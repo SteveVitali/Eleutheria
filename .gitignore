@@ -1,0 +1,16 @@
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Stray research fetch artifacts (Cloudflare challenge pages, partial downloads)
+icpsr.html
+*.tmp
+*.partial
+
+# Scratch
+scratch/
+tmp/
