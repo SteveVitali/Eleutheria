@@ -18,3 +18,4 @@ graph_annotations [entity claim vocab_registries] 2026-08-27T12:12:00Z Devin <de
 inference_schema [entity] 2026-08-27T12:13:00Z Devin <devin@sig-project.org> # Appendix C.6 L4 inference.* separate schema
 access_control [claim evidence] 2026-08-27T12:14:00Z Devin <devin@sig-project.org> # §16.8 roles + restrictive RLS by sensitivity tier (ADR-012)
 seed_vocab [vocab_registries] 2026-08-27T12:15:00Z Devin <devin@sig-project.org> # fixed reference vocabularies (R/D/I, object/entity types, evidence roles)
+evidence_store [evidence access_control] 2026-08-27T13:30:00Z Devin <devin@sig-project.org> # §17 OCFL dedup blob registry + source_uri uniqueness + access log (SIG-EVID-004/011/012)

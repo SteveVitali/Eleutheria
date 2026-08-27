@@ -34,8 +34,9 @@ of a landed one.
 | ADR-020 | GitHub Actions for CI |
 | ADR-021 | Source registry as seeded data, with a runtime ingestion gate in `connectors` (P00.4) |
 | ADR-022 | Defer physical partitioning of `claim` to preserve the `claim_id` FK contract (P02.1) |
+| ADR-023 | An `evidence/` package + content-addressed blob dedup for the capture row (P02.2) |
 
 ADR-001…012 are the §15.5 decision set; ADR-013…020 are the stack ADRs. The
 egress question of §38.5 is resolved for the whole project in ADR-015. ADR-021 is
 the P00.4 source-registry decision; ADR-022 is the P02.1 claim-spine partitioning
-decision.
+decision; ADR-023 is the P02.2 evidence-store package + blob-dedup decision.

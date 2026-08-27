@@ -22,6 +22,9 @@ members = [
     "orchestration",
     "policy",
     "ops",
+    # Added by ADR-023 after the frozen §47 layout: the OCFL write-once evidence
+    # store (§17). §47 names no home for it; ADR-023 records the deviation.
+    "evidence",
 ]
 
 [dependency-groups]
@@ -59,6 +62,13 @@ strict_equality = true
 # imports; our own code stays fully type-checked.
 [[tool.mypy.overrides]]
 module = ["linkml.*", "linkml_runtime", "yaml", "rdflib", "rdflib.*"]
+ignore_missing_imports = true
+
+# The evidence store (P02.2) drives boto3 (S3 / Object Lock) and playwright (live
+# WACZ capture); neither ships type stubs / a py.typed marker. Ignore *only* their
+# missing imports — our own code stays fully type-checked.
+[[tool.mypy.overrides]]
+module = ["boto3", "boto3.*", "botocore", "botocore.*", "playwright.*", "blake3"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]

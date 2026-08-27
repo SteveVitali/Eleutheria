@@ -9,7 +9,7 @@
 # Import names of the workspace's Python packages (the §47 layout minus the
 # non-Python dirs web/ docs/ tests/). Kept in sync by tests/unit/test_package_layout.py.
 PY_PACKAGES := ontology db connectors parsing resolution reconcile inference \
-	tasks api exports orchestration policy ops
+	tasks api exports orchestration policy ops evidence
 MYPY_TARGETS := $(foreach p,$(PY_PACKAGES),-p $(p))
 # Python source this repo owns: each package's src tree, plus the test suite.
 LINT_PATHS := $(foreach p,$(PY_PACKAGES),$(p)/src) tests
