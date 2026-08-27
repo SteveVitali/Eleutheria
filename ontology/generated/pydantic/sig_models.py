@@ -85,7 +85,7 @@ linkml_meta = LinkMLMeta({'default_prefix': 'sig',
                            'prefix_reference': 'http://www.w3.org/2004/02/skos/core#'},
                   'xsd': {'prefix_prefix': 'xsd',
                           'prefix_reference': 'http://www.w3.org/2001/XMLSchema#'}},
-     'source_file': '/Users/stevenvitali/Eleutheria/ontology/src/ontology/schema/sig.yaml',
+     'source_file': 'ontology/src/ontology/schema/sig.yaml',
      'title': 'Surveillance Infrastructure Graph ontology'} )
 
 class TemporalBoundKind(str, Enum):
