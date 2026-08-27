@@ -558,3 +558,56 @@ layer (§42.3). Decision record: ADR-027.
 | SIG-PARSE-007 (committed fixtures) | `tests/connectors/fixtures/osm/*.json` (Overpass snapshot, element history, deletion snapshot) | driven throughout `tests/connectors/test_osm.py` |
 | SIG-PARSE-008 (a canary alerts on structural drift) | `connectors.osm.canary_findings` | `tests/connectors/test_osm.py::test_canary_passes_on_the_committed_fixture`, `::test_canary_flags_structural_drift` |
 | SIG-INGEST-021 (connector self-registers on the plug-in seam; visible in the CLI) | `connectors.osm.OSMConnector` (`@register`); imported by `connectors.__init__` | `tests/connectors/test_osm.py::test_osm_connector_is_registered`; `tests/connectors/test_cli.py::test_list_connectors_includes_the_osm_connector` |
+
+# P04.3 — the `atlas` connector
+
+The second real source adapter on the P04.1 framework (§23.3), of deliberately
+different shape from `osm`: agency-level **adoption** from the EFF Atlas of
+Surveillance, writing a single predicate — `deployment_exists` — at family-level
+technology granularity into the CC-BY-4.0 SIG graph compartment. All
+source-specific logic is pure and fixture-driven; no live fetch runs in CI. See
+ADR-028.
+
+## `deployment_exists` at family granularity + the predicate allowlist (§23.3, SIG-INGEST-033)
+
+| Requirement | Where | Test |
+|---|---|---|
+| §23.3 (writes `deployment_exists` at **family-level** technology granularity; Atlas category → SIG family, seeded from the `eff_atlas` crosswalk, carrying the SKOS relation + `lossy` provenance — SIG-STORE-039/040, SIG-ONTO-058) | `connectors.atlas` (`category_mapping`, `AtlasConnector._deployment_row`); versioned `data/atlas_vocab.toml` (`[categories]`) | `tests/connectors/test_atlas.py::test_only_deployment_exists_is_written_at_family_granularity`, `::test_category_maps_to_a_sig_family` |
+| SIG-INGEST-033 (predicate allowlist enforced as a schema gate; MUST NOT write device counts, coordinates, configuration, current status) | `connectors.atlas` (`predicate_allowlist`, `assert_predicate_allowed`, `PredicateNotAllowed`, `forbidden_predicate_genres`); `data/atlas_vocab.toml` (`predicate_allowlist`, `forbidden_predicate_genres`) | `tests/connectors/test_atlas.py::test_predicate_allowlist_refuses_counts_coordinates_config_status`, `::test_no_claim_row_writes_any_other_predicate` |
+| §23.3 vocabulary is versioned data, not code (§20 migrations) | `connectors.atlas.vocab`/`vocab_version`/`atlas_version`; `data/atlas_vocab.toml` | `tests/connectors/test_atlas.py::test_vocabulary_is_versioned` |
+| §23.3 unmapped category → research task, never a guessed family | `connectors.atlas` (`AtlasConnector._unmapped_row`, `unmapped_category_task`) | `tests/connectors/test_atlas.py::test_unmapped_category_files_a_research_task_and_writes_no_deployment`, `::test_unmapped_category_task_shape` |
+
+## Agency-id keying + surrogate routing (SIG-INGEST-034)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-INGEST-034 (key on the Atlas agency identifier; ORI-shaped → canonical `us.fbi.ori`, non-ORI-shaped → `atlas.agency_name` surrogate path feeding P03.2's crosswalk; never resolve entities itself) | `connectors.atlas` (`agency_identity`, `AgencyIdentity`, `ORI_SCHEME`/`ATLAS_AGENCY_SCHEME`); `link()` inherited identity default; ORI shape via `resolution.ori.is_valid_ori` | `tests/connectors/test_atlas.py::test_ori_shaped_agency_routes_to_the_canonical_path`, `::test_non_ori_shaped_agency_routes_to_the_surrogate_path`, `::test_agency_routing_flows_through_the_pipeline`, `::test_connector_does_not_resolve_entities_itself` |
+
+## Attribution + vocabulary version + supersession (§23.3, AC1/AC5)
+
+| Requirement | Where | Test |
+|---|---|---|
+| §23.3 (preserve the Atlas's own source attribution **and** the recorded Atlas vocabulary version on every row) | `connectors.atlas._stamp` (`source_attribution`, `atlas_version`); `AtlasConnector.extract` (`attribution_links`) | `tests/connectors/test_atlas.py::test_rows_preserve_atlas_source_attribution_and_vocabulary_version` |
+| §23.3 (later evidence supersedes/temporally qualifies via the resolver, never by overwrite — append-only, P1–P3) | `connectors.atlas` (rows carry no `is_current`/authoritative flag; `raw_value` preserved); resolver-side supersession is P08.x | `tests/connectors/test_atlas.py::test_rows_are_append_only_with_no_current_value_flag` |
+| CC-BY-4.0 landing in the SIG graph compartment (§42.2, SIG-LIC-010) | `connectors.atlas._stamp` (`CC_BY_LICENSE`/`SIG_GRAPH_COMPARTMENT`); `policy/data/licenses.toml` (`compartments.sig_graph`) | `tests/connectors/test_atlas.py::test_rows_land_in_the_cc_by_sig_graph_compartment` |
+
+## Evidence-genre preservation (§23.3, OL-2D-AT-02)
+
+| Requirement | Where | Test |
+|---|---|---|
+| §23.3 (nine methodology components; carry the producing component where the upstream records it, else record the granularity loss rather than guess a tier) | `connectors.atlas` (`evidence_genres`, `normalize_evidence_genre`, `AtlasConnector._resolve_genre`, `_genre_column`); `data/atlas_vocab.toml` (`[evidence_genres]`, `evidence_genre_columns`) | `tests/connectors/test_atlas.py::test_genre_is_a_granularity_loss_when_the_feed_records_no_component`, `::test_genre_is_carried_when_the_feed_records_the_component`, `::test_the_nine_methodology_genres_are_named` |
+
+## Category retirement, not a world change (SIG-ONTO-059)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ONTO-059 (a retired Atlas category is recorded as a **category retirement** — a vocabulary event keyed on the Atlas version — never a deployment and never the world event of a deployment ending) | `connectors.atlas` (`category_retirement_record`, `is_retired_category`, `retired_categories`, `CATEGORY_RETIRED_PREDICATE` vs `DEPLOYMENT_ENDED_PREDICATE`); `data/atlas_vocab.toml` (`[retired]`) | `tests/connectors/test_atlas.py::test_retired_category_is_recorded_as_a_category_retirement`, `::test_retired_category_helpers` |
+
+## Fixtures, canary, registration, reproducibility (SIG-PARSE-007/008, SIG-INGEST-021/003)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-PARSE-007 (committed fixtures) | `tests/connectors/fixtures/atlas/*.csv` (adoption feed; feed with a methodology component) | driven throughout `tests/connectors/test_atlas.py` |
+| SIG-PARSE-008 (a canary alerts on structural drift) | `connectors.atlas.canary_findings`, `parse_csv` | `tests/connectors/test_atlas.py::test_canary_passes_on_the_committed_fixture`, `::test_canary_flags_structural_drift` |
+| SIG-INGEST-021 (connector self-registers on the plug-in seam; visible in the CLI) | `connectors.atlas.AtlasConnector` (`@register`); imported by `connectors.__init__` | `tests/connectors/test_atlas.py::test_atlas_connector_is_registered`; `tests/connectors/test_cli.py::test_list_connectors_includes_the_atlas_connector` |
+| SIG-INGEST-003 (post-capture stages are pure; replay/shadow reproducibility) | `connectors.atlas` (`normalize` carries no wall-clock; `category_retirement_record` keyed on version, not time) | `tests/connectors/test_atlas.py::test_claim_set_is_reproducible_across_runs` |

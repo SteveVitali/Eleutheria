@@ -1,0 +1,95 @@
+# SPDX-License-Identifier: Apache-2.0
+# The versioned EFF Atlas of Surveillance category -> claim vocabulary (§23.3, P04.3).
+# This table is DATA, not code (SIG-ENG-001): the mapping from the Atlas's own
+# category taxonomy onto SIG's technology FAMILIES, the nine methodology
+# components, the predicate allowlist, and the retired-category ledger are data
+# rows reviewed on their own. Changes after P04.3 are VERSIONED MIGRATIONS (§20),
+# not edits — bump `atlas_version`/`vocab_version` and add the change, never
+# silently rewrite a mapping, so a re-extraction under a new vocabulary is a new
+# interpretation, never a destructive overwrite (SIG-INGEST-017, SIG-ONTO-059).
+#
+# The category -> SIG concept rows are seeded from the authoritative external
+# crosswalk (ontology/vocab/crosswalks.yaml, the `eff_atlas` taxonomy, §20.3,
+# SIG-STORE-039/040); the connector rolls each to its FAMILY level (§23.3) and
+# carries the SKOS relation + lossy flag as provenance. A category NOT listed here
+# is recorded as an unmapped category + a research task (never guessed).
+
+# The connector's own vocabulary version, stamped onto every run (§20).
+vocab_version = "2026.08.27"
+
+# The Atlas vocabulary version SIG observed the upstream taxonomy at. Recorded on
+# EVERY row (SIG-ONTO-059): an external vocabulary changes, and its changes carry
+# negative semantics, so a row is only interpretable against the version of the
+# Atlas taxonomy that produced it. Matches crosswalks.yaml `version_observed`.
+atlas_version = "2024-03"
+
+# The single predicate this connector may write, at family-level technology
+# granularity (§23.3). The allowlist is enforced as a hard schema gate
+# (SIG-INGEST-033): writing anything else is a schema error.
+predicate_allowlist = ["deployment_exists"]
+
+# Predicate GENRES the Atlas connector MUST NOT write (§23.3): device counts,
+# coordinates, configuration, current status. Named here so the refusal is data,
+# not a magic string — the allowlist above is authoritative; this documents the
+# out-of-scope write-set the spec calls out explicitly.
+forbidden_predicate_genres = [
+  "device_count",
+  "coordinates",
+  "configuration",
+  "current_status",
+]
+
+# The candidate CSV column names the upstream may use to record the producing
+# methodology component. If NONE of these appear in the feed header, the feed does
+# not record the component at all and every row is a granularity loss (§23.3).
+# (Kept above the first [table] header so it stays a top-level key.)
+evidence_genre_columns = ["Method", "Methodology", "Component", "Evidence Genre"]
+
+# The nine methodology components of the Atlas's own evidence-genre model
+# (§23.3, OL-2D-AT-02). Where the upstream records WHICH component produced a row,
+# the connector carries it (normalized to one of these); where it does not, the
+# connector records the granularity loss rather than assign a tier by guess.
+# `aliases` map the upstream's free-text component labels onto the canonical genre.
+[evidence_genres]
+osint                = { aliases = ["osint", "open source", "open-source intelligence"] }
+news_reporting       = { aliases = ["news", "news reporting", "media", "press coverage"] }
+government_documents = { aliases = ["gov docs", "government documents", "government document", "public records"] }
+meeting_minutes      = { aliases = ["minutes", "meeting minutes", "council minutes", "agenda"] }
+press_releases       = { aliases = ["press release", "press releases", "pr"] }
+procurement_leads    = { aliases = ["procurement", "procurement lead", "procurement leads", "procurement aggregator"] }
+crowdsourcing        = { aliases = ["crowdsourcing", "crowdsourced", "crowd sourced", "tip"] }
+staff_review         = { aliases = ["staff review", "staff and intern review", "intern review", "staff"] }
+imported_datasets    = { aliases = ["imported dataset", "imported datasets", "specialist dataset", "dataset import"] }
+
+# The CSV columns the connector reads (§23.3). `agency_column` is the Atlas agency
+# identifier the connector keys on (SIG-INGEST-034); `category_column` carries the
+# Atlas category that maps to a SIG technology family.
+[columns]
+agency_column   = "Agency"
+category_column = "Type"
+# Columns whose values are preserved verbatim as the row's upstream source
+# attribution (§23.3 "Atlas's own source attribution preserved on each row").
+attribution_columns = ["Link 1", "Link 2", "Link 3", "Summary"]
+# Descriptive locator columns preserved as raw context (never parsed into claims).
+context_columns = ["City", "County", "State", "Vendor"]
+
+# Atlas category -> SIG technology FAMILY (§23.3, seeded from the eff_atlas
+# crosswalk in ontology/vocab/crosswalks.yaml). `family` is the family-level slug
+# the deployment_exists row is written at; `sig_concept` is the finer crosswalk
+# target; `relation` + `lossy` are the SKOS mapping provenance (SIG-STORE-040).
+# A query traversing a lossy crosswalk MUST propagate the flag (SIG-ONTO-058).
+[categories]
+"Automated License Plate Readers"     = { family = "alpr",             sig_concept = "alpr-unspecified",       relation = "broadMatch",   lossy = true }
+"Face Recognition"                    = { family = "face-recognition", sig_concept = "face-identification-1ton", relation = "closeMatch",   lossy = true }
+"Gunshot Detection"                   = { family = "gunshot-detection", sig_concept = "gunshot-detection-fixed", relation = "closeMatch",   lossy = false }
+"Drones/UAVs"                         = { family = "uas",              sig_concept = "uas-general",            relation = "closeMatch",   lossy = true }
+"Third-Party Investigative Platforms" = { family = "federation-hub",   sig_concept = "camera-federation-hub",  relation = "relatedMatch", lossy = true }
+
+# Retired Atlas categories (SIG-ONTO-059). A row tagged with one of these is
+# recorded as a CATEGORY RETIREMENT, never a deployment and never a world change:
+# the EFF Atlas retired its Ring/Neighbors category in March 2024 and removed
+# ~2,530 data points, so the *absence* of a Ring data point after that date means
+# "category retired", not "program ended". `retired_at` is the Atlas vocabulary
+# version at which the category disappeared; `note` records why.
+[retired]
+"Ring/Neighbors" = { retired_at = "2024-03", removed_data_points = 2530, note = "EFF Atlas retired the Ring/Neighbors category in March 2024 (SIG-ONTO-059); absence after 2024-03 is a category retirement, not a program ending." }

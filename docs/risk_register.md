@@ -234,3 +234,26 @@ network is contacted in CI.
 |---|---|---|---|
 | RISK-P4-06 | Live Overpass fetching: a real HTTP `Transport` for `PoliteFetcher`, the OCFL `CaptureStore` adapter (carried from RISK-P4-04/05), and shared-layer handling of Overpass **429 → back off / poll `/api/status`** and **504 → shrink** (SIG-INGEST-045h). The framework's `PoliteFetcher` currently classifies 429 as a bot challenge → disappearance, which is wrong for Overpass slot exhaustion. | This ticket owns the source-specific stages + etiquette, all exercised over committed fixtures (SIG-PARSE-007); a real transport and the OCFL adapter are the live-wiring ticket, and reconciling the shared 429 semantics is framework surgery deliberately deferred (out of P04.2 scope — ADR-026/027). | The etiquette is built and tested as pure helpers now (`overpass_status_action` 429→back_off/504→shrink, `build_overpass_query` `[timeout]/[maxsize]` + no-space filters, `acquisition_mode` PBF-vs-tiled, `assert_own_or_public_instance`, `BulkStitchingForbidden`); the descriptive contact-carrying UA is already enforced by the shared `PoliteFetcher` (SIG-INGEST-045d). ADR-027 records the deferral and its revisit trigger. |
 | RISK-P4-07 | A **physically separate** ODbL `physical_asset` table in the DB per §42.3. The Appendix-C `physical_asset` table carries the OSM columns inline and is not itself compartment-split. | Connectors are not DB-wired in P04.x (the framework asserts through the `ClaimSink` seam, RISK-P4-06); splitting the stored table is a DB/ontology concern, not a connector one. | Every OSM output row is stamped `license=ODbL-1.0`/`compartment=osm_physical` and the export gate (`policy.licensing.compute_export_license`, tested) fails any merge with the CC-BY graph, so the separation obligation (SIG-LIC-006) holds at the export boundary today; the stored-table split is tracked for the DB layer (ADR-027 revisit trigger). |
+
+## Phase 4 — Connector framework, OSM, Atlas (P04.3 — the `atlas` connector)
+
+P04.3 is the second real connector on the P04.1 substrate and is deliberately of a
+different shape from `osm`: agency-level **adoption** from the EFF Atlas of
+Surveillance (§23.3), writing a single predicate — `deployment_exists` — at
+family-level technology granularity into the CC-BY-4.0 SIG graph compartment. All
+source-specific logic is pure and fixture-driven; no live network is contacted in
+CI.
+
+### Deviations recorded as ADRs (SIG-ENG-031)
+
+| id | Deviation | ADR |
+|---|---|---|
+| — | The Atlas category→family mapping, the nine evidence genres, the predicate allowlist, and the retired-category ledger are versioned **data** (`data/atlas_vocab.toml`), not code (§20 migrations); the category map is **seeded from the `eff_atlas` crosswalk** and rolled to family level (SIG-STORE-039/040); `deployment_exists` landing in the CC-BY-4.0 SIG graph is realised at the connector layer (compartment stamping + the export gate) because connectors are not DB-wired yet; a category retirement (SIG-ONTO-059) is recorded as a `vocabulary_event` row keyed on the Atlas version rather than wall-clock time so `normalize` stays idempotent (SIG-INGEST-003). | ADR-028 |
+
+### Scaffolded / bounded requirements (SIG-ENG-005)
+
+| id | Requirement | Why not fully closed now | Compensating control |
+|---|---|---|---|
+| RISK-P4-08 | Resolver-side **supersession / temporal qualification** of an Atlas row by later evidence (§23.3, OL-2D-AT-06). The connector does not itself decide when a later claim supersedes an Atlas row. | Reconciliation/supersession is the resolver's job (P08.x), explicitly out of scope for a connector ticket; deciding it here would duplicate and pre-empt that layer. | Every Atlas row is **append-only** and carries the full provenance a resolver needs (source attribution, Atlas vocabulary version, candidate agency identifier, upstream links), and the connector marks nothing "current"/authoritative — so supersession is a pure resolver decision over existing data, tested by `test_rows_are_append_only_with_no_current_value_flag`. ADR-028 records the deferral. |
+| RISK-P4-09 | An **exhaustive** Atlas category → family map. Only the five crosswalk-seeded families (ALPR, face recognition, gunshot detection, UAS, camera-federation hub) are mapped; the real Atlas taxonomy carries more. | The authoritative external crosswalk (`ontology/vocab/crosswalks.yaml`) seeds exactly these; extending the map is a reviewed §20 data migration, not code, and guessing the remainder would fabricate mappings (SIG-STORE-040). | An unmapped category is recorded as an unmapped category **+ a research task** (never a guessed family), tested by `test_unmapped_category_files_a_research_task_and_writes_no_deployment`; the map grows by additive data migration exactly as the osm vocabulary does. |
+| RISK-P4-10 | Live Atlas fetching: a real HTTP `Transport` for `PoliteFetcher` and the OCFL `CaptureStore` adapter (carried from RISK-P4-04/05/06). | The framework is not live-wired yet (ADR-026); this ticket owns the source-specific stages, all exercised over committed fixtures (SIG-PARSE-007). | The `Transport` protocol + `CaptureStore` seam are stable; the connector inherits gate/isolation/lineage/replay/disappearance unchanged and is driven end-to-end over committed CSV fixtures, so a real transport is a drop-in (ADR-026/028 revisit trigger). |
