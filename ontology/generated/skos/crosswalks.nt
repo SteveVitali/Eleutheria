@@ -1,0 +1,85 @@
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/alpr_accountability_atlas/98901e2e8b9e> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/alpr_accountability_atlas/98901e2e8b9e> <http://www.w3.org/2004/02/skos/core#prefLabel> "ALPR" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/alpr_accountability_atlas/98901e2e8b9e> <https://ontology.sig-project.org/schema/lossy> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/alpr_accountability_atlas/98901e2e8b9e> <https://ontology.sig-project.org/schema/taxonomy> "alpr_accountability_atlas" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/ccops_inventory/80c5f86a66e9> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/ccops_inventory/80c5f86a66e9> <http://www.w3.org/2004/02/skos/core#prefLabel> "Biometric Surveillance" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/ccops_inventory/80c5f86a66e9> <https://ontology.sig-project.org/schema/lossy> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/ccops_inventory/80c5f86a66e9> <https://ontology.sig-project.org/schema/taxonomy> "ccops_inventory" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/ccops_inventory/c8196c84bedd> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/ccops_inventory/c8196c84bedd> <http://www.w3.org/2004/02/skos/core#prefLabel> "Real-Time Crime Center" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/ccops_inventory/c8196c84bedd> <https://ontology.sig-project.org/schema/lossy> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/ccops_inventory/c8196c84bedd> <https://ontology.sig-project.org/schema/taxonomy> "ccops_inventory" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_atlas/0954b773773f> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_atlas/0954b773773f> <http://www.w3.org/2004/02/skos/core#prefLabel> "Face Recognition" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_atlas/0954b773773f> <https://ontology.sig-project.org/schema/lossy> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_atlas/0954b773773f> <https://ontology.sig-project.org/schema/taxonomy> "eff_atlas" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_atlas/30300b1d5bdc> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_atlas/30300b1d5bdc> <http://www.w3.org/2004/02/skos/core#prefLabel> "Third-Party Investigative Platforms" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_atlas/30300b1d5bdc> <https://ontology.sig-project.org/schema/lossy> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_atlas/30300b1d5bdc> <https://ontology.sig-project.org/schema/taxonomy> "eff_atlas" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_atlas/30b9ccb47758> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_atlas/30b9ccb47758> <http://www.w3.org/2004/02/skos/core#prefLabel> "Automated License Plate Readers" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_atlas/30b9ccb47758> <https://ontology.sig-project.org/schema/lossy> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_atlas/30b9ccb47758> <https://ontology.sig-project.org/schema/taxonomy> "eff_atlas" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_atlas/6c7d54ca01ae> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_atlas/6c7d54ca01ae> <http://www.w3.org/2004/02/skos/core#prefLabel> "Drones/UAVs" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_atlas/6c7d54ca01ae> <https://ontology.sig-project.org/schema/lossy> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_atlas/6c7d54ca01ae> <https://ontology.sig-project.org/schema/taxonomy> "eff_atlas" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_atlas/82d041f29019> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_atlas/82d041f29019> <http://www.w3.org/2004/02/skos/core#prefLabel> "Gunshot Detection" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_atlas/82d041f29019> <https://ontology.sig-project.org/schema/lossy> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_atlas/82d041f29019> <https://ontology.sig-project.org/schema/taxonomy> "eff_atlas" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_sls/19f68760cfca> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_sls/19f68760cfca> <http://www.w3.org/2004/02/skos/core#prefLabel> "Cell-Site Simulators" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_sls/19f68760cfca> <https://ontology.sig-project.org/schema/lossy> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_sls/19f68760cfca> <https://ontology.sig-project.org/schema/taxonomy> "eff_sls" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_sls/513a4ddc2b57> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_sls/513a4ddc2b57> <http://www.w3.org/2004/02/skos/core#prefLabel> "Social Media Monitoring" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_sls/513a4ddc2b57> <https://ontology.sig-project.org/schema/lossy> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_sls/513a4ddc2b57> <https://ontology.sig-project.org/schema/taxonomy> "eff_sls" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_sls/a0b77e5d6332> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_sls/a0b77e5d6332> <http://www.w3.org/2004/02/skos/core#prefLabel> "Mobile Device Forensic Tools" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_sls/a0b77e5d6332> <https://ontology.sig-project.org/schema/lossy> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_sls/a0b77e5d6332> <https://ontology.sig-project.org/schema/taxonomy> "eff_sls" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_sls/f83e266063a4> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_sls/f83e266063a4> <http://www.w3.org/2004/02/skos/core#prefLabel> "Electronic Monitoring" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_sls/f83e266063a4> <https://ontology.sig-project.org/schema/lossy> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_sls/f83e266063a4> <https://ontology.sig-project.org/schema/taxonomy> "eff_sls" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/fr_technopolice/13f3d71a2c57> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/fr_technopolice/13f3d71a2c57> <http://www.w3.org/2004/02/skos/core#prefLabel> "LAPI" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/fr_technopolice/13f3d71a2c57> <https://ontology.sig-project.org/schema/lossy> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/fr_technopolice/13f3d71a2c57> <https://ontology.sig-project.org/schema/taxonomy> "fr_technopolice" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/fr_technopolice/fdca994b774e> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/fr_technopolice/fdca994b774e> <http://www.w3.org/2004/02/skos/core#prefLabel> "vidéosurveillance algorithmique (VSA)" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/fr_technopolice/fdca994b774e> <https://ontology.sig-project.org/schema/lossy> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/fr_technopolice/fdca994b774e> <https://ontology.sig-project.org/schema/taxonomy> "fr_technopolice" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/osm_surveillance/570a026bdca3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/osm_surveillance/570a026bdca3> <http://www.w3.org/2004/02/skos/core#prefLabel> "camera:type=dome" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/osm_surveillance/570a026bdca3> <https://ontology.sig-project.org/schema/lossy> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/osm_surveillance/570a026bdca3> <https://ontology.sig-project.org/schema/taxonomy> "osm_surveillance" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/osm_surveillance/909979ce6820> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/osm_surveillance/909979ce6820> <http://www.w3.org/2004/02/skos/core#prefLabel> "surveillance:type=ALPR" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/osm_surveillance/909979ce6820> <https://ontology.sig-project.org/schema/lossy> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/osm_surveillance/909979ce6820> <https://ontology.sig-project.org/schema/taxonomy> "osm_surveillance" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/osm_surveillance/aab6a9209a62> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/osm_surveillance/aab6a9209a62> <http://www.w3.org/2004/02/skos/core#prefLabel> "man_made=surveillance" .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/osm_surveillance/aab6a9209a62> <https://ontology.sig-project.org/schema/lossy> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+<https://ontology.sig-project.org/vocab/crosswalk/1.0.0/osm_surveillance/aab6a9209a62> <https://ontology.sig-project.org/schema/taxonomy> "osm_surveillance" .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/alpr-fixed> <http://www.w3.org/2004/02/skos/core#closeMatch> <https://ontology.sig-project.org/vocab/crosswalk/1.0.0/fr_technopolice/13f3d71a2c57> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/alpr-fixed> <http://www.w3.org/2004/02/skos/core#closeMatch> <https://ontology.sig-project.org/vocab/crosswalk/1.0.0/osm_surveillance/909979ce6820> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/alpr-unspecified> <http://www.w3.org/2004/02/skos/core#broadMatch> <https://ontology.sig-project.org/vocab/crosswalk/1.0.0/alpr_accountability_atlas/98901e2e8b9e> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/alpr-unspecified> <http://www.w3.org/2004/02/skos/core#broadMatch> <https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_atlas/30b9ccb47758> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/camera-federation-hub> <http://www.w3.org/2004/02/skos/core#relatedMatch> <https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_atlas/30300b1d5bdc> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/camera-fixed-cctv> <http://www.w3.org/2004/02/skos/core#broadMatch> <https://ontology.sig-project.org/vocab/crosswalk/1.0.0/osm_surveillance/aab6a9209a62> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/camera-ptz> <http://www.w3.org/2004/02/skos/core#relatedMatch> <https://ontology.sig-project.org/vocab/crosswalk/1.0.0/osm_surveillance/570a026bdca3> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/cell-site-simulator-general> <http://www.w3.org/2004/02/skos/core#closeMatch> <https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_sls/19f68760cfca> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/electronic-monitoring-ankle> <http://www.w3.org/2004/02/skos/core#closeMatch> <https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_sls/f83e266063a4> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/extraction-physical> <http://www.w3.org/2004/02/skos/core#broadMatch> <https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_sls/a0b77e5d6332> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/face-identification-1ton> <http://www.w3.org/2004/02/skos/core#broadMatch> <https://ontology.sig-project.org/vocab/crosswalk/1.0.0/ccops_inventory/80c5f86a66e9> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/face-identification-1ton> <http://www.w3.org/2004/02/skos/core#closeMatch> <https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_atlas/0954b773773f> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/gunshot-detection-fixed> <http://www.w3.org/2004/02/skos/core#closeMatch> <https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_atlas/82d041f29019> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/rtcc-platform> <http://www.w3.org/2004/02/skos/core#closeMatch> <https://ontology.sig-project.org/vocab/crosswalk/1.0.0/ccops_inventory/c8196c84bedd> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/social-media-monitoring> <http://www.w3.org/2004/02/skos/core#closeMatch> <https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_sls/513a4ddc2b57> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/uas-general> <http://www.w3.org/2004/02/skos/core#closeMatch> <https://ontology.sig-project.org/vocab/crosswalk/1.0.0/eff_atlas/6c7d54ca01ae> .
+<https://ontology.sig-project.org/vocab/technology/1.0.0/video-analytics-object> <http://www.w3.org/2004/02/skos/core#closeMatch> <https://ontology.sig-project.org/vocab/crosswalk/1.0.0/fr_technopolice/fdca994b774e> .

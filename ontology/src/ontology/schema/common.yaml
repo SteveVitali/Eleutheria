@@ -1,0 +1,596 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# Common types, shared slots, and the STRUCTURAL controlled vocabularies of §13
+# (evidence/epistemics §13.3, the four lifecycle tracks §13.4, roles §12.4, and
+# the small closed enums referenced by entity/edge predicate surfaces). The large
+# open vocabularies — the technology tree (§13.1) and the capability grammar
+# (§13.2) — are NOT permissible-value enums here: they are versioned SKOS concept
+# schemes whose term lists live in ontology/vocab/ (§13 l.2153) and are bound to
+# slots by the `technology_code` / `capability_code` types below.
+id: https://ontology.sig-project.org/schema/common
+name: sig_common
+title: SIG common types, slots, and structural vocabularies
+description: >-
+  Shared LinkML building blocks for the SIG ontology: custom scalar types, the
+  universal temporal/provenance slots, and the closed structural enums of §13.3,
+  §13.4, §12.4, and §13.5.
+license: Apache-2.0
+prefixes:
+  linkml: https://w3id.org/linkml/
+  sig: https://ontology.sig-project.org/schema/
+  skos: http://www.w3.org/2004/02/skos/core#
+  xsd: http://www.w3.org/2001/XMLSchema#
+default_prefix: sig
+default_range: string
+imports:
+  - linkml:types
+
+# --- Custom scalar types ------------------------------------------------------
+types:
+  edtf:
+    typeof: string
+    base: str
+    uri: xsd:string
+    description: >-
+      An Extended Date/Time Format (ISO 8601-2 / EDTF) string. Uncertain and
+      open-ended time is preserved verbatim; "early 2025" is NOT coerced to a
+      point (§9.3, ADR-004).
+  geometry_wkt:
+    typeof: string
+    base: str
+    uri: xsd:string
+    description: A geometry as WKT/EWKT, SRID 4326 unless otherwise stated (§19.1).
+  bcp47:
+    typeof: string
+    base: str
+    uri: xsd:string
+    description: A BCP-47 language tag qualifying a label-bearing value (§9.7, SIG-ONTO-069).
+  technology_code:
+    typeof: string
+    base: str
+    uri: xsd:string
+    description: >-
+      A slug from the versioned SKOS Technology concept scheme (§13.1). Bound to
+      the scheme by IRI; the authoritative term list is the generated SKOS
+      artifact, never inlined here (so the 14/36/104 counts have one home).
+  capability_code:
+    typeof: string
+    base: str
+    uri: xsd:string
+    description: >-
+      A `verb.object.scope` slug from the versioned SKOS Capability concept
+      scheme (§13.2, §11.6).
+  predicate_code:
+    typeof: string
+    base: str
+    uri: xsd:string
+    description: A slug from the predicate registry (§13.6, SIG-ONTO-066).
+  money:
+    typeof: decimal
+    base: Decimal
+    uri: xsd:decimal
+    description: A monetary amount; always paired with a currency slot.
+  duration_iso:
+    typeof: string
+    base: str
+    uri: xsd:string
+    description: An ISO-8601 duration (e.g. retention period), distinct from an ordinal bucket.
+
+# --- Universal slots ----------------------------------------------------------
+slots:
+  id:
+    identifier: true
+    range: uriorcurie
+    description: The entity's stable minted identity (L2 identity only, §8.2).
+  valid_from:
+    range: edtf
+    description: When the fact/relationship became true (valid time, §9.2).
+  valid_to:
+    range: edtf
+    description: When it ceased to be true; distinct from unknown vs ongoing (§9.5).
+  valid_from_kind:
+    range: TemporalBoundKind
+    description: Whether valid_from is known, unknown, or ongoing (§9.5, SIG-ONTO-044).
+  valid_to_kind:
+    range: TemporalBoundKind
+    description: Whether valid_to is known, unknown, or ongoing (§9.5, SIG-ONTO-044).
+  observed_at:
+    range: edtf
+    description: When SIG observed the state (observation time, never collapsed with valid time — §9).
+  # Cross-cutting provenance handles (the claim/evidence spine is P02; these are
+  # the ontology-level references that make every fact evidenced — §3.1).
+  sources:
+    range: uriorcurie
+    multivalued: true
+    description: Supporting evidence artifacts/sources; every fact is evidenced (SIG-CHART-013).
+
+# --- Structural enums: evidence and epistemics (§13.3) ------------------------
+enums:
+  TemporalBoundKind:
+    description: How a temporal bound is known (§9.5).
+    permissible_values:
+      known: {description: "A specific known bound."}
+      unknown: {description: "Bound exists but is not known."}
+      ongoing: {description: "The fact is still in force (open interval)."}
+  SourceReliability:
+    description: Reliability R of the publisher, not the claim (§10.4).
+    permissible_values:
+      R1: {description: "Highest reliability."}
+      R2: {}
+      R3: {}
+      R4: {}
+      R5: {}
+      R6: {description: "Lowest reliability."}
+  ClaimDirectness:
+    description: Directness D from the (genre × predicate) matrix (§10.5).
+    permissible_values:
+      D1: {description: "Authoritative record of the fact itself."}
+      D2: {description: "First-party report of the fact."}
+      D3: {description: "Secondhand report or close proxy."}
+      D4: {description: "Establishes a related fact; short inference."}
+      D5: {description: "Bears on target only through a modelling assumption."}
+      D6: {description: "Non-probative for this predicate — excluded from the admissible set."}
+  ArtifactIntegrity:
+    description: Integrity I of the artifact (§10.6).
+    permissible_values:
+      I1: {}
+      I2: {}
+      I3: {}
+  Currency:
+    description: Currency C derived at query time from volatility half-life (§28.3).
+    permissible_values:
+      C1: {description: "CURRENT."}
+      C2: {description: "AGING."}
+      C3: {description: "STALE."}
+      C4: {description: "HISTORICAL."}
+  WeightClass:
+    description: Composed weight class W (§10.6).
+    permissible_values:
+      W0: {}
+      W1: {}
+      W2: {}
+      W3: {}
+      W4: {}
+  EvidenceRole:
+    description: The role a piece of evidence plays for a claim (§13.3).
+    permissible_values:
+      establishes: {}
+      corroborates: {}
+      contextualizes: {}
+      contradicts: {}
+      supersedes_basis: {}
+      attests_absence: {}
+  EpistemicStatus:
+    description: Required epistemic status of an accountability event (§11.17, SIG-ONTO-038).
+    permissible_values:
+      alleged: {}
+      reported: {}
+      confirmed: {}
+      adjudicated: {}
+      policy_action: {}
+      vendor_statement: {}
+      disputed: {}
+      retracted: {}
+  AbsenceKind:
+    description: How an absence is known — negative space is queryable (§9.5).
+    permissible_values:
+      not_researched: {}
+      searched_not_found: {}
+      evidence_of_absence: {}
+      not_applicable: {}
+  ContradictionState:
+    description: State of a contradiction (§31).
+    permissible_values:
+      uncontested: {}
+      resolved_conflict: {}
+      unresolved_conflict: {}
+      insufficient: {}
+  ValueKind:
+    description: RDF-style value kind — known value, unknown value, or no value (§9.5).
+    permissible_values:
+      value: {}
+      somevalue: {description: "A value exists but is unknown."}
+      novalue: {description: "There is provably no value."}
+  PredicateVolatility:
+    description: Volatility class governing currency decay (§28.3, SIG-RECON-008).
+    permissible_values:
+      IMMUTABLE: {description: "Never changes; half-life infinite; always C1."}
+      GLACIAL: {}
+      SLOW: {}
+      MODERATE: {}
+      FAST: {}
+      VOLATILE: {}
+  ResolutionStrategy:
+    description: Per-predicate resolution strategy (§28.4, SIG-RECON-012).
+    permissible_values:
+      latest_observation_wins: {}
+      authoritative_source_wins: {}
+      interval_union: {}
+      interval_intersection: {}
+      max_support: {}
+      never_resolve: {description: "Recorded but deliberately not adjudicated (§12.4 contested facts)."}
+  SkosMappingRelation:
+    description: SKOS mapping relations for crosswalks (§20.3).
+    permissible_values:
+      exactMatch: {}
+      closeMatch: {}
+      broadMatch: {}
+      narrowMatch: {}
+      relatedMatch: {}
+
+  # --- Deployment lifecycle: four orthogonal tracks (§13.4, SIG-ONTO-061) -----
+  ProcurementState:
+    description: Track 1 — procurement (§13.4). `unknown` is admissible and default (SIG-ONTO-063).
+    permissible_values:
+      unknown: {}
+      proposed: {}
+      rfp_issued: {}
+      awarded: {}
+      contracted: {}
+      cooperative_piggyback: {}
+      bundle_included: {}
+      free_trial: {}
+      donated: {}
+      third_party_funded: {}
+      grant_funded_pending: {}
+      renewed: {}
+      nonrenewed: {}
+      canceled: {}
+      rejected: {}
+  PhysicalState:
+    description: Track 2 — physical (§13.4). `replaced` is deliberately NOT here (SIG-ONTO-062).
+    permissible_values:
+      unknown: {}
+      not_installed: {}
+      installation: {}
+      installed: {}
+      installed_inactive: {}
+      decommissioning: {}
+      removed: {}
+      destroyed_or_lost: {}
+  OperationalState:
+    description: Track 3 — operational (§13.4).
+    permissible_values:
+      unknown: {}
+      inactive: {}
+      pilot: {}
+      active: {}
+      expanded: {}
+      restricted: {}
+      suspended: {}
+  AuthorizationState:
+    description: Track 4 — authorization (§13.4).
+    permissible_values:
+      unknown: {}
+      unauthorized: {}
+      approval_pending: {}
+      authorized: {}
+      authorized_expired: {}
+      moratorium: {}
+      sunset_by_ordinance: {}
+
+  # --- The fourteen roles (§12.4, SIG-ONTO-047) -------------------------------
+  Role:
+    description: The fourteen separately-modelled roles (§12.4). Never collapsed to owner/operator.
+    permissible_values:
+      owner: {description: "Who could lawfully remove it?"}
+      purchaser: {description: "Whose money bought it?"}
+      funder: {description: "Whose grant/appropriation supplied that money?"}
+      installer: {description: "Who physically mounted it?"}
+      host: {description: "Whose pole/wall/right-of-way is it on?"}
+      operator: {description: "Who aims, tunes, and responds to it?"}
+      data_controller: {description: "Who can change the retention setting?"}
+      data_processor: {description: "Could they lawfully use it for their own purposes?"}
+      platform_provider: {description: "Who would the capability disappear with?"}
+      accessor_read: {description: "Can they view without initiating a search?"}
+      searcher: {description: "Can they execute queries against the corpus?"}
+      alert_recipient: {description: "Do they get notified?"}
+      auditor: {description: "Can they see the search log as of right?"}
+      regulator: {description: "Can they prohibit it?"}
+
+  # --- The three sharing edge types (§12.2, SIG-ONTO-042) ---------------------
+  AccessKind:
+    description: The three edge types that MUST NEVER be merged (§12.2).
+    permissible_values:
+      configured_access: {description: "The system is set up to permit it."}
+      observed_use: {description: "Someone actually did it."}
+      declared_policy: {description: "Someone said it is permitted or forbidden."}
+  Automaticity:
+    description: How access is triggered (§12.5).
+    permissible_values:
+      automatic: {}
+      manual_approval: {}
+      per_incident_consent: {}
+      legal_process_required: {}
+  CapabilityScope:
+    description: Capability scope values (§11.6, §13.2).
+    permissible_values:
+      own: {}
+      partner: {}
+      state: {}
+      region: {}
+      national: {}
+      commercial: {}
+      subject: {}
+  CohortApplicability:
+    description: Which cohort an integration termination applies to (§12.3, SIG-ONTO-046).
+    permissible_values:
+      all: {}
+      new_customers_only: {}
+      existing_customers_only: {}
+
+  # --- Asset / candidate enums (§11.8, §11.9) ---------------------------------
+  Mobility:
+    description: Physical asset mobility (§11.8).
+    permissible_values:
+      fixed: {}
+      redeployable: {}
+      vehicle_mounted: {}
+      airborne: {}
+      handheld: {}
+      unknown: {}
+  ConfirmationStatus:
+    description: How a physical asset was confirmed (§11.8).
+    permissible_values:
+      field_confirmed: {}
+      imagery_confirmed: {}
+      record_confirmed: {}
+      reported_unverified: {}
+      candidate: {}
+  DetectionMethod:
+    description: How a candidate asset was detected (§11.9, SIG-ONTO-030).
+    permissible_values:
+      rf_oui_match: {}
+      wigle_observation: {}
+      imagery_detection: {}
+      contributor_report: {}
+      model_inference: {}
+      count_gap_inference: {}
+  PromotionStatus:
+    description: Candidate-asset promotion lifecycle (§11.9, §43.5).
+    permissible_values:
+      unreviewed: {}
+      corroborated: {}
+      promoted: {}
+      rejected: {}
+      suppressed_by_policy: {}
+
+  # --- Product / system / policy / contract enums -----------------------------
+  ProductStatus:
+    description: Product lifecycle status (§11.4).
+    permissible_values:
+      announced: {}
+      available: {}
+      end_of_sale: {}
+      end_of_life: {}
+      renamed: {}
+      discontinued: {}
+  SystemScope:
+    description: DataSystem scope (§11.10).
+    permissible_values:
+      agency_local: {}
+      vendor_cloud_single_tenant: {}
+      vendor_cloud_shared: {}
+      state: {}
+      regional: {}
+      federal: {}
+      commercial: {}
+  AcquisitionChannel:
+    description: Contract acquisition channel (§11.11, SIG-ONTO-032).
+    permissible_values:
+      direct_award: {}
+      competitive_rfp: {}
+      sole_source: {}
+      cooperative_piggyback: {}
+      bundle_inclusion: {}
+      free_trial: {}
+      donation: {}
+      grant_funded: {}
+  FundingInstrumentType:
+    description: Funding instrument type (§11.12).
+    permissible_values:
+      federal_grant: {}
+      state_grant: {}
+      private_donation: {}
+      bid_assessment: {}
+      hoa_assessment: {}
+      foundation_grant: {}
+      asset_forfeiture: {}
+      vendor_provided_free: {}
+  PolicyType:
+    description: Policy type (§11.13).
+    permissible_values:
+      retention: {}
+      acceptable_use: {}
+      warrant_requirement: {}
+      immigration_restriction: {}
+      reproductive_health_restriction: {}
+      audit_requirement: {}
+      external_sharing: {}
+      data_minimization: {}
+      oversight_reporting: {}
+      sunset: {}
+  EnforcementMechanism:
+    description: Policy enforcement mechanism (§11.13).
+    permissible_values:
+      none_stated: {}
+      internal_discipline: {}
+      audit: {}
+      external_oversight: {}
+      statutory_penalty: {}
+      contractual: {}
+  ObservedVia:
+    description: How a configuration state was observed (§11.15, SIG-ONTO-036).
+    permissible_values:
+      portal: {}
+      config_screenshot: {}
+      foia_export: {}
+      vendor_statement: {}
+      contract_term: {}
+
+  # --- Accountability / legal / records enums (§11.14, §11.17-19) -------------
+  LegalInstrumentType:
+    description: Legal instrument type, internationalized (§11.14, §13.7).
+    permissible_values:
+      statute: {}
+      ordinance: {}
+      regulation: {}
+      executive_order: {}
+      court_order: {}
+      consent_decree: {}
+      dpa_decision: {}
+      code_of_practice: {}
+      prefectoral_order: {description: "e.g. a French arrêté préfectoral."}
+      directive: {}
+  AccountabilityEventType:
+    description: Accountability event type (§11.17).
+    permissible_values:
+      false_stop: {}
+      wrongful_arrest: {}
+      alleged_stalking_misuse: {}
+      immigration_search_controversy: {}
+      policy_violation: {}
+      data_breach: {}
+      security_finding: {}
+      moratorium: {}
+      contract_cancellation: {}
+      public_hearing: {}
+      audit_finding: {}
+      regulatory_action: {}
+      vendor_statement: {}
+      local_regulation: {}
+  ProceedingPosture:
+    description: Legal proceeding posture (§11.18).
+    permissible_values:
+      filed: {}
+      pending: {}
+      dismissed: {}
+      settled: {}
+      judgment_plaintiff: {}
+      judgment_defendant: {}
+      on_appeal: {}
+      consent_decree: {}
+      class_certified: {}
+  AuditSourceType:
+    description: Audit source type — these are NOT interchangeable (§11.16, §23.7).
+    permissible_values:
+      organization_audit: {}
+      network_audit: {}
+      portal_public_audit: {}
+      event_log: {}
+  RecordsResponseStatus:
+    description: Records-request response status (§11.19). no_responsive_records is a positive finding (SIG-ONTO-040).
+    permissible_values:
+      draft: {}
+      filed: {}
+      acknowledged: {}
+      partially_fulfilled: {}
+      fulfilled: {}
+      denied: {}
+      appealed: {}
+      abandoned: {}
+      no_responsive_records: {}
+      fee_demanded: {}
+  RecordsPlatform:
+    description: Records-request platform (§11.19).
+    permissible_values:
+      muckrock: {}
+      nextrequest: {}
+      govqa: {}
+      justfoia: {}
+      direct_email: {}
+      portal: {}
+      paper: {}
+  AliasType:
+    description: Organization alias qualifier (§11.2).
+    permissible_values:
+      abbreviation: {}
+      former_name: {}
+      slug: {}
+      misspelling: {}
+      local_usage: {}
+      legal_name: {}
+      dba: {}
+  SuccessionKind:
+    description: Temporal identity succession qualifier (§14.5).
+    permissible_values:
+      merged_into: {}
+      split_from: {}
+      renamed_from: {}
+      absorbed_by: {}
+
+  # --- Internationalized, country-namespaced enums (§13.7, SIG-ONTO-068) ------
+  # A US-shaped enum is prohibited; each carries an abstract parent plus national
+  # children. The full extensible term list is the SKOS artifact; these carry the
+  # load-bearing terms named in §11 plus at least one non-US namespace to prove
+  # the model is not US-only.
+  JurisdictionType:
+    description: Jurisdiction type, namespaced per country (§11.1, §13.7).
+    permissible_values:
+      country: {}
+      state_province: {}
+      county: {}
+      municipality: {}
+      township: {}
+      special_district: {}
+      school_district: {}
+      tribal: {}
+      federal_region: {}
+      judicial_district: {}
+      metropolitan_area: {}
+      neighborhood: {}
+      unincorporated_area: {}
+  OrganizationType:
+    description: >-
+      Organization type, namespaced and extensible (§11.2, §13.7). "vendor" is a
+      ROLE, not a subtype (SIG-ONTO-012); it appears here only as an
+      organization-classification convenience and never specializes the entity.
+    permissible_values:
+      us.le.municipal_police: {}
+      us.le.sheriff: {}
+      us.le.state_police: {}
+      us.le.university_police: {}
+      us.le.transit_police: {}
+      us.le.school_district_police: {}
+      us.le.tribal_police: {}
+      us.le.federal: {}
+      us.gov.municipality: {}
+      us.gov.county: {}
+      us.gov.special_district: {}
+      us.fusion_center: {}
+      private.company: {}
+      private.hoa: {}
+      private.security_firm: {}
+      private.bid: {}
+      nonprofit: {}
+      hospital: {}
+      university: {}
+      school_district: {}
+      utility: {}
+      transit_agency: {}
+      vendor: {}
+      data_broker: {}
+      fr.police_municipale: {}
+      fr.gendarmerie: {}
+  AcquisitionMethod:
+    description: >-
+      Acquisition method, internationalized (§13.8). foia_request is US-specific;
+      the abstract parent is records_request with national children, plus
+      no_equivalent_available (itself a coverage fact).
+    permissible_values:
+      records_request: {description: "Abstract parent of all public-records regimes."}
+      us.foia: {}
+      us.state_public_records: {}
+      fr.cada: {}
+      uk.foi: {}
+      eu.access_to_documents: {}
+      no_equivalent_available: {}
+  Salience:
+    description: Technology salience rating (§13.1, SIG-ONTO-056).
+    permissible_values:
+      L: {description: "Low."}
+      M: {description: "Medium."}
+      H: {description: "High."}
+      C: {description: "Constitutional/statutory special category."}

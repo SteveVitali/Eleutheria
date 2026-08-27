@@ -156,3 +156,61 @@ and its export gate (`policy.licensing`).
 | SIG-INGEST-039a (unlocated groups not silently dropped) | `data/local_groups.toml` (`deflock_idaho`, `monterey_park_organizers`) | `test_..._unlocated_groups_are_registered_as_a_coverage_fact` |
 | SIG-INGEST-039b (FlockReporter disappeared, `disappeared_observed_at`) | `data/local_groups.toml` `[groups.flockreporter]` | `test_..._flockreporter_directory_is_disappeared_with_observation_date` |
 | SIG-INGEST-040 (national partners registered with contacts) | `data/local_groups.toml` `[partners.*]`; `connectors.ecosystem.partners` | `test_..._national_partners_registered_with_contacts` |
+
+# P01.1 — Ontology as code + vocabularies
+
+The single LinkML source (`ontology/src/ontology/schema/`) plus the versioned
+vocabulary term lists (`ontology/vocab/`) generate every downstream form; the
+generator is `ontology/src/ontology/generate.py`, driven by `sig-ontology generate`
+and gated by `make verify-gen`. Committed artifacts live under `ontology/generated/`.
+
+## Single source and the generation gate (§20.1, SIG-STORE-034, SIG-ENG-016)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-STORE-034 (one LinkML source → SQL DDL, JSON Schema, OWL/SHACL, Pydantic, docs) | `ontology.generate` (LinkML gen-* drivers); `ontology/generated/{sql,jsonschema,owl,shacl,pydantic,docs}` | `test_generation_gate.py::test_every_downstream_form_is_committed` |
+| SIG-ENG-016 / AC1 (CI fails if committed ≠ fresh generation) | `ontology.generate.generate(check=True)`; `make verify-gen` | `test_generation_gate.py::test_committed_artifacts_match_a_fresh_generation` |
+
+## Entities and edges (§11, §12)
+
+| Requirement | Where | Test |
+|---|---|---|
+| §11 entity catalog incl. [NEW] (SIG-ONTO-010/014/029/033, §11.14/§11.19) | `schema/entities.yaml` | `test_schema_structure.py::test_every_section_11_entity_is_a_class`, `::test_new_entities_are_present` |
+| SIG-ONTO-041 (edges directed, typed from a closed catalog, time-bounded, evidenced, perspectival) | `schema/edges.yaml` (`Edge`, `EdgeType`) | `test_schema_structure.py::test_edge_type_is_a_closed_catalog_with_every_section_12_edge`, `::test_edges_carry_universal_requirements` |
+| SIG-ONTO-045/050 (no stored `integrates_with`; no undifferentiated `shares_with`) | `schema/edges.yaml` `EdgeType` (prohibited absent) | `test_schema_structure.py::test_prohibited_edges_are_absent` |
+| §0.7 / N1 / N4 / SIG-ONTO-037 (no plate/trip/per-person column) | `schema/*.yaml` (absence) | `test_schema_structure.py::test_no_plate_trip_or_per_person_slot_exists` |
+| §11.3 / SIG-ONTO-014/015/016 (Person tightly constrained; required public-interest basis + human review) | `schema/entities.yaml` `Person` | `test_schema_structure.py::test_person_is_tightly_constrained` |
+| SIG-ONTO-049 (sharing never reduced to `shares_with`; direction/scope/kind required) | `schema/edges.yaml` `AccessRelationship` | `generalization/test_generalization.py::test_access_relationship_requires_direction_scope_and_kind` |
+
+## Controlled vocabularies as SKOS (§13, §20.2)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ONTO-052/052a (14 domains / 36 families / 104 technologies, asserted vs artifact) | `vocab/technology.yaml`; `generated/registry/vocab_summary.json` | `test_vocabularies.py::test_technology_counts_are_14_36_104` |
+| SIG-ONTO-020/054 / AC4 (every family has an `-unspecified` leaf) | `vocab/technology.yaml` | `test_vocabularies.py::test_every_family_has_an_unspecified_leaf` |
+| SIG-ONTO-056 (each technology: distinguishing criterion, evidence signature, salience) | `vocab/technology.yaml` | `test_vocabularies.py::test_every_technology_carries_criterion_signature_and_salience` |
+| SIG-ONTO-023/024/060 (~45 `verb.object.scope` capabilities incl. export/onward-disclosure) | `vocab/capability.yaml` | `test_vocabularies.py::test_capability_vocabulary_shape` |
+| SIG-ONTO-022/053/055 / AC5 (no vendor name in any identifier; stable lowercase-hyphenated slugs) | `schema/*.yaml`, `vocab/*.yaml` | `test_schema_structure.py::test_no_vendor_name_in_any_schema_identifier`, `test_vocabularies.py::test_no_vendor_name_in_any_vocab_slug` |
+| §13.3/§13.4/§13.5 as SKOS (evidence/epistemics, four lifecycle tracks, org/acquisition/role enums) | `ontology.generate.build_structural_skos`; `generated/skos/structural.nt` | `test_vocabularies.py::test_structural_vocabularies_are_published_as_skos` |
+| SIG-STORE-035 / AC6 (versioned SKOS schemes at stable per-version IRIs) | `ontology.generate` SKOS builders; `generated/skos/*.nt` | `test_vocabularies.py::test_vocabularies_publish_at_stable_per_version_iris` |
+| SIG-ONTO-068/069 (i18n: country-namespaced enums; BCP-47 labels) | `schema/common.yaml` (`bcp47`, namespaced enums), `name_lang` slots | `test_schema_structure.py` (enum presence); `test_vocabularies.py` |
+
+## Predicate registry (§13.6)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ONTO-066/067 / AC3 (every predicate: volatility class + half-life, resolution strategy, directness row) | `vocab/predicates.yaml`; `generated/registry/predicate_registry.json` | `test_predicate_registry.py::test_every_predicate_has_volatility_strategy_and_directness_row` |
+| SIG-RECON-010 (recency must not break IMMUTABLE/GLACIAL ties) | `vocab/predicates.yaml` | `test_predicate_registry.py::test_immutable_and_glacial_predicates_use_non_recency_strategies` |
+| SIG-RECON-012 / §12.4 (contested facts never resolved) | `vocab/predicates.yaml` (`asset_data_controller`) | `test_predicate_registry.py::test_contested_facts_are_never_resolved` |
+
+## Generalization conformance suite (§5.2, SIG-CHART-027/028)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-CHART-028 / AC2 (acoustic sensor; capability with no asset; reference database; commercial data-access; integration hub — all expressible) | `tests/ontology/generalization/`; generated Pydantic models | `generalization/test_generalization.py` (five scenarios) |
+
+## Crosswalks (§20.3)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-STORE-039/040, SIG-ONTO-058 (many-to-many external crosswalks with SKOS mapping relation + `lossy` flag) | `vocab/crosswalks.yaml`; `generated/skos/crosswalks.nt` | `test_generation_gate.py::test_every_downstream_form_is_committed` (`skos/crosswalks.nt`) |

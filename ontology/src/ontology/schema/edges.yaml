@@ -1,0 +1,192 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# The §12 relationship catalog. Every edge is directed, typed from a closed
+# catalog, time-bounded, evidenced, and perspectival (§12.1, SIG-ONTO-041). The
+# prohibited edges of §12.8 are ABSENT from EdgeType by construction:
+#   - no asset→person edge, no movement/trip/sighting edge (N1, N4);
+#   - no undifferentiated symmetric `shares_with`;
+#   - no stored `integrates_with` (query-time rollup only, SIG-ONTO-045);
+#   - no automated Person→AccountabilityEvent edge (SIG-ONTO-016).
+id: https://ontology.sig-project.org/schema/edges
+name: sig_edges
+title: SIG relationship catalog (§12)
+license: Apache-2.0
+prefixes:
+  linkml: https://w3id.org/linkml/
+  sig: https://ontology.sig-project.org/schema/
+default_prefix: sig
+default_range: string
+imports:
+  - linkml:types
+  - common
+  - entities
+
+enums:
+  Direction:
+    description: Explicit edge direction — never symmetric by default (§12.5, SIG-ONTO-049).
+    permissible_values:
+      a_to_b: {}
+      b_to_a: {}
+  EdgeType:
+    description: >-
+      The closed catalog of relationship types (§12.1, SIG-ONTO-041). Untyped
+      edges are a schema error. Prohibited edges (§12.8) are intentionally absent.
+    permissible_values:
+      # Integration edges (§12.3) — `integrates_with` is deliberately NOT here.
+      ingests_feed_from: {description: "B pulls a continuous stream from A; data comes to rest in B."}
+      pushes_alerts_to: {description: "A pushes discrete events to B."}
+      federates_search_to: {description: "B may query A's data; the corpus stays with A."}
+      is_queryable_by: {description: "Inverse asserted from A's side (perspectival)."}
+      hosts_data_for: {description: "A stores/controls infrastructure holding B's data (custody)."}
+      resells_data_from: {description: "A sells access to data collected by B (money + third-party corpus)."}
+      provides_platform_to: {description: "A supplies the software surface B operates on."}
+      subscribes_to: {description: "B pays for standing access to A's data/service."}
+      enrolls_asset_into: {description: "An asset owned by A is registered into platform B."}
+      requests_data_from: {description: "A can issue per-incident, consent-gated requests to B's users."}
+      distributes_list_to: {description: "A pushes a watchlist to B; matches do NOT return to A (SIG-ONTO-046)."}
+      authorizes: {description: "A grants B legal permission to operate a capability; no data moves."}
+      replaced_by: {description: "B's deployment supersedes A's for the same capability at the same org."}
+      succeeds: {description: "Temporal substitution (§12.3)."}
+      # Organizational and structural edges (§12.6)
+      parent_of: {}
+      child_of: {}
+      merged_into: {}
+      split_from: {}
+      renamed_from: {}
+      absorbed_by: {}
+      participates_in: {description: "Fusion centers, task forces, cooperative purchasing bodies."}
+      has_jurisdiction_over: {}
+      operates_within: {description: "A deployment operating outside the operator's own jurisdiction — first-class, not an anomaly."}
+      member_of_network: {}
+      # Provenance edges (§12.7)
+      derived_from_claim: {}
+      supersedes_claim: {}
+      contradicts_claim: {}
+      corroborates_claim: {}
+      extracted_from_capture: {}
+      captures_artifact: {}
+      published_by_source: {}
+
+classes:
+  Edge:
+    abstract: true
+    description: >-
+      Universal edge requirements (§12.1): directed, typed, time-bounded,
+      evidenced, and perspectival.
+    attributes:
+      id:
+        identifier: true
+        range: uriorcurie
+      source:
+        range: uriorcurie
+        required: true
+        description: The asserting/originating node (directed — §12.1.1).
+      target:
+        range: uriorcurie
+        required: true
+      edge_type:
+        range: EdgeType
+        required: true
+        description: Typed from the closed catalog (§12.1.2).
+      valid_from:
+        range: edtf
+      valid_to:
+        range: edtf
+      valid_from_kind:
+        range: TemporalBoundKind
+        description: Snapshot sharing carries unknown/ongoing (SIG-ONTO-044).
+      valid_to_kind:
+        range: TemporalBoundKind
+      observed_at:
+        range: edtf
+      sources:
+        range: uriorcurie
+        multivalued: true
+        description: At least one supporting claim (§12.1.4, SIG-CHART-013).
+      asserted_by:
+        range: uriorcurie
+        description: Which party asserted it — perspectival (§12.1.5).
+
+  AccessRelationship:
+    is_a: Edge
+    description: >-
+      A sharing/access relationship; direction, scope, automaticity, and kind are
+      all required — never reduced to `shares_with` (§12.5, SIG-ONTO-049). The
+      three access kinds (§12.2) are never merged (SIG-ONTO-042).
+    attributes:
+      scope:
+        range: CapabilityScope
+        required: true
+      direction:
+        range: Direction
+        required: true
+        description: Required; never symmetric by default (SIG-ONTO-049).
+      automaticity:
+        range: Automaticity
+      access_kind:
+        range: AccessKind
+        required: true
+        description: Configured vs observed vs declared — never defaulted into one another (SIG-ONTO-042).
+
+  IntegrationEdge:
+    is_a: Edge
+    description: >-
+      A data-bearing integration edge (§12.3). Edges are per (product-pair,
+      data-kind, direction), never per product-pair (SIG-ONTO-046). Unilaterally
+      terminable, mid-contract, possibly partially, via applies_to_cohort.
+    attributes:
+      data_kind:
+        range: string
+        required: true
+        description: The kind of data that moves (part of the edge key, SIG-ONTO-046).
+      initiator:
+        range: uriorcurie
+      transport:
+        range: string
+      granularity:
+        range: string
+      data_comes_to_rest:
+        range: boolean
+      scope:
+        range: CapabilityScope
+      consent_gate:
+        range: boolean
+      mechanism:
+        range: string
+      terminable_by:
+        range: uriorcurie
+      termination_reason:
+        range: string
+      applies_to_cohort:
+        range: CohortApplicability
+        description: Partial termination cohort — all / new_customers_only / existing_customers_only (SIG-ONTO-046).
+
+  RoleAssignment:
+    is_a: Edge
+    description: >-
+      Assigns one of the fourteen roles (§12.4, SIG-ONTO-047) from a party to an
+      asset/deployment/system. Modelled separately so the seven load-bearing
+      separations (SIG-ONTO-048) are each independently representable, and so
+      §43.3 coordinate sensitivity can be evaluated at the ROLE level (host≠owner).
+    attributes:
+      role:
+        range: Role
+        required: true
+      party:
+        range: uriorcurie
+        required: true
+        description: The Organization (or, rarely and reviewed, Person) holding the role.
+      over:
+        range: uriorcurie
+        required: true
+        description: The PhysicalAsset / Deployment / DataSystem the role is held over.
+
+  StructuralEdge:
+    is_a: Edge
+    description: Organizational/structural relationships (§12.6).
+
+  ProvenanceEdge:
+    is_a: Edge
+    description: Provenance relationships among claims, captures, artifacts, and sources (§12.7).

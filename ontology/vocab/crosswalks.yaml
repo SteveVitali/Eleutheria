@@ -1,0 +1,48 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# Crosswalks from the SIG technology vocabulary to external taxonomies (§20.3,
+# SIG-STORE-039/040). External taxonomies partition the space on incompatible
+# axes (SIG-ONTO-058), so crosswalks are many-to-many with an explicit SKOS
+# mapping relation and a `lossy` flag; a query traversing a lossy crosswalk MUST
+# propagate the flag. Mapping Atlas's single "Automated License Plate Readers"
+# onto SIG's finer ALPR family is broadMatch and lossy — exactMatch would
+# fabricate precision (SIG-STORE-040). SIG never adopts an external vocabulary as
+# its primary key (SIG-ONTO-058).
+scheme: crosswalk
+title: SIG external-taxonomy crosswalks (§20.3)
+version: 1.0.0
+# The taxonomies SIG-STORE-039 requires crosswalks to, each with a version stamp
+# (SIG-ONTO-059 — external vocabularies change, and their changes carry meaning).
+external_taxonomies:
+  - {id: eff_atlas, name: EFF Atlas of Surveillance categories, version_observed: "2024-03"}
+  - {id: eff_sls, name: EFF Street-Level Surveillance topics, version_observed: "2024"}
+  - {id: alpr_accountability_atlas, name: ALPR Accountability Atlas issue categories, version_observed: "2024"}
+  - {id: osm_surveillance, name: OSM surveillance:type / surveillance / camera:type, version_observed: "2024"}
+  - {id: ccops_inventory, name: CCOPS surveillance-ordinance inventory categories, version_observed: "2024"}
+  - {id: fr_technopolice, name: French Technopolice vocabulary, version_observed: "2024"}
+crosswalks:
+  # EFF Atlas — coarse, procurement-visible; mapping onto SIG's finer families is lossy.
+  - {sig_concept: alpr-unspecified, taxonomy: eff_atlas, external_concept: Automated License Plate Readers, relation: broadMatch, lossy: true}
+  - {sig_concept: face-identification-1ton, taxonomy: eff_atlas, external_concept: Face Recognition, relation: closeMatch, lossy: true}
+  - {sig_concept: gunshot-detection-fixed, taxonomy: eff_atlas, external_concept: Gunshot Detection, relation: closeMatch, lossy: false}
+  - {sig_concept: uas-general, taxonomy: eff_atlas, external_concept: Drones/UAVs, relation: closeMatch, lossy: true}
+  - {sig_concept: camera-federation-hub, taxonomy: eff_atlas, external_concept: Third-Party Investigative Platforms, relation: relatedMatch, lossy: true}
+  # EFF Street-Level Surveillance — civil-liberties argument axis.
+  - {sig_concept: cell-site-simulator-general, taxonomy: eff_sls, external_concept: Cell-Site Simulators, relation: closeMatch, lossy: false}
+  - {sig_concept: extraction-physical, taxonomy: eff_sls, external_concept: Mobile Device Forensic Tools, relation: broadMatch, lossy: true}
+  - {sig_concept: social-media-monitoring, taxonomy: eff_sls, external_concept: Social Media Monitoring, relation: closeMatch, lossy: false}
+  - {sig_concept: electronic-monitoring-ankle, taxonomy: eff_sls, external_concept: Electronic Monitoring, relation: closeMatch, lossy: false}
+  # ALPR Accountability Atlas — issue categories (epistemic-labelled events).
+  - {sig_concept: alpr-unspecified, taxonomy: alpr_accountability_atlas, external_concept: ALPR, relation: broadMatch, lossy: true}
+  # OSM physical layer — SIG inherits OSM's global device schema (SIG-CHART-030).
+  - {sig_concept: alpr-fixed, taxonomy: osm_surveillance, external_concept: "surveillance:type=ALPR", relation: closeMatch, lossy: true}
+  - {sig_concept: camera-fixed-cctv, taxonomy: osm_surveillance, external_concept: "man_made=surveillance", relation: broadMatch, lossy: true}
+  - {sig_concept: camera-ptz, taxonomy: osm_surveillance, external_concept: "camera:type=dome", relation: relatedMatch, lossy: true}
+  # CCOPS inventory categories — legal-trigger axis.
+  - {sig_concept: face-identification-1ton, taxonomy: ccops_inventory, external_concept: Biometric Surveillance, relation: broadMatch, lossy: true}
+  - {sig_concept: rtcc-platform, taxonomy: ccops_inventory, external_concept: Real-Time Crime Center, relation: closeMatch, lossy: true}
+  # French Technopolice — international alignment (§5.3).
+  - {sig_concept: video-analytics-object, taxonomy: fr_technopolice, external_concept: "vidéosurveillance algorithmique (VSA)", relation: closeMatch, lossy: true}
+  - {sig_concept: alpr-fixed, taxonomy: fr_technopolice, external_concept: "LAPI", relation: closeMatch, lossy: true}

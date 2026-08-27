@@ -49,6 +49,13 @@ warn_redundant_casts = true
 disallow_untyped_defs = true
 strict_equality = true
 
+# The ontology generators (P01.1) drive third-party toolchains that ship no type
+# stubs / py.typed marker (LinkML, PyYAML, rdflib). Ignore *only* their missing
+# imports; our own code stays fully type-checked.
+[[tool.mypy.overrides]]
+module = ["linkml.*", "linkml_runtime", "yaml", "rdflib", "rdflib.*"]
+ignore_missing_imports = true
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["tests"]

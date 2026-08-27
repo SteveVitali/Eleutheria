@@ -1,0 +1,710 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# The §11 entity catalog as LinkML classes. Each class models an entity's
+# PREDICATE SURFACE — the claims that may be made about it (§11 preamble) — not a
+# physical L2 table (the L2/L1 split and its DDL are P02). Every [NEW] entity is
+# present: Jurisdiction, Person, CandidateAsset, FundingInstrument,
+# LegalInstrument, RecordsRequest.
+id: https://ontology.sig-project.org/schema/entities
+name: sig_entities
+title: SIG entity catalog (§11)
+license: Apache-2.0
+prefixes:
+  linkml: https://w3id.org/linkml/
+  sig: https://ontology.sig-project.org/schema/
+default_prefix: sig
+default_range: string
+imports:
+  - linkml:types
+  - common
+
+classes:
+  Entity:
+    abstract: true
+    description: Abstract base — every entity has identity (§3.1 defining standard).
+    slots:
+      - id
+
+  Jurisdiction:
+    is_a: Entity
+    description: >-
+      [NEW] A first-class jurisdiction with a self-referential hierarchy, a
+      pluggable national code system, and temporally-versioned geometry
+      (§11.1, SIG-ONTO-010/011).
+    attributes:
+      jurisdiction_type:
+        range: JurisdictionType
+      parent_jurisdiction:
+        range: Jurisdiction
+        multivalued: true
+        description: Multiple parents permitted; hierarchies overlap (SIG-ONTO-010).
+      code_system:
+        range: string
+        multivalued: true
+        description: Repeatable code-system identifiers (us.census.geoid, iso.3166-2, fr.insee, ...).
+      code:
+        range: string
+        multivalued: true
+      boundary:
+        range: geometry_wkt
+        description: MultiPolygon, 4326.
+      boundary_source:
+        range: uriorcurie
+      name:
+        range: string
+        multivalued: true
+      name_lang:
+        range: bcp47
+        multivalued: true
+      valid_from:
+        range: edtf
+      valid_to:
+        range: edtf
+
+  Organization:
+    is_a: Entity
+    description: >-
+      The single entity for ALL institutional actors; "vendor" is a role, not a
+      subtype (§11.2, SIG-ONTO-012). canonical_name is a claim, not a column (§8.2).
+    attributes:
+      canonical_name:
+        range: string
+        description: A claim, not an authoritative column (§8.2, SIG-ONTO-003).
+      alias:
+        range: string
+        multivalued: true
+      alias_type:
+        range: AliasType
+        multivalued: true
+      name_lang:
+        range: bcp47
+        multivalued: true
+      organization_type:
+        range: OrganizationType
+      parent_organization:
+        range: Organization
+      jurisdiction:
+        range: Jurisdiction
+      identifier:
+        range: string
+        multivalued: true
+        description: Repeatable (scheme,value) pairs, qualified by identifier_system (SIG-IDENT-006).
+      identifier_system:
+        range: string
+        multivalued: true
+      government_domain:
+        range: string
+      address:
+        range: string
+        multivalued: true
+      valid_from:
+        range: edtf
+      valid_to:
+        range: edtf
+      succession:
+        range: Organization
+        multivalued: true
+      succession_kind:
+        range: SuccessionKind
+        multivalued: true
+      publication_review:
+        range: boolean
+        description: Routes surrogate-only orgs through §43.4 before public exposure (SIG-ONTO-013).
+
+  Person:
+    is_a: Entity
+    description: >-
+      [NEW] Tightly constrained (§11.3, SIG-ONTO-014/015/016). A Person row carries
+      NO surveillance attributes and MUST NOT be reachable from any automated
+      extraction path. It exists only for named public officials and SIG's own
+      attributable curators.
+    attributes:
+      public_interest_basis:
+        range: string
+        required: true
+        description: MUST pass the officer-naming test (§43.4); required (SIG-ONTO-016).
+      human_review_completed:
+        range: boolean
+        required: true
+        description: Person creation MUST have been through human review (SIG-ONTO-016).
+      role_description:
+        range: string
+        description: The public role justifying inclusion (e.g. named official in an accountability event).
+
+  Product:
+    is_a: Entity
+    description: A product; MUST NOT be equated with a Technology (§11.4, SIG-ONTO-017).
+    attributes:
+      product_name:
+        range: string
+        description: Time-bounded; products are renamed constantly.
+      vendor:
+        range: Organization
+      implements_technology:
+        range: technology_code
+        multivalued: true
+      can_offer_capability:
+        range: capability_code
+        multivalued: true
+        description: Defeasible / marketing-level only (SIG-ONTO-018).
+      product_status:
+        range: ProductStatus
+      successor_product:
+        range: Product
+
+  Technology:
+    is_a: Entity
+    description: >-
+      A three-level technology (domain→family→technology, §11.5, SIG-ONTO-019). The
+      authoritative term hierarchy is the SKOS Technology scheme (§13.1); this
+      class carries the code and its rollup levels for a specific referenced node.
+    attributes:
+      technology:
+        range: technology_code
+        description: The technology-level slug.
+      family:
+        range: technology_code
+        description: The family-level slug this rolls up to.
+      domain:
+        range: technology_code
+        description: The domain-level slug this rolls up to.
+
+  Capability:
+    is_a: Entity
+    description: A verb.object.scope capability (§11.6, SIG-ONTO-023).
+    attributes:
+      capability:
+        range: capability_code
+      scope:
+        range: CapabilityScope
+
+  Deployment:
+    is_a: Entity
+    description: >-
+      The bridge between organizational adoption and individual devices; creatable
+      with NO product, NO vendor, and NO physical asset (§11.7, SIG-ONTO-026).
+    attributes:
+      deploying_organization:
+        range: Organization
+      product:
+        range: Product
+      vendor:
+        range: Organization
+      technology:
+        range: technology_code
+        multivalued: true
+        description: Repeatable; the coarsest level the evidence supports.
+      actually_provides_capability:
+        range: capability_code
+        multivalued: true
+        description: Evidentiary; never silently inferred from product default (SIG-ONTO-018).
+      procurement_state:
+        range: ProcurementState
+      physical_state:
+        range: PhysicalState
+      operational_state:
+        range: OperationalState
+      authorization_state:
+        range: AuthorizationState
+      litigation_hold:
+        range: boolean
+        description: A flag, coexisting with any state combination (SIG-ONTO-061).
+      jurisdiction:
+        range: Jurisdiction
+      contracted_device_count:
+        range: integer
+      installed_device_count:
+        range: integer
+      active_device_count:
+        range: integer
+      proposed_at:
+        range: edtf
+      approved_at:
+        range: edtf
+      contracted_at:
+        range: edtf
+      active_from:
+        range: edtf
+      inactive_at:
+        range: edtf
+
+  PhysicalAsset:
+    is_a: Entity
+    description: >-
+      A field-observed device; geometry is OPTIONAL and operator absence is a
+      first-class countable state (§11.8, SIG-ONTO-027/028). Accommodates ways and
+      relations, not only nodes, and MUST NOT force sensors into a camera abstraction.
+    attributes:
+      asset_type:
+        range: technology_code
+        description: A Technology reference, not a free string.
+      geometry:
+        range: geometry_wkt
+        description: Optional (SIG-GEO-004).
+      mobility:
+        range: Mobility
+      manufacturer:
+        range: Organization
+      model:
+        range: string
+      deployment:
+        range: Deployment
+        description: May be absent — the orphaned-device case.
+      first_observed:
+        range: datetime
+      last_observed:
+        range: datetime
+      upstream_id:
+        range: string
+        multivalued: true
+        description: Qualified by system (osm.node, osm.way, osm.relation, deflock.id, ...).
+      osm_version:
+        range: integer
+      sensitivity_tier:
+        range: string
+      confirmation_status:
+        range: ConfirmationStatus
+
+  CandidateAsset:
+    is_a: Entity
+    description: >-
+      [NEW] RF/heuristic leads that MUST live in a separate entity type and MUST
+      NOT appear in any public device layer until promoted under §43.5
+      (§11.9, SIG-ONTO-029/030).
+    attributes:
+      detection_method:
+        range: DetectionMethod
+      location_estimate:
+        range: geometry_wkt
+        description: With estimate_radius_m — never a bare point.
+      estimate_radius_m:
+        range: float
+      identifier_prefix:
+        range: string
+        description: OUI or similar; never a full MAC.
+      observation_count:
+        range: integer
+      promotion_status:
+        range: PromotionStatus
+      residential_parcel_flag:
+        range: boolean
+        description: A true value bars publication outright (§43.5).
+
+  DataSystem:
+    is_a: Entity
+    description: >-
+      Reference databases as infrastructure — representable even where SIG holds
+      no sensor (§11.10, SIG-ONTO-031).
+    attributes:
+      operator:
+        range: Organization
+      vendor:
+        range: Organization
+      product:
+        range: Product
+      data_types:
+        range: string
+        multivalued: true
+      retention:
+        range: duration_iso
+        description: A ConfigurationState fact where it varies per deployment.
+      system_scope:
+        range: SystemScope
+      holds_data_collected_by:
+        range: Organization
+        description: Custody != collection.
+
+  Contract:
+    is_a: Entity
+    description: >-
+      A contract; acquisition_channel and parent_cooperative_contract are REQUIRED
+      model elements (§11.11, SIG-ONTO-032).
+    attributes:
+      buyer:
+        range: Organization
+      seller:
+        range: Organization
+      amount:
+        range: money
+      currency:
+        range: string
+      signed_date:
+        range: edtf
+      start_date:
+        range: edtf
+      end_date:
+        range: edtf
+      renewal_options:
+        range: string
+      products:
+        range: Product
+        multivalued: true
+      quantities:
+        range: integer
+        multivalued: true
+      document:
+        range: uriorcurie
+      acquisition_channel:
+        range: AcquisitionChannel
+      parent_cooperative_contract:
+        range: Contract
+        description: The master award being ridden (SIG-ONTO-032).
+      amends_contract:
+        range: Contract
+
+  FundingInstrument:
+    is_a: Entity
+    description: >-
+      [NEW] Purchaser != operator != funder (§11.12, SIG-ONTO-033). Grants and
+      third-party funding; federal grant → local surveillance is traceable.
+    attributes:
+      funder:
+        range: Organization
+      recipient:
+        range: Organization
+      instrument_type:
+        range: FundingInstrumentType
+      program_name:
+        range: string
+        description: e.g. Byrne JAG, UASI, COPS, Operation Stonegarden, HIDTA.
+      amount:
+        range: money
+      award_date:
+        range: edtf
+      period:
+        range: string
+      conditions:
+        range: string
+      federal_award_id:
+        range: string
+        description: USAspending award/sub-award id — the traceable link (SIG-ONTO-033).
+
+  Policy:
+    is_a: Entity
+    description: >-
+      An institutional policy; MUST NOT be merged with ConfigurationState (§11.13,
+      SIG-ONTO-034). Their disagreement is a first-class finding.
+    attributes:
+      policy_type:
+        range: PolicyType
+      applies_to:
+        range: uriorcurie
+        multivalued: true
+        description: Organization, Deployment, or Product — polymorphic and repeatable.
+      effective_from:
+        range: edtf
+      effective_to:
+        range: edtf
+      adopting_body:
+        range: Organization
+      text:
+        range: string
+      document:
+        range: uriorcurie
+      enforcement_mechanism:
+        range: EnforcementMechanism
+
+  LegalInstrument:
+    is_a: Entity
+    description: >-
+      [NEW] Laws and regulations as a modelled entity (§11.14). Gives the
+      international requirement somewhere to put an arrêté préfectoral, a CNIL
+      decision, or an EU AI Act obligation.
+    attributes:
+      instrument_type:
+        range: LegalInstrumentType
+      enacting_body:
+        range: Organization
+      jurisdiction:
+        range: Jurisdiction
+      citation:
+        range: string
+      effective_from:
+        range: edtf
+      effective_to:
+        range: edtf
+      sunset_date:
+        range: edtf
+      constrains_technology:
+        range: technology_code
+        multivalued: true
+      constrains_capability:
+        range: capability_code
+        multivalued: true
+      requires_authorization_of:
+        range: uriorcurie
+        multivalued: true
+        description: CCOPS-style approval requirements.
+
+  ConfigurationState:
+    is_a: Entity
+    description: >-
+      Promoted to a first-class, time-versioned, per-Deployment entity (§11.15).
+      Configuration is observed, never assumed (SIG-ONTO-036). Retention is a
+      duration OR an ordinal bucket; SIG never fabricates a midpoint (SIG-ONTO-035a).
+    attributes:
+      deployment:
+        range: Deployment
+      retention_days:
+        range: duration_iso
+        description: Duration OR ordinal bucket; MUST accept both (SIG-ONTO-035a).
+      retention_bucket:
+        range: string
+        description: The ordinal bucket form; comparison operates on intervals, never a coerced point.
+      subscribed_hotlist_topic:
+        range: string
+        multivalued: true
+      sharing_partner:
+        range: Organization
+        multivalued: true
+        description: Repeatable, directional.
+      state_lookup_enabled:
+        range: boolean
+      national_lookup_enabled:
+        range: boolean
+      federal_sharing_enabled:
+        range: boolean
+      offense_category_filter:
+        range: string
+        multivalued: true
+      live_stream_permitted_to:
+        range: uriorcurie
+        multivalued: true
+      third_party_integration:
+        range: uriorcurie
+        multivalued: true
+      audit_case_code_required:
+        range: boolean
+      observed_via:
+        range: ObservedVia
+
+  UsageAggregate:
+    is_a: Entity
+    description: >-
+      Aggregated usage; direction is the point (§11.16). NO per-search, per-plate,
+      or per-person row may exist here or anywhere in SIG (SIG-ONTO-037, §18.1).
+    attributes:
+      searching_org:
+        range: Organization
+        required: true
+      source_org:
+        range: Organization
+        required: true
+      period:
+        range: string
+        description: Minimum granularity one month for published data (§18.4).
+      count:
+        range: integer
+        description: Subject to small-cell suppression (§18.4).
+      search_scope:
+        range: CapabilityScope
+      reason_category:
+        range: string
+      reason_raw_value:
+        range: string
+        description: Normalized reason_category retains the raw value (P2).
+      audit_source_type:
+        range: AuditSourceType
+      coverage_period:
+        range: string
+        description: What span the underlying audit covered — distinct from period.
+
+  AccountabilityEvent:
+    is_a: Entity
+    description: >-
+      An accountability event; epistemic_status is REQUIRED and rendered
+      everywhere (§11.17, SIG-ONTO-038/039).
+    attributes:
+      event_type:
+        range: AccountabilityEventType
+      epistemic_status:
+        range: EpistemicStatus
+        required: true
+      date:
+        range: edtf
+      organizations:
+        range: Organization
+        multivalued: true
+      deployments:
+        range: Deployment
+        multivalued: true
+      technologies:
+        range: technology_code
+        multivalued: true
+      affected_party_class:
+        range: string
+        description: A class, never a named private individual (N4).
+      sources:
+        range: uriorcurie
+        multivalued: true
+        description: Linkable to all six source classes of OL-2E-AL-03 (SIG-ONTO-039).
+
+  LegalProceeding:
+    is_a: Entity
+    description: Split from AccountabilityEvent — dockets, parties, filings, posture (§11.18).
+    attributes:
+      court:
+        range: Organization
+      docket_number:
+        range: string
+      case_name:
+        range: string
+      parties:
+        range: uriorcurie
+        multivalued: true
+      party_role:
+        range: string
+        multivalued: true
+      filed_date:
+        range: edtf
+      disposition_date:
+        range: edtf
+      posture:
+        range: ProceedingPosture
+      courtlistener_id:
+        range: string
+      recap_id:
+        range: string
+
+  RecordsRequest:
+    is_a: Entity
+    description: >-
+      [NEW] A public-records request SIG both cites as provenance and generates as
+      a task (§11.19). no_responsive_records is a positive finding (SIG-ONTO-040).
+    attributes:
+      requesting_party:
+        range: Organization
+      target_agency:
+        range: Organization
+      request_text:
+        range: string
+      filed_date:
+        range: edtf
+      response_date:
+        range: edtf
+      response_status:
+        range: RecordsResponseStatus
+      statutory_basis:
+        range: LegalInstrument
+      platform:
+        range: RecordsPlatform
+      external_id:
+        range: string
+      released_documents:
+        range: uriorcurie
+        multivalued: true
+
+  # --- The evidence / claim spine (§11.20-21). Physical DDL is P02; modelled here
+  # as identity-bearing entities so the ontology is complete. -------------------
+  Source:
+    is_a: Entity
+    description: A publisher of evidence (§10.2, §11.20). Distinct from artifact and capture.
+    attributes:
+      publisher_name:
+        range: string
+      reliability:
+        range: SourceReliability
+  EvidenceArtifact:
+    is_a: Entity
+    description: A specific artifact published by a Source (§10.2).
+    attributes:
+      published_by:
+        range: Source
+      integrity:
+        range: ArtifactIntegrity
+  EvidenceCapture:
+    is_a: Entity
+    description: A content-addressed capture of an artifact at a time (§10.2, L0).
+    attributes:
+      captures_artifact:
+        range: EvidenceArtifact
+      captured_at:
+        range: datetime
+      content_digest:
+        range: string
+  Extraction:
+    is_a: Entity
+    description: A run that extracted claims from a capture (§10.2).
+    attributes:
+      from_capture:
+        range: EvidenceCapture
+      extraction_method:
+        range: string
+  Claim:
+    is_a: Entity
+    description: >-
+      An append-only assertion (subject, predicate, value, ...) — the substance of
+      the graph (§10.3, L1). Physical append-only table is P02.
+    attributes:
+      subject:
+        range: uriorcurie
+      predicate:
+        range: predicate_code
+      value:
+        range: string
+      value_kind:
+        range: ValueKind
+      raw_value:
+        range: string
+      absence_kind:
+        range: AbsenceKind
+      evidence_role:
+        range: EvidenceRole
+      supersedes:
+        range: Claim
+  Resolution:
+    is_a: Entity
+    description: A stored current-best decision record (§16.4, L3), not a view.
+    attributes:
+      subject:
+        range: uriorcurie
+      predicate:
+        range: predicate_code
+      resolved_value:
+        range: string
+      confidence:
+        range: WeightClass
+      contradiction_state:
+        range: ContradictionState
+      rationale:
+        range: string
+  Contradiction:
+    is_a: Entity
+    description: A first-class, addressable contradiction object (§31).
+    attributes:
+      subject:
+        range: uriorcurie
+      predicate:
+        range: predicate_code
+      state:
+        range: ContradictionState
+
+  ResearchTask:
+    is_a: Entity
+    description: "[NEW] A research task as an object (§11.22, behaviour at §33.2)."
+    attributes:
+      task_type:
+        range: string
+      target:
+        range: uriorcurie
+      closing_condition:
+        range: string
+      resolved:
+        range: boolean
+
+  CoverageRecord:
+    is_a: Entity
+    description: "[NEW] Makes negative claims queryable (§11.23, §32.2)."
+    attributes:
+      subject:
+        range: uriorcurie
+      predicate:
+        range: predicate_code
+      absence_kind:
+        range: AbsenceKind
+      coverage_period:
+        range: string
+      denominator_published:
+        range: boolean
