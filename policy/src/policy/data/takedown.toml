@@ -1,0 +1,80 @@
+# SPDX-License-Identifier: Apache-2.0
+# The takedown / corrections / suppression policy table (docs/2_canonical_design_spec.md
+# §45). Data, not code: the intake categories, their handling SLAs, the permitted
+# outcomes, and the transparency-report shape are rows the governance module reads —
+# amending a category or an SLA is a data change, never a code change.
+
+# SIG-GOV-001: a public intake channel accepts these categories, reachable in one
+# click from any claim (SIG-UI-033). SIG-GOV-003: each has a published SLA, in hours,
+# and a priority rank (lower = handled first). Privacy-harm and safety outrank
+# everything, including factual corrections.
+[[intake.categories]]
+id = "privacy_harm"
+label = "Privacy harm"
+priority = 1
+sla_hours = 72
+
+[[intake.categories]]
+id = "security_concern"
+label = "Security concern"
+priority = 1
+sla_hours = 72
+
+[[intake.categories]]
+id = "legal_demand"
+label = "Legal demand"
+priority = 2
+sla_hours = 168
+
+[[intake.categories]]
+id = "copyright_claim"
+label = "Copyright claim"
+priority = 2
+sla_hours = 168
+
+[[intake.categories]]
+id = "factual_error"
+label = "Factual error"
+priority = 3
+sla_hours = 336
+
+# SIG-GOV-002: intake never requires identifying the submitter, except a legal demand
+# that requires standing.
+[intake]
+identity_required_default = false
+identity_required_for = ["legal_demand"]
+
+# SIG-GOV-004: the permitted handling outcomes. `refuse` MUST be a real, exercisable
+# option carrying published reasoning — a process that cannot say no is a heckler's veto.
+[[outcomes]]
+id = "correct"
+label = "Correct"
+destructive = false
+
+[[outcomes]]
+id = "annotate"
+label = "Annotate"
+destructive = false
+
+[[outcomes]]
+id = "suppress"
+label = "Suppress from public view while retaining internally"
+destructive = false
+
+[[outcomes]]
+id = "delete"
+label = "Delete entirely"
+destructive = true
+
+[[outcomes]]
+id = "refuse"
+label = "Refuse, with published reasoning"
+destructive = false
+requires_published_reasoning = true
+
+# SIG-GOV-011: the transparency report publishes periodic counts across this grid —
+# every intake category by every outcome, refusals included.
+[transparency_report]
+group_by = ["category", "outcome"]
+include_refusals = true
+period = "quarterly"
