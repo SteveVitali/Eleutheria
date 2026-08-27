@@ -30,6 +30,11 @@ dev = [
     "ruff>=0.6.9",
     "mypy>=1.11.2",
     "hypothesis>=6.100",
+    # The claim-spine (P02.1) tests stand up a real PG18+PostGIS container and
+    # apply the sqitch plan against it (§48, SIG-STORE-024). testcontainers pulls
+    # the `docker` SDK transitively; psycopg is the client driver.
+    "testcontainers>=4.8",
+    "psycopg[binary]>=3.2",
 ]
 
 [tool.ruff]

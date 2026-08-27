@@ -214,3 +214,30 @@ and gated by `make verify-gen`. Committed artifacts live under `ontology/generat
 | Requirement | Where | Test |
 |---|---|---|
 | SIG-STORE-039/040, SIG-ONTO-058 (many-to-many external crosswalks with SKOS mapping relation + `lossy` flag) | `vocab/crosswalks.yaml`; `generated/skos/crosswalks.nt` | `test_generation_gate.py::test_every_downstream_form_is_committed` (`skos/crosswalks.nt`) |
+
+# P02.1 — The bitemporal claim spine
+
+The physical schema lives in `db/` as sqitch changes (deploy/revert/verify) and is
+exercised against a real PostgreSQL 18 + PostGIS instance in `tests/db/`
+(testcontainers stands up the engine and applies the sqitch plan; SIG-STORE-024).
+
+## Canonical schema (§16)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-STORE-008 / AC (entity tables hold identity only) | `db/deploy/entity.sql`, `db/deploy/domain_entities.sql` | `test_schema_integrity.py::test_entity_tables_hold_no_duplicate_predicate_columns` |
+| SIG-STORE-009 / AC2 (no entity column duplicates a registered predicate) | `db/deploy/domain_entities.sql`; predicate registry from P01.1 | `test_schema_integrity.py::test_entity_tables_hold_no_duplicate_predicate_columns` |
+| SIG-STORE-010 (UUIDv7 primary keys via `uuidv7()`) | `db/deploy/entity.sql`, `db/deploy/claim.sql`, … | deploy applies on PG18 (`conftest.sig_database`); ADR-022 |
+| SIG-STORE-011 / AC1 (append-only enforced in the DB; generated guard column list) | `db/deploy/claim_append_only.sql` | `test_append_only.py::test_update_of_a_value_column_is_rejected`, `::test_guard_column_list_matches_the_live_schema` |
+| SIG-STORE-012 (no DELETE for app roles on append-only tables) | `db/deploy/access_control.sql` (REVOKE DELETE) | `test_append_only.py::test_delete_is_rejected` (trigger, defence-in-depth) |
+| SIG-STORE-013 (sys_period lower immutable; upper set only on correction) | `db/deploy/claim_append_only.sql` | `test_append_only.py::test_sys_period_lower_bound_is_immutable`, `::test_closing_sys_period_is_permitted` |
+| SIG-STORE-014/016 / AC4 (resolution is a stored decision record; non-overlap by exclusion constraint, not app code) | `db/deploy/resolution.sql` (`resolution_no_overlap` GiST EXCLUDE) | `test_resolution_exclusion.py::test_overlapping_current_resolutions_are_rejected`, `::test_exclusion_is_a_database_constraint` |
+| SIG-STORE-015 (`unresolved_conflict` is a publishable outcome) | `db/deploy/resolution.sql` (`contradiction_state`) | `verify/resolution.sql`; column present |
+| SIG-STORE-017/019 (resolver/ruleset versions independent; human override first-class) | `db/deploy/resolution.sql` | `verify/resolution.sql` |
+| SIG-STORE-020 / AC3 (corrections close sys_period + new claim with revises_claim; prior belief preserved) | `db/deploy/claim.sql` (`claim_correction_reasoned`) | `test_corrections.py::test_correction_preserves_prior_belief`, `::test_correction_requires_a_reason` |
+| SIG-STORE-023 / AC5 (restrictive RLS by tier; public role no BYPASSRLS; export row_security=off fails loud) | `db/deploy/access_control.sql`, ADR-012 | `test_rls.py::test_tier_visibility_per_role`, `::test_public_role_holds_no_bypassrls`, `::test_export_role_fails_loudly_with_row_security_off` |
+| SIG-STORE-024 (RLS policy tests CI-blocking, every role × tier) | `.github/workflows/ci.yml` (`SIG_REQUIRE_DB_TESTS`) | `test_rls.py::test_tier_visibility_per_role[*]` |
+| SIG-STORE-026 / AC6 (no plate-capable column anywhere) | schema (absence, by construction) | `test_schema_integrity.py::test_no_plate_capable_column_anywhere` |
+| SIG-STORE-041 (physical migrations managed with sqitch, deploy/revert/verify) | `db/sqitch.plan`, `db/deploy/`, `db/revert/`, `db/verify/` | `conftest.sig_database` (sqitch deploy); `db/verify/*` |
+| SIG-STORE-047 / §C.7 (forbidden columns/tables never exist) | schema (absence) | `test_schema_integrity.py::test_no_per_search_sighting_or_trip_table`, `::test_person_has_no_address_column`, `::test_claim_has_no_stored_currency_column`, `::test_integrates_with_edge_value_is_forbidden` |
+| SIG-ONTO-001/002 (six-layer model; L4 inference a separate schema) | `db/deploy/inference_schema.sql` (`inference.*`) | `verify/inference_schema.sql` |

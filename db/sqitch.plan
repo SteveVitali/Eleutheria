@@ -1,0 +1,20 @@
+%syntax-version=1.0.0
+%project=sig
+%uri=https://github.com/SteveVitali/Eleutheria
+
+extensions 2026-08-27T12:00:00Z Devin <devin@sig-project.org> # PostGIS + btree_gist (uuidv7 is core PG18)
+vocab_registries [extensions] 2026-08-27T12:01:00Z Devin <devin@sig-project.org> # Appendix C.1 controlled vocabularies + predicate registry
+claim_enums [extensions] 2026-08-27T12:02:00Z Devin <devin@sig-project.org> # value_kind / claim_rank / review_status (§16.2)
+entity [vocab_registries] 2026-08-27T12:03:00Z Devin <devin@sig-project.org> # §16.1 identity-only entity table (L2)
+rights_sources_lineage [vocab_registries entity] 2026-08-27T12:04:00Z Devin <devin@sig-project.org> # Appendix C.2 rights / source_registry / ingest_run
+evidence [rights_sources_lineage] 2026-08-27T12:05:00Z Devin <devin@sig-project.org> # Appendix C.3 evidence_artifact / evidence_capture / extraction (L0 FK targets)
+claim [entity claim_enums vocab_registries evidence rights_sources_lineage] 2026-08-27T12:06:00Z Devin <devin@sig-project.org> # §16.2 the append-only claim table (L1)
+claim_append_only [claim] 2026-08-27T12:07:00Z Devin <devin@sig-project.org> # §16.3 append-only enforcement (guard list + trigger)
+resolution [claim vocab_registries] 2026-08-27T12:08:00Z Devin <devin@sig-project.org> # §16.4 resolution decision record + non-overlap exclusion (L3)
+claim_evidence [claim evidence vocab_registries] 2026-08-27T12:09:00Z Devin <devin@sig-project.org> # §16.5 claim evidence set + qualifiers
+domain_entities [entity claim vocab_registries] 2026-08-27T12:10:00Z Devin <devin@sig-project.org> # Appendix C.4 identity-only domain entity sub-tables
+relationships [entity claim] 2026-08-27T12:11:00Z Devin <devin@sig-project.org> # Appendix C.5 relationship + entity_role edges
+graph_annotations [entity claim vocab_registries] 2026-08-27T12:12:00Z Devin <devin@sig-project.org> # Appendix C.6 contradiction / coverage_record / research_task
+inference_schema [entity] 2026-08-27T12:13:00Z Devin <devin@sig-project.org> # Appendix C.6 L4 inference.* separate schema
+access_control [claim evidence] 2026-08-27T12:14:00Z Devin <devin@sig-project.org> # §16.8 roles + restrictive RLS by sensitivity tier (ADR-012)
+seed_vocab [vocab_registries] 2026-08-27T12:15:00Z Devin <devin@sig-project.org> # fixed reference vocabularies (R/D/I, object/entity types, evidence roles)

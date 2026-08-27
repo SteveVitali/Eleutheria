@@ -3,7 +3,12 @@ name = "sig-db"
 version = "0.0.0"
 description = "SIG db package (skeleton; see docs/2_canonical_design_spec.md §47)."
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    # The canonical store is PostgreSQL 18 + PostGIS (ADR-001); psycopg v3 is the
+    # driver for the db stage and its tests. The binary wheel bundles libpq, so
+    # neither developers nor CI need a system libpq.
+    "psycopg[binary]>=3.2",
+]
 
 [project.scripts]
 sig-db = "db.cli:main"

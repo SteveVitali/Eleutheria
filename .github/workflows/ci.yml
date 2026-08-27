@@ -44,8 +44,16 @@ jobs:
       - name: Type-check
         run: make typecheck
 
+      # The claim-spine DB tests (P02.1) stand up PostgreSQL 18 + PostGIS in a
+      # throwaway container and apply the sqitch plan against it (SIG-STORE-024).
+      # ubuntu-latest ships a running Docker daemon; SIG_REQUIRE_DB_TESTS turns a
+      # missing daemon into a failure so the RLS/append-only suite can never
+      # silently skip. Ryuk is disabled — the fixtures clean up explicitly.
       - name: Test
         run: make test
+        env:
+          SIG_REQUIRE_DB_TESTS: "1"
+          TESTCONTAINERS_RYUK_DISABLED: "true"
 
       - name: Generated artifacts match a fresh generation
         run: make verify-gen
