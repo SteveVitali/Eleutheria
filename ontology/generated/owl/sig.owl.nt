@@ -1265,6 +1265,42 @@
 <https://ontology.sig-project.org/schema/FundingInstrumentType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/FundingInstrumentType#private_donation> .
 <https://ontology.sig-project.org/schema/FundingInstrumentType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/FundingInstrumentType#state_grant> .
 <https://ontology.sig-project.org/schema/FundingInstrumentType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/FundingInstrumentType#vendor_provided_free> .
+<https://ontology.sig-project.org/schema/GeometryPrecision#organization_centroid_or_unknown> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/GeometryPrecision#organization_centroid_or_unknown> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/GeometryPrecision> .
+<https://ontology.sig-project.org/schema/GeometryPrecision#organization_centroid_or_unknown> <http://www.w3.org/2000/01/rdf-schema#label> "organization_centroid_or_unknown" .
+<https://ontology.sig-project.org/schema/GeometryPrecision#organization_centroid_or_unknown> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/GeometryPrecision> .
+<https://ontology.sig-project.org/schema/GeometryPrecision#organization_centroid_or_unknown> <http://www.w3.org/2004/02/skos/core#definition> "An agency-registry point of unknown precision; barred from point-in-polygon and address use (SIG-IDENT-004)." .
+<https://ontology.sig-project.org/schema/GeometryPrecision#parcel_centroid> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/GeometryPrecision#parcel_centroid> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/GeometryPrecision> .
+<https://ontology.sig-project.org/schema/GeometryPrecision#parcel_centroid> <http://www.w3.org/2000/01/rdf-schema#label> "parcel_centroid" .
+<https://ontology.sig-project.org/schema/GeometryPrecision#parcel_centroid> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/GeometryPrecision> .
+<https://ontology.sig-project.org/schema/GeometryPrecision#parcel_centroid> <http://www.w3.org/2004/02/skos/core#definition> "The centroid of a matched parcel." .
+<https://ontology.sig-project.org/schema/GeometryPrecision#place_centroid> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/GeometryPrecision#place_centroid> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/GeometryPrecision> .
+<https://ontology.sig-project.org/schema/GeometryPrecision#place_centroid> <http://www.w3.org/2000/01/rdf-schema#label> "place_centroid" .
+<https://ontology.sig-project.org/schema/GeometryPrecision#place_centroid> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/GeometryPrecision> .
+<https://ontology.sig-project.org/schema/GeometryPrecision#place_centroid> <http://www.w3.org/2004/02/skos/core#definition> "The centroid of a containing place; coarse." .
+<https://ontology.sig-project.org/schema/GeometryPrecision#rooftop> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/GeometryPrecision#rooftop> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/GeometryPrecision> .
+<https://ontology.sig-project.org/schema/GeometryPrecision#rooftop> <http://www.w3.org/2000/01/rdf-schema#label> "rooftop" .
+<https://ontology.sig-project.org/schema/GeometryPrecision#rooftop> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/GeometryPrecision> .
+<https://ontology.sig-project.org/schema/GeometryPrecision#rooftop> <http://www.w3.org/2004/02/skos/core#definition> "A rooftop / address-point geocode." .
+<https://ontology.sig-project.org/schema/GeometryPrecision#street_interpolated> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/GeometryPrecision#street_interpolated> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/GeometryPrecision> .
+<https://ontology.sig-project.org/schema/GeometryPrecision#street_interpolated> <http://www.w3.org/2000/01/rdf-schema#label> "street_interpolated" .
+<https://ontology.sig-project.org/schema/GeometryPrecision#street_interpolated> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/GeometryPrecision> .
+<https://ontology.sig-project.org/schema/GeometryPrecision#street_interpolated> <http://www.w3.org/2004/02/skos/core#definition> "Interpolated along a street segment." .
+<https://ontology.sig-project.org/schema/GeometryPrecision> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/GeometryPrecision> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/linkml/EnumDefinition> .
+<https://ontology.sig-project.org/schema/GeometryPrecision> <http://www.w3.org/2000/01/rdf-schema#label> "GeometryPrecision" .
+<https://ontology.sig-project.org/schema/GeometryPrecision> <http://www.w3.org/2002/07/owl#unionOf> _:cb1955cc7d13a6549760fa1b78dd391bd7f722a795184e3e15e60b260c47efe39b0 .
+<https://ontology.sig-project.org/schema/GeometryPrecision> <http://www.w3.org/2004/02/skos/core#definition> "How precisely a stored geometry locates its subject (§14.2, SIG-IDENT-004). An agency-registry latitude/longitude MUST be stored as `organization_centroid_or_unknown` and MUST NOT be used for point-in-polygon jurisdiction assignment or as an organization address — using an agency centroid as a device location would be a fabrication." .
+<https://ontology.sig-project.org/schema/GeometryPrecision> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/schema/common> .
+<https://ontology.sig-project.org/schema/GeometryPrecision> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/GeometryPrecision#organization_centroid_or_unknown> .
+<https://ontology.sig-project.org/schema/GeometryPrecision> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/GeometryPrecision#parcel_centroid> .
+<https://ontology.sig-project.org/schema/GeometryPrecision> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/GeometryPrecision#place_centroid> .
+<https://ontology.sig-project.org/schema/GeometryPrecision> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/GeometryPrecision#rooftop> .
+<https://ontology.sig-project.org/schema/GeometryPrecision> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/GeometryPrecision#street_interpolated> .
 <https://ontology.sig-project.org/schema/IntegrationEdge> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
 <https://ontology.sig-project.org/schema/IntegrationEdge> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/linkml/ClassDefinition> .
 <https://ontology.sig-project.org/schema/IntegrationEdge> <http://www.w3.org/2000/01/rdf-schema#label> "IntegrationEdge" .
@@ -1623,6 +1659,54 @@
 <https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:cb306da389a1d6deb44a4b3a0ddc5f8400306217d674059e77e1305cea0e4ecf463 .
 <https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/2004/02/skos/core#definition> "The single entity for ALL institutional actors; \"vendor\" is a role, not a subtype (§11.2, SIG-ONTO-012). canonical_name is a claim, not a column (§8.2)." .
 <https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/schema/entities> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#absorbed> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#absorbed> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/OrganizationRelationType> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#absorbed> <http://www.w3.org/2000/01/rdf-schema#label> "absorbed" .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#absorbed> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/OrganizationRelationType> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#absorbed> <http://www.w3.org/2004/02/skos/core#definition> "A was absorbed by B (e.g. a disbanded PD taken over by a county sheriff)." .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#acquired> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#acquired> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/OrganizationRelationType> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#acquired> <http://www.w3.org/2000/01/rdf-schema#label> "acquired" .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#acquired> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/OrganizationRelationType> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#acquired> <http://www.w3.org/2004/02/skos/core#definition> "A acquired B (e.g. a vendor acquisition transferring product ownership)." .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#merged_into> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#merged_into> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/OrganizationRelationType> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#merged_into> <http://www.w3.org/2000/01/rdf-schema#label> "merged_into" .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#merged_into> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/OrganizationRelationType> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#merged_into> <http://www.w3.org/2004/02/skos/core#definition> "A was merged into B (A ceases; B continues/created)." .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#parent_of> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#parent_of> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/OrganizationRelationType> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#parent_of> <http://www.w3.org/2000/01/rdf-schema#label> "parent_of" .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#parent_of> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/OrganizationRelationType> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#parent_of> <http://www.w3.org/2004/02/skos/core#definition> "A is the parent body of B (a municipality is parent_of its police department, SIG-IDENT-009)." .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#same_as> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#same_as> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/OrganizationRelationType> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#same_as> <http://www.w3.org/2000/01/rdf-schema#label> "same_as" .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#same_as> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/OrganizationRelationType> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#same_as> <http://www.w3.org/2004/02/skos/core#definition> "The two records denote the same real-world organization." .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#split_into> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#split_into> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/OrganizationRelationType> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#split_into> <http://www.w3.org/2000/01/rdf-schema#label> "split_into" .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#split_into> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/OrganizationRelationType> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#split_into> <http://www.w3.org/2004/02/skos/core#definition> "A split into B (and usually others)." .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#succeeded_by> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#succeeded_by> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/OrganizationRelationType> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#succeeded_by> <http://www.w3.org/2000/01/rdf-schema#label> "succeeded_by" .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#succeeded_by> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/OrganizationRelationType> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType#succeeded_by> <http://www.w3.org/2004/02/skos/core#definition> "A organization was succeeded by B (temporal substitution)." .
+<https://ontology.sig-project.org/schema/OrganizationRelationType> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/linkml/EnumDefinition> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType> <http://www.w3.org/2000/01/rdf-schema#label> "OrganizationRelationType" .
+<https://ontology.sig-project.org/schema/OrganizationRelationType> <http://www.w3.org/2002/07/owl#unionOf> _:cb120f58b506e6e513d4cbd1b57b41b3942590f81d9a02a74b47bb2d11b4e888d7f .
+<https://ontology.sig-project.org/schema/OrganizationRelationType> <http://www.w3.org/2004/02/skos/core#definition> "The seven-value vocabulary of the reified, bitemporal OrganizationRelation (§14.5, SIG-IDENT-016). Organizational change is modelled as first-class relation records carrying valid + transaction time, never as a mutable column. A pure rename is deliberately NOT here: renaming produces a new version and a dated alias, never a succession relation (SIG-IDENT-017)." .
+<https://ontology.sig-project.org/schema/OrganizationRelationType> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/schema/common> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/OrganizationRelationType#absorbed> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/OrganizationRelationType#acquired> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/OrganizationRelationType#merged_into> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/OrganizationRelationType#parent_of> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/OrganizationRelationType#same_as> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/OrganizationRelationType#split_into> .
+<https://ontology.sig-project.org/schema/OrganizationRelationType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/OrganizationRelationType#succeeded_by> .
 <https://ontology.sig-project.org/schema/OrganizationType#data_broker> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
 <https://ontology.sig-project.org/schema/OrganizationType#data_broker> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/OrganizationType> .
 <https://ontology.sig-project.org/schema/OrganizationType#data_broker> <http://www.w3.org/2000/01/rdf-schema#label> "data_broker" .
@@ -3706,6 +3790,8 @@ _:cb11ec4966ca95c84de1d50ba7bb2c0d1f8fd57d30210dccaf6cb1b4fa6db0a5b8f <http://ww
 _:cb11ec4966ca95c84de1d50ba7bb2c0d1f8fd57d30210dccaf6cb1b4fa6db0a5b8f <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb11fb470256a55330dca0250b0b0f78faacbd83392154a81ee5117a79c2c81ecd2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/FundingInstrumentType#federal_grant> .
 _:cb11fb470256a55330dca0250b0b0f78faacbd83392154a81ee5117a79c2c81ecd2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbc0ea1bc24fb353d85c4f6a8e52e0163da46ce60de813e939d3b49d1d7bb50a69 .
+_:cb120f58b506e6e513d4cbd1b57b41b3942590f81d9a02a74b47bb2d11b4e888d7f <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/OrganizationRelationType#same_as> .
+_:cb120f58b506e6e513d4cbd1b57b41b3942590f81d9a02a74b47bb2d11b4e888d7f <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb224afaf95f0b901660e0ed20d6ba3eb6bf1f43e7fa4309f432ba939cbb9be146 .
 _:cb12146fbb7cab20a6f1b942f9590bf4009e0fc0c4970c1f06012c375a706674317 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/TemporalBoundKind#known> .
 _:cb12146fbb7cab20a6f1b942f9590bf4009e0fc0c4970c1f06012c375a706674317 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb557cf0cce0d4929f8086929445f383ed85397a2ad585d227827c1c57b5f0415a .
 _:cb123372eff9f23454ce5e4c65e2291300e93d61da4f7fa5c1ab22881c0d037d7ce <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ValueKind#value> .
@@ -3874,6 +3960,8 @@ _:cb185459fe11093652ebf754052bc7cc32fbf53694360abcb7a012816f660a5eb5c <http://ww
 _:cb185459fe11093652ebf754052bc7cc32fbf53694360abcb7a012816f660a5eb5c <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbc4580166982977f6be3e3642f0697a761064b729197756a9c4c7b0f492fdaeb3 .
 _:cb185bbbb603d09b3dc2a25fd0e3bd3625166a72f430cd1216249d98367eccfdc06 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/AcquisitionMethod#no_equivalent_available> .
 _:cb185bbbb603d09b3dc2a25fd0e3bd3625166a72f430cd1216249d98367eccfdc06 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:cb186a6a1fe6aae90c27b2af7047960dc8af07f379cba0f7e87807bd9270f8ddbd0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/GeometryPrecision#organization_centroid_or_unknown> .
+_:cb186a6a1fe6aae90c27b2af7047960dc8af07f379cba0f7e87807bd9270f8ddbd0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb187190bcd595dbd2187ed1590631129b83d0a1066dd8b472b03a7f06ea699518c <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
 _:cb187190bcd595dbd2187ed1590631129b83d0a1066dd8b472b03a7f06ea699518c <http://www.w3.org/2002/07/owl#allValuesFrom> <https://w3id.org/linkml/Uriorcurie> .
 _:cb187190bcd595dbd2187ed1590631129b83d0a1066dd8b472b03a7f06ea699518c <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/initiator> .
@@ -3905,6 +3993,8 @@ _:cb18f0a0298612727294a6cb98606de796de035f519d4b51aabd71bcfc6853bf2e5 <http://ww
 _:cb18f0a0298612727294a6cb98606de796de035f519d4b51aabd71bcfc6853bf2e5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb61aec75391c5bb0f4ab54ae62788f46a11cf9f1777211e5407b2e7ac8b4b4c7e .
 _:cb193ce161ad877704ced2bb85e6a6aa81cba5de35ac267400a4894c95d21147b35 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ContradictionState#insufficient> .
 _:cb193ce161ad877704ced2bb85e6a6aa81cba5de35ac267400a4894c95d21147b35 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:cb1955cc7d13a6549760fa1b78dd391bd7f722a795184e3e15e60b260c47efe39b0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/GeometryPrecision#rooftop> .
+_:cb1955cc7d13a6549760fa1b78dd391bd7f722a795184e3e15e60b260c47efe39b0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb865dce1221319e87df16275fc4d102d7b2d8cc4b04dfb493c89d84ce1b36caf3 .
 _:cb195ab593959561a7a6590e1062e320974ff14cd9504ca2ef30d46f9a64211f539 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/DetectionMethod#count_gap_inference> .
 _:cb195ab593959561a7a6590e1062e320974ff14cd9504ca2ef30d46f9a64211f539 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb195f83cee20639c674b5d0bc375ce06de5ae97e00d48ef1f500d636d494155477 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
@@ -3912,6 +4002,8 @@ _:cb195f83cee20639c674b5d0bc375ce06de5ae97e00d48ef1f500d636d494155477 <http://ww
 _:cb195f83cee20639c674b5d0bc375ce06de5ae97e00d48ef1f500d636d494155477 <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/conditions> .
 _:cb19720857f998c705c5647e9b298fcf5fcc90231ad5c7322d98a20c8643a0ce573 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ProcurementState#unknown> .
 _:cb19720857f998c705c5647e9b298fcf5fcc90231ad5c7322d98a20c8643a0ce573 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb546cf08bb77051ba503f122591a2a78a42a1e673be2185e98584eeba53ebc8cc .
+_:cb197e21b565243734a2a90adcbce245ed030363516c218424c9db53df0b2534882 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/OrganizationRelationType#acquired> .
+_:cb197e21b565243734a2a90adcbce245ed030363516c218424c9db53df0b2534882 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb197e698ac48e7b42b47404345fd41113a30ddb603aeb3e8fd7912614085840ccf <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/EpistemicStatus#retracted> .
 _:cb197e698ac48e7b42b47404345fd41113a30ddb603aeb3e8fd7912614085840ccf <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb19918171709f19d42ed98693b48f2bf57bc068a1650b4d762b73adc148aa8c26 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/WeightClass#W2> .
@@ -3964,6 +4056,8 @@ _:cb1a2c606e101f5a2f271bfa407cb6548f2c3578708fca6b6edc3f7afab0ea44aa <http://www
 _:cb1a3c81bb6c211ca5859b24dd21ad599af42af447d02540133c3707fae5efe967e <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
 _:cb1a3c81bb6c211ca5859b24dd21ad599af42af447d02540133c3707fae5efe967e <http://www.w3.org/2002/07/owl#allValuesFrom> <https://w3id.org/linkml/String> .
 _:cb1a3c81bb6c211ca5859b24dd21ad599af42af447d02540133c3707fae5efe967e <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/resolved_value> .
+_:cb1a484f9a43d6f1bb6b0a488f45b1af25768a9a52fb0f560f06c61a27d15c3bd2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/OrganizationRelationType#absorbed> .
+_:cb1a484f9a43d6f1bb6b0a488f45b1af25768a9a52fb0f560f06c61a27d15c3bd2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb3e4a22fef86c287331c3bdb7788f8029457790fe9a949aa0886713bdd1189122 .
 _:cb1a65d85f7d3e89fd191cff0bcb5001b2db8685bee4b754ff496a0817abb93dfbc <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
 _:cb1a65d85f7d3e89fd191cff0bcb5001b2db8685bee4b754ff496a0817abb93dfbc <http://www.w3.org/2002/07/owl#maxCardinality> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb1a65d85f7d3e89fd191cff0bcb5001b2db8685bee4b754ff496a0817abb93dfbc <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/domain> .
@@ -4435,6 +4529,8 @@ _:cb221c993561e95c6d7ead8710843cb417ac05bed21a5936443100949fbc4691ac2 <http://ww
 _:cb2244fb328dfe709bbc543b37cf9261e2d29e79c1f85f766811524839b43625b2f <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
 _:cb2244fb328dfe709bbc543b37cf9261e2d29e79c1f85f766811524839b43625b2f <http://www.w3.org/2002/07/owl#maxCardinality> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb2244fb328dfe709bbc543b37cf9261e2d29e79c1f85f766811524839b43625b2f <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/granularity> .
+_:cb224afaf95f0b901660e0ed20d6ba3eb6bf1f43e7fa4309f432ba939cbb9be146 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/OrganizationRelationType#succeeded_by> .
+_:cb224afaf95f0b901660e0ed20d6ba3eb6bf1f43e7fa4309f432ba939cbb9be146 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb40a23afe365a9eb3b14c7c49225ccd714be13f3e8015b43592ba8a03d620ec2a .
 _:cb225286830a324185f8944e3672599f772af9941298b6444ffe0efab23226ff1bb <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
 _:cb225286830a324185f8944e3672599f772af9941298b6444ffe0efab23226ff1bb <http://www.w3.org/2002/07/owl#allValuesFrom> <https://ontology.sig-project.org/schema/geometry_wkt> .
 _:cb225286830a324185f8944e3672599f772af9941298b6444ffe0efab23226ff1bb <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/location_estimate> .
@@ -5199,6 +5295,8 @@ _:cb3d0b17f2c6352095cecadf6fff7636303a7e16e492831cd3c79b04002f20961e <http://www
 _:cb3d0b17f2c6352095cecadf6fff7636303a7e16e492831cd3c79b04002f20961e <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb390b3cf976a2988f8260257241c54d31243ccde4dd8cb8a89f82e007e1050117 .
 _:cb3dbf8d35075316102c334678acea015cf2c870d7bf286757d94d3223a68a39d2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ProcurementState#renewed> .
 _:cb3dbf8d35075316102c334678acea015cf2c870d7bf286757d94d3223a68a39d2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb305615378f164de034aba6e51af544a193e707395edf68c845c915a48bc56c6e .
+_:cb3e4a22fef86c287331c3bdb7788f8029457790fe9a949aa0886713bdd1189122 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/OrganizationRelationType#parent_of> .
+_:cb3e4a22fef86c287331c3bdb7788f8029457790fe9a949aa0886713bdd1189122 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb197e21b565243734a2a90adcbce245ed030363516c218424c9db53df0b2534882 .
 _:cb3f06fce541843a8a1c4fe83814618957807cdaa710031fd938d6cff003a49f59 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/Currency#C3> .
 _:cb3f06fce541843a8a1c4fe83814618957807cdaa710031fd938d6cff003a49f59 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbd7eb93adce97c8ad40f0ddf56d7f4c7fcf8a84c0abb8845f291dadd90f6a2d9f .
 _:cb3f5d94df35410275711d30433224a7647bd5f5c3f2de99ba52344389753f33b <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/Deployment> .
@@ -5211,6 +5309,8 @@ _:cb3fd4e72355534f6b3e8537c63d29c3f3d65faa05070543da02604e95c874ab28 <http://www
 _:cb3fd4e72355534f6b3e8537c63d29c3f3d65faa05070543da02604e95c874ab28 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb5e73adf6bb4eab806d33e74d3955c84c19e0932ff918f7fc45053542bf24e49f .
 _:cb4065a455a671709b0e19e274242ceb68fb0a1c733d10e89c2fb6f4ede9c514f9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ProductStatus#announced> .
 _:cb4065a455a671709b0e19e274242ceb68fb0a1c733d10e89c2fb6f4ede9c514f9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbb44a99762e54bd839a8abbb36143a477e3b1a994f59ff4142a7edc265de5aac4 .
+_:cb40a23afe365a9eb3b14c7c49225ccd714be13f3e8015b43592ba8a03d620ec2a <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/OrganizationRelationType#merged_into> .
+_:cb40a23afe365a9eb3b14c7c49225ccd714be13f3e8015b43592ba8a03d620ec2a <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbd8d97c0aefddc7c6f1c0bc280fe2aff67b1efe0ae480a9383ddf51b05b409ab0 .
 _:cb40d82f6b89fa91699a13a66523091f8686bbe383d911ef4703f1509e58d30cf6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ResolutionStrategy#authoritative_source_wins> .
 _:cb40d82f6b89fa91699a13a66523091f8686bbe383d911ef4703f1509e58d30cf6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb86c8d0f415f649b5fe7114c3ba07539f3e85f947194ea7a7011b37f9edbd5c62 .
 _:cb412801917706ca91beff7979a85a851057866d611f28dfe6e44e8d520f0d3aef <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/Role#funder> .
@@ -5389,6 +5489,8 @@ _:cb85c88240781a8a7f2e49831c44df38b69e63982b995afb1eb428f66eea330b27 <http://www
 _:cb85c88240781a8a7f2e49831c44df38b69e63982b995afb1eb428f66eea330b27 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbd404fdc70cb912cb5708bd8fec7c08d7abff6da73b1dc016d9deb07a0b5d0a9d .
 _:cb85e4da217f6819080146d082468b4d5f4851cd11ab15afed5e98f58fe6bbd8d4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/AliasType#local_usage> .
 _:cb85e4da217f6819080146d082468b4d5f4851cd11ab15afed5e98f58fe6bbd8d4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb7f5e9ebe79903583028df0caa5e47e27d694f80e5ce8e9b355ed56b7a361b70a .
+_:cb865dce1221319e87df16275fc4d102d7b2d8cc4b04dfb493c89d84ce1b36caf3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/GeometryPrecision#parcel_centroid> .
+_:cb865dce1221319e87df16275fc4d102d7b2d8cc4b04dfb493c89d84ce1b36caf3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb8e7dd097a2a70f5a2e101169b5c9b7f86cdf429e1777466f3a6cb45cf7c153ee .
 _:cb868c2a984fde77a836c773a7fc114808292c61d12d8413b207ed1ea5a3e15ae2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/JurisdictionType#neighborhood> .
 _:cb868c2a984fde77a836c773a7fc114808292c61d12d8413b207ed1ea5a3e15ae2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1c270dafea70a0d7e267e9a5516055c4534bab043b4b8a55ef54f5a026d12cded .
 _:cb86c8d0f415f649b5fe7114c3ba07539f3e85f947194ea7a7011b37f9edbd5c62 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ResolutionStrategy#interval_union> .
@@ -5413,6 +5515,8 @@ _:cb8c36dfaf7d1abfa17d3f03899fe1509517c0a49c9b52bcf1ba0424bdd422827b <http://www
 _:cb8c36dfaf7d1abfa17d3f03899fe1509517c0a49c9b52bcf1ba0424bdd422827b <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb197e698ac48e7b42b47404345fd41113a30ddb603aeb3e8fd7912614085840ccf .
 _:cb8e46b3d191c153a9fb59aae824e789e5c42f1cc351f3c35bb011e2710f5aca63 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ProcurementState#free_trial> .
 _:cb8e46b3d191c153a9fb59aae824e789e5c42f1cc351f3c35bb011e2710f5aca63 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1bf11c7b604f5f332bcd19da303574e0bc810e074270a0f2a3dbdcdb29e91bf2 .
+_:cb8e7dd097a2a70f5a2e101169b5c9b7f86cdf429e1777466f3a6cb45cf7c153ee <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/GeometryPrecision#street_interpolated> .
+_:cb8e7dd097a2a70f5a2e101169b5c9b7f86cdf429e1777466f3a6cb45cf7c153ee <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbfba9364e14f695a95a833cab87f933ac18f57338bad97d9749d73bf62ea4cfef .
 _:cb8ec8be967f8651214f785d5528d9e2b1a93fce2607db1cdc4d02c1d50bde8a79 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/EdgeType#derived_from_claim> .
 _:cb8ec8be967f8651214f785d5528d9e2b1a93fce2607db1cdc4d02c1d50bde8a79 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb2e254e9836d611949f63c5be0d449623c414d173750ffa85b89f88ba7096fffb .
 _:cb8f80842096f2f616f13692ad33d7cec9831f328f67c80876a1b0e4204167115e <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/EdgeType#provides_platform_to> .
@@ -5620,6 +5724,8 @@ _:cbd7eb93adce97c8ad40f0ddf56d7f4c7fcf8a84c0abb8845f291dadd90f6a2d9f <http://www
 _:cbd7eb93adce97c8ad40f0ddf56d7f4c7fcf8a84c0abb8845f291dadd90f6a2d9f <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cbd8b6a4439bff371137818df9888f2e0d3a75a24e9608be030e6fe46226e8a165 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/Role#data_controller> .
 _:cbd8b6a4439bff371137818df9888f2e0d3a75a24e9608be030e6fe46226e8a165 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb30f45443f4dbdfb8a777f6171ee7c101b6e8d8927a6cadcbf538fad24dd7871 .
+_:cbd8d97c0aefddc7c6f1c0bc280fe2aff67b1efe0ae480a9383ddf51b05b409ab0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/OrganizationRelationType#split_into> .
+_:cbd8d97c0aefddc7c6f1c0bc280fe2aff67b1efe0ae480a9383ddf51b05b409ab0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1a484f9a43d6f1bb6b0a488f45b1af25768a9a52fb0f560f06c61a27d15c3bd2 .
 _:cbd9b2665c92446a3a90371448116c09bdc4f4409d6047e6fdaa80e8a1cef3abe0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/OperationalState#expanded> .
 _:cbd9b2665c92446a3a90371448116c09bdc4f4409d6047e6fdaa80e8a1cef3abe0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cba8f958b9115706c768a802cbc422cfdd3fdf3ab17ab365593696e978a8f6438a .
 _:cbd9f4eccceecc8cf2f92b2b77fc5c41403bab861bf368ff067278cc849065fae6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/PromotionStatus#suppressed_by_policy> .
@@ -5715,6 +5821,8 @@ _:cbfa89b56830fe7c4bab7ea36092f7c9840757e29a193d7f9acace1aa09067532e <http://www
 _:cbfadb14d9271255c28c852cd7b31dfd6f738f535fca4278aed1ca3a7c16c63776 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
 _:cbfadb14d9271255c28c852cd7b31dfd6f738f535fca4278aed1ca3a7c16c63776 <http://www.w3.org/2002/07/owl#allValuesFrom> <https://w3id.org/linkml/String> .
 _:cbfadb14d9271255c28c852cd7b31dfd6f738f535fca4278aed1ca3a7c16c63776 <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/case_name> .
+_:cbfba9364e14f695a95a833cab87f933ac18f57338bad97d9749d73bf62ea4cfef <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/GeometryPrecision#place_centroid> .
+_:cbfba9364e14f695a95a833cab87f933ac18f57338bad97d9749d73bf62ea4cfef <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb186a6a1fe6aae90c27b2af7047960dc8af07f379cba0f7e87807bd9270f8ddbd0 .
 _:cbfbcbc80ad91afc2f6926a1eda4e9f308f7d9a7ef101d5f395e1cacf3387200b9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/EdgeType#merged_into> .
 _:cbfbcbc80ad91afc2f6926a1eda4e9f308f7d9a7ef101d5f395e1cacf3387200b9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb4e80e5ea8b4659a5e6bd059b9c53c9af2c586d22c0ed2fddef50f133e6f35a07 .
 _:cbfc5416ca0ab0baa6ee31d2da687671aecfd7e20dbaff42393878d6347c1ad45e <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/DetectionMethod#rf_oui_match> .

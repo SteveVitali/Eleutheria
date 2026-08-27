@@ -1,12 +1,17 @@
 [project]
 name = "sig-resolution"
 version = "0.0.0"
-description = "SIG resolution package (skeleton; see docs/2_canonical_design_spec.md §47)."
+description = "SIG resolution package: the Jurisdiction and Organization identity registries, temporal identity, and deterministic identity guards (§11.1-11.3, §14)."
 requires-python = ">=3.11"
-dependencies = []
+# The registry-ingest guard reuses the four-state absence model from the db
+# package (SIG-IDENT-008 distinguishes absent from not-observed via db.absence).
+dependencies = ["sig-db"]
 
 [project.scripts]
 sig-resolution = "resolution.cli:main"
+
+[tool.uv.sources]
+sig-db = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]

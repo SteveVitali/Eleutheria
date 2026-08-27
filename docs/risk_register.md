@@ -139,3 +139,30 @@ they are resolved before launch, not discovered after.
 |---|---|---|---|
 | RISK-P2-14 | SIG-TIME-005/012 also bind the **API and UI** rendering surfaces (`ongoing` with observation date; four absence states distinguishable) | The read API (`api/`, ADR-017) and the web UI (`web/`, ADR-014) are later phases; this ticket owns the shared rendering + query contract they consume | The conformant renderings and the distinguishable absence presentation are built and tested here (`db.temporal.render_valid_bound`/`assert_conformant_rendering`, `db.absence.render_absence`); a non-conformant "currently …" rendering is rejected in code, so the API/UI wire to a contract that already fails closed. |
 | RISK-P2-15 | TI-6 (mutually-exclusive resolved intervals) and TI-7 (supersedes-chain acyclicity) as **whole-graph** guarantees | The pipeline checks (`db.invariants.check_ti6/7`) see only the batch a connector hands them; the resolver (`reconcile`, P08.1) and a nightly full-graph audit own the cross-batch view | Same-predicate L3 overlap is already a hard DB constraint from P02.1 (`resolution_no_overlap`); the batch checks catch within-run breaches now; the full-graph audit is a tracked P08.1 / nightly deliverable (§48). |
+
+## Phase 3 — Identity registry and deterministic ER (P03.1)
+
+### Risk retired
+
+| id | Risk | How it is retired |
+|---|---|---|
+| RISK-P3-01 | **Risk 2 (§51.2) — bad entity resolution makes every network statistic misleading** (first part; the deterministic cascade and probabilistic matcher land in P03.2 / P05). The exposure this half closes: an unstable identity substrate — GEOIDs stored as integers or without a level, a municipality conflated with its police department, a rename silently minting a new identifier and fragmenting an entity's history, an agency centroid used as a device location, or a silent-zero ingest quietly poisoning coverage. | The substrate is now enforced in code (`resolution/`): GEOIDs are fixed-width strings validated against an explicit level (`resolution.geoid`, SIG-IDENT-005); a municipality and its department are distinct organizations joined by a reified `parent_of` relation (`resolution.temporal_identity.municipality_department_pair`, SIG-IDENT-009); a pure rename produces a new version + dated alias and provably **no** succession relation and **no** new identifier (`resolution.temporal_identity.rename_organization`, SIG-IDENT-017, with the five worked succession fixtures, SIG-IDENT-019); an agency centroid is stamped `organization_centroid_or_unknown` and refused for point-in-polygon and address use (`resolution.geometry_precision`, SIG-IDENT-004); a zero-record ingest fails the run and distinguishes absent from not-observed via the P02.3 four-state model (`resolution.registry_ingest`, SIG-IDENT-008); identifiers are sets of `(scheme,value)` (SIG-IDENT-006); and jurisdiction geometry is temporally versioned so a point's containing jurisdiction is evaluated as of its observation date (`resolution.jurisdiction.boundary_as_of`, SIG-ONTO-011). |
+
+### Deviations recorded as ADRs (SIG-ENG-031)
+
+None. The seven-value `OrganizationRelationType` and the `GeometryPrecision`
+vocabularies are **additive** to the LinkML source of truth (§20.1, ADR-007) — new
+controlled vocabularies §14 already mandates — and the physical registry tables
+(App C.4 `jurisdiction`/`organization`/`organization_relation`/`entity_identifier`)
+were shipped verbatim in P02, so no schema change and no design deviation was
+required. The canonical DDL's free-text `relation_type` / `status` columns are kept
+as-is (vocabulary is enforced in the ontology + `resolution/`, not by a CHECK the
+canonical DDL deliberately omits).
+
+### Scaffolded / bounded requirements (SIG-ENG-005)
+
+| id | Requirement | Why not fully closed now | Compensating control |
+|---|---|---|---|
+| RISK-P3-02 | SIG-IDENT-010 (the two classification axes) draws `operating_relationship` from a vocabulary | Rather than mint a competing enum, the relationship axis reuses the existing fourteen-role `Role` vocabulary (§12.4) — "purchaser but not operator" is a role over a specific deployment (`entity_role`), materialized when connectors assert roles in P04+ | The axes and their independence are modelled and tested now (`resolution.identity.TwoAxisClassification`); a conformance test grounds `organization_class` in `OrganizationType` and `operating_relationship` in `Role` (`test_vocab_conformance.py`), so the two-axis contract is fixed even though role edges are populated later. |
+| RISK-P3-03 | Persisting registries and minting surrogate `entity_id`s end-to-end into Postgres | The registry-*ingest* orchestration (reading Census/FBI-CDE/IPEDS/… and writing entities + claims) is a connector concern (P04+); this ticket owns the identity model, the guards, and the row/claim emitters | The domain layer emits table rows (`Organization.to_row`, `OrganizationRelation.to_row`) and enforces every guard as pure, tested logic, and the physical layer is exercised against a real PG18+PostGIS via `tests/db/test_identity_registry.py`; surrogate minting is deterministic and idempotent (`resolution.identity.mint_surrogate`). Public `sig:` identifier minting, `normalize_org_name()`, the crosswalk, and the deterministic cascade are P03.2. |
+| RISK-P3-04 | The legacy `Organization.succession` / `SuccessionKind` slots (P01.1) coexist with the reified `OrganizationRelation` | The reified, bitemporal relation is the authoritative model for organizational change (SIG-IDENT-016); the older per-entity slots predate this ticket and are retained additively for back-compat | New temporal-identity edges are written only as `organization_relation` rows with the seven-value vocabulary; the reified model is the one the fixtures and the physical test assert, and it is where later phases read succession from. |

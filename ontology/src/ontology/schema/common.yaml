@@ -520,6 +520,35 @@ enums:
       split_from: {}
       renamed_from: {}
       absorbed_by: {}
+  OrganizationRelationType:
+    description: >-
+      The seven-value vocabulary of the reified, bitemporal OrganizationRelation
+      (§14.5, SIG-IDENT-016). Organizational change is modelled as first-class
+      relation records carrying valid + transaction time, never as a mutable
+      column. A pure rename is deliberately NOT here: renaming produces a new
+      version and a dated alias, never a succession relation (SIG-IDENT-017).
+    permissible_values:
+      same_as: {description: "The two records denote the same real-world organization."}
+      succeeded_by: {description: "A organization was succeeded by B (temporal substitution)."}
+      merged_into: {description: "A was merged into B (A ceases; B continues/created)."}
+      split_into: {description: "A split into B (and usually others)."}
+      absorbed: {description: "A was absorbed by B (e.g. a disbanded PD taken over by a county sheriff)."}
+      parent_of: {description: "A is the parent body of B (a municipality is parent_of its police department, SIG-IDENT-009)."}
+      acquired: {description: "A acquired B (e.g. a vendor acquisition transferring product ownership)."}
+  GeometryPrecision:
+    description: >-
+      How precisely a stored geometry locates its subject (§14.2, SIG-IDENT-004).
+      An agency-registry latitude/longitude MUST be stored as
+      `organization_centroid_or_unknown` and MUST NOT be used for point-in-polygon
+      jurisdiction assignment or as an organization address — using an agency
+      centroid as a device location would be a fabrication.
+    permissible_values:
+      rooftop: {description: "A rooftop / address-point geocode."}
+      parcel_centroid: {description: "The centroid of a matched parcel."}
+      street_interpolated: {description: "Interpolated along a street segment."}
+      place_centroid: {description: "The centroid of a containing place; coarse."}
+      organization_centroid_or_unknown:
+        description: "An agency-registry point of unknown precision; barred from point-in-polygon and address use (SIG-IDENT-004)."
 
   # --- Internationalized, country-namespaced enums (§13.7, SIG-ONTO-068) ------
   # A US-shaped enum is prohibited; each carries an abstract parent plus national

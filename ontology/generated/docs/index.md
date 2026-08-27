@@ -292,11 +292,13 @@ Name: sig
 | [EpistemicStatus](EpistemicStatus.md) | Required epistemic status of an accountability event (§11 |
 | [EvidenceRole](EvidenceRole.md) | The role a piece of evidence plays for a claim (§13 |
 | [FundingInstrumentType](FundingInstrumentType.md) | Funding instrument type (§11 |
+| [GeometryPrecision](GeometryPrecision.md) | How precisely a stored geometry locates its subject (§14 |
 | [JurisdictionType](JurisdictionType.md) | Jurisdiction type, namespaced per country (§11 |
 | [LegalInstrumentType](LegalInstrumentType.md) | Legal instrument type, internationalized (§11 |
 | [Mobility](Mobility.md) | Physical asset mobility (§11 |
 | [ObservedVia](ObservedVia.md) | How a configuration state was observed (§11 |
 | [OperationalState](OperationalState.md) | Track 3 — operational (§13 |
+| [OrganizationRelationType](OrganizationRelationType.md) | The seven-value vocabulary of the reified, bitemporal OrganizationRelation (§... |
 | [OrganizationType](OrganizationType.md) | Organization type, namespaced and extensible (§11 |
 | [PhysicalState](PhysicalState.md) | Track 2 — physical (§13 |
 | [PolicyType](PolicyType.md) | Policy type (§11 |

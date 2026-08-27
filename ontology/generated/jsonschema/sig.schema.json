@@ -1315,6 +1315,18 @@
             "title": "FundingInstrumentType",
             "type": "string"
         },
+        "GeometryPrecision": {
+            "description": "How precisely a stored geometry locates its subject (\u00a714.2, SIG-IDENT-004). An agency-registry latitude/longitude MUST be stored as `organization_centroid_or_unknown` and MUST NOT be used for point-in-polygon jurisdiction assignment or as an organization address \u2014 using an agency centroid as a device location would be a fabrication.",
+            "enum": [
+                "rooftop",
+                "parcel_centroid",
+                "street_interpolated",
+                "place_centroid",
+                "organization_centroid_or_unknown"
+            ],
+            "title": "GeometryPrecision",
+            "type": "string"
+        },
         "IntegrationEdge": {
             "additionalProperties": false,
             "description": "A data-bearing integration edge (\u00a712.3). Edges are per (product-pair, data-kind, direction), never per product-pair (SIG-ONTO-046). Unilaterally terminable, mid-contract, possibly partially, via applies_to_cohort.",
@@ -1905,6 +1917,20 @@
             ],
             "title": "Organization",
             "type": "object"
+        },
+        "OrganizationRelationType": {
+            "description": "The seven-value vocabulary of the reified, bitemporal OrganizationRelation (\u00a714.5, SIG-IDENT-016). Organizational change is modelled as first-class relation records carrying valid + transaction time, never as a mutable column. A pure rename is deliberately NOT here: renaming produces a new version and a dated alias, never a succession relation (SIG-IDENT-017).",
+            "enum": [
+                "same_as",
+                "succeeded_by",
+                "merged_into",
+                "split_into",
+                "absorbed",
+                "parent_of",
+                "acquired"
+            ],
+            "title": "OrganizationRelationType",
+            "type": "string"
         },
         "OrganizationType": {
             "description": "Organization type, namespaced and extensible (\u00a711.2, \u00a713.7). \"vendor\" is a ROLE, not a subtype (SIG-ONTO-012); it appears here only as an organization-classification convenience and never specializes the entity.",
