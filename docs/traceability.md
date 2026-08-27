@@ -298,3 +298,57 @@ change `db/deploy/evidence_store.sql`, exercised against a real PG18 in
 | SIG-EVID-016 (every claim references an `ingest_run` recording connector/commit/ruleset/vocab/digests/params/env) | `evidence/ingest_run.py::IngestRun`; `db/deploy/rights_sources_lineage.sql` (`ingest_run`) | `test_ingest_run.py::test_ingest_run_records_the_reproducibility_fields` |
 | SIG-EVID-017 (re-run over pinned digests → byte-identical tuples modulo `claim_id`/`sys_period`) | `evidence.ingest_run.canonical_claim_tuple`; deterministic packaging (`evidence.capture.build_wacz`) | `test_ingest_run.py::test_reproducibility_modulo_claim_id_and_sys_period`; `test_capture.py::test_wacz_packaging_is_deterministic` |
 | SIG-EVID-018 (ingestion runs LC_ALL=C / TZ=UTC; no wall-clock in derived values) | `evidence.ingest_run.deterministic_environment` / `assert_deterministic_environment` | `test_ingest_run.py::test_deterministic_environment_is_lc_all_c_tz_utc`, `::test_non_deterministic_environment_is_rejected` |
+
+# P02.3 — Temporal semantics and provenance
+
+Time and provenance become queryable: EDTF Level 1 with a pinned deterministic
+envelope (`db/src/db/edtf.py`), the two as-of query axes and the four absence
+states (`db/src/db/temporal.py`, `db/src/db/absence.py`), the eight temporal
+invariants as pipeline data-quality checks (`db/src/db/invariants.py`), an
+additive `temporally_unanchored` flag plus the `claim_as_of`/`resolution_as_of`
+SQL functions (`db/deploy/temporal_invariants.sql`), and PROV-O export over the
+P02.2 `ingest_run` lineage (`exports/src/exports/provo.py`). ADR-024/025.
+
+## EDTF encoding and the envelope (§9.3, §16.7)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-TIME-006 / SIG-STORE-021 (EDTF L1; pinned, versioned, deterministic envelope; widening in `ruleset_version`) | `db.edtf.derive_envelope`, `db.edtf.ENVELOPE_RULESET_VERSION`; ADR-024 | `tests/unit/test_edtf.py::test_spec_16_7_table_envelopes`, `::test_envelope_is_deterministic`, `::test_round_trip_canonical`, `::test_unknown_ruleset_is_refused` |
+| SIG-STORE-022 (MUST NOT sharpen "early 2025" to `2025-01-01`) | `db.edtf.derive_envelope` | `tests/unit/test_edtf.py::test_early_2025_is_not_sharpened_to_jan_1` |
+| SIG-TIME-004 (each bound carries a closed-vocabulary kind) | `db.temporal.ValidBoundKind`, `db.temporal.ObservedAtKind` | `tests/unit/test_temporal_semantics.py::test_ongoing_and_unknown_are_distinguished`, `::test_before_and_after_bounds_render_distinctly` |
+
+## Kinds and ongoing rendering (§9.3, P12)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-TIME-005 / AC2 (`ongoing` ≠ "true now"; rendered with the observation date; `ongoing` ≠ `unknown`) | `db.temporal.render_valid_bound`, `db.temporal.assert_conformant_rendering` | `tests/unit/test_temporal_semantics.py::test_ongoing_is_rendered_with_the_observation_date`, `::test_currently_phrasing_is_non_conformant`, `::test_ongoing_without_an_observation_date_is_refused` |
+
+## As-of query semantics (§9.4)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-TIME-007 (two independent as-of axes with explicit defaults; world=today, belief=now) | `db.temporal.AsOf`; `db/deploy/temporal_invariants.sql` (`claim_as_of`, `resolution_as_of`) | `tests/unit/test_temporal_semantics.py::test_defaults_are_explicit_world_today_belief_now`, `::test_where_predicate_filters_both_axes` |
+| SIG-TIME-008/009 / AC4 (the fourth belief-pinned form; correction returns the old value at a prior belief) | `claim_as_of` SQL function | `tests/db/test_as_of.py::test_claim_as_of_belief_returns_prior_belief`, `::test_claim_as_of_world_filters_valid_time`; `tests/unit/test_temporal_semantics.py::test_the_four_questions` |
+| SIG-TIME-016 (only T1 and T5 are as-of axes; T2 is an ordering scalar) | `db.temporal.AsOf` (world→valid_period, belief→sys_period) | `tests/unit/test_temporal_semantics.py::test_where_predicate_filters_both_axes` |
+
+## Absence states (§9.5)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-TIME-010 / AC5 (four distinct states; encoding maps to coverage_record + resolution) | `db.absence.AbsenceState`, `coverage_kind_for`, `state_from_coverage_kind` | `tests/unit/test_absence.py::test_all_four_states_render_distinguishably`, `::test_coverage_kinds_match_the_schema_vocabulary`, `::test_unresolved_is_not_a_coverage_record` |
+| SIG-TIME-011 (`NO_EVIDENCE_FOUND` names the sources searched) | `db.absence.render_absence` | `tests/unit/test_absence.py::test_no_evidence_found_requires_the_sources_searched` |
+| SIG-TIME-012 (`NOT_RESEARCHED` renders distinguishably from `NO_EVIDENCE_FOUND`) | `db.absence.render_absence` | `tests/unit/test_absence.py::test_not_researched_differs_from_no_evidence_found` |
+
+## Temporal invariants (§9.6)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-TIME-013 / AC1 (TI-1..TI-8 as DB constraints or run-failing DQ checks) | `db.invariants` (check_ti1..8, `check_all`); `db/deploy/temporal_invariants.sql` (`claim_unanchored_reasoned` for TI-8); P02.1 `claim_observed_not_future` (TI-5), `resolution_no_overlap` (TI-6); ADR-025 | `tests/property/test_temporal_invariants.py` (TI-1..TI-8); `tests/db/test_as_of.py::test_temporally_unanchored_requires_a_reason` |
+| SIG-TIME-014 (L1 contradiction is legal; only L3 must be consistent — TI-6) | `db.invariants.check_ti6` (mutually-exclusive predicates only) | `tests/property/test_temporal_invariants.py::test_ti6_detects_overlap_of_exclusive_predicates` |
+
+## PROV-O lineage export (§21.6)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-INGEST-015 (every claim traceable to its `ingest_run`) | `exports.provo` (claim→run/extraction wiring); P02.1 `claim.ingest_run_id` | `tests/exports/test_provo.py::test_wiring_edges_use_prov_vocabulary` |
+| SIG-INGEST-016 / AC6 (lineage maps onto PROV-O; captures/claims=Entity, runs/extractions=Activity, connectors/curators/sources=Agent, `revises_claim`=`prov:wasRevisionOf`; export validates) | `exports.provo.build_prov_graph`, `validate_prov_graph`, `export_lineage` | `tests/exports/test_provo.py::test_captures_and_claims_are_entities`, `::test_runs_and_extractions_are_activities`, `::test_connectors_curators_sources_are_agents`, `::test_revises_claim_maps_to_was_revision_of`, `::test_export_validates`, `::test_validation_rejects_a_disjoint_class_conflict` |

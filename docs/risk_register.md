@@ -117,3 +117,25 @@ they are resolved before launch, not discovered after.
 |---|---|---|---|
 | RISK-P2-09 | SIG-EVID-007/008 (live WACZ capture of a JS-rendered portal with a real browser) | End-to-end capture needs a headless browser + a live source; running one per PR is slow, flaky, and hits third-party sites | The capture-set contract and the deterministic WARC→WACZ 1.1.1 packager are built and tested from fixtures (`evidence.capture`, `test_capture.py`); the real Playwright capture path (`capture_live`) ships behind the `capture` extra and is exercised by the connectors (P04+), mirroring how the DB tests gate on Docker. |
 | RISK-P2-10 | SIG-EVID-017 (a CI test asserts re-running a pinned connector over pinned digests yields byte-identical claim tuples modulo `claim_id`/`sys_period`) | The connector that produces claim tuples is P04+; this ticket owns the evidence side | The reproducibility *machinery* is built and tested: a deterministic environment (`LC_ALL=C`/`TZ=UTC`, SIG-EVID-018), an `ingest_run` record of all reproducibility inputs (SIG-EVID-016), and the canonicalisation the CI test compares (`evidence.ingest_run.canonical_claim_tuple`, `test_ingest_run.py`). Deterministic packaging is proven (`test_capture.py::test_wacz_packaging_is_deterministic`). |
+
+## Phase 2 — The bitemporal claim and evidence spine (P02.3 — temporal semantics and provenance)
+
+### Risk retired
+
+| id | Risk | How it is retired |
+|---|---|---|
+| RISK-P2-11 | **Risk 3 (§51.2) — a claim/temporal model that cannot express contradiction and uncertainty** (final part; the P02.1 entry RISK-P2-01 retired the append-only/correction/resolution spine). The remaining exposure was that time and provenance were stored but not yet *queryable or invariant-checked*: imprecise dates could silently sharpen, an `ongoing` edge could read as "true now", a past citation might not reproduce, absence states could collapse to NULL, and lineage had no interoperable export. | EDTF Level 1 stays imprecise with a **pinned, deterministic** envelope (`db.edtf`, ADR-024; `"early 2025"` never becomes `2025-01-01`, `test_edtf.py`). `ongoing` is rendered only with its observation date and never as "currently" (`db.temporal`, SIG-TIME-005, `test_temporal_semantics.py`). The two as-of axes ship as `claim_as_of`/`resolution_as_of`, and a belief-pinned query reproduces a corrected-away value (`tests/db/test_as_of.py`, SIG-TIME-009). The four absence states render distinguishably (`db.absence`, `test_absence.py`). TI-1..TI-8 are enforced as pipeline data-quality checks with property tests (`db.invariants`, `test_temporal_invariants.py`, SIG-TIME-013/014). Lineage exports as validated PROV-O (`exports.provo`, SIG-INGEST-016, `test_provo.py`). |
+
+### Deviations recorded as ADRs (SIG-ENG-031)
+
+| id | Deviation | ADR |
+|---|---|---|
+| RISK-P2-12 | The EDTF `tstzrange` envelope is derived by an in-repo, stdlib-only, version-pinned function (`ENVELOPE_RULESET_VERSION`) rather than a third-party EDTF library, so the widening policy is deterministic and auditable; EDTF Level 2 is not yet supported. | ADR-024 |
+| RISK-P2-13 | TI-1..TI-8 are enforced as pure pipeline data-quality checks (complementing the P02.1 physical constraints) rather than all as DB constraints, and the as-of contract ships as SQL functions plus a Python predicate builder. Explicitly permitted by SIG-TIME-013 ("DB constraints OR run-failing data-quality checks"). | ADR-025 |
+
+### Scaffolded / bounded requirements (SIG-ENG-005)
+
+| id | Requirement | Why not fully closed now | Compensating control |
+|---|---|---|---|
+| RISK-P2-14 | SIG-TIME-005/012 also bind the **API and UI** rendering surfaces (`ongoing` with observation date; four absence states distinguishable) | The read API (`api/`, ADR-017) and the web UI (`web/`, ADR-014) are later phases; this ticket owns the shared rendering + query contract they consume | The conformant renderings and the distinguishable absence presentation are built and tested here (`db.temporal.render_valid_bound`/`assert_conformant_rendering`, `db.absence.render_absence`); a non-conformant "currently …" rendering is rejected in code, so the API/UI wire to a contract that already fails closed. |
+| RISK-P2-15 | TI-6 (mutually-exclusive resolved intervals) and TI-7 (supersedes-chain acyclicity) as **whole-graph** guarantees | The pipeline checks (`db.invariants.check_ti6/7`) see only the batch a connector hands them; the resolver (`reconcile`, P08.1) and a nightly full-graph audit own the cross-batch view | Same-predicate L3 overlap is already a hard DB constraint from P02.1 (`resolution_no_overlap`); the batch checks catch within-run breaches now; the full-graph audit is a tracked P08.1 / nightly deliverable (§48). |

@@ -1,9 +1,13 @@
 [project]
 name = "sig-exports"
 version = "0.0.0"
-description = "SIG exports package (skeleton; see docs/2_canonical_design_spec.md §47)."
+description = "SIG exports package: bulk artifact builders, incl. the PROV-O lineage export (§21.6)."
 requires-python = ">=3.11"
-dependencies = []
+# The PROV-O lineage export (SIG-INGEST-016) builds an RDF graph with rdflib,
+# already a project dependency via `ontology` (OWL/SHACL generation).
+dependencies = [
+    "rdflib>=7.0",
+]
 
 [project.scripts]
 sig-exports = "exports.cli:main"

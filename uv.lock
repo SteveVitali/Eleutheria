@@ -2093,6 +2093,12 @@ provides-extras = ["capture"]
 name = "sig-exports"
 version = "0.0.0"
 source = { editable = "exports" }
+dependencies = [
+    { name = "rdflib" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "rdflib", specifier = ">=7.0" }]
 
 [[package]]
 name = "sig-inference"
