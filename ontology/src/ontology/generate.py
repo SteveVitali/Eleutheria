@@ -107,7 +107,21 @@ def _gen_jsonschema(schema: str) -> str:
 def _gen_pydantic(schema: str) -> str:
     from linkml.generators.pydanticgen import PydanticGenerator
 
-    return PydanticGenerator(schema).serialize()
+    return _relativize_repo_paths(PydanticGenerator(schema).serialize())
+
+
+def _relativize_repo_paths(text: str) -> str:
+    """Rewrite the absolute schema path LinkML embeds as ``source_file`` metadata.
+
+    ``PydanticGenerator`` records the schema's absolute ``source_file`` in the
+    module's ``linkml_meta`` block, so the output otherwise carries the machine
+    it was generated on (``/Users/...`` vs. the CI runner's ``/home/runner/...``)
+    and the byte-for-byte generation gate (SIG-ENG-016) fails. Rewriting it to the
+    stable repo-relative path makes the artifact byte-deterministic everywhere.
+    """
+    abs_schema = str(schema_path())
+    rel_schema = schema_path().relative_to(_pkg_dir().parent).as_posix()
+    return text.replace(abs_schema, rel_schema)
 
 
 def _gen_sql(schema: str) -> str:
@@ -188,9 +202,20 @@ def _gen_docs(schema: str, out: Path) -> None:
     from linkml.generators.docgen import DocGenerator
 
     out.mkdir(parents=True, exist_ok=True)
-    DocGenerator(schema, mergeimports=True, metadata=False, directory=str(out)).serialize(
-        directory=str(out)
-    )
+    # subfolder_type_separation writes classes/, slots/, enums/, types/ into their
+    # own subfolders. Without it, a class and an eponymous slot (e.g. Capability /
+    # capability) both write docs/<name>.md — distinct paths only on a
+    # case-sensitive filesystem. A dev on case-insensitive macOS then silently
+    # commits one file per pair, and the case-sensitive CI runner regenerates both,
+    # breaking the generation gate (SIG-ENG-016). Separate subfolders make the tree
+    # identical on every filesystem.
+    DocGenerator(
+        schema,
+        mergeimports=True,
+        metadata=False,
+        directory=str(out),
+        subfolder_type_separation=True,
+    ).serialize(directory=str(out))
 
 
 # --- SKOS concept schemes (§13, §20.2) ---------------------------------------
