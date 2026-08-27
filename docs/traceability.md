@@ -459,3 +459,51 @@ and public `sig:` minting are P03.2 and are deliberately absent here.
 |---|---|---|
 | SIG-IDENT-033 (SIG↔external identifier crosswalk export) | `resolution.crosswalk.build_sig_external_crosswalk`, `CrosswalkRow`, `export_crosswalk` (→ `policy.licensing.assert_export_permitted`) | `tests/resolution/test_crosswalk.py::test_sig_external_crosswalk_is_deterministic_and_sorted`, `::test_crosswalk_publishes_when_all_rights_permit`, `::test_crosswalk_fails_closed_on_a_non_redistributable_source` |
 | SIG-IDENT-034 (public `ORI9 → Census GEOID` crosswalk, subject to the licence gate) | `resolution.crosswalk.build_ori_geoid_crosswalk` (validates both sides), `export_crosswalk` | `tests/resolution/test_crosswalk.py::test_ori_geoid_crosswalk_validates_both_sides`, `::test_ori_geoid_crosswalk_rejects_a_malformed_ori`, `::test_ori_geoid_crosswalk_rejects_a_malformed_geoid` |
+
+# P04.1 — the connector framework
+
+The reusable eight-stage substrate (§21) every source adapter plugs into. No
+source-specific connector is written here (OSM/Atlas are P04.2/P04.3); the
+framework is exercised end-to-end by a toy connector in `tests/connectors/`.
+
+## The eight-stage interface (§21.1, SIG-INGEST-001/002/003)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-INGEST-001 (eight stages, separately addressable/retryable, each content-addressed) | `connectors.stages` (`Stage`, `STAGE_ORDER`, `StageArtifact`, `ArtifactStore`, `content_digest`, `Connector`); `connectors.pipeline.run_stage` | `tests/connectors/test_stages.py::test_the_eight_stages_are_named_and_ordered`, `::test_artifact_store_addresses_and_retries_stages`; `tests/connectors/test_pipeline.py::test_stages_are_separately_runnable_and_idempotent` |
+| SIG-INGEST-002 (fetch() the only egress; post-capture stages pure; replay network-isolated) | `connectors.stages.may_egress`/`POST_CAPTURE_STAGES`; `connectors.isolation.network_isolated`; `connectors.pipeline.run_post_capture` | `tests/connectors/test_stages.py::test_fetch_is_the_only_egress_stage`; `tests/connectors/test_isolation.py`; `tests/connectors/test_pipeline.py::test_egress_after_capture_fails_the_run` |
+| SIG-INGEST-003 (stage idempotency modulo generated ids/timestamps) | `connectors.stages.content_digest`; `evidence.ingest_run.canonical_claim_tuple` | `tests/connectors/test_stages.py::test_content_addressing_is_deterministic_and_order_independent`; `tests/connectors/test_pipeline.py::test_stages_are_separately_runnable_and_idempotent` |
+
+## Source disappearance as data (§21.4, SIG-INGEST-009/010)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-INGEST-009 (404/removal/challenge is a first-class event row, not an exception) | `connectors.disappearance` (`failing_status_for_http`, `failing_status_for_error`, `note_disappearance`); `connectors.pipeline._fetch_or_disappear` (reuses `evidence.disappearance`) | `tests/connectors/test_connector_disappearance.py`; `tests/connectors/test_pipeline.py::test_404_records_a_disappearance_not_an_exception`, `::test_persistent_challenge_records_a_disappearance` |
+| SIG-INGEST-010 (disappearance generates a research task) | `connectors.disappearance.note_disappearance` (→ `evidence.disappearance.disappearance_task`) | `tests/connectors/test_connector_disappearance.py::test_note_disappearance_produces_event_and_task` |
+
+## Politeness and access (§21.5, SIG-INGEST-011/012/013)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-INGEST-011 (shared rate-limiter + robots layer; per-host budgets; contact UA; connectors hold no HTTP client) | `connectors.net` (`PoliteFetcher`, `RateLimiter`, `user_agent`); connectors fetch through `RunContext.fetcher` only | `tests/connectors/test_net.py::test_user_agent_carries_a_contact_url`, `::test_rate_limiter_enforces_a_per_host_minimum_interval`, `::test_robots_crawl_delay_pins_the_host_budget` |
+| SIG-INGEST-012 (robots.txt unretrievable ⇒ refuse to run) | `connectors.net.PoliteFetcher._ensure_robots` (→ `policy.crawler.robots_permits`) | `tests/connectors/test_net.py::test_unretrievable_robots_refuses_to_run` |
+| SIG-INGEST-013 (no challenge-defeating crawler) | `connectors.net` (`ChallengeEncountered`, construction-time `policy.crawler.assert_no_circumvention`) | `tests/connectors/test_net.py::test_bot_challenge_is_surfaced_never_defeated`, `::test_circumvention_technique_is_rejected_at_construction` |
+
+## The connector-loader gate (§21.5/§22.4/§42.4, SIG-INGEST-014/028, SIG-LIC-010)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-INGEST-014 (loader checks ingestion_permitted + custody_posture + compact_status before any fetch; refuses when absent/unresolved) | `connectors.loader.assert_loadable`, `compact_permits_ingestion`, `custody_permits_fetch`; `connectors.pipeline.run` (gate up front) | `tests/connectors/test_loader_gate.py`; `tests/connectors/test_pipeline.py::test_gate_refuses_before_any_fetch` |
+| SIG-INGEST-028 (pipeline refuses a connector whose compact denies ingestion) | `connectors.loader.assert_ingestion_permitted` / `assert_loadable` | `tests/connectors/test_loader_gate.py::test_gate_refuses_when_ingestion_not_permitted`, `::test_gate_refuses_when_compact_denies`; `tests/unit/test_ingestion_gate.py` |
+| SIG-LIC-010 (export licence computed per compartment; build fails on incompatibility) | `connectors.loader.assert_export_compatible` (→ `policy.licensing.compute_export_license`); `connectors.cli export-check` | `tests/connectors/test_loader_gate.py::test_export_of_compatible_compartment_computes_a_licence`, `::test_export_mixing_incompatible_compartments_fails_the_build`; `tests/connectors/test_cli.py::test_export_check_passes_on_the_seeded_registry` |
+
+## Backfill, replay, shadow mode, lineage (§21.6/§21.7, SIG-INGEST-015/016/017/018/019/021)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-INGEST-015 (every claim traceable to its ingest_run) | `connectors.lineage.build_lineage`; `evidence.ingest_run.IngestRun` | `tests/connectors/test_lineage.py::test_build_lineage_assembles_the_run` |
+| SIG-INGEST-016 (lineage maps onto PROV-O) | `connectors.lineage.build_lineage` (→ `exports.provo.build_prov_graph`/`export_lineage`) | `tests/connectors/test_lineage.py::test_lineage_maps_onto_prov_o` |
+| SIG-INGEST-017 (re-run extraction over archived captures → new claim set, old preserved) | `connectors.replay.replay`, `replay_fingerprint` | `tests/connectors/test_replay.py::test_replay_over_pinned_captures_is_byte_identical` |
+| SIG-INGEST-018 (replay against archived snapshots only, network-isolated) | `connectors.replay.replay` (via `connectors.pipeline.run_post_capture` under `network_isolated`) | `tests/connectors/test_replay.py::test_replay_is_network_isolated`, `::test_replay_never_asserts` |
+| SIG-INGEST-019 (shadow mode diffs new vs current, reports delta before asserting) | `connectors.replay.shadow_replay`, `diff_claim_sets`, `ShadowDiff` | `tests/connectors/test_replay.py::test_shadow_replay_reports_delta_without_asserting`, `::test_diff_claim_sets_ignores_generated_columns` |
+| SIG-INGEST-021 (every stage runnable as a plain CLI; orchestrator import confined to orchestration/) | `connectors.cli` (`stages`/`gate`/`export-check`), `connectors.stages.register`; `connectors.pipeline` imports no orchestrator | `tests/connectors/test_cli.py`; `tests/unit/test_cli_convention.py`; `tests/unit/test_import_boundary.py` |

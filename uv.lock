@@ -2050,11 +2050,19 @@ name = "sig-connectors"
 version = "0.0.0"
 source = { editable = "connectors" }
 dependencies = [
+    { name = "sig-evidence" },
+    { name = "sig-exports" },
     { name = "sig-policy" },
+    { name = "sig-resolution" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "sig-policy", editable = "policy" }]
+requires-dist = [
+    { name = "sig-evidence", editable = "evidence" },
+    { name = "sig-exports", editable = "exports" },
+    { name = "sig-policy", editable = "policy" },
+    { name = "sig-resolution", editable = "resolution" },
+]
 
 [[package]]
 name = "sig-db"

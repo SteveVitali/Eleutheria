@@ -189,3 +189,28 @@ existing P00.2 licence gate (`policy.licensing`). The one dependency added is
 | RISK-P3-07 | SIG-IDENT-002 UCR↔USPS table and the SIG-IDENT-033/034 crosswalk *content* | This ticket owns the *machinery* (the reference table, the export builders + licence gate), not the full national code table or the populated crosswalk rows, which a connector run (P04+) fills. | The table ships with the mandated divergences (NB→NE, GM→GU) and passes-through the identical majority; the export builders validate every ORI/GEOID and fail the build on a malformed row; publishing goes only through the licence gate (`export_crosswalk` → SIG-LIC-004). Populating rows end-to-end is a connector concern. |
 | RISK-P3-08 | SIG-IDENT-031 dereferenceable `/id/<type>/<uuid>` HTTP endpoint + rendered HTML/JSON-LD/RDF representations | The URL construction and the content-negotiation *decision* are owned here as pure logic; the live HTTP route and the serialisers that render each representation are an API-surface concern (P07+ delivery). | `dereference_url` and `negotiate` are deterministic and tested; the representations they select (`html`/`json-ld`/`rdf`) are wired to real responders when the public API ships. |
 | RISK-P3-09 | The Tier-2 collision list and the acronym/normalise ruleset are seed data, not the full data-generated corpus | The spec calls the collision list "data-generated"; here it is a versioned seed exclusion set with the correct shape and injection seam (`CascadeContext`), regenerated from the corpus in a later data pass. | Rulesets are versioned data (`data/*.toml`) with committed test vectors that run in CI (SIG-IDENT-022); changing what auto-writes is a reviewable data diff, and `CascadeContext.from_data()` is overridable so a regenerated list drops in without code change. |
+
+## Phase 4 — Connector framework, OSM, Atlas (P04.1 — the connector framework)
+
+P04.1 builds the reusable eight-stage substrate every source adapter plugs into
+(§21). It writes no source-specific connector (OSM/Atlas are P04.2/P04.3) and
+reuses the existing evidence store (captures, `ingest_run`, disappearance),
+`policy` (licensing + crawler conduct), `resolution` (the `link()` cascade), and
+the `exports` PROV-O projection — so it adds a stage contract and wiring, not new
+domain logic. One deviation ADR was written (ADR-026: fetch-only egress +
+socket-level network-isolated replay + the `CaptureStore` seam). Dependencies
+added: `sig-connectors → sig-evidence, sig-resolution, sig-exports` (none depend
+back — no cycle), recorded in `connectors/pyproject.toml`.
+
+| id | Item | Status / compensating control |
+|---|---|---|
+| RISK-P4-01 | **Replay reproducibility (SIG-INGEST-017/018).** A parser change that silently alters claims, or a replay that accidentally re-contacts a source, corrupts history or hammers an upstream. | Replay runs the post-capture stages under socket-level `network_isolated` (any egress raises and fails the run) and reads captures back by digest; byte-identical modulo `claim_id`/`sys_period` is asserted over `claim_set_fingerprint` (`tests/connectors/test_replay.py`). |
+| RISK-P4-02 | **Silent egress after capture (SIG-INGEST-002).** A post-capture stage that reaches the network breaks the purity guarantee replay depends on. | `connectors.isolation` blocks sockets below any HTTP client; the driver runs every post-capture stage inside it on live runs *and* replay; a leaky-parse connector is proven to fail the run. |
+| RISK-P4-03 | **A connector running against a source it may not (SIG-INGEST-014/028, SIG-LIC-010).** Ingesting without permission, or exporting incompatible licences merged together, is a legal error. | `connectors.loader.assert_loadable` gates on ingestion_permitted + compact_status + custody_posture *before any fetch*; `assert_export_compatible` delegates to `policy.licensing.compute_export_license` so mixing incompatible compartments fails the build (`connectors export-check`, tested). |
+
+### Scaffolded / bounded requirements (SIG-ENG-005)
+
+| id | Requirement | Why not fully closed now | Compensating control |
+|---|---|---|---|
+| RISK-P4-04 | The real OCFL-backed `CaptureStore` adapter over `evidence.store.EvidenceStore` (SIG-INGEST-001, §17) | P04.1 owns the stage *contract* and ships the in-memory `CaptureStore` the tests and replay harness use; adapting the OCFL/S3 store to the protocol is a P04.2 concern (it drags object storage into every connector test). | The `CaptureStore` protocol (`put`/`get`/`has`, content-addressed) is the stable seam; the evidence store already writes content-addressed capture rows (P02.2), so the adapter is mechanical and does not change the framework contract (ADR-026). |
+| RISK-P4-05 | Source-specific `discover/fetch/parse/extract/normalize` and a real HTTP `Transport` for `PoliteFetcher` (SIG-INGEST-006/007) | The framework is source-agnostic by design; the first concrete connectors (OSM/Atlas) and a real transport are P04.2/P04.3. | The `Transport` protocol and the `Connector` base class are the injection seams; a toy connector + fake transport exercise every framework guarantee end-to-end in CI, so a real connector inherits gate/isolation/lineage/replay/disappearance unchanged. |
