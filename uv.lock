@@ -2153,10 +2153,14 @@ version = "0.0.0"
 source = { editable = "resolution" }
 dependencies = [
     { name = "sig-db" },
+    { name = "sig-policy" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "sig-db", editable = "db" }]
+requires-dist = [
+    { name = "sig-db", editable = "db" },
+    { name = "sig-policy", editable = "policy" },
+]
 
 [[package]]
 name = "sig-tasks"

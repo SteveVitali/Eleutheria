@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: Apache-2.0
+# The UCR/NCIC state code -> USPS state code reference table (SIG-IDENT-002).
+#
+# ORI9 codes carry a two-character state prefix in the FBI's UCR/NCIC coding, which
+# is NOT always the USPS abbreviation. This table is REQUIRED so that translation
+# happens by lookup, never by assuming the ORI's first two characters are a USPS
+# code. Only the DIVERGENCES are listed here; every other UCR code equals its USPS
+# code (identity). The spec mandates at minimum NB->NE and GM->GU.
+#
+# This is a *hint* for enrichment/blocking, never identity evidence: an ORI is
+# validated by pattern (^[A-Z0-9]{9}$), not by its state prefix.
+
+version = "1"
+
+[divergences]
+NB = "NE"   # Nebraska
+GM = "GU"   # Guam

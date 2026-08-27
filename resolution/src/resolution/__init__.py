@@ -11,8 +11,17 @@ the reified bitemporal temporal-identity relations and the rule that a rename is
 not a succession (:mod:`resolution.temporal_identity`), fixed-width GEOID
 validation (:mod:`resolution.geoid`), the agency-centroid geometry guard
 (:mod:`resolution.geometry_precision`), and the zero-record ingest guard
-(:mod:`resolution.registry_ingest`). The probabilistic cascade, the crosswalk, and
-public ``sig:`` identifier minting build on this in P03.2.
+(:mod:`resolution.registry_ingest`).
+
+P03.2 adds the deterministic, explainable half of entity resolution on top of that
+substrate: the versioned name normaliser (:mod:`resolution.normalize`), ORI
+validation and the UCR↔USPS table (:mod:`resolution.ori`), the per-class canonical
+scheme registry and crosswalk exports (:mod:`resolution.crosswalk`), the tiered
+address keys (:mod:`resolution.address`), vendor-portal slug parsing
+(:mod:`resolution.slug`), the deterministic cascade tiers 0–3
+(:mod:`resolution.cascade`), and public ``sig:`` identifier minting with the
+split/merge stability contract (:mod:`resolution.public_id`). The probabilistic
+tiers 4–5 and the ER quality gates are handed to P05.1.
 """
 
 __version__ = "0.0.0"

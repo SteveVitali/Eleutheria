@@ -1,0 +1,73 @@
+# SPDX-License-Identifier: Apache-2.0
+# Per-class canonical identifier schemes (SIG-IDENT-001), §14.2 Q9-Q12.
+#
+# Every organization class has a DESIGNATED canonical identifier scheme; where none
+# exists the class is `surrogate = true` and SIG mints a §14.4 surrogate. Rules are
+# matched most-specific-first: an exact `classes` hit wins over a `prefixes` hit,
+# and a longer prefix wins over a shorter one. `secondary` schemes are recorded when
+# present but are not the canonical handle.
+#
+# Wikidata QID is deliberately NOT a canonical scheme for US law enforcement
+# (SIG-IDENT-007): it is recorded where available but MUST NOT be depended on for
+# US-LE coverage. For vendors it is strong — see crosswalk.wikidata_reliable_for.
+
+version = "1"
+
+[[rule]]
+prefixes = ["us.le."]
+canonical = "us.fbi.ori"
+label = "US law-enforcement agency"
+source = "FBI CDE agency registry"
+
+[[rule]]
+classes = ["us.gov.municipality", "us.gov.county", "us.gov.special_district"]
+canonical = "us.census.geoid"
+label = "US municipality / county / special district"
+source = "Census Gazetteer + TIGER/Line"
+
+[[rule]]
+classes = ["school_district"]
+canonical = "us.nces.leaid"
+label = "School district"
+source = "NCES"
+
+[[rule]]
+classes = ["university"]
+canonical = "us.ipeds.unitid"
+label = "University"
+source = "IPEDS"
+
+[[rule]]
+classes = ["transit_agency"]
+canonical = "us.ntd.id"
+label = "Transit agency"
+source = "FTA NTD"
+
+[[rule]]
+classes = ["hospital"]
+canonical = "us.cms.ccn"
+secondary = ["us.cms.npi"]
+label = "Hospital facility"
+source = "CMS"
+
+[[rule]]
+classes = ["private.company", "private.security_firm", "private.bid", "vendor", "data_broker", "nonprofit"]
+canonical = "gleif.lei"
+secondary = ["us.sam.uei", "dnb.duns", "wikidata.qid"]
+label = "Corporate / private entity"
+source = "GLEIF golden-copy (CC0)"
+
+# Non-US jurisdictions: multiple national schemes plus GeoNames.
+[[rule]]
+prefixes = ["fr."]
+canonical = "geonames.id"
+secondary = ["iso3166-2", "insee"]
+label = "Non-US jurisdiction / body"
+source = "national sources + GeoNames"
+
+# Everything else — HOAs, fusion centers, anything with no external scheme —
+# takes a SIG-minted surrogate (§14.4).
+[[rule]]
+classes = ["private.hoa", "us.fusion_center"]
+surrogate = true
+label = "SIG surrogate (no external canonical scheme)"

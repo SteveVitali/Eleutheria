@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: Apache-2.0
+# The acronym_alias table (SIG-IDENT-022): agency acronyms resolved by EXACT
+# whole-string lookup only. Acronyms are NEVER fuzzy-matched — fuzzy-matching
+# initials is exactly how two unrelated agencies (LASD vs LAPD, or any pair
+# sharing initials) get silently merged. A miss here means "not an acronym we
+# know", not "close enough". The expansion is then fed through normalize_org_name.
+
+version = "1"
+
+[acronyms]
+LAPD = "Los Angeles Police Department"
+NYPD = "New York City Police Department"
+LASD = "Los Angeles County Sheriff's Department"
+CHP = "California Highway Patrol"
+CPD = "Chicago Police Department"
