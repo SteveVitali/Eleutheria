@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "SIG public web surface (skeleton; TypeScript is confined to this package per SIG-ENG-010). Built out in Phase 15.",
-  "license": "LicenseRef-SIG-Undetermined",
+  "license": "Apache-2.0",
   "type": "module",
   "scripts": {
     "typecheck": "tsc --noEmit"

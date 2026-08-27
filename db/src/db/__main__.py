@@ -1,6 +1,6 @@
-# SPDX-License-Identifier: LicenseRef-SIG-Undetermined
-# Copyright (C) 2026 The SIG project. Licence posture is a placeholder; final
-# licences are decided in P00.2 (see LICENSE and docs/2_canonical_design_spec.md §42).
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 """Enable `python -m db` (SIG-ENG-013)."""
 
 from __future__ import annotations

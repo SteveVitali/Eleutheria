@@ -1,0 +1,62 @@
+# SPDX-License-Identifier: Apache-2.0
+# Threat model (§44.2), a maintained, versioned artifact (SIG-SEC-001). Every
+# adversary row MUST name at least one mitigation that maps to a defined
+# requirement id; a row with no mapped mitigation fails the phase gate. Reviewed
+# at every phase gate. policy.threat_model loads and validates this.
+
+version = "2026-08-26"
+reviewed_at_phase = "P00"
+
+[[adversaries]]
+adversary = "Vendor / agency counsel"
+objective = "Suppress or discredit"
+mitigations = ["SIG-INGEST-036", "SIG-GOV-004"]
+notes = "Not hypothetical: an ecosystem project has already faced two vendor takedown attempts, one still pending."
+
+[[adversaries]]
+adversary = "Legal process against SIG"
+objective = "Compel contributor identity"
+mitigations = ["SIG-CONTRIB-005", "SIG-GOV-011"]
+notes = "Do not collect it; short log retention; transparency reporting."
+
+[[adversaries]]
+adversary = "Doxxer using SIG"
+objective = "Locate or target an individual"
+mitigations = ["SIG-PUB-002", "SIG-PUB-007", "SIG-API-012"]
+notes = "Categorical exclusions; the officer test; no per-person query surface."
+
+[[adversaries]]
+adversary = "Data-poisoning contributor"
+objective = "Insert false presence or false absence"
+mitigations = ["SIG-CHART-012", "SIG-STORE-020"]
+notes = "Provenance-required writes; review queues; anomaly detection; full revert."
+
+[[adversaries]]
+adversary = "Entity-resolution attacker"
+objective = "Corrupt the graph by forcing bad merges"
+mitigations = ["SIG-IDENT-028"]
+notes = "Deterministic-first cascade; auto-write demotion on precision loss (§14.7)."
+
+[[adversaries]]
+adversary = "Scraper / re-host"
+objective = "Take the data without attribution"
+mitigations = ["SIG-LIC-011"]
+notes = "Open licences make this mostly legitimate; attribution obligations pass downstream."
+
+[[adversaries]]
+adversary = "Infrastructure attacker"
+objective = "Take SIG offline"
+mitigations = ["SIG-GEO-012", "SIG-EXPORT-009"]
+notes = "Static-first architecture; mirrors; offline distribution (§46.5)."
+
+[[adversaries]]
+adversary = "Insider"
+objective = "Exfiltrate sealed material"
+mitigations = ["SIG-SEC-004", "SIG-EVID-012"]
+notes = "RLS; access logging; least privilege."
+
+[[adversaries]]
+adversary = "State actor"
+objective = "Surveil SIG's researchers"
+mitigations = ["SIG-SEC-002"]
+notes = "Minimal retention; pseudonymity; the whole architecture assumes this."

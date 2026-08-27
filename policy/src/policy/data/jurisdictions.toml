@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: Apache-2.0
+# Jurisdiction-conditional publication policy (§43.8, SIG-PUB-017). A single
+# global rule is not available: some data-protection regimes constrain
+# publishing even public-body employee names, while others treat the same
+# records as presumptively public. The policy engine evaluates BOTH the
+# jurisdiction of the data subject and the jurisdiction of the record's origin,
+# and publication requires that both permit it. Data, not code.
+
+# Default when a jurisdiction is unknown: the conservative posture (do not
+# publish employee names).
+[defaults]
+public_employee_names_publishable = false
+
+[jurisdictions.US]
+public_employee_names_publishable = true
+
+[jurisdictions."US-CA"]
+public_employee_names_publishable = true
+
+[jurisdictions.EU]
+public_employee_names_publishable = false
+
+[jurisdictions.DE]
+public_employee_names_publishable = false
+
+[jurisdictions.UK]
+public_employee_names_publishable = true

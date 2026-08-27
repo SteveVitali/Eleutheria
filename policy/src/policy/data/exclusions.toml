@@ -1,0 +1,34 @@
+# SPDX-License-Identifier: Apache-2.0
+# Categorically excluded data (§43.2, SIG-PUB-002/003). These MUST NOT be
+# stored in any tier, at any sensitivity level. No balancing test applies. Data,
+# not code: policy.publication reads this.
+
+[[excluded]]
+kind = "license_plate_number"
+detail = "Licence plate numbers, or reversible derivatives"
+enforcement = "No such column may exist (SIG-STORE-026); schema test"
+
+[[excluded]]
+kind = "travel_history"
+detail = "Individual travel histories or sightings"
+enforcement = "No such entity or edge (§12.8)"
+
+[[excluded]]
+kind = "home_address"
+detail = "Home addresses of officers or private individuals"
+enforcement = "Categorical. No balancing test applies (SIG-PUB-003)"
+
+[[excluded]]
+kind = "incidental_private_name"
+detail = "Private-person names encountered incidentally"
+enforcement = "Extraction-time redaction"
+
+[[excluded]]
+kind = "residential_association_membership"
+detail = "Residential association membership of individuals"
+enforcement = "§14.4"
+
+[[excluded]]
+kind = "personal_identifier_noninstitutional"
+detail = "Personal identifiers unrelated to institutional conduct"
+enforcement = "Extraction-time redaction"
