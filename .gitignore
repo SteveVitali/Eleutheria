@@ -14,3 +14,21 @@ icpsr.html
 # Scratch
 scratch/
 tmp/
+
+# Ticket build artifacts (derived from docs/2_canonical_design_spec.md; regenerate, don't commit)
+docs/tickets/
+
+# Python / uv
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Generated SBOM (produced per release via `make sbom`)
+sbom.cdx.json
+
+# Node (web/)
+node_modules/
