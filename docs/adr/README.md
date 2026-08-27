@@ -32,6 +32,8 @@ of a landed one.
 | ADR-018 | MapLibre GL for the web map |
 | ADR-019 | pytest + Hypothesis for testing |
 | ADR-020 | GitHub Actions for CI |
+| ADR-021 | Source registry as seeded data, with a runtime ingestion gate in `connectors` (P00.4) |
 
 ADR-001…012 are the §15.5 decision set; ADR-013…020 are the stack ADRs. The
-egress question of §38.5 is resolved for the whole project in ADR-015.
+egress question of §38.5 is resolved for the whole project in ADR-015. ADR-021 is
+the P00.4 source-registry decision.

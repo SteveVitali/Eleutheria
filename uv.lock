@@ -468,6 +468,12 @@ source = { editable = "api" }
 name = "sig-connectors"
 version = "0.0.0"
 source = { editable = "connectors" }
+dependencies = [
+    { name = "sig-policy" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "sig-policy", editable = "policy" }]
 
 [[package]]
 name = "sig-db"

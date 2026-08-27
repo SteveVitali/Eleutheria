@@ -1,0 +1,211 @@
+# SPDX-License-Identifier: Apache-2.0
+# The local-group registry (SIG-INGEST-039, SIG-TASK-014) and the national
+# partner roster (SIG-INGEST-040). DATA, not code.
+#
+# The local-group URLs were RECOVERED from the last surviving archive capture of
+# the ecosystem directory and then individually re-tested on 2026-08-20 (SC-11);
+# they are not the outline's bare names. A 403 means the site is alive behind bot
+# protection, not that it is gone (http_status records the distinction).
+#
+# Two coverage facts are first-class, never silent drops:
+#   * groups the outline names but the recovered directory does not carry are
+#     status="unlocated" (SIG-INGEST-039a);
+#   * FlockReporter — the directory itself — is status="disappeared" with
+#     disappeared_observed_at (SIG-INGEST-039b): its DNS ceased to resolve
+#     between 2026-07-28 (its only capture) and 2026-08-20.
+
+# --- Alive on 2026-08-20 (200, or "alive (403)" behind bot protection) --------
+
+[groups.alpr_pictures]
+name = "ALPR Pictures"
+status = "alive"
+url = "https://alpr.pictures/"
+verified = true
+http_status = "alive (403)"
+last_verified = 2026-08-20
+
+[groups.deflock_atlanta]
+name = "DeFlock Atlanta"
+status = "alive"
+url = "https://deflockatlanta.org/"
+verified = true
+http_status = "200"
+last_verified = 2026-08-20
+
+[groups.deflock_birmingham]
+name = "DeFlock Birmingham"
+status = "alive"
+url = "https://deflockbhm.com/"
+verified = true
+http_status = "200"
+last_verified = 2026-08-20
+
+[groups.deflock_joplin]
+name = "DeFlock Joplin"
+status = "alive"
+url = "https://deflockjoplin.today/"
+verified = true
+http_status = "alive (403)"
+last_verified = 2026-08-20
+
+[groups.deflock_lynnwood]
+name = "DeFlock Lynnwood"
+status = "alive"
+url = "https://deflocklynnwood.com/"
+verified = true
+http_status = "200"
+last_verified = 2026-08-20
+
+[groups.deflock_olympia]
+name = "DeFlock Olympia"
+status = "alive"
+url = "https://deflockoly.noblogs.org/"
+verified = true
+http_status = "200"
+last_verified = 2026-08-20
+
+[groups.deflock_redmond]
+name = "DeFlock Redmond"
+status = "alive"
+url = "https://bsky.app/profile/deflock-redmond.bsky.social"
+verified = true
+http_status = "200"
+last_verified = 2026-08-20
+notes = "No own domain (Bluesky profile)."
+
+[groups.deflock_tucson]
+name = "DeFlock Tucson"
+status = "alive"
+url = "https://deflocktucson.com/"
+verified = true
+http_status = "200"
+last_verified = 2026-08-20
+
+[groups.deflock_vegas]
+name = "DeFlock Vegas"
+status = "alive"
+url = "https://www.deflock.vegas/"
+verified = true
+http_status = "200"
+last_verified = 2026-08-20
+
+[groups.eyes_off_cedar_rapids]
+name = "Eyes Off Cedar Rapids"
+status = "alive"
+url = "https://eyesoffcr.org/"
+verified = true
+http_status = "alive (403)"
+last_verified = 2026-08-20
+
+[groups.eyes_off_colorado]
+name = "Eyes Off Colorado"
+status = "alive"
+url = "https://www.eyesoffcolorado.org/"
+verified = true
+http_status = "200"
+last_verified = 2026-08-20
+
+[groups.eyes_off_indiana]
+name = "Eyes Off Indiana"
+status = "alive"
+url = "https://eyesoffindiana.org/"
+verified = true
+http_status = "200"
+last_verified = 2026-08-20
+
+[groups.live_free_va]
+name = "Live Free VA"
+status = "alive"
+url = "https://livefreeva.org/"
+verified = true
+http_status = "200"
+last_verified = 2026-08-20
+
+[groups.community_discord]
+name = "Community Discord"
+status = "alive"
+url = "https://discord.gg/m9VsbR6d5z"
+verified = false
+http_status = "listed in the directory"
+last_verified = 2026-08-20
+
+# --- Unlocated: named by the outline, absent from the recovered directory -----
+#     (SIG-INGEST-039a) — the absence is itself a coverage fact; no url.
+
+[groups.deflock_idaho]
+name = "DeFlock Idaho"
+status = "unlocated"
+notes = "Named by the outline; does NOT appear in the recovered directory (SIG-INGEST-039a)."
+
+[groups.monterey_park_organizers]
+name = "Monterey Park organizers"
+status = "unlocated"
+notes = "Named by the outline; does NOT appear in the recovered directory (SIG-INGEST-039a)."
+
+# --- Disappeared: the directory itself (SIG-INGEST-039b) ----------------------
+
+[groups.flockreporter]
+name = "FlockReporter"
+status = "disappeared"
+url = ""
+verified = true
+http_status = "DNS no longer resolves"
+last_verified = 2026-08-20
+disappeared_observed_at = 2026-08-20
+notes = "The ecosystem directory. DNS ceased to resolve between 2026-07-28 (its last and only archive capture) and 2026-08-20; recovered capture retained as evidence; research task generated (§33.2 #8). Its Matrix room was homeserver-bound to the same domain and died with it. The worked justification for §46.5."
+
+# ===========================================================================
+# National partner organizations (SIG-INGEST-040): consumers/contributors, not
+# data sources — registered with contact channels so outreach and
+# correction-routing have somewhere to go.
+# ===========================================================================
+
+[partners.eff]
+name = "Electronic Frontier Foundation (EFF)"
+contact = "info@eff.org"
+url = "https://www.eff.org/"
+
+[partners.aclu]
+name = "ACLU (and state affiliates)"
+contact = "https://www.aclu.org/contact-us"
+url = "https://www.aclu.org/"
+
+[partners.epic]
+name = "Electronic Privacy Information Center (EPIC)"
+contact = "info@epic.org"
+url = "https://epic.org/"
+
+[partners.brennan_center]
+name = "Brennan Center for Justice"
+contact = "https://www.brennancenter.org/about/contact-us"
+url = "https://www.brennancenter.org/"
+
+[partners.stop]
+name = "Surveillance Technology Oversight Project (S.T.O.P.)"
+contact = "info@stopspying.org"
+url = "https://www.stopspying.org/"
+
+[partners.oakland_privacy]
+name = "Oakland Privacy"
+contact = "https://oaklandprivacy.org/contact/"
+url = "https://oaklandprivacy.org/"
+
+[partners.lucy_parsons_labs]
+name = "Lucy Parsons Labs"
+contact = "https://lucyparsonslabs.com/"
+url = "https://lucyparsonslabs.com/"
+
+[partners.stop_lapd_spying]
+name = "Stop LAPD Spying Coalition"
+contact = "https://stoplapdspying.org/contact/"
+url = "https://stoplapdspying.org/"
+
+[partners.mediajustice]
+name = "MediaJustice"
+contact = "https://mediajustice.org/contact/"
+url = "https://mediajustice.org/"
+
+[partners.reporters_committee]
+name = "Reporters Committee for Freedom of the Press"
+contact = "https://www.rcfp.org/about-us/contact/"
+url = "https://www.rcfp.org/"

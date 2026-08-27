@@ -1,0 +1,1380 @@
+# SPDX-License-Identifier: Apache-2.0
+# The seeded source registry (docs/2_canonical_design_spec.md §22.6, SIG-INGEST-038).
+# This table is DATA, not code (SIG-ENG-001): every source SIG may ingest from is
+# a row here, seeded from the verified access matrix (§22.2), OL-21, and the
+# sources research added (§22.3). Seeding a new source is a data row reviewed on
+# its own — never a schema or code change.
+#
+# Invariants (enforced by connectors.registry + tests):
+#   * ingestion_permitted defaults to false — a hard runtime gate, SIG-INGEST-028.
+#     Every seed row is false: Phase 0 seeds the registry; connectors are Phase 4+.
+#   * rights.redistributable is SEPARATELY REVIEWED and never derived from the SPDX
+#     string (SIG-INGEST-024 / SIG-LIC-003). A row with no [rights] block is
+#     UNDETERMINED + redistributable=false and fails the export gate CLOSED
+#     (SIG-LIC-004): the fail-closed default for a source whose rights the lead
+#     research pass did not resolve. A [rights] block is added only where the spec
+#     resolves the licence, and always states redistributable explicitly.
+#   * compact_status is the closed SIG-INGEST-027 vocabulary; no_response is a real
+#     recorded state.
+#   * default_tier is source reliability R1..R6 (§10.4), assigned per source.
+#
+# Fields per row map to §10.3.1 Source + the SIG-INGEST-023 minimum-field list.
+
+# ===========================================================================
+# A. Physical infrastructure (§22.6 A)
+# ===========================================================================
+
+[sources.osm_surveillance_tagging]
+name = "OSM surveillance tagging (Tag:man_made=surveillance)"
+source_kind = "upstream_project"
+homepage_url = "https://wiki.openstreetmap.org/wiki/Tag:man_made%3Dsurveillance"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "wiki"
+notes = "Schema authority for the surveillance tag vocabulary."
+[sources.osm_surveillance_tagging.rights]
+spdx = "ODbL-1.0"
+attribution = "© OpenStreetMap contributors"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.openstreetmap.org/copyright"
+retrieval_date = 2026-08-20
+
+[sources.osm_copyright]
+name = "OSM copyright / licence"
+source_kind = "upstream_project"
+homepage_url = "https://www.openstreetmap.org/copyright"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+notes = "ODbL authority (§42.3)."
+[sources.osm_copyright.rights]
+spdx = "ODbL-1.0"
+attribution = "© OpenStreetMap contributors"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.openstreetmap.org/copyright"
+retrieval_date = 2026-08-20
+
+[sources.osmf_licence_guidelines]
+name = "OSMF Licence Community Guidelines"
+source_kind = "upstream_project"
+homepage_url = "https://wiki.osmfoundation.org/wiki/Licence/Community_Guidelines"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+notes = "Collective Database, Horizontal Layers, Substantial, Produced Work."
+[sources.osmf_licence_guidelines.rights]
+spdx = "ODbL-1.0"
+attribution = "© OpenStreetMap Foundation"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://wiki.osmfoundation.org/wiki/Licence/Community_Guidelines"
+retrieval_date = 2026-08-20
+
+[sources.osm_taginfo]
+name = "OSM taginfo API"
+source_kind = "upstream_project"
+homepage_url = "https://taginfo.openstreetmap.org/api/4/"
+default_tier = "R3"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "json_api"
+auth_model = "none"
+verified = true
+last_verified = 2026-08-20
+notes = "Tag statistics; vocabulary discovery. VERIFIED (§22.2)."
+[sources.osm_taginfo.rights]
+spdx = "ODbL-1.0"
+attribution = "© OpenStreetMap contributors"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.openstreetmap.org/copyright"
+retrieval_date = 2026-08-20
+
+[sources.osm_overpass]
+name = "OSM Overpass API"
+source_kind = "upstream_project"
+homepage_url = "https://overpass-api.de/api/interpreter"
+default_tier = "R5"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "json_xml_api"
+auth_model = "none"
+notes = "Element extraction. Not yet tested — read etiquette rules first (§22.2)."
+[sources.osm_overpass.rights]
+spdx = "ODbL-1.0"
+attribution = "© OpenStreetMap contributors"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.openstreetmap.org/copyright"
+retrieval_date = 2026-08-20
+
+[sources.osm_replication]
+name = "OSM replication diffs"
+source_kind = "upstream_project"
+homepage_url = "https://planet.openstreetmap.org/replication/"
+default_tier = "R5"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "osc_diff"
+notes = "Incremental updates. Not yet tested (§22.2)."
+[sources.osm_replication.rights]
+spdx = "ODbL-1.0"
+attribution = "© OpenStreetMap contributors"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.openstreetmap.org/copyright"
+retrieval_date = 2026-08-20
+
+[sources.osm_element_history]
+name = "OSM element history"
+source_kind = "upstream_project"
+homepage_url = "https://api.openstreetmap.org/api/0.6/node/<id>/history.json"
+default_tier = "R5"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "json_api"
+notes = "Per-element history (Q19)."
+[sources.osm_element_history.rights]
+spdx = "ODbL-1.0"
+attribution = "© OpenStreetMap contributors"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.openstreetmap.org/copyright"
+retrieval_date = 2026-08-20
+
+[sources.osm_automated_edits_coc]
+name = "OSM Automated Edits code of conduct"
+source_kind = "upstream_project"
+homepage_url = "https://wiki.openstreetmap.org/wiki/Automated_Edits_code_of_conduct"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "Hard constraint on write-back (R-14)."
+[sources.osm_automated_edits_coc.rights]
+spdx = "ODbL-1.0"
+attribution = "© OpenStreetMap contributors"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.openstreetmap.org/copyright"
+retrieval_date = 2026-08-20
+
+[sources.deflock]
+name = "DeFlock"
+source_kind = "upstream_project"
+# REQ-R1-14 / SIG-TASK-014: the canonical host is deflock.org (200, serves the
+# app). deflock.me returns 403 (Cloudflare challenge ahead of a 301 to .org) and
+# MUST NOT be used as the canonical host.
+homepage_url = "https://deflock.org/"
+default_tier = "R5"
+custody_posture = "REFERENCE"
+compact_status = "not_contacted"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+notes = "Upstream field observation. Canonical host deflock.org, NOT deflock.me (403 Cloudflare)."
+
+[sources.deflock_repo]
+name = "DeFlock — canonical repo (FoggedLens/deflock)"
+source_kind = "upstream_project"
+homepage_url = "https://github.com/FoggedLens/deflock"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+notes = "The real DeFlock code."
+[sources.deflock_repo.rights]
+spdx = "MIT"
+attribution = "FoggedLens / DeFlock"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://github.com/FoggedLens/deflock/blob/main/LICENSE"
+retrieval_date = 2026-08-20
+
+[sources.deflock_app_repo]
+name = "DeFlock — app repo (FoggedLens/deflock-app)"
+source_kind = "upstream_project"
+homepage_url = "https://github.com/FoggedLens/deflock-app"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+# SIG-INGEST-048b: AGPL-3.0 code MUST NOT be linked into SIG's Apache-2.0
+# codebase; its methods may be studied freely. derivative_permitted=false records
+# the linking hazard (not an ODbL/data restriction).
+notes = "AGPL-3.0 licence hazard: code MUST NOT be linked into SIG's Apache-2.0 codebase (SIG-INGEST-048b)."
+[sources.deflock_app_repo.rights]
+spdx = "AGPL-3.0"
+attribution = "FoggedLens / DeFlock"
+redistributable = true
+derivative_permitted = false
+terms_url = "https://github.com/FoggedLens/deflock-app/blob/main/LICENSE"
+retrieval_date = 2026-08-20
+
+[sources.flockhopper3_deflock_data]
+name = "flockhopper3/deflock-data (NOT DeFlock)"
+source_kind = "upstream_project"
+homepage_url = "https://github.com/flockhopper3/deflock-data"
+default_tier = "R6"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+notes = "Cited at OL-21-04. Exists, but belongs to a DIFFERENT project — do NOT treat as DeFlock's."
+
+[sources.surveillance_under_surveillance]
+name = "Surveillance under Surveillance"
+source_kind = "community"
+homepage_url = "https://sunders.uber.space/"
+default_tier = "R5"
+custody_posture = "REFERENCE"
+compact_status = "not_contacted"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+notes = "Peer OSM visualization; evidence of the international community."
+
+[sources.panopticity]
+name = "PanoptiCity"
+source_kind = "community"
+homepage_url = "https://panopticity.fr/"
+default_tier = "R5"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+notes = "FOV/coverage analysis; downstream consumer of derived geometry."
+
+[sources.drivers_against_flock]
+name = "Drivers Against Flock"
+source_kind = "community"
+homepage_url = "https://driversagainstflock.org/"
+default_tier = "R5"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+notes = "Downstream consumer; do NOT compete."
+
+# ===========================================================================
+# B. Vendor / portal layer (§22.6 B)
+# ===========================================================================
+
+[sources.flock_transparency_portals]
+name = "Flock transparency portals"
+source_kind = "vendor_site"
+homepage_url = "https://transparency.flocksafety.com/"
+default_tier = "R2"
+custody_posture = "LINK"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "none_lawful"
+verified = true
+last_verified = 2026-08-20
+notes = "First-party config/usage. 403 on all paths — NO lawful automated access (F2.1). ToS forbids bulk extraction."
+
+[sources.flock_api_terms]
+name = "Flock API & Integration Terms"
+source_kind = "vendor_site"
+homepage_url = "https://www.flocksafety.com/legal/api-integration-terms"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "ToS constraint."
+
+[sources.eyes_on_flock]
+name = "Eyes on Flock"
+source_kind = "upstream_project"
+homepage_url = "https://eyesonflock.com/"
+default_tier = "R3"
+custody_posture = "MIRROR"
+# SIG-INGEST-030/030a: the ACCESS question is RESOLVED (public, unauthenticated,
+# key-free JSON API; robots Allow:/ use=reference; licence CC-BY-SA-4.0). The
+# recorded Stage-0 outcome is public_terms_only: SIG can use the public CC-BY-SA
+# API lawfully today. Partnership/succession outreach (attribution agreement,
+# refresh cadence, archival succession SIG-CONTRIB-013) remains a Phase-0
+# deliverable and is not yet concluded — see notes; ingestion stays gated.
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "json_api (GET /api/v1/data)"
+auth_model = "none"
+cadence = "key on upstream data_last_updated; do not poll faster than upstream refresh (SIG-INGEST-030c)"
+contact = "contact@eyesonflock.com"
+verified = true
+last_verified = 2026-08-20
+notes = "Top Stage-0 dependency (§22.5). Stage-0 outreach outcome: public CC-BY-SA terms confirmed usable (SIG-INGEST-030 RESOLVED 2026-08-20); partnership + archival-succession outreach remains a Phase-0 deliverable (SIG-INGEST-030a/032). The Phase 11 blocker (SIG-INGEST-030) is thereby recorded, not open."
+[sources.eyes_on_flock.rights]
+spdx = "CC-BY-SA-4.0"
+attribution = "Eyes on Flock (CC BY-SA 4.0)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://eyesonflock.com/"
+retrieval_date = 2026-08-20
+
+[sources.eyes_on_flock_description]
+name = "Eyes on Flock description (Reddit)"
+source_kind = "news_publisher"
+homepage_url = "https://www.reddit.com/r/FlockSurveillance/comments/1ra26qw/"
+default_tier = "R5"
+custody_posture = "LINK"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "Methodology context."
+
+[sources.axon_community_connect]
+name = "Axon Community Connect"
+source_kind = "vendor_site"
+homepage_url = "https://axoncommunityconnect.com/communities/"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "public_listing + unauthenticated per-org stats endpoints"
+verified = true
+last_verified = 2026-08-20
+notes = "Private-camera federation scale. 321 communities enumerated (R7-F7.15)."
+
+[sources.footnote4a]
+name = "Footnote4a"
+source_kind = "community"
+homepage_url = "https://footnote4a.org/news/transparency-portals"
+default_tier = "R4"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+notes = "Portal tracking; surfaced via HIBF (§22.3 SIG-INGEST-026)."
+
+[sources.ca_sharing_visualization]
+name = "CA sharing visualization (Reddit)"
+source_kind = "news_publisher"
+homepage_url = "https://www.reddit.com/r/FlockSurveillance/comments/1slvs6a/"
+default_tier = "R5"
+custody_posture = "LINK"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "Archival-design precedent."
+
+# ===========================================================================
+# C. Usage and audit layer (§22.6 C)
+# ===========================================================================
+
+[sources.have_i_been_flocked]
+name = "Have I Been Flocked"
+source_kind = "upstream_project"
+homepage_url = "https://haveibeenflocked.com/"
+default_tier = "R3"
+custody_posture = "REFERENCE"
+compact_status = "not_contacted"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+notes = "Specialist upstream for usage. Rights unresolved — UNDETERMINED (SIG-LIC-004)."
+
+[sources.hibf_methodology]
+name = "HIBF methodology hub"
+source_kind = "upstream_project"
+homepage_url = "https://haveibeenflocked.com/about"
+default_tier = "R3"
+custody_posture = "REFERENCE"
+compact_status = "not_contacted"
+robots_policy = "honor"
+notes = "Methodology."
+
+[sources.hibf_audit_log_guide]
+name = "HIBF audit-log guide"
+source_kind = "upstream_project"
+homepage_url = "https://haveibeenflocked.com/about/audit-logs"
+default_tier = "R3"
+custody_posture = "REFERENCE"
+compact_status = "not_contacted"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+notes = "Canonical audit field schemas (F2.3)."
+
+[sources.alpr_watch]
+name = "ALPR Watch"
+source_kind = "upstream_project"
+homepage_url = "https://alprwatch.org/"
+default_tier = "R3"
+custody_posture = "REFERENCE"
+compact_status = "not_contacted"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+notes = "FOIA normalization; routing; offline packages. Rights unresolved — UNDETERMINED."
+
+[sources.alpr_watch_foia_method]
+name = "ALPR Watch Flock FOIA method"
+source_kind = "upstream_project"
+homepage_url = "https://alprwatch.org/news/2025-07-28_flock_foia/"
+default_tier = "R3"
+custody_posture = "REFERENCE"
+compact_status = "not_contacted"
+robots_policy = "honor"
+notes = "Pipeline reference."
+
+[sources.alpr_watch_code]
+name = "ALPR Watch code (GitLab)"
+source_kind = "upstream_project"
+homepage_url = "https://gitlab.com/alprwatch-org"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "not_contacted"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+notes = "GitLab, NOT GitHub (C-02). Repo licence unresolved — UNDETERMINED."
+
+[sources.alpr_watch_dashboard]
+name = "ALPR Watch FOIA dashboard (Superset)"
+source_kind = "upstream_project"
+homepage_url = "https://superset.alprwatch.org/superset/dashboard/columbia-river-gorge-foia/"
+default_tier = "R3"
+custody_posture = "REFERENCE"
+compact_status = "not_contacted"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+notes = "Worked analysis."
+
+[sources.flock_ajith_fyi]
+name = "flock.ajith.fyi"
+source_kind = "community"
+homepage_url = "https://flock.ajith.fyi/"
+default_tier = "R6"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+verified = false
+notes = "Network-topology visualization precedent. DO NOT INGEST — publishes raw operator identifiers (§43.2a, SIG-INGEST-048); no licence stated → UNDETERMINED."
+
+[sources.monahan_grounding_the_flock]
+name = "Monahan, \"Grounding the Flock\" (2026)"
+source_kind = "academic"
+homepage_url = "https://journals.sagepub.com/doi/10.1177/20501579261453519"
+default_tier = "R4"
+custody_posture = "LINK"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+notes = "Academic framing. 403 — capture_status=paywalled (SC-07). UNDETERMINED."
+
+# ===========================================================================
+# D. Adoption layer (§22.6 D)
+# ===========================================================================
+
+[sources.eff_atlas_of_surveillance]
+name = "EFF Atlas of Surveillance"
+source_kind = "upstream_project"
+homepage_url = "https://www.atlasofsurveillance.org/"
+default_tier = "R3"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "bulk_csv"
+verified = true
+last_verified = 2026-08-20
+notes = "Primary deployment seed. CC-BY-4.0 WITH a third-party caveat (SC-09): redistributable is separately reviewed true for the Atlas compilation; incorporated third-party data reviewed per-artifact."
+[sources.eff_atlas_of_surveillance.rights]
+spdx = "CC-BY-4.0"
+attribution = "Electronic Frontier Foundation, Atlas of Surveillance (CC BY 4.0)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.eff.org/copyright"
+retrieval_date = 2026-08-20
+
+[sources.atlas_methodology]
+name = "Atlas methodology"
+source_kind = "upstream_project"
+homepage_url = "https://www.atlasofsurveillance.org/methodology"
+default_tier = "R3"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "Evidence standards; the 'not a complete inventory' statement."
+
+[sources.atlas_about]
+name = "Atlas about / scope boundary"
+source_kind = "upstream_project"
+homepage_url = "https://atlasofsurveillance.org/pages/about"
+default_tier = "R3"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+notes = "Delegates the device layer to DeFlock (SC-10)."
+
+[sources.atlas_data_library]
+name = "Atlas Data Library"
+source_kind = "upstream_project"
+homepage_url = "https://www.atlasofsurveillance.org/data-library"
+default_tier = "R3"
+custody_posture = "LINK"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "Index of specialist datasets (§22.7); Phase 17 ingestion backlog."
+
+[sources.eff_copyright]
+name = "EFF copyright"
+source_kind = "upstream_project"
+homepage_url = "https://www.eff.org/copyright"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+notes = "Licence authority for Atlas."
+
+[sources.eff_street_level_surveillance]
+name = "EFF Street-Level Surveillance"
+source_kind = "upstream_project"
+homepage_url = "https://www.eff.org/issues/street-level-surveillance"
+default_tier = "R3"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "Second technology taxonomy for crosswalk (§20.3)."
+
+[sources.eff_data_driven]
+name = "EFF Data Driven (2018 release)"
+source_kind = "upstream_project"
+homepage_url = "https://www.eff.org/deeplinks/2018/11/eff-and-muckrock-release-records-and-data-200-law-enforcement-agencies-automated"
+default_tier = "R3"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "Vendor-neutral ALPR network source (§23.10)."
+
+# ===========================================================================
+# E. Accountability layer (§22.6 E)
+# ===========================================================================
+
+[sources.alpr_accountability_atlas]
+name = "ALPR Accountability Atlas"
+source_kind = "upstream_project"
+homepage_url = "https://alpratlas.org/"
+default_tier = "R3"
+custody_posture = "REFERENCE"
+compact_status = "not_contacted"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+notes = "Incidents; the epistemic-label model SIG adopts. UNDETERMINED."
+
+[sources.alpr_abuse_library]
+name = "ALPR Abuse Library"
+source_kind = "upstream_project"
+homepage_url = "https://library.kansas.watch/"
+default_tier = "R3"
+custody_posture = "REFERENCE"
+compact_status = "not_contacted"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+notes = "Curated source index; held UNNORMALIZED (SIG-EPIS-030). UNDETERMINED."
+
+[sources.aclu_flock_toolkit]
+name = "ACLU Get the Flock Out toolkit"
+source_kind = "upstream_project"
+homepage_url = "https://www.aclu.org/get-the-flock-out-toolkit"
+default_tier = "R3"
+custody_posture = "REFERENCE"
+compact_status = "not_contacted"
+robots_policy = "honor"
+notes = "Defines the local-advocate requirements the dossier serves (§39.0)."
+
+[sources.aclu_cell_site_simulators]
+name = "ACLU cell-site simulators"
+source_kind = "upstream_project"
+homepage_url = "https://www.aclu.org/issues/privacy-technology/surveillance-technologies/stingray-tracking-devices"
+default_tier = "R3"
+custody_posture = "REFERENCE"
+compact_status = "not_contacted"
+robots_policy = "honor"
+notes = "Agency possession dataset."
+
+[sources.wired_shotspotter_leak]
+name = "WIRED ShotSpotter sensor leak"
+source_kind = "news_publisher"
+homepage_url = "https://www.wired.com/story/shotspotter-secret-sensor-locations-leak"
+default_tier = "R4"
+custody_posture = "LINK"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "Acoustic sensors; leak-provenance veto applies (SIG-PUB-005)."
+
+[sources.guardian_flock_cameras]
+name = "Guardian, Flock cameras (2026-08-20)"
+source_kind = "news_publisher"
+homepage_url = "https://www.theguardian.com/us-news/2026/aug/20/flock-cameras-surveillance"
+default_tier = "R4"
+custody_posture = "LINK"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "Vendor-replacement reporting."
+
+[sources.courtlistener_recap]
+name = "CourtListener / RECAP"
+source_kind = "court_system"
+homepage_url = "https://www.courtlistener.com/api/rest/v4/"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api"
+auth_model = "token for most endpoints"
+rate_limits = "~5/min, 50/hr, 125/day — lookup only, crawling impossible (SIG-INGEST-025)"
+verified = true
+last_verified = 2026-08-20
+notes = "Litigation evidence (§22.3)."
+
+# ===========================================================================
+# F. Records, procurement, evidence (§22.6 F, §22.3 SIG-INGEST-026)
+# ===========================================================================
+
+[sources.muckrock]
+name = "MuckRock"
+source_kind = "records_channel"
+homepage_url = "https://www.muckrock.com/"
+default_tier = "R3"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "api_v2"
+auth_model = "5-min JWT"
+rate_limits = "~15 req/min; 401 on all data endpoints"
+verified = true
+last_verified = 2026-08-20
+notes = "api_v2 (not v1 — outline's reference is wrong)."
+
+[sources.documentcloud]
+name = "DocumentCloud"
+source_kind = "records_channel"
+homepage_url = "https://api.www.documentcloud.org/api/documents/search/"
+default_tier = "R3"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "search_api + S3 assets"
+auth_model = "none for public"
+verified = true
+last_verified = 2026-08-20
+notes = "Public search + full text. Per-document rights vary — UNDETERMINED at source level."
+
+[sources.usaspending]
+name = "USAspending"
+source_kind = "government_portal"
+homepage_url = "https://api.usaspending.gov/"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (spending_by_award incl. sub-awards; recipient/duns)"
+auth_model = "none"
+verified = true
+last_verified = 2026-08-20
+notes = "Prime AND sub-awards (grant→deployment tracing: Byrne JAG, UASI). US Government work, public record — rights UNDETERMINED pending review."
+
+[sources.sam_gov]
+name = "SAM.gov"
+source_kind = "government_portal"
+homepage_url = "https://api.sam.gov/"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api"
+auth_model = "api key"
+rate_limits = "free key = 10 requests/day"
+verified = true
+last_verified = 2026-08-20
+notes = "Vendor identity substrate (§14.2)."
+
+[sources.govspend]
+name = "GovSpend"
+source_kind = "commercial"
+homepage_url = "https://www.govspend.com/"
+default_tier = "R3"
+custody_posture = "LINK"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "Commercial procurement aggregator cited by Atlas; paywalled — LINK posture (§23.6 SIG-INGEST-047). UNDETERMINED."
+
+[sources.sourcewell]
+name = "Sourcewell"
+source_kind = "government_portal"
+homepage_url = "https://www.sourcewell-mn.gov/"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "public files"
+auth_model = "none"
+verified = true
+last_verified = 2026-08-20
+notes = "Free full competitive record + signed contracts + monthly SKU price lists. Dominant acquisition channel (§22.3)."
+
+[sources.omnia_partners]
+name = "OMNIA Partners"
+source_kind = "government_portal"
+homepage_url = "https://www.omniapartners.com/"
+default_tier = "R1"
+custody_posture = "LINK"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "Cooperative purchasing vehicle (§22.3)."
+
+[sources.naspo_valuepoint]
+name = "NASPO ValuePoint"
+source_kind = "government_portal"
+homepage_url = "https://www.naspovaluepoint.org/"
+default_tier = "R1"
+custody_posture = "LINK"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "Cooperative purchasing vehicle (§22.3)."
+
+[sources.buyboard]
+name = "BuyBoard"
+source_kind = "government_portal"
+homepage_url = "https://www.buyboard.com/"
+default_tier = "R1"
+custody_posture = "LINK"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "Cooperative purchasing vehicle (§22.3)."
+
+[sources.tips_usa]
+name = "TIPS"
+source_kind = "government_portal"
+homepage_url = "https://www.tips-usa.com/"
+default_tier = "R1"
+custody_posture = "LINK"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "Cooperative purchasing vehicle (§22.3)."
+
+[sources.hgacbuy]
+name = "HGACBuy"
+source_kind = "government_portal"
+homepage_url = "https://www.hgacbuy.org/"
+default_tier = "R1"
+custody_posture = "LINK"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "Cooperative purchasing vehicle (§22.3)."
+
+[sources.equalis_group]
+name = "Equalis Group"
+source_kind = "government_portal"
+homepage_url = "https://equalisgroup.org/"
+default_tier = "R1"
+custody_posture = "LINK"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "Cooperative purchasing vehicle (§22.3)."
+
+[sources.gsa]
+name = "GSA"
+source_kind = "government_portal"
+homepage_url = "https://www.gsa.gov/"
+default_tier = "R1"
+custody_posture = "LINK"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "Cooperative purchasing vehicle named at §22.3 SIG-INGEST-026."
+
+[sources.legistar]
+name = "Legistar InSite API"
+source_kind = "government_portal"
+homepage_url = "https://webapi.legistar.com/v1/<client>/"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (matters, attachments, histories, events)"
+auth_model = "none"
+verified = true
+last_verified = 2026-08-20
+notes = "Real API, not 'agenda system' (§22.3)."
+
+[sources.primegov]
+name = "PrimeGov"
+source_kind = "government_portal"
+homepage_url = "https://<tenant>.primegov.com/api/v2/PublicPortal/"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (meetings, agendas)"
+auth_model = "none"
+verified = true
+last_verified = 2026-08-20
+notes = "Needs a tenant registry SIG must build and publish (§22.3)."
+
+[sources.civicclerk]
+name = "CivicClerk"
+source_kind = "government_portal"
+homepage_url = "https://<tenant>.api.civicclerk.com/v1/Events"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api + plaintext file stream"
+auth_model = "none"
+verified = true
+last_verified = 2026-08-20
+notes = "Meetings + plaintext file stream (§22.3)."
+
+[sources.civicplus]
+name = "CivicPlus"
+source_kind = "government_portal"
+homepage_url = "https://www.civicplus.com/"
+default_tier = "R2"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+notes = "Agenda/records platform named at §22.3 SIG-INGEST-026; no municipality→platform directory exists."
+
+[sources.novusagenda]
+name = "NovusAgenda"
+source_kind = "government_portal"
+homepage_url = "https://www.novusagenda.com/"
+default_tier = "R2"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+notes = "Agenda platform named at §22.3 SIG-INGEST-026."
+
+[sources.boarddocs]
+name = "BoardDocs"
+source_kind = "government_portal"
+homepage_url = "https://www.boarddocs.com/"
+default_tier = "R2"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+notes = "Agenda platform named at §22.3 SIG-INGEST-026."
+
+[sources.iqm2]
+name = "IQM2"
+source_kind = "government_portal"
+homepage_url = "https://www.iqm2.com/"
+default_tier = "R2"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+notes = "Agenda platform named at §22.3 SIG-INGEST-026."
+
+[sources.escribe]
+name = "eScribe"
+source_kind = "government_portal"
+homepage_url = "https://www.escribemeetings.com/"
+default_tier = "R2"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+notes = "Agenda platform named at §22.3 SIG-INGEST-026."
+
+[sources.nextrequest]
+name = "NextRequest"
+source_kind = "records_channel"
+homepage_url = "https://<tenant>.nextrequest.com/client/requests"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "undocumented /client/requests, /client/request_documents"
+auth_model = "none"
+verified = true
+last_verified = 2026-08-20
+notes = "Published request logs + released documents (§22.3)."
+
+[sources.govqa]
+name = "GovQA"
+source_kind = "records_channel"
+homepage_url = "https://www.govqa.com/"
+default_tier = "R2"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+notes = "Records portal named at §22.3 SIG-INGEST-026."
+
+[sources.justfoia]
+name = "JustFOIA"
+source_kind = "records_channel"
+homepage_url = "https://www.justfoia.com/"
+default_tier = "R2"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+notes = "Records portal named at §22.3 SIG-INGEST-026."
+
+[sources.foiaxpress]
+name = "FOIAXpress"
+source_kind = "records_channel"
+homepage_url = "https://foiaxpress.com/"
+default_tier = "R2"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+notes = "Records portal named at §22.3 SIG-INGEST-026."
+
+[sources.openstates]
+name = "OpenStates"
+source_kind = "government_portal"
+homepage_url = "https://v3.openstates.org/"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api"
+auth_model = "api key (403 without)"
+verified = true
+last_verified = 2026-08-20
+notes = "State legislation."
+
+[sources.fbi_cde_agency_registry]
+name = "FBI CDE agency registry"
+source_kind = "government_portal"
+homepage_url = "https://api.usa.gov/crime/fbi/cde/agency/byStateAbbr/{ST}"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api"
+auth_model = "api.data.gov key"
+rate_limits = "429s observed"
+verified = true
+last_verified = 2026-08-20
+notes = "ORI9 authority; identity substrate (§14.2)."
+
+[sources.leaic_crosswalk]
+name = "LEAIC crosswalk (ICPSR study 35158)"
+source_kind = "academic"
+homepage_url = "https://www.icpsr.umich.edu/web/ICPSR/studies/35158"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "manual acquisition (login)"
+auth_model = "ICPSR login"
+notes = "ORI↔FIPS↔place crosswalk. Manual acquisition. UNDETERMINED pending terms review."
+
+[sources.census_gazetteer_tiger]
+name = "Census Gazetteer / TIGER"
+source_kind = "government_portal"
+homepage_url = "https://www.census.gov/geographies/reference-files/time-series/geo/gazetteer-files.html"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+verified = false
+notes = "GEOID + boundaries; identity substrate (§14.2). US Government work, public record."
+
+[sources.census_geocoder]
+name = "Census Geocoder"
+source_kind = "government_portal"
+homepage_url = "https://geocoding.geo.census.gov/geocoder/"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (keyless)"
+auth_model = "none"
+notes = "Address→jurisdiction."
+
+[sources.gleif]
+name = "GLEIF golden copy"
+source_kind = "government_portal"
+homepage_url = "https://www.gleif.org/en/lei-data/gleif-golden-copy"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "LEI; identity substrate (§14.2)."
+[sources.gleif.rights]
+spdx = "CC0-1.0"
+attribution = "GLEIF"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.gleif.org/en/about/governance/data-terms-of-use"
+retrieval_date = 2026-08-20
+
+[sources.nces_ipeds_ntd_cms]
+name = "NCES / IPEDS / NTD / CMS"
+source_kind = "government_portal"
+homepage_url = "https://nces.ed.gov/ccd/"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "Per-class identifiers (§14.2). US Government works, public record."
+
+[sources.wikidata_sparql]
+name = "Wikidata SPARQL"
+source_kind = "upstream_project"
+homepage_url = "https://query.wikidata.org/sparql"
+default_tier = "R3"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "sparql"
+auth_model = "none"
+notes = "QID crosswalk; 83.4% of ALPR manufacturers."
+[sources.wikidata_sparql.rights]
+spdx = "CC0-1.0"
+attribution = "Wikidata contributors"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.wikidata.org/wiki/Wikidata:Licensing"
+retrieval_date = 2026-08-20
+
+[sources.internet_archive_wayback]
+name = "Internet Archive Wayback"
+source_kind = "upstream_project"
+homepage_url = "https://archive.org/wayback/available"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "availability + CDX API"
+auth_model = "none"
+verified = true
+last_verified = 2026-08-20
+notes = "Archival. *.flocksafety.com is EXCLUDED (C-12/SC-13) — no third-party archive fallback for the portal layer."
+
+[sources.dhs_fusion_centers]
+name = "DHS fusion centers"
+source_kind = "government_portal"
+homepage_url = "https://www.dhs.gov/fusion-center-locations-and-contact-information"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "Authoritative roster: 80 centers (54 primary + 26 recognized). §22.3."
+
+[sources.faa_drone_waivers]
+name = "FAA drone waivers"
+source_kind = "government_portal"
+homepage_url = "https://www.faa.gov/uas/"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "Dated authorization_state records with native validity intervals (§22.3, EFF FOIA release)."
+
+# ===========================================================================
+# G. Lead generation (§22.6 G)
+# ===========================================================================
+
+[sources.flock_finder]
+name = "Flock Finder"
+source_kind = "community"
+homepage_url = "https://github.com/simeononsecurity/flock-finder"
+default_tier = "R6"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "RF/OUI candidates. R6, lead generation only; actively maintained (SIG-INGEST-048)."
+[sources.flock_finder.rights]
+spdx = "MIT"
+attribution = "simeononsecurity"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://github.com/simeononsecurity/flock-finder/blob/main/LICENSE"
+retrieval_date = 2026-08-20
+
+[sources.flock_you]
+name = "Flock-You"
+source_kind = "community"
+homepage_url = "https://github.com/colonelpanichacks/flock-you"
+default_tier = "R6"
+custody_posture = "REFERENCE"
+compact_status = "not_contacted"
+robots_policy = "honor"
+notes = "Local RF detection. Never auto-confirms. Repo licence unresolved — UNDETERMINED."
+
+[sources.wigle]
+name = "WiGLE"
+source_kind = "commercial"
+homepage_url = "https://wigle.net/"
+default_tier = "R6"
+custody_posture = "LINK"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "Underlying radio observations. UNDETERMINED."
+
+# ===========================================================================
+# H. Community ecosystem (§22.6 H)
+# ===========================================================================
+
+[sources.flockreporter]
+name = "FlockReporter"
+source_kind = "community"
+homepage_url = "https://flockreporter.org/"
+default_tier = "R5"
+custody_posture = "LINK"
+# SIG-INGEST-027: no_response is a recorded state. Also DISAPPEARED — see the
+# local-group/directory registry (SIG-INGEST-039b) for disappeared_observed_at.
+compact_status = "no_response"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+notes = "Local-group directory. Did NOT respond (C-03, R-12) and its DNS then ceased to resolve — registered DISAPPEARED in the local-group registry (SIG-INGEST-039b)."
+
+[sources.eyes_off_cedar_rapids]
+name = "Eyes Off Cedar Rapids"
+source_kind = "community"
+homepage_url = "https://eyesoffcr.org/"
+default_tier = "R5"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+notes = "Confirmed live local group (§22.3 eyesoffcr.org)."
+
+[sources.r_flocksurveillance]
+name = "r/FlockSurveillance"
+source_kind = "community"
+homepage_url = "https://www.reddit.com/r/FlockSurveillance/"
+default_tier = "R5"
+custody_posture = "LINK"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "Ecosystem discovery. Blanket Disallow: / — manual reference only."
+
+# ===========================================================================
+# H2. Projects the outline does not name (§22.6 H2, SIG-INGEST-048)
+# ===========================================================================
+
+[sources.sm_alpr]
+name = "none-below/sm-alpr"
+source_kind = "upstream_project"
+homepage_url = "https://github.com/none-below/sm-alpr"
+default_tier = "R3"
+custody_posture = "REFERENCE"
+compact_status = "not_contacted"
+robots_policy = "honor"
+# SIG-INGEST-048b: AGPL-3.0 code MUST NOT be linked into SIG's Apache-2.0
+# codebase; its methods may be studied freely.
+notes = "Most sophisticated portal archiver found: daily dated captures, sharing-graph builder, rename detection (prior art §29.7). AGPL-3.0 licence hazard (SIG-INGEST-048b)."
+[sources.sm_alpr.rights]
+spdx = "AGPL-3.0"
+attribution = "none-below"
+redistributable = true
+derivative_permitted = false
+terms_url = "https://github.com/none-below/sm-alpr/blob/main/LICENSE"
+retrieval_date = 2026-08-20
+
+[sources.eyes_off_eugene]
+name = "eyes-off/eugene-oregon"
+source_kind = "upstream_project"
+homepage_url = "https://github.com/eyes-off/eugene-oregon"
+default_tier = "R3"
+custody_posture = "REFERENCE"
+compact_status = "not_contacted"
+robots_policy = "honor"
+notes = "Long-term archive of search-audit CSVs, built to defeat the 30-day rolling window (SIG-INGEST-048)."
+[sources.eyes_off_eugene.rights]
+spdx = "CC0-1.0"
+attribution = "eyes-off"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://github.com/eyes-off/eugene-oregon/blob/main/LICENSE"
+retrieval_date = 2026-08-20
+
+[sources.panopti_ca]
+name = "resistanceisliberty/panopti.ca"
+source_kind = "upstream_project"
+homepage_url = "https://panopti.ca/"
+default_tier = "R5"
+custody_posture = "REFERENCE"
+compact_status = "not_contacted"
+robots_policy = "honor"
+notes = "Canadian DeFlock fork; bilingual EN/FR; maps government CCTV. Extends the model beyond the US — live Stage-6 precedent (SIG-INGEST-048)."
+[sources.panopti_ca.rights]
+spdx = "MIT"
+attribution = "resistanceisliberty"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://panopti.ca/"
+retrieval_date = 2026-08-20
+
+[sources.private_eyes]
+name = "mcclatchy-southeast/private_eyes"
+source_kind = "news_publisher"
+homepage_url = "https://github.com/mcclatchy-southeast/private_eyes"
+default_tier = "R4"
+custody_posture = "REFERENCE"
+compact_status = "not_contacted"
+robots_policy = "honor"
+notes = "Newsroom dataset flagging portal-vs-reality discrepancies in a controlled column. Prior art §29.1 (SIG-INGEST-048)."
+[sources.private_eyes.rights]
+spdx = "MIT"
+attribution = "McClatchy Southeast"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://github.com/mcclatchy-southeast/private_eyes/blob/main/LICENSE"
+retrieval_date = 2026-08-20
+
+[sources.ringmast4r_flock]
+name = "Ringmast4r/FLOCK"
+source_kind = "community"
+homepage_url = "https://ringmast4r.github.io/FLOCK"
+default_tier = "R6"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+# SIG-INGEST-048a: the unreproducible "336K+ cameras" figure MUST NOT be
+# repeated; direct measurement finds 144,312 (SC-03). No licence → UNDETERMINED.
+notes = "Claims '336K+ cameras worldwide'; unmaintained since 2025-11; figure NOT reproducible from OSM (SIG-INGEST-048a). No licence stated → UNDETERMINED (SIG-INGEST-048b)."
+
+# ===========================================================================
+# H3. Government-mandated disclosure (CCOPS) — a source class of its own
+#     (§22.6 H3, SIG-INGEST-049 / -049f)
+# ===========================================================================
+
+[sources.ccops_ordinance_disclosures]
+name = "Municipal surveillance-ordinance (CCOPS) disclosures"
+source_kind = "government_portal"
+homepage_url = "https://www.aclu.org/issues/privacy-technology/surveillance-technologies/community-control-over-police-surveillance"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "Source class government_mandated_disclosure (SIG-INGEST-049): ~26 jurisdictions, ~5% population, 0.14% of agencies; zero publish machine-readable; the national list is an image file. Depth-not-breadth; highest value is calibration (§28/§29.2). Public record — rights UNDETERMINED at class level."
+
+[sources.state_alpr_statute_inventory]
+name = "State ALPR statute national inventory"
+source_kind = "government_portal"
+homepage_url = "https://www.ncsl.org/technology-and-communication/automated-license-plate-readers"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "SIG-INGEST-049f: the one national inventory — HTML-only, 16 states, FROZEN since 2022-02-03 (predates the recent expansion; missing at least one statute enacted since). One-time seed, never a feed; SIG maintains it onward. Leads to records, not feeds (SIG-INGEST-025a)."
+
+# ===========================================================================
+# H4. Future recurring sources — mandated but not yet flowing (§22.6 H4, SIG-INGEST-050)
+# ===========================================================================
+
+[sources.future_statutory_disclosure_2027]
+name = "State statutory disclosure — first reports due 2027-04-01"
+source_kind = "government_portal"
+homepage_url = ""
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "not_applicable"
+notes = "SIG-INGEST-050: enacted statute mandating public posting of nine items mapping onto SIG's deployment schema; first reports due 2027-04-01. Registered early so the connector can be specified against the field list; absence before the due date is a lawful not_applicable coverage state; non-compliance after is an AccountabilityEvent (SIG-INGEST-049e)."
+
+# ===========================================================================
+# I. International (§22.6 I)
+# ===========================================================================
+
+[sources.technopolice]
+name = "Technopolice"
+source_kind = "upstream_project"
+homepage_url = "https://technopolice.fr/"
+default_tier = "R4"
+custody_posture = "REFERENCE"
+compact_status = "not_contacted"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+notes = "FR/BE mapping; Stage 6 model. UNDETERMINED."
+
+[sources.technopolice_forum]
+name = "Technopolice mapping discussion"
+source_kind = "upstream_project"
+homepage_url = "https://forum.technopolice.fr/topic/405/cartographier-la-surveillance"
+default_tier = "R4"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+notes = "The OSM-vs-own-database debate. In the source registry per §22.6 I / spec note."
+
+[sources.technocarte_update]
+name = "Technocarte update"
+source_kind = "upstream_project"
+homepage_url = "https://technopolice.fr/blog/mise-a-jour-de-la-technocarte/"
+default_tier = "R4"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+notes = "Dataset state."
+
+[sources.la_quadrature_du_net]
+name = "La Quadrature du Net"
+source_kind = "news_publisher"
+homepage_url = "https://www.laquadrature.net/"
+default_tier = "R4"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+notes = "Publisher."
+
+[sources.sous_surveillance_osm_import]
+name = "sous-surveillance.net → OSM import"
+source_kind = "upstream_project"
+homepage_url = "https://wiki.openstreetmap.org/wiki/Import/sous-surveillance"
+default_tier = "R5"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "~12,000 cameras; activist-DB→commons precedent."
+[sources.sous_surveillance_osm_import.rights]
+spdx = "ODbL-1.0"
+attribution = "© OpenStreetMap contributors"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.openstreetmap.org/copyright"
+retrieval_date = 2026-08-20
+
+[sources.ted_eu]
+name = "TED (EU tenders)"
+source_kind = "government_portal"
+homepage_url = "https://ted.europa.eu/"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "EU procurement. UNDETERMINED pending reuse-terms review."
+
+[sources.decp_fr]
+name = "DECP (FR procurement)"
+source_kind = "government_portal"
+homepage_url = "https://www.data.gouv.fr/"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "National open procurement data. UNDETERMINED pending reuse-terms review (Licence Ouverte)."
