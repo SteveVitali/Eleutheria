@@ -1,0 +1,61 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62",
+  "osm3s": {
+    "timestamp_osm_base": "2026-09-20T00:00:00Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+    {
+      "type": "node",
+      "id": 1001,
+      "lat": 37.7749,
+      "lon": -122.4194,
+      "timestamp": "2024-12-15T10:00:00Z",
+      "version": 5,
+      "changeset": 900001,
+      "user": "mapper_alice",
+      "uid": 4242,
+      "tags": {
+        "man_made": "surveillance",
+        "surveillance:type": "ALPR;camera",
+        "surveillance": "public",
+        "surveillance:zone": "traffic",
+        "camera:type": "fixed",
+        "manufacturer": "Flock Safety"
+      }
+    },
+    {
+      "type": "relation",
+      "id": 3003,
+      "bounds": { "minlat": 40.70, "minlon": -74.02, "maxlat": 40.72, "maxlon": -73.99 },
+      "timestamp": "2025-02-03T09:00:00Z",
+      "version": 1,
+      "changeset": 900003,
+      "user": "mapper_carol",
+      "uid": 7,
+      "members": [{ "type": "way", "ref": 5551, "role": "outer" }],
+      "tags": {
+        "man_made": "surveillance",
+        "surveillance:type": "novel_sensor_kind",
+        "operator": "City of Example"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5005,
+      "lat": 42.3601,
+      "lon": -71.0589,
+      "timestamp": "2026-09-01T08:00:00Z",
+      "version": 1,
+      "changeset": 900005,
+      "user": "mapper_erin",
+      "uid": 55,
+      "tags": {
+        "man_made": "surveillance",
+        "surveillance:type": "camera",
+        "camera:type": "dome"
+      }
+    }
+  ]
+}

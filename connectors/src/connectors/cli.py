@@ -9,8 +9,8 @@ orchestration choice is reversible (SIG-INGEST-021, ADR-014). The sub-commands:
 * ``validate`` — the registry self-checks that must hold at every phase gate
   (SIG-INGEST-023..040).
 * ``stages`` — list the eight stages in order (§21.1, SIG-INGEST-001).
-* ``list-connectors`` — list the registered source connectors (empty until P04.2;
-  the plug-in seam later connectors register through, SIG-INGEST-021).
+* ``list-connectors`` — list the registered source connectors (the `osm`
+  connector lands in P04.2; the plug-in seam they register through, SIG-INGEST-021).
 * ``gate --source ID`` — report the connector-loader gate verdict for a source
   (SIG-INGEST-014/028): ingestion_permitted + compact_status + custody_posture.
 * ``export-check`` — compute the export licence per compartment across the
@@ -46,9 +46,7 @@ def build_parser() -> argparse.ArgumentParser:
     sub = parser.add_subparsers(dest="command")
     sub.add_parser("validate", help="run the source-registry data-layer self-checks")
     sub.add_parser("stages", help="list the eight connector stages in order (§21.1)")
-    sub.add_parser(
-        "list-connectors", help="list the registered source connectors (empty until P04.2)"
-    )
+    sub.add_parser("list-connectors", help="list the registered source connectors")
     gate = sub.add_parser("gate", help="report the connector-loader gate verdict for a source")
     gate.add_argument("--source", required=True, help="source id to check")
     sub.add_parser("export-check", help="compute the export licence per compartment (SIG-LIC-010)")

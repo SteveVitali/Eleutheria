@@ -507,3 +507,54 @@ framework is exercised end-to-end by a toy connector in `tests/connectors/`.
 | SIG-INGEST-018 (replay against archived snapshots only, network-isolated) | `connectors.replay.replay` (via `connectors.pipeline.run_post_capture` under `network_isolated`) | `tests/connectors/test_replay.py::test_replay_is_network_isolated`, `::test_replay_never_asserts` |
 | SIG-INGEST-019 (shadow mode diffs new vs current, reports delta before asserting) | `connectors.replay.shadow_replay`, `diff_claim_sets`, `ShadowDiff` | `tests/connectors/test_replay.py::test_shadow_replay_reports_delta_without_asserting`, `::test_diff_claim_sets_ignores_generated_columns` |
 | SIG-INGEST-021 (every stage runnable as a plain CLI; orchestrator import confined to orchestration/) | `connectors.cli` (`stages`/`gate`/`export-check`), `connectors.stages.register`; `connectors.pipeline` imports no orchestrator | `tests/connectors/test_cli.py`; `tests/unit/test_cli_convention.py`; `tests/unit/test_import_boundary.py` |
+
+# P04.2 — the `osm` connector
+
+The first real source adapter on the P04.1 framework (§23.2): surveillance
+physical assets from OpenStreetMap, landing in the physically separate ODbL asset
+layer (§42.3). Decision record: ADR-027.
+
+## Tag vocabulary and normalization (§23.2, SIG-INGEST-045)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-INGEST-045 (consume the four surveillance keys + wider §23.2 vocab; split `;` multi-values as unordered sets; cross-key normalize; a surveillance-bearing key/value outside the allowlist → unmapped value + research task) | `connectors.osm` (`normalize`, `split_multivalue`, `map_surveillance_type`, `map_mobility`, `is_surveillance_bearing_key`, `unmapped_tag_task`); versioned `data/osm_tag_vocab.toml` | `tests/connectors/test_osm.py::test_all_four_surveillance_keys_are_normalized_and_mobility_inferred`, `::test_semicolon_multivalue_is_split_as_an_unordered_set`, `::test_unallowlisted_surveillance_key_becomes_unmapped_value_plus_task`, `::test_unmapped_surveillance_type_value_records_a_task`, `::test_non_camera_surveillance_types_are_in_scope` |
+| SIG-INGEST-045 (vocabulary is versioned data, not code — §20 migrations) | `connectors.osm.vocab`/`vocab_version`; `data/osm_tag_vocab.toml` (`version`) | `tests/connectors/test_osm.py::test_vocabulary_is_versioned` |
+| Handles nodes, ways **and** relations (§23.2, SIG-GEO-003) | `connectors.osm.OSMConnector.extract`; `geometry_descriptor` | `tests/connectors/test_osm.py::test_handles_nodes_ways_relations_and_preserves_id_and_version` |
+
+## Keying and edit-detection (SIG-INGEST-045b / 045f)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-INGEST-045b/045f (key on `(osm_type, osm_id, version)`; id-space scoped subject; preserve id AND version so a later OSM edit is detectable — REQ-R1-01) | `connectors.osm` (`ElementRef`, `ElementVersionRef`, `element_version_ref`); `physical_asset_rows` (version preserved) | `tests/connectors/test_osm.py::test_subject_id_is_id_space_scoped`, `::test_handles_nodes_ways_relations_and_preserves_id_and_version` |
+
+## `first_observed` from element history (SIG-INGEST-045a / 045c)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-INGEST-045a (first_observed = version where surveillance tags first appeared, walked from history; never the creation timestamp) | `connectors.osm.first_observed_from_history`, `history_versions`, `OSMConnector.resolve_first_observed`/`_extract_history` | `tests/connectors/test_osm.py::test_first_observed_is_walked_from_history_not_creation`, `::test_first_observed_flows_through_the_pipeline`, `::test_first_observed_none_when_never_surveillance`, `::test_snapshot_asset_first_observed_is_never_the_creation_timestamp` |
+
+## Deletion via snapshot diffing (SIG-INGEST-045g)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-INGEST-045g (deletion detected by snapshot diff; *deleted from OSM* is a mapping event, kept distinct from *removed from street* — a world event) | `connectors.osm` (`snapshot_diff`, `SnapshotDiff.deletion_events`, `DELETED_FROM_OSM_PREDICATE` vs `REMOVED_FROM_STREET_PREDICATE`) | `tests/connectors/test_osm.py::test_deletion_is_detected_by_snapshot_diff_as_a_mapping_event`, `::test_snapshot_diff_does_not_treat_a_persisting_element_as_gone` |
+
+## Mapper-identity discard + Overpass etiquette (SIG-INGEST-045e / 045d/h/i/j)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-INGEST-045e (discard OSM `user`/`uid` at ingest, never store/expose; retain `changeset`) | `connectors.osm.strip_mapper_identity`; `OSMConnector.extract` (mapper keys dropped) | `tests/connectors/test_osm.py::test_strip_mapper_identity_drops_user_and_uid_keeps_changeset`, `::test_no_output_row_ever_carries_user_or_uid` |
+| SIG-INGEST-045d (descriptive contact-carrying UA; no spaces in tag-value filters) | shared `connectors.net.PoliteFetcher` UA; `connectors.osm.build_overpass_query` (client-side filtering) | `tests/connectors/test_osm.py::test_fetch_carries_a_descriptive_user_agent`, `::test_overpass_query_respects_etiquette` |
+| SIG-INGEST-045h (Overpass quotas; 429 → back off, 504 → shrink) | `connectors.osm.overpass_status_action`, `build_overpass_query` (`[timeout]/[maxsize]`), quota constants | `tests/connectors/test_osm.py::test_overpass_status_actions`, `::test_overpass_query_respects_etiquette` |
+| SIG-INGEST-045i (PBF for bulk, tiled Overpass for increments; no worldwide bbox-stitching) | `connectors.osm.acquisition_mode`, `build_overpass_query` (`BulkStitchingForbidden`) | `tests/connectors/test_osm.py::test_unbounded_query_is_refused_as_bulk_stitching` |
+| SIG-INGEST-045j (never another project's self-hosted Overpass without permission) | `connectors.osm.assert_own_or_public_instance` | `tests/connectors/test_osm.py::test_only_public_or_permitted_overpass_instances_are_used` |
+
+## ODbL landing + fixtures/canary (SIG-ONTO-007, SIG-LIC-006, SIG-PARSE-007/008)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-LIC-006 / SIG-ONTO-007 (output lands in the separate ODbL asset layer; an export mixing it with the CC-BY graph fails) | `connectors.osm` (`_stamp` → `ODBL_LICENSE`/`ODBL_COMPARTMENT`, `physical_asset_rows`); export gate `policy.licensing.compute_export_license` / `connectors.loader.assert_export_compatible` | `tests/connectors/test_osm.py::test_every_output_row_is_stamped_into_the_odbl_compartment`, `::test_export_mixing_osm_with_the_cc_by_graph_fails`, `::test_osm_sources_share_one_compatible_compartment` |
+| SIG-PARSE-007 (committed fixtures) | `tests/connectors/fixtures/osm/*.json` (Overpass snapshot, element history, deletion snapshot) | driven throughout `tests/connectors/test_osm.py` |
+| SIG-PARSE-008 (a canary alerts on structural drift) | `connectors.osm.canary_findings` | `tests/connectors/test_osm.py::test_canary_passes_on_the_committed_fixture`, `::test_canary_flags_structural_drift` |
+| SIG-INGEST-021 (connector self-registers on the plug-in seam; visible in the CLI) | `connectors.osm.OSMConnector` (`@register`); imported by `connectors.__init__` | `tests/connectors/test_osm.py::test_osm_connector_is_registered`; `tests/connectors/test_cli.py::test_list_connectors_includes_the_osm_connector` |
