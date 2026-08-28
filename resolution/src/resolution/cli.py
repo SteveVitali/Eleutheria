@@ -16,6 +16,13 @@ Sub-commands expose the identity substrate (§11.1-11.3, §14):
   print the tier-4/5 PROPOSED proposals with weights (SIG-IDENT-021/025).
 * ``block-size PATH KEYS`` — size an equijoin blocking rule over records and report
   whether it is accepted or rejected (SIG-IDENT-023).
+* ``review enqueue QUEUE PATH`` — score a records file with the matcher and enqueue the
+  tier-4/5 PROPOSED proposals into a JSON queue file (SIG-IDENT-020).
+* ``review list QUEUE`` — list the pending proposals with the confidence explanation
+  surfaced inline (SIG-IDENT-025).
+* ``review show QUEUE ID`` — the full confidence explanation for one proposal.
+* ``review decide QUEUE ID accept|reject --reviewer R`` — record a human decision,
+  logging model/prompt provenance for model-assisted items (SIG-IDENT-026).
 
 With no sub-command it prints help and exits 0 (the SIG-ENG-013 convention).
 """
@@ -24,6 +31,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 
 from . import __version__
 from .blocking import BlockingRule, BlockingRuleRejected, size_blocking_rule, validate_blocking_rule
@@ -33,6 +41,11 @@ from .identity import parse_agency_name
 from .normalize import NORMALIZE_RULESET_VERSION, normalize_org_name
 from .ori import OriValidationError, is_civil_ori, validate_ori
 from .probabilistic import ProbabilisticMatcher
+from .review_queue import (
+    ReviewQueue,
+    review_item_from_match,
+    surface_confidence_explanation,
+)
 from .slug import parse_slug
 from .temporal_identity import OrganizationRelationType
 
@@ -73,6 +86,27 @@ def build_parser() -> argparse.ArgumentParser:
     block_size = sub.add_parser("block-size", help="size an equijoin blocking rule")
     block_size.add_argument("path", help="a JSON file: an array of record objects")
     block_size.add_argument("keys", help="comma-separated equijoin key columns")
+
+    review = sub.add_parser("review", help="the internal review queue / curation surface")
+    review_sub = review.add_subparsers(dest="review_command")
+
+    enqueue = review_sub.add_parser("enqueue", help="score records and enqueue PROPOSED matches")
+    enqueue.add_argument("queue", help="the JSON queue file (created if absent)")
+    enqueue.add_argument("path", help="a JSON file: an array of record objects")
+
+    review_list = review_sub.add_parser("list", help="list pending proposals with confidence")
+    review_list.add_argument("queue", help="the JSON queue file")
+
+    show = review_sub.add_parser("show", help="show one proposal's confidence explanation")
+    show.add_argument("queue", help="the JSON queue file")
+    show.add_argument("item_id", help="the review item id")
+
+    decide = review_sub.add_parser("decide", help="record a human accept/reject decision")
+    decide.add_argument("queue", help="the JSON queue file")
+    decide.add_argument("item_id", help="the review item id")
+    decide.add_argument("decision", choices=("accept", "reject"))
+    decide.add_argument("--reviewer", required=True, help="the human reviewer")
+    decide.add_argument("--rationale", default=None, help="an optional note / review rationale")
     return parser
 
 
@@ -82,6 +116,73 @@ def _load_records(path: str) -> list[dict[str, object]]:
     if not isinstance(records, list):
         raise ValueError("records file must contain a JSON array of objects")
     return records
+
+
+def _load_queue(path: str) -> ReviewQueue:
+    if not os.path.exists(path):
+        return ReviewQueue()
+    with open(path, encoding="utf-8") as fh:
+        return ReviewQueue.from_dict(json.load(fh))
+
+
+def _save_queue(path: str, queue: ReviewQueue) -> None:
+    with open(path, "w", encoding="utf-8") as fh:
+        json.dump(queue.to_dict(), fh, indent=2, sort_keys=True)
+
+
+def _run_review(args: argparse.Namespace) -> int:
+    if args.review_command == "enqueue":
+        queue = _load_queue(args.queue)
+        matcher = ProbabilisticMatcher.from_data()
+        added = 0
+        for match in matcher.match(_load_records(args.path)):
+            item = review_item_from_match(match)
+            if queue.get(item.item_id) is None:
+                queue.enqueue(item)
+                added += 1
+        _save_queue(args.queue, queue)
+        print(
+            f"enqueued {added} PROPOSED proposal(s); {len(queue.pending())} pending in {args.queue}"
+        )
+        return 0
+    if args.review_command == "list":
+        queue = _load_queue(args.queue)
+        pending = queue.pending()
+        if not pending:
+            print("(no pending proposals)")
+            return 0
+        for item in pending:
+            print(f"[{item.item_id}]")
+            print(surface_confidence_explanation(item))
+        return 0
+    if args.review_command == "show":
+        queue = _load_queue(args.queue)
+        found = queue.get(args.item_id)
+        if found is None:
+            print(f"no such review item: {args.item_id}")
+            return 2
+        print(surface_confidence_explanation(found))
+        return 0
+    if args.review_command == "decide":
+        queue = _load_queue(args.queue)
+        try:
+            decision = queue.decide(
+                args.item_id,
+                args.decision,
+                reviewer=args.reviewer,
+                rationale=args.rationale,
+            )
+        except ValueError as exc:
+            print(str(exc))
+            return 2
+        _save_queue(args.queue, queue)
+        provenance = ""
+        if decision.model_id is not None:
+            provenance = f" (model {decision.model_id} prompt {decision.prompt_version})"
+        print(f"{decision.decision} by {decision.reviewer} at {decision.decided_at}{provenance}")
+        return 0
+    print("usage: sig-resolution review {enqueue,list,show,decide} ...")
+    return 2
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -159,6 +260,8 @@ def main(argv: list[str] | None = None) -> int:
             return 2
         print(f"accepted: {accepted} candidate comparisons")
         return 0
+    if args.command == "review":
+        return _run_review(args)
 
     parser.print_help()
     return 0

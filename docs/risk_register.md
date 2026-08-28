@@ -289,3 +289,32 @@ write path are P05.2 / P08.x.
 | RISK-P5-04 | The **live claim-table / `resolution`-table write path and the review queue** for PROPOSED proposals (§14.6, §27). The ER stage emits proposals, `same_as` relations, and an `ERRun` as in-memory value objects with `to_row()` shapes, not DB rows. | Connectors/ER are not DB-wired in P05.1 (ADR-026/029), and the review-queue persistence + curation UI are explicitly P05.2. Wiring here would pre-empt that ticket. | The append-only, versioned, provenance-carrying shapes a DB writer needs are established and tested now (`ERRun.to_row`, `OrganizationRelation.to_row`, `ProbabilisticMatch.match_evidence`); `run_entity_resolution` composes the full six-tier cascade end-to-end over library inputs. ADR-029 records the deferral and its revisit trigger. |
 | RISK-P5-05 | The gold set's **model m/u values are seeded by judgement, not EM-estimated**, and the committed gold set is a small illustrative one, not the national stratified sample. | A trained model would be non-deterministic and undefendable as a stated rule (§28.1, SIG-RECON-004); building the full national gold set is a data-collection effort beyond a code ticket. | The gold set's *construction* (stratified sampling, double adjudication + κ, three-value vocab, frozen holdout, per-label provenance) is built and tested (`resolution.gold_set`), and the auto-write demotion gate (SIG-IDENT-028) bounds the risk of a mis-specified model by demoting any tier whose holdout precision falls below the published floor. Refitting is a versioned model migration. |
 | RISK-P5-06 | The **adjudicators' human judgement itself** (the correctness of a `match` / `non_match` / `not_enough_information` label) and inter-adjudicator agreement in the wild. | Human adjudication is agentic, not a unit test (the same posture as SIG-PUB-008 in RISK-P0-05). | The *machinery* around it is deterministic and tested: the three-value vocabulary, the written adjudication rules as versioned data, Cohen's κ computation, double-adjudication consensus (disagreement yields no silent pick), and the immutable frozen holdout (`test_frozen_holdout_pair_cannot_be_relabelled`). |
+
+## Phase 5 — Probabilistic ER, review queue, curation UI (P05.2 — the review queue + the LLM boundary)
+
+P05.2 adds the internal review queue + curation contract (`resolution.review_queue`) and
+the model-assisted-extraction scaffolding (`parsing.extraction`) as library code + data +
+a CLI. It **partly retires RISK-P5-04**: the review-queue persistence and curation surface
+now exist (JSON-serialisable queue + `sig-resolution review` CLI); the live claim-table
+*write* path for accepted decisions remains P08.x. See ADR-030.
+
+### Risk retired
+
+| id | Risk | How it is retired |
+|---|---|---|
+| RISK-P5-07 | **Model output reaching the graph** — an LLM extraction or review rationale silently becoming a published claim. | Every model-extracted claim is constructed R6/`PROPOSED` with `writes_to_graph` always False, and the only sink is a `ReviewQueue` with no graph-write method; a decision on model output logs `model_id`+`prompt_version` (SIG-IDENT-026, SIG-LLM-002/005). Proven by `test_extracted_claim_is_r6_and_proposed_and_never_writes_to_graph`, `test_queue_has_no_graph_write_path`, `test_model_extraction_item_is_model_assisted_and_logs_provenance_on_decision`. |
+| RISK-P5-08 | **A hallucinated extraction** — a model-invented value with no basis in the source. | Every extracted claim carries a `SourceSpan` whose verbatim text must appear in the capture at its offsets, or the extraction is rejected (SIG-LLM-004 / SIG-PARSE-003) — hallucination is mechanically detectable. Proven by `test_span_text_not_in_the_capture_is_rejected`, `test_extract_rejects_the_whole_batch_when_one_span_is_unlocatable`. |
+| RISK-P5-09 | **Lowered evidentiary standard on model outage** — emitting a weaker claim to keep the pipeline moving when the model is down. | `run_extraction` queues the work (`queued=True`, no claims) rather than failing or degrading the standard (SIG-LLM-007). Proven by `test_unavailable_model_queues_the_work_and_emits_no_claim`. |
+
+### Partly retired
+
+| id | Update |
+|---|---|
+| RISK-P5-04 | **Review-queue persistence + curation UI delivered.** `resolution.review_queue.ReviewQueue` (append-only decisions, `to_dict`/`from_dict`) and the `sig-resolution review enqueue/list/show/decide` CLI realise the review queue and curation surface P05.1 deferred. The live claim-table **write** path that acts on an accepted decision is still P08.x, and the public web curation UI is still P15.x — both compensated by the append-only, provenance-carrying `ReviewItem`/`ReviewDecision` shapes tested here (`test_queue_round_trips_through_json_dict`). |
+
+### Scaffolded / bounded requirements (SIG-ENG-005)
+
+| id | Requirement | Why not fully closed now | Compensating control |
+|---|---|---|---|
+| RISK-P5-10 | The **actual model client** for model-assisted extraction (`SIG-LLM-001`). No vendor SDK or network call is wired; `run_extraction` drives an injected `ModelClient` protocol. | A concrete model integration (auth, batching, cost, the `ai-train=no` vs model-assisted-extraction distinction, SIG-LIC-004c) is an operator decision beyond this ticket, and wiring one would make the scaffolding non-deterministic and untestable offline. | The whole boundary is enforced on the *output* regardless of which model produced it — schema validation, span-in-capture, R6/`PROPOSED`, provenance logging, graceful degradation — so any client is a drop-in behind a tested guardrail (ADR-030 revisit trigger). |
+| RISK-P5-11 | The **gold-set accuracy cadence** for SIG-LLM-006 uses seeded per-type thresholds and an on-demand `measure_accuracy`, not a scheduled measurement against a national gold set. | The published cadence and the real per-extraction-type gold sets are a data/ops effort beyond a code ticket (mirrors RISK-P5-05 for the ER gold set). | The demotion *mechanism* is built and tested: a measured accuracy below the versioned floor flips the type to human-only deterministically (`evaluate_demotion`), and sampling is reproducible; formalising the cadence is a data migration + ops schedule. |

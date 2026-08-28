@@ -2480,6 +2480,7 @@ source = { editable = "resolution" }
 dependencies = [
     { name = "duckdb" },
     { name = "sig-db" },
+    { name = "sig-parsing" },
     { name = "sig-policy" },
     { name = "splink" },
 ]
@@ -2488,6 +2489,7 @@ dependencies = [
 requires-dist = [
     { name = "duckdb", specifier = ">=1.0.0" },
     { name = "sig-db", editable = "db" },
+    { name = "sig-parsing", editable = "parsing" },
     { name = "sig-policy", editable = "policy" },
     { name = "splink", specifier = ">=4.0.0" },
 ]

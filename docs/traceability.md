@@ -660,3 +660,58 @@ auto-write; the review-queue persistence and curation UI are P05.2.
 | Requirement | Where | Test |
 |---|---|---|
 | SIG-ENG-013 (the probabilistic stage is a plain CLI: `er-match` prints PROPOSED proposals with weights; `block-size` sizes an equijoin rule) | `resolution.cli` (`er-match`, `block-size` subcommands) | `tests/resolution/test_cli_er.py::test_er_match_prints_proposals`, `::test_block_size_accepts_a_selective_rule`, `::test_block_size_rejects_state_alone`, `::test_er_match_on_no_matches_is_graceful` |
+
+# P05.2 — Curation UI and review queue (the LLM boundary + the review path)
+
+P05.2 adds the internal review queue + curation contract (`resolution.review_queue`) and
+the model-assisted-extraction scaffolding — the LLM boundary (`parsing.extraction`) — as
+pure, tested library code plus versioned data and a plain CLI. Model output reaches only
+the review queue at R6/`PROPOSED`, never the graph; the curation UI is the CLI and the
+JSON-serialisable queue (the persistence P05.1 deferred); the web surface is P15.x. See
+ADR-030.
+
+## Model-assisted extraction scaffolding (SIG-LLM-001/002/003)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-LLM-001 (models MAY propose candidate structured claims / review rationales, for the human queue only) | `parsing.extraction` (`ExtractedClaim`, `run_extraction` → proposals; `resolution.review_queue.ReviewDecision.rationale` is a note, never authority) | `tests/parsing/test_extraction.py::test_available_model_returns_proposed_claims`; `tests/resolution/test_review_queue.py::test_model_extraction_item_is_model_assisted_and_logs_provenance_on_decision` |
+| SIG-LLM-002 (models MUST NOT write to the graph or be a self-standing claim; output only to the queue) | `parsing.extraction.ExtractedClaim.writes_to_graph` (always False); `resolution.review_queue.ReviewQueue` (no graph-write method; only `enqueue`/`decide`) | `tests/parsing/test_extraction.py::test_extracted_claim_is_r6_and_proposed_and_never_writes_to_graph`; `tests/resolution/test_review_queue.py::test_queue_has_no_graph_write_path` |
+| SIG-LLM-003 (every extraction records `model_id`, `prompt_version`, deterministic parameters; validates output against a schema) | `parsing.extraction` (`ModelExtraction`, `deterministic_parameters`, `validate_output`); `data/extraction_schema.toml` (`[deterministic_parameters]`, `[schema.*]`) | `tests/parsing/test_extraction.py::test_extraction_records_model_prompt_and_deterministic_parameters`, `::test_extraction_without_its_provenance_is_rejected`, `::test_schema_validation_rejects_a_missing_claim_field`, `::test_schema_validation_rejects_a_span_missing_its_locator` |
+
+## Source-span guardrail (SIG-LLM-004, SIG-PARSE-003)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-LLM-004 / SIG-PARSE-003 (every model-extracted claim carries a source span; a span not present in the capture is rejected) | `parsing.extraction` (`SourceSpan`, `validate_span`, `extract_claims`) | `tests/parsing/test_extraction.py::test_span_present_in_the_capture_is_accepted`, `::test_span_text_not_in_the_capture_is_rejected`, `::test_span_offsets_beyond_the_capture_are_rejected`, `::test_span_without_text_or_locator_is_rejected`, `::test_extract_rejects_the_whole_batch_when_one_span_is_unlocatable`; `tests/parsing/test_cli_extraction.py::test_extract_rejects_a_hallucinated_span` |
+
+## R6 + PROPOSED, never to the graph (SIG-LLM-005)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-LLM-005 (model-extracted claims are R6 and enter as `PROPOSED`) | `parsing.extraction.ExtractedClaim` (`source_reliability=R6`, `claim_status=PROPOSED`, both enforced in `__post_init__`) | `tests/parsing/test_extraction.py::test_extracted_claim_is_r6_and_proposed_and_never_writes_to_graph`, `::test_a_claim_at_a_lowered_standard_cannot_be_constructed` |
+
+## Sampling + gold-accuracy demotion (SIG-LLM-006)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-LLM-006 (per-extraction-type review sampling rate; gold-set accuracy measured; demotion to human-only on breach) | `parsing.extraction` (`ExtractionTypePolicy`, `load_policies`, `should_sample_for_review`, `measure_accuracy`, `evaluate_demotion`); `data/extraction_schema.toml` (`[[extraction_type]]`) | `tests/parsing/test_extraction.py::test_policies_are_loaded_per_extraction_type`, `::test_accuracy_below_the_floor_demotes_to_human_only`, `::test_accuracy_at_or_above_the_floor_does_not_demote`, `::test_a_passing_measurement_does_not_repromote_a_demoted_type`, `::test_measure_accuracy_counts_matches_against_gold`, `::test_sampling_is_deterministic_and_total_when_demoted`; `tests/parsing/test_cli_extraction.py::test_sampling_reports_demotion` |
+
+## Graceful degradation (SIG-LLM-007)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-LLM-007 (model unavailable → work queues, does not fail; no lowered-standard claim emitted) | `parsing.extraction` (`run_extraction`, `ExtractionOutcome`, `MODEL_UNAVAILABLE`, `ModelClient`) | `tests/parsing/test_extraction.py::test_unavailable_model_queues_the_work_and_emits_no_claim`, `::test_available_model_with_a_hallucinated_span_still_rejects` |
+
+## Review queue + confidence explanation (SIG-IDENT-025/026, §27)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-IDENT-025 (the per-comparison confidence explanation for each proposed match is surfaced in the review UI; a reviewer accepts/rejects) | `resolution.review_queue` (`review_item_from_match`, `ConfidenceFactor`, `surface_confidence_explanation`, `ReviewQueue.decide`); `resolution.cli` (`review list`/`show`/`decide`) | `tests/resolution/test_review_queue.py::test_match_item_carries_the_per_comparison_decomposition`, `::test_surface_confidence_explanation_shows_the_decomposition`, `::test_reviewer_can_accept_a_proposed_match`, `::test_reviewer_can_reject_a_proposed_match`; `tests/resolution/test_cli_review.py::test_enqueue_list_and_decide_flow` |
+| SIG-IDENT-026 (LLMs may generate review rationales but MUST NOT write to the graph; model id + prompt version logged with each human decision) | `resolution.review_queue` (`ReviewItem.model_assisted`, `ReviewQueue.decide` copies `model_id`/`prompt_version` onto the `ReviewDecision`; no graph-write path) | `tests/resolution/test_review_queue.py::test_model_extraction_item_is_model_assisted_and_logs_provenance_on_decision`, `::test_a_model_assisted_item_missing_provenance_cannot_be_decided`, `::test_a_deterministic_er_match_decision_is_not_model_assisted`, `::test_queue_has_no_graph_write_path` |
+| SIG-RECON-001 (the ER review path: decisions are append-only, an item is not re-decided) | `resolution.review_queue.ReviewQueue` (`decide` moves pending→decided, appends decision; refuses re-decide/duplicate) | `tests/resolution/test_review_queue.py::test_decisions_are_append_only_an_item_is_not_re_decided`, `::test_deciding_an_unknown_item_raises`, `::test_enqueue_rejects_a_duplicate_id`, `::test_queue_round_trips_through_json_dict` |
+
+## CLI (SIG-ENG-013)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ENG-013 (the LLM-extraction stage and the curation surface are plain CLIs: `sig-parsing extract`/`sampling`; `sig-resolution review enqueue`/`list`/`show`/`decide`) | `parsing.cli` (`extract`, `sampling`); `resolution.cli` (`review` subcommands) | `tests/parsing/test_cli_extraction.py::test_extract_prints_proposed_claims`, `::test_sampling_lists_policies`; `tests/resolution/test_cli_review.py::test_enqueue_list_and_decide_flow`, `::test_decide_on_a_missing_item_reports_and_exits_nonzero` |

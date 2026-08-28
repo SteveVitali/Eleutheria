@@ -1,0 +1,50 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# The model-assisted-extraction contract as versioned data (§25, ADR-030):
+#   * the deterministic decoding parameters a caller must pin (SIG-LLM-003);
+#   * the output schema every candidate item is validated against (SIG-LLM-003);
+#   * the per-extraction-type human-review sampling rate and the gold-set accuracy
+#     floor below which the type is demoted to human-only (SIG-LLM-006).
+# Changing any of these is a versioned migration (bump `version`), diffable like the
+# resolution ruleset — never a silent code change.
+
+version = "1"
+
+# The deterministic decoding parameters a model-assisted extraction MUST pin and
+# record (SIG-LLM-003). Greedy decoding (temperature 0) with a fixed seed makes an
+# extraction reproducible; a model MUST NOT produce a confidence value (SIG-LLM-002.4).
+[deterministic_parameters]
+temperature = 0.0
+top_p = 1.0
+seed = 0
+
+# The output schema model output is validated against before anything else runs
+# (SIG-LLM-003). Every candidate claim MUST carry these fields; its `span` MUST carry
+# the locator fields the evidence viewer resolves (SIG-PARSE-003).
+[schema.claim_field]
+required = ["subject", "predicate", "value", "span"]
+
+[schema.span]
+required = ["text", "start", "end", "locator"]
+
+# Per-extraction-type human-review sampling + gold-accuracy demotion (SIG-LLM-006).
+# `review_sample_rate` is the fraction of this type's proposals sampled for review;
+# `accuracy_threshold` is the gold-set accuracy floor — measured accuracy below it
+# demotes the type to human-only (every item routed to a human, the model no longer
+# trusted for it).
+[[extraction_type]]
+name = "org_alias"
+review_sample_rate = 0.10
+accuracy_threshold = 0.90
+
+[[extraction_type]]
+name = "reason_code"
+review_sample_rate = 0.20
+accuracy_threshold = 0.85
+
+[[extraction_type]]
+name = "structured_claim"
+review_sample_rate = 0.25
+accuracy_threshold = 0.90
