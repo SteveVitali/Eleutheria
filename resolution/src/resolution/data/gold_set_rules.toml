@@ -1,0 +1,68 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# The gold-standard label set's construction rules (SIG-IDENT-027), versioned data.
+# The set is built by STRATIFIED sampling of blocked candidate pairs across
+# match-weight bands (not a uniform sample, which would drown in easy high-weight
+# matches and never probe the decision boundary), then DOUBLE-adjudicated against
+# the written rules below, with Cohen's kappa reported as the inter-adjudicator
+# agreement. A frozen holdout fraction is set aside and never used to tune the model.
+
+version = "1"
+
+# The three-value label vocabulary (SIG-IDENT-027). A binary match/non-match forces
+# adjudicators to guess on genuinely ambiguous pairs; the third value records honest
+# uncertainty instead of manufacturing a label.
+labels = ["match", "non_match", "not_enough_information"]
+
+# Fraction of the adjudicated set frozen as the holdout (SIG-IDENT-028 evaluates on
+# it). Frozen = immutable and never used for model tuning.
+holdout_fraction = 0.3
+
+# Target number of pairs sampled from each weight band.
+sample_per_band = 20
+
+# The written adjudication rules (SIG-IDENT-027). Deliberately prose: an adjudicator
+# reads these, not code. Defined before the [[band]] tables so it is a root-level key.
+adjudication_rules = """
+Adjudicate each candidate pair of organisations into exactly one of three labels.
+
+- match: the two records denote the SAME real-world organisation. Corroborate with a
+  shared canonical identifier (ORI/GEOID/LEI/UEI), a shared official government
+  domain, or an authoritative source that names both spellings for one body. A name
+  near-duplicate ALONE is not sufficient.
+- non_match: the two records denote DIFFERENT organisations, even if their names are
+  similar (e.g. two different "Springfield Police Department"s in different states, or
+  a municipality vs. its police department).
+- not_enough_information: the available evidence cannot decide the pair. Do NOT guess;
+  this label is the correct answer for a genuinely ambiguous pair.
+
+Acronyms are resolved by the acronym table, never fuzzy-matched (SIG-IDENT-022). A
+rename is not a merge of two entities (SIG-IDENT-017). When in doubt between match and
+non_match, choose not_enough_information.
+"""
+
+# Match-weight bands, most-confident first. A scored pair is assigned to the first
+# band whose `min_weight` it meets; the final band's `min_weight` is the floor of the
+# scored space. Sampling draws from every band so the gold set covers the whole weight
+# range, especially the low/ambiguous bands around the decision threshold.
+[[band]]
+name = "very_high"
+min_weight = 8.0
+
+[[band]]
+name = "high"
+min_weight = 3.5
+
+[[band]]
+name = "boundary"
+min_weight = 0.0
+
+[[band]]
+name = "low"
+min_weight = -3.0
+
+[[band]]
+name = "very_low"
+min_weight = -1000000.0

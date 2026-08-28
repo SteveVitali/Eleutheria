@@ -257,3 +257,35 @@ CI.
 | RISK-P4-08 | Resolver-side **supersession / temporal qualification** of an Atlas row by later evidence (§23.3, OL-2D-AT-06). The connector does not itself decide when a later claim supersedes an Atlas row. | Reconciliation/supersession is the resolver's job (P08.x), explicitly out of scope for a connector ticket; deciding it here would duplicate and pre-empt that layer. | Every Atlas row is **append-only** and carries the full provenance a resolver needs (source attribution, Atlas vocabulary version, candidate agency identifier, upstream links), and the connector marks nothing "current"/authoritative — so supersession is a pure resolver decision over existing data, tested by `test_rows_are_append_only_with_no_current_value_flag`. ADR-028 records the deferral. |
 | RISK-P4-09 | An **exhaustive** Atlas category → family map. Only the five crosswalk-seeded families (ALPR, face recognition, gunshot detection, UAS, camera-federation hub) are mapped; the real Atlas taxonomy carries more. | The authoritative external crosswalk (`ontology/vocab/crosswalks.yaml`) seeds exactly these; extending the map is a reviewed §20 data migration, not code, and guessing the remainder would fabricate mappings (SIG-STORE-040). | An unmapped category is recorded as an unmapped category **+ a research task** (never a guessed family), tested by `test_unmapped_category_files_a_research_task_and_writes_no_deployment`; the map grows by additive data migration exactly as the osm vocabulary does. |
 | RISK-P4-10 | Live Atlas fetching: a real HTTP `Transport` for `PoliteFetcher` and the OCFL `CaptureStore` adapter (carried from RISK-P4-04/05/06). | The framework is not live-wired yet (ADR-026); this ticket owns the source-specific stages, all exercised over committed fixtures (SIG-PARSE-007). | The `Transport` protocol + `CaptureStore` seam are stable; the connector inherits gate/isolation/lineage/replay/disappearance unchanged and is driven end-to-end over committed CSV fixtures, so a real transport is a drop-in (ADR-026/028 revisit trigger). |
+
+## Phase 5 — Probabilistic ER, review queue, curation UI (P05.1 — the matcher + §14.7 quality gates)
+
+P05.1 adds the probabilistic top of the resolution cascade (Splink 4 on DuckDB),
+sized blocking, the gold set + frozen holdout, the auto-write demotion gate, and
+cluster-shape alerts. Per SIG-IDENT-030 / SIG-RECON-003 no network-analytics surface
+ships before these gates pass. As with the connectors (ADR-026/027/028), the stage is
+realised at the layers that exist today — pure, tested library code plus versioned
+data — because the review-queue persistence, the curation UI, and the claim-table
+write path are P05.2 / P08.x.
+
+### Risk retired
+
+| id | Risk | How it is retired |
+|---|---|---|
+| RISK-P5-01 | **Uncertain matches writing themselves** (the Phase-5 headline risk, §52): a probabilistic or weak-signal match silently merging two organisations. | Tiers 4 and 5 return `ProbabilisticMatch` objects with `disposition="review"` / `claim_status="PROPOSED"` and no auto-write path exists on them (SIG-IDENT-020); tier 6 returns nothing at all. Proven by `test_every_probabilistic_match_is_proposed_never_auto_write` and `test_tier6_below_threshold_persists_no_record`. |
+| RISK-P5-02 | **An unsized blocking rule** degrading into an all-pairs scan, or a low-cardinality rule (state/suffix alone) that blocks nothing. | Every blocking rule is sized against a documented ceiling and rejected if oversized; sole low-cardinality keys are refused (SIG-IDENT-023). The matcher sizes before it scores. Proven by `test_oversized_rule_is_rejected`, `test_sole_low_cardinality_key_is_prohibited`, `test_oversized_blocking_aborts_the_match`. |
+| RISK-P5-03 | **An unexplainable merge** — a match weight with no decomposition a journalist could defend. | The model is fully-specified m/u data, so every match carries its weight and per-comparison Bayes-factor decomposition (SIG-IDENT-025), deterministic run to run. Proven by `test_every_match_records_tier_evidence_weight_and_decomposition` and `test_matching_is_deterministic`. |
+
+### Deviations recorded as ADRs (SIG-ENG-031)
+
+| id | Deviation | ADR |
+|---|---|---|
+| — | Splink 4 is driven as a **fully-specified, deterministic** model (per-level m/u in versioned `data/splink_model.toml`) rather than an EM-trained one, so the match weight and its decomposition are reproducible and explainable (§28.1); tiers 4–5, the gold set, the quality gates, the ER run record, and the `same_as`/stability wiring are realised as pure library code + data because connectors/ER are not DB-wired yet; the auto-write-demotion floor is published with the model. numpy/pandas/splink stubs are excluded from mypy via `follow_imports = "skip"` (their stubs don't type-check under the 3.11 target). | ADR-029 |
+
+### Scaffolded / bounded requirements (SIG-ENG-005)
+
+| id | Requirement | Why not fully closed now | Compensating control |
+|---|---|---|---|
+| RISK-P5-04 | The **live claim-table / `resolution`-table write path and the review queue** for PROPOSED proposals (§14.6, §27). The ER stage emits proposals, `same_as` relations, and an `ERRun` as in-memory value objects with `to_row()` shapes, not DB rows. | Connectors/ER are not DB-wired in P05.1 (ADR-026/029), and the review-queue persistence + curation UI are explicitly P05.2. Wiring here would pre-empt that ticket. | The append-only, versioned, provenance-carrying shapes a DB writer needs are established and tested now (`ERRun.to_row`, `OrganizationRelation.to_row`, `ProbabilisticMatch.match_evidence`); `run_entity_resolution` composes the full six-tier cascade end-to-end over library inputs. ADR-029 records the deferral and its revisit trigger. |
+| RISK-P5-05 | The gold set's **model m/u values are seeded by judgement, not EM-estimated**, and the committed gold set is a small illustrative one, not the national stratified sample. | A trained model would be non-deterministic and undefendable as a stated rule (§28.1, SIG-RECON-004); building the full national gold set is a data-collection effort beyond a code ticket. | The gold set's *construction* (stratified sampling, double adjudication + κ, three-value vocab, frozen holdout, per-label provenance) is built and tested (`resolution.gold_set`), and the auto-write demotion gate (SIG-IDENT-028) bounds the risk of a mis-specified model by demoting any tier whose holdout precision falls below the published floor. Refitting is a versioned model migration. |
+| RISK-P5-06 | The **adjudicators' human judgement itself** (the correctness of a `match` / `non_match` / `not_enough_information` label) and inter-adjudicator agreement in the wild. | Human adjudication is agentic, not a unit test (the same posture as SIG-PUB-008 in RISK-P0-05). | The *machinery* around it is deterministic and tested: the three-value vocabulary, the written adjudication rules as versioned data, Cohen's κ computation, double-adjudication consensus (disagreement yields no silent pick), and the immutable frozen holdout (`test_frozen_holdout_pair_cannot_be_relabelled`). |

@@ -71,6 +71,16 @@ ignore_missing_imports = true
 module = ["boto3", "boto3.*", "botocore", "botocore.*", "playwright.*", "blake3"]
 ignore_missing_imports = true
 
+# The probabilistic ER matcher (P05.1) drives Splink 4 on DuckDB (SIG-IDENT-021) with
+# pandas/numpy/igraph in its transitive closure. These ship py.typed markers, but their
+# stubs don't type-check cleanly under this project's 3.11 target (numpy's stubs use
+# 3.12-only `type` statement syntax), so `follow_imports = "skip"` treats them as Any
+# rather than parsing them. Our own ER code stays fully type-checked.
+[[tool.mypy.overrides]]
+module = ["splink", "splink.*", "duckdb", "duckdb.*", "pandas", "pandas.*", "numpy", "numpy.*", "igraph", "igraph.*"]
+ignore_missing_imports = true
+follow_imports = "skip"
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["tests"]

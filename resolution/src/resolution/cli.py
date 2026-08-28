@@ -12,6 +12,10 @@ Sub-commands expose the identity substrate (§11.1-11.3, §14):
 * ``ori VALUE``         — validate an ORI9 and report the civil-ORI flag (SIG-IDENT-002/003).
 * ``scheme CLASS``      — the canonical identifier scheme for a class (SIG-IDENT-001).
 * ``slug SLUG``         — parse a vendor-portal slug into a name hypothesis (SIG-IDENT-015).
+* ``er-match PATH``     — score records (a JSON array) with the probabilistic matcher and
+  print the tier-4/5 PROPOSED proposals with weights (SIG-IDENT-021/025).
+* ``block-size PATH KEYS`` — size an equijoin blocking rule over records and report
+  whether it is accepted or rejected (SIG-IDENT-023).
 
 With no sub-command it prints help and exits 0 (the SIG-ENG-013 convention).
 """
@@ -19,13 +23,16 @@ With no sub-command it prints help and exits 0 (the SIG-ENG-013 convention).
 from __future__ import annotations
 
 import argparse
+import json
 
 from . import __version__
+from .blocking import BlockingRule, BlockingRuleRejected, size_blocking_rule, validate_blocking_rule
 from .crosswalk import canonical_scheme_for
 from .geoid import GeoidValidationError, validate_geoid
 from .identity import parse_agency_name
 from .normalize import NORMALIZE_RULESET_VERSION, normalize_org_name
 from .ori import OriValidationError, is_civil_ori, validate_ori
+from .probabilistic import ProbabilisticMatcher
 from .slug import parse_slug
 from .temporal_identity import OrganizationRelationType
 
@@ -59,7 +66,22 @@ def build_parser() -> argparse.ArgumentParser:
 
     slug = sub.add_parser("slug", help="parse a vendor-portal slug into a name hypothesis")
     slug.add_argument("slug")
+
+    er_match = sub.add_parser("er-match", help="score records and print PROPOSED proposals")
+    er_match.add_argument("path", help="a JSON file: an array of record objects")
+
+    block_size = sub.add_parser("block-size", help="size an equijoin blocking rule")
+    block_size.add_argument("path", help="a JSON file: an array of record objects")
+    block_size.add_argument("keys", help="comma-separated equijoin key columns")
     return parser
+
+
+def _load_records(path: str) -> list[dict[str, object]]:
+    with open(path, encoding="utf-8") as fh:
+        records = json.load(fh)
+    if not isinstance(records, list):
+        raise ValueError("records file must contain a JSON array of objects")
+    return records
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -112,6 +134,30 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         print(f"name hypothesis: {hypothesis.name_hypothesis}")
         print(f"(grammar v{hypothesis.grammar_version}; hypothesis only, not an identity)")
+        return 0
+    if args.command == "er-match":
+        matcher = ProbabilisticMatcher.from_data()
+        proposals = matcher.match(_load_records(args.path))
+        if not proposals:
+            print("(no tier-4/5 proposals; every scored pair fell to tier 6)")
+            return 0
+        for m in proposals:
+            print(
+                f"tier {m.tier_label}  weight {m.match_weight:+.2f}  "
+                f"p={m.match_probability:.3f}  {m.left} ~ {m.right}  [{m.disposition}]"
+            )
+            for c in m.decomposition:
+                print(f"    {c.column}: bf={c.bayes_factor:.3f} [{c.label}]")
+        return 0
+    if args.command == "block-size":
+        rule = BlockingRule("cli", tuple(k.strip() for k in args.keys.split(",") if k.strip()))
+        records = _load_records(args.path)
+        try:
+            accepted = validate_blocking_rule(records, rule)
+        except BlockingRuleRejected as exc:
+            print(f"rejected ({size_blocking_rule(records, rule)} comparisons): {exc}")
+            return 2
+        print(f"accepted: {accepted} candidate comparisons")
         return 0
 
     parser.print_help()

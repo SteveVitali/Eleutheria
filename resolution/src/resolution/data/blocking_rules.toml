@@ -1,0 +1,46 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# Sized blocking configuration for the probabilistic matcher (SIG-IDENT-023/024),
+# versioned data (change = bump `version`). `comparison_ceiling` is the documented
+# maximum number of candidate comparisons a single blocking rule may generate over
+# the record set before it is rejected as unsized. `prohibited_sole_keys` are the
+# low-cardinality columns a rule may never block on *alone* (suffix alone or state
+# alone pairs almost everything and is not real blocking).
+
+version = "1"
+
+# A blocking rule generating more than this many candidate comparisons is rejected
+# (SIG-IDENT-023). One million pairs is comfortably scorable by Splink/DuckDB on a
+# laptop while still catching the accidental all-pairs rule.
+comparison_ceiling = 1000000
+
+# Suffix alone and state alone are prohibited (SIG-IDENT-023). The keys below name
+# every column that is a synonym for one of those two low-cardinality axes.
+prohibited_sole_keys = [
+  "state",
+  "suffix",
+  "canonical_suffix",
+]
+
+# The default blocking rules. Each pairs a genuinely selective key (a name token,
+# the normalized name, a canonical identifier) — never a bare suffix/state — and is
+# still sized at run time against the ceiling above.
+[[rule]]
+rule_id = "state_and_name_first_token"
+keys = ["state", "name_first_token"]
+method = "equijoin"
+description = "same state AND same first normalized-name token — the workhorse block"
+
+[[rule]]
+rule_id = "normalized_name_exact"
+keys = ["normalized_name"]
+method = "equijoin"
+description = "identical normalized name in any state (catches cross-state duplicates)"
+
+[[rule]]
+rule_id = "name_trigram"
+keys = ["normalized_name"]
+method = "trigram"
+description = "shared name trigram — candidate search only, never a decision score (SIG-IDENT-024)"

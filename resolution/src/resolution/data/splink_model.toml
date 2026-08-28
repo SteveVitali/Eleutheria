@@ -1,0 +1,110 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# The Splink 4 probabilistic-matching model (SIG-IDENT-021), as **versioned data,
+# not code** — diffable and separately attributable from the resolver (the §28.1
+# principle applied to the probabilistic tier). Every comparison level carries its
+# own m and u probability, so the Fellegi–Sunter match weight and its per-comparison
+# Bayes-factor decomposition (SIG-IDENT-025) are FULLY SPECIFIED and deterministic:
+# no expectation-maximisation training runs at match time, and the same input always
+# produces the same weight. Change the model = bump `version`.
+#
+# match weight = log2(prior_odds) + Σ log2(bayes_factor_i), where bayes_factor_i =
+# m_i / u_i for the comparison level that fired on column i. Trigram similarity is
+# deliberately absent from every `sql_condition`: it may only power candidate search
+# (blocking), never a decision score (SIG-IDENT-024).
+
+version = "1"
+
+# The prior: two organisations drawn at random from the blocked space match this
+# often. Small, because most blocked candidate pairs are still non-matches.
+probability_two_random_records_match = 0.001
+
+[thresholds]
+# Match-weight band boundaries that map a scored pair onto a cascade tier
+# (SIG-IDENT-020). A pair with weight >= `tier4_review` is tier 4 (a probabilistic
+# match above the review threshold); a weight in [`tier5_weak`, `tier4_review`) is
+# tier 5 (a weak-signal candidate); a weight below `tier5_weak` is tier 6 — discarded
+# with NO per-pair record. Both tier 4 and tier 5 are PROPOSED → review, never
+# auto-write.
+tier4_review = 3.5
+tier5_weak = -3.0
+
+# The published holdout-precision floor for an auto-writing tier. If a run's measured
+# holdout precision for an auto-write tier (0–3) falls below this, that tier is
+# demoted to review (SIG-IDENT-028). Lives with the model so the gate and the model
+# are versioned together.
+auto_write_precision_threshold = 0.97
+
+# The equijoin blocking rules Splink materialises predictions over. These mirror the
+# selective (never suffix-alone / state-alone) rules in blocking_rules.toml and are
+# sized against the ceiling before the matcher runs (SIG-IDENT-023).
+[[blocking_rule]]
+columns = ["state", "name_first_token"]
+
+[[blocking_rule]]
+columns = ["normalized_name"]
+
+# --- Comparisons (Fellegi–Sunter), most-specific level first ------------------
+
+[[comparison]]
+output_column_name = "normalized_name"
+  [[comparison.level]]
+  sql_condition = '"normalized_name_l" IS NULL OR "normalized_name_r" IS NULL'
+  label = "name null"
+  is_null_level = true
+  [[comparison.level]]
+  sql_condition = '"normalized_name_l" = "normalized_name_r"'
+  label = "name exact"
+  m = 0.55
+  u = 0.0001
+  [[comparison.level]]
+  sql_condition = 'jaro_winkler_similarity("normalized_name_l", "normalized_name_r") >= 0.92'
+  label = "name jaro-winkler >= 0.92"
+  m = 0.30
+  u = 0.003
+  [[comparison.level]]
+  sql_condition = 'jaro_winkler_similarity("normalized_name_l", "normalized_name_r") >= 0.85'
+  label = "name jaro-winkler >= 0.85"
+  m = 0.10
+  u = 0.02
+  [[comparison.level]]
+  sql_condition = "ELSE"
+  label = "name all other"
+  m = 0.05
+  u = 0.9769
+
+[[comparison]]
+output_column_name = "state"
+  [[comparison.level]]
+  sql_condition = '"state_l" IS NULL OR "state_r" IS NULL'
+  label = "state null"
+  is_null_level = true
+  [[comparison.level]]
+  sql_condition = '"state_l" = "state_r"'
+  label = "state exact"
+  m = 0.98
+  u = 0.03
+  [[comparison.level]]
+  sql_condition = "ELSE"
+  label = "state all other"
+  m = 0.02
+  u = 0.97
+
+[[comparison]]
+output_column_name = "organization_class"
+  [[comparison.level]]
+  sql_condition = '"organization_class_l" IS NULL OR "organization_class_r" IS NULL'
+  label = "class null"
+  is_null_level = true
+  [[comparison.level]]
+  sql_condition = '"organization_class_l" = "organization_class_r"'
+  label = "class exact"
+  m = 0.95
+  u = 0.25
+  [[comparison.level]]
+  sql_condition = "ELSE"
+  label = "class all other"
+  m = 0.05
+  u = 0.75

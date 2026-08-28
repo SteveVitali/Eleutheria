@@ -5,8 +5,10 @@
 SIG-IDENT-020/025).
 
 The full cascade is six tiers; this module owns the **deterministic, auto-writing**
-ones (0–3). Tiers 4–5 (Splink probabilistic matching + the review queue) and tier 6
-(discard) belong to P05.1 and are deliberately not implemented here.
+ones (0–3). Tiers 4–5 (Splink probabilistic matching, each PROPOSED → review) and
+tier 6 (discard, no per-pair record) live in :mod:`resolution.probabilistic`; the
+six-tier composition — deterministic auto-writes first, probabilistic proposals for
+the fall-through pairs — is driven by the ER-run stage in :mod:`resolution.er_run`.
 
 | Tier | Rule | Disposition |
 |------|------|-------------|
@@ -253,7 +255,7 @@ def resolve(
     Returns the first tier's :class:`MatchResult` that fires (each auto-write, each
     carrying ``match_tier`` + ``match_evidence``), or ``None`` if no deterministic
     tier matches — in which case the pair falls through to the probabilistic tiers
-    4–5 (the review queue), which are out of scope here (P05.1).
+    4–5 (:mod:`resolution.probabilistic`), which propose it for review.
     """
     if a.entity_id == b.entity_id:
         raise ValueError("resolve() compares two distinct candidates")
