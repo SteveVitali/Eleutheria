@@ -28,8 +28,11 @@ Source-specific connectors plug into the framework and self-register on import
 (SIG-INGEST-021): :mod:`connectors.osm` is the first (P04.2, §23.2),
 :mod:`connectors.atlas` the second (P04.3, §23.3), and :mod:`connectors.records`
 the third (P07.2, §23.5 — MuckRock/NextRequest/DocumentCloud as targeted-lookup
-API clients). Importing the package imports the connectors so they appear in the
-registry (``connectors.stages.registered_connectors``) and the CLI.
+API clients), and :mod:`connectors.procurement` the fourth (P07.3, §23.6 —
+cooperative purchasing vehicles, USAspending sub-awards, and agenda platforms,
+writing ``Contract``/``FundingInstrument`` and owning the published agenda-platform
+tenant registry). Importing the package imports the connectors so they appear in
+the registry (``connectors.stages.registered_connectors``) and the CLI.
 """
 
 # Importing the source-specific connectors registers them (SIG-INGEST-021). Kept
@@ -37,6 +40,7 @@ registry (``connectors.stages.registered_connectors``) and the CLI.
 # imported for the registration side effect only.
 from . import atlas as atlas  # noqa: E402,F401
 from . import osm as osm  # noqa: E402,F401
+from . import procurement as procurement  # noqa: E402,F401
 from . import records as records  # noqa: E402,F401
 
 __version__ = "0.0.0"

@@ -183,6 +183,7 @@
 --     * Slot: id Description: The entity's stable minted identity (L2 identity only, §8.2).
 -- # Class: EvidenceArtifact Description: A specific artifact published by a Source (§10.2).
 --     * Slot: published_by
+--     * Slot: artifact_type Description: The genre of the artifact (§10.3.2, SIG-INGEST-047).
 --     * Slot: integrity
 --     * Slot: id Description: The entity's stable minted identity (L2 identity only, §8.2).
 -- # Class: EvidenceCapture Description: A content-addressed capture of an artifact at a time (§10.2, L0).
@@ -701,6 +702,7 @@ CREATE INDEX "ix_Organization_id" ON "Organization" (id);
 
 CREATE TABLE "EvidenceArtifact" (
 	published_by TEXT,
+	artifact_type VARCHAR(29),
 	integrity VARCHAR(2),
 	id TEXT NOT NULL,
 	PRIMARY KEY (id),

@@ -612,6 +612,9 @@ classes:
     attributes:
       published_by:
         range: Source
+      artifact_type:
+        range: ArtifactType
+        description: The genre of the artifact (§10.3.2, SIG-INGEST-047).
       integrity:
         range: ArtifactIntegrity
   EvidenceCapture:

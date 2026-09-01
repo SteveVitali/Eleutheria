@@ -331,6 +331,7 @@ STRUCTURAL_ENUMS: dict[str, tuple[str, ...]] = {
         "SourceReliability",
         "ClaimDirectness",
         "ArtifactIntegrity",
+        "ArtifactType",
         "Currency",
         "WeightClass",
         "EvidenceRole",

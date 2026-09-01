@@ -1,0 +1,214 @@
+# SPDX-License-Identifier: Apache-2.0
+# The versioned `procurement` connector vocabulary (§23.6, §11.11, §11.12, P07.3).
+# This table is DATA, not code (SIG-ENG-001): the Contract / FundingInstrument
+# predicate surface, the acquisition-channel and funding-instrument vocabularies,
+# the cooperative-vehicle source set, the agenda-platform set, and the USAspending
+# sub-award facts are data rows reviewed on their own.
+# Changes after P07.3 are VERSIONED MIGRATIONS (§20), not edits — bump
+# `vocab_version` and add the change, never silently rewrite a row, so a
+# re-extraction under a new vocabulary is a new interpretation, never a
+# destructive overwrite (SIG-INGEST-017).
+#
+# The acquisition-channel and funding-instrument value sets mirror the frozen
+# ontology enums AcquisitionChannel / FundingInstrumentType and the ProcurementState
+# lifecycle track (ontology/schema/common.yaml, §11.11/§11.12/§13.4); they are
+# duplicated here as the connector's runtime allowlist and a test asserts they stay
+# in lock-step with the ontology (drift is a failed test).
+#
+# NOTE ON TOML ORDERING: every top-level key MUST appear ABOVE the first [table]
+# header — otherwise TOML nests it under that table. The [sources] and per-source
+# tables therefore come last.
+
+# The connector's own vocabulary version, stamped onto every run (§20).
+vocab_version = "2026.09.01"
+
+# The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
+# `procurement` connector may write ONLY the Contract (§11.11) and FundingInstrument
+# (§11.12) predicate surfaces plus the dated lifecycle transition. Writing anything
+# else — a device count, a deployment, a records request, a parsed-document claim —
+# is a schema error, the D6 admissibility filter enforced at ingest (§10.5).
+# `contract` and `funding_instrument` are the entity assertions themselves; the
+# rest are their predicates.
+predicate_allowlist = [
+  "contract",
+  "buyer",
+  "seller",
+  "amount",
+  "currency",
+  "signed_date",
+  "start_date",
+  "end_date",
+  "renewal_options",
+  "products",
+  "quantities",
+  "document",
+  "acquisition_channel",
+  "parent_cooperative_contract",
+  "amends_contract",
+  "lifecycle_transition",
+  "external_id",
+  "funding_instrument",
+  "funder",
+  "recipient",
+  "instrument_type",
+  "program_name",
+  "award_date",
+  "period",
+  "conditions",
+  "federal_award_id",
+]
+
+# Predicate GENRES the procurement connector MUST NOT write (scope-creep guard,
+# §23.6 / spec "Out of scope"): the device/deployment/config write-set owned by
+# other tickets, the records-request surface (P07.2), and parsed-document claims
+# (the parser is P07.1's; this connector CALLS it to classify a captured contract
+# document, it does not run a layer engine). Named here so the refusal is data, not
+# a magic string — the allowlist above is authoritative; this documents the
+# out-of-scope write-set explicitly.
+forbidden_predicate_genres = [
+  "deployment_exists",
+  "device_count",
+  "camera_count",
+  "records_request",
+  "response_status",
+  "parsed_document_claim",
+  "configuration_state",
+]
+
+# The Contract acquisition-channel vocabulary (§11.11, AcquisitionChannel). A
+# REQUIRED model element, not a convenience (SIG-ONTO-032).
+acquisition_channels = [
+  "direct_award",
+  "competitive_rfp",
+  "sole_source",
+  "cooperative_piggyback",
+  "bundle_inclusion",
+  "free_trial",
+  "donation",
+  "grant_funded",
+]
+
+# The acquisition channel a piggyback contract carries. When a contract is on this
+# channel it MUST set parent_cooperative_contract (the ridden master award) —
+# SIG-ONTO-032: an agency riding a master award often files NO local RFP, and a
+# model assuming a local competition would wrongly conclude no procurement evidence
+# exists. Enforced in code (Contract.__post_init__), named here as data.
+cooperative_channel = "cooperative_piggyback"
+
+# The FundingInstrument instrument-type vocabulary (§11.12, FundingInstrumentType).
+# Funder != recipient != purchaser: a BID/HOA/foundation/federal program can fund
+# surveillance an agency operates, a pattern CCOPS ordinances (which regulate agency
+# acquisition) miss (SIG-ONTO-033).
+funding_instrument_types = [
+  "federal_grant",
+  "state_grant",
+  "private_donation",
+  "bid_assessment",
+  "hoa_assessment",
+  "foundation_grant",
+  "asset_forfeiture",
+  "vendor_provided_free",
+]
+
+# The procurement lifecycle-track states (§13.4, ProcurementState). A dated
+# lifecycle transition is a (state, date) pair the connector may write.
+procurement_states = [
+  "unknown",
+  "proposed",
+  "rfp_issued",
+  "awarded",
+  "contracted",
+  "cooperative_piggyback",
+  "bundle_included",
+  "free_trial",
+  "donated",
+  "third_party_funded",
+  "grant_funded_pending",
+  "renewed",
+  "nonrenewed",
+  "canceled",
+  "rejected",
+]
+
+# Federal grant PROGRAM names that name local surveillance purchases in USAspending
+# sub-award data (§11.12 program_name, SIG-ONTO-033). A program_name is a literal,
+# recorded verbatim; this list documents the ones R4 verified route to LPR/ALPR and
+# camera purchases by sheriffs and cities. NOT a closed vocabulary — a program not
+# listed is still recorded from its raw value.
+federal_programs = [
+  "Byrne JAG",
+  "Edward Byrne Memorial Justice Assistance Grant",
+  "UASI",
+  "Urban Area Security Initiative",
+  "COPS",
+  "Operation Stonegarden",
+  "HIDTA",
+  "Homeland Security Grant Program",
+  "State Homeland Security Program",
+]
+
+# The cooperative purchasing vehicles (§22.3, §11.11). A contract sourced from one
+# of these is a piggyback: acquisition_channel = cooperative_piggyback and it MUST
+# link the master award via parent_cooperative_contract (SIG-ONTO-032). Values are
+# registry source ids (data/sources.toml).
+cooperative_vehicles = [
+  "sourcewell",
+  "omnia_partners",
+  "naspo_valuepoint",
+  "buyboard",
+  "tips_usa",
+  "hgacbuy",
+  "equalis_group",
+  "gsa",
+]
+
+# The agenda-platform registry source ids (§22.3). Agenda platforms are per-tenant
+# APIs; the municipality->platform directory is the published tenant registry in
+# data/agenda_tenants.toml, which the connector reads its targets from.
+agenda_platforms = [
+  "legistar",
+  "primegov",
+  "civicclerk",
+  "civicplus",
+]
+
+# The artifact_type genres this connector may stamp on a captured procurement
+# document (§10.3.2, SIG-INGEST-047). Mirrors the frozen ArtifactType ontology enum;
+# a test asserts these are members of it.
+artifact_types = [
+  "contract",
+  "grant_award",
+  "budget",
+  "state_auditor_survey",
+  "warrant",
+  "procurement_aggregator_record",
+]
+
+# The registry source ids the `procurement` connector runs against, by connector
+# role key (§22.6). Each is a row already seeded in data/sources.toml.
+[sources]
+usaspending    = "usaspending"
+sam_gov        = "sam_gov"
+govspend       = "govspend"
+sourcewell     = "sourcewell"
+omnia_partners = "omnia_partners"
+gsa            = "gsa"
+legistar       = "legistar"
+primegov       = "primegov"
+civicclerk     = "civicclerk"
+
+# --- USAspending: sub-awards, not only prime awards (§23.6, SIG-ONTO-033) ------
+# USAspending exposes prime awards AND sub-awards. Sub-awards are the traceable
+# link from a federal grant program (Byrne JAG, UASI) to the LOCAL purchase that
+# appears in no local procurement record. The connector MUST pull sub-awards
+# (`subaward_type = "sub-grant"`/`"sub-contract"`), not only prime awards.
+[usaspending]
+api_base           = "https://api.usaspending.gov/api/v2"
+subawards_endpoint = "/subawards/"                  # POST spending_by_award w/ subaward=true
+prime_endpoint     = "/search/spending_by_award/"
+# The award-id field on a sub-award that is the traceable federal_award_id link.
+federal_award_id_field = "prime_award_generated_internal_id"
+subaward_id_field      = "internal_id"
+# Sub-awards MUST be pulled: this is the flag the connector asserts on every
+# USAspending target (assert_pulls_subawards).
+subaward = true

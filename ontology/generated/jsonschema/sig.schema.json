@@ -254,6 +254,39 @@
             "title": "ArtifactIntegrity",
             "type": "string"
         },
+        "ArtifactType": {
+            "description": "The genre of an evidence artifact (\u00a710.3.2). SIG-INGEST-047 additionally carries state_auditor_survey, warrant, and procurement_aggregator_record (\u00a723.6) \u2014 the state-auditor surveys are R1 government datasets and the aggregator record is the paywalled procurement-aggregator lead under a LINK custody posture.",
+            "enum": [
+                "contract",
+                "invoice",
+                "council_minutes",
+                "agenda_packet",
+                "audit_export",
+                "configuration_export",
+                "portal_page",
+                "policy_document",
+                "court_filing",
+                "news_article",
+                "dataset",
+                "press_release",
+                "presentation",
+                "email",
+                "photograph",
+                "osm_element",
+                "radio_observation",
+                "budget",
+                "grant_award",
+                "statute",
+                "regulation",
+                "screenshot",
+                "state_auditor_survey",
+                "warrant",
+                "procurement_aggregator_record",
+                "other"
+            ],
+            "title": "ArtifactType",
+            "type": "string"
+        },
         "AuditSourceType": {
             "description": "Audit source type \u2014 these are NOT interchangeable (\u00a711.16, \u00a723.7).",
             "enum": [
@@ -1138,6 +1171,10 @@
             "additionalProperties": false,
             "description": "A specific artifact published by a Source (\u00a710.2).",
             "properties": {
+                "artifact_type": {
+                    "$ref": "#/$defs/ArtifactType",
+                    "description": "The genre of the artifact (\u00a710.3.2, SIG-INGEST-047)."
+                },
                 "id": {
                     "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
                     "type": "string"

@@ -1,0 +1,87 @@
+# SPDX-License-Identifier: Apache-2.0
+# The agenda-platform tenant registry (§22.3, §23.6, P07.3) — a PUBLISHED artifact
+# this ticket OWNS. Agenda platforms (Legistar, PrimeGov, CivicClerk, CivicPlus,
+# NovusAgenda, BoardDocs, IQM2, eScribe) are per-tenant APIs, and no
+# municipality->platform directory exists upstream — "SIG should build one" (§22.3
+# SIG-INGEST-026). This is that directory: each row maps a jurisdiction to the
+# agenda platform that serves it and the tenant slug its per-tenant API is keyed by,
+# so the `procurement` connector can build targeted-lookup URLs from it.
+#
+# This is DATA, not code (SIG-ENG-001), and a registry described in prose is not
+# executable: `connectors.procurement.agenda_tenants()` loads it and the connector's
+# discover() reads its targets from it. Changes are versioned migrations (§20): bump
+# `registry_version`, never silently rewrite a row.
+#
+# DISCOVERY NEGATIVES ARE RETAINED (§22.3, SIG-METRIC-002a): a jurisdiction that was
+# probed and found to have NO discoverable agenda platform is a [negatives.*] row,
+# not a silent drop. `connectors.procurement.tenant_discovery_negatives()` renders
+# each as a NO_EVIDENCE_FOUND coverage record (naming the platforms probed,
+# SIG-TIME-011) so P09.1's coverage surfaces inherit them once it lands — wired now
+# so the negatives are never discarded.
+#
+# `platform` values are registry source ids (data/sources.toml). `verified` records
+# whether the tenant<->platform mapping was checked against the live per-tenant API;
+# unverified seed rows are honest about it (verified = false) rather than asserting a
+# certainty SIG does not have (§3.1, no synthetic certainty).
+#
+# TOML ORDERING: scalars first, then the [tenants.*] and [negatives.*] tables.
+
+registry_version = "2026.09.01"
+
+# The platforms the discovery probe checks a jurisdiction against, in order. A
+# jurisdiction absent from every one of these becomes a [negatives.*] row.
+probed_platforms = [
+  "legistar",
+  "primegov",
+  "civicclerk",
+  "civicplus",
+]
+
+# --- tenants: jurisdiction -> agenda platform + per-tenant API key -------------
+# Each tenant carries the jurisdiction (a candidate identifier the identity layer
+# resolves — SIG-INGEST-034, never resolved here), the platform source id, and the
+# `tenant` slug the per-tenant API URL is built from.
+
+[tenants.chicago_il]
+jurisdiction = "City of Chicago, IL"
+platform = "legistar"
+tenant = "chicago"
+api_base = "https://webapi.legistar.com/v1/chicago"
+verified = true
+last_verified = 2026-08-20
+notes = "Legistar InSite client 'chicago' (§22.3)."
+
+[tenants.seattle_wa]
+jurisdiction = "City of Seattle, WA"
+platform = "legistar"
+tenant = "seattle"
+api_base = "https://webapi.legistar.com/v1/seattle"
+verified = true
+last_verified = 2026-08-20
+notes = "Legistar InSite client 'seattle'."
+
+[tenants.los_angeles_ca]
+jurisdiction = "City of Los Angeles, CA"
+platform = "primegov"
+tenant = "lacity"
+api_base = "https://lacity.primegov.com/api/v2/PublicPortal"
+verified = false
+notes = "PrimeGov tenant seed — pending live verification (§22.3)."
+
+[tenants.oklahoma_city_ok]
+jurisdiction = "City of Oklahoma City, OK"
+platform = "civicclerk"
+tenant = "oklahomacityok"
+api_base = "https://oklahomacityok.api.civicclerk.com/v1/Events"
+verified = false
+notes = "CivicClerk tenant seed for the OKC vertical slice (P06.1) — pending live verification."
+
+# --- discovery negatives: probed, no platform found (SIG-METRIC-002a) ----------
+# Retained, not discarded: each renders to a NO_EVIDENCE_FOUND coverage record so
+# the negative space is queryable once P09.1 lands.
+
+[negatives.rural_county_x]
+jurisdiction = "Example Rural County"
+probed_platforms = ["legistar", "primegov", "civicclerk", "civicplus"]
+probed_on = 2026-08-20
+notes = "No agenda-platform API discovered; agendas published as loose PDFs on a static site (a records lead, not a feed)."

@@ -70,6 +70,7 @@ Name: sig
 | [applies_to](slots/applies_to.md) | Organization, Deployment, or Product — polymorphic and repeatable |
 | [applies_to_cohort](slots/applies_to_cohort.md) | Partial termination cohort — all / new_customers_only / existing_customers_on... |
 | [approved_at](slots/approved_at.md) |  |
+| [artifact_type](slots/artifact_type.md) | The genre of the artifact (§10 |
 | [asserted_by](slots/asserted_by.md) | Which party asserted it — perspectival (§12 |
 | [asset_type](slots/asset_type.md) | A Technology reference, not a free string |
 | [audit_case_code_required](slots/audit_case_code_required.md) |  |
@@ -276,6 +277,7 @@ Name: sig
 | [AcquisitionMethod](enums/AcquisitionMethod.md) | Acquisition method, internationalized (§13 |
 | [AliasType](enums/AliasType.md) | Organization alias qualifier (§11 |
 | [ArtifactIntegrity](enums/ArtifactIntegrity.md) | Integrity I of the artifact (§10 |
+| [ArtifactType](enums/ArtifactType.md) | The genre of an evidence artifact (§10 |
 | [AuditSourceType](enums/AuditSourceType.md) | Audit source type — these are NOT interchangeable (§11 |
 | [AuthorizationState](enums/AuthorizationState.md) | Track 4 — authorization (§13 |
 | [Automaticity](enums/Automaticity.md) | How access is triggered (§12 |
