@@ -1,12 +1,17 @@
 [project]
 name = "sig-tasks"
 version = "0.0.0"
-description = "SIG tasks package (skeleton; see docs/2_canonical_design_spec.md §47)."
+description = "SIG tasks package: the §33 research-task coordination engine."
 requires-python = ">=3.11"
-dependencies = []
+# The disposition→data bridge reuses inference's CoverageRecord (P09.1,
+# SIG-TASK-009) rather than re-encoding the §32.1 coverage shape.
+dependencies = ["sig-inference"]
 
 [project.scripts]
 sig-tasks = "tasks.cli:main"
+
+[tool.uv.sources]
+sig-inference = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]
