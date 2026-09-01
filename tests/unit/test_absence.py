@@ -11,10 +11,14 @@ from __future__ import annotations
 
 import pytest
 from db.absence import (
+    ABSENCE_KINDS,
+    NOT_APPLICABLE_CODE,
+    NOT_APPLICABLE_KIND,
     UNRESOLVED_CONTRADICTION_STATE,
     AbsenceState,
     coverage_kind_for,
     render_absence,
+    render_coverage_kind,
     state_from_coverage_kind,
 )
 
@@ -77,3 +81,45 @@ def test_coverage_kinds_match_the_schema_vocabulary() -> None:
     assert coverage_kind_for(AbsenceState.NOT_RESEARCHED) == "not_researched"
     assert coverage_kind_for(AbsenceState.NO_EVIDENCE_FOUND) == "searched_not_found"
     assert coverage_kind_for(AbsenceState.EVIDENCE_OF_ABSENCE) == "evidence_of_absence"
+    assert ABSENCE_KINDS == {
+        "not_researched",
+        "searched_not_found",
+        "evidence_of_absence",
+        "not_applicable",
+    }
+
+
+def test_not_applicable_renders_distinguishably_and_has_no_state() -> None:
+    """SIG-METRIC-001/§32.1: `not_applicable` is a fourth coverage kind, distinct
+    from every 'unknown' state — the predicate simply does not apply."""
+    rendered = render_coverage_kind(NOT_APPLICABLE_KIND)
+    assert rendered.code == NOT_APPLICABLE_CODE
+    assert rendered.state is None  # not a kind of "unknown"
+    assert "not apply" in rendered.detail.lower()
+    # It has no §9.5 epistemic state; asking for one is an error, not a silent coerce.
+    with pytest.raises(ValueError, match="epistemic state"):
+        state_from_coverage_kind(NOT_APPLICABLE_KIND)
+
+
+def test_render_coverage_kind_covers_all_four_kinds_distinguishably() -> None:
+    """SIG-TIME-012: all four §32.1 coverage kinds render with distinct codes."""
+    renders = [
+        render_coverage_kind("not_researched"),
+        render_coverage_kind("searched_not_found", sources_searched=["Atlas"]),
+        render_coverage_kind("evidence_of_absence"),
+        render_coverage_kind(NOT_APPLICABLE_KIND),
+    ]
+    codes = {r.code for r in renders}
+    assert len(codes) == 4  # every coverage kind has its own machine token
+    # The two most-conflated kinds are not identical.
+    assert render_coverage_kind("not_researched").code != renders[1].code
+
+
+def test_render_coverage_kind_rejects_searched_not_found_without_sources() -> None:
+    with pytest.raises(ValueError, match="SIG-TIME-011"):
+        render_coverage_kind("searched_not_found")
+
+
+def test_render_coverage_kind_rejects_unknown_kind() -> None:
+    with pytest.raises(ValueError, match="unknown coverage absence_kind"):
+        render_coverage_kind("made_up_kind")
