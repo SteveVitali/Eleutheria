@@ -25,6 +25,11 @@ queues, anti-abuse, and SIG's own local-group registry. The concrete detector
 * :mod:`tasks.catalog` — the concrete §33.2 catalog (P10.2): the 34 task types
   registered against the DSL, and the §31 contradiction-detector→task map
   (SIG-TASK-003/004).
+* :mod:`tasks.records_request` — records-request generation (§36, P10.3): the
+  51-jurisdiction records-law reference table, emit-with-the-correct-statute,
+  operationally-binding residency routing into the geographic queue + a coverage
+  fact, versioned templates with measured success rates, and the consent gate
+  (SIG-TASK-015/016/016a/016b/017/018).
 """
 
 __version__ = "0.0.0"
