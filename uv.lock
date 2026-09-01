@@ -2393,11 +2393,17 @@ name = "sig-db"
 version = "0.0.0"
 source = { editable = "db" }
 dependencies = [
+    { name = "duckdb" },
     { name = "psycopg", extra = ["binary"] },
+    { name = "sig-evidence" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "psycopg", extras = ["binary"], specifier = ">=3.2" }]
+requires-dist = [
+    { name = "duckdb", specifier = ">=1.0.0" },
+    { name = "psycopg", extras = ["binary"], specifier = ">=3.2" },
+    { name = "sig-evidence", editable = "evidence" },
+]
 
 [[package]]
 name = "sig-evidence"
