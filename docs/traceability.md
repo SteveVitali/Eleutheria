@@ -1325,3 +1325,44 @@ speculative label). Closure ships as the pure `inference.access_paths` value-obj
 | Requirement | Where | Test |
 |---|---|---|
 | SIG-RECON-050 (beyond a published hop count a path is labelled speculative and excluded from headline figures) | `inference.access_paths` (`SPECULATIVE_HOP_THRESHOLD`; `AccessPath.speculative`/`is_headline`; `AccessPathClosure.headline_paths`/`speculative_paths`/`reachable(headline_only=…)`) | `tests/inference/test_access_paths.py::test_paths_within_threshold_are_headline_and_not_speculative`, `::test_paths_beyond_threshold_are_speculative_and_excluded_from_headlines` |
+
+# P13.1 — Accountability events and the `accountability` connector
+
+Accountability as first-class, epistemically-honest records (§§11.17–11.18, §23.8): the
+`AccountabilityEvent` / `LegalProceeding` predicate surfaces, a REQUIRED `epistemic_status` preserved
+verbatim end to end (SIG-ONTO-038), incident-to-source links across all six OL-2E-AL-03 classes with
+the class recorded (SIG-ONTO-039), and the `accountability` connector consuming the Accountability
+Atlas's five artifacts, the Abuse Library, and CourtListener (targeted-lookup only, §22.2).
+
+## `epistemic_status` — required and preserved end to end (§11.17, SIG-ONTO-038)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ONTO-038 #1 (`epistemic_status` REQUIRED; a write without it is rejected) | `ontology/schema/entities.yaml` `AccountabilityEvent.epistemic_status` (`required: true`); `connectors.accountability.AccountabilityEventRecord` (`MissingEpistemicStatus` / vocabulary check) | `tests/ontology/test_schema_structure.py::test_accountability_event_records_epistemic_status_and_source_class`, `tests/connectors/test_accountability.py::test_epistemic_status_is_required_on_write`, `::test_epistemic_status_outside_the_vocabulary_is_rejected` |
+| SIG-ONTO-038 #2 (carried verbatim from the upstream where provided; raw value preserved, P2) | `connectors.accountability.AccountabilityEventRecord` (`raw_epistemic_status`; emits under the registered `event_epistemic_status` predicate) | `tests/connectors/test_accountability.py::test_epistemic_status_is_preserved_verbatim_on_the_claim_rows` |
+| SIG-ONTO-038 #3 (survives ingestion→resolution→read unchanged; never flattened to "X happened") | `reconcile.resolve.RESOLVE` (value passed through unchanged for `event_epistemic_status`); `exports.accountability` render guard | `tests/reconcile/test_resolve.py::test_event_epistemic_status_is_preserved_verbatim_through_resolution`, `::test_a_disputed_status_never_resolves_to_confirmed` |
+| SIG-ONTO-038 #4 (an allegation is never rendered with a factual verb — OL-2E-AA-05) | `exports.accountability.render_event_phrase` / `assert_not_flattened` / `flattening_findings` (`STATUS_FRAME`, `FACTUAL_STATUSES`) | `tests/exports/test_accountability_render.py::test_the_three_named_non_factual_statuses_never_render_as_a_bare_fact`, `::test_the_guard_rejects_an_allegation_phrased_as_a_fact`, `::test_the_guard_requires_the_epistemic_qualifier_on_the_surface` |
+
+## Six-source-class linkage with the class recorded (§11.17, SIG-ONTO-039)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ONTO-039 #1 (an incident is linkable to all six OL-2E-AL-03 classes) | `ontology/schema/common.yaml` `SourceClass` (six values); `ontology/schema/entities.yaml` `AccountabilityEvent.source_classes`; `connectors.accountability.EvidenceLink` | `tests/ontology/test_schema_structure.py::test_source_class_is_the_six_ol_2e_al_03_classes`, `tests/connectors/test_accountability.py::test_an_incident_links_to_all_six_source_classes_with_the_class_recorded` |
+| SIG-ONTO-039 #2 (the class is recorded on the evidence link; advocacy-only is distinguishable from a court record) | `connectors.accountability.EvidenceLink.source_class` (validated); `AccountabilityEventRecord.rests_only_on` / `source_class_set`; evidence-link claim rows carry `source_class` | `tests/connectors/test_accountability.py::test_advocacy_only_claim_is_distinguishable_from_a_court_record_claim`, `::test_an_out_of_vocabulary_source_class_is_rejected`, `::test_source_index_csv_types_each_source_per_ol_2e_al_03` |
+
+## The `accountability` connector (§23.8)
+
+| Requirement | Where | Test |
+|---|---|---|
+| §23.8 (predicate allowlist as a hard schema gate; Policy/LegalInstrument/deployments refused — P13.2 owns policy) | `connectors.accountability.assert_predicate_allowed`; `data/accountability_vocab.toml` (`predicate_allowlist` / `forbidden_predicate_genres`) | `tests/connectors/test_accountability.py::test_the_allowlist_is_the_only_write_set`, `::test_a_forbidden_predicate_is_refused_at_the_ingest_boundary`, `::test_forbidden_genres_are_outside_the_allowlist` |
+| §23.8 (crosswalk the upstream record categories, never adopt wholesale; unmapped → research task) | `connectors.accountability.category_crosswalk`; `data/accountability_vocab.toml` `[crosswalk.*]` (SKOS relation + `lossy`); `unmapped_category_task` | `tests/connectors/test_accountability.py::test_upstream_categories_are_crosswalked_not_adopted_wholesale`, `::test_a_litigation_category_spawns_a_proceeding_and_defaults_to_alleged`, `::test_an_unmapped_category_yields_a_research_task_never_a_guess` |
+| §23.8 / OL-2E-AA-02 (all five Atlas artifacts consumed; the source index preserves event-vs-reporting) | `connectors.accountability.atlas_artifacts`; `AccountabilityConnector.parse`/`extract`/`normalize` (issue-record CSV, source-index CSV, GeoJSON, data dictionary, research archive) | `tests/connectors/test_accountability.py::test_all_five_atlas_artifacts_are_named_and_consumed`, `::test_issue_record_csv_produces_epistemically_honest_events`, `::test_a_geojson_artifact_is_consumed_as_context_not_a_device_layer` |
+| §23.8 / OL-2E-AL-02 (the Abuse Library is a curated source index ingested without normalizing entries into facts) | `connectors.accountability.AccountabilityConnector._normalize_abuse_entry` (`index_only`, advocacy-analysis link) | `tests/connectors/test_accountability.py::test_abuse_library_entries_are_index_only_advocacy_links_never_facts` |
+| §22.2 / SIG-INGEST-036/037 (CourtListener/RECAP targeted-lookup only; a crawl is refused) | `connectors.accountability.assert_targeted_lookup`; `AccountabilityConnector.discover`/`fetch` | `tests/connectors/test_accountability.py::test_a_known_docket_lookup_is_allowed`, `::test_crawling_the_court_api_is_refused`, `::test_discover_refuses_a_courtlistener_crawl_target` |
+| §11.18 (`LegalProceeding` — dockets, parties, posture; court-record-class link by construction) | `connectors.accountability.LegalProceedingRecord` (`ProceedingPosture` validation; `_links` defaults to a `court_record` link) | `tests/connectors/test_accountability.py::test_courtlistener_payload_becomes_a_court_record_backed_proceeding`, `::test_a_proceeding_posture_outside_the_vocabulary_is_rejected` |
+
+## Vocabulary lock-step with the frozen ontology enums (§§11.17–11.18)
+
+| Requirement | Where | Test |
+|---|---|---|
+| The connector + render-guard vocabularies mirror the ontology (drift is a failed test) | `connectors.accountability` (`epistemic_statuses`/`event_types`/`postures`/`source_classes`); `exports.accountability.EPISTEMIC_STATUSES` | `tests/connectors/test_accountability.py::test_epistemic_status_vocab_matches_the_ontology_enum`, `::test_event_type_vocab_matches_the_ontology_enum`, `::test_posture_vocab_matches_the_ontology_enum`, `::test_source_class_vocab_matches_the_ontology_enum`, `tests/exports/test_accountability_render.py::test_render_status_vocab_matches_the_ontology_enum` |

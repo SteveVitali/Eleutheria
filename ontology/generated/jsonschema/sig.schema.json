@@ -155,6 +155,16 @@
                         "null"
                     ]
                 },
+                "source_classes": {
+                    "description": "The OL-2E-AL-03 class of each entry in `sources`, index-aligned (as `parties`/`party_role` on LegalProceeding). Recording the class on the evidence link is what makes a claim resting only on advocacy analysis distinguishable from one resting on a court record (SIG-ONTO-039).",
+                    "items": {
+                        "$ref": "#/$defs/SourceClass"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
                 "sources": {
                     "description": "Linkable to all six source classes of OL-2E-AL-03 (SIG-ONTO-039).",
                     "items": {
@@ -2772,6 +2782,19 @@
             ],
             "title": "Source",
             "type": "object"
+        },
+        "SourceClass": {
+            "description": "The six evidence source classes of OL-2E-AL-03 (\u00a711.17, SIG-ONTO-039). An accountability incident MUST be linkable to all six, with the class RECORDED on the evidence link, so a claim resting only on advocacy analysis is distinguishable from one resting on a court record. These are epistemic classes of the reporting, NOT the R1..R6 reliability tiers (\u00a710.4).",
+            "enum": [
+                "primary_record",
+                "court_record",
+                "agency_statement",
+                "vendor_statement",
+                "investigative_article",
+                "advocacy_analysis"
+            ],
+            "title": "SourceClass",
+            "type": "string"
         },
         "SourceReliability": {
             "description": "Reliability R of the publisher, not the claim (\u00a710.4).",
