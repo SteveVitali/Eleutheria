@@ -35,7 +35,11 @@ tenant registry), and :mod:`connectors.flock_portal` the fifth (P11.1, §23.4 �
 Eyes on Flock portal layer from the aggregator's CC-BY-SA-4.0 API, landing in the
 separate portal compartment), and :mod:`connectors.audit_structural` the sixth
 (P11.2, §23.7 — the agency Flock audit-export layer parsed into structural
-aggregates and configured edges only, never a per-search or per-plate row).
+aggregates and configured edges only, never a per-search or per-plate row), and
+:mod:`connectors.accountability` the seventh (P13.1, §23.8 — the Accountability
+Atlas / Abuse Library / CourtListener layer, writing ``AccountabilityEvent`` /
+``LegalProceeding`` and source-class-tagged evidence links with a REQUIRED,
+verbatim-preserved ``epistemic_status``).
 Importing the package imports the connectors so they appear in the registry
 (``connectors.stages.registered_connectors``) and the CLI.
 """
@@ -43,6 +47,7 @@ Importing the package imports the connectors so they appear in the registry
 # Importing the source-specific connectors registers them (SIG-INGEST-021). Kept
 # at the bottom so the framework modules above are fully initialised first, and
 # imported for the registration side effect only.
+from . import accountability as accountability  # noqa: E402,F401
 from . import atlas as atlas  # noqa: E402,F401
 from . import audit_structural as audit_structural  # noqa: E402,F401
 from . import flock_portal as flock_portal  # noqa: E402,F401

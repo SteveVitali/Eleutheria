@@ -540,6 +540,14 @@ classes:
         range: uriorcurie
         multivalued: true
         description: Linkable to all six source classes of OL-2E-AL-03 (SIG-ONTO-039).
+      source_classes:
+        range: SourceClass
+        multivalued: true
+        description: >-
+          The OL-2E-AL-03 class of each entry in `sources`, index-aligned (as
+          `parties`/`party_role` on LegalProceeding). Recording the class on the
+          evidence link is what makes a claim resting only on advocacy analysis
+          distinguishable from one resting on a court record (SIG-ONTO-039).
 
   LegalProceeding:
     is_a: Entity

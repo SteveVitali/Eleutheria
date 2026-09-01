@@ -73,6 +73,7 @@
 <https://ontology.sig-project.org/schema/AccountabilityEvent> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:cb1cac07a2084b63f8a297579c7696e13fd10807fc0c63822cce70ccf9f4b2574b0 .
 <https://ontology.sig-project.org/schema/AccountabilityEvent> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:cb1cbb6171b950d12adffaadac477cb779ede4e62b299af609102233a25339bf655 .
 <https://ontology.sig-project.org/schema/AccountabilityEvent> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:cb1d24c31a5b1a1b6c80d9c6e0b4065bf17c1ae34c94f0c7b15be68000d715a9f34 .
+<https://ontology.sig-project.org/schema/AccountabilityEvent> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:cb2081a5ed230eab814e04709c7dab4c4ac05c5fe765d176a025f2338386ce722e2 .
 <https://ontology.sig-project.org/schema/AccountabilityEvent> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:cb22ce1291d6a579d23f8087d5d8b8284faf1940fba88b8b6ceaef5544f7fd560b7 .
 <https://ontology.sig-project.org/schema/AccountabilityEvent> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:cb232ce5f0c1c9868bc8dfa7247583b207340c96021845db11f8cc3106f48129252 .
 <https://ontology.sig-project.org/schema/AccountabilityEvent> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:cb24142b0e90eccead4a504a4faf2c5eeeed66a316e8e278ca01e9ce2a5dfa49861 .
@@ -2770,6 +2771,48 @@
 <https://ontology.sig-project.org/schema/Source> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:cb2ead1129ee39e48f1dd219a0eea0cb97097c3c6c2e262a87de75334e30f2a1d08 .
 <https://ontology.sig-project.org/schema/Source> <http://www.w3.org/2004/02/skos/core#definition> "A publisher of evidence (§10.2, §11.20). Distinct from artifact and capture." .
 <https://ontology.sig-project.org/schema/Source> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/schema/entities> .
+<https://ontology.sig-project.org/schema/SourceClass#advocacy_analysis> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/SourceClass#advocacy_analysis> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/SourceClass> .
+<https://ontology.sig-project.org/schema/SourceClass#advocacy_analysis> <http://www.w3.org/2000/01/rdf-schema#label> "advocacy_analysis" .
+<https://ontology.sig-project.org/schema/SourceClass#advocacy_analysis> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/SourceClass> .
+<https://ontology.sig-project.org/schema/SourceClass#advocacy_analysis> <http://www.w3.org/2004/02/skos/core#definition> "Advocacy-organization analysis or a curated accountability index entry." .
+<https://ontology.sig-project.org/schema/SourceClass#agency_statement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/SourceClass#agency_statement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/SourceClass> .
+<https://ontology.sig-project.org/schema/SourceClass#agency_statement> <http://www.w3.org/2000/01/rdf-schema#label> "agency_statement" .
+<https://ontology.sig-project.org/schema/SourceClass#agency_statement> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/SourceClass> .
+<https://ontology.sig-project.org/schema/SourceClass#agency_statement> <http://www.w3.org/2004/02/skos/core#definition> "A statement by the agency involved (press release, official response, testimony)." .
+<https://ontology.sig-project.org/schema/SourceClass#court_record> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/SourceClass#court_record> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/SourceClass> .
+<https://ontology.sig-project.org/schema/SourceClass#court_record> <http://www.w3.org/2000/01/rdf-schema#label> "court_record" .
+<https://ontology.sig-project.org/schema/SourceClass#court_record> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/SourceClass> .
+<https://ontology.sig-project.org/schema/SourceClass#court_record> <http://www.w3.org/2004/02/skos/core#definition> "A court/docket record — a filing, order, or docket entry (CourtListener/RECAP)." .
+<https://ontology.sig-project.org/schema/SourceClass#investigative_article> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/SourceClass#investigative_article> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/SourceClass> .
+<https://ontology.sig-project.org/schema/SourceClass#investigative_article> <http://www.w3.org/2000/01/rdf-schema#label> "investigative_article" .
+<https://ontology.sig-project.org/schema/SourceClass#investigative_article> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/SourceClass> .
+<https://ontology.sig-project.org/schema/SourceClass#investigative_article> <http://www.w3.org/2004/02/skos/core#definition> "Investigative journalism reporting the incident." .
+<https://ontology.sig-project.org/schema/SourceClass#primary_record> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/SourceClass#primary_record> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/SourceClass> .
+<https://ontology.sig-project.org/schema/SourceClass#primary_record> <http://www.w3.org/2000/01/rdf-schema#label> "primary_record" .
+<https://ontology.sig-project.org/schema/SourceClass#primary_record> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/SourceClass> .
+<https://ontology.sig-project.org/schema/SourceClass#primary_record> <http://www.w3.org/2004/02/skos/core#definition> "A primary document — the underlying record itself (a contract, a filing exhibit, an incident report)." .
+<https://ontology.sig-project.org/schema/SourceClass#vendor_statement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/SourceClass#vendor_statement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/SourceClass> .
+<https://ontology.sig-project.org/schema/SourceClass#vendor_statement> <http://www.w3.org/2000/01/rdf-schema#label> "vendor_statement" .
+<https://ontology.sig-project.org/schema/SourceClass#vendor_statement> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/SourceClass> .
+<https://ontology.sig-project.org/schema/SourceClass#vendor_statement> <http://www.w3.org/2004/02/skos/core#definition> "A statement by the vendor involved (product page, press response, spokesperson quote)." .
+<https://ontology.sig-project.org/schema/SourceClass> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/SourceClass> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/linkml/EnumDefinition> .
+<https://ontology.sig-project.org/schema/SourceClass> <http://www.w3.org/2000/01/rdf-schema#label> "SourceClass" .
+<https://ontology.sig-project.org/schema/SourceClass> <http://www.w3.org/2002/07/owl#unionOf> _:cb11bb806c8902401b29f7c7be413de98c19b94d31c81db68737f9c243fa5bd671b .
+<https://ontology.sig-project.org/schema/SourceClass> <http://www.w3.org/2004/02/skos/core#definition> "The six evidence source classes of OL-2E-AL-03 (§11.17, SIG-ONTO-039). An accountability incident MUST be linkable to all six, with the class RECORDED on the evidence link, so a claim resting only on advocacy analysis is distinguishable from one resting on a court record. These are epistemic classes of the reporting, NOT the R1..R6 reliability tiers (§10.4)." .
+<https://ontology.sig-project.org/schema/SourceClass> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/schema/common> .
+<https://ontology.sig-project.org/schema/SourceClass> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/SourceClass#advocacy_analysis> .
+<https://ontology.sig-project.org/schema/SourceClass> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/SourceClass#agency_statement> .
+<https://ontology.sig-project.org/schema/SourceClass> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/SourceClass#court_record> .
+<https://ontology.sig-project.org/schema/SourceClass> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/SourceClass#investigative_article> .
+<https://ontology.sig-project.org/schema/SourceClass> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/SourceClass#primary_record> .
+<https://ontology.sig-project.org/schema/SourceClass> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/SourceClass#vendor_statement> .
 <https://ontology.sig-project.org/schema/SourceReliability#R1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
 <https://ontology.sig-project.org/schema/SourceReliability#R1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/SourceReliability> .
 <https://ontology.sig-project.org/schema/SourceReliability#R1> <http://www.w3.org/2000/01/rdf-schema#label> "R1" .
@@ -3754,6 +3797,11 @@
 <https://ontology.sig-project.org/schema/source> <http://www.w3.org/2000/01/rdf-schema#label> "source" .
 <https://ontology.sig-project.org/schema/source> <http://www.w3.org/2004/02/skos/core#definition> "The asserting/originating node (directed — §12.1.1)." .
 <https://ontology.sig-project.org/schema/source> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/schema/edges> .
+<https://ontology.sig-project.org/schema/source_classes> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<https://ontology.sig-project.org/schema/source_classes> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/linkml/SlotDefinition> .
+<https://ontology.sig-project.org/schema/source_classes> <http://www.w3.org/2000/01/rdf-schema#label> "source_classes" .
+<https://ontology.sig-project.org/schema/source_classes> <http://www.w3.org/2004/02/skos/core#definition> "The OL-2E-AL-03 class of each entry in `sources`, index-aligned (as `parties`/`party_role` on LegalProceeding). Recording the class on the evidence link is what makes a claim resting only on advocacy analysis distinguishable from one resting on a court record (SIG-ONTO-039)." .
+<https://ontology.sig-project.org/schema/source_classes> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/schema/entities> .
 <https://ontology.sig-project.org/schema/source_org> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
 <https://ontology.sig-project.org/schema/source_org> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/linkml/SlotDefinition> .
 <https://ontology.sig-project.org/schema/source_org> <http://www.w3.org/2000/01/rdf-schema#label> "source_org" .
@@ -3929,6 +3977,8 @@ _:cb1198342071daab36a13e7ce1220b1e962439ecfe369f481b747f0f0ef5f16434 <http://www
 _:cb1198342071daab36a13e7ce1220b1e962439ecfe369f481b747f0f0ef5f16434 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbdaeabbf6572b2d3eb4995174554c795174585aca297368af229894f9c67c325b .
 _:cb11b684e820cecbe3250ef86aea9e22b2ab2d2be13de2e55e1f2dc70602e6518f7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/Direction#b_to_a> .
 _:cb11b684e820cecbe3250ef86aea9e22b2ab2d2be13de2e55e1f2dc70602e6518f7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:cb11bb806c8902401b29f7c7be413de98c19b94d31c81db68737f9c243fa5bd671b <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/SourceClass#primary_record> .
+_:cb11bb806c8902401b29f7c7be413de98c19b94d31c81db68737f9c243fa5bd671b <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb44ff94729bc91e64a339c8a60ae3e9eb319c0fe92fac7c3f01dc89258855c5c9 .
 _:cb11da7b1b9fb26fa9a87ab86239c9bda5891ce502b0f622b1275eb944baf9f771b <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/RecordsPlatform#muckrock> .
 _:cb11da7b1b9fb26fa9a87ab86239c9bda5891ce502b0f622b1275eb944baf9f771b <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb9f52601977bb44b78c9438ce801fc950e2a5dd0bd7fdf018d29821a2a7bcd0b8 .
 _:cb11e363dd1d57ffd387429b7a13d47800978981562e38389dd1e2e9fd3f3a90912 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/Automaticity#legal_process_required> .
@@ -4050,6 +4100,8 @@ _:cb16699ab13ad5db6f2c24f2128d70c47fce1c0fb942cbda9c807a3331df92b5c07 <http://ww
 _:cb16699ab13ad5db6f2c24f2128d70c47fce1c0fb942cbda9c807a3331df92b5c07 <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/osm_version> .
 _:cb166ba53c0b263352ce46f6fd85aedfe71be95aa6d8fe66613915943547721196b <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/UsageAggregate> .
 _:cb166ba53c0b263352ce46f6fd85aedfe71be95aa6d8fe66613915943547721196b <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:cb166e9bbeba4ccafb0dfc9462d17e4da736106a7edcc90d3a669dc9dd3448d6e94 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/SourceClass#advocacy_analysis> .
+_:cb166e9bbeba4ccafb0dfc9462d17e4da736106a7edcc90d3a669dc9dd3448d6e94 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb167f187b2efc25201d00946213ae8f8b313beacc73a45f68889a2b688eccd2610 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
 _:cb167f187b2efc25201d00946213ae8f8b313beacc73a45f68889a2b688eccd2610 <http://www.w3.org/2002/07/owl#allValuesFrom> <https://w3id.org/linkml/Datetime> .
 _:cb167f187b2efc25201d00946213ae8f8b313beacc73a45f68889a2b688eccd2610 <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/last_observed> .
@@ -4552,6 +4604,9 @@ _:cb206b178b48ac7cd17b1de56de6727cbc5f71fef2363fba050f48ee9a4d0697a4e <http://ww
 _:cb2073bf8167ae82ddb7c9f9750c2b1e3236cbea2d0c0fe1a2b8fd073d8e569eef0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
 _:cb2073bf8167ae82ddb7c9f9750c2b1e3236cbea2d0c0fe1a2b8fd073d8e569eef0 <http://www.w3.org/2002/07/owl#maxCardinality> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb2073bf8167ae82ddb7c9f9750c2b1e3236cbea2d0c0fe1a2b8fd073d8e569eef0 <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/valid_to_kind> .
+_:cb2081a5ed230eab814e04709c7dab4c4ac05c5fe765d176a025f2338386ce722e2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+_:cb2081a5ed230eab814e04709c7dab4c4ac05c5fe765d176a025f2338386ce722e2 <http://www.w3.org/2002/07/owl#allValuesFrom> <https://ontology.sig-project.org/schema/SourceClass> .
+_:cb2081a5ed230eab814e04709c7dab4c4ac05c5fe765d176a025f2338386ce722e2 <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/source_classes> .
 _:cb2099d493237eac1359845717f6050ed37d58d5425953b860345decf2b29395a0d <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
 _:cb2099d493237eac1359845717f6050ed37d58d5425953b860345decf2b29395a0d <http://www.w3.org/2002/07/owl#allValuesFrom> <https://w3id.org/linkml/String> .
 _:cb2099d493237eac1359845717f6050ed37d58d5425953b860345decf2b29395a0d <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/reason_category> .
@@ -5484,10 +5539,14 @@ _:cb42127ec5e7ec54413f71984c97d2853fe0a1bf38126cde1855e70b6430555200 <http://www
 _:cb42127ec5e7ec54413f71984c97d2853fe0a1bf38126cde1855e70b6430555200 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb571bee74f91ea89b44d25a1fd4cc17cf308937c08a75848daef39e5435805f78 .
 _:cb4409df3b24f6789217f2794fa71456b13c98c3a0eed501ac1e138b9cdfd8d0b3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/AcquisitionChannel#bundle_inclusion> .
 _:cb4409df3b24f6789217f2794fa71456b13c98c3a0eed501ac1e138b9cdfd8d0b3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb4777ace5c7b59922bd70d8679f3ead28bd5c5e53db8226506bd9aead279024bd .
+_:cb44ff94729bc91e64a339c8a60ae3e9eb319c0fe92fac7c3f01dc89258855c5c9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/SourceClass#court_record> .
+_:cb44ff94729bc91e64a339c8a60ae3e9eb319c0fe92fac7c3f01dc89258855c5c9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb47dc64b6eb8527a863d912369d9caa6982682860e81dbde19ba71504bc4d7d84 .
 _:cb473c897b8eadac8d7179690d5e5c68ee2533784d58f3302094c9e8eaa540e097 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/SuccessionKind#renamed_from> .
 _:cb473c897b8eadac8d7179690d5e5c68ee2533784d58f3302094c9e8eaa540e097 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb15a264471181d108ff70d48b5e1f68d90854f63a46cb07aa3e9d1aee2497727b9 .
 _:cb4777ace5c7b59922bd70d8679f3ead28bd5c5e53db8226506bd9aead279024bd <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/AcquisitionChannel#free_trial> .
 _:cb4777ace5c7b59922bd70d8679f3ead28bd5c5e53db8226506bd9aead279024bd <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb141e0962568a913f9043dfd0d6a9e519f559d5747a08cd55ebcb0479494e6d53 .
+_:cb47dc64b6eb8527a863d912369d9caa6982682860e81dbde19ba71504bc4d7d84 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/SourceClass#agency_statement> .
+_:cb47dc64b6eb8527a863d912369d9caa6982682860e81dbde19ba71504bc4d7d84 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cba9445d727b81481fe1093c0d1b1e080ae2507601416d1f233144c567758ec192 .
 _:cb48d849dd9d32ef212f4e3b2a32c833e0662228ccd291001d0c00f540bd2b48a4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ProceedingPosture#judgment_plaintiff> .
 _:cb48d849dd9d32ef212f4e3b2a32c833e0662228ccd291001d0c00f540bd2b48a4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb644d37188109f6ad9163c54f9e3992f622603cec539317f4c47974f8fae326d1 .
 _:cb497f66d1c3629460d1ddfd1bb691ca96eecb79526f8faddad8d508329ec8a4f1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/Automaticity#per_incident_consent> .
@@ -5688,6 +5747,8 @@ _:cb8bd3cd65aba39ab1ae1d827023c48276ba54523ba3ed4b42117ff77cb30b271c <http://www
 _:cb8bd3cd65aba39ab1ae1d827023c48276ba54523ba3ed4b42117ff77cb30b271c <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb868c2a984fde77a836c773a7fc114808292c61d12d8413b207ed1ea5a3e15ae2 .
 _:cb8c36dfaf7d1abfa17d3f03899fe1509517c0a49c9b52bcf1ba0424bdd422827b <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/EpistemicStatus#disputed> .
 _:cb8c36dfaf7d1abfa17d3f03899fe1509517c0a49c9b52bcf1ba0424bdd422827b <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb197e698ac48e7b42b47404345fd41113a30ddb603aeb3e8fd7912614085840ccf .
+_:cb8c763fb5c15d64edd25af7a1f03745f85aec150a89f54d3c197af4f8c82e2f1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/SourceClass#investigative_article> .
+_:cb8c763fb5c15d64edd25af7a1f03745f85aec150a89f54d3c197af4f8c82e2f1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb166e9bbeba4ccafb0dfc9462d17e4da736106a7edcc90d3a669dc9dd3448d6e94 .
 _:cb8d3e1fa0e3df86e6adac3e60324845665f6be5f030f76df1662960385fce393a <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ArtifactType#policy_document> .
 _:cb8d3e1fa0e3df86e6adac3e60324845665f6be5f030f76df1662960385fce393a <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1dfdb488671dc89bc2a4862f00378f9c5d1f6c68c4aa4935a76a7f5592ef0c65 .
 _:cb8e46b3d191c153a9fb59aae824e789e5c42f1cc351f3c35bb011e2710f5aca63 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ProcurementState#free_trial> .
@@ -5765,6 +5826,8 @@ _:cba8bd0a61bb49ca61d3755c3eafd1d087f23fa6d4533950ae6829a963c66602ab <http://www
 _:cba8bd0a61bb49ca61d3755c3eafd1d087f23fa6d4533950ae6829a963c66602ab <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbc58dffa361763d855393732f1e4d3879ff8eadb63b270afdb43b2687b0aa966d .
 _:cba8f958b9115706c768a802cbc422cfdd3fdf3ab17ab365593696e978a8f6438a <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/OperationalState#restricted> .
 _:cba8f958b9115706c768a802cbc422cfdd3fdf3ab17ab365593696e978a8f6438a <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb16ed2c62f21e0f30bc697a3ae5d26c2cfc4d67c59f8cbc3e3903a008c02d7d45f .
+_:cba9445d727b81481fe1093c0d1b1e080ae2507601416d1f233144c567758ec192 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/SourceClass#vendor_statement> .
+_:cba9445d727b81481fe1093c0d1b1e080ae2507601416d1f233144c567758ec192 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb8c763fb5c15d64edd25af7a1f03745f85aec150a89f54d3c197af4f8c82e2f1 .
 _:cbab3701eccfd322ceee3332e7d667d7c274efdb9fc9b39a20965f52fc7dd00f67 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/SystemScope#vendor_cloud_single_tenant> .
 _:cbab3701eccfd322ceee3332e7d667d7c274efdb9fc9b39a20965f52fc7dd00f67 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb6c0abec4a508c60515d5feabc3bcc4414bbb8f2209a32a6cb59f65d621771bad .
 _:cbabb3df44636f1c0c0bf544fa4a8212563b98382ba390a8143001a5ce08126bfd <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ObservedVia#portal> .
