@@ -44,6 +44,8 @@ of a landed one.
 | ADR-030 | Review queue + LLM-extraction scaffolding as a library plus CLI (P05.2) |
 | ADR-031 | A minimal count-reconciliation seed + the three missing count predicates, for the vertical slice (P06.1) |
 | ADR-032 | A minimal slice dossier renderer with a print-CSS PDF path, ahead of the production surface (P06.1) |
+| ADR-033 | The layered document-parsing stack as the parser interface every connector extracts through (P07.1) |
+| ADR-034 | The `records` connector: targeted-lookup posture, MuckRock api_v2 + short-lived JWT, and the `no_responsive_records` → coverage bridge (P07.2) |
 
 ADR-001…012 are the §15.5 decision set; ADR-013…020 are the stack ADRs. The
 egress question of §38.5 is resolved for the whole project in ADR-015. ADR-021 is
@@ -69,4 +71,11 @@ layered-parsing-stack decision (the §24 parser interface every connector extrac
 through: the seven-layer cheapest-sufficient enum, byte/zip-manifest classification
 with per-member archive handling, the six-kind locator schema, the `raw_value`
 contract, the versioned reversible reason-code mapping, and the fixtures + canary
-parser-drift defences — no new heavy dependency and no DDL).
+parser-drift defences — no new heavy dependency and no DDL). ADR-034 is the P07.2
+`records`-connector decision (MuckRock/NextRequest/DocumentCloud as a targeted-lookup
+client that cannot be configured into a crawler; MuckRock api_v2 with a five-minute
+JWT that refreshes early and on a 401 and rides an additive per-request `headers`
+seam on the shared fetcher; the `no_responsive_records` → `NO_EVIDENCE_FOUND`
+coverage bridge reusing `db.absence`; the predicate allowlist and candidate-only
+party keying; released documents captured as `EvidenceArtifact` rows and classified
+through the P07.1 parser, with the extraction engines still deferred).

@@ -49,13 +49,19 @@ class FakeTransport:
         self._robots_text = robots_text
         self.request_log: list[str] = []
         self.robots_log: list[str] = []
+        # Per-request headers seen, keyed nothing — appended in request order so a
+        # test can assert an Authorization header rode the shared seam (§23.5).
+        self.header_log: list[Mapping[str, str] | None] = []
 
     def robots(self, robots_url: str) -> RobotsResult:
         self.robots_log.append(robots_url)
         return RobotsResult(text=self._robots_text)
 
-    def request(self, url: str, *, user_agent: str) -> FetchResult:
+    def request(
+        self, url: str, *, user_agent: str, headers: Mapping[str, str] | None = None
+    ) -> FetchResult:
         self.request_log.append(url)
+        self.header_log.append(dict(headers) if headers is not None else None)
         return self._responses[url]
 
 

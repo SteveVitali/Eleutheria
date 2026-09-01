@@ -30,7 +30,7 @@ real sockets and a later ticket can plug a real HTTP transport in unchanged.
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Protocol, runtime_checkable
@@ -75,11 +75,19 @@ class RobotsResult:
 
 @runtime_checkable
 class Transport(Protocol):
-    """The low-level network transport the fetcher drives (injected, testable)."""
+    """The low-level network transport the fetcher drives (injected, testable).
+
+    ``request`` accepts optional per-request ``headers`` (default none) so an
+    authenticated source (e.g. MuckRock's Bearer-JWT data endpoints, §23.5) can
+    ride the single shared egress seam rather than opening its own HTTP client
+    (SIG-INGEST-011). Sources that need no auth ignore it.
+    """
 
     def robots(self, robots_url: str) -> RobotsResult: ...
 
-    def request(self, url: str, *, user_agent: str) -> FetchResult: ...
+    def request(
+        self, url: str, *, user_agent: str, headers: Mapping[str, str] | None = None
+    ) -> FetchResult: ...
 
 
 def user_agent(name: str, version: str, contact_url: str = DEFAULT_CONTACT_URL) -> str:
@@ -199,8 +207,15 @@ class PoliteFetcher:
         parser = self._ensure_robots(host, url)
         return parser.can_fetch(self._ua, url)
 
-    def fetch(self, url: str) -> FetchResult:
+    def fetch(self, url: str, *, headers: Mapping[str, str] | None = None) -> FetchResult:
         """Fetch ``url`` politely: robots-checked, rate-limited, UA-identified.
+
+        Optional ``headers`` are per-request request headers passed to the
+        transport — the seam an authenticated source uses to carry a credential
+        (e.g. an ``Authorization: Bearer <jwt>`` on MuckRock's api_v2 data
+        endpoints, §23.5) through the shared politeness layer rather than an HTTP
+        client of its own (SIG-INGEST-011). Supplying a credential this way is
+        *authentication*, not access-control circumvention (Rule 4 / SIG-INGEST-013).
 
         Raises :class:`RobotsUnretrievable` if robots.txt is unavailable,
         :class:`RobotsDisallowed` if it forbids the URL, and
@@ -213,7 +228,12 @@ class PoliteFetcher:
                 f"robots.txt disallows {self._ua!r} from fetching {url!r} (Rule 2)."
             )
         self._limiter.acquire(host)
-        result = self._transport.request(url, user_agent=self._ua)
+        # Pass headers only when present so a transport that predates the headers
+        # seam (and takes only user_agent) keeps working unchanged (back-compat).
+        if headers is None:
+            result = self._transport.request(url, user_agent=self._ua)
+        else:
+            result = self._transport.request(url, user_agent=self._ua, headers=headers)
         if _is_challenge(result):
             raise ChallengeEncountered(
                 f"{url!r} returned a bot-management challenge (status {result.status}); "
