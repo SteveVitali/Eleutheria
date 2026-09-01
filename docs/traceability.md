@@ -841,3 +841,66 @@ and the `ArtifactType` enum + SIG-INGEST-047 additions.
 | SIG-INGEST-034 — the connector emits candidate identifiers and never resolves entities itself | `connectors.procurement.org_candidate`; `Contract.claim_rows`/`FundingInstrument.claim_rows` (candidate_identifier on party predicates) | `tests/connectors/test_procurement.py::test_party_predicates_carry_a_candidate_identifier_not_a_resolution`, `::test_funding_parties_carry_candidate_identifiers` |
 | §11.11/§11.12/§13.4 vocabularies lock-stepped to the frozen ontology enums | `data/procurement_vocab.toml` (`acquisition_channels`, `funding_instrument_types`, `procurement_states`) | `tests/connectors/test_procurement.py::test_acquisition_channel_vocab_matches_the_ontology_enum`, `::test_funding_instrument_type_vocab_matches_the_ontology_enum`, `::test_procurement_state_vocab_matches_the_ontology_enum` |
 | SIG-INGEST-003 — append-only load contract (claim_id + sys_period only on claim/entity rows) | `connectors.procurement.load_claims_for_l1` | `tests/connectors/test_procurement.py::test_load_adds_identity_only_to_claim_and_entity_rows` |
+
+# P08.2 — The reconciliation workflows (§29)
+
+The §29 per-predicate workflows layered on the P08.1 resolver (ADR-036): thin,
+immutable value-object modules in `reconcile/` that emit contradictions, research
+tasks, and an L4 device-attribution inference. P08.3 (§31) owns the materialized
+`Contradiction` entity; P12.x (§30) owns the full L4 inference layer. §29.1
+camera-count reconciliation landed in the P06.1 slice (above; SIG-RECON-026..029).
+
+## Device attribution (§29.2)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-RECON-030 (candidate generation weighs spatial containment, distance, road-network context, adjacency, vendor match, unmapped count gaps) | `reconcile.attribution.CandidateOperator` (the six signals + `score`/`corroborating_score`), `attribute_operator` | `tests/reconcile/test_attribution.py::test_corroborated_candidate_yields_probable_l4_inference`, `::test_county_road_inside_city_does_not_default_to_containing_jurisdiction` |
+| SIG-RECON-031 (output is an L4 `probable` inference; never written to `operator` as observed; never auto-pushed to OSM) | `reconcile.model.Inference` (`layer`/`is_observation`/`pushable_to_osm`/`as_observed_operator`), `reconcile.attribution._infer` | `tests/reconcile/test_attribution.py::test_corroborated_candidate_yields_probable_l4_inference`, `::test_inference_is_not_writable_as_observed_operator`, `::test_inference_is_never_auto_pushable_to_osm`; `tests/reconcile/test_model_inference.py::test_inference_is_never_auto_pushable_and_not_observable` |
+| SIG-RECON-032 (the hard cases modelled, not defaulted: county road, state-police-in-city, on-behalf-of, multi-agency shared, boundary) | `reconcile.attribution.attribute_operator` (boundary/containment_only/cross_jurisdiction_road/multi_agency_shared/on_behalf_of/tie branches) | `tests/reconcile/test_attribution.py::test_containment_alone_is_not_attribution`, `::test_boundary_device_is_enqueued_not_picked`, `::test_multi_agency_shared_deployment_is_multiple_operators_not_a_conflict`, `::test_operator_on_behalf_of_names_the_role`, `::test_equally_corroborated_candidates_are_enqueued` |
+| SIG-RECON-033 (promotion needs human confirmation or a D1/D2 source; a high score never self-promotes) | `reconcile.attribution.promote`, `PromotionRefused` | `tests/reconcile/test_attribution.py::test_high_score_does_not_promote_itself`, `::test_human_confirmation_promotes`, `::test_documentary_source_promotes`, `::test_weak_directness_does_not_promote` |
+
+## Sharing-edge reconciliation (§29.3)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-RECON-034 (the three edge types reconciled separately; no merge) | `reconcile.sharing.ACCESS_KINDS`, `reconcile_sharing` (per-kind grouping) | `tests/reconcile/test_sharing.py::test_the_three_edge_types_are_reconciled_separately` |
+| SIG-RECON-035 (asymmetry is a finding: `SHARING_ASYMMETRY` + research task, not a merge) | `reconcile.sharing.reconcile_sharing`; `reconcile.model.SHARING_ASYMMETRY` | `tests/reconcile/test_sharing.py::test_asymmetry_is_a_finding_not_a_merge`, `::test_reciprocated_edge_has_no_asymmetry` |
+| SIG-RECON-036 (a single-snapshot edge carries `valid_from_kind='unknown'`; no start inferred from first observation) | `reconcile.sharing.SharingObservation.valid_from_kind`, `ReconciledEdge.valid_from_kind` | `tests/reconcile/test_sharing.py::test_single_snapshot_edge_carries_unknown_valid_from_kind`, `::test_multi_snapshot_edge_can_have_known_start` |
+| SIG-RECON-037 (`observed_use` ↛ `configured_access` at L1; the inference is L4-only, labelled) | `reconcile.sharing.infer_access_from_use`, `L1InferenceForbidden` | `tests/reconcile/test_sharing.py::test_observed_use_does_not_create_configured_access_at_l1`, `::test_infer_access_rejects_non_use_edges` |
+
+## Deployment-lifecycle reconciliation (§29.4)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-RECON-038 (the four tracks resolved independently) | `reconcile.lifecycle.TRACKS`, `resolve_lifecycle`, `resolve_track` | `tests/reconcile/test_lifecycle.py::test_four_tracks_are_resolved_independently` |
+| SIG-RECON-039 (event-log transitions preferred over inferred) | `reconcile.lifecycle.resolve_track` (event-log-first tie stabiliser) | `tests/reconcile/test_lifecycle.py::test_event_log_transition_is_preferred_within_a_window` |
+| SIG-RECON-040 (fuzzy dates ordered by EDTF envelope; overlapping ⇒ unordered-within-window) | `reconcile.lifecycle.resolve_track` (envelope-overlap window merge, reuses `db.edtf.derive_envelope`) | `tests/reconcile/test_lifecycle.py::test_distinct_dated_events_are_ordered`, `::test_overlapping_fuzzy_envelopes_are_unordered_within_window` |
+| SIG-RECON-041 (vendor replacement ⇒ `replaced_by` edge rendered "vendor replaced", never "surveillance removed") | `reconcile.lifecycle.detect_vendor_replacement`, `ReplacedByEdge`, `REPLACEMENT_RENDER` | `tests/reconcile/test_lifecycle.py::test_vendor_replacement_is_rendered_as_replacement`, `::test_replacement_outside_window_is_not_detected`, `::test_replacement_requires_same_technology_family`, `::test_successor_predating_cancellation_is_not_a_replacement` |
+| SIG-RECON-042 (canceled contract + installed hardware stated plainly, never smoothed) | `reconcile.lifecycle.render_lifecycle_status`, `LifecycleStatus` | `tests/reconcile/test_lifecycle.py::test_canceled_contract_with_hardware_present_is_stated_plainly`, `::test_ordinary_status_renders_both_tracks_without_a_finding` |
+
+## Retention reconciliation (§29.5)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-RECON-043 (three retention predicates; disagreement is a finding; vendor default never populates configuration; a default change is not retroactive) | `reconcile.retention.reconcile_retention`, `populate_configured_from_vendor_default` (`VendorDefaultLeak`), `apply_vendor_default_change` | `tests/reconcile/test_retention.py::test_three_predicates_stay_distinct`, `::test_policy_versus_configured_disagreement_is_a_finding`, `::test_vendor_default_never_populates_configuration`, `::test_vendor_default_change_is_not_retroactive` |
+
+## Policy-versus-configuration reconciliation (§29.6)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-RECON-044 (divergence is a first-class finding with both sides' evidence; never editorially collapsed; the immigration-hotlist case is expressible) | `reconcile.policy_config.reconcile_policy_configuration`, `PolicyConfigResult` (`collapse` raises); `reconcile.model.POLICY_CONFIGURATION_DIVERGENCE` | `tests/reconcile/test_policy_config.py::test_canonical_immigration_divergence_is_a_first_class_finding`, `::test_divergence_must_not_be_collapsed`, `::test_required_but_disabled_is_a_finding` |
+
+## Snapshot-diff reconciliation (§29.7)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-RECON-045 (consecutive captures diffed at extracted-field level; per-field change events carry both values and both dates) | `reconcile.snapshot_diff.diff_captures`, `diff_series`, `FieldChangeEvent`, `Capture` | `tests/reconcile/test_snapshot_diff.py::test_modified_field_carries_both_values_and_both_dates`, `::test_added_and_removed_fields`, `::test_present_but_none_is_distinct_from_absent`, `::test_series_diffs_consecutively_in_chronological_order` |
+
+## Additional workflows (§29.8)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-RECON-046 — cost/contract-value reconciliation (contract vs invoices vs budget vs cooperative SKU, distinct bases) | `reconcile.additional.reconcile_cost`, `COST_BASES`, `CostClaim` | `tests/reconcile/test_additional.py::test_cost_bases_stay_distinct_and_deltas_are_findings`, `::test_cost_agreement_has_no_finding` |
+| SIG-RECON-046 — organization-existence reconciliation (named in a list, unknown to any registry; §14.4) | `reconcile.additional.reconcile_organization_existence`, `OrgExistenceFinding` | `tests/reconcile/test_additional.py::test_unknown_org_named_in_a_list_is_a_finding` |
+| SIG-RECON-046 — capability reconciliation across disagreeing sources, respecting marketed-vs-configured (SIG-ONTO-018) | `reconcile.additional.reconcile_capability`, `CAPABILITY_KINDS`, `CapabilityClaim` | `tests/reconcile/test_additional.py::test_marketed_capability_does_not_imply_configured`, `::test_within_kind_disagreement_is_a_finding_and_stays_unresolved` |
+| SIG-RECON-046 — geographic-coverage reconciliation (distinct scopes kept distinct) | `reconcile.additional.reconcile_geographic_coverage`, `CoverageClaim` | `tests/reconcile/test_additional.py::test_distinct_scopes_stay_distinct`, `::test_within_scope_disagreement_is_a_finding` |
