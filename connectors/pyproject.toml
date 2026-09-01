@@ -13,6 +13,11 @@ requires-python = ">=3.11"
 # §9.5 coverage model, SIG-ONTO-040) and routes each released document through the
 # P07.1 parser interface parsing.classification (§23.5 "calls the parser"). Both
 # are leaf packages that never import connectors (no cycle).
+# sig-reconcile is added by P11.1: the `flock_portal` connector lands its portal
+# snapshots through the §29.7 snapshot-diff reconciler and its configured-sharing
+# edges through the §29.3 sharing-edge reconciler (both owned by P08.2,
+# SIG-RECON-045/034/035/036/037). reconcile depends only on sig-ontology + sig-db
+# and never imports connectors, so there is no cycle.
 dependencies = [
     "sig-policy",
     "sig-evidence",
@@ -20,6 +25,7 @@ dependencies = [
     "sig-exports",
     "sig-db",
     "sig-parsing",
+    "sig-reconcile",
 ]
 
 [project.scripts]
@@ -32,6 +38,7 @@ sig-resolution = { workspace = true }
 sig-exports = { workspace = true }
 sig-db = { workspace = true }
 sig-parsing = { workspace = true }
+sig-reconcile = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]
