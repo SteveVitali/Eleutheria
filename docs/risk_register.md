@@ -746,6 +746,35 @@ tagging, and the targeted-lookup discipline were not enforced.
 | RISK-P13-05 | **CourtListener/RECAP is crawled** — a ~5/min court API is enumerated instead of looked up, a legal-posture violation (§22.2, SIG-INGEST-036/037). | `assert_targeted_lookup` refuses crawl/list/search modes, pagination cursors, and bare collection endpoints; `discover`/`fetch` assert it for every court target. Proven by `tests/connectors/test_accountability.py::test_crawling_the_court_api_is_refused`, `::test_discover_refuses_a_courtlistener_crawl_target`. |
 | RISK-P13-06 | **The Abuse Library's curated entries are normalized into facts** rather than kept as an index (OL-2E-AL-02). | Abuse Library entries become `index_only` advocacy-analysis evidence links, never event claims. Proven by `tests/connectors/test_accountability.py::test_abuse_library_entries_are_index_only_advocacy_links_never_facts`. |
 
+## Phase 13 — Accountability, policy, legal instruments (P13.2 — policy, legal instruments, and policy/configuration divergence)
+
+Per §53 / SIG-ENG-031, P13.2's risk-register entries. P13.2 models what governs the infrastructure and
+surfaces where it is disobeyed (§§11.13–11.14, §29.6, §10.9). The `Policy` / `LegalInstrument` entities
+(P01.1) and the §29.6 divergence reconciler (P08.2) are consumed as-is; this ticket adds no schema and
+no persisted surface, so its risks are narrow: the two governing objects could be folded into one, the
+divergence could be editorially collapsed, or a curated index entry could be silently promoted to a
+claim. See ADR-046 for the decision to land P13.2 as acceptance tests plus the SIG-EPIS-030 general form.
+
+### Design risks retired by executable checks
+
+| id | Risk | Compensating control |
+|---|---|---|
+| RISK-P13-10 | **`Policy` and `ConfigurationState` are merged into one object** — a written rule and the observed configuration are folded together, destroying the §29.6 finding before it can be made (SIG-ONTO-034, P10). | The two are distinct classes with disjoint predicate surfaces in the ontology, and distinct types at the resolution layer (`reconcile.policy_config.PolicyStatement` vs `ConfigurationState`, both sides retained). Proven by `tests/ontology/test_schema_structure.py::test_policy_and_configuration_state_are_never_merged`, `tests/reconcile/test_policy_config.py::test_policy_and_configuration_are_distinct_and_never_merged`. |
+| RISK-P13-11 | **Policy/configuration divergence is editorially collapsed** — a written policy prohibiting immigration-related use and an enabled immigration hotlist are merged into one answer instead of surfaced as a finding carrying both sides' evidence (SIG-RECON-044, OL-8.12-02). | `reconcile_policy_configuration` emits a `policy_configuration_divergence` finding with both sides' evidence and a research task; `PolicyConfigResult.collapse()` raises. Proven by `tests/reconcile/test_policy_config.py::test_canonical_immigration_divergence_is_a_first_class_finding`, `::test_divergence_must_not_be_collapsed`, `::test_required_but_disabled_is_a_finding`. |
+| RISK-P13-12 | **A curated source index is normalized into claims** — a bibliography of reporting is materialized into low-quality facts about its subjects, destroying the index's value (SIG-EPIS-030, §10.9, OL-2E-AL-02). | `connectors.curated_index.CuratedSourceIndex` holds entries as `index_only` references; `as_claims()` raises `IndexNormalizationRefused`, and the P13.1 Abuse Library path consumes this general form. Proven by `tests/connectors/test_curated_index.py::test_index_records_are_index_only_never_claim_rows`, `::test_normalizing_a_curated_index_into_claims_is_refused`, `::test_the_accountability_connector_relies_on_the_general_capability`. |
+
+### Deviations recorded as ADRs (SIG-ENG-031)
+
+| ADR | Deviation |
+|---|---|
+| ADR-046 | The `Policy` / `LegalInstrument` predicate surfaces (P01.1) and the §29.6 divergence reconciler (P08.2) were front-loaded by dependencies, so P13.2 re-implements nothing: it adds the ticket's acceptance tests against those surfaces (no schema change; the generation gate is untouched) and lands SIG-EPIS-030 as the general `connectors.curated_index` module, refactoring the P13.1 Abuse Library path to consume it additively (the emitted `index_only` row shape is byte-identical). |
+
+### Scaffolded / bounded requirements (SIG-ENG-005)
+
+| id | Requirement | Why not fully closed now | Compensating control |
+|---|---|---|---|
+| RISK-P13-13 | Public API / export surfaces over `Policy` / `LegalInstrument`, and `ConfigurationState` population | Out of scope: the read/export surfaces are P14.1 / P14.2, and `ConfigurationState` population + the configuration-cut rule are owned upstream (P01.1 + the config-writing connectors); this ticket only reconciles against them. | The predicate surfaces and the never-merged invariant are proven now, so the downstream surfaces build on a tested, additive base; the §29.6 reconciler already renders the divergence finding both sides retained. |
+
 ### Scaffolded / bounded requirements (SIG-ENG-005)
 
 | id | Requirement | Why not fully automatable now | Compensating control |
