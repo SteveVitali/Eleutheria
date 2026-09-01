@@ -39,8 +39,19 @@ class AbsenceState(StrEnum):
     UNRESOLVED = "UNRESOLVED"
 
 
+# The `coverage_record.absence_kind` vocabulary (§32.1, graph_annotations.sql).
+# NOTE these four are NOT the four §9.5 epistemic *states*: `UNRESOLVED` is a
+# state with no coverage kind (it lives on the L3 resolution row), and
+# `not_applicable` is a coverage kind with no epistemic state (the predicate does
+# not apply to the subject — it is not a species of "unknown").
+NOT_APPLICABLE_KIND = "not_applicable"
+ABSENCE_KINDS: frozenset[str] = frozenset(
+    {"not_researched", "searched_not_found", "evidence_of_absence", NOT_APPLICABLE_KIND}
+)
+
 # AbsenceState <-> coverage_record.absence_kind (graph_annotations.sql). UNRESOLVED
 # has no coverage_kind: it lives on the L3 resolution row, not a coverage record.
+# `not_applicable` has no epistemic state: it is a coverage kind, not an "unknown".
 _STATE_TO_COVERAGE_KIND: dict[AbsenceState, str] = {
     AbsenceState.NOT_RESEARCHED: "not_researched",
     AbsenceState.NO_EVIDENCE_FOUND: "searched_not_found",
@@ -66,18 +77,34 @@ def coverage_kind_for(state: AbsenceState) -> str:
 
 
 def state_from_coverage_kind(absence_kind: str) -> AbsenceState:
-    """Map a `coverage_record.absence_kind` back to its logical state."""
+    """Map a `coverage_record.absence_kind` back to its logical state.
+
+    `not_applicable` is a valid coverage kind but carries no §9.5 epistemic
+    state (it is not a species of "unknown"), so it raises rather than being
+    silently coerced into one.
+    """
     try:
         return _COVERAGE_KIND_TO_STATE[absence_kind]
     except KeyError:
+        if absence_kind == NOT_APPLICABLE_KIND:
+            raise ValueError(
+                f"{absence_kind!r} has no §9.5 epistemic state; the predicate does "
+                "not apply to the subject, which is not a kind of unknown"
+            ) from None
         raise ValueError(f"unknown coverage absence_kind {absence_kind!r}") from None
 
 
 @dataclass(frozen=True)
 class AbsenceRendering:
-    """A distinguishable presentation of an absence state (SIG-TIME-012)."""
+    """A distinguishable presentation of an absence state (SIG-TIME-012).
 
-    state: AbsenceState
+    `state` is the §9.5 epistemic state, or `None` for the `not_applicable`
+    coverage kind, which carries no epistemic state (it is not a kind of
+    "unknown"). Distinguishability keys off `code`, which is never `None` and
+    never shared between two renderings.
+    """
+
+    state: AbsenceState | None
     label: str
     detail: str
     # A stable machine token every surface keys off; never NULL, never shared
@@ -132,3 +159,35 @@ def render_absence(
         ),
         code=AbsenceState.UNRESOLVED.value,
     )
+
+
+# The distinguishable rendering token for the fourth coverage kind. It is neither
+# an `AbsenceState` (not a kind of "unknown") nor blank; it keys off its own token
+# so the API and UI never conflate "does not apply" with "not yet researched".
+NOT_APPLICABLE_CODE = "NOT_APPLICABLE"
+
+
+def render_coverage_kind(
+    absence_kind: str,
+    *,
+    sources_searched: Sequence[str] | None = None,
+) -> AbsenceRendering:
+    """Render any of the four §32.1 coverage `absence_kind`s distinguishably.
+
+    The three "unknown"-family kinds delegate to :func:`render_absence` via their
+    §9.5 state; `not_applicable` — the predicate does not apply to the subject —
+    gets its own distinguishable rendering, because collapsing it into
+    `not_researched` (SIG-TIME-012) would misreport a deliberate non-question as an
+    unmet research obligation. `searched_not_found` still MUST name the sources
+    searched (SIG-TIME-011); an empty `sources_searched` is rejected.
+    """
+    if absence_kind == NOT_APPLICABLE_KIND:
+        return AbsenceRendering(
+            state=None,  # no §9.5 epistemic state: not a kind of "unknown"
+            label="Not applicable",
+            detail="This predicate does not apply to this subject.",
+            code=NOT_APPLICABLE_CODE,
+        )
+    if absence_kind not in ABSENCE_KINDS:
+        raise ValueError(f"unknown coverage absence_kind {absence_kind!r}")
+    return render_absence(state_from_coverage_kind(absence_kind), sources_searched=sources_searched)

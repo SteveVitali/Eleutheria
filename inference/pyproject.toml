@@ -1,12 +1,19 @@
 [project]
 name = "sig-inference"
 version = "0.0.0"
-description = "SIG inference package (skeleton; see docs/2_canonical_design_spec.md §47)."
+description = "SIG inference package (§32 coverage/quality metrics; §47 L4 derivations)."
 requires-python = ">=3.11"
-dependencies = []
+# The coverage-metrics layer (§32) reuses the four-state absence model (sig-db)
+# and the volatility-relative currency derivation (sig-reconcile) rather than
+# duplicating either — freshness is currency, not absolute days (SIG-METRIC-006).
+dependencies = ["sig-db", "sig-reconcile"]
 
 [project.scripts]
 sig-inference = "inference.cli:main"
+
+[tool.uv.sources]
+sig-db = { workspace = true }
+sig-reconcile = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]

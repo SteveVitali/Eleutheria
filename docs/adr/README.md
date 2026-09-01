@@ -47,6 +47,9 @@ of a landed one.
 | ADR-033 | The layered document-parsing stack as the parser interface every connector extracts through (P07.1) |
 | ADR-034 | The `records` connector: targeted-lookup posture, MuckRock api_v2 + short-lived JWT, and the `no_responsive_records` → coverage bridge (P07.2) |
 | ADR-035 | The `procurement` connector: cooperative-piggyback → parent award, USAspending sub-award tracing, the `FundingInstrument` runtime shape, the published agenda-platform tenant registry, and `artifact_type` as an ontology vocabulary (P07.3) |
+| ADR-036 | The reconciliation workflows layered on the resolver (P08.2) |
+| ADR-037 | The materialized `Contradiction` entity, its lifecycle, and the byte-identical L3 rebuild (P08.3) |
+| ADR-038 | The coverage-metrics layer in `inference`, reuse of `db.absence`/currency, and the executable capture–recapture prohibition (P09.1) |
 
 ADR-001…012 are the §15.5 decision set; ADR-013…020 are the stack ADRs. The
 egress question of §38.5 is resolved for the whole project in ADR-015. ADR-021 is
