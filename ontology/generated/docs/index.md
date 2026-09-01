@@ -76,7 +76,7 @@ Name: sig
 | [audit_case_code_required](slots/audit_case_code_required.md) |  |
 | [audit_source_type](slots/audit_source_type.md) |  |
 | [authorization_state](slots/authorization_state.md) |  |
-| [automaticity](slots/automaticity.md) |  |
+| [automaticity](slots/automaticity.md) | Required; direction/scope/automaticity/kind are all required (SIG-ONTO-049) |
 | [award_date](slots/award_date.md) |  |
 | [boundary](slots/boundary.md) | MultiPolygon, 4326 |
 | [boundary_source](slots/boundary_source.md) |  |
