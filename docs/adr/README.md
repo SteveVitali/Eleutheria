@@ -51,6 +51,7 @@ of a landed one.
 | ADR-037 | The materialized `Contradiction` entity, its lifecycle, and the byte-identical L3 rebuild (P08.3) |
 | ADR-038 | The coverage-metrics layer in `inference`, reuse of `db.absence`/currency, and the executable capture–recapture prohibition (P09.1) |
 | ADR-039 | The research-task engine: detector/closing-condition as callables, the `resolved_no_evidence_exists`→`CoverageRecord` bridge, and executable anti-abuse (P10.1) |
+| ADR-040 | The §33.2 detector catalog (34 registered task types) and the §31 contradiction→task map, cross-checked against `CONTRADICTION_TYPES` (P10.2) |
 
 ADR-001…012 are the §15.5 decision set; ADR-013…020 are the stack ADRs. The
 egress question of §38.5 is resolved for the whole project in ADR-015. ADR-021 is
