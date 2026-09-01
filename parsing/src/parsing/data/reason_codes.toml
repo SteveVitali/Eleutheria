@@ -1,0 +1,59 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# The reason-code normalization mapping as versioned data (§24.2, SIG-PARSE-005/006).
+#
+# Reason fields ("why was this surveillance search / access performed?") arrive in two
+# forms and are normalized to the SAME canonical codes through this table:
+#
+#   * [free_text]  — a typed phrase; matched after casefolding + whitespace/punctuation
+#                    folding against the listed variants. A weak-to-moderate signal.
+#   * [dropdown]   — a value chosen from a constrained menu; matched case-insensitively
+#                    against the listed labels. A MUCH stronger signal (SIG-PARSE-006),
+#                    so the two forms are normalized separately and the form is recorded
+#                    on the claim.
+#
+# The mapping is inspectable (it is data), reversible (each canonical code lists the raw
+# variants that map to it — `parsing.reason_codes.raw_variants`), and versioned. Changing
+# it is a new `version`, never an edit of history: existing claims keep the
+# `mapping_version` they were stamped with, and a bulk re-classification is performed as
+# NEW claims (extraction_method = 'vocabulary_migration', SIG-STORE-038) — never a rewrite.
+
+version = "1"
+
+# Free-text reason phrases → canonical code. Variants are compared after casefolding,
+# trimming, collapsing internal whitespace, and stripping surrounding punctuation.
+[free_text]
+criminal_investigation = [
+    "criminal investigation",
+    "crim inv",
+    "criminal invest",
+    "investigation",
+    "invest",
+    "ci",
+]
+traffic_enforcement = [
+    "traffic enforcement",
+    "traffic stop",
+    "traffic",
+    "moving violation",
+]
+stolen_vehicle = ["stolen vehicle", "stolen veh", "stolen auto", "svs hit"]
+wanted_person = ["wanted person", "wanted", "warrant", "warrant service"]
+missing_person = ["missing person", "missing", "runaway"]
+amber_alert = ["amber alert", "amber", "child abduction"]
+officer_safety = ["officer safety", "officer security", "safety"]
+intelligence = ["intelligence", "intel", "situational awareness"]
+
+# Constrained-dropdown labels → canonical code. These are the menu values a system
+# offers; a match here is a strong signal (the value was chosen, not typed).
+[dropdown]
+criminal_investigation = ["Criminal Investigation"]
+traffic_enforcement = ["Traffic Enforcement"]
+stolen_vehicle = ["Stolen Vehicle"]
+wanted_person = ["Wanted Person", "Warrant"]
+missing_person = ["Missing Person"]
+amber_alert = ["AMBER Alert"]
+officer_safety = ["Officer Safety"]
+intelligence = ["Intelligence"]

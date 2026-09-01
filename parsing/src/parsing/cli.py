@@ -3,8 +3,17 @@
 # carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 """Plain-CLI entry point for the `parsing` stage (SIG-ENG-013).
 
-Sub-commands expose the model-assisted-extraction boundary (§25):
+Sub-commands expose the layered parsing stack (§24) and the model-assisted-extraction
+boundary (§25):
 
+* ``classify PATH``  — classify a file before parsing and print the verdict; a mixed-format
+  ZIP is classified **per member** (SIG-PARSE-002), and each verdict names the cheapest
+  sufficient layer (SIG-PARSE-001).
+* ``layers``         — list the seven extraction layers, cheapest first, with the method
+  string recorded on the extraction (SIG-PARSE-001).
+* ``reason KIND TEXT`` — normalize a reason field through the versioned mapping, retaining
+  the raw text and stamping the mapping version (SIG-PARSE-005/006); ``--reverse CODE``
+  instead lists the raw variants a canonical code maps from (the reversible view).
 * ``extract PATH``   — run the extraction scaffolding over a JSON job (capture text,
   model provenance, and candidate items) and print the R6/``PROPOSED`` proposals, or the
   rejection when a span is not present in the capture (SIG-LLM-003/004/005).
@@ -19,8 +28,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import zipfile
 
 from . import __version__
+from .classification import classify, classify_archive
 from .extraction import (
     EXTRACTION_SCHEMA_VERSION,
     ExtractionRejected,
@@ -30,6 +41,8 @@ from .extraction import (
     extract_claims,
     load_policies,
 )
+from .layers import LAYER_ORDER
+from .reason_codes import ReasonKind, load_reason_mapping, normalize_reason
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -40,6 +53,24 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     sub = parser.add_subparsers(dest="command")
+
+    classify_cmd = sub.add_parser("classify", help="classify a file before parsing (§24.1)")
+    classify_cmd.add_argument("path", help="a file to classify; a ZIP is classified per member")
+
+    sub.add_parser("layers", help="list the seven extraction layers, cheapest first (§24.1)")
+
+    reason = sub.add_parser("reason", help="normalize a reason field through the versioned mapping")
+    reason.add_argument(
+        "kind",
+        choices=[k.value for k in ReasonKind],
+        help="the form the reason arrived in (a dropdown value is a stronger signal)",
+    )
+    reason.add_argument("text", nargs="?", help="the raw reason text to normalize")
+    reason.add_argument(
+        "--reverse",
+        metavar="CODE",
+        help="instead of normalizing, list the raw variants this canonical code maps from",
+    )
 
     extract = sub.add_parser("extract", help="run model-assisted extraction over a JSON job")
     extract.add_argument(
@@ -58,6 +89,69 @@ def build_parser() -> argparse.ArgumentParser:
         help="a measured gold accuracy; with --type, report the demotion decision",
     )
     return parser
+
+
+def _run_classify(path: str) -> int:
+    with open(path, "rb") as fh:
+        data = fh.read()
+    try:
+        archive = classify_archive(path, data)
+    except zipfile.BadZipFile:
+        archive = None
+    if archive is not None:
+        print(f"{path}: ZIP archive, {len(archive.members)} member(s) (SIG-PARSE-002):")
+        for member in archive.members:
+            layer = member.recommended_layer
+            method = layer.method if layer is not None else "-"
+            print(
+                f"  {member.filename}: {member.file_format.value} → {method}  "
+                f"scanned={member.scanned} encrypted={member.encrypted} "
+                f"merged_headers={member.merged_headers} multi_sheet={member.multi_sheet}"
+            )
+        return 0
+    verdict = classify(path, data)
+    layer = verdict.recommended_layer
+    method = layer.method if layer is not None else "-"
+    print(
+        f"{path}: {verdict.file_format.value} → {method}  "
+        f"scanned={verdict.scanned} encrypted={verdict.encrypted} "
+        f"merged_headers={verdict.merged_headers} multi_sheet={verdict.multi_sheet}"
+    )
+    for note in verdict.notes:
+        print(f"    - {note}")
+    return 0
+
+
+def _run_layers() -> int:
+    print("The seven extraction layers, cheapest first (§24.1, SIG-PARSE-001):")
+    for layer in LAYER_ORDER:
+        print(f"  {layer.cost}  {layer.method}")
+    return 0
+
+
+def _run_reason(kind_value: str, text: str | None, reverse: str | None) -> int:
+    kind = ReasonKind(kind_value)
+    if reverse is not None:
+        mapping = load_reason_mapping()
+        variants = mapping.raw_variants(reverse, kind)
+        if not variants:
+            print(f"no {kind.value} variants map to {reverse!r} (mapping v{mapping.version})")
+            return 2
+        print(f"{reverse} ({kind.value}, mapping v{mapping.version}) maps from:")
+        for variant in variants:
+            print(f"  {variant!r}")
+        return 0
+    if text is None:
+        print("reason: TEXT is required unless --reverse is given")
+        return 2
+    result = normalize_reason(text, kind)
+    code = result.code if result.matched else "(unmapped)"
+    print(
+        f"{text!r} [{result.reason_kind.value}] → {code}  "
+        f"signal={result.signal_strength.value}  mapping v{result.mapping_version}  "
+        f"raw_value={result.raw_text!r}"
+    )
+    return 0
 
 
 def _run_extract(path: str) -> int:
@@ -125,6 +219,12 @@ def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
 
+    if args.command == "classify":
+        return _run_classify(args.path)
+    if args.command == "layers":
+        return _run_layers()
+    if args.command == "reason":
+        return _run_reason(args.kind, args.text, args.reverse)
     if args.command == "extract":
         return _run_extract(args.path)
     if args.command == "sampling":

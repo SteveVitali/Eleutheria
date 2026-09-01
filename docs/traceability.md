@@ -760,3 +760,34 @@ retrospective in `docs/slice/P06.1_retrospective.md` (HARD GATE §54, SIG-ENG-03
 | AC — a genuine contradiction detected + rendered without collapse | `okc_slice` (`value_disagreement`, `policy_configuration_divergence`); `exports.dossier` | `tests/acceptance/queries/test_j1_journalists_traversal.py::test_at_least_one_genuine_contradiction_rendered_without_collapse` |
 | AC — hardness precondition satisfied, declared before the slice | `docs/slice/P06.1_hardness_precondition.md`; `okc_slice.build_slice` | `tests/acceptance/test_hardness_precondition.py` (all) |
 | AC — a written retrospective is committed (HARD GATE §54, SIG-ENG-034) | `docs/slice/P06.1_retrospective.md` | `tests/acceptance/test_slice_artifacts.py::test_retrospective_is_committed_and_substantive` |
+
+# P07.1 — The layered document-parsing stack (§24, the parser interface)
+
+## Layered strategy (§24.1)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-PARSE-001 (cheapest sufficient of seven layers; method recorded on the extraction) | `parsing/src/parsing/layers.py` (`ExtractionLayer`, `cheapest_sufficient`, `.method`); `parsing.claim.ParsedClaim.extraction_method` | `tests/parsing/test_layers.py::test_cheapest_sufficient_picks_the_least_cost_candidate`, `::test_method_strings_match_the_extraction_method_vocabulary`, `tests/parsing/test_claim.py::test_claim_records_method_and_carries_raw_value_and_locator` |
+| SIG-PARSE-002 (classification runs before parsing; verdict recorded; mixed-format ZIP classified per member) | `parsing/src/parsing/classification.py` (`classify`, `classify_archive`, `ClassificationVerdict.to_row`) | `tests/parsing/test_classification.py::test_mixed_response_archive_is_classified_per_member`, `::test_encrypted_pdf_is_flagged_and_routed_to_human`, `::test_the_verdict_is_recordable` |
+| SIG-PARSE-003 (mandatory locator on every claim; locator-less extraction rejected) | `parsing/src/parsing/locator.py` (`Locator`, `LocatorRequired`); `parsing.claim.ParsedClaim.__post_init__` | `tests/parsing/test_claim.py::test_a_claim_without_a_locator_is_rejected`, `tests/parsing/test_locator.py` (all) |
+| SIG-PARSE-004 (`raw_value` preserved before typing, including for unparseable values, P2) | `parsing/src/parsing/claim.py` (`ParsedValue.typed`/`unparseable`, `raw_value` mandatory) | `tests/parsing/test_claim.py::test_raw_value_is_preserved_for_an_unparseable_value_round_trip`, `::test_raw_value_may_not_be_none` |
+
+## Reason-code normalization (§24.2)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-PARSE-005 (versioned, inspectable, reversible mapping as data; raw text retained; mapping version stamped; no history rewrite, SIG-STORE-038) | `parsing/src/parsing/reason_codes.py`; `parsing/src/parsing/data/reason_codes.toml`; `VOCABULARY_MIGRATION_METHOD` | `tests/parsing/test_reason_codes.py::test_every_canonical_code_is_reversible`, `::test_the_mapping_version_is_stamped_on_every_result`, `::test_changing_the_mapping_does_not_rewrite_history` |
+| SIG-PARSE-006 (free-text vs constrained-dropdown reasons distinguished; dropdown a stronger signal) | `parsing.reason_codes.ReasonKind`, `SignalStrength`, `ReasonMapping.normalize` | `tests/parsing/test_reason_codes.py::test_free_text_and_dropdown_are_distinguished_by_signal_strength`, `::test_an_unmapped_reason_retains_its_raw_text_and_does_not_match` |
+
+## Parser drift (§24.3)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-PARSE-007 (committed fixtures per parser: real input → expected output) | `parsing/src/parsing/drift.py` (`FixtureCase`, `assert_no_drift`); `tests/parsing/fixtures/records/mixed_response.zip` (+ `build_mixed_response.py`) | `tests/parsing/test_drift.py::test_committed_fixture_passes_for_an_unchanged_parser`, `::test_a_drifted_parser_fails_the_fixture_assertion`, `tests/parsing/test_classification.py::test_mixed_response_archive_is_classified_per_member` |
+| SIG-PARSE-008 (nightly canary vs live sources alerts — not silently drops — on structural change; R11) | `parsing.drift` (`StructuralExpectation`, `structural_findings`, `run_canary`, `CanaryReport.alerted`); `tests/parsing/fixtures/canary/` | `tests/parsing/test_drift.py::test_canary_alerts_and_does_not_drop_on_structural_drift`, `::test_canary_is_clean_on_the_expected_shape` |
+
+## The `parsing` CLI surface (§24, SIG-ENG-013)
+
+| Requirement | Where | Test |
+|---|---|---|
+| `sig-parsing classify` (per-member for a ZIP), `layers`, `reason` (normalize + reverse) | `parsing/src/parsing/cli.py` | `tests/parsing/test_cli_parsing.py` (all) |
