@@ -1241,3 +1241,47 @@ P08.2 (count §29.1, sharing §29.3) — this connector produces the observation
 | SIG-INGEST-003 (post-capture stages pure; reproducible claim set — only deterministic rows in the stream) | `connectors.audit_structural` (`extract`/`normalize` pure; sharing findings kept out of L1) | `tests/connectors/test_audit_structural.py::test_claim_set_is_reproducible_across_runs` |
 | SIG-PARSE-007/008 (committed fixtures + a canary on structural drift) | `tests/connectors/fixtures/audit_structural/*.csv`; `connectors.audit_structural.canary_findings`, `parse_csv` | `tests/connectors/test_audit_structural.py::test_canary_passes_on_the_committed_fixtures`, `::test_canary_flags_structural_drift` |
 | §23.7 (raw values preserved; source + append-only, P1–P3) | `connectors.audit_structural._stamp`, `UsageAggregate.to_row` (`raw_value`) | `tests/connectors/test_audit_structural.py::test_rows_carry_source_and_are_append_only`, `::test_fetch_carries_a_descriptive_user_agent` |
+
+# P12.1 — Usage aggregates and the analytics boundary
+
+Every executable requirement P12.1 satisfies (§11.16, §18), mapped to code and the test that fails
+if it is removed (SIG-ENG-004). The `UsageAggregate` entity and the ingestion bright-line gate land
+in P11.2 (§23.7); this ticket owns the **boundary** — the DuckDB/Parquet substrate, the UUID+period
+join, partition-as-evidence, and small-cell suppression (ADR-044). The canonical-store half of the
+"no plate column" pair is the P02.1 Postgres test; the rows below cover the analytics-store half.
+
+## The bright line as an analytics-store schema property (§18.1, SIG-ONTO-037/SIG-STORE-025/026)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-STORE-026 / §18.1 (the analytics store holds no plate-capable column and — to foreclose the §18.3 name-join hazard — no name column; the whole published schema is asserted) | `db.analytics` (`ANALYTICS_COLUMNS`, `assert_no_name_or_plate_column`, `assert_analytics_schema`; run in `AnalyticsRow.__post_init__` and `write_partitions`); `sig-db analytics assert-schema` | `tests/db/test_analytics.py::test_analytics_schema_honours_the_bright_line`, `::test_no_analytics_column_is_a_name_or_plate_column`, `::test_plate_or_name_columns_are_rejected`, `::test_schema_missing_a_uuid_or_lineage_column_is_rejected` |
+| SIG-STORE-025 / SIG-ONTO-037 / §18.1 (no per-search or per-plate row reaches the analytics store; a name never crosses the boundary; the projection keys on resolved UUIDs and drops names) | `db.analytics.project_aggregate` (keeps `searching_org_id`/`source_org_id` UUIDs, drops any name field) | `tests/db/test_analytics.py::test_project_aggregate_keys_on_uuids_and_drops_names` |
+
+## The substrate — Hive-partitioned Parquet on DuckDB (§18.2, SIG-STORE-027)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-STORE-027 (high-volume aggregates live outside PostgreSQL as Hive-partitioned Parquet queried by DuckDB; no columnar Postgres extension) | `db.analytics` (`write_partitions` via DuckDB partitioned `COPY`, `PARTITION_KEYS`, `partition_relative_path`, `read_partitions_expr`); `duckdb>=1.0.0` direct dep of `sig-db` (ADR-044) | `tests/db/test_analytics.py::test_aggregates_round_trip_through_hive_partitioned_parquet`, `::test_partition_path_is_hive_key_value`, `::test_partition_path_rejects_a_non_month_period` |
+
+## The join — UUID + period only, never names, with lineage (§18.3, SIG-STORE-028)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-STORE-028 (aggregate partitions join to the graph ONLY via `sig_entity_id` UUIDs and period, never via names) | `db.analytics` (`JOIN_KEYS`, `assert_join_keys`, `build_graph_join_sql` — a name key is a hard `JoinKeyError`) | `tests/db/test_analytics.py::test_assert_join_keys_allows_uuid_and_period`, `::test_assert_join_keys_refuses_name_keys`, `::test_empty_join_keys_are_refused`, `::test_join_sql_refuses_to_build_on_a_name_column`, `::test_partitions_join_to_the_graph_by_uuid` |
+| SIG-STORE-028 (partitions carry `ingest_run_id` and `agg_ruleset_version`) | `db.analytics.AnalyticsRow` (`ingest_run_id`, `agg_ruleset_version`; `AGG_RULESET_VERSION`) | `tests/db/test_analytics.py::test_join_carries_lineage_columns`, `::test_suppressed_row_carries_flag_and_threshold` |
+
+## Partitions as evidence artifacts; summaries cite them (§18.3, SIG-STORE-029)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-STORE-029 (partitions registered as evidence artifacts with digests) | `db.analytics` (`PartitionArtifact`, `write_partitions` content-addresses each file via `evidence.digest.multihash`, `register_partition_as_evidence`, `partition_artifact_id`) | `tests/db/test_analytics.py::test_written_partitions_are_content_addressed`, `::test_partition_is_registered_as_an_evidence_artifact` |
+| SIG-STORE-029 (a claim is created only as a summary statement about a partition, citing the partition as evidence — the §10.1 chain unbroken) | `db.analytics.summary_claim_for_partition` (`cites_partition_digest`, `evidence_artifact_id`; refuses a small count) | `tests/db/test_analytics.py::test_summary_claim_cites_the_partition_as_evidence`, `::test_summary_claim_refuses_to_publish_a_small_count` |
+
+## Small-cell disclosure control (§18.4, SIG-STORE-030/031/032/033)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-STORE-030 (counts 1–4 suppressed as null + `suppressed_flag` + `k_threshold`, never zero; finest granularity one month) | `db.suppression` (`is_small_cell`, `_primary_decision`, `SuppressionDecision`, `assert_month_granularity`, `is_month_period`) | `tests/db/test_suppression.py::test_small_cell_is_one_to_k_minus_one`, `::test_zero_is_not_a_small_cell`, `::test_individual_small_count_is_suppressed_to_null_never_zero`, `::test_month_granularity` |
+| SIG-STORE-030 (complementary suppression so a single suppression is not invertible from published totals) | `db.suppression.suppress_group` (`_complementary_candidate`, `GroupSuppressionResult.margin_publishable`) | `tests/db/test_suppression.py::test_a_lone_suppressed_cell_triggers_complementary_suppression`, `::test_two_primary_suppressions_need_no_complementary`, `::test_single_cell_margin_withholds_the_total_when_it_would_be_invertible` |
+| SIG-STORE-031/032 (suppression records which rationale applied; institutional small counts publish; individual small counts suppress; ambiguous → suppress + raise a review task) | `db.suppression` (`SuppressionRationale`, `_primary_decision`, `review_task_required`, `_complementary_candidate` prefers non-institutional) | `tests/db/test_suppression.py::test_institutional_small_count_is_published_not_suppressed`, `::test_ambiguous_small_cell_is_suppressed_and_raises_a_review_task`, `::test_ambiguous_large_cell_is_published_without_a_task`, `::test_contractual_is_suppressed_and_must_cite_a_rights_record`, `::test_complementary_prefers_a_non_institutional_cell`, `::test_complementary_falls_on_institutional_only_when_forced_and_flags_review` |
+| SIG-STORE-033 (k=5 is SIG's own documented policy; a stricter partner threshold wins) | `db.suppression` (`DEFAULT_K_THRESHOLD`, `effective_k_threshold`) | `tests/db/test_suppression.py::test_default_threshold_is_sigs_own_policy`, `::test_stricter_partner_threshold_wins` |

@@ -8,10 +8,22 @@ dependencies = [
     # driver for the db stage and its tests. The binary wheel bundles libpq, so
     # neither developers nor CI need a system libpq.
     "psycopg[binary]>=3.2",
+    # The §18 analytics boundary (P12.1): high-volume usage aggregates live OUTSIDE
+    # PostgreSQL as Hive-partitioned Parquet queried by DuckDB (SIG-STORE-027, no
+    # columnar Postgres extension adopted as canonical). DuckDB writes the
+    # partitioned Parquet and runs the UUID+period join (ADR-010, ADR-044).
+    "duckdb>=1.0.0",
+    # Partitions are registered as evidence artifacts with content-addressed digests
+    # (SIG-STORE-029); `db.analytics` reuses the interop multihash (SIG-EVID-002).
+    # `evidence` is a leaf package (no sig-* deps), so this adds no import cycle.
+    "sig-evidence",
 ]
 
 [project.scripts]
 sig-db = "db.cli:main"
+
+[tool.uv.sources]
+sig-evidence = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]
