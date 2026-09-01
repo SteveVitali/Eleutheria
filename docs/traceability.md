@@ -1039,3 +1039,26 @@ records-request path that exercises `resolved_no_evidence_exists` end-to-end is 
 | Requirement | Where | Test |
 |---|---|---|
 | SIG-TASK-014 (SIG's own registry — name, jurisdiction, URL, contact, activity status, claimed queues — not dependent on an external directory) | `tasks.groups.LocalGroupRegistry`, `LocalGroup`, `ActivityStatus` | `tests/tasks/test_groups.py::test_registry_carries_every_sig_task_014_field`, `::test_registry_is_self_contained_no_external_dependency`, `::test_activity_status_update_is_immutable_per_row`, `::test_recording_a_claim_is_additive_and_idempotent` |
+
+# P10.2 — The detector catalog (§33.2)
+
+The concrete **task catalog** of §33.2 (ADR-040): the 34 enumerated task types, each
+registered against P10.1's DSL (`tasks.spec`) with a versioned `detector` query and a
+testable `closing_condition`, plus the §31 contradiction-detector→task map so every
+contradiction has a route to resolution. Modelled in `tasks/catalog.py`; detectors read
+the representative in-memory `Facts` keys P10.1 standardised (binding to the live graph
+is downstream, RISK-P10-07). §33.2 is the count authority (34 rows). The catalog is the
+data that turns the P10.1 engine into a working research-coordination queue.
+
+## The task catalog (§33.2, SIG-TASK-003)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-TASK-003 (all 34 §33.2 task types implemented, each registered with a **testable** `closing_condition`; §33.2 is the count authority — a type that cannot express one cannot register) | `tasks.catalog.CATALOG_TASK_TYPES`, `CATALOG_SIZE` (34), `build_catalog` (registers all 34 through the SIG-TASK-002 gate) | `tests/tasks/test_tasks_catalog.py::test_catalog_has_exactly_the_34_types_of_the_count_authority`, `::test_building_the_catalog_registers_every_type`, `::test_every_catalog_type_has_a_testable_closing_condition`, `::test_every_catalog_type_declares_all_eight_fields_from_the_vocabulary` |
+| Per-type detector fixtures — each detector fires on a seeded positive, stays quiet on a seeded negative, and **auto-invalidates** (through the P10.1 lifecycle) when its condition clears (SIG-TASK-006) | `tasks.catalog` detectors/closing conditions; `tasks.lifecycle.TaskPool.sweep_invalidations` | `tests/tasks/test_tasks_catalog.py::test_detector_fires_on_positive_and_is_quiet_on_negative`, `::test_closing_condition_is_open_on_positive_and_met_when_cleared`, `::test_task_auto_invalidates_when_its_condition_clears` (each parametrized over all 34 types) |
+
+## Contradiction → task mapping (§31, SIG-TASK-004)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-TASK-004 (every §31 contradiction detector maps to a task type — detection without a route to resolution is just an alarm) | `tasks.catalog.CONTRADICTION_TASK_MAP` (keyed on the §31 `contradiction_type` vocabulary, routing each to a catalog task; many-to-one by design, ADR-040) | `tests/tasks/test_tasks_catalog.py::test_every_contradiction_type_maps_to_a_task` (keys == `reconcile.model.CONTRADICTION_TYPES`), `::test_every_mapped_task_type_is_a_registered_catalog_type` |

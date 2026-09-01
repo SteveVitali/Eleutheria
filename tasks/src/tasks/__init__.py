@@ -22,6 +22,9 @@ queues, anti-abuse, and SIG's own local-group registry. The concrete detector
 * :mod:`tasks.recognition` — qualitative recognition; the volume leaderboard is an
   executable refusal (SIG-TASK-012).
 * :mod:`tasks.groups` — the SIG-owned local-group registry (SIG-TASK-014).
+* :mod:`tasks.catalog` — the concrete §33.2 catalog (P10.2): the 34 task types
+  registered against the DSL, and the §31 contradiction-detector→task map
+  (SIG-TASK-003/004).
 """
 
 __version__ = "0.0.0"
