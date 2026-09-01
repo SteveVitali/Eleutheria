@@ -78,6 +78,19 @@ def test_required_but_disabled_is_a_finding() -> None:
     assert res.divergent is True
 
 
+def test_policy_and_configuration_are_distinct_and_never_merged() -> None:
+    # SIG-ONTO-034 at the resolution layer: the written policy and the configured
+    # state are modelled as two distinct types, and the finding retains both sides
+    # as separate objects rather than folding them into one merged value.
+    assert PolicyStatement is not ConfigurationState
+    policy = PolicyStatement(subject_id="org:pd", capability=CAP, stance=PROHIBITED)
+    config = ConfigurationState(subject_id="org:pd", capability=CAP, enabled=True)
+    res = reconcile_policy_configuration(policy, config)
+    assert isinstance(res.policy, PolicyStatement)
+    assert isinstance(res.configuration, ConfigurationState)
+    assert res.policy is policy and res.configuration is config
+
+
 def test_mismatched_capability_is_rejected() -> None:
     policy = PolicyStatement(subject_id="org:pd", capability="a", stance=PROHIBITED)
     config = ConfigurationState(subject_id="org:pd", capability="b", enabled=True)
