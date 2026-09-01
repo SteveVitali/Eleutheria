@@ -1111,3 +1111,81 @@ in `tasks/records_request.py` with the reference table and templates as versione
 | Requirement | Where | Test |
 |---|---|---|
 | SIG-TASK-009 (a records request returning no responsive record writes a `CoverageRecord` — `searched_not_found` + sources searched — exercised through the records path) | `tasks.records_request.record_no_responsive_records` (reuses `tasks.dispositions.resolve_no_evidence_exists`) | `tests/tasks/test_tasks_records_request.py::test_no_responsive_records_writes_a_coverage_record` |
+
+# P11.1 — The `flock_portal` connector (§23.4 — the portal layer via the aggregator API)
+
+The fifth source connector on the P04.1 framework (`connectors.flock_portal`, ADR-042): the
+Flock **portal layer** from the Eyes on Flock aggregator's public **CC BY-SA 4.0** JSON API,
+landing in its own separable CC-BY-SA compartment, keyed on the upstream snapshot field, honouring
+a challenge as a refusal, and feeding P08.2's §29.3 sharing-edge and §29.7 snapshot-diff
+reconcilers (owned/tested there). All source-specific logic is pure and fixture-driven; no live
+fetch runs in CI.
+
+## Source, compartment, and the licence-compartment build guard (SIG-INGEST-035, SIG-LIC-004a)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-INGEST-035 (source the portal layer from the aggregator's public CC-BY-SA-4.0 API, never the vendor; output lands in the CC-BY-SA-4.0 `portal` compartment, never the CC-BY graph) | `connectors.flock_portal` (`FlockPortalConnector`, `_stamp` → `CC_BY_SA_LICENSE`/`PORTAL_COMPARTMENT`); `policy/data/licenses.toml` (`compartments.portal`) | `tests/connectors/test_flock_portal.py::test_rows_land_in_the_cc_by_sa_portal_compartment`, `::test_portal_compartment_alone_exports_under_cc_by_sa` |
+| SIG-LIC-004a (an export merging the portal compartment with the CC-BY graph fails the build) | `policy.licensing.compute_export_license`; `connectors.loader.assert_export_compatible` | `tests/connectors/test_flock_portal.py::test_export_merging_portal_with_the_cc_by_graph_fails_the_build` |
+
+## No challenge-defeating code; a challenge is a refusal (SIG-INGEST-036/037, §26 rule 4)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-INGEST-036/037 (honour a challenge/bot-management response as a refusal; no circumvention anywhere; connector holds no HTTP client of its own) | `connectors.flock_portal.FlockPortalConnector.fetch` (egress only via `ctx.fetcher`); `connectors.net.PoliteFetcher` raises `ChallengeEncountered`; `connectors.pipeline` records it as a disappearance | `tests/connectors/test_flock_portal.py::test_challenge_response_is_honoured_as_a_refusal`, `::test_the_fetcher_never_defeats_a_challenge` |
+
+## Change detection keyed on the upstream snapshot field, not fetch time (SIG-INGEST-030c)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-INGEST-030c (change detection + `observed_at` key on the upstream `data_last_updated` snapshot field, never fetch time; SIG does not poll faster than the upstream refresh) | `connectors.flock_portal` (`snapshot_field_name`, `portal_snapshot_date`, `is_poll_due`, `upstream_refresh_days`); `data/flock_portal_vocab.toml` (`snapshot_field`, `upstream_refresh_days`); the declared freshness recorded as `portal_last_updated_declared`, never trusted as `observed_at` | `tests/connectors/test_flock_portal.py::test_observed_at_is_the_upstream_snapshot_date_not_fetch_time`, `::test_declared_freshness_is_recorded_but_not_used_as_observed_at`, `::test_is_poll_due_keys_on_the_snapshot_and_respects_the_refresh_cadence` |
+
+## Historical back-fill from archived captures (SIG-INGEST-030b)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-INGEST-030b (back-fill sourced from archived captures of the API endpoint; a Wayback capture is a first-class target and its `observed_at` is the archived snapshot's own date) | `connectors.flock_portal.FlockPortalConnector.discover` (target-agnostic); `observed_at` keyed on `portal_snapshot_date` | `tests/connectors/test_flock_portal.py::test_backfill_from_an_archived_capture_keys_observed_at_on_the_snapshot` |
+
+## `ai_training_permitted = false`, recorded and enforced (SIG-LIC-004b)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-LIC-004b (the grant is recorded false on every row and enforced by the training gate for this source) | `connectors.flock_portal._stamp` (`ai_training_permitted = False`); `connectors.data.sources.toml` (`eyes_on_flock` omits the grant → default deny); `policy.licensing.assert_training_allowed` | `tests/connectors/test_flock_portal.py::test_ai_training_is_recorded_false_on_every_row`, `::test_ai_training_gate_refuses_this_source` |
+
+## Portal-existence events (SIG-INGEST-035, §17.6)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-INGEST-035 (a fetched portal emits `portal_exists = True`; a portal that drops out of a later snapshot emits `portal_exists = False` **and** a research task; a newly appeared portal emits an event + a "no known deployment" task) | `connectors.flock_portal` (`portal_exists_claim`, `portal_disappearance_task`, `portal_appeared_task`, `detect_portal_changes`) | `tests/connectors/test_flock_portal.py::test_portal_disappearance_produces_an_event_and_a_task`, `::test_portal_appearance_produces_an_event_and_a_no_known_deployment_task`, `::test_a_fetched_portal_emits_a_portal_exists_true_claim` |
+| §17.6 (an endpoint 404 / persistent challenge is a first-class disappearance event + task) | `connectors.pipeline._fetch_or_disappear`; `connectors.disappearance` | `tests/connectors/test_flock_portal.py::test_challenge_response_is_honoured_as_a_refusal` |
+
+## Snapshot diffing → per-field change events, via P08.2 (SIG-RECON-045)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-RECON-045 (consecutive captures diffed at the extracted-field level → per-field change events with both values + both dates, through P08.2's reconciler — invoked, not forked) | `connectors.flock_portal` (`portal_capture`, `diff_portal_snapshots`) → `reconcile.snapshot_diff.diff_series` / `Capture` / `FieldChangeEvent` | `tests/connectors/test_flock_portal.py::test_snapshot_diff_produces_per_field_change_events_via_p08_2` |
+
+## Portal sharing = configured access, directional, blanks-as-negatives (SIG-ONTO-042/044, SIG-RECON-034/035/036/037)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ONTO-042/044 (portal sharing lands as **configured access only**, directional, blank cells as negatives; single-snapshot edges carry `valid_from_kind='unknown'`) | `connectors.flock_portal` (`sharing_observations_for_portal`, `sharing_observations`, `reconcile_portal_sharing`, `_sharing_edge_rows`); `data/flock_portal_vocab.toml` (`[sharing]`) | `tests/connectors/test_flock_portal.py::test_sharing_edges_are_configured_access_directional_single_snapshot`, `::test_blank_sharing_cells_are_negatives_not_unknown_edges`, `::test_connector_streams_only_deterministic_edges_for_sharing` |
+| SIG-RECON-034/035/036/037 (exercised here; owned/tested in P08.2) — asymmetry is a finding via the §29.3 reconciler run over the whole snapshot | `connectors.flock_portal.reconcile_portal_sharing` → `reconcile.sharing.reconcile_sharing` | `tests/connectors/test_flock_portal.py::test_sharing_asymmetry_is_a_finding_via_the_p08_2_reconciler` |
+
+## Predicate allowlist + the SIG-INGEST-031 fallbacks (§23.4, §18.1, SIG-INGEST-031)
+
+| Requirement | Where | Test |
+|---|---|---|
+| §23.4 / §18.1 (predicate allowlist enforced as a schema gate; MUST NOT write contract facts, device geometry, or any per-search/per-plate row) | `connectors.flock_portal` (`predicate_allowlist`, `assert_predicate_allowed`, `PredicateNotAllowed`, `forbidden_predicate_genres`); `data/flock_portal_vocab.toml` | `tests/connectors/test_flock_portal.py::test_predicate_allowlist_and_forbidden_genres`, `::test_no_row_writes_a_predicate_outside_the_allowlist` |
+| SIG-RECON-011 (the rolling usage counters are windowed, carrying their window length) | `connectors.flock_portal.field_claim` (`windowed`/`window_months`); `data/flock_portal_vocab.toml` (`window_months`, `[fields]` `windowed`) | `tests/connectors/test_flock_portal.py::test_windowed_usage_counters_carry_their_window` |
+| SIG-INGEST-031 (the three fallbacks retained as named routes — records acquisition, contributor capture, partner archive; a challenge-defeating crawler is NOT a route; records-request generation itself is P10.3) | `connectors.flock_portal` (`fallback_routes`, `fallback_tasks_for_gaps`); `data/flock_portal_vocab.toml` (`[fallbacks.*]`) | `tests/connectors/test_flock_portal.py::test_the_three_fallback_routes_are_retained_and_named`, `::test_missing_aggregator_fields_route_to_the_fallbacks`, `::test_a_complete_portal_routes_to_no_fallback` |
+
+## Fixtures, canary, registration, reproducibility, provenance (SIG-PARSE-007/008, SIG-INGEST-021/003)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-PARSE-007 (committed fixtures) | `tests/connectors/fixtures/flock_portal/*.json` (two consecutive live snapshots + an archived Wayback capture) | driven throughout `tests/connectors/test_flock_portal.py` |
+| SIG-PARSE-008 (a canary alerts on structural drift) | `connectors.flock_portal.canary_findings`, `parse_json` | `tests/connectors/test_flock_portal.py::test_canary_passes_on_the_committed_fixtures`, `::test_canary_flags_structural_drift` |
+| SIG-INGEST-021 (connector self-registers on the plug-in seam; visible in the CLI) | `connectors.flock_portal.FlockPortalConnector` (`@register`); imported by `connectors.__init__` | `tests/connectors/test_flock_portal.py::test_flock_portal_connector_is_registered` |
+| SIG-INGEST-003 (post-capture stages are pure; reproducible claim set — only the deterministic edges enter the stream) | `connectors.flock_portal` (`normalize` carries no wall-clock; `observed_at` keyed on the snapshot; sharing findings kept out of L1) | `tests/connectors/test_flock_portal.py::test_claim_set_is_reproducible_across_runs` |
+| §23.4 (raw values preserved beside typed values; attribution + append-only, P1–P3) | `connectors.flock_portal` (`field_claim` `raw_value`/`extracted_field`; `_stamp` `source_attribution`; no `is_current`/authoritative flags) | `tests/connectors/test_flock_portal.py::test_raw_values_are_preserved_beside_typed_values`, `::test_rows_preserve_attribution_and_are_append_only`, `::test_fetch_carries_a_descriptive_user_agent` |
