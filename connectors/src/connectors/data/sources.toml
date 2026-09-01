@@ -414,6 +414,37 @@ verified = true
 last_verified = 2026-08-20
 notes = "Canonical audit field schemas (F2.3)."
 
+# The agency audit exports themselves — the agency's OWN Flock audit CSVs
+# (Organization / Network / Portal-Public audits, Event Logs, SharedNetworks.csv),
+# obtained as public records, NOT the derived HIBF bulk exports (SIG-INGEST-046a:
+# a derived artifact — hashed plates, inferred names, redacted reasons — MUST NOT
+# be ingested as though it were the agency's primary record). The `audit_structural`
+# connector (P11.2, §23.7) parses these into STRUCTURAL AGGREGATES ONLY (§18.1).
+# A US agency public record carries no copyright reservation → CC0-1.0; the
+# structural aggregates SIG derives are SIG-original and land under the licence
+# gate. ingestion_permitted stays false until a reviewer resolves each export's
+# posture (SIG-INGEST-028).
+[sources.agency_audit_export]
+name = "Agency Flock audit export (public record)"
+source_kind = "records_channel"
+homepage_url = "https://eleutheria.example/records/agency-audit-export"
+default_tier = "R2"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "not_applicable"
+access_method = "public_records_request"
+auth_model = "none"
+verified = true
+last_verified = 2026-08-20
+notes = "Agency-provided Flock audit CSVs obtained by records request (§23.7). Ingested as structural aggregates only (§18.1); per-search/per-plate rows are never stored. NOT the derived HIBF exports (SIG-INGEST-046a)."
+[sources.agency_audit_export.rights]
+spdx = "CC0-1.0"
+attribution = "Agency Flock audit export (public record)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://eleutheria.example/records/agency-audit-export"
+retrieval_date = 2026-08-20
+
 [sources.alpr_watch]
 name = "ALPR Watch"
 source_kind = "upstream_project"
