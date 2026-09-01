@@ -77,6 +77,20 @@ ticket is the **Python parser interface that produces those shapes**, not a sche
    (`extraction_method = 'vocabulary_migration'`, the `VOCABULARY_MIGRATION_METHOD` constant),
    never an edit of the claims stamped with the old version (SIG-STORE-038).
 
+4. **The concrete layer-3/4/5 engines are owned by the P07.2/P07.3 connector tickets, not by
+   this one — and that ownership is stated here to close a decomposition seam.** §24.1 mandates
+   the *strategy* (the layer ladder, cheapest-sufficient, method recorded); it names no PDF/OCR
+   library and defines no `SIG-PARSE-*` requiring one. P07.1 therefore ships the engine-agnostic
+   interface and the layer *selection*, and the concrete extraction engines (PDF text/table, OCR)
+   are instantiated **behind this interface by the first connector that must extract text from a
+   real captured document** — `records` (P07.2) and `procurement` (P07.3). The P07.2/P07.3
+   dependency lines read "P07.1 parses …/procurement documents", which could be misread as "the
+   engines live in P07.1"; they do not. P07.1 owns the *contract* every layer obeys (locator,
+   `raw_value`, method, reason); each connector adds the concrete layer it needs as a drop-in,
+   the way `parsing.extraction` (layer 6) is driven by an injected `ModelClient`. If a firmer
+   assignment is wanted it is a decompose-step / canonical-spec-source change (SIG-ENG-003), not
+   an edit of the derived, gitignored ticket files.
+
 ## Consequences
 
 Every connector now extracts through one stack: it classifies first (per member for an
@@ -86,15 +100,21 @@ cannot type), and normalizes reasons through inspectable versioned data. The loc
 and `raw_value` contract are a **stable interface** P07.2/P07.3 depend on. Costs and
 deferrals, stated rather than hidden:
 
-- **No heavy extraction engines are wired here.** The layer *selection* and the interface are
-  complete and tested; the concrete layer-3/4/5 parsers (PDF text/table, OCR) are added by
-  the connectors that need them, behind this interface. Classification's scanned-PDF signal
-  is a deterministic heuristic, not a rendering-based decision — a mis-route is corrected
-  downstream, never a silent drop.
-- **The canary is the deterministic core, not the schedule.** `structural_findings`/`run_canary`
-  are pure functions of a parsed sample; the nightly job that fetches a live sample and
-  raises the alert is an ops schedule (like the P05.2 gold-set cadence), not code shipped
-  here.
+- **No heavy extraction engines are wired here (owner: P07.2/P07.3, per Decision 4).** The
+  layer *selection* and the interface are complete and tested; the concrete layer-3/4/5 parsers
+  (PDF text/table, OCR) are added, behind this interface, by the `records`/`procurement`
+  connectors that first parse real documents. Classification's scanned-PDF signal is a
+  deterministic heuristic, not a rendering-based decision — a mis-route is corrected downstream,
+  never a silent drop.
+- **The canary is the deterministic core; the *schedule* is an orchestration deliverable, and
+  the spec already provides for it.** `structural_findings`/`run_canary` are pure functions of a
+  parsed sample; SIG-PARSE-008's "nightly" MUST is satisfied by a thin fetch-live-sample →
+  `run_canary` → alert wrapper wired as a **Dagster schedule** in `orchestration/` (SIG-INGEST-020,
+  which makes the schedule cron-swappable, plus the SIG-GOV-020/021 degraded-mode keepalive so a
+  dormant scheduler cannot silently stop it). No standalone ticket names this cross-parser job
+  today; it lands with live orchestration, and the per-connector canary ACs (spec line 6782)
+  carry the per-parser half in the meantime — like the P05.2 gold-set cadence, the mechanism
+  ships now and the schedule is an ops schedule.
 - **No DDL.** The stack produces the shapes the claim spine already stores; no migration is
   added. The reason fields it emits (`reason_code`, `reason_raw_value`, `reason_kind`,
   `reason_signal_strength`, `reason_mapping_version`) map onto the existing `raw_value` /
