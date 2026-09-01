@@ -37,7 +37,8 @@
                     ]
                 },
                 "automaticity": {
-                    "$ref": "#/$defs/Automaticity"
+                    "$ref": "#/$defs/Automaticity",
+                    "description": "Required; direction/scope/automaticity/kind are all required (SIG-ONTO-049)."
                 },
                 "direction": {
                     "$ref": "#/$defs/Direction",
@@ -99,6 +100,7 @@
             "required": [
                 "scope",
                 "direction",
+                "automaticity",
                 "access_kind",
                 "id",
                 "source",

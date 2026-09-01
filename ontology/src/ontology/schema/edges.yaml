@@ -125,6 +125,8 @@ classes:
         description: Required; never symmetric by default (SIG-ONTO-049).
       automaticity:
         range: Automaticity
+        required: true
+        description: Required; direction/scope/automaticity/kind are all required (SIG-ONTO-049).
       access_kind:
         range: AccessKind
         required: true
