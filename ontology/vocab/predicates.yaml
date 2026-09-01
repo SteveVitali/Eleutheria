@@ -22,7 +22,7 @@ artifact_genres:
 - audit_log
 - news_article
 - vendor_default_page
-count: 53
+count: 56
 predicates:
 - predicate_id: contract_signed_date
   vocab_version: 1.0.0
@@ -860,6 +860,65 @@ predicates:
     audit_log: D4
     news_article: D3
     vendor_default_page: D5
+- predicate_id: invoiced_device_count
+  vocab_version: 1.0.0
+  value_datatype: integer
+  cardinality: single
+  definition: Device quantity actually billed on an invoice (§29.1).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/invoiced_device_count
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D3
+    invoice: D1
+    portal_snapshot: D5
+    council_minutes: D4
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D4
+    vendor_default_page: D6
+- predicate_id: mapped_device_count
+  vocab_version: 1.0.0
+  value_datatype: integer
+  cardinality: single
+  definition: Independently field-observed and mapped device count; a LOWER BOUND
+    only, never an estimate of the true count (§29.1, SIG-RECON-027).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/mapped_device_count
+  volatility_class: SLOW
+  half_life: 12mo
+  resolution_strategy: max_support
+  directness:
+    executed_contract: D5
+    invoice: D6
+    portal_snapshot: D5
+    council_minutes: D5
+    agency_policy: D6
+    osm_node_set: D3
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+- predicate_id: claimed_device_count
+  vocab_version: 1.0.0
+  value_datatype: integer
+  cardinality: single
+  definition: Device count someone stated in public (press release, council
+    presentation) (§29.1).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/claimed_device_count
+  volatility_class: FAST
+  half_life: 6mo
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D4
+    invoice: D5
+    portal_snapshot: D3
+    council_minutes: D2
+    agency_policy: D3
+    osm_node_set: D5
+    audit_log: D4
+    news_article: D2
+    vendor_default_page: D3
 - predicate_id: configured_sharing_partner_set
   vocab_version: 1.0.0
   value_datatype: uriorcurie

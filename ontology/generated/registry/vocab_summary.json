@@ -70,7 +70,7 @@
       "news_article",
       "vendor_default_page"
     ],
-    "count": 53,
+    "count": 56,
     "ids": [
       "active_device_count",
       "asset_data_controller",
@@ -80,6 +80,7 @@
       "authorization_state",
       "candidate_location_estimate",
       "candidate_promotion_status",
+      "claimed_device_count",
       "configured_access_edge",
       "configured_retention_days",
       "configured_sharing_partner_set",
@@ -101,8 +102,10 @@
       "implements_technology",
       "installed_device_count",
       "integration_edge_active",
+      "invoiced_device_count",
       "jurisdiction_boundary",
       "jurisdiction_parent",
+      "mapped_device_count",
       "national_lookup_enabled",
       "observed_use_edge",
       "offense_category_filter",

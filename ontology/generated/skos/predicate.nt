@@ -70,6 +70,15 @@
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_promotion_status> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_promotion_status> <https://ontology.sig-project.org/schema/valueDatatype> "PromotionStatus" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_promotion_status> <https://ontology.sig-project.org/schema/volatilityClass> "MODERATE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/claimed_device_count> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/claimed_device_count> <http://www.w3.org/2004/02/skos/core#definition> "Device count someone stated in public (press release, council presentation) (§29.1)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/claimed_device_count> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/claimed_device_count> <http://www.w3.org/2004/02/skos/core#prefLabel> "claimed_device_count"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/claimed_device_count> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/claimed_device_count> <https://ontology.sig-project.org/schema/halfLife> "6mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/claimed_device_count> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/claimed_device_count> <https://ontology.sig-project.org/schema/valueDatatype> "integer" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/claimed_device_count> <https://ontology.sig-project.org/schema/volatilityClass> "FAST" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_access_edge> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_access_edge> <http://www.w3.org/2004/02/skos/core#definition> "Configured-access sharing edge state." .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_access_edge> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
@@ -259,6 +268,15 @@
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/integration_edge_active> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/integration_edge_active> <https://ontology.sig-project.org/schema/valueDatatype> "boolean" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/integration_edge_active> <https://ontology.sig-project.org/schema/volatilityClass> "MODERATE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/invoiced_device_count> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/invoiced_device_count> <http://www.w3.org/2004/02/skos/core#definition> "Device quantity actually billed on an invoice (§29.1)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/invoiced_device_count> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/invoiced_device_count> <http://www.w3.org/2004/02/skos/core#prefLabel> "invoiced_device_count"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/invoiced_device_count> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/invoiced_device_count> <https://ontology.sig-project.org/schema/halfLife> "infinite" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/invoiced_device_count> <https://ontology.sig-project.org/schema/resolutionStrategy> "authoritative_source_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/invoiced_device_count> <https://ontology.sig-project.org/schema/valueDatatype> "integer" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/invoiced_device_count> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_boundary> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_boundary> <http://www.w3.org/2004/02/skos/core#definition> "Jurisdiction boundary geometry (temporally versioned)." .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_boundary> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
@@ -277,6 +295,15 @@
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_parent> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_parent> <https://ontology.sig-project.org/schema/valueDatatype> "uriorcurie" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_parent> <https://ontology.sig-project.org/schema/volatilityClass> "GLACIAL" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/mapped_device_count> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/mapped_device_count> <http://www.w3.org/2004/02/skos/core#definition> "Independently field-observed and mapped device count; a LOWER BOUND only, never an estimate of the true count (§29.1, SIG-RECON-027)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/mapped_device_count> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/mapped_device_count> <http://www.w3.org/2004/02/skos/core#prefLabel> "mapped_device_count"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/mapped_device_count> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/mapped_device_count> <https://ontology.sig-project.org/schema/halfLife> "12mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/mapped_device_count> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/mapped_device_count> <https://ontology.sig-project.org/schema/valueDatatype> "integer" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/mapped_device_count> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/national_lookup_enabled> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/national_lookup_enabled> <http://www.w3.org/2004/02/skos/core#definition> "National lookup toggle." .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/national_lookup_enabled> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
