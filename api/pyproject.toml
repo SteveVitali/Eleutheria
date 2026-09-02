@@ -1,12 +1,37 @@
 [project]
 name = "sig-api"
 version = "0.0.0"
-description = "SIG api package (skeleton; see docs/2_canonical_design_spec.md §47)."
+description = "SIG public read API: the hand-written, versioned §37 read contract (P14.1)."
 requires-python = ">=3.11"
-dependencies = []
+# The public API is a hand-written, versioned contract (SIG-API-001): FastAPI for
+# the routing + OpenAPI generation, uvicorn as the ASGI server for `sig-api serve`.
+# Every material-fact response is assembled from the existing engines rather than
+# reinvented — the resolver (sig-reconcile), coverage (sig-inference), coordinate
+# sensitivity + licence (sig-policy), evidence tiers (sig-evidence), the two-axis
+# as-of contract (sig-db), crosswalk (sig-resolution), and dossiers (sig-exports).
+dependencies = [
+    "fastapi>=0.115,<0.120",
+    "uvicorn>=0.30,<0.40",
+    "sig-reconcile",
+    "sig-inference",
+    "sig-policy",
+    "sig-evidence",
+    "sig-db",
+    "sig-resolution",
+    "sig-exports",
+]
 
 [project.scripts]
 sig-api = "api.cli:main"
+
+[tool.uv.sources]
+sig-reconcile = { workspace = true }
+sig-inference = { workspace = true }
+sig-policy = { workspace = true }
+sig-evidence = { workspace = true }
+sig-db = { workspace = true }
+sig-resolution = { workspace = true }
+sig-exports = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]
