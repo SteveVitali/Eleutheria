@@ -1,0 +1,2958 @@
+{
+    "$defs": {
+        "AbsenceKind": {
+            "description": "How an absence is known \u2014 negative space is queryable (\u00a79.5).",
+            "enum": [
+                "not_researched",
+                "searched_not_found",
+                "evidence_of_absence",
+                "not_applicable"
+            ],
+            "title": "AbsenceKind",
+            "type": "string"
+        },
+        "AccessKind": {
+            "description": "The three edge types that MUST NEVER be merged (\u00a712.2).",
+            "enum": [
+                "configured_access",
+                "observed_use",
+                "declared_policy"
+            ],
+            "title": "AccessKind",
+            "type": "string"
+        },
+        "AccessRelationship": {
+            "additionalProperties": false,
+            "description": "A sharing/access relationship; direction, scope, automaticity, and kind are all required \u2014 never reduced to `shares_with` (\u00a712.5, SIG-ONTO-049). The three access kinds (\u00a712.2) are never merged (SIG-ONTO-042).",
+            "properties": {
+                "access_kind": {
+                    "$ref": "#/$defs/AccessKind",
+                    "description": "Configured vs observed vs declared \u2014 never defaulted into one another (SIG-ONTO-042)."
+                },
+                "asserted_by": {
+                    "description": "Which party asserted it \u2014 perspectival (\u00a712.1.5).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "automaticity": {
+                    "$ref": "#/$defs/Automaticity"
+                },
+                "direction": {
+                    "$ref": "#/$defs/Direction",
+                    "description": "Required; never symmetric by default (SIG-ONTO-049)."
+                },
+                "edge_type": {
+                    "$ref": "#/$defs/EdgeType",
+                    "description": "Typed from the closed catalog (\u00a712.1.2)."
+                },
+                "id": {
+                    "type": "string"
+                },
+                "observed_at": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "scope": {
+                    "$ref": "#/$defs/CapabilityScope"
+                },
+                "source": {
+                    "description": "The asserting/originating node (directed \u2014 \u00a712.1.1).",
+                    "type": "string"
+                },
+                "sources": {
+                    "description": "At least one supporting claim (\u00a712.1.4, SIG-CHART-013).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "target": {
+                    "type": "string"
+                },
+                "valid_from": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "valid_from_kind": {
+                    "$ref": "#/$defs/TemporalBoundKind",
+                    "description": "Snapshot sharing carries unknown/ongoing (SIG-ONTO-044)."
+                },
+                "valid_to": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "valid_to_kind": {
+                    "$ref": "#/$defs/TemporalBoundKind"
+                }
+            },
+            "required": [
+                "scope",
+                "direction",
+                "access_kind",
+                "id",
+                "source",
+                "target",
+                "edge_type"
+            ],
+            "title": "AccessRelationship",
+            "type": "object"
+        },
+        "AccountabilityEvent": {
+            "additionalProperties": false,
+            "description": "An accountability event; epistemic_status is REQUIRED and rendered everywhere (\u00a711.17, SIG-ONTO-038/039).",
+            "properties": {
+                "affected_party_class": {
+                    "description": "A class, never a named private individual (N4).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "date": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "deployments": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "epistemic_status": {
+                    "$ref": "#/$defs/EpistemicStatus"
+                },
+                "event_type": {
+                    "$ref": "#/$defs/AccountabilityEventType"
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "organizations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "sources": {
+                    "description": "Linkable to all six source classes of OL-2E-AL-03 (SIG-ONTO-039).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "technologies": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "epistemic_status",
+                "id"
+            ],
+            "title": "AccountabilityEvent",
+            "type": "object"
+        },
+        "AccountabilityEventType": {
+            "description": "Accountability event type (\u00a711.17).",
+            "enum": [
+                "false_stop",
+                "wrongful_arrest",
+                "alleged_stalking_misuse",
+                "immigration_search_controversy",
+                "policy_violation",
+                "data_breach",
+                "security_finding",
+                "moratorium",
+                "contract_cancellation",
+                "public_hearing",
+                "audit_finding",
+                "regulatory_action",
+                "vendor_statement",
+                "local_regulation"
+            ],
+            "title": "AccountabilityEventType",
+            "type": "string"
+        },
+        "AcquisitionChannel": {
+            "description": "Contract acquisition channel (\u00a711.11, SIG-ONTO-032).",
+            "enum": [
+                "direct_award",
+                "competitive_rfp",
+                "sole_source",
+                "cooperative_piggyback",
+                "bundle_inclusion",
+                "free_trial",
+                "donation",
+                "grant_funded"
+            ],
+            "title": "AcquisitionChannel",
+            "type": "string"
+        },
+        "AcquisitionMethod": {
+            "description": "Acquisition method, internationalized (\u00a713.8). foia_request is US-specific; the abstract parent is records_request with national children, plus no_equivalent_available (itself a coverage fact).",
+            "enum": [
+                "records_request",
+                "us.foia",
+                "us.state_public_records",
+                "fr.cada",
+                "uk.foi",
+                "eu.access_to_documents",
+                "no_equivalent_available"
+            ],
+            "title": "AcquisitionMethod",
+            "type": "string"
+        },
+        "AliasType": {
+            "description": "Organization alias qualifier (\u00a711.2).",
+            "enum": [
+                "abbreviation",
+                "former_name",
+                "slug",
+                "misspelling",
+                "local_usage",
+                "legal_name",
+                "dba"
+            ],
+            "title": "AliasType",
+            "type": "string"
+        },
+        "ArtifactIntegrity": {
+            "description": "Integrity I of the artifact (\u00a710.6).",
+            "enum": [
+                "I1",
+                "I2",
+                "I3"
+            ],
+            "title": "ArtifactIntegrity",
+            "type": "string"
+        },
+        "AuditSourceType": {
+            "description": "Audit source type \u2014 these are NOT interchangeable (\u00a711.16, \u00a723.7).",
+            "enum": [
+                "organization_audit",
+                "network_audit",
+                "portal_public_audit",
+                "event_log"
+            ],
+            "title": "AuditSourceType",
+            "type": "string"
+        },
+        "AuthorizationState": {
+            "description": "Track 4 \u2014 authorization (\u00a713.4).",
+            "enum": [
+                "unknown",
+                "unauthorized",
+                "approval_pending",
+                "authorized",
+                "authorized_expired",
+                "moratorium",
+                "sunset_by_ordinance"
+            ],
+            "title": "AuthorizationState",
+            "type": "string"
+        },
+        "Automaticity": {
+            "description": "How access is triggered (\u00a712.5).",
+            "enum": [
+                "automatic",
+                "manual_approval",
+                "per_incident_consent",
+                "legal_process_required"
+            ],
+            "title": "Automaticity",
+            "type": "string"
+        },
+        "CandidateAsset": {
+            "additionalProperties": false,
+            "description": "[NEW] RF/heuristic leads that MUST live in a separate entity type and MUST NOT appear in any public device layer until promoted under \u00a743.5 (\u00a711.9, SIG-ONTO-029/030).",
+            "properties": {
+                "detection_method": {
+                    "$ref": "#/$defs/DetectionMethod"
+                },
+                "estimate_radius_m": {
+                    "type": [
+                        "number",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "identifier_prefix": {
+                    "description": "OUI or similar; never a full MAC.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "location_estimate": {
+                    "description": "With estimate_radius_m \u2014 never a bare point.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "observation_count": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "promotion_status": {
+                    "$ref": "#/$defs/PromotionStatus"
+                },
+                "residential_parcel_flag": {
+                    "description": "A true value bars publication outright (\u00a743.5).",
+                    "type": [
+                        "boolean",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "CandidateAsset",
+            "type": "object"
+        },
+        "Capability": {
+            "additionalProperties": false,
+            "description": "A verb.object.scope capability (\u00a711.6, SIG-ONTO-023).",
+            "properties": {
+                "capability": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "scope": {
+                    "$ref": "#/$defs/CapabilityScope"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "Capability",
+            "type": "object"
+        },
+        "CapabilityScope": {
+            "description": "Capability scope values (\u00a711.6, \u00a713.2).",
+            "enum": [
+                "own",
+                "partner",
+                "state",
+                "region",
+                "national",
+                "commercial",
+                "subject"
+            ],
+            "title": "CapabilityScope",
+            "type": "string"
+        },
+        "Claim": {
+            "additionalProperties": false,
+            "description": "An append-only assertion (subject, predicate, value, ...) \u2014 the substance of the graph (\u00a710.3, L1). Physical append-only table is P02.",
+            "properties": {
+                "absence_kind": {
+                    "$ref": "#/$defs/AbsenceKind"
+                },
+                "evidence_role": {
+                    "$ref": "#/$defs/EvidenceRole"
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "predicate": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "raw_value": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "subject": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "supersedes": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "value": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "value_kind": {
+                    "$ref": "#/$defs/ValueKind"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "Claim",
+            "type": "object"
+        },
+        "ClaimDirectness": {
+            "description": "Directness D from the (genre \u00d7 predicate) matrix (\u00a710.5).",
+            "enum": [
+                "D1",
+                "D2",
+                "D3",
+                "D4",
+                "D5",
+                "D6"
+            ],
+            "title": "ClaimDirectness",
+            "type": "string"
+        },
+        "CohortApplicability": {
+            "description": "Which cohort an integration termination applies to (\u00a712.3, SIG-ONTO-046).",
+            "enum": [
+                "all",
+                "new_customers_only",
+                "existing_customers_only"
+            ],
+            "title": "CohortApplicability",
+            "type": "string"
+        },
+        "ConfigurationState": {
+            "additionalProperties": false,
+            "description": "Promoted to a first-class, time-versioned, per-Deployment entity (\u00a711.15). Configuration is observed, never assumed (SIG-ONTO-036). Retention is a duration OR an ordinal bucket; SIG never fabricates a midpoint (SIG-ONTO-035a).",
+            "properties": {
+                "audit_case_code_required": {
+                    "type": [
+                        "boolean",
+                        "null"
+                    ]
+                },
+                "deployment": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "federal_sharing_enabled": {
+                    "type": [
+                        "boolean",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "live_stream_permitted_to": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "national_lookup_enabled": {
+                    "type": [
+                        "boolean",
+                        "null"
+                    ]
+                },
+                "observed_via": {
+                    "$ref": "#/$defs/ObservedVia"
+                },
+                "offense_category_filter": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "retention_bucket": {
+                    "description": "The ordinal bucket form; comparison operates on intervals, never a coerced point.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "retention_days": {
+                    "description": "Duration OR ordinal bucket; MUST accept both (SIG-ONTO-035a).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "sharing_partner": {
+                    "description": "Repeatable, directional.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "state_lookup_enabled": {
+                    "type": [
+                        "boolean",
+                        "null"
+                    ]
+                },
+                "subscribed_hotlist_topic": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "third_party_integration": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "ConfigurationState",
+            "type": "object"
+        },
+        "ConfirmationStatus": {
+            "description": "How a physical asset was confirmed (\u00a711.8).",
+            "enum": [
+                "field_confirmed",
+                "imagery_confirmed",
+                "record_confirmed",
+                "reported_unverified",
+                "candidate"
+            ],
+            "title": "ConfirmationStatus",
+            "type": "string"
+        },
+        "Contract": {
+            "additionalProperties": false,
+            "description": "A contract; acquisition_channel and parent_cooperative_contract are REQUIRED model elements (\u00a711.11, SIG-ONTO-032).",
+            "properties": {
+                "acquisition_channel": {
+                    "$ref": "#/$defs/AcquisitionChannel"
+                },
+                "amends_contract": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "amount": {
+                    "type": [
+                        "number",
+                        "null"
+                    ]
+                },
+                "buyer": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "currency": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "document": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "end_date": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "parent_cooperative_contract": {
+                    "description": "The master award being ridden (SIG-ONTO-032).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "products": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "quantities": {
+                    "items": {
+                        "type": "integer"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "renewal_options": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "seller": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "signed_date": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "start_date": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "Contract",
+            "type": "object"
+        },
+        "Contradiction": {
+            "additionalProperties": false,
+            "description": "A first-class, addressable contradiction object (\u00a731).",
+            "properties": {
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "predicate": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "state": {
+                    "$ref": "#/$defs/ContradictionState"
+                },
+                "subject": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "Contradiction",
+            "type": "object"
+        },
+        "ContradictionState": {
+            "description": "State of a contradiction (\u00a731).",
+            "enum": [
+                "uncontested",
+                "resolved_conflict",
+                "unresolved_conflict",
+                "insufficient"
+            ],
+            "title": "ContradictionState",
+            "type": "string"
+        },
+        "CoverageRecord": {
+            "additionalProperties": false,
+            "description": "[NEW] Makes negative claims queryable (\u00a711.23, \u00a732.2).",
+            "properties": {
+                "absence_kind": {
+                    "$ref": "#/$defs/AbsenceKind"
+                },
+                "coverage_period": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "denominator_published": {
+                    "type": [
+                        "boolean",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "predicate": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "subject": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "CoverageRecord",
+            "type": "object"
+        },
+        "Currency": {
+            "description": "Currency C derived at query time from volatility half-life (\u00a728.3).",
+            "enum": [
+                "C1",
+                "C2",
+                "C3",
+                "C4"
+            ],
+            "title": "Currency",
+            "type": "string"
+        },
+        "DataSystem": {
+            "additionalProperties": false,
+            "description": "Reference databases as infrastructure \u2014 representable even where SIG holds no sensor (\u00a711.10, SIG-ONTO-031).",
+            "properties": {
+                "data_types": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "holds_data_collected_by": {
+                    "description": "Custody != collection.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "operator": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "product": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "retention": {
+                    "description": "A ConfigurationState fact where it varies per deployment.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "system_scope": {
+                    "$ref": "#/$defs/SystemScope"
+                },
+                "vendor": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "DataSystem",
+            "type": "object"
+        },
+        "Deployment": {
+            "additionalProperties": false,
+            "description": "The bridge between organizational adoption and individual devices; creatable with NO product, NO vendor, and NO physical asset (\u00a711.7, SIG-ONTO-026).",
+            "properties": {
+                "active_device_count": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "active_from": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "actually_provides_capability": {
+                    "description": "Evidentiary; never silently inferred from product default (SIG-ONTO-018).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "approved_at": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "authorization_state": {
+                    "$ref": "#/$defs/AuthorizationState"
+                },
+                "contracted_at": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "contracted_device_count": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "deploying_organization": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "inactive_at": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "installed_device_count": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "jurisdiction": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "litigation_hold": {
+                    "description": "A flag, coexisting with any state combination (SIG-ONTO-061).",
+                    "type": [
+                        "boolean",
+                        "null"
+                    ]
+                },
+                "operational_state": {
+                    "$ref": "#/$defs/OperationalState"
+                },
+                "physical_state": {
+                    "$ref": "#/$defs/PhysicalState"
+                },
+                "procurement_state": {
+                    "$ref": "#/$defs/ProcurementState"
+                },
+                "product": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "proposed_at": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "technology": {
+                    "description": "Repeatable; the coarsest level the evidence supports.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "vendor": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "Deployment",
+            "type": "object"
+        },
+        "DetectionMethod": {
+            "description": "How a candidate asset was detected (\u00a711.9, SIG-ONTO-030).",
+            "enum": [
+                "rf_oui_match",
+                "wigle_observation",
+                "imagery_detection",
+                "contributor_report",
+                "model_inference",
+                "count_gap_inference"
+            ],
+            "title": "DetectionMethod",
+            "type": "string"
+        },
+        "Direction": {
+            "description": "Explicit edge direction \u2014 never symmetric by default (\u00a712.5, SIG-ONTO-049).",
+            "enum": [
+                "a_to_b",
+                "b_to_a"
+            ],
+            "title": "Direction",
+            "type": "string"
+        },
+        "Edge": {
+            "additionalProperties": false,
+            "description": "Universal edge requirements (\u00a712.1): directed, typed, time-bounded, evidenced, and perspectival.",
+            "properties": {
+                "asserted_by": {
+                    "description": "Which party asserted it \u2014 perspectival (\u00a712.1.5).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "edge_type": {
+                    "$ref": "#/$defs/EdgeType",
+                    "description": "Typed from the closed catalog (\u00a712.1.2)."
+                },
+                "id": {
+                    "type": "string"
+                },
+                "observed_at": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "source": {
+                    "description": "The asserting/originating node (directed \u2014 \u00a712.1.1).",
+                    "type": "string"
+                },
+                "sources": {
+                    "description": "At least one supporting claim (\u00a712.1.4, SIG-CHART-013).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "target": {
+                    "type": "string"
+                },
+                "valid_from": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "valid_from_kind": {
+                    "$ref": "#/$defs/TemporalBoundKind",
+                    "description": "Snapshot sharing carries unknown/ongoing (SIG-ONTO-044)."
+                },
+                "valid_to": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "valid_to_kind": {
+                    "$ref": "#/$defs/TemporalBoundKind"
+                }
+            },
+            "required": [
+                "id",
+                "source",
+                "target",
+                "edge_type"
+            ],
+            "title": "Edge",
+            "type": "object"
+        },
+        "EdgeType": {
+            "description": "The closed catalog of relationship types (\u00a712.1, SIG-ONTO-041). Untyped edges are a schema error. Prohibited edges (\u00a712.8) are intentionally absent.",
+            "enum": [
+                "ingests_feed_from",
+                "pushes_alerts_to",
+                "federates_search_to",
+                "is_queryable_by",
+                "hosts_data_for",
+                "resells_data_from",
+                "provides_platform_to",
+                "subscribes_to",
+                "enrolls_asset_into",
+                "requests_data_from",
+                "distributes_list_to",
+                "authorizes",
+                "replaced_by",
+                "succeeds",
+                "parent_of",
+                "child_of",
+                "merged_into",
+                "split_from",
+                "renamed_from",
+                "absorbed_by",
+                "participates_in",
+                "has_jurisdiction_over",
+                "operates_within",
+                "member_of_network",
+                "derived_from_claim",
+                "supersedes_claim",
+                "contradicts_claim",
+                "corroborates_claim",
+                "extracted_from_capture",
+                "captures_artifact",
+                "published_by_source"
+            ],
+            "title": "EdgeType",
+            "type": "string"
+        },
+        "EnforcementMechanism": {
+            "description": "Policy enforcement mechanism (\u00a711.13).",
+            "enum": [
+                "none_stated",
+                "internal_discipline",
+                "audit",
+                "external_oversight",
+                "statutory_penalty",
+                "contractual"
+            ],
+            "title": "EnforcementMechanism",
+            "type": "string"
+        },
+        "Entity": {
+            "additionalProperties": false,
+            "description": "Abstract base \u2014 every entity has identity (\u00a73.1 defining standard).",
+            "properties": {
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "Entity",
+            "type": "object"
+        },
+        "EpistemicStatus": {
+            "description": "Required epistemic status of an accountability event (\u00a711.17, SIG-ONTO-038).",
+            "enum": [
+                "alleged",
+                "reported",
+                "confirmed",
+                "adjudicated",
+                "policy_action",
+                "vendor_statement",
+                "disputed",
+                "retracted"
+            ],
+            "title": "EpistemicStatus",
+            "type": "string"
+        },
+        "EvidenceArtifact": {
+            "additionalProperties": false,
+            "description": "A specific artifact published by a Source (\u00a710.2).",
+            "properties": {
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "integrity": {
+                    "$ref": "#/$defs/ArtifactIntegrity"
+                },
+                "published_by": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "EvidenceArtifact",
+            "type": "object"
+        },
+        "EvidenceCapture": {
+            "additionalProperties": false,
+            "description": "A content-addressed capture of an artifact at a time (\u00a710.2, L0).",
+            "properties": {
+                "captured_at": {
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "captures_artifact": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "content_digest": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "EvidenceCapture",
+            "type": "object"
+        },
+        "EvidenceRole": {
+            "description": "The role a piece of evidence plays for a claim (\u00a713.3).",
+            "enum": [
+                "establishes",
+                "corroborates",
+                "contextualizes",
+                "contradicts",
+                "supersedes_basis",
+                "attests_absence"
+            ],
+            "title": "EvidenceRole",
+            "type": "string"
+        },
+        "Extraction": {
+            "additionalProperties": false,
+            "description": "A run that extracted claims from a capture (\u00a710.2).",
+            "properties": {
+                "extraction_method": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "from_capture": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "Extraction",
+            "type": "object"
+        },
+        "FundingInstrument": {
+            "additionalProperties": false,
+            "description": "[NEW] Purchaser != operator != funder (\u00a711.12, SIG-ONTO-033). Grants and third-party funding; federal grant \u2192 local surveillance is traceable.",
+            "properties": {
+                "amount": {
+                    "type": [
+                        "number",
+                        "null"
+                    ]
+                },
+                "award_date": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "conditions": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "federal_award_id": {
+                    "description": "USAspending award/sub-award id \u2014 the traceable link (SIG-ONTO-033).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "funder": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "instrument_type": {
+                    "$ref": "#/$defs/FundingInstrumentType"
+                },
+                "period": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "program_name": {
+                    "description": "e.g. Byrne JAG, UASI, COPS, Operation Stonegarden, HIDTA.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "recipient": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "FundingInstrument",
+            "type": "object"
+        },
+        "FundingInstrumentType": {
+            "description": "Funding instrument type (\u00a711.12).",
+            "enum": [
+                "federal_grant",
+                "state_grant",
+                "private_donation",
+                "bid_assessment",
+                "hoa_assessment",
+                "foundation_grant",
+                "asset_forfeiture",
+                "vendor_provided_free"
+            ],
+            "title": "FundingInstrumentType",
+            "type": "string"
+        },
+        "IntegrationEdge": {
+            "additionalProperties": false,
+            "description": "A data-bearing integration edge (\u00a712.3). Edges are per (product-pair, data-kind, direction), never per product-pair (SIG-ONTO-046). Unilaterally terminable, mid-contract, possibly partially, via applies_to_cohort.",
+            "properties": {
+                "applies_to_cohort": {
+                    "$ref": "#/$defs/CohortApplicability",
+                    "description": "Partial termination cohort \u2014 all / new_customers_only / existing_customers_only (SIG-ONTO-046)."
+                },
+                "asserted_by": {
+                    "description": "Which party asserted it \u2014 perspectival (\u00a712.1.5).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "consent_gate": {
+                    "type": [
+                        "boolean",
+                        "null"
+                    ]
+                },
+                "data_comes_to_rest": {
+                    "type": [
+                        "boolean",
+                        "null"
+                    ]
+                },
+                "data_kind": {
+                    "description": "The kind of data that moves (part of the edge key, SIG-ONTO-046).",
+                    "type": "string"
+                },
+                "edge_type": {
+                    "$ref": "#/$defs/EdgeType",
+                    "description": "Typed from the closed catalog (\u00a712.1.2)."
+                },
+                "granularity": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "type": "string"
+                },
+                "initiator": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "mechanism": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "observed_at": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "scope": {
+                    "$ref": "#/$defs/CapabilityScope"
+                },
+                "source": {
+                    "description": "The asserting/originating node (directed \u2014 \u00a712.1.1).",
+                    "type": "string"
+                },
+                "sources": {
+                    "description": "At least one supporting claim (\u00a712.1.4, SIG-CHART-013).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "target": {
+                    "type": "string"
+                },
+                "terminable_by": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "termination_reason": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "transport": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "valid_from": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "valid_from_kind": {
+                    "$ref": "#/$defs/TemporalBoundKind",
+                    "description": "Snapshot sharing carries unknown/ongoing (SIG-ONTO-044)."
+                },
+                "valid_to": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "valid_to_kind": {
+                    "$ref": "#/$defs/TemporalBoundKind"
+                }
+            },
+            "required": [
+                "data_kind",
+                "id",
+                "source",
+                "target",
+                "edge_type"
+            ],
+            "title": "IntegrationEdge",
+            "type": "object"
+        },
+        "Jurisdiction": {
+            "additionalProperties": false,
+            "description": "[NEW] A first-class jurisdiction with a self-referential hierarchy, a pluggable national code system, and temporally-versioned geometry (\u00a711.1, SIG-ONTO-010/011).",
+            "properties": {
+                "boundary": {
+                    "description": "MultiPolygon, 4326.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "boundary_source": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "code": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "code_system": {
+                    "description": "Repeatable code-system identifiers (us.census.geoid, iso.3166-2, fr.insee, ...).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "jurisdiction_type": {
+                    "$ref": "#/$defs/JurisdictionType"
+                },
+                "name": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "name_lang": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "parent_jurisdiction": {
+                    "description": "Multiple parents permitted; hierarchies overlap (SIG-ONTO-010).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "valid_from": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "valid_to": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "Jurisdiction",
+            "type": "object"
+        },
+        "JurisdictionType": {
+            "description": "Jurisdiction type, namespaced per country (\u00a711.1, \u00a713.7).",
+            "enum": [
+                "country",
+                "state_province",
+                "county",
+                "municipality",
+                "township",
+                "special_district",
+                "school_district",
+                "tribal",
+                "federal_region",
+                "judicial_district",
+                "metropolitan_area",
+                "neighborhood",
+                "unincorporated_area"
+            ],
+            "title": "JurisdictionType",
+            "type": "string"
+        },
+        "LegalInstrument": {
+            "additionalProperties": false,
+            "description": "[NEW] Laws and regulations as a modelled entity (\u00a711.14). Gives the international requirement somewhere to put an arr\u00eat\u00e9 pr\u00e9fectoral, a CNIL decision, or an EU AI Act obligation.",
+            "properties": {
+                "citation": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "constrains_capability": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "constrains_technology": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "effective_from": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "effective_to": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "enacting_body": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "instrument_type": {
+                    "$ref": "#/$defs/LegalInstrumentType"
+                },
+                "jurisdiction": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "requires_authorization_of": {
+                    "description": "CCOPS-style approval requirements.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "sunset_date": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "LegalInstrument",
+            "type": "object"
+        },
+        "LegalInstrumentType": {
+            "description": "Legal instrument type, internationalized (\u00a711.14, \u00a713.7).",
+            "enum": [
+                "statute",
+                "ordinance",
+                "regulation",
+                "executive_order",
+                "court_order",
+                "consent_decree",
+                "dpa_decision",
+                "code_of_practice",
+                "prefectoral_order",
+                "directive"
+            ],
+            "title": "LegalInstrumentType",
+            "type": "string"
+        },
+        "LegalProceeding": {
+            "additionalProperties": false,
+            "description": "Split from AccountabilityEvent \u2014 dockets, parties, filings, posture (\u00a711.18).",
+            "properties": {
+                "case_name": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "court": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "courtlistener_id": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "disposition_date": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "docket_number": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "filed_date": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "parties": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "party_role": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "posture": {
+                    "$ref": "#/$defs/ProceedingPosture"
+                },
+                "recap_id": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "LegalProceeding",
+            "type": "object"
+        },
+        "Mobility": {
+            "description": "Physical asset mobility (\u00a711.8).",
+            "enum": [
+                "fixed",
+                "redeployable",
+                "vehicle_mounted",
+                "airborne",
+                "handheld",
+                "unknown"
+            ],
+            "title": "Mobility",
+            "type": "string"
+        },
+        "ObservedVia": {
+            "description": "How a configuration state was observed (\u00a711.15, SIG-ONTO-036).",
+            "enum": [
+                "portal",
+                "config_screenshot",
+                "foia_export",
+                "vendor_statement",
+                "contract_term"
+            ],
+            "title": "ObservedVia",
+            "type": "string"
+        },
+        "OperationalState": {
+            "description": "Track 3 \u2014 operational (\u00a713.4).",
+            "enum": [
+                "unknown",
+                "inactive",
+                "pilot",
+                "active",
+                "expanded",
+                "restricted",
+                "suspended"
+            ],
+            "title": "OperationalState",
+            "type": "string"
+        },
+        "Organization": {
+            "additionalProperties": false,
+            "description": "The single entity for ALL institutional actors; \"vendor\" is a role, not a subtype (\u00a711.2, SIG-ONTO-012). canonical_name is a claim, not a column (\u00a78.2).",
+            "properties": {
+                "address": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "alias": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "alias_type": {
+                    "items": {
+                        "$ref": "#/$defs/AliasType"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "canonical_name": {
+                    "description": "A claim, not an authoritative column (\u00a78.2, SIG-ONTO-003).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "government_domain": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "identifier": {
+                    "description": "Repeatable (scheme,value) pairs, qualified by identifier_system (SIG-IDENT-006).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "identifier_system": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "jurisdiction": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "name_lang": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "organization_type": {
+                    "$ref": "#/$defs/OrganizationType"
+                },
+                "parent_organization": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "publication_review": {
+                    "description": "Routes surrogate-only orgs through \u00a743.4 before public exposure (SIG-ONTO-013).",
+                    "type": [
+                        "boolean",
+                        "null"
+                    ]
+                },
+                "succession": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "succession_kind": {
+                    "items": {
+                        "$ref": "#/$defs/SuccessionKind"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "valid_from": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "valid_to": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "Organization",
+            "type": "object"
+        },
+        "OrganizationType": {
+            "description": "Organization type, namespaced and extensible (\u00a711.2, \u00a713.7). \"vendor\" is a ROLE, not a subtype (SIG-ONTO-012); it appears here only as an organization-classification convenience and never specializes the entity.",
+            "enum": [
+                "us.le.municipal_police",
+                "us.le.sheriff",
+                "us.le.state_police",
+                "us.le.university_police",
+                "us.le.transit_police",
+                "us.le.school_district_police",
+                "us.le.tribal_police",
+                "us.le.federal",
+                "us.gov.municipality",
+                "us.gov.county",
+                "us.gov.special_district",
+                "us.fusion_center",
+                "private.company",
+                "private.hoa",
+                "private.security_firm",
+                "private.bid",
+                "nonprofit",
+                "hospital",
+                "university",
+                "school_district",
+                "utility",
+                "transit_agency",
+                "vendor",
+                "data_broker",
+                "fr.police_municipale",
+                "fr.gendarmerie"
+            ],
+            "title": "OrganizationType",
+            "type": "string"
+        },
+        "Person": {
+            "additionalProperties": false,
+            "description": "[NEW] Tightly constrained (\u00a711.3, SIG-ONTO-014/015/016). A Person row carries NO surveillance attributes and MUST NOT be reachable from any automated extraction path. It exists only for named public officials and SIG's own attributable curators.",
+            "properties": {
+                "human_review_completed": {
+                    "description": "Person creation MUST have been through human review (SIG-ONTO-016).",
+                    "type": "boolean"
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "public_interest_basis": {
+                    "description": "MUST pass the officer-naming test (\u00a743.4); required (SIG-ONTO-016).",
+                    "type": "string"
+                },
+                "role_description": {
+                    "description": "The public role justifying inclusion (e.g. named official in an accountability event).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "public_interest_basis",
+                "human_review_completed",
+                "id"
+            ],
+            "title": "Person",
+            "type": "object"
+        },
+        "PhysicalAsset": {
+            "additionalProperties": false,
+            "description": "A field-observed device; geometry is OPTIONAL and operator absence is a first-class countable state (\u00a711.8, SIG-ONTO-027/028). Accommodates ways and relations, not only nodes, and MUST NOT force sensors into a camera abstraction.",
+            "properties": {
+                "asset_type": {
+                    "description": "A Technology reference, not a free string.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "confirmation_status": {
+                    "$ref": "#/$defs/ConfirmationStatus"
+                },
+                "deployment": {
+                    "description": "May be absent \u2014 the orphaned-device case.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "first_observed": {
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "geometry": {
+                    "description": "Optional (SIG-GEO-004).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "last_observed": {
+                    "format": "date-time",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "manufacturer": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "mobility": {
+                    "$ref": "#/$defs/Mobility"
+                },
+                "model": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "osm_version": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "sensitivity_tier": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "upstream_id": {
+                    "description": "Qualified by system (osm.node, osm.way, osm.relation, deflock.id, ...).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "PhysicalAsset",
+            "type": "object"
+        },
+        "PhysicalState": {
+            "description": "Track 2 \u2014 physical (\u00a713.4). `replaced` is deliberately NOT here (SIG-ONTO-062).",
+            "enum": [
+                "unknown",
+                "not_installed",
+                "installation",
+                "installed",
+                "installed_inactive",
+                "decommissioning",
+                "removed",
+                "destroyed_or_lost"
+            ],
+            "title": "PhysicalState",
+            "type": "string"
+        },
+        "Policy": {
+            "additionalProperties": false,
+            "description": "An institutional policy; MUST NOT be merged with ConfigurationState (\u00a711.13, SIG-ONTO-034). Their disagreement is a first-class finding.",
+            "properties": {
+                "adopting_body": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "applies_to": {
+                    "description": "Organization, Deployment, or Product \u2014 polymorphic and repeatable.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "document": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "effective_from": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "effective_to": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "enforcement_mechanism": {
+                    "$ref": "#/$defs/EnforcementMechanism"
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "policy_type": {
+                    "$ref": "#/$defs/PolicyType"
+                },
+                "text": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "Policy",
+            "type": "object"
+        },
+        "PolicyType": {
+            "description": "Policy type (\u00a711.13).",
+            "enum": [
+                "retention",
+                "acceptable_use",
+                "warrant_requirement",
+                "immigration_restriction",
+                "reproductive_health_restriction",
+                "audit_requirement",
+                "external_sharing",
+                "data_minimization",
+                "oversight_reporting",
+                "sunset"
+            ],
+            "title": "PolicyType",
+            "type": "string"
+        },
+        "PredicateVolatility": {
+            "description": "Volatility class governing currency decay (\u00a728.3, SIG-RECON-008).",
+            "enum": [
+                "IMMUTABLE",
+                "GLACIAL",
+                "SLOW",
+                "MODERATE",
+                "FAST",
+                "VOLATILE"
+            ],
+            "title": "PredicateVolatility",
+            "type": "string"
+        },
+        "ProceedingPosture": {
+            "description": "Legal proceeding posture (\u00a711.18).",
+            "enum": [
+                "filed",
+                "pending",
+                "dismissed",
+                "settled",
+                "judgment_plaintiff",
+                "judgment_defendant",
+                "on_appeal",
+                "consent_decree",
+                "class_certified"
+            ],
+            "title": "ProceedingPosture",
+            "type": "string"
+        },
+        "ProcurementState": {
+            "description": "Track 1 \u2014 procurement (\u00a713.4). `unknown` is admissible and default (SIG-ONTO-063).",
+            "enum": [
+                "unknown",
+                "proposed",
+                "rfp_issued",
+                "awarded",
+                "contracted",
+                "cooperative_piggyback",
+                "bundle_included",
+                "free_trial",
+                "donated",
+                "third_party_funded",
+                "grant_funded_pending",
+                "renewed",
+                "nonrenewed",
+                "canceled",
+                "rejected"
+            ],
+            "title": "ProcurementState",
+            "type": "string"
+        },
+        "Product": {
+            "additionalProperties": false,
+            "description": "A product; MUST NOT be equated with a Technology (\u00a711.4, SIG-ONTO-017).",
+            "properties": {
+                "can_offer_capability": {
+                    "description": "Defeasible / marketing-level only (SIG-ONTO-018).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "implements_technology": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "product_name": {
+                    "description": "Time-bounded; products are renamed constantly.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "product_status": {
+                    "$ref": "#/$defs/ProductStatus"
+                },
+                "successor_product": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "vendor": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "Product",
+            "type": "object"
+        },
+        "ProductStatus": {
+            "description": "Product lifecycle status (\u00a711.4).",
+            "enum": [
+                "announced",
+                "available",
+                "end_of_sale",
+                "end_of_life",
+                "renamed",
+                "discontinued"
+            ],
+            "title": "ProductStatus",
+            "type": "string"
+        },
+        "PromotionStatus": {
+            "description": "Candidate-asset promotion lifecycle (\u00a711.9, \u00a743.5).",
+            "enum": [
+                "unreviewed",
+                "corroborated",
+                "promoted",
+                "rejected",
+                "suppressed_by_policy"
+            ],
+            "title": "PromotionStatus",
+            "type": "string"
+        },
+        "ProvenanceEdge": {
+            "additionalProperties": false,
+            "description": "Provenance relationships among claims, captures, artifacts, and sources (\u00a712.7).",
+            "properties": {
+                "asserted_by": {
+                    "description": "Which party asserted it \u2014 perspectival (\u00a712.1.5).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "edge_type": {
+                    "$ref": "#/$defs/EdgeType",
+                    "description": "Typed from the closed catalog (\u00a712.1.2)."
+                },
+                "id": {
+                    "type": "string"
+                },
+                "observed_at": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "source": {
+                    "description": "The asserting/originating node (directed \u2014 \u00a712.1.1).",
+                    "type": "string"
+                },
+                "sources": {
+                    "description": "At least one supporting claim (\u00a712.1.4, SIG-CHART-013).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "target": {
+                    "type": "string"
+                },
+                "valid_from": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "valid_from_kind": {
+                    "$ref": "#/$defs/TemporalBoundKind",
+                    "description": "Snapshot sharing carries unknown/ongoing (SIG-ONTO-044)."
+                },
+                "valid_to": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "valid_to_kind": {
+                    "$ref": "#/$defs/TemporalBoundKind"
+                }
+            },
+            "required": [
+                "id",
+                "source",
+                "target",
+                "edge_type"
+            ],
+            "title": "ProvenanceEdge",
+            "type": "object"
+        },
+        "RecordsPlatform": {
+            "description": "Records-request platform (\u00a711.19).",
+            "enum": [
+                "muckrock",
+                "nextrequest",
+                "govqa",
+                "justfoia",
+                "direct_email",
+                "portal",
+                "paper"
+            ],
+            "title": "RecordsPlatform",
+            "type": "string"
+        },
+        "RecordsRequest": {
+            "additionalProperties": false,
+            "description": "[NEW] A public-records request SIG both cites as provenance and generates as a task (\u00a711.19). no_responsive_records is a positive finding (SIG-ONTO-040).",
+            "properties": {
+                "external_id": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "filed_date": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "platform": {
+                    "$ref": "#/$defs/RecordsPlatform"
+                },
+                "released_documents": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "request_text": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "requesting_party": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "response_date": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "response_status": {
+                    "$ref": "#/$defs/RecordsResponseStatus"
+                },
+                "statutory_basis": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "target_agency": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "RecordsRequest",
+            "type": "object"
+        },
+        "RecordsResponseStatus": {
+            "description": "Records-request response status (\u00a711.19). no_responsive_records is a positive finding (SIG-ONTO-040).",
+            "enum": [
+                "draft",
+                "filed",
+                "acknowledged",
+                "partially_fulfilled",
+                "fulfilled",
+                "denied",
+                "appealed",
+                "abandoned",
+                "no_responsive_records",
+                "fee_demanded"
+            ],
+            "title": "RecordsResponseStatus",
+            "type": "string"
+        },
+        "ResearchTask": {
+            "additionalProperties": false,
+            "description": "[NEW] A research task as an object (\u00a711.22, behaviour at \u00a733.2).",
+            "properties": {
+                "closing_condition": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "resolved": {
+                    "type": [
+                        "boolean",
+                        "null"
+                    ]
+                },
+                "target": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "task_type": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "ResearchTask",
+            "type": "object"
+        },
+        "Resolution": {
+            "additionalProperties": false,
+            "description": "A stored current-best decision record (\u00a716.4, L3), not a view.",
+            "properties": {
+                "confidence": {
+                    "$ref": "#/$defs/WeightClass"
+                },
+                "contradiction_state": {
+                    "$ref": "#/$defs/ContradictionState"
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "predicate": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "rationale": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "resolved_value": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "subject": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "Resolution",
+            "type": "object"
+        },
+        "ResolutionStrategy": {
+            "description": "Per-predicate resolution strategy (\u00a728.4, SIG-RECON-012).",
+            "enum": [
+                "latest_observation_wins",
+                "authoritative_source_wins",
+                "interval_union",
+                "interval_intersection",
+                "max_support",
+                "never_resolve"
+            ],
+            "title": "ResolutionStrategy",
+            "type": "string"
+        },
+        "Role": {
+            "description": "The fourteen separately-modelled roles (\u00a712.4). Never collapsed to owner/operator.",
+            "enum": [
+                "owner",
+                "purchaser",
+                "funder",
+                "installer",
+                "host",
+                "operator",
+                "data_controller",
+                "data_processor",
+                "platform_provider",
+                "accessor_read",
+                "searcher",
+                "alert_recipient",
+                "auditor",
+                "regulator"
+            ],
+            "title": "Role",
+            "type": "string"
+        },
+        "RoleAssignment": {
+            "additionalProperties": false,
+            "description": "Assigns one of the fourteen roles (\u00a712.4, SIG-ONTO-047) from a party to an asset/deployment/system. Modelled separately so the seven load-bearing separations (SIG-ONTO-048) are each independently representable, and so \u00a743.3 coordinate sensitivity can be evaluated at the ROLE level (host\u2260owner).",
+            "properties": {
+                "asserted_by": {
+                    "description": "Which party asserted it \u2014 perspectival (\u00a712.1.5).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "edge_type": {
+                    "$ref": "#/$defs/EdgeType",
+                    "description": "Typed from the closed catalog (\u00a712.1.2)."
+                },
+                "id": {
+                    "type": "string"
+                },
+                "observed_at": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "over": {
+                    "description": "The PhysicalAsset / Deployment / DataSystem the role is held over.",
+                    "type": "string"
+                },
+                "party": {
+                    "description": "The Organization (or, rarely and reviewed, Person) holding the role.",
+                    "type": "string"
+                },
+                "role": {
+                    "$ref": "#/$defs/Role"
+                },
+                "source": {
+                    "description": "The asserting/originating node (directed \u2014 \u00a712.1.1).",
+                    "type": "string"
+                },
+                "sources": {
+                    "description": "At least one supporting claim (\u00a712.1.4, SIG-CHART-013).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "target": {
+                    "type": "string"
+                },
+                "valid_from": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "valid_from_kind": {
+                    "$ref": "#/$defs/TemporalBoundKind",
+                    "description": "Snapshot sharing carries unknown/ongoing (SIG-ONTO-044)."
+                },
+                "valid_to": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "valid_to_kind": {
+                    "$ref": "#/$defs/TemporalBoundKind"
+                }
+            },
+            "required": [
+                "role",
+                "party",
+                "over",
+                "id",
+                "source",
+                "target",
+                "edge_type"
+            ],
+            "title": "RoleAssignment",
+            "type": "object"
+        },
+        "Salience": {
+            "description": "Technology salience rating (\u00a713.1, SIG-ONTO-056).",
+            "enum": [
+                "L",
+                "M",
+                "H",
+                "C"
+            ],
+            "title": "Salience",
+            "type": "string"
+        },
+        "SkosMappingRelation": {
+            "description": "SKOS mapping relations for crosswalks (\u00a720.3).",
+            "enum": [
+                "exactMatch",
+                "closeMatch",
+                "broadMatch",
+                "narrowMatch",
+                "relatedMatch"
+            ],
+            "title": "SkosMappingRelation",
+            "type": "string"
+        },
+        "Source": {
+            "additionalProperties": false,
+            "description": "A publisher of evidence (\u00a710.2, \u00a711.20). Distinct from artifact and capture.",
+            "properties": {
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "publisher_name": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "reliability": {
+                    "$ref": "#/$defs/SourceReliability"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "Source",
+            "type": "object"
+        },
+        "SourceReliability": {
+            "description": "Reliability R of the publisher, not the claim (\u00a710.4).",
+            "enum": [
+                "R1",
+                "R2",
+                "R3",
+                "R4",
+                "R5",
+                "R6"
+            ],
+            "title": "SourceReliability",
+            "type": "string"
+        },
+        "StructuralEdge": {
+            "additionalProperties": false,
+            "description": "Organizational/structural relationships (\u00a712.6).",
+            "properties": {
+                "asserted_by": {
+                    "description": "Which party asserted it \u2014 perspectival (\u00a712.1.5).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "edge_type": {
+                    "$ref": "#/$defs/EdgeType",
+                    "description": "Typed from the closed catalog (\u00a712.1.2)."
+                },
+                "id": {
+                    "type": "string"
+                },
+                "observed_at": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "source": {
+                    "description": "The asserting/originating node (directed \u2014 \u00a712.1.1).",
+                    "type": "string"
+                },
+                "sources": {
+                    "description": "At least one supporting claim (\u00a712.1.4, SIG-CHART-013).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "target": {
+                    "type": "string"
+                },
+                "valid_from": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "valid_from_kind": {
+                    "$ref": "#/$defs/TemporalBoundKind",
+                    "description": "Snapshot sharing carries unknown/ongoing (SIG-ONTO-044)."
+                },
+                "valid_to": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "valid_to_kind": {
+                    "$ref": "#/$defs/TemporalBoundKind"
+                }
+            },
+            "required": [
+                "id",
+                "source",
+                "target",
+                "edge_type"
+            ],
+            "title": "StructuralEdge",
+            "type": "object"
+        },
+        "SuccessionKind": {
+            "description": "Temporal identity succession qualifier (\u00a714.5).",
+            "enum": [
+                "merged_into",
+                "split_from",
+                "renamed_from",
+                "absorbed_by"
+            ],
+            "title": "SuccessionKind",
+            "type": "string"
+        },
+        "SystemScope": {
+            "description": "DataSystem scope (\u00a711.10).",
+            "enum": [
+                "agency_local",
+                "vendor_cloud_single_tenant",
+                "vendor_cloud_shared",
+                "state",
+                "regional",
+                "federal",
+                "commercial"
+            ],
+            "title": "SystemScope",
+            "type": "string"
+        },
+        "Technology": {
+            "additionalProperties": false,
+            "description": "A three-level technology (domain\u2192family\u2192technology, \u00a711.5, SIG-ONTO-019). The authoritative term hierarchy is the SKOS Technology scheme (\u00a713.1); this class carries the code and its rollup levels for a specific referenced node.",
+            "properties": {
+                "domain": {
+                    "description": "The domain-level slug this rolls up to.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "family": {
+                    "description": "The family-level slug this rolls up to.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "technology": {
+                    "description": "The technology-level slug.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "Technology",
+            "type": "object"
+        },
+        "TemporalBoundKind": {
+            "description": "How a temporal bound is known (\u00a79.5).",
+            "enum": [
+                "known",
+                "unknown",
+                "ongoing"
+            ],
+            "title": "TemporalBoundKind",
+            "type": "string"
+        },
+        "UsageAggregate": {
+            "additionalProperties": false,
+            "description": "Aggregated usage; direction is the point (\u00a711.16). NO per-search, per-plate, or per-person row may exist here or anywhere in SIG (SIG-ONTO-037, \u00a718.1).",
+            "properties": {
+                "audit_source_type": {
+                    "$ref": "#/$defs/AuditSourceType"
+                },
+                "count": {
+                    "description": "Subject to small-cell suppression (\u00a718.4).",
+                    "type": [
+                        "integer",
+                        "null"
+                    ]
+                },
+                "coverage_period": {
+                    "description": "What span the underlying audit covered \u2014 distinct from period.",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "id": {
+                    "description": "The entity's stable minted identity (L2 identity only, \u00a78.2).",
+                    "type": "string"
+                },
+                "period": {
+                    "description": "Minimum granularity one month for published data (\u00a718.4).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "reason_category": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "reason_raw_value": {
+                    "description": "Normalized reason_category retains the raw value (P2).",
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "search_scope": {
+                    "$ref": "#/$defs/CapabilityScope"
+                },
+                "searching_org": {
+                    "type": "string"
+                },
+                "source_org": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "searching_org",
+                "source_org",
+                "id"
+            ],
+            "title": "UsageAggregate",
+            "type": "object"
+        },
+        "ValueKind": {
+            "description": "RDF-style value kind \u2014 known value, unknown value, or no value (\u00a79.5).",
+            "enum": [
+                "value",
+                "somevalue",
+                "novalue"
+            ],
+            "title": "ValueKind",
+            "type": "string"
+        },
+        "WeightClass": {
+            "description": "Composed weight class W (\u00a710.6).",
+            "enum": [
+                "W0",
+                "W1",
+                "W2",
+                "W3",
+                "W4"
+            ],
+            "title": "WeightClass",
+            "type": "string"
+        }
+    },
+    "$id": "https://ontology.sig-project.org/schema/sig",
+    "$schema": "https://json-schema.org/draft/2019-09/schema",
+    "additionalProperties": true,
+    "metamodel_version": "1.11.0",
+    "title": "sig",
+    "type": "object",
+    "version": "1.0.0"
+}

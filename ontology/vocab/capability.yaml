@@ -1,0 +1,68 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# The SIG capability vocabulary (§13.2, §11.6) — SKOS source of truth. Capability
+# slugs follow the grammar `verb.object.scope` (SIG-ONTO-023); a noun list cannot
+# express scope or direction. The export / onward-disclosure class is present by
+# requirement (SIG-ONTO-024) — it is where the harm the project documents occurs.
+# Governance capabilities are NEGATIVE (restrictions), modelled so that "no
+# evidence of a restriction" never becomes "restriction absent" (SIG-ONTO-025).
+scheme: capability
+title: SIG capability vocabulary (§13.2)
+version: 1.0.0
+grammar: verb.object.scope
+scopes: [own, partner, state, region, national, commercial, subject]
+classes: [query, alerting, live_operations, acquisition, export_disclosure, governance]
+capabilities:
+  # --- Query -----------------------------------------------------------------
+  - {slug: search.plate.own, class: query, verb: search, object: plate, scope: own, label: Search plates (own), salience: M}
+  - {slug: search.plate.partner, class: query, verb: search, object: plate, scope: partner, label: Search plates (partner), salience: H}
+  - {slug: search.plate.state, class: query, verb: search, object: plate, scope: state, label: Search plates (state), salience: H}
+  - {slug: search.plate.region, class: query, verb: search, object: plate, scope: region, label: Search plates (region), salience: H}
+  - {slug: search.plate.national, class: query, verb: search, object: plate, scope: national, label: Search plates (national), salience: H}
+  - {slug: search.plate.commercial, class: query, verb: search, object: plate, scope: commercial, label: Search plates (commercial), salience: H}
+  - {slug: search.face.own, class: query, verb: search, object: face, scope: own, label: Search faces (own), salience: C}
+  - {slug: search.face.state, class: query, verb: search, object: face, scope: state, label: Search faces (state), salience: C}
+  - {slug: search.face.national, class: query, verb: search, object: face, scope: national, label: Search faces (national), salience: C}
+  - {slug: search.face.commercial, class: query, verb: search, object: face, scope: commercial, label: Search faces (commercial), salience: C}
+  - {slug: search.location_history.subject, class: query, verb: search, object: location_history, scope: subject, label: Search location history (subject), salience: C}
+  - {slug: search.location_history.commercial, class: query, verb: search, object: location_history, scope: commercial, label: Search location history (commercial), salience: C}
+  - {slug: search.person_records.commercial, class: query, verb: search, object: person_records, scope: commercial, label: Search person records (commercial), salience: C}
+  - {slug: search.records.region, class: query, verb: search, object: records, scope: region, label: Search records (region), salience: M}
+  - {slug: search.plate.subject, class: query, verb: search, object: plate, scope: subject, label: Search plates (subject), salience: H}
+  - {slug: search.face.partner, class: query, verb: search, object: face, scope: partner, label: Search faces (partner), salience: C}
+  - {slug: search.location_history.own, class: query, verb: search, object: location_history, scope: own, label: Search location history (own), salience: H}
+  # --- Alerting --------------------------------------------------------------
+  - {slug: alert.hotlist.own, class: alerting, verb: alert, object: hotlist, scope: own, label: Hotlist alert (own), salience: M}
+  - {slug: alert.hotlist.federal, class: alerting, verb: alert, object: hotlist, scope: federal, label: Hotlist alert (federal), salience: C}
+  - {slug: alert.hotlist.custom, class: alerting, verb: alert, object: hotlist, scope: custom, label: Hotlist alert (custom), salience: H}
+  - {slug: alert.gunshot.own, class: alerting, verb: alert, object: gunshot, scope: own, label: Gunshot alert (own), salience: M}
+  - {slug: alert.push_to.partner, class: alerting, verb: alert, object: push_to, scope: partner, label: Push alerts to partner, salience: H}
+  - {slug: alert.hotlist.state, class: alerting, verb: alert, object: hotlist, scope: state, label: Hotlist alert (state), salience: H}
+  # --- Live operations -------------------------------------------------------
+  - {slug: view.livestream.private_camera, class: live_operations, verb: view, object: livestream, scope: private_camera, label: View private-camera livestream, salience: H}
+  - {slug: view.livestream.officer, class: live_operations, verb: view, object: livestream, scope: officer, label: View officer livestream, salience: H}
+  - {slug: control.ptz.private_camera, class: live_operations, verb: control, object: ptz, scope: private_camera, label: Steer a private PTZ camera, salience: C}
+  - {slug: dispatch.uas.autonomous, class: live_operations, verb: dispatch, object: uas, scope: autonomous, label: Dispatch autonomous UAS, salience: H}
+  - {slug: view.cad.partner, class: live_operations, verb: view, object: cad, scope: partner, label: View partner CAD, salience: M}
+  - {slug: view.livestream.partner, class: live_operations, verb: view, object: livestream, scope: partner, label: View partner livestream, salience: H}
+  # --- Acquisition / extraction ----------------------------------------------
+  - {slug: extract.device.logical, class: acquisition, verb: extract, object: device, scope: logical, label: Logical device extraction, salience: C}
+  - {slug: extract.device.physical, class: acquisition, verb: extract, object: device, scope: physical, label: Physical device extraction, salience: C}
+  - {slug: extract.cloud.account, class: acquisition, verb: extract, object: cloud, scope: account, label: Cloud-account extraction, salience: C}
+  - {slug: locate.handset.rf, class: acquisition, verb: locate, object: handset, scope: rf, label: Locate handset by RF, salience: C}
+  - {slug: intercept.content.subject, class: acquisition, verb: intercept, object: content, scope: subject, label: Intercept content (subject), salience: C}
+  # --- Export / onward disclosure (SIG-ONTO-024) -----------------------------
+  - {slug: disclose.results.to_partner, class: export_disclosure, verb: disclose, object: results, scope: to_partner, label: Disclose results to partner, salience: H}
+  - {slug: disclose.bulk.to_vendor, class: export_disclosure, verb: disclose, object: bulk, scope: to_vendor, label: Disclose bulk to vendor, salience: C}
+  - {slug: disclose.audit.public, class: export_disclosure, verb: disclose, object: audit, scope: public, label: Disclose audit publicly, salience: L}
+  - {slug: resell.derived.commercial, class: export_disclosure, verb: resell, object: derived, scope: commercial, label: Resell derived data (commercial), salience: C}
+  - {slug: disclose.results.to_federal, class: export_disclosure, verb: disclose, object: results, scope: to_federal, label: Disclose results to federal, salience: C}
+  # --- Governance (negative — restrictions, SIG-ONTO-025) --------------------
+  - {slug: restrict.offense_category.own, class: governance, verb: restrict, object: offense_category, scope: own, label: Restrict by offence category, negative: true, salience: M}
+  - {slug: restrict.federal_sharing.own, class: governance, verb: restrict, object: federal_sharing, scope: own, label: Restrict federal sharing, negative: true, salience: C}
+  - {slug: restrict.immigration_query.own, class: governance, verb: restrict, object: immigration_query, scope: own, label: Restrict immigration queries, negative: true, salience: C}
+  - {slug: restrict.reproductive_query.own, class: governance, verb: restrict, object: reproductive_query, scope: own, label: Restrict reproductive-health queries, negative: true, salience: C}
+  - {slug: audit.case_code.required, class: governance, verb: audit, object: case_code, scope: required, label: Require case code for audit, negative: true, salience: M}
+  - {slug: restrict.external_sharing.own, class: governance, verb: restrict, object: external_sharing, scope: own, label: Restrict external sharing, negative: true, salience: H}

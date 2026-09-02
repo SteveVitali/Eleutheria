@@ -1,0 +1,1033 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# The predicate registry (§13.6, SIG-ONTO-066/067) — source of truth. A predicate
+# MUST NOT be added without a volatility class + half-life (§28.3), a resolution
+# strategy (§28.4), and its row in the directness matrix (§10.5): a predicate with
+# none of those cannot be resolved, only guessed at. The directness rows carry the
+# published §10.5 values for the matrix predicates and a conservative default
+# elsewhere; the full (genre × predicate) matrix is completed in the reconcile
+# ruleset (P08), which consumes this registry.
+scheme: predicate
+title: SIG predicate registry (§13.6)
+version: 1.0.0
+artifact_genres:
+- executed_contract
+- invoice
+- portal_snapshot
+- council_minutes
+- agency_policy
+- osm_node_set
+- audit_log
+- news_article
+- vendor_default_page
+count: 53
+predicates:
+- predicate_id: contract_signed_date
+  vocab_version: 1.0.0
+  value_datatype: edtf
+  cardinality: single
+  definition: Date a contract was signed.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_signed_date
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D1
+    invoice: D3
+    portal_snapshot: D6
+    council_minutes: D2
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+- predicate_id: contract_value
+  vocab_version: 1.0.0
+  value_datatype: decimal
+  cardinality: single
+  definition: Monetary value of a contract.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_value
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: contracted_device_count
+  vocab_version: 1.0.0
+  value_datatype: integer
+  cardinality: single
+  definition: Device quantity specified by a contract.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/contracted_device_count
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D1
+    invoice: D2
+    portal_snapshot: D5
+    council_minutes: D2
+    agency_policy: D6
+    osm_node_set: D5
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+- predicate_id: contract_start_date
+  vocab_version: 1.0.0
+  value_datatype: edtf
+  cardinality: single
+  definition: Contract term start.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_start_date
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: contract_end_date
+  vocab_version: 1.0.0
+  value_datatype: edtf
+  cardinality: single
+  definition: Contract term end.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_end_date
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: statutory_citation
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: Citation of a legal instrument.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/statutory_citation
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: funding_amount
+  vocab_version: 1.0.0
+  value_datatype: decimal
+  cardinality: single
+  definition: Amount of a funding instrument.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_amount
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: funding_program_name
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: Named funding program (e.g. Byrne JAG).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_program_name
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: federal_award_id
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: USAspending award/sub-award id.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_award_id
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: event_epistemic_status
+  vocab_version: 1.0.0
+  value_datatype: EpistemicStatus
+  cardinality: single
+  definition: Epistemic status of an accountability event.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/event_epistemic_status
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: max_support
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: organization_legal_name
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: Legal name of an organization (a claim).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_legal_name
+  volatility_class: GLACIAL
+  half_life: 10y
+  resolution_strategy: max_support
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: organization_jurisdiction
+  vocab_version: 1.0.0
+  value_datatype: uriorcurie
+  cardinality: single
+  definition: Jurisdiction an organization serves.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_jurisdiction
+  volatility_class: GLACIAL
+  half_life: 10y
+  resolution_strategy: max_support
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: organization_ori
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: FBI ORI9 identifier.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_ori
+  volatility_class: GLACIAL
+  half_life: 10y
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: organization_type
+  vocab_version: 1.0.0
+  value_datatype: OrganizationType
+  cardinality: single
+  definition: Organization type.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_type
+  volatility_class: GLACIAL
+  half_life: 10y
+  resolution_strategy: max_support
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: product_vendor
+  vocab_version: 1.0.0
+  value_datatype: uriorcurie
+  cardinality: single
+  definition: Vendor of a product.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/product_vendor
+  volatility_class: GLACIAL
+  half_life: 5y
+  resolution_strategy: max_support
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: product_capabilities
+  vocab_version: 1.0.0
+  value_datatype: capability_code
+  cardinality: multi
+  definition: Marketing-level product capabilities (defeasible).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/product_capabilities
+  volatility_class: GLACIAL
+  half_life: 5y
+  resolution_strategy: max_support
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: product_status
+  vocab_version: 1.0.0
+  value_datatype: ProductStatus
+  cardinality: single
+  definition: Product lifecycle status.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/product_status
+  volatility_class: MODERATE
+  half_life: 12mo
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: implements_technology
+  vocab_version: 1.0.0
+  value_datatype: technology_code
+  cardinality: multi
+  definition: Technology implemented by a product.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/implements_technology
+  volatility_class: GLACIAL
+  half_life: 5y
+  resolution_strategy: max_support
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: jurisdiction_parent
+  vocab_version: 1.0.0
+  value_datatype: uriorcurie
+  cardinality: multi
+  definition: Parent jurisdiction.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_parent
+  volatility_class: GLACIAL
+  half_life: 10y
+  resolution_strategy: max_support
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: jurisdiction_boundary
+  vocab_version: 1.0.0
+  value_datatype: geometry_wkt
+  cardinality: single
+  definition: Jurisdiction boundary geometry (temporally versioned).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_boundary
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: deployment_exists
+  vocab_version: 1.0.0
+  value_datatype: boolean
+  cardinality: single
+  definition: Whether a deployment exists.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/deployment_exists
+  volatility_class: SLOW
+  half_life: 3y
+  resolution_strategy: max_support
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: asset_operator
+  vocab_version: 1.0.0
+  value_datatype: uriorcurie
+  cardinality: single
+  definition: Operator attribution for an asset.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_operator
+  volatility_class: SLOW
+  half_life: 3y
+  resolution_strategy: max_support
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: fixed_asset_location
+  vocab_version: 1.0.0
+  value_datatype: geometry_wkt
+  cardinality: single
+  definition: Location of a fixed asset.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/fixed_asset_location
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: written_policy_value
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: A value stated in a written policy.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/written_policy_value
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: max_support
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: policy_enforcement_mechanism
+  vocab_version: 1.0.0
+  value_datatype: EnforcementMechanism
+  cardinality: single
+  definition: Policy enforcement mechanism.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/policy_enforcement_mechanism
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: max_support
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: offense_category_filter
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: Configured offence-category filter.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/offense_category_filter
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: audit_case_code_required
+  vocab_version: 1.0.0
+  value_datatype: boolean
+  cardinality: single
+  definition: Whether a case code is required for audit.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/audit_case_code_required
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: data_system_scope
+  vocab_version: 1.0.0
+  value_datatype: SystemScope
+  cardinality: single
+  definition: Scope of a data system.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/data_system_scope
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: max_support
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: holds_data_collected_by
+  vocab_version: 1.0.0
+  value_datatype: uriorcurie
+  cardinality: multi
+  definition: Custodian-vs-collector relationship.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/holds_data_collected_by
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: max_support
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: role_assignment
+  vocab_version: 1.0.0
+  value_datatype: Role
+  cardinality: multi
+  definition: Assignment of one of the fourteen roles.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/role_assignment
+  volatility_class: SLOW
+  half_life: 3y
+  resolution_strategy: max_support
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: candidate_location_estimate
+  vocab_version: 1.0.0
+  value_datatype: geometry_wkt
+  cardinality: single
+  definition: Estimated location of a candidate asset.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_location_estimate
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: asset_exists_at_location
+  vocab_version: 1.0.0
+  value_datatype: boolean
+  cardinality: single
+  definition: Whether an asset exists at a location.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_exists_at_location
+  volatility_class: MODERATE
+  half_life: 12mo
+  resolution_strategy: max_support
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: procurement_state
+  vocab_version: 1.0.0
+  value_datatype: ProcurementState
+  cardinality: single
+  definition: Deployment procurement track state.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/procurement_state
+  volatility_class: MODERATE
+  half_life: 12mo
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: authorization_state
+  vocab_version: 1.0.0
+  value_datatype: AuthorizationState
+  cardinality: single
+  definition: Deployment authorization track state.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/authorization_state
+  volatility_class: MODERATE
+  half_life: 12mo
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: configured_retention_days
+  vocab_version: 1.0.0
+  value_datatype: duration_iso
+  cardinality: single
+  definition: Configured retention (duration or bucket).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_retention_days
+  volatility_class: MODERATE
+  half_life: 9mo
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D4
+    invoice: D6
+    portal_snapshot: D1
+    council_minutes: D3
+    agency_policy: D2
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: vendor_default_retention
+  vocab_version: 1.0.0
+  value_datatype: duration_iso
+  cardinality: single
+  definition: Vendor default retention (inference basis only).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor_default_retention
+  volatility_class: MODERATE
+  half_life: 9mo
+  resolution_strategy: max_support
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: data_system_retention
+  vocab_version: 1.0.0
+  value_datatype: duration_iso
+  cardinality: single
+  definition: Retention configured on a data system.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/data_system_retention
+  volatility_class: MODERATE
+  half_life: 9mo
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: proceeding_posture
+  vocab_version: 1.0.0
+  value_datatype: ProceedingPosture
+  cardinality: single
+  definition: Legal proceeding posture.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_posture
+  volatility_class: MODERATE
+  half_life: 12mo
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: records_response_status
+  vocab_version: 1.0.0
+  value_datatype: RecordsResponseStatus
+  cardinality: single
+  definition: Records-request response status.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/records_response_status
+  volatility_class: MODERATE
+  half_life: 12mo
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: candidate_promotion_status
+  vocab_version: 1.0.0
+  value_datatype: PromotionStatus
+  cardinality: single
+  definition: Candidate-asset promotion status.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_promotion_status
+  volatility_class: MODERATE
+  half_life: 12mo
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: integration_edge_active
+  vocab_version: 1.0.0
+  value_datatype: boolean
+  cardinality: single
+  definition: Whether an integration edge is active.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/integration_edge_active
+  volatility_class: MODERATE
+  half_life: 12mo
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: operational_state
+  vocab_version: 1.0.0
+  value_datatype: OperationalState
+  cardinality: single
+  definition: Deployment operational track state.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/operational_state
+  volatility_class: FAST
+  half_life: 6mo
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: active_device_count
+  vocab_version: 1.0.0
+  value_datatype: integer
+  cardinality: single
+  definition: Currently active device count.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/active_device_count
+  volatility_class: FAST
+  half_life: 6mo
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D5
+    invoice: D4
+    portal_snapshot: D1
+    council_minutes: D4
+    agency_policy: D6
+    osm_node_set: D3
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D6
+- predicate_id: installed_device_count
+  vocab_version: 1.0.0
+  value_datatype: integer
+  cardinality: single
+  definition: Installed device count.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/installed_device_count
+  volatility_class: FAST
+  half_life: 6mo
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: configured_sharing_partner_set
+  vocab_version: 1.0.0
+  value_datatype: uriorcurie
+  cardinality: multi
+  definition: Configured sharing partners (directional).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner_set
+  volatility_class: FAST
+  half_life: 4mo
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D1
+    council_minutes: D4
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D6
+- predicate_id: configured_access_edge
+  vocab_version: 1.0.0
+  value_datatype: boolean
+  cardinality: single
+  definition: Configured-access sharing edge state.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_access_edge
+  volatility_class: FAST
+  half_life: 4mo
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: state_lookup_enabled
+  vocab_version: 1.0.0
+  value_datatype: boolean
+  cardinality: single
+  definition: State lookup toggle.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/state_lookup_enabled
+  volatility_class: VOLATILE
+  half_life: 2mo
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: national_lookup_enabled
+  vocab_version: 1.0.0
+  value_datatype: boolean
+  cardinality: single
+  definition: National lookup toggle.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/national_lookup_enabled
+  volatility_class: VOLATILE
+  half_life: 2mo
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: federal_sharing_enabled
+  vocab_version: 1.0.0
+  value_datatype: boolean
+  cardinality: single
+  definition: Federal sharing toggle.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_sharing_enabled
+  volatility_class: VOLATILE
+  half_life: 2mo
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: subscribed_hotlist_topic
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: Subscribed hotlist topics.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/subscribed_hotlist_topic
+  volatility_class: VOLATILE
+  half_life: 2mo
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: windowed_search_count
+  vocab_version: 1.0.0
+  value_datatype: integer
+  cardinality: single
+  definition: Windowed usage count (indexed, not stale — SIG-RECON-011).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/windowed_search_count
+  volatility_class: VOLATILE
+  half_life: 1mo
+  resolution_strategy: interval_union
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: observed_use_edge
+  vocab_version: 1.0.0
+  value_datatype: boolean
+  cardinality: single
+  definition: Observed-use sharing edge (windowed).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/observed_use_edge
+  volatility_class: VOLATILE
+  half_life: 1mo
+  resolution_strategy: interval_union
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+- predicate_id: asset_data_controller
+  vocab_version: 1.0.0
+  value_datatype: uriorcurie
+  cardinality: single
+  definition: Contested data-controller assertion — recorded, not adjudicated (§12.4).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_data_controller
+  volatility_class: MODERATE
+  half_life: 12mo
+  resolution_strategy: never_resolve
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5

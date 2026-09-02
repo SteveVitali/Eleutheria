@@ -1,0 +1,920 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# The SIG technology vocabulary (§13.1) — SKOS source of truth. 14 domains, 36
+# families, 104 technologies; every family carries an -unspecified leaf
+# (SIG-ONTO-020/054); every technology carries a distinguishing criterion, an
+# evidence signature, and a salience L/M/H/C (SIG-ONTO-056). Slugs are
+# lowercase-hyphenated, stable forever, encode family-discriminator, never a
+# vendor (SIG-ONTO-053/055). Authored source; the SKOS artifact is generated from it.
+scheme: technology
+title: SIG technology vocabulary (§13.1)
+version: 1.0.0
+hierarchy: domain → family → technology
+counts:
+  domains: 14
+  families: 36
+  technologies: 104
+domains:
+- slug: surveillance-vehicle
+  label: Vehicle surveillance
+  families:
+  - slug: alpr
+    label: Automated licence plate readers
+    technologies:
+    - slug: alpr-fixed
+      label: Fixed ALPR
+      distinguishing_criterion: Pole/structure-mounted, permanently sited at one location.
+      evidence_signature:
+      - license plate reader
+      - fixed LPR
+      - pole-mounted camera
+      salience: M
+    - slug: alpr-mobile
+      label: Mobile ALPR
+      distinguishing_criterion: Mounted on a patrol vehicle and reads while in motion.
+      evidence_signature:
+      - mobile LPR
+      - vehicle-mounted plate reader
+      salience: M
+    - slug: alpr-covert
+      label: Covert ALPR
+      distinguishing_criterion: Concealed/disguised siting intended to avoid detection.
+      evidence_signature:
+      - covert LPR
+      - concealed camera
+      salience: H
+    - slug: alpr-trailer
+      label: Trailer-mounted ALPR
+      distinguishing_criterion: Redeployable on a towed trailer, often solar-powered.
+      evidence_signature:
+      - LPR trailer
+      - camera trailer plate reader
+      salience: M
+    - slug: alpr-checkpoint
+      label: Checkpoint ALPR
+      distinguishing_criterion: Deployed at a fixed screening chokepoint or border checkpoint.
+      evidence_signature:
+      - checkpoint LPR
+      - border plate reader
+      salience: M
+    - slug: alpr-unspecified
+      label: Automated licence plate readers (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - automated licence plate readers
+      salience: H
+  - slug: vehicle-fingerprint
+    label: Vehicle fingerprinting
+    technologies:
+    - slug: vehicle-fingerprint-reid
+      label: Vehicle fingerprint re-identification
+      distinguishing_criterion: Re-identifies a vehicle by make/model/colour/features without reading
+        a plate.
+      evidence_signature:
+      - vehicle fingerprint
+      - vehicle re-identification
+      - make model color
+      salience: H
+    - slug: vehicle-fingerprint-unspecified
+      label: Vehicle fingerprinting (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - vehicle fingerprinting
+      salience: H
+  - slug: plate-data-commercial
+    label: Commercial plate-data purchase
+    technologies:
+    - slug: plate-data-commercial-purchase
+      label: Commercial plate-data purchase
+      distinguishing_criterion: Purchase of plate reads collected by a commercial (non-agency) network.
+      evidence_signature:
+      - commercial LPR data
+      - plate data subscription
+      - national plate database
+      salience: H
+    - slug: plate-data-commercial-unspecified
+      label: Commercial plate-data purchase (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - commercial plate-data purchase
+      salience: H
+- slug: surveillance-video
+  label: Video surveillance
+  families:
+  - slug: fixed-camera
+    label: Fixed and PTZ cameras
+    technologies:
+    - slug: camera-fixed-cctv
+      label: Fixed CCTV
+      distinguishing_criterion: Fixed field-of-view video camera.
+      evidence_signature:
+      - CCTV
+      - fixed camera
+      - surveillance camera
+      salience: L
+    - slug: camera-ptz
+      label: Pan-tilt-zoom camera
+      distinguishing_criterion: Operator-steerable pan/tilt/zoom camera.
+      evidence_signature:
+      - PTZ camera
+      - pan tilt zoom
+      salience: M
+    - slug: fixed-camera-unspecified
+      label: Fixed and PTZ cameras (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - fixed and ptz cameras
+      salience: M
+  - slug: private-camera-integration
+    label: Private-camera registry and integration
+    technologies:
+    - slug: private-camera-registry
+      label: Private-camera registry
+      distinguishing_criterion: A register of privately owned cameras with no live feed access.
+      evidence_signature:
+      - camera registry
+      - register your camera
+      salience: M
+    - slug: private-camera-integration
+      label: Private-camera integration
+      distinguishing_criterion: Live private feeds integrated into an agency platform.
+      evidence_signature:
+      - camera integration
+      - connect your camera
+      salience: H
+    - slug: private-camera-per-incident-request
+      label: Per-incident private-camera request
+      distinguishing_criterion: Consent-gated, per-incident footage requests from private owners.
+      evidence_signature:
+      - footage request
+      - per-incident camera request
+      salience: M
+    - slug: private-camera-integration-unspecified
+      label: Private-camera registry and integration (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - private-camera registry and integration
+      salience: H
+  - slug: video-analytics
+    label: Video analytics
+    technologies:
+    - slug: video-analytics-object
+      label: Object-detection analytics
+      distinguishing_criterion: Automated detection/classification of objects in a video stream.
+      evidence_signature:
+      - video analytics
+      - object detection
+      - person of interest search
+      salience: H
+    - slug: video-analytics-loitering
+      label: Behavioural video analytics
+      distinguishing_criterion: Flags loitering/anomalous movement in a video stream.
+      evidence_signature:
+      - loitering detection
+      - anomaly video analytics
+      salience: H
+    - slug: video-analytics-unspecified
+      label: Video analytics (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - video analytics
+      salience: H
+  - slug: camera-trailer
+    label: Camera trailers
+    technologies:
+    - slug: camera-trailer-video
+      label: Video camera trailer
+      distinguishing_criterion: Redeployable trailer carrying video (not primarily ALPR) cameras.
+      evidence_signature:
+      - camera trailer
+      - mobile surveillance trailer
+      salience: M
+    - slug: camera-trailer-unspecified
+      label: Camera trailers (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - camera trailers
+      salience: M
+- slug: body-worn-video
+  label: Body-worn and in-car video
+  families:
+  - slug: body-worn-camera
+    label: Body-worn cameras
+    technologies:
+    - slug: bwc-recorded
+      label: Recorded body-worn camera
+      distinguishing_criterion: Records to storage for later review.
+      evidence_signature:
+      - body-worn camera
+      - BWC
+      - body cam
+      salience: M
+    - slug: bwc-livestream
+      label: Live-streaming body-worn camera
+      distinguishing_criterion: Streams live into an integration/RTCC platform.
+      evidence_signature:
+      - BWC livestream
+      - live body camera
+      - real-time streaming
+      salience: H
+    - slug: body-worn-camera-unspecified
+      label: Body-worn cameras (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - body-worn cameras
+      salience: H
+  - slug: in-car-video
+    label: In-car video
+    technologies:
+    - slug: in-car-video-recorded
+      label: In-car video
+      distinguishing_criterion: Dash/in-car camera system.
+      evidence_signature:
+      - in-car video
+      - dash cam
+      - ICV
+      salience: L
+    - slug: in-car-video-unspecified
+      label: In-car video (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - in-car video
+      salience: L
+- slug: biometric-id
+  label: Biometric identification
+  families:
+  - slug: face-recognition
+    label: Face recognition
+    technologies:
+    - slug: face-verification-1to1
+      label: 1:1 face verification
+      distinguishing_criterion: Confirms a claimed identity against one template.
+      evidence_signature:
+      - face verification
+      - 1:1 match
+      salience: C
+    - slug: face-identification-1ton
+      label: 1:N face identification
+      distinguishing_criterion: Searches a face against a gallery of many.
+      evidence_signature:
+      - face recognition
+      - 1:N search
+      - facial recognition
+      salience: C
+    - slug: face-retrospective
+      label: Retrospective face search
+      distinguishing_criterion: Searches recorded imagery after the fact.
+      evidence_signature:
+      - retrospective facial recognition
+      - RFR
+      salience: C
+    - slug: face-live
+      label: Live face recognition
+      distinguishing_criterion: Matches faces against a watchlist in real time.
+      evidence_signature:
+      - live facial recognition
+      - LFR
+      - real-time face
+      salience: C
+    - slug: face-clustering
+      label: Face clustering
+      distinguishing_criterion: Groups unlabelled faces across media without a named gallery.
+      evidence_signature:
+      - face clustering
+      - face grouping
+      salience: C
+    - slug: face-recognition-unspecified
+      label: Face recognition (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - face recognition
+      salience: C
+  - slug: fingerprint
+    label: Fingerprint identification
+    technologies:
+    - slug: fingerprint-tenprint
+      label: Ten-print identification
+      distinguishing_criterion: Matches full ten-print sets (AFIS).
+      evidence_signature:
+      - AFIS
+      - ten-print
+      - fingerprint database
+      salience: C
+    - slug: fingerprint-latent
+      label: Latent print identification
+      distinguishing_criterion: Matches partial/latent prints from a scene.
+      evidence_signature:
+      - latent print
+      - latent fingerprint
+      salience: C
+    - slug: fingerprint-mobile
+      label: Mobile fingerprint
+      distinguishing_criterion: Field mobile fingerprint capture/identification.
+      evidence_signature:
+      - mobile fingerprint
+      - rapid ID
+      salience: C
+    - slug: fingerprint-unspecified
+      label: Fingerprint identification (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - fingerprint identification
+      salience: C
+  - slug: iris
+    label: Iris recognition
+    technologies:
+    - slug: iris-recognition
+      label: Iris recognition
+      distinguishing_criterion: Identifies by iris pattern.
+      evidence_signature:
+      - iris recognition
+      - iris scan
+      salience: C
+    - slug: iris-unspecified
+      label: Iris recognition (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - iris recognition
+      salience: C
+  - slug: dna
+    label: DNA identification
+    technologies:
+    - slug: dna-forensic
+      label: Forensic DNA
+      distinguishing_criterion: Laboratory forensic DNA profiling.
+      evidence_signature:
+      - DNA profiling
+      - CODIS
+      salience: C
+    - slug: rapid-dna
+      label: Rapid DNA
+      distinguishing_criterion: Field/booking rapid DNA analysis.
+      evidence_signature:
+      - Rapid DNA
+      - booking DNA
+      salience: C
+    - slug: dna-unspecified
+      label: DNA identification (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - dna identification
+      salience: C
+  - slug: other-biometric
+    label: Other biometrics
+    technologies:
+    - slug: tattoo-recognition
+      label: Tattoo recognition
+      distinguishing_criterion: Identifies/matches by tattoo imagery.
+      evidence_signature:
+      - tattoo recognition
+      - tattoo matching
+      salience: C
+    - slug: gait-recognition
+      label: Gait recognition
+      distinguishing_criterion: Identifies by walking gait.
+      evidence_signature:
+      - gait recognition
+      - gait analysis
+      salience: C
+    - slug: voice-recognition
+      label: Voice recognition
+      distinguishing_criterion: Identifies by voiceprint.
+      evidence_signature:
+      - voice recognition
+      - speaker identification
+      - voiceprint
+      salience: C
+    - slug: other-biometric-unspecified
+      label: Other biometrics (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - other biometrics
+      salience: C
+- slug: acoustic
+  label: Acoustic sensing
+  families:
+  - slug: gunshot-detection
+    label: Gunshot detection
+    technologies:
+    - slug: gunshot-detection-fixed
+      label: Gunshot detection
+      distinguishing_criterion: Acoustic sensors localising gunfire.
+      evidence_signature:
+      - gunshot detection
+      - acoustic gunshot
+      salience: H
+    - slug: gunshot-detection-unspecified
+      label: Gunshot detection (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - gunshot detection
+      salience: H
+  - slug: acoustic-sensing
+    label: General acoustic sensing
+    technologies:
+    - slug: acoustic-sensing-general
+      label: Acoustic sensing
+      distinguishing_criterion: Non-gunshot acoustic monitoring/classification.
+      evidence_signature:
+      - acoustic sensor
+      - sound monitoring
+      salience: M
+    - slug: acoustic-sensing-unspecified
+      label: General acoustic sensing (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - general acoustic sensing
+      salience: M
+- slug: robotics-aerial
+  label: Aerial robotics
+  families:
+  - slug: uas
+    label: Unmanned aerial systems
+    technologies:
+    - slug: uas-general
+      label: Unmanned aerial system
+      distinguishing_criterion: A drone operated for surveillance tasks.
+      evidence_signature:
+      - UAS
+      - drone
+      - UAV
+      salience: H
+    - slug: drone-as-first-responder
+      label: Drone as first responder
+      distinguishing_criterion: Autonomous/rapid-launch drone dispatched to calls.
+      evidence_signature:
+      - DFR
+      - drone as first responder
+      salience: H
+    - slug: uas-unspecified
+      label: Unmanned aerial systems (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - unmanned aerial systems
+      salience: H
+  - slug: aerostat
+    label: Aerostats and persistent aerial
+    technologies:
+    - slug: tethered-aerostat
+      label: Tethered aerostat
+      distinguishing_criterion: A tethered balloon carrying sensors.
+      evidence_signature:
+      - aerostat
+      - tethered balloon
+      salience: H
+    - slug: persistent-aerial-surveillance
+      label: Persistent aerial surveillance
+      distinguishing_criterion: Wide-area, long-dwell aerial imaging.
+      evidence_signature:
+      - persistent surveillance
+      - wide-area motion imagery
+      - WAMI
+      salience: C
+    - slug: aerostat-unspecified
+      label: Aerostats and persistent aerial (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - aerostats and persistent aerial
+      salience: C
+- slug: robotics-ground
+  label: Ground robotics
+  families:
+  - slug: ground-robotics
+    label: Ground robotics
+    technologies:
+    - slug: ugv
+      label: Unmanned ground vehicle
+      distinguishing_criterion: A ground robot carrying sensors.
+      evidence_signature:
+      - UGV
+      - ground robot
+      salience: M
+    - slug: robot-dog
+      label: Quadruped robot
+      distinguishing_criterion: A legged robot platform (e.g. quadruped).
+      evidence_signature:
+      - robot dog
+      - quadruped robot
+      salience: M
+    - slug: ground-robotics-unspecified
+      label: Ground robotics (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - ground robotics
+      salience: M
+- slug: comms-intercept
+  label: Communications interception
+  families:
+  - slug: cell-site-simulator
+    label: Cell-site simulators
+    technologies:
+    - slug: cell-site-simulator-general
+      label: Cell-site simulator
+      distinguishing_criterion: Simulates a cell tower to locate/identify handsets.
+      evidence_signature:
+      - cell-site simulator
+      - IMSI catcher
+      salience: C
+    - slug: cell-site-simulator-unspecified
+      label: Cell-site simulators (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - cell-site simulators
+      salience: C
+  - slug: lawful-intercept
+    label: Lawful intercept and metadata
+    technologies:
+    - slug: wiretap-content
+      label: Content interception
+      distinguishing_criterion: Interception of communications content.
+      evidence_signature:
+      - wiretap
+      - content interception
+      - Title III
+      salience: C
+    - slug: metadata-interception
+      label: Metadata interception
+      distinguishing_criterion: Collection of communications metadata.
+      evidence_signature:
+      - pen register
+      - trap and trace
+      - metadata
+      salience: C
+    - slug: tower-dump
+      label: Tower dump
+      distinguishing_criterion: Bulk request of all handsets seen by a tower in a window.
+      evidence_signature:
+      - tower dump
+      - cell tower dump
+      salience: C
+    - slug: lawful-intercept-unspecified
+      label: Lawful intercept and metadata (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - lawful intercept and metadata
+      salience: C
+  - slug: wifi-bluetooth-tracking
+    label: Wi-Fi / Bluetooth tracking
+    technologies:
+    - slug: wifi-bluetooth-sensor
+      label: Wi-Fi/Bluetooth sensor
+      distinguishing_criterion: Detects/tracks devices by Wi-Fi/Bluetooth radio emissions.
+      evidence_signature:
+      - wifi tracking
+      - bluetooth beacon
+      - MAC address sensor
+      salience: H
+    - slug: wifi-bluetooth-tracking-unspecified
+      label: Wi-Fi / Bluetooth tracking (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - wi-fi / bluetooth tracking
+      salience: H
+- slug: device-forensics
+  label: Mobile device forensics
+  families:
+  - slug: mobile-forensics
+    label: Mobile device forensics
+    technologies:
+    - slug: extraction-logical
+      label: Logical extraction
+      distinguishing_criterion: Logical acquisition of accessible device data.
+      evidence_signature:
+      - logical extraction
+      salience: C
+    - slug: extraction-physical
+      label: Physical extraction
+      distinguishing_criterion: Bit-level physical acquisition of device storage.
+      evidence_signature:
+      - physical extraction
+      - full file system
+      salience: C
+    - slug: cloud-account-extraction
+      label: Cloud-account extraction
+      distinguishing_criterion: Acquisition of cloud account data via tokens/credentials.
+      evidence_signature:
+      - cloud extraction
+      - cloud analyzer
+      salience: C
+    - slug: exploit-service
+      label: Exploit service
+      distinguishing_criterion: Vendor exploit service to unlock/extract devices.
+      evidence_signature:
+      - exploit service
+      - device unlock
+      salience: C
+    - slug: mobile-forensics-unspecified
+      label: Mobile device forensics (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - mobile device forensics
+      salience: C
+- slug: data-acquisition
+  label: Commercial data acquisition
+  families:
+  - slug: location-data
+    label: Location-data acquisition
+    technologies:
+    - slug: adtech-location-purchase
+      label: Ad-tech location purchase
+      distinguishing_criterion: Purchase of advertising-derived device location data.
+      evidence_signature:
+      - ad-tech location
+      - mobile advertising ID
+      salience: C
+    - slug: location-data-subscription
+      label: Location-data subscription platform
+      distinguishing_criterion: Subscription platform for querying device location history.
+      evidence_signature:
+      - location data platform
+      - location intelligence
+      salience: C
+    - slug: geofence-warrant-data
+      label: Geofence data
+      distinguishing_criterion: Location data obtained via geofence process.
+      evidence_signature:
+      - geofence warrant
+      - reverse location
+      salience: C
+    - slug: location-data-unspecified
+      label: Location-data acquisition (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - location-data acquisition
+      salience: C
+  - slug: records-broker
+    label: Person- and utility-records brokers
+    technologies:
+    - slug: person-records-broker
+      label: Person-records broker
+      distinguishing_criterion: Commercial broker of person records (addresses, associates).
+      evidence_signature:
+      - data broker
+      - person search
+      salience: C
+    - slug: utility-records
+      label: Utility records
+      distinguishing_criterion: Access to utility subscriber records.
+      evidence_signature:
+      - utility records
+      - utility subpoena
+      salience: H
+    - slug: records-broker-unspecified
+      label: Person- and utility-records brokers (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - person- and utility-records brokers
+      salience: C
+- slug: analytics-inference
+  label: Analytics and inference
+  families:
+  - slug: predictive-policing
+    label: Predictive policing
+    technologies:
+    - slug: predictive-policing-place
+      label: Place-based predictive policing
+      distinguishing_criterion: Predicts where crime will occur.
+      evidence_signature:
+      - predictive policing
+      - hot spot
+      salience: H
+    - slug: predictive-policing-person
+      label: Person-based predictive policing
+      distinguishing_criterion: Predicts who will be involved in crime.
+      evidence_signature:
+      - person-based prediction
+      - heat list
+      - risk list
+      salience: C
+    - slug: predictive-policing-unspecified
+      label: Predictive policing (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - predictive policing
+      salience: C
+  - slug: risk-analytics
+    label: Risk and behavioural analytics
+    technologies:
+    - slug: risk-assessment
+      label: Risk assessment
+      distinguishing_criterion: Algorithmic risk scoring of individuals.
+      evidence_signature:
+      - risk assessment
+      - risk score
+      - pretrial risk
+      salience: C
+    - slug: behavioral-analytics
+      label: Behavioural analytics
+      distinguishing_criterion: Detects anomalous behaviour patterns.
+      evidence_signature:
+      - behavioral analytics
+      - anomaly detection
+      salience: H
+    - slug: risk-analytics-unspecified
+      label: Risk and behavioural analytics (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - risk and behavioural analytics
+      salience: C
+  - slug: osint-monitoring
+    label: OSINT and social-media monitoring
+    technologies:
+    - slug: social-media-monitoring
+      label: Social-media monitoring
+      distinguishing_criterion: Monitors social media for people/events.
+      evidence_signature:
+      - social media monitoring
+      - SMM
+      salience: C
+    - slug: osint-platform
+      label: OSINT platform
+      distinguishing_criterion: Aggregated open-source intelligence tooling.
+      evidence_signature:
+      - OSINT platform
+      - open source intelligence
+      salience: H
+    - slug: osint-monitoring-unspecified
+      label: OSINT and social-media monitoring (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - osint and social-media monitoring
+      salience: C
+- slug: integration-platform
+  label: Integration platforms
+  families:
+  - slug: rtcc
+    label: Real-time crime centre platform
+    technologies:
+    - slug: rtcc-platform
+      label: RTCC platform
+      distinguishing_criterion: Software surface aggregating feeds for a real-time crime centre (the software;
+        the unit is an Organization sub-type, SIG-ONTO-057).
+      evidence_signature:
+      - RTCC
+      - real-time crime center
+      - fusion platform
+      salience: H
+    - slug: rtcc-unspecified
+      label: Real-time crime centre platform (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - real-time crime centre platform
+      salience: H
+  - slug: cad-rms
+    label: CAD/RMS integration
+    technologies:
+    - slug: cad-rms-integration
+      label: CAD/RMS integration
+      distinguishing_criterion: Integrates computer-aided dispatch / records management data.
+      evidence_signature:
+      - CAD integration
+      - RMS integration
+      salience: M
+    - slug: cad-rms-unspecified
+      label: CAD/RMS integration (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - cad/rms integration
+      salience: M
+  - slug: federation-hub
+    label: Camera federation hub
+    technologies:
+    - slug: camera-federation-hub
+      label: Camera federation hub
+      distinguishing_criterion: Federates many camera systems into one search surface.
+      evidence_signature:
+      - camera federation
+      - video hub
+      salience: H
+    - slug: federation-hub-unspecified
+      label: Camera federation hub (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - camera federation hub
+      salience: H
+  - slug: investigative-platform
+    label: Third-party investigative platform
+    technologies:
+    - slug: third-party-investigative-platform
+      label: Third-party investigative platform
+      distinguishing_criterion: Aggregated investigative analytics over multiple data sources.
+      evidence_signature:
+      - investigative platform
+      - link analysis
+      salience: C
+    - slug: investigative-platform-unspecified
+      label: Third-party investigative platform (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - third-party investigative platform
+      salience: C
+- slug: person-monitoring
+  label: Person monitoring
+  families:
+  - slug: electronic-monitoring
+    label: Electronic monitoring
+    technologies:
+    - slug: electronic-monitoring-ankle
+      label: Electronic monitoring
+      distinguishing_criterion: GPS/RF monitoring of a supervised person.
+      evidence_signature:
+      - electronic monitoring
+      - ankle monitor
+      - GPS monitoring
+      salience: C
+    - slug: electronic-monitoring-unspecified
+      label: Electronic monitoring (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - electronic monitoring
+      salience: C
+  - slug: custodial-monitoring
+    label: Custodial communications monitoring
+    technologies:
+    - slug: jail-communications-monitoring
+      label: Jail-communications monitoring
+      distinguishing_criterion: Monitoring/analysis of custodial phone/messaging.
+      evidence_signature:
+      - jail calls
+      - inmate communications
+      - call monitoring
+      salience: C
+    - slug: custodial-monitoring-unspecified
+      label: Custodial communications monitoring (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - custodial communications monitoring
+      salience: C
+- slug: facility-screening
+  label: Facility screening
+  families:
+  - slug: weapon-detection
+    label: Weapon detection
+    technologies:
+    - slug: weapon-detection-scanner
+      label: Weapon detection
+      distinguishing_criterion: Automated weapon/threat detection at a portal.
+      evidence_signature:
+      - weapon detection
+      - concealed weapon
+      salience: H
+    - slug: weapon-detection-unspecified
+      label: Weapon detection (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - weapon detection
+      salience: H
+  - slug: school-surveillance
+    label: School surveillance
+    technologies:
+    - slug: school-surveillance-suite
+      label: School surveillance
+      distinguishing_criterion: Surveillance/monitoring suite deployed in schools.
+      evidence_signature:
+      - school surveillance
+      - student monitoring
+      salience: C
+    - slug: school-surveillance-unspecified
+      label: School surveillance (unspecified)
+      distinguishing_criterion: 'The coarsest level: evidence names the family but not the discriminator
+        separating its specific technologies.'
+      evidence_signature:
+      - school surveillance
+      salience: C

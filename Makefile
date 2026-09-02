@@ -14,7 +14,7 @@ MYPY_TARGETS := $(foreach p,$(PY_PACKAGES),-p $(p))
 # Python source this repo owns: each package's src tree, plus the test suite.
 LINT_PATHS := $(foreach p,$(PY_PACKAGES),$(p)/src) tests
 
-.PHONY: sync lint format-check typecheck test check lock export sbom gen verify-gen
+.PHONY: sync lint format-check typecheck test check lock export sbom gen gen-ontology verify-gen
 
 ## Install every workspace member + the dev toolchain from the committed lockfile.
 sync:
@@ -43,11 +43,15 @@ check: lint format-check typecheck test verify-gen
 lock:
 	uv lock
 
-## Regenerate all committed generated artifacts (SIG-ENG-015/016 gate).
-## Today the only generated artifact is the standards-based (PEP 751) lock
-## export; later tickets add ontology-derived artifacts here.
-gen: export
-	@:
+## Regenerate all committed generated artifacts (SIG-ENG-015/016 gate):
+## the standards-based (PEP 751) lock export plus every ontology-derived
+## artifact (SQL DDL, JSON Schema, OWL/SHACL, Pydantic, docs, SKOS, registry).
+gen: export gen-ontology
+
+## Ontology artifacts from the single LinkML source (§20.1, ADR-007).
+## PYTHONHASHSEED is pinned so set-ordered generator output is byte-deterministic.
+gen-ontology:
+	PYTHONHASHSEED=0 uv run python -m ontology generate
 
 ## Standards-based lock export (SIG-ENG-011): PEP 751 pylock.toml.
 export:
@@ -55,7 +59,7 @@ export:
 
 ## Verify committed generated artifacts match a fresh generation (SIG-ENG-016).
 verify-gen: gen
-	git diff --exit-code -- pylock.toml
+	git diff --exit-code -- pylock.toml ontology/generated
 
 ## Software Bill of Materials (SIG-ENG-011), CycloneDX, generated per release.
 ## Run ephemerally via uvx (so it need not live in the runtime lockfile), against

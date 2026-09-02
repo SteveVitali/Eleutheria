@@ -1,0 +1,482 @@
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/active_device_count> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/active_device_count> <http://www.w3.org/2004/02/skos/core#definition> "Currently active device count." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/active_device_count> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/active_device_count> <http://www.w3.org/2004/02/skos/core#prefLabel> "active_device_count"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/active_device_count> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/active_device_count> <https://ontology.sig-project.org/schema/halfLife> "6mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/active_device_count> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/active_device_count> <https://ontology.sig-project.org/schema/valueDatatype> "integer" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/active_device_count> <https://ontology.sig-project.org/schema/volatilityClass> "FAST" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_data_controller> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_data_controller> <http://www.w3.org/2004/02/skos/core#definition> "Contested data-controller assertion — recorded, not adjudicated (§12.4)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_data_controller> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_data_controller> <http://www.w3.org/2004/02/skos/core#prefLabel> "asset_data_controller"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_data_controller> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_data_controller> <https://ontology.sig-project.org/schema/halfLife> "12mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_data_controller> <https://ontology.sig-project.org/schema/resolutionStrategy> "never_resolve" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_data_controller> <https://ontology.sig-project.org/schema/valueDatatype> "uriorcurie" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_data_controller> <https://ontology.sig-project.org/schema/volatilityClass> "MODERATE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_exists_at_location> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_exists_at_location> <http://www.w3.org/2004/02/skos/core#definition> "Whether an asset exists at a location." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_exists_at_location> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_exists_at_location> <http://www.w3.org/2004/02/skos/core#prefLabel> "asset_exists_at_location"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_exists_at_location> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_exists_at_location> <https://ontology.sig-project.org/schema/halfLife> "12mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_exists_at_location> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_exists_at_location> <https://ontology.sig-project.org/schema/valueDatatype> "boolean" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_exists_at_location> <https://ontology.sig-project.org/schema/volatilityClass> "MODERATE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_operator> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_operator> <http://www.w3.org/2004/02/skos/core#definition> "Operator attribution for an asset." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_operator> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_operator> <http://www.w3.org/2004/02/skos/core#prefLabel> "asset_operator"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_operator> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_operator> <https://ontology.sig-project.org/schema/halfLife> "3y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_operator> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_operator> <https://ontology.sig-project.org/schema/valueDatatype> "uriorcurie" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_operator> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/audit_case_code_required> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/audit_case_code_required> <http://www.w3.org/2004/02/skos/core#definition> "Whether a case code is required for audit." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/audit_case_code_required> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/audit_case_code_required> <http://www.w3.org/2004/02/skos/core#prefLabel> "audit_case_code_required"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/audit_case_code_required> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/audit_case_code_required> <https://ontology.sig-project.org/schema/halfLife> "2y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/audit_case_code_required> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/audit_case_code_required> <https://ontology.sig-project.org/schema/valueDatatype> "boolean" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/audit_case_code_required> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/authorization_state> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/authorization_state> <http://www.w3.org/2004/02/skos/core#definition> "Deployment authorization track state." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/authorization_state> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/authorization_state> <http://www.w3.org/2004/02/skos/core#prefLabel> "authorization_state"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/authorization_state> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/authorization_state> <https://ontology.sig-project.org/schema/halfLife> "12mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/authorization_state> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/authorization_state> <https://ontology.sig-project.org/schema/valueDatatype> "AuthorizationState" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/authorization_state> <https://ontology.sig-project.org/schema/volatilityClass> "MODERATE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_location_estimate> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_location_estimate> <http://www.w3.org/2004/02/skos/core#definition> "Estimated location of a candidate asset." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_location_estimate> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_location_estimate> <http://www.w3.org/2004/02/skos/core#prefLabel> "candidate_location_estimate"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_location_estimate> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_location_estimate> <https://ontology.sig-project.org/schema/halfLife> "2y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_location_estimate> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_location_estimate> <https://ontology.sig-project.org/schema/valueDatatype> "geometry_wkt" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_location_estimate> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_promotion_status> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_promotion_status> <http://www.w3.org/2004/02/skos/core#definition> "Candidate-asset promotion status." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_promotion_status> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_promotion_status> <http://www.w3.org/2004/02/skos/core#prefLabel> "candidate_promotion_status"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_promotion_status> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_promotion_status> <https://ontology.sig-project.org/schema/halfLife> "12mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_promotion_status> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_promotion_status> <https://ontology.sig-project.org/schema/valueDatatype> "PromotionStatus" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_promotion_status> <https://ontology.sig-project.org/schema/volatilityClass> "MODERATE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_access_edge> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_access_edge> <http://www.w3.org/2004/02/skos/core#definition> "Configured-access sharing edge state." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_access_edge> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_access_edge> <http://www.w3.org/2004/02/skos/core#prefLabel> "configured_access_edge"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_access_edge> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_access_edge> <https://ontology.sig-project.org/schema/halfLife> "4mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_access_edge> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_access_edge> <https://ontology.sig-project.org/schema/valueDatatype> "boolean" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_access_edge> <https://ontology.sig-project.org/schema/volatilityClass> "FAST" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_retention_days> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_retention_days> <http://www.w3.org/2004/02/skos/core#definition> "Configured retention (duration or bucket)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_retention_days> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_retention_days> <http://www.w3.org/2004/02/skos/core#prefLabel> "configured_retention_days"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_retention_days> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_retention_days> <https://ontology.sig-project.org/schema/halfLife> "9mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_retention_days> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_retention_days> <https://ontology.sig-project.org/schema/valueDatatype> "duration_iso" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_retention_days> <https://ontology.sig-project.org/schema/volatilityClass> "MODERATE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner_set> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner_set> <http://www.w3.org/2004/02/skos/core#definition> "Configured sharing partners (directional)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner_set> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner_set> <http://www.w3.org/2004/02/skos/core#prefLabel> "configured_sharing_partner_set"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner_set> <https://ontology.sig-project.org/schema/cardinality> "multi" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner_set> <https://ontology.sig-project.org/schema/halfLife> "4mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner_set> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner_set> <https://ontology.sig-project.org/schema/valueDatatype> "uriorcurie" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner_set> <https://ontology.sig-project.org/schema/volatilityClass> "FAST" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_end_date> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_end_date> <http://www.w3.org/2004/02/skos/core#definition> "Contract term end." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_end_date> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_end_date> <http://www.w3.org/2004/02/skos/core#prefLabel> "contract_end_date"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_end_date> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_end_date> <https://ontology.sig-project.org/schema/halfLife> "infinite" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_end_date> <https://ontology.sig-project.org/schema/resolutionStrategy> "authoritative_source_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_end_date> <https://ontology.sig-project.org/schema/valueDatatype> "edtf" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_end_date> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_signed_date> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_signed_date> <http://www.w3.org/2004/02/skos/core#definition> "Date a contract was signed." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_signed_date> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_signed_date> <http://www.w3.org/2004/02/skos/core#prefLabel> "contract_signed_date"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_signed_date> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_signed_date> <https://ontology.sig-project.org/schema/halfLife> "infinite" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_signed_date> <https://ontology.sig-project.org/schema/resolutionStrategy> "authoritative_source_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_signed_date> <https://ontology.sig-project.org/schema/valueDatatype> "edtf" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_signed_date> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_start_date> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_start_date> <http://www.w3.org/2004/02/skos/core#definition> "Contract term start." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_start_date> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_start_date> <http://www.w3.org/2004/02/skos/core#prefLabel> "contract_start_date"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_start_date> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_start_date> <https://ontology.sig-project.org/schema/halfLife> "infinite" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_start_date> <https://ontology.sig-project.org/schema/resolutionStrategy> "authoritative_source_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_start_date> <https://ontology.sig-project.org/schema/valueDatatype> "edtf" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_start_date> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_value> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_value> <http://www.w3.org/2004/02/skos/core#definition> "Monetary value of a contract." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_value> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_value> <http://www.w3.org/2004/02/skos/core#prefLabel> "contract_value"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_value> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_value> <https://ontology.sig-project.org/schema/halfLife> "infinite" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_value> <https://ontology.sig-project.org/schema/resolutionStrategy> "authoritative_source_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_value> <https://ontology.sig-project.org/schema/valueDatatype> "decimal" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contract_value> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contracted_device_count> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contracted_device_count> <http://www.w3.org/2004/02/skos/core#definition> "Device quantity specified by a contract." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contracted_device_count> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contracted_device_count> <http://www.w3.org/2004/02/skos/core#prefLabel> "contracted_device_count"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contracted_device_count> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contracted_device_count> <https://ontology.sig-project.org/schema/halfLife> "infinite" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contracted_device_count> <https://ontology.sig-project.org/schema/resolutionStrategy> "authoritative_source_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contracted_device_count> <https://ontology.sig-project.org/schema/valueDatatype> "integer" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/contracted_device_count> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/data_system_retention> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/data_system_retention> <http://www.w3.org/2004/02/skos/core#definition> "Retention configured on a data system." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/data_system_retention> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/data_system_retention> <http://www.w3.org/2004/02/skos/core#prefLabel> "data_system_retention"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/data_system_retention> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/data_system_retention> <https://ontology.sig-project.org/schema/halfLife> "9mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/data_system_retention> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/data_system_retention> <https://ontology.sig-project.org/schema/valueDatatype> "duration_iso" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/data_system_retention> <https://ontology.sig-project.org/schema/volatilityClass> "MODERATE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/data_system_scope> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/data_system_scope> <http://www.w3.org/2004/02/skos/core#definition> "Scope of a data system." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/data_system_scope> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/data_system_scope> <http://www.w3.org/2004/02/skos/core#prefLabel> "data_system_scope"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/data_system_scope> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/data_system_scope> <https://ontology.sig-project.org/schema/halfLife> "2y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/data_system_scope> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/data_system_scope> <https://ontology.sig-project.org/schema/valueDatatype> "SystemScope" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/data_system_scope> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/deployment_exists> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/deployment_exists> <http://www.w3.org/2004/02/skos/core#definition> "Whether a deployment exists." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/deployment_exists> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/deployment_exists> <http://www.w3.org/2004/02/skos/core#prefLabel> "deployment_exists"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/deployment_exists> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/deployment_exists> <https://ontology.sig-project.org/schema/halfLife> "3y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/deployment_exists> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/deployment_exists> <https://ontology.sig-project.org/schema/valueDatatype> "boolean" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/deployment_exists> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/event_epistemic_status> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/event_epistemic_status> <http://www.w3.org/2004/02/skos/core#definition> "Epistemic status of an accountability event." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/event_epistemic_status> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/event_epistemic_status> <http://www.w3.org/2004/02/skos/core#prefLabel> "event_epistemic_status"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/event_epistemic_status> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/event_epistemic_status> <https://ontology.sig-project.org/schema/halfLife> "infinite" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/event_epistemic_status> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/event_epistemic_status> <https://ontology.sig-project.org/schema/valueDatatype> "EpistemicStatus" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/event_epistemic_status> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_award_id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_award_id> <http://www.w3.org/2004/02/skos/core#definition> "USAspending award/sub-award id." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_award_id> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_award_id> <http://www.w3.org/2004/02/skos/core#prefLabel> "federal_award_id"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_award_id> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_award_id> <https://ontology.sig-project.org/schema/halfLife> "infinite" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_award_id> <https://ontology.sig-project.org/schema/resolutionStrategy> "authoritative_source_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_award_id> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_award_id> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_sharing_enabled> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_sharing_enabled> <http://www.w3.org/2004/02/skos/core#definition> "Federal sharing toggle." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_sharing_enabled> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_sharing_enabled> <http://www.w3.org/2004/02/skos/core#prefLabel> "federal_sharing_enabled"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_sharing_enabled> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_sharing_enabled> <https://ontology.sig-project.org/schema/halfLife> "2mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_sharing_enabled> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_sharing_enabled> <https://ontology.sig-project.org/schema/valueDatatype> "boolean" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_sharing_enabled> <https://ontology.sig-project.org/schema/volatilityClass> "VOLATILE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/fixed_asset_location> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/fixed_asset_location> <http://www.w3.org/2004/02/skos/core#definition> "Location of a fixed asset." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/fixed_asset_location> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/fixed_asset_location> <http://www.w3.org/2004/02/skos/core#prefLabel> "fixed_asset_location"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/fixed_asset_location> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/fixed_asset_location> <https://ontology.sig-project.org/schema/halfLife> "2y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/fixed_asset_location> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/fixed_asset_location> <https://ontology.sig-project.org/schema/valueDatatype> "geometry_wkt" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/fixed_asset_location> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_amount> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_amount> <http://www.w3.org/2004/02/skos/core#definition> "Amount of a funding instrument." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_amount> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_amount> <http://www.w3.org/2004/02/skos/core#prefLabel> "funding_amount"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_amount> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_amount> <https://ontology.sig-project.org/schema/halfLife> "infinite" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_amount> <https://ontology.sig-project.org/schema/resolutionStrategy> "authoritative_source_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_amount> <https://ontology.sig-project.org/schema/valueDatatype> "decimal" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_amount> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_program_name> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_program_name> <http://www.w3.org/2004/02/skos/core#definition> "Named funding program (e.g. Byrne JAG)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_program_name> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_program_name> <http://www.w3.org/2004/02/skos/core#prefLabel> "funding_program_name"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_program_name> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_program_name> <https://ontology.sig-project.org/schema/halfLife> "infinite" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_program_name> <https://ontology.sig-project.org/schema/resolutionStrategy> "authoritative_source_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_program_name> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/funding_program_name> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/holds_data_collected_by> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/holds_data_collected_by> <http://www.w3.org/2004/02/skos/core#definition> "Custodian-vs-collector relationship." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/holds_data_collected_by> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/holds_data_collected_by> <http://www.w3.org/2004/02/skos/core#prefLabel> "holds_data_collected_by"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/holds_data_collected_by> <https://ontology.sig-project.org/schema/cardinality> "multi" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/holds_data_collected_by> <https://ontology.sig-project.org/schema/halfLife> "2y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/holds_data_collected_by> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/holds_data_collected_by> <https://ontology.sig-project.org/schema/valueDatatype> "uriorcurie" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/holds_data_collected_by> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/implements_technology> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/implements_technology> <http://www.w3.org/2004/02/skos/core#definition> "Technology implemented by a product." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/implements_technology> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/implements_technology> <http://www.w3.org/2004/02/skos/core#prefLabel> "implements_technology"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/implements_technology> <https://ontology.sig-project.org/schema/cardinality> "multi" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/implements_technology> <https://ontology.sig-project.org/schema/halfLife> "5y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/implements_technology> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/implements_technology> <https://ontology.sig-project.org/schema/valueDatatype> "technology_code" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/implements_technology> <https://ontology.sig-project.org/schema/volatilityClass> "GLACIAL" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/installed_device_count> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/installed_device_count> <http://www.w3.org/2004/02/skos/core#definition> "Installed device count." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/installed_device_count> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/installed_device_count> <http://www.w3.org/2004/02/skos/core#prefLabel> "installed_device_count"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/installed_device_count> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/installed_device_count> <https://ontology.sig-project.org/schema/halfLife> "6mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/installed_device_count> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/installed_device_count> <https://ontology.sig-project.org/schema/valueDatatype> "integer" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/installed_device_count> <https://ontology.sig-project.org/schema/volatilityClass> "FAST" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/integration_edge_active> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/integration_edge_active> <http://www.w3.org/2004/02/skos/core#definition> "Whether an integration edge is active." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/integration_edge_active> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/integration_edge_active> <http://www.w3.org/2004/02/skos/core#prefLabel> "integration_edge_active"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/integration_edge_active> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/integration_edge_active> <https://ontology.sig-project.org/schema/halfLife> "12mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/integration_edge_active> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/integration_edge_active> <https://ontology.sig-project.org/schema/valueDatatype> "boolean" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/integration_edge_active> <https://ontology.sig-project.org/schema/volatilityClass> "MODERATE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_boundary> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_boundary> <http://www.w3.org/2004/02/skos/core#definition> "Jurisdiction boundary geometry (temporally versioned)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_boundary> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_boundary> <http://www.w3.org/2004/02/skos/core#prefLabel> "jurisdiction_boundary"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_boundary> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_boundary> <https://ontology.sig-project.org/schema/halfLife> "2y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_boundary> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_boundary> <https://ontology.sig-project.org/schema/valueDatatype> "geometry_wkt" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_boundary> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_parent> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_parent> <http://www.w3.org/2004/02/skos/core#definition> "Parent jurisdiction." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_parent> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_parent> <http://www.w3.org/2004/02/skos/core#prefLabel> "jurisdiction_parent"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_parent> <https://ontology.sig-project.org/schema/cardinality> "multi" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_parent> <https://ontology.sig-project.org/schema/halfLife> "10y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_parent> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_parent> <https://ontology.sig-project.org/schema/valueDatatype> "uriorcurie" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction_parent> <https://ontology.sig-project.org/schema/volatilityClass> "GLACIAL" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/national_lookup_enabled> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/national_lookup_enabled> <http://www.w3.org/2004/02/skos/core#definition> "National lookup toggle." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/national_lookup_enabled> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/national_lookup_enabled> <http://www.w3.org/2004/02/skos/core#prefLabel> "national_lookup_enabled"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/national_lookup_enabled> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/national_lookup_enabled> <https://ontology.sig-project.org/schema/halfLife> "2mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/national_lookup_enabled> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/national_lookup_enabled> <https://ontology.sig-project.org/schema/valueDatatype> "boolean" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/national_lookup_enabled> <https://ontology.sig-project.org/schema/volatilityClass> "VOLATILE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/observed_use_edge> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/observed_use_edge> <http://www.w3.org/2004/02/skos/core#definition> "Observed-use sharing edge (windowed)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/observed_use_edge> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/observed_use_edge> <http://www.w3.org/2004/02/skos/core#prefLabel> "observed_use_edge"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/observed_use_edge> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/observed_use_edge> <https://ontology.sig-project.org/schema/halfLife> "1mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/observed_use_edge> <https://ontology.sig-project.org/schema/resolutionStrategy> "interval_union" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/observed_use_edge> <https://ontology.sig-project.org/schema/valueDatatype> "boolean" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/observed_use_edge> <https://ontology.sig-project.org/schema/volatilityClass> "VOLATILE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/offense_category_filter> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/offense_category_filter> <http://www.w3.org/2004/02/skos/core#definition> "Configured offence-category filter." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/offense_category_filter> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/offense_category_filter> <http://www.w3.org/2004/02/skos/core#prefLabel> "offense_category_filter"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/offense_category_filter> <https://ontology.sig-project.org/schema/cardinality> "multi" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/offense_category_filter> <https://ontology.sig-project.org/schema/halfLife> "2y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/offense_category_filter> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/offense_category_filter> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/offense_category_filter> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/operational_state> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/operational_state> <http://www.w3.org/2004/02/skos/core#definition> "Deployment operational track state." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/operational_state> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/operational_state> <http://www.w3.org/2004/02/skos/core#prefLabel> "operational_state"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/operational_state> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/operational_state> <https://ontology.sig-project.org/schema/halfLife> "6mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/operational_state> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/operational_state> <https://ontology.sig-project.org/schema/valueDatatype> "OperationalState" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/operational_state> <https://ontology.sig-project.org/schema/volatilityClass> "FAST" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_jurisdiction> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_jurisdiction> <http://www.w3.org/2004/02/skos/core#definition> "Jurisdiction an organization serves." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_jurisdiction> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_jurisdiction> <http://www.w3.org/2004/02/skos/core#prefLabel> "organization_jurisdiction"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_jurisdiction> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_jurisdiction> <https://ontology.sig-project.org/schema/halfLife> "10y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_jurisdiction> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_jurisdiction> <https://ontology.sig-project.org/schema/valueDatatype> "uriorcurie" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_jurisdiction> <https://ontology.sig-project.org/schema/volatilityClass> "GLACIAL" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_legal_name> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_legal_name> <http://www.w3.org/2004/02/skos/core#definition> "Legal name of an organization (a claim)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_legal_name> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_legal_name> <http://www.w3.org/2004/02/skos/core#prefLabel> "organization_legal_name"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_legal_name> <https://ontology.sig-project.org/schema/cardinality> "multi" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_legal_name> <https://ontology.sig-project.org/schema/halfLife> "10y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_legal_name> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_legal_name> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_legal_name> <https://ontology.sig-project.org/schema/volatilityClass> "GLACIAL" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_ori> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_ori> <http://www.w3.org/2004/02/skos/core#definition> "FBI ORI9 identifier." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_ori> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_ori> <http://www.w3.org/2004/02/skos/core#prefLabel> "organization_ori"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_ori> <https://ontology.sig-project.org/schema/cardinality> "multi" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_ori> <https://ontology.sig-project.org/schema/halfLife> "10y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_ori> <https://ontology.sig-project.org/schema/resolutionStrategy> "authoritative_source_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_ori> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_ori> <https://ontology.sig-project.org/schema/volatilityClass> "GLACIAL" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_type> <http://www.w3.org/2004/02/skos/core#definition> "Organization type." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_type> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_type> <http://www.w3.org/2004/02/skos/core#prefLabel> "organization_type"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_type> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_type> <https://ontology.sig-project.org/schema/halfLife> "10y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_type> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_type> <https://ontology.sig-project.org/schema/valueDatatype> "OrganizationType" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/organization_type> <https://ontology.sig-project.org/schema/volatilityClass> "GLACIAL" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/policy_enforcement_mechanism> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/policy_enforcement_mechanism> <http://www.w3.org/2004/02/skos/core#definition> "Policy enforcement mechanism." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/policy_enforcement_mechanism> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/policy_enforcement_mechanism> <http://www.w3.org/2004/02/skos/core#prefLabel> "policy_enforcement_mechanism"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/policy_enforcement_mechanism> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/policy_enforcement_mechanism> <https://ontology.sig-project.org/schema/halfLife> "2y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/policy_enforcement_mechanism> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/policy_enforcement_mechanism> <https://ontology.sig-project.org/schema/valueDatatype> "EnforcementMechanism" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/policy_enforcement_mechanism> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_posture> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_posture> <http://www.w3.org/2004/02/skos/core#definition> "Legal proceeding posture." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_posture> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_posture> <http://www.w3.org/2004/02/skos/core#prefLabel> "proceeding_posture"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_posture> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_posture> <https://ontology.sig-project.org/schema/halfLife> "12mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_posture> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_posture> <https://ontology.sig-project.org/schema/valueDatatype> "ProceedingPosture" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_posture> <https://ontology.sig-project.org/schema/volatilityClass> "MODERATE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/procurement_state> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/procurement_state> <http://www.w3.org/2004/02/skos/core#definition> "Deployment procurement track state." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/procurement_state> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/procurement_state> <http://www.w3.org/2004/02/skos/core#prefLabel> "procurement_state"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/procurement_state> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/procurement_state> <https://ontology.sig-project.org/schema/halfLife> "12mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/procurement_state> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/procurement_state> <https://ontology.sig-project.org/schema/valueDatatype> "ProcurementState" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/procurement_state> <https://ontology.sig-project.org/schema/volatilityClass> "MODERATE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_capabilities> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_capabilities> <http://www.w3.org/2004/02/skos/core#definition> "Marketing-level product capabilities (defeasible)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_capabilities> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_capabilities> <http://www.w3.org/2004/02/skos/core#prefLabel> "product_capabilities"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_capabilities> <https://ontology.sig-project.org/schema/cardinality> "multi" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_capabilities> <https://ontology.sig-project.org/schema/halfLife> "5y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_capabilities> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_capabilities> <https://ontology.sig-project.org/schema/valueDatatype> "capability_code" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_capabilities> <https://ontology.sig-project.org/schema/volatilityClass> "GLACIAL" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_status> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_status> <http://www.w3.org/2004/02/skos/core#definition> "Product lifecycle status." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_status> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_status> <http://www.w3.org/2004/02/skos/core#prefLabel> "product_status"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_status> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_status> <https://ontology.sig-project.org/schema/halfLife> "12mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_status> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_status> <https://ontology.sig-project.org/schema/valueDatatype> "ProductStatus" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_status> <https://ontology.sig-project.org/schema/volatilityClass> "MODERATE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_vendor> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_vendor> <http://www.w3.org/2004/02/skos/core#definition> "Vendor of a product." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_vendor> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_vendor> <http://www.w3.org/2004/02/skos/core#prefLabel> "product_vendor"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_vendor> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_vendor> <https://ontology.sig-project.org/schema/halfLife> "5y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_vendor> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_vendor> <https://ontology.sig-project.org/schema/valueDatatype> "uriorcurie" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/product_vendor> <https://ontology.sig-project.org/schema/volatilityClass> "GLACIAL" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/records_response_status> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/records_response_status> <http://www.w3.org/2004/02/skos/core#definition> "Records-request response status." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/records_response_status> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/records_response_status> <http://www.w3.org/2004/02/skos/core#prefLabel> "records_response_status"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/records_response_status> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/records_response_status> <https://ontology.sig-project.org/schema/halfLife> "12mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/records_response_status> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/records_response_status> <https://ontology.sig-project.org/schema/valueDatatype> "RecordsResponseStatus" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/records_response_status> <https://ontology.sig-project.org/schema/volatilityClass> "MODERATE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/role_assignment> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/role_assignment> <http://www.w3.org/2004/02/skos/core#definition> "Assignment of one of the fourteen roles." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/role_assignment> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/role_assignment> <http://www.w3.org/2004/02/skos/core#prefLabel> "role_assignment"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/role_assignment> <https://ontology.sig-project.org/schema/cardinality> "multi" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/role_assignment> <https://ontology.sig-project.org/schema/halfLife> "3y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/role_assignment> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/role_assignment> <https://ontology.sig-project.org/schema/valueDatatype> "Role" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/role_assignment> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/state_lookup_enabled> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/state_lookup_enabled> <http://www.w3.org/2004/02/skos/core#definition> "State lookup toggle." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/state_lookup_enabled> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/state_lookup_enabled> <http://www.w3.org/2004/02/skos/core#prefLabel> "state_lookup_enabled"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/state_lookup_enabled> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/state_lookup_enabled> <https://ontology.sig-project.org/schema/halfLife> "2mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/state_lookup_enabled> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/state_lookup_enabled> <https://ontology.sig-project.org/schema/valueDatatype> "boolean" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/state_lookup_enabled> <https://ontology.sig-project.org/schema/volatilityClass> "VOLATILE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/statutory_citation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/statutory_citation> <http://www.w3.org/2004/02/skos/core#definition> "Citation of a legal instrument." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/statutory_citation> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/statutory_citation> <http://www.w3.org/2004/02/skos/core#prefLabel> "statutory_citation"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/statutory_citation> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/statutory_citation> <https://ontology.sig-project.org/schema/halfLife> "infinite" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/statutory_citation> <https://ontology.sig-project.org/schema/resolutionStrategy> "authoritative_source_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/statutory_citation> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/statutory_citation> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/subscribed_hotlist_topic> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/subscribed_hotlist_topic> <http://www.w3.org/2004/02/skos/core#definition> "Subscribed hotlist topics." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/subscribed_hotlist_topic> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/subscribed_hotlist_topic> <http://www.w3.org/2004/02/skos/core#prefLabel> "subscribed_hotlist_topic"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/subscribed_hotlist_topic> <https://ontology.sig-project.org/schema/cardinality> "multi" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/subscribed_hotlist_topic> <https://ontology.sig-project.org/schema/halfLife> "2mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/subscribed_hotlist_topic> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/subscribed_hotlist_topic> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/subscribed_hotlist_topic> <https://ontology.sig-project.org/schema/volatilityClass> "VOLATILE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor_default_retention> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor_default_retention> <http://www.w3.org/2004/02/skos/core#definition> "Vendor default retention (inference basis only)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor_default_retention> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor_default_retention> <http://www.w3.org/2004/02/skos/core#prefLabel> "vendor_default_retention"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor_default_retention> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor_default_retention> <https://ontology.sig-project.org/schema/halfLife> "9mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor_default_retention> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor_default_retention> <https://ontology.sig-project.org/schema/valueDatatype> "duration_iso" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor_default_retention> <https://ontology.sig-project.org/schema/volatilityClass> "MODERATE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/windowed_search_count> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/windowed_search_count> <http://www.w3.org/2004/02/skos/core#definition> "Windowed usage count (indexed, not stale — SIG-RECON-011)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/windowed_search_count> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/windowed_search_count> <http://www.w3.org/2004/02/skos/core#prefLabel> "windowed_search_count"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/windowed_search_count> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/windowed_search_count> <https://ontology.sig-project.org/schema/halfLife> "1mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/windowed_search_count> <https://ontology.sig-project.org/schema/resolutionStrategy> "interval_union" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/windowed_search_count> <https://ontology.sig-project.org/schema/valueDatatype> "integer" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/windowed_search_count> <https://ontology.sig-project.org/schema/volatilityClass> "VOLATILE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/written_policy_value> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/written_policy_value> <http://www.w3.org/2004/02/skos/core#definition> "A value stated in a written policy." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/written_policy_value> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/written_policy_value> <http://www.w3.org/2004/02/skos/core#prefLabel> "written_policy_value"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/written_policy_value> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/written_policy_value> <https://ontology.sig-project.org/schema/halfLife> "2y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/written_policy_value> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/written_policy_value> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/written_policy_value> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0> <http://purl.org/dc/terms/description> "Immutable once published (SIG-STORE-036)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0> <http://purl.org/dc/terms/title> "SIG predicate registry" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#ConceptScheme> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0> <http://www.w3.org/2002/07/owl#versionIRI> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0> <http://www.w3.org/2002/07/owl#versionInfo> "1.0.0" .

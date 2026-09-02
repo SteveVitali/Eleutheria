@@ -1,0 +1,32 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# The SIG ontology — the SINGLE source of truth (ADR-007, SIG-STORE-034). This
+# entry schema imports the §11 entity catalog, the §12 relationship catalog, and
+# the §13 structural vocabularies; the generators (SQL DDL, JSON Schema,
+# OWL/SHACL, Pydantic, docs) all run from here. The large open vocabularies (the
+# technology tree §13.1 and capability grammar §13.2) and the predicate registry
+# (§13.6) are versioned SKOS/JSON artifacts generated from ontology/vocab/.
+id: https://ontology.sig-project.org/schema/sig
+name: sig
+title: Surveillance Infrastructure Graph ontology
+description: >-
+  The canonical SIG ontology: entities (§11), relationships (§12), and the
+  structural controlled vocabularies (§13). One LinkML source generates every
+  downstream form (§20.1).
+version: 1.0.0
+license: Apache-2.0
+default_prefix: sig
+default_range: string
+prefixes:
+  linkml: https://w3id.org/linkml/
+  sig: https://ontology.sig-project.org/schema/
+  skos: http://www.w3.org/2004/02/skos/core#
+  dcterms: http://purl.org/dc/terms/
+  xsd: http://www.w3.org/2001/XMLSchema#
+imports:
+  - linkml:types
+  - common
+  - entities
+  - edges
