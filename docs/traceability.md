@@ -109,3 +109,50 @@ test where it is deterministically checkable.
 | SIG-CONTRIB-006 (pseudonymity incl. trusted-reviewer) | `docs/governance/contributor-safety.md` | `test_..._contributor_safety_documents_pseudonymity_and_pii_window` |
 | SIG-CONTRIB-007 (know-your-rights; no trespass/interfere) | `docs/governance/contributor-safety.md` | `test_..._contributor_safety_documents_pseudonymity_and_pii_window` |
 | SIG-CONTRIB-008 (detained/arrested/harassed policy) | `docs/governance/contributor-safety.md` | `test_..._contributor_safety_documents_pseudonymity_and_pii_window` |
+
+---
+
+# P00.4 — Seeded source registry
+
+The source registry is executable data (SIG-ENG-001): every §22.6 / §22.3 source
+is a row in `connectors/src/connectors/data/sources.toml`, loaded and validated
+by `connectors.registry`; the local-group and partner registries live in
+`data/local_groups.toml` (`connectors.ecosystem`); the ingestion gate is
+`connectors.loader`. Rights records reuse P00.2's `policy.rights.RightsRecord`
+and its export gate (`policy.licensing`).
+
+## Registry schema & seed (§22.1, §22.6, §10.3.1)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-INGEST-023 (registry row minimum fields) | `connectors.registry.SourceRecord`; `data/sources.toml` | `test_source_registry.py::test_every_source_carries_the_minimum_fields` |
+| SIG-INGEST-038 (every §22.6 row seeded) | `data/sources.toml` | `test_..._named_seed_row_is_registered`, `test_..._registry_is_non_trivially_seeded` |
+| SIG-INGEST-026 (§22.3 additions incl. cooperative vehicles, agenda/records platforms) | `data/sources.toml` | `test_..._section_22_3_addition_is_registered` |
+| REQ-R1-14 / SIG-TASK-014 (DeFlock canonical host `deflock.org`, not `deflock.me`) | `data/sources.toml` `[sources.deflock]` | `test_..._deflock_canonical_host_is_org_not_me` |
+
+## Rights per source (§42.1, SIG-LIC-*)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-LIC-001 (rights record populated or explicitly UNDETERMINED) | `registry._rights_from_row` → `policy.rights.RightsRecord` | `test_..._rights_are_populated_or_explicitly_undetermined` |
+| SIG-INGEST-024 / SIG-LIC-003 (`redistributable` separately reviewed, not derived) | `registry._rights_from_row` (fail-closed default) | `test_..._redistributable_is_never_derived_from_the_licence_string` |
+| SIG-LIC-004 (UNDETERMINED fails the export gate closed) | `policy.licensing.assert_export_permitted` over registry rights | `test_registry_export_gate.py::test_undetermined_registry_row_fails_the_export_gate_closed` |
+| SIG-INGEST-048b (AGPL / no-licence hazards) | `data/sources.toml` (`sm_alpr`, `deflock_app_repo`, `ringmast4r_flock`) | `test_..._agpl_projects_are_marked_non_derivative_licence_hazards`, `test_..._unlicensed_projects_are_undetermined...` |
+
+## Compact & the ingestion gate (§22.4)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-INGEST-027 (`compact_status` closed vocab incl. `no_response`) | `registry.CompactStatus` | `test_..._compact_status_is_the_closed_vocabulary_including_no_response` |
+| SIG-INGEST-028 / SIG-CHART-032 (connector refuses to run when `ingestion_permitted` false) | `connectors.loader.assert_ingestion_permitted` / `run_connector` | `test_ingestion_gate.py::test_connector_refuses_to_run_when_ingestion_not_permitted` |
+| SIG-INGEST-028 (`ingestion_permitted` defaults false) | `registry.SourceRecord.ingestion_permitted` | `test_..._ingestion_permitted_defaults_false_across_the_seed` |
+
+## Eyes on Flock & the ecosystem registries (§22.5, §22.6 H)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-INGEST-030 (Eyes on Flock Stage-0 outreach outcome recorded — Phase 11 blocker) | `data/sources.toml` `[sources.eyes_on_flock]` | `test_..._eyes_on_flock_outreach_outcome_is_recorded` |
+| SIG-INGEST-039 / SIG-TASK-014 (local-group registry seeded incl. `eyesoffcr.org`) | `data/local_groups.toml`; `connectors.ecosystem.local_groups` | `test_local_group_registry.py::test_local_group_registry_exists_and_is_seeded` |
+| SIG-INGEST-039a (unlocated groups not silently dropped) | `data/local_groups.toml` (`deflock_idaho`, `monterey_park_organizers`) | `test_..._unlocated_groups_are_registered_as_a_coverage_fact` |
+| SIG-INGEST-039b (FlockReporter disappeared, `disappeared_observed_at`) | `data/local_groups.toml` `[groups.flockreporter]` | `test_..._flockreporter_directory_is_disappeared_with_observation_date` |
+| SIG-INGEST-040 (national partners registered with contacts) | `data/local_groups.toml` `[partners.*]`; `connectors.ecosystem.partners` | `test_..._national_partners_registered_with_contacts` |

@@ -1,12 +1,18 @@
 [project]
 name = "sig-connectors"
 version = "0.0.0"
-description = "SIG connectors package (skeleton; see docs/2_canonical_design_spec.md §47)."
+description = "SIG connectors package: the seeded source registry and the ingestion gate (§22)."
 requires-python = ">=3.11"
-dependencies = []
+# The registry carries a policy.rights.RightsRecord per source and its
+# UNDETERMINED rows must fail the policy export gate (SIG-LIC-004), so this
+# package depends on sig-policy (resolved from the workspace).
+dependencies = ["sig-policy"]
 
 [project.scripts]
 sig-connectors = "connectors.cli:main"
+
+[tool.uv.sources]
+sig-policy = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]
