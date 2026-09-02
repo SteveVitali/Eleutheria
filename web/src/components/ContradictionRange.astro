@@ -1,0 +1,59 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// A contradiction, rendered as a value RANGE with the competing claims plotted
+// (SIG-UI-009). Each claim is labelled with its source, tier, date, and document
+// link, and — where a claim measures a *different quantity* — an explicit note, so
+// the reader can see at a glance that "42 vs 38" is not necessarily a disagreement
+// (§29.1). The plotted track is decorative and aria-hidden; the claims list below
+// carries the full information and is the no-JS/screen-reader equivalent.
+import { contradictionRange, plotPosition } from "../lib/epistemic";
+import type { CompetingClaim } from "../lib/epistemic";
+
+interface Props {
+  claims: CompetingClaim[];
+  unit?: string;
+}
+
+const { claims, unit } = Astro.props;
+const range = contradictionRange(claims);
+const suffix = unit ? ` ${unit}` : "";
+---
+
+<figure class="sig-range" data-testid="contradiction-range">
+  <figcaption>
+    Contested range: <strong>{range.min}</strong>–<strong>{range.max}</strong>{suffix}
+    across {claims.length} competing claim{claims.length === 1 ? "" : "s"}
+  </figcaption>
+
+  <div class="sig-range__track" aria-hidden="true">
+    {
+      claims.map((c) => (
+        <span
+          class="sig-range__point"
+          style={`left: ${(plotPosition(range, c.value) * 100).toFixed(1)}%`}
+          title={`${c.value}${suffix} — ${c.source}`}
+        />
+      ))
+    }
+  </div>
+
+  <ol class="sig-range__claims">
+    {
+      claims.map((c) => (
+        <li data-testid="competing-claim" data-claim-id={c.claimId}>
+          <strong>{c.value}{suffix}</strong> — {c.source}
+          <span class="sig-range__meta"> (tier {c.tier}, {c.date})</span>
+          <a href={c.documentUrl} aria-label={`Source document for the ${c.source} claim (${c.value})`}> document</a>
+          {c.differentQuantityNote && (
+            <p class="sig-range__note" data-testid="different-quantity-note">
+              <em>Different quantity:</em> {c.differentQuantityNote}
+            </p>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</figure>

@@ -1,0 +1,28 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The persistent contested-value marker (SIG-UI-008). A contested value carries
+// this marker at EVERY appearance — table cell, summary tile, map popup, list —
+// not only in a detail view, so a reader who never opens the detail still knows
+// the number is disputed. The marker is a glyph + text (a non-colour channel,
+// SIG-UI-005); colour merely reinforces it.
+import { CONTESTED_MARKER } from "../lib/epistemic";
+
+interface Props {
+  /** Optional compact mode: glyph only, meaning still in the accessible label. */
+  compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
+---
+
+<span class="sig-contested" data-testid="contested-marker" title={CONTESTED_MARKER.label}>
+  <span class="sig-contested__glyph" aria-hidden="true">{CONTESTED_MARKER.glyph}</span>
+  {compact ? (
+    <span class="sig-visually-hidden">{CONTESTED_MARKER.label}</span>
+  ) : (
+    <span class="sig-contested__label">{CONTESTED_MARKER.label}</span>
+  )}
+</span>
