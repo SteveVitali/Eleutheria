@@ -1,0 +1,51 @@
+# SPDX-License-Identifier: LicenseRef-SIG-Undetermined
+# Copyright (C) 2026 The SIG project. Licence posture is a placeholder; final
+# licences are decided in P00.2 (see LICENSE and docs/2_canonical_design_spec.md §42).
+#
+# CI (SIG-ENG-015/016 wiring): lint, type-check, test, and the
+# "generated artifacts match a fresh generation" gate — run green on the empty
+# skeleton. Install is strictly from the committed lockfile (uv --frozen).
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.6"
+          enable-cache: true
+
+      - name: Install Python (pinned by .python-version)
+        run: uv python install
+
+      - name: Install workspace from the committed lockfile
+        run: make sync
+
+      - name: Lint
+        run: make lint
+
+      - name: Format check
+        run: make format-check
+
+      - name: Type-check
+        run: make typecheck
+
+      - name: Test
+        run: make test
+
+      - name: Generated artifacts match a fresh generation
+        run: make verify-gen

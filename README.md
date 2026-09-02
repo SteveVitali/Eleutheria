@@ -10,7 +10,9 @@ claim-level-provenance knowledge graph of surveillance infrastructure.
 > evidence exists, how they change over time, and exactly which sources support or contradict every
 > material claim.**
 
-This repository currently contains **specification and research only** — no implementation yet.
+This repository contains the full **specification and research base**, plus the **repository
+skeleton** the phased build forks from (see *Repository layout & development* below). Domain and
+ingestion code arrive in later phases.
 
 ## Contents
 
@@ -55,6 +57,41 @@ The canonical spec is a **build artifact**. Edit the section sources, not the ou
 
 ```sh
 sh docs/research/_meta/spec_src/BUILD.sh
+```
+
+## Repository layout & development
+
+The repo is a [**uv**](https://docs.astral.sh/uv/) workspace (SIG-ENG-011). Its top-level layout is
+the canonical §47 package layout (SIG-ENG-012) — these package names are frozen; renaming one
+requires an ADR:
+
+```
+ontology/  db/  connectors/  parsing/  resolution/  reconcile/  inference/
+tasks/  api/  exports/  orchestration/  policy/  ops/          # Python packages
+web/                                                            # TypeScript (SIG-ENG-010)
+docs/  tests/                                                   # docs & the test suite
+```
+
+Conventions established here that every later ticket depends on:
+
+- **Python is primary; TypeScript is confined to `web/`** (SIG-ENG-010).
+- **Every pipeline stage is a plain CLI** (SIG-ENG-013): each package `<pkg>` is runnable as
+  `uv run python -m <pkg>` and installs a `sig-<pkg>` console script (`<pkg>/src/<pkg>/cli.py`).
+- **Only `orchestration/` may import a workflow orchestrator** (SIG-ENG-013); the list of
+  orchestrator modules lives in `orchestration/pipeline.py` and the boundary is enforced by
+  `tests/unit/test_import_boundary.py`.
+- **`policy/` is real, tested code**, not prose (SIG-ENG-014).
+- **Every source file carries an SPDX header**; the licence posture is a placeholder until P00.2
+  (see `LICENSE`).
+
+Common commands (humans and CI run the same `make` targets):
+
+```sh
+make sync          # install the workspace from the committed lockfile (uv --frozen)
+make check         # lint + format-check + type-check + tests + generated-artifact gate (the CI gate)
+make lock          # refresh uv.lock
+make export        # regenerate the PEP 751 lock export (pylock.toml)
+make sbom          # produce a CycloneDX SBOM (per release)
 ```
 
 ## Method note

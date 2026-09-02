@@ -1,0 +1,11 @@
+{
+  "name": "@sig/web",
+  "version": "0.0.0",
+  "private": true,
+  "description": "SIG public web surface (skeleton; TypeScript is confined to this package per SIG-ENG-010). Built out in Phase 15.",
+  "license": "LicenseRef-SIG-Undetermined",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

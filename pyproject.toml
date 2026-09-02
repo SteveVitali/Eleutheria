@@ -1,0 +1,54 @@
+# SPDX-License-Identifier: LicenseRef-SIG-Undetermined
+# Copyright (C) 2026 The SIG project. Licence posture is a placeholder; final
+# licences are decided in P00.2 (see LICENSE and docs/2_canonical_design_spec.md §42).
+#
+# Virtual workspace root (SIG-ENG-011). This file defines the uv workspace, its
+# members (the §47 package layout), the shared dev toolchain, and the shared
+# lint/type-check/test configuration. It is intentionally NOT a distributable
+# package: SIG ships as the per-area member packages under each §47 directory.
+
+[tool.uv.workspace]
+members = [
+    "ontology",
+    "db",
+    "connectors",
+    "parsing",
+    "resolution",
+    "reconcile",
+    "inference",
+    "tasks",
+    "api",
+    "exports",
+    "orchestration",
+    "policy",
+    "ops",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.0",
+    "ruff>=0.6.9",
+    "mypy>=1.11.2",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+# Only lint/format code this repo owns as Python source. web/ is TypeScript;
+# docs/ and scratch/ are prose/build-scratch and are out of scope here.
+extend-exclude = ["web", "docs", "scratch"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_unused_configs = true
+warn_redundant_casts = true
+disallow_untyped_defs = true
+strict_equality = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["tests"]
+addopts = "-ra"

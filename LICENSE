@@ -1,0 +1,23 @@
+SIG — LICENCE POSTURE (PLACEHOLDER)
+===================================
+
+SPDX-License-Identifier: LicenseRef-SIG-Undetermined
+
+This repository's final licensing has NOT yet been decided. The licensing
+decision is owned by ticket P00.2 and by the canonical design spec
+(docs/2_canonical_design_spec.md §42, "Licensing Decision"), which anticipates a
+split posture — for example an open-data licence (ODbL) for database contents
+and a separate open-source licence for code, with per-source rights computed at
+export time.
+
+Until P00.2 lands:
+
+  * Treat all code and data in this repository as UNDETERMINED for
+    redistribution purposes.
+  * Every source file carries the SPDX tag `LicenseRef-SIG-Undetermined` as a
+    placeholder. P00.2 replaces both this file and those tags with the resolved
+    licence identifiers.
+
+This placeholder exists so that the repository has an explicit, machine-readable
+licence posture from its first commit, rather than an implicit "all rights
+reserved" silence.
