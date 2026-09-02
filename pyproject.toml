@@ -38,6 +38,9 @@ dev = [
     # the `docker` SDK transitively; psycopg is the client driver.
     "testcontainers>=4.8",
     "psycopg[binary]>=3.2",
+    # The public-API (P14.1) tests drive the FastAPI app through Starlette's
+    # TestClient, which speaks the ASGI transport over httpx (SIG-API-001..013).
+    "httpx>=0.27",
 ]
 
 [tool.ruff]
@@ -49,6 +52,13 @@ extend-exclude = ["web", "docs", "scratch"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+
+# FastAPI's dependency-injection markers (Depends/Query/Header) are call-in-
+# argument-default *by design* — that is how the framework declares a dependency
+# (SIG-API-001, the P14.1 public API). Treat them as immutable so B008 does not
+# fire on the idiomatic pattern; every other B008 case still errors.
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.Header"]
 
 [tool.mypy]
 python_version = "3.11"

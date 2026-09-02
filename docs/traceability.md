@@ -1396,3 +1396,44 @@ surfaces, the never-merged invariant, and the SIG-EPIS-030 general form.
 | Requirement | Where | Test |
 |---|---|---|
 | SIG-EPIS-030 / OL-2E-AL-02 (SIG can hold a curated source index *as an index* without normalizing its entries into claims — the general form the P13.1 `accountability` connector's Abuse Library handling relies on) | `connectors.curated_index.CuratedSourceIndex` / `CuratedIndexEntry` (`index_records` are `index_only`; `as_claims` raises `IndexNormalizationRefused`); `connectors.accountability.AccountabilityConnector._normalize_abuse_entry` (builds a `CuratedIndexEntry`) | `tests/connectors/test_curated_index.py::test_a_curated_index_retains_its_entries_as_an_index`, `::test_index_records_are_index_only_never_claim_rows`, `::test_normalizing_a_curated_index_into_claims_is_refused`, `::test_the_accountability_connector_relies_on_the_general_capability` |
+
+# P14.1 — The public read API
+
+The hand-written, versioned §37 read contract (FastAPI + OpenAPI): every material fact carries its
+full resolution envelope, both as-of axes are accepted and echoed, belief-pinned requests are
+reproducible after a correction, every id is dereferenceable with content negotiation, a `/changes`
+feed exists, access tiers never reach `restricted`/`sealed`, and no prohibited endpoint exists. The
+envelope (P08.1 resolver), coverage (P09.1), snapshot-diff (§29.7), coordinate sensitivity (§19.4),
+evidence tiers (§17.5), and licence/attribution (§42.4) engines are consumed as-is (see ADR-047).
+
+## Principles — envelope, coverage, licence, attribution (§37.1)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-API-001 (hand-written, versioned contract; OpenAPI generated, never a schema reflection) | `api.models` (authored Pydantic response models); `api.app.create_app` (`/v1` prefix, `API_VERSION`) | `tests/api/test_api_shape.py::test_openapi_is_generated_and_versioned`, `::test_the_contract_is_url_versioned`, `::test_response_models_are_hand_written_pydantic_not_reflected` |
+| SIG-API-002 (every material fact carries the full §37.1 resolution envelope; a bare value is never returned) | `api.envelope.resolution_envelope` / `material_fact`; `api.models.RESOLUTION_ENVELOPE_FIELDS` | `tests/api/test_api_envelope_contract.py::test_resolution_response_carries_the_full_envelope`, `::test_entity_facts_each_carry_the_full_envelope`, `::test_a_material_fact_is_never_a_top_level_bare_value`, `::test_unresearched_subject_returns_an_unresolved_envelope_not_a_bare_value` |
+| SIG-API-003 (per-response coverage statement, §32.2) | `api.envelope.coverage_statement`; every `/v1` response model carries `coverage` | `tests/api/test_api_coverage_license.py::test_every_v1_read_response_carries_a_coverage_statement`, `::test_coverage_states_the_explained_gap` |
+| SIG-API-004 (collection licence statement + entity upstream attribution) | `api.envelope.license_statement` / `attribution_for` (reuse `policy.licensing.compute_export_license` / `downstream_obligations`) | `tests/api/test_api_coverage_license.py::test_collection_response_carries_a_licence_statement`, `::test_entity_response_carries_upstream_attribution`, `::test_incompatible_compartments_yield_no_single_licence`, `::test_a_non_redistributable_source_closes_the_licence_gate` |
+
+## As-of semantics (§37.2)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-API-005 (every read endpoint accepts + echoes `as_of_world`/`as_of_belief`, defaulted explicitly, never an implicit "latest") | `api.asof.as_of_dependency` / `AsOfContext.echo` (reuse `db.temporal.AsOf`) | `tests/api/test_api_as_of.py::test_omitting_both_params_echoes_explicit_defaults_not_latest`, `::test_supplied_params_are_echoed_back_verbatim`, `::test_every_read_family_accepts_and_echoes_as_of` |
+| SIG-API-006 (cacheable by the full as-of pair; belief-pinned immutable/long-cache, now-pinned not) | `api.asof.AsOfContext.build` / `apply_cache` (`belief_pinned = not belief_defaulted`) | `tests/api/test_api_as_of.py::test_now_pinned_request_is_not_cacheable`, `::test_belief_pinned_request_is_immutable_and_long_cached`, `::test_only_a_defaulted_belief_is_now_pinned_and_uncacheable`, `test_api_reproducibility.py::test_belief_pinned_request_is_reproducible_after_a_correction`, `::test_now_pinned_request_sees_the_correction` |
+
+## Shape — resource families, dereference, changes (§37.3)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-API-007 (REST/OpenAPI baseline; the §37.3 resource families) | `api.routes.build_router` (`/entity`, `/claim`, `/resolution`, `/evidence`, `/dossier`, `/search`, `/task`, `/coverage`, `/contradiction`, `/crosswalk`, `/export`, `/changes`) | `tests/api/test_api_shape.py::test_every_section_37_3_resource_family_is_present` |
+| SIG-API-008 (every id dereferenceable at `/id/{type}/{uuid}` with content negotiation to HTML/JSON-LD/RDF) | `api.dereference` (`select_media_type`, `render_html`/`render_jsonld`/`render_turtle` via rdflib); `api.app` `/id/{id_type}/{uuid}` | `tests/api/test_api_dereference.py::test_html_is_the_default_representation`, `::test_jsonld_representation_is_valid_json_ld`, `::test_rdf_turtle_representation`, `::test_star_accept_falls_back_to_html` |
+| SIG-API-009 (`/changes` feed driven by the §29.7 snapshot-diff layer) | `api.routes` `/changes` (reuse `reconcile.snapshot_diff.diff_series`) | `tests/api/test_api_changes.py::test_changes_feed_emits_field_level_events_from_the_snapshot_diff`, `::test_changes_feed_can_be_followed_incrementally_with_since` |
+
+## Access tiers and anti-misuse (§37.4)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-API-011 (tiers anonymous/registered/partner; no tier grants `restricted`/`sealed`) | `api.tiers.AccessTier` / `tier_dependency` / `assert_public_visibility` (tier-independent gate) | `tests/api/test_api_tiers.py::test_bearer_token_maps_to_a_tier`, `::test_no_tier_can_read_a_restricted_entity`, `::test_public_data_is_reachable_at_every_tier`, `::test_the_visibility_gate_is_tier_independent` |
+| SIG-API-012 (no device-liveness, per-person lookup, sealed bytes, or over-precise coordinates §19.4) | `api.prohibitions` (structural route bar + `assert_entity_type_allowed`); `evidence.tiers.public_representation` (sealed bytes withheld); `policy.sensitivity.apply_tier` (coordinate reduction) | `tests/api/test_api_prohibitions.py::test_no_mounted_route_is_a_prohibited_surface`, `::test_building_an_app_with_a_prohibited_route_fails_closed`, `::test_sealed_capture_never_returns_its_bytes`, `::test_a_person_entity_type_is_refused_by_the_generic_entity_route`, `::test_coordinates_are_reduced_to_the_sensitivity_tier` |
+| SIG-API-013 (acceptable-use terms prohibit re-identification and state a remedy) | `api.terms.acceptable_use_terms`; `api.app` `/terms` | `tests/api/test_api_terms.py::test_terms_prohibit_reidentification`, `::test_terms_state_a_remedy_not_a_decorative_prohibition`, `::test_terms_describe_all_three_tiers` |
