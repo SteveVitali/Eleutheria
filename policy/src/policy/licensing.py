@@ -57,12 +57,18 @@ def effective_license(record: RightsRecord, registry: Mapping[str, Any] | None =
     Normally the declared ``spdx``. But a silently-travelling share-alike
     obligation does not disappear because an intermediary failed to pass it on
     (SIG-LIC-009a): if the record names a share-alike ``upstream_license``, that
-    stricter regime governs.
+    stricter regime governs. And where the upstream provenance cannot be resolved —
+    an ``upstream_license`` that is not in the compartment registry — the spec says
+    default to the **stricter** regime, not the declared permissive one; returning the
+    unknown upstream makes :func:`compute_export_license` fail the build closed rather
+    than silently laundering an obligation SIG cannot vouch for.
     """
     reg = _registry(registry)["licenses"]
     upstream = record.upstream_license
-    if upstream and reg.get(upstream, {}).get("share_alike"):
-        return upstream
+    if upstream:
+        facts = reg.get(upstream)
+        if facts is None or facts.get("share_alike"):
+            return upstream
     return record.spdx
 
 
@@ -124,6 +130,56 @@ def compute_export_license(
 
 def _most_constraining(candidates: set[str], reg: Mapping[str, Any]) -> str:
     return sorted(candidates, key=lambda spdx: (not reg[spdx].get("share_alike", False), spdx))[0]
+
+
+def most_permissive_license(
+    records: Iterable[RightsRecord],
+    registry: Mapping[str, Any] | None = None,
+) -> str:
+    """The *least*-constraining licence a set of rights may all be published under.
+
+    The mirror of :func:`compute_export_license`: same relicensable-set intersection
+    and same fail-closed / incompatibility behaviour, but it returns the most permissive
+    common target rather than the strictest. The crosswalk (SIG-IDENT-033) is published
+    under the most permissive licence its constituents allow (SIG-EXPORT-007), so its
+    reuse is maximised — but it still cannot escape the licence math: incompatible
+    constituents raise exactly as the ordinary gate does.
+    """
+    records = list(records)
+    assert_export_permitted(records)
+    reg = _registry(registry)["licenses"]
+
+    if not records:
+        raise LicenseIncompatibilityError("cannot compute an export licence for zero sources")
+
+    candidate: set[str] | None = None
+    for record in records:
+        spdx = effective_license(record, registry)
+        if spdx not in reg:
+            raise LicenseIncompatibilityError(
+                f"source {record.source_id!r} declares licence {spdx!r}, which is not "
+                "in the compartment registry (licenses.toml)."
+            )
+        allowed = set(reg[spdx]["relicensable_to"])
+        candidate = allowed if candidate is None else (candidate & allowed)
+
+    assert candidate is not None
+    if not candidate:
+        licences = sorted({effective_license(r, registry) for r in records})
+        raise LicenseIncompatibilityError(
+            f"licences {licences} are mutually incompatible and cannot be merged "
+            "into one export compartment (SIG-LIC-004a)."
+        )
+    # Reuse-maximising order: the fewest obligations first — not share-alike before
+    # share-alike, then no-attribution before attribution — then lexical for determinism.
+    return sorted(
+        candidate,
+        key=lambda spdx: (
+            reg[spdx].get("share_alike", False),
+            reg[spdx].get("attribution_required", True),
+            spdx,
+        ),
+    )[0]
 
 
 def assert_training_allowed(record: RightsRecord) -> None:

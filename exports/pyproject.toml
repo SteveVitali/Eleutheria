@@ -5,12 +5,31 @@ description = "SIG exports package: bulk artifact builders, incl. the PROV-O lin
 requires-python = ">=3.11"
 # The PROV-O lineage export (SIG-INGEST-016) builds an RDF graph with rdflib,
 # already a project dependency via `ontology` (OWL/SHACL generation).
+#
+# P14.2 (bulk exports) adds:
+# - sig-policy: the N-compartment export licence model and its gates (§42.4,
+#   SIG-LIC-004/004a/010/011). The export layer *computes* every file's licence from
+#   constituent rights via policy.licensing — the same code path the read API uses to
+#   attach a collection's licence (SIG-API-004), so exports and API agree by construction.
+# - sig-resolution: the identifier crosswalk builders (SIG-IDENT-033/034) published as
+#   their own most-permissive artifact (SIG-EXPORT-007).
+# Both are leaf-ward of exports (policy is a leaf; resolution depends only on policy),
+# so there is no cycle even though api and connectors depend on sig-exports.
+# duckdb writes the Parquet artifact (SIG-EXPORT-001); it is already a workspace dep
+# (sig-db, sig-resolution) and ships no extra native toolchain here.
 dependencies = [
     "rdflib>=7.0",
+    "sig-policy",
+    "sig-resolution",
+    "duckdb>=1.0.0",
 ]
 
 [project.scripts]
 sig-exports = "exports.cli:main"
+
+[tool.uv.sources]
+sig-policy = { workspace = true }
+sig-resolution = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]
