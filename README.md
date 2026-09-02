@@ -22,6 +22,8 @@ ingestion code arrive in later phases.
 | `docs/2_canonical_design_spec.md` | **The canonical design and implementation specification** (8,888 lines, 668 numbered requirements) |
 | `docs/research/` | The evidence base: 13 research workstreams, 26,818 lines, 501 evidence-formatted findings |
 | `docs/research/_meta/` | Traceability index, adversarial gap analysis, lead-agent spot-checks, and the spec's section sources |
+| `docs/governance/` | The adopted governance and safety policies: takedown/corrections/suppression, governance & Code of Conduct, the anti-misuse statement, contributor safety |
+| `docs/adr/` | Architecture Decision Records (Appendix F) |
 
 ## The specification
 

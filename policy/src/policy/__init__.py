@@ -16,6 +16,8 @@ pipeline is a pure, versioned function with a test:
 * :mod:`policy.publication` — categorical exclusions, de-pseudonymisation, and
   jurisdiction-conditional publication (§43.2/43.8).
 * :mod:`policy.threat_model` — the versioned threat-model artifact (§44).
+* :mod:`policy.governance` — corrections-preserve-history and suppression-vs-
+  deletion as executable primitives, plus the takedown intake/SLA table (§45).
 
 The tables these rules read (licence compartments, the sensitivity matrix, the
 threat model, exclusions, crawler rules) are data under ``policy/data/``.

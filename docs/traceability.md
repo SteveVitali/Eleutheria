@@ -1,9 +1,12 @@
-# Traceability matrix — P00.2 (executable policy and the decision record)
+# Traceability matrix
 
-Every executable requirement this ticket satisfies, mapped to where it lives and
-the automated test that fails if it is removed (SIG-ENG-004). This is the
-ticket-scoped view; the full Appendix A matrix is maintained in
-`docs/research/_meta/OUTLINE_TRACE.md`.
+Every executable requirement each Phase-0 ticket satisfies, mapped to where it
+lives and the automated test that fails if it is removed (SIG-ENG-004). This is
+the ticket-scoped view; the full Appendix A matrix is maintained in
+`docs/research/_meta/OUTLINE_TRACE.md`. Sections are grouped by ticket
+(P00.2 first, then P00.3 below).
+
+# P00.2 — executable policy and the decision record
 
 ## Crawler conduct (§26)
 
@@ -57,3 +60,52 @@ ticket-scoped view; the full Appendix A matrix is maintained in
 | SIG-STORE-007 (every ADR names a revisit trigger) | `docs/adr/` | `test_..._every_adr_names_a_revisit_trigger` |
 | SIG-INGEST-020 (Dagster) | ADR-016 | `test_policy_adrs.py` |
 | SIG-ENG-014 (policy is real, tested code) | `policy/` package | `test_policy_package.py` + all policy tests |
+
+---
+
+# P00.3 — Governance, takedown, and contributor safety
+
+The two load-bearing distinctions (corrections preserve history; suppression is
+not deletion) are executable and tested; the remaining governance requirements
+are prose policy under `docs/governance/`, each with a presence/link/verbatim
+test where it is deterministically checkable.
+
+## Takedown, corrections & suppression (§45)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-GOV-001 (intake channel; categories) | `data/takedown.toml` `[intake]`; `governance.intake_categories` | `test_governance_policy.py::test_intake_categories_cover_the_required_kinds` |
+| SIG-GOV-002 (intake needs no identity, save legal standing) | `governance.identity_required_for` | `test_..._intake_does_not_require_identity_by_default` |
+| SIG-GOV-003 (SLAs; privacy/safety prioritised above all) | `data/takedown.toml`; `governance.intake_categories` | `test_..._sla_prioritises_privacy_and_safety` |
+| SIG-GOV-004 (outcomes incl. refuse-with-reasoning) | `data/takedown.toml` `[[outcomes]]`; `governance.permitted_outcomes` | `test_..._permitted_outcomes_include_refusal` |
+| SIG-GOV-005 (correction = new assertion; as_of_belief preserved) | `policy.governance.BeliefLog.correct`/`value_as_of_belief` | `test_..._correction_preserves_prior_belief`; `test_..._correction_is_a_new_assertion_not_a_deletion` |
+| SIG-GOV-006 (public corrections log) | `docs/governance/takedown-corrections-suppression.md` | `test_governance_docs.py::test_takedown_doc_covers_suppression_and_corrections` |
+| SIG-GOV-007 (suppression distinct from deletion; sealed tier) | `policy.governance.BeliefLog.suppress`/`public_value_as_of_belief` | `test_..._suppression_is_distinct_from_deletion` |
+| SIG-GOV-008 (true deletion: two-person auth; tombstone) | `policy.governance.BeliefLog.delete` | `test_..._deletion_requires_two_person_auth_and_leaves_tombstone` |
+| SIG-GOV-009 (governance-mode Object Lock rationale) | `docs/governance/takedown-corrections-suppression.md` | `test_governance_docs.py::test_takedown_doc_covers_suppression_and_corrections` |
+| SIG-GOV-010 (dispute response published alongside) | `docs/governance/takedown-corrections-suppression.md` | `test_governance_docs.py` (published+linked) |
+| SIG-GOV-011 (transparency report by category × outcome incl. refusals) | `data/takedown.toml` `[transparency_report]`; `governance.transparency_report_shape` | `test_..._transparency_report_groups_category_by_outcome_including_refusals` |
+
+## Governance & Code of Conduct (§46.2, §46.4–46.5)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-GOV-014 (decision-making, CoC w/ enforcement, dispute res) | `docs/governance/governance-and-code-of-conduct.md` | `test_governance_docs.py` (published+linked) |
+| SIG-GOV-015 (editorial board distinct from maintainers) | `docs/governance/governance-and-code-of-conduct.md` | `test_governance_docs.py` (published+linked) |
+| SIG-GOV-016 (capture resistance incl. funding policy) | `docs/governance/governance-and-code-of-conduct.md` | `test_governance_docs.py` (published+linked) |
+| SIG-GOV-021 (degraded-mode-tested posture; documented here) | `docs/governance/governance-and-code-of-conduct.md` | `test_governance_docs.py` (published+linked) |
+
+## Anti-misuse statement (§46.3)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-GOV-019 (honest anti-misuse statement, verbatim first-class page) | `docs/governance/anti-misuse-statement.md` | `test_governance_docs.py::test_anti_misuse_statement_published_verbatim` |
+
+## Contributor safety (§34.3)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-CONTRIB-005 (PII minimisation window; what is not stored) | `docs/governance/contributor-safety.md` | `test_governance_docs.py::test_contributor_safety_documents_pseudonymity_and_pii_window` |
+| SIG-CONTRIB-006 (pseudonymity incl. trusted-reviewer) | `docs/governance/contributor-safety.md` | `test_..._contributor_safety_documents_pseudonymity_and_pii_window` |
+| SIG-CONTRIB-007 (know-your-rights; no trespass/interfere) | `docs/governance/contributor-safety.md` | `test_..._contributor_safety_documents_pseudonymity_and_pii_window` |
+| SIG-CONTRIB-008 (detained/arrested/harassed policy) | `docs/governance/contributor-safety.md` | `test_..._contributor_safety_documents_pseudonymity_and_pii_window` |

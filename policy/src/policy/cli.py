@@ -14,6 +14,7 @@ import argparse
 
 from . import __version__
 from .crawler import conduct_rules
+from .governance import intake_categories, permitted_outcomes
 from .licensing import compartments
 from .threat_model import ThreatModelError, load_threat_model, validate_threat_model
 
@@ -39,6 +40,8 @@ def _validate() -> int:
     print(f"crawler conduct rules: {len(conduct_rules())}")
     print(f"licence compartments: {len(compartments())}")
     print(f"threat-model adversary rows: {len(load_threat_model())}")
+    print(f"takedown intake categories: {len(intake_categories())}")
+    print(f"takedown permitted outcomes: {len(permitted_outcomes())}")
     print("policy self-checks OK")
     return 0
 
