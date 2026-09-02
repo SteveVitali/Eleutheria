@@ -1,0 +1,38 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The landing shell. Static-first, zero client JS (SIG-UI-036). The local advocate
+// is the design center (SIG-UI-002): plain-language register, paper-friendly.
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Surveillance Infrastructure Graph" path="/">
+  <p>
+    SIG is an open, vendor-agnostic, temporally versioned record of surveillance
+    infrastructure — what is deployed, where and by whom, how it is connected and
+    governed, and exactly which sources support or contradict every material claim.
+    SIG <strong>reports</strong>; it does not endorse.
+  </p>
+
+  <h2>How to read this record</h2>
+  <p>
+    Every material claim on this site carries four independent epistemic fields, a
+    support glyph that says <em>why</em> it is trusted, a persistent marker when a
+    value is contested, and an honest, clickable gap wherever SIG has not (yet)
+    looked. Absence of a row is <strong>not</strong> evidence of absence.
+  </p>
+  <ul>
+    <li><a href="/visual-language/">The epistemic visual language</a> — the reference for every field, glyph, marker, and gap.</li>
+    <li><a href="/reference-map/">Reference map</a> — with a full tabular equivalent (usable without JavaScript).</li>
+    <li><a href="/reference-graph/">Reference graph</a> — with a full list equivalent (usable without JavaScript).</li>
+  </ul>
+
+  <h2>Reproducible by design</h2>
+  <p>
+    Every page exposes a belief-pinned permalink and a citation you can hand to a
+    council member or cite in a filing. A citation captured today re-resolves to the
+    same belief even after SIG corrects itself. See the citation block below.
+  </p>
+</BaseLayout>

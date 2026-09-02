@@ -1476,3 +1476,36 @@ evidence tiers (§17.5), and licence/attribution (§42.4) engines are consumed a
 |---|---|---|
 | SIG-EXPORT-008 (zero-or-low-egress object storage + CDN/mirror) | `exports.distribution.assert_low_egress`/`plan_distribution`; wired into `exports.bundle.build_bundle` + `sig-exports build --store` | `tests/exports/test_distribution.py::test_metered_egress_provider_fails_the_build`, `::test_cdn_and_mirror_urls_are_built`, `test_bundle.py::test_metered_egress_store_fails_the_build`, `::test_distribution_plan_is_built_when_a_low_egress_store_is_given` |
 | SIG-EXPORT-009 (torrent/IPFS SHOULD for the largest artifacts) | `exports.distribution.ipfs_cidv1_raw`/`torrent_magnet_v2`/`plan_distribution` | `tests/exports/test_distribution.py::test_largest_artifacts_get_torrent_and_ipfs`, `::test_ipfs_cid_and_magnet_are_deterministic_content_addresses` |
+
+# P15.1 — Web shell + the epistemic visual language
+
+The TypeScript surface is confined to `web/` (SIG-ENG-010); its tests are the
+`web/` vitest + Playwright suites (run by the CI `web` job), not the Python `pytest`
+suite. Paths below are relative to `web/`.
+
+## The epistemic visual language (§39.1)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-UI-003 (four-step glyph + text equivalent + machine-readable evidence count + downgrade reason code) | `src/lib/epistemic.ts::supportMark`/`supportGlyph`/`supportTextEquivalent`/`DOWNGRADE_REASONS`; `src/components/SupportGlyph.astro` | `tests/unit/epistemic.test.ts` "support glyph (SIG-UI-003)"; `tests/e2e/shell.spec.ts` "support glyph carries its machine-readable payload" |
+| SIG-UI-004 (four fields independently visible; no fused badge) | `src/lib/epistemic.ts::EPISTEMIC_FIELD_NAMES`; `src/components/EpistemicFields.astro` (`data-fused="false"`, four chips) | `tests/unit/epistemic.test.ts` "four independent fields"; `tests/e2e/shell.spec.ts` "renders four separate field chips and never a fused badge" |
+| SIG-UI-005 (no colour-only; redundant non-colour channel per state) | every component ships a glyph/symbol/text channel (`SupportGlyph`, `EpistemicFields` value text, `AbsenceHatch` symbol+text, `ContestedMarker` glyph+label) | `tests/unit/design-tokens.test.ts`; `tests/e2e/shell.spec.ts` "no green for epistemic state, rendered" |
+| SIG-UI-006 (green never for epistemic state) | `src/styles/epistemic.css` (every `--sig-epi-*` is an `hsl()` outside hue [75,165]) | `tests/unit/design-tokens.test.ts::"no epistemic token uses a green hue"`; `tests/e2e/shell.spec.ts` rendered-hue check |
+| SIG-UI-007 (one hatch texture; four §9.5 kinds within; each clickable → research task) | `src/lib/epistemic.ts::ABSENCE_HATCH_CLASS`/`ABSENCE_KIND_META`; `src/components/AbsenceHatch.astro`; `src/lib/task.ts::buildResearchTask`; `src/pages/task/new/[slug].astro` (`getStaticPaths`) | `tests/unit/epistemic.test.ts` "absence: one texture, four kinds"; `tests/unit/task.test.ts`; `tests/e2e/shell.spec.ts` "absence hatch → research task, end to end"; `tests/e2e/content.nojs.spec.ts` "real GET link resolves" |
+| SIG-UI-008 (contested marker persistent at every appearance) | `src/components/ContestedMarker.astro`; rendered in visual-language, `reference-map` popup + table, `reference-graph` list + SVG edge | `tests/e2e/shell.spec.ts` "contested marker is persistent across render paths" |
+| SIG-UI-009 (contradiction as value range; claims plotted with source/tier/date/link + different-quantity note) | `src/lib/epistemic.ts::contradictionRange`/`plotPosition`; `src/components/ContradictionRange.astro`; `fixtures.ts::DEVICE_COUNT_CLAIMS` | `tests/unit/epistemic.test.ts` "contradiction value range"; `tests/e2e/shell.spec.ts` "contradiction renders as a value range" |
+
+## Citation and permanence (§39.9)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-UI-035 (belief-pinned permalink + citation on every page; reproducible after a correction) | `src/lib/citation.ts::beliefPinnedPermalink`/`citationText`; `src/components/Citation.astro` in `BaseLayout.astro`; `fixtures.ts::resolveAsOfBelief` | `tests/unit/citation.test.ts` (incl. "reproducible after a correction"); `tests/e2e/shell.spec.ts` "citation present on {every page}"; `tests/e2e/content.nojs.spec.ts` "citation permalink present without JS" |
+
+## Implementation stack and design system (§40)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-UI-036 (zero-JS-by-default static-first; breaking archivability needs a greppable directive) | `astro.config.mjs` (`output: "static"`); no `client:*` directive anywhere in `src/` | build emits 0 `.js` files; `lighthouserc.json` `resource-summary:script:size` budget = 0 |
+| SIG-UI-037 (usable without JS; tabular equivalent per map, list per graph) | `src/pages/reference-map.astro` (`<table>`); `src/pages/reference-graph.astro` (`<ul>`) | `tests/e2e/content.nojs.spec.ts` (JS disabled): map 3-row table, graph 2-edge list; `tests/e2e/a11y.spec.ts` axe WCAG 2.2 AA |
+| SIG-UI-039 (every dependency OSI-licensed; CC-BY-NC/source-available/BUSL excluded, checked in CI) | `scripts/check-licenses.mjs` (`OSI_ALLOW` + documented `WAIVED` + `DENY`); CI `web` job step | `npm run check:licenses` (CI gate); ADR-049 (waiver rationale) |
+| SIG-UI-041 (performance budgets in CI; build fails on regression) | `lighthouserc.json` (perf ≥ 0.9, script size 0, total ≤ 150 KB); CI `web` job `check:perf` | `npm run check:perf` (CI gate) |

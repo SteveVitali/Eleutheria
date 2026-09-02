@@ -1,0 +1,83 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The reference graph and its LIST EQUIVALENT (SIG-UI-037). Every graph must have a
+// list equivalent. The diagram is a static, zero-JS SVG; the edge list below is the
+// identical information and the no-JS/screen-reader path. Each edge carries its own
+// support glyph, and a contested edge carries the persistent contested marker
+// (SIG-UI-008) in the list itself.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SupportGlyph from "../components/SupportGlyph.astro";
+import ContestedMarker from "../components/ContestedMarker.astro";
+import { REFERENCE_GRAPH_NODES, REFERENCE_GRAPH_EDGES } from "../lib/fixtures";
+import { isContested } from "../lib/epistemic";
+
+const nodeLabel = (id: string) => REFERENCE_GRAPH_NODES.find((n) => n.id === id)?.label ?? id;
+const nodeX = (i: number) => 60 + i * 140;
+---
+
+<BaseLayout title="Reference graph" path="/reference-graph/">
+  <p>
+    A reference relationship graph (the sharing network). It renders as a static
+    diagram with no client JavaScript. <strong>Every edge is also in the list
+    below</strong> — the list is the equivalent, not a fallback.
+  </p>
+
+  <figure aria-labelledby="graph-caption">
+    <svg
+      role="img"
+      aria-label="Static diagram of the reference sharing network; full detail in the list below."
+      viewBox="0 0 400 160"
+      width="400"
+      height="160"
+      style="border:1px solid var(--sig-rule); background: hsl(0deg 0% 97%);"
+    >
+      {REFERENCE_GRAPH_EDGES.map((e) => {
+        const fi = REFERENCE_GRAPH_NODES.findIndex((n) => n.id === e.from);
+        const ti = REFERENCE_GRAPH_NODES.findIndex((n) => n.id === e.to);
+        const midX = (nodeX(fi) + nodeX(ti)) / 2;
+        const contested = isContested(e.agreement);
+        return (
+          <g>
+            <line
+              x1={nodeX(fi)}
+              y1="80"
+              x2={nodeX(ti)}
+              y2="80"
+              stroke="var(--sig-muted)"
+              stroke-width="2"
+              stroke-dasharray={contested ? "4 3" : undefined}
+            />
+            {contested && (
+              // The contested marker persists even in the decorative diagram
+              // (SIG-UI-008): a ≠ glyph, a non-colour channel, on the edge.
+              <text x={midX} y="72" text-anchor="middle" font-size="13" font-weight="700">
+                {"\u2260"}
+              </text>
+            )}
+          </g>
+        );
+      })}
+      {REFERENCE_GRAPH_NODES.map((n, i) => (
+        <g>
+          <circle cx={nodeX(i)} cy="80" r="10" fill="var(--sig-epi-status-resolved)"><title>{n.label}</title></circle>
+          <text x={nodeX(i)} y="110" text-anchor="middle" font-size="10">{n.label}</text>
+        </g>
+      ))}
+    </svg>
+    <figcaption id="graph-caption">Nodes are institutions and vendors; edges are declared relationships.</figcaption>
+  </figure>
+
+  <h2 id="list-heading">List equivalent</h2>
+  <ul class="sig-edge-list" aria-labelledby="list-heading">
+    {REFERENCE_GRAPH_EDGES.map((e) => (
+      <li data-testid="graph-edge">
+        <strong>{nodeLabel(e.from)}</strong> {e.relation} <strong>{nodeLabel(e.to)}</strong>
+        {isContested(e.agreement) && <> <ContestedMarker compact={true} /></>}
+        <div><SupportGlyph support={e.support} evidenceCount={e.evidence_count} /></div>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>

@@ -1,0 +1,36 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The four-step support glyph (SIG-UI-003). The glyph is decorative on its own,
+// so it is always paired with an accessible text equivalent, a machine-readable
+// evidence count, and — where the value is below CONFIRMED — a downgrade reason
+// code. The visible glyph is aria-hidden; the text equivalent carries the meaning.
+import { supportMark } from "../lib/epistemic";
+import type { Support } from "../lib/epistemic";
+
+interface Props {
+  support: Support;
+  evidenceCount: number;
+}
+
+const { support, evidenceCount } = Astro.props;
+const mark = supportMark(support, evidenceCount);
+---
+
+<span
+  class="sig-glyph"
+  data-testid="support-glyph"
+  data-support={mark.support}
+  data-filled-steps={mark.filledSteps}
+  data-evidence-count={mark.evidenceCount}
+  data-downgrade-reason={mark.downgradeReasonCode ?? ""}
+>
+  <span class="sig-glyph__mark" aria-hidden="true">{mark.glyph}</span>
+  <span class="sig-glyph__text"> {mark.textEquivalent}</span>
+  <span class="sig-glyph__evidence"> · {mark.evidenceCount} evidence class{mark.evidenceCount === 1 ? "" : "es"}</span>
+  {mark.downgradeReasonCode && (
+    <span class="sig-glyph__reason"> · downgrade: {mark.downgradeReasonCode}</span>
+  )}
+</span>
