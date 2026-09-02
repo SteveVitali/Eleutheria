@@ -1,0 +1,58 @@
+# SPDX-License-Identifier: Apache-2.0
+# Crawler Conduct Policy (§26, SIG-INGEST-036). The eight operative rules,
+# binding on every connector. Rule 4 (no circumvention) is also a legal posture
+# (SIG-INGEST-037): deviating from it is an ADR-level decision requiring counsel,
+# not an engineering judgment. policy.crawler exposes these as executable checks.
+
+version = "2026-08-26"
+
+[[rules]]
+n = 1
+title = "Identify"
+text = "A descriptive UA with a contact URL and an explanation page. No spoofing."
+
+[[rules]]
+n = 2
+title = "Honor robots.txt"
+text = "Honor robots.txt, including AI-crawler directives and content-signal headers. Where robots.txt is unretrievable, permission is NOT granted (SIG-INGEST-012)."
+
+[[rules]]
+n = 3
+title = "Rate-limit conservatively"
+text = "Rate-limit conservatively, per host, with backoff. Never burden a small civic host."
+
+[[rules]]
+n = 4
+title = "Never circumvent access controls"
+text = "No authentication bypass, no paywall evasion, no challenge-solving, no proxy rotation or human-mimicking to defeat bot management. This is a legal posture (SIG-INGEST-037)."
+
+[[rules]]
+n = 5
+title = "Prefer the offered channel"
+text = "If a source publishes an API, a bulk download, or a partner feed, use it instead of scraping the HTML."
+
+[[rules]]
+n = 6
+title = "Ask first"
+text = "Ask first where the compact is unresolved and the source is a small civil-society project."
+
+[[rules]]
+n = 7
+title = "Honor opt-out"
+text = "Honor opt-out immediately and record it in the compact."
+
+[[rules]]
+n = 8
+title = "Cache aggressively; refetch rarely"
+text = "Conditional requests, content-hash short-circuits."
+
+# Techniques that constitute circumvention under Rule 4. Presence of any of
+# these in a connector's plan is an ADR-level deviation requiring counsel.
+[circumvention]
+techniques = [
+    "authentication_bypass",
+    "paywall_evasion",
+    "challenge_solving",
+    "proxy_rotation",
+    "human_mimicking",
+]

@@ -1,0 +1,83 @@
+# SPDX-License-Identifier: Apache-2.0
+# SIG's own licences (SIG-LIC-005) and the export compartment model
+# (SIG-LIC-004a). This table is DATA, not code: adding a source under a new
+# share-alike licence is a new [compartments.*] / [licenses.*] row here and MUST
+# NOT require a schema or code change. The export gate in policy.licensing reads
+# it at runtime. See docs/2_canonical_design_spec.md §42 and docs/adr/ADR-009,
+# ADR-011.
+
+# ---------------------------------------------------------------------------
+# Per-licence facts. `relicensable_to` is the data-driven compatibility
+# relation: the set of export licences that content under this licence MAY be
+# placed under. Every licence is trivially relicensable to itself. Share-alike
+# licences (ODbL-1.0, CC-BY-SA-4.0) are relicensable to themselves ONLY — which
+# is exactly why they cannot be merged with each other and cannot be folded into
+# the permissive CC-BY-4.0 graph (SIG-LIC-004a). CC0-1.0 (public domain) may be
+# placed under any of them.
+# ---------------------------------------------------------------------------
+
+[licenses."Apache-2.0"]
+kind = "code"
+share_alike = false
+attribution_required = true
+relicensable_to = ["Apache-2.0"]
+
+[licenses."CC-BY-4.0"]
+kind = "data"
+share_alike = false
+attribution_required = true
+relicensable_to = ["CC-BY-4.0"]
+
+[licenses."CC-BY-SA-4.0"]
+kind = "data"
+share_alike = true
+attribution_required = true
+relicensable_to = ["CC-BY-SA-4.0"]
+
+[licenses."ODbL-1.0"]
+kind = "data"
+share_alike = true
+attribution_required = true
+relicensable_to = ["ODbL-1.0"]
+
+[licenses."CC0-1.0"]
+kind = "data"
+share_alike = false
+attribution_required = false
+relicensable_to = ["CC0-1.0", "CC-BY-4.0", "CC-BY-SA-4.0", "ODbL-1.0"]
+
+# ---------------------------------------------------------------------------
+# The export compartments (SIG-LIC-005 / §42.2). Each mutually-incompatible
+# licence regime present in the corpus gets its own separable compartment, its
+# own table, and its own export file. The set is open: more rows may be added.
+# ---------------------------------------------------------------------------
+
+[compartments.code]
+license = "Apache-2.0"
+description = "SIG source code"
+source = "SIG"
+
+[compartments.sig_graph]
+license = "CC-BY-4.0"
+description = "SIG-original evidence graph"
+source = "SIG"
+
+[compartments.osm_physical]
+license = "ODbL-1.0"
+description = "OSM-derived physical-asset layer (separate table and file, §42.3)"
+source = "OpenStreetMap"
+
+[compartments.portal]
+license = "CC-BY-SA-4.0"
+description = "Eyes on Flock-derived portal layer (SC-18.3)"
+source = "Eyes on Flock"
+
+[compartments.ontology]
+license = "CC0-1.0"
+description = "Ontology and controlled vocabularies"
+source = "SIG"
+
+[compartments.osm_contribution]
+license = "CC0-1.0"
+description = "SIG subset dual-licensed CC0 for upstream OSM contribution (SIG-LIC-007a)"
+source = "SIG"

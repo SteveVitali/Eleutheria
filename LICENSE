@@ -1,23 +1,60 @@
-SIG — LICENCE POSTURE (PLACEHOLDER)
-===================================
+SIG — LICENCE POSTURE
+=====================
 
-SPDX-License-Identifier: LicenseRef-SIG-Undetermined
+The repository-wide "undetermined" placeholder was resolved by ticket P00.2
+(the licensing decision, docs/2_canonical_design_spec.md §42, SIG-LIC-005).
+SIG is not a single-licence project: code, data, and documentation carry
+different licences, and the data itself is partitioned into mutually
+incompatible licence compartments computed per-source at export time
+(SIG-LIC-004a). The machine-readable form of this table lives in the `policy/`
+package (`policy.licensing`); this file is its human-readable statement.
 
-This repository's final licensing has NOT yet been decided. The licensing
-decision is owned by ticket P00.2 and by the canonical design spec
-(docs/2_canonical_design_spec.md §42, "Licensing Decision"), which anticipates a
-split posture — for example an open-data licence (ODbL) for database contents
-and a separate open-source licence for code, with per-source rights computed at
-export time.
+Resolved licences (SIG-LIC-005 / §42.2)
+---------------------------------------
 
-Until P00.2 lands:
+  * Code                     Apache-2.0
+      SPDX-License-Identifier: Apache-2.0
+      Patent grant and trademark reservation. AGPL was rejected: the valuable
+      asset is the graph, not the crawler, and AGPL would deter adoption by
+      exactly the institutions Goal 8 targets. Every first-party source file
+      carries the `Apache-2.0` SPDX tag.
 
-  * Treat all code and data in this repository as UNDETERMINED for
-    redistribution purposes.
-  * Every source file carries the SPDX tag `LicenseRef-SIG-Undetermined` as a
-    placeholder. P00.2 replaces both this file and those tags with the resolved
-    licence identifiers.
+  * SIG-original graph data   CC-BY-4.0
+      Attribution keeps the provenance chain alive downstream — SIG's whole
+      thesis. CC0 was rejected for that reason.
 
-This placeholder exists so that the repository has an explicit, machine-readable
-licence posture from its first commit, rather than an implicit "all rights
-reserved" silence.
+  * OSM-derived physical assets   ODbL-1.0   (separate table and export file)
+      Share-alike; published as a physically separate compartment (§42.3,
+      Strategy B). Not mergeable into the CC-BY-4.0 graph.
+
+  * Portal layer (Eyes on Flock–derived)   CC-BY-SA-4.0   (separate compartment)
+      Share-alike; not mergeable with ODbL, and not foldable into CC-BY-4.0.
+
+  * Documentation             CC-BY-4.0
+  * Ontology and vocabularies CC0-1.0
+      A vocabulary succeeds only by adoption; every obligation is an adoption
+      tax, and term lists are barely copyrightable.
+
+  * SIG data contributed upstream to OpenStreetMap   CC0-1.0   (dual-licensed
+      for that purpose only, SIG-LIC-007a) — satisfies OSM's no-additional-
+      copyright import rule; scoped to the contributed subset, not the graph.
+
+The full text of Apache-2.0 governs the code in this repository. The referenced
+data/documentation licences are the standard published texts of ODbL-1.0,
+CC-BY-4.0, CC-BY-SA-4.0, and CC0-1.0 respectively.
+
+Per-source and export-time rights
+----------------------------------
+
+Every source and evidence artifact carries a rights record (SIG-LIC-001): an
+SPDX expression (using `LicenseRef-SIG-<slug>` for bespoke terms), an attribution
+string, a **separately reviewed** `redistributable` boolean (never inferred from
+the licence string, SIG-LIC-003), derivative permission, an `ai_training_permitted`
+grant (SIG-LIC-004b), the terms URL, and the retrieval date. A source with
+unresolved rights is `UNDETERMINED` and fails the export gate closed
+(SIG-LIC-004). Export licences are computed from constituent rights and the build
+fails on incompatibility (SIG-LIC-010); the compatibility gate runs per
+compartment (see `policy.licensing`).
+
+Items referred to counsel before launch (SIG-LIC-009) are listed in the risk
+register (docs/risk_register.md).

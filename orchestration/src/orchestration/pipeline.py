@@ -1,6 +1,6 @@
-# SPDX-License-Identifier: LicenseRef-SIG-Undetermined
-# Copyright (C) 2026 The SIG project. Licence posture is a placeholder; final
-# licences are decided in P00.2 (see LICENSE and docs/2_canonical_design_spec.md §42).
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 """The orchestration seam (SIG-ENG-013 / SIG-INGEST-021).
 
 `orchestration/` is the ONLY package permitted to import a workflow
@@ -9,8 +9,9 @@ exposes plain-CLI stages (see each package's `cli.py`); this package is where
 those stages are wired into a workflow engine in a later ticket.
 
 The import boundary is enforced mechanically by
-`tests/unit/test_import_boundary.py`. No orchestrator has been chosen yet, so
-this module holds only the convention and the seam.
+`tests/unit/test_import_boundary.py`. Dagster OSS is the chosen orchestrator
+(ADR-016 / SIG-INGEST-020), but nothing is wired yet — this module holds only
+the convention and the seam; the choice is kept reversible (SIG-INGEST-021).
 """
 
 from __future__ import annotations

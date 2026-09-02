@@ -1,7 +1,12 @@
-# SPDX-License-Identifier: LicenseRef-SIG-Undetermined
-# Copyright (C) 2026 The SIG project. Licence posture is a placeholder; final
-# licences are decided in P00.2 (see LICENSE and docs/2_canonical_design_spec.md §42).
-"""Licence headers — every source file carries an SPDX tag (P00.1 deliverable 6)."""
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+"""Licence headers — every source file carries an SPDX tag (P00.1 deliverable 6).
+
+The repo-wide placeholder posture was resolved in P00.2: first-party code is
+Apache-2.0 (SIG-LIC-005). Data and documentation carry per-artifact licences and
+are not code source files, so they are not checked here.
+"""
 
 from __future__ import annotations
 
@@ -10,7 +15,7 @@ from pathlib import Path
 import pytest
 from support import PY_PACKAGES, REPO_ROOT
 
-SPDX_TAG = "SPDX-License-Identifier: LicenseRef-SIG-Undetermined"
+SPDX_TAG = "SPDX-License-Identifier: Apache-2.0"
 
 
 def _source_files() -> list[Path]:

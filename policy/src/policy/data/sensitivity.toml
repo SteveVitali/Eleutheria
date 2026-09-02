@@ -1,0 +1,55 @@
+# SPDX-License-Identifier: Apache-2.0
+# Coordinate sensitivity matrix (§43.3, SIG-PUB-004..006) and the geospatial
+# publication tiers (§19.4, SIG-GEO-008..010). Data, not code: the policy engine
+# in policy.sensitivity reads this. Precision is governed by the sensitivity
+# CLASS (role-aware, §12.4 sep. 6), applied at the view layer, with full
+# precision retained only in canonical storage.
+
+# Published-precision matrix, keyed on sensitivity class (§43.3).
+[classes.C1]
+applies = "Publicly visible hardware on public right-of-way"
+published = "exact"
+geo_tier = 0
+
+[classes.C2]
+applies = "Hidden sensor on public infrastructure"
+published = "reduced_precision"        # documented radius / tract level
+geo_tier = 1
+operator_published_upgrade = true       # exact only if the operator already published it
+
+[classes.C3]
+applies = "Private-residence candidate; private registrant in a camera-sharing program"
+published = "no_location"               # program-level facts only
+geo_tier = 3
+
+[classes.C4]
+applies = "Confidential facility (DV shelter, protective, undercover)"
+published = "jurisdiction_only"         # existence not resolvable
+geo_tier = 3
+
+[classes.C5]
+applies = "Mobile asset"
+published = "jurisdiction_only"         # plus dated historical observations; NEVER a current position
+geo_tier = 3
+current_position_forbidden = true
+
+# Geospatial tier transforms (§19.4). Random jitter is forbidden unless the
+# radius is published AND the offset is deterministic per asset (SIG-GEO-009).
+[tiers.0]
+transform = "full_precision"
+
+[tiers.1]
+transform = "truncate"
+decimal_places = 2                       # published number of decimal places
+
+[tiers.2]
+transform = "grid_bin"
+resolution_m = 1000                      # published binning radius; candidates / near-sensitive assets
+
+[tiers.3]
+transform = "jurisdiction_only"          # no geometry published
+
+# The default for ordinary roadside ALPR hardware (SIG-PUB-006): C1. SIG does
+# not invent a new norm for the ordinary case.
+[defaults]
+roadside_alpr = "C1"
