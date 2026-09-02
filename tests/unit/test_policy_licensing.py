@@ -113,6 +113,16 @@ def test_silently_travelling_share_alike_uses_stricter_upstream() -> None:
         licensing.compute_export_license([laundered, _rec("sig", "CC-BY-4.0")])
 
 
+def test_unresolvable_upstream_provenance_fails_closed_not_silently_permissive() -> None:
+    # SIG-LIC-009a: an upstream_license SIG cannot resolve (not in the registry) must
+    # default to the stricter regime, never the declared permissive one — so the build
+    # fails closed rather than laundering an unknown share-alike obligation.
+    unknown = _rec("x", "CC-BY-4.0", upstream_license="GPL-3.0-only")
+    assert licensing.effective_license(unknown) == "GPL-3.0-only"
+    with pytest.raises(licensing.LicenseIncompatibilityError):
+        licensing.compute_export_license([unknown])
+
+
 # --- SIG-LIC-004b/004c: ai-training gate enforced at the data layer ------------
 
 

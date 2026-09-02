@@ -2521,11 +2521,19 @@ name = "sig-exports"
 version = "0.0.0"
 source = { editable = "exports" }
 dependencies = [
+    { name = "duckdb" },
     { name = "rdflib" },
+    { name = "sig-policy" },
+    { name = "sig-resolution" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "rdflib", specifier = ">=7.0" }]
+requires-dist = [
+    { name = "duckdb", specifier = ">=1.0.0" },
+    { name = "rdflib", specifier = ">=7.0" },
+    { name = "sig-policy", editable = "policy" },
+    { name = "sig-resolution", editable = "resolution" },
+]
 
 [[package]]
 name = "sig-inference"
