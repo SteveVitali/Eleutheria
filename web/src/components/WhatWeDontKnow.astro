@@ -1,0 +1,44 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// "What we don't know" — a headline feature, not an appendix (SIG-UI-011). It is
+// rendered in the summary (top of the dossier), in its own §39.2 section, and in
+// the print export; the same gap list is emitted by the API endpoint. Each gap is
+// the single absence hatch (SIG-UI-007), clickable to a research task — a gap is an
+// invitation, not a dead end. NO_EVIDENCE_FOUND gaps name the sources searched.
+import AbsenceHatch from "./AbsenceHatch.astro";
+import { ABSENCE_KIND_META } from "../lib/epistemic";
+import type { Gap } from "../lib/dossier";
+
+interface Props {
+  gaps: Gap[];
+  /** A short DOM-id-safe discriminator so the summary and section copies differ. */
+  variant: string;
+}
+
+const { gaps, variant } = Astro.props;
+---
+
+<ul class="sig-gaps" data-testid={`what-we-dont-know-${variant}`}>
+  {gaps.map((g) => (
+    <li class="sig-gaps__item" data-gap-kind={g.kind}>
+      <span class="sig-gaps__label">{g.label}</span>
+      {" "}
+      <AbsenceHatch
+        kind={g.kind}
+        subject_id={g.subject_id}
+        predicate_id={g.predicate_id}
+        predicate_label={g.label}
+      />
+      {g.kind === "NO_EVIDENCE_FOUND" && g.sources_searched && (
+        <span class="sig-gaps__searched">
+          Sources searched: {g.sources_searched.join(", ")}.
+        </span>
+      )}
+      {g.note && <span class="sig-gaps__note">{g.note}</span>}
+      <span class="sig-visually-hidden">{ABSENCE_KIND_META[g.kind].meaning}</span>
+    </li>
+  ))}
+</ul>

@@ -1,0 +1,101 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The dossier print / PDF path (SIG-UI-013): a document suitable for handing to a
+// council member. It is a standalone, zero-JS page (not the interactive shell
+// layout) that paginates the twelve §39.2 sections into `.sig-print-page` blocks,
+// EACH carrying a footer with the as-of date and the belief-pinned permalink — so
+// every page of the printed PDF is self-identifying and citable (SIG-UI-013/035).
+// Browser "Print → Save as PDF" from this route yields the council-ready document;
+// the reconciliations print expanded (a paper reader cannot click) via print CSS.
+import "../../../styles/epistemic.css";
+import IncompletenessBanner from "../../../components/IncompletenessBanner.astro";
+import WhatWeDontKnow from "../../../components/WhatWeDontKnow.astro";
+import DossierSection from "../../../components/DossierSection.astro";
+import ActionBlocks from "../../../components/ActionBlocks.astro";
+import { SECTION_TITLES, dossierPath, dossierPermalink, validateDossier } from "../../../lib/dossier";
+import type { Section } from "../../../lib/dossier";
+import { DOSSIERS } from "../../../lib/dossier-fixture";
+
+export function getStaticPaths() {
+  return DOSSIERS.map((d) => ({ params: { slug: d.slug }, props: { dossier: d } }));
+}
+
+const { dossier } = Astro.props;
+validateDossier(dossier);
+
+const SECTIONS_PER_PAGE = 3;
+const origin = Astro.site ? Astro.site.origin : undefined;
+const permalink = dossierPermalink(dossier, origin);
+
+const ACTION_FOR_SECTION: Record<string, "authorization" | "termination" | "legal_regime"> = {
+  cost_and_expiry: "termination",
+  accountability_events: "authorization",
+  policy: "legal_regime",
+};
+
+// Chunk the twelve sections into fixed-size pages; page 1 also carries the header,
+// the incompleteness banner, and the "what we don't know" summary.
+const pages: Section[][] = [];
+for (let i = 0; i < dossier.sections.length; i += SECTIONS_PER_PAGE) {
+  pages.push(dossier.sections.slice(i, i + SECTIONS_PER_PAGE));
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{dossier.subject_label} — SIG dossier (print)</title>
+    <link rel="canonical" href={new URL(dossierPath(dossier.slug), Astro.site ?? "https://sig.example").href} />
+  </head>
+  <body>
+    <div class="sig-print-toolbar" role="note">
+      <p>
+        Print or save this page as a PDF (your browser's Print dialog → “Save as PDF”).
+        <a href={dossierPath(dossier.slug)}>Back to the interactive dossier.</a>
+      </p>
+    </div>
+
+    {pages.map((chunk, idx) => (
+      <div class="sig-print-page" data-testid="print-page">
+        {idx === 0 && (
+          <header class="sig-print-header">
+            <h1>{dossier.subject_label}</h1>
+            <p class="sig-dossier-jurisdiction">{dossier.jurisdiction}</p>
+            <IncompletenessBanner dossier={dossier} />
+            <section aria-labelledby="print-summary-gaps">
+              <h2 id="print-summary-gaps">What we don't know (summary)</h2>
+              <WhatWeDontKnow gaps={dossier.gaps} variant="print-summary" />
+            </section>
+          </header>
+        )}
+
+        {chunk.map((section) => (
+          <section data-section-id={section.section_id}>
+            <h2>{SECTION_TITLES[section.section_id]}</h2>
+            {section.section_id === "what_we_dont_know" ? (
+              <WhatWeDontKnow gaps={dossier.gaps} variant="print-section" />
+            ) : (
+              <DossierSection section={section} />
+            )}
+            {ACTION_FOR_SECTION[section.section_id] && (
+              <ActionBlocks dossier={dossier} which={ACTION_FOR_SECTION[section.section_id]!} />
+            )}
+          </section>
+        ))}
+
+        <footer class="sig-print-footer" data-testid="print-footer">
+          <span class="sig-print-footer__asof">
+            As of world <time datetime={dossier.asOf.as_of_world}>{dossier.asOf.as_of_world}</time>,
+            belief <time datetime={dossier.asOf.as_of_belief}>{dossier.asOf.as_of_belief}</time>
+          </span>
+          <a class="sig-print-footer__permalink" data-testid="print-permalink" href={permalink}>{permalink}</a>
+        </footer>
+      </div>
+    ))}
+  </body>
+</html>

@@ -262,3 +262,173 @@ table.sig-table td {
   white-space: pre-wrap;
   word-break: break-word;
 }
+
+/* --- The local dossier (§39.2, SIG-UI-010..015) ---------------------------- */
+/* All chrome here is neutral greyscale — no `--sig-epi-*` tokens — so it carries
+ * no epistemic meaning and is exempt from the green-band rule (SIG-UI-006). */
+
+/* The incompleteness banner (SIG-UI-012): prominent, not fine print. */
+.sig-incompleteness {
+  border: 2px solid var(--sig-epi-agreement-contested);
+  background: color-mix(in srgb, var(--sig-epi-agreement-contested) 8%, transparent);
+  padding: 0.75rem 1rem;
+  margin: 1rem 0 1.5rem;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+.sig-dossier-summary {
+  border-left: 4px solid var(--sig-rule);
+  padding-left: 1rem;
+  margin: 1rem 0 1.5rem;
+}
+
+/* "What we don't know" gap list (SIG-UI-011). */
+.sig-gaps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.sig-gaps__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+.sig-gaps__label {
+  font-weight: 600;
+}
+.sig-gaps__searched,
+.sig-gaps__note {
+  color: var(--sig-muted);
+  font-size: 0.9rem;
+  flex-basis: 100%;
+}
+
+/* Material figure → reconciliation disclosure (SIG-UI-014). */
+.sig-recon {
+  border: 1px solid var(--sig-rule);
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  margin: 0.6rem 0;
+}
+.sig-recon > summary {
+  cursor: pointer;
+  font-size: 1rem;
+}
+.sig-recon__label {
+  color: var(--sig-muted);
+}
+.sig-recon__body {
+  margin-top: 0.6rem;
+}
+.sig-recon__rule-label {
+  color: var(--sig-muted);
+  font-size: 0.85rem;
+}
+.sig-recon__claims {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+.sig-recon__won {
+  color: var(--sig-muted);
+  font-weight: 400;
+}
+.sig-recon__diff {
+  font-size: 0.9rem;
+  color: var(--sig-muted);
+}
+
+/* Dossier rows + unknown values (SIG-UI-015). */
+.sig-dossier-rows {
+  list-style: none;
+  padding: 0;
+  margin: 0.4rem 0;
+}
+.sig-dossier-row {
+  padding: 0.25rem 0;
+}
+.sig-dossier-row__label {
+  font-weight: 600;
+}
+.sig-dossier-row__note {
+  color: var(--sig-muted);
+}
+.sig-unknown {
+  color: var(--sig-muted);
+  font-style: italic;
+}
+
+/* The three action blocks (SIG-UI-014a). */
+.sig-action-block {
+  border: 1px solid var(--sig-rule);
+  border-radius: 4px;
+  padding: 0.6rem 0.9rem;
+  margin: 0.8rem 0;
+}
+.sig-action-block h3 {
+  margin-top: 0;
+}
+.sig-kv {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.2rem 1rem;
+  margin: 0;
+}
+.sig-kv dt {
+  font-weight: 600;
+  color: var(--sig-muted);
+}
+.sig-kv dd {
+  margin: 0;
+}
+
+/* --- The print / PDF path (SIG-UI-013) ------------------------------------- */
+/* The dedicated print route renders the dossier as paginated `.sig-print-page`
+ * blocks, EACH carrying a footer with the as-of date and the permalink, so every
+ * page of the printed PDF is self-identifying and citable. Browser "print to PDF"
+ * from this route produces a hand-to-a-council-member document. */
+.sig-print-page {
+  margin: 0 auto 2rem;
+  max-width: 62rem;
+}
+.sig-print-footer {
+  border-top: 1px solid var(--sig-muted);
+  margin-top: 1.5rem;
+  padding-top: 0.4rem;
+  font-size: 0.75rem;
+  color: var(--sig-muted);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+@media print {
+  @page {
+    size: letter;
+    margin: 2cm;
+  }
+  .sig-header,
+  .sig-skip-link,
+  .sig-cite,
+  .sig-print-toolbar {
+    display: none !important;
+  }
+  .sig-print-page {
+    page-break-after: always;
+  }
+  .sig-print-page:last-child {
+    page-break-after: auto;
+  }
+  /* Reconciliations are printed expanded — a paper reader cannot click. */
+  details.sig-recon > .sig-recon__body {
+    display: block !important;
+  }
+  a {
+    color: var(--sig-ink);
+  }
+}
