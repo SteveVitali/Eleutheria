@@ -37,10 +37,13 @@ of a landed one.
 | ADR-023 | An `evidence/` package + content-addressed blob dedup for the capture row (P02.2) |
 | ADR-024 | A pinned, deterministic, in-repo EDTF envelope derivation (P02.3) |
 | ADR-025 | Temporal invariants as pipeline data-quality checks; as-of as SQL functions (P02.3) |
+| ADR-026 | The eight-stage connector framework: fetch-only egress + socket-level network-isolated replay (P04.1) |
 
 ADR-001…012 are the §15.5 decision set; ADR-013…020 are the stack ADRs. The
 egress question of §38.5 is resolved for the whole project in ADR-015. ADR-021 is
 the P00.4 source-registry decision; ADR-022 is the P02.1 claim-spine partitioning
 decision; ADR-023 is the P02.2 evidence-store package + blob-dedup decision;
 ADR-024 and ADR-025 are the P02.3 temporal-semantics decisions (the EDTF envelope
-function, and the invariant/as-of enforcement surfaces).
+function, and the invariant/as-of enforcement surfaces). ADR-026 is the P04.1
+connector-framework decision (the eight-stage contract, fetch-only egress, and
+socket-level network-isolated replay).

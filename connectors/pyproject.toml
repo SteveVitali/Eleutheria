@@ -1,18 +1,23 @@
 [project]
 name = "sig-connectors"
 version = "0.0.0"
-description = "SIG connectors package: the seeded source registry and the ingestion gate (§22)."
+description = "SIG connectors package: the eight-stage connector framework, source registry, and ingestion gate (§21, §22)."
 requires-python = ">=3.11"
-# The registry carries a policy.rights.RightsRecord per source and its
-# UNDETERMINED rows must fail the policy export gate (SIG-LIC-004), so this
-# package depends on sig-policy (resolved from the workspace).
-dependencies = ["sig-policy"]
+# The connector framework (P04.1) is the substrate every source adapter plugs
+# into: it gates on policy (rights/licensing/crawler conduct), archives through
+# the evidence store, resolves entities via the resolution layer at link(), and
+# maps run lineage onto the PROV-O projection in exports. All resolved from the
+# workspace; none of these depend back on connectors (no cycle).
+dependencies = ["sig-policy", "sig-evidence", "sig-resolution", "sig-exports"]
 
 [project.scripts]
 sig-connectors = "connectors.cli:main"
 
 [tool.uv.sources]
 sig-policy = { workspace = true }
+sig-evidence = { workspace = true }
+sig-resolution = { workspace = true }
+sig-exports = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]
