@@ -352,3 +352,70 @@ P02.2 `ingest_run` lineage (`exports/src/exports/provo.py`). ADR-024/025.
 |---|---|---|
 | SIG-INGEST-015 (every claim traceable to its `ingest_run`) | `exports.provo` (claim→run/extraction wiring); P02.1 `claim.ingest_run_id` | `tests/exports/test_provo.py::test_wiring_edges_use_prov_vocabulary` |
 | SIG-INGEST-016 / AC6 (lineage maps onto PROV-O; captures/claims=Entity, runs/extractions=Activity, connectors/curators/sources=Agent, `revises_claim`=`prov:wasRevisionOf`; export validates) | `exports.provo.build_prov_graph`, `validate_prov_graph`, `export_lineage` | `tests/exports/test_provo.py::test_captures_and_claims_are_entities`, `::test_runs_and_extractions_are_activities`, `::test_connectors_curators_sources_are_agents`, `::test_revises_claim_maps_to_was_revision_of`, `::test_export_validates`, `::test_validation_rejects_a_disjoint_class_conflict` |
+
+# P03.1 — Jurisdiction and Organization registries
+
+Stable identity before anything is counted (Phase 3, first half): the identity
+substrate in the `resolution/` package over the physical registry tables already
+shipped in P02 (App C.4 `jurisdiction` / `organization` / `organization_relation`
+/ `entity_identifier`). The seven-value `OrganizationRelationType` and the
+`GeometryPrecision` vocabularies are added to the LinkML source of truth (§20.1)
+and regenerated. `normalize_org_name()`, the crosswalk, the deterministic cascade,
+and public `sig:` minting are P03.2 and are deliberately absent here.
+
+## Jurisdiction registry and temporal geometry (§11.1, SIG-ONTO-010/011)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ONTO-010 (first-class jurisdiction; overlapping self-referential hierarchy; pluggable code systems; MultiPolygon + boundary_source) | `resolution.jurisdiction.JurisdictionRecord` (`parents` tuple = overlap), `resolution.jurisdiction.build_jurisdiction`; `db/deploy/domain_entities.sql` (`jurisdiction`) | `tests/resolution/test_jurisdiction.py::test_overlapping_parents_are_permitted`, `::test_geoid_identifiers_are_validated_against_the_level` |
+| SIG-ONTO-011 (jurisdiction geometry is temporally versioned; as-of differs from today) | `resolution.jurisdiction.BoundaryVersion`, `JurisdictionRecord.boundary_as_of`; `db/deploy/domain_entities.sql` (`jurisdiction.boundary_valid`) | `tests/resolution/test_jurisdiction.py::test_boundary_as_of_returns_the_version_in_force`, `tests/db/test_identity_registry.py::test_jurisdiction_boundary_is_temporally_versioned` |
+| SIG-IDENT-005 (GEOIDs fixed-width strings + explicit level; 7-char is ambiguous) | `resolution.geoid.validate_geoid`, `GEOID_WIDTHS`, `geoid_levels_for_width` | `tests/resolution/test_geoid.py::test_valid_fixed_width_geoids_pass`, `::test_seven_char_geoid_is_ambiguous_without_a_level`, `::test_wrong_width_for_level_is_rejected`, `::test_missing_level_is_rejected`; `tests/db/test_identity_registry.py::test_jurisdiction_requires_an_explicit_level` |
+
+## Organization registry (§11.2, SIG-ONTO-012/013, SIG-IDENT-006/010)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ONTO-012 (single entity for all actors; vendor is a role, not a subtype) | `resolution.identity.Organization` (one class; `organization_class` is a value, vendor never a subtype) | `tests/resolution/test_identity.py::test_two_axes_are_independent`, `tests/resolution/test_vocab_conformance.py::test_two_axes_are_grounded_in_the_ontology_vocabularies` |
+| SIG-IDENT-006 (identifiers are SETS of (scheme,value), never single columns) | `resolution.identity.Identifier`, `identifier_set`; `db/deploy/domain_entities.sql` (`entity_identifier` PK) | `tests/resolution/test_identity.py::test_identifiers_are_a_deduplicating_set`, `::test_identifier_requires_scheme_and_value`; `tests/db/test_identity_registry.py::test_identifiers_are_a_set_per_entity` |
+| SIG-IDENT-010 (two independent axes: organization_class × operating_relationship) | `resolution.identity.TwoAxisClassification`, `classify` (class∈OrganizationType, relationship∈Role) | `tests/resolution/test_identity.py::test_two_axes_are_independent`, `::test_two_axes_require_both`; `tests/resolution/test_vocab_conformance.py::test_two_axes_are_grounded_in_the_ontology_vocabularies` |
+| SIG-IDENT-018 (status vocab active\|inactive\|withdrawn\|suppressed; withdrawn≠suppressed) | `resolution.identity.OrgStatus`; `db/deploy/domain_entities.sql` (`organization.status`) | `tests/resolution/test_identity.py::test_status_vocabulary`; `tests/db/test_identity_registry.py::test_status_vocabulary_values_persist` |
+
+## Municipality / department split and colon-name parsing (SIG-IDENT-009/011)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-IDENT-009 (municipality and its police department are distinct orgs joined by parent_of) | `resolution.temporal_identity.municipality_department_pair` | `tests/resolution/test_temporal_identity.py::test_municipality_and_department_are_distinct_joined_by_parent_of`, `::test_municipality_department_pair_requires_distinct_entities`; `tests/db/test_identity_registry.py::test_municipality_and_department_are_distinct_joined_by_parent_of` |
+| SIG-IDENT-011 (colon agency name → parent + local unit; parent materialized) | `resolution.identity.parse_agency_name`, `AgencyName` | `tests/resolution/test_identity.py::test_colon_name_splits_into_parent_and_unit`, `::test_name_without_colon_has_no_parent`, `::test_dangling_colon_is_not_a_parent_split` |
+
+## Surrogate identity and publication review (§14.4, SIG-IDENT-012, SIG-ONTO-013)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-IDENT-012 (surrogate with immutable identity_basis of the six named fields) | `resolution.identity.IdentityBasis` (frozen), `mint_surrogate`; `db/deploy/domain_entities.sql` (`organization.identity_basis` jsonb) | `tests/resolution/test_identity.py::test_identity_basis_is_immutable_with_six_fields`, `::test_surrogate_minting_is_deterministic_and_routes_private_bodies_to_review`; `tests/db/test_identity_registry.py::test_surrogate_identity_basis_round_trips` |
+| SIG-ONTO-013 (surrogate-only small private body routed through §43.4 publication review) | `resolution.identity.requires_publication_review`, `mint_surrogate`; `organization.publication_review_required` | `tests/resolution/test_identity.py::test_publication_review_routing_rule`, `::test_organization_to_row_maps_class_to_type_and_carries_basis` |
+
+## Geometry precision guard (SIG-IDENT-004)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-IDENT-004 (agency centroid stored as `organization_centroid_or_unknown`; barred from point-in-polygon and address use) | `resolution.geometry_precision.GeometryPrecision`, `assert_point_in_polygon_usable`, `assert_usable_as_address` | `tests/resolution/test_geometry_precision.py::test_agency_centroid_is_rejected_for_point_in_polygon`, `::test_agency_centroid_is_rejected_as_an_address`, `::test_real_precisions_are_usable` |
+
+## Temporal identity: the reified relation and rename-is-not-succession (§14.5, SIG-IDENT-016/017/019)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-IDENT-016 (reified, bitemporal OrganizationRelation; seven-value vocabulary; valid + txn time) | `resolution.temporal_identity.OrganizationRelationType`, `OrganizationRelation`; ontology `OrganizationRelationType` enum; `db/deploy/domain_entities.sql` (`organization_relation`) | `tests/resolution/test_temporal_identity.py::test_relation_vocabulary_is_exactly_seven_values`, `::test_relation_carries_valid_time_and_serialises`, `::test_relation_rejects_a_self_loop_and_coerces_a_string_type`; `tests/resolution/test_vocab_conformance.py::test_organization_relation_type_matches_the_ontology`; `tests/db/test_identity_registry.py::test_all_seven_relation_types_are_storable`, `::test_municipality_and_department_are_distinct_joined_by_parent_of` |
+| SIG-IDENT-017 (a pure rename → new version + dated alias; NO succession relation; NO new identifier) | `resolution.temporal_identity.rename_organization`, `RenameResult` | `tests/resolution/test_temporal_identity.py::test_rename_produces_no_succession_and_no_new_identifier`, `::test_identifiers_survive_a_rename_unchanged` |
+| SIG-IDENT-019 (five succession fixtures pass) | `resolution.temporal_identity.absorb`/`merge`/`split`/`rename_organization`/`acquire` + `transfer_product_vendor` | `tests/resolution/test_temporal_identity.py::test_absorb_fixture`, `::test_merge_fixture`, `::test_split_fixture`, `::test_rename_produces_no_succession_and_no_new_identifier`, `::test_acquire_fixture_transfers_product_ownership` |
+
+## Registry-ingest guard (SIG-IDENT-008)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-IDENT-008 (zero-record ingest fails the run; absent distinguished from not-observed) | `resolution.registry_ingest.assert_registry_records_present`, `classify_zero`, `ZeroRecordIngest` (reuses `db.absence`) | `tests/resolution/test_registry_ingest.py::test_zero_record_ingest_fails_the_run`, `::test_absent_is_distinguished_from_not_observed`, `::test_not_observed_zero_must_name_the_sources_searched`, `::test_nonzero_ingest_returns_the_count` |
+
+## Vocabulary as code (§20.1, ADR-007)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ONTO-068 (namespaced vocabularies; class axis in OrganizationType, relationship axis in Role) + single-source-of-truth for the two new enums | `ontology/src/ontology/schema/common.yaml` (`OrganizationRelationType`, `GeometryPrecision`); regenerated `ontology/generated/**` | `tests/resolution/test_vocab_conformance.py::test_organization_relation_type_matches_the_ontology`, `::test_geometry_precision_matches_the_ontology`; `tests/ontology/test_generation_gate.py` (`make verify-gen`) |

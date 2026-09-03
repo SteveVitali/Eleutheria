@@ -725,6 +725,66 @@ class SuccessionKind(str, Enum):
     absorbed_by = "absorbed_by"
 
 
+class OrganizationRelationType(str, Enum):
+    """
+    The seven-value vocabulary of the reified, bitemporal OrganizationRelation (§14.5, SIG-IDENT-016). Organizational change is modelled as first-class relation records carrying valid + transaction time, never as a mutable column. A pure rename is deliberately NOT here: renaming produces a new version and a dated alias, never a succession relation (SIG-IDENT-017).
+    """
+    same_as = "same_as"
+    """
+    The two records denote the same real-world organization.
+    """
+    succeeded_by = "succeeded_by"
+    """
+    A organization was succeeded by B (temporal substitution).
+    """
+    merged_into = "merged_into"
+    """
+    A was merged into B (A ceases; B continues/created).
+    """
+    split_into = "split_into"
+    """
+    A split into B (and usually others).
+    """
+    absorbed = "absorbed"
+    """
+    A was absorbed by B (e.g. a disbanded PD taken over by a county sheriff).
+    """
+    parent_of = "parent_of"
+    """
+    A is the parent body of B (a municipality is parent_of its police department, SIG-IDENT-009).
+    """
+    acquired = "acquired"
+    """
+    A acquired B (e.g. a vendor acquisition transferring product ownership).
+    """
+
+
+class GeometryPrecision(str, Enum):
+    """
+    How precisely a stored geometry locates its subject (§14.2, SIG-IDENT-004). An agency-registry latitude/longitude MUST be stored as `organization_centroid_or_unknown` and MUST NOT be used for point-in-polygon jurisdiction assignment or as an organization address — using an agency centroid as a device location would be a fabrication.
+    """
+    rooftop = "rooftop"
+    """
+    A rooftop / address-point geocode.
+    """
+    parcel_centroid = "parcel_centroid"
+    """
+    The centroid of a matched parcel.
+    """
+    street_interpolated = "street_interpolated"
+    """
+    Interpolated along a street segment.
+    """
+    place_centroid = "place_centroid"
+    """
+    The centroid of a containing place; coarse.
+    """
+    organization_centroid_or_unknown = "organization_centroid_or_unknown"
+    """
+    An agency-registry point of unknown precision; barred from point-in-polygon and address use (SIG-IDENT-004).
+    """
+
+
 class JurisdictionType(str, Enum):
     """
     Jurisdiction type, namespaced per country (§11.1, §13.7).

@@ -292,11 +292,13 @@ Name: sig
 | [EpistemicStatus](enums/EpistemicStatus.md) | Required epistemic status of an accountability event (§11 |
 | [EvidenceRole](enums/EvidenceRole.md) | The role a piece of evidence plays for a claim (§13 |
 | [FundingInstrumentType](enums/FundingInstrumentType.md) | Funding instrument type (§11 |
+| [GeometryPrecision](enums/GeometryPrecision.md) | How precisely a stored geometry locates its subject (§14 |
 | [JurisdictionType](enums/JurisdictionType.md) | Jurisdiction type, namespaced per country (§11 |
 | [LegalInstrumentType](enums/LegalInstrumentType.md) | Legal instrument type, internationalized (§11 |
 | [Mobility](enums/Mobility.md) | Physical asset mobility (§11 |
 | [ObservedVia](enums/ObservedVia.md) | How a configuration state was observed (§11 |
 | [OperationalState](enums/OperationalState.md) | Track 3 — operational (§13 |
+| [OrganizationRelationType](enums/OrganizationRelationType.md) | The seven-value vocabulary of the reified, bitemporal OrganizationRelation (§... |
 | [OrganizationType](enums/OrganizationType.md) | Organization type, namespaced and extensible (§11 |
 | [PhysicalState](enums/PhysicalState.md) | Track 2 — physical (§13 |
 | [PolicyType](enums/PolicyType.md) | Policy type (§11 |
