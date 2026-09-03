@@ -1,0 +1,16 @@
+# SPDX-License-Identifier: Apache-2.0
+# The vendor-portal slug grammar and denylist (SIG-IDENT-015), §14.4.
+#
+# Vendor portal slugs (e.g. a Flock/Fusus network subdomain or path segment) are
+# parsed by THIS documented, versioned grammar — never by ad-hoc splitting — and a
+# parse produces a HYPOTHESIS, never an identity assertion. Vendor-internal test
+# organisations are excluded by the explicit denylist below so a demo/test tenant
+# never becomes a candidate real body.
+
+version = "1"
+
+# Exact slug tokens (case-insensitive) that are vendor-internal test tenants.
+denylist_exact = ["test", "demo", "sandbox", "training", "example", "internal", "qa"]
+
+# Slug tokens that, if present anywhere, mark the slug as vendor-internal.
+denylist_contains = ["flock-test", "internal-demo", "do-not-use"]

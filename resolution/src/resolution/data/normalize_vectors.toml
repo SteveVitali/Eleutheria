@@ -1,0 +1,72 @@
+# SPDX-License-Identifier: Apache-2.0
+# Committed normalize_org_name() test vectors (SIG-IDENT-022). This is the
+# behavioural contract that runs in CI: tests/resolution/test_normalize.py asserts
+# normalize_org_name(input) == expected for EVERY vector below. Changing the
+# normaliser's behaviour means editing these vectors and bumping the ruleset
+# version in normalize_rules.toml — the function's output is versioned data, not
+# an implementation detail that may drift silently.
+
+version = "1"
+
+# --- Sheriff's Office / Department collapse to one canonical suffix ----------
+[[vector]]
+input = "Los Angeles County Sheriff's Office"
+expected = "los angeles county sheriff office"
+note = "possessive apostrophe dropped; 'office' is the canonical suffix"
+
+[[vector]]
+input = "Los Angeles County Sheriff's Department"
+expected = "los angeles county sheriff office"
+note = "'Department' collapses to the same suffix as 'Office' (SIG-IDENT-022)"
+
+[[vector]]
+input = "Harris County Sheriffs Dept"
+expected = "harris county sheriff office"
+note = "no apostrophe + abbreviation both reach the one canonical form"
+
+# --- Casing, whitespace, punctuation, unicode -------------------------------
+[[vector]]
+input = "  BERKELEY   Police   Department  "
+expected = "berkeley police department"
+note = "case-folded, whitespace collapsed and trimmed"
+
+[[vector]]
+input = "Ville de Montréal — Service de Police"
+expected = "ville de montreal service de police"
+note = "accents folded; em-dash treated as punctuation"
+
+[[vector]]
+input = "Cook County Sheriff & Police"
+expected = "cook county sheriff and police"
+note = "ampersand expands to 'and'"
+
+[[vector]]
+input = "Springfield Twp Police Dept"
+expected = "springfield township police department"
+note = "unambiguous abbreviations expand"
+
+# --- Acronyms resolve by EXACT lookup only (never fuzzy) --------------------
+[[vector]]
+input = "LAPD"
+expected = "los angeles police department"
+note = "exact acronym lookup, then normalised"
+
+[[vector]]
+input = "lasd"
+expected = "los angeles county sheriff office"
+note = "acronym lookup is case-insensitive; LASD expands then collapses its suffix"
+
+[[vector]]
+input = "  CHP  "
+expected = "california highway patrol"
+note = "trimmed before exact acronym lookup"
+
+[[vector]]
+input = "LAPDX"
+expected = "lapdx"
+note = "a near-miss is NOT an acronym; it is normalised literally, never fuzzy-matched to LAPD"
+
+[[vector]]
+input = "LAP"
+expected = "lap"
+note = "a prefix of an acronym is not the acronym (exact whole-string lookup)"

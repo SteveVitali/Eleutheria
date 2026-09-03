@@ -1,0 +1,31 @@
+# SPDX-License-Identifier: Apache-2.0
+# The normalize_org_name() ruleset — DATA, not code (SIG-IDENT-022). Its version
+# is bumped whenever a rule changes; committed test vectors in
+# normalize_vectors.toml pin behaviour and run in CI. The function that reads this
+# is resolution.normalize.normalize_org_name.
+
+version = "1"
+
+# Phrase-level canonical-suffix collapse, applied after casing/punctuation
+# normalisation and tokenisation (whole-phrase suffix match on the trailing
+# tokens). "Sheriff's Office" and "Sheriff's Department" collapse to ONE canonical
+# suffix so the same body written both ways normalises identically (SIG-IDENT-022).
+[[suffix_collapse]]
+canonical = "sheriff office"
+variants = [
+  "sheriff office",
+  "sheriff department",
+  "sheriffs office",
+  "sheriffs department",
+  "sheriffs dept",
+  "sheriff dept",
+]
+
+# Token-level abbreviation expansion (exact whole-token match only — never a
+# substring, and never fuzzy). Kept deliberately small and unambiguous: an
+# expansion that could mean two different things (e.g. "co" → county|company) is
+# excluded rather than guessed.
+[abbreviations]
+dept = "department"
+depts = "departments"
+twp = "township"

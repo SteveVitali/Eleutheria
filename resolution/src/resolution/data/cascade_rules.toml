@@ -1,0 +1,43 @@
+# SPDX-License-Identifier: Apache-2.0
+# The deterministic cascade's exclusion data (§14.6, SIG-IDENT-020). All three
+# tables are DATA, not code, and are versioned with `version` so a change to what
+# the cascade will auto-write is a reviewable data diff.
+#
+# * name_collisions  — normalized names that collide across DISTINCT real entities
+#   even within one state+class, so Tier 2 MUST NOT auto-write on them (it routes
+#   to review instead). This stands in for the data-GENERATED collision list a real
+#   run derives from the corpus; the shape (a versioned exclusion set) is the point.
+# * shared_hosting_domains — domains that host many unrelated bodies, so a shared
+#   domain is NOT evidence of same-entity at Tier 3a.
+# * tier0_schemes    — the canonical identifier schemes an exact shared value may
+#   auto-link on at Tier 0 (ORI9, GEOID, LEI, UEI, QID).
+
+version = "1"
+
+# Generic names that recur for unrelated agencies nationwide; excluded from Tier-2
+# name+state+class auto-write.
+name_collisions = [
+  "springfield police department",
+  "washington police department",
+  "franklin police department",
+  "lincoln police department",
+  "clinton police department",
+]
+
+# Shared-hosting / portal domains that many unrelated bodies sit behind.
+shared_hosting_domains = [
+  "wordpress.com",
+  "wixsite.com",
+  "govoffice.com",
+  "revize.com",
+  "cityofpost.com",
+]
+
+# Canonical schemes eligible for a Tier-0 exact-shared-identifier auto-write.
+tier0_schemes = [
+  "us.fbi.ori",
+  "us.census.geoid",
+  "gleif.lei",
+  "us.sam.uei",
+  "wikidata.qid",
+]

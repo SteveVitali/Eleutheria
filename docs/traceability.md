@@ -419,3 +419,43 @@ and public `sig:` minting are P03.2 and are deliberately absent here.
 | Requirement | Where | Test |
 |---|---|---|
 | SIG-ONTO-068 (namespaced vocabularies; class axis in OrganizationType, relationship axis in Role) + single-source-of-truth for the two new enums | `ontology/src/ontology/schema/common.yaml` (`OrganizationRelationType`, `GeometryPrecision`); regenerated `ontology/generated/**` | `tests/resolution/test_vocab_conformance.py::test_organization_relation_type_matches_the_ontology`, `::test_geometry_precision_matches_the_ontology`; `tests/ontology/test_generation_gate.py` (`make verify-gen`) |
+
+# P03.2 — Deterministic entity resolution
+
+## Identifier crosswalk and per-class canonical schemes (§14.2, SIG-IDENT-001/002/003/007)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-IDENT-001 (every class has a designated canonical identifier scheme; else a surrogate) | `resolution.crosswalk.canonical_scheme_for`, `SchemeResolution`; `data/canonical_schemes.toml` | `tests/resolution/test_crosswalk.py::test_us_le_class_is_ori`, `::test_representative_classes_map_to_their_schemes`, `::test_class_with_no_external_scheme_takes_a_surrogate`, `::test_exact_class_match_beats_prefix` |
+| SIG-IDENT-002 (ORI validated by `^[A-Z0-9]{9}$`, never positional; UCR↔USPS table incl NB→NE, GM→GU) | `resolution.ori.validate_ori`, `ORI_PATTERN`, `ucr_to_usps`, `usps_to_ucr`, `ucr_usps_divergences`; `data/ucr_usps.toml` | `tests/resolution/test_ori.py::test_valid_ori_is_nine_alnum`, `::test_validation_does_not_consult_the_state_prefix`, `::test_ucr_usps_divergences_include_the_mandated_pairs`, `::test_ucr_to_usps_translates_divergent_and_passes_through_identical` |
+| SIG-IDENT-003 (ORI with alphabetic 9th char flagged civil/applicant; not auto-linked without a 2nd source) | `resolution.ori.is_civil_ori`; `resolution.cascade._tier0` (civil ORI refused as sole basis) | `tests/resolution/test_ori.py::test_alphabetic_ninth_char_is_flagged_civil`, `::test_numeric_ninth_char_is_not_civil`; `tests/resolution/test_cascade.py::test_civil_ori_alone_does_not_auto_link_at_tier0`, `::test_civil_ori_with_a_second_shared_id_still_auto_links` |
+| SIG-IDENT-007 (Wikidata recorded but not depended on for US LE; strong for vendors) | `resolution.crosswalk.wikidata_reliable_for` | `tests/resolution/test_crosswalk.py::test_wikidata_is_not_reliable_for_us_le_but_is_for_vendors` |
+
+## Name normalisation (§14.6, SIG-IDENT-022)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-IDENT-022 (`normalize_org_name()` pure/deterministic/versioned + committed vectors in CI; sheriff collapse; acronyms by exact lookup only, never fuzzy) | `resolution.normalize.normalize_org_name`, `resolve_acronym`, `NORMALIZE_RULESET_VERSION`; `data/normalize_rules.toml`, `data/acronym_alias.toml`, `data/normalize_vectors.toml` | `tests/resolution/test_normalize.py::test_every_committed_vector_holds`, `::test_is_deterministic_and_idempotent`, `::test_sheriff_office_and_department_collapse_to_one_suffix`, `::test_similar_initials_are_not_fuzzy_merged`, `::test_acronym_lookup_is_whole_string_not_substring` |
+
+## Deterministic cascade tiers 0–3 and address keys (§14.6/§14.4, SIG-IDENT-020/025/013/015)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-IDENT-020 (six-tier cascade, deterministic first; tiers 0–3 auto-write) | `resolution.cascade.resolve`, `Candidate`, `MatchResult`, `CascadeContext`; `data/cascade_rules.toml` | `tests/resolution/test_cascade.py::test_tier0_exact_shared_ori_auto_writes`, `::test_tier1_established_crosswalk_auto_writes`, `::test_tier2_name_state_class_auto_writes`, `::test_tier3a_shared_gov_domain_auto_writes`, `::test_tier3b_k1_plus_name_auto_writes`, `::test_tier0_precedes_lower_tiers` |
+| SIG-IDENT-025 (every match records `match_tier` + `match_evidence`) | `resolution.cascade.MatchResult` (`match_tier`, `tier_label`, `match_evidence`) | `tests/resolution/test_cascade.py` (`_assert_auto_write` asserts both on every tier) |
+| SIG-IDENT-013 (address keys K1–K4; K1/K2 may match, K3/K4 blocking-only, never identity evidence) | `resolution.address.AddressKeys`, `IDENTITY_KEYS`, `BLOCKING_ONLY_KEYS`, `assert_identity_usable`, `build_address_keys`; `resolution.cascade._tier3b` (K1 only) | `tests/resolution/test_address.py::test_blocking_only_keys_are_refused_as_identity_evidence`, `::test_build_partitions_keys_into_identity_and_blocking`; `tests/resolution/test_cascade.py::test_tier3b_uses_only_k1_never_a_blocking_key` |
+| SIG-IDENT-015 (vendor-portal slugs parsed by a versioned grammar + denylist; hypothesis, never identity) | `resolution.slug.parse_slug`, `SlugHypothesis`, `is_denied_slug`, `SLUG_GRAMMAR_VERSION`; `data/slug_grammar.toml` | `tests/resolution/test_slug.py::test_slug_parses_by_grammar_into_a_hypothesis`, `::test_denylisted_test_tenants_never_parse_to_a_body`, `::test_contains_denylist_marker_is_denied` |
+
+## Public identifiers and stability (§14.8, SIG-IDENT-031/032)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-IDENT-031 (mint `sig:<type>:<uuidv7>`, dereferenceable at `/id/<type>/<uuid>` with content negotiation) | `resolution.public_id.uuid7`, `mint`, `parse`, `dereference_url`, `negotiate` | `tests/resolution/test_public_id.py::test_uuid7_has_version_7_and_is_time_ordered`, `::test_mint_produces_sig_type_uuidv7_form`, `::test_dereference_url_uses_the_id_path`, `::test_content_negotiation_covers_html_jsonld_rdf` |
+| SIG-IDENT-032 (stable across split/merge; `redirects_to`/`split_into` + tombstones; never silently reassigned) | `resolution.public_id.PublicIdRegistry` (`split`, `merge`, `resolve`), `Tombstone`, `MergeSplitEvent`, `Resolution` | `tests/resolution/test_public_id.py::test_public_ids_survive_a_simulated_cluster_split`, `::test_split_never_reassigns_the_source_id`, `::test_a_tombstoned_id_cannot_be_re_registered`, `::test_merge_preserves_the_survivor_and_redirects_the_rest`, `::test_resolve_follows_a_chain_of_merges_to_the_final_survivor` |
+
+## Crosswalk exports behind the licence gate (§14.8, SIG-IDENT-033/034)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-IDENT-033 (SIG↔external identifier crosswalk export) | `resolution.crosswalk.build_sig_external_crosswalk`, `CrosswalkRow`, `export_crosswalk` (→ `policy.licensing.assert_export_permitted`) | `tests/resolution/test_crosswalk.py::test_sig_external_crosswalk_is_deterministic_and_sorted`, `::test_crosswalk_publishes_when_all_rights_permit`, `::test_crosswalk_fails_closed_on_a_non_redistributable_source` |
+| SIG-IDENT-034 (public `ORI9 → Census GEOID` crosswalk, subject to the licence gate) | `resolution.crosswalk.build_ori_geoid_crosswalk` (validates both sides), `export_crosswalk` | `tests/resolution/test_crosswalk.py::test_ori_geoid_crosswalk_validates_both_sides`, `::test_ori_geoid_crosswalk_rejects_a_malformed_ori`, `::test_ori_geoid_crosswalk_rejects_a_malformed_geoid` |
