@@ -14,7 +14,7 @@ MYPY_TARGETS := $(foreach p,$(PY_PACKAGES),-p $(p))
 # Python source this repo owns: each package's src tree, plus the test suite.
 LINT_PATHS := $(foreach p,$(PY_PACKAGES),$(p)/src) tests
 
-.PHONY: sync lint format-check typecheck test check lock export sbom gen gen-ontology verify-gen
+.PHONY: sync lint format-check typecheck test test-db check lock export sbom gen gen-ontology verify-gen
 
 ## Install every workspace member + the dev toolchain from the committed lockfile.
 sync:
@@ -35,6 +35,12 @@ typecheck:
 ## Run the test suite.
 test:
 	uv run pytest
+
+## Run only the claim-spine database tests (PG18+PostGIS via Docker; P02.1).
+## These skip if the Docker daemon is unreachable unless SIG_REQUIRE_DB_TESTS is
+## set — which this target does, so a missing daemon fails loudly.
+test-db:
+	SIG_REQUIRE_DB_TESTS=1 uv run pytest tests/db
 
 ## The full local gate — mirror of CI.
 check: lint format-check typecheck test verify-gen
