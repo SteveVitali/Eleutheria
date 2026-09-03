@@ -1,0 +1,25 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The explicit incompleteness banner every dossier MUST carry (SIG-UI-012): it
+// names the number of unresearched fields and states that absence of a row is not
+// evidence of absence. In a project whose standard is "no synthetic certainty",
+// this is a headline, not fine print — so it renders as a prominent, role="note"
+// banner at the top of the dossier and its print export.
+import { incompletenessBanner, unresearchedFieldCount } from "../lib/dossier";
+import type { Dossier } from "../lib/dossier";
+
+interface Props {
+  dossier: Dossier;
+}
+
+const { dossier } = Astro.props;
+const text = incompletenessBanner(dossier);
+const count = unresearchedFieldCount(dossier);
+---
+
+<div class="sig-incompleteness" role="note" data-testid="incompleteness-banner" data-unresearched={count}>
+  {text}
+</div>

@@ -1,0 +1,72 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The local dossier — the project's primary public artifact (§39.2). Static-first,
+// zero client JS (SIG-UI-036/037): one page is pre-generated per jurisdiction. It
+// renders all twelve §39.2 sections in order (SIG-UI-010), the incompleteness banner
+// (SIG-UI-012), "what we don't know" in the summary AND its section (SIG-UI-011),
+// every material figure expandable to its reconciliation (SIG-UI-014), the three
+// action blocks (SIG-UI-014a) with the derived next_decision_date shown wherever the
+// expiry is (SIG-UI-014b), and unknown Appendix-B values rendered explicitly
+// (SIG-UI-015). The citation/permalink (SIG-UI-035) comes from the base layout.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import IncompletenessBanner from "../../components/IncompletenessBanner.astro";
+import WhatWeDontKnow from "../../components/WhatWeDontKnow.astro";
+import DossierSection from "../../components/DossierSection.astro";
+import ActionBlocks from "../../components/ActionBlocks.astro";
+import { SECTION_TITLES, dossierJsonPath, dossierPath, dossierPrintPath, validateDossier } from "../../lib/dossier";
+import { DOSSIERS } from "../../lib/dossier-fixture";
+
+export function getStaticPaths() {
+  return DOSSIERS.map((d) => ({ params: { slug: d.slug }, props: { dossier: d } }));
+}
+
+const { dossier } = Astro.props;
+// Enforce the §39.2 section contract at build time (SIG-UI-010): a mis-ordered or
+// incomplete dossier fails the build rather than shipping.
+validateDossier(dossier);
+
+// Which action block is rendered under which section (SIG-UI-014a/b).
+const ACTION_FOR_SECTION: Record<string, "authorization" | "termination" | "legal_regime"> = {
+  cost_and_expiry: "termination",
+  accountability_events: "authorization",
+  policy: "legal_regime",
+};
+---
+
+<BaseLayout title={dossier.subject_label} path={dossierPath(dossier.slug)}>
+  <p class="sig-dossier-jurisdiction" data-testid="dossier-jurisdiction">{dossier.jurisdiction}</p>
+
+  <IncompletenessBanner dossier={dossier} />
+
+  <section class="sig-dossier-summary" aria-labelledby="summary-gaps-heading">
+    <h2 id="summary-gaps-heading">What we don't know (summary)</h2>
+    <p>
+      This is a headline, not an appendix. The full record is below; here is what SIG
+      cannot yet tell you about this deployment.
+    </p>
+    <WhatWeDontKnow gaps={dossier.gaps} variant="summary" />
+  </section>
+
+  <p class="sig-dossier-actions">
+    <a href={dossierPrintPath(dossier.slug)} data-testid="print-link">Print / PDF version</a>
+    {" · "}
+    <a href={dossierJsonPath(dossier.slug)} data-testid="api-link">JSON (API form)</a>
+  </p>
+
+  {dossier.sections.map((section) => (
+    <section aria-labelledby={`sec-${section.section_id}`} data-testid="dossier-section" data-section-id={section.section_id}>
+      <h2 id={`sec-${section.section_id}`}>{SECTION_TITLES[section.section_id]}</h2>
+      {section.section_id === "what_we_dont_know" ? (
+        <WhatWeDontKnow gaps={dossier.gaps} variant="section" />
+      ) : (
+        <DossierSection section={section} />
+      )}
+      {ACTION_FOR_SECTION[section.section_id] && (
+        <ActionBlocks dossier={dossier} which={ACTION_FOR_SECTION[section.section_id]!} />
+      )}
+    </section>
+  ))}
+</BaseLayout>
