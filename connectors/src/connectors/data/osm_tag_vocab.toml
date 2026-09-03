@@ -1,0 +1,89 @@
+# SPDX-License-Identifier: Apache-2.0
+# The versioned OSM surveillance tag -> claim vocabulary (SIG-INGEST-045).
+# This table is DATA, not code (SIG-ENG-001): the mapping from OSM's measured tag
+# vocabulary onto SIG's typed values is a data row, reviewed on its own. Changes
+# to it after P04.2 are VERSIONED MIGRATIONS (§20), not edits — bump `version` and
+# add the change, never silently rewrite a mapping, so a re-extraction under a new
+# vocabulary is a new interpretation, never a destructive overwrite (SIG-INGEST-017).
+#
+# Coverage is measured against the 144,312 elements tagged surveillance:type=ALPR
+# as of 2026-08-20 (R1-F1.5); see docs/2_canonical_design_spec.md §23.2.
+
+version = "2026.08.27"
+
+# The selection predicate: an element is an in-scope surveillance asset iff it
+# carries this tag (§23.2, 99.7% ALPR coverage).
+selection_key = "man_made"
+selection_value = "surveillance"
+
+# Keys whose values are multi-valued and MUST be split on ';' into an UNORDERED
+# set (§23.2: "Split on ; as an unordered set").
+multivalue_keys = [
+  "surveillance:type",
+  "surveillance",
+  "surveillance:zone",
+  "camera:type",
+  "manufacturer",
+]
+
+# Mapper-identity keys DISCARDED at ingest and never stored or exposed
+# (SIG-INGEST-045e): a queryable table of which mapper recorded which police
+# camera is a targeting surface. `changeset` is NOT here — it is retained as the
+# provenance anchor and is not person-identifying on its face.
+mapper_identity_keys = ["user", "uid"]
+
+# Keys that describe an asset but are only ever kept as raw_value — never parsed
+# into a typed claim (§23.2: `description` is "raw_value only").
+raw_value_only_keys = ["description"]
+
+# The allowlisted keys the connector consumes, each mapped to the predicate its
+# value becomes a claim about (§23.2 table). A surveillance-bearing key OUTSIDE
+# this allowlist is recorded as an unmapped value + a research task (REQ-R1-02,
+# SIG-INGEST-045). `raw_value` is always preserved (P2), whatever the mapping.
+[keys]
+"surveillance:type"     = { predicate = "asset_type",       carries = "device kind (116 distinct values)" }
+"surveillance"          = { predicate = "surveillance_zone", carries = "zone; polluted with types/booleans, never trusted alone (R1-F1.4)" }
+"surveillance:zone"     = { predicate = "surveillance_zone", carries = "zone; cross-checked against `surveillance`" }
+"camera:type"           = { predicate = "camera_type",       carries = "drives mobility; ~8% non-fixed" }
+"camera:mount"          = { predicate = "camera_mount",      carries = "sparse -> field-research task" }
+"direction"             = { predicate = "direction",         carries = "bearing; input to derived FOV (§19.3)" }
+"camera:direction"      = { predicate = "direction",         carries = "bearing (alternate); reconciled with `direction`" }
+"manufacturer"          = { predicate = "manufacturer",      carries = "vendor string (7,031 distinct DB-wide)" }
+"manufacturer:wikidata" = { predicate = "manufacturer_qid",  carries = "vendor QID; first-class crosswalk key (SIG-STORE-044)" }
+"operator"              = { predicate = "operator_stated",   carries = "operating organization; absence is the backlog (SIG-ONTO-028)" }
+"operator:wikidata"     = { predicate = "operator_qid",      carries = "operator QID crosswalk" }
+"operator:type"         = { predicate = "operator_type",     carries = "operator class; sparse -> research task" }
+"brand"                 = { predicate = "brand",             carries = "brand; reconciled with manufacturer" }
+"brand:wikidata"        = { predicate = "brand_qid",         carries = "brand QID" }
+"ref"                   = { predicate = "upstream_ref",      carries = "device reference/label; preserved as upstream identifier" }
+"start_date"            = { predicate = "installation_date", carries = "installation; valid_from input" }
+"check_date"            = { predicate = "last_checked",      carries = "last verification; staleness input" }
+"source"                = { predicate = "mapping_source",    carries = "provenance of the mapping (§10.8)" }
+"electricity"           = { predicate = "power_arrangement", carries = "descriptive" }
+"description"           = { predicate = "description",       carries = "free text; raw_value only, never parsed into claims" }
+
+# surveillance:type value -> normalized device kind (asset technology). Values are
+# lowercased and stripped before lookup. A value not present here is recorded as an
+# UNMAPPED value + a research task (SIG-INGEST-045); the raw value is still kept.
+# Non-camera surveillance types are in scope from Phase 4 (R1-F1.3): gunshot_detector
+# (3,250 elements) and AFR (67) exist in OSM today.
+[surveillance_type]
+"alpr"              = "alpr"
+"camera"            = "camera"
+"cctv"              = "camera"
+"gunshot_detector"  = "acoustic_gunshot_detector"
+"acoustic_detector" = "acoustic_gunshot_detector"
+"afr"               = "automated_facial_recognition"
+"guard"             = "guard"
+"webcam"            = "webcam"
+
+# camera:type / surveillance:type mobility inference (§23.2: camera:type drives
+# `mobility`; fixed 92%, ~8% non-fixed). Values lowercased/stripped before lookup;
+# an unrecognised value leaves mobility "unknown" (never guessed).
+[mobility]
+"fixed"    = "fixed"
+"dome"     = "fixed"
+"panning"  = "fixed"
+"mobile"   = "mobile"
+"vehicle"  = "mobile"
+"drone"    = "mobile"

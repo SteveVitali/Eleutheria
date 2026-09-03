@@ -1,0 +1,48 @@
+{
+  "version": "0.6",
+  "generator": "OpenStreetMap server",
+  "copyright": "OpenStreetMap and contributors",
+  "license": "http://opendatacommons.org/licenses/odbl/1-0/",
+  "elements": [
+    {
+      "type": "node",
+      "id": 1001,
+      "lat": 37.7749,
+      "lon": -122.4194,
+      "timestamp": "2009-03-01T00:00:00Z",
+      "version": 1,
+      "changeset": 111,
+      "user": "freeway_importer",
+      "uid": 10,
+      "tags": { "highway": "motorway_junction" }
+    },
+    {
+      "type": "node",
+      "id": 1001,
+      "lat": 37.7749,
+      "lon": -122.4194,
+      "timestamp": "2009-03-01T00:05:00Z",
+      "version": 2,
+      "changeset": 112,
+      "user": "freeway_importer",
+      "uid": 10,
+      "tags": { "highway": "motorway_junction", "ref": "12" }
+    },
+    {
+      "type": "node",
+      "id": 1001,
+      "lat": 37.7749,
+      "lon": -122.4194,
+      "timestamp": "2024-12-15T10:00:00Z",
+      "version": 5,
+      "changeset": 900001,
+      "user": "mapper_alice",
+      "uid": 4242,
+      "tags": {
+        "man_made": "surveillance",
+        "surveillance:type": "ALPR",
+        "camera:type": "fixed"
+      }
+    }
+  ]
+}

@@ -16,12 +16,13 @@ def test_stages_lists_the_eight_stages(capsys: pytest.CaptureFixture[str]) -> No
         assert name in out
 
 
-def test_list_connectors_is_empty_in_the_framework_phase(
+def test_list_connectors_includes_the_osm_connector(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    # P04.1 ships the framework and the registration seam; no source connector yet.
+    # P04.2 lands the first source connector on the P04.1 registration seam
+    # (SIG-INGEST-021): `osm` now appears in the CLI listing.
     assert main(["list-connectors"]) == 0
-    assert "no source connectors registered" in capsys.readouterr().out
+    assert "osm" in capsys.readouterr().out.split()
 
 
 def test_gate_reports_refused_for_a_gated_source(capsys: pytest.CaptureFixture[str]) -> None:
