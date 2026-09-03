@@ -241,3 +241,60 @@ exercised against a real PostgreSQL 18 + PostGIS instance in `tests/db/`
 | SIG-STORE-041 (physical migrations managed with sqitch, deploy/revert/verify) | `db/sqitch.plan`, `db/deploy/`, `db/revert/`, `db/verify/` | `conftest.sig_database` (sqitch deploy); `db/verify/*` |
 | SIG-STORE-047 / §C.7 (forbidden columns/tables never exist) | schema (absence) | `test_schema_integrity.py::test_no_per_search_sighting_or_trip_table`, `::test_person_has_no_address_column`, `::test_claim_has_no_stored_currency_column`, `::test_integrates_with_edge_value_is_forbidden` |
 | SIG-ONTO-001/002 (six-layer model; L4 inference a separate schema) | `db/deploy/inference_schema.sql` (`inference.*`) | `verify/inference_schema.sql` |
+
+# P02.2 — The OCFL evidence store
+
+The write-once evidence layer lives in the new `evidence/` package (ADR-023): the
+content-addressing codec, the OCFL 1.1 writer/reader, the S3/Object-Lock backend,
+the storage-tier model, the WACZ capture pipeline, redaction, disappearance, and
+ingest-run reproducibility. The byte-level schema (dedup blob registry,
+`source_uri` uniqueness, redaction guard, audited access log) is a new sqitch
+change `db/deploy/evidence_store.sql`, exercised against a real PG18 in
+`tests/db/test_evidence_store.py`.
+
+## Content addressing (§17.2)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-EVID-002 (digests stored as multihash, base32-lowercase) | `evidence/digest.py::multihash` | `test_digest.py::test_multihash_is_base32_lowercase_multibase`, `::test_decoded_multihash_matches_reference_multiformats_encoding` |
+| SIG-EVID-003 (interop digest SHA-256/512; BLAKE3 additionally for fixity) | `evidence.digest` (`INTEROP_ALGOS`, `blake3_hex`) | `test_digest.py::test_interop_digest_must_be_sha2_not_blake3`, `::test_blake3_fixity_is_hex_and_stable` |
+| SIG-EVID-004 (dedup by digest; `(content_digest, source_uri)` unique; 1 blob / N rows) | `db/deploy/evidence_store.sql` (`evidence_blob` PK); `evidence.store` | `tests/db/test_evidence_store.py::test_source_uri_dedup_key_is_unique`, `::test_unchanged_page_yields_one_blob_but_many_capture_rows`; `test_ocfl.py::test_unchanged_bytes_dedup_to_one_blob_many_versions`; `test_store.py::test_refetch_of_unchanged_bytes_dedups_blobs` |
+
+## OCFL layout (§17.3)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-EVID-005 / AC1 (OCFL 1.1 root; 1 object/stream, 1 version/capture; sha512 manifest + BLAKE3 fixity; readable without SIG code) | `evidence/ocfl.py` | `test_ocfl.py::test_object_readable_without_sig_code`, `::test_fixity_block_records_blake3`, `::test_storage_root_declares_ocfl_and_layout` |
+| SIG-EVID-006 (versioning enabled + governance-mode Object Lock, never compliance; documented retention) | `evidence/storage.py` (`governance_object_lock_configuration`, `S3ObjectStore.ensure_bucket`) | `test_storage.py::test_object_lock_config_is_governance_not_compliance`, `::test_compliance_mode_is_rejected`, `::test_ensure_bucket_enables_versioning_and_governance_lock` |
+
+## Web captures (§17.4)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-EVID-007 (captures stored as WACZ 1.1.1, not screenshots/PDF alone) | `evidence/capture.py::build_wacz` | `test_capture.py::test_wacz_is_a_valid_1_1_1_package` |
+| SIG-EVID-008 / AC4 (JS artifact → WACZ + screenshot + payload + raw HTML, each a capture row, one artifact) | `evidence.capture.capture_set`; `evidence.store.EvidenceStore.store_capture_set` | `test_capture.py::test_js_artifact_full_capture_set`; `test_store.py::test_capture_set_becomes_n_rows_under_one_object` |
+
+## Storage tiers (§17.5)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-EVID-009 (every capture carries public/restricted/sealed) | `evidence.tiers.StorageTier`; `db/deploy/evidence.sql` (CHECK) | `test_tiers.py::test_audited_tiers` |
+| SIG-EVID-010 / AC2 (sealed → metadata-only public representation) | `evidence.tiers.public_representation` | `test_tiers.py::test_sealed_exposes_metadata_only`, `::test_restricted_redacts_the_excerpt_but_keeps_metadata` |
+| SIG-EVID-011 / AC5 (redaction = new capture with `parent_capture_id`; method + version recorded; original never edited) | `evidence/redaction.py`; `db/deploy/evidence_store.sql` (`evidence_capture_redaction_versioned`) | `test_redaction.py`; `tests/db/test_evidence_store.py::test_redaction_is_a_new_capture_with_parent_and_version`, `::test_redaction_without_version_is_rejected` |
+| SIG-EVID-012 (restricted/sealed byte access logged w/ requester+purpose+timestamp; access log has own retention) | `evidence/access_log.py`; `db/deploy/evidence_store.sql` (`evidence_access_log`) | `test_access_log.py`; `tests/db/test_evidence_store.py::test_access_log_only_records_restricted_and_sealed` |
+
+## Disappearance and link rot (§17.6)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-EVID-013 / AC6 (disappearance event on artifact; never delete artifact/captures/claims) | `evidence/disappearance.py`; `db/deploy/access_control.sql` (REVOKE DELETE) | `test_disappearance.py::test_disappearance_is_an_event_not_a_delete`; `tests/db/test_evidence_store.py::test_disappearance_is_an_update_not_a_delete`, `::test_ingest_run_grant_forbids_delete_on_evidence` |
+| SIG-EVID-014 (disappearance generates a §33.2 research task; distinct UI state) | `evidence.disappearance.disappearance_task` | `test_disappearance.py::test_disappearance_generates_a_research_task` |
+| SIG-EVID-015 (link-rot sweep on a volatility-proportional cadence; Wayback for permitted public artifacts) | `evidence.disappearance` (`sweep_cadence_days`, `wayback_save_url`) | `test_disappearance.py::test_sweep_cadence_is_proportional_to_volatility`, `::test_wayback_save_url` |
+
+## Reproducibility (§17.7)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-EVID-016 (every claim references an `ingest_run` recording connector/commit/ruleset/vocab/digests/params/env) | `evidence/ingest_run.py::IngestRun`; `db/deploy/rights_sources_lineage.sql` (`ingest_run`) | `test_ingest_run.py::test_ingest_run_records_the_reproducibility_fields` |
+| SIG-EVID-017 (re-run over pinned digests → byte-identical tuples modulo `claim_id`/`sys_period`) | `evidence.ingest_run.canonical_claim_tuple`; deterministic packaging (`evidence.capture.build_wacz`) | `test_ingest_run.py::test_reproducibility_modulo_claim_id_and_sys_period`; `test_capture.py::test_wacz_packaging_is_deterministic` |
+| SIG-EVID-018 (ingestion runs LC_ALL=C / TZ=UTC; no wall-clock in derived values) | `evidence.ingest_run.deterministic_environment` / `assert_deterministic_environment` | `test_ingest_run.py::test_deterministic_environment_is_lc_all_c_tz_utc`, `::test_non_deterministic_environment_is_rejected` |

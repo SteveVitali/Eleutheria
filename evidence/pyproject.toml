@@ -1,0 +1,30 @@
+[project]
+name = "sig-evidence"
+version = "0.0.0"
+description = "SIG evidence package: the OCFL 1.1 write-once evidence store, content addressing, capture pipeline, and storage tiers (§17)."
+requires-python = ">=3.11"
+# The evidence store is content-addressed (SIG-EVID-003: SHA-2 interop digest
+# via stdlib hashlib; BLAKE3 fixity via blake3). Bytes live in an OCFL 1.1 root
+# on S3-compatible storage (boto3; ADR-015). Web captures are WACZ 1.1.1 produced
+# by a real headless browser (playwright) — that path is optional at runtime and
+# lazily imported, so neither developers nor CI need a browser to use the store.
+dependencies = [
+    "blake3>=0.4.1",
+    "boto3>=1.34",
+]
+
+[project.optional-dependencies]
+# Live web capture (SIG-EVID-007/008) drives a real headless browser. Kept
+# optional so the store, OCFL layer, and packaging are usable (and testable)
+# without installing a browser toolchain.
+capture = ["playwright>=1.44"]
+
+[project.scripts]
+sig-evidence = "evidence.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/evidence"]

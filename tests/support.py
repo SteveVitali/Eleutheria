@@ -33,7 +33,15 @@ SIG47_DIRS: tuple[str, ...] = (
 
 # The subset of §47 that are Python workspace packages (i.e. not web/ docs/ tests/).
 NON_PACKAGE_DIRS: frozenset[str] = frozenset({"web", "docs", "tests"})
-PY_PACKAGES: tuple[str, ...] = tuple(d for d in SIG47_DIRS if d not in NON_PACKAGE_DIRS)
+
+# Python packages added by ADR after the frozen §47 layout. `evidence/` (the OCFL
+# write-once evidence store, §17) is one: §17 needs a home and §47 names none, so
+# ADR-023 adds it as a workspace member. New entries here MUST cite an ADR.
+ADR_EXTENSION_PACKAGES: tuple[str, ...] = ("evidence",)
+
+PY_PACKAGES: tuple[str, ...] = (
+    tuple(d for d in SIG47_DIRS if d not in NON_PACKAGE_DIRS) + ADR_EXTENSION_PACKAGES
+)
 
 
 def workspace_members() -> list[str]:
