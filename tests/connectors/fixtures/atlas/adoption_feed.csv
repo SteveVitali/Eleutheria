@@ -1,0 +1,8 @@
+City,County,State,Agency,Type,Vendor,Link 1,Link 2,Link 3,Summary
+Fresno,Fresno County,CA,Fresno Police Department,Automated License Plate Readers,Flock Safety,https://example.gov/fresno-alpr,,,Council approved a fixed ALPR camera network.
+,,TX,TX0570000,Face Recognition,Clearview AI,https://example.gov/tx-fr,,,Face recognition contract keyed by an ORI-shaped agency identifier.
+Oakland,Alameda County,CA,Oakland Police Department,Gunshot Detection,SoundThinking,https://example.gov/oak-gsd,https://news.example.com/oak,,Acoustic gunshot detection deployment.
+,,NY,New York State Police,Drones/UAVs,DJI,https://example.gov/nysp-uas,,,
+Atlanta,Fulton County,GA,Atlanta Police Department,Third-Party Investigative Platforms,Fusus,https://example.gov/atl-tpip,,,Camera federation / real-time platform.
+Detroit,Wayne County,MI,Detroit Police Department,Predictive Policing,PredPol,https://example.gov/det-pp,,,A category not in the versioned vocabulary.
+Los Angeles,Los Angeles County,CA,Los Angeles Police Department,Ring/Neighbors,Ring,https://example.gov/lapd-ring,,,A category the Atlas retired in March 2024.

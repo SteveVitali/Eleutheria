@@ -25,14 +25,16 @@ passes through (:mod:`connectors.loader`). Second — added in P04.1 — the reu
 * :mod:`connectors.lineage` — per-run lineage mapped to PROV-O (SIG-INGEST-015/016).
 
 Source-specific connectors plug into the framework and self-register on import
-(SIG-INGEST-021): :mod:`connectors.osm` is the first (P04.2, §23.2); Atlas is
-P04.3. Importing the package imports the connectors so they appear in the
-registry (``connectors.stages.registered_connectors``) and the CLI.
+(SIG-INGEST-021): :mod:`connectors.osm` is the first (P04.2, §23.2) and
+:mod:`connectors.atlas` the second (P04.3, §23.3). Importing the package imports
+the connectors so they appear in the registry
+(``connectors.stages.registered_connectors``) and the CLI.
 """
 
 # Importing the source-specific connectors registers them (SIG-INGEST-021). Kept
 # at the bottom so the framework modules above are fully initialised first, and
 # imported for the registration side effect only.
+from . import atlas as atlas  # noqa: E402,F401
 from . import osm as osm  # noqa: E402,F401
 
 __version__ = "0.0.0"

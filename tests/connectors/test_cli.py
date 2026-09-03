@@ -25,6 +25,15 @@ def test_list_connectors_includes_the_osm_connector(
     assert "osm" in capsys.readouterr().out.split()
 
 
+def test_list_connectors_includes_the_atlas_connector(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    # P04.3 lands the second source connector on the same seam (SIG-INGEST-021):
+    # `atlas` now appears in the CLI listing.
+    assert main(["list-connectors"]) == 0
+    assert "atlas" in capsys.readouterr().out.split()
+
+
 def test_gate_reports_refused_for_a_gated_source(capsys: pytest.CaptureFixture[str]) -> None:
     # No seeded source is permitted at this phase => the gate refuses.
     code = main(["gate", "--source", "eyes_on_flock"])

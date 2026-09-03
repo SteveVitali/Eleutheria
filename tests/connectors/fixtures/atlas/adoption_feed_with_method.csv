@@ -1,0 +1,5 @@
+City,County,State,Agency,Type,Vendor,Method,Link 1,Summary
+Reno,Washoe County,NV,Reno Police Department,Automated License Plate Readers,Flock Safety,News Reporting,https://example.gov/reno,Component recorded upstream: news reporting.
+Miami,Miami-Dade County,FL,Miami Police Department,Gunshot Detection,SoundThinking,Procurement,https://example.gov/miami,Component recorded upstream: a procurement lead.
+Boise,Ada County,ID,Boise Police Department,Drones/UAVs,DJI,,https://example.gov/boise,Component column present but blank for this row (granularity loss).
+Salem,Marion County,OR,Salem Police Department,Face Recognition,Clearview AI,Vibes,https://example.gov/salem,Component recorded but not one of the nine genres (granularity loss; no guess).
