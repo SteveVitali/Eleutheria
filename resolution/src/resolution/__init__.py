@@ -20,8 +20,16 @@ scheme registry and crosswalk exports (:mod:`resolution.crosswalk`), the tiered
 address keys (:mod:`resolution.address`), vendor-portal slug parsing
 (:mod:`resolution.slug`), the deterministic cascade tiers 0–3
 (:mod:`resolution.cascade`), and public ``sig:`` identifier minting with the
-split/merge stability contract (:mod:`resolution.public_id`). The probabilistic
-tiers 4–5 and the ER quality gates are handed to P05.1.
+split/merge stability contract (:mod:`resolution.public_id`).
+
+P05.1 adds the probabilistic top of the cascade and the §14.7 quality gates: the
+Splink 4 / DuckDB matcher and tiers 4–5 that create PROPOSED review proposals
+(:mod:`resolution.probabilistic`), sized blocking (:mod:`resolution.blocking`), the
+gold set with double adjudication and a frozen holdout (:mod:`resolution.gold_set`),
+the pairwise/B-cubed metrics with auto-write demotion and cluster-shape alerts
+(:mod:`resolution.quality_gates`), and the re-runnable ER pipeline stage that composes
+the six tiers, records its run, and keeps public identifiers stable across cluster
+change (:mod:`resolution.er_run`).
 """
 
 __version__ = "0.0.0"

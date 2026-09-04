@@ -611,3 +611,52 @@ ADR-028.
 | SIG-PARSE-008 (a canary alerts on structural drift) | `connectors.atlas.canary_findings`, `parse_csv` | `tests/connectors/test_atlas.py::test_canary_passes_on_the_committed_fixture`, `::test_canary_flags_structural_drift` |
 | SIG-INGEST-021 (connector self-registers on the plug-in seam; visible in the CLI) | `connectors.atlas.AtlasConnector` (`@register`); imported by `connectors.__init__` | `tests/connectors/test_atlas.py::test_atlas_connector_is_registered`; `tests/connectors/test_cli.py::test_list_connectors_includes_the_atlas_connector` |
 | SIG-INGEST-003 (post-capture stages are pure; replay/shadow reproducibility) | `connectors.atlas` (`normalize` carries no wall-clock; `category_retirement_record` keyed on version, not time) | `tests/connectors/test_atlas.py::test_claim_set_is_reproducible_across_runs` |
+
+# P05.1 — Probabilistic entity resolution (tiers 4–5, the §14.7 quality gates)
+
+P05.1 adds the probabilistic top of the cascade as pure, tested library code plus
+versioned data (mirroring the P03.2 deterministic cascade; connectors/ER are not
+DB-wired yet — ADR-029). Tiers 4–5 create `PROPOSED` proposals for review and never
+auto-write; the review-queue persistence and curation UI are P05.2.
+
+## Splink matcher + tiers 4–6 (SIG-IDENT-020/021/025)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-IDENT-020 (tiers 4 probabilistic + 5 weak-signal create `PROPOSED` claims → review, never auto-write; tier 6 persists no per-pair record) | `resolution.probabilistic` (`ProbabilisticMatcher._tier_for`, `ProbabilisticMatch.disposition="review"`, `PROPOSED`, `proposed`); `data/splink_model.toml` (`[thresholds]` `tier4_review`/`tier5_weak`) | `tests/resolution/test_probabilistic.py::test_every_probabilistic_match_is_proposed_never_auto_write`, `::test_tier6_below_threshold_persists_no_record`, `::test_tier_boundaries_are_data_driven`; `tests/resolution/test_er_run.py::test_composition_auto_writes_deterministic_and_proposes_probabilistic` |
+| SIG-IDENT-021 (Splink 4 on a DuckDB backend; AGPL/proprietary excluded) | `resolution.probabilistic.ProbabilisticMatcher.match` (`DuckDBAPI`, `Linker`); `resolution/pyproject.toml` (`splink>=4`, `duckdb`); ADR-029 | `tests/resolution/test_probabilistic.py::test_evidence_names_the_splink_duckdb_matcher`, `::test_matching_is_deterministic` |
+| SIG-IDENT-025 (every match records `match_tier`, `match_evidence`; probabilistic → match weight **and** its per-comparison decomposition) | `resolution.probabilistic` (`ProbabilisticMatch.match_weight`/`decomposition`, `ComparisonContribution`, `match_evidence["decomposition"]`); fully-specified m/u model `data/splink_model.toml` | `tests/resolution/test_probabilistic.py::test_every_match_records_tier_evidence_weight_and_decomposition`, `::test_decomposition_is_mirrored_in_evidence_json`, `::test_strong_name_match_reaches_tier4_with_explainable_weight` |
+
+## Sized blocking (SIG-IDENT-023/024)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-IDENT-023 (blocking rules sized before use, rejected above a documented comparison ceiling; suffix-alone / state-alone prohibited) | `resolution.blocking` (`size_blocking_rule`, `validate_blocking_rule`, `blocked_pairs`, `BlockingContext`, `BlockingRuleRejected`); `data/blocking_rules.toml` (`comparison_ceiling`, `prohibited_sole_keys`) | `tests/resolution/test_blocking.py::test_size_counts_exact_within_block_pairs`, `::test_oversized_rule_is_rejected`, `::test_sole_low_cardinality_key_is_prohibited`, `::test_blocked_pairs_aborts_if_any_rule_is_prohibited`; `tests/resolution/test_probabilistic.py::test_oversized_blocking_aborts_the_match` |
+| SIG-IDENT-024 (trigram may power candidate search but never a decision score) | `resolution.blocking` (`trigrams`, `method="trigram"`); `resolution.probabilistic.assert_no_trigram_decision` | `tests/resolution/test_blocking.py::test_trigram_generates_candidates`; `tests/resolution/test_probabilistic.py::test_trigram_decision_score_is_rejected`, `::test_shipped_model_uses_no_trigram_decision_score`, `::test_jaro_winkler_is_allowed_as_a_decision_score` |
+
+## Gold set + frozen holdout (SIG-IDENT-027)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-IDENT-027 (stratified blocked-pair sampling across weight bands; double adjudication reporting Cohen's κ; three-value label vocabulary; written adjudication rules; frozen holdout; versioned data with per-label provenance) | `resolution.gold_set` (`stratified_sample`, `GoldLabel`, `cohens_kappa`, `adjudicated_label`, `Adjudication`, `GoldSet`/`holdout`/`relabel`, `adjudication_rules`, `build_gold_set`); `data/gold_set_rules.toml` (`labels`, `[[band]]`, `holdout_fraction`, `adjudication_rules`) | `tests/resolution/test_gold_set.py::test_label_vocabulary_is_exactly_three_values`, `::test_stratified_sample_covers_every_band_and_caps_per_band`, `::test_kappa_is_below_one_on_disagreement`, `::test_gold_set_is_versioned_and_carries_provenance`, `::test_holdout_is_a_frozen_fraction`, `::test_frozen_holdout_pair_cannot_be_relabelled` |
+
+## Quality gates + cluster-shape alerts (SIG-IDENT-028/029)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-IDENT-028 (pairwise P/R/F1 at each tier boundary + B-cubed cluster P/R on the holdout; auto-write tiers demoted to review on a holdout-precision breach) | `resolution.quality_gates` (`metrics_at_tier_boundaries`, `pairwise_metrics`, `bcubed`, `demote_auto_write_tiers`, `DemotionDecision`, `AUTO_WRITE_TIERS`); floor `data/splink_model.toml` (`auto_write_precision_threshold`) | `tests/resolution/test_quality_gates.py::test_metrics_reported_at_each_tier_boundary`, `::test_bcubed_penalises_a_bad_merge`, `::test_bcubed_penalises_a_bad_split`, `::test_auto_write_tier_demoted_when_precision_below_threshold`, `::test_only_auto_write_tiers_are_demotable` |
+| SIG-IDENT-029 (cluster-shape alerts: oversized PD/sheriff cluster; single-bridge join of substantial components) | `resolution.quality_gates` (`cluster_shape_alerts`, `ClusterShapeAlert`, `ClusterShapeContext`, `_bridges`); `data/quality_gates.toml` (`max_le_cluster_size`, `substantial_component_size`, `le_classes`) | `tests/resolution/test_quality_gates.py::test_oversized_law_enforcement_cluster_is_flagged`, `::test_single_bridge_join_of_substantial_components_is_flagged`, `::test_densely_connected_cluster_has_no_bridge_alert`, `::test_bridge_to_a_singleton_is_not_substantial` |
+| SIG-IDENT-032 (public identifiers stable across split/merge; surviving id preserved, retired id → redirect/tombstone, never silently reassigned) | `resolution.er_run.stabilise_cluster_change` routing through `resolution.public_id.PublicIdRegistry` (`merge`/`split`/`resolve`) | `tests/resolution/test_er_run.py::test_merge_preserves_survivor_and_redirects_the_retired_id`, `::test_split_tombstones_source_into_minted_successors`, `::test_split_without_a_minter_is_refused` |
+
+## ER as a distinct, re-runnable pipeline stage (SIG-RECON-001/002)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-RECON-001 (ER runs as a distinct stage between `normalize()` and `load()`, with its own run record, quality report, and rollback path) | `resolution.er_run` (`ERRun`/`to_row`/`completed`/`rolled_back`, `ERQualityReport`, `ERResult`, `stage_between`, `run_entity_resolution`) | `tests/resolution/test_er_run.py::test_stage_runs_between_normalize_and_load`, `::test_run_record_enforces_deterministic_environment`, `::test_run_record_row_has_versions_and_status`, `::test_completed_and_rolled_back_status_transitions`, `::test_report_records_blocking_sizes_and_passes_gate` |
+| SIG-RECON-002 (re-runnable over historical claims without destroying prior clustering; a re-cluster produces new `same_as` assertions with a new ruleset version, never silently moving claims) | `resolution.er_run` (`recluster`, `ERRun.rerun`, `cluster_same_as`) | `tests/resolution/test_er_run.py::test_rerun_requires_a_new_ruleset_version`, `::test_rerun_chains_to_previous_and_flags_rerun`, `::test_recluster_produces_new_run_without_touching_the_prior_result`, `::test_cluster_same_as_emits_star_relations` |
+
+## CLI (SIG-ENG-013)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ENG-013 (the probabilistic stage is a plain CLI: `er-match` prints PROPOSED proposals with weights; `block-size` sizes an equijoin rule) | `resolution.cli` (`er-match`, `block-size` subcommands) | `tests/resolution/test_cli_er.py::test_er_match_prints_proposals`, `::test_block_size_accepts_a_selective_rule`, `::test_block_size_rejects_state_alone`, `::test_er_match_on_no_matches_is_graceful` |

@@ -7,7 +7,12 @@ requires-python = ">=3.11"
 # package (SIG-IDENT-008 distinguishes absent from not-observed via db.absence);
 # the crosswalk exports publish only through the policy licence gate (SIG-IDENT-033
 # /034 → SIG-LIC-004 in policy.licensing).
-dependencies = ["sig-db", "sig-policy"]
+dependencies = [
+    "duckdb>=1.0.0",
+    "sig-db",
+    "sig-policy",
+    "splink>=4.0.0",
+]
 
 [project.scripts]
 sig-resolution = "resolution.cli:main"

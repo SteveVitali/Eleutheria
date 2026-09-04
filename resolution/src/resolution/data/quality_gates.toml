@@ -1,0 +1,33 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# Cluster-shape alert configuration (SIG-IDENT-029), versioned data. These thresholds
+# describe the SIGNATURES OF A BAD MERGE: a single municipal police department or
+# sheriff's office should never resolve into a large cluster, and two substantial
+# components joined by a single bridge edge are almost certainly two real entities the
+# matcher wrongly stitched together. The auto-write-demotion precision floor is
+# published with the model (splink_model.toml, `auto_write_precision_threshold`).
+
+version = "1"
+
+[cluster_shape]
+# A cluster all of whose members are law-enforcement agencies (a PD/sheriff cluster)
+# larger than this is implausible — one agency does not have this many distinct
+# identities (SIG-IDENT-029).
+max_le_cluster_size = 6
+
+# When a single bridge edge, if removed, splits a cluster into two components that are
+# EACH at least this large, the cluster is flagged: a lone link joining two substantial
+# blobs is the classic bad-merge shape (SIG-IDENT-029).
+substantial_component_size = 3
+
+# The organisation classes considered law-enforcement for the oversized-cluster rule.
+le_classes = [
+  "us.le.municipal_police",
+  "us.le.sheriff",
+  "us.le.county_police",
+  "us.le.state_police",
+  "us.le.campus_police",
+  "us.le.transit_police",
+]

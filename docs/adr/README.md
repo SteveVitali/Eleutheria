@@ -39,6 +39,8 @@ of a landed one.
 | ADR-025 | Temporal invariants as pipeline data-quality checks; as-of as SQL functions (P02.3) |
 | ADR-026 | The eight-stage connector framework: fetch-only egress + socket-level network-isolated replay (P04.1) |
 | ADR-027 | The `osm` connector: versioned tag vocabulary, `(type,id,version)` keying, ODbL landing (P04.2) |
+| ADR-028 | The `atlas` connector: family-level `deployment_exists`, agency-id keying, category-retirement-not-a-world-change (P04.3) |
+| ADR-029 | Splink 4 on DuckDB for the probabilistic ER tiers 4–5, as a fully-specified deterministic model (P05.1) |
 
 ADR-001…012 are the §15.5 decision set; ADR-013…020 are the stack ADRs. The
 egress question of §38.5 is resolved for the whole project in ADR-015. ADR-021 is
@@ -50,3 +52,8 @@ connector-framework decision (the eight-stage contract, fetch-only egress, and
 socket-level network-isolated replay). ADR-027 is the P04.2 `osm`-connector
 decision (the versioned tag vocabulary, `(type,id,version)` keying,
 history-derived `first_observed`, snapshot-diff deletion, and ODbL landing).
+ADR-028 is the P04.3 `atlas`-connector decision (family-level `deployment_exists`,
+agency-id keying with a surrogate fallback, and category-retirement-as-vocabulary
+event). ADR-029 is the P05.1 probabilistic-ER decision (Splink 4 on DuckDB as a
+fully-specified, deterministic, versioned-as-data model for cascade tiers 4–5, with
+sized blocking, the gold set + frozen holdout, and the §14.7 quality gates).
