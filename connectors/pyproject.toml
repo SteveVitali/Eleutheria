@@ -8,7 +8,19 @@ requires-python = ">=3.11"
 # the evidence store, resolves entities via the resolution layer at link(), and
 # maps run lineage onto the PROV-O projection in exports. All resolved from the
 # workspace; none of these depend back on connectors (no cycle).
-dependencies = ["sig-policy", "sig-evidence", "sig-resolution", "sig-exports"]
+# sig-db and sig-parsing are added by P07.2: the `records` connector writes the
+# no_responsive_records -> CoverageRecord bridge through db.absence (the canonical
+# §9.5 coverage model, SIG-ONTO-040) and routes each released document through the
+# P07.1 parser interface parsing.classification (§23.5 "calls the parser"). Both
+# are leaf packages that never import connectors (no cycle).
+dependencies = [
+    "sig-policy",
+    "sig-evidence",
+    "sig-resolution",
+    "sig-exports",
+    "sig-db",
+    "sig-parsing",
+]
 
 [project.scripts]
 sig-connectors = "connectors.cli:main"
@@ -18,6 +30,8 @@ sig-policy = { workspace = true }
 sig-evidence = { workspace = true }
 sig-resolution = { workspace = true }
 sig-exports = { workspace = true }
+sig-db = { workspace = true }
+sig-parsing = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]

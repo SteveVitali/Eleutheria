@@ -34,6 +34,15 @@ def test_list_connectors_includes_the_atlas_connector(
     assert "atlas" in capsys.readouterr().out.split()
 
 
+def test_list_connectors_includes_the_records_connector(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    # P07.2 lands the third source connector on the same seam (SIG-INGEST-021):
+    # `records` (MuckRock/NextRequest/DocumentCloud, §23.5) now appears in the CLI.
+    assert main(["list-connectors"]) == 0
+    assert "records" in capsys.readouterr().out.split()
+
+
 def test_gate_reports_refused_for_a_gated_source(capsys: pytest.CaptureFixture[str]) -> None:
     # No seeded source is permitted at this phase => the gate refuses.
     code = main(["gate", "--source", "eyes_on_flock"])

@@ -293,10 +293,12 @@ class Fetcher(Protocol):
 
     Connectors hold no HTTP client of their own; they are handed a fetcher on the
     :class:`RunContext` and it is the single seam through which any egress passes.
-    :class:`connectors.net.PoliteFetcher` is the implementation.
+    :class:`connectors.net.PoliteFetcher` is the implementation. Optional
+    ``headers`` carry a per-request credential (e.g. a Bearer JWT) through the
+    shared seam for an authenticated source (§23.5); most connectors omit them.
     """
 
-    def fetch(self, url: str) -> FetchResult: ...
+    def fetch(self, url: str, *, headers: Mapping[str, str] | None = None) -> FetchResult: ...
 
 
 # --- run context --------------------------------------------------------------

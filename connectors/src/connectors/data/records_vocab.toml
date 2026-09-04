@@ -1,0 +1,131 @@
+# SPDX-License-Identifier: Apache-2.0
+# The versioned `records` connector vocabulary (§23.5, §11.19, P07.2).
+# This table is DATA, not code (SIG-ENG-001): the RecordsRequest predicate
+# surface, the response-status and platform vocabularies, the coverage bridge,
+# and the MuckRock api_v2 endpoint/auth facts are data rows reviewed on their own.
+# Changes after P07.2 are VERSIONED MIGRATIONS (§20), not edits — bump
+# `vocab_version` and add the change, never silently rewrite a row, so a
+# re-extraction under a new vocabulary is a new interpretation, never a
+# destructive overwrite (SIG-INGEST-017).
+#
+# The response-status and platform value sets mirror the frozen ontology enums
+# RecordsResponseStatus / RecordsPlatform (ontology/schema/common.yaml, §11.19);
+# they are duplicated here as the connector's runtime allowlist and a test
+# asserts they stay in lock-step with the ontology (drift is a failed test).
+#
+# NOTE ON TOML ORDERING: every top-level key MUST appear ABOVE the first [table]
+# header — otherwise TOML nests it under that table. The [sources] and [muckrock]
+# tables therefore come last.
+
+# The connector's own vocabulary version, stamped onto every run (§20).
+vocab_version = "2026.09.01"
+
+# The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
+# `records` connector may write ONLY the RecordsRequest predicate surface (§11.19)
+# plus the released-document capture link. Writing anything else — a contract
+# value, a device count, a deployment — is a schema error, the D6 admissibility
+# filter enforced at ingest (§10.5). `records_request` is the entity assertion
+# itself; the rest are its §11.19 predicates.
+predicate_allowlist = [
+  "records_request",
+  "requesting_party",
+  "target_agency",
+  "request_text",
+  "filed_date",
+  "response_date",
+  "response_status",
+  "statutory_basis",
+  "platform",
+  "external_id",
+  "released_documents",
+]
+
+# Predicate GENRES the records connector MUST NOT write (scope-creep guard, §23.5
+# / spec "Out of scope"): the procurement + deployment + parsed-document write-set
+# owned by other tickets (P07.1 parses the documents; P07.3 owns FundingInstrument
+# and procurement; §23.5 records only the REQUEST and its released captures).
+# Named here so the refusal is data, not a magic string — the allowlist above is
+# authoritative; this documents the out-of-scope write-set explicitly.
+forbidden_predicate_genres = [
+  "deployment_exists",
+  "device_count",
+  "contract_value",
+  "funding_instrument",
+  "camera_count",
+  "parsed_document_claim",
+]
+
+# The RecordsRequest response-status vocabulary (§11.19, RecordsResponseStatus).
+# `no_responsive_records` is the one that is a POSITIVE FINDING feeding the
+# coverage model, never a null result (SIG-ONTO-040); it is named in
+# `coverage_trigger_status` below so the bridge is data, not a hard-coded string.
+response_statuses = [
+  "draft",
+  "filed",
+  "acknowledged",
+  "partially_fulfilled",
+  "fulfilled",
+  "denied",
+  "appealed",
+  "abandoned",
+  "no_responsive_records",
+  "fee_demanded",
+]
+
+# The response status that is a positive coverage finding (SIG-ONTO-040). An
+# agency stating on the record that it holds no responsive documents (e.g. "no
+# ALPR contracts") is EVIDENCE — it writes a CoverageRecord in the
+# NO_EVIDENCE_FOUND state (searched_not_found), not a discarded null.
+coverage_trigger_status = "no_responsive_records"
+
+# The RecordsRequest platform vocabulary (§11.19, RecordsPlatform).
+platforms = [
+  "muckrock",
+  "nextrequest",
+  "govqa",
+  "justfoia",
+  "direct_email",
+  "portal",
+  "paper",
+]
+
+# The registry source ids the `records` connector runs against (§22.6 F). Each is
+# a records_channel row already seeded in data/sources.toml.
+[sources]
+muckrock      = "muckrock"
+nextrequest   = "nextrequest"
+documentcloud = "documentcloud"
+
+# --- MuckRock api_v2 + short-lived JWT (§23.5, F4.1/F4.2/F4.3) ----------------
+# The outline's api_v1 reference is WRONG: the current, documented MuckRock API is
+# api_v2, an OAuth-bearer-token API with a 9-endpoint object model, and there is
+# NO unauthenticated read path — /api_v2/ data endpoints return HTTP 401 without a
+# bearer token. Access tokens are 5-minute JWTs minted from a separate accounts
+# host; a naive "fetch a token at job start" design fails, so the client must
+# refresh on a TTL shorter than the token lifetime and on a 401 (F4.3).
+[muckrock]
+api_v2_base       = "https://www.muckrock.com/api_v2"
+# The superseded api_v1 base, recorded ONLY so the connector can refuse it with a
+# clear error (the outline's reference) — never fetched.
+api_v1_base       = "https://www.muckrock.com/api_v1"
+token_url         = "https://accounts.muckrock.com/api/token/"
+token_refresh_url = "https://accounts.muckrock.com/api/refresh/"
+# The api_v2 object model (DRF DefaultRouter root, F4.1). All are data endpoints
+# requiring auth; `requests`/`files` are the two the records connector reads.
+endpoints = [
+  "requests",
+  "communications",
+  "agencies",
+  "files",
+  "jurisdictions",
+  "users",
+  "statistics",
+  "organizations",
+  "projects",
+]
+# The JWT lifetime and the refresh margin. The token is valid for 5 minutes
+# (300s) after issue (F4.3); the cache refreshes once the token is within
+# `refresh_margin_seconds` of expiry, so a fetch never rides a token about to die
+# mid-flight. The effective cache TTL (ttl - margin) is therefore < 5 minutes.
+jwt_ttl_seconds        = 300
+refresh_margin_seconds = 30
