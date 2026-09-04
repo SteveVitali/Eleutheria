@@ -64,4 +64,9 @@ ADR-030 is the P05.2 review-queue + LLM-extraction decision (the boundary as a
 library plus CLI). ADR-031 and ADR-032 are the P06.1 vertical-slice decisions: a
 minimal count-reconciliation seed plus the three missing §29.1 count predicates
 (ahead of the Phase-8 engine), and a minimal §39.2 dossier renderer with a
-print-CSS PDF path (ahead of the P15.2 production surface).
+print-CSS PDF path (ahead of the P15.2 production surface). ADR-033 is the P07.1
+layered-parsing-stack decision (the §24 parser interface every connector extracts
+through: the seven-layer cheapest-sufficient enum, byte/zip-manifest classification
+with per-member archive handling, the six-kind locator schema, the `raw_value`
+contract, the versioned reversible reason-code mapping, and the fixtures + canary
+parser-drift defences — no new heavy dependency and no DDL).

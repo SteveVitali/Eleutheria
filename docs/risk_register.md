@@ -357,3 +357,37 @@ retrospective (HARD GATE §54).
 |---|---|---|---|
 | RISK-P6-06 | **Live acquisition of the slice's evidence.** The records/procurement/parsing connectors (P07) and the portal layer (P11) do not exist yet, so the slice's evidence is committed fixtures faithfully transcribing cited public sources, not live captures. | Phase 6 is deliberately sequenced before those connectors (§52); building them here would pre-empt P07/P11. | Each artifact's bytes are content-addressed (a real `capture_digest`), its real source URL is the `stable_locator`, and each claim's `locator` pins a span in the captured document — the full evidence→claim shape (§D.4) is proven end to end, and the tension is recorded in the retrospective (finding 6). |
 | RISK-P6-07 | **The live claim-spine / DB write path.** The slice reconciles and renders over in-memory value objects (matching the connector/ER convention), not the PG claim table. | Docker-free acceptance queries run in CI (SIG-CHART-009); the live write path is P08.x. | The reconciliation value objects align with `db/deploy/graph_annotations.sql`; the append-only guarantees are unchanged (no writable current-value columns introduced). |
+
+## Phase 7 — Records, procurement, and document parsing (P07.1 — the layered parsing stack)
+
+P07.1 adds the §24 **parser interface every connector extracts through** as focused,
+dependency-light modules in `parsing/` beside the P05.2 layer-6 model boundary: the
+seven-layer cheapest-sufficient enum (`parsing.layers`), byte/zip-manifest classification
+with per-member archive handling (`parsing.classification`), the six-kind locator schema
+(`parsing.locator`), the `raw_value` claim contract (`parsing.claim`), the versioned
+reversible reason-code mapping (`parsing.reason_codes` + `data/reason_codes.toml`), and the
+fixtures + canary parser-drift defences (`parsing.drift`). It adds no third-party dependency
+(`pylock.toml` unchanged) and no DDL — it produces the shapes the P02 claim spine already
+stores. See ADR-033.
+
+### Risk retired
+
+| id | Risk | How it is retired |
+|---|---|---|
+| RISK-P7-01 | **Silent parser drift (R11, a top-5 operational risk).** An upstream source changes shape and a parser keeps producing garbage undetected. | Two complementary defences: committed fixtures fail a test on any parser-output change (`parsing.drift.assert_no_drift`), and a structural canary **alerts** — returns findings, never drops — when a live sample's shape drifts (`parsing.drift.run_canary`, `CanaryReport.alerted`). Proven by `tests/parsing/test_drift.py::test_a_drifted_parser_fails_the_fixture_assertion`, `::test_canary_alerts_and_does_not_drop_on_structural_drift`. |
+| RISK-P7-02 | **An extraction with no provenance** — a value admitted to the graph that cannot say where it came from. | A `ParsedClaim` cannot be constructed without a `Locator` (six validated kinds); a locator-less claim is rejected (SIG-PARSE-003). Proven by `tests/parsing/test_claim.py::test_a_claim_without_a_locator_is_rejected`. |
+| RISK-P7-03 | **A value SIG cannot parse being dropped as an error** — losing data about the source (P2). | `ParsedValue.unparseable` keeps the raw literal with `parsed=None`; `raw_value` is mandatory and never None. Proven by `tests/parsing/test_claim.py::test_raw_value_is_preserved_for_an_unparseable_value_round_trip`. |
+| RISK-P7-04 | **A reason-vocabulary change rewriting history** (SIG-STORE-038). | The mapping is versioned data; every normalized reason is stamped with the version; a re-classification is new claims (`vocabulary_migration`), never an edit. Proven by `tests/parsing/test_reason_codes.py::test_changing_the_mapping_does_not_rewrite_history`. |
+
+### Deviations recorded as ADRs (SIG-ENG-031)
+
+| ADR | Deviation |
+|---|---|
+| ADR-033 | The §24 stack as the `parsing` parser interface: classification by byte/zip-manifest signals (no `pypdf`/`openpyxl` dependency), the heavy layer-3/4/5 engines deferred to the connectors that need them, and the reason-kind/signal fields mapped onto existing claim-spine columns rather than a new migration. |
+
+### Scaffolded / bounded requirements (SIG-ENG-005)
+
+| id | Requirement | Why not fully closed now | Compensating control |
+|---|---|---|---|
+| RISK-P7-05 | The **concrete extraction engines** for layers 3–5 (PDF text/table, OCR). Only the layer *selection* and interface are built; classification routes to a layer, it does not run one. **Owner: P07.2/P07.3** (ADR-033 Decision 4) — §24.1 mandates the strategy, not a specific engine, so no `SIG-PARSE-*` requires an engine here; the P07.2/P07.3 "P07.1 parses documents" dependency phrasing notwithstanding, the engines are added behind this interface by the connectors that first parse real documents. | Wiring the heavy libraries (and OCR) here would pre-empt those tickets and add runtime dependencies with no caller; a firmer assignment is a decompose-step / canonical-spec-source change (SIG-ENG-003), not an edit of the derived ticket. | The interface is complete and tested end-to-end; the scanned-PDF signal is a deterministic byte heuristic whose mis-route is corrected downstream, never a silent drop (ADR-033 revisit trigger). |
+| RISK-P7-06 | The **nightly canary schedule** (SIG-PARSE-008 MUST). The deterministic drift core exists; the scheduled fetch-a-live-sample-and-alert job does not. **Owner: the `orchestration/` layer / live-run wiring** — the spec provides for it via SIG-INGEST-020 (Dagster, cron-swappable) and the SIG-GOV-020/021 degraded-mode keepalive; no standalone ticket names the cross-parser job, so it lands with live orchestration (mirrors the P05.2 gold-set cadence, RISK-P5-11). | The ops schedule and alert destinations are an operations concern, not a code ticket; the per-connector canary ACs (spec line 6782) carry the per-parser half in the meantime. | `structural_findings`/`run_canary` are pure and tested; the nightly job is a thin fetch-and-call wrapper whose alerting contract is a tracked ops deliverable. |
