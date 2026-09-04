@@ -43,6 +43,16 @@ def test_list_connectors_includes_the_records_connector(
     assert "records" in capsys.readouterr().out.split()
 
 
+def test_list_connectors_includes_the_procurement_connector(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    # P07.3 lands the fourth source connector on the same seam (SIG-INGEST-021):
+    # `procurement` (cooperative vehicles/USAspending/agenda platforms, §23.6) now
+    # appears in the CLI listing.
+    assert main(["list-connectors"]) == 0
+    assert "procurement" in capsys.readouterr().out.split()
+
+
 def test_gate_reports_refused_for_a_gated_source(capsys: pytest.CaptureFixture[str]) -> None:
     # No seeded source is permitted at this phase => the gate refuses.
     code = main(["gate", "--source", "eyes_on_flock"])

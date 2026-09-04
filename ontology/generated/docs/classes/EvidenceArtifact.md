@@ -27,6 +27,17 @@ URI: [sig:class/EvidenceArtifact](https://ontology.sig-project.org/schema/class/
       Entity <|-- EvidenceArtifact
         click Entity href "../../classes/Entity/"
       
+      EvidenceArtifact : artifact_type
+        
+          
+    
+        
+        
+        EvidenceArtifact --> "0..1" ArtifactType : artifact_type
+        click ArtifactType href "../../enums/ArtifactType/"
+    
+
+        
       EvidenceArtifact : id
         
       EvidenceArtifact : integrity
@@ -68,6 +79,7 @@ URI: [sig:class/EvidenceArtifact](https://ontology.sig-project.org/schema/class/
 | Name | Cardinality and Range | Description | Inheritance |
 | ---  | --- | --- | --- |
 | [published_by](../slots/published_by.md) | 0..1 <br/> [Source](../classes/Source.md) |  | direct |
+| [artifact_type](../slots/artifact_type.md) | 0..1 <br/> [ArtifactType](../enums/ArtifactType.md) | The genre of the artifact (§10 | direct |
 | [integrity](../slots/integrity.md) | 0..1 <br/> [ArtifactIntegrity](../enums/ArtifactIntegrity.md) |  | direct |
 | [id](../slots/id.md) | 1 <br/> [Uriorcurie](../types/Uriorcurie.md) | The entity's stable minted identity (L2 identity only, §8 | [Entity](../classes/Entity.md) |
 
@@ -139,6 +151,14 @@ attributes:
     domain_of:
     - EvidenceArtifact
     range: Source
+  artifact_type:
+    name: artifact_type
+    description: The genre of the artifact (§10.3.2, SIG-INGEST-047).
+    from_schema: https://ontology.sig-project.org/schema/entities
+    rank: 1000
+    domain_of:
+    - EvidenceArtifact
+    range: ArtifactType
   integrity:
     name: integrity
     from_schema: https://ontology.sig-project.org/schema/entities
@@ -168,6 +188,15 @@ attributes:
     domain_of:
     - EvidenceArtifact
     range: Source
+  artifact_type:
+    name: artifact_type
+    description: The genre of the artifact (§10.3.2, SIG-INGEST-047).
+    from_schema: https://ontology.sig-project.org/schema/entities
+    rank: 1000
+    owner: EvidenceArtifact
+    domain_of:
+    - EvidenceArtifact
+    range: ArtifactType
   integrity:
     name: integrity
     from_schema: https://ontology.sig-project.org/schema/entities

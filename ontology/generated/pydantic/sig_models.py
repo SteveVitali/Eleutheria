@@ -163,6 +163,47 @@ class ArtifactIntegrity(str, Enum):
     I3 = "I3"
 
 
+class ArtifactType(str, Enum):
+    """
+    The genre of an evidence artifact (§10.3.2). SIG-INGEST-047 additionally carries state_auditor_survey, warrant, and procurement_aggregator_record (§23.6) — the state-auditor surveys are R1 government datasets and the aggregator record is the paywalled procurement-aggregator lead under a LINK custody posture.
+    """
+    contract = "contract"
+    invoice = "invoice"
+    council_minutes = "council_minutes"
+    agenda_packet = "agenda_packet"
+    audit_export = "audit_export"
+    configuration_export = "configuration_export"
+    portal_page = "portal_page"
+    policy_document = "policy_document"
+    court_filing = "court_filing"
+    news_article = "news_article"
+    dataset = "dataset"
+    press_release = "press_release"
+    presentation = "presentation"
+    email = "email"
+    photograph = "photograph"
+    osm_element = "osm_element"
+    radio_observation = "radio_observation"
+    budget = "budget"
+    grant_award = "grant_award"
+    statute = "statute"
+    regulation = "regulation"
+    screenshot = "screenshot"
+    state_auditor_survey = "state_auditor_survey"
+    """
+    A state auditor's periodic survey of agency surveillance-technology holdings — an R1 government dataset (§23.6, SIG-INGEST-047).
+    """
+    warrant = "warrant"
+    """
+    A warrant artifact (§23.6, SIG-INGEST-047).
+    """
+    procurement_aggregator_record = "procurement_aggregator_record"
+    """
+    A record from the paywalled commercial procurement aggregator carried under a LINK custody posture (§23.6, SIG-INGEST-047).
+    """
+    other = "other"
+
+
 class Currency(str, Enum):
     """
     Currency C derived at query time from volatility half-life (§28.3).
@@ -1343,6 +1384,7 @@ class EvidenceArtifact(Entity):
     linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'from_schema': 'https://ontology.sig-project.org/schema/entities'})
 
     published_by: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['EvidenceArtifact']} })
+    artifact_type: Optional[ArtifactType] = Field(default=None, description="""The genre of the artifact (§10.3.2, SIG-INGEST-047).""", json_schema_extra = { "linkml_meta": {'domain_of': ['EvidenceArtifact']} })
     integrity: Optional[ArtifactIntegrity] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['EvidenceArtifact']} })
     id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 

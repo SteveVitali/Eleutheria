@@ -138,6 +138,47 @@ enums:
       I1: {}
       I2: {}
       I3: {}
+  ArtifactType:
+    description: >-
+      The genre of an evidence artifact (§10.3.2). SIG-INGEST-047 additionally
+      carries state_auditor_survey, warrant, and procurement_aggregator_record
+      (§23.6) — the state-auditor surveys are R1 government datasets and the
+      aggregator record is the paywalled procurement-aggregator lead under a LINK
+      custody posture.
+    permissible_values:
+      contract: {}
+      invoice: {}
+      council_minutes: {}
+      agenda_packet: {}
+      audit_export: {}
+      configuration_export: {}
+      portal_page: {}
+      policy_document: {}
+      court_filing: {}
+      news_article: {}
+      dataset: {}
+      press_release: {}
+      presentation: {}
+      email: {}
+      photograph: {}
+      osm_element: {}
+      radio_observation: {}
+      budget: {}
+      grant_award: {}
+      statute: {}
+      regulation: {}
+      screenshot: {}
+      state_auditor_survey:
+        description: >-
+          A state auditor's periodic survey of agency surveillance-technology
+          holdings — an R1 government dataset (§23.6, SIG-INGEST-047).
+      warrant:
+        description: A warrant artifact (§23.6, SIG-INGEST-047).
+      procurement_aggregator_record:
+        description: >-
+          A record from the paywalled commercial procurement aggregator carried
+          under a LINK custody posture (§23.6, SIG-INGEST-047).
+      other: {}
   Currency:
     description: Currency C derived at query time from volatility half-life (§28.3).
     permissible_values:
