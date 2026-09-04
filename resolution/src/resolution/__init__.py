@@ -30,6 +30,13 @@ the pairwise/B-cubed metrics with auto-write demotion and cluster-shape alerts
 (:mod:`resolution.quality_gates`), and the re-runnable ER pipeline stage that composes
 the six tiers, records its run, and keeps public identifiers stable across cluster
 change (:mod:`resolution.er_run`).
+
+P05.2 adds the internal review queue and curation contract (:mod:`resolution.review_queue`,
+§14.6/§25/§27): a human accepts/rejects each tier-4/5 PROPOSED match with its
+per-comparison confidence explanation surfaced inline (SIG-IDENT-025), and adjudicates the
+model-assisted extractions from the upstream ``parsing`` stage — logging ``model_id`` and
+``prompt_version`` with every decision on model output (SIG-IDENT-026). Nothing in the
+queue writes to the graph; LLM output reaches only the queue (SIG-LLM-002).
 """
 
 __version__ = "0.0.0"
