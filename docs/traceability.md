@@ -715,3 +715,48 @@ ADR-030.
 | Requirement | Where | Test |
 |---|---|---|
 | SIG-ENG-013 (the LLM-extraction stage and the curation surface are plain CLIs: `sig-parsing extract`/`sampling`; `sig-resolution review enqueue`/`list`/`show`/`decide`) | `parsing.cli` (`extract`, `sampling`); `resolution.cli` (`review` subcommands) | `tests/parsing/test_cli_extraction.py::test_extract_prints_proposed_claims`, `::test_sampling_lists_policies`; `tests/resolution/test_cli_review.py::test_enqueue_list_and_decide_flow`, `::test_decide_on_a_missing_item_reports_and_exits_nonzero` |
+
+# P06.1 — Vertical slice: one jurisdiction end-to-end (Oklahoma City / OKCPD Flock)
+
+The slice carries one real jurisdiction from evidence to a rendered dossier and
+executes J-1. Requirement stamps below; the hardness precondition is declared in
+`docs/slice/P06.1_hardness_precondition.md` (before the slice) and the
+retrospective in `docs/slice/P06.1_retrospective.md` (HARD GATE §54, SIG-ENG-034).
+
+## The J-1 acceptance query (SIG-CHART-009/010)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-CHART-009 (J-1 has an executable acceptance query under `tests/acceptance/queries/`, run in CI) | `tests/acceptance/queries/test_j1_journalists_traversal.py`; `tests/acceptance/okc_slice.py` (`build_slice`, `j1_traversal`) | `tests/acceptance/queries/test_j1_journalists_traversal.py::test_j1_executes_end_to_end` |
+| SIG-CHART-010 (every returned material fact carries a resolvable evidence ref; a coverage statement accompanies the result) | `okc_slice.material_facts`; `exports.dossier` (`what_we_dont_know`, `incompleteness_banner`) | `::test_every_material_fact_resolves_to_a_document_at_a_locator`, `::test_result_carries_a_coverage_and_incompleteness_statement` |
+
+## Camera-count reconciliation (§29.1)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-EPIS-021 (composed weight `W` from the published ordinal table) | `reconcile.weight.weight_class` | `tests/reconcile/test_weight.py::test_appendix_d2_worked_example_reproduces_exact_weight_classes`, `::test_base_reliability_maps_to_published_classes`, `::test_d5_and_c4_downgrades_floor_at_w1` |
+| SIG-RECON-008 (currency `C` derived from volatility half-life at query time) | `reconcile.weight.currency`, `half_life_days` | `tests/reconcile/test_weight.py::test_currency_bands_track_half_life`, `::test_immutable_predicate_is_always_c1` |
+| SIG-RECON-026 (the count predicates are distinct and never conflated) | `reconcile.counts.reconcile_counts`; `reconcile.model.COUNT_BASES`; the six registry predicates | `tests/reconcile/test_counts.py::test_three_answers_to_three_questions_not_one`, `tests/acceptance/queries/test_j1_journalists_traversal.py::test_count_predicates_are_distinct_with_their_own_resolutions` |
+| SIG-RECON-027 (`mapped_device_count` is a lower bound only) | `reconcile.counts._resolve_one_basis` (`lower_bound`) | `tests/reconcile/test_counts.py::test_okc_predicates_stay_distinct` |
+| SIG-RECON-028 (refuse to compare different `count_basis`; emit `PREDICATE_CONFLATION`) | `reconcile.counts.reconcile_as_single_count` | `tests/reconcile/test_counts.py::test_conflating_contracted_and_mapped_emits_predicate_conflation`, `tests/acceptance/queries/test_j1_journalists_traversal.py::test_predicate_conflation_fires_on_deliberate_conflation` |
+| SIG-RECON-029 (every predicate carries its own resolution + `unresolved_delta` + tasks; no single true count) | `reconcile.counts.reconcile_counts`, `_compute_deltas`; `reconcile.model.CountReconciliation.true_count` | `tests/reconcile/test_counts.py::test_no_single_true_count_is_emitted`, `::test_deltas_become_research_tasks` |
+| SIG-ONTO-067 (new count predicates carry volatility/half-life/strategy/directness) | `ontology/vocab/predicates.yaml` (`invoiced_/mapped_/claimed_device_count`) | `tests/ontology/test_predicate_registry.py::test_every_predicate_has_volatility_strategy_and_directness_row`, `tests/reconcile/test_weight.py::test_registry_carries_all_six_count_predicates` |
+
+## The local dossier (§39.2)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-UI-010 (the twelve sections, in order) | `exports.dossier.SECTION_ORDER`, `Dossier.validate` | `tests/exports/test_dossier.py::test_sections_are_the_twelve_in_order`, `::test_out_of_order_sections_are_rejected` |
+| SIG-UI-011 ("what we don't know" in summary + API + print) | `exports.dossier.render_json`, `render_print_html` | `tests/exports/test_dossier.py::test_what_we_dont_know_is_in_summary_and_api_and_print` |
+| SIG-UI-012 (explicit incompleteness banner) | `exports.dossier.Dossier.incompleteness_banner` | `tests/exports/test_dossier.py::test_incompleteness_banner_names_count_and_absence_rule` |
+| SIG-UI-013 (print/PDF path: paginated, sources, as-of + permalink on every page) | `exports.dossier.render_print_html` | `tests/exports/test_dossier.py::test_print_path_has_sources_and_asof_and_permalink_on_every_page` |
+| SIG-UI-014 (every material figure expandable to its reconciliation) | `exports.dossier.Figure`, `Reconciliation`, `_figure_html` | `tests/exports/test_dossier.py::test_every_material_figure_is_expandable_to_its_reconciliation` |
+| SIG-UI-015 (`unknown` rendered, not omitted) | `exports.dossier.Row.display_value` | `tests/exports/test_dossier.py::test_unknown_values_are_rendered_not_omitted` |
+
+## The slice acceptance criteria (Phase 6, §52)
+
+| Requirement | Where | Test |
+|---|---|---|
+| AC — a genuine contradiction detected + rendered without collapse | `okc_slice` (`value_disagreement`, `policy_configuration_divergence`); `exports.dossier` | `tests/acceptance/queries/test_j1_journalists_traversal.py::test_at_least_one_genuine_contradiction_rendered_without_collapse` |
+| AC — hardness precondition satisfied, declared before the slice | `docs/slice/P06.1_hardness_precondition.md`; `okc_slice.build_slice` | `tests/acceptance/test_hardness_precondition.py` (all) |
+| AC — a written retrospective is committed (HARD GATE §54, SIG-ENG-034) | `docs/slice/P06.1_retrospective.md` | `tests/acceptance/test_slice_artifacts.py::test_retrospective_is_committed_and_substantive` |

@@ -1,0 +1,125 @@
+{
+  "_note": "P06.1 vertical-slice evidence fixtures for the Oklahoma City OKCPD Flock ALPR program. Each artifact faithfully transcribes a cited public source (its `url` is the stable_locator); figures are transcribed from that public reporting as of 2026-09-01, not fetched by a live connector (the records/portal/parsing connectors are P07/P11). See docs/slice/P06.1_retrospective.md.",
+  "artifacts": [
+    {
+      "artifact_id": "okc-contract-c241032",
+      "source_id": "src:okc-procurement",
+      "source_family": "executed contract / procurement record",
+      "genre": "executed_contract",
+      "reliability": "R1",
+      "artifact_type": "executed_contract",
+      "url": "https://deflockokc.com/the-case.html",
+      "retrieved_at": "2026-09-01",
+      "title": "City of Oklahoma City — Master Agreement C241032 (Flock Safety)",
+      "text": "Oklahoma City pays Flock roughly $270,000 a year for 90 cameras. Per-camera cost derived from OKC contract documents: Master Agreement C241032 and Renewal Letters. $270,000 annual fee divided by 90 cameras equals $3,000 per camera per year. The program has run under an active contract with Flock Safety since 2023."
+    },
+    {
+      "artifact_id": "okc-council-2026-08-18",
+      "source_id": "src:okc-council",
+      "source_family": "municipal governance record",
+      "genre": "council_minutes",
+      "reliability": "R2",
+      "artifact_type": "council_minutes",
+      "url": "https://www.kgou.org/politics-and-government/2026-08-19/oklahoma-city-council-renews-license-plate-reader-contract-despite-pushback",
+      "retrieved_at": "2026-09-01",
+      "title": "Oklahoma City Council renews license plate reader contract despite pushback (2026-08-18)",
+      "text": "The Oklahoma City Council voted Tuesday, August 18, 2026, to extend the city's contract with ALPR vendor Flock Safety, 5 to 3, despite opposition from residents; council members Cooper, Hamon, and Pennington voted no after public comment. The renewal was granted with the addition of an amendment that gives Oklahoma City, rather than Flock, the sole power to share data with federal agencies. Chief Bacy said his department is reducing the data retention period from 30 to 7 days and removing its data from a nationwide sharing platform. The one-year renewal runs through 2027-06-30 and returns to the council before another renewal."
+    },
+    {
+      "artifact_id": "okc-bacy-count-2026-08-18",
+      "source_id": "src:journalrecord",
+      "source_family": "investigative journalism",
+      "genre": "news_article",
+      "reliability": "R2",
+      "artifact_type": "news_article",
+      "url": "https://journalrecord.com/2026/08/18/okc-council-votes-keep-flock-cameras-privacy-concerns/",
+      "retrieved_at": "2026-09-01",
+      "title": "OKC Council approves Flock contract extension with new restrictions",
+      "text": "Bacy said OKCPD has 90 cameras, while businesses own around 100 within city limits."
+    },
+    {
+      "artifact_id": "okc-oklahoman-2026-08-03",
+      "source_id": "src:oklahoman",
+      "source_family": "investigative journalism",
+      "genre": "news_article",
+      "reliability": "R4",
+      "artifact_type": "news_article",
+      "url": "https://www.oklahoman.com/story/news/local/2026/08/03/okc-council-will-vote-on-police-contract-for-flock-cameras/90958514007/",
+      "retrieved_at": "2026-09-01",
+      "title": "OKC Council will vote on police contract for Flock cameras",
+      "text": "The funding would go toward maintaining the 90 active ALPR cameras operated under the OKCPD contract. According to DeFlock OKC, a local offshoot of the national crowdsourcing data project DeFlock, there are an estimated 300 ALPR cameras in the OKC metro area."
+    },
+    {
+      "artifact_id": "okc-deflock-map",
+      "source_id": "src:deflock",
+      "source_family": "community field-mapping",
+      "genre": "osm_node_set",
+      "reliability": "R5",
+      "artifact_type": "osm_node_set",
+      "url": "https://deflockokc.com/",
+      "retrieved_at": "2026-09-01",
+      "title": "DeFlock OKC — community camera map",
+      "text": "The contract says 90 cameras. The community map shows 299 across the OKC metro area. Private businesses, parking lots, and HOAs feed data into the same Flock network; many mapped devices have no confirmed operator."
+    },
+    {
+      "artifact_id": "okc-ops-manual-5-118",
+      "source_id": "src:okcpd-policy",
+      "source_family": "agency policy",
+      "genre": "agency_policy",
+      "reliability": "R2",
+      "artifact_type": "agency_policy",
+      "url": "https://deflockokc.com/the-case.html",
+      "retrieved_at": "2026-09-01",
+      "title": "OKCPD Operations Manual \u00a75-118 (ALPR policy)",
+      "text": "The OKCPD Operations Manual states that ALPR data will not be shared as part of a law enforcement information database. Their only published ALPR policy, Manual \u00a75-118, still covers vehicle-mounted readers, not Flock's static cameras."
+    },
+    {
+      "artifact_id": "okc-sharing-109-agencies",
+      "source_id": "src:okc-council",
+      "source_family": "municipal governance record",
+      "genre": "council_minutes",
+      "reliability": "R2",
+      "artifact_type": "council_minutes",
+      "url": "https://deflockokc.com/",
+      "retrieved_at": "2026-09-01",
+      "title": "OKCPD data sharing — configured access (confirmed 2026-08-18)",
+      "text": "On August 18, OKCPD confirmed 109 local agencies can already pull OKC's Flock data, and when Councilwoman Hamon asked for the list, Chief Bacy said, 'No, ma'am.' Flock's network spans more than 5,000 agencies and 100,000 cameras sharing data nationwide."
+    },
+    {
+      "artifact_id": "okc-statute-47-7-606-1",
+      "source_id": "src:ok-statute",
+      "source_family": "statutory / legal regime",
+      "genre": "news_article",
+      "reliability": "R1",
+      "artifact_type": "legal_instrument",
+      "url": "https://deflockokc.com/the-case.html",
+      "retrieved_at": "2026-09-01",
+      "title": "Oklahoma statute 47 O.S. \u00a77-606.1",
+      "text": "Oklahoma statute 47 O.S. \u00a77-606.1 limits ALPR use to insurance enforcement. OKCPD uses Flock far beyond that."
+    },
+    {
+      "artifact_id": "okc-litigation-flock",
+      "source_id": "src:deflock",
+      "source_family": "investigative journalism",
+      "genre": "news_article",
+      "reliability": "R4",
+      "artifact_type": "legal_proceeding",
+      "url": "https://deflockokc.com/the-case.html",
+      "retrieved_at": "2026-09-01",
+      "title": "Related litigation — Flock ALPR under constitutional challenge",
+      "text": "Flock's platform is under federal constitutional challenge. This is vendor-level litigation bearing on the technology deployed in Oklahoma City, not an Oklahoma City-specific case."
+    },
+    {
+      "artifact_id": "okc-replacement-fusus-axon",
+      "source_id": "src:deflock",
+      "source_family": "investigative journalism",
+      "genre": "news_article",
+      "reliability": "R4",
+      "artifact_type": "news_article",
+      "url": "https://deflockokc.com/",
+      "retrieved_at": "2026-09-01",
+      "title": "Adjacent / replacement vendor — Fusus (Axon)",
+      "text": "Through Fusus, the Axon-owned real-time crime center OKCPD taps, the department already pulls in private and community cameras beyond its Flock poles. Residents refuse any replacement vendor, Axon included."
+    }
+  ]
+}

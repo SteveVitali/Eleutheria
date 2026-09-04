@@ -318,3 +318,42 @@ now exist (JSON-serialisable queue + `sig-resolution review` CLI); the live clai
 |---|---|---|---|
 | RISK-P5-10 | The **actual model client** for model-assisted extraction (`SIG-LLM-001`). No vendor SDK or network call is wired; `run_extraction` drives an injected `ModelClient` protocol. | A concrete model integration (auth, batching, cost, the `ai-train=no` vs model-assisted-extraction distinction, SIG-LIC-004c) is an operator decision beyond this ticket, and wiring one would make the scaffolding non-deterministic and untestable offline. | The whole boundary is enforced on the *output* regardless of which model produced it — schema validation, span-in-capture, R6/`PROPOSED`, provenance logging, graceful degradation — so any client is a drop-in behind a tested guardrail (ADR-030 revisit trigger). |
 | RISK-P5-11 | The **gold-set accuracy cadence** for SIG-LLM-006 uses seeded per-type thresholds and an on-demand `measure_accuracy`, not a scheduled measurement against a national gold set. | The published cadence and the real per-extraction-type gold sets are a data/ops effort beyond a code ticket (mirrors RISK-P5-05 for the ER gold set). | The demotion *mechanism* is built and tested: a measured accuracy below the versioned floor flips the type to human-only deterministically (`evaluate_demotion`), and sampling is reproducible; formalising the cadence is a data migration + ops schedule. |
+
+## Phase 6 — Vertical slice: one jurisdiction end-to-end (P06.1 — Oklahoma City / OKCPD Flock)
+
+P06.1 carries one real jurisdiction (Oklahoma City, OKCPD Flock ALPR) from
+evidence to a rendered dossier and executes J-1, to **falsify the design before
+it is replicated** (§51.1). It adds the minimal count-reconciliation seed
+(`reconcile.weight/counts/model`), the §39.2 dossier renderer (`exports.dossier`),
+the J-1 acceptance query (`tests/acceptance/`), the three missing §29.1 count
+predicates, the pre-registered hardness precondition, and the committed
+retrospective (HARD GATE §54).
+
+### Risk retired
+
+| id | Risk | How it is retired |
+|---|---|---|
+| RISK-P6-01 | **Design falsification (§51.2).** The claim/temporal/epistemic/reconciliation model might not survive contact with a real, messy jurisdiction — and discovering that at national scale would be catastrophic. | One real jurisdiction is carried end to end through J-1; the epistemic weight model reproduces Appendix D.2 exactly (`test_appendix_d2_worked_example_reproduces_exact_weight_classes`), the count predicates stay distinct with `PREDICATE_CONFLATION` firing on a deliberate conflation, and every material fact resolves to a document at a locator. The model **survived** on its core claim (reconciliation-not-aggregation, contradictions stay visible) and its **failures are recorded and mostly fixed now** in `docs/slice/P06.1_retrospective.md` — at one jurisdiction rather than twenty thousand. |
+
+### Findings surfaced by the slice (recorded in the retrospective)
+
+| id | Finding | Disposition |
+|---|---|---|
+| RISK-P6-02 | The predicate registry shipped with three of the six §29.1 count predicates missing; `C` could not be derived for `mapped/invoiced/claimed_device_count`. | **Fixed here** (additive registry rows, ADR-031). A conformance check for the §29.1 set is handed to P08. |
+| RISK-P6-03 | Appendix D.2's published `W2` for OSM-mapped does not follow from §10.6 without the unstated structured-export `+1` upgrade. | Implemented faithfully and test-anchored; **spec doc fix** recommended (retrospective finding 2). |
+| RISK-P6-04 | The count model conflates *basis* with *scope*: real municipal data (metro-mapped 299 > city-active 90) inverts the Appendix-D delta ordering. | Handed to P08 — the count model needs a scope/population dimension (retrospective finding 3; ADR-031 revisit trigger). |
+| RISK-P6-05 | `count_basis` is load-bearing in §29.1 but has no home in the schema/model; the generated `Contradiction`/`ResearchTask` models are thinner than the DB tables and the contradiction-type vocabulary is spec-only. | Handed to P08 / ontology generation (retrospective findings 4–5). |
+
+### Deviations recorded as ADRs (SIG-ENG-031)
+
+| ADR | Deviation |
+|---|---|
+| ADR-031 | A minimal count-reconciliation seed in `reconcile/` ahead of the Phase-8 engine, plus the three added count predicates (additive, back-compatible). |
+| ADR-032 | A minimal §39.2 dossier renderer in `exports/` with a print-CSS PDF path; a server-side PDF renderer and the full epistemic surface are deferred to P15.2. |
+
+### Scaffolded / bounded requirements (SIG-ENG-005)
+
+| id | Requirement | Why not fully closed now | Compensating control |
+|---|---|---|---|
+| RISK-P6-06 | **Live acquisition of the slice's evidence.** The records/procurement/parsing connectors (P07) and the portal layer (P11) do not exist yet, so the slice's evidence is committed fixtures faithfully transcribing cited public sources, not live captures. | Phase 6 is deliberately sequenced before those connectors (§52); building them here would pre-empt P07/P11. | Each artifact's bytes are content-addressed (a real `capture_digest`), its real source URL is the `stable_locator`, and each claim's `locator` pins a span in the captured document — the full evidence→claim shape (§D.4) is proven end to end, and the tension is recorded in the retrospective (finding 6). |
+| RISK-P6-07 | **The live claim-spine / DB write path.** The slice reconciles and renders over in-memory value objects (matching the connector/ER convention), not the PG claim table. | Docker-free acceptance queries run in CI (SIG-CHART-009); the live write path is P08.x. | The reconciliation value objects align with `db/deploy/graph_annotations.sql`; the append-only guarantees are unchanged (no writable current-value columns introduced). |

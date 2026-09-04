@@ -3,10 +3,16 @@ name = "sig-reconcile"
 version = "0.0.0"
 description = "SIG reconcile package (skeleton; see docs/2_canonical_design_spec.md §47)."
 requires-python = ">=3.11"
-dependencies = []
+# The count-reconciliation seed (P06.1 vertical slice) consumes the predicate
+# registry (volatility/half-life/directness) generated from the ontology source.
+# The full reconciliation engine is P08; this is the minimal slice ahead of it.
+dependencies = ["sig-ontology"]
 
 [project.scripts]
 sig-reconcile = "reconcile.cli:main"
+
+[tool.uv.sources]
+sig-ontology = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]

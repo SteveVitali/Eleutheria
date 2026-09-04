@@ -41,6 +41,9 @@ of a landed one.
 | ADR-027 | The `osm` connector: versioned tag vocabulary, `(type,id,version)` keying, ODbL landing (P04.2) |
 | ADR-028 | The `atlas` connector: family-level `deployment_exists`, agency-id keying, category-retirement-not-a-world-change (P04.3) |
 | ADR-029 | Splink 4 on DuckDB for the probabilistic ER tiers 4–5, as a fully-specified deterministic model (P05.1) |
+| ADR-030 | Review queue + LLM-extraction scaffolding as a library plus CLI (P05.2) |
+| ADR-031 | A minimal count-reconciliation seed + the three missing count predicates, for the vertical slice (P06.1) |
+| ADR-032 | A minimal slice dossier renderer with a print-CSS PDF path, ahead of the production surface (P06.1) |
 
 ADR-001…012 are the §15.5 decision set; ADR-013…020 are the stack ADRs. The
 egress question of §38.5 is resolved for the whole project in ADR-015. ADR-021 is
@@ -57,3 +60,8 @@ agency-id keying with a surrogate fallback, and category-retirement-as-vocabular
 event). ADR-029 is the P05.1 probabilistic-ER decision (Splink 4 on DuckDB as a
 fully-specified, deterministic, versioned-as-data model for cascade tiers 4–5, with
 sized blocking, the gold set + frozen holdout, and the §14.7 quality gates).
+ADR-030 is the P05.2 review-queue + LLM-extraction decision (the boundary as a
+library plus CLI). ADR-031 and ADR-032 are the P06.1 vertical-slice decisions: a
+minimal count-reconciliation seed plus the three missing §29.1 count predicates
+(ahead of the Phase-8 engine), and a minimal §39.2 dossier renderer with a
+print-CSS PDF path (ahead of the P15.2 production surface).
