@@ -205,7 +205,9 @@ class ClaimResponse(_Model):
     A claim is one asserted observation with its evidence, not the resolved value
     for its (subject, predicate) — the resolution lives at ``/resolution`` and is
     linked here — so this response is provenance and carries no bare "current
-    value".
+    value". Its ``attribution`` names the upstream of the claim's source
+    structurally (SIG-CONTRIB-020): a claim's upstream is named in the API, not only
+    in aggregate on an About page.
     """
 
     claim_id: str
@@ -215,6 +217,9 @@ class ClaimResponse(_Model):
     raw_value: str
     observed_at: date
     source_id: str
+    #: Structural upstream attribution for this claim's source(s) — the upstream is
+    #: named on the claim itself, not only on an About page (SIG-CONTRIB-020).
+    attribution: list[Attribution]
     genre: str
     review_status: str
     evidence_capture_ids: list[str]

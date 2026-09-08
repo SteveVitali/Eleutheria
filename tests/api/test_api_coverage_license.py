@@ -62,6 +62,18 @@ def test_entity_response_carries_upstream_attribution(client: TestClient) -> Non
     assert all(a["attribution"] for a in attribution)
 
 
+def test_claim_response_names_its_upstream_attribution(client: TestClient) -> None:
+    """SIG-CONTRIB-020: a claim's upstream is named on the claim in the API response,
+    not only in aggregate on an About page."""
+    body = client.get("/v1/claim/portal").json()
+    assert body["source_id"] == "src:portal"
+    attribution = body["attribution"]
+    assert attribution, "the claim carries structural upstream attribution"
+    named = {a["source_id"] for a in attribution}
+    assert "src:portal" in named
+    assert all(a["attribution"] for a in attribution)
+
+
 def _rights(source_id: str, spdx: str) -> RightsRecord:
     return RightsRecord(
         source_id=source_id,

@@ -27,4 +27,5 @@ adopt the spec's policy, they do not redefine it.
 | [Anti-misuse statement](anti-misuse-statement.md) | the dual-use tension, stated honestly and in public | §46.3 | SIG-GOV-019 |
 | [Contributor safety](contributor-safety.md) | PII minimisation, pseudonymity, know-your-rights, the detained-contributor policy | §34.3 | SIG-CONTRIB-005…008 |
 | [Contributor onboarding usability study](contributor-onboarding-usability-study.md) | the moderated ≤10-minute onboarding study: protocol and published results | §34.2 | SIG-CONTRIB-003 |
+| [Organised Editing activity — SIG operator attribution](organised-editing-activity.md) | the OSM Organised Editing activity page: coordinating org, changeset hashtag, goal, tools + data sources with usage conditions, metrics (task outcomes, not rankings) | §35.2, §42.3a | SIG-CONTRIB-016d…g, SIG-LIC-007a–c |
 | [Hostile-reader review — dossier template](hostile-reader-review-dossier.md) | the recorded, release-blocking hostile-reader review of the dossier template version | §41 | SIG-UI-042 |

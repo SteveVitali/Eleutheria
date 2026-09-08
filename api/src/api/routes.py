@@ -166,6 +166,7 @@ def build_router() -> APIRouter:
         if stored is None:
             raise HTTPException(status_code=404, detail="claim not found")
         c = stored.claim
+        rights = store.rights_for((c.source_id,) if c.source_id else ())
         asof.apply_cache(response)
         return ClaimResponse(
             claim_id=c.claim_id,
@@ -175,6 +176,7 @@ def build_router() -> APIRouter:
             raw_value=c.raw_value,
             observed_at=c.observed_at,
             source_id=c.source_id,
+            attribution=attribution_for(rights),
             genre=c.genre,
             review_status=c.review_status,
             evidence_capture_ids=list(stored.capture_ids),
