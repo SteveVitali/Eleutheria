@@ -20,9 +20,31 @@ export const SHELL_PAGES = [
   "/evidence/",
   "/evidence/active-device-count/",
   "/evidence/operator-roster-size/",
+  "/research-queue/",
+  "/corrections/",
+  "/dispute/",
+  "/methodology/",
+  "/data-freshness/",
+  "/coverage-metrics/",
+  "/editorial-standards/",
+  "/style-guide/",
   "/reference-map/",
   "/reference-graph/",
 ] as const;
+
+// The seven outline surfaces + the required eighth (the corrections log), asserted to
+// exist across the built Phase-15 site (P15.5 deliverable 6 / AC1). Each maps to a
+// representative page (the recommender lives on /watch/; the viewer at /evidence/*).
+export const PHASE15_SURFACES = {
+  dossier: "/dossier/oklahoma-city/",
+  map: "/map/",
+  network: "/network/",
+  watch: "/watch/",
+  evidence_recommender: "/watch/",
+  evidence_viewer: "/evidence/active-device-count/",
+  research_queue: "/research-queue/",
+  corrections_log: "/corrections/",
+} as const;
 
 // The worked dossier's canonical slug + its derived surfaces (SIG-UI-010..015).
 export const DOSSIER_SLUG = "oklahoma-city";

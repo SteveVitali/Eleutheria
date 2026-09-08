@@ -1,0 +1,124 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The public research-queue surface (§39.7, SIG-UI-031) — the seventh outline surface.
+// Static, zero-JS (SIG-UI-036/037): each task card states the closing condition, the
+// evidence sought, the assignee class, and the effort estimate; the queue supports
+// geographic filtering (§33.5), shows claiming-with-expiry as priority-not-exclusivity
+// (SIG-TASK-010/011), and exposes the full disposition vocabulary incl. "searched,
+// found nothing" (SIG-TASK-008/009). No volume leaderboard (SIG-TASK-012).
+import BaseLayout from "../layouts/BaseLayout.astro";
+import {
+  claimStatusFor,
+  orderQueue,
+  queueJurisdictions,
+  tasksForJurisdiction,
+  DISPOSITION_META,
+  SEARCHED_FOUND_NOTHING,
+} from "../lib/research-queue";
+import {
+  JURISDICTION_CLAIMS,
+  QUEUE_AS_OF,
+  RESEARCH_QUEUE,
+  RESEARCH_QUEUE_PROVENANCE,
+} from "../lib/corrections-methodology-fixture";
+
+const ordered = orderQueue(RESEARCH_QUEUE, JURISDICTION_CLAIMS, QUEUE_AS_OF);
+const jurisdictions = queueJurisdictions(RESEARCH_QUEUE);
+---
+
+<BaseLayout title="Research queue" path="/research-queue/" provenance={RESEARCH_QUEUE_PROVENANCE}>
+  <p>
+    The research queue turns every open gap into <strong>actionable work</strong>. Each
+    task states what would <strong>close</strong> it, what <strong>evidence</strong> is
+    sought, <strong>who</strong> it is for, and how much <strong>effort</strong> it is.
+    Absence is an invitation, not a dead end.
+  </p>
+  <p class="sig-queue-note" data-testid="no-leaderboard-note">
+    There is no volume leaderboard. Recognition is qualitative and tied to verified
+    contributions — volume incentives produce low-quality submissions at scale (SIG-TASK-012).
+  </p>
+
+  <!-- Geographic filtering (§33.5): the queue's jurisdictions, each a same-page anchor. -->
+  <h2 id="filter-heading">Filter by jurisdiction</h2>
+  <ul class="sig-queue-filter" aria-labelledby="filter-heading">
+    {jurisdictions.map((j) => (
+      <li data-testid="jurisdiction-filter" data-jurisdiction={j}>
+        <a href={`#jurisdiction-${j.replace(/[^a-zA-Z0-9]+/g, "-")}`}>{j}</a>
+        {" — "}{tasksForJurisdiction(RESEARCH_QUEUE, j).length} task(s)
+      </li>
+    ))}
+  </ul>
+
+  <h2 id="queue-heading">Open tasks</h2>
+  <ol class="sig-queue" aria-labelledby="queue-heading">
+    {ordered.map((card) => {
+      const claim = claimStatusFor(card, JURISDICTION_CLAIMS, QUEUE_AS_OF);
+      return (
+        <li
+          class="sig-task-card"
+          data-testid="task-card"
+          id={`jurisdiction-${card.jurisdiction.replace(/[^a-zA-Z0-9]+/g, "-")}`}
+          data-task-type={card.task_type}
+          data-jurisdiction={card.jurisdiction}
+          data-scope={card.geographic_scope}
+          data-assignee={card.assignee_class}
+          data-effort={card.effort_estimate}
+          data-claimed={claim.claimed ? "true" : "false"}
+        >
+          <h3>{card.subject_label}</h3>
+          <dl class="sig-task-card__fields">
+            <div>
+              <dt>Closing condition</dt>
+              <dd data-testid="closing-condition">{card.closing_condition}</dd>
+            </div>
+            <div>
+              <dt>Evidence sought</dt>
+              <dd data-testid="evidence-sought">{card.evidence_sought}</dd>
+            </div>
+            <div>
+              <dt>Assignee class</dt>
+              <dd data-testid="assignee-class">{card.assignee_class}</dd>
+            </div>
+            <div>
+              <dt>Effort estimate</dt>
+              <dd data-testid="effort-estimate">{card.effort_estimate}</dd>
+            </div>
+            <div>
+              <dt>Geographic scope</dt>
+              <dd>{card.geographic_scope} — {card.jurisdiction}</dd>
+            </div>
+          </dl>
+
+          <!-- Claiming with expiry (SIG-TASK-010/011): priority, never exclusivity. -->
+          <p class="sig-task-card__claim" data-testid="claim-status">
+            {claim.claimed ? (
+              <>Claimed by <strong>{claim.claimed_by}</strong>, expiring {claim.expires_at}. </>
+            ) : (
+              <>Unclaimed. </>
+            )}
+            <span data-testid="anyone-may-work">Any contributor may work this task — a claim grants priority, not exclusivity.</span>
+          </p>
+
+          <!-- The full disposition vocabulary (SIG-TASK-008), incl. searched-found-nothing. -->
+          <details class="sig-task-card__dispositions">
+            <summary>How this task can be dispositioned</summary>
+            <ul>
+              {card.dispositions.map((d) => (
+                <li
+                  data-testid="disposition"
+                  data-disposition={d}
+                  data-searched-found-nothing={d === SEARCHED_FOUND_NOTHING ? "true" : "false"}
+                >
+                  <code>{d}</code> — {DISPOSITION_META[d]}
+                </li>
+              ))}
+            </ul>
+          </details>
+        </li>
+      );
+    })}
+  </ol>
+</BaseLayout>

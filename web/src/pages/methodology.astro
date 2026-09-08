@@ -1,0 +1,65 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The public methodology page (§39.8, SIG-UI-034). Static, zero-JS. It explains how
+// SIG knows what it knows — evidence tiers, currency, reconciliation, the four kinds of
+// absence, and the honesty constraints — and links the data-freshness (§32.4) and
+// coverage-metrics (§32.5) pages. Linked from every dossier via the base layout's
+// "How we know this" module, satisfying "linked from every dossier".
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Methodology" path="/methodology/">
+  <p>
+    This page explains how SIG produces and qualifies every claim. SIG
+    <strong>reports</strong>; it does not endorse. Every material claim carries four
+    independent epistemic fields, a support glyph, a persistent marker when contested,
+    and an honest gap wherever SIG has not looked.
+  </p>
+
+  <h2>Evidence tiers and support</h2>
+  <p>
+    Sources are graded by an evidence tier (e.g. a records-request contract outranks a
+    portal aggregator snapshot). The support glyph is a four-step mark whose fill
+    reflects how many independent, method-distinct evidence classes stand behind the
+    winning value, and it always carries a machine-readable downgrade reason when it
+    sits below fully confirmed.
+  </p>
+
+  <h2>Reconciliation and contradiction</h2>
+  <p>
+    When sources disagree, SIG resolves by a versioned ruleset (e.g. highest tier wins)
+    and <strong>preserves the dissent</strong> — a contested value is plotted as a
+    range, with each competing claim's source, tier, date, and document link. Two
+    numbers that measure different quantities are labelled as such, not forced into a
+    disagreement.
+  </p>
+
+  <h2>Absence is data</h2>
+  <p>
+    A missing row is never silently omitted. SIG distinguishes four kinds of absence —
+    not researched, no evidence found (with the sources searched named), evidence of
+    absence, and unresolved — and each is a clickable invitation to
+    <a href="/research-queue/">research it</a>.
+  </p>
+
+  <h2>What SIG does not do</h2>
+  <p data-testid="no-capture-recapture">
+    SIG does <strong>not</strong> publish a capture–recapture estimate of device
+    population from volunteer mapping and vendor portal reporting — not with a caveat,
+    not with a wide interval. Linkage is impossible from published counts, the samples
+    are not independent, and the estimator's known failure mode is understating the very
+    thing SIG exists to document. SIG publishes counted quantities with
+    <strong>named denominators</strong> and records-derived bounds instead — never a
+    total. See the <a href="/coverage-metrics/">coverage metrics</a>.
+  </p>
+
+  <h2>Freshness and coverage</h2>
+  <ul>
+    <li><a href="/data-freshness/">Data freshness</a> — per source: last successful run, last content change, current status, and stale-entity counts measured against predicate volatility (§32.4).</li>
+    <li><a href="/coverage-metrics/">Coverage metrics</a> — counted quantities with named denominators, records-derived bounds, reconciliation ratios, and measured survey recall (§32.5).</li>
+    <li><a href="/style-guide/">Editorial style guide</a> and <a href="/editorial-standards/">editorial standards</a> — the register rules that govern every published sentence, including generated text.</li>
+  </ul>
+</BaseLayout>

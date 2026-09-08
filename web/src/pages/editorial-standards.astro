@@ -1,0 +1,89 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The public editorial-standards page (§41). Static, zero-JS. It renders (a) the three
+// example conformant editorial cases verbatim (SIG-UI-045) and (b) the recorded
+// hostile-reader review for the current dossier template version (SIG-UI-042) — its
+// findings and their disposition — with the release gate enforced at build:
+// assertReviewReleasable throws if any finding is undispositioned, so a template version
+// with open findings can never render/release.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import {
+  EDITORIAL_CASES,
+  allFindingsDispositioned,
+  assertReviewReleasable,
+  openFindings,
+} from "../lib/editorial";
+import { HOSTILE_READER_REVIEW } from "../lib/corrections-methodology-fixture";
+
+// SIG-UI-042: release is blocked until every hostile-reader finding is dispositioned.
+// This runs at build, so an undispositioned finding fails the build.
+assertReviewReleasable(HOSTILE_READER_REVIEW);
+const review = HOSTILE_READER_REVIEW;
+const releasable = allFindingsDispositioned(review) && review.reviewers.length >= 2;
+const open = openFindings(review);
+---
+
+<BaseLayout title="Editorial standards" path="/editorial-standards/">
+  <p>
+    SIG's editorial standards are what make its record usable as evidence. The
+    <a href="/style-guide/">style guide</a> codifies the register rules; this page
+    records the two hardest editorial machinery pieces: the worked example cases and the
+    hostile-reader review that gates every dossier template version.
+  </p>
+
+  <!-- The three example editorial cases, rendered as specified (SIG-UI-045). -->
+  <h2 id="cases-heading">Example cases</h2>
+  <p>Conformant copy for the three hardest cases:</p>
+  <ul class="sig-editorial-cases" aria-labelledby="cases-heading">
+    {EDITORIAL_CASES.map((c) => (
+      <li class="sig-editorial-case" data-testid="editorial-case" data-case-id={c.id}>
+        <h3>{c.title}</h3>
+        <blockquote data-testid="editorial-case-copy">{c.copy}</blockquote>
+      </li>
+    ))}
+  </ul>
+
+  <!-- The recorded hostile-reader review (SIG-UI-042). -->
+  <h2 id="review-heading">Hostile-reader review</h2>
+  <p>
+    Before a dossier template version is released, two reviewers independently read a
+    real rendered dossier adopting the stance of the documented organization's counsel
+    and log every sentence they would challenge. The review, its findings, and their
+    disposition are committed alongside the template version;
+    <strong>release is blocked until every finding is dispositioned</strong>.
+  </p>
+  <dl class="sig-review-meta">
+    <dt>Template version</dt><dd data-testid="review-template-version">{review.template_version}</dd>
+    <dt>Dossier reviewed</dt><dd><a href={review.reviewed_dossier}>{review.reviewed_dossier}</a></dd>
+    <dt>Reviewers</dt><dd data-testid="review-reviewers">{review.reviewers.join("; ")}</dd>
+    <dt>Review date</dt><dd><time datetime={review.review_date}>{review.review_date}</time></dd>
+    <dt>Release status</dt>
+    <dd
+      data-testid="release-status"
+      data-releasable={releasable ? "true" : "false"}
+      data-open-findings={open.length}
+    >
+      {releasable ? "Releasable — every finding dispositioned" : `Blocked — ${open.length} open finding(s)`}
+    </dd>
+  </dl>
+
+  <h3 id="findings-heading">Findings</h3>
+  <ol class="sig-review-findings" aria-labelledby="findings-heading">
+    {review.findings.map((f) => (
+      <li
+        class="sig-review-finding"
+        data-testid="review-finding"
+        data-finding-id={f.id}
+        data-disposition={f.disposition ?? "open"}
+      >
+        <p class="sig-review-finding__challenge" data-testid="finding-challenge">{f.challenge}</p>
+        <p class="sig-review-finding__disposition" data-testid="finding-disposition">
+          <strong>{f.disposition ?? "OPEN"}</strong> — {f.resolution}
+        </p>
+      </li>
+    ))}
+  </ol>
+</BaseLayout>

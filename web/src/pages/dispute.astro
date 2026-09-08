@@ -1,0 +1,65 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The public dispute/correction submission page (§45.1, SIG-UI-033). Reachable in one
+// click from any claim on every page (the base layout renders the link everywhere).
+// Static, zero-JS: it states the five intake categories, the published handling
+// priority (privacy-harm and safety above all others, SIG-GOV-003), that no identity
+// is required except a legal demand needing standing (SIG-GOV-002), and the permitted
+// outcomes incl. refusal with published reasoning (SIG-GOV-004). Correction preserves
+// history (SIG-GOV-005); a subject may also attach a response (SIG-GOV-010).
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { categoriesByPriority } from "../lib/corrections";
+
+const categories = categoriesByPriority();
+---
+
+<BaseLayout title="Dispute or correct a record" path="/dispute/">
+  <p>
+    Anyone can ask SIG to correct, annotate, suppress, or remove a record — or dispute
+    an accurate one and attach a response. This channel is reachable in one click from
+    any claim on the site.
+  </p>
+
+  <h2 id="priority-heading">How submissions are prioritized</h2>
+  <p data-testid="priority-note">
+    <strong>Privacy-harm and safety claims are handled before all others, including
+    factual corrections</strong> (SIG-GOV-003). You do <strong>not</strong> need to
+    identify yourself — the only exception is a legal demand that requires standing
+    (SIG-GOV-002).
+  </p>
+
+  <h2 id="categories-heading">What are you reporting?</h2>
+  <ul class="sig-dispute-categories" aria-labelledby="categories-heading">
+    {categories.map((c) => (
+      <li
+        data-testid="dispute-category"
+        data-category={c.category}
+        data-priority-band={c.priorityBand}
+        data-requires-identity={c.requiresIdentity ? "true" : "false"}
+      >
+        <strong>{c.label}</strong> — {c.description}
+        {c.priorityBand === 0 && <span data-testid="prioritized"> (prioritized above all others)</span>}
+        {c.requiresIdentity && <span data-testid="requires-identity"> (may require standing)</span>}
+      </li>
+    ))}
+  </ul>
+
+  <h2 id="outcomes-heading">What can happen</h2>
+  <ul class="sig-dispute-outcomes" aria-labelledby="outcomes-heading">
+    <li><strong>Correct</strong> — a new, corrected assertion is appended; the prior value is preserved and stays citable (SIG-GOV-005).</li>
+    <li><strong>Annotate</strong> — a response is attached alongside the claim, even when the claim is accurate (SIG-GOV-010).</li>
+    <li><strong>Suppress</strong> — removed from public view, retained internally under seal (SIG-GOV-007).</li>
+    <li><strong>Delete</strong> — reserved for material SIG must not hold at all; a content-free tombstone records that a deletion occurred (SIG-GOV-008).</li>
+    <li data-testid="refusal-outcome"><strong>Refuse</strong> — declined, with published reasoning. Refusal is a real, exercisable option (SIG-GOV-004).</li>
+  </ul>
+
+  <h2 id="submit-heading">Submit</h2>
+  <p>
+    Every submission and its outcome is counted in the public
+    <a href="/corrections/">corrections log's transparency report</a> (SIG-GOV-011).
+    A correction, once made, appears there in full.
+  </p>
+</BaseLayout>

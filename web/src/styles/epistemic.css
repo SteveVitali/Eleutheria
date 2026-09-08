@@ -530,6 +530,8 @@ table.sig-table td {
   .sig-header,
   .sig-skip-link,
   .sig-cite,
+  .sig-hwkt,
+  .sig-dispute,
   .sig-print-toolbar {
     display: none !important;
   }
@@ -667,4 +669,116 @@ table.sig-table td {
 }
 .sig-capture-diff tr[data-changed="true"] {
   font-weight: 600;
+}
+
+/* --- P15.5: research queue, corrections, methodology + editorial standards --- */
+/* Neutral greyscale chrome only; no `--sig-epi-*` tokens are introduced here, so
+ * none of it carries epistemic meaning (SIG-UI-006). Epistemic markers embedded in
+ * these surfaces bring their own colour via their components. */
+
+/* The site-wide "How we know this" module (SIG-UI-044) + dispute link (SIG-UI-033),
+ * rendered by the base layout on every page just above the citation. */
+.sig-hwkt {
+  margin-top: 2.5rem;
+  border-top: 1px solid var(--sig-rule);
+  padding-top: 0.8rem;
+  font-size: 0.85rem;
+}
+.sig-hwkt__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.4rem 1.2rem;
+  margin: 0;
+}
+.sig-hwkt__grid dt {
+  font-weight: 600;
+  color: var(--sig-muted);
+}
+.sig-hwkt__grid dd {
+  margin: 0 0 0.4rem;
+}
+.sig-hwkt__links {
+  margin-top: 0.6rem;
+}
+.sig-dispute {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+.sig-dispute--compact {
+  font-size: 0.8rem;
+}
+
+/* Research queue (SIG-UI-031). */
+.sig-queue,
+.sig-queue-filter,
+.sig-dispute-categories,
+.sig-dispute-outcomes,
+.sig-corrections,
+.sig-coverage,
+.sig-editorial-cases,
+.sig-register-rules,
+.sig-review-findings,
+.sig-generated-rationale {
+  list-style: none;
+  padding-left: 0;
+}
+.sig-task-card,
+.sig-correction,
+.sig-coverage-metric,
+.sig-editorial-case,
+.sig-register-rule,
+.sig-review-finding {
+  border: 1px solid var(--sig-rule);
+  border-radius: 6px;
+  padding: 0.8rem 1rem;
+  margin-bottom: 1rem;
+}
+.sig-task-card__fields > div,
+.sig-correction__fields > div {
+  margin-bottom: 0.3rem;
+}
+.sig-task-card__fields dt,
+.sig-correction__fields dt {
+  font-weight: 600;
+  color: var(--sig-muted);
+}
+.sig-task-card__fields dd,
+.sig-correction__fields dd {
+  margin: 0;
+}
+.sig-task-card__claim {
+  font-size: 0.85rem;
+  color: var(--sig-muted);
+}
+.sig-queue-note,
+.sig-coverage-prohibition {
+  font-style: italic;
+  color: var(--sig-muted);
+}
+.sig-transparency {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1rem;
+}
+
+/* Data-freshness table. */
+table.sig-freshness {
+  border-collapse: collapse;
+  width: 100%;
+}
+table.sig-freshness th,
+table.sig-freshness td {
+  border: 1px solid var(--sig-rule);
+  padding: 0.4rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+/* Editorial standards: example cases + register rules. */
+.sig-editorial-case blockquote,
+.sig-register-rule__good,
+.sig-register-rule__bad {
+  border-left: 3px solid var(--sig-rule);
+  padding-left: 0.8rem;
+  margin: 0.4rem 0;
 }

@@ -9,9 +9,12 @@
 // citation affordance (SIG-UI-035), a skip link, a document language, and the
 // shared design system — the a11y + no-JS baseline P15.2–P15.5 all inherit.
 import Citation from "../components/Citation.astro";
+import HowWeKnowThis from "../components/HowWeKnowThis.astro";
+import DisputeLink from "../components/DisputeLink.astro";
 import "../styles/epistemic.css";
 import { AS_OF, RULESET_VERSION } from "../lib/fixtures";
 import type { AsOfEcho } from "../lib/fixtures";
+import type { ProvenanceSummary } from "../lib/provenance";
 
 interface Props {
   title: string;
@@ -19,11 +22,14 @@ interface Props {
   path: string;
   asOf?: AsOfEcho;
   rulesetVersion?: string;
+  /** The page's "How we know this" provenance (SIG-UI-044); defaults site-wide. */
+  provenance?: ProvenanceSummary;
 }
 
 const { title, path } = Astro.props;
 const asOf = Astro.props.asOf ?? AS_OF;
 const rulesetVersion = Astro.props.rulesetVersion ?? RULESET_VERSION;
+const provenance = Astro.props.provenance;
 ---
 
 <!doctype html>
@@ -49,6 +55,9 @@ const rulesetVersion = Astro.props.rulesetVersion ?? RULESET_VERSION;
         <a href="/network/">Network</a>
         <a href="/watch/">Watch</a>
         <a href="/evidence/">Evidence</a>
+        <a href="/research-queue/">Research queue</a>
+        <a href="/corrections/">Corrections</a>
+        <a href="/methodology/">Methodology</a>
         <a href="/reference-map/">Reference map</a>
         <a href="/reference-graph/">Reference graph</a>
       </nav>
@@ -56,6 +65,8 @@ const rulesetVersion = Astro.props.rulesetVersion ?? RULESET_VERSION;
     <main id="main">
       <h1>{title}</h1>
       <slot />
+      <HowWeKnowThis provenance={provenance} />
+      <DisputeLink />
       <Citation path={path} title={title} asOf={asOf} rulesetVersion={rulesetVersion} />
     </main>
   </body>

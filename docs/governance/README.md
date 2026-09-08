@@ -26,3 +26,4 @@ adopt the spec's policy, they do not redefine it.
 | [Governance & Code of Conduct](governance-and-code-of-conduct.md) | decision-making, editorial board, capture resistance, continuity/succession posture | §46.2, §46.4–46.5 | SIG-GOV-014…016, SIG-GOV-021 |
 | [Anti-misuse statement](anti-misuse-statement.md) | the dual-use tension, stated honestly and in public | §46.3 | SIG-GOV-019 |
 | [Contributor safety](contributor-safety.md) | PII minimisation, pseudonymity, know-your-rights, the detained-contributor policy | §34.3 | SIG-CONTRIB-005…008 |
+| [Hostile-reader review — dossier template](hostile-reader-review-dossier.md) | the recorded, release-blocking hostile-reader review of the dossier template version | §41 | SIG-UI-042 |
