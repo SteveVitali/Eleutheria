@@ -229,7 +229,7 @@
             "type": "string"
         },
         "AcquisitionMethod": {
-            "description": "Acquisition method, internationalized (\u00a713.8). foia_request is US-specific; the abstract parent is records_request with national children, plus no_equivalent_available (itself a coverage fact).",
+            "description": "Acquisition method, internationalized (\u00a713.8, SIG-ONTO-068). foia_request is US-specific; the abstract parent `records_request` carries national children linked by `is_a`, plus `no_equivalent_available` for jurisdictions with no access regime (itself a coverage fact worth recording).",
             "enum": [
                 "records_request",
                 "us.foia",
@@ -1559,6 +1559,7 @@
                     ]
                 },
                 "name_lang": {
+                    "description": "Repeatable BCP-47 language tags for the multilingual labels (SIG-ONTO-069).",
                     "items": {
                         "type": "string"
                     },
@@ -1569,6 +1570,16 @@
                 },
                 "parent_jurisdiction": {
                     "description": "Multiple parents permitted; hierarchies overlap (SIG-ONTO-010).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
+                "transliteration_scheme": {
+                    "description": "Repeatable qualifier naming the transliteration scheme a romanised/ transliterated label was produced under (e.g. ISO 9, BGN/PCGN); a transliterated name carries it so the original script stays recoverable (SIG-ONTO-069).",
                     "items": {
                         "type": "string"
                     },
@@ -1597,7 +1608,7 @@
             "type": "object"
         },
         "JurisdictionType": {
-            "description": "Jurisdiction type, namespaced per country (\u00a711.1, \u00a713.7).",
+            "description": "Jurisdiction type, namespaced per country (\u00a711.1, \u00a713.7, SIG-ONTO-068). The dotless terms are the shared abstract levels every country's hierarchy maps onto; national levels are `<cc>.*` children linked by `is_a`, so a new country plugs its own level names in without widening a US-shaped enum.",
             "enum": [
                 "country",
                 "state_province",
@@ -1611,7 +1622,15 @@
                 "judicial_district",
                 "metropolitan_area",
                 "neighborhood",
-                "unincorporated_area"
+                "unincorporated_area",
+                "fr.region",
+                "fr.departement",
+                "fr.commune",
+                "fr.epci",
+                "uk.police_force_area",
+                "de.bundesland",
+                "de.kreis",
+                "de.gemeinde"
             ],
             "title": "JurisdictionType",
             "type": "string"
@@ -1699,7 +1718,7 @@
             "type": "object"
         },
         "LegalInstrumentType": {
-            "description": "Legal instrument type, internationalized (\u00a711.14, \u00a713.7).",
+            "description": "Legal instrument type, internationalized and country-namespaced (\u00a711.14, \u00a713.7, SIG-ONTO-068). The dotless terms are the shared abstract parents; national instruments are `<cc>.*` children linked by `is_a`, added under a national namespace rather than by widening a US-shaped enum (\u00a75.3). P18.2 is the first consumer (the French arr\u00eat\u00e9 pr\u00e9fectoral / CNIL decision).",
             "enum": [
                 "statute",
                 "ordinance",
@@ -1710,7 +1729,12 @@
                 "dpa_decision",
                 "code_of_practice",
                 "prefectoral_order",
-                "directive"
+                "directive",
+                "fr.arrete_prefectoral",
+                "fr.cnil_decision",
+                "uk.surveillance_camera_code",
+                "eu.ai_act",
+                "de.landesdatenschutzgesetz"
             ],
             "title": "LegalInstrumentType",
             "type": "string"
@@ -1906,6 +1930,7 @@
                     ]
                 },
                 "name_lang": {
+                    "description": "Repeatable BCP-47 language tags for the multilingual entity names (SIG-ONTO-069).",
                     "items": {
                         "type": "string"
                     },
@@ -1948,6 +1973,16 @@
                         "null"
                     ]
                 },
+                "transliteration_scheme": {
+                    "description": "Repeatable qualifier naming the transliteration scheme a romanised/ transliterated name was produced under (e.g. ISO 9, BGN/PCGN, Hepburn), so the original script stays recoverable (SIG-ONTO-069).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": [
+                        "array",
+                        "null"
+                    ]
+                },
                 "valid_from": {
                     "type": [
                         "string",
@@ -1982,8 +2017,10 @@
             "type": "string"
         },
         "OrganizationType": {
-            "description": "Organization type, namespaced and extensible (\u00a711.2, \u00a713.7). \"vendor\" is a ROLE, not a subtype (SIG-ONTO-012); it appears here only as an organization-classification convenience and never specializes the entity.",
+            "description": "Organization type, namespaced and extensible (\u00a711.2, \u00a713.7, SIG-ONTO-068). \"vendor\" is a ROLE, not a subtype (SIG-ONTO-012); it appears here only as an organization-classification convenience and never specializes the entity. `law_enforcement` is the shared abstract parent every country's police-force types map onto; national forces are `<cc>.*` children linked by `is_a`, added under a national namespace rather than by widening the `us.*` set.",
             "enum": [
+                "law_enforcement",
+                "government",
                 "us.le.municipal_police",
                 "us.le.sheriff",
                 "us.le.state_police",
@@ -2009,7 +2046,9 @@
                 "vendor",
                 "data_broker",
                 "fr.police_municipale",
-                "fr.gendarmerie"
+                "fr.gendarmerie",
+                "uk.territorial_police",
+                "de.landespolizei"
             ],
             "title": "OrganizationType",
             "type": "string"

@@ -473,7 +473,12 @@ enums:
 
   # --- Accountability / legal / records enums (§11.14, §11.17-19) -------------
   LegalInstrumentType:
-    description: Legal instrument type, internationalized (§11.14, §13.7).
+    description: >-
+      Legal instrument type, internationalized and country-namespaced (§11.14,
+      §13.7, SIG-ONTO-068). The dotless terms are the shared abstract parents;
+      national instruments are `<cc>.*` children linked by `is_a`, added under a
+      national namespace rather than by widening a US-shaped enum (§5.3). P18.2
+      is the first consumer (the French arrêté préfectoral / CNIL decision).
     permissible_values:
       statute: {}
       ordinance: {}
@@ -481,10 +486,27 @@ enums:
       executive_order: {}
       court_order: {}
       consent_decree: {}
-      dpa_decision: {}
+      dpa_decision: {description: "A data-protection authority decision (abstract parent)."}
       code_of_practice: {}
-      prefectoral_order: {description: "e.g. a French arrêté préfectoral."}
+      prefectoral_order: {description: "A prefectoral order (abstract parent); e.g. a French arrêté préfectoral."}
       directive: {}
+      # National children under a shared abstract parent (SIG-ONTO-068). No US
+      # child is added here — a US-shaped enum is prohibited (§5.3).
+      fr.arrete_prefectoral:
+        is_a: prefectoral_order
+        description: "France — arrêté préfectoral (the published authorization instrument, §52 Phase 18)."
+      fr.cnil_decision:
+        is_a: dpa_decision
+        description: "France — a CNIL (data-protection authority) decision."
+      uk.surveillance_camera_code:
+        is_a: code_of_practice
+        description: "United Kingdom — the Surveillance Camera Code of Practice."
+      eu.ai_act:
+        is_a: regulation
+        description: "European Union — an EU AI Act obligation."
+      de.landesdatenschutzgesetz:
+        is_a: statute
+        description: "Germany — a Land data-protection statute."
   AccountabilityEventType:
     description: Accountability event type (§11.17).
     permissible_values:
@@ -611,7 +633,11 @@ enums:
   # load-bearing terms named in §11 plus at least one non-US namespace to prove
   # the model is not US-only.
   JurisdictionType:
-    description: Jurisdiction type, namespaced per country (§11.1, §13.7).
+    description: >-
+      Jurisdiction type, namespaced per country (§11.1, §13.7, SIG-ONTO-068).
+      The dotless terms are the shared abstract levels every country's hierarchy
+      maps onto; national levels are `<cc>.*` children linked by `is_a`, so a new
+      country plugs its own level names in without widening a US-shaped enum.
     permissible_values:
       country: {}
       state_province: {}
@@ -626,24 +652,56 @@ enums:
       metropolitan_area: {}
       neighborhood: {}
       unincorporated_area: {}
+      # National levels under the shared abstract levels (SIG-ONTO-068).
+      fr.region:
+        is_a: state_province
+        description: "France — région."
+      fr.departement:
+        is_a: county
+        description: "France — département."
+      fr.commune:
+        is_a: municipality
+        description: "France — commune."
+      fr.epci:
+        is_a: metropolitan_area
+        description: "France — EPCI (intercommunal grouping); a non-tree overlapping parent."
+      uk.police_force_area:
+        is_a: special_district
+        description: "United Kingdom — police force area (a non-tree operational grouping)."
+      de.bundesland:
+        is_a: state_province
+        description: "Germany — Bundesland (state)."
+      de.kreis:
+        is_a: county
+        description: "Germany — Kreis (district)."
+      de.gemeinde:
+        is_a: municipality
+        description: "Germany — Gemeinde (municipality)."
   OrganizationType:
     description: >-
-      Organization type, namespaced and extensible (§11.2, §13.7). "vendor" is a
-      ROLE, not a subtype (SIG-ONTO-012); it appears here only as an
+      Organization type, namespaced and extensible (§11.2, §13.7, SIG-ONTO-068).
+      "vendor" is a ROLE, not a subtype (SIG-ONTO-012); it appears here only as an
       organization-classification convenience and never specializes the entity.
+      `law_enforcement` is the shared abstract parent every country's police-force
+      types map onto; national forces are `<cc>.*` children linked by `is_a`,
+      added under a national namespace rather than by widening the `us.*` set.
     permissible_values:
-      us.le.municipal_police: {}
-      us.le.sheriff: {}
-      us.le.state_police: {}
-      us.le.university_police: {}
-      us.le.transit_police: {}
-      us.le.school_district_police: {}
-      us.le.tribal_police: {}
-      us.le.federal: {}
-      us.gov.municipality: {}
-      us.gov.county: {}
-      us.gov.special_district: {}
-      us.fusion_center: {}
+      law_enforcement:
+        description: "Abstract parent of every country's law-enforcement organization types (SIG-ONTO-068)."
+      government:
+        description: "Abstract parent of every country's civil-government body types (SIG-ONTO-068)."
+      us.le.municipal_police: {is_a: law_enforcement}
+      us.le.sheriff: {is_a: law_enforcement}
+      us.le.state_police: {is_a: law_enforcement}
+      us.le.university_police: {is_a: law_enforcement}
+      us.le.transit_police: {is_a: law_enforcement}
+      us.le.school_district_police: {is_a: law_enforcement}
+      us.le.tribal_police: {is_a: law_enforcement}
+      us.le.federal: {is_a: law_enforcement}
+      us.gov.municipality: {is_a: government}
+      us.gov.county: {is_a: government}
+      us.gov.special_district: {is_a: government}
+      us.fusion_center: {is_a: government}
       private.company: {}
       private.hoa: {}
       private.security_firm: {}
@@ -656,21 +714,26 @@ enums:
       transit_agency: {}
       vendor: {}
       data_broker: {}
-      fr.police_municipale: {}
-      fr.gendarmerie: {}
+      # National law-enforcement children under the shared abstract parent.
+      fr.police_municipale: {is_a: law_enforcement, description: "France — police municipale."}
+      fr.gendarmerie: {is_a: law_enforcement, description: "France — gendarmerie nationale."}
+      uk.territorial_police: {is_a: law_enforcement, description: "United Kingdom — a territorial police force."}
+      de.landespolizei: {is_a: law_enforcement, description: "Germany — a Land police force."}
   AcquisitionMethod:
     description: >-
-      Acquisition method, internationalized (§13.8). foia_request is US-specific;
-      the abstract parent is records_request with national children, plus
-      no_equivalent_available (itself a coverage fact).
+      Acquisition method, internationalized (§13.8, SIG-ONTO-068). foia_request is
+      US-specific; the abstract parent `records_request` carries national children
+      linked by `is_a`, plus `no_equivalent_available` for jurisdictions with no
+      access regime (itself a coverage fact worth recording).
     permissible_values:
       records_request: {description: "Abstract parent of all public-records regimes."}
-      us.foia: {}
-      us.state_public_records: {}
-      fr.cada: {}
-      uk.foi: {}
-      eu.access_to_documents: {}
-      no_equivalent_available: {}
+      us.foia: {is_a: records_request}
+      us.state_public_records: {is_a: records_request}
+      fr.cada: {is_a: records_request}
+      uk.foi: {is_a: records_request}
+      eu.access_to_documents: {is_a: records_request}
+      no_equivalent_available:
+        description: "No access regime exists in the jurisdiction — a recorded coverage fact, not a records-request child."
   Salience:
     description: Technology salience rating (§13.1, SIG-ONTO-056).
     permissible_values:

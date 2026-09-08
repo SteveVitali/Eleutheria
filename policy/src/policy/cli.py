@@ -15,6 +15,7 @@ import argparse
 from . import __version__
 from .crawler import conduct_rules
 from .governance import intake_categories, permitted_outcomes
+from .jurisdiction import AdapterIncomplete, USShapedAssumptionError, adapters, validate_adapter
 from .licensing import compartments
 from .threat_model import ThreatModelError, load_threat_model, validate_threat_model
 
@@ -28,6 +29,10 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     sub = parser.add_subparsers(dest="command")
     sub.add_parser("validate", help="run the policy data-layer self-checks")
+    sub.add_parser(
+        "jurisdiction",
+        help="validate every jurisdiction adapter against the §5.3 checklist",
+    )
     return parser
 
 
@@ -46,11 +51,35 @@ def _validate() -> int:
     return 0
 
 
+def _jurisdiction() -> int:
+    """Validate every seeded jurisdiction adapter against the §5.3 checklist."""
+    all_adapters = adapters()
+    if not all_adapters:
+        print("no jurisdiction adapters registered")
+        return 1
+    for code, adapter in sorted(all_adapters.items()):
+        try:
+            checklist = validate_adapter(adapter)
+        except (USShapedAssumptionError, AdapterIncomplete) as exc:
+            print(f"adapter {code} INVALID: {exc}")
+            return 1
+        satisfied = sum(1 for ok in checklist.values() if ok)
+        print(
+            f"adapter {code} ({adapter.namespace}.*): OK — "
+            f"{satisfied}/{len(checklist)} checklist items, profile "
+            f"{adapter.publication_profile!r}"
+        )
+    print(f"jurisdiction adapters OK: {len(all_adapters)}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run the `policy` CLI. Returns a process exit code."""
     parser = build_parser()
     args = parser.parse_args(argv)
     if args.command == "validate":
         return _validate()
+    if args.command == "jurisdiction":
+        return _jurisdiction()
     parser.print_help()
     return 0

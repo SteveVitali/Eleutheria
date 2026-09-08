@@ -1,0 +1,55 @@
+# SPDX-License-Identifier: Apache-2.0
+# The jurisdiction adapter set (§5.3, §13.7-13.8, SIG-CHART-029/030). Each country
+# that plugs into the international data model ships one row here: its jurisdiction
+# levels + code systems, its namespaced organization / legal-instrument types, its
+# records-request vocabulary, its default languages, and the §43.8 publication
+# profile that applies. Data, not code — adding a country is a data row plus a test
+# fixture, never a schema change.
+#
+# Every vocabulary term below is a permissible value of the corresponding ontology
+# enum (JurisdictionType / OrganizationType / LegalInstrumentType / AcquisitionMethod),
+# asserted by tests/unit/test_jurisdiction_adapter.py. A non-US adapter carries ONLY
+# its own `<namespace>.*` terms (plus country-neutral abstract parents and
+# `no_equivalent_available`): a `us.*` term in a non-US row is the US-shaped
+# assumption §5.3 prohibits and the framework rejects it.
+
+# The US baseline (US-DEFAULT profile). The initial focus, but not a privileged
+# shape — it is one adapter among peers.
+[adapters.US]
+namespace = "us"
+jurisdiction_levels = ["country", "state_province", "county", "municipality"]
+national_code_schemes = ["us.census.geoid", "us.fips", "us.gnis", "us.fbi.ori"]
+organization_types = ["us.le.municipal_police", "us.le.sheriff", "us.le.state_police", "us.gov.municipality"]
+legal_instrument_types = ["statute", "ordinance", "executive_order"]
+records_request_methods = ["us.foia", "us.state_public_records"]
+default_languages = ["en-US"]
+publication_profile = "US-DEFAULT"
+local_partner = "SIG core (US)"
+
+# France — the recommended first non-US adapter (§52 Phase 18). Authorization is
+# carried by published prefectural orders (arrêté préfectoral) and data protection
+# by CNIL; the records-request regime is CADA. No `us.*` term appears.
+[adapters.FR]
+namespace = "fr"
+jurisdiction_levels = ["country", "fr.region", "fr.departement", "fr.commune", "fr.epci"]
+national_code_schemes = ["fr.insee", "iso.3166-2", "wikidata.qid"]
+organization_types = ["fr.police_municipale", "fr.gendarmerie"]
+legal_instrument_types = ["fr.arrete_prefectoral", "fr.cnil_decision"]
+records_request_methods = ["fr.cada"]
+default_languages = ["fr-FR"]
+publication_profile = "FR-GDPR"
+local_partner = "La Quadrature du Net (Technopolice)"
+
+# United Kingdom — ISO code GB, vocabulary namespace `uk`. Records requests under
+# the Freedom of Information Act; the Surveillance Camera Code of Practice as the
+# governing instrument.
+[adapters.UK]
+namespace = "uk"
+jurisdiction_levels = ["country", "uk.police_force_area", "municipality"]
+national_code_schemes = ["uk.ons", "iso.3166-2", "wikidata.qid"]
+organization_types = ["uk.territorial_police"]
+legal_instrument_types = ["uk.surveillance_camera_code"]
+records_request_methods = ["uk.foi"]
+default_languages = ["en-GB", "cy-GB"]
+publication_profile = "GB"
+local_partner = "SIG core (UK) — read-only pending local reviewer"

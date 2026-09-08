@@ -63,6 +63,8 @@ URI: [sig:class/Jurisdiction](https://ontology.sig-project.org/schema/class/Juri
     
 
         
+      Jurisdiction : transliteration_scheme
+        
       Jurisdiction : valid_from
         
       Jurisdiction : valid_to
@@ -90,7 +92,8 @@ URI: [sig:class/Jurisdiction](https://ontology.sig-project.org/schema/class/Juri
 | [boundary](../slots/boundary.md) | 0..1 <br/> [GeometryWkt](../types/GeometryWkt.md) | MultiPolygon, 4326 | direct |
 | [boundary_source](../slots/boundary_source.md) | 0..1 <br/> [Uriorcurie](../types/Uriorcurie.md) |  | direct |
 | [name](../slots/name.md) | * <br/> [String](../types/String.md) |  | direct |
-| [name_lang](../slots/name_lang.md) | * <br/> [Bcp47](../types/Bcp47.md) |  | direct |
+| [name_lang](../slots/name_lang.md) | * <br/> [Bcp47](../types/Bcp47.md) | Repeatable BCP-47 language tags for the multilingual labels (SIG-ONTO-069) | direct |
+| [transliteration_scheme](../slots/transliteration_scheme.md) | * <br/> [String](../types/String.md) | Repeatable qualifier naming the transliteration scheme a romanised/ translite... | direct |
 | [valid_from](../slots/valid_from.md) | 0..1 <br/> [Edtf](../types/Edtf.md) |  | direct |
 | [valid_to](../slots/valid_to.md) | 0..1 <br/> [Edtf](../types/Edtf.md) |  | direct |
 | [id](../slots/id.md) | 1 <br/> [Uriorcurie](../types/Uriorcurie.md) | The entity's stable minted identity (L2 identity only, §8 | [Entity](../classes/Entity.md) |
@@ -219,12 +222,25 @@ attributes:
     multivalued: true
   name_lang:
     name: name_lang
+    description: Repeatable BCP-47 language tags for the multilingual labels (SIG-ONTO-069).
     from_schema: https://ontology.sig-project.org/schema/entities
     rank: 1000
     domain_of:
     - Jurisdiction
     - Organization
     range: bcp47
+    multivalued: true
+  transliteration_scheme:
+    name: transliteration_scheme
+    description: Repeatable qualifier naming the transliteration scheme a romanised/
+      transliterated label was produced under (e.g. ISO 9, BGN/PCGN); a transliterated
+      name carries it so the original script stays recoverable (SIG-ONTO-069).
+    from_schema: https://ontology.sig-project.org/schema/entities
+    rank: 1000
+    domain_of:
+    - Jurisdiction
+    - Organization
+    range: string
     multivalued: true
   valid_from:
     name: valid_from
@@ -323,6 +339,7 @@ attributes:
     multivalued: true
   name_lang:
     name: name_lang
+    description: Repeatable BCP-47 language tags for the multilingual labels (SIG-ONTO-069).
     from_schema: https://ontology.sig-project.org/schema/entities
     rank: 1000
     owner: Jurisdiction
@@ -330,6 +347,19 @@ attributes:
     - Jurisdiction
     - Organization
     range: bcp47
+    multivalued: true
+  transliteration_scheme:
+    name: transliteration_scheme
+    description: Repeatable qualifier naming the transliteration scheme a romanised/
+      transliterated label was produced under (e.g. ISO 9, BGN/PCGN); a transliterated
+      name carries it so the original script stays recoverable (SIG-ONTO-069).
+    from_schema: https://ontology.sig-project.org/schema/entities
+    rank: 1000
+    owner: Jurisdiction
+    domain_of:
+    - Jurisdiction
+    - Organization
+    range: string
     multivalued: true
   valid_from:
     name: valid_from
