@@ -15,9 +15,6 @@ icpsr.html
 scratch/
 tmp/
 
-# Ticket build artifacts (derived from docs/2_canonical_design_spec.md; regenerate, don't commit)
-docs/tickets/
-
 # Python / uv
 .venv/
 __pycache__/
