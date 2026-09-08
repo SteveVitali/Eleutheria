@@ -507,6 +507,9 @@ enums:
       de.landesdatenschutzgesetz:
         is_a: statute
         description: "Germany — a Land data-protection statute."
+      be.loi_cameras:
+        is_a: statute
+        description: "Belgium — loi caméras (21 March 2007) governing installation and use of surveillance cameras."
   AccountabilityEventType:
     description: Accountability event type (§11.17).
     permissible_values:
@@ -677,6 +680,18 @@ enums:
       de.gemeinde:
         is_a: municipality
         description: "Germany — Gemeinde (municipality)."
+      be.region:
+        is_a: state_province
+        description: "Belgium — région / gewest (Brussels-Capital, Flanders, Wallonia)."
+      be.province:
+        is_a: county
+        description: "Belgium — province."
+      be.commune:
+        is_a: municipality
+        description: "Belgium — commune / gemeente."
+      be.police_zone:
+        is_a: special_district
+        description: "Belgium — zone de police locale (a non-tree operational grouping of communes)."
   OrganizationType:
     description: >-
       Organization type, namespaced and extensible (§11.2, §13.7, SIG-ONTO-068).
@@ -719,6 +734,11 @@ enums:
       fr.gendarmerie: {is_a: law_enforcement, description: "France — gendarmerie nationale."}
       uk.territorial_police: {is_a: law_enforcement, description: "United Kingdom — a territorial police force."}
       de.landespolizei: {is_a: law_enforcement, description: "Germany — a Land police force."}
+      fr.police_nationale: {is_a: law_enforcement, description: "France — police nationale (national state police)."}
+      fr.douanes: {is_a: law_enforcement, description: "France — douanes (customs); an ALPR operator (F9.13)."}
+      fr.prefecture: {is_a: government, description: "France — préfecture (the State's representative in the département; the authorizing body for vidéoprotection, F9.18)."}
+      be.police_locale: {is_a: law_enforcement, description: "Belgium — a zone de police locale (local police)."}
+      be.police_federale: {is_a: law_enforcement, description: "Belgium — police fédérale (federal police)."}
   AcquisitionMethod:
     description: >-
       Acquisition method, internationalized (§13.8, SIG-ONTO-068). foia_request is
