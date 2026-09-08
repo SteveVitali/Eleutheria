@@ -1,0 +1,143 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The evidence viewer (§39.6). Static, zero-JS (SIG-UI-036/037): it renders the
+// document with the supporting span highlighted at its locator, and shows the claim,
+// the extraction method + version, the review status, the conflicting claims, the
+// capture date + digest, the acquisition method, and the full claim history
+// (SIG-UI-028). For a sealed capture it renders the metadata-only representation with
+// an explanation of why the bytes are withheld (SIG-UI-030). Where two captures of the
+// same artifact exist, it diffs them field by field (SIG-UI-029). A claim with
+// conflicting claims carries the persistent contested marker (SIG-UI-008).
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ContestedMarker from "../../components/ContestedMarker.astro";
+import {
+  assertClaimView,
+  claimHighlightedDocument,
+  diffCaptures,
+  isClaimContested,
+  isSealed,
+  sealedMetadata,
+} from "../../lib/evidence-viewer";
+import type { ClaimView } from "../../lib/evidence-viewer";
+import { CLAIM_VIEWS, DIFF_CAPTURES } from "../../lib/watch-evidence-fixture";
+
+export const getStaticPaths: GetStaticPaths = () =>
+  CLAIM_VIEWS.map((view) => ({ params: { id: view.claim_id }, props: { view } }));
+
+const { view } = Astro.props as { view: ClaimView };
+// Enforce the SIG-UI-028 completeness contract at build: an incomplete view fails the build.
+assertClaimView(view);
+
+const sealed = isSealed(view.capture);
+const highlighted = claimHighlightedDocument(view);
+const meta = sealed ? sealedMetadata(view.capture) : null;
+const contested = isClaimContested(view);
+// The field-by-field capture diff is shown for the claim about the portal artifact.
+const showDiff = view.claim_id === "active-device-count";
+const diff = showDiff ? diffCaptures(DIFF_CAPTURES[0], DIFF_CAPTURES[1]) : [];
+---
+
+<BaseLayout title={`Evidence — ${view.claim_label}`} path={`/evidence/${view.claim_id}/`}>
+  <section
+    data-testid="evidence-view"
+    data-claim-id={view.claim_id}
+    data-sealed={sealed ? "true" : "false"}
+    data-contested={contested ? "true" : "false"}
+  >
+    <p>
+      <strong>Claim:</strong> {view.claim_label} = <strong>{String(view.value)}</strong>
+      {contested && <ContestedMarker compact />}
+    </p>
+
+    <!-- The supporting document (SIG-UI-028), or the sealed metadata-only view (SIG-UI-030). -->
+    {sealed ? (
+      <div class="sig-sealed" data-testid="sealed-notice">
+        <h2>Sealed capture — bytes withheld</h2>
+        <p data-testid="sealed-reason">{meta!.sealed_reason}</p>
+        <p>
+          SIG holds this capture but must not publish its bytes. Its existence, source,
+          date, digest, and the claims it supports remain public (§17.5).
+        </p>
+      </div>
+    ) : (
+      <figure aria-label="Supporting document with the claim's span highlighted">
+        <h2>Supporting document</h2>
+        <blockquote class="sig-document" data-testid="document-text">
+          {highlighted!.before}
+          <mark class="sig-evidence-span" data-testid="highlighted-span">{highlighted!.highlighted}</mark>
+          {highlighted!.after}
+        </blockquote>
+        <figcaption>Highlighted at: {view.locator.description} ({view.locator.kind}).</figcaption>
+      </figure>
+    )}
+
+    <!-- The provenance chain (SIG-UI-028). -->
+    <h2>Provenance</h2>
+    <dl class="sig-evidence-meta">
+      <div><dt>Extraction method</dt><dd data-testid="extraction-method">{view.extraction_method}</dd></div>
+      <div><dt>Extraction version</dt><dd data-testid="extraction-version">{view.extraction_version}</dd></div>
+      <div><dt>Review status</dt><dd data-testid="review-status">{view.review_status}</dd></div>
+      <div><dt>Capture date</dt><dd data-testid="capture-date">{view.capture.captured_at}</dd></div>
+      <div><dt>Capture digest</dt><dd data-testid="capture-digest"><code>{view.capture.content_digest}</code></dd></div>
+      <div><dt>Acquisition method</dt><dd data-testid="acquisition-method">{view.capture.acquisition_method}</dd></div>
+      <div><dt>Storage tier</dt><dd data-testid="storage-tier">{view.capture.storage_tier}</dd></div>
+    </dl>
+
+    <!-- Conflicting claims (SIG-UI-028/009) — the dispute stays visible. -->
+    <h2>Conflicting claims</h2>
+    {contested ? (
+      <ul class="sig-conflicting" data-testid="conflicting-claims">
+        {view.conflicting_claims.map((c) => (
+          <li data-testid="conflicting-claim" data-claim-id={c.claimId}>
+            <strong>{String(c.value)}</strong> — {c.source} ({c.tier}, {c.date}).
+            <a href={c.documentUrl}>document</a>
+            {c.differentQuantityNote && <p class="sig-different-quantity">{c.differentQuantityNote}</p>}
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p data-testid="no-conflicts">No conflicting claims recorded.</p>
+    )}
+
+    <!-- The full claim history (SIG-UI-028). -->
+    <h2>Claim history</h2>
+    <ol class="sig-claim-history" data-testid="claim-history">
+      {view.history.map((h) => (
+        <li data-testid="history-event" data-event={h.event}>
+          <strong>{h.asserted_at}</strong> — {h.event}: {String(h.value)}
+          {h.note && <span class="sig-history-note"> — {h.note}</span>}
+        </li>
+      ))}
+    </ol>
+
+    <!-- Capture diffing, field by field (SIG-UI-029, §29.7). -->
+    {showDiff && (
+      <section class="sig-capture-diff" data-testid="capture-diff">
+        <h2>What changed between captures</h2>
+        <p>
+          Two captures of the same artifact, diffed field by field —
+          {DIFF_CAPTURES[0].captured_at} vs {DIFF_CAPTURES[1].captured_at}.
+        </p>
+        <table>
+          <thead>
+            <tr><th>Field</th><th>{diff[0]?.from_date}</th><th>{diff[0]?.to_date}</th><th>Changed?</th></tr>
+          </thead>
+          <tbody>
+            {diff.map((c) => (
+              <tr data-testid="diff-field" data-field={c.field} data-changed={c.changed ? "true" : "false"}>
+                <td>{c.field}</td>
+                <td>{c.from_value === null ? "—" : String(c.from_value)}</td>
+                <td>{c.to_value === null ? "—" : String(c.to_value)}</td>
+                <td>{c.changed ? "changed" : "unchanged"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    )}
+  </section>
+</BaseLayout>

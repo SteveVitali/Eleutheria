@@ -16,6 +16,10 @@ export const SHELL_PAGES = [
   "/visual-language/",
   "/map/",
   "/network/",
+  "/watch/",
+  "/evidence/",
+  "/evidence/active-device-count/",
+  "/evidence/operator-roster-size/",
   "/reference-map/",
   "/reference-graph/",
 ] as const;

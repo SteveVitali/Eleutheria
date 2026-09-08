@@ -1,0 +1,33 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The evidence viewer index (§39.6). Lists the claims whose full evidence view is
+// available — each links to the document with its supporting span highlighted, the
+// provenance chain, the conflicting claims, the capture diff, and (for sealed
+// captures) the metadata-only representation. Static, zero-JS (SIG-UI-036/037).
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ContestedMarker from "../../components/ContestedMarker.astro";
+import { evidencePath, isClaimContested, isSealed } from "../../lib/evidence-viewer";
+import { CLAIM_VIEWS } from "../../lib/watch-evidence-fixture";
+---
+
+<BaseLayout title="Evidence viewer" path="/evidence/">
+  <p>
+    The evidence viewer shows the document with the supporting span highlighted at its
+    locator, the extraction method and version, the review status, the conflicting
+    claims, the capture date and digest, the acquisition method, and the full claim
+    history. Sealed captures are shown metadata-only, with an explanation of why the
+    bytes are withheld.
+  </p>
+  <ul class="sig-evidence-index">
+    {CLAIM_VIEWS.map((view) => (
+      <li data-testid="evidence-index-item" data-claim-id={view.claim_id} data-sealed={isSealed(view.capture) ? "true" : "false"}>
+        <a href={evidencePath(view.claim_id)}>{view.claim_label}</a>
+        {isClaimContested(view) && <ContestedMarker compact />}
+        {isSealed(view.capture) && <span class="sig-sealed-badge"> (sealed — metadata only)</span>}
+      </li>
+    ))}
+  </ul>
+</BaseLayout>

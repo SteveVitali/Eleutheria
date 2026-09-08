@@ -547,3 +547,124 @@ table.sig-table td {
     color: var(--sig-ink);
   }
 }
+
+/* --- P15.4: renewal watch + recommender + evidence viewer (§39.5/39.6) ------ */
+/* All chrome uses the neutral greyscale tokens; no epistemic colour is introduced
+ * here (the contested marker and glyphs bring their own via the components). */
+.sig-watch-list,
+.sig-subscription-list,
+.sig-recommendations,
+.sig-citation-list,
+.sig-evidence-index {
+  list-style: none;
+  padding-left: 0;
+}
+.sig-watch-item {
+  border: 1px solid var(--sig-rule);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  margin: 0.75rem 0;
+}
+.sig-watch-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 0.4rem 1.5rem;
+  margin: 0.5rem 0 0;
+}
+.sig-watch-fields dt {
+  font-size: 0.8rem;
+  color: var(--sig-muted);
+}
+.sig-watch-fields dd {
+  margin: 0 0 0.4rem;
+}
+.sig-subscription,
+.sig-citation-list li,
+.sig-evidence-index li {
+  margin: 0.4rem 0;
+}
+.sig-neutrality-note {
+  border-left: 3px solid var(--sig-ink);
+  padding-left: 0.75rem;
+}
+.sig-recommendation {
+  border-bottom: 1px solid var(--sig-rule);
+  padding: 0.5rem 0;
+}
+.sig-recommendation__meta {
+  color: var(--sig-muted);
+  font-size: 0.85rem;
+}
+.sig-score-breakdown {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding-left: 0;
+  margin: 0.25rem 0 0;
+  font-size: 0.8rem;
+  color: var(--sig-muted);
+}
+.sig-score-breakdown li {
+  border: 1px solid var(--sig-rule);
+  border-radius: 999px;
+  padding: 0.05rem 0.5rem;
+}
+
+/* The evidence viewer (§39.6). */
+.sig-document {
+  border: 1px solid var(--sig-rule);
+  border-left: 4px solid var(--sig-muted);
+  padding: 0.75rem 1rem;
+  margin: 0.5rem 0;
+  white-space: pre-wrap;
+}
+/* The supporting span: a neutral highlight PLUS an underline (a non-colour channel,
+ * SIG-UI-005), so the highlight survives greyscale and print. */
+.sig-evidence-span {
+  background: hsl(0deg 0% 90%);
+  color: var(--sig-ink);
+  border-bottom: 2px solid var(--sig-ink);
+  padding: 0 0.1rem;
+  font-weight: 600;
+}
+.sig-evidence-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 0.3rem 1.5rem;
+}
+.sig-evidence-meta dt {
+  font-size: 0.8rem;
+  color: var(--sig-muted);
+}
+.sig-evidence-meta dd {
+  margin: 0 0 0.4rem;
+  word-break: break-word;
+}
+.sig-conflicting,
+.sig-claim-history {
+  padding-left: 1.1rem;
+}
+.sig-different-quantity,
+.sig-history-note {
+  color: var(--sig-muted);
+  font-size: 0.85rem;
+}
+.sig-sealed {
+  border: 2px dashed var(--sig-muted);
+  padding: 0.75rem 1rem;
+  margin: 0.5rem 0;
+}
+.sig-capture-diff table {
+  border-collapse: collapse;
+  width: 100%;
+}
+.sig-capture-diff th,
+.sig-capture-diff td {
+  border: 1px solid var(--sig-rule);
+  padding: 0.3rem 0.5rem;
+  text-align: left;
+}
+.sig-capture-diff tr[data-changed="true"] {
+  font-weight: 600;
+}
