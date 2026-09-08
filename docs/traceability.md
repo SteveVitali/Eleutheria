@@ -1790,3 +1790,61 @@ suite and be recorded as a Phase-1 defect, not patched here.
 |---|---|---|
 | SIG-ENG-004 (every new requirement has an automated test) | `tests/ontology/generalization/test_stage5_forensics.py` | `make check` (pytest) |
 | Phase gate: CI green incl. data-quality; no deviation (no ADR needed — no schema change); traceability + risk register updated | this section; `docs/risk_register.md` (Phase 17 — P17.2) | `make check` (lint/format/typecheck/pytest/verify-gen — `verify-gen` proves the ontology is byte-unchanged) |
+
+# P17.3 — Gunshot detection, drones, and commercial location data (Stage 5)
+
+Continues P17.1/P17.2's §5.2 proof: the schema frozen in Phase 2/4 absorbs a
+further Stage-5 span with **no change**. P17.3 *populates* gunshot detection,
+drones, and commercial location data as instance graphs over the generated
+Pydantic model and the committed §13.1/§13.2 vocabularies, extending the
+generalization conformance suite. The load-bearing requirement is SIG-ONTO-027:
+acoustic gunshot sensors and drones are **non-camera physical sensors**,
+represented as `PhysicalAsset`s whose `asset_type`/`mobility` are never a camera
+— not forced into a camera abstraction. No LinkML source, generated artifact, or
+wire contract changed (the ontology is owned by P01.1); a construct that required
+a new schema element would fail the suite and be recorded as a Phase-1 defect,
+not patched here.
+
+## Populated with no schema change (§5.2, SIG-CHART-027/028)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-CHART-027/028 / AC1 (gunshot detection, drones, and commercial location data populated with no schema change; every capability slug, edge type, entity class, technology slug, mobility value, and role the constructs use already exists — the deterministic Phase-1-defect detector) | `tests/ontology/generalization/test_stage5_acoustic_drone_location.py`; generated Pydantic models; `ontology/vocab/{capability,technology}.yaml` (unchanged) | `test_stage5_acoustic_drone_location.py::test_stage5_acoustic_drone_location_required_no_schema_change`; `make check` `verify-gen` (byte-clean) |
+
+## Gunshot detection — acoustic, non-camera PhysicalAssets (SIG-ONTO-027)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ONTO-027 / deliverable 1 / AC2 (gunshot detection is a `PhysicalAsset` whose `asset_type` is an `acoustic` Technology — `gunshot-detection-fixed`, already in OSM as `gunshot_detector` — never a camera) | `PhysicalAsset` (`asset:gunshot-sensor-rooftop`, `asset_type=gunshot-detection-fixed`); `Capability` (`alert.gunshot.own`); `Deployment` (`dep:gunshot-city-pd`); `technology.yaml` `acoustic`/`gunshot-detection` | `test_stage5_acoustic_drone_location.py::test_gunshot_detection_is_an_acoustic_non_camera_physical_asset` |
+| §12.4 item 6 / §43.3 (a rooftop acoustic sensor's coordinate sensitivity is evaluated at the ROLE level and protects the *host*, not the operator) | two `RoleAssignment`s over the same asset — `operator` (`org:city-pd`) and `host` (`org:downtown-building-owner`); the sensitive `geometry`/`sensitivity_tier` live on the asset the host hosts | `test_stage5_acoustic_drone_location.py::test_gunshot_sensor_coordinate_risk_is_evaluated_at_the_host_role` |
+
+## Drones / UAS — airborne, non-camera PhysicalAssets (SIG-ONTO-027)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ONTO-027 / deliverable 2 / AC2 (drones are airborne `PhysicalAsset`s — `mobility=airborne`, `asset_type` under `robotics-aerial` — not a camera abstraction) | `PhysicalAsset` (`asset:uas-general`, `asset:drone-first-responder`, `mobility=airborne`); `Capability` (`dispatch.uas.autonomous`); `Deployment` (`dep:dfr-county`); `technology.yaml` `robotics-aerial`/`uas` | `test_stage5_acoustic_drone_location.py::test_drones_are_airborne_non_camera_physical_assets` |
+
+## Commercial location data — a subscription with no owned sensor (SIG-ONTO-026/031)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ONTO-026/031 / deliverable 3 / AC2 (commercial location data is a `data-acquisition` Deployment — a subscription — plus a reference `DataSystem`, with NO product, NO vendor, and NO `PhysicalAsset`: a deployment with no roadside device) | `Deployment` (`dep:location-subscription-metro-pd`, `technology=[location-data-subscription]`, `product`/`vendor` `None`); `DataSystem` (`sys:commercial-location-platform`); `AccessRelationship` (`subscribes_to`); no `PhysicalAsset` | `test_stage5_acoustic_drone_location.py::test_commercial_location_is_a_subscription_with_no_owned_sensor` |
+
+## No camera abstraction is forced (SIG-ONTO-026/027, AC2)
+
+| Requirement | Where | Test |
+|---|---|---|
+| Deliverable 1+2+3 / SIG-ONTO-026/027 / AC2 (none of gunshot detection, drones, or commercial location data is represented as a camera; the physical sensors carry acoustic / robotics-aerial `asset_type`s, and the subscription owns no `PhysicalAsset`) | populated graphs (no `camera-*` `asset_type`; physical assets are only `gunshot-detection-fixed` / `uas-general` / `drone-as-first-responder`) | `test_stage5_acoustic_drone_location.py::test_no_sensor_is_forced_into_a_camera_abstraction` |
+
+## Person constraint (§11.3, §43.4)
+
+| Requirement | Where | Test |
+|---|---|---|
+| §11.3 / §43.4 (commercial location corpora MUST NOT mint `Person` rows for the individuals they observe) | populated graphs (zero `Person` nodes) | `test_stage5_acoustic_drone_location.py::test_no_person_rows_are_minted_for_observed_individuals` |
+
+## Phase gate (§51.3)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ENG-004 (every new requirement has an automated test) | `tests/ontology/generalization/test_stage5_acoustic_drone_location.py` | `make check` (pytest) |
+| Phase gate: CI green incl. data-quality; no deviation (no ADR needed — no schema change); traceability + risk register updated | this section; `docs/risk_register.md` (Phase 17 — P17.3) | `make check` (lint/format/typecheck/pytest/verify-gen — `verify-gen` proves the ontology is byte-unchanged) |

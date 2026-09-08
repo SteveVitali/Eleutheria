@@ -1090,3 +1090,36 @@ makes that impossible to do silently.
 |---|---|---|---|
 | RISK-P17-08 | The remaining Phase-17 priority technologies — gunshot detection, drones, and commercial location-data ingestion (**P17.3**); private-camera federation, RTCC, and the data-broker chain (**P17.1**, landed) | Explicitly out of scope for P17.2 (the phase is populated technology-by-technology, OL-17.5-01) | Each has its own ticket; the schema-absorption guarantee proven here (SIG-CHART-027) is the invariant those tickets extend. The §22.7 EFF Data Library roster is the registered Phase-17 ingestion backlog (SIG-INGEST-041). |
 | RISK-P17-09 | The populated constructs are **instance graphs in the conformance suite**, not rows persisted to the claim spine, and there is **no live authorization-dataset connector** (§23) | P17.2 is the §5.2 expressibility proof, not an ingestion connector; live population arrives with the Stage-5 connectors over the same frozen schema | The instance shapes mirror the generated model exactly (they *are* the generated Pydantic classes); persisting them — and wiring a §23 authorization-dataset connector that maps native validity intervals to EDTF via `db.edtf` — is additive and needs no schema change, which is precisely what this ticket proves. |
+
+## Phase 17 — Broader surveillance technologies (P17.3 — gunshot detection, drones, commercial location data)
+
+Per §53 / SIG-ENG-031, P17.3's risk-register entries. P17.3 continues the §5.2
+proof P17.1/P17.2 began: it *populates* gunshot detection, drones, and commercial
+location data over the frozen schema and proves it with the generalization
+conformance suite. The load-bearing constraint is SIG-ONTO-027: acoustic gunshot
+sensors and drones are **non-camera physical sensors** and MUST be representable
+without a camera abstraction. No LinkML source, generated artifact, or wire
+contract changed — so **no ADR is required** (an ADR records a *deviation*, and
+there is none). The design risk is identical to P17.1/P17.2's: that a Stage-5
+construct silently forces a schema change; the compensating control makes that
+impossible to do silently.
+
+### The Phase-1-defect record path (SIG-CHART-027/028, AC1)
+
+| id | Risk (what breaks the acceptance gate if unhandled) | Compensating control |
+|---|---|---|
+| RISK-P17-10 | **A Stage-5 construct is populated by silently widening the schema** — a hand-edit to the LinkML source or generated artifacts to make gunshot detection, a drone, or a commercial location subscription "fit" (e.g. adding an `airborne` mobility value, an `acoustic`/`robotics-aerial`/`data-acquisition` technology, or a `subscribes_to` edge that did not already exist), which would falsify the §5.2 generalization guarantee (SIG-CHART-027) and cross into P01.1's ownership. | The population is a **test-only** instance graph over the *committed* Pydantic model, `capability.yaml`, and `technology.yaml`; `verify-gen` in `make check` fails if any generated artifact drifts from the source, and `test_stage5_acoustic_drone_location.py::test_stage5_acoustic_drone_location_required_no_schema_change` fails if any capability slug, edge type, entity class, technology slug, mobility value, or role the constructs need is not already present. A required change therefore surfaces as a **red conformance test** — the recorded Phase-1 defect — filed against the ontology (P01.1), never patched in this ticket. No such defect was found: all constructs populate with the frozen schema (`verify-gen` byte-clean). |
+
+### Modelling observations (not a schema change here)
+
+| id | Observation | Why it is not acted on here | Note for the ontology owner (P01.1) |
+|---|---|---|---|
+| RISK-P17-11 | Gunshot detection has both a specific slug (`gunshot-detection-fixed`) and an `-unspecified` coarsest-level slug under the `acoustic`/`gunshot-detection` family; the drone family likewise carries `uas-general`, `drone-as-first-responder`, and `uas-unspecified`. The population uses the *specific* slugs where the OSM/evidence signature supports them. | The coarsest-level fallback is a deliberate ontology feature (evidence names the family but not the discriminator), not a gap; choosing the specific slug where warranted is correct, and both levels already exist. Expressibility is intact, so no schema change is made (P01.1 owns the LinkML source). | No action required; recorded to document that the coarsest-level slugs are available for lower-confidence evidence. |
+| RISK-P17-12 | The `RoleAssignment` used to place the rooftop gunshot sensor's coordinate risk on the **host** (§43.3, §12.4 item 6) inherits the required `edge_type` from `Edge`, which the closed §12 catalog does not specialise for roles (the same observation as RISK-P17-04). | The host ≠ operator separation **is** representable (SIG-ONTO-048 — the tests assert on `role`/`party`/`over`, never on the inherited `edge_type`), so no schema change is required and none is made here. | Same note as RISK-P17-04: a future refinement could drop `edge_type` from `RoleAssignment` or add a role-specific catalog member. Recorded as an observation, not a Phase-1 defect. |
+
+### Deferred / out of scope here (SIG-ENG-005)
+
+| id | Requirement | Why not addressed here | Compensating control |
+|---|---|---|---|
+| RISK-P17-13 | The other Phase-17 technology spans — private-camera federation, RTCC, and the data-broker chain (**P17.1**); facial recognition, cell-site simulators, mobile-device forensics, and federal authorization datasets (**P17.2**) — both landed | Explicitly out of scope for P17.3 (the phase is populated technology-by-technology, OL-17.5-01) | Each has its own ticket; the schema-absorption guarantee proven here (SIG-CHART-027) is the invariant those tickets share. The §22.7 EFF Data Library roster is the registered Phase-17 ingestion backlog (SIG-INGEST-041). |
+| RISK-P17-14 | The populated constructs are **instance graphs in the conformance suite**, not rows persisted to the claim spine, and there is **no live gunshot/drone/location-data connector** (§23) | P17.3 is the §5.2 expressibility proof, not an ingestion connector; live population arrives with the Stage-5 connectors over the same frozen schema (gunshot detectors already exist in OSM as `gunshot_detector`, R1-F1.3, ready for that connector) | The instance shapes mirror the generated model exactly (they *are* the generated Pydantic classes); persisting them — and wiring a §23 connector that carries the host-role coordinate rule (§43.3) — is additive and needs no schema change, which is precisely what this ticket proves. |
