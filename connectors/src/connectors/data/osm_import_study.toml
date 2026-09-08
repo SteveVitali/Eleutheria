@@ -1,0 +1,90 @@
+# SPDX-License-Identifier: Apache-2.0
+# The study of the already-executed sous-surveillance.net → OpenStreetMap import
+# (§35.2, SIG-CONTRIB-016, P18.2). The ~12,000-camera import the outline attributes
+# to "France and Belgium: Technopolice" is the concrete, already-executed path from
+# an activist database to the common geographic substrate SIG's whole federation
+# thesis depends on. Phase 18 MUST study it — its conventions, its community
+# consultation, and its outcome — BEFORE proposing any SIG-originated contribution
+# at scale. This table is the machine-readable form of that study; the prose study
+# is docs/studies/osm-sous-surveillance-import.md.
+#
+# Data, not code (SIG-ENG-001): a test asserts every required study section is
+# present and the gate (connectors/osm_import_study.py) reads it to refuse a scaled
+# contribution proposal until the study is complete.
+
+# The upstream identifier that survives in OSM — the join key SIG reconciles on
+# rather than re-importing the activist database (F9.7).
+join_key = "ref:sous-surveillance_net"
+
+# The source registry ids this study bears on.
+import_source_id = "sous_surveillance_osm_import"
+
+# Corrections to the outline the study establishes (F9.6/F9.7): the outline's number
+# and actor attribution are both imprecise, and are corrected here rather than
+# repeated (every contradiction stays visible, §3.1).
+[corrections]
+outline_claim = "A historical French sous-surveillance.net dataset of ~12,000 cameras was imported into OSM by Technopolice (France and Belgium: Technopolice)."
+corrected_number = "~20,000 in the source database; ~18,000 imported worldwide; ~12,000 is the France-only subset."
+corrected_actor = "Executed by User:Vucod via User:VucodImport with support of OpenStreetMap Belgium — not Technopolice. Technopolice's forum independently advocated OSM (F9.5); its Technocarte is a stale 51-commune polygon map."
+corrected_completion = "Brussels pilot March 2020 (authorization granted); full import finalised March 2025 (absent from the outline)."
+
+# CONVENTIONS — the import's field crosswalk and conflation rules (F9.12), a
+# ready-made non-US crosswalk template and field-tested reconciliation defaults.
+[conventions]
+documented = true
+# Every imported node carries these base tags.
+base_tags = ["man_made=surveillance", "surveillance:type=camera"]
+# Distance-banded conflation with an explicit uncertainty band (F9.12): a first-class
+# precedent for SIG's §11.1 camera reconciliation.
+conflation_under_5m = "excluded (treated as a duplicate of an existing OSM camera)"
+conflation_5m_to_10m = "imported with fixme='This may be a duplicated camera'"
+conflation_over_10m = "imported as a new node"
+# Age-based staleness is a first-class output of ingestion, not a query-time compute.
+staleness_rule = "survey:date older than 10 years → fixme='This may be disused'"
+# Belgium (Brussels-region) import estimates (F9.12).
+belgium_direct_import_pct = 92.5
+belgium_excluded_pct = 7.0
+belgium_flagged_pct = 0.5
+# A representative slice of the source-field → OSM-tag crosswalk (F9.12). The
+# upstream id is PRESERVED as a namespaced ref — the convention SIG adopts verbatim.
+[conventions.field_crosswalk]
+id_camera = "ref:sous-surveillance_net"
+op_name = "operator"
+title = "name"
+direction = "camera:direction"
+apparence = "camera:type (dome kept; radar → surveillance:type=ALPR)"
+op_type = "surveillance (private → outdoor)"
+
+# CONSULTATION — how the import was proposed, authorized, and communicated (F9.6),
+# and the licensing anti-pattern SIG must NOT repeat (F9.8).
+[consultation]
+documented = true
+import_plan_url = "https://wiki.openstreetmap.org/wiki/Import/Catalogue/sous-surveillance.net"
+category = "Import from Belgium"
+forum_debate = "The Technopolice mapping forum explicitly resolved in favour of OSM and criticised sous-surveillance.net for consuming OSM tiles without contributing back (F9.5, OL-5.2-02)."
+[[consultation.timeline]]
+date = "2019-10"
+event = "Discussion with sous-surveillance.net and OpenStreetMap Belgium; proposition to sous-surveillance.net."
+[[consultation.timeline]]
+date = "2020-03"
+event = "Import limited to Brussels (authorization granted) — changeset 82207370."
+[[consultation.timeline]]
+date = "2020-09"
+event = "Authorization granted to import the full dataset; communication towards OSM France."
+[[consultation.timeline]]
+date = "2025-03"
+event = "Finalized import — around 18,000 cameras imported worldwide."
+[consultation.anti_pattern]
+what = "The import's permission record is a single one-line email extract in the wiki Background section, and the processed OSM data files were never linked ('available [???here???]')."
+lesson = "SIG MUST NOT repeat this: a machine-readable rights record with a resolved SPDX and a durable link is required (§42.1), not a one-line email; a human-mediated workflow with individual review is what keeps a contribution compliant (SIG-CONTRIB-016b)."
+
+# OUTCOME — the measured result (F9.6/F9.7/F9.10).
+[outcome]
+documented = true
+source_database_cameras = 20000
+imported_worldwide = 18000
+france_subset = 12000
+coverage = "Mostly France and Belgium, with smaller counts in Luxembourg, Montréal, Seattle, Moscow and Minsk. OSM's global surveillance layer has since grown to 558,645 objects (ALPR alone 144,312)."
+completion_date = "2025-03"
+density_caveat = "France leads world per-country OSM surveillance density largely as an artefact of THIS import (F9.10); coverage must be annotated with import provenance, not read as uniform completeness."
+outcome_assessment = "The activist-database → common-substrate path executed successfully and is the strongest available evidence SIG's federation thesis works; SIG reconciles against OSM via the ref:sous-surveillance_net join key rather than re-importing (F9.6/F9.7)."

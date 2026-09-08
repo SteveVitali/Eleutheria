@@ -1156,3 +1156,43 @@ generated artifacts match a fresh generation.
 | RISK-P18-04 | The **per-source ingestion checklist items** — boundary sources, Wikidata coverage, the law-enforcement organisation registry, procurement portals, the official gazette, DPA corpora, date/number locale (R9 Part I items 2/4/5/8/11/13/14/16) — are not gated by the framework. | These are per-country *connector* work (the France RAA → arrêté pipeline, DECP procurement, CADA/CNIL corpora), which is **P18.2**, not the framework. | They are recorded in `policy.jurisdiction.CHECKLIST_ITEMS` as items the framework does not yet gate, mapped `None`, so a reader sees exactly what a live onboarding still owes. The adapter ships read-only until a local partner is named (item 18). |
 | RISK-P18-05 | The coarse-international layer is the **claim shape + anti-disaggregation guard**, not a live connector; the three datasets (Carnegie AI GSI, Facial Recognition World Map, ASPI) are registered `ingestion_permitted = false`. | The datasets are LINK-posture / UNDETERMINED pending rights review (§22.7); a live fetch connector is downstream, exactly as the source-registry gate intends. | `connectors.coarse_international.assert_not_disaggregated` refuses agency-level disaggregation at the seam (`tests/connectors/test_coarse_international.py::test_agency_level_disaggregation_is_refused`), so the P4 guarantee holds the moment a connector is wired; the registry rows fail the ingestion gate closed until reviewed. |
 | RISK-P18-06 | **The France/Belgium connectors themselves** (Technopolice, prefectoral-order → LegalInstrument, national procurement → Contract, the ~12,000-camera OSM import study) are not built here. | Explicitly out of scope — **P18.2**. | P18.1 provides the framework (namespaced vocabularies under a national parent, the adapter checklist, coarse-granularity guard) those connectors consume; each will exercise one adapter end-to-end (ingest → reconcile → serve). |
+
+## Phase 18 — International adapter #1 (P18.2 — the France/Belgium connectors)
+
+Per §53 / SIG-ENG-031, P18.2's risk-register entries. P18.2 is the **first consumer**
+of the P18.1 jurisdiction adapter framework and its §5.3 stress-test: it builds the
+France/Belgium (Technopolice) connectors — published prefectural orders →
+`LegalInstrument`, national open-data procurement (DECP) → `Contract`, the non-US
+records-request vocabulary incl. `no_equivalent_available` — and studies the
+already-executed ~12,000-camera OSM import (SIG-CONTRIB-016). It makes **additive
+schema changes** (the `be.*` national children + a few `fr.*` org types), so
+**ADR-057 records the deviation** and `verify-gen` proves the committed generated
+artifacts match a fresh generation.
+
+### The §5.3 stress-test: both authorization and procurement must map (SIG-ONTO-032, §11.14)
+
+| id | Risk (what breaks the acceptance gate if unhandled) | Compensating control |
+|---|---|---|
+| RISK-P18-07 | **Authorization by prefectural order fails to map onto `LegalInstrument`** — the arrêté préfectoral is a §5.3 defect if it needs a shape the model cannot hold. | It maps: `prefectoral_order_from_raa` builds a `LegalInstrument` with `instrument_type=fr.arrete_prefectoral` (a national child of the abstract `prefectoral_order` parent), and `abstract_instrument_type` rolls it up so AC2's "maps onto `instrument_type=prefectoral_order`" is a queryable property (`tests/connectors/test_france_belgium.py::test_prefectoral_order_maps_onto_legal_instrument_prefectoral_order`). |
+| RISK-P18-08 | **National open-data procurement fails to map onto `Contract`**, or a framework-agreement piggyback silently drops `parent_cooperative_contract` (SIG-ONTO-032), so a missing local RFP reads as "no procurement". | `contract_from_decp` maps a DECP record 1:1 onto the country-neutral `Contract`; a marché riding an `idAccordCadre` is reclassified to `cooperative_piggyback`, and the `Contract` dataclass's `__post_init__` refuses that channel without a `parent_cooperative_contract` (`::test_decp_framework_agreement_is_a_piggyback_that_links_its_master`). |
+| RISK-P18-09 | **A US-shaped records term leaks into the non-US connector** — `foia_request` / `us.foia` — falsifying AC1. | `assert_not_us_records_method` refuses the three US terms at the seam, and the connector emits only `fr.cada` / `no_equivalent_available` (`::test_records_connector_emits_fr_cada_not_foia`, `::test_a_us_records_method_is_refused`). The vocab↔ontology lock-step test catches drift. |
+
+### Additive schema deviation (ADR-057)
+
+| id | Deviation | Why it is safe / bounded | Compensating control |
+|---|---|---|---|
+| RISK-P18-10 | P18.2 adds `be.*` national children (JurisdictionType/OrganizationType/LegalInstrumentType) and a few `fr.*` org types, and regenerates every artifact. | Purely **additive**: no existing permissible value, wire name, or slot is removed or renamed (SIG-ENG-003); the frozen `us.*` org set is unchanged; `fr.gendarmerie` (P18.1) is kept, no duplicate added. | `make check` `verify-gen` proves the committed `ontology/generated` tree equals a fresh byte-deterministic generation; `tests/unit/test_france_belgium_adapter.py::test_no_us_enum_was_widened_for_france_or_belgium` asserts the frozen us.* baseline; ADR-057 records the deviation. |
+
+### Modelling choices recorded (not defects)
+
+| id | Observation | Why it is not a defect | Note |
+|---|---|---|---|
+| RISK-P18-11 | Belgium's national camera register exists but is inaccessible (Belgian-eID wall, F9.31) — a *known-complete-unknown* — represented as an `acquisition_method=no_equivalent_available` claim with a `known_complete_unknown` flag, not a `db.absence` state. | The register is neither `NO_EVIDENCE_FOUND` nor `EVIDENCE_OF_ABSENCE`; forcing it into the §9.5 absence vocabulary would misrepresent it. The flag records the state faithfully. | A dedicated coverage state for "complete authoritative register exists but is inaccessible" is an additive §9.5 extension a later ticket can make; recorded, not acted on here. |
+| RISK-P18-12 | DECP carries a `modifications[]` amendment history and a `dureeMois` from which `end_date` is derivable; the connector preserves modifications in `raw` and leaves `end_date` unset rather than fabricating an "amended" `ProcurementState` (there is none) or a stored end date (F9.16). | Modelling amendments as first-class dated sub-events and a derived/stated `end_date` flag is an additive extension; fabricating a state or a value would violate P2/P4. | Recorded for the ontology owner (P01.1) as a candidate `Contract` refinement, not a Phase-18 defect. |
+
+### Deferred / out of scope here (SIG-ENG-005)
+
+| id | Requirement | Why not addressed here | Compensating control |
+|---|---|---|---|
+| RISK-P18-13 | **Live fetch** of the France/Belgium sources and **arrêté-PDF text extraction / segmentation** are not performed here. | The three sources (`raa_prefectures`, `madada`, `declarationcamera_be`) are registered `ingestion_permitted = false` pending rights review (§22.6 I), and the PDF parser is P07.1's, only *called* here (SIG-INGEST-046a). | The connectors interpret the documented DECP/RAA record shapes (F9.16/F9.18) over fixtures end-to-end; a live run is a data-gate flip plus wiring the P07.1 parser, no schema change. |
+| RISK-P18-14 | Any **SIG-originated OSM contribution executed at scale** is not performed here. | Explicitly out of scope — gated on the import study (this ticket) and the P16.2 human-mediated contribution-back architecture (SIG-CONTRIB-014/015). | `connectors.osm_import_study.assert_import_studied_before_scaled_contribution` refuses a scaled proposal until conventions/consultation/outcome are documented (`tests/connectors/test_osm_import_study.py::test_gate_refuses_a_scaled_contribution_when_a_section_is_undocumented`); a bulk contribution still owes the full SIG-CONTRIB-016c requirements. |

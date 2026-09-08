@@ -690,6 +690,10 @@ class LegalInstrumentType(str, Enum):
     """
     Germany — a Land data-protection statute.
     """
+    beFULL_STOPloi_cameras = "be.loi_cameras"
+    """
+    Belgium — loi caméras (21 March 2007) governing installation and use of surveillance cameras.
+    """
 
 
 class AccountabilityEventType(str, Enum):
@@ -928,6 +932,22 @@ class JurisdictionType(str, Enum):
     """
     Germany — Gemeinde (municipality).
     """
+    beFULL_STOPregion = "be.region"
+    """
+    Belgium — région / gewest (Brussels-Capital, Flanders, Wallonia).
+    """
+    beFULL_STOPprovince = "be.province"
+    """
+    Belgium — province.
+    """
+    beFULL_STOPcommune = "be.commune"
+    """
+    Belgium — commune / gemeente.
+    """
+    beFULL_STOPpolice_zone = "be.police_zone"
+    """
+    Belgium — zone de police locale (a non-tree operational grouping of communes).
+    """
 
 
 class OrganizationType(str, Enum):
@@ -981,6 +1001,26 @@ class OrganizationType(str, Enum):
     deFULL_STOPlandespolizei = "de.landespolizei"
     """
     Germany — a Land police force.
+    """
+    frFULL_STOPpolice_nationale = "fr.police_nationale"
+    """
+    France — police nationale (national state police).
+    """
+    frFULL_STOPdouanes = "fr.douanes"
+    """
+    France — douanes (customs); an ALPR operator (F9.13).
+    """
+    frFULL_STOPprefecture = "fr.prefecture"
+    """
+    France — préfecture (the State's representative in the département; the authorizing body for vidéoprotection, F9.18).
+    """
+    beFULL_STOPpolice_locale = "be.police_locale"
+    """
+    Belgium — a zone de police locale (local police).
+    """
+    beFULL_STOPpolice_federale = "be.police_federale"
+    """
+    Belgium — police fédérale (federal police).
     """
 
 

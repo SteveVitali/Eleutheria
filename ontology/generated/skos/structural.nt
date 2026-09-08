@@ -587,6 +587,30 @@
 <https://ontology.sig-project.org/vocab/EvidenceRole/1.0.0> <http://www.w3.org/2004/02/skos/core#hasTopConcept> <https://ontology.sig-project.org/vocab/EvidenceRole/1.0.0/corroborates> .
 <https://ontology.sig-project.org/vocab/EvidenceRole/1.0.0> <http://www.w3.org/2004/02/skos/core#hasTopConcept> <https://ontology.sig-project.org/vocab/EvidenceRole/1.0.0/establishes> .
 <https://ontology.sig-project.org/vocab/EvidenceRole/1.0.0> <http://www.w3.org/2004/02/skos/core#hasTopConcept> <https://ontology.sig-project.org/vocab/EvidenceRole/1.0.0/supersedes_basis> .
+<https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/be.commune> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/be.commune> <http://www.w3.org/2004/02/skos/core#broader> <https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/municipality> .
+<https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/be.commune> <http://www.w3.org/2004/02/skos/core#definition> "Belgium — commune / gemeente." .
+<https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/be.commune> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0> .
+<https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/be.commune> <http://www.w3.org/2004/02/skos/core#notation> "be.commune" .
+<https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/be.commune> <http://www.w3.org/2004/02/skos/core#prefLabel> "be.commune"@en .
+<https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/be.police_zone> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/be.police_zone> <http://www.w3.org/2004/02/skos/core#broader> <https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/special_district> .
+<https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/be.police_zone> <http://www.w3.org/2004/02/skos/core#definition> "Belgium — zone de police locale (a non-tree operational grouping of communes)." .
+<https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/be.police_zone> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0> .
+<https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/be.police_zone> <http://www.w3.org/2004/02/skos/core#notation> "be.police_zone" .
+<https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/be.police_zone> <http://www.w3.org/2004/02/skos/core#prefLabel> "be.police_zone"@en .
+<https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/be.province> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/be.province> <http://www.w3.org/2004/02/skos/core#broader> <https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/county> .
+<https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/be.province> <http://www.w3.org/2004/02/skos/core#definition> "Belgium — province." .
+<https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/be.province> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0> .
+<https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/be.province> <http://www.w3.org/2004/02/skos/core#notation> "be.province" .
+<https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/be.province> <http://www.w3.org/2004/02/skos/core#prefLabel> "be.province"@en .
+<https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/be.region> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/be.region> <http://www.w3.org/2004/02/skos/core#broader> <https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/state_province> .
+<https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/be.region> <http://www.w3.org/2004/02/skos/core#definition> "Belgium — région / gewest (Brussels-Capital, Flanders, Wallonia)." .
+<https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/be.region> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0> .
+<https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/be.region> <http://www.w3.org/2004/02/skos/core#notation> "be.region" .
+<https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/be.region> <http://www.w3.org/2004/02/skos/core#prefLabel> "be.region"@en .
 <https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/country> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/country> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0> .
 <https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/country> <http://www.w3.org/2004/02/skos/core#notation> "country" .
@@ -718,6 +742,12 @@
 <https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0> <http://www.w3.org/2004/02/skos/core#hasTopConcept> <https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/township> .
 <https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0> <http://www.w3.org/2004/02/skos/core#hasTopConcept> <https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/tribal> .
 <https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0> <http://www.w3.org/2004/02/skos/core#hasTopConcept> <https://ontology.sig-project.org/vocab/JurisdictionType/1.0.0/unincorporated_area> .
+<https://ontology.sig-project.org/vocab/LegalInstrumentType/1.0.0/be.loi_cameras> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/LegalInstrumentType/1.0.0/be.loi_cameras> <http://www.w3.org/2004/02/skos/core#broader> <https://ontology.sig-project.org/vocab/LegalInstrumentType/1.0.0/statute> .
+<https://ontology.sig-project.org/vocab/LegalInstrumentType/1.0.0/be.loi_cameras> <http://www.w3.org/2004/02/skos/core#definition> "Belgium — loi caméras (21 March 2007) governing installation and use of surveillance cameras." .
+<https://ontology.sig-project.org/vocab/LegalInstrumentType/1.0.0/be.loi_cameras> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/LegalInstrumentType/1.0.0> .
+<https://ontology.sig-project.org/vocab/LegalInstrumentType/1.0.0/be.loi_cameras> <http://www.w3.org/2004/02/skos/core#notation> "be.loi_cameras" .
+<https://ontology.sig-project.org/vocab/LegalInstrumentType/1.0.0/be.loi_cameras> <http://www.w3.org/2004/02/skos/core#prefLabel> "be.loi_cameras"@en .
 <https://ontology.sig-project.org/vocab/LegalInstrumentType/1.0.0/code_of_practice> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.sig-project.org/vocab/LegalInstrumentType/1.0.0/code_of_practice> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/LegalInstrumentType/1.0.0> .
 <https://ontology.sig-project.org/vocab/LegalInstrumentType/1.0.0/code_of_practice> <http://www.w3.org/2004/02/skos/core#notation> "code_of_practice" .
@@ -862,6 +892,18 @@
 <https://ontology.sig-project.org/vocab/OperationalState/1.0.0> <http://www.w3.org/2004/02/skos/core#hasTopConcept> <https://ontology.sig-project.org/vocab/OperationalState/1.0.0/restricted> .
 <https://ontology.sig-project.org/vocab/OperationalState/1.0.0> <http://www.w3.org/2004/02/skos/core#hasTopConcept> <https://ontology.sig-project.org/vocab/OperationalState/1.0.0/suspended> .
 <https://ontology.sig-project.org/vocab/OperationalState/1.0.0> <http://www.w3.org/2004/02/skos/core#hasTopConcept> <https://ontology.sig-project.org/vocab/OperationalState/1.0.0/unknown> .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/be.police_federale> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/be.police_federale> <http://www.w3.org/2004/02/skos/core#broader> <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/law_enforcement> .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/be.police_federale> <http://www.w3.org/2004/02/skos/core#definition> "Belgium — police fédérale (federal police)." .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/be.police_federale> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0> .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/be.police_federale> <http://www.w3.org/2004/02/skos/core#notation> "be.police_federale" .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/be.police_federale> <http://www.w3.org/2004/02/skos/core#prefLabel> "be.police_federale"@en .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/be.police_locale> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/be.police_locale> <http://www.w3.org/2004/02/skos/core#broader> <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/law_enforcement> .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/be.police_locale> <http://www.w3.org/2004/02/skos/core#definition> "Belgium — a zone de police locale (local police)." .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/be.police_locale> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0> .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/be.police_locale> <http://www.w3.org/2004/02/skos/core#notation> "be.police_locale" .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/be.police_locale> <http://www.w3.org/2004/02/skos/core#prefLabel> "be.police_locale"@en .
 <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/data_broker> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/data_broker> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0> .
 <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/data_broker> <http://www.w3.org/2004/02/skos/core#notation> "data_broker" .
@@ -873,6 +915,12 @@
 <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/de.landespolizei> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0> .
 <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/de.landespolizei> <http://www.w3.org/2004/02/skos/core#notation> "de.landespolizei" .
 <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/de.landespolizei> <http://www.w3.org/2004/02/skos/core#prefLabel> "de.landespolizei"@en .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/fr.douanes> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/fr.douanes> <http://www.w3.org/2004/02/skos/core#broader> <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/law_enforcement> .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/fr.douanes> <http://www.w3.org/2004/02/skos/core#definition> "France — douanes (customs); an ALPR operator (F9.13)." .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/fr.douanes> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0> .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/fr.douanes> <http://www.w3.org/2004/02/skos/core#notation> "fr.douanes" .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/fr.douanes> <http://www.w3.org/2004/02/skos/core#prefLabel> "fr.douanes"@en .
 <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/fr.gendarmerie> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/fr.gendarmerie> <http://www.w3.org/2004/02/skos/core#broader> <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/law_enforcement> .
 <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/fr.gendarmerie> <http://www.w3.org/2004/02/skos/core#definition> "France — gendarmerie nationale." .
@@ -885,6 +933,18 @@
 <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/fr.police_municipale> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0> .
 <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/fr.police_municipale> <http://www.w3.org/2004/02/skos/core#notation> "fr.police_municipale" .
 <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/fr.police_municipale> <http://www.w3.org/2004/02/skos/core#prefLabel> "fr.police_municipale"@en .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/fr.police_nationale> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/fr.police_nationale> <http://www.w3.org/2004/02/skos/core#broader> <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/law_enforcement> .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/fr.police_nationale> <http://www.w3.org/2004/02/skos/core#definition> "France — police nationale (national state police)." .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/fr.police_nationale> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0> .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/fr.police_nationale> <http://www.w3.org/2004/02/skos/core#notation> "fr.police_nationale" .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/fr.police_nationale> <http://www.w3.org/2004/02/skos/core#prefLabel> "fr.police_nationale"@en .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/fr.prefecture> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/fr.prefecture> <http://www.w3.org/2004/02/skos/core#broader> <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/government> .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/fr.prefecture> <http://www.w3.org/2004/02/skos/core#definition> "France — préfecture (the State's representative in the département; the authorizing body for vidéoprotection, F9.18)." .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/fr.prefecture> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0> .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/fr.prefecture> <http://www.w3.org/2004/02/skos/core#notation> "fr.prefecture" .
+<https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/fr.prefecture> <http://www.w3.org/2004/02/skos/core#prefLabel> "fr.prefecture"@en .
 <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/government> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/government> <http://www.w3.org/2004/02/skos/core#definition> "Abstract parent of every country's civil-government body types (SIG-ONTO-068)." .
 <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0/government> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/OrganizationType/1.0.0> .

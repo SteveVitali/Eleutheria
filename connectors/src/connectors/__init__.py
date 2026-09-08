@@ -47,10 +47,14 @@ Importing the package imports the connectors so they appear in the registry
 # Importing the source-specific connectors registers them (SIG-INGEST-021). Kept
 # at the bottom so the framework modules above are fully initialised first, and
 # imported for the registration side effect only.
+# france_belgium is the P18.2 France/Belgium (Technopolice) pair — the first non-US
+# adapter (§52 Phase 18); it reuses connectors.procurement.Contract, which Python
+# imports transitively regardless of registration order here.
 from . import accountability as accountability  # noqa: E402,F401
 from . import atlas as atlas  # noqa: E402,F401
 from . import audit_structural as audit_structural  # noqa: E402,F401
 from . import flock_portal as flock_portal  # noqa: E402,F401
+from . import france_belgium as france_belgium  # noqa: E402,F401
 from . import osm as osm  # noqa: E402,F401
 from . import procurement as procurement  # noqa: E402,F401
 from . import records as records  # noqa: E402,F401

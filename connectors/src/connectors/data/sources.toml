@@ -1410,6 +1410,61 @@ compact_status = "public_terms_only"
 robots_policy = "honor"
 notes = "National open procurement data. UNDETERMINED pending reuse-terms review (Licence Ouverte)."
 
+# RAA des préfectures — the weekly ODbL-licensed index of 22,403 prefecture
+# gazette PDFs (F9.18). The arrêtés préfectoraux authorising vidéoprotection are
+# INSIDE the PDFs, not in the index; the france_belgium records connector parses
+# them into LegalInstrument (instrument_type=fr.arrete_prefectoral). Five-year,
+# renewable authorizations under the Code de la sécurité intérieure L251-1..L255-1.
+[sources.raa_prefectures]
+name = "RAA des préfectures (arrêtés préfectoraux)"
+source_kind = "government_portal"
+homepage_url = "https://www.data.gouv.fr/fr/datasets/recueils-des-actes-administratifs-des-prefectures/"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+notes = "22,403 RAA PDFs; weekly index (F9.18). Prefectural authorization = 5-yr renewable (CSI L252). Legally authoritative, dated, expiring Authorization the US has no equivalent of."
+[sources.raa_prefectures.rights]
+spdx = "ODbL-1.0"
+attribution = "Recueils des actes administratifs des préfectures (data.gouv.fr)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.data.gouv.fr/fr/datasets/recueils-des-actes-administratifs-des-prefectures/"
+retrieval_date = 2026-08-20
+
+# Ma Dada — France's MuckRock: an Alaveteli-family public-records (CADA) platform
+# (F9.14). The internationalized records-request regime is fr.cada, NOT foia_request.
+[sources.madada]
+name = "Ma Dada (FR CADA public-records platform)"
+source_kind = "records_channel"
+homepage_url = "https://madada.fr/"
+default_tier = "R2"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+notes = "51,669 requests / 51,918 authorities; Atom feeds, no complete API (F9.14). Acquisition method fr.cada (§13.8). Rights UNDETERMINED pending site-terms review."
+
+# Belgium — declarationcamera.be, the legally complete national camera register
+# behind a Belgian-eID wall, not public (F9.31). A known-complete-unknown: a
+# complete authoritative register exists, is held by the police, and is not
+# accessible — so the records-request regime for it is no_equivalent_available.
+[sources.declarationcamera_be]
+name = "declarationcamera.be (BE national camera register)"
+source_kind = "government_portal"
+homepage_url = "https://www.declarationcamera.be/"
+default_tier = "R1"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+auth_model = "belgian_eid (citizen assurance Level 300)"
+verified = true
+last_verified = 2026-08-20
+notes = "loi caméras 21 March 2007; declarations to police since 25 May 2018. Register held by police/DPA, NOT public — no anonymous access path (F9.31). Known-complete-unknown; records-request regime no_equivalent_available (§13.8)."
+
 # Coarse international datasets (§22.7, SIG-ENG-036/SIG-INGEST-042). Country-level
 # indices and a global facial-recognition map are country-granularity; the ASPI
 # study is vendor-granularity. Each is LINK posture and UNDETERMINED until its
