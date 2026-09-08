@@ -382,12 +382,18 @@ def build_structural_skos() -> str:
                 ref = URIRef(f"{scheme_iri}/{pv_name}")
                 g.add((ref, RDF.type, SKOS.Concept))
                 g.add((ref, SKOS.inScheme, scheme))
-                g.add((ref, SKOS.topConceptOf, scheme))
-                g.add((scheme, SKOS.hasTopConcept, ref))
                 g.add((ref, SKOS.prefLabel, Literal(pv_name, lang="en")))
                 g.add((ref, SKOS.notation, Literal(pv_name)))
                 if pv.description:
                     g.add((ref, SKOS.definition, Literal(pv.description)))
+                # Country-namespaced children declare their shared abstract parent
+                # via LinkML `is_a` (§13.7, SIG-ONTO-068); publish it as
+                # skos:broader. Only parentless terms are top concepts.
+                if pv.is_a:
+                    g.add((ref, SKOS.broader, URIRef(f"{scheme_iri}/{pv.is_a}")))
+                else:
+                    g.add((ref, SKOS.topConceptOf, scheme))
+                    g.add((scheme, SKOS.hasTopConcept, ref))
     return _canonical_nt(g)
 
 

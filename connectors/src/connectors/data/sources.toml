@@ -1409,3 +1409,38 @@ custody_posture = "REFERENCE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
 notes = "National open procurement data. UNDETERMINED pending reuse-terms review (Licence Ouverte)."
+
+# Coarse international datasets (§22.7, SIG-ENG-036/SIG-INGEST-042). Country-level
+# indices and a global facial-recognition map are country-granularity; the ASPI
+# study is vendor-granularity. Each is LINK posture and UNDETERMINED until its
+# rights are reviewed, and MUST be ingested at its explicit coarse granularity —
+# never disaggregated to agency level by inference (connectors/coarse_international.py).
+[sources.carnegie_ai_gsi]
+name = "AI Global Surveillance Index (Carnegie)"
+source_kind = "academic"
+homepage_url = "https://carnegieendowment.org/2019/09/17/global-expansion-of-ai-surveillance-pub-79847"
+default_tier = "R2"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+notes = "Country-level AI-surveillance index (OL-5.3-01); coarse granularity mandatory (SIG-INGEST-042). UNDETERMINED."
+
+[sources.facial_recognition_world_map]
+name = "Facial Recognition World Map"
+source_kind = "community"
+homepage_url = "https://www.surfshark.com/facial-recognition-map"
+default_tier = "R4"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+notes = "Country-level facial-recognition map (OL-5.3-01); coarse granularity mandatory (SIG-INGEST-042). UNDETERMINED."
+
+[sources.aspi_mapping_chinas_tech_giants]
+name = "Mapping China's Tech Giants (ASPI)"
+source_kind = "academic"
+homepage_url = "https://chinatechmap.aspi.org.au/"
+default_tier = "R2"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+notes = "Vendor-level international dataset (OL-5.3-01); coarse granularity mandatory (SIG-INGEST-042). UNDETERMINED."

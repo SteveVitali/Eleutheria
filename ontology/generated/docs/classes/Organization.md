@@ -111,6 +111,8 @@ URI: [sig:class/Organization](https://ontology.sig-project.org/schema/class/Orga
     
 
         
+      Organization : transliteration_scheme
+        
       Organization : valid_from
         
       Organization : valid_to
@@ -134,7 +136,8 @@ URI: [sig:class/Organization](https://ontology.sig-project.org/schema/class/Orga
 | [canonical_name](../slots/canonical_name.md) | 0..1 <br/> [String](../types/String.md) | A claim, not an authoritative column (§8 | direct |
 | [alias](../slots/alias.md) | * <br/> [String](../types/String.md) |  | direct |
 | [alias_type](../slots/alias_type.md) | * <br/> [AliasType](../enums/AliasType.md) |  | direct |
-| [name_lang](../slots/name_lang.md) | * <br/> [Bcp47](../types/Bcp47.md) |  | direct |
+| [name_lang](../slots/name_lang.md) | * <br/> [Bcp47](../types/Bcp47.md) | Repeatable BCP-47 language tags for the multilingual entity names (SIG-ONTO-0... | direct |
+| [transliteration_scheme](../slots/transliteration_scheme.md) | * <br/> [String](../types/String.md) | Repeatable qualifier naming the transliteration scheme a romanised/ translite... | direct |
 | [organization_type](../slots/organization_type.md) | 0..1 <br/> [OrganizationType](../enums/OrganizationType.md) |  | direct |
 | [parent_organization](../slots/parent_organization.md) | 0..1 <br/> [Organization](../classes/Organization.md) |  | direct |
 | [jurisdiction](../slots/jurisdiction.md) | 0..1 <br/> [Jurisdiction](../classes/Jurisdiction.md) |  | direct |
@@ -258,11 +261,24 @@ attributes:
     multivalued: true
   name_lang:
     name: name_lang
+    description: Repeatable BCP-47 language tags for the multilingual entity names
+      (SIG-ONTO-069).
     from_schema: https://ontology.sig-project.org/schema/entities
     domain_of:
     - Jurisdiction
     - Organization
     range: bcp47
+    multivalued: true
+  transliteration_scheme:
+    name: transliteration_scheme
+    description: Repeatable qualifier naming the transliteration scheme a romanised/
+      transliterated name was produced under (e.g. ISO 9, BGN/PCGN, Hepburn), so the
+      original script stays recoverable (SIG-ONTO-069).
+    from_schema: https://ontology.sig-project.org/schema/entities
+    domain_of:
+    - Jurisdiction
+    - Organization
+    range: string
     multivalued: true
   organization_type:
     name: organization_type
@@ -403,12 +419,26 @@ attributes:
     multivalued: true
   name_lang:
     name: name_lang
+    description: Repeatable BCP-47 language tags for the multilingual entity names
+      (SIG-ONTO-069).
     from_schema: https://ontology.sig-project.org/schema/entities
     owner: Organization
     domain_of:
     - Jurisdiction
     - Organization
     range: bcp47
+    multivalued: true
+  transliteration_scheme:
+    name: transliteration_scheme
+    description: Repeatable qualifier naming the transliteration scheme a romanised/
+      transliterated name was produced under (e.g. ISO 9, BGN/PCGN, Hepburn), so the
+      original script stays recoverable (SIG-ONTO-069).
+    from_schema: https://ontology.sig-project.org/schema/entities
+    owner: Organization
+    domain_of:
+    - Jurisdiction
+    - Organization
+    range: string
     multivalued: true
   organization_type:
     name: organization_type
