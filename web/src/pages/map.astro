@@ -1,0 +1,239 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The infrastructure map (§39.3). The shipped page is static and zero-JS
+// (SIG-UI-036): the layer catalog, the coverage-bound point control, the
+// low-coverage≠low-density encoding, the national-zoom bins, and the no-coordinate
+// jurisdiction indicators all render server-side, and the TABULAR EQUIVALENT below
+// is the source of truth and the no-JS/screen-reader path (SIG-UI-037). The map is
+// SERVED from self-hosted static PMTiles v3 with OSM attribution — the style is at
+// /map/style.json (SIG-UI-038, SIG-GEO-012/013) — but the maplibre-gl runtime is not
+// bundled, so archivability and the zero-JS budget hold (see ADR for P15.3).
+import BaseLayout from "../layouts/BaseLayout.astro";
+import AbsenceHatch from "../components/AbsenceHatch.astro";
+import {
+  LAYER_CONTROLS,
+  OBSERVED_LAYERS,
+  DERIVED_LAYERS,
+  NATIONAL_ZOOM_MAX,
+  POINT_LAYER_ID,
+  COVERAGE_LAYER_ID,
+  DEFAULT_SHARING_EDGE_VIEW,
+  coverageEncoding,
+  partitionByLocatability,
+  readsAsDensity,
+  renderBin,
+} from "../lib/map";
+import { MAP_ATTRIBUTION_LINE } from "../lib/map-tiles";
+import { MAP_ASSETS, DENSITY_BINS } from "../lib/map-network-fixture";
+
+const { locatable, jurisdictionIndicators } = partitionByLocatability(MAP_ASSETS);
+const maxCount = Math.max(1, ...DENSITY_BINS.map((b) => b.deviceCount));
+const bins = DENSITY_BINS.map((b) => ({ bin: b, render: renderBin(b, maxCount) }));
+
+// Which layer id each control governs, for the "bound control" display.
+const boundControl = LAYER_CONTROLS.find(
+  (c) => c.governs.includes(POINT_LAYER_ID) && c.governs.includes(COVERAGE_LAYER_ID),
+)!;
+
+// A tiny static bin strip so the low-coverage≠low-density encoding is visible.
+const cell = 64;
+---
+
+<BaseLayout title="Infrastructure map" path="/map/">
+  <p>
+    The surveillance-infrastructure map. It renders as static content with no client
+    JavaScript and is <strong>served from self-hosted static vector tiles</strong>, so
+    it has no hard dependency on a third-party tile CDN. <strong>Everything the map
+    shows is also in the tables below</strong> — they are the equivalent, not a
+    fallback.
+  </p>
+
+  <!-- Layers (SIG-UI-016): observed layers, plus DERIVED layers flagged distinct. -->
+  <h2 id="layers-heading">Layers</h2>
+  <ul class="sig-layer-controls" data-testid="map-layer-controls" aria-labelledby="layers-heading">
+    {LAYER_CONTROLS.map((c) => {
+      const bound = c.id === boundControl.id;
+      return (
+        <li
+          class="sig-layer-control"
+          data-testid="layer-control"
+          data-control-id={c.id}
+          data-governs={c.governs.join(",")}
+          data-bound={bound ? "true" : "false"}
+        >
+          <strong>{c.label}</strong>
+          {bound && (
+            <span class="sig-layer-control__note">
+              — a single bound control: you cannot show devices without also showing where
+              SIG has <em>not</em> looked (SIG-UI-017).
+            </span>
+          )}
+        </li>
+      );
+    })}
+  </ul>
+
+  <details class="sig-recon">
+    <summary>Observed vs derived layers (SIG-GEO-006)</summary>
+    <div class="sig-recon__body">
+      <p><strong>Observed</strong> (a record): {OBSERVED_LAYERS.map((l) => l.label).join(", ")}.</p>
+      <p>
+        <strong>Derived</strong> (a model, drawn distinctly and separately toggled):
+        {DERIVED_LAYERS.map((l) => l.label).join(", ")}.
+      </p>
+    </div>
+  </details>
+
+  <!-- National-zoom density bins with the low-coverage≠low-density encoding. -->
+  <h2 id="coverage-heading">National view: density binning with coverage (SIG-UI-018/019)</h2>
+  <p>
+    At national zoom (≤ {NATIONAL_ZOOM_MAX}) the map bins density rather than drawing
+    individual points. <strong>Low coverage is desaturated and hatched</strong> so
+    "we don't know" never reads as "there is little here."
+  </p>
+  <figure aria-labelledby="bins-caption">
+    <svg
+      role="img"
+      aria-label="Density bins; low-coverage cells are hatched and desaturated, distinct from confidently-low-density cells."
+      viewBox={`0 0 ${cell * bins.length} ${cell + 40}`}
+      width={cell * bins.length}
+      height={cell + 40}
+      style="max-width:100%;border:1px solid var(--sig-rule);background:hsl(0deg 0% 98%);"
+    >
+      {bins.map(({ bin, render }, i) => (
+        <g>
+          <rect
+            x={i * cell + 6}
+            y={6}
+            width={cell - 12}
+            height={cell - 12}
+            fill={render.coverage.desaturated
+              ? "hsl(220deg 8% 82%)"
+              : `hsl(214deg 70% ${72 - render.densityBucket * 14}%)`}
+            stroke={render.coverage.hatched ? "var(--sig-epi-absence-ink)" : "var(--sig-rule)"}
+            stroke-dasharray={render.coverage.hatched ? "3 2" : undefined}
+          >
+            <title>{`${bin.jurisdiction}: ${bin.deviceCount} device(s), coverage ${bin.coverage}`}</title>
+          </rect>
+          <text x={i * cell + cell / 2} y={cell + 12} text-anchor="middle" font-size="9">
+            {bin.coverage}
+          </text>
+          <text x={i * cell + cell / 2} y={cell + 26} text-anchor="middle" font-size="9">
+            {readsAsDensity(bin) ? `${bin.deviceCount} dev` : "unknown"}
+          </text>
+        </g>
+      ))}
+    </svg>
+    <figcaption id="bins-caption">
+      Each cell is an H3 bin (§19.5). A grey hatched cell means SIG has barely looked;
+      its count is suppressed, not shown as a low density.
+    </figcaption>
+  </figure>
+
+  <h2 id="bins-table-heading">Coverage bins (tabular equivalent)</h2>
+  <table class="sig-table" aria-labelledby="bins-table-heading">
+    <thead>
+      <tr>
+        <th scope="col">H3 cell</th>
+        <th scope="col">Jurisdiction</th>
+        <th scope="col">Devices</th>
+        <th scope="col">Coverage</th>
+        <th scope="col">Reads as</th>
+      </tr>
+    </thead>
+    <tbody>
+      {bins.map(({ bin }) => (
+        <tr
+          data-testid="coverage-bin"
+          data-coverage={bin.coverage}
+          data-desaturated={coverageEncoding(bin.coverage).desaturated ? "true" : "false"}
+          data-hatched={coverageEncoding(bin.coverage).hatched ? "true" : "false"}
+          data-reads-as-density={readsAsDensity(bin) ? "true" : "false"}
+        >
+          <th scope="row"><code>{bin.h3}</code></th>
+          <td>{bin.jurisdiction}</td>
+          <td>{bin.deviceCount}</td>
+          <td>{coverageEncoding(bin.coverage).label}</td>
+          <td>{readsAsDensity(bin) ? "a density signal" : "we don't know (coverage too low)"}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  <!-- The tabular equivalent for the asset points + jurisdiction indicators. -->
+  <h2 id="assets-heading">Located assets (tabular equivalent)</h2>
+  <table class="sig-table" aria-labelledby="assets-heading">
+    <thead>
+      <tr>
+        <th scope="col">Asset</th>
+        <th scope="col">Jurisdiction</th>
+        <th scope="col">Tier</th>
+        <th scope="col">Latitude</th>
+        <th scope="col">Longitude</th>
+        <th scope="col">Published precision</th>
+      </tr>
+    </thead>
+    <tbody>
+      {locatable.map((a) => (
+        <tr data-testid="map-asset-row">
+          <th scope="row">{a.label}</th>
+          <td>{a.jurisdiction}</td>
+          <td>{a.tier}</td>
+          <td>{a.lat}</td>
+          <td>{a.lon}</td>
+          <td>{a.precision}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  <!-- No-coordinate assets: jurisdiction indicators, never dropped (SIG-UI-020). -->
+  <h2 id="nocoord-heading">Assets without a published point</h2>
+  <p>
+    Assets with no coordinates — or whose sensitivity tier forbids publishing a point —
+    are <strong>not dropped</strong>. They appear as jurisdiction-level indicators, so
+    the map does not systematically understate capability (SIG-UI-020).
+  </p>
+  <ul class="sig-jurisdiction-indicators">
+    {jurisdictionIndicators.map((j) => (
+      <li data-testid="jurisdiction-indicator" data-count={j.count}>
+        <strong>{j.jurisdiction}</strong>: {j.count} asset{j.count === 1 ? "" : "s"} with no
+        published point.
+        <ul>
+          {j.assetIds.map((id) => {
+            const asset = MAP_ASSETS.find((a) => a.id === id)!;
+            return (
+              <li>
+                {asset.label} — {asset.precision}
+                {asset.locationAbsence && (
+                  <> <AbsenceHatch
+                    kind={asset.locationAbsence}
+                    subject_id={asset.id}
+                    predicate_id="location"
+                    predicate_label="Location"
+                  /></>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </li>
+    ))}
+  </ul>
+
+  <h2 id="sharing-heading">Sharing edges</h2>
+  <p>
+    Sharing edges default to an <strong>{DEFAULT_SHARING_EDGE_VIEW} network</strong> from a
+    selected entity — never a national hairball (SIG-UI-021). Explore them in the
+    <a href="/network/">network explorer</a>, which also offers matrix and arc views.
+  </p>
+
+  <!-- OSM attribution in every rendering context, incl. print (SIG-GEO-013). -->
+  <p class="sig-map-attribution" data-testid="map-attribution">
+    {MAP_ATTRIBUTION_LINE}. Tiles served as static PMTiles v3 —
+    <a href="/map/style.json">map style</a> (SIG-GEO-012, SIG-UI-038).
+  </p>
+</BaseLayout>

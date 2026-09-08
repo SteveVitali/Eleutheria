@@ -14,6 +14,8 @@ export const SHELL_PAGES = [
   "/",
   "/dossier/oklahoma-city/",
   "/visual-language/",
+  "/map/",
+  "/network/",
   "/reference-map/",
   "/reference-graph/",
 ] as const;

@@ -386,6 +386,121 @@ table.sig-table td {
   margin: 0;
 }
 
+/* --- The infrastructure map + network explorer (§39.3/§39.4, P15.3) -------- */
+/* All chrome here is neutral greyscale; the epistemic tokens it reuses (contested)
+ * are the same non-green tokens the design-token test already guards (SIG-UI-006). */
+
+.sig-layer-controls,
+.sig-jurisdiction-indicators,
+.sig-centrality,
+.sig-access-legend {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.sig-layer-control {
+  border: 1px solid var(--sig-rule);
+  border-left-width: 4px;
+  border-radius: 4px;
+  padding: 0.4rem 0.6rem;
+}
+.sig-layer-control[data-bound="true"] {
+  border-left-color: var(--sig-epi-agreement-contested);
+}
+.sig-layer-control__note {
+  color: var(--sig-muted);
+  font-size: 0.9rem;
+}
+
+.sig-map-attribution {
+  margin-top: 2rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--sig-rule);
+  font-size: 0.8rem;
+  color: var(--sig-muted);
+}
+
+.sig-centrality__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  border-left: 4px solid var(--sig-rule);
+  padding: 0.3rem 0.7rem;
+}
+.sig-centrality__er {
+  color: var(--sig-muted);
+  font-size: 0.85rem;
+}
+
+.sig-access-legend li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid var(--sig-rule);
+  border-radius: 4px;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.9rem;
+}
+.sig-access-glyph {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.sig-access-group {
+  margin: 1rem 0;
+}
+.sig-edge-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.4rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.sig-edge-list > li {
+  border-left: 3px solid var(--sig-rule);
+  padding: 0.2rem 0.7rem;
+}
+
+.sig-paths {
+  padding-left: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.sig-path {
+  border: 1px solid var(--sig-rule);
+  border-radius: 4px;
+  padding: 0.5rem 0.8rem;
+}
+.sig-path[data-speculative="true"] {
+  border-left: 4px solid var(--sig-epi-agreement-contested);
+}
+.sig-path[data-headline="true"] {
+  border-left: 4px solid var(--sig-epi-status-resolved);
+}
+.sig-path__speculative {
+  font-weight: 700;
+  color: var(--sig-epi-agreement-contested);
+}
+.sig-path__chain {
+  font-weight: 600;
+  margin: 0.3rem 0;
+}
+.sig-path__hops {
+  margin: 0.3rem 0 0;
+  padding-left: 1.1rem;
+}
+.sig-path__hop-meta,
+.sig-path__evidence {
+  color: var(--sig-muted);
+  font-size: 0.85rem;
+  display: block;
+}
+
 /* --- The print / PDF path (SIG-UI-013) ------------------------------------- */
 /* The dedicated print route renders the dossier as paginated `.sig-print-page`
  * blocks, EACH carrying a footer with the as-of date and the permalink, so every
