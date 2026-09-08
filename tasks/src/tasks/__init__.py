@@ -30,6 +30,26 @@ queues, anti-abuse, and SIG's own local-group registry. The concrete detector
   operationally-binding residency routing into the geographic queue + a coverage
   fact, versioned templates with measured success rates, and the consent gate
   (SIG-TASK-015/016/016a/016b/017/018).
+
+The contributor system (§34, P16.1) — write tiers, onboarding, safety, and
+poisoning resistance:
+
+* :mod:`tasks.contributor` — the five-tier write model (scope + review per tier),
+  the L0-entry and no-claim-without-provenance rules, the pseudonymity guarantee,
+  and the `Person`-creation gate (SIG-CONTRIB-001/002/006).
+* :mod:`tasks.submission` — contributor submissions enter at L0 as evidence,
+  device observations route to OSM/DeFlock, and the PII-minimisation posture:
+  no contributor real name / device id / precise geolocation, and operational
+  logs that purge past a short window (SIG-CONTRIB-002/004/005).
+* :mod:`tasks.onboarding` — the two onboarding paths and the moderated
+  usability-study harness that gates a ≤10-minute median over an ontology-naïve
+  cohort (SIG-CONTRIB-003).
+* :mod:`tasks.revert` — revert a contribution as a unit, recorded as a new
+  append-only assertion that deletes nothing (SIG-CONTRIB-009; the §16.6 spine).
+* :mod:`tasks.poisoning` — vandalism/poisoning resistance: anomaly routing that
+  never auto-rejects and guards false absence equally, the vendor
+  operating-territory check, the no-SIG-caused-mass-revert refusal, and the
+  visual-weight discipline (SIG-CONTRIB-010/011/011a/011b/011c).
 """
 
 __version__ = "0.0.0"

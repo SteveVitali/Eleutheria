@@ -1594,3 +1594,54 @@ no-JS/a11y baseline (ADR-053). Implementation is `web/`; TypeScript is confined 
 | SIG-UI-042 (recorded hostile-reader review committed with the template version; release blocked until every finding is dispositioned) | `web/src/lib/editorial.ts::HostileReaderReview`/`allFindingsDispositioned`/`assertReviewReleasable`; `corrections-methodology-fixture.ts::HOSTILE_READER_REVIEW`; `docs/governance/hostile-reader-review-dossier.md`; `src/pages/editorial-standards.astro` (build-gates via `assertReviewReleasable`, `release-status`) | `web/tests/unit/editorial.test.ts` "hostile-reader review release gate"; `corrections-methodology.spec.ts` "the hostile-reader review is recorded and every finding dispositioned"; `.nojs.spec.ts` |
 | P15.5 AC1 / deliverable 6 (all seven outline surfaces + the corrections log exist across the built Phase-15 site) | `web/tests/e2e/pages.ts::PHASE15_SURFACES` (dossier, map, network, watch, recommender, viewer, research queue + corrections log) | `web/tests/e2e/corrections-methodology.spec.ts` "seven outline surfaces + the corrections log exist" |
 | Phase gate (SIG-ENG-004; §51.3): the new surfaces exist + function no-JS; a11y + perf gates hold on the new pages; ADR-053; traceability + risk register updated | `src/pages/*` (8 new pages); `tests/e2e/pages.ts` (SHELL_PAGES ⊇ the new pages → A11Y_PAGES) | `web/tests/e2e/corrections-methodology.nojs.spec.ts`; `web/tests/e2e/a11y.spec.ts` (axe WCAG 2.2 AA on the new pages); `lighthouserc.json` (0 script bytes, ≤150 KB, auto-globbed over `dist`) |
+
+---
+
+# P16.1 — Contributor system
+
+The contributor system end to end (§34.1–34.4), in the `tasks` package as pure,
+tested Python ahead of persistence (ADR-054): the five write tiers, onboarding +
+the moderated usability-study gate, the data-minimisation posture, revert-as-a-unit,
+and vandalism/poisoning resistance. The safety **policy** prose (§34.3) is P00.3's
+`docs/governance/contributor-safety.md`; this ticket adds the executable system and
+the published onboarding study. Additive — no prior wire name, id, or schema changes.
+
+## Tiers, provenance, and L0 entry (§34.1)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-CONTRIB-001 (five tiers; per-tier write scope + review requirement) | `tasks.contributor::ContributorTier`/`WriteScope`/`ReviewRequirement`/`scopes_for`/`may_write`/`review_requirement` | `test_tasks_contributor.py::test_exactly_five_tiers`, `::test_write_scope_is_cumulative_up_the_ladder`, `::test_review_requirement_per_tier` |
+| SIG-CONTRIB-001 + Notes (no tier below Curator may create a `Person`) | `tasks.contributor::may_create_person` | `test_tasks_contributor.py::test_person_creation_gated_below_curator` |
+| SIG-CONTRIB-002 (no claim without provenance; submissions enter L0 as evidence, never L1) | `tasks.contributor::assert_has_provenance`/`entry_level_for_submission`/`SUBMISSION_ENTRY_LEVEL`/`EvidenceLevel`; `tasks.submission::submit`/`SubmissionReceipt` | `test_tasks_contributor.py::test_no_claim_without_provenance`, `::test_submission_enters_at_l0_never_l1`; `test_tasks_submission.py::test_submit_creates_l0_evidence_and_no_l1_claim` (AC1) |
+| SIG-CONTRIB-006 (pseudonymous contribution at every tier incl. trusted reviewer) | `tasks.contributor::supports_pseudonymous`/`Contributor` (handle-keyed, no real-name field) | `test_tasks_contributor.py::test_pseudonymous_supported_at_every_tier` (AC3, per-tier), `::test_trusted_reviewer_pseudonymity_is_explicit`, `::test_contributor_carries_no_real_name_field` |
+
+## Onboarding (§34.2)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-CONTRIB-003 (onboarding paths; moderated usability study ≥5 ontology-naïve, median ≤10 min, published; re-run on flow change) | `tasks.onboarding::OnboardingPath`/`available_paths`/`UsabilityStudy`/`load_study`; `data/usability_study.toml`; `docs/governance/contributor-onboarding-usability-study.md` | `test_tasks_onboarding.py::test_two_onboarding_paths`, `::test_published_study_meets_the_gate` (AC7), `::test_gate_fails_without_enough_naive_participants`, `::test_gate_fails_when_median_exceeds_target`, `::test_gate_requires_moderation_and_publication` |
+| SIG-CONTRIB-004 (device observations routed to OSM/DeFlock, not captured) | `tasks.submission::route_device_observation`/`is_sig_capturable`/`OSM_ROUTED_KINDS`; `submit` refuses a device observation | `test_tasks_submission.py::test_device_observation_is_routed_not_captured` |
+
+## Safety / data minimisation (§34.3)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-CONTRIB-005 (no real name / device id / precise contributor geo; operational IP logs purge past a short window) | `tasks.submission::SubmissionRecord`/`FORBIDDEN_CONTRIBUTOR_DATA`/`retained_submission_fields`/`OperationalLog.purge_expired`/`PII_MINIMISATION_WINDOW` | `test_tasks_submission.py::test_submission_record_retains_no_contributor_pii` (AC2), `::test_operational_log_purges_entries_past_the_window` |
+
+## Vandalism and poisoning resistance (§34.4)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-CONTRIB-009 (every contribution revertible as a unit; the revert is a new assertion, never a deletion) | `tasks.revert::ContributionLedger` (no delete path; `revert_contribution` appends retractions); the live spine via `claim.retraction_of` | `test_tasks_revert.py` (AC4: append-only, unit, prior-belief preserved, no-delete-path); `tests/db/test_reverts.py::test_revert_appends_retractions_and_deletes_nothing` |
+| SIG-CONTRIB-010 (anomaly detection on bursts / coordinated-similar / contested-resolving; route to review, never auto-reject) | `tasks.poisoning::AnomalyDetector`/`RoutingDecision` (no `reject` value)/`ReviewReason` | `test_tasks_poisoning.py::test_no_auto_reject_outcome_exists`, `::test_burst_routes_to_review`, `::test_coordinated_similar_routes_to_review`, `::test_contested_resolving_routes_to_review` (AC5) |
+| SIG-CONTRIB-011 (false-absence campaigns guarded equally) | `tasks.poisoning::AnomalyDetector` (never branches on `polarity`) | `test_tasks_poisoning.py::test_false_absence_is_guarded_equally` (AC5) |
+| SIG-CONTRIB-011a (vendor operating-territory check: no independent V-in-C evidence → lowest confidence + verification task, not an observation) | `tasks.poisoning::check_operating_territory`/`TerritoryVerdict`/`VerificationTask` | `test_tasks_poisoning.py::test_unsupported_territory_held_at_lowest_confidence_with_task` (AC6), `::test_supported_territory_enters_normally` |
+| SIG-CONTRIB-011b (SIG never the proximate cause of a mass revert; suggestion-not-write) | `tasks.poisoning::apply_reverts_automatically` (hard refusal)/`suggest_reverts_for_review`/`RevertSuggestion` | `test_tasks_poisoning.py::test_sig_never_auto_applies_a_mass_revert`, `::test_reverts_are_suggestions_not_writes` |
+| SIG-CONTRIB-011c (unverified community observation not rendered at records-derived visual weight) | `tasks.poisoning::visual_weight`/`renders_with_same_weight`/`assert_distinct_visual_weight`/`ClaimSource` | `test_tasks_poisoning.py::test_unverified_renders_below_records_derived` |
+
+## Phase gate (§51.3)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ENG-004 (every new requirement has an automated test) | the `tasks.contributor`/`submission`/`onboarding`/`revert`/`poisoning` modules | `tests/tasks/test_tasks_{contributor,submission,onboarding,revert,poisoning}.py`; `tests/db/test_reverts.py` |
+| Phase gate: CI green incl. data-quality; ADR for the deviation; traceability + risk register updated | ADR-054; this section; `docs/risk_register.md` (Phase 16) | `make check` (lint/format/typecheck/pytest/verify-gen); `test_policy_adrs.py` (ADR-054 revisit trigger) |
