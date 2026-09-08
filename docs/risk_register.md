@@ -1059,3 +1059,34 @@ that impossible to do silently.
 | id | Observation | Why it is not acted on here | Note for the ontology owner (P01.1) |
 |---|---|---|---|
 | RISK-P17-04 | `RoleAssignment` inherits the required `edge_type` from `Edge`, but the closed §12 catalog has no role-specific member — the role semantics live entirely in `role`/`party`/`over` (§12.4). Populating owner ≠ operator therefore carries a structurally-valid-but-semantically-orthogonal `edge_type`. | The separation **is** representable (SIG-ONTO-048 is satisfied — the tests assert on `role`/`party`/`over`, never on the inherited `edge_type`), so no schema change is required and none is made here (P01.1 owns the LinkML source). | A future refinement could drop `edge_type` from `RoleAssignment` or add a dedicated `holds_role` catalog member; recorded as an observation, not a Phase-1 defect, because expressibility is intact. |
+
+## Phase 17 — Broader surveillance technologies (P17.2 — facial recognition, cell-site simulators, mobile-device forensics)
+
+Per §53 / SIG-ENG-031, P17.2's risk-register entries. P17.2 continues the §5.2
+proof P17.1 began: it *populates* facial recognition, cell-site simulators, and
+mobile-device forensics — plus the federal-authorization case — over the frozen
+schema and proves it with the generalization conformance suite. No LinkML source,
+generated artifact, or wire contract changed — so **no ADR is required** (an ADR
+records a *deviation*, and there is none). The design risk is identical to P17.1's:
+that a Stage-5 construct silently forces a schema change; the compensating control
+makes that impossible to do silently.
+
+### The Phase-1-defect record path (SIG-CHART-027/028, AC1)
+
+| id | Risk (what breaks the acceptance gate if unhandled) | Compensating control |
+|---|---|---|
+| RISK-P17-05 | **A Stage-5 construct is populated by silently widening the schema** — a hand-edit to the LinkML source or generated artifacts to make facial recognition, a cell-site simulator, a forensic extraction, or a federal authorization "fit", which would falsify the §5.2 generalization guarantee (SIG-CHART-027) and cross into P01.1's ownership. | The population is a **test-only** instance graph over the *committed* Pydantic model, `capability.yaml`, and `technology.yaml`; `verify-gen` in `make check` fails if any generated artifact drifts from the source, and `test_stage5_forensics.py::test_stage5_forensics_required_no_schema_change` fails if any capability slug, edge type, entity class, technology slug, or lifecycle state the constructs need is not already present. A required change therefore surfaces as a **red conformance test** — the recorded Phase-1 defect — filed against the ontology (P01.1), never patched in this ticket. No such defect was found: all constructs populate with the frozen schema (`verify-gen` byte-clean). |
+
+### Modelling observations (not a schema change here)
+
+| id | Observation | Why it is not acted on here | Note for the ontology owner (P01.1) |
+|---|---|---|---|
+| RISK-P17-06 | §11.10's FR illustration names predicates `can_query` and `searches_against`, but the **closed §12 catalog** (SIG-ONTO-041) contains neither — it realises "the query moves, the corpus stays" as `federates_search_to` (and its perspectival inverse `is_queryable_by`). | The construct **is** expressible (SIG-ONTO-031 is satisfied — FR resolves to a reference `DataSystem` via `federates_search_to`, `data_comes_to_rest=False`), so no new edge type is required and none is added here. | The illustrative predicate names in §11.10 are prose, not catalog members; a future refinement could align the prose with the catalog. Recorded as an observation, not a Phase-1 defect. |
+| RISK-P17-07 | The `authorizes` edge (§12.1, "A grants B legal permission … no data moves") is populated as a `StructuralEdge`; the closed catalog does not bind `authorizes` to a specific `Edge` subclass. | A structural (non-data-bearing) carrier is the faithful choice for a permission relationship; the test asserts on `edge_type`/`source`/`target` and the native validity interval, never on the subclass. Expressibility is intact, so no schema change is made (P01.1 owns the LinkML source). | A future refinement could add a dedicated legal/authorization edge class; recorded as an observation, not a Phase-1 defect. |
+
+### Deferred / out of scope here (SIG-ENG-005)
+
+| id | Requirement | Why not addressed here | Compensating control |
+|---|---|---|---|
+| RISK-P17-08 | The remaining Phase-17 priority technologies — gunshot detection, drones, and commercial location-data ingestion (**P17.3**); private-camera federation, RTCC, and the data-broker chain (**P17.1**, landed) | Explicitly out of scope for P17.2 (the phase is populated technology-by-technology, OL-17.5-01) | Each has its own ticket; the schema-absorption guarantee proven here (SIG-CHART-027) is the invariant those tickets extend. The §22.7 EFF Data Library roster is the registered Phase-17 ingestion backlog (SIG-INGEST-041). |
+| RISK-P17-09 | The populated constructs are **instance graphs in the conformance suite**, not rows persisted to the claim spine, and there is **no live authorization-dataset connector** (§23) | P17.2 is the §5.2 expressibility proof, not an ingestion connector; live population arrives with the Stage-5 connectors over the same frozen schema | The instance shapes mirror the generated model exactly (they *are* the generated Pydantic classes); persisting them — and wiring a §23 authorization-dataset connector that maps native validity intervals to EDTF via `db.edtf` — is additive and needs no schema change, which is precisely what this ticket proves. |
