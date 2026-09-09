@@ -40,6 +40,16 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Optional PostgreSQL read role to SET ROLE to (e.g. sig_read_public); RLS stays on.",
     )
+
+    # The AUTHENTICATED curation surface (§34, ADR-068). A SEPARATE process from
+    # `serve`, bound to a non-public interface, mounted only when SIG_CURATION_ENABLED=1
+    # (RISK-P21-10). It is never the public read API (Part VIII §0.7).
+    curate = sub.add_parser(
+        "serve-curation",
+        help="Run the authenticated curation service (needs SIG_CURATION_ENABLED=1).",
+    )
+    curate.add_argument("--host", default="127.0.0.1", help="Bind host (default 127.0.0.1).")
+    curate.add_argument("--port", type=int, default=8001, help="Bind port (default 8001).")
     return parser
 
 
@@ -62,11 +72,29 @@ def _serve(host: str, port: int, dsn: str | None = None, role: str | None = None
     return 0
 
 
+def _serve_curation(host: str, port: int) -> int:
+    import uvicorn
+
+    from .curation import create_curation_app, curation_enabled
+
+    if not curation_enabled():
+        print(
+            "refusing to serve: SIG_CURATION_ENABLED is not 1 — the curation surface is "
+            "disabled by default (RISK-P21-10). Set SIG_CURATION_ENABLED=1 to enable it "
+            "on this non-public process only."
+        )
+        return 3
+    uvicorn.run(create_curation_app(), host=host, port=port)
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run the `api` CLI. Returns a process exit code."""
     parser = build_parser()
     args = parser.parse_args(argv)
     if args.command == "serve":
         return _serve(args.host, args.port, args.dsn, args.role)
+    if args.command == "serve-curation":
+        return _serve_curation(args.host, args.port)
     parser.print_help()
     return 0
