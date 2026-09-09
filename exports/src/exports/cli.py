@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 
 from . import __version__
@@ -82,6 +83,66 @@ def build_parser() -> argparse.ArgumentParser:
     )
     build.add_argument("--base-url", default="", help="Object-store base URL for the plan.")
     build.add_argument("--cdn-url", default="", help="CDN base URL for the plan.")
+
+    deposit = subparsers.add_parser(
+        "deposit",
+        help="Deposit a built export to Zenodo (SIG-EXPORT-002). --dry-run is the default.",
+    )
+    deposit.add_argument("--in", dest="in_dir", required=True, help="A built export directory.")
+    deposit.add_argument(
+        "--sandbox",
+        action="store_true",
+        help="Target sandbox.zenodo.org (a REAL sandbox deposit unless --dry-run); needs "
+        "SIG_ZENODO_SANDBOX_TOKEN. Without --sandbox the deposit is always offline (dry-run).",
+    )
+    deposit.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Force an offline deterministic deposit (FakeZenodoTransport); no network.",
+    )
+    deposit.add_argument(
+        "--deposits-md",
+        default="docs/build/DEPOSITS.md",
+        help="The append-only deposit ledger to record the DOIs in.",
+    )
+
+    tiles = subparsers.add_parser(
+        "tiles",
+        help="Render a GeoJSON layer to PMTiles (LD-F07/H08); tippecanoe else pure-Python.",
+    )
+    tiles.add_argument("--in", dest="in_geojson", required=True, help="Input GeoJSON export.")
+    tiles.add_argument("--out", required=True, help="Output PMTiles path.")
+    tiles.add_argument("--layer", default="devices", help="Vector layer id (default: devices).")
+    tiles.add_argument(
+        "--license", default="ODbL-1.0", help="Layer SPDX licence (default ODbL-1.0)."
+    )
+
+    torrent = subparsers.add_parser(
+        "torrent",
+        help="Produce a .torrent for a bulk artifact (pure-Python bencode, SIG-EXPORT-009).",
+    )
+    torrent.add_argument("--in", dest="in_file", required=True, help="The artifact to seed.")
+    torrent.add_argument(
+        "--out", default=None, help="Output .torrent path (default: <in>.torrent)."
+    )
+    torrent.add_argument(
+        "--tracker", action="append", default=[], help="Announce URL (repeatable; may be omitted)."
+    )
+
+    push = subparsers.add_parser(
+        "push",
+        help="Upload a built export to an S3-compatible store under content-hash keys.",
+    )
+    push.add_argument("--in", dest="in_dir", required=True, help="A built export directory.")
+    push.add_argument("--store", required=True, help="s3://bucket or provider:bucket target.")
+    push.add_argument(
+        "--endpoint-url", default=None, help="S3-compatible endpoint (SIG_OBJECT_STORE_URL)."
+    )
+    push.add_argument(
+        "--provider",
+        default="cloudflare-r2",
+        help="Egress provider for the SIG-EXPORT-008 gate (default cloudflare-r2, zero-egress).",
+    )
     return parser
 
 
@@ -229,6 +290,26 @@ def _run_build(
         summary["jurisdiction"] = jurisdiction
         summary["dossiers"] = [d["slug"] for d in dossiers]
         summary["web_dossiers_path"] = os.path.join(web_dir, "dossiers.json")
+
+        # Render REAL vector tiles for the map (LD-F07/H08 closed, §40, ADR-048/051):
+        # the ODbL physical layer's GeoJSON → a PMTiles v3 archive the web build serves
+        # at /tiles/sig-infrastructure.pmtiles. The ODbL licence + OSM attribution ride
+        # in the tile metadata (§42) — the OSM layer stays its separate compartment.
+        from .tiles import ODBL_ATTRIBUTION, render_pmtiles_file
+
+        geojson_path = os.path.join(out_dir, "osm_physical", "devices.geojson")
+        if os.path.exists(geojson_path):
+            tiles_dir = os.path.join(web_dir, "tiles")
+            os.makedirs(tiles_dir, exist_ok=True)
+            tiles_out = os.path.join(tiles_dir, "sig-infrastructure.pmtiles")
+            renderer = render_pmtiles_file(
+                geojson_path,
+                tiles_out,
+                layer_name="devices",
+                license_id="ODbL-1.0",
+                attribution=ODBL_ATTRIBUTION,
+            )
+            summary["tiles"] = {"path": tiles_out, "renderer": renderer, "license": "ODbL-1.0"}
     if zenodo_dry_run:
         from .zenodo import FakeZenodoTransport, deposit_release
 
@@ -240,6 +321,141 @@ def _run_build(
         )
         summary["zenodo"] = deposition.as_json()
     sys.stdout.write(json.dumps(summary, indent=2, sort_keys=True) + "\n")
+    return 0
+
+
+def _run_deposit(in_dir: str, sandbox: bool, dry_run: bool, deposits_md: str) -> int:
+    """Deposit a built export to Zenodo (SIG-EXPORT-002).
+
+    - no ``--sandbox`` → always an offline dry-run (FakeZenodoTransport, production-shaped
+      DOIs) — production deposit is an operator-only action, out of scope here.
+    - ``--sandbox --dry-run`` → offline dry-run with the sandbox (``10.5072``) prefix.
+    - ``--sandbox`` (no ``--dry-run``) → a REAL sandbox deposit; needs
+      ``SIG_ZENODO_SANDBOX_TOKEN`` — absent, exit 4 (``gate pending: HG-07``), write nothing.
+    """
+    import datetime
+
+    from .deposits import DepositRecord, append_record
+    from .zenodo import (
+        ZENODO_PRODUCTION_PREFIX,
+        ZENODO_SANDBOX_PREFIX,
+        FakeZenodoTransport,
+        ZenodoHttpTransport,
+        ZenodoTransport,
+        deposit_export_dir,
+    )
+
+    live_sandbox = sandbox and not dry_run
+    token = os.environ.get("SIG_ZENODO_SANDBOX_TOKEN")
+    if live_sandbox and not token:
+        print(
+            "sig-exports deposit: gate pending: HG-07 — SIG_ZENODO_SANDBOX_TOKEN not set; "
+            "no Zenodo account credential available. Wrote nothing.",
+            file=sys.stderr,
+        )
+        return 4
+
+    extra: dict[str, bytes] = {}
+    for extra_name in ("CITATION.cff", "sbom.cdx.json"):
+        # Repo-root files that travel with every deposit (§38.2).
+        for base in (".", os.path.dirname(os.path.abspath(in_dir))):
+            candidate = os.path.join(base, extra_name)
+            if os.path.exists(candidate):
+                with open(candidate, "rb") as fh:
+                    extra[extra_name] = fh.read()
+                break
+
+    transport: ZenodoTransport
+    if live_sandbox:
+        assert token is not None
+        transport = ZenodoHttpTransport(token=token, sandbox=True)
+        environment = "sandbox"
+    else:
+        prefix = ZENODO_SANDBOX_PREFIX if sandbox else ZENODO_PRODUCTION_PREFIX
+        transport = FakeZenodoTransport(prefix=prefix)
+        environment = "sandbox-dry-run" if sandbox else "dry-run"
+
+    deposition = deposit_export_dir(in_dir, transport, extra_files=extra)
+
+    import json as _json
+
+    with open(os.path.join(in_dir, "manifest.json"), encoding="utf-8") as fh:
+        release_id = str(_json.load(fh)["release_id"])
+    record = DepositRecord(
+        release_id=release_id,
+        environment=environment,
+        deposition=deposition,
+        when=datetime.date.today(),
+    )
+    existing = None
+    if os.path.exists(deposits_md):
+        with open(deposits_md, encoding="utf-8") as fh:
+            existing = fh.read()
+    os.makedirs(os.path.dirname(deposits_md) or ".", exist_ok=True)
+    with open(deposits_md, "w", encoding="utf-8") as fh:
+        fh.write(append_record(existing, record))
+
+    sys.stdout.write(
+        json.dumps(
+            {
+                "environment": environment,
+                "release_id": release_id,
+                "concept_doi": deposition.concept_doi,
+                "version_doi": deposition.version_doi,
+                "files": list(deposition.files),
+                "deposits_md": deposits_md,
+            },
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n"
+    )
+    return 0
+
+
+def _run_tiles(in_geojson: str, out: str, layer: str, license_id: str) -> int:
+    from .tiles import ODBL_ATTRIBUTION, render_pmtiles_file
+
+    renderer = render_pmtiles_file(
+        in_geojson, out, layer_name=layer, license_id=license_id, attribution=ODBL_ATTRIBUTION
+    )
+    sys.stdout.write(
+        json.dumps({"out": out, "renderer": renderer, "layer": layer, "license": license_id}) + "\n"
+    )
+    return 0
+
+
+def _run_torrent(in_file: str, out: str | None, trackers: list[str]) -> int:
+    from .torrent import infohash_v1, make_torrent
+
+    with open(in_file, "rb") as fh:
+        data = fh.read()
+    out_path = out or (in_file + ".torrent")
+    name = os.path.basename(in_file)
+    torrent_bytes = make_torrent(data, name, announce_list=trackers, comment="SIG bulk export")
+    with open(out_path, "wb") as fh:
+        fh.write(torrent_bytes)
+    sys.stdout.write(
+        json.dumps({"out": out_path, "name": name, "infohash": infohash_v1(torrent_bytes)}) + "\n"
+    )
+    return 0
+
+
+def _run_push(in_dir: str, store: str, endpoint_url: str | None, provider: str) -> int:
+    from .distribution import ObjectStore
+    from .push import build_s3_client, push_export_dir, push_summary
+
+    # Accept both s3://bucket and provider:bucket.
+    if store.startswith("s3://"):
+        bucket = store[len("s3://") :].split("/", 1)[0]
+    else:
+        provider, _, bucket = store.partition(":")
+    obj_store = ObjectStore(provider=provider, bucket=bucket)
+    client = build_s3_client(obj_store, endpoint_url=endpoint_url)
+    results = push_export_dir(in_dir, obj_store, client)
+    sys.stdout.write(
+        json.dumps(dict(push_summary(results, obj_store)), indent=2, sort_keys=True) + "\n"
+    )
     return 0
 
 
@@ -259,5 +475,13 @@ def main(argv: list[str] | None = None) -> int:
             args.cdn_url,
             jurisdiction=args.jurisdiction,
         )
+    if args.command == "deposit":
+        return _run_deposit(args.in_dir, args.sandbox, args.dry_run, args.deposits_md)
+    if args.command == "tiles":
+        return _run_tiles(args.in_geojson, args.out, args.layer, args.license)
+    if args.command == "torrent":
+        return _run_torrent(args.in_file, args.out, args.tracker)
+    if args.command == "push":
+        return _run_push(args.in_dir, args.store, args.endpoint_url, args.provider)
     parser.print_help()
     return 0

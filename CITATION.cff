@@ -1,6 +1,15 @@
 # SPDX-License-Identifier: CC-BY-4.0
-# Citation metadata (Citation File Format 1.2.0). Minimal by design; P21.5 extends
-# it with the Zenodo concept DOI once the first deposit is made (HG-07).
+# Citation metadata (Citation File Format 1.2.0). Minimal by design.
+# P21.5 (ADR-067) wires the Zenodo deposit: `sig-exports deposit` uploads this file with
+# each release and records the DOIs in docs/build/DEPOSITS.md. The `doi` / `identifiers`
+# concept-DOI field is added below ONLY once a real *production* deposit exists — a
+# sandbox `10.5072/…` DOI is not citable and must never be recorded here (RISK-P21-08,
+# §3.1: no synthetic certainty). Until then the deposit is `gate pending: HG-07`.
+#
+# identifiers:
+#   - type: doi
+#     value: "10.5281/zenodo.<CONCEPT>"   # filled from DEPOSITS.md after the production deposit
+#     description: "The concept DOI (all versions)"
 cff-version: 1.2.0
 message: "If you use SIG, please cite it using these metadata."
 title: "SIG — Surveillance Infrastructure Graph"

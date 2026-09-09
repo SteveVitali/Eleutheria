@@ -10,6 +10,9 @@ dependencies = [
     "sig-db",
     "sig-api",
     "psycopg[binary]>=3.2",
+    # P21.5: the Software Heritage "save code now" request (SIG-GOV-022) speaks HTTP
+    # over httpx (already in the workspace); no token needed for public repos.
+    "httpx>=0.27",
 ]
 
 [project.scripts]
