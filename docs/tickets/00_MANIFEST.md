@@ -160,25 +160,49 @@ retroactively), 20 = reconciliation & release, 21 = operationalization toward on
 | 65 | `P22.2__agent-docs-refresh.md` | 22 | Agent-facing docs: `agent-docs` refresh (or clean-slate bootstrap) of the `AGENTS.md` hierarchy + `CLAUDE.md`; `make docs-check` + CI docs step; ADR-072 | option: clean slate (asked at the pause) |
 | 66 | `P22.3__build-memory-v2-migration.md` | 22 | **Build-memory v2 migration (ADR-073).** Retire `.agents/scratch/`; commit the build's memory under `docs/build/` in the v2 layout; convert the machine ledger to `docs/build/LEDGER.md`; complete `BUILD_INDEX.md` rows 47–66; seed `docs/tickets/DEFERRALS.md`; regenerate the ADR index; vendor `check-build-memory.sh` into `make docs-check` | — |
 
-### Round 2 — capstone-over-capstone + reconciliation tail (rows 67–73, build-memory v2)
+### Round 3 — Go live for Oklahoma City (rows 67–78) · Round 4 — Productionize & scale (rows 79–85) · tail (86–87)
 
-> **Round 2 (instantiated by P22.3 from the v2 tail templates).** The round-1 capstone (PR #68,
-> `devin/sig-postbuild-capstone`) already verified the composed build (`make check` 2718 passed, 0 failed,
-> 0 xfailed; `tests/e2e` 16 passed; `run_okc.sh` 8/8). These tail rows are therefore a **delta over the
-> completed Round 1**, not a re-run of that verification: their `Load` lines point at the existing
-> `docs/build/reports/CAPSTONE_VERIFICATION.md`, `CAPSTONE_CLOSURE.md`, `COVERAGE_MATRIX.csv`, and the
-> P19.x/P20.x reports. `DOC.1`/`DOC.2` are **omitted** because P22.1/P22.2 already ran (spec Appendix B item 6).
-> Not started — `docs/build/LEDGER.md` `nextTicket: P23.1`.
+> **Seeded 2026-09-09 by `decompose-spec mode=extend` over `~/MetaHarness/sig-golive-spec.md`
+> (v0.2.0, ratified).** This chain **replaces** the redundant P23.1–P23.7 migration-closeout tail
+> (removed — PR #68 already capstoned the composed build; the P22.3 migration, PR #69, added no
+> product code — per the spec's "Reconciling the P23.x migration tail" instruction). Historical
+> rows 47–66 and all committed artifacts are untouched (append-only, BM-COMPAT-05).
+>
+> **Three lanes (GL-META-00).** Each row is tagged **A** (human/gate marker — no `implement-spec`
+> contract), **B** (return-pass re-run — the row's file column points at the **existing** P21.x
+> contract + its DEFERRALS row; **no new contract file**), or **C** (new-code `implement-spec`
+> contract). A Lane-B row never authors a duplicate contract; a Lane-A row never gets a contract.
+>
+> **Rounds ratify independently:** Round 3 (go-live) is ratified; Round 4 (productionize) ratifies
+> after OKC is live. Do not autonomously execute an unratified round. Gate dispositions delegated
+> at decompose time are pre-recorded in `docs/build/LEDGER.md § GATE DECISIONS` (GL-GATE-01..05) so
+> `orchestrate-build` does not stall — with honest provenance (engineering/interim, not counsel).
+> `nextTicket: GATE-G1` (REL.1). LIVE.1 is **split**: `LIVE.1a` (Lane C, the 3 new OKC document
+> connectors) + the fetch half (Lane B, re-run `P21.3`).
 
-| # | Ticket file | Phase | Scope | Gate |
-|---|---|---|---|---|
-| 67 | `P23.1__capstone-gap-analysis.md` | 23 | **CAP.1** — Round-2 gap-analysis delta (independent fresh context): re-classify only what changed since PR #68 into `COVERAGE_MATRIX.csv`; seam re-hunt; `CAPSTONE_GAP_ANALYSIS.md` addendum | — |
-| 68 | `P23.2__capstone-composed-verification.md` | 23 | **CAP.2** — re-run the composed build as one unit only if the delta touched a seam; else cite PR #68's green composed run; `COMPOSED_E2E_REPORT.md` addendum | — (Docker if re-run) |
-| 69 | `P23.3__capstone-closure.md` | 23 | **CAP.3** — close any newly-routed Round-2 gaps on a capstone branch; append the ACCEPTED-deviations delta to `CAPSTONE_CLOSURE.md` | — |
-| 70 | `P23.4__gate-accept.md` | 23 | **GATE-ACCEPT** (marker) — operator signs the Round-2 accepted-deviations delta (nothing new expected) | operator signature |
-| 71 | `P23.5__backlog-and-readiness.md` | 23 | **REC.1** — refresh `BACKLOG.csv`/`BACKLOG.md`/`OPERATIONAL_READINESS.md` against the current DEFERRALS + open findings | — |
-| 72 | `P23.6__spec-reconciliation.md` | 23 | **REC.2** — refresh `TICKET_VS_SPEC.md`/`SPEC_RECONCILIATION_PLAN.md`; fold back any Round-2 amendments via `spec_src` → `BUILD.sh` | HG-13 (if any amendment) |
-| 73 | `P23.7__integration-plan.md` | 23 | **REC.3** — refresh `INTEGRATION_PLAN.md` (PR graph now #47–#68 + this round), read-only merge dry-run, release-notes delta | — |
+| # | file | phase | kind | lane | scope | gate |
+|---|---|---|---|---|---|---|
+| 67 | `67_GATE-G1__integrate-and-release-v0-1-0.md` | 20 | gate | **A** | **REL.1 (GL-REL-01):** operator merges #47–#68 bottom-up, `make check` on `main`, tag `v0.1.0`, `make sbom` + release. Milestone, non-blocking. | HG-05 (operator; NOT pre-answered) |
+| 68 | `68_HUMAN-H1__legal-home-and-governance.md` | 21 | human | **A** | **GOV.1 (GL-GOV-01):** name legal home (SIG-GOV-012); two reviewer roles + concurrence (SIG-PUB-008); takedown/corrections contact. | HG-01 (interim via GL-GATE-01), HG-11 |
+| 69 | `69_HUMAN-H2__counsel-signoff.md` | 21 | human | **A** | **LEGAL.1 (GL-LEGAL-01):** counsel opinions — ODbL 4.4(b), officer-naming gate, publication tiers, Part VIII. | HG-02 (interim engineering disposition via GL-GATE-02) |
+| 70 | `70_HUMAN-H3__accounts-credentials-hosting.md` | 21 | human | **A** | **ACCT.1 (GL-ACCT-01):** Zenodo/object-store/SWH; MapRoulette+OSM OE; API tokens; GCP host. `provided: yes/no` only. | HG-07, HG-08, HG-09, HG-12 (host via GL-GATE-04) |
+| 71 | `P21.1__rights-review-and-registry-completion.md` | 21 | ticket | **B** | **RIGHTS.1 (GL-RIGHTS-01):** re-run per DEFERRALS `D-P21.1-1/2`. Reviewer flips the OKC critical subset first (GL-GATE-03); record Stage-0 outreach. **No new contract.** | HG-03, HG-04 (phased flip via GL-GATE-03) |
+| 72 | `72_LIVE.1a__okc-document-connectors.md` | 21 | ticket | **C** | **LIVE.1a (GL-LIVE-01, new-code half):** the 3 OKC document connectors `okc_procurement`/`okcpd_policy`/`ok_statute` (fetch→OCFL→parse→claims; shadow diff 0). Closes BL-023/024/026. | HG-03 (≥1 green), HG-09 (live smoke) |
+| 73 | `P21.3__live-connector-wiring.md` | 21 | ticket | **B** | **LIVE.1 (fetch half, GL-LIVE-01):** re-run per DEFERRALS `D-P21.3-1/2` — first real fetches over the green OKC sources via the transports LIVE.1a's connectors plug into. **No new contract.** | HG-03, HG-09 |
+| 74 | `P21.4__first-jurisdiction-ingest-and-publish.md` | 21 | ticket | **B** | **LIVE.2 (GL-LIVE-02):** re-run per DEFERRALS `D-P21.4-1/2/3` — `run_okc.sh` live → exports+web → J-1/Q-1..13 → publish to GCP staging/private. **No new contract.** | HG-01, HG-11, HG-02, Go-public |
+| 75 | `75_GATE-G2__go-public-dns-cutover.md` | 21 | gate | **A** | **Go-public (GL-GATE-05):** operator DNS/host cutover after real HG-01/HG-11, then bump `v0.2.0` "first public jurisdiction". **Stays human — NOT pre-answered.** | Go-public (operator) |
+| 76 | `P21.5__infra-deposit-and-tiles.md` | 21 | ticket | **B** | **INFRA.1 (GL-INFRA-01):** re-run per DEFERRALS `D-P21.5-1` — real Zenodo DOI, object-store push + CDN + live egress alarm, SWH save, mirrors. **No new contract.** | HG-07, HG-12, HG-02 (ODbL export) |
+| 77 | `P21.7__contribution-back-live.md` | 21 | ticket | **B** | **CONTRIB.1 (GL-CONTRIB-01):** re-run per DEFERRALS `D-P21.7-1/2` — register OE page, live MapRoulette challenge + OSM feed → LeverageLedger, usability study. **No new contract.** | HG-08, HG-10 |
+| 78 | `P21.8__data-driven-and-coarse-international.md` | 21 | ticket | **B** | **SOURCES.1 (GL-SOURCES-01):** re-run per DEFERRALS `D-P21.8-1` **and** re-run `P21.9__stage5-pathway-connectors.md` (`D-P21.9-1`) — flip + fetch reviewed ecosystem/pathway sources (news LINK-only; FR/BE design-gated false). **No new contract.** | HG-03/HG-04 per source |
+| 79 | `79_DEPLOY.1__gcp-hosted-deployment.md` | 22+ | ticket | **C** | **DEPLOY.1 (GL-DEPLOY-01):** `ops/gcp/` infra-as-code (GCS + Cloud Run + Cloud SQL/`e2-micro`) on GCP `zeta-medley-508121-u7`; `sig-ops deploy --target gcp`; backups + tested restore drill. | HG-12 — IaC written+validated; real `apply` gated on operator `gcloud` ADC |
+| 80 | `80_SCHED.1__reingest-cadence.md` | 22+ | ticket | **C** | **SCHED.1 (GL-SCHED-01):** cadence-driven re-ingest per source, freshness tracking, disappearance detection via a minimal scheduler. | — |
+| 81 | `81_OBS.1__observability-alerting.md` | 22+ | ticket | **C** | **OBS.1 (GL-OBS-01):** metrics/logs/alerting; wire the egress-budget alarm + keepalive to a notifier; uptime/error budgets. | — |
+| 82 | `82_CI.1__ci-composed-hardening.md` | 22+ | ticket | **C** | **CI.1 (GL-CI-01):** CI runs the composed `tests/e2e` for real (closes P20.4/CI-RED-01); nightly; dep/license/secret scanning; enforce doc gates. | — |
+| 83 | `83_META.1__housekeeping-backlog.md` | 22+ | ticket | **C** | **META.1 (GL-META-01):** 5 skeleton `pyproject.toml` descriptions (BL-052); docs-drift (incl. `check_backlog.py` path); triage P22+ backlog with real landings. | — |
+| 84 | `84_JURIS.2__second-jurisdiction.md` | 22+ | ticket | **C** | **JURIS.2 (GL-JURIS-01):** second jurisdiction — rights-review its sources, run `run_<juris>.sh` end-to-end through the P18.1 adapter framework. | HG-03/HG-04 per new source |
+| 85 | `85_CCOPS.1__ccops-disclosure-connector.md` | 22+ | ticket | **C** | **CCOPS.1 (GL-CCOPS-01):** `government_mandated_disclosure` (CCOPS) connector, eight-stage + loader gate, per-agency aggregate rows only; `procured≠deployed`. Retires P17-FLIP-01. | HG-03/HG-04 per source |
+| 86 | `86_REC.1__golive-readiness-delta.md` | reconcile | reconcile | **C** | **REC.1 (tail=minimal):** readiness delta over PR #68 — refresh `OPERATIONAL_READINESS.md`/`BACKLOG.csv`; append any new accepted-deviation to `CAPSTONE_CLOSURE.md`. NOT a full CAP.1–CAP.3. | — |
+| 87 | `87_GATE-ACCEPT__operator-signs-golive-deviations.md` | reconcile | gate | **A** | **GATE-ACCEPT (marker):** operator re-signs the accepted-deviations delta (if changed). Blocks `projectStatus: DONE` for the go-live round. | operator signature |
 
 ## Phase gates & special points
 - **Integration is an operator action after the chain** (`docs/build/INTEGRATION_PLAN.md` §(d)); no ticket merges PRs; all rows 47–65 stack on `devin/p18-2-france-belgium`. P20.3 writes the read-only `merge_dryrun.sh` + the bottom-up merge + `v0.1.0` tag/release procedure and bumps versions to `0.1.0`, but merges/tags nothing (HG-05 is the post-chain operator action).
@@ -214,3 +238,14 @@ retroactively), 20 = reconciliation & release, 21 = operationalization toward on
 - **2026-09-09 — INSERT** P22.1 `repo-docs-refresh` (row 64) and P22.2 `agent-docs-refresh` (row 65): operator documentation pass over the finished build.
 - **2026-09-09 — ROUND 1 CAPSTONE** ran as PR #68 (`devin/sig-postbuild-capstone` @ `625d802`, stacked on P22.2/PR#67; merges nothing): closed MATRIX-INT-01, APPENDIX-F-01, CHECK-BACKLOG-01; composed E2E green; `projectStatus: DONE`.
 - **2026-09-09 — INSERT + ROUND 2** P22.3 `build-memory-v2-migration` (row 66, ADR-073): migrated the build memory to the v2 layout and instantiated the Round-2 tail rows 67–73 (`P23.1…P23.7`) from the v2 templates as a delta over the completed Round 1 (`DOC.*` omitted; `nextTicket: P23.1`).
+- **2026-09-09 — REMOVE (P23.x tail)** `decompose-spec mode=extend` removed the seven Round-2 placeholder rows 67–73 (`P23.1…P23.7`) **and their files**, per the spec's "Reconciling the P23.x migration tail" instruction: they are a redundant migration-closeout (PR #68 already capstoned the composed build; PR #69 / P22.3 added no product code). Historical rows 47–66 and all committed artifacts untouched (append-only, BM-COMPAT-05).
+- **2026-09-09 — ROUND 3 + ROUND 4 seeded** by `decompose-spec mode=extend spec=~/MetaHarness/sig-golive-spec.md tail=minimal worktree=~/Eleutheria`, forked from chain tip `devin/p22-3-build-memory-v2-migration` (PR #69) on branch `devin/sig-golive-plan` (stacked PR). New rows **67–87** under the three-lane policy (GL-META-00): Lane A markers (`GATE-G1`/REL.1, `HUMAN-H1`/GOV.1, `HUMAN-H2`/LEGAL.1, `HUMAN-H3`/ACCT.1, `GATE-G2`/Go-public, `GATE-ACCEPT`); Lane B return-pass rows pointing at the existing `P21.1/P21.3/P21.4/P21.5/P21.7/P21.8/P21.9` contracts (no duplicate files); Lane C new-code contracts (`LIVE.1a`, `DEPLOY.1`, `SCHED.1`, `OBS.1`, `CI.1`, `META.1`, `JURIS.2`, `CCOPS.1`). `nextTicket: GATE-G1`.
+- **2026-09-09 — SPLIT** LIVE.1 (spec GL-LIVE-01): the 3 new OKC document connectors became their own Lane-C contract `LIVE.1a` (row 72); the fetch half is the Lane-B re-run of `P21.3` (row 73). Rationale: the connector code is genuinely new; the transport wiring is a verbatim re-run — keeping them in one row would either duplicate the P21.3 contract or hide the new code.
+- **2026-09-09 — tail=minimal** (spec D6 + Appendix B item 7): the go-live round closes with a REC-style readiness delta (`REC.1`, row 86) + `GATE-ACCEPT` (row 87), **not** a full CAP.1–CAP.3 — PR #68 already capstoned the composed build; `DOC.1`/`DOC.2` omitted because P22.1/P22.2 already ran.
+
+## Decomposition decisions (go-live round; Phase-4 adversarial review)
+- **Three lanes, three homes (GL-META-00).** New-code work → full `implement-spec` contracts (Lane C); human prerequisites → HUMAN/GATE markers (Lane A); return-pass re-runs → manifest rows pointing at the existing P21.x contract + its DEFERRALS row (Lane B, no new contract). This keeps the plan honest (no duplicated contracts) and matches how the sig-postbuild build recorded its gate-skipped tickets.
+- **Sequencing (spec §4 critical path + operator runbook).** REL.1 (GATE-G1) first as the non-blocking release milestone; the three human markers (GOV.1/LEGAL.1/ACCT.1) next (parallel in reality, serialized in the chain for a clean stack); then the go-live re-runs RIGHTS.1 → LIVE.1a → LIVE.1(fetch) → LIVE.2 → Go-public → INFRA.1/CONTRIB.1/SOURCES.1; then Round 4 DEPLOY.1 → SCHED.1 → OBS.1 → CI.1 → META.1 → JURIS.2 → CCOPS.1; then the minimal tail. Go-public (GATE-G2) placed immediately after LIVE.2 (it gates only the public cutover + `v0.2.0`, not the staging publish).
+- **Gate dispositions pre-recorded with honest provenance.** GL-GATE-01..05 are in `docs/build/LEDGER.md § GATE DECISIONS` so `orchestrate-build` does not stall; they are **engineering/interim** decisions (legal-home interim posture; publish-permitting engineering disposition "not a legal opinion; counsel review recommended"; phased flip; GCP host; Go-public stays human), never counsel/legal opinions. A real legal home + counsel opinion remain human actions before the public cutover.
+- **Coverage.** Every Part II GL-* ticket maps to exactly one chain row: GL-REL-01→67, GL-GOV-01→68, GL-LEGAL-01→69, GL-ACCT-01→70, GL-RIGHTS-01→71, GL-LIVE-01→72(+73), GL-LIVE-02→74, GL-GATE-05→75, GL-INFRA-01→76, GL-CONTRIB-01→77, GL-SOURCES-01→78, GL-DEPLOY-01→79, GL-SCHED-01→80, GL-OBS-01→81, GL-CI-01→82, GL-META-01→83, GL-JURIS-01→84, GL-CCOPS-01→85. Nothing in the spec's non-goals is scheduled (no worker merges/tags; no automated OSM edits; no third jurisdiction).
+- **Revisability.** This plan is revisable at run time: `orchestrate-build` may split an overflowing Lane-C ticket (e.g. DEPLOY.1 if the Terraform module grows) or merge trivial ones and write the change back here + the ledger.

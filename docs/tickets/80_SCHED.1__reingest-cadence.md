@@ -1,0 +1,48 @@
+<!--
+  Lane C (new code) contract — productionize Round 4. Filled by decompose-spec mode=extend over
+  ~/MetaHarness/sig-golive-spec.md (2026-09-09). CITES the spec's §§ and GL-* ids.
+-->
+# SCHED.1 — Re-ingest cadence & orchestration (GL-SCHED-01)
+
+- **Sequence:** 80 of 87 · **Phase:** 22+ (productionize) · **Kind:** ticket
+- **Tag:** golive-round4
+- **base_branch:** current checkout
+- **Depends on:** DEPLOY.1 (a hosted stack to schedule against)
+- **Run:** `implement-spec spec=docs/tickets/80_SCHED.1__reingest-cadence.md live_verification=false`
+- **Gate status:** none
+- **Live stage:** offline-only
+
+## Goal
+Close the deferred scheduling seam (the P21.3 backlog): drive `sig-connectors run` per source on a
+cadence that respects source etiquette, track freshness, and detect disappearance — via a minimal
+scheduler, not a heavyweight orchestrator unless warranted.
+
+## Load (read these — do not re-read others)
+- `~/MetaHarness/sig-golive-spec.md` Part II § SCHED.1 (GL-SCHED-01).
+- `docs/2_canonical_design_spec.md` §§ on scheduling/cadence + disappearance detection; `orchestration/`;
+  the `PoliteFetcher`/Overpass etiquette in `connectors/`; `docs/tickets/P21.3__live-connector-wiring.md`.
+
+## In scope — deliverables
+1. Cadence-driven `sig-connectors run` per source (respecting `PoliteFetcher`/Overpass etiquette),
+   via a minimal scheduler (cron / GitHub Actions first; Prefect/Dagster only if warranted) (GL-SCHED-01).
+2. Freshness tracking per source; the disappearance-detection cadence (GL-SCHED-01).
+3. An ADR (cadence-vs-etiquette design) + a `RISK` entry for cadence vs source etiquette.
+
+## Out of scope
+- The hosting substrate — DEPLOY.1 (row 79). Alerting on failures — OBS.1 (row 81).
+- Any new connector — LIVE.1a / SOURCES.1 / CCOPS.1.
+
+## Acceptance criteria
+- [ ] a scheduled run re-ingests a source, produces new dated claims (never overwrites) and records freshness *(deterministic)*
+- [ ] a source going dark triggers a disappearance record *(deterministic)*
+- [ ] append-only preserved (re-ingest adds claims, no UPDATE/DELETE) *(deterministic)*
+- [ ] verification green; every new behaviour has a test that fails if it is removed; requirement ids stamped in the PR; anything not automatically verifiable is a `DEFERRALS.md` row with its compensating control; ADRs written for every deviation and owned decision; `BUILD_INDEX.md` row and `LEDGER.md` advanced. *(agentic — the universal phase-gate AC)*
+
+## Requirement IDs to satisfy and stamp in the PR
+GL-SCHED-01.
+
+## Cross-cutting invariants
+- Cited from `docs/tickets/00_MANIFEST.md § Cross-cutting invariants`.
+
+## Notes
+- Owns the scheduler-choice ADR. Re-confirm the `orchestration/` seam at build time.
