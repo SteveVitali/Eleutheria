@@ -50,3 +50,4 @@ BL-048,"Determinism / whole-graph audit CI jobs (resolution rebuild, TI-6/7 audi
 BL-049,"Generate physical DDL from LinkML (ontology/db seam, SIG-STORE-045)",schema-refinement,RISK-P2-04,,db,,P22+,,L,open
 BL-050,Recorded ADR-sanctioned spec deviations — no further action,process,LD-D01 LD-D02 LD-D05 LD-D06 LD-D10 LD-D12 LD-D13,,docs,,accepted,,S,accepted
 BL-051,Spec-vs-code drift after the P20.2 ticked amendments (unbuilt MAY/deferred surfaces),docs-drift,RISK-P20-02 ADR-062,SIG-UI-047 SIG-EVID-020 SIG-ENG-039,docs,,P20.3,,S,open
+BL-052,"pyproject.toml description reads ""skeleton"" for five fully-built packages (db, parsing, reconcile, orchestration, policy) — package metadata contradicts the shipped code",docs-drift,P22.1 DOCS_REFRESH_REPORT,SIG-ENG-012,db parsing reconcile orchestration policy,,P22+,,S,open
