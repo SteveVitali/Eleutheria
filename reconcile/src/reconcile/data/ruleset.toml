@@ -1,0 +1,93 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# THE RECONCILIATION RULESET — data, not code (SIG-RECON-005).
+#
+# The resolver (reconcile.resolve.RESOLVE) is deterministic and rule-based
+# (SIG-RECON-004); the *policy* it applies lives here so it is versioned,
+# diffable, testable, and separately attributable from the resolver
+# implementation (SIG-STORE-017). `ruleset_version` below is the policy version;
+# `resolver_version` is the code version stamped by reconcile.resolve.
+#
+# What lives here (policy): the numeric-spread tolerances the ambiguity test U4
+# and the MINOR_DISAGREEMENT band consume, the versioned rationale templates
+# (SIG-RECON-022) and the mechanical word-lists their committed test enforces
+# (SIG-RECON-023), and the resolution-strategy vocabulary (SIG-RECON-012).
+#
+# What does NOT live here: the per-predicate epistemics — volatility class,
+# half-life, resolution strategy, and the (genre x predicate) directness matrix.
+# Those are the ontology-owned predicate registry (SIG-ONTO-066/067), themselves
+# versioned data the resolver consumes (SIG-RECON-009); duplicating them here
+# would create two sources of truth. The ordinal weight-composition table is the
+# §10.6 spec constant implemented and pinned to Appendix D.2 in reconcile.weight.
+
+ruleset_version = "2026.1"
+
+# --- numeric tolerance (SIG-RECON-014 U4; §10.7 MINOR_DISAGREEMENT) -----------
+# The relative spread (max-min)/max above which two competing numeric values are
+# "too far apart to pick between" absent a dispositive (W4) claim. Keyed by
+# volatility class so a fast-changing count tolerates less drift than a glacial
+# one; `default` applies to any class without an entry.
+[numeric_tolerance]
+default = 0.10
+IMMUTABLE = 0.0
+GLACIAL = 0.05
+SLOW = 0.08
+MODERATE = 0.10
+FAST = 0.15
+VOLATILE = 0.20
+
+# --- resolution-strategy vocabulary (SIG-RECON-012) --------------------------
+# The closed set of strategies a predicate registry row may name. A predicate
+# whose registry row names no strategy is NOT resolvable (SIG-RECON-013): silence
+# yields UNRESOLVED, never a guess.
+[strategies]
+latest_observation_wins = "FAST/VOLATILE operational state, active counts, sharing sets."
+authoritative_source_wins = "Legal facts: contract dates, values, statutory citations."
+interval_union = "Coverage/validity spans where sources report partial periods."
+interval_intersection = "Facts requiring simultaneous support."
+max_support = "Categorical facts with no clear authority ordering."
+never_resolve = "Predicates SIG records but deliberately does not adjudicate (§12.4)."
+
+# --- rationale style guide (SIG-RECON-023 clauses d, e; §41) -----------------
+# The committed template test asserts no rendered rationale places a support term
+# and an agreement term in the same sentence (SIG-EPIS-025), and uses no
+# evaluative adjective from the prohibited list codified by the style guide (§41,
+# SIG-UI-043 "report; do not characterize"). These word-lists are the mechanical
+# form of that editorial rule; editing a template re-runs the test against them.
+[style]
+support_terms = [
+  "confirmed", "supported", "support", "strongly", "probable", "probably",
+  "weakly", "unsupported", "dispositive",
+]
+agreement_terms = [
+  "uncontested", "disagreement", "disagree", "contested", "irreconcilable",
+  "agree", "agrees", "agreement", "corroborate", "corroborated", "conflict",
+  "conflicting", "dissent",
+]
+prohibited_adjectives = [
+  "massive", "sophisticated", "vast", "sprawling", "sweeping", "shocking",
+  "alarming", "egregious", "notorious", "invasive", "dangerous", "orwellian",
+  "admitted", "staggering", "rampant", "unprecedented",
+]
+
+# --- versioned rationale templates (SIG-RECON-022) ---------------------------
+# One template per rationale_code (the resolution table's vocab_rationale FK).
+# Filled ONLY from a resolution's own structured fields. Values are always stated
+# adjacent to the source or named rule that carries them (clause c). Support and
+# agreement language is kept in separate sentences (clause d).
+[templates]
+RESOLVED_DIRECT = "{value}, as reported by {source} captured {observed_at}. {source} is the most direct available source for {predicate_label}."
+RESOLVED_OVER_DISSENT = "{value}, as reported by {source} captured {observed_at}, the most direct available evidence for {predicate_label}. A competing figure of {dissent_value} ({dissent_source}, {dissent_observed_at}) carries less weight and is retained with its evidence."
+RESOLVED_CONFIRMED_MULTI = "Confirmed. {n_classes} independent sources using different collection methods — {methods} — record {predicate_label} of {value}."
+RESOLVED_LOWER_BOUND = "{value} devices independently mapped by {source} ({observed_at}); a lower bound on the physical population, never an estimate of {predicate_label}."
+UNRESOLVED_NO_EVIDENCE = "Unresolved. No admissible source establishes {predicate_label}."
+UNRESOLVED_WEAK = "Unresolved. The best available evidence for {predicate_label} is {source} ({observed_at}), which is too weak to assert alone."
+UNRESOLVED_STANDOFF = "Unresolved. {value} rests on {source} ({observed_at}); {dissent_value} rests on {dissent_source} ({dissent_observed_at}); no source establishes {predicate_label} directly. Both values are shown with their evidence."
+UNRESOLVED_SPREAD = "Unresolved. Sources give {predicate_label} as {value} ({source}) and {dissent_value} ({dissent_source}), too far apart to choose between and with nothing dispositive. Both values are shown with their evidence."
+UNRESOLVED_STALE = "Unresolved, stale. The most recent evidence for {predicate_label} is {age_human} old ({source}, {observed_at}), and {predicate_label} typically changes within about {half_life_human}. Last known: {value}, as of {last_known_date}."
+UNRESOLVED_CONFLATION = "Unresolved. The available claims describe different quantities and fewer than two remain once mismatched bases are set aside; the remainder cannot be compared for {predicate_label}."
+UNRESOLVED_BLOCKING = "Unresolved. An open contradiction on {predicate_label} is flagged not-safe-to-publish; {value} from {source} and {dissent_value} from {dissent_source} are both shown with their evidence."
+UNRESOLVED_IRRECONCILABLE = "Unresolved. {value} rests on {source} and {dissent_value} rests on {dissent_source}; the disagreement is first-party on both sides and neither supersedes the other. Both values are shown with their evidence."
+UNRESOLVED_NO_STRATEGY = "Unresolved. The ruleset assigns no resolution strategy for {predicate_label}; SIG records the claims but does not adjudicate this predicate."
