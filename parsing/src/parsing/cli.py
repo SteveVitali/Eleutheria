@@ -8,7 +8,9 @@ boundary (§25):
 
 * ``classify PATH``  — classify a file before parsing and print the verdict; a mixed-format
   ZIP is classified **per member** (SIG-PARSE-002), and each verdict names the cheapest
-  sufficient layer (SIG-PARSE-001).
+  sufficient layer (SIG-PARSE-001). For a single document it also reports the document
+  **genre** (procurement / policy / deployment / vendor / agenda — LD-F17), the axis the
+  Stage-5 pathway connectors' procured≠deployed rule turns on (§46).
 * ``layers``         — list the seven extraction layers, cheapest first, with the method
   string recorded on the extraction (SIG-PARSE-001).
 * ``reason KIND TEXT`` — normalize a reason field through the versioned mapping, retaining
@@ -41,6 +43,7 @@ from .extraction import (
     extract_claims,
     load_policies,
 )
+from .genre import classify_genre
 from .layers import LAYER_ORDER
 from .reason_codes import ReasonKind, load_reason_mapping, normalize_reason
 
@@ -112,13 +115,18 @@ def _run_classify(path: str) -> int:
     verdict = classify(path, data)
     layer = verdict.recommended_layer
     method = layer.method if layer is not None else "-"
+    # The document GENRE (LD-F17): what KIND of document this is, distinct from its
+    # container format — load-bearing for the P21.9 procured≠deployed rule (§46).
+    genre = classify_genre(path, data)
     print(
-        f"{path}: {verdict.file_format.value} → {method}  "
+        f"{path}: {verdict.file_format.value} → {method}  genre={genre.genre.value}  "
         f"scanned={verdict.scanned} encrypted={verdict.encrypted} "
         f"merged_headers={verdict.merged_headers} multi_sheet={verdict.multi_sheet}"
     )
     for note in verdict.notes:
         print(f"    - {note}")
+    if genre.hits:
+        print(f"    - genre markers: {', '.join(genre.hits)}")
     return 0
 
 

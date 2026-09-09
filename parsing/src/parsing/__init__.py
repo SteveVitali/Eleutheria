@@ -20,6 +20,17 @@ connector extracts through:
 * :mod:`parsing.drift` — parser-drift defences: committed **fixtures** per parser and a
   nightly **canary** that alerts (never silently drops) on structural change (SIG-PARSE-007/008).
 
+P21.9 adds the **ADR-033-deferred concrete engines** the Stage-5 pathway connectors need
+(LD-F17 — "which connectors implement which layer?"):
+
+* :mod:`parsing.genre` — **document-genre classification** (procurement / policy /
+  deployment / vendor / agenda), the axis distinct from file format that the P21.9
+  procured≠deployed rule turns on (§46, RISK-P21-16);
+* :mod:`parsing.tables` — the **layer-4 table-extraction** engine (``pdf_table``) that
+  reads a procurement table into cell-located claims (SIG-PARSE-003);
+* :mod:`parsing.clauses` — the **layer-3 clause-locator** engine (``pdf_text``) that
+  addresses a policy document's numbered clauses by byte range (SIG-PARSE-003).
+
 P05.2 added the **model-assisted extraction scaffolding** — the LLM boundary
 (:mod:`parsing.extraction`, §25, SIG-LLM-001–007), which layer 6 of the stack wires in:
 every extraction records its ``model_id``/``prompt_version``/deterministic parameters and
