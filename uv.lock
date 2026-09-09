@@ -2477,11 +2477,15 @@ name = "sig-reconcile"
 version = "0.0.0"
 source = { editable = "reconcile" }
 dependencies = [
+    { name = "sig-db" },
     { name = "sig-ontology" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "sig-ontology", editable = "ontology" }]
+requires-dist = [
+    { name = "sig-db", editable = "db" },
+    { name = "sig-ontology", editable = "ontology" },
+]
 
 [[package]]
 name = "sig-resolution"

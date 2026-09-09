@@ -12,7 +12,7 @@ deliberately thin: the slice proves the *shape* end to end (see ADR-031).
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import UTC, date, datetime
 
 # --- the count predicates and their bases (§29.1, SIG-RECON-026) --------------
 
@@ -44,11 +44,33 @@ def basis_for_predicate(predicate_id: str) -> str:
 
 
 # --- contradiction type vocabulary (§31, docs §4932) --------------------------
-# The canonical `contradiction_type` codomain; the slice exercises a subset.
+# The canonical `contradiction_type` codomain. The §29 workflows emit members of
+# this set; P08.3 (§31) owns the materialized `Contradiction` entity + lifecycle.
 PREDICATE_CONFLATION = "predicate_conflation"
 VALUE_DISAGREEMENT = "value_disagreement"
+VALUE_DOMAIN_MISMATCH = "value_domain_mismatch"
+SHARING_ASYMMETRY = "sharing_asymmetry"
 POLICY_CONFIGURATION_DIVERGENCE = "policy_configuration_divergence"
+TEMPORAL_IMPOSSIBILITY = "temporal_impossibility"
 COUNT_BASIS_MISMATCH = "count_basis_mismatch"
+IDENTITY_AMBIGUITY = "identity_ambiguity"
+UNDECLARED_COPYING = "undeclared_copying"
+
+#: The whole canonical `contradiction_type` codomain (docs §4932); membership is
+#: asserted by tests so a workflow cannot silently coin a new type.
+CONTRADICTION_TYPES: frozenset[str] = frozenset(
+    {
+        VALUE_DISAGREEMENT,
+        PREDICATE_CONFLATION,
+        VALUE_DOMAIN_MISMATCH,
+        SHARING_ASYMMETRY,
+        POLICY_CONFIGURATION_DIVERGENCE,
+        TEMPORAL_IMPOSSIBILITY,
+        COUNT_BASIS_MISMATCH,
+        IDENTITY_AMBIGUITY,
+        UNDECLARED_COPYING,
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -121,6 +143,63 @@ class Contradiction:
     status: str = "open"
     evidence: tuple[Evidence, ...] = ()
     research_task_ids: tuple[str, ...] = ()
+
+
+# --- L4 inference (§30, SIG-RECON-047 / SIG-RECON-031) ------------------------
+
+
+def _now() -> datetime:
+    return datetime.now(UTC)
+
+
+@dataclass(frozen=True)
+class Inference:
+    """An L4 derived fact — the reconciliation namespace's *inference* output.
+
+    L4 inferences live in a separate namespace from observed L1 claims (§30). They
+    carry their ``derivation_rule``, ``rule_version``, and ``input_claim_ids``, are
+    labelled in every surface (:attr:`confidence`), and are droppable/recomputable.
+    Aligned with the persisted shape of ``inference.derived_fact``
+    (``db/deploy/inference_schema.sql``) without pulling in the database.
+
+    Two invariants the type enforces so downstream code cannot mistake an
+    inference for an observation:
+
+    * :attr:`layer` is always ``"L4"`` and :meth:`is_observation` is always False —
+      an inference MUST NOT be written into an asset's ``operator`` as though
+      observed (SIG-RECON-031).
+    * :attr:`pushable_to_osm` is always False — an inference MUST NOT be pushed to
+      OSM automatically (SIG-RECON-031, §35.2). Promotion to an asserted fact
+      requires human confirmation or a ``D1``/``D2`` source (SIG-RECON-033).
+    """
+
+    subject_id: str
+    predicate_id: str
+    value: object
+    derivation_rule: str
+    rule_version: str
+    input_claim_ids: tuple[str, ...]
+    confidence: str = "probable"  # the §29.2 default label; never promotes itself
+    rationale: str = ""
+    #: Alternative values that were NOT selected — retained so an ambiguous
+    #: inference stays visibly ambiguous rather than collapsing to one answer.
+    alternatives: tuple[object, ...] = ()
+    derived_at: datetime = field(default_factory=_now)
+
+    layer: str = field(default="L4", init=False)
+    pushable_to_osm: bool = field(default=False, init=False)
+
+    @property
+    def is_observation(self) -> bool:
+        """An inference is never an observation (SIG-RECON-031)."""
+        return False
+
+    def as_observed_operator(self) -> None:  # pragma: no cover - the point is it raises
+        """Refuse to be written into ``operator`` as though observed (SIG-RECON-031)."""
+        raise NotImplementedError(
+            "an L4 inference MUST NOT be written to operator as observed; promotion "
+            "requires human confirmation or a D1/D2 source (SIG-RECON-031/033)"
+        )
 
 
 @dataclass(frozen=True)
