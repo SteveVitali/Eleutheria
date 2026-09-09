@@ -54,7 +54,7 @@ const DENY = ["-NC", "NONCOMMERCIAL", "BUSL", "SSPL", "ELASTIC", "COMMONS-CLAUSE
 
 // The workspace package itself is private and carries no distributable licence of
 // its own to vet; exclude it (its code licence is the repo's LICENSE / SPDX headers).
-const SELF = "@sig/web@0.0.0";
+const SELF = "@sig/web@0.1.0";
 
 function splitExpression(expr) {
   // Split an SPDX expression / dual licence into atoms: "(MIT OR Apache-2.0)".
