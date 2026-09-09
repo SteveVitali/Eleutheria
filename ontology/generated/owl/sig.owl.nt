@@ -52,7 +52,7 @@
 <https://ontology.sig-project.org/schema/AccessRelationship> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/linkml/ClassDefinition> .
 <https://ontology.sig-project.org/schema/AccessRelationship> <http://www.w3.org/2000/01/rdf-schema#label> "AccessRelationship" .
 <https://ontology.sig-project.org/schema/AccessRelationship> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/Edge> .
-<https://ontology.sig-project.org/schema/AccessRelationship> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:cb1cbe45d1602c6e721dd1a3830d68c9308480d1cfe08209da726c3c722e071b5ac .
+<https://ontology.sig-project.org/schema/AccessRelationship> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:cb1f005445ad3ee0935b7d51317a89389d5a43ed7483377e2a133a7eab2f6b3ca68 .
 <https://ontology.sig-project.org/schema/AccessRelationship> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:cb216af8cd170fda539896e87ff0e5fdb77849407e1b71c37ac137403768cfcc72c .
 <https://ontology.sig-project.org/schema/AccessRelationship> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:cb254338b1d571c96ae4239f44b339555ae83e71eb8a658306c127604170e33a146 .
 <https://ontology.sig-project.org/schema/AccessRelationship> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:cb27616f8406763b4a50734cb43ac7c8da0af1ba5dd459265f982ab11a30d4d45f1 .
@@ -3090,6 +3090,7 @@
 <https://ontology.sig-project.org/schema/automaticity> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
 <https://ontology.sig-project.org/schema/automaticity> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/linkml/SlotDefinition> .
 <https://ontology.sig-project.org/schema/automaticity> <http://www.w3.org/2000/01/rdf-schema#label> "automaticity" .
+<https://ontology.sig-project.org/schema/automaticity> <http://www.w3.org/2004/02/skos/core#definition> "Required; direction/scope/automaticity/kind are all required (SIG-ONTO-049)." .
 <https://ontology.sig-project.org/schema/automaticity> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/schema/edges> .
 <https://ontology.sig-project.org/schema/award_date> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
 <https://ontology.sig-project.org/schema/award_date> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/linkml/SlotDefinition> .
@@ -4340,9 +4341,6 @@ _:cb1cac07a2084b63f8a297579c7696e13fd10807fc0c63822cce70ccf9f4b2574b0 <http://ww
 _:cb1cbb6171b950d12adffaadac477cb779ede4e62b299af609102233a25339bf655 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
 _:cb1cbb6171b950d12adffaadac477cb779ede4e62b299af609102233a25339bf655 <http://www.w3.org/2002/07/owl#allValuesFrom> <https://ontology.sig-project.org/schema/EpistemicStatus> .
 _:cb1cbb6171b950d12adffaadac477cb779ede4e62b299af609102233a25339bf655 <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/epistemic_status> .
-_:cb1cbe45d1602c6e721dd1a3830d68c9308480d1cfe08209da726c3c722e071b5ac <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
-_:cb1cbe45d1602c6e721dd1a3830d68c9308480d1cfe08209da726c3c722e071b5ac <http://www.w3.org/2002/07/owl#maxCardinality> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb1cbe45d1602c6e721dd1a3830d68c9308480d1cfe08209da726c3c722e071b5ac <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/automaticity> .
 _:cb1cc73f98eed9c478314ccbd73114dba14f6d017cf9df18ec6ffda536152e64a0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/CapabilityScope#national> .
 _:cb1cc73f98eed9c478314ccbd73114dba14f6d017cf9df18ec6ffda536152e64a0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb3c9849869f9f1ecbd7fbe36d1b8bde0328898889cea28c8e9f9bd02a8fdfc48f .
 _:cb1ce7494e9bf0a67c887285dd8cca3533f2170ebbf511f1681e9267b04b58ddb8c <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/TemporalBoundKind#ongoing> .
@@ -4470,6 +4468,9 @@ _:cb1ee1da0d5dc5c665fe087a05991ee927fdeef918b59e937ac5e570258042d4f9b <http://ww
 _:cb1ee88db9065868f132fcc3f55bd643ed3725b95c76d5094a756ee6925158c996a <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
 _:cb1ee88db9065868f132fcc3f55bd643ed3725b95c76d5094a756ee6925158c996a <http://www.w3.org/2002/07/owl#allValuesFrom> <https://w3id.org/linkml/Integer> .
 _:cb1ee88db9065868f132fcc3f55bd643ed3725b95c76d5094a756ee6925158c996a <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/observation_count> .
+_:cb1f005445ad3ee0935b7d51317a89389d5a43ed7483377e2a133a7eab2f6b3ca68 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+_:cb1f005445ad3ee0935b7d51317a89389d5a43ed7483377e2a133a7eab2f6b3ca68 <http://www.w3.org/2002/07/owl#cardinality> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb1f005445ad3ee0935b7d51317a89389d5a43ed7483377e2a133a7eab2f6b3ca68 <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/automaticity> .
 _:cb1f151fc2601c0cdc54eaeb2f30822ce9e3ca736c79928ffca71253e9adbdc064e <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
 _:cb1f151fc2601c0cdc54eaeb2f30822ce9e3ca736c79928ffca71253e9adbdc064e <http://www.w3.org/2002/07/owl#allValuesFrom> <https://w3id.org/linkml/String> .
 _:cb1f151fc2601c0cdc54eaeb2f30822ce9e3ca736c79928ffca71253e9adbdc064e <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/reason_raw_value> .

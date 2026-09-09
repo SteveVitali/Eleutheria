@@ -245,7 +245,7 @@
 -- # Class: AccessRelationship Description: A sharing/access relationship; direction, scope, automaticity, and kind are all required — never reduced to `shares_with` (§12.5, SIG-ONTO-049). The three access kinds (§12.2) are never merged (SIG-ONTO-042).
 --     * Slot: scope
 --     * Slot: direction Description: Required; never symmetric by default (SIG-ONTO-049).
---     * Slot: automaticity
+--     * Slot: automaticity Description: Required; direction/scope/automaticity/kind are all required (SIG-ONTO-049).
 --     * Slot: access_kind Description: Configured vs observed vs declared — never defaulted into one another (SIG-ONTO-042).
 --     * Slot: id
 --     * Slot: source Description: The asserting/originating node (directed — §12.1.1).
@@ -594,7 +594,7 @@ CREATE INDEX "ix_Edge_id" ON "Edge" (id);
 CREATE TABLE "AccessRelationship" (
 	scope VARCHAR(10) NOT NULL,
 	direction VARCHAR(6) NOT NULL,
-	automaticity VARCHAR(22),
+	automaticity VARCHAR(22) NOT NULL,
 	access_kind VARCHAR(17) NOT NULL,
 	id TEXT NOT NULL,
 	source TEXT NOT NULL,

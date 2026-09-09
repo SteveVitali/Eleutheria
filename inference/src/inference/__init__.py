@@ -12,6 +12,10 @@ spine (§32). This package makes negative space queryable rather than editorial:
 * :mod:`inference.freshness` — freshness relative to predicate volatility.
 * :mod:`inference.completeness` — the capture–recapture prohibition and the
   publishable-completeness guardrails.
+* :mod:`inference.access_paths` — bounded access-path closure (§30.2): the three
+  §12.2 sharing edge types kept separate, only ``configured_access`` /
+  ``federates_search_to`` composing, scope/hop/temporal bounds, path-minimum
+  confidence, and the speculative label that keeps a long chain out of headlines.
 """
 
 __version__ = "0.0.0"

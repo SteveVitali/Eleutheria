@@ -32,7 +32,7 @@ URI: [sig:enum/Automaticity](https://ontology.sig-project.org/schema/enum/Automa
 
 | Name | Description |
 | ---  | --- |
-| [automaticity](../slots/automaticity.md) |  |
+| [automaticity](../slots/automaticity.md) | Required; direction/scope/automaticity/kind are all required (SIG-ONTO-049) |
 
 
 

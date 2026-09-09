@@ -5,6 +5,11 @@ search:
 
 # Slot: automaticity 
 
+
+_Required; direction/scope/automaticity/kind are all required (SIG-ONTO-049)._
+
+
+
 <div data-search-exclude markdown="1">
 
 
@@ -40,6 +45,7 @@ URI: [sig:slot/automaticity](https://ontology.sig-project.org/schema/slot/automa
 
 | Property | Value |
 | --- | --- |
+| Required | Yes |
 ### Slot Characteristics
 
 | Property | Value |
@@ -86,12 +92,14 @@ URI: [sig:slot/automaticity](https://ontology.sig-project.org/schema/slot/automa
 <details>
 ```yaml
 name: automaticity
+description: Required; direction/scope/automaticity/kind are all required (SIG-ONTO-049).
 from_schema: https://ontology.sig-project.org/schema/sig
 rank: 1000
 owner: AccessRelationship
 domain_of:
 - AccessRelationship
 range: Automaticity
+required: true
 
 ```
 </details></div>

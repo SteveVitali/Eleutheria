@@ -1511,7 +1511,7 @@ class AccessRelationship(Edge):
 
     scope: CapabilityScope = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['Capability', 'AccessRelationship', 'IntegrationEdge']} })
     direction: Direction = Field(default=..., description="""Required; never symmetric by default (SIG-ONTO-049).""", json_schema_extra = { "linkml_meta": {'domain_of': ['AccessRelationship']} })
-    automaticity: Optional[Automaticity] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['AccessRelationship']} })
+    automaticity: Automaticity = Field(default=..., description="""Required; direction/scope/automaticity/kind are all required (SIG-ONTO-049).""", json_schema_extra = { "linkml_meta": {'domain_of': ['AccessRelationship']} })
     access_kind: AccessKind = Field(default=..., description="""Configured vs observed vs declared — never defaulted into one another (SIG-ONTO-042).""", json_schema_extra = { "linkml_meta": {'domain_of': ['AccessRelationship']} })
     id: str = Field(default=..., json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
     source: str = Field(default=..., description="""The asserting/originating node (directed — §12.1.1).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Edge']} })

@@ -1285,3 +1285,43 @@ join, partition-as-evidence, and small-cell suppression (ADR-044). The canonical
 | SIG-STORE-030 (complementary suppression so a single suppression is not invertible from published totals) | `db.suppression.suppress_group` (`_complementary_candidate`, `GroupSuppressionResult.margin_publishable`) | `tests/db/test_suppression.py::test_a_lone_suppressed_cell_triggers_complementary_suppression`, `::test_two_primary_suppressions_need_no_complementary`, `::test_single_cell_margin_withholds_the_total_when_it_would_be_invertible` |
 | SIG-STORE-031/032 (suppression records which rationale applied; institutional small counts publish; individual small counts suppress; ambiguous → suppress + raise a review task) | `db.suppression` (`SuppressionRationale`, `_primary_decision`, `review_task_required`, `_complementary_candidate` prefers non-institutional) | `tests/db/test_suppression.py::test_institutional_small_count_is_published_not_suppressed`, `::test_ambiguous_small_cell_is_suppressed_and_raises_a_review_task`, `::test_ambiguous_large_cell_is_published_without_a_task`, `::test_contractual_is_suppressed_and_must_cite_a_rights_record`, `::test_complementary_prefers_a_non_institutional_cell`, `::test_complementary_falls_on_institutional_only_when_forced_and_flags_review` |
 | SIG-STORE-033 (k=5 is SIG's own documented policy; a stricter partner threshold wins) | `db.suppression` (`DEFAULT_K_THRESHOLD`, `effective_k_threshold`) | `tests/db/test_suppression.py::test_default_threshold_is_sigs_own_policy`, `::test_stricter_partner_threshold_wins` |
+
+# P12.2 — Access edges and access-path closure
+
+The three §12.2 sharing edge types kept separate, `AccessRelationship`'s required attributes, and the
+§30.2 access-path-closure bound (composition/scope/temporal limits, path-minimum confidence, the
+speculative label). Closure ships as the pure `inference.access_paths` value-object module (ADR-045).
+
+## The three sharing edge types, never merged (§12.2, SIG-ONTO-042/043/044)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ONTO-042 (the three access kinds are distinct and never merged, collapsed, or defaulted into one another) | `inference.access_paths` (`ACCESS_KINDS` reused from `reconcile.sharing`; `COMPOSABLE_LABELS` / `NON_COMPOSING_ACCESS_KINDS`; a hop's `edge_label` is preserved verbatim by closure); `reconcile.sharing.reconcile_sharing` reconciles each kind separately | `tests/inference/test_access_paths.py::test_the_three_access_kinds_are_exactly_the_canonical_set`, `::test_only_configured_access_and_federation_compose`, `::test_closure_never_relabels_a_hop_kind`, `::test_access_edge_kinds_stay_distinct_and_are_not_defaulted` |
+| SIG-ONTO-043 (the three kinds' disagreement is a *finding*, not an error — emitted, both sides shown) — *emission owned/tested in P08.2 (§29.3/§29.6), consumed here* | `reconcile.sharing.reconcile_sharing` (`SHARING_ASYMMETRY`); `reconcile.policy_config.reconcile_policy_configuration` (policy↔configuration divergence) | `tests/reconcile/test_sharing.py::test_asymmetry_is_a_finding_not_a_merge`, `tests/reconcile/test_policy_config.py::test_canonical_immigration_divergence_is_a_first_class_finding` |
+| SIG-ONTO-044 (a single-snapshot sharing edge carries `valid_from_kind='unknown'`; start never inferred from first observation) | `inference.access_paths.AccessEdge.temporal_status` (unknown/ongoing default is always valid) | `tests/inference/test_access_paths.py::test_single_snapshot_edge_is_always_valid` |
+| SIG-RECON-037 (an `observed_use` edge never creates/implies a `configured_access` edge; the L4 inference is labelled) — *owned/tested in P08.2, enforced here at the edge model* | `reconcile.sharing.infer_access_from_use` (L4, labelled); `inference.access_paths` never composes `observed_use` | `tests/reconcile/test_sharing.py` (P08.2); `tests/inference/test_access_paths.py::test_observed_use_does_not_compose` |
+
+## `AccessRelationship` — required direction/scope/automaticity/kind (§12.5, SIG-ONTO-049)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ONTO-049 (never reduced to `shares_with`; direction, scope, automaticity, and kind all required; `asserted_by` for asymmetry) | `ontology/src/ontology/schema/edges.yaml` `AccessRelationship` (`direction`/`scope`/`automaticity`/`access_kind` all `required: true`; `asserted_by` inherited from `Edge`) | `tests/ontology/generalization/test_generalization.py::test_access_relationship_requires_direction_scope_and_kind`, `::test_access_relationship_requires_automaticity` |
+
+## Access-path closure — bounded (§30.2, SIG-RECON-047/048/049)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-RECON-048 (closure is implemented) | `inference.access_paths.close_access_paths` (transitive reachability source→target) | `tests/inference/test_access_paths.py::test_federation_composes_with_configured_access`, `::test_target_filter_returns_only_paths_to_that_target` |
+| SIG-RECON-049 #1 (only `configured_access` and `federates_search_to` compose; `observed_use` does not) | `inference.access_paths` (`COMPOSABLE_LABELS`; only composable edges traversed) | `tests/inference/test_access_paths.py::test_observed_use_does_not_compose`, `::test_a_standalone_observed_use_chain_reaches_nothing_by_composition`, `::test_only_configured_access_and_federation_compose` |
+| SIG-RECON-049 #2 (`distributes_list_to` does not compose in the query direction) | `inference.access_paths` (excluded from `COMPOSABLE_LABELS`) | `tests/inference/test_access_paths.py::test_distributes_list_to_does_not_compose_in_the_query_direction` |
+| SIG-RECON-049 #3 (scope respected — a partner-scoped edge does not chain into a national-scoped one) | `inference.access_paths` (`SCOPE_ORDER`/`_scope_breadth`; a hop broadening the chain's scope is refused; path scope is the narrowest hop) | `tests/inference/test_access_paths.py::test_scope_may_not_broaden_along_a_chain`, `::test_scope_may_narrow_along_a_chain_and_path_scope_is_the_narrowest` |
+| SIG-RECON-049 #4 (every hop valid at as-of; a path through an expired edge is historical and labelled) | `inference.access_paths.AccessEdge.temporal_status` / `AccessPath.temporal_status` (`LIVE`/`HISTORICAL`; a future hop is not traversed) | `tests/inference/test_access_paths.py::test_expired_hop_yields_a_historical_labelled_path`, `::test_a_future_hop_is_not_asserted_as_of_the_query_time` |
+| SIG-RECON-049 #5 (path length capped; every path shows its full hop list with each hop's evidence — no unexplained edge) | `inference.access_paths` (`MAX_PATH_HOPS`; `AccessEdge` requires non-empty `evidence`; `AccessPath.public_view`/`hop_views` emit the full hop list) | `tests/inference/test_access_paths.py::test_path_length_is_capped`, `::test_every_published_path_carries_its_full_hop_list_with_per_hop_evidence`, `::test_a_hop_without_evidence_is_rejected` |
+| SIG-RECON-049 #6 (confidence is the minimum over the path, never the average) | `inference.access_paths.AccessPath.confidence` (`CONFIDENCE_ORDER` min) | `tests/inference/test_access_paths.py::test_confidence_is_the_minimum_over_the_path_never_the_average` |
+| SIG-RECON-047 (closure output is a labelled L4 inference carrying `derivation_rule`/`derived_at`/`input_claim_ids`; never an observation) | `inference.access_paths.AccessPath.to_inference` (builds `reconcile.model.Inference`) | `tests/inference/test_access_paths.py::test_path_becomes_a_labelled_l4_inference_never_an_observation`, `::test_inference_input_claim_ids_dedupe_shared_evidence` |
+
+## Speculative labelling — excluded from headline figures (§30.2, SIG-RECON-050)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-RECON-050 (beyond a published hop count a path is labelled speculative and excluded from headline figures) | `inference.access_paths` (`SPECULATIVE_HOP_THRESHOLD`; `AccessPath.speculative`/`is_headline`; `AccessPathClosure.headline_paths`/`speculative_paths`/`reachable(headline_only=…)`) | `tests/inference/test_access_paths.py::test_paths_within_threshold_are_headline_and_not_speculative`, `::test_paths_beyond_threshold_are_speculative_and_excluded_from_headlines` |

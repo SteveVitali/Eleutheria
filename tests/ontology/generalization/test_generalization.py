@@ -83,6 +83,7 @@ def test_commercial_data_access_relationship_with_no_local_sensor(m: object) -> 
         edge_type=m.EdgeType.resells_data_from,  # type: ignore[attr-defined]
         scope=m.CapabilityScope.commercial,  # type: ignore[attr-defined]
         direction=m.Direction.a_to_b,  # type: ignore[attr-defined]
+        automaticity=m.Automaticity.automatic,  # type: ignore[attr-defined]
         access_kind=m.AccessKind.configured_access,  # type: ignore[attr-defined]
     )
     assert rel.access_kind == m.AccessKind.configured_access  # type: ignore[attr-defined]
@@ -113,4 +114,21 @@ def test_access_relationship_requires_direction_scope_and_kind(m: object) -> Non
             source="a",
             target="b",
             edge_type=m.EdgeType.subscribes_to,  # type: ignore[attr-defined]
+        )
+
+
+def test_access_relationship_requires_automaticity(m: object) -> None:
+    # SIG-ONTO-049: direction, scope, automaticity, AND kind are all required — an
+    # AccessRelationship missing automaticity is a reduction the spec forbids.
+    from pydantic import ValidationError
+
+    with pytest.raises(ValidationError):
+        m.AccessRelationship(  # type: ignore[attr-defined]
+            id="edge:no-automaticity",
+            source="a",
+            target="b",
+            edge_type=m.EdgeType.subscribes_to,  # type: ignore[attr-defined]
+            scope=m.CapabilityScope.partner,  # type: ignore[attr-defined]
+            direction=m.Direction.a_to_b,  # type: ignore[attr-defined]
+            access_kind=m.AccessKind.configured_access,  # type: ignore[attr-defined]
         )

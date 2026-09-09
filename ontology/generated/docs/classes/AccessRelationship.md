@@ -46,7 +46,7 @@ URI: [sig:class/AccessRelationship](https://ontology.sig-project.org/schema/clas
     
         
         
-        AccessRelationship --> "0..1" Automaticity : automaticity
+        AccessRelationship --> "1" Automaticity : automaticity
         click Automaticity href "../../enums/Automaticity/"
     
 
@@ -138,7 +138,7 @@ URI: [sig:class/AccessRelationship](https://ontology.sig-project.org/schema/clas
 | ---  | --- | --- | --- |
 | [scope](../slots/scope.md) | 1 <br/> [CapabilityScope](../enums/CapabilityScope.md) |  | direct |
 | [direction](../slots/direction.md) | 1 <br/> [Direction](../enums/Direction.md) | Required; never symmetric by default (SIG-ONTO-049) | direct |
-| [automaticity](../slots/automaticity.md) | 0..1 <br/> [Automaticity](../enums/Automaticity.md) |  | direct |
+| [automaticity](../slots/automaticity.md) | 1 <br/> [Automaticity](../enums/Automaticity.md) | Required; direction/scope/automaticity/kind are all required (SIG-ONTO-049) | direct |
 | [access_kind](../slots/access_kind.md) | 1 <br/> [AccessKind](../enums/AccessKind.md) | Configured vs observed vs declared — never defaulted into one another (SIG-ON... | direct |
 | [id](../slots/id.md) | 1 <br/> [Uriorcurie](../types/Uriorcurie.md) |  | [Edge](../classes/Edge.md) |
 | [source](../slots/source.md) | 1 <br/> [Uriorcurie](../types/Uriorcurie.md) | The asserting/originating node (directed — §12 | [Edge](../classes/Edge.md) |
@@ -228,11 +228,13 @@ attributes:
     required: true
   automaticity:
     name: automaticity
+    description: Required; direction/scope/automaticity/kind are all required (SIG-ONTO-049).
     from_schema: https://ontology.sig-project.org/schema/edges
     rank: 1000
     domain_of:
     - AccessRelationship
     range: Automaticity
+    required: true
   access_kind:
     name: access_kind
     description: Configured vs observed vs declared — never defaulted into one another
@@ -281,12 +283,14 @@ attributes:
     required: true
   automaticity:
     name: automaticity
+    description: Required; direction/scope/automaticity/kind are all required (SIG-ONTO-049).
     from_schema: https://ontology.sig-project.org/schema/edges
     rank: 1000
     owner: AccessRelationship
     domain_of:
     - AccessRelationship
     range: Automaticity
+    required: true
   access_kind:
     name: access_kind
     description: Configured vs observed vs declared — never defaulted into one another
