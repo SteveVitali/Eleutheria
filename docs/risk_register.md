@@ -816,3 +816,34 @@ ADR-047 for the decision to build a hand-written contract over a `ReadStore` sea
 | RISK-P14-08 | Bulk exports, export-licence computation, the ODbL split, crosswalk export, and Zenodo deposit are out of scope | Those are P14.2 (SIG-EXPORT-*); the read API only *lists* available bulk artifacts at `/export` | `/export` is an index only (computes no artifact and no export licence); the P14.2 exports reproduce the P14.1 envelope response shape via the same code path (SIG-EXPORT-003), so they build on a tested, versioned base. |
 | RISK-P14-09 | Rate limiting is expressed as tier metadata, not enforced in-process | Enforcement is an ops/gateway concern; the security-relevant tier boundary (no `restricted`/`sealed` at any tier) is what P14.1 owns and enforces | `api.tiers.TIER_RATE_LIMITS` declares the budgets so the contract is inspectable; the data reachable never changes by tier (SIG-API-011), which is the invariant tested. |
 | RISK-P14-10 | GraphQL (SIG-API-010, a SHOULD) is not offered | Out of scope unless trivially free; it MUST NOT be the only surface, and REST is the surface | REST + OpenAPI is the complete, cacheable, archivable surface §37 requires; a later GraphQL layer, if added, is additive over the same `ReadStore`. |
+
+## Phase 14 — API and exports (P14.2 — bulk exports, licence computation, Zenodo deposit)
+
+Per §53 / SIG-ENG-031, P14.2's risk-register entries. P14.2 owns the bulk dataset publication and
+the export-time licence computation (§38, §42.4). Its risks are **licence-leak** risks — the export
+is where a wrong licence or a merged share-alike file would ship irrevocably — so the compensating
+controls fail the *build* closed rather than catching a violation after publication. See ADR-048.
+
+### Design / licence risks retired by executable checks
+
+| id | Risk | Compensating control |
+|---|---|---|
+| RISK-P14-11 | **A share-alike input is folded into an incompatible export** — an ODbL or CC-BY-SA source is merged into the CC-BY graph, silently forcing the whole file share-alike (SIG-EXPORT-004, SIG-LIC-010). | The bundle *computes* each file's licence from constituent rights via `policy.licensing.compute_export_license`; an incompatible mix raises and fails the build. Proven by `tests/exports/test_bundle.py::test_incompatible_share_alike_mix_fails_the_build`, `test_compartments.py::test_incompatible_mix_in_one_table_fails_the_build`. |
+| RISK-P14-12 | **The ODbL asset layer ships merged with the CC-BY graph** (SIG-EXPORT-005). | Each table computes to one licence and one `licenses.toml` compartment directory, so ODbL and CC-BY are physically separate files; `assert_separated` + the build-time separate-serving-artifacts check enforce it. Proven by `tests/exports/test_bundle.py::test_odbl_assets_are_a_distinct_file_never_merged_into_cc_by`, `::test_route_privacy_and_researcher_layers_are_separate_files`. |
+| RISK-P14-13 | **A silently-travelling share-alike obligation is laundered** — content derived from a share-alike upstream ships as permissive because an intermediary dropped the obligation (SIG-LIC-009a). | `policy.licensing.effective_license` promotes a share-alike `upstream_license` to the governing regime, and an *unresolvable* upstream forces the build to fail closed rather than default permissive. Proven by `tests/unit/test_policy_licensing.py::test_silently_travelling_share_alike_uses_stricter_upstream`, `::test_unresolvable_upstream_provenance_fails_closed_not_silently_permissive`. |
+| RISK-P14-14 | **A downstream consumer cannot determine a fact's licence** and is forced to assume the strictest (SIG-EXPORT-006, SIG-LIC-011). | Every exported row is stamped with its per-row obligation via `policy.licensing.downstream_obligations` — the same function the read API uses. Proven by `tests/exports/test_compartments.py::test_enrich_rows_stamps_per_row_rights_provenance`, `test_bundle.py::test_every_exported_row_carries_rights_provenance`. |
+| RISK-P14-15 | **Popularity becomes an existential egress bill** — a metered-egress provider turns a 2 GB × 5,000 download month into a four-figure invoice (SIG-EXPORT-008). | `exports.distribution.assert_low_egress` fails a build that targets a metered provider; the largest artifacts also get torrent/IPFS references (SIG-EXPORT-009). Proven by `tests/exports/test_bundle.py::test_metered_egress_store_fails_the_build`, `test_distribution.py::test_largest_artifacts_get_torrent_and_ipfs`. |
+
+### Deviations recorded as ADRs (SIG-ENG-031)
+
+| ADR | Deviation |
+|---|---|
+| ADR-048 | PMTiles ships as a valid v3 archive carrying the ODbL layer as metadata (real GeoJSON of the layer ships alongside); rendered vector tiles are deferred to the map surface (Phase 15). `derivative_permitted` is not added to the shared export gate (SIG-LIC-004 gates `redistributable` + `UNDETERMINED`; expanding it is P00.4's contract). Binary-format byte-reproducibility is keyed on a fixed toolchain version (DuckDB stamps its version into Parquet). |
+
+### Scaffolded / bounded requirements (SIG-ENG-005)
+
+| id | Requirement | Why not fully closed now | Compensating control |
+|---|---|---|---|
+| RISK-P14-16 | The Zenodo deposit runs against a deterministic `FakeZenodoTransport`, not the live Zenodo HTTP API | No network in CI; the real client lands with orchestration/publication, like every external transport | The deposit *policy* — concept + version DOI, evidence bytes excluded, digest manifest deposited — is behind the `ZenodoTransport` seam and fully tested; the production client must satisfy the same contract (`tests/exports/test_zenodo.py`). |
+| RISK-P14-17 | The PMTiles tileset is metadata-only (no rendered vector tiles) | Tile rendering is a tippecanoe-class build step owned by the Phase-15 map surface; the archive is a valid v3 container | The route/privacy class's data need is served by the real, complete GeoJSON of the ODbL layer; the PMTiles archive is spec-valid and its tile bodies fill when the tiler lands (ADR-048). |
+| RISK-P14-18 | Export inputs (`ExportTable`s) are supplied by the caller/CLI, not yet projected from a live `ReadStore` | The production read/query layer is not DB-wired (RISK-P14-07); the export reuses the same `policy.licensing` / `resolution.crosswalk` code path the API uses | Reproducibility is a pure function of the `BuildSpec`; the projection wires to the same `ReadStore` seam when it is DB-backed (SIG-EXPORT-003), re-verified per ADR-048's revisit trigger. |

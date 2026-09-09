@@ -1437,3 +1437,42 @@ evidence tiers (§17.5), and licence/attribution (§42.4) engines are consumed a
 | SIG-API-011 (tiers anonymous/registered/partner; no tier grants `restricted`/`sealed`) | `api.tiers.AccessTier` / `tier_dependency` / `assert_public_visibility` (tier-independent gate) | `tests/api/test_api_tiers.py::test_bearer_token_maps_to_a_tier`, `::test_no_tier_can_read_a_restricted_entity`, `::test_public_data_is_reachable_at_every_tier`, `::test_the_visibility_gate_is_tier_independent` |
 | SIG-API-012 (no device-liveness, per-person lookup, sealed bytes, or over-precise coordinates §19.4) | `api.prohibitions` (structural route bar + `assert_entity_type_allowed`); `evidence.tiers.public_representation` (sealed bytes withheld); `policy.sensitivity.apply_tier` (coordinate reduction) | `tests/api/test_api_prohibitions.py::test_no_mounted_route_is_a_prohibited_surface`, `::test_building_an_app_with_a_prohibited_route_fails_closed`, `::test_sealed_capture_never_returns_its_bytes`, `::test_a_person_entity_type_is_refused_by_the_generic_entity_route`, `::test_coordinates_are_reduced_to_the_sensitivity_tier` |
 | SIG-API-013 (acceptable-use terms prohibit re-identification and state a remedy) | `api.terms.acceptable_use_terms`; `api.app` `/terms` | `tests/api/test_api_terms.py::test_terms_prohibit_reidentification`, `::test_terms_state_a_remedy_not_a_decorative_prohibition`, `::test_terms_describe_all_three_tiers` |
+
+# P14.2 — bulk exports, licence computation, and Zenodo deposit
+
+## Static-first: versioned artifacts + manifest (§38.1)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-EXPORT-001 (7 bulk formats + checksums + manifest) | `exports.formats.FORMATS` (parquet/csv/jsonl/jsonld/sqlite/geojson/pmtiles); `exports.manifest.Artifact.of` (sha256), `Manifest` | `tests/exports/test_formats.py::test_all_seven_export_formats_are_registered`, `::test_every_writer_is_deterministic`, `test_bundle.py::test_manifest_lists_every_artifact_with_a_checksum` |
+| SIG-EXPORT-002 (Frictionless tabular + RO-Crate evidence + Zenodo concept/version DOI + digest manifest) | `exports.frictionless.data_package`/`ro_crate`; `exports.zenodo.deposit_release` (`FakeZenodoTransport`) | `tests/exports/test_frictionless.py`, `test_zenodo.py::test_deposit_carries_concept_and_version_doi`, `::test_evidence_bytes_are_excluded_but_digest_manifest_is_deposited`, `test_bundle.py::test_datapackage_excludes_evidence_and_ro_crate_includes_it` |
+| SIG-EXPORT-003 (reproducible from `(as_of pair + ruleset + resolver)` via the API's code path) | `exports.manifest.BuildSpec.release_id`; `exports.bundle.build_bundle` (pure fn; licence via `policy.licensing`, crosswalk via `resolution.crosswalk`) | `tests/exports/test_manifest.py::test_release_id_is_a_deterministic_function...`, `test_bundle.py::test_two_builds_from_the_same_spec_are_byte_identical`, `test_cli_build.py::test_build_cli_is_reproducible` |
+
+## Licence computation (§38.2, §42.4)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-EXPORT-004 / SIG-LIC-010 (computed licence; build fails on incompatible share-alike mix) | `exports.compartments.place_table` (reuse `policy.licensing.compute_export_license`); `exports.bundle.build_bundle` | `tests/exports/test_compartments.py::test_incompatible_mix_in_one_table_fails_the_build`, `test_bundle.py::test_incompatible_share_alike_mix_fails_the_build` |
+| SIG-LIC-009a (silently-travelling share-alike → stricter; unknown upstream fails closed) | `policy.licensing.effective_license` | `tests/unit/test_policy_licensing.py::test_silently_travelling_share_alike_uses_stricter_upstream`, `::test_unresolvable_upstream_provenance_fails_closed_not_silently_permissive` |
+| SIG-EXPORT-005 (ODbL asset layer as a separate file from the CC-BY graph) | `exports.compartments.compartment_for_license`/`assert_separated`; `exports.bundle` (compartment directories) | `tests/exports/test_compartments.py::test_odbl_table_places_in_its_own_compartment`, `test_bundle.py::test_odbl_assets_are_a_distinct_file_never_merged_into_cc_by` |
+| SIG-EXPORT-006 / SIG-LIC-011 (per-row rights provenance) | `exports.compartments.enrich_rows` (reuse `policy.licensing.downstream_obligations`) | `tests/exports/test_compartments.py::test_enrich_rows_stamps_per_row_rights_provenance`, `test_bundle.py::test_every_exported_row_carries_rights_provenance` |
+
+## The crosswalk export (§38.3)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-EXPORT-007 (crosswalk published separately, prominently, most-permissive licence) | `exports.bundle.crosswalk_table_from_identifiers` (reuse `resolution.crosswalk.build_sig_external_crosswalk`/`export_crosswalk`); `policy.licensing.most_permissive_license`; `crosswalk/` path | `tests/exports/test_bundle.py::test_crosswalk_is_published_separately_and_most_permissive`, `::test_crosswalk_built_via_resolution_builder_and_licence_gate`, `test_compartments.py::test_most_permissive_prefers_public_domain` |
+
+## Downstream application classes (§38.4)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-EXPORT-010 (six downstream classes validated; a class with no artifact is a defect) | `exports.downstream.DOWNSTREAM_CLASSES`/`validate`/`assert_all_served`; `exports.bundle.Bundle.validate_portfolio` | `tests/exports/test_downstream.py::test_there_are_exactly_six_classes`, `::test_full_portfolio_serves_every_class`, `::test_missing_capability_is_reported_as_a_design_defect`, `test_bundle.py::test_validate_portfolio_passes_with_external_capabilities` |
+| SIG-EXPORT-011 (conflicting needs served as separate artifacts) | `exports.downstream.assert_separate_serving_artifacts`; enforced in `exports.bundle.build_bundle` | `tests/exports/test_downstream.py::test_route_privacy_and_researcher_artifacts_must_be_separate`, `test_bundle.py::test_route_privacy_and_researcher_layers_are_separate_files` |
+
+## Sustainability of distribution (§38.5)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-EXPORT-008 (zero-or-low-egress object storage + CDN/mirror) | `exports.distribution.assert_low_egress`/`plan_distribution`; wired into `exports.bundle.build_bundle` + `sig-exports build --store` | `tests/exports/test_distribution.py::test_metered_egress_provider_fails_the_build`, `::test_cdn_and_mirror_urls_are_built`, `test_bundle.py::test_metered_egress_store_fails_the_build`, `::test_distribution_plan_is_built_when_a_low_egress_store_is_given` |
+| SIG-EXPORT-009 (torrent/IPFS SHOULD for the largest artifacts) | `exports.distribution.ipfs_cidv1_raw`/`torrent_magnet_v2`/`plan_distribution` | `tests/exports/test_distribution.py::test_largest_artifacts_get_torrent_and_ipfs`, `::test_ipfs_cid_and_magnet_are_deterministic_content_addresses` |
