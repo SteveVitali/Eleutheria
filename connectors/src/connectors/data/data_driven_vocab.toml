@@ -1,0 +1,81 @@
+# SPDX-License-Identifier: Apache-2.0
+# The versioned EFF/MuckRock **Data Driven** connector vocabulary (§23.9, P21.8).
+# This table is DATA, not code (SIG-ENG-001): the predicate allowlist, the
+# aggregate-only column guard, the per-column retention-window model, and the
+# release/source facts are data rows reviewed on their own. Changes after P21.8
+# are VERSIONED MIGRATIONS (§20) — bump `vocab_version` and add the change, never
+# silently rewrite a mapping, so a re-extraction under a new vocabulary is a new
+# interpretation, never a destructive overwrite (SIG-INGEST-017/043d).
+
+# The connector's own vocabulary version, stamped onto every run (§20).
+vocab_version = "2026.08.27"
+
+# The registry source this connector runs against (§22.6 D). The release is a
+# MIRROR candidate whose rights stay UNDETERMINED until reviewed (SIG-INGEST-028).
+source_id = "eff_data_driven"
+
+# The predicates this connector may write, at PER-AGENCY AGGREGATE granularity
+# only (§23.9, SIG-INGEST-043; RISK-P0-08 / RISK-P21-15). The allowlist is a hard
+# schema gate (SIG-INGEST-033): writing anything else is a schema error.
+#
+# * deployment_exists          — a non-Flock ALPR vendor deployment at an agency
+# * scan_volume_observed       — aggregate detections (SIG-INGEST-043a)
+# * hit_volume_observed        — aggregate hotlist hits (SIG-INGEST-043a)
+# * non_hit_proportion_observed— the corpus's key structural number (043a)
+# * sharing_partner_degree     — sharing DEGREE only, never an edge (043c)
+# * pooled_lookup_participation— configured_access to a vendor-operated pooled service
+# * retention_window_observed  — per-column retention window w/ its unit (043d)
+predicate_allowlist = [
+  "deployment_exists",
+  "scan_volume_observed",
+  "hit_volume_observed",
+  "non_hit_proportion_observed",
+  "sharing_partner_degree",
+  "pooled_lookup_participation",
+  "retention_window_observed",
+]
+
+# The column/row GENRES this connector MUST NEVER ingest (§23.9, §18.1,
+# SIG-INGEST-043, RISK-P0-08, RISK-P21-15). Data Driven is per-agency AGGREGATE
+# rows ONLY: a per-search, per-plate, per-person/officer, or per-edge sharing-list
+# column would enable the de-pseudonymisation join §43.2a forbids and manufacture
+# the unexplained edge the defining standard forbids (043c). A fixture carrying
+# any of these tokens is REJECTED at the ingest boundary by `assert_aggregate_only`.
+forbidden_column_tokens = [
+  "per_search",
+  "per-search",
+  "search_record",
+  "search_records",
+  "individual_search",
+  "individual_searches",
+  "plate_read",
+  "plate_reads",
+  "per_plate",
+  "per_person",
+  "officer",
+  "officer_name",
+  "sharing_edge",
+  "sharing_edges",
+  "edge_list",
+  "partner_list",
+  "sharing_partner_list",
+  "queried_plate",
+  "hotlist_entry",
+]
+
+# The claim this connector's value rests on is STRUCTURAL, not current
+# (SIG-INGEST-044): every claim is historical and carries `observed_at`, subject
+# to normal currency decay (§28.3). The connector NEVER writes a current-state
+# claim; this is the marker every row carries.
+temporal_class = "historical"
+
+# SIG-INGEST-043c: all 463 source-document links resolve to a host that blocks
+# automated access. SIG therefore obtains sharing DEGREE (how many partners each
+# agency had) but NEVER the sharing edge list. Recorded with every ingest.
+source_documents_block_automation = true
+source_document_link_count = 463
+
+# SIG-INGEST-043b: the article URL is a dead end containing no data links; the
+# data lives at separate file paths. The connector targets the file artifacts
+# directly and marks the article as CONTEXT, never as the source.
+article_is_context_only = true

@@ -597,10 +597,11 @@ name = "EFF Data Driven (2018 release)"
 source_kind = "upstream_project"
 homepage_url = "https://www.eff.org/deeplinks/2018/11/eff-and-muckrock-release-records-and-data-200-law-enforcement-agencies-automated"
 default_tier = "R3"
-custody_posture = "REFERENCE"
+custody_posture = "MIRROR"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-notes = "Vendor-neutral ALPR network source (§23.10)."
+access_method = "bulk_file_artifacts"
+notes = "Vendor-neutral ALPR network source (§23.9). First-class `data_driven` connector (P21.8). MIRROR candidate — rights UNDETERMINED until reviewed (packet docs/build/rights/eff_data_driven.md); ingestion_permitted stays false (SIG-INGEST-028). Per-agency AGGREGATE rows only (RISK-P0-08). The article URL is context; data lives at file artifacts (SIG-INGEST-043b)."
 
 # ===========================================================================
 # E. Accountability layer (§22.6 E)

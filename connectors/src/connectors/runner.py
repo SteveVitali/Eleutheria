@@ -56,6 +56,10 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "muckrock": "records",
     "usaspending": "procurement",
     "okc_council": "procurement",
+    "eff_data_driven": "data_driven",
+    "carnegie_ai_gsi": "coarse_international",
+    "facial_recognition_world_map": "coarse_international",
+    "aspi_mapping_chinas_tech_giants": "coarse_international",
 }
 
 
