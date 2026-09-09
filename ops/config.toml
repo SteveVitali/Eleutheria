@@ -1,0 +1,29 @@
+# SPDX-License-Identifier: Apache-2.0
+# SIG operations config (P21.5, ADR-067). Zero-cost posture (SIG-STORE-003, HG-12):
+# every credentialed value is a TEMPLATE — the operator fills it and the integration
+# runs. Absent credentials, the CLIs report `gate pending: HG-07` and touch no network.
+
+[object_store]
+# The bulk-export object store (SIG-EXPORT-008: zero-or-low-egress ONLY).
+# ADR-067 picks Cloudflare R2 (zero egress) as the primary; AWS S3 + CloudFront
+# (ADR-015) is the documented alternative, kept for the evidence Object-Lock store.
+provider = "cloudflare-r2"        # zero-egress (EGRESS_CLASS); a metered provider fails the build
+bucket = "sig-bulk"               # the CLI's `cloudflare-r2:sig-bulk` target, reconciled here
+# Filled from the environment, never committed (HG-07 / HG-09):
+#   SIG_OBJECT_STORE_URL   -> endpoint_url (S3-compatible)
+#   SIG_OBJECT_STORE_KEY   -> access key id
+#   SIG_OBJECT_STORE_SECRET-> secret access key
+endpoint_url = ""                 # e.g. https://<accountid>.r2.cloudflarestorage.com
+
+[egress]
+# The egress budget alarm (§38.5, RISK-P0-07 / RISK-P21-09). ADR-015's "revisit if
+# egress climbs" trigger now has a MEASUREMENT: when the store's usage API reports
+# monthly egress at or above this threshold, `sig-ops egress-report` alarms non-zero.
+monthly_budget_gb = 100.0         # documented alarm threshold (untested against a real bill)
+alarm_ratio = 0.8                 # warn at 80% of budget, alarm at 100%
+
+[cdn]
+# The CDN in front of the store. Content-hash keys are immutable, so objects are
+# cached effectively forever (see exports.push.IMMUTABLE_CACHE_CONTROL).
+provider = "cloudflare"           # R2 + Cloudflare CDN = zero egress to the edge
+cache_control = "public, max-age=31536000, immutable"
