@@ -50,6 +50,22 @@ def build_parser() -> argparse.ArgumentParser:
     gate = sub.add_parser("gate", help="report the connector-loader gate verdict for a source")
     gate.add_argument("--source", required=True, help="source id to check")
     sub.add_parser("export-check", help="compute the export licence per compartment (SIG-LIC-010)")
+    runp = sub.add_parser(
+        "run",
+        help="run a connector over a fixture and assert claims into the selected sink (P19.4)",
+    )
+    runp.add_argument("--connector", required=True, help="registered connector name (e.g. atlas)")
+    runp.add_argument("--source", required=True, help="source id for the run (SourceRecord)")
+    runp.add_argument("--fixture", required=True, help="path to the committed fixture file")
+    runp.add_argument("--kind", required=True, help="target kind (e.g. bulk_csv, overpass)")
+    runp.add_argument("--media-type", required=True, help="fixture media type")
+    runp.add_argument(
+        "--sink",
+        default="memory",
+        choices=("memory", "pg"),
+        help="claim sink: 'memory' (default) or 'pg' (requires --dsn)",
+    )
+    runp.add_argument("--dsn", default=None, help="PostgreSQL DSN when --sink pg")
     return parser
 
 
@@ -129,10 +145,39 @@ def _export_check() -> int:
     return 0
 
 
+def _run(args: argparse.Namespace) -> int:
+    # Import the source connectors so they register (SIG-INGEST-021).
+    from pathlib import Path
+
+    from . import atlas, osm  # noqa: F401  (import side effect: @register)
+    from .runner import run_connector_over_fixture
+
+    if args.sink == "pg" and not args.dsn:
+        print("--sink pg requires --dsn")
+        return 2
+    report = run_connector_over_fixture(
+        args.connector,
+        args.source,
+        Path(args.fixture),
+        media_type=args.media_type,
+        kind=args.kind,
+        sink_kind=args.sink,
+        dsn=args.dsn,
+    )
+    print(
+        f"connector {args.connector!r}: {len(report.claims)} claim(s), "
+        f"{len(report.captures)} capture(s), asserted={report.asserted} "
+        f"(sink={args.sink})"
+    )
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run the `connectors` CLI. Returns a process exit code."""
     parser = build_parser()
     args = parser.parse_args(argv)
+    if args.command == "run":
+        return _run(args)
     if args.command == "validate":
         return _validate()
     if args.command == "stages":

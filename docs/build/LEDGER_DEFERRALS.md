@@ -139,3 +139,29 @@ For these tickets the PR body (`gh pr view N`) is the better evidence record; P1
 - LD-V 12 · LD-F 18 · LD-D 14 · LD-H 13 · LD-P 7 · LD-X 11 · LH 15 → **90 rows**, each with a source.
 - Rows already closed by a later ticket (recorded so P19.2 can mark them MET): LD-F18, LD-H05.
 - Rows with **no owner anywhere** (orphaned seams): LD-F05/LD-H04 (curation web UI), LD-F07/LD-H08 (tile generation), LD-F08/LD-H09 (`derivative_permitted` gate), LD-V12/LD-H11 (jurisdiction-conditional web render), LD-F03 (osm live wiring), LD-H12 (Stage-5 connectors), LD-X05 (P08.1 §53 section).
+
+## 9. P19.4 closures + re-routing (append-only; historical rows above are not edited)
+
+P19.4 (`devin/p19-4-capstone-spine-wiring`) crossed two of the three claim-spine
+seams the P19.3 composed run surfaced, and re-routed the third:
+
+- **LD-F06b (S3, connector → PG)** — **CLOSED by P19.4.** `db.claim_sink.PgClaimSink`
+  persists connector claims to the PG spine (L0 evidence + L2 identity + L1 claim),
+  append-only and idempotent on a new `content_digest` (sqitch `claim_content_digest`);
+  selected via `connectors.sinks.make_claim_sink` / `sig-connectors run --sink pg --dsn`.
+  `tests/db/test_claim_sink.py`; e2e S3 xfail flipped to a pass. Also closes the write
+  side of **LD-F04's data-flow** for connector claims (ER matching itself is separate — see below).
+- **LD-F06 / LD-V06 (S6, API → PG)** — **CLOSED by P19.4.** `api.store_pg.PgReadStore`
+  implements all 16 `ReadStore` methods over PG (publication at the store boundary,
+  RLS enabled, as-of belief); `create_app(store)` unchanged; `sig-api serve --dsn`.
+  Graph annotations `_compute_on_read()` until P21.2 materialises them (ADR-059, RISK-P19-07).
+  `tests/api/test_store_pg.py`; e2e S6 xfail flipped to a pass.
+- **LD-F04 (S4, ER over PG)** — **RE-ROUTED to P19.5 per the P19.4 size guard.** Deliverables
+  1+2+4 shipped fully; the ER-over-PG backend (probabilistic matcher reading org/entity
+  candidates from PG, the PG `ReviewQueue` + `review_decision` table, `sig-resolution
+  match/review decide --dsn`, `tests/resolution/test_pg_backend.py`) did not fit alongside
+  them and moves to P19.5. The e2e S4 `LD-F04` xfail is **kept** (not fabricated), reason
+  updated to point at P19.5. Recorded in ADR-059 §Decision 6.
+
+New landing owners: LD-F06b → **closed_by=P19.4**; LD-F06/LD-V06 → **closed_by=P19.4**;
+LD-F04 → **P19.5**.
