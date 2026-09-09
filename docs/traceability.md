@@ -1366,3 +1366,33 @@ Atlas's five artifacts, the Abuse Library, and CourtListener (targeted-lookup on
 | Requirement | Where | Test |
 |---|---|---|
 | The connector + render-guard vocabularies mirror the ontology (drift is a failed test) | `connectors.accountability` (`epistemic_statuses`/`event_types`/`postures`/`source_classes`); `exports.accountability.EPISTEMIC_STATUSES` | `tests/connectors/test_accountability.py::test_epistemic_status_vocab_matches_the_ontology_enum`, `::test_event_type_vocab_matches_the_ontology_enum`, `::test_posture_vocab_matches_the_ontology_enum`, `::test_source_class_vocab_matches_the_ontology_enum`, `tests/exports/test_accountability_render.py::test_render_status_vocab_matches_the_ontology_enum` |
+
+# P13.2 — Policy, legal instruments, and policy/configuration divergence
+
+What governs the infrastructure and where it is disobeyed (§§11.13–11.14, §29.6, §10.9): the `Policy`
+and `LegalInstrument` predicate surfaces (SIG-ONTO-034; §11.14), policy-versus-configuration
+divergence as a first-class finding that is never editorially collapsed (SIG-RECON-044), the invariant
+that `Policy` and `ConfigurationState` are never merged (SIG-ONTO-034), and the general capability to
+hold a curated source index *as an index* without normalizing its entries into claims (SIG-EPIS-030).
+The entities are defined in P01.1 and the §29.6 reconciler in P08.2; this ticket owns their predicate
+surfaces, the never-merged invariant, and the SIG-EPIS-030 general form.
+
+## `Policy` / `LegalInstrument` predicate surfaces (§§11.13–11.14, SIG-ONTO-034)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ONTO-034 (Policy is identity-only with its §11.13 predicate surface: policy_type; polymorphic repeatable `applies_to`; adopting_body; enforcement_mechanism) | `ontology/schema/entities.yaml` `Policy`; `ontology/schema/common.yaml` `PolicyType` / `EnforcementMechanism` | `tests/ontology/test_schema_structure.py::test_policy_predicate_surface`, `::test_every_section_11_entity_is_a_class` |
+| §11.14 `LegalInstrument` [NEW] (instrument_type, enacting_body, jurisdiction, citation, effective/sunset dates, `constrains_*` / `requires_authorization_of` edges) | `ontology/schema/entities.yaml` `LegalInstrument`; `ontology/schema/common.yaml` `LegalInstrumentType` | `tests/ontology/test_schema_structure.py::test_legal_instrument_predicate_surface`, `::test_new_entities_are_present` |
+
+## Policy/configuration divergence is a rendered finding, never collapsed (§29.6, SIG-RECON-044)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-RECON-044 (divergence is a first-class finding with both sides' evidence; never editorially collapsed; the canonical immigration-hotlist case is expressible/renderable) | `reconcile.policy_config.reconcile_policy_configuration`, `PolicyConfigResult` (`collapse` raises); `reconcile.model.POLICY_CONFIGURATION_DIVERGENCE` | `tests/reconcile/test_policy_config.py::test_canonical_immigration_divergence_is_a_first_class_finding`, `::test_divergence_must_not_be_collapsed`, `::test_required_but_disabled_is_a_finding` |
+| SIG-ONTO-034 (Policy and ConfigurationState are never merged — distinct classes with disjoint predicate surfaces; distinct types at the resolution layer) | `ontology/schema/entities.yaml` `Policy` / `ConfigurationState` (disjoint slots); `reconcile.policy_config.PolicyStatement` / `ConfigurationState` (distinct types; both sides retained) | `tests/ontology/test_schema_structure.py::test_policy_and_configuration_state_are_never_merged`, `tests/reconcile/test_policy_config.py::test_policy_and_configuration_are_distinct_and_never_merged` |
+
+## A curated source index held as an index, never normalized into claims (§10.9, SIG-EPIS-030)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-EPIS-030 / OL-2E-AL-02 (SIG can hold a curated source index *as an index* without normalizing its entries into claims — the general form the P13.1 `accountability` connector's Abuse Library handling relies on) | `connectors.curated_index.CuratedSourceIndex` / `CuratedIndexEntry` (`index_records` are `index_only`; `as_claims` raises `IndexNormalizationRefused`); `connectors.accountability.AccountabilityConnector._normalize_abuse_entry` (builds a `CuratedIndexEntry`) | `tests/connectors/test_curated_index.py::test_a_curated_index_retains_its_entries_as_an_index`, `::test_index_records_are_index_only_never_claim_rows`, `::test_normalizing_a_curated_index_into_claims_is_refused`, `::test_the_accountability_connector_relies_on_the_general_capability` |

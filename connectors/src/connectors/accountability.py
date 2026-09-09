@@ -67,6 +67,7 @@ from typing import Any
 from uuid import uuid4
 
 from ._data import load_table
+from .curated_index import CuratedIndexEntry
 from .stages import CaptureRef, Connector, FetchResult, RunContext, register
 
 _DETECTOR_VERSION = "connectors.accountability/1"
@@ -890,22 +891,27 @@ class AccountabilityConnector(Connector):
     def _normalize_abuse_entry(self, ctx: RunContext, raw: Mapping[str, Any]) -> dict[str, Any]:
         """An Abuse Library entry as an advocacy-analysis source link, NOT a fact (OL-2E-AL-02).
 
-        The Abuse Library is a curated source INDEX ingested as an index without
-        normalizing its entries into facts (§10.9 consumed here, not built): the
-        entry becomes an advocacy-analysis evidence link keyed to its incident.
+        The Abuse Library is a curated source INDEX held as an index without
+        normalizing its entries into facts (§10.9, SIG-EPIS-030): the entry is a
+        :class:`~connectors.curated_index.CuratedIndexEntry` (the general form of
+        this behaviour), surfaced as an advocacy-analysis ``index_only`` evidence
+        link keyed to its incident — never an event claim.
         """
         incident = str(raw.get("incident") or raw.get("id") or "")
         ref = str(raw.get("url") or raw.get("source") or raw.get("citation") or incident)
-        link = EvidenceLink(source_ref=ref, source_class="advocacy_analysis")
+        entry = CuratedIndexEntry(
+            source_ref=ref, source_class="advocacy_analysis", indexes=incident
+        )
         return _stamp(
             {
                 "record_kind": "evidence_link",
-                "subject_id": f"accountability:{ctx.source.id}:{incident}",
+                "subject_id": f"accountability:{ctx.source.id}:{entry.indexes}",
                 "predicate_id": assert_predicate_allowed("event_source"),
-                "value": link.source_ref,
-                "source_class": link.source_class,
-                "raw_value": link.source_ref,
-                "index_only": True,  # OL-2E-AL-02: an index entry, never normalized to a fact.
+                "value": entry.source_ref,
+                "source_class": entry.source_class,
+                "raw_value": entry.source_ref,
+                # SIG-EPIS-030 / OL-2E-AL-02: an index entry, never normalized to a fact.
+                "index_only": True,
             },
             source_id=ctx.source.id,
         )

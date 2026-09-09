@@ -169,6 +169,64 @@ def test_accountability_event_records_epistemic_status_and_source_class(sv: obje
     assert slots["source_classes"].multivalued
 
 
+def test_policy_predicate_surface(sv: object) -> None:
+    # §11.13 / SIG-ONTO-034: Policy carries its identity-only predicate surface —
+    # a policy type, a polymorphic repeatable applies_to, an adopting body, and an
+    # enforcement mechanism.
+    slots = {s.name: s for s in sv.class_induced_slots("Policy")}  # type: ignore[attr-defined]
+    assert {
+        "policy_type",
+        "applies_to",
+        "adopting_body",
+        "enforcement_mechanism",
+    } <= set(slots)
+    # applies_to is polymorphic (Organization / Deployment / Product) and repeatable.
+    assert slots["applies_to"].multivalued
+    assert slots["policy_type"].range == "PolicyType"
+    assert slots["enforcement_mechanism"].range == "EnforcementMechanism"
+
+
+def test_legal_instrument_predicate_surface(sv: object) -> None:
+    # §11.14 [NEW]: a modelled law/regulation with an instrument type, an enacting
+    # body, a jurisdiction, a citation, effective/sunset dates, and the constrains_*
+    # / requires_authorization_of edges (CCOPS-style approval requirements).
+    slots = {s.name: s for s in sv.class_induced_slots("LegalInstrument")}  # type: ignore[attr-defined]
+    assert {
+        "instrument_type",
+        "enacting_body",
+        "jurisdiction",
+        "citation",
+        "effective_from",
+        "effective_to",
+        "sunset_date",
+        "constrains_technology",
+        "constrains_capability",
+        "requires_authorization_of",
+    } <= set(slots)
+    assert slots["instrument_type"].range == "LegalInstrumentType"
+    assert slots["constrains_technology"].multivalued
+    assert slots["constrains_capability"].multivalued
+    assert slots["requires_authorization_of"].multivalued
+
+
+def test_policy_and_configuration_state_are_never_merged(sv: object) -> None:
+    # SIG-ONTO-034 (§11.13, P10): Policy MUST NOT be merged with ConfigurationState —
+    # their disagreement is a first-class finding (§29.6), not one collapsed object.
+    classes = set(sv.all_classes())  # type: ignore[attr-defined]
+    assert {"Policy", "ConfigurationState"} <= classes
+    # Two distinct classes; neither is a subtype of the other.
+    assert sv.get_class("Policy").is_a != "ConfigurationState"  # type: ignore[attr-defined]
+    assert sv.get_class("ConfigurationState").is_a != "Policy"  # type: ignore[attr-defined]
+    # Their predicate surfaces are disjoint apart from the universal `id`: no slot
+    # belongs to both, so the two objects cannot be silently folded into one.
+    policy_slots = {s.name for s in sv.class_induced_slots("Policy")} - {"id"}  # type: ignore[attr-defined]
+    config_slots = {s.name for s in sv.class_induced_slots("ConfigurationState")} - {"id"}  # type: ignore[attr-defined]
+    assert not (policy_slots & config_slots), policy_slots & config_slots
+    # The distinguishing predicates live on exactly one side.
+    assert "policy_type" in policy_slots and "policy_type" not in config_slots
+    assert "retention_days" in config_slots and "retention_days" not in policy_slots
+
+
 def test_no_plate_trip_or_per_person_slot_exists(sv: object) -> None:
     # §0.7 Part VIII / N1 / N4 / SIG-ONTO-037: no plate/trip/per-person column anywhere.
     forbidden = {"plate", "trip", "sighting"}
