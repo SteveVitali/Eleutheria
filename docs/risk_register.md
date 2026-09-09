@@ -541,3 +541,34 @@ and — the sharpest — a population total published from data that cannot supp
 | id | Requirement | Why not fully automatable now | Compensating control |
 |---|---|---|---|
 | RISK-P9-08 | SIG-TIME-012 "distinguishable in the **UI**" | The UI (`web/`, TypeScript) is deferred to Phase 15; there is no browser surface to drive here | The **API-contract** half is deterministic and tested (distinct `absence_code`/`label` per kind in `CoverageRecord.public_view`); the UI rendering is a tracked P15.5 deliverable that consumes these tokens. |
+
+## Phase 10 — Research-task generation (P10.1 — the task-coordination engine)
+
+Per §53 / SIG-ENG-031, the phase's risk-register entries. P10.1 owns the detector-as-data
+contract, the lifecycle/disposition vocabulary, geographic queues, anti-abuse, and the
+SIG-owned local-group registry (ADR-039). The concrete catalog is P10.2; the
+records-request path is P10.3.
+
+### Design risks retired by executable checks (SIG-METRIC / SIG-TASK)
+
+| id | Risk | Compensating control |
+|---|---|---|
+| RISK-P10-01 | **"Research this" tasks** — a task type with no testable closing condition can never be decided done, so it can only leave the queue on success and the backlog only grows (SIG-TASK-002, M-17). | `tasks.spec` models `closing_condition` as a `Callable[[Facts], bool]`, and `TaskTypeRegistry.register` refuses a type whose condition is `None` (`UntestableClosingConditionError`). Proven by `tests/tasks/test_spec.py::test_untestable_closing_condition_cannot_register`. |
+| RISK-P10-02 | **Stale tasks linger** — evidence arrives by another route but the task stays in the queue, wasting mapper attention (SIG-TASK-006). | The same callable detector is re-evaluated by `TaskPool.sweep_invalidations`; a task whose detector no longer fires is silently invalidated. Proven by `tests/tasks/test_lifecycle.py::test_auto_invalidate_when_detector_stops_firing`. |
+| RISK-P10-03 | **The queue can only grow** — "searched, found nothing" is unrecordable, so a negative result becomes nothing instead of data (SIG-TASK-009, M-17). | `resolved_no_evidence_exists` is reachable **only** through `tasks.dispositions.resolve_no_evidence_exists`, which builds a `searched_not_found` `CoverageRecord` (reusing P09.1, inheriting the `sources_searched`-required invariant) before closing the task; `ResearchTask.close` refuses the disposition directly. Proven by `tests/tasks/test_dispositions.py::test_resolved_no_evidence_exists_writes_a_coverage_record`, `::test_no_evidence_exists_is_unreachable_through_plain_close`. |
+| RISK-P10-04 | **Geographic claiming hardens into gatekeeping** — a claim becomes de-facto exclusivity and defeats the federation principle (SIG-TASK-010/011). | `any_contributor_may_work(task)` takes no contributor and no claim (it is `task.is_open`), so no code path lets a claim exclude anyone; claims expire (`GeographicClaim.is_active`) and only affect ordering, not membership. Proven by `tests/tasks/test_geographic.py::test_a_claim_never_grants_exclusivity`, `::test_claims_expire_without_renewal`. |
+| RISK-P10-05 | **Volume gamification** — a leaderboard ranking contributors by volume produces low-quality submissions at scale (SIG-TASK-012). | `volume_leaderboard` is an executable refusal (always raises `ProhibitedLeaderboardError`); `recognize` derives recognition only from *verified* contributions with no score/rank field. Proven by `tests/tasks/test_recognition.py::test_volume_leaderboard_is_an_executable_refusal`, `::test_recognition_ignores_unverified_volume`. |
+| RISK-P10-06 | **One badly-modelled entity floods the queue** (SIG-TASK-013). | `TaskPool.generate` enforces `(task_type, subject)` duplicate suppression and a per-subject `RateLimiter`; deduplicated generation does not consume budget. Proven by `tests/tasks/test_lifecycle.py::test_pool_refuses_to_flood_one_subject_with_task_types`, `::test_duplicate_suppression_by_task_type_and_subject`. |
+
+### Deviations recorded as ADRs (SIG-ENG-031)
+
+| ADR | Deviation |
+|---|---|
+| ADR-039 | The task engine lives in `tasks/` as **pure-Python** value objects aligned to `research_task` (`db/deploy/graph_annotations.sql`), **not** persisted to Postgres and **not** served/claimed over HTTP here — persistence and the contributor API/UI are downstream, continuing the ADR-031/036/037/038 precedent. `detector`/`closing_condition` are modelled as **callables** (not free text) so testability is mechanical; `resolved_no_evidence_exists` is routed through a bridge that writes a `CoverageRecord` first; and the anti-abuse MUSTs are executable (a raising `volume_leaderboard`, a per-subject `RateLimiter`). `tasks` gains a `sig-inference` dependency (one-directional). |
+
+### Scaffolded / bounded requirements (SIG-ENG-005)
+
+| id | Requirement | Why not fully automatable now | Compensating control |
+|---|---|---|---|
+| RISK-P10-07 | The concrete detector catalog (§33.2) and the `Facts` shape its detectors read | The 34 detectors and their real graph-query surface are **P10.2**; this ticket owns the DSL they register against | The DSL is exercised with representative in-memory `Facts` fixtures; P10.2 pins the query surface to the real graph. Registration/lifecycle/dedup are all tested against the engine now. |
+| RISK-P10-08 | Persistence of tasks, claims, and local groups (no `local_group`/claim DDL exists in Appendix C) | Live Postgres persistence and the claiming API are downstream; Appendix C names no `local_group` table | Fields track the `research_task` DDL; SIG-TASK-014's ownership guarantee is met by a self-contained in-memory registry with no external dependency (F1.9). Adding a schema is an additive downstream change (ADR-039 revisit trigger). |

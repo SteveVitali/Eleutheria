@@ -985,3 +985,57 @@ API envelope (P14.1) and the methodology/coverage web pages (P15.5) consume thes
 | SIG-METRIC-008b (the one legitimate exception: records-derived survey recall — pre-registered, window < half-life, labelled method-recall, never extrapolated) | `inference.completeness.RecordsDerivedRecall` | `tests/inference/test_completeness.py::test_records_derived_recall_measures_the_survey_not_the_population`, `::test_records_derived_recall_must_be_pre_registered`, `::test_records_derived_recall_window_must_beat_the_half_life` |
 | SIG-METRIC-009 (publish counted quantities with named denominators / bounds / ratios / measured recall — never a total) | `inference.completeness.CompletenessStatement`, `CompletenessMethod`, `assert_no_population_total` | `tests/inference/test_completeness.py::test_completeness_statement_with_a_named_denominator_is_publishable`, `::test_a_bare_number_is_not_a_publishable_completeness_figure` |
 | SIG-METRIC-010 (no completeness percentage that implies it knows the denominator of reality) | `inference.completeness.CompletenessStatement.__post_init__` (rejects reality/total denominators) | `tests/inference/test_completeness.py::test_completeness_statement_rejects_a_denominator_of_reality` |
+
+# P10.1 — The research-task engine (§33.1, §33.3–33.7)
+
+The task-coordination **engine** (ADR-039): tasks as data with a testable closing
+condition, the §33.3 lifecycle with auto-invalidation, the full disposition
+vocabulary including "searched, found nothing" wired to a `CoverageRecord`,
+non-exclusive expiring geographic queues, the anti-abuse rules, and the SIG-owned
+local-group registry. Modelled as pure-Python value objects in `tasks/`, aligned with
+`db/deploy/graph_annotations.sql`'s `research_task` row and reusing
+`inference.coverage.CoverageRecord` (P09.1) for the disposition→data bridge rather than
+re-encoding the §32.1 shape. The concrete detector *catalog* (§33.2) is P10.2; the
+records-request path that exercises `resolved_no_evidence_exists` end-to-end is P10.3.
+
+## The detector specification language (§33.1)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-TASK-001 (every task type declared as data with all eight fields: `task_type`, `detector`, `priority_fn`, `closing_condition`, `assignee_class`, `effort_estimate`, `dispositions[]`, `geographic_scope`) | `tasks.spec.TaskType`, `tasks.spec.Detector`, `tasks.vocabulary` (`AssigneeClass`, `Disposition`, `EffortEstimate`), `tasks.spec.GeographicScope` | `tests/tasks/test_spec.py::test_task_type_declares_all_eight_fields`, `::test_detector_and_priority_are_evaluable` |
+| SIG-TASK-002 (a task type with **no testable `closing_condition`** MUST NOT register) | `tasks.spec.TaskType.has_testable_closing_condition`, `tasks.spec.TaskTypeRegistry.register` (raises `UntestableClosingConditionError`) | `tests/tasks/test_spec.py::test_untestable_closing_condition_cannot_register`, `::test_a_testable_closing_condition_registers_and_is_evaluable`, `::test_duplicate_slug_is_refused` |
+
+## Lifecycle, auto-invalidation, dedup, claim timeout (§33.3)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-TASK-005 (`generated→triaged→claimed→in_progress→submitted→verified→closed` + `reopened`/`invalidated`) | `tasks.vocabulary.TaskStatus`, `is_legal_transition`, `tasks.lifecycle.ResearchTask` transition helpers | `tests/tasks/test_lifecycle.py::test_happy_path_traversal`, `::test_illegal_transition_is_refused` |
+| SIG-TASK-006 (tasks **auto-invalidate** when their detector stops firing — evidence by another route silently closes them) | `tasks.lifecycle.TaskPool.sweep_invalidations`, `ResearchTask.detector_still_fires`/`invalidate` | `tests/tasks/test_lifecycle.py::test_auto_invalidate_when_detector_stops_firing`, `::test_a_task_whose_detector_still_fires_is_not_swept`, `::test_a_closed_task_is_not_reinvalidated` |
+| SIG-TASK-007 (duplicate suppression by `(task_type, subject)`; claim timeout returns abandoned claims to the pool) | `tasks.lifecycle.TaskPool.generate` (dedup), `TaskPool.reclaim_expired`, `ResearchTask.claim_is_expired`/`release` | `tests/tasks/test_lifecycle.py::test_duplicate_suppression_by_task_type_and_subject`, `::test_different_subjects_are_distinct_tasks`, `::test_expired_claim_returns_to_the_pool` |
+
+## Dispositions — the queue must be able to shrink (§33.4)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-TASK-008 (disposition vocabulary richer than "done": the eight §33.4 outcomes) | `tasks.vocabulary.Disposition`; `tasks.dispositions` (`RESOLVED_DISPOSITIONS`, `BLOCKED_DISPOSITIONS`) | `tests/tasks/test_dispositions.py::test_disposition_vocabulary_is_richer_than_done` |
+| SIG-TASK-009 (`resolved_no_evidence_exists` writes a `CoverageRecord` with `absence_kind=searched_not_found` + sources; the only path to that disposition) | `tasks.dispositions.resolve_no_evidence_exists` (reuses `inference.coverage.CoverageRecord`); `ResearchTask.close` refuses the disposition directly | `tests/tasks/test_dispositions.py::test_resolved_no_evidence_exists_writes_a_coverage_record`, `::test_no_evidence_without_sources_is_refused_before_the_task_closes`, `::test_no_evidence_exists_is_unreachable_through_plain_close` |
+
+## Geographic queues (§33.5)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-TASK-010 (a local group MAY claim a jurisdiction — visibility, notification, priority; **no exclusivity**) | `tasks.geographic.GeographicQueue.claim`/`has_priority`/`visible_jurisdictions`/`order_for_group` | `tests/tasks/test_geographic.py::test_claim_grants_priority_and_visibility`, `::test_claim_priority_orders_but_does_not_filter` |
+| SIG-TASK-011 (claims **expire** without renewal; **any contributor** may work **any open task**) | `tasks.geographic.GeographicClaim.is_active`, `GeographicQueue.active_claims`, `tasks.geographic.any_contributor_may_work` | `tests/tasks/test_geographic.py::test_claims_expire_without_renewal`, `::test_a_claim_never_grants_exclusivity`, `::test_expired_claim_stops_boosting_order` |
+
+## Anti-abuse (§33.6)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-TASK-012 (no volume leaderboards; recognition qualitative and tied to verified contributions) | `tasks.recognition.recognize`, `Recognition` (no score/rank field); `volume_leaderboard` (always raises `ProhibitedLeaderboardError`) | `tests/tasks/test_recognition.py::test_recognition_ignores_unverified_volume`, `::test_recognition_is_qualitative_not_a_count`, `::test_volume_leaderboard_is_an_executable_refusal` |
+| SIG-TASK-013 (task generation rate-limited per subject so one badly-modelled entity cannot flood the queue) | `tasks.lifecycle.RateLimiter`, `TaskPool.generate` (per-subject budget) | `tests/tasks/test_lifecycle.py::test_rate_limiter_caps_generation_per_subject`, `::test_rate_limiter_is_a_rate_not_a_ban`, `::test_pool_refuses_to_flood_one_subject_with_task_types` |
+
+## The SIG-owned local-group registry (§33.7)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-TASK-014 (SIG's own registry — name, jurisdiction, URL, contact, activity status, claimed queues — not dependent on an external directory) | `tasks.groups.LocalGroupRegistry`, `LocalGroup`, `ActivityStatus` | `tests/tasks/test_groups.py::test_registry_carries_every_sig_task_014_field`, `::test_registry_is_self_contained_no_external_dependency`, `::test_activity_status_update_is_immutable_per_row`, `::test_recording_a_claim_is_additive_and_idempotent` |
