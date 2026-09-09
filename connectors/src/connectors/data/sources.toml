@@ -1572,3 +1572,44 @@ custody_posture = "LINK"
 compact_status = "public_terms_only"
 robots_policy = "honor"
 notes = "OKC daily newspaper (R4). LINK-posture candidate: Gannett/USA TODAY Network copyright — link out, never re-host content. Rights UNDETERMINED pending review (docs/slice/P06.1_hardness_precondition.md, SIG-LIC-004). Packet docs/build/rights/oklahoman.md."
+
+# --- P21.9 Stage-5 pathway connector sources (§46, HG-03 gate pending) --------
+# Three LINK-posture sources, one per Phase-17 pathway family, each drawing its
+# fixtures from public procurement/policy/federation/deployment documents already
+# cited in the research cache (per-fixture source URLs in each fixture directory's
+# SOURCES.md). Rights UNDETERMINED / ingestion_permitted=false until a rights packet
+# + operator flip (HG-03/HG-04 pending — P21.9 ships over committed fixtures only).
+# A `run --mode live` against any of these REFUSES at the loader gate (exit 3).
+
+[sources.pathways_rtcc_federation]
+name = "Municipal RTCC / private-camera federation disclosures (Stage-5 pathway)"
+source_kind = "government_portal"
+homepage_url = "https://www.eff.org/pages/atlas-surveillance"
+default_tier = "R3"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "pathways connector over committed fixtures (tests/connectors/fixtures/pathways)"
+notes = "Stage-5 P17.1 federation/RTCC pathway (private-camera registries, RTCC integration hubs, data-broker chain). Fixtures excerpt public disclosures; per-fixture URLs in SOURCES.md. Rights UNDETERMINED, ingestion_permitted=false pending review (HG-03, SIG-LIC-004). Packet docs/build/rights/pathways_rtcc_federation.md."
+
+[sources.pathways_fr_css_forensics]
+name = "FR / cell-site-simulator / mobile-forensics procurement & policy (Stage-5 pathway)"
+source_kind = "government_portal"
+homepage_url = "https://www.eff.org/pages/atlas-surveillance"
+default_tier = "R3"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "pathways connector over committed fixtures (tests/connectors/fixtures/pathways)"
+notes = "Stage-5 P17.2 FR/CSS/forensics pathway (facial recognition, cell-site simulators, mobile-device forensics, federal authorizations). Fixtures excerpt public procurement/policy/court documents; per-fixture URLs in SOURCES.md. Rights UNDETERMINED, ingestion_permitted=false pending review (HG-03, SIG-LIC-004). Packet docs/build/rights/pathways_fr_css_forensics.md."
+
+[sources.pathways_acoustic_drone_location]
+name = "Acoustic / drone / commercial-location procurement & policy (Stage-5 pathway)"
+source_kind = "government_portal"
+homepage_url = "https://www.eff.org/pages/atlas-surveillance"
+default_tier = "R3"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "pathways connector over committed fixtures (tests/connectors/fixtures/pathways)"
+notes = "Stage-5 P17.3 acoustic/drone/location pathway (gunshot detection, drones/UAS, commercial location-data subscriptions). Fixtures excerpt public procurement/policy/deployment documents; per-fixture URLs in SOURCES.md. Rights UNDETERMINED, ingestion_permitted=false pending review (HG-03, SIG-LIC-004). Packet docs/build/rights/pathways_acoustic_drone_location.md."
