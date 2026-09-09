@@ -66,7 +66,7 @@ from real usage without retaining who contributed or when.
 ## Results
 
 **Status: not yet run — gate pending HG-10** (see
-[`docs/build/USABILITY_STUDY.md`](../build/USABILITY_STUDY.md), the authoritative
+[`docs/build/reports/USABILITY_STUDY.md`](../build/reports/USABILITY_STUDY.md), the authoritative
 record). The moderated study with ≥5 real ontology-naïve participants has **not**
 been conducted: scheduling naïve participants is an agentic act requiring humans
 (HG-10). The protocol, the machine-checked ≤10-minute gate, and the aggregate-only

@@ -1,0 +1,6 @@
+# Agent-only re-includes (does NOT affect git; these stay uncommitted).
+# Make the derived ticket docs and the agent scratch/ledger dir readable and
+# writable by the file tools, which otherwise refuse anything matched by
+# .gitignore. git still ignores them via .gitignore, so they are never committed.
+!.agents/scratch/
+!.agents/scratch/**

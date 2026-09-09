@@ -100,3 +100,36 @@ None. Cells that could not be established from the ledger were filled from the P
 
 - Three read-only subagents extracted the 44 ledgers with a fixed schema; their output is summarised here and expanded in `LEDGER_DEFERRALS.md`. Spot-checks by hand: P01.1 (the subagent had pasted P02.3's out-of-scope lines under P01.1 — corrected: the P01.1 ledger contains no out-of-scope/live/deviation statements; L28–32 and L66–69 are vocabulary/generation notes), P04.1 L112–117, P14.1 L49–52/L95–100, P06.1 L38, P07.2 L48, P07.3 L16 — all as reported.
 - The P00.4 "ADR-048" attribution in the subagent output is a mis-read (ADR-048 is P14.2's, which *names* P00.4 as gate owner); P00.4's ADR is ADR-021 per its `**Phase:**` field.
+
+## A.7 — Post-build chain + capstone (rows 47–66; build-memory v2 columns, P22.3)
+
+Appended by **P22.3** (build-memory v2 migration) from the `docs/build/LEDGER.md` PHASE LOG "done"
+entries (ground truth) + `gh pr view 47..68`. Columns per BM-INDEX-01: seq · ticket · kind · branch · PR ·
+base · landed · ADRs · deferrals opened→closed · live verification (run/fixture-only/n-a/gate-pending) ·
+evidence. Inserts (P20.4 CI-fix, P22.0 plan-extension) and the round-1 CAPSTONE are recorded as rows.
+Every `evidence` path is a committed file under `docs/build/runs/` or `docs/build/pr/`.
+
+|Seq|Ticket|Kind|Branch|PR|Base|Landed|ADRs|Deferrals opened→closed|Live verification|Evidence|
+|---|---|---|---|---|---|---|---|---|---|---|
+| 47 | P19.1 | ticket | `devin/p19-1-build-memory-and-hygiene` | #47 | `devin/p18-2-france-belgium` | 2026-09-08 | ADR-058 | — | n-a | `pr/P19.1.md` |
+| 48 | P19.2 | capstone | `devin/p19-2-capstone-gap-analysis` | #48 | `devin/p19-1-build-memory-and-hygiene` | 2026-09-08 | — | — | n-a | `runs/P19.2.md` |
+| 49 | P19.3 | capstone | `devin/p19-3-capstone-composed-verification` | #49 | `devin/p19-2-capstone-gap-analysis` | 2026-09-08 | — | — | run | `runs/P19.3.md` |
+| 50 | P19.4 | capstone | `devin/p19-4-capstone-spine-wiring` | #50 | `devin/p19-3-capstone-composed-verification` | 2026-09-08 | ADR-059 | — (LD-F04 split → P19.5) | run | `pr/P19.4.md` |
+| 51 | P19.5 | capstone | `devin/p19-5-capstone-gap-closure` | #51 | `devin/p19-4-capstone-spine-wiring` | 2026-09-08 | ADR-060, ADR-061 | — | run | `runs/P19.5.md` |
+| 52 | P20.1 | reconcile | `devin/p20-1-backlog-and-operational-readiness` | #52 | `devin/p19-5-capstone-gap-closure` | 2026-09-08 | — | — → BACKLOG.csv seeded | n-a | `runs/P20.1.md` |
+| 53 | P20.2 | reconcile | `devin/p20-2-spec-reconciliation` | #53 | `devin/p20-1-backlog-and-operational-readiness` | 2026-09-08 | ADR-062 | — | n-a | `pr/P20.2.md` |
+| 54 | P20.3 | reconcile | `devin/p20-3-integration-release` | #54 | `devin/p20-2-spec-reconciliation` | 2026-09-08 | — | — | run | `runs/P20.3.md` |
+| 54.5 | P20.4 | ticket (insert) | `devin/p20-4-fix-ci-e2e-webbuild` | #55 | `devin/p20-3-integration-release` | 2026-09-08 | — | — (CI-RED-01 closed) | fixture-only | `runs/P20.4.md` |
+| 55 | P21.1 | ticket | `devin/p21-1-rights-review-and-registry-completion` | #56 | `devin/p20-4-fix-ci-e2e-webbuild` | 2026-09-09 | ADR-063 | D-P21.1-1, D-P21.1-2 → BL-032/033 closed | fixture-only | `runs/P21.1.md` |
+| 55.5 | P22.0 | insert (plan-extension) | `devin/p22-0-plan-extension` | #57 | `devin/p21-1-rights-review-and-registry-completion` | 2026-09-09 | — | — | n-a | `pr/P22.0.md` |
+| 56 | P21.2 | ticket | `devin/p21-2-persist-annotation-layer` | #58 | `devin/p22-0-plan-extension` | 2026-09-09 | — | — → BL-004/005/027 closed | run | `runs/P21.2.md` |
+| 57 | P21.3 | ticket | `devin/p21-3-live-connector-wiring` | #59 | `devin/p21-2-persist-annotation-layer` | 2026-09-09 | ADR-065 | D-P21.3-1, D-P21.3-2 | gate-pending | `runs/P21.3.md` |
+| 58 | P21.4 | ticket | `devin/p21-4-first-jurisdiction-ingest-and-publish` | #60 | `devin/p21-3-live-connector-wiring` | 2026-09-09 | ADR-066 | D-P21.4-1, D-P21.4-2, D-P21.4-3 | run (staging) | `runs/P21.4.md` |
+| 59 | P21.5 | ticket | `devin/p21-5-infra-deposit-and-tiles` | #61 | `devin/p21-4-first-jurisdiction-ingest-and-publish` | 2026-09-09 | ADR-067 | D-P21.5-1 | gate-pending | `runs/P21.5.md` |
+| 60 | P21.6 | ticket | `devin/p21-6-curation-web-ui` | #62 | `devin/p21-5-infra-deposit-and-tiles` | 2026-09-09 | ADR-068 | — | run | `pr/P21.6.md` |
+| 61 | P21.7 | ticket | `devin/p21-7-contribution-back-live` | #63 | `devin/p21-6-curation-web-ui` | 2026-09-09 | ADR-069 | D-P21.7-1, D-P21.7-2 | gate-pending | `runs/P21.7.md` |
+| 62 | P21.8 | ticket | `devin/p21-8-data-driven-and-coarse-international` | #64 | `devin/p21-7-contribution-back-live` | 2026-09-09 | ADR-070 | D-P21.8-1 | fixture-only | `runs/P21.8.md` |
+| 63 | P21.9 | ticket | `devin/p21-9-stage5-pathway-connectors` | #65 | `devin/p21-8-data-driven-and-coarse-international` | 2026-09-09 | ADR-071 | D-P21.9-1 → BL-043 closed | fixture-only | `runs/P21.9.md` |
+| 64 | P22.1 | ticket | `devin/p22-1-repo-docs-refresh` | #66 | `devin/p21-9-stage5-pathway-connectors` | 2026-09-09 | — | — | n-a | `runs/P22.1.md` |
+| 65 | P22.2 | ticket | `devin/p22-2-agent-docs-refresh` | #67 | `devin/p22-1-repo-docs-refresh` | 2026-09-09 | ADR-072 | — | n-a | `runs/P22.2.md` |
+| CAP | CAPSTONE | capstone | `devin/sig-postbuild-capstone` | #68 | `devin/p22-2-agent-docs-refresh` | 2026-09-09 | — | — (MATRIX-INT-01/APPENDIX-F-01/CHECK-BACKLOG-01 closed) | run | `pr/CAPSTONE.md` |

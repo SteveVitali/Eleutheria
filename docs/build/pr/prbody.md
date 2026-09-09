@@ -1,0 +1,50 @@
+## Summary
+
+The deterministic, explainable half of entity resolution (P03.2), built on the P03.1 identity substrate. Implements canonical §14.2/§14.4/§14.6/§14.8 as pure, versioned, tested domain logic in `resolution/`. Tiers 4–5 (Splink), the gold/holdout set, cluster-shape alerts, and auto-demotion are deliberately deferred to P05.1; LLM review rationales to P05.x.
+
+Stacked on `devin/p03-1-identity-registries`.
+
+## What changed
+
+New modules under `resolution/src/resolution/`:
+- `normalize.py` — `normalize_org_name()`: pure, deterministic, **versioned** normaliser + committed test-vector suite that runs in CI.
+- `ori.py` — ORI9 validation by pattern, the UCR↔USPS table, the civil-ORI flag.
+- `crosswalk.py` — per-class canonical-scheme registry, the Wikidata asymmetry, and the SIG↔external / ORI9→GEOID crosswalk exports behind the licence gate.
+- `address.py` — tiered address keys K1–K4 with the K1/K2-may-match vs K3/K4-blocking-only rule.
+- `slug.py` — vendor-portal slug parsing as a versioned-grammar hypothesis generator + denylist.
+- `cascade.py` — the deterministic cascade, tiers 0–3, each match carrying `match_tier` + `match_evidence`.
+- `public_id.py` — `sig:<type>:<uuidv7>` minting, dereference URL + content negotiation, and the split/merge stability registry (tombstones + `redirects_to`/`split_into`).
+- `data/*.toml` — the rulesets (normalise rules, acronym table, committed vectors, UCR↔USPS, canonical schemes, cascade exclusions, slug grammar) as **versioned data, not code**.
+
+Also: extended the `sig-resolution` CLI (`normalize`/`ori`/`scheme`/`slug`), added the `sig-policy` dependency (for the export licence gate), and updated `docs/traceability.md` + `docs/risk_register.md`.
+
+## Design decisions
+- **Rulesets are data.** Every behaviour that could drift (normalisation, acronyms, collision list, schemes, slug denylist) is a versioned TOML table; changing what auto-writes is a reviewable data diff.
+- **The cascade returns `None` below tier 3**, cleanly marking the boundary where a pair falls through to the probabilistic tiers (P05.1) — no probabilistic logic leaks into this PR.
+- **`CascadeContext` is injectable**, so the seed collision list can be swapped for the regenerated data-generated one without a code change.
+- **No schema change / no design deviation** — the physical registry tables shipped in P02; this is pure logic + data, so no ADR was required.
+
+## Verification
+- `make check` green: ruff lint + format, mypy (strict) across all 90 source files, `verify-gen` clean, **775 tests pass**.
+- 102 new tests across 7 files (`tests/resolution/test_{normalize,ori,crosswalk,address,slug,cascade,public_id}.py`).
+- Live-verified the CLI: `python -m resolution normalize LAPD` → `los angeles police department`; `ori TX22700AA` → civil flag `True`; `scheme private.hoa` → surrogate; `slug flock-test` → denied.
+
+## Spec
+Implements `docs/tickets/P03.2__deterministic-er.md` (build artifact of `docs/2_canonical_design_spec.md` §14).
+
+## Acceptance criteria → evidence
+
+| AC (SIG-IDENT) | Status | Evidence |
+|---|---|---|
+| `normalize_org_name()` vectors pass; sheriff collapse; acronyms exact-lookup only (022) | met | `test_normalize.py::test_every_committed_vector_holds`, `::test_sheriff_office_and_department_collapse_to_one_suffix`, `::test_similar_initials_are_not_fuzzy_merged` |
+| ORI by pattern not position; UCR↔USPS incl NB→NE, GM→GU (002) | met | `test_ori.py::test_validation_does_not_consult_the_state_prefix`, `::test_ucr_usps_divergences_include_the_mandated_pairs` |
+| Public ids survive a simulated split; redirects_to/split_into + tombstones; never silently reassigned (032) | met | `test_public_id.py::test_public_ids_survive_a_simulated_cluster_split`, `::test_split_never_reassigns_the_source_id`, `::test_merge_preserves_the_survivor_and_redirects_the_rest` |
+| Tiers 0–3 auto-write with match_tier + match_evidence; K3/K4 never identity evidence (020/013/025) | met | `test_cascade.py` (`_assert_auto_write` on every tier), `::test_tier3b_uses_only_k1_never_a_blocking_key`; `test_address.py::test_blocking_only_keys_are_refused_as_identity_evidence` |
+| ORI with alphabetic 9th char flagged; not auto-linked without a 2nd source (003) | met | `test_ori.py::test_alphabetic_ninth_char_is_flagged_civil`; `test_cascade.py::test_civil_ori_alone_does_not_auto_link_at_tier0`, `::test_civil_ori_with_a_second_shared_id_still_auto_links` |
+| Canonical scheme per class + Wikidata caveat (001/007) | met | `test_crosswalk.py::test_representative_classes_map_to_their_schemes`, `::test_wikidata_is_not_reliable_for_us_le_but_is_for_vendors` |
+| Crosswalk exports behind the licence gate (033/034) | met | `test_crosswalk.py::test_crosswalk_fails_closed_on_a_non_redistributable_source`, `::test_ori_geoid_crosswalk_validates_both_sides` |
+| Public id form + dereference + content negotiation (031) | met | `test_public_id.py::test_mint_produces_sig_type_uuidv7_form`, `::test_dereference_url_uses_the_id_path`, `::test_content_negotiation_covers_html_jsonld_rdf` |
+| Slug versioned grammar + denylist, hypothesis-only (015) | met | `test_slug.py::test_slug_parses_by_grammar_into_a_hypothesis`, `::test_denylisted_test_tenants_never_parse_to_a_body` |
+| Phase-gate (§51.3): CI green; new reqs tested; traceability + risk register updated | met | `make check` green; `docs/traceability.md` + `docs/risk_register.md` P03.2 sections |
+
+Generated with [Devin](https://devin.ai)

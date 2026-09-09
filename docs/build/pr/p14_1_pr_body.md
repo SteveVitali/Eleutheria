@@ -1,0 +1,59 @@
+## Summary
+
+Implements **P14.1 — the public read API** (spec: `docs/tickets/P14.1__public-api.md`, canonical §37): the hand-written, versioned wire contract every consumer (and, via the same code path, the P14.2 exports — SIG-EXPORT-003) reads SIG through. It never returns a bare value — every material fact carries its full resolution envelope — accepts and echoes both as-of axes, keeps belief-pinned requests reproducible after a correction, dereferences every id with content negotiation, exposes a `/changes` feed, enforces access tiers that never reach `restricted`/`sealed`, and mounts **no** prohibited endpoint.
+
+Stacked on `devin/p13-2-policy-legal` (the P13.2 branch), per the stacked-PR chain.
+
+The resolver (P08.1), coverage (P09.1), snapshot-diff (§29.7), coordinate sensitivity (§19.4), evidence tiers (§17.5), and licence/attribution (§42.4) engines are consumed **as-is** — the API assembles, it does not reinvent (ADR-047).
+
+## What changed
+- **`api/src/api/`** — the read-API package:
+  - `models.py` — the hand-written Pydantic wire contract (`RESOLUTION_ENVELOPE_FIELDS` is the single source of truth for the §37.1 envelope).
+  - `envelope.py` — pure adapters from `reconcile.resolve.Resolution` → envelope, coverage statement, and licence/attribution (reusing `policy.licensing`).
+  - `asof.py` — the two-axis as-of dependency (reuses `db.temporal.AsOf`), echo, and belief-pinned cache decision.
+  - `store.py` — the `ReadStore` Protocol + deterministic `InMemoryStore` with belief-time filtering (the reproducibility-after-correction mechanism).
+  - `tiers.py` / `prohibitions.py` — access tiers + tier-independent restricted/sealed gate; the fail-closed prohibited-endpoint bar + per-person entity-type guard.
+  - `dereference.py` — `/id/{type}/{uuid}` HTML/JSON-LD/RDF content negotiation (rdflib).
+  - `terms.py` — acceptable-use terms with a stated remedy.
+  - `routes.py` / `app.py` — the `/v1` resource families and the app factory (fails closed on any prohibited route).
+  - `demo.py` / `cli.py` — a seedable demo store and `sig-api serve` (uvicorn).
+- **`api/pyproject.toml`**, **`pyproject.toml`**, **`uv.lock`**, **`pylock.toml`** — add `fastapi`/`uvicorn` (runtime) and `httpx` (dev, for the TestClient) + workspace deps; a narrowly-scoped ruff B008 allowance for FastAPI's `Depends`/`Query`/`Header`.
+- **`tests/api/`** — 66 tests across the §37 acceptance criteria (envelope contract, as-of/cache, reproducibility, prohibitions, tiers, shape, dereference, changes, coverage/licence, terms, unit adapters).
+- **Docs (phase-gate):** `docs/adr/ADR-047`, `docs/traceability.md` (P14.1), `docs/risk_register.md` (Phase 14, RISK-P14-01..10), `docs/adr/README.md` index.
+
+## Design decisions (see ADR-047)
+- **Hand-written, versioned, over a `ReadStore` seam** — no in-Python DB fetch layer exists yet, so endpoints read through a Protocol (in-memory in tests, Postgres in production later), keeping "storage stays refactorable" (SIG-API-001) literally true.
+- **The value only ever leaves inside an envelope** — one adapter (`envelope.material_fact`), one required-field set; a bare value cannot be emitted.
+- **Belief-pinning = cacheability** — an explicit `as_of_belief` is a fixed, reproducible cut → `immutable`; a *defaulted* belief resolves fresh each request → `no-store`. No wall-clock race.
+- **The prohibited bar is structural + fail-closed** — asserted at app construction and in a contract test; sealed/restricted bytes are impossible because captures are served only through `evidence.tiers.public_representation`, and coordinates are reduced through `policy.sensitivity.apply_tier`.
+- **Scope guard** — `/export` is an index only (P14.2 owns bulk/export-licence/ODbL/Zenodo); GraphQL (SIG-API-010, a SHOULD) is deliberately not the only surface, i.e. not added.
+
+## Verification
+- `make lint`, `make format-check`, `make typecheck` (166 source files) — all green.
+- **1924** non-DB tests pass (incl. the 66 new `tests/api`); the DB suite (`tests/db`) passes against PG18+PostGIS unchanged.
+- **Live**: driven through a real uvicorn server (`sig-api serve`) with curl — envelope on every fact, `no-store` vs `immutable` by belief-pinning, sealed capture yields no bytes, C3 entity is jurisdiction-only, restricted entity 404s at the partner tier, person entity-type 404s, `/id` negotiates all three representations, malformed `as_of` → 400, `/changes` field event via `diff_series`, OpenAPI versioned with all families present.
+- `make verify-gen`: `ontology/generated` unchanged (no schema edits); the only `pylock.toml` delta is the intended dependency additions.
+
+## Requirement IDs
+SIG-API-001, SIG-API-002, SIG-API-003, SIG-API-004, SIG-API-005, SIG-API-006, SIG-API-007, SIG-API-008, SIG-API-009, SIG-API-011, SIG-API-012, SIG-API-013 (SIG-API-010 GraphQL is a SHOULD, deliberately not the only surface). Enforcement of Part VIII points reuses SIG-EVID-009/010 (sealed representation), SIG-PUB-004/§19.4 (coordinate tiers), SIG-LIC-004/004a (licence gate).
+
+## Acceptance criteria → evidence
+
+| Acceptance criterion | Evidence (test) |
+|---|---|
+| No endpoint returns a bare value without its resolution envelope (SIG-API-002) | `test_api_envelope_contract.py::test_a_material_fact_is_never_a_top_level_bare_value`, `::test_resolution_response_carries_the_full_envelope`, `::test_entity_facts_each_carry_the_full_envelope` |
+| Both as-of parameters accepted and echoed; never an implicit "latest" (SIG-API-005) | `test_api_as_of.py::test_omitting_both_params_echoes_explicit_defaults_not_latest`, `::test_supplied_params_are_echoed_back_verbatim`, `::test_every_read_family_accepts_and_echoes_as_of` |
+| A belief-pinned request is reproducible after a correction (SIG-API-006) | `test_api_reproducibility.py::test_belief_pinned_request_is_reproducible_after_a_correction`, `::test_now_pinned_request_sees_the_correction`, `::test_a_correction_is_a_new_claim_never_an_edit` |
+| No prohibited endpoint exists (SIG-API-012) | `test_api_prohibitions.py::test_no_mounted_route_is_a_prohibited_surface`, `::test_building_an_app_with_a_prohibited_route_fails_closed`, `::test_sealed_capture_never_returns_its_bytes`, `::test_a_person_entity_type_is_refused_by_the_generic_entity_route`, `::test_coordinates_are_reduced_to_the_sensitivity_tier` |
+| Per-response coverage statement (SIG-API-003) | `test_api_coverage_license.py::test_every_v1_read_response_carries_a_coverage_statement`, `::test_coverage_states_the_explained_gap` |
+| Collection licence statement + entity attribution (SIG-API-004) | `test_api_coverage_license.py::test_collection_response_carries_a_licence_statement`, `::test_entity_response_carries_upstream_attribution`, `::test_incompatible_compartments_yield_no_single_licence`, `::test_a_non_redistributable_source_closes_the_licence_gate` |
+| Hand-written, versioned, all §37.3 families (SIG-API-001/007) | `test_api_shape.py::test_openapi_is_generated_and_versioned`, `::test_every_section_37_3_resource_family_is_present`, `::test_response_models_are_hand_written_pydantic_not_reflected` |
+| Dereferenceable ids with content negotiation (SIG-API-008) | `test_api_dereference.py` (html/jsonld/turtle + `*/*` fallback + 404) |
+| `/changes` from the snapshot-diff layer (SIG-API-009) | `test_api_changes.py::test_changes_feed_emits_field_level_events_from_the_snapshot_diff`, `::test_changes_feed_can_be_followed_incrementally_with_since` |
+| Tiers; no tier grants restricted/sealed (SIG-API-011) | `test_api_tiers.py::test_no_tier_can_read_a_restricted_entity`, `::test_public_data_is_reachable_at_every_tier`, `::test_the_visibility_gate_is_tier_independent` |
+| Acceptable-use terms with a stated remedy (SIG-API-013) | `test_api_terms.py::test_terms_prohibit_reidentification`, `::test_terms_state_a_remedy_not_a_decorative_prohibition` |
+| Phase-gate (§51.3): CI green, tests, ADR, traceability + risk register | 1924 non-DB tests + tests/db green; ADR-047; `docs/traceability.md` P14.1; `docs/risk_register.md` RISK-P14-01..10 |
+
+Spec: `docs/tickets/P14.1__public-api.md` · canonical `docs/2_canonical_design_spec.md` §37.
+
+Generated with [Devin](https://devin.ai)

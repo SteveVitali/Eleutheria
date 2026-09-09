@@ -1,0 +1,43 @@
+{
+  "build_spec": {
+    "as_of_snapshot": "2026-06-30",
+    "as_of_belief": "2026-06-30",
+    "ruleset_version": "reconcile-ruleset/2026.2",
+    "resolver_version": "reconcile-resolver/1.4.0",
+    "dataset_slug": "sig"
+  },
+  "rights": [
+    {"source_id": "osm_overpass", "spdx": "ODbL-1.0", "attribution": "© OpenStreetMap contributors",
+     "redistributable": true, "derivative_permitted": true,
+     "terms_url": "https://www.openstreetmap.org/copyright", "retrieval_date": "2026-06-01"},
+    {"source_id": "sig", "spdx": "CC-BY-4.0", "attribution": "© The SIG project",
+     "redistributable": true, "derivative_permitted": true,
+     "terms_url": "https://sig-project.org/license", "retrieval_date": "2026-06-01"},
+    {"source_id": "sig_ontology", "spdx": "CC0-1.0", "attribution": "",
+     "redistributable": true, "derivative_permitted": true,
+     "terms_url": "https://creativecommons.org/publicdomain/zero/1.0/", "retrieval_date": "2026-06-01"}
+  ],
+  "tables": [
+    {"name": "physical_assets", "kind": "geo", "compartment": "osm_physical",
+     "rows": [
+       {"source_id": "osm_overpass", "data": {"subject_id": "asset:1", "asset_technology": "alpr",
+         "mobility": "fixed", "geometry": {"type": "Point", "coordinates": [-122.42, 37.77]}}},
+       {"source_id": "osm_overpass", "data": {"subject_id": "asset:2", "asset_technology": "cctv",
+         "mobility": "fixed", "geometry": {"type": "Point", "coordinates": [-122.27, 37.80]}}}
+     ]},
+    {"name": "operator_claims", "kind": "tabular",
+     "rows": [
+       {"source_id": "sig", "data": {"subject_id": "org:1", "predicate": "operates", "object": "asset:1"}},
+       {"source_id": "sig", "data": {"subject_id": "org:1", "predicate": "operates", "object": "asset:2"}}
+     ]},
+    {"name": "evidence_captures", "kind": "evidence",
+     "rows": [
+       {"source_id": "sig", "data": {"capture_id": "cap:1", "digest": "sha256:abcd", "source_family": "records"}}
+     ]}
+  ],
+  "crosswalk": {"name": "sig_external_crosswalk", "source_id": "sig_ontology",
+    "rows": [
+      {"sig_id": "org:1", "scheme": "ORI9", "value": "CA0380100"},
+      {"sig_id": "org:1", "scheme": "GEOID", "value": "0667000"}
+    ]}
+}

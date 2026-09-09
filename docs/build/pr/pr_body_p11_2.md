@@ -1,0 +1,41 @@
+## Summary
+
+Implements **§23.7** (P11.2) as the sixth source connector on the P04.1 framework: `audit_structural` parses the agency's **own** Flock audit CSV exports — Organization / Network / Portal-Public audits, Event Logs, and `SharedNetworks.csv` — into **structural aggregates and configured edges only**. The audit layer is where the Part VIII "no searchable database of people's movements" line bites hardest, so the load-bearing discipline is that **no per-search or per-plate row is produced anywhere** (§18.1).
+
+Stacked on P11.1 (`devin/p11-1-flock-portal`); reuses the P08.2 §29.1 count and §29.3 sharing reconcilers established there.
+
+Spec: `docs/tickets/P11.2__audit-structural.md` → canonical §23.7, §11.16, §18.1, §29.3, §29.1.
+
+## What changed
+- **`connectors/src/connectors/audit_structural.py`** — the connector: transient per-search aggregation → `UsageAggregate` rows (§11.16, one-month granularity §18.4); `assert_no_per_row_output` §18.1 schema gate; audit `Camera Count` → independent `active_device_count` claim + `reconcile_camera_counts` seam; `SharedNetworks.csv` → directional configured-access edges via `reconcile_audit_sharing`; `classify_cell` (`***` ≠ empty); the four non-interchangeable audit source types; event-log lifecycle transitions.
+- **`data/audit_structural_vocab.toml`** — versioned column aliases, the four types, `***` sentinel, reason vocabulary, sharing/camera-count columns, forbidden per-row column set.
+- **`data/sources.toml`** — new `agency_audit_export` source (records_channel, MIRROR, public_terms_only, CC0-1.0 public record — **not** the derived HIBF export, SIG-INGEST-046a).
+- **`__init__.py`** — registers the connector (SIG-INGEST-021).
+- **Docs** — ADR-043, `docs/traceability.md` (P11.2 section), `docs/risk_register.md` (RISK-P11-08..15).
+- **Tests + fixtures** — `tests/connectors/test_audit_structural.py` (26 tests) over five committed CSV fixtures.
+
+## Design decisions
+- Aggregate in `extract` so per-search rows are consumed there; only aggregates/counts/edges/transitions leave. The §18.1 bright line is enforced as a **schema property** (`assert_no_per_row_output` → `PerRowLeak`), tested against a fixture that ships Plate + Officer columns.
+- Camera Count uses the `active` count basis (per the §29.1 table); reconciled by P08.2, **never merged** — the disagreement is retained as a finding.
+- Only the **deterministic** sharing edges enter the L1 stream; the reconciler's non-deterministic asymmetry task ids stay in P08.2 (reproducibility, SIG-INGEST-003).
+- Compartment is decided per source by the licence gate (like `records`), not pinned.
+
+## Verification
+- `make check` green: ruff check + format, mypy (149 files), full `uv run pytest` (1775 tests incl. PG18/PostGIS DB tests), `verify-gen` diff clean.
+- `tests/connectors/test_audit_structural.py`: 26 passed.
+- Live-drove the connector over all five fixtures and inspected emitted rows (immigration count=2, redacted vs unspecified distinct buckets, direction preserved, camera count 42 with `***` skipped, 3 directional edges w/ `valid_from_kind='unknown'` + blank org originating none, 3 lifecycle transitions); no plate/officer value in any claim.
+
+## Acceptance criteria → evidence
+
+| AC (§) | Evidence |
+|---|---|
+| No per-search/per-plate row (§18.1) | `aggregate_search_events` + `assert_no_per_row_output`; `test_no_per_search_or_per_plate_row_is_produced`, `test_the_per_row_schema_gate_rejects_a_plate_bearing_row` |
+| Camera Count independent count claim, reconciled not merged (§23.7/§29.1) | `camera_count_claim`, `reconcile_camera_counts`→`reconcile.counts`; `test_camera_count_is_an_independent_active_device_count_claim`, `test_camera_count_is_reconciled_against_other_counts_never_merged_via_p08_2` |
+| SharedNetworks configured/directional/blanks-negative; asymmetry via P08.2 (SIG-ONTO-042/044, §29.3) | `sharing_observations`, `reconcile_audit_sharing`→`reconcile.sharing`; `test_sharednetworks_edges_are_configured_access_directional_single_snapshot`, `test_blank_sharing_cells_are_negatives_not_unknown_edges`, `test_sharing_asymmetry_is_a_finding_via_the_p08_2_reconciler`, `test_connector_streams_only_deterministic_edges_for_sharing` |
+| `***` redaction ≠ empty (SIG-INGEST-046) | `classify_cell`, `reason_category`, `redacted_cell_rows`; `test_classify_cell_distinguishes_redacted_from_empty_and_present`, `test_reason_category_keeps_redacted_distinct_from_unspecified`, `test_redacted_and_empty_reasons_produce_distinct_aggregate_buckets` |
+| Four source types non-interchangeable (§23.7) | `assert_audit_source_type` + stamped `audit_source_type`; `test_the_four_audit_source_types_are_the_closed_set`, `test_every_aggregate_records_its_source_type_and_they_are_not_unioned` |
+| Phase gate (§51.3) | `make check` green; ADR-043 + traceability + risk register updated |
+
+Requirement IDs: SIG-INGEST-035/046/046a, SIG-ONTO-042/044, SIG-STORE-025/026, SIG-RECON-011; exercises (owned/tested in P08.2) SIG-RECON-026/029, SIG-RECON-034/035/036/037.
+
+Generated with [Devin](https://devin.ai)

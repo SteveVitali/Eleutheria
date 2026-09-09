@@ -1,0 +1,4 @@
+[
+  {"unique_id":"org:1","normalized_name":"los angeles police department","name_first_token":"los","state":"CA","organization_class":"us.le.municipal_police"},
+  {"unique_id":"org:2","normalized_name":"los angeles police dept","name_first_token":"los","state":"CA","organization_class":"us.le.municipal_police"}
+]

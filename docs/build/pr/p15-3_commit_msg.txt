@@ -1,0 +1,27 @@
+P15.3: the infrastructure map + network explorer — honest-rendering rules and the static-PMTiles serving contract
+
+The two §39.3/§39.4 public surfaces on P15.1's epistemic visual language and
+zero-JS/a11y baseline. Honest-rendering rules are pure, tested logic
+(web/src/lib/map.ts, network.ts): the coverage↔point single bound control
+(SIG-UI-017), low-coverage≠low-density desaturation (SIG-UI-018), national-zoom
+binning + per-tier point honesty (SIG-UI-019/GEO-011), no-coordinate jurisdiction
+indicators with a conservation law (SIG-UI-020), ego-default sharing/network
+(SIG-UI-021/022), the structurally-required inline ER-quality disclosure on every
+centrality statistic (SIG-UI-023/IDENT-030), the three unmerged §12.2 access edge
+types (SIG-UI-024), and access-path closure with per-hop evidence + speculative
+label beyond the hop threshold (SIG-UI-025/RECON-050), mirroring
+inference.access_paths.
+
+The static-PMTiles serving contract (SIG-UI-038, SIG-GEO-012/013) lands as a
+served, tested artifact at /map/style.json — a MapLibre GL style over self-hosted
+PMTiles v3 with OSM attribution and no third-party tile CDN — without bundling the
+maplibre-gl runtime, a recorded deviation from ADR-018 that keeps the ADR-049
+zero-JS invariant and the Lighthouse budgets green. The shipped /map/ and /network/
+pages stay zero-JS with the tabular/list equivalent as the source of truth.
+
+ADR-051 records the design + deviation; traceability and the risk register carry
+the P15.3 rows. Additive: the P15.1 reference surfaces and fixtures are untouched.
+
+Generated with [Devin](https://devin.ai)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>

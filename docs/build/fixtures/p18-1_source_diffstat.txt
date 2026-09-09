@@ -1,0 +1,17 @@
+ .devinignore                                       |   8 +
+ connectors/src/connectors/coarse_international.py  | 170 ++++++++++++++
+ connectors/src/connectors/data/sources.toml        |  35 +++
+ ...47-labels-and-coarse-international-ingestion.md | 103 +++++++++
+ docs/risk_register.md                              |  33 +++
+ docs/traceability.md                               |  49 ++++
+ ontology/src/ontology/generate.py                  |  10 +-
+ ontology/src/ontology/schema/common.yaml           | 113 ++++++---
+ ontology/src/ontology/schema/entities.yaml         |  17 ++
+ policy/src/policy/cli.py                           |  29 +++
+ policy/src/policy/data/jurisdiction_adapters.toml  |  55 +++++
+ policy/src/policy/data/jurisdictions.toml          |   6 +
+ policy/src/policy/jurisdiction.py                  | 257 +++++++++++++++++++++
+ tests/connectors/test_coarse_international.py      |  91 ++++++++
+ tests/ontology/test_i18n.py                        | 171 ++++++++++++++
+ tests/unit/test_jurisdiction_adapter.py            | 148 ++++++++++++
+ 16 files changed, 1267 insertions(+), 28 deletions(-)

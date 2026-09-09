@@ -14,7 +14,7 @@ MYPY_TARGETS := $(foreach p,$(PY_PACKAGES),-p $(p))
 # Python source this repo owns: each package's src tree, plus the test suite.
 LINT_PATHS := $(foreach p,$(PY_PACKAGES),$(p)/src) tests
 
-.PHONY: sync lint format-check typecheck test test-db check lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent
+.PHONY: sync lint format-check typecheck test test-db check lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory
 
 ## Install every workspace member + the dev toolchain from the committed lockfile.
 sync:
@@ -71,7 +71,7 @@ verify-gen: gen
 ## repo-docs detector (P22.1) plus the agent-facing AGENTS.md detector. Both are
 ## vendored under scripts/docs/, structural-only, read-only, and exit non-zero on
 ## a critical issue. Run over the whole repo (`.`). Wired into CI on pull requests.
-docs-check: docs-check-repo docs-check-agent
+docs-check: docs-check-repo docs-check-agent docs-check-build-memory
 
 ## Human-facing docs freshness check (P22.1): the vendored refresh-repo-docs
 ## detector over the in-scope doc corpus (README/CONTRIBUTING/CHANGELOG/docs).
@@ -84,6 +84,13 @@ docs-check-repo:
 ## drift). Read-only; exits non-zero on a critical issue.
 docs-check-agent:
 	bash scripts/docs/check-agent-docs-freshness.sh .
+
+## Build-memory layout check (P22.3 / build-memory v2, ADR-073): the vendored
+## check-build-memory.sh validates the committed docs/build/ + docs/tickets/ +
+## docs/adr/ layout (allowlist, ticket sequence, DEFERRALS ids, ADR index<->files,
+## LEDGER key set, secret/size scans). Read-only; exits non-zero on a violation.
+docs-check-build-memory:
+	bash scripts/docs/check-build-memory.sh .
 
 ## Software Bill of Materials (SIG-ENG-011), CycloneDX, generated per release.
 ## Run ephemerally via uvx (so it need not live in the runtime lockfile), against
