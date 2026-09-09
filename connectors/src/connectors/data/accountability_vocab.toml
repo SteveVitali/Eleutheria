@@ -1,0 +1,226 @@
+# SPDX-License-Identifier: Apache-2.0
+# The versioned `accountability` connector vocabulary (§23.8, §11.17–11.18, P13.1).
+# This table is DATA, not code (SIG-ENG-001): the AccountabilityEvent /
+# LegalProceeding predicate surface, the epistemic-status / event-type / posture /
+# source-class value sets, and the crosswalk from the upstream record categories
+# are data rows reviewed on their own. Changes after P13.1 are VERSIONED
+# MIGRATIONS (§20), not edits — bump `vocab_version` and add the change, never
+# silently rewrite a row (SIG-INGEST-017).
+#
+# The epistemic_statuses / event_types / postures / source_classes value sets
+# MIRROR the frozen ontology enums (ontology/schema/common.yaml §§11.17–11.18):
+# EpistemicStatus / AccountabilityEventType / ProceedingPosture / SourceClass.
+# They are duplicated here as the connector's runtime allowlist and a test asserts
+# they stay in lock-step with the ontology (drift is a failed test).
+#
+# NOTE ON TOML ORDERING: every top-level key MUST appear ABOVE the first [table]
+# header — otherwise TOML nests it under that table. The [tables] therefore come
+# last.
+
+# The connector's own vocabulary version, stamped onto every run (§20).
+vocab_version = "2026.09.01"
+
+# The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
+# `accountability` connector may write ONLY the AccountabilityEvent (§11.17) and
+# LegalProceeding (§11.18) predicate surfaces plus the source-class-tagged
+# evidence link. Writing anything else — a Policy, a LegalInstrument, a
+# deployment, a device count, a usage row — is a schema error, the D6
+# admissibility filter enforced at ingest (§10.5). `accountability_event` and
+# `legal_proceeding` are the entity assertions themselves; the rest are their
+# §11.17–11.18 predicates. `event_epistemic_status` and `proceeding_posture` are
+# the two ids also registered in the ontology predicate registry, so the epistemic
+# status flows through the resolver (RESOLVE) unchanged (SIG-ONTO-038).
+predicate_allowlist = [
+  "accountability_event",
+  "event_type",
+  "event_epistemic_status",
+  "event_date",
+  "event_organizations",
+  "event_deployments",
+  "event_technologies",
+  "affected_party_class",
+  "event_source",
+  "legal_proceeding",
+  "proceeding_court",
+  "proceeding_docket_number",
+  "proceeding_case_name",
+  "proceeding_parties",
+  "proceeding_party_role",
+  "proceeding_filed_date",
+  "proceeding_disposition_date",
+  "proceeding_posture",
+  "proceeding_courtlistener_id",
+  "proceeding_recap_id",
+]
+
+# Predicate GENRES the accountability connector MUST NOT write (scope-creep guard,
+# spec "Out of scope"): Policy / LegalInstrument / policy-configuration divergence
+# is P13.2; deployments, procurement, device counts, usage, and public
+# API/export surfaces are other tickets. Named here so the refusal is data, not a
+# magic string — the allowlist above is authoritative; this documents the
+# out-of-scope write-set explicitly.
+forbidden_predicate_genres = [
+  "policy",
+  "legal_instrument",
+  "policy_configuration_divergence",
+  "deployment_exists",
+  "device_count",
+  "contract_value",
+  "funding_instrument",
+  "usage_aggregate",
+  "configuration_state",
+]
+
+# The AccountabilityEvent epistemic-status vocabulary (§11.17, EpistemicStatus).
+# REQUIRED on every event and preserved verbatim from the upstream where provided
+# (SIG-ONTO-038); the graph never flattens an allegation to "X happened".
+epistemic_statuses = [
+  "alleged",
+  "reported",
+  "confirmed",
+  "adjudicated",
+  "policy_action",
+  "vendor_statement",
+  "disputed",
+  "retracted",
+]
+
+# The epistemic statuses that MAY carry a factual verb on a rendered surface: only
+# a confirmed/adjudicated event is a fact. Every other status is non-factual and a
+# renderer MUST hedge it (OL-2E-AA-05); the exports render guard enforces this.
+factual_epistemic_statuses = [
+  "confirmed",
+  "adjudicated",
+]
+
+# The AccountabilityEvent event-type vocabulary (§11.17, AccountabilityEventType).
+event_types = [
+  "false_stop",
+  "wrongful_arrest",
+  "alleged_stalking_misuse",
+  "immigration_search_controversy",
+  "policy_violation",
+  "data_breach",
+  "security_finding",
+  "moratorium",
+  "contract_cancellation",
+  "public_hearing",
+  "audit_finding",
+  "regulatory_action",
+  "vendor_statement",
+  "local_regulation",
+]
+
+# The LegalProceeding posture vocabulary (§11.18, ProceedingPosture).
+postures = [
+  "filed",
+  "pending",
+  "dismissed",
+  "settled",
+  "judgment_plaintiff",
+  "judgment_defendant",
+  "on_appeal",
+  "consent_decree",
+  "class_certified",
+]
+
+# The six OL-2E-AL-03 evidence source classes (§11.17, SourceClass, SIG-ONTO-039).
+# The class is RECORDED on every evidence link so a claim resting only on advocacy
+# analysis is distinguishable from one resting on a court record.
+source_classes = [
+  "primary_record",
+  "court_record",
+  "agency_statement",
+  "vendor_statement",
+  "investigative_article",
+  "advocacy_analysis",
+]
+
+# The registry source ids the `accountability` connector runs against (§22.6 E).
+# Each is already seeded in data/sources.toml.
+[sources]
+accountability_atlas = "alpr_accountability_atlas"
+abuse_library       = "alpr_abuse_library"
+courtlistener       = "courtlistener_recap"
+
+# The five artifacts the Accountability Atlas publishes, ALL of which MUST be
+# consumed rather than only the headline CSV (§23.8, OL-2E-AA-02). The data
+# dictionary is the crosswalk authority (§20.3); the source index is what lets SIG
+# preserve the distinction between an event and the reporting about it.
+[atlas_artifacts]
+issue_record_csv = "the headline issue-record CSV — one row per accountability incident"
+source_index_csv = "the source-index CSV — the reporting behind each incident, typed per OL-2E-AL-03"
+geojson          = "the incident GeoJSON — incident locations (context, not a device layer)"
+data_dictionary  = "the data dictionary — the crosswalk authority (§20.3)"
+research_archive  = "the research archive — supporting provenance, recorded not normalized"
+
+# The crosswalk from the Accountability Atlas's own record categories onto the SIG
+# vocabulary (§23.8): the upstream categories are CROSSWALKED, never adopted
+# wholesale. Each entry carries the SIG event_type (where a clean match exists), a
+# default epistemic_status (used only where the upstream row provides none — a
+# provided upstream label is always preserved verbatim, SIG-ONTO-038), whether the
+# category spawns a LegalProceeding, a SKOS mapping relation, and a `lossy` flag —
+# exactly as the atlas connector carries its crosswalk provenance (SIG-STORE-040).
+# A row whose category is outside this crosswalk is recorded as unmapped + a
+# research task, never guessed.
+[crosswalk.local_regulation_action]
+event_type = "local_regulation"
+epistemic_default = "policy_action"
+creates_proceeding = false
+relation = "closeMatch"
+lossy = false
+
+[crosswalk.litigation]
+# Litigation documents a lawsuit ABOUT an underlying incident: it spawns a
+# LegalProceeding, and its allegations are `alleged` until a court adjudicates
+# them. No event_type is invented here (no synthetic certainty, §3.1) — the row
+# must carry its own, else it is recorded unmapped.
+epistemic_default = "alleged"
+creates_proceeding = true
+relation = "relatedMatch"
+lossy = true
+
+[crosswalk.wrongful_stop_false_alert]
+event_type = "false_stop"
+epistemic_default = "alleged"
+creates_proceeding = false
+relation = "closeMatch"
+lossy = false
+
+[crosswalk.immigration_data_sharing]
+event_type = "immigration_search_controversy"
+epistemic_default = "reported"
+creates_proceeding = false
+relation = "closeMatch"
+lossy = false
+
+[crosswalk.security_product_issue]
+event_type = "security_finding"
+epistemic_default = "reported"
+creates_proceeding = false
+relation = "broadMatch"
+lossy = true
+
+[crosswalk.stakeholder_company_context]
+event_type = "vendor_statement"
+epistemic_default = "vendor_statement"
+creates_proceeding = false
+relation = "relatedMatch"
+lossy = true
+
+# CourtListener / RECAP is a TARGETED-LOOKUP source only (§22.2, §23.8): the API
+# is queried for KNOWN dockets/opinions, never crawled (its ~5/min rate limit
+# makes a crawl both prohibited and doomed). This is a LEGAL posture — a deviation
+# is an ADR with counsel, not an engineering judgement (SIG-INGEST-037). The
+# collection endpoints are named so a bare listing target is refused.
+[courtlistener]
+api_base = "https://www.courtlistener.com/api/rest/v4"
+# The v4 collection endpoints; a target that names one with no specific id (or a
+# pagination cursor) is an enumeration and is refused.
+collections = [
+  "/dockets",
+  "/opinions",
+  "/clusters",
+  "/recap",
+  "/search",
+]

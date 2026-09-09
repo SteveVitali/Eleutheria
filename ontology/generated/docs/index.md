@@ -232,6 +232,7 @@ Name: sig
 | [sharing_partner](slots/sharing_partner.md) | Repeatable, directional |
 | [signed_date](slots/signed_date.md) |  |
 | [source](slots/source.md) | The asserting/originating node (directed — §12 |
+| [source_classes](slots/source_classes.md) | The OL-2E-AL-03 class of each entry in `sources`, index-aligned (as `parties`... |
 | [source_org](slots/source_org.md) |  |
 | [sources](slots/sources.md) | Supporting evidence artifacts/sources; every fact is evidenced (SIG-CHART-013... |
 | [start_date](slots/start_date.md) |  |
@@ -315,6 +316,7 @@ Name: sig
 | [Role](enums/Role.md) | The fourteen separately-modelled roles (§12 |
 | [Salience](enums/Salience.md) | Technology salience rating (§13 |
 | [SkosMappingRelation](enums/SkosMappingRelation.md) | SKOS mapping relations for crosswalks (§20 |
+| [SourceClass](enums/SourceClass.md) | The six evidence source classes of OL-2E-AL-03 (§11 |
 | [SourceReliability](enums/SourceReliability.md) | Reliability R of the publisher, not the claim (§10 |
 | [SuccessionKind](enums/SuccessionKind.md) | Temporal identity succession qualifier (§14 |
 | [SystemScope](enums/SystemScope.md) | DataSystem scope (§11 |

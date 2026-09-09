@@ -704,6 +704,36 @@ class ProceedingPosture(str, Enum):
     class_certified = "class_certified"
 
 
+class SourceClass(str, Enum):
+    """
+    The six evidence source classes of OL-2E-AL-03 (§11.17, SIG-ONTO-039). An accountability incident MUST be linkable to all six, with the class RECORDED on the evidence link, so a claim resting only on advocacy analysis is distinguishable from one resting on a court record. These are epistemic classes of the reporting, NOT the R1..R6 reliability tiers (§10.4).
+    """
+    primary_record = "primary_record"
+    """
+    A primary document — the underlying record itself (a contract, a filing exhibit, an incident report).
+    """
+    court_record = "court_record"
+    """
+    A court/docket record — a filing, order, or docket entry (CourtListener/RECAP).
+    """
+    agency_statement = "agency_statement"
+    """
+    A statement by the agency involved (press release, official response, testimony).
+    """
+    vendor_statement = "vendor_statement"
+    """
+    A statement by the vendor involved (product page, press response, spokesperson quote).
+    """
+    investigative_article = "investigative_article"
+    """
+    Investigative journalism reporting the incident.
+    """
+    advocacy_analysis = "advocacy_analysis"
+    """
+    Advocacy-organization analysis or a curated accountability index entry.
+    """
+
+
 class AuditSourceType(str, Enum):
     """
     Audit source type — these are NOT interchangeable (§11.16, §23.7).
@@ -1325,6 +1355,7 @@ class AccountabilityEvent(Entity):
     technologies: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['AccountabilityEvent']} })
     affected_party_class: Optional[str] = Field(default=None, description="""A class, never a named private individual (N4).""", json_schema_extra = { "linkml_meta": {'domain_of': ['AccountabilityEvent']} })
     sources: Optional[list[str]] = Field(default=None, description="""Linkable to all six source classes of OL-2E-AL-03 (SIG-ONTO-039).""", json_schema_extra = { "linkml_meta": {'domain_of': ['AccountabilityEvent', 'Edge']} })
+    source_classes: Optional[list[SourceClass]] = Field(default=None, description="""The OL-2E-AL-03 class of each entry in `sources`, index-aligned (as `parties`/`party_role` on LegalProceeding). Recording the class on the evidence link is what makes a claim resting only on advocacy analysis distinguishable from one resting on a court record (SIG-ONTO-039).""", json_schema_extra = { "linkml_meta": {'domain_of': ['AccountabilityEvent']} })
     id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
 
 

@@ -77,6 +77,17 @@ URI: [sig:class/AccountabilityEvent](https://ontology.sig-project.org/schema/cla
     
 
         
+      AccountabilityEvent : source_classes
+        
+          
+    
+        
+        
+        AccountabilityEvent --> "*" SourceClass : source_classes
+        click SourceClass href "../../enums/SourceClass/"
+    
+
+        
       AccountabilityEvent : sources
         
       AccountabilityEvent : technologies
@@ -105,6 +116,7 @@ URI: [sig:class/AccountabilityEvent](https://ontology.sig-project.org/schema/cla
 | [technologies](../slots/technologies.md) | * <br/> [TechnologyCode](../types/TechnologyCode.md) |  | direct |
 | [affected_party_class](../slots/affected_party_class.md) | 0..1 <br/> [String](../types/String.md) | A class, never a named private individual (N4) | direct |
 | [sources](../slots/sources.md) | * <br/> [Uriorcurie](../types/Uriorcurie.md) | Linkable to all six source classes of OL-2E-AL-03 (SIG-ONTO-039) | direct |
+| [source_classes](../slots/source_classes.md) | * <br/> [SourceClass](../enums/SourceClass.md) | The OL-2E-AL-03 class of each entry in `sources`, index-aligned (as `parties`... | direct |
 | [id](../slots/id.md) | 1 <br/> [Uriorcurie](../types/Uriorcurie.md) | The entity's stable minted identity (L2 identity only, §8 | [Entity](../classes/Entity.md) |
 
 
@@ -225,6 +237,18 @@ attributes:
     - Edge
     range: uriorcurie
     multivalued: true
+  source_classes:
+    name: source_classes
+    description: The OL-2E-AL-03 class of each entry in `sources`, index-aligned (as
+      `parties`/`party_role` on LegalProceeding). Recording the class on the evidence
+      link is what makes a claim resting only on advocacy analysis distinguishable
+      from one resting on a court record (SIG-ONTO-039).
+    from_schema: https://ontology.sig-project.org/schema/entities
+    rank: 1000
+    domain_of:
+    - AccountabilityEvent
+    range: SourceClass
+    multivalued: true
 
 ```
 </details>
@@ -310,6 +334,19 @@ attributes:
     - AccountabilityEvent
     - Edge
     range: uriorcurie
+    multivalued: true
+  source_classes:
+    name: source_classes
+    description: The OL-2E-AL-03 class of each entry in `sources`, index-aligned (as
+      `parties`/`party_role` on LegalProceeding). Recording the class on the evidence
+      link is what makes a claim resting only on advocacy analysis distinguishable
+      from one resting on a court record (SIG-ONTO-039).
+    from_schema: https://ontology.sig-project.org/schema/entities
+    rank: 1000
+    owner: AccountabilityEvent
+    domain_of:
+    - AccountabilityEvent
+    range: SourceClass
     multivalued: true
   id:
     name: id

@@ -417,6 +417,9 @@
 -- # Class: AccountabilityEvent_sources
 --     * Slot: AccountabilityEvent_id Description: Autocreated FK slot
 --     * Slot: sources Description: Linkable to all six source classes of OL-2E-AL-03 (SIG-ONTO-039).
+-- # Class: AccountabilityEvent_source_classes
+--     * Slot: AccountabilityEvent_id Description: Autocreated FK slot
+--     * Slot: source_classes Description: The OL-2E-AL-03 class of each entry in `sources`, index-aligned (as `parties`/`party_role` on LegalProceeding). Recording the class on the evidence link is what makes a claim resting only on advocacy analysis distinguishable from one resting on a court record (SIG-ONTO-039).
 -- # Class: LegalProceeding_parties
 --     * Slot: LegalProceeding_id Description: Autocreated FK slot
 --     * Slot: parties
@@ -773,6 +776,15 @@ CREATE TABLE "AccountabilityEvent_sources" (
 );
 CREATE INDEX "ix_AccountabilityEvent_sources_AccountabilityEvent_id" ON "AccountabilityEvent_sources" ("AccountabilityEvent_id");
 CREATE INDEX "ix_AccountabilityEvent_sources_sources" ON "AccountabilityEvent_sources" (sources);
+
+CREATE TABLE "AccountabilityEvent_source_classes" (
+	"AccountabilityEvent_id" TEXT,
+	source_classes VARCHAR(21),
+	PRIMARY KEY ("AccountabilityEvent_id", source_classes),
+	FOREIGN KEY("AccountabilityEvent_id") REFERENCES "AccountabilityEvent" (id)
+);
+CREATE INDEX "ix_AccountabilityEvent_source_classes_AccountabilityEvent_id" ON "AccountabilityEvent_source_classes" ("AccountabilityEvent_id");
+CREATE INDEX "ix_AccountabilityEvent_source_classes_source_classes" ON "AccountabilityEvent_source_classes" (source_classes);
 
 CREATE TABLE "Edge_sources" (
 	"Edge_id" TEXT,

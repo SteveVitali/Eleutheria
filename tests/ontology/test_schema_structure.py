@@ -145,6 +145,30 @@ def test_person_is_tightly_constrained(sv: object) -> None:
     assert slots["human_review_completed"].required
 
 
+def test_source_class_is_the_six_ol_2e_al_03_classes(sv: object) -> None:
+    # SIG-ONTO-039 / §11.17: an incident is linkable to all six source classes.
+    values = set(sv.get_enum("SourceClass").permissible_values)  # type: ignore[attr-defined]
+    assert values == {
+        "primary_record",
+        "court_record",
+        "agency_statement",
+        "vendor_statement",
+        "investigative_article",
+        "advocacy_analysis",
+    }
+
+
+def test_accountability_event_records_epistemic_status_and_source_class(sv: object) -> None:
+    # SIG-ONTO-038: epistemic_status REQUIRED; SIG-ONTO-039: class recorded on the link.
+    slots = {s.name: s for s in sv.class_induced_slots("AccountabilityEvent")}  # type: ignore[attr-defined]
+    assert slots["epistemic_status"].required
+    assert slots["epistemic_status"].range == "EpistemicStatus"
+    # The per-source OL-2E-AL-03 class is recorded alongside the sources.
+    assert "source_classes" in slots
+    assert slots["source_classes"].range == "SourceClass"
+    assert slots["source_classes"].multivalued
+
+
 def test_no_plate_trip_or_per_person_slot_exists(sv: object) -> None:
     # §0.7 Part VIII / N1 / N4 / SIG-ONTO-037: no plate/trip/per-person column anywhere.
     forbidden = {"plate", "trip", "sighting"}

@@ -11,6 +11,7 @@ independence, and human override that never hides the algorithmic result.
 
 from __future__ import annotations
 
+import dataclasses
 import itertools
 from datetime import date
 
@@ -642,3 +643,44 @@ def test_input_digest_changes_with_the_claim_set() -> None:
     two = _resolve("active_device_count", [a, b])
     assert one.input_digest != two.input_digest
     assert one.input_digest == _resolve("active_device_count", [a]).input_digest
+
+
+# --- epistemic_status preserved verbatim through resolution (SIG-ONTO-038, P13.1) --
+
+
+def test_event_epistemic_status_is_preserved_verbatim_through_resolution() -> None:
+    """The end-to-end half of SIG-ONTO-038: a value carried in as ``alleged`` must
+    survive ingestion -> resolution -> read UNCHANGED. The resolver never flattens
+    an allegation into a fact; ``event_epistemic_status`` resolves to exactly the
+    ingested vocabulary value, with its raw upstream value preserved on the claim."""
+    a = _claim(
+        "e1",
+        "event_epistemic_status",
+        "alleged",
+        R="R3",
+        genre="news_article",
+        observed=date(2026, 8, 1),
+    )
+    a = dataclasses.replace(a, raw_value="Alleged (pending suit)")
+    r = _resolve("event_epistemic_status", [a])
+    assert r.resolution_status == "RESOLVED"
+    # verbatim: the resolved value is exactly the ingested EpistemicStatus value.
+    assert r.value == "alleged"
+    # the raw upstream phrasing is preserved (P2), never overwritten by the typed value.
+    assert a.raw_value == "Alleged (pending suit)"
+
+
+def test_a_disputed_status_never_resolves_to_confirmed() -> None:
+    """A disputed allegation and a confirmation are a contradiction, not a silent
+    upgrade: resolving disputed-only claims yields ``disputed``, never ``confirmed``."""
+    a = _claim(
+        "d1",
+        "event_epistemic_status",
+        "disputed",
+        R="R3",
+        genre="news_article",
+        observed=date(2026, 8, 1),
+    )
+    r = _resolve("event_epistemic_status", [a])
+    assert r.value == "disputed"
+    assert r.value != "confirmed"
