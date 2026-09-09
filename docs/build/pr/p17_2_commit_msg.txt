@@ -1,0 +1,25 @@
+P17.2: facial recognition, cell-site simulators, and mobile-device forensics — populated with no schema change
+
+Continue P17.1's standing proof of §5.2: populate a further Stage-5 span over the
+frozen §11/§12/§13 schema as instance graphs in the generalization conformance
+suite (SIG-CHART-027/028). Facial recognition is a search.face.* Capability
+(SIG-ONTO-023) resolving to a reference DataSystem gallery with no locally owned
+sensor — §11.10's searches_against realised in the closed catalog as
+federates_search_to (SIG-ONTO-031). Cell-site simulators and mobile-device
+forensics are Deployments with no product, no vendor, and no physical asset — a
+capability with no roadside device (SIG-ONTO-026), via locate.handset.rf and
+extract.device.logical/physical / extract.cloud.account. None is forced into a
+camera abstraction (SIG-ONTO-026/027/031), and no Person row is minted for
+observed individuals (§11.3, §43.4). A federal authorization populates the
+Deployment's authorization_state (§13.4 track 4) and carries its native validity
+interval as EDTF on the linked LegalInstrument and the authorizes edge, proven a
+genuine EdtfInterval with distinct bounds via db.edtf — never coerced to a point.
+
+No LinkML source, generated artifact, or wire contract changed — verify-gen is
+byte-clean, so §5.2 holds and no Phase-1 defect was required; the no-schema-change
+test is the deterministic Phase-1-defect detector. Traceability and risk register
+updated (Phase 17 / P17.2); no ADR (no deviation).
+
+Generated with [Devin](https://devin.ai)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>

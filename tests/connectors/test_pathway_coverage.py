@@ -30,7 +30,7 @@ from evidence.ingest_run import IngestRun
 from connectors import pathways as pw
 
 _FIX = Path(__file__).parent / "fixtures" / "pathways"
-_REPORT = Path("docs/build/STAGE5_CONNECTORS.md")
+_REPORT = Path("docs/build/reports/STAGE5_CONNECTORS.md")
 _FAMILIES = ("rtcc_federation", "fr_css_forensics", "acoustic_drone_location")
 
 # The canonical roster of P17 conformance-suite pathways, one per fixture graph in

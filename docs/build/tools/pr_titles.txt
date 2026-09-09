@@ -1,0 +1,46 @@
+1|P00.1 — Repository skeleton, uv workspace, and CI
+2|P00.2: executable policy package and the decision record
+3|P00.3: governance, takedown, and contributor-safety policies
+4|P00.4: seed the source registry and the ingestion gate
+5|P01.1: Ontology as code — LinkML source, SKOS vocabularies, generators
+6|P02.1: The bitemporal claim spine (physical schema, append-only, RLS)
+7|P02.2: the OCFL write-once evidence store (§17)
+8|P02.3: Temporal semantics and provenance (EDTF envelope, as-of, invariants, PROV-O)
+9|P03.1: Jurisdiction and Organization identity registries
+10|P03.2: the deterministic, explainable half of entity resolution
+11|P04.1: the connector framework — the eight-stage substrate every source plugs into
+12|P04.2: the osm connector — surveillance physical assets under ODbL
+13|P04.3: the atlas connector — agency adoption, family-level deployment_exists, category-retirement-not-a-world-change
+14|P05.1: probabilistic entity resolution — Splink tiers 4-5 to review, the quality gates
+15|P05.2: curation UI and review queue — the LLM boundary
+16|P06.1: vertical slice — one jurisdiction (OKC) end-to-end
+17|P07.1: the layered document-parsing stack
+18|P07.2: the records connector and RecordsRequest (§23.5, §11.19)
+19|P07.3 — Procurement connectors, FundingInstrument, and the agenda-platform tenant registry
+20|P08.1: the reconciliation resolver — RESOLVE(), ruleset-as-data, ambiguity test, human override
+21|P08.2: the §29 reconciliation workflows layered on the resolver
+22|P08.3: Contradiction as a first-class object — materialized entity, lifecycle, byte-identical L3 rebuild
+23|P09.1: Coverage, completeness, and negative space (§32)
+24|P10.1: the research-task engine — detector-as-data, lifecycle, dispositions, geographic queues, anti-abuse, local-group registry
+25|P10.2: the §33.2 detector catalog and the §31 contradiction→task map
+26|P10.3: Records-request generation — correct-statute emit, residency routing, versioned templates, consent
+27|P11.1: the flock_portal connector — the Eyes on Flock portal layer via the aggregator API
+28|P11.2: the audit_structural connector — the Flock audit-export layer as structural aggregates only
+29|P12.1: usage-analytics boundary — DuckDB/Parquet substrate, UUID+period join, partition-as-evidence, small-cell suppression
+30|P12.2: access edges and access-path closure — the composition bound, the speculative label, and required automaticity
+31|P13.1 — Accountability events and the accountability connector
+32|P13.2: policy, legal instruments, and policy/configuration divergence — the never-merged invariant and the SIG-EPIS-030 curated-index general form
+33|P14.1: the public read API — hand-written versioned contract, resolution envelope on every fact, and the prohibited-endpoint bar
+34|P14.2: bulk exports — computed-licence compartments, reproducible releases, Zenodo deposit, and egress-friendly distribution
+35|P15.1: web shell + epistemic visual language (no-JS, archivable a11y baseline)
+36|P15.2: the production local dossier surface — print, PDF, and the §39.2 public artifact
+37|P15.3: the infrastructure map + network explorer — honest-rendering rules and the static-PMTiles serving contract
+38|P15.4 — Renewal watch, evidence recommender, and evidence viewer
+39|P15.5: research queue, corrections log, methodology/metrics, and the editorial-standards conformance gate
+40|P16.1: the contributor system — tiers, L0 entry, revert-as-new-assertion, and poisoning resistance
+41|P16.2: contribution back — no automated OSM writes, the human-mediated suggestion workflow, the changeset hashtag + §7 metric, the contribution-path licence gate, and structural upstream attribution
+42|P17.1: private-camera federation, RTCC integration, and the six-layer data-broker chain — §5.2 proof, no schema change
+43|P17.2: facial recognition, cell-site simulators, and mobile-device forensics — populated with no schema change
+44|P17.3: gunshot detection, drones, and commercial location data — populated with no schema change
+45|P18.1: the jurisdiction adapter framework — namespaced vocabularies, BCP-47 labels, jurisdiction-conditional publication, coarse international ingestion
+46|P18.2: France/Belgium (Technopolice) connectors — prefectural orders → LegalInstrument, DECP → Contract, and the OSM import study

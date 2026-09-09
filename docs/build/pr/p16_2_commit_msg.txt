@@ -1,0 +1,34 @@
+P16.2: contribution back — no automated OSM writes, the human-mediated suggestion workflow, the changeset hashtag + §7 metric, the contribution-path licence gate, and structural upstream attribution
+
+Contribution back to the ecosystem (§35) as pure, tested Python ahead of
+persistence (ADR-055), following the established tasks/policy pattern. Additive —
+no prior wire name, id, or schema change.
+
+- No direct automated OSM writes (tasks.contribution): write_to_osm exists only to
+  refuse and an AppliedEdit cannot name SIG as the applier; contribution goes
+  through a MapRoulette cooperative (cooperativeType=tags) TagSuggestion a human
+  mapper applies in their own account (SIG-CONTRIB-014/015/015a/015b).
+- The Automated Edits Code scope analysis recorded as ADR-055 (the spec's
+  Appendix-F "ADR-017"): operator attribution is in scope, the exceptions do not
+  apply, individual human review is what keeps SIG outside the Code, and a genuine
+  bulk edit needs the full proposal/decision path (SIG-CONTRIB-016/016a/016b/016c).
+- The declared changeset hashtag #sig_operator_attribution, required on every SIG
+  edit and wired to the §7 leverage metric via LeverageLedger reading accepted
+  hashtag-bearing changesets (SIG-CONTRIB-016e).
+- The published + registered Organised Editing activity page disclosing tools and
+  data sources with usage conditions and metrics-as-task-outcomes, machine-checked
+  from data/organised_editing.toml (SIG-CONTRIB-016d/016g; SIG-LIC-007a/b/c).
+- The contribution-path licence gate (policy.licensing.assert_contribution_permitted:
+  derivative + relicensable-to-ODbL, distinct from the export gate) applied before a
+  suggestion is rendered; per-project correction channels (SIG-CONTRIB-016f/018).
+- Device-observation routing re-cited (SIG-CONTRIB-004, landed P16.1), and structural
+  per-claim upstream attribution on the API /claim response (SIG-CONTRIB-020);
+  exports already name upstream per row.
+
+ADR-055; Organised Editing activity page published under docs/governance; traceability
++ risk register updated. New unit suites; full local gate green (2238 passed;
+lint/format/typecheck/pytest/verify-gen).
+
+Generated with [Devin](https://devin.ai)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>

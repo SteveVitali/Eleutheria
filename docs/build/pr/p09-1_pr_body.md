@@ -1,0 +1,37 @@
+## Summary
+Makes negative space **queryable rather than editorial** (canonical §9.5, §32). Implements the §32 coverage-metrics layer in `inference/` as pure-Python value objects aligned with `db/deploy/graph_annotations.sql`, reusing `db.absence` (the four §9.5 states) and `reconcile.weight.currency` (§28.3) rather than re-encoding either. Persistence + the HTTP read-API coverage statement are P14.1; the methodology/coverage web pages are P15.5 — this ticket owns the shapes, validation, and rendering they consume (ADR-038).
+
+Implements `docs/tickets/P09.1__coverage.md` (spec: `docs/2_canonical_design_spec.md` §9.5, §32).
+
+## What changed
+- **`inference/coverage.py`** — `CoverageRecord` (§32.1 shape); `sources_searched[]` required for `searched_not_found`; `probe_coverage_records` retains discovery-probe negatives.
+- **`inference/denominators.py`** — `PublishedAggregate` + `assert_denominated` (a bare count is a type error); `jurisdiction_coverage` (all eight §32.4 fields); `provenance_completeness` (shortfall is a defect list).
+- **`inference/freshness.py`** — freshness as §28.3 currency `C1..C4` (relative to predicate volatility, not days); the per-source freshness surface.
+- **`inference/completeness.py`** — capture–recapture and multi-list estimators that **always refuse**; `CompletenessStatement`/`assert_no_population_total` (never an implied denominator of reality); `RecordsDerivedRecall` (the one §32.5 exception, fully constrained).
+- **`db/absence.py`** — added the fourth coverage kind `not_applicable` (`render_coverage_kind`, `ABSENCE_KINDS`); widened `AbsenceRendering.state` to `Optional` (additive; no consumer reads it).
+- **Governance (phase-gate §51.3):** ADR-038; `docs/traceability.md` + `docs/risk_register.md` P09.1/Phase-9 sections; ADR index restored for 036/037/038.
+
+## Design decisions
+- Coverage metrics live in `inference/` (§47 derived metrics); no dedicated `metrics/` package is added (ADR-038).
+- The capture–recapture prohibition (§32.5) is an **executable refusal** — a test, not a code-review convention. Not with a caveat, not with a wide interval.
+- Freshness reuses the resolver currency derivation, so there is exactly one definition of "stale" in the system.
+- Pure-Python, aligned to the DDL, no live Postgres and no HTTP here (continues ADR-031/036/037).
+
+## Verification
+- `make check` (CI mirror: ruff + format + mypy + full pytest + verify-gen) — **exit 0, 1461 passed**; ontology regen + `pylock.toml` byte-clean.
+- +51 new tests across `tests/inference/` and `tests/unit/test_absence.py`.
+- Independent fresh-context design + gap-analysis review; findings closed in a gap-closure pass (strengthened the §32.5 recall exception, negative-input validation, behavioral test assertions).
+
+## Acceptance criteria → evidence
+| AC | Status | Evidence |
+|---|---|---|
+| `CoverageRecord` rejects `searched_not_found` missing `sources_searched[]` | met | `CoverageRecord.__post_init__`; `tests/inference/test_coverage.py::test_searched_not_found_requires_sources_searched` |
+| Every published aggregate carries a denominator (+not-evaluable); a bare count fails the build | met | `PublishedAggregate`, `assert_denominated`; `test_denominators.py::test_bare_count_is_not_publishable` |
+| Four absence kinds distinguishable in API (UI deferred to P15.5) | met (API) | `CoverageRecord.public_view`, `db.absence.render_coverage_kind`; `test_coverage.py::test_four_kinds_render_distinguishably_in_the_api_view`; RISK-P9-08 |
+| Freshness relative to predicate volatility, not absolute days | met | `inference.freshness` (reuses `reconcile.weight.currency`); `test_freshness.py::test_same_age_yields_different_currency_by_volatility` |
+| Completeness estimate publishes violated assumptions or is omitted; no capture–recapture / multi-list ever published | met | `completeness.capture_recapture_population`/`multi_list_log_linear_population` raise; `test_completeness.py::test_capture_recapture_is_never_published` |
+| Phase-gate §51.3: CI green, tests, ADR, traceability, risk register | met | `make check` exit 0; ADR-038; `docs/traceability.md`; `docs/risk_register.md` |
+
+Requirement IDs stamped: SIG-METRIC-001/002/002a/003/004/005/006/007/008/008a/008b/009/010, SIG-TIME-010/011/012.
+
+Generated with [Devin](https://devin.ai)

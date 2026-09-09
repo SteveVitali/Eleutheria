@@ -1,0 +1,44 @@
+## Summary
+Implements **P10.1 — the research-task engine** (`docs/tickets/P10.1__task-engine.md`), the §33 task-coordination engine: tasks as data with a testable closing condition, the lifecycle with auto-invalidation, the full disposition vocabulary (including "searched, found nothing" wired to a `CoverageRecord`), non-exclusive expiring geographic queues, the anti-abuse rules, and SIG's own local-group registry.
+
+Modelled as pure-Python value objects in `tasks/`, aligned with `graph_annotations.research_task` and reusing `inference.coverage.CoverageRecord` (P09.1) for the disposition→data bridge rather than re-encoding the §32.1 shape (**ADR-039**). Stacked on `devin/p09-1-coverage`.
+
+**Out of scope (guarded):** the concrete detector *catalog* (§33.2) is P10.2; records-request generation is P10.3; the `CoverageRecord` entity is P09.1 (consumed); contributor UI is P05.2/P15.x. None of these were implemented.
+
+## What changed
+- `tasks/src/tasks/vocabulary.py` — `AssigneeClass`, `Disposition`, `EffortEstimate`, `TaskStatus` + the §33.3 transition table.
+- `tasks/src/tasks/spec.py` — `Detector`, `TaskType` (the DSL, all 8 fields), `TaskTypeRegistry` (refuses untestable closing conditions).
+- `tasks/src/tasks/lifecycle.py` — `ResearchTask` state machine, auto-invalidation, `TaskPool` (dedup + claim timeout), `RateLimiter`.
+- `tasks/src/tasks/dispositions.py` — `resolve_no_evidence_exists` → `CoverageRecord` bridge.
+- `tasks/src/tasks/geographic.py` — `GeographicClaim`/`GeographicQueue` + `any_contributor_may_work`.
+- `tasks/src/tasks/recognition.py` — qualitative recognition; `volume_leaderboard` executable refusal.
+- `tasks/src/tasks/groups.py` — SIG-owned `LocalGroupRegistry`.
+- `tasks/pyproject.toml` — added `sig-inference` workspace dependency.
+- `tests/tasks/` — 48 tests, one file per module.
+- `docs/adr/ADR-039…`, `docs/adr/README.md`, `docs/traceability.md` (P10.1), `docs/risk_register.md` (Phase 10).
+
+## Design decisions (ADR-039)
+- `detector` and `closing_condition` are **callables** over subject `Facts`, so "testable" is mechanical and auto-invalidation is `not detector.fires(facts)`.
+- `resolved_no_evidence_exists` is reachable **only** through the bridge that writes the `CoverageRecord` first (`close()` refuses it), so the queue shrinks only by producing data; the `sources_searched`-required invariant is inherited from P09.1.
+- Anti-abuse MUSTs are executable: a raising `volume_leaderboard`, a per-subject `RateLimiter`.
+- Geographic claims are ordering + visibility only; `any_contributor_may_work` takes no claim, so no path can gate an open task.
+- Self-review refinement: broadened transitions so `not_actionable`/`superseded`/`deferred` can close early and an `invalidated` task can be `reopened` (no dead-end under the `(task_type, subject)` uniqueness).
+
+## Verification
+- `make check` green: lint + format + mypy (143 src files) + **1523 tests pass** + `verify-gen` (pylock + ontology) clean.
+- Live end-to-end drive of the engine with a realistic `missing_contract` detector confirmed every AC (see table).
+
+## Acceptance criteria → evidence
+| AC (spec) | Status | Evidence |
+|---|---|---|
+| A task type with no testable `closing_condition` cannot register (SIG-TASK-002) | ✅ met | `tests/tasks/test_tasks_spec.py::test_untestable_closing_condition_cannot_register`; live: "untestable closing_condition refused" |
+| Tasks auto-invalidate when their detector stops firing (SIG-TASK-006) | ✅ met | `tests/tasks/test_tasks_lifecycle.py::test_auto_invalidate_when_detector_stops_firing`; live: contract arrives → task `invalidated` |
+| Geographic claims expire without renewal and never grant exclusivity (SIG-TASK-010/011) | ✅ met | `tests/tasks/test_tasks_geographic.py::test_claims_expire_without_renewal`, `::test_a_claim_never_grants_exclusivity`; live: priority now / expired later / any-contributor-may-work |
+| `resolved_no_evidence_exists` writes a `CoverageRecord` (SIG-TASK-009) | ✅ met | `tests/tasks/test_tasks_dispositions.py::test_resolved_no_evidence_exists_writes_a_coverage_record`, `::test_no_evidence_exists_is_unreachable_through_plain_close`; live: `searched_not_found` record + task closed |
+| Phase-gate §51.3 (CI green, tests, ADR, traceability, risk register) | ✅ met | `make check` (1523 passed); ADR-039; `docs/traceability.md` P10.1; `docs/risk_register.md` Phase 10 |
+
+Requirement IDs stamped: **SIG-TASK-001, 002, 005, 006, 007, 008, 009, 010, 011, 012, 013, 014** (SIG-TASK-003/004 — the catalog — are P10.2).
+
+Implements `docs/tickets/P10.1__task-engine.md`.
+
+Generated with [Devin](https://devin.ai)

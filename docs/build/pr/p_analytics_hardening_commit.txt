@@ -1,0 +1,13 @@
+db(analytics): harden usage-analytics boundary — reason_raw, rights_record, forbidden org-id columns, COMPLEMENTARY rationale
+
+Follow-up hardening to the P12.1 usage-analytics store:
+- carry reason_raw alongside the normalized reason_category (11.16 P2)
+- cite rights_record when a contractual suppression applied (18.4)
+- reject the connector textual org-id columns (searching_org/source_org)
+  by exact name and validate relation names as SQL identifiers (SIG-STORE-028)
+- stamp complementary suppressions with a distinct COMPLEMENTARY rationale so a
+  suppressed cell never carries a publish rationale (SIG-STORE-030/031)
+
+Generated with [Devin](https://devin.ai)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>

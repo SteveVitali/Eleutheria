@@ -1,0 +1,30 @@
+P03.2: the deterministic, explainable half of entity resolution
+
+Deterministic ER on top of the P03.1 identity substrate (14.2/14.4/14.6/14.8):
+
+- normalize_org_name(): pure, versioned name normaliser with a committed
+  test-vector suite in CI; Sheriff Office/Department collapse to one suffix;
+  acronyms resolve by exact lookup only, never fuzzy (SIG-IDENT-022).
+- ORI validated by pattern ^[A-Z0-9]{9}$ (never positional); UCR<->USPS table
+  incl NB->NE, GM->GU; civil/applicant-ORI flag (SIG-IDENT-002/003).
+- Per-class canonical scheme registry + the Wikidata-not-for-US-LE asymmetry
+  (SIG-IDENT-001/007).
+- Deterministic cascade tiers 0-3, all auto-write, each recording match_tier +
+  match_evidence; a civil ORI is refused as a sole basis; Tier-2 gated by a
+  data-generated collision list; tiered address keys with K3/K4 blocking-only;
+  vendor-portal slug parsing as a versioned-grammar hypothesis
+  (SIG-IDENT-020/025/013/015).
+- Public sig:<type>:<uuidv7> minting, dereferenceable with content negotiation,
+  and the stability contract: split/merge are dated events with
+  redirects_to/split_into pointers and tombstones; no id silently reassigned
+  (SIG-IDENT-031/032).
+- SIG<->external and ORI9->GEOID crosswalk exports behind the policy licence
+  gate (SIG-IDENT-033/034).
+
+Rulesets are versioned data (resolution/src/resolution/data/*.toml), not code.
+Traceability matrix and risk register updated; tiers 4-5 / gold-holdout /
+cluster-shape alerts / auto-demotion are handed to P05.1.
+
+Generated with [Devin](https://devin.ai)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>

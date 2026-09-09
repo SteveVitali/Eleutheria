@@ -1,0 +1,22 @@
+P13.2: policy, legal instruments, and policy/configuration divergence — the never-merged invariant and the SIG-EPIS-030 curated-index general form
+
+The Policy/LegalInstrument predicate surfaces (P01.1) and the §29.6 divergence
+reconciler (P08.2) are consumed as-is (no schema change). This ticket adds the
+ticket-scoped acceptance tests against those surfaces and lands SIG-EPIS-030 as a
+reusable capability:
+
+- connectors.curated_index: CuratedSourceIndex / CuratedIndexEntry — a curated
+  bibliography held AS AN INDEX (§10.9); index_records() are index_only and
+  as_claims() raises IndexNormalizationRefused. The general form of the behaviour
+  the P13.1 accountability connector's Abuse Library path relied on; that path now
+  builds a CuratedIndexEntry (byte-identical row shape, additive).
+- Policy / LegalInstrument predicate-surface tests (§§11.13–11.14).
+- Policy is never merged with ConfigurationState (SIG-ONTO-034) — schema-level
+  (disjoint predicate surfaces) and resolution-level (distinct types) tests.
+- ADR-046, traceability P13.2 section, risk-register Phase 13 (P13.2).
+
+Requirement ids: SIG-ONTO-034, SIG-RECON-044, SIG-EPIS-030, §11.14 LegalInstrument.
+
+Generated with [Devin](https://devin.ai)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>

@@ -15,7 +15,7 @@ all §47 packages built and tested (`make check` green), the claim spine over Po
 the OCFL evidence store, the read API, exports with licence-compartment computation, the zero-JS web
 shell, and twelve fixture-tested connectors. It is a buildable, fully-tested reference implementation —
 **not a running service**: nothing is deployed and no source has been fetched live (see
-*Repository layout & development* and `docs/build/RELEASE_NOTES_v0.1.0.md`).
+*Repository layout & development* and `docs/build/reports/RELEASE_NOTES_v0.1.0.md`).
 
 ## Contents
 
@@ -170,7 +170,7 @@ stacked-PR chain and cuts the tag after the build**, following the copy-pasteabl
 [`docs/build/INTEGRATION_PLAN.md`](./docs/build/INTEGRATION_PLAN.md) §(d): re-run
 `sh docs/build/tools/merge_dryrun.sh`, merge the open PRs bottom-up, `make check`, then
 `git tag -a v0.1.0`, `make sbom`, and `gh release create` with
-[`docs/build/RELEASE_NOTES_v0.1.0.md`](./docs/build/RELEASE_NOTES_v0.1.0.md). Contribution workflow:
+[`docs/build/reports/RELEASE_NOTES_v0.1.0.md`](./docs/build/reports/RELEASE_NOTES_v0.1.0.md). Contribution workflow:
 [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
 ## Method note
