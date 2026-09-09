@@ -1,0 +1,86 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// Side-by-side entity compare + decide (P21.6, §28.5, SIG-IDENT-025). The reviewer
+// weighs the two records with the per-comparison confidence decomposition, then
+// records match / no-match / defer with a reason. The form is a plain
+// `<form method="post">` posting to the authenticated curation API — it works with NO
+// JavaScript (progressive enhancement). A machine suggestion, if any, is shown as a
+// LABELLED suggestion and is NEVER pre-selected (SIG-LLM-001/002).
+import CurateLayout from "../../layouts/CurateLayout.astro";
+import { REVIEW_QUEUE, ER_DECISIONS, curationAction } from "../../lib/curation";
+
+export function getStaticPaths() {
+  return REVIEW_QUEUE.map((item) => ({ params: { id: item.item_id } }));
+}
+
+const { id } = Astro.params;
+const item = REVIEW_QUEUE.find((i) => i.item_id === id)!;
+const action = curationAction(`review-queue/${encodeURIComponent(item.item_id)}/decide`);
+---
+
+<CurateLayout title="Compare and decide" path="/curate/">
+  <p><a href="/curate/">← Back to the review queue</a></p>
+  <p data-testid="compare-summary">{item.summary}</p>
+
+  <div class="sig-compare" data-testid="entity-compare">
+    {[item.left, item.right].map((side, index) => (
+      <section class="sig-compare__side" data-testid={index === 0 ? "compare-left" : "compare-right"}>
+        <h2>{side.label}</h2>
+        <dl class="sig-kv">
+          {Object.entries(side.fields).map(([k, v]) => (
+            <div>
+              <dt>{k}</dt>
+              <dd>{v}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+    ))}
+  </div>
+
+  <h2 id="rationale-heading">Match rationale</h2>
+  <ul class="sig-recon" aria-labelledby="rationale-heading" data-testid="match-rationale">
+    {item.confidence.map((factor) => (
+      <li data-testid="confidence-factor">
+        <strong>{factor.name}</strong>: {factor.weight >= 0 ? "+" : ""}{factor.weight}
+        {" — "}{factor.detail}
+      </li>
+    ))}
+  </ul>
+
+  {item.suggestion && (
+    <div class="sig-suggestion" data-testid="decide-suggestion">
+      <strong>Machine suggestion (not applied):</strong>{" "}
+      <span data-testid="suggestion-decision">{item.suggestion.suggested_decision}</span> —
+      confidence {item.suggestion.confidence_class}, from model <code>{item.suggestion.model_id}</code>
+      / prompt <code>{item.suggestion.prompt_version}</code>. This is a labelled suggestion only;
+      a human must choose below (SIG-LLM-001/002).
+    </div>
+  )}
+
+  <form class="sig-decide-form" method="post" action={action} data-testid="decide-form">
+    <fieldset>
+      <legend>Decision</legend>
+      {ER_DECISIONS.map((choice) => (
+        <label>
+          <input
+            type="radio"
+            name="decision"
+            value={choice.value}
+            required
+            data-testid={`decision-${choice.value}`}
+          />
+          {choice.label}
+        </label>
+      ))}
+    </fieldset>
+    <label>
+      Reason (required for defer; recommended for every decision)
+      <textarea name="reason" rows="3" data-testid="decide-reason"></textarea>
+    </label>
+    <button type="submit" data-testid="decide-submit">Record decision</button>
+  </form>
+</CurateLayout>

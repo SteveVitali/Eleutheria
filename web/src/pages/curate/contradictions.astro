@@ -1,0 +1,62 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// Contradiction disposition (P21.6, §30, defining standard §3.1). A contradiction is
+// NEVER deleted — it is dispositioned with a reason. Both claims are shown with their
+// evidence and dates so the reviewer decides on the full picture. Zero-JS form.
+import CurateLayout from "../../layouts/CurateLayout.astro";
+import { CONTRADICTIONS, curationAction } from "../../lib/curation";
+---
+
+<CurateLayout title="Contradiction dispositions" path="/curate/contradictions/">
+  <p>
+    A contradiction is never silently resolved: both claims, their evidence, and their
+    dates are shown, and a disposition always carries a reason (§3.1). The disposition is
+    an append-only record; the contradiction is retained.
+  </p>
+
+  {CONTRADICTIONS.map((c) => (
+    <section data-testid="contradiction" data-contradiction-id={c.contradiction_id}>
+      <h2>{c.subject_label} — {c.predicate_label}</h2>
+      <p>Kind: <code>{c.kind}</code></p>
+      <div class="sig-contradiction-claims" data-testid="contradiction-claims">
+        {c.claims.map((claim) => (
+          <div class="sig-contradiction-claim" data-testid="contradiction-claim">
+            <h3>Claim {claim.claim_id}</h3>
+            <dl class="sig-kv">
+              <div><dt>Value</dt><dd data-testid="claim-value">{claim.value}</dd></div>
+              <div><dt>Evidence</dt><dd data-testid="claim-evidence">{claim.evidence_ref}</dd></div>
+              <div><dt>As of</dt><dd data-testid="claim-date">{claim.as_of}</dd></div>
+              <div><dt>Source</dt><dd>{claim.source}</dd></div>
+            </dl>
+          </div>
+        ))}
+      </div>
+
+      <form
+        class="sig-decide-form"
+        method="post"
+        action={curationAction(`contradiction/${encodeURIComponent(c.contradiction_id)}/disposition`)}
+        data-testid="contradiction-form"
+      >
+        <label>
+          Disposition
+          <select name="disposition" required data-testid="contradiction-disposition">
+            <option value="">Choose a disposition…</option>
+            <option value="resolved_prefer_records">Prefer records-derived claim</option>
+            <option value="resolved_prefer_portal">Prefer portal claim</option>
+            <option value="both_true_time_indexed">Both true (time-indexed)</option>
+            <option value="needs_more_evidence">Needs more evidence</option>
+          </select>
+        </label>
+        <label>
+          Reason (required, §3.1)
+          <textarea name="reason" rows="3" required data-testid="contradiction-reason"></textarea>
+        </label>
+        <button type="submit" data-testid="contradiction-submit">Record disposition</button>
+      </form>
+    </section>
+  ))}
+</CurateLayout>
