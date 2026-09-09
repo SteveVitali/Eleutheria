@@ -23,6 +23,12 @@ Sub-commands expose the identity substrate (§11.1-11.3, §14):
 * ``review show QUEUE ID`` — the full confidence explanation for one proposal.
 * ``review decide QUEUE ID accept|reject --reviewer R`` — record a human decision,
   logging model/prompt provenance for model-assisted items (SIG-IDENT-026).
+* ``match --dsn … --jurisdiction ID`` — read org candidates from the PostgreSQL
+  claim spine, score them with the probabilistic matcher, and enqueue the tier-4/5
+  PROPOSED proposals as append-only ``review_item`` rows (P19.5, SIG-IDENT-021/025).
+* ``review {list,show,decide,enqueue} --dsn …`` — the same curation surface backed
+  by PostgreSQL (``PgReviewQueue``) instead of a JSON queue file; ``decide --dsn``
+  appends exactly one ``review_decision`` row per call (history on repeat).
 
 With no sub-command it prints help and exits 0 (the SIG-ENG-013 convention).
 """
@@ -32,6 +38,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+from typing import Any
 
 from . import __version__
 from .blocking import BlockingRule, BlockingRuleRejected, size_blocking_rule, validate_blocking_rule
@@ -41,6 +48,7 @@ from .identity import parse_agency_name
 from .normalize import NORMALIZE_RULESET_VERSION, normalize_org_name
 from .ori import OriValidationError, is_civil_ori, validate_ori
 from .probabilistic import ProbabilisticMatcher
+from .review_pg import PgReviewQueue
 from .review_queue import (
     ReviewQueue,
     review_item_from_match,
@@ -87,26 +95,42 @@ def build_parser() -> argparse.ArgumentParser:
     block_size.add_argument("path", help="a JSON file: an array of record objects")
     block_size.add_argument("keys", help="comma-separated equijoin key columns")
 
+    match = sub.add_parser(
+        "match",
+        help="read org candidates from the PG spine, score, and enqueue PROPOSED proposals",
+    )
+    match.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    match.add_argument(
+        "--jurisdiction",
+        default=None,
+        help="jurisdiction token to filter candidate orgs by (e.g. okc); on identifiers",
+    )
+    match.add_argument("--role", default=None, help="optional read role to SET ROLE to")
+
     review = sub.add_parser("review", help="the internal review queue / curation surface")
     review_sub = review.add_subparsers(dest="review_command")
 
     enqueue = review_sub.add_parser("enqueue", help="score records and enqueue PROPOSED matches")
-    enqueue.add_argument("queue", help="the JSON queue file (created if absent)")
+    enqueue.add_argument("queue", nargs="?", help="the JSON queue file (created if absent)")
     enqueue.add_argument("path", help="a JSON file: an array of record objects")
+    enqueue.add_argument("--dsn", default=None, help="use PG (PgReviewQueue), not a file")
 
     review_list = review_sub.add_parser("list", help="list pending proposals with confidence")
-    review_list.add_argument("queue", help="the JSON queue file")
+    review_list.add_argument("queue", nargs="?", help="the JSON queue file")
+    review_list.add_argument("--dsn", default=None, help="use PG (PgReviewQueue), not a file")
 
     show = review_sub.add_parser("show", help="show one proposal's confidence explanation")
-    show.add_argument("queue", help="the JSON queue file")
+    show.add_argument("queue", nargs="?", help="the JSON queue file")
     show.add_argument("item_id", help="the review item id")
+    show.add_argument("--dsn", default=None, help="use PG (PgReviewQueue), not a file")
 
     decide = review_sub.add_parser("decide", help="record a human accept/reject decision")
-    decide.add_argument("queue", help="the JSON queue file")
+    decide.add_argument("queue", nargs="?", help="the JSON queue file")
     decide.add_argument("item_id", help="the review item id")
     decide.add_argument("decision", choices=("accept", "reject"))
     decide.add_argument("--reviewer", required=True, help="the human reviewer")
     decide.add_argument("--rationale", default=None, help="an optional note / review rationale")
+    decide.add_argument("--dsn", default=None, help="use PG (PgReviewQueue), not a file")
     return parser
 
 
@@ -130,7 +154,115 @@ def _save_queue(path: str, queue: ReviewQueue) -> None:
         json.dump(queue.to_dict(), fh, indent=2, sort_keys=True)
 
 
+def _read_org_candidates(conn: Any, jurisdiction: str | None) -> list[dict[str, object]]:
+    """Read organisation candidates from the PG spine for the probabilistic matcher.
+
+    Each candidate carries the columns the model blocks/compares on
+    (``unique_id``, ``normalized_name``, ``name_first_token``, ``state``,
+    ``organization_class``), derived from the ``organization`` projection + the
+    entity's identifiers. Optionally filtered to a jurisdiction token matched on the
+    entity's identifier values (e.g. ``okc``).
+    """
+    params: list[Any] = []
+    where = ""
+    if jurisdiction:
+        where = (
+            " WHERE o.entity_id IN (SELECT entity_id FROM entity_identifier WHERE value ILIKE %s)"
+        )
+        params.append(f"%{jurisdiction}%")
+    rows = conn.execute(
+        "SELECT o.entity_id, o.cached_canonical_name, o.organization_type, "
+        "       (SELECT value FROM entity_identifier ei WHERE ei.entity_id = o.entity_id "
+        "          AND ei.scheme = 'us.state' LIMIT 1) AS state "
+        "  FROM organization o" + where + " ORDER BY o.entity_id",
+        tuple(params),
+    ).fetchall()
+    candidates: list[dict[str, object]] = []
+    for entity_id, canonical_name, org_type, state in rows:
+        normalized = normalize_org_name(str(canonical_name or ""))
+        first_token = normalized.split()[0] if normalized else ""
+        candidates.append(
+            {
+                "unique_id": str(entity_id),
+                "normalized_name": normalized,
+                "name_first_token": first_token,
+                "state": state or "",
+                "organization_class": org_type or "",
+            }
+        )
+    return candidates
+
+
+def _run_match(args: argparse.Namespace) -> int:
+    """Score PG org candidates and enqueue the tier-4/5 PROPOSED proposals (P19.5)."""
+    queue = PgReviewQueue.from_dsn(args.dsn)
+    if args.role:
+        queue._conn.execute(f"SET ROLE {args.role}")
+    candidates = _read_org_candidates(queue._conn, args.jurisdiction)
+    if len(candidates) < 2:
+        print(f"(only {len(candidates)} candidate org(s) for the filter; nothing to match)")
+        return 0
+    proposals = ProbabilisticMatcher.from_data().match(candidates)
+    if not proposals:
+        print("(no tier-4/5 proposals; every scored pair fell to tier 6)")
+        return 0
+    added = queue.enqueue_matches(proposals)
+    for m in proposals:
+        print(
+            f"tier {m.tier_label}  weight {m.match_weight:+.2f}  "
+            f"p={m.match_probability:.3f}  {m.left} ~ {m.right}  [{m.disposition}]"
+        )
+    print(f"enqueued {added} PROPOSED proposal(s) to the PG review queue")
+    return 0
+
+
+def _run_review_pg(args: argparse.Namespace) -> int:
+    """The review curation surface backed by PostgreSQL (``PgReviewQueue``)."""
+    queue = PgReviewQueue.from_dsn(args.dsn)
+    if args.review_command == "enqueue":
+        matcher = ProbabilisticMatcher.from_data()
+        added = queue.enqueue_matches(matcher.match(_load_records(args.path)))
+        print(f"enqueued {added} PROPOSED proposal(s); {len(queue.pending())} pending in PG")
+        return 0
+    if args.review_command == "list":
+        pending = queue.pending()
+        if not pending:
+            print("(no pending proposals)")
+            return 0
+        for item in pending:
+            print(f"[{item.item_id}]")
+            print(surface_confidence_explanation(item))
+        return 0
+    if args.review_command == "show":
+        found = queue.get(args.item_id)
+        if found is None:
+            print(f"no such review item: {args.item_id}")
+            return 2
+        print(surface_confidence_explanation(found))
+        return 0
+    if args.review_command == "decide":
+        try:
+            decision = queue.decide(
+                args.item_id,
+                args.decision,
+                reviewer=args.reviewer,
+                rationale=args.rationale,
+            )
+        except ValueError as exc:
+            print(str(exc))
+            return 2
+        provenance = ""
+        if decision.model_id is not None:
+            provenance = f" (model {decision.model_id} prompt {decision.prompt_version})"
+        print(f"{decision.decision} by {decision.reviewer} at {decision.decided_at}{provenance}")
+        return 0
+    print("usage: sig-resolution review {enqueue,list,show,decide} --dsn ...")
+    return 2
+
+
 def _run_review(args: argparse.Namespace) -> int:
+    if getattr(args, "dsn", None):
+        return _run_review_pg(args)
     if args.review_command == "enqueue":
         queue = _load_queue(args.queue)
         matcher = ProbabilisticMatcher.from_data()
@@ -260,6 +392,8 @@ def main(argv: list[str] | None = None) -> int:
             return 2
         print(f"accepted: {accepted} candidate comparisons")
         return 0
+    if args.command == "match":
+        return _run_match(args)
     if args.command == "review":
         return _run_review(args)
 

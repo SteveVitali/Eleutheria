@@ -22,6 +22,7 @@
 
 import { isContested } from "./epistemic";
 import { AS_OF, DEVICE_COUNT_CLAIMS, OKCPD, RULESET_VERSION } from "./fixtures";
+import { JURISDICTION_DOSSIERS } from "./dossier-jurisdiction-fixture";
 import type { CompetingClaim } from "./epistemic";
 import type { Dossier, Figure } from "./dossier";
 
@@ -222,6 +223,15 @@ export const OKC_DOSSIER: Dossier = {
       section_id: "accountability_events",
       rows: [
         { label: "Procurement approval", value: "Approved 2025-03-25 (see authorization block)" },
+        // A public-employee name: publishable under US-DEFAULT (SIG-PUB-017), so the
+        // publication gate leaves it shown — the jurisdiction-conditional contrast to
+        // the FR/BE dossiers, where the equivalent name is withheld.
+        {
+          label: "Approving official",
+          value: "Chief Wade Gourley",
+          isPublicEmployeeName: true,
+          originJurisdiction: "US",
+        },
       ],
     },
     {
@@ -249,4 +259,4 @@ export const OKC_DOSSIER: Dossier = {
 };
 
 /** Every dossier the shell statically generates (drives `getStaticPaths`). */
-export const DOSSIERS: Dossier[] = [OKC_DOSSIER];
+export const DOSSIERS: Dossier[] = [OKC_DOSSIER, ...JURISDICTION_DOSSIERS];

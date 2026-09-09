@@ -93,19 +93,73 @@ def effective_license(record: RightsRecord, registry: Mapping[str, Any] | None =
     return record.spdx
 
 
+def export_refusal_reason(record: RightsRecord) -> str | None:
+    """Why ``record`` may not leave the system through an export, or ``None``.
+
+    The three fail-closed conditions of the export gate, in order (§42.2/42.4,
+    Part VIII §0.7 — an export can only ever *reduce* what leaves the system):
+
+    * ``UNDETERMINED`` rights (``SIG-LIC-004``);
+    * not separately-reviewed ``redistributable`` (``SIG-LIC-003``);
+    * ``derivative_permitted=false`` (``SIG-INGEST-048b`` / ``SIG-LIC-004/010``): an
+      export bundle is a derived/aggregated work, so a source that forbids derivatives
+      (e.g. the AGPL-3.0 ``sm_alpr`` / ``deflock_app_repo`` code — studyable, never
+      linkable into a derivative) must not travel in one.
+
+    Returned as a short machine-stable reason (``UNDETERMINED`` / ``not-redistributable``
+    / ``derivative_permitted=false``) so the caller can partition and report it.
+    """
+    if is_undetermined(record):
+        return "UNDETERMINED"
+    if not record.redistributable:
+        return "not-redistributable"
+    if not record.derivative_permitted:
+        return "derivative_permitted=false"
+    return None
+
+
 def assert_export_permitted(records: Iterable[RightsRecord]) -> None:
     """Fail closed on any source that may not be published (SIG-LIC-004)."""
     for record in records:
-        if is_undetermined(record):
+        reason = export_refusal_reason(record)
+        if reason == "UNDETERMINED":
             raise ExportGateClosed(
                 f"source {record.source_id!r} has UNDETERMINED rights; the export "
                 "gate fails closed (SIG-LIC-004)."
             )
-        if not record.redistributable:
+        if reason == "not-redistributable":
             raise ExportGateClosed(
                 f"source {record.source_id!r} is not marked redistributable "
                 "(SIG-LIC-003); the export gate fails closed."
             )
+        if reason == "derivative_permitted=false":
+            raise ExportGateClosed(
+                f"source {record.source_id!r} sets derivative_permitted=false; an export "
+                "bundle is a derived work, so the export gate fails closed "
+                "(SIG-INGEST-048b, SIG-LIC-004/010)."
+            )
+
+
+def partition_exportable(
+    records: Iterable[RightsRecord],
+) -> tuple[list[RightsRecord], list[tuple[RightsRecord, str]]]:
+    """Split ``records`` into (exportable, refused) without raising (§42.2/42.4).
+
+    The non-raising companion to :func:`assert_export_permitted`: every record that
+    fails a gate condition is moved to ``refused`` paired with its
+    :func:`export_refusal_reason`, so a caller can *partition* a mixed export set
+    (dropping ``sm_alpr`` with reason ``derivative_permitted=false``) rather than
+    abort the whole build. Because it only ever withholds, it honours Part VIII §0.7.
+    """
+    exportable: list[RightsRecord] = []
+    refused: list[tuple[RightsRecord, str]] = []
+    for record in records:
+        reason = export_refusal_reason(record)
+        if reason is None:
+            exportable.append(record)
+        else:
+            refused.append((record, reason))
+    return exportable, refused
 
 
 def compute_export_license(

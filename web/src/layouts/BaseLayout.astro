@@ -24,16 +24,19 @@ interface Props {
   rulesetVersion?: string;
   /** The page's "How we know this" provenance (SIG-UI-044); defaults site-wide. */
   provenance?: ProvenanceSummary;
+  /** The BCP-47 document language (SIG-UI localisation); defaults to English. */
+  lang?: string;
 }
 
 const { title, path } = Astro.props;
 const asOf = Astro.props.asOf ?? AS_OF;
 const rulesetVersion = Astro.props.rulesetVersion ?? RULESET_VERSION;
 const provenance = Astro.props.provenance;
+const lang = Astro.props.lang ?? "en";
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
