@@ -2425,7 +2425,7 @@ wheels = [
 
 [[package]]
 name = "sig-api"
-version = "0.0.0"
+version = "0.1.0"
 source = { editable = "api" }
 dependencies = [
     { name = "fastapi" },
@@ -2454,7 +2454,7 @@ requires-dist = [
 
 [[package]]
 name = "sig-connectors"
-version = "0.0.0"
+version = "0.1.0"
 source = { editable = "connectors" }
 dependencies = [
     { name = "sig-db" },
@@ -2479,7 +2479,7 @@ requires-dist = [
 
 [[package]]
 name = "sig-db"
-version = "0.0.0"
+version = "0.1.0"
 source = { editable = "db" }
 dependencies = [
     { name = "duckdb" },
@@ -2496,7 +2496,7 @@ requires-dist = [
 
 [[package]]
 name = "sig-evidence"
-version = "0.0.0"
+version = "0.1.0"
 source = { editable = "evidence" }
 dependencies = [
     { name = "blake3" },
@@ -2518,7 +2518,7 @@ provides-extras = ["capture"]
 
 [[package]]
 name = "sig-exports"
-version = "0.0.0"
+version = "0.1.0"
 source = { editable = "exports" }
 dependencies = [
     { name = "duckdb" },
@@ -2537,7 +2537,7 @@ requires-dist = [
 
 [[package]]
 name = "sig-inference"
-version = "0.0.0"
+version = "0.1.0"
 source = { editable = "inference" }
 dependencies = [
     { name = "sig-db" },
@@ -2569,27 +2569,27 @@ requires-dist = [
 
 [[package]]
 name = "sig-ops"
-version = "0.0.0"
+version = "0.1.0"
 source = { editable = "ops" }
 
 [[package]]
 name = "sig-orchestration"
-version = "0.0.0"
+version = "0.1.0"
 source = { editable = "orchestration" }
 
 [[package]]
 name = "sig-parsing"
-version = "0.0.0"
+version = "0.1.0"
 source = { editable = "parsing" }
 
 [[package]]
 name = "sig-policy"
-version = "0.0.0"
+version = "0.1.0"
 source = { editable = "policy" }
 
 [[package]]
 name = "sig-reconcile"
-version = "0.0.0"
+version = "0.1.0"
 source = { editable = "reconcile" }
 dependencies = [
     { name = "sig-db" },
@@ -2604,7 +2604,7 @@ requires-dist = [
 
 [[package]]
 name = "sig-resolution"
-version = "0.0.0"
+version = "0.1.0"
 source = { editable = "resolution" }
 dependencies = [
     { name = "duckdb" },
@@ -2625,7 +2625,7 @@ requires-dist = [
 
 [[package]]
 name = "sig-tasks"
-version = "0.0.0"
+version = "0.1.0"
 source = { editable = "tasks" }
 dependencies = [
     { name = "sig-inference" },

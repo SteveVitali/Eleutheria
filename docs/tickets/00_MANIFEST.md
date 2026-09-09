@@ -144,6 +144,7 @@ retroactively), 20 = reconciliation & release, 21 = operationalization toward on
 | 63 | `P21.9__stage5-pathway-connectors.md` | 21 | Stage-5 connectors for the P17 pathways (RTCC/federation, FR/CSS/forensics, acoustic/drone/location) + the ADR-033-deferred parser layers | HG-03/HG-04 per source |
 
 ## Phase gates & special points
+- **Integration is an operator action after the chain** (`docs/build/INTEGRATION_PLAN.md` §(d)); no ticket merges PRs; all rows 47–63 stack on `devin/p18-2-france-belgium`. P20.3 writes the read-only `merge_dryrun.sh` + the bottom-up merge + `v0.1.0` tag/release procedure and bumps versions to `0.1.0`, but merges/tags nothing (HG-05 is the post-chain operator action).
 - **P06.1 is a hard synchronization barrier** (§54): its written retrospective MUST be committed before any ticket below it starts.
 - Every ticket ends on the universal phase gate (§51.3): CI green incl. data-quality checks, tests for new requirements, ADRs for deviations, traceability + risk register updated.
 - **P11.1 and P11.2 (Flock) depend on an external source** and must never block P12+ (SIG-ENG-035); if the source is unavailable, continue down the list and return.

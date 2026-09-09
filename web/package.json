@@ -1,6 +1,6 @@
 {
   "name": "@sig/web",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "SIG public web surface (Astro static-first, zero-JS-by-default) — the Phase-15 shell and the epistemic visual language every other surface consumes (SIG-UI-036/037). TypeScript is confined to this package (SIG-ENG-010).",
   "license": "Apache-2.0",

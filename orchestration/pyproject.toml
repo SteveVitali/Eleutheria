@@ -1,6 +1,6 @@
 [project]
 name = "sig-orchestration"
-version = "0.0.0"
+version = "0.1.0"
 description = "SIG orchestration package (skeleton; see docs/2_canonical_design_spec.md §47)."
 requires-python = ">=3.11"
 dependencies = []
