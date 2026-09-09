@@ -600,3 +600,30 @@ against the P10.1 engine.
 |---|---|---|---|
 | RISK-P10-13 | The catalog detectors' binding to the real materialized-graph query surface (they read documented `Facts` keys, not live projections) | No graph-query surface exists for the detectors to bind to yet; ADR-039/040 scope it downstream | Each row's contract (which facts it reads, when it fires, when it closes) is pinned with committed positive/negative fixtures and an end-to-end auto-invalidation test; binding the keys to live projections is an additive downstream change (ADR-040 revisit trigger). |
 | RISK-P10-14 | Task routes for `temporal_impossibility` and `undeclared_copying` are mapped ahead of any reconcile detector that emits them | The P08.2/P08.3 workflows do not yet emit these two of the nine `contradiction_type`s | The map covers the **full** §31 vocabulary so a future emitter already has a route; the chosen catalog task is revisited if a real emitter proves it a poor fit (ADR-040 revisit trigger). |
+
+## Phase 10 — Research-task generation (P10.3 — records-request generation)
+
+Per §53 / SIG-ENG-031, P10.3's risk-register entries. P10.3 owns the §36 records-request
+generator (ADR-041): the 51-jurisdiction records-law table, emit-with-the-correct-statute,
+operationally-binding residency routing, versioned templates with measured success rates,
+and the consent gate — built on the P10.1 engine and the P09.1 coverage model.
+
+### Design risks retired by executable checks (SIG-TASK)
+
+| id | Risk | Compensating control |
+|---|---|---|
+| RISK-P10-15 | **A residency barrier is read as an absence of surveillance** — a non-resident-blocked jurisdiction records `searched_not_found`, so thin coverage there looks like "we looked and there is nothing" instead of "we are legally barred from filing" (SIG-TASK-016a, §32.2). | The barrier writes a `not_researched` `CoverageRecord` (never `searched_not_found`), attributed to the statute in `search_method`; the emit path is unreachable for a non-resident/unknown-residency filer in a restricted state. Proven by `tests/tasks/test_tasks_records_request.py::test_non_resident_in_restricted_jurisdiction_refuses_routes_and_records_coverage`, `::test_residency_barrier_coverage_is_never_searched_not_found`, `::test_unknown_residency_defaults_to_restrictive`. |
+| RISK-P10-16 | **A request cites the wrong statute** — the emitted request names a citation that does not match the target jurisdiction, or SIG files on a contributor's behalf without consent (SIG-TASK-015/018). | The citation is looked up in the reviewed 51-jurisdiction table (never guessed) and the emit path refuses a filer without explicit consent and a public-act acknowledgement. Proven by `tests/tasks/test_tasks_records_request.py::test_emits_the_correct_statute_for_the_jurisdiction`, `::test_emit_without_consent_is_refused`, `::test_emit_without_public_act_acknowledgement_is_refused`; the table's per-row completeness/uniqueness by `tests/tasks/test_tasks_records_law.py`. |
+
+### Deviations recorded as ADRs (SIG-ENG-031)
+
+| ADR | Deviation |
+|---|---|
+| ADR-041 | The residency barrier is recorded with `absence_kind = not_researched` (attributed to the statute in `search_method`), **not** a new `legal_barrier` kind — the four-kind §9.5/§32.1 vocabulary is a frozen P09.1/DDL contract and this is additive. "Route to the geographic queue" is realized as a **routing decision** (`ResidencyBlock` naming the jurisdiction's local filers + active claimants), not a mutation of the P10.1 `TaskPool`/`GeographicQueue`, because that queue is a claims-and-ordering coordinator, not a task container; applying the routing through the live pool is downstream. |
+
+### Scaffolded / bounded requirements (SIG-ENG-005)
+
+| id | Requirement | Why not fully automatable now | Compensating control |
+|---|---|---|---|
+| RISK-P10-17 | The per-jurisdiction operational-detail fields (`response_deadline`, `fee_rules`, `appeal_path`) are honest seed summaries, not counsel-reviewed legal advice | Per-jurisdiction counsel review is a Phase-0/legal deliverable, not an engineering one; a statute's fixed number often does not exist ("reasonable time") | The two load-bearing fields (`citation`, `residency_required`) are asserted by the suite; the operational fields are **versioned data** (`table_version`), so a counsel correction is a tracked migration, not a code change (ADR-041 revisit trigger). |
+| RISK-P10-18 | Template success rates are measured through an in-memory `TemplateOutcomeLog` fed by the caller, not by a live filing/response backend (SIG-TASK-017) | No filing/response ingestion backend exists yet (the `records` connector, P07.2, ingests replies; wiring outcomes back to the log is downstream) | The measurement surface (per-version rate + the min-sample-guarded revision flag) is fully implemented and tested; feeding it from real filed outcomes is an additive downstream change (ADR-041 revisit trigger). |

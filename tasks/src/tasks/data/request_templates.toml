@@ -1,0 +1,99 @@
+# SPDX-License-Identifier: Apache-2.0
+# Versioned public-records request templates (§36, SIG-TASK-017).
+# This table is DATA, not code (SIG-ENG-001): the proven request language for each
+# record type is a reviewed row. Templates MUST be VERSIONED — a body change is a
+# NEW version appended here (a new [[templates.<record_type>.versions]] entry),
+# never an in-place rewrite of a landed version, so the success rate measured for
+# a given wording (SIG-TASK-017) always refers to the exact language that produced
+# the outcomes. "Which language works is itself a research finding": the outcome
+# log that measures success rates and flags denial-producing language for revision
+# lives in `tasks.records_request.TemplateOutcomeLog`; this file seeds the language.
+#
+# Placeholders in a `body` are Python str.format named fields the generator fills:
+#   {agency} {records_contact} {statute} {citation} {records_sought}
+#   {response_deadline} {filer} {public_act_notice}
+# A body MUST NOT contain a literal brace other than these placeholders.
+#
+# NOTE ON TOML ORDERING: top-level keys appear above the first [table] header.
+
+# The template set's version, stamped onto every emitted request (§20).
+template_set_version = "2026.09.01"
+
+# The success-rate floor below which a template version is flagged for revision
+# (SIG-TASK-017): a version whose measured success rate falls under this, over at
+# least `revision_min_sample` recorded outcomes, "produces denials" and should be
+# revised. Data, not a magic number in code.
+revision_success_floor = 0.5
+revision_min_sample = 5
+
+[templates.alpr_contract]
+records_sought = "all contracts, purchase orders, invoices, and service agreements with automated licence-plate-reader (ALPR) vendors (including but not limited to Flock Safety, Motorola/Vigilant, and Genetec), for the period {start_date} to present"
+[[templates.alpr_contract.versions]]
+version = "v1"
+body = """Pursuant to the {statute} ({citation}), I request copies of the following public records held by {agency}: {records_sought}.
+
+Please provide responsive records in electronic format where available. If any portion is withheld, please cite the specific statutory exemption for each redaction and release all reasonably segregable non-exempt portions. If you anticipate fees exceeding $25, please contact me with an itemised estimate before proceeding. I would appreciate a response within the {response_deadline} your law provides.
+
+{public_act_notice}
+
+Submitted by: {filer}. Records contact: {records_contact}."""
+
+[templates.camera_deployment]
+records_sought = "records identifying the number, make, model, and locations of fixed and mobile cameras operated by or on behalf of {agency}, including deployment maps, site lists, and installation records, for the period {start_date} to present"
+[[templates.camera_deployment.versions]]
+version = "v1"
+body = """Pursuant to the {statute} ({citation}), I request copies of the following public records held by {agency}: {records_sought}.
+
+Please provide responsive records in electronic format where available. Where the precise location of a device is claimed exempt, please release the aggregate count and the statutory basis for withholding the locations. If you anticipate fees exceeding $25, please contact me with an itemised estimate before proceeding. I would appreciate a response within the {response_deadline} your law provides.
+
+{public_act_notice}
+
+Submitted by: {filer}. Records contact: {records_contact}."""
+
+[templates.surveillance_policy]
+records_sought = "all current policies, standard operating procedures, retention schedules, and audit records governing {agency}'s use of surveillance technology, including any surveillance-use or civil-liberties impact policies adopted under local ordinance"
+[[templates.surveillance_policy.versions]]
+version = "v1"
+body = """Pursuant to the {statute} ({citation}), I request copies of the following public records held by {agency}: {records_sought}.
+
+Please provide responsive records in electronic format where available. If any portion is withheld, please cite the specific statutory exemption for each redaction. If you anticipate fees exceeding $25, please contact me with an itemised estimate before proceeding. I would appreciate a response within the {response_deadline} your law provides.
+
+{public_act_notice}
+
+Submitted by: {filer}. Records contact: {records_contact}."""
+
+[templates.data_sharing_agreement]
+records_sought = "all memoranda of understanding, data-sharing agreements, and terms-of-service governing {agency}'s sharing of surveillance data (including ALPR hotlists, camera feeds, and search access) with other agencies or private parties, for the period {start_date} to present"
+[[templates.data_sharing_agreement.versions]]
+version = "v1"
+body = """Pursuant to the {statute} ({citation}), I request copies of the following public records held by {agency}: {records_sought}.
+
+Please provide responsive records in electronic format where available. If any portion is withheld, please cite the specific statutory exemption for each redaction and release all reasonably segregable non-exempt portions. If you anticipate fees exceeding $25, please contact me with an itemised estimate before proceeding. I would appreciate a response within the {response_deadline} your law provides.
+
+{public_act_notice}
+
+Submitted by: {filer}. Records contact: {records_contact}."""
+
+[templates.drone_program]
+records_sought = "records describing {agency}'s unmanned-aircraft (drone) program, including FAA authorisations (COAs), acquisition records, use policies, and flight logs, for the period {start_date} to present"
+[[templates.drone_program.versions]]
+version = "v1"
+body = """Pursuant to the {statute} ({citation}), I request copies of the following public records held by {agency}: {records_sought}.
+
+Please provide responsive records in electronic format where available. If any portion is withheld, please cite the specific statutory exemption for each redaction. If you anticipate fees exceeding $25, please contact me with an itemised estimate before proceeding. I would appreciate a response within the {response_deadline} your law provides.
+
+{public_act_notice}
+
+Submitted by: {filer}. Records contact: {records_contact}."""
+
+[templates.face_recognition]
+records_sought = "records describing {agency}'s use of face-recognition technology, including vendor contracts, search logs, use policies, and audit records, for the period {start_date} to present"
+[[templates.face_recognition.versions]]
+version = "v1"
+body = """Pursuant to the {statute} ({citation}), I request copies of the following public records held by {agency}: {records_sought}.
+
+Please provide responsive records in electronic format where available. If any portion is withheld, please cite the specific statutory exemption for each redaction and release all reasonably segregable non-exempt portions. If you anticipate fees exceeding $25, please contact me with an itemised estimate before proceeding. I would appreciate a response within the {response_deadline} your law provides.
+
+{public_act_notice}
+
+Submitted by: {filer}. Records contact: {records_contact}."""

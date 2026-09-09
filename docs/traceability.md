@@ -1062,3 +1062,52 @@ data that turns the P10.1 engine into a working research-coordination queue.
 | Requirement | Where | Test |
 |---|---|---|
 | SIG-TASK-004 (every §31 contradiction detector maps to a task type — detection without a route to resolution is just an alarm) | `tasks.catalog.CONTRADICTION_TASK_MAP` (keyed on the §31 `contradiction_type` vocabulary, routing each to a catalog task; many-to-one by design, ADR-040) | `tests/tasks/test_tasks_catalog.py::test_every_contradiction_type_maps_to_a_task` (keys == `reconcile.model.CONTRADICTION_TYPES`), `::test_every_mapped_task_type_is_a_registered_catalog_type` |
+
+# P10.3 — Records-request generation (§36)
+
+Records-request generation (ADR-041): given a research gap, emit a ready-to-file request
+carrying the **correct statutory citation for the jurisdiction** from the 51-jurisdiction
+records-law reference table; treat residency as operationally binding (refuse a
+non-resident/unknown-residency filer in the six restricted states, route to the
+jurisdiction's local filers, and record the barrier as a `not_researched` coverage fact);
+version the request language and measure its success rate; gate on contributor consent;
+and close a no-responsive-records reply through the P10.1 coverage-writing bridge. Modelled
+in `tasks/records_request.py` with the reference table and templates as versioned data
+(`tasks/data/records_law.toml`, `tasks/data/request_templates.toml`).
+
+## Request generation with the correct statute (§36, SIG-TASK-015)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-TASK-015 (emit a ready-to-file request: target agency + records contact, the correct statutory citation for the jurisdiction, proven request language for the record type, the specific records sought) | `tasks.records_request.RecordsRequestGenerator.generate`/`_emit`, `GeneratedRecordsRequest` | `tests/tasks/test_tasks_records_request.py::test_emits_the_correct_statute_for_the_jurisdiction` (parametrized over 5 jurisdictions/record types), `::test_emitted_request_carries_the_sig_task_015_surface` |
+
+## The 51-jurisdiction records-law reference table (§36, SIG-TASK-016)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-TASK-016 (per-jurisdiction records-law table for all 51 US jurisdictions: statute name/citation, initial response deadline, fee rules, appeal path, residency-required flag) | `tasks.records_request.records_law_table`/`RecordsLaw`/`records_law_for`, `tasks/data/records_law.toml` | `tests/tasks/test_tasks_records_law.py::test_table_covers_all_51_us_jurisdictions`, `::test_every_row_carries_all_six_reference_fields`, `::test_citations_are_distinct_per_jurisdiction`, `::test_records_law_for_unknown_jurisdiction_raises` |
+
+## Residency handling — operationally binding (§36, SIG-TASK-016a/016b)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-TASK-016a (refuse to emit a non-resident's request in a residency-restricted jurisdiction; route the task to that jurisdiction's geographic queue / local filers; record the constraint as a coverage fact, §9.5/§32.2) | `tasks.records_request.RecordsRequestGenerator._route_residency_block`, `residency_barrier_coverage` (`not_researched`, attributed in `search_method`), `ResidencyBlock` (local filers + active claimants) | `tests/tasks/test_tasks_records_request.py::test_non_resident_in_restricted_jurisdiction_refuses_routes_and_records_coverage`, `::test_residency_barrier_coverage_is_never_searched_not_found`, `::test_residency_block_does_not_require_consent` |
+| SIG-TASK-016b (unknown residency recorded as unknown and defaulting to the restrictive behaviour — route to a local filer — never assume openness) | `tasks.records_request.ResidencyStatus.UNKNOWN`, `_BLOCKED_IN_RESTRICTED` | `tests/tasks/test_tasks_records_request.py::test_unknown_residency_defaults_to_restrictive` |
+
+## Versioned templates with measured success rates (§36, SIG-TASK-017)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-TASK-017 (request templates versioned; success rates measured; denial-producing language flagged for revision) | `tasks.records_request.TemplateLibrary`, `RequestTemplate`, `TemplateOutcomeLog`, `tasks/data/request_templates.toml` | `tests/tasks/test_tasks_templates.py::test_every_record_type_has_at_least_one_version`, `::test_success_rate_is_measured_from_recorded_outcomes`, `::test_denial_producing_language_is_flagged_for_revision`, `::test_undersampled_version_is_not_flagged`, `::test_working_language_is_not_flagged` |
+
+## Consent gate (§36, SIG-TASK-018)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-TASK-018 (do not file on a contributor's behalf without explicit consent; make clear a filed request is a public act attributable to the filer) | `tasks.records_request.RecordsRequestGenerator._check_consent`, `Filer`, `GeneratedRecordsRequest.public_act_notice` | `tests/tasks/test_tasks_records_request.py::test_emit_without_consent_is_refused`, `::test_emit_without_public_act_acknowledgement_is_refused`, `::test_emitted_request_states_it_is_a_public_act` |
+
+## `resolved_no_evidence_exists` → `CoverageRecord` through the records path (§36, SIG-TASK-009)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-TASK-009 (a records request returning no responsive record writes a `CoverageRecord` — `searched_not_found` + sources searched — exercised through the records path) | `tasks.records_request.record_no_responsive_records` (reuses `tasks.dispositions.resolve_no_evidence_exists`) | `tests/tasks/test_tasks_records_request.py::test_no_responsive_records_writes_a_coverage_record` |

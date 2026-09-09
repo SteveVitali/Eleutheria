@@ -1,0 +1,490 @@
+# SPDX-License-Identifier: Apache-2.0
+# The per-jurisdiction public-records-law reference table (§36, SIG-TASK-016).
+# This table is DATA, not code (SIG-ENG-001): every jurisdiction is a reviewed
+# row, so amending a statute citation or a residency flag is a data change, never
+# a code change. Changes after P10.3 are VERSIONED (§20): bump `table_version` and
+# add the change, never silently rewrite a landed row.
+#
+# WHAT IS LOAD-BEARING vs. SEED. Two fields are operationally binding and are
+# asserted by the test suite: the `citation` (SIG-TASK-015 emits it, so it MUST be
+# correct for the jurisdiction) and `residency_required` (SIG-TASK-016a: a true
+# value refuses a non-resident filer and routes to a local one). The exactly-six
+# residency-restricted states are Alabama, Arkansas, Delaware, Kentucky,
+# Tennessee, and Virginia (§36 / R12-F12.26). The operational-detail fields
+# (`response_deadline`, `fee_rules`, `appeal_path`) are SEED values pending the
+# per-jurisdiction counsel review (RISK-P10-16, SIG-ENG-005): they are honest
+# widely-documented summaries, not legal advice, and are deliberately coarse where
+# a statute fixes no single number ("reasonable time"). They are versioned data so
+# a counsel correction is a tracked migration.
+#
+# NOTE ON TOML ORDERING: every top-level key MUST appear ABOVE the first [table]
+# header — otherwise TOML nests it under that table. The [jurisdictions.*] rows
+# therefore come last.
+
+# The reference table's own version, stamped onto every emitted request (§20).
+table_version = "2026.09.01"
+
+# The six residency-restricted jurisdictions (§36, SIG-TASK-016a). Named here as
+# data so the operational refusal keys off a reviewed list, not a magic set buried
+# in code; a test asserts each row's `residency_required` agrees with this list,
+# so the two can never drift.
+residency_restricted = ["AL", "AR", "DE", "KY", "TN", "VA"]
+
+[jurisdictions.AL]
+name = "Alabama"
+statute = "Alabama Open Records Act"
+citation = "Ala. Code § 36-12-40"
+response_deadline = "No fixed statutory deadline (reasonable time)"
+fee_rules = "Actual cost of duplication; a research/retrieval fee may apply"
+appeal_path = "Civil action (mandamus) in circuit court"
+residency_required = true
+
+[jurisdictions.AK]
+name = "Alaska"
+statute = "Alaska Public Records Act"
+citation = "Alaska Stat. § 40.25.110"
+response_deadline = "10 business days"
+fee_rules = "Reasonable copying and personnel fees; fee waiver for public interest"
+appeal_path = "Administrative appeal to the agency head, then superior court"
+residency_required = false
+
+[jurisdictions.AZ]
+name = "Arizona"
+statute = "Arizona Public Records Law"
+citation = "Ariz. Rev. Stat. § 39-121"
+response_deadline = "Promptly (no fixed statutory deadline)"
+fee_rules = "Copying fees; commercial-purpose requests pay a higher schedule"
+appeal_path = "Special action in superior court"
+residency_required = false
+
+[jurisdictions.AR]
+name = "Arkansas"
+statute = "Arkansas Freedom of Information Act"
+citation = "Ark. Code § 25-19-101"
+response_deadline = "3 business days"
+fee_rules = "Actual cost of reproduction; no fee for inspection"
+appeal_path = "Civil action in circuit court (expedited)"
+residency_required = true
+
+[jurisdictions.CA]
+name = "California"
+statute = "California Public Records Act"
+citation = "Cal. Gov. Code § 7920.000"
+response_deadline = "10 calendar days (determination)"
+fee_rules = "Direct cost of duplication; no search fees for most records"
+appeal_path = "Writ of mandate in superior court"
+residency_required = false
+
+[jurisdictions.CO]
+name = "Colorado"
+statute = "Colorado Open Records Act"
+citation = "Colo. Rev. Stat. § 24-72-201"
+response_deadline = "3 business days (extendable to 7)"
+fee_rules = "Statutory per-hour research fee after the first hour; copying fees"
+appeal_path = "Application to show cause in district court"
+residency_required = false
+
+[jurisdictions.CT]
+name = "Connecticut"
+statute = "Connecticut Freedom of Information Act"
+citation = "Conn. Gen. Stat. § 1-200"
+response_deadline = "4 business days (acknowledgment); promptly"
+fee_rules = "Copying fees capped by statute; fee waiver for indigent/public interest"
+appeal_path = "Freedom of Information Commission, then superior court"
+residency_required = false
+
+[jurisdictions.DE]
+name = "Delaware"
+statute = "Delaware Freedom of Information Act"
+citation = "Del. Code tit. 29 § 10001"
+response_deadline = "15 business days"
+fee_rules = "Administrative and copying fees per the FOIA fee schedule"
+appeal_path = "Attorney General petition, then Chancery/Superior Court"
+residency_required = true
+
+[jurisdictions.FL]
+name = "Florida"
+statute = "Florida Public Records Act"
+citation = "Fla. Stat. § 119.01"
+response_deadline = "Reasonable time (no fixed statutory deadline)"
+fee_rules = "Duplication cost; a special-service charge for extensive use"
+appeal_path = "Civil action (mandamus) in circuit court"
+residency_required = false
+
+[jurisdictions.GA]
+name = "Georgia"
+statute = "Georgia Open Records Act"
+citation = "Ga. Code § 50-18-70"
+response_deadline = "3 business days"
+fee_rules = "Copying plus search/retrieval after the first 15 minutes"
+appeal_path = "Civil action in superior court; Attorney General mediation"
+residency_required = false
+
+[jurisdictions.HI]
+name = "Hawaii"
+statute = "Uniform Information Practices Act"
+citation = "Haw. Rev. Stat. § 92F-1"
+response_deadline = "10 business days"
+fee_rules = "Search, review, and segregation fees; first fees may be waived"
+appeal_path = "Office of Information Practices, then circuit court"
+residency_required = false
+
+[jurisdictions.ID]
+name = "Idaho"
+statute = "Idaho Public Records Act"
+citation = "Idaho Code § 74-101"
+response_deadline = "3 business days (extendable to 10)"
+fee_rules = "Copying fees; labor charges after two hours / 100 pages"
+appeal_path = "Petition in district court (expedited)"
+residency_required = false
+
+[jurisdictions.IL]
+name = "Illinois"
+statute = "Illinois Freedom of Information Act"
+citation = "5 ILCS 140/1"
+response_deadline = "5 business days (extendable by 5)"
+fee_rules = "First 50 pages of letter/legal copies free; duplication cost after"
+appeal_path = "Public Access Counselor (Attorney General), then circuit court"
+residency_required = false
+
+[jurisdictions.IN]
+name = "Indiana"
+statute = "Access to Public Records Act"
+citation = "Ind. Code § 5-14-3"
+response_deadline = "7 calendar days (mailed request); 24 hours (in person)"
+fee_rules = "Copying fee per the agency's schedule"
+appeal_path = "Public Access Counselor (advisory), then civil action"
+residency_required = false
+
+[jurisdictions.IA]
+name = "Iowa"
+statute = "Iowa Open Records Law"
+citation = "Iowa Code § 22.1"
+response_deadline = "Reasonable time (10-20 business days as guidance)"
+fee_rules = "Actual cost of copying and supervision"
+appeal_path = "Iowa Public Information Board, then district court"
+residency_required = false
+
+[jurisdictions.KS]
+name = "Kansas"
+statute = "Kansas Open Records Act"
+citation = "Kan. Stat. § 45-215"
+response_deadline = "3 business days"
+fee_rules = "Copying plus staff time to fulfil the request"
+appeal_path = "Civil action in district court; Attorney General complaint"
+residency_required = false
+
+[jurisdictions.KY]
+name = "Kentucky"
+statute = "Kentucky Open Records Act"
+citation = "Ky. Rev. Stat. § 61.870"
+response_deadline = "5 business days"
+fee_rules = "Reasonable copying fee; no charge for staff time to locate"
+appeal_path = "Attorney General appeal, then circuit court"
+residency_required = true
+
+[jurisdictions.LA]
+name = "Louisiana"
+statute = "Louisiana Public Records Act"
+citation = "La. Rev. Stat. § 44:1"
+response_deadline = "3 business days"
+fee_rules = "Reasonable copying fee set by the custodian"
+appeal_path = "Writ of mandamus in district court"
+residency_required = false
+
+[jurisdictions.ME]
+name = "Maine"
+statute = "Maine Freedom of Access Act"
+citation = "1 M.R.S. § 401"
+response_deadline = "5 business days (acknowledgment); reasonable time"
+fee_rules = "Copying plus staff time after the first hour"
+appeal_path = "Appeal to superior court; Public Access Ombudsman"
+residency_required = false
+
+[jurisdictions.MD]
+name = "Maryland"
+statute = "Maryland Public Information Act"
+citation = "Md. Code, Gen. Prov. § 4-101"
+response_deadline = "30 calendar days (10 days for a decision)"
+fee_rules = "Search, preparation, and copying after the first two hours"
+appeal_path = "Public Information Act Compliance Board / Ombudsman, then circuit court"
+residency_required = false
+
+[jurisdictions.MA]
+name = "Massachusetts"
+statute = "Massachusetts Public Records Law"
+citation = "Mass. Gen. Laws ch. 66 § 10"
+response_deadline = "10 business days"
+fee_rules = "Copying plus reasonable segregation/search fees"
+appeal_path = "Supervisor of Records (Secretary of the Commonwealth), then superior court"
+residency_required = false
+
+[jurisdictions.MI]
+name = "Michigan"
+statute = "Michigan Freedom of Information Act"
+citation = "Mich. Comp. Laws § 15.231"
+response_deadline = "5 business days (extendable by 10)"
+fee_rules = "Labor, copying, and mailing per the statutory fee formula"
+appeal_path = "Appeal to the agency head, then circuit court"
+residency_required = false
+
+[jurisdictions.MN]
+name = "Minnesota"
+statute = "Minnesota Government Data Practices Act"
+citation = "Minn. Stat. § 13.01"
+response_deadline = "Reasonable time (prompt)"
+fee_rules = "Copying cost; no charge to inspect"
+appeal_path = "Advisory opinion (Administration Dept.), then district court"
+residency_required = false
+
+[jurisdictions.MS]
+name = "Mississippi"
+statute = "Mississippi Public Records Act"
+citation = "Miss. Code § 25-61-1"
+response_deadline = "7 business days"
+fee_rules = "Actual cost of searching, reviewing, and duplicating"
+appeal_path = "Ethics Commission complaint, then chancery/circuit court"
+residency_required = false
+
+[jurisdictions.MO]
+name = "Missouri"
+statute = "Missouri Sunshine Law"
+citation = "Mo. Rev. Stat. § 610.010"
+response_deadline = "3 business days"
+fee_rules = "Copying plus staff time at the lowest-paid capable employee's rate"
+appeal_path = "Attorney General complaint, then civil action in circuit court"
+residency_required = false
+
+[jurisdictions.MT]
+name = "Montana"
+statute = "Montana Public Records Act"
+citation = "Mont. Code § 2-6-1001"
+response_deadline = "No fixed statutory deadline (reasonable time)"
+fee_rules = "Cost of fulfilling the request; charges must be disclosed on request"
+appeal_path = "Civil action in district court"
+residency_required = false
+
+[jurisdictions.NE]
+name = "Nebraska"
+statute = "Nebraska Public Records Statutes"
+citation = "Neb. Rev. Stat. § 84-712"
+response_deadline = "4 business days"
+fee_rules = "Copying plus special-service charges for extensive requests"
+appeal_path = "Petition to the Attorney General, then district court (mandamus)"
+residency_required = false
+
+[jurisdictions.NV]
+name = "Nevada"
+statute = "Nevada Public Records Act"
+citation = "Nev. Rev. Stat. § 239.010"
+response_deadline = "5 business days"
+fee_rules = "Actual cost of a medium; extraordinary-use fee allowed"
+appeal_path = "Petition for writ in district court"
+residency_required = false
+
+[jurisdictions.NH]
+name = "New Hampshire"
+statute = "New Hampshire Right-to-Know Law"
+citation = "N.H. Rev. Stat. § 91-A:1"
+response_deadline = "5 business days"
+fee_rules = "Actual cost of copying; no charge for electronic records already digital"
+appeal_path = "Petition in superior court; Ombudsman option"
+residency_required = false
+
+[jurisdictions.NJ]
+name = "New Jersey"
+statute = "Open Public Records Act"
+citation = "N.J. Stat. § 47:1A-1"
+response_deadline = "7 business days"
+fee_rules = "Statutory per-page copying fees; special-service charge for extraordinary effort"
+appeal_path = "Government Records Council, or civil action in Superior Court"
+residency_required = false
+
+[jurisdictions.NM]
+name = "New Mexico"
+statute = "Inspection of Public Records Act"
+citation = "N.M. Stat. § 14-2-1"
+response_deadline = "15 calendar days (3 days to acknowledge)"
+fee_rules = "Reasonable copying fee capped by statute"
+appeal_path = "Attorney General complaint, then district court"
+residency_required = false
+
+[jurisdictions.NY]
+name = "New York"
+statute = "Freedom of Information Law"
+citation = "N.Y. Pub. Off. Law § 84"
+response_deadline = "5 business days (acknowledgment)"
+fee_rules = "Copying at a statutory per-page rate; preparation time for some records"
+appeal_path = "Administrative appeal, then Article 78 proceeding; Committee on Open Government (advisory)"
+residency_required = false
+
+[jurisdictions.NC]
+name = "North Carolina"
+statute = "North Carolina Public Records Law"
+citation = "N.C. Gen. Stat. § 132-1"
+response_deadline = "Reasonable time (no fixed statutory deadline)"
+fee_rules = "Actual cost of duplication; special-service charge for extensive IT work"
+appeal_path = "Civil action in superior court; mediation available"
+residency_required = false
+
+[jurisdictions.ND]
+name = "North Dakota"
+statute = "North Dakota Open Records Statute"
+citation = "N.D. Cent. Code § 44-04-18"
+response_deadline = "Reasonable time (no fixed statutory deadline)"
+fee_rules = "Copying plus a limited per-hour retrieval fee after the first hour"
+appeal_path = "Attorney General opinion, then district court"
+residency_required = false
+
+[jurisdictions.OH]
+name = "Ohio"
+statute = "Ohio Public Records Act"
+citation = "Ohio Rev. Code § 149.43"
+response_deadline = "Reasonable time (prompt)"
+fee_rules = "Actual cost of the medium; no charge for staff time"
+appeal_path = "Court of Claims (expedited) or mandamus in the courts"
+residency_required = false
+
+[jurisdictions.OK]
+name = "Oklahoma"
+statute = "Oklahoma Open Records Act"
+citation = "Okla. Stat. tit. 51 § 24A.1"
+response_deadline = "Reasonable time (prompt)"
+fee_rules = "Copying plus a search fee for commercial or extensive requests"
+appeal_path = "Civil action in district court"
+residency_required = false
+
+[jurisdictions.OR]
+name = "Oregon"
+statute = "Oregon Public Records Law"
+citation = "Or. Rev. Stat. § 192.311"
+response_deadline = "5 business days (acknowledgment); reasonable time to complete"
+fee_rules = "Actual cost of responding, including staff time; fee waiver for public interest"
+appeal_path = "District Attorney or Attorney General petition, then circuit court"
+residency_required = false
+
+[jurisdictions.PA]
+name = "Pennsylvania"
+statute = "Pennsylvania Right-to-Know Law"
+citation = "65 Pa. Stat. § 67.101"
+response_deadline = "5 business days (extendable by 30)"
+fee_rules = "Statutory per-page copying fee; no charge for staff time"
+appeal_path = "Office of Open Records appeal, then Commonwealth/Common Pleas Court"
+residency_required = false
+
+[jurisdictions.RI]
+name = "Rhode Island"
+statute = "Access to Public Records Act"
+citation = "R.I. Gen. Laws § 38-2-1"
+response_deadline = "10 business days (extendable by 20)"
+fee_rules = "Per-page copying fee plus search/retrieval after the first hour"
+appeal_path = "Attorney General complaint, or civil action in superior court"
+residency_required = false
+
+[jurisdictions.SC]
+name = "South Carolina"
+statute = "South Carolina Freedom of Information Act"
+citation = "S.C. Code § 30-4-10"
+response_deadline = "10 business days (determination)"
+fee_rules = "Search, retrieval, and copying at the prorated staff rate"
+appeal_path = "Civil action in circuit court"
+residency_required = false
+
+[jurisdictions.SD]
+name = "South Dakota"
+statute = "South Dakota Sunshine Law"
+citation = "S.D. Codified Laws § 1-27-1"
+response_deadline = "Reasonable time (no fixed statutory deadline)"
+fee_rules = "Actual cost of mailing and reproduction; limited retrieval fee"
+appeal_path = "Office of Hearing Examiners, then circuit court"
+residency_required = false
+
+[jurisdictions.TN]
+name = "Tennessee"
+statute = "Tennessee Public Records Act"
+citation = "Tenn. Code § 10-7-503"
+response_deadline = "7 business days"
+fee_rules = "Copying plus labor after the first hour (per the state schedule)"
+appeal_path = "Office of Open Records Counsel (advisory), then chancery court"
+residency_required = true
+
+[jurisdictions.TX]
+name = "Texas"
+statute = "Texas Public Information Act"
+citation = "Tex. Gov. Code § 552.001"
+response_deadline = "10 business days (promptly)"
+fee_rules = "Copying and, for large requests, personnel time per the AG cost rules"
+appeal_path = "Attorney General ruling on withholding, then mandamus in district court"
+residency_required = false
+
+[jurisdictions.UT]
+name = "Utah"
+statute = "Government Records Access and Management Act"
+citation = "Utah Code § 63G-2-101"
+response_deadline = "10 business days"
+fee_rules = "Copying plus staff time after the first quarter hour; fee waiver for public interest"
+appeal_path = "Agency appeal, then State Records Committee or district court"
+residency_required = false
+
+[jurisdictions.VT]
+name = "Vermont"
+statute = "Vermont Public Records Act"
+citation = "1 V.S.A. § 315"
+response_deadline = "3 business days"
+fee_rules = "Copying plus staff time after the first 30 minutes"
+appeal_path = "Agency head appeal, then superior court"
+residency_required = false
+
+[jurisdictions.VA]
+name = "Virginia"
+statute = "Virginia Freedom of Information Act"
+citation = "Va. Code § 2.2-3700"
+response_deadline = "5 business days (extendable by 7)"
+fee_rules = "Actual cost of accessing, duplicating, and supplying the records"
+appeal_path = "Petition for mandamus/injunction in general district or circuit court; FOIA Council (advisory)"
+residency_required = true
+
+[jurisdictions.WA]
+name = "Washington"
+statute = "Washington Public Records Act"
+citation = "Wash. Rev. Code § 42.56.001"
+response_deadline = "5 business days (to respond, not necessarily produce)"
+fee_rules = "Statutory per-page and per-gigabyte customized charges; no search fees"
+appeal_path = "Agency review, then civil action in superior court"
+residency_required = false
+
+[jurisdictions.WV]
+name = "West Virginia"
+statute = "West Virginia Freedom of Information Act"
+citation = "W. Va. Code § 29B-1-1"
+response_deadline = "5 business days"
+fee_rules = "Actual cost of reproduction; no charge to search"
+appeal_path = "Civil action (mandamus/declaratory) in circuit court"
+residency_required = false
+
+[jurisdictions.WI]
+name = "Wisconsin"
+statute = "Wisconsin Public Records Law"
+citation = "Wis. Stat. § 19.31"
+response_deadline = "Reasonable time (as soon as practicable)"
+fee_rules = "Actual copying and location cost when location exceeds $50"
+appeal_path = "Mandamus in circuit court; Attorney General or DA referral"
+residency_required = false
+
+[jurisdictions.WY]
+name = "Wyoming"
+statute = "Wyoming Public Records Act"
+citation = "Wyo. Stat. § 16-4-201"
+response_deadline = "Reasonable time (7 business days as guidance)"
+fee_rules = "Copying plus production costs; higher schedule for commercial use"
+appeal_path = "Public Records Ombudsman, then district court"
+residency_required = false
+
+[jurisdictions.DC]
+name = "District of Columbia"
+statute = "District of Columbia Freedom of Information Act"
+citation = "D.C. Code § 2-531"
+response_deadline = "15 business days (extendable by 10)"
+fee_rules = "Search and duplication fees; fee waiver in the public interest"
+appeal_path = "Mayor's Office appeal, then Superior Court of the District of Columbia"
+residency_required = false
