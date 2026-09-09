@@ -1953,3 +1953,14 @@ ADR-057 records the additive schema deviation.
 | SIG-ENG-012 (§47 package layout frozen; renaming needs an ADR) | root `AGENTS.md` "Critical gotchas" #3; `tests/unit/test_package_layout.py` | `make check` |
 | SIG-ENG-031 (agent onboarding docs — `AGENTS.md` hierarchy) | root `AGENTS.md` + `web/AGENTS.md`, `db/AGENTS.md`, `connectors/AGENTS.md`; `CLAUDE.md` bridge | `agent-docs` freshness detector; ADR-058 |
 | Phase gate: CI green; ADR written; traceability + risk register updated | this section; `docs/adr/ADR-058-*`; `docs/risk_register.md` (Phase 19 — P19.1, `RISK-P19-01/02`) | `make check` (lint/format/typecheck/pytest/verify-gen) |
+
+## Whole-spec coverage (docs/build/COVERAGE_MATRIX.csv) — the capstone gap analysis (P19.2)
+
+The ticket-scoped sections above map each ticket's requirements to code + tests. **`docs/build/COVERAGE_MATRIX.csv`** is the orthogonal, whole-spec view: all **668** requirement ids classified MET / MET-DIFFERENTLY / PARTIAL / MISSING / AT-RISK-INTEGRATION / N/A-RATIONALE with an evidence anchor, owning ticket, tests, ADRs, risk rows, and closure routing. It is the single place the build is judged as a whole; `docs/build/CAPSTONE_GAP_ANALYSIS.md` narrates the method, roll-ups, the seam hunt (24 rows), the spot-check, and the per-ticket work lists.
+
+| Requirement | Where | Evidence |
+|---|---|---|
+| SIG-ENG-002 (a phase is complete only when every acceptance criterion is judged against the ACs) | whole-spec verdict matrix over all 668 ids | `docs/build/COVERAGE_MATRIX.csv`; `docs/build/CAPSTONE_GAP_ANALYSIS.md` §(b) roll-up |
+| SIG-ENG-004 / SIG-ENG-005 (Done needs automated evidence — the matrix records where it is missing) | `class=covered+untested` (142) and `covered+tested` (412) columns; the `tests` column cites the node/path or records its absence | `docs/build/COVERAGE_MATRIX.csv`; RISK-P19-04 |
+| SIG-ENG-030 / SIG-ENG-031 (risk register + agent-citeable build memory) | `RISK-P19-03/04` in `docs/risk_register.md`; matrix + analysis committed under `docs/build/` | `docs/risk_register.md` (Phase 19 — P19.2); this section |
+| Consistency gate (668 rows, valid enums, every non-MET row routed, evidence for MET/MET-DIFFERENTLY) | `python docs/build/tools/check_coverage_matrix.py docs/build/COVERAGE_MATRIX.csv` → `668 rows OK` | committed stdlib script |
