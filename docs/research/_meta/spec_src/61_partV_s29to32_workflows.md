@@ -209,7 +209,11 @@ distinction must survive at a glance (§39.1).
 
 Discharges OL-6.5-01, OL-6.5-02, OL-24-11.
 
-**SIG-RECON-053 (MUST).** `Contradiction` MUST be a materialized entity with:
+**SIG-RECON-053 (MUST).** `Contradiction` MUST be a first-class object with the shape below —
+**materialized as a stored entity _or_ computed on read** from the claim spine; either is
+conforming so long as the shape, the lifecycle (SIG-RECON-054…057), and the byte-identical L3
+rebuild (SIG-STORE-018) hold. Compute-on-read is the accepted Phase-8 form; persistence is
+deferred to Phase 21 (ADR-037):
 
 | Field | Notes |
 |---|---|
@@ -243,7 +247,9 @@ Discharges Goal 6 (OL-7.1-06) and the negative-claims doctrine (OL-9.4).
 
 ### 32.1 The coverage record
 
-**SIG-METRIC-001 (MUST).** `CoverageRecord` MUST make negative claims **queryable**:
+**SIG-METRIC-001 (MUST).** `CoverageRecord` MUST make negative claims **queryable** (whether
+materialized as stored rows or computed on read from the claim spine is an implementation
+choice; compute-on-read is conforming for Phase 9, persistence deferred to Phase 21, ADR-038):
 
 | Field | Notes |
 |---|---|
@@ -253,6 +259,13 @@ Discharges Goal 6 (OL-7.1-06) and the negative-claims doctrine (OL-9.4).
 | `sources_searched[]` | **Required for `searched_not_found`** |
 | `searched_at`, `searched_by` | |
 | `search_method` | |
+
+The `absence_kind` vocabulary is closed and load-bearing: `not_researched` (no search was
+performed — including where a legal or procedural barrier such as a residency requirement
+prevented one, SIG-TASK-016a), `searched_not_found` (a search ran and returned nothing, and
+`sources_searched[]` is then required), `evidence_of_absence` (a source positively asserts the
+thing does not exist), and `not_applicable`. Reading `not_researched` as `searched_not_found`,
+or vice versa, misstates coverage; the two are recorded distinctly (ADR-041).
 
 **SIG-METRIC-002 (MUST).** "Not in the Atlas" and "not in the Atlas, not in any portal, and not in
 three years of council minutes" are very different statements, and `sources_searched[]` is what

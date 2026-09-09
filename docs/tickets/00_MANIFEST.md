@@ -154,3 +154,15 @@ retroactively), 20 = reconciliation & release, 21 = operationalization toward on
 
 ## Spec amendments applied
 - **Task-type count reconciled (2026-08-26):** §33.2 enumerates **34** task types; the Phase-10 Part X AC said "32". Fixed at source (`spec_src/96_partX_s51to54_plan.md`) and rebuilt (`sh docs/research/_meta/spec_src/BUILD.sh`); the canonical spec now reads "All 34 task types". P10.2 covers all 34.
+- **P20.2 spec reconciliation (2026-09-09, gate HG-13, ADR-062):** all eight amendments ticked and applied at `spec_src` → `BUILD.sh` → the canonical spec (byte-clean; `check_spec_src.py` exit 0):
+  - **A1** (§40, ADR-018/051): zero-JS static map is the conforming default (SIG-UI-038); interactive MapLibre is an optional progressive-enhancement island — new **SIG-UI-047 (MAY)**.
+  - **A2** (§32.1/§33, ADR-041): residency barrier recorded as `absence_kind = not_researched`; the closed absence vocabulary made binding.
+  - **A3** (§11.2, ADR-056): `canonical_name` is a **scalar**; competing names remain claims.
+  - **A4** (§16.2 #6, ADR-022): claim partitioning is **MAY**/deferred and MUST keep the `claim_id` PK/FK contract.
+  - **A5** (§31/§32/§33, ADR-037/038/039): `Contradiction`/`CoverageRecord`/research tasks MAY be **compute-on-read**; persistence deferred to Phase 21.
+  - **A6** (§34/§39.7, ADR-030): **CLI + JSONL** curation/review queue conforming for Phase 5; web surface deferred to Phase 21.
+  - **A7** (§47, ADR-023): `evidence/` added to the SIG-ENG-012 layout.
+  - **A8**: no further `P20.2:spec`-routed normative item exists (empty set).
+  - **Fold-back ids (N=3):** SIG-UI-047, **SIG-EVID-020** (evidence blob-vs-capture dedup, ADR-023), **SIG-ENG-039** (Appendix F ↔ `docs/adr/` equivalence in CI, ADR-062). Spec id count 668 → **671**.
+  - **Non-normative:** Appendix F rebuilt to repository ADR numbering (ADR-001…062; fixes LD-X04/LD-D03); `docs/adr/README.md` gained ADR-056/057 index rows; Appendix G.5 added; §52 "32"→"34" task types confirmed.
+  - **Follow-up rule (SIG-ENG-039):** any PR that adds an ADR MUST add its Appendix F row in the same PR; a PR that adds a requirement id MUST add its `spec_src` paragraph and Appendix F/coverage rows in the same PR. Enforced by `docs/build/tools/check_spec_src.py`.

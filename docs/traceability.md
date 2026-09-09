@@ -2022,3 +2022,19 @@ exactly one `sources` cell (defining standard §3.1). It records the HG-14 signa
 | Backlog ↔ risk-register cross-ref (≤2-hop fate lookup) | `docs/risk_register.md` deferred rows carry a ` → BL-nnn` suffix (first cell only, append-only) | `grep -c '→ BL-' docs/risk_register.md` = 100 = distinct RISK ids in `sources`; `git diff --stat` shows modifications only |
 | Themes ≤10; every bl_id in exactly one theme | `docs/build/BACKLOG_THEMES.md` (10 themes) | `check_backlog.py` theme coverage assertion (all 50 bl_ids, no duplicate) |
 | Phase gate (§51.3): `make check` green (docs only); traceability + risk register updated | `make check`; this section; RISK-P20-01 | `docs/risk_register.md` (Phase 20 — P20.1); `docs/build/OPERATIONAL_READINESS.md` |
+
+# P20.2 — spec reconciliation (amendments, fold-backs, Appendix F)
+
+The three fold-back requirement ids P20.2 appended to the canonical spec (via `spec_src` →
+`BUILD.sh`), each pointing at the code/tooling that already satisfies it, plus the reconciliation
+consistency evidence. No package code or schema changed; `check_spec_src.py` and its test are the
+only new files (both under `docs/build/tools/`, `docs/**`-scoped).
+
+| Requirement | Where | Test / evidence |
+|---|---|---|
+| SIG-UI-047 (MAY — optional interactive MapLibre island; zero-JS static map is the default) | §40; `docs/2_canonical_design_spec.md`; ADR-051/ADR-018 | `COVERAGE_MATRIX.csv` (`deferred(RISK)`, routing `P21.5`); build deferred to P21.5 (BL-010/BL-051) |
+| SIG-EVID-020 (MUST — `evidence/` content-addressed blob-vs-capture dedup) | `evidence/src/evidence/`; §17 | `tests/evidence/test_store.py`, `tests/evidence/test_digest.py` (ADR-023) |
+| SIG-ENG-039 (MUST — every ADR file has an Appendix F row, checked in CI) | Appendix F (`spec_src/99a_appF_adr.md`); `docs/adr/README.md`; §47 | `docs/build/tools/check_spec_src.py`; `docs/build/tools/test_check_spec_src.py` (ADR-062) |
+| SIG-ENG-003 (spec amendment path — `spec_src` → `BUILD.sh` → ADR) | `spec_src/*.md`; ADR-062 | `sh docs/research/_meta/spec_src/BUILD.sh && git diff --exit-code docs/2_canonical_design_spec.md` (byte-clean); `check_spec_src.py` exit 0 |
+| SIG-ENG-001 / SIG-ENG-002 / SIG-ENG-031 (phases executable from spec; phase completeness; register + traceability updated) | Part X §52 (34 task types; new-id mentions); `SPEC_RECONCILIATION_PLAN.md`; `TICKET_VS_SPEC.md` | this section; `docs/risk_register.md` `## Phase 20 — Spec reconciliation (P20.2)` (RISK-P20-02 → BL-051) |
+| Phase gate (§51.3): `make check` green (docs only); ADR-062 present; register + manifest updated | `make check`; `docs/adr/ADR-062-*.md`; `00_MANIFEST.md` "Spec amendments applied" | `make check`; `python docs/build/tools/check_spec_src.py` (671 ids = 668 + 3) |
