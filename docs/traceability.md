@@ -1964,3 +1964,25 @@ The ticket-scoped sections above map each ticket's requirements to code + tests.
 | SIG-ENG-004 / SIG-ENG-005 (Done needs automated evidence — the matrix records where it is missing) | `class=covered+untested` (142) and `covered+tested` (412) columns; the `tests` column cites the node/path or records its absence | `docs/build/COVERAGE_MATRIX.csv`; RISK-P19-04 |
 | SIG-ENG-030 / SIG-ENG-031 (risk register + agent-citeable build memory) | `RISK-P19-03/04` in `docs/risk_register.md`; matrix + analysis committed under `docs/build/` | `docs/risk_register.md` (Phase 19 — P19.2); this section |
 | Consistency gate (668 rows, valid enums, every non-MET row routed, evidence for MET/MET-DIFFERENTLY) | `python docs/build/tools/check_coverage_matrix.py docs/build/COVERAGE_MATRIX.csv` → `668 rows OK` | committed stdlib script |
+
+## Composed end-to-end (tests/e2e) — the whole build driven as one unit (P19.3)
+
+`tests/e2e/test_composed_stack.py` drives the build as a single composed stack for the first time —
+PG18+PostGIS claim spine (real `db/sqitch.plan`) → OCFL evidence store → connector replay → entity
+resolution → the reconciliation resolver → the read API → exports → the `web/` build — one ordered
+test per seam (S1–S8), Docker-gated exactly like `tests/db`. It is the retroactive `implement-spec`
+Phase-5.3 live verification for the 28 tickets that skipped or ran fixture-only, and it records every
+unwired seam as an `xfail` tagged with its `LEDGER_DEFERRALS` id (never a loosened assertion).
+`docs/build/COMPOSED_E2E_REPORT.md` is the full evidence report; `docs/build/tools/retro_cli_matrix.sh`
+is the committed CLI drive matrix (LD-V02).
+
+| Requirement | Where | Evidence |
+|---|---|---|
+| SIG-CHART-009 (the §2.3 acceptance queries run end-to-end) | S1 spine + S2 OCFL + S5 resolver contradiction visible + S6 API resolution envelope | `tests/e2e/test_composed_stack.py::test_s1…test_s6`; COMPOSED_E2E_REPORT §(b) |
+| SIG-ENG-005 (no Done on a manual check alone — the composed path is now a test) | the composed suite replaces the 28 fixture-only / not-recorded manual 5.3 checks | `tests/e2e/`; COMPOSED_E2E_REPORT §(c) 28 rows |
+| SIG-ENG-034 (vertical-slice gate retro-fit) | S2+S5 re-run the P06.1 slice's evidence + contradiction through the composed stack (LD-V01) | `tests/e2e/test_composed_stack.py::test_s2_ocfl_evidence_capture`, `::test_s5_resolver_keeps_contradiction_visible` |
+| SIG-STORE-024 (DB tests against real PG) | S1 deploys `db/sqitch.plan` into a fresh `postgis/postgis:18-3.6`; append-only preserved | `tests/e2e/test_composed_stack.py::test_s1_claim_spine_sqitch_deploy_and_append_only`; `make test-db` (114 passed) |
+| SIG-INGEST-021 (plain-CLI stages driven) | the retro CLI matrix drives 17 stage CLIs once each with a real argument | `docs/build/tools/retro_cli_matrix.sh` (exits 0, 17 rows); COMPOSED_E2E_REPORT §(d) |
+| SIG-INGEST-002/018 (network isolation re-proof, LD-X06) | a DNS lookup inside a connector run fails the run; every DNS entry point guarded | `tests/e2e/test_isolation_reproof.py`; `connectors/src/connectors/isolation.py` |
+| Composed CODE gaps → P19.4 (spine) / P19.5 / P21.4 | S3 `LD-F06b` (PG ClaimSink), S6 `LD-F06` (DB ReadStore), S4 `LD-F04` (ER DB-wire), S8 `LD-V08` (web reads exports) | COMPOSED_E2E_REPORT §(e); CAPSTONE_GAP_ANALYSIS §(i) |
+| Phase gate: composed run only passed/xfailed (0 failed/skipped); risk register + traceability updated | `SIG_REQUIRE_DB_TESTS=1 uv run pytest tests/e2e -ra` → 10 passed, 4 xfailed | `docs/risk_register.md` (Phase 19 — P19.3, `RISK-P19-05/06`); this section |
