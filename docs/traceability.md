@@ -2210,3 +2210,28 @@ hand-edited), SIG-ENG-031 (risk register maintained), SIG-LIC-005 (licence postu
 | Scope boundary respected: no report-only path edited except appended P22.1 register/traceability sections (SIG-ENG-003, P1–P3) | `git diff --name-only` (checked in review) | detector §"excluded-scope findings" in `DOCS_REFRESH_REPORT.md`; no `docs/2_canonical_design_spec.md` / `docs/research/**` / ADR body / ticket edits |
 | Risk register maintained (SIG-ENG-031): RISK-P22-01/02 | `docs/risk_register.md` (Phase 22 — Documentation (P22.1)) | present; §53 format (id + risk + compensating control) |
 | Phase gate (§51.3): `make check` green (unchanged count); `make docs-check-repo` runs; traceability + risk appended | `make check`; `make docs-check-repo`; this section | `make check` (0 failed / 0 xfailed / 2652 passed + 54 skipped, Docker down); `make docs-check-repo` (exit 0) |
+
+# P22.2 — Agent-facing documentation (`agent-docs`, refresh deep=true)
+
+Agent-facing documentation. P22.2 converges the `AGENTS.md` hierarchy + `CLAUDE.md` on the finished
+65-ticket build and gates both doc sets in CI. No canonical requirement ids are added
+(agent-orientation hygiene); the stamped ids are SIG-ENG-001 (executable from the documents),
+SIG-ENG-012 (frozen §47 layout stated as a boundary), SIG-ENG-015/016 (the CI gate extended),
+SIG-ENG-031 (risk register). Only `scripts/docs/`, `Makefile`, `.github/workflows/ci.yml`, the
+`AGENTS.md` hierarchy, `CLAUDE.md`, ADR-072, and the appended register sections changed.
+
+| Requirement | Where | Test |
+|---|---|---|
+| Every `AGENTS.md` statement is verified against a file or a run (§3.1); 0 critical, 0 coverage gaps | root + `web/`,`db/`,`connectors/`,`api/`,`exports/`,`ops/`,`tests/` `AGENTS.md` | `bash scripts/docs/check-agent-docs-freshness.sh .` (8 docs, 0 issues, exit 0) |
+| Length budgets held (SIG-ENG-001, RISK-P22-03): root ≤250, packages ≤150, guideline section order | root `AGENTS.md` (161 lines); package docs ≤70 | `wc -l` on each; `grep -n '^## '` order = Purpose → … → Do → Don't → Boundaries |
+| Nearest-file-wins stated; no root↔package contradiction (RISK-P22-04) | every `AGENTS.md` states nearest-file-wins; consistency sweep | reviewer check; `make docs-check-agent` |
+| Root doc names the executable facts: `BUILD.sh`, `ingestion_permitted`, `SIG_REQUIRE_DB_TESTS`, `verify-gen`, `docs/tickets/`, `docs/build/`, `.agents/scratch/`, `HG-` | root `AGENTS.md` (Build & Test, Critical Gotchas, Don't, Boundaries) | `grep -F` each string in `AGENTS.md` |
+| `CLAUDE.md` bridge (SIG-ENG-001): first non-empty line `@AGENTS.md` | `CLAUDE.md` | `head -1 CLAUDE.md` = `@AGENTS.md` |
+| Frozen §47 layout stated as a boundary (SIG-ENG-012) | root `AGENTS.md` (Module Layout, Don't, Boundaries) | present; matches `pyproject.toml` members + `web/` |
+| Part VIII §0.7 restated as agent boundaries (no plate/person data, officer-naming gate, ODbL separation; no secrets) | root `AGENTS.md` (Boundaries); `api/`,`exports/` docs | present (curation-never-public, ODbL compartment, secrets env-only / HG-09) |
+| Append-only instruction (P1–P3): docs tell agents to append, never rewrite, registers/ADRs | root `AGENTS.md` (Don't) | present |
+| Both detectors vendored + `make docs-check` + CI step (SIG-ENG-015/016) | `scripts/docs/check-agent-docs-freshness.sh` (MIT), `Makefile` (`docs-check`), `.github/workflows/ci.yml` (`docs` job) | `make docs-check` (both detectors, exit 0); CI `docs` job runs on PRs |
+| `make check` unchanged (additive/back-compat): `docs-check` measured ~30s (>10s) ⇒ CI-only | `Makefile` (`check` target untouched); ADR-072 | `make check` green, unchanged count; `time make docs-check` ≈ 30s |
+| ADR-072 documents the gates + revisit trigger (SIG-STORE-007) and is indexed | `docs/adr/ADR-072-documentation-freshness-gates.md`; `docs/adr/README.md` index | `tests/unit/test_policy_adrs.py` (revisit trigger present); grep ADR-072 in README |
+| Risk register maintained (SIG-ENG-031): RISK-P22-03/04 | `docs/risk_register.md` (Phase 22 — Documentation (P22.2)) | present; §53 format |
+| Phase gate (§51.3): `make check` green (unchanged count); ADR-072 indexed; traceability + risk appended | `make check`; ADR-072; this section | `make check` (0 failed / 0 xfailed); `make docs-check` (exit 0) |
