@@ -29,6 +29,7 @@ from . import __version__
 from .ecosystem import GroupStatus, local_groups, partners
 from .loader import assert_export_compatible, is_loadable, source_export_license
 from .registry import get, sources
+from .review import flip_ready, gate_breakdown, is_flip_ready, review_metadata_violations
 from .stages import registered_connectors, stage_names
 
 
@@ -50,6 +51,11 @@ def build_parser() -> argparse.ArgumentParser:
     gate = sub.add_parser("gate", help="report the connector-loader gate verdict for a source")
     gate.add_argument("--source", required=True, help="source id to check")
     sub.add_parser("export-check", help="compute the export licence per compartment (SIG-LIC-010)")
+    rev = sub.add_parser(
+        "review-status",
+        help="per-source rights-review gate breakdown + flip-ready count (P21.1)",
+    )
+    rev.add_argument("--source", default=None, help="show one source's five-field gate breakdown")
     runp = sub.add_parser(
         "run",
         help="run a connector over a fixture and assert claims into the selected sink (P19.4)",
@@ -86,6 +92,13 @@ def _validate() -> int:
         f"local groups: {len(groups)} (unlocated {len(unlocated)}, disappeared {len(disappeared)})"
     )
     print(f"national partners: {len(orgs)}")
+    # The flip-metadata rule (P21.1, SIG-INGEST-028/038, SIG-LIC-001/009): a row
+    # flipped to ingestion_permitted=true is invalid without its review metadata.
+    violations = review_metadata_violations(srcs)
+    if violations:
+        for msg in violations:
+            print(f"VALIDATION FAILED: {msg}")
+        return 1
     print("connectors registry self-checks OK")
     return 0
 
@@ -145,6 +158,39 @@ def _export_check() -> int:
     return 0
 
 
+def _review_status(source_id: str | None) -> int:
+    # Per-source gate breakdown (SIG-INGEST-014/028, §22.4, §8.4). With --source,
+    # print the five gate fields; with no arg, print the same counts as `validate`
+    # plus flip-ready and loadable-now.
+    if source_id is not None:
+        try:
+            record = get(source_id)
+        except KeyError:
+            print(f"unknown source id: {source_id!r}")
+            return 2
+        bd = gate_breakdown(record)
+        print(f"source {source_id!r}:")
+        print(
+            f"  ingestion_permitted={bd.ingestion_permitted} compact={bd.compact_ok} "
+            f"custody={bd.custody_ok} rights={bd.rights_present} reviewed-by={bd.reviewed_by}"
+        )
+        print(f"  flip-ready: {is_flip_ready(record)}")
+        print(f"  loadable now: {bd.loadable}")
+        return 0
+
+    srcs = sources()
+    permitted = [s for s in srcs if s.ingestion_permitted]
+    loadable = [s for s in srcs if is_loadable(s)]
+    ready = flip_ready(srcs)
+    print(f"registered sources: {len(srcs)}")
+    print(f"  ingestion_permitted=true: {len(permitted)}")
+    print(f"  flip-ready: {len(ready)}")
+    print(f"  loadable now: {len(loadable)}")
+    for s in ready:
+        print(f"    flip-ready: {s.id}")
+    return 0
+
+
 def _run(args: argparse.Namespace) -> int:
     # Import the source connectors so they register (SIG-INGEST-021).
     from pathlib import Path
@@ -188,5 +234,7 @@ def main(argv: list[str] | None = None) -> int:
         return _gate(args.source)
     if args.command == "export-check":
         return _export_check()
+    if args.command == "review-status":
+        return _review_status(args.source)
     parser.print_help()
     return 0

@@ -127,6 +127,16 @@ class SourceRecord:
     #: Whether the lead research pass actually reached the URL (§22.6 "Verified").
     verified: bool = False
     notes: str = ""
+    #: Rights-review metadata (P21.1, SIG-LIC-001/009, SIG-INGEST-028/038). All
+    #: optional (additive/back-compat): an unreviewed row carries none. A flip to
+    #: ``ingestion_permitted = true`` is invalid without them — enforced by
+    #: :func:`review_metadata_violations`, not by prose.
+    #: Reviewer ROLE (never a personal name — Part VIII §0.7), e.g. "licensing reviewer".
+    rights_reviewed_by: str = ""
+    #: Date the rights review was recorded.
+    rights_reviewed_on: date | None = None
+    #: Path (repo-relative) to the source's rights-review packet under docs/build/rights/.
+    review_packet: str = ""
 
     def __post_init__(self) -> None:
         if not self.id:
@@ -191,6 +201,11 @@ def _record_from_row(source_id: str, row: dict[str, Any]) -> SourceRecord:
         last_verified=last_verified if isinstance(last_verified, date) else None,
         verified=bool(row.get("verified", False)),
         notes=str(row.get("notes", "")),
+        rights_reviewed_by=str(row.get("rights_reviewed_by", "")),
+        rights_reviewed_on=(
+            reviewed_on if isinstance(reviewed_on := row.get("rights_reviewed_on"), date) else None
+        ),
+        review_packet=str(row.get("review_packet", "")),
     )
 
 

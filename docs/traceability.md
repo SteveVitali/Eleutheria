@@ -2055,3 +2055,23 @@ lockfiles, and docs change; no package code or schema changed.
 | Read-only merge dry-run over all open PRs (no ref touched) | `docs/build/tools/merge_dryrun.sh`; `docs/build/INTEGRATION_PLAN.md` §(b) | `sh docs/build/tools/merge_dryrun.sh` exit 0, 27/27 `[none]`; `git rev-parse main origin/main` unchanged; `git worktree list` = 1; `git tag -l` empty |
 | Operator merge + tag + release procedure (copy-pasteable) | `docs/build/INTEGRATION_PLAN.md` §(d) | bottom-up `gh pr merge`; `git tag -a v0.1.0`; `make sbom`; `gh release create` |
 | Phase gate (§51.3): `make check` green; traceability + risk register + manifest updated | `make check`; this section; `00_MANIFEST.md` "Phase gates & special points" | `make check` (2418 passed, 1 xfailed); `make test-db` (116 passed); `tests/e2e` (13 passed, 1 xfailed → `LD-V08`/P21.4) |
+
+# P21.1 — rights review packets, registry completion, Stage-0 outreach record
+
+P21.1 registers the six OKC critical-path sources (115 total), adds the additive review-metadata fields
+and the machine-checked flip rule, ships the 27 rights-review packets + `_TEMPLATE.md`, the
+`RIGHTS_REVIEW_INDEX.md`, the 19-project `STAGE0_OUTREACH_RECORD.md` + outreach letter template, and the
+`review-status` CLI. The HG-03/HG-04 gate is **skipped** (nothing flipped; `loadable now: 0`,
+`flip-ready: 18`). No package schema changed beyond additive optional row fields; no new requirement ids.
+
+| Requirement | Where | Test / evidence |
+|---|---|---|
+| SIG-INGEST-023 (registry row minimum fields) | `sources.toml` 6 OKC rows; `connectors.registry.SourceRecord` (+ `rights_reviewed_by`/`rights_reviewed_on`/`review_packet`) | `tests/connectors/test_okc_slice_mapping.py`; `tests/unit/test_source_registry.py`; `uv run sig-connectors validate` → `registered sources: 115` |
+| SIG-INGEST-027 (closed `compact_status` vocabulary incl. `no_response`) | `STAGE0_OUTREACH_RECORD.md` outcomes; `connectors.registry.CompactStatus` | `tests/connectors/test_stage0_outreach.py` (outcomes in the closed enum; FlockReporter `no_response` recorded) |
+| SIG-INGEST-028 / SIG-INGEST-038 (ingestion_permitted defaults false; the flip rule) | `connectors.review.review_metadata_violations`; `connectors.cli._validate` | `tests/connectors/test_review_status.py` (a flip lacking `rights_reviewed_by` makes `validate` fail naming the id; seed has 0 violations) |
+| SIG-LIC-001 / SIG-LIC-004 (per-source rights review; UNDETERMINED fails closed) | 27 packets `docs/build/rights/*.md`; `RIGHTS_REVIEW_INDEX.md`; 6 OKC + `usaspending`/`deflock`/`civicclerk` left UNDETERMINED | `ls docs/build/rights/*.md | grep -v _TEMPLATE | wc -l` = 27; each packet has `Terms (verbatim)` / `SPDX candidate` / `Decision`; `test_okc_slice_mapping.py` (OKC rows UNDETERMINED at seed) |
+| SIG-LIC-009 / SIG-LIC-009a (recorded reviewer role ≠ legal opinion; silently-travelling share-alike) | packet counsel-needed flag; ADR-063; `deflock_repo`/`raa_prefectures` ODbL-travel notes | RISK-P21-02; packets’ ODbL-implications + counsel-needed sections |
+| SIG-CONTRIB-012 / 012a / 013 (Stage-0 outreach before any connector; opening offer; archival succession) | `STAGE0_OUTREACH_RECORD.md` (19 federation-compact projects, spec §6/§35.1); `docs/governance/stage0-outreach-letter.md` | `tests/connectors/test_stage0_outreach.py` (19 rows; letter states non-competition, archival succession SIG-CONTRIB-013, opt-out) |
+| SIG-INGEST-030 (Eyes on Flock outreach outcome recorded) | `eyes_on_flock` row + packet; `STAGE0_OUTREACH_RECORD.md` row 3 | `tests/unit/test_source_registry.py::test_eyes_on_flock_outreach_outcome_is_recorded`; `docs/build/rights/eyes_on_flock.md` |
+| `review-status` subcommand (per-source gate breakdown + flip-ready) | `connectors.cli._review_status`; `connectors.review.gate_breakdown` | `uv run sig-connectors review-status` → `flip-ready: 18`, `loadable now: 0`; `test_review_status.py` |
+| Phase gate (§51.3): `make check` green; ADR-063; register + traceability updated; BACKLOG rows closed | `make check`; `docs/adr/ADR-063-*.md`; `docs/risk_register.md` `## Phase 21 — Operationalization (P21.1)`; `docs/build/BACKLOG.csv` | `make check`; `python docs/build/tools/check_spec_src.py` (63 ADRs, 671 ids); RISK-P21-01/02; BL-032/BL-033 `status=closed` |

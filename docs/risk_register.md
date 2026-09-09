@@ -1307,3 +1307,18 @@ compensating control that is either a committed tool or an explicit step in the 
 > unchanged (adding Node to the `python` job was explicitly *not* the chosen fix). Verified node-present
 > (`make check` = 2418 passed / 1 xfailed, S8 → `LD-V08` xfail) and node-absent (S8 skipped, 0 failed).
 > Landed by `devin/p20-4-fix-ci-e2e-webbuild` (P20.4).
+
+## Phase 21 — Operationalization (P21.1)
+
+Per §53 / SIG-ENG-031, P21.1's risk-register entry. P21.1 turns "0 of N loadable" into a reviewable,
+one-line-per-source decision: the 6 OKC critical-path rows are registered (115 total), a machine-checked
+flip rule requires review metadata, 27 rights-review packets + the 19-project Stage-0 outreach record give
+a human what they need to unblock ingestion **without touching code**. The gate is **skipped this run**
+(HG-03/HG-04 = SKIP): nothing is flipped (`loadable now: 0`, `flip-ready: 18`) and no outreach is recorded.
+
+### Rights-review / registry-completion risks and their compensating controls (SIG-ENG-005)
+
+| id | Risk (what breaks the acceptance gate if unhandled) | Compensating control |
+|---|---|---|
+| RISK-P21-01 | **Packets quote terms that may change.** A rights-review packet quotes a source's terms/robots text verbatim, but published terms and licences change over time; a packet that silently ages could carry a stale quote into a future flip decision, and a reviewer might act on terms that no longer hold (defining standard §3.1 — no synthetic certainty about rights). | **Compensating control:** every packet's verbatim quote carries an explicit `retrieval_date` (the date the agent actually fetched the terms page — reading a terms page is permitted research, not ingestion), separated from the reviewer's judgement (the Decision line). The registry row carries `rights.retrieval_date` and, once reviewed, `last_verified`; the flip rule (`connectors.review.review_metadata_violations`) refuses a flip whose `last_verified` is absent. Where a terms page could not be fetched this pass, the packet says so honestly and records the `terms_url` for the reviewer rather than inventing text. Packets are regenerable and the index (`RIGHTS_REVIEW_INDEX.md`) is reproduced from `sig-connectors validate`. |
+| RISK-P21-02 | **A recorded reviewer role could be mistaken for a legal opinion.** The registry records `rights_reviewed_by` (a reviewer *role*) on a flip; a reader could read that as counsel sign-off on the licence — but a per-source rights review is not a legal opinion, and the ODbL §4.4(b)/sui-generis and AGPL-linking questions remain open counsel items (HG-02, RISK-P0-01..04, SIG-INGEST-048b). | **Compensating control:** `rights_reviewed_by` is a **role string, never a personal name** (Part VIII §0.7); every packet carries an explicit **counsel-needed flag** (YES/NO/PARTIAL, SIG-LIC-009) and states that it asserts no legal conclusion. ADR-063 records that the reviewer metadata is provenance-of-flip, not counsel disposition; the OSM/ODbL-derived and AGPL compartments stay export/link-only until HG-02 counsel review, independently of any `ingestion_permitted` flip. `usaspending` is left `UNDETERMINED` (public-domain facts laid out, SPDX candidate `CC0-1.0`) precisely so this ticket makes no rights judgement. |
