@@ -1189,3 +1189,55 @@ fetch runs in CI.
 | SIG-INGEST-021 (connector self-registers on the plug-in seam; visible in the CLI) | `connectors.flock_portal.FlockPortalConnector` (`@register`); imported by `connectors.__init__` | `tests/connectors/test_flock_portal.py::test_flock_portal_connector_is_registered` |
 | SIG-INGEST-003 (post-capture stages are pure; reproducible claim set — only the deterministic edges enter the stream) | `connectors.flock_portal` (`normalize` carries no wall-clock; `observed_at` keyed on the snapshot; sharing findings kept out of L1) | `tests/connectors/test_flock_portal.py::test_claim_set_is_reproducible_across_runs` |
 | §23.4 (raw values preserved beside typed values; attribution + append-only, P1–P3) | `connectors.flock_portal` (`field_claim` `raw_value`/`extracted_field`; `_stamp` `source_attribution`; no `is_current`/authoritative flags) | `tests/connectors/test_flock_portal.py::test_raw_values_are_preserved_beside_typed_values`, `::test_rows_preserve_attribution_and_are_append_only`, `::test_fetch_carries_a_descriptive_user_agent` |
+
+# P11.2 — the `audit_structural` connector
+
+Every executable requirement P11.2 satisfies (§23.7), mapped to code and the test that fails if it
+is removed (SIG-ENG-004). Requirements reconciliation *logic* exercised here is owned/tested by
+P08.2 (count §29.1, sharing §29.3) — this connector produces the observations and invokes it.
+
+## Structural aggregates only — the §18.1 per-plate bright line (SIG-INGEST-046, SIG-STORE-025/026)
+
+| Requirement | Where | Test |
+|---|---|---|
+| §18.1 / SIG-STORE-025 (no per-search or per-plate row is produced anywhere; per-search rows read transiently, aggregated, dropped) | `connectors.audit_structural` (`aggregate_search_events`, `extract` consumes per-search rows), `data/audit_structural_vocab.toml` (`forbidden_output_columns`) | `tests/connectors/test_audit_structural.py::test_no_per_search_or_per_plate_row_is_produced`, `::test_aggregates_count_distinct_searches_and_carry_direction` |
+| SIG-STORE-026 (the bright line is a schema property — a plate-capable row is rejected at the boundary) | `connectors.audit_structural.assert_no_per_row_output` (`PerRowLeak`); run in `normalize` | `tests/connectors/test_audit_structural.py::test_the_per_row_schema_gate_rejects_a_plate_bearing_row` |
+| §11.16 / §18.4 (`UsageAggregate` shape: searching_org→source_org, month-granular period, count, scope, reason_category, coverage_period) | `connectors.audit_structural.UsageAggregate`, `period_month` | `tests/connectors/test_audit_structural.py::test_aggregates_count_distinct_searches_and_carry_direction`, `::test_redacted_and_empty_reasons_produce_distinct_aggregate_buckets` |
+
+## The audit `Camera Count` as an independent count claim (§23.7, §29.1, SIG-RECON-026)
+
+| Requirement | Where | Test |
+|---|---|---|
+| §23.7 (audit `Camera Count` lands as an independent count claim — its own `active_device_count` basis, reconciled against other counts by P08.2, never merged) | `connectors.audit_structural` (`camera_count_claim`, `camera_count_observation`, `reconcile_camera_counts`) → `reconcile.counts.reconcile_counts`; `data/audit_structural_vocab.toml` (`[camera_count]`) | `tests/connectors/test_audit_structural.py::test_camera_count_is_an_independent_active_device_count_claim`, `::test_camera_count_is_reconciled_against_other_counts_never_merged_via_p08_2`, `::test_redacted_camera_count_yields_no_fabricated_count` |
+
+## `SharedNetworks.csv` = configured access, directional, blanks-as-negatives (SIG-ONTO-042/044, SIG-RECON-034/035/036/037)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ONTO-042/044 (SharedNetworks lands as configured access only, directional, blank cells as negatives; single-snapshot edges carry `valid_from_kind='unknown'`) | `connectors.audit_structural` (`sharing_observations`, `reconcile_audit_sharing`, `_sharing_edge_rows`); `data/audit_structural_vocab.toml` (`[sharing]`) | `tests/connectors/test_audit_structural.py::test_sharednetworks_edges_are_configured_access_directional_single_snapshot`, `::test_blank_sharing_cells_are_negatives_not_unknown_edges`, `::test_connector_streams_only_deterministic_edges_for_sharing` |
+| SIG-RECON-034/035/036/037 (exercised here; owned/tested in P08.2) — asymmetry is a finding via the §29.3 reconciler run over the whole file | `connectors.audit_structural.reconcile_audit_sharing` → `reconcile.sharing.reconcile_sharing` | `tests/connectors/test_audit_structural.py::test_sharing_asymmetry_is_a_finding_via_the_p08_2_reconciler` |
+
+## `***` redaction distinguished from empty (SIG-INGEST-046)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-INGEST-046 (`***` redaction is a distinct recorded state, never conflated with empty/missing) | `connectors.audit_structural` (`classify_cell`, `is_redacted`, `reason_category`, `redacted_cell_rows`); `data/audit_structural_vocab.toml` (`redaction_sentinel`) | `tests/connectors/test_audit_structural.py::test_classify_cell_distinguishes_redacted_from_empty_and_present`, `::test_reason_category_keeps_redacted_distinct_from_unspecified`, `::test_redacted_and_empty_reasons_produce_distinct_aggregate_buckets` |
+
+## The four audit source types kept non-interchangeable (§23.7)
+
+| Requirement | Where | Test |
+|---|---|---|
+| §23.7 (the four audit source types are recorded on every aggregate and not silently unioned) | `connectors.audit_structural` (`audit_source_types`, `assert_audit_source_type`, `UnknownAuditSourceType`; `audit_source_type` stamped on every row); `data/audit_structural_vocab.toml` (`audit_source_types`) | `tests/connectors/test_audit_structural.py::test_the_four_audit_source_types_are_the_closed_set`, `::test_every_aggregate_records_its_source_type_and_they_are_not_unioned` |
+| §23.7 writes: event-log lifecycle transitions (dated, tagged by source type; §29.4 preference owned by P08.2) | `connectors.audit_structural.lifecycle_transition_rows`; `data/audit_structural_vocab.toml` (`[event_log]`) | `tests/connectors/test_audit_structural.py::test_event_log_lands_dated_lifecycle_transitions_tagged_by_source_type` |
+| §23.7 "Duplicate handling" (overlapping exports deduplicated by `(source_org, searching_org, window)` before aggregation, overlap recorded); "Source-agency provenance" (every aggregate carries its export + requesting agency) | `connectors.audit_structural.deduplicate_events`; `UsageAggregate` (`requesting_agency`, `audit_export_id`) | `tests/connectors/test_audit_structural.py::test_overlapping_exports_are_deduplicated_by_window_block`, `::test_source_agency_provenance_travels_on_every_aggregate` |
+
+## The agency-audit source, allowlist, canary, registration, reproducibility (SIG-INGEST-046a/021/003, SIG-PARSE-007/008)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-INGEST-046a (agency primary records, not the derived HIBF export) | `connectors/data/sources.toml` (`agency_audit_export`, CC0-1.0 public record) | `tests/unit/test_source_registry.py` (registry invariants) |
+| §23.7 predicate allowlist enforced as a schema gate | `connectors.audit_structural` (`predicate_allowlist`, `assert_predicate_allowed`, `PredicateNotAllowed`) | `tests/connectors/test_audit_structural.py::test_predicate_allowlist_is_enforced` |
+| SIG-INGEST-021 (self-registers on the plug-in seam; visible in the CLI) | `connectors.audit_structural.AuditStructuralConnector` (`@register`); imported by `connectors.__init__` | `tests/connectors/test_audit_structural.py::test_audit_structural_connector_is_registered` |
+| SIG-INGEST-003 (post-capture stages pure; reproducible claim set — only deterministic rows in the stream) | `connectors.audit_structural` (`extract`/`normalize` pure; sharing findings kept out of L1) | `tests/connectors/test_audit_structural.py::test_claim_set_is_reproducible_across_runs` |
+| SIG-PARSE-007/008 (committed fixtures + a canary on structural drift) | `tests/connectors/fixtures/audit_structural/*.csv`; `connectors.audit_structural.canary_findings`, `parse_csv` | `tests/connectors/test_audit_structural.py::test_canary_passes_on_the_committed_fixtures`, `::test_canary_flags_structural_drift` |
+| §23.7 (raw values preserved; source + append-only, P1–P3) | `connectors.audit_structural._stamp`, `UsageAggregate.to_row` (`raw_value`) | `tests/connectors/test_audit_structural.py::test_rows_carry_source_and_are_append_only`, `::test_fetch_carries_a_descriptive_user_agent` |

@@ -1,0 +1,142 @@
+# SPDX-License-Identifier: Apache-2.0
+# The versioned `audit_structural` connector vocabulary (§23.7, P11.2). DATA, not
+# code (SIG-ENG-001): the audit-CSV column aliases, the four audit source types,
+# the predicate allowlist, the forbidden per-row column set (§18.1), the reason
+# and scope normalizations, the `***` redaction sentinel, and the sharing /
+# camera-count field maps are data rows — reviewed on their own and changed as
+# VERSIONED MIGRATIONS (§20): bump `vocab_version` and add the change, never
+# silently rewrite a mapping.
+#
+# The connector parses the AGENCY's own Flock audit exports (obtained as public
+# records, source `agency_audit_export`) into STRUCTURAL AGGREGATES ONLY. It NEVER
+# creates a per-search or per-plate row (§18.1, the Part VIII bright line): the
+# per-search rows are read transiently, aggregated, and dropped. It is NOT the
+# derived HIBF bulk export (SIG-INGEST-046a).
+
+# The connector's own vocabulary version, stamped onto every run (§20).
+vocab_version = "2026.09.01"
+
+# The four audit source types (§23.7 / §11.16). They are NOT interchangeable and
+# MUST be recorded on every aggregate; the connector refuses to silently union
+# rows across types. Each capture declares its type on the discover target.
+audit_source_types = [
+  "organization_audit",
+  "network_audit",
+  "portal_public_audit",
+  "event_log",
+]
+
+# The redaction sentinel a Flock audit export writes into a withheld cell. A
+# redacted cell is a DISTINCT, recorded state — never conflated with an empty or
+# missing value (SIG-INGEST-046, `***` != empty).
+redaction_sentinel = "***"
+
+# The minimum published time granularity for an aggregate period (§18.4): one
+# month. Per-search timestamps are floored to their month for the `period`; the
+# finer timestamp is never stored.
+period_granularity = "month"
+
+# The predicates this connector may write (§23.7). Enforced as a hard schema gate
+# (SIG-INGEST-033 analogue): writing anything outside this set is a schema error.
+predicate_allowlist = [
+  "usage_search_aggregate",
+  "active_device_count",
+  "configured_sharing_partner",
+  "deployment_lifecycle_transition",
+  "audit_cell_redacted",
+]
+
+# Predicate GENRES the connector MUST NOT write (§18.1, the bright line): any
+# per-search, per-plate, or per-person row, and any officer identity. Named as
+# data so the refusal is not a magic string; the allowlist above is authoritative.
+forbidden_predicate_genres = [
+  "per_search_row",
+  "per_plate_row",
+  "per_person_row",
+  "officer_identity",
+]
+
+# Column names / substrings that MUST NEVER appear on an emitted row (§18.1,
+# SIG-STORE-025/026): a plate, a plate hash, a per-search id, a raw timestamp, an
+# officer/user identity. This is the schema property a data-quality test asserts
+# — a claim carrying any of these would be a per-search/per-plate leak.
+forbidden_output_columns = [
+  "plate",
+  "plate_hash",
+  "license_plate",
+  "search_id",
+  "vehicle_id",
+  "trip_id",
+  "officer",
+  "officer_name",
+  "user",
+  "user_name",
+  "device_serial",
+  "timestamp",
+  "searched_at",
+  "reason_text",
+]
+
+# The UsageAggregate grouping fields (§11.16), discovered per audit type via these
+# column aliases (§23.7: the audit schema is agency-configured and discovered per
+# capture). The first alias present in the header wins.
+[aggregate]
+searching_org_columns = ["Searching Organization", "searching_org", "requesting_agency"]
+source_org_columns = ["Source Organization", "source_org", "owning_agency", "network"]
+reason_columns = ["Reason", "reason", "search_reason"]
+scope_columns = ["Scope", "search_scope", "scope"]
+# Per-search timestamp — read ONLY to derive the aggregate's month, then dropped.
+timestamp_columns = ["Timestamp", "timestamp", "searched_at", "date"]
+
+# Reason-category normalization (§11.16: `reason_category` is a vocab; raw_value
+# retained, P2). An unmapped reason falls to `other` with its raw value kept. The
+# `***` sentinel maps to the distinct `redacted` category (never `unspecified`),
+# and a blank/absent reason maps to `unspecified` — the two are kept apart.
+[reason_categories]
+"immigration" = "immigration_enforcement"
+"ice" = "immigration_enforcement"
+"criminal investigation" = "criminal_investigation"
+"investigation" = "criminal_investigation"
+"stolen vehicle" = "stolen_vehicle"
+"amber alert" = "amber_alert"
+"traffic" = "traffic_enforcement"
+"welfare check" = "welfare_check"
+
+# The audit `Camera Count` (§23.7): an INDEPENDENT count claim, its own count
+# basis, reconciled against other counts by P08.2 (reconcile.counts) and NEVER
+# merged into them (§29.1, SIG-RECON-026). `active_device_count` is the basis the
+# audit export attests (§29.1 table: "Portal; audit `Camera Count`; vendor
+# statement"); `audit_log` is the evidence genre for the (genre x predicate)
+# directness lookup.
+[camera_count]
+predicate = "active_device_count"
+count_basis = "active"
+genre = "audit_log"
+columns = ["Camera Count", "camera_count", "cameras", "device_count"]
+
+# `SharedNetworks.csv` (§23.7, SIG-ONTO-042/044). Directional CONFIGURED-ACCESS
+# edges only (never observed_use); blank cells are NEGATIVES (no configured
+# sharing, not "unknown"); single-snapshot edges carry `valid_from_kind='unknown'`
+# (SIG-RECON-036). Asymmetry / findings run through P08.2's §29.3 reconciler. Each
+# row names one organization and its outbound / inbound partner lists.
+[sharing]
+org_field = "Organization"
+shared_with_field = "Shares With"
+received_from_field = "Receives From"
+access_kind = "configured_access"
+
+# The event-log audit type (§23.7 writes: "event-log lifecycle transitions"). A
+# dated (state, date) transition per row; recorded tagged with its audit source
+# type. Reconciliation of transitions (§29.4, event-log preferred over inferred)
+# is owned by P08.2 — consumed there, not decided here.
+[event_log]
+subject_columns = ["Deployment", "deployment", "subject", "camera_network"]
+state_columns = ["State", "event", "transition", "status"]
+date_columns = ["Date", "date", "event_date", "timestamp"]
+
+# The audit-export source-agency provenance columns (§23.7 "Source-agency
+# provenance"): every aggregate carries the export it came from and that export's
+# requesting agency. Read from the discover target, falling back to these columns.
+[provenance]
+requesting_agency_columns = ["Requesting Agency", "requesting_agency"]
+export_id_columns = ["Export", "export_id", "audit_export"]

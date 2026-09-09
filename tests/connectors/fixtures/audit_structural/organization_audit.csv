@@ -1,0 +1,7 @@
+Searching Organization,Source Organization,Reason,Scope,Timestamp,Plate,Officer
+Springfield PD,Shelby County SO,Immigration,state,2026-08-03T09:15:00,ABC123,J. Smith
+Springfield PD,Shelby County SO,Immigration,state,2026-08-05T10:00:00,XYZ789,J. Smith
+Springfield PD,Shelby County SO,Criminal Investigation,national,2026-08-10T11:00:00,LMN456,K. Doe
+Springfield PD,Shelby County SO,***,state,2026-08-12T12:00:00,QRS111,K. Doe
+Springfield PD,Shelby County SO,,state,2026-08-15T13:00:00,TUV222,L. Roe
+Shelby County SO,Springfield PD,Stolen Vehicle,state,2026-08-20T14:00:00,WWW333,M. Poe
