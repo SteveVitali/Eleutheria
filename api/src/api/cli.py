@@ -27,19 +27,38 @@ def build_parser() -> argparse.ArgumentParser:
         version=f"%(prog)s {__version__}",
     )
     sub = parser.add_subparsers(dest="command")
-    serve = sub.add_parser("serve", help="Run the read API under uvicorn (demo store).")
+    serve = sub.add_parser("serve", help="Run the read API under uvicorn.")
     serve.add_argument("--host", default="127.0.0.1", help="Bind host (default 127.0.0.1).")
     serve.add_argument("--port", type=int, default=8000, help="Bind port (default 8000).")
+    serve.add_argument(
+        "--dsn",
+        default=None,
+        help="Serve over the PostgreSQL claim spine (PgReadStore) instead of the demo store.",
+    )
+    serve.add_argument(
+        "--role",
+        default=None,
+        help="Optional PostgreSQL read role to SET ROLE to (e.g. sig_read_public); RLS stays on.",
+    )
     return parser
 
 
-def _serve(host: str, port: int) -> int:
+def _serve(host: str, port: int, dsn: str | None = None, role: str | None = None) -> int:
     import uvicorn
 
     from .app import create_app
-    from .demo import build_demo_store
+    from .store import ReadStore
 
-    uvicorn.run(create_app(build_demo_store()), host=host, port=port)
+    store: ReadStore
+    if dsn:
+        from .store_pg import build_pg_store
+
+        store = build_pg_store(dsn, role=role)
+    else:
+        from .demo import build_demo_store
+
+        store = build_demo_store()
+    uvicorn.run(create_app(store), host=host, port=port)
     return 0
 
 
@@ -48,6 +67,6 @@ def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     if args.command == "serve":
-        return _serve(args.host, args.port)
+        return _serve(args.host, args.port, args.dsn, args.role)
     parser.print_help()
     return 0
