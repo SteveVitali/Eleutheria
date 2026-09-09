@@ -14,7 +14,7 @@ MYPY_TARGETS := $(foreach p,$(PY_PACKAGES),-p $(p))
 # Python source this repo owns: each package's src tree, plus the test suite.
 LINT_PATHS := $(foreach p,$(PY_PACKAGES),$(p)/src) tests
 
-.PHONY: sync lint format-check typecheck test test-db check lock export sbom gen gen-ontology verify-gen docs-check-repo
+.PHONY: sync lint format-check typecheck test test-db check lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent
 
 ## Install every workspace member + the dev toolchain from the committed lockfile.
 sync:
@@ -67,11 +67,23 @@ export:
 verify-gen: gen
 	git diff --exit-code -- pylock.toml ontology/generated
 
+## Both documentation freshness detectors (P22.2, ADR-072): the human-facing
+## repo-docs detector (P22.1) plus the agent-facing AGENTS.md detector. Both are
+## vendored under scripts/docs/, structural-only, read-only, and exit non-zero on
+## a critical issue. Run over the whole repo (`.`). Wired into CI on pull requests.
+docs-check: docs-check-repo docs-check-agent
+
 ## Human-facing docs freshness check (P22.1): the vendored refresh-repo-docs
 ## detector over the in-scope doc corpus (README/CONTRIBUTING/CHANGELOG/docs).
-## Read-only; exits non-zero on a broken reference. CI wiring is P22.2's.
+## Read-only; exits non-zero on a broken reference.
 docs-check-repo:
 	bash scripts/docs/check-repo-docs-freshness.sh .
+
+## Agent-facing docs freshness check (P22.2): the vendored agent-docs detector
+## over the AGENTS.md hierarchy (broken references, key-file/coverage/line-count
+## drift). Read-only; exits non-zero on a critical issue.
+docs-check-agent:
+	bash scripts/docs/check-agent-docs-freshness.sh .
 
 ## Software Bill of Materials (SIG-ENG-011), CycloneDX, generated per release.
 ## Run ephemerally via uvx (so it need not live in the runtime lockfile), against
