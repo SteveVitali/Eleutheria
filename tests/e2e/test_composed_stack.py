@@ -12,13 +12,14 @@ session fixtures in ``conftest.py``.
 **Never fabricate green (orchestrate-build §3.1).**  A seam that *exists but has
 never been wired together* is recorded as an ``xfail`` whose reason begins with
 its ``LEDGER_DEFERRALS`` id (``^LD-[A-Z]+[0-9]+[a-z]?:``) — never a loosened or
-removed assertion.  The four spine/rendering gaps this ticket surfaces are the
-CODE work of P19.4 (spine) and P19.5/P21.4 (the rest):
+removed assertion.  P19.4 crosses the two claim-spine seams (S3 ``LD-F06b`` and S6
+``LD-F06``); the ER seam (``LD-F04``) moves to P19.5 per that ticket's size guard,
+and web rendering (``LD-V08``) is P21.4:
 
-* S3 ``LD-F06b`` — no PG ``ClaimSink``: connector claims never written to PG.
-* S4 ``LD-F04``  — ER not DB-wired: matches/decisions not persisted to PG.
-* S6 ``LD-F06``  — no DB-backed ``ReadStore``: the API has never read the spine.
-* S8 ``LD-V08``  — ``web/`` reads fixtures, not the export/API path.
+* S3 ``LD-F06b`` — CROSSED (P19.4): connector claims persist to PG via ``PgClaimSink``.
+* S4 ``LD-F04``  — ER not DB-wired: matches/decisions not persisted to PG (P19.5).
+* S6 ``LD-F06``  — CROSSED (P19.4): the API reads the spine via ``PgReadStore``.
+* S8 ``LD-V08``  — ``web/`` reads fixtures, not the export/API path (P21.4).
 
 Docker gating mirrors ``tests/db/conftest.py``: without a daemon the module
 **skips**; with ``SIG_REQUIRE_DB_TESTS=1`` a missing daemon is a hard failure.
@@ -425,7 +426,12 @@ def test_s2_ocfl_evidence_capture(ocfl_capture: _OcflResult) -> None:
 # =============================================================================
 
 
-def test_s3_connector_replay_to_claim_sink(connector_replay: dict[str, _ConnectorRun]) -> None:
+def test_s3_connector_replay_to_claim_sink(
+    connector_replay: dict[str, _ConnectorRun], composed_db: dict[str, object]
+) -> None:
+    import psycopg
+    from db.claim_sink import PgClaimSink
+
     for name in ("atlas", "osm"):
         run = connector_replay[name]
         # Crossed: the live run asserted claims into the in-memory sink, and the
@@ -436,13 +442,36 @@ def test_s3_connector_replay_to_claim_sink(connector_replay: dict[str, _Connecto
         assert run.replay_claims, f"{name}: replay produced no claims"
         assert run.replay_reproducible, f"{name}: replay is not reproducible"
 
-    # Seam that cannot be crossed: the only ClaimSink implementation is
-    # InMemoryClaimSink (connectors/stages.py:280), so connector claims have never
-    # been written to the PG `claim` table. Writing a PgClaimSink is P19.4.
-    pytest.xfail(
-        "LD-F06b: no PG ClaimSink — connector claims are asserted to InMemoryClaimSink "
-        "only and have never been written to the PG claim table (P19.4)"
+    # Seam CROSSED (P19.4, LD-F06b): the atlas + osm claim sets are now persisted to
+    # the PG `claim` spine through db.claim_sink.PgClaimSink — L0 evidence + L2
+    # identity + L1 claims, append-only, recorded_at set by the DB. Replaying the
+    # same run is idempotent (content-digest ON CONFLICT), so N>0 the first time and
+    # 0 new rows the second.
+    dsn = (
+        f"postgresql://{composed_db['user']}:{composed_db['password']}"
+        f"@{composed_db['host']}:{composed_db['port']}/{composed_db['dbname']}"
     )
+    with psycopg.connect(dsn, autocommit=True) as conn:
+        before = conn.execute(
+            "SELECT count(*) FROM claim WHERE content_digest IS NOT NULL"
+        ).fetchone()[0]
+    for name in ("atlas", "osm"):
+        sink = PgClaimSink.from_dsn(
+            dsn, connector_name=name, connector_version="1.0.0", code_commit="p19.3-composed"
+        )
+        sink.assert_claims(connector_replay[name].sink_claims)
+        assert sink.report.inserted > 0, f"{name}: no claims were written to the PG spine"
+        # Idempotent replay of the identical run inserts nothing new.
+        replay_sink = PgClaimSink.from_dsn(
+            dsn, connector_name=name, connector_version="1.0.0", code_commit="p19.3-composed"
+        )
+        replay_sink.assert_claims(connector_replay[name].sink_claims)
+        assert replay_sink.report.inserted == 0, f"{name}: replay must be idempotent"
+    with psycopg.connect(dsn, autocommit=True) as conn:
+        after = conn.execute(
+            "SELECT count(*) FROM claim WHERE content_digest IS NOT NULL"
+        ).fetchone()[0]
+    assert after > before, "connector claims must land in the PG claim table"
 
 
 # =============================================================================
@@ -503,7 +532,8 @@ def test_s4_probabilistic_er_and_review_round_trip() -> None:
     # spine is P19.4.
     pytest.xfail(
         "LD-F04: ER not DB-wired — probabilistic matches and review decisions are "
-        "held in memory, never persisted to the PG spine (P19.4)"
+        "held in memory, never persisted to the PG spine (moved to P19.5 per the "
+        "P19.4 size guard; ADR-059)"
     )
 
 
@@ -575,7 +605,9 @@ def test_s5_resolver_keeps_contradiction_visible() -> None:
 # =============================================================================
 
 
-def test_s6_api_serves_resolution_envelope_and_families(api_server: _ApiServer) -> None:
+def test_s6_api_serves_resolution_envelope_and_families(
+    api_server: _ApiServer, composed_db: dict[str, object]
+) -> None:
     import httpx
 
     subject = "agency:okcpd"
@@ -600,13 +632,44 @@ def test_s6_api_serves_resolution_envelope_and_families(api_server: _ApiServer) 
             resp = client.get(path)
             assert resp.status_code == 200, f"{path}: {resp.status_code} {resp.text}"
 
-    # Seam that cannot be crossed: the API is served over InMemoryStore
-    # (api/store.py:147). There is no DB-backed ReadStore — the API has never
-    # read the PG claim spine. Wiring a PG ReadStore is P19.4.
-    pytest.xfail(
-        "LD-F06: no DB-backed ReadStore — the API is served over InMemoryStore and has "
-        "never read the PG claim spine (P19.4)"
+    # Seam CROSSED (P19.4, LD-F06): the same hand-written app now serves over the PG
+    # claim spine through api.store_pg.PgReadStore. create_app(store) is unchanged;
+    # the store reads the claims S3 persisted (belief-time as-of, RLS enabled,
+    # publication applied at the store boundary) and the resolver keeps any
+    # within-predicate disagreement visible.
+    from api.store_pg import PgReadStore
+    from starlette.testclient import TestClient
+
+    from api import create_app
+
+    # Build the DSN from the composed DB the connector run (S3) populated.
+    dsn = (
+        f"postgresql://{composed_db['user']}:{composed_db['password']}"
+        f"@{composed_db['host']}:{composed_db['port']}/{composed_db['dbname']}"
     )
+    pg_store = PgReadStore(dsn)
+    try:
+        with TestClient(create_app(pg_store)) as pg_client:
+            # A subject + predicate that S3 wrote to the spine.
+            row = pg_store._conn.execute(  # noqa: SLF001 - test reaches into the store conn
+                "SELECT subject_id, predicate_id FROM claim "
+                "WHERE content_digest IS NOT NULL LIMIT 1"
+            ).fetchone()
+            assert row is not None, "S3 must have written claims the API can read"
+            subject_id, predicate_id = str(row[0]), str(row[1])
+            for path in (
+                f"/v1/resolution/{subject_id}/{predicate_id}",
+                f"/v1/entity/deployment/{subject_id}",
+                "/v1/contradiction",
+                "/v1/task",
+                "/v1/crosswalk",
+                "/v1/changes",
+            ):
+                resp = pg_client.get(path)
+                assert resp.status_code == 200, f"PG {path}: {resp.status_code} {resp.text[:200]}"
+                assert "as_of" in resp.json(), f"PG {path}: not an as-of envelope"
+    finally:
+        pg_store.close()
 
 
 # =============================================================================
