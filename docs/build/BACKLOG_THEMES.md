@@ -29,7 +29,7 @@ Each `BL-` id appears in exactly one theme (validated by `check_backlog.py`). Th
 
 ## T7 — Docs hygiene
 - **retired mostly by:** P19.1/P19.5 (done)
-- **bl_ids:** BL-013, BL-014, BL-021, BL-022
+- **bl_ids:** BL-013, BL-014, BL-021, BL-022, BL-052
 
 ## T8 — Contribution-back
 - **retired mostly by:** P21.7

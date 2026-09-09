@@ -27,8 +27,8 @@ BL-025,"Concrete extraction engines (parser layers 3-5, OCR) + model client",def
 BL-026,Live-connector WACZ per PR + byte-identical reproducibility test (SIG-EVID-017),deferred-feature,LD-F02 LD-H02 RISK-P2-09 RISK-P2-10 RISK-P11-07,,evidence,,P21.3,,M,open
 BL-027,"Persist reconcile-workflow outputs (contradictions, sharing edges, tasks, access edges)",deferred-feature,RISK-P11-06 RISK-P11-14 RISK-P12-14 RISK-P10-14 RISK-P10-07 RISK-P12-06 RISK-P12-07,,reconcile,,P21.2,accepted:compute-on-read A5/HG-14,M,closed
 BL-028,Records-request filing/response backend (template outcome log fed live),deferred-feature,ADR-041 RISK-P10-18 RISK-P10-17,,tasks,,P22+,,M,open
-BL-029,Zenodo live deposit + object store (rendered tiles + dry-run/push-stub DELIVERED P21.5 ADR-067; LIVE deposit+store gate-pending HG-07),external-dep,RISK-P14-16 LD-V07 ADR-048 RISK-P14-17 LD-F07 LD-H08 LD-D09 ADR-015 ADR-067 RISK-P21-08 RISK-P21-09,,exports,,P21.5,HG-07,L,open
-BL-030,Zero-cost / degraded-but-alive keepalive tested (SIG-GOV-021),operational-prereq,RISK-P0-12 LD-P07 ADR-067,SIG-GOV-021,ops,,P21.5,,M,closed
+BL-029,Zenodo live deposit + object store (rendered tiles + dry-run/push-stub DELIVERED P21.5 ADR-067; LIVE deposit+store gate-pending HG-07),external-dep,RISK-P14-16 LD-V07 ADR-048 RISK-P14-17 LD-F07 LD-H08 LD-D09 ADR-015 ADR-067,,exports,,P21.5,HG-07,L,open
+BL-030,Zero-cost / degraded-but-alive keepalive tested (SIG-GOV-021),operational-prereq,RISK-P0-12 LD-P07,SIG-GOV-021,ops,,P21.5,,M,closed
 BL-031,API rate-limit enforcement + GraphQL (deferred SHOULDs),deferred-feature,RISK-P14-09 RISK-P14-10,,api,,P22+,,S,open
 BL-032,Per-source rights review + registry completion (flip ingestion_permitted),rights/legal,RISK-P0-19 LD-P05 ADR-063,SIG-LIC-001 SIG-INGEST-038,connectors,OKC-live,P21.1,HG-03,L,closed
 BL-033,Stage-0 outreach / Eyes-on-Flock archival succession recorded,rights/legal,RISK-P0-20 LD-P01,SIG-CONTRIB-012/012a,connectors,OKC-live,P21.1,HG-04,M,closed
@@ -36,12 +36,12 @@ BL-034,Legal home + counsel launch prerequisites,rights/legal,LD-P02,,docs,OKC-p
 BL-035,Counsel disposition: ODbL 4.4(b) derivative / know-your-rights guidance,rights/legal,RISK-P16-16 RISK-P0-11,,docs,OKC-publish,human-gate:HG-02,HG-02,M,open
 BL-036,"Operating governance: board, Code of Conduct, funding policy",operational-prereq,RISK-P0-10,,docs,OKC-publish,human-gate:HG-11,HG-11,M,open
 BL-037,"Infra accounts (Zenodo concept DOI, object store, Docker CI runner)",external-dep,LD-P06,,ops,,human-gate:HG-07,HG-07,S,open
-BL-038,OSM/MapRoulette accounts + Organised-Editing activity registration (client+gate landed P21.7/ADR-069; registration itself gate-pending HG-08),external-dep,RISK-P16-13 LD-P04 ADR-069,,tasks,,human-gate:HG-08,HG-08,S,open
+BL-038,OSM/MapRoulette accounts + Organised-Editing activity registration (client+gate landed P21.7/ADR-069; registration itself gate-pending HG-08),external-dep,RISK-P16-13 LD-P04,,tasks,,human-gate:HG-08,HG-08,S,open
 BL-039,MapRoulette client + OSM changeset feed + §7 leverage metric page LANDED (P21.7/ADR-069; dry-run+fixtures tested); live push/pull gate-pending HG-08,deferred-feature,RISK-P16-14 RISK-P16-15 LD-F11 ADR-055 ADR-069 RISK-P18-14 LD-V09,,tasks,,P21.7,HG-08,L,open
-BL-040,Moderated usability study (>=5 ontology-naive contributors); protocol + opt-in aggregate-only instrumentation LANDED (P21.7/ADR-069); study gate-pending HG-10,operational-prereq,RISK-P16-06 LD-P03 ADR-069,,docs,,P21.7,HG-10,M,open
-BL-041,Contributor onboarding: jurisdiction-aware know-your-rights shown (out of scope P21.7 — separate follow-up),deferred-feature,RISK-P16-08,,web,,P21.x,,S,open
-BL-042,Data Driven + coarse-international + France/Belgium live connectors,deferred-feature,RISK-P18-04 RISK-P18-05 RISK-P18-06 RISK-P18-13 RISK-P21-14 RISK-P21-15 ADR-056 ADR-057 ADR-070,SIG-INGEST-043 SIG-INGEST-043a SIG-INGEST-043b SIG-INGEST-043c SIG-INGEST-043d SIG-INGEST-044 SIG-INGEST-049,connectors,,P21.8,HG-03,L,open
-BL-043,Stage-5 pathway connectors persisted to the claim spine,deferred-feature,RISK-P17-02 RISK-P17-03 RISK-P17-08 RISK-P17-09 RISK-P17-13 RISK-P17-14 LD-H12 LD-V10,SIG-INGEST,connectors,,P21.9,HG-03,L,closed (P21.9 pathways connector; ADR-071; RISK-P17-03 retired; live gate-pending HG-03)
+BL-040,Moderated usability study (>=5 ontology-naive contributors); protocol + opt-in aggregate-only instrumentation LANDED (P21.7/ADR-069); study gate-pending HG-10,operational-prereq,RISK-P16-06 LD-P03,,docs,,P21.7,HG-10,M,open
+BL-041,Contributor onboarding: jurisdiction-aware know-your-rights shown (out of scope P21.7 — separate follow-up),deferred-feature,RISK-P16-08,,web,,P22+,,S,open
+BL-042,Data Driven + coarse-international + France/Belgium live connectors,deferred-feature,RISK-P18-04 RISK-P18-05 RISK-P18-06 RISK-P18-13 ADR-056 ADR-057 ADR-070,SIG-INGEST-043 SIG-INGEST-043a SIG-INGEST-043b SIG-INGEST-043c SIG-INGEST-043d SIG-INGEST-044 SIG-INGEST-049,connectors,,P21.8,HG-03,L,open
+BL-043,Stage-5 pathway connectors persisted to the claim spine (LANDED P21.9/ADR-071; RISK-P17-03 retired; live gate-pending HG-03),deferred-feature,RISK-P17-02 RISK-P17-03 RISK-P17-08 RISK-P17-09 RISK-P17-13 RISK-P17-14 LD-H12 LD-V10 ADR-071,SIG-INGEST,connectors,,P21.9,HG-03,L,closed
 BL-044,"Data completeness as connectors land (crosswalks, vocab, gold sets, category maps)",deferred-feature,RISK-P1-02 RISK-P3-02 RISK-P3-07 RISK-P3-09 RISK-P4-09 RISK-P5-05 RISK-P5-11,,connectors,,P21.3,,M,open
 BL-045,"Ruleset calibration once real data exists (volatility, directness matrix, Atlas supersession)",schema-refinement,RISK-P1-03 RISK-P1-04 RISK-P4-08,,reconcile,,P22+,,M,open
 BL-046,Dereferenceable /id/<type>/<uuid> endpoint + ODbL physical_asset table (§42.3),deferred-feature,RISK-P3-08 RISK-P4-07,,api,,P21.4,,M,open
@@ -50,4 +50,4 @@ BL-048,"Determinism / whole-graph audit CI jobs (resolution rebuild, TI-6/7 audi
 BL-049,"Generate physical DDL from LinkML (ontology/db seam, SIG-STORE-045)",schema-refinement,RISK-P2-04,,db,,P22+,,L,open
 BL-050,Recorded ADR-sanctioned spec deviations — no further action,process,LD-D01 LD-D02 LD-D05 LD-D06 LD-D10 LD-D12 LD-D13,,docs,,accepted,,S,accepted
 BL-051,Spec-vs-code drift after the P20.2 ticked amendments (unbuilt MAY/deferred surfaces),docs-drift,RISK-P20-02 ADR-062,SIG-UI-047 SIG-EVID-020 SIG-ENG-039,docs,,P20.3,,S,open
-BL-052,"pyproject.toml description reads ""skeleton"" for five fully-built packages (db, parsing, reconcile, orchestration, policy) — package metadata contradicts the shipped code",docs-drift,P22.1 DOCS_REFRESH_REPORT,SIG-ENG-012,db parsing reconcile orchestration policy,,P22+,,S,open
+BL-052,"pyproject.toml description reads ""skeleton"" for five fully-built packages (db, parsing, reconcile, orchestration, policy) — package metadata contradicts the shipped code",docs-drift,ADR-072,SIG-ENG-012,db parsing reconcile orchestration policy,,P22+,,S,open
