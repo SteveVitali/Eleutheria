@@ -131,6 +131,32 @@ authoritative, complete set is the 76 matrix rows enumerated below.
 | SIG-TIME-003 | 9.2 The five temporal dimensions | — / accepted | T1 MUST NOT be inferred at ingestion - enforced by temporal model design; not cited by id |
 | SIG-UI-038 | 40. Implementation stack and design system | ADR-051 / P20.2:spec | served map is zero-JS static PMTiles + tabular equivalent, not the interactive MapLibre runtime the spec implies (ADR-051, LD-F09/D11) |
 
+### (b) Addendum — 2026, sig-postbuild capstone verification (append-only; the signed table above is unchanged)
+
+The signed §(b) table above (76 rows) is **not rewritten**. This addendum records a single
+post-signature reconciliation made during the `sig-postbuild` capstone verification, when the
+coverage-matrix integrity checker (`check_coverage_matrix.py`) flagged two rows carrying
+enum values outside the checker's vocabulary (a MATRIX-INT gap, not a coverage regression):
+
+- **`SIG-STORE-003`** — verdict was the invalid literal `COVERED`. The requirement ("start,
+  ingest, resolve, serve with zero non-PostGIS extensions", §15.2) is proven by the zero-cost
+  degraded rebuild + monthly-keepalive fail-loud test (`tests/ops/test_degraded.py`), so it is now
+  **`MET`** (routing `—`), a straight test-cited pass — **not** a MET-DIFFERENTLY deviation. It adds
+  nothing to the accepted-deviation set.
+- **`SIG-UI-047`** — class was the invalid literal `deferred(A1-ticked)` and verdict `MISSING`. This
+  is the **same** zero-JS static-map decision already accepted as `SIG-UI-038` in the signed table
+  (A1 ticked → the zero-JS static PMTiles map is the conforming default; the MapLibre island is not
+  built by decision, ADR-051/ADR-067). It is now recorded consistently as `class=deviated(ADR)`,
+  `verdict=MET-DIFFERENTLY`, `routing=P20.2:spec` — the correct enum for that already-accepted
+  deviation.
+
+**Effect on the count:** the matrix `MET-DIFFERENTLY` count moves **76 → 77** (SIG-UI-047 crosses
+`MISSING → MET-DIFFERENTLY`; SIG-STORE-003 becomes `MET`, not MET-DIFFERENTLY). The new row is the
+same already-signed zero-JS-map deviation reasoning under its second fold-back id (`SIG-UI-047`
+alongside `SIG-UI-038`), so **no new class of deviation is introduced** and the operator's HG-14
+acceptance of Family 2 (zero-JS static map, ADR-051, `P20.2:spec`) already covers it. `MISSING`
+moves 10 → 9. `check_coverage_matrix.py` now exits 0 (`671 rows OK`).
+
 ## (c) Items routed to P21.x (unchanged from the gap analysis)
 
 The gap analysis routed the remaining non-MET rows to later tickets; P19.5 does not change that routing
