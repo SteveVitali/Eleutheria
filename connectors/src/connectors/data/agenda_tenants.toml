@@ -74,7 +74,7 @@ platform = "civicclerk"
 tenant = "oklahomacityok"
 api_base = "https://oklahomacityok.api.civicclerk.com/v1/Events"
 verified = false
-notes = "CivicClerk tenant seed for the OKC vertical slice (P06.1) — pending live verification."
+notes = "CivicClerk tenant seed for the OKC vertical slice (P06.1) — pending live verification. P21.3: tenant NOT verified live this run (HG-03 skip / HG-09 no token — no live probe permitted); verification is gated behind a green review-status for okc_council and SIG_CIVICCLERK_BASE. `verified` stays false rather than asserting a certainty SIG does not have (§3.1)."
 
 # --- discovery negatives: probed, no platform found (SIG-METRIC-002a) ----------
 # Retained, not discarded: each renders to a NO_EVIDENCE_FOUND coverage record so
