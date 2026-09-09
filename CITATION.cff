@@ -1,0 +1,23 @@
+# SPDX-License-Identifier: CC-BY-4.0
+# Citation metadata (Citation File Format 1.2.0). Minimal by design; P21.5 extends
+# it with the Zenodo concept DOI once the first deposit is made (HG-07).
+cff-version: 1.2.0
+message: "If you use SIG, please cite it using these metadata."
+title: "SIG — Surveillance Infrastructure Graph"
+abstract: >-
+  An open, vendor-agnostic, temporally versioned, claim-level-provenance knowledge
+  graph of surveillance infrastructure that federates public-interest datasets and
+  primary records, with explicit evidence, contradiction, and coverage semantics.
+type: software
+version: "0.1.0"
+date-released: "2026-09-09"
+license: Apache-2.0
+repository-code: "https://github.com/SteveVitali/Eleutheria"
+authors:
+  - name: "The SIG project"
+keywords:
+  - surveillance
+  - knowledge-graph
+  - provenance
+  - transparency
+  - accountability

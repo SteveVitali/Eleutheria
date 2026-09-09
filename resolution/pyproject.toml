@@ -1,6 +1,6 @@
 [project]
 name = "sig-resolution"
-version = "0.0.0"
+version = "0.1.0"
 description = "SIG resolution package: the Jurisdiction and Organization identity registries, temporal identity, and deterministic identity guards (§11.1-11.3, §14)."
 requires-python = ">=3.11"
 # The registry-ingest guard reuses the four-state absence model from the db

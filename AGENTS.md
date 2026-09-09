@@ -49,6 +49,11 @@ requirement: edit the section source under `docs/research/_meta/spec_src/*.md`, 
 `sh docs/research/_meta/spec_src/BUILD.sh` to reassemble the spec, and record the change in an ADR
 (`docs/adr/`, SIG-ENG-003). Never edit `docs/2_canonical_design_spec.md` directly.
 
+- **When a new ADR is added, add its Appendix F row in the same PR (SIG-ENG-039).** Appendix F
+  (`spec_src/99a_appF_adr.md`) must stay in one-to-one correspondence with the `docs/adr/ADR-*.md`
+  file set; likewise a PR that adds a requirement id must add its `spec_src` paragraph and Appendix
+  F/coverage rows in the same PR. Enforced by `docs/build/tools/check_spec_src.py` (PR-invoked).
+
 ## Where things live
 
 - **`docs/tickets/`** — the ordered ticket backlog, **committed** as the build's contract record

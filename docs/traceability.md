@@ -2038,3 +2038,20 @@ only new files (both under `docs/build/tools/`, `docs/**`-scoped).
 | SIG-ENG-003 (spec amendment path — `spec_src` → `BUILD.sh` → ADR) | `spec_src/*.md`; ADR-062 | `sh docs/research/_meta/spec_src/BUILD.sh && git diff --exit-code docs/2_canonical_design_spec.md` (byte-clean); `check_spec_src.py` exit 0 |
 | SIG-ENG-001 / SIG-ENG-002 / SIG-ENG-031 (phases executable from spec; phase completeness; register + traceability updated) | Part X §52 (34 task types; new-id mentions); `SPEC_RECONCILIATION_PLAN.md`; `TICKET_VS_SPEC.md` | this section; `docs/risk_register.md` `## Phase 20 — Spec reconciliation (P20.2)` (RISK-P20-02 → BL-051) |
 | Phase gate (§51.3): `make check` green (docs only); ADR-062 present; register + manifest updated | `make check`; `docs/adr/ADR-062-*.md`; `00_MANIFEST.md` "Spec amendments applied" | `make check`; `python docs/build/tools/check_spec_src.py` (671 ids = 668 + 3) |
+
+# P20.3 — integration plan & release readiness (no merging)
+
+P20.3 makes integration a copy-paste operator procedure and bumps versions to `0.1.0`, while
+**merging nothing, tagging nothing, and not touching `main` or any branch**. Only version fields,
+lockfiles, and docs change; no package code or schema changed.
+
+| Requirement | Where | Test / evidence |
+|---|---|---|
+| SIG-ENG-011 (uv workspace + committed lockfile; PEP 751 export) | `pyproject.toml` members; `uv.lock`; `pylock.toml` | `make sync --frozen`; `make export`; version `0.1.0` across all 14 members |
+| SIG-ENG-015 / SIG-ENG-016 (CI gates; generated artifacts match a fresh generation) | `.github/workflows/ci.yml`; `Makefile` `verify-gen` | `docs/build/CI_STATUS.md` (this branch's `python` + `web` run); `make check` green (2418 passed, 1 xfailed) |
+| SIG-ENG-031 (each phase updates risk register + traceability) | this section; `docs/risk_register.md` `## Phase 20 — Integration & release (P20.3)` | RISK-P20-03/04/05 |
+| SIG-LIC-005 (multi-licence statement carried in the release notes) | `LICENSE`; `docs/build/RELEASE_NOTES_v0.1.0.md` ("Licence posture") | release notes; `CONTRIBUTING.md` "Licence headers" |
+| SIG-GOV-021 (degraded/zero-cost CI posture recorded) | `docs/build/CI_STATUS.md` (zero-cost posture; what CI does not cover) | `CI_STATUS.md`; BL-030 (degraded-mode keepalive → P21.5) |
+| Read-only merge dry-run over all open PRs (no ref touched) | `docs/build/tools/merge_dryrun.sh`; `docs/build/INTEGRATION_PLAN.md` §(b) | `sh docs/build/tools/merge_dryrun.sh` exit 0, 27/27 `[none]`; `git rev-parse main origin/main` unchanged; `git worktree list` = 1; `git tag -l` empty |
+| Operator merge + tag + release procedure (copy-pasteable) | `docs/build/INTEGRATION_PLAN.md` §(d) | bottom-up `gh pr merge`; `git tag -a v0.1.0`; `make sbom`; `gh release create` |
+| Phase gate (§51.3): `make check` green; traceability + risk register + manifest updated | `make check`; this section; `00_MANIFEST.md` "Phase gates & special points" | `make check` (2418 passed, 1 xfailed); `make test-db` (116 passed); `tests/e2e` (13 passed, 1 xfailed → `LD-V08`/P21.4) |
