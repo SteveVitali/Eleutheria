@@ -133,3 +133,4 @@ Every `evidence` path is a committed file under `docs/build/runs/` or `docs/buil
 | 64 | P22.1 | ticket | `devin/p22-1-repo-docs-refresh` | #66 | `devin/p21-9-stage5-pathway-connectors` | 2026-09-09 | — | — | n-a | `runs/P22.1.md` |
 | 65 | P22.2 | ticket | `devin/p22-2-agent-docs-refresh` | #67 | `devin/p22-1-repo-docs-refresh` | 2026-09-09 | ADR-072 | — | n-a | `runs/P22.2.md` |
 | CAP | CAPSTONE | capstone | `devin/sig-postbuild-capstone` | #68 | `devin/p22-2-agent-docs-refresh` | 2026-09-09 | — | — (MATRIX-INT-01/APPENDIX-F-01/CHECK-BACKLOG-01 closed) | run | `pr/CAPSTONE.md` |
+| 66 | P22.3 | ticket | `devin/p22-3-build-memory-v2-migration` | #69 | `devin/sig-postbuild-capstone` | 2026-09-09 | ADR-073 | D-P21.1-1..D-P21.9-1 opened (12, from RETURN PASS) → none closed | n-a | `runs/P22.3.md` |
