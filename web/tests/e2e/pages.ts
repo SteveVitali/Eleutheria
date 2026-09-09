@@ -71,7 +71,26 @@ export const JURISDICTION_DOSSIER_PAGES = [
   "/dossier/brussels-alpr/",
 ] as const;
 
+// The authenticated curation surface (P21.6, §34, ADR-068). NOT part of the public
+// zero-JS shell — behind auth and under WCAG 2.2 AA (not the public zero-JS/perf
+// budget). Kept here so the axe sweep covers them like every other page. The compare
+// page id is URL-encoded (the item_id carries ':' and '~').
+export const CURATE_COMPARE_PAGE = "/curate/er_match%3Aagency%3Aokcpd~agency%3Aokc-pd/";
+export const CURATE_PAGES = [
+  "/curate/",
+  CURATE_COMPARE_PAGE,
+  "/curate/contradictions/",
+  "/curate/tasks/",
+  "/curate/submit/",
+  "/curate/revert/",
+] as const;
+
 // The full a11y surface for the axe sweep: the shell-layout pages, a task-intake
-// page, the jurisdiction-conditional dossiers, and the standalone dossier print
-// export (WCAG 2.2 AA everywhere, SIG-UI-037).
-export const A11Y_PAGES = [...ALL_PAGES, ...JURISDICTION_DOSSIER_PAGES, DOSSIER_PRINT] as const;
+// page, the jurisdiction-conditional dossiers, the standalone dossier print export,
+// and the curation pages (WCAG 2.2 AA everywhere, SIG-UI-037 + P21.6).
+export const A11Y_PAGES = [
+  ...ALL_PAGES,
+  ...JURISDICTION_DOSSIER_PAGES,
+  DOSSIER_PRINT,
+  ...CURATE_PAGES,
+] as const;

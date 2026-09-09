@@ -1,0 +1,56 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The ER review queue (P21.6, §28.5, §14.6). A reviewer works tier-4/5 probabilistic
+// matches and model-assisted extractions here; each item links to a side-by-side
+// compare + decide page. Ordered by impact (RISK-P21-11: reviewer fatigue). Zero-JS:
+// plain anchors and lists, usable without JavaScript.
+import CurateLayout from "../../layouts/CurateLayout.astro";
+import { REVIEW_QUEUE, orderByImpact } from "../../lib/curation";
+
+const items = orderByImpact(REVIEW_QUEUE);
+---
+
+<CurateLayout title="Review queue" path="/curate/">
+  <p>
+    Tier-4/5 entity-resolution matches and model-assisted extractions awaiting human
+    adjudication. Highest-impact proposals are ordered first. Nothing here has reached
+    the graph — accepting an item records an append-only decision, it does not merge.
+  </p>
+  <p data-testid="queue-count">{items.length} item(s) pending review.</p>
+
+  <ol class="sig-queue" aria-label="Review queue">
+    {items.map((item) => (
+      <li
+        class="sig-queue-item"
+        data-testid="review-item"
+        data-item-id={item.item_id}
+        data-kind={item.kind}
+      >
+        <h2>
+          <a href={`/curate/${encodeURIComponent(item.item_id)}/`} data-testid="review-link">
+            {item.left.label} ~ {item.right.label}
+          </a>
+        </h2>
+        <p data-testid="review-summary">{item.summary}</p>
+        <p>
+          Tier <span data-testid="review-tier">{item.tier_label}</span>
+          {item.overall_weight !== null && (
+            <> · match weight <span data-testid="review-weight">{item.overall_weight.toFixed(2)}</span></>
+          )}
+        </p>
+        {item.suggestion && (
+          <p class="sig-suggestion" data-testid="review-suggestion">
+            <strong>Machine suggestion (not applied):</strong>{" "}
+            <span data-testid="suggestion-decision">{item.suggestion.suggested_decision}</span>{" "}
+            — confidence <span data-testid="suggestion-confidence">{item.suggestion.confidence_class}</span>,
+            from model <code>{item.suggestion.model_id}</code> / prompt{" "}
+            <code>{item.suggestion.prompt_version}</code>. A human must decide (SIG-LLM-001/002).
+          </p>
+        )}
+      </li>
+    ))}
+  </ol>
+</CurateLayout>

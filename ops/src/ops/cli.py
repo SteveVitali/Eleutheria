@@ -88,6 +88,20 @@ def default_static_url() -> str:
     return os.environ.get("SIG_STAGING_STATIC_URL", f"http://{host}:{port}")
 
 
+def _curation_host_port() -> tuple[str, int]:
+    # Bound to loopback by default: the curation surface is authenticated and MUST
+    # NOT be world-reachable (P21.6, ADR-068, Part VIII §0.7, RISK-P21-10).
+    return (
+        os.environ.get("SIG_CURATION_HOST", "127.0.0.1"),
+        int(os.environ.get("SIG_CURATION_PORT", "8001")),
+    )
+
+
+def default_curation_url() -> str:
+    host, port = _curation_host_port()
+    return os.environ.get("SIG_STAGING_CURATION_URL", f"http://{host}:{port}")
+
+
 # --- parser -------------------------------------------------------------------
 
 
@@ -257,6 +271,24 @@ def _cmd_up(args: argparse.Namespace) -> int:
     state["api_pid"] = api_proc.pid
     state["api_url"] = default_api_url()
 
+    # 2b. The AUTHENTICATED curation service (P21.6, ADR-068) as a SEPARATE host
+    # process, bound to loopback and gated on SIG_CURATION_ENABLED=1 (RISK-P21-10,
+    # Part VIII §0.7). It is never the public read API and never world-reachable.
+    cur_host, cur_port = _curation_host_port()
+    print(f"  → sig-api serve-curation on {cur_host}:{cur_port} (authenticated, non-public)")
+    curation_log = _STATE_DIR / "curation.log"
+    curation_env = {**os.environ, "SIG_CURATION_ENABLED": "1"}
+    curation_proc = subprocess.Popen(
+        ["sig-api", "serve-curation", "--host", cur_host, "--port", str(cur_port)],
+        stdout=curation_log.open("w"),
+        stderr=subprocess.STDOUT,
+        cwd=str(_REPO_ROOT),
+        env=curation_env,
+        start_new_session=True,
+    )
+    state["curation_pid"] = curation_proc.pid
+    state["curation_url"] = default_curation_url()
+
     # 3. Static server for web/dist as a host process.
     if not args.no_static:
         static_host, static_port = _static_host_port()
@@ -287,6 +319,11 @@ def _cmd_up(args: argparse.Namespace) -> int:
     _write_state(state)
 
     ok_api = _wait(lambda: _http_ok(default_api_url() + "/"), label="API", timeout=45)
+    ok_curation = _wait(
+        lambda: _http_ok(default_curation_url() + "/"), label="curation", timeout=45
+    )
+    if not ok_curation:
+        print("  ! curation service did not become healthy (see .sig/ops/curation.log)")
     ok_static = True
     if not args.no_static and "static_pid" in state:
         ok_static = _wait(lambda: _http_ok(default_static_url()), label="static", timeout=30)
@@ -294,7 +331,7 @@ def _cmd_up(args: argparse.Namespace) -> int:
     if args.seed:
         _cmd_seed(argparse.Namespace(jurisdiction=args.jurisdiction, dsn=dsn))
 
-    if ok_api and ok_static:
+    if ok_api and ok_static and ok_curation:
         print("sig-ops up: OK — run `sig-ops status` to confirm.")
         return 0
     print("sig-ops up: one or more services did not become healthy (see `sig-ops status`).")
@@ -309,19 +346,24 @@ def _cmd_status(_args: argparse.Namespace) -> int:
     dsn = str(state.get("dsn") or default_dsn())
     api_url = str(state.get("api_url") or default_api_url())
     static_url = str(state.get("static_url") or default_static_url())
+    curation_url = str(state.get("curation_url") or default_curation_url())
 
     pg = _pg_ready(dsn)
     api = _http_ok(api_url + "/")
+    curation = _http_ok(curation_url + "/")
     # A static file server has no health route; the root listing is the signal.
     static = _http_ok(static_url)
 
     def mark(ok: bool) -> str:
         return "healthy" if ok else "DOWN"
 
-    print(f"PG      ({dsn}): {mark(pg)}")
-    print(f"API     ({api_url}): {mark(api)}")
-    print(f"static  ({static_url}): {mark(static)}")
-    return 0 if (pg and api and static) else 1
+    print(f"PG        ({dsn}): {mark(pg)}")
+    print(f"API       ({api_url}): {mark(api)}")
+    # The curation service is reported SEPARATELY: it is a distinct, authenticated,
+    # non-public process (P21.6, ADR-068), never folded into the public API line.
+    print(f"curation  ({curation_url}): {mark(curation)}  [authenticated, non-public]")
+    print(f"static    ({static_url}): {mark(static)}")
+    return 0 if (pg and api and static and curation) else 1
 
 
 # --- down ---------------------------------------------------------------------
@@ -343,7 +385,7 @@ def _kill_pid(pid: object) -> None:
 def _cmd_down(_args: argparse.Namespace) -> int:
     print("sig-ops down: tearing down the SIG runtime")
     state = _read_state()
-    for key in ("api_pid", "static_pid"):
+    for key in ("api_pid", "curation_pid", "static_pid"):
         _kill_pid(state.get(key))
     print("  → docker compose down -v")
     try:

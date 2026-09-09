@@ -1,5 +1,5 @@
 {
-  "//": "SPDX-License-Identifier: Apache-2.0 — SIG performance-budget CI gate (SIG-UI-041). A dense evidence page that takes eight seconds to load will not be used at a podium; the build FAILS on regression.",
+  "//": "SPDX-License-Identifier: Apache-2.0 — SIG performance-budget CI gate (SIG-UI-041). A dense evidence page that takes eight seconds to load will not be used at a podium; the build FAILS on regression. P21.6 adds a separate /curate/** block: the authenticated curation pages are under WCAG 2.2 AA (a11y 100) but NOT the public zero-JS/performance budget (perf advisory; script size not asserted — a JS island for keyboard shortcuts/diff views is permitted there).",
   "ci": {
     "collect": {
       "staticDistDir": "./dist",
@@ -9,16 +9,33 @@
       }
     },
     "assert": {
-      "assertions": {
-        "categories:performance": ["error", { "minScore": 0.9 }],
-        "categories:accessibility": ["error", { "minScore": 1 }],
-        "resource-summary:script:size": ["error", { "maxNumericValue": 0 }],
-        "resource-summary:total:size": ["error", { "maxNumericValue": 153600 }],
-        "total-byte-weight": ["error", { "maxNumericValue": 153600 }],
-        "unminified-css": "off",
-        "uses-long-cache-ttl": "off",
-        "csp-xss": "off"
-      }
+      "assertMatrix": [
+        {
+          "//": "Public pages: the full zero-JS + performance budget.",
+          "matchingUrlPattern": "^(?:(?!/curate/).)*$",
+          "assertions": {
+            "categories:performance": ["error", { "minScore": 0.9 }],
+            "categories:accessibility": ["error", { "minScore": 1 }],
+            "resource-summary:script:size": ["error", { "maxNumericValue": 0 }],
+            "resource-summary:total:size": ["error", { "maxNumericValue": 153600 }],
+            "total-byte-weight": ["error", { "maxNumericValue": 153600 }],
+            "unminified-css": "off",
+            "uses-long-cache-ttl": "off",
+            "csp-xss": "off"
+          }
+        },
+        {
+          "//": "Curation pages (/curate/**): WCAG 2.2 AA enforced; performance advisory only; script size NOT asserted (island allowance, ADR-068). Not the public budget.",
+          "matchingUrlPattern": ".*/curate/.*",
+          "assertions": {
+            "categories:accessibility": ["error", { "minScore": 1 }],
+            "categories:performance": ["warn", { "minScore": 0.7 }],
+            "unminified-css": "off",
+            "uses-long-cache-ttl": "off",
+            "csp-xss": "off"
+          }
+        }
+      ]
     },
     "upload": {
       "target": "filesystem",
