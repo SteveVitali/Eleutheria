@@ -29,6 +29,7 @@ import { fileURLToPath } from "node:url";
 import { DOSSIERS } from "./dossier-fixture";
 import { JURISDICTION_DOSSIERS } from "./dossier-jurisdiction-fixture";
 import type { Dossier } from "./dossier";
+import { LEVERAGE_METRIC_FIXTURE, type LeverageMetric } from "./leverage-fixture";
 
 export type DataSource = "fixtures" | "export";
 
@@ -79,4 +80,42 @@ export function getDossiers(): Dossier[] {
   // data source (they show the jurisdiction-conditional withholding, not export
   // data), so they render in both modes and the e2e/a11y surface is identical.
   return [...(parsed as Dossier[]), ...JURISDICTION_DOSSIERS];
+}
+
+/**
+ * The §7 contribution-back leverage metric (P21.7, SIG-CONTRIB-016e): the count of
+ * SIG-originated operator-attribution suggestions accepted upstream, read from the
+ * public OSM changeset feed via the declared hashtag.
+ *
+ *   - `fixtures` mode — the committed sample (`leverage-fixture.ts`).
+ *   - `export` mode — `<exportDir>/web/leverage.json`, produced by
+ *     `sig-tasks osm-feed pull --out <dir>` (`tasks.osm_feed.leverage_metric_json`).
+ *
+ * `export` mode fails LOUD if the artifact is missing — never a silent fall-back to
+ * fixtures (that would fabricate the metric). The record carries only the hashtag,
+ * the accepted count, and the attributed changeset ids — no OSM user data
+ * (Part VIII §0.7).
+ */
+export function getLeverageMetric(): LeverageMetric {
+  if (dataSource() === "fixtures") return LEVERAGE_METRIC_FIXTURE;
+  const path = `${exportDir()}/web/leverage.json`;
+  let raw: string;
+  try {
+    raw = readFileSync(path, "utf-8");
+  } catch (cause) {
+    throw new Error(
+      `SIG_DATA_SOURCE=export but the leverage metric artifact is missing: ${path}. ` +
+        `Run \`sig-tasks osm-feed pull --out <dir>\` first (P21.7).`,
+      { cause },
+    );
+  }
+  const parsed = JSON.parse(raw) as Partial<LeverageMetric>;
+  if (
+    typeof parsed.hashtag !== "string" ||
+    typeof parsed.accepted_operator_attributions !== "number" ||
+    !Array.isArray(parsed.attributed_changeset_ids)
+  ) {
+    throw new Error(`${path}: not a valid leverage metric record`);
+  }
+  return parsed as LeverageMetric;
 }

@@ -36,10 +36,47 @@ the data for a new session's measurements re-checks the requirement automaticall
   (SIG-CONTRIB-007) — the study never asks a participant to trespass, tamper, or
   interfere.
 
+## Consent (no personal data retained)
+
+Before a session, each participant is read and agrees to this consent:
+
+> *You are helping test how easy it is to make a first contribution to SIG. We
+> record only how many minutes the task takes and where you got stuck — never your
+> name, and never anything that identifies you. Nothing you enter is tied to you.
+> You may stop at any time and your partial timing is discarded. SIG keeps only an
+> aggregate (a count and a median across participants), not your individual time.*
+
+No participant-identifying data is stored anywhere in the repository: participants
+are referred to by role-free sequence ids (P1, P2, …) only, and the field
+instrumentation is aggregate-only (below).
+
+## Instrumentation — opt-in, aggregate-only field timing (SIG-CONTRIB-003, Part VIII §0.7)
+
+Beyond the moderated sessions, the live L0 form (`/curate/submit/`) carries an
+**opt-in** timing field: a newcomer may check a box and enter the minutes since the
+landing page. When (and only when) they opt in, the server folds that one number
+into `tasks.onboarding.OnboardingTimingAggregate` — a **bucketed histogram** from
+which a count and median are computed. **No per-user row, no identity, no handle or
+role is stored** — the elapsed time is *never* written to the append-only submission
+row (verified by `tests/api/test_curation_onboarding_timing.py`). The aggregate
+record (`count` + `median_minutes` only) is exposed at
+`GET /v1/curation/onboarding-timing`. This lets the ≤10-minute gate be re-checked
+from real usage without retaining who contributed or when.
+
 ## Results
 
-Round 1, published 2026-09-08. Six ontology-naïve participants plus one
-SIG-experienced control (excluded from the median).
+**Status: not yet run — gate pending HG-10** (see
+[`docs/build/USABILITY_STUDY.md`](../build/USABILITY_STUDY.md), the authoritative
+record). The moderated study with ≥5 real ontology-naïve participants has **not**
+been conducted: scheduling naïve participants is an agentic act requiring humans
+(HG-10). The protocol, the machine-checked ≤10-minute gate, and the aggregate-only
+instrumentation are all landed and re-runnable; the results below are **illustrative
+harness data** (`tasks/src/tasks/data/usability_study.toml`) that demonstrate the
+gate mechanism, **not** a completed study. They are replaced with the real session's
+measurements when HG-10 clears.
+
+_Illustrative harness data — six ontology-naïve sequence ids plus one
+SIG-experienced control (excluded from the median):_
 
 | Participant | Ontology-naïve | Path | Minutes to first accepted |
 |---|---|---|---|
@@ -51,9 +88,11 @@ SIG-experienced control (excluded from the median).
 | P6 | yes | observation + photo + location | 9.5 |
 | C1 | no (control) | nearby task | 3.0 |
 
-**Median over the six ontology-naïve participants: 7.75 minutes ≤ 10.** The
-study passes SIG-CONTRIB-003.
+**Illustrative median over the six sequence ids: 7.75 minutes ≤ 10** — this
+demonstrates that the harness computes and gates the median correctly; it is **not**
+a real result. The authoritative status is *not yet run — gate pending HG-10*.
 
 The correctness of *jurisdiction-aware legal guidance* shown during the study is
 agentic and flagged for counsel review before launch (see the risk register);
-the ≤10-minute onboarding gate itself is deterministic and re-checked in CI.
+the ≤10-minute onboarding gate itself is deterministic and re-checked in CI, so
+swapping in the real session's measurements re-checks SIG-CONTRIB-003 automatically.

@@ -46,6 +46,32 @@ import { SUBMISSION_KINDS, curationAction } from "../../lib/curation";
       As of (date the evidence describes)
       <input type="date" name="as_of" data-testid="submit-asof" />
     </label>
+
+    <fieldset class="sig-timing-optin" data-testid="submit-timing">
+      <legend>Usability timing (optional, opt-in)</legend>
+      <p class="sig-timing-optin__note">
+        For the onboarding usability study (SIG-CONTRIB-003) you may share how many
+        minutes this took, starting from the landing page. This is <strong>opt-in</strong>
+        and <strong>aggregate-only</strong>: SIG stores just a running count and median —
+        <strong>no per-person row, no identity, and no name or role</strong> is kept
+        (Part VIII §0.7). Leave it unchecked to submit without timing.
+      </p>
+      <label class="sig-timing-optin__check">
+        <input type="checkbox" name="timing_opt_in" value="1" data-testid="submit-timing-optin" />
+        Include my timing in the aggregate (opt-in)
+      </label>
+      <label>
+        Minutes from the landing page (only used if opted in)
+        <input
+          type="number"
+          name="elapsed_minutes"
+          min="0"
+          step="0.5"
+          data-testid="submit-timing-minutes"
+        />
+      </label>
+    </fieldset>
+
     <button type="submit" data-testid="submit-submit">Submit evidence (enters at L0)</button>
   </form>
 </CurateLayout>

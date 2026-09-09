@@ -291,6 +291,25 @@ def _run_build(
         summary["dossiers"] = [d["slug"] for d in dossiers]
         summary["web_dossiers_path"] = os.path.join(web_dir, "dossiers.json")
 
+        # The §7 contribution-back leverage metric (P21.7, ADR-069): replay the
+        # recorded OSM changeset feed and emit web/leverage.json so the site's
+        # /contribution-back page reads the (fixture-replayed) attributions in
+        # `export` mode. Fixtures-only — no live OSM poll — and it stores only
+        # changeset id + comment (no OSM usernames, Part VIII §0.7). Absent fixtures
+        # → a zeroed metric (never fabricate a count we did not measure, §3.1).
+        from pathlib import Path as _Path
+
+        from tasks.contribution import LeverageLedger
+        from tasks.osm_feed import DEFAULT_FIXTURE_GLOB, leverage_metric_json, pull_files
+
+        repo_root = _Path(__file__).resolve().parents[3]
+        fixture_paths = sorted(repo_root.glob(DEFAULT_FIXTURE_GLOB))
+        ledger = pull_files(fixture_paths).ledger if fixture_paths else LeverageLedger()
+        leverage = leverage_metric_json(ledger)
+        with open(os.path.join(web_dir, "leverage.json"), "w", encoding="utf-8") as fh:
+            json.dump(leverage, fh, indent=2, sort_keys=True)
+        summary["web_leverage_path"] = os.path.join(web_dir, "leverage.json")
+
         # Render REAL vector tiles for the map (LD-F07/H08 closed, §40, ADR-048/051):
         # the ODbL physical layer's GeoJSON → a PMTiles v3 archive the web build serves
         # at /tiles/sig-infrastructure.pmtiles. The ODbL licence + OSM attribution ride
