@@ -24,6 +24,10 @@ and web rendering (``LD-V08``) is P21.4:
 
 Docker gating mirrors ``tests/db/conftest.py``: without a daemon the module
 **skips**; with ``SIG_REQUIRE_DB_TESTS=1`` a missing daemon is a hard failure.
+S8 adds the same "skip when the required environment is absent" gate for the
+``web/`` build (P20.4): without ``npm`` / ``web/node_modules`` the ``web_build``
+fixture **skips cleanly** (the web build is covered by the CI ``web`` job), and
+where the env is present it runs unchanged into the ``LD-V08`` xfail.
 """
 
 from __future__ import annotations
@@ -31,6 +35,7 @@ from __future__ import annotations
 import dataclasses
 import json
 import os
+import shutil
 import subprocess
 import threading
 import time
@@ -348,8 +353,25 @@ class _WebBuild:
 
 @pytest.fixture(scope="session")
 def web_build() -> _WebBuild:
-    """S8: build the Astro `web/` site with `npm --prefix web run build`."""
+    """S8: build the Astro `web/` site with `npm --prefix web run build`.
+
+    Gated on a usable web-build environment, mirroring the Docker
+    ``_require_or_skip`` pattern this module already uses (``tests/db/conftest.py``,
+    ``tests/e2e/conftest.py``). The CI ``python`` job runs the whole pytest suite
+    (``tests/e2e`` included) but installs no Node / ``web/node_modules`` — only the
+    CI ``web`` job does. Without that environment ``npm run build`` cannot run, so
+    S8 **skips cleanly** here rather than failing (rc 127). The web-build assertion
+    is already fully exercised by the ``web`` job (``npm run build``) and locally,
+    so the ``python`` job skipping it loses no coverage. Where the environment IS
+    present (local dev, the ``web`` job) S8 runs exactly as before and ends in the
+    ``LD-V08`` xfail below — no assertion is loosened (never fabricate green).
+    """
     web_dir = REPO_ROOT / "web"
+    if shutil.which("npm") is None or not (web_dir / "node_modules").exists():
+        pytest.skip(
+            "web build environment unavailable (no npm / web/node_modules); the web "
+            "build is covered by the CI `web` job"
+        )
     proc = subprocess.run(
         ["npm", "--prefix", str(web_dir), "run", "build"],
         capture_output=True,
