@@ -86,3 +86,4 @@ repository number, title, and owning phase. Its single source of truth is `docs/
 | ADR-062 | Spec reconciliation after the 46-ticket build (Appendix F/G, applied amendments A1–A8, fold-back ids) | P20.2 |
 | ADR-063 | Registry review metadata and the flip rule (the `rights_reviewed_by`/`rights_reviewed_on`/`review_packet` fields, `review-status`, the 27 rights packets, the Stage-0 outreach record) | P21.1 |
 | ADR-065 | Live connector wiring (the `HttpxTransport` over `httpx`, the `OcflCaptureStore` adapter, and the gated `sig-connectors run --mode live\|replay\|shadow` CLI that refuses a live fetch — exit 3 — for any non-green source and owns the content-free fetch-record format) | P21.3 |
+| ADR-066 | Runtime composition (`sig-ops` + `ops/docker-compose.yml`) and the export-backed web data layer (`web/src/lib/data.ts`, `SIG_DATA_SOURCE=fixtures\|export`); the jurisdiction export emits `web/dossiers.json`; crosses LD-V08 | P21.4 |

@@ -17,10 +17,10 @@ import DossierSection from "../../../components/DossierSection.astro";
 import ActionBlocks from "../../../components/ActionBlocks.astro";
 import { SECTION_TITLES, dossierPath, dossierPermalink, validateDossier } from "../../../lib/dossier";
 import type { Section } from "../../../lib/dossier";
-import { DOSSIERS } from "../../../lib/dossier-fixture";
+import { getDossiers } from "../../../lib/data";
 
 export function getStaticPaths() {
-  return DOSSIERS.map((d) => ({ params: { slug: d.slug }, props: { dossier: d } }));
+  return getDossiers().map((d) => ({ params: { slug: d.slug }, props: { dossier: d } }));
 }
 
 const { dossier } = Astro.props;

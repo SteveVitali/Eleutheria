@@ -14,13 +14,13 @@ import { absenceTaskHref, buildResearchTask, decodeTaskSlug, taskSlug } from "..
 import { ABSENCE_KIND_META } from "../../../lib/epistemic";
 import { TASKABLE_ABSENCES } from "../../../lib/fixtures";
 import { dossierTaskableAbsences } from "../../../lib/dossier";
-import { DOSSIERS } from "../../../lib/dossier-fixture";
+import { getDossiers } from "../../../lib/data";
 
 export function getStaticPaths() {
   // The shell's own taskable absences plus every clickable gap in every dossier
   // (SIG-UI-007/011). Deduplicate by slug so a gap that appears in both a dossier
   // row and its "what we don't know" list generates exactly one intake page.
-  const all = [...TASKABLE_ABSENCES, ...DOSSIERS.flatMap(dossierTaskableAbsences)];
+  const all = [...TASKABLE_ABSENCES, ...getDossiers().flatMap(dossierTaskableAbsences)];
   const bySlug = new Map<string, (typeof all)[number]>();
   for (const params of all) bySlug.set(taskSlug(params), params);
   return [...bySlug.keys()].map((slug) => ({ params: { slug } }));

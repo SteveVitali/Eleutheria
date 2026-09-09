@@ -44,3 +44,4 @@ web/.astro/
 web/test-results/
 web/playwright-report/
 web/.lighthouseci/
+exports/out/

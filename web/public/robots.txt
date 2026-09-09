@@ -1,0 +1,5 @@
+# SIG public web surface — robots policy (SIG-API-013, §43).
+# The dossiers and the visual-language reference are meant to be crawled and
+# archived (SIG-UI-037). Terms of acceptable use are served at /terms (the API).
+User-agent: *
+Allow: /

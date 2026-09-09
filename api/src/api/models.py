@@ -386,3 +386,7 @@ class TermsResponse(_Model):
     prohibitions: list[str]
     remedy: str
     reidentification_prohibited: bool
+    #: The per-compartment licence statement (SIG-LIC-004/010, §42): each export
+    #: compartment is offered under its own licence, kept physically separate. Empty
+    #: by default so existing consumers are unaffected (additive, back-compatible).
+    licenses: dict[str, str] = {}

@@ -1,12 +1,23 @@
 [project]
 name = "sig-ops"
 version = "0.1.0"
-description = "SIG ops package (skeleton; see docs/2_canonical_design_spec.md §47)."
+description = "SIG ops: runtime composition of the PG spine + API + static site (P21.4, ADR-066)."
 requires-python = ">=3.11"
-dependencies = []
+# The runtime composition orchestrates the claim spine (sig-db claim sink for
+# `seed`) and the read API (`sig-api serve`, launched as a host process). psycopg
+# is the client driver for the health check + seed writes.
+dependencies = [
+    "sig-db",
+    "sig-api",
+    "psycopg[binary]>=3.2",
+]
 
 [project.scripts]
 sig-ops = "ops.cli:main"
+
+[tool.uv.sources]
+sig-db = { workspace = true }
+sig-api = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]

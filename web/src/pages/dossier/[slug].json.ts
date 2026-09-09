@@ -10,10 +10,10 @@
 import type { APIRoute, GetStaticPaths } from "astro";
 import { renderDossierJson } from "../../lib/dossier";
 import type { Dossier } from "../../lib/dossier";
-import { DOSSIERS } from "../../lib/dossier-fixture";
+import { getDossiers } from "../../lib/data";
 
 export const getStaticPaths: GetStaticPaths = () =>
-  DOSSIERS.map((d) => ({ params: { slug: d.slug }, props: { dossier: d } }));
+  getDossiers().map((d) => ({ params: { slug: d.slug }, props: { dossier: d } }));
 
 export const GET: APIRoute = ({ props }) => {
   const { dossier } = props as { dossier: Dossier };
