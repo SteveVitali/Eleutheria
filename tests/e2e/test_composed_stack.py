@@ -17,7 +17,8 @@ removed assertion.  P19.4 crosses the two claim-spine seams (S3 ``LD-F06b`` and 
 and web rendering (``LD-V08``) is P21.4:
 
 * S3 ``LD-F06b`` — CROSSED (P19.4): connector claims persist to PG via ``PgClaimSink``.
-* S4 ``LD-F04``  — ER not DB-wired: matches/decisions not persisted to PG (P19.5).
+* S4 ``LD-F04``  — CROSSED (P19.5): ER matches + review decisions persist to PG via
+  ``sig-resolution match/review`` over ``review_item`` / ``review_decision``.
 * S6 ``LD-F06``  — CROSSED (P19.4): the API reads the spine via ``PgReadStore``.
 * S8 ``LD-V08``  — ``web/`` reads fixtures, not the export/API path (P21.4).
 
@@ -503,38 +504,73 @@ _ER_RECORDS = [
 ]
 
 
-def test_s4_probabilistic_er_and_review_round_trip() -> None:
-    from resolution.probabilistic import ProbabilisticMatcher
-    from resolution.review_queue import ACCEPT, ReviewQueue, review_item_from_match
+def test_s4_probabilistic_er_and_review_round_trip(composed_db: dict[str, object]) -> None:
+    import psycopg
+    from resolution.cli import main as resolution_main
+    from resolution.review_pg import PgReviewQueue
 
-    # Crossed (in memory): the matcher scores the near-duplicate OKCPD orgs and
-    # returns tier-4/5 PROPOSED proposals only — never auto-writes (SIG-IDENT-020).
-    matches = ProbabilisticMatcher.from_data().match(_ER_RECORDS)
-    assert matches, "the OKCPD near-duplicate pair should be scored"
-    assert all(m.match_tier in (4, 5) and m.proposed for m in matches)
-
-    # Crossed (in memory): the review queue enqueue → decide round-trip is
-    # append-only and records the human reviewer (SIG-IDENT-026, P1–P3).
-    queue = ReviewQueue()
-    for match in matches:
-        queue.enqueue(review_item_from_match(match))
-    pending = queue.pending()
-    assert pending, "proposals should be pending"
-    decision = queue.decide(pending[0].item_id, ACCEPT, reviewer="curator:okc")
-    assert decision.accepted and decision.reviewer == "curator:okc"
-    assert len(queue.decisions()) == 1
-    # An already-decided item cannot be re-decided (append-only).
-    with pytest.raises(ValueError):
-        queue.decide(pending[0].item_id, ACCEPT, reviewer="curator:okc")
-
-    # Seam that cannot be crossed: ER is not DB-wired — neither the matches nor
-    # the review decisions are persisted to / read from PG. Wiring ER to the
-    # spine is P19.4.
-    pytest.xfail(
-        "LD-F04: ER not DB-wired — probabilistic matches and review decisions are "
-        "held in memory, never persisted to the PG spine (moved to P19.5 per the "
-        "P19.4 size guard; ADR-059)"
+    dsn = (
+        f"postgresql://{composed_db['user']}:{composed_db['password']}"
+        f"@{composed_db['host']}:{composed_db['port']}/{composed_db['dbname']}"
     )
+
+    # Seam CROSSED (P19.5, LD-F04): the near-duplicate OKCPD organisations live in
+    # the PG spine as `organization` projections; the matcher reads them from PG,
+    # scores the pair, and persists the tier-4/5 PROPOSED proposals + the human
+    # review decision to the append-only `review_item` / `review_decision` tables.
+    with psycopg.connect(dsn, autocommit=True) as conn:
+        conn.execute("TRUNCATE review_decision, review_item CASCADE")
+        for subject, canonical, org_type in (
+            ("okc:okcpd-1", "Oklahoma City Police Department", "us.le.municipal_police"),
+            ("okc:okcpd-2", "Oklahoma City Police Dept", "us.le.municipal_police"),
+            ("okc:tcso-1", "Tulsa County Sheriff Office", "us.le.sheriff"),
+        ):
+            existing = conn.execute(
+                "SELECT entity_id FROM entity_identifier "
+                "WHERE scheme = 'sig.connector.subject' AND value = %s",
+                (subject,),
+            ).fetchone()
+            if existing is None:
+                entity_id = conn.execute(
+                    "INSERT INTO entity(entity_type) VALUES ('organization') RETURNING entity_id"
+                ).fetchone()[0]
+                conn.execute(
+                    "INSERT INTO entity_identifier(entity_id, scheme, value) VALUES (%s, %s, %s)",
+                    (entity_id, "sig.connector.subject", subject),
+                )
+                conn.execute(
+                    "INSERT INTO entity_identifier(entity_id, scheme, value) VALUES (%s, %s, %s)",
+                    (entity_id, "us.state", "OK"),
+                )
+            else:
+                entity_id = existing[0]
+            conn.execute(
+                "INSERT INTO organization(entity_id, organization_type, cached_canonical_name) "
+                "VALUES (%s, %s, %s) ON CONFLICT (entity_id) "
+                "DO UPDATE SET cached_canonical_name = EXCLUDED.cached_canonical_name",
+                (entity_id, org_type, canonical),
+            )
+
+    # Crossed: `sig-resolution match --dsn … --jurisdiction okc` scores the PG
+    # candidates and enqueues the tier-4/5 PROPOSED proposals (never auto-writes,
+    # SIG-IDENT-020).
+    assert resolution_main(["match", "--dsn", dsn, "--jurisdiction", "okc"]) == 0
+    queue = PgReviewQueue.from_dsn(dsn)
+    pending = queue.pending()
+    assert pending, "the OKCPD near-duplicate pair should be scored and enqueued to PG"
+
+    # Crossed: a curator's accept/reject appends an append-only `review_decision`
+    # row recording the human reviewer (SIG-IDENT-026, P1–P3). Deciding the same
+    # item again appends a second row — a decision history, never an edit.
+    item_id = pending[0].item_id
+    decision = queue.decide(item_id, "accept", reviewer="curator:okc")
+    assert decision.accepted and decision.reviewer == "curator:okc"
+    queue.decide(item_id, "reject", reviewer="curator:okc")
+    with psycopg.connect(dsn, autocommit=True) as conn:
+        n = conn.execute(
+            "SELECT count(*) FROM review_decision WHERE item_id = %s", (item_id,)
+        ).fetchone()[0]
+    assert n == 2, "each decide call appends exactly one append-only review_decision row"
 
 
 # =============================================================================

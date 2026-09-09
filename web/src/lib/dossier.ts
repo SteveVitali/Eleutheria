@@ -32,6 +32,7 @@ import type { AbsenceKind, CompetingClaim, Support } from "./epistemic";
 import { beliefPinnedPermalink } from "./citation";
 import type { AsOfEcho } from "./fixtures";
 import type { AbsenceTaskParams } from "./task";
+import { adapterFor, adapterPublicationPermitted } from "./publication";
 
 // --- SIG-UI-010: the twelve sections, in the exact §39.2 order ---------------
 
@@ -108,11 +109,25 @@ export interface Row {
   /** A link to the supporting document at its locator (SIG-UI-014). */
   documentUrl?: string;
   note?: string;
+  /**
+   * True when this row's value is a public-employee name — gated by the
+   * jurisdiction-conditional publication rule (SIG-PUB-017). See
+   * `applyPublicationPolicy`.
+   */
+  isPublicEmployeeName?: boolean;
+  /** The record's origin jurisdiction (defaults to the dossier's own). */
+  originJurisdiction?: string;
+  /**
+   * Set by `applyPublicationPolicy` when the value was withheld under the
+   * governing regime — the value is cleared and this flag drives the render.
+   */
+  withheld?: boolean;
 }
 
 /** The explicit display string for a row value (SIG-UI-015: "unknown", not omitted). */
 export function rowDisplayValue(row: Row): string {
   if (row.absence) return ABSENCE_KIND_META[row.absence].label;
+  if (row.withheld) return "withheld";
   return row.value === null ? "unknown" : String(row.value);
 }
 
@@ -213,6 +228,105 @@ export interface Dossier {
   authorization: Authorization;
   termination: TerminationInput;
   legal_regime: LegalRegime;
+  /**
+   * The BCP-47 language tag the page renders in (SIG-UI localisation). Optional
+   * and defaults to "en" so the existing OKC dossier is unchanged (back-compat).
+   */
+  lang?: string;
+  /**
+   * The data subject's jurisdiction code (e.g. "US", "FR", "BE"), which selects the
+   * §43.8 publication adapter. Defaults to "US" so the existing dossier is unchanged.
+   */
+  jurisdictionCode?: string;
+}
+
+/** The BCP-47 language tag for a dossier (defaults to English). */
+export function dossierLang(dossier: Dossier): string {
+  return dossier.lang ?? "en";
+}
+
+// --- Localised section titles (SIG-UI localisation, §43) ---------------------
+
+/**
+ * The twelve §39.2 section titles per language. English is the canonical wire form
+ * used by `renderDossierJson`; the page picks the reader's language from the
+ * dossier's BCP-47 tag (its primary subtag), falling back to English for any
+ * section/language not translated.
+ */
+export const SECTION_TITLES_BY_LANG: Record<string, Record<string, string>> = {
+  en: SECTION_TITLES,
+  fr: {
+    at_a_glance: "En bref",
+    what_is_deployed: "Ce qui est déployé",
+    cost_and_expiry: "Coût et échéance",
+    who_else_can_see: "Qui d'autre voit les données",
+    configuration_and_retention: "Configuration et conservation",
+    usage: "Utilisation",
+    where_the_hardware_is: "Où se trouve le matériel",
+    policy: "Cadre juridique",
+    accountability_events: "Événements de responsabilité",
+    timeline: "Chronologie",
+    what_we_dont_know: "Ce que nous ignorons",
+    how_we_know_this: "Comment nous le savons",
+  },
+  nl: {
+    at_a_glance: "In het kort",
+    what_is_deployed: "Wat is ingezet",
+    cost_and_expiry: "Kosten en vervaldatum",
+    who_else_can_see: "Wie de gegevens nog meer ziet",
+    configuration_and_retention: "Configuratie en bewaring",
+    usage: "Gebruik",
+    where_the_hardware_is: "Waar de hardware is",
+    policy: "Juridisch kader",
+    accountability_events: "Verantwoordingsgebeurtenissen",
+    timeline: "Tijdlijn",
+    what_we_dont_know: "Wat we niet weten",
+    how_we_know_this: "Hoe we dit weten",
+  },
+};
+
+/** The section titles for a dossier's language, falling back to English per key. */
+export function sectionTitlesFor(lang: string): Record<string, string> {
+  const primary = lang.split("-")[0] ?? "en";
+  const table = SECTION_TITLES_BY_LANG[primary] ?? SECTION_TITLES;
+  return { ...SECTION_TITLES, ...table };
+}
+
+/**
+ * Apply the jurisdiction-conditional publication policy to a dossier at build time
+ * (SIG-PUB-017, §44). For every row flagged `isPublicEmployeeName`, the governing
+ * adapter (the dossier's `jurisdictionCode`) and the record's origin jurisdiction
+ * are checked; when publication is NOT permitted the value is withheld — cleared and
+ * marked `withheld` with the governing regime named in a note. This can ONLY ever
+ * withhold (Part VIII §0.7): a permitted name is returned unchanged, so the FR/BE
+ * dossiers show everything the US one does except the gated name.
+ */
+export function applyPublicationPolicy(dossier: Dossier): Dossier {
+  const adapter = adapterFor(dossier.jurisdictionCode ?? "US");
+  const gateRow = (row: Row): Row => {
+    if (!row.isPublicEmployeeName) return row;
+    const permitted = adapterPublicationPermitted(
+      adapter,
+      row.originJurisdiction ?? adapter.code,
+      { isPublicEmployeeName: true },
+    );
+    if (permitted) return row;
+    return {
+      ...row,
+      value: null,
+      withheld: true,
+      note:
+        `Public-employee name withheld: not publishable under ${adapter.profile} ` +
+        `(SIG-PUB-017).`,
+    };
+  };
+  return {
+    ...dossier,
+    sections: dossier.sections.map((s) => ({
+      ...s,
+      ...(s.rows ? { rows: s.rows.map(gateRow) } : {}),
+    })),
+  };
 }
 
 /** The canonical page path for a dossier (trailing slash — SIG-UI-035). */

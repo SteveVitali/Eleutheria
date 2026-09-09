@@ -39,8 +39,14 @@ const rows = section.rows ?? [];
         ) : (
           <>
             <span
-              class={r.value === null ? "sig-dossier-row__value sig-unknown" : "sig-dossier-row__value"}
-              data-testid="dossier-row-value"
+              class={
+                r.withheld
+                  ? "sig-dossier-row__value sig-withheld"
+                  : r.value === null
+                    ? "sig-dossier-row__value sig-unknown"
+                    : "sig-dossier-row__value"
+              }
+              data-testid={r.withheld ? "dossier-row-withheld" : "dossier-row-value"}
             >
               {rowDisplayValue(r)}
             </span>
