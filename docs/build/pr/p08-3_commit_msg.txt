@@ -1,0 +1,33 @@
+P08.3: Contradiction as a first-class object — materialized entity, lifecycle, byte-identical L3 rebuild
+
+Promote reconcile.model.Contradiction into the materialized §31 entity
+(SIG-RECON-053): stable identity, claim_ids[], and resolution fields alongside
+the existing severity/status/research_task_ids (additive, back-compat). Its
+append-only lifecycle (open -> under_research -> resolved / accepted_unresolvable
+/ superseded, SIG-RECON-056) lives as transition methods that return new records
+— a contradiction is never edited in place and resolving it never deletes it
+(SIG-RECON-055/021).
+
+New reconcile.contradiction owns the orchestration: content-derived
+materialization, the severity=blocking -> UNRESOLVED (U7) manual brake
+(SIG-RECON-054), the publish-not-hide projection that exposes an open
+unresolved_conflict (SIG-RECON-055), and the detector->task conformance check
+(SIG-RECON-057). New reconcile.rebuild + a committed data/l3_rebuild_sample.json
+verify a resolution is reproducible from (claims + ruleset_version +
+resolver_version + as_of pair) via input_digest, gated in CI (SIG-RECON-019/020/021).
+
+To make the detector->task contract hold uniformly, counts links its
+value_disagreement task and the resolver's Phase-2 contradictions
+(value_domain_mismatch, predicate_conflation) emit deterministic, content-derived
+research tasks; Resolution/CountResolution gain an additive tasks field.
+
+Design + deviations recorded in ADR-037; traceability matrix and risk register
+updated (RISK-P8-10..14). make check green (ruff, mypy 132 files, 1410 tests,
+verify-gen).
+
+Requirement ids: SIG-RECON-053, SIG-RECON-054, SIG-RECON-055, SIG-RECON-056,
+SIG-RECON-057, SIG-RECON-019, SIG-RECON-020, SIG-RECON-021.
+
+Generated with [Devin](https://devin.ai)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>

@@ -1,0 +1,42 @@
+## Summary
+
+P18.2 is the **first consumer** of the P18.1 jurisdiction adapter framework and its **§5.3 stress-test**. The France/Belgium (Technopolice) evidence base is structurally different from the US in exactly the ways that break a US-shaped model: authorization is carried by **published prefectural orders** (not contracts) and procurement by a **single national open-data dataset** (not thousands of municipal systems). Both had to map onto existing entities or be a §5.3 defect — **they map**, and the connectors reach for **no `us.*` term**.
+
+Implements spec `docs/tickets/P18.2__france-belgium.md` (§5.3, §11.14, §13.8, §23.5/§23.6, §35.2). Design + deviations: **ADR-057**.
+
+## What changed
+
+- **`connectors/france_belgium.py`** — two adapters, `france_belgium_records` and `france_belgium_procurement`, deliberately *not* reusing the US connectors' US-shaped machinery:
+  - The **`LegalInstrument` runtime shape** (§11.14; this ticket is its first consumer). A published arrêté préfectoral → `instrument_type=fr.arrete_prefectoral`, a national child of the abstract `prefectoral_order` parent (`abstract_instrument_type` rolls it up — AC2). Five-year renewable validity → derived `sunset_date`.
+  - The **internationalized records-request vocabulary** — `fr.cada` (France) / `no_equivalent_available` (Belgium's eID-walled register, a *known-complete-unknown*), never `foia_request` (`assert_not_us_records_method`).
+  - **DECP → the country-neutral `Contract`** (reused from `procurement`); a marché riding an accord-cadre is a `cooperative_piggyback` that MUST set `parent_cooperative_contract` (SIG-ONTO-032).
+- **Belgium onboarded under the `be.*` namespace** — `JurisdictionType`/`OrganizationType`/`LegalInstrumentType` children under shared abstract parents; a `BE` adapter + `BE-GDPR` redact-by-default publication; a few `fr.*` org types (`police_nationale`/`douanes`/`prefecture`). **No `us.*` enum widened** (frozen baseline asserted). Ontology regenerated; `verify-gen` byte-clean.
+- **`connectors/osm_import_study.py` + `docs/studies/osm-sous-surveillance-import.md`** — the ~12,000-camera sous-surveillance.net → OSM import studied (conventions/consultation/outcome), correcting the outline's number (~12k → ~18k imported / ~20k source) and actor (OSM Belgium / `User:Vucod`, not Technopolice). A gate refuses a SIG-originated contribution *at scale* until the study is complete (SIG-CONTRIB-016).
+- Source rows `raa_prefectures` / `madada` / `declarationcamera_be` (`ingestion_permitted=false`); ADR-057; traceability + Phase-18 risk register updated.
+
+## Design decisions
+
+- **New module, not extension.** The `records`/`procurement` connectors' MuckRock/`foia_request` and USAspending/cooperative-US vocabularies are the US-shaped assumptions §5.3 prohibits; reusing them would smuggle one in. Country-neutral runtime shapes (`Contract`) *are* reused — the point of AC2.
+- **Belgium's inaccessible register** is an `acquisition_method=no_equivalent_available` claim with a `known_complete_unknown` flag, not a `db.absence` state (the register *exists* but is inaccessible — neither `NO_EVIDENCE_FOUND` nor `EVIDENCE_OF_ABSENCE`).
+- **DECP `end_date`** left unset (derivable from `dureeMois`, F9.16); amendments preserved in `raw` rather than forced into a non-existent `ProcurementState`. Full rationale in ADR-057 "Deviations".
+
+## Acceptance criteria → evidence
+
+| AC | Status | Evidence |
+|---|---|---|
+| Non-US records vocab used (`fr.cada`, `no_equivalent_available`), not `foia_request` (§13.8, SIG-ONTO-068) | ✅ | `test_records_connector_emits_fr_cada_not_foia`, `::_no_equivalent_available_for_belgium`, `::_a_us_records_method_is_refused` |
+| Prefectural order → `LegalInstrument` (`instrument_type=prefectoral_order`); national procurement → `Contract` (§11.14, SIG-ONTO-032) | ✅ | `test_prefectoral_order_maps_onto_legal_instrument_prefectoral_order`, `test_decp_record_maps_onto_contract`, `test_decp_framework_agreement_is_a_piggyback_that_links_its_master` |
+| FR/BE org + legal-instrument types under the national namespace, no `us.*` widened (SIG-ONTO-068) | ✅ | `test_org_and_legal_types_use_the_national_namespace`, `test_belgium_terms_are_real_namespaced_ontology_values`, `test_no_us_enum_was_widened_for_france_or_belgium` |
+| ~12,000-camera OSM import studied before any SIG-originated contribution at scale (SIG-CONTRIB-016) | ✅ | `test_study_documents_conventions_consultation_and_outcome`, `test_gate_refuses_a_scaled_contribution_when_a_section_is_undocumented`, `docs/studies/osm-sous-surveillance-import.md` |
+| Phase-gate §51.3 (CI green incl. data-quality; new reqs tested; ADR; traceability; risk register) | ✅ | `make check` (2363 passed; lint/format/typecheck clean; `verify-gen` byte-clean); ADR-057; traceability + risk register P18.2 sections |
+
+Requirement ids stamped: **SIG-CHART-029, SIG-ONTO-068, SIG-ONTO-032, SIG-CONTRIB-016** + §11.14 `LegalInstrument`, §13.8 acquisition method, §23.5/§23.6 connectors.
+
+#### Test plan
+
+- [x] `make check` green — lint, format, mypy, **2363 pytest passed** (was 2322 at the P18.1 baseline; +36 new), `verify-gen` byte-clean.
+- [x] 36 new tests: `tests/connectors/test_france_belgium.py` (23), `tests/connectors/test_osm_import_study.py` (6), `tests/unit/test_france_belgium_adapter.py` (6) + combined-payload routing.
+- [x] `sig-connectors export-check` OK (raa_prefectures ODbL joins the `osm_physical` compartment cleanly).
+- [ ] Live fetch / arrêté-PDF segmentation and any OSM contribution executed at scale — out of scope (sources `ingestion_permitted=false`; contribution gated on P16.2).
+
+Generated with [Devin](https://devin.ai)

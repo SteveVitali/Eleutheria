@@ -1,0 +1,42 @@
+## Summary
+
+Implements **P11.1 — the `flock_portal` connector** (spec: `docs/tickets/P11.1__flock-portal.md`, canonical §23.4), the fifth source connector on the P04.1 eight-stage framework. It sources the Flock **portal layer** from the Eyes on Flock aggregator's public **CC BY-SA 4.0** JSON API — never the vendor, whose every path returns a bot challenge — and lands it in a **separate CC-BY-SA-4.0 compartment** that the export gate keeps out of the CC-BY graph.
+
+Stacked on `devin/p10-3-records-request-gen` (the P10.3 branch), per the stacked-PR chain.
+
+## What changed
+- **`connectors/src/connectors/flock_portal.py`** — the connector: field→predicate mapping (allowlist-gated), change detection keyed on the upstream snapshot field, sharing-edge + snapshot-diff reconciliation via P08.2, portal-existence events, and the SIG-INGEST-031 fallback routes.
+- **`connectors/src/connectors/data/flock_portal_vocab.toml`** — the versioned field map, predicate allowlist, snapshot field, windowed-usage set, sharing fields, and fallback routes (data, not code).
+- **`connectors/src/connectors/__init__.py`**, **`connectors/pyproject.toml`** — register the connector; add `sig-reconcile` as a direct workspace dep (no cycle; `pylock.toml` unchanged).
+- **`tests/connectors/test_flock_portal.py`** (33 tests) + committed fixtures (`tests/connectors/fixtures/flock_portal/*.json`: two consecutive live snapshots + an archived Wayback capture).
+- **Docs (phase-gate):** `docs/adr/ADR-042`, `docs/traceability.md` (P11.1 section), `docs/risk_register.md` (Phase 11, RISK-P11-01..07), `docs/adr/README.md` index.
+
+## Design decisions (see ADR-042)
+- Every row stamped `compartment=portal` / `license=CC-BY-SA-4.0` / `ai_training_permitted=false`; the computed export gate fails the build on a merge with any CC-BY source.
+- A challenge is honoured as a **refusal** — no HTTP client of its own, no circumvention code; the pipeline records a disappearance.
+- `observed_at` and poll cadence key on the upstream `data_last_updated`, never fetch time; back-fill is target-agnostic (an archived capture is just another target).
+- Sharing edges are **configured-access only**, directional, blanks-as-negatives, `valid_from_kind='unknown'`, reconciled across the whole snapshot through P08.2's §29.3 reconciler (invoked, not forked); snapshot diffing runs through P08.2's §29.7 `diff_series`. Only the **deterministic edges** enter the connector's claim stream — the reconciler's (non-deterministic-id) asymmetry findings are P08.2's to emit, preserving the run's reproducibility fingerprint.
+- Cross-capture operations (snapshot diff, appeared/disappeared) are tested module functions invoked by the backfill/change-feed driver (a single run is a pure function of one capture).
+
+## Verification
+- `make check` — ruff lint + format, mypy (148 files), **1746 pytest passed**, and the generated-artifact gate (`verify-gen`) all green.
+- No live fetch / DB wiring in CI (consistent with prior connectors, ADR-028/029); the connector is exercised end-to-end over committed fixtures + pure helpers.
+
+## Requirement IDs
+SIG-INGEST-030/030a/030b/030c/031/032, SIG-INGEST-035/036/037, SIG-LIC-004a/004b, SIG-ONTO-042/044; exercises (owned/tested in P08.2) SIG-RECON-034/035/036/037/045.
+
+## Acceptance criteria → evidence
+
+| Acceptance criterion | Evidence (test) |
+|---|---|
+| No challenge-defeating code; challenge honoured as refusal | `test_challenge_response_is_honoured_as_a_refusal`, `test_the_fetcher_never_defeats_a_challenge` |
+| Separate CC-BY-SA compartment; export merge with CC-BY graph fails build (SIG-LIC-004a) | `test_rows_land_in_the_cc_by_sa_portal_compartment`, `test_export_merging_portal_with_the_cc_by_graph_fails_the_build` |
+| Change detection keys on the upstream snapshot field, not fetch time (SIG-INGEST-030c) | `test_observed_at_is_the_upstream_snapshot_date_not_fetch_time`, `test_is_poll_due_keys_on_the_snapshot_and_respects_the_refresh_cadence`, `test_declared_freshness_is_recorded_but_not_used_as_observed_at` |
+| Historical back-fill from archived captures (SIG-INGEST-030b) | `test_backfill_from_an_archived_capture_keys_observed_at_on_the_snapshot` |
+| `ai_training_permitted=false` recorded and enforced (SIG-LIC-004b) | `test_ai_training_is_recorded_false_on_every_row`, `test_ai_training_gate_refuses_this_source` |
+| Portal disappearance → event + task (SIG-INGEST-035) | `test_portal_disappearance_produces_an_event_and_a_task`, `test_portal_appearance_produces_an_event_and_a_no_known_deployment_task` |
+| Snapshot diffing → per-field change events via P08.2 (SIG-RECON-045) | `test_snapshot_diff_produces_per_field_change_events_via_p08_2` |
+| Sharing edges: configured access, directional, blanks negative (SIG-ONTO-042/044) | `test_sharing_edges_are_configured_access_directional_single_snapshot`, `test_blank_sharing_cells_are_negatives_not_unknown_edges`, `test_sharing_asymmetry_is_a_finding_via_the_p08_2_reconciler` |
+| Phase-gate (§51.3): CI green, tests, ADR, traceability + risk register | `make check` 1746 passed; ADR-042; `docs/traceability.md` P11.1; `docs/risk_register.md` RISK-P11-01..07 |
+
+Generated with [Devin](https://devin.ai)

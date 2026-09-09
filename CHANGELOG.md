@@ -14,7 +14,7 @@ specification-driven build (Phases 0–18), the post-build capstone, reconciliat
 release-readiness chain (Phases 19–20), and the Phase-21 operationalization chain that runs the
 system as composed local staging (Phases 21.1–21.9). A buildable, fully-tested reference
 implementation — **not a running service** (nothing deployed; no source fetched live). Full detail:
-[`docs/build/RELEASE_NOTES_v0.1.0.md`](./docs/build/RELEASE_NOTES_v0.1.0.md).
+[`docs/build/reports/RELEASE_NOTES_v0.1.0.md`](./docs/build/reports/RELEASE_NOTES_v0.1.0.md).
 
 > **Phase 21 — operationalization (local staging, no live sources).** SIG now runs as a composed
 > system for one real jurisdiction (Oklahoma City), end-to-end, without fetching a live source: the

@@ -1,0 +1,1 @@
+{"capture_text": "Acme Police Department operates 12 ALPR cameras on Main Street.", "model_id": "acme-extract-v2", "prompt_version": "claims-2026-08", "extraction_type": "structured_claim", "items": [{"subject": "acme_pd", "predicate": "operates", "value": "ALPR", "span": {"text": "facial recognition", "start": 35, "end": 47, "locator": {"byte_range": [35]}}}]}

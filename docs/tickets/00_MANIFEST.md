@@ -8,6 +8,19 @@ contract derived from `docs/2_canonical_design_spec.md` (Part X phases).
 > design. To change a requirement, amend `docs/2_canonical_design_spec.md` via an ADR (SIG-ENG-003),
 > then update the affected ticket's Load/AC lines — never fork the design into a ticket file.
 
+> **Committed build memory (build-memory v2, P22.3 / ADR-073).** This directory is the committed
+> **contract record**; the committed **machine state** is `docs/build/LEDGER.md` (CURRENT STATE, GATE
+> DECISIONS, RETURN PASS, PHASE LOG — no longer gitignored under `.agents/scratch/`), the per-ticket run
+> ledgers are `docs/build/runs/<ID>.md`, PR bodies `docs/build/pr/<ID>.md`, and the durable build
+> memory is `docs/build/` (see `docs/build/README.md`). The layout is validated by
+> `scripts/docs/check-build-memory.sh .` (in `make docs-check`).
+
+> **Deferrals companion.** `docs/tickets/DEFERRALS.md` is the append-only register of owed obligations
+> (read it first every run; a deferral not in the file did not happen). It cites `docs/build/BACKLOG.csv`
+> for normalized debt.
+
+`companions: DEFERRALS.md, _TEMPLATE.md`
+
 ## How to build (stacked PR chain)
 
 Each ticket forks from **whatever branch is currently checked out** and opens a PR based on it, so the
@@ -109,13 +122,14 @@ Planned 2026-09-08 after PR #46 by the planning sessions recorded in `docs/build
    #20–#46). Integration is an **operator action after the chain**: P20.3 writes the dry-run script and the exact
    bottom-up merge + `v0.1.0` tag procedure (`docs/build/INTEGRATION_PLAN.md` §(d)); the operator runs it.
 4. **Gates pause the orchestrator.** Under `orchestrate-build`, the loop STOPS before every gated ticket, presents
-   the gate block, and records the operator's answers in the build ledger's `GATE DECISIONS` table; the worker
-   copies them into the ticket header in its first commit. "Skip for now" is a valid answer — the ticket then runs
-   ungated and is listed in the ledger's RETURN PASS table for a later re-run.
+   the gate block, and records the operator's answers in the **committed** `docs/build/LEDGER.md` `GATE DECISIONS`
+   table (no longer gitignored — build-memory v2, P22.3); the worker copies them into the ticket header in its
+   first commit. "Skip for now" is a valid answer — the ticket then runs ungated and is listed in the ledger's
+   RETURN PASS table (and seeded into `docs/tickets/DEFERRALS.md`) for a later re-run.
 
 **How to drive it end to end:** one resumable `orchestrate-build` call (prompt in the build ledger's OPERATING MODE
-note, `.agents/scratch/planning/sig-postbuild-build-ledger.md`) that pauses only at SETUP, human gates, real blocks and
-CAPSTONE — then the operator integrates per `docs/build/INTEGRATION_PLAN.md`. Details: `DECISION_MEMO.md` §9. By hand,
+note, now committed at `docs/build/LEDGER.md`) that pauses only at SETUP, human gates, real blocks and
+CAPSTONE — then the operator integrates per `docs/build/INTEGRATION_PLAN.md`. Details: `docs/build/reports/DECISION_MEMO.md` §9. By hand,
 use each ticket's own `Run:` line verbatim — the `live_verification` flag differs per ticket.
 
 Phases 19–22 are not in the spec's Part X; 19 = capstone & consolidation (orchestrate-build CAPSTONE run
@@ -144,6 +158,27 @@ retroactively), 20 = reconciliation & release, 21 = operationalization toward on
 | 63 | `P21.9__stage5-pathway-connectors.md` | 21 | Stage-5 connectors for the P17 pathways (RTCC/federation, FR/CSS/forensics, acoustic/drone/location) + the ADR-033-deferred parser layers | HG-03/HG-04 per source |
 | 64 | `P22.1__repo-docs-refresh.md` | 22 | Human-facing docs: full `refresh-repo-docs` audit of README/CONTRIBUTING/CHANGELOG/governance/studies against the finished code; generated/frozen/historical docs report-only; `docs/README.md` map; `DOCS_REFRESH_REPORT.md`; vendored detector | — |
 | 65 | `P22.2__agent-docs-refresh.md` | 22 | Agent-facing docs: `agent-docs` refresh (or clean-slate bootstrap) of the `AGENTS.md` hierarchy + `CLAUDE.md`; `make docs-check` + CI docs step; ADR-072 | option: clean slate (asked at the pause) |
+| 66 | `P22.3__build-memory-v2-migration.md` | 22 | **Build-memory v2 migration (ADR-073).** Retire `.agents/scratch/`; commit the build's memory under `docs/build/` in the v2 layout; convert the machine ledger to `docs/build/LEDGER.md`; complete `BUILD_INDEX.md` rows 47–66; seed `docs/tickets/DEFERRALS.md`; regenerate the ADR index; vendor `check-build-memory.sh` into `make docs-check` | — |
+
+### Round 2 — capstone-over-capstone + reconciliation tail (rows 67–73, build-memory v2)
+
+> **Round 2 (instantiated by P22.3 from the v2 tail templates).** The round-1 capstone (PR #68,
+> `devin/sig-postbuild-capstone`) already verified the composed build (`make check` 2718 passed, 0 failed,
+> 0 xfailed; `tests/e2e` 16 passed; `run_okc.sh` 8/8). These tail rows are therefore a **delta over the
+> completed Round 1**, not a re-run of that verification: their `Load` lines point at the existing
+> `docs/build/reports/CAPSTONE_VERIFICATION.md`, `CAPSTONE_CLOSURE.md`, `COVERAGE_MATRIX.csv`, and the
+> P19.x/P20.x reports. `DOC.1`/`DOC.2` are **omitted** because P22.1/P22.2 already ran (spec Appendix B item 6).
+> Not started — `docs/build/LEDGER.md` `nextTicket: P23.1`.
+
+| # | Ticket file | Phase | Scope | Gate |
+|---|---|---|---|---|
+| 67 | `P23.1__capstone-gap-analysis.md` | 23 | **CAP.1** — Round-2 gap-analysis delta (independent fresh context): re-classify only what changed since PR #68 into `COVERAGE_MATRIX.csv`; seam re-hunt; `CAPSTONE_GAP_ANALYSIS.md` addendum | — |
+| 68 | `P23.2__capstone-composed-verification.md` | 23 | **CAP.2** — re-run the composed build as one unit only if the delta touched a seam; else cite PR #68's green composed run; `COMPOSED_E2E_REPORT.md` addendum | — (Docker if re-run) |
+| 69 | `P23.3__capstone-closure.md` | 23 | **CAP.3** — close any newly-routed Round-2 gaps on a capstone branch; append the ACCEPTED-deviations delta to `CAPSTONE_CLOSURE.md` | — |
+| 70 | `P23.4__gate-accept.md` | 23 | **GATE-ACCEPT** (marker) — operator signs the Round-2 accepted-deviations delta (nothing new expected) | operator signature |
+| 71 | `P23.5__backlog-and-readiness.md` | 23 | **REC.1** — refresh `BACKLOG.csv`/`BACKLOG.md`/`OPERATIONAL_READINESS.md` against the current DEFERRALS + open findings | — |
+| 72 | `P23.6__spec-reconciliation.md` | 23 | **REC.2** — refresh `TICKET_VS_SPEC.md`/`SPEC_RECONCILIATION_PLAN.md`; fold back any Round-2 amendments via `spec_src` → `BUILD.sh` | HG-13 (if any amendment) |
+| 73 | `P23.7__integration-plan.md` | 23 | **REC.3** — refresh `INTEGRATION_PLAN.md` (PR graph now #47–#68 + this round), read-only merge dry-run, release-notes delta | — |
 
 ## Phase gates & special points
 - **Integration is an operator action after the chain** (`docs/build/INTEGRATION_PLAN.md` §(d)); no ticket merges PRs; all rows 47–65 stack on `devin/p18-2-france-belgium`. P20.3 writes the read-only `merge_dryrun.sh` + the bottom-up merge + `v0.1.0` tag/release procedure and bumps versions to `0.1.0`, but merges/tags nothing (HG-05 is the post-chain operator action).
@@ -169,3 +204,13 @@ retroactively), 20 = reconciliation & release, 21 = operationalization toward on
   - **Fold-back ids (N=3):** SIG-UI-047, **SIG-EVID-020** (evidence blob-vs-capture dedup, ADR-023), **SIG-ENG-039** (Appendix F ↔ `docs/adr/` equivalence in CI, ADR-062). Spec id count 668 → **671**.
   - **Non-normative:** Appendix F rebuilt to repository ADR numbering (ADR-001…062; fixes LD-X04/LD-D03); `docs/adr/README.md` gained ADR-056/057 index rows; Appendix G.5 added; §52 "32"→"34" task types confirmed.
   - **Follow-up rule (SIG-ENG-039):** any PR that adds an ADR MUST add its Appendix F row in the same PR; a PR that adds a requirement id MUST add its `spec_src` paragraph and Appendix F/coverage rows in the same PR. Enforced by `docs/build/tools/check_spec_src.py`.
+- **Build memory committed under `docs/build/` (2026-09-09, P22.3, ADR-073):** supersedes ADR-058 §3 (the `.agents/scratch/` gitignored-scratch home). No `spec_src` change and no new requirement id — a build-memory/layout decision, recorded as ADR-073 (Appendix F row added; `check_spec_src.py` exit 0, 72 ADRs).
+
+## Plan extensions (append-only: inserts, splits, rounds)
+- **2026-09-08 — SPLIT** P19.4 (capstone-spine-wiring): the ER-over-PG / LD-F04 deliverable moved into P19.5 per the ticket's size guard; both files kept; recorded in the ledger PHASE LOG + ADR-059 §6.
+- **2026-09-08 — SPLIT** at planning: P21.8 split out of the original Phase-21 plan (data-driven + coarse-international as its own unit).
+- **2026-09-08 — INSERT** P20.4 `fix-ci-e2e-webbuild` (row 54.5, inline spec, no ticket file): operator chose "fix CI-RED-01 now"; landed as PR #55.
+- **2026-09-09 — INSERT** P22.0 plan-extension commit (PR #57): committed the operator's `00_MANIFEST.md` rows 64–65 edit + the two untracked `P22.1`/`P22.2` ticket files so the tree was clean; extended the chain to row 65, CAPSTONE after P22.2.
+- **2026-09-09 — INSERT** P22.1 `repo-docs-refresh` (row 64) and P22.2 `agent-docs-refresh` (row 65): operator documentation pass over the finished build.
+- **2026-09-09 — ROUND 1 CAPSTONE** ran as PR #68 (`devin/sig-postbuild-capstone` @ `625d802`, stacked on P22.2/PR#67; merges nothing): closed MATRIX-INT-01, APPENDIX-F-01, CHECK-BACKLOG-01; composed E2E green; `projectStatus: DONE`.
+- **2026-09-09 — INSERT + ROUND 2** P22.3 `build-memory-v2-migration` (row 66, ADR-073): migrated the build memory to the v2 layout and instantiated the Round-2 tail rows 67–73 (`P23.1…P23.7`) from the v2 templates as a delta over the completed Round 1 (`DOC.*` omitted; `nextTicket: P23.1`).

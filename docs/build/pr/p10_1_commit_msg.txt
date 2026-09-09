@@ -1,0 +1,31 @@
+P10.1: the research-task engine — detector-as-data, lifecycle, dispositions, geographic queues, anti-abuse, local-group registry
+
+The §33 task-coordination engine as pure-Python value objects in tasks/, aligned
+with graph_annotations.research_task and reusing inference.coverage.CoverageRecord
+(P09.1) for the disposition→data bridge rather than re-encoding the §32.1 shape
+(ADR-039). The concrete detector catalog (§33.2) is P10.2; the records-request path
+that exercises resolved_no_evidence_exists end-to-end is P10.3.
+
+- spec: TaskType declared as data with all eight §33.1 fields; detector and
+  closing_condition modelled as callables so "testable" is mechanical, and the
+  registry refuses a type with no testable closing_condition (SIG-TASK-001/002).
+- lifecycle: the §33.3 state machine, auto-invalidation when the detector stops
+  firing, and a TaskPool enforcing (task_type, subject) duplicate suppression, claim
+  timeout, and per-subject rate limiting (SIG-TASK-005/006/007/013).
+- dispositions: the eight-outcome vocabulary; resolved_no_evidence_exists is
+  reachable only through a bridge that writes a searched_not_found CoverageRecord
+  first, so the queue shrinks only by producing data (SIG-TASK-008/009).
+- geographic: expiring, non-exclusive claims — any_contributor_may_work takes no
+  claim, so no code path can gate an open task (SIG-TASK-010/011).
+- recognition: qualitative, tied to verified contributions; the volume leaderboard
+  is an executable refusal (SIG-TASK-012).
+- groups: SIG's own in-memory local-group registry, no external dependency
+  (SIG-TASK-014).
+
+Phase-gate (§51.3): make check green (1523 passed); ADR-039, traceability, and the
+Phase 10 risk register updated. Satisfies SIG-TASK-001/002/005/006/007/008/009/010/
+011/012/013/014.
+
+Generated with [Devin](https://devin.ai)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>

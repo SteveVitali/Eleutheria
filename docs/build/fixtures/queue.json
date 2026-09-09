@@ -1,0 +1,73 @@
+{
+  "decided": [
+    {
+      "confidence": [
+        {
+          "detail": "name jaro-winkler >= 0.92",
+          "name": "normalized_name",
+          "weight": 100.0
+        },
+        {
+          "detail": "state exact",
+          "name": "state",
+          "weight": 32.666666666666664
+        },
+        {
+          "detail": "class exact",
+          "name": "organization_class",
+          "weight": 3.8
+        }
+      ],
+      "item_id": "er_match:org:1~org:2",
+      "kind": "er_match",
+      "model_id": null,
+      "overall_weight": 3.6352620839325813,
+      "payload": {
+        "blocking_sizes": {
+          "normalized_name": 0,
+          "state+name_first_token": 1
+        },
+        "claim_status": "PROPOSED",
+        "decomposition": [
+          {
+            "bayes_factor": 100.0,
+            "column": "normalized_name",
+            "gamma": 2,
+            "label": "name jaro-winkler >= 0.92"
+          },
+          {
+            "bayes_factor": 32.666666666666664,
+            "column": "state",
+            "gamma": 1,
+            "label": "state exact"
+          },
+          {
+            "bayes_factor": 3.8,
+            "column": "organization_class",
+            "gamma": 1,
+            "label": "class exact"
+          }
+        ],
+        "match_probability": 0.9255163158287149,
+        "match_weight": 3.6352620839325813,
+        "matcher": "splink4-duckdb",
+        "model_version": "1",
+        "rule": "splink_probabilistic"
+      },
+      "prompt_version": null,
+      "summary": "tier 4: org:1 ~ org:2 (weight +3.64, p=0.926)"
+    }
+  ],
+  "decisions": [
+    {
+      "decided_at": "2026-08-28T00:57:31.823899+00:00",
+      "decision": "accept",
+      "item_id": "er_match:org:1~org:2",
+      "model_id": null,
+      "prompt_version": null,
+      "rationale": null,
+      "reviewer": "curator.jane"
+    }
+  ],
+  "pending": []
+}

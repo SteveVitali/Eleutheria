@@ -1,0 +1,35 @@
+P12.2: access edges and access-path closure — composition bound, speculative label, required automaticity
+
+Delivers §30.2 access-path closure — "can org A reach org B's data through any
+chain?" — as the pure value-object module `inference.access_paths`, bounded so it
+manufactures neither a false "A can search C" nor an unlabelled theoretical path
+(SIG-RECON-048/049/050). It builds on the P08.2 sharing-edge reconciler that lands
+the edges and does not fork it.
+
+- The three §12.2 sharing edge types stay separate (SIG-ONTO-042): closure composes
+  ONLY `configured_access` and `federates_search_to`; `observed_use` (use is not
+  access), `declared_policy` (a statement is not a channel), and query-direction
+  `distributes_list_to` never compose, and a hop keeps its `edge_label` verbatim —
+  no operation merges, collapses, or defaults one kind into another. `ACCESS_KINDS`
+  is reused from `reconcile.sharing`.
+- Bounds, all computed on the path and not caller-overridable: scope may not broaden
+  along a chain and a path's scope is its narrowest hop (SIG-RECON-049 #3); every hop
+  must be valid at the as-of time — a future hop is not traversed, an expired hop
+  taints the path historical (#4); single-snapshot edges (valid_from_kind='unknown',
+  ongoing) are always valid (SIG-ONTO-044); path length is capped at MAX_PATH_HOPS and
+  every hop carries evidence, so a published path always shows its full hop list (#5);
+  confidence is the path MINIMUM, never the average (#6).
+- Beyond the published SPECULATIVE_HOP_THRESHOLD a path is labelled speculative and
+  excluded from headline figures (is_headline, reachable(headline_only=True)), never
+  hidden and never counted as a shared-data relationship (SIG-RECON-050).
+- Closure output is a labelled L4 inference (SIG-RECON-047): to_inference() carries
+  derivation_rule/derived_at/input_claim_ids and is never an observation.
+- Ontology: AccessRelationship.automaticity is now REQUIRED (SIG-ONTO-049 makes
+  direction/scope/automaticity/kind all required); generated artifacts regenerated;
+  the generalization suite gains a test for the omission.
+- ADR-045, traceability, and the Phase-12 risk register updated; full test coverage
+  in tests/inference/test_access_paths.py.
+
+Generated with [Devin](https://devin.ai)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>
