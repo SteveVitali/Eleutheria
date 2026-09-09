@@ -2001,3 +2001,24 @@ documentation gaps, and moves P19.4's deferred ER-over-PostgreSQL here (ADR-059 
 | SIG-INGEST-021 / §32 (the `inference` CLI is wired) | `inference.cli` `coverage` / `access-paths` / `completeness` / `freshness` over the existing modules | `tests/inference/test_cli.py`; `uv run python -m inference coverage --help` exit 0 |
 | SIG-ENG-030 / SIG-ENG-031 (P08.1 ADR + §53 section; the un-ADR'd hardening commit) | ADR-060 (resolver, retro-fitted); risk register `## Phase 8 — Resolver (P08.1)` (RISK-P8-00a/00b); ADR-044 `## Post-hoc hardening (4493b14 …)` | `docs/adr/ADR-060-*.md`; `docs/risk_register.md`; `docs/adr/ADR-044-*.md` |
 | Phase gate (§51.3): `make check` green; new code tested; ADR-060/061; traceability + risk register updated; matrix consistent | `make check`; `check_coverage_matrix.py` exit 0 (0 rows `PARTIAL/MISSING & routing=P19.4:*`); `CAPSTONE_CLOSURE.md` §(b) == MET-DIFFERENTLY count | this section; `docs/risk_register.md` (Phase 19 — P19.5, `RISK-P19-09/10`); `docs/build/CAPSTONE_CLOSURE.md` |
+
+## Phase 20 — One backlog + operational readiness (P20.1)
+
+P20.1 replaces the four overlapping backlogs (risk-register deferred-class tables, ADR revisit
+triggers, `LEDGER_DEFERRALS.md`, `CHECKLIST_ITEMS→None`) with **one** normalized `docs/build/BACKLOG.csv`
+where every deferred RISK row (100), every ADR revisit trigger (61), and every LD row (90) lands in
+exactly one `sources` cell (defining standard §3.1). It records the HG-14 signature in
+`CAPSTONE_CLOSURE.md` §(e) and publishes the operational-readiness map. No code changed;
+`check_backlog.py` is a PR-invoked docs tool, not a `make check` step (RISK-P20-01).
+
+| Requirement | Where | Evidence |
+|---|---|---|
+| SIG-ENG-030 / SIG-ENG-031 (each phase updates the risk register + traceability) | `docs/risk_register.md` `## Phase 20 — Backlog & readiness (P20.1)` (RISK-P20-01); this section | `docs/risk_register.md`; `docs/build/BACKLOG.csv` (50 items) |
+| SIG-ENG-002 (phase completeness — one backlog, no orphan/double-owned source) | `docs/build/BACKLOG.csv` + `docs/build/tools/check_backlog.py` | `python docs/build/tools/check_backlog.py` → `risk deferred rows: 100/100`, `ADR revisit triggers: 61/61`, `LD rows: 90/90`, `duplicate sources: 0` (exit 0) |
+| SIG-GOV-021 (degraded-but-alive mode — readiness row) | `OPERATIONAL_READINESS.md` §(a) API/exports + §(e) cost posture; BL-030 | `docs/build/OPERATIONAL_READINESS.md`; RISK-P0-12 → BL-030 |
+| SIG-STORE-003 (zero-cost start — readiness row) | `OPERATIONAL_READINESS.md` §(e) zero-cost mode vs egress risk (RISK-P0-07, ADR-015); nothing deployed (SCOPING §(vi)) | `docs/build/OPERATIONAL_READINESS.md` §(e) |
+| SIG-CONTRIB-012/012a (Stage-0 — readiness gate row) | `OPERATIONAL_READINESS.md` §(d) HG-04; BL-033 | `docs/build/OPERATIONAL_READINESS.md`; RISK-P0-20 / LD-P01 → BL-033 |
+| HG-14 (operator signs the ACCEPTED-deviations list) | `docs/build/CAPSTONE_CLOSURE.md` §(e) signature line (76/76, 0 rejected) | `CAPSTONE_CLOSURE.md` §(e); build ledger GATE DECISIONS |
+| Backlog ↔ risk-register cross-ref (≤2-hop fate lookup) | `docs/risk_register.md` deferred rows carry a ` → BL-nnn` suffix (first cell only, append-only) | `grep -c '→ BL-' docs/risk_register.md` = 100 = distinct RISK ids in `sources`; `git diff --stat` shows modifications only |
+| Themes ≤10; every bl_id in exactly one theme | `docs/build/BACKLOG_THEMES.md` (10 themes) | `check_backlog.py` theme coverage assertion (all 50 bl_ids, no duplicate) |
+| Phase gate (§51.3): `make check` green (docs only); traceability + risk register updated | `make check`; this section; RISK-P20-01 | `docs/risk_register.md` (Phase 20 — P20.1); `docs/build/OPERATIONAL_READINESS.md` |
