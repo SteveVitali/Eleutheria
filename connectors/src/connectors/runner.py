@@ -60,6 +60,9 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "carnegie_ai_gsi": "coarse_international",
     "facial_recognition_world_map": "coarse_international",
     "aspi_mapping_chinas_tech_giants": "coarse_international",
+    "pathways_rtcc_federation": "pathways",
+    "pathways_fr_css_forensics": "pathways",
+    "pathways_acoustic_drone_location": "pathways",
 }
 
 

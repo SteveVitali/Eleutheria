@@ -58,6 +58,7 @@ from . import data_driven as data_driven  # noqa: E402,F401
 from . import flock_portal as flock_portal  # noqa: E402,F401
 from . import france_belgium as france_belgium  # noqa: E402,F401
 from . import osm as osm  # noqa: E402,F401
+from . import pathways as pathways  # noqa: E402,F401
 from . import procurement as procurement  # noqa: E402,F401
 from . import records as records  # noqa: E402,F401
 

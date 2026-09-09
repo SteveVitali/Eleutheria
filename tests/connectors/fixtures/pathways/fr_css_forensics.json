@@ -1,0 +1,55 @@
+{
+  "pathway_family": "fr_css_forensics",
+  "documents": [
+    {
+      "id": "face-recognition-policy",
+      "conformance_pathway": "face_recognition",
+      "genre": "policy_document",
+      "kind": "policy_clauses",
+      "source_url": "https://www.documentcloud.org/documents/state-police-facial-recognition-policy",
+      "retrieved_date": "2026-08-20",
+      "subject_id": "deployment:fr-state-police",
+      "subject_kind": "deployment",
+      "text": "Operations Manual\n\nSection 2 Authorization\nFacial recognition searches shall be run only against the state DMV image gallery under a documented investigative lead.\n\nSection 4 Use restriction\nThe facial recognition system shall not be used for real-time watchlist matching.\n",
+      "clauses": [
+        {"clause": "2", "predicate": "technology", "value": "face-identification-1ton", "claim_type": "vendor_product"},
+        {"clause": "2", "predicate": "use_restriction", "value": "investigative lead required", "claim_type": "policy"},
+        {"clause": "4", "predicate": "use_restriction", "value": "no real-time watchlist matching", "claim_type": "policy"}
+      ]
+    },
+    {
+      "id": "css-forensics-deployment-report",
+      "conformance_pathway": "css_and_forensics",
+      "genre": "deployment_report",
+      "kind": "assertions",
+      "source_url": "https://www.documentcloud.org/documents/county-sheriff-annual-surveillance-report-2024",
+      "retrieved_date": "2026-08-20",
+      "subject_id": "deployment:css-county",
+      "subject_kind": "deployment",
+      "text": "Annual Surveillance Report 2024. The county sheriff's cell-site simulator and mobile-device forensics capabilities are currently operating and were actively deployed during the reporting period; the system is live.",
+      "assertions": [
+        {"predicate": "deployed", "value": true, "claim_type": "deployment", "technology": "cell-site-simulator-general"},
+        {"predicate": "actually_provides_capability", "value": "locate.handset.rf", "claim_type": "deployment"},
+        {"predicate": "actually_provides_capability", "value": "extract.device.logical", "claim_type": "deployment"},
+        {"predicate": "in_operation", "value": true, "claim_type": "deployment"},
+        {"predicate": "vendor_name", "value": "(vendor undisclosed in report)", "claim_type": "vendor_product"}
+      ]
+    },
+    {
+      "id": "federal-authorization-court-order",
+      "conformance_pathway": "federal_authorization",
+      "genre": "policy_document",
+      "kind": "policy_clauses",
+      "source_url": "https://www.courtlistener.com/docket/federal-css-authorization-order",
+      "retrieved_date": "2026-08-20",
+      "subject_id": "deployment:css-authorized",
+      "subject_kind": "deployment",
+      "text": "United States District Court\n\nSection 1 Authorization\nThe court authorizes a cell-site simulator under a court order and pen register for a period not to exceed 60 days.\n\nSection 2 Retention\nData shall not be retained beyond the authorized period.\n",
+      "clauses": [
+        {"clause": "1", "predicate": "authorization_state", "value": "authorized", "claim_type": "policy"},
+        {"clause": "1", "predicate": "legal_instrument", "value": "court_order", "claim_type": "policy"},
+        {"clause": "2", "predicate": "retention_period", "value": "authorized period only", "claim_type": "policy"}
+      ]
+    }
+  ]
+}
