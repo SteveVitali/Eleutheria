@@ -1,0 +1,34 @@
+{
+  "summary": {
+    "portals": 1,
+    "total_cameras": 60,
+    "generated_by": "Eyes on Flock",
+    "license": "CC-BY-SA-4.0"
+  },
+  "portals": [
+    {
+      "slug": "okc-pd",
+      "state": "OK",
+      "county": "Oklahoma",
+      "population": 681054,
+      "type": "police_department",
+      "portal_url": "https://transparency.flocksafety.com/okc-pd",
+      "data_last_updated": "2025-11-02",
+      "total_cameras": 60,
+      "data_retention": 30,
+      "total_searches": 1800,
+      "vehicles_captured": 800000,
+      "hotlist_hits": 190,
+      "hotlist_hit_rate": 0.00024,
+      "state_lookup_enabled": true,
+      "national_lookup_enabled": false,
+      "federal_sharing_enabled": false,
+      "subscribed_hotlist_topics": ["ncic"],
+      "organizations_shared_with": ["tulsa-pd"],
+      "organizations_received_from": [],
+      "permitted_uses": "investigation of felonies",
+      "prohibited_uses": "no immigration enforcement",
+      "public_search_audit": true
+    }
+  ]
+}

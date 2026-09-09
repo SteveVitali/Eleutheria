@@ -53,6 +53,7 @@ of a landed one.
 | ADR-039 | The research-task engine: detector/closing-condition as callables, the `resolved_no_evidence_exists`→`CoverageRecord` bridge, and executable anti-abuse (P10.1) |
 | ADR-040 | The §33.2 detector catalog (34 registered task types) and the §31 contradiction→task map, cross-checked against `CONTRADICTION_TYPES` (P10.2) |
 | ADR-041 | The records-request generator: the 51-jurisdiction records-law table + templates as versioned data, `not_researched` (not `searched_not_found`) for the residency barrier, local-filer routing, measured template success rates, and the consent gate (P10.3) |
+| ADR-042 | The `flock_portal` connector: portal claims in their own CC-BY-SA-4.0 compartment (export merge with the CC-BY graph fails the build), change detection + back-fill keyed on the upstream `data_last_updated` snapshot field (never fetch time), a challenge honoured as a refusal, the §29.3 sharing-edge + §29.7 snapshot-diff reconcilers invoked (not forked) with only deterministic edges in the claim stream, and the SIG-INGEST-031 fallbacks retained as named routes (P11.1) |
 
 ADR-001…012 are the §15.5 decision set; ADR-013…020 are the stack ADRs. The
 egress question of §38.5 is resolved for the whole project in ADR-015. ADR-021 is

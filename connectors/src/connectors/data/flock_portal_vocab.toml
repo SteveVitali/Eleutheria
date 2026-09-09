@@ -1,0 +1,112 @@
+# SPDX-License-Identifier: Apache-2.0
+# The versioned `flock_portal` connector vocabulary (§23.4, P11.1). DATA, not code
+# (SIG-ENG-001): the aggregator-API field -> SIG predicate mapping, the predicate
+# allowlist, the windowed-statistic set, the change-detection snapshot field, the
+# sharing-edge fields, and the SIG-INGEST-031 fallback routes are data rows,
+# reviewed on their own and changed as VERSIONED MIGRATIONS (§20) — bump
+# `vocab_version` and add the change, never silently rewrite a mapping.
+#
+# The connector sources the portal layer from the Eyes on Flock aggregator's
+# public CC-BY-SA-4.0 JSON API (GET /api/v1/data), NEVER the vendor, whose every
+# path returns a bot challenge (§22.5 F2.1, SIG-INGEST-035). Output lands in the
+# CC-BY-SA-4.0 `portal` compartment, never the CC-BY graph (SIG-LIC-004a).
+
+# The connector's own vocabulary version, stamped onto every run (§20).
+vocab_version = "2026.09.01"
+
+# Change detection MUST key on the upstream's own snapshot field, not SIG's fetch
+# time (SIG-INGEST-030c). This is that field's name in the aggregator response;
+# the connector reads it as the claim `observed_at` and as the change-detection
+# key, and NEVER uses wall-clock fetch time for either.
+snapshot_field = "data_last_updated"
+
+# The upstream's own refresh cadence, in days. SIG MUST NOT poll faster than the
+# upstream refreshes (SIG-INGEST-030c): polling more often adds load without
+# adding information, since change is keyed on the snapshot field above. Data, so
+# a confirmed cadence from Stage-0 outreach (SIG-INGEST-030a) is a one-line edit.
+upstream_refresh_days = 1
+
+# The window length (months) carried by the windowed usage statistics
+# (SIG-RECON-011): the portal's rolling counters are windowed, not cumulative.
+window_months = 1
+
+# The predicates this connector may write (§23.4). Enforced as a hard schema gate
+# (SIG-INGEST-033 analogue): writing anything outside this set is a schema error.
+predicate_allowlist = [
+  "active_device_count",
+  "configured_retention_days",
+  "configured_sharing_partner",
+  "state_lookup_enabled",
+  "national_lookup_enabled",
+  "federal_sharing_enabled",
+  "subscribed_hotlist_topic",
+  "vehicles_detected_windowed_count",
+  "hotlist_hit_windowed_count",
+  "usage_search_windowed_count",
+  "portal_stated_permitted_use",
+  "portal_stated_prohibited_use",
+  "portal_exists",
+  "portal_last_updated_declared",
+]
+
+# Predicate GENRES the connector MUST NOT write (§23.4 "MUST NOT write"): contract
+# facts (P07.3/records own those), device geometry (OSM/derived-geometry own it),
+# and any per-search or per-plate row (§18.1, forbidden everywhere). Named as data
+# so the refusal is not a magic string; the allowlist above is authoritative.
+forbidden_predicate_genres = [
+  "contract_fact",
+  "device_geometry",
+  "per_search_row",
+  "per_plate_row",
+]
+
+# The aggregator-response field the connector keys each portal on (its stable
+# slug) and the descriptive fields it preserves as raw context (never parsed into
+# claims): the portal's location and the vendor transparency-portal URL.
+[identity]
+slug_field = "slug"
+portal_url_field = "portal_url"
+context_fields = ["state", "county", "population", "type", "portal_url", "hotlist_hit_rate"]
+
+# Aggregator field -> SIG predicate (§23.4 write table). `genre` is the predicate
+# genre (for the allowlist's out-of-scope complement); `windowed` marks the
+# rolling usage counters (SIG-RECON-011), which carry `window_months`. A field
+# absent from a given portal is simply not written — a tolerant mapping, never a
+# fabricated value (§3.1: no synthetic certainty).
+[fields]
+total_cameras           = { predicate = "active_device_count",              genre = "count",         windowed = false }
+data_retention          = { predicate = "configured_retention_days",        genre = "configuration", windowed = false }
+state_lookup_enabled    = { predicate = "state_lookup_enabled",             genre = "configuration", windowed = false }
+national_lookup_enabled = { predicate = "national_lookup_enabled",          genre = "configuration", windowed = false }
+federal_sharing_enabled = { predicate = "federal_sharing_enabled",          genre = "configuration", windowed = false }
+subscribed_hotlist_topics = { predicate = "subscribed_hotlist_topic",       genre = "configuration", windowed = false }
+vehicles_captured       = { predicate = "vehicles_detected_windowed_count", genre = "usage",         windowed = true }
+hotlist_hits            = { predicate = "hotlist_hit_windowed_count",       genre = "usage",         windowed = true }
+total_searches          = { predicate = "usage_search_windowed_count",      genre = "usage",         windowed = true }
+permitted_uses          = { predicate = "portal_stated_permitted_use",      genre = "policy",        windowed = false }
+prohibited_uses         = { predicate = "portal_stated_prohibited_use",     genre = "policy",        windowed = false }
+
+# The directional sharing fields (§23.4, SIG-ONTO-042/044). Both land as
+# CONFIGURED-ACCESS edges only (never observed_use), directional, with blank cells
+# treated as negatives (an empty list is "no configured sharing", not "unknown").
+# `shared_with` is A->partner (A shares with the partner); `received_from` is
+# partner->A. Single-snapshot edges carry `valid_from_kind='unknown'`
+# (SIG-RECON-036); asymmetry/findings run through P08.2's §29.3 reconciler.
+[sharing]
+shared_with_field   = "organizations_shared_with"
+received_from_field = "organizations_received_from"
+access_kind = "configured_access"
+
+# The SIG-INGEST-031 fallbacks — retained because the API is a single dependency.
+# Each is a NAMED ROUTE, not a scraper: building a challenge-defeating crawler is
+# explicitly NOT on this list and MUST NOT be added. Records-request GENERATION is
+# P10.3; this connector only ROUTES to the records fallback (produces the task).
+[fallbacks.records_acquisition]
+route = "records"
+description = "Public-records acquisition of the underlying portal configuration from the agency — lawful, and yields better evidence than the portal (SIG-INGEST-031a)."
+[fallbacks.contributor_capture]
+route = "contributor"
+description = "Contributor-submitted captures made by a human browsing the portal normally (SIG-INGEST-031b)."
+[fallbacks.partner_archive]
+route = "partner_archive"
+description = "Partner archives of the aggregator response (SIG-INGEST-031c)."
