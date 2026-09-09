@@ -42,10 +42,12 @@ persistence (the established `tasks`/`policy.governance` pattern).
 
 from __future__ import annotations
 
+import tomllib
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from enum import StrEnum
 from functools import cache
+from pathlib import Path
 from typing import Any, NoReturn
 
 from policy.licensing import assert_contribution_permitted
@@ -55,6 +57,8 @@ from ._data import load_table
 
 __all__ = [
     "CHANGESET_HASHTAG",
+    "contribution_registered",
+    "ops_config_path",
     "CooperativeType",
     "MapperDecision",
     "AutomatedOsmWriteError",
@@ -87,6 +91,39 @@ __all__ = [
 #: is a spec amendment, not an edit (SIG-ENG-003), because the metric and the
 #: Organised Editing disclosure both key on it.
 CHANGESET_HASHTAG = "#sig_operator_attribution"
+
+
+def ops_config_path() -> Path:
+    """The repo's ``ops/config.toml`` path (P21.5, ADR-067).
+
+    The contribution-back live gate reads its ``registered`` flag from operations
+    config, next to the object-store / egress budget, so an operator flips one file
+    to turn the challenge push from a refusal into a real (still human-mediated)
+    push once the Organised Editing activity is genuinely registered (HG-08).
+    """
+    return Path(__file__).resolve().parents[3] / "ops" / "config.toml"
+
+
+def contribution_registered(config_path: str | Path | None = None) -> bool:
+    """Whether the SIG Organised Editing activity is registered (``ops/config.toml``).
+
+    Reads ``[tasks.contribution] registered`` and **fails closed** (``False``) when
+    the file or the key is absent — an unregistered activity may not push a
+    MapRoulette challenge (SIG-CONTRIB-016d, RISK-P16-14). The registration itself
+    is an off-repo, human decision (HG-08): the flag records that it happened, it
+    does not perform it.
+    """
+    path = Path(config_path) if config_path is not None else ops_config_path()
+    if not path.exists():
+        return False
+    with path.open("rb") as fh:
+        doc = tomllib.load(fh)
+    section = doc.get("tasks", {})
+    if isinstance(section, dict):
+        contribution = section.get("contribution", {})
+        if isinstance(contribution, dict):
+            return bool(contribution.get("registered", False))
+    return False
 
 
 #: How the MapRoulette cooperative-challenge object model maps onto SIG's
@@ -408,6 +445,11 @@ class LeverageLedger:
     def __init__(self, *, hashtag: str = CHANGESET_HASHTAG) -> None:
         self._hashtag = hashtag
         self._changesets: dict[str, UpstreamChangeset] = {}
+
+    @property
+    def hashtag(self) -> str:
+        """The changeset hashtag this ledger keys its metric on (SIG-CONTRIB-016e)."""
+        return self._hashtag
 
     def record(self, changeset: UpstreamChangeset) -> None:
         """Observe an upstream changeset (idempotent by ``changeset_id``)."""
