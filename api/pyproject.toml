@@ -1,6 +1,6 @@
 [project]
 name = "sig-api"
-version = "0.0.0"
+version = "0.1.0"
 description = "SIG public read API: the hand-written, versioned §37 read contract (P14.1)."
 requires-python = ">=3.11"
 # The public API is a hand-written, versioned contract (SIG-API-001): FastAPI for
