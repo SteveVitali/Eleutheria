@@ -3,7 +3,14 @@
 - **Spec:** docs/2_canonical_design_spec.md §35.2 (SIG-CONTRIB-016d/016e/016g),
   §42.3a (SIG-LIC-007a/007b/007c)
 - **OSM wiki namespace:** `Organised Editing/Activities/SIG operator attribution`
-- **Status:** Registered in the OSM Organised Editing activities list (2026-09-08)
+- **Wiki page URL:** _placeholder — `SIG_OSM_OE_PAGE` (recorded in `ops/config.toml`
+  `[tasks.contribution] oe_page`) once the operator files the page (HG-08)._
+- **Disclosure status:** Published and machine-checked (every required field present).
+- **Live-push status (P21.7):** **GATE-PENDING — HG-08.** The live MapRoulette
+  challenge push is separately gated by `ops/config.toml`
+  `[tasks.contribution] registered`, which stays `false` until the operator confirms
+  the OSMF activities-list filing. While `false`, `sig-tasks maproulette push`
+  **refuses (exit 3)**. See _Registration and the live-push gate_ below.
 - **Machine-checked source:** `tasks/src/tasks/data/organised_editing.toml`, loaded and
   validated by `tasks.contribution.organised_editing_activity` (a disclosure missing any
   required field cannot be constructed)
@@ -88,6 +95,40 @@ SIG measures **task outcomes, not contributor rankings**: suggestions accepted /
 rejected / edited upstream, and devices resolved. There are **no** contributor
 leaderboards or per-mapper rankings, consistent with §33.6's prohibition on volume
 gamification.
+
+## Registration and the live-push gate (P21.7, SIG-CONTRIB-016d, RISK-P16-14)
+
+Two distinct things must both be true before a single SIG task appears as a live
+MapRoulette challenge, and they are gated **separately** on purpose:
+
+1. **This disclosure is complete and published.** Every field the Organised Editing
+   Guidelines require is present and machine-checked from
+   `tasks/src/tasks/data/organised_editing.toml`; the page is published under the
+   `Organised Editing/Activities/` namespace above.
+2. **The activity is genuinely registered *and* the operator authorises live pushes.**
+   Filing the activity in the OSMF activities list is an off-repo, human act needing
+   a real MapRoulette/OSM account (**HG-08**). SIG records that authorisation in
+   `ops/config.toml` under `[tasks.contribution]`:
+
+   | key | meaning | current |
+   |---|---|---|
+   | `registered` | the OSMF activities-list filing is done **and** live pushes are authorised | `false` (gate-pending HG-08) |
+   | `oe_page` | the wiki page URL (`SIG_OSM_OE_PAGE`) once filed | _empty_ |
+   | `maproulette_challenge` | the challenge id recorded after a real push | _empty_ |
+
+   `tasks.contribution.contribution_registered()` reads `registered` and **fails
+   closed** (returns `false` when the file or key is absent). While it is `false`,
+   `tasks.maproulette.MapRouletteClient.push` raises `ChallengeNotRegisteredError`
+   and the CLI (`sig-tasks maproulette push`) exits `3` with this registration
+   reason — so a challenge **cannot** be pushed before the activity is disclosed,
+   filed, and explicitly authorised. This is the RISK-P16-14 compensating control.
+
+**Account-holder disclosure (SIG-CONTRIB-015b).** The MapRoulette account
+`SIG_operator_attribution` is held by the SIG maintainer group (a shared org
+account); its credentials are supplied to the tooling only through the
+`SIG_MAPROULETTE_API_KEY` environment variable at push time and are never committed.
+Absent that key the client is in dry-run and performs no network call. The contact
+channel for the activity is the organisation address `osm-contact@sig.example`.
 
 ## What keeps this compliant
 

@@ -22,6 +22,7 @@ export const SHELL_PAGES = [
   "/evidence/operator-roster-size/",
   "/research-queue/",
   "/corrections/",
+  "/contribution-back/",
   "/dispute/",
   "/methodology/",
   "/data-freshness/",

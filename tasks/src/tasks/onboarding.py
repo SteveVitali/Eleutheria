@@ -21,7 +21,7 @@ re-evaluate, and the gate re-checks.
 from __future__ import annotations
 
 import statistics
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import StrEnum
 
 from ._data import load_table
@@ -30,6 +30,7 @@ __all__ = [
     "OnboardingPath",
     "Participant",
     "UsabilityStudy",
+    "OnboardingTimingAggregate",
     "MIN_NAIVE_PARTICIPANTS",
     "MEDIAN_TARGET_MINUTES",
     "available_paths",
@@ -133,6 +134,76 @@ class UsabilityStudy:
             and self.naive_count() >= MIN_NAIVE_PARTICIPANTS
             and self.median_minutes() <= MEDIAN_TARGET_MINUTES
         )
+
+
+@dataclass
+class OnboardingTimingAggregate:
+    """Opt-in, **aggregate-only** onboarding timing (SIG-CONTRIB-003, Part VIII §0.7).
+
+    The moderated study (above) needs ≥5 naïve participants; the *field* signal that
+    complements it is how long real newcomers take from landing to first accepted
+    contribution. Retaining that per user would be per-person behavioural data SIG
+    must never keep, so this stores **only** a count and a bucketed histogram of
+    elapsed minutes — **no per-user rows, no identity, no handle/role**. The median
+    the ≤10-minute gate uses is computed from the histogram, so the study can be
+    re-checked from real usage while nothing about *who* contributed is retained.
+
+    Recording is **opt-in**: the caller records a measurement only when the
+    participant consented (the L0 form's opt-in timing field). ``bucket_minutes`` is
+    the histogram resolution; a bucket holds only its count.
+    """
+
+    bucket_minutes: float = 1.0
+    _counts: dict[int, int] = field(default_factory=dict)
+
+    def record(self, minutes: float) -> None:
+        """Fold one opt-in elapsed-minutes measurement into the histogram (no row kept)."""
+        if minutes < 0:
+            raise ValueError("elapsed minutes MUST be non-negative")
+        index = int(minutes // self.bucket_minutes)
+        self._counts[index] = self._counts.get(index, 0) + 1
+
+    @property
+    def count(self) -> int:
+        """How many opt-in measurements have been folded in (an aggregate count)."""
+        return sum(self._counts.values())
+
+    def median_minutes(self) -> float | None:
+        """The median elapsed minutes from the histogram (``None`` when empty).
+
+        Uses bucket midpoints — an aggregate estimate, never a reconstruction of any
+        individual's exact time (which is not retained).
+        """
+        n = self.count
+        if n == 0:
+            return None
+        ordered = sorted(self._counts.items())
+
+        def _midpoint_at(rank: int) -> float:
+            seen = 0
+            for index, cnt in ordered:
+                seen += cnt
+                if rank < seen:
+                    return (index + 0.5) * self.bucket_minutes
+            return (ordered[-1][0] + 0.5) * self.bucket_minutes
+
+        lower = _midpoint_at((n - 1) // 2)
+        upper = _midpoint_at(n // 2)
+        return (lower + upper) / 2
+
+    def to_record(self) -> dict[str, object]:
+        """The aggregate record (count + median only) — the sole thing persisted.
+
+        This is what a store keeps: no per-user rows, no identity — just the two
+        aggregate numbers the study gate re-checks (SIG-CONTRIB-003, Part VIII §0.7).
+        """
+        return {
+            "opt_in": True,
+            "aggregate_only": True,
+            "count": self.count,
+            "median_minutes": self.median_minutes(),
+            "median_target_minutes": MEDIAN_TARGET_MINUTES,
+        }
 
 
 def load_study() -> UsabilityStudy:

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Recorded OSM changeset-API fixture (P21.7, §35.2). Replay-only: SIG performs no
+  live OSM poll this run (HG-08). The `user`/`uid` attributes are PRESENT in the real
+  API response and DELIBERATELY present here so the parser proves it never reads them
+  (Part VIII §0.7): tasks.osm_feed stores only the changeset id + comment.
+-->
+<osm version="0.6" generator="OpenStreetMap server">
+  <!-- Accepted: closed, carries the SIG changeset hashtag → attributed + counted. -->
+  <changeset id="140000001" created_at="2026-09-10T14:02:11Z" closed_at="2026-09-10T14:05:47Z"
+             open="false" user="mapper_alice" uid="1000001" comments_count="0"
+             min_lat="35.46" min_lon="-97.55" max_lat="35.47" max_lon="-97.51">
+    <tag k="comment" v="operator=Oklahoma City Police Department on ALPR node #sig_operator_attribution #sig-okc"/>
+    <tag k="created_by" v="JOSM/1.5"/>
+    <tag k="source" v="public procurement records"/>
+  </changeset>
+  <!-- Accepted: closed, carries the SIG hashtag → attributed + counted. -->
+  <changeset id="140000002" created_at="2026-09-10T15:11:00Z" closed_at="2026-09-10T15:12:30Z"
+             open="false" user="mapper_bob" uid="1000002" comments_count="1"
+             min_lat="35.48" min_lon="-97.53" max_lat="35.49" max_lon="-97.50">
+    <tag k="comment" v="Add operator=OCPD to orphaned camera #sig_operator_attribution #sig-okc"/>
+    <tag k="created_by" v="iD"/>
+  </changeset>
+  <!-- Not SIG: no hashtag → ignored, never stored. -->
+  <changeset id="140000003" created_at="2026-09-10T16:00:00Z" closed_at="2026-09-10T16:01:00Z"
+             open="false" user="mapper_carol" uid="1000003" comments_count="0">
+    <tag k="comment" v="fix a typo in a street name"/>
+    <tag k="created_by" v="iD"/>
+  </changeset>
+</osm>

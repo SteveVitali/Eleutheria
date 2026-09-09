@@ -21,6 +21,11 @@ dependencies = [
     "rdflib>=7.0",
     "sig-policy",
     "sig-resolution",
+    # P21.7 (ADR-069): a jurisdiction export self-contains the §7 contribution-back
+    # leverage metric (web/leverage.json) so the site builds from the export bytes
+    # in `export` mode; the metric is produced by tasks.osm_feed over the recorded
+    # changeset feed (fixtures-replay; no live OSM poll, no OSM usernames).
+    "sig-tasks",
     "duckdb>=1.0.0",
     # P21.5: the Zenodo deposit REST transport (SIG-EXPORT-002) speaks HTTP over httpx —
     # already available in the workspace (the P14.1 API tests + P21.3 connectors use it);
@@ -36,6 +41,7 @@ sig-exports = "exports.cli:main"
 [tool.uv.sources]
 sig-policy = { workspace = true }
 sig-resolution = { workspace = true }
+sig-tasks = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]

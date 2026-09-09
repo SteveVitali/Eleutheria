@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Second page of the recorded changeset feed (P21.7). One accepted SIG changeset and
+  one still-OPEN SIG changeset (attributed to the id, but not yet counted as accepted
+  by the §7 metric until it closes). `user`/`uid` present and never read.
+-->
+<osm version="0.6" generator="OpenStreetMap server">
+  <!-- Accepted: closed, carries the SIG hashtag. -->
+  <changeset id="140000004" created_at="2026-09-11T09:20:00Z" closed_at="2026-09-11T09:22:10Z"
+             open="false" user="mapper_dan" uid="1000004" comments_count="0"
+             min_lat="35.44" min_lon="-97.56" max_lat="35.45" max_lon="-97.52">
+    <tag k="comment" v="operator=OCPD, source: city contract #sig_operator_attribution #sig-okc"/>
+    <tag k="created_by" v="JOSM/1.5"/>
+  </changeset>
+  <!-- In flight: OPEN, carries the SIG hashtag → attributed (id known) but NOT counted
+       as an accepted attribution until it closes. -->
+  <changeset id="140000005" created_at="2026-09-11T10:00:00Z"
+             open="true" user="mapper_erin" uid="1000005" comments_count="0">
+    <tag k="comment" v="operator=OCPD on two nodes #sig_operator_attribution #sig-okc"/>
+    <tag k="created_by" v="iD"/>
+  </changeset>
+</osm>
