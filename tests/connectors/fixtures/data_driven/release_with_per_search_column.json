@@ -1,0 +1,34 @@
+{
+  "release": {
+    "release_id": "eff_muckrock_data_driven",
+    "publisher": "EFF / MuckRock",
+    "version": "2018.11-invalid",
+    "retrieved_date": "2026-08-20",
+    "observed_at": "2018-11",
+    "data_file_urls": [
+      "https://cdn.muckrock.example/data_driven/alpr_per_search_2018.csv"
+    ],
+    "source_documents_block_automation": true,
+    "source_document_link_count": 463,
+    "columns": [
+      "agency_id",
+      "agency_name",
+      "state",
+      "vendor",
+      "detections",
+      "individual_searches"
+    ],
+    "agencies": [
+      {
+        "agency_id": "TX0570000",
+        "agency_name": "Austin Police Department",
+        "state": "TX",
+        "vendor": "vigilant",
+        "detections": 100000000,
+        "individual_searches": [
+          {"plate": "ABC123", "queried_at": "2018-06-01T10:00:00Z", "officer": "redacted"}
+        ]
+      }
+    ]
+  }
+}

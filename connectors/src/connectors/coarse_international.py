@@ -27,8 +27,12 @@ anti-disaggregation guard** every coarse-international connector must route thro
 
 from __future__ import annotations
 
+import json
+from collections.abc import Mapping
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from typing import Any
+from uuid import uuid4
 
 #: The coarse granularities a country/vendor-level international dataset may claim.
 #: `agency`/`device` are deliberately absent — that is the level SIG-INGEST-042
@@ -162,13 +166,101 @@ def coarse_claim(
     }
 
 
+# --- the REFERENCE-capture path (§47, P18.1, P21.8) ---------------------------
+#
+# The three datasets stay LINK-posture and ``ingestion_permitted = false`` until a
+# rights packet + an operator flip changes a row (§22.7). This connector is the
+# capture path that runs the moment such a flip happens: it drives the extractor
+# above through the eight-stage framework, so ``run --mode live`` on a flipped
+# source ingests it — and ``run --mode live`` on an un-flipped source REFUSES at
+# the loader gate (exit 3), exactly as every other gated source does. Over
+# committed fixtures it runs in replay/shadow with no network (SIG-INGEST-018/019).
+
+from .stages import CaptureRef, Connector, FetchResult, RunContext, register  # noqa: E402
+
+
+def parse_coarse(data: bytes) -> dict[str, Any]:
+    """Parse a coarse-international dataset capture (pure function of the bytes)."""
+    payload = json.loads(data.decode("utf-8"))
+    if "rows" not in payload:
+        raise ValueError("a coarse-international capture must carry a 'rows' list (§22.7)")
+    return payload
+
+
+@register
+class CoarseInternationalConnector(Connector):
+    """The `coarse_international` connector — country/vendor-level datasets (§22.7, §47).
+
+    The REFERENCE-capture path for the three coarse international datasets (Carnegie
+    AI GSI, Facial Recognition World Map, ASPI Mapping China's Tech Giants). It runs
+    on the P04.1 eight-stage framework and routes every row through
+    :func:`coarse_claim`, so the **anti-disaggregation guard** (SIG-ENG-036 /
+    SIG-INGEST-042) cannot be bypassed: a country/vendor claim can never be pinned
+    to an agency. The datasets stay LINK-posture until a packet + flip permits a
+    live run, so a live run against an un-flipped source is refused at the loader
+    gate (exit 3); replay/shadow run over committed fixtures with no network.
+    """
+
+    name = "coarse_international"
+    version = "1.0.0"
+
+    def discover(self, ctx: RunContext) -> list[Mapping[str, Any]]:
+        return list(ctx.parameters.get("targets", []))
+
+    def fetch(self, ctx: RunContext, target: Mapping[str, Any]) -> FetchResult:
+        assert ctx.fetcher is not None, "connectors fetch only through the shared layer"
+        return ctx.fetcher.fetch(str(target["url"]))
+
+    def parse(self, ctx: RunContext, capture: CaptureRef) -> dict[str, Any]:
+        return parse_coarse(ctx.captures.get(capture.digest))
+
+    def extract(self, ctx: RunContext, parsed: Mapping[str, Any]) -> list[Mapping[str, Any]]:
+        dataset_id = str(parsed.get("dataset") or ctx.source.id)
+        return [{"dataset_id": dataset_id, "row": dict(row)} for row in parsed.get("rows", [])]
+
+    def normalize(
+        self, ctx: RunContext, raw_claims: list[Mapping[str, Any]]
+    ) -> list[dict[str, Any]]:
+        out: list[dict[str, Any]] = []
+        for raw in raw_claims:
+            dataset = DATASETS[str(raw["dataset_id"])]
+            subject_kind = _SUBJECT_KIND_FOR_GRANULARITY[dataset.granularity]
+            row = raw["row"]
+            out.append(
+                coarse_claim(
+                    dataset,
+                    subject_kind=subject_kind,
+                    subject_id=str(row["subject_id"]),
+                    predicate=str(row["predicate"]),
+                    value=row.get("value"),
+                    raw_value=str(row["raw_value"]),
+                    attribution=str(row.get("attribution", dataset.name)),
+                )
+            )
+        return out
+
+    def load(self, ctx: RunContext, linked: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        out: list[dict[str, Any]] = []
+        for claim in linked:
+            out.append(
+                {
+                    **claim,
+                    "claim_id": str(uuid4()),
+                    "sys_period": f"[{datetime.now(UTC).isoformat()},)",
+                }
+            )
+        return out
+
+
 __all__ = [
     "COARSE_GRANULARITIES",
     "DATASETS",
     "DISAGGREGATED_SUBJECT_KINDS",
     "CoarseDataset",
     "CoarseGranularityError",
+    "CoarseInternationalConnector",
     "DisaggregationError",
     "assert_not_disaggregated",
     "coarse_claim",
+    "parse_coarse",
 ]

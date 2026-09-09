@@ -1,0 +1,64 @@
+{
+  "release": {
+    "release_id": "eff_muckrock_data_driven",
+    "publisher": "EFF / MuckRock",
+    "version": "2018.11",
+    "retrieved_date": "2026-08-20",
+    "observed_at": "2018-11",
+    "article_url": "https://www.eff.org/deeplinks/2018/11/eff-and-muckrock-release-records-and-data-200-law-enforcement-agencies-automated",
+    "data_file_urls": [
+      "https://cdn.muckrock.example/data_driven/alpr_agencies_2018.csv"
+    ],
+    "source_documents_block_automation": true,
+    "source_document_link_count": 463,
+    "columns": [
+      "agency_id",
+      "agency_name",
+      "state",
+      "vendor",
+      "detections",
+      "hits",
+      "sharing_partner_degree",
+      "pooled_lookup_participant",
+      "retention"
+    ],
+    "retention_window_columns": {
+      "vigilant_window": {"vendor": "vigilant", "unit": "days", "window": 30},
+      "elsag_window": {"vendor": "elsag", "unit": "months", "window": 12}
+    },
+    "agencies": [
+      {
+        "agency_id": "TX0570000",
+        "agency_name": "Austin Police Department",
+        "state": "TX",
+        "vendor": "vigilant",
+        "detections": 100000000,
+        "hits": 448000,
+        "sharing_partner_degree": 851,
+        "pooled_lookup_participant": true,
+        "retention": {"column": "vigilant_window", "value": 30, "unit": "days"},
+        "records_request": {
+          "platform": "muckrock",
+          "external_id": "foia-2018-austin-alpr",
+          "target_agency": "Austin Police Department"
+        }
+      },
+      {
+        "agency_id": "federal-cbp",
+        "agency_name": "US Customs and Border Protection",
+        "state": null,
+        "vendor": "elsag",
+        "detections": 2441566055,
+        "hits": 10936164,
+        "sharing_partner_degree": 130,
+        "pooled_lookup_participant": true,
+        "retention": {"column": "elsag_window", "value": 12, "unit": "months"},
+        "records_request": {
+          "platform": "muckrock",
+          "external_id": "foia-2018-cbp-alpr",
+          "target_agency": "US Customs and Border Protection"
+        }
+      }
+    ]
+  }
+}
