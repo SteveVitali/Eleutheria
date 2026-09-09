@@ -125,3 +125,20 @@ revisit whether the in-memory models should be thinned to adapters over the stor
 Any change to the tier table, the disposition of an anomaly (still never
 auto-reject), the PII-minimisation window, or the vendor operating-territory rule
 is a spec amendment (SIG-ENG-003), not an edit here.
+
+### Trigger evaluation — P21.2 (2026): NOT fired
+
+Evaluated at P21.2. **The trigger did not fire.** Per amendment **A5** (HG-13) and
+the operator-signed ACCEPTED list at **HG-14** (`docs/build/CAPSTONE_CLOSURE.md`
+§(b)), the compute-on-read / in-memory design is accepted as **conforming**: the
+contributor system gains no DB-wired persistence path in P21.2 (no `contributor` /
+`submission` store, no live `retraction_of` revert beyond the test fixture), so the
+in-memory models are not thinned to store adapters. Persistence is **deferred**
+(BACKLOG `BL-005`, `LD-F10`, `RISK-P16-07`), and P21.2 shrank to its alignment-test
++ ADR-note deliverables only.
+
+Note: no `contributor`/`submission` table exists in `db/deploy/` (confirmed by
+`grep -l contributor db/deploy/*.sql` → none), so there is no contributor
+value-object ↔ table pair for `tests/db/test_annotation_alignment.py` to align yet.
+When a contributor persistence path is added, that pair joins the alignment guard
+and this trigger re-arms.

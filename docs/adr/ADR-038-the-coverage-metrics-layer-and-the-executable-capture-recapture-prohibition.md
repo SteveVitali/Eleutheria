@@ -109,3 +109,19 @@ or if the §28.3 currency thresholds or the predicate registry's volatility clas
 change (freshness follows them). Also revisit if a records-derived recall exercise is
 actually run (SIG-METRIC-008b), so its pre-registration and window are checked against
 this object.
+
+### Trigger evaluation — P21.2 (2026): NOT fired
+
+Evaluated at P21.2. **The trigger did not fire.** Per amendment **A5** (HG-13) and
+the operator-signed ACCEPTED list at **HG-14** (`docs/build/CAPSTONE_CLOSURE.md`
+§(b)), compute-on-read is accepted as **conforming**: the `CoverageRecord` value
+object remains the computation layer and is recomputed on read; the
+`coverage_record` table is not written for real. Persistence of the annotation
+layer is **deferred** (BACKLOG `BL-004`), so P21.2 shrank to its alignment-test +
+ADR-note deliverables only.
+
+P21.2 added `tests/db/test_annotation_alignment.py`, which introspects the live
+`coverage_record` schema against this dataclass and asserts names/types/nullability
+agree (0 mismatches — `CoverageRecord` maps field-for-field, no additive column
+needed), guarding the shape until the read-API/persistence work lands and re-arms
+this trigger.
