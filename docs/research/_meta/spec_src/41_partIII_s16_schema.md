@@ -135,7 +135,7 @@ CREATE TABLE claim (
   CONSTRAINT claim_observed_not_future CHECK (
       observed_at IS NULL OR observed_at <= clock_timestamp() + interval '1 day'
   )
-) PARTITION BY RANGE (observed_at);
+);  -- MAY later: PARTITION BY RANGE (observed_at) — deferred to preserve the claim_id PK/FK contract (ADR-022)
 
 CREATE INDEX ON claim (subject_id, predicate_id, observed_at DESC);
 CREATE INDEX ON claim USING gist (valid_period);
@@ -156,7 +156,7 @@ CREATE INDEX ON claim (subject_id) WHERE upper_inf(sys_period);
 | 5 | Four epistemic axes, not one `confidence` | Source reliability, claim directness, artifact integrity, and currency are independent (§10.4–§10.6). A first-rate contract is an `R1` source and `D5` — weak support — for *current* camera count. |
 | 5b | `C` (currency) is **not a column** | A claim's currency changes with the passage of time without the claim changing. Storing it would guarantee it goes stale (SIG-EPIS-020). |
 | 5c | `legacy_source_tier` is nullable and non-resolving | The outline's Tier A–F is a *genre* scale (§10.4). Where an upstream publishes its own tier label, SIG preserves it as source data (P2) but MUST NOT resolve on it. |
-| 6 | Partitioned by `observed_at`, not by `sys_period` | Queries filter on observation time, and historical backfills of old observations should land in old partitions. |
+| 6 | **MAY** partition by `observed_at` (never by `sys_period`); physical partitioning is **deferred** and MUST preserve the `claim_id` PK/FK contract (ADR-022) | Queries filter on observation time and historical backfills should land in old partitions, so `observed_at` is the partition key **if and when** partitioning is introduced. But partitioning MUST NOT break the `claim_id` primary key or any foreign key referencing it (append-only claim spine); until that contract can be kept, the table stays unpartitioned (ADR-022, LD-D01). |
 | 7 | `derived_from_claim_ids` | Without it, three sources that all copied one portal look like three independent corroborations (§28.6). |
 
 ### 16.3 Append-only enforcement

@@ -116,6 +116,7 @@ JSON Schema, OWL/SHACL, Pydantic, docs; the generalization conformance suite (SI
 
 **Acceptance criteria.**
 - [ ] CI fails if committed generated artifacts differ from a fresh generation.
+- [ ] Every `docs/adr/ADR-*.md` has a matching Appendix F row (repo numbering), checked in CI (SIG-ENG-039, ADR-062).
 - [ ] The generalization suite passes: acoustic sensor; capability with no asset; reference
       database; commercial data-access relationship; integration hub — all expressible.
 - [ ] Every predicate has volatility, strategy, and a directness row (SIG-ONTO-067).
@@ -144,6 +145,7 @@ export; ingest-run lineage.
 - [ ] EDTF round-trips; "early 2025" does not become `2025-01-01`.
 - [ ] Resolution overlap prevented by exclusion constraint, not application code.
 - [ ] An OCFL object is readable without SIG's code.
+- [ ] The `evidence/` package (§47) separates content-addressed blobs from capture rows with digest-keyed dedup (SIG-EVID-020, ADR-023).
 - [ ] Sealed captures expose metadata-only public representations.
 - [ ] RLS tests pass for every role × tier.
 
@@ -303,7 +305,7 @@ test; rationale templates; `Contradiction`; the workflows of §29.
 ### Phase 10 — Research-task generation
 
 **Acceptance criteria.**
-- [ ] All 32 task types implemented, each with a testable closing condition.
+- [ ] All 34 task types implemented, each with a testable closing condition (the §33.2 catalog enumerates 34: the outline's seven plus the required additions; ADR-040).
 - [ ] Every contradiction detector maps to a task.
 - [ ] `resolved_no_evidence_exists` writes a `CoverageRecord`.
 - [ ] Tasks auto-invalidate when their detector stops firing.
@@ -387,7 +389,7 @@ own domains are unarchivable — if it goes away, so does the only route to this
 
 **Acceptance criteria.**
 - [ ] All seven outline surfaces exist, **plus the corrections log**.
-- [ ] Core content usable **without JavaScript**; every map has a tabular equivalent.
+- [ ] Core content usable **without JavaScript**; every map has a tabular equivalent. A zero-JS static map is the conforming default (SIG-UI-038); an interactive MapLibre island (SIG-UI-047) is optional progressive enhancement deferred to Phase 21 (ADR-051).
 - [ ] WCAG 2.2 AA automated checks pass; no colour-only encoding.
 - [ ] The four epistemic fields are independently visible; no fused badge.
 - [ ] Absence renders as one texture, is clickable, and generates a task.

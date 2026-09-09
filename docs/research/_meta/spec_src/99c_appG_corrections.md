@@ -126,3 +126,44 @@ settled:
    in practice, which is a consultation outcome and cannot be determined unilaterally.
 3. The residual ODbL questions of §42.3 requiring counsel — unchanged, and correctly so.
 4. Per-source licence positions for several newly discovered projects, two of which state none.
+
+## G.5 Post-build reconciliation (2026-09)
+
+After the 46-ticket build (P00.1–P18.2) and the capstone passes (P19–P20.1), the spec and the
+built system were reconciled (ticket P20.2, ADR-062, gate HG-13). Nothing here removes an
+obligation: seven items are **ticked normative amendments** (each with an ADR, so no requirement is
+weakened silently — defining standard §3.1), and the remainder are non-normative index/wording
+corrections. The reconciliation plan (`docs/build/SPEC_RECONCILIATION_PLAN.md`) carries the full
+before/after text and the ticket-added disposition tables (`docs/build/TICKET_VS_SPEC.md`).
+
+### G.5.1 Ticked normative amendments applied to `spec_src`
+
+| # | Section | Change | ADR |
+|---|---|---|---|
+| A1 | §40 (SIG-UI-038, +SIG-UI-047) | A zero-JS static map is the **conforming default**; the interactive MapLibre renderer is an **optional progressive-enhancement island** (SIG-UI-047, MAY), not a precondition of conformance | ADR-051, ADR-018 |
+| A2 | §32.1 (SIG-METRIC-001) / §33 (SIG-TASK-016a) | The residency barrier is recorded with `absence_kind = not_researched`; the closed absence vocabulary and its `not_researched` vs `searched_not_found` distinction made explicit | ADR-041 |
+| A3 | §11.2 (`Organization`) | `canonical_name` is a **scalar** resolved label; the competing names it is chosen from remain claims | ADR-056 |
+| A4 | §16.2 design-point #6 | Claim-table partitioning is **MAY** (deferred); it MUST preserve the `claim_id` PK/FK contract | ADR-022 |
+| A5 | §31 (SIG-RECON-053), §32 (SIG-METRIC-001), §33 (SIG-TASK-002) | `Contradiction`, `CoverageRecord`, and research tasks MAY be **computed on read** or materialized; compute-on-read is the accepted Phase-8/9/10 form, persistence deferred to Phase 21 | ADR-037/038/039 |
+| A6 | §34 (SIG-CONTRIB-002), §39.7 (SIG-UI-031) | A **CLI + JSONL** curation/review queue is a conforming Phase-5 form; the web surface is deferred to Phase 21 | ADR-030 |
+| A7 | §47 (SIG-ENG-012) | `evidence/` added as a member package of the frozen layout | ADR-023 |
+| A8 | — | No further `P20.2:spec`-routed normative item exists beyond A1 (`SIG-UI-038` is the only such routing in `COVERAGE_MATRIX.csv`/`CAPSTONE_*`); the enumerated set is empty | — |
+
+### G.5.2 Fold-back requirement ids (approved ticket-added scope folded into the spec)
+
+New ids appended to their prefix sequences (never reused, never renumbered — §0.3):
+
+| New id | Section | What it captures | Origin |
+|---|---|---|---|
+| SIG-UI-047 (MAY) | §40 | Interactive MapLibre progressive-enhancement map island (optional; deferred to Phase 21) | A1 / ADR-051 / P15.3 ticket-added |
+| SIG-EVID-020 (MUST) | §17 | The `evidence/` package's content-addressed blob-vs-capture dedup contract | ADR-023 / P02.2 ticket-added |
+| SIG-ENG-039 (MUST) | §47 | Every `docs/adr/ADR-*.md` MUST have an Appendix F row in the same PR, checked in CI | ADR-062 |
+
+### G.5.3 Non-normative corrections
+
+| # | Correction | Effect |
+|---|---|---|
+| N-01 | **Appendix F rebuilt to repository ADR numbering.** The old logical 18-decision table is replaced by all repository ADRs (ADR-001…062) with title + phase, sourced from `docs/adr/README.md` | Fixes LD-X04 / LD-D03 (logical-vs-repo numbering drift); `check_spec_src.py` enforces file-set == index-set going forward (SIG-ENG-039) |
+| N-02 | `docs/adr/README.md` index gained the missing **ADR-056** and **ADR-057** rows | The index now lists every ADR file |
+| N-03 | §52 Phase-10 acceptance criterion "All **32** task types" → "All **34** task types" | Aligns Part X with the §33.2 catalog (34 rows) and ADR-040; the 2026-08-26 manifest note now matches the spec text |
+
