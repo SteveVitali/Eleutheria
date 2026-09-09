@@ -1530,7 +1530,7 @@ are edges, and the entity is not specialized.
 
 | Predicate | Type | Notes |
 |---|---|---|
-| `canonical_name` | literal | **A claim, not a column.** Competing names are competing claims (§8.2) |
+| `canonical_name` | literal (**scalar**) | A **single** resolved display/identity label, held as one scalar per `Organization` for identity and back-compat. The competing names it is chosen from **remain claims** (§8.2); `canonical_name` is the resolver's single preferred label over them, not a repeatable column (ADR-056, LD-D12) |
 | `alias` | literal | Repeatable, with `alias_type` qualifier: `abbreviation`, `former_name`, `slug`, `misspelling`, `local_usage`, `legal_name`, `dba` |
 | `name_lang` | BCP-47 | Multilingual labels |
 | `organization_type` | vocab | Namespaced and extensible: `us.le.municipal_police`, `us.le.sheriff`, `us.le.state_police`, `us.le.university_police`, `us.le.transit_police`, `us.le.school_district_police`, `us.le.tribal_police`, `us.le.federal`, `us.gov.municipality`, `us.gov.county`, `us.gov.special_district`, `us.fusion_center`, `private.company`, `private.hoa`, `private.security_firm`, `private.bid`, `nonprofit`, `hospital`, `university`, `school_district`, `utility`, `transit_agency`, `vendor`, `data_broker`, `fr.police_municipale`, `fr.gendarmerie`, … (§13.7) |
@@ -2786,7 +2786,7 @@ CREATE TABLE claim (
   CONSTRAINT claim_observed_not_future CHECK (
       observed_at IS NULL OR observed_at <= clock_timestamp() + interval '1 day'
   )
-) PARTITION BY RANGE (observed_at);
+);  -- MAY later: PARTITION BY RANGE (observed_at) — deferred to preserve the claim_id PK/FK contract (ADR-022)
 
 CREATE INDEX ON claim (subject_id, predicate_id, observed_at DESC);
 CREATE INDEX ON claim USING gist (valid_period);
@@ -2807,7 +2807,7 @@ CREATE INDEX ON claim (subject_id) WHERE upper_inf(sys_period);
 | 5 | Four epistemic axes, not one `confidence` | Source reliability, claim directness, artifact integrity, and currency are independent (§10.4–§10.6). A first-rate contract is an `R1` source and `D5` — weak support — for *current* camera count. |
 | 5b | `C` (currency) is **not a column** | A claim's currency changes with the passage of time without the claim changing. Storing it would guarantee it goes stale (SIG-EPIS-020). |
 | 5c | `legacy_source_tier` is nullable and non-resolving | The outline's Tier A–F is a *genre* scale (§10.4). Where an upstream publishes its own tier label, SIG preserves it as source data (P2) but MUST NOT resolve on it. |
-| 6 | Partitioned by `observed_at`, not by `sys_period` | Queries filter on observation time, and historical backfills of old observations should land in old partitions. |
+| 6 | **MAY** partition by `observed_at` (never by `sys_period`); physical partitioning is **deferred** and MUST preserve the `claim_id` PK/FK contract (ADR-022) | Queries filter on observation time and historical backfills should land in old partitions, so `observed_at` is the partition key **if and when** partitioning is introduced. But partitioning MUST NOT break the `claim_id` primary key or any foreign key referencing it (append-only claim spine); until that contract can be kept, the table stays unpartitioned (ADR-022, LD-D01). |
 | 7 | `derived_from_claim_ids` | Without it, three sources that all copied one portal look like three independent corroborations (§28.6). |
 
 ### 16.3 Append-only enforcement
@@ -3049,6 +3049,14 @@ counterparty accepts. SIG carries both rather than choosing.
 **SIG-EVID-004 (MUST).** Deduplication MUST be by digest. A portal page fetched daily that has
 not changed produces one stored blob and N capture rows. `(content_digest, source_uri)` is
 unique.
+
+**SIG-EVID-020 (MUST).** The evidence store MUST be its own workspace package (`evidence/`, §47)
+and MUST separate the **content-addressed blob** from the **capture row** that cites it: identical
+bytes captured under different `source_uri`s, or the same source re-fetched unchanged, resolve to a
+**single** stored blob (keyed by the SIG-EVID-002 multihash), while each capture is an independent,
+append-only row carrying its own `source_uri`, `fetched_at`, and provenance. A capture MUST NOT
+duplicate blob bytes, and deleting a capture row MUST NOT delete a blob still referenced by another
+capture. This is the blob-dedup contract the `evidence/` package implements (ADR-023, LD-D02).
 
 ### 17.3 Layout: OCFL
 
@@ -4924,7 +4932,11 @@ distinction must survive at a glance (§39.1).
 
 Discharges OL-6.5-01, OL-6.5-02, OL-24-11.
 
-**SIG-RECON-053 (MUST).** `Contradiction` MUST be a materialized entity with:
+**SIG-RECON-053 (MUST).** `Contradiction` MUST be a first-class object with the shape below —
+**materialized as a stored entity _or_ computed on read** from the claim spine; either is
+conforming so long as the shape, the lifecycle (SIG-RECON-054…057), and the byte-identical L3
+rebuild (SIG-STORE-018) hold. Compute-on-read is the accepted Phase-8 form; persistence is
+deferred to Phase 21 (ADR-037):
 
 | Field | Notes |
 |---|---|
@@ -4958,7 +4970,9 @@ Discharges Goal 6 (OL-7.1-06) and the negative-claims doctrine (OL-9.4).
 
 ### 32.1 The coverage record
 
-**SIG-METRIC-001 (MUST).** `CoverageRecord` MUST make negative claims **queryable**:
+**SIG-METRIC-001 (MUST).** `CoverageRecord` MUST make negative claims **queryable** (whether
+materialized as stored rows or computed on read from the claim spine is an implementation
+choice; compute-on-read is conforming for Phase 9, persistence deferred to Phase 21, ADR-038):
 
 | Field | Notes |
 |---|---|
@@ -4968,6 +4982,13 @@ Discharges Goal 6 (OL-7.1-06) and the negative-claims doctrine (OL-9.4).
 | `sources_searched[]` | **Required for `searched_not_found`** |
 | `searched_at`, `searched_by` | |
 | `search_method` | |
+
+The `absence_kind` vocabulary is closed and load-bearing: `not_researched` (no search was
+performed — including where a legal or procedural barrier such as a residency requirement
+prevented one, SIG-TASK-016a), `searched_not_found` (a search ran and returned nothing, and
+`sources_searched[]` is then required), `evidence_of_absence` (a source positively asserts the
+thing does not exist), and `not_applicable`. Reading `not_researched` as `searched_not_found`,
+or vice versa, misstates coverage; the two are recorded distinctly (ADR-041).
 
 **SIG-METRIC-002 (MUST).** "Not in the Atlas" and "not in the Atlas, not in any portal, and not in
 three years of council minutes" are very different statements, and `sources_searched[]` is what
@@ -5093,7 +5114,11 @@ passive database (OL-3-07). This part specifies that machinery.
 
 **SIG-TASK-002 (MUST).** A task type with no testable `closing_condition` MUST NOT be registered.
 "Research this" is not a task; "obtain a document establishing X, or record that the agency states
-no such document exists" is.
+no such document exists" is. Research tasks and their dispositions MAY be **materialized as stored
+rows _or_ computed on read** by running the registered `detector`s over the claim spine; either is
+conforming so long as this detector/closing-condition contract and the disposition vocabulary
+(§33.4) hold. Compute-on-read is the accepted Phase-10 form; task-queue persistence is deferred to
+Phase 21 (ADR-039).
 
 ### 33.2 The task catalog
 
@@ -5213,7 +5238,12 @@ when tested, F1.9.)*
 | Maintainer | Ruleset, vocabulary, schema | ADR + review |
 
 **SIG-CONTRIB-002 (MUST).** No tier may write a claim without provenance. Contributor submissions
-enter at **L0** as evidence (a photo, a document, a report), never directly at L1.
+enter at **L0** as evidence (a photo, a document, a report), never directly at L1. The curation /
+review surface these tiers act through (submission intake, the review queue of §39.7, disposition,
+revert) **MAY be a CLI + JSONL queue** for Phase 5; that form is **conforming** for the contributor
+and curation workflow, with an interactive **web** curation/review surface deferred to Phase 21
+(P21.6). This is a form allowance, not a weakening: every tier's review requirement, provenance
+rule, and disposition vocabulary still hold whatever the surface (ADR-030, LD-F05).
 
 ### 34.2 Onboarding
 
@@ -5466,7 +5496,10 @@ Therefore the request generator MUST:
    states, SIG's records-acquisition capability is *exactly* its local-contributor coverage.
 3. **Record the constraint as a coverage fact**, so that thin evidence in a residency-restricted
    state is attributed to the legal barrier rather than read as an absence of surveillance
-   (§9.5, §32.2).
+   (§9.5, §32.2). The coverage fact MUST use `absence_kind = not_researched` (§32.1) — the
+   absence vocabulary carries this value for exactly the "a legal or procedural barrier
+   prevented the search" case, which is distinct from `searched_not_found` (a search that ran
+   and returned nothing) and MUST NOT be recorded as the latter (ADR-041, LD-F14).
 
 **SIG-TASK-016b (MUST).** Where the residency position could not be determined it MUST be recorded
 as unknown and MUST default to the restrictive behaviour — route to a local filer — rather than
@@ -5798,7 +5831,9 @@ explanation of why the bytes are withheld (§17.5).
 
 **SIG-UI-031 (MUST).** Task cards MUST state the closing condition, the evidence sought, the
 assignee class, and the effort estimate. MUST support geographic filtering, claiming with expiry,
-and the full disposition vocabulary including "searched, found nothing" (§33.2).
+and the full disposition vocabulary including "searched, found nothing" (§33.2). A **CLI + JSONL
+queue** is a conforming implementation of this research/curation surface for Phase 5 (ADR-030,
+SIG-CONTRIB-002); the interactive web rendering of the queue is deferred to Phase 21 (P21.6).
 
 ### 39.8 Corrections, methodology, and metrics
 
@@ -5834,7 +5869,19 @@ accessibility requirement and an archival one.
 
 **SIG-UI-038 (MUST).** Maps MUST use an open-source renderer with self-hosted vector tiles
 (§19.5). Third-party tile CDNs MUST NOT be a hard dependency, and basemap attribution MUST be
-correct in every context (SIG-GEO-013).
+correct in every context (SIG-GEO-013). A **zero-JS static map** — a server- or build-time
+rendered image, or self-hosted static PMTiles served without a client-side runtime, always
+paired with the tabular equivalent SIG-UI-037 requires — is a **conforming default** for this
+requirement; a client-side interactive renderer (MapLibre GL) is an **optional
+progressive-enhancement island** (SIG-UI-047), not a precondition of conformance (ADR-051,
+ADR-018, LD-F09).
+
+**SIG-UI-047 (MAY).** An interactive client-side map renderer (MapLibre GL over the self-hosted
+static PMTiles + `/map/style.json` contract of SIG-UI-038/SIG-GEO-012) MAY be shipped as a
+**progressive-enhancement island** layered on top of the zero-JS static default. If shipped it
+MUST NOT become a hard dependency of any core page, MUST keep the zero-JS default fully usable
+with JavaScript disabled (SIG-UI-037), and MUST NOT regress the performance or archivability
+budgets (SIG-UI-041). Building this island is deferred to Phase 21 (ADR-051, ADR-018, LD-F09).
 
 **SIG-UI-039 (MUST).** Every dependency MUST be OSI-licensed. Non-commercial (CC-BY-NC),
 source-available, and dual BUSL licences MUST be excluded — this rules out several popular graph
@@ -6477,6 +6524,7 @@ standards-based lock export and an SBOM per release.
 ```
 ontology/        LinkML source of truth; vocabularies (SKOS); generated artifacts
 db/              sqitch migrations; RLS policies; DDL
+evidence/        content-addressed evidence blobs; OCFL capture rows; blob dedup (§17, ADR-023)
 connectors/      one package per source; each with fixtures/
 parsing/         format handlers; extraction; locators
 resolution/      entity resolution; blocking; gold set; metrics
@@ -6498,6 +6546,14 @@ orchestrator import confined to `orchestration/` (SIG-INGEST-021).
 
 **SIG-ENG-014 (MUST).** `policy/` MUST be a real, tested code package — the publication rules,
 sensitivity classification, and licence gates are executable logic, not prose in `docs/`.
+
+**SIG-ENG-039 (MUST).** The Architecture Decision Record index (Appendix F) MUST list **every**
+`docs/adr/ADR-*.md` by its repository number, title, and owning phase, and `docs/adr/README.md`
+is its single source of truth. Any pull request that adds an ADR MUST add its Appendix F row in
+the **same** PR; a CI/consistency check (`docs/build/tools/check_spec_src.py`) MUST assert that
+the set of ADR files and the set of Appendix F rows are equal. Appendix F numbering is the
+repository ADR numbering — earlier "logical" numbering in ledgers is a documented equivalence,
+not a second scheme (ADR-062, LD-X04/LD-D03).
 
 ---
 
@@ -6701,6 +6757,7 @@ JSON Schema, OWL/SHACL, Pydantic, docs; the generalization conformance suite (SI
 
 **Acceptance criteria.**
 - [ ] CI fails if committed generated artifacts differ from a fresh generation.
+- [ ] Every `docs/adr/ADR-*.md` has a matching Appendix F row (repo numbering), checked in CI (SIG-ENG-039, ADR-062).
 - [ ] The generalization suite passes: acoustic sensor; capability with no asset; reference
       database; commercial data-access relationship; integration hub — all expressible.
 - [ ] Every predicate has volatility, strategy, and a directness row (SIG-ONTO-067).
@@ -6729,6 +6786,7 @@ export; ingest-run lineage.
 - [ ] EDTF round-trips; "early 2025" does not become `2025-01-01`.
 - [ ] Resolution overlap prevented by exclusion constraint, not application code.
 - [ ] An OCFL object is readable without SIG's code.
+- [ ] The `evidence/` package (§47) separates content-addressed blobs from capture rows with digest-keyed dedup (SIG-EVID-020, ADR-023).
 - [ ] Sealed captures expose metadata-only public representations.
 - [ ] RLS tests pass for every role × tier.
 
@@ -6888,7 +6946,7 @@ test; rationale templates; `Contradiction`; the workflows of §29.
 ### Phase 10 — Research-task generation
 
 **Acceptance criteria.**
-- [ ] All 32 task types implemented, each with a testable closing condition.
+- [ ] All 34 task types implemented, each with a testable closing condition (the §33.2 catalog enumerates 34: the outline's seven plus the required additions; ADR-040).
 - [ ] Every contradiction detector maps to a task.
 - [ ] `resolved_no_evidence_exists` writes a `CoverageRecord`.
 - [ ] Tasks auto-invalidate when their detector stops firing.
@@ -6972,7 +7030,7 @@ own domains are unarchivable — if it goes away, so does the only route to this
 
 **Acceptance criteria.**
 - [ ] All seven outline surfaces exist, **plus the corrections log**.
-- [ ] Core content usable **without JavaScript**; every map has a tabular equivalent.
+- [ ] Core content usable **without JavaScript**; every map has a tabular equivalent. A zero-JS static map is the conforming default (SIG-UI-038); an interactive MapLibre island (SIG-UI-047) is optional progressive enhancement deferred to Phase 21 (ADR-051).
 - [ ] WCAG 2.2 AA automated checks pass; no colour-only encoding.
 - [ ] The four epistemic fields are independently visible; no fused badge.
 - [ ] Absence renders as one texture, is clickable, and generates a task.
@@ -8732,30 +8790,90 @@ stated, because several of these differences are load-bearing.
 
 # Appendix F — Architecture Decision Record index
 
-**SIG-STORE-006** requires each decision below to be written as an ADR under `docs/adr/` in Phase 1,
+**SIG-STORE-006** requires each decision below to be written as an ADR under `docs/adr/`,
 using a consistent template: context, decision, status, consequences, alternatives considered, and —
 mandatory per SIG-STORE-007 — a **revisit trigger**.
 
-| ADR | Decision | Spec | Revisit trigger |
-|---|---|---|---|
-| ADR-001 | PostgreSQL 18 + PostGIS canonical; everything else a projection | §15.1 | A projection becomes the sole home of any fact; or a managed-Postgres dependency becomes unavailable |
-| ADR-002 | Append-only claims; entity tables hold identity only | §16.1–16.3 | Write throughput becomes a demonstrated bottleneck |
-| ADR-003 | Two interval time dimensions + one ordering scalar | §9.2 | A use case requires `AS OF` travel along observation time |
-| ADR-004 | EDTF for uncertain dates | §16.7 | EDTF tooling becomes unmaintained |
-| ADR-005 | Resolution as a stored decision record | §16.4 | Storage cost of resolutions exceeds a defined share of the database |
-| ADR-006 | OCFL 1.1 evidence store, governance-mode Object Lock | §17.3 | A legal regime makes governance mode untenable |
-| ADR-007 | LinkML as the single ontology source of truth | §20.1 | Generated artifacts diverge from hand-written needs in more than one target |
-| ADR-008 | SKOS for published vocabularies | §20.2 | A downstream consumer standard displaces SKOS |
-| ADR-009 | SPDX expressions + a build-time licence gate | §42.1, §42.4 | A key source's terms are inexpressible in SPDX |
-| ADR-010 | DuckDB/Parquet analytics boundary; no raw audit rows | §18 | Interactive aggregate latency misses its budget |
-| ADR-011 | **Strategy B ODbL posture: separate ODbL asset layer, CC-BY-4.0 graph** | §42.3 | OSMF guidance changes; or counsel advises differently on the §42.3 residuals |
-| ADR-012 | Sensitivity tiers via RLS, applied at the view layer | §16.8, §19.4 | A tier transform is shown to be invertible from published aggregates |
-| ADR-013 | Apache-2.0 code; CC-BY-4.0 data; CC0 ontology | §42.2 | Proprietary re-hosting causes demonstrated harm to the commons |
-| ADR-014 | Dagster OSS orchestration, kept reversible | §21.8 | Its licence changes; or ops burden exceeds the cron alternative |
-| ADR-015 | Static-first, zero-JS-default frontend | §40 | Interactive requirements make progressive enhancement untenable |
-| ADR-016 | Splink 4 for probabilistic ER | §14.6 | Holdout precision cannot reach the auto-write threshold |
-| ADR-017 | No direct automated OSM writes | §35.2 | The OSM automated-edits review (R-14) concludes otherwise |
-| ADR-018 | Rule-based, non-learned resolution | §28.1 | A learned resolver demonstrates both better accuracy *and* per-decision explainability |
+This index is the **repository ADR numbering** and lists **every** `docs/adr/ADR-*.md` by its
+repository number, title, and owning phase. Its single source of truth is `docs/adr/README.md`
+(SIG-ENG-039): any pull request that adds an ADR MUST add its row here in the same PR, and
+`docs/build/tools/check_spec_src.py` asserts the ADR-file set and this table are equal.
+
+> **Numbering note (LD-X04 / LD-D03).** Early drafts of this appendix used a *logical* numbering
+> for the eighteen §15.5 + stack decisions that does **not** match the repository ADR numbers. That
+> logical scheme is retired: the repository numbering above is canonical. A few historical
+> equivalences a reader may meet in older ledgers/PR bodies: logical "ADR-013 (Apache-2.0 code /
+> CC-BY data / CC0 ontology, §42.2)" and logical "ADR-016 (Splink)" and logical "ADR-017 (no direct
+> automated OSM writes, §35.2)" and logical "ADR-024/025 (the P06.1 count-reconciliation /
+> dossier-renderer decisions)" all refer to *design points* now recorded under the repository ADRs
+> that own them — e.g. Splink is repository **ADR-029** (P05.1), the no-OSM-writes decision is
+> repository **ADR-055** (P16.2, which itself records the spec's Appendix-F "ADR-017"), and the
+> P06.1 seeds are repository **ADR-031/032**. When in doubt, cite the repository number.
+
+| ADR | Decision | Phase |
+|---|---|---|
+| ADR-001 | PostgreSQL 18 + PostGIS as the canonical store; everything else a projection | P00.2 |
+| ADR-002 | Append-only claim table; entity tables hold identity only | P00.2 |
+| ADR-003 | Two interval time dimensions plus one ordering scalar | P00.2 |
+| ADR-004 | EDTF for uncertain dates | P00.2 |
+| ADR-005 | Resolution as a stored decision record, not a view | P00.2 |
+| ADR-006 | OCFL 1.1 evidence store on object storage with governance-mode Object Lock | P00.2 |
+| ADR-007 | LinkML as the single ontology source of truth | P00.2 |
+| ADR-008 | SKOS for published controlled vocabularies | P00.2 |
+| ADR-009 | SPDX expressions for per-source licensing, with a build-time compatibility gate | P00.2 |
+| ADR-010 | DuckDB/Parquet analytics boundary; no raw audit rows anywhere | P00.2 |
+| ADR-011 | The ODbL posture: OSM-derived assets in a separate compartment (Strategy B) | P00.2 |
+| ADR-012 | Sensitivity tiers enforced by RLS, applied at the view layer | P00.2 |
+| ADR-013 | uv as the workspace and lockfile tool | P00.2 |
+| ADR-014 | Astro for the public web surface | P00.2 |
+| ADR-015 | AWS S3 for the evidence store and CloudFront for bulk-export delivery | P00.2 |
+| ADR-016 | Dagster OSS for orchestration, kept reversible | P00.2 |
+| ADR-017 | FastAPI for the read API | P00.2 |
+| ADR-018 | MapLibre GL for the web map | P00.2 |
+| ADR-019 | pytest + Hypothesis for testing | P00.2 |
+| ADR-020 | GitHub Actions for CI | P00.2 |
+| ADR-021 | Source registry as seeded data, with a runtime ingestion gate in `connectors` | P00.4 |
+| ADR-022 | Defer physical partitioning of `claim` to preserve the `claim_id` FK contract | P02.1 |
+| ADR-023 | An `evidence/` package, and content-addressed blob dedup for the capture row | P02.2 |
+| ADR-024 | A pinned, deterministic, in-repo EDTF envelope derivation | P02.3 |
+| ADR-025 | Temporal invariants as pipeline data-quality checks; as-of as SQL functions | P02.3 |
+| ADR-026 | The eight-stage connector framework | P04.1 |
+| ADR-027 | The `osm` connector | P04.2 |
+| ADR-028 | The `atlas` connector | P04.3 |
+| ADR-029 | Splink 4 on DuckDB for the probabilistic ER tiers 4–5, as a fully-specified deterministic model | P05.1 |
+| ADR-030 | The review queue and the LLM-extraction scaffolding as library + CLI, in `resolution` and `parsing` | P05.2 |
+| ADR-031 | A minimal count-reconciliation seed, and the three missing count predicates, for the P06.1 vertical slice | P06.1 |
+| ADR-032 | A minimal slice dossier renderer, with a print-CSS PDF path, ahead of the production surface | P06.1 |
+| ADR-033 | The layered document-parsing stack as the parser interface every connector extracts through, in `parsing` | P07.1 |
+| ADR-034 | The `records` connector | P07.2 |
+| ADR-035 | The `procurement` connector | P07.3 |
+| ADR-036 | The §29 reconciliation workflows as value-object modules layered on the resolver | P08.2 |
+| ADR-037 | The materialized Contradiction entity, its lifecycle, and the byte-identical L3 rebuild | P08.3 |
+| ADR-038 | The coverage-metrics layer, its home in `inference`, and the executable capture–recapture prohibition | P09.1 |
+| ADR-039 | The research-task engine | P10.1 |
+| ADR-040 | The §33.2 detector catalog and the §31 contradiction→task map | P10.2 |
+| ADR-041 | The records-request generator | P10.3 |
+| ADR-042 | The `flock_portal` connector | P11.1 |
+| ADR-043 | The `audit_structural` connector | P11.2 |
+| ADR-044 | The usage-analytics boundary | P12.1 |
+| ADR-045 | Access-path closure | P12.2 |
+| ADR-046 | Policy/LegalInstrument surfaces, the never-merged invariant, and the SIG-EPIS-030 general form | P13.2 |
+| ADR-047 | The public read API | P14.1 |
+| ADR-048 | Bulk exports | P14.2 |
+| ADR-049 | The epistemic visual language and the no-JS, archivable web shell | P15.1 |
+| ADR-050 | The production local-dossier surface | P15.2 |
+| ADR-051 | The infrastructure map + network explorer (with the static-PMTiles serving contract) | P15.3 |
+| ADR-052 | The renewal watch, evidence recommender, and evidence viewer | P15.4 |
+| ADR-053 | The research queue, public corrections log, methodology/metrics pages, and the editorial-standards conformance gate | P15.5 |
+| ADR-054 | The contributor system | P16.1 |
+| ADR-055 | No direct automated OSM writes (the human-mediated suggestion workflow; records the spec's logical "ADR-017", §35.2) | P16.2 |
+| ADR-056 | The jurisdiction adapter framework (country-namespaced vocabularies, BCP-47 labels, `canonical_name` scalar) | P18.1 |
+| ADR-057 | The France/Belgium (Technopolice) connectors | P18.2 |
+| ADR-058 | Tickets and build memory are committed; agent scratch is unified | P19.1 |
+| ADR-059 | Capstone spine wiring (`PgClaimSink`, `PgReadStore`, the compute-on-read seam) | P19.4 |
+| ADR-060 | The resolver (P08.1) — retro-fitted record | P08.1 (retro-fitted by P19.5) |
+| ADR-061 | Capstone gap closure (export gate, jurisdiction-conditional web render, ER over PostgreSQL) | P19.5 |
+| ADR-062 | Spec reconciliation after the 46-ticket build (Appendix F/G, applied amendments A1–A8, fold-back ids) | P20.2 |
 
 # Appendix G — Corrections and material extensions to the source outline
 
@@ -8885,4 +9003,45 @@ settled:
    in practice, which is a consultation outcome and cannot be determined unilaterally.
 3. The residual ODbL questions of §42.3 requiring counsel — unchanged, and correctly so.
 4. Per-source licence positions for several newly discovered projects, two of which state none.
+
+## G.5 Post-build reconciliation (2026-09)
+
+After the 46-ticket build (P00.1–P18.2) and the capstone passes (P19–P20.1), the spec and the
+built system were reconciled (ticket P20.2, ADR-062, gate HG-13). Nothing here removes an
+obligation: seven items are **ticked normative amendments** (each with an ADR, so no requirement is
+weakened silently — defining standard §3.1), and the remainder are non-normative index/wording
+corrections. The reconciliation plan (`docs/build/SPEC_RECONCILIATION_PLAN.md`) carries the full
+before/after text and the ticket-added disposition tables (`docs/build/TICKET_VS_SPEC.md`).
+
+### G.5.1 Ticked normative amendments applied to `spec_src`
+
+| # | Section | Change | ADR |
+|---|---|---|---|
+| A1 | §40 (SIG-UI-038, +SIG-UI-047) | A zero-JS static map is the **conforming default**; the interactive MapLibre renderer is an **optional progressive-enhancement island** (SIG-UI-047, MAY), not a precondition of conformance | ADR-051, ADR-018 |
+| A2 | §32.1 (SIG-METRIC-001) / §33 (SIG-TASK-016a) | The residency barrier is recorded with `absence_kind = not_researched`; the closed absence vocabulary and its `not_researched` vs `searched_not_found` distinction made explicit | ADR-041 |
+| A3 | §11.2 (`Organization`) | `canonical_name` is a **scalar** resolved label; the competing names it is chosen from remain claims | ADR-056 |
+| A4 | §16.2 design-point #6 | Claim-table partitioning is **MAY** (deferred); it MUST preserve the `claim_id` PK/FK contract | ADR-022 |
+| A5 | §31 (SIG-RECON-053), §32 (SIG-METRIC-001), §33 (SIG-TASK-002) | `Contradiction`, `CoverageRecord`, and research tasks MAY be **computed on read** or materialized; compute-on-read is the accepted Phase-8/9/10 form, persistence deferred to Phase 21 | ADR-037/038/039 |
+| A6 | §34 (SIG-CONTRIB-002), §39.7 (SIG-UI-031) | A **CLI + JSONL** curation/review queue is a conforming Phase-5 form; the web surface is deferred to Phase 21 | ADR-030 |
+| A7 | §47 (SIG-ENG-012) | `evidence/` added as a member package of the frozen layout | ADR-023 |
+| A8 | — | No further `P20.2:spec`-routed normative item exists beyond A1 (`SIG-UI-038` is the only such routing in `COVERAGE_MATRIX.csv`/`CAPSTONE_*`); the enumerated set is empty | — |
+
+### G.5.2 Fold-back requirement ids (approved ticket-added scope folded into the spec)
+
+New ids appended to their prefix sequences (never reused, never renumbered — §0.3):
+
+| New id | Section | What it captures | Origin |
+|---|---|---|---|
+| SIG-UI-047 (MAY) | §40 | Interactive MapLibre progressive-enhancement map island (optional; deferred to Phase 21) | A1 / ADR-051 / P15.3 ticket-added |
+| SIG-EVID-020 (MUST) | §17 | The `evidence/` package's content-addressed blob-vs-capture dedup contract | ADR-023 / P02.2 ticket-added |
+| SIG-ENG-039 (MUST) | §47 | Every `docs/adr/ADR-*.md` MUST have an Appendix F row in the same PR, checked in CI | ADR-062 |
+
+### G.5.3 Non-normative corrections
+
+| # | Correction | Effect |
+|---|---|---|
+| N-01 | **Appendix F rebuilt to repository ADR numbering.** The old logical 18-decision table is replaced by all repository ADRs (ADR-001…062) with title + phase, sourced from `docs/adr/README.md` | Fixes LD-X04 / LD-D03 (logical-vs-repo numbering drift); `check_spec_src.py` enforces file-set == index-set going forward (SIG-ENG-039) |
+| N-02 | `docs/adr/README.md` index gained the missing **ADR-056** and **ADR-057** rows | The index now lists every ADR file |
+| N-03 | §52 Phase-10 acceptance criterion "All **32** task types" → "All **34** task types" | Aligns Part X with the §33.2 catalog (34 rows) and ADR-040; the 2026-08-26 manifest note now matches the spec text |
+
 

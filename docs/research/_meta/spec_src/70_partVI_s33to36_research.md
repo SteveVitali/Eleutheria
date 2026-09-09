@@ -23,7 +23,11 @@ passive database (OL-3-07). This part specifies that machinery.
 
 **SIG-TASK-002 (MUST).** A task type with no testable `closing_condition` MUST NOT be registered.
 "Research this" is not a task; "obtain a document establishing X, or record that the agency states
-no such document exists" is.
+no such document exists" is. Research tasks and their dispositions MAY be **materialized as stored
+rows _or_ computed on read** by running the registered `detector`s over the claim spine; either is
+conforming so long as this detector/closing-condition contract and the disposition vocabulary
+(§33.4) hold. Compute-on-read is the accepted Phase-10 form; task-queue persistence is deferred to
+Phase 21 (ADR-039).
 
 ### 33.2 The task catalog
 
@@ -143,7 +147,12 @@ when tested, F1.9.)*
 | Maintainer | Ruleset, vocabulary, schema | ADR + review |
 
 **SIG-CONTRIB-002 (MUST).** No tier may write a claim without provenance. Contributor submissions
-enter at **L0** as evidence (a photo, a document, a report), never directly at L1.
+enter at **L0** as evidence (a photo, a document, a report), never directly at L1. The curation /
+review surface these tiers act through (submission intake, the review queue of §39.7, disposition,
+revert) **MAY be a CLI + JSONL queue** for Phase 5; that form is **conforming** for the contributor
+and curation workflow, with an interactive **web** curation/review surface deferred to Phase 21
+(P21.6). This is a form allowance, not a weakening: every tier's review requirement, provenance
+rule, and disposition vocabulary still hold whatever the surface (ADR-030, LD-F05).
 
 ### 34.2 Onboarding
 
@@ -396,7 +405,10 @@ Therefore the request generator MUST:
    states, SIG's records-acquisition capability is *exactly* its local-contributor coverage.
 3. **Record the constraint as a coverage fact**, so that thin evidence in a residency-restricted
    state is attributed to the legal barrier rather than read as an absence of surveillance
-   (§9.5, §32.2).
+   (§9.5, §32.2). The coverage fact MUST use `absence_kind = not_researched` (§32.1) — the
+   absence vocabulary carries this value for exactly the "a legal or procedural barrier
+   prevented the search" case, which is distinct from `searched_not_found` (a search that ran
+   and returned nothing) and MUST NOT be recorded as the latter (ADR-041, LD-F14).
 
 **SIG-TASK-016b (MUST).** Where the residency position could not be determined it MUST be recorded
 as unknown and MUST default to the restrictive behaviour — route to a local filer — rather than

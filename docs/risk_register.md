@@ -1260,3 +1260,17 @@ cell (defining standard §3.1). This section adds no code; the phase gate is uni
 | id | Risk (what breaks the acceptance gate if unhandled) | Compensating control |
 |---|---|---|
 | RISK-P20-01 | **Backlog drift — two sources of truth re-emerge.** Once the risk register keeps its `BL-nnn` cross-refs and `BACKLOG.csv` keeps the deferred items, an editor could add a deferred RISK row, an ADR revisit trigger, or an LD row without a backlog id (an orphan), or map one source into two items (a double-owned source), so the "one backlog" invariant silently rots. The obvious fix — put the check in `make check` — is **declined**: `check_backlog.py` reads `docs/adr/*.md` and `docs/risk_register.md`, which change every phase, so wiring it into the CI gate would make unrelated tickets red on backlog edits and couple the code gate to docs churn. | **Compensating control (kept a PR-invoked docs tool, not a `make check` step):** `docs/build/tools/check_backlog.py` (stdlib) parses the three source universes and asserts each id appears in exactly one `sources` cell, that enums are valid, and that no source is double-owned — printing `risk deferred rows: N/N`, `ADR revisit triggers: M/M`, `LD rows: 90/90`, `duplicate sources: 0`. It is run in the P20.1 PR (and by any later ticket that sets `status=closed` on a `BL-` id) and is named in the ticket's Definition of Done, so drift is caught at review time. The count of `BL-` cross-ref suffixes in `docs/risk_register.md` equals the distinct RISK ids in `sources` (100), a second deterministic cross-check a reviewer can run in one line. |
+
+## Phase 20 — Spec reconciliation (P20.2)
+
+Per §53 / SIG-ENG-031, P20.2's risk-register entry. P20.2 applies the eight ticked
+HG-13 amendments (A1–A8) at `spec_src`, folds back three requirement ids
+(SIG-UI-047, SIG-EVID-020, SIG-ENG-039), rebuilds Appendix F to repository ADR
+numbering, and adds ADR-062. No package code or schema changed (only the new stdlib
+`check_spec_src.py` and its test); `git diff --stat` is `docs/**` only.
+
+### Deferred — spec-vs-code drift after the ticked amendments (SIG-ENG-005)
+
+| id | Risk (what breaks the acceptance gate if unhandled) | Compensating control |
+|---|---|---|
+| RISK-P20-02 → BL-051 | **Unbuilt work legitimised by the ticked amendments could drift from the spec.** The amendments accept deferrals whose *build* is still outstanding: the optional MapLibre island (SIG-UI-047 → P21.5), the Phase-21 persistence of contradiction/coverage/task objects (A5 → P21.2), and the web curation surface (A6 → P21.6). If those tickets never land, a reader of the spec could expect a surface the code does not yet provide (conforming today, but a divergence risk over time). Also folded-back ids and future ADRs must keep landing with their Appendix F row / `spec_src` paragraph in the same PR (SIG-ENG-039), or Appendix F drifts again. | **Compensating control:** `docs/build/tools/check_spec_src.py` (stdlib, PR-invoked) asserts byte-identical `BUILD.sh` reproduction, Appendix F ↔ `docs/adr/` equality, the `668 + 3` id count, and no duplicate/malformed/reserved ids; the residual build items are carried in `docs/build/BACKLOG.csv` (BL-051 and the existing BL-004/BL-007/BL-010 rows) with `landing` set to the P21.x ticket that builds each. `SPEC_RECONCILIATION_PLAN.md §(e)` names this residual explicitly. |
