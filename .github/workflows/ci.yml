@@ -18,6 +18,23 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Documentation freshness gate (P22.2, ADR-072). Runs BOTH vendored detectors
+  # (human-facing repo docs from P22.1 + the agent-facing AGENTS.md hierarchy) on
+  # pull requests. Structural checks only — deterministic, no LLM — so drift
+  # (broken references, coverage gaps) is caught at change time, not by a periodic
+  # sweep. Pure bash + git; no uv/toolchain needed. Kept out of `make check`
+  # because the two detectors together take ~30s (>10s), so they run here.
+  docs:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # the detectors classify missing refs via git history
+
+      - name: Documentation freshness (both detectors)
+        run: make docs-check
+
   python:
     runs-on: ubuntu-latest
     steps:
