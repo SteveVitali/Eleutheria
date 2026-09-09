@@ -572,3 +572,31 @@ records-request path is P10.3.
 |---|---|---|---|
 | RISK-P10-07 | The concrete detector catalog (§33.2) and the `Facts` shape its detectors read | The 34 detectors and their real graph-query surface are **P10.2**; this ticket owns the DSL they register against | The DSL is exercised with representative in-memory `Facts` fixtures; P10.2 pins the query surface to the real graph. Registration/lifecycle/dedup are all tested against the engine now. |
 | RISK-P10-08 | Persistence of tasks, claims, and local groups (no `local_group`/claim DDL exists in Appendix C) | Live Postgres persistence and the claiming API are downstream; Appendix C names no `local_group` table | Fields track the `research_task` DDL; SIG-TASK-014's ownership guarantee is met by a self-contained in-memory registry with no external dependency (F1.9). Adding a schema is an additive downstream change (ADR-039 revisit trigger). |
+
+## Phase 10 — Research-task generation (P10.2 — the detector catalog)
+
+Per §53 / SIG-ENG-031, P10.2's risk-register entries. P10.2 owns the concrete §33.2
+catalog (the 34 task types) and the §31 contradiction→task map (ADR-040), registered
+against the P10.1 engine.
+
+### Design risks retired by executable checks (SIG-TASK)
+
+| id | Risk | Compensating control |
+|---|---|---|
+| RISK-P10-09 | **A "research this" catalog row** — a §33.2 task type ships without a testable closing condition, so it can never leave the queue on any disposition but success and the backlog grows (SIG-TASK-002/003). | Every row is registered through `TaskTypeRegistry.register`, which refuses an untestable closing condition; `build_catalog()` registering all 34 is therefore the proof. Proven by `tests/tasks/test_tasks_catalog.py::test_building_the_catalog_registers_every_type`, `::test_every_catalog_type_has_a_testable_closing_condition`. |
+| RISK-P10-10 | **A contradiction with no route to resolution** — a §31 detector fires but no task type exists to work it, so detection is "just an alarm" (SIG-TASK-004). | `CONTRADICTION_TASK_MAP`'s keys are asserted to be exactly `reconcile.model.CONTRADICTION_TYPES` and every value a registered catalog slug, so an unrouted contradiction type is a failing test. Proven by `tests/tasks/test_tasks_catalog.py::test_every_contradiction_type_maps_to_a_task`, `::test_every_mapped_task_type_is_a_registered_catalog_type`. |
+| RISK-P10-11 | **Stale catalog tasks linger** — a catalog detector keeps firing after the gap it names is closed, wasting contributor attention (SIG-TASK-006). | Each row is built so its detector stops firing exactly when the gap closes; the P10.1 `TaskPool.sweep_invalidations` then silently invalidates it. Proven per-type (all 34) by `tests/tasks/test_tasks_catalog.py::test_task_auto_invalidates_when_its_condition_clears`. |
+| RISK-P10-12 | **Catalog drifts from the spec count** — §33.2 grows/shrinks but the catalog does not, or the Part X "32" figure is used instead of §33.2's 34. | `CATALOG_SIZE = 34` and the unique-slug count are asserted against §33.2 as the count authority. Proven by `tests/tasks/test_tasks_catalog.py::test_catalog_has_exactly_the_34_types_of_the_count_authority`. |
+
+### Deviations recorded as ADRs (SIG-ENG-031)
+
+| ADR | Deviation |
+|---|---|
+| ADR-040 | The catalog's detectors read representative in-memory `Facts` keys (with committed positive/negative fixtures), **not** the live materialized graph — continuing ADR-039's scaffolding boundary (RISK-P10-07); binding the keys to the real query surface is downstream. SIG-TASK-004 is modelled as a **many-to-one** map from the §31 `contradiction_type` vocabulary to catalog task slugs (the catalog is coarser than the type vocabulary), cross-checked against `reconcile.model.CONTRADICTION_TYPES` as a **test-only** import so no new runtime dependency is added to `tasks`. |
+
+### Scaffolded / bounded requirements (SIG-ENG-005)
+
+| id | Requirement | Why not fully automatable now | Compensating control |
+|---|---|---|---|
+| RISK-P10-13 | The catalog detectors' binding to the real materialized-graph query surface (they read documented `Facts` keys, not live projections) | No graph-query surface exists for the detectors to bind to yet; ADR-039/040 scope it downstream | Each row's contract (which facts it reads, when it fires, when it closes) is pinned with committed positive/negative fixtures and an end-to-end auto-invalidation test; binding the keys to live projections is an additive downstream change (ADR-040 revisit trigger). |
+| RISK-P10-14 | Task routes for `temporal_impossibility` and `undeclared_copying` are mapped ahead of any reconcile detector that emits them | The P08.2/P08.3 workflows do not yet emit these two of the nine `contradiction_type`s | The map covers the **full** §31 vocabulary so a future emitter already has a route; the chosen catalog task is revisited if a real emitter proves it a poor fit (ADR-040 revisit trigger). |
