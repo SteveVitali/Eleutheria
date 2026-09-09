@@ -2187,3 +2187,26 @@ no source flipped); a `run --mode live` refuses (exit 3).
 | `shadow` over all new fixtures: 0 diffs on re-run (SIG-INGEST-019); additive/back-compat | `connectors.pathways` (pure parse/extract/normalize); existing connectors/parsers untouched | `tests/connectors/test_pathways.py::test_shadow_replay_over_fixture_has_zero_diffs` |
 | Part VIII §0.7 — no per-person data from forensics/location documents (aggregate/structural only) | `connectors.pathways` (no Person subjects; deployment/vendor/policy subjects only) | conformance graphs `tests/ontology/generalization/test_stage5_forensics.py::test_no_person_rows_are_minted_for_observed_individuals` |
 | Phase gate (§51.3): `make check` green; ADR-071 (+ Appendix F, README); risk register; BACKLOG closed | `make check`; `docs/adr/ADR-071-*.md`; `docs/risk_register.md` (RISK-P21-16/17; RISK-P17-03 → retired by P21.9); `docs/build/BACKLOG.csv` (BL-043 closed) | `make check`; `python docs/build/tools/check_spec_src.py` (70 ADRs) |
+
+# P22.1 — Human-facing documentation refresh (`refresh-repo-docs`, full audit)
+
+P22.1 audits every reader-facing document against the finished code (65-ticket chain) and fixes the
+in-scope set only: READMEs, `CONTRIBUTING.md`, `CHANGELOG.md`, the new `docs/README.md`, and the
+governance index. Generated/frozen/historical/append-only docs are audited but never edited (the
+report-only set); their findings are recorded in `docs/build/DOCS_REFRESH_REPORT.md`. No canonical
+requirement ids are added (documentation hygiene); the stamped ids are SIG-ENG-001 (the repo is
+executable from its documents), SIG-ENG-003 (spec amendment path respected — the spec was not
+hand-edited), SIG-ENG-031 (risk register maintained), SIG-LIC-005 (licence posture stated correctly).
+
+| Requirement | Where | Test |
+|---|---|---|
+| The repo is executable from its documents (SIG-ENG-001): every command in the four executable READMEs runs or is gate-marked | `README.md`, `CONTRIBUTING.md`, `ops/README.md`, `web/README.md` (commands verified during the run; see PR body table) | `make check` (green, 2652 passed); `bash scripts/docs/check-repo-docs-freshness.sh .` (exit 0) |
+| `docs/README.md` classifies every top-level `docs/` entry (generated/frozen/append-only/historical/living) | `docs/README.md` | `ls docs` names every classified entry; `make docs-check-repo` |
+| The 14 workspace members + `web/` + `docs/build/` are named with one line each; no false "live" claim | `README.md` ("Repository layout & development", "Running SIG — three ways") | `grep` each `pyproject.toml` member name in `README.md`; claims sourced from `OPERATIONAL_READINESS.md` |
+| CHANGELOG is evidence-backed (Keep a Changelog); `0.1.0` stays unreleased; each entry cites a real PR/tag/ticket (SIG-ENG-003) | `CHANGELOG.md` (Phase-21 block, PRs #56–#65) | `gh pr view N` / `ls docs/tickets` for each cited id; `git tag -l` (no `v0.1.0` yet ⇒ unreleased) |
+| Governance index lists the eight adopted policies with status (SIG-LIC-005 posture cross-checked) | `docs/governance/README.md` | `ls docs/governance/*.md` = 8 + README; status read from each doc |
+| Licence posture stated correctly (SIG-LIC-005): code Apache-2.0, data/docs per-artifact | `README.md`, `CONTRIBUTING.md` | cross-checked against `LICENSE` and `policy.licensing` |
+| Vendored freshness detector is additive tooling (SIG-ENG-001); no product code changed | `scripts/docs/check-repo-docs-freshness.sh`, `Makefile` (`docs-check-repo`) | `make docs-check-repo` (exit 0); `make check` test count unchanged (2652) |
+| Scope boundary respected: no report-only path edited except appended P22.1 register/traceability sections (SIG-ENG-003, P1–P3) | `git diff --name-only` (checked in review) | detector §"excluded-scope findings" in `DOCS_REFRESH_REPORT.md`; no `docs/2_canonical_design_spec.md` / `docs/research/**` / ADR body / ticket edits |
+| Risk register maintained (SIG-ENG-031): RISK-P22-01/02 | `docs/risk_register.md` (Phase 22 — Documentation (P22.1)) | present; §53 format (id + risk + compensating control) |
+| Phase gate (§51.3): `make check` green (unchanged count); `make docs-check-repo` runs; traceability + risk appended | `make check`; `make docs-check-repo`; this section | `make check` (0 failed / 0 xfailed / 2652 passed + 54 skipped, Docker down); `make docs-check-repo` (exit 0) |
