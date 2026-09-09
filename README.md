@@ -74,6 +74,11 @@ web/                                                            # TypeScript (SI
 docs/  tests/                                                   # docs & the test suite
 ```
 
+The phased build's contract record lives in the repo: the ordered ticket backlog is
+`docs/tickets/00_MANIFEST.md` (each `PXX.Y` ticket is a committed contract), and the durable build
+memory — planning ledger, build index, decision memo and later capstone/backlog artifacts — lives
+under `docs/build/`.
+
 Conventions established here that every later ticket depends on:
 
 - **Python is primary; TypeScript is confined to `web/`** (SIG-ENG-010).
