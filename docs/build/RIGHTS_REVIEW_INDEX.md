@@ -31,7 +31,7 @@ registered sources: 115
 |  | `alpr_watch_code` | UNDETERMINED | not_contacted | REFERENCE |  | REFUSED | — (P22+ backlog) |
 |  | `alpr_watch_dashboard` | UNDETERMINED | not_contacted | REFERENCE |  | REFUSED | — (P22+ backlog) |
 |  | `alpr_watch_foia_method` | UNDETERMINED | not_contacted | REFERENCE |  | REFUSED | — (P22+ backlog) |
-|  | `aspi_mapping_chinas_tech_giants` | UNDETERMINED | not_contacted | LINK |  | REFUSED | — (P22+ backlog) |
+|  | `aspi_mapping_chinas_tech_giants` | UNDETERMINED | not_contacted | LINK |  | REFUSED | [docs/build/rights/aspi_mapping_chinas_tech_giants.md](rights/aspi_mapping_chinas_tech_giants.md) |
 |  | `atlas_about` | UNDETERMINED | public_terms_only | REFERENCE |  | REFUSED | — (P22+ backlog) |
 |  | `atlas_data_library` | UNDETERMINED | public_terms_only | LINK |  | REFUSED | — (P22+ backlog) |
 |  | `atlas_methodology` | UNDETERMINED | public_terms_only | REFERENCE |  | REFUSED | — (P22+ backlog) |
@@ -39,7 +39,7 @@ registered sources: 115
 |  | `boarddocs` | UNDETERMINED | not_contacted | LINK |  | REFUSED | — (P22+ backlog) |
 |  | `buyboard` | UNDETERMINED | public_terms_only | LINK |  | REFUSED | — (P22+ backlog) |
 |  | `ca_sharing_visualization` | UNDETERMINED | public_terms_only | LINK |  | REFUSED | — (P22+ backlog) |
-|  | `carnegie_ai_gsi` | UNDETERMINED | not_contacted | LINK |  | REFUSED | — (P22+ backlog) |
+|  | `carnegie_ai_gsi` | UNDETERMINED | not_contacted | LINK |  | REFUSED | [docs/build/rights/carnegie_ai_gsi.md](rights/carnegie_ai_gsi.md) |
 |  | `ccops_ordinance_disclosures` | UNDETERMINED | public_terms_only | MIRROR |  | REFUSED | — (P22+ backlog) |
 |  | `census_gazetteer_tiger` | UNDETERMINED | public_terms_only | MIRROR |  | REFUSED | — (P22+ backlog) |
 |  | `census_geocoder` | UNDETERMINED | public_terms_only | REFERENCE |  | REFUSED | — (P22+ backlog) |
@@ -56,7 +56,7 @@ registered sources: 115
 |  | `drivers_against_flock` | UNDETERMINED | not_contacted | LINK |  | REFUSED | — (P22+ backlog) |
 |  | `eff_atlas_of_surveillance` | CC-BY-4.0 | public_terms_only | MIRROR | yes | flip-ready | [docs/build/rights/eff_atlas_of_surveillance.md](rights/eff_atlas_of_surveillance.md) |
 |  | `eff_copyright` | UNDETERMINED | public_terms_only | REFERENCE |  | REFUSED | — (P22+ backlog) |
-|  | `eff_data_driven` | UNDETERMINED | public_terms_only | REFERENCE |  | REFUSED | — (P22+ backlog) |
+|  | `eff_data_driven` | UNDETERMINED | public_terms_only | MIRROR |  | REFUSED | [docs/build/rights/eff_data_driven.md](rights/eff_data_driven.md) |
 |  | `eff_street_level_surveillance` | UNDETERMINED | public_terms_only | REFERENCE |  | REFUSED | — (P22+ backlog) |
 |  | `equalis_group` | UNDETERMINED | public_terms_only | LINK |  | REFUSED | — (P22+ backlog) |
 |  | `escribe` | UNDETERMINED | not_contacted | LINK |  | REFUSED | — (P22+ backlog) |
@@ -65,7 +65,7 @@ registered sources: 115
 |  | `eyes_on_flock` | CC-BY-SA-4.0 | public_terms_only | MIRROR | yes | flip-ready | [docs/build/rights/eyes_on_flock.md](rights/eyes_on_flock.md) |
 |  | `eyes_on_flock_description` | UNDETERMINED | public_terms_only | LINK |  | REFUSED | — (P22+ backlog) |
 |  | `faa_drone_waivers` | UNDETERMINED | public_terms_only | REFERENCE |  | REFUSED | — (P22+ backlog) |
-|  | `facial_recognition_world_map` | UNDETERMINED | not_contacted | LINK |  | REFUSED | — (P22+ backlog) |
+|  | `facial_recognition_world_map` | UNDETERMINED | not_contacted | LINK |  | REFUSED | [docs/build/rights/facial_recognition_world_map.md](rights/facial_recognition_world_map.md) |
 |  | `fbi_cde_agency_registry` | UNDETERMINED | public_terms_only | REFERENCE |  | REFUSED | — (P22+ backlog) |
 |  | `flock_ajith_fyi` | UNDETERMINED | not_contacted | LINK |  | REFUSED | — (P22+ backlog) |
 |  | `flock_api_terms` | UNDETERMINED | public_terms_only | REFERENCE |  | REFUSED | — (P22+ backlog) |
@@ -138,4 +138,4 @@ registered sources: 115
 |  | `wikidata_sparql` | CC0-1.0 | public_terms_only | REFERENCE | yes | flip-ready | [docs/build/rights/wikidata_sparql.md](rights/wikidata_sparql.md) |
 |  | `wired_shotspotter_leak` | UNDETERMINED | public_terms_only | LINK |  | REFUSED | — (P22+ backlog) |
 
-_Packets present: 27 (excludes `_TEMPLATE.md`)._ Regenerate: `python .agents/scratch/tools/gen_rights_index.py`.
+_Packets present: 31 (excludes `_TEMPLATE.md`)._ Regenerate: `python .agents/scratch/tools/gen_rights_index.py`. P21.8 added packets for `eff_data_driven` (now MIRROR candidate — rights UNDETERMINED), `carnegie_ai_gsi`, `facial_recognition_world_map`, and `aspi_mapping_chinas_tech_giants`; all stay `ingestion_permitted=false` (HG-03 pending).

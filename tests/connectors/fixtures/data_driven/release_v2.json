@@ -1,0 +1,64 @@
+{
+  "release": {
+    "release_id": "eff_muckrock_data_driven",
+    "publisher": "EFF / MuckRock",
+    "version": "2019.05",
+    "retrieved_date": "2026-08-21",
+    "observed_at": "2019-05",
+    "article_url": "https://www.eff.org/deeplinks/2018/11/eff-and-muckrock-release-records-and-data-200-law-enforcement-agencies-automated",
+    "data_file_urls": [
+      "https://cdn.muckrock.example/data_driven/alpr_agencies_2019_corrected.csv"
+    ],
+    "source_documents_block_automation": true,
+    "source_document_link_count": 463,
+    "columns": [
+      "agency_id",
+      "agency_name",
+      "state",
+      "vendor",
+      "detections",
+      "hits",
+      "sharing_partner_degree",
+      "pooled_lookup_participant",
+      "retention"
+    ],
+    "retention_window_columns": {
+      "vigilant_window": {"vendor": "vigilant", "unit": "days", "window": 30},
+      "elsag_window": {"vendor": "elsag", "unit": "months", "window": 12}
+    },
+    "agencies": [
+      {
+        "agency_id": "TX0570000",
+        "agency_name": "Austin Police Department",
+        "state": "TX",
+        "vendor": "vigilant",
+        "detections": 101250000,
+        "hits": 451900,
+        "sharing_partner_degree": 863,
+        "pooled_lookup_participant": true,
+        "retention": {"column": "vigilant_window", "value": 30, "unit": "days"},
+        "records_request": {
+          "platform": "muckrock",
+          "external_id": "foia-2018-austin-alpr",
+          "target_agency": "Austin Police Department"
+        }
+      },
+      {
+        "agency_id": "federal-cbp",
+        "agency_name": "US Customs and Border Protection",
+        "state": null,
+        "vendor": "elsag",
+        "detections": 2455010000,
+        "hits": 11002540,
+        "sharing_partner_degree": 134,
+        "pooled_lookup_participant": true,
+        "retention": {"column": "elsag_window", "value": 12, "unit": "months"},
+        "records_request": {
+          "platform": "muckrock",
+          "external_id": "foia-2018-cbp-alpr",
+          "target_agency": "US Customs and Border Protection"
+        }
+      }
+    ]
+  }
+}

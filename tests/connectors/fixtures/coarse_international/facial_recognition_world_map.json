@@ -1,0 +1,20 @@
+{
+  "dataset": "facial_recognition_world_map",
+  "attribution": "Facial Recognition World Map",
+  "rows": [
+    {
+      "subject_id": "jurisdiction:iso.3166-1:RS",
+      "predicate": "facial_recognition_status",
+      "value": "in_use",
+      "raw_value": "Serbia — facial recognition: in use",
+      "attribution": "Facial Recognition World Map"
+    },
+    {
+      "subject_id": "jurisdiction:iso.3166-1:DE",
+      "predicate": "facial_recognition_status",
+      "value": "banned_partial",
+      "raw_value": "Germany — facial recognition: partial ban",
+      "attribution": "Facial Recognition World Map"
+    }
+  ]
+}
