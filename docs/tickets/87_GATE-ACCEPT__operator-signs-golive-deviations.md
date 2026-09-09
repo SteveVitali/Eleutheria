@@ -1,0 +1,39 @@
+<!--
+  Tail marker GATE-ACCEPT. Filled by decompose-spec mode=extend over ~/MetaHarness/sig-golive-spec.md
+  (2026-09-09). A GATE marker, NOT an implement-spec input — orchestrate-build executes it, never
+  guessed past.
+-->
+# GATE-ACCEPT — operator signs the go-live accepted-deviations delta
+
+> **Milestone gate — NOT an `implement-spec` input.** The chain STOPS here after REC.1 until the
+> operator dispositions the accepted-deviations delta. Never guessed past.
+
+- **Kind:** gate · **Phase:** reconcile (go-live closeout)
+- **Blocks:** `projectStatus: DONE` for the go-live round (BM-TAIL-03).
+
+## Criterion (verbatim)
+The operator has reviewed the go-live accepted-deviations delta appended to
+`docs/build/CAPSTONE_CLOSURE.md` (from REC.1) and signed each new row as accepted, or sent a row
+back to closure. The go-live round (Rounds 3–4 against `~/MetaHarness/sig-golive-spec.md`) is not
+DONE while any proposed deviation is unsigned. Per spec D6 this is a **re-sign of the
+accepted-deviations list if it changed** — a delta over the PR #68 capstone, not a fresh full
+capstone.
+
+## Readout
+`docs/build/readouts/GATE-ACCEPT.md` — append-only: the delta list presented, the operator's
+per-row disposition (ACCEPTED / SEND-BACK + what would accept it), verdict
+(PASSED | NOT PASSABLE | SKIPPED-BY-OPERATOR), date, and the operator's disposition line.
+`orchestrate-build` records the answers in `LEDGER.md § GATE DECISIONS` and commits on the chain tip.
+
+## Pre-registered thresholds
+Every new row in the REC.1 accepted-deviations delta is signed (accepted) or returned to closure;
+no proposed deviation is left unsigned. If REC.1 found no change, the operator confirms "no change".
+
+## Deferrals rule
+This gate refuses to pass while any `OPEN` row in `docs/tickets/DEFERRALS.md` scoped to the go-live
+closeout remains (`DEFERRALS.md` rule 4). Note: the Lane B return-pass `D-*` rows (real fetches,
+credentialed steps) are operator re-runs, not closeout blocks — they are tracked as RETURN PASS.
+
+## Disposition
+- [ ] Operator disposition recorded in `docs/build/LEDGER.md` § GATE DECISIONS and
+      `docs/build/readouts/GATE-ACCEPT.md`.

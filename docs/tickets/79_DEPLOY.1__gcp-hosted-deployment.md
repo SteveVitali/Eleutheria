@@ -1,0 +1,66 @@
+<!--
+  Lane C (new code) contract — productionize Round 4. Filled by decompose-spec mode=extend over
+  ~/MetaHarness/sig-golive-spec.md (2026-09-09). CITES the spec's §§ and GL-* ids; does not
+  copy the design.
+-->
+# DEPLOY.1 — Real hosted deployment on GCP + backups (GL-DEPLOY-01)
+
+- **Sequence:** 79 of 87 · **Phase:** 22+ (productionize) · **Kind:** ticket
+- **Tag:** golive-round4
+- **base_branch:** current checkout
+- **Depends on:** the go-live round (LIVE.2 — a published OKC surface to host); HUMAN-H3 (ACCT.1 — HG-12 GCP + Secret Manager)
+- **Run:** `implement-spec spec=docs/tickets/79_DEPLOY.1__gcp-hosted-deployment.md live_verification=false`
+- **Gate status:** HG-12 — infra-as-code is written + validated autonomously; the real `apply`/deploy is **gated on operator `gcloud` Application Default Credentials in the run shell** and never executed by an isolated subagent
+- **Live stage:** operator-gated: GCP `apply` (GL-GATE-04 — project `zeta-medley-508121-u7`, zero/low-cost design)
+
+> **Ratify Round 4 first (spec §0 runbook step 4).** Do not execute this before OKC is live.
+
+## Goal
+Give SIG a real, zero/low-cost hosted home on the operator's GCP project so the OKC dossier
+serves from a public GCP URL, with automated backups and a tested restore drill — written and
+validated as infra-as-code, applied only under operator credentials.
+
+## Load (read these — do not re-read others)
+- `~/MetaHarness/sig-golive-spec.md` Part II § DEPLOY.1 (GL-DEPLOY-01); §0.1 GL-GATE-04; Part I §3 (D4).
+- `docs/2_canonical_design_spec.md` SIG-STORE-003 (zero-cost posture); `ops/docker-compose.yml`;
+  `ops/` (`sig-ops`, egress, degraded mode); `exports/` (`sig-exports`); `web/` build.
+- `docs/build/reports/DEPOSITS.md`, `docs/build/INTEGRATION_PLAN.md`.
+
+## In scope — deliverables
+1. `ops/gcp/` infra-as-code (a Terraform module **or** idempotent `gcloud` scripts) parameterised
+   by project id (`zeta-medley-508121-u7`) / region: **GCS** bucket(s) for the static site +
+   `sig-exports` output + deposits/mirrors (public-read on the published compartment only);
+   **Cloud Run** for the API (min-instances 0, scales to zero); Postgres+PostGIS on the smallest
+   **Cloud SQL** tier **or** a single **`e2-micro` GCE** running the compose stack — pick one in
+   **ADR-`DEPLOY`**, keep the other documented; TLS via managed cert / Cloud Run default; secrets
+   from **Secret Manager** (GL-DEPLOY-01).
+2. A `sig-ops deploy --target gcp` path that builds + pushes the API image (Artifact Registry)
+   and syncs `web/dist` + exports to GCS (GL-DEPLOY-01).
+3. **Automated backups** (Cloud SQL automated backups **or** `pg_dump` + OCFL sync to a GCS backup
+   bucket) and a **documented + tested restore drill** (rebuild the graph from backup + the Zenodo
+   deposit) (GL-DEPLOY-01).
+4. A cost note vs the GCP free tier.
+
+## Out of scope
+- Re-ingest scheduling — SCHED.1 (row 80). Alerting/observability — OBS.1 (row 81).
+- CI running the composed stack — CI.1 (row 82).
+- Actually cutting DNS public / naming the legal home — Go-public (GATE-G2), GOV.1.
+
+## Acceptance criteria
+- [ ] `terraform validate`/plan (or the gcloud dry-run) is green with no ADC present *(deterministic)*
+- [ ] with operator ADC present, `sig-ops deploy --target gcp` brings up API + static + PG and the OKC dossier serves from the GCS/Cloud Run URL *(deterministic; operator-gated — DEFERRALS row until ADC provided)*
+- [ ] a restore drill reproduces the graph from backup + deposit *(deterministic; operator-gated)*
+- [ ] monthly cost documented against the free tier; secrets only in Secret Manager (no token literal in any file) *(deterministic)*
+- [ ] verification green; every new behaviour has a test that fails if it is removed; requirement ids stamped in the PR; anything not automatically verifiable is a `DEFERRALS.md` row with its compensating control; ADRs written for every deviation and owned decision; `BUILD_INDEX.md` row and `LEDGER.md` advanced. *(agentic — the universal phase-gate AC)*
+
+## Requirement IDs to satisfy and stamp in the PR
+GL-DEPLOY-01. Consumes GL-GATE-04.
+
+## Cross-cutting invariants
+- Cited from `docs/tickets/00_MANIFEST.md § Cross-cutting invariants`.
+
+## Notes
+- Owns the Cloud-SQL-vs-GCE decision (ADR-`DEPLOY`). The real `apply` is a RETURN PASS action
+  under operator ADC — an isolated subagent lands it in prepare mode (code + config, gate-pending).
+  Provenance: GL-GATE-04 pre-answers the *host choice* (GCP `zeta-medley-508121-u7`); it does not
+  pre-authorize the `apply`.

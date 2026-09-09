@@ -1,0 +1,37 @@
+<!--
+  Template: docs/tickets/NN[a-z]_HUMAN-H<k>__<slug>.md — a HUMAN marker (BM-TICKET-05).
+  Written by: decompose-spec mode=extend over ~/MetaHarness/sig-golive-spec.md (2026-09-09).
+  A marker, NOT an implement-spec input: no run line.
+-->
+# HUMAN-H2 — Counsel sign-off (LEGAL.1, GL-LEGAL-01)
+
+- **Kind:** human · **Phase:** 21 (go live)
+- **Blocks:** INFRA.1 OSM export (HG-02), LIVE.2 publish (HG-02).
+- **Gate register:** HG-02 (counsel sign-off).
+
+> **Operator work — NOT an `implement-spec` input.** Actions only the operator/counsel can take.
+
+> **Pre-answered (interim, engineering) at decompose time — GL-GATE-02.** An **engineering
+> disposition, publish-permitting, NOT a legal opinion.** Publication of the SIG graph, the
+> OSM-derived compartment (ODbL, separate + attribution + share-alike), and the OKC dossiers is
+> permitted, resting on the *structural* safeguards already built and tested (Part VIII: no
+> plate/trip/per-person storage; officer-naming gate; sensitivity tiers + coordinate rules;
+> per-compartment licences; publication tiers; honest-rendering). **Labelled in every artifact as
+> "operator/engineering disposition pending counsel; counsel review recommended before real public
+> exposure."** A real counsel opinion supersedes this before public exposure.
+
+## Checklist
+- [ ] Recorded counsel opinion — ODbL 4.4(b) disposition (supersede the interim disposition with a real one, RISK-P0-01). <!-- HG-02 -->
+- [ ] Recorded counsel opinion — officer-naming gate.
+- [ ] Recorded counsel opinion — publication tiers + sensitive-coordinate rules.
+- [ ] Recorded counsel opinion — Part VIII compliance of the published surface.
+- [ ] Record in a governance doc + the GATE DECISIONS table (opinion summary, not the full privileged text).
+
+## Exit criterion
+Each item has a dated counsel disposition; if any tightens the interim posture, the affected
+`COVERAGE_MATRIX`/ADR note is updated (append-only) and INFRA.1/LIVE.2 consume it.
+
+## DEFERRALS rule for tickets that run before this completes
+A ticket that depends on this row but runs before a real counsel opinion exists relies on the
+GL-GATE-02 interim engineering disposition and opens/keeps a `D-LEGAL.1-*` row (unblocked-by =
+"HUMAN-H2") — never a failure, never a fabricated pass.

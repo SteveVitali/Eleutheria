@@ -1,0 +1,38 @@
+<!--
+  Template: docs/tickets/NN[a-z]_HUMAN-H<k>__<slug>.md — a HUMAN marker (BM-TICKET-05).
+  Written by: decompose-spec mode=extend over ~/MetaHarness/sig-golive-spec.md (2026-09-09).
+  A marker, NOT an implement-spec input: no run line. Secrets are NEVER written to any file —
+  the marker records `provided: yes/no` only (the validator greps token shapes).
+-->
+# HUMAN-H3 — Provision accounts, credentials, hosting (ACCT.1, GL-ACCT-01)
+
+- **Kind:** human · **Phase:** 21 (go live)
+- **Blocks:** LIVE.1a/LIVE.1 (HG-09 tokens), INFRA.1 (HG-07, HG-12), CONTRIB.1 (HG-08), DEPLOY.1 (HG-12).
+- **Gate register:** HG-07 (deposit/object-store accounts), HG-08 (contribution accounts), HG-09 (API tokens), HG-12 (hosting/budget).
+
+> **Operator work — NOT an `implement-spec` input.** Create/record credentials as `provided: yes/no`,
+> **never values**. Store secrets in the operator's secret manager / the worker's shell env at run
+> time. The chain never silently blocks: a code ticket that reaches this before it is done records
+> the gated remainder as `DEFERRALS.md` rows and continues.
+
+> **Host pre-answered — GL-GATE-04 (HG-12).** GCP project `zeta-medley-508121-u7` (name
+> `eleutheria`), zero/low-cost design (SIG-STORE-003); DEPLOY.1 picks Cloud SQL vs `e2-micro` GCE
+> in its ADR. The *host choice* is answered; provisioning the accounts/tokens below is still
+> genuine operator work, and the GCP `apply` is separately gated on operator `gcloud` ADC.
+
+## Checklist
+- [ ] Zenodo (sandbox + prod) account — `provided: no`. <!-- HG-07 -->
+- [ ] S3-compatible object store + optional Software Heritage token — `provided: no`. <!-- HG-07 -->
+- [ ] MapRoulette API key + registered OSM Organised-Editing page — `provided: no`. <!-- HG-08 -->
+- [ ] API tokens `SIG_MUCKROCK_TOKEN` / `SIG_DATA_GOV_KEY` / `SIG_OVERPASS_ENDPOINT` / `SIG_CIVICCLERK_BASE` — `provided: no`. <!-- HG-09 -->
+- [ ] Real host target on GCP `zeta-medley-508121-u7` + Secret Manager — `provided: no`. <!-- HG-12 / GL-GATE-04 -->
+- [ ] Document the env names each re-run needs (not the values).
+
+## Exit criterion
+Every `SIG_*` env name the re-runs need has a `provided: yes` row; `check-build-memory.sh` finds
+no token literal in any file.
+
+## DEFERRALS rule for tickets that run before this completes
+A ticket that depends on this row but runs before a credential is provided opens a `D-<TICKET>-<n>`
+row (unblocked-by = "HUMAN-H3", `provided: no` proxy) and reports "gate pending". See existing
+`D-P21.3-2` (HG-09), `D-P21.5-1` (HG-07), `D-P21.7-1` (HG-08), and `D-ACCT.1-1` (HG-12).

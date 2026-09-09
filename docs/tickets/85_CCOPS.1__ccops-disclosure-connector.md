@@ -1,0 +1,50 @@
+<!--
+  Lane C (new code) contract — productionize Round 4. Filled by decompose-spec mode=extend over
+  ~/MetaHarness/sig-golive-spec.md (2026-09-09). CITES the spec's §§ and GL-* ids.
+-->
+# CCOPS.1 — Government-mandated-disclosure connector (GL-CCOPS-01)
+
+- **Sequence:** 85 of 87 · **Phase:** 22+ (productionize) · **Kind:** ticket
+- **Tag:** golive-round4
+- **base_branch:** current checkout
+- **Depends on:** JURIS.2 (row 84) — the previous Round-4 step; the eight-stage connector framework (P04.1) + loader gate
+- **Run:** `implement-spec spec=docs/tickets/85_CCOPS.1__ccops-disclosure-connector.md live_verification=false`
+- **Gate status:** HG-03/HG-04 per CCOPS source (rights packets + review) — orchestrate-build pauses; skip runs over fixtures + packets
+- **Live stage:** operator-gated: real fetch of green CCOPS disclosure sources
+
+## Goal
+Close the one genuinely-missing connector class (the P17-FLIP deferral): a
+`government_mandated_disclosure` connector for municipal surveillance-ordinance (CCOPS)
+disclosures, through the eight-stage framework + loader gate, with per-agency aggregate rows only.
+
+## Load (read these — do not re-read others)
+- `~/MetaHarness/sig-golive-spec.md` Part II § CCOPS.1 (GL-CCOPS-01); Appendix A (P17-FLIP-01);
+  `docs/build/LEDGER.md § OPEN FINDINGS` (P17-FLIP-01).
+- `docs/tickets/P04.1__connector-framework.md` (eight-stage framework + loader gate);
+  `docs/2_canonical_design_spec.md` SIG-INGEST-049* + Part VIII (`procured≠deployed`, aggregates only).
+
+## In scope — deliverables
+1. A `government_mandated_disclosure` connector for CCOPS disclosures through the eight-stage
+   framework + loader gate (GL-CCOPS-01; SIG-INGEST-049*).
+2. Per-agency **aggregate rows only** (Part VIII); rights packets + review for its sources.
+3. A CCOPS disclosure fixture that ingests to typed claims; `procured≠deployed` enforced.
+
+## Out of scope
+- The second jurisdiction — JURIS.2 (row 84). Any P17 pathway connector (P21.9 delivered those).
+- Person-level or non-aggregate CCOPS data — forbidden (Part VIII).
+
+## Acceptance criteria
+- [ ] SIG-INGEST-049* move from PARTIAL to MET with test evidence *(deterministic)*
+- [ ] a CCOPS disclosure fixture ingests to typed claims *(deterministic)*
+- [ ] `procured≠deployed` enforced; per-agency aggregate rows only (Part VIII) *(deterministic)*
+- [ ] verification green; every new behaviour has a test that fails if it is removed; requirement ids stamped in the PR; anything not automatically verifiable is a `DEFERRALS.md` row with its compensating control; ADRs written for every deviation and owned decision; `BUILD_INDEX.md` row and `LEDGER.md` advanced. *(agentic — the universal phase-gate AC)*
+
+## Requirement IDs to satisfy and stamp in the PR
+GL-CCOPS-01; SIG-INGEST-049*. Closes/retires OPEN FINDING P17-FLIP-01.
+
+## Cross-cutting invariants
+- Cited from `docs/tickets/00_MANIFEST.md § Cross-cutting invariants`.
+
+## Notes
+- Owns the `government_mandated_disclosure` connector class. Re-confirm the P04.1 framework +
+  loader-gate seam at build time.

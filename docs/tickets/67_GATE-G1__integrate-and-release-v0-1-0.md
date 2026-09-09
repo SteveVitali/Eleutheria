@@ -1,0 +1,38 @@
+<!--
+  Template: docs/tickets/NN[a-z]_GATE-G<k>__<slug>.md — a GATE marker (BM-TICKET-05, BM-GATE-03).
+  Written by: decompose-spec mode=extend over ~/MetaHarness/sig-golive-spec.md (2026-09-09).
+  A marker, NOT an implement-spec input: no run line. Executed by orchestrate-build. Never guessed past.
+-->
+# GATE-G1 — Integrate & release v0.1.0 (REL.1, GL-REL-01)
+
+- **Kind:** gate · **Phase:** 20 (release)
+- **Readout:** `docs/build/readouts/GATE-G1.md`
+- **Blocks:** nothing downstream strictly — milestone (spec Part I §4: REL.1 is non-blocking; may precede or follow the go-live work).
+
+> **Milestone gate — NOT an `implement-spec` input.** The chain STOPS here until the operator
+> dispositions the readout. Never guessed past. **No worker merges, tags, or pushes `main`** —
+> REL.1 is an operator action (spec Appendix B item 1; `INTEGRATION_PLAN.md §(d)`).
+
+## Criterion (verbatim from the spec)
+> **REL.1 — Integrate & release v0.1.0 (GL-REL-01).** Goal: land the whole tested machine as
+> `v0.1.0` without changing behaviour. Steps: re-run `docs/build/tools/merge_dryrun.sh` (expect 0
+> conflicts); merge #47–#68 bottom-up per `INTEGRATION_PLAN.md §(d)`, retargeting each next base
+> to `main`; `git checkout main && git pull`; `make check` green on `main`; `git tag -a v0.1.0`,
+> `make sbom`, `gh release create v0.1.0 … sbom.cdx.json`; verify CI green on `main`.
+
+## Pre-registered thresholds
+- `git tag -l` contains `v0.1.0`; `main` CI green; `docs/build/CHANGELOG.md` `0.1.0` dated; every
+  PR #47–#68 merged (or the delta recorded).
+- Gate register: **HG-05** (Integration & release). Owner: operator.
+
+## DEFERRALS rule
+This gate does not pass while any `OPEN` row in `docs/tickets/DEFERRALS.md` scoped to release
+remains (DEFERRALS rule 4). None currently scoped to release.
+
+## Disposition
+- [ ] Operator merges/tags/releases (their action), records the outcome in `docs/build/LEDGER.md`
+      GATE DECISIONS and in `docs/build/readouts/GATE-G1.md` as PASSED | SKIPPED-BY-OPERATOR |
+      NOT PASSABLE (+ what would pass it).
+
+<!-- NOTE: NOT pre-answered in GATE DECISIONS — REL.1/HG-05 is a genuine operator release action,
+     distinct from the delegated GL-GATE-01..05 dispositions. -->
