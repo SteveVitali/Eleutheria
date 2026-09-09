@@ -2523,7 +2523,9 @@ name = "sig-exports"
 version = "0.1.0"
 source = { editable = "exports" }
 dependencies = [
+    { name = "boto3" },
     { name = "duckdb" },
+    { name = "httpx" },
     { name = "rdflib" },
     { name = "sig-policy" },
     { name = "sig-resolution" },
@@ -2531,7 +2533,9 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "boto3", specifier = ">=1.34" },
     { name = "duckdb", specifier = ">=1.0.0" },
+    { name = "httpx", specifier = ">=0.27" },
     { name = "rdflib", specifier = ">=7.0" },
     { name = "sig-policy", editable = "policy" },
     { name = "sig-resolution", editable = "resolution" },
@@ -2574,6 +2578,7 @@ name = "sig-ops"
 version = "0.1.0"
 source = { editable = "ops" }
 dependencies = [
+    { name = "httpx" },
     { name = "psycopg", extra = ["binary"] },
     { name = "sig-api" },
     { name = "sig-db" },
@@ -2581,6 +2586,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "httpx", specifier = ">=0.27" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2" },
     { name = "sig-api", editable = "api" },
     { name = "sig-db", editable = "db" },
