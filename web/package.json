@@ -25,6 +25,7 @@
   "devDependencies": {
     "@astrojs/check": "0.9.10",
     "@axe-core/playwright": "4.13.0",
+    "@types/node": "22.10.2",
     "@lhci/cli": "0.15.1",
     "@playwright/test": "1.62.1",
     "license-checker-rseidelsohn": "5.0.1",

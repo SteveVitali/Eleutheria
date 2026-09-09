@@ -20,7 +20,9 @@ and web rendering (``LD-V08``) is P21.4:
 * S4 ``LD-F04``  — CROSSED (P19.5): ER matches + review decisions persist to PG via
   ``sig-resolution match/review`` over ``review_item`` / ``review_decision``.
 * S6 ``LD-F06``  — CROSSED (P19.4): the API reads the spine via ``PgReadStore``.
-* S8 ``LD-V08``  — ``web/`` reads fixtures, not the export/API path (P21.4).
+* S8 ``LD-V08``  — CROSSED (P21.4): ``web/`` builds from the export bytes via
+  ``web/src/lib/data.ts`` (``SIG_DATA_SOURCE=export``); the OKC dossier renders the
+  299-vs-190 contradiction from the jurisdiction export, not the TS fixtures.
 
 Docker gating mirrors ``tests/db/conftest.py``: without a daemon the module
 **skips**; with ``SIG_REQUIRE_DB_TESTS=1`` a missing daemon is a hard failure.
@@ -349,36 +351,76 @@ def exports_release(tmp_path_factory: pytest.TempPathFactory) -> _ExportRelease:
 class _WebBuild:
     dist: Path
     returncode: int
+    data_source: str
 
 
-@pytest.fixture(scope="session")
-def web_build() -> _WebBuild:
-    """S8: build the Astro `web/` site with `npm --prefix web run build`.
-
-    Gated on a usable web-build environment, mirroring the Docker
-    ``_require_or_skip`` pattern this module already uses (``tests/db/conftest.py``,
-    ``tests/e2e/conftest.py``). The CI ``python`` job runs the whole pytest suite
-    (``tests/e2e`` included) but installs no Node / ``web/node_modules`` — only the
-    CI ``web`` job does. Without that environment ``npm run build`` cannot run, so
-    S8 **skips cleanly** here rather than failing (rc 127). The web-build assertion
-    is already fully exercised by the ``web`` job (``npm run build``) and locally,
-    so the ``python`` job skipping it loses no coverage. Where the environment IS
-    present (local dev, the ``web`` job) S8 runs exactly as before and ends in the
-    ``LD-V08`` xfail below — no assertion is loosened (never fabricate green).
-    """
+def _require_web_env() -> Path:
     web_dir = REPO_ROOT / "web"
     if shutil.which("npm") is None or not (web_dir / "node_modules").exists():
         pytest.skip(
             "web build environment unavailable (no npm / web/node_modules); the web "
             "build is covered by the CI `web` job"
         )
+    return web_dir
+
+
+@pytest.fixture(scope="session")
+def web_build() -> _WebBuild:
+    """S8 (fixtures mode): build the Astro `web/` site with `npm run build`.
+
+    Gated on a usable web-build environment, mirroring the Docker
+    ``_require_or_skip`` pattern this module already uses (``tests/db/conftest.py``,
+    ``tests/e2e/conftest.py``). The CI ``python`` job runs the whole pytest suite
+    (``tests/e2e`` included) but installs no Node / ``web/node_modules`` — only the
+    CI ``web`` job does. Without that environment ``npm run build`` cannot run, so
+    S8 **skips cleanly** here rather than failing (rc 127). Fixtures mode is the CI
+    default (``SIG_DATA_SOURCE=fixtures``), so this build is unchanged.
+    """
+    web_dir = _require_web_env()
     proc = subprocess.run(
         ["npm", "--prefix", str(web_dir), "run", "build"],
         capture_output=True,
         text=True,
         cwd=str(REPO_ROOT),
+        env={**os.environ, "SIG_DATA_SOURCE": "fixtures"},
     )
-    return _WebBuild(dist=web_dir / "dist", returncode=proc.returncode)
+    return _WebBuild(dist=web_dir / "dist", returncode=proc.returncode, data_source="fixtures")
+
+
+@pytest.fixture(scope="session")
+def web_build_from_export(tmp_path_factory: pytest.TempPathFactory) -> _WebBuild:
+    """S8 (export mode, LD-V08 CROSSED, P21.4): build `web/` FROM the export bytes.
+
+    First build the fixture-backed jurisdiction export with ``sig-exports build
+    --jurisdiction okc`` (no green sources on this build → the committed slice, not
+    a live fetch; network-isolated), which emits ``web/dossiers.json`` (the `/v1`
+    dossier contract) alongside the ODbL/CC-BY compartments. Then build the static
+    site with ``SIG_DATA_SOURCE=export`` pointed at that export dir, so the dossier
+    route renders from the EXPORT bytes rather than the committed TS fixtures — the
+    seam ``LD-V08`` recorded as never-wired. ``web/src/lib/data.ts`` is the switch.
+    """
+    web_dir = _require_web_env()
+    export_dir = tmp_path_factory.mktemp("okc_export")
+    built = subprocess.run(
+        ["sig-exports", "build", "--jurisdiction", "okc", "--out", str(export_dir)],
+        capture_output=True,
+        text=True,
+        cwd=str(REPO_ROOT),
+    )
+    assert built.returncode == 0, f"sig-exports build --jurisdiction okc failed: {built.stderr}"
+    assert (export_dir / "web" / "dossiers.json").exists(), "export must emit web/dossiers.json"
+    proc = subprocess.run(
+        ["npm", "--prefix", str(web_dir), "run", "build"],
+        capture_output=True,
+        text=True,
+        cwd=str(REPO_ROOT),
+        env={
+            **os.environ,
+            "SIG_DATA_SOURCE": "export",
+            "SIG_EXPORT_DIR": str(export_dir),
+        },
+    )
+    return _WebBuild(dist=web_dir / "dist", returncode=proc.returncode, data_source="export")
 
 
 # =============================================================================
@@ -760,15 +802,31 @@ def test_s7_exports_build_licence_split_and_pmtiles(exports_release: _ExportRele
 
 def test_s8_web_build_emits_dossier_route(web_build: _WebBuild) -> None:
     assert web_build.returncode == 0, "npm run build must exit 0"
-    # Crossed: the static build emits the dossier route for the slice jurisdiction.
+    # The static build emits the dossier route for the slice jurisdiction (fixtures
+    # mode — the CI default, SIG_DATA_SOURCE=fixtures, unchanged).
     dossier_html = web_build.dist / "dossier" / "oklahoma-city" / "index.html"
     assert dossier_html.exists(), "the OKC dossier route must be in web/dist"
     assert b"Oklahoma City" in dossier_html.read_bytes()
 
-    # Seam that cannot be crossed: web/ renders from committed fixtures
-    # (web/src/lib/*-fixture.ts), not the live export/API path — so the dossier is
-    # NOT rendered from the S7 export bytes. Wiring web → exports is P21.4.
-    pytest.xfail(
-        "LD-V08: web reads fixtures, not exports — the dossier route renders from "
-        "web/src/lib/*-fixture.ts, not the S7 export/API bytes (P21.4)"
-    )
+
+def test_s8_web_build_renders_from_export_bytes(web_build_from_export: _WebBuild) -> None:
+    """S8 LD-V08 CROSSED (P21.4): the dossier renders from the EXPORT, not fixtures.
+
+    Building with ``SIG_DATA_SOURCE=export`` over the jurisdiction export's
+    ``web/dossiers.json``, the OKC dossier page carries the defining-standard
+    contradiction (§3.1): the 299-vs-190 ``claimed_device_count`` disagreement with
+    BOTH sources and dates — a value the committed TS fixtures do NOT contain, so
+    its presence proves the page was rendered from the export bytes.
+    """
+    assert web_build_from_export.returncode == 0, "SIG_DATA_SOURCE=export build must exit 0"
+    dossier_html = web_build_from_export.dist / "dossier" / "oklahoma-city" / "index.html"
+    assert dossier_html.exists(), "the OKC dossier route must be built from the export"
+    html = dossier_html.read_text(encoding="utf-8")
+
+    # The contradiction is on the page, both values retained (never collapsed).
+    assert "299" in html, "DeFlock's ~299 claim must be on the export-built dossier"
+    assert "190" in html, "Chief Bacy's ~190 claim must be on the export-built dossier"
+    assert "Claimed device count" in html, "the claimed-count figure must render"
+    # Both sources and both dates — every number links claim → evidence (§3.1).
+    assert "DeFlock" in html and "Bacy" in html, "both competing sources must be shown"
+    assert "2026-08-20" in html and "2026-08-18" in html, "both claim dates must be shown"
