@@ -165,6 +165,8 @@ def test_a_lone_suppressed_cell_triggers_complementary_suppression() -> None:
     # The smallest publishable cell absorbs the complementary suppression.
     assert decisions["mid"].suppressed_flag is True
     assert decisions["mid"].complementary is True
+    # A complementary cell is stamped COMPLEMENTARY, never its own (publish) rationale.
+    assert decisions["mid"].rationale is SuppressionRationale.COMPLEMENTARY
     assert decisions["big"].suppressed_flag is False
 
 
@@ -191,6 +193,8 @@ def test_complementary_falls_on_institutional_only_when_forced_and_flags_review(
     decisions = _by_label(result)
     assert decisions["agency"].suppressed_flag is True
     assert decisions["agency"].complementary is True
+    # The suppressed institutional cell no longer claims a "publish" rationale.
+    assert decisions["agency"].rationale is SuppressionRationale.COMPLEMENTARY
     assert any("accountability tradeoff" in t for t in result.review_tasks)
 
 

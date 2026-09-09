@@ -54,6 +54,10 @@ class SuppressionRationale(StrEnum):
     # The two protected/institutional readings cannot be separated. The §18.4
     # default is to suppress AND raise a review task, never to publish (SIG-STORE-032).
     AMBIGUOUS = "ambiguous"
+    # A *secondary* suppression applied only to keep another suppressed cell
+    # non-invertible (SIG-STORE-030). Recorded distinctly so a suppressed cell is
+    # never stamped with a "publish" rationale (e.g. institutional_conduct).
+    COMPLEMENTARY = "complementary"
 
 
 def effective_k_threshold(base_k: int = DEFAULT_K_THRESHOLD, partner_k: int | None = None) -> int:
@@ -300,11 +304,15 @@ def suppress_group(
                         f"{cells[candidate].label!r}; confirm the accountability tradeoff "
                         f"(SIG-STORE-032)"
                     )
+                # Stamp COMPLEMENTARY, not the cell's own rationale: a cell
+                # suppressed only to protect another must never carry a "publish"
+                # rationale (e.g. institutional_conduct) once it is null (SIG-STORE-031).
                 decisions[candidate] = replace(
                     decisions[candidate],
                     published_count=None,
                     suppressed_flag=True,
                     complementary=True,
+                    rationale=SuppressionRationale.COMPLEMENTARY,
                 )
 
     return GroupSuppressionResult(
