@@ -2095,3 +2095,27 @@ table pair exists (`grep -l contributor db/deploy/*.sql` → none), so ADR-054 a
 | Deliverable 5 (shrunk): ADR trigger notes | `## Revisit trigger` → `### Trigger evaluation — P21.2 (2026): NOT fired` appended to ADR-037/038/039/054 (append-only) | `grep -c "Trigger evaluation — P21.2" docs/adr/ADR-0{37,38,39,54}*` = 1 each |
 | e2e xfails tagged P21.2 | none exist — the only `tests/e2e` xfail is `LD-V08` → **P21.4** (`tests/e2e/test_composed_stack.py:771`); nothing re-tagged (no P21.2/LD-V05/LD-D07 tags present) | `grep -rn "P21.2\|LD-V05\|LD-D07" tests/e2e` → 0 xfail tags |
 | Phase gate (§51.3): `make check` green; ADR notes; register + traceability; BACKLOG rows closed | `make check`; ADR-037/038/039/054 notes; `docs/risk_register.md` `## Phase 21 — Operationalization (P21.2)` (RISK-P21-03); `docs/build/BACKLOG.csv` | `make check`; RISK-P21-03; BL-004/BL-005/BL-027 `status=closed` (accepted: compute-on-read A5/HG-14); BL-006 left open (identity/resolution-layer persistence, outside the annotation compute-on-read family) |
+
+# P21.3 — live connector wiring (transports behind the gate; stub + fixture only, HG-03 pending)
+
+P21.3 wires the real connector network path (`HttpxTransport` over `httpx`, promoted to a `connectors`
+runtime dep), the OCFL-backed `OcflCaptureStore`, and the gated `sig-connectors run --mode live|replay|shadow`
+CLI + fetch-record format (ADR-065). Per the operator's gate answers this run performs **no live fetch** and
+**flips no source** (HG-03 skip; HG-09 no tokens): every deliverable is exercised over a local HTTP stub
+(`httpx.MockTransport`) and fixture `shadow`/`replay` (diff = 0). A live fetch is structurally impossible
+until a source's review-status is fully green — `run --mode live` refuses with **exit 3** before any egress
+(the LD-X08 guard). The `Transport`/`CaptureStore` Protocols are unchanged and `InMemory*` stay the defaults
+(additive/back-compat).
+
+| Requirement | Where | Test / evidence |
+|---|---|---|
+| SIG-INGEST-011/037 + §26 Rule 3/4 (politeness; retry-with-backoff; Overpass 429/504; never circumvent) | `connectors.transports.HttpxTransport` (429/503/504 `Retry-After` backoff; `assert_no_circumvention`) | `tests/connectors/test_httpx_transport.py` (429+`Retry-After: 2` → exactly one retry ≥ 2 s; 504 backed off not challenged; 403 never retried; circumvention rejected) — all over `httpx.MockTransport`, **no network** |
+| SIG-INGEST-012 (robots mandatory; disallowed path never fetched) | `HttpxTransport.robots`; `connectors.net.PoliteFetcher` | `test_httpx_transport.py::test_robots_disallowed_path_is_never_requested` (handler sees only `/robots.txt`); `::test_robots_unretrievable_returns_none_text` |
+| SIG-INGEST-017 (conditional GET / ETag; new claim set without destroying old) | `HttpxTransport` If-None-Match/If-Modified-Since + 304 body replay | `test_httpx_transport.py::test_conditional_get_replays_the_validators_and_serves_304_body` |
+| SIG-EVID-004 / SIG-EVID-005 (content-addressed OCFL capture; dedup by digest) | `connectors.capture_ocfl.OcflCaptureStore` over `evidence.ocfl.OcflStore` | `tests/connectors/test_capture_ocfl.py` (round-trip; digest == `InMemoryCaptureStore`; dedup; conformant OCFL inventory; optional WACZ for HTML) |
+| SIG-INGEST-014/027/028 (gate before any fetch; live refuses unless fully green — LD-X08) | `connectors.runner.run_source`/`live_gate_reasons`/`LiveGateRefused`; `connectors.cli._run` (exit 3) | `tests/connectors/test_runner.py` (`--mode live` on `osm_overpass` → exit 3 + reasons; refusal opens no socket under `network_isolated()`); AC command reproduced in `LIVE_WIRING_REPORT.md` |
+| SIG-INGEST-018/019 (replay/shadow never assert; shadow diff over committed fixtures) | `connectors.runner._run_over_fixture`; `connectors.replay.shadow_replay` | `test_runner.py::test_shadow_over_committed_fixtures_reports_zero_diffs` (osm + atlas → changed = 0); `::test_replay_over_fixture_is_reproducible` |
+| SIG-INGEST-002/018 + LD-X06 (post-capture isolation holds with the live transport present) | `connectors.isolation.network_isolated` | `tests/connectors/test_isolation.py::test_httpx_transport_present_cannot_escape_isolation` (socket + DNS blocked inside isolation) |
+| SIG-INGEST-015 (fetch record: provenance + conduct evidence, no content) | `connectors.runner.FetchRecord`/`write_fetch_record`; `docs/build/live_runs/` | `test_runner.py::test_fetch_record_carries_conduct_evidence_and_no_content` (rate-limit + robots present; no `body`/`content`; dated filename) |
+| HG-09 / RISK-P21-05 (env-only secrets; no token literal; `.env*` ignored) | env names read only; `.gitignore` `.env`/`.env.*`/`*.env` | `tests/connectors/test_secrets.py` (no `SIG_*_TOKEN`/`api_key` literal in `.py`/`.toml`; `.env*` ignored); `git grep 'SIG_MUCKROCK_TOKEN=\|api_key='` empty |
+| Phase gate (§51.3): `make check` green; ADR-065; register + traceability; BACKLOG rows | `make check`; `docs/adr/ADR-065-*.md`; `docs/risk_register.md` `## Phase 21 — Operationalization (P21.3)` (RISK-P21-04/05); `docs/build/LIVE_WIRING_REPORT.md`; `docs/build/BACKLOG.csv` | `make check`; `python docs/build/tools/check_spec_src.py` (64 ADRs); `check_backlog.py` green; BL-023/BL-024/BL-026 noted pending HG-03/HG-09 in the report (live fetch gated) |
