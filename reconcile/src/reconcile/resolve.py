@@ -31,7 +31,7 @@ from dataclasses import dataclass, field, replace
 from datetime import UTC, date, datetime
 from typing import cast
 
-from .model import Contradiction, Evidence
+from .model import Contradiction, Evidence, ResearchTask
 from .rationale import render_rationale
 from .ruleset import Ruleset, load_ruleset
 from .weight import (
@@ -193,6 +193,9 @@ class Resolution:
     last_known_value: object | None = None
     last_known_date: date | None = None
     contradictions: tuple[Contradiction, ...] = ()
+    #: Research tasks the resolution's contradictions generated — the detector→task
+    #: contract (SIG-RECON-057). Deterministic ids keep the record reproducible.
+    tasks: tuple[ResearchTask, ...] = ()
     decided_by: str = "auto"
     override_rationale: str | None = None
     algorithmic: Resolution | None = None
@@ -263,6 +266,7 @@ class _State:
     considered: list[Claim] = field(default_factory=list)
     excluded: list[ExcludedClaim] = field(default_factory=list)
     contradictions: list[Contradiction] = field(default_factory=list)
+    tasks: list[ResearchTask] = field(default_factory=list)
     rules: list[str] = field(default_factory=list)
     n_basis_dropped: int = 0
 
@@ -272,6 +276,16 @@ class _State:
 
     def drop(self, claim: Claim, reason: str) -> None:
         self.excluded.append(ExcludedClaim(claim.claim_id, reason))
+
+
+def _det_task_id(subject_id: str, predicate_id: str, kind: str) -> str:
+    """A deterministic research-task id for a resolver-emitted contradiction.
+
+    Content-derived (not random) so the emitted task — and hence the whole
+    resolution record — is byte-identical on a rebuild (SIG-RECON-020).
+    """
+    payload = f"{subject_id}|{predicate_id}|{kind}"
+    return f"task:{hashlib.sha256(payload.encode()).hexdigest()}"
 
 
 def RESOLVE(  # noqa: N802 - the spec names the function RESOLVE (SIG-RECON-006)
@@ -488,6 +502,18 @@ def _canonicalize(st: _State, claims: list[Claim]) -> list[Claim]:
             st.drop(c, f"value {c.value!r} is not a valid {datatype} (VALUE_DOMAIN_MISMATCH)")
     if mismatched:
         st.fire("VALUE_DOMAIN_MISMATCH")
+        task = ResearchTask(
+            task_id=_det_task_id(st.subject_id, st.predicate_id, "value_domain_mismatch"),
+            task_type="resolve_value_domain_mismatch",
+            subject_id=st.subject_id,
+            closing_condition=(
+                f"Establish a canonical {datatype} value for {st.predicate_id}; the dropped "
+                "claim value(s) could not be canonicalized to its value domain."
+            ),
+            detector_version=RESOLVER_VERSION,
+            priority=0.5,
+        )
+        st.tasks.append(task)
         st.contradictions.append(
             Contradiction(
                 contradiction_type="value_domain_mismatch",
@@ -499,6 +525,7 @@ def _canonicalize(st: _State, claims: list[Claim]) -> list[Claim]:
                     f"{datatype} domain of {st.predicate_id} (§28 Phase 2.2)."
                 ),
                 severity="notable",
+                research_task_ids=(task.task_id,),
             )
         )
     claims = domain_ok
@@ -519,6 +546,18 @@ def _canonicalize(st: _State, claims: list[Claim]) -> list[Claim]:
             kept.append(c)
     if dropped_values:
         st.fire("PREDICATE_CONFLATION")
+        task = ResearchTask(
+            task_id=_det_task_id(st.subject_id, st.predicate_id, "predicate_conflation"),
+            task_type="resolve_predicate_conflation",
+            subject_id=st.subject_id,
+            closing_condition=(
+                f"Source a claim carrying the {target!r} count basis for {st.predicate_id}; "
+                "the mismatched-basis claims were dropped, not adjudicated."
+            ),
+            detector_version=RESOLVER_VERSION,
+            priority=0.55,
+        )
+        st.tasks.append(task)
         st.contradictions.append(
             Contradiction(
                 contradiction_type="predicate_conflation",
@@ -534,6 +573,7 @@ def _canonicalize(st: _State, claims: list[Claim]) -> list[Claim]:
                 evidence=tuple(
                     c.evidence for c in claims if c.evidence is not None and c.count_basis != target
                 ),
+                research_task_ids=(task.task_id,),
             )
         )
     return kept
@@ -884,6 +924,7 @@ def _finalize(
         last_known_value=last_known_value,
         last_known_date=last_known_date,
         contradictions=tuple(st.contradictions),
+        tasks=tuple(st.tasks),
     )
 
 

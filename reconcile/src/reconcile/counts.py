@@ -118,23 +118,39 @@ def _resolve_one_basis(
     dissenting = tuple(c for c, _ in admissible if c is not winner)
 
     contradictions: list[Contradiction] = []
+    tasks: list[ResearchTask] = []
     # A genuine within-predicate disagreement: two admissible claims on the SAME
     # basis with different values (mapped is exempt — a higher figure is a better
-    # lower bound, not a disagreement).
+    # lower bound, not a disagreement). The disagreement emits a research task and
+    # links it (SIG-RECON-057): the detector never states a conflict without work.
     distinct_values = {c.value for c, _ in admissible}
     if len(distinct_values) > 1 and not lower_bound:
+        sorted_values = tuple(sorted(distinct_values))
+        task = ResearchTask(
+            task_id=_task_id(),
+            task_type="reconcile_disagreeing_count",
+            subject_id=subject_id,
+            closing_condition=(
+                f"Obtain a dispositive source reconciling {predicate_id} values {sorted_values}."
+            ),
+            detector_version=DETECTOR_VERSION,
+            priority=0.6,
+            note=f"{predicate_id} carries disagreeing claims {sorted_values}.",
+        )
+        tasks.append(task)
         contradictions.append(
             Contradiction(
                 contradiction_type=VALUE_DISAGREEMENT,
                 subject_id=subject_id,
                 predicate_id=predicate_id,
-                claim_values=tuple(sorted(distinct_values)),
+                claim_values=sorted_values,
                 note=(
                     f"{predicate_id} carries disagreeing claims "
-                    f"({', '.join(str(v) for v in sorted(distinct_values))}); "
+                    f"({', '.join(str(v) for v in sorted_values)}); "
                     "both retained, neither collapsed."
                 ),
                 evidence=tuple(c.evidence for c, _ in admissible),
+                research_task_ids=(task.task_id,),
             )
         )
 
@@ -149,6 +165,7 @@ def _resolve_one_basis(
         rationale=_rationale(basis, winner, wins, lower_bound),
         resolution_status="RESOLVED",
         contradictions=tuple(contradictions),
+        tasks=tuple(tasks),
     )
 
 
@@ -209,26 +226,12 @@ def reconcile_counts(
         res = _resolve_one_basis(subject_id, basis, group, as_of=as_of)
         resolutions[basis] = res
         contradictions.extend(res.contradictions)
+        # Each within-predicate disagreement already carries its linked research
+        # task (the detector→task contract, SIG-RECON-057).
+        tasks.extend(res.tasks)
 
     deltas = _compute_deltas(subject_id, resolutions)
     tasks.extend(d.task for d in deltas)
-
-    # A value_disagreement contradiction generates its own research task.
-    for con in list(contradictions):
-        if con.contradiction_type == VALUE_DISAGREEMENT:
-            t = ResearchTask(
-                task_id=_task_id(),
-                task_type="reconcile_disagreeing_count",
-                subject_id=subject_id,
-                closing_condition=(
-                    f"Obtain a dispositive source reconciling {con.predicate_id} "
-                    f"values {con.claim_values}."
-                ),
-                detector_version=DETECTOR_VERSION,
-                priority=0.6,
-                note=con.note,
-            )
-            tasks.append(t)
 
     return CountReconciliation(
         subject_id=subject_id,

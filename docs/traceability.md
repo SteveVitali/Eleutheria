@@ -904,3 +904,31 @@ camera-count reconciliation landed in the P06.1 slice (above; SIG-RECON-026..029
 | SIG-RECON-046 — organization-existence reconciliation (named in a list, unknown to any registry; §14.4) | `reconcile.additional.reconcile_organization_existence`, `OrgExistenceFinding` | `tests/reconcile/test_additional.py::test_unknown_org_named_in_a_list_is_a_finding` |
 | SIG-RECON-046 — capability reconciliation across disagreeing sources, respecting marketed-vs-configured (SIG-ONTO-018) | `reconcile.additional.reconcile_capability`, `CAPABILITY_KINDS`, `CapabilityClaim` | `tests/reconcile/test_additional.py::test_marketed_capability_does_not_imply_configured`, `::test_within_kind_disagreement_is_a_finding_and_stays_unresolved` |
 | SIG-RECON-046 — geographic-coverage reconciliation (distinct scopes kept distinct) | `reconcile.additional.reconcile_geographic_coverage`, `CoverageClaim` | `tests/reconcile/test_additional.py::test_distinct_scopes_stay_distinct`, `::test_within_scope_disagreement_is_a_finding` |
+
+# P08.3 — Contradiction as a first-class object (§31, §28.7)
+
+The materialized `Contradiction` entity and its lifecycle (ADR-037): identity,
+`claim_ids[]`, the five-state lifecycle, the `blocking → U7` manual brake, the
+publish-not-hide projection, the byte-identical L3 rebuild gate, and the
+detector→task contract. Promotes the existing `reconcile.model.Contradiction`
+(additive/back-compat) and models it in pure Python aligned with
+`db/deploy/graph_annotations.sql`.
+
+## The materialized entity + lifecycle (§31)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-RECON-053 (`Contradiction` is a materialized entity: `subject_id`/`predicate_id`, `contradiction_type`, `claim_ids[]`, `severity`, `status`, resolution fields, `research_task_ids[]`, identity) | `reconcile.model.Contradiction`; `reconcile.contradiction.materialize`, `derive_contradiction_id` | `tests/reconcile/test_contradiction.py::test_entity_has_the_full_field_set_and_identity`, `::test_materialized_identity_is_content_derived_and_idempotent`, `::test_invalid_severity_and_status_are_rejected` |
+| SIG-RECON-056 (`status ∈ {open, under_research, resolved, accepted_unresolvable, superseded}`; `accepted_unresolvable` a legitimate terminal state) | `reconcile.model.Contradiction.begin_research`/`resolve`/`accept_unresolvable`/`supersede`; `CONTRADICTION_STATUSES`/`OPEN_STATUSES`/`TERMINAL_STATUSES` | `tests/reconcile/test_contradiction.py::test_the_lifecycle_vocab_matches_the_spec`, `::test_open_flows_through_under_research_to_resolved`, `::test_accepted_unresolvable_is_a_legitimate_terminal_state`, `::test_illegal_transitions_are_refused` |
+| SIG-RECON-054 (`severity = blocking` forces `UNRESOLVED` `U7`; the manual brake, deletes nothing) | `reconcile.contradiction.forces_unresolved`, `open_blocking_contradictions`; `reconcile.resolve.RESOLVE` (`blocking_contradiction` → `U7`) | `tests/reconcile/test_contradiction.py::test_open_blocking_contradiction_forces_unresolved_u7`, `::test_brake_only_bites_for_open_blocking_on_the_same_pair` |
+| SIG-RECON-055 (`unresolved_conflict` is publishable — an open contradiction is exposed via `contradiction_state` and the API, not hidden) | `reconcile.model.Contradiction.public_state`/`public_view`; `reconcile.contradiction.publishable_view`; `reconcile.resolve._contradiction_state` | `tests/reconcile/test_contradiction.py::test_open_contradiction_is_published_as_unresolved_conflict_not_suppressed`, `::test_resolution_contradiction_state_exposes_open_conflict` |
+| SIG-RECON-055 (a resolved contradiction remains visible in history; resolution sets status and does not delete) | `reconcile.model.Contradiction.resolve` (returns a new record, retains all fields) | `tests/reconcile/test_contradiction.py::test_resolution_sets_status_and_does_not_delete`, `::test_resolved_contradiction_remains_visible_in_history`, `::test_resolve_requires_note_and_actor` |
+| SIG-RECON-057 (every contradiction detector emits a research task with a defined closing condition) | `reconcile.contradiction.detector_task_violations`, `assert_detector_task_contract`; linked tasks in `reconcile.resolve` (Phase 2.2/2.3), `reconcile.counts` | `tests/reconcile/test_detector_task_contract.py::test_every_detector_honours_the_detector_task_contract`, `::test_every_detector_emits_at_least_one_contradiction_on_its_fixture`; `tests/reconcile/test_contradiction.py::test_detector_task_contract_helper_flags_a_taskless_contradiction`, `::test_detector_task_contract_flags_dangling_or_empty_closing_condition` |
+
+## Byte-identical L3 rebuild (§28.7)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-RECON-019 (resolutions recomputed on new/superseded claims, ruleset change, currency-class crossing) | `reconcile.resolve.RESOLVE` (as_of-driven currency; `input_digest` over claims + ruleset_version); `reconcile.rebuild.rebuild_resolution` | `tests/reconcile/test_rebuild.py::test_a_changed_claim_breaks_the_digest`, `::test_a_version_change_refuses_to_reproduce` |
+| SIG-RECON-020 (a resolution is reproducible from `(claims + ruleset_version + resolver_version + as_of pair)`, verified by `input_digest`; CI regenerates a sample and asserts a match) | `reconcile.rebuild.verify_reproducible`, `load_sample`, `RebuildSample`; `reconcile/src/reconcile/data/l3_rebuild_sample.json` | `tests/reconcile/test_rebuild.py::test_committed_sample_regenerates_byte_identically`, `::test_sample_is_a_meaningful_multiclaim_resolution`, `::test_verify_reproducible_roundtrips_a_stored_resolution` |
+| SIG-RECON-021 (resolutions are never edited in place; a new resolution supersedes the old in transaction time) | `reconcile.resolve.Resolution` (frozen) / `pin`; `reconcile.rebuild.rebuild_resolution` (returns a new record); `reconcile.model.Contradiction` lifecycle (append-only) | `tests/reconcile/test_rebuild.py::test_rebuild_returns_a_new_record_and_does_not_mutate_the_stored_one`; `tests/reconcile/test_contradiction.py::test_resolution_sets_status_and_does_not_delete` |

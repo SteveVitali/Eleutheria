@@ -11,7 +11,7 @@ deliberately thin: the slice proves the *shape* end to end (see ADR-031).
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import UTC, date, datetime
 
 # --- the count predicates and their bases (§29.1, SIG-RECON-026) --------------
@@ -130,9 +130,51 @@ class ResearchTask:
     note: str = ""
 
 
+# --- contradiction lifecycle vocabulary (§31, SIG-RECON-053/056) --------------
+
+#: The three severities of §31 (`graph_annotations.contradiction.severity`).
+SEVERITIES: frozenset[str] = frozenset({"informational", "notable", "blocking"})
+
+#: The five lifecycle states of §31 (SIG-RECON-053). ``accepted_unresolvable`` is
+#: a legitimate terminal state (SIG-RECON-056).
+CONTRADICTION_STATUSES: frozenset[str] = frozenset(
+    {"open", "under_research", "resolved", "accepted_unresolvable", "superseded"}
+)
+
+#: The states in which the contradiction is still live and publishes as an open
+#: ``unresolved_conflict`` (SIG-RECON-055).
+OPEN_STATUSES: frozenset[str] = frozenset({"open", "under_research"})
+
+#: The settled states. A settled contradiction is NEVER deleted — it stays visible
+#: in history (SIG-RECON-055); only a new record supersedes it (SIG-RECON-021).
+TERMINAL_STATUSES: frozenset[str] = frozenset({"resolved", "accepted_unresolvable", "superseded"})
+
+
+class ContradictionLifecycleError(ValueError):
+    """Raised on an illegal contradiction status transition (§31 lifecycle)."""
+
+
 @dataclass(frozen=True)
 class Contradiction:
-    """A first-class, addressable contradiction (§31, graph_annotations.sql)."""
+    """A first-class, materialized, addressable contradiction (§31, SIG-RECON-053).
+
+    The stored shape of ``graph_annotations.contradiction``: it has its own
+    identity (:attr:`contradiction_id`), names what is disputed
+    (``subject_id``/``predicate_id``/``contradiction_type``), the disagreeing
+    ``claim_ids``, a ``severity`` and a lifecycle ``status``, the resolution
+    fields, and the ``research_task_ids`` generated to close it.
+
+    The lifecycle is append-only. The transition methods
+    (:meth:`begin_research`, :meth:`resolve`, :meth:`accept_unresolvable`,
+    :meth:`supersede`) return a **new** record — a contradiction is never edited
+    in place and resolving it never deletes it (SIG-RECON-021/055). ``severity =
+    blocking`` on an open contradiction is the manual brake that forces
+    ``UNRESOLVED`` (``U7``, SIG-RECON-054); see :mod:`reconcile.contradiction`.
+
+    ``claim_values`` (the disagreeing values as seen at detection) and
+    ``evidence`` are retained alongside ``claim_ids`` so a detected contradiction
+    is displayable before it is linked to persisted claim rows.
+    """
 
     contradiction_type: str
     subject_id: str
@@ -143,6 +185,129 @@ class Contradiction:
     status: str = "open"
     evidence: tuple[Evidence, ...] = ()
     research_task_ids: tuple[str, ...] = ()
+    #: The materialized entity's own identity (§3.1: every node has identity).
+    #: Empty until the contradiction is materialized (:func:`contradiction.materialize`).
+    contradiction_id: str = ""
+    #: The ids of the disagreeing claims (SIG-RECON-053 ``claim_ids[]``).
+    claim_ids: tuple[str, ...] = ()
+    resolution_note: str | None = None
+    resolved_by: str | None = None
+    resolved_at: datetime | None = None
+
+    def __post_init__(self) -> None:
+        if self.severity not in SEVERITIES:
+            raise ValueError(f"unknown contradiction severity {self.severity!r} (§31 {SEVERITIES})")
+        if self.status not in CONTRADICTION_STATUSES:
+            raise ValueError(
+                f"unknown contradiction status {self.status!r} (§31 {CONTRADICTION_STATUSES})"
+            )
+
+    # --- lifecycle state (SIG-RECON-053/054/055) ----------------------------
+
+    @property
+    def is_open(self) -> bool:
+        """Still live (``open`` or ``under_research``) — publishes as a conflict."""
+        return self.status in OPEN_STATUSES
+
+    @property
+    def is_terminal(self) -> bool:
+        return self.status in TERMINAL_STATUSES
+
+    @property
+    def is_blocking(self) -> bool:
+        """A blocking severity is the manual brake (SIG-RECON-054)."""
+        return self.severity == "blocking"
+
+    @property
+    def public_state(self) -> str:
+        """How this contradiction surfaces on the published resolution/API.
+
+        An open contradiction is exposed as ``unresolved_conflict`` — never
+        suppressed (SIG-RECON-055); a settled one surfaces with its own status so
+        it stays visible in history.
+        """
+        return "unresolved_conflict" if self.is_open else self.status
+
+    def public_view(self) -> dict[str, object]:
+        """The API/publish projection (SIG-RECON-055). Open contradictions are
+        included with ``contradiction_state = unresolved_conflict``, not hidden."""
+        return {
+            "contradiction_id": self.contradiction_id,
+            "subject_id": self.subject_id,
+            "predicate_id": self.predicate_id,
+            "contradiction_type": self.contradiction_type,
+            "claim_ids": list(self.claim_ids),
+            "severity": self.severity,
+            "status": self.status,
+            "contradiction_state": self.public_state,
+            "note": self.note,
+            "resolution_note": self.resolution_note,
+            "resolved_by": self.resolved_by,
+            "resolved_at": self.resolved_at.isoformat() if self.resolved_at else None,
+            "research_task_ids": list(self.research_task_ids),
+        }
+
+    # --- lifecycle transitions (append-only; never edit in place) ------------
+
+    def with_identity(self, contradiction_id: str) -> Contradiction:
+        """Stamp the entity's identity (§3.1). Returns a new record."""
+        if not contradiction_id:
+            raise ValueError("contradiction_id must be non-empty")
+        return replace(self, contradiction_id=contradiction_id)
+
+    def begin_research(self) -> Contradiction:
+        """``open`` → ``under_research``. Returns a new record."""
+        if self.status != "open":
+            raise ContradictionLifecycleError(
+                f"begin_research requires status 'open', not {self.status!r}"
+            )
+        return replace(self, status="under_research")
+
+    def resolve(self, *, note: str, by: str, at: datetime | None = None) -> Contradiction:
+        """Settle the contradiction as ``resolved`` (SIG-RECON-055).
+
+        Sets ``status`` and the resolution fields; it does **not** delete — every
+        other field (including ``claim_ids`` and ``research_task_ids``) is
+        retained so the resolved contradiction stays visible in history. Requires
+        a live status and a non-empty ``note``/``by`` (the editorial act is
+        recorded, like an override).
+        """
+        return self._settle("resolved", note=note, by=by, at=at)
+
+    def accept_unresolvable(
+        self, *, note: str, by: str, at: datetime | None = None
+    ) -> Contradiction:
+        """Settle as ``accepted_unresolvable`` — a legitimate terminal state when
+        the disagreement cannot be settled with available evidence (SIG-RECON-056)."""
+        return self._settle("accepted_unresolvable", note=note, by=by, at=at)
+
+    def _settle(self, status: str, *, note: str, by: str, at: datetime | None) -> Contradiction:
+        if self.status not in OPEN_STATUSES:
+            raise ContradictionLifecycleError(
+                f"cannot {status} a contradiction whose status is {self.status!r} "
+                f"(only {sorted(OPEN_STATUSES)} may be settled)"
+            )
+        if not note:
+            raise ValueError(f"a {status} transition MUST record a resolution_note")
+        if not by:
+            raise ValueError(f"a {status} transition MUST record resolved_by")
+        return replace(
+            self,
+            status=status,
+            resolution_note=note,
+            resolved_by=by,
+            resolved_at=at or _now(),
+        )
+
+    def supersede(self, *, at: datetime | None = None) -> Contradiction:
+        """Mark this record superseded by a freshly recomputed one (SIG-RECON-021).
+
+        Allowed from any non-superseded status: a recomputation replaces the old
+        record in transaction time rather than editing it. Returns a new record.
+        """
+        if self.status == "superseded":
+            raise ContradictionLifecycleError("contradiction is already superseded")
+        return replace(self, status="superseded", resolved_at=at or self.resolved_at)
 
 
 # --- L4 inference (§30, SIG-RECON-047 / SIG-RECON-031) ------------------------
@@ -216,6 +381,10 @@ class CountResolution:
     rationale: str
     resolution_status: str  # RESOLVED | INSUFFICIENT
     contradictions: tuple[Contradiction, ...] = ()
+    #: Research tasks generated by this resolution's contradictions — the
+    #: detector→task contract (SIG-RECON-057): every emitted contradiction links a
+    #: task with a defined closing condition.
+    tasks: tuple[ResearchTask, ...] = ()
 
 
 @dataclass(frozen=True)

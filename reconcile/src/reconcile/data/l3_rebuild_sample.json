@@ -1,0 +1,84 @@
+{
+  "_note": "L3 byte-identical rebuild sample (SIG-RECON-020). Regenerate with make gen or the P08.3 generator when the ruleset/resolver version changes.",
+  "subject_id": "dep:okc",
+  "predicate_id": "active_device_count",
+  "as_of_world": "2026-09-01",
+  "as_of_belief": "2026-09-01",
+  "ruleset_version": "2026.1",
+  "resolver_version": "p08.1/1.0.0",
+  "claims": [
+    {
+      "claim_id": "claim:portal-2026-07",
+      "subject_id": "dep:okc",
+      "predicate_id": "active_device_count",
+      "value": 38,
+      "reliability": "R2",
+      "integrity": "I1",
+      "genre": "portal_snapshot",
+      "observed_at": "2026-07-01",
+      "source_id": "src:okc-portal",
+      "count_basis": "active",
+      "structured_exact": true
+    },
+    {
+      "claim_id": "claim:minutes-2026-06",
+      "subject_id": "dep:okc",
+      "predicate_id": "active_device_count",
+      "value": 38,
+      "reliability": "R2",
+      "integrity": "I1",
+      "genre": "council_minutes",
+      "observed_at": "2026-06-15",
+      "source_id": "src:okc-council",
+      "count_basis": "active",
+      "structured_exact": false
+    },
+    {
+      "claim_id": "claim:news-2026-05",
+      "subject_id": "dep:okc",
+      "predicate_id": "active_device_count",
+      "value": 40,
+      "reliability": "R4",
+      "integrity": "I1",
+      "genre": "news_article",
+      "observed_at": "2026-05-01",
+      "source_id": "src:local-news",
+      "count_basis": "active",
+      "structured_exact": false
+    }
+  ],
+  "expected_input_digest": "8955ded1e6369e3e9b7f4a8e4cbabec51238535c378404602fe0e65755d3b060",
+  "expected_decision_key": [
+    "RESOLVED",
+    "38",
+    "CONFIRMED",
+    "UNCONTESTED",
+    "CURRENT",
+    "uncontested",
+    "latest_observation_wins",
+    "RESOLVED_CONFIRMED_MULTI",
+    "Confirmed. 2 independent sources using different collection methods \u2014 src:okc-council, src:okc-portal \u2014 record active device count of 38.",
+    "claim:portal-2026-07",
+    [
+      "claim:minutes-2026-06",
+      "claim:news-2026-05",
+      "claim:portal-2026-07"
+    ],
+    [
+      "claim:minutes-2026-06",
+      "claim:portal-2026-07"
+    ],
+    [],
+    [
+      "claim:minutes-2026-06",
+      "claim:portal-2026-07"
+    ],
+    [
+      "W0-retained",
+      "latest_observation_wins",
+      "SIG-RECON-007"
+    ],
+    null,
+    "8955ded1e6369e3e9b7f4a8e4cbabec51238535c378404602fe0e65755d3b060"
+  ]
+}
