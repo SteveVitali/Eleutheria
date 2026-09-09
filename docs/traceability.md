@@ -1986,3 +1986,18 @@ is the committed CLI drive matrix (LD-V02).
 | SIG-INGEST-002/018 (network isolation re-proof, LD-X06) | a DNS lookup inside a connector run fails the run; every DNS entry point guarded | `tests/e2e/test_isolation_reproof.py`; `connectors/src/connectors/isolation.py` |
 | Composed CODE gaps → P19.4 (spine) / P19.5 / P21.4 | S3 `LD-F06b` (PG ClaimSink), S6 `LD-F06` (DB ReadStore), S4 `LD-F04` (ER DB-wire), S8 `LD-V08` (web reads exports) | COMPOSED_E2E_REPORT §(e); CAPSTONE_GAP_ANALYSIS §(i) |
 | Phase gate: composed run only passed/xfailed (0 failed/skipped); risk register + traceability updated | `SIG_REQUIRE_DB_TESTS=1 uv run pytest tests/e2e -ra` → 10 passed, 4 xfailed | `docs/risk_register.md` (Phase 19 — P19.3, `RISK-P19-05/06`); this section |
+
+## Capstone gap closure — remaining CODE + documentation gaps + the ACCEPTED list (P19.5)
+
+P19.5 closes the small/medium CODE gaps `CAPSTONE_GAP_ANALYSIS.md` §(i) routed to closure, the P08.1
+documentation gaps, and moves P19.4's deferred ER-over-PostgreSQL here (ADR-059 §6, `LD-F04`). It owns
+`docs/build/CAPSTONE_CLOSURE.md` and the proposed ACCEPTED-deviations list (HG-14).
+
+| Requirement | Where | Evidence |
+|---|---|---|
+| SIG-INGEST-048b / SIG-LIC-004 / SIG-LIC-010 (the export gate honours `derivative_permitted`) | `policy.licensing.assert_export_permitted` fails closed on `derivative_permitted=false`; `export_refusal_reason` / `partition_exportable` (reduce-only, §0.7) | `tests/unit/test_registry_export_gate.py` (`sm_alpr` refused with reason `derivative_permitted=false`); ADR-061 |
+| SIG-PUB-017 (jurisdiction-conditional web render) | `web/src/lib/publication.ts` mirrors `policy.jurisdiction.adapter_publication_permitted`; `dossier.applyPublicationPolicy` withholds a public-employee name under FR-GDPR/BE-GDPR at build time; BCP-47 `lang` + localised titles | `web/tests/e2e/jurisdiction.spec.ts` (+ `.nojs`), `web/tests/unit/publication.test.ts`; zero-JS budget held (`check:perf` script size 0); ADR-061 |
+| SIG-IDENT-020/021/025/026 + LD-F04 (ER over PostgreSQL) | `sig-resolution match --dsn`/`review decide --dsn`; additive `review_queue` sqitch (`review_item` + append-only `review_decision`); `PgReviewQueue` (JSONL default unchanged) | `tests/resolution/test_pg_backend.py`; `tests/e2e/test_composed_stack.py::test_s4…` flipped to PASS; ADR-059 §6 / ADR-061 |
+| SIG-INGEST-021 / §32 (the `inference` CLI is wired) | `inference.cli` `coverage` / `access-paths` / `completeness` / `freshness` over the existing modules | `tests/inference/test_cli.py`; `uv run python -m inference coverage --help` exit 0 |
+| SIG-ENG-030 / SIG-ENG-031 (P08.1 ADR + §53 section; the un-ADR'd hardening commit) | ADR-060 (resolver, retro-fitted); risk register `## Phase 8 — Resolver (P08.1)` (RISK-P8-00a/00b); ADR-044 `## Post-hoc hardening (4493b14 …)` | `docs/adr/ADR-060-*.md`; `docs/risk_register.md`; `docs/adr/ADR-044-*.md` |
+| Phase gate (§51.3): `make check` green; new code tested; ADR-060/061; traceability + risk register updated; matrix consistent | `make check`; `check_coverage_matrix.py` exit 0 (0 rows `PARTIAL/MISSING & routing=P19.4:*`); `CAPSTONE_CLOSURE.md` §(b) == MET-DIFFERENTLY count | this section; `docs/risk_register.md` (Phase 19 — P19.5, `RISK-P19-09/10`); `docs/build/CAPSTONE_CLOSURE.md` |

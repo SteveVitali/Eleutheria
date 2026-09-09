@@ -45,6 +45,41 @@ def test_agpl_repo_is_redistributable_but_flagged_non_derivative() -> None:
     assert app.rights.derivative_permitted is False
 
 
+def test_sm_alpr_refused_from_export_with_derivative_permitted_false() -> None:
+    # P19.5 / LD-F08 / SIG-INGEST-048b: sm_alpr is AGPL-3.0 — redistributable but
+    # derivative_permitted=false. An export bundle is a derived work, so the export
+    # gate now fails closed with the machine-stable reason `derivative_permitted=false`.
+    sm_alpr = get("sm_alpr")
+    assert sm_alpr.rights.redistributable is True
+    assert sm_alpr.rights.derivative_permitted is False
+    assert licensing.export_refusal_reason(sm_alpr.rights) == "derivative_permitted=false"
+    with pytest.raises(licensing.ExportGateClosed) as excinfo:
+        licensing.assert_export_permitted([sm_alpr.rights])
+    assert "derivative_permitted=false" in str(excinfo.value)
+
+
+def test_partition_drops_non_derivative_sources_from_an_export_set() -> None:
+    # A mixed export set: the CC-BY Atlas is exportable; sm_alpr and deflock_app_repo
+    # (both derivative_permitted=false) are partitioned out with the reason, rather
+    # than aborting the whole export (Part VIII §0.7 — the gate only withholds).
+    atlas = get("eff_atlas_of_surveillance")
+    sm_alpr = get("sm_alpr")
+    app = get("deflock_app_repo")
+    exportable, refused = licensing.partition_exportable([atlas.rights, sm_alpr.rights, app.rights])
+    assert atlas.rights in exportable
+    refused_ids = {r.source_id: reason for r, reason in refused}
+    assert refused_ids["sm_alpr"] == "derivative_permitted=false"
+    assert refused_ids["deflock_app_repo"] == "derivative_permitted=false"
+
+
+def test_derivative_gate_still_admits_derivative_permitted_sources() -> None:
+    # Back-compat: a redistributable, derivative-permitted source (the Atlas) still
+    # passes the gate unchanged — the new condition can only reduce, never add.
+    atlas = get("eff_atlas_of_surveillance")
+    assert atlas.rights.derivative_permitted is True
+    licensing.assert_export_permitted([atlas.rights])  # does not raise
+
+
 def test_every_registry_rights_record_is_addressable() -> None:
     recs = rights_records()
     assert len(recs) == len(sources())

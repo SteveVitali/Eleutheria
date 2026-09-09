@@ -16,17 +16,23 @@ import IncompletenessBanner from "../../components/IncompletenessBanner.astro";
 import WhatWeDontKnow from "../../components/WhatWeDontKnow.astro";
 import DossierSection from "../../components/DossierSection.astro";
 import ActionBlocks from "../../components/ActionBlocks.astro";
-import { SECTION_TITLES, dossierJsonPath, dossierPath, dossierPrintPath, validateDossier } from "../../lib/dossier";
+import { applyPublicationPolicy, dossierLang, dossierJsonPath, dossierPath, dossierPrintPath, sectionTitlesFor, validateDossier } from "../../lib/dossier";
 import { DOSSIERS } from "../../lib/dossier-fixture";
 
 export function getStaticPaths() {
   return DOSSIERS.map((d) => ({ params: { slug: d.slug }, props: { dossier: d } }));
 }
 
-const { dossier } = Astro.props;
+// Apply the jurisdiction-conditional publication policy in the build-time data path
+// (SIG-PUB-017, §44): a public-employee name that may not be published under the
+// dossier's regime (FR-GDPR / BE-GDPR) is withheld before any HTML is emitted. This
+// can only ever WITHHOLD (Part VIII §0.7).
+const dossier = applyPublicationPolicy(Astro.props.dossier);
 // Enforce the §39.2 section contract at build time (SIG-UI-010): a mis-ordered or
 // incomplete dossier fails the build rather than shipping.
 validateDossier(dossier);
+const lang = dossierLang(dossier);
+const SECTION_TITLES = sectionTitlesFor(lang);
 
 // Which action block is rendered under which section (SIG-UI-014a/b).
 const ACTION_FOR_SECTION: Record<string, "authorization" | "termination" | "legal_regime"> = {
@@ -36,7 +42,7 @@ const ACTION_FOR_SECTION: Record<string, "authorization" | "termination" | "lega
 };
 ---
 
-<BaseLayout title={dossier.subject_label} path={dossierPath(dossier.slug)}>
+<BaseLayout title={dossier.subject_label} path={dossierPath(dossier.slug)} lang={lang}>
   <p class="sig-dossier-jurisdiction" data-testid="dossier-jurisdiction">{dossier.jurisdiction}</p>
 
   <IncompletenessBanner dossier={dossier} />

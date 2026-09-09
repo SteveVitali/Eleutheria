@@ -63,6 +63,15 @@ export const TASK_PAGE = absenceTaskHref({
 
 export const ALL_PAGES = [...SHELL_PAGES, TASK_PAGE] as const;
 
+// The jurisdiction-conditional dossiers (FR-GDPR / BE-GDPR), localised and with the
+// public-employee name withheld at build time (SIG-PUB-017, §44). Included in the a11y
+// sweep so the localised pages meet WCAG 2.2 AA like every other shell page.
+export const JURISDICTION_DOSSIER_PAGES = [
+  "/dossier/paris-alpr/",
+  "/dossier/brussels-alpr/",
+] as const;
+
 // The full a11y surface for the axe sweep: the shell-layout pages, a task-intake
-// page, and the standalone dossier print export (WCAG 2.2 AA everywhere, SIG-UI-037).
-export const A11Y_PAGES = [...ALL_PAGES, DOSSIER_PRINT] as const;
+// page, the jurisdiction-conditional dossiers, and the standalone dossier print
+// export (WCAG 2.2 AA everywhere, SIG-UI-037).
+export const A11Y_PAGES = [...ALL_PAGES, ...JURISDICTION_DOSSIER_PAGES, DOSSIER_PRINT] as const;
