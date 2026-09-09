@@ -2075,3 +2075,23 @@ and the machine-checked flip rule, ships the 27 rights-review packets + `_TEMPLA
 | SIG-INGEST-030 (Eyes on Flock outreach outcome recorded) | `eyes_on_flock` row + packet; `STAGE0_OUTREACH_RECORD.md` row 3 | `tests/unit/test_source_registry.py::test_eyes_on_flock_outreach_outcome_is_recorded`; `docs/build/rights/eyes_on_flock.md` |
 | `review-status` subcommand (per-source gate breakdown + flip-ready) | `connectors.cli._review_status`; `connectors.review.gate_breakdown` | `uv run sig-connectors review-status` → `flip-ready: 18`, `loadable now: 0`; `test_review_status.py` |
 | Phase gate (§51.3): `make check` green; ADR-063; register + traceability updated; BACKLOG rows closed | `make check`; `docs/adr/ADR-063-*.md`; `docs/risk_register.md` `## Phase 21 — Operationalization (P21.1)`; `docs/build/BACKLOG.csv` | `make check`; `python docs/build/tools/check_spec_src.py` (63 ADRs, 671 ids); RISK-P21-01/02; BL-032/BL-033 `status=closed` |
+
+# P21.2 — annotation-layer DDL↔dataclass alignment (shrunk: compute-on-read ACCEPTED)
+
+P21.2 was decision-gated on the capstone verdict. With amendment **A5** ticked (HG-13) and the
+compute-on-read family (ADR-037/038/039/054) on the operator-signed ACCEPTED list (HG-14,
+`docs/build/CAPSTONE_CLOSURE.md` §(b)), the ticket **shrank** to deliverables 1 and 5: the annotation
+layer stays the pure-Python computation layer (recomputed on read, not persisted — LD-V05/LD-D07/LD-F10),
+so repositories, pipeline wiring, and API-reads-rows (deliverables 2/3/4) are **out of scope**. The
+delivered work is a live-schema alignment guard plus the evaluated-not-fired ADR trigger notes. No
+`spec_src` edit; no new requirement id; no ADR added (Appendix F unchanged). No contributor value-object ↔
+table pair exists (`grep -l contributor db/deploy/*.sql` → none), so ADR-054 aligns nothing yet.
+
+| Requirement | Where | Test / evidence |
+|---|---|---|
+| SIG-EPIS-018 / SIG-RECON-039 / SIG-RECON-040 (annotation entities aligned to their tables; LD-V05) | `tests/db/test_annotation_alignment.py` maps `Contradiction`/`CoverageRecord`/`ResearchTask`/`Inference` to `contradiction`/`coverage_record`/`research_task`/`inference.derived_fact` and introspects `information_schema.columns` (live PG) | `SIG_REQUIRE_DB_TESTS=1 uv run pytest tests/db/test_annotation_alignment.py` → 4 passed, 0 mismatches; negative-tested (removing the `value`→`value_json` alias fails the guard) |
+| SIG-STORE-024 (CI-blocking DB tests over real PG) | new test uses the P02.1 `conn`/`sig_database` testcontainers harness (`tests/db/conftest.py`), never a mock | `make test-db` |
+| Additive/back-compat + append-only (P1–P3) | 0 additive columns needed; 1 **dataclass alias** (`Inference.value` ↔ `derived_fact.value_json`); value objects unchanged; no sqitch change; no `UPDATE`/`DELETE` | `git diff` (only new test + docs); `db/sqitch.plan` unchanged |
+| Deliverable 5 (shrunk): ADR trigger notes | `## Revisit trigger` → `### Trigger evaluation — P21.2 (2026): NOT fired` appended to ADR-037/038/039/054 (append-only) | `grep -c "Trigger evaluation — P21.2" docs/adr/ADR-0{37,38,39,54}*` = 1 each |
+| e2e xfails tagged P21.2 | none exist — the only `tests/e2e` xfail is `LD-V08` → **P21.4** (`tests/e2e/test_composed_stack.py:771`); nothing re-tagged (no P21.2/LD-V05/LD-D07 tags present) | `grep -rn "P21.2\|LD-V05\|LD-D07" tests/e2e` → 0 xfail tags |
+| Phase gate (§51.3): `make check` green; ADR notes; register + traceability; BACKLOG rows closed | `make check`; ADR-037/038/039/054 notes; `docs/risk_register.md` `## Phase 21 — Operationalization (P21.2)` (RISK-P21-03); `docs/build/BACKLOG.csv` | `make check`; RISK-P21-03; BL-004/BL-005/BL-027 `status=closed` (accepted: compute-on-read A5/HG-14); BL-006 left open (identity/resolution-layer persistence, outside the annotation compute-on-read family) |

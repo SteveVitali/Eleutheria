@@ -116,3 +116,20 @@ filed records request, or when the contributor API/UI (claiming, dispositions,
 recognition surfaces) lands and needs a wire projection of these objects. Also revisit
 if a `local_group` or claim table is added to Appendix C, so the in-memory registry is
 aligned to it.
+
+### Trigger evaluation — P21.2 (2026): NOT fired
+
+Evaluated at P21.2. **The trigger did not fire.** Per amendment **A5** (HG-13) and
+the operator-signed ACCEPTED list at **HG-14** (`docs/build/CAPSTONE_CLOSURE.md`
+§(b)), compute-on-read is accepted as **conforming**: the `ResearchTask` value
+object and `TaskPool` remain the in-memory engine; the `research_task` row is not
+written/claimed for real, and no `local_group`/claim schema is added. Persistence
+is **deferred** (BACKLOG `BL-004`), so P21.2 shrank to its alignment-test +
+ADR-note deliverables only.
+
+P21.2 added `tests/db/test_annotation_alignment.py`, which introspects the live
+`research_task` schema against the `ResearchTask` dataclass and asserts
+names/types/nullability agree. The lifecycle columns (`disposition`, `claimed_by`,
+`claimed_at`, `claim_expires_at`) are nullable and remain unfilled until the engine
+is persisted; `note` is recorded as `compute_only`. Adding those persisted fields
+later is an additive change that re-arms this trigger.
