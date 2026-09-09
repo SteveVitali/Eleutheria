@@ -506,3 +506,38 @@ defining standard (§3.1) and of the reproducibility contract SIG-RECON-020 pins
 | ADR | Deviation |
 |---|---|
 | ADR-037 | The materialized `Contradiction` entity is modelled in **pure Python** aligned with `db/deploy/graph_annotations.sql` and is **not** persisted to Postgres here — continuing the ADR-031/036 precedent; persistence and the read-API projection are downstream (P14.1). The existing `reconcile.model.Contradiction` is **promoted** into the entity (additive fields, back-compat) rather than introducing a second type. The byte-identical L3 rebuild is verified **in-process** against the resolver. To make the detector→task contract hold uniformly, the resolver's Phase-2 contradictions emit **deterministic** (content-derived) research-task ids, and `Resolution`/`CountResolution` gained an additive `tasks` field. |
+
+## Phase 9 — Coverage and negative space (P09.1 — the §32 coverage-metrics layer)
+
+The §32 metrics that make negative space queryable rather than editorial (ADR-038).
+The risks here are failures of the "explicit about uncertainty" principle (§3.1, P4):
+a negative claim that cannot say what was searched, an aggregate published without a
+denominator, four absence kinds collapsed into one, freshness measured in flat days,
+and — the sharpest — a population total published from data that cannot support one.
+
+| id | Risk | How it is retired |
+|---|---|---|
+| RISK-P9-01 | **A negative claim cannot say what was searched** — a `searched_not_found` record without `sources_searched[]`, so "not in the Atlas" and "not in the Atlas, any portal, or three years of minutes" are indistinguishable (SIG-METRIC-001/002). | `inference.coverage.CoverageRecord.__post_init__` rejects a `searched_not_found` record with empty `sources_searched` (mirroring the `graph_annotations.coverage_record` CHECK); `probe_coverage_records` refuses an anonymous negative. Proven by `tests/inference/test_coverage.py::test_searched_not_found_requires_sources_searched`, `::test_probe_requires_named_sources`. |
+| RISK-P9-02 | **Discovery-probe negatives are discarded** — the more informative half of an enumeration is thrown away, so a new portal/agency/tenant cannot be detected later without re-probing, and "we found N" never becomes "we tested M, N exist" (SIG-METRIC-002a). | `inference.coverage.probe_coverage_records` retains every confirmed-absent candidate as a `searched_not_found` `CoverageRecord`. Proven by `tests/inference/test_coverage.py::test_probe_retains_only_the_confirmed_absent_candidates`, `::test_probe_is_a_denominator_present_plus_absent_equals_candidates`. |
+| RISK-P9-03 | **The four absence kinds collapse** — `not_researched` renders identically to `searched_not_found`, so "we have not looked" reads as "we looked and found nothing" (SIG-TIME-010/012). | Each of the four §32.1 coverage kinds has a distinct machine token via `db.absence.render_coverage_kind`; `CoverageRecord.public_view` carries it, and `not_applicable` (no epistemic state) is distinct from every "unknown". Proven by `tests/inference/test_coverage.py::test_four_kinds_render_distinguishably_in_the_api_view`; `tests/unit/test_absence.py::test_render_coverage_kind_covers_all_four_kinds_distinguishably`. |
+| RISK-P9-04 | **An aggregate ships without a denominator** — "37 agencies share data" published with no evaluable population and no not-evaluable count, implying completeness (SIG-METRIC-003). | `PublishedAggregate` carries denominator + not-evaluable, and `assert_denominated` refuses a bare count as a type error; per-jurisdiction counts are all denominated by agencies known. Proven by `tests/inference/test_denominators.py::test_bare_count_is_not_publishable`, `::test_jurisdiction_coverage_denominates_every_count`. |
+| RISK-P9-05 | **Freshness is measured in flat days** — a two-year-old immutable contract date is flagged stale, or a two-year-old FAST active count is treated as fresh (SIG-METRIC-006). | `inference.freshness` derives currency `C1..C4` from the predicate's volatility class and half-life (reusing `reconcile.weight.currency`, §28.3), so the same age yields opposite freshness by predicate. Proven by `tests/inference/test_freshness.py::test_same_age_yields_different_currency_by_volatility`, `::test_immutable_is_never_stale_however_old`. |
+| RISK-P9-06 | **A population total is published** — a capture–recapture or multi-list estimate ships (even caveated), whose known failure mode is *understating* the surveillance footprint SIG exists to document (SIG-METRIC-008/008a/010). | The estimators are executable refusals (`capture_recapture_population`, `multi_list_log_linear_population` always raise `ProhibitedEstimateError`); `CompletenessStatement`/`assert_no_population_total` reject an implied denominator of reality; the sole exception (`RecordsDerivedRecall`) is constrained to pre-registered, within-half-life, non-extrapolated method-recall. Proven by `tests/inference/test_completeness.py::test_capture_recapture_is_never_published`, `::test_completeness_statement_rejects_a_denominator_of_reality`, `::test_records_derived_recall_window_must_beat_the_half_life`. |
+
+### Provenance-completeness target (SIG-METRIC-005)
+
+| id | Item | Compensating control |
+|---|---|---|
+| RISK-P9-07 | SIG-METRIC-005 targets 100% of published claims resolvable to an evidence artifact; reaching 100% depends on upstream connector coverage that lands over later phases, not on P09.1. | The *metric* is deterministic and its shortfall is materialized as a defect list (`inference.denominators.provenance_completeness`), so any gap is an actionable list of claim ids, not a statistic. Proven by `tests/inference/test_denominators.py::test_provenance_shortfall_is_a_defect_list_not_a_statistic`. |
+
+### Deviations recorded as ADRs (SIG-ENG-031)
+
+| ADR | Deviation |
+|---|---|
+| ADR-038 | The §32 coverage-metrics layer lives in `inference/` (the §47 home for derived metrics; no dedicated `metrics/` package is added) as **pure-Python** value objects aligned with `db/deploy/graph_annotations.sql`, **not** persisted to Postgres and **not** served over HTTP here — persistence + the read-API coverage statement are P14.1, the web surfaces P15.5, continuing the ADR-031/036/037 precedent. It **reuses** `db.absence` (extended only with the fourth `not_applicable` rendering; `AbsenceRendering.state` widened to `Optional`) and `reconcile.weight.currency` rather than re-encoding the four states or a second freshness notion. The capture–recapture / multi-list prohibitions are implemented as functions that **always raise**, so the §32.5 MUST NOT is gated by a test. |
+
+### Scaffolded / bounded requirements (SIG-ENG-005)
+
+| id | Requirement | Why not fully automatable now | Compensating control |
+|---|---|---|---|
+| RISK-P9-08 | SIG-TIME-012 "distinguishable in the **UI**" | The UI (`web/`, TypeScript) is deferred to Phase 15; there is no browser surface to drive here | The **API-contract** half is deterministic and tested (distinct `absence_code`/`label` per kind in `CoverageRecord.public_view`); the UI rendering is a tracked P15.5 deliverable that consumes these tokens. |

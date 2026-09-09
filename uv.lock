@@ -2434,6 +2434,16 @@ requires-dist = [{ name = "rdflib", specifier = ">=7.0" }]
 name = "sig-inference"
 version = "0.0.0"
 source = { editable = "inference" }
+dependencies = [
+    { name = "sig-db" },
+    { name = "sig-reconcile" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "sig-db", editable = "db" },
+    { name = "sig-reconcile", editable = "reconcile" },
+]
 
 [[package]]
 name = "sig-ontology"

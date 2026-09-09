@@ -932,3 +932,56 @@ detector→task contract. Promotes the existing `reconcile.model.Contradiction`
 | SIG-RECON-019 (resolutions recomputed on new/superseded claims, ruleset change, currency-class crossing) | `reconcile.resolve.RESOLVE` (as_of-driven currency; `input_digest` over claims + ruleset_version); `reconcile.rebuild.rebuild_resolution` | `tests/reconcile/test_rebuild.py::test_a_changed_claim_breaks_the_digest`, `::test_a_version_change_refuses_to_reproduce` |
 | SIG-RECON-020 (a resolution is reproducible from `(claims + ruleset_version + resolver_version + as_of pair)`, verified by `input_digest`; CI regenerates a sample and asserts a match) | `reconcile.rebuild.verify_reproducible`, `load_sample`, `RebuildSample`; `reconcile/src/reconcile/data/l3_rebuild_sample.json` | `tests/reconcile/test_rebuild.py::test_committed_sample_regenerates_byte_identically`, `::test_sample_is_a_meaningful_multiclaim_resolution`, `::test_verify_reproducible_roundtrips_a_stored_resolution` |
 | SIG-RECON-021 (resolutions are never edited in place; a new resolution supersedes the old in transaction time) | `reconcile.resolve.Resolution` (frozen) / `pin`; `reconcile.rebuild.rebuild_resolution` (returns a new record); `reconcile.model.Contradiction` lifecycle (append-only) | `tests/reconcile/test_rebuild.py::test_rebuild_returns_a_new_record_and_does_not_mutate_the_stored_one`; `tests/reconcile/test_contradiction.py::test_resolution_sets_status_and_does_not_delete` |
+
+# P09.1 — Coverage, completeness, and negative space (§9.5, §32)
+
+The §32 coverage-metrics layer (ADR-038): the `CoverageRecord` with required
+`sources_searched[]`, discovery-probe negatives retained, the four absence kinds
+rendered distinguishably in the API, published denominators on every aggregate,
+per-jurisdiction coverage, provenance completeness, freshness relative to predicate
+volatility, and the executable capture–recapture prohibition. Modelled as
+pure-Python value objects in `inference/`, aligned with
+`db/deploy/graph_annotations.sql`, reusing `db.absence` (four §9.5 states) and
+`reconcile.weight.currency` (§28.3 currency) rather than re-encoding either. The read
+API envelope (P14.1) and the methodology/coverage web pages (P15.5) consume these.
+
+## The coverage record and the four absence kinds (§32.1, §9.5)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-METRIC-001 (`CoverageRecord` shape: subject id/class, predicate, `absence_kind`, `sources_searched[]`, `searched_at`/`searched_by`, `search_method`) | `inference.coverage.CoverageRecord`; `db/deploy/graph_annotations.sql` `coverage_record` | `tests/inference/test_coverage.py::test_public_view_carries_the_full_shape`, `::test_coverage_record_requires_a_subject_identity`, `::test_unknown_absence_kind_is_rejected` |
+| SIG-METRIC-002 (`sources_searched[]` **required** for `searched_not_found`; a record missing it is rejected) | `inference.coverage.CoverageRecord.__post_init__` (mirrors the DDL CHECK) | `tests/inference/test_coverage.py::test_searched_not_found_requires_sources_searched`, `::test_other_kinds_do_not_require_sources` |
+| SIG-METRIC-002a (discovery-probe negatives retained as `searched_not_found`, not discarded) | `inference.coverage.probe_coverage_records` | `tests/inference/test_coverage.py::test_probe_retains_only_the_confirmed_absent_candidates`, `::test_probe_is_a_denominator_present_plus_absent_equals_candidates`, `::test_probe_rejects_a_present_id_outside_the_candidate_space`, `::test_probe_requires_named_sources` |
+| SIG-TIME-010 (four absence kinds map to the §9.5 epistemic states; `not_applicable` carries none) | `inference.coverage.CoverageRecord.epistemic_state`; `db.absence.state_from_coverage_kind`, `ABSENCE_KINDS` | `tests/inference/test_coverage.py::test_epistemic_state_maps_kinds_and_not_applicable_is_stateless`; `tests/unit/test_absence.py::test_not_applicable_renders_distinguishably_and_has_no_state` |
+| SIG-TIME-011 (`searched_not_found`/`NO_EVIDENCE_FOUND` MUST name the sources searched) | `db.absence.render_absence`/`render_coverage_kind`; `CoverageRecord.rendering` | `tests/unit/test_absence.py::test_render_coverage_kind_rejects_searched_not_found_without_sources`; `tests/inference/test_coverage.py::test_searched_not_found_requires_sources_searched` |
+| SIG-TIME-012 (API renders the four kinds distinguishably; `not_researched` ≠ `searched_not_found`) | `inference.coverage.CoverageRecord.public_view`; `db.absence.render_coverage_kind`, `NOT_APPLICABLE_CODE` | `tests/inference/test_coverage.py::test_four_kinds_render_distinguishably_in_the_api_view`; `tests/unit/test_absence.py::test_render_coverage_kind_covers_all_four_kinds_distinguishably`, `::test_not_researched_differs_from_no_evidence_found` |
+
+## Published denominators and per-jurisdiction coverage (§32.2, §32.4)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-METRIC-003 (every published aggregate carries its denominator and not-evaluable count; a bare count is not publishable) | `inference.denominators.PublishedAggregate`, `assert_denominated` | `tests/inference/test_denominators.py::test_bare_count_is_not_publishable`, `::test_published_aggregate_phrase_is_conformant`, `::test_a_numerator_cannot_exceed_its_denominator` |
+| SIG-METRIC-004 (per-jurisdiction coverage: agencies known / with deployment / contract / portal evidence / mapped devices; mean evidence age; open-contradiction count; weight-class distribution) | `inference.denominators.jurisdiction_coverage`, `JurisdictionCoverage`, `AgencyCoverageInput` | `tests/inference/test_denominators.py::test_jurisdiction_coverage_denominates_every_count`, `::test_jurisdiction_coverage_mean_age_and_distribution`, `::test_jurisdiction_coverage_mean_age_is_none_when_no_dated_evidence`, `::test_jurisdiction_coverage_rejects_duplicate_agency` |
+
+## Provenance completeness (§32.3)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-METRIC-005 (share of published claims with resolvable evidence, targeted at 100%; a shortfall is a defect list, not a statistic) | `inference.denominators.provenance_completeness`, `ProvenanceCompleteness` | `tests/inference/test_denominators.py::test_provenance_shortfall_is_a_defect_list_not_a_statistic`, `::test_provenance_complete_when_all_resolvable`, `::test_provenance_empty_is_trivially_complete` |
+
+## Freshness relative to predicate volatility (§32.4)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-METRIC-006 (freshness measured relative to predicate volatility, not absolute days) | `inference.freshness.predicate_currency`, `is_stale_for_predicate` (delegates to `reconcile.weight.currency`, §28.3) | `tests/inference/test_freshness.py::test_same_age_yields_different_currency_by_volatility`, `::test_immutable_is_never_stale_however_old`, `::test_fast_predicate_goes_stale_past_its_window` |
+| SIG-METRIC-007 (per-source freshness surface: last successful run, last content change, status, stale-count for the predicate class) | `inference.freshness.source_freshness`, `SourceFreshness` | `tests/inference/test_freshness.py::test_source_freshness_surface_counts_stale_by_predicate_class` |
+
+## Completeness-estimation guardrails (§32.5)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-METRIC-008 (capture–recapture population estimate prohibited — not with a caveat, not with a wide interval) | `inference.completeness.capture_recapture_population` (always raises `ProhibitedEstimateError`) | `tests/inference/test_completeness.py::test_capture_recapture_is_never_published` |
+| SIG-METRIC-008a (multi-list log-linear rescue prohibited) | `inference.completeness.multi_list_log_linear_population` (always raises) | `tests/inference/test_completeness.py::test_multi_list_log_linear_is_never_published` |
+| SIG-METRIC-008b (the one legitimate exception: records-derived survey recall — pre-registered, window < half-life, labelled method-recall, never extrapolated) | `inference.completeness.RecordsDerivedRecall` | `tests/inference/test_completeness.py::test_records_derived_recall_measures_the_survey_not_the_population`, `::test_records_derived_recall_must_be_pre_registered`, `::test_records_derived_recall_window_must_beat_the_half_life` |
+| SIG-METRIC-009 (publish counted quantities with named denominators / bounds / ratios / measured recall — never a total) | `inference.completeness.CompletenessStatement`, `CompletenessMethod`, `assert_no_population_total` | `tests/inference/test_completeness.py::test_completeness_statement_with_a_named_denominator_is_publishable`, `::test_a_bare_number_is_not_a_publishable_completeness_figure` |
+| SIG-METRIC-010 (no completeness percentage that implies it knows the denominator of reality) | `inference.completeness.CompletenessStatement.__post_init__` (rejects reality/total denominators) | `tests/inference/test_completeness.py::test_completeness_statement_rejects_a_denominator_of_reality` |
