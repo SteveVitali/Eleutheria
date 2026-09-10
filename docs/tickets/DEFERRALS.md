@@ -47,7 +47,7 @@ work re-run per each ticket's `Run:` line after the operator acts.
 
 ## Go-live round (Round 3/4) reconciliation — GL-* cross-reference (2026-09-09)
 
-Seeded by `decompose-spec mode=extend` over `~/MetaHarness/sig-golive-spec.md`. The existing
+Seeded by `decompose-spec mode=extend` over `docs/3_sig_golive_spec.md`. The existing
 `D-P21.*` rows above are the go-live return-pass obligations; this maps each to its spec `GL-*`
 id and the manifest chain row that re-runs it (Lane B — no new contract). Append-only: existing
 rows are **not** rewritten. (First column is the GL id so these are not parsed as `D-` rows.)
