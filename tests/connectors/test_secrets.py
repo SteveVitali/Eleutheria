@@ -7,11 +7,19 @@ Tokens/keys are read from the environment (``SIG_MUCKROCK_TOKEN``,
 ``SIG_DATA_GOV_KEY``, ``SIG_OVERPASS_ENDPOINT``, ``SIG_CIVICCLERK_BASE``); a
 hardcoded token literal in a ``.py`` / ``.toml`` file, or an un-ignored ``.env``,
 is a leak. This test is the guard the ticket requires (RISK-P21-05).
+
+The same rule covers non-public *identifiers* that name real infrastructure
+(go-live spec D3): this repository is public, so the GCP project id is written
+as ``$SIG_GCP_PROJECT`` and resolved from the environment. Export
+``SIG_GCP_PROJECT`` to arm that check; without it there is nothing to search for
+and the check skips.
 """
 
 from __future__ import annotations
 
+import os
 import re
+import subprocess
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -63,3 +71,25 @@ def test_env_files_are_gitignored() -> None:
     # .env.* (and *.env), which together cover every .env* variant.
     assert ".env" in patterns
     assert any(p in patterns for p in (".env.*", ".env*", "*.env"))
+
+
+def test_gcp_project_id_is_env_resolved_not_committed() -> None:
+    """The real project id appears in no tracked file — only ``$SIG_GCP_PROJECT`` (D3)."""
+    project_id = os.environ.get("SIG_GCP_PROJECT", "").strip()
+    if not project_id:
+        import pytest
+
+        pytest.skip("SIG_GCP_PROJECT unset; export it to arm the leak check")
+
+    tracked = subprocess.run(
+        ["git", "-C", str(REPO_ROOT), "grep", "-Il", "--", project_id],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    # git grep exits 1 with no output when there is no match — the clean case.
+    offenders = [line for line in tracked.stdout.splitlines() if line]
+    assert not offenders, (
+        "GCP project id committed literally; write `$SIG_GCP_PROJECT` instead:\n"
+        + "\n".join(offenders)
+    )
