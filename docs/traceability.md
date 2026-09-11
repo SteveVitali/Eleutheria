@@ -1509,3 +1509,20 @@ suite. Paths below are relative to `web/`.
 | SIG-UI-037 (usable without JS; tabular equivalent per map, list per graph) | `src/pages/reference-map.astro` (`<table>`); `src/pages/reference-graph.astro` (`<ul>`) | `tests/e2e/content.nojs.spec.ts` (JS disabled): map 3-row table, graph 2-edge list; `tests/e2e/a11y.spec.ts` axe WCAG 2.2 AA |
 | SIG-UI-039 (every dependency OSI-licensed; CC-BY-NC/source-available/BUSL excluded, checked in CI) | `scripts/check-licenses.mjs` (`OSI_ALLOW` + documented `WAIVED` + `DENY`); CI `web` job step | `npm run check:licenses` (CI gate); ADR-049 (waiver rationale) |
 | SIG-UI-041 (performance budgets in CI; build fails on regression) | `lighthouserc.json` (perf ≥ 0.9, script size 0, total ≤ 150 KB); CI `web` job `check:perf` | `npm run check:perf` (CI gate) |
+
+# P15.2 — The local dossier (§39.2)
+
+The **production** dossier surface, built on P15.1's epistemic visual language and no-JS/a11y baseline
+(ADR-050). It supersedes — but does not delete — the P06.1 `exports.dossier` slice renderer, whose rows
+above still hold. Implementation is `web/`; TypeScript is confined there (SIG-ENG-010).
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-UI-010 (the twelve sections, in order) | `web/src/lib/dossier.ts::SECTION_ORDER`/`validateDossier`; `src/pages/dossier/[slug].astro` | `web/tests/unit/dossier.test.ts` "the twelve sections in order"; `web/tests/e2e/dossier.spec.ts` "all twelve §39.2 sections render in order"; `dossier.nojs.spec.ts` |
+| SIG-UI-011 ("what we don't know" in summary + print + API) | `web/src/lib/dossier.ts::renderDossierJson` (top-level `what_we_dont_know`); `src/components/WhatWeDontKnow.astro`; `src/pages/dossier/[slug].astro` (summary + section), `.../print.astro`, `.../[slug].json.ts` | `web/tests/unit/dossier.test.ts` "what we don't know: summary + API"; `web/tests/e2e/dossier.spec.ts` "appears in the summary, the section, AND the API" |
+| SIG-UI-012 (explicit incompleteness banner; count + absence rule) | `web/src/lib/dossier.ts::incompletenessBanner`/`unresearchedFieldCount`; `src/components/IncompletenessBanner.astro` | `web/tests/unit/dossier.test.ts` "incompleteness banner"; `web/tests/e2e/dossier.spec.ts` "incompleteness banner names the count and the absence rule" |
+| SIG-UI-013 (print/PDF path: paginated, sources, as-of + permalink on every page) | `web/src/pages/dossier/[slug]/print.astro` (per-page `.sig-print-page` + footer); `src/styles/epistemic.css` (`@media print`) | `web/tests/e2e/dossier.spec.ts` "every print page carries a footer …" + "renders to a usable, multi-byte PDF" (headless `page.pdf()`); `dossier.nojs.spec.ts` |
+| SIG-UI-014 (every material figure expandable to its reconciliation: rule, competing claims, tier/date, document link) | `web/src/lib/dossier.ts::Figure`/`Reconciliation`; `src/components/DossierFigure.astro` (native `<details>`) | `web/tests/unit/dossier.test.ts` "every material figure expands to its reconciliation"; `web/tests/e2e/dossier.spec.ts` (agentic) + `dossier.nojs.spec.ts` "opens without JS" |
+| SIG-UI-014a (the three action blocks: authorization / termination_mechanics / legal_regime) | `web/src/lib/dossier.ts::Authorization`/`TerminationInput`/`LegalRegime`; `src/components/ActionBlocks.astro` | `web/tests/unit/dossier.test.ts` "carries the three action blocks …"; `web/tests/e2e/dossier.spec.ts` "the three action blocks are present" |
+| SIG-UI-014b (`next_decision_date` computed + displayed wherever an expiry is; renewal watch keys on it) | `web/src/lib/dossier.ts::nextDecisionDate`/`resolveTermination`; `ActionBlocks.astro` (rendered in "cost and expiry") | `web/tests/unit/dossier.test.ts` "next_decision_date, not the expiry date"; `web/tests/e2e/dossier.spec.ts` "next_decision_date is computed and shown wherever the expiry is" |
+| SIG-UI-015 (`unknown` rendered, not omitted) | `web/src/lib/dossier.ts::rowDisplayValue`; `src/components/DossierSection.astro` (`.sig-unknown`) | `web/tests/unit/dossier.test.ts` "unknown Appendix-B values are rendered, not omitted"; `web/tests/e2e/dossier.spec.ts` + `dossier.nojs.spec.ts` |

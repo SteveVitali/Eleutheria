@@ -1,0 +1,79 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The three action blocks the outline's §15.1 field list omits (SIG-UI-014a) — the
+// blocks that convert the dossier from a description into something a person can act
+// on. Rendered inside the relevant §39.2 section:
+//   - authorization        → "Accountability events" (who approved it, and how)
+//   - termination_mechanics → "Cost and expiry" (so next_decision_date appears
+//                              wherever the expiry is displayed — SIG-UI-014b)
+//   - legal_regime         → "Policy" (what lever exists here)
+// The consent-agenda flag is first-class: "approved 7–0 after public comment" and
+// "passed unopposed on the consent agenda" are politically opposite facts.
+import { resolveTermination } from "../lib/dossier";
+import type { Dossier } from "../lib/dossier";
+
+interface Props {
+  dossier: Dossier;
+  which: "authorization" | "termination" | "legal_regime";
+}
+
+const { dossier, which } = Astro.props;
+const yesNo = (v: boolean | null): string => (v === null ? "unknown" : v ? "yes" : "no");
+const orUnknown = (v: string | null): string => (v === null ? "unknown" : v);
+const t = resolveTermination(dossier.termination);
+---
+
+{which === "authorization" && (
+  <div class="sig-action-block" data-testid="authorization-block">
+    <h3>Authorization</h3>
+    <dl class="sig-kv">
+      <dt>Approving body</dt><dd>{orUnknown(dossier.authorization.approving_body)}</dd>
+      <dt>Vote</dt><dd>{orUnknown(dossier.authorization.vote)}</dd>
+      <dt>Passed on a consent agenda</dt>
+      <dd data-testid="auth-consent-agenda">{yesNo(dossier.authorization.consent_agenda)}</dd>
+      <dt>Public comment taken</dt><dd>{yesNo(dossier.authorization.public_comment)}</dd>
+      <dt>Date</dt><dd>{orUnknown(dossier.authorization.date)}</dd>
+    </dl>
+  </div>
+)}
+
+{which === "termination" && (
+  <div class="sig-action-block" data-testid="termination-block">
+    <h3>Termination mechanics</h3>
+    <dl class="sig-kv">
+      <dt>Auto-renews</dt><dd>{yesNo(t.auto_renews)}</dd>
+      <dt>Notice window (days)</dt>
+      <dd>{t.notice_window_days === null ? "unknown" : t.notice_window_days}</dd>
+      <dt>Contract expiry</dt><dd><time datetime={t.expiry_date ?? undefined}>{orUnknown(t.expiry_date)}</time></dd>
+      <dt>Next decision date</dt>
+      <dd data-testid="next-decision-date">
+        <strong><time datetime={t.next_decision_date ?? undefined}>{orUnknown(t.next_decision_date)}</time></strong>
+      </dd>
+    </dl>
+    <p class="sig-action-block__note">
+      The <strong>decision</strong> date is the figure that matters, not the expiry:
+      after it, an auto-renewing contract renews by default.
+    </p>
+  </div>
+)}
+
+{which === "legal_regime" && (
+  <div class="sig-action-block" data-testid="legal-regime-block">
+    <h3>Legal regime</h3>
+    <dl class="sig-kv">
+      <dt>State statute</dt><dd>{orUnknown(dossier.legal_regime.state_statute)}</dd>
+      <dt>Local ordinance</dt><dd>{orUnknown(dossier.legal_regime.local_ordinance)}</dd>
+      <dt>Disclosure duties</dt>
+      <dd>
+        {dossier.legal_regime.disclosure_duties.length > 0 ? (
+          <ul>{dossier.legal_regime.disclosure_duties.map((d) => <li>{d}</li>)}</ul>
+        ) : (
+          "unknown"
+        )}
+      </dd>
+    </dl>
+  </div>
+)}

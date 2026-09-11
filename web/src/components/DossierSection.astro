@@ -1,0 +1,59 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// Renders the body of one dossier section: its material figures (each expandable to
+// its reconciliation, SIG-UI-014) and its rows. A row that is an absence renders as
+// the single clickable hatch (SIG-UI-007); a row with a null value renders the
+// literal "unknown" rather than being omitted (SIG-UI-015). Shared by the
+// interactive dossier page and the print export so the two never drift.
+import DossierFigure from "./DossierFigure.astro";
+import AbsenceHatch from "./AbsenceHatch.astro";
+import { rowDisplayValue } from "../lib/dossier";
+import type { Section } from "../lib/dossier";
+
+interface Props {
+  section: Section;
+}
+
+const { section } = Astro.props;
+const figures = section.figures ?? [];
+const rows = section.rows ?? [];
+---
+
+{figures.map((f) => <DossierFigure figure={f} />)}
+
+{rows.length > 0 && (
+  <ul class="sig-dossier-rows">
+    {rows.map((r) => (
+      <li class="sig-dossier-row" data-testid="dossier-row">
+        <span class="sig-dossier-row__label">{r.label}:</span>{" "}
+        {r.absence ? (
+          <AbsenceHatch
+            kind={r.absence}
+            subject_id={r.subject_id ?? ""}
+            predicate_id={r.predicate_id ?? ""}
+            predicate_label={r.label}
+          />
+        ) : (
+          <>
+            <span
+              class={r.value === null ? "sig-dossier-row__value sig-unknown" : "sig-dossier-row__value"}
+              data-testid="dossier-row-value"
+            >
+              {rowDisplayValue(r)}
+            </span>
+            {r.documentUrl && (
+              <>
+                {" "}
+                <a class="sig-dossier-row__src" href={r.documentUrl}>[source]</a>
+              </>
+            )}
+          </>
+        )}
+        {r.note && <span class="sig-dossier-row__note"> — {r.note}</span>}
+      </li>
+    ))}
+  </ul>
+)}

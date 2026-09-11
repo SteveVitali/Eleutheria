@@ -879,3 +879,27 @@ enforced by machine, not memory. See ADR-049 for the decisions and the one recor
 |---|---|---|---|
 | RISK-P15-07 | The shell renders from committed TS fixtures, not the live `/v1` read API | Static-first means no build-time API dependency (SIG-UI-036), and the read API has no DB-wired store yet (RISK-P14-07/17) | `web/src/lib/fixtures.ts`'s `ResolutionEnvelope` is a faithful *subset* of `api/src/api/models.py`; wiring to the live API is a data-source swap, not a component change (ADR-049 revisit trigger). |
 | RISK-P15-08 | Only reference/demo pages exist (visual-language, reference map/graph, task intake) — not the dossier, map, network, watch, or corrections surfaces | Those surfaces are P15.2–P15.5; P15.1 owns only the shared visual language + baseline | The components are the canonical, tested surface later tickets import; a change to the visual language is a new ADR, not an ad-hoc edit (§0.7, ADR-049). |
+
+## Phase 15 — Public web surfaces (P15.2 — the local dossier)
+
+Per §53 / SIG-ENG-031, P15.2's risk-register entries. P15.2 owns the **production** dossier — the
+project's primary public artifact, built for a local advocate at a podium in six days (SIG-UI-002).
+Its risks are **actionability** risks (the print path and the decision date are the design center, not
+niceties) and **synthetic-certainty** risks (a gap or an unknown that reads as settled fact). See
+ADR-050 for the decisions; it supersedes but retains the P06.1 `exports.dossier` renderer (ADR-032).
+
+### Design / disclosure risks retired by executable checks
+
+| id | Risk | Compensating control |
+|---|---|---|
+| RISK-P15-09 | **The print export is not a usable, citable document** — it is not genuinely paginated, or a page lacks the as-of date / permalink, so a page handed to a council member cannot be traced back (SIG-UI-013). | The dedicated print route (`dossier/[slug]/print.astro`) paginates into `.sig-print-page` blocks, **each** carrying a footer with the as-of pair and the belief-pinned permalink. Proven by `web/tests/e2e/dossier.spec.ts` "every print page carries a footer …" (footers == pages) and "renders to a usable, multi-byte PDF" (headless `page.pdf()` yields a real, >1-page `%PDF`). |
+| RISK-P15-10 | **The surfaced expiry misleads** — a reader sees a contract's expiry date and misses that an auto-renewing contract's real deadline is the notice-window-earlier decision date, or `next_decision_date` drifts from what the renewal watch (P15.4) alerts on (SIG-UI-014b). | `next_decision_date` is a pure, never-stored derivation (`expiry − notice_window` when auto-renewing, else the expiry), rendered wherever the expiry is (the "cost and expiry" section) and exposed under one stable wire name P15.4 keys on. Proven by `web/tests/unit/dossier.test.ts` (the Appendix-D example: 2027-04-02 / 90d → 2027-01-02) and `web/tests/e2e/dossier.spec.ts` "shown wherever the expiry is". |
+| RISK-P15-11 | **"What we don't know" is demoted to an appendix** — it appears in one surface but not another, so a machine or a reader who takes the summary or the API at face value never learns the gaps (SIG-UI-011). | The gap list is single-sourced in `renderDossierJson` and rendered in the HTML summary, its §39.2 section, and the print export, and emitted as a top-level `what_we_dont_know` key by the static JSON endpoint. Proven by `web/tests/e2e/dossier.spec.ts` "appears in the summary, the section, AND the API". |
+| RISK-P15-12 | **An unknown value is silently omitted** — a policy whose configuration evidence is unknown reads as "no such policy" rather than "not yet researched", i.e. synthetic certainty (SIG-UI-012/015). | Rows render `null` as the literal "unknown" (`rowDisplayValue`); absence rows render the single clickable hatch; the incompleteness banner names the distinct-unresearched count. Proven by `web/tests/unit/dossier.test.ts` + `web/tests/e2e/dossier.spec.ts` / `dossier.nojs.spec.ts`. |
+
+### Scaffolded / bounded requirements (SIG-ENG-005)
+
+| id | Requirement | Why not fully closed now | Compensating control |
+|---|---|---|---|
+| RISK-P15-13 | The dossier renders from a committed TS fixture for one worked jurisdiction, not the live `/v1` dossier API | Static-first means no build-time API dependency (SIG-UI-036), and the read API has no DB-wired store yet (RISK-P14-07/17) | `renderDossierJson`'s shape is the `/v1` dossier contract; wiring to the live API is a data-source swap, not a component change (ADR-050 revisit trigger). |
+| RISK-P15-14 | A material figure's document link resolves to the claim endpoint (`/v1/claim/{id}`), not yet to the highlighted page/cell span (SIG-UI-014) | The span-level evidence viewer is §39.6 (a later P15 surface); the claim URL is the addressable locator that resolves the span, consistent with P15.1's contradiction view | Every reconciliation carries the rule, each competing claim's source/tier/date, and a resolvable document link; the fine-grained span is an additive drill-down the evidence viewer adds (SIG-UI-028). |
