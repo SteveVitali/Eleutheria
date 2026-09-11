@@ -1,0 +1,44 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The four epistemic fields, rendered INDEPENDENTLY visible (SIG-UI-004). A single
+// fused badge is prohibited: "strongly supported but contested" and "confirmed but
+// historical" must both be expressible at a glance, so each field is its own chip
+// with its own name and value. Colour (the left border, from epistemic.css) is a
+// redundant channel only — the field name and value text always carry the meaning
+// (SIG-UI-005).
+import { EPISTEMIC_FIELD_NAMES, FIELD_TITLES } from "../lib/epistemic";
+import type { Agreement, Currency, ResolutionStatus, Support } from "../lib/epistemic";
+
+interface Props {
+  resolution_status: ResolutionStatus;
+  support: Support;
+  agreement: Agreement;
+  currency: Currency | null;
+}
+
+const props = Astro.props;
+const values: Record<string, string> = {
+  resolution_status: props.resolution_status,
+  support: props.support,
+  agreement: props.agreement,
+  currency: props.currency ?? "—",
+};
+
+function humanize(value: string): string {
+  return value === "—" ? "not applicable" : value.toLowerCase().replace(/_/g, " ");
+}
+---
+
+<ul class="sig-fields" data-testid="epistemic-fields" data-fused="false">
+  {
+    EPISTEMIC_FIELD_NAMES.map((name) => (
+      <li class="sig-field" data-field={name} data-value={values[name]}>
+        <span class="sig-field__name">{FIELD_TITLES[name]}</span>
+        <span class="sig-field__value">{humanize(values[name])}</span>
+      </li>
+    ))
+  }
+</ul>

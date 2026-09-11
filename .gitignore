@@ -32,3 +32,8 @@ sbom.cdx.json
 
 # Node (web/)
 node_modules/
+web/dist/
+web/.astro/
+web/test-results/
+web/playwright-report/
+web/.lighthouseci/

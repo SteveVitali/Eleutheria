@@ -57,3 +57,46 @@ jobs:
 
       - name: Generated artifacts match a fresh generation
         run: make verify-gen
+
+  # The Phase-15 web shell (SIG-UI-036..041). Confined to web/ (SIG-ENG-010). This
+  # job IS the CI enforcement of the shell's mandated gates: WCAG 2.2 AA (axe), the
+  # OSI-only dependency licence check, and the performance budgets — "checked in CI,
+  # not by memory" (SIG-UI-039) and "the build fails on regression" (SIG-UI-041).
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Node (pinned major)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install from the committed lockfile
+        run: npm ci
+
+      - name: Type-check (astro check)
+        run: npm run typecheck
+
+      - name: Unit tests (epistemic logic + design-token invariants)
+        run: npm run test:unit
+
+      - name: Build the static site (zero-JS-by-default)
+        run: npm run build
+
+      - name: Dependency licence gate (OSI only; excludes CC-BY-NC / source-available / BUSL)
+        run: npm run check:licenses
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: End-to-end + WCAG 2.2 AA (axe) + no-JS baseline
+        run: npm run test:e2e
+
+      - name: Performance budgets (build fails on regression)
+        run: npm run check:perf

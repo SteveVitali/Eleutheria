@@ -1,0 +1,55 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The task-intake page a clicked absence hatch lands on (SIG-UI-007). It is fully
+// static and needs no client JavaScript: one page is pre-generated per taskable
+// absence (the fixture registry `TASKABLE_ABSENCES`), and the page renders the
+// well-formed, GENERATED research-task descriptor derived from the slug. This is
+// the end of the "gap → research task" flow: absence is an invitation, not a
+// dead end.
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { absenceTaskHref, buildResearchTask, decodeTaskSlug, taskSlug } from "../../../lib/task";
+import { ABSENCE_KIND_META } from "../../../lib/epistemic";
+import { TASKABLE_ABSENCES } from "../../../lib/fixtures";
+
+export function getStaticPaths() {
+  return TASKABLE_ABSENCES.map((params) => ({ params: { slug: taskSlug(params) } }));
+}
+
+const { slug } = Astro.params;
+const params = slug ? decodeTaskSlug(slug) : null;
+const task = params ? buildResearchTask(params) : null;
+const meta = params ? ABSENCE_KIND_META[params.absence_kind] : null;
+const path = params ? absenceTaskHref(params) : "/task/new/";
+---
+
+<BaseLayout title="Generate a research task" path={path}>
+  {task && params && meta ? (
+    <section data-testid="generated-task" data-task-status={task.status} data-task-type={task.task_type}>
+      <p>
+        A research task has been generated from this gap. It enters the queue in the
+        <strong> {task.status}</strong> state and is keyed for de-duplication on
+        <code> ({task.dedup_key[0]}, {task.dedup_key[1]})</code>.
+      </p>
+      <dl class="sig-task">
+        <dt>Task type</dt><dd data-testid="task-field-type">{task.task_type}</dd>
+        <dt>Status</dt><dd data-testid="task-field-status">{task.status}</dd>
+        <dt>Subject</dt><dd data-testid="task-field-subject">{task.subject_id}</dd>
+        <dt>Predicate</dt><dd data-testid="task-field-predicate">{task.predicate_id}</dd>
+        <dt>Absence kind</dt><dd data-testid="task-field-absence">{meta.label} ({task.absence_kind})</dd>
+        <dt>Rationale</dt><dd data-testid="task-field-rationale">{task.rationale}</dd>
+      </dl>
+      <p>
+        This descriptor mirrors the engine's <code>research_task</code> row; the
+        production queue accepts it and routes it by assignee class.
+      </p>
+    </section>
+  ) : (
+    <section data-testid="task-error">
+      <p>This gap could not be turned into a research task: the request was malformed.</p>
+      <p><a href="/visual-language/">Return to the visual-language reference.</a></p>
+    </section>
+  )}
+</BaseLayout>

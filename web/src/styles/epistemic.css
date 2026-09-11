@@ -1,0 +1,264 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+ * carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+ *
+ * The epistemic design system (§39.1, §40).
+ *
+ * INVARIANTS enforced here and tested in tests/unit/design-tokens.test.ts:
+ *   - SIG-UI-006: every epistemic colour token (`--sig-epi-*`) is written as an
+ *     hsl() whose hue is OUTSIDE the green band [75deg, 165deg]. Green reads as
+ *     endorsement; SIG reports, it does not endorse. The test parses this file.
+ *   - SIG-UI-005: colour never carries meaning alone. Each epistemic state also
+ *     has a glyph/symbol/text channel supplied by the components. The tokens here
+ *     are the *redundant* colour channel, never the sole one.
+ *   - SIG-UI-007: absence has exactly ONE texture — `.sig-absence-hatch`. It is
+ *     defined once, here, and used for nothing else.
+ *
+ * Saturated colour is reserved for epistemic state and data (SIG-UI-006); chrome
+ * uses the neutral `--sig-ink` / `--sig-paper` tokens, which are exempt (they are
+ * not `--sig-epi-*` tokens and encode no epistemic meaning).
+ */
+
+:root {
+  /* Neutral chrome (not epistemic; greyscale, no hue). */
+  --sig-paper: hsl(0deg 0% 100%);
+  --sig-ink: hsl(0deg 0% 12%);
+  --sig-muted: hsl(0deg 0% 40%);
+  --sig-rule: hsl(0deg 0% 82%);
+  --sig-focus: hsl(216deg 90% 45%);
+
+  /* Support scale (SIG-UI-003) — a blue→amber sequence; NO green. */
+  --sig-epi-support-confirmed: hsl(214deg 80% 38%);
+  --sig-epi-support-strong: hsl(206deg 72% 44%);
+  --sig-epi-support-probable: hsl(41deg 88% 45%);
+  --sig-epi-support-weak: hsl(28deg 82% 48%);
+  --sig-epi-support-unsupported: hsl(0deg 0% 55%);
+
+  /* Agreement (SIG-UI-008) — contested reads as magenta/violet, never green. */
+  --sig-epi-agreement-uncontested: hsl(0deg 0% 35%);
+  --sig-epi-agreement-minor: hsl(266deg 40% 50%);
+  --sig-epi-agreement-contested: hsl(318deg 65% 45%);
+  --sig-epi-agreement-irreconcilable: hsl(348deg 72% 45%);
+
+  /* Currency — a desaturation ramp toward grey for older beliefs; NO green. */
+  --sig-epi-currency-current: hsl(214deg 60% 42%);
+  --sig-epi-currency-aging: hsl(214deg 34% 46%);
+  --sig-epi-currency-stale: hsl(214deg 16% 52%);
+  --sig-epi-currency-historical: hsl(0deg 0% 50%);
+
+  /* Resolution status accents; NO green. */
+  --sig-epi-status-resolved: hsl(214deg 70% 40%);
+  --sig-epi-status-unresolved: hsl(348deg 72% 45%);
+  --sig-epi-status-superseded: hsl(0deg 0% 45%);
+  --sig-epi-status-withdrawn: hsl(0deg 0% 60%);
+
+  /* Absence hatch ink (the single texture's stroke); neutral, NO green. */
+  --sig-epi-absence-ink: hsl(220deg 12% 40%);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--sig-ink);
+  background: var(--sig-paper);
+  line-height: 1.5;
+}
+
+main {
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 4rem;
+}
+
+a {
+  color: var(--sig-focus);
+}
+
+:focus-visible {
+  outline: 3px solid var(--sig-focus);
+  outline-offset: 2px;
+}
+
+.sig-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.sig-skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--sig-ink);
+  color: var(--sig-paper);
+  padding: 0.5rem 0.75rem;
+  z-index: 10;
+}
+.sig-skip-link:focus {
+  left: 0;
+}
+
+/* --- The four independent epistemic-field chips (SIG-UI-004) --------------- */
+.sig-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: stretch;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.sig-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  border: 1px solid var(--sig-rule);
+  border-left-width: 4px;
+  border-radius: 4px;
+  padding: 0.3rem 0.55rem;
+  min-width: 8.5rem;
+}
+.sig-field__name {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--sig-muted);
+}
+.sig-field__value {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.sig-field[data-field="support"][data-value="CONFIRMED"] { border-left-color: var(--sig-epi-support-confirmed); }
+.sig-field[data-field="support"][data-value="STRONGLY_SUPPORTED"] { border-left-color: var(--sig-epi-support-strong); }
+.sig-field[data-field="support"][data-value="PROBABLE"] { border-left-color: var(--sig-epi-support-probable); }
+.sig-field[data-field="support"][data-value="WEAKLY_SUPPORTED"] { border-left-color: var(--sig-epi-support-weak); }
+.sig-field[data-field="support"][data-value="UNSUPPORTED"] { border-left-color: var(--sig-epi-support-unsupported); }
+
+.sig-field[data-field="agreement"][data-value="UNCONTESTED"] { border-left-color: var(--sig-epi-agreement-uncontested); }
+.sig-field[data-field="agreement"][data-value="MINOR_DISAGREEMENT"] { border-left-color: var(--sig-epi-agreement-minor); }
+.sig-field[data-field="agreement"][data-value="CONTESTED"] { border-left-color: var(--sig-epi-agreement-contested); }
+.sig-field[data-field="agreement"][data-value="IRRECONCILABLE"] { border-left-color: var(--sig-epi-agreement-irreconcilable); }
+
+.sig-field[data-field="currency"][data-value="CURRENT"] { border-left-color: var(--sig-epi-currency-current); }
+.sig-field[data-field="currency"][data-value="AGING"] { border-left-color: var(--sig-epi-currency-aging); }
+.sig-field[data-field="currency"][data-value="STALE"] { border-left-color: var(--sig-epi-currency-stale); }
+.sig-field[data-field="currency"][data-value="HISTORICAL"] { border-left-color: var(--sig-epi-currency-historical); }
+
+.sig-field[data-field="resolution_status"][data-value="RESOLVED"] { border-left-color: var(--sig-epi-status-resolved); }
+.sig-field[data-field="resolution_status"][data-value="UNRESOLVED"] { border-left-color: var(--sig-epi-status-unresolved); }
+.sig-field[data-field="resolution_status"][data-value="SUPERSEDED"] { border-left-color: var(--sig-epi-status-superseded); }
+.sig-field[data-field="resolution_status"][data-value="WITHDRAWN"] { border-left-color: var(--sig-epi-status-withdrawn); }
+
+/* --- The support glyph (SIG-UI-003) ---------------------------------------- */
+.sig-glyph {
+  font-variant-emoji: text;
+  letter-spacing: 0.05em;
+}
+.sig-glyph__mark {
+  white-space: nowrap;
+}
+
+/* --- The contested marker (SIG-UI-008) ------------------------------------- */
+.sig-contested {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-weight: 700;
+  color: var(--sig-epi-agreement-contested);
+}
+.sig-contested__glyph {
+  font-size: 0.95em;
+}
+
+/* --- Absence: exactly ONE texture (SIG-UI-007) ----------------------------- */
+.sig-absence-hatch {
+  --hatch: var(--sig-epi-absence-ink);
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent 0,
+    transparent 5px,
+    color-mix(in srgb, var(--hatch) 45%, transparent) 5px,
+    color-mix(in srgb, var(--hatch) 45%, transparent) 7px
+  );
+  border: 1px dashed var(--sig-epi-absence-ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  color: var(--sig-ink);
+  text-decoration: none;
+}
+.sig-absence-hatch__symbol {
+  font-weight: 700;
+}
+a.sig-absence-hatch:hover,
+a.sig-absence-hatch:focus-visible {
+  background-color: color-mix(in srgb, var(--sig-focus) 12%, transparent);
+}
+
+/* --- Contradiction value range (SIG-UI-009) -------------------------------- */
+.sig-range {
+  border: 1px solid var(--sig-rule);
+  border-radius: 4px;
+  padding: 0.75rem;
+}
+.sig-range__track {
+  position: relative;
+  height: 2px;
+  background: var(--sig-rule);
+  margin: 1.5rem 0.5rem 0.5rem;
+}
+.sig-range__point {
+  position: absolute;
+  top: 50%;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: var(--sig-epi-status-resolved);
+  transform: translate(-50%, -50%);
+}
+.sig-range__claims {
+  margin: 0.5rem 0 0;
+  padding-left: 1.1rem;
+}
+
+table.sig-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+table.sig-table th,
+table.sig-table td {
+  border: 1px solid var(--sig-rule);
+  padding: 0.4rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.sig-cite {
+  margin-top: 3rem;
+  border-top: 2px solid var(--sig-rule);
+  padding-top: 1rem;
+  font-size: 0.85rem;
+}
+.sig-cite__text {
+  background: hsl(0deg 0% 96%);
+  padding: 0.6rem;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}

@@ -1,0 +1,95 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The reference page for the epistemic visual language (§39.1). It exercises every
+// component P15.2–P15.5 consume, over the demo fixture (OKCPD 42-vs-38). This page
+// is the canonical demonstration of SIG-UI-003..009 — later surfaces reference
+// these components; they do not redefine them.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SupportGlyph from "../components/SupportGlyph.astro";
+import EpistemicFields from "../components/EpistemicFields.astro";
+import ContestedMarker from "../components/ContestedMarker.astro";
+import AbsenceHatch from "../components/AbsenceHatch.astro";
+import ContradictionRange from "../components/ContradictionRange.astro";
+import { SUPPORT_LEVELS, ABSENCE_KINDS, ABSENCE_KIND_META, isContested } from "../lib/epistemic";
+import { OKCPD } from "../lib/fixtures";
+
+const fact = OKCPD.facts[0]!;
+const env = fact.envelope;
+const contested = isContested(env.agreement);
+---
+
+<BaseLayout title="The epistemic visual language" path="/visual-language/">
+  <p>
+    The project's defining UI problem is communicating uncertainty without false
+    confidence or paralysing hedging. This page is the reference implementation.
+  </p>
+
+  <section aria-labelledby="glyph-heading">
+    <h2 id="glyph-heading">Support glyph (SIG-UI-003)</h2>
+    <p>A four-step glyph, always with a text equivalent, an evidence count, and a downgrade reason code:</p>
+    <ul>
+      {SUPPORT_LEVELS.map((s) => (
+        <li><SupportGlyph support={s} evidenceCount={s === "CONFIRMED" ? 2 : 1} /></li>
+      ))}
+    </ul>
+  </section>
+
+  <section aria-labelledby="fields-heading">
+    <h2 id="fields-heading">Four independent fields (SIG-UI-004)</h2>
+    <p>
+      Never a single fused badge — "{env.support.toLowerCase().replace(/_/g, " ")} but
+      {" "}{env.agreement.toLowerCase()}" must be expressible at a glance:
+    </p>
+    <EpistemicFields
+      resolution_status={env.resolution_status}
+      support={env.support}
+      agreement={env.agreement}
+      currency={env.currency}
+    />
+    <p>Its support, as the glyph carries it (evidence count from the resolved fact):</p>
+    <SupportGlyph support={env.support} evidenceCount={fact.evidence_count} />
+  </section>
+
+  <section aria-labelledby="contested-heading">
+    <h2 id="contested-heading">Contested marker (SIG-UI-008)</h2>
+    <p>
+      The device count is <strong>{String(env.value)}</strong>
+      {contested && <> <ContestedMarker /></>}. The marker is persistent — it appears
+      here, in the table below, and on the map popup and graph list.
+    </p>
+  </section>
+
+  <section aria-labelledby="contradiction-heading">
+    <h2 id="contradiction-heading">Contradiction as a value range (SIG-UI-009)</h2>
+    <ContradictionRange claims={fact.competing ?? []} unit="devices" />
+  </section>
+
+  <section aria-labelledby="absence-heading">
+    <h2 id="absence-heading">Absence: one texture, four kinds (SIG-UI-007)</h2>
+    <p>Exactly one hatch texture; the four kinds are distinguished within it, and each is clickable → a research task:</p>
+    <table class="sig-table">
+      <thead>
+        <tr><th scope="col">Absence kind</th><th scope="col">Meaning</th><th scope="col">Gap (clickable)</th></tr>
+      </thead>
+      <tbody>
+        {ABSENCE_KINDS.map((k) => (
+          <tr>
+            <td>{ABSENCE_KIND_META[k].label}</td>
+            <td>{ABSENCE_KIND_META[k].meaning}</td>
+            <td>
+              <AbsenceHatch
+                kind={k}
+                subject_id="agency:okcpd"
+                predicate_id={`demo_${k.toLowerCase()}`}
+                predicate_label={ABSENCE_KIND_META[k].label}
+              />
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </section>
+</BaseLayout>

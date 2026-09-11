@@ -1,0 +1,103 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The reference map and its TABULAR EQUIVALENT (SIG-UI-037). Every map must have a
+// tabular equivalent — an accessibility AND an archival requirement. The map here
+// is a static, zero-JS SVG (no third-party tile CDN dependency, SIG-UI-038); the
+// table below carries the identical information and is the no-JS/screen-reader path.
+// The map "popup" for the contested site carries the persistent contested marker
+// (SIG-UI-008), and a site with an unknown location shows the single absence hatch.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ContestedMarker from "../components/ContestedMarker.astro";
+import AbsenceHatch from "../components/AbsenceHatch.astro";
+import { REFERENCE_MAP_SITES, OKCPD } from "../lib/fixtures";
+
+const plotted = REFERENCE_MAP_SITES.filter((s) => s.lat !== null && s.lon !== null);
+const lats = plotted.map((s) => s.lat as number);
+const lons = plotted.map((s) => s.lon as number);
+const minLat = Math.min(...lats), maxLat = Math.max(...lats);
+const minLon = Math.min(...lons), maxLon = Math.max(...lons);
+const span = (v: number, lo: number, hi: number) => (hi === lo ? 0.5 : (v - lo) / (hi - lo));
+const deviceFact = OKCPD.facts[0]!;
+---
+
+<BaseLayout title="Reference map" path="/reference-map/">
+  <p>
+    A reference infrastructure map. It renders as a static image with no client
+    JavaScript and no third-party tile dependency. <strong>Everything the map shows
+    is also in the table below</strong> — the table is the equivalent, not a fallback.
+  </p>
+
+  <figure aria-labelledby="map-caption">
+    <svg
+      role="img"
+      aria-label="Static map of three reference sites in Oklahoma City; full detail in the table below."
+      viewBox="0 0 400 240"
+      width="400"
+      height="240"
+      style="border:1px solid var(--sig-rule); background: hsl(0deg 0% 97%);"
+    >
+      {plotted.map((s) => (
+        <circle
+          cx={20 + span(s.lon as number, minLon, maxLon) * 360}
+          cy={220 - span(s.lat as number, minLat, maxLat) * 200}
+          r="6"
+          fill="var(--sig-epi-status-resolved)"
+        >
+          <title>{s.label}</title>
+        </circle>
+      ))}
+    </svg>
+    <figcaption id="map-caption">
+      Reference sites. Coordinates are reduced to each site's sensitivity tier
+      (§19.4); a site whose location SIG has not confirmed appears as a gap, below.
+    </figcaption>
+  </figure>
+
+  <aside class="sig-popup" data-testid="map-popup" aria-label="Map popup: downtown corridor site">
+    <h2>Popup: fixed ALPR — downtown corridor</h2>
+    <p>
+      Operated by {OKCPD.label}. Active device count:
+      <strong>{String(deviceFact.envelope.value)}</strong> <ContestedMarker compact={true} />
+    </p>
+  </aside>
+
+  <h2 id="table-heading">Tabular equivalent</h2>
+  <table class="sig-table" aria-labelledby="table-heading">
+    <thead>
+      <tr>
+        <th scope="col">Site</th>
+        <th scope="col">Jurisdiction</th>
+        <th scope="col">Latitude</th>
+        <th scope="col">Longitude</th>
+        <th scope="col">Published precision</th>
+      </tr>
+    </thead>
+    <tbody>
+      {REFERENCE_MAP_SITES.map((s) => (
+        <tr data-testid="map-row">
+          <th scope="row">{s.label}</th>
+          <td>{s.jurisdiction}</td>
+          {s.locationAbsence ? (
+            <td colspan="3">
+              <AbsenceHatch
+                kind={s.locationAbsence}
+                subject_id={s.id}
+                predicate_id="location"
+                predicate_label="Location"
+              />
+            </td>
+          ) : (
+            <>
+              <td>{s.lat}</td>
+              <td>{s.lon}</td>
+              <td>{s.precision}</td>
+            </>
+          )}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</BaseLayout>

@@ -1,0 +1,57 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The web shell's base layout (SIG-UI-036/037). It ships NO client JavaScript:
+// there is no `client:*` directive anywhere in the shell, so the built HTML is
+// archivable by default. Every page rendered through this layout carries the
+// citation affordance (SIG-UI-035), a skip link, a document language, and the
+// shared design system — the a11y + no-JS baseline P15.2–P15.5 all inherit.
+import Citation from "../components/Citation.astro";
+import "../styles/epistemic.css";
+import { AS_OF, RULESET_VERSION } from "../lib/fixtures";
+import type { AsOfEcho } from "../lib/fixtures";
+
+interface Props {
+  title: string;
+  /** The canonical path for the belief-pinned permalink (SIG-UI-035). */
+  path: string;
+  asOf?: AsOfEcho;
+  rulesetVersion?: string;
+}
+
+const { title, path } = Astro.props;
+const asOf = Astro.props.asOf ?? AS_OF;
+const rulesetVersion = Astro.props.rulesetVersion ?? RULESET_VERSION;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} · SIG</title>
+    <meta
+      name="description"
+      content="Surveillance Infrastructure Graph — an open, temporally versioned, claim-level-provenance record."
+    />
+    <link rel="canonical" href={new URL(path, Astro.site ?? "https://sig.example").href} />
+  </head>
+  <body>
+    <a class="sig-skip-link" href="#main">Skip to main content</a>
+    <header class="sig-header">
+      <nav aria-label="Primary">
+        <a href="/">SIG</a>
+        <a href="/visual-language/">Visual language</a>
+        <a href="/reference-map/">Reference map</a>
+        <a href="/reference-graph/">Reference graph</a>
+      </nav>
+    </header>
+    <main id="main">
+      <h1>{title}</h1>
+      <slot />
+      <Citation path={path} title={title} asOf={asOf} rulesetVersion={rulesetVersion} />
+    </main>
+  </body>
+</html>

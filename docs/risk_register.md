@@ -847,3 +847,35 @@ controls fail the *build* closed rather than catching a violation after publicat
 | RISK-P14-16 | The Zenodo deposit runs against a deterministic `FakeZenodoTransport`, not the live Zenodo HTTP API | No network in CI; the real client lands with orchestration/publication, like every external transport | The deposit *policy* — concept + version DOI, evidence bytes excluded, digest manifest deposited — is behind the `ZenodoTransport` seam and fully tested; the production client must satisfy the same contract (`tests/exports/test_zenodo.py`). |
 | RISK-P14-17 | The PMTiles tileset is metadata-only (no rendered vector tiles) | Tile rendering is a tippecanoe-class build step owned by the Phase-15 map surface; the archive is a valid v3 container | The route/privacy class's data need is served by the real, complete GeoJSON of the ODbL layer; the PMTiles archive is spec-valid and its tile bodies fill when the tiler lands (ADR-048). |
 | RISK-P14-18 | Export inputs (`ExportTable`s) are supplied by the caller/CLI, not yet projected from a live `ReadStore` | The production read/query layer is not DB-wired (RISK-P14-07); the export reuses the same `policy.licensing` / `resolution.crosswalk` code path the API uses | Reproducibility is a pure function of the `BuildSpec`; the projection wires to the same `ReadStore` seam when it is DB-backed (SIG-EXPORT-003), re-verified per ADR-048's revisit trigger. |
+
+## Phase 15 — Public web surfaces (P15.1 — the web shell + the epistemic visual language)
+
+Per §53 / SIG-ENG-031, P15.1's risk-register entries. P15.1 owns the epistemic visual language and
+the a11y / no-JS / archivability baseline that P15.2–P15.5 all consume, so its risks are
+**misrepresentation** risks — a page that looks confident about a contested or absent fact, or that
+silently stops being archivable — plus the two CI gates (licence, performance) the spec mandates be
+enforced by machine, not memory. See ADR-049 for the decisions and the one recorded deviation.
+
+### Design / disclosure risks retired by executable checks
+
+| id | Risk | Compensating control |
+|---|---|---|
+| RISK-P15-01 | **A fused badge collapses the four epistemic fields** — "strongly supported but contested" or "confirmed but historical" becomes unexpressible and a reader mistakes one axis for another (SIG-UI-004). | The four §10.7 fields render as four independent chips; `EpistemicFields.astro` emits `data-fused="false"` and no fused token exists. Proven by `web/tests/e2e/shell.spec.ts` "renders four separate field chips and never a fused badge" and `web/tests/unit/epistemic.test.ts` "four independent fields". |
+| RISK-P15-02 | **Green is used for epistemic state** — saturated green reads as SIG *endorsing* a fact, which it never does (SIG-UI-006). | Every `--sig-epi-*` token is an `hsl()` whose hue is outside the green band [75°,165°], enforced by a stylesheet-parsing unit test and re-checked on the *rendered* hues in the browser. Proven by `web/tests/unit/design-tokens.test.ts` and `web/tests/e2e/shell.spec.ts` "no green for epistemic state, rendered". |
+| RISK-P15-03 | **A contested value appears unmarked** — a reader who never opens the detail treats a disputed number as settled (SIG-UI-008). | `ContestedMarker` renders at every appearance — detail, map popup, table cell, graph list, and the SVG edge. Proven by `web/tests/e2e/shell.spec.ts` "contested marker is persistent across render paths". |
+| RISK-P15-04 | **A gap reads as "nothing here"** — a hatched cell looks like proof of absence instead of an invitation (SIG-UI-007, §9.5). | Absence is one hatch texture with four distinguishable kinds, each a clickable GET link that generates a `GENERATED` research task on a pre-generated no-JS page. Proven by `web/tests/e2e/shell.spec.ts` "absence hatch → research task, end to end" and `web/tests/e2e/content.nojs.spec.ts`. |
+| RISK-P15-05 | **A citation stops being reproducible after a correction** — the permalink silently resolves to the new value (SIG-UI-035, SIG-TIME-008). | Every page's permalink pins both as-of axes + the ruleset version; belief-time filtering (`resolveAsOfBelief`) makes a later-asserted correction invisible to the pinned belief. Proven by `web/tests/unit/citation.test.ts` "reproducible after a correction" and the every-page e2e citation check. |
+| RISK-P15-06 | **Archivability erodes silently** — client JavaScript creeps in and the page stops rendering in a web archive years later (SIG-UI-036/037). | Astro `output: "static"` with no `client:*` directive ships zero client JS; the no-JS Playwright project renders every core surface with JavaScript disabled, and the Lighthouse `script:size` budget is 0 bytes. |
+
+### Deviations recorded as ADRs (SIG-ENG-031)
+
+| ADR | Deviation |
+|---|---|
+| ADR-049 | The dependency-licence gate is "OSI-approved **or** a short, explicitly-enumerated waiver" rather than literal OSI-only (SIG-UI-039): the Astro toolchain tree resolves two dependencies to `CC0-1.0` and `BlueOak-1.0.0` — permissive/public-domain, and none of the excluded categories (CC-BY-NC / source-available / BUSL). They sit in a separate `WAIVED` set (never mislabelled as OSI); any *other* non-OSI licence still fails the build. The self-hosted-tiles map renderer (SIG-UI-038) and Postgres FTS search (SIG-UI-040) are not implemented here (P15.3 / on demonstrated need); the reference map is a static, tile-CDN-free SVG + table. |
+
+### Scaffolded / bounded requirements (SIG-ENG-005)
+
+| id | Requirement | Why not fully closed now | Compensating control |
+|---|---|---|---|
+| RISK-P15-07 | The shell renders from committed TS fixtures, not the live `/v1` read API | Static-first means no build-time API dependency (SIG-UI-036), and the read API has no DB-wired store yet (RISK-P14-07/17) | `web/src/lib/fixtures.ts`'s `ResolutionEnvelope` is a faithful *subset* of `api/src/api/models.py`; wiring to the live API is a data-source swap, not a component change (ADR-049 revisit trigger). |
+| RISK-P15-08 | Only reference/demo pages exist (visual-language, reference map/graph, task intake) — not the dossier, map, network, watch, or corrections surfaces | Those surfaces are P15.2–P15.5; P15.1 owns only the shared visual language + baseline | The components are the canonical, tested surface later tickets import; a change to the visual language is a new ADR, not an ad-hoc edit (§0.7, ADR-049). |

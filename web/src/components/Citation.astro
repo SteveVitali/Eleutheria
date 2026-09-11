@@ -1,0 +1,49 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The belief-pinned permalink + "cite this page" affordance every page carries
+// (SIG-UI-035, SIG-TIME-008). The permalink pins BOTH as-of axes and the ruleset
+// version, so a citation captured today re-resolves to the same belief after a
+// later correction. Rendered as plain text + a copyable block — no JavaScript.
+import { beliefPinnedPermalink, citationText } from "../lib/citation";
+import { AS_OF, RULESET_VERSION } from "../lib/fixtures";
+import type { AsOfEcho } from "../lib/fixtures";
+
+interface Props {
+  path: string;
+  title: string;
+  asOf?: AsOfEcho;
+  rulesetVersion?: string;
+}
+
+const { path, title } = Astro.props;
+const asOf = Astro.props.asOf ?? AS_OF;
+const rulesetVersion = Astro.props.rulesetVersion ?? RULESET_VERSION;
+// The canonical (archival) origin comes from Astro's `site` config, so a real
+// deployment sets it once rather than the permalink hard-coding a host.
+const input = { path, title, asOf, rulesetVersion, ...(Astro.site ? { origin: Astro.site.origin } : {}) };
+const permalink = beliefPinnedPermalink(input);
+const cite = citationText(input);
+---
+
+<section class="sig-cite" data-testid="citation" aria-labelledby="cite-heading">
+  <h2 id="cite-heading">Cite this page</h2>
+  <p>
+    Belief-pinned permalink (reproducible after SIG corrects itself):
+    <a
+      class="sig-cite__permalink"
+      data-testid="permalink"
+      rel="bookmark"
+      href={permalink}
+      >{permalink}</a
+    >
+  </p>
+  <p>
+    As of world <time datetime={asOf.as_of_world}>{asOf.as_of_world}</time>,
+    belief <time datetime={asOf.as_of_belief}>{asOf.as_of_belief}</time>;
+    ruleset <code>{rulesetVersion}</code>.
+  </p>
+  <p class="sig-cite__text" data-testid="citation-text">{cite}</p>
+</section>
