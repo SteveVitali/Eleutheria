@@ -1,0 +1,36 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The dispute/correction submission affordance (SIG-UI-033, §45.1). Rendered by the
+// base layout on EVERY page, so the public intake channel is one click from any claim.
+// A plain anchor (a no-JS GET) to the static intake page; when given a subject it
+// deep-links "what this is about". Submitting requires no identity except a legal
+// demand needing standing (SIG-GOV-002).
+import { disputeHref } from "../lib/corrections";
+
+interface Props {
+  subject_id?: string;
+  predicate_id?: string;
+  as_of_belief?: string;
+  /** A compact inline variant for placing next to an individual claim. */
+  compact?: boolean;
+}
+
+const { subject_id, predicate_id, as_of_belief, compact } = Astro.props;
+const href = disputeHref(
+  subject_id || predicate_id || as_of_belief
+    ? { ...(subject_id ? { subject_id } : {}), ...(predicate_id ? { predicate_id } : {}), ...(as_of_belief ? { as_of_belief } : {}) }
+    : undefined,
+);
+---
+
+{compact ? (
+  <a class="sig-dispute sig-dispute--compact" data-testid="dispute-link" href={href}>Dispute or correct this</a>
+) : (
+  <p class="sig-dispute" data-testid="dispute-link-block">
+    Something wrong, or a privacy or safety concern?
+    <a data-testid="dispute-link" href={href}>Dispute or correct this record</a> — one click, no account required.
+  </p>
+)}

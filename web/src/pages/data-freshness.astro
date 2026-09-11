@@ -1,0 +1,51 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The public data-freshness page (§32.4, SIG-UI-034, SIG-METRIC-007). Static, zero-JS.
+// Per source: last successful run, last content change, current status, and the count
+// of entities whose evidence is stale FOR THEIR PREDICATE CLASS — freshness is measured
+// relative to predicate volatility, not absolute days (SIG-METRIC-006). A freshness
+// dashboard is itself a trust affordance.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { assertFreshnessRow } from "../lib/metrics";
+import { FRESHNESS_ROWS } from "../lib/corrections-methodology-fixture";
+
+// Enforce the per-source row contract at build (SIG-METRIC-007).
+for (const row of FRESHNESS_ROWS) assertFreshnessRow(row);
+---
+
+<BaseLayout title="Data freshness" path="/data-freshness/">
+  <p>
+    How current is each source? Freshness is measured <strong>relative to predicate
+    volatility</strong>, not in absolute days — a two-year-old contract date is fresh; a
+    two-year-old active count is historical (§32.4).
+  </p>
+
+  <table class="sig-freshness" data-testid="freshness-table">
+    <caption class="sig-visually-hidden">Per-source data freshness</caption>
+    <thead>
+      <tr>
+        <th scope="col">Source</th>
+        <th scope="col">Last successful run</th>
+        <th scope="col">Last content change</th>
+        <th scope="col">Status</th>
+        <th scope="col">Stale entities (for their predicate class)</th>
+        <th scope="col">Volatility class</th>
+      </tr>
+    </thead>
+    <tbody>
+      {FRESHNESS_ROWS.map((row) => (
+        <tr data-testid="freshness-row" data-source={row.source} data-status={row.status}>
+          <th scope="row">{row.source}</th>
+          <td><time datetime={row.last_successful_run}>{row.last_successful_run}</time></td>
+          <td><time datetime={row.last_content_change}>{row.last_content_change}</time></td>
+          <td data-testid="freshness-status">{row.status}</td>
+          <td data-testid="stale-count">{row.stale_entity_count}</td>
+          <td>{row.volatility_class}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</BaseLayout>

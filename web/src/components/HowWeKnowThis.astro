@@ -1,0 +1,63 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The "How we know this" module every page carries (SIG-UI-044). It renders the SIX
+// required components — artifact counts, tier distribution, source-independence count,
+// date range, rules applied, and human-review status — from a provenance summary,
+// refusing to render if any component is missing (assertProvenanceComplete). Also the
+// home of the public methodology / data-freshness / coverage-metrics links (SIG-UI-034),
+// so those pages are reachable — and linked from every dossier — on every page.
+import { assertProvenanceComplete, DEFAULT_PROVENANCE, REVIEW_STATUS_LABELS } from "../lib/provenance";
+import type { ProvenanceSummary } from "../lib/provenance";
+
+interface Props {
+  provenance?: ProvenanceSummary;
+}
+
+const provenance = Astro.props.provenance ?? DEFAULT_PROVENANCE;
+// Enforce the six-component contract at build time (SIG-UI-044): a module missing a
+// component fails the build rather than shipping.
+assertProvenanceComplete(provenance);
+
+const tiers = Object.entries(provenance.tier_distribution).sort(([a], [b]) => a.localeCompare(b));
+const range = provenance.date_range;
+---
+
+<section class="sig-hwkt" data-testid="how-we-know-this" aria-labelledby="hwkt-heading">
+  <h2 id="hwkt-heading">How we know this</h2>
+  <dl class="sig-hwkt__grid">
+    <div data-testid="hwkt-artifact_count" data-component="artifact_count">
+      <dt>Artifacts</dt>
+      <dd>{provenance.artifact_count}</dd>
+    </div>
+    <div data-testid="hwkt-tier_distribution" data-component="tier_distribution">
+      <dt>Tier distribution</dt>
+      <dd>{tiers.map(([tier, n], i) => (<>{i > 0 ? ", " : ""}<span data-tier={tier}>{n}×{tier}</span></>))}</dd>
+    </div>
+    <div data-testid="hwkt-source_independence_count" data-component="source_independence_count">
+      <dt>Independent sources</dt>
+      <dd>{provenance.source_independence_count}</dd>
+    </div>
+    <div data-testid="hwkt-date_range" data-component="date_range">
+      <dt>Date range</dt>
+      <dd>{range ? `${range.earliest} – ${range.latest}` : "no dated evidence"}</dd>
+    </div>
+    <div data-testid="hwkt-rules_applied" data-component="rules_applied">
+      <dt>Rules applied</dt>
+      <dd>{provenance.rules_applied.join(", ")}</dd>
+    </div>
+    <div data-testid="hwkt-human_review_status" data-component="human_review_status">
+      <dt>Human review</dt>
+      <dd data-review-status={provenance.human_review_status}>{REVIEW_STATUS_LABELS[provenance.human_review_status]}</dd>
+    </div>
+  </dl>
+  <p class="sig-hwkt__links">
+    <a href="/methodology/" data-testid="methodology-link">Methodology</a>
+    {" · "}
+    <a href="/data-freshness/" data-testid="data-freshness-link">Data freshness</a>
+    {" · "}
+    <a href="/coverage-metrics/" data-testid="coverage-metrics-link">Coverage metrics</a>
+  </p>
+</section>

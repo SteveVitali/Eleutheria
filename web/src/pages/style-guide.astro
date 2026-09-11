@@ -1,0 +1,58 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The public editorial style guide (§41, SIG-UI-046). Static, zero-JS. It codifies the
+// six register rules (SIG-UI-043), each with a conformant and a non-conformant example,
+// and states that the rules bind GENERATED rationale text exactly as they bind
+// hand-written copy — generated text is published text. The generated rationale
+// templates SIG ships are gated against the register rules at build time here.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { REGISTER_RULES, assertRegisterConformant, checkRegisterConformance } from "../lib/editorial";
+import { GENERATED_RATIONALE_TEMPLATES } from "../lib/corrections-methodology-fixture";
+
+// SIG-UI-046: apply the register rules to generated rationale templates too. A template
+// that violates a register rule fails the build rather than shipping as published text.
+for (const t of GENERATED_RATIONALE_TEMPLATES) assertRegisterConformant(t, "generated rationale template");
+const rationaleChecks = GENERATED_RATIONALE_TEMPLATES.map((t) => ({
+  text: t,
+  conformant: checkRegisterConformance(t).length === 0,
+}));
+---
+
+<BaseLayout title="Editorial style guide" path="/style-guide/">
+  <p>
+    SIG's register is what makes the work usable as evidence: a police chief or vendor
+    counsel reading their own dossier should find it accurate, neutral, and hard to
+    attack. These six rules govern every published sentence — including
+    <strong>generated</strong> rationale text, which is published text and is held to
+    exactly the same standard (SIG-UI-046).
+  </p>
+
+  <h2 id="rules-heading">The six register rules</h2>
+  <ol class="sig-register-rules" aria-labelledby="rules-heading">
+    {REGISTER_RULES.map((r) => (
+      <li class="sig-register-rule" data-testid="register-rule" data-rule={r.n}>
+        <h3>{r.n}. {r.rule}</h3>
+        <p>{r.detail}</p>
+        <p class="sig-register-rule__good" data-testid="rule-conformant">Do: “{r.conformant}”</p>
+        <p class="sig-register-rule__bad" data-testid="rule-nonconformant">Not: “{r.nonConformant}”</p>
+      </li>
+    ))}
+  </ol>
+
+  <h2 id="generated-heading">Generated text is published text</h2>
+  <p>
+    Rationale strings the resolver generates are bound by these rules too. The templates
+    SIG ships are checked against the register rules automatically; a violation fails the
+    build.
+  </p>
+  <ul class="sig-generated-rationale" data-testid="generated-rationale-checks" aria-labelledby="generated-heading">
+    {rationaleChecks.map((c) => (
+      <li data-testid="generated-rationale" data-conformant={c.conformant ? "true" : "false"}>
+        “{c.text}”
+      </li>
+    ))}
+  </ul>
+</BaseLayout>

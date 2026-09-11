@@ -1,0 +1,106 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The public corrections log (§39.8, SIG-UI-032) — the required EIGHTH surface the
+// outline omits. Static, zero-JS: every correction lists what changed, when, why, and
+// who reported it, with the outcome (correct / annotate / suppress / delete / refuse,
+// SIG-GOV-004) and a belief-pinned permalink to the value AS IT STOOD, so a citation
+// made before the correction stays reproducible (SIG-GOV-005). Ends with the
+// transparency report — counts by category and outcome, including refusals (SIG-GOV-011).
+import BaseLayout from "../layouts/BaseLayout.astro";
+import DisputeLink from "../components/DisputeLink.astro";
+import {
+  CORRECTION_OUTCOME_META,
+  orderedCorrections,
+  priorValuePermalink,
+  transparencyReport,
+} from "../lib/corrections";
+import { RULESET_VERSION } from "../lib/fixtures";
+import { CORRECTIONS, CORRECTIONS_PROVENANCE } from "../lib/corrections-methodology-fixture";
+
+const origin = Astro.site?.origin;
+const entries = orderedCorrections(CORRECTIONS);
+const report = transparencyReport(CORRECTIONS);
+---
+
+<BaseLayout title="Corrections log" path="/corrections/" provenance={CORRECTIONS_PROVENANCE}>
+  <p>
+    Every correction SIG makes is public. A correction is a <strong>new assertion</strong>,
+    never a deletion: the earlier value is preserved, so a citation captured before a
+    correction re-resolves to what it said then (SIG-GOV-005). Each entry states
+    <strong>what changed, when, why, and who reported it</strong>.
+  </p>
+
+  <DisputeLink />
+
+  <h2 id="log-heading">Corrections</h2>
+  <ol class="sig-corrections" aria-labelledby="log-heading">
+    {entries.map((e) => (
+      <li
+        class="sig-correction"
+        data-testid="correction"
+        data-correction-id={e.id}
+        data-category={e.category}
+        data-outcome={e.outcome}
+      >
+        <h3>{e.subject_label}</h3>
+        <dl class="sig-correction__fields">
+          <div>
+            <dt>What changed</dt>
+            <dd data-testid="what-changed">{e.what_changed}</dd>
+          </div>
+          <div>
+            <dt>When</dt>
+            <dd data-testid="when"><time datetime={e.corrected_at}>{e.corrected_at}</time></dd>
+          </div>
+          <div>
+            <dt>Why</dt>
+            <dd data-testid="why">{e.reason}</dd>
+          </div>
+          <div>
+            <dt>Reported by</dt>
+            <dd data-testid="reported-by">{e.reported_by}</dd>
+          </div>
+          <div>
+            <dt>Outcome</dt>
+            <dd data-testid="outcome"><code>{e.outcome}</code> — {CORRECTION_OUTCOME_META[e.outcome]}</dd>
+          </div>
+          <div>
+            <dt>Value</dt>
+            <dd data-testid="value-change">{e.previous_value} → {e.corrected_value}</dd>
+          </div>
+        </dl>
+        <p class="sig-correction__prior">
+          The value as it stood is still citable:
+          <a data-testid="prior-permalink" href={priorValuePermalink(e, RULESET_VERSION, origin)}>
+            belief-pinned permalink ({e.previous_belief_date})
+          </a>.
+        </p>
+      </li>
+    ))}
+  </ol>
+
+  <!-- Transparency reporting (SIG-GOV-011): counts by category and outcome, incl. refusals. -->
+  <h2 id="transparency-heading">Transparency report</h2>
+  <p data-testid="transparency-total">Total requests recorded: <strong>{report.total}</strong>.</p>
+  <div class="sig-transparency">
+    <div>
+      <h3>By category</h3>
+      <ul data-testid="transparency-by-category">
+        {Object.entries(report.by_category).map(([cat, n]) => (
+          <li data-category={cat}>{cat}: {n}</li>
+        ))}
+      </ul>
+    </div>
+    <div>
+      <h3>By outcome</h3>
+      <ul data-testid="transparency-by-outcome">
+        {Object.entries(report.by_outcome).map(([outcome, n]) => (
+          <li data-outcome={outcome} data-testid={`outcome-count-${outcome}`}>{outcome}: {n}</li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,44 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The public coverage-metrics page (§32.5, SIG-UI-034). Static, zero-JS. It publishes
+// counted quantities with NAMED denominators, records-derived bounds, per-agency
+// reconciliation ratios, and measured survey recall — and NEVER a total (SIG-METRIC-009).
+// It publishes no completeness percentage implying a known denominator of reality
+// (SIG-METRIC-010) and no capture–recapture estimate (SIG-METRIC-008). Those
+// prohibitions are enforced structurally by assertCoverageMetrics at build.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { assertCoverageMetrics } from "../lib/metrics";
+import { COVERAGE_METRICS } from "../lib/corrections-methodology-fixture";
+
+// A build-time gate: any metric without a named denominator, or claiming a population
+// total, fails the build (SIG-METRIC-009/010).
+assertCoverageMetrics(COVERAGE_METRICS);
+---
+
+<BaseLayout title="Coverage metrics" path="/coverage-metrics/">
+  <p>
+    SIG publishes what it can honestly measure: <strong>counted quantities with named
+    denominators</strong>, records-derived bounds, per-agency reconciliation ratios, and
+    measured survey recall. It <strong>never publishes a total</strong>, and it never
+    implies it knows the denominator of reality.
+  </p>
+  <p class="sig-coverage-prohibition" data-testid="no-total-note">
+    In particular, SIG does not publish a capture–recapture population estimate from
+    volunteer mapping and vendor portal reporting (SIG-METRIC-008). The defensible claim
+    is coverage of <em>known</em> entities plus an explicit statement that the true
+    population is unknown.
+  </p>
+
+  <ul class="sig-coverage" data-testid="coverage-list">
+    {COVERAGE_METRICS.map((m) => (
+      <li class="sig-coverage-metric" data-testid="coverage-metric" data-kind={m.kind} data-metric-id={m.id}>
+        <h2>{m.label}</h2>
+        <p class="sig-coverage-metric__value" data-testid="coverage-value"><strong>{m.value}</strong> <span data-testid="coverage-denominator">{m.denominator}</span></p>
+        <p class="sig-coverage-metric__note" data-testid="population-note">{m.population_note}</p>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>
