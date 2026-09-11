@@ -1029,3 +1029,33 @@ device), never to maximise write volume (SIG-CONTRIB-017a).
 | RISK-P16-14 | The contribution system is modelled in memory; there is **no live MapRoulette client** and **no live OSM changeset feed** populating `LeverageLedger` | Consistent with the established `tasks`/`policy.governance` pattern — the engine owns the rules; a live client is downstream | The MapRoulette object-model crosswalk is documented and tested (`MAPROULETTE_FIELD_CROSSWALK`); the suggestion/apply/metric shapes mirror the challenge model. Wiring a live client + changeset feed is additive (ADR-055 revisit trigger). |
 | RISK-P16-15 | The §7 leverage metric's **published surface** (§39.8 public metrics page) reads the live count | P15.5's metrics page renders from committed fixtures (RISK-P15-31); the live tasks/metrics read paths have no DB-wired store yet | `LeverageLedger` computes the metric deterministically from hashtag-bearing changesets; wiring it into the published page is a source swap, not a component change (ADR-053/ADR-055 revisit triggers). |
 | RISK-P16-16 | SIG-LIC-009 counsel review: whether device-linked API responses / OSM-sourced geometry constitute ODbL derivative-database distribution | Legal determination needs counsel (carried from §42.3a) | Recorded here and in ADR-055; the ODbL asset layer stays in its own compartment (ADR-011) and the contributed subset is CC0 (SIG-LIC-007a); flagged for counsel before launch. |
+
+## Phase 17 — Broader surveillance technologies (P17.1 — private-camera federation + RTCC integration)
+
+Per §53 / SIG-ENG-031, P17.1's risk-register entries. P17.1 is the standing proof
+of §5.2: it *populates* the Stage-5 span (private-camera federation, RTCC
+integration hubs, the six-layer commercial data-broker chain) over the frozen
+schema and proves it with the generalization conformance suite. No LinkML source,
+generated artifact, or wire contract changed — so **no ADR is required** (an ADR
+records a *deviation*, and there is none). The one design risk is that a future
+Stage-5 construct silently forces a schema change; the compensating control makes
+that impossible to do silently.
+
+### The Phase-1-defect record path (SIG-CHART-027/028, AC1)
+
+| id | Risk (what breaks the acceptance gate if unhandled) | Compensating control |
+|---|---|---|
+| RISK-P17-01 | **A Stage-5 construct is populated by silently widening the schema** — a hand-edit to the LinkML source or generated artifacts to make a technology "fit", which would falsify the §5.2 generalization guarantee (SIG-CHART-027) and cross into P01.1's ownership. | The population is a **test-only** instance graph over the *committed* Pydantic model and vocabulary; `verify-gen` in `make check` fails if any generated artifact drifts from the source, and `test_stage5_federation.py::test_stage5_population_required_no_schema_change` fails if any edge type, role, entity class, or §13.1 slug the pathways need is not already present. A required change therefore surfaces as a **red conformance test** — the recorded Phase-1 defect — and is filed against the ontology (P01.1), never patched in this ticket. No such defect was found: all three pathways populate with the frozen schema. |
+
+### Deferred / out of scope here (SIG-ENG-005)
+
+| id | Requirement | Why not addressed here | Compensating control |
+|---|---|---|---|
+| RISK-P17-02 | The remaining Phase-17 priority technologies — facial recognition, cell-site simulators, mobile-device forensics, and federal authorization datasets (**P17.2**); gunshot detection, drones, and commercial location-data ingestion (**P17.3**) | Explicitly out of scope for P17.1 (the phase is populated technology-by-technology, OL-17.5-01) | Each has its own ticket; the schema-absorption guarantee proven here (SIG-CHART-027) is the invariant those tickets extend. The §22.7 EFF Data Library roster is the registered Phase-17 ingestion backlog (SIG-INGEST-041). |
+| RISK-P17-03 | The populated pathways are **instance graphs in the conformance suite**, not rows persisted to the claim spine | P17.1 is the §5.2 expressibility proof, not an ingestion connector; live population arrives with the Stage-5 connectors (P17.2/P17.3) over the same frozen schema | The instance shapes mirror the generated model exactly (they *are* the generated Pydantic classes); persisting them is additive and needs no schema change, which is precisely what this ticket proves. |
+
+### Modelling observations (not a schema change here)
+
+| id | Observation | Why it is not acted on here | Note for the ontology owner (P01.1) |
+|---|---|---|---|
+| RISK-P17-04 | `RoleAssignment` inherits the required `edge_type` from `Edge`, but the closed §12 catalog has no role-specific member — the role semantics live entirely in `role`/`party`/`over` (§12.4). Populating owner ≠ operator therefore carries a structurally-valid-but-semantically-orthogonal `edge_type`. | The separation **is** representable (SIG-ONTO-048 is satisfied — the tests assert on `role`/`party`/`over`, never on the inherited `edge_type`), so no schema change is required and none is made here (P01.1 owns the LinkML source). | A future refinement could drop `edge_type` from `RoleAssignment` or add a dedicated `holds_role` catalog member; recorded as an observation, not a Phase-1 defect, because expressibility is intact. |
