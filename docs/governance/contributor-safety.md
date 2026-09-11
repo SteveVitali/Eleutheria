@@ -2,7 +2,10 @@
 
 *Adopts docs/2_canonical_design_spec.md §34.3 (SIG-CONTRIB-005…008). This is the
 safety **policy**; the contributor *system* — tiers, onboarding, revert mechanics,
-anti-poisoning — is built later (P16.1, §34.1/34.2/34.4).*
+anti-poisoning — is implemented by P16.1 (§34.1/34.2/34.4) in the `tasks` package
+(`tasks.contributor`, `tasks.submission`, `tasks.onboarding`, `tasks.revert`,
+`tasks.poisoning`). The onboarding usability study required by §34.2 is published
+at [contributor-onboarding-usability-study.md](contributor-onboarding-usability-study.md).*
 
 People who contribute observations to SIG take on real risk. The infrastructure
 this project documents is deployed by agencies and vendors that have already

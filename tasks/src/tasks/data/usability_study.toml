@@ -1,0 +1,63 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# The as-run moderated onboarding usability study (§34.2, SIG-CONTRIB-003).
+# Data, not code: the harness in tasks/onboarding.py reads this and re-checks the
+# ≤10-minute median over the ontology-naïve cohort. The prose protocol and the
+# narrative results live in docs/governance/contributor-onboarding-usability-study.md.
+#
+# Re-run on any change to the contribution flow: replace the participant rows
+# with the new session's measurements and the gate re-evaluates.
+
+[study]
+title = "SIG contributor onboarding — moderated usability study, round 1"
+moderated = true
+published_at = "2026-09-08"
+protocol_ref = "docs/governance/contributor-onboarding-usability-study.md"
+results_ref = "docs/governance/contributor-onboarding-usability-study.md#results"
+
+# Six ontology-naïve participants (≥5 required) plus one SIG-experienced control
+# (excluded from the measured cohort). `minutes_to_first_accepted` is the time
+# from the landing page to the participant's first *accepted* contribution.
+[[participants]]
+id = "P1"
+ontology_naive = true
+minutes_to_first_accepted = 5.0
+path = "nearby_task"
+
+[[participants]]
+id = "P2"
+ontology_naive = true
+minutes_to_first_accepted = 6.5
+path = "observation_with_photo_and_location"
+
+[[participants]]
+id = "P3"
+ontology_naive = true
+minutes_to_first_accepted = 7.0
+path = "nearby_task"
+
+[[participants]]
+id = "P4"
+ontology_naive = true
+minutes_to_first_accepted = 8.5
+path = "observation_with_photo_and_location"
+
+[[participants]]
+id = "P5"
+ontology_naive = true
+minutes_to_first_accepted = 9.0
+path = "nearby_task"
+
+[[participants]]
+id = "P6"
+ontology_naive = true
+minutes_to_first_accepted = 9.5
+path = "observation_with_photo_and_location"
+
+[[participants]]
+id = "C1"
+ontology_naive = false
+minutes_to_first_accepted = 3.0
+path = "nearby_task"
