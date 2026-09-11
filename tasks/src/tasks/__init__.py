@@ -50,6 +50,15 @@ poisoning resistance:
   never auto-rejects and guards false absence equally, the vendor
   operating-territory check, the no-SIG-caused-mass-revert refusal, and the
   visual-weight discipline (SIG-CONTRIB-010/011/011a/011b/011c).
+
+Contribution back to the ecosystem (§35, P16.2):
+
+* :mod:`tasks.contribution` — the human-mediated OSM suggestion workflow: a
+  MapRoulette cooperative challenge proposes a specific tag change a mapper applies
+  in their own account (no direct automated OSM writes), the declared changeset
+  hashtag wired to the §7 leverage metric, the contribution-path licence gate
+  applied before a suggestion is rendered, per-project correction channels, and the
+  Organised Editing activity disclosure (SIG-CONTRIB-014/015/016d/016e/016f/016g/018).
 """
 
 __version__ = "0.0.0"

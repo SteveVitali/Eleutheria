@@ -97,6 +97,16 @@ def test_enrich_rows_stamps_per_row_rights_provenance() -> None:
     assert rights["attribution"] == "© OSM contributors"
 
 
+def test_export_row_names_its_upstream_structurally() -> None:
+    # SIG-CONTRIB-020: attribution reciprocity is structural — every exported row
+    # names its upstream source and attribution, not only an aggregate About page.
+    idx = _idx(_rr("osm", "ODbL-1.0", attribution="© OpenStreetMap contributors"))
+    table = C.ExportTable("devices", (C.ExportRow("osm", {"subject_id": "d1"}),))
+    rights = C.enrich_rows(table, idx)[0][C.RIGHTS_KEY]
+    assert rights["source_id"] == "osm"
+    assert rights["attribution"] == "© OpenStreetMap contributors"
+
+
 def test_silently_travelling_upstream_forces_the_stricter_compartment() -> None:
     # SIG-LIC-009a: declares CC-BY but derived from ODbL upstream => ODbL governs, so a
     # naive merge with the CC-BY graph fails the build.

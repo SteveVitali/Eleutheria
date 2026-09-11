@@ -1,0 +1,85 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# The SIG Organised Editing activity disclosure (§35.2, SIG-CONTRIB-016d/016e/016g;
+# §42.3a SIG-LIC-007a/007b/007c). Data, not code: the loader in
+# tasks/contribution.py reads this and asserts every disclosure the OSM Organised
+# Editing Guidelines require is present. The published, human-readable activity
+# page that renders + registers this lives at
+# docs/governance/organised-editing-activity.md and is published under the OSM wiki
+# `Organised Editing/Activities/` namespace (activity_page_wiki).
+#
+# Changes after this ticket are VERSIONED (§20): bump `version` and add the change,
+# never silently rewrite a landed row.
+
+[activity]
+version = "v1"
+coordinating_org = "The SIG project (Surveillance Infrastructure Graph)"
+contact = "osm-contact@sig.example"
+# The declared changeset hashtag — MUST equal tasks.contribution.CHANGESET_HASHTAG
+# (SIG-CONTRIB-016e); it is required on every SIG-originated edit and is how the
+# §7 leverage metric reads accepted contributions.
+hashtag = "#sig_operator_attribution"
+goal = "Add operator=* attribution to orphaned surveillance-device nodes (the ~116,800-device backlog) from public contracts and records, one human-reviewed decision per device."
+why = "OSM's ODbL share-alike posture and the federation compact (P5) both oblige SIG to give operator attributions back in a form OSM contributors can use (SIG-CONTRIB-017)."
+timeframe = "Ongoing from 2026-09; reviewed each quarter."
+# Registered in the OSM Organised Editing activities list (SIG-CONTRIB-016d).
+registered = true
+registered_at = "2026-09-08"
+activity_page = "docs/governance/organised-editing-activity.md"
+activity_page_wiki = "Organised Editing/Activities/SIG operator attribution"
+
+# Who holds SIG's MapRoulette account, and the located MapRoulette API docs
+# (SIG-CONTRIB-015b — challenge creation requires authentication, and the account
+# falls under this disclosure).
+account_holder = "SIG maintainers (shared org account); credentials held by the maintainer group"
+maproulette_api_docs = "https://maproulette.org/docs/swagger-ui/index.html"
+maproulette_account = "SIG_operator_attribution"
+
+# The metrics used, stated as task OUTCOMES not contributor rankings
+# (SIG-CONTRIB-016g; §33.6 forbids volume gamification).
+metrics = "Task outcomes only — suggestions accepted / rejected / edited upstream, and devices resolved. NO contributor leaderboards or per-mapper rankings are kept or published."
+
+# The attribution SIG expects for the contributed subset, limited to what OSM
+# offers (SIG-LIC-007b): a note on the activity account and source info in
+# changesets — decided acceptable in advance, recorded here.
+attribution_expectation = "Mention on the OSM contributors/activity wiki page and source information in changesets; SIG accepts these as sufficient (SIG-LIC-007b)."
+
+# The participating accounts that wish to be identified (SIG-CONTRIB-016d).
+# Individual volunteer mappers are NOT listed here — they apply edits in their own
+# accounts with their own judgment (SIG-CONTRIB-015) and are not directed en masse.
+participating_accounts = ["SIG_operator_attribution"]
+
+# Every non-standard TOOL used, with its usage conditions and a link
+# (SIG-CONTRIB-016d).
+[[activity.tools]]
+name = "MapRoulette cooperative challenge"
+usage_conditions = "Free, community-run; cooperativeType=tags proposes a specific tag change a mapper accepts/rejects/edits in their own account."
+url = "https://maproulette.org/"
+
+[[activity.tools]]
+name = "SIG task engine + contribution builder"
+usage_conditions = "Apache-2.0; open source; builds suggestions only, never writes to OSM (SIG-CONTRIB-014)."
+url = "https://github.com/sig-project/eleutheria"
+
+# Every DATA SOURCE feeding a contribution, with its licence and usage conditions
+# (SIG-CONTRIB-016d; the licence disclosure of SIG-LIC-007c). Only sources whose
+# terms permit deriving an OSM edit (SIG-CONTRIB-016f) may appear here.
+[[activity.data_sources]]
+name = "OpenStreetMap (Overpass)"
+license = "ODbL-1.0"
+usage_conditions = "Relicensable to OSM's own ODbL-1.0; attribution © OpenStreetMap contributors."
+url = "https://www.openstreetmap.org/copyright"
+
+[[activity.data_sources]]
+name = "SIG operator-attribution subset (contributed upstream)"
+license = "CC0-1.0"
+usage_conditions = "Dual-licensed CC0-1.0 for OSM contribution (SIG-LIC-007a); satisfies OSM's no-added-copyright import rule."
+url = "https://sig.example/licence"
+
+[[activity.data_sources]]
+name = "Public procurement contracts and agency records"
+license = "CC0-1.0"
+usage_conditions = "Facts about public infrastructure derived from public records; contributable as CC0 (SIG-LIC-007a)."
+url = "https://sig.example/records"

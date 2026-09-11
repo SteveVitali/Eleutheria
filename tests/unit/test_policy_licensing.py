@@ -159,3 +159,54 @@ def test_sig_own_licence_compartments_present() -> None:
     comps = licensing.compartments()
     licences = {c["license"] for c in comps.values()}
     assert {"Apache-2.0", "CC-BY-4.0", "ODbL-1.0", "CC-BY-SA-4.0", "CC0-1.0"} <= licences
+
+
+# --- SIG-CONTRIB-016f / §42.3a: the contribution-path licence gate ------------
+
+
+def test_odbl_source_permits_osm_contribution() -> None:
+    # An ODbL-1.0 source with derivative rights is relicensable to OSM's own
+    # ODbL-1.0 database licence, so a fact derived from it may be contributed.
+    odbl = _rec("osm_overpass", "ODbL-1.0", derivative_permitted=True)
+    assert licensing.permits_osm_contribution(odbl) is True
+    licensing.assert_contribution_permitted(odbl)  # does not raise
+
+
+def test_public_domain_source_permits_osm_contribution() -> None:
+    cc0 = _rec("gov_record", "CC0-1.0", derivative_permitted=True)
+    assert licensing.permits_osm_contribution(cc0) is True
+    licensing.assert_contribution_permitted(cc0)  # does not raise
+
+
+def test_no_derivatives_source_is_blocked_from_contribution() -> None:
+    # SIG-CONTRIB-016f: a source that forbids derivative works cannot feed an
+    # OSM edit — a task built on it must be blocked, not surfaced.
+    nd = _rec("proprietary_feed", "CC-BY-4.0", derivative_permitted=False)
+    assert licensing.permits_osm_contribution(nd) is False
+    with pytest.raises(licensing.ContributionGateClosed):
+        licensing.assert_contribution_permitted(nd)
+
+
+def test_share_alike_incompatible_source_is_blocked_from_contribution() -> None:
+    # A CC-BY-SA-4.0 source is not relicensable to ODbL-1.0; deriving an OSM edit
+    # from it would breach its share-alike terms (§42.3a).
+    sa = _rec("portal", "CC-BY-SA-4.0", derivative_permitted=True)
+    assert licensing.permits_osm_contribution(sa) is False
+    with pytest.raises(licensing.ContributionGateClosed):
+        licensing.assert_contribution_permitted(sa)
+
+
+def test_plain_cc_by_source_is_blocked_from_contribution() -> None:
+    # OSM does not accept plain CC-BY-4.0 without an added waiver (SIG-LIC-007a):
+    # the gate refuses it rather than inviting a mapper into a breach.
+    ccby = _rec("sig_graph", "CC-BY-4.0", derivative_permitted=True)
+    assert licensing.permits_osm_contribution(ccby) is False
+    with pytest.raises(licensing.ContributionGateClosed):
+        licensing.assert_contribution_permitted(ccby)
+
+
+def test_undetermined_rights_are_blocked_from_contribution() -> None:
+    undet = _rec("mystery", "UNDETERMINED", derivative_permitted=True)
+    assert licensing.permits_osm_contribution(undet) is False
+    with pytest.raises(licensing.ContributionGateClosed):
+        licensing.assert_contribution_permitted(undet)

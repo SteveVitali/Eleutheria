@@ -20,6 +20,11 @@ Three gates are enforced here:
 * **Training gate (SIG-LIC-004c).** Content whose rights do not permit AI
   training MUST NOT be routed through a model-training pipeline, enforced at the
   data layer.
+* **Contribution-path gate (SIG-CONTRIB-016f, §42.3a).** A *distinct* gate from
+  the export gate: a source whose terms do not permit deriving an upstream (OSM)
+  edit from it MUST NOT feed a contribution task, because publishing such a task
+  would invite a mapper into a licence breach and make SIG the proximate cause of
+  it (:func:`permits_osm_contribution` / :func:`assert_contribution_permitted`).
 
 Silently-travelling share-alike (SIG-LIC-009a): where a record's provenance is a
 share-alike upstream, the *stricter* upstream regime governs, not the declared
@@ -45,6 +50,22 @@ class LicenseIncompatibilityError(Exception):
 
 class TrainingNotPermitted(Exception):
     """Raised when ai-train=no content is routed toward a training pipeline."""
+
+
+class ContributionGateClosed(Exception):
+    """Raised when a source's terms do not permit deriving an upstream (OSM) edit.
+
+    The contribution-path licence gate (SIG-CONTRIB-016f; §42.3a/SIG-LIC-007a/007c),
+    distinct from the export gate of :func:`assert_export_permitted`: a
+    contribution task built on such a source would invite a mapper into a licence
+    breach, making SIG the proximate cause of it.
+    """
+
+
+#: OSM's own database licence — the licence a contributed edit lands under
+#: (§42.3/§42.3a). A source's evidence can feed a contribution task only if a fact
+#: derived from it may be placed under this licence.
+OSM_CONTRIBUTION_TARGET = "ODbL-1.0"
 
 
 def _registry(registry: Mapping[str, Any] | None) -> Mapping[str, Any]:
@@ -194,6 +215,71 @@ def assert_training_allowed(record: RightsRecord) -> None:
         raise TrainingNotPermitted(
             f"source {record.source_id!r} is not marked ai_training_permitted "
             "(SIG-LIC-004b/004c); it MUST NOT be routed to a training pipeline."
+        )
+
+
+def permits_osm_contribution(
+    record: RightsRecord,
+    *,
+    target: str = OSM_CONTRIBUTION_TARGET,
+    registry: Mapping[str, Any] | None = None,
+) -> bool:
+    """Whether a source's terms permit deriving an upstream OSM edit from it.
+
+    True only when the rights are resolved (not ``UNDETERMINED``), the source
+    permits derivative works (``derivative_permitted``), and a fact derived from
+    it may be relicensed into OSM's ``target`` database licence — reusing the same
+    ``relicensable_to`` compatibility relation the export gate uses. A
+    no-derivatives source, an ``UNDETERMINED`` one, or a share-alike-incompatible
+    licence (e.g. CC-BY-SA-4.0, or plain CC-BY-4.0 which OSM does not accept
+    without an added waiver) is therefore excluded, exactly as §42.3a/SIG-LIC-007a
+    require. This is the read-only form of :func:`assert_contribution_permitted`.
+    """
+    if is_undetermined(record) or not record.derivative_permitted:
+        return False
+    reg = _registry(registry)["licenses"]
+    facts = reg.get(effective_license(record, registry))
+    return facts is not None and target in set(facts["relicensable_to"])
+
+
+def assert_contribution_permitted(
+    record: RightsRecord,
+    *,
+    target: str = OSM_CONTRIBUTION_TARGET,
+    registry: Mapping[str, Any] | None = None,
+) -> None:
+    """Fail closed on a source whose terms forbid an upstream OSM contribution.
+
+    The contribution-path gate the task builder MUST apply *before rendering* a
+    contribution task (SIG-CONTRIB-016f): a task built on an incompatible source
+    is blocked rather than surfaced. Distinct from the §42.4 export gate — it asks
+    whether a mapper may lawfully *derive an OSM edit* from the evidence, not
+    whether SIG may publish it. Raises :class:`ContributionGateClosed` naming the
+    reason so the block is auditable.
+    """
+    if is_undetermined(record):
+        raise ContributionGateClosed(
+            f"source {record.source_id!r} has UNDETERMINED rights; it MUST NOT feed a "
+            "contribution task (SIG-CONTRIB-016f)."
+        )
+    if not record.derivative_permitted:
+        raise ContributionGateClosed(
+            f"source {record.source_id!r} does not permit derivative works; a fact derived "
+            "from it MUST NOT feed an OSM contribution task (SIG-CONTRIB-016f, §42.3a)."
+        )
+    reg = _registry(registry)["licenses"]
+    governing = effective_license(record, registry)
+    facts = reg.get(governing)
+    if facts is None:
+        raise ContributionGateClosed(
+            f"source {record.source_id!r} declares licence {governing!r}, which is not in the "
+            "compartment registry (licenses.toml); it cannot be proven contributable."
+        )
+    if target not in set(facts["relicensable_to"]):
+        raise ContributionGateClosed(
+            f"source {record.source_id!r} licence {governing!r} is not relicensable to "
+            f"{target!r}; deriving an OSM edit from it would breach its terms "
+            "(SIG-CONTRIB-016f, §42.3a / SIG-LIC-007a)."
         )
 
 

@@ -1645,3 +1645,49 @@ the published onboarding study. Additive — no prior wire name, id, or schema c
 |---|---|---|
 | SIG-ENG-004 (every new requirement has an automated test) | the `tasks.contributor`/`submission`/`onboarding`/`revert`/`poisoning` modules | `tests/tasks/test_tasks_{contributor,submission,onboarding,revert,poisoning}.py`; `tests/db/test_reverts.py` |
 | Phase gate: CI green incl. data-quality; ADR for the deviation; traceability + risk register updated | ADR-054; this section; `docs/risk_register.md` (Phase 16) | `make check` (lint/format/typecheck/pytest/verify-gen); `test_policy_adrs.py` (ADR-054 revisit trigger) |
+
+---
+
+# P16.2 — Contribution back to the ecosystem
+
+Contribution back (§35), in the `tasks` package as pure, tested Python ahead of
+persistence (ADR-055), plus the contribution-path licence gate in `policy.licensing`
+and structural per-claim upstream attribution in the read API. Additive — no prior
+wire name, id, or schema change. Device-observation routing (SIG-CONTRIB-004) landed
+in P16.1 and is re-cited here as the §35-owned surface.
+
+## To OpenStreetMap — the human-mediated suggestion workflow (§35.2)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-CONTRIB-014 (no direct automated writes to OSM) | `tasks.contribution::write_to_osm` (always raises `AutomatedOsmWriteError`); `AppliedEdit.__post_init__` refuses a SIG applier | `test_tasks_contribution.py::test_no_automated_osm_write_path_exists` (AC1), `::test_sig_can_never_be_the_account_that_applies_an_edit` |
+| SIG-CONTRIB-015 (human-mediated suggestion workflow; a mapper applies each change in their own account) | `tasks.contribution::build_suggestion`/`apply_by_mapper`/`AppliedEdit`/`MapperDecision` | `test_tasks_contribution.py::test_suggestion_becomes_an_edit_only_when_a_human_mapper_applies_it` (AC1), `::test_mapper_can_reject_a_suggestion_and_nothing_is_written`, `::test_mapper_can_edit_to_a_different_value_exercising_judgment` |
+| SIG-CONTRIB-015a (MapRoulette cooperative challenge; `cooperativeType=tags`) | `tasks.contribution::CooperativeChallenge`/`CooperativeType`/`TagChange`/`MAPROULETTE_FIELD_CROSSWALK` | `test_tasks_contribution.py::test_cooperative_challenge_is_tags_typed_and_carries_the_hashtag`, `::test_maproulette_crosswalk_is_documented` |
+| SIG-CONTRIB-015b (MapRoulette API docs located; account holder disclosed) | `tasks.contribution::organised_editing_activity` (`account_holder`, `maproulette_api_docs`); `data/organised_editing.toml` | `test_tasks_contribution.py::test_activity_page_discloses_tools_and_data_sources_with_conditions` |
+| SIG-CONTRIB-016/016a/016b/016c (the Automated Edits Code scope analysis recorded as an ADR) | ADR-055 (records the spec Appendix-F "ADR-017") | `test_policy_adrs.py::test_every_adr_names_a_revisit_trigger[ADR-055-...]` (AC2, agentic) |
+| SIG-CONTRIB-016d (Organised Editing activity page published + registered; discloses org+contact, hashtag, goal, timeframe, tools + data sources with usage conditions, participating accounts) | `tasks.contribution::OrganisedEditingActivity`/`organised_editing_activity`; `data/organised_editing.toml`; `docs/governance/organised-editing-activity.md` | `test_tasks_contribution.py::test_activity_page_discloses_tools_and_data_sources_with_conditions` (AC3), `::test_activity_disclosure_refuses_a_mismatched_hashtag` |
+| SIG-CONTRIB-016e (changeset hashtag declared, required on SIG edits, wired to the §7 leverage metric) | `tasks.contribution::CHANGESET_HASHTAG`/`carries_hashtag`/`LeverageLedger.accepted_operator_attributions`/`UpstreamChangeset` | `test_tasks_contribution.py::test_declared_hashtag_is_required_on_a_sig_suggestion` (AC4), `::test_leverage_metric_reads_accepted_edits_from_the_hashtag` (AC4), `::test_a_task_originated_suggestion_flows_into_the_metric_when_accepted` |
+| SIG-CONTRIB-016f (contribution-path licence gate: source terms must permit deriving an OSM edit; checked before rendering) | `policy.licensing::permits_osm_contribution`/`assert_contribution_permitted`/`ContributionGateClosed`/`OSM_CONTRIBUTION_TARGET`; `tasks.contribution::build_suggestion` (gate applied first) | `test_policy_licensing.py::test_no_derivatives_source_is_blocked_from_contribution`, `::test_share_alike_incompatible_source_is_blocked_from_contribution`, `::test_plain_cc_by_source_is_blocked_from_contribution`, `::test_odbl_source_permits_osm_contribution`; `test_tasks_contribution.py::test_licence_gate_blocks_a_task_on_an_incompatible_source` (AC5) |
+| SIG-CONTRIB-016g (metrics disclosed as task outcomes, not contributor rankings) | `tasks.contribution::OrganisedEditingActivity.__post_init__` (rejects ranking/leaderboard metrics); `data/organised_editing.toml` `metrics` | `test_tasks_contribution.py::test_activity_disclosure_refuses_contributor_rankings_as_metrics`, `::test_activity_page_discloses_tools_and_data_sources_with_conditions` |
+| SIG-CONTRIB-017/017a (operator attribution is the highest-value contribution; minimise human cost per resolution, not maximise write volume) | `tasks.contribution::TagChange` (one device + candidate operator + evidence as one reviewable unit); ADR-055 | `test_tasks_contribution.py::test_suggestion_becomes_an_edit_only_when_a_human_mapper_applies_it` |
+| SIG-LIC-007a/007b/007c (contributed subset dual-licensed CC0; attribution limited to what OSM offers; activity page discloses source licences) | `data/organised_editing.toml` (`data_sources` licences, `attribution_expectation`); `policy/data/licenses.toml` `compartments.osm_contribution`; `docs/governance/organised-editing-activity.md` | `test_tasks_contribution.py::test_activity_page_discloses_tools_and_data_sources_with_conditions`; `test_policy_licensing.py::test_public_domain_source_permits_osm_contribution` |
+
+## Device-observation routing (§34.2, owned §35 — landed P16.1)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-CONTRIB-004 (device observations route to OSM/DeFlock, not SIG capture) | `tasks.submission::route_device_observation`/`is_sig_capturable`/`OSM_ROUTED_KINDS` | `test_tasks_submission.py::test_device_observation_is_routed_not_captured` (AC6) |
+
+## To other projects, and attribution reciprocity (§35.3)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-CONTRIB-018 (per-project correction export formats; use each project's own submission channel) | `tasks.contribution::ContributionChannel`/`PROJECT_CHANNELS`/`channel_for` | `test_tasks_contribution.py::test_per_project_channels_use_each_projects_own_channel` |
+| SIG-CONTRIB-020 (upstream named structurally in UI, API, and exports — not only an About page) | API `/claim`: `api.models::ClaimResponse.attribution` + `api.routes` `claim` (`attribution_for(store.rights_for(...))`); exports: `exports.compartments::enrich_rows` per-row `_rights`; UI: `web/src/components/DossierFigure.astro` per-claim source column (P15.2) | `test_api_coverage_license.py::test_claim_response_names_its_upstream_attribution`, `::test_entity_response_carries_upstream_attribution`; `test_compartments.py::test_export_row_names_its_upstream_structurally` |
+
+## Phase gate (§51.3)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ENG-004 (every new requirement has an automated test) | `tasks.contribution`; `policy.licensing` contribution gate; `api` claim attribution | `tests/tasks/test_tasks_contribution.py`; `tests/unit/test_policy_licensing.py`; `tests/api/test_api_coverage_license.py`; `tests/exports/test_compartments.py` |
+| Phase gate: CI green incl. data-quality; ADR for the deviation; traceability + risk register updated | ADR-055; this section; `docs/risk_register.md` (Phase 16 — P16.2) | `make check` (lint/format/typecheck/pytest/verify-gen); `test_policy_adrs.py` (ADR-055 revisit trigger) |
