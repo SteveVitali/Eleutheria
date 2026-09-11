@@ -1,0 +1,223 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The network explorer (§39.4). Static, zero-JS (SIG-UI-036): the default ego
+// network, the inline ER-quality disclosure on every centrality statistic, the three
+// distinct + separately-listed access edge types, and the access-path closures all
+// render server-side. The LIST EQUIVALENT (the edge lists and the hop lists) is the
+// source of truth and the no-JS/screen-reader path (SIG-UI-037).
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SupportGlyph from "../components/SupportGlyph.astro";
+import {
+  ACCESS_EDGE_TYPES,
+  ACCESS_EDGE_STYLES,
+  DEFAULT_NETWORK_VIEW,
+  egoNetwork,
+  filterAccessEdges,
+  DEFAULT_ACCESS_EDGE_FILTER,
+  pathConfidence,
+  pathHopCount,
+  pathIsHeadline,
+  pathIsSpeculative,
+  pathOrgs,
+  pathSource,
+  pathTarget,
+  pathTemporalStatus,
+  SPECULATIVE_HOP_THRESHOLD,
+} from "../lib/network";
+import {
+  NETWORK_NODES,
+  NETWORK_EDGES,
+  CENTRALITY_STATS,
+  ACCESS_PATHS,
+  FOCUS_ENTITY_ID,
+} from "../lib/map-network-fixture";
+
+const labelOf = (id: string) => NETWORK_NODES.find((n) => n.id === id)?.label ?? id;
+
+// The default surface is an ego network with expansion, never a global graph.
+const ego = egoNetwork(NETWORK_NODES, NETWORK_EDGES, FOCUS_ENTITY_ID, 1);
+
+// Lay the ego nodes out on a circle for the static diagram (center in the middle).
+const others = ego.nodes.filter((n) => n.id !== FOCUS_ENTITY_ID);
+const cx = 200;
+const cy = 150;
+const r = 110;
+const pos = new Map<string, { x: number; y: number }>();
+pos.set(FOCUS_ENTITY_ID, { x: cx, y: cy });
+others.forEach((n, i) => {
+  const a = (2 * Math.PI * i) / Math.max(1, others.length);
+  pos.set(n.id, { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) });
+});
+---
+
+<BaseLayout title="Network explorer" path="/network/">
+  <p>
+    The sharing / access network. It defaults to an <strong>ego network</strong> around
+    one entity — never a global graph — and expands one ring at a time (SIG-UI-022).
+    <strong>Every edge and every path is also in the lists below</strong>: the lists are
+    the equivalent, not a fallback.
+  </p>
+
+  <section data-testid="network-view" data-default-view={DEFAULT_NETWORK_VIEW}>
+    <h2 id="ego-heading">Ego network — {labelOf(FOCUS_ENTITY_ID)}</h2>
+    <figure aria-labelledby="ego-caption">
+      <svg
+        role="img"
+        aria-label={`Ego network around ${labelOf(FOCUS_ENTITY_ID)}; full detail in the lists below.`}
+        viewBox="0 0 400 300"
+        width="400"
+        height="300"
+        style="max-width:100%;border:1px solid var(--sig-rule);background:hsl(0deg 0% 98%);"
+      >
+        {ego.edges.map((e) => {
+          const a = pos.get(e.from)!;
+          const b = pos.get(e.to)!;
+          const style = ACCESS_EDGE_STYLES[e.access_kind];
+          return (
+            <line
+              x1={a.x}
+              y1={a.y}
+              x2={b.x}
+              y2={b.y}
+              stroke="var(--sig-muted)"
+              stroke-width="2"
+              stroke-dasharray={style.dash || undefined}
+            />
+          );
+        })}
+        {ego.nodes.map((n) => {
+          const p = pos.get(n.id)!;
+          const center = n.id === FOCUS_ENTITY_ID;
+          return (
+            <g>
+              <circle cx={p.x} cy={p.y} r={center ? 12 : 9} fill="var(--sig-epi-status-resolved)">
+                <title>{n.label}</title>
+              </circle>
+              <text x={p.x} y={p.y - 15} text-anchor="middle" font-size="9">{n.label}</text>
+            </g>
+          );
+        })}
+      </svg>
+      <figcaption id="ego-caption">
+        Expansion pulls in the next ring of neighbours; edge dash patterns encode the
+        access type (see the legend below).
+      </figcaption>
+    </figure>
+  </section>
+
+  <!-- Centrality/hub statistics — each with its ER-quality disclosure INLINE. -->
+  <h2 id="centrality-heading">Centrality &amp; hub statistics</h2>
+  <p>
+    If entity resolution is imperfect, so is every network statistic — so each figure
+    carries its ER-quality disclosure <strong>at the statistic, not in a footnote</strong>
+    (SIG-UI-023).
+  </p>
+  <ul class="sig-centrality">
+    {CENTRALITY_STATS.map((s) => (
+      <li class="sig-centrality__item" data-testid="centrality-stat" data-metric={s.metric}>
+        <span class="sig-centrality__value">
+          <strong>{labelOf(s.node_id)}</strong> — {s.metric.replace(/_/g, " ")}: {s.value.toFixed(2)}
+        </span>
+        <span class="sig-centrality__er" data-testid="er-disclosure">{s.disclosure}</span>
+      </li>
+    ))}
+  </ul>
+
+  <!-- The three access edge types: distinct legend + three unmerged lists. -->
+  <h2 id="access-heading">Access edges</h2>
+  <p>
+    The three access edge types are <strong>never merged by default</strong> and each is
+    independently filterable (SIG-UI-024). They are distinguished by a glyph and a dash
+    pattern — two non-colour channels, legible in greyscale and print.
+  </p>
+  <ul class="sig-access-legend" data-testid="access-legend">
+    {ACCESS_EDGE_TYPES.map((k) => {
+      const style = ACCESS_EDGE_STYLES[k];
+      return (
+        <li data-testid="access-legend-item" data-kind={k} data-glyph={style.glyph} data-dash={style.dash}>
+          <span class="sig-access-glyph" aria-hidden="true">{style.glyph}</span>
+          <svg width="40" height="10" aria-hidden="true">
+            <line x1="0" y1="5" x2="40" y2="5" stroke="var(--sig-ink)" stroke-width="2" stroke-dasharray={style.dash || undefined}></line>
+          </svg>
+          <strong>{style.label}</strong> — {style.meaning} <em>Never implies:</em> {style.neverImplies}
+        </li>
+      );
+    })}
+  </ul>
+
+  {ACCESS_EDGE_TYPES.map((k) => {
+    const edges = filterAccessEdges(NETWORK_EDGES, {
+      ...DEFAULT_ACCESS_EDGE_FILTER,
+      configured_access: k === "configured_access",
+      observed_use: k === "observed_use",
+      declared_policy: k === "declared_policy",
+    });
+    const style = ACCESS_EDGE_STYLES[k];
+    return (
+      <section class="sig-access-group" data-testid="access-edge-group" data-kind={k}>
+        <h3>{style.glyph} {style.label}</h3>
+        <ul class="sig-edge-list">
+          {edges.map((e) => (
+            <li data-testid="access-edge" data-kind={e.access_kind}>
+              <strong>{labelOf(e.from)}</strong> {e.relation} <strong>{labelOf(e.to)}</strong>
+              <div><SupportGlyph support={e.support} evidenceCount={e.evidence_count} /></div>
+            </li>
+          ))}
+        </ul>
+      </section>
+    );
+  })}
+
+  <!-- Access-path closure: full hop list, per-hop evidence, speculative label. -->
+  <h2 id="paths-heading">Access-path closure</h2>
+  <p>
+    "Can this entity reach that entity's data, through any chain?" Each path shows its
+    <strong>full hop list with per-hop evidence</strong>; confidence is the minimum over
+    the hops; and a path longer than {SPECULATIVE_HOP_THRESHOLD} hops is labelled
+    <strong>speculative</strong> and excluded from headline figures (SIG-UI-025,
+    SIG-RECON-050).
+  </p>
+  <ol class="sig-paths">
+    {ACCESS_PATHS.map((p) => (
+      <li
+        class="sig-path"
+        data-testid="access-path"
+        data-hop-count={pathHopCount(p)}
+        data-speculative={pathIsSpeculative(p) ? "true" : "false"}
+        data-headline={pathIsHeadline(p) ? "true" : "false"}
+        data-temporal={pathTemporalStatus(p)}
+      >
+        <p class="sig-path__summary">
+          <strong>{labelOf(pathSource(p))}</strong> can reach
+          <strong> {labelOf(pathTarget(p))}</strong>
+          — {pathHopCount(p)} hop{pathHopCount(p) === 1 ? "" : "s"},
+          confidence {pathConfidence(p)} (path minimum), {pathTemporalStatus(p)}.
+          {pathIsSpeculative(p) ? (
+            <span class="sig-path__speculative" data-testid="speculative-label">
+              {" "}SPECULATIVE — beyond the published hop threshold; not a headline figure.
+            </span>
+          ) : (
+            <span class="sig-path__finding"> A publishable finding.</span>
+          )}
+        </p>
+        <p class="sig-path__chain">{pathOrgs(p).map((o) => labelOf(o)).join(" → ")}</p>
+        <ol class="sig-path__hops">
+          {p.hops.map((h) => (
+            <li data-testid="path-hop" data-edge-label={h.edge_label}>
+              <strong>{labelOf(h.from_org)}</strong> → <strong>{labelOf(h.to_org)}</strong>
+              <span class="sig-path__hop-meta">
+                ({h.edge_label}, scope {h.scope}, {h.confidence})
+              </span>
+              <span class="sig-path__evidence" data-testid="hop-evidence">
+                evidence: {h.evidence.join(", ")}
+              </span>
+            </li>
+          ))}
+        </ol>
+      </li>
+    ))}
+  </ol>
+</BaseLayout>

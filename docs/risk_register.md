@@ -903,3 +903,32 @@ ADR-050 for the decisions; it supersedes but retains the P06.1 `exports.dossier`
 |---|---|---|---|
 | RISK-P15-13 | The dossier renders from a committed TS fixture for one worked jurisdiction, not the live `/v1` dossier API | Static-first means no build-time API dependency (SIG-UI-036), and the read API has no DB-wired store yet (RISK-P14-07/17) | `renderDossierJson`'s shape is the `/v1` dossier contract; wiring to the live API is a data-source swap, not a component change (ADR-050 revisit trigger). |
 | RISK-P15-14 | A material figure's document link resolves to the claim endpoint (`/v1/claim/{id}`), not yet to the highlighted page/cell span (SIG-UI-014) | The span-level evidence viewer is §39.6 (a later P15 surface); the claim URL is the addressable locator that resolves the span, consistent with P15.1's contradiction view | Every reconciliation carries the rule, each competing claim's source/tier/date, and a resolvable document link; the fine-grained span is an additive drill-down the evidence viewer adds (SIG-UI-028). |
+
+## Phase 15 — Public web surfaces (P15.3 — the infrastructure map + network explorer)
+
+Per §53 / SIG-ENG-031, P15.3's risk-register entries. P15.3 owns the two spatial/graph surfaces
+(§39.3/§39.4) and their honest-rendering rules, plus the static-PMTiles serving contract
+(SIG-UI-038/SIG-GEO-012/013). Implementation is `web/` (SIG-ENG-010).
+
+### Deviation recorded as an ADR (SIG-ENG-003)
+
+| ADR | Deviation + rationale |
+|---|---|
+| ADR-051 | The static-PMTiles serving contract is landed as a **served, tested artifact** — a MapLibre GL style over self-hosted PMTiles v3 with OSM attribution at `/map/style.json` — but the **maplibre-gl runtime is NOT bundled** into the archivable pages (a deviation from ADR-018's "renderer"): doing so would ship client JS, failing the mechanically-enforced ADR-049 zero-JS invariant and the Lighthouse budgets (0 script bytes, ≤150 KB). The shipped `/map/` + `/network/` pages stay zero-JS with the tabular/list equivalent as source of truth; the OSM attribution renders in the static HTML (every context incl. print). This is the closest faithful alternative that keeps every hard CI gate green, and the requirement under test (SIG-UI-038/SIG-GEO-012/013 — the map *served* from static PMTiles with OSM attribution and no hard third-party CDN) is met and machine-verified. |
+
+### Honest-rendering risks addressed
+
+| id | Risk (what breaks the defining standard if unhandled) | Compensating control |
+|---|---|---|
+| RISK-P15-15 | **The map lies by default** — a user sees device points with the coverage underlay switched off, so a sparsely-covered area reads as "there is nothing here" (SIG-UI-017). | The point layer and the coverage underlay are governed by a **single** `LayerControl`; `coverageBoundToPoints`/`assertCoverageBinding` reject any control set that could show points without coverage. Proven by `web/tests/unit/map.test.ts` "coverage bound … by a single control" and `web/tests/e2e/map-network.spec.ts`. |
+| RISK-P15-16 | **Low coverage reads as low density** — a barely-searched cell with a low count looks like a confidently-low count, understating capability (SIG-UI-018). | Low/absent-coverage cells are desaturated, value-suppressed, and hatched (`coverageEncoding`); a low-coverage count never renders as a density bucket (`renderBin` → bucket 0), and `readsAsDensity` is false. The two encodings are provably distinct. Proven by `web/tests/unit/map.test.ts` "low coverage MUST NOT read as low density" and `map-network.nojs.spec.ts`. |
+| RISK-P15-17 | **No-coordinate assets are silently dropped** — a map showing only locatable assets systematically understates capability (SIG-UI-020). | `partitionByLocatability` rolls point-less / tier-3 assets into jurisdiction indicators with a conservation law (`locatable + Σ indicators = total`); the page renders them. Proven by `web/tests/unit/map.test.ts` + `web/tests/e2e/map-network.spec.ts` (conservation). |
+| RISK-P15-18 | **A centrality figure appears without its ER-quality disclosure** — a hub statistic reads as fact when imperfect entity resolution makes it imperfect (SIG-UI-023, SIG-IDENT-030). | The disclosure is **structural**: a `CentralityStatistic` cannot be constructed without a valid `ErQuality` + inline `disclosure` (`centralityStatistic` throws), and it renders at the statistic, never a footnote. Proven by `web/tests/unit/network.test.ts` + `web/tests/e2e/map-network.spec.ts`/`.nojs.spec.ts`. |
+| RISK-P15-19 | **A theoretical path is presented as a shared-data relationship** — a long speculative chain blurs into "these agencies share data" (SIG-UI-025, SIG-RECON-050). | A path beyond `SPECULATIVE_HOP_THRESHOLD` (3) is labelled **speculative** and excluded from headline figures; every hop carries per-hop evidence (an evidence-less hop is rejected); confidence is the path minimum. Mirrors `inference.access_paths`. Proven by `web/tests/unit/network.test.ts` + `web/tests/e2e/map-network.spec.ts`. |
+
+### Deferred / not-fully-closed here (SIG-ENG-005)
+
+| id | Requirement | Why not fully closed now | Compensating control |
+|---|---|---|---|
+| RISK-P15-20 | The map/network render from committed TS fixtures for the worked Oklahoma City case, not the live `/v1` API | Static-first means no build-time API dependency (SIG-UI-036); the read API has no DB-wired store yet (RISK-P14-07/17) | The fixture shapes mirror the pipeline (`§19.4` tier, `§12.2` `access_kind`, the `inference.access_paths` hop list); wiring to the live API is a data-source swap, not a component change (ADR-051 revisit trigger). |
+| RISK-P15-21 | No interactive MapLibre map ships; the served `/map/style.json` is not yet loaded by a running renderer, and the real `sig-infrastructure.pmtiles` / basemap archives do not exist yet | The zero-JS + perf gates forbid the runtime here (ADR-051); the `.pmtiles` binaries are a build artifact of the upstream geospatial phase (tippecanoe over the resolution projection), out of P15.3 scope | The serving **contract** (PMTiles v3, self-hosted relative paths, OSM attribution, no third-party CDN) is fixed and tested (`assertServingContract`), and the honest-rendering logic is single-sourced so an interactive renderer cannot diverge from the static render (ADR-051 revisit trigger). |
