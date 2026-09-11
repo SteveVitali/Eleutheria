@@ -932,3 +932,24 @@ Per §53 / SIG-ENG-031, P15.3's risk-register entries. P15.3 owns the two spatia
 |---|---|---|---|
 | RISK-P15-20 | The map/network render from committed TS fixtures for the worked Oklahoma City case, not the live `/v1` API | Static-first means no build-time API dependency (SIG-UI-036); the read API has no DB-wired store yet (RISK-P14-07/17) | The fixture shapes mirror the pipeline (`§19.4` tier, `§12.2` `access_kind`, the `inference.access_paths` hop list); wiring to the live API is a data-source swap, not a component change (ADR-051 revisit trigger). |
 | RISK-P15-21 | No interactive MapLibre map ships; the served `/map/style.json` is not yet loaded by a running renderer, and the real `sig-infrastructure.pmtiles` / basemap archives do not exist yet | The zero-JS + perf gates forbid the runtime here (ADR-051); the `.pmtiles` binaries are a build artifact of the upstream geospatial phase (tippecanoe over the resolution projection), out of P15.3 scope | The serving **contract** (PMTiles v3, self-hosted relative paths, OSM attribution, no third-party CDN) is fixed and tested (`assertServingContract`), and the honest-rendering logic is single-sourced so an interactive renderer cannot diverge from the static render (ADR-051 revisit trigger). |
+
+## Phase 15 — Public web surfaces (P15.4 — renewal watch + evidence recommender + evidence viewer)
+
+Per §53 / SIG-ENG-031, P15.4's risk-register entries. P15.4 owns the actionable-timing
+and evidence-inspection surfaces (§39.5/39.5a/39.6) and, critically, the recommender's
+**neutrality guarantee** (SIG-UI-027b). Implementation is `web/` (SIG-ENG-010).
+
+### Neutrality + honest-rendering risks addressed
+
+| id | Risk (what breaks the defining standard if unhandled) | Compensating control |
+|---|---|---|
+| RISK-P15-22 | **The recommender becomes an advocacy instrument** — it ranks evidence by predicted persuasiveness / sentiment / vote effect, and SIG stops being a record (SIG-UI-027b). | Neutrality is **structural**: the `EvidenceArtifact` type carries only the six §39.5a axes; `assertNeutralInputs` rejects any artifact bearing a denylisted signal at runtime; the score is a pure function of the six axes with a per-axis breakdown; a D6 artifact is excluded. Proven by `web/tests/unit/recommender.test.ts` "the neutrality guarantee" and `web/tests/e2e/watch-evidence.spec.ts`. |
+| RISK-P15-23 | **The watch alerts on the wrong date** — it surfaces the expiry, so a reader misses the auto-renewal notice deadline and the decision is made by default (SIG-UI-014b). | The watch reuses P15.2's `resolveTermination`/`nextDecisionDate` **verbatim** — it never recomputes or forks the wire name — so the alert date (expiry-minus-notice for an auto-renewing contract) is byte-identical to the dossier's. Proven by `web/tests/unit/watch.test.ts` and the iCal/RSS DTSTART/pubDate keyed on 2027-01-02, not 2027-04-02. |
+| RISK-P15-24 | **A sealed capture leaks bytes** — the viewer renders withheld material, or presents an inference as an observation without its provenance (SIG-UI-030/028, §17.5). | The `Capture` tier invariant is enforced (`assertCaptureTier`): a sealed capture MUST carry no `document_text` and MUST explain why; the viewer renders metadata-only. `assertClaimView` enforces the full SIG-UI-028 provenance chain (method+version, review, digest, acquisition, full history) at build. Proven by `web/tests/unit/evidence-viewer.test.ts` + `web/tests/e2e/watch-evidence.spec.ts`. |
+
+### Deferred / not-fully-closed here (SIG-ENG-005)
+
+| id | Requirement | Why not fully closed now | Compensating control |
+|---|---|---|---|
+| RISK-P15-25 | The watch, recommender, and viewer render from committed TS fixtures for the worked Oklahoma City case, not the live `/v1` API | Static-first means no build-time API dependency (SIG-UI-036); the read API has no DB-wired store yet (RISK-P14-07/17) | The fixture shapes mirror the pipeline (`TerminationInput`/`next_decision_date`, directness `D`/currency `C`, `storage_tier`/`capture_status`, extraction method + locator); wiring to the live API is a data-source swap, not a component change (ADR-052 revisit trigger). |
+| RISK-P15-26 | The subscriptions are static per-jurisdiction feeds emitted at build, not a live/dynamic feed the moment a decision date changes | The zero-JS + static-first gates forbid a feed server here (ADR-049/052); a rebuild regenerates the feeds deterministically | The iCal/RSS serializers are single-sourced and tested (valid RFC 5545 with §3.1 folding, RSS 2.0), keyed on `next_decision_date`; a subscriber re-fetches the static file and a rebuild refreshes it (ADR-052 revisit trigger). |

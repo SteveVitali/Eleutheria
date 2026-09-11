@@ -1,0 +1,172 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The procurement/renewal watch + the evidence recommender (§39.5, §39.5a). Static,
+// zero-JS (SIG-UI-036): the watch keys every alert on next_decision_date (not the
+// expiry — SIG-UI-014b), offers per-jurisdiction iCal + RSS subscriptions
+// (SIG-UI-027), and ranks the most useful evidence for the upcoming decision by
+// directness / recency / dispute status ONLY (SIG-UI-027a/b) with an exportable
+// citation list (SIG-UI-027c). Contested contracts carry the persistent marker at
+// every appearance (SIG-UI-008). The list/table is the source of truth (SIG-UI-037).
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ContestedMarker from "../components/ContestedMarker.astro";
+import {
+  resolveWatchItem,
+  watchJurisdictions,
+  watchICalPath,
+  watchRssPath,
+  itemsForJurisdiction,
+} from "../lib/watch";
+import { recommendEvidence, citationList } from "../lib/recommender";
+import {
+  WATCH_ITEMS,
+  DECISION_POINT,
+  EVIDENCE_ARTIFACTS,
+} from "../lib/watch-evidence-fixture";
+
+// The static plain-text citation export (SIG-UI-027c); emitted by watch/citations.txt.ts.
+const CITATIONS_PATH = "/watch/citations.txt";
+
+const jurisdictions = watchJurisdictions(WATCH_ITEMS);
+const ranked = recommendEvidence(EVIDENCE_ARTIFACTS, DECISION_POINT);
+const citations = citationList(ranked);
+const axisLabels: Record<string, string> = {
+  directness: "directness",
+  currency: "recency",
+  artifact_type: "artifact type",
+  open_contradiction: "open contradiction",
+  open_task: "open task",
+  capture_status: "retrievability",
+};
+---
+
+<BaseLayout title="Renewal watch & evidence" path="/watch/">
+  <p>
+    The procurement/renewal watch turns passive history into <strong>actionable civic
+    timing</strong>. Every alert keys on the <strong>decision date</strong> — the notice
+    deadline after which the contract renews by default — <strong>not the expiry date</strong>
+    (SIG-UI-014b). Subscribe by jurisdiction and drop the deadline into your own calendar.
+  </p>
+
+  <!-- The renewal watch (SIG-UI-026): per contract, the actionable fields. -->
+  <h2 id="watch-heading">Contracts on the watch</h2>
+  <ul class="sig-watch-list" aria-labelledby="watch-heading">
+    {WATCH_ITEMS.map((raw) => {
+      const item = resolveWatchItem(raw);
+      return (
+        <li
+          class="sig-watch-item"
+          data-testid="watch-item"
+          data-contract-id={item.contract_id}
+          data-jurisdiction={item.jurisdiction}
+          data-decision-date={item.next_decision_date ?? ""}
+          data-expiry-date={item.expiry_date ?? ""}
+          data-contested={item.contested ? "true" : "false"}
+        >
+          <h3>
+            {item.subject_label}
+            {item.contested && <ContestedMarker compact />}
+          </h3>
+          <dl class="sig-watch-fields">
+            <div>
+              <dt>Decision deadline (notice)</dt>
+              <dd data-testid="decision-date"><strong>{item.next_decision_date ?? "unknown"}</strong></dd>
+            </div>
+            <div>
+              <dt>Contract expiry</dt>
+              <dd>{item.expiry_date ?? "unknown"}</dd>
+            </div>
+            <div>
+              <dt>Renewal window</dt>
+              <dd>{item.renewal_window_days === null ? "n/a (does not auto-renew)" : `${item.renewal_window_days} days before expiry`}</dd>
+            </div>
+            <div>
+              <dt>Approving body</dt>
+              <dd>{item.approving_body ?? "unknown"}</dd>
+            </div>
+            <div>
+              <dt>Next scheduled meeting</dt>
+              <dd>{item.next_scheduled_meeting ?? "unknown"}</dd>
+            </div>
+            <div>
+              <dt>Replacement procurement</dt>
+              <dd>{item.replacement_procurement ?? "none known"}</dd>
+            </div>
+          </dl>
+        </li>
+      );
+    })}
+  </ul>
+
+  <!-- Subscriptions by jurisdiction (SIG-UI-027): iCal + RSS, keyed on decision date. -->
+  <h2 id="subscribe-heading">Subscribe by jurisdiction</h2>
+  <p>
+    Each subscription contains one dated event per contract, keyed on its decision
+    deadline. Add the iCal feed to a calendar app, or the RSS feed to a reader.
+  </p>
+  <ul class="sig-subscription-list" aria-labelledby="subscribe-heading">
+    {jurisdictions.map((j) => (
+      <li class="sig-subscription" data-testid="subscription" data-jurisdiction={j}>
+        <strong>{j}</strong> — {itemsForJurisdiction(WATCH_ITEMS, j).length} contract(s):
+        <a data-testid="ical-link" data-jurisdiction={j} href={watchICalPath(j)}>iCal (.ics)</a>
+        {" · "}
+        <a data-testid="rss-link" data-jurisdiction={j} href={watchRssPath(j)}>RSS (.xml)</a>
+      </li>
+    ))}
+  </ul>
+
+  <!-- The evidence recommender (SIG-UI-027a/b/c). -->
+  <h2 id="recommender-heading">Evidence for the upcoming decision</h2>
+  <p data-testid="decision-point" data-decision-type={DECISION_POINT.decision_type} data-decision-date={DECISION_POINT.date}>
+    Preparing for <strong>{DECISION_POINT.label}</strong> ({DECISION_POINT.decision_type.replace(/_/g, " ")},
+    decision {DECISION_POINT.date}). The most useful evidence artifacts, ranked.
+  </p>
+  <p class="sig-neutrality-note" data-testid="neutrality-note">
+    SIG ranks by <strong>evidentiary directness, recency, and dispute status only</strong>.
+    It <strong>never</strong> ranks by persuasiveness, sentiment, or predicted effect on a
+    vote — that would make SIG an advocacy instrument (SIG-UI-027b).
+  </p>
+  <ol class="sig-recommendations" aria-labelledby="recommender-heading">
+    {ranked.map((r, i) => (
+      <li
+        class="sig-recommendation"
+        data-testid="recommended-artifact"
+        data-artifact-id={r.artifact.artifact_id}
+        data-rank={i + 1}
+        data-score={r.score}
+        data-contested={r.contested ? "true" : "false"}
+      >
+        <p class="sig-recommendation__title">
+          <strong>{i + 1}. {r.artifact.title}</strong>
+          {r.contested && <ContestedMarker compact />}
+          <span class="sig-recommendation__meta"> — {r.artifact.source} (directness {r.artifact.directness}, currency {r.artifact.currency}, {r.artifact.capture_status})</span>
+        </p>
+        <ul class="sig-score-breakdown" data-testid="score-breakdown">
+          {Object.entries(r.breakdown)
+            .filter(([, v]) => v !== 0)
+            .map(([axis, v]) => (
+              <li data-axis={axis}>{axisLabels[axis]}: +{v}</li>
+            ))}
+        </ul>
+      </li>
+    ))}
+  </ol>
+
+  <!-- Exportable citation list (SIG-UI-027c). -->
+  <h2 id="citations-heading">Citation list</h2>
+  <p>
+    Attach this to public comment. Every entry carries a belief-pinned permalink and
+    an as-of date, so a citation stays reproducible after SIG corrects itself.
+    <a data-testid="citation-export" href={CITATIONS_PATH}>Download as plain text</a>.
+  </p>
+  <ol class="sig-citation-list" data-testid="citation-list" aria-labelledby="citations-heading">
+    {citations.map((c) => (
+      <li data-testid="citation-entry" data-artifact-id={c.artifact_id} data-contested={c.contested ? "true" : "false"}>
+        <cite>{c.title}</cite>{c.contested && <ContestedMarker compact />} — {c.source}.
+        As of {c.as_of}. <a href={c.permalink}>{c.permalink}</a>
+      </li>
+    ))}
+  </ol>
+</BaseLayout>
