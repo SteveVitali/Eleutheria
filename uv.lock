@@ -2598,6 +2598,16 @@ requires-dist = [
 name = "sig-orchestration"
 version = "0.1.0"
 source = { editable = "orchestration" }
+dependencies = [
+    { name = "sig-connectors" },
+    { name = "sig-evidence" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "sig-connectors", editable = "connectors" },
+    { name = "sig-evidence", editable = "evidence" },
+]
 
 [[package]]
 name = "sig-parsing"

@@ -2267,3 +2267,19 @@ build-memory requirement ids BM-MIGE-01..07, BM-COMPAT-04..05.
 | BM-MIGE-07 — docs to v2 paths (`AGENTS.md`, `docs/README.md`, `docs/build/README.md`) | `AGENTS.md` (build-memory section + DEFERRALS gotcha); `docs/README.md` rows; `docs/build/README.md` | `make docs-check` exit 0 (all three detectors) |
 | SIG-ENG-039 — Appendix F ↔ `docs/adr/` equal | `99a_appF_adr.md` + `docs/adr/` | `check_spec_src.py` exit 0 (72 = 72) |
 | No code change; `make check` green | (no product code touched) | `SIG_REQUIRE_DB_TESTS=1 make check` = 2719 passed, 1 skipped, 0 failed, 0 xfailed (baseline 2718 + ADR-073's 1 parametrized case) |
+
+## Phase 24 — Productionize (P24.2 — re-ingest cadence, SCHED.1 / GL-SCHED-01)
+
+Stamped id: **GL-SCHED-01**. ADR-076 (scheduler choice + cadence-vs-etiquette). Builds on the
+P21.3 `PoliteFetcher`/`connectors.runner` and the existing `connectors.disappearance` /
+`evidence.disappearance` seams (re-confirmed at build time), and the reserved `orchestration/`
+Dagster seam (SIG-INGEST-021, kept reversible).
+
+| Requirement / obligation | Where implemented | Proof |
+|---|---|---|
+| GL-SCHED-01 — cadence-driven `sig-connectors run` per source via a minimal scheduler, respecting `PoliteFetcher`/Overpass etiquette | `.github/workflows/reingest.yml` (daily cron → `sig-orchestration due` → `sig-connectors run` per source); `orchestration/src/orchestration/cadence.py` (`reingest_interval_days`, `due_sources`, `is_due`); `orchestration/src/orchestration/cli.py` (`due`/`interval`/`freshness`/`record`/`sweep-cadence`) | `tests/orchestration/test_reingest_cadence.py` — cadence text→interval (incl. hourly clamped to the daily floor), `due_sources` lists uningested then none when fresh; `sig-orchestration due`/`interval`/`sweep-cadence` run green |
+| GL-SCHED-01 — a scheduled run re-ingests a source, produces new dated claims (never overwrites) and records freshness | `cadence.run_scheduled_source` (drives `connectors.runner.run_connector_over_fixture` into a shared `ClaimSink`; appends a dated `FreshnessRecord` to the append-only `FreshnessLedger`) | `test_scheduled_reingest_produces_new_dated_claims_and_records_freshness` — v1 then v2 release: v2 keys disjoint from v1, sink holds v1 ∪ v2 (nothing overwritten), 2 dated freshness records, `last_ingested_at` advances |
+| GL-SCHED-01 — a source going dark triggers a disappearance record | `cadence.detect_disappearance` (reuses `connectors.disappearance.note_disappearance` + `failing_status_for_http/error`); `cadence.disappearance_sweep_due`/`disappearance_sweep_days`→`evidence.disappearance.sweep_cadence_days` | `test_source_going_dark_triggers_a_disappearance_record` (404/410/401/451 → event + `source_disappeared` research task), `test_persistent_challenge_is_recorded_as_a_disappearance`, `test_healthy_fetch_produces_no_disappearance`, `test_disappearance_sweep_cadence_is_volatility_proportional` |
+| Append-only preserved (re-ingest adds claims; NO UPDATE/DELETE) | `cadence.py` (no SQL; `FreshnessLedger.record` opens the JSONL in append mode only) | `test_cadence_module_issues_no_update_or_delete` (source scan), `test_freshness_ledger_is_append_only` (second write is a byte-prefix superset), `test_source_not_due_is_skipped_without_reingesting` |
+| RISK-P24-01 — cadence vs source etiquette | `docs/risk_register.md` Phase 24 row; `MIN_INTERVAL_DAYS` floor + `PoliteFetcher` fine layer + gate refusal | `test_interval_is_never_below_the_etiquette_floor`; gate refusal path unchanged from ADR-065 (exit 3, non-green) |
+| Import boundary intact (orchestration depends inward on connectors/evidence; nothing imports the orchestrator) | `orchestration/pyproject.toml` (`sig-connectors`, `sig-evidence`); `orchestration.pipeline.ORCHESTRATOR_MODULES` unchanged | `tests/unit/test_import_boundary.py` green; `make check` green |
