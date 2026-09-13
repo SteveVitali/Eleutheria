@@ -1,0 +1,92 @@
+# SPDX-License-Identifier: Apache-2.0
+# The versioned vocabulary for the three OKC document connectors (LIVE.1a /
+# GL-LIVE-01, P23.5): okc_procurement, okcpd_policy, ok_statute.
+#
+# This table is DATA, not code (SIG-ENG-001): the per-connector predicate
+# allowlists (the hard schema gate, SIG-INGEST-033), the Part VIII forbidden-token
+# set (§0.7 / §43.2 — the mechanical form of "no plate/trip/per-person data"), the
+# person-naming predicate set that routes through the officer-naming gate (§43.4),
+# and the default sensitivity class stamped on every parsed claim (§43.3) are data
+# rows reviewed on their own. Changes after P23.5 are VERSIONED MIGRATIONS (§20):
+# bump `vocab_version` and add the change, never silently rewrite a row.
+#
+# NOTE ON TOML ORDERING: every top-level key MUST appear ABOVE the first [table]
+# header — otherwise TOML nests it under that table.
+
+# The connectors' shared vocabulary version, stamped onto every run (§20).
+vocab_version = "2026.09.10"
+
+# Part VIII §0.7 / §43.2 (SIG-PUB-002/003): content tokens that mark plate,
+# per-trip, per-person, or per-search data. Any predicate id OR raw value carrying
+# one of these is REFUSED at the ingest boundary (`assert_part_viii_safe`) before a
+# single claim is built — the OKC document connectors emit institutional facts
+# (contracts, policy clauses, statutes) ONLY, never per-plate/per-trip/per-person
+# rows. Complements the categorical-exclusion list (policy/data/exclusions.toml).
+forbidden_tokens = [
+  "license plate", "licence plate", "plate number", "license_plate", "plate_number",
+  "per-person", "per_person", "per person",
+  "per-trip", "per_trip", "per trip",
+  "travel history", "travel_history", "trip history", "individual travel",
+  "per-search", "per_search", "per search", "hotlist hit", "hotlist_hit",
+  "home address", "home_address",
+]
+
+# Predicate ids that NAME a natural person. A claim carrying one of these MUST pass
+# the five-prong officer-naming test with two independent reviewer concurrences
+# (§43.4, SIG-PUB-007/008) or it is refused (default no-publish). The OKC document
+# connectors never emit these; the guard is present so a future fixture cannot
+# smuggle a person-named claim past the gate.
+person_naming_predicates = [
+  "officer_name", "person_name", "individual_name", "named_individual",
+]
+
+# The default sensitivity class stamped on every OKC document claim (§43.3,
+# SIG-PUB-004/006): C1 — institutional / public-record facts with no per-asset
+# coordinate. Applied to the parsed claim so the publication tier travels with it.
+default_sensitivity_class = "C1"
+
+# --- per-connector configuration ---------------------------------------------
+# Each connector declares its registry source id, the document genre it reads
+# (re-derived from the document text at extraction, never trusted from a label —
+# `parsing.genre.classify_genre`), the sig-parsing extractor it drives, and its
+# predicate allowlist (SIG-INGEST-033).
+
+[connectors.okc_procurement]
+source_id = "okc_procurement"
+genre = "procurement_record"
+extractor = "procurement_table"
+# Contract / procurement predicate surface (§11.11-flavoured document facts).
+predicate_allowlist = [
+  "vendor_name",
+  "product_name",
+  "contract_number",
+  "contract_amount",
+  "procurement_date",
+  "contract_term_end",
+  "quantity",
+]
+
+[connectors.okcpd_policy]
+source_id = "okcpd_policy"
+genre = "policy_document"
+extractor = "policy_clauses"
+# Agency-policy clause predicate surface (a policy clause locates to a §).
+predicate_allowlist = [
+  "policy_clause",
+  "retention_period",
+  "use_restriction",
+  "sharing_restriction",
+  "authorization_state",
+]
+
+[connectors.ok_statute]
+source_id = "ok_statute"
+genre = "policy_document"
+extractor = "policy_clauses"
+# Statute / legal-instrument predicate surface (statutory text is clause-organised).
+predicate_allowlist = [
+  "legal_instrument",
+  "statutory_citation",
+  "use_restriction",
+  "authorization_state",
+]
