@@ -79,6 +79,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-072](ADR-072-documentation-freshness-gates.md) | — | — | Accepted |
 | [ADR-073](ADR-073-build-memory-committed-under-docs-build-scratch-retired.md) | — | P22.3 | Accepted |
 | [ADR-074](ADR-074-okc-document-connectors-okc-procurement-okcpd-policy-ok-statute-over-the-sig-parsing-layers-with-the-part-viii-guard.md) | — | — | Accepted |
+| [ADR-075](ADR-075-gcp-hosted-deployment-e2-micro-vs-cloud-sql.md) | — | — | Accepted |
 
 ## Notes
 
