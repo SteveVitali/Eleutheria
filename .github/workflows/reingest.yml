@@ -1,0 +1,93 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# Re-ingest cadence scheduler (SCHED.1, GL-SCHED-01, ADR-076).
+#
+# The MINIMAL scheduler that closes the P21.3 scheduling backlog: a GitHub Actions
+# cron (not a heavyweight Prefect/Dagster deployment — the orchestration/ seam stays
+# reserved and reversible, SIG-INGEST-021) that drives `sig-connectors run` per source
+# on a cadence that respects source etiquette.
+#
+# Two layers of politeness (cadence vs etiquette — ADR-076):
+#   * COARSE — this job asks `sig-orchestration due` which sources have passed their
+#     per-source re-ingest interval (from the registry `cadence`, clamped to a
+#     once-a-day etiquette floor). Only due sources are run.
+#   * FINE   — each `sig-connectors run` egresses through the shared PoliteFetcher
+#     (per-host crawl-delay from robots, retry-with-backoff on 429/503/504 honouring
+#     Retry-After, Overpass 429/504 = back off; RISK-P21-04/RISK-P24-01). The scheduler
+#     never bypasses the gate: a non-green source is REFUSED (exit 3) before any socket
+#     opens, so this workflow is safe to run before any HG-03 flip.
+#
+# Secrets (HG-09): any source token rides the environment only (SIG_*), never a file.
+
+name: reingest
+
+on:
+  schedule:
+    # 05:00 UTC daily. The per-source cadence (`sig-orchestration due`) decides which
+    # sources actually run today; most fire far less often than daily. Daily is the
+    # scheduler's polling tick, not any source's fetch frequency.
+    - cron: "0 5 * * *"
+  # Manual trigger so an operator can drive a re-ingest on demand.
+  workflow_dispatch:
+
+concurrency:
+  group: reingest-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  reingest-due-sources:
+    runs-on: ubuntu-latest
+    env:
+      # Env-only source credentials (HG-09); absent by default → live runs refuse.
+      SIG_MUCKROCK_TOKEN: ${{ secrets.SIG_MUCKROCK_TOKEN }}
+      SIG_DATA_GOV_KEY: ${{ secrets.SIG_DATA_GOV_KEY }}
+      SIG_OVERPASS_ENDPOINT: ${{ secrets.SIG_OVERPASS_ENDPOINT }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.6"
+          enable-cache: true
+
+      - name: Install Python (pinned by .python-version)
+        run: uv python install
+
+      - name: Install workspace from the committed lockfile
+        run: make sync
+
+      # The cadence decision: which sources have passed their re-ingest interval.
+      - name: Compute the due source list (respecting per-source cadence)
+        id: due
+        run: |
+          uv run sig-orchestration due | tee due_sources.txt
+
+      # Drive `sig-connectors run` per due source. Each run is gated + polite: a
+      # non-green source exits 3 (refused before any fetch) — expected until HG-03,
+      # so we do NOT fail the job on a per-source refusal; freshness is recorded for
+      # each source that produced claims.
+      - name: Re-ingest each due source (gated + polite via PoliteFetcher)
+        run: |
+          set -u
+          while IFS= read -r source; do
+            [ -z "$source" ] && continue
+            echo "::group::re-ingest $source"
+            if uv run sig-connectors run --source "$source" --mode live --sink pg; then
+              uv run sig-orchestration record --source "$source" --mode scheduled
+            else
+              code=$?
+              if [ "$code" -eq 3 ]; then
+                echo "source $source refused (gate pending HG-03) — skipping, not a failure"
+              else
+                echo "source $source failed with exit $code"
+                exit "$code"
+              fi
+            fi
+            echo "::endgroup::"
+          done < due_sources.txt
