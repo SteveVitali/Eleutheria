@@ -54,12 +54,35 @@ def test_every_fixture_source_id_maps_to_a_registered_source() -> None:
         assert registry_id in reg, f"{fixture_id} -> {registry_id} not registered"
 
 
-def test_the_six_okc_rows_are_registered_undetermined_and_gated() -> None:
-    for sid in _OKC_NEW_ROWS:
+_OKC_FLIPPED_GOV_ROWS = ("okc_procurement", "okc_council", "okcpd_policy", "ok_statute")
+_OKC_NEWS_ROWS = ("journalrecord", "oklahoman")
+
+
+def test_the_okc_government_rows_are_flipped_with_review_metadata() -> None:
+    # RIGHTS.1 flip re-run (GL-GATE-03, 2026-09-10): the four OKC government-record
+    # rows now carry a resolved public-domain rights block (CC0-1.0, the registry-
+    # accepted expression) + full review metadata, and are flipped loadable.
+    from datetime import date
+
+    for sid in _OKC_FLIPPED_GOV_ROWS:
         rec = get(sid)
-        # Seeded WITHOUT a rights block => UNDETERMINED (SIG-LIC-004), and
-        # WITHOUT ingestion_permitted (defaults false, SIG-INGEST-028).
-        assert is_undetermined(rec.rights), f"{sid} should be UNDETERMINED at seed"
+        assert not is_undetermined(rec.rights), f"{sid} should have a resolved rights block"
+        assert rec.rights.spdx == "CC0-1.0"
+        assert rec.rights.redistributable is True
+        assert rec.rights.derivative_permitted is True
+        assert rec.ingestion_permitted is True
+        assert rec.rights_reviewed_by == "maintainer (delegated)"
+        assert rec.rights_reviewed_on == date(2026, 9, 10)
+        assert rec.last_verified == date(2026, 9, 10)
+        assert rec.compact_status is CompactStatus.PUBLIC_TERMS_ONLY
+
+
+def test_the_okc_news_rows_stay_undetermined_and_gated() -> None:
+    # journalrecord/oklahoman stay LINK-posture per their packets (GL-GATE-03):
+    # UNDETERMINED, not permitted.
+    for sid in _OKC_NEWS_ROWS:
+        rec = get(sid)
+        assert is_undetermined(rec.rights), f"{sid} should stay UNDETERMINED"
         assert rec.ingestion_permitted is False
         assert rec.compact_status is CompactStatus.PUBLIC_TERMS_ONLY
         assert "P06.1" in rec.notes  # cites the slice precondition doc

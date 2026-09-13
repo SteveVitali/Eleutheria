@@ -137,17 +137,21 @@ def test_validate_fails_naming_the_offending_id(monkeypatch: pytest.MonkeyPatch)
     assert "okc_procurement_test_flip" in buf.getvalue()
 
 
-# --- flip-ready + loadable counts (AC: flip-ready 18, loadable 0 == validate) -
+# --- flip-ready + loadable counts (post RIGHTS.1 flip re-run, GL-GATE-03) ------
+# The OKC critical subset was flipped 2026-09-10 (okc_procurement/okc_council/
+# okcpd_policy/ok_statute + osm_overpass/deflock_repo): 6 sources are now loadable
+# and the two OSM/community rows left the flip-ready set (flag now true), so
+# flip-ready dropped 18 -> 16 while loadable-now rose 0 -> 6.
 
 
-def test_review_status_prints_flip_ready_18_and_loadable_0(
+def test_review_status_prints_flip_ready_16_and_loadable_6(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
     assert "registered sources: 118" in out
-    assert "flip-ready: 18" in out
-    assert "loadable now: 0" in out
+    assert "flip-ready: 16" in out
+    assert "loadable now: 6" in out
 
 
 def test_review_status_loadable_equals_validate() -> None:
@@ -155,8 +159,8 @@ def test_review_status_loadable_equals_validate() -> None:
     from connectors.loader import is_loadable
 
     loadable = [s for s in sources() if is_loadable(s)]
-    assert len(loadable) == 0
-    assert len(flip_ready()) == 18
+    assert len(loadable) == 6
+    assert len(flip_ready()) == 16
 
 
 def test_flip_ready_excludes_permitted_and_undetermined_and_link() -> None:
@@ -177,9 +181,11 @@ def test_review_status_single_source_shows_five_gate_fields(
     out = capsys.readouterr().out
     for field in ("ingestion_permitted=", "compact=", "custody=", "rights=", "reviewed-by="):
         assert field in out
-    # osm_overpass is flip-ready: rights + compact + custody all true, flag false.
-    assert "flip-ready: True" in out
-    assert "loadable now: False" in out
+    # osm_overpass was flipped 2026-09-10 (GL-GATE-03): now loadable, no longer
+    # flip-ready (the flag is true), all five gate fields green.
+    assert "ingestion_permitted=True" in out
+    assert "flip-ready: False" in out
+    assert "loadable now: True" in out
 
 
 def test_review_status_unknown_source_is_an_error(capsys: pytest.CaptureFixture[str]) -> None:
