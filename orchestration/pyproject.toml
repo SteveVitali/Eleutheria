@@ -1,12 +1,22 @@
 [project]
 name = "sig-orchestration"
 version = "0.1.0"
-description = "SIG orchestration package (skeleton; see docs/2_canonical_design_spec.md §47)."
+description = "SIG orchestration package: the re-ingest cadence & freshness scheduling seam (§47)."
 requires-python = ">=3.11"
-dependencies = []
+# The cadence engine (SCHED.1, GL-SCHED-01, ADR-076) drives the connector runner on
+# a per-source interval and reuses the disappearance classifier — so it depends on
+# sig-connectors (the eight-stage runner + PoliteFetcher + the disappearance mapper)
+# and sig-evidence (the volatility-proportional sweep cadence). orchestration/ is the
+# ONLY package permitted to import a workflow orchestrator, so this dependency edge
+# points inward and creates no cycle (tests/unit/test_import_boundary.py).
+dependencies = ["sig-connectors", "sig-evidence"]
 
 [project.scripts]
 sig-orchestration = "orchestration.cli:main"
+
+[tool.uv.sources]
+sig-connectors = { workspace = true }
+sig-evidence = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]
