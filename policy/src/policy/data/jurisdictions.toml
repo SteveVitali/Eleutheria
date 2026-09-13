@@ -29,5 +29,11 @@ public_employee_names_publishable = false
 [jurisdictions.DE]
 public_employee_names_publishable = false
 
+# Belgium (BE-GDPR profile): like FR/DE, redact public-official names by default
+# under GDPR; publication only with a documented Art. 6(1)(f) balancing test
+# (§43.8, P18.2).
+[jurisdictions.BE]
+public_employee_names_publishable = false
+
 [jurisdictions.UK]
 public_employee_names_publishable = true

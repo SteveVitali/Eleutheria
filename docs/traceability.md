@@ -1897,3 +1897,49 @@ P18.1 owns this framework; P18.2 (France/Belgium) is its first consumer.
 |---|---|---|
 | SIG-ENG-004 (every new requirement has an automated test) | `tests/ontology/test_i18n.py`, `tests/unit/test_jurisdiction_adapter.py`, `tests/connectors/test_coarse_international.py`, `tests/unit/test_policy_publication.py` | `make check` (pytest) |
 | Phase gate: CI green incl. data-quality; ADR written for the schema deviation; traceability + risk register updated | this section; `docs/adr/ADR-056-*`; `docs/risk_register.md` (Phase 18 — P18.1) | `make check` (lint/format/typecheck/pytest/verify-gen — `verify-gen` proves the committed generated artifacts match a fresh generation) |
+
+# P18.2 — International adapter #1: the France/Belgium (Technopolice) connectors
+
+P18.2 is the **first consumer** of the P18.1 jurisdiction adapter framework and its
+§5.3 stress-test: authorization by published prefectural orders → `LegalInstrument`,
+national open-data procurement (DECP) → `Contract`, the non-US records-request
+vocabulary incl. `no_equivalent_available`, and the study of the already-executed
+~12,000-camera OSM import. Belgium is onboarded under the `be.*` national namespace.
+ADR-057 records the additive schema deviation.
+
+## The non-US records-request vocabulary — fr.cada / no_equivalent_available, not foia_request (SIG-ONTO-068, §13.8)
+
+| Requirement | Where | Test |
+|---|---|---|
+| §13.8 / SIG-ONTO-068 (the internationalized records-request vocabulary is used — `fr.cada` for France, `no_equivalent_available` for Belgium — and never `foia_request` / `us.*`) | `connectors.france_belgium` (`records_request_method_for`, `acquisition_method_claim`, `assert_not_us_records_method`, `assert_acquisition_method`, `USRecordsMethodError`, `FranceBelgiumRecordsConnector`); `connectors/data/france_belgium_vocab.toml` (`records_request_methods`, `forbidden_us_acquisition_methods`); source rows `madada`, `declarationcamera_be` | `tests/connectors/test_france_belgium.py::test_records_connector_emits_fr_cada_not_foia`, `::test_records_connector_emits_no_equivalent_available_for_belgium`, `::test_a_us_records_method_is_refused`, `::test_records_request_method_lookup_is_defined_for_fr_and_be`, `::test_legal_instrument_and_acquisition_vocab_match_the_ontology` |
+
+## Authorization by prefectural order → LegalInstrument (§11.14, SIG-ONTO-068)
+
+| Requirement | Where | Test |
+|---|---|---|
+| §11.14 (a published arrêté préfectoral maps onto `LegalInstrument` with `instrument_type=prefectoral_order` — the abstract parent of the national child `fr.arrete_prefectoral`; five-year renewable validity → `sunset_date`) | `connectors.france_belgium` (`LegalInstrument`, `prefectoral_order_from_raa`, `prefectoral_order_family`, `abstract_instrument_type`, `assert_legal_predicate_allowed`, `InvalidLegalInstrument`); `ontology/schema/common.yaml` `LegalInstrumentType` (`prefectoral_order` parent + `fr.arrete_prefectoral`); source row `raa_prefectures` | `tests/connectors/test_france_belgium.py::test_prefectoral_order_maps_onto_legal_instrument_prefectoral_order`, `::test_prefectoral_order_entity_row_records_the_abstract_parent`, `::test_legal_instrument_rejects_an_out_of_vocabulary_type`, `::test_belgian_loi_cameras_is_a_national_instrument_under_a_shared_parent`, `::test_records_predicate_allowlist_refuses_out_of_scope` |
+
+## National open-data procurement → Contract, with the framework-agreement piggyback (§23.6, SIG-ONTO-032)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ONTO-032 / §23.6 (a DECP record maps 1:1 onto `Contract`; a marché riding an accord-cadre is a `cooperative_piggyback` that MUST set `parent_cooperative_contract`) | `connectors.france_belgium` (`contract_from_decp`, `decp_acquisition_channel`, `FranceBelgiumProcurementConnector`); reuses `connectors.procurement.Contract`/`LifecycleTransition`; `connectors/data/france_belgium_vocab.toml` (`decp` procedure_channels, `decp_framework_channel`); source row `decp_fr` | `tests/connectors/test_france_belgium.py::test_decp_record_maps_onto_contract`, `::test_decp_framework_agreement_is_a_piggyback_that_links_its_master`, `::test_decp_contract_claim_rows_pass_the_procurement_allowlist`, `::test_decp_procedure_maps_to_acquisition_channel`, `::test_procurement_connector_runs_end_to_end_from_a_decp_payload` |
+
+## France/Belgium under a national namespace, not a widened US enum (SIG-ONTO-068, deliverable 4)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ONTO-068 (France/Belgium jurisdictions, org types, and legal-instrument types instantiated as `<cc>.*` children under a shared abstract parent; the `BE` adapter validates with no `us.*` code path; no `us.*` enum widened) | `ontology/schema/common.yaml` `JurisdictionType` (`be.region`/`be.province`/`be.commune`/`be.police_zone`), `OrganizationType` (`be.police_locale`/`be.police_federale`, `fr.police_nationale`/`fr.douanes`/`fr.prefecture`), `LegalInstrumentType` (`be.loi_cameras`); `policy/data/jurisdiction_adapters.toml` (`BE`); `policy/data/jurisdictions.toml` (`BE` BE-GDPR) | `tests/unit/test_france_belgium_adapter.py::test_belgium_adapter_is_seeded_and_validates`, `::test_org_and_legal_types_use_the_national_namespace`, `::test_belgium_terms_are_real_namespaced_ontology_values`, `::test_no_us_enum_was_widened_for_france_or_belgium`, `::test_belgium_records_regime_is_no_equivalent_available`, `::test_belgium_publication_is_jurisdiction_conditional_redact_by_default` |
+
+## The ~12,000-camera OSM import studied before any SIG-originated contribution at scale (SIG-CONTRIB-016, §35.2)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-CONTRIB-016 (the sous-surveillance.net → OSM import is studied — conventions, consultation, and outcome documented — before any SIG-originated contribution at scale is proposed) | `connectors.osm_import_study` (`ImportStudy`, `import_study`, `assert_import_studied_before_scaled_contribution`, `ImportNotStudied`, `REQUIRED_SECTIONS`); `connectors/data/osm_import_study.toml`; prose study `docs/studies/osm-sous-surveillance-import.md`; source row `sous_surveillance_osm_import` | `tests/connectors/test_osm_import_study.py::test_study_documents_conventions_consultation_and_outcome`, `::test_study_carries_the_reconciliation_join_key`, `::test_study_corrects_the_outline_number_and_actor_attribution`, `::test_conventions_capture_the_distance_banded_conflation_rule`, `::test_gate_permits_a_scaled_contribution_once_the_import_is_studied`, `::test_gate_refuses_a_scaled_contribution_when_a_section_is_undocumented` |
+
+## Phase gate (§51.3)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ENG-004 (every new requirement has an automated test) | `tests/connectors/test_france_belgium.py`, `tests/connectors/test_osm_import_study.py`, `tests/unit/test_france_belgium_adapter.py` | `make check` (pytest) |
+| Phase gate: CI green incl. data-quality; ADR written for the schema deviation; traceability + risk register updated | this section; `docs/adr/ADR-057-*`; `docs/risk_register.md` (Phase 18 — P18.2) | `make check` (lint/format/typecheck/pytest/verify-gen) |

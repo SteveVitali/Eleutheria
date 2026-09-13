@@ -50,6 +50,11 @@ URI: [sig:enum/OrganizationType](https://ontology.sig-project.org/schema/enum/Or
 | fr.gendarmerie | None | France — gendarmerie nationale | Is-A: NONE<br>|
 | uk.territorial_police | None | United Kingdom — a territorial police force | Is-A: NONE<br>|
 | de.landespolizei | None | Germany — a Land police force | Is-A: NONE<br>|
+| fr.police_nationale | None | France — police nationale (national state police) | Is-A: NONE<br>|
+| fr.douanes | None | France — douanes (customs); an ALPR operator (F9 | Is-A: NONE<br>|
+| fr.prefecture | None | France — préfecture (the State's representative in the département; the autho... | Is-A: NONE<br>|
+| be.police_locale | None | Belgium — a zone de police locale (local police) | Is-A: NONE<br>|
+| be.police_federale | None | Belgium — police fédérale (federal police) | Is-A: NONE<br>|
 
 
 
@@ -181,6 +186,27 @@ permissible_values:
   de.landespolizei:
     text: de.landespolizei
     description: Germany — a Land police force.
+    is_a: law_enforcement
+  fr.police_nationale:
+    text: fr.police_nationale
+    description: France — police nationale (national state police).
+    is_a: law_enforcement
+  fr.douanes:
+    text: fr.douanes
+    description: France — douanes (customs); an ALPR operator (F9.13).
+    is_a: law_enforcement
+  fr.prefecture:
+    text: fr.prefecture
+    description: France — préfecture (the State's representative in the département;
+      the authorizing body for vidéoprotection, F9.18).
+    is_a: government
+  be.police_locale:
+    text: be.police_locale
+    description: Belgium — a zone de police locale (local police).
+    is_a: law_enforcement
+  be.police_federale:
+    text: be.police_federale
+    description: Belgium — police fédérale (federal police).
     is_a: law_enforcement
 
 ```

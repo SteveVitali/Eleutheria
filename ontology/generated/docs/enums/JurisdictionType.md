@@ -41,6 +41,10 @@ URI: [sig:enum/JurisdictionType](https://ontology.sig-project.org/schema/enum/Ju
 | de.bundesland | None | Germany — Bundesland (state) | Is-A: NONE<br>|
 | de.kreis | None | Germany — Kreis (district) | Is-A: NONE<br>|
 | de.gemeinde | None | Germany — Gemeinde (municipality) | Is-A: NONE<br>|
+| be.region | None | Belgium — région / gewest (Brussels-Capital, Flanders, Wallonia) | Is-A: NONE<br>|
+| be.province | None | Belgium — province | Is-A: NONE<br>|
+| be.commune | None | Belgium — commune / gemeente | Is-A: NONE<br>|
+| be.police_zone | None | Belgium — zone de police locale (a non-tree operational grouping of communes) | Is-A: NONE<br>|
 
 
 
@@ -146,6 +150,23 @@ permissible_values:
     text: de.gemeinde
     description: Germany — Gemeinde (municipality).
     is_a: municipality
+  be.region:
+    text: be.region
+    description: Belgium — région / gewest (Brussels-Capital, Flanders, Wallonia).
+    is_a: state_province
+  be.province:
+    text: be.province
+    description: Belgium — province.
+    is_a: county
+  be.commune:
+    text: be.commune
+    description: Belgium — commune / gemeente.
+    is_a: municipality
+  be.police_zone:
+    text: be.police_zone
+    description: Belgium — zone de police locale (a non-tree operational grouping
+      of communes).
+    is_a: special_district
 
 ```
 </details>

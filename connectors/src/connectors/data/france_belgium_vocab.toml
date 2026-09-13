@@ -1,0 +1,146 @@
+# SPDX-License-Identifier: Apache-2.0
+# The versioned `france_belgium` (Technopolice) connector vocabulary (§23.5, §23.6,
+# §11.14, §13.8, P18.2). This table is DATA, not code (SIG-ENG-001): the
+# LegalInstrument predicate surface, the internationalized records-request and
+# legal-instrument vocabularies, and the DECP procedure -> acquisition_channel map
+# are data rows reviewed on their own.
+# Changes after P18.2 are VERSIONED MIGRATIONS (§20), not edits — bump
+# `vocab_version` and add the change, never silently rewrite a row.
+#
+# The legal-instrument and acquisition-method value sets mirror the frozen ontology
+# enums LegalInstrumentType / AcquisitionMethod (ontology/schema/common.yaml,
+# §11.14/§13.8); they are duplicated here as the connector's runtime allowlist and a
+# test asserts they stay in lock-step with the ontology (drift is a failed test).
+#
+# NOTE ON TOML ORDERING: every top-level key MUST appear ABOVE the first [table]
+# header — otherwise TOML nests it under that table. The [sources], [decp], and
+# [records_request_methods] tables therefore come last.
+
+# The connector's own vocabulary version, stamped onto every run (§20).
+vocab_version = "2026.09.08"
+
+# The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
+# `france_belgium_records` connector may write ONLY the §11.14 LegalInstrument
+# predicate surface plus the acquisition-method coverage fact. A procurement value,
+# a deployment, or a device count is refused here, at the ingest boundary (§10.5 D6).
+legal_instrument_predicate_allowlist = [
+  "legal_instrument",
+  "instrument_type",
+  "enacting_body",
+  "jurisdiction",
+  "citation",
+  "effective_from",
+  "effective_to",
+  "sunset_date",
+  "constrains_technology",
+  "constrains_capability",
+  "requires_authorization_of",
+  "external_id",
+  "acquisition_method",
+]
+
+# Predicate GENRES this connector MUST NOT write (scope-creep guard, spec "Out of
+# scope"): the procurement Contract surface is the `france_belgium_procurement`
+# connector's; devices/deployments belong to the physical/deployment tickets;
+# parsed-document claims are P07.1's. Named as data so the refusal is auditable.
+legal_instrument_forbidden_predicate_genres = [
+  "contract",
+  "funding_instrument",
+  "deployment_exists",
+  "device_count",
+  "camera_count",
+  "parsed_document_claim",
+]
+
+# The full LegalInstrumentType permissible-value set (§11.14), mirrored from the
+# ontology enum. A test asserts lock-step with ontology/schema/common.yaml.
+legal_instrument_types = [
+  "statute",
+  "ordinance",
+  "regulation",
+  "executive_order",
+  "court_order",
+  "consent_decree",
+  "dpa_decision",
+  "code_of_practice",
+  "prefectoral_order",
+  "directive",
+  "fr.arrete_prefectoral",
+  "fr.cnil_decision",
+  "uk.surveillance_camera_code",
+  "eu.ai_act",
+  "de.landesdatenschutzgesetz",
+  "be.loi_cameras",
+]
+
+# The prefectoral-order family: the shared abstract parent plus its national
+# `is_a` children (§11.14, SIG-ONTO-068). Authorization by published prefectural
+# order maps onto a LegalInstrument in THIS family — the France stress-test of the
+# model (a US-shaped enum could not hold the arrêté préfectoral). Used to assert
+# `instrument_type=prefectoral_order` for an arrêté préfectoral (AC2).
+prefectoral_order_parent = "prefectoral_order"
+prefectoral_order_family = ["prefectoral_order", "fr.arrete_prefectoral"]
+
+# The France arrêté préfectoral concrete instrument type + its statutory basis and
+# five-year renewable validity (Code de la sécurité intérieure L252, F9.18).
+fr_prefectoral_order_instrument_type = "fr.arrete_prefectoral"
+fr_prefectoral_order_citation = "Code de la sécurité intérieure, art. L251-1 à L255-1 (autorisation L252)"
+fr_prefectoral_order_validity_years = 5
+
+# The full AcquisitionMethod permissible-value set (§13.8), mirrored from the
+# ontology enum. `records_request` is the abstract parent; national children carry
+# the country namespace; `no_equivalent_available` is a country-neutral coverage
+# fact for a jurisdiction with no accessible access regime.
+acquisition_methods = [
+  "records_request",
+  "us.foia",
+  "us.state_public_records",
+  "fr.cada",
+  "uk.foi",
+  "eu.access_to_documents",
+  "no_equivalent_available",
+]
+
+# The US-specific records-request terms a NON-US connector MUST NOT emit
+# (SIG-ONTO-068, §13.8): the outline's `foia_request` and the two `us.*` children.
+# Emitting one of these from the France/Belgium connector is exactly the US-shaped
+# assumption §5.3 prohibits, and it is refused at construction.
+forbidden_us_acquisition_methods = ["foia_request", "us.foia", "us.state_public_records"]
+
+# The DECP acquisition-channel a marché riding an accord-cadre (framework
+# agreement) carries: it is a piggyback on a master award and MUST set
+# parent_cooperative_contract = the accord-cadre id (SIG-ONTO-032). Mirrors the
+# procurement connector's cooperative_channel.
+decp_framework_channel = "cooperative_piggyback"
+# The channel assumed when the DECP `procedure` field maps to nothing more specific.
+decp_default_channel = "direct_award"
+# DECP records are procurement records, not documents: the DECP->EvidenceArtifact
+# edge is to the RECORD, not a PDF (DECP carries no document link, F9.16).
+decp_currency = "EUR"
+
+# The registry source ids the `france_belgium` connectors run against (§22.6 I).
+# Each is a row already seeded in data/sources.toml.
+[sources]
+prefectural_orders = "raa_prefectures"   # arrêtés préfectoraux -> LegalInstrument
+records_fr          = "madada"           # FR CADA records channel -> fr.cada
+records_be          = "declarationcamera_be"  # BE register (eID wall) -> no_equivalent_available
+procurement         = "decp_fr"          # DECP national open-data procurement -> Contract
+
+# The internationalized records-request regime by jurisdiction (§13.8). France's
+# CADA regime is `fr.cada`; Belgium's national camera register is behind a
+# Belgian-eID wall and not public, so its regime is `no_equivalent_available` — a
+# recorded coverage fact, never `foia_request`.
+[records_request_methods]
+FR = "fr.cada"
+BE = "no_equivalent_available"
+
+# DECP `procedure` (free-text French) -> AcquisitionChannel (§11.11). Unmapped
+# procedures fall back to `decp_default_channel`; a marché with an accord-cadre is
+# reclassified to the framework channel regardless of `procedure`.
+[decp.procedure_channels]
+"Appel d'offres ouvert" = "competitive_rfp"
+"Appel d'offres restreint" = "competitive_rfp"
+"Procédure adaptée" = "competitive_rfp"
+"Dialogue compétitif" = "competitive_rfp"
+"Marché négocié sans publicité ni mise en concurrence préalable" = "sole_source"
+"Marché passé sans publicité ni mise en concurrence préalable" = "sole_source"

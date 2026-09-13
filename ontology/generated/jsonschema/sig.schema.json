@@ -1630,7 +1630,11 @@
                 "uk.police_force_area",
                 "de.bundesland",
                 "de.kreis",
-                "de.gemeinde"
+                "de.gemeinde",
+                "be.region",
+                "be.province",
+                "be.commune",
+                "be.police_zone"
             ],
             "title": "JurisdictionType",
             "type": "string"
@@ -1734,7 +1738,8 @@
                 "fr.cnil_decision",
                 "uk.surveillance_camera_code",
                 "eu.ai_act",
-                "de.landesdatenschutzgesetz"
+                "de.landesdatenschutzgesetz",
+                "be.loi_cameras"
             ],
             "title": "LegalInstrumentType",
             "type": "string"
@@ -2048,7 +2053,12 @@
                 "fr.police_municipale",
                 "fr.gendarmerie",
                 "uk.territorial_police",
-                "de.landespolizei"
+                "de.landespolizei",
+                "fr.police_nationale",
+                "fr.douanes",
+                "fr.prefecture",
+                "be.police_locale",
+                "be.police_federale"
             ],
             "title": "OrganizationType",
             "type": "string"

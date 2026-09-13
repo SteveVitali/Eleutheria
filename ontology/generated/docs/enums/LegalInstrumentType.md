@@ -35,6 +35,7 @@ URI: [sig:enum/LegalInstrumentType](https://ontology.sig-project.org/schema/enum
 | uk.surveillance_camera_code | None | United Kingdom — the Surveillance Camera Code of Practice | Is-A: NONE<br>|
 | eu.ai_act | None | European Union — an EU AI Act obligation | Is-A: NONE<br>|
 | de.landesdatenschutzgesetz | None | Germany — a Land data-protection statute | Is-A: NONE<br>|
+| be.loi_cameras | None | Belgium — loi caméras (21 March 2007) governing installation and use of surve... | Is-A: NONE<br>|
 
 
 
@@ -119,6 +120,11 @@ permissible_values:
   de.landesdatenschutzgesetz:
     text: de.landesdatenschutzgesetz
     description: Germany — a Land data-protection statute.
+    is_a: statute
+  be.loi_cameras:
+    text: be.loi_cameras
+    description: Belgium — loi caméras (21 March 2007) governing installation and
+      use of surveillance cameras.
     is_a: statute
 
 ```

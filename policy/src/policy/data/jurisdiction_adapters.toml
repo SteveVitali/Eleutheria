@@ -40,6 +40,23 @@ default_languages = ["fr-FR"]
 publication_profile = "FR-GDPR"
 local_partner = "La Quadrature du Net (Technopolice)"
 
+# Belgium — the second France/Belgium (Technopolice) adapter (§52 Phase 18, P18.2).
+# The sous-surveillance.net → OSM import landed in Belgium first (Brussels pilot,
+# F9.6). The loi caméras (21 March 2007) is the governing instrument; the national
+# camera register sits behind a Belgian-eID wall and is NOT public (F9.31), so the
+# records-request regime for it is `no_equivalent_available` — a recorded coverage
+# fact, not a foreign-namespace borrow. Trilingual labels (fr/nl/de). No `us.*` term.
+[adapters.BE]
+namespace = "be"
+jurisdiction_levels = ["country", "be.region", "be.province", "be.commune", "be.police_zone"]
+national_code_schemes = ["be.nis", "iso.3166-2", "wikidata.qid"]
+organization_types = ["be.police_locale", "be.police_federale"]
+legal_instrument_types = ["be.loi_cameras"]
+records_request_methods = ["no_equivalent_available"]
+default_languages = ["fr-BE", "nl-BE", "de-BE"]
+publication_profile = "BE-GDPR"
+local_partner = "OpenStreetMap Belgium (sous-surveillance.net import) — read-only pending local reviewer"
+
 # United Kingdom — ISO code GB, vocabulary namespace `uk`. Records requests under
 # the Freedom of Information Act; the Surveillance Camera Code of Practice as the
 # governing instrument.

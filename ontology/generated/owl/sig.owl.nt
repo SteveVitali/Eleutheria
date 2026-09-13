@@ -1497,6 +1497,30 @@
 <https://ontology.sig-project.org/schema/Jurisdiction> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:cb34b7badfb9b025e73935e8f153d9093a4a05a7cc2624ed84b6425d4c798b3cd00 .
 <https://ontology.sig-project.org/schema/Jurisdiction> <http://www.w3.org/2004/02/skos/core#definition> "[NEW] A first-class jurisdiction with a self-referential hierarchy, a pluggable national code system, and temporally-versioned geometry (§11.1, SIG-ONTO-010/011)." .
 <https://ontology.sig-project.org/schema/Jurisdiction> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/schema/entities> .
+<https://ontology.sig-project.org/schema/JurisdictionType#be.commune> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/JurisdictionType#be.commune> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/JurisdictionType> .
+<https://ontology.sig-project.org/schema/JurisdictionType#be.commune> <http://www.w3.org/2000/01/rdf-schema#label> "be.commune" .
+<https://ontology.sig-project.org/schema/JurisdictionType#be.commune> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/JurisdictionType#municipality> .
+<https://ontology.sig-project.org/schema/JurisdictionType#be.commune> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/JurisdictionType> .
+<https://ontology.sig-project.org/schema/JurisdictionType#be.commune> <http://www.w3.org/2004/02/skos/core#definition> "Belgium — commune / gemeente." .
+<https://ontology.sig-project.org/schema/JurisdictionType#be.police_zone> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/JurisdictionType#be.police_zone> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/JurisdictionType> .
+<https://ontology.sig-project.org/schema/JurisdictionType#be.police_zone> <http://www.w3.org/2000/01/rdf-schema#label> "be.police_zone" .
+<https://ontology.sig-project.org/schema/JurisdictionType#be.police_zone> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/JurisdictionType#special_district> .
+<https://ontology.sig-project.org/schema/JurisdictionType#be.police_zone> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/JurisdictionType> .
+<https://ontology.sig-project.org/schema/JurisdictionType#be.police_zone> <http://www.w3.org/2004/02/skos/core#definition> "Belgium — zone de police locale (a non-tree operational grouping of communes)." .
+<https://ontology.sig-project.org/schema/JurisdictionType#be.province> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/JurisdictionType#be.province> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/JurisdictionType> .
+<https://ontology.sig-project.org/schema/JurisdictionType#be.province> <http://www.w3.org/2000/01/rdf-schema#label> "be.province" .
+<https://ontology.sig-project.org/schema/JurisdictionType#be.province> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/JurisdictionType#county> .
+<https://ontology.sig-project.org/schema/JurisdictionType#be.province> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/JurisdictionType> .
+<https://ontology.sig-project.org/schema/JurisdictionType#be.province> <http://www.w3.org/2004/02/skos/core#definition> "Belgium — province." .
+<https://ontology.sig-project.org/schema/JurisdictionType#be.region> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/JurisdictionType#be.region> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/JurisdictionType> .
+<https://ontology.sig-project.org/schema/JurisdictionType#be.region> <http://www.w3.org/2000/01/rdf-schema#label> "be.region" .
+<https://ontology.sig-project.org/schema/JurisdictionType#be.region> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/JurisdictionType#state_province> .
+<https://ontology.sig-project.org/schema/JurisdictionType#be.region> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/JurisdictionType> .
+<https://ontology.sig-project.org/schema/JurisdictionType#be.region> <http://www.w3.org/2004/02/skos/core#definition> "Belgium — région / gewest (Brussels-Capital, Flanders, Wallonia)." .
 <https://ontology.sig-project.org/schema/JurisdictionType#country> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
 <https://ontology.sig-project.org/schema/JurisdictionType#country> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/JurisdictionType> .
 <https://ontology.sig-project.org/schema/JurisdictionType#country> <http://www.w3.org/2000/01/rdf-schema#label> "country" .
@@ -1603,6 +1627,10 @@
 <https://ontology.sig-project.org/schema/JurisdictionType> <http://www.w3.org/2002/07/owl#unionOf> _:cb14d18d1222ee385cf227771705997c5fc103c5599bb0902c9e8624b72fcfe1eea .
 <https://ontology.sig-project.org/schema/JurisdictionType> <http://www.w3.org/2004/02/skos/core#definition> "Jurisdiction type, namespaced per country (§11.1, §13.7, SIG-ONTO-068). The dotless terms are the shared abstract levels every country's hierarchy maps onto; national levels are `<cc>.*` children linked by `is_a`, so a new country plugs its own level names in without widening a US-shaped enum." .
 <https://ontology.sig-project.org/schema/JurisdictionType> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/schema/common> .
+<https://ontology.sig-project.org/schema/JurisdictionType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/JurisdictionType#be.commune> .
+<https://ontology.sig-project.org/schema/JurisdictionType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/JurisdictionType#be.police_zone> .
+<https://ontology.sig-project.org/schema/JurisdictionType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/JurisdictionType#be.province> .
+<https://ontology.sig-project.org/schema/JurisdictionType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/JurisdictionType#be.region> .
 <https://ontology.sig-project.org/schema/JurisdictionType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/JurisdictionType#country> .
 <https://ontology.sig-project.org/schema/JurisdictionType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/JurisdictionType#county> .
 <https://ontology.sig-project.org/schema/JurisdictionType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/JurisdictionType#de.bundesland> .
@@ -1647,6 +1675,12 @@
 <https://ontology.sig-project.org/schema/LegalInstrument> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:cb39f812efc86db211d8b24fe1d932b9d73282337a04244a6fa79e26f372ecababa .
 <https://ontology.sig-project.org/schema/LegalInstrument> <http://www.w3.org/2004/02/skos/core#definition> "[NEW] Laws and regulations as a modelled entity (§11.14). Gives the international requirement somewhere to put an arrêté préfectoral, a CNIL decision, or an EU AI Act obligation." .
 <https://ontology.sig-project.org/schema/LegalInstrument> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/schema/entities> .
+<https://ontology.sig-project.org/schema/LegalInstrumentType#be.loi_cameras> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/LegalInstrumentType#be.loi_cameras> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/LegalInstrumentType> .
+<https://ontology.sig-project.org/schema/LegalInstrumentType#be.loi_cameras> <http://www.w3.org/2000/01/rdf-schema#label> "be.loi_cameras" .
+<https://ontology.sig-project.org/schema/LegalInstrumentType#be.loi_cameras> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/LegalInstrumentType#statute> .
+<https://ontology.sig-project.org/schema/LegalInstrumentType#be.loi_cameras> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/LegalInstrumentType> .
+<https://ontology.sig-project.org/schema/LegalInstrumentType#be.loi_cameras> <http://www.w3.org/2004/02/skos/core#definition> "Belgium — loi caméras (21 March 2007) governing installation and use of surveillance cameras." .
 <https://ontology.sig-project.org/schema/LegalInstrumentType#code_of_practice> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
 <https://ontology.sig-project.org/schema/LegalInstrumentType#code_of_practice> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/LegalInstrumentType> .
 <https://ontology.sig-project.org/schema/LegalInstrumentType#code_of_practice> <http://www.w3.org/2000/01/rdf-schema#label> "code_of_practice" .
@@ -1725,6 +1759,7 @@
 <https://ontology.sig-project.org/schema/LegalInstrumentType> <http://www.w3.org/2002/07/owl#unionOf> _:cb2974cba3b05513b1fe62619eca56e74026957548cf3e4bd9d21bb85f7c962009 .
 <https://ontology.sig-project.org/schema/LegalInstrumentType> <http://www.w3.org/2004/02/skos/core#definition> "Legal instrument type, internationalized and country-namespaced (§11.14, §13.7, SIG-ONTO-068). The dotless terms are the shared abstract parents; national instruments are `<cc>.*` children linked by `is_a`, added under a national namespace rather than by widening a US-shaped enum (§5.3). P18.2 is the first consumer (the French arrêté préfectoral / CNIL decision)." .
 <https://ontology.sig-project.org/schema/LegalInstrumentType> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/schema/common> .
+<https://ontology.sig-project.org/schema/LegalInstrumentType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/LegalInstrumentType#be.loi_cameras> .
 <https://ontology.sig-project.org/schema/LegalInstrumentType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/LegalInstrumentType#code_of_practice> .
 <https://ontology.sig-project.org/schema/LegalInstrumentType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/LegalInstrumentType#consent_decree> .
 <https://ontology.sig-project.org/schema/LegalInstrumentType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/LegalInstrumentType#court_order> .
@@ -1949,6 +1984,18 @@
 <https://ontology.sig-project.org/schema/OrganizationRelationType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/OrganizationRelationType#same_as> .
 <https://ontology.sig-project.org/schema/OrganizationRelationType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/OrganizationRelationType#split_into> .
 <https://ontology.sig-project.org/schema/OrganizationRelationType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/OrganizationRelationType#succeeded_by> .
+<https://ontology.sig-project.org/schema/OrganizationType#be.police_federale> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/OrganizationType#be.police_federale> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/OrganizationType> .
+<https://ontology.sig-project.org/schema/OrganizationType#be.police_federale> <http://www.w3.org/2000/01/rdf-schema#label> "be.police_federale" .
+<https://ontology.sig-project.org/schema/OrganizationType#be.police_federale> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/OrganizationType#law_enforcement> .
+<https://ontology.sig-project.org/schema/OrganizationType#be.police_federale> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/OrganizationType> .
+<https://ontology.sig-project.org/schema/OrganizationType#be.police_federale> <http://www.w3.org/2004/02/skos/core#definition> "Belgium — police fédérale (federal police)." .
+<https://ontology.sig-project.org/schema/OrganizationType#be.police_locale> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/OrganizationType#be.police_locale> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/OrganizationType> .
+<https://ontology.sig-project.org/schema/OrganizationType#be.police_locale> <http://www.w3.org/2000/01/rdf-schema#label> "be.police_locale" .
+<https://ontology.sig-project.org/schema/OrganizationType#be.police_locale> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/OrganizationType#law_enforcement> .
+<https://ontology.sig-project.org/schema/OrganizationType#be.police_locale> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/OrganizationType> .
+<https://ontology.sig-project.org/schema/OrganizationType#be.police_locale> <http://www.w3.org/2004/02/skos/core#definition> "Belgium — a zone de police locale (local police)." .
 <https://ontology.sig-project.org/schema/OrganizationType#data_broker> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
 <https://ontology.sig-project.org/schema/OrganizationType#data_broker> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/OrganizationType> .
 <https://ontology.sig-project.org/schema/OrganizationType#data_broker> <http://www.w3.org/2000/01/rdf-schema#label> "data_broker" .
@@ -1959,6 +2006,12 @@
 <https://ontology.sig-project.org/schema/OrganizationType#de.landespolizei> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/OrganizationType#law_enforcement> .
 <https://ontology.sig-project.org/schema/OrganizationType#de.landespolizei> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/OrganizationType> .
 <https://ontology.sig-project.org/schema/OrganizationType#de.landespolizei> <http://www.w3.org/2004/02/skos/core#definition> "Germany — a Land police force." .
+<https://ontology.sig-project.org/schema/OrganizationType#fr.douanes> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/OrganizationType#fr.douanes> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/OrganizationType> .
+<https://ontology.sig-project.org/schema/OrganizationType#fr.douanes> <http://www.w3.org/2000/01/rdf-schema#label> "fr.douanes" .
+<https://ontology.sig-project.org/schema/OrganizationType#fr.douanes> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/OrganizationType#law_enforcement> .
+<https://ontology.sig-project.org/schema/OrganizationType#fr.douanes> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/OrganizationType> .
+<https://ontology.sig-project.org/schema/OrganizationType#fr.douanes> <http://www.w3.org/2004/02/skos/core#definition> "France — douanes (customs); an ALPR operator (F9.13)." .
 <https://ontology.sig-project.org/schema/OrganizationType#fr.gendarmerie> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
 <https://ontology.sig-project.org/schema/OrganizationType#fr.gendarmerie> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/OrganizationType> .
 <https://ontology.sig-project.org/schema/OrganizationType#fr.gendarmerie> <http://www.w3.org/2000/01/rdf-schema#label> "fr.gendarmerie" .
@@ -1971,6 +2024,18 @@
 <https://ontology.sig-project.org/schema/OrganizationType#fr.police_municipale> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/OrganizationType#law_enforcement> .
 <https://ontology.sig-project.org/schema/OrganizationType#fr.police_municipale> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/OrganizationType> .
 <https://ontology.sig-project.org/schema/OrganizationType#fr.police_municipale> <http://www.w3.org/2004/02/skos/core#definition> "France — police municipale." .
+<https://ontology.sig-project.org/schema/OrganizationType#fr.police_nationale> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/OrganizationType#fr.police_nationale> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/OrganizationType> .
+<https://ontology.sig-project.org/schema/OrganizationType#fr.police_nationale> <http://www.w3.org/2000/01/rdf-schema#label> "fr.police_nationale" .
+<https://ontology.sig-project.org/schema/OrganizationType#fr.police_nationale> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/OrganizationType#law_enforcement> .
+<https://ontology.sig-project.org/schema/OrganizationType#fr.police_nationale> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/OrganizationType> .
+<https://ontology.sig-project.org/schema/OrganizationType#fr.police_nationale> <http://www.w3.org/2004/02/skos/core#definition> "France — police nationale (national state police)." .
+<https://ontology.sig-project.org/schema/OrganizationType#fr.prefecture> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<https://ontology.sig-project.org/schema/OrganizationType#fr.prefecture> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/OrganizationType> .
+<https://ontology.sig-project.org/schema/OrganizationType#fr.prefecture> <http://www.w3.org/2000/01/rdf-schema#label> "fr.prefecture" .
+<https://ontology.sig-project.org/schema/OrganizationType#fr.prefecture> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/OrganizationType#government> .
+<https://ontology.sig-project.org/schema/OrganizationType#fr.prefecture> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <https://ontology.sig-project.org/schema/OrganizationType> .
+<https://ontology.sig-project.org/schema/OrganizationType#fr.prefecture> <http://www.w3.org/2004/02/skos/core#definition> "France — préfecture (the State's representative in the département; the authorizing body for vidéoprotection, F9.18)." .
 <https://ontology.sig-project.org/schema/OrganizationType#government> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
 <https://ontology.sig-project.org/schema/OrganizationType#government> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://ontology.sig-project.org/schema/OrganizationType> .
 <https://ontology.sig-project.org/schema/OrganizationType#government> <http://www.w3.org/2000/01/rdf-schema#label> "government" .
@@ -2097,10 +2162,15 @@
 <https://ontology.sig-project.org/schema/OrganizationType> <http://www.w3.org/2002/07/owl#unionOf> _:cbfbc671881cc4ede90bb7577bd87c8ab2389349a3facf737e63cd1334b2a120c7 .
 <https://ontology.sig-project.org/schema/OrganizationType> <http://www.w3.org/2004/02/skos/core#definition> "Organization type, namespaced and extensible (§11.2, §13.7, SIG-ONTO-068). \"vendor\" is a ROLE, not a subtype (SIG-ONTO-012); it appears here only as an organization-classification convenience and never specializes the entity. `law_enforcement` is the shared abstract parent every country's police-force types map onto; national forces are `<cc>.*` children linked by `is_a`, added under a national namespace rather than by widening the `us.*` set." .
 <https://ontology.sig-project.org/schema/OrganizationType> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/schema/common> .
+<https://ontology.sig-project.org/schema/OrganizationType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/OrganizationType#be.police_federale> .
+<https://ontology.sig-project.org/schema/OrganizationType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/OrganizationType#be.police_locale> .
 <https://ontology.sig-project.org/schema/OrganizationType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/OrganizationType#data_broker> .
 <https://ontology.sig-project.org/schema/OrganizationType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/OrganizationType#de.landespolizei> .
+<https://ontology.sig-project.org/schema/OrganizationType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/OrganizationType#fr.douanes> .
 <https://ontology.sig-project.org/schema/OrganizationType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/OrganizationType#fr.gendarmerie> .
 <https://ontology.sig-project.org/schema/OrganizationType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/OrganizationType#fr.police_municipale> .
+<https://ontology.sig-project.org/schema/OrganizationType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/OrganizationType#fr.police_nationale> .
+<https://ontology.sig-project.org/schema/OrganizationType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/OrganizationType#fr.prefecture> .
 <https://ontology.sig-project.org/schema/OrganizationType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/OrganizationType#government> .
 <https://ontology.sig-project.org/schema/OrganizationType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/OrganizationType#hospital> .
 <https://ontology.sig-project.org/schema/OrganizationType> <https://w3id.org/linkml/permissible_values> <https://ontology.sig-project.org/schema/OrganizationType#law_enforcement> .
@@ -4145,6 +4215,8 @@ _:cb126bc8bb4540d8d6544adf80d7b3386ba6d21341e41a03e583a309cf8f434d173 <http://ww
 _:cb126bc8bb4540d8d6544adf80d7b3386ba6d21341e41a03e583a309cf8f434d173 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb128512cdecc8bac2e950892a7fcac5297c5516e38902c0b50728e065eb6de4448 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/SystemScope#commercial> .
 _:cb128512cdecc8bac2e950892a7fcac5297c5516e38902c0b50728e065eb6de4448 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:cb128eacf695f72d18891ab009da27312fcc61e0c867de64b375b96b1846163c7c <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/LegalInstrumentType#de.landesdatenschutzgesetz> .
+_:cb128eacf695f72d18891ab009da27312fcc61e0c867de64b375b96b1846163c7c <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb16ade116a474d780f53b2d7f8ae76297cb5df3cb02b2adf747473dbd668d7f74e .
 _:cb12c7fc34ea2b8ce1e750312137a6e8c89bcf3742bbd4fc6f133c3c64a0f1ca60e <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ConfirmationStatus#field_confirmed> .
 _:cb12c7fc34ea2b8ce1e750312137a6e8c89bcf3742bbd4fc6f133c3c64a0f1ca60e <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbc93ba0193384bf9c60237ecfe44f476443e46314e47f727862d87a409120911d .
 _:cb12cd643249b1d7c3d34bdd24ce1b167707f1ee11185747d369a75419843feb334 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
@@ -4247,6 +4319,8 @@ _:cb167f187b2efc25201d00946213ae8f8b313beacc73a45f68889a2b688eccd2610 <http://ww
 _:cb167f187b2efc25201d00946213ae8f8b313beacc73a45f68889a2b688eccd2610 <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/last_observed> .
 _:cb16ac911799855d783de3fde64e8d3083e9d0dcfd34ba39efca7adeec130438cd0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/CapabilityScope#subject> .
 _:cb16ac911799855d783de3fde64e8d3083e9d0dcfd34ba39efca7adeec130438cd0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:cb16ade116a474d780f53b2d7f8ae76297cb5df3cb02b2adf747473dbd668d7f74e <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/LegalInstrumentType#be.loi_cameras> .
+_:cb16ade116a474d780f53b2d7f8ae76297cb5df3cb02b2adf747473dbd668d7f74e <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb16ca41e118ed54ec58919df136e69f74fdbee69a444aaa2d4b334f5ace9f543f <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/AcquisitionChannel#competitive_rfp> .
 _:cb16ca41e118ed54ec58919df136e69f74fdbee69a444aaa2d4b334f5ace9f543f <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb4a8358dbfc3da4f17d6d7f204dfb5c450ec63e6895fa5001151dad637be7c314 .
 _:cb16d0321984643bd1eb780938b7d7d537f4ce48826af64d767c08260aea4bdd24b <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/SourceReliability#R1> .
@@ -4261,12 +4335,16 @@ _:cb17110d45e35dd55fdd2412bb6b567176733866b743e1db9835c8af5da1d18d962 <http://ww
 _:cb17110d45e35dd55fdd2412bb6b567176733866b743e1db9835c8af5da1d18d962 <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/party> .
 _:cb1735136a4cc74e61f063f81874a3e84e44e31ef31906de23d81e7a32611736aad <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ProcurementState#rejected> .
 _:cb1735136a4cc74e61f063f81874a3e84e44e31ef31906de23d81e7a32611736aad <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:cb17601ac110c181dc38d713d9772d12459a08344e07317c909085c2bf2bdb060d <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/JurisdictionType#be.commune> .
+_:cb17601ac110c181dc38d713d9772d12459a08344e07317c909085c2bf2bdb060d <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb178ce55073504d79bfea01c9fa51dcc16c66d0993898628a4b9b10204bfb47331 .
 _:cb1768974616953f54d5992415caada6a2659de1503a1a79dcc97f2ae850a27c06e <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
 _:cb1768974616953f54d5992415caada6a2659de1503a1a79dcc97f2ae850a27c06e <http://www.w3.org/2002/07/owl#allValuesFrom> <https://w3id.org/linkml/String> .
 _:cb1768974616953f54d5992415caada6a2659de1503a1a79dcc97f2ae850a27c06e <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/docket_number> .
 _:cb178083194f6aedc3e330543dfd59c5839df689f78ee66619f36a2282149dc2506 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
 _:cb178083194f6aedc3e330543dfd59c5839df689f78ee66619f36a2282149dc2506 <http://www.w3.org/2002/07/owl#maxCardinality> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb178083194f6aedc3e330543dfd59c5839df689f78ee66619f36a2282149dc2506 <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/national_lookup_enabled> .
+_:cb178ce55073504d79bfea01c9fa51dcc16c66d0993898628a4b9b10204bfb47331 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/JurisdictionType#be.police_zone> .
+_:cb178ce55073504d79bfea01c9fa51dcc16c66d0993898628a4b9b10204bfb47331 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb17958b086711406c5ba6cdb5b39e2a001c7ba36aab64aa4ab552dd2aac538960c <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
 _:cb17958b086711406c5ba6cdb5b39e2a001c7ba36aab64aa4ab552dd2aac538960c <http://www.w3.org/2002/07/owl#allValuesFrom> <https://ontology.sig-project.org/schema/capability_code> .
 _:cb17958b086711406c5ba6cdb5b39e2a001c7ba36aab64aa4ab552dd2aac538960c <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/can_offer_capability> .
@@ -4275,6 +4353,8 @@ _:cb17ae0d4bbf8ff4f4268a789961ba1a32a0b77c12637a020b0855446aa1dd1d2c <http://www
 _:cb17b129cf48051b47a2ee38625beeb1bbfb16b0fc8d6028f4f195126a958dd4b18 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
 _:cb17b129cf48051b47a2ee38625beeb1bbfb16b0fc8d6028f4f195126a958dd4b18 <http://www.w3.org/2002/07/owl#maxCardinality> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb17b129cf48051b47a2ee38625beeb1bbfb16b0fc8d6028f4f195126a958dd4b18 <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/vendor> .
+_:cb17bea47bf9b8d581c1b986b94764f4c42fbc24023fc36051bb98e4719ceedbb76 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/OrganizationType#be.police_federale> .
+_:cb17bea47bf9b8d581c1b986b94764f4c42fbc24023fc36051bb98e4719ceedbb76 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb17c09dc39b309be29032fe34d8264e87fede7c2bfc8306e8df64a2a469a1195f9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ProceedingPosture#filed> .
 _:cb17c09dc39b309be29032fe34d8264e87fede7c2bfc8306e8df64a2a469a1195f9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb7ede3760a9fca184d19deb682888a99332f52a11b3194efbc672c34d185838ed .
 _:cb17c61af961651bcd83f25757cd07462add9cadcc90047c11eb7141149cc854ead <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
@@ -4336,8 +4416,6 @@ _:cb193ce161ad877704ced2bb85e6a6aa81cba5de35ac267400a4894c95d21147b35 <http://ww
 _:cb193ce161ad877704ced2bb85e6a6aa81cba5de35ac267400a4894c95d21147b35 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb1955cc7d13a6549760fa1b78dd391bd7f722a795184e3e15e60b260c47efe39b0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/GeometryPrecision#rooftop> .
 _:cb1955cc7d13a6549760fa1b78dd391bd7f722a795184e3e15e60b260c47efe39b0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb865dce1221319e87df16275fc4d102d7b2d8cc4b04dfb493c89d84ce1b36caf3 .
-_:cb19582812a63741752af867faf7fae5f119978d92ce26d4a46386b340bfd443392 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/OrganizationType#de.landespolizei> .
-_:cb19582812a63741752af867faf7fae5f119978d92ce26d4a46386b340bfd443392 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb195ab593959561a7a6590e1062e320974ff14cd9504ca2ef30d46f9a64211f539 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/DetectionMethod#count_gap_inference> .
 _:cb195ab593959561a7a6590e1062e320974ff14cd9504ca2ef30d46f9a64211f539 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb195f83cee20639c674b5d0bc375ce06de5ae97e00d48ef1f500d636d494155477 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
@@ -4530,6 +4608,8 @@ _:cb1c6fe4674d7428d10991c891ebbb412d8c821a4d723da426c96670d6e8a9d727a <http://ww
 _:cb1c82f66db5ea91d73bc6f89a8266326d21e572bd3d9f653d9b779ef939e98f1bc <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
 _:cb1c82f66db5ea91d73bc6f89a8266326d21e572bd3d9f653d9b779ef939e98f1bc <http://www.w3.org/2002/07/owl#allValuesFrom> <https://ontology.sig-project.org/schema/Deployment> .
 _:cb1c82f66db5ea91d73bc6f89a8266326d21e572bd3d9f653d9b779ef939e98f1bc <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/deployment> .
+_:cb1c943e6c0469583a7e7ff22a6132298c6a966a9f57b2bbcb0f2635192fc0a938 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/JurisdictionType#de.gemeinde> .
+_:cb1c943e6c0469583a7e7ff22a6132298c6a966a9f57b2bbcb0f2635192fc0a938 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb8ab1b4d9339d4174232d7d2b2eabc5f7dda2077de5234219c3adee0e096f3ede .
 _:cb1ca996ff756f8d15bb952e4cba0ece8fc66326efbeea0988dd5253c0f9df9650b <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/Role#regulator> .
 _:cb1ca996ff756f8d15bb952e4cba0ece8fc66326efbeea0988dd5253c0f9df9650b <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb1cac07a2084b63f8a297579c7696e13fd10807fc0c63822cce70ccf9f4b2574b0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
@@ -5733,6 +5813,8 @@ _:cb54311632f6782daac21b3836f133c8cb47c5b9c0fc52d2694425ffa9295cdd1c <http://www
 _:cb54311632f6782daac21b3836f133c8cb47c5b9c0fc52d2694425ffa9295cdd1c <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbc5f35241b359e3e2158abe72d76f4b574d3681e0fe3f469234e792658c01c1cb .
 _:cb546cf08bb77051ba503f122591a2a78a42a1e673be2185e98584eeba53ebc8cc <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ProcurementState#proposed> .
 _:cb546cf08bb77051ba503f122591a2a78a42a1e673be2185e98584eeba53ebc8cc <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb12f6f5aac8027bdc21d75ee913caf641f43a21b5334c65e7324eb607be988490 .
+_:cb5501a36c9e702528c13da30f6668c16fd8271ac5a7e7c21d72c36ac1f464a7b5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/OrganizationType#fr.police_nationale> .
+_:cb5501a36c9e702528c13da30f6668c16fd8271ac5a7e7c21d72c36ac1f464a7b5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb5d8ab8a6433922b3b9d3fd60dc2617c1e4d0d162da3d4be063b6355b35e642df .
 _:cb552dc358ad2d4548f8627865feabbc4d2dc8fef69107cb235f0e1cce6c16efbd <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/JurisdictionType#township> .
 _:cb552dc358ad2d4548f8627865feabbc4d2dc8fef69107cb235f0e1cce6c16efbd <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1a2c606e101f5a2f271bfa407cb6548f2c3578708fca6b6edc3f7afab0ea44aa .
 _:cb557cf0cce0d4929f8086929445f383ed85397a2ad585d227827c1c57b5f0415a <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/TemporalBoundKind#unknown> .
@@ -5751,6 +5833,8 @@ _:cb5cd2299ffcdf5e3396bc04b1f9c337c8e98983e26437dcc8c07d59034c03f5dc <http://www
 _:cb5cd2299ffcdf5e3396bc04b1f9c337c8e98983e26437dcc8c07d59034c03f5dc <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb815239ea78fe60b519150d85db704aad9213b02da0c2211fea757abf342303bd .
 _:cb5d30284abd4b5ec04fe49b0fbcb2ddad5e4a3b6cd86607b2b6231addfde850f <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/RecordsResponseStatus#denied> .
 _:cb5d30284abd4b5ec04fe49b0fbcb2ddad5e4a3b6cd86607b2b6231addfde850f <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cba83360e6f5655f7fa286eee78b38f983ef4ed565d3c06ef1e52b776e8397c64c .
+_:cb5d8ab8a6433922b3b9d3fd60dc2617c1e4d0d162da3d4be063b6355b35e642df <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/OrganizationType#fr.douanes> .
+_:cb5d8ab8a6433922b3b9d3fd60dc2617c1e4d0d162da3d4be063b6355b35e642df <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb84f1f8d2ceb96a1d16c09fa6d1ccdb95bcff7ae80608c5e16f628c16a02e32ce .
 _:cb5debeda914347cef83fa7b342b58088fb9cf995f3d17067634e76896d29044dd <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/EdgeType#contradicts_claim> .
 _:cb5debeda914347cef83fa7b342b58088fb9cf995f3d17067634e76896d29044dd <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbf8c3e540f774b043912ffc15f484b29e3dd2b79e00c8c99cab0aa4f755bad5ba .
 _:cb5e73adf6bb4eab806d33e74d3955c84c19e0932ff918f7fc45053542bf24e49f <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/LegalInstrumentType#prefectoral_order> .
@@ -5798,7 +5882,7 @@ _:cb6aaeac78281e9633eeac6dce8eb709a2703aaa48505e2fbaaec03c7a924f0536 <http://www
 _:cb6ae4037c34a8395eda074b22a3adc384bb9c9b4c4efe14f6f303da56efa5bfd0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ClaimDirectness#D4> .
 _:cb6ae4037c34a8395eda074b22a3adc384bb9c9b4c4efe14f6f303da56efa5bfd0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbaf2ccddaa35c55e1379b048ed836b6b66cc3ac93ce2cfd0c859afc2d1bb7c49 .
 _:cb6b1917875a3bec17e5ebcadacb0468a47a7ee5ca91a73ab6e0b6d596c83a1504 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/OrganizationType#uk.territorial_police> .
-_:cb6b1917875a3bec17e5ebcadacb0468a47a7ee5ca91a73ab6e0b6d596c83a1504 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb19582812a63741752af867faf7fae5f119978d92ce26d4a46386b340bfd443392 .
+_:cb6b1917875a3bec17e5ebcadacb0468a47a7ee5ca91a73ab6e0b6d596c83a1504 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbbdb919e5ab13591b6e51c8c0d2c9b910fb3b7fe5c0cef0927861b0a12c430c1d .
 _:cb6c08a9c1c5ac49ed0817a73afeec80f34d5177f70227fdfd642dcb966e7f61f0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ProceedingPosture#on_appeal> .
 _:cb6c08a9c1c5ac49ed0817a73afeec80f34d5177f70227fdfd642dcb966e7f61f0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb9ff4d802bc507b44a2ec9c9fb194c895d6e593b927802d69188e34cc7b786f5b .
 _:cb6c0abec4a508c60515d5feabc3bcc4414bbb8f2209a32a6cb59f65d621771bad <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/SystemScope#vendor_cloud_shared> .
@@ -5853,6 +5937,8 @@ _:cb7b0662cd9f3fa49f9572237a1f9614065dcafea617ce6ecc2624dd348ef75283 <http://www
 _:cb7b0662cd9f3fa49f9572237a1f9614065dcafea617ce6ecc2624dd348ef75283 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb18a1d8dea43386beda1f04e3554abb69356d02dc85a14e2ae430b4513e2513072 .
 _:cb7b2f0a4606bda631279232cb2c8745f9b100fac310b3c85eafc16b4bf10cba16 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ProcurementState#bundle_included> .
 _:cb7b2f0a4606bda631279232cb2c8745f9b100fac310b3c85eafc16b4bf10cba16 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb8e46b3d191c153a9fb59aae824e789e5c42f1cc351f3c35bb011e2710f5aca63 .
+_:cb7ccf9346f09ed33e7ac47d56bd62d0842121975731c19b19fb4cfe2df0f7a93f <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/JurisdictionType#be.province> .
+_:cb7ccf9346f09ed33e7ac47d56bd62d0842121975731c19b19fb4cfe2df0f7a93f <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb17601ac110c181dc38d713d9772d12459a08344e07317c909085c2bf2bdb060d .
 _:cb7dc6388f16826dc863e1233edc1065abb2dcbf9a6e37f51595be05b34d25756b <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ResolutionStrategy#interval_intersection> .
 _:cb7dc6388f16826dc863e1233edc1065abb2dcbf9a6e37f51595be05b34d25756b <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb89f56cf5cbeacd64deb9321d084d08d188e4d65d83b25408e27d377376d0edbc .
 _:cb7e08d6e4cfab38b405f6955f9552f129c3c5e608a5fa03f661de5b4217732194 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/FundingInstrumentType#asset_forfeiture> .
@@ -5883,6 +5969,8 @@ _:cb82f740eb5524a57f3762339c14ea3342b538324b38c975b29d8e729a53da1dd7 <http://www
 _:cb82f740eb5524a57f3762339c14ea3342b538324b38c975b29d8e729a53da1dd7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb6c4dd5332952c2110c337c91a4cd544e4677bde47d8106f5d992f29a2177b9cd .
 _:cb84b4f842e5691222a2defcb3343d1837fe8dedad46a59201429b00dbac259090 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/EnforcementMechanism#statutory_penalty> .
 _:cb84b4f842e5691222a2defcb3343d1837fe8dedad46a59201429b00dbac259090 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb126bc8bb4540d8d6544adf80d7b3386ba6d21341e41a03e583a309cf8f434d173 .
+_:cb84f1f8d2ceb96a1d16c09fa6d1ccdb95bcff7ae80608c5e16f628c16a02e32ce <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/OrganizationType#fr.prefecture> .
+_:cb84f1f8d2ceb96a1d16c09fa6d1ccdb95bcff7ae80608c5e16f628c16a02e32ce <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbfac17358cb27f5a71c07cafde6c0aedb5be2e9d5dd1b946dea7d3cafbd8b007 .
 _:cb85c88240781a8a7f2e49831c44df38b69e63982b995afb1eb428f66eea330b27 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/PhysicalState#installed_inactive> .
 _:cb85c88240781a8a7f2e49831c44df38b69e63982b995afb1eb428f66eea330b27 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbd404fdc70cb912cb5708bd8fec7c08d7abff6da73b1dc016d9deb07a0b5d0a9d .
 _:cb85e4da217f6819080146d082468b4d5f4851cd11ab15afed5e98f58fe6bbd8d4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/AliasType#local_usage> .
@@ -5894,7 +5982,7 @@ _:cb868c2a984fde77a836c773a7fc114808292c61d12d8413b207ed1ea5a3e15ae2 <http://www
 _:cb86c8d0f415f649b5fe7114c3ba07539f3e85f947194ea7a7011b37f9edbd5c62 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ResolutionStrategy#interval_union> .
 _:cb86c8d0f415f649b5fe7114c3ba07539f3e85f947194ea7a7011b37f9edbd5c62 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb7dc6388f16826dc863e1233edc1065abb2dcbf9a6e37f51595be05b34d25756b .
 _:cb86e03784065330c216ff92b2a75f098c620f072ac253363bce95af11534cc5f3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/JurisdictionType#de.kreis> .
-_:cb86e03784065330c216ff92b2a75f098c620f072ac253363bce95af11534cc5f3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbf45da5b0bcca1671bfb4a9190e16cf8d08d3c3e67951157ecf2fb88400c1d0ad .
+_:cb86e03784065330c216ff92b2a75f098c620f072ac253363bce95af11534cc5f3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1c943e6c0469583a7e7ff22a6132298c6a966a9f57b2bbcb0f2635192fc0a938 .
 _:cb86f0b123e4c775435345f223c10faa0e9bb41a9578e077ff58e9f7656c4fa369 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/EvidenceArtifact> .
 _:cb86f0b123e4c775435345f223c10faa0e9bb41a9578e077ff58e9f7656c4fa369 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbc706e7aab9db00136e73d0d89523e7f62a92d050eee704dcb774cfff72eadf76 .
 _:cb88116a58087a417276880c98a83cdaa861fc307879913f8c2bcf9e6f9cfc5eec <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/SystemScope#regional> .
@@ -5909,6 +5997,8 @@ _:cb89f56cf5cbeacd64deb9321d084d08d188e4d65d83b25408e27d377376d0edbc <http://www
 _:cb89f56cf5cbeacd64deb9321d084d08d188e4d65d83b25408e27d377376d0edbc <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1d37226e3340688f521d24e30a1f675e406f9aca8d35f7069317de89b82c7b9e5 .
 _:cb8a7eab4c9df280a5701e9fa8787f481488c664b1da5965708c92e4145edc66c3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/Role#installer> .
 _:cb8a7eab4c9df280a5701e9fa8787f481488c664b1da5965708c92e4145edc66c3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbc5558367f181207eb7a37953c9cf0cdb97691ba1d1c1dd8665d6f1819c0b8ec4 .
+_:cb8ab1b4d9339d4174232d7d2b2eabc5f7dda2077de5234219c3adee0e096f3ede <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/JurisdictionType#be.region> .
+_:cb8ab1b4d9339d4174232d7d2b2eabc5f7dda2077de5234219c3adee0e096f3ede <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb7ccf9346f09ed33e7ac47d56bd62d0842121975731c19b19fb4cfe2df0f7a93f .
 _:cb8bd3cd65aba39ab1ae1d827023c48276ba54523ba3ed4b42117ff77cb30b271c <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/JurisdictionType#metropolitan_area> .
 _:cb8bd3cd65aba39ab1ae1d827023c48276ba54523ba3ed4b42117ff77cb30b271c <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb868c2a984fde77a836c773a7fc114808292c61d12d8413b207ed1ea5a3e15ae2 .
 _:cb8c36dfaf7d1abfa17d3f03899fe1509517c0a49c9b52bcf1ba0424bdd422827b <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/EpistemicStatus#disputed> .
@@ -6058,6 +6148,8 @@ _:cbbb00560573042fca45c801a95d4b7a113a5178da37dee76d4ef010c463f11d48 <http://www
 _:cbbb00560573042fca45c801a95d4b7a113a5178da37dee76d4ef010c463f11d48 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbc8533d0907a55cdc04e97124ed622eb6bc0c04b145df6a772a26eb04e36d18c2 .
 _:cbbbd8bf9e4402d5aadabbfd42b32bb0e993f45be5e181ea1cb1c3e14b849f84f8 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/Role#purchaser> .
 _:cbbbd8bf9e4402d5aadabbfd42b32bb0e993f45be5e181ea1cb1c3e14b849f84f8 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb412801917706ca91beff7979a85a851057866d611f28dfe6e44e8d520f0d3aef .
+_:cbbdb919e5ab13591b6e51c8c0d2c9b910fb3b7fe5c0cef0927861b0a12c430c1d <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/OrganizationType#de.landespolizei> .
+_:cbbdb919e5ab13591b6e51c8c0d2c9b910fb3b7fe5c0cef0927861b0a12c430c1d <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb5501a36c9e702528c13da30f6668c16fd8271ac5a7e7c21d72c36ac1f464a7b5 .
 _:cbbea51e24d9d6194f7197138e72cdddd0a5a9e7a6dea64d82e7c66b37ad519f7d <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/SkosMappingRelation#exactMatch> .
 _:cbbea51e24d9d6194f7197138e72cdddd0a5a9e7a6dea64d82e7c66b37ad519f7d <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb23fdfecabaa6cf78b5b75ac63edce68dd2e80b45f1f2e721f58efc7a9bef5be4 .
 _:cbbeb9bac1de50c9a1edee2bba54fd96e95398f4e0a02143ddcf1ff80ee2feece7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/Role#auditor> .
@@ -6202,8 +6294,6 @@ _:cbe7f53f6252bf3059ed05d15161224d9e256da88eb55c44ae144a569f44650a11 <http://www
 _:cbe7f53f6252bf3059ed05d15161224d9e256da88eb55c44ae144a569f44650a11 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbe148b1f4c82e78efdc59fdf87ebfbc0f58a3fafc73ee006d95189baa839b25a8 .
 _:cbea19f4686a20b250be40e7267fc5fa761a1bc46f9649f25eea12fd184a8ddb85 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/Role#alert_recipient> .
 _:cbea19f4686a20b250be40e7267fc5fa761a1bc46f9649f25eea12fd184a8ddb85 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbbeb9bac1de50c9a1edee2bba54fd96e95398f4e0a02143ddcf1ff80ee2feece7 .
-_:cbea58143b4e57eb4fca4f66f8870bd7306a9f3a0f897cbe6735c2ee83171763f1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/LegalInstrumentType#de.landesdatenschutzgesetz> .
-_:cbea58143b4e57eb4fca4f66f8870bd7306a9f3a0f897cbe6735c2ee83171763f1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cbea99984e849e9c034200f311391bbc473a3d5bb817015d821c2960f394890af1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/PredicateVolatility#IMMUTABLE> .
 _:cbea99984e849e9c034200f311391bbc473a3d5bb817015d821c2960f394890af1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb639979a0841690d17231fac17626a170ecf7901f6e4cb23aeff0e5bd5a083ff8 .
 _:cbeaa773b9eea94f46e549e3666920b644967d56fc931a4bab3545d6979c11a678 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/JurisdictionType#unincorporated_area> .
@@ -6227,13 +6317,11 @@ _:cbf070c501abf559ce45cf7106006909b3193b8cc9d4763bf03ad6556fea2d55df <http://www
 _:cbf078ff9e2317623381a05b432440b871ec1f2f8250991539cbc78f9cc5837357 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ProvenanceEdge> .
 _:cbf078ff9e2317623381a05b432440b871ec1f2f8250991539cbc78f9cc5837357 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb9a9bfe0d9a21b21366515d8688562285a38c7d30156fb1d8b49655f82b16c0e2 .
 _:cbf29f774805307fdc4089bc88c32617a08d145a187df3972abfe6b033513df70b <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/LegalInstrumentType#eu.ai_act> .
-_:cbf29f774805307fdc4089bc88c32617a08d145a187df3972abfe6b033513df70b <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbea58143b4e57eb4fca4f66f8870bd7306a9f3a0f897cbe6735c2ee83171763f1 .
+_:cbf29f774805307fdc4089bc88c32617a08d145a187df3972abfe6b033513df70b <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb128eacf695f72d18891ab009da27312fcc61e0c867de64b375b96b1846163c7c .
 _:cbf375c2eb50433564a201c16fe4c45b771a379790c875d61298c73e334b570cd3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/AuditSourceType#portal_public_audit> .
 _:cbf375c2eb50433564a201c16fe4c45b771a379790c875d61298c73e334b570cd3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbff0dcc6d7923f1ee04c8af5252da29115584323ed8f17434a59b135239fd7d33 .
 _:cbf45426325b1a21692117f36dc4951e0199799ff75ccbe0a976adedc0a468bf12 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ProceedingPosture#class_certified> .
 _:cbf45426325b1a21692117f36dc4951e0199799ff75ccbe0a976adedc0a468bf12 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
-_:cbf45da5b0bcca1671bfb4a9190e16cf8d08d3c3e67951157ecf2fb88400c1d0ad <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/JurisdictionType#de.gemeinde> .
-_:cbf45da5b0bcca1671bfb4a9190e16cf8d08d3c3e67951157ecf2fb88400c1d0ad <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cbf4b0861d6feeb8a00e4ec122346e31746b8a15672b4db0ced8acaa0177ba209e <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/Source> .
 _:cbf4b0861d6feeb8a00e4ec122346e31746b8a15672b4db0ced8acaa0177ba209e <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbb472352fac47f562c4e448c327ea6fc15c8fc739f10bcf52f7c242cda50ce6c7 .
 _:cbf53157922181cb64015848e215af18de20a20dd7c3eb39035db3ca1809ade805 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/ArtifactType#screenshot> .
@@ -6264,6 +6352,8 @@ _:cbf92f2e20210d0b96621b7acd6cd4485ffa4e0a0be3a6fe175e4b3d63b97c0008 <http://www
 _:cbf92f2e20210d0b96621b7acd6cd4485ffa4e0a0be3a6fe175e4b3d63b97c0008 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbdd562475a0cd3c3f8bca3c21ed73de5c5beea611a6b5cebb034c66bf1d0274dd .
 _:cbfa89b56830fe7c4bab7ea36092f7c9840757e29a193d7f9acace1aa09067532e <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/AccountabilityEventType#public_hearing> .
 _:cbfa89b56830fe7c4bab7ea36092f7c9840757e29a193d7f9acace1aa09067532e <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb61688b76f5a99bc18c760eb197882f689bb5ab94a4ebd4cd20431444352cbe00 .
+_:cbfac17358cb27f5a71c07cafde6c0aedb5be2e9d5dd1b946dea7d3cafbd8b007 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/OrganizationType#be.police_locale> .
+_:cbfac17358cb27f5a71c07cafde6c0aedb5be2e9d5dd1b946dea7d3cafbd8b007 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb17bea47bf9b8d581c1b986b94764f4c42fbc24023fc36051bb98e4719ceedbb76 .
 _:cbfadb14d9271255c28c852cd7b31dfd6f738f535fca4278aed1ca3a7c16c63776 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
 _:cbfadb14d9271255c28c852cd7b31dfd6f738f535fca4278aed1ca3a7c16c63776 <http://www.w3.org/2002/07/owl#allValuesFrom> <https://w3id.org/linkml/String> .
 _:cbfadb14d9271255c28c852cd7b31dfd6f738f535fca4278aed1ca3a7c16c63776 <http://www.w3.org/2002/07/owl#onProperty> <https://ontology.sig-project.org/schema/case_name> .
