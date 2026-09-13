@@ -1,0 +1,29 @@
+{
+  "_note": "P23.5 (LIVE.1a) shadow fixture for the ok_statute document connector. Faithfully transcribes the cited public Oklahoma statutory text (47 O.S. s7-606.1) the layer-3 pdf_text clause locator reads. Matches tests/acceptance/fixtures/okc_sources.json (okc-statute-47-7-606-1): 47 O.S. s7-606.1 limits ALPR use to insurance enforcement. Statutory text is an edict of government (public domain). Live fetch of the real document is DEFERRED (HG-09, D-LIVE.1a-1).",
+  "connector": "ok_statute",
+  "documents": [
+    {
+      "id": "okc-statute-47-7-606-1",
+      "genre": "policy_document",
+      "kind": "policy_clauses",
+      "source_url": "https://www.oscn.net/applications/oscn/index.asp?ftdb=STOKST47",
+      "retrieved_date": "2026-09-01",
+      "subject_id": "sig:deployment:okc-okcpd-flock",
+      "text": "Oklahoma Statutes, Title 47.\n\n\u00a7 7-606.1. Automated reader systems.\nUse of such systems is limited to insurance verification and enforcement.",
+      "clauses": [
+        {
+          "clause": "7-606.1",
+          "predicate": "statutory_citation",
+          "value": "47 O.S. \u00a7 7-606.1",
+          "value_kind": "text"
+        },
+        {
+          "clause": "7-606.1",
+          "predicate": "use_restriction",
+          "value": "limited to insurance enforcement",
+          "value_kind": "text"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "_note": "P23.5 (LIVE.1a) shadow fixture for the okcpd_policy document connector. Faithfully transcribes the cited public OKCPD Operations Manual ALPR clause (Manual s5-118) the layer-3 pdf_text clause locator reads. Matches tests/acceptance/fixtures/okc_sources.json (okc-ops-manual-5-118): the manual states ALPR data will not be shared as part of a law enforcement information database, and its only published ALPR policy still covers vehicle-mounted readers. Live fetch of the real document is DEFERRED (HG-09, D-LIVE.1a-1).",
+  "connector": "okcpd_policy",
+  "documents": [
+    {
+      "id": "okc-ops-manual-5-118",
+      "genre": "policy_document",
+      "kind": "policy_clauses",
+      "source_url": "https://www.okc.gov/departments/police",
+      "retrieved_date": "2026-09-01",
+      "subject_id": "sig:deployment:okc-okcpd-flock",
+      "text": "OKCPD Operations Manual (policy).\n\n\u00a7 5-118. Automated Reader Systems.\nData will not be shared as part of a law enforcement information database. This section covers vehicle-mounted readers, not Flock's static cameras.",
+      "clauses": [
+        {
+          "clause": "5-118",
+          "predicate": "sharing_restriction",
+          "value": "will not be shared as part of a law enforcement information database",
+          "value_kind": "text"
+        },
+        {
+          "clause": "5-118",
+          "predicate": "use_restriction",
+          "value": "covers vehicle-mounted readers, not static cameras",
+          "value_kind": "text"
+        }
+      ]
+    }
+  ]
+}

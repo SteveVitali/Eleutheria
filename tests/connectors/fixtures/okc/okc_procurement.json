@@ -1,0 +1,22 @@
+{
+  "_note": "P23.5 (LIVE.1a) shadow fixture for the okc_procurement document connector. Faithfully transcribes the cited public OKC procurement document (City of Oklahoma City Master Agreement C241032 with Flock Safety) as a table grid the layer-4 pdf_table engine reads. Figures match tests/acceptance/fixtures/okc_sources.json (okc-contract-c241032): $270,000/year, 90 cameras, contract C241032. The connector fetches -> captures to OCFL -> parses -> emits these contract claims; the live fetch of the real document is DEFERRED (HG-09, D-LIVE.1a-1).",
+  "connector": "okc_procurement",
+  "documents": [
+    {
+      "id": "okc-contract-c241032",
+      "genre": "procurement_record",
+      "kind": "procurement_table",
+      "source_url": "https://www.okc.gov/departments/finance/purchasing",
+      "retrieved_date": "2026-09-01",
+      "subject_id": "contract:okc_procurement:C241032",
+      "text": "Vendor | Product | Contract No | Annual Amount | Cameras\nFlock Safety | ALPR camera program (Master Agreement) | C241032 | $270,000 | 90",
+      "columns": {
+        "Vendor": {"predicate": "vendor_name"},
+        "Product": {"predicate": "product_name"},
+        "Contract No": {"predicate": "contract_number"},
+        "Annual Amount": {"predicate": "contract_amount", "value_kind": "amount"},
+        "Cameras": {"predicate": "quantity", "value_kind": "int"}
+      }
+    }
+  ]
+}
