@@ -1738,3 +1738,55 @@ Phase-1 defect, not patched here.
 |---|---|---|
 | SIG-ENG-004 (every new requirement has an automated test) | `tests/ontology/generalization/test_stage5_federation.py` | `make check` (pytest) |
 | Phase gate: CI green incl. data-quality; no deviation (no ADR needed — no schema change); traceability + risk register updated | this section; `docs/risk_register.md` (Phase 17 — P17.1) | `make check` (lint/format/typecheck/pytest/verify-gen — `verify-gen` proves the ontology is byte-unchanged) |
+
+# P17.2 — Facial recognition, cell-site simulators, and mobile-device forensics (Stage 5)
+
+Continues P17.1's §5.2 proof: the schema frozen in Phase 2/4 absorbs a further
+Stage-5 span with **no change**. P17.2 *populates* facial recognition, cell-site
+simulators, and mobile-device forensics — plus the federal-authorization case —
+as instance graphs over the generated Pydantic model and the committed
+§13.1/§13.2 vocabularies, extending the generalization conformance suite. No
+LinkML source, generated artifact, or wire contract changed (the ontology is
+owned by P01.1); a construct that required a new schema element would fail the
+suite and be recorded as a Phase-1 defect, not patched here.
+
+## Populated with no schema change (§5.2, SIG-CHART-027/028)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-CHART-027/028 / AC1 (FR, CSS, and forensics populated with no schema change; every capability slug, edge type, entity class, technology slug, and lifecycle state the constructs use already exists — the deterministic Phase-1-defect detector) | `tests/ontology/generalization/test_stage5_forensics.py`; generated Pydantic models; `ontology/vocab/{capability,technology}.yaml` (unchanged) | `test_stage5_forensics.py::test_stage5_forensics_required_no_schema_change`; `make check` `verify-gen` (byte-clean) |
+
+## Facial recognition against a reference gallery (SIG-ONTO-023/031)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ONTO-023 / deliverable 1 (FR is a `verb.object.scope` `Capability`, `search.face.*`) + SIG-ONTO-031 (it resolves to a reference `DataSystem` gallery — `searches_against` realised in the closed §12 catalog as `federates_search_to`, corpus stays put) | `Capability` (`search.face.state`); `DataSystem` (`sys:dmv-image-gallery`); `IntegrationEdge` (`federates_search_to`, `data_comes_to_rest=False`) | `test_stage5_forensics.py::test_face_recognition_is_a_capability_searching_a_reference_datasystem` |
+| SIG-ONTO-026/031 / AC2 (FR has no locally owned sensor — a Deployment + DataSystems with no product, vendor, or PhysicalAsset) | `Deployment` (`dep:fr-state-police`, `product`/`vendor` `None`); no `PhysicalAsset` | `test_stage5_forensics.py::test_face_recognition_has_no_locally_owned_sensor` |
+
+## Cell-site simulators + mobile-device forensics — capabilities with no asset (SIG-ONTO-023/026)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ONTO-026 / deliverable 2 / AC2 (CSS and forensics are Deployments with no product, no vendor, and no physical asset — a capability with no roadside device) | `Deployment` (`dep:css-county`, `dep:forensics-county`); no `PhysicalAsset` | `test_stage5_forensics.py::test_css_and_forensics_are_deployments_with_no_product_vendor_or_asset` |
+| SIG-ONTO-023 (capability slugs `locate.handset.rf`, `extract.device.logical/physical`, `extract.cloud.account`; technologies under `comms-intercept` / `device-forensics`, never a camera domain) | `Capability`; `technology.yaml` `cell-site-simulator-general`, `extraction-logical/physical`, `cloud-account-extraction` | `test_stage5_forensics.py::test_css_and_forensics_capability_slugs_follow_the_grammar` |
+| SIG-ONTO-026/027/031 / deliverable 3 / AC2 (none of FR, CSS, or forensics is forced into a camera abstraction) | populated graphs (no `PhysicalAsset`, no `camera-*` `asset_type`) | `test_stage5_forensics.py::test_no_construct_is_forced_into_a_camera_abstraction` |
+
+## Federal authorization datasets — `authorization_state` + native validity interval (§13.4 track 4)
+
+| Requirement | Where | Test |
+|---|---|---|
+| §13.4 track 4 / deliverable 4 / AC3 (an ingested federal authorization populates the Deployment's `authorization_state`) | `Deployment` (`authorization_state=authorized`); `LegalInstrument` (`court_order`); `StructuralEdge` (`authorizes`) | `test_stage5_forensics.py::test_federal_authorization_populates_track4_authorization_state` |
+| Deliverable 4 / AC3 (the authorization's native validity interval is preserved as EDTF — a genuine interval with two distinct bounds — never coerced to a fabricated point) | `LegalInstrument.effective_from`/`effective_to`; `authorizes` edge `valid_from`/`valid_to`; `db.edtf.parse_edtf`/`derive_envelope` | `test_stage5_forensics.py::test_authorization_carries_native_validity_interval_not_a_point` |
+
+## Person constraint (§11.3, §43.4)
+
+| Requirement | Where | Test |
+|---|---|---|
+| §11.3 / §43.4 (FR reference galleries and forensic extractions MUST NOT mint `Person` rows for observed individuals) | populated graphs (zero `Person` nodes) | `test_stage5_forensics.py::test_no_person_rows_are_minted_for_observed_individuals` |
+
+## Phase gate (§51.3)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ENG-004 (every new requirement has an automated test) | `tests/ontology/generalization/test_stage5_forensics.py` | `make check` (pytest) |
+| Phase gate: CI green incl. data-quality; no deviation (no ADR needed — no schema change); traceability + risk register updated | this section; `docs/risk_register.md` (Phase 17 — P17.2) | `make check` (lint/format/typecheck/pytest/verify-gen — `verify-gen` proves the ontology is byte-unchanged) |
