@@ -42,7 +42,7 @@ dispatchTarget:  subagent                                     # Devin CLI isolat
 buildWorktree:   /Users/stevenvitali/Eleutheria               # deliberate override of the skill's sibling-worktree default — see SETUP note 0
 buildBranchBase: devin/p18-2-france-belgium
 pinnedBaseSha:   1baf05f
-chainTip:        devin/p23-golive-markers                     # RECONCILED 2026-09-10: go-live chain resumes here. HEAD was svitali/golive-spec-home (descendant of the round base devin/sig-golive-plan, carrying the go-live seed + renumber + spec-home + GCP-resolve commits); the orchestrator forked devin/p23-golive-markers off it for the Lane-A marker cluster (P23.1–P23.4). Round base = devin/sig-golive-plan.
+chainTip:        devin/p21-1-rights-flip-rerun                # P21.1 re-run PR #72 (stacked on devin/p23-golive-markers ← the Lane-A marker cluster P23.1–P23.4 ← svitali/golive-spec-home ← round base devin/sig-golive-plan). Reconciled 2026-09-10 by orchestrate-build; each subsequent ticket forks from the then-current tip.
 benchmarkSet:    N/A                                          # ACs are deterministic + reviewer-agentic; no benchmark set
 autonomy:        checkpoint                                   # pauses at SETUP, real blocks, and every GATE; auto-advances green ungated tickets
 mergePolicy:     NONE                                         # no ticket merges/tags/pushes main; operator integrates after the chain
