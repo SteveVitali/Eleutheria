@@ -9,7 +9,7 @@ search:
 
 
 
-_Jurisdiction type, namespaced per country (§11.1, §13.7)._
+_Jurisdiction type, namespaced per country (§11.1, §13.7, SIG-ONTO-068). The dotless terms are the shared abstract levels every country's hierarchy maps onto; national levels are `<cc>.*` children linked by `is_a`, so a new country plugs its own level names in without widening a US-shaped enum._
 
 
 
@@ -18,21 +18,29 @@ _Jurisdiction type, namespaced per country (§11.1, §13.7)._
 URI: [sig:enum/JurisdictionType](https://ontology.sig-project.org/schema/enum/JurisdictionType)
 
 ## Permissible Values
-| Value | Meaning | Description |
-| --- | --- | --- |
-| country | None |  |
-| state_province | None |  |
-| county | None |  |
-| municipality | None |  |
-| township | None |  |
-| special_district | None |  |
-| school_district | None |  |
-| tribal | None |  |
-| federal_region | None |  |
-| judicial_district | None |  |
-| metropolitan_area | None |  |
-| neighborhood | None |  |
-| unincorporated_area | None |  |
+| Value | Meaning | Description | Additional Info |
+| --- | --- | --- | --- |
+| country | None |  ||
+| state_province | None |  ||
+| county | None |  ||
+| municipality | None |  ||
+| township | None |  ||
+| special_district | None |  ||
+| school_district | None |  ||
+| tribal | None |  ||
+| federal_region | None |  ||
+| judicial_district | None |  ||
+| metropolitan_area | None |  ||
+| neighborhood | None |  ||
+| unincorporated_area | None |  ||
+| fr.region | None | France — région | Is-A: NONE<br>|
+| fr.departement | None | France — département | Is-A: NONE<br>|
+| fr.commune | None | France — commune | Is-A: NONE<br>|
+| fr.epci | None | France — EPCI (intercommunal grouping); a non-tree overlapping parent | Is-A: NONE<br>|
+| uk.police_force_area | None | United Kingdom — police force area (a non-tree operational grouping) | Is-A: NONE<br>|
+| de.bundesland | None | Germany — Bundesland (state) | Is-A: NONE<br>|
+| de.kreis | None | Germany — Kreis (district) | Is-A: NONE<br>|
+| de.gemeinde | None | Germany — Gemeinde (municipality) | Is-A: NONE<br>|
 
 
 
@@ -73,7 +81,10 @@ URI: [sig:enum/JurisdictionType](https://ontology.sig-project.org/schema/enum/Ju
 <details>
 ```yaml
 name: JurisdictionType
-description: Jurisdiction type, namespaced per country (§11.1, §13.7).
+description: Jurisdiction type, namespaced per country (§11.1, §13.7, SIG-ONTO-068).
+  The dotless terms are the shared abstract levels every country's hierarchy maps
+  onto; national levels are `<cc>.*` children linked by `is_a`, so a new country plugs
+  its own level names in without widening a US-shaped enum.
 from_schema: https://ontology.sig-project.org/schema/sig
 rank: 1000
 permissible_values:
@@ -103,6 +114,38 @@ permissible_values:
     text: neighborhood
   unincorporated_area:
     text: unincorporated_area
+  fr.region:
+    text: fr.region
+    description: France — région.
+    is_a: state_province
+  fr.departement:
+    text: fr.departement
+    description: France — département.
+    is_a: county
+  fr.commune:
+    text: fr.commune
+    description: France — commune.
+    is_a: municipality
+  fr.epci:
+    text: fr.epci
+    description: France — EPCI (intercommunal grouping); a non-tree overlapping parent.
+    is_a: metropolitan_area
+  uk.police_force_area:
+    text: uk.police_force_area
+    description: United Kingdom — police force area (a non-tree operational grouping).
+    is_a: special_district
+  de.bundesland:
+    text: de.bundesland
+    description: Germany — Bundesland (state).
+    is_a: state_province
+  de.kreis:
+    text: de.kreis
+    description: Germany — Kreis (district).
+    is_a: county
+  de.gemeinde:
+    text: de.gemeinde
+    description: Germany — Gemeinde (municipality).
+    is_a: municipality
 
 ```
 </details>

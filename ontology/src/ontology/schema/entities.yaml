@@ -58,6 +58,15 @@ classes:
       name_lang:
         range: bcp47
         multivalued: true
+        description: Repeatable BCP-47 language tags for the multilingual labels (SIG-ONTO-069).
+      transliteration_scheme:
+        range: string
+        multivalued: true
+        description: >-
+          Repeatable qualifier naming the transliteration scheme a romanised/
+          transliterated label was produced under (e.g. ISO 9, BGN/PCGN); a
+          transliterated name carries it so the original script stays recoverable
+          (SIG-ONTO-069).
       valid_from:
         range: edtf
       valid_to:
@@ -81,6 +90,14 @@ classes:
       name_lang:
         range: bcp47
         multivalued: true
+        description: Repeatable BCP-47 language tags for the multilingual entity names (SIG-ONTO-069).
+      transliteration_scheme:
+        range: string
+        multivalued: true
+        description: >-
+          Repeatable qualifier naming the transliteration scheme a romanised/
+          transliterated name was produced under (e.g. ISO 9, BGN/PCGN, Hepburn),
+          so the original script stays recoverable (SIG-ONTO-069).
       organization_type:
         range: OrganizationType
       parent_organization:

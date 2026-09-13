@@ -20,6 +20,12 @@ public_employee_names_publishable = true
 [jurisdictions.EU]
 public_employee_names_publishable = false
 
+# France (FR-GDPR profile): redact public-official names by default, publishing
+# only with a documented Art. 6(1)(f) balancing test — so the default posture
+# here is no-publish (§43.8, R9 FR-GDPR profile).
+[jurisdictions.FR]
+public_employee_names_publishable = false
+
 [jurisdictions.DE]
 public_employee_names_publishable = false
 

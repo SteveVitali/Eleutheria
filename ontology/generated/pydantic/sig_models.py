@@ -652,7 +652,7 @@ class ObservedVia(str, Enum):
 
 class LegalInstrumentType(str, Enum):
     """
-    Legal instrument type, internationalized (§11.14, §13.7).
+    Legal instrument type, internationalized and country-namespaced (§11.14, §13.7, SIG-ONTO-068). The dotless terms are the shared abstract parents; national instruments are `<cc>.*` children linked by `is_a`, added under a national namespace rather than by widening a US-shaped enum (§5.3). P18.2 is the first consumer (the French arrêté préfectoral / CNIL decision).
     """
     statute = "statute"
     ordinance = "ordinance"
@@ -661,12 +661,35 @@ class LegalInstrumentType(str, Enum):
     court_order = "court_order"
     consent_decree = "consent_decree"
     dpa_decision = "dpa_decision"
+    """
+    A data-protection authority decision (abstract parent).
+    """
     code_of_practice = "code_of_practice"
     prefectoral_order = "prefectoral_order"
     """
-    e.g. a French arrêté préfectoral.
+    A prefectoral order (abstract parent); e.g. a French arrêté préfectoral.
     """
     directive = "directive"
+    frFULL_STOParrete_prefectoral = "fr.arrete_prefectoral"
+    """
+    France — arrêté préfectoral (the published authorization instrument, §52 Phase 18).
+    """
+    frFULL_STOPcnil_decision = "fr.cnil_decision"
+    """
+    France — a CNIL (data-protection authority) decision.
+    """
+    ukFULL_STOPsurveillance_camera_code = "uk.surveillance_camera_code"
+    """
+    United Kingdom — the Surveillance Camera Code of Practice.
+    """
+    euFULL_STOPai_act = "eu.ai_act"
+    """
+    European Union — an EU AI Act obligation.
+    """
+    deFULL_STOPlandesdatenschutzgesetz = "de.landesdatenschutzgesetz"
+    """
+    Germany — a Land data-protection statute.
+    """
 
 
 class AccountabilityEventType(str, Enum):
@@ -858,7 +881,7 @@ class GeometryPrecision(str, Enum):
 
 class JurisdictionType(str, Enum):
     """
-    Jurisdiction type, namespaced per country (§11.1, §13.7).
+    Jurisdiction type, namespaced per country (§11.1, §13.7, SIG-ONTO-068). The dotless terms are the shared abstract levels every country's hierarchy maps onto; national levels are `<cc>.*` children linked by `is_a`, so a new country plugs its own level names in without widening a US-shaped enum.
     """
     country = "country"
     state_province = "state_province"
@@ -873,11 +896,51 @@ class JurisdictionType(str, Enum):
     metropolitan_area = "metropolitan_area"
     neighborhood = "neighborhood"
     unincorporated_area = "unincorporated_area"
+    frFULL_STOPregion = "fr.region"
+    """
+    France — région.
+    """
+    frFULL_STOPdepartement = "fr.departement"
+    """
+    France — département.
+    """
+    frFULL_STOPcommune = "fr.commune"
+    """
+    France — commune.
+    """
+    frFULL_STOPepci = "fr.epci"
+    """
+    France — EPCI (intercommunal grouping); a non-tree overlapping parent.
+    """
+    ukFULL_STOPpolice_force_area = "uk.police_force_area"
+    """
+    United Kingdom — police force area (a non-tree operational grouping).
+    """
+    deFULL_STOPbundesland = "de.bundesland"
+    """
+    Germany — Bundesland (state).
+    """
+    deFULL_STOPkreis = "de.kreis"
+    """
+    Germany — Kreis (district).
+    """
+    deFULL_STOPgemeinde = "de.gemeinde"
+    """
+    Germany — Gemeinde (municipality).
+    """
 
 
 class OrganizationType(str, Enum):
     """
-    Organization type, namespaced and extensible (§11.2, §13.7). "vendor" is a ROLE, not a subtype (SIG-ONTO-012); it appears here only as an organization-classification convenience and never specializes the entity.
+    Organization type, namespaced and extensible (§11.2, §13.7, SIG-ONTO-068). "vendor" is a ROLE, not a subtype (SIG-ONTO-012); it appears here only as an organization-classification convenience and never specializes the entity. `law_enforcement` is the shared abstract parent every country's police-force types map onto; national forces are `<cc>.*` children linked by `is_a`, added under a national namespace rather than by widening the `us.*` set.
+    """
+    law_enforcement = "law_enforcement"
+    """
+    Abstract parent of every country's law-enforcement organization types (SIG-ONTO-068).
+    """
+    government = "government"
+    """
+    Abstract parent of every country's civil-government body types (SIG-ONTO-068).
     """
     usFULL_STOPleFULL_STOPmunicipal_police = "us.le.municipal_police"
     usFULL_STOPleFULL_STOPsheriff = "us.le.sheriff"
@@ -904,12 +967,26 @@ class OrganizationType(str, Enum):
     vendor = "vendor"
     data_broker = "data_broker"
     frFULL_STOPpolice_municipale = "fr.police_municipale"
+    """
+    France — police municipale.
+    """
     frFULL_STOPgendarmerie = "fr.gendarmerie"
+    """
+    France — gendarmerie nationale.
+    """
+    ukFULL_STOPterritorial_police = "uk.territorial_police"
+    """
+    United Kingdom — a territorial police force.
+    """
+    deFULL_STOPlandespolizei = "de.landespolizei"
+    """
+    Germany — a Land police force.
+    """
 
 
 class AcquisitionMethod(str, Enum):
     """
-    Acquisition method, internationalized (§13.8). foia_request is US-specific; the abstract parent is records_request with national children, plus no_equivalent_available (itself a coverage fact).
+    Acquisition method, internationalized (§13.8, SIG-ONTO-068). foia_request is US-specific; the abstract parent `records_request` carries national children linked by `is_a`, plus `no_equivalent_available` for jurisdictions with no access regime (itself a coverage fact worth recording).
     """
     records_request = "records_request"
     """
@@ -921,6 +998,9 @@ class AcquisitionMethod(str, Enum):
     ukFULL_STOPfoi = "uk.foi"
     euFULL_STOPaccess_to_documents = "eu.access_to_documents"
     no_equivalent_available = "no_equivalent_available"
+    """
+    No access regime exists in the jurisdiction — a recorded coverage fact, not a records-request child.
+    """
 
 
 class Salience(str, Enum):
@@ -1062,7 +1142,8 @@ class Jurisdiction(Entity):
     boundary: Optional[str] = Field(default=None, description="""MultiPolygon, 4326.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction']} })
     boundary_source: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction']} })
     name: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction']} })
-    name_lang: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization']} })
+    name_lang: Optional[list[str]] = Field(default=None, description="""Repeatable BCP-47 language tags for the multilingual labels (SIG-ONTO-069).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization']} })
+    transliteration_scheme: Optional[list[str]] = Field(default=None, description="""Repeatable qualifier naming the transliteration scheme a romanised/ transliterated label was produced under (e.g. ISO 9, BGN/PCGN); a transliterated name carries it so the original script stays recoverable (SIG-ONTO-069).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization']} })
     valid_from: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization', 'Edge']} })
     valid_to: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization', 'Edge']} })
     id: str = Field(default=..., description="""The entity's stable minted identity (L2 identity only, §8.2).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Entity', 'Edge']} })
@@ -1077,7 +1158,8 @@ class Organization(Entity):
     canonical_name: Optional[str] = Field(default=None, description="""A claim, not an authoritative column (§8.2, SIG-ONTO-003).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Organization']} })
     alias: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Organization']} })
     alias_type: Optional[list[AliasType]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Organization']} })
-    name_lang: Optional[list[str]] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization']} })
+    name_lang: Optional[list[str]] = Field(default=None, description="""Repeatable BCP-47 language tags for the multilingual entity names (SIG-ONTO-069).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization']} })
+    transliteration_scheme: Optional[list[str]] = Field(default=None, description="""Repeatable qualifier naming the transliteration scheme a romanised/ transliterated name was produced under (e.g. ISO 9, BGN/PCGN, Hepburn), so the original script stays recoverable (SIG-ONTO-069).""", json_schema_extra = { "linkml_meta": {'domain_of': ['Jurisdiction', 'Organization']} })
     organization_type: Optional[OrganizationType] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Organization']} })
     parent_organization: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Organization']} })
     jurisdiction: Optional[str] = Field(default=None, json_schema_extra = { "linkml_meta": {'domain_of': ['Organization', 'Deployment', 'LegalInstrument']} })

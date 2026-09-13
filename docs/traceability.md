@@ -1848,3 +1848,52 @@ not patched here.
 |---|---|---|
 | SIG-ENG-004 (every new requirement has an automated test) | `tests/ontology/generalization/test_stage5_acoustic_drone_location.py` | `make check` (pytest) |
 | Phase gate: CI green incl. data-quality; no deviation (no ADR needed — no schema change); traceability + risk register updated | this section; `docs/risk_register.md` (Phase 17 — P17.3) | `make check` (lint/format/typecheck/pytest/verify-gen — `verify-gen` proves the ontology is byte-unchanged) |
+
+# P18.1 — Jurisdiction adapter framework (Stage 6, §5.3 / §13.7–13.8 / §43.8)
+
+The reusable framework a new country plugs into with **no US-shaped assumption** (SIG-CHART-029/030):
+the four §13.7 vocabularies country-namespaced under a shared abstract parent, added by national children
+rather than by widening a US enum (SIG-ONTO-068); repeatable BCP-47 labels with a `transliteration_scheme`
+qualifier (SIG-ONTO-069); jurisdiction-conditional publication over the data subject's and the record's
+origin jurisdiction (SIG-PUB-017, §43.8); and coarse country-/vendor-level international datasets ingested at
+explicit coarse granularity, never disaggregated to agency level by inference (SIG-ENG-036/SIG-INGEST-042).
+P18.1 owns this framework; P18.2 (France/Belgium) is its first consumer.
+
+## Country-namespaced vocabularies under a shared abstract parent (SIG-ONTO-068)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ONTO-068 (organization_type, jurisdiction_type, acquisition_method, legal_instrument_type namespaced by country with a shared abstract parent; national children `<cc>.*` linked via LinkML `is_a`; **no `us.*` enum widened**) | `ontology/schema/common.yaml` `OrganizationType` (`law_enforcement` parent + `fr.police_municipale`/`fr.gendarmerie`/`uk.territorial_police`/`de.landespolizei`), `JurisdictionType` (`fr.region`/`fr.departement`/`fr.commune`/`fr.epci`/`uk.police_force_area`/`de.bundesland`/`de.kreis`/`de.gemeinde`), `LegalInstrumentType` (`fr.arrete_prefectoral`/`fr.cnil_decision`/`uk.surveillance_camera_code`/`eu.ai_act`/`de.landesdatenschutzgesetz`), `AcquisitionMethod` (`records_request` parent + national children); `generate.py::build_structural_skos` publishes `is_a` as `skos:broader` | `tests/ontology/test_i18n.py::test_enum_carries_non_us_national_children`, `::test_every_non_us_national_child_has_a_shared_abstract_parent`, `::test_no_us_enum_was_widened`, `::test_us_law_enforcement_types_share_the_international_abstract_parent`, `::test_records_request_vocabulary_is_internationalised`, `::test_legal_instrument_type_carries_a_national_authorization_instrument` |
+
+## Multilingual labels with BCP-47 tags + transliteration scheme (SIG-ONTO-069)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ONTO-069 (every label-bearing entity carries repeatable BCP-47 language-tagged labels; transliterations carry a `transliteration_scheme` qualifier; labels round-trip and render) | `ontology/schema/entities.yaml` `Jurisdiction`/`Organization` `name_lang` (range `bcp47`, multivalued) + `transliteration_scheme` (multivalued); generated Pydantic `sig_models.py` | `tests/ontology/test_i18n.py::test_label_bearing_entity_has_bcp47_and_transliteration_slots`, `::test_multilingual_labels_round_trip_and_render` |
+
+## The jurisdiction adapter framework — no US-shaped assumption (SIG-CHART-029/030)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-CHART-029 (a reusable jurisdiction adapter — code system, org types, legal instruments, records-request vocabulary, publication rules — satisfiable with no US-shaped assumption; machine-checked checklist) | `policy.jurisdiction.JurisdictionAdapter`, `CHECKLIST_ITEMS`/`GATED_ITEMS`, `adapter_checklist`, `validate_adapter`, `adapters()`; `policy/data/jurisdiction_adapters.toml` (US/FR/UK); `sig-policy jurisdiction` CLI | `tests/unit/test_jurisdiction_adapter.py::test_every_seeded_adapter_validates`, `::test_an_incomplete_adapter_fails_the_checklist`, `::test_adapter_vocab_terms_are_real_ontology_enum_values` |
+| SIG-CHART-030 (no US-only device schema / no `us.*`-only code path; onboarding a non-US jurisdiction touches no `us.*` term) | `policy.jurisdiction.assert_no_us_shaped_assumption`, `USShapedAssumptionError`; OSM global device schema inherited (SIG-CHART-030, unchanged) | `tests/unit/test_jurisdiction_adapter.py::test_non_us_adapter_has_no_us_shaped_code_path`, `::test_a_us_term_in_a_non_us_adapter_is_rejected`, `::test_non_us_adapters_use_their_own_namespace_for_org_and_legal_types` |
+| §13.8 (the non-US records-request vocabulary is used, including `no_equivalent_available`) | `policy/data/jurisdiction_adapters.toml` (`fr.cada`, `uk.foi`); `ontology/schema/common.yaml` `AcquisitionMethod` (`no_equivalent_available`) | `tests/unit/test_jurisdiction_adapter.py::test_non_us_records_request_vocabulary_is_used`, `::test_no_equivalent_available_is_a_valid_records_regime_declaration` |
+
+## Jurisdiction-conditional publication (SIG-PUB-017, §43.8)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-PUB-017 (publication rules evaluate the data subject's jurisdiction AND the record's origin; different outcomes across regimes — FR-GDPR redacts, US-DEFAULT publishes) | `policy.publication.publication_permitted`; `policy.jurisdiction.adapter_publication_permitted`; `policy/data/jurisdictions.toml` (US/FR/EU/DE/UK) | `tests/unit/test_jurisdiction_adapter.py::test_publication_is_jurisdiction_conditional_across_adapters`; `tests/unit/test_policy_publication.py::test_jurisdiction_conditional_publication` |
+
+## Coarse international datasets — explicit coarse granularity, no disaggregation (SIG-ENG-036 / SIG-INGEST-042)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ENG-036 / SIG-INGEST-042 (country-/vendor-level datasets ingested as claims with explicit coarse granularity; never disaggregated to agency level by inference) | `connectors.coarse_international` (`CoarseDataset`, `DATASETS`, `coarse_claim`, `assert_not_disaggregated`, `DisaggregationError`); `connectors/data/sources.toml` (`carnegie_ai_gsi`, `facial_recognition_world_map`, `aspi_mapping_chinas_tech_giants`) | `tests/connectors/test_coarse_international.py::test_all_three_named_datasets_are_registered_and_gated`, `::test_country_and_vendor_granularities_are_declared`, `::test_coarse_claim_stamps_explicit_granularity_and_preserves_raw_value`, `::test_agency_level_disaggregation_is_refused`, `::test_country_dataset_rejects_a_vendor_subject_and_vice_versa`, `::test_a_non_coarse_granularity_is_rejected_at_construction` |
+
+## Phase gate (§51.3)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ENG-004 (every new requirement has an automated test) | `tests/ontology/test_i18n.py`, `tests/unit/test_jurisdiction_adapter.py`, `tests/connectors/test_coarse_international.py`, `tests/unit/test_policy_publication.py` | `make check` (pytest) |
+| Phase gate: CI green incl. data-quality; ADR written for the schema deviation; traceability + risk register updated | this section; `docs/adr/ADR-056-*`; `docs/risk_register.md` (Phase 18 — P18.1) | `make check` (lint/format/typecheck/pytest/verify-gen — `verify-gen` proves the committed generated artifacts match a fresh generation) |

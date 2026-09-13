@@ -329,7 +329,10 @@
 --     * Slot: name
 -- # Class: Jurisdiction_name_lang
 --     * Slot: Jurisdiction_id Description: Autocreated FK slot
---     * Slot: name_lang
+--     * Slot: name_lang Description: Repeatable BCP-47 language tags for the multilingual labels (SIG-ONTO-069).
+-- # Class: Jurisdiction_transliteration_scheme
+--     * Slot: Jurisdiction_id Description: Autocreated FK slot
+--     * Slot: transliteration_scheme Description: Repeatable qualifier naming the transliteration scheme a romanised/ transliterated label was produced under (e.g. ISO 9, BGN/PCGN); a transliterated name carries it so the original script stays recoverable (SIG-ONTO-069).
 -- # Class: Organization_alias
 --     * Slot: Organization_id Description: Autocreated FK slot
 --     * Slot: alias
@@ -338,7 +341,10 @@
 --     * Slot: alias_type
 -- # Class: Organization_name_lang
 --     * Slot: Organization_id Description: Autocreated FK slot
---     * Slot: name_lang
+--     * Slot: name_lang Description: Repeatable BCP-47 language tags for the multilingual entity names (SIG-ONTO-069).
+-- # Class: Organization_transliteration_scheme
+--     * Slot: Organization_id Description: Autocreated FK slot
+--     * Slot: transliteration_scheme Description: Repeatable qualifier naming the transliteration scheme a romanised/ transliterated name was produced under (e.g. ISO 9, BGN/PCGN, Hepburn), so the original script stays recoverable (SIG-ONTO-069).
 -- # Class: Organization_identifier
 --     * Slot: Organization_id Description: Autocreated FK slot
 --     * Slot: identifier Description: Repeatable (scheme,value) pairs, qualified by identifier_system (SIG-IDENT-006).
@@ -455,7 +461,7 @@ CREATE TABLE "Entity" (
 CREATE INDEX "ix_Entity_id" ON "Entity" (id);
 
 CREATE TABLE "Jurisdiction" (
-	jurisdiction_type VARCHAR(19),
+	jurisdiction_type VARCHAR(20),
 	boundary TEXT,
 	boundary_source TEXT,
 	valid_from TEXT,
@@ -759,6 +765,15 @@ CREATE TABLE "Jurisdiction_name_lang" (
 CREATE INDEX "ix_Jurisdiction_name_lang_Jurisdiction_id" ON "Jurisdiction_name_lang" ("Jurisdiction_id");
 CREATE INDEX "ix_Jurisdiction_name_lang_name_lang" ON "Jurisdiction_name_lang" (name_lang);
 
+CREATE TABLE "Jurisdiction_transliteration_scheme" (
+	"Jurisdiction_id" TEXT,
+	transliteration_scheme TEXT,
+	PRIMARY KEY ("Jurisdiction_id", transliteration_scheme),
+	FOREIGN KEY("Jurisdiction_id") REFERENCES "Jurisdiction" (id)
+);
+CREATE INDEX "ix_Jurisdiction_transliteration_scheme_Jurisdiction_id" ON "Jurisdiction_transliteration_scheme" ("Jurisdiction_id");
+CREATE INDEX "ix_Jurisdiction_transliteration_scheme_transliteration_scheme" ON "Jurisdiction_transliteration_scheme" (transliteration_scheme);
+
 CREATE TABLE "AccountabilityEvent_technologies" (
 	"AccountabilityEvent_id" TEXT,
 	technologies TEXT,
@@ -906,7 +921,7 @@ CREATE TABLE "Policy" (
 CREATE INDEX "ix_Policy_id" ON "Policy" (id);
 
 CREATE TABLE "LegalInstrument" (
-	instrument_type VARCHAR(17),
+	instrument_type VARCHAR(27),
 	enacting_body TEXT,
 	jurisdiction TEXT,
 	citation TEXT,
@@ -988,6 +1003,15 @@ CREATE TABLE "Organization_name_lang" (
 );
 CREATE INDEX "ix_Organization_name_lang_Organization_id" ON "Organization_name_lang" ("Organization_id");
 CREATE INDEX "ix_Organization_name_lang_name_lang" ON "Organization_name_lang" (name_lang);
+
+CREATE TABLE "Organization_transliteration_scheme" (
+	"Organization_id" TEXT,
+	transliteration_scheme TEXT,
+	PRIMARY KEY ("Organization_id", transliteration_scheme),
+	FOREIGN KEY("Organization_id") REFERENCES "Organization" (id)
+);
+CREATE INDEX "ix_Organization_transliteration_scheme_Organization_id" ON "Organization_transliteration_scheme" ("Organization_id");
+CREATE INDEX "ix_Organization_transliteration_scheme_transliteration_scheme" ON "Organization_transliteration_scheme" (transliteration_scheme);
 
 CREATE TABLE "Organization_identifier" (
 	"Organization_id" TEXT,

@@ -165,7 +165,7 @@ Name: sig
 | [mobility](slots/mobility.md) |  |
 | [model](slots/model.md) |  |
 | [name](slots/name.md) |  |
-| [name_lang](slots/name_lang.md) |  |
+| [name_lang](slots/name_lang.md) | Repeatable BCP-47 language tags for the multilingual labels (SIG-ONTO-069) |
 | [national_lookup_enabled](slots/national_lookup_enabled.md) |  |
 | [observation_count](slots/observation_count.md) |  |
 | [observed_at](slots/observed_at.md) | When SIG observed the state (observation time, never collapsed with valid tim... |
@@ -256,6 +256,7 @@ Name: sig
 | [termination_reason](slots/termination_reason.md) |  |
 | [text](slots/text.md) |  |
 | [third_party_integration](slots/third_party_integration.md) |  |
+| [transliteration_scheme](slots/transliteration_scheme.md) | Repeatable qualifier naming the transliteration scheme a romanised/ translite... |
 | [transport](slots/transport.md) |  |
 | [upstream_id](slots/upstream_id.md) | Qualified by system (osm |
 | [valid_from](slots/valid_from.md) | When the fact/relationship became true (valid time, §9 |
@@ -297,7 +298,7 @@ Name: sig
 | [FundingInstrumentType](enums/FundingInstrumentType.md) | Funding instrument type (§11 |
 | [GeometryPrecision](enums/GeometryPrecision.md) | How precisely a stored geometry locates its subject (§14 |
 | [JurisdictionType](enums/JurisdictionType.md) | Jurisdiction type, namespaced per country (§11 |
-| [LegalInstrumentType](enums/LegalInstrumentType.md) | Legal instrument type, internationalized (§11 |
+| [LegalInstrumentType](enums/LegalInstrumentType.md) | Legal instrument type, internationalized and country-namespaced (§11 |
 | [Mobility](enums/Mobility.md) | Physical asset mobility (§11 |
 | [ObservedVia](enums/ObservedVia.md) | How a configuration state was observed (§11 |
 | [OperationalState](enums/OperationalState.md) | Track 3 — operational (§13 |

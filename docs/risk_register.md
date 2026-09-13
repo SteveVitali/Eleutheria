@@ -1123,3 +1123,36 @@ impossible to do silently.
 |---|---|---|---|
 | RISK-P17-13 | The other Phase-17 technology spans — private-camera federation, RTCC, and the data-broker chain (**P17.1**); facial recognition, cell-site simulators, mobile-device forensics, and federal authorization datasets (**P17.2**) — both landed | Explicitly out of scope for P17.3 (the phase is populated technology-by-technology, OL-17.5-01) | Each has its own ticket; the schema-absorption guarantee proven here (SIG-CHART-027) is the invariant those tickets share. The §22.7 EFF Data Library roster is the registered Phase-17 ingestion backlog (SIG-INGEST-041). |
 | RISK-P17-14 | The populated constructs are **instance graphs in the conformance suite**, not rows persisted to the claim spine, and there is **no live gunshot/drone/location-data connector** (§23) | P17.3 is the §5.2 expressibility proof, not an ingestion connector; live population arrives with the Stage-5 connectors over the same frozen schema (gunshot detectors already exist in OSM as `gunshot_detector`, R1-F1.3, ready for that connector) | The instance shapes mirror the generated model exactly (they *are* the generated Pydantic classes); persisting them — and wiring a §23 connector that carries the host-role coordinate rule (§43.3) — is additive and needs no schema change, which is precisely what this ticket proves. |
+
+## Phase 18 — International adapter #1 (P18.1 — the jurisdiction adapter framework)
+
+Per §53 / SIG-ENG-031, P18.1's risk-register entries. P18.1 **owns the jurisdiction
+adapter framework** (§5.3) that P18.2 (France/Belgium) is the first consumer of:
+country-namespaced vocabularies under a shared abstract parent (SIG-ONTO-068), BCP-47
+labels with a transliteration qualifier (SIG-ONTO-069), jurisdiction-conditional
+publication (SIG-PUB-017), and coarse international ingestion (SIG-ENG-036/INGEST-042).
+Unlike the P17.x "populated with no schema change" tickets, P18.1 makes **additive
+schema changes** (national enum children via LinkML `is_a`, a `transliteration_scheme`
+slot), so **ADR-056 records the deviation** and `verify-gen` proves the committed
+generated artifacts match a fresh generation.
+
+### The no-US-shaped-assumption guarantee (SIG-CHART-029/030, SIG-ONTO-068)
+
+| id | Risk (what breaks the acceptance gate if unhandled) | Compensating control |
+|---|---|---|
+| RISK-P18-01 | **A US-shaped assumption re-enters through the vocabulary** — a national type added by widening a `us.*` enum, or a non-US adapter that reaches for a `us.*` term — falsifying SIG-CHART-030 / SIG-ONTO-068. | The us.* permissible set of each internationalised enum is **frozen** and asserted (`tests/ontology/test_i18n.py::test_no_us_enum_was_widened`); national children are added only under their own namespace with a country-neutral abstract parent (`::test_every_non_us_national_child_has_a_shared_abstract_parent`); and `policy.jurisdiction.assert_no_us_shaped_assumption` raises on any foreign-namespace term in a non-US adapter (`tests/unit/test_jurisdiction_adapter.py::test_a_us_term_in_a_non_us_adapter_is_rejected`). A regression surfaces as a red test. |
+| RISK-P18-02 | **The adapter checklist drifts from the real ontology** — an adapter declares an org/legal/records term that is not a permissible value of the corresponding enum, so the checklist "passes" against a private string list. | The adapter vocabulary is cross-checked against the LinkML enums (`tests/unit/test_jurisdiction_adapter.py::test_adapter_vocab_terms_are_real_ontology_enum_values`); a typo or a removed enum value fails CI. |
+
+### Additive schema deviation (ADR-056)
+
+| id | Deviation | Why it is safe / bounded | Compensating control |
+|---|---|---|---|
+| RISK-P18-03 | P18.1 edits the LinkML source (enum `is_a` linkage + national children; `transliteration_scheme` slot) and regenerates every artifact — a schema change, unlike P17.x. | Purely **additive**: no existing permissible value, wire name, or slot is removed or renamed (SIG-ENG-003 back-compat); new slots are optional (today's-behaviour default = absent). Pre-existing `us.gov.*` / sector `private.*` values are untouched. | `make check` `verify-gen` proves the committed `ontology/generated` tree equals a fresh byte-deterministic generation; the P02 claim-spine DDL is regenerated from the same source. ADR-056 records the deviation and its revisit trigger. |
+
+### Deferred / out of scope here (SIG-ENG-005)
+
+| id | Requirement | Why not addressed here | Compensating control |
+|---|---|---|---|
+| RISK-P18-04 | The **per-source ingestion checklist items** — boundary sources, Wikidata coverage, the law-enforcement organisation registry, procurement portals, the official gazette, DPA corpora, date/number locale (R9 Part I items 2/4/5/8/11/13/14/16) — are not gated by the framework. | These are per-country *connector* work (the France RAA → arrêté pipeline, DECP procurement, CADA/CNIL corpora), which is **P18.2**, not the framework. | They are recorded in `policy.jurisdiction.CHECKLIST_ITEMS` as items the framework does not yet gate, mapped `None`, so a reader sees exactly what a live onboarding still owes. The adapter ships read-only until a local partner is named (item 18). |
+| RISK-P18-05 | The coarse-international layer is the **claim shape + anti-disaggregation guard**, not a live connector; the three datasets (Carnegie AI GSI, Facial Recognition World Map, ASPI) are registered `ingestion_permitted = false`. | The datasets are LINK-posture / UNDETERMINED pending rights review (§22.7); a live fetch connector is downstream, exactly as the source-registry gate intends. | `connectors.coarse_international.assert_not_disaggregated` refuses agency-level disaggregation at the seam (`tests/connectors/test_coarse_international.py::test_agency_level_disaggregation_is_refused`), so the P4 guarantee holds the moment a connector is wired; the registry rows fail the ingestion gate closed until reviewed. |
+| RISK-P18-06 | **The France/Belgium connectors themselves** (Technopolice, prefectoral-order → LegalInstrument, national procurement → Contract, the ~12,000-camera OSM import study) are not built here. | Explicitly out of scope — **P18.2**. | P18.1 provides the framework (namespaced vocabularies under a national parent, the adapter checklist, coarse-granularity guard) those connectors consume; each will exercise one adapter end-to-end (ingest → reconcile → serve). |

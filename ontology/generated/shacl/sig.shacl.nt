@@ -259,16 +259,17 @@
 <https://ontology.sig-project.org/schema/Jurisdiction> <http://www.w3.org/2000/01/rdf-schema#comment> "[NEW] A first-class jurisdiction with a self-referential hierarchy, a pluggable national code system, and temporally-versioned geometry (§11.1, SIG-ONTO-010/011)." .
 <https://ontology.sig-project.org/schema/Jurisdiction> <http://www.w3.org/ns/shacl#closed> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
 <https://ontology.sig-project.org/schema/Jurisdiction> <http://www.w3.org/ns/shacl#ignoredProperties> _:cb2038c7ce2b13f6199c0c4c2bfabb6080d270d0cf2e63180c721a344637c8514ec .
-<https://ontology.sig-project.org/schema/Jurisdiction> <http://www.w3.org/ns/shacl#property> _:cb20e90e346529eba0b64803b634688ad55b211e476f75b5cbb9aa43cb807633d9b .
 <https://ontology.sig-project.org/schema/Jurisdiction> <http://www.w3.org/ns/shacl#property> _:cb222937aad7034431942f7c00c2ea5c318388f96149d3d2ab1829f21c94129192b .
 <https://ontology.sig-project.org/schema/Jurisdiction> <http://www.w3.org/ns/shacl#property> _:cb282559c84fedec11007b64f072919ca9ad12cdb36eb4cc66c09cd60b78c25433d .
+<https://ontology.sig-project.org/schema/Jurisdiction> <http://www.w3.org/ns/shacl#property> _:cb2875101e3742e88ac25e555ee84294d6e560b4f7a16d887c75dcff3b2e7c193a0 .
 <https://ontology.sig-project.org/schema/Jurisdiction> <http://www.w3.org/ns/shacl#property> _:cb28bac274205b45de41894c5c829806e65f52c5d0d069b7769bc73ca806649a2ea .
 <https://ontology.sig-project.org/schema/Jurisdiction> <http://www.w3.org/ns/shacl#property> _:cb29f2d92c0c77457787452b83773ac31f21f08c20de6ac5a59963c83a7dfb0f084 .
+<https://ontology.sig-project.org/schema/Jurisdiction> <http://www.w3.org/ns/shacl#property> _:cb2a55ffc99a0c830b78fc45a4fccea5b3a9cf8a4bec2924d05738978375da3c613 .
 <https://ontology.sig-project.org/schema/Jurisdiction> <http://www.w3.org/ns/shacl#property> _:cb2a64f736c817b9a50e6d0b8a3156150a7023510eaa2f16584bd3a1843f8e31c18 .
-<https://ontology.sig-project.org/schema/Jurisdiction> <http://www.w3.org/ns/shacl#property> _:cb2ad18ca03c56009eaf3ad321f15d7dadbe758a87c61f3e07b9037453ab4b3da15 .
+<https://ontology.sig-project.org/schema/Jurisdiction> <http://www.w3.org/ns/shacl#property> _:cb2b13f46d3743711d90598b2e14ad1aa84eb72365a7e870aa0448744bb841c9d0a .
 <https://ontology.sig-project.org/schema/Jurisdiction> <http://www.w3.org/ns/shacl#property> _:cb2b4236173b03fdd2801db05d1655d0158aa178b020373009068380dab0729b9ff .
-<https://ontology.sig-project.org/schema/Jurisdiction> <http://www.w3.org/ns/shacl#property> _:cb2dbff9f44e4e84be5f8c99fff562f6b042abd57bce15b5a2f01706858a42ab8fb .
-<https://ontology.sig-project.org/schema/Jurisdiction> <http://www.w3.org/ns/shacl#property> _:cb3300e4ff80bde1346a1177328c4f268429d29d1b732c189dcec18594f5b186da7 .
+<https://ontology.sig-project.org/schema/Jurisdiction> <http://www.w3.org/ns/shacl#property> _:cb2cdf0263d3df6592c6478cf8ef56c04ed10cf04743ea126ae10977112dfd9d58c .
+<https://ontology.sig-project.org/schema/Jurisdiction> <http://www.w3.org/ns/shacl#property> _:cb2f405754fce01dfc9ee0f7ae9519be3fe04e5d47efe11edaebfe6616311fe8f19 .
 <https://ontology.sig-project.org/schema/Jurisdiction> <http://www.w3.org/ns/shacl#property> _:cb3a592635f05296a9e3b6f654fc3b1b9f8e6ac5788c376cc8a1d1df1eda8fca92e .
 <https://ontology.sig-project.org/schema/Jurisdiction> <http://www.w3.org/ns/shacl#targetClass> <https://ontology.sig-project.org/schema/Jurisdiction> .
 <https://ontology.sig-project.org/schema/LegalInstrument> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
@@ -307,23 +308,24 @@
 <https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/2000/01/rdf-schema#comment> "The single entity for ALL institutional actors; \"vendor\" is a role, not a subtype (§11.2, SIG-ONTO-012). canonical_name is a claim, not a column (§8.2)." .
 <https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#closed> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
 <https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#ignoredProperties> _:cb26c928beae1c850ae2f8c5b88706a1cdf948f2d92c69045b4069abf6da9b70c61 .
+<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb1cdc82c4cd1f90437dc8653329776f3cf87e34f959f9db45d626fedf4477b2205 .
 <https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb1dfc862180a36a3e37f6f55da2042273fb4d0ac059202e4d46de8646a39792b1a .
-<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb1f4321e0cb5e7056f3572e83e241dffc63c875fad79f4e7bca4865c4041e7eed2 .
-<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb25a378773d9f12603ff6e148b44c573e96b2b3d8f2e057ddd8a17657bd5106d00 .
-<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb28e23dc412498920039344bad838c6a46766c9fccb11d4ba58e86e6b1ae98331f .
-<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb2ab240ca412b0cef4cab0f1552d57f470c3c9482c59a4fe04c753c49cf0b98ff9 .
+<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb23cec75c4cb0158bfbd182859f5112c3e80e63b135274886c50b2863fc4cbffaa .
+<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb281202d5e6978de60ff40cbe5bae5cc74ead8c71116e89cfea56642c22b8b3829 .
+<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb28260698f72bde4d07346c1560d3debb2a6a86cbf0a693a952d0b64ca56a78511 .
+<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb2984ddbe007d7e9001812c50320fd04b9123f78640dff511c330eb26bb9a70302 .
 <https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb2ac4850d04443358bda3aac56eb09013b3316d783e098830f2c0bb5ea69ffe7f9 .
-<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb2bf62d937222e5f33fb3076c49ebd2f775e3265e3da236084265809d94ae40bdb .
-<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb2caa14e0eca572917f6dc6b0bd4b61bb7445cce3187425562637d121a4b14e31b .
-<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb2e4e6b842bd7667ee00215924895c843e5a744c9ac2b3bba6d3e8105b45773de3 .
-<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb3056f67b2643dd7ae812dce2fefcfe4c23522d0cf3b2af0ccb03bc33f8c96931d .
+<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb2c329e2aefbca62d8bff6cc3f28c46d6a9df1c4ee765b918485c9bda75e8d6617 .
+<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb2fc6a960a3471575675c43b2319a2f86e765d800e92887dde421e23181ef11b1c .
+<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb2fce7a0b82e49916272b07f439290b95d27243bdf37d7d1b048e5e7c46fbdbc05 .
 <https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb30cd5d9cf5803668186e676d4896a95e9b8a2e997ff293a2d09ad338a5a970452 .
-<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb328ae927e79a4c2f64fa068b95e9878a210a52fabf89df2a36d5833ba98e4efcd .
-<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb32b1db7a40a6d6f6aee78de904e070686edc6eefc26523caabb53ca66c9fe5f18 .
-<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb359ec6d98837a06455a175c806550bd40727e941669b97db9a6bf4ed34fbdadf1 .
-<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb38718e9689f8739e5871753fc11ab0576768ead0702b7bab5baad04301c65c2b0 .
-<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb390cbcf7090f757e452710f2967741ff4ef5b5f84ec1971878018dea86883c56d .
-<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb3ad9c63e4ee57896b2183870200800847e3afd0111a8676490564050671659e72 .
+<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb30eeb789bb5c14738d09df2bef74a687fd4165d68a8127fa5521954c5ae9ffe22 .
+<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb3110e6e26190f426f683c6dd53e920f012ed04499b0fad2c08196a112a0378664 .
+<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb33424a578324885068c4f804fd3a22fd2e1313b141e9e25057457fd4b82cb677c .
+<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb36202ce7a38cd3aa8d32c3d47c3812474b6977fb2a1b3629064f5cd068822d548 .
+<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb36eeb8db7ba98e7606de91ae4c2a98159cda4094f931f53d481cbda8563f3b923 .
+<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb37176926f4a235cd2dde43cffa49e34e2458614554fbe79630043a53ce4e15a42 .
+<https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#property> _:cb380d4aa4b729f429dd520dfbd9438676996ff80ef99fef8b689fa4e93ee19adfc .
 <https://ontology.sig-project.org/schema/Organization> <http://www.w3.org/ns/shacl#targetClass> <https://ontology.sig-project.org/schema/Organization> .
 <https://ontology.sig-project.org/schema/Person> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
 <https://ontology.sig-project.org/schema/Person> <http://www.w3.org/2000/01/rdf-schema#comment> "[NEW] Tightly constrained (§11.3, SIG-ONTO-014/015/016). A Person row carries NO surveillance attributes and MUST NOT be reachable from any automated extraction path. It exists only for named public officials and SIG's own attributable curators." .
@@ -504,7 +506,7 @@ _:cb100a88f6f95ec3ca66d184a54aa28d5959fe354416452a9c3e8a2bc783bcf1d6a <http://ww
 _:cb101de085ba8cdfaaa7f29f1177ef4f44628d9f43b5188b2238a4cfbbcbd8b1c90 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "hosts_data_for" .
 _:cb101de085ba8cdfaaa7f29f1177ef4f44628d9f43b5188b2238a4cfbbcbd8b1c90 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb2c5681c5c8cfb2aa524deb570fc24805d1cc76bdd9660f761b93cef3df697a7e5 .
 _:cb101f088494a545248de65a6c022eaf13e187a386f7e3c248e6ed55931530c62f4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "dpa_decision" .
-_:cb101f088494a545248de65a6c022eaf13e187a386f7e3c248e6ed55931530c62f4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb24a48d72d76c9ab639763a267c769bcedbeffbd9f182ab414eda2c72684bbe3b1 .
+_:cb101f088494a545248de65a6c022eaf13e187a386f7e3c248e6ed55931530c62f4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb25972262d1f66798c15d0a84543ab16ae9cb9f4cf9590695210fc70c262ca7d71 .
 _:cb1032c6a7f1ff462adbe4437989361ced38b6ae3cbcc300a44ce6e950d68820928 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "renewed" .
 _:cb1032c6a7f1ff462adbe4437989361ced38b6ae3cbcc300a44ce6e950d68820928 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb104582dcd279e1bfcd31f53f8bc90f067b6484a31e94c93efad2ef688ae3cefd8 .
 _:cb103526e7e43ce16b9d29b2c3c5d54cfe912fa69d908665108031621359104d858 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "school_district" .
@@ -515,6 +517,8 @@ _:cb103d0010b524cd7e38cecdd6bcdf5907296e17600096c813c7e636bf94dd99c76 <http://ww
 _:cb103d0010b524cd7e38cecdd6bcdf5907296e17600096c813c7e636bf94dd99c76 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbbb7891a7230d71e2c20b34b520199029889daae724ba9c54722641068f2d06d3 .
 _:cb104582dcd279e1bfcd31f53f8bc90f067b6484a31e94c93efad2ef688ae3cefd8 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "nonrenewed" .
 _:cb104582dcd279e1bfcd31f53f8bc90f067b6484a31e94c93efad2ef688ae3cefd8 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb21afb24689120bf7b918dd9ad173a9c0de0e3d4051b641c01c1666175e414322d .
+_:cb10684736094f37f10d45da366cd4ff251adb1cec42a6335c20e11bba8feb2d953 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "split_from" .
+_:cb10684736094f37f10d45da366cd4ff251adb1cec42a6335c20e11bba8feb2d953 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1a565ac5676633d3a1b61892387c09ac19a2f292d0ac3b6af178efc60f174eb5e .
 _:cb106d3c78336291a91428c90d8cf109ee57d316e8678c1424b5a5082cf913d999c <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/courtlistener_id> .
 _:cb106d3c78336291a91428c90d8cf109ee57d316e8678c1424b5a5082cf913d999c <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb543e5bb0719fe100019d1e6869677485c4e62d7fd73509ce3784bf944a87a699 .
 _:cb1070db261a7278a6aa5803299f49e5346a02e9420a42293bb52e9858028977bef <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/detection_method> .
@@ -535,6 +539,10 @@ _:cb10eaf4665268080a55bace0b54d24d20ed2afe2e28fe40b2493ce3078809f9bc0 <http://ww
 _:cb10eaf4665268080a55bace0b54d24d20ed2afe2e28fe40b2493ce3078809f9bc0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb220521a4051b0a90a4b3b25d179c2769b491033c09f52512829893283e300f3ce .
 _:cb10f6163a003f720ac20eb8d83e07197839e6feeb199013a54aaada235a890aede <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "alleged" .
 _:cb10f6163a003f720ac20eb8d83e07197839e6feeb199013a54aaada235a890aede <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1c3cb8a184a5bf7718351676d83e07ca7f5973c56c756066d016170a72dadd622 .
+_:cb10fa471e7b63b860e41ceac85b4321e350cb976de7760471d697e17eb5828e547 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "fr.commune" .
+_:cb10fa471e7b63b860e41ceac85b4321e350cb976de7760471d697e17eb5828e547 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb199b62de76be962e8581705f5602d04da39242777aff81524c18f31d72d5218cd .
+_:cb10fe90c6d1ca49bf355efe794d94f08ea5523532e28eb6e5b63ccabb30be8ed7b <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/parent_cooperative_contract> .
+_:cb10fe90c6d1ca49bf355efe794d94f08ea5523532e28eb6e5b63ccabb30be8ed7b <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1ed5fef1f4f2c59ec54de76e1a524310ea154a2fa3b5cd52526eff46321ab0293 .
 _:cb11235ac680473677436078d3d9e7d4b05ad571b37aa62bcd9abd3c85cdb5c55b0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "agenda_packet" .
 _:cb11235ac680473677436078d3d9e7d4b05ad571b37aa62bcd9abd3c85cdb5c55b0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbaec4a4f4815b164e49235248c4d1d3b4309301fa9aa4f8329ff870b663f55404 .
 _:cb1133d6b1665ee8abccc797ae0a68f280310e987d9bd6d0cc37929eb449f1e254b <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "immigration_restriction" .
@@ -563,8 +571,6 @@ _:cb11b18141df22fd2d20f5c8fa7ac680801ef79a2a6fffa20f9df7ecb8487927b37 <http://ww
 _:cb11b18141df22fd2d20f5c8fa7ac680801ef79a2a6fffa20f9df7ecb8487927b37 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb2e397fa206d40e63f122c5d9d1b01c913e61791094561bde06e5869bfb31e8454 .
 _:cb11b2143954c567ab510e49920691a68eefe4861065cd80527c90969dd479f4ea6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "ingests_feed_from" .
 _:cb11b2143954c567ab510e49920691a68eefe4861065cd80527c90969dd479f4ea6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb2c3e66c5210566d7e9acd6c05de6c6843a5831498fc398676dbe644a4f771a308 .
-_:cb11b97d9d0c5371e7a3c4593a1489ef20f428e50da808876101b5f7e378ae9b7ce <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "us.le.sheriff" .
-_:cb11b97d9d0c5371e7a3c4593a1489ef20f428e50da808876101b5f7e378ae9b7ce <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1fba8475e7c1c3c84a7cef28b7b4568dd254fd6e98c16b5414c1308d5ac31e764 .
 _:cb11bdd868957121e7ac0d19570705480713faf7a7bfced398e20646c30dd50dfc8 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "procurement_aggregator_record" .
 _:cb11bdd868957121e7ac0d19570705480713faf7a7bfced398e20646c30dd50dfc8 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1cceec6e51f263367e207bd4af05e71bddc370fc8a00346421c291b90be444da3 .
 _:cb11c65c0383c7ba1fa146182dfc669950aa92b8d884504d33c5852d9e749bd8614 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "R4" .
@@ -577,8 +583,6 @@ _:cb11eb5dbca3124386dbeee8166738964873804f651d6696866b9c123defdf8fe41 <http://ww
 _:cb11eb5dbca3124386dbeee8166738964873804f651d6696866b9c123defdf8fe41 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1e694dcaceec2974cee7f1121af5f4c24b5adc563fc0379ce8fe8ac409c0ee7ab .
 _:cb11f02d252a930c89815f019d90d95027da6b845de1ed02b61861e2e613d17046f <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "warrant" .
 _:cb11f02d252a930c89815f019d90d95027da6b845de1ed02b61861e2e613d17046f <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb11bdd868957121e7ac0d19570705480713faf7a7bfced398e20646c30dd50dfc8 .
-_:cb11f6fc5cfebad904e51ce2b4686d234d962feaaa3a35702b3a995c68f2b791c00 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/from_capture> .
-_:cb11f6fc5cfebad904e51ce2b4686d234d962feaaa3a35702b3a995c68f2b791c00 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1544534d3f18a6d9144d67e621e952d17b3bfd9d9816a0431c5364be9de1a1f5f .
 _:cb11f77d0e53b4a79bc23a1960d2868248a76be229af505c982d92ed01fe4b0524b <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "partner" .
 _:cb11f77d0e53b4a79bc23a1960d2868248a76be229af505c982d92ed01fe4b0524b <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb25019ca9e0c3a20dc1d67d243a73bfa34264162bd0d99e79230ba0e25835e294a .
 _:cb11f7a3e9d05a2e6978d3812b2bb47e2ce1ec676ff308f3ea693d6f15bc9a97485 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "per_incident_consent" .
@@ -632,6 +636,8 @@ _:cb12fcf0e0b4afc0b556dcdc813618769eecf4fa044cc8f90cc51ef9942ac97fe2c <http://ww
 _:cb12fcf0e0b4afc0b556dcdc813618769eecf4fa044cc8f90cc51ef9942ac97fe2c <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb17df6dc14415a21b0bdb7e6c3ee7883953e69554731b5e703ee1df1cd897330c1 .
 _:cb12ff77b3422c8d99a05ffd48e2467dacef0a0996590ac01a06762b88f72f7d4c2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "federates_search_to" .
 _:cb12ff77b3422c8d99a05ffd48e2467dacef0a0996590ac01a06762b88f72f7d4c2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb296e7b812d9059744246ea34ba041e4a02b37018a05e41d5d8be67325b96178bc .
+_:cb130147804eb3805ff54231536f0cb7c2547aaf0b8a2f5e36b0b33c4c9a21cd4d7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "fr.gendarmerie" .
+_:cb130147804eb3805ff54231536f0cb7c2547aaf0b8a2f5e36b0b33c4c9a21cd4d7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb17b5e651a6089304a8ad01fa704ae0f7192df2ce9a156c88f888ad2bda02aefba .
 _:cb130b62dd7d532225c8b17ed27fbaf4f91e702c84c443b066883014b8f7cbc7454 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/statutory_basis> .
 _:cb130b62dd7d532225c8b17ed27fbaf4f91e702c84c443b066883014b8f7cbc7454 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb14f0a080f25cca35086066206744542f899717be5412c6b1276673b6406e365be .
 _:cb1311f62e50f96823d37afcfc18e961184b2f03f740839ca74457bd0a77fa304f2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/search_scope> .
@@ -650,18 +656,22 @@ _:cb135201e4d2b99d9da92fa0a0f3992f5c2f96e1e4484d678b9523020041b70e850 <http://ww
 _:cb135201e4d2b99d9da92fa0a0f3992f5c2f96e1e4484d678b9523020041b70e850 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1217bc2292a5dd83f3da65b7ec4f2e586fe5078b092621d3dd8835baaf7f91b03 .
 _:cb13521e5f82eb9ece57a7c9f396bc489196903175397bc5b2e6e299bc691240ed0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/amends_contract> .
 _:cb13521e5f82eb9ece57a7c9f396bc489196903175397bc5b2e6e299bc691240ed0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb16fbef433eb3a7946d8f726d10d06cf6ce65946d7ee38d8be0a0c6294c0c5555c .
+_:cb13537f2bfaa2c3b252f368980bd6e31e2a369a46d9c9f7cdca54391549ed4c47e <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "neighborhood" .
+_:cb13537f2bfaa2c3b252f368980bd6e31e2a369a46d9c9f7cdca54391549ed4c47e <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb143c2d8a3b301b340efe16a1fc48182df8bee6b15501e01500d6e74904f558e3d .
 _:cb135514852d9e0d5b98429d7c855b992a9fb390606b16cdf00f9aadcabb70e61f3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/sharing_partner> .
 _:cb135514852d9e0d5b98429d7c855b992a9fb390606b16cdf00f9aadcabb70e61f3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb23502e93a7d527cd13b12d97856d6b32108a2926b02306fa05e968b06ef962c73 .
+_:cb135e5583da2714591a6961df42fa4583df1f038d640e69511c05ee9045360d91c <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/transliteration_scheme> .
+_:cb135e5583da2714591a6961df42fa4583df1f038d640e69511c05ee9045360d91c <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb10fe90c6d1ca49bf355efe794d94f08ea5523532e28eb6e5b63ccabb30be8ed7b .
 _:cb136920edf1c053e97c42e27150b3e445065094199f10571c6fdec6c95dfb2ea1d <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/deployment> .
 _:cb136920edf1c053e97c42e27150b3e445065094199f10571c6fdec6c95dfb2ea1d <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb21b7f56bd7a4dd6dbe19bc61f7c8ce4ecff63ea846edb8ba3b21decbe21aee4b2 .
 _:cb137940331eaf110122a22cff182a054e473bd90cb6c77f02575b6d16f74f721da <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "awarded" .
 _:cb137940331eaf110122a22cff182a054e473bd90cb6c77f02575b6d16f74f721da <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb27e2b215153d9dbdabca7bed626dd99f85a190b4947daff7f9a28fb47ed9185f0 .
 _:cb13898d2d9c97220c436c560e4c35cdc9ba3bbe9c8d1c8c6c2732b22bdcac95e14 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "expanded" .
 _:cb13898d2d9c97220c436c560e4c35cdc9ba3bbe9c8d1c8c6c2732b22bdcac95e14 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb187f96847ed8c8919e06306da29b97c4ab2f7de2cf293f1be4b3c162ad4031d3b .
+_:cb138c00b0a43c25a37014a9563daa48f17957acdcc7fcfcac7ae84223f23e4a72b <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "de.bundesland" .
+_:cb138c00b0a43c25a37014a9563daa48f17957acdcc7fcfcac7ae84223f23e4a72b <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb21a17411b8abc1854778673bebdee42db09511a4a08c3d89a684f64c93f11c61a .
 _:cb138dcba15915235bb5ce7391e3474354ad465d7afb8e988f0c3c4169cfeba4fc4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/request_text> .
 _:cb138dcba15915235bb5ce7391e3474354ad465d7afb8e988f0c3c4169cfeba4fc4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb163e10a8b944330bb6c23f3b7d9c96e94e574568c65661dc6e7901e110920d154 .
-_:cb139bce64147a7d9e65c0e3834c66d6de152c6804134a0a0f53d2e5e7426506d9f <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/geometry> .
-_:cb139bce64147a7d9e65c0e3834c66d6de152c6804134a0a0f53d2e5e7426506d9f <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1186ac5cedb8f993d135f92c670716c106bfd44dfd5a78e764fc29878af7f35c0 .
 _:cb13a1c242d7cc2d6a2f503b8a067b5abd2578fbc0e72cbb3d61e97df23b5148e18 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "split_from" .
 _:cb13a1c242d7cc2d6a2f503b8a067b5abd2578fbc0e72cbb3d61e97df23b5148e18 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb2728b3bb11e16038523a7ac2bc93c97252240b2644b7f92896b6cbd76ff828a70 .
 _:cb13a58ecfa101427a7bac13ecd5e166fee02daaa20928531fe00d19c5b1c528419 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "distributes_list_to" .
@@ -702,6 +712,8 @@ _:cb1427e05b3464e554dd92bd6546aa1c924d98afbca347f25c604a190c54443630e <http://ww
 _:cb1427e05b3464e554dd92bd6546aa1c924d98afbca347f25c604a190c54443630e <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb29880c6908635c71e6228e0d148eecf8489ea3744e6cdebaa20894b00613248b8 .
 _:cb143b8c5dc765915bfcd8796843a882dfce28904c190dc850b3950294db290b1a2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "bid_assessment" .
 _:cb143b8c5dc765915bfcd8796843a882dfce28904c190dc850b3950294db290b1a2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbc52a5f0a2338e6cfd6bc80d67bd23223fe4bbde1685fbff87e9c01ffb1d74bbd .
+_:cb143c2d8a3b301b340efe16a1fc48182df8bee6b15501e01500d6e74904f558e3d <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "unincorporated_area" .
+_:cb143c2d8a3b301b340efe16a1fc48182df8bee6b15501e01500d6e74904f558e3d <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb16496a2131989d7e12893e4569acb457f404599c51b62c205ae001277259e15ff .
 _:cb143ffa7a960288cdf9ebf6f8c8f902609375f484b104a5615a03b0d8a90c2327d <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/funder> .
 _:cb143ffa7a960288cdf9ebf6f8c8f902609375f484b104a5615a03b0d8a90c2327d <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb16388f28bf8355346d52f5caeb0468839d0b6e583235323e8ba723efd280cc943 .
 _:cb14493378a48f22c684fbfa295702b49ad2d216ca1298073eb6a8384fe61addfd1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/physical_state> .
@@ -713,7 +725,7 @@ _:cb144ddc019bb07d846165b7f25bf01d89b9c6c1c7f44429e73e650ce83ef054d58 <http://ww
 _:cb145c6f686ed7a796947a6da6179ad0faca74d802239eab29a0d6cd0a91d95d55f <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "member_of_network" .
 _:cb145c6f686ed7a796947a6da6179ad0faca74d802239eab29a0d6cd0a91d95d55f <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb17cbeed45b2cf8782427359d5aa710e360ece444767fd6baf2aef08476e4e6d80 .
 _:cb1462ebaf248ba9de872e4f4b8d631640147c64227132f0718de7bbe94d816fa82 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/succession_kind> .
-_:cb1462ebaf248ba9de872e4f4b8d631640147c64227132f0718de7bbe94d816fa82 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb11f6fc5cfebad904e51ce2b4686d234d962feaaa3a35702b3a995c68f2b791c00 .
+_:cb1462ebaf248ba9de872e4f4b8d631640147c64227132f0718de7bbe94d816fa82 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1dd9c9e44f27a57e270b8d69854f6cd8a1bb62e26bd4ba54f5d7022171474aabb .
 _:cb1466f60544c461f186ff96bee221926e4c215ee0e5b6cbe83c7cc8bc740abd608 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "bundle_included" .
 _:cb1466f60544c461f186ff96bee221926e4c215ee0e5b6cbe83c7cc8bc740abd608 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbcc6fd243a2e5da13b9c0dd8dae587f00f1a4b18f99fe8def763a60dbafc5d4f4 .
 _:cb146e885aece286a95b04310a0f39b10db030de81952f46cee5b6562dd7105495e <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/subject> .
@@ -722,12 +734,16 @@ _:cb147030f26cad5ac12fe4f9172d7367592e387046379c45bfb9c805e7d19fc38e4 <http://ww
 _:cb147030f26cad5ac12fe4f9172d7367592e387046379c45bfb9c805e7d19fc38e4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1b8f2b5740c4ffc3c217b600e316ddb2b4854eb0cc81aa4b03afd304a4508d127 .
 _:cb1474fa6c7acce5f3d4992fbb2b54ef28534aec7660915c68e96e0d47cd17de2c5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/target_agency> .
 _:cb1474fa6c7acce5f3d4992fbb2b54ef28534aec7660915c68e96e0d47cd17de2c5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb19a23dad489228aceefe5af598b90aee18ea90f02593c1053932f3e8066e7fa9e .
+_:cb1478e2585628c9a7e7b54529fcce8f7c9ea754335a231047c15b9eae35e65f8bb <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "de.landesdatenschutzgesetz" .
+_:cb1478e2585628c9a7e7b54529fcce8f7c9ea754335a231047c15b9eae35e65f8bb <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb147bf6fdd3026ea60f844b6251200ff827bebcb18b64c0831f8743e94775c2c11 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/federal_award_id> .
 _:cb147bf6fdd3026ea60f844b6251200ff827bebcb18b64c0831f8743e94775c2c11 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb162f22efa7774c3c8ed3f8ecbdbb77e2e5e6896914bd68ad82ad72d5b622de125 .
 _:cb14877f6f5df637830e2d8edf196d9e6c8e729b64ceb6196996302b5120a3bcdac <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/deploying_organization> .
 _:cb14877f6f5df637830e2d8edf196d9e6c8e729b64ceb6196996302b5120a3bcdac <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1d74c405c397521436247c4583cd05b432681c673e75bf3df85102f362eb099dc .
 _:cb14901a7996314c3a913aea794d4ec57d1df2cb1f50163aa0906eea146dc57fa6f <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/resolved_value> .
 _:cb14901a7996314c3a913aea794d4ec57d1df2cb1f50163aa0906eea146dc57fa6f <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb19ec0b4f851dfa569a8b8ce12e91b0297c5036dabefeedda765544b54acec7a01 .
+_:cb1490c4250b4ad4fcd9f9f212a786760d06649892b13fa8c2e79f986f6f465be5f <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "fr.cnil_decision" .
+_:cb1490c4250b4ad4fcd9f9f212a786760d06649892b13fa8c2e79f986f6f465be5f <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb158021eaab010cb0df423eaceab314cd60fce0ee990083956cf1f7b652b69252e .
 _:cb149e7fc997c479a3715a08c63ec80858d7b0dd52805b0c08d91707dd2df0429ec <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "unreviewed" .
 _:cb149e7fc997c479a3715a08c63ec80858d7b0dd52805b0c08d91707dd2df0429ec <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1b4e82568344ec76749dd1250ec81a6020c2f8f93c8adffc188d8d171d3141899 .
 _:cb14a53f35b1183aad1ce94383b4151bf07bd9490a762ec165ba2bd72f0ee579d23 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "donation" .
@@ -742,6 +758,8 @@ _:cb14b6af2174a06c3d5e205512d0d63293f7279a5649c51fc7590c2e2b2bffd9be5 <http://ww
 _:cb14b6af2174a06c3d5e205512d0d63293f7279a5649c51fc7590c2e2b2bffd9be5 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb14b6af2174a06c3d5e205512d0d63293f7279a5649c51fc7590c2e2b2bffd9be5 <http://www.w3.org/ns/shacl#order> "2"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb14b6af2174a06c3d5e205512d0d63293f7279a5649c51fc7590c2e2b2bffd9be5 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/state> .
+_:cb14e0b282669ec57518f154d687b0b7425e76686c7c0a8e7bb7ca0b183fe3c377f <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "us.le.sheriff" .
+_:cb14e0b282669ec57518f154d687b0b7425e76686c7c0a8e7bb7ca0b183fe3c377f <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb18478f5ba3ab609e008a864af33c23332c4985d06fc4cf270cbeac41f9e938586 .
 _:cb14e2c0907dc236847b7e1f0ca6c4a48ec6957e770ee7f6a264b542fbb59020332 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/valid_to> .
 _:cb14e2c0907dc236847b7e1f0ca6c4a48ec6957e770ee7f6a264b542fbb59020332 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb26876c303b2d5b346e12726deeb949508244b71b47bf3d7121f593ef8f5c35a55 .
 _:cb14e7cfc264820080b4e3185ac2e4603da50d9ffdfcfac4d71eaac2cd4dce2a930 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "R3" .
@@ -758,8 +776,6 @@ _:cb15364cdc46d3c705af33f9afd7d32bad25df564c7c6edb5a6898f882ba6af2104 <http://ww
 _:cb15364cdc46d3c705af33f9afd7d32bad25df564c7c6edb5a6898f882ba6af2104 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb216dd2bb58bad761d13ae96d24b542d443871de89621969d7dac7e1d49d225d6d .
 _:cb154105d51ceb75a405c1a4433bb245f673c8f2369538b68c90d82a46e68c6f6ec <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "installation" .
 _:cb154105d51ceb75a405c1a4433bb245f673c8f2369538b68c90d82a46e68c6f6ec <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb12fcf0e0b4afc0b556dcdc813618769eecf4fa044cc8f90cc51ef9942ac97fe2c .
-_:cb1544534d3f18a6d9144d67e621e952d17b3bfd9d9816a0431c5364be9de1a1f5f <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/parent_cooperative_contract> .
-_:cb1544534d3f18a6d9144d67e621e952d17b3bfd9d9816a0431c5364be9de1a1f5f <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1913ee4944982d397905782745135f12986ec70fdd6328717d5639b641964d754 .
 _:cb1545eb23dc2ecbdbe0af960fbfe751448ed455d28a7a378a5e86ea785deec08e3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "partner" .
 _:cb1545eb23dc2ecbdbe0af960fbfe751448ed455d28a7a378a5e86ea785deec08e3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1699192be543fdcf5c14e20c6d4866e33dd67b48280a7ba1e104d62189650c272 .
 _:cb154f9f10c6c3564c30b70f452129f5e6795e76c7af55a008bdb48a4eeb6eb9958 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "partner" .
@@ -776,10 +792,10 @@ _:cb1570ccb9005974a6eb146f87b43680a1e1bdffffde89afafec4df888a0c4aa344 <http://ww
 _:cb1570ccb9005974a6eb146f87b43680a1e1bdffffde89afafec4df888a0c4aa344 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb23c439cd246f1aef549fe36e6d0bd61a319da98a62a79087610c4398ad4cfc00e .
 _:cb1574bbd4bf6f55b66804810fb5067450a5d771429b0baff9ed5fd5050ab4b297a <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "W4" .
 _:cb1574bbd4bf6f55b66804810fb5067450a5d771429b0baff9ed5fd5050ab4b297a <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:cb158021eaab010cb0df423eaceab314cd60fce0ee990083956cf1f7b652b69252e <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "uk.surveillance_camera_code" .
+_:cb158021eaab010cb0df423eaceab314cd60fce0ee990083956cf1f7b652b69252e <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1956656e1ac4165604b75b220f9dc51325590a7117bb46acdecb054164378dafa .
 _:cb15821c9c14c8d22310761707fa615e9e1f1463977feb76a5ab81623f944cadf2d <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "federates_search_to" .
 _:cb15821c9c14c8d22310761707fa615e9e1f1463977feb76a5ab81623f944cadf2d <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb24e352672d54efd5dbc309eadc6313d8eefd8bdfed318e86c47c681e2e35d1439 .
-_:cb15831083b2a84ff10781361602583469baa71b0090b608a03e4c5219d0b910b34 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "renamed_from" .
-_:cb15831083b2a84ff10781361602583469baa71b0090b608a03e4c5219d0b910b34 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1bef4ec322936664194e36203c696463cb48b2a23337d44c89fd36dbac4872ae9 .
 _:cb158c499f33deffc2ccd7e21a854912e7759912ee60d7d47526da96905091fcb0e <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "subject" .
 _:cb158c499f33deffc2ccd7e21a854912e7759912ee60d7d47526da96905091fcb0e <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb1594808cdba3edf9887920ce8dfb4a2e959dd6652bf8aa24e19b3d1b8aa9554e4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "member_of_network" .
@@ -828,12 +844,12 @@ _:cb163e10a8b944330bb6c23f3b7d9c96e94e574568c65661dc6e7901e110920d154 <http://ww
 _:cb163e10a8b944330bb6c23f3b7d9c96e94e574568c65661dc6e7901e110920d154 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb19e61126588b87a7a26155e2898d3f586ea25f07c7153feed39bbd60e88f1fcb8 .
 _:cb16436a8310513b4db83a71b0860b2437dcd0dbe12b0bf9824bb5f24a756d4bb55 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "us.fusion_center" .
 _:cb16436a8310513b4db83a71b0860b2437dcd0dbe12b0bf9824bb5f24a756d4bb55 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb17c172acc0a9de09e7d18bdb921164ce18aa9948a719e29f843901797f02eb950 .
+_:cb16496a2131989d7e12893e4569acb457f404599c51b62c205ae001277259e15ff <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "fr.region" .
+_:cb16496a2131989d7e12893e4569acb457f404599c51b62c205ae001277259e15ff <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1ea9e0865a833bea5d188186ff7d1c44dc600f6a01ce973865f06945b83d5ce2a .
 _:cb164c1dbe276290992a934e01992bb9275d62da20ac9ec15922d7663fd69bf770 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/recipient> .
 _:cb164c1dbe276290992a934e01992bb9275d62da20ac9ec15922d7663fd69bf770 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1efd216cd22b66e1ef112c12f89ae0f52ef315480286c8de900267c6ec22b7452 .
 _:cb1651101f08833e12831b5377aef780dd8ad541e887f27819cfc84ec1331de6641 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "policy_violation" .
 _:cb1651101f08833e12831b5377aef780dd8ad541e887f27819cfc84ec1331de6641 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1bd9ffd71b6ce1a9e8badc088e6d288d9317df93387993aaf32518c58ba8034ca .
-_:cb167c138120695af01ed2747e402b699e352f407896bde6c4506041cbec2b88eb1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "us.le.university_police" .
-_:cb167c138120695af01ed2747e402b699e352f407896bde6c4506041cbec2b88eb1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb201cc2de294a447dfe772f8be080e1bd88b044605ee76724f3369acec073419de .
 _:cb167eb1fb792b2f00460a69602a85acb1a8925cddc1a1ece7258a16de509ff2faf <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "somevalue" .
 _:cb167eb1fb792b2f00460a69602a85acb1a8925cddc1a1ece7258a16de509ff2faf <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbfb32b9094822749e79471569d5e10131e8c4192820f45f94d7f1d935ddb83ca4 .
 _:cb1685c9ea511a7c7c80e2bc66863a3ded2d2a08eccc37557e5cffcbb97026c644c <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "corroborates_claim" .
@@ -903,14 +919,20 @@ _:cb176cf72a21f9bb06e875e66cdddf0e05c7cb1cec7175aad0e393dbfe6daf96eed <http://ww
 _:cb176cf72a21f9bb06e875e66cdddf0e05c7cb1cec7175aad0e393dbfe6daf96eed <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb243861baf7f557ce796dcb11bd67065cca1cf2ec0f1797d99eec34349e2b4fca3 .
 _:cb177242052ccba85659dfec17e42b6d1a3245894c3e973641005be564108ef5f76 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/identifier_prefix> .
 _:cb177242052ccba85659dfec17e42b6d1a3245894c3e973641005be564108ef5f76 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1fe56cdc32ec37403821a538eeb155c580f5bbcb169fe96c720a711a9d485ef81 .
+_:cb1774d2db24ffdc53c017488bb1c3f19a37fa5de88e9d301ce4d5f855e869ce903 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/geometry> .
+_:cb1774d2db24ffdc53c017488bb1c3f19a37fa5de88e9d301ce4d5f855e869ce903 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1186ac5cedb8f993d135f92c670716c106bfd44dfd5a78e764fc29878af7f35c0 .
 _:cb1789f1b2e9f1ff9ef5e42a9a45cf16aa8054629ea7c48a086da1f3d75582faf76 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "slug" .
 _:cb1789f1b2e9f1ff9ef5e42a9a45cf16aa8054629ea7c48a086da1f3d75582faf76 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb10a33b092c4ae7c1d766281d5602898ba2a9fa3785c7ea04e26931f7cd0ced9ee .
 _:cb178fd7ac9cebee0178202e811c9889e0b9747ad1cc0dbcd8b7a97f382726ddbd5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "not_applicable" .
 _:cb178fd7ac9cebee0178202e811c9889e0b9747ad1cc0dbcd8b7a97f382726ddbd5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb179a8e16b1d6e6df850daf51a12a82e4b4209b48d9b4e63ee6622c786c4dc5a78 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "known" .
 _:cb179a8e16b1d6e6df850daf51a12a82e4b4209b48d9b4e63ee6622c786c4dc5a78 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb250b516c35b68e11830b5b98daa502809954730c26fc308f8ea93926261035f02 .
+_:cb17a248cdf92659ec7c22d640737edf734916779d7235175377374aeb9108edd52 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "fr.police_municipale" .
+_:cb17a248cdf92659ec7c22d640737edf734916779d7235175377374aeb9108edd52 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb130147804eb3805ff54231536f0cb7c2547aaf0b8a2f5e36b0b33c4c9a21cd4d7 .
 _:cb17a6388a48aedff71737d2e79d0e79cd48cf99d33f8caa807b8cbe72e3dfca1e6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/products> .
 _:cb17a6388a48aedff71737d2e79d0e79cd48cf99d33f8caa807b8cbe72e3dfca1e6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb103d0010b524cd7e38cecdd6bcdf5907296e17600096c813c7e636bf94dd99c76 .
+_:cb17b5e651a6089304a8ad01fa704ae0f7192df2ce9a156c88f888ad2bda02aefba <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "uk.territorial_police" .
+_:cb17b5e651a6089304a8ad01fa704ae0f7192df2ce9a156c88f888ad2bda02aefba <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb23d37d65e6f2771a92c5c33de43b82004239076d5bf163612a3e29a58dba22d26 .
 _:cb17b6b00ea2961f15bab4df1669dabad1c6988058c7dc34cce04ea481bdda5af48 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "known" .
 _:cb17b6b00ea2961f15bab4df1669dabad1c6988058c7dc34cce04ea481bdda5af48 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb2649710ff028b058bd53438b3839a6978492302d685ae6e6973b5604d7a081acd .
 _:cb17b8cecd3b652b8b042e60f86b8e4422d7e6cbaed56cee187a9fe41e600d6ec97 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "consent_decree" .
@@ -947,8 +969,10 @@ _:cb1838dde9da3adafaf773082aa462ecf940530c41648f6f8f3b656552747c02ae4 <http://ww
 _:cb1838dde9da3adafaf773082aa462ecf940530c41648f6f8f3b656552747c02ae4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb21db9e4e7038d071bbf74caad65770158f179555046615ed188f2b276c4babe67 .
 _:cb1846d0e0db4e1d0270604539022546d4d5ac640f0ebfd56b4640e3c2ed42a6cb6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/retention_bucket> .
 _:cb1846d0e0db4e1d0270604539022546d4d5ac640f0ebfd56b4640e3c2ed42a6cb6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1691de8c1205bc43f33f64c3d6addbeb997efecf4a9d5ff6e77b976141376d919 .
+_:cb18478f5ba3ab609e008a864af33c23332c4985d06fc4cf270cbeac41f9e938586 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "us.le.state_police" .
+_:cb18478f5ba3ab609e008a864af33c23332c4985d06fc4cf270cbeac41f9e938586 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbf9e8d49cf38a08133173711208dba5bbda355e2a8eb1f79922c8abed9321d35a .
 _:cb186c150e266ff7c0d7c0a8799377c5f83076bbba686280707ef7937483e61a688 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "metropolitan_area" .
-_:cb186c150e266ff7c0d7c0a8799377c5f83076bbba686280707ef7937483e61a688 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb197b638dd26572aec65fea4123bdec35fa5ec9af8c77a2a06102421338a47e011 .
+_:cb186c150e266ff7c0d7c0a8799377c5f83076bbba686280707ef7937483e61a688 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb13537f2bfaa2c3b252f368980bd6e31e2a369a46d9c9f7cdca54391549ed4c47e .
 _:cb1876fc88c545ac795fc9697b058f7c114484f78c76cd9c752f853a32645767b8a <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "known" .
 _:cb1876fc88c545ac795fc9697b058f7c114484f78c76cd9c752f853a32645767b8a <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb23be996165a09e6923f10ad54f9341c76d8549b88328114b2f076d5b3f9521906 .
 _:cb187f96847ed8c8919e06306da29b97c4ab2f7de2cf293f1be4b3c162ad4031d3b <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "restricted" .
@@ -971,7 +995,7 @@ _:cb18a30966694951753b8241c75ff7218bd0c6bcf7e5bd6b0d2dc48915de2ece752 <http://ww
 _:cb18a6145751d38c59ccb284439c2dfc0c51ed938eb983259dfd059f2dc810ab19e <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "dba" .
 _:cb18a6145751d38c59ccb284439c2dfc0c51ed938eb983259dfd059f2dc810ab19e <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb18b23a1a09742a5b5434178d44fe1aca2214650a35af83f897db3e3325d53b588 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "vendor" .
-_:cb18b23a1a09742a5b5434178d44fe1aca2214650a35af83f897db3e3325d53b588 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb9abcf2df0c40d59c8084859584d576305fae0d08331db69dc27a10d7d7c3a658 .
+_:cb18b23a1a09742a5b5434178d44fe1aca2214650a35af83f897db3e3325d53b588 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb9e788f9a341c2949d8af7af1a2782eb137ebbf8f5030a61cd07ae0ab8fe8b72d .
 _:cb18d034374a041bd1ba326ade8e06bf68de236378bde3fec4a14f8f83b5fa1b8e3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/value> .
 _:cb18d034374a041bd1ba326ade8e06bf68de236378bde3fec4a14f8f83b5fa1b8e3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb16bbaf1091f35045de915ddcefd5713cf29a9677c667a968b8f407ad9e188b0eb .
 _:cb18daa07ae53b5b22db879a84418577551689b59791d7b48d4262bb1399d60ddd5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/captures_artifact> .
@@ -988,8 +1012,6 @@ _:cb190602b583a58526ea2498e204f3c8586c3fcb61f578d10efd98c5e06e7429934 <http://ww
 _:cb190602b583a58526ea2498e204f3c8586c3fcb61f578d10efd98c5e06e7429934 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb13ab375f09f53ead27f97d29b275081f699efe4e68ca8490e0b2f7f014d2550ad .
 _:cb190d5e55f4ac3ff1a4346ba0e192465e629702abc4c8cf7ba736fcd9add7dca57 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "participates_in" .
 _:cb190d5e55f4ac3ff1a4346ba0e192465e629702abc4c8cf7ba736fcd9add7dca57 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1b3a0a52d90affb2755e0cdec31259f5f882df796fc295737a8170bf307c40926 .
-_:cb1913ee4944982d397905782745135f12986ec70fdd6328717d5639b641964d754 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/text> .
-_:cb1913ee4944982d397905782745135f12986ec70fdd6328717d5639b641964d754 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb139bce64147a7d9e65c0e3834c66d6de152c6804134a0a0f53d2e5e7426506d9f .
 _:cb1918c65edc90145c2a9f6c3855a2c2177b506e39893b5979401d190490d25b698 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/product_status> .
 _:cb1918c65edc90145c2a9f6c3855a2c2177b506e39893b5979401d190490d25b698 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbe2ff30459978522667b809d2cbc82b770822626aa708cc09aaf8510b8e0c5b9a .
 _:cb192a877bf6b9fcb5508023272dcb3ae6197a4698c8e755f6a9b6acc838234abf5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/active_device_count> .
@@ -1004,6 +1026,8 @@ _:cb1940b5a606e7082410baa8ad007270aa69c001b8ad6c55f8ca0ca611b5e480280 <http://ww
 _:cb1940b5a606e7082410baa8ad007270aa69c001b8ad6c55f8ca0ca611b5e480280 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1f34014e94eedb91cec496fda7eeac8fabfaa4e8bae980e0a8a0e5472cbdbe91c .
 _:cb1941e2ac649a40c3ce94129ed576db9773b6e39a4957efa9a3593693ad36f3701 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "press_release" .
 _:cb1941e2ac649a40c3ce94129ed576db9773b6e39a4957efa9a3593693ad36f3701 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb27ad775b1d4273f23b59a9857ae2ff7c18b8f858cbb8c41e6fe6bf7e9fde31baa .
+_:cb1956656e1ac4165604b75b220f9dc51325590a7117bb46acdecb054164378dafa <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "eu.ai_act" .
+_:cb1956656e1ac4165604b75b220f9dc51325590a7117bb46acdecb054164378dafa <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1478e2585628c9a7e7b54529fcce8f7c9ea754335a231047c15b9eae35e65f8bb .
 _:cb195a1b42e26c224bc5d3ac7fac3c6afcd725bd6b7beff67551694fc95f05f68d2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> .
 _:cb195a1b42e26c224bc5d3ac7fac3c6afcd725bd6b7beff67551694fc95f05f68d2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb196163e457679c17a7410c56e043791c9984a634ddb06fbe3f7968f5fd827baf7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "child_of" .
@@ -1012,8 +1036,6 @@ _:cb19691fff4c138698682792228a885eec08b22bdb78bc782a0957b87b0a48a7f1a <http://ww
 _:cb19691fff4c138698682792228a885eec08b22bdb78bc782a0957b87b0a48a7f1a <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb21038945b6fc57ba7c09afd094b8d6226e0c9dd9809e107a833a666e033fc9230 .
 _:cb196d780560cb800135e075b8dad49e820664c0ab2624e80317485cca5f3e23c9b <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "legal_name" .
 _:cb196d780560cb800135e075b8dad49e820664c0ab2624e80317485cca5f3e23c9b <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb18a6145751d38c59ccb284439c2dfc0c51ed938eb983259dfd059f2dc810ab19e .
-_:cb197b638dd26572aec65fea4123bdec35fa5ec9af8c77a2a06102421338a47e011 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "neighborhood" .
-_:cb197b638dd26572aec65fea4123bdec35fa5ec9af8c77a2a06102421338a47e011 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1d55b23ad019f131d053058855da4c102087ecd6e27e6a6201c021633bed3178b .
 _:cb197e47191960d1b037f408841d54aa3fa0ddf1aa862ee35db58af440b28c8e617 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
 _:cb197e47191960d1b037f408841d54aa3fa0ddf1aa862ee35db58af440b28c8e617 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
 _:cb197e47191960d1b037f408841d54aa3fa0ddf1aa862ee35db58af440b28c8e617 <http://www.w3.org/ns/shacl#order> "4"^^<http://www.w3.org/2001/XMLSchema#integer> .
@@ -1022,6 +1044,8 @@ _:cb198dfcab082678d01ff46b2219c07e785abec234aba4db107990e563a104314b8 <http://ww
 _:cb198dfcab082678d01ff46b2219c07e785abec234aba4db107990e563a104314b8 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1c435ab4bd4bb7e626a971ed687ea6c59df3650ce133aa67eda307ea84be696a0 .
 _:cb19913f555856ae6717ead3a42b0ab6bb989cc985b411ad13d6ead64db681d1d92 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "published_by_source" .
 _:cb19913f555856ae6717ead3a42b0ab6bb989cc985b411ad13d6ead64db681d1d92 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:cb199b62de76be962e8581705f5602d04da39242777aff81524c18f31d72d5218cd <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "fr.epci" .
+_:cb199b62de76be962e8581705f5602d04da39242777aff81524c18f31d72d5218cd <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1a8ce1e2f316f03d5b5d6394bba825127ef85c8016938e1f6ac5d17711ee21dfc .
 _:cb19a23dad489228aceefe5af598b90aee18ea90f02593c1053932f3e8066e7fa9e <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/publication_review> .
 _:cb19a23dad489228aceefe5af598b90aee18ea90f02593c1053932f3e8066e7fa9e <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1cf2225b3727d8f5501877f6649c06243c980c3446e61841909e57563d7117e10 .
 _:cb19a7a1433145074e44b2fe9b8e225fd5823e6161d9facfb5f434f0af9fc407d3e <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "vendor_statement" .
@@ -1032,6 +1056,8 @@ _:cb19d18b34374b95a48bffc5a91d753230d01c9f69114b7b5d3151cafb6ba23e676 <http://ww
 _:cb19d18b34374b95a48bffc5a91d753230d01c9f69114b7b5d3151cafb6ba23e676 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb15bd6f33e3bcea6a196c68c2d489a10c477238fd4b67cf7e22dd66b933d2d5578 .
 _:cb19e61126588b87a7a26155e2898d3f586ea25f07c7153feed39bbd60e88f1fcb8 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/parent_organization> .
 _:cb19e61126588b87a7a26155e2898d3f586ea25f07c7153feed39bbd60e88f1fcb8 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbe22fde36117e1238e6917705ec30879d05a0b867c80ad9136a18b65b2b4591a6 .
+_:cb19e74285d135a4deaa952e036acb4f890c9aa504793518ffc6c65df4905358ebc <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "government" .
+_:cb19e74285d135a4deaa952e036acb4f890c9aa504793518ffc6c65df4905358ebc <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb2117103b6054bc13bb48fd71e0604afe1f19e09e1e081f39699f9a43bed37e6c9 .
 _:cb19e7b8b30b9927daa99fc87c6a78409400f239b2bb1bf9b35555e5157de4f57f1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "announced" .
 _:cb19e7b8b30b9927daa99fc87c6a78409400f239b2bb1bf9b35555e5157de4f57f1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb264b898b0538b81950f196dea4006a0aeb6f57f4c0d6c819794b4d5790c05369 .
 _:cb19ec0b4f851dfa569a8b8ce12e91b0297c5036dabefeedda765544b54acec7a01 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> .
@@ -1066,6 +1092,8 @@ _:cb1a33fade438ebbb428d7d8b3381af85f67fd9a12edbb5ff427c1fe5a1a1565be0 <http://ww
 _:cb1a33fade438ebbb428d7d8b3381af85f67fd9a12edbb5ff427c1fe5a1a1565be0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb15d8961f00fba32a97cf3be6dbb2e0a7170789dae46004559b32907a102650f2f .
 _:cb1a3973aa9e42f9ca83003986051da77e8b79cb24ae5fa21fd8e0f1e28544efaa3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/end_date> .
 _:cb1a3973aa9e42f9ca83003986051da77e8b79cb24ae5fa21fd8e0f1e28544efaa3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb27deb7c0d2cef2a5429426a2934aca3e88bd0cc964ac23b1d4e75538e60738280 .
+_:cb1a565ac5676633d3a1b61892387c09ac19a2f292d0ac3b6af178efc60f174eb5e <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "renamed_from" .
+_:cb1a565ac5676633d3a1b61892387c09ac19a2f292d0ac3b6af178efc60f174eb5e <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1bef4ec322936664194e36203c696463cb48b2a23337d44c89fd36dbac4872ae9 .
 _:cb1a6652d9f1fbb0c09106aae7f607e0de9e2401bba36f2332c6bb9645d56e80187 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "state" .
 _:cb1a6652d9f1fbb0c09106aae7f607e0de9e2401bba36f2332c6bb9645d56e80187 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1a6bfd3279dc3eb66f946aa5fbd04e866eeab5fd44e7d3ba8b1da9291188ac449 .
 _:cb1a6bfd3279dc3eb66f946aa5fbd04e866eeab5fd44e7d3ba8b1da9291188ac449 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "regional" .
@@ -1084,6 +1112,8 @@ _:cb1a86c0e40660a1adb4c6b0c91fb157a18aaf91e09fde387ea9027d6def8f1ab77 <http://ww
 _:cb1a86c0e40660a1adb4c6b0c91fb157a18aaf91e09fde387ea9027d6def8f1ab77 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1651101f08833e12831b5377aef780dd8ad541e887f27819cfc84ec1331de6641 .
 _:cb1a88b9891088a509344e67eb6ac6db546b05c0d129b617d03f70027b04d9279db <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "local_usage" .
 _:cb1a88b9891088a509344e67eb6ac6db546b05c0d129b617d03f70027b04d9279db <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb196d780560cb800135e075b8dad49e820664c0ab2624e80317485cca5f3e23c9b .
+_:cb1a8ce1e2f316f03d5b5d6394bba825127ef85c8016938e1f6ac5d17711ee21dfc <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "uk.police_force_area" .
+_:cb1a8ce1e2f316f03d5b5d6394bba825127ef85c8016938e1f6ac5d17711ee21dfc <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb138c00b0a43c25a37014a9563daa48f17957acdcc7fcfcac7ae84223f23e4a72b .
 _:cb1a988df2c26669443a86540d63bdbdac33f0eeb6dfd92dd6f3b6b306058fd3980 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/event_type> .
 _:cb1a988df2c26669443a86540d63bdbdac33f0eeb6dfd92dd6f3b6b306058fd3980 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbf66ff3f64bdc405b916eea5a5af16100567714feafa366aabe77e56e255b1107 .
 _:cb1a9d3a8dbcac0e5b8cfc3be8c1b5dabfb5a6a6c23ccdeb555e62ef436790225b1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "candidate" .
@@ -1130,6 +1160,8 @@ _:cb1b08a4d500d4144b9adf7c57fd526aa9e2433f3421d7e8bf5e21228c1cea3eae4 <http://ww
 _:cb1b08a4d500d4144b9adf7c57fd526aa9e2433f3421d7e8bf5e21228c1cea3eae4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1e7cbcd83b14f0e1bea4c70aff48ecd903e6e12a6b20c9b1a7d3190bc20bf19e9 .
 _:cb1b0e0b5df86c7a646f95b014034c3b6e05b3cd4d53bbf202fcd9112b999ca90c5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "statutory_penalty" .
 _:cb1b0e0b5df86c7a646f95b014034c3b6e05b3cd4d53bbf202fcd9112b999ca90c5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb24df81c5b10808f20380fa6fe763f2a03c1f53a9a6da397d7f4ea1c00d2906fad .
+_:cb1b1755f1e3efe5cd66bb337eb943bc19a9c289a552a0fff1a84b9f5ec5a4b870e <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "de.gemeinde" .
+_:cb1b1755f1e3efe5cd66bb337eb943bc19a9c289a552a0fff1a84b9f5ec5a4b870e <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb1b1761611173863c565afec895012967248e89837d5ac8f0c2fb595d472f067d2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "unauthorized" .
 _:cb1b1761611173863c565afec895012967248e89837d5ac8f0c2fb595d472f067d2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb15b6009125126b876dacb596b2cd194178aaf73f4962ecc4c926de0f7f5f2a134 .
 _:cb1b1bc84695a82cc665b21cc14261eebc63d45f4849a968141db3481c13f776f48 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "absorbed_by" .
@@ -1148,8 +1180,6 @@ _:cb1b3cab1062e93b4f2d629172d380fc1daa63d644cb1e1afd21f25cb11dbc6dfc4 <http://ww
 _:cb1b3cab1062e93b4f2d629172d380fc1daa63d644cb1e1afd21f25cb11dbc6dfc4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb15a6046d7566db22d2babc2fe17569582c095710377663ec76224596a153fcf19 .
 _:cb1b4e82568344ec76749dd1250ec81a6020c2f8f93c8adffc188d8d171d3141899 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "corroborated" .
 _:cb1b4e82568344ec76749dd1250ec81a6020c2f8f93c8adffc188d8d171d3141899 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1c7f414464c5cb03ac4bd3f194b2793bb8ce52dceae87c665f571301da202dfd3 .
-_:cb1b53554955c5934c9f4197b70a6657ec0b55abe903783b6ee2d30d555fae9b839 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "fr.police_municipale" .
-_:cb1b53554955c5934c9f4197b70a6657ec0b55abe903783b6ee2d30d555fae9b839 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb291835518850691004b74e0cc39e18ea813688ed5c940a12ff47b00218f3c4398 .
 _:cb1b6673ecf6a839f374ef4ee43ca61ec1b44d3419aedb0159017cf2976984df31a <http://www.w3.org/ns/shacl#in> _:cb15c72d5a12214abd551d2dc0368f673232306eea6fc6d31721db35841ab9fe975 .
 _:cb1b6673ecf6a839f374ef4ee43ca61ec1b44d3419aedb0159017cf2976984df31a <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb1b6673ecf6a839f374ef4ee43ca61ec1b44d3419aedb0159017cf2976984df31a <http://www.w3.org/ns/shacl#order> "5"^^<http://www.w3.org/2001/XMLSchema#integer> .
@@ -1174,8 +1204,6 @@ _:cb1b92cf46467280b09e95c97470292b3a3f66e9887f713b3d44b873469b29e2be6 <http://ww
 _:cb1b92cf46467280b09e95c97470292b3a3f66e9887f713b3d44b873469b29e2be6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb20f7dc266e83d5781c6d8f2e08770b8b7dd6f411cd67e185037d58ba5754ca9bf .
 _:cb1bb185d8f02d2fc4f0a3b9acf1111b3c83a4cb7be161ac36a418a935768cb4f3a <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "radio_observation" .
 _:cb1bb185d8f02d2fc4f0a3b9acf1111b3c83a4cb7be161ac36a418a935768cb4f3a <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb22ab623486637c3c87e9b8fdbc34c3c0f8657dec86370c077f5d2c491e93ac34b .
-_:cb1bb8b2815e71a77eb7485174186291120070e7d2a094e0c5e8f987e5ad1421506 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "split_from" .
-_:cb1bb8b2815e71a77eb7485174186291120070e7d2a094e0c5e8f987e5ad1421506 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb15831083b2a84ff10781361602583469baa71b0090b608a03e4c5219d0b910b34 .
 _:cb1bd9d52db0540263e8ab5816779d1a40f0e06c5507fe99577eb2809a3df93f24d <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "partially_fulfilled" .
 _:cb1bd9d52db0540263e8ab5816779d1a40f0e06c5507fe99577eb2809a3df93f24d <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1f7709507818d85f0333e63b1f8cdd5a6c2e247fe692c4ae8c0cee8f8eac61ced .
 _:cb1bd9ffd71b6ce1a9e8badc088e6d288d9317df93387993aaf32518c58ba8034ca <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "data_breach" .
@@ -1196,8 +1224,6 @@ _:cb1bfd6762775c51a017463cb74f24cf949dc3eb4127f1f60f659436566f26e343e <http://ww
 _:cb1bfd6762775c51a017463cb74f24cf949dc3eb4127f1f60f659436566f26e343e <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/absence_kind> .
 _:cb1c14df19c9792f5b6bc56835804b8f60db72ef30b8ab1c64fb3d03b9573555071 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "us.gov.county" .
 _:cb1c14df19c9792f5b6bc56835804b8f60db72ef30b8ab1c64fb3d03b9573555071 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb169afd15cf4822d023b250c86fb37ef1bca8274f0d54d6bae7230af1ffac3c0fd .
-_:cb1c1a25afad7b7a6ae1a1273bbf4f41d4d9f42ecfa8a5dc68dd819fbe29994bc56 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "us.le.municipal_police" .
-_:cb1c1a25afad7b7a6ae1a1273bbf4f41d4d9f42ecfa8a5dc68dd819fbe29994bc56 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb11b97d9d0c5371e7a3c4593a1489ef20f428e50da808876101b5f7e378ae9b7ce .
 _:cb1c2d9618808caaff3072e69e7e25412f5fec73c93eb72553f6436d69b9f735a20 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "draft" .
 _:cb1c2d9618808caaff3072e69e7e25412f5fec73c93eb72553f6436d69b9f735a20 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb21904fadf2a5161fd84be3e7f35324f631fe297a2ab23cfbc93233cb53006fddf .
 _:cb1c32582e2e8f10a8fa11699faed224b288b0fc11dcbbfdddcb343057e0845a0be <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "free_trial" .
@@ -1235,6 +1261,8 @@ _:cb1c98ddc9ea9204ea40ae8456bbbde362e09e8e70f68eef3e740a79d38f21b6fc6 <http://ww
 _:cb1c98ddc9ea9204ea40ae8456bbbde362e09e8e70f68eef3e740a79d38f21b6fc6 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/federal_sharing_enabled> .
 _:cb1ca05170fd13c99c6ec5795151a73c59289a8feca20f47077ff558c7352c4ddb0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/requesting_party> .
 _:cb1ca05170fd13c99c6ec5795151a73c59289a8feca20f47077ff558c7352c4ddb0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1d80532edef50791b3f075befa2402e85cad68e6c8de04280864298a61285b8c4 .
+_:cb1ca30e2a231b38705e4ade269f26d4c46b902ff8022ee8b2a775d5ce0f81ee26c <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "directive" .
+_:cb1ca30e2a231b38705e4ade269f26d4c46b902ff8022ee8b2a775d5ce0f81ee26c <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbf343847a79a39f3d1225dce04f5895076337675f6a14bb87488c0d48e2a504f3 .
 _:cb1ca3e4142d0dcd190d0e1e2318106fbedf9ff868d58f181ff5d059bbb691847ba <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/first_observed> .
 _:cb1ca3e4142d0dcd190d0e1e2318106fbedf9ff868d58f181ff5d059bbb691847ba <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb13d2e61850123e852e3856fbdfbf4ba15b1bde48a508ed587c2fe523e0f50bc75 .
 _:cb1cad1fee30fdde79d32bb4bb8a1c91edc659946164ffa525943098d61da7efc49 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "none_stated" .
@@ -1271,6 +1299,9 @@ _:cb1cd8b97d63f8aced93769e9cf216a31b541defd5c15c81f599e89fbca08e6a29f <http://ww
 _:cb1cd8b97d63f8aced93769e9cf216a31b541defd5c15c81f599e89fbca08e6a29f <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb11eb5dbca3124386dbeee8166738964873804f651d6696866b9c123defdf8fe41 .
 _:cb1cd9f87c8da21cc29e4fa19231b2cbc92b6db9d011a411906a3eca1e6aeef3a76 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> .
 _:cb1cd9f87c8da21cc29e4fa19231b2cbc92b6db9d011a411906a3eca1e6aeef3a76 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:cb1cdc82c4cd1f90437dc8653329776f3cf87e34f959f9db45d626fedf4477b2205 <http://www.w3.org/ns/shacl#in> _:cb26d58711fbc4edbece9f683e1106b5064f9e1feddda50deac460adbe91b7cbf4d .
+_:cb1cdc82c4cd1f90437dc8653329776f3cf87e34f959f9db45d626fedf4477b2205 <http://www.w3.org/ns/shacl#order> "15"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb1cdc82c4cd1f90437dc8653329776f3cf87e34f959f9db45d626fedf4477b2205 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/succession_kind> .
 _:cb1ceab5982e8610a85a5547633f19e3c25fab43e83ac605c081df85ffc5f233587 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "federal" .
 _:cb1ceab5982e8610a85a5547633f19e3c25fab43e83ac605c081df85ffc5f233587 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb240b9182b1fc9c10bd287dd407638f6c74b455f061e6d4e5639a82b08dfdffb1d .
 _:cb1cf2225b3727d8f5501877f6649c06243c980c3446e61841909e57563d7117e10 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/authorization_state> .
@@ -1298,8 +1329,6 @@ _:cb1d46d4747afdb884aab6d92cbdaf4785a116b47b2843bb2e0561c9438b5d1fe98 <http://ww
 _:cb1d46d4747afdb884aab6d92cbdaf4785a116b47b2843bb2e0561c9438b5d1fe98 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb2df953809ef472611e0952ae142fee23b3cb1c711c04774d410cad70bd3c27ebf .
 _:cb1d51b28b57e4eda1b6b70f7f1dc4b03f9b6098745bed9ed14d43d2922b18f1f6f <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "oversight_reporting" .
 _:cb1d51b28b57e4eda1b6b70f7f1dc4b03f9b6098745bed9ed14d43d2922b18f1f6f <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1ffd55e8c1ef4defa1a50b3b864cda11168b68f50221a7ebf8c532e4df04dee83 .
-_:cb1d55b23ad019f131d053058855da4c102087ecd6e27e6a6201c021633bed3178b <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "unincorporated_area" .
-_:cb1d55b23ad019f131d053058855da4c102087ecd6e27e6a6201c021633bed3178b <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb1d56dbe795a67ec7ffb4e361e83441187885cf62bf62fbbbf5fa8a111b0d112e2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/party> .
 _:cb1d56dbe795a67ec7ffb4e361e83441187885cf62bf62fbbbf5fa8a111b0d112e2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb22d94f65277b96906ffa45058f5ed989e4683bd3cacd538890b1c4a2fa260f7cf .
 _:cb1d62ac64a02bb60686060b708844143b5d1967f60c62dcdfb196e8ac5dd3a5035 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "osm_element" .
@@ -1342,6 +1371,8 @@ _:cb1dc53066799da5bf0ad17282f4fa1219b2d5db5b363d6c632e68d04fa4a5d4d6a <http://ww
 _:cb1dc53066799da5bf0ad17282f4fa1219b2d5db5b363d6c632e68d04fa4a5d4d6a <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb337e61870d48161f60d412caa423793c499bf68eaeb2ef1b27e7cc4f992959525 .
 _:cb1dd52822935c9fccd050eb9b08f21a773eb8166effc3ff1ad7bd6b69c78f14e4d <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/searching_org> .
 _:cb1dd52822935c9fccd050eb9b08f21a773eb8166effc3ff1ad7bd6b69c78f14e4d <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbde97b7fcb8acaf3bd0fa71a37313f5e1fe90847e85e76e5cd211ddf7af8e267a .
+_:cb1dd9c9e44f27a57e270b8d69854f6cd8a1bb62e26bd4ba54f5d7022171474aabb <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/from_capture> .
+_:cb1dd9c9e44f27a57e270b8d69854f6cd8a1bb62e26bd4ba54f5d7022171474aabb <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb135e5583da2714591a6961df42fa4583df1f038d640e69511c05ee9045360d91c .
 _:cb1df8a059396a572b1663cd1479fd9ad6402aa9870b97884c558e1a44b85c0d438 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "all" .
 _:cb1df8a059396a572b1663cd1479fd9ad6402aa9870b97884c558e1a44b85c0d438 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb235afbf39c4027afe63957e0fe5e26b95c0ca2f7844aabfaa5c3c2c796c87471a .
 _:cb1dfc862180a36a3e37f6f55da2042273fb4d0ac059202e4d46de8646a39792b1a <http://www.w3.org/ns/shacl#in> _:cb132d6b65a600e81f09af32e11f3b6837e1be3b0c4464c0f2725f7f64e376bce2f .
@@ -1377,8 +1408,6 @@ _:cb1e694dcaceec2974cee7f1121af5f4c24b5adc563fc0379ce8fe8ac409c0ee7ab <http://ww
 _:cb1e694dcaceec2974cee7f1121af5f4c24b5adc563fc0379ce8fe8ac409c0ee7ab <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1f3b1bffba1af8b80427ccdba252d40d23198947d82c6a5b12d6e18ad72dbbe18 .
 _:cb1e6fceb6ac6ce1c67bb9f33b215a6fa6403181e25658e057860d275473db77e53 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "configuration_export" .
 _:cb1e6fceb6ac6ce1c67bb9f33b215a6fa6403181e25658e057860d275473db77e53 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb182c14734021cca40584525ee7fc3d1a50eaa3e0c3ac2c8381137ac76f357e916 .
-_:cb1e7353f125ad868d1f855415eb48b36ca7cb5beba9319e5d931fc89ecd1c69137 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "prefectoral_order" .
-_:cb1e7353f125ad868d1f855415eb48b36ca7cb5beba9319e5d931fc89ecd1c69137 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb2b6b017cd774c9d972ed2bb4be8d056f627693b47e3719be6a990c8a900df1ea5 .
 _:cb1e7820735aa594c886649d1b4c57199b6627c1bf00aa6c48bebb9ebc3572306e4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> .
 _:cb1e7820735aa594c886649d1b4c57199b6627c1bf00aa6c48bebb9ebc3572306e4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb1e7cbcd83b14f0e1bea4c70aff48ecd903e6e12a6b20c9b1a7d3190bc20bf19e9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/extraction_method> .
@@ -1402,6 +1431,8 @@ _:cb1e9d0ceb0be5ea4b66301c5f60b4ee5f96a813b10b757a98ca3c199824ed6b65c <http://ww
 _:cb1e9d0ceb0be5ea4b66301c5f60b4ee5f96a813b10b757a98ca3c199824ed6b65c <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb1e9e20f6528aca69ab7d8c646b66d88b95c5b10915f4b52431f58a65403cb9fef <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "authorized" .
 _:cb1e9e20f6528aca69ab7d8c646b66d88b95c5b10915f4b52431f58a65403cb9fef <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb22798ea726ed985e180a0d6b1643879eceed3e1d0fb5c9bc8117cfd5781c3e316 .
+_:cb1ea9e0865a833bea5d188186ff7d1c44dc600f6a01ce973865f06945b83d5ce2a <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "fr.departement" .
+_:cb1ea9e0865a833bea5d188186ff7d1c44dc600f6a01ce973865f06945b83d5ce2a <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb10fa471e7b63b860e41ceac85b4321e350cb976de7760471d697e17eb5828e547 .
 _:cb1eaecdf17a14faa1b97f1159d61a0da3d3268ea4a3c10b7ed528340f127096dde <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "primary_record" .
 _:cb1eaecdf17a14faa1b97f1159d61a0da3d3268ea4a3c10b7ed528340f127096dde <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb11a9412c302d7740d0580b0ce520179cd31d6cadf50f1750a29d4652f9b067451 .
 _:cb1eb9bd943ea3f7e1e281b431d8dca9eb15f40ee41e9caca82983ee7ee734b8da8 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "I3" .
@@ -1419,6 +1450,8 @@ _:cb1ed278c511b62f9120e048d30c02918201ae285602bc32b82f65701f8ed296b30 <http://ww
 _:cb1ed278c511b62f9120e048d30c02918201ae285602bc32b82f65701f8ed296b30 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb1ed278c511b62f9120e048d30c02918201ae285602bc32b82f65701f8ed296b30 <http://www.w3.org/ns/shacl#order> "2"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb1ed278c511b62f9120e048d30c02918201ae285602bc32b82f65701f8ed296b30 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/instrument_type> .
+_:cb1ed5fef1f4f2c59ec54de76e1a524310ea154a2fa3b5cd52526eff46321ab0293 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/text> .
+_:cb1ed5fef1f4f2c59ec54de76e1a524310ea154a2fa3b5cd52526eff46321ab0293 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1774d2db24ffdc53c017488bb1c3f19a37fa5de88e9d301ce4d5f855e869ce903 .
 _:cb1ee7c7235ba58ba53b72515714d5e50aa280697298262751eb4373f90ad607451 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "state_province" .
 _:cb1ee7c7235ba58ba53b72515714d5e50aa280697298262751eb4373f90ad607451 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1a1b905bcb177d1b3a714e7bed64c0c7e3727941ec9ec95057579d17d0995c35c .
 _:cb1ef1c126f3561341c613ba661dbb40db1255de11fe773385e8dd4bb90399304af <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/model> .
@@ -1452,12 +1485,6 @@ _:cb1f3aba27ec4707a3aec2eef27829d3a1bf4a49a909d2cc98510ccb865e1867c29 <http://ww
 _:cb1f3aba27ec4707a3aec2eef27829d3a1bf4a49a909d2cc98510ccb865e1867c29 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/platform> .
 _:cb1f3b1bffba1af8b80427ccdba252d40d23198947d82c6a5b12d6e18ad72dbbe18 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "reported_unverified" .
 _:cb1f3b1bffba1af8b80427ccdba252d40d23198947d82c6a5b12d6e18ad72dbbe18 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1a9d3a8dbcac0e5b8cfc3be8c1b5dabfb5a6a6c23ccdeb555e62ef436790225b1 .
-_:cb1f4321e0cb5e7056f3572e83e241dffc63c875fad79f4e7bca4865c4041e7eed2 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#boolean> .
-_:cb1f4321e0cb5e7056f3572e83e241dffc63c875fad79f4e7bca4865c4041e7eed2 <http://www.w3.org/ns/shacl#description> "Routes surrogate-only orgs through §43.4 before public exposure (SIG-ONTO-013)." .
-_:cb1f4321e0cb5e7056f3572e83e241dffc63c875fad79f4e7bca4865c4041e7eed2 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb1f4321e0cb5e7056f3572e83e241dffc63c875fad79f4e7bca4865c4041e7eed2 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
-_:cb1f4321e0cb5e7056f3572e83e241dffc63c875fad79f4e7bca4865c4041e7eed2 <http://www.w3.org/ns/shacl#order> "15"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb1f4321e0cb5e7056f3572e83e241dffc63c875fad79f4e7bca4865c4041e7eed2 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/publication_review> .
 _:cb1f53b4e53e7b7e20de4368ddea304f7db496574ba15c1195bcc1cc0dff90b5d62 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "pushes_alerts_to" .
 _:cb1f53b4e53e7b7e20de4368ddea304f7db496574ba15c1195bcc1cc0dff90b5d62 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb24eb8ea2cf25a553b0396da0fc9c2344b26ac4ca6f71c6211424d90b443b282a5 .
 _:cb1f549e9b12614a5b1045ee7b92b45ba51ffc90e29bfc32b94b6aecc3fb4104083 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "handheld" .
@@ -1492,8 +1519,6 @@ _:cb1fab42634688bd90ca76f698905a46da4779e4b61d0d5219ab3ff0e796a85da9c <http://ww
 _:cb1fab42634688bd90ca76f698905a46da4779e4b61d0d5219ab3ff0e796a85da9c <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/subject> .
 _:cb1fb7784c34157ee99f798b5db022f2400512de87d923b95f5457ce7237a7d9d94 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "extracted_from_capture" .
 _:cb1fb7784c34157ee99f798b5db022f2400512de87d923b95f5457ce7237a7d9d94 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb288e6a597985d6ed2a1d601b5055b98d6508a26064879b98392c5507e08a36ea5 .
-_:cb1fba8475e7c1c3c84a7cef28b7b4568dd254fd6e98c16b5414c1308d5ac31e764 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "us.le.state_police" .
-_:cb1fba8475e7c1c3c84a7cef28b7b4568dd254fd6e98c16b5414c1308d5ac31e764 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb167c138120695af01ed2747e402b699e352f407896bde6c4506041cbec2b88eb1 .
 _:cb1fc65acb21c0a6118827f207ac3ead6d00c145eea0a2f9bf7289a8c8a2026111f <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "abandoned" .
 _:cb1fc65acb21c0a6118827f207ac3ead6d00c145eea0a2f9bf7289a8c8a2026111f <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbfaf1ebf17d6c66b58e7cb46711b9af1f3af318de81fc6d3015fc4e08348bbf11 .
 _:cb1fcd2b24c2c3667d74ba99574d4c489f890bb58354ef2c0367fa6f8a54987883d <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> .
@@ -1537,8 +1562,6 @@ _:cb201765e091460054186318224039844db7a0de94c25910143ea3b3a7e9ea708a1 <http://ww
 _:cb201765e091460054186318224039844db7a0de94c25910143ea3b3a7e9ea708a1 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/third_party_integration> .
 _:cb2017acd28407889e1b5ed9106f768da327b4cc8962cafeff8594fbbbe1697718e <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/transport> .
 _:cb2017acd28407889e1b5ed9106f768da327b4cc8962cafeff8594fbbbe1697718e <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb26ac186f326f582e97a67d5f85c618faedd6385788fc052ecd58c0176b1c5a110 .
-_:cb201cc2de294a447dfe772f8be080e1bd88b044605ee76724f3369acec073419de <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "us.le.transit_police" .
-_:cb201cc2de294a447dfe772f8be080e1bd88b044605ee76724f3369acec073419de <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1a7d969705da006215d2d83e55bc93995b7605aaf34e275a565deef3faf6289a6 .
 _:cb203056beb38640dfdfbbd3c1bde89a26b4fb5288245a1eea3e008803ba40e4605 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/program_name> .
 _:cb203056beb38640dfdfbbd3c1bde89a26b4fb5288245a1eea3e008803ba40e4605 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb14493378a48f22c684fbfa295702b49ad2d216ca1298073eb6a8384fe61addfd1 .
 _:cb20370e5bc5f2e45a2e2c0d73c62755719ddda0c0368a54498ddd0fc2dc85b3c2d <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "inactive" .
@@ -1609,10 +1632,6 @@ _:cb20e8e83b0b4ac377f7d30f73177e762e801ac2ccfc5f331bcff6b05003a1abe2d <http://ww
 _:cb20e8e83b0b4ac377f7d30f73177e762e801ac2ccfc5f331bcff6b05003a1abe2d <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
 _:cb20e8e83b0b4ac377f7d30f73177e762e801ac2ccfc5f331bcff6b05003a1abe2d <http://www.w3.org/ns/shacl#order> "4"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb20e8e83b0b4ac377f7d30f73177e762e801ac2ccfc5f331bcff6b05003a1abe2d <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/valid_from> .
-_:cb20e90e346529eba0b64803b634688ad55b211e476f75b5cbb9aa43cb807633d9b <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
-_:cb20e90e346529eba0b64803b634688ad55b211e476f75b5cbb9aa43cb807633d9b <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
-_:cb20e90e346529eba0b64803b634688ad55b211e476f75b5cbb9aa43cb807633d9b <http://www.w3.org/ns/shacl#order> "7"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb20e90e346529eba0b64803b634688ad55b211e476f75b5cbb9aa43cb807633d9b <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/name_lang> .
 _:cb20ee0526a543517a9c944e7397cd3cfa4536de213f633e0626c06be8f0a09ca25 <http://www.w3.org/ns/shacl#in> _:cb1fedd121426095304fe7470fd0e151a774d4889f1e57031e0b414e5280f2b4091 .
 _:cb20ee0526a543517a9c944e7397cd3cfa4536de213f633e0626c06be8f0a09ca25 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb20ee0526a543517a9c944e7397cd3cfa4536de213f633e0626c06be8f0a09ca25 <http://www.w3.org/ns/shacl#order> "2"^^<http://www.w3.org/2001/XMLSchema#integer> .
@@ -1627,6 +1646,8 @@ _:cb21038945b6fc57ba7c09afd094b8d6226e0c9dd9809e107a833a666e033fc9230 <http://ww
 _:cb21038945b6fc57ba7c09afd094b8d6226e0c9dd9809e107a833a666e033fc9230 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1ade2c03a79a63f4ed2f51fe5dd0f21428e87570b502889c23a0debf37a192ae9 .
 _:cb2111f1209422a5155a721b44cbf71502aeb8c1186ce3f0808e194c0d8669b671d <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> .
 _:cb2111f1209422a5155a721b44cbf71502aeb8c1186ce3f0808e194c0d8669b671d <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:cb2117103b6054bc13bb48fd71e0604afe1f19e09e1e081f39699f9a43bed37e6c9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "us.le.municipal_police" .
+_:cb2117103b6054bc13bb48fd71e0604afe1f19e09e1e081f39699f9a43bed37e6c9 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb14e0b282669ec57518f154d687b0b7425e76686c7c0a8e7bb7ca0b183fe3c377f .
 _:cb212685ab413bc9283605a1e08ae3acfba037b612e5719fc8b3dbb50e4d3a77623 <http://www.w3.org/ns/shacl#in> _:cb1337318825b245f8ab0ff1ffbe4cbbffb192dab8e4b8d18875859dcabd87fd411 .
 _:cb212685ab413bc9283605a1e08ae3acfba037b612e5719fc8b3dbb50e4d3a77623 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb212685ab413bc9283605a1e08ae3acfba037b612e5719fc8b3dbb50e4d3a77623 <http://www.w3.org/ns/shacl#order> "0"^^<http://www.w3.org/2001/XMLSchema#integer> .
@@ -1673,6 +1694,8 @@ _:cb2195fa6729c9c4063803441159a79412a8d7a72d66788e9b75cf781b22aaf37b1 <http://ww
 _:cb2195fa6729c9c4063803441159a79412a8d7a72d66788e9b75cf781b22aaf37b1 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
 _:cb2195fa6729c9c4063803441159a79412a8d7a72d66788e9b75cf781b22aaf37b1 <http://www.w3.org/ns/shacl#order> "2"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb2195fa6729c9c4063803441159a79412a8d7a72d66788e9b75cf781b22aaf37b1 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/implements_technology> .
+_:cb21a17411b8abc1854778673bebdee42db09511a4a08c3d89a684f64c93f11c61a <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "de.kreis" .
+_:cb21a17411b8abc1854778673bebdee42db09511a4a08c3d89a684f64c93f11c61a <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1b1755f1e3efe5cd66bb337eb943bc19a9c289a552a0fff1a84b9f5ec5a4b870e .
 _:cb21af17690da29b6a1110155edf71313f4d908a6048836faeb7d498e6ddb53d5c4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "competitive_rfp" .
 _:cb21af17690da29b6a1110155edf71313f4d908a6048836faeb7d498e6ddb53d5c4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb2321a3d20645d6a9f2a69bccfc1116c7e8df41ac9bd52d2e8288c38c6a6d61f79 .
 _:cb21afb24689120bf7b918dd9ad173a9c0de0e3d4051b641c01c1666175e414322d <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "canceled" .
@@ -1681,6 +1704,8 @@ _:cb21b3affab57711efbd80b145d32d821fd4e1061fdfc99bf775400520bd2bd6690 <http://ww
 _:cb21b3affab57711efbd80b145d32d821fd4e1061fdfc99bf775400520bd2bd6690 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1ae2ca7f661b7229cb918f876b511b68e1d17a98d352324050caec2f7e0a0b57f .
 _:cb21b7f56bd7a4dd6dbe19bc61f7c8ce4ecff63ea846edb8ba3b21decbe21aee4b2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/released_documents> .
 _:cb21b7f56bd7a4dd6dbe19bc61f7c8ce4ecff63ea846edb8ba3b21decbe21aee4b2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb15cfdfabd8fefedbbaa61178e46fc381ec3ce173c68cfa766c54f4ca33bdbadf9 .
+_:cb21c0c21b824db6eb3d7fb4e4f3b91e305f22fbeec3af5f83c765b7a7f11325032 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "us.le.transit_police" .
+_:cb21c0c21b824db6eb3d7fb4e4f3b91e305f22fbeec3af5f83c765b7a7f11325032 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1a7d969705da006215d2d83e55bc93995b7605aaf34e275a565deef3faf6289a6 .
 _:cb21c5ad43bd22aa12b0035619975af04710a7b074e0835f25d13e06ff1c10461f6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/platform> .
 _:cb21c5ad43bd22aa12b0035619975af04710a7b074e0835f25d13e06ff1c10461f6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1f7d885cb3a4f16683ddb9bda752e5f5369eae815a1689a835c1b0832143aacfc .
 _:cb21cf8716857cce1beed8797c9155e95eb24ca71e2d184894fe2418d0cf155e528 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> .
@@ -1858,6 +1883,13 @@ _:cb23c71f7501e33239538d672a41e87f0cfb330bca9989d363121894c90cccff528 <http://ww
 _:cb23c71f7501e33239538d672a41e87f0cfb330bca9989d363121894c90cccff528 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/id> .
 _:cb23c7250e11681318e7e17148197d57b03a23ac70d1637adc154e574051d7869cb <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "event_log" .
 _:cb23c7250e11681318e7e17148197d57b03a23ac70d1637adc154e574051d7869cb <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:cb23cec75c4cb0158bfbd182859f5112c3e80e63b135274886c50b2863fc4cbffaa <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
+_:cb23cec75c4cb0158bfbd182859f5112c3e80e63b135274886c50b2863fc4cbffaa <http://www.w3.org/ns/shacl#description> "Repeatable qualifier naming the transliteration scheme a romanised/ transliterated name was produced under (e.g. ISO 9, BGN/PCGN, Hepburn), so the original script stays recoverable (SIG-ONTO-069)." .
+_:cb23cec75c4cb0158bfbd182859f5112c3e80e63b135274886c50b2863fc4cbffaa <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+_:cb23cec75c4cb0158bfbd182859f5112c3e80e63b135274886c50b2863fc4cbffaa <http://www.w3.org/ns/shacl#order> "4"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb23cec75c4cb0158bfbd182859f5112c3e80e63b135274886c50b2863fc4cbffaa <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/transliteration_scheme> .
+_:cb23d37d65e6f2771a92c5c33de43b82004239076d5bf163612a3e29a58dba22d26 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "de.landespolizei" .
+_:cb23d37d65e6f2771a92c5c33de43b82004239076d5bf163612a3e29a58dba22d26 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb23db94dfff214856e91c91c125dbabd4f82da2b7a970276f7820eed94fe1f9305 <http://www.w3.org/ns/shacl#in> _:cb1a1709b52c86b2b7d523c87fdad9ba51e5776e84c9df73a6e206a62ecc5b23ac5 .
 _:cb23db94dfff214856e91c91c125dbabd4f82da2b7a970276f7820eed94fe1f9305 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb23db94dfff214856e91c91c125dbabd4f82da2b7a970276f7820eed94fe1f9305 <http://www.w3.org/ns/shacl#order> "7"^^<http://www.w3.org/2001/XMLSchema#integer> .
@@ -1906,8 +1938,6 @@ _:cb2441098e8a543a8185ade9a2680bf22212073b8df4df3fe75cc67eac7257756cd <http://ww
 _:cb2441098e8a543a8185ade9a2680bf22212073b8df4df3fe75cc67eac7257756cd <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
 _:cb2441098e8a543a8185ade9a2680bf22212073b8df4df3fe75cc67eac7257756cd <http://www.w3.org/ns/shacl#order> "7"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb2441098e8a543a8185ade9a2680bf22212073b8df4df3fe75cc67eac7257756cd <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/sources> .
-_:cb24416f295f67452574b85858d437e25a3fd5b2a6e8ad767682c7834095683f68c <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "merged_into" .
-_:cb24416f295f67452574b85858d437e25a3fd5b2a6e8ad767682c7834095683f68c <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1bb8b2815e71a77eb7485174186291120070e7d2a094e0c5e8f987e5ad1421506 .
 _:cb24425563067b39380180c49a96b5a7da1068aada28a15d16cf96ef5305e298f1a <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "subject" .
 _:cb24425563067b39380180c49a96b5a7da1068aada28a15d16cf96ef5305e298f1a <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb2446ce4b67b518d49dd139c5811ad96d0cc61f3d5c8877bb47e4d138b219e9fdf <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/canonical_name> .
@@ -1942,8 +1972,6 @@ _:cb249654be8edca313235f33273eb7f8eb5c8d8e8149f5440f0db2bc3273257c65f <http://ww
 _:cb249654be8edca313235f33273eb7f8eb5c8d8e8149f5440f0db2bc3273257c65f <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb150e367cb4a770e5d3d1f635925bbcfa6668936e42976f1f9d3f8ff90343742e9 .
 _:cb249d7b3336717b4371ec92b67731aeff759ecffc2a25256dc9fa959cd9ee3fb16 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/asset_type> .
 _:cb249d7b3336717b4371ec92b67731aeff759ecffc2a25256dc9fa959cd9ee3fb16 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbdd9217a6d154d3e2f02b1ba8056be3386f12d839d676a5f70bad91bdad224eab .
-_:cb24a48d72d76c9ab639763a267c769bcedbeffbd9f182ab414eda2c72684bbe3b1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "code_of_practice" .
-_:cb24a48d72d76c9ab639763a267c769bcedbeffbd9f182ab414eda2c72684bbe3b1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1e7353f125ad868d1f855415eb48b36ca7cb5beba9319e5d931fc89ecd1c69137 .
 _:cb24a7a2683a834cbbfe0bf35732e1455915a913a0f04cddc4b22db9a710cd231a3 <http://www.w3.org/ns/shacl#class> <https://ontology.sig-project.org/schema/Product> .
 _:cb24a7a2683a834cbbfe0bf35732e1455915a913a0f04cddc4b22db9a710cd231a3 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb24a7a2683a834cbbfe0bf35732e1455915a913a0f04cddc4b22db9a710cd231a3 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
@@ -2018,11 +2046,8 @@ _:cb25833f3e9a123cd674b62d7b618869f06cd6913181fa91e8d82d2bb9c034e2413 <http://ww
 _:cb25833f3e9a123cd674b62d7b618869f06cd6913181fa91e8d82d2bb9c034e2413 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1f9af7ce0fde75f5325ce21c1459878cc2116c601bf1fddc57d37ffc2f331a179 .
 _:cb2590062230b3809d60fab4ca2d2c7822e36b35564cb7a93d199b3ada53fded6ba <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "ongoing" .
 _:cb2590062230b3809d60fab4ca2d2c7822e36b35564cb7a93d199b3ada53fded6ba <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
-_:cb25a378773d9f12603ff6e148b44c573e96b2b3d8f2e057ddd8a17657bd5106d00 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
-_:cb25a378773d9f12603ff6e148b44c573e96b2b3d8f2e057ddd8a17657bd5106d00 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb25a378773d9f12603ff6e148b44c573e96b2b3d8f2e057ddd8a17657bd5106d00 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
-_:cb25a378773d9f12603ff6e148b44c573e96b2b3d8f2e057ddd8a17657bd5106d00 <http://www.w3.org/ns/shacl#order> "11"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb25a378773d9f12603ff6e148b44c573e96b2b3d8f2e057ddd8a17657bd5106d00 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/valid_from> .
+_:cb25972262d1f66798c15d0a84543ab16ae9cb9f4cf9590695210fc70c262ca7d71 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "code_of_practice" .
+_:cb25972262d1f66798c15d0a84543ab16ae9cb9f4cf9590695210fc70c262ca7d71 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb2a7babb3179f9a5576b6d8551dc7525b1e0dd4797b786ed2e7aceecccf2fb06c2 .
 _:cb25b5b1532af6c7f4809fb6c5a06b5a973ca0d4455932d927ec99555dfd143dd4e <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "derived_from_claim" .
 _:cb25b5b1532af6c7f4809fb6c5a06b5a973ca0d4455932d927ec99555dfd143dd4e <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb208ac670575509fd775c53466275863de8338271d03fe29f4ab35df0be72ef130 .
 _:cb25f845dc19bd43cf72079aec181e7bb26be7bafa4ac88a02af4c299754aa234bf <http://www.w3.org/ns/shacl#class> <https://ontology.sig-project.org/schema/Organization> .
@@ -2122,6 +2147,8 @@ _:cb26c928beae1c850ae2f8c5b88706a1cdf948f2d92c69045b4069abf6da9b70c61 <http://ww
 _:cb26c928beae1c850ae2f8c5b88706a1cdf948f2d92c69045b4069abf6da9b70c61 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb26cf4f1048b19f4edcb1babbcabd316526d7198ec40a5b4206199f84317f881f4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "requests_data_from" .
 _:cb26cf4f1048b19f4edcb1babbcabd316526d7198ec40a5b4206199f84317f881f4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb2695f6ee9b7e24eb54eab37f0945f4ffc32d69f79cbac794c69f40eadf3efd1a5 .
+_:cb26d58711fbc4edbece9f683e1106b5064f9e1feddda50deac460adbe91b7cbf4d <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "merged_into" .
+_:cb26d58711fbc4edbece9f683e1106b5064f9e1feddda50deac460adbe91b7cbf4d <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb10684736094f37f10d45da366cd4ff251adb1cec42a6335c20e11bba8feb2d953 .
 _:cb26d85c61c8630f1fd73bfc304ad977e58c7088db630af22301876347747085976 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "enrolls_asset_into" .
 _:cb26d85c61c8630f1fd73bfc304ad977e58c7088db630af22301876347747085976 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb2b649a73c5e782ae8297888edf496e411e2830ef0dff214e805c0751b6a7a655e .
 _:cb26de7083635baec8cefdc8afd3dcb8a191ec6e993e20ba4530959bf89a76120df <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#decimal> .
@@ -2221,6 +2248,10 @@ _:cb2801794a98d4a16cf44082332d7f81edb226e5e11fe652a246e4b1af964942907 <http://ww
 _:cb2801794a98d4a16cf44082332d7f81edb226e5e11fe652a246e4b1af964942907 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb280b65e129299a571e24b0507c8040d64cd34d1abef9838685b5f94472a6fb7d2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "federates_search_to" .
 _:cb280b65e129299a571e24b0507c8040d64cd34d1abef9838685b5f94472a6fb7d2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb2782ae8b98a796e6bedcf902ace7a53e0a07193bbacc9f17185ec862772ab9d7c .
+_:cb281202d5e6978de60ff40cbe5bae5cc74ead8c71116e89cfea56642c22b8b3829 <http://www.w3.org/ns/shacl#class> <https://ontology.sig-project.org/schema/Organization> .
+_:cb281202d5e6978de60ff40cbe5bae5cc74ead8c71116e89cfea56642c22b8b3829 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
+_:cb281202d5e6978de60ff40cbe5bae5cc74ead8c71116e89cfea56642c22b8b3829 <http://www.w3.org/ns/shacl#order> "14"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb281202d5e6978de60ff40cbe5bae5cc74ead8c71116e89cfea56642c22b8b3829 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/succession> .
 _:cb28147aa8924f22adb4b90acdd50a4df4a4e971ffc09fc68666d864ac7be0c851d <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
 _:cb28147aa8924f22adb4b90acdd50a4df4a4e971ffc09fc68666d864ac7be0c851d <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb28147aa8924f22adb4b90acdd50a4df4a4e971ffc09fc68666d864ac7be0c851d <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
@@ -2232,6 +2263,11 @@ _:cb282559c84fedec11007b64f072919ca9ad12cdb36eb4cc66c09cd60b78c25433d <http://ww
 _:cb282559c84fedec11007b64f072919ca9ad12cdb36eb4cc66c09cd60b78c25433d <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
 _:cb282559c84fedec11007b64f072919ca9ad12cdb36eb4cc66c09cd60b78c25433d <http://www.w3.org/ns/shacl#order> "3"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb282559c84fedec11007b64f072919ca9ad12cdb36eb4cc66c09cd60b78c25433d <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/code> .
+_:cb28260698f72bde4d07346c1560d3debb2a6a86cbf0a693a952d0b64ca56a78511 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
+_:cb28260698f72bde4d07346c1560d3debb2a6a86cbf0a693a952d0b64ca56a78511 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb28260698f72bde4d07346c1560d3debb2a6a86cbf0a693a952d0b64ca56a78511 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+_:cb28260698f72bde4d07346c1560d3debb2a6a86cbf0a693a952d0b64ca56a78511 <http://www.w3.org/ns/shacl#order> "12"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb28260698f72bde4d07346c1560d3debb2a6a86cbf0a693a952d0b64ca56a78511 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/valid_from> .
 _:cb2828130b16498e8f8efb119e3df9c01c498ad5409f31f1d7e656da615caa23926 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/quantities> .
 _:cb2828130b16498e8f8efb119e3df9c01c498ad5409f31f1d7e656da615caa23926 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbe8d1f3f7466297817220b6a752627ef6785caccfeff8286e1eae657f88183ccf .
 _:cb283043219f0d31db013f8b44eedb255d9e410286688ac1b1e8d4c795c9f8bb860 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
@@ -2253,6 +2289,11 @@ _:cb2865b2ccc7db6dad2e4bf9ad8a35261cc8ac0b725de25a8066bcfe067141936d7 <http://ww
 _:cb2865b2ccc7db6dad2e4bf9ad8a35261cc8ac0b725de25a8066bcfe067141936d7 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/request_text> .
 _:cb2869b74155dd96a00a2b37561cc88fe99fc8d733359cada4cf65a9fac4b44a3ca <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "unknown" .
 _:cb2869b74155dd96a00a2b37561cc88fe99fc8d733359cada4cf65a9fac4b44a3ca <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+_:cb2875101e3742e88ac25e555ee84294d6e560b4f7a16d887c75dcff3b2e7c193a0 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
+_:cb2875101e3742e88ac25e555ee84294d6e560b4f7a16d887c75dcff3b2e7c193a0 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb2875101e3742e88ac25e555ee84294d6e560b4f7a16d887c75dcff3b2e7c193a0 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+_:cb2875101e3742e88ac25e555ee84294d6e560b4f7a16d887c75dcff3b2e7c193a0 <http://www.w3.org/ns/shacl#order> "9"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb2875101e3742e88ac25e555ee84294d6e560b4f7a16d887c75dcff3b2e7c193a0 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/valid_from> .
 _:cb28784076f043cc3631fbf3e6162b7f01707ace30fe15f0ea6d398e2b58c3dd73d <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
 _:cb28784076f043cc3631fbf3e6162b7f01707ace30fe15f0ea6d398e2b58c3dd73d <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb28784076f043cc3631fbf3e6162b7f01707ace30fe15f0ea6d398e2b58c3dd73d <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
@@ -2280,10 +2321,6 @@ _:cb28ca141951011f83e96047663b7a0337b4c2d5985973d4198ee086a9c43548f2e <http://ww
 _:cb28ca141951011f83e96047663b7a0337b4c2d5985973d4198ee086a9c43548f2e <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb28d777b46b77b4b18456faa3271ca71340fc5f0e2dd2c86594c264e557cfca7d5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "retracted" .
 _:cb28d777b46b77b4b18456faa3271ca71340fc5f0e2dd2c86594c264e557cfca7d5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
-_:cb28e23dc412498920039344bad838c6a46766c9fccb11d4ba58e86e6b1ae98331f <http://www.w3.org/ns/shacl#in> _:cb1c1a25afad7b7a6ae1a1273bbf4f41d4d9f42ecfa8a5dc68dd819fbe29994bc56 .
-_:cb28e23dc412498920039344bad838c6a46766c9fccb11d4ba58e86e6b1ae98331f <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb28e23dc412498920039344bad838c6a46766c9fccb11d4ba58e86e6b1ae98331f <http://www.w3.org/ns/shacl#order> "4"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb28e23dc412498920039344bad838c6a46766c9fccb11d4ba58e86e6b1ae98331f <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/organization_type> .
 _:cb28ea43f6270aa60d68287d02e45b6fd5f6d12274bb9339fe5216744b27cbfd6b7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "insufficient" .
 _:cb28ea43f6270aa60d68287d02e45b6fd5f6d12274bb9339fe5216744b27cbfd6b7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb28f00c382a29f6ac50d8cc3a16d2a6896595e588a0b49bf245361340958fdd2b6 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
@@ -2300,8 +2337,6 @@ _:cb28f79c2ba545eb47492a9780973d496ea582f7101e590747c48d12b3d1e85be4a <http://ww
 _:cb28f79c2ba545eb47492a9780973d496ea582f7101e590747c48d12b3d1e85be4a <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/statutory_basis> .
 _:cb291048650fe7970a12dabd305bb42fd8a030c3866856f6fd2731572c413930826 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "operates_within" .
 _:cb291048650fe7970a12dabd305bb42fd8a030c3866856f6fd2731572c413930826 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1a7b3632ba187db6ae1dec80e3d92f78db7c36340587da0f90a25017f7caf7fda .
-_:cb291835518850691004b74e0cc39e18ea813688ed5c940a12ff47b00218f3c4398 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "fr.gendarmerie" .
-_:cb291835518850691004b74e0cc39e18ea813688ed5c940a12ff47b00218f3c4398 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb2918f1bc8503f05e09f2772ee92fce22be9d7d381e4dc88ca5ca07f2c9b81c19d <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#boolean> .
 _:cb2918f1bc8503f05e09f2772ee92fce22be9d7d381e4dc88ca5ca07f2c9b81c19d <http://www.w3.org/ns/shacl#description> "A flag, coexisting with any state combination (SIG-ONTO-061)." .
 _:cb2918f1bc8503f05e09f2772ee92fce22be9d7d381e4dc88ca5ca07f2c9b81c19d <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
@@ -2350,6 +2385,12 @@ _:cb2981a9c4b0bc29dde4558148b768f47a07c5cd4403b9f97dd7d85a41e932ddb56 <http://ww
 _:cb2981a9c4b0bc29dde4558148b768f47a07c5cd4403b9f97dd7d85a41e932ddb56 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
 _:cb2981a9c4b0bc29dde4558148b768f47a07c5cd4403b9f97dd7d85a41e932ddb56 <http://www.w3.org/ns/shacl#order> "9"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb2981a9c4b0bc29dde4558148b768f47a07c5cd4403b9f97dd7d85a41e932ddb56 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/sources> .
+_:cb2984ddbe007d7e9001812c50320fd04b9123f78640dff511c330eb26bb9a70302 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#boolean> .
+_:cb2984ddbe007d7e9001812c50320fd04b9123f78640dff511c330eb26bb9a70302 <http://www.w3.org/ns/shacl#description> "Routes surrogate-only orgs through §43.4 before public exposure (SIG-ONTO-013)." .
+_:cb2984ddbe007d7e9001812c50320fd04b9123f78640dff511c330eb26bb9a70302 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb2984ddbe007d7e9001812c50320fd04b9123f78640dff511c330eb26bb9a70302 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+_:cb2984ddbe007d7e9001812c50320fd04b9123f78640dff511c330eb26bb9a70302 <http://www.w3.org/ns/shacl#order> "16"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb2984ddbe007d7e9001812c50320fd04b9123f78640dff511c330eb26bb9a70302 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/publication_review> .
 _:cb2985a3eecffff84da6911252e405ac76f597a0df643a152e2847b805c827d85c3 <http://www.w3.org/ns/shacl#description> "Typed from the closed catalog (§12.1.2)." .
 _:cb2985a3eecffff84da6911252e405ac76f597a0df643a152e2847b805c827d85c3 <http://www.w3.org/ns/shacl#in> _:cb1d380eafd961b45512aa32693009e9c6fb01972eb291bc6e5eed4d9230c55d54f .
 _:cb2985a3eecffff84da6911252e405ac76f597a0df643a152e2847b805c827d85c3 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
@@ -2435,6 +2476,11 @@ _:cb2a54aa7a6d8f8d3a53be54de84c7cc27676180024f281dd5c6677dbcc1047f31b <http://ww
 _:cb2a54aa7a6d8f8d3a53be54de84c7cc27676180024f281dd5c6677dbcc1047f31b <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
 _:cb2a54aa7a6d8f8d3a53be54de84c7cc27676180024f281dd5c6677dbcc1047f31b <http://www.w3.org/ns/shacl#order> "6"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb2a54aa7a6d8f8d3a53be54de84c7cc27676180024f281dd5c6677dbcc1047f31b <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/end_date> .
+_:cb2a55ffc99a0c830b78fc45a4fccea5b3a9cf8a4bec2924d05738978375da3c613 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
+_:cb2a55ffc99a0c830b78fc45a4fccea5b3a9cf8a4bec2924d05738978375da3c613 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb2a55ffc99a0c830b78fc45a4fccea5b3a9cf8a4bec2924d05738978375da3c613 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+_:cb2a55ffc99a0c830b78fc45a4fccea5b3a9cf8a4bec2924d05738978375da3c613 <http://www.w3.org/ns/shacl#order> "10"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb2a55ffc99a0c830b78fc45a4fccea5b3a9cf8a4bec2924d05738978375da3c613 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/valid_to> .
 _:cb2a60587c0ece018d5f563e3bd83020e965830914d1397bbf8d0356c2d179f24c8 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "contradicts_claim" .
 _:cb2a60587c0ece018d5f563e3bd83020e965830914d1397bbf8d0356c2d179f24c8 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1685c9ea511a7c7c80e2bc66863a3ded2d2a08eccc37557e5cffcbb97026c644c .
 _:cb2a64f736c817b9a50e6d0b8a3156150a7023510eaa2f16584bd3a1843f8e31c18 <http://www.w3.org/ns/shacl#class> <https://ontology.sig-project.org/schema/Jurisdiction> .
@@ -2448,6 +2494,8 @@ _:cb2a6f39512c5ba7f25c055035d3cd0414e98259dbf69627e464e05e0c05ca62c36 <http://ww
 _:cb2a6f39512c5ba7f25c055035d3cd0414e98259dbf69627e464e05e0c05ca62c36 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
 _:cb2a6f39512c5ba7f25c055035d3cd0414e98259dbf69627e464e05e0c05ca62c36 <http://www.w3.org/ns/shacl#order> "2"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb2a6f39512c5ba7f25c055035d3cd0414e98259dbf69627e464e05e0c05ca62c36 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/domain> .
+_:cb2a7babb3179f9a5576b6d8551dc7525b1e0dd4797b786ed2e7aceecccf2fb06c2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "prefectoral_order" .
+_:cb2a7babb3179f9a5576b6d8551dc7525b1e0dd4797b786ed2e7aceecccf2fb06c2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1ca30e2a231b38705e4ade269f26d4c46b902ff8022ee8b2a775d5ce0f81ee26c .
 _:cb2a7e048bfd95b41f4ea3907262ef1f24d58713b5b6dcd5cecdfe3adaadf096428 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "ongoing" .
 _:cb2a7e048bfd95b41f4ea3907262ef1f24d58713b5b6dcd5cecdfe3adaadf096428 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb2a8b5f49a3e490f16a3b17b6d3a230bccc9bf2dabf3ff9cb664e6cadadc769fda <http://www.w3.org/ns/shacl#description> "The asserting/originating node (directed — §12.1.1)." .
@@ -2474,10 +2522,6 @@ _:cb2aa19868e5d59e16119769f82f6a24f034506f1ad7a4679e7e52ed874db8e35e7 <http://ww
 _:cb2aa19868e5d59e16119769f82f6a24f034506f1ad7a4679e7e52ed874db8e35e7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1af436bda9d15b56bf9dd4d79622b42bae3383d2124bc6ccb7e96d7da1d8b7298 .
 _:cb2aa2c4354f2a7850b83fd278f3e9077bd20b0f738c12bad9c0165f886e1fa54c5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "participates_in" .
 _:cb2aa2c4354f2a7850b83fd278f3e9077bd20b0f738c12bad9c0165f886e1fa54c5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb2aa19868e5d59e16119769f82f6a24f034506f1ad7a4679e7e52ed874db8e35e7 .
-_:cb2ab240ca412b0cef4cab0f1552d57f470c3c9482c59a4fe04c753c49cf0b98ff9 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
-_:cb2ab240ca412b0cef4cab0f1552d57f470c3c9482c59a4fe04c753c49cf0b98ff9 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
-_:cb2ab240ca412b0cef4cab0f1552d57f470c3c9482c59a4fe04c753c49cf0b98ff9 <http://www.w3.org/ns/shacl#order> "10"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb2ab240ca412b0cef4cab0f1552d57f470c3c9482c59a4fe04c753c49cf0b98ff9 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/address> .
 _:cb2ac15f58450f60c8307842dd3f71cd68182817730a35239567352bb9b369f07cf <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
 _:cb2ac15f58450f60c8307842dd3f71cd68182817730a35239567352bb9b369f07cf <http://www.w3.org/ns/shacl#description> "Minimum granularity one month for published data (§18.4)." .
 _:cb2ac15f58450f60c8307842dd3f71cd68182817730a35239567352bb9b369f07cf <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
@@ -2488,17 +2532,17 @@ _:cb2ac4850d04443358bda3aac56eb09013b3316d783e098830f2c0bb5ea69ffe7f9 <http://ww
 _:cb2ac4850d04443358bda3aac56eb09013b3316d783e098830f2c0bb5ea69ffe7f9 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
 _:cb2ac4850d04443358bda3aac56eb09013b3316d783e098830f2c0bb5ea69ffe7f9 <http://www.w3.org/ns/shacl#order> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb2ac4850d04443358bda3aac56eb09013b3316d783e098830f2c0bb5ea69ffe7f9 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/alias> .
-_:cb2ad18ca03c56009eaf3ad321f15d7dadbe758a87c61f3e07b9037453ab4b3da15 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
-_:cb2ad18ca03c56009eaf3ad321f15d7dadbe758a87c61f3e07b9037453ab4b3da15 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb2ad18ca03c56009eaf3ad321f15d7dadbe758a87c61f3e07b9037453ab4b3da15 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
-_:cb2ad18ca03c56009eaf3ad321f15d7dadbe758a87c61f3e07b9037453ab4b3da15 <http://www.w3.org/ns/shacl#order> "8"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb2ad18ca03c56009eaf3ad321f15d7dadbe758a87c61f3e07b9037453ab4b3da15 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/valid_from> .
 _:cb2aed94704f0b1654ea82af3c4c1787a947a0e02d7dcc69057a6dca30611a7a57f <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
 _:cb2aed94704f0b1654ea82af3c4c1787a947a0e02d7dcc69057a6dca30611a7a57f <http://www.w3.org/ns/shacl#description> "The ordinal bucket form; comparison operates on intervals, never a coerced point." .
 _:cb2aed94704f0b1654ea82af3c4c1787a947a0e02d7dcc69057a6dca30611a7a57f <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb2aed94704f0b1654ea82af3c4c1787a947a0e02d7dcc69057a6dca30611a7a57f <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
 _:cb2aed94704f0b1654ea82af3c4c1787a947a0e02d7dcc69057a6dca30611a7a57f <http://www.w3.org/ns/shacl#order> "2"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb2aed94704f0b1654ea82af3c4c1787a947a0e02d7dcc69057a6dca30611a7a57f <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/retention_bucket> .
+_:cb2b13f46d3743711d90598b2e14ad1aa84eb72365a7e870aa0448744bb841c9d0a <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
+_:cb2b13f46d3743711d90598b2e14ad1aa84eb72365a7e870aa0448744bb841c9d0a <http://www.w3.org/ns/shacl#description> "Repeatable BCP-47 language tags for the multilingual labels (SIG-ONTO-069)." .
+_:cb2b13f46d3743711d90598b2e14ad1aa84eb72365a7e870aa0448744bb841c9d0a <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+_:cb2b13f46d3743711d90598b2e14ad1aa84eb72365a7e870aa0448744bb841c9d0a <http://www.w3.org/ns/shacl#order> "7"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb2b13f46d3743711d90598b2e14ad1aa84eb72365a7e870aa0448744bb841c9d0a <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/name_lang> .
 _:cb2b2382c71800f2b31c7df2786d4a44ecd12277eeb223ec1e904977bac3bdb288f <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
 _:cb2b2382c71800f2b31c7df2786d4a44ecd12277eeb223ec1e904977bac3bdb288f <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb2b2382c71800f2b31c7df2786d4a44ecd12277eeb223ec1e904977bac3bdb288f <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
@@ -2534,8 +2578,6 @@ _:cb2b6200f3acd22e4a3715706f84142586fba0513af437bac509159f392bcd1fc6d <http://ww
 _:cb2b6200f3acd22e4a3715706f84142586fba0513af437bac509159f392bcd1fc6d <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/mechanism> .
 _:cb2b649a73c5e782ae8297888edf496e411e2830ef0dff214e805c0751b6a7a655e <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "requests_data_from" .
 _:cb2b649a73c5e782ae8297888edf496e411e2830ef0dff214e805c0751b6a7a655e <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb2b3bf0dbcae74542171a9500f795cd1c4f347081a71d49d8497b750b16499f9c6 .
-_:cb2b6b017cd774c9d972ed2bb4be8d056f627693b47e3719be6a990c8a900df1ea5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "directive" .
-_:cb2b6b017cd774c9d972ed2bb4be8d056f627693b47e3719be6a990c8a900df1ea5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
 _:cb2b812c8bd83f5318d2e1488c88f8a00f1f97ebda0a4b061c8b2d1ce24d4dcd385 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
 _:cb2b812c8bd83f5318d2e1488c88f8a00f1f97ebda0a4b061c8b2d1ce24d4dcd385 <http://www.w3.org/ns/shacl#description> "The public role justifying inclusion (e.g. named official in an accountability event)." .
 _:cb2b812c8bd83f5318d2e1488c88f8a00f1f97ebda0a4b061c8b2d1ce24d4dcd385 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
@@ -2566,10 +2608,6 @@ _:cb2be12b4bfee01d9268bf8d53ac42af8e27618d490c9c22185f37455078bdc7da2 <http://ww
 _:cb2be12b4bfee01d9268bf8d53ac42af8e27618d490c9c22185f37455078bdc7da2 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
 _:cb2be12b4bfee01d9268bf8d53ac42af8e27618d490c9c22185f37455078bdc7da2 <http://www.w3.org/ns/shacl#order> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb2be12b4bfee01d9268bf8d53ac42af8e27618d490c9c22185f37455078bdc7da2 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/retention_days> .
-_:cb2bf62d937222e5f33fb3076c49ebd2f775e3265e3da236084265809d94ae40bdb <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
-_:cb2bf62d937222e5f33fb3076c49ebd2f775e3265e3da236084265809d94ae40bdb <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
-_:cb2bf62d937222e5f33fb3076c49ebd2f775e3265e3da236084265809d94ae40bdb <http://www.w3.org/ns/shacl#order> "3"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb2bf62d937222e5f33fb3076c49ebd2f775e3265e3da236084265809d94ae40bdb <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/name_lang> .
 _:cb2bf86586a89ec166bbf26e110866206ac87aedd6ec6cfc2b32a7473d7ac0be4a4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/code> .
 _:cb2bf86586a89ec166bbf26e110866206ac87aedd6ec6cfc2b32a7473d7ac0be4a4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb16e24258c79f9cf0d499c0a84a89b0498076fcff172a99ca9a7b4962600615897 .
 _:cb2c0e148b4d4016616e8acb678127efdb14ef3e0af3d7799e3aff84c54895edf96 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "derived_from_claim" .
@@ -2580,6 +2618,10 @@ _:cb2c28d1db10970f9b1dbbd09bc4ebd014cdfd6477f073d15b4bdaee61afa5d729c <http://ww
 _:cb2c28d1db10970f9b1dbbd09bc4ebd014cdfd6477f073d15b4bdaee61afa5d729c <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/event_type> .
 _:cb2c2a998948d9f12f23d1137aaa498c65353b3325e4cdb5396bc38a3e3f319ab4d <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "unknown" .
 _:cb2c2a998948d9f12f23d1137aaa498c65353b3325e4cdb5396bc38a3e3f319ab4d <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb2577ee11b9335860bb23da9db350f7abc6737eef9a68b557506cee16244dc7801 .
+_:cb2c329e2aefbca62d8bff6cc3f28c46d6a9df1c4ee765b918485c9bda75e8d6617 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
+_:cb2c329e2aefbca62d8bff6cc3f28c46d6a9df1c4ee765b918485c9bda75e8d6617 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+_:cb2c329e2aefbca62d8bff6cc3f28c46d6a9df1c4ee765b918485c9bda75e8d6617 <http://www.w3.org/ns/shacl#order> "11"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb2c329e2aefbca62d8bff6cc3f28c46d6a9df1c4ee765b918485c9bda75e8d6617 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/address> .
 _:cb2c36d2607f698d4a347d3a0d8c4096d38965c8a3702097dc85af9547baa6fcd2d <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "commercial" .
 _:cb2c36d2607f698d4a347d3a0d8c4096d38965c8a3702097dc85af9547baa6fcd2d <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1880c65934704131131541c207346b157ec3b4dfc50e224e5038df5aa9864a39b .
 _:cb2c3acff98e155f006bca4f3f4a8c994045bb15c54d976bb4e2fc66ba6bdbf05bc <http://www.w3.org/ns/shacl#description> "The PhysicalAsset / Deployment / DataSystem the role is held over." .
@@ -2620,9 +2662,6 @@ _:cb2c8b6e20b818698209d533c430ba04fc2dd601627fb771c32424ef732f5153b88 <http://ww
 _:cb2c8b6e20b818698209d533c430ba04fc2dd601627fb771c32424ef732f5153b88 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
 _:cb2c8b6e20b818698209d533c430ba04fc2dd601627fb771c32424ef732f5153b88 <http://www.w3.org/ns/shacl#order> "0"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb2c8b6e20b818698209d533c430ba04fc2dd601627fb771c32424ef732f5153b88 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/subject> .
-_:cb2caa14e0eca572917f6dc6b0bd4b61bb7445cce3187425562637d121a4b14e31b <http://www.w3.org/ns/shacl#in> _:cb24416f295f67452574b85858d437e25a3fd5b2a6e8ad767682c7834095683f68c .
-_:cb2caa14e0eca572917f6dc6b0bd4b61bb7445cce3187425562637d121a4b14e31b <http://www.w3.org/ns/shacl#order> "14"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb2caa14e0eca572917f6dc6b0bd4b61bb7445cce3187425562637d121a4b14e31b <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/succession_kind> .
 _:cb2cc41962900d138ee1f5184791ada0596840805c9218e779afddffebe9ad491e8 <http://www.w3.org/ns/shacl#class> <https://ontology.sig-project.org/schema/Organization> .
 _:cb2cc41962900d138ee1f5184791ada0596840805c9218e779afddffebe9ad491e8 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
 _:cb2cc41962900d138ee1f5184791ada0596840805c9218e779afddffebe9ad491e8 <http://www.w3.org/ns/shacl#order> "3"^^<http://www.w3.org/2001/XMLSchema#integer> .
@@ -2636,6 +2675,11 @@ _:cb2cd91a8aebbc928d87ca2ac70157338d9827337af0f5d6f6e224daa3bc5ca4885 <http://ww
 _:cb2cd91a8aebbc928d87ca2ac70157338d9827337af0f5d6f6e224daa3bc5ca4885 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
 _:cb2cd91a8aebbc928d87ca2ac70157338d9827337af0f5d6f6e224daa3bc5ca4885 <http://www.w3.org/ns/shacl#order> "3"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb2cd91a8aebbc928d87ca2ac70157338d9827337af0f5d6f6e224daa3bc5ca4885 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/data_types> .
+_:cb2cdf0263d3df6592c6478cf8ef56c04ed10cf04743ea126ae10977112dfd9d58c <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
+_:cb2cdf0263d3df6592c6478cf8ef56c04ed10cf04743ea126ae10977112dfd9d58c <http://www.w3.org/ns/shacl#description> "Repeatable qualifier naming the transliteration scheme a romanised/ transliterated label was produced under (e.g. ISO 9, BGN/PCGN); a transliterated name carries it so the original script stays recoverable (SIG-ONTO-069)." .
+_:cb2cdf0263d3df6592c6478cf8ef56c04ed10cf04743ea126ae10977112dfd9d58c <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+_:cb2cdf0263d3df6592c6478cf8ef56c04ed10cf04743ea126ae10977112dfd9d58c <http://www.w3.org/ns/shacl#order> "8"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb2cdf0263d3df6592c6478cf8ef56c04ed10cf04743ea126ae10977112dfd9d58c <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/transliteration_scheme> .
 _:cb2cea6c2f14e0c5cdaff9003798475ed82549107681e1f07aaf2f98310a406166f <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "contradicts_claim" .
 _:cb2cea6c2f14e0c5cdaff9003798475ed82549107681e1f07aaf2f98310a406166f <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1be0755fe97f02fff9fe3305d5fadc08f2c87daca3600d6a4ddb7f2e319169cee .
 _:cb2d133fa248f7479602d68472d517afd98c8c42e910e327c8f23e4d2545bec160c <http://www.w3.org/ns/shacl#class> <https://ontology.sig-project.org/schema/Organization> .
@@ -2667,11 +2711,6 @@ _:cb2d94e0d83d94beb6ee90c0989722bd838ad2ec91039b4c63d19679af14d31f8ea <http://ww
 _:cb2d94e0d83d94beb6ee90c0989722bd838ad2ec91039b4c63d19679af14d31f8ea <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
 _:cb2d94e0d83d94beb6ee90c0989722bd838ad2ec91039b4c63d19679af14d31f8ea <http://www.w3.org/ns/shacl#order> "0"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb2d94e0d83d94beb6ee90c0989722bd838ad2ec91039b4c63d19679af14d31f8ea <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/publisher_name> .
-_:cb2dbff9f44e4e84be5f8c99fff562f6b042abd57bce15b5a2f01706858a42ab8fb <http://www.w3.org/ns/shacl#description> "The entity's stable minted identity (L2 identity only, §8.2)." .
-_:cb2dbff9f44e4e84be5f8c99fff562f6b042abd57bce15b5a2f01706858a42ab8fb <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb2dbff9f44e4e84be5f8c99fff562f6b042abd57bce15b5a2f01706858a42ab8fb <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
-_:cb2dbff9f44e4e84be5f8c99fff562f6b042abd57bce15b5a2f01706858a42ab8fb <http://www.w3.org/ns/shacl#order> "10"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb2dbff9f44e4e84be5f8c99fff562f6b042abd57bce15b5a2f01706858a42ab8fb <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/id> .
 _:cb2dc306372df36725769cb86617201437a5b49bbc238372070c35917dd6277f696 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "requests_data_from" .
 _:cb2dc306372df36725769cb86617201437a5b49bbc238372070c35917dd6277f696 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb18e752ce02c4268d643fdaeed4002aae0d684b2944c2b0327a009c04f20a5437b .
 _:cb2dcb872e4f547f252b10b9b09ee9acf5895ab41dea2770234c016e5a26dad26ff <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
@@ -2726,10 +2765,6 @@ _:cb2e44a6ef14e37a6ae28d1521117a402c501be1b5b617435a2d347653de8e52a1a <http://ww
 _:cb2e44a6ef14e37a6ae28d1521117a402c501be1b5b617435a2d347653de8e52a1a <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
 _:cb2e44a6ef14e37a6ae28d1521117a402c501be1b5b617435a2d347653de8e52a1a <http://www.w3.org/ns/shacl#order> "5"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb2e44a6ef14e37a6ae28d1521117a402c501be1b5b617435a2d347653de8e52a1a <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/valid_to> .
-_:cb2e4e6b842bd7667ee00215924895c843e5a744c9ac2b3bba6d3e8105b45773de3 <http://www.w3.org/ns/shacl#class> <https://ontology.sig-project.org/schema/Organization> .
-_:cb2e4e6b842bd7667ee00215924895c843e5a744c9ac2b3bba6d3e8105b45773de3 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
-_:cb2e4e6b842bd7667ee00215924895c843e5a744c9ac2b3bba6d3e8105b45773de3 <http://www.w3.org/ns/shacl#order> "13"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb2e4e6b842bd7667ee00215924895c843e5a744c9ac2b3bba6d3e8105b45773de3 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/succession> .
 _:cb2e50bdd5a8907fe70b986fd55139494e79a2ca988b2b5c159d03cba33d2c7eb37 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#dateTime> .
 _:cb2e50bdd5a8907fe70b986fd55139494e79a2ca988b2b5c159d03cba33d2c7eb37 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb2e50bdd5a8907fe70b986fd55139494e79a2ca988b2b5c159d03cba33d2c7eb37 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
@@ -2790,6 +2825,11 @@ _:cb2efce7698aaeb8e0c73b2f535f2d20a45e1fb269b016c00df8c54ec091048cf49 <http://ww
 _:cb2efce7698aaeb8e0c73b2f535f2d20a45e1fb269b016c00df8c54ec091048cf49 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb26f75f96773c07fe5c668941632ec120d190da6634890a51442f5d7f5dcf3c188 .
 _:cb2f2b0789a3858ff646c4b5bb8367ec5ae527894b38867e69ac29ddd54481a5b20 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "parent_of" .
 _:cb2f2b0789a3858ff646c4b5bb8367ec5ae527894b38867e69ac29ddd54481a5b20 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb26a466e3ed2725b757004ae24b5d76d07cda3dbb177667d2d36717b84c965c3ad .
+_:cb2f405754fce01dfc9ee0f7ae9519be3fe04e5d47efe11edaebfe6616311fe8f19 <http://www.w3.org/ns/shacl#description> "The entity's stable minted identity (L2 identity only, §8.2)." .
+_:cb2f405754fce01dfc9ee0f7ae9519be3fe04e5d47efe11edaebfe6616311fe8f19 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb2f405754fce01dfc9ee0f7ae9519be3fe04e5d47efe11edaebfe6616311fe8f19 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
+_:cb2f405754fce01dfc9ee0f7ae9519be3fe04e5d47efe11edaebfe6616311fe8f19 <http://www.w3.org/ns/shacl#order> "11"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb2f405754fce01dfc9ee0f7ae9519be3fe04e5d47efe11edaebfe6616311fe8f19 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/id> .
 _:cb2f5232f183335c7a9f39d0cb2845aa23045627b28f25eb1c5b260a3e79b52218b <http://www.w3.org/ns/shacl#class> <https://ontology.sig-project.org/schema/Organization> .
 _:cb2f5232f183335c7a9f39d0cb2845aa23045627b28f25eb1c5b260a3e79b52218b <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb2f5232f183335c7a9f39d0cb2845aa23045627b28f25eb1c5b260a3e79b52218b <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
@@ -2805,6 +2845,16 @@ _:cb2fa88806f85498a4088edb9c925bf25cb14911f332f60a19bf298af93d8651d64 <http://ww
 _:cb2fa88806f85498a4088edb9c925bf25cb14911f332f60a19bf298af93d8651d64 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
 _:cb2fa88806f85498a4088edb9c925bf25cb14911f332f60a19bf298af93d8651d64 <http://www.w3.org/ns/shacl#order> "13"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb2fa88806f85498a4088edb9c925bf25cb14911f332f60a19bf298af93d8651d64 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/amends_contract> .
+_:cb2fc6a960a3471575675c43b2319a2f86e765d800e92887dde421e23181ef11b1c <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
+_:cb2fc6a960a3471575675c43b2319a2f86e765d800e92887dde421e23181ef11b1c <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb2fc6a960a3471575675c43b2319a2f86e765d800e92887dde421e23181ef11b1c <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+_:cb2fc6a960a3471575675c43b2319a2f86e765d800e92887dde421e23181ef11b1c <http://www.w3.org/ns/shacl#order> "10"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb2fc6a960a3471575675c43b2319a2f86e765d800e92887dde421e23181ef11b1c <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/government_domain> .
+_:cb2fce7a0b82e49916272b07f439290b95d27243bdf37d7d1b048e5e7c46fbdbc05 <http://www.w3.org/ns/shacl#class> <https://ontology.sig-project.org/schema/Jurisdiction> .
+_:cb2fce7a0b82e49916272b07f439290b95d27243bdf37d7d1b048e5e7c46fbdbc05 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb2fce7a0b82e49916272b07f439290b95d27243bdf37d7d1b048e5e7c46fbdbc05 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
+_:cb2fce7a0b82e49916272b07f439290b95d27243bdf37d7d1b048e5e7c46fbdbc05 <http://www.w3.org/ns/shacl#order> "7"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb2fce7a0b82e49916272b07f439290b95d27243bdf37d7d1b048e5e7c46fbdbc05 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/jurisdiction> .
 _:cb2fcfe20c7fd68e73740b2c92d3a550897bed99d49e8e6529ac543803f5746c256 <http://www.w3.org/ns/shacl#in> _:cbdc54521d51a3254ba445966f71887ec73bf2d8bdfc7381374b244e3c1697976b .
 _:cb2fcfe20c7fd68e73740b2c92d3a550897bed99d49e8e6529ac543803f5746c256 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb2fcfe20c7fd68e73740b2c92d3a550897bed99d49e8e6529ac543803f5746c256 <http://www.w3.org/ns/shacl#order> "8"^^<http://www.w3.org/2001/XMLSchema#integer> .
@@ -2847,11 +2897,6 @@ _:cb3045340f19427c6f07176e91cf6a3e32f9de1762d7b43127cb1864b6898bf8ee2 <http://ww
 _:cb3045340f19427c6f07176e91cf6a3e32f9de1762d7b43127cb1864b6898bf8ee2 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
 _:cb3045340f19427c6f07176e91cf6a3e32f9de1762d7b43127cb1864b6898bf8ee2 <http://www.w3.org/ns/shacl#order> "4"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb3045340f19427c6f07176e91cf6a3e32f9de1762d7b43127cb1864b6898bf8ee2 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/adopting_body> .
-_:cb3056f67b2643dd7ae812dce2fefcfe4c23522d0cf3b2af0ccb03bc33f8c96931d <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
-_:cb3056f67b2643dd7ae812dce2fefcfe4c23522d0cf3b2af0ccb03bc33f8c96931d <http://www.w3.org/ns/shacl#description> "Repeatable (scheme,value) pairs, qualified by identifier_system (SIG-IDENT-006)." .
-_:cb3056f67b2643dd7ae812dce2fefcfe4c23522d0cf3b2af0ccb03bc33f8c96931d <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
-_:cb3056f67b2643dd7ae812dce2fefcfe4c23522d0cf3b2af0ccb03bc33f8c96931d <http://www.w3.org/ns/shacl#order> "7"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb3056f67b2643dd7ae812dce2fefcfe4c23522d0cf3b2af0ccb03bc33f8c96931d <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/identifier> .
 _:cb305bb1ec7be0eae16da8ec2cd4def1b2fec3b2719f5fa661b1ae2a9af0942af9a <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "requests_data_from" .
 _:cb305bb1ec7be0eae16da8ec2cd4def1b2fec3b2719f5fa661b1ae2a9af0942af9a <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb30aac71b328900013378377989c29a47724e7375a7c3c343bc393e2e322b46774 .
 _:cb307b65775bd667e29664f8c2bbc23cb0c4e9d2f9529c56699ab8f4cf30bee880e <http://www.w3.org/ns/shacl#description> "The entity's stable minted identity (L2 identity only, §8.2)." .
@@ -2882,6 +2927,11 @@ _:cb30de0e6f3b14431fd305cf93610a9533ba0356f189cdb47c631a086c89a1171d0 <http://ww
 _:cb30de0e6f3b14431fd305cf93610a9533ba0356f189cdb47c631a086c89a1171d0 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
 _:cb30de0e6f3b14431fd305cf93610a9533ba0356f189cdb47c631a086c89a1171d0 <http://www.w3.org/ns/shacl#order> "4"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb30de0e6f3b14431fd305cf93610a9533ba0356f189cdb47c631a086c89a1171d0 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/id> .
+_:cb30eeb789bb5c14738d09df2bef74a687fd4165d68a8127fa5521954c5ae9ffe22 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
+_:cb30eeb789bb5c14738d09df2bef74a687fd4165d68a8127fa5521954c5ae9ffe22 <http://www.w3.org/ns/shacl#description> "Repeatable BCP-47 language tags for the multilingual entity names (SIG-ONTO-069)." .
+_:cb30eeb789bb5c14738d09df2bef74a687fd4165d68a8127fa5521954c5ae9ffe22 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+_:cb30eeb789bb5c14738d09df2bef74a687fd4165d68a8127fa5521954c5ae9ffe22 <http://www.w3.org/ns/shacl#order> "3"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb30eeb789bb5c14738d09df2bef74a687fd4165d68a8127fa5521954c5ae9ffe22 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/name_lang> .
 _:cb30f0e5472ebfde68fba661c443228ae62dd40d515222cd62fb2cb223b7e2495c6 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
 _:cb30f0e5472ebfde68fba661c443228ae62dd40d515222cd62fb2cb223b7e2495c6 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb30f0e5472ebfde68fba661c443228ae62dd40d515222cd62fb2cb223b7e2495c6 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
@@ -2892,6 +2942,10 @@ _:cb30f44320801a1827dad4e4fc8e92897975b952644435b607ce1847a4582e7423b <http://ww
 _:cb30f44320801a1827dad4e4fc8e92897975b952644435b607ce1847a4582e7423b <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
 _:cb30f44320801a1827dad4e4fc8e92897975b952644435b607ce1847a4582e7423b <http://www.w3.org/ns/shacl#order> "0"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb30f44320801a1827dad4e4fc8e92897975b952644435b607ce1847a4582e7423b <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/deploying_organization> .
+_:cb3110e6e26190f426f683c6dd53e920f012ed04499b0fad2c08196a112a0378664 <http://www.w3.org/ns/shacl#in> _:cbf72a907be468e8f5d5733e1d4c9ca0cf272cfc27ab1fe36fa3d230002198c96c .
+_:cb3110e6e26190f426f683c6dd53e920f012ed04499b0fad2c08196a112a0378664 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb3110e6e26190f426f683c6dd53e920f012ed04499b0fad2c08196a112a0378664 <http://www.w3.org/ns/shacl#order> "5"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb3110e6e26190f426f683c6dd53e920f012ed04499b0fad2c08196a112a0378664 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/organization_type> .
 _:cb311be58194ddcfa6eebd7ca158645eede39d1b8de68e536476b1959a6274168b9 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#dateTime> .
 _:cb311be58194ddcfa6eebd7ca158645eede39d1b8de68e536476b1959a6274168b9 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb311be58194ddcfa6eebd7ca158645eede39d1b8de68e536476b1959a6274168b9 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
@@ -3015,11 +3069,6 @@ _:cb3270cad61fe5937d405655142dfc640c9c4c61481224a95b66fc446fc04198b30 <http://ww
 _:cb3270cad61fe5937d405655142dfc640c9c4c61481224a95b66fc446fc04198b30 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/valid_to> .
 _:cb327b8991c8b14a217f1483a9999a02a1e1eb4017ab9c2374c763651936f594b4c <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "replaced_by" .
 _:cb327b8991c8b14a217f1483a9999a02a1e1eb4017ab9c2374c763651936f594b4c <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb3315e6551d7eb744ba5adb3bd3932ce6091dd6ce4c5e63b3a763948be16499852 .
-_:cb328ae927e79a4c2f64fa068b95e9878a210a52fabf89df2a36d5833ba98e4efcd <http://www.w3.org/ns/shacl#class> <https://ontology.sig-project.org/schema/Jurisdiction> .
-_:cb328ae927e79a4c2f64fa068b95e9878a210a52fabf89df2a36d5833ba98e4efcd <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb328ae927e79a4c2f64fa068b95e9878a210a52fabf89df2a36d5833ba98e4efcd <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
-_:cb328ae927e79a4c2f64fa068b95e9878a210a52fabf89df2a36d5833ba98e4efcd <http://www.w3.org/ns/shacl#order> "6"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb328ae927e79a4c2f64fa068b95e9878a210a52fabf89df2a36d5833ba98e4efcd <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/jurisdiction> .
 _:cb3292237c0be086ef2ace55bdd5be010e38264d1d0ac8d929d6760106cbe5bc232 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb3292237c0be086ef2ace55bdd5be010e38264d1d0ac8d929d6760106cbe5bc232 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
 _:cb3292237c0be086ef2ace55bdd5be010e38264d1d0ac8d929d6760106cbe5bc232 <http://www.w3.org/ns/shacl#order> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
@@ -3029,11 +3078,6 @@ _:cb32a139a449b55635ea9076b9de91567981681c58c3f997339dbcf2b2ecfe48a89 <http://ww
 _:cb32a139a449b55635ea9076b9de91567981681c58c3f997339dbcf2b2ecfe48a89 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
 _:cb32a139a449b55635ea9076b9de91567981681c58c3f997339dbcf2b2ecfe48a89 <http://www.w3.org/ns/shacl#order> "9"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb32a139a449b55635ea9076b9de91567981681c58c3f997339dbcf2b2ecfe48a89 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/id> .
-_:cb32b1db7a40a6d6f6aee78de904e070686edc6eefc26523caabb53ca66c9fe5f18 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
-_:cb32b1db7a40a6d6f6aee78de904e070686edc6eefc26523caabb53ca66c9fe5f18 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb32b1db7a40a6d6f6aee78de904e070686edc6eefc26523caabb53ca66c9fe5f18 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
-_:cb32b1db7a40a6d6f6aee78de904e070686edc6eefc26523caabb53ca66c9fe5f18 <http://www.w3.org/ns/shacl#order> "12"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb32b1db7a40a6d6f6aee78de904e070686edc6eefc26523caabb53ca66c9fe5f18 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/valid_to> .
 _:cb32c464f375ed4e247821a7ddfa41591fbf0bd369db48f89ad6e2309d44b140fdf <http://www.w3.org/ns/shacl#class> <https://ontology.sig-project.org/schema/Organization> .
 _:cb32c464f375ed4e247821a7ddfa41591fbf0bd369db48f89ad6e2309d44b140fdf <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb32c464f375ed4e247821a7ddfa41591fbf0bd369db48f89ad6e2309d44b140fdf <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
@@ -3046,11 +3090,6 @@ _:cb32fd1f86709664c1ab0278e7530893abe620cf2e918a8c55e8b0f32110ae76823 <http://ww
 _:cb32fd1f86709664c1ab0278e7530893abe620cf2e918a8c55e8b0f32110ae76823 <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb32fd1f86709664c1ab0278e7530893abe620cf2e918a8c55e8b0f32110ae76823 <http://www.w3.org/ns/shacl#order> "7"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb32fd1f86709664c1ab0278e7530893abe620cf2e918a8c55e8b0f32110ae76823 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/edge_type> .
-_:cb3300e4ff80bde1346a1177328c4f268429d29d1b732c189dcec18594f5b186da7 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
-_:cb3300e4ff80bde1346a1177328c4f268429d29d1b732c189dcec18594f5b186da7 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb3300e4ff80bde1346a1177328c4f268429d29d1b732c189dcec18594f5b186da7 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
-_:cb3300e4ff80bde1346a1177328c4f268429d29d1b732c189dcec18594f5b186da7 <http://www.w3.org/ns/shacl#order> "9"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb3300e4ff80bde1346a1177328c4f268429d29d1b732c189dcec18594f5b186da7 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/valid_to> .
 _:cb3315e6551d7eb744ba5adb3bd3932ce6091dd6ce4c5e63b3a763948be16499852 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "succeeds" .
 _:cb3315e6551d7eb744ba5adb3bd3932ce6091dd6ce4c5e63b3a763948be16499852 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb2f2b0789a3858ff646c4b5bb8367ec5ae527894b38867e69ac29ddd54481a5b20 .
 _:cb331ee205b6e6540a34eb05c6c9a1835443bab1bc1b19f192334298870e8d56f83 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "unknown" .
@@ -3075,6 +3114,10 @@ _:cb334138ad4b7e50d74336ce0da36bba23daa568fc029c733a34daee035246a5eb7 <http://ww
 _:cb334138ad4b7e50d74336ce0da36bba23daa568fc029c733a34daee035246a5eb7 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
 _:cb334138ad4b7e50d74336ce0da36bba23daa568fc029c733a34daee035246a5eb7 <http://www.w3.org/ns/shacl#order> "10"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb334138ad4b7e50d74336ce0da36bba23daa568fc029c733a34daee035246a5eb7 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/asserted_by> .
+_:cb33424a578324885068c4f804fd3a22fd2e1313b141e9e25057457fd4b82cb677c <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
+_:cb33424a578324885068c4f804fd3a22fd2e1313b141e9e25057457fd4b82cb677c <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+_:cb33424a578324885068c4f804fd3a22fd2e1313b141e9e25057457fd4b82cb677c <http://www.w3.org/ns/shacl#order> "9"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb33424a578324885068c4f804fd3a22fd2e1313b141e9e25057457fd4b82cb677c <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/identifier_system> .
 _:cb3347ae2da6a026e9285356977ebfa6f10ba054e1d1d18ea80700b4697eb676bef <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "participates_in" .
 _:cb3347ae2da6a026e9285356977ebfa6f10ba054e1d1d18ea80700b4697eb676bef <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb27a19b4ed94b3d3279b06edd34c6caced642783f99df79a0115efed186dd82e81 .
 _:cb3374a45d6f1a04a54378e4cce383fca10f2b84c4400dd5181a6be4b57ebc7515d <http://www.w3.org/ns/shacl#description> "Typed from the closed catalog (§12.1.2)." .
@@ -3190,10 +3233,6 @@ _:cb359943db7fcbfeb77a8073554c3f75089a563ab03895210a0ac5ebb15c47d430c <http://ww
 _:cb359943db7fcbfeb77a8073554c3f75089a563ab03895210a0ac5ebb15c47d430c <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
 _:cb359943db7fcbfeb77a8073554c3f75089a563ab03895210a0ac5ebb15c47d430c <http://www.w3.org/ns/shacl#order> "3"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb359943db7fcbfeb77a8073554c3f75089a563ab03895210a0ac5ebb15c47d430c <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/id> .
-_:cb359ec6d98837a06455a175c806550bd40727e941669b97db9a6bf4ed34fbdadf1 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
-_:cb359ec6d98837a06455a175c806550bd40727e941669b97db9a6bf4ed34fbdadf1 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
-_:cb359ec6d98837a06455a175c806550bd40727e941669b97db9a6bf4ed34fbdadf1 <http://www.w3.org/ns/shacl#order> "8"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb359ec6d98837a06455a175c806550bd40727e941669b97db9a6bf4ed34fbdadf1 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/identifier_system> .
 _:cb35a6965641385d4dcf3b42e980de02ae914e14ee135cd750b2294938e6978d72b <http://www.w3.org/ns/shacl#description> "The entity's stable minted identity (L2 identity only, §8.2)." .
 _:cb35a6965641385d4dcf3b42e980de02ae914e14ee135cd750b2294938e6978d72b <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb35a6965641385d4dcf3b42e980de02ae914e14ee135cd750b2294938e6978d72b <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
@@ -3232,6 +3271,11 @@ _:cb360c55009bd25d20510a6f68d61fbdf2211737eff2fc7cfe05820b461cfc5ef7e <http://ww
 _:cb360c55009bd25d20510a6f68d61fbdf2211737eff2fc7cfe05820b461cfc5ef7e <http://www.w3.org/ns/shacl#minCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb360c55009bd25d20510a6f68d61fbdf2211737eff2fc7cfe05820b461cfc5ef7e <http://www.w3.org/ns/shacl#order> "3"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb360c55009bd25d20510a6f68d61fbdf2211737eff2fc7cfe05820b461cfc5ef7e <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/edge_type> .
+_:cb36202ce7a38cd3aa8d32c3d47c3812474b6977fb2a1b3629064f5cd068822d548 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
+_:cb36202ce7a38cd3aa8d32c3d47c3812474b6977fb2a1b3629064f5cd068822d548 <http://www.w3.org/ns/shacl#description> "Repeatable (scheme,value) pairs, qualified by identifier_system (SIG-IDENT-006)." .
+_:cb36202ce7a38cd3aa8d32c3d47c3812474b6977fb2a1b3629064f5cd068822d548 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+_:cb36202ce7a38cd3aa8d32c3d47c3812474b6977fb2a1b3629064f5cd068822d548 <http://www.w3.org/ns/shacl#order> "8"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb36202ce7a38cd3aa8d32c3d47c3812474b6977fb2a1b3629064f5cd068822d548 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/identifier> .
 _:cb3677d8a4c84315a590ea27b2cedbf2df1f719f696b5d368e8df2713eed4b08d8c <http://www.w3.org/ns/shacl#description> "The entity's stable minted identity (L2 identity only, §8.2)." .
 _:cb3677d8a4c84315a590ea27b2cedbf2df1f719f696b5d368e8df2713eed4b08d8c <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb3677d8a4c84315a590ea27b2cedbf2df1f719f696b5d368e8df2713eed4b08d8c <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
@@ -3254,6 +3298,16 @@ _:cb36d46e6f253d82428b6dd87195dd1458e7aa74e435174392d9da882ca9c1bd66c <http://ww
 _:cb36d46e6f253d82428b6dd87195dd1458e7aa74e435174392d9da882ca9c1bd66c <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/source> .
 _:cb36e96dfa349ca09b34956c94e350147a8fd9df2142ddf8a8f25e5a65ac949928c <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "absorbed_by" .
 _:cb36e96dfa349ca09b34956c94e350147a8fd9df2142ddf8a8f25e5a65ac949928c <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb190d5e55f4ac3ff1a4346ba0e192465e629702abc4c8cf7ba736fcd9add7dca57 .
+_:cb36eeb8db7ba98e7606de91ae4c2a98159cda4094f931f53d481cbda8563f3b923 <http://www.w3.org/ns/shacl#class> <https://ontology.sig-project.org/schema/Organization> .
+_:cb36eeb8db7ba98e7606de91ae4c2a98159cda4094f931f53d481cbda8563f3b923 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb36eeb8db7ba98e7606de91ae4c2a98159cda4094f931f53d481cbda8563f3b923 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
+_:cb36eeb8db7ba98e7606de91ae4c2a98159cda4094f931f53d481cbda8563f3b923 <http://www.w3.org/ns/shacl#order> "6"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb36eeb8db7ba98e7606de91ae4c2a98159cda4094f931f53d481cbda8563f3b923 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/parent_organization> .
+_:cb37176926f4a235cd2dde43cffa49e34e2458614554fbe79630043a53ce4e15a42 <http://www.w3.org/ns/shacl#description> "The entity's stable minted identity (L2 identity only, §8.2)." .
+_:cb37176926f4a235cd2dde43cffa49e34e2458614554fbe79630043a53ce4e15a42 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb37176926f4a235cd2dde43cffa49e34e2458614554fbe79630043a53ce4e15a42 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
+_:cb37176926f4a235cd2dde43cffa49e34e2458614554fbe79630043a53ce4e15a42 <http://www.w3.org/ns/shacl#order> "17"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb37176926f4a235cd2dde43cffa49e34e2458614554fbe79630043a53ce4e15a42 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/id> .
 _:cb3722797030a3e8d9a111ce8758ba4248bdd946f39733c3c5d1fc236d6f14ae0e1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "provides_platform_to" .
 _:cb3722797030a3e8d9a111ce8758ba4248bdd946f39733c3c5d1fc236d6f14ae0e1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1838dde9da3adafaf773082aa462ecf940530c41648f6f8f3b656552747c02ae4 .
 _:cb373cd347495584cfe6c809c0a00aac4cd8f7c825ef28d067216c47f5ab71113b4 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
@@ -3303,16 +3357,16 @@ _:cb38056df179e75923a05410c235f2c19159070f96364e41f622270e44287b5f5a7 <http://ww
 _:cb38056df179e75923a05410c235f2c19159070f96364e41f622270e44287b5f5a7 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
 _:cb38056df179e75923a05410c235f2c19159070f96364e41f622270e44287b5f5a7 <http://www.w3.org/ns/shacl#order> "0"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb38056df179e75923a05410c235f2c19159070f96364e41f622270e44287b5f5a7 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/id> .
+_:cb380d4aa4b729f429dd520dfbd9438676996ff80ef99fef8b689fa4e93ee19adfc <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
+_:cb380d4aa4b729f429dd520dfbd9438676996ff80ef99fef8b689fa4e93ee19adfc <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb380d4aa4b729f429dd520dfbd9438676996ff80ef99fef8b689fa4e93ee19adfc <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
+_:cb380d4aa4b729f429dd520dfbd9438676996ff80ef99fef8b689fa4e93ee19adfc <http://www.w3.org/ns/shacl#order> "13"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:cb380d4aa4b729f429dd520dfbd9438676996ff80ef99fef8b689fa4e93ee19adfc <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/valid_to> .
 _:cb385383e72da4ae835436850a1c7fed3e9467c99c3b46aac5dadfb096bb24d74cc <http://www.w3.org/ns/shacl#description> "The entity's stable minted identity (L2 identity only, §8.2)." .
 _:cb385383e72da4ae835436850a1c7fed3e9467c99c3b46aac5dadfb096bb24d74cc <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb385383e72da4ae835436850a1c7fed3e9467c99c3b46aac5dadfb096bb24d74cc <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
 _:cb385383e72da4ae835436850a1c7fed3e9467c99c3b46aac5dadfb096bb24d74cc <http://www.w3.org/ns/shacl#order> "3"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb385383e72da4ae835436850a1c7fed3e9467c99c3b46aac5dadfb096bb24d74cc <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/id> .
-_:cb38718e9689f8739e5871753fc11ab0576768ead0702b7bab5baad04301c65c2b0 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
-_:cb38718e9689f8739e5871753fc11ab0576768ead0702b7bab5baad04301c65c2b0 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb38718e9689f8739e5871753fc11ab0576768ead0702b7bab5baad04301c65c2b0 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#Literal> .
-_:cb38718e9689f8739e5871753fc11ab0576768ead0702b7bab5baad04301c65c2b0 <http://www.w3.org/ns/shacl#order> "9"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb38718e9689f8739e5871753fc11ab0576768ead0702b7bab5baad04301c65c2b0 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/government_domain> .
 _:cb38756fc2f27a5261d5924671db98b5e74e0f68a978586352f404b21f3918ff02d <http://www.w3.org/ns/shacl#description> "Required; direction/scope/automaticity/kind are all required (SIG-ONTO-049)." .
 _:cb38756fc2f27a5261d5924671db98b5e74e0f68a978586352f404b21f3918ff02d <http://www.w3.org/ns/shacl#in> _:cb93d6855f8544e675e25e9c3e41924090075bedeca7fda4aba0b901603b823f14 .
 _:cb38756fc2f27a5261d5924671db98b5e74e0f68a978586352f404b21f3918ff02d <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
@@ -3343,11 +3397,6 @@ _:cb38ec936cace1189797548619095b78d892299b9b6f0d166e6659c258395b77248 <http://ww
 _:cb38ec936cace1189797548619095b78d892299b9b6f0d166e6659c258395b77248 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
 _:cb38ec936cace1189797548619095b78d892299b9b6f0d166e6659c258395b77248 <http://www.w3.org/ns/shacl#order> "12"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb38ec936cace1189797548619095b78d892299b9b6f0d166e6659c258395b77248 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/parent_cooperative_contract> .
-_:cb390cbcf7090f757e452710f2967741ff4ef5b5f84ec1971878018dea86883c56d <http://www.w3.org/ns/shacl#class> <https://ontology.sig-project.org/schema/Organization> .
-_:cb390cbcf7090f757e452710f2967741ff4ef5b5f84ec1971878018dea86883c56d <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb390cbcf7090f757e452710f2967741ff4ef5b5f84ec1971878018dea86883c56d <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
-_:cb390cbcf7090f757e452710f2967741ff4ef5b5f84ec1971878018dea86883c56d <http://www.w3.org/ns/shacl#order> "5"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb390cbcf7090f757e452710f2967741ff4ef5b5f84ec1971878018dea86883c56d <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/parent_organization> .
 _:cb3914743cf67598a13e8864b57a50733bce1201694c9db1a3af794e38dec218326 <http://www.w3.org/ns/shacl#datatype> <http://www.w3.org/2001/XMLSchema#string> .
 _:cb3914743cf67598a13e8864b57a50733bce1201694c9db1a3af794e38dec218326 <http://www.w3.org/ns/shacl#description> "Normalized reason_category retains the raw value (P2)." .
 _:cb3914743cf67598a13e8864b57a50733bce1201694c9db1a3af794e38dec218326 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
@@ -3415,11 +3464,6 @@ _:cb3ac71fc1a53937724431882948d9cdc32c8bfae9b09641f3185c6d1f43e11f22c <http://ww
 _:cb3ac71fc1a53937724431882948d9cdc32c8bfae9b09641f3185c6d1f43e11f22c <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
 _:cb3ac71fc1a53937724431882948d9cdc32c8bfae9b09641f3185c6d1f43e11f22c <http://www.w3.org/ns/shacl#order> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb3ac71fc1a53937724431882948d9cdc32c8bfae9b09641f3185c6d1f43e11f22c <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/source_org> .
-_:cb3ad9c63e4ee57896b2183870200800847e3afd0111a8676490564050671659e72 <http://www.w3.org/ns/shacl#description> "The entity's stable minted identity (L2 identity only, §8.2)." .
-_:cb3ad9c63e4ee57896b2183870200800847e3afd0111a8676490564050671659e72 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb3ad9c63e4ee57896b2183870200800847e3afd0111a8676490564050671659e72 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
-_:cb3ad9c63e4ee57896b2183870200800847e3afd0111a8676490564050671659e72 <http://www.w3.org/ns/shacl#order> "16"^^<http://www.w3.org/2001/XMLSchema#integer> .
-_:cb3ad9c63e4ee57896b2183870200800847e3afd0111a8676490564050671659e72 <http://www.w3.org/ns/shacl#path> <https://ontology.sig-project.org/schema/id> .
 _:cb3aef1bbf9f2b6086d1bc7a0ffda98b1fd072a07a72ad07e922fd7d60bc2c0c4c4 <http://www.w3.org/ns/shacl#class> <https://ontology.sig-project.org/schema/Organization> .
 _:cb3aef1bbf9f2b6086d1bc7a0ffda98b1fd072a07a72ad07e922fd7d60bc2c0c4c4 <http://www.w3.org/ns/shacl#maxCount> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
 _:cb3aef1bbf9f2b6086d1bc7a0ffda98b1fd072a07a72ad07e922fd7d60bc2c0c4c4 <http://www.w3.org/ns/shacl#nodeKind> <http://www.w3.org/ns/shacl#IRI> .
@@ -3573,10 +3617,10 @@ _:cb93d6855f8544e675e25e9c3e41924090075bedeca7fda4aba0b901603b823f14 <http://www
 _:cb93d6855f8544e675e25e9c3e41924090075bedeca7fda4aba0b901603b823f14 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb20d76207a61d3c21325cafe4596c5c6d3b4c83f4a69bb40a19c7006d7035e17d1 .
 _:cb985f1f651ce9a5ea917b4070357912fee228004012c17fc2cdfe0e9deb581ee8 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "R5" .
 _:cb985f1f651ce9a5ea917b4070357912fee228004012c17fc2cdfe0e9deb581ee8 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1225a78b0f595b1ee6c5f403624139a686c9a5c1b1e5d6e03289dee72c95e3cbe .
-_:cb9abcf2df0c40d59c8084859584d576305fae0d08331db69dc27a10d7d7c3a658 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "data_broker" .
-_:cb9abcf2df0c40d59c8084859584d576305fae0d08331db69dc27a10d7d7c3a658 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1b53554955c5934c9f4197b70a6657ec0b55abe903783b6ee2d30d555fae9b839 .
 _:cb9ca1bc2a6f6466d09a473ad0c9dea9cbb7c123ee20cebffee7b81078efb22371 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "rf_oui_match" .
 _:cb9ca1bc2a6f6466d09a473ad0c9dea9cbb7c123ee20cebffee7b81078efb22371 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1b92cf46467280b09e95c97470292b3a3f66e9887f713b3d44b873469b29e2be6 .
+_:cb9e788f9a341c2949d8af7af1a2782eb137ebbf8f5030a61cd07ae0ab8fe8b72d <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "data_broker" .
+_:cb9e788f9a341c2949d8af7af1a2782eb137ebbf8f5030a61cd07ae0ab8fe8b72d <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb17a248cdf92659ec7c22d640737edf734916779d7235175377374aeb9108edd52 .
 _:cba2c8481489dfeff59354e19cb0522d8d8abb52d39ececcda82de98b4caf88ce2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "own" .
 _:cba2c8481489dfeff59354e19cb0522d8d8abb52d39ececcda82de98b4caf88ce2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1545eb23dc2ecbdbe0af960fbfe751448ed455d28a7a378a5e86ea785deec08e3 .
 _:cbab2ba923570b707bf387b7e3b96815dcd69c17701e1e3e29807082288a498e29 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "state" .
@@ -3682,10 +3726,16 @@ _:cbf2873846629ed083cf4a895b51f69c8987605de4560edb102160f4fc49fcb541 <http://www
 _:cbf2873846629ed083cf4a895b51f69c8987605de4560edb102160f4fc49fcb541 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1d20d069bd6f5de402455842ca28f63f08499fd5fa2e265fb834202faa07f23f1 .
 _:cbf2b151a32e2c8f879c64e7a97e31e13674c5f927ea8afebf958dd583ba430bd5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "state" .
 _:cbf2b151a32e2c8f879c64e7a97e31e13674c5f927ea8afebf958dd583ba430bd5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb16ca36ead38aebb3fad18166ae939ef64277c29607aefd6570049ab3efb482888 .
+_:cbf343847a79a39f3d1225dce04f5895076337675f6a14bb87488c0d48e2a504f3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "fr.arrete_prefectoral" .
+_:cbf343847a79a39f3d1225dce04f5895076337675f6a14bb87488c0d48e2a504f3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb1490c4250b4ad4fcd9f9f212a786760d06649892b13fa8c2e79f986f6f465be5f .
 _:cbf66ff3f64bdc405b916eea5a5af16100567714feafa366aabe77e56e255b1107 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/buyer> .
 _:cbf66ff3f64bdc405b916eea5a5af16100567714feafa366aabe77e56e255b1107 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbced95eb7c39e125ec20cb6cd5a4fe991ab9a4c20718eb8a6290cf3bcd9c45f64 .
+_:cbf72a907be468e8f5d5733e1d4c9ca0cf272cfc27ab1fe36fa3d230002198c96c <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "law_enforcement" .
+_:cbf72a907be468e8f5d5733e1d4c9ca0cf272cfc27ab1fe36fa3d230002198c96c <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb19e74285d135a4deaa952e036acb4f890c9aa504793518ffc6c65df4905358ebc .
 _:cbf7356bd72c2b80478d65fe571bd5f4448becd91cfe02acf298dc4242fda9230f <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/family> .
 _:cbf7356bd72c2b80478d65fe571bd5f4448becd91cfe02acf298dc4242fda9230f <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cbfd5f4b175338ab0230b838dcbf147b12f1a1eb1f894f2db5e224c51fb7db91ec .
+_:cbf9e8d49cf38a08133173711208dba5bbda355e2a8eb1f79922c8abed9321d35a <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "us.le.university_police" .
+_:cbf9e8d49cf38a08133173711208dba5bbda355e2a8eb1f79922c8abed9321d35a <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb21c0c21b824db6eb3d7fb4e4f3b91e305f22fbeec3af5f83c765b7a7f11325032 .
 _:cbf9f863f8984b7440b30ff7dd0980188ace75a0eaf7cbe71861fa55a931a83506 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> <https://ontology.sig-project.org/schema/holds_data_collected_by> .
 _:cbf9f863f8984b7440b30ff7dd0980188ace75a0eaf7cbe71861fa55a931a83506 <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> _:cb19fc8c9214e76e15ca369bb0dd89451904fe6ea5d54376f1e1560f0ac64160b93 .
 _:cbfaf1ebf17d6c66b58e7cb46711b9af1f3af318de81fc6d3015fc4e08348bbf11 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> "no_responsive_records" .
