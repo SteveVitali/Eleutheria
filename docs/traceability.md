@@ -1691,3 +1691,50 @@ in P16.1 and is re-cited here as the §35-owned surface.
 |---|---|---|
 | SIG-ENG-004 (every new requirement has an automated test) | `tasks.contribution`; `policy.licensing` contribution gate; `api` claim attribution | `tests/tasks/test_tasks_contribution.py`; `tests/unit/test_policy_licensing.py`; `tests/api/test_api_coverage_license.py`; `tests/exports/test_compartments.py` |
 | Phase gate: CI green incl. data-quality; ADR for the deviation; traceability + risk register updated | ADR-055; this section; `docs/risk_register.md` (Phase 16 — P16.2) | `make check` (lint/format/typecheck/pytest/verify-gen); `test_policy_adrs.py` (ADR-055 revisit trigger) |
+
+# P17.1 — Private-camera federation and RTCC integration (Stage 5)
+
+Phase 17 is the standing proof of §5.2: the schema frozen in Phase 2/4 absorbs a
+Stage-5 technology span with **no change**. P17.1 *populates* the Appendix D.5
+pathways — private-camera federation, RTCC integration hubs, and the six-layer
+commercial data-broker chain — as instance graphs over the generated Pydantic
+model, extending the generalization conformance suite. No LinkML source, generated
+artifact, or wire contract changed (the ontology is owned by P01.1); a construct
+that required a new schema element would fail the suite and be recorded as a
+Phase-1 defect, not patched here.
+
+## Populated with no schema change (§5.2, SIG-CHART-027/028)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-CHART-027/028 / AC1 (each Stage-5 construct populated with no schema change; every edge type, role, entity class, and §13.1 slug the pathways use already exists — the deterministic Phase-1-defect detector) | `tests/ontology/generalization/test_stage5_federation.py`; generated Pydantic models; `ontology/vocab/technology.yaml` (unchanged) | `test_stage5_federation.py::test_stage5_population_required_no_schema_change` |
+
+## Private-camera federation — Appendix D.5 pathway 1 (SIG-ONTO-045/046/047/048)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ONTO-047/048 #1 / AC3 (owner ≠ operator independently representable — a private camera owned by a business, operated by a police RTCC, as two first-class `RoleAssignment`s over the same asset) | `RoleAssignment` (`role`/`party`/`over`); populated pathway 1 | `test_stage5_federation.py::test_private_camera_owner_is_independently_separable_from_operator` |
+| SIG-ONTO-045/046 / AC1 deliverable 1 (`enrolls_asset_into` — object is a *device* — kept distinct from a live-feed fact carrying its own `consent_gate`; registry vs integration are distinct vocab concepts) | `IntegrationEdge` (`enrolls_asset_into` vs `ingests_feed_from`, `consent_gate`, `data_comes_to_rest`); `technology.yaml` `private-camera-registry` / `private-camera-integration` | `test_stage5_federation.py::test_enrolment_is_a_device_edge_distinct_from_the_consent_gated_live_feed` |
+| §12.3 (`federates_search_to`: the query moves, the corpus stays with A) | `IntegrationEdge` (`federates_search_to`, `data_comes_to_rest=False`) | `test_stage5_federation.py::test_platform_federates_search_to_rtcc_corpus_stays_put` |
+| SIG-ONTO-045 (no stored `integrates_with` in the populated pathway) | `EdgeType` (absent by construction) | `test_stage5_federation.py::test_pathway1_stores_no_integrates_with` |
+
+## RTCC integration hubs consuming other systems (SIG-ONTO-045/046, §11.10 SIG-ONTO-031)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ONTO-045/046 / AC3 deliverable 2 (an integration hub that consumes other systems modelled as a `DataSystem` + directional `ingests_feed_from` / `federates_search_to` / `pushes_alerts_to`, never a stored `integrates_with`) | `DataSystem`; `IntegrationEdge`; `technology.yaml` `rtcc-platform` / `camera-federation-hub` | `test_stage5_federation.py::test_rtcc_hub_consumes_other_systems_via_directional_edges`, `::test_hub_stores_no_integrates_with` |
+| SIG-ONTO-031 (a reference database is infrastructure — a `DataSystem` even with no owned sensor) | `DataSystem` (`system_scope`, no `PhysicalAsset`) | `test_stage5_federation.py::test_reference_database_is_infrastructure_with_no_sensor` |
+
+## Commercial data-broker chain — six layers, not five (SIG-ONTO-046, Appendix D.5 pathway 3)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ONTO-046 / AC2 (the chain is representable with distinct aggregator and productizer roles — six distinct organizations, `resells_data_from` between separate broker and productizing-platform orgs, not collapsed) | `AccessRelationship` (`subscribes_to`/`resells_data_from`, `scope=commercial`); six-org populated chain (R7 F7.29) | `test_stage5_federation.py::test_broker_chain_has_six_distinct_layers`, `::test_aggregator_and_productizer_are_distinct_organizations`, `::test_broker_chain_edge_sequence_is_subscribes_then_two_resells` |
+| SIG-CHART-027 (§13.1 broker-chain vocabulary concepts exist) | `technology.yaml` `third-party-investigative-platform` / `person-records-broker` / `adtech-location-purchase` | `test_stage5_federation.py::test_broker_chain_technology_concepts_exist` |
+
+## Phase gate (§51.3)
+
+| Requirement | Where | Test |
+|---|---|---|
+| SIG-ENG-004 (every new requirement has an automated test) | `tests/ontology/generalization/test_stage5_federation.py` | `make check` (pytest) |
+| Phase gate: CI green incl. data-quality; no deviation (no ADR needed — no schema change); traceability + risk register updated | this section; `docs/risk_register.md` (Phase 17 — P17.1) | `make check` (lint/format/typecheck/pytest/verify-gen — `verify-gen` proves the ontology is byte-unchanged) |
