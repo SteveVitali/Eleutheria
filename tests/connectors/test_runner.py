@@ -34,17 +34,20 @@ _ATLAS_FIX = Path(__file__).resolve().parents[1] / "connectors" / "fixtures" / "
 
 
 def test_no_seeded_source_is_review_status_green() -> None:
-    # HG-03: no source is flipped this run, so every critical-path source is
-    # refused for a live fetch.
-    for source_id in ("osm_overpass", "eff_atlas_of_surveillance", "muckrock", "usaspending"):
+    # After the RIGHTS.1 flip re-run (GL-GATE-03) the OKC critical subset is green;
+    # the sources that stay gated (news LINK-posture + un-reviewed federal/records
+    # channels) are still refused for a live fetch.
+    for source_id in ("journalrecord", "oklahoman", "muckrock", "usaspending"):
         assert not is_review_status_green(source_id)
         assert live_gate_reasons(source_id)
 
 
 def test_live_mode_refuses_an_ungated_source_with_reasons() -> None:
+    # usaspending stays un-flipped / UNDETERMINED (not in the GL-GATE-03 subset), so
+    # a live fetch is refused with the gate reasons.
     with pytest.raises(LiveGateRefused) as excinfo:
-        run_source("osm_overpass", mode=RunMode.LIVE, sink_kind="memory")
-    assert excinfo.value.source_id == "osm_overpass"
+        run_source("usaspending", mode=RunMode.LIVE, sink_kind="memory")
+    assert excinfo.value.source_id == "usaspending"
     assert any("ingestion_permitted" in r for r in excinfo.value.reasons)
 
 
@@ -54,15 +57,15 @@ def test_live_refusal_opens_no_socket() -> None:
     # LiveGateRefused proves the gate is checked first.
     with network_isolated():
         with pytest.raises(LiveGateRefused):
-            run_source("osm_overpass", mode=RunMode.LIVE, sink_kind="memory")
+            run_source("usaspending", mode=RunMode.LIVE, sink_kind="memory")
 
 
 def test_cli_live_mode_exits_3_and_prints_gate_reasons(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    # AC: `sig-connectors run --source osm_overpass --mode live --sink memory`
+    # AC: `sig-connectors run --source usaspending --mode live --sink memory`
     # on an un-flipped source exits 3 and prints the gate reasons.
-    code = main(["run", "--source", "osm_overpass", "--mode", "live", "--sink", "memory"])
+    code = main(["run", "--source", "usaspending", "--mode", "live", "--sink", "memory"])
     out = capsys.readouterr().out
     assert code == 3
     assert "REFUSED" in out
