@@ -1,0 +1,133 @@
+{
+  "api_url": "http://127.0.0.1:8000",
+  "as_of": "2026-09-14",
+  "jurisdiction": "france",
+  "mode": "fixture-backed (shadow); no green sources \u2014 HG-03/HG-04 pending (not live)",
+  "queries": [
+    {
+      "blocker": "",
+      "carrier": "LegalInstrument \u2192 authorization_state (arr\u00eat\u00e9 pr\u00e9fectoral)",
+      "detail": "resolution_status=RESOLVED, value='authorized', considered=1 claim(s).",
+      "endpoint": "/v1/resolution/sig:deployment:france-gex-videoprotection/authorization_state",
+      "id": "FR-1",
+      "in_fixture_subset": true,
+      "question": "La vid\u00e9oprotection est-elle autoris\u00e9e ?",
+      "status": "pass"
+    },
+    {
+      "blocker": "",
+      "carrier": "statutory_citation (Code de la s\u00e9curit\u00e9 int\u00e9rieure)",
+      "detail": "resolution_status=RESOLVED, value='Code de la s\u00e9curit\u00e9 int\u00e9rieure, art. L251-1 \u00e0 L255-1', considered=1 claim(s).",
+      "endpoint": "/v1/resolution/sig:deployment:france-gex-videoprotection/statutory_citation",
+      "id": "FR-2",
+      "in_fixture_subset": true,
+      "question": "Sous quel r\u00e9gime juridique ?",
+      "status": "pass"
+    },
+    {
+      "blocker": "",
+      "carrier": "deployment_exists",
+      "detail": "resolution_status=RESOLVED, value=True, considered=1 claim(s).",
+      "endpoint": "/v1/resolution/sig:deployment:france-gex-videoprotection/deployment_exists",
+      "id": "FR-3",
+      "in_fixture_subset": true,
+      "question": "Le d\u00e9ploiement est-il attest\u00e9 ?",
+      "status": "pass"
+    },
+    {
+      "blocker": "",
+      "carrier": "Contract \u2192 contract_value (march\u00e9 DECP)",
+      "detail": "resolution_status=RESOLVED, value=50754, considered=1 claim(s).",
+      "endpoint": "/v1/resolution/contract:france:decp-2025kazvs0000000/contract_value",
+      "id": "FR-4",
+      "in_fixture_subset": true,
+      "question": "Quel march\u00e9 public a \u00e9t\u00e9 notifi\u00e9 ?",
+      "status": "pass"
+    },
+    {
+      "blocker": "",
+      "carrier": "implements_technology (camera-fixed-cctv)",
+      "detail": "resolution_status=RESOLVED, value='camera-fixed-cctv', considered=1 claim(s).",
+      "endpoint": "/v1/resolution/sig:deployment:france-gex-videoprotection/implements_technology",
+      "id": "FR-6",
+      "in_fixture_subset": true,
+      "question": "Quelle technologie est mise en \u0153uvre ?",
+      "status": "pass"
+    },
+    {
+      "blocker": "",
+      "carrier": "Organization (police municipale de Gex)",
+      "detail": "6 entity(ies) match 'france' in the composed spine.",
+      "endpoint": "/v1/search?q=france",
+      "id": "FR-5",
+      "in_fixture_subset": true,
+      "question": "Quelle organisation op\u00e8re le syst\u00e8me ?",
+      "status": "pass"
+    },
+    {
+      "blocker": "",
+      "carrier": "published dossier (publication gate, SIG-PUB-017)",
+      "detail": "1 public-employee-name row(s) flagged for FR-GDPR withholding (SIG-PUB-017); adapter_publication_permitted(FR)=False.",
+      "endpoint": "/Users/stevenvitali/Eleutheria/exports/out/france/web/dossiers.json",
+      "id": "FR-7",
+      "in_fixture_subset": true,
+      "question": "Le nom de l'agent public signataire est-il retenu (RGPD/Part VIII) ?",
+      "status": "pass"
+    },
+    {
+      "blocker": "HG-03-pending: flip the source (e.g. `sig-connectors review-status --source raa_prefectures`), then `sig-connectors run --source raa_prefectures --mode live --sink pg --dsn $SIG_STAGING_DSN` to ingest the 'prefectoral_order corpus beyond the committed fixture' carrier.",
+      "carrier": "prefectoral_order corpus (raa_prefectures)",
+      "detail": "",
+      "endpoint": "",
+      "id": "FR-8",
+      "in_fixture_subset": false,
+      "question": "Les arr\u00eat\u00e9s au-del\u00e0 du jeu d'essai (corpus RAA complet) ?",
+      "status": "blocked"
+    },
+    {
+      "blocker": "HG-03-pending: flip the source (e.g. `sig-connectors review-status --source madada`), then `sig-connectors run --source madada --mode live --sink pg --dsn $SIG_STAGING_DSN` to ingest the 'records-request register (compact gate: not_contacted)' carrier.",
+      "carrier": "records_request register (madada)",
+      "detail": "",
+      "endpoint": "",
+      "id": "FR-9",
+      "in_fixture_subset": false,
+      "question": "Le registre CADA au-del\u00e0 du jeu d'essai (Ma Dada) ?",
+      "status": "blocked"
+    },
+    {
+      "blocker": "HG-03-pending: flip the source (e.g. `sig-connectors review-status --source osm_overpass`), then `sig-connectors run --source osm_overpass --mode live --sink pg --dsn $SIG_STAGING_DSN` to ingest the 'OSM camera layer for the commune (no geo slice imported)' carrier.",
+      "carrier": "PhysicalAsset geometry (OSM/ODbL layer)",
+      "detail": "",
+      "endpoint": "",
+      "id": "FR-10",
+      "in_fixture_subset": false,
+      "question": "La couche OSM des cam\u00e9ras pour la commune ?",
+      "status": "blocked"
+    }
+  ],
+  "summary": {
+    "blocked": 3,
+    "failed": 0,
+    "fixture_subset_all_pass": true,
+    "passed": 7,
+    "total": 10,
+    "traversal_status": "pass"
+  },
+  "traversal": {
+    "hops": {
+      "arrete_prefectoral": {
+        "status": 200,
+        "value": "authorized"
+      },
+      "legal_regime": {
+        "status": 200,
+        "value": "Code de la s\u00e9curit\u00e9 int\u00e9rieure, art. L251-1 \u00e0 L255-1"
+      },
+      "marche_decp": {
+        "status": 200,
+        "value": 50754
+      }
+    },
+    "status": "pass"
+  }
+}
