@@ -35,6 +35,12 @@ jobs:
       - name: Documentation freshness (both detectors)
         run: make docs-check
 
+      # CI.1 / GL-CI-01: the build-memory layout gate is named explicitly per the
+      # contract (it also runs inside `make docs-check` above — this step keeps
+      # the enforcement visible even if the docs-check composition changes).
+      - name: Build-memory layout gate (check-build-memory.sh)
+        run: bash scripts/docs/check-build-memory.sh .
+
   python:
     runs-on: ubuntu-latest
     steps:
@@ -74,6 +80,76 @@ jobs:
 
       - name: Generated artifacts match a fresh generation
         run: make verify-gen
+
+  # The composed-stack e2e run FOR REAL (CI.1 / GL-CI-01 — closes the P20.4 /
+  # CI-RED-01 gap honestly): ubuntu-latest ships a running Docker daemon and this
+  # job installs Node + web/node_modules, so the whole tests/e2e suite — seams
+  # S1..S8 including the web build (LD-V08, crossed by P21.4) — actually runs
+  # instead of skipping. The `python` job above also runs tests/e2e (Docker is
+  # present there) but S8's web-build fixtures skip without node_modules — this
+  # job is the one that proves the composed suite WITH the web build present.
+  # SIG_REQUIRE_DB_TESTS=1 turns a missing daemon into a hard failure: the
+  # composed gate can never silently no-op.
+  composed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.6"
+          enable-cache: true
+
+      - name: Install Python (pinned by .python-version)
+        run: uv python install
+
+      - name: Install workspace from the committed lockfile
+        run: make sync
+
+      - name: Install Node (pinned major)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install web deps (the S8 web-build fixtures need web/node_modules)
+        run: npm --prefix web ci
+
+      - name: Composed e2e — tests/e2e with Docker + the web build present
+        run: uv run pytest tests/e2e
+        env:
+          SIG_REQUIRE_DB_TESTS: "1"
+          TESTCONTAINERS_RYUK_DISABLED: "true"
+
+  # Dependency licence + secret scanning (CI.1 / GL-CI-01, ADR-078). These two
+  # gates are deterministic and offline, so they run on every PR — a committed
+  # secret is a permanent leak and a bad licence is cheapest to catch at change
+  # time; the dependency *vulnerability* audit (pip-audit → OSV) needs network
+  # and advisories drift without a commit, so it rides nightly.yml instead.
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.6"
+          enable-cache: true
+
+      - name: Install Python (pinned by .python-version)
+        run: uv python install
+
+      - name: Install workspace from the committed lockfile
+        run: make sync
+
+      - name: Secret scan over every tracked file
+        run: make scan-secrets
+
+      - name: Dependency licence scan (mirrors the web job's OSI/excluded-category gate)
+        run: make scan-licenses
 
   # The Phase-15 web shell (SIG-UI-036..041). Confined to web/ (SIG-ENG-010). This
   # job IS the CI enforcement of the shell's mandated gates: WCAG 2.2 AA (axe), the
