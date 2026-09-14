@@ -55,6 +55,33 @@ acceptance queries against the running API → status). See `RISK-P21-06/07` for
 export-freshness and pre-gate-exposure risks, and `docs/build/FIRST_JURISDICTION_REPORT.md`
 for the run's output.
 
+## Observability & alerting (OBS.1 / GL-OBS-01, ADR-077)
+
+Zero-cost posture: a **file**, not a hosted metrics stack. The recorded-alert
+ledger (`.sig/ops/alerts.jsonl`, env `SIG_ALERT_LOG`) is always on — every alert is
+*recorded* before any external delivery is attempted. The optional webhook notifier
+is env-only (`SIG_ALERT_WEBHOOK_URL` / `SIG_ALERT_WEBHOOK_TOKEN`, HG-09); absent,
+alerts degrade to the ledger + a `SIG-ALERT` log line.
+
+```bash
+uv run sig-ops egress-report --alert [--usage-gb N]   # INFRA.1's alarm → recorded alert on breach
+uv run sig-ops keepalive-check                        # verify the dormant-scheduler keepalive
+uv run sig-ops probe [--alert]                        # record ok/latency metrics; alert on DOWN
+uv run sig-ops alerts [--prune] [--limit N]           # read the recorded-alert ledger
+uv run sig-ops dashboard [--out FILE] [--verify-keepalive]  # render the readout
+```
+
+- **`probe`** appends one JSONL row per service (pg/api/curation/static) to the
+  bounded probe log (`SIG_PROBE_LOG`); both logs are held to the `[observability]`
+  retention policy in `ops/config.toml` (age + byte caps, oldest first).
+- **`dashboard`** renders the markdown readout — service health, uptime vs error
+  budget (rolling `window_days`, `uptime_target_pct`), the egress level, the
+  keepalive verification, and the recorded alerts. Committed example:
+  `docs/build/reports/observability-dashboard.md`.
+- `.github/workflows/observability.yml` runs this daily; `keepalive.yml` fires a
+  recorded alert on failure. Secrets ride env only — every emitted surface is
+  scrubbed of env-secret values (`ops.alerts.scrub_secrets`).
+
 ## Go-public cut-over
 
 Deferred: `HG-01` (legal home) and `HG-11` (operating governance) are **not** ticked,

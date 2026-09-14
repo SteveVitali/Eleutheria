@@ -62,3 +62,24 @@ jobs:
       # scheduler / broken pipeline is caught by a RED build, not a dead site.
       - name: Rebuild the degraded static site (fails loudly if it cannot)
         run: uv run sig-ops degraded --data-source fixtures
+
+      # OBS.1 / GL-OBS-01: a keepalive failure fires a RECORDED alert (ADR-077) —
+      # appended to the alert ledger (uploaded below) and pushed to the notifier
+      # seam (SIG_ALERT_WEBHOOK_URL, env-only per HG-09; absent → log-only).
+      - name: Record + notify the keepalive failure
+        if: failure()
+        env:
+          SIG_ALERT_WEBHOOK_URL: ${{ secrets.SIG_ALERT_WEBHOOK_URL }}
+          SIG_ALERT_WEBHOOK_TOKEN: ${{ secrets.SIG_ALERT_WEBHOOK_TOKEN }}
+          SIG_ALERT_LOG: keepalive-alerts.jsonl
+        run: >
+          uv run sig-ops alert --kind keepalive --severity critical
+          --message "monthly degraded rebuild FAILED — dormant-scheduler keepalive caught a broken pipeline (SIG-GOV-021, RISK-P0-12)"
+
+      - name: Upload the recorded alert ledger
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: keepalive-alerts
+          path: keepalive-alerts.jsonl
+          if-no-files-found: ignore

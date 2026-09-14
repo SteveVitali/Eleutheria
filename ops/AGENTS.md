@@ -16,6 +16,8 @@ adds to the root `AGENTS.md`. See `ops/README.md` for the operator runbook.
 | `ops/src/ops/seed.py` | ~160 | load a jurisdiction slice into the spine via `db.claim_sink.PgClaimSink` |
 | `ops/src/ops/egress.py` | ~120 | egress accounting / `egress-report` |
 | `ops/src/ops/degraded.py` | ~80 | the degraded / keepalive posture |
+| `ops/src/ops/alerts.py` | ~270 | the notifier seam + recorded-alert ledger (OBS.1, ADR-077) |
+| `ops/src/ops/observe.py` | ~450 | probes, bounded logs, uptime/error budgets, the readout |
 | `ops/src/ops/swh.py` | ~85 | Software Heritage `swh-save` |
 | `ops/docker-compose.yml` | — | the PG18+PostGIS service (with sqitch deploy on start) |
 | `ops/config.toml` | — | runtime config (staging endpoints, tasks/contribution gates) |

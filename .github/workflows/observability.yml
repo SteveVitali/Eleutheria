@@ -1,0 +1,105 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# Observability & alerting sweep (OBS.1 / GL-OBS-01, ADR-077).
+#
+# The zero-cost posture (SIG-STORE-003) means a FILE, not a hosted metrics stack:
+# this daily job runs the same `sig-ops` commands an operator runs by hand —
+# the egress-budget check wired to the notifier seam (`egress-report --alert`),
+# a stack probe when staging endpoints are configured, and the dashboard readout —
+# and uploads the recorded-alert ledger + bounded probe log + readout as artifacts.
+#
+# Secrets (HG-09): the webhook endpoint/token and any staging DSN ride secrets/vars
+# only — never literals. Absent, the notifiers degrade to the always-on recorded
+# ledger + log line; nothing is fabricated.
+
+name: observability
+
+on:
+  schedule:
+    # 06:00 UTC daily — ahead of the monthly 07:00 keepalive tick on the 1st.
+    - cron: "0 6 * * *"
+  # Manual trigger so an operator can drive a sweep on demand.
+  workflow_dispatch:
+
+concurrency:
+  group: observability-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # The notifier seam (ADR-077): env-only, never literals.
+  SIG_ALERT_WEBHOOK_URL: ${{ secrets.SIG_ALERT_WEBHOOK_URL }}
+  SIG_ALERT_WEBHOOK_TOKEN: ${{ secrets.SIG_ALERT_WEBHOOK_TOKEN }}
+  # Staging/live endpoints the probe checks (operator vars; absent → probe skipped).
+  SIG_STAGING_API_URL: ${{ vars.SIG_STAGING_API_URL }}
+  SIG_STAGING_STATIC_URL: ${{ vars.SIG_STAGING_STATIC_URL }}
+  SIG_STAGING_CURATION_URL: ${{ vars.SIG_STAGING_CURATION_URL }}
+  SIG_STAGING_DSN: ${{ secrets.SIG_STAGING_DSN }}
+  # The recorded-alert ledger + bounded metrics log land in the workspace and are
+  # uploaded as artifacts below.
+  SIG_ALERT_LOG: alerts.jsonl
+  SIG_PROBE_LOG: probes.jsonl
+
+jobs:
+  observe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.6"
+          enable-cache: true
+
+      - name: Install Python (pinned by .python-version)
+        run: uv python install
+
+      - name: Install workspace from the committed lockfile
+        run: make sync
+
+      # INFRA.1's egress-budget alarm, wired to the notifier: a warn/alarm breach
+      # fires a recorded alert; a full breach also exits 5 (the job goes RED).
+      # When the operator records current usage as the SIG_EGRESS_USAGE_GB var it
+      # is measured for real; absent, the report is gate-pending (HG-07) and no
+      # false alarm fires.
+      - name: Egress budget check — recorded alert on breach
+        run: |
+          if [ -n "${SIG_EGRESS_USAGE_GB:-}" ]; then
+            uv run sig-ops egress-report --alert --usage-gb "$SIG_EGRESS_USAGE_GB"
+          else
+            uv run sig-ops egress-report --alert
+          fi
+        env:
+          SIG_EGRESS_USAGE_GB: ${{ vars.SIG_EGRESS_USAGE_GB }}
+
+      # Stack probe: records ok/latency metrics to the bounded probe log and fires
+      # a recorded alert per DOWN service. Skipped (not failed) while the hosted
+      # endpoints are unconfigured — the offline posture measures nothing.
+      - name: Probe the live stack (skipped until endpoints are configured)
+        run: |
+          if [ -n "${SIG_STAGING_API_URL:-}" ]; then
+            uv run sig-ops probe --alert
+          else
+            echo "staging endpoints unset — probe skipped (offline posture; nothing measured)"
+          fi
+
+      # The dashboard/readout artifact: a deterministic render of the recorded
+      # probe log + alert ledger + egress report.
+      - name: Render the observability readout
+        run: uv run sig-ops dashboard --out observability-dashboard.md
+
+      - name: Upload the recorded alerts, metrics log, and readout
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: observability-${{ github.run_id }}
+          path: |
+            alerts.jsonl
+            probes.jsonl
+            observability-dashboard.md
+          if-no-files-found: ignore
