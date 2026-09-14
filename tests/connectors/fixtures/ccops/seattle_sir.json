@@ -1,0 +1,77 @@
+{
+  "_note": "Seattle Surveillance Ordinance (SMC 14.18) — SPD ALPR Surveillance Impact Report, the fixed ~50-field questionnaire (F3.20). Excerpted committed capture of a public mandated disclosure; retrieved 2026-08-20; never fetched live. The SIR is a pre-acquisition COMMITMENT document — it authorizes and constrains, it does not report measured use (procured != deployed). Fiscal 1.1/1.2 sit blank in the filing — mandated != populated.",
+  "disclosure_source": "seattle",
+  "documents": [
+    {
+      "id": "seattle-sir-alpr-2017",
+      "kind": "field_questionnaire",
+      "genre": "policy_document",
+      "source_url": "https://www.seattle.gov/Documents/Departments/Tech/Privacy/Final-2017-SIRs/SPD-ALPR-SIR-2017.pdf",
+      "retrieved_date": "2026-08-20",
+      "jurisdiction": "seattle",
+      "agency": "Seattle Police Department",
+      "technology": "Automated License Plate Recognition (ALPR)",
+      "reporting_period": "2017",
+      "reports_actual_use": false,
+      "ordinance": {
+        "ordinance_citation": "Seattle Municipal Code 14.18 (Surveillance Ordinance)",
+        "enacting_body": "Seattle City Council",
+        "oversight_body": "Office of the CTO / Intelligence Ordinance Auditor",
+        "effective_date": "2017-09-01",
+        "reporting_cadence": "quarterly (CTO acquisition-determination reports)"
+      },
+      "text": "Surveillance Impact Report — Automated License Plate Recognition. Prepared under the Seattle Surveillance Ordinance, SMC 14.18, a policy of the Seattle City Council. This policy document describes the rules governing use of the surveillance technology, the retention period for collected data, the audit and oversight policy, and the data sharing policy. The ordinance requires Council approval before acquisition and annual review of the approved policy.",
+      "fields": [
+        {
+          "field": "SIR 5.1 (data retention)",
+          "predicate": "retention_period",
+          "value": "all ALPR data is deleted after 90 days",
+          "state": "answered"
+        },
+        {
+          "field": "SIR 5.2 (audit & oversight)",
+          "predicate": "audit_mechanism",
+          "value": "SPD's Audit Unit can conduct an audit at any time; the Office of Inspector General and the Seattle Intelligence Ordinance Auditor also have audit authority",
+          "state": "answered"
+        },
+        {
+          "field": "SIR 6.1 (data sharing partners)",
+          "predicate": "sharing_partner",
+          "value": "none declared",
+          "raw_value": "SPD has no data sharing partners for ALPR; outside entities obtain records only through criminal-prosecution disclosures",
+          "state": "answered"
+        },
+        {
+          "field": "SIR 4.6 (signage & visibility)",
+          "predicate": "signage_visibility",
+          "value": "ALPR antennas are conspicuously mounted on marked SPD vehicles",
+          "state": "answered"
+        },
+        {
+          "field": "SIR Fiscal 1.4 (vendor subsidies / freebies)",
+          "predicate": "vendor_subsidy",
+          "value": "Seattle Police Foundation Grant",
+          "state": "answered"
+        },
+        {
+          "field": "SIR Fiscal 1.1 (one-time acquisition cost)",
+          "predicate": "acquisition_cost",
+          "value": "",
+          "state": "present_but_empty"
+        },
+        {
+          "field": "SIR Fiscal 1.2 (annual operating cost)",
+          "predicate": "operating_cost",
+          "value": "",
+          "state": "present_but_empty"
+        },
+        {
+          "field": "SIR 10.4 (effectiveness metrics)",
+          "predicate": "effectiveness_claim",
+          "value": "",
+          "state": "absent"
+        }
+      ]
+    }
+  ]
+}

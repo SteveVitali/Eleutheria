@@ -57,6 +57,7 @@ from . import coarse_international as coarse_international  # noqa: E402,F401
 from . import data_driven as data_driven  # noqa: E402,F401
 from . import flock_portal as flock_portal  # noqa: E402,F401
 from . import france_belgium as france_belgium  # noqa: E402,F401
+from . import government_mandated_disclosure as government_mandated_disclosure  # noqa: E402,F401
 from . import ok_statute as ok_statute  # noqa: E402,F401
 from . import okc_procurement as okc_procurement  # noqa: E402,F401
 from . import okcpd_policy as okcpd_policy  # noqa: E402,F401

@@ -1,0 +1,93 @@
+# SPDX-License-Identifier: Apache-2.0
+# The one-time state-ALPR-statute seed (SIG-INGEST-049f, P24.7), seeded from the
+# one national inventory that exists — the NCSL state-by-state ALPR statute
+# table — and LABELLED WITH ITS DATE: the inventory is HTML-only, covers 16
+# states in 17 table rows (California appears twice), and has been FROZEN since
+# 2022-02-03 (it predates the recent Flock expansion; Virginia's 2025 statute is
+# absent from it). A one-time seed, never a feed: SIG maintains it onward
+# (F3.28). DATA, not code (SIG-ENG-001).
+#
+# Provenance: source `state_alpr_statute_inventory`
+# (connectors/src/connectors/data/sources.toml),
+# https://www.ncsl.org/technology-and-communication/automated-license-plate-readers-state-statutes
+# — retrieved 2026-08-20, page reads verbatim "Updated February 03, 2022".
+# Spine ingestion stays operator-gated (HG-03): this committed asset is the
+# seed; loading it into the claim spine is deferred (DEFERRALS D-CCOPS.1-1).
+#
+# Shape: one [[statutes]] row per state (16), each carrying its enactment
+# year(s) and citations where the NCSL summary names them — the NCSL table's
+# own layout is 17 rows because California occupies two.
+
+as_of = "2022-02-03"
+frozen = true
+never_a_feed = true
+inventory = "NCSL state ALPR statute table (HTML only; 17 rows / 16 states)"
+inventory_url = "https://www.ncsl.org/technology-and-communication/automated-license-plate-readers-state-statutes"
+state_count = 16
+ncsl_table_rows = 17
+note = "predates the recent expansion; Virginia's 2025 statute is absent — SIG maintains it onward"
+
+[[statutes]]
+state = "Arkansas"
+years_enacted = [2013]
+
+[[statutes]]
+state = "California"
+years_enacted = [2011, 2015]
+citations = ["Veh. Code § 2413", "Civ. Code §§ 1798.29, 1798.90.5 (SB 34)"]
+
+[[statutes]]
+state = "Colorado"
+years_enacted = [2014]
+
+[[statutes]]
+state = "Florida"
+years_enacted = [2014]
+
+[[statutes]]
+state = "Georgia"
+years_enacted = [2018]
+
+[[statutes]]
+state = "Maine"
+years_enacted = [2009]
+
+[[statutes]]
+state = "Maryland"
+years_enacted = [2014]
+
+[[statutes]]
+state = "Minnesota"
+years_enacted = [2015]
+
+[[statutes]]
+state = "Montana"
+years_enacted = [2017]
+
+[[statutes]]
+state = "Nebraska"
+years_enacted = [2018]
+
+[[statutes]]
+state = "New Hampshire"
+years_enacted = [2007]
+
+[[statutes]]
+state = "North Carolina"
+years_enacted = [2015]
+
+[[statutes]]
+state = "Oklahoma"
+years_enacted = [2016, 2017]
+
+[[statutes]]
+state = "Tennessee"
+years_enacted = [2014, 2021]
+
+[[statutes]]
+state = "Utah"
+years_enacted = [2013, 2014, 2020]
+
+[[statutes]]
+state = "Vermont"
+years_enacted = [2013]
