@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate docs/build/STAGE0_OUTREACH_RECORD.md (P21.1, scratch generator).
+"""Generate docs/build/reports/STAGE0_OUTREACH_RECORD.md (P21.1, scratch generator).
 
 One row per federation-compact project (the 19 from spec §6 / §35.1). The gate
 HG-04 is SKIP this run: NO outreach was performed, so every row's `date_sent` is
@@ -16,7 +16,7 @@ import pathlib
 from connectors.registry import get, registry
 
 ROOT = pathlib.Path(__file__).resolve().parents[3]
-OUT = ROOT / "docs/build/STAGE0_OUTREACH_RECORD.md"
+OUT = ROOT / "docs/build/reports/STAGE0_OUTREACH_RECORD.md"
 
 # Outcome ranking so a project's row surfaces the most-progressed recorded state
 # among its governed sources (a "contacted" state surfaces over not_contacted).

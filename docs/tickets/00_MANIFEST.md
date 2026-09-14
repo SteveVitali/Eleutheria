@@ -106,9 +106,10 @@ Language is **Python** (TypeScript confined to `web/`), per SIG-ENG-010.
 
 ### Post-build chain (rows 47–65) — committed from here on
 
-Planned 2026-09-08 after PR #46 by the planning sessions recorded in `docs/build/PLANNING_LEDGER.md`
-(the plan-for-the-plan), `docs/build/DECISION_MEMO.md` (the sequence and rationale), `BUILD_INDEX.md`,
-`LEDGER_DEFERRALS.md` and `SCOPING_NUMBERS.md` (the evidence). Until P19.1 lands those files are at
+Planned 2026-09-08 after PR #46 by the planning sessions recorded in `docs/build/reports/PLANNING_LEDGER.md`
+(the plan-for-the-plan), `docs/build/reports/DECISION_MEMO.md` (the sequence and rationale), `BUILD_INDEX.md`,
+`reports/LEDGER_DEFERRALS.md` and `reports/SCOPING_NUMBERS.md` (the evidence; the named reports were moved
+under `docs/build/reports/` by P22.3). Until P19.1 lands those files are at
 `.agents/scratch/planning/`. Three rules differ from rows 1–46:
 
 1. **These ticket files are committed** (decision T4/ADR-058, executed by P19.1) — `docs/tickets/` is the

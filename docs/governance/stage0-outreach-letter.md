@@ -9,7 +9,7 @@
 > **Fill the `<...>` fields per project.** Address the letter to an
 > **organisational** channel (a project inbox / issue tracker / contact form) — never
 > a private individual by name (Part VIII §0.7). Keep the record in
-> `docs/build/STAGE0_OUTREACH_RECORD.md` (a new dated row per real outreach event;
+> `docs/build/reports/STAGE0_OUTREACH_RECORD.md` (a new dated row per real outreach event;
 > append-only, P1–P3 — never rewrite an earlier row).
 
 ---
@@ -75,7 +75,7 @@ Thank you for the work you do.
 `partnership_active`
 
 Record the outcome (project, date, outcome, governed source ids) as a new row in
-`docs/build/STAGE0_OUTREACH_RECORD.md` and, where it changes a source's posture, on the
+`docs/build/reports/STAGE0_OUTREACH_RECORD.md` and, where it changes a source's posture, on the
 `sources.toml` row (with `last_verified`). A flip to `ingestion_permitted = true` also
 requires the rights-review metadata (`rights_reviewed_by`, `rights_reviewed_on`) — see
 `docs/adr/ADR-063-*.md`.

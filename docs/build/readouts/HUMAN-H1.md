@@ -18,7 +18,7 @@
 ## What would pass it
 Operator names the real legal home in `docs/governance/governance-and-code-of-conduct.md`, defines
 the two reviewer roles + concurrence workflow, stands up the takedown/corrections contact, and ticks
-`docs/build/PUBLICATION_CHECKLIST.md` HG-01/HG-11 with evidence links.
+`docs/build/reports/PUBLICATION_CHECKLIST.md` HG-01/HG-11 with evidence links.
 
 ## Consequence recorded
 LIVE.2 public publish (P21.4) stays gate-pending on real HG-01 + HG-11 → RETURN PASS; DEFERRALS

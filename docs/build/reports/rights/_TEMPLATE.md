@@ -1,6 +1,6 @@
 # Rights-review packet — TEMPLATE (SIG-LIC-001, P21.1)
 
-> Copy this file to `docs/build/rights/<source_id>.md`. A packet lays out **facts**
+> Copy this file to `docs/build/reports/rights/<source_id>.md`. A packet lays out **facts**
 > (quoted terms + retrieval date) separately from **judgement** (the reviewer decision
 > line). It asserts **no** legal conclusion (defining standard §3.1 — no synthetic
 > certainty about rights). Reading a terms/robots page is permitted research, **not**
