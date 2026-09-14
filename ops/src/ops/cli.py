@@ -24,6 +24,21 @@ Sub-commands (P21.4 deliverable 1):
 
 Staging endpoints default to local and are overridable by env (HG-12):
 ``SIG_STAGING_DSN``, ``SIG_STAGING_API_URL``, ``SIG_STAGING_STATIC_URL``.
+
+Observability & alerting sub-commands (OBS.1 / GL-OBS-01, ADR-077):
+
+* ``egress-report --alert`` — INFRA.1's egress alarm wired to the notifier seam:
+  a warn/alarm threshold breach fires a *recorded* alert (append-only ledger).
+* ``keepalive-check`` — verify the dormant-scheduler keepalive (workflow intact +
+  real degraded rebuild); a failure fires a recorded ``critical`` alert.
+* ``probe [--alert]`` — measure the stack (ok/latency per service) into the
+  bounded probe log; ``--alert`` records an alert per DOWN service.
+* ``alerts`` — read the recorded-alert ledger; ``dashboard`` — render the
+  markdown readout (health, uptime vs error budget, egress, keepalive, alerts).
+
+State files live under ``.sig/ops/`` (gitignored), env-overridable:
+``SIG_ALERT_LOG`` / ``SIG_PROBE_LOG``. Notifier: ``SIG_ALERT_WEBHOOK_URL`` +
+``SIG_ALERT_WEBHOOK_TOKEN`` (env-only, HG-09); absent → ledger + log line only.
 """
 
 from __future__ import annotations
@@ -35,11 +50,13 @@ import signal
 import subprocess
 import sys
 import time
-import urllib.error
-import urllib.request
 from pathlib import Path
 
 from . import __version__
+from .alerts import Alert
+from .observe import ObservabilityConfig
+from .observe import http_ok as _http_ok
+from .observe import pg_ready as _pg_ready
 
 #: Repo root: ops/src/ops/cli.py -> parents[3].
 _REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -143,6 +160,13 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="observed monthly egress (GB); omit when no live usage API (gate pending: HG-07).",
     )
+    egress.add_argument(
+        "--alert",
+        action="store_true",
+        help="fire a RECORDED alert via the notifier seam when the threshold is breached "
+        "(warn/alarm); the alert is appended to the ledger and sent to env-configured "
+        "notifiers (OBS.1, ADR-077).",
+    )
 
     swh = sub.add_parser(
         "swh-save", help="build a Software Heritage save-code-now request (SIG-GOV-022/023/024)"
@@ -193,6 +217,77 @@ def build_parser() -> argparse.ArgumentParser:
     drill.add_argument(
         "--target-db", default="sig_restore", help="fresh database name to restore into"
     )
+
+    # --- OBS.1 / GL-OBS-01: observability & alerting (ADR-077) ------------------
+    keepalive = sub.add_parser(
+        "keepalive-check",
+        help="verify the dormant-scheduler keepalive (workflow intact + degraded rebuild); "
+        "a failure fires a RECORDED alert (SIG-GOV-021, RISK-P0-12)",
+    )
+    keepalive.add_argument(
+        "--data-source",
+        default="fixtures",
+        choices=["fixtures", "export"],
+        help="fixtures (committed typed fixtures) or export (last committed export snapshot).",
+    )
+    keepalive.add_argument("--export-dir", default=None, help="export snapshot dir (export mode).")
+
+    probe = sub.add_parser(
+        "probe",
+        help="probe the live stack (PG/API/curation/static), append to the bounded "
+        "metrics log, and print the results",
+    )
+    probe.add_argument(
+        "--alert",
+        action="store_true",
+        help="fire a RECORDED alert for each service that is DOWN.",
+    )
+    probe.add_argument(
+        "--config", default=None, help="ops/config.toml path (default: ops/config.toml)"
+    )
+
+    alerts = sub.add_parser(
+        "alerts", help="list the recorded alerts (the append-only alert ledger)"
+    )
+    alerts.add_argument(
+        "--config", default=None, help="ops/config.toml path (default: ops/config.toml)"
+    )
+    alerts.add_argument("--limit", type=int, default=0, help="show only the last N alerts")
+    alerts.add_argument(
+        "--prune",
+        action="store_true",
+        help="apply the [observability] retention policy to the ledger first.",
+    )
+
+    alert_cmd = sub.add_parser(
+        "alert",
+        help="record + notify an alert (used by workflow failure steps, e.g. keepalive)",
+    )
+    alert_cmd.add_argument("--kind", required=True, help="alert kind (e.g. keepalive)")
+    alert_cmd.add_argument("--severity", default="critical", choices=["warn", "alarm", "critical"])
+    alert_cmd.add_argument("--message", required=True, help="human-readable alert text")
+
+    dash = sub.add_parser(
+        "dashboard",
+        help="render the observability readout (markdown) from the recorded state",
+    )
+    dash.add_argument(
+        "--config", default=None, help="ops/config.toml path (default: ops/config.toml)"
+    )
+    dash.add_argument(
+        "--out", default=None, help="write the readout to this file instead of stdout"
+    )
+    dash.add_argument(
+        "--usage-gb",
+        type=float,
+        default=None,
+        help="observed monthly egress (GB) for the egress-budget row (omit = gate pending).",
+    )
+    dash.add_argument(
+        "--verify-keepalive",
+        action="store_true",
+        help="also run the keepalive verification into the readout (runs the degraded build).",
+    )
     return parser
 
 
@@ -219,25 +314,6 @@ def _write_state(state: dict[str, object]) -> None:
 def _compose(*args: str, check: bool = True) -> subprocess.CompletedProcess[str]:
     cmd = ["docker", "compose", "-p", _COMPOSE_PROJECT, "-f", str(_COMPOSE_FILE), *args]
     return subprocess.run(cmd, capture_output=True, text=True, check=check, cwd=str(_REPO_ROOT))
-
-
-def _http_ok(url: str, *, timeout: float = 3.0) -> bool:
-    try:
-        with urllib.request.urlopen(url, timeout=timeout) as resp:  # noqa: S310 - local staging
-            return 200 <= resp.status < 500
-    except (urllib.error.URLError, ConnectionError, OSError, ValueError):
-        return False
-
-
-def _pg_ready(dsn: str) -> bool:
-    try:
-        import psycopg
-
-        with psycopg.connect(dsn, connect_timeout=3) as conn:
-            conn.execute("SELECT 1")
-        return True
-    except Exception:  # noqa: BLE001 - any failure means "not ready"
-        return False
 
 
 def _wait(predicate: object, *, label: str, timeout: float = 90.0) -> bool:
@@ -443,6 +519,32 @@ def _cmd_seed(args: argparse.Namespace) -> int:
     return 0
 
 
+# --- OBS.1 helpers (alert ledger + probe log live under .sig/ops/, env-overridable) ---
+
+
+def _alert_ledger_path() -> Path:
+    return Path(os.environ.get("SIG_ALERT_LOG", str(_STATE_DIR / "alerts.jsonl")))
+
+
+def _probe_log_path() -> Path:
+    return Path(os.environ.get("SIG_PROBE_LOG", str(_STATE_DIR / "probes.jsonl")))
+
+
+def _fire_alert(
+    kind: str, severity: str, message: str, *, detail: dict[str, object] | None = None
+) -> Alert:
+    """Record an alert in the ledger, then notify every env-configured sink (ADR-077)."""
+    from .alerts import AlertLedger, fire, notifiers_from_env
+
+    alert = Alert.create(kind, severity, message, detail=detail)
+    fire(alert, ledger=AlertLedger(_alert_ledger_path()), notifiers=notifiers_from_env())
+    return alert
+
+
+def _observability_config(config_arg: str | Path | None) -> ObservabilityConfig:
+    return ObservabilityConfig.from_toml(config_arg or (_COMPOSE_FILE.parent / "config.toml"))
+
+
 def _cmd_egress_report(args: argparse.Namespace) -> int:
     from .egress import EgressConfig, build_report, exit_code_for
 
@@ -456,6 +558,17 @@ def _cmd_egress_report(args: argparse.Namespace) -> int:
             f"budget threshold {config.monthly_budget_gb} GB documented, not measured "
             "(RISK-P21-09).",
             file=sys.stderr,
+        )
+    # Wire INFRA.1's alarm to the notifier seam (OBS.1): a warn/alarm threshold
+    # breach fires a RECORDED alert. The breach decision stays in ops.egress —
+    # this consumes it, it does not re-implement it.
+    if args.alert and report.level in ("warn", "alarm"):
+        _fire_alert(
+            "egress-budget",
+            report.level,
+            f"egress threshold breached: {report.usage_gb} GB of "
+            f"{report.budget_gb} GB ({report.level})",
+            detail=report.as_json(),
         )
     return exit_code_for(report)
 
@@ -560,6 +673,139 @@ def _cmd_backup_drill(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_keepalive_check(args: argparse.Namespace) -> int:
+    from .alerts import alert_exit_code
+    from .observe import verify_keepalive
+
+    result = verify_keepalive(
+        repo_root=_REPO_ROOT,
+        data_source=args.data_source,
+        export_dir=args.export_dir,
+    )
+    print(json.dumps(result.as_json(), indent=2, sort_keys=True))
+    if result.ok:
+        print("sig-ops keepalive-check: OK — the dormant-scheduler keepalive verifies.")
+        return 0
+    fired = _fire_alert(
+        "keepalive",
+        "critical",
+        "keepalive verification FAILED — the degraded rebuild or its scheduler "
+        "wiring is broken (SIG-GOV-021, RISK-P0-12)",
+        detail=result.as_json(),
+    )
+    print(
+        "sig-ops keepalive-check: FAILED — recorded alert fired (kind=keepalive).",
+        file=sys.stderr,
+    )
+    return alert_exit_code(fired)
+
+
+def _cmd_probe(args: argparse.Namespace) -> int:
+    from .alerts import alert_exit_code
+    from .observe import ProbeLog, probe_stack, prune_jsonl
+
+    config = _observability_config(args.config)
+    results = probe_stack(
+        dsn=default_dsn(),
+        api_url=default_api_url(),
+        static_url=default_static_url(),
+        curation_url=default_curation_url(),
+    )
+    log = ProbeLog(_probe_log_path())
+    for result in results:
+        log.append(result)
+    dropped = prune_jsonl(log.path, config.retention())
+    for result in results:
+        print(json.dumps(result.as_json(), sort_keys=True))
+    if dropped:
+        print(f"  (retention: pruned {dropped} probe rows)", file=sys.stderr)
+    down = [r for r in results if not r.ok]
+    if down and args.alert:
+        fired = None
+        for result in down:
+            fired = _fire_alert(
+                "probe",
+                "critical",
+                f"service {result.service} is DOWN ({result.detail or 'unreachable'})",
+                detail=result.as_json(),
+            )
+        return alert_exit_code(fired)
+    return 0 if not down else 1
+
+
+def _cmd_alerts(args: argparse.Namespace) -> int:
+    from .alerts import AlertLedger
+    from .observe import prune_jsonl
+
+    ledger = AlertLedger(_alert_ledger_path())
+    if args.prune:
+        config = _observability_config(args.config)
+        dropped = prune_jsonl(ledger.path, config.retention())
+        if dropped:
+            print(f"  (retention: pruned {dropped} alert rows)", file=sys.stderr)
+    rows = ledger.read()
+    if args.limit:
+        rows = rows[-args.limit :]
+    if not rows:
+        print("no alerts recorded")
+        return 0
+    for row in rows:
+        print(json.dumps(row, sort_keys=True))
+    return 0
+
+
+def _cmd_alert(args: argparse.Namespace) -> int:
+    alert = _fire_alert(args.kind, args.severity, args.message)
+    print(
+        f"recorded alert: {alert.severity} {alert.kind} at {alert.ts} "
+        f"(ledger {_alert_ledger_path()})"
+    )
+    return 0
+
+
+def _cmd_dashboard(args: argparse.Namespace) -> int:
+    from .alerts import AlertLedger
+    from .egress import EgressConfig, build_report
+    from .observe import (
+        ProbeLog,
+        compute_uptime,
+        prune_jsonl,
+        render_dashboard,
+        verify_keepalive,
+    )
+
+    config_path = args.config or (_COMPOSE_FILE.parent / "config.toml")
+    config = _observability_config(config_path)
+    log = ProbeLog(_probe_log_path())
+    ledger = AlertLedger(_alert_ledger_path())
+    prune_jsonl(log.path, config.retention())
+    prune_jsonl(ledger.path, config.retention())
+    records = log.read()
+    budgets = compute_uptime(
+        records, window_days=config.window_days, target_pct=config.uptime_target_pct
+    )
+    latest = {r.service: r for r in records}  # last write wins per service
+    egress = build_report(EgressConfig.from_toml(config_path), args.usage_gb).as_json()
+    keepalive = verify_keepalive(repo_root=_REPO_ROOT) if args.verify_keepalive else None
+    text = render_dashboard(
+        budgets=budgets,
+        latest=latest,
+        alerts=ledger.read(),
+        egress=egress,
+        keepalive=keepalive,
+        window_days=config.window_days,
+        target_pct=config.uptime_target_pct,
+    )
+    if args.out:
+        out = Path(args.out)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(text, encoding="utf-8")
+        print(f"dashboard written to {out}")
+    else:
+        print(text, end="")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run the `ops` CLI. Returns a process exit code."""
     parser = build_parser()
@@ -582,5 +828,15 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_deploy(args)
     if args.command == "backup-drill":
         return _cmd_backup_drill(args)
+    if args.command == "keepalive-check":
+        return _cmd_keepalive_check(args)
+    if args.command == "probe":
+        return _cmd_probe(args)
+    if args.command == "alerts":
+        return _cmd_alerts(args)
+    if args.command == "alert":
+        return _cmd_alert(args)
+    if args.command == "dashboard":
+        return _cmd_dashboard(args)
     parser.print_help()
     return 0
