@@ -1,0 +1,32 @@
+{
+  "_note": "P24.6 (JURIS.2) committed fixture for `sig-connectors run --source decp_fr --mode replay|shadow`. A DECP (Données essentielles de la commande publique) payload in the verbatim F9.16 structure — national open-data procurement, not municipal portals. The second marché rides an accord-cadre (idAccordCadre) → cooperative_piggyback with parent_cooperative_contract set (SIG-ONTO-032). Fixture bytes only — never fetched live (the source stays ingestion_permitted=false, HG-03).",
+  "marches": {
+    "marche": [
+      {
+        "id": "2025kazvs0000000",
+        "acheteur": {"id": "20009020700016"},
+        "nature": "Marché",
+        "objet": "Fourniture et installation d'un système de vidéoprotection",
+        "codeCPV": "35125300",
+        "procedure": "Appel d'offres ouvert",
+        "dureeMois": 12,
+        "dateNotification": "2025-04-01",
+        "montant": 50754,
+        "titulaires": [{"titulaire": {"typeIdentifiant": "SIRET", "id": "31483054800140"}}]
+      },
+      {
+        "id": "2025kazvs0000001",
+        "acheteur": {"id": "20009020700016"},
+        "nature": "Marché",
+        "objet": "Maintenance du système de vidéoprotection",
+        "codeCPV": "50811000",
+        "procedure": "Marché passé sur le fondement d'un accord-cadre",
+        "idAccordCadre": "accord-cadre-2024-089",
+        "dureeMois": 24,
+        "dateNotification": "2025-06-15",
+        "montant": 12400,
+        "titulaires": [{"titulaire": {"typeIdentifiant": "SIRET", "id": "31483054800140"}}]
+      }
+    ]
+  }
+}

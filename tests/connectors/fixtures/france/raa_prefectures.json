@@ -1,0 +1,13 @@
+{
+  "_note": "P24.6 (JURIS.2) committed fixture for `sig-connectors run --source raa_prefectures --mode replay|shadow`. RAA-shaped prefectural-order payload (the Recueils des actes administratifs des préfectures, data.gouv.fr) — the P18.2 test vector recorded as a committed fixture. Authorization by published arrêté préfectoral, not by contract. Fixture bytes only — never fetched live (the source stays ingestion_permitted=false, HG-03).",
+  "prefectoral_orders": [
+    {
+      "external_id": "arrete-01-2026-0451",
+      "prefecture": "Préfecture de l'Ain",
+      "departement": "01",
+      "effective_from": "2026-02-01",
+      "operator": "Commune de Gex",
+      "constrains_technology": ["fixed_cctv"]
+    }
+  ]
+}

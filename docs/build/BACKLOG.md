@@ -177,6 +177,8 @@ landing here. Regenerate this file after any backlog edit:
   - sources: RISK-P2-03 RISK-P2-15 ADR-078
 - **BL-049** — Generate physical DDL from LinkML (ontology/db seam, SIG-STORE-045) · _schema-refinement_ · L · status=open
   - sources: RISK-P2-04
+- **BL-053** — Third-jurisdiction onboarding + recorded P24.6 couplings (operator selects the jurisdiction; ILIKE '%<j>%' filter is a convention not a structure; §11.14 predicates out-of-ruleset; empty-tile step for a no-OSM-layer jurisdiction) · _process_ · M · status=open
+  - sources: ADR-079
 
 ## P25+ unscheduled (post-Round-4 manifest — the next planning round owns these)
 
@@ -190,3 +192,4 @@ Triaged by P24.5 (META.1 / GL-META-01, 2026-09-13): each row was checked against
 - **BL-047** — Schema cleanup: legacy succession slots vs reified OrganizationRelationship · _schema-refinement_ · S · sources: RISK-P3-04
 - **BL-048** — Determinism / whole-graph audit CI jobs (resolution rebuild, TI-6/7 audit) · _process_ · M · sources: RISK-P2-03 RISK-P2-15 ADR-078
 - **BL-049** — Generate physical DDL from LinkML (ontology/db seam, SIG-STORE-045) · _schema-refinement_ · L · sources: RISK-P2-04
+- **BL-053** — Third-jurisdiction onboarding + recorded P24.6 couplings (operator selects the jurisdiction; ILIKE '%<j>%' filter is a convention not a structure; §11.14 predicates out-of-ruleset; empty-tile step for a no-OSM-layer jurisdiction) · _process_ · M · sources: ADR-079

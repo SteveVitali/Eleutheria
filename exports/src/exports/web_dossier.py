@@ -403,10 +403,218 @@ def _okc_dossier() -> dict[str, Any]:
     }
 
 
+def _france_dossier() -> dict[str, Any]:
+    """The France dossier — Commune de Gex (Ain) vidéoprotection (P24.6, JURIS.2).
+
+    The second-jurisdiction dossier in the same web ``Dossier`` contract, in its
+    own BCP-47 language (``fr``), and carrying the Part VIII surface the FR
+    adapter dictates: the signing-officer row is marked ``isPublicEmployeeName``
+    + ``originJurisdiction: "FR"`` so the build-time publication gate
+    (``applyPublicationPolicy`` / SIG-PUB-017) **withholds** it under FR-GDPR —
+    where the US dossier publishes the equivalent name. The DECP marché is a
+    recorded gap, not a figure: its rights are UNDETERMINED (Licence Ouverte 2.0
+    outside the accepted SPDX set pending HG-03), so its content stays
+    link-posture and is never re-published here.
+    """
+    return {
+        "slug": "gex-videoprotection",
+        "subject_label": "Commune de Gex — vidéoprotection (arrêté préfectoral)",
+        "jurisdiction": "Gex, Ain, France",
+        "jurisdictionCode": "FR",
+        "lang": "fr",
+        "asOf": _AS_OF,
+        "rulesetVersion": _RULESET_VERSION,
+        "source_families": [
+            "Arrêté préfectoral (Recueil des actes administratifs de l'Ain, ODbL)",
+            "Avis de marché public (DECP — lien seulement, droits en revue HG-03)",
+            "Registre CADA (Ma Dada — lien seulement)",
+        ],
+        "authorization": {
+            "approving_body": "Préfecture de l'Ain",
+            "vote": None,
+            "consent_agenda": None,
+            "public_comment": None,
+            "date": "2026-02-01",
+        },
+        "termination": {
+            "auto_renews": True,
+            "notice_window_days": None,
+            "expiry_date": "2031-02-01",
+        },
+        "legal_regime": {
+            "state_statute": "Code de la sécurité intérieure, art. L251-1 à L255-1",
+            "local_ordinance": None,
+            "disclosure_duties": [
+                "RGPD — droit d'accès",
+                "CADA — communication des documents administratifs",
+            ],
+        },
+        "gaps": [
+            {
+                "label": "Marché DECP — droits non résolus (HG-03)",
+                "kind": "UNRESOLVED",
+                "subject_id": "contract:france:decp-2025kazvs0000000",
+                "predicate_id": "contract_value",
+                "note": "Le marché DECP 2025kazvs0000000 existe (posture lien); ses "
+                "droits sont UNDETERMINED — contenu exclu de l'export publié "
+                "jusqu'à la revue HG-03 (§42 fail-closed).",
+            },
+            {
+                "label": "Partenaires de partage de données",
+                "kind": "NOT_RESEARCHED",
+                "subject_id": "agency:france:gex-police-municipale",
+                "predicate_id": "sharing_partners",
+                "note": "SIG n'a pas recherché les partenaires de partage.",
+            },
+        ],
+        "sections": [
+            {
+                "section_id": "at_a_glance",
+                "rows": [
+                    {"label": "Exploitant", "value": "Commune de Gex"},
+                    {"label": "Technologie", "value": "Vidéoprotection (caméras fixes)"},
+                    {"label": "Statut", "value": "Autorisée par arrêté préfectoral"},
+                ],
+            },
+            {
+                "section_id": "what_is_deployed",
+                "rows": [
+                    {
+                        "label": "Type de dispositif",
+                        "value": "Caméras fixes de vidéoprotection",
+                    },
+                    {
+                        "label": "Base légale",
+                        "value": "Arrêté préfectoral 01-2026-0451 (CSI L251-1 à L255-1)",
+                    },
+                ],
+            },
+            {
+                "section_id": "cost_and_expiry",
+                "rows": [
+                    {
+                        "label": "Valeur du marché",
+                        "value": None,
+                        "absence": "UNRESOLVED",
+                        "subject_id": "contract:france:decp-2025kazvs0000000",
+                        "predicate_id": "contract_value",
+                        "note": "Marché DECP en lien — droits UNDETERMINED, revue HG-03.",
+                    },
+                    {
+                        "label": "Expiration de l'autorisation",
+                        "value": "2031-02-01",
+                        "note": "Cinq ans, renouvelable (dérivé de la date d'effet).",
+                    },
+                ],
+            },
+            {
+                "section_id": "who_else_can_see",
+                "rows": [
+                    {
+                        "label": "Partenaires de partage",
+                        "value": None,
+                        "absence": "NOT_RESEARCHED",
+                        "subject_id": "agency:france:gex-police-municipale",
+                        "predicate_id": "sharing_partners",
+                    },
+                ],
+            },
+            {
+                "section_id": "configuration_and_retention",
+                "rows": [
+                    {
+                        "label": "Durée de conservation (jours)",
+                        "value": None,
+                        "absence": "NO_EVIDENCE_FOUND",
+                        "subject_id": "sig:deployment:france-gex-videoprotection",
+                        "predicate_id": "configured_retention_days",
+                    },
+                ],
+            },
+            {
+                "section_id": "usage",
+                "rows": [
+                    {
+                        "label": "Consultations (fenêtre)",
+                        "value": None,
+                        "absence": "NOT_RESEARCHED",
+                    },
+                ],
+            },
+            {
+                "section_id": "where_the_hardware_is",
+                "rows": [
+                    {
+                        "label": "Dispositifs cartographiés",
+                        "value": None,
+                        "absence": "NO_EVIDENCE_FOUND",
+                        "note": "Aucune couche OSM n'a été importée pour cette commune.",
+                    },
+                ],
+            },
+            {
+                "section_id": "policy",
+                "rows": [
+                    {
+                        "label": "Base légale",
+                        "value": "Code de la sécurité intérieure L251-1 à L255-1",
+                    },
+                    {
+                        "label": "Régime d'accès aux documents",
+                        "value": "fr.cada — jamais us.foia (SIG-ONTO-068)",
+                    },
+                ],
+            },
+            {
+                "section_id": "accountability_events",
+                "rows": [
+                    {
+                        "label": "Autorisation préfectorale",
+                        "value": "Arrêté en vigueur depuis le 2026-02-01",
+                    },
+                    # The public-employee-name row the FR-GDPR publication gate
+                    # withholds (SIG-PUB-017; contrast: the US dossier publishes it).
+                    {
+                        "label": "Signataire de l'arrêté",
+                        "value": "M. le préfet de l'Ain",
+                        "isPublicEmployeeName": True,
+                        "originJurisdiction": "FR",
+                    },
+                ],
+            },
+            {
+                "section_id": "timeline",
+                "rows": [
+                    {"label": "2025-04-01", "value": "Marché DECP notifié (lien)"},
+                    {"label": "2026-02-01", "value": "Arrêté préfectoral en vigueur"},
+                    {"label": "2031-02-01", "value": "Expiration (renouvelable)"},
+                ],
+            },
+            {"section_id": "what_we_dont_know"},
+            {
+                "section_id": "how_we_know_this",
+                "rows": [
+                    {
+                        "label": "Sources",
+                        "value": "RAA de l'Ain (ODbL), DECP (lien), Ma Dada (lien)",
+                    },
+                    {
+                        "label": "Méthodologie",
+                        "value": "/methodology/",
+                        "documentUrl": "/methodology/",
+                    },
+                ],
+            },
+        ],
+    }
+
+
 def build_web_dossiers(jurisdiction: str) -> list[dict[str, Any]]:
-    """Return the web dossier bundle for ``jurisdiction`` (only ``okc`` in P21.4)."""
+    """Return the web dossier bundle for ``jurisdiction`` (``okc``, ``france``)."""
+    if jurisdiction == "france":
+        return [_france_dossier()]
     if jurisdiction != "okc":
         raise ValueError(
-            f"only the 'okc' jurisdiction dossier is buildable in P21.4 (got {jurisdiction!r})"
+            f"no jurisdiction dossier bundle for {jurisdiction!r} (buildable: 'okc', 'france')"
         )
     return [_okc_dossier()]

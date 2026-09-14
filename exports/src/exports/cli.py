@@ -162,9 +162,18 @@ def _jurisdiction_request(jurisdiction: str) -> dict[str, object]:
     Two licence compartments: the OSM-derived physical device layer (ODbL 1.0, its
     OWN separate compartment — §42, HG-02, included in exports with attribution +
     share-alike) and the SIG graph (CC-BY-4.0). No green sources → fixture values.
+    P24.6 (JURIS.2) adds the France slice — same compartment discipline: the
+    arrêté-derived rows ride ODbL (the RAA's recorded licence, share-alike), the
+    SIG graph rows ride CC-BY, and the DECP-derived content stays OUT of the
+    published bundle while its rights are UNDETERMINED (the export gate fails
+    closed in the second jurisdiction too — recorded as a gap, never bypassed).
     """
+    if jurisdiction == "france":
+        return _france_request()
     if jurisdiction != "okc":
-        raise ValueError("only the 'okc' jurisdiction export is buildable in P21.4")
+        raise ValueError(
+            f"no jurisdiction export request for {jurisdiction!r} (buildable: 'okc', 'france')"
+        )
     return {
         "build_spec": {
             "as_of_snapshot": "2026-08-20",
@@ -222,6 +231,111 @@ def _jurisdiction_request(jurisdiction: str) -> dict[str, object]:
                             "resolution_status": "UNRESOLVED",
                         },
                     }
+                ],
+            },
+        ],
+    }
+
+
+def _france_request() -> dict[str, object]:
+    """The France (Gex, Ain — vidéoprotection) export build-request (P24.6, JURIS.2).
+
+    Same licence-compartment discipline as OKC: the arrêté-derived rows carry
+    ``raa_prefectures`` rights (ODbL-1.0 as recorded in the registry — share-alike,
+    so they sit in the ODbL compartment, never merged with the graph), and the
+    SIG graph rows carry ``sig`` (CC-BY-4.0). The DECP marché is deliberately
+    ABSENT: its rights are UNDETERMINED (Licence Ouverte 2.0 is outside the
+    accepted SPDX set pending HG-03 review), so the export gate would fail closed
+    on any row citing it — the honest posture is a recorded gap, not a row.
+    Fixture-backed, deterministic, byte-reproducible — no live fetch.
+    """
+    return {
+        "build_spec": {
+            "as_of_snapshot": "2026-09-13",
+            "as_of_belief": "2026-09-13",
+            "ruleset_version": "resolver-ruleset-2026.07",
+            "resolver_version": "p08.1/1.0.0",
+        },
+        "rights": [
+            {
+                "source_id": "raa_prefectures",
+                "spdx": "ODbL-1.0",
+                "attribution": "Recueils des actes administratifs des préfectures, "
+                "ODbL 1.0 (share-alike)",
+                "redistributable": True,
+                "derivative_permitted": True,
+                "terms_url": "https://opendatacommons.org/licenses/odbl/1-0/",
+                "retrieval_date": "2026-09-13",
+            },
+            {
+                "source_id": "sig",
+                "spdx": "CC-BY-4.0",
+                "attribution": "© SIG",
+                "redistributable": True,
+                "derivative_permitted": True,
+                "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+                "retrieval_date": "2026-09-13",
+            },
+        ],
+        "tables": [
+            {
+                "name": "legal_instruments",
+                "kind": "tabular",
+                "rows": [
+                    {
+                        "source_id": "raa_prefectures",
+                        "data": {
+                            "subject_id": "legal_instrument:france:raa:arrete-01-2026-0451",
+                            "external_id": "arrete-01-2026-0451",
+                            "instrument_type": "fr.arrete_prefectoral",
+                            "abstract_instrument_type": "prefectoral_order",
+                            "enacting_body": "Préfecture de l'Ain",
+                            "jurisdiction": "01",
+                            "citation": "Code de la sécurité intérieure, art. L251-1 à L255-1",
+                            "effective_from": "2026-02-01",
+                            "sunset_date": "2031-02-01",
+                            "sunset_date_derived": True,
+                        },
+                    }
+                ],
+            },
+            {
+                "name": "claims",
+                "kind": "tabular",
+                "rows": [
+                    {
+                        "source_id": "sig",
+                        "data": {
+                            "subject_id": "sig:deployment:france-gex-videoprotection",
+                            "predicate_id": "authorization_state",
+                            "value": "authorized",
+                            "resolution_status": "RESOLVED",
+                            "note": "Arrêté préfectoral 01-2026-0451 — cinq ans, renouvelable.",
+                        },
+                    },
+                    {
+                        "source_id": "sig",
+                        "data": {
+                            "subject_id": "jurisdiction:france",
+                            "predicate_id": "acquisition_method",
+                            "value": "fr.cada",
+                            "resolution_status": "RESOLVED",
+                            "note": "CADA — never us.foia (SIG-ONTO-068).",
+                        },
+                    },
+                    {
+                        "source_id": "sig",
+                        "data": {
+                            "subject_id": "sig:deployment:france-gex-videoprotection",
+                            "predicate_id": "contract_value",
+                            "value": None,
+                            "absence": "UNRESOLVED",
+                            "note": "DECP marché 2025kazvs0000000 exists (link posture); its "
+                            "rights are UNDETERMINED — excluded from the published "
+                            "export until the HG-03 review resolves the licence (§42 "
+                            "fail-closed). The claim stays in the spine.",
+                        },
+                    },
                 ],
             },
         ],
