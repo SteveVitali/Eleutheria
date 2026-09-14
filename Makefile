@@ -14,7 +14,7 @@ MYPY_TARGETS := $(foreach p,$(PY_PACKAGES),-p $(p))
 # Python source this repo owns: each package's src tree, plus the test suite.
 LINT_PATHS := $(foreach p,$(PY_PACKAGES),$(p)/src) tests
 
-.PHONY: sync lint format-check typecheck test test-db check lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory
+.PHONY: sync lint format-check typecheck test test-db check lock export sbom gen gen-ontology verify-gen docs-check docs-check-repo docs-check-agent docs-check-build-memory security-scan scan-secrets scan-licenses audit-deps
 
 ## Install every workspace member + the dev toolchain from the committed lockfile.
 sync:
@@ -91,6 +91,26 @@ docs-check-agent:
 ## LEDGER key set, secret/size scans). Read-only; exits non-zero on a violation.
 docs-check-build-memory:
 	bash scripts/docs/check-build-memory.sh .
+
+## The CI.1 / GL-CI-01 scanning gates (ADR-078) — the same commands CI runs.
+## `security-scan` runs all three; the nightly workflow does the same. The two
+## offline scanners run on every PR; `audit-deps` needs network (OSV advisory
+## DB) so it rides the nightly.
+security-scan: scan-secrets scan-licenses audit-deps
+
+## Tracked-file secret scan — high-confidence credential shapes, no literals
+## echoed (HG-09: secrets are env-only; a committed secret is a permanent leak).
+scan-secrets:
+	uv run python scripts/ci/secret_scan.py
+
+## Python dependency licence gate — the SIG-UI-039 excluded categories plus a
+## review-required fail on unresolvable licences and on new strong-copyleft deps.
+scan-licenses:
+	uv run python scripts/ci/license_scan.py
+
+## Dependency vulnerability audit — uv export → uvx pip-audit (needs network).
+audit-deps:
+	bash scripts/ci/dep_audit.sh
 
 ## Software Bill of Materials (SIG-ENG-011), CycloneDX, generated per release.
 ## Run ephemerally via uvx (so it need not live in the runtime lockfile), against

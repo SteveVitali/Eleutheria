@@ -1,0 +1,113 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# Nightly composed run + scanning (CI.1 / GL-CI-01, ADR-078).
+#
+# Every night (03:00 UTC — ahead of reingest 05:00 and observability 06:00) this
+# job re-runs the composed tests/e2e for real (Docker + the web build present,
+# SIG_REQUIRE_DB_TESTS=1 so nothing can silently skip) and runs the three scans:
+# dependency vulnerability audit (pip-audit → OSV; needs network — advisories
+# drift without a commit, which is exactly why it runs on a schedule), the
+# dependency licence gate, and the tracked-file secret scan.
+#
+# Every stage runs `continue-on-error` so the nightly REPORT is complete even on
+# red — a report that only exists on green is the wrong shape. The report step
+# (scripts/ci/nightly_report.py) is itself the gate: it writes
+# nightly-report.md, uploads it `if: always()`, and exits non-zero when any
+# stage failed — a red nightly is loud, not silent.
+
+name: nightly
+
+on:
+  schedule:
+    # 03:00 UTC daily — ahead of the reingest (05:00) and observability (06:00)
+    # sweeps so a broken composed run is reported before they spend calls.
+    - cron: "0 3 * * *"
+  # Manual trigger so an operator can produce the report on demand.
+  workflow_dispatch:
+
+concurrency:
+  group: nightly-${{ github.ref }}
+  # Never cancel a running nightly — the report must complete even on a slow day.
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  nightly:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.6"
+          enable-cache: true
+
+      - name: Install Python (pinned by .python-version)
+        run: uv python install
+
+      - name: Install workspace from the committed lockfile
+        run: make sync
+
+      - name: Install Node (pinned major)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install web deps (the S8 web-build fixtures need web/node_modules)
+        run: npm --prefix web ci
+
+      - name: Composed e2e — tests/e2e with Docker + the web build present
+        id: e2e
+        continue-on-error: true
+        run: uv run pytest tests/e2e --junitxml nightly-e2e.xml 2>&1 | tee nightly-e2e.txt
+        env:
+          SIG_REQUIRE_DB_TESTS: "1"
+          TESTCONTAINERS_RYUK_DISABLED: "true"
+
+      - name: Secret scan over every tracked file
+        id: secrets
+        continue-on-error: true
+        run: uv run python scripts/ci/secret_scan.py 2>&1 | tee secret-scan.txt
+
+      - name: Dependency licence scan (excluded categories + unresolvable + new GPL)
+        id: licenses
+        continue-on-error: true
+        run: uv run python scripts/ci/license_scan.py 2>&1 | tee license-scan.txt
+
+      - name: Dependency vulnerability audit (uv export → uvx pip-audit → OSV)
+        id: depaudit
+        continue-on-error: true
+        run: bash scripts/ci/dep_audit.sh 2>&1 | tee dep-audit.txt
+
+      # The report is ALSO the gate: it writes nightly-report.md, then exits
+      # non-zero if any stage outcome was not success — the upload below still
+      # runs (if: always()), so the red nightly carries its own evidence.
+      - name: Compose the nightly report (fails the run if any stage failed)
+        if: always()
+        run: >
+          uv run python scripts/ci/nightly_report.py --out nightly-report.md
+          e2e=${{ steps.e2e.outcome }} secrets=${{ steps.secrets.outcome }}
+          licenses=${{ steps.licenses.outcome }} depaudit=${{ steps.depaudit.outcome }}
+          --log e2e=nightly-e2e.txt --log secrets=secret-scan.txt
+          --log licenses=license-scan.txt --log depaudit=dep-audit.txt
+
+      - name: Upload the nightly report + stage logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-${{ github.run_id }}
+          path: |
+            nightly-report.md
+            nightly-e2e.txt
+            nightly-e2e.xml
+            secret-scan.txt
+            license-scan.txt
+            dep-audit.txt
+          if-no-files-found: warn
