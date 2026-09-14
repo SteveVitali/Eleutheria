@@ -157,6 +157,36 @@ alongside `SIG-UI-038`), so **no new class of deviation is introduced** and the 
 acceptance of Family 2 (zero-JS static map, ADR-051, `P20.2:spec`) already covers it. `MISSING`
 moves 10 → 9. `check_coverage_matrix.py` now exits 0 (`671 rows OK`).
 
+### (b) Addendum 2 — 2026-09-13, Round 3–4 readiness delta (P24.8 / REC.1; append-only)
+
+The go-live (Round 3) and productionize (Round 4) tickets introduced **no new
+accepted deviation**: the `COVERAGE_MATRIX.csv` `MET-DIFFERENTLY` count is **77**,
+unchanged since the addendum above (verified by `grep -c MET-DIFFERENTLY` this
+run). The signed §(b) table is not rewritten.
+
+What Rounds 3–4 did produce, none of which is a `MET-DIFFERENTLY` deviation:
+
+- **New spec requirements closed straight** — `SIG-INGEST-049`/`049a`–`049f` +
+  `SIG-INGEST-050` moved `PARTIAL`/`MISSING` → **`MET`** with test evidence
+  (P24.7 / CCOPS.1 / ADR-080), retiring OPEN FINDING P17-FLIP-01. Straight
+  passes add nothing to this list.
+- **Owned engineering decisions** the spec delegated to an ADR — ADR-074 (OKC
+  document connectors), ADR-075 (e2-micro GCE vs Cloud SQL — DEPLOY.1's own
+  "pick one" clause), ADR-076 (GitHub-Actions cron vs Prefect/Dagster —
+  SCHED.1's "cron first" allowance), ADR-077 (record-first notifier), ADR-078
+  (CI composed job), ADR-079 (France adapter dispositions), ADR-080 (CCOPS
+  connector shape). These are decisions *within* spec latitude, not deviations
+  from a requirement.
+- **Deferred obligations** — every credentialed/gated remainder is a
+  `DEFERRALS.md` `D-*` row citing exactly one `BL-*` backlog home
+  (`OPERATIONAL_READINESS.md` carries the full map); none loosens a spec MUST.
+
+**Net for GATE-ACCEPT (P24.9):** the ACCEPTED list the operator signs is the
+signed 76-row §(b) table **plus the one addendum row** (`SIG-UI-047`, the same
+already-accepted zero-JS-map deviation under its second fold-back id) —
+**77 rows, 0 new since the capstone addendum.** No new deviation requires
+signature beyond what HG-14 already accepted.
+
 ## (c) Items routed to P21.x (unchanged from the gap analysis)
 
 The gap analysis routed the remaining non-MET rows to later tickets; P19.5 does not change that routing

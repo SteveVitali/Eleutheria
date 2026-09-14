@@ -1,0 +1,29 @@
+--- source=raa_prefectures mode=shadow sink=pg ---
+source 'raa_prefectures' [shadow] via connector 'france_belgium_records': 10 claim(s), 1 capture(s), shadow diff changed=0
+STATE: raa_prefectures shadow OK
+--- source=decp_fr mode=shadow sink=pg ---
+source 'decp_fr' [shadow] via connector 'france_belgium_procurement': 26 claim(s), 1 capture(s), shadow diff changed=0
+STATE: decp_fr shadow OK
+--- source=madada mode=shadow sink=pg ---
+Traceback (most recent call last):
+  File "/Users/stevenvitali/Eleutheria/.venv/bin/sig-connectors", line 10, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/Users/stevenvitali/Eleutheria/connectors/src/connectors/cli.py", line 266, in main
+    return _run(args)
+           ^^^^^^^^^^
+  File "/Users/stevenvitali/Eleutheria/connectors/src/connectors/cli.py", line 230, in _run
+    report = run_source(
+             ^^^^^^^^^^^
+  File "/Users/stevenvitali/Eleutheria/connectors/src/connectors/runner.py", line 345, in run_source
+    return _run_over_fixture(
+           ^^^^^^^^^^^^^^^^^^
+  File "/Users/stevenvitali/Eleutheria/connectors/src/connectors/runner.py", line 448, in _run_over_fixture
+    fixture_report = run(connector, ctx)
+                     ^^^^^^^^^^^^^^^^^^^
+  File "/Users/stevenvitali/Eleutheria/connectors/src/connectors/pipeline.py", line 108, in run
+    assert_loadable(ctx.source)
+  File "/Users/stevenvitali/Eleutheria/connectors/src/connectors/loader.py", line 105, in assert_loadable
+    raise IngestionNotPermitted(
+connectors.loader.IngestionNotPermitted: source 'madada' has compact_status='not_contacted', which does not permit ingestion; the loader refuses to run before any fetch (SIG-INGEST-014/027).
+STATE: madada HG-03-pending — flip green then re-run with --mode live
