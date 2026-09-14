@@ -115,7 +115,7 @@ def test_the_seeded_registry_has_no_flip_metadata_violations() -> None:
 def test_validate_passes_on_the_seeded_registry(capsys: pytest.CaptureFixture[str]) -> None:
     assert main(["validate"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 118" in out
+    assert "registered sources: 121" in out
     assert "self-checks OK" in out
 
 
@@ -149,7 +149,7 @@ def test_review_status_prints_flip_ready_16_and_loadable_6(
 ) -> None:
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 118" in out
+    assert "registered sources: 121" in out
     assert "flip-ready: 16" in out
     assert "loadable now: 6" in out
 

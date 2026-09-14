@@ -1305,13 +1305,66 @@ notes = "Claims '336K+ cameras worldwide'; unmaintained since 2025-11; figure NO
 
 [sources.ccops_ordinance_disclosures]
 name = "Municipal surveillance-ordinance (CCOPS) disclosures"
-source_kind = "government_portal"
+source_kind = "government_mandated_disclosure"
 homepage_url = "https://www.aclu.org/issues/privacy-technology/surveillance-technologies/community-control-over-police-surveillance"
 default_tier = "R1"
 custody_posture = "MIRROR"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-notes = "Source class government_mandated_disclosure (SIG-INGEST-049): ~26 jurisdictions, ~5% population, 0.14% of agencies; zero publish machine-readable; the national list is an image file. Depth-not-breadth; highest value is calibration (§28/§29.2). Public record — rights UNDETERMINED at class level."
+notes = "Source class government_mandated_disclosure (SIG-INGEST-049): ~26 jurisdictions, ~5% population, 0.14% of agencies; zero publish machine-readable; the national list is an image file. Depth-not-breadth; highest value is calibration (§28/§29.2). Public record — rights UNDETERMINED at class level. The class-level row; the three paying per-city adapters land in P24.7 (SIG-INGEST-049c)."
+
+# The three connectors that "pay for themselves" (SIG-INGEST-049c, P24.7 /
+# CCOPS.1 / GL-CCOPS-01): Seattle (quarterly + the fixed 50-field SIR
+# questionnaire), NYC POST Act (42 policies on a stable URL pattern), SF Chapter
+# 19B (biannual citywide inventory with a compliance metric). All emit
+# per-agency AGGREGATE rows only (Part VIII) through the
+# government_mandated_disclosure connector; procured≠deployed is enforced at the
+# genre and predicate level. Every row stays ingestion_permitted=false with
+# rights UNDETERMINED until a rights packet + operator flip (HG-03/HG-04): a
+# `run --mode live` REFUSES at the loader gate (exit 3); replay/shadow run over
+# committed fixtures (tests/connectors/fixtures/ccops/).
+
+[sources.ccops_seattle]
+name = "Seattle Surveillance Ordinance disclosures (SMC 14.18 — Master List, SIRs, quarterly determination reports)"
+source_kind = "government_mandated_disclosure"
+homepage_url = "https://www.seattle.gov/tech/data-privacy/surveillance-technology"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+review_packet = "docs/build/reports/rights/ccops_seattle.md"
+access_method = "government_mandated_disclosure connector over committed fixtures (tests/connectors/fixtures/ccops)"
+notes = "The most complete CCOPS regime (F3.20): 14 technologies / 2 departments on the 2025-09 Master List; a fixed ~50-field SIR questionnaire that IS the SIG-INGEST-049b dossier field list (deployment locations, signage, fiscal incl. vendor subsidies, data sharing, retention, audit — the Fiscal 1.1/1.2 cost tables sit blank: mandated ≠ populated); quarterly determination reports unbroken 2017Q4→2026Q2. PDF only; nothing on data.seattle.gov. Public record — rights UNDETERMINED pending review (HG-03); Seattle's SIR is a pre-acquisition commitment document, never deployment evidence."
+
+[sources.ccops_nyc_post]
+name = "NYC POST Act impact & use policies (42 per-technology PDFs)"
+source_kind = "government_mandated_disclosure"
+homepage_url = "https://www.nyc.gov/site/nypd/about/about-nypd/policy/post-act.page"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+review_packet = "docs/build/reports/rights/ccops_nyc_post.md"
+access_method = "government_mandated_disclosure connector over committed fixtures (tests/connectors/fixtures/ccops)"
+notes = "The closest thing to a machine-enumerable CCOPS corpus (F3.24): a single index page, 42 distinct PDFs under /assets/nypd/downloads/pdf/public_information/post-final/, consistent filenames, synchronised revision date (2026-02-04) acting as a version stamp. Declared fields: capabilities, use rules, unauthorized-access protections, data retention, public access, external-entity access, trainings, audit & oversight, health & safety, disparate impacts. NYPD is the largest single-agency CCOPS regime in the US. Public record — rights UNDETERMINED pending review (HG-03); the IUPs describe capabilities and rules, they do not report measured use."
+
+[sources.ccops_sf]
+name = "San Francisco Chapter 19B biannual surveillance technology inventory"
+source_kind = "government_mandated_disclosure"
+homepage_url = "https://www.sf.gov/surveillance-technology-inventory"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+verified = true
+last_verified = 2026-08-20
+review_packet = "docs/build/reports/rights/ccops_sf.md"
+access_method = "government_mandated_disclosure connector over committed fixtures (tests/connectors/fixtures/ccops)"
+notes = "The broadest CCOPS regime (F3.21): citywide — every city department, not just police — with a published compliance breakdown (2026-03-02 report: 66% approved policy, 26% technologies in use WITHOUT an approved policy — 37 technologies / 9 departments; the SIG-INGEST-049e non-compliance finding class). Four appendices: BOS-approved (93 tech / 58 policies), draft-reviewed (10), seeking procurement / SFPD pilot (1 — the 2024-03 ballot-measure pilot carve-out), in use without approved policy (37). PDF only. Public record — rights UNDETERMINED pending review (HG-03); the inventory's own in-use statuses are the use evidence, never an inference."
 
 [sources.state_alpr_statute_inventory]
 name = "State ALPR statute national inventory"
