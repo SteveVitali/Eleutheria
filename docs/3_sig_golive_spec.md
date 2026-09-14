@@ -91,7 +91,7 @@ Each row becomes a `HUMAN-H<k>` or `GATE-G<k>` marker; the operator signs it; it
 | HG-01 | Legal home named (SIG-GOV-012) | operator names the legal entity in `docs/governance/governance-and-code-of-conduct.md` | operator/legal | LIVE.2 publish |
 | HG-11 | Operating governance | two reviewer **roles** + written concurrence workflow (SIG-PUB-008) + live takedown/corrections contact | governance | LIVE.2 publish |
 | HG-02 | Counsel sign-off | counsel opinion recorded for ODbL 4.4(b) (RISK-P0-01), officer-naming gate, publication tiers, Part VIII | counsel | INFRA.1 OSM export, LIVE.2 publish |
-| HG-03 | Per-source rights flips | reviewer reads the 27 packets in `docs/build/rights/`, sets `ingestion_permitted=true` + review metadata | reviewer | RIGHTS.1, LIVE.1, SOURCES.1 |
+| HG-03 | Per-source rights flips | reviewer reads the 27 packets in `docs/build/reports/rights/`, sets `ingestion_permitted=true` + review metadata | reviewer | RIGHTS.1, LIVE.1, SOURCES.1 |
 | HG-04 | Stage-0 outreach | perform + record outreach to the 19 compact projects (SIG-CONTRIB-012/013) | operator | RIGHTS.1, SOURCES.1 |
 | HG-07 | Deposit/object-store accounts | Zenodo (sandbox+prod), S3-compatible store, optional SWH token | operator | INFRA.1 |
 | HG-08 | Contribution accounts | MapRoulette API key + registered OSM Organised-Editing page | operator | CONTRIB.1 |
@@ -152,7 +152,7 @@ Each row becomes a `HUMAN-H<k>` or `GATE-G<k>` marker; the operator signs it; it
 ### GOV.1 — Legal home & operating governance (GL-GOV-01, HUMAN-H_a + GATE)
 - **Kind:** human + small doc · **Gate:** HG-01, HG-11.
 - **Deliverables:** name the legal home in `docs/governance/governance-and-code-of-conduct.md` (SIG-GOV-012); define **two reviewer roles** + the written-concurrence workflow (`ReviewerConcurrence`, SIG-PUB-008); stand up a live takedown/corrections contact (org channel only, no personal data). Sign the marker; readout to `docs/build/readouts/`.
-- **Acceptance:** governance doc names the home + the two roles + the contact; `docs/build/PUBLICATION_CHECKLIST.md` HG-01/HG-11 rows tick with evidence links.
+- **Acceptance:** governance doc names the home + the two roles + the contact; `docs/build/reports/PUBLICATION_CHECKLIST.md` HG-01/HG-11 rows tick with evidence links.
 
 ### LEGAL.1 — Counsel sign-off (GL-LEGAL-01, HUMAN-H_b)
 - **Kind:** human · **Gate:** HG-02.
@@ -237,7 +237,7 @@ Each row becomes a `HUMAN-H<k>` or `GATE-G<k>` marker; the operator signs it; it
 
 | GL ticket | Existing ticket / DEFERRALS | BACKLOG / matrix ids |
 |---|---|---|
-| RIGHTS.1 | P21.1 · `D-P21.1-*` | packets in `docs/build/rights/` |
+| RIGHTS.1 | P21.1 · `D-P21.1-*` | packets in `docs/build/reports/rights/` |
 | LIVE.1 | P21.3 · `D-P21.3-*` · BL-023/024/026 | doc-connector ids |
 | LIVE.2 | P21.4 · `D-P21.4-*` | SIG-PUB-*, SIG-UI-* |
 | INFRA.1 | P21.5 · `D-P21.5-*` | SIG-STORE-003/004/005, SIG-GOV-022/023/024 |

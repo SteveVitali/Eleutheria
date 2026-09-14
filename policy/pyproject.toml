@@ -1,7 +1,7 @@
 [project]
 name = "sig-policy"
 version = "0.1.0"
-description = "SIG policy package (skeleton; see docs/2_canonical_design_spec.md §47)."
+description = "SIG policy package: executable governance — sensitivity tiers, licence compartments, publication and ingestion gates (§42-§46, §47)."
 requires-python = ">=3.11"
 dependencies = []
 

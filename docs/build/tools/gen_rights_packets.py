@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import pathlib
 
-RIGHTS = pathlib.Path(__file__).resolve().parents[3] / "docs/build/rights"
+RIGHTS = pathlib.Path(__file__).resolve().parents[3] / "docs/build/reports/rights"
 RETRIEVAL = "2026-09-09"
 
 # --- Verbatim terms actually fetched by the agent (retrieval 2026-09-09) -------
@@ -432,7 +432,7 @@ for sid, name, home, terms, custody, tier_desc, note in OKC:
 
 TEMPLATE = """# Rights-review packet — TEMPLATE (SIG-LIC-001, P21.1)
 
-> Copy this file to `docs/build/rights/<source_id>.md`. A packet lays out **facts**
+> Copy this file to `docs/build/reports/rights/<source_id>.md`. A packet lays out **facts**
 > (quoted terms + retrieval date) separately from **judgement** (the reviewer decision
 > line). It asserts **no** legal conclusion (defining standard §3.1 — no synthetic
 > certainty about rights). Reading a terms/robots page is permitted research, **not**

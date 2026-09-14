@@ -37,9 +37,11 @@ export SIG_STAGING_API_URL="$API_URL"
 
 EXPORT_DIR="$REPO_ROOT/exports/out/$JURISDICTION"
 DATE="$(date +%Y-%m-%d)"
-ACCEPTANCE_OUT="$REPO_ROOT/docs/build/okc/acceptance_${DATE}.json"
-CONNECTOR_LOG="$REPO_ROOT/docs/build/okc/connector_runs_${DATE}.txt"
-mkdir -p "$REPO_ROOT/docs/build/okc"
+# P22.3 (build-memory v2) moved run artifacts under docs/build/reports/ — write
+# there so a live run does not recreate a top-level docs/build/okc/ (v2 layout).
+ACCEPTANCE_OUT="$REPO_ROOT/docs/build/reports/okc/acceptance_${DATE}.json"
+CONNECTOR_LOG="$REPO_ROOT/docs/build/reports/okc/connector_runs_${DATE}.txt"
+mkdir -p "$REPO_ROOT/docs/build/reports/okc"
 
 say() { printf '\n=== %s ===\n' "$1"; }
 

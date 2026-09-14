@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate docs/build/RIGHTS_REVIEW_INDEX.md from the live registry (P21.1, scratch)."""
+"""Generate docs/build/reports/RIGHTS_REVIEW_INDEX.md from the live registry (P21.1, scratch)."""
 
 from __future__ import annotations
 
@@ -11,8 +11,8 @@ from connectors.review import flip_ready, has_rights_block, is_flip_ready
 from policy.rights import is_undetermined
 
 ROOT = pathlib.Path(__file__).resolve().parents[3]
-OUT = ROOT / "docs/build/RIGHTS_REVIEW_INDEX.md"
-RIGHTS_DIR = ROOT / "docs/build/rights"
+OUT = ROOT / "docs/build/reports/RIGHTS_REVIEW_INDEX.md"
+RIGHTS_DIR = ROOT / "docs/build/reports/rights"
 
 OKC_MIN = {"okc_procurement", "okc_council", "okcpd_policy", "ok_statute", "osm_overpass", "deflock_repo"}
 OKC_ALL = OKC_MIN | {"journalrecord", "oklahoman"}
@@ -49,7 +49,7 @@ def main() -> None:
         "**compact status**, and **custody posture** are read from "
         "`connectors/src/connectors/data/sources.toml`; **gate** and **flip-ready** are computed by "
         "`connectors.review` / `connectors.loader`. A **packet** column links the rights-review packet "
-        "for the 27 sources on the critical path (`docs/build/rights/<id>.md`); the rest are P22+ "
+        "for the 27 sources on the critical path (`docs/build/reports/rights/<id>.md`); the rest are P22+ "
         "backlog. `⭐` marks the OKC minimum set (critical-path step 4). Counts are reproduced from "
         "`uv run sig-connectors validate` — do not hand-edit; regenerate."
     )
@@ -68,7 +68,7 @@ def main() -> None:
         "**Gate skipped this run (HG-03/HG-04 = SKIP):** nothing was flipped, so `loadable now: 0`. "
         "The 18 flip-ready sources are unblockable by an operator flip + recorded review metadata; the "
         "6 OKC rows + `usaspending` + `deflock` + `civicclerk` are UNDETERMINED pending review. See "
-        "`docs/build/STAGE0_OUTREACH_RECORD.md` for the compact/outreach state."
+        "`docs/build/reports/STAGE0_OUTREACH_RECORD.md` for the compact/outreach state."
     )
     lines.append("")
     lines.append("## OKC minimum set (critical-path step 4)")

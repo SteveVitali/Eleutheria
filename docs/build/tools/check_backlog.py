@@ -19,6 +19,7 @@ from anywhere:
 Exits 0 and prints the four count lines when the backlog is consistent; exits 1
 with the first failing invariant otherwise.
 """
+
 from __future__ import annotations
 
 import csv
@@ -28,9 +29,11 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[3]
 BACKLOG = ROOT / "docs/build/BACKLOG.csv"
-THEMES = ROOT / "docs/build/BACKLOG_THEMES.md"
+# P22.3 (build-memory v2 migration) moved the root report files into
+# docs/build/reports/; the two backlog sources of truth live there now.
+THEMES = ROOT / "docs/build/reports/BACKLOG_THEMES.md"
 RISK = ROOT / "docs/risk_register.md"
-LD = ROOT / "docs/build/LEDGER_DEFERRALS.md"
+LD = ROOT / "docs/build/reports/LEDGER_DEFERRALS.md"
 ADR_DIR = ROOT / "docs/adr"
 
 # Risk-register subsection headings whose RISK rows are the deferred/unclosed
@@ -40,16 +43,25 @@ DEFERRED_HEADING = re.compile(
 )
 
 VALID_TYPE = {
-    "defect", "deferred-feature", "operational-prereq", "rights/legal",
-    "docs-drift", "schema-refinement", "external-dep", "process",
+    "defect",
+    "deferred-feature",
+    "operational-prereq",
+    "rights/legal",
+    "docs-drift",
+    "schema-refinement",
+    "external-dep",
+    "process",
 }
 VALID_SIZE = {"S", "M", "L"}
 VALID_STATUS = {"open", "closed", "accepted"}
-# landing enum: closed-by:P19.4/5, P20.2/P20.3, P21.1..P21.9, P22+, accepted,
-# human-gate:HG-nn. (P21.9 = Stage-5 pathway connectors, per the phase plan;
-# the ticket's "P21.1…P21.8" shorthand is inclusive of the ninth P21 ticket.)
+# landing enum: closed-by:P<n>.<m>, a P<n>.<m> chain ticket, a P<n>+ phase bucket
+# (P22+ was the post-build unscheduled bucket; P25+ = post-Round-4 manifest,
+# P24.5/META.1), accepted, human-gate:HG-nn. (P21.9 = Stage-5 pathway connectors,
+# per the phase plan; the ticket's "P21.1…P21.8" shorthand is inclusive of the
+# ninth P21 ticket. Generalised by P24.5 so future tickets land rows without
+# editing this enum.)
 LANDING_RE = re.compile(
-    r"^(closed-by:P19\.[45]|P20\.[23]|P21\.[1-9]|P22\+|accepted|human-gate:HG-\d{2})$"
+    r"^(closed-by:P\d{2}\.\d|P\d{2}\.\d|P\d{2}\+|accepted|human-gate:HG-\d{2})$"
 )
 
 
@@ -109,8 +121,17 @@ def main() -> int:
     rows = load_rows()
 
     expected_cols = [
-        "bl_id", "title", "type", "sources", "req_ids",
-        "package", "blocks", "landing", "gate", "size", "status",
+        "bl_id",
+        "title",
+        "type",
+        "sources",
+        "req_ids",
+        "package",
+        "blocks",
+        "landing",
+        "gate",
+        "size",
+        "status",
     ]
     if rows and list(rows[0].keys()) != expected_cols:
         _fail(f"unexpected columns {list(rows[0].keys())}")
@@ -196,22 +217,32 @@ def main() -> int:
     ok = True
     if THEMES.exists():
         if theme_headings > 10:
-            print(f"  too many themes: {theme_headings} > 10", file=sys.stderr); ok = False
+            print(f"  too many themes: {theme_headings} > 10", file=sys.stderr)
+            ok = False
         missing_theme = [r["bl_id"] for r in rows if r["bl_id"] not in theme_owner]
         if missing_theme:
-            print(f"  bl_ids in no theme: {' '.join(missing_theme)}", file=sys.stderr); ok = False
+            print(f"  bl_ids in no theme: {' '.join(missing_theme)}", file=sys.stderr)
+            ok = False
         if theme_dupes:
-            print(f"  bl_ids in >1 theme: {'; '.join(theme_dupes)}", file=sys.stderr); ok = False
+            print(f"  bl_ids in >1 theme: {'; '.join(theme_dupes)}", file=sys.stderr)
+            ok = False
     if unmapped_risk:
-        print(f"  unmapped RISK: {' '.join(unmapped_risk)}", file=sys.stderr); ok = False
+        print(f"  unmapped RISK: {' '.join(unmapped_risk)}", file=sys.stderr)
+        ok = False
     if unmapped_adr:
-        print(f"  unmapped ADR: {' '.join(unmapped_adr)}", file=sys.stderr); ok = False
+        print(f"  unmapped ADR: {' '.join(unmapped_adr)}", file=sys.stderr)
+        ok = False
     if unmapped_ld:
-        print(f"  unmapped LD: {' '.join(unmapped_ld)}", file=sys.stderr); ok = False
+        print(f"  unmapped LD: {' '.join(unmapped_ld)}", file=sys.stderr)
+        ok = False
     if orphan_sources:
-        print(f"  orphan sources (not a RISK/ADR/LD id): {' '.join(orphan_sources)}", file=sys.stderr); ok = False
+        print(
+            f"  orphan sources (not a RISK/ADR/LD id): {' '.join(orphan_sources)}", file=sys.stderr
+        )
+        ok = False
     if dupes:
-        print(f"  double-owned sources: {'; '.join(dupes)}", file=sys.stderr); ok = False
+        print(f"  double-owned sources: {'; '.join(dupes)}", file=sys.stderr)
+        ok = False
 
     if not ok:
         return 1

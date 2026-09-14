@@ -5,7 +5,7 @@ import pathlib
 
 ROOT = pathlib.Path("/Users/stevenvitali/Eleutheria")
 RISK = ROOT / "docs/risk_register.md"
-LD = ROOT / "docs/build/LEDGER_DEFERRALS.md"
+LD = ROOT / "docs/build/reports/LEDGER_DEFERRALS.md"  # moved by P22.3 (build-memory v2)
 ADR_DIR = ROOT / "docs/adr"
 
 DEFERRED_RE = re.compile(r"Deferred|Out of scope|Scaffolded|Unverifiable|not-fully-closed|Bounded", re.I)
