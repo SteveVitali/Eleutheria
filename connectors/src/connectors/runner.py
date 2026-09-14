@@ -66,6 +66,15 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "pathways_rtcc_federation": "pathways",
     "pathways_fr_css_forensics": "pathways",
     "pathways_acoustic_drone_location": "pathways",
+    # The second jurisdiction (P24.6 / JURIS.2): the France/Belgium sources route
+    # through the P18.2 connectors — records for the arrêté + CADA path,
+    # procurement for the DECP national open-data path. All stay
+    # `ingestion_permitted=false` (HG-03); they run over committed fixtures in
+    # replay/shadow only.
+    "raa_prefectures": "france_belgium_records",
+    "madada": "france_belgium_records",
+    "declarationcamera_be": "france_belgium_records",
+    "decp_fr": "france_belgium_procurement",
 }
 
 

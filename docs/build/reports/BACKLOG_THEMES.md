@@ -37,7 +37,7 @@ Each `BL-` id appears in exactly one theme (validated by `check_backlog.py`). Th
 
 ## T9 — International & Stage-5
 - **retired mostly by:** P21.8/P21.9
-- **bl_ids:** BL-042, BL-043
+- **bl_ids:** BL-042, BL-043, BL-053
 
 ## T10 — Accepted by design
 - **retired mostly by:** — (accepted)

@@ -505,13 +505,16 @@ def _cmd_down(_args: argparse.Namespace) -> int:
 
 
 def _cmd_seed(args: argparse.Namespace) -> int:
-    from .seed import seed_jurisdiction
+    from .seed import seed_jurisdiction, seedable_jurisdictions
 
     dsn = args.dsn or default_dsn()
-    if args.jurisdiction != "okc":
-        print(f"only the 'okc' jurisdiction slice is seedable in P21.4 (got {args.jurisdiction!r})")
+    if args.jurisdiction not in seedable_jurisdictions():
+        print(
+            f"no slice for jurisdiction {args.jurisdiction!r}; seedable: "
+            f"{', '.join(seedable_jurisdictions())}"
+        )
         return 2
-    report = seed_jurisdiction(dsn)
+    report = seed_jurisdiction(dsn, jurisdiction=args.jurisdiction)
     print(
         f"seeded jurisdiction {args.jurisdiction!r}: {report['inserted']} claim(s) inserted, "
         f"{report['duplicates']} duplicate(s), {report['entities']} entity(ies)"

@@ -1418,6 +1418,7 @@ default_tier = "R1"
 custody_posture = "REFERENCE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
+review_packet = "docs/build/reports/rights/decp_fr.md"
 notes = "National open procurement data. UNDETERMINED pending reuse-terms review (Licence Ouverte)."
 
 # RAA des préfectures — the weekly ODbL-licensed index of 22,403 prefecture
@@ -1435,6 +1436,7 @@ compact_status = "public_terms_only"
 robots_policy = "honor"
 verified = true
 last_verified = 2026-08-20
+review_packet = "docs/build/reports/rights/raa_prefectures.md"
 notes = "22,403 RAA PDFs; weekly index (F9.18). Prefectural authorization = 5-yr renewable (CSI L252). Legally authoritative, dated, expiring Authorization the US has no equivalent of."
 [sources.raa_prefectures.rights]
 spdx = "ODbL-1.0"
@@ -1456,6 +1458,7 @@ compact_status = "not_contacted"
 robots_policy = "honor"
 verified = true
 last_verified = 2026-08-20
+review_packet = "docs/build/reports/rights/madada.md"
 notes = "51,669 requests / 51,918 authorities; Atom feeds, no complete API (F9.14). Acquisition method fr.cada (§13.8). Rights UNDETERMINED pending site-terms review."
 
 # Belgium — declarationcamera.be, the legally complete national camera register
