@@ -1,0 +1,323 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# Live-op dispositions for registry sources with NO connector mapping (P25.6,
+# LIVE-OPS.6). Every non-mapped source carries exactly one row here; the CI
+# completeness check (tests/connectors/test_live_dispositions.py) fails when a
+# new source is registered without a disposition or a mapped source is listed.
+# Values: link_only | reference | mirror | promote (promote carries class_ticket).
+# custody_posture maps 1:1 onto the first three; a `promote` row names the class
+# ticket a future live connector lands under (HG-03 flip still required — never here).
+
+[sources.aclu_cell_site_simulators]
+disposition = "reference"
+
+[sources.aclu_flock_toolkit]
+disposition = "reference"
+
+[sources.agency_audit_export]
+disposition = "mirror"
+
+[sources.alpr_abuse_library]
+disposition = "reference"
+
+[sources.alpr_accountability_atlas]
+disposition = "reference"
+
+[sources.alpr_watch]
+disposition = "reference"
+
+[sources.alpr_watch_code]
+disposition = "reference"
+
+[sources.alpr_watch_dashboard]
+disposition = "reference"
+
+[sources.alpr_watch_foia_method]
+disposition = "reference"
+
+[sources.atlas_about]
+disposition = "reference"
+
+[sources.atlas_data_library]
+disposition = "link_only"
+
+[sources.atlas_methodology]
+disposition = "reference"
+
+[sources.axon_community_connect]
+disposition = "reference"
+
+[sources.boarddocs]
+disposition = "link_only"
+
+[sources.buyboard]
+disposition = "link_only"
+
+[sources.ca_sharing_visualization]
+disposition = "link_only"
+
+[sources.ccops_ordinance_disclosures]
+disposition = "mirror"
+
+[sources.census_gazetteer_tiger]
+disposition = "mirror"
+
+[sources.census_geocoder]
+disposition = "reference"
+
+[sources.civicclerk]
+disposition = "promote"
+class_ticket = "P25.2"
+note = "P25.2 — agenda-platform tenant path (procurement connector reads agenda_tenants)"
+
+[sources.civicplus]
+disposition = "link_only"
+
+[sources.courtlistener_recap]
+disposition = "promote"
+class_ticket = "P25.2"
+note = "P25.2 — records channel (court records rest_api)"
+
+[sources.deflock]
+disposition = "reference"
+
+[sources.deflock_app_repo]
+disposition = "reference"
+
+[sources.deflock_repo]
+disposition = "reference"
+
+[sources.dhs_fusion_centers]
+disposition = "reference"
+
+[sources.documentcloud]
+disposition = "promote"
+class_ticket = "P25.2"
+note = "P25.2 — records channel (released-document host; Cloudflare-blocked 2026-09-15, same posture as muckrock)"
+
+[sources.drivers_against_flock]
+disposition = "link_only"
+
+[sources.eff_copyright]
+disposition = "reference"
+
+[sources.eff_street_level_surveillance]
+disposition = "reference"
+
+[sources.equalis_group]
+disposition = "link_only"
+
+[sources.escribe]
+disposition = "link_only"
+
+[sources.eyes_off_cedar_rapids]
+disposition = "link_only"
+
+[sources.eyes_off_eugene]
+disposition = "reference"
+
+[sources.eyes_on_flock]
+disposition = "promote"
+class_ticket = "P25.3"
+note = "P25.3 — upstream_project json_api (community Flock data, physical layer)"
+
+[sources.eyes_on_flock_description]
+disposition = "link_only"
+
+[sources.faa_drone_waivers]
+disposition = "reference"
+
+[sources.fbi_cde_agency_registry]
+disposition = "promote"
+class_ticket = "P25.4"
+note = "P25.4 — data.gov-keyed ORI9 identity substrate (needs a substrate/claims connector; flipped 2026-09-15)"
+
+[sources.flock_ajith_fyi]
+disposition = "link_only"
+
+[sources.flock_api_terms]
+disposition = "reference"
+
+[sources.flock_finder]
+disposition = "reference"
+
+[sources.flock_transparency_portals]
+disposition = "link_only"
+
+[sources.flock_you]
+disposition = "reference"
+
+[sources.flockhopper3_deflock_data]
+disposition = "link_only"
+
+[sources.flockreporter]
+disposition = "link_only"
+
+[sources.foiaxpress]
+disposition = "link_only"
+
+[sources.footnote4a]
+disposition = "link_only"
+
+[sources.future_statutory_disclosure_2027]
+disposition = "mirror"
+
+[sources.gleif]
+disposition = "mirror"
+
+[sources.govqa]
+disposition = "link_only"
+
+[sources.govspend]
+disposition = "link_only"
+
+[sources.gsa]
+disposition = "link_only"
+
+[sources.guardian_flock_cameras]
+disposition = "link_only"
+
+[sources.have_i_been_flocked]
+disposition = "reference"
+
+[sources.hgacbuy]
+disposition = "link_only"
+
+[sources.hibf_audit_log_guide]
+disposition = "reference"
+
+[sources.hibf_methodology]
+disposition = "reference"
+
+[sources.internet_archive_wayback]
+disposition = "reference"
+
+[sources.iqm2]
+disposition = "link_only"
+
+[sources.journalrecord]
+disposition = "link_only"
+
+[sources.justfoia]
+disposition = "link_only"
+
+[sources.la_quadrature_du_net]
+disposition = "link_only"
+
+[sources.leaic_crosswalk]
+disposition = "mirror"
+
+[sources.legistar]
+disposition = "promote"
+class_ticket = "P25.2"
+note = "P25.2 — agenda-platform tenant path"
+
+[sources.monahan_grounding_the_flock]
+disposition = "link_only"
+
+[sources.naspo_valuepoint]
+disposition = "link_only"
+
+[sources.nces_ipeds_ntd_cms]
+disposition = "mirror"
+
+[sources.nextrequest]
+disposition = "reference"
+
+[sources.novusagenda]
+disposition = "link_only"
+
+[sources.oklahoman]
+disposition = "link_only"
+
+[sources.omnia_partners]
+disposition = "link_only"
+
+[sources.openstates]
+disposition = "promote"
+class_ticket = "P25.2"
+note = "P25.2 — records/statute channel (legislative rest_api)"
+
+[sources.osm_automated_edits_coc]
+disposition = "reference"
+
+[sources.osm_copyright]
+disposition = "reference"
+
+[sources.osm_replication]
+disposition = "reference"
+
+[sources.osm_surveillance_tagging]
+disposition = "reference"
+
+[sources.osm_taginfo]
+disposition = "reference"
+
+[sources.osmf_licence_guidelines]
+disposition = "reference"
+
+[sources.panopti_ca]
+disposition = "reference"
+
+[sources.panopticity]
+disposition = "link_only"
+
+[sources.primegov]
+disposition = "promote"
+class_ticket = "P25.2"
+note = "P25.2 — agenda-platform tenant path"
+
+[sources.private_eyes]
+disposition = "reference"
+
+[sources.r_flocksurveillance]
+disposition = "link_only"
+
+[sources.ringmast4r_flock]
+disposition = "link_only"
+
+[sources.sam_gov]
+disposition = "promote"
+class_ticket = "P25.2"
+note = "P25.2 — federal procurement rest_api"
+
+[sources.sm_alpr]
+disposition = "reference"
+
+[sources.sourcewell]
+disposition = "reference"
+
+[sources.sous_surveillance_osm_import]
+disposition = "reference"
+
+[sources.state_alpr_statute_inventory]
+disposition = "mirror"
+
+[sources.surveillance_under_surveillance]
+disposition = "reference"
+
+[sources.technocarte_update]
+disposition = "link_only"
+
+[sources.technopolice]
+disposition = "reference"
+
+[sources.technopolice_forum]
+disposition = "link_only"
+
+[sources.ted_eu]
+disposition = "reference"
+
+[sources.tips_usa]
+disposition = "link_only"
+
+[sources.wigle]
+disposition = "link_only"
+
+[sources.wikidata_sparql]
+disposition = "reference"
+
+[sources.wired_shotspotter_leak]
+disposition = "link_only"

@@ -31,29 +31,38 @@ rights). Every row below names the P25 ticket that owns its live-op work.
 | pathways / Stage-5 (3) | `pathways_rtcc_federation`, `pathways_fr_css_forensics`, `pathways_acoustic_drone_location` | design-gated | none | HG-03/04; Part VIII/counsel | **P25.5** |
 | CCOPS (3) | `ccops_seattle`, `ccops_nyc_post`, `ccops_sf` | CRAWL (gov PDFs) | none | HG-03/04 | **P25.5** (+ BL-054 expansion) |
 
-## B. Unmapped sources (98) — triage disposition
+## B. Unmapped sources (98) — triage disposition — **RESOLVED 2026-09-15**
 
-These carry **no connector** today. The dominant disposition is *cited, not
-fetched* — they are evidence/reference rows, not live-fetch targets.
+Every one of the 98 now carries exactly one recorded disposition in
+`connectors/src/connectors/data/live_dispositions.toml`, and the CI check
+(`tests/connectors/test_live_dispositions.py`) enforces
+`mapped ∪ dispositions == 121` — a newly-registered source with neither a
+connector map entry nor a disposition row **fails the build**.
 
-| disposition | ~count | meaning | owning ticket |
-|---|---|---|---|
-| **LINK-only (cited, not fetched)** | 38 LINK | a stable citation locator; SIG links to it, never ingests its bytes as a source feed (news, primary-source links). No live connector by design. | **P25.6** (confirm + record the disposition; no fetch) |
-| **REFERENCE (background/context)** | 51 REFERENCE | context/reference datasets (accountability libraries, toolkits) cited for provenance; not a structured feed. No live connector unless promoted. | **P25.6** (triage: keep REFERENCE vs promote) |
-| **MIRROR (archived copy)** | 9 MIRROR | an archived/mirrored copy of another source; fetched (if ever) from the archive, not the origin. | **P25.6** (archive-fetch policy) |
-| **future-connector candidates** | subset w/ `access_method=rest_api/json_api/sparql` | REFERENCE rows that expose a real API (e.g. `rest_api`, `sparql`) — genuine future live connectors. | **P25.6** promotes each to its class ticket (P25.2–P25.5) with an HG-03 flip. |
+| disposition | count | meaning |
+|---|---|---|
+| `link_only` | 38 | a stable citation locator; SIG links, never ingests as a feed. |
+| `reference` | 43 | context/provenance rows (accountability libraries, toolkits, geocoder + taginfo substrates). |
+| `mirror` | 8 | archived copies; fetched (if ever) from the archive, not the origin. |
+| `promote` | 9 | a real API/feed → a genuine future live connector (HG-03 flip still required). |
 
-**Rule:** P25.6 must classify **every** one of the 98 into exactly one of the
-above, so no source is left without a disposition (a `check`-style assertion:
-mapped ∪ LINK ∪ REFERENCE ∪ MIRROR ∪ promoted == 121).
+**Promoted (9):** `civicclerk`, `legistar`, `primegov`, `sam_gov`,
+`courtlistener_recap`, `documentcloud`, `openstates` → **P25.2** (records/
+procurement/agenda-tenant classes); `eyes_on_flock` → **P25.3** (physical layer);
+`fbi_cde_agency_registry` → **P25.4** (data.gov-keyed ORI9 substrate — needs a
+substrate connector; flipped 2026-09-15). `documentcloud` shares the muckrock
+Cloudflare-WAF finding.
 
 ## C. Cross-cutting (not per-source)
 
 | item | owning ticket | status |
 |---|---|---|
-| the ADR-083 carve-out **implementation** (`policy.crawler` allow-list + `PoliteFetcher` wiring + test) | **P25.1** | scoped |
-| the `data/live_targets.toml` rows for every live-connector source | its class ticket | scoped |
-| HG-07 Zenodo (sandbox) deposit + object-store push + SWH | **P21.5 re-run** (`D-P21.5-1`) — **Zenodo token now available** | creds-ready |
+| the ADR-083 carve-out **implementation** (`policy.crawler` allow-list + `PoliteFetcher` wiring + test) | **P25.1** | **LANDED** (api_allowlist.toml + PoliteFetcher conduct decisions + POST seam) |
+| the `data/live_targets.toml` rows for every live-connector source | its class ticket | landed for all 6 live-able sources (osm_overpass, osm_element_history, eff_atlas, usaspending, eff_data_driven, muckrock) |
+| POST body support in the shared fetch seam (USAspending subawards) | **P25.2** | **LANDED** — 540 sub-award claims committed live |
+| MuckRock JWT-refresh wiring | **P25.2** | **LANDED** — fetch honestly WAF-blocked (Cloudflare 403 → recorded disappearance) |
+| Data Driven real-artifact adapter (EFF zip → release manifest) | **P25.4** | **LANDED** — 200 agency aggregates live |
+| HG-07 Zenodo (sandbox) deposit + object-store push + SWH | **P21.5 re-run** (`D-P21.5-1`) — **Zenodo token now available** | **sandbox deposit DONE** (10.5072/zenodo.603732); object-store push + SWH remain |
 | Go-public (public buckets + Cloud Run unauth + DNS + `v0.2.0`) | operator (HG-11 second reviewer + HG-02 counsel) | blocked |
 
 ## D. Ownership summary
