@@ -1943,3 +1943,13 @@ ADR-057 records the additive schema deviation.
 |---|---|---|
 | SIG-ENG-004 (every new requirement has an automated test) | `tests/connectors/test_france_belgium.py`, `tests/connectors/test_osm_import_study.py`, `tests/unit/test_france_belgium_adapter.py` | `make check` (pytest) |
 | Phase gate: CI green incl. data-quality; ADR written for the schema deviation; traceability + risk register updated | this section; `docs/adr/ADR-057-*`; `docs/risk_register.md` (Phase 18 — P18.2) | `make check` (lint/format/typecheck/pytest/verify-gen) |
+
+## Build memory (docs/build, docs/tickets) — the build's contract record is committed (P19.1)
+
+| Requirement | Where | Evidence |
+|---|---|---|
+| SIG-ENG-001 (single source of truth / no undocumented scattered state — the build's memory is durable and citeable) | `docs/tickets/` committed (65 files, `00_MANIFEST.md` the order); `docs/build/` build memory (`PLANNING_LEDGER.md`, `BUILD_INDEX.md`, `LEDGER_DEFERRALS.md`, `SCOPING_NUMBERS.md`, `SCOPING_ID_LISTS.md`, `DECISION_MEMO.md`, `README.md`); `.agents/scratch/` the single gitignored scratch root (`README.md` + rename mapping) | `git ls-files docs/tickets | wc -l` = 65; `git ls-files docs/build` = the 7 files; ADR-058 |
+| SIG-ENG-003 (spec is amended at source, not in place — documented for agents) | root `AGENTS.md` "Amending the specification" (`docs/research/_meta/spec_src/*.md` → `sh docs/research/_meta/spec_src/BUILD.sh` → ADR); `_TEMPLATE.md` derived-artifact banner | `AGENTS.md`; `docs/research/_meta/spec_src/BUILD.sh` |
+| SIG-ENG-012 (§47 package layout frozen; renaming needs an ADR) | root `AGENTS.md` "Critical gotchas" #3; `tests/unit/test_package_layout.py` | `make check` |
+| SIG-ENG-031 (agent onboarding docs — `AGENTS.md` hierarchy) | root `AGENTS.md` + `web/AGENTS.md`, `db/AGENTS.md`, `connectors/AGENTS.md`; `CLAUDE.md` bridge | `agent-docs` freshness detector; ADR-058 |
+| Phase gate: CI green; ADR written; traceability + risk register updated | this section; `docs/adr/ADR-058-*`; `docs/risk_register.md` (Phase 19 — P19.1, `RISK-P19-01/02`) | `make check` (lint/format/typecheck/pytest/verify-gen) |
