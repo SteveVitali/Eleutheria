@@ -6,11 +6,11 @@ gate the operator has not ticked. **Go-public is impossible until every item is
 ticked** — it is a single human decision made against this list.
 
 **Jurisdiction:** Oklahoma City (first jurisdiction, P21.4).
-**State:** staging complete; **go-public GATED** (HG-01, HG-11, Go-public pending).
+**State:** staging complete; HG-01 ✅ (interim, 2026-09-15); **go-public GATED** (HG-11 items 2–3 + HG-02 counsel on item 4 + the Go-public decision still pending).
 
 | # | Item | State | Evidence |
 |---|---|---|---|
-| 1 | **Legal home named (HG-01, SIG-GOV-012)** | `gate pending: HG-01` | `docs/governance/governance-and-code-of-conduct.md` does not yet name the legal home; operator answer: SKIP — not named. |
+| 1 | **Legal home named (HG-01, SIG-GOV-012)** | ✅ ticked (interim — personal capacity) | `docs/governance/governance-and-code-of-conduct.md § Legal home` names **Steven Vitali** as the legal home (individual maintainer, personal capacity, 2026-09-15). Interim personal-name home; a more durable home + counsel (HG-02) recommended before Go-public. `D-P21.4-1` DONE. |
 | 2 | **Two-reviewer concurrence (HG-11, SIG-PUB-008)** | `gate pending: HG-11` | `docs/build/okc/concurrence.md` — fewer than two independent reviewer roles recorded; operator answer: SKIP — governance not established. |
 | 3 | **Takedown / corrections contact live** | `gate pending: HG-11` | The corrections *mechanism* is built and served (`/corrections`, `/dispute`, the corrections-methodology page); the live contact is a governance item pending HG-11. |
 | 4 | **ODbL 4.4(b) disposition (HG-02)** | ✅ ticked | Operator disposition recorded: "OSM-derived surveillance layer is publishable as a Produced Work with ODbL attribution + share-alike notice, kept in its separate ODbL compartment and offered under ODbL; **included in exports (not link-only)**." The jurisdiction export writes the OSM layer to a **separate** `osm_physical` compartment under `ODbL-1.0` (see `exports/out/okc/osm_physical/`, `manifest.json`), attribution "© OpenStreetMap contributors, ODbL 1.0 (share-alike)". |
@@ -25,8 +25,9 @@ ticked** — it is a single human decision made against this list.
 
 - **Staging:** ✅ complete (local staging, HG-12 — `sig-ops up/status/down` healthy; the
   static site built from the export; acceptance queries run against the API).
-- **Go-public:** ❌ **NO** — blocked on items 1–3 (HG-01, HG-11) and the operator's
-  Go-public decision. This ticket is complete-with-gates-skipped → **RETURN PASS**.
+- **Go-public:** ❌ **NO** — HG-01 now ticked (item 1, interim); still blocked on items 2–3
+  (HG-11, operator-deferred 2026-09-15), counsel superseding item 4 (HG-02, operator-deferred),
+  and the operator's Go-public decision. This ticket is complete-with-gates-skipped → **RETURN PASS**.
 
 ---
 
@@ -44,7 +45,7 @@ the exact command/action that satisfies it.
 
 | # | Item | Current state (2026-09-10 re-run) | What satisfies it |
 |---|---|---|---|
-| 1 | **Legal home named (HG-01)** | `gate pending: HG-01` — **INTERIM posture only** (GL-GATE-01, P23.2/HUMAN-H1): "SIG operates as an independent open-source project under maintainer stewardship pending a formal legal-home designation." This is an engineering/interim disposition, **NOT counsel and NOT a real named home**. `D-P21.4-1` OPEN. | Operator names a real legal home in `docs/governance/governance-and-code-of-conduct.md` (SIG-GOV-012); then tick. Required **before** Go-public. |
+| 1 | **Legal home named (HG-01)** | ✅ ticked (interim — personal capacity, 2026-09-15) — resolves the GL-GATE-01 interim posture: `docs/governance/governance-and-code-of-conduct.md § Legal home` names **Steven Vitali** (individual maintainer, personal capacity). Interim personal-name home, **not counsel**; a more durable home + HG-02 counsel recommended before real public exposure. `D-P21.4-1` DONE. | Satisfied for HG-01. Go-public still gated on HG-11 (items 2–3) + counsel superseding item 4. |
 | 2 | **Two-reviewer concurrence (HG-11)** | `gate pending: HG-11` — **OWED / not established** (P23.2/HUMAN-H1): no two named reviewer roles with written concurrence. `docs/build/reports/okc/concurrence.md` is a template only. `D-P21.4-2` OPEN. | Operator establishes two independent reviewer roles + written concurrence + a live takedown/corrections contact; fill `concurrence.md` (`ReviewerConcurrence`, SIG-PUB-008); then tick. |
 | 3 | **Takedown / corrections contact live** | `gate pending: HG-11` — mechanism built + served (`/corrections`, `/dispute`, corrections-methodology page, re-verified in this run's e2e), live contact still owed with HG-11. | Governance item; ticks with HG-11. |
 | 4 | **ODbL 4.4(b) disposition (HG-02)** | ✅ ticked — **INTERIM engineering disposition** (GL-GATE-02, P23.3/HUMAN-H2; **pending counsel**). OSM-derived layer IS included in the export in its **separate ODbL compartment** with attribution + share-alike (re-verified: export `licenses: ["CC-BY-4.0","ODbL-1.0"]`, `exports/out/okc/` two-compartment layout). | Real counsel opinion (`D-LEGAL.1-1` OPEN) supersedes the interim disposition before real public exposure. |
