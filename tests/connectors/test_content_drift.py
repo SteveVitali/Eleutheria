@@ -71,3 +71,24 @@ def test_fetch_record_carries_content_drift_field() -> None:
     )
     d = rec.to_dict()
     assert d["content_drift"] and d["claim_count"] == 0
+
+
+def test_osm_parse_raises_content_drift_on_non_json() -> None:
+    """A live Overpass HTML/WAF page fails loud, not with an opaque JSONDecodeError."""
+
+    from connectors.osm import OSMConnector
+    from connectors.registry import get
+    from connectors.stages import InMemoryCaptureStore, RunContext
+
+    class _IngestRun:  # minimal stand-in; parse never reads it
+        pass
+
+    captures = InMemoryCaptureStore()
+    ref = captures.put(
+        b"<!DOCTYPE html><html><title>406 Not Acceptable</title></html>",
+        media_type="text/html",
+        source_uri="https://lz4.overpass-api.de/api/interpreter",
+    )
+    ctx = RunContext(source=get("osm_overpass"), run=_IngestRun(), captures=captures)  # type: ignore[arg-type]
+    with pytest.raises(ContentDrift):
+        OSMConnector().parse(ctx, ref)
