@@ -42,7 +42,14 @@ from .registry import SourceRecord, get
 from .replay import ShadowDiff, replay, replay_fingerprint, shadow_replay
 from .review import has_review_metadata, has_rights_block
 from .sinks import make_claim_sink
-from .stages import ClaimSink, Connector, InMemoryCaptureStore, RunContext, registered_connectors
+from .stages import (
+    ClaimSink,
+    Connector,
+    ContentDrift,
+    InMemoryCaptureStore,
+    RunContext,
+    registered_connectors,
+)
 
 _ROBOTS_ALLOW_ALL = "User-agent: *\nAllow: /\n"
 
@@ -245,6 +252,9 @@ class FetchRecord:
     claim_count: int = 0
     rate_limit_events: list[Mapping[str, Any]] = field(default_factory=list)
     robots_decisions: list[Mapping[str, Any]] = field(default_factory=list)
+    #: Set when the live content no longer matched the connector's expected shape
+    #: (P25.1 / ADR-082): the run emitted 0 claims and recorded the drift, loud.
+    content_drift: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         """A JSON-serialisable dict; content is never included (§3.1, §17)."""
@@ -261,6 +271,7 @@ class FetchRecord:
             "claim_count": self.claim_count,
             "rate_limit_events": [dict(e) for e in self.rate_limit_events],
             "robots_decisions": [dict(d) for d in self.robots_decisions],
+            "content_drift": self.content_drift,
         }
 
 
@@ -414,7 +425,27 @@ def _run_live(
         claim_sink=sink,
         parameters={"targets": targets},
     )
-    report = run(connector, ctx)
+    try:
+        report = run(connector, ctx)
+    except ContentDrift as drift:
+        # The fetch succeeded but the content no longer matches the parser's shape
+        # (P25.1 / ADR-082): record the drift loud (0 claims), never garbage, then
+        # re-raise so the CLI exits non-zero.
+        write_fetch_record(
+            FetchRecord(
+                source_id=source_id,
+                connector=connector.name,
+                mode=RunMode.LIVE.value,
+                started_at=started.isoformat(),
+                duration_seconds=time.monotonic() - t0,
+                claim_count=0,
+                rate_limit_events=list(transport.rate_limit_events),
+                content_drift=str(drift),
+            ),
+            capture_dir / "live_runs",
+        )
+        transport.close()
+        raise
     fetch_record = FetchRecord(
         source_id=source_id,
         connector=connector.name,

@@ -61,7 +61,7 @@ from policy.publication import is_categorically_excluded
 from policy.sensitivity import SensitivityClass, geo_tier_for
 
 from ._data import load_table
-from .stages import CaptureRef, Connector, FetchResult, RunContext
+from .stages import CaptureRef, Connector, ContentDrift, FetchResult, RunContext
 
 __all__ = [
     "OKC_DOCUMENTS_VOCAB",
@@ -318,10 +318,12 @@ def _document_context(connector_name: str, doc: Mapping[str, Any]) -> DocumentCo
             f"connector reads {expected.value!r} documents (SIG-INGEST-033)."
         )
     if derived is not DocumentGenre.UNKNOWN and derived is not expected:
-        raise ValueError(
-            f"document {doc.get('id')!r} text classifies as {derived.value!r} but the "
-            f"{connector_name!r} connector reads {expected.value!r}; the genre used is the "
-            "one DERIVED from the text, not the fixture label (no relabelling)."
+        raise ContentDrift(
+            str(cfg["source_id"]),
+            f"fetched document classifies as {derived.value!r}, not the "
+            f"{expected.value!r} this connector reads",
+            details=f"document {doc.get('id')!r}; the genre used is DERIVED from the "
+            "text, never a label (no relabelling, SIG-INGEST-033)",
         )
     return DocumentContext(
         connector=connector_name,
@@ -374,9 +376,11 @@ def _extract_policy_clauses(
     for fact in doc["clauses"]:
         clause = find_clause(clauses, str(fact["clause"]))
         if clause is None:
-            raise ValueError(
-                f"clause fact cites clause {fact['clause']!r} not found in document "
-                f"{doc.get('id')!r} (SIG-PARSE-003)"
+            raise ContentDrift(
+                ctx.source_id,
+                f"expected clause {fact['clause']!r} is absent from the fetched document",
+                details=f"document {doc.get('id')!r} (SIG-PARSE-003) — the live text no "
+                "longer contains the cited clause",
             )
         pc = clause_claim(
             clause,
@@ -404,13 +408,42 @@ _EXTRACTORS = {
 }
 
 
-def parse_okc_document(data: bytes) -> dict[str, Any]:
-    """Parse an OKC document capture (pure function of the bytes)."""
-    payload = json.loads(data.decode("utf-8"))
-    if "connector" not in payload or "documents" not in payload:
-        raise ValueError(
-            "an OKC document capture must carry a 'connector' and a 'documents' list "
-            "(LIVE.1a, GL-LIVE-01)."
+def _sniff(data: bytes) -> str:
+    """A short, content-free description of drifted bytes (P25.1 / ADR-082)."""
+    head = data[:512].lstrip()
+    if head[:5] == b"%PDF-":
+        kind = "a PDF document"
+    elif head[:1] in (b"<",) or head[:14].lower().startswith(b"<!doctype html"):
+        kind = "an HTML/XML page"
+    elif head[:1] in (b"{", b"["):
+        kind = "JSON (but not the expected OKC document envelope)"
+    else:
+        kind = "an unrecognised byte stream"
+    return f"{len(data)} bytes of {kind}"
+
+
+def parse_okc_document(source_id: str, data: bytes) -> dict[str, Any]:
+    """Parse an OKC document capture (pure function of the bytes).
+
+    A live fetch returns the raw document (a PDF or a web page), which is NOT the
+    structured fixture envelope this connector consumes: that mismatch is reported as
+    :class:`ContentDrift` (fail loud, recorded — never garbage or a silent zero),
+    the P25.1 hardening. Replay/shadow over the committed fixtures is unchanged.
+    """
+    try:
+        payload = json.loads(data.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ContentDrift(
+            source_id,
+            "captured content is not the structured OKC document envelope",
+            details=f"{_sniff(data)}; a live document fetch needs the P25.1 live "
+            f"document parser before it can emit claims ({exc.__class__.__name__})",
+        ) from exc
+    if not isinstance(payload, dict) or "connector" not in payload or "documents" not in payload:
+        raise ContentDrift(
+            source_id,
+            "captured content lacks the 'connector'/'documents' envelope keys",
+            details=_sniff(data),
         )
     return payload
 
@@ -463,7 +496,7 @@ class OkcDocumentConnector(Connector):
         return ctx.fetcher.fetch(str(target["url"]))
 
     def parse(self, ctx: RunContext, capture: CaptureRef) -> dict[str, Any]:
-        return parse_okc_document(ctx.captures.get(capture.digest))
+        return parse_okc_document(ctx.source.id, ctx.captures.get(capture.digest))
 
     def extract(self, ctx: RunContext, parsed: Mapping[str, Any]) -> list[Mapping[str, Any]]:
         return extract_documents(self.name, parsed)
