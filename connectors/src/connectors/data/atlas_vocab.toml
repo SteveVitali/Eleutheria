@@ -15,7 +15,10 @@
 # is recorded as an unmapped category + a research task (never guessed).
 
 # The connector's own vocabulary version, stamped onto every run (§20).
-vocab_version = "2026.08.27"
+# 2026.09.15: added `columns.category_column_candidates` — the live Atlas export
+# renamed the category column `Type` -> `Technology` (observed 2026-09-15, P25.3);
+# the connector resolves the first candidate present in the header.
+vocab_version = "2026.09.15"
 
 # The Atlas vocabulary version SIG observed the upstream taxonomy at. Recorded on
 # EVERY row (SIG-ONTO-059): an external vocabulary changes, and its changes carry
@@ -67,6 +70,12 @@ imported_datasets    = { aliases = ["imported dataset", "imported datasets", "sp
 [columns]
 agency_column   = "Agency"
 category_column = "Type"
+# Candidate names the upstream has used for the category column, in preference
+# order (mirrors `evidence_genre_columns`): the connector reads the FIRST one
+# present in the feed header. `Type` is the fixture-era name; the live export
+# renamed it `Technology` (observed 2026-09-15). If none are present the feed
+# has drifted — a schema error, not an empty feed.
+category_column_candidates = ["Type", "Technology"]
 # Columns whose values are preserved verbatim as the row's upstream source
 # attribution (§23.3 "Atlas's own source attribution preserved on each row").
 attribution_columns = ["Link 1", "Link 2", "Link 3", "Summary"]

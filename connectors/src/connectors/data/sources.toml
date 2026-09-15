@@ -152,7 +152,12 @@ custody_posture = "REFERENCE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
 access_method = "json_api"
-notes = "Per-element history (Q19)."
+verified = true
+last_verified = 2026-09-15
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-15
+notes = "Per-element history (Q19). FLIPPED 2026-09-15 (GL-GATE-03, P25.3): OSM data is ODbL-1.0 (redistributable + derivative_permitted; ODbL compartment §42.3) — same basis as the flipped osm_overpass; the OSM API (api.openstreetmap.org) is the documented history endpoint."
 [sources.osm_element_history.rights]
 spdx = "ODbL-1.0"
 attribution = "© OpenStreetMap contributors"
@@ -538,7 +543,10 @@ robots_policy = "honor"
 access_method = "bulk_csv"
 verified = true
 last_verified = 2026-08-20
-notes = "Primary deployment seed. CC-BY-4.0 WITH a third-party caveat (SC-09): redistributable is separately reviewed true for the Atlas compilation; incorporated third-party data reviewed per-artifact."
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-15
+notes = "Primary deployment seed. CC-BY-4.0 WITH a third-party caveat (SC-09): redistributable is separately reviewed true for the Atlas compilation; incorporated third-party data reviewed per-artifact. FLIPPED 2026-09-15 (GL-GATE-03, P25.3): the Atlas compilation is CC-BY-4.0 (packet eff_atlas_of_surveillance.md — redistributable + derivative_permitted reviewed true; attribution required); incorporated third-party data stays reviewed per-artifact."
 [sources.eff_atlas_of_surveillance.rights]
 spdx = "CC-BY-4.0"
 attribution = "Electronic Frontier Foundation, Atlas of Surveillance (CC BY 4.0)"
@@ -1490,7 +1498,7 @@ robots_policy = "honor"
 verified = true
 last_verified = 2026-08-20
 review_packet = "docs/build/reports/rights/raa_prefectures.md"
-notes = "22,403 RAA PDFs; weekly index (F9.18). Prefectural authorization = 5-yr renewable (CSI L252). Legally authoritative, dated, expiring Authorization the US has no equivalent of."
+notes = "22,403 RAA PDFs; weekly index (F9.18). Prefectural authorization = 5-yr renewable (CSI L252). Legally authoritative, dated, expiring Authorization the US has no equivalent of. NOT flipped: the RAA index is ODbL, but the France cohort stays gated (P24.6/D-JURIS.2-1 — the arrêté corpus + LO 2.0 posture need review); flip + live fetch is P25.5."
 [sources.raa_prefectures.rights]
 spdx = "ODbL-1.0"
 attribution = "Recueils des actes administratifs des préfectures (data.gouv.fr)"

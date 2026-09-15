@@ -1,0 +1,6 @@
+AOSNUMBER,NEWAOSNUMBER (ORI9),City,County,State,Agency,Type of LEA,Summary,Type of Juris,Technology
+1001,,Fresno,Fresno County,CA,Fresno Police Department,Police,Council approved a fixed ALPR camera network.,City,Automated License Plate Readers
+1002,TX0570000,,,TX,TX0570000,Sheriff,Face recognition contract keyed by an ORI-shaped agency identifier.,State,Face Recognition
+1003,,Oakland,Alameda County,CA,Oakland Police Department,Police,Acoustic gunshot detection deployment.,City,Gunshot Detection
+1004,,Atlanta,Fulton County,GA,Atlanta Police Department,Police,Camera federation / real-time platform.,City,Third-Party Investigative Platforms
+1005,,Detroit,Wayne County,MI,Detroit Police Department,Police,A category not in the versioned vocabulary.,City,Predictive Policing

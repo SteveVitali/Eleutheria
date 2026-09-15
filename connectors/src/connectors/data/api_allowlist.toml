@@ -58,3 +58,15 @@ endpoint_prefix = "/api"
 tos_basis = "MuckRock public API (Squarelet-authenticated); documented programmatic access to released records/listings under ToS."
 rate_limit_per_min = 10
 counsel_reviewed = false
+
+# The OSM main API — documented element endpoints (incl. /history.json) serving
+# ODbL data; the same basis as the Overpass entries above. openstreetmap.org's
+# robots.txt disallows /api/ for CRAWLERS; this is documented, rate-limited API
+# access (ADR-083), kept deliberately small (per-element history for assets under
+# active reconciliation, SIG-INGEST-045c — not bulk reads; bulk stays on Overpass).
+[[api_host]]
+host = "api.openstreetmap.org"
+endpoint_prefix = "/api/0.6"
+tos_basis = "OSM API 0.6 is the documented public API for OSM data (ODbL); element history reads are a documented endpoint under the OSM API usage policy."
+rate_limit_per_min = 10
+counsel_reviewed = false

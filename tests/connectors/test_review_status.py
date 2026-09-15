@@ -137,21 +137,24 @@ def test_validate_fails_naming_the_offending_id(monkeypatch: pytest.MonkeyPatch)
     assert "okc_procurement_test_flip" in buf.getvalue()
 
 
-# --- flip-ready + loadable counts (post RIGHTS.1 flip re-run, GL-GATE-03) ------
+# --- flip-ready + loadable counts (post RIGHTS.1 + P25 flips, GL-GATE-03) ------
 # The OKC critical subset was flipped 2026-09-10 (okc_procurement/okc_council/
-# okcpd_policy/ok_statute + osm_overpass/deflock_repo): 6 sources are now loadable
-# and the two OSM/community rows left the flip-ready set (flag now true), so
-# flip-ready dropped 18 -> 16 while loadable-now rose 0 -> 6.
+# okcpd_policy/ok_statute + osm_overpass/deflock_repo) = 6 loadable. Then 2026-09-15
+# (P25.3) two more resolved-licence sources were flipped —
+# eff_atlas_of_surveillance (CC-BY-4.0) and osm_element_history (ODbL) — so
+# loadable-now rose 6 -> 8 and flip-ready dropped 16 -> 14. raa_prefectures was
+# NOT flipped: the France cohort stays gated (P24.6/D-JURIS.2-1) even though the
+# RAA index is ODbL.
 
 
-def test_review_status_prints_flip_ready_16_and_loadable_6(
+def test_review_status_prints_flip_ready_14_and_loadable_8(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
     assert "registered sources: 121" in out
-    assert "flip-ready: 16" in out
-    assert "loadable now: 6" in out
+    assert "flip-ready: 14" in out
+    assert "loadable now: 8" in out
 
 
 def test_review_status_loadable_equals_validate() -> None:
@@ -159,8 +162,8 @@ def test_review_status_loadable_equals_validate() -> None:
     from connectors.loader import is_loadable
 
     loadable = [s for s in sources() if is_loadable(s)]
-    assert len(loadable) == 6
-    assert len(flip_ready()) == 16
+    assert len(loadable) == 8
+    assert len(flip_ready()) == 14
 
 
 def test_flip_ready_excludes_permitted_and_undetermined_and_link() -> None:

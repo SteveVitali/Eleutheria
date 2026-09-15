@@ -53,19 +53,32 @@ def test_source_ids_are_unique() -> None:
 # --- SIG-INGEST-028: ingestion_permitted defaults to false --------------------
 
 
-#: The OKC critical subset flipped by the RIGHTS.1 re-run (GL-GATE-03, 2026-09-10);
+#: The OKC critical subset flipped by the RIGHTS.1 re-run (GL-GATE-03, 2026-09-10),
+#: plus the two resolved-licence sources flipped for live ops (GL-GATE-03, 2026-09-15):
+#: eff_atlas (CC-BY-4.0) and osm_element_history (ODbL-1.0). raa_prefectures stays
+#: unflipped — the France cohort is gated (P24.6/D-JURIS.2-1) even though the index is ODbL.
 #: every other seeded source stays un-permitted (the flag still defaults false).
-_FLIPPED_OKC_SUBSET = frozenset(
-    {"okc_procurement", "okc_council", "okcpd_policy", "ok_statute", "osm_overpass", "deflock_repo"}
+_FLIPPED_SUBSET = frozenset(
+    {
+        "okc_procurement",
+        "okc_council",
+        "okcpd_policy",
+        "ok_statute",
+        "osm_overpass",
+        "deflock_repo",
+        "eff_atlas_of_surveillance",
+        "osm_element_history",
+    }
 )
 
 
 def test_ingestion_permitted_defaults_false_across_the_seed() -> None:
     # Phase 0 seeds the registry; connectors are Phase 4+. A source is permitted
     # only after a reviewer resolves its posture and flips the flag — as of the
-    # RIGHTS.1 re-run that is exactly the OKC critical subset, and nothing else.
+    # RIGHTS.1 re-run that is the OKC critical subset plus the two resolved-licence
+    # live-ops flips (eff_atlas, osm_element_history), and nothing else.
     permitted = {s.id for s in sources() if s.ingestion_permitted}
-    assert permitted == set(_FLIPPED_OKC_SUBSET)
+    assert permitted == set(_FLIPPED_SUBSET)
 
 
 # --- SIG-INGEST-027: compact_status is a closed vocabulary incl. no_response --

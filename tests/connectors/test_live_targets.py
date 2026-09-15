@@ -43,6 +43,24 @@ def test_overpass_endpoint_is_env_overridable(monkeypatch: pytest.MonkeyPatch) -
     assert live_targets("osm_overpass")[0]["url"].startswith(DEFAULT_OVERPASS_ENDPOINT)
 
 
+def test_osm_element_history_has_configured_targets() -> None:
+    """The OSM history live rows exist and point at the documented API 0.6 endpoint."""
+    targets = live_targets("osm_element_history")
+    assert targets, "osm_element_history is flipped — it must have live targets"
+    for t in targets:
+        assert t["kind"] == "history"
+        assert t["url"].startswith("https://api.openstreetmap.org/api/0.6/")
+        assert t["url"].endswith("/history.json")
+
+
+def test_eff_atlas_has_a_configured_live_target() -> None:
+    """The Atlas bulk-CSV live row exists and uses the www. host (apex 301s)."""
+    targets = live_targets("eff_atlas_of_surveillance")
+    assert len(targets) == 1
+    assert targets[0]["kind"] == "bulk_csv"
+    assert targets[0]["url"] == "https://www.atlasofsurveillance.org/download.csv"
+
+
 def test_unknown_source_has_no_live_targets() -> None:
     assert live_targets("no_such_source_xyz") == []
 

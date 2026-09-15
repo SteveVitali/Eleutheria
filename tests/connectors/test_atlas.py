@@ -363,6 +363,49 @@ def test_canary_flags_structural_drift() -> None:
     assert any("empty" in f for f in canary_findings(empty))
 
 
+# --- live-schema: the `Technology` column rename (P25.3, observed 2026-09-15) --
+
+
+def test_live_schema_technology_column_runs_end_to_end() -> None:
+    """The live Atlas export renamed `Type` -> `Technology`; the connector reads it."""
+    _, claims = _run_over("adoption_feed_live_schema.csv")
+    by_family = {c["technology_family"] for c in _deployments(claims)}
+    assert {"alpr", "face-recognition", "gunshot-detection", "federation-hub"} <= by_family
+    # "Predictive Policing" is still an unmapped category + research task, not drift.
+    unmapped = [c for c in claims if c.get("record_kind") == "unmapped_category"]
+    assert any(c["raw_value"] == "Predictive Policing" for c in unmapped)
+
+
+def test_canary_passes_on_the_live_schema() -> None:
+    # The renamed column resolves through `category_column_candidates` — no drift.
+    assert canary_findings(parse_csv(_fixture_bytes("adoption_feed_live_schema.csv"))) == []
+
+
+def test_canary_flags_a_header_with_no_category_candidate() -> None:
+    # NEITHER `Type` nor `Technology` present = genuine schema drift, not a rename.
+    drifted = {
+        "header": ["Agency", "Surveillance Kind"],
+        "rows": [{"Agency": "X PD", "Surveillance Kind": "ALPR"}],
+    }
+    assert any("category" in f or "Type" in f for f in canary_findings(drifted))
+
+
+def test_extract_raises_content_drift_when_no_category_candidate() -> None:
+    """extract() fails loud (ContentDrift, 0 claims) when no candidate column exists."""
+    from connectors.stages import ContentDrift
+
+    class _Run:  # extract never reads it
+        pass
+
+    ctx = RunContext(source=get(_ATLAS_SOURCE_ID), run=_Run())  # type: ignore[arg-type]
+    parsed = {
+        "header": ["Agency", "Surveillance Kind"],
+        "rows": [{"Agency": "X PD", "Surveillance Kind": "ALPR"}],
+    }
+    with pytest.raises(ContentDrift):
+        AtlasConnector().extract(ctx, parsed)
+
+
 # --- vocabulary is versioned data ---------------------------------------------
 
 

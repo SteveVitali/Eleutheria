@@ -29,3 +29,26 @@ overpass_query = """[out:json][timeout:90];
   way["man_made"="surveillance"](35.30,-97.85,35.75,-97.15);
 );
 out meta center;"""
+
+# EFF Atlas of Surveillance — the full national bulk CSV (CC-BY-4.0). robots.txt is
+# open (CRAWL mode, no carve-out needed). Use the www. host: the apex redirects
+# 301 and the transport does not follow redirects. ~15k rows / 8.5 MB — a bulk load
+# best inserted from within GCP (a Cloud Run/GCE job), not over a laptop proxy.
+[eff_atlas_of_surveillance]
+kind = "bulk_csv"
+targets = [
+  { id = "atlas-full", url = "https://www.atlasofsurveillance.org/download.csv", kind = "bulk_csv" },
+]
+
+# OSM per-element history (SIG-INGEST-045c) — the documented OSM API 0.6 history
+# endpoint (ADR-083 allow-listed: api.openstreetmap.org /api/0.6). Element ids are
+# real OKC surveillance nodes observed via the osm_overpass live fetch (2026-09-15).
+# Deliberately SMALL: history walks are for elements under active reconciliation,
+# not bulk reads — bulk stays on Overpass. Output lands in the ODbL compartment.
+[osm_element_history]
+kind = "history"
+targets = [
+  { id = "osm-hist:node:2546410616", url = "https://api.openstreetmap.org/api/0.6/node/2546410616/history.json", kind = "history" },
+  { id = "osm-hist:node:9221430265", url = "https://api.openstreetmap.org/api/0.6/node/9221430265/history.json", kind = "history" },
+  { id = "osm-hist:node:9221430266", url = "https://api.openstreetmap.org/api/0.6/node/9221430266/history.json", kind = "history" },
+]
