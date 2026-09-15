@@ -139,22 +139,23 @@ def test_validate_fails_naming_the_offending_id(monkeypatch: pytest.MonkeyPatch)
 
 # --- flip-ready + loadable counts (post RIGHTS.1 + P25 flips, GL-GATE-03) ------
 # The OKC critical subset was flipped 2026-09-10 (okc_procurement/okc_council/
-# okcpd_policy/ok_statute + osm_overpass/deflock_repo) = 6 loadable. Then 2026-09-15
-# (P25.3) two more resolved-licence sources were flipped —
-# eff_atlas_of_surveillance (CC-BY-4.0) and osm_element_history (ODbL) — so
-# loadable-now rose 6 -> 8 and flip-ready dropped 16 -> 14. raa_prefectures was
-# NOT flipped: the France cohort stays gated (P24.6/D-JURIS.2-1) even though the
-# RAA index is ODbL.
+# okcpd_policy/ok_statute + osm_overpass/deflock_repo) = 6 loadable. Then 2026-09-15:
+# two resolved-licence sources (P25.3: eff_atlas_of_surveillance CC-BY-4.0,
+# osm_element_history ODbL) and four B-pass operator-approved flips (usaspending
+# CC0-1.0, fbi_cde_agency_registry CC0-1.0, eff_data_driven CC-BY-4.0, muckrock
+# LicenseRef at REFERENCE) = 12 loadable. decp_fr's LicenceOuverte-2.0 block (ADR-084)
+# made it flip-ready without a flip (France cohort gated, P24.6/D-JURIS.2-1), so
+# flip-ready went 14 -> 15. raa_prefectures likewise resolved-ODbL, unflipped.
 
 
-def test_review_status_prints_flip_ready_14_and_loadable_8(
+def test_review_status_prints_flip_ready_15_and_loadable_12(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
     assert "registered sources: 121" in out
-    assert "flip-ready: 14" in out
-    assert "loadable now: 8" in out
+    assert "flip-ready: 15" in out
+    assert "loadable now: 12" in out
 
 
 def test_review_status_loadable_equals_validate() -> None:
@@ -162,8 +163,8 @@ def test_review_status_loadable_equals_validate() -> None:
     from connectors.loader import is_loadable
 
     loadable = [s for s in sources() if is_loadable(s)]
-    assert len(loadable) == 8
-    assert len(flip_ready()) == 14
+    assert len(loadable) == 12
+    assert len(flip_ready()) == 15
 
 
 def test_flip_ready_excludes_permitted_and_undetermined_and_link() -> None:

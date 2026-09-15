@@ -54,10 +54,13 @@ def test_source_ids_are_unique() -> None:
 
 
 #: The OKC critical subset flipped by the RIGHTS.1 re-run (GL-GATE-03, 2026-09-10),
-#: plus the two resolved-licence sources flipped for live ops (GL-GATE-03, 2026-09-15):
-#: eff_atlas (CC-BY-4.0) and osm_element_history (ODbL-1.0). raa_prefectures stays
-#: unflipped — the France cohort is gated (P24.6/D-JURIS.2-1) even though the index is ODbL.
-#: every other seeded source stays un-permitted (the flag still defaults false).
+#: plus the resolved-licence live-ops flips (GL-GATE-03, 2026-09-15): eff_atlas
+#: (CC-BY-4.0) and osm_element_history (ODbL-1.0), and the four B-pass
+#: operator-approved flips: usaspending (CC0-1.0), fbi_cde_agency_registry (CC0-1.0),
+#: eff_data_driven (CC-BY-4.0), muckrock (LicenseRef-MuckRock-API-ToS, REFERENCE —
+#: non-redistributable until per-document posture resolves). raa_prefectures and
+#: decp_fr are rights-RESOLVED but stay unflipped (France cohort gated,
+#: P24.6/D-JURIS.2-1). Every other seeded source stays un-permitted.
 _FLIPPED_SUBSET = frozenset(
     {
         "okc_procurement",
@@ -68,6 +71,10 @@ _FLIPPED_SUBSET = frozenset(
         "deflock_repo",
         "eff_atlas_of_surveillance",
         "osm_element_history",
+        "usaspending",
+        "fbi_cde_agency_registry",
+        "eff_data_driven",
+        "muckrock",
     }
 )
 
@@ -75,8 +82,7 @@ _FLIPPED_SUBSET = frozenset(
 def test_ingestion_permitted_defaults_false_across_the_seed() -> None:
     # Phase 0 seeds the registry; connectors are Phase 4+. A source is permitted
     # only after a reviewer resolves its posture and flips the flag — as of the
-    # RIGHTS.1 re-run that is the OKC critical subset plus the two resolved-licence
-    # live-ops flips (eff_atlas, osm_element_history), and nothing else.
+    # RIGHTS.1 re-run plus the 2026-09-15 live-ops flips that is exactly this set.
     permitted = {s.id for s in sources() if s.ingestion_permitted}
     assert permitted == set(_FLIPPED_SUBSET)
 

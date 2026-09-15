@@ -54,8 +54,12 @@ mirroring (content-addressed per release version, SIG-INGEST-043b). Registry row
 
 ## Decision
 
-- [ ] permit ingestion — reviewer: ____ date: ____
-- SPDX to record: ____   rights_reviewed_by (role, never a name): ____   rights_reviewed_on: ____
+- [x] permit ingestion — reviewer: maintainer (delegated), operator-approved 2026-09-15 (B pass)
+- SPDX to record: `CC-BY-4.0`   rights_reviewed_by (role, never a name): maintainer (delegated)   rights_reviewed_on: 2026-09-15
+- Basis: eff.org/copyright fetched 2026-09-15 ("all original material on the EFF website
+  … CC-BY-4.0 unless otherwise noted") covers the EFF/MuckRock compilation layer; the
+  underlying agency records are U.S. government public records; SIG ingests per-agency
+  AGGREGATE rows only (§23.9, RISK-P0-08, SIG-INGEST-043c). PARTIAL counsel flag retained.
 
 ## Counsel-needed flag
 

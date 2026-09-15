@@ -2,7 +2,7 @@
 # SUCCESSION — continuity, mirrors, and how to rebuild SIG from the archive
 
 *P21.5, SIG-GOV-022/023/024, §46.5, ADR-067. Companion: `ops/mirrors.toml` (the mirror
-manifest), `docs/build/DEPOSITS.md` (the deposit ledger), `docs/build/INFRA_RUNBOOK.md`.*
+manifest), `docs/build/reports/DEPOSITS.md` (the deposit ledger), `docs/build/INFRA_RUNBOOK.md`.*
 
 **Purpose.** If the primary domain, the git forge, or the project itself disappears, the
 data and code are released in a form that lets others continue (SIG-GOV-023). This
@@ -33,7 +33,7 @@ A reader with only the Zenodo deposit and the source repository can reconstruct 
 2. **Install the toolchain.** `uv python install && make sync` (Python workspace), and
    `npm --prefix web ci` (the web shell). Both install strictly from committed lockfiles.
 3. **Fetch the release** from Zenodo by its **concept DOI** (resolves to the latest
-   version) or a specific **version DOI** — see `docs/build/DEPOSITS.md` for the DOIs.
+   version) or a specific **version DOI** — see `docs/build/reports/DEPOSITS.md` for the DOIs.
 4. **Verify integrity.** Check every artifact's SHA-256 against the deposited
    `manifest.json` / `digests.json` (checksums are part of the release, SIG-EXPORT-001).
 5. **Place the export** in a directory, e.g. `exports/out/okc/`, preserving the

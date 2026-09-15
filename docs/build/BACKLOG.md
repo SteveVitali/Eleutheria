@@ -180,7 +180,7 @@ landing here. Regenerate this file after any backlog edit:
 - **BL-051** — Spec-vs-code drift after the P20.2 ticked amendments (unbuilt MAY/deferred surfaces) · _docs-drift_ · S · status=open
   - sources: RISK-P20-02 ADR-062
 - **BL-053** — Third-jurisdiction onboarding + recorded P24.6 couplings (operator selects the jurisdiction; ILIKE '%<j>%' filter is a convention not a structure; §11.14 predicates out-of-ruleset; empty-tile step for a no-OSM-layer jurisdiction) · _process_ · M · status=open
-  - sources: ADR-079
+  - sources: ADR-079 ADR-084
 - **BL-054** — CCOPS expansion beyond the three paying sources — remaining ~23 jurisdictions via legislative-platform scrapers (Legistar/Granicus/IQM2/CivicClerk); new extractor kinds per ADR-080 (revisit trigger b); live flips+fetches gate-pending HG-03 · _deferred-feature_ · L · status=open · gate HG-03
   - sources: ADR-080
 
@@ -200,5 +200,5 @@ Triaged by P24.5 (META.1 / GL-META-01, 2026-09-13): each row was checked against
 - **BL-048** — Determinism / whole-graph audit CI jobs (resolution rebuild, TI-6/7 audit) · _process_ · M · sources: RISK-P2-03 RISK-P2-15 ADR-078
 - **BL-049** — Generate physical DDL from LinkML (ontology/db seam, SIG-STORE-045) · _schema-refinement_ · L · sources: RISK-P2-04
 - **BL-051** — Spec-vs-code drift after the P20.2 ticked amendments (unbuilt MAY/deferred surfaces) · _docs-drift_ · S · sources: RISK-P20-02 ADR-062
-- **BL-053** — Third-jurisdiction onboarding + recorded P24.6 couplings (operator selects the jurisdiction; ILIKE '%<j>%' filter is a convention not a structure; §11.14 predicates out-of-ruleset; empty-tile step for a no-OSM-layer jurisdiction) · _process_ · M · sources: ADR-079
+- **BL-053** — Third-jurisdiction onboarding + recorded P24.6 couplings (operator selects the jurisdiction; ILIKE '%<j>%' filter is a convention not a structure; §11.14 predicates out-of-ruleset; empty-tile step for a no-OSM-layer jurisdiction) · _process_ · M · sources: ADR-079 ADR-084
 - **BL-054** — CCOPS expansion beyond the three paying sources — remaining ~23 jurisdictions via legislative-platform scrapers (Legistar/Granicus/IQM2/CivicClerk); new extractor kinds per ADR-080 (revisit trigger b); live flips+fetches gate-pending HG-03 · _deferred-feature_ · L · sources: ADR-080

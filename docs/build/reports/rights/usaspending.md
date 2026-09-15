@@ -48,8 +48,8 @@ REFERENCE (prime + sub-awards; federal_award_id tracing). The one source ever fe
 
 ## Decision
 
-- [ ] permit ingestion — reviewer: ____ date: ____
-- SPDX to record: `CC0-1.0 candidate (US-PD)`   rights_reviewed_by (role, never a name): ____   rights_reviewed_on: ____
+- [x] permit ingestion — reviewer: maintainer (delegated), operator-approved 2026-09-15 (B pass)
+- SPDX to record: `CC0-1.0`   rights_reviewed_by (role, never a name): maintainer (delegated)   rights_reviewed_on: 2026-09-15
 
 ## Counsel-needed flag
 

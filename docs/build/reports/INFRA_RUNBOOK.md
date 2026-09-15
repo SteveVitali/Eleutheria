@@ -18,7 +18,7 @@ Prerequisite for the export-based commands: a built release, e.g.
 | production deposit (operator only) | `uv run sig-exports deposit --in exports/out/okc` *(swap in a production token)* | production Zenodo token |
 
 - Without `SIG_ZENODO_SANDBOX_TOKEN`, `--sandbox` exits **4** (`gate pending: HG-07`) and
-  writes nothing. Every deposit appends a row to `docs/build/DEPOSITS.md` with its
+  writes nothing. Every deposit appends a row to `docs/build/reports/DEPOSITS.md` with its
   `environment` (RISK-P21-08). The deposit uploads the release bundle + `manifest.json` +
   `digests.json` + `CITATION.cff` + `sbom.cdx.json` and carries the per-compartment licence.
 

@@ -40,7 +40,7 @@ from connectors.pipeline import run
 from connectors.records import RecordsRequest
 from connectors.registry import get
 from connectors.replay import diff_claim_sets
-from connectors.runner import LiveGateRefused, RunMode, run_source
+from connectors.runner import RunMode, run_source
 from connectors.stages import (
     InMemoryCaptureStore,
     InMemoryClaimSink,
@@ -354,17 +354,21 @@ def test_aggregate_non_hit_none_when_no_detections() -> None:
 # --- run modes: live REFUSES (exit 3); shadow 0 diffs; replay reproducible -----
 
 
-def test_live_run_is_refused_while_source_is_unflipped() -> None:
-    with pytest.raises(LiveGateRefused) as exc:
+def test_live_run_now_passes_the_gate_but_has_no_targets() -> None:
+    # Flipped 2026-09-15 (operator-approved B pass, CC-BY-4.0): the live gate now
+    # passes, so the NEXT honest gate fires — no live_targets row until P25.4
+    # wires the real data-file artifacts (SIG-INGEST-043b).
+    from connectors.live_targets import NoLiveTargets
+
+    with pytest.raises(NoLiveTargets):
         run_source(DATA_DRIVEN_SOURCE_ID, mode=RunMode.LIVE)
-    assert any("ingestion_permitted" in r for r in exc.value.reasons)
 
 
-def test_cli_live_run_exits_3(capsys: pytest.CaptureFixture[str]) -> None:
+def test_cli_live_run_exits_4_no_targets(capsys: pytest.CaptureFixture[str]) -> None:
     rc = main(["run", "--source", DATA_DRIVEN_SOURCE_ID, "--mode", "live"])
-    assert rc == 3
+    assert rc == 4
     out = capsys.readouterr().out
-    assert "REFUSED" in out
+    assert "NO LIVE TARGETS" in out
 
 
 def test_shadow_over_fixture_has_zero_diffs() -> None:

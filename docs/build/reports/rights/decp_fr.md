@@ -53,8 +53,11 @@ HG-03 review records a reviewer + date.
 
 ## Decision
 
-- [ ] permit ingestion — reviewer: ____ date: ____
-- SPDX to record: `UNDETERMINED`   rights_reviewed_by (role, never a name): ____   rights_reviewed_on: ____
+- [ ] permit ingestion — reviewer: maintainer (delegated) date: 2026-09-15 — **rights RESOLVED, flip HELD**
+- SPDX recorded: `LicenceOuverte-2.0` (confirmed `fr-lo` via the data.gouv.fr API 2026-09-15;
+  added to the accepted SPDX set by ADR-084, `relicensable_to` self-only pending HG-02 on
+  LO↔CC-BY compatibility). The source is **not flipped**: the France-cohort gate
+  (P24.6/D-JURIS.2-1) holds it for the P25.5 review. rights_reviewed_by: maintainer (delegated)   rights_reviewed_on: 2026-09-15
 
 ## Counsel-needed flag
 

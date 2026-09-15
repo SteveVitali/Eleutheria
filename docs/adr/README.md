@@ -88,6 +88,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-081](ADR-081-gcp-live-deployment-cloud-sql-and-cloud-run-vs-the-e2-micro-decision-plus-the-image-dsn-and-read-grant-gap-closures.md) | — | — | Accepted |
 | [ADR-082](ADR-082-live-fetch-targets-table-and-the-overpass-robots-gate-finding.md) | — | — | Accepted |
 | [ADR-083](ADR-083-crawler-conduct-documented-api-access-is-not-crawling-carve-out.md) | — | — | Accepted |
+| [ADR-084](ADR-084-accept-licence-ouverte-2-0-in-the-spdx-set-for-decp-fr.md) | — | — | Accepted |
 
 ## Notes
 

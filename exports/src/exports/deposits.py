@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 # carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
-"""The append-only deposit ledger, ``docs/build/DEPOSITS.md`` (P21.5, §38.2).
+"""The append-only deposit ledger, ``docs/build/reports/DEPOSITS.md`` (P21.5, §38.2).
 
 Every Zenodo deposit — dry-run, sandbox, or (later) production — is recorded here as a
 **dated, append-only row** (P1–P3). The environment column is load-bearing: a *sandbox*

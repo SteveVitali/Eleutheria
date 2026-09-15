@@ -618,7 +618,20 @@ custody_posture = "MIRROR"
 compact_status = "public_terms_only"
 robots_policy = "honor"
 access_method = "bulk_file_artifacts"
-notes = "Vendor-neutral ALPR network source (§23.9). First-class `data_driven` connector (P21.8). MIRROR candidate — rights UNDETERMINED until reviewed (packet docs/build/rights/eff_data_driven.md); ingestion_permitted stays false (SIG-INGEST-028). Per-agency AGGREGATE rows only (RISK-P0-08). The article URL is context; data lives at file artifacts (SIG-INGEST-043b)."
+notes = "Vendor-neutral ALPR network source (§23.9). First-class `data_driven` connector (P21.8). FLIPPED 2026-09-15 (GL-GATE-03, operator-approved in the B pass): EFF site licence is CC-BY-4.0 (eff.org/copyright, fetched 2026-09-15) covering the EFF/MuckRock compilation layer; ingest is per-agency AGGREGATE rows only (RISK-P0-08, SIG-INGEST-043c). Counsel flag PARTIAL retained (underlying-records nuance) — revisit if HG-02 disagrees. The article URL is context; data lives at file artifacts (SIG-INGEST-043b)."
+review_packet = "docs/build/reports/rights/eff_data_driven.md"
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-15
+verified = true
+last_verified = 2026-09-15
+[sources.eff_data_driven.rights]
+spdx = "CC-BY-4.0"
+attribution = "EFF & MuckRock — Data Driven (2018)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.eff.org/copyright"
+retrieval_date = 2026-09-15
 
 # ===========================================================================
 # E. Accountability layer (§22.6 E)
@@ -719,8 +732,19 @@ access_method = "api_v2"
 auth_model = "5-min JWT"
 rate_limits = "~15 req/min; 401 on all data endpoints"
 verified = true
-last_verified = 2026-08-20
-notes = "api_v2 (not v1 — outline's reference is wrong)."
+last_verified = 2026-09-15
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-15
+notes = "api_v2 (not v1 — outline's reference is wrong). FLIPPED 2026-09-15 (GL-GATE-03, operator-approved in the B pass): documented api_v2 ToS (15 req/min, identifiable UA, token+refresh auth — all honoured by design) at REFERENCE custody; SPDX is LicenseRef-MuckRock-API-ToS — the released-records contents carry per-document posture (PARTIAL counsel), and the export gate fails closed on a non-registered licence until HG-02."
+review_packet = "docs/build/reports/rights/muckrock.md"
+[sources.muckrock.rights]
+spdx = "LicenseRef-MuckRock-API-ToS"
+attribution = "MuckRock Foundation"
+redistributable = false
+derivative_permitted = false
+terms_url = "https://www.muckrock.com/api/"
+retrieval_date = 2026-09-15
 
 [sources.documentcloud]
 name = "DocumentCloud"
@@ -747,8 +771,19 @@ robots_policy = "honor"
 access_method = "rest_api (spending_by_award incl. sub-awards; recipient/duns)"
 auth_model = "none"
 verified = true
-last_verified = 2026-08-20
-notes = "Prime AND sub-awards (grant→deployment tracing: Byrne JAG, UASI). US Government work, public record — rights UNDETERMINED pending review."
+last_verified = 2026-09-15
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-15
+review_packet = "docs/build/reports/rights/usaspending.md"
+notes = "Prime AND sub-awards (grant→deployment tracing: Byrne JAG, UASI). US Government work, public record. FLIPPED 2026-09-15 (GL-GATE-03, operator-approved in the B pass): DATA Act federal public-domain (17 U.S.C. §105) → CC0-1.0. Live fetch needs POST-with-body support (P25.2)."
+[sources.usaspending.rights]
+spdx = "CC0-1.0"
+attribution = "USAspending.gov (U.S. Department of the Treasury)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://api.usaspending.gov/docs/"
+retrieval_date = 2026-09-15
 
 [sources.sam_gov]
 name = "SAM.gov"
@@ -1021,8 +1056,19 @@ access_method = "rest_api"
 auth_model = "api.data.gov key"
 rate_limits = "429s observed"
 verified = true
-last_verified = 2026-08-20
-notes = "ORI9 authority; identity substrate (§14.2)."
+last_verified = 2026-09-15
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-15
+notes = "ORI9 authority; identity substrate (§14.2). FLIPPED 2026-09-15 (GL-GATE-03, operator-approved in the B pass): US federal public-domain (17 U.S.C. §105) via data.gov → CC0-1.0. The staged SIG_DATA_GOV_KEY is auth (P25.4 wiring), not the rights basis."
+review_packet = "docs/build/reports/rights/fbi_cde_agency_registry.md"
+[sources.fbi_cde_agency_registry.rights]
+spdx = "CC0-1.0"
+attribution = "FBI Crime Data Explorer (FBI/CJIS, via data.gov)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://api.usa.gov/"
+retrieval_date = 2026-09-15
 
 [sources.leaic_crosswalk]
 name = "LEAIC crosswalk (ICPSR study 35158)"
@@ -1480,7 +1526,17 @@ custody_posture = "REFERENCE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
 review_packet = "docs/build/reports/rights/decp_fr.md"
-notes = "National open procurement data. UNDETERMINED pending reuse-terms review (Licence Ouverte)."
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-15
+last_verified = 2026-09-15
+notes = "National open procurement data. Licence RESOLVED: `fr-lo` (Licence Ouverte 2.0) confirmed via the data.gouv.fr API 2026-09-15 and added to the accepted SPDX set (ADR-084). NOT flipped — the France cohort stays gated (P24.6/D-JURIS.2-1); the flip + live fetch is P25.5."
+[sources.decp_fr.rights]
+spdx = "LicenceOuverte-2.0"
+attribution = "DECP — données essentielles de la commande publique (data.gouv.fr)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://github.com/etalab/licence-ouverte/blob/master/LO.md"
+retrieval_date = 2026-09-15
 
 # RAA des préfectures — the weekly ODbL-licensed index of 22,403 prefecture
 # gazette PDFs (F9.18). The arrêtés préfectoraux authorising vidéoprotection are
@@ -1498,7 +1554,7 @@ robots_policy = "honor"
 verified = true
 last_verified = 2026-08-20
 review_packet = "docs/build/reports/rights/raa_prefectures.md"
-notes = "22,403 RAA PDFs; weekly index (F9.18). Prefectural authorization = 5-yr renewable (CSI L252). Legally authoritative, dated, expiring Authorization the US has no equivalent of. NOT flipped: the RAA index is ODbL, but the France cohort stays gated (P24.6/D-JURIS.2-1 — the arrêté corpus + LO 2.0 posture need review); flip + live fetch is P25.5."
+notes = "22,403 RAA PDFs; weekly index (F9.18). Prefectural authorization = 5-yr renewable (CSI L252). Legally authoritative, dated, expiring Authorization the US has no equivalent of. NOT flipped: the RAA index licence is CONFIRMED ODbL-1.0 (data.gouv.fr API `odc-odbl`, 2026-09-15), but the France cohort stays gated (P24.6/D-JURIS.2-1 — the arrêté corpus + LO 2.0 posture need review); flip + live fetch is P25.5."
 [sources.raa_prefectures.rights]
 spdx = "ODbL-1.0"
 attribution = "Recueils des actes administratifs des préfectures (data.gouv.fr)"
@@ -1536,8 +1592,9 @@ compact_status = "not_contacted"
 robots_policy = "honor"
 auth_model = "belgian_eid (citizen assurance Level 300)"
 verified = true
-last_verified = 2026-08-20
-notes = "loi caméras 21 March 2007; declarations to police since 25 May 2018. Register held by police/DPA, NOT public — no anonymous access path (F9.31). Known-complete-unknown; records-request regime no_equivalent_available (§13.8)."
+last_verified = 2026-09-15
+notes = "loi caméras 21 March 2007; declarations to police since 25 May 2018. Register held by police/DPA, NOT public — no anonymous access path (F9.31). Known-complete-unknown; records-request regime no_equivalent_available (§13.8). Packet drafted 2026-09-15 (B pass): JS-only shell, no terms reachable — LINK-only pending HG-04 outreach."
+review_packet = "docs/build/reports/rights/declarationcamera_be.md"
 
 # Coarse international datasets (§22.7, SIG-ENG-036/SIG-INGEST-042). Country-level
 # indices and a global facial-recognition map are country-granularity; the ASPI

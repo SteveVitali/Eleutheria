@@ -102,7 +102,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     deposit.add_argument(
         "--deposits-md",
-        default="docs/build/DEPOSITS.md",
+        default="docs/build/reports/DEPOSITS.md",
         help="The append-only deposit ledger to record the DOIs in.",
     )
 
