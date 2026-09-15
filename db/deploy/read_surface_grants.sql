@@ -19,14 +19,13 @@ BEGIN;
 GRANT USAGE ON SCHEMA public    TO sig_read_public, sig_export;
 GRANT USAGE ON SCHEMA inference TO sig_read_public, sig_export;
 
--- SELECT across the full read surface (existing tables) …
+-- SELECT across the full read surface. NB: deliberately NOT using
+-- `ALTER DEFAULT PRIVILEGES` for future tables — that emits a per-owner default-
+-- privileges statement into pg_dump that a non-superuser restore user (e.g. the
+-- Cloud SQL import account) cannot re-apply, which aborts the whole restore
+-- ("permission denied to change default privileges"). A later change that adds a
+-- read-surface table re-grants explicitly instead (keeps the DB restorable, ADR-081).
 GRANT SELECT ON ALL TABLES IN SCHEMA public    TO sig_read_public, sig_export;
 GRANT SELECT ON ALL TABLES IN SCHEMA inference TO sig_read_public, sig_export;
-
--- … and for any tables added by later changes (forward-compatible).
-ALTER DEFAULT PRIVILEGES IN SCHEMA public
-  GRANT SELECT ON TABLES TO sig_read_public, sig_export;
-ALTER DEFAULT PRIVILEGES IN SCHEMA inference
-  GRANT SELECT ON TABLES TO sig_read_public, sig_export;
 
 COMMIT;

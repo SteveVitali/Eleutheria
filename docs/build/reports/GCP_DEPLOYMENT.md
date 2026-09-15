@@ -124,8 +124,35 @@ requires HG-11 (governance) + counsel (HG-02), then: flip the `sig-web`/`sig-pub
 buckets to public-read, sync `web/dist` + the published export compartment, set
 Cloud Run `--allow-unauthenticated`, and a DNS cutover.
 
-## Remaining for this ticket (`D-DEPLOY.1-1` PARTIAL)
+## Cloud restore drill (`D-DEPLOY.1-1` DONE, 2026-09-15)
 
-The **cloud restore drill**: restore a Cloud SQL managed backup into a fresh
-instance and assert claim/evidence/entity counts reproduce (the cloud analogue of
-the local `sig-ops backup-drill`).
+```bash
+STAMP=$(date +%Y%m%dT%H%M%SZ)
+gcloud sql export sql sig-pg "gs://$SIG_GCP_PROJECT-sig-backups/pg/sig-$STAMP.sql" --database=sig
+gcloud sql databases create sig_restore --instance=sig-pg
+gcloud sql import sql sig-pg "gs://$SIG_GCP_PROJECT-sig-backups/pg/sig-$STAMP.sql" --database=sig_restore
+# assert counts reproduce, then drop the drill db:
+#   sig_restore: claims=5 entities=3 evidence=5  (== source sig)
+gcloud sql databases delete sig_restore --instance=sig-pg
+```
+
+**Finding (fixed):** the first drill aborted — the `read_surface_grants` migration's
+`ALTER DEFAULT PRIVILEGES` clauses cannot be re-applied by the Cloud SQL import user
+("permission denied to change default privileges"), which rolls back the whole
+import. Removed those clauses (explicit `GRANT ON ALL TABLES` retained); re-export +
+re-import then reproduced counts exactly. Keep the schema free of
+`ALTER DEFAULT PRIVILEGES` for restorability (ADR-081).
+
+## Data + published artifacts (2026-09-15)
+
+- **Seeded** jurisdictions into the hosted spine: `okc` (5 claims / 3 entities) +
+  `france` (11 claims / 4 entities) via `sig-ops seed --jurisdiction <j>`.
+- **Exports** built (`sig-exports build --jurisdiction {okc,france} --out exports/out/<j>`) —
+  compartments `sig_graph` (CC-BY) / `osm_physical` (ODbL) / `web` — pushed to
+  `gs://…-sig-public/{okc,france}/` (private under Finish-line A).
+- **Static site** (50 pages, `SIG_DATA_SOURCE=export`) synced to `gs://…-sig-web` (private).
+
+## Remaining (owed, not this ticket)
+
+Zenodo/SWH deposits (HG-07, `D-P21.5-1`); real live source fetches (the placeholder
+target-URL plumbing, `D-P21.3-1`/`D-LIVE.1a-1`); Go-public flip (HG-11 + counsel).

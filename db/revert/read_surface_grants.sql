@@ -5,11 +5,6 @@
 
 BEGIN;
 
-ALTER DEFAULT PRIVILEGES IN SCHEMA public
-  REVOKE SELECT ON TABLES FROM sig_read_public, sig_export;
-ALTER DEFAULT PRIVILEGES IN SCHEMA inference
-  REVOKE SELECT ON TABLES FROM sig_read_public, sig_export;
-
 REVOKE SELECT ON ALL TABLES IN SCHEMA public    FROM sig_read_public, sig_export;
 REVOKE SELECT ON ALL TABLES IN SCHEMA inference FROM sig_read_public, sig_export;
 REVOKE USAGE  ON SCHEMA inference FROM sig_read_public, sig_export;
