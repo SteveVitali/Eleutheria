@@ -318,7 +318,13 @@ class Fetcher(Protocol):
     shared seam for an authenticated source (§23.5); most connectors omit them.
     """
 
-    def fetch(self, url: str, *, headers: Mapping[str, str] | None = None) -> FetchResult: ...
+    def fetch(
+        self,
+        url: str,
+        *,
+        headers: Mapping[str, str] | None = None,
+        body: bytes | None = None,
+    ) -> FetchResult: ...
 
 
 # --- run context --------------------------------------------------------------

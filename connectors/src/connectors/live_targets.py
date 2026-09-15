@@ -51,9 +51,16 @@ def live_targets(source_id: str) -> list[dict[str, str]]:
     if kind == "overpass":
         return _overpass_targets(source_id, spec)
     # Generic document/http targets: an explicit list of {id, url[, kind]} rows.
+    # Extra keys (e.g. a POST body's `post_body`, USAspending's `subaward` flag)
+    # pass through untouched — they are reviewed data the connector consumes.
     targets = spec.get("targets", [])
     return [
-        {"id": str(t["id"]), "url": str(t["url"]), "kind": str(t.get("kind", kind or "http"))}
+        {
+            "id": str(t["id"]),
+            "url": str(t["url"]),
+            "kind": str(t.get("kind", kind or "http")),
+            **{k: v for k, v in t.items() if k not in {"id", "url", "kind"}},
+        }
         for t in targets
     ]
 

@@ -59,6 +59,17 @@ tos_basis = "MuckRock public API (Squarelet-authenticated); documented programma
 rate_limit_per_min = 10
 counsel_reviewed = false
 
+# Squarelet (accounts.muckrock.com) hosts MuckRock's documented token +
+# refresh endpoints (§23.5, F4.2/F4.3) — the credential exchange, not a data
+# read. A refresh POST here is documented API access (ADR-083); it carries no
+# content beyond the credential.
+[[api_host]]
+host = "accounts.muckrock.com"
+endpoint_prefix = "/api/"
+tos_basis = "Squarelet token/refresh endpoints — the documented MuckRock api_v2 credential exchange (§23.5, F4.2)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
 # The OSM main API — documented element endpoints (incl. /history.json) serving
 # ODbL data; the same basis as the Overpass entries above. openstreetmap.org's
 # robots.txt disallows /api/ for CRAWLERS; this is documented, rate-limited API

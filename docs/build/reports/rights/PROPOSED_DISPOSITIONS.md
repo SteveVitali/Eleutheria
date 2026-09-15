@@ -52,3 +52,31 @@
 - **Live-ops state after the pass:** 12 sources flipped/loadable; the four new
   ones still need their P25.2/P25.4 connector code (POST body, JWT refresh,
   data.gov-key auth, bulk-file fetch) before a live run emits anything.
+
+## C-pass live-ops outcomes (2026-09-15, later same day)
+
+- **`usaspending` — LIVE DATA LANDED.** POST support added to the shared seam
+  (`PoliteFetcher.fetch(body=)` → `Transport.request(body=)` → `HttpxTransport`
+  POST, conditional-GET bypassed for POST); `/search/spending_by_award/` with
+  `subawards: true` fetched 100 sub-award rows → **1000 emitted rows, 540 claims
+  committed** to the hosted Cloud SQL spine. Sub-award display-label fields
+  (`Sub-Award ID`, `Sub-Awardee Name`, …) now map in `_build_subaward`.
+- **`muckrock` — plumbing done, fetch honestly WAF-blocked.** The
+  `SIG_MUCKROCK_REFRESH` → `accounts.muckrock.com/api/refresh/` → 5-min-JWT flow
+  is wired into the live runner (`muckrock_token_cache` in `ctx.parameters`);
+  the accounts host is ADR-083 allow-listed. But both `accounts.muckrock.com`
+  and `www.muckrock.com/api_v2/` answer programmatic requests with a **Cloudflare
+  challenge (HTTP 403 HTML)** — the run correctly recorded it as a first-class
+  `disappearance` (SIG-INGEST-013: surfaced, never defeated). Live fetch awaits a
+  posture change (MuckRock whitelist request / different vantage point) — a real
+  finding, not a code gap.
+- **`eff_data_driven` — needs a manifest adapter, not just a target.** The real
+  artifact is `https://www.eff.org/files/2020/01/28/alpr_2016-2017_update.zip`
+  (EFF-hosted, CC-BY-4.0). The connector's ingest unit is a *release manifest
+  JSON*; a live run needs a manifest for the real release (or zip/CSV parsing
+  support). Scoped under P25.4.
+- **`fbi_cde_agency_registry` — no claims connector.** It is the ORI9 identity
+  substrate feeding resolution (§14.2), not a claims-emitting source; `run
+  --source` refuses "no connector known" — correct-by-design. Its data.gov-key
+  fetch belongs to a substrate download path, not the claims pipeline (P25.6
+  triage confirms its disposition).

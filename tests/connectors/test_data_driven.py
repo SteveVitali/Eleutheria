@@ -354,21 +354,69 @@ def test_aggregate_non_hit_none_when_no_detections() -> None:
 # --- run modes: live REFUSES (exit 3); shadow 0 diffs; replay reproducible -----
 
 
-def test_live_run_now_passes_the_gate_but_has_no_targets() -> None:
-    # Flipped 2026-09-15 (operator-approved B pass, CC-BY-4.0): the live gate now
-    # passes, so the NEXT honest gate fires — no live_targets row until P25.4
-    # wires the real data-file artifacts (SIG-INGEST-043b).
-    from connectors.live_targets import NoLiveTargets
+def test_live_targets_point_at_the_real_eff_zip() -> None:
+    # P25.4: the flipped source now has a real live target — the EFF-hosted
+    # release ZIP of lettered-column CSVs (CC-BY-4.0, robots-open CRAWL).
+    from connectors.live_targets import live_targets
 
-    with pytest.raises(NoLiveTargets):
-        run_source(DATA_DRIVEN_SOURCE_ID, mode=RunMode.LIVE)
+    targets = live_targets(DATA_DRIVEN_SOURCE_ID)
+    assert len(targets) == 1
+    assert targets[0]["url"] == ("https://www.eff.org/files/2020/01/28/alpr_2016-2017_update.zip")
+    assert targets[0]["kind"] == "release_zip"
 
 
-def test_cli_live_run_exits_4_no_targets(capsys: pytest.CaptureFixture[str]) -> None:
-    rc = main(["run", "--source", DATA_DRIVEN_SOURCE_ID, "--mode", "live"])
-    assert rc == 4
-    out = capsys.readouterr().out
-    assert "NO LIVE TARGETS" in out
+def test_the_real_eff_zip_parses_to_per_agency_aggregates() -> None:
+    # P25.4 regression: the committed real EFF release ZIP (the actual upstream
+    # artifact, CC-BY-4.0) must parse to per-agency aggregate rows — lettered
+    # columns mapped via the vocab, "Not Provided" → null, never per-search.
+    from connectors.data_driven import DataDrivenConnector
+
+    zip_bytes = (_FIX / "eff_release_2016_2017.zip").read_bytes()
+    conn = DataDrivenConnector()
+    captures = InMemoryCaptureStore()
+    capture = captures.put(
+        zip_bytes,
+        media_type="application/zip",
+        source_uri="https://www.eff.org/files/2020/01/28/alpr_2016-2017_update.zip",
+    )
+    ctx = RunContext(
+        source=dataclasses.replace(get(DATA_DRIVEN_SOURCE_ID), ingestion_permitted=True),
+        run=IngestRun("data_driven", "1.0.0", "deadbeef", "r1", vocab_version(), ()),
+        captures=captures,
+        claim_sink=InMemoryClaimSink(),
+        parameters={"targets": []},
+    )
+    parsed = conn.parse(ctx, capture)
+    release = parsed["release"]
+    assert release["release_id"] == "eff-muckrock-alpr-2016-2017-update"
+    assert release["data_file_urls"] == [capture.source_uri]
+    assert len(release["agencies"]) == 200  # the real upstream row count
+    # The real upstream headers feed the aggregate-only guard in extract().
+    assert "E1. 2016 Detections" in release["columns"]
+
+    extracted = conn.extract(ctx, parsed)
+    assert len(extracted) == 200
+    rows = conn.normalize(ctx, extracted)
+    predicates = {r.get("predicate_id") for r in rows if r.get("record_kind") == "claim"}
+    assert predicates <= {
+        "deployment_exists",
+        "scan_volume_observed",
+        "hit_volume_observed",
+        "non_hit_proportion_observed",
+        "sharing_partner_degree",
+        "pooled_lookup_participation",
+        "retention_window_observed",
+    }
+    # A real agency: Acworth PD — Direct Sharing 270, NVLS participant.
+    acworth = next(r for r in rows if r.get("raw_agency") == "Acworth Police Department")
+    assert acworth["state"] == "GA"
+    degree = next(
+        r
+        for r in rows
+        if r.get("subject_id") == acworth["subject_id"]
+        and r.get("predicate_id") == "sharing_partner_degree"
+    )
+    assert degree["value"] == 270
 
 
 def test_shadow_over_fixture_has_zero_diffs() -> None:

@@ -791,6 +791,16 @@ class ProcurementConnector(Connector):
         assert ctx.fetcher is not None, "connectors fetch only through the shared layer"
         if ctx.source.id == source_ids().get("usaspending"):
             assert_pulls_subawards(target)
+        post_body = target.get("post_body")
+        if post_body is not None:
+            # USAspending's sub-award search is POST-only (the documented
+            # ``/search/spending_by_award/`` endpoint with ``subawards: true``,
+            # §23.6) — the body rides the shared seam like an auth header.
+            return ctx.fetcher.fetch(
+                str(target["url"]),
+                headers={"Content-Type": "application/json"},
+                body=json.dumps(post_body, sort_keys=True).encode("utf-8"),
+            )
         return ctx.fetcher.fetch(str(target["url"]))
 
     # -- interpretation (pure functions of the capture) --
@@ -978,6 +988,7 @@ class ProcurementConnector(Connector):
             raw.get("prime_award_id")
             or raw.get(str(cfg["federal_award_id_field"]))
             or raw.get("prime_award_generated_internal_id")
+            or raw.get("prime_award_internal_id")
             or ""
         )
         return SubAward(
@@ -985,21 +996,37 @@ class ProcurementConnector(Connector):
                 raw.get("subaward_id")
                 or raw.get(str(cfg["subaward_id_field"]))
                 or raw.get("id")
+                # The live API returns display labels for requested fields.
+                or raw.get("Sub-Award ID")
                 or ""
             ),
             prime_award_id=prime_id,
             funder=_opt_str(
-                raw.get("funder") or raw.get("prime_awardee") or raw.get("awarding_agency")
+                raw.get("funder")
+                or raw.get("prime_awardee")
+                or raw.get("awarding_agency")
+                or raw.get("Awarding Agency")
             )
             or "",
             recipient=_opt_str(
-                raw.get("recipient") or raw.get("subawardee") or raw.get("subrecipient_name")
+                raw.get("recipient")
+                or raw.get("subawardee")
+                or raw.get("subrecipient_name")
+                or raw.get("Sub-Awardee Name")
             )
             or "",
             program_name=_opt_str(raw.get("program_name") or raw.get("cfda_title")),
-            amount=_opt_str(raw.get("amount") or raw.get("subaward_amount")),
-            award_date=_opt_str(raw.get("award_date") or raw.get("action_date")),
-            description=_opt_str(raw.get("description") or raw.get("subaward_description")),
+            amount=_opt_str(
+                raw.get("amount") or raw.get("subaward_amount") or raw.get("Sub-Award Amount")
+            ),
+            award_date=_opt_str(
+                raw.get("award_date") or raw.get("action_date") or raw.get("Sub-Award Date")
+            ),
+            description=_opt_str(
+                raw.get("description")
+                or raw.get("subaward_description")
+                or raw.get("Sub-Award Description")
+            ),
             raw=dict(raw),
         )
 

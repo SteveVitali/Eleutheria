@@ -162,7 +162,12 @@ class _StaticFileTransport:
         return RobotsResult(text=_ROBOTS_ALLOW_ALL)
 
     def request(
-        self, url: str, *, user_agent: str, headers: Mapping[str, str] | None = None
+        self,
+        url: str,
+        *,
+        user_agent: str,
+        headers: Mapping[str, str] | None = None,
+        body: bytes | None = None,
     ) -> FetchResult:
         return FetchResult(
             url=url,
@@ -417,13 +422,16 @@ def _run_live(
         code_commit=code_commit,
     )
     source = get(source_id)
+    parameters: dict[str, Any] = {"targets": targets}
+    if source_id == "muckrock":
+        parameters["muckrock_token_cache"] = _muckrock_token_cache(fetcher)
     ctx = RunContext(
         source=source,
         run=IngestRun(connector.name, version, code_commit, "r1", "v1", ()),
         fetcher=fetcher,
         captures=captures,
         claim_sink=sink,
-        parameters={"targets": targets},
+        parameters=parameters,
     )
     try:
         report = run(connector, ctx)
@@ -467,6 +475,49 @@ def _run_live(
         asserted=report.asserted,
         fetch_record=fetch_record,
     )
+
+
+def _muckrock_token_cache(fetcher: PoliteFetcher) -> Any:
+    """Build the refreshing MuckRock JWT cache for a live run (§23.5, F4.2/F4.3).
+
+    The mint exchanges ``$SIG_MUCKROCK_REFRESH`` (a long-lived refresh token,
+    HG-09 env-only) at the documented Squarelet ``/api/refresh/`` endpoint for a
+    5-minute access JWT. The exchange itself rides the shared politeness layer —
+    the accounts host is ADR-083 allow-listed, so the credential exchange is
+    rate-limited and audited like every other egress. A missing refresh token is
+    a loud configuration error, never a silent unauthenticated run.
+    """
+    import os
+
+    from .records import MuckRockTokenCache, muckrock_config
+
+    refresh = os.environ.get("SIG_MUCKROCK_REFRESH", "").strip()
+    if not refresh:
+        raise RuntimeError(
+            "muckrock live run requires $SIG_MUCKROCK_REFRESH (the long-lived "
+            "refresh token that mints the 5-minute api_v2 JWT, §23.5 F4.2/HG-09); "
+            "without it the run would 401 on every data endpoint."
+        )
+    cfg = muckrock_config()
+    refresh_url = str(cfg["token_refresh_url"])
+
+    class _RefreshTokenSource:
+        """Mints an access JWT by POSTing the refresh token through the fetcher."""
+
+        def mint(self) -> str:
+            result = fetcher.fetch(
+                refresh_url,
+                headers={"Content-Type": "application/json"},
+                body=json.dumps({"refresh": refresh}).encode("utf-8"),
+            )
+            if result.status != 200:
+                raise RuntimeError(
+                    f"MuckRock token refresh returned HTTP {result.status}; the "
+                    "access JWT was not minted (§23.5 F4.3) — check the credential."
+                )
+            return str(json.loads(result.body)["access"])
+
+    return MuckRockTokenCache(_RefreshTokenSource())
 
 
 def _run_over_fixture(

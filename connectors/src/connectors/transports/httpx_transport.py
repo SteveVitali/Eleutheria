@@ -137,21 +137,27 @@ class HttpxTransport:
         return RobotsResult(text=resp.text)
 
     def request(
-        self, url: str, *, user_agent: str, headers: Mapping[str, str] | None = None
+        self,
+        url: str,
+        *,
+        user_agent: str,
+        headers: Mapping[str, str] | None = None,
+        body: bytes | None = None,
     ) -> FetchResult:
-        """Execute one GET with backoff-retry + conditional GET (never circumvents).
+        """Execute one GET (or POST when ``body`` is given) with backoff-retry.
 
         The ``user_agent`` and any per-request ``headers`` (e.g. an
         ``Authorization: Bearer`` credential riding the shared seam, §23.5) come
         from the fetcher. A challenge status (401/403) is returned unretried for
         the fetcher to surface (SIG-INGEST-013); a 429/503/504 is backed off and
-        retried up to ``max_retries`` (§26 Rule 3).
+        retried up to ``max_retries`` (§26 Rule 3). Conditional GET (ETag) applies
+        only to GET — a POST body is sent every time.
         """
         request_headers: dict[str, str] = {"User-Agent": user_agent}
         if headers:
             request_headers.update(headers)
         cached = self._cache.get(url)
-        if self._conditional_get and cached is not None:
+        if body is None and self._conditional_get and cached is not None:
             if cached.etag is not None:
                 request_headers["If-None-Match"] = cached.etag
             if cached.last_modified is not None:
@@ -159,7 +165,10 @@ class HttpxTransport:
 
         attempt = 0
         while True:
-            resp = self._client.get(url, headers=request_headers)
+            if body is None:
+                resp = self._client.get(url, headers=request_headers)
+            else:
+                resp = self._client.post(url, content=body, headers=request_headers)
             status = resp.status_code
             if status in RETRYABLE_STATUSES and attempt < self._max_retries:
                 wait = self._retry_after_seconds(resp) or _bounded(
@@ -177,10 +186,12 @@ class HttpxTransport:
                 self._sleep(wait)
                 attempt += 1
                 continue
-            return self._to_fetch_result(url, resp)
+            return self._to_fetch_result(url, resp, cacheable=body is None)
 
     # -- helpers --------------------------------------------------------------
-    def _to_fetch_result(self, url: str, resp: httpx.Response) -> FetchResult:
+    def _to_fetch_result(
+        self, url: str, resp: httpx.Response, *, cacheable: bool = True
+    ) -> FetchResult:
         response_headers = {k: v for k, v in resp.headers.items()}
         # A 304 means the previously-captured body is still current: serve it back
         # so the post-capture stages address the same bytes (SIG-INGEST-017/003).
@@ -195,7 +206,9 @@ class HttpxTransport:
             )
         media_type = _media_type(resp)
         body = resp.content
-        if self._conditional_get and resp.status_code == 200:
+        # Only GET responses are cached for conditional revalidation — a POST
+        # response is never replayed as an If-None-Match answer.
+        if cacheable and self._conditional_get and resp.status_code == 200:
             self._cache[url] = _CachedResponse(
                 etag=resp.headers.get("ETag"),
                 last_modified=resp.headers.get("Last-Modified"),

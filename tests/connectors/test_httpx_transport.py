@@ -172,3 +172,40 @@ def test_transport_refuses_a_configured_circumvention_technique() -> None:
 def test_default_user_agent_carries_a_contact_url() -> None:
     ua = default_user_agent()
     assert ua.startswith("SIG/") and "+https://" in ua
+
+
+def test_a_body_sends_a_post_with_the_body_bytes() -> None:
+    # USAspending's sub-award search is POST-only (§23.6): a non-None ``body``
+    # makes the request a POST carrying the body, never a GET.
+    seen: list[tuple[str, bytes]] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append((request.method, request.content))
+        return httpx.Response(200, json={"results": []})
+
+    transport = HttpxTransport(client=_client(handler))
+    result = transport.request(
+        "https://api.usaspending.gov/api/v2/search/spending_by_award/",
+        user_agent="SIG/0 (+u)",
+        headers={"Content-Type": "application/json"},
+        body=b'{"subawards": true}',
+    )
+    assert result.status == 200
+    assert seen == [("POST", b'{"subawards": true}')]
+
+
+def test_a_post_is_never_conditional_and_never_cached() -> None:
+    # POST responses must not enter the ETag cache nor be replayed: two POSTs
+    # both hit the transport, and no If-None-Match ever rides a POST.
+    calls = {"n": 0}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls["n"] += 1
+        assert request.method == "POST"
+        assert "If-None-Match" not in request.headers
+        return httpx.Response(200, text="ok", headers={"ETag": '"v1"'})
+
+    transport = HttpxTransport(client=_client(handler))
+    for _ in range(2):
+        transport.request("https://x.test/search", user_agent="SIG/0 (+u)", body=b"{}")
+    assert calls["n"] == 2

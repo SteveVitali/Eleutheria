@@ -40,6 +40,45 @@ targets = [
   { id = "atlas-full", url = "https://www.atlasofsurveillance.org/download.csv", kind = "bulk_csv" },
 ]
 
+# USAspending sub-award search (§23.6, SIG-ONTO-033) — the documented
+# ``/search/spending_by_award/`` POST endpoint (ADR-083 allow-listed:
+# api.usaspending.gov /api; GET is refused upstream, the search is POST-only).
+# Scoped to ASSISTANCE sub-awards on surveillance-relevant keywords — the
+# federal-grant → local-purchase link (Byrne JAG / UASI → a city's ALPR buy).
+# `subaward = true` is the connector-asserted flag (assert_pulls_subawards);
+# `post_body` is sent verbatim as the JSON request body.
+[usaspending]
+kind = "procurement_api"
+targets = [
+  { id = "usaspending-surveillance-subawards", url = "https://api.usaspending.gov/api/v2/search/spending_by_award/", kind = "subaward_search", subaward = true, post_body = { subawards = true, filters = { time_period = [ { start_date = "2018-01-01", end_date = "2026-12-31" } ], award_type_codes = [ "02", "03", "04", "05", "06", "07", "08", "09", "10", "11" ], keywords = [ "license plate reader", "automated license plate", "automatic license plate", "gunshot detection", "shotspotter", "surveillance camera", "video surveillance", "cctv", "real time crime center", "drone" ] }, fields = [ "Sub-Award ID", "Sub-Awardee Name", "Sub-Award Date", "Sub-Award Amount", "Sub-Award Description", "Awarding Agency", "prime_award_generated_internal_id" ], limit = 100, page = 1, sort = "Sub-Award Amount", order = "desc" } },
+]
+
+# EFF/MuckRock Data Driven release (§23.9, P25.4) — the real EFF-hosted artifact:
+# a ZIP of lettered-column CSVs (the 2016-2017 ALPR update, 200 per-agency
+# aggregate rows, CC-BY-4.0). robots-open CRAWL. The connector maps the lettered
+# columns via data_driven_vocab.toml's [eff_release] map — per-agency AGGREGATE
+# rows only; the guard inspects the real upstream headers (RISK-P0-08).
+[eff_data_driven]
+kind = "release_zip"
+targets = [
+  { id = "eff-dd-2016-2017", url = "https://www.eff.org/files/2020/01/28/alpr_2016-2017_update.zip", kind = "release_zip" },
+]
+
+# MuckRock api_v2 (§23.5, SIG-INGEST-036) — targeted lookups ONLY, never a
+# listing. api_v2 data endpoints are ADR-083 allow-listed (www.muckrock.com/api
+# covers /api_v2); auth is the $SIG_MUCKROCK_REFRESH → 5-min JWT flow the runner
+# wires. As of 2026-09-15 both muckrock.com and accounts.muckrock.com answer
+# programmatic requests with a Cloudflare challenge (HTTP 403) — SIG does not
+# defeat challenges (SIG-INGEST-013): a live run surfaces this as a recorded
+# disappearance, which is the correct outcome until the WAF posture changes.
+# Request 136412 = the EFF "Automated License Plate Readers" request to LAPD
+# (muckrock.com/foi/los-angeles-91/…-136412), a real targeted lookup.
+[muckrock]
+kind = "records_api"
+targets = [
+  { id = "muckrock-foia:136412", url = "https://www.muckrock.com/api_v2/requests/136412/", kind = "records_request", external_id = "136412" },
+]
+
 # OSM per-element history (SIG-INGEST-045c) — the documented OSM API 0.6 history
 # endpoint (ADR-083 allow-listed: api.openstreetmap.org /api/0.6). Element ids are
 # real OKC surveillance nodes observed via the osm_overpass live fetch (2026-09-15).

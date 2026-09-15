@@ -93,16 +93,23 @@ class _SequenceTransport:
     def __init__(self, responses: dict[str, list[tuple[int, bytes, str]]]) -> None:
         self._responses = {k: list(v) for k, v in responses.items()}
         self.request_log: list[str] = []
+        self.bodies: list[bytes | None] = []
 
     def robots(self, robots_url: str) -> RobotsResult:
         return RobotsResult(text=_ROBOTS_ALLOW_ALL)
 
     def request(
-        self, url: str, *, user_agent: str, headers: Mapping[str, str] | None = None
+        self,
+        url: str,
+        *,
+        user_agent: str,
+        headers: Mapping[str, str] | None = None,
+        body: bytes | None = None,
     ) -> FetchResult:
         self.request_log.append(url)
-        status, body, media = self._responses[url].pop(0)
-        return FetchResult(url=url, status=status, body=body, media_type=media)
+        self.bodies.append(body)
+        status, body_, media = self._responses[url].pop(0)
+        return FetchResult(url=url, status=status, body=body_, media_type=media)
 
 
 def _fetcher(transport: _SequenceTransport) -> PoliteFetcher:
@@ -592,3 +599,43 @@ def test_pipeline_ingests_usaspending_subawards_end_to_end() -> None:
     assert report.asserted
     fi = next(c for c in report.claims if c.get("record_kind") == "funding_instrument")
     assert fi["federal_award_id"] == "15PBJA-23-GG-01234-JAGX"
+
+
+def test_usaspending_post_body_target_posts_and_parses_display_labels() -> None:
+    # The live USAspending shape: a POST to /search/spending_by_award/ whose
+    # results carry the API's display labels (verified against the real API
+    # 2026-09-15) rather than snake_case keys.
+    from connectors import pipeline
+
+    url = "https://api.usaspending.gov/api/v2/search/spending_by_award/"
+    payload = {
+        "results": [
+            {
+                "internal_id": "SUB-OKC-001",
+                "Sub-Award ID": "SUB-OKC-001",
+                "Sub-Awardee Name": "Oklahoma City Police Department",
+                "Sub-Award Date": "2023-06-01",
+                "Sub-Award Amount": 82000.0,
+                "Sub-Award Description": "ALPR cameras",
+                "Awarding Agency": "U.S. DOJ",
+                "prime_award_generated_internal_id": "ASST_NON_15PBJA-23-GG-01234-JAGX_180",
+            }
+        ]
+    }
+    transport = _SequenceTransport(
+        {url: [(200, json.dumps(payload).encode("utf-8"), "application/json")]}
+    )
+    post_body = {"subawards": True, "filters": {"keywords": ["license plate reader"]}}
+    ctx = _ctx(
+        "usaspending",
+        fetcher=_fetcher(transport),
+        parameters={"targets": [{"url": url, "subaward": True, "post_body": post_body}]},
+    )
+    report = pipeline.run(ProcurementConnector(), ctx)
+    assert report.asserted
+    # The target's post_body was sent verbatim as the request body (JSON).
+    assert transport.bodies == [json.dumps(post_body, sort_keys=True).encode("utf-8")]
+    fi = next(c for c in report.claims if c.get("record_kind") == "funding_instrument")
+    assert fi["federal_award_id"] == "ASST_NON_15PBJA-23-GG-01234-JAGX_180"
+    recipient = next(c for c in report.claims if c.get("predicate_id") == "recipient")
+    assert recipient["value"] == "Oklahoma City Police Department"

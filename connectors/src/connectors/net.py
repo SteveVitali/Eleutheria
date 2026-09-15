@@ -33,7 +33,7 @@ from __future__ import annotations
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from typing import Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 from urllib.parse import urlsplit
 from urllib.robotparser import RobotFileParser
 
@@ -89,7 +89,12 @@ class Transport(Protocol):
     def robots(self, robots_url: str) -> RobotsResult: ...
 
     def request(
-        self, url: str, *, user_agent: str, headers: Mapping[str, str] | None = None
+        self,
+        url: str,
+        *,
+        user_agent: str,
+        headers: Mapping[str, str] | None = None,
+        body: bytes | None = None,
     ) -> FetchResult: ...
 
 
@@ -213,7 +218,13 @@ class PoliteFetcher:
         parser = self._ensure_robots(host, url)
         return parser.can_fetch(self._ua, url)
 
-    def fetch(self, url: str, *, headers: Mapping[str, str] | None = None) -> FetchResult:
+    def fetch(
+        self,
+        url: str,
+        *,
+        headers: Mapping[str, str] | None = None,
+        body: bytes | None = None,
+    ) -> FetchResult:
         """Fetch ``url`` politely: robots-checked, rate-limited, UA-identified.
 
         Optional ``headers`` are per-request request headers passed to the
@@ -222,6 +233,12 @@ class PoliteFetcher:
         endpoints, §23.5) through the shared politeness layer rather than an HTTP
         client of its own (SIG-INGEST-011). Supplying a credential this way is
         *authentication*, not access-control circumvention (Rule 4 / SIG-INGEST-013).
+
+        A non-``None`` ``body`` makes the request a **POST** (a documented
+        API-mode pattern — e.g. USAspending's ``spending_by_award`` sub-award
+        search, §23.6). POST is still robots-checked / allow-listed and
+        rate-limited exactly as a GET; it is a different verb on a documented
+        endpoint, never a circumvention.
 
         Raises :class:`RobotsUnretrievable` if robots.txt is unavailable,
         :class:`RobotsDisallowed` if it forbids the URL, and
@@ -242,12 +259,14 @@ class PoliteFetcher:
                     f"robots.txt disallows {self._ua!r} from fetching {url!r} (Rule 2)."
                 )
         self._limiter.acquire(host)
-        # Pass headers only when present so a transport that predates the headers
-        # seam (and takes only user_agent) keeps working unchanged (back-compat).
-        if headers is None:
-            result = self._transport.request(url, user_agent=self._ua)
-        else:
-            result = self._transport.request(url, user_agent=self._ua, headers=headers)
+        # Pass headers/body only when present so a transport that predates the
+        # seams (and takes only user_agent) keeps working unchanged (back-compat).
+        kwargs: dict[str, Any] = {}
+        if headers is not None:
+            kwargs["headers"] = headers
+        if body is not None:
+            kwargs["body"] = body
+        result = self._transport.request(url, user_agent=self._ua, **kwargs)
         if _is_challenge(result):
             raise ChallengeEncountered(
                 f"{url!r} returned a bot-management challenge (status {result.status}); "
