@@ -123,6 +123,11 @@ landing here. Regenerate this file after any backlog edit:
 - **BL-043** — Stage-5 pathway connectors persisted to the claim spine (LANDED P21.9/ADR-071; RISK-P17-03 retired; live gate-pending HG-03) · _deferred-feature_ · L · status=closed · gate HG-03
   - sources: RISK-P17-02 RISK-P17-03 RISK-P17-08 RISK-P17-09 RISK-P17-13 RISK-P17-14 LD-H12 LD-V10 ADR-071
 
+## P25.1
+
+- **BL-055** — Live-fetch operationalization: Overpass robots/endpoint policy decision + document-connector content-drift hardening; wire real data/live_targets.toml rows + run real fetches into the hosted spine (P25.1; findings from the P24.1 live deploy, ADR-082) · _external-dep_ · M · status=open · gate HG-03
+  - sources: ADR-082
+
 ## human-gate:HG-01
 
 - **BL-034** — Legal home + counsel launch prerequisites · _rights/legal_ · M · status=open · gate HG-01

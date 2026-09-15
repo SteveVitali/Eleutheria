@@ -370,9 +370,18 @@ def _run_live(
     if reasons:
         raise LiveGateRefused(source_id, reasons)
 
-    # --- green-source live path (unreachable while no source is flipped) -------
-    # Built with the real HTTP transport + OCFL capture store; kept correct so a
-    # future green flip runs unchanged. Not exercised this run (HG-03 pending).
+    # Real per-source fetch targets come from the declarative live-targets table
+    # (P24.1 / ADR-082) — NOT a placeholder. A green source with no configured
+    # target is refused here rather than fetching a bogus URL (SIG-INGEST-045i).
+    from .live_targets import NoLiveTargets, live_targets
+
+    targets = live_targets(source_id)
+    if not targets:
+        raise NoLiveTargets(source_id)
+
+    # --- green-source live path -----------------------------------------------
+    # The real HTTP transport + OCFL capture store, driven by the configured
+    # targets through the shared politeness layer.
     from evidence.ocfl import OcflStore  # local import: heavy evidence deps
     from evidence.storage import LocalFileStore
 
@@ -403,6 +412,7 @@ def _run_live(
         fetcher=fetcher,
         captures=captures,
         claim_sink=sink,
+        parameters={"targets": targets},
     )
     report = run(connector, ctx)
     fetch_record = FetchRecord(

@@ -1,0 +1,31 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# Per-source LIVE fetch targets (P24.1 live deploy / DEPLOY.1, ADR-082). The live
+# runner (`connectors.runner._run_live`) supplies these to a connector's
+# ``discover()`` as ``ctx.parameters["targets"]`` — closing the P21.3 deliverable-4
+# gap where the live path shipped with no real targets (so a green source fetched
+# nothing). This is DATA, not code (SIG-ENG-001, SIG-INGEST-038): a new live target
+# is a reviewed data change, never a code edit. NO secrets here (HG-09) — endpoints
+# and tokens come from the environment at fetch time. A source absent from this
+# table has NO live targets and the live runner refuses (it never fetches a
+# placeholder URL).
+
+# OSM/DeFlock physical ALPR assets via the Overpass API (keyless). The response is
+# the same JSON shape as the committed fixture (tests/connectors/fixtures/osm/
+# overpass_snapshot.json), so the existing osm parser handles it unchanged; output
+# lands in the physically separate ODbL compartment (§42.3).
+[osm_overpass]
+kind = "overpass"
+# Overpass QL — man_made=surveillance in the Oklahoma City metro bbox (S,W,N,E).
+# The runner builds the request URL from $SIG_OVERPASS_ENDPOINT (default: the
+# public instance) + urlencode(query). `out meta center` yields the version/
+# changeset/timestamp the (osm_type,osm_id,version) key + first_observed need,
+# and way centroids (SIG-INGEST-045a/045b/045f).
+overpass_query = """[out:json][timeout:90];
+(
+  node["man_made"="surveillance"](35.30,-97.85,35.75,-97.15);
+  way["man_made"="surveillance"](35.30,-97.85,35.75,-97.15);
+);
+out meta center;"""

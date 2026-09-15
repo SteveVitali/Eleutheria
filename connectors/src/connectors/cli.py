@@ -221,6 +221,7 @@ def _run(args: argparse.Namespace) -> int:
     # Importing the package registers every source connector (SIG-INGEST-021).
     from pathlib import Path
 
+    from .live_targets import NoLiveTargets
     from .runner import LiveGateRefused, RunMode, run_source
 
     if args.sink == "pg" and not args.dsn:
@@ -246,6 +247,10 @@ def _run(args: argparse.Namespace) -> int:
         for reason in refused.reasons:
             print(f"  - {reason}")
         return 3
+    except NoLiveTargets as missing:
+        # A green source with no configured live target: config gap, not a fetch.
+        print(f"NO LIVE TARGETS (exit 4): {missing}")
+        return 4
     summary = (
         f"source {args.source!r} [{args.mode}] via connector {report.connector!r}: "
         f"{len(report.claims)} claim(s), {len(report.captures)} capture(s)"
