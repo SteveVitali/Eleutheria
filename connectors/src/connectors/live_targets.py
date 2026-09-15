@@ -23,9 +23,11 @@ from urllib.parse import urlencode
 
 from ._data import load_table
 
-#: The public Overpass instance, used when $SIG_OVERPASS_ENDPOINT is unset (the
-#: P21.3 gate names this env var; the default is a keyless public endpoint).
-DEFAULT_OVERPASS_ENDPOINT = "https://overpass-api.de/api/interpreter"
+#: The Overpass instance used when $SIG_OVERPASS_ENDPOINT is unset. The lz4 mirror
+#: is the default because the main overpass-api.de host returns HTTP 406 to
+#: programmatic requests (a WAF quirk, 2026-09-15); both are on the ADR-083
+#: allow-list. The UA must not contain "crawler" or the WAF 406s (see net.py).
+DEFAULT_OVERPASS_ENDPOINT = "https://lz4.overpass-api.de/api/interpreter"
 
 
 def _overpass_targets(source_id: str, spec: dict[str, Any]) -> list[dict[str, str]]:

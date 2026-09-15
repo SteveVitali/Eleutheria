@@ -1,0 +1,60 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# The ADR-083 API-vs-crawl carve-out allow-list. robots.txt governs CRAWLING; a
+# host listed here is accessed in API MODE — documented, rate-limited access to the
+# named endpoint prefix under that API's Terms of Service, which robots.txt (a
+# crawler convention) does not govern. This is DATA, not code (SIG-ENG-001): a new
+# entry is a reviewed data change naming the host, the endpoint prefix it covers,
+# the ToS basis, and the rate limit. A host NOT listed here stays CRAWL mode
+# (robots binds) — there is no wildcard, no blanket bypass. `PoliteFetcher` consults
+# this and stamps the decision into the fetch record (auditable).
+#
+# `counsel_reviewed = false` on every entry until HG-02 counsel confirms the
+# carve-out before real public exposure (ADR-083). Rate-limiting, back-off, and the
+# no-circumvention rule (SIG-INGEST-013) still apply in API mode.
+
+[[api_host]]
+host = "overpass-api.de"
+endpoint_prefix = "/api/interpreter"
+tos_basis = "Overpass API is a public read API for OSM data (ODbL); documented for programmatic use with fair-use rate limits."
+rate_limit_per_min = 4
+counsel_reviewed = false
+
+# The lz4 Overpass mirror — the main overpass-api.de host returns HTTP 406 (a WAF
+# content-negotiation quirk, 2026-09-15); lz4 serves the same documented API and JSON.
+[[api_host]]
+host = "lz4.overpass-api.de"
+endpoint_prefix = "/api/interpreter"
+tos_basis = "lz4 Overpass mirror — the same public OSM read API (ODbL) as overpass-api.de; documented programmatic use with fair-use rate limits."
+rate_limit_per_min = 4
+counsel_reviewed = false
+
+[[api_host]]
+host = "api.data.gov"
+endpoint_prefix = "/"
+tos_basis = "api.data.gov is the US government API gateway; keyed, documented programmatic access under its published rate-limit policy."
+rate_limit_per_min = 30
+counsel_reviewed = false
+
+[[api_host]]
+host = "catalog.data.gov"
+endpoint_prefix = "/api"
+tos_basis = "data.gov CKAN catalog API; documented programmatic dataset access."
+rate_limit_per_min = 30
+counsel_reviewed = false
+
+[[api_host]]
+host = "api.usaspending.gov"
+endpoint_prefix = "/api"
+tos_basis = "USAspending.gov public API; documented programmatic access, no key required, published rate limits."
+rate_limit_per_min = 60
+counsel_reviewed = false
+
+[[api_host]]
+host = "www.muckrock.com"
+endpoint_prefix = "/api"
+tos_basis = "MuckRock public API (Squarelet-authenticated); documented programmatic access to released records/listings under ToS."
+rate_limit_per_min = 10
+counsel_reviewed = false

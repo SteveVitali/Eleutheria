@@ -39,10 +39,13 @@ from urllib.robotparser import RobotFileParser
 
 from policy.crawler import assert_no_circumvention, robots_permits
 
+from .api_allowlist import api_allow_reason
 from .stages import FetchResult
 
-#: The contact URL the crawler UA carries (Crawler Conduct Rule 1, SIG-INGEST-011).
-DEFAULT_CONTACT_URL = "https://sig-project.org/crawler"
+#: The contact URL the UA carries (Crawler Conduct Rule 1, SIG-INGEST-011). The
+#: path avoids the token "crawler": some API WAFs (e.g. the Overpass front-end)
+#: reject any User-Agent containing it with HTTP 406 (ADR-083 / P25 live finding).
+DEFAULT_CONTACT_URL = "https://sig-project.org/data-collection"
 
 #: Conservative default minimum seconds between requests to one host when the
 #: source publishes no crawl-delay (SIG-INGEST-011 / Rule 3).
@@ -178,6 +181,9 @@ class PoliteFetcher:
         self._transport = transport
         self._limiter = rate_limiter or RateLimiter()
         self._robots: dict[str, RobotFileParser] = {}
+        #: Auditable conduct decisions (ADR-083): one entry per fetch recording
+        #: whether robots (CRAWL) or the API allow-list (API) governed it.
+        self.conduct_decisions: list[dict[str, str]] = []
 
     @property
     def user_agent_string(self) -> str:
@@ -223,10 +229,18 @@ class PoliteFetcher:
         defeated — SIG-INGEST-013).
         """
         host = _host(url)
-        if not self.can_fetch(url):
-            raise RobotsDisallowed(
-                f"robots.txt disallows {self._ua!r} from fetching {url!r} (Rule 2)."
-            )
+        # ADR-083 carve-out: an allow-listed API endpoint is API mode (documented,
+        # ToS-governed, rate-limited) — robots governs crawling, not this. A host
+        # off the allow-list stays CRAWL and robots binds (no blanket bypass).
+        api_reason = api_allow_reason(url)
+        if api_reason is not None:
+            self.conduct_decisions.append({"url": url, "mode": "api", "basis": api_reason})
+        else:
+            self.conduct_decisions.append({"url": url, "mode": "crawl"})
+            if not self.can_fetch(url):
+                raise RobotsDisallowed(
+                    f"robots.txt disallows {self._ua!r} from fetching {url!r} (Rule 2)."
+                )
         self._limiter.acquire(host)
         # Pass headers only when present so a transport that predates the headers
         # seam (and takes only user_agent) keeps working unchanged (back-compat).
