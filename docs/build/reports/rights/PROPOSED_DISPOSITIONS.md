@@ -118,3 +118,20 @@ The remaining gated cohort resolved — each on a recorded basis, none silently:
   `[muckrock_status_map]` to the §11.19 enum (vocab 2026.09.15); unmapped values
   still fail loud. Image: `ops/Dockerfile` now installs `./connectors` so
   `sig-connectors run` jobs can execute in-cloud.
+
+## Counsel determinations (HG-02, operator-reported 2026-09-15)
+
+Counsel approved ingestion for the five previously held sources — all flipped
+`ingestion_permitted=true` with `rights_reviewed_by = "counsel (HG-02)"`:
+
+- `madada`, `declarationcamera_be` — DERIVE custody, derived-facts only (request
+  metadata / register facts, never user-authored request text),
+  `LicenseRef-DerivedFacts-Citations`, `redistributable=false`.
+- `aspi_mapping_chinas_tech_giants`, `carnegie_ai_gsi`,
+  `facial_recognition_world_map` — same basis; coarse country/vendor-level facts
+  only (SIG-INGEST-042 granularity floor).
+
+**Every connector-mapped source is now flipped (25/25).** Live runs for these
+five still refuse on `NoLiveTargets` — the flips record the rights posture;
+fetch capability needs adapters (madada Atom/CSV→records, the three
+coarse-international page scrapers) or an HG-04 eID path (declarationcamera_be).

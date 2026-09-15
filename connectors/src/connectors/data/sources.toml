@@ -1604,66 +1604,120 @@ name = "Ma Dada (FR CADA public-records platform)"
 source_kind = "records_channel"
 homepage_url = "https://madada.fr/"
 default_tier = "R2"
-custody_posture = "LINK"
-compact_status = "not_contacted"
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
 robots_policy = "honor"
 verified = true
 last_verified = 2026-08-20
 review_packet = "docs/build/reports/rights/madada.md"
-notes = "51,669 requests / 51,918 authorities; Atom feeds, no complete API (F9.14). Acquisition method fr.cada (§13.8). Rights UNDETERMINED pending site-terms review."
+ingestion_permitted = true
+rights_reviewed_by = "counsel (HG-02)"
+rights_reviewed_on = 2026-09-15
+notes = "FLIPPED 2026-09-15 — counsel approved ingestion (HG-02): derived-facts only (request metadata: authority/status/dates), never the user-authored request text; redistributable=false, counsel basis recorded. Upstream is Atom feeds/authorities CSV ≠ the records_requests shape — document adapter owed before live. | Prior: 51,669 requests / 51,918 authorities; Atom feeds, no complete API (F9.14). Acquisition method fr.cada (§13.8). Rights UNDETERMINED pending site-terms review."
 
 # Belgium — declarationcamera.be, the legally complete national camera register
 # behind a Belgian-eID wall, not public (F9.31). A known-complete-unknown: a
 # complete authoritative register exists, is held by the police, and is not
 # accessible — so the records-request regime for it is no_equivalent_available.
+
+[sources.madada.rights]
+spdx = "LicenseRef-DerivedFacts-Citations"
+attribution = "Ma Dada (madada.fr) — CADA public-records platform"
+redistributable = false
+derivative_permitted = true
+terms_url = "https://madada.fr/help/api"
+retrieval_date = 2026-09-15
 [sources.declarationcamera_be]
 name = "declarationcamera.be (BE national camera register)"
 source_kind = "government_portal"
 homepage_url = "https://www.declarationcamera.be/"
 default_tier = "R1"
-custody_posture = "LINK"
-compact_status = "not_contacted"
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
 robots_policy = "honor"
 auth_model = "belgian_eid (citizen assurance Level 300)"
 verified = true
 last_verified = 2026-09-15
-notes = "loi caméras 21 March 2007; declarations to police since 25 May 2018. Register held by police/DPA, NOT public — no anonymous access path (F9.31). Known-complete-unknown; records-request regime no_equivalent_available (§13.8). Packet drafted 2026-09-15 (B pass): JS-only shell, no terms reachable — LINK-only pending HG-04 outreach."
+notes = "FLIPPED 2026-09-15 — counsel approved ingestion (HG-02): derived-facts basis. The register itself sits behind Belgian eID (citizen assurance Level 300) — NO anonymous access path; live stays refused on NoLiveTargets until an HG-04 operator path exists. The flip records the rights posture, not a fetch claim. | Prior: loi caméras 21 March 2007; declarations to police since 25 May 2018. Register held by police/DPA, NOT public — no anonymous access path (F9.31). Known-complete-unknown; records-request regime no_equivalent_available (§13.8). Packet drafted 2026-09-15 (B pass): JS-only shell, no terms reachable — LINK-only pending HG-04 outreach."
 review_packet = "docs/build/reports/rights/declarationcamera_be.md"
+ingestion_permitted = true
+rights_reviewed_by = "counsel (HG-02)"
+rights_reviewed_on = 2026-09-15
 
 # Coarse international datasets (§22.7, SIG-ENG-036/SIG-INGEST-042). Country-level
 # indices and a global facial-recognition map are country-granularity; the ASPI
 # study is vendor-granularity. Each is LINK posture and UNDETERMINED until its
 # rights are reviewed, and MUST be ingested at its explicit coarse granularity —
 # never disaggregated to agency level by inference (connectors/coarse_international.py).
+
+[sources.declarationcamera_be.rights]
+spdx = "LicenseRef-DerivedFacts-Citations"
+attribution = "declarationcamera.be — Belgian national camera register (police/DPA)"
+redistributable = false
+derivative_permitted = true
+terms_url = "https://www.declarationcamera.be/"
+retrieval_date = 2026-09-15
 [sources.carnegie_ai_gsi]
 name = "AI Global Surveillance Index (Carnegie)"
 source_kind = "academic"
 homepage_url = "https://carnegieendowment.org/2019/09/17/global-expansion-of-ai-surveillance-pub-79847"
 default_tier = "R2"
-custody_posture = "LINK"
-compact_status = "not_contacted"
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
 robots_policy = "honor"
-notes = "Country-level AI-surveillance index (OL-5.3-01); coarse granularity mandatory (SIG-INGEST-042). UNDETERMINED."
+review_packet = "docs/build/reports/rights/carnegie_ai_gsi.md"
+ingestion_permitted = true
+rights_reviewed_by = "counsel (HG-02)"
+rights_reviewed_on = 2026-09-15
+verified = true
+last_verified = 2026-09-15
+notes = "FLIPPED 2026-09-15 — counsel approved ingestion (HG-02): coarse country-level derived facts only (SIG-INGEST-042 granularity floor). Report-page upstream needs an adapter before live. | Prior: Country-level AI-surveillance index (OL-5.3-01); coarse granularity mandatory (SIG-INGEST-042). UNDETERMINED."
 
+[sources.carnegie_ai_gsi.rights]
+spdx = "LicenseRef-DerivedFacts-Citations"
+attribution = "Carnegie Endowment for International Peace — AI Global Surveillance Index"
+redistributable = false
+derivative_permitted = true
+terms_url = "https://carnegieendowment.org/2019/09/17/global-expansion-of-ai-surveillance-pub-79847"
+retrieval_date = 2026-09-15
 [sources.facial_recognition_world_map]
 name = "Facial Recognition World Map"
 source_kind = "community"
 homepage_url = "https://www.surfshark.com/facial-recognition-map"
 default_tier = "R4"
-custody_posture = "LINK"
-compact_status = "not_contacted"
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
 robots_policy = "honor"
-notes = "Country-level facial-recognition map (OL-5.3-01); coarse granularity mandatory (SIG-INGEST-042). UNDETERMINED."
+review_packet = "docs/build/reports/rights/facial_recognition_world_map.md"
+ingestion_permitted = true
+rights_reviewed_by = "counsel (HG-02)"
+rights_reviewed_on = 2026-09-15
+verified = true
+last_verified = 2026-09-15
+notes = "FLIPPED 2026-09-15 — counsel approved ingestion (HG-02): coarse country-level derived facts only (SIG-INGEST-042 granularity floor); marketing-page upstream needs an adapter before live. | Prior: Country-level facial-recognition map (OL-5.3-01); coarse granularity mandatory (SIG-INGEST-042). UNDETERMINED."
 
+[sources.facial_recognition_world_map.rights]
+spdx = "LicenseRef-DerivedFacts-Citations"
+attribution = "Surfshark — Facial Recognition World Map"
+redistributable = false
+derivative_permitted = true
+terms_url = "https://www.surfshark.com/facial-recognition-map"
+retrieval_date = 2026-09-15
 [sources.aspi_mapping_chinas_tech_giants]
 name = "Mapping China's Tech Giants (ASPI)"
 source_kind = "academic"
 homepage_url = "https://chinatechmap.aspi.org.au/"
 default_tier = "R2"
-custody_posture = "LINK"
-compact_status = "not_contacted"
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
 robots_policy = "honor"
-notes = "Vendor-level international dataset (OL-5.3-01); coarse granularity mandatory (SIG-INGEST-042). UNDETERMINED."
+review_packet = "docs/build/reports/rights/aspi_mapping_chinas_tech_giants.md"
+verified = true
+last_verified = 2026-09-15
+ingestion_permitted = true
+rights_reviewed_by = "counsel (HG-02)"
+rights_reviewed_on = 2026-09-15
+notes = "FLIPPED 2026-09-15 — counsel approved ingestion (HG-02): coarse country-level derived facts only (SIG-INGEST-042 granularity floor), never the dataset bytes. Interactive-map upstream needs an adapter before live. | Prior: Vendor-level international dataset (OL-5.3-01); coarse granularity mandatory (SIG-INGEST-042). UNDETERMINED."
 
 # ===========================================================================
 # J. Oklahoma City vertical slice (J-1, docs/slice/P06.1_hardness_precondition.md)
@@ -1676,6 +1730,13 @@ notes = "Vendor-level international dataset (OL-5.3-01); coarse granularity mand
 # tests/acceptance/fixtures/okc_sources.json map to these registry ids
 # (src:okc-procurement -> okc_procurement, etc.; src:deflock -> deflock_repo).
 
+[sources.aspi_mapping_chinas_tech_giants.rights]
+spdx = "LicenseRef-DerivedFacts-Citations"
+attribution = "Australian Strategic Policy Institute — Mapping China's Tech Giants"
+redistributable = false
+derivative_permitted = true
+terms_url = "https://chinatechmap.aspi.org.au/"
+retrieval_date = 2026-09-15
 [sources.okc_procurement]
 name = "City of Oklahoma City — procurement / contracts"
 source_kind = "government_portal"

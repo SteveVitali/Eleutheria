@@ -43,20 +43,43 @@ def test_no_seeded_source_is_review_status_green() -> None:
         assert live_gate_reasons(source_id)
 
 
-def test_live_mode_refuses_an_ungated_source_with_reasons() -> None:
-    # madada is connector-mapped but rights-UNRESOLVED (user-authored request
-    # text — HG-04 outreach owed), so a live fetch is refused with the gate
-    # reasons even after the France cohort went per-source (2026-09-15).
+def _gated_record(source_id: str = "madada"):
+    """A synthetic still-gated registry row for a connector-mapped source.
+
+    After the 2026-09-15 unblock pass every connector-mapped source is flipped,
+    so the live-refusal AC is exercised by standing a gated record in for a real
+    mapped id — the refusal path (`live_gate_reasons` → `LiveGateRefused` before
+    any transport) is the thing under test.
+    """
+    import dataclasses
+
+    from connectors.registry import get
+
+    return dataclasses.replace(get(source_id), ingestion_permitted=False)
+
+
+def test_live_mode_refuses_an_ungated_source_with_reasons(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # A connector-mapped source whose record is not flipped is refused with the
+    # gate reasons. (Every real mapped row is flipped post-2026-09-15 — the gate
+    # itself is the AC, so a synthetic un-flipped record stands in.)
+    import connectors.runner as runner
+
+    monkeypatch.setattr(runner, "get", lambda _sid: _gated_record("madada"))
     with pytest.raises(LiveGateRefused) as excinfo:
         run_source("madada", mode=RunMode.LIVE, sink_kind="memory")
     assert excinfo.value.source_id == "madada"
     assert any("ingestion_permitted" in r for r in excinfo.value.reasons)
 
 
-def test_live_refusal_opens_no_socket() -> None:
+def test_live_refusal_opens_no_socket(monkeypatch: pytest.MonkeyPatch) -> None:
     # AC: the live refusal happens before any transport is built — no socket is
     # opened. Under network isolation an accidental egress would raise; the clean
     # LiveGateRefused proves the gate is checked first.
+    import connectors.runner as runner
+
+    monkeypatch.setattr(runner, "get", lambda _sid: _gated_record("madada"))
     with network_isolated():
         with pytest.raises(LiveGateRefused):
             run_source("madada", mode=RunMode.LIVE, sink_kind="memory")
@@ -64,9 +87,13 @@ def test_live_refusal_opens_no_socket() -> None:
 
 def test_cli_live_mode_exits_3_and_prints_gate_reasons(
     capsys: pytest.CaptureFixture[str],
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    # AC: `sig-connectors run --source madada --mode live --sink memory`
-    # on an un-flipped source exits 3 and prints the gate reasons.
+    # AC: `sig-connectors run --source <un-flipped> --mode live` exits 3 and
+    # prints the gate reasons (synthetic gated record — see _gated_record).
+    import connectors.runner as runner
+
+    monkeypatch.setattr(runner, "get", lambda _sid: _gated_record("madada"))
     code = main(["run", "--source", "madada", "--mode", "live", "--sink", "memory"])
     out = capsys.readouterr().out
     assert code == 3

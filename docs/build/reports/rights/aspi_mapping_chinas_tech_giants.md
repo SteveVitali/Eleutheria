@@ -46,8 +46,9 @@ live fetch (exit 3) until then.
 
 ## Decision
 
-- [ ] permit ingestion — reviewer: ____ date: ____
-- SPDX to record: ____   rights_reviewed_by (role, never a name): ____   rights_reviewed_on: ____
+- [x] permit ingestion — reviewer: counsel (HG-02), operator-reported counsel approval 2026-09-15
+- SPDX to record: `LicenseRef-DerivedFacts-Citations`   rights_reviewed_by (role, never a name): counsel (HG-02)   rights_reviewed_on: 2026-09-15
+- **Status:** FLIPPED 2026-09-15 on counsel's approval — DERIVE custody, derived-facts only (metadata/facts, never the upstream expressive content), `redistributable=false`.
 
 ## Counsel-needed flag
 

@@ -4,9 +4,11 @@
 """The second-jurisdiction connector run wiring (P24.6 / JURIS.2 / GL-JURIS-01).
 
 The France sources route through the P18.2 `france_belgium` connectors — data
-rows in `CONNECTOR_FOR_SOURCE`, not a per-jurisdiction hack. Every source stays
-`ingestion_permitted=false` (HG-03): replay/shadow run over the committed
-fixtures under network isolation; a live run is refused before any socket opens.
+rows in `CONNECTOR_FOR_SOURCE`, not a per-jurisdiction hack. All four are flipped
+(operator + counsel determinations 2026-09-15): replay/shadow run over the
+committed fixtures under network isolation; `decp_fr` is live (real DECP file),
+`raa_prefectures`/`madada`/`declarationcamera_be` live-refuse on NoLiveTargets
+pending document adapters / an HG-04 eID path.
 """
 
 from __future__ import annotations
@@ -15,7 +17,7 @@ import json
 from pathlib import Path
 
 import pytest
-from connectors.runner import CONNECTOR_FOR_SOURCE, LiveGateRefused, RunMode, run_source
+from connectors.runner import CONNECTOR_FOR_SOURCE, RunMode, run_source
 
 FIXTURES = Path(__file__).parent / "fixtures" / "france"
 
@@ -55,21 +57,19 @@ def test_raa_shadow_run_emits_the_prefectoral_instrument() -> None:
     assert report.diff is not None and report.diff.changed_count == 0
 
 
-def test_madada_shadow_run_is_refused_at_the_compact_gate() -> None:
-    # `madada` is compact_status=not_contacted + custody LINK — the loader gate
-    # refuses even a fixture/shadow run (SIG-INGEST-014/027). That refusal is the
-    # honest evidence run_france.sh records; the fr.cada claim still reaches the
-    # spine via the seed.
-    from connectors.loader import IngestionNotPermitted
-
-    with pytest.raises(IngestionNotPermitted, match="compact_status"):
-        run_source(
-            "madada",
-            mode=RunMode.SHADOW,
-            fixture=FIXTURES / "madada_records.json",
-            kind="records",
-            media_type="application/json",
-        )
+def test_madada_shadow_run_now_passes_the_gate() -> None:
+    # Counsel approved madada (HG-02, 2026-09-15) — DERIVE custody +
+    # public_terms_only + the derived-facts licence — so a shadow run over the
+    # committed fixture now passes the loader gate (it was refused before the
+    # counsel flip). Live still refuses on NoLiveTargets (adapter owed).
+    report = run_source(
+        "madada",
+        mode=RunMode.SHADOW,
+        fixture=FIXTURES / "madada_records.json",
+        kind="records",
+        media_type="application/json",
+    )
+    assert report.claims
 
 
 def test_madada_fixture_normalizes_to_fr_cada_not_foia() -> None:
@@ -130,29 +130,31 @@ def test_decp_shadow_run_maps_marches_onto_contracts() -> None:
     assert report.diff is not None and report.diff.changed_count == 0
 
 
-HELD_FRANCE_SOURCES = ("madada", "declarationcamera_be")
+def test_france_sources_without_live_targets_still_refuse_live(source_id: str = "") -> None:
+    # Counsel approved all four France/Belgium sources (HG-02, 2026-09-15) —
+    # flipped on the derived-facts basis. But a live run still REFUSES on
+    # NoLiveTargets for the three without a registered target: raa_prefectures
+    # (upstream is the dataset-API resource index, not the prefectoral_orders
+    # shape — adapter owed), madada (Atom/CSV feeds ≠ records_requests shape),
+    # declarationcamera_be (the register sits behind Belgian eID — no anonymous
+    # path at all). Only decp_fr has a live target (the DECP monthly file).
+    from connectors.live_targets import NoLiveTargets
+
+    for sid in ("raa_prefectures", "madada", "declarationcamera_be"):
+        with pytest.raises(NoLiveTargets):
+            run_source(sid, mode=RunMode.LIVE)
 
 
-@pytest.mark.parametrize("source_id", HELD_FRANCE_SOURCES)
-def test_live_run_refuses_a_rights_unresolved_france_source(source_id: str) -> None:
-    # The France cohort gate is now PER-SOURCE (operator decision 2026-09-15):
-    # rights-resolved France sources may flip; a source with no licence basis
-    # (madada, declarationcamera_be — user-authored content, HG-04 outreach owed)
-    # stays refused before any socket opens.
-    with pytest.raises(LiveGateRefused):
-        run_source(source_id, mode=RunMode.LIVE)
-
-
-def test_only_rights_resolved_france_sources_are_flipped() -> None:
-    # decp_fr (LicenceOuverte-2.0, ADR-084) and raa_prefectures (ODbL-1.0) are
-    # flipped (operator-approved 2026-09-15); the rights-unresolved cohort
-    # members stay un-permitted.
+def test_all_france_sources_are_flipped_on_the_counsel_basis() -> None:
+    # Counsel approved ingestion for the whole cohort (HG-02, 2026-09-15):
+    # raa_prefectures (ODbL-1.0) + decp_fr (LicenceOuverte-2.0, ADR-084) on their
+    # confirmed licences; madada + declarationcamera_be on the derived-facts
+    # basis (LicenseRef-DerivedFacts-Citations — request metadata / register
+    # facts only, never user-authored request text; redistributable=false).
     from connectors.registry import get
 
-    for source_id in ("raa_prefectures", "decp_fr"):
+    for source_id in FRANCE_SOURCES:
         assert get(source_id).ingestion_permitted is True, source_id
-    for source_id in HELD_FRANCE_SOURCES:
-        assert get(source_id).ingestion_permitted is False, source_id
     # The P24.6 rights packets are linked from the France source rows (Belgium's
     # eID-gated register is out of the France slice — its packet is HG-04 work).
     for source_id in ("raa_prefectures", "decp_fr", "madada"):

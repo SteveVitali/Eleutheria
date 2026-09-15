@@ -19,7 +19,7 @@ from connectors.net import FetchResult, PoliteFetcher, RobotsResult
 from connectors.pipeline import run
 from connectors.registry import CompactStatus, CustodyPosture, get
 from connectors.replay import shadow_replay
-from connectors.runner import LiveGateRefused, RunMode, run_source
+from connectors.runner import RunMode, run_source
 from connectors.stages import (
     InMemoryCaptureStore,
     InMemoryClaimSink,
@@ -54,9 +54,8 @@ class _StaticTransport:
 def _flipped_ctx(source_id: str, fixture: str) -> tuple[RunContext, Any]:
     """A RunContext for a source the operator has FLIPPED (packet + review, P21.8).
 
-    The registry row stays LINK / not_contacted / false (SIG-INGEST-028); this
-    simulates the post-flip state the REFERENCE-capture path is designed for — a
-    REFERENCE custody posture with a compact status that permits ingestion.
+    The rows are flipped (counsel, 2026-09-15 — ADR-085 basis); this override
+    still exercises the REFERENCE-capture path the connector was designed for.
     """
     transport = _StaticTransport((_FIX / fixture).read_bytes())
     fetcher = PoliteFetcher(
@@ -84,12 +83,15 @@ def _run_over(source_id: str, fixture: str) -> list[dict[str, Any]]:
     return run(ci.CoarseInternationalConnector(), ctx).claims
 
 
-def test_all_three_named_datasets_are_registered_and_gated() -> None:
-    # §22.7: the coarse datasets are registered LINK-posture and not yet permitted.
+def test_all_three_named_datasets_are_registered_and_counsel_flipped() -> None:
+    # Counsel approved ingestion for all three (HG-02, 2026-09-15): DERIVE
+    # custody on the derived-facts basis — coarse country/vendor-level facts
+    # only (SIG-INGEST-042), never the upstream page/dataset bytes.
     for sid, dataset in ci.DATASETS.items():
         rec = get(sid)
-        assert rec.custody_posture.value == "LINK"
-        assert rec.ingestion_permitted is False
+        assert rec.custody_posture.value == "DERIVE"
+        assert rec.ingestion_permitted is True
+        assert rec.rights.spdx == "LicenseRef-DerivedFacts-Citations"
         assert dataset.granularity in ci.COARSE_GRANULARITIES
 
 
@@ -190,17 +192,22 @@ def test_capture_path_runs_over_fixtures_at_coarse_granularity(
         assert c["raw_value"]  # P2 preserved verbatim
 
 
-def test_all_three_coarse_sources_keep_link_posture_and_are_gated() -> None:
-    # P21.8 keeps LINK posture: a live run is refused until a packet + flip.
+def test_all_three_coarse_sources_are_flipped_but_adapter_gated() -> None:
+    # Counsel-flipped 2026-09-15 (HG-02, derived-facts basis). A live run still
+    # refuses — the upstreams are interactive pages/datasets, not the connector's
+    # JSON shape, so no live targets are registered: NoLiveTargets, not the
+    # rights gate. The document/page adapter is the owed work.
+    from connectors.live_targets import NoLiveTargets
+
     for sid in (
         "carnegie_ai_gsi",
         "facial_recognition_world_map",
         "aspi_mapping_chinas_tech_giants",
     ):
         rec = get(sid)
-        assert rec.custody_posture.value == "LINK"
-        assert rec.ingestion_permitted is False
-        with pytest.raises(LiveGateRefused):
+        assert rec.custody_posture.value == "DERIVE"
+        assert rec.ingestion_permitted is True
+        with pytest.raises(NoLiveTargets):
             run_source(sid, mode=RunMode.LIVE)
 
 

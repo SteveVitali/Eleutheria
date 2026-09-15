@@ -62,7 +62,11 @@ def test_source_ids_are_unique() -> None:
 #: (ODbL-1.0) and decp_fr (LicenceOuverte-2.0, ADR-084) flipped once the France
 #: cohort gate went per-source (operator decision 2026-09-15); ccops_seattle/
 #: nyc_post/sf and pathways_rtcc/css/acoustic flipped on the municipal-mandated-
-#: disclosure basis (ADR-085). Every other seeded source stays un-permitted.
+#: disclosure basis (ADR-085); and the five held sources flipped 2026-09-15 on
+#: counsel's approval (HG-02): madada, declarationcamera_be, aspi, carnegie_ai_gsi,
+#: facial_recognition_world_map — all LicenseRef-DerivedFacts-Citations, DERIVE
+#: custody, redistributable=false. Every connector-mapped source is now flipped;
+#: the unmapped remainder stays un-permitted.
 _FLIPPED_SUBSET = frozenset(
     {
         "okc_procurement",
@@ -85,6 +89,11 @@ _FLIPPED_SUBSET = frozenset(
         "pathways_rtcc_federation",
         "pathways_fr_css_forensics",
         "pathways_acoustic_drone_location",
+        "madada",
+        "declarationcamera_be",
+        "aspi_mapping_chinas_tech_giants",
+        "carnegie_ai_gsi",
+        "facial_recognition_world_map",
     }
 )
 
