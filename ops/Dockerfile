@@ -14,18 +14,41 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /app
 
-# The uv workspace metadata + sources (built context = repo root).
+# The uv workspace metadata + sources (built context = repo root). uv resolves
+# the workspace from the root pyproject, which declares every member in
+# [tool.uv.workspace].members — so each member directory must exist even though
+# only sig-api's transitive closure is installed (P24.1 gap-closure, ADR-075).
 COPY pyproject.toml uv.lock pylock.toml ./
-COPY api ./api
-COPY db ./db
 COPY ontology ./ontology
+COPY db ./db
+COPY connectors ./connectors
+COPY parsing ./parsing
+COPY resolution ./resolution
+COPY reconcile ./reconcile
+COPY inference ./inference
+COPY tasks ./tasks
+COPY api ./api
+COPY exports ./exports
+COPY orchestration ./orchestration
+COPY policy ./policy
+COPY ops ./ops
+COPY evidence ./evidence
 
-# Install uv and the read-API package (+ its workspace deps) into the system env.
+# Install uv and the read-API package (+ its transitive workspace deps) into the
+# system env. Installing ./api pulls sig-reconcile/-inference/-policy/-evidence/
+# -db/-resolution/-exports from the local workspace.
 RUN pip install --no-cache-dir uv \
- && uv pip install --system ./api ./db
+ && uv pip install --system ./api
 
-# Cloud Run provides $PORT; bind the read API there. The DSN + secrets arrive as
-# environment variables injected from Secret Manager at deploy time.
-ENV SIG_API_HOST=0.0.0.0
+# Cloud Run provides $PORT; bind the read API there. When SIG_CLOUDSQL_CONNECTION
+# is set (the Cloud SQL socket instance connection name), assemble the PgReadStore
+# DSN at runtime from the parts — the PG password arrives from Secret Manager as
+# $SIG_PG_PASSWORD and is NEVER stored in the deploy config or image (HG-09). The
+# public API SET ROLEs to $SIG_API_ROLE (default sig_read_public) so RLS serves
+# only tier-0 rows. With no Cloud SQL connection the demo store is served (local).
+ENV SIG_API_HOST=0.0.0.0 \
+    SIG_PG_USER=sig \
+    SIG_PG_DB=sig \
+    SIG_API_ROLE=sig_read_public
 EXPOSE 8080
-CMD ["sh", "-c", "sig-api serve --host 0.0.0.0 --port ${PORT:-8080}"]
+CMD ["sh", "-c", "if [ -n \"$SIG_CLOUDSQL_CONNECTION\" ]; then exec sig-api serve --host 0.0.0.0 --port ${PORT:-8080} --dsn \"postgresql://${SIG_PG_USER}:${SIG_PG_PASSWORD}@/${SIG_PG_DB}?host=/cloudsql/${SIG_CLOUDSQL_CONNECTION}\" ${SIG_API_ROLE:+--role \"$SIG_API_ROLE\"}; else exec sig-api serve --host 0.0.0.0 --port ${PORT:-8080}; fi"]

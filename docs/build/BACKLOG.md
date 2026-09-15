@@ -136,7 +136,7 @@ landing here. Regenerate this file after any backlog edit:
 ## human-gate:HG-07
 
 - **BL-037** — Infra accounts + host: Zenodo concept DOI, object store, Docker CI runner (HG-07) + real GCP host/apply/deploy + OBS.1 live-side verification (HG-12; homes D-ACCT.1-1, D-DEPLOY.1-1, D-OBS.1-1) · _external-dep_ · S · status=open · gate HG-07 HG-12
-  - sources: LD-P06 ADR-075 ADR-077
+  - sources: LD-P06 ADR-075 ADR-077 ADR-081
 
 ## human-gate:HG-08
 
