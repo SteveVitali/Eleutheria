@@ -87,6 +87,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-080](ADR-080-government-mandated-disclosure-ccops-one-connector-three-source-adapters-the-per-agency-aggregate-row-schema-and-the-two-layer-procured-not-deployed-guard.md) | — | — | Accepted |
 | [ADR-081](ADR-081-gcp-live-deployment-cloud-sql-and-cloud-run-vs-the-e2-micro-decision-plus-the-image-dsn-and-read-grant-gap-closures.md) | — | — | Accepted |
 | [ADR-082](ADR-082-live-fetch-targets-table-and-the-overpass-robots-gate-finding.md) | — | — | Accepted |
+| [ADR-083](ADR-083-crawler-conduct-documented-api-access-is-not-crawling-carve-out.md) | — | — | Accepted |
 
 ## Notes
 

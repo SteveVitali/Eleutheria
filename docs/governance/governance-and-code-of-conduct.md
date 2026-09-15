@@ -21,6 +21,22 @@ fiscal-sponsor umbrella) and a counsel opinion (HG-02) are recommended **before 
 public exposure** (Go-public / GATE-G2). Until then the project runs at Finish-line A
 (deployed, access-restricted), not a public launch.
 
+## Reviewer roles & takedown contact (HG-11, interim — 2026-09-15)
+
+**Interim posture, recorded 2026-09-15.** Pending a second independent reviewer:
+
+- **Maintainer / first reviewer of record:** Steven Vitali (the legal home above).
+- **Takedown / corrections contact of record:** Steven Vitali, via the served
+  `/corrections` and `/dispute` mechanisms (SIG-PUB-008); this names a live human
+  behind the already-built mechanism.
+- **Second independent reviewer:** **still owed.** The two-reviewer written-concurrence
+  workflow (`ReviewerConcurrence`, SIG-PUB-008) is not satisfied by a single reviewer.
+
+*Scope note (honest):* one reviewer is an **interim** posture; **Go-public
+(GATE-G2) remains blocked** until a second independent reviewer + written concurrence
+exist (and HG-02 counsel confirms the publication posture). This records who is
+accountable now; it does not satisfy HG-11 for public launch.
+
 ## Decision-making (SIG-GOV-014)
 
 This governance document defines who decides what:
