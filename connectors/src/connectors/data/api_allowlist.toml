@@ -81,3 +81,21 @@ endpoint_prefix = "/api/0.6"
 tos_basis = "OSM API 0.6 is the documented public API for OSM data (ODbL); element history reads are a documented endpoint under the OSM API usage policy."
 rate_limit_per_min = 10
 counsel_reviewed = false
+
+# data.gouv.fr — the French national open-data platform (Etalab). The dataset
+# API (/api/1/) is documented for programmatic use; static.data.gouv.fr
+# /resources/ is the published download CDN for dataset files (both licences —
+# Licence Ouverte 2.0 and ODbL — confirmed via the API, 2026-09-15).
+[[api_host]]
+host = "www.data.gouv.fr"
+endpoint_prefix = "/api/1/"
+tos_basis = "data.gouv.fr API v1 is the documented public API of the French national open-data platform (Etalab); documented programmatic access."
+rate_limit_per_min = 20
+counsel_reviewed = false
+
+[[api_host]]
+host = "static.data.gouv.fr"
+endpoint_prefix = "/resources/"
+tos_basis = "static.data.gouv.fr /resources/ is the published download CDN for data.gouv.fr dataset files; the URL is surfaced by the documented dataset API."
+rate_limit_per_min = 10
+counsel_reviewed = false

@@ -48,10 +48,9 @@ until a rights review + operator flip. Live run refuses (exit 3) while the gate 
 
 ## Decision
 
-- [ ] permit ingestion — reviewer: ____ date: ____
-- SPDX to record: ____   rights_reviewed_by (role, never a name): ____   rights_reviewed_on: ____
-- **Status:** rights UNDETERMINED, `ingestion_permitted = false`. HG-03/HG-04 **pending** (P24.7
-  ships over committed fixtures; no source flipped, no live fetch performed).
+- [x] permit ingestion — reviewer: maintainer (delegated), operator-approved 2026-09-15 (ADR-085)
+- SPDX to record: `LicenseRef-DerivedFacts-Citations`   rights_reviewed_by (role, never a name): maintainer (delegated)   rights_reviewed_on: 2026-09-15
+- **Status:** FLIPPED 2026-09-15 on the municipal-mandated-disclosure + derived-facts basis (ADR-085): the connector emits derived facts and citations and never re-hosts the ordinance PDFs. Counsel flag retained for HG-02 (municipal-copyright reading of the documents themselves is outstanding — it does not attach to SIG's derived-facts records, but counsel confirms before a published compartment).
 
 ## Counsel-needed flag
 

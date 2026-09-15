@@ -44,12 +44,12 @@ def test_no_seeded_source_is_review_status_green() -> None:
 
 
 def test_live_mode_refuses_an_ungated_source_with_reasons() -> None:
-    # decp_fr is rights-RESOLVED (LicenceOuverte-2.0, ADR-084) but stays un-flipped
-    # (France cohort, P24.6/D-JURIS.2-1), so a live fetch is refused with the gate
-    # reasons. (usaspending was flipped in the 2026-09-15 B pass.)
+    # madada is connector-mapped but rights-UNRESOLVED (user-authored request
+    # text — HG-04 outreach owed), so a live fetch is refused with the gate
+    # reasons even after the France cohort went per-source (2026-09-15).
     with pytest.raises(LiveGateRefused) as excinfo:
-        run_source("decp_fr", mode=RunMode.LIVE, sink_kind="memory")
-    assert excinfo.value.source_id == "decp_fr"
+        run_source("madada", mode=RunMode.LIVE, sink_kind="memory")
+    assert excinfo.value.source_id == "madada"
     assert any("ingestion_permitted" in r for r in excinfo.value.reasons)
 
 
@@ -59,15 +59,15 @@ def test_live_refusal_opens_no_socket() -> None:
     # LiveGateRefused proves the gate is checked first.
     with network_isolated():
         with pytest.raises(LiveGateRefused):
-            run_source("decp_fr", mode=RunMode.LIVE, sink_kind="memory")
+            run_source("madada", mode=RunMode.LIVE, sink_kind="memory")
 
 
 def test_cli_live_mode_exits_3_and_prints_gate_reasons(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    # AC: `sig-connectors run --source decp_fr --mode live --sink memory`
+    # AC: `sig-connectors run --source madada --mode live --sink memory`
     # on an un-flipped source exits 3 and prints the gate reasons.
-    code = main(["run", "--source", "decp_fr", "--mode", "live", "--sink", "memory"])
+    code = main(["run", "--source", "madada", "--mode", "live", "--sink", "memory"])
     out = capsys.readouterr().out
     assert code == 3
     assert "REFUSED" in out

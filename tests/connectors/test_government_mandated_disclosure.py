@@ -22,7 +22,7 @@ from typing import Any
 
 import pytest
 from connectors.registry import SourceKind, get
-from connectors.runner import CONNECTOR_FOR_SOURCE, LiveGateRefused, RunMode, run_source
+from connectors.runner import CONNECTOR_FOR_SOURCE, RunMode, run_source
 from connectors.stages import registered_connectors
 
 from connectors import government_mandated_disclosure as gmd
@@ -107,12 +107,15 @@ def test_scope_block_carries_the_honest_depth_not_breadth_numbers() -> None:
     assert scope["registry_row_cap"] == 26
 
 
-def test_sources_are_not_flipped_and_rights_are_undetermined() -> None:
-    # HG-03: no source flips; rights UNDETERMINED → export gate fails closed.
+def test_sources_are_flipped_on_the_mandated_disclosure_basis() -> None:
+    # ADR-085 (operator decision 2026-09-15): all three CCOPS sources flipped on
+    # the municipal-mandated-disclosure + derived-facts basis — the connector
+    # emits derived facts + citations and never re-hosts the ordinance PDFs.
+    # Counsel flag retained (HG-02).
     for source_id in _SOURCES:
         rec = get(source_id)
-        assert rec.ingestion_permitted is False, source_id
-        assert rec.rights.spdx.strip().upper() == "UNDETERMINED"
+        assert rec.ingestion_permitted is True, source_id
+        assert rec.rights.spdx == "LicenseRef-DerivedFacts-Citations"
         assert rec.review_packet.startswith("docs/build/reports/rights/")
 
 
@@ -121,8 +124,12 @@ def test_sources_are_not_flipped_and_rights_are_undetermined() -> None:
 
 @pytest.mark.parametrize("source_id", _SOURCES)
 def test_live_run_refuses_every_ccops_source(source_id: str) -> None:
-    # A live run is refused before any socket opens (exit 3 at the CLI).
-    with pytest.raises(LiveGateRefused):
+    # Flipped under ADR-085, but the upstream is PDF/HTML and no document adapter
+    # has landed — no live targets are registered, so a live run refuses on
+    # NoLiveTargets (SIG-INGEST-045i) rather than fetching a placeholder.
+    from connectors.live_targets import NoLiveTargets
+
+    with pytest.raises(NoLiveTargets):
         run_source(source_id, mode=RunMode.LIVE)
 
 

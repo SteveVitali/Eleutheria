@@ -6,7 +6,8 @@
 Pins the deliverables: the connector is registered; it emits typed, evidenced P17 claims
 through the ADR-033-deferred parser layers; the procured≠deployed epistemic rule
 (RISK-P21-16) is enforced at both the genre and predicate level; the LINK-posture sources
-refuse a live run (exit 3, LiveGateRefused); and a shadow replay over the committed
+refuse a live run (NoLiveTargets — no targets registered pending document adapters);
+and a shadow replay over the committed
 fixtures is byte-identical (0 diffs, SIG-INGEST-019).
 """
 
@@ -22,7 +23,7 @@ from connectors.net import FetchResult, PoliteFetcher, RobotsResult
 from connectors.pipeline import run
 from connectors.registry import CompactStatus, CustodyPosture, get
 from connectors.replay import shadow_replay
-from connectors.runner import LiveGateRefused, RunMode, run_source
+from connectors.runner import RunMode, run_source
 from connectors.stages import (
     InMemoryCaptureStore,
     InMemoryClaimSink,
@@ -91,16 +92,21 @@ def test_connector_is_registered() -> None:
     assert "pathways" in registered_connectors()
 
 
-def test_all_three_family_sources_keep_link_posture_and_are_gated() -> None:
-    # §22.7 / HG-03: the sources stay LINK-posture and not-yet-permitted; a live run
-    # against each REFUSES before any fetch (exit 3 via LiveGateRefused).
+def test_all_three_family_sources_are_flipped_on_the_derived_facts_basis() -> None:
+    # ADR-085 (operator decision 2026-09-15): flipped on the derived-facts +
+    # citations basis — DERIVE custody, LicenseRef-DerivedFacts-Citations, counsel
+    # flag retained (HG-02). A live run still REFUSES — no live targets are
+    # registered (upstream is PDF/HTML pending document adapters): the refusal is
+    # NoLiveTargets, not the rights gate.
+    from connectors.live_targets import NoLiveTargets
+
     for family in _FAMILIES:
         sid = pw.pathway_family_source(family)
         rec = get(sid)
-        assert rec.custody_posture.value == "LINK"
-        assert rec.ingestion_permitted is False
-        assert rec.rights.spdx.strip().upper() == "UNDETERMINED"
-        with pytest.raises(LiveGateRefused):
+        assert rec.custody_posture.value == "DERIVE"
+        assert rec.ingestion_permitted is True
+        assert rec.rights.spdx == "LicenseRef-DerivedFacts-Citations"
+        with pytest.raises(NoLiveTargets):
             run_source(sid, mode=RunMode.LIVE)
 
 

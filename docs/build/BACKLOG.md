@@ -126,7 +126,7 @@ landing here. Regenerate this file after any backlog edit:
 ## P25.1
 
 - **BL-055** — Live-fetch operationalization: Overpass robots/endpoint policy decision + document-connector content-drift hardening; wire real data/live_targets.toml rows + run real fetches into the hosted spine (P25.1..P25.6; findings from the P24.1 live deploy, ADR-082); implements the adopted ADR-083 API-vs-crawl carve-out — the umbrella backlog home for the whole P25 live-fetch series (see SOURCE_LIVE_OPS_MATRIX.md) · _external-dep_ · L · status=open · gate HG-03
-  - sources: ADR-082 ADR-083
+  - sources: ADR-082 ADR-083 ADR-085
 
 ## human-gate:HG-01
 

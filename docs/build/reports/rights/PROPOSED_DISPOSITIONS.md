@@ -80,3 +80,41 @@
   --source` refuses "no connector known" — correct-by-design. Its data.gov-key
   fetch belongs to a substrate download path, not the claims pipeline (P25.6
   triage confirms its disposition).
+
+## Unblock-pass determinations (2026-09-15, operator-approved)
+
+The remaining gated cohort resolved — each on a recorded basis, none silently:
+
+- **France cohort → per-source gate.** The P24.6/D-JURIS.2-1 hold is now
+  per-source (operator decision): `raa_prefectures` (ODbL-1.0 confirmed) and
+  `decp_fr` (LicenceOuverte-2.0, ADR-084) **flipped**; `madada` and
+  `declarationcamera_be` stay held (no licence basis — HG-04 outreach owed).
+  `decp_fr` got its first live target — the DECP consolidated monthly file
+  `decp-2024-01.json` (~1.4MB, verbatim F9.16 shape) — and a live run emitted
+  **9,494 claims**. `raa_prefectures` stays replay/shadow: its upstream is the
+  data.gouv.fr dataset-API resource index, not the `prefectoral_orders` shape
+  (resources→orders adapter owed). The regenerated static-URL timestamp
+  caveat is recorded on the target.
+- **CCOPS×3 FLIPPED** (`ccops_seattle`, `ccops_nyc_post`, `ccops_sf`) on the
+  municipal-mandated-disclosure + derived-facts basis — **ADR-085**. SPDX
+  `LicenseRef-DerivedFacts-Citations`; `redistributable=false` (upstream bytes
+  never re-hosted); **counsel flag retained** (HG-02 confirms the
+  municipal-copyright reading before a published compartment). Live runs stay
+  refused on `NoLiveTargets` — upstream is PDF/HTML; document adapters owed.
+- **Pathways×3 FLIPPED** on the same derived-facts + citations basis (ADR-085):
+  DERIVE custody (was LINK), `public_terms_only` compact (per-document upstream
+  terms stay mixed, SIG-LIC-009). Live refused on `NoLiveTargets` pending the
+  same document-adapter work.
+- **Still held (5):** `madada`, `declarationcamera_be`, `aspi_mapping_chinas_tech_giants`,
+  `carnegie_ai_gsi`, `facial_recognition_world_map` — no licence basis; HG-04
+  outreach / counsel required. Not changed by this pass.
+- **`muckrock` — LIVE DATA LANDED via Cloud Run egress.** The Cloudflare 403
+  was local/residential-IP reputation, not a block on documented API access:
+  a Cloud Run job egressing from GCP gets `200 application/json` on
+  `/api_v2/` (probe) and the real fetch (job `sig-ingest-muckrock`, refresh →
+  5-min JWT → request 136412) succeeded — **8 rows / 6 claims committed** to the
+  hosted spine. The run surfaced a real vocab gap: api_v2's raw `status` values
+  (`done`, `ack`, `no_docs`, …) now map through `records_vocab.toml`
+  `[muckrock_status_map]` to the §11.19 enum (vocab 2026.09.15); unmapped values
+  still fail loud. Image: `ops/Dockerfile` now installs `./connectors` so
+  `sig-connectors run` jobs can execute in-cloud.

@@ -36,9 +36,13 @@ COPY evidence ./evidence
 
 # Install uv and the read-API package (+ its transitive workspace deps) into the
 # system env. Installing ./api pulls sig-reconcile/-inference/-policy/-evidence/
-# -db/-resolution/-exports from the local workspace.
+# -db/-resolution/-exports from the local workspace. ./connectors is installed
+# too (P25.5): the same image backs `sig-connectors run` Cloud Run jobs (the
+# MuckRock Cloudflare WAF challenges local/residential egress but answers GCP
+# datacenter egress — probe 2026-09-15), so the live connector path runs in
+# cloud. Secret values still arrive only from Secret Manager env vars (HG-09).
 RUN pip install --no-cache-dir uv \
- && uv pip install --system ./api
+ && uv pip install --system ./api ./connectors
 
 # Cloud Run provides $PORT; bind the read API there. When SIG_CLOUDSQL_CONNECTION
 # is set (the Cloud SQL socket instance connection name), assemble the PgReadStore

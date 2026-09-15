@@ -143,19 +143,21 @@ def test_validate_fails_naming_the_offending_id(monkeypatch: pytest.MonkeyPatch)
 # two resolved-licence sources (P25.3: eff_atlas_of_surveillance CC-BY-4.0,
 # osm_element_history ODbL) and four B-pass operator-approved flips (usaspending
 # CC0-1.0, fbi_cde_agency_registry CC0-1.0, eff_data_driven CC-BY-4.0, muckrock
-# LicenseRef at REFERENCE) = 12 loadable. decp_fr's LicenceOuverte-2.0 block (ADR-084)
-# made it flip-ready without a flip (France cohort gated, P24.6/D-JURIS.2-1), so
-# flip-ready went 14 -> 15. raa_prefectures likewise resolved-ODbL, unflipped.
+# LicenseRef at REFERENCE) = 12 loadable. The same-day unblock pass (operator
+# determination, ADR-085) flipped the rights-resolved France pair (raa_prefectures
+# ODbL-1.0, decp_fr LicenceOuverte-2.0 — the cohort gate went per-source) plus
+# ccops_seattle/nyc_post/sf and pathways_rtcc/css/acoustic on the derived-facts +
+# mandated-disclosure basis = 20 loadable, 13 flip-ready.
 
 
-def test_review_status_prints_flip_ready_15_and_loadable_12(
+def test_review_status_prints_flip_ready_13_and_loadable_20(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
     assert "registered sources: 121" in out
-    assert "flip-ready: 15" in out
-    assert "loadable now: 12" in out
+    assert "flip-ready: 13" in out
+    assert "loadable now: 20" in out
 
 
 def test_review_status_loadable_equals_validate() -> None:
@@ -163,8 +165,8 @@ def test_review_status_loadable_equals_validate() -> None:
     from connectors.loader import is_loadable
 
     loadable = [s for s in sources() if is_loadable(s)]
-    assert len(loadable) == 12
-    assert len(flip_ready()) == 15
+    assert len(loadable) == 20
+    assert len(flip_ready()) == 13
 
 
 def test_flip_ready_excludes_permitted_and_undetermined_and_link() -> None:

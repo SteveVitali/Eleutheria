@@ -191,6 +191,45 @@ def test_no_responsive_records_flows_through_normalize() -> None:
     assert coverage[0]["sources_searched"]  # non-empty (SIG-TIME-011)
 
 
+def test_muckrock_raw_status_maps_through_the_vocab() -> None:
+    # The live api_v2 vocabulary ("done", "ack", "no_docs", …) differs from the
+    # §11.19 normalized enum — `_build_request` translates through the versioned
+    # [muckrock_status_map]. `done` → `fulfilled` (observed live 2026-09-15,
+    # request 136412); `no_docs` → the SIG-ONTO-040 positive coverage finding.
+    ctx = _ctx("muckrock")
+    raw = {
+        "record_kind": "records_request",
+        "raw": {"id": "136412", "platform": "muckrock", "status": "done"},
+    }
+    rows = RecordsConnector().normalize(ctx, [raw])
+    assert rows  # does not raise InvalidRecordsRequest
+    statuses = [r.get("raw_value") for r in rows if r.get("predicate_id") == "response_status"]
+    assert statuses == ["fulfilled"]
+
+    raw_no_docs = {
+        "record_kind": "records_request",
+        "raw": {"id": "2", "platform": "muckrock", "status": "no_docs"},
+    }
+    rows = RecordsConnector().normalize(ctx, [raw_no_docs])
+    coverage = [r for r in rows if r.get("record_kind") == "coverage_record"]
+    assert len(coverage) == 1
+    assert coverage[0]["absence_state"] == "NO_EVIDENCE_FOUND"
+
+
+def test_unmapped_muckrock_status_fails_loud() -> None:
+    # A status value in neither the map nor the enum is recorded drift, not a
+    # silent coerce — the enum check still refuses it.
+    from connectors.records import InvalidRecordsRequest
+
+    ctx = _ctx("muckrock")
+    raw = {
+        "record_kind": "records_request",
+        "raw": {"id": "3", "platform": "muckrock", "status": "brand_new_status"},
+    }
+    with pytest.raises(InvalidRecordsRequest):
+        RecordsConnector().normalize(ctx, [raw])
+
+
 def test_a_fulfilled_request_writes_no_coverage_record() -> None:
     ctx = _ctx("muckrock")
     raw = {

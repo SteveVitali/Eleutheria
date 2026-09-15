@@ -130,21 +130,29 @@ def test_decp_shadow_run_maps_marches_onto_contracts() -> None:
     assert report.diff is not None and report.diff.changed_count == 0
 
 
-@pytest.mark.parametrize("source_id", FRANCE_SOURCES)
-def test_live_run_refuses_every_france_source(source_id: str) -> None:
-    # No France source is flipped (HG-03): a live run is refused before any
-    # socket opens — the gate exercised in the second jurisdiction, exit 3 at CLI.
+HELD_FRANCE_SOURCES = ("madada", "declarationcamera_be")
+
+
+@pytest.mark.parametrize("source_id", HELD_FRANCE_SOURCES)
+def test_live_run_refuses_a_rights_unresolved_france_source(source_id: str) -> None:
+    # The France cohort gate is now PER-SOURCE (operator decision 2026-09-15):
+    # rights-resolved France sources may flip; a source with no licence basis
+    # (madada, declarationcamera_be — user-authored content, HG-04 outreach owed)
+    # stays refused before any socket opens.
     with pytest.raises(LiveGateRefused):
         run_source(source_id, mode=RunMode.LIVE)
 
 
-def test_no_france_source_is_flipped() -> None:
-    # The registry posture this ticket must not change (HG-03 is an operator gate).
+def test_only_rights_resolved_france_sources_are_flipped() -> None:
+    # decp_fr (LicenceOuverte-2.0, ADR-084) and raa_prefectures (ODbL-1.0) are
+    # flipped (operator-approved 2026-09-15); the rights-unresolved cohort
+    # members stay un-permitted.
     from connectors.registry import get
 
-    for source_id in FRANCE_SOURCES:
-        record = get(source_id)
-        assert record.ingestion_permitted is False, source_id
+    for source_id in ("raa_prefectures", "decp_fr"):
+        assert get(source_id).ingestion_permitted is True, source_id
+    for source_id in HELD_FRANCE_SOURCES:
+        assert get(source_id).ingestion_permitted is False, source_id
     # The P24.6 rights packets are linked from the France source rows (Belgium's
     # eID-gated register is out of the France slice — its packet is HG-04 work).
     for source_id in ("raa_prefectures", "decp_fr", "madada"):

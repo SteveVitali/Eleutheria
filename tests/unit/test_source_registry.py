@@ -58,9 +58,11 @@ def test_source_ids_are_unique() -> None:
 #: (CC-BY-4.0) and osm_element_history (ODbL-1.0), and the four B-pass
 #: operator-approved flips: usaspending (CC0-1.0), fbi_cde_agency_registry (CC0-1.0),
 #: eff_data_driven (CC-BY-4.0), muckrock (LicenseRef-MuckRock-API-ToS, REFERENCE —
-#: non-redistributable until per-document posture resolves). raa_prefectures and
-#: decp_fr are rights-RESOLVED but stay unflipped (France cohort gated,
-#: P24.6/D-JURIS.2-1). Every other seeded source stays un-permitted.
+#: non-redistributable until per-document posture resolves). raa_prefectures
+#: (ODbL-1.0) and decp_fr (LicenceOuverte-2.0, ADR-084) flipped once the France
+#: cohort gate went per-source (operator decision 2026-09-15); ccops_seattle/
+#: nyc_post/sf and pathways_rtcc/css/acoustic flipped on the municipal-mandated-
+#: disclosure basis (ADR-085). Every other seeded source stays un-permitted.
 _FLIPPED_SUBSET = frozenset(
     {
         "okc_procurement",
@@ -75,6 +77,14 @@ _FLIPPED_SUBSET = frozenset(
         "fbi_cde_agency_registry",
         "eff_data_driven",
         "muckrock",
+        "raa_prefectures",
+        "decp_fr",
+        "ccops_seattle",
+        "ccops_nyc_post",
+        "ccops_sf",
+        "pathways_rtcc_federation",
+        "pathways_fr_css_forensics",
+        "pathways_acoustic_drone_location",
     }
 )
 

@@ -91,3 +91,17 @@ targets = [
   { id = "osm-hist:node:9221430265", url = "https://api.openstreetmap.org/api/0.6/node/9221430265/history.json", kind = "history" },
   { id = "osm-hist:node:9221430266", url = "https://api.openstreetmap.org/api/0.6/node/9221430266/history.json", kind = "history" },
 ]
+
+# DECP consolidated monthly file — the verbatim F9.16 shape
+# ({"marches":{"marche":[...]}}) the france_belgium procurement connector parses.
+# decp-2024-01.json is the smallest monthly file (~1.4MB); its static URL is
+# pinned to the current data.gouv.fr generation (dataset:
+# donnees-essentielles-de-la-commande-publique-fichiers-consolides). The URL
+# path carries a regeneration timestamp — if Etalab regenerates the resource it
+# 404s (a recorded disappearance, never silent); following the dataset-API
+# indirection to the current URL is owed adapter work.
+[decp_fr]
+kind = "procurement"
+targets = [
+  { id = "decp-2024-01", url = "https://static.data.gouv.fr/resources/donnees-essentielles-de-la-commande-publique-fichiers-consolides/20260623-084347/decp-2024-01.json", kind = "contract" },
+]

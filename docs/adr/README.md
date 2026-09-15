@@ -89,6 +89,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-082](ADR-082-live-fetch-targets-table-and-the-overpass-robots-gate-finding.md) | — | — | Accepted |
 | [ADR-083](ADR-083-crawler-conduct-documented-api-access-is-not-crawling-carve-out.md) | — | — | Accepted |
 | [ADR-084](ADR-084-accept-licence-ouverte-2-0-in-the-spdx-set-for-decp-fr.md) | — | — | Accepted |
+| [ADR-085](ADR-085-municipal-mandated-disclosure-and-derived-facts-basis-for-ccops-and-pathways.md) | — | — | Accepted |
 
 ## Notes
 
