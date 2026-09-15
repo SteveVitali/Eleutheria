@@ -19,7 +19,6 @@ from connectors.net import FetchResult, PoliteFetcher, RobotsResult
 from connectors.pipeline import run
 from connectors.registry import CompactStatus, CustodyPosture, get
 from connectors.replay import shadow_replay
-from connectors.runner import RunMode, run_source
 from connectors.stages import (
     InMemoryCaptureStore,
     InMemoryClaimSink,
@@ -192,12 +191,12 @@ def test_capture_path_runs_over_fixtures_at_coarse_granularity(
         assert c["raw_value"]  # P2 preserved verbatim
 
 
-def test_all_three_coarse_sources_are_flipped_but_adapter_gated() -> None:
-    # Counsel-flipped 2026-09-15 (HG-02, derived-facts basis). A live run still
-    # refuses — the upstreams are interactive pages/datasets, not the connector's
-    # JSON shape, so no live targets are registered: NoLiveTargets, not the
-    # rights gate. The document/page adapter is the owed work.
-    from connectors.live_targets import NoLiveTargets
+def test_all_three_coarse_sources_are_flipped_with_document_targets() -> None:
+    # Counsel-flipped 2026-09-15 (HG-02, derived-facts basis). With the
+    # document-capture path landed (P25.5) each source carries its upstream
+    # index/map page as a live target, fetched as an EvidenceArtifact — the
+    # coarse-granularity guard is unaffected (an artifact asserts no claim).
+    from connectors.live_targets import live_targets
 
     for sid in (
         "carnegie_ai_gsi",
@@ -207,8 +206,39 @@ def test_all_three_coarse_sources_are_flipped_but_adapter_gated() -> None:
         rec = get(sid)
         assert rec.custody_posture.value == "DERIVE"
         assert rec.ingestion_permitted is True
-        with pytest.raises(NoLiveTargets):
-            run_source(sid, mode=RunMode.LIVE)
+        assert live_targets(sid), f"{sid} has no live target registered"
+
+
+class _HtmlTransport(_StaticTransport):
+    def request(self, url: str, *, user_agent: str) -> FetchResult:
+        return FetchResult(
+            url=url,
+            status=200,
+            body=self._body,
+            media_type="text/html",
+            retrieved_at=datetime(2026, 8, 20, tzinfo=UTC),
+        )
+
+
+def test_document_capture_yields_artifact_not_claims() -> None:
+    # A live upstream page (non-JSON — the GSI index page, the FRWM map page) is
+    # captured as an EvidenceArtifact row carrying provenance + the P07.1 verdict;
+    # no coarse claim is fabricated from an unparsed page.
+    ctx, _ = _flipped_ctx("carnegie_ai_gsi", "carnegie_ai_gsi.json")
+    ctx.fetcher = PoliteFetcher(
+        connector_name="coarse_international",
+        connector_version="1.0.0",
+        transport=_HtmlTransport(b"<html><body>AI Global Surveillance Index</body></html>"),
+    )
+    report = run(ci.CoarseInternationalConnector(), ctx)
+    kinds = [row["record_kind"] for row in report.claims]
+    assert "evidence_artifact" in kinds
+    assert "quality_report" in kinds
+    assert "claim" not in kinds
+    artifact = next(r for r in report.claims if r["record_kind"] == "evidence_artifact")
+    assert artifact["predicate_id"] == "document"
+    assert artifact["published_by"] == "carnegie_ai_gsi"
+    assert artifact["classification"]["file_format"] == "html"
 
 
 def test_shadow_replay_over_coarse_fixture_has_zero_diffs() -> None:

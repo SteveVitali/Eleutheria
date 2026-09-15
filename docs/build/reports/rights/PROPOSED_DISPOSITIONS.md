@@ -135,3 +135,29 @@ Counsel approved ingestion for the five previously held sources — all flipped
 five still refuse on `NoLiveTargets` — the flips record the rights posture;
 fetch capability needs adapters (madada Atom/CSV→records, the three
 coarse-international page scrapers) or an HG-04 eID path (declarationcamera_be).
+
+## Document-capture path (P25.5, 2026-09-15)
+
+The four document-source connectors (`france_belgium_records`,
+`government_mandated_disclosure`, `pathways`, `coarse_international`) now carry a
+shared **document-capture** path: a non-JSON capture (PDF, HTML, CSV, Atom feed)
+is routed to the P07.1 classifier and emitted as an `evidence_artifact` row —
+provenance only (source URI, content-addressed capture digest, media type,
+verdict); the bytes are never re-hosted and no field claim is fabricated from an
+unparsed document. `document` was added to each connector's predicate allowlist
+(vocabs bumped to 2026.09.16).
+
+Live targets registered (`live_targets.toml`) and **verified live**:
+
+- `raa_prefectures` — the national RAA index CSV (`static.data.gouv.fr`, ODbL).
+- `madada` — the platform's own successful-requests Atom feed.
+- `ccops_seattle`, `ccops_nyc_post` — the mandated-disclosure index pages.
+- `pathways_rtcc_federation` / `pathways_fr_css_forensics` /
+  `pathways_acoustic_drone_location` — one real EFF upstream page per family.
+- `carnegie_ai_gsi`, `facial_recognition_world_map` — the index/map pages.
+
+Honest non-fetch outcomes (recorded, not defeated): `aspi_mapping_chinas_tech_giants`
+— host WAF 403 → disappearance; `ccops_sf` — sf.gov robots.txt unretrievable →
+SIG-INGEST-012 refusal; `declarationcamera_be` — still NoLiveTargets (Belgian
+eID; HG-04). Field-level claims for all of the above still require the curated
+extraction adapters (RAA PDF→arrêté, CCOPS PDF→fields, pathways doc→claims).

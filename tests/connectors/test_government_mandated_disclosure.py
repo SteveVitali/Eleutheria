@@ -123,14 +123,38 @@ def test_sources_are_flipped_on_the_mandated_disclosure_basis() -> None:
 
 
 @pytest.mark.parametrize("source_id", _SOURCES)
-def test_live_run_refuses_every_ccops_source(source_id: str) -> None:
-    # Flipped under ADR-085, but the upstream is PDF/HTML and no document adapter
-    # has landed — no live targets are registered, so a live run refuses on
-    # NoLiveTargets (SIG-INGEST-045i) rather than fetching a placeholder.
-    from connectors.live_targets import NoLiveTargets
+def test_every_ccops_source_has_a_document_target(source_id: str) -> None:
+    # Flipped under ADR-085 with the document-capture path landed (P25.5): each
+    # source carries a real upstream index/document URL, fetched as an
+    # EvidenceArtifact (never re-hosted). A live run is not exercised here —
+    # unit tests never touch the network.
+    from connectors.live_targets import live_targets
 
-    with pytest.raises(NoLiveTargets):
-        run_source(source_id, mode=RunMode.LIVE)
+    targets = live_targets(source_id)
+    assert targets, f"{source_id} has no live target registered"
+    assert all(t["kind"] == "document" for t in targets)
+
+
+def test_document_capture_yields_artifact_not_claims() -> None:
+    # A live upstream disclosure document (non-JSON — a POST Act PDF, a Chapter
+    # 19B inventory) is captured as an EvidenceArtifact row carrying provenance +
+    # the P07.1 verdict; no field claim is fabricated from an unparsed document,
+    # and the aggregate schema gate exempts the provenance rows.
+    report = run_source(
+        "ccops_seattle",
+        mode=RunMode.SHADOW,
+        fixture=_FIX / "sample_disclosure.pdf",
+        kind="disclosure",
+        media_type="application/pdf",
+    )
+    kinds = [row["record_kind"] for row in report.claims]
+    assert "evidence_artifact" in kinds
+    assert "quality_report" in kinds
+    assert "claim" not in kinds
+    artifact = next(r for r in report.claims if r["record_kind"] == "evidence_artifact")
+    assert artifact["predicate_id"] == "document"
+    assert artifact["published_by"] == "ccops_seattle"
+    assert artifact["classification"]["file_format"] == "pdf"
 
 
 # --- fixture → typed, evidenced, per-agency aggregate claims --------------------

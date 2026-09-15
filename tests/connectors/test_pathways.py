@@ -5,9 +5,9 @@
 
 Pins the deliverables: the connector is registered; it emits typed, evidenced P17 claims
 through the ADR-033-deferred parser layers; the procured≠deployed epistemic rule
-(RISK-P21-16) is enforced at both the genre and predicate level; the LINK-posture sources
-refuse a live run (NoLiveTargets — no targets registered pending document adapters);
-and a shadow replay over the committed
+(RISK-P21-16) is enforced at both the genre and predicate level; the flipped sources
+carry document-capture live targets (P25.5 — upstream documents become
+EvidenceArtifacts, never re-hosted); and a shadow replay over the committed
 fixtures is byte-identical (0 diffs, SIG-INGEST-019).
 """
 
@@ -23,7 +23,6 @@ from connectors.net import FetchResult, PoliteFetcher, RobotsResult
 from connectors.pipeline import run
 from connectors.registry import CompactStatus, CustodyPosture, get
 from connectors.replay import shadow_replay
-from connectors.runner import RunMode, run_source
 from connectors.stages import (
     InMemoryCaptureStore,
     InMemoryClaimSink,
@@ -95,10 +94,10 @@ def test_connector_is_registered() -> None:
 def test_all_three_family_sources_are_flipped_on_the_derived_facts_basis() -> None:
     # ADR-085 (operator decision 2026-09-15): flipped on the derived-facts +
     # citations basis — DERIVE custody, LicenseRef-DerivedFacts-Citations, counsel
-    # flag retained (HG-02). A live run still REFUSES — no live targets are
-    # registered (upstream is PDF/HTML pending document adapters): the refusal is
-    # NoLiveTargets, not the rights gate.
-    from connectors.live_targets import NoLiveTargets
+    # flag retained (HG-02). With the document-capture path landed (P25.5) each
+    # family carries a real upstream document target fetched as an
+    # EvidenceArtifact; field claims stay on the curated path.
+    from connectors.live_targets import live_targets
 
     for family in _FAMILIES:
         sid = pw.pathway_family_source(family)
@@ -106,8 +105,7 @@ def test_all_three_family_sources_are_flipped_on_the_derived_facts_basis() -> No
         assert rec.custody_posture.value == "DERIVE"
         assert rec.ingestion_permitted is True
         assert rec.rights.spdx == "LicenseRef-DerivedFacts-Citations"
-        with pytest.raises(NoLiveTargets):
-            run_source(sid, mode=RunMode.LIVE)
+        assert live_targets(sid), f"{sid} has no live target registered"
 
 
 # --- claims are typed + evidenced ---------------------------------------------
@@ -272,3 +270,35 @@ def test_fixtures_have_a_sources_md() -> None:
     text = (_FIX / "SOURCES.md").read_text()
     for family in _FAMILIES:
         assert f"{family}.json" in text
+
+
+class _PdfTransport(_StaticTransport):
+    def request(self, url: str, *, user_agent: str) -> FetchResult:
+        return FetchResult(
+            url=url,
+            status=200,
+            body=self._body,
+            media_type="application/pdf",
+            retrieved_at=datetime(2026, 8, 20, tzinfo=UTC),
+        )
+
+
+def test_document_capture_yields_artifact_not_claims() -> None:
+    # A live upstream document (non-JSON) is captured as an EvidenceArtifact row
+    # carrying provenance + the P07.1 verdict — the bytes are never re-hosted and
+    # no field claim is fabricated from an unparsed document.
+    ctx = _flipped_ctx("pathways_rtcc_federation", "rtcc_federation.json")
+    ctx.fetcher = PoliteFetcher(
+        connector_name="pathways",
+        connector_version="1.0.0",
+        transport=_PdfTransport(b"%PDF-1.4\nfake rtcc federation report"),
+    )
+    report = run(pw.PathwaysConnector(), ctx)
+    kinds = [row["record_kind"] for row in report.claims]
+    assert "evidence_artifact" in kinds
+    assert "quality_report" in kinds
+    assert "claim" not in kinds
+    artifact = next(r for r in report.claims if r["record_kind"] == "evidence_artifact")
+    assert artifact["predicate_id"] == "document"
+    assert artifact["published_by"] == "pathways_rtcc_federation"
+    assert artifact["classification"]["file_format"] == "pdf"

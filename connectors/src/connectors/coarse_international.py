@@ -34,6 +34,9 @@ from datetime import UTC, datetime
 from typing import Any
 from uuid import uuid4
 
+from evidence.digest import multihash
+from parsing.classification import classify
+
 #: The coarse granularities a country/vendor-level international dataset may claim.
 #: `agency`/`device` are deliberately absent — that is the level SIG-INGEST-042
 #: forbids inferring.
@@ -187,6 +190,52 @@ def parse_coarse(data: bytes) -> dict[str, Any]:
     return payload
 
 
+def _is_json_media(media_type: str) -> bool:
+    # Only a JSON content type is the curated dataset payload; everything else —
+    # including text/html — is an upstream document routed to the P07.1 classifier.
+    return "json" in media_type.lower()
+
+
+def _filename_from_uri(uri: str) -> str:
+    tail = uri.split("?", 1)[0].rstrip("/").rsplit("/", 1)[-1]
+    return tail or "document"
+
+
+def document_artifact_id(source_uri: str) -> str:
+    """The stable EvidenceArtifact id for an upstream document at ``source_uri``.
+
+    Keyed on the source URI, not the bytes, so the id is stable across
+    re-captures and never depends on capture order (§10.2). Deterministic.
+    """
+    return f"coarse:artifact:{multihash(source_uri.encode('utf-8'))}"
+
+
+def _document_artifact_row(source_id: str, record: Mapping[str, Any]) -> dict[str, Any]:
+    """An upstream document capture as an EvidenceArtifact row (§10.2).
+
+    The coarse sources are DERIVE-posture (``LicenseRef-DerivedFacts-Citations``,
+    redistributable=false): the bytes are **never re-hosted** — the row carries
+    provenance (source URI, content-addressed capture digest, media type, size)
+    plus the P07.1 classification verdict, recorded but not run to a layer engine
+    (SIG-PARSE-001/002). The SIG-INGEST-042 anti-disaggregation guard is moot for a
+    provenance row: it asserts no granularity claim at all.
+    """
+    source_uri = str(record["source_uri"])
+    return {
+        "record_kind": "evidence_artifact",
+        "subject_id": document_artifact_id(source_uri),
+        "predicate_id": "document",
+        "published_by": source_id,
+        "source_uri": source_uri,
+        "capture_digest": str(record["capture_digest"]),
+        "media_type": str(record["media_type"]),
+        "byte_size": int(record["byte_size"]),
+        "integrity": "captured",
+        "classification": dict(record["verdict"]),
+        "raw_value": source_uri,
+    }
+
+
 @register
 class CoarseInternationalConnector(Connector):
     """The `coarse_international` connector — country/vendor-level datasets (§22.7, §47).
@@ -212,9 +261,37 @@ class CoarseInternationalConnector(Connector):
         return ctx.fetcher.fetch(str(target["url"]))
 
     def parse(self, ctx: RunContext, capture: CaptureRef) -> dict[str, Any]:
-        return parse_coarse(ctx.captures.get(capture.digest))
+        """Structure the captured bytes — a curated dataset payload, or an upstream document.
+
+        A JSON capture is the curated ``rows`` payload; anything else (an
+        interactive-map page, a report landing page) is an upstream document
+        classified via the P07.1 parser — the derived-facts basis permits
+        capturing provenance, never re-hosting the bytes.
+        """
+        data = ctx.captures.get(capture.digest)
+        if _is_json_media(capture.media_type):
+            return parse_coarse(data)
+        verdict = classify(_filename_from_uri(capture.source_uri), data)
+        return {
+            "kind": "document",
+            "capture": capture,
+            "verdict": verdict.to_row(),
+            "byte_size": len(data),
+        }
 
     def extract(self, ctx: RunContext, parsed: Mapping[str, Any]) -> list[Mapping[str, Any]]:
+        if parsed.get("kind") == "document":
+            capture = parsed["capture"]
+            return [
+                {
+                    "record_kind": "evidence_document",
+                    "source_uri": capture.source_uri,
+                    "capture_digest": capture.digest,
+                    "media_type": capture.media_type,
+                    "byte_size": parsed["byte_size"],
+                    "verdict": parsed["verdict"],
+                }
+            ]
         dataset_id = str(parsed.get("dataset") or ctx.source.id)
         return [{"dataset_id": dataset_id, "row": dict(row)} for row in parsed.get("rows", [])]
 
@@ -222,7 +299,12 @@ class CoarseInternationalConnector(Connector):
         self, ctx: RunContext, raw_claims: list[Mapping[str, Any]]
     ) -> list[dict[str, Any]]:
         out: list[dict[str, Any]] = []
+        artifact_count = 0
         for raw in raw_claims:
+            if raw.get("record_kind") == "evidence_document":
+                out.append(_document_artifact_row(ctx.source.id, raw))
+                artifact_count += 1
+                continue
             dataset = DATASETS[str(raw["dataset_id"])]
             subject_kind = _SUBJECT_KIND_FOR_GRANULARITY[dataset.granularity]
             row = raw["row"]
@@ -236,6 +318,23 @@ class CoarseInternationalConnector(Connector):
                     raw_value=str(row["raw_value"]),
                     attribution=str(row.get("attribution", dataset.name)),
                 )
+            )
+        if artifact_count:
+            out.append(
+                {
+                    "record_kind": "quality_report",
+                    "source_id": ctx.source.id,
+                    "capture_digest": str(raw_claims[0].get("capture_digest", "")),
+                    "media_type": str(raw_claims[0].get("media_type", "")),
+                    "byte_size": int(raw_claims[0].get("byte_size", 0)),
+                    "capture_kind": "document",
+                    "connector_name": self.name,
+                    "connector_version": self.version,
+                    "vocab_version": "none",
+                    "evidence_artifact_count": artifact_count,
+                    "claim_count": len(raw_claims) - artifact_count,
+                    "classification": raw_claims[0].get("verdict"),
+                }
             )
         return out
 

@@ -17,7 +17,7 @@
 # [records_request_methods] tables therefore come last.
 
 # The connector's own vocabulary version, stamped onto every run (§20).
-vocab_version = "2026.09.08"
+vocab_version = "2026.09.16"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `france_belgium_records` connector may write ONLY the §11.14 LegalInstrument
@@ -37,6 +37,9 @@ legal_instrument_predicate_allowlist = [
   "requires_authorization_of",
   "external_id",
   "acquisition_method",
+  # an upstream document capture recorded as an EvidenceArtifact (§10.2) —
+  # provenance + P07.1 verdict only; the bytes are never re-hosted
+  "document",
 ]
 
 # Predicate GENRES this connector MUST NOT write (scope-creep guard, spec "Out of

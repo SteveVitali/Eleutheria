@@ -105,3 +105,84 @@ kind = "procurement"
 targets = [
   { id = "decp-2024-01", url = "https://static.data.gouv.fr/resources/donnees-essentielles-de-la-commande-publique-fichiers-consolides/20260623-084347/decp-2024-01.json", kind = "contract" },
 ]
+
+# --- document-capture targets (P25.5) ------------------------------------------
+# For the counsel-flipped document sources the connector captures the upstream
+# document itself as an EvidenceArtifact row (provenance + P07.1 verdict; the
+# bytes are never re-hosted — LicenseRef-DerivedFacts-Citations). Field-level
+# claims still come only from the curated extraction path; a changed shape fails
+# loud rather than fabricating a claim.
+
+# RAA — the national prefecture gazette index (data.gouv.fr CSV, ODbL-1.0) plus
+# one real prefecture gazette PDF. The index CSV is allow-listed under
+# static.data.gouv.fr /resources/; prefecture hosts are plain CRAWL. Resolving
+# each row's PDF and extracting arrêtés is the owed resource-index adapter.
+[raa_prefectures]
+kind = "document"
+targets = [
+  { id = "raa-prefectures-index", url = "https://static.data.gouv.fr/resources/recueils-des-actes-administratifs-des-prefectures/20260914-114014/raa-des-prefectures.csv", kind = "document" },
+]
+
+# MaDada — the platform's own Atom feed of successful requests (the platform
+# publishes it; application/atom+xml). Request bodies stay unre-hosted.
+[madada]
+kind = "document"
+targets = [
+  { id = "madada-successful-requests", url = "https://madada.fr/feed/search/%20(latest_status:successful%20OR%20latest_status:partially_successful)", kind = "document" },
+]
+
+# CCOPS — the three mandated-disclosure index pages (ADR-085). nyc.gov answers
+# datacenter/residential egress with a WAF challenge (a recorded disappearance,
+# never defeated — SIG-INGEST-013); sf.gov serves a JS shell (captured as-is).
+[ccops_seattle]
+kind = "document"
+targets = [
+  { id = "ccops-seattle-sir-index", url = "https://www.seattle.gov/tech/data-privacy/surveillance-technology", kind = "document" },
+]
+[ccops_nyc_post]
+kind = "document"
+targets = [
+  { id = "ccops-nyc-post-index", url = "https://www.nyc.gov/site/nypd/about/about-nypd/policy/post-act.page", kind = "document" },
+]
+[ccops_sf]
+kind = "document"
+targets = [
+  { id = "ccops-sf-inventory-index", url = "https://www.sf.gov/surveillance-technology-inventory", kind = "document" },
+]
+
+# Pathways — one real upstream document per family (EFF-published; the
+# per-document mixed terms stay visible per ADR-085). documentcloud fixture URLs
+# were placeholders and are NOT registered — only verified-reachable pages.
+[pathways_rtcc_federation]
+kind = "document"
+targets = [
+  { id = "eff-fusus-rtcc", url = "https://www.eff.org/deeplinks/2023/05/neighborhood-watch-out-cops-are-incorporating-private-cameras-their-real-time", kind = "document" },
+]
+[pathways_fr_css_forensics]
+kind = "document"
+targets = [
+  { id = "eff-face-recognition", url = "https://www.eff.org/issues/face-recognition", kind = "document" },
+]
+[pathways_acoustic_drone_location]
+kind = "document"
+targets = [
+  { id = "eff-drones", url = "https://www.eff.org/issues/drones", kind = "document" },
+]
+
+# Coarse international — the upstream index/map/report pages themselves. ASPI's
+# chinatechmap host answers with a WAF challenge (recorded disappearance).
+[carnegie_ai_gsi]
+kind = "document"
+targets = [
+  { id = "carnegie-aigs-index", url = "https://carnegieendowment.org/publications/interactive/ai-surveillance", kind = "document" },
+]
+[facial_recognition_world_map]
+kind = "document"
+targets = [
+  { id = "surfshark-frwm", url = "https://surfshark.com/facial-recognition-map", kind = "document" },
+]
+[aspi_mapping_chinas_tech_giants]
+kind = "document"
+targets = [
+  { id = "aspi-chinatechmap", url = "https://chinatechmap.aspi.org.au/", kind = "document" },
+]

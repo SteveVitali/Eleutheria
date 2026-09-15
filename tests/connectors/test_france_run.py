@@ -7,8 +7,9 @@ The France sources route through the P18.2 `france_belgium` connectors — data
 rows in `CONNECTOR_FOR_SOURCE`, not a per-jurisdiction hack. All four are flipped
 (operator + counsel determinations 2026-09-15): replay/shadow run over the
 committed fixtures under network isolation; `decp_fr` is live (real DECP file),
-`raa_prefectures`/`madada`/`declarationcamera_be` live-refuse on NoLiveTargets
-pending document adapters / an HG-04 eID path.
+`raa_prefectures`/`madada` carry document-capture targets (the RAA index CSV /
+the MaDada Atom feed — P25.5), and `declarationcamera_be` alone still refuses
+live on NoLiveTargets (the register sits behind Belgian eID).
 """
 
 from __future__ import annotations
@@ -72,6 +73,27 @@ def test_madada_shadow_run_now_passes_the_gate() -> None:
     assert report.claims
 
 
+def test_document_capture_yields_artifact_not_claims() -> None:
+    # A live upstream document (non-JSON — a gazette PDF, an index page, a MaDada
+    # Atom feed) is captured as an EvidenceArtifact row carrying provenance + the
+    # P07.1 verdict; no instrument claim is fabricated from an unparsed document.
+    report = run_source(
+        "raa_prefectures",
+        mode=RunMode.SHADOW,
+        fixture=FIXTURES / "sample_document.pdf",
+        kind="records",
+        media_type="application/pdf",
+    )
+    kinds = [row["record_kind"] for row in report.claims]
+    assert "evidence_artifact" in kinds
+    assert "quality_report" in kinds
+    assert "claim" not in kinds
+    artifact = next(r for r in report.claims if r["record_kind"] == "evidence_artifact")
+    assert artifact["predicate_id"] == "document"
+    assert artifact["published_by"] == "raa_prefectures"
+    assert artifact["classification"]["file_format"] == "pdf"
+
+
 def test_madada_fixture_normalizes_to_fr_cada_not_foia() -> None:
     # The connector itself is correct over the fixture — only the source's gate
     # blocks the run. (The regime claim is what the seed carries into the spine.)
@@ -130,19 +152,18 @@ def test_decp_shadow_run_maps_marches_onto_contracts() -> None:
     assert report.diff is not None and report.diff.changed_count == 0
 
 
-def test_france_sources_without_live_targets_still_refuse_live(source_id: str = "") -> None:
-    # Counsel approved all four France/Belgium sources (HG-02, 2026-09-15) —
-    # flipped on the derived-facts basis. But a live run still REFUSES on
-    # NoLiveTargets for the three without a registered target: raa_prefectures
-    # (upstream is the dataset-API resource index, not the prefectoral_orders
-    # shape — adapter owed), madada (Atom/CSV feeds ≠ records_requests shape),
-    # declarationcamera_be (the register sits behind Belgian eID — no anonymous
-    # path at all). Only decp_fr has a live target (the DECP monthly file).
-    from connectors.live_targets import NoLiveTargets
+def test_france_document_targets_registered_but_declarationcamera_stays_gated() -> None:
+    # Counsel approved all four France/Belgium sources (HG-02, 2026-09-15).
+    # With the document-capture path landed (P25.5), raa_prefectures carries the
+    # national RAA index CSV and madada the platform's own Atom feed — both
+    # captured as EvidenceArtifacts. declarationcamera_be stays targetless: the
+    # register sits behind Belgian eID — no anonymous path exists to register.
+    from connectors.live_targets import NoLiveTargets, live_targets
 
-    for sid in ("raa_prefectures", "madada", "declarationcamera_be"):
-        with pytest.raises(NoLiveTargets):
-            run_source(sid, mode=RunMode.LIVE)
+    assert live_targets("raa_prefectures")
+    assert live_targets("madada")
+    with pytest.raises(NoLiveTargets):
+        run_source("declarationcamera_be", mode=RunMode.LIVE)
 
 
 def test_all_france_sources_are_flipped_on_the_counsel_basis() -> None:
