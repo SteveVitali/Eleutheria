@@ -42,6 +42,11 @@ from .maproulette import (
     build_challenge,
 )
 from .osm_feed import DEFAULT_FIXTURE_GLOB, leverage_metric_json, pull_files
+from .request_outcomes import (
+    RequestOutcomeLog,
+    outcome_from_api_payload,
+    outcome_from_claims,
+)
 
 
 def _repo_root() -> Path:
@@ -86,6 +91,49 @@ def build_parser() -> argparse.ArgumentParser:
         "--fixtures", nargs="*", default=None, help="changeset XML fixtures (default: recorded)"
     )
     fpull.add_argument("--out", default=None, help="write <out>/web/leverage.json (export mode)")
+
+    ro = sub.add_parser(
+        "records-outcomes",
+        help="records-request outcome log (BL-028): record + fold real request outcomes",
+    )
+    ro_sub = ro.add_subparsers(dest="ro_command")
+    rec = ro_sub.add_parser(
+        "record",
+        help="append outcome observations (claims JSON per request, or one API payload)",
+    )
+    rec.add_argument(
+        "--claims",
+        default=None,
+        metavar="FILE",
+        help="JSON list of spine/connector claim rows; grouped per request by subject_id",
+    )
+    rec.add_argument(
+        "--payload",
+        default=None,
+        metavar="FILE",
+        help="one platform API request object (e.g. MuckRock api_v2) as JSON",
+    )
+    rec.add_argument(
+        "--status-map",
+        default=None,
+        metavar="FILE",
+        help="JSON map raw platform status -> §11.19 status (e.g. muckrock_status_map)",
+    )
+    rec.add_argument("--platform", default="muckrock", help="platform id for the observation")
+    rec.add_argument(
+        "--source",
+        default=None,
+        help="observation source label (default: claim_spine for --claims, <platform>_api "
+        "for --payload)",
+    )
+    rec.add_argument(
+        "--log",
+        default=None,
+        help="outcome-log path (default: $SIG_RECORDS_OUTCOME_LOG or "
+        ".sig/tasks/records_outcomes.jsonl)",
+    )
+    show = ro_sub.add_parser("show", help="print the folded current state per request")
+    show.add_argument("--log", default=None, help="outcome-log path (as for `record`)")
     return parser
 
 
@@ -209,6 +257,78 @@ def _osm_feed_pull(args: argparse.Namespace) -> int:
     return 0
 
 
+# --------------------------------------------------------------------------- #
+# Records-request outcome log (BL-028 / D-META.1-2)
+# --------------------------------------------------------------------------- #
+def _outcome_log(args: argparse.Namespace) -> RequestOutcomeLog:
+    import os
+
+    path = args.log or os.environ.get("SIG_RECORDS_OUTCOME_LOG")
+    return RequestOutcomeLog(path) if path else RequestOutcomeLog()
+
+
+def _records_outcomes_record(args: argparse.Namespace) -> int:
+    log = _outcome_log(args)
+    recorded = []
+    if args.claims:
+        rows = json.loads(Path(args.claims).read_text())
+        # Group the claim rows per request subject; a file with no subject_id
+        # column is treated as one request's predicate surface.
+        groups: dict[str, list[dict]] = {}
+        for row in rows:
+            groups.setdefault(str(row.get("subject_id") or "_"), []).append(row)
+        for claims in groups.values():
+            recorded.append(
+                log.record(
+                    outcome_from_claims(
+                        claims,
+                        platform=args.platform,
+                        source=args.source or "claim_spine",
+                    )
+                )
+            )
+    if args.payload:
+        status_map = json.loads(Path(args.status_map).read_text()) if args.status_map else None
+        recorded.append(
+            log.record(
+                outcome_from_api_payload(
+                    json.loads(Path(args.payload).read_text()),
+                    platform=args.platform,
+                    status_map=status_map,
+                    source=args.source or f"{args.platform}_api",
+                )
+            )
+        )
+    if not recorded:
+        print("nothing to record: pass --claims or --payload")
+        return 2
+    for outcome in recorded:
+        print(
+            f"recorded {outcome.key}: state={outcome.state} "
+            f"status={outcome.response_status} agency={outcome.agency} "
+            f"filed={outcome.filed_date} response={outcome.response_date} "
+            f"(source={outcome.source})"
+        )
+    print(f"appended {len(recorded)} observation(s) to {log.path}")
+    return 0
+
+
+def _records_outcomes_show(args: argparse.Namespace) -> int:
+    log = _outcome_log(args)
+    latest = log.latest()
+    if not latest:
+        print(f"no outcomes recorded in {log.path}")
+        return 0
+    for key in sorted(latest):
+        o = latest[key]
+        print(
+            f"{key}: {o.state} ({o.response_status}) agency={o.agency} "
+            f"filed={o.filed_date} response={o.response_date} "
+            f"observed={o.observed_at} via {o.source}"
+        )
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run the `tasks` CLI. Returns a process exit code (3 = a gated refusal)."""
     parser = build_parser()
@@ -223,6 +343,13 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "osm-feed":
         if args.feed_command == "pull":
             return _osm_feed_pull(args)
+        parser.parse_args([args.command, "--help"])
+        return 0
+    if args.command == "records-outcomes":
+        if args.ro_command == "record":
+            return _records_outcomes_record(args)
+        if args.ro_command == "show":
+            return _records_outcomes_show(args)
         parser.parse_args([args.command, "--help"])
         return 0
     parser.print_help()

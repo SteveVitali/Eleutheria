@@ -1,0 +1,43 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# The records-request outcome vocabulary (D-META.1-2 / BL-028, P25.9) — DATA,
+# not code (SIG-ENG-001): the §11.19 response_status → coarse outcome-state map,
+# the statuses that count as a template success, and the statuses excluded from
+# template measurement. Changes after P25.9 are VERSIONED (§20) — bump
+# `outcomes_version` and add the change, never silently rewrite a landed row.
+# A §11.19 status absent from `status_to_state` fails loud in
+# tasks.request_outcomes.outcome_state_for (recorded drift, never a silent
+# coerce).
+
+outcomes_version = "2026.09.16"
+
+# The statuses that count as a template SUCCESS when fed to the
+# TemplateOutcomeLog (SIG-TASK-017): the language got records released, in full
+# or in part.
+template_success_statuses = ["fulfilled", "partially_fulfilled"]
+
+# Terminal statuses NEVER counted against a template's success rate:
+# `no_responsive_records` is an on-record agency answer — a positive coverage
+# finding (SIG-ONTO-040 / SIG-TASK-009), not a failure of the language.
+template_excluded_statuses = ["no_responsive_records"]
+
+# §11.19 RecordsResponseStatus → the coarse outcome state the log folds on
+# (the ticket's filed/acknowledged/completed, plus `in_flight` for a still-open
+# request and `draft` for one never filed). `fee_demanded` is an on-the-record
+# agency answer short of release — acknowledged, not completed. `appealed` is
+# still in flight (the appeal is pending). The five completed statuses close
+# the request: fulfilled, partially_fulfilled, denied, abandoned,
+# no_responsive_records.
+[status_to_state]
+draft                 = "draft"
+filed                 = "filed"
+acknowledged          = "acknowledged"
+fee_demanded          = "acknowledged"
+appealed              = "in_flight"
+fulfilled             = "completed"
+partially_fulfilled   = "completed"
+denied                = "completed"
+abandoned             = "completed"
+no_responsive_records = "completed"
