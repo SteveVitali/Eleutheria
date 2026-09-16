@@ -288,11 +288,16 @@ def build_router() -> APIRouter:
         asof: AsOfContext = Depends(as_of_dependency),
         tier: AccessTier = Depends(tier_dependency),
     ) -> ContradictionCollection:
+        records = store.contradictions()
+        # Freshness is disclosed, not implied (§3.1): the served set states the
+        # spine watermark it was computed at (P25.10).
+        watermark = store.annotation_watermark()
         asof.apply_cache(response)
         return ContradictionCollection(
-            contradictions=[_contradiction(c, asof) for c in store.contradictions()],
+            contradictions=[_contradiction(c, asof, watermark) for c in records],
             coverage=empty_coverage("contradiction"),
             as_of=asof.echo(),
+            spine_watermark=watermark,
         )
 
     @router.get("/contradiction/{contradiction_id}", response_model=ContradictionResponse)
@@ -307,7 +312,7 @@ def build_router() -> APIRouter:
         if record is None:
             raise HTTPException(status_code=404, detail="contradiction not found")
         asof.apply_cache(response)
-        return _contradiction(record, asof)
+        return _contradiction(record, asof, store.annotation_watermark())
 
     # --- /task ----------------------------------------------------------------
     @router.get("/task", response_model=TaskCollection)
@@ -317,11 +322,14 @@ def build_router() -> APIRouter:
         asof: AsOfContext = Depends(as_of_dependency),
         tier: AccessTier = Depends(tier_dependency),
     ) -> TaskCollection:
+        records = store.tasks()
+        watermark = store.annotation_watermark()
         asof.apply_cache(response)
         return TaskCollection(
-            tasks=[_task(t, asof) for t in store.tasks()],
+            tasks=[_task(t, asof, watermark) for t in records],
             coverage=empty_coverage("task"),
             as_of=asof.echo(),
+            spine_watermark=watermark,
         )
 
     @router.get("/task/{task_id}", response_model=TaskResponse)
@@ -336,7 +344,7 @@ def build_router() -> APIRouter:
         if record is None:
             raise HTTPException(status_code=404, detail="task not found")
         asof.apply_cache(response)
-        return _task(record, asof)
+        return _task(record, asof, store.annotation_watermark())
 
     # --- /crosswalk (collection) ----------------------------------------------
     @router.get("/crosswalk", response_model=CrosswalkResponse)
@@ -442,7 +450,9 @@ def _geo_point(record: EntityRecord) -> GeoPoint | None:
     )
 
 
-def _contradiction(record: ContradictionRecord, asof: AsOfContext) -> ContradictionResponse:
+def _contradiction(
+    record: ContradictionRecord, asof: AsOfContext, watermark: str | None
+) -> ContradictionResponse:
     return ContradictionResponse(
         contradiction_id=record.contradiction_id,
         subject_id=record.subject_id,
@@ -452,10 +462,11 @@ def _contradiction(record: ContradictionRecord, asof: AsOfContext) -> Contradict
         claim_ids=list(record.claim_ids),
         coverage=empty_coverage(f"contradiction:{record.contradiction_id}"),
         as_of=asof.echo(),
+        spine_watermark=watermark,
     )
 
 
-def _task(record: TaskRecord, asof: AsOfContext) -> TaskResponse:
+def _task(record: TaskRecord, asof: AsOfContext, watermark: str | None) -> TaskResponse:
     return TaskResponse(
         task_id=record.task_id,
         kind=record.kind,
@@ -465,4 +476,5 @@ def _task(record: TaskRecord, asof: AsOfContext) -> TaskResponse:
         rationale=record.rationale,
         coverage=empty_coverage(f"task:{record.task_id}"),
         as_of=asof.echo(),
+        spine_watermark=watermark,
     )

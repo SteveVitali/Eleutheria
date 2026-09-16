@@ -32,11 +32,27 @@ The graph-annotation surfaces (``contradiction`` / ``coverage_for`` / ``tasks`` 
 (:func:`reconcile.resolve.RESOLVE`, :class:`tasks.lifecycle.TaskPool`) — see
 :meth:`PgReadStore._compute_on_read`. Persisting those annotations is P21.2; this
 compute-on-read seam is exactly what P21.2 later replaces (ADR-059, RISK-P19-07).
+
+P25.10 made that seam bounded-latency without ever serving a stale set:
+
+* The compute is **set-based**: one query fetches every public claim (the same
+  SELECT ``claims_for`` issues per pair), grouped in memory — the per-pair loop
+  was the entire ~105 s cold time (~36k round-trips over 17,950 pairs); the
+  resolver pass itself is ~0.1 s in memory.
+* The result is memoized per instance against the **spine watermark**
+  (:meth:`PgReadStore._spine_watermark`). The spine is append-only — the only
+  permitted mutation is closing a claim's ``sys_period``, which the watermark
+  counts separately — so a cache keyed on it is provably never stale: any write
+  that could change the served set changes the key.
+* The served watermark is disclosed on the response (``spine_watermark``), so a
+  cached answer always states which spine state it describes (§3.1 freshness).
 """
 
 from __future__ import annotations
 
+import threading
 import uuid as _uuid
+from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from typing import Any
 
@@ -90,6 +106,15 @@ def _reconstruct_value(value_kind: str, text: Any, num: Any, boolean: Any) -> ob
     return text
 
 
+@dataclass(frozen=True)
+class _AnnotationView:
+    """A served contradiction/task set plus the spine watermark it describes."""
+
+    contradictions: list[ContradictionRecord]
+    tasks: list[TaskRecord]
+    watermark: str
+
+
 class PgReadStore:
     """A :class:`~api.store.ReadStore` served from PostgreSQL (P19.4, SIG-API-001)."""
 
@@ -104,11 +129,19 @@ class PgReadStore:
         self._dsn = dsn
         self._ruleset = ruleset
         self._as_of = as_of
+        self._role = role
         # RLS stays enabled: we never set row_security=off. An optional read role
         # (e.g. sig_read_public) makes RLS enforce the public tier ceiling too.
         self._conn = psycopg.connect(dsn, autocommit=True)
         if role:
             self._conn.execute(f"SET ROLE {role}")
+        # P25.10: the compute-on-read annotation set is memoized against the
+        # spine watermark. The lock keeps the per-instance compute to once per
+        # watermark under concurrent requests, and the compute itself runs on a
+        # dedicated connection so it cannot interleave with per-request reads.
+        self._annotation_lock = threading.Lock()
+        self._annotation_cache: _AnnotationView | None = None
+        self._last_annotation_view: _AnnotationView | None = None
 
     def close(self) -> None:
         self._conn.close()
@@ -463,14 +496,116 @@ class PgReadStore:
             for r in rows
         ]
 
-    def _claim_pairs(self) -> list[tuple[str, str]]:
-        rows = self._conn.execute(
-            "SELECT DISTINCT subject_id, predicate_id FROM claim "
-            "WHERE sensitivity_tier = 0 ORDER BY subject_id, predicate_id"
-        ).fetchall()
-        return [(str(r[0]), str(r[1])) for r in rows]
+    def _connect(self) -> psycopg.Connection:
+        """A dedicated read connection for the annotation compute (P25.10).
 
-    def _compute_on_read(self) -> tuple[list[ContradictionRecord], list[TaskRecord]]:
+        The compute runs several statements over the whole spine; on its own
+        connection it can never interleave with a per-request read on
+        ``self._conn``, and the same read role (RLS ceiling) applies.
+        """
+        conn = psycopg.connect(self._dsn, autocommit=True)
+        if self._role:
+            conn.execute(f"SET ROLE {self._role}")
+        return conn
+
+    def _spine_watermark(self) -> str:
+        """A monotone watermark over the append-only spine (P25.10).
+
+        The spine never lets a claim row change content (``claim_append_only``
+        forbids DELETE and every non-``sys_period`` UPDATE; the one permitted
+        mutation — closing ``sys_period`` — is counted separately), so this tuple
+        of row counts plus the latest assertion instant changes iff a row the
+        annotation compute reads has arrived. A cache keyed on it is provably
+        never stale: anything that could change the served set changes the key.
+        """
+        row = self._conn.execute(
+            "SELECT (SELECT count(*) FROM claim),"
+            "       (SELECT count(*) FROM claim WHERE upper(sys_period) IS NOT NULL),"
+            "       (SELECT max(lower(sys_period)) FROM claim),"
+            "       (SELECT count(*) FROM claim_evidence),"
+            "       (SELECT count(*) FROM evidence_capture),"
+            "       (SELECT count(*) FROM evidence_artifact)"
+        ).fetchone()
+        assert row is not None
+        claims, closed, latest, claim_ev, captures, artifacts = row
+        latest_s = latest.isoformat() if latest is not None else "none"
+        return (
+            f"claims={claims} closed={closed} latest_assertion={latest_s} "
+            f"evidence={claim_ev}/{captures}/{artifacts}"
+        )
+
+    def _public_claim_groups(
+        self, conn: psycopg.Connection, belief: datetime
+    ) -> dict[tuple[str, str], list[Claim]]:
+        """Every public claim visible at ``belief``, grouped by (subject, predicate).
+
+        The same SELECT :meth:`claims_for` issues per pair — the publication
+        boundary (``sensitivity_tier = 0``) and the as-of belief predicate are
+        unchanged — issued once over the whole spine. ``claim.subject_id`` IS the
+        entity id, so grouping needs no per-pair entity resolution.
+        """
+        rows = conn.execute(
+            "SELECT c.claim_id, c.subject_id, c.predicate_id, c.value_kind, c.value_text, "
+            "       c.value_num, c.value_bool, c.raw_value, c.observed_at, "
+            "       c.source_reliability, c.artifact_integrity, c.review_status, "
+            "       lower(c.valid_period), upper(c.valid_period), "
+            "       ea.source_id, ea.artifact_type "
+            "  FROM claim c "
+            "  LEFT JOIN LATERAL ("
+            "     SELECT ea.source_id, ea.artifact_type "
+            "       FROM claim_evidence ce "
+            "       JOIN evidence_capture ec ON ec.capture_id = ce.capture_id "
+            "       JOIN evidence_artifact ea ON ea.artifact_id = ec.artifact_id "
+            "      WHERE ce.claim_id = c.claim_id LIMIT 1"
+            "  ) ea ON true "
+            " WHERE c.sensitivity_tier = 0 "  # publication boundary (§0.7)
+            "   AND c.sys_period @> %s::timestamptz "  # as-of belief (§9.4)
+            " ORDER BY c.subject_id, c.predicate_id, c.claim_id",
+            (belief,),
+        ).fetchall()
+        groups: dict[tuple[str, str], list[Claim]] = {}
+        for r in rows:
+            (
+                claim_id,
+                subject_id,
+                predicate_id,
+                value_kind,
+                value_text,
+                value_num,
+                value_bool,
+                raw_value,
+                observed_at,
+                reliability,
+                integrity,
+                review_status,
+                valid_from,
+                valid_to,
+                source_id,
+                artifact_type,
+            ) = r
+            sid, pid = str(subject_id), str(predicate_id)
+            groups.setdefault((sid, pid), []).append(
+                Claim(
+                    claim_id=str(claim_id),
+                    subject_id=sid,
+                    predicate_id=pid,
+                    value=_reconstruct_value(value_kind, value_text, value_num, value_bool),
+                    reliability=reliability,
+                    integrity=integrity,
+                    genre=artifact_type or "",
+                    observed_at=_as_date(observed_at) if observed_at else date(1970, 1, 1),
+                    raw_value=raw_value or "",
+                    valid_from=_as_date(valid_from) if valid_from else None,
+                    valid_to=_as_date(valid_to) if valid_to else None,
+                    review_status=review_status or "active",
+                    source_id=source_id or "",
+                )
+            )
+        return groups
+
+    def _compute_on_read(
+        self, conn: psycopg.Connection
+    ) -> tuple[list[ContradictionRecord], list[TaskRecord]]:
         """Derive contradictions + tasks from the live claims via the resolver.
 
         The seam P21.2 replaces with persisted ``graph_annotations`` rows: rather
@@ -481,10 +616,9 @@ class PgReadStore:
         now = datetime.now(tz=UTC)
         contradictions: list[ContradictionRecord] = []
         tasks: dict[str, TaskRecord] = {}
-        for entity_id, predicate_id in self._claim_pairs():
-            claims = self.claims_for(entity_id, predicate_id, as_of_belief=now)
-            if not claims:
-                continue
+        groups = self._public_claim_groups(conn, now)
+        for entity_id, predicate_id in sorted(groups):
+            claims = groups[entity_id, predicate_id]
             try:
                 resolved = RESOLVE(
                     entity_id,
@@ -524,16 +658,69 @@ class PgReadStore:
         return contradictions, sorted(tasks.values(), key=lambda t: t.task_id)
 
     def contradictions(self) -> list[ContradictionRecord]:
-        persisted = self._persisted_contradictions()
-        if persisted:
-            return persisted
-        return self._compute_on_read()[0]
+        return self._annotation_view().contradictions
 
     def contradiction(self, contradiction_id: str) -> ContradictionRecord | None:
         for c in self.contradictions():
             if c.contradiction_id == contradiction_id:
                 return c
         return None
+
+    def _annotation_view(self) -> _AnnotationView:
+        """The current contradiction/task set plus the watermark it describes.
+
+        Persisted ``graph_annotations`` rows (P21.2) are authoritative and read
+        live; the compute-on-read fallback is memoized against the spine
+        watermark so the spine is re-resolved at most once per instance per
+        watermark — never more, and (append-only) never stale. The watermark is
+        read BEFORE the data so the disclosed state never overstates freshness.
+        """
+        with self._annotation_lock:
+            watermark = self._spine_watermark()
+            persisted_c = self._persisted_contradictions()
+            persisted_t = self._persisted_tasks()
+            if persisted_c and persisted_t:
+                view = _AnnotationView(persisted_c, persisted_t, watermark)
+            else:
+                cached = self._annotation_cache
+                if cached is None or cached.watermark != watermark:
+                    with self._connect() as conn:
+                        computed_c, computed_t = self._compute_on_read(conn)
+                    cached = _AnnotationView(computed_c, computed_t, watermark)
+                    self._annotation_cache = cached
+                view = _AnnotationView(
+                    persisted_c if persisted_c else cached.contradictions,
+                    persisted_t if persisted_t else cached.tasks,
+                    # A served computed portion was derived at its cache key; a
+                    # live-read persisted portion describes at least that state,
+                    # so the cache key is the honest (conservative) disclosure.
+                    cached.watermark,
+                )
+            self._last_annotation_view = view
+            return view
+
+    def annotation_watermark(self) -> str | None:
+        """The spine watermark the last-served annotation set was computed at."""
+        view = self._last_annotation_view
+        if view is None:
+            view = self._annotation_view()
+        return view.watermark
+
+    def warmup(self) -> None:
+        """Kick off the one-per-instance annotation compute in the background.
+
+        Best-effort: a failure here is retried on the first real request, which
+        surfaces the error properly. The lock guarantees the compute still runs
+        at most once even if a request arrives mid-warmup.
+        """
+
+        def _warm() -> None:
+            try:
+                self._annotation_view()
+            except Exception:  # noqa: BLE001 - warmup is advisory, never fatal
+                pass
+
+        threading.Thread(target=_warm, name="sig-annotation-warmup", daemon=True).start()
 
     def _persisted_tasks(self) -> list[TaskRecord]:
         rows = self._conn.execute(
@@ -552,10 +739,7 @@ class PgReadStore:
         ]
 
     def tasks(self) -> list[TaskRecord]:
-        persisted = self._persisted_tasks()
-        if persisted:
-            return persisted
-        return self._compute_on_read()[1]
+        return self._annotation_view().tasks
 
     def task(self, task_id: str) -> TaskRecord | None:
         for t in self.tasks():

@@ -68,6 +68,10 @@ def _serve(host: str, port: int, dsn: str | None = None, role: str | None = None
         from .demo import build_demo_store
 
         store = build_demo_store()
+    # P25.10: pre-compute the watermark-keyed annotation set in the background so
+    # even the first /v1/contradiction request is warm (a no-op for stores whose
+    # surfaces are already materialised).
+    store.warmup()
     uvicorn.run(create_app(store), host=host, port=port)
     return 0
 
