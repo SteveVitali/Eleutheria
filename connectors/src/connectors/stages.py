@@ -355,6 +355,13 @@ class RunContext:
     #: department) a resolved document's claims are built from — pure context,
     #: populated network-isolated, never fetched from.
     resolved_targets: dict[str, Mapping[str, Any]] = field(default_factory=dict)
+    #: Disappearances a connector records while resolving follow-on targets in
+    #: ``discover_more`` (P25.7): an upstream index/lookup may report that a
+    #: reviewed resource is **gone** (e.g. a dataset-API document that no longer
+    #: lists the configured resource) — a recorded disposition, never a silent
+    #: empty selection or a stale-URL fallback. The driver drains this list onto
+    #: the run report after the bounded continuation pass.
+    resolved_disappearances: list[Any] = field(default_factory=list)
 
     @property
     def asserts_claims(self) -> bool:

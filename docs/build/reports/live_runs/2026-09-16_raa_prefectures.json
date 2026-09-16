@@ -6,7 +6,8 @@
   "claim_count": 3,
   "connector": "france_belgium_records",
   "content_drift": null,
-  "duration_seconds": 3.891422,
+  "disappearances": [],
+  "duration_seconds": 4.075511,
   "mode": "live",
   "politeness_refusal": null,
   "rate_limit_events": [],
@@ -14,63 +15,63 @@
     {
       "detail": "robots.txt for 'www.charente.gouv.fr' is unretrievable; crawl permission is NOT granted and the connector refuses to run (SIG-INGEST-012).",
       "id": "raa-arrete:16:4360",
-      "observed_at": "2026-09-16T01:38:54.620803+00:00",
+      "observed_at": "2026-09-16T04:57:22.111128+00:00",
       "refusal": "RobotsUnretrievable",
       "url": "https://www.charente.gouv.fr/contenu/telechargement/52963/419274/file/AP Modificatif Liste électorale sénatoriales 2026.pdf"
     },
     {
       "detail": "robots.txt for 'www.cotes-darmor.gouv.fr' is unretrievable; crawl permission is NOT granted and the connector refuses to run (SIG-INGEST-012).",
       "id": "raa-arrete:22:5635",
-      "observed_at": "2026-09-16T01:38:55.051937+00:00",
+      "observed_at": "2026-09-16T04:57:22.418202+00:00",
       "refusal": "RobotsUnretrievable",
       "url": "https://www.cotes-darmor.gouv.fr/contenu/telechargement/79697/654699/file/recueil-22-2026-198-recueil-des-actes-administratifs.pdf"
     },
     {
       "detail": "robots.txt for 'www.dordogne.gouv.fr' is unretrievable; crawl permission is NOT granted and the connector refuses to run (SIG-INGEST-012).",
       "id": "raa-arrete:24:6043",
-      "observed_at": "2026-09-16T01:38:55.471857+00:00",
+      "observed_at": "2026-09-16T04:57:22.749297+00:00",
       "refusal": "RobotsUnretrievable",
       "url": "https://www.dordogne.gouv.fr/contenu/telechargement/52562/407366/file/AP vente-conso alcool VP.pdf"
     },
     {
       "detail": "robots.txt for 'www.dordogne.gouv.fr' is unretrievable; crawl permission is NOT granted and the connector refuses to run (SIG-INGEST-012).",
       "id": "raa-arrete:24:6044",
-      "observed_at": "2026-09-16T01:38:55.788138+00:00",
+      "observed_at": "2026-09-16T04:57:23.082395+00:00",
       "refusal": "RobotsUnretrievable",
       "url": "https://www.dordogne.gouv.fr/contenu/telechargement/52564/407376/file/AP nuisance sonore BTP.pdf"
     },
     {
       "detail": "robots.txt for 'www.dordogne.gouv.fr' is unretrievable; crawl permission is NOT granted and the connector refuses to run (SIG-INGEST-012).",
       "id": "raa-arrete:24:6045",
-      "observed_at": "2026-09-16T01:38:56.104930+00:00",
+      "observed_at": "2026-09-16T04:57:23.407149+00:00",
       "refusal": "RobotsUnretrievable",
       "url": "https://www.dordogne.gouv.fr/contenu/telechargement/52563/407371/file/AP manif sportives.pdf"
     },
     {
       "detail": "robots.txt for 'www.doubs.gouv.fr' is unretrievable; crawl permission is NOT granted and the connector refuses to run (SIG-INGEST-012).",
       "id": "raa-arrete:25:6220",
-      "observed_at": "2026-09-16T01:38:56.636863+00:00",
+      "observed_at": "2026-09-16T04:57:23.721323+00:00",
       "refusal": "RobotsUnretrievable",
       "url": "https://www.doubs.gouv.fr/contenu/telechargement/45935/306349/file/2026-01-23 arrêté préfectoral portant interdiction de rassemblement automobile du 23 au 26 janvier 2026.pdf"
     },
     {
       "detail": "robots.txt for 'www.eure-et-loir.gouv.fr' is unretrievable; crawl permission is NOT granted and the connector refuses to run (SIG-INGEST-012).",
       "id": "raa-arrete:28:6792",
-      "observed_at": "2026-09-16T01:38:56.951124+00:00",
+      "observed_at": "2026-09-16T04:57:24.042975+00:00",
       "refusal": "RobotsUnretrievable",
       "url": "https://www.eure-et-loir.gouv.fr/contenu/telechargement/59723/394882/file/Arrêté du 05 janvier 2026 12H15 portant règlementation exceptionnelle de la circulation routière.pdf"
     },
     {
       "detail": "robots.txt for 'www.eure-et-loir.gouv.fr' is unretrievable; crawl permission is NOT granted and the connector refuses to run (SIG-INGEST-012).",
       "id": "raa-arrete:28:6795",
-      "observed_at": "2026-09-16T01:38:57.269085+00:00",
+      "observed_at": "2026-09-16T04:57:24.338930+00:00",
       "refusal": "RobotsUnretrievable",
       "url": "https://www.eure-et-loir.gouv.fr/contenu/telechargement/59933/396144/file/2025-12-30-Arrete_DDT-SGREB-2025-365_Peche_2026_signé.pdf"
     }
   ],
   "robots_decisions": [],
   "source_id": "raa_prefectures",
-  "started_at": "2026-09-16T01:38:53.377495+00:00",
+  "started_at": "2026-09-16T04:57:20.338235+00:00",
   "status_codes": [],
   "urls": []
 }

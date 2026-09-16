@@ -65,6 +65,7 @@ from parsing.genre import classify_genre
 from parsing.locator import Locator
 
 from ._data import load_table
+from .disappearance import note_disappearance
 from .procurement import Contract, LifecycleTransition
 from .stages import (
     CaptureRef,
@@ -493,6 +494,154 @@ def resolve_raa_targets(
     return out
 
 
+# --- the DECP dataset-API indirection (P25.7) -----------------------------------
+#
+# The consolidated DECP files are *resources* of a data.gouv.fr dataset whose
+# static URLs carry a regeneration timestamp — Etalab republishes and the pinned
+# ``static.data.gouv.fr/resources/<dataset>/<timestamp>/<file>`` URL 404s. The
+# live seed target is therefore the dataset document on the documented API v1
+# (``www.data.gouv.fr /api/1/datasets/…``, allow-listed under ADR-083); the
+# connector resolves the reviewed resource's CURRENT ``url`` from the captured
+# index at run time. A regenerated resource resolves to its new timestamped URL;
+# an absent/renamed resource is a recorded ``link_rotted`` disappearance — never
+# a silent fallback to a stale URL.
+
+
+@dataclass(frozen=True)
+class DecpDatasetResource:
+    """One resource row of the data.gouv.fr dataset-API document."""
+
+    title: str
+    url: str
+    resource_id: str = ""
+    last_modified: str = ""
+    format: str = ""
+
+
+@dataclass(frozen=True)
+class DecpDataset:
+    """The parsed dataset-API document: the dataset identity + its resource index."""
+
+    dataset_id: str
+    title: str
+    resources: tuple[DecpDatasetResource, ...]
+
+
+def parse_decp_dataset(data: bytes, *, source_id: str) -> DecpDataset:
+    """Parse the data.gouv.fr dataset-API document — STRICT shape (fail closed).
+
+    The documented shape is a JSON object carrying ``resources`` — a list of
+    objects each with a non-empty ``title`` and an http(s) ``url``. A document
+    that is not that shape (not JSON, no ``resources`` list, a resource missing
+    its ``title``/``url``) is :class:`ContentDrift`: the API surface changed and
+    the adapter refuses to guess which entry is the consolidated DECP file.
+    """
+    try:
+        payload = json.loads(data)
+    except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+        raise ContentDrift(
+            source_id,
+            "the data.gouv.fr dataset-API document is not JSON",
+            details=str(exc),
+        ) from exc
+    if not isinstance(payload, Mapping):
+        raise ContentDrift(
+            source_id,
+            "the dataset-API document is not a JSON object — the API shape changed",
+        )
+    resources = payload.get("resources")
+    if not isinstance(resources, list):
+        raise ContentDrift(
+            source_id,
+            "the dataset-API document carries no `resources` list — the API shape "
+            "changed; fail closed, never guess",
+        )
+    entries: list[DecpDatasetResource] = []
+    for i, entry in enumerate(resources):
+        if not isinstance(entry, Mapping):
+            raise ContentDrift(
+                source_id,
+                f"dataset resource #{i} is not an object — the API shape changed",
+            )
+        title = str(entry.get("title") or "").strip()
+        url = str(entry.get("url") or "").strip()
+        if not title or not url.startswith(("http://", "https://")):
+            raise ContentDrift(
+                source_id,
+                f"dataset resource #{i} lacks a title/url — the API shape changed; "
+                "fail closed, never guess",
+            )
+        entries.append(
+            DecpDatasetResource(
+                title=title,
+                url=url,
+                resource_id=str(entry.get("id") or ""),
+                last_modified=str(
+                    entry.get("last_modified") or entry.get("last_modified_at") or ""
+                ),
+                format=str(entry.get("format") or ""),
+            )
+        )
+    return DecpDataset(
+        dataset_id=str(payload.get("id") or ""),
+        title=str(payload.get("title") or ""),
+        resources=tuple(entries),
+    )
+
+
+def resolve_decp_targets(
+    ctx: RunContext, index_capture: CaptureRef, spec: Mapping[str, Any]
+) -> list[dict[str, Any]]:
+    """Resolve the reviewed DECP resource's CURRENT url from the dataset index (P25.7).
+
+    The ``dataset_index`` target spec names the reviewed resource by
+    ``resource_title``. Exactly one match resolves to a target carrying the
+    dataset-API provenance (dataset url, resource id, last-modified stamp).
+    **Zero** matches means the reviewed resource is gone from the dataset — a
+    recorded ``link_rotted`` disappearance on ``ctx.resolved_disappearances``
+    (the driver drains it onto the run report), never a fallback to a stale
+    pinned URL. **More than one** match is :class:`ContentDrift` — an ambiguous
+    selector fails loud rather than silently picking one.
+    """
+    title = str(spec.get("resource_title") or "").strip()
+    if not title:
+        raise ContentDrift(
+            ctx.source.id,
+            "a dataset_index target must name `resource_title` — the reviewed "
+            "resource selector is data, not a guess",
+        )
+    dataset = parse_decp_dataset(ctx.captures.get(index_capture.digest), source_id=ctx.source.id)
+    matches = [r for r in dataset.resources if r.title == title]
+    if not matches:
+        ctx.resolved_disappearances.append(
+            note_disappearance(
+                artifact_id=f"{spec.get('id') or 'decp-dataset'}:{title}",
+                observed_at=index_capture.retrieved_at or datetime.now(UTC),
+                failing_status="link_rotted",
+            )
+        )
+        return []
+    if len(matches) > 1:
+        raise ContentDrift(
+            ctx.source.id,
+            f"the dataset-API document lists {len(matches)} resources titled "
+            f"{title!r} — the selector is ambiguous; fail closed, never pick one",
+        )
+    resource = matches[0]
+    return [
+        {
+            "id": f"{spec.get('id') or 'decp-dataset'}:{resource.title}",
+            "url": resource.url,
+            "kind": str(spec.get("resource_kind") or "contract"),
+            "dataset_url": index_capture.source_uri,
+            "dataset_id": dataset.dataset_id,
+            "resource_title": resource.title,
+            "resource_id": resource.resource_id,
+            "resource_last_modified": resource.last_modified,
+        }
+    ]
+
+
 # --- the MaDada Atom adapter (P25.5) --------------------------------------------
 #
 # The platform publishes an Atom feed of *successful* requests. An entry maps to
@@ -615,6 +764,10 @@ class LegalInstrument:
     instrument_type: str
     enacting_body: str | None = None
     jurisdiction: str | None = None
+    #: The candidate-identifier scheme the ``jurisdiction`` claim carries
+    #: (SIG-INGEST-034): ``fr.insee`` for the France/Belgium paths; the statute-seed
+    #: loader (P25.7) passes ``us.state`` — a candidate, never a resolution.
+    jurisdiction_scheme: str = "fr.insee"
     citation: str | None = None
     effective_from: str | None = None
     effective_to: str | None = None
@@ -712,7 +865,9 @@ class LegalInstrument:
             if predicate == "enacting_body" and isinstance(value, str):
                 row["candidate_identifier"] = org_candidate(value)
             elif predicate == "jurisdiction" and isinstance(value, str):
-                row["candidate_identifier"] = jurisdiction_candidate(value)
+                row["candidate_identifier"] = jurisdiction_candidate(
+                    value, scheme=self.jurisdiction_scheme
+                )
             if predicate == "sunset_date" and self.raw.get("sunset_date_derived"):
                 # The five-year sunset is DERIVED from effective_from (CSI L252),
                 # not read from the document — the claim says so explicitly.
@@ -1289,13 +1444,91 @@ class FranceBelgiumProcurementConnector(Connector):
         assert ctx.fetcher is not None, "connectors fetch only through the shared layer"
         return ctx.fetcher.fetch(str(target["url"]))
 
+    def discover_more(
+        self, ctx: RunContext, captures: Sequence[CaptureRef]
+    ) -> list[Mapping[str, Any]]:
+        """Resolve the reviewed DECP resource's current URL from the dataset index.
+
+        A ``dataset_index`` capture IS the indirection (P25.7): the data.gouv.fr
+        dataset-API document lists the current resource URLs, so the run
+        resolves the reviewed resource's live URL at run time — a regenerated
+        resource moves URL and still resolves; a removed/renamed one is a
+        recorded disappearance on ``ctx.resolved_disappearances``, never a
+        stale-URL fallback. The pass is network-isolated — a pure function of
+        captured bytes; only the driver's ``fetch()`` egresses for the resolved
+        resource.
+        """
+        out: list[Mapping[str, Any]] = []
+        for capture in captures:
+            spec = _configured_target(ctx, capture.source_uri)
+            if not spec or str(spec.get("kind") or "") != "dataset_index":
+                continue
+            for target in resolve_decp_targets(ctx, capture, spec):
+                url = str(target["url"])
+                if url not in ctx.resolved_targets:
+                    ctx.resolved_targets[url] = target
+                    out.append(target)
+        return out
+
     def parse(self, ctx: RunContext, capture: CaptureRef) -> dict[str, Any]:
-        """Structure the captured DECP JSON payload."""
+        """Structure the captured DECP JSON payload — or the dataset-API index.
+
+        A ``dataset_index`` capture is the data.gouv.fr dataset document (P25.7),
+        parsed STRICTLY: a changed API shape is :class:`ContentDrift`, never a
+        guessed resource. Any other capture is the consolidated DECP payload
+        itself (the resolved resource's bytes).
+        """
         data = ctx.captures.get(capture.digest)
+        target = _configured_target(ctx, capture.source_uri)
+        kind = str(target.get("kind") or "") if target else ""
+        if kind == "dataset_index" and target is not None:
+            dataset = parse_decp_dataset(data, source_id=ctx.source.id)
+            verdict = classify(_filename_from_uri(capture.source_uri), data)
+            return {
+                "kind": "dataset_index",
+                "capture": capture,
+                "verdict": verdict.to_row(),
+                "byte_size": len(data),
+                "dataset_id": dataset.dataset_id,
+                "dataset_title": dataset.title,
+                "resource_title": str(target.get("resource_title") or ""),
+                "resource_count": len(dataset.resources),
+                "resources": [
+                    {
+                        "title": r.title,
+                        "url": r.url,
+                        "id": r.resource_id,
+                        "last_modified": r.last_modified,
+                        "format": r.format,
+                    }
+                    for r in dataset.resources
+                ],
+            }
         return {"payload": json.loads(data), "capture": capture}
 
     def extract(self, ctx: RunContext, parsed: Mapping[str, Any]) -> list[Mapping[str, Any]]:
-        """Pull the DECP marché records, preserving raw values (P2)."""
+        """Pull the DECP marché records, preserving raw values (P2).
+
+        A ``dataset_index`` capture yields one index record (the dataset identity,
+        the reviewed ``resource_title`` selector, and the resource count) — the
+        indirection's provenance. The resolved resource capture yields the
+        marché records as before.
+        """
+        if parsed.get("kind") == "dataset_index":
+            capture = parsed["capture"]
+            return [
+                {
+                    "record_kind": "dataset_index",
+                    "source_uri": capture.source_uri,
+                    "capture_digest": capture.digest,
+                    "media_type": capture.media_type,
+                    "byte_size": parsed["byte_size"],
+                    "dataset_id": parsed["dataset_id"],
+                    "dataset_title": parsed["dataset_title"],
+                    "resource_title": parsed["resource_title"],
+                    "resource_count": parsed["resource_count"],
+                }
+            ]
         payload = parsed["payload"]
         return [{"record_kind": "contract", "raw": dict(obj)} for obj in _decp_marches(payload)]
 
@@ -1304,6 +1537,31 @@ class FranceBelgiumProcurementConnector(Connector):
     ) -> list[dict[str, Any]]:
         out: list[dict[str, Any]] = []
         for raw in raw_claims:
+            if raw["record_kind"] == "dataset_index":
+                # The captured dataset-API document is a quality datum: it
+                # records the indirection's outcome — which dataset, which
+                # resource selector, how many resources the index listed (P25.7).
+                out.append(
+                    _stamp(
+                        {
+                            "record_kind": "quality_report",
+                            "source_id": ctx.source.id,
+                            "capture_digest": str(raw["capture_digest"]),
+                            "media_type": str(raw["media_type"]),
+                            "byte_size": int(raw["byte_size"]),
+                            "capture_kind": "dataset_index",
+                            "dataset_id": str(raw["dataset_id"]),
+                            "dataset_title": str(raw["dataset_title"]),
+                            "resource_title": str(raw["resource_title"]),
+                            "resource_count": int(raw["resource_count"]),
+                            "connector_name": self.name,
+                            "connector_version": self.version,
+                            "vocab_version": vocab_version(),
+                        },
+                        source_id=ctx.source.id,
+                    )
+                )
+                continue
             contract = contract_from_decp(raw["raw"], source_id=ctx.source.id)
             rows = list(contract.claim_rows())
             claim_count = sum(1 for r in rows if r.get("record_kind") == "claim")
@@ -1472,6 +1730,8 @@ __all__ = [
     "AtomEntry",
     "CaptureQualityReport",
     "Contract",
+    "DecpDataset",
+    "DecpDatasetResource",
     "FranceBelgiumProcurementConnector",
     "FranceBelgiumRecordsConnector",
     "InvalidAcquisitionMethod",
@@ -1493,11 +1753,13 @@ __all__ = [
     "load_claims_for_l1",
     "madada_feed_spec",
     "parse_atom_feed",
+    "parse_decp_dataset",
     "parse_raa_index",
     "prefectoral_order_family",
     "prefectoral_order_from_raa",
     "raa_index_spec",
     "records_request_method_for",
+    "resolve_decp_targets",
     "resolve_raa_targets",
     "source_ids",
     "vocab_version",

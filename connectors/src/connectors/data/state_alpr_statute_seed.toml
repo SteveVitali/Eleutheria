@@ -19,6 +19,8 @@
 # own layout is 17 rows because California occupies two.
 
 as_of = "2022-02-03"
+as_of_label = "Updated February 03, 2022"   # the NCSL page's verbatim label (P2)
+retrieved = "2026-08-20"                    # the date this committed asset was captured
 frozen = true
 never_a_feed = true
 inventory = "NCSL state ALPR statute table (HTML only; 17 rows / 16 states)"

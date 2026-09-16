@@ -123,3 +123,23 @@ def test_most_permissive_prefers_public_domain() -> None:
     # SIG-EXPORT-007: the crosswalk gets the least-constraining licence its inputs allow.
     assert C.most_permissive_license([_rr("a", "CC0-1.0")]) == "CC0-1.0"
     assert C.most_permissive_license([_rr("a", "CC0-1.0"), _rr("b", "CC-BY-4.0")]) == "CC-BY-4.0"
+
+
+# --- P25.7: LicenseRef-DerivedFacts-Citations recorded exclusion (HG-02) -------
+
+
+def test_derived_facts_table_fails_the_export_gate_with_the_named_exclusion() -> None:
+    # The licence is registered with `export_disposition = "excluded"` (counsel-
+    # pending, HG-02): a table governed by it is refused with the recorded
+    # reason — a decision, not a silent gap or a guessed compartment.
+    idx = _idx(_rr("ccops_like", "LicenseRef-DerivedFacts-Citations"))
+    table = C.ExportTable("t", (C.ExportRow("ccops_like", {}),))
+    with pytest.raises(ExportGateClosed, match="excluded"):
+        C.place_table(table, idx)
+
+
+def test_derived_facts_licence_has_no_compartment_by_recorded_decision() -> None:
+    # `compartment_for_license` names the recorded exclusion — never "add a
+    # compartment row" as though the gap were accidental.
+    with pytest.raises(LicenseIncompatibilityError, match="counsel_pending"):
+        C.compartment_for_license("LicenseRef-DerivedFacts-Citations", None, None)

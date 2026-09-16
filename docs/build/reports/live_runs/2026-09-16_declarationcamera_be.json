@@ -1,0 +1,19 @@
+{
+  "byte_counts": [],
+  "capture_digests": [],
+  "claim_count": 0,
+  "connector": "france_belgium_records",
+  "content_drift": null,
+  "disappearances": [],
+  "duration_seconds": 0.0,
+  "mode": "live",
+  "note": "P25.7 (LIVE-OPS.7 d3): the Belgian national camera register sits behind Belgian eID (citizen assurance Level 300) — there is NO anonymous access path (F9.31, known-complete-unknown). The source passed the live gate (rights flipped 2026-09-15 on counsel's derived-facts basis, HG-02) but has no live targets: `sig-connectors run --source declarationcamera_be --mode live` exits 4 (NoLiveTargets) — the live runner never fetches a placeholder URL. Recorded boundary: live stays refused until an HG-04 eID/outreach path exists; nothing is engineered around the wall.",
+  "politeness_refusal": "NoLiveTargets: source 'declarationcamera_be' passed the live gate but has no live targets — the register is Belgian-eID-walled (assurance Level 300) with no anonymous path; pending HG-04 (eID/outreach).",
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "declarationcamera_be",
+  "started_at": "2026-09-16T04:12:00+00:00",
+  "status_codes": [],
+  "urls": []
+}

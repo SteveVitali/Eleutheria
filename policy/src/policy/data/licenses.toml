@@ -58,6 +58,29 @@ share_alike = false
 attribution_required = true
 relicensable_to = ["LicenceOuverte-2.0"]
 
+# LicenseRef-DerivedFacts-Citations — the ADR-085 basis the counsel-flipped
+# document sources run on (CCOPS filings, pathways pages, madada, the coarse
+# international adapters, declarationcamera_be): SIG emits derived facts and
+# citations, never re-hosts the upstream expressive content. The HG-02
+# publication decision is HUMAN — which compartment (if any) those facts may be
+# published under is counsel's call, not an adapter's.
+#
+# This row is a RECORDED EXCLUSION, not a licence grant and not a silent gap
+# (P25.7): `export_disposition = "excluded"` makes every export/refusal gate
+# refuse the licence with the named reason, and the empty `relicensable_to`
+# means the licence math can never land it in a compartment even if the
+# exclusion check were bypassed. Counsel replaces the exclusion with a real
+# `relicensable_to` set + a [compartments.*] row when HG-02 resolves — a data
+# change here, never a code change.
+[licenses."LicenseRef-DerivedFacts-Citations"]
+kind = "data"
+share_alike = false
+attribution_required = true
+relicensable_to = []
+export_disposition = "excluded"
+exclusion = "counsel_pending"
+exclusion_reason = "HG-02 counsel decision pending: whether the derived facts/citations may be published and under which licence is a human legal call; until then this licence is excluded from every export compartment."
+
 # ---------------------------------------------------------------------------
 # The export compartments (SIG-LIC-005 / §42.2). Each mutually-incompatible
 # licence regime present in the corpus gets its own separable compartment, its

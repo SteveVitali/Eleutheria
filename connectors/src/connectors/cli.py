@@ -68,6 +68,25 @@ def build_parser() -> argparse.ArgumentParser:
             "(exit 3) unless the source's review-status is fully green"
         ),
     )
+    seedp = sub.add_parser(
+        "load-seed",
+        help=(
+            "load a committed one-time seed asset (seeds.toml) into the claim spine "
+            "through the same pipeline + loader gate as every source (P25.7); "
+            "packaged bytes over the static transport — never a network fetch"
+        ),
+    )
+    seedp.add_argument("--source", required=True, help="seed source id (seeds.toml row)")
+    seedp.add_argument(
+        "--connector", default=None, help="registered connector name (else inferred)"
+    )
+    seedp.add_argument(
+        "--sink",
+        default="memory",
+        choices=("memory", "pg"),
+        help="claim sink: 'memory' (default) or 'pg' (requires --dsn)",
+    )
+    seedp.add_argument("--dsn", default=None, help="PG DSN for --sink pg")
     runp.add_argument("--source", required=True, help="source id for the run (SourceRecord)")
     runp.add_argument(
         "--mode",
@@ -217,6 +236,39 @@ def _review_status(source_id: str | None) -> int:
     return 0
 
 
+def _load_seed(args: argparse.Namespace) -> int:
+    """Drive ``runner.run_seed`` — the packaged seed through the same pipeline+gate."""
+    from .runner import run_seed
+    from .seeds import SeedNotRegistered
+    from .stages import ContentDrift
+
+    if args.sink == "pg" and not args.dsn:
+        print("--sink pg requires --dsn")
+        return 2
+    try:
+        report = run_seed(
+            args.source,
+            connector_name=args.connector,
+            sink_kind=args.sink,
+            dsn=args.dsn,
+        )
+    except SeedNotRegistered as missing:
+        print(f"NO SEED (exit 4): {missing}")
+        return 4
+    except ContentDrift as drift:
+        # The committed asset's shape drifted from the reviewed contract: fail
+        # loud — a seed's value is that it is reviewed data (SIG-INGEST-049f).
+        print(f"CONTENT DRIFT (exit 5): {drift}")
+        return 5
+    claims = [r for r in report.claims if r.get("record_kind") == "claim"]
+    print(
+        f"seed {args.source!r}: {len(claims)} claim row(s) asserted "
+        f"(asserted={report.asserted}) via the packaged asset — the same gate + "
+        "pipeline as every source; the registry row stays ingestion_permitted=false."
+    )
+    return 0
+
+
 def _run(args: argparse.Namespace) -> int:
     # Importing the package registers every source connector (SIG-INGEST-021).
     from pathlib import Path
@@ -287,6 +339,8 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.command == "run":
         return _run(args)
+    if args.command == "load-seed":
+        return _load_seed(args)
     if args.command == "validate":
         return _validate()
     if args.command == "stages":

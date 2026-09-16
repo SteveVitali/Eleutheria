@@ -736,6 +736,13 @@ last_verified = 2026-09-15
 ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-15
+# P25.7 (LIVE-OPS.7 d5): the recurring form of the P25.2 one-off run. A monthly
+# cadence is the recorded interval — `sig-orchestration due` maps it to 30 days
+# and ops/gcp/schedule.sh wires the same cadence onto the `sig-ingest-muckrock`
+# Cloud Run job via Cloud Scheduler. Targeted lookups ONLY, never a listing
+# crawl (SIG-INGEST-036/037): the cadence re-checks the configured request ids,
+# it does not enumerate.
+cadence = "monthly"
 notes = "api_v2 (not v1 — outline's reference is wrong). FLIPPED 2026-09-15 (GL-GATE-03, operator-approved in the B pass): documented api_v2 ToS (15 req/min, identifiable UA, token+refresh auth — all honoured by design) at REFERENCE custody; SPDX is LicenseRef-MuckRock-API-ToS — the released-records contents carry per-document posture (PARTIAL counsel), and the export gate fails closed on a non-registered licence until HG-02."
 review_packet = "docs/build/reports/rights/muckrock.md"
 [sources.muckrock.rights]

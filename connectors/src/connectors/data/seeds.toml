@@ -1,0 +1,26 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# Committed one-time seed assets (P25.7 / D-CCOPS.1-1, SIG-INGEST-049f). A seed
+# is REVIEWED COMMITTED DATA, never a feed: `sig-connectors load-seed` serves
+# the packaged bytes through the SAME eight-stage pipeline and the SAME loader
+# gate as every source — the run-time in-memory permit flip the fixture path
+# documents (SIG-INGEST-028: the registry row stays `ingestion_permitted=false`
+# and no network is ever opened for a seed). The seed's `as_of` label is stamped
+# on the loaded claims so the frozen-inventory date travels with the data.
+#
+# DATA, not code (SIG-ENG-001): registering a new seed is a data row here plus a
+# packaged asset — never a code change.
+#
+# `asset`       — the packaged TOML under connectors/data/.
+# `kind`        — the connector's target kind (which adapter parses the asset).
+# `media_type`  — the asset's content type.
+# `target_url`  — the upstream URL the committed asset stands in for (the seed's
+#                 provenance — the capture's source_uri; never fetched).
+
+[state_alpr_statute_inventory]
+asset = "state_alpr_statute_seed.toml"
+kind = "statute_seed"
+media_type = "application/toml"
+target_url = "https://www.ncsl.org/technology-and-communication/automated-license-plate-readers-state-statutes"

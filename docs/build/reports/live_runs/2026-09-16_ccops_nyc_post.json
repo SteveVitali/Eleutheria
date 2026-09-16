@@ -1,7 +1,7 @@
 {
   "byte_counts": [],
   "capture_digests": [
-    "bcnahasox5wcclmrdxfukxnk44aojtgptdztfjodczswwbmsf67p6ybad6czr6l6uxwgyb7jdrdid6j2f42z5evaoc5cw3drw2yif4wpsey",
+    "bcnaf5bva2mabyvcyj5dan5n4l4pzbed4cqwu4gpwujz5mqqw5rfgr6yydvei7fvs2lqrshebdxltw5jlvpum4ikstiulanokschz3nqkky",
     "bcnajwt22c4czyzavzf5qzfid2ompw2jba5oquvtrrl22w37en26ez5bcvqkagcmdpys56rdhfhzccvq7gasteyvc7crz244c763a74gvv4",
     "bcnao2nxpn2krfr7qgks3arwffnzl42uri74wnne7fvhgkqwhn4aroe5xyg45zcx6ldhbc7hta76uqqs4zok3s3wae2gupahfb2nhzroavq",
     "bcnajzwwg4fngz5uctipelnds2gq6a7mf2hek7hyawaxkkol3xx6o7ryepyfrnjeht5neqaoqak2kgne3eca2xa2tfvno6p5z26ahudh464",
@@ -12,14 +12,15 @@
   "claim_count": 94,
   "connector": "government_mandated_disclosure",
   "content_drift": null,
-  "duration_seconds": 6.386145,
+  "disappearances": [],
+  "duration_seconds": 19.512004,
   "mode": "live",
   "politeness_refusal": null,
   "rate_limit_events": [],
   "refusals": [],
   "robots_decisions": [],
   "source_id": "ccops_nyc_post",
-  "started_at": "2026-09-16T01:39:58.192527+00:00",
+  "started_at": "2026-09-16T04:56:45.829574+00:00",
   "status_codes": [],
   "urls": []
 }

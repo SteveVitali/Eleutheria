@@ -1,20 +1,20 @@
 {
   "byte_counts": [],
   "capture_digests": [
-    "bcnagqeer2y6mrpk7ozcfw7mc7v6gzky62m2izgo5lyurwd6josm2vj4jha3cma2vw26bligu2hxgenoy3444wf5n7yzxzre7sj5z5kppzy"
+    "bcnaj6bkbmoruhg5w252dmnsx7gll4v5zxmhymbsk7fcdjeusavvlpyhbmst5smgytomyi7m6qgg7n45o67z7ltlvcu55nd3z7csfsszioi"
   ],
   "claim_count": 3,
   "connector": "pathways",
   "content_drift": null,
   "disappearances": [],
-  "duration_seconds": 0.090654,
+  "duration_seconds": 2.240847,
   "mode": "live",
   "politeness_refusal": null,
   "rate_limit_events": [],
   "refusals": [],
   "robots_decisions": [],
   "source_id": "pathways_acoustic_drone_location",
-  "started_at": "2026-09-16T01:42:01.427763+00:00",
+  "started_at": "2026-09-16T04:53:06.454868+00:00",
   "status_codes": [],
   "urls": []
 }

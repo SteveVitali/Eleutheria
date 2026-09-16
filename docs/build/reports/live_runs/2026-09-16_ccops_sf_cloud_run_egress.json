@@ -1,0 +1,31 @@
+{
+  "byte_counts": [],
+  "capture_digests": [],
+  "claim_count": 0,
+  "connector": "government_mandated_disclosure",
+  "content_drift": null,
+  "disappearances": [],
+  "duration_seconds": 0.0,
+  "mode": "live",
+  "note": "P25.7 (LIVE-OPS.7 d3): Cloud Run egress probe — the MuckRock precedent, a normal alternate vantage, never a WAF/robots defeat (SIG-INGEST-012/013). Job 'ccops-sf-egress-probe' (curlimages/curl, plain GET, no challenge workarounds) ran twice from GCP us-central1 on 2026-09-16: www.sf.gov answered BOTH robots.txt and the CCOPS index page with HTTP 202 text/html — an interstitial/challenge page, not retrievable robots content. The local-vantage RobotsUnretrievable refusal (2026-09-16_ccops_sf.json) is therefore CONFIRMED from the hosted egress: crawl permission is not granted and the source stays a recorded honest non-fetch.",
+  "politeness_refusal": "RobotsUnretrievable: robots.txt for 'www.sf.gov' is unretrievable from Cloud Run egress (HTTP 202 text/html challenge page, not robots content); crawl permission is NOT granted (SIG-INGEST-012). The same vantage returns 202 text/html for /surveillance-technology-inventory. No challenge defeat attempted (SIG-INGEST-013).",
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [
+    {
+      "host": "www.sf.gov",
+      "vantage": "cloud-run:us-central1 (ccops-sf-egress-probe)",
+      "robots_url": "https://www.sf.gov/robots.txt",
+      "decision": "unretrievable",
+      "http_status": 202,
+      "content_type": "text/html; charset=UTF-8"
+    }
+  ],
+  "source_id": "ccops_sf",
+  "started_at": "2026-09-16T04:10:00+00:00",
+  "status_codes": [202, 202],
+  "urls": [
+    "https://www.sf.gov/robots.txt",
+    "https://www.sf.gov/surveillance-technology-inventory"
+  ]
+}
