@@ -50,3 +50,5 @@ flip. A content-fetching connector MUST NOT run against it (loader gate refuses;
 
 PARTIAL — SIG-LIC-009: per-document terms (vendor press releases vs government records vs advocacy)
 warrant per-document review before any flip.
+
+**HG-02 resolved 2026-09-16 (counsel, operator-reported):** derived facts/citations publishable — dedicated `derived_facts` compartment (ADR-086); `redistributable` flipped to true on the registry record (it gates SIG's emitted claims; upstream bytes are still never re-hosted — architectural, not flag-borne).

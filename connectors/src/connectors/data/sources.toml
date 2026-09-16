@@ -1400,12 +1400,12 @@ ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-15
 access_method = "government_mandated_disclosure connector over committed fixtures (tests/connectors/fixtures/ccops)"
-notes = "FLIPPED 2026-09-15 (operator decision, ADR-085): municipal-mandated disclosure + derived-facts basis — the connector emits derived facts and citations, never re-hosts the ordinance PDFs. LicenseRef-DerivedFacts-Citations; counsel flag retained (HG-02). The most complete CCOPS regime (F3.20): 14 technologies / 2 departments on the 2025-09 Master List; a fixed ~50-field SIR questionnaire that IS the SIG-INGEST-049b dossier field list (deployment locations, signage, fiscal incl. vendor subsidies, data sharing, retention, audit — the Fiscal 1.1/1.2 cost tables sit blank: mandated ≠ populated); quarterly determination reports unbroken 2017Q4→2026Q2. PDF only; nothing on data.seattle.gov. Public record — rights UNDETERMINED pending review (HG-03); Seattle's SIR is a pre-acquisition commitment document, never deployment evidence."
+notes = "FLIPPED 2026-09-15 (operator decision, ADR-085): municipal-mandated disclosure + derived-facts basis — the connector emits derived facts and citations, never re-hosts the ordinance PDFs. LicenseRef-DerivedFacts-Citations; counsel flag retained (HG-02). The most complete CCOPS regime (F3.20): 14 technologies / 2 departments on the 2025-09 Master List; a fixed ~50-field SIR questionnaire that IS the SIG-INGEST-049b dossier field list (deployment locations, signage, fiscal incl. vendor subsidies, data sharing, retention, audit — the Fiscal 1.1/1.2 cost tables sit blank: mandated ≠ populated); quarterly determination reports unbroken 2017Q4→2026Q2. PDF only; nothing on data.seattle.gov. Public record — rights UNDETERMINED pending review (HG-03); Seattle's SIR is a pre-acquisition commitment document, never deployment evidence. HG-02 resolved 2026-09-16 (counsel, ADR-086): derived facts publish in the derived_facts compartment; redistributable=true (upstream bytes still never re-hosted)."
 
 [sources.ccops_seattle.rights]
 spdx = "LicenseRef-DerivedFacts-Citations"
 attribution = "City of Seattle — SMC 14.18 mandated disclosures"
-redistributable = false
+redistributable = true
 derivative_permitted = true
 terms_url = "https://www.seattle.gov/tech/data-privacy/surveillance-technology"
 retrieval_date = 2026-09-15
@@ -1424,12 +1424,12 @@ ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-15
 access_method = "government_mandated_disclosure connector over committed fixtures (tests/connectors/fixtures/ccops)"
-notes = "FLIPPED 2026-09-15 (operator decision, ADR-085): municipal-mandated disclosure + derived-facts basis — the connector emits derived facts and citations, never re-hosts the ordinance PDFs. LicenseRef-DerivedFacts-Citations; counsel flag retained (HG-02). The closest thing to a machine-enumerable CCOPS corpus (F3.24): a single index page, 42 distinct PDFs under /assets/nypd/downloads/pdf/public_information/post-final/, consistent filenames, synchronised revision date (2026-02-04) acting as a version stamp. Declared fields: capabilities, use rules, unauthorized-access protections, data retention, public access, external-entity access, trainings, audit & oversight, health & safety, disparate impacts. NYPD is the largest single-agency CCOPS regime in the US. Public record — rights UNDETERMINED pending review (HG-03); the IUPs describe capabilities and rules, they do not report measured use."
+notes = "FLIPPED 2026-09-15 (operator decision, ADR-085): municipal-mandated disclosure + derived-facts basis — the connector emits derived facts and citations, never re-hosts the ordinance PDFs. LicenseRef-DerivedFacts-Citations; counsel flag retained (HG-02). The closest thing to a machine-enumerable CCOPS corpus (F3.24): a single index page, 42 distinct PDFs under /assets/nypd/downloads/pdf/public_information/post-final/, consistent filenames, synchronised revision date (2026-02-04) acting as a version stamp. Declared fields: capabilities, use rules, unauthorized-access protections, data retention, public access, external-entity access, trainings, audit & oversight, health & safety, disparate impacts. NYPD is the largest single-agency CCOPS regime in the US. Public record — rights UNDETERMINED pending review (HG-03); the IUPs describe capabilities and rules, they do not report measured use. HG-02 resolved 2026-09-16 (counsel, ADR-086): derived facts publish in the derived_facts compartment; redistributable=true (upstream bytes still never re-hosted)."
 
 [sources.ccops_nyc_post.rights]
 spdx = "LicenseRef-DerivedFacts-Citations"
 attribution = "NYPD — POST Act impact & use policies (mandated disclosures)"
-redistributable = false
+redistributable = true
 derivative_permitted = true
 terms_url = "https://www.nyc.gov/site/nypd/about/about-nypd/policy/post-act.page"
 retrieval_date = 2026-09-15
@@ -1448,12 +1448,12 @@ ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-15
 access_method = "government_mandated_disclosure connector over committed fixtures (tests/connectors/fixtures/ccops)"
-notes = "FLIPPED 2026-09-15 (operator decision, ADR-085): municipal-mandated disclosure + derived-facts basis — the connector emits derived facts and citations, never re-hosts the ordinance PDFs. LicenseRef-DerivedFacts-Citations; counsel flag retained (HG-02). The broadest CCOPS regime (F3.21): citywide — every city department, not just police — with a published compliance breakdown (2026-03-02 report: 66% approved policy, 26% technologies in use WITHOUT an approved policy — 37 technologies / 9 departments; the SIG-INGEST-049e non-compliance finding class). Four appendices: BOS-approved (93 tech / 58 policies), draft-reviewed (10), seeking procurement / SFPD pilot (1 — the 2024-03 ballot-measure pilot carve-out), in use without approved policy (37). PDF only. Public record — rights UNDETERMINED pending review (HG-03); the inventory's own in-use statuses are the use evidence, never an inference."
+notes = "FLIPPED 2026-09-15 (operator decision, ADR-085): municipal-mandated disclosure + derived-facts basis — the connector emits derived facts and citations, never re-hosts the ordinance PDFs. LicenseRef-DerivedFacts-Citations; counsel flag retained (HG-02). The broadest CCOPS regime (F3.21): citywide — every city department, not just police — with a published compliance breakdown (2026-03-02 report: 66% approved policy, 26% technologies in use WITHOUT an approved policy — 37 technologies / 9 departments; the SIG-INGEST-049e non-compliance finding class). Four appendices: BOS-approved (93 tech / 58 policies), draft-reviewed (10), seeking procurement / SFPD pilot (1 — the 2024-03 ballot-measure pilot carve-out), in use without approved policy (37). PDF only. Public record — rights UNDETERMINED pending review (HG-03); the inventory's own in-use statuses are the use evidence, never an inference. HG-02 resolved 2026-09-16 (counsel, ADR-086): derived facts publish in the derived_facts compartment; redistributable=true (upstream bytes still never re-hosted)."
 
 [sources.ccops_sf.rights]
 spdx = "LicenseRef-DerivedFacts-Citations"
 attribution = "City & County of San Francisco — Chapter 19B mandated inventory"
-redistributable = false
+redistributable = true
 derivative_permitted = true
 terms_url = "https://www.sf.gov/surveillance-technology-inventory"
 retrieval_date = 2026-09-15
@@ -1620,7 +1620,7 @@ review_packet = "docs/build/reports/rights/madada.md"
 ingestion_permitted = true
 rights_reviewed_by = "counsel (HG-02)"
 rights_reviewed_on = 2026-09-15
-notes = "FLIPPED 2026-09-15 — counsel approved ingestion (HG-02): derived-facts only (request metadata: authority/status/dates), never the user-authored request text; redistributable=false, counsel basis recorded. Upstream is Atom feeds/authorities CSV ≠ the records_requests shape — document adapter owed before live. | Prior: 51,669 requests / 51,918 authorities; Atom feeds, no complete API (F9.14). Acquisition method fr.cada (§13.8). Rights UNDETERMINED pending site-terms review."
+notes = "FLIPPED 2026-09-15 — counsel approved ingestion (HG-02): derived-facts only (request metadata: authority/status/dates), never the user-authored request text; redistributable=false, counsel basis recorded. Upstream is Atom feeds/authorities CSV ≠ the records_requests shape — document adapter owed before live. | Prior: 51,669 requests / 51,918 authorities; Atom feeds, no complete API (F9.14). Acquisition method fr.cada (§13.8). Rights UNDETERMINED pending site-terms review. HG-02 resolved 2026-09-16 (counsel, ADR-086): derived facts publish in the derived_facts compartment; redistributable=true (upstream bytes still never re-hosted)."
 
 # Belgium — declarationcamera.be, the legally complete national camera register
 # behind a Belgian-eID wall, not public (F9.31). A known-complete-unknown: a
@@ -1630,7 +1630,7 @@ notes = "FLIPPED 2026-09-15 — counsel approved ingestion (HG-02): derived-fact
 [sources.madada.rights]
 spdx = "LicenseRef-DerivedFacts-Citations"
 attribution = "Ma Dada (madada.fr) — CADA public-records platform"
-redistributable = false
+redistributable = true
 derivative_permitted = true
 terms_url = "https://madada.fr/help/api"
 retrieval_date = 2026-09-15
@@ -1645,7 +1645,7 @@ robots_policy = "honor"
 auth_model = "belgian_eid (citizen assurance Level 300)"
 verified = true
 last_verified = 2026-09-15
-notes = "FLIPPED 2026-09-15 — counsel approved ingestion (HG-02): derived-facts basis. The register itself sits behind Belgian eID (citizen assurance Level 300) — NO anonymous access path; live stays refused on NoLiveTargets until an HG-04 operator path exists. The flip records the rights posture, not a fetch claim. | Prior: loi caméras 21 March 2007; declarations to police since 25 May 2018. Register held by police/DPA, NOT public — no anonymous access path (F9.31). Known-complete-unknown; records-request regime no_equivalent_available (§13.8). Packet drafted 2026-09-15 (B pass): JS-only shell, no terms reachable — LINK-only pending HG-04 outreach."
+notes = "FLIPPED 2026-09-15 — counsel approved ingestion (HG-02): derived-facts basis. The register itself sits behind Belgian eID (citizen assurance Level 300) — NO anonymous access path; live stays refused on NoLiveTargets until an HG-04 operator path exists. The flip records the rights posture, not a fetch claim. | Prior: loi caméras 21 March 2007; declarations to police since 25 May 2018. Register held by police/DPA, NOT public — no anonymous access path (F9.31). Known-complete-unknown; records-request regime no_equivalent_available (§13.8). Packet drafted 2026-09-15 (B pass): JS-only shell, no terms reachable — LINK-only pending HG-04 outreach. HG-02 resolved 2026-09-16 (counsel, ADR-086): derived facts publish in the derived_facts compartment; redistributable=true (upstream bytes still never re-hosted)."
 review_packet = "docs/build/reports/rights/declarationcamera_be.md"
 ingestion_permitted = true
 rights_reviewed_by = "counsel (HG-02)"
@@ -1660,7 +1660,7 @@ rights_reviewed_on = 2026-09-15
 [sources.declarationcamera_be.rights]
 spdx = "LicenseRef-DerivedFacts-Citations"
 attribution = "declarationcamera.be — Belgian national camera register (police/DPA)"
-redistributable = false
+redistributable = true
 derivative_permitted = true
 terms_url = "https://www.declarationcamera.be/"
 retrieval_date = 2026-09-15
@@ -1678,12 +1678,12 @@ rights_reviewed_by = "counsel (HG-02)"
 rights_reviewed_on = 2026-09-15
 verified = true
 last_verified = 2026-09-15
-notes = "FLIPPED 2026-09-15 — counsel approved ingestion (HG-02): coarse country-level derived facts only (SIG-INGEST-042 granularity floor). Report-page upstream needs an adapter before live. | Prior: Country-level AI-surveillance index (OL-5.3-01); coarse granularity mandatory (SIG-INGEST-042). UNDETERMINED."
+notes = "FLIPPED 2026-09-15 — counsel approved ingestion (HG-02): coarse country-level derived facts only (SIG-INGEST-042 granularity floor). Report-page upstream needs an adapter before live. | Prior: Country-level AI-surveillance index (OL-5.3-01); coarse granularity mandatory (SIG-INGEST-042). UNDETERMINED. HG-02 resolved 2026-09-16 (counsel, ADR-086): derived facts publish in the derived_facts compartment; redistributable=true (upstream bytes still never re-hosted)."
 
 [sources.carnegie_ai_gsi.rights]
 spdx = "LicenseRef-DerivedFacts-Citations"
 attribution = "Carnegie Endowment for International Peace — AI Global Surveillance Index"
-redistributable = false
+redistributable = true
 derivative_permitted = true
 terms_url = "https://carnegieendowment.org/2019/09/17/global-expansion-of-ai-surveillance-pub-79847"
 retrieval_date = 2026-09-15
@@ -1701,12 +1701,12 @@ rights_reviewed_by = "counsel (HG-02)"
 rights_reviewed_on = 2026-09-15
 verified = true
 last_verified = 2026-09-15
-notes = "FLIPPED 2026-09-15 — counsel approved ingestion (HG-02): coarse country-level derived facts only (SIG-INGEST-042 granularity floor); marketing-page upstream needs an adapter before live. | Prior: Country-level facial-recognition map (OL-5.3-01); coarse granularity mandatory (SIG-INGEST-042). UNDETERMINED."
+notes = "FLIPPED 2026-09-15 — counsel approved ingestion (HG-02): coarse country-level derived facts only (SIG-INGEST-042 granularity floor); marketing-page upstream needs an adapter before live. | Prior: Country-level facial-recognition map (OL-5.3-01); coarse granularity mandatory (SIG-INGEST-042). UNDETERMINED. HG-02 resolved 2026-09-16 (counsel, ADR-086): derived facts publish in the derived_facts compartment; redistributable=true (upstream bytes still never re-hosted)."
 
 [sources.facial_recognition_world_map.rights]
 spdx = "LicenseRef-DerivedFacts-Citations"
 attribution = "Surfshark — Facial Recognition World Map"
-redistributable = false
+redistributable = true
 derivative_permitted = true
 terms_url = "https://www.surfshark.com/facial-recognition-map"
 retrieval_date = 2026-09-15
@@ -1724,7 +1724,7 @@ last_verified = 2026-09-15
 ingestion_permitted = true
 rights_reviewed_by = "counsel (HG-02)"
 rights_reviewed_on = 2026-09-15
-notes = "FLIPPED 2026-09-15 — counsel approved ingestion (HG-02): coarse country-level derived facts only (SIG-INGEST-042 granularity floor), never the dataset bytes. Interactive-map upstream needs an adapter before live. | Prior: Vendor-level international dataset (OL-5.3-01); coarse granularity mandatory (SIG-INGEST-042). UNDETERMINED."
+notes = "FLIPPED 2026-09-15 — counsel approved ingestion (HG-02): coarse country-level derived facts only (SIG-INGEST-042 granularity floor), never the dataset bytes. Interactive-map upstream needs an adapter before live. | Prior: Vendor-level international dataset (OL-5.3-01); coarse granularity mandatory (SIG-INGEST-042). UNDETERMINED. HG-02 resolved 2026-09-16 (counsel, ADR-086): derived facts publish in the derived_facts compartment; redistributable=true (upstream bytes still never re-hosted)."
 
 # ===========================================================================
 # J. Oklahoma City vertical slice (J-1, docs/slice/P06.1_hardness_precondition.md)
@@ -1740,7 +1740,7 @@ notes = "FLIPPED 2026-09-15 — counsel approved ingestion (HG-02): coarse count
 [sources.aspi_mapping_chinas_tech_giants.rights]
 spdx = "LicenseRef-DerivedFacts-Citations"
 attribution = "Australian Strategic Policy Institute — Mapping China's Tech Giants"
-redistributable = false
+redistributable = true
 derivative_permitted = true
 terms_url = "https://chinatechmap.aspi.org.au/"
 retrieval_date = 2026-09-15
@@ -1876,12 +1876,12 @@ ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-15
 access_method = "pathways connector over committed fixtures (tests/connectors/fixtures/pathways)"
-notes = "Stage-5 P17.1 federation/RTCC pathway (private-camera registries, RTCC integration hubs, data-broker chain). Fixtures excerpt public disclosures; per-fixture URLs in SOURCES.md. FLIPPED 2026-09-15 (operator decision, ADR-085): derived-facts + citations basis — SIG ingests only its own paraphrased records with upstream URLs cited, never re-hosts upstream bytes. LicenseRef-DerivedFacts-Citations; counsel flag retained (HG-02). Packet docs/build/reports/rights/pathways_rtcc_federation.md."
+notes = "Stage-5 P17.1 federation/RTCC pathway (private-camera registries, RTCC integration hubs, data-broker chain). Fixtures excerpt public disclosures; per-fixture URLs in SOURCES.md. FLIPPED 2026-09-15 (operator decision, ADR-085): derived-facts + citations basis — SIG ingests only its own paraphrased records with upstream URLs cited, never re-hosts upstream bytes. LicenseRef-DerivedFacts-Citations; counsel flag retained (HG-02). Packet docs/build/reports/rights/pathways_rtcc_federation.md. HG-02 resolved 2026-09-16 (counsel, ADR-086): derived facts publish in the derived_facts compartment; redistributable=true (upstream bytes still never re-hosted)."
 
 [sources.pathways_rtcc_federation.rights]
 spdx = "LicenseRef-DerivedFacts-Citations"
 attribution = "SIG derived-facts records over cited municipal disclosures (per-fixture URLs)"
-redistributable = false
+redistributable = true
 derivative_permitted = true
 terms_url = "docs/build/reports/rights/pathways_rtcc_federation.md"
 retrieval_date = 2026-09-15
@@ -1900,12 +1900,12 @@ ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-15
 access_method = "pathways connector over committed fixtures (tests/connectors/fixtures/pathways)"
-notes = "Stage-5 P17.2 FR/CSS/forensics pathway (facial recognition, cell-site simulators, mobile-device forensics, federal authorizations). Fixtures excerpt public procurement/policy/court documents; per-fixture URLs in SOURCES.md. FLIPPED 2026-09-15 (operator decision, ADR-085): derived-facts + citations basis — SIG ingests only its own paraphrased records with upstream URLs cited, never re-hosts upstream bytes. LicenseRef-DerivedFacts-Citations; counsel flag retained (HG-02). Packet docs/build/reports/rights/pathways_fr_css_forensics.md."
+notes = "Stage-5 P17.2 FR/CSS/forensics pathway (facial recognition, cell-site simulators, mobile-device forensics, federal authorizations). Fixtures excerpt public procurement/policy/court documents; per-fixture URLs in SOURCES.md. FLIPPED 2026-09-15 (operator decision, ADR-085): derived-facts + citations basis — SIG ingests only its own paraphrased records with upstream URLs cited, never re-hosts upstream bytes. LicenseRef-DerivedFacts-Citations; counsel flag retained (HG-02). Packet docs/build/reports/rights/pathways_fr_css_forensics.md. HG-02 resolved 2026-09-16 (counsel, ADR-086): derived facts publish in the derived_facts compartment; redistributable=true (upstream bytes still never re-hosted)."
 
 [sources.pathways_fr_css_forensics.rights]
 spdx = "LicenseRef-DerivedFacts-Citations"
 attribution = "SIG derived-facts records over cited procurement/policy/court documents (per-fixture URLs)"
-redistributable = false
+redistributable = true
 derivative_permitted = true
 terms_url = "docs/build/reports/rights/pathways_fr_css_forensics.md"
 retrieval_date = 2026-09-15
@@ -1924,12 +1924,12 @@ ingestion_permitted = true
 rights_reviewed_by = "maintainer (delegated)"
 rights_reviewed_on = 2026-09-15
 access_method = "pathways connector over committed fixtures (tests/connectors/fixtures/pathways)"
-notes = "Stage-5 P17.3 acoustic/drone/location pathway (gunshot detection, drones/UAS, commercial location-data subscriptions). Fixtures excerpt public procurement/policy/deployment documents; per-fixture URLs in SOURCES.md. FLIPPED 2026-09-15 (operator decision, ADR-085): derived-facts + citations basis — SIG ingests only its own paraphrased records with upstream URLs cited, never re-hosts upstream bytes. LicenseRef-DerivedFacts-Citations; counsel flag retained (HG-02). Packet docs/build/reports/rights/pathways_acoustic_drone_location.md."
+notes = "Stage-5 P17.3 acoustic/drone/location pathway (gunshot detection, drones/UAS, commercial location-data subscriptions). Fixtures excerpt public procurement/policy/deployment documents; per-fixture URLs in SOURCES.md. FLIPPED 2026-09-15 (operator decision, ADR-085): derived-facts + citations basis — SIG ingests only its own paraphrased records with upstream URLs cited, never re-hosts upstream bytes. LicenseRef-DerivedFacts-Citations; counsel flag retained (HG-02). Packet docs/build/reports/rights/pathways_acoustic_drone_location.md. HG-02 resolved 2026-09-16 (counsel, ADR-086): derived facts publish in the derived_facts compartment; redistributable=true (upstream bytes still never re-hosted)."
 
 [sources.pathways_acoustic_drone_location.rights]
 spdx = "LicenseRef-DerivedFacts-Citations"
 attribution = "SIG derived-facts records over cited procurement/policy/deployment documents (per-fixture URLs)"
-redistributable = false
+redistributable = true
 derivative_permitted = true
 terms_url = "docs/build/reports/rights/pathways_acoustic_drone_location.md"
 retrieval_date = 2026-09-15

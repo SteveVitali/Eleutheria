@@ -61,25 +61,19 @@ relicensable_to = ["LicenceOuverte-2.0"]
 # LicenseRef-DerivedFacts-Citations — the ADR-085 basis the counsel-flipped
 # document sources run on (CCOPS filings, pathways pages, madada, the coarse
 # international adapters, declarationcamera_be): SIG emits derived facts and
-# citations, never re-hosts the upstream expressive content. The HG-02
-# publication decision is HUMAN — which compartment (if any) those facts may be
-# published under is counsel's call, not an adapter's.
+# citations, never re-hosts the upstream expressive content.
 #
-# This row is a RECORDED EXCLUSION, not a licence grant and not a silent gap
-# (P25.7): `export_disposition = "excluded"` makes every export/refusal gate
-# refuse the licence with the named reason, and the empty `relicensable_to`
-# means the licence math can never land it in a compartment even if the
-# exclusion check were bypassed. Counsel replaces the exclusion with a real
-# `relicensable_to` set + a [compartments.*] row when HG-02 resolves — a data
-# change here, never a code change.
+# HG-02 resolved 2026-09-16 (counsel, recorded in LEDGER GATE DECISIONS +
+# ADR-086): the derived facts/citations MAY be published — in the dedicated
+# `derived_facts` compartment under this expression, self-relicensable only.
+# Keeping the LicenseRef (rather than folding into CC-BY-4.0) is the
+# conservative reading: the basis stays visible and the facts can never merge
+# into sig_graph/osm_physical/portal (the licence math intersects to itself).
 [licenses."LicenseRef-DerivedFacts-Citations"]
 kind = "data"
 share_alike = false
 attribution_required = true
-relicensable_to = []
-export_disposition = "excluded"
-exclusion = "counsel_pending"
-exclusion_reason = "HG-02 counsel decision pending: whether the derived facts/citations may be published and under which licence is a human legal call; until then this licence is excluded from every export compartment."
+relicensable_to = ["LicenseRef-DerivedFacts-Citations"]
 
 # ---------------------------------------------------------------------------
 # The export compartments (SIG-LIC-005 / §42.2). Each mutually-incompatible
@@ -115,4 +109,9 @@ source = "SIG"
 [compartments.osm_contribution]
 license = "CC0-1.0"
 description = "SIG subset dual-licensed CC0 for upstream OSM contribution (SIG-LIC-007a)"
+source = "SIG"
+
+[compartments.derived_facts]
+license = "LicenseRef-DerivedFacts-Citations"
+description = "SIG-authored derived facts + citations over counsel-approved document sources (ADR-085/ADR-086; upstream bytes never re-hosted)"
 source = "SIG"

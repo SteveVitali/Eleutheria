@@ -65,7 +65,10 @@ def test_source_ids_are_unique() -> None:
 #: disclosure basis (ADR-085); and the five held sources flipped 2026-09-15 on
 #: counsel's approval (HG-02): madada, declarationcamera_be, aspi, carnegie_ai_gsi,
 #: facial_recognition_world_map — all LicenseRef-DerivedFacts-Citations, DERIVE
-#: custody, redistributable=false. Every connector-mapped source is now flipped;
+#: custody; counsel resolved HG-02 on 2026-09-16 (ADR-086) — the derived facts
+#: publish in the dedicated `derived_facts` compartment, so those records are
+#: redistributable (upstream bytes are never re-hosted regardless — no connector
+#: emits them into the spine). Every connector-mapped source is now flipped;
 #: the unmapped remainder stays un-permitted.
 _FLIPPED_SUBSET = frozenset(
     {
