@@ -42,6 +42,7 @@ fetch (SIG-INGEST-018/019).
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -49,8 +50,11 @@ from functools import cache
 from typing import Any
 from uuid import uuid4
 
+from parsing.claim import ParsedValue
 from parsing.clauses import clause_claim, find_clause, locate_clauses
+from parsing.document import html_text, pdf_text_pages
 from parsing.genre import DocumentGenre, classify_genre
+from parsing.locator import Locator
 from parsing.tables import parse_table, table_claims
 from policy.officer import (
     OfficerNamingProngs,
@@ -402,9 +406,42 @@ def _extract_policy_clauses(
     return out
 
 
+def _extract_live_clauses(
+    connector_name: str, doc: Mapping[str, Any], ctx: DocumentContext
+) -> list[dict[str, Any]]:
+    """Emit the reviewed clause facts of a live-captured section (P25.8).
+
+    ``_live_document_envelope`` has already verified each fact's verbatim
+    ``literal`` inside the captured section and attached the real capture
+    locator; here the literal becomes the claim's ``raw_value`` (P2 preserved)
+    and the reviewed ``value`` its typed interpretation — each claim still
+    routes through :func:`okc_claim`, so the predicate allowlist and the Part
+    VIII guard apply unchanged.
+    """
+    out: list[dict[str, Any]] = []
+    for fact in doc["clauses"]:
+        parsed_value = ParsedValue.typed(
+            str(fact["literal"]),
+            fact["value"],
+            value_kind=str(fact.get("value_kind", "text")),
+        )
+        out.append(
+            okc_claim(
+                ctx,
+                predicate=str(fact["predicate"]),
+                value=parsed_value.parsed,
+                raw_value=parsed_value.raw_value,
+                extraction_method=str(doc.get("method", "pdf_text")),
+                locator=fact["locator"],
+            )
+        )
+    return out
+
+
 _EXTRACTORS = {
     "procurement_table": _extract_procurement_table,
     "policy_clauses": _extract_policy_clauses,
+    "live_clauses": _extract_live_clauses,
 }
 
 
@@ -428,7 +465,9 @@ def parse_okc_document(source_id: str, data: bytes) -> dict[str, Any]:
     A live fetch returns the raw document (a PDF or a web page), which is NOT the
     structured fixture envelope this connector consumes: that mismatch is reported as
     :class:`ContentDrift` (fail loud, recorded — never garbage or a silent zero),
-    the P25.1 hardening. Replay/shadow over the committed fixtures is unchanged.
+    the P25.1 hardening — UNLESS the capture's target carries a reviewed
+    ``clauses`` map, in which case :func:`_live_document_envelope` reads the real
+    page (P25.8). Replay/shadow over the committed fixtures is unchanged.
     """
     try:
         payload = json.loads(data.decode("utf-8"))
@@ -446,6 +485,179 @@ def parse_okc_document(source_id: str, data: bytes) -> dict[str, Any]:
             details=_sniff(data),
         )
     return payload
+
+
+# --- the live document path (P25.8 / D-LIVE.1a-1) ------------------------------
+#
+# A configured live target may carry a REVIEWED clause map (`clauses`) — data on
+# the live-targets row (SIG-INGEST-038), never code. The live path slices the
+# cited section verbatim out of the real captured page so the clause layer can
+# address it; a capture whose page no longer carries the marker is a recorded
+# ContentDrift, never a claim asserted beyond the capture.
+
+
+def _configured_target(ctx: RunContext, uri: str) -> Mapping[str, Any] | None:
+    """The run-context target spec for a capture URI (configured, never resolved)."""
+    for target in ctx.parameters.get("targets", []) or ():
+        if str(target.get("url") or "") == uri:
+            return target
+    return None
+
+
+def _page_text(data: bytes) -> str:
+    """The visible text of a captured page, decoded honestly.
+
+    UTF-8 first; cp1252 as the declared-fallback for hosts that still serve it
+    (OSCN emits Latin-1, where ``§`` is 0xA7 — a lossy UTF-8 read would erase the
+    section marker the clause layer keys on).
+    """
+    try:
+        decoded = data.decode("utf-8")
+    except UnicodeDecodeError:
+        decoded = data.decode("cp1252")
+    return html_text(decoded.encode("utf-8"))
+
+
+def _fold(text: str) -> str:
+    """Whitespace-folded text for literal matching across line breaks."""
+    return re.sub(r"\s+", " ", text)
+
+
+def _pdf_section_slice(text: str, section: str, source_id: str) -> str:
+    """The verbatim slice of ``section`` in a manual's extracted text (P25.8).
+
+    A manual section opens with a bare ``<N>-<M> <title>`` heading at line start
+    (the manual carries no ``§`` marker); its ``<N>-<M>.<k>`` subsections belong
+    to it, and the section ends at the next *sibling* heading. Lines carrying
+    dot leaders are table-of-contents entries and are skipped.
+    """
+    heading = re.compile(rf"(?m)^[ \t]*{re.escape(section)}(?!\.?\d)")
+    start = -1
+    for match in heading.finditer(text):
+        line_end = text.find("\n", match.start())
+        line = text[match.start() : line_end if line_end > 0 else len(text)]
+        if "...." not in line:
+            start = match.start()
+            break
+    if start < 0:
+        raise ContentDrift(
+            source_id,
+            f"captured document lacks the cited section {section!r} heading",
+            details=_sniff(text.encode("utf-8")),
+        )
+    tail = text[start + len(section) :]
+    nxt = re.search(rf"(?m)^[ \t]*(?!{re.escape(section)})\d+-\d+\s*\S", tail)
+    end = start + len(section) + nxt.start() if nxt else min(start + 16000, len(text))
+    return text[start:end]
+
+
+def _page_locator(pages: tuple[str, ...], literal: str) -> dict[str, Any] | None:
+    """The 1-based ``page`` locator for a literal, tolerant of line wraps (P25.8)."""
+    folded = _fold(literal).lower()
+    for i, page in enumerate(pages, start=1):
+        if folded in _fold(page).lower():
+            return Locator.page(i).to_row()
+    return None
+
+
+def _live_document_envelope(
+    source_id: str,
+    data: bytes,
+    capture: CaptureRef,
+    target: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Build the connector's document envelope from a real captured page (P25.8).
+
+    The reviewed ``section`` is located in the real capture — a ``§ <section>``
+    marker in a captured web page, or a ``<N>-<M>`` heading inside a captured
+    PDF's text layer — and sliced verbatim. Every reviewed fact carries a
+    ``literal`` that MUST appear (whitespace-folded) inside the slice: it is the
+    claim's verbatim ``raw_value`` and its evidence is the real locator — a
+    ``page`` locator for a PDF, a ``byte_range`` into the extracted text for a
+    page. An absent marker or literal is a recorded :class:`ContentDrift`,
+    never a claim asserted beyond the capture (§3.1).
+    """
+    section = str(target["section"])
+    if data.lstrip()[:5] == b"%PDF-":
+        pages = pdf_text_pages(data)
+        if not pages:
+            raise ContentDrift(
+                source_id,
+                "captured PDF yielded no text layer",
+                details=_sniff(data),
+            )
+        section_text = _pdf_section_slice("\n\n".join(pages), section, source_id)
+        method = "pdf_text"
+
+        def locator_for(literal: str) -> dict[str, Any] | None:
+            return _page_locator(pages, literal)
+
+    else:
+        text = _page_text(data)
+        if not text:
+            raise ContentDrift(
+                source_id,
+                "captured page yielded no visible text",
+                details=_sniff(data),
+            )
+        marker = f"§ {section}"
+        start = text.find(marker)
+        if start < 0:
+            raise ContentDrift(
+                source_id,
+                f"captured page lacks the § {section} marker the reviewed clause map cites",
+                details=_sniff(data),
+            )
+        nxt = text.find("§", start + 1)
+        section_text = text[start : nxt if nxt > start else min(start + 8000, len(text))]
+        method = "selector_template"
+
+        def locator_for(literal: str) -> dict[str, Any] | None:
+            offset = _fold(section_text).find(_fold(literal))
+            if offset < 0:
+                return None
+            return Locator.byte_range(offset, offset + len(literal)).to_row()
+
+    folded_slice = _fold(section_text)
+    facts: list[dict[str, Any]] = []
+    for fact in target["clauses"]:
+        literal = str(fact.get("literal") or fact["value"])
+        if _fold(literal) not in folded_slice:
+            raise ContentDrift(
+                source_id,
+                f"the reviewed literal for {fact['predicate']!r} is absent from "
+                f"the captured {section!r} section",
+                details=_sniff(data),
+            )
+        locator = locator_for(literal)
+        if locator is None:
+            raise ContentDrift(
+                source_id,
+                f"the reviewed literal for {fact['predicate']!r} could not be "
+                "located in the capture",
+                details=_sniff(data),
+            )
+        facts.append({**fact, "literal": literal, "locator": locator})
+    retrieved = (
+        capture.retrieved_at.date().isoformat()
+        if capture.retrieved_at is not None
+        else datetime.now(UTC).date().isoformat()
+    )
+    return {
+        "connector": source_id,
+        "documents": [
+            {
+                "id": str(target.get("doc_id") or target["id"]),
+                "kind": "live_clauses",
+                "source_url": capture.source_uri,
+                "retrieved_date": retrieved,
+                "subject_id": str(target["subject_id"]),
+                "text": section_text,
+                "method": method,
+                "clauses": facts,
+            }
+        ],
+    }
 
 
 def extract_documents(connector_name: str, parsed: Mapping[str, Any]) -> list[Mapping[str, Any]]:
@@ -496,7 +708,11 @@ class OkcDocumentConnector(Connector):
         return ctx.fetcher.fetch(str(target["url"]))
 
     def parse(self, ctx: RunContext, capture: CaptureRef) -> dict[str, Any]:
-        return parse_okc_document(ctx.source.id, ctx.captures.get(capture.digest))
+        data = ctx.captures.get(capture.digest)
+        target = _configured_target(ctx, capture.source_uri)
+        if target is not None and "clauses" in target:
+            return _live_document_envelope(ctx.source.id, data, capture, target)
+        return parse_okc_document(ctx.source.id, data)
 
     def extract(self, ctx: RunContext, parsed: Mapping[str, Any]) -> list[Mapping[str, Any]]:
         return extract_documents(self.name, parsed)

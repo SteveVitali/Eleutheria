@@ -310,3 +310,258 @@ def test_fixtures_have_a_sources_md() -> None:
     text = (_FIX / "SOURCES.md").read_text()
     for name in _CONNECTORS:
         assert f"{name}.json" in text
+
+
+# --- the live document path (P25.8 / D-LIVE.1a-1) ------------------------------
+#
+# A configured live target may carry a reviewed clause map; a real captured page
+# (not the fixture envelope) is sliced at its § marker into the same document
+# shape, so the clause layer emits real typed claims. An absent marker is a
+# recorded ContentDrift — never a claim asserted beyond the capture (§3.1).
+
+_STATUTE_PAGE = (
+    "<html><body><div>"
+    "7-606.1 - Uninsured Vehicle Enforcement Program - Implementation - "
+    "Automatic License Plate Reader System - Restrictions - Annual Report "
+    "This Statute Will Go Into Effect Effective On: 01/01/2027 "
+    "Cite as: 47 O.S. § 7-606.1 (OSCN 2026) "
+    "A. There is hereby created the Uninsured Vehicle Enforcement Program. "
+    "B. The Uninsured Vehicle Enforcement Program shall be implemented and "
+    "administered by the district attorneys of the State of Oklahoma "
+    "within their respective districts or at the District Attorneys Council. "
+    "To implement this program, the use of technology and software to aid in "
+    "detection of offenses involving uninsured motorists is necessary and "
+    "district attorneys and participating law enforcement agencies shall have "
+    "the authority to enter into contractual agreements with automated license "
+    "plate reader providers to provide necessary technology, equipment, and "
+    "maintenance thereof. "
+    "C. 1. Participating law enforcement agencies may use automatic license "
+    "plate reader systems to access and collect data for the investigation, "
+    "detection, analysis, or enforcement of Oklahoma's Compulsory Insurance "
+    "Law."
+    "</div></body></html>"
+)
+
+_STATUTE_TARGET = {
+    "id": "ok-statute-47-7-606-1",
+    "url": "https://www.oscn.net/applications/oscn/DeliverDocument.asp?CiteID=478582",
+    "kind": "document_page",
+    "doc_id": "okc-statute-47-7-606-1",
+    "subject_id": "sig:deployment:okc-okcpd-flock",
+    "section": "7-606.1",
+    "clauses": [
+        {
+            "clause": "7-606.1",
+            "predicate": "statutory_citation",
+            "value": "47 O.S. § 7-606.1",
+            "literal": "§ 7-606.1 (OSCN 2026)",
+            "value_kind": "text",
+        },
+        {
+            "clause": "7-606.1",
+            "predicate": "use_restriction",
+            "value": "limited to insurance enforcement",
+            "literal": "enforcement of Oklahoma's Compulsory Insurance Law",
+            "value_kind": "text",
+        },
+    ],
+}
+
+
+class _PageTransport(_StaticTransport):
+    """A transport that serves a real web page (text/html), not the envelope."""
+
+    def request(self, url: str, *, user_agent: str, headers: Any | None = None) -> FetchResult:
+        result = super().request(url, user_agent=user_agent, headers=headers)
+        return dataclasses.replace(result, media_type="text/html")
+
+
+def _live_ctx(body: bytes, target: dict[str, Any]) -> RunContext:
+    name = "ok_statute"
+    transport = _PageTransport(body)
+    fetcher = PoliteFetcher(connector_name=name, connector_version="1.0.0", transport=transport)
+    source = dataclasses.replace(get(name), ingestion_permitted=True)
+    return RunContext(
+        source=source,
+        run=IngestRun(name, "1.0.0", "deadbeef", "r1", "v1", ()),
+        fetcher=fetcher,
+        captures=InMemoryCaptureStore(),
+        claim_sink=InMemoryClaimSink(),
+        parameters={"targets": [target]},
+    )
+
+
+def test_live_page_yields_typed_statute_claims() -> None:
+    connector = registered_connectors()["ok_statute"]()
+    claims = run(connector, _live_ctx(_STATUTE_PAGE.encode(), _STATUTE_TARGET)).claims
+    by_pred = {c["predicate_id"]: c for c in claims}
+    assert "7-606.1" in by_pred["statutory_citation"]["value"]
+    assert by_pred["use_restriction"]["value"] == "limited to insurance enforcement"
+    for c in claims:
+        assert c["evidence"]["locator"]
+        assert c["evidence"]["source_url"].endswith("CiteID=478582")
+
+
+def test_live_page_latin1_section_marker() -> None:
+    # OSCN serves Latin-1: the § byte (0xA7) must survive the decode or the
+    # clause layer cannot locate the section marker.
+    connector = registered_connectors()["ok_statute"]()
+    claims = run(connector, _live_ctx(_STATUTE_PAGE.encode("cp1252"), _STATUTE_TARGET)).claims
+    assert {c["predicate_id"] for c in claims} == {
+        "statutory_citation",
+        "use_restriction",
+    }
+
+
+def test_live_page_missing_section_is_content_drift() -> None:
+    from connectors.stages import ContentDrift
+
+    connector = registered_connectors()["ok_statute"]()
+    drifted = _STATUTE_PAGE.replace("§ 7-606.1", "§ 9-999").encode()
+    with pytest.raises(ContentDrift):
+        run(connector, _live_ctx(drifted, _STATUTE_TARGET))
+
+
+def test_live_page_absent_literal_is_content_drift() -> None:
+    # The reviewed literal MUST appear in the captured section — a fact whose
+    # literal is absent is recorded drift, never a claim beyond the capture.
+    from connectors.stages import ContentDrift
+
+    connector = registered_connectors()["ok_statute"]()
+    target = {
+        **_STATUTE_TARGET,
+        "clauses": [
+            {
+                "clause": "7-606.1",
+                "predicate": "use_restriction",
+                "value": "x",
+                "literal": "a sentence that is not in the captured page",
+                "value_kind": "text",
+            }
+        ],
+    }
+    with pytest.raises(ContentDrift):
+        run(connector, _live_ctx(_STATUTE_PAGE.encode(), target))
+
+
+def test_live_claim_keeps_verbatim_literal_as_raw_value() -> None:
+    # P2: the typed interpretation sits in `value`; the verbatim source literal
+    # is the claim's raw_value.
+    connector = registered_connectors()["ok_statute"]()
+    claims = run(connector, _live_ctx(_STATUTE_PAGE.encode(), _STATUTE_TARGET)).claims
+    by_pred = {c["predicate_id"]: c for c in claims}
+    cite = by_pred["statutory_citation"]
+    assert cite["value"] == "47 O.S. § 7-606.1"  # reviewed interpretation
+    assert cite["raw_value"] == "§ 7-606.1 (OSCN 2026)"  # verbatim source literal
+
+
+def _make_pdf(lines: list[str]) -> bytes:
+    """A minimal single-page PDF with a real text layer (xref-correct)."""
+    import io
+
+    objs = [
+        b"<</Type/Catalog/Pages 2 0 R>>",
+        b"<</Type/Pages/Kids[3 0 R]/Count 1>>endobj",
+        b"<</Type/Page/Parent 2 0 R/MediaBox[0 0 612 792]/Contents 4 0 R"
+        b"/Resources<</Font<</F1 5 0 R>>>>>>endobj",
+    ]
+    ops = " ".join(f"({line}) Tj T*" for line in lines)
+    body = f"BT /F1 12 Tf 72 720 Td 14 TL {ops} ET".encode()
+    objs.append(f"<< /Length {len(body)} >>".encode() + b"\nstream\n" + body + b"\nendstream")
+    objs.append(b"<</Type/Font/Subtype/Type1/BaseFont/Helvetica>>endobj")
+    out = io.BytesIO()
+    out.write(b"%PDF-1.4\n")
+    offsets = [0]
+    for i, obj in enumerate(objs, 1):
+        offsets.append(out.tell())
+        out.write(f"{i} 0 obj\n".encode())
+        out.write(obj)
+        if not obj.endswith(b"endobj"):
+            out.write(b"endobj")
+        out.write(b"\n")
+    xref = out.tell()
+    out.write(f"xref\n0 {len(objs) + 1}\n".encode())
+    out.write(b"0000000000 65535 f \n")
+    for off in offsets[1:]:
+        out.write(f"{off:010d} 00000 n \n".encode())
+    out.write(f"trailer<</Size {len(objs) + 1}/Root 1 0 R>>\nstartxref\n{xref}\n%%EOF".encode())
+    return out.getvalue()
+
+
+_POLICY_TARGET = {
+    "id": "okcpd-ops-manual-5-118",
+    "url": "https://www.okc.gov/files/assets/city/v/2/police/documents/operations-manual-6th-edition-june-15-2026.pdf",
+    "kind": "document_page",
+    "doc_id": "okc-ops-manual-5-118",
+    "subject_id": "sig:deployment:okc-okcpd-flock",
+    "section": "5-118",
+    "clauses": [
+        {
+            "clause": "5-118",
+            "predicate": "use_restriction",
+            "value": "official law enforcement purposes only",
+            "literal": "used exclusively for official law enforcement purposes",
+            "value_kind": "text",
+        },
+    ],
+}
+
+
+def test_live_pdf_manual_yields_page_located_claims() -> None:
+    # A real captured PDF (no § marker, bare "5-118" heading) locates the cited
+    # section, verifies the reviewed literal, and emits a page-located claim.
+    name = "okcpd_policy"
+    pdf = _make_pdf(
+        [
+            "5-117 Response to Emergency Call Out",
+            "All personnel respond to duty when called.",
+            "5-118 Automated License Plate Readers",
+            "The data captured will be used exclusively for official law enforcement purposes.",
+            "5-119 Facial Comparison Program",
+        ]
+    )
+    transport = _PageTransport(pdf)
+    fetcher = PoliteFetcher(connector_name=name, connector_version="1.0.0", transport=transport)
+    source = dataclasses.replace(get(name), ingestion_permitted=True)
+    ctx = RunContext(
+        source=source,
+        run=IngestRun(name, "1.0.0", "deadbeef", "r1", "v1", ()),
+        fetcher=fetcher,
+        captures=InMemoryCaptureStore(),
+        claim_sink=InMemoryClaimSink(),
+        parameters={"targets": [_POLICY_TARGET]},
+    )
+    claims = run(registered_connectors()[name](), ctx).claims
+    assert len(claims) == 1
+    claim = claims[0]
+    assert claim["predicate_id"] == "use_restriction"
+    assert claim["raw_value"] == "used exclusively for official law enforcement purposes"
+    assert claim["evidence"]["locator"] == {"kind": "page", "page": 1}
+    assert claim["evidence"]["extraction_method"] == "pdf_text"
+
+
+def test_live_pdf_toc_entry_is_not_the_section() -> None:
+    # A dot-leader table-of-contents line is not the section body — the slice
+    # must come from the real heading, or the literal check records drift.
+    from connectors.stages import ContentDrift
+
+    pdf = _make_pdf(
+        [
+            "5-118 Automated License Plate Readers ............. 274",
+            "5-119 Facial Comparison Program",
+        ]
+    )
+    name = "okcpd_policy"
+    transport = _PageTransport(pdf)
+    fetcher = PoliteFetcher(connector_name=name, connector_version="1.0.0", transport=transport)
+    source = dataclasses.replace(get(name), ingestion_permitted=True)
+    ctx = RunContext(
+        source=source,
+        run=IngestRun(name, "1.0.0", "deadbeef", "r1", "v1", ()),
+        fetcher=fetcher,
+        captures=InMemoryCaptureStore(),
+        claim_sink=InMemoryClaimSink(),
+        parameters={"targets": [_POLICY_TARGET]},
+    )
+    with pytest.raises(ContentDrift):
+        run(registered_connectors()[name](), ctx)

@@ -1,0 +1,20 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnaay63qc5txwbh4xneyaamx56q4i2sjgam7xcfh4htcfu2lyfnx2u4i5j27ykh7k5oy4hltenr4x2vqrt6lsnhptwtvks5jpyxvhjbrly"
+  ],
+  "claim_count": 3,
+  "connector": "okcpd_policy",
+  "content_drift": null,
+  "disappearances": [],
+  "duration_seconds": 10.552811,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "okcpd_policy",
+  "started_at": "2026-09-16T17:41:03.864229+00:00",
+  "status_codes": [],
+  "urls": []
+}

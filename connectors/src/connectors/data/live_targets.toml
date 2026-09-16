@@ -235,3 +235,50 @@ kind = "document"
 targets = [
   { id = "aspi-chinatechmap", url = "https://chinatechmap.aspi.org.au/", kind = "document" },
 ]
+
+# Oklahoma Statutes Title 47 §7-606.1 — the ALPR statute ("Uninsured Vehicle
+# Enforcement Program … Automatic License Plate Reader System"): the single
+# reviewed section page on OSCN. The Title-47 index maps §7-606.1 →
+# CiteID=478582 (verified reachable 2026-09-16; the P25.8 fetch ran via Cloud
+# Run egress). The `clauses` rows are the REVIEWED clause→predicate map —
+# data on the target row (SIG-INGEST-038), never code. The live parse locates
+# the "§ 7-606.1" marker in the real captured page and slices the section
+# verbatim; an absent marker is a recorded ContentDrift, never a claim
+# asserted beyond the capture (§3.1).
+[ok_statute]
+kind = "document_page"
+targets = [
+  { id = "ok-statute-47-7-606-1", url = "https://www.oscn.net/applications/oscn/DeliverDocument.asp?CiteID=478582", kind = "document_page", doc_id = "okc-statute-47-7-606-1", subject_id = "sig:deployment:okc-okcpd-flock", section = "7-606.1", clauses = [
+    { clause = "7-606.1", predicate = "statutory_citation", value = "47 O.S. § 7-606.1", literal = "§ 7-606.1 (OSCN 2026)", value_kind = "text" },
+    { clause = "7-606.1", predicate = "use_restriction", value = "limited to insurance enforcement", literal = "shall not be used by any individual or agency for purposes other than enforcement of the Compulsory Insurance Law or as otherwise permitted by law", value_kind = "text" },
+    { clause = "7-606.1", predicate = "authorization_state", value = "authorized conditional on Insurance Department verification", literal = "shall not be implemented until such time that the Insurance Department verifies that the following conditions have been met", value_kind = "text" },
+  ] },
+]
+
+# D-LIVE.1a-1 (P25.8): the OKCPD Operations Manual ALPR directive — the real
+# captured PDF, reachable under okc.gov robots (§5-118 verified on pages
+# 283-285 of the 6th-edition manual, retrieved 2026-09-16). `section = "5-118"`
+# is the manual heading the live PDF parse locates at line start (TOC dot-
+# leader lines skipped); each fact's `literal` is verbatim manual text that
+# MUST appear in the slice — the claim's raw_value — while `value` is the
+# reviewed interpretation. An absent heading or literal is ContentDrift.
+[okcpd_policy]
+kind = "document_page"
+targets = [
+  { id = "okcpd-ops-manual-5-118", url = "https://www.okc.gov/files/assets/city/v/2/police/documents/operations-manual-6th-edition-june-15-2026.pdf", kind = "document_page", doc_id = "okc-ops-manual-5-118", subject_id = "sig:deployment:okc-okcpd-flock", section = "5-118", clauses = [
+    { clause = "5-118", predicate = "use_restriction", value = "official law enforcement purposes only", literal = "The data captured will be used exclusively for official law enforcement purposes", value_kind = "text" },
+    { clause = "5-118", predicate = "retention_period", value = "at most 60 days unless required by law", literal = "no ALPR system shall retain data any longer than sixty (60) days unless required by law", value_kind = "text" },
+    { clause = "5-118", predicate = "sharing_restriction", value = "shared only with other law enforcement agencies with System Administrator approval", literal = "ALPR data may only be shared with other law enforcement agencies with the approval of the System Administrator", value_kind = "text" },
+  ] },
+]
+
+# D-LIVE.1a-1 (P25.8): the OKC purchasing surface — the registry homepage and
+# the only located public entry point for the executed-contract record
+# (Flock Master Agreement C241032). The page sits behind okc.gov's edge WAF:
+# the smoke's honest outcomes are a captured page (then reviewed clause rows
+# get authored from it) or a recorded access refusal — never a bypass.
+[okc_procurement]
+kind = "document_page"
+targets = [
+  { id = "okc-purchasing-index", url = "https://www.okc.gov/departments/finance/purchasing", kind = "document_page" },
+]
