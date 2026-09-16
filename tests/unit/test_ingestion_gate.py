@@ -31,10 +31,12 @@ def test_connector_refuses_to_run_when_ingestion_not_permitted() -> None:
 
 
 def test_gate_can_be_addressed_by_id_or_record() -> None:
+    # journalrecord stays un-permitted (news sources hold the LINK posture;
+    # eyes_on_flock flipped under GL-GATE-06, 2026-09-16).
     with pytest.raises(IngestionNotPermitted):
-        assert_ingestion_permitted("eyes_on_flock")
+        assert_ingestion_permitted("journalrecord")
     with pytest.raises(IngestionNotPermitted):
-        assert_ingestion_permitted(get("eyes_on_flock"))
+        assert_ingestion_permitted(get("journalrecord"))
 
 
 def test_connector_runs_only_once_ingestion_is_permitted() -> None:

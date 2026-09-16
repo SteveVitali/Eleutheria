@@ -25,7 +25,8 @@ def _permit(source_id: str):  # type: ignore[no-untyped-def]
 
 
 def test_gate_passes_when_all_three_conditions_hold() -> None:
-    # eyes_on_flock: MIRROR + public_terms_only; only ingestion_permitted was missing.
+    # eyes_on_flock: MIRROR + public_terms_only; GL-GATE-06 (2026-09-16) flipped
+    # it, so all three conditions hold on the seeded row as-is.
     record = _permit("eyes_on_flock")
     assert assert_loadable(record) is record
     assert is_loadable(record)
@@ -33,8 +34,9 @@ def test_gate_passes_when_all_three_conditions_hold() -> None:
 
 def test_gate_refuses_when_ingestion_not_permitted() -> None:
     # SIG-INGEST-028: ingestion_permitted defaults false; the gate fails closed.
+    # journalrecord stays un-permitted (news sources hold the LINK posture).
     with pytest.raises(IngestionNotPermitted):
-        assert_loadable(get("eyes_on_flock"))
+        assert_loadable(get("journalrecord"))
 
 
 def test_gate_refuses_when_compact_denies() -> None:

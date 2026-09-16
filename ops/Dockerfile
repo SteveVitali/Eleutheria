@@ -40,9 +40,13 @@ COPY evidence ./evidence
 # too (P25.5): the same image backs `sig-connectors run` Cloud Run jobs (the
 # MuckRock Cloudflare WAF challenges local/residential egress but answers GCP
 # datacenter egress — probe 2026-09-15), so the live connector path runs in
-# cloud. Secret values still arrive only from Secret Manager env vars (HG-09).
+# cloud. ./ops joins it (P26.1 / OPS.2): the scheduled `sig-probe` +
+# `sig-ingest-<source>` Cloud Run jobs run `sig-ops probe-hosted` /
+# `sig-ops scheduled-ingest`, which wraps the same gated `connectors.runner`
+# path and appends the WORM run rows to gs://…-sig-restricted/ops/. Secret
+# values still arrive only from Secret Manager env vars (HG-09).
 RUN pip install --no-cache-dir uv \
- && uv pip install --system ./api ./connectors
+ && uv pip install --system ./api ./connectors ./ops
 
 # Cloud Run provides $PORT; bind the read API there. When SIG_CLOUDSQL_CONNECTION
 # is set (the Cloud SQL socket instance connection name), assemble the PgReadStore

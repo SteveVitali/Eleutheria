@@ -9,6 +9,9 @@ requires-python = ">=3.11"
 dependencies = [
     "sig-db",
     "sig-api",
+    # P26.1 (OPS.2): `sig-ops scheduled-ingest` wraps the gated live connector run
+    # (connectors.runner.run_source) so scheduled runs are identical to manual ones.
+    "sig-connectors",
     "psycopg[binary]>=3.2",
     # P21.5: the Software Heritage "save code now" request (SIG-GOV-022) speaks HTTP
     # over httpx (already in the workspace); no token needed for public repos.
@@ -21,6 +24,7 @@ sig-ops = "ops.cli:main"
 [tool.uv.sources]
 sig-db = { workspace = true }
 sig-api = { workspace = true }
+sig-connectors = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]
