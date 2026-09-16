@@ -210,10 +210,10 @@ def test_watermark_keyed_serve_path_discloses_and_invalidates(
 ) -> None:
     """P25.10: same set as compute-on-read, watermark disclosed, never stale.
 
-    The spine is append-only, so the compute-on-read annotation set is memoized
+    The spine is append-only, so the compute-on-read annotation set is memoised
     against the spine watermark: repeated reads at one watermark never recompute;
     a new contradiction-producing claim bumps the watermark and the endpoint
-    reflects it on the next read — the cache can never serve a stale set.
+    reflects it on the next read; the cache can never serve a stale set.
     """
     from api.app import create_app
     from api.store_pg import PgReadStore
@@ -242,13 +242,13 @@ def test_watermark_keyed_serve_path_discloses_and_invalidates(
             "every served item states the watermark it was computed at"
         )
 
-        # A second read at the same watermark is the memoized set — no recompute.
+        # A second read at the same watermark is the memoised set, no recompute.
         second = client.get("/v1/contradiction").json()
         assert second["spine_watermark"] == wm1
         assert {c["contradiction_id"] for c in second["contradictions"]} == ids1
         assert compute_calls == 1, "a same-watermark read must never recompute"
 
-        # /v1/task is the same shape — the shared cached view, same disclosure.
+        # /v1/task is the same shape: the shared cached view, same disclosure.
         tasks = client.get("/v1/task").json()
         assert tasks["spine_watermark"] == wm1
         assert compute_calls == 1
@@ -292,7 +292,7 @@ def test_watermark_keyed_serve_path_discloses_and_invalidates(
         )
 
         # The bumped watermark recomputes exactly once and serves BOTH the old
-        # and the new contradiction — a stale set can never be served.
+        # and the new contradiction; a stale set can never be served.
         third = client.get("/v1/contradiction").json()
         assert third["spine_watermark"] != wm1
         ids3 = {c["contradiction_id"] for c in third["contradictions"]}

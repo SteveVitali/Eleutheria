@@ -36,13 +36,13 @@ compute-on-read seam is exactly what P21.2 later replaces (ADR-059, RISK-P19-07)
 P25.10 made that seam bounded-latency without ever serving a stale set:
 
 * The compute is **set-based**: one query fetches every public claim (the same
-  SELECT ``claims_for`` issues per pair), grouped in memory — the per-pair loop
-  was the entire ~105 s cold time (~36k round-trips over 17,950 pairs); the
-  resolver pass itself is ~0.1 s in memory.
-* The result is memoized per instance against the **spine watermark**
-  (:meth:`PgReadStore._spine_watermark`). The spine is append-only — the only
+  SELECT ``claims_for`` issues per pair), grouped in memory; the per-pair loop
+  was the entire ~105 s cold time (~36k round-trips over 17,950 pairs), while
+  the resolver pass itself is ~0.1 s in memory.
+* The result is memoised per instance against the **spine watermark**
+  (:meth:`PgReadStore._spine_watermark`). The spine is append-only: the only
   permitted mutation is closing a claim's ``sys_period``, which the watermark
-  counts separately — so a cache keyed on it is provably never stale: any write
+  counts separately, so a cache keyed on it is provably never stale. Any write
   that could change the served set changes the key.
 * The served watermark is disclosed on the response (``spine_watermark``), so a
   cached answer always states which spine state it describes (§3.1 freshness).
@@ -135,7 +135,7 @@ class PgReadStore:
         self._conn = psycopg.connect(dsn, autocommit=True)
         if role:
             self._conn.execute(f"SET ROLE {role}")
-        # P25.10: the compute-on-read annotation set is memoized against the
+        # P25.10: the compute-on-read annotation set is memoised against the
         # spine watermark. The lock keeps the per-instance compute to once per
         # watermark under concurrent requests, and the compute itself runs on a
         # dedicated connection so it cannot interleave with per-request reads.
@@ -513,7 +513,7 @@ class PgReadStore:
 
         The spine never lets a claim row change content (``claim_append_only``
         forbids DELETE and every non-``sys_period`` UPDATE; the one permitted
-        mutation — closing ``sys_period`` — is counted separately), so this tuple
+        mutation, closing ``sys_period``, is counted separately), so this tuple
         of row counts plus the latest assertion instant changes iff a row the
         annotation compute reads has arrived. A cache keyed on it is provably
         never stale: anything that could change the served set changes the key.
@@ -539,9 +539,9 @@ class PgReadStore:
     ) -> dict[tuple[str, str], list[Claim]]:
         """Every public claim visible at ``belief``, grouped by (subject, predicate).
 
-        The same SELECT :meth:`claims_for` issues per pair — the publication
-        boundary (``sensitivity_tier = 0``) and the as-of belief predicate are
-        unchanged — issued once over the whole spine. ``claim.subject_id`` IS the
+        The same SELECT :meth:`claims_for` issues per pair (the publication
+        boundary ``sensitivity_tier = 0`` and the as-of belief predicate are
+        unchanged), issued once over the whole spine. ``claim.subject_id`` IS the
         entity id, so grouping needs no per-pair entity resolution.
         """
         rows = conn.execute(
@@ -670,9 +670,9 @@ class PgReadStore:
         """The current contradiction/task set plus the watermark it describes.
 
         Persisted ``graph_annotations`` rows (P21.2) are authoritative and read
-        live; the compute-on-read fallback is memoized against the spine
+        live; the compute-on-read fallback is memoised against the spine
         watermark so the spine is re-resolved at most once per instance per
-        watermark — never more, and (append-only) never stale. The watermark is
+        watermark: never more, and (append-only) never stale. The watermark is
         read BEFORE the data so the disclosed state never overstates freshness.
         """
         with self._annotation_lock:

@@ -278,7 +278,7 @@ class InMemoryStore:
         return self._contradictions.get(contradiction_id)
 
     def annotation_watermark(self) -> str | None:
-        # Seeded records, not a spine-derived set — there is no watermark to disclose.
+        # Seeded records, not a spine-derived set: there is no watermark to disclose.
         return None
 
     def warmup(self) -> None:
