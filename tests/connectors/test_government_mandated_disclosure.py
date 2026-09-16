@@ -132,7 +132,7 @@ def test_every_ccops_source_has_a_document_target(source_id: str) -> None:
 
     targets = live_targets(source_id)
     assert targets, f"{source_id} has no live target registered"
-    assert all(t["kind"] == "document" for t in targets)
+    assert all(t["kind"] in {"document", "index_page", "disclosure_document"} for t in targets)
 
 
 def test_document_capture_yields_artifact_not_claims() -> None:

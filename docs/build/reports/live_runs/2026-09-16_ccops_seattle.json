@@ -1,0 +1,41 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnaok466k55fkfw7uadvbhcdx7ws4fa4c5jyp4aecu7ifmst74u4owi6ccngoiye2e775snahqdkchgk5dbdopaahee6koymjt6xglbkaq"
+  ],
+  "claim_count": 5,
+  "connector": "government_mandated_disclosure",
+  "content_drift": null,
+  "disappearances": [
+    {
+      "artifact_id": "ccops_seattle-doc:112",
+      "failing_status": "link_rotted",
+      "observed_at": "2026-09-16T01:41:42.705592+00:00"
+    },
+    {
+      "artifact_id": "ccops_seattle-doc:113",
+      "failing_status": "link_rotted",
+      "observed_at": "2026-09-16T01:41:43.725025+00:00"
+    },
+    {
+      "artifact_id": "ccops_seattle-doc:114",
+      "failing_status": "link_rotted",
+      "observed_at": "2026-09-16T01:41:44.770173+00:00"
+    },
+    {
+      "artifact_id": "ccops_seattle-doc:122",
+      "failing_status": "link_rotted",
+      "observed_at": "2026-09-16T01:41:45.728823+00:00"
+    }
+  ],
+  "duration_seconds": 4.242357,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "ccops_seattle",
+  "started_at": "2026-09-16T01:41:41.486336+00:00",
+  "status_codes": [],
+  "urls": []
+}

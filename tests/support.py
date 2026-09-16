@@ -149,3 +149,49 @@ def slug_tokens(slug: str) -> set[str]:
     import re
 
     return {t for t in re.split(r"[-._]", slug.lower()) if t}
+
+
+def minimal_pdf(pages: list[list[str]]) -> bytes:
+    """A valid, deterministic one-font PDF whose pages carry ``pages`` text lines.
+
+    Shared test fixture builder (P25.5): connectors' PDF-text extraction must be
+    exercised over bytes pypdf actually parses — a hand-rolled minimal document
+    (uncompressed content stream + base Helvetica) keeps the fixture small and
+    byte-stable across platforms, so shadow/replay runs stay deterministic.
+    """
+    objects: list[bytes] = []
+    kids = " ".join(f"{3 + i * 2} 0 R" for i in range(len(pages)))
+    objects.append(b"<< /Type /Catalog /Pages 2 0 R >>")
+    objects.append(f"<< /Type /Pages /Kids [{kids}] /Count {len(pages)} >>".encode())
+    font_obj = 3 + len(pages) * 2
+    for i, lines in enumerate(pages):
+        page_obj = 3 + i * 2
+        content_obj = page_obj + 1
+        stream_lines = "BT /F1 10 Tf 50 780 Td 12 TL\n"
+        for line in lines:
+            esc = line.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)")
+            stream_lines += f"({esc}) Tj T*\n"
+        stream_lines += "ET"
+        stream = stream_lines.encode()
+        objects.append(
+            (
+                "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] "
+                f"/Contents {content_obj} 0 R "
+                f"/Resources << /Font << /F1 {font_obj} 0 R >> >> >>"
+            ).encode()
+        )
+        objects.append(
+            b"<< /Length " + str(len(stream)).encode() + b" >>\nstream\n" + stream + b"\nendstream"
+        )
+    objects.append(b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>")
+    out = b"%PDF-1.4\n"
+    offsets: list[int] = []
+    for i, obj in enumerate(objects, 1):
+        offsets.append(len(out))
+        out += f"{i} 0 obj\n".encode() + obj + b"\nendobj\n"
+    xref = len(out)
+    out += f"xref\n0 {len(objects) + 1}\n0000000000 65535 f \n".encode()
+    for off in offsets:
+        out += f"{off:010d} 00000 n \n".encode()
+    out += f"trailer\n<< /Size {len(objects) + 1} /Root 1 0 R >>\nstartxref\n{xref}\n%%EOF".encode()
+    return out

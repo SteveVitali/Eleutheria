@@ -1,0 +1,17 @@
+{
+  "byte_counts": [],
+  "capture_digests": [],
+  "claim_count": 0,
+  "connector": "government_mandated_disclosure",
+  "content_drift": null,
+  "duration_seconds": 0.114678,
+  "mode": "live",
+  "politeness_refusal": "RobotsUnretrievable: robots.txt for 'www.sf.gov' is unretrievable; crawl permission is NOT granted and the connector refuses to run (SIG-INGEST-012).",
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "ccops_sf",
+  "started_at": "2026-09-16T01:39:24.542939+00:00",
+  "status_codes": [],
+  "urls": []
+}

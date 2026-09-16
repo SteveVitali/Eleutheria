@@ -1,0 +1,20 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnao53no4av7sfgvenek66wj3jbdbzykpcqzpoyxbk7tlbyujlxjngud5suxy7bj6vm477zqi4papduj54ix5jby44q7egtglrpeotr64e"
+  ],
+  "claim_count": 4,
+  "connector": "pathways",
+  "content_drift": null,
+  "disappearances": [],
+  "duration_seconds": 0.170108,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "pathways_rtcc_federation",
+  "started_at": "2026-09-16T01:41:52.003464+00:00",
+  "status_codes": [],
+  "urls": []
+}

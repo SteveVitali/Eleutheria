@@ -25,3 +25,16 @@ Honesty notes:
 - Seattle's SIR is a **pre-acquisition commitment** document: it authorizes and
   constrains; it does not report measured use — no `disclosure_use` claim may
   come from it (`procured ≠ deployed`).
+
+## P25.5 live-extraction fixtures (added 2026-09-17)
+
+| fixture | disclosure | shape |
+|---|---|---|
+| `post_act_index.html` | NYC POST Act index page — the discovery surface for the 42 `post-final/*.pdf` IUP filings | Index HTML carrying the POST Act + "New York City Council" literals, three spec-matching filing links, and deliberately non-matching links (off-host, non-filing) |
+
+The adapter resolves spec-matching links into bounded `disclosure_document`
+targets (`max_documents` in `live_targets.toml`); a captured filing is read via
+`pdf_text`/`selector_template`, and its claims carry page/byte locators into the
+captured bytes. The IUP body text in tests is built by
+`tests/support.py::minimal_pdf` — a deterministic one-font PDF — rather than a
+committed binary.

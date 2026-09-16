@@ -74,20 +74,37 @@ committed fixtures with no network (SIG-INGEST-018/019).
 from __future__ import annotations
 
 import json
-from collections.abc import Iterable, Mapping
+import re
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from functools import cache
 from typing import Any
+from urllib.parse import urlparse
 from uuid import uuid4
 
 from evidence.digest import multihash
-from parsing.classification import classify
+from parsing.classification import FileFormat, classify
 from parsing.clauses import clause_claim, find_clause, locate_clauses
+from parsing.document import (
+    byte_range_locator,
+    html_links,
+    html_text,
+    page_locator_for,
+    pdf_text_pages,
+)
 from parsing.genre import DEPLOYMENT_GENRES, DocumentGenre, classify_genre
+from parsing.locator import Locator
 
 from ._data import load_table
-from .stages import CaptureRef, Connector, FetchResult, RunContext, register
+from .stages import (
+    CaptureRef,
+    Connector,
+    ContentDrift,
+    FetchResult,
+    RunContext,
+    register,
+)
 
 __all__ = [
     "CCOPS_CONNECTOR",
@@ -236,6 +253,22 @@ def source_id_for(source_key: str) -> str:
 def disclosure_sources() -> frozenset[str]:
     """Every registry source id in the government_mandated_disclosure class."""
     return frozenset(str(s) for s in vocab()["sources"].values())
+
+
+def adapter_key_for(source_id: str) -> str | None:
+    """The ``[sources]`` key for a registry source id (``nyc_post``, ``seattle``, ``sf``)."""
+    for key, sid in vocab()["sources"].items():
+        if str(sid) == source_id:
+            return str(key)
+    return None
+
+
+def source_adapter(source_id: str) -> Mapping[str, Any] | None:
+    """The reviewed ``[adapters.<key>]`` spec for a source id (P25.5), or ``None``."""
+    key = adapter_key_for(source_id)
+    if key is None:
+        return None
+    return vocab().get("adapters", {}).get(key)
 
 
 # --- the schema gates ---------------------------------------------------------
@@ -408,7 +441,7 @@ def assert_no_forbidden_output(rows: Iterable[Mapping[str, Any]]) -> None:
     per-agency aggregate claims — the gate does not apply to them.
     """
     for row in rows:
-        if row.get("record_kind") in {"evidence_document", "quality_report"}:
+        if row.get("record_kind") in {"evidence_document", "quality_report", "index_page"}:
             continue
         assert_aggregate_row(row)
 
@@ -521,6 +554,507 @@ def disclosure_claim(
         row["field_state"] = field_state
     assert_aggregate_row(row)
     return row
+
+
+# --- the index→document adapter (P25.5) -----------------------------------------
+#
+# Each CCOPS index page IS the discovery surface for its mandated filings: the
+# captured HTML's <a href> links are filtered through the reviewed
+# ``[adapters.<key>]`` spec (same host, ``doc_url_contains``, ``doc_suffixes``,
+# bounded by ``max_documents``) into ``disclosure_document`` targets — never an
+# unbounded crawl. A captured filing is read at the P07.1-classified layer:
+# digital-native PDFs via the layer-3 ``pdf_text`` engine, HTML filings via the
+# layer-2 text helper. Every claim routes through ``disclosure_claim``, so all
+# three guards (genre / use-predicate / aggregate schema) run on every row, and
+# a filing with no text layer is an evidence artifact — never fabricated fields.
+
+
+def _configured_target(ctx: RunContext, uri: str) -> Mapping[str, Any] | None:
+    """The run-context target spec for a capture URI (configured or resolved)."""
+    resolved = ctx.resolved_targets.get(uri)
+    if resolved is not None:
+        return resolved
+    for target in ctx.parameters.get("targets", []) or ():
+        if str(target.get("url") or "") == uri:
+            return target
+    return None
+
+
+def _retrieved_date(capture: CaptureRef) -> str:
+    if capture.retrieved_at is not None:
+        return capture.retrieved_at.date().isoformat()
+    return datetime.now(UTC).date().isoformat()
+
+
+def _same_host(url: str, host: str) -> bool:
+    netloc = urlparse(url).netloc.lower()
+    return netloc == host or netloc.endswith(f".{host}")
+
+
+def _matching_doc_links(
+    data: bytes, index_url: str, adapter: Mapping[str, Any], spec: Mapping[str, Any]
+) -> list[Any]:
+    """The document links on a captured index page matching the reviewed spec."""
+    url_contains = str(
+        spec.get("doc_url_contains") or adapter.get("doc_url_contains") or ""
+    ).lower()
+    suffixes = tuple(
+        str(s).lower() for s in (spec.get("doc_suffixes") or adapter.get("doc_suffixes") or ())
+    )
+    same_host = bool(spec.get("same_host", True))
+    host = urlparse(index_url).netloc.lower()
+    anchor_re = spec.get("anchor_pattern")
+    anchor_pattern = re.compile(str(anchor_re), re.I) if anchor_re else None
+    out = []
+    for link in html_links(data, index_url):
+        lowered = link.url.lower()
+        path = urlparse(link.url).path.lower()
+        if same_host and not _same_host(link.url, host):
+            continue
+        if url_contains and url_contains not in lowered:
+            continue
+        if suffixes and not path.endswith(suffixes):
+            continue
+        if anchor_pattern is not None and not anchor_pattern.search(link.anchor):
+            continue
+        out.append(link)
+    return out
+
+
+def resolve_index_targets(
+    ctx: RunContext,
+    index_capture: CaptureRef,
+    spec: Mapping[str, Any],
+    adapter: Mapping[str, Any],
+) -> list[dict[str, Any]]:
+    """Resolve the bounded ``disclosure_document`` targets off an index page (P25.5).
+
+    The resolved child carries its index provenance (index URL + link ordinal +
+    anchor text) and registers on ``ctx.resolved_targets``; the cap comes from
+    the live-target row's ``max_documents`` (default 8) — bounded fan-out, never
+    the whole filing archive.
+    """
+    data = ctx.captures.get(index_capture.digest)
+    max_documents = int(spec.get("max_documents", 8))
+    out: list[dict[str, Any]] = []
+    for link in _matching_doc_links(data, index_capture.source_uri, adapter, spec):
+        if len(out) >= max_documents:
+            break
+        out.append(
+            {
+                "id": f"{ctx.source.id}-doc:{link.ordinal}",
+                "url": link.url,
+                "kind": "disclosure_document",
+                "index_url": index_capture.source_uri,
+                "link_ordinal": link.ordinal,
+                "anchor": link.anchor,
+            }
+        )
+    return out
+
+
+#: A NYC POST Act IUP carries its revision as ``UPDATED: <Month> <D>, <YYYY>``.
+_RE_UPDATED = re.compile(r"UPDATED:\s*([A-Za-z]+)\s+(\d{1,2}),?\s*(\d{4})", re.IGNORECASE)
+_RE_FILENAME_PERIOD = re.compile(r"_(\d{1,2})\.(\d{1,2})\.(\d{2})(?=[_.]|$)")
+_MONTHS = {
+    "january": "01",
+    "february": "02",
+    "march": "03",
+    "april": "04",
+    "may": "05",
+    "june": "06",
+    "july": "07",
+    "august": "08",
+    "september": "09",
+    "october": "10",
+    "november": "11",
+    "december": "12",
+}
+
+
+def _reporting_period(text: str, filename: str) -> str | None:
+    """The filing's revision date — the disclosure's reporting period (ISO).
+
+    Read from the document's own ``UPDATED:`` literal first, then a filename
+    ``_M.D.YY`` component; ``None`` when neither exists — a claim with no
+    reporting period cannot satisfy the aggregate gate and is not emitted.
+    """
+    match = _RE_UPDATED.search(text)
+    if match:
+        month = _MONTHS.get(match.group(1).lower())
+        if month:
+            return f"{match.group(3)}-{month}-{int(match.group(2)):02d}"
+    match = _RE_FILENAME_PERIOD.search(filename)
+    if match:
+        month, day, year = match.groups()
+        if 1 <= int(month) <= 12 and 1 <= int(day) <= 31:
+            return f"20{year}-{int(month):02d}-{int(day):02d}"
+    return None
+
+
+def _document_technology(
+    filename: str, pages: tuple[str, ...], adapter: Mapping[str, Any]
+) -> tuple[str, str] | None:
+    """The filing's technology name + its raw literal, derived from the document.
+
+    Preferred: the first ALL-CAPS title heading on page 1 (e.g.
+    ``CELL-SITE SIMULATORS:`` → ``Cell-Site Simulators``). Fallback: the filename
+    slug before the adapter's ``technology_filename_marker``
+    (``<tech>-nypd-impact-and-use-policy*.pdf``). ``None`` when the document
+    supplies neither — a claim with no technology cannot satisfy the aggregate
+    gate.
+    """
+    if pages:
+        for line in pages[0].splitlines()[:12]:
+            stripped = line.strip()
+            if (
+                6 < len(stripped) < 60
+                and stripped.endswith(":")
+                and stripped == stripped.upper()
+                and re.search(r"[A-Z]{3}", stripped)
+            ):
+                literal = stripped[:-1].strip()
+                return literal.title(), literal
+    marker = str(adapter.get("technology_filename_marker") or "")
+    if marker:
+        stem, sep, _ = filename.lower().rsplit("/", 1)[-1].partition(marker)
+        if sep and stem:
+            return stem.replace("-", " ").strip().title(), stem
+    return None
+
+
+def _normalize_heading(text: str) -> str:
+    return re.sub(r"\s+", " ", text).replace("&", "&").upper().strip()
+
+
+def _section_state(text: str, heading: str, all_headings: list[str]) -> tuple[str, str]:
+    """One mandated section's field state + the body text it carried (F3.20).
+
+    ``answered`` = the heading is present and carries a non-trivial body before
+    the next mandated heading; ``present_but_empty`` = the heading is present but
+    the body is empty or an explicit N/A; ``absent`` = the mandated heading is
+    not in the filing at all.
+    """
+    folded = _normalize_heading(text)
+    head = _normalize_heading(heading)
+    idx = folded.find(head)
+    if idx < 0:
+        return "absent", ""
+    rest = folded[idx + len(head) :]
+    # The body ends at the next mandated heading (headings may carry a section
+    # number prefix — "VI. EXTERNAL ENTITIES" — which is markup, not body).
+    nxt = len(rest)
+    for other in all_headings:
+        o = _normalize_heading(other)
+        if o == head:
+            continue
+        match = re.search(
+            r"(?:^|\s)(?:[IVXLCDM]+|\d+)[.)]\s*" + re.escape(o) + r"|" + re.escape(o),
+            rest,
+        )
+        if match and match.start() < nxt:
+            nxt = match.start()
+    body = rest[:nxt].strip(" :—-.")
+    if not body or re.fullmatch(r"(n/?a|none|[ivxlcdm]+)[.]?", body, re.IGNORECASE):
+        return "present_but_empty", ""
+    return "answered", body
+
+
+_RE_DURATION = re.compile(
+    r"((?:within|for up to|for a period of|for|after)\s+\d+\s+(?:days?|months?|years?))",
+    re.IGNORECASE,
+)
+
+
+def _retention_literal(section_body: str) -> str | None:
+    """A duration literal inside a retention section body — ``None`` when absent."""
+    match = _RE_DURATION.search(section_body)
+    return match.group(1) if match else None
+
+
+_RE_LEGAL_AUTHORITY = re.compile(
+    r"(POST Act|Public Oversight of Surveillance Technology[^\n.]*|"
+    r"Administrative Code\s*§?\s*14-1\d\d|Local Law\s+\d+\s+of\s+\d{4})",
+    re.IGNORECASE,
+)
+
+
+def _document_text(parsed: Mapping[str, Any]) -> tuple[str, tuple[str, ...], str]:
+    """The extracted text + page tuple + extraction method for a parsed document."""
+    pages = tuple(str(p) for p in parsed.get("pages") or ())
+    if pages:
+        return "\n".join(pages), pages, "pdf_text"
+    text = str(parsed.get("text") or "")
+    return text, (text,) if text else (), "selector_template"
+
+
+def _evidence_record(
+    capture: CaptureRef, parsed: Mapping[str, Any], genre: DocumentGenre
+) -> dict[str, Any]:
+    return {
+        "record_kind": "evidence_document",
+        "source_uri": capture.source_uri,
+        "capture_digest": capture.digest,
+        "media_type": capture.media_type,
+        "byte_size": parsed["byte_size"],
+        "verdict": parsed["verdict"],
+        "genre": genre.value,
+    }
+
+
+def _extract_index_page(ctx: RunContext, parsed: Mapping[str, Any]) -> list[Mapping[str, Any]]:
+    """Field-level claims off a captured CCOPS index page (P25.5).
+
+    The index page is evidence for the ordinance it publishes under: the
+    ordinance-citation literal (``SMC 14.18`` / ``POST Act`` / ``Chapter 19B``)
+    and the enacting-body literal are located verbatim in the captured bytes
+    (``byte_range`` locators). The page is also recorded as an ``index_page``
+    provenance row carrying the resolved-link count so a silently-emptied index
+    is visible downstream (and a link-less index never reaches here — parse
+    fails closed with :class:`ContentDrift`).
+    """
+    capture = parsed["capture"]
+    data = ctx.captures.get(capture.digest)
+    adapter = source_adapter(ctx.source.id) or {}
+    genre = classify_genre(capture.source_uri, data).genre
+    out: list[Mapping[str, Any]] = [_evidence_record(capture, parsed, genre)]
+    permitted = genre_claim_types().get(genre, frozenset())
+    literals_found: list[str] = []
+    doc = DocumentContext(
+        source_id=ctx.source.id,
+        source_url=capture.source_uri,
+        retrieved_date=_retrieved_date(capture),
+        genre=genre,
+        jurisdiction=str(adapter.get("jurisdiction", "")),
+        reporting_period=_retrieved_date(capture),
+        agency=str(adapter.get("agency", "")),
+    )
+    if adapter and "ordinance" in permitted:
+        for literal in adapter.get("ordinance_literals", ()):
+            loc = byte_range_locator(data, str(literal))
+            if loc is None:
+                continue
+            literals_found.append(str(literal))
+            out.append(
+                disclosure_claim(
+                    doc,
+                    claim_type="ordinance",
+                    predicate="ordinance_citation",
+                    value=str(adapter["ordinance_citation"]),
+                    raw_value=str(literal),
+                    extraction_method="selector_template",
+                    locator=loc,
+                    agency=str(adapter.get("enacting_body") or doc.agency),
+                    technology=None,
+                )
+            )
+            break
+        body_literal = str(adapter.get("enacting_body_literal") or "")
+        loc = byte_range_locator(data, body_literal) if body_literal else None
+        if loc is not None:
+            out.append(
+                disclosure_claim(
+                    doc,
+                    claim_type="ordinance",
+                    predicate="enacting_body",
+                    value=str(adapter.get("enacting_body") or body_literal),
+                    raw_value=body_literal,
+                    extraction_method="selector_template",
+                    locator=loc,
+                    agency=str(adapter.get("enacting_body") or doc.agency),
+                    technology=None,
+                )
+            )
+    out.append(
+        {
+            "record_kind": "index_page",
+            "source_uri": capture.source_uri,
+            "capture_digest": capture.digest,
+            "media_type": capture.media_type,
+            "byte_size": parsed["byte_size"],
+            "verdict": parsed["verdict"],
+            "genre": genre.value,
+            "link_count": int(parsed.get("link_count", 0)),
+            "ordinance_literals_found": literals_found,
+        }
+    )
+    return out
+
+
+def _extract_disclosure_document(
+    ctx: RunContext, parsed: Mapping[str, Any]
+) -> list[Mapping[str, Any]]:
+    """Field-level claims off a captured disclosure filing (P25.5).
+
+    A digital-native filing yields: the ordinance citation + enacting body it
+    carries (``ordinance`` claims — jurisdiction-scoped), its technology name
+    (derived from the document's own title heading or filename slug — never
+    trusted from a fixture label), its legal-authority literal, a retention
+    literal where the retention section carries one, and one
+    ``disclosure_field_state`` claim per reviewed mandated section recording
+    ``answered`` / ``present_but_empty`` / ``absent`` (mandated != populated).
+    A filing with no text layer, no derivable reporting period, or no
+    technology is an evidence artifact + index record ONLY — fields are never
+    fabricated to fill the schema.
+    """
+    capture = parsed["capture"]
+    data = ctx.captures.get(capture.digest)
+    adapter = source_adapter(ctx.source.id) or {}
+    genre = DocumentGenre(str(parsed.get("genre", "unknown")))
+    artifact = _evidence_record(capture, parsed, genre)
+    out: list[Mapping[str, Any]] = [artifact]
+    text, pages, method = _document_text(parsed)
+    if not adapter or not text.strip():
+        return out
+
+    suppressed: list[str] = []
+
+    def emit(make: Any) -> None:
+        """Append a claim; a Part VIII token collision suppresses it, recorded.
+
+        A verbatim literal may itself carry a forbidden token (the real ALPR
+        filing's technology name literally reads "AUTOMATIC LICENSE PLATE
+        READERS"): the aggregate gate refuses that raw literal, and the adapter
+        drops the claim — recorded on the artifact row — rather than crash the
+        run or weaken the sweep (Part VIII, fail closed).
+        """
+        try:
+            out.append(make())
+        except PartVIIIViolation as exc:
+            suppressed.append(str(exc))
+
+    def finish() -> list[Mapping[str, Any]]:
+        if suppressed:
+            artifact["part_viii_suppressions"] = list(suppressed)
+        return out
+
+    filename = _filename_from_uri(capture.source_uri)
+    period = _reporting_period(text, filename)
+    tech = _document_technology(filename, pages if pages else (text,), adapter)
+    permitted = genre_claim_types().get(genre, frozenset())
+    doc = DocumentContext(
+        source_id=ctx.source.id,
+        source_url=capture.source_uri,
+        retrieved_date=_retrieved_date(capture),
+        genre=genre,
+        jurisdiction=str(adapter.get("jurisdiction", "")),
+        reporting_period=period or _retrieved_date(capture),
+        agency=str(adapter.get("agency", "")),
+        technology=tech[0] if tech else None,
+        # A deployment-genre filing IS a use report; every other genre reports
+        # none (the epistemic guard independently refuses a use claim that
+        # slips through).
+        reports_actual_use=genre in DEPLOYMENT_GENRES,
+    )
+    if "ordinance" in permitted:
+        literal = next(
+            (
+                str(literal)
+                for literal in adapter.get("ordinance_literals", ())
+                if str(literal).lower() in text.lower()
+            ),
+            None,
+        )
+        loc = (
+            page_locator_for(pages, literal)
+            if literal and pages
+            else (byte_range_locator(data, literal) if literal else None)
+        )
+        emit(
+            lambda: disclosure_claim(
+                doc,
+                claim_type="ordinance",
+                predicate="ordinance_citation",
+                value=str(adapter["ordinance_citation"]),
+                raw_value=literal or str(adapter["ordinance_citation"]),
+                extraction_method=method,
+                locator=loc or Locator.page(1).to_row(),
+                agency=str(adapter.get("enacting_body") or doc.agency),
+                technology=None,
+            )
+        )
+        body_literal = str(adapter.get("enacting_body_literal") or "")
+        body_loc = (
+            page_locator_for(pages, body_literal)
+            if body_literal and pages
+            else (byte_range_locator(data, body_literal) if body_literal else None)
+        )
+        if body_loc is not None:
+            emit(
+                lambda: disclosure_claim(
+                    doc,
+                    claim_type="ordinance",
+                    predicate="enacting_body",
+                    value=str(adapter.get("enacting_body") or body_literal),
+                    raw_value=body_literal,
+                    extraction_method=method,
+                    locator=body_loc,
+                    agency=str(adapter.get("enacting_body") or doc.agency),
+                    technology=None,
+                )
+            )
+    if "disclosure" not in permitted or tech is None or period is None:
+        return finish()
+    tech_loc = page_locator_for(pages, tech[1]) or Locator.page(1).to_row()
+    emit(
+        lambda: disclosure_claim(
+            doc,
+            claim_type="disclosure",
+            predicate="technology",
+            value=tech[0],
+            raw_value=tech[1],
+            extraction_method=method,
+            locator=tech_loc,
+        )
+    )
+    authority = _RE_LEGAL_AUTHORITY.search(text)
+    if authority:
+        literal = authority.group(1)
+        emit(
+            lambda: disclosure_claim(
+                doc,
+                claim_type="disclosure",
+                predicate="legal_authority",
+                value=literal,
+                raw_value=literal,
+                extraction_method=method,
+                locator=page_locator_for(pages, literal) or tech_loc,
+            )
+        )
+    sections = [dict(s) for s in adapter.get("mandated_sections", ())]
+    headings = [str(s["heading"]) for s in sections]
+    for i, section in enumerate(sections):
+        state, body = _section_state(text, str(section["heading"]), headings)
+        loc = (
+            page_locator_for(pages, str(section["heading"])) if state != "absent" else None
+        ) or Locator.row(i).to_row()
+        emit(
+            lambda loc=loc, state=state, section=section: disclosure_claim(
+                doc,
+                claim_type="disclosure",
+                predicate="disclosure_field_state",
+                value=state,
+                raw_value=str(section["field"]),
+                extraction_method=method,
+                locator=loc,
+                field_state=state,
+            )
+        )
+        if state == "answered" and str(section["field"]) == "retention_access_use":
+            duration = _retention_literal(body)
+            if duration:
+                emit(
+                    lambda loc=loc, duration=duration: disclosure_claim(
+                        doc,
+                        claim_type="disclosure",
+                        predicate="retention_period",
+                        value=duration,
+                        raw_value=duration,
+                        extraction_method=method,
+                        locator=loc,
+                    )
+                )
+    return finish()
 
 
 # --- the per-document extractors ----------------------------------------------
@@ -807,7 +1341,7 @@ def _document_artifact_row(
     engine here (SIG-PARSE-001/002).
     """
     source_uri = str(record["source_uri"])
-    return {
+    row = {
         "record_kind": "evidence_artifact",
         "subject_id": document_artifact_id(source_uri),
         "predicate_id": assert_predicate_allowed("document"),
@@ -820,6 +1354,14 @@ def _document_artifact_row(
         "classification": dict(record["verdict"]),
         "raw_value": source_uri,
     }
+    if record.get("genre"):
+        row["document_genre"] = str(record["genre"])
+    if record.get("part_viii_suppressions"):
+        # A raw literal the Part VIII sweep refused (e.g. a technology name that
+        # literally contains a forbidden token): the claim was suppressed and the
+        # suppression is recorded, never silently dropped.
+        row["part_viii_suppressions"] = list(record["part_viii_suppressions"])
+    return row
 
 
 def parse_disclosure(data: bytes) -> dict[str, Any]:
@@ -860,18 +1402,88 @@ class GovernmentMandatedDisclosureConnector(Connector):
         assert ctx.fetcher is not None, "connectors fetch only through the shared layer"
         return ctx.fetcher.fetch(str(target["url"]))
 
+    def discover_more(
+        self, ctx: RunContext, captures: Sequence[CaptureRef]
+    ) -> list[Mapping[str, Any]]:
+        """Bounded index→filing fan-out (P25.5).
+
+        Every captured ``index_page`` target resolves its spec-matching document
+        links into ``disclosure_document`` targets — bounded by the reviewed
+        ``max_documents``, each carrying its index provenance — registered on
+        ``ctx.resolved_targets`` so the fetch/parse stages see the same spec a
+        configured target would carry.
+        """
+        out: list[Mapping[str, Any]] = []
+        for capture in captures:
+            spec = _configured_target(ctx, capture.source_uri)
+            if spec is None or str(spec.get("kind")) != "index_page":
+                continue
+            adapter = source_adapter(ctx.source.id)
+            if adapter is None:
+                continue
+            for target in resolve_index_targets(ctx, capture, spec, adapter):
+                ctx.resolved_targets[str(target["url"])] = target
+                out.append(target)
+        return out
+
     def parse(self, ctx: RunContext, capture: CaptureRef) -> dict[str, Any]:
         """Structure the captured bytes — a curated fixture payload, or an upstream document.
 
-        A JSON capture is the curated ``disclosure_source`` payload; anything else
-        (a POST Act PDF, a Chapter 19B inventory) is an upstream document classified
-        via the P07.1 parser — the derived-facts basis permits capturing provenance,
-        never re-hosting the bytes.
+        A JSON capture is the curated ``disclosure_source`` payload. An
+        ``index_page`` target parses its links + visible text and fails closed
+        (:class:`ContentDrift`) when the page carries no spec-matching filing
+        links — the upstream page shape changed. A ``disclosure_document`` /
+        ``document`` target is classified (P07.1 + genre re-derived from the
+        bytes) and read at its text layer — ``pdf_text`` for a digital-native
+        PDF, ``selector_template`` for HTML; a filing with no text layer parses
+        to the document it is and extracts as an artifact only.
         """
         data = ctx.captures.get(capture.digest)
         if _is_json_media(capture.media_type):
             return parse_disclosure(data)
         verdict = classify(_filename_from_uri(capture.source_uri), data)
+        spec = _configured_target(ctx, capture.source_uri)
+        configured_kind = str(spec.get("kind") or "") if spec else ""
+        if configured_kind == "index_page":
+            adapter = source_adapter(ctx.source.id)
+            links = (
+                _matching_doc_links(data, capture.source_uri, adapter, spec or {})
+                if adapter is not None
+                else []
+            )
+            if not links:
+                raise ContentDrift(
+                    ctx.source.id,
+                    f"index page {capture.source_uri} carries no filing links "
+                    "matching the reviewed discovery spec; the upstream page "
+                    "shape changed — refusing to emit from a drifted index.",
+                )
+            return {
+                "kind": "index_page",
+                "capture": capture,
+                "verdict": verdict.to_row(),
+                "byte_size": len(data),
+                "text": html_text(data),
+                "link_count": len(links),
+            }
+        if configured_kind in {"disclosure_document", "document"}:
+            genre = classify_genre(capture.source_uri, data).genre
+            out: dict[str, Any] = {
+                "kind": "disclosure_document",
+                "capture": capture,
+                "verdict": verdict.to_row(),
+                "byte_size": len(data),
+                "genre": genre.value,
+            }
+            if verdict.file_format is FileFormat.PDF:
+                pages = pdf_text_pages(data)
+                if any(pages):
+                    out["pages"] = pages
+            elif verdict.file_format is FileFormat.HTML:
+                text = html_text(data)
+                if text:
+                    out["text"] = text
+            return out
         return {
             "kind": "document",
             "capture": capture,
@@ -880,6 +1492,11 @@ class GovernmentMandatedDisclosureConnector(Connector):
         }
 
     def extract(self, ctx: RunContext, parsed: Mapping[str, Any]) -> list[Mapping[str, Any]]:
+        kind = str(parsed.get("kind") or "")
+        if kind == "index_page":
+            return _extract_index_page(ctx, parsed)
+        if kind == "disclosure_document":
+            return _extract_disclosure_document(ctx, parsed)
         return extract_documents(parsed)
 
     def normalize(
@@ -897,7 +1514,13 @@ class GovernmentMandatedDisclosureConnector(Connector):
         artifact_count = 0
         for claim in raw_claims:
             if claim.get("record_kind") == "evidence_document":
-                out.append({**_document_artifact_row(source_id, claim), "vocab_version": version})
+                out.append(
+                    {
+                        **_document_artifact_row(source_id, claim),
+                        "vocab_version": version,
+                        "license_spdx": ctx.source.rights.spdx,
+                    }
+                )
                 artifact_count += 1
                 continue
             out.append({**claim, "vocab_version": version})

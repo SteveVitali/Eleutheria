@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- P25.5 committed fixture: a MaDada-shaped Atom feed of *successful* requests.
+     The <title>/<content> below are deliberately request-text-like (a request
+     body excerpt) so the tests prove the adapter suppresses and never retains
+     them — only the atom id, timestamps, and request-event link may surface. -->
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>MaDada — dernières demandes abouties</title>
+  <link href="https://madada.fr/feed/search/%20(latest_status:successful%20OR%20latest_status:partially_successful)" rel="self"/>
+  <id>https://madada.fr/feed/search/successful</id>
+  <updated>2026-09-14T10:00:00+02:00</updated>
+  <entry>
+    <title>Demande CADA — registre des caméras de vidéoprotection de la commune de Gex</title>
+    <link href="https://madada.fr/request/registre_cameras_gex#request_event/1042"/>
+    <id>tag:madada.fr,2026:InfoRequestEvent/1042</id>
+    <published>2026-09-10T09:00:00+02:00</published>
+    <updated>2026-09-12T11:00:00+02:00</updated>
+    <author><name>Madame Durant</name></author>
+    <content>Je vous prie de bien vouloir me transmettre, en application de la loi CADA, le registre des demandes concernant la vidéoprotection de la commune.</content>
+  </entry>
+  <entry>
+    <title>Transparence — marchés de maintenance du réseau de contrôle automatisé</title>
+    <link href="https://madada.fr/request/marches_controle_automatise#request_event/1043"/>
+    <id>tag:madada.fr,2026:InfoRequestEvent/1043</id>
+    <published>2026-09-11T08:30:00+02:00</published>
+    <updated>2026-09-13T14:45:00+02:00</updated>
+    <author><name>Monsieur Martin</name></author>
+    <summary>La commune a transmis les documents demandés (demande partiellement aboutie).</summary>
+  </entry>
+</feed>

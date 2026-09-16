@@ -222,6 +222,7 @@ def _run(args: argparse.Namespace) -> int:
     from pathlib import Path
 
     from .live_targets import NoLiveTargets
+    from .net import RobotsDisallowed, RobotsUnretrievable
     from .runner import LiveGateRefused, RunMode, run_source
     from .stages import ContentDrift
 
@@ -259,10 +260,19 @@ def _run(args: argparse.Namespace) -> int:
         print(f"CONTENT DRIFT (exit 5): {drift}")
         print("  recorded in the fetch record (0 claims); no garbage emitted.")
         return 5
+    except (RobotsUnretrievable, RobotsDisallowed) as refused:
+        # The politeness layer refused the run (SIG-INGEST-012): robots.txt could
+        # not be retrieved or disallows the fetch. Recorded on the fetch record;
+        # never bypassed.
+        print(f"POLITENESS REFUSAL (exit 6): {refused}")
+        print("  recorded in the fetch record; the refusal is never bypassed.")
+        return 6
     summary = (
         f"source {args.source!r} [{args.mode}] via connector {report.connector!r}: "
         f"{len(report.claims)} claim(s), {len(report.captures)} capture(s)"
     )
+    if report.refusals:
+        summary += f", {len(report.refusals)} politeness refusal(s) recorded"
     if report.diff is not None:
         summary += f", shadow diff changed={report.diff.changed_count}"
     if report.replay_reproducible is not None:

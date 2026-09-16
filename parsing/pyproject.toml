@@ -3,7 +3,9 @@ name = "sig-parsing"
 version = "0.1.0"
 description = "SIG parsing package: the §24 layered parser stack (genre detection, tables, clauses) that connectors extract through (§47)."
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "pypdf>=5",
+]
 
 [project.scripts]
 sig-parsing = "parsing.cli:main"

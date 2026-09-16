@@ -349,6 +349,12 @@ class RunContext:
     parameters: Mapping[str, Any] = field(default_factory=dict)
     replay: bool = False
     shadow: bool = False
+    #: Per-document targets a connector resolved **from a captured resource index**
+    #: during the run (P25.5 — ``discover_more``), keyed by resolved URL. The
+    #: post-capture stages read them for the provenance fields (index row, title,
+    #: department) a resolved document's claims are built from — pure context,
+    #: populated network-isolated, never fetched from.
+    resolved_targets: dict[str, Mapping[str, Any]] = field(default_factory=dict)
 
     @property
     def asserts_claims(self) -> bool:
@@ -382,6 +388,22 @@ class Connector(ABC):
     @abstractmethod
     def fetch(self, ctx: RunContext, target: Mapping[str, Any]) -> FetchResult:
         """Obtain bytes for one target. The ONLY stage permitted egress."""
+
+    def discover_more(
+        self, ctx: RunContext, captures: Sequence[CaptureRef]
+    ) -> list[Mapping[str, Any]]:
+        """Follow-on targets resolved from already-captured bytes (P25.5).
+
+        A resource-index capture (the RAA national CSV, a CCOPS disclosure index
+        page) is itself the discovery surface for its per-document children: the
+        connector reads the stored captures — **network-isolated, a pure function
+        of captured bytes** — and returns a bounded list of resolved targets, each
+        also recorded on ``ctx.resolved_targets`` so the child's post-capture
+        stages see its provenance. The default is no follow-on targets; the
+        driver runs exactly one bounded continuation pass (never a recursive
+        crawl), and only ``fetch()`` egresses for the resolved targets.
+        """
+        return []
 
     # -- capture (stable framework meaning) --
     def capture(self, ctx: RunContext, fetched: FetchResult) -> CaptureRef:

@@ -17,7 +17,9 @@
 # [records_request_methods] tables therefore come last.
 
 # The connector's own vocabulary version, stamped onto every run (§20).
-vocab_version = "2026.09.16"
+# 2026.09.17 — P25.5: added [raa_index] (the resource-index adapter's reviewed
+# fan-out bounds) and [madada_feed] (the Atom feed's safe-metadata field set).
+vocab_version = "2026.09.17"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `france_belgium_records` connector may write ONLY the §11.14 LegalInstrument
@@ -120,6 +122,36 @@ decp_default_channel = "direct_award"
 # DECP records are procurement records, not documents: the DECP->EvidenceArtifact
 # edge is to the RECORD, not a PDF (DECP carries no document link, F9.16).
 decp_currency = "EUR"
+
+# P25.5 — the RAA resource-index adapter's REVIEWED fan-out defaults. The
+# national index CSV (`titre;url;departement;mise_a_jour`, ~23k rows) is the
+# discovery surface for per-prefecture gazette PDFs; a live run resolves only a
+# bounded subset (the live-target row may tighten, never widen, these bounds):
+# a departement allowlist, a conservative titre pattern that selects arrêté rows
+# (the index mixes recueils, bulletins, and attachments — an unmatched row is
+# never guessed into an instrument), https-only document URLs, and a hard cap
+# on resolved children per run (never an unbounded 23k-document crawl).
+[raa_index]
+required_columns = ["titre", "url", "departement", "mise_a_jour"]
+# The titre must carry an "arrêt"/"arrêté" word — a bare "arr" would match
+# "carrefour", "arrivée", "parrainage" (Actualités pages, not instruments).
+title_pattern = "arr[êeé]t"
+# The document URL must be a PDF — Actualités/article slugs are not gazettes.
+doc_url_pattern = "\\.pdf($|\\?)"
+departement_pattern = "^[0-9A-Za-z]{2,3}$"
+max_documents = 8
+require_https = true
+
+# P25.5 — the MaDada Atom adapter's safe-metadata contract. A feed entry maps to
+# ONE records-request context (fr.cada) carrying ONLY: the atom id, the
+# publication/update timestamps, and the request-event link. The user-authored
+# <title>/<content> are request text — never parsed, stored, or emitted
+# (aggregate-only privacy posture; the platform's own feed documents outcomes,
+# not bodies).
+[madada_feed]
+namespace = "http://www.w3.org/2005/Atom"
+entry_fields = ["id", "published", "updated", "link"]
+never_emit = ["title", "content", "summary", "author"]
 
 # The registry source ids the `france_belgium` connectors run against (§22.6 I).
 # Each is a row already seeded in data/sources.toml.

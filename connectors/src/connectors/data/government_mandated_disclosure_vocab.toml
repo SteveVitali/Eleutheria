@@ -15,7 +15,9 @@
 # header — otherwise TOML nests it under that table.
 
 # The connector's own vocabulary version, stamped onto every run (§20).
-vocab_version = "2026.09.16"
+# 2026.09.17 — P25.5: added [adapters.*] — the reviewed per-source index→document
+# discovery specs and mandated-section lists the live extraction adapter reads.
+vocab_version = "2026.09.17"
 
 # The five claim types the connector may emit. `disclosure_use` is the
 # epistemically-loaded one: it may be asserted ONLY where the disclosure itself
@@ -205,3 +207,65 @@ note = "depth, not breadth — a curated document corpus, never a national pictu
 seattle = "ccops_seattle"
 nyc_post = "ccops_nyc_post"
 sf = "ccops_sf"
+
+# --- P25.5: per-source index→document adapter specs (reviewed data) ------------
+#
+# Each CCOPS index page is the discovery surface for its mandated filings. The
+# adapter extracts <a href> links from the captured index, keeps the ones
+# matching the spec below (same host, url_contains, suffixes), and resolves them
+# into bounded `disclosure_document` targets. `ordinance_literals` are the
+# ordinance-citation literals expected on the index page (an index-page claim
+# cites the literal verbatim with a byte-range locator). `mandated_sections`
+# are the POST Act IUP field schema (the legally required sections of a NYC
+# impact & use policy) — each yields a `disclosure_field_state` claim recording
+# answered / present_but_empty / absent (mandated != populated, F3.20).
+
+[adapters.seattle]
+jurisdiction = "seattle"
+agency = "City of Seattle"
+ordinance_citation = "Seattle Municipal Code 14.18 (Surveillance Ordinance)"
+ordinance_literals = ["SMC 14.18", "Chapter 14.18", "14.18", "Surveillance Ordinance"]
+enacting_body_literal = "Seattle City Council"
+enacting_body = "Seattle City Council"
+doc_url_contains = "/documents/"
+doc_suffixes = [".pdf"]
+mandated_sections = []
+
+[adapters.nyc_post]
+jurisdiction = "nyc"
+agency = "New York City Police Department"
+ordinance_citation = "NYC Administrative Code § 14-189 (POST Act)"
+ordinance_literals = ["POST Act", "Public Oversight of Surveillance Technology"]
+enacting_body_literal = "New York City Council"
+enacting_body = "New York City Council"
+doc_url_contains = "/post-final/"
+doc_suffixes = [".pdf"]
+# The IUP filename slug: "<technology>-nypd-impact-and-use-policy[_*].pdf" — the
+# technology name precedes this marker (used when the title heading is absent).
+technology_filename_marker = "-nypd-impact-and-use-policy"
+# The POST Act IUP field schema — the sections the statute requires a policy to
+# carry. Section state is recorded; a literal value is emitted only where the
+# document's own text supplies it (never fabricated).
+mandated_sections = [
+  { field = "capabilities", heading = "CAPABILITIES OF THE TECHNOLOGY" },
+  { field = "rules_of_use", heading = "RULES, PROCESSES & GUIDELINES" },
+  { field = "safeguards", heading = "SAFEGUARD & SECURITY MEASURES" },
+  { field = "retention_access_use", heading = "RETENTION, ACCESS & USE" },
+  { field = "public_access", heading = "PUBLIC ACCESS OR USE" },
+  { field = "external_entities", heading = "EXTERNAL ENTITIES" },
+  { field = "training", heading = "TRAINING" },
+  { field = "audit_oversight", heading = "INTERNAL AUDIT & OVERSIGHT" },
+  { field = "health_safety", heading = "HEALTH & SAFETY REPORTING" },
+  { field = "disparate_impacts", heading = "DISPARATE IMPACTS" },
+]
+
+[adapters.sf]
+jurisdiction = "sf"
+agency = "City and County of San Francisco"
+ordinance_citation = "San Francisco Administrative Code Chapter 19B (Acquisition of Surveillance Technology)"
+ordinance_literals = ["Chapter 19B", "19B"]
+enacting_body_literal = "Board of Supervisors"
+enacting_body = "San Francisco Board of Supervisors"
+doc_url_contains = "/documents/"
+doc_suffixes = [".pdf"]
+mandated_sections = []

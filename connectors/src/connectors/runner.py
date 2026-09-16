@@ -36,7 +36,7 @@ from typing import Any
 from evidence.ingest_run import IngestRun
 
 from .loader import compact_permits_ingestion, custody_permits_fetch
-from .net import FetchResult, PoliteFetcher, RobotsResult
+from .net import FetchResult, PoliteFetcher, RobotsDisallowed, RobotsResult, RobotsUnretrievable
 from .pipeline import RunReport, run
 from .registry import SourceRecord, get
 from .replay import ShadowDiff, replay, replay_fingerprint, shadow_replay
@@ -260,6 +260,18 @@ class FetchRecord:
     #: Set when the live content no longer matched the connector's expected shape
     #: (P25.1 / ADR-082): the run emitted 0 claims and recorded the drift, loud.
     content_drift: str | None = None
+    #: Set when the politeness layer refused the run outright — a seed target whose
+    #: host's robots.txt could not be retrieved or disallowed the fetch
+    #: (SIG-INGEST-012). The refusal is recorded, never bypassed.
+    politeness_refusal: str | None = None
+    #: Per-document politeness refusals on discovery-continuation targets
+    #: (P25.5): a resolved child whose host refuses is a recorded disposition,
+    #: and the run continues to the next resolved target.
+    refusals: list[Mapping[str, Any]] = field(default_factory=list)
+    #: Per-document disappearances (a resolved child that 404s / is
+    #: access-restricted — SIG-INGEST-009/010), recorded loud so a dead filing
+    # link is visible, never a silent empty result.
+    disappearances: list[Mapping[str, Any]] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         """A JSON-serialisable dict; content is never included (§3.1, §17)."""
@@ -277,6 +289,9 @@ class FetchRecord:
             "rate_limit_events": [dict(e) for e in self.rate_limit_events],
             "robots_decisions": [dict(d) for d in self.robots_decisions],
             "content_drift": self.content_drift,
+            "politeness_refusal": self.politeness_refusal,
+            "refusals": [dict(r) for r in self.refusals],
+            "disappearances": [dict(d) for d in self.disappearances],
         }
 
 
@@ -313,6 +328,8 @@ class SourceRunReport:
     diff: ShadowDiff | None = None
     replay_reproducible: bool | None = None
     fetch_record: FetchRecord | None = None
+    refusals: list[dict[str, Any]] = field(default_factory=list)
+    disappearances: list[dict[str, Any]] = field(default_factory=list)
 
 
 def _connector_for(source_id: str, connector_name: str | None) -> Connector:
@@ -454,6 +471,26 @@ def _run_live(
         )
         transport.close()
         raise
+    except (RobotsUnretrievable, RobotsDisallowed) as exc:
+        # A seed target the politeness layer may not fetch (robots.txt
+        # unretrievable or disallowing — SIG-INGEST-012) refuses the whole run.
+        # Record the refusal loud, never bypass it, then re-raise so the CLI
+        # exits non-zero.
+        write_fetch_record(
+            FetchRecord(
+                source_id=source_id,
+                connector=connector.name,
+                mode=RunMode.LIVE.value,
+                started_at=started.isoformat(),
+                duration_seconds=time.monotonic() - t0,
+                claim_count=0,
+                rate_limit_events=list(transport.rate_limit_events),
+                politeness_refusal=f"{type(exc).__name__}: {exc}",
+            ),
+            capture_dir / "live_runs",
+        )
+        transport.close()
+        raise
     fetch_record = FetchRecord(
         source_id=source_id,
         connector=connector.name,
@@ -463,6 +500,15 @@ def _run_live(
         capture_digests=[c.digest for c in report.captures],
         claim_count=len(report.claims),
         rate_limit_events=list(transport.rate_limit_events),
+        refusals=[dict(r) for r in report.refusals],
+        disappearances=[
+            {
+                "artifact_id": d.event.artifact_id,
+                "failing_status": d.event.failing_status,
+                "observed_at": d.event.observed_at.isoformat(),
+            }
+            for d in report.disappearances
+        ],
     )
     write_fetch_record(fetch_record, capture_dir / "live_runs")
     transport.close()
@@ -474,6 +520,15 @@ def _run_live(
         captures=report.captures,
         asserted=report.asserted,
         fetch_record=fetch_record,
+        refusals=list(report.refusals),
+        disappearances=[
+            {
+                "artifact_id": d.event.artifact_id,
+                "failing_status": d.event.failing_status,
+                "observed_at": d.event.observed_at.isoformat(),
+            }
+            for d in report.disappearances
+        ],
     )
 
 

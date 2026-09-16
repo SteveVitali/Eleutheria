@@ -1,0 +1,19 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnacxs372xi3s2vczd5kcnkmuse22ssg353syf6ucexv4vn37cj4qmc23qa4h6b6f4rb72n72at4f3fgfr6hrtnx47sqxykpywcpizymti"
+  ],
+  "claim_count": 52,
+  "connector": "france_belgium_records",
+  "content_drift": null,
+  "duration_seconds": 0.910129,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "madada",
+  "started_at": "2026-09-16T01:39:47.764864+00:00",
+  "status_codes": [],
+  "urls": []
+}
