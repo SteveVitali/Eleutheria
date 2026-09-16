@@ -111,10 +111,12 @@ satisfied that was not.
 
 | Endpoint | Result |
 |---|---|
-| `storage.googleapis.com/zeta-medley-508121-u7-sig-web/index.html` | **200** (anonymous) |
-| `…-sig-web/robots.txt` | **200** |
-| `…-sig-public/okc/manifest.json` | **200** |
-| `…-sig-public/okc/web/dossiers.json` | **200** |
+| `sig-web-873541617837.us-central1.run.app/` — **canonical site** | **200** (anonymous; zero `<script>` verified live) |
+| `…/data-freshness/`, `…/dossier/oklahoma-city/`, `…/editorial-standards/`, `…/map/`, `…/watch/` | **200** each (correct titles); `/data-freshness` (no slash) → **301** to trailing slash |
+| `…/nonexistent-page/` | **404** |
+| `…/_astro/*.css` assets | **200** |
+| `…-sig-public/okc/manifest.json` (bucket endpoint) | **200** |
+| `…-sig-public/okc/web/dossiers.json` (bucket endpoint) | **200** |
 | `…-sig-restricted/probe` | **403** (private — correct) |
 | `…-sig-backups/probe` | **403** (private — correct) |
 | `sig-api-e5ctyx36jq-uc.a.run.app/` | **200** (anonymous) |
@@ -123,10 +125,22 @@ satisfied that was not.
 | `…/v1/dossier/okc` | **200** |
 | `…/v1/contradiction` | **200** — 1 contradiction returned (299-vs-190, visible as required; ~105 s compute-on-read cold) |
 
+**Serving fix (same day):** the raw bucket endpoints do NOT resolve directory
+indexes — GCS `MainPageSuffix` only applies through a custom domain CNAME'd to
+`c.storage.googleapis.com`, so `/data-freshness/` on `*.storage.googleapis.com`
+404'd (and `/` returned the XML bucket listing). Since DNS is deferred, the site
+is served by a new **`sig-web` Cloud Run service** (`nginx:1.27-alpine`,
+gen2, `--allow-unauthenticated`, port 80) with the `sig-web` bucket mounted
+read-only via Cloud Storage FUSE at `/usr/share/nginx/html` — nginx's native
+`index index.html` resolves every directory URL correctly. The buckets stay
+public-read for direct object access (export artifacts + site files); the
+canonical human-facing site URL is the `sig-web` run.app URL.
+
 ### Go / no-go (2026-09-16)
 
-**GO — executed.** Public surface live: static site + published export compartment +
-read-only API, all anonymously reachable; private compartments verified closed.
+**GO — executed.** Public surface live: static site (`sig-web` Cloud Run service)
++ published export compartment + read-only API, all anonymously reachable;
+private compartments verified closed.
 **Recorded debt:** second reviewer (HG-11), remaining counsel opinions (HG-02 remainder),
 outreach (HG-04), contribution-back credentials (HG-08), usability study (HG-10) — all
 OPEN/DEFERRED in `docs/tickets/DEFERRALS.md`, none claimed done.
