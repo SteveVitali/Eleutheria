@@ -90,6 +90,33 @@ def test_secret_scan_clean_files_pass(tmp_path: Path) -> None:
     assert proc.returncode == 0, proc.stderr
 
 
+def test_secret_scan_allows_secret_manager_name_bindings(tmp_path: Path) -> None:
+    """``secrets = { ENV = "sig-name" }`` binds Secret Manager *names* (HG-09) —
+    the cadence.toml job-wiring pattern; a name is not a credential."""
+    toml = tmp_path / "cadence.toml"
+    # The env-var names are assembled so THIS test file carries no credential-
+    # shaped literal itself; the seeded file holds the real binding shape.
+    key1 = "SIG_SAM_GOV" + "_KEY"
+    key2 = "SIG_OPENSTATES" + "_KEY"
+    toml.write_text(
+        f'secrets = {{ {key1} = "sig-sam-gov-key" }}\n'
+        f'secrets = {{ {key2} = "sig-openstates-key" }}  # a name binding\n'
+    )
+    proc = _run("secret_scan.py", str(toml))
+    assert proc.returncode == 0, proc.stderr
+
+
+def test_secret_scan_still_flags_a_value_in_a_secrets_binding(tmp_path: Path) -> None:
+    """The exemption is the *name shape*: a non-`sig-*` literal in the same
+    binding is still a credential-shaped hit."""
+    toml = tmp_path / "cadence.toml"
+    key = "SIG_SAM_GOV" + "_KEY"
+    toml.write_text(f'secrets = {{ {key} = "a1b2c3d4e5f6a1b2c3d4e5f6" }}\n')
+    proc = _run("secret_scan.py", str(toml))
+    assert proc.returncode == 1
+    assert "sig-credential-literal" in proc.stderr
+
+
 # --- license_scan.py -----------------------------------------------------------
 
 

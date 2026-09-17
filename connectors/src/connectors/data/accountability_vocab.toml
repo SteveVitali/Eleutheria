@@ -238,3 +238,7 @@ collections = [
 api_base = "https://v3.openstates.org"
 bills_endpoint = "/bills"
 api_key_env = "SIG_OPENSTATES_KEY"
+# The documented v3 credential header (P26.4): the key rides the request
+# header, never the URL — a keyed query would land in the recorded source_uri /
+# run records (HG-09). Verified live 2026-09-17: X-API-KEY → 200, keyless → 403.
+api_key_header = "X-API-KEY"

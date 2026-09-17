@@ -1,0 +1,20 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnaix2pp6mrx4554kx6mwewnfqlcwvfykax7tm5ongasyfqaduzueerkxlbksaujszkyhl467n53ceojq2d54pkyc2sgggiynmtsj5da3i"
+  ],
+  "claim_count": 8,
+  "connector": "procurement",
+  "content_drift": null,
+  "disappearances": [],
+  "duration_seconds": 407.094903,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "sam_gov",
+  "started_at": "2026-09-17T04:26:53.990483+00:00",
+  "status_codes": [],
+  "urls": []
+}

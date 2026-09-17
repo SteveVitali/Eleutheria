@@ -687,14 +687,18 @@ class AccountabilityConnector(Connector):
             assert_targeted_lookup(target)
         url = str(target["url"])
         if ctx.source.id == source_ids().get("openstates"):
-            # OpenStates v3 requires an `apikey` parameter (or X-API-KEY header) —
-            # resolved from the environment only (HG-09). Keyless it answers 403,
-            # which the shared layer records as a challenge, never defeated.
+            # OpenStates v3 authenticates via the documented X-API-KEY request
+            # header — the key resolves from the environment only (HG-09) and
+            # never rides in the URL, so no credential lands in the recorded
+            # source_uri / run records. Keyless it answers 403, which the shared
+            # layer records as a challenge, never defeated.
             import os
 
             key = os.environ.get(str(openstates_config()["api_key_env"]), "").strip()
-            if key and "apikey=" not in url:
-                url += f"{'&' if '?' in url else '?'}apikey={key}"
+            if key:
+                return ctx.fetcher.fetch(
+                    url, headers={str(openstates_config()["api_key_header"]): key}
+                )
         return ctx.fetcher.fetch(url)
 
     # -- interpretation (pure functions of the capture) --

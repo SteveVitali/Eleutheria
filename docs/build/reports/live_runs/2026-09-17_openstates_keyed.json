@@ -1,0 +1,20 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnapza7whi7hgcetvqjo7tlwz2f3xb36tdyzeiqq2hovihxu4raizhsa4ixng57g3m6poqokkpa7d7p6hrlg3iq4y2sjzchbywhqx7gh6y"
+  ],
+  "claim_count": 10,
+  "connector": "accountability",
+  "content_drift": null,
+  "disappearances": [],
+  "duration_seconds": 1.15778,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "openstates",
+  "started_at": "2026-09-17T04:37:49.609123+00:00",
+  "status_codes": [],
+  "urls": []
+}

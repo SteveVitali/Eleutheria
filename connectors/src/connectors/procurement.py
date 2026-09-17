@@ -851,28 +851,31 @@ class ProcurementConnector(Connector):
         if ctx.source.id == source_ids().get("usaspending"):
             assert_pulls_subawards(target)
         url = str(target["url"])
+        headers: dict[str, str] = {}
         if ctx.source.id == source_ids().get("sam_gov"):
-            # SAM.gov's public API requires an api_key query parameter — resolved
-            # from the environment (HG-09: the key is auth, never stored in a
-            # file). Keyless, SAM.gov answers 404 — a recorded disappearance, not
-            # something to defeat.
+            # SAM.gov's public API requires an api_key credential — resolved
+            # from the environment and carried on the reviewed X-Api-Key request
+            # header (HG-09: the key is auth, never stored in a file, and never
+            # appended to the request URL — a keyed query would land in the
+            # capture's recorded source_uri and run records). Keyless, SAM.gov
+            # answers 404 — a recorded disappearance, not something to defeat.
             import os
 
             key = os.environ.get(str(sam_gov_config()["api_key_env"]), "").strip()
-            if key and "api_key" not in url:
-                sep = "&" if "?" in url else "?"
-                url = f"{url}{sep}api_key={key}"
+            if key:
+                headers[str(sam_gov_config()["api_key_header"])] = key
         post_body = target.get("post_body")
         if post_body is not None:
             # POST-targeted searches (USAspending sub-awards §23.6; PrimeGov's
             # PublicPortal /search index, P26.2) ride the shared seam like an
             # auth header — the body is reviewed target/vocab data, not content.
+            headers["Content-Type"] = "application/json"
             return ctx.fetcher.fetch(
                 url,
-                headers={"Content-Type": "application/json"},
+                headers=headers,
                 body=json.dumps(post_body, sort_keys=True).encode("utf-8"),
             )
-        return ctx.fetcher.fetch(url)
+        return ctx.fetcher.fetch(url, headers=headers or None)
 
     # -- interpretation (pure functions of the capture) --
     def parse(self, ctx: RunContext, capture: CaptureRef) -> dict[str, Any]:

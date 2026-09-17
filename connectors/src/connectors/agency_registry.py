@@ -41,7 +41,6 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from functools import cache
 from typing import Any
-from urllib.parse import urlsplit, urlunsplit
 from uuid import uuid4
 
 from ._data import load_table
@@ -255,10 +254,11 @@ class AgencyRegistryConnector(Connector):
         cfg = cde_config()
         key = os.environ.get(str(cfg["api_key_env"]), "").strip() or str(cfg.get("demo_key", ""))
         url = str(target["url"])
-        if key and "api_key" not in url.lower():
-            parts = urlsplit(url)
-            query = f"{parts.query}&API_KEY={key}" if parts.query else f"API_KEY={key}"
-            url = urlunsplit((parts.scheme, parts.netloc, parts.path, query, parts.fragment))
+        # The api.data.gov credential rides the reviewed X-Api-Key request header
+        # (P26.4), never the URL — a keyed query would land in the capture's
+        # recorded source_uri and run records (HG-09).
+        if key:
+            return ctx.fetcher.fetch(url, headers={str(cfg["api_key_header"]): key})
         return ctx.fetcher.fetch(url)
 
     # -- interpretation (pure functions of the capture) --
