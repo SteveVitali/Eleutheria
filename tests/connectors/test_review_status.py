@@ -151,17 +151,21 @@ def test_validate_fails_naming_the_offending_id(monkeypatch: pytest.MonkeyPatch)
 # approved the five held sources (madada, declarationcamera_be, aspi,
 # carnegie_ai_gsi, facial_recognition_world_map — LicenseRef-DerivedFacts-Citations,
 # DERIVE custody) = 25 loadable; flip-ready unchanged at 13 (those five had no
-# rights blocks before counsel, so they were never in the flip-ready set).
+# rights blocks before counsel, so they were never in the flip-ready set). The
+# GL-GATE-06 blanket rights disposition (2026-09-16) then flipped all 13
+# flip-ready sources = 38 loadable, 0 flip-ready.
 
 
-def test_review_status_prints_flip_ready_13_and_loadable_25(
+def test_review_status_prints_flip_ready_0_and_loadable_38(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
+    # GL-GATE-06 (2026-09-16) flipped the 13 flip-ready sources, so flip-ready
+    # drained to 0 and loadable rose 25 → 38.
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
     assert "registered sources: 121" in out
-    assert "flip-ready: 13" in out
-    assert "loadable now: 25" in out
+    assert "flip-ready: 0" in out
+    assert "loadable now: 38" in out
 
 
 def test_review_status_loadable_equals_validate() -> None:
@@ -169,8 +173,8 @@ def test_review_status_loadable_equals_validate() -> None:
     from connectors.loader import is_loadable
 
     loadable = [s for s in sources() if is_loadable(s)]
-    assert len(loadable) == 25
-    assert len(flip_ready()) == 13
+    assert len(loadable) == 38
+    assert len(flip_ready()) == 0
 
 
 def test_flip_ready_excludes_permitted_and_undetermined_and_link() -> None:

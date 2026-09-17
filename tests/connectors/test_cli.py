@@ -54,8 +54,9 @@ def test_list_connectors_includes_the_procurement_connector(
 
 
 def test_gate_reports_refused_for_a_gated_source(capsys: pytest.CaptureFixture[str]) -> None:
-    # No seeded source is permitted at this phase => the gate refuses.
-    code = main(["gate", "--source", "eyes_on_flock"])
+    # journalrecord is still un-permitted (news sources stay LINK-posture) => the
+    # gate refuses. (eyes_on_flock flipped under GL-GATE-06, 2026-09-16.)
+    code = main(["gate", "--source", "journalrecord"])
     assert code == 1
     assert "REFUSED" in capsys.readouterr().out
 
