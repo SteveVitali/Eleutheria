@@ -93,6 +93,35 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     # via `sig-connectors load-seed` / `run_seed` — the packaged asset over the
     # static transport, never a live fetch.
     "state_alpr_statute_inventory": "state_statute_seed",
+    # The nine P25.6 `promote` sources, made real under P26.2 (SOURCES.2). Each
+    # routes through its named class connector — no bespoke adapters:
+    #   * legistar / civicclerk / primegov — the agenda-platform tenant path the
+    #     procurement connector already owns (§22.3, §23.6): discover() reads the
+    #     published tenant registry, fetch hits the per-tenant index endpoint,
+    #     and a reviewed matter-type match emits a Contract claim;
+    #   * sam_gov — the procurement connector's federal-opportunity path
+    #     (`procurement_notice` records; api_key from $SIG_SAM_GOV_KEY, HG-09);
+    #   * courtlistener_recap — the accountability connector's targeted-lookup
+    #     CourtListener path (SIG-INGEST-036/037: known dockets only);
+    #   * documentcloud — the records connector's released-document index path
+    #     (targeted document lookups, never the search listing);
+    #   * eyes_on_flock — the existing flock_portal connector (P11.1);
+    #   * openstates — the accountability connector's bill-index path: a state
+    #     bill is NOT a §11.14 LegalInstrument (the frozen LegalInstrumentType
+    #     vocabulary has no 'bill' and a pending bill is not a statute), so the
+    #     bill row is an index_only evidence link (primary_record class) — the
+    #     index fact is recorded, no legal effect is asserted (§3.1);
+    #   * fbi_cde_agency_registry — the new `agency_registry` connector (P26.2):
+    #     the ORI9 agency identity substrate, not procurement/records semantics.
+    "legistar": "procurement",
+    "civicclerk": "procurement",
+    "primegov": "procurement",
+    "sam_gov": "procurement",
+    "courtlistener_recap": "accountability",
+    "documentcloud": "records",
+    "eyes_on_flock": "flock_portal",
+    "openstates": "accountability",
+    "fbi_cde_agency_registry": "agency_registry",
 }
 
 

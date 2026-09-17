@@ -18,7 +18,11 @@
 # last.
 
 # The connector's own vocabulary version, stamped onto every run (§20).
-vocab_version = "2026.09.01"
+# 2026.09.16 (P26.2 / SOURCES.2): +openstates — the state-legislation index is a
+# `bill_index` record emitted as an index_only primary_record evidence link (a
+# bill is not a §11.14 LegalInstrument — the frozen LegalInstrumentType
+# vocabulary has no 'bill' and a pending bill is not a statute; §3.1).
+vocab_version = "2026.09.16"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `accountability` connector may write ONLY the AccountabilityEvent (§11.17) and
@@ -142,6 +146,7 @@ source_classes = [
 accountability_atlas = "alpr_accountability_atlas"
 abuse_library       = "alpr_abuse_library"
 courtlistener       = "courtlistener_recap"
+openstates          = "openstates"
 
 # The five artifacts the Accountability Atlas publishes, ALL of which MUST be
 # consumed rather than only the headline CSV (§23.8, OL-2E-AA-02). The data
@@ -224,3 +229,12 @@ collections = [
   "/recap",
   "/search",
 ]
+
+# OpenStates v3 (P26.2 / SOURCES.2): the documented public bill-search API
+# (docs.openstates.org; data under a public-domain dedication per
+# open.pluralpolicy.com/data/, retrieved 2026-09-16). Keyed access — the key is
+# auth, not the rights basis (HG-09: $SIG_OPENSTATES_KEY, env only).
+[openstates]
+api_base = "https://v3.openstates.org"
+bills_endpoint = "/bills"
+api_key_env = "SIG_OPENSTATES_KEY"

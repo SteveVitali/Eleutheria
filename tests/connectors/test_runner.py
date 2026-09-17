@@ -34,11 +34,18 @@ _ATLAS_FIX = Path(__file__).resolve().parents[1] / "connectors" / "fixtures" / "
 
 
 def test_no_seeded_source_is_review_status_green() -> None:
-    # After the RIGHTS.1 flip re-run (GL-GATE-03) plus the 2026-09-15 live-ops
-    # flips, the sources that stay gated (news LINK-posture + un-reviewed
-    # federal/records channels) are still refused for a live fetch. muckrock +
-    # usaspending moved out of this set in the B pass (operator-approved flips).
-    for source_id in ("journalrecord", "oklahoman", "sam_gov", "documentcloud"):
+    # After the RIGHTS.1 flip re-run (GL-GATE-03) plus the 2026-09-15/16 flips
+    # (B pass, GL-GATE-06, and the P26.2 promoted-source flips), the sources that
+    # stay gated are still refused for a live fetch. sam_gov moved out of this
+    # set in P26.2 (federal public-domain rights resolved); documentcloud +
+    # courtlistener_recap are CONNECTOR-MAPPED but stay gated — per-document
+    # rights UNDETERMINED and membership-agreement access respectively.
+    for source_id in (
+        "journalrecord",
+        "oklahoman",
+        "documentcloud",
+        "courtlistener_recap",
+    ):
         assert not is_review_status_green(source_id)
         assert live_gate_reasons(source_id)
 

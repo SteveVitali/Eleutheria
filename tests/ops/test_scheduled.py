@@ -113,7 +113,7 @@ def test_cadence_toml_rows_are_well_formed() -> None:
     assert len(ids) == len(set(ids)), "duplicate source rows"
     for s in config.sources:
         assert len(s.cron.split()) == 5, f"{s.source}: bad cron {s.cron!r}"
-        assert s.cadence in {"weekly", "monthly"}
+        assert s.cadence in {"weekly", "monthly", "quarterly"}
         assert s.job.startswith("sig-ingest-")
         assert s.scheduler.startswith("sig-sched-")
     existing = [s for s in config.sources if s.existing]

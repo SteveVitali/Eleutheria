@@ -99,3 +99,79 @@ endpoint_prefix = "/resources/"
 tos_basis = "static.data.gouv.fr /resources/ is the published download CDN for data.gouv.fr dataset files; the URL is surfaced by the documented dataset API."
 rate_limit_per_min = 10
 counsel_reviewed = false
+
+# --- P26.2 (SOURCES.2): the promoted sources' documented API hosts ------------
+
+# Granicus Legistar InSite API — the documented public read API every InSite
+# client exposes for its municipal legislative records (unauthenticated; the
+# portal fronts it). webapi.legistar.com serves no robots.txt — the API is not
+# a crawl surface, it is the published programmatic path (municipal public
+# records, CC0-1.0 on the legistar row).
+[[api_host]]
+host = "webapi.legistar.com"
+endpoint_prefix = "/v1"
+tos_basis = "Legistar InSite API (webapi.legistar.com/v1) is the documented public read API for municipal legislative records (matters/events), served unauthenticated per tenant."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+# SAM.gov opportunities API — GSA's documented public REST API
+# (open.gsa.gov/api/sam-opportunities/), keyed with a free registration;
+# federal public-domain data (17 U.S.C. §105).
+[[api_host]]
+host = "api.sam.gov"
+endpoint_prefix = "/prod/"
+tos_basis = "api.sam.gov is GSA's documented public opportunities API (open.gsa.gov), free keyed access under the published API ToS; federal public-domain data."
+rate_limit_per_min = 2
+counsel_reviewed = false
+
+# OpenStates v3 — the documented public API (docs.openstates.org) behind a free
+# registered key; the data is published under a public-domain dedication
+# (open.pluralpolicy.com/data/, retrieved 2026-09-16).
+[[api_host]]
+host = "v3.openstates.org"
+endpoint_prefix = "/"
+tos_basis = "v3.openstates.org is the documented OpenStates public API (docs.openstates.org) for registered-key access; data under a public-domain dedication."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+# api.usa.gov — the FBI Crime Data Explorer API host (documented at
+# api.usa.gov/crime), keyed via data.gov; federal public-domain data.
+[[api_host]]
+host = "api.usa.gov"
+endpoint_prefix = "/crime/"
+tos_basis = "api.usa.gov/crime is the documented FBI CDE public API (data.gov key); federal public-domain data."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+# Eyes on Flock — the documented public CC-BY-SA-4.0 JSON API
+# (eyesonflock.com/api/v1/data); the host fronts Cloudflare — a challenge is a
+# recorded disappearance, never defeated (SIG-INGEST-013).
+[[api_host]]
+host = "eyesonflock.com"
+endpoint_prefix = "/api/v1"
+tos_basis = "eyesonflock.com/api/v1 is the project's documented public JSON API, published CC-BY-SA-4.0 (rights resolved SIG-INGEST-030, 2026-08-20)."
+rate_limit_per_min = 2
+counsel_reviewed = false
+
+# DocumentCloud — the documented public read API (api.documentcloud.org);
+# single-document lookups only (the records connector refuses listings,
+# SIG-INGEST-036). robots.txt is Disallow:/ — the API prefix is the documented
+# programmatic surface. The source itself stays rights-gated (per-document
+# rights vary); this entry records the API-mode basis, not permission.
+[[api_host]]
+host = "api.www.documentcloud.org"
+endpoint_prefix = "/api/"
+tos_basis = "api.www.documentcloud.org/api/ is DocumentCloud's documented public API; targeted document lookups under the platform ToS."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+# CourtListener REST API v4 — documented keyed access (wiki.free.law); targeted
+# docket/opinion lookups only (the accountability connector refuses collections
+# and cursors, SIG-INGEST-036/037). The source stays rights-gated (FLP
+# membership-agreement access); this entry records the API-mode basis only.
+[[api_host]]
+host = "www.courtlistener.com"
+endpoint_prefix = "/api/rest/"
+tos_basis = "CourtListener REST API v4 is the documented keyed programmatic API (wiki.free.law); targeted lookups under FLP's published usage terms."
+rate_limit_per_min = 5
+counsel_reviewed = false

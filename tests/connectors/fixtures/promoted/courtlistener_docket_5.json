@@ -1,0 +1,18 @@
+{
+  "id": 5,
+  "court": "scotus",
+  "court_id": "scotus",
+  "docket_number": "05-908",
+  "case_name": "Doe v. Example City Police Department",
+  "date_filed": "2026-01-15",
+  "date_terminated": null,
+  "assigned_to_str": "",
+  "referred_to_str": "",
+  "cause": "42 U.S.C. § 1983 Civil Rights Act",
+  "nature_of_suit": "Civil Rights",
+  "jury_demand": "None",
+  "resource_uri": "https://www.courtlistener.com/api/rest/v4/dockets/5/",
+  "clusters": "https://www.courtlistener.com/api/rest/v4/clusters/?docket=5",
+  "recap_documents": "https://www.courtlistener.com/api/rest/v4/recap-documents/?docket_entry__docket=5",
+  "absolute_url": "/docket/5/doe-v-example-city-police-department/"
+}

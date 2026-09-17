@@ -131,6 +131,11 @@ def usaspending_config() -> Mapping[str, Any]:
     return vocab()["usaspending"]
 
 
+def sam_gov_config() -> Mapping[str, Any]:
+    """The SAM.gov opportunity-search facts (``[sam_gov]`` in the vocab, P26.2)."""
+    return vocab()["sam_gov"]
+
+
 # --- the predicate allowlist (SIG-INGEST-033) ---------------------------------
 
 
@@ -566,28 +571,66 @@ def agenda_tenants() -> dict[str, Mapping[str, Any]]:
     return dict(agenda_registry().get("tenants", {}))
 
 
+def platform_endpoints() -> Mapping[str, Any]:
+    """The per-platform index-endpoint facts (``[platform_endpoints.*]``, P26.2)."""
+    return vocab().get("platform_endpoints", {})
+
+
 def tenant_targets(platform: str | None = None) -> list[dict[str, Any]]:
     """The targeted-lookup targets from the tenant registry (the connector reads these).
 
     One target per registered tenant (optionally filtered to a single ``platform``
-    source id), carrying the per-tenant ``api_base`` URL and the jurisdiction as a
-    candidate identifier (SIG-INGEST-034). This is "the connector reads tenants from
-    the registry" (§23.6 AC).
+    source id). The ``url`` is the tenant's **index endpoint** — ``api_base`` plus
+    the platform's reviewed ``index_path``/``index_query``/``index_method`` from
+    ``[platform_endpoints.*]`` (P26.2): the public meetings/matters listing the
+    portal itself reads, bounded, never a crawl. The jurisdiction rides as a
+    candidate identifier (SIG-INGEST-034).
     """
     out: list[dict[str, Any]] = []
     for tenant_id, row in agenda_tenants().items():
         if platform is not None and row.get("platform") != platform:
             continue
-        out.append(
-            {
-                "tenant_id": tenant_id,
-                "platform": row.get("platform"),
-                "jurisdiction": row.get("jurisdiction"),
-                "url": row.get("api_base"),
-                "external_id": tenant_id,
-            }
-        )
+        platform_id = str(row.get("platform") or "")
+        endpoint = platform_endpoints().get(platform_id, {})
+        api_base = str(row.get("api_base") or "").rstrip("/")
+        index_path = str(endpoint.get("index_path", ""))
+        index_query = str(endpoint.get("index_query", "")).strip()
+        url = f"{api_base}{index_path}" + (f"?{index_query}" if index_query else "")
+        target: dict[str, Any] = {
+            "tenant_id": tenant_id,
+            "platform": platform_id,
+            "jurisdiction": row.get("jurisdiction"),
+            "url": url,
+            "external_id": tenant_id,
+            "kind": "agenda_index",
+        }
+        if str(endpoint.get("index_method", "")).lower() == "post":
+            # e.g. PrimeGov PublicPortal /search — the bounded POST body rides the
+            # shared fetch seam exactly like a USAspending sub-award search does.
+            target["post_body"] = dict(endpoint.get("index_body", {}))
+        patterns = endpoint.get("contract_matter_patterns")
+        if patterns:
+            target["contract_matter_patterns"] = list(patterns)
+        out.append(target)
     return out
+
+
+def tenant_for_uri(uri: str) -> Mapping[str, Any] | None:
+    """The tenant-registry row whose index URL ``uri`` fetches (P26.2).
+
+    ``extract``/``normalize`` are pure functions of the capture — the tenant
+    context (jurisdiction, contract-type patterns) is recovered by matching the
+    capture's source URI back to the registry row whose generated URL it is.
+    """
+    for target in tenant_targets():
+        if str(target["url"]) == uri:
+            return target
+    # A tenant's bare api_base (or a per-item detail URL under it) still maps.
+    for target in tenant_targets():
+        api_base = str(target["url"]).split("?", 1)[0].rstrip("/")
+        if uri.rstrip("/") == api_base or uri.startswith(f"{api_base}/"):
+            return target
+    return None
 
 
 def tenant_discovery_negatives() -> list[dict[str, Any]]:
@@ -780,7 +823,18 @@ class ProcurementConnector(Connector):
         """
         targets: list[Mapping[str, Any]] = list(ctx.parameters.get("targets", []))
         if ctx.source.id in agenda_platform_sources():
-            targets = [*targets, *tenant_targets(platform=ctx.source.id)]
+            # The live path passes the registry-derived targets in already
+            # (live_targets kind=agenda_tenants); dedupe on tenant_id so a tenant
+            # is never fetched twice in one run.
+            seen = {str(t.get("tenant_id")) for t in targets if t.get("tenant_id")}
+            targets = [
+                *targets,
+                *(
+                    t
+                    for t in tenant_targets(platform=ctx.source.id)
+                    if str(t.get("tenant_id")) not in seen
+                ),
+            ]
         if ctx.source.id == source_ids().get("usaspending"):
             for target in targets:
                 assert_pulls_subawards(target)
@@ -791,17 +845,29 @@ class ProcurementConnector(Connector):
         assert ctx.fetcher is not None, "connectors fetch only through the shared layer"
         if ctx.source.id == source_ids().get("usaspending"):
             assert_pulls_subawards(target)
+        url = str(target["url"])
+        if ctx.source.id == source_ids().get("sam_gov"):
+            # SAM.gov's public API requires an api_key query parameter — resolved
+            # from the environment (HG-09: the key is auth, never stored in a
+            # file). Keyless, SAM.gov answers 404 — a recorded disappearance, not
+            # something to defeat.
+            import os
+
+            key = os.environ.get(str(sam_gov_config()["api_key_env"]), "").strip()
+            if key and "api_key" not in url:
+                sep = "&" if "?" in url else "?"
+                url = f"{url}{sep}api_key={key}"
         post_body = target.get("post_body")
         if post_body is not None:
-            # USAspending's sub-award search is POST-only (the documented
-            # ``/search/spending_by_award/`` endpoint with ``subawards: true``,
-            # §23.6) — the body rides the shared seam like an auth header.
+            # POST-targeted searches (USAspending sub-awards §23.6; PrimeGov's
+            # PublicPortal /search index, P26.2) ride the shared seam like an
+            # auth header — the body is reviewed target/vocab data, not content.
             return ctx.fetcher.fetch(
-                str(target["url"]),
+                url,
                 headers={"Content-Type": "application/json"},
                 body=json.dumps(post_body, sort_keys=True).encode("utf-8"),
             )
-        return ctx.fetcher.fetch(str(target["url"]))
+        return ctx.fetcher.fetch(url)
 
     # -- interpretation (pure functions of the capture) --
     def parse(self, ctx: RunContext, capture: CaptureRef) -> dict[str, Any]:
@@ -838,6 +904,46 @@ class ProcurementConnector(Connector):
                 }
             ]
         payload = parsed["payload"]
+        if ctx.source.id in agenda_platform_sources():
+            # An agenda-platform tenant index (P26.2): one `agenda_item` raw
+            # record per matter/event/meeting, carrying the tenant context
+            # recovered from the registry so normalize() knows the jurisdiction
+            # + reviewed contract-type patterns. An InSite error envelope (a
+            # tenant whose client id is not provisioned — recorded, §3.1) is a
+            # `tenant_api_error` record, never a silent empty result.
+            tenant = tenant_for_uri(str(parsed["capture"].source_uri))
+            if _is_tenant_error_envelope(payload):
+                raw_payload = (
+                    dict(payload) if isinstance(payload, Mapping) else {"payload": payload}
+                )
+                return [
+                    {
+                        "record_kind": "tenant_api_error",
+                        "raw": raw_payload,
+                        "tenant": dict(tenant) if tenant else None,
+                    }
+                ]
+            if isinstance(payload, Mapping):
+                objects = list(payload.get("value") or payload.get("results") or [])
+            elif isinstance(payload, Sequence) and not isinstance(payload, (str, bytes)):
+                objects = list(payload)
+            else:
+                objects = [payload]
+            return [
+                {
+                    "record_kind": "agenda_item",
+                    "raw": dict(o) if isinstance(o, Mapping) else {"value": o},
+                    "tenant": dict(tenant) if tenant else None,
+                }
+                for o in objects
+            ]
+        if ctx.source.id == source_ids().get("sam_gov"):
+            # SAM.gov opportunities search — `opportunitiesData` is the notice
+            # list (P26.2); a notice is a dated procurement event, not a contract.
+            objects = (
+                list(payload.get("opportunitiesData", [])) if isinstance(payload, Mapping) else []
+            )
+            return [{"record_kind": "procurement_notice", "raw": dict(o)} for o in objects]
         if isinstance(payload, Mapping) and "results" in payload:
             objects = list(payload["results"])
         elif isinstance(payload, Sequence) and not isinstance(payload, (str, bytes)):
@@ -861,6 +967,12 @@ class ProcurementConnector(Connector):
                 out.extend(self._normalize_document(ctx, raw))
             elif kind == "subaward":
                 out.extend(self._normalize_subaward(ctx, raw))
+            elif kind == "agenda_item":
+                out.extend(self._normalize_agenda_item(ctx, raw))
+            elif kind == "tenant_api_error":
+                out.append(self._normalize_tenant_error(ctx, raw))
+            elif kind == "procurement_notice":
+                out.extend(self._normalize_notice(ctx, raw))
             else:
                 out.extend(self._normalize_contract(ctx, raw))
         return out
@@ -940,6 +1052,236 @@ class ProcurementConnector(Connector):
             classification=dict(raw["verdict"]),
         )
         return [artifact.to_row(), _stamp(report.to_row(), source_id=ctx.source.id)]
+
+    def _normalize_agenda_item(
+        self, ctx: RunContext, raw: Mapping[str, Any]
+    ) -> list[dict[str, Any]]:
+        """One agenda-platform index record → an ``agenda_index`` row (+ maybe a Contract).
+
+        Every matter/event/meeting is retained as an index row carrying its
+        locators (item id, title, dates, document link) and the tenant's
+        jurisdiction as a candidate identifier (SIG-INGEST-034). A Contract is
+        emitted **only** when the item's type name matches the tenant's reviewed
+        ``contract_matter_patterns`` (P26.2) — an ordinance or appointment is
+        legislative business, never a contract (§3.1, no synthetic certainty).
+        """
+        item = raw["raw"]
+        tenant = raw.get("tenant") or {}
+        tenant_id = str(tenant.get("tenant_id") or "")
+        platform = str(tenant.get("platform") or ctx.source.id)
+        jurisdiction = _opt_str(tenant.get("jurisdiction"))
+        external_id = (
+            _first_nonempty(
+                item,
+                (
+                    "MatterFile",
+                    "MatterId",
+                    "id",
+                    "meetingId",
+                    "meeting_id",
+                    "event_id",
+                    "systemItemId",
+                ),
+            )
+            or _digest_of(item)[:24]
+        )
+        type_name = _first_nonempty(
+            item, ("MatterTypeName", "type_name", "category", "categoryName", "info")
+        )
+        title = _first_nonempty(
+            item, ("MatterTitle", "MatterName", "meetingTitle", "name", "title")
+        )
+        doc_link = self._agenda_item_link(item, tenant, platform)
+        subject = f"agenda_item:{ctx.source.id}:{tenant_id or 'unscoped'}:{external_id}"
+        index_row = _stamp(
+            {
+                "record_kind": "agenda_index",
+                "subject_id": subject,
+                "predicate_id": assert_predicate_allowed("agenda_item"),
+                "external_id": external_id,
+                "raw_value": title or external_id,
+                "platform": platform,
+                "tenant_id": tenant_id or None,
+                "title": title,
+                "type_name": type_name,
+                "status": _first_nonempty(item, ("MatterStatusName", "status", "meetingStatus")),
+                "introduced": _first_nonempty(
+                    item, ("MatterIntroDate", "startDateTime", "meetingDate")
+                ),
+                "enactment_number": _first_nonempty(item, ("MatterEnactmentNumber",)),
+                "document": doc_link,
+                "jurisdiction": jurisdiction,
+                "raw": dict(item),
+            },
+            source_id=ctx.source.id,
+        )
+        if jurisdiction:
+            index_row["jurisdiction_candidate"] = org_candidate(
+                jurisdiction, scheme="agenda.jurisdiction_name"
+            )
+        rows: list[dict[str, Any]] = [index_row]
+
+        patterns = [
+            str(p).lower()
+            for p in (
+                tenant.get("contract_matter_patterns")
+                or platform_endpoints().get(platform, {}).get("contract_matter_patterns", [])
+            )
+        ]
+        if type_name and any(p in type_name.lower() for p in patterns):
+            contract = Contract(
+                external_id=external_id,
+                source_id=ctx.source.id,
+                buyer=jurisdiction,
+                document=doc_link,
+                lifecycle=tuple(
+                    LifecycleTransition(state=state, date=date)
+                    for state, date in (
+                        (
+                            "proposed",
+                            _first_nonempty(item, ("MatterIntroDate", "created_at")),
+                        ),
+                        (
+                            "awarded",
+                            _first_nonempty(item, ("MatterPassedDate", "MatterEnactmentDate")),
+                        ),
+                    )
+                    if date
+                ),
+                raw=dict(item),
+            )
+            rows.extend(contract.claim_rows())
+        return rows
+
+    def _agenda_item_link(
+        self, item: Mapping[str, Any], tenant: Mapping[str, Any], platform: str
+    ) -> str | None:
+        """The human-readable item link an agenda index row records (never fetched here)."""
+        template = platform_endpoints().get(platform, {}).get("matter_link_template")
+        if template and item.get("MatterId"):
+            return str(template).format(
+                tenant=tenant.get("tenant") or tenant.get("tenant_id") or "",
+                matter_id=item.get("MatterId"),
+                matter_guid=item.get("MatterGuid") or "",
+            )
+        for key in ("url", "link", "document_url", "itemsSearchResultsDefaultLinkOnMeetingPortal"):
+            if item.get(key):
+                return str(item[key])
+        return None
+
+    def _normalize_tenant_error(self, ctx: RunContext, raw: Mapping[str, Any]) -> dict[str, Any]:
+        """A tenant whose index answered an API error envelope — recorded, not silent (§3.1)."""
+        tenant = raw.get("tenant") or {}
+        tenant_id = tenant.get("tenant_id") or "unknown"
+        envelope = raw["raw"] if isinstance(raw.get("raw"), Mapping) else {}
+        return _stamp(
+            {
+                "record_kind": "tenant_api_error",
+                "subject_id": f"agenda_tenant:{ctx.source.id}:{tenant_id}",
+                "predicate_id": assert_predicate_allowed("agenda_item"),
+                "raw_value": _opt_str(envelope.get("Message")) or "tenant index error envelope",
+                "tenant_id": tenant.get("tenant_id"),
+                "jurisdiction": tenant.get("jurisdiction"),
+                "raw": dict(envelope),
+            },
+            source_id=ctx.source.id,
+        )
+
+    def _normalize_notice(self, ctx: RunContext, raw: Mapping[str, Any]) -> list[dict[str, Any]]:
+        """A SAM.gov opportunity → a ``procurement_notice`` subject + its claims (P26.2).
+
+        A notice is the dated evidence of a procurement lifecycle event — a
+        solicitation, an award announcement — not a Contract (the award may never
+        have executed). The reviewed ``[sam_gov.notice_map]`` maps the notice type
+        to a lifecycle state; an unlisted type emits the index facts only, never
+        a guessed transition (§3.1).
+        """
+        notice = raw["raw"]
+        notice_id = (
+            _first_nonempty(notice, ("noticeId", "notice_id", "id")) or _digest_of(notice)[:24]
+        )
+        notice_type = _first_nonempty(notice, ("type", "notice_type"))
+        subject = f"procurement_notice:{ctx.source.id}:{notice_id}"
+        agency = _opt_str(
+            " / ".join(
+                p
+                for p in (
+                    _opt_str(notice.get("fullParentPathName") or notice.get("department")),
+                    _opt_str(notice.get("subTier") or notice.get("agency")),
+                    _opt_str(notice.get("office")),
+                )
+                if p
+            )
+        )
+        surface: dict[str, Any] = {
+            "external_id": notice_id,
+            "notice_type": notice_type,
+            "posted_date": _opt_str(notice.get("postedDate")),
+            "response_deadline": _opt_str(
+                notice.get("responseDeadLine") or notice.get("response_deadline")
+            ),
+            "buyer": agency,
+            "document": _opt_str(notice.get("uiLink") or notice.get("url")),
+        }
+        rows: list[dict[str, Any]] = [
+            _stamp(
+                {
+                    "record_kind": "procurement_notice",
+                    "subject_id": subject,
+                    "predicate_id": assert_predicate_allowed("procurement_notice"),
+                    "external_id": notice_id,
+                    "raw_value": notice_id,
+                    "predicate_surface": {k: v for k, v in surface.items() if v is not None},
+                    "title": _opt_str(notice.get("title")),
+                    "raw": dict(notice),
+                },
+                source_id=ctx.source.id,
+            )
+        ]
+        for predicate, value in surface.items():
+            if value is None:
+                continue
+            row: dict[str, Any] = {
+                "record_kind": "claim",
+                "subject_id": subject,
+                "predicate_id": assert_predicate_allowed(predicate),
+                "raw_value": _raw_value_of(value),
+                "value": value,
+            }
+            if predicate == "buyer":
+                row["candidate_identifier"] = org_candidate(str(value))
+            rows.append(_stamp(row, source_id=ctx.source.id))
+        mapping = sam_gov_config().get("notice_map", {}).get(str(notice_type or ""))
+        if mapping:
+            rows.append(
+                _stamp(
+                    {
+                        "record_kind": "claim",
+                        "subject_id": subject,
+                        "predicate_id": assert_predicate_allowed("lifecycle_transition"),
+                        "raw_value": str(mapping["state"]),
+                        "value": {
+                            "state": str(mapping["state"]),
+                            "date": _opt_str(notice.get("postedDate")),
+                        },
+                    },
+                    source_id=ctx.source.id,
+                )
+            )
+            if mapping.get("channel"):
+                rows.append(
+                    _stamp(
+                        {
+                            "record_kind": "claim",
+                            "subject_id": subject,
+                            "predicate_id": assert_predicate_allowed("acquisition_channel"),
+                            "raw_value": str(mapping["channel"]),
+                            "value": str(mapping["channel"]),
+                        },
+                        source_id=ctx.source.id,
+                    )
+                )
+        return rows
 
     def _build_contract(self, ctx: RunContext, raw: Mapping[str, Any]) -> Contract:
         """Map a raw contract object onto the §11.11 runtime shape.
@@ -1057,7 +1399,7 @@ def load_claims_for_l1(claims: Iterable[Mapping[str, Any]]) -> list[dict[str, An
     (SIG-INGEST-003). Only the claim/entity rows get an identity + transaction time;
     coverage records, evidence artifacts, and quality reports keep their own keys.
     """
-    stamped_kinds = {"contract", "funding_instrument", "claim"}
+    stamped_kinds = {"contract", "funding_instrument", "procurement_notice", "claim"}
     out: list[dict[str, Any]] = []
     for claim in claims:
         if claim.get("record_kind") in stamped_kinds:
@@ -1083,6 +1425,31 @@ def _raw_value_of(value: Any) -> str:
     if isinstance(value, (list, tuple)):
         return ";".join(str(v) for v in value)
     return str(value)
+
+
+def _is_tenant_error_envelope(payload: Any) -> bool:
+    """Whether an agenda-platform payload is an InSite-style API error envelope.
+
+    A tenant whose client id is not provisioned answers HTTP 200 with
+    ``{"Message": ..., "ExceptionMessage"/"messageDetail": ...}`` — an error
+    envelope, not an index page (observed 2026-09-16 on the shared
+    webapi.legistar.com host). Recorded as a tenant_api_error row, never read as
+    an empty index (§3.1).
+    """
+    return (
+        isinstance(payload, Mapping)
+        and "Message" in payload
+        and ("ExceptionMessage" in payload or "messageDetail" in payload)
+    )
+
+
+def _first_nonempty(raw: Mapping[str, Any], keys: Iterable[str]) -> str | None:
+    """The first present non-empty string value among ``keys`` (alias-tolerant read)."""
+    for key in keys:
+        value = _opt_str(raw.get(key))
+        if value is not None:
+            return value
+    return None
 
 
 def _looks_like_subaward(obj: Mapping[str, Any]) -> bool:
@@ -1157,10 +1524,13 @@ __all__ = [
     "is_predicate_allowed",
     "load_claims_for_l1",
     "org_candidate",
+    "platform_endpoints",
     "predicate_allowlist",
     "procurement_states",
+    "sam_gov_config",
     "source_ids",
     "tenant_discovery_negatives",
+    "tenant_for_uri",
     "tenant_targets",
     "trace_subaward_to_deployment",
     "usaspending_config",

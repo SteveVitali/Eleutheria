@@ -240,3 +240,61 @@ cron = "0 5 19 * *"
 job = "sig-ingest-okc-procurement"
 scheduler = "sig-sched-okc-procurement"
 note = "okc.gov edge WAF 403s the index — a recorded link_rotted/access refusal stands."
+
+# --- P26.2 (SOURCES.2): the nine promoted sources' scheduled runs ------------
+
+[[sources]]
+id = "legistar"
+cadence = "monthly"
+cron = "0 5 20 * *"
+job = "sig-ingest-legistar"
+scheduler = "sig-sched-legistar"
+note = "Verified InSite tenants (seattle/mesa/sanantonio) → matters+events indexes; 'chicago' is a recorded tenant_api_error. Agenda platforms draft for RECURRING (05:00); a near-empty monthly source stays monthly."
+
+[[sources]]
+id = "primegov"
+cadence = "monthly"
+cron = "0 5 21 * *"
+job = "sig-ingest-primegov"
+scheduler = "sig-sched-primegov"
+note = "lacity.primegov.com robots.txt is Disallow:/ — a recorded politeness_refusal until an API-mode basis (ADR-083) or a serving tenant lands."
+
+[[sources]]
+id = "civicclerk"
+cadence = "monthly"
+cron = "0 5 22 * *"
+job = "sig-ingest-civicclerk"
+scheduler = "sig-sched-civicclerk"
+note = "v1 API is IdentityServer-gated — anonymous reads 404 and the api host serves no robots.txt → a recorded robots_unretrievable until an access path resolves (HG-09)."
+
+[[sources]]
+id = "eyes_on_flock"
+cadence = "weekly"
+cron = "0 5 23 * 0"
+job = "sig-ingest-eyes-on-flock"
+scheduler = "sig-sched-eyes-on-flock"
+note = "Weekly — the portal freshness stamp is days-stale (2026-09-15) so daily adds little. Cloudflare currently 403s programmatic egress — a recorded disappearance (SIG-INGEST-013), never defeated."
+
+[[sources]]
+id = "fbi_cde_agency_registry"
+cadence = "quarterly"
+cron = "0 5 1 1,4,7,10 *"
+job = "sig-ingest-fbi-cde"
+scheduler = "sig-sched-fbi-cde"
+note = "Agency registry slices (byStateAbbr) — verified live 2026-09-16 with the data.gov key ($SIG_DATA_GOV_KEY, HG-09)."
+
+[[sources]]
+id = "sam_gov"
+cadence = "weekly"
+cron = "0 5 1 * 1"
+job = "sig-ingest-sam-gov"
+scheduler = "sig-sched-sam-gov"
+note = "Bounded opportunity search over the documented public API; key from $SIG_SAM_GOV_KEY (HG-09). Keyless the API 404s — a recorded disappearance."
+
+[[sources]]
+id = "openstates"
+cadence = "weekly"
+cron = "0 5 2 * 2"
+job = "sig-ingest-openstates"
+scheduler = "sig-sched-openstates"
+note = "Bounded state-scoped bill queries over v3; key from $SIG_OPENSTATES_KEY (HG-09). Keyless → 403 challenge, recorded. Bills index as index_only links (a pending bill is not a §11.14 LegalInstrument)."

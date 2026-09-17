@@ -1,0 +1,18 @@
+{
+  "byte_counts": [],
+  "capture_digests": [],
+  "claim_count": 0,
+  "connector": "procurement",
+  "content_drift": null,
+  "disappearances": [],
+  "duration_seconds": 0.162097,
+  "mode": "live",
+  "politeness_refusal": "RobotsDisallowed: robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://lacity.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "primegov",
+  "started_at": "2026-09-17T00:54:12.293910+00:00",
+  "status_codes": [],
+  "urls": []
+}

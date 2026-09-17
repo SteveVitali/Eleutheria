@@ -1,0 +1,82 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# The versioned `agency_registry` connector vocabulary (P26.2 / SOURCES.2) — the
+# FBI Crime Data Explorer agency registry (the ORI9 identity substrate, §14.2).
+# This table is DATA, not code (SIG-ENG-001): the predicate allowlist, the API
+# facts, and the per-field→predicate map are data rows reviewed on their own.
+# Changes after P26.2 are VERSIONED MIGRATIONS (§20), not edits — bump
+# `vocab_version` and add the change, never silently rewrite a row
+# (SIG-INGEST-017).
+#
+# NOTE ON TOML ORDERING: every top-level key MUST appear ABOVE the first [table]
+# header — otherwise TOML nests it under that table.
+
+# The connector's own vocabulary version, stamped onto every run (§20).
+vocab_version = "2026.09.16"
+
+# The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
+# `agency_registry` connector may write ONLY the agency-registry-entry surface —
+# an ORI-keyed law-enforcement-agency identity row. Writing anything else — a
+# deployment, a device count, an agency headcount — is a schema error, the D6
+# admissibility filter enforced at ingest (§10.5). `agency_registry_entry` is
+# the entity assertion itself; the rest are its predicates.
+predicate_allowlist = [
+  "agency_registry_entry",
+  "agency_ori9",
+  "agency_name",
+  "agency_state",
+  "agency_county",
+  "agency_type",
+  "nibrs_participant",
+  "nibrs_start_date",
+  "agency_latitude",
+  "agency_longitude",
+  "external_id",
+]
+
+# Predicate GENRES this connector MUST NOT write (scope-creep guard): the
+# registry is an IDENTITY substrate — it asserts the agency exists and carries
+# an ORI; it says nothing about what the agency deploys. Deployments, device
+# counts, procurement, and personnel claims are other tickets' surfaces.
+forbidden_predicate_genres = [
+  "deployment_exists",
+  "device_count",
+  "camera_count",
+  "contract",
+  "officer_count",
+  "parsed_document_claim",
+]
+
+# The registry source id this connector runs against (§22.6).
+[sources]
+fbi_cde_agency_registry = "fbi_cde_agency_registry"
+
+# The FBI Crime Data Explorer API (documented at api.usa.gov/crime): the
+# byStateAbbr agency listing returns `{<COUNTY>: [ {agency…} ]}` — a keyed public
+# endpoint (data.gov key; $SIG_DATA_GOV_KEY env — HG-09 — else the documented
+# api.data.gov DEMO_KEY for exploration). Federal public-domain data
+# (17 U.S.C. §105), rights resolved CC0-1.0 (registry row, flipped 2026-09-15).
+[cde]
+api_base = "https://api.usa.gov/crime/fbi/cde"
+by_state_endpoint = "/agency/byStateAbbr/"
+api_key_env = "SIG_DATA_GOV_KEY"
+# api.data.gov's published demonstration key — documented public fallback for
+# keyless exploration (heavily rate-limited; it is auth data published upstream,
+# not a secret and not a circumvention).
+demo_key = "DEMO_KEY"
+
+# The CDE agency-object field → predicate map (verified against the live
+# 2026-09-16 response: {ori, counties, is_nibrs, latitude, longitude,
+# state_abbr, state_name, agency_name, agency_type_name, nibrs_start_date}).
+[field_map]
+ori               = "agency_ori9"
+agency_name       = "agency_name"
+state_abbr        = "agency_state"
+counties          = "agency_county"
+agency_type_name  = "agency_type"
+is_nibrs          = "nibrs_participant"
+nibrs_start_date  = "nibrs_start_date"
+latitude          = "agency_latitude"
+longitude         = "agency_longitude"

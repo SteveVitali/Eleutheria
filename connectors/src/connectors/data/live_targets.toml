@@ -282,3 +282,77 @@ kind = "document_page"
 targets = [
   { id = "okc-purchasing-index", url = "https://www.okc.gov/departments/finance/purchasing", kind = "document_page" },
 ]
+
+# --- P26.2 promoted sources (SOURCES.2) ---------------------------------------
+# The three agenda-platform sources take their targets from the published tenant
+# registry (data/agenda_tenants.toml) — kind "agenda_tenants" expands to the
+# platform's tenant index endpoints, never a duplicated list. Legistar is
+# live-verified (2026-09-16); PrimeGov's lacity tenant serves but its robots.txt
+# disallows / (a recorded robots refusal stands); CivicClerk's v1 API is
+# IdentityServer-gated — anonymous reads 404 and the api host serves no
+# robots.txt (a recorded robots-unretrievable refusal stands).
+[legistar]
+kind = "agenda_tenants"
+[primegov]
+kind = "agenda_tenants"
+[civicclerk]
+kind = "agenda_tenants"
+
+# Eyes on Flock — the documented public CC-BY-SA-4.0 JSON API (flipped
+# 2026-09-16 under GL-GATE-06). The host currently answers programmatic egress
+# with a Cloudflare challenge — a recorded disappearance, never defeated
+# (SIG-INGEST-013).
+[eyes_on_flock]
+kind = "document"
+targets = [
+  { id = "eyes-on-flock-data", url = "https://eyesonflock.com/api/v1/data", kind = "portal_json" },
+]
+
+# FBI CDE agency registry — the documented api.usa.gov endpoint; the data.gov
+# key resolves from $SIG_DATA_GOV_KEY at fetch time (HG-09, else the published
+# DEMO_KEY). byStateAbbr/OK is a bounded per-state slice (verified live
+# 2026-09-16: real county→agency map returned).
+[fbi_cde_agency_registry]
+kind = "document"
+targets = [
+  { id = "fbi-cde-agencies-ok", url = "https://api.usa.gov/crime/fbi/cde/agency/byStateAbbr/OK", kind = "agency_registry" },
+]
+
+# SAM.gov opportunities — a BOUNDED keyword search over the documented public
+# API (limit + posted window; the free key resolves from $SIG_SAM_GOV_KEY at
+# fetch time, HG-09). Keyless the API answers 404 — a recorded disappearance.
+[sam_gov]
+kind = "document"
+targets = [
+  { id = "samgov-lpr-opportunities-2026", url = "https://api.sam.gov/prod/opportunities/v2/search?limit=25&postedFrom=01/01/2026&postedTo=12/31/2026&title=license%20plate%20reader", kind = "opportunity_search" },
+]
+
+# OpenStates — a bounded state-scoped bill query over the documented v3 API
+# (per_page bound; key from $SIG_OPENSTATES_KEY, HG-09). Keyless → 403
+# challenge, recorded.
+[openstates]
+kind = "document"
+targets = [
+  { id = "openstates-ok-alpr-bills", url = "https://v3.openstates.org/bills?jurisdiction=ok&q=license+plate+reader&per_page=10", kind = "bill_search" },
+]
+
+# CourtListener / RECAP — a targeted docket lookup (dockets/<id>/ names ONE
+# resource; assert_targeted_lookup requires the specific id). The source stays
+# GATED (FLP membership-agreement access — operator decision, HG-09 class): a
+# live run is refused at the gate, and keyless the endpoint answers 401 anyway.
+[courtlistener_recap]
+kind = "document"
+targets = [
+  { id = "cl-docket-5", url = "https://www.courtlistener.com/api/rest/v4/dockets/5/", kind = "docket_lookup", docket_id = "5" },
+]
+
+# DocumentCloud — a targeted single-document lookup (verified reachable
+# 2026-09-16: /api/documents/20504557/ answers the metadata record). The source
+# stays GATED — per-document rights vary, source-level licence UNDETERMINED —
+# so the live run refuses at the gate; the row is the reviewed target for the
+# day a rights decision lands.
+[documentcloud]
+kind = "document"
+targets = [
+  { id = "dc-doc-20504557", url = "https://api.www.documentcloud.org/api/documents/20504557/", kind = "document_lookup", external_id = "20504557" },
+]

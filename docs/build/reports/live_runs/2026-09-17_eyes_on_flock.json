@@ -1,0 +1,20 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnamhiaij56jj4nbxse3p3gazuambglbcads4iketheq4ki7ysys4xt643y44ei75dsbdrcpwlqbvlgjnbs7kpzos322yp4j4y7h3mlyjy"
+  ],
+  "claim_count": 11311,
+  "connector": "flock_portal",
+  "content_drift": null,
+  "disappearances": [],
+  "duration_seconds": 2.661392,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "eyes_on_flock",
+  "started_at": "2026-09-17T00:54:31.830830+00:00",
+  "status_codes": [],
+  "urls": []
+}

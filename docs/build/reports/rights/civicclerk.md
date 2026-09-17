@@ -20,15 +20,15 @@
 
 ## SPDX candidate
 
-`UNDETERMINED`  (accepted expressions per `policy/data/licenses.toml`)
+`CC0-1.0`  (accepted expressions per `policy/data/licenses.toml`)
 
 ## redistributable analysis
 
-Government public records are redistributable; the vendor platform ToS may constrain the ACCESS METHOD (rate/robots), not the record rights. redistributable=false until reviewed.  → registry `redistributable = false`.
+The RECORDS (agendas/minutes/video indexes) are municipal public records — redistributable on the same basis as `okc_council` (GL-GATE-06, 2026-09-16). The vendor platform ToS constrains the ACCESS METHOD, not the record rights.  → registry `redistributable = true`.
 
 ## derivative_permitted analysis
 
-Public-record derivatives permitted; confirm the vendor ToS does not forbid bulk automated extraction.  → registry `derivative_permitted = false`.
+Public-record derivatives permitted (same basis as `okc_council`).  → registry `derivative_permitted = true`.
 
 ## ODbL compartment implications
 
@@ -38,11 +38,15 @@ Not OSM-derived. No ODbL implication.
 
 REFERENCE (fetch published agendas/minutes for the tenant jurisdiction).
 
+## Access note (2026-09-16, honest)
+
+The v1 API template `{tenant}.api.civicclerk.com/v1` is confirmed from the portal JS, but anonymous reads 404 on every probed tenant and the api host serves no robots.txt — the tenant surface is IdentityServer-gated (the portal obtains a session). A working access path is unresolved (HG-09 class decision); the live target records the posture, nothing is faked.
+
 ## Decision
 
-- [ ] permit ingestion — reviewer: ____ date: ____
-- SPDX to record: `UNDETERMINED`   rights_reviewed_by (role, never a name): ____   rights_reviewed_on: ____
+- [x] permit ingestion — reviewer: maintainer (delegated) date: 2026-09-16
+- SPDX recorded: `CC0-1.0`   rights_reviewed_by: maintainer (delegated)   rights_reviewed_on: 2026-09-16
 
 ## Counsel-needed flag
 
-**PARTIAL — public-record rights are clear; the vendor ToS automated-access clause needs a read.**
+**NO — public-record rights resolved under GL-GATE-06; the access-path question (IdentityServer session) is HG-09-class engineering, not a rights blocker.**

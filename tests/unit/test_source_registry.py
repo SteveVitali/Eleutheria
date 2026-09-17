@@ -73,8 +73,11 @@ def test_source_ids_are_unique() -> None:
 #: (osm_copyright, osm_taginfo, osmf_licence_guidelines, osm_surveillance_tagging,
 #: osm_replication, osm_automated_edits_coc, sous_surveillance_osm_import,
 #: wikidata_sparql, eyes_on_flock, flock_finder, deflock_app_repo, gleif,
-#: agency_audit_export). Every connector-mapped source is now flipped;
-#: the unmapped remainder stays un-permitted.
+#: agency_audit_export). P26.2 (2026-09-17) then flipped the five promoted
+#: sources whose rights resolve clear under GL-GATE-06 (legistar, primegov,
+#: civicclerk, sam_gov, openstates). The two promoted-but-unresolved sources
+#: (documentcloud, courtlistener_recap) are connector-mapped yet stay
+#: un-permitted, and the unmapped remainder stays un-permitted.
 _FLIPPED_SUBSET = frozenset(
     {
         "okc_procurement",
@@ -116,6 +119,17 @@ _FLIPPED_SUBSET = frozenset(
         "deflock_app_repo",
         "gleif",
         "agency_audit_export",
+        # P26.2 (2026-09-17): the promoted sources whose rights resolve to a
+        # resolved-clear licence under GL-GATE-06 — the three agenda platforms
+        # (LicenseRef-PublicAgenda-MeetingRecord), sam_gov (CC0-1.0) and
+        # openstates (CC-BY-4.0). documentcloud + courtlistener_recap stay
+        # gated (per-document licence ambiguity / the FLP membership agreement
+        # is an operator acceptance, not a blanket-clear licence).
+        "legistar",
+        "primegov",
+        "civicclerk",
+        "sam_gov",
+        "openstates",
     }
 )
 
@@ -123,8 +137,9 @@ _FLIPPED_SUBSET = frozenset(
 def test_ingestion_permitted_defaults_false_across_the_seed() -> None:
     # Phase 0 seeds the registry; connectors are Phase 4+. A source is permitted
     # only after a reviewer resolves its posture and flips the flag — as of the
-    # RIGHTS.1 re-run, the 2026-09-15 live-ops flips, and the GL-GATE-06 blanket
-    # disposition (2026-09-16) that is exactly this set (38 sources).
+    # RIGHTS.1 re-run, the 2026-09-15 live-ops flips, the GL-GATE-06 blanket
+    # disposition (2026-09-16), and the P26.2 promoted-source flips (2026-09-17)
+    # that is exactly this set (43 sources).
     permitted = {s.id for s in sources() if s.ingestion_permitted}
     assert permitted == set(_FLIPPED_SUBSET)
 

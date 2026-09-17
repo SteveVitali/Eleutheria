@@ -1,0 +1,20 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnaexvo6mxeggpy6bneqoxewyn3cvnmnwbzbyok4czz5hf5742yc2aqay3gak3y34v5d2zx33l6j3nmswp2544nxkpjcxlmcoqgyurbhoy"
+  ],
+  "claim_count": 5111,
+  "connector": "agency_registry",
+  "content_drift": null,
+  "disappearances": [],
+  "duration_seconds": 1.336801,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "fbi_cde_agency_registry",
+  "started_at": "2026-09-17T00:54:44.564607+00:00",
+  "status_codes": [],
+  "urls": []
+}
