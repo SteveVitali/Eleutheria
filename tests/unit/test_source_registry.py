@@ -130,6 +130,10 @@ _FLIPPED_SUBSET = frozenset(
         "civicclerk",
         "sam_gov",
         "openstates",
+        # P26.5 (2026-09-17): eScribe — the fourth enumerated agenda platform —
+        # flipped on the same GL-GATE-06 municipal-public-record basis
+        # (CC0-1.0; packet docs/build/reports/rights/escribe.md).
+        "escribe",
     }
 )
 
@@ -138,8 +142,8 @@ def test_ingestion_permitted_defaults_false_across_the_seed() -> None:
     # Phase 0 seeds the registry; connectors are Phase 4+. A source is permitted
     # only after a reviewer resolves its posture and flips the flag — as of the
     # RIGHTS.1 re-run, the 2026-09-15 live-ops flips, the GL-GATE-06 blanket
-    # disposition (2026-09-16), and the P26.2 promoted-source flips (2026-09-17)
-    # that is exactly this set (43 sources).
+    # disposition (2026-09-16), the P26.2 promoted-source flips (2026-09-17),
+    # and the P26.5 eScribe flip that is exactly this set (44 sources).
     permitted = {s.id for s in sources() if s.ingestion_permitted}
     assert permitted == set(_FLIPPED_SUBSET)
 

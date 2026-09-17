@@ -36,7 +36,14 @@ from typing import Any
 from evidence.ingest_run import IngestRun
 
 from .loader import compact_permits_ingestion, custody_permits_fetch
-from .net import FetchResult, PoliteFetcher, RobotsDisallowed, RobotsResult, RobotsUnretrievable
+from .net import (
+    FetchResult,
+    PoliteFetcher,
+    RateLimiter,
+    RobotsDisallowed,
+    RobotsResult,
+    RobotsUnretrievable,
+)
 from .pipeline import RunReport, run
 from .registry import SourceRecord, get
 from .replay import ShadowDiff, replay, replay_fingerprint, shadow_replay
@@ -116,6 +123,10 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "legistar": "procurement",
     "civicclerk": "procurement",
     "primegov": "procurement",
+    # P26.5 (SOURCES.5): eScribe joins the agenda-platform tenant path — the
+    # tenant's public calendar page itself calls the bounded JSON webmethod the
+    # registry row names (MeetingsCalendarView.aspx/GetCalendarMeetings).
+    "escribe": "procurement",
     "sam_gov": "procurement",
     "courtlistener_recap": "accountability",
     "documentcloud": "records",
@@ -252,7 +263,13 @@ def run_connector_over_fixture(
     source = dataclasses.replace(get(source_id), ingestion_permitted=True)
     transport = _StaticFileTransport(fixture.read_bytes(), media_type)
     fetcher = PoliteFetcher(
-        connector_name=connector.name, connector_version=version, transport=transport
+        connector_name=connector.name,
+        connector_version=version,
+        transport=transport,
+        # A fixture replay opens no socket — the politeness bookkeeping still
+        # runs, but it must not burn REAL sleep seconds per same-host tenant
+        # now that a source fans out to hundreds of registry targets (P26.5).
+        rate_limiter=RateLimiter(sleep=lambda _seconds: None),
     )
     ctx = RunContext(
         source=source,
@@ -685,7 +702,12 @@ def _run_over_fixture(
     source = dataclasses.replace(get(source_id), ingestion_permitted=True)
     transport = _StaticFileTransport(fixture.read_bytes(), media_type)
     fetcher = PoliteFetcher(
-        connector_name=connector.name, connector_version=version, transport=transport
+        connector_name=connector.name,
+        connector_version=version,
+        transport=transport,
+        # Static-transport replay/shadow: no socket is opened, so per-host
+        # politeness sleeps must not burn real time across tenant fan-out.
+        rate_limiter=RateLimiter(sleep=lambda _seconds: None),
     )
     ctx = RunContext(
         source=source,

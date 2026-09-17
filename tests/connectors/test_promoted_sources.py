@@ -201,6 +201,65 @@ def test_civicclerk_events_index_over_fixture() -> None:
     assert {r["external_id"] for r in index_rows} == {"8821", "8822"}
 
 
+# --- P26.5: eScribe joins the agenda-platform tenant path ----------------------
+
+
+def test_escribe_is_a_mapped_green_agenda_platform() -> None:
+    """P26.5: escribe routes through the procurement tenant path and is green."""
+    assert CONNECTOR_FOR_SOURCE["escribe"] == "procurement"
+    assert is_review_status_green("escribe")
+    targets = live_targets("escribe")
+    assert targets, "escribe has no registered tenants"
+    assert all(t["platform"] == "escribe" for t in targets)
+    for t in targets:
+        assert t["url"].endswith("MeetingsCalendarView.aspx/GetCalendarMeetings")
+        # The bounded calendar window rides the reviewed POST body, never a crawl.
+        assert t.get("post_body"), "escribe targets need the bounded POST body"
+
+
+def test_escribe_meetings_index_over_fixture() -> None:
+    """The ASP.NET webmethod's {"d": [...]} envelope yields agenda_index rows."""
+    victoria = next(
+        t["id"] for t in tenant_targets(platform="escribe") if t.get("tenant") == "victoria"
+    )
+    report = run_connector_over_fixture(
+        "procurement",
+        "escribe",
+        _FIX / "escribe_victoria_meetings.json",
+        media_type="application/json",
+        kind="agenda_index",
+        target_url=_tenant_url("escribe", victoria),
+    )
+    index_rows = [
+        c
+        for c in report.claims
+        if c.get("record_kind") == "agenda_index"
+        and c.get("jurisdiction") == "City of Victoria, BC"
+    ]
+    assert {r["external_id"] for r in index_rows} == {
+        "dff39131-4f54-4ebf-b7a6-33e652e07a62",
+        "1773290d-ce2f-43f9-8e19-a03bfdc649dd",
+    }
+    assert all(r["platform"] == "escribe" for r in index_rows)
+    assert all(r["document"] for r in index_rows)
+
+
+def test_platform_census_rows_are_enumerated_never_targets() -> None:
+    """The P26.5 [[platform_census]] records the found-but-not-ingested universe."""
+    from connectors.procurement import platform_census
+
+    census = platform_census()
+    assert census, "the platform census must record the enumerated universe"
+    platforms = {str(r.get("platform")) for r in census}
+    assert {"granicus", "novusagenda"} <= platforms
+    for row in census:
+        assert row.get("host") and row.get("outcome") and row.get("enum_source")
+    # A census host is NEVER expanded into a live target.
+    target_urls = {str(t["url"]) for t in tenant_targets()}
+    for row in census:
+        assert not any(str(row["host"]) in url for url in target_urls)
+
+
 # --- sam_gov: opportunities → procurement_notice + reviewed lifecycle ---------
 
 

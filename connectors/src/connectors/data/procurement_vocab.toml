@@ -23,7 +23,10 @@
 # 2026.09.16 (P26.2 / SOURCES.2): +procurement_notice surface (SAM.gov federal
 # opportunities), +agenda_item index rows + the per-platform index endpoints /
 # reviewed matter-type patterns the agenda-platform tenant path now resolves.
-vocab_version = "2026.09.16"
+# 2026.09.17 (P26.5 / SOURCES.5): +escribe platform (eScribe Meetings — the
+# ASP.NET `MeetingsCalendarView.aspx/GetCalendarMeetings` JSON webmethod,
+# `items_key = "d"`) joins the agenda-platform set.
+vocab_version = "2026.09.17"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `procurement` connector may write ONLY the Contract (§11.11) and FundingInstrument
@@ -182,6 +185,7 @@ agenda_platforms = [
   "primegov",
   "civicclerk",
   "civicplus",
+  "escribe",
 ]
 
 # The artifact_type genres this connector may stamp on a captured procurement
@@ -208,6 +212,7 @@ gsa            = "gsa"
 legistar       = "legistar"
 primegov       = "primegov"
 civicclerk     = "civicclerk"
+escribe        = "escribe"
 
 # --- USAspending: sub-awards, not only prime awards (§23.6, SIG-ONTO-033) ------
 # USAspending exposes prime awards AND sub-awards. Sub-awards are the traceable
@@ -273,6 +278,21 @@ index_body = {}
 # the index is otherwise the tenant's full event list).
 index_path  = ""
 index_query = "$top=100"
+
+[platform_endpoints.escribe]
+# eScribe Meetings (P26.5): the tenant's public Meetings calendar page calls its
+# own ASP.NET JSON webmethod — POST {api_base}/MeetingsCalendarView.aspx/
+# GetCalendarMeetings answers {"d": [ …meeting records… ]} (verified live
+# 2026-09-17 across the pub-* tenant surface; api_base template is
+# https://pub-{tenant}.escribemeetings.com). The reviewed index_body bounds the
+# calendar window — a dated slice, never a full-history crawl.
+index_path   = "/MeetingsCalendarView.aspx/GetCalendarMeetings"
+index_method = "post"
+index_body   = { calendarStartDate = "2025-01-01T00:00:00", calendarEndDate = "2026-12-31T23:59:59" }
+items_key    = "d"
+# The human-readable meeting page (link, not bytes) — {tenant} is the pub-*
+# slug, {matter_id} the meeting's ID guid.
+matter_link_template = "https://pub-{tenant}.escribemeetings.com/MeetingsCalendarView.aspx/Meeting?Id={matter_id}"
 
 # --- SAM.gov federal opportunities (P26.2 / SOURCES.2) -------------------------
 # The documented public opportunities search (api.sam.gov, open.gsa.gov): a
