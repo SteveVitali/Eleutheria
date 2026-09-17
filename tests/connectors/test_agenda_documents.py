@@ -264,8 +264,12 @@ def test_legistar_matter_document_emits_verbatim_claims(pin_tenant: Any) -> None
     assert all(
         c["subject_id"].startswith(("agenda_item:legistar:", "contract:legistar:")) for c in claims
     )
-    doc_digests = {d["capture_digest"] for d in docs}
-    assert all(c["evidence"]["capture_digest"] in doc_digests for c in claims)
+    # The capture↔document map lives on the agenda_document row, not inside the
+    # claim: a byte-volatile capture id must not key the claim's content_digest
+    # (a re-fetch of a churning page then mints duplicate claims).
+    doc_urls = {d["raw_value"] for d in docs}
+    assert all(c["evidence"]["source_url"] in doc_urls for c in claims)
+    assert all(d["capture_digest"] for d in docs)
 
 
 def test_civicclerk_meeting_document_via_agenda_id(pin_tenant: Any) -> None:

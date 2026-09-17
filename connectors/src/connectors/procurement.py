@@ -1476,7 +1476,12 @@ class ProcurementConnector(Connector):
                         "retrieved_date": retrieved_date,
                         "extraction_method": method,
                         "locator": Locator.byte_range(0, len(text)).to_row(),
-                        "capture_digest": raw.get("capture_digest"),
+                        # No capture_digest inside the claim: the digest keys the
+                        # claim's content_digest, and a byte-volatile page (a
+                        # CSRF token churning between fetches) would mint a new
+                        # claim per run — the capture↔document map lives on the
+                        # agenda_document row + the fetch record instead (the
+                        # OKC convention carries no capture id either).
                     },
                 },
                 source_id=ctx.source.id,
@@ -1537,7 +1542,6 @@ class ProcurementConnector(Connector):
                                 "retrieved_date": retrieved_date,
                                 "extraction_method": method,
                                 "locator": locator,
-                                "capture_digest": raw.get("capture_digest"),
                             },
                         },
                         source_id=ctx.source.id,
