@@ -1,0 +1,25 @@
+{
+  "id": 4501,
+  "eventId": 9101,
+  "meetingName": "Council Regular Meeting",
+  "meetingDate": "2026-08-18T09:00:00",
+  "items": [
+    {
+      "agendaObjectItemName": "1. Public Safety Technology",
+      "description": "A resolution authorizing a contract for body-worn camera maintenance and automated license plate reader services.",
+      "htmlContent": "<p>Authorizing the Police Department to renew the automated license plate reader contract with Vigilant Solutions.</p>"
+    },
+    {
+      "agendaObjectItemName": "2. Road Resurfacing",
+      "description": "A resolution authorizing the resurfacing of Mahalani Street."
+    }
+  ],
+  "publishedFiles": [
+    {
+      "fileId": 77,
+      "fileName": "Agenda.pdf",
+      "type": "Agenda",
+      "url": "https://mauicountyhi.api.civicclerk.com/v1/Meetings/GetMeetingFile(stream=1)"
+    }
+  ]
+}

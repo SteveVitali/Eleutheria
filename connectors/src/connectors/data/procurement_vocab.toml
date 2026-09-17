@@ -26,7 +26,15 @@
 # 2026.09.17 (P26.5 / SOURCES.5): +escribe platform (eScribe Meetings — the
 # ASP.NET `MeetingsCalendarView.aspx/GetCalendarMeetings` JSON webmethod,
 # `items_key = "d"`) joins the agenda-platform set.
-vocab_version = "2026.09.17"
+# 2026.09.17 (P26.6 / SOURCES.6): +content_term predicate (a captured agenda/
+# minutes/matter document contains a reviewed agenda_content_vocab term —
+# verbatim literal + document locator); +per-platform document endpoints
+# (doc_url_template / doc_link_keys / doc_id_keys / doc_genre /
+# doc_required_fields) and the reviewed bounded-window bounds
+# (doc_per_tenant / doc_run_cap) each platform's index captures fan out under;
+# escribe matter_link_template corrected to the verified Meeting.aspx page
+# (the MeetingsCalendarView.aspx/Meeting link 404s — probed 2026-09-17).
+vocab_version = "2026.09.17-p26.6"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `procurement` connector may write ONLY the Contract (§11.11) and FundingInstrument
@@ -71,6 +79,10 @@ predicate_allowlist = [
   "posted_date",
   "response_deadline",
   "agenda_item",
+  # P26.6 (SOURCES.6): a captured agenda/matter document contains a reviewed
+  # agenda_content_vocab term — the verbatim literal stays raw_value, the term
+  # id is the typed value, and the claim carries the document locator.
+  "content_term",
 ]
 
 # Predicate GENRES the procurement connector MUST NOT write (scope-creep guard,
@@ -262,6 +274,21 @@ contract_matter_patterns = [
   "professional services",
   "settlement",
 ]
+# P26.6 — the matter DOCUMENT endpoint + bounded window. `{api_base}/matters/
+# {MatterId}` is the documented InSite matter detail (probed 2026-09-17:
+# webapi.legistar.com/v1/seattle/matters/11400 → the matter JSON, API-mode
+# allow-listed). A 200 JSON object missing every `doc_required_fields` key — or
+# a non-JSON body — is genre drift (ContentDrift), not a document.
+doc_url_template    = "{api_base}/matters/{item_id}"
+doc_id_keys         = ["MatterId"]
+doc_genre           = "json"
+doc_required_fields = ["MatterId"]
+# The reviewed window: at most 20 most-relevant matters per tenant per run
+# (vocab-/contract-matching index items first, then index order = recency),
+# and at most 350 document fetches per platform run so the monthly job stays
+# inside its task window. Both bounds ride each generated target row as data.
+doc_per_tenant = 20
+doc_run_cap    = 350
 
 [platform_endpoints.primegov]
 # PrimeGov PublicPortal: POST {api_base}/search returns the tenant meeting index
@@ -270,6 +297,17 @@ index_path = "/search"
 index_method = "post"
 index_body = {}
 # Meeting objects carry no contract-typing — index rows only.
+# P26.6: the meeting's own `itemsSearchResultsDefaultLinkOnMeetingPortal` field
+# names the human portal document — the document URL comes from the captured
+# payload, never constructed. doc_genre "any" sniffs PDF/JSON/HTML from the
+# captured bytes. NOTE: every PrimeGov host's robots.txt answers `Disallow: /`
+# (platform-wide, P26.5 probe 2026-09-17) — these document targets resolve only
+# if an index capture exists, and each fetch is a recorded robots refusal while
+# the wall stands. The bound is reviewed anyway so the row is complete data.
+doc_link_keys  = ["itemsSearchResultsDefaultLinkOnMeetingPortal"]
+doc_genre      = "any"
+doc_per_tenant = 20
+doc_run_cap    = 100
 
 [platform_endpoints.civicclerk]
 # CivicClerk v1: {api_base} already names the Events index (the portal's own
@@ -278,6 +316,17 @@ index_body = {}
 # the index is otherwise the tenant's full event list).
 index_path  = ""
 index_query = "$top=100"
+# P26.6 — the meeting DOCUMENT endpoint (probed 2026-09-17):
+# /v1/Meetings/{agendaId} answers the meeting JSON — `items[]` agenda objects
+# (agendaObjectItemName/Description/HtmlContent) + `publishedFiles[]` (agenda
+# PDF links) — for an event whose `agendaId` is non-zero. An event with no
+# agenda (agendaId 0/absent) resolves no document. A non-JSON body is drift.
+doc_url_template    = "https://{tenant}.api.civicclerk.com/v1/Meetings/{item_id}"
+doc_id_keys         = ["agendaId"]
+doc_genre           = "json"
+doc_required_fields = ["id"]
+doc_per_tenant      = 20
+doc_run_cap         = 350
 
 [platform_endpoints.escribe]
 # eScribe Meetings (P26.5): the tenant's public Meetings calendar page calls its
@@ -291,8 +340,18 @@ index_method = "post"
 index_body   = { calendarStartDate = "2025-01-01T00:00:00", calendarEndDate = "2026-12-31T23:59:59" }
 items_key    = "d"
 # The human-readable meeting page (link, not bytes) — {tenant} is the pub-*
-# slug, {matter_id} the meeting's ID guid.
-matter_link_template = "https://pub-{tenant}.escribemeetings.com/MeetingsCalendarView.aspx/Meeting?Id={matter_id}"
+# slug, {matter_id} the meeting's ID guid. P26.6 probe (2026-09-17): the
+# MeetingsCalendarView.aspx/Meeting path 404s; the classic Meeting.aspx page is
+# the tenant's real public agenda/minutes document — corrected.
+matter_link_template = "https://pub-{tenant}.escribemeetings.com/Meeting.aspx?Id={matter_id}&Agenda=Agenda&lang=English"
+# P26.6 — the meeting DOCUMENT is that same server-rendered Meeting.aspx page
+# (probed: 211 KB HTML agenda with item text, genre html). A non-HTML capture
+# here is genre drift; a page with no text is an honest `empty` outcome.
+doc_url_template = "{api_base}/Meeting.aspx?Id={item_id}&Agenda=Agenda&lang=English"
+doc_id_keys      = ["ID", "Id"]
+doc_genre        = "html"
+doc_per_tenant   = 20
+doc_run_cap      = 300
 
 # --- SAM.gov federal opportunities (P26.2 / SOURCES.2) -------------------------
 # The documented public opportunities search (api.sam.gov, open.gsa.gov): a

@@ -372,6 +372,10 @@ class FetchRecord:
     #: access-restricted — SIG-INGEST-009/010), recorded loud so a dead filing
     # link is visible, never a silent empty result.
     disappearances: list[Mapping[str, Any]] = field(default_factory=list)
+    #: Per-document content drift on resolved child documents (P26.6): a
+    #: document whose captured bytes no longer parse as the platform's genre is
+    #: recorded here — fail-closed per document, never a fabricated extraction.
+    document_drift: list[Mapping[str, Any]] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         """A JSON-serialisable dict; content is never included (§3.1, §17)."""
@@ -392,6 +396,7 @@ class FetchRecord:
             "politeness_refusal": self.politeness_refusal,
             "refusals": [dict(r) for r in self.refusals],
             "disappearances": [dict(d) for d in self.disappearances],
+            "document_drift": [dict(d) for d in self.document_drift],
         }
 
 
@@ -430,6 +435,7 @@ class SourceRunReport:
     fetch_record: FetchRecord | None = None
     refusals: list[dict[str, Any]] = field(default_factory=list)
     disappearances: list[dict[str, Any]] = field(default_factory=list)
+    drifted: list[dict[str, Any]] = field(default_factory=list)
 
 
 def _robots_decisions(fetcher: PoliteFetcher) -> list[Mapping[str, Any]]:
@@ -623,6 +629,7 @@ def _run_live(
             }
             for d in report.disappearances
         ],
+        document_drift=[dict(d) for d in report.drifted],
     )
     write_fetch_record(fetch_record, capture_dir / "live_runs")
     transport.close()
@@ -643,6 +650,7 @@ def _run_live(
             }
             for d in report.disappearances
         ],
+        drifted=list(report.drifted),
     )
 
 
