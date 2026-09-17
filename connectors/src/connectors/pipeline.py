@@ -180,14 +180,16 @@ def _fetch_or_disappear(
     swallowed exception (SIG-INGEST-009/010). A robots-disallowed URL is a
     politeness refusal, not a disappearance: on a *seed* target it propagates
     (a refused seed is a refused run); on a discovery-continuation target
-    (``record_refusals=True``) it lands on ``report.refusals`` — a recorded
-    per-document disposition — and the run continues (P25.5).
+    (``record_refusals=True``) — or a target that declares
+    ``record_refusals`` itself, as every multi-tenant agenda-platform target
+    does (P26.3: each host's own robots verdict is a recorded per-host
+    outcome) — it lands on ``report.refusals``, and the run continues.
     """
     subject_id = target.get("subject_id")
     try:
         fetched = connector.fetch(ctx, target)
     except (RobotsUnretrievable, RobotsDisallowed) as exc:
-        if not record_refusals:
+        if not (record_refusals or target.get("record_refusals")):
             raise  # a politeness refusal on a seed target refuses the run
         report.refusals.append(
             {

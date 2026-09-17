@@ -125,16 +125,28 @@ class HttpxTransport:
 
     # -- Transport protocol ---------------------------------------------------
     def robots(self, robots_url: str) -> RobotsResult:
-        """Retrieve robots.txt; ``None`` text means unretrievable (SIG-INGEST-012)."""
+        """Retrieve robots.txt, preserving the access-result signal (ADR-087).
+
+        ``text`` carries the policy body only on a 2xx; ``status`` carries the
+        server's answer so the fetcher can apply the RFC 9309 §2.3.1.4 split —
+        a 4xx means *no policy exists* (unrestricted), while a 5xx/429 or a
+        connection-level failure (``status=None``) is *unavailable* and stays
+        fail-closed (SIG-INGEST-012).
+        """
         try:
             resp = self._client.get(robots_url, headers={"User-Agent": default_user_agent()})
         except httpx.HTTPError:
-            # Unretrievable robots.txt is NOT an implied grant — the fetcher fails
-            # closed on a None text (SIG-INGEST-012).
-            return RobotsResult(text=None)
-        if resp.status_code != 200:
-            return RobotsResult(text=None)
-        return RobotsResult(text=resp.text)
+            # A connection failure/timeout is unavailable, not "no policy" — the
+            # fetcher fails closed on it (SIG-INGEST-012).
+            return RobotsResult(text=None, status=None)
+        if 200 <= resp.status_code < 300:
+            # Any 2xx is a retrieved policy — an empty body (204) parses as
+            # unrestricted, which is what an empty robots.txt means.
+            return RobotsResult(text=resp.text, status=resp.status_code)
+        # 4xx → no policy exists; 5xx/429 → unavailable. The status goes to
+        # the fetcher for that split; the error body is never parsed as a
+        # policy (a 404 page is not robots content).
+        return RobotsResult(text=None, status=resp.status_code)
 
     def request(
         self,

@@ -269,7 +269,10 @@ index_body = {}
 [platform_endpoints.civicclerk]
 # CivicClerk v1: {api_base} already names the Events index (the portal's own
 # endpoint; api_base template is https://{tenant}.api.civicclerk.com/v1/Events).
-index_path = ""
+# The endpoint speaks OData — $top bounds the pull (P26.3: verified 2026-09-17,
+# the index is otherwise the tenant's full event list).
+index_path  = ""
+index_query = "$top=100"
 
 # --- SAM.gov federal opportunities (P26.2 / SOURCES.2) -------------------------
 # The documented public opportunities search (api.sam.gov, open.gsa.gov): a

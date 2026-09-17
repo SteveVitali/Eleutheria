@@ -11,9 +11,15 @@ egress passes through it.
 
 Three rules are enforced here rather than left to prose:
 
-* **Robots is mandatory (SIG-INGEST-012).** Where ``robots.txt`` cannot be
-  retrieved, crawl permission is treated as *not granted* and the fetcher refuses
-  to run (:class:`RobotsUnretrievable`), via :func:`policy.crawler.robots_permits`.
+* **Robots is mandatory (SIG-INGEST-012, as amended by ADR-087).** Where
+  ``robots.txt`` is *unavailable* — a connection failure, a timeout, an
+  exhausted redirect chain, or a 5xx/429 server answer — crawl permission is
+  treated as *not granted* and the fetcher refuses to run
+  (:class:`RobotsUnretrievable`), via
+  :func:`policy.crawler.robots_access_permits`. A **4xx** robots response is a
+  different signal: under RFC 9309 §2.3.1.4 it means *no policy exists*, so
+  access is unrestricted (this is how hosts that answer robots.txt with 404 —
+  e.g. the ``*.api.civicclerk.com`` tenant surface — are reached).
 * **No challenge-defeating crawler (SIG-INGEST-013 / Rule 4).** The fetcher never
   solves a bot-management challenge or rotates identity: a persistent challenge is
   surfaced as a :class:`ChallengeEncountered` outcome for the disappearance layer
@@ -37,7 +43,7 @@ from typing import Any, Protocol, runtime_checkable
 from urllib.parse import urlsplit
 from urllib.robotparser import RobotFileParser
 
-from policy.crawler import assert_no_circumvention, robots_permits
+from policy.crawler import assert_no_circumvention, robots_access_permits
 
 from .api_allowlist import api_allow_reason
 from .stages import FetchResult
@@ -53,7 +59,13 @@ DEFAULT_CRAWL_DELAY_SECONDS = 1.0
 
 
 class RobotsUnretrievable(Exception):
-    """Raised when robots.txt cannot be retrieved — permission is not granted."""
+    """Raised when robots.txt is *unavailable* — permission is not granted.
+
+    "Unavailable" means the retrieval failed at the transport level (connection
+    error, timeout, redirect exhaustion) or the server answered 5xx/429
+    (SIG-INGEST-012, RFC 9309 §2.3.1.4). A 4xx answer never raises this: it
+    means no policy exists, so access is unrestricted (ADR-087).
+    """
 
 
 class RobotsDisallowed(Exception):
@@ -70,10 +82,21 @@ class ChallengeEncountered(Exception):
 
 @dataclass(frozen=True)
 class RobotsResult:
-    """The outcome of retrieving robots.txt for a host."""
+    """The outcome of retrieving robots.txt for a host.
 
-    #: ``None`` means unretrievable — treated as *not granted* (SIG-INGEST-012).
+    Two signals are kept distinct (RFC 9309 §2.3.1.4 / ADR-087): ``text`` is the
+    policy body when one was retrieved (2xx), and ``status`` is the HTTP status
+    of the robots response when the transport reached a server — ``None`` for a
+    connection-level failure (timeout, DNS, redirect exhaustion). ``text=None``
+    *with* a 4xx ``status`` means "no policy exists" (unrestricted); with a
+    5xx/429 or no ``status`` it means "unavailable" (not granted).
+    """
+
+    #: ``None`` means no policy body was retrieved — the ``status`` decides
+    #: whether that is "no policy exists" (4xx) or "unavailable" (else).
     text: str | None
+    #: The HTTP status of the robots response; ``None`` on connection failure.
+    status: int | None = None
 
 
 @runtime_checkable
@@ -189,6 +212,12 @@ class PoliteFetcher:
         #: Auditable conduct decisions (ADR-083): one entry per fetch recording
         #: whether robots (CRAWL) or the API allow-list (API) governed it.
         self.conduct_decisions: list[dict[str, str]] = []
+        #: Per-host robots.txt retrieval outcomes for the audit trail (ADR-087):
+        #: ``host -> {"robots_url", "status", "outcome"}`` where ``outcome`` is
+        #: ``"retrieved"`` (a policy governs), ``"no_policy_4xx"`` (RFC 9309
+        #: §2.3.1.4 — the host answered 4xx, no policy exists, unrestricted), or
+        #: ``"unretrievable"`` (connection failure / 5xx / 429 — not granted).
+        self.robots_outcomes: dict[str, dict[str, Any]] = {}
 
     @property
     def user_agent_string(self) -> str:
@@ -197,13 +226,33 @@ class PoliteFetcher:
     def _ensure_robots(self, host: str, sample_url: str) -> RobotFileParser:
         if host in self._robots:
             return self._robots[host]
-        result = self._transport.robots(_robots_url(sample_url))
-        # An unretrievable robots.txt is not an implied grant (SIG-INGEST-012).
-        if not robots_permits(None if result.text is None else True):
-            raise RobotsUnretrievable(
-                f"robots.txt for {host!r} is unretrievable; crawl permission is "
-                "NOT granted and the connector refuses to run (SIG-INGEST-012)."
+        robots_url = _robots_url(sample_url)
+        result = self._transport.robots(robots_url)
+        retrieved = result.text is not None
+        # RFC 9309 §2.3.1.4 access-result split (ADR-087): a 4xx answer means no
+        # policy exists (unrestricted); only an *unavailable* robots.txt —
+        # connection failure, 5xx, 429 — is not an implied grant (SIG-INGEST-012).
+        if not robots_access_permits(retrieved=retrieved, status=result.status):
+            self.robots_outcomes[host] = {
+                "robots_url": robots_url,
+                "status": result.status,
+                "outcome": "unretrievable",
+            }
+            reason = (
+                "connection failure or timeout"
+                if result.status is None
+                else f"HTTP {result.status}"
             )
+            raise RobotsUnretrievable(
+                f"robots.txt for {host!r} is unavailable ({reason}); crawl "
+                "permission is NOT granted and the connector refuses to run "
+                "(SIG-INGEST-012, RFC 9309 §2.3.1.4)."
+            )
+        self.robots_outcomes[host] = {
+            "robots_url": robots_url,
+            "status": result.status,
+            "outcome": "retrieved" if retrieved else "no_policy_4xx",
+        }
         parser = RobotFileParser()
         parser.parse((result.text or "").splitlines())
         self._robots[host] = parser

@@ -56,6 +56,36 @@ def robots_permits(fetch_allowed: bool | None) -> bool:
     return fetch_allowed
 
 
+def robots_access_permits(*, retrieved: bool, status: int | None) -> bool:
+    """Whether the robots.txt *retrieval outcome* permits fetching at all.
+
+    This is the access-result split RFC 9309 §2.3.1.4 draws (ADR-087, the
+    P26.3 amendment to SIG-INGEST-012):
+
+    * ``retrieved`` (a 2xx policy body was obtained) — a policy exists and its
+      parsed verdict governs via :func:`robots_permits` → ``True`` here.
+    * ``status`` in the 4xx range **except 429** — the server answered "no
+      such policy resource" (404) or an equivalent client error: under the
+      RFC, a 4xx means no robots.txt exists, so access is *unrestricted* →
+      ``True``.
+    * ``status`` ``429`` — rate limiting is not "no policy"; the RFC treats it
+      as unavailable → ``False``.
+    * ``status`` ``None`` (connection failure, timeout, redirect exhaustion)
+      or a 5xx/1xx/3xx residue — the file is genuinely *unavailable*; the RFC
+      has the crawler assume complete disallow → ``False``.
+
+    The distinction this guards: "no policy exists" (4xx) is a different
+    signal from "the policy could not be retrieved" (429, 5xx, or a
+    connection-level failure) — only the latter defaults closed
+    (SIG-INGEST-012 as amended by ADR-087).
+    """
+    if retrieved:
+        return True
+    if status is None:
+        return False
+    return 400 <= status < 500 and status != 429
+
+
 def parse_content_signal(header: str) -> dict[str, str]:
     """Parse a ``Content-Signal`` header into its directives.
 

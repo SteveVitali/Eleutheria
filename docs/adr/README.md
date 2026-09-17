@@ -91,6 +91,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-084](ADR-084-accept-licence-ouverte-2-0-in-the-spdx-set-for-decp-fr.md) | — | — | Accepted |
 | [ADR-085](ADR-085-municipal-mandated-disclosure-and-derived-facts-basis-for-ccops-and-pathways.md) | — | — | Accepted |
 | [ADR-086](ADR-086-hg02-counsel-resolution-derived-facts-publication-compartment.md) | — | — | Accepted |
+| [ADR-087](ADR-087-robots-4xx-means-no-policy-exists-rfc-9309-access-result-split.md) | — | — | Accepted |
 
 ## Notes
 

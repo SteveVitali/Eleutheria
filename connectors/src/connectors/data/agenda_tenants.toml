@@ -32,7 +32,35 @@
 # indexes); PrimeGov lacity POST /search verified (real meeting index);
 # CivicClerk {tenant}.api.civicclerk.com/v1/Events still 404s anonymous
 # (IdentityServer-gated surface) — the oklahoma_city row stays verified=false.
-registry_version = "2026.09.16"
+#
+# 2026.09.17 (P26.3 / SOURCES.3): the multi-tenant expansion. Live probes against
+# the three platforms' real surfaces, same-day, with the shared politeness UA:
+#   * legistar — 27 further InSite client ids verified on the shared host
+#     (webapi.legistar.com/v1/<client>/matters returns the real matter index);
+#     'lacity' added verified=false — the shared host answers a 500 InSite error
+#     envelope ("LegistarConnectionString setting is not set up in InSite for
+#     client lacity") and lacity.legistar.com serves portal stubs/410s, no JSON
+#     index (recorded honestly — the PrimeGov substitute attempt for LA, whose
+#     real legislative surface is cityclerk.lacity.org, a different platform).
+#     Dozens of guessed client ids (neworleans, honolulu, minneapolis, stlouis,
+#     kcmo, cincinnati, cleveland, atlanta, austin, fortworth, tulsa, elpaso,
+#     memphis, indianapolis, jacksonville, miami, tampa, orlando, raleigh,
+#     cambridgema, berkeley, davisca, worcester, providence, spokane, tacoma,
+#     boise, saltlakecity, reno, bakersfield, riverside, santaana, anaheim,
+#     irvine, glendale, pasadena, torrance, fremont, eugene, grandrapids,
+#     annarbor, akronoh, daytonoh, durhamnc, virginiabeach, norfolk, chesapeake,
+#     losangeles, la, cityofla, lacityclerk, losangelesca …) answered the 500
+#     error envelope or 404 — NOT provisioned, not registered.
+#   * civicclerk — 34 further tenants verified: robots.txt answers 404 (no
+#     policy exists — RFC 9309 §2.3.1.4 / ADR-087) AND /v1/Events answers a real
+#     event index. The 2026-09-16 "every anonymous v1 request 404s" finding was
+#     specific to oklahomacityok, which still 404s (verified=false).
+#   * primegov — 8 further tenants verified serving (POST /search returns a real
+#     meeting index) — and EVERY probed PrimeGov host answers robots.txt with
+#     `User-agent: *` / `Disallow: /` (platform-wide, 2026-09-17). They stay
+#     robots refusals; the rows exist so each host's own recorded verdict is
+#     data, never a silent skip.
+registry_version = "2026.09.17"
 
 # The platforms the discovery probe checks a jurisdiction against, in order. A
 # jurisdiction absent from every one of these becomes a [negatives.*] row.
@@ -101,6 +129,659 @@ api_base = "https://oklahomacityok.api.civicclerk.com/v1/Events"
 verified = false
 last_verified = 2026-09-16
 notes = "CivicClerk tenant for the OKC vertical slice (P06.1). The v1 API template is confirmed from the portal JS (https://{tenant}.api.civicclerk.com/v1 + /Events, /EventCategories) but EVERY anonymous v1 request 404s across probed tenants (2026-09-16) — the tenant surface is IdentityServer-gated; anonymous access unresolved. `verified` stays false rather than asserting a certainty SIG does not have (§3.1)."
+
+# --- P26.3 expansion (2026-09-17) ---------------------------------------------
+# Live-verified against the shared InSite host (webapi.legistar.com/v1/<client>
+# /matters → real matter index). Rows in roughly metro-size order; each was
+# probed same-day — a slug that answers the InSite error envelope is NOT
+# registered (see the registry header for the probed-negative slug list).
+
+[tenants.los_angeles_county_ca]
+jurisdiction = "Los Angeles County, CA"
+platform = "legistar"
+tenant = "lacounty"
+api_base = "https://webapi.legistar.com/v1/lacounty"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'lacounty' — live-verified 2026-09-17. The LA-area record leg: LA City itself is NOT provisioned on the shared host (see los_angeles_ca_legistar) — the county board index is the working LA jurisdiction on this platform."
+
+[tenants.san_francisco_ca]
+jurisdiction = "City and County of San Francisco, CA"
+platform = "legistar"
+tenant = "sfgov"
+api_base = "https://webapi.legistar.com/v1/sfgov"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'sfgov' — live-verified 2026-09-17."
+
+[tenants.boston_ma]
+jurisdiction = "City of Boston, MA"
+platform = "legistar"
+tenant = "boston"
+api_base = "https://webapi.legistar.com/v1/boston"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'boston' — live-verified 2026-09-17."
+
+[tenants.detroit_mi]
+jurisdiction = "City of Detroit, MI"
+platform = "legistar"
+tenant = "detroit"
+api_base = "https://webapi.legistar.com/v1/detroit"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'detroit' — live-verified 2026-09-17 (detroitmi/detroit.legistar.com are not the client id)."
+
+[tenants.milwaukee_wi]
+jurisdiction = "City of Milwaukee, WI"
+platform = "legistar"
+tenant = "milwaukee"
+api_base = "https://webapi.legistar.com/v1/milwaukee"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'milwaukee' — live-verified 2026-09-17."
+
+[tenants.baltimore_md]
+jurisdiction = "City of Baltimore, MD"
+platform = "legistar"
+tenant = "baltimore"
+api_base = "https://webapi.legistar.com/v1/baltimore"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'baltimore' — live-verified 2026-09-17."
+
+[tenants.denver_co]
+jurisdiction = "City and County of Denver, CO"
+platform = "legistar"
+tenant = "denver"
+api_base = "https://webapi.legistar.com/v1/denver"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'denver' — live-verified 2026-09-17."
+
+[tenants.columbus_oh]
+jurisdiction = "City of Columbus, OH"
+platform = "legistar"
+tenant = "columbus"
+api_base = "https://webapi.legistar.com/v1/columbus"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'columbus' — live-verified 2026-09-17."
+
+[tenants.phoenix_az]
+jurisdiction = "City of Phoenix, AZ"
+platform = "legistar"
+tenant = "phoenix"
+api_base = "https://webapi.legistar.com/v1/phoenix"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'phoenix' — live-verified 2026-09-17."
+
+[tenants.nashville_tn]
+jurisdiction = "Metropolitan Government of Nashville-Davidson County, TN"
+platform = "legistar"
+tenant = "nashville"
+api_base = "https://webapi.legistar.com/v1/nashville"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'nashville' — live-verified 2026-09-17."
+
+[tenants.oakland_ca]
+jurisdiction = "City of Oakland, CA"
+platform = "legistar"
+tenant = "oakland"
+api_base = "https://webapi.legistar.com/v1/oakland"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'oakland' — live-verified 2026-09-17."
+
+[tenants.albuquerque_nm]
+jurisdiction = "City of Albuquerque, NM"
+platform = "legistar"
+tenant = "cabq"
+api_base = "https://webapi.legistar.com/v1/cabq"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'cabq' — live-verified 2026-09-17."
+
+[tenants.madison_wi]
+jurisdiction = "City of Madison, WI"
+platform = "legistar"
+tenant = "madison"
+api_base = "https://webapi.legistar.com/v1/madison"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'madison' — live-verified 2026-09-17."
+
+[tenants.pittsburgh_pa]
+jurisdiction = "City of Pittsburgh, PA"
+platform = "legistar"
+tenant = "pittsburgh"
+api_base = "https://webapi.legistar.com/v1/pittsburgh"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'pittsburgh' — live-verified 2026-09-17."
+
+[tenants.saint_paul_mn]
+jurisdiction = "City of Saint Paul, MN"
+platform = "legistar"
+tenant = "stpaul"
+api_base = "https://webapi.legistar.com/v1/stpaul"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'stpaul' — live-verified 2026-09-17."
+
+[tenants.kansas_city_mo]
+jurisdiction = "Kansas City, MO"
+platform = "legistar"
+tenant = "kansascity"
+api_base = "https://webapi.legistar.com/v1/kansascity"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'kansascity' — live-verified 2026-09-17 ('kcmo' answers the error envelope — not provisioned under that id)."
+
+[tenants.atlanta_ga]
+jurisdiction = "City of Atlanta, GA"
+platform = "legistar"
+tenant = "atlantaga"
+api_base = "https://webapi.legistar.com/v1/atlantaga"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'atlantaga' — live-verified 2026-09-17 ('atlanta'/'cityofatlanta' answer the error envelope — not provisioned under those ids)."
+
+[tenants.austin_tx]
+jurisdiction = "City of Austin, TX"
+platform = "legistar"
+tenant = "austintexas"
+api_base = "https://webapi.legistar.com/v1/austintexas"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'austintexas' — live-verified 2026-09-17 ('austin' answers the error envelope — not provisioned under that id)."
+
+[tenants.san_jose_ca]
+jurisdiction = "City of San José, CA"
+platform = "legistar"
+tenant = "sanjose"
+api_base = "https://webapi.legistar.com/v1/sanjose"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'sanjose' — live-verified 2026-09-17 ('sanjoseca' answers the error envelope — not provisioned under that id)."
+
+[tenants.sacramento_ca]
+jurisdiction = "City of Sacramento, CA"
+platform = "legistar"
+tenant = "sacramento"
+api_base = "https://webapi.legistar.com/v1/sacramento"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'sacramento' — live-verified 2026-09-17."
+
+[tenants.long_beach_ca]
+jurisdiction = "City of Long Beach, CA"
+platform = "legistar"
+tenant = "longbeach"
+api_base = "https://webapi.legistar.com/v1/longbeach"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'longbeach' — live-verified 2026-09-17. Long Beach ALSO runs a PrimeGov tenant (long_beach_ca_primegov) — the robots-refused platform is recorded alongside the working one."
+
+[tenants.louisville_ky]
+jurisdiction = "Louisville Metro, KY"
+platform = "legistar"
+tenant = "louisville"
+api_base = "https://webapi.legistar.com/v1/louisville"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'louisville' — live-verified 2026-09-17."
+
+[tenants.somerville_ma]
+jurisdiction = "City of Somerville, MA"
+platform = "legistar"
+tenant = "somervillema"
+api_base = "https://webapi.legistar.com/v1/somervillema"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'somervillema' — live-verified 2026-09-17."
+
+[tenants.fresno_ca]
+jurisdiction = "City of Fresno, CA"
+platform = "legistar"
+tenant = "fresno"
+api_base = "https://webapi.legistar.com/v1/fresno"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'fresno' — live-verified 2026-09-17."
+
+[tenants.salem_or]
+jurisdiction = "City of Salem, OR"
+platform = "legistar"
+tenant = "salem"
+api_base = "https://webapi.legistar.com/v1/salem"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'salem' — live-verified 2026-09-17."
+
+[tenants.toledo_oh]
+jurisdiction = "City of Toledo, OH"
+platform = "legistar"
+tenant = "toledo"
+api_base = "https://webapi.legistar.com/v1/toledo"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'toledo' — live-verified 2026-09-17."
+
+[tenants.richmond_va]
+jurisdiction = "City of Richmond, VA"
+platform = "legistar"
+tenant = "richmondva"
+api_base = "https://webapi.legistar.com/v1/richmondva"
+verified = true
+last_verified = 2026-09-17
+notes = "Legistar InSite client 'richmondva' — live-verified 2026-09-17."
+
+[tenants.los_angeles_ca_legistar]
+jurisdiction = "City of Los Angeles, CA"
+platform = "legistar"
+tenant = "lacity"
+api_base = "https://webapi.legistar.com/v1/lacity"
+verified = false
+last_verified = 2026-09-17
+notes = "The P26.3 PrimeGov substitute attempt for LA City (lacity.primegov.com is Disallow:/ — never fetched). LA City's InSite client id is NOT provisioned on the shared host: /v1/lacity/matters answers a 500 error envelope ('LegistarConnectionString setting is not set up in InSite for client lacity'), recorded as a tenant_api_error row, never read as an empty index. lacity.legistar.com exists but serves stub/410 pages — no JSON index. The real LA City legislative surface is cityclerk.lacity.org (CFMS — a different platform, registered as discovery row la_city_clerk_cfms). LA-area records DO land via los_angeles_county_ca (verified)."
+
+# --- CivicClerk tenants (P26.3) ------------------------------------------------
+# api_base IS the Events index endpoint ({tenant}.api.civicclerk.com/v1/Events;
+# platform_endpoints.civicclerk.index_path = ""). Every row below was probed
+# 2026-09-17: robots.txt → 404 (no policy exists — ADR-087), /v1/Events → a real
+# event index. Slugs whose Events endpoint 404s are NOT registered (the 404
+# means the tenant surface does not serve anonymous reads — e.g.
+# oklahomacityok, kept below verified=false).
+
+[tenants.brookline_ma]
+jurisdiction = "Town of Brookline, MA"
+platform = "civicclerk"
+tenant = "brooklinema"
+api_base = "https://brooklinema.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.colton_ca]
+jurisdiction = "City of Colton, CA"
+platform = "civicclerk"
+tenant = "coltonca"
+api_base = "https://coltonca.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.northport_al]
+jurisdiction = "City of Northport, AL"
+platform = "civicclerk"
+tenant = "northportal"
+api_base = "https://northportal.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.maui_county_hi]
+jurisdiction = "County of Maui, HI"
+platform = "civicclerk"
+tenant = "mauicounty"
+api_base = "https://mauicounty.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.san_juan_county_wa]
+jurisdiction = "San Juan County, WA"
+platform = "civicclerk"
+tenant = "sanjuancowa"
+api_base = "https://sanjuancowa.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.santa_rosa_county_fl]
+jurisdiction = "Santa Rosa County, FL"
+platform = "civicclerk"
+tenant = "santarosacofl"
+api_base = "https://santarosacofl.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.wcid1]
+jurisdiction = "W.C.I.D. No. 1 (special district — jurisdiction detail unresolved)"
+platform = "civicclerk"
+tenant = "wcid1"
+api_base = "https://wcid1.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200 ('Regular Board Meeting' / Board of Directors), probed 2026-09-17. A water-control-and-improvement-district tenant; the jurisdiction string is a candidate identifier, unresolved here (SIG-INGEST-034)."
+
+[tenants.norfolk_va]
+jurisdiction = "City of Norfolk, VA"
+platform = "civicclerk"
+tenant = "norfolkva"
+api_base = "https://norfolkva.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.scottsdale_az]
+jurisdiction = "City of Scottsdale, AZ"
+platform = "civicclerk"
+tenant = "scottsdaleaz"
+api_base = "https://scottsdaleaz.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.garland_tx]
+jurisdiction = "City of Garland, TX"
+platform = "civicclerk"
+tenant = "garlandtx"
+api_base = "https://garlandtx.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.mcallen_tx]
+jurisdiction = "City of McAllen, TX"
+platform = "civicclerk"
+tenant = "mcallentx"
+api_base = "https://mcallentx.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.brownsville_tx]
+jurisdiction = "City of Brownsville, TX"
+platform = "civicclerk"
+tenant = "brownsvilletx"
+api_base = "https://brownsvilletx.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.amarillo_tx]
+jurisdiction = "City of Amarillo, TX"
+platform = "civicclerk"
+tenant = "amarillotx"
+api_base = "https://amarillotx.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.charleston_sc]
+jurisdiction = "City of Charleston, SC"
+platform = "civicclerk"
+tenant = "charlestonsc"
+api_base = "https://charlestonsc.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.columbia_sc]
+jurisdiction = "City of Columbia, SC"
+platform = "civicclerk"
+tenant = "columbiasc"
+api_base = "https://columbiasc.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.murfreesboro_tn]
+jurisdiction = "City of Murfreesboro, TN"
+platform = "civicclerk"
+tenant = "murfreesborotn"
+api_base = "https://murfreesborotn.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.mobile_al]
+jurisdiction = "City of Mobile, AL"
+platform = "civicclerk"
+tenant = "mobileal"
+api_base = "https://mobileal.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.jackson_ms]
+jurisdiction = "City of Jackson, MS"
+platform = "civicclerk"
+tenant = "jacksonms"
+api_base = "https://jacksonms.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.fayetteville_ar]
+jurisdiction = "City of Fayetteville, AR"
+platform = "civicclerk"
+tenant = "fayettevillear"
+api_base = "https://fayettevillear.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.vancouver_wa]
+jurisdiction = "City of Vancouver, WA"
+platform = "civicclerk"
+tenant = "vancouverwa"
+api_base = "https://vancouverwa.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.springfield_mo]
+jurisdiction = "City of Springfield, MO"
+platform = "civicclerk"
+tenant = "springfieldmo"
+api_base = "https://springfieldmo.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.green_bay_wi]
+jurisdiction = "City of Green Bay, WI"
+platform = "civicclerk"
+tenant = "greenbaywi"
+api_base = "https://greenbaywi.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.lansing_mi]
+jurisdiction = "City of Lansing, MI"
+platform = "civicclerk"
+tenant = "lansingmi"
+api_base = "https://lansingmi.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.kalamazoo_mi]
+jurisdiction = "City of Kalamazoo, MI"
+platform = "civicclerk"
+tenant = "kalamazoomi"
+api_base = "https://kalamazoomi.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.fort_wayne_in]
+jurisdiction = "City of Fort Wayne, IN"
+platform = "civicclerk"
+tenant = "fortwaynein"
+api_base = "https://fortwaynein.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.roanoke_va]
+jurisdiction = "City of Roanoke, VA"
+platform = "civicclerk"
+tenant = "roanokeva"
+api_base = "https://roanokeva.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.charlottesville_va]
+jurisdiction = "City of Charlottesville, VA"
+platform = "civicclerk"
+tenant = "charlottesvilleva"
+api_base = "https://charlottesvilleva.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.buffalo_ny]
+jurisdiction = "City of Buffalo, NY"
+platform = "civicclerk"
+tenant = "buffalony"
+api_base = "https://buffalony.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.albany_ny]
+jurisdiction = "City of Albany, NY"
+platform = "civicclerk"
+tenant = "albanyny"
+api_base = "https://albanyny.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.springfield_ma]
+jurisdiction = "City of Springfield, MA"
+platform = "civicclerk"
+tenant = "springfieldma"
+api_base = "https://springfieldma.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.newton_ma]
+jurisdiction = "City of Newton, MA"
+platform = "civicclerk"
+tenant = "newtonma"
+api_base = "https://newtonma.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.manchester_nh]
+jurisdiction = "City of Manchester, NH"
+platform = "civicclerk"
+tenant = "manchesternh"
+api_base = "https://manchesternh.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.portland_me]
+jurisdiction = "City of Portland, ME"
+platform = "civicclerk"
+tenant = "portlandme"
+api_base = "https://portlandme.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+[tenants.burlington_vt]
+jurisdiction = "City of Burlington, VT"
+platform = "civicclerk"
+tenant = "burlingtonvt"
+api_base = "https://burlingtonvt.api.civicclerk.com/v1/Events"
+verified = true
+last_verified = 2026-09-17
+notes = "CivicClerk tenant — robots 404 / Events 200, probed 2026-09-17."
+
+# --- PrimeGov tenants (P26.3) --------------------------------------------------
+# Every probed PrimeGov host answers robots.txt with `User-agent: *` /
+# `Disallow: /` (platform-wide, 2026-09-17) and POST {api_base}/search serves a
+# real meeting index. The tenants are registered so each host's OWN recorded
+# robots refusal is data (per-host outcome rows), never a silent skip — and so
+# a future reviewed API-mode basis (D-SOURCES.2-4) has the target set ready.
+# verified = the tenant<->platform mapping was confirmed serving; the robots
+# refusal stands regardless.
+
+[tenants.las_vegas_nv]
+jurisdiction = "City of Las Vegas, NV"
+platform = "primegov"
+tenant = "lasvegas"
+api_base = "https://lasvegas.primegov.com/api/v2/PublicPortal"
+verified = true
+last_verified = 2026-09-17
+notes = "PrimeGov tenant — /search serves a real meeting index (2026-09-17); robots.txt is Disallow:/ — a recorded robots refusal stands for this host."
+
+[tenants.long_beach_ca_primegov]
+jurisdiction = "City of Long Beach, CA"
+platform = "primegov"
+tenant = "longbeach"
+api_base = "https://longbeach.primegov.com/api/v2/PublicPortal"
+verified = true
+last_verified = 2026-09-17
+notes = "PrimeGov tenant — /search serves (2026-09-17); robots Disallow:/ — recorded refusal. Long Beach ALSO runs a verified Legistar tenant (long_beach_ca) — the working platform is alongside."
+
+[tenants.palo_alto_ca]
+jurisdiction = "City of Palo Alto, CA"
+platform = "primegov"
+tenant = "cityofpaloalto"
+api_base = "https://cityofpaloalto.primegov.com/api/v2/PublicPortal"
+verified = true
+last_verified = 2026-09-17
+notes = "PrimeGov tenant — /search serves a real meeting index (2026-09-17); robots.txt is Disallow:/ — a recorded robots refusal stands for this host."
+
+[tenants.tulare_county_ca]
+jurisdiction = "Tulare County, CA"
+platform = "primegov"
+tenant = "tularecounty"
+api_base = "https://tularecounty.primegov.com/api/v2/PublicPortal"
+verified = true
+last_verified = 2026-09-17
+notes = "PrimeGov tenant — /search serves a real meeting index (2026-09-17); robots.txt is Disallow:/ — a recorded robots refusal stands for this host."
+
+[tenants.bedford_oh]
+jurisdiction = "City of Bedford, OH"
+platform = "primegov"
+tenant = "bedfordoh"
+api_base = "https://bedfordoh.primegov.com/api/v2/PublicPortal"
+verified = true
+last_verified = 2026-09-17
+notes = "PrimeGov tenant — /search serves a real meeting index (2026-09-17); robots.txt is Disallow:/ — a recorded robots refusal stands for this host."
+
+[tenants.western_municipal_water_district_ca]
+jurisdiction = "Western Municipal Water District, CA"
+platform = "primegov"
+tenant = "wmwd"
+api_base = "https://wmwd.primegov.com/api/v2/PublicPortal"
+verified = true
+last_verified = 2026-09-17
+notes = "PrimeGov tenant — /search serves a real meeting index (2026-09-17); robots.txt is Disallow:/ — a recorded robots refusal stands for this host."
+
+[tenants.san_antonio_tx_primegov]
+jurisdiction = "City of San Antonio, TX"
+platform = "primegov"
+tenant = "sanantonio"
+api_base = "https://sanantonio.primegov.com/api/v2/PublicPortal"
+verified = true
+last_verified = 2026-09-17
+notes = "PrimeGov tenant — /search serves a real meeting index (2026-09-17); robots.txt is Disallow:/ — a recorded robots refusal stands for this host. San Antonio ALSO runs a verified Legistar tenant (san_antonio_tx)."
+
+[tenants.adams_county_co]
+jurisdiction = "Adams County, CO"
+platform = "primegov"
+tenant = "adamscounty"
+api_base = "https://adamscounty.primegov.com/api/v2/PublicPortal"
+verified = true
+last_verified = 2026-09-17
+notes = "PrimeGov tenant — /search serves a real meeting index (2026-09-17); robots.txt is Disallow:/ — a recorded robots refusal stands for this host."
 
 # --- discovery negatives: probed, no platform found (SIG-METRIC-002a) ----------
 # Retained, not discarded: each renders to a NO_EVIDENCE_FOUND coverage record so

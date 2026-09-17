@@ -115,7 +115,7 @@ def test_the_seeded_registry_has_no_flip_metadata_violations() -> None:
 def test_validate_passes_on_the_seeded_registry(capsys: pytest.CaptureFixture[str]) -> None:
     assert main(["validate"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 142" in out
+    assert "registered sources: 143" in out
     assert "self-checks OK" in out
 
 
@@ -160,17 +160,21 @@ def test_validate_fails_naming_the_offending_id(monkeypatch: pytest.MonkeyPatch)
 # 17 U.S.C. §105), openstates (documented public-domain dedication,
 # open.pluralpolicy.com/data/) — while documentcloud (per-document rights
 # UNDETERMINED) and courtlistener_recap (membership-agreement access, HG-09
-# class) stay gated = 43 loadable, 0 flip-ready.
+# class) stay gated = 43 loadable, 0 flip-ready. P26.3 (SOURCES.3, 2026-09-17)
+# added one gated discovery row (la_city_clerk_cfms — the real LA City
+# legislative surface found during the PrimeGov robots-wall pivot) = 143
+# registered, 43 loadable, 0 flip-ready.
 
 
 def test_review_status_prints_flip_ready_0_and_loadable_43(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
     # GL-GATE-06 (2026-09-16) drained flip-ready to 0; the same-day P26.2 pass
-    # flipped the five resolved promoted sources (38 → 43 loadable).
+    # flipped the five resolved promoted sources (38 → 43 loadable). P26.3's
+    # gated discovery row moved registered 142 → 143; loadable is unchanged.
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 142" in out
+    assert "registered sources: 143" in out
     assert "flip-ready: 0" in out
     assert "loadable now: 43" in out
 

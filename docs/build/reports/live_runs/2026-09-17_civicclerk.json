@@ -1,18 +1,270 @@
 {
   "byte_counts": [],
-  "capture_digests": [],
-  "claim_count": 0,
+  "capture_digests": [
+    "bcnaaheds6isfdfjt6f2meghzki7ifa44twpwa2ejz7j5fkolsu47hnyxa5uxji52eckjqepa73kmry6sd73xwcjkz6y6xsls7knll5hwji",
+    "bcnaatvuko4u7xfi7s7pqpbsir5lv7zi7ljm4zb4hqdal4l7svicao6exqfhzq27ikcmjqjumjn64ojmdzr6knv5tt4mw6ftkjsej3luxpm",
+    "bcnaisf4sglvp3o55e4mfgy4bfqnacccaankxi3hhmgwa25zhpgwihlg2sdyxqgmppls4r2tyh4tmrsgtgriggt4sgmx42q4wehpvwb5cy4",
+    "bcnajgc7yhfvfuhpy3qrlxi7drriopklbapne4bb2n56wsx3hnxdpbxdozlawzatilx26qnwakyztkbihtaqmec7zzuzri65buqyx5pljky",
+    "bcnaalquz4y72jxua6paufnhq2d2wkfoxa6batazh2xsxcbxned5q7pnuktbztvdkriekk64n554cph556sta7lx2i4b3l4ct7pnlvp4ccm",
+    "bcnagtdtbbof3fmeeooojqgr3ryodl65m2a42cuj347w4suixsgbrberodk7fg6lah3mstss7mnff2jhkj4jgnrcsz4yrswtgn3sa6iofim",
+    "bcnacot463ev6yraa3sms7iezf7r3aay4bkymfx7m2lftwccm7cjfkvi363hbz7o6g5kmyn5lpewl65urvmgrxlof2fb662iqalmsh2pcdq",
+    "bcnabb4frfojitikiwjd2nluyjoozzgcqv4oqqbafm3ypnpyp5kogj63ali32c2dvjvp4wzytnduylkzlowsmp6skf7ds3g45yhyphdxnym",
+    "bcnafyxrmptoozrfac7gepaj3jusibalgooxy6zwbncy6ehn3mrln7hxvzcubbzlloif2y6ntw4bfdmqgpp7t7p2yigloolcf7gmjmusory",
+    "bcnaoqnfaoehpybxibd5rzdhddflhlqvoq2s4bagee2tmzfs3ieqzmz3rke2cyn6uavvnmgnfq4liggo6osvigv556i32pzy4ysuli2nj7a",
+    "bcnak3ua2dhqwwmvgkcanh5kkcsfiqwlxqxmta2yq7wbhdvjr7j46ubpsk326lxyqacxxhbbqganmo7p72l2wngmr5buo5txxwyvkcfei4i",
+    "bcnapahuzdwelktan7xoerg6cby3jbzmd5xo6ip2pa3h53b4yejw4brjvc4w4pdd5f2wnsi2zh6uf5f27mxqxdwqerr33ji6r5gfzwm7yga",
+    "bcnadszl6bpk6tqn2yoslpf3km7gwl6ixozjbimtf3d2zd2blkjfnt4galrl3khbgwgcqceqbwsjgns3csltejdkbc6ib7pcxra75ub2nee",
+    "bcnahsoifvocq2kfs6ywymcbalj7ospsom6bygoyizbcwgced3py4sbx57p7y3s2t2pqiw3erziyfqoiplfanddzoaew3jy5k5agur7uxfu",
+    "bcnaouozlit2ivhm6vol6ugcr2gqmyvqh5545goniddaptzrbtguwgdqgudfqxbx3n7i3h4cofwp53ea4ort64c2i2qgjrn5k3kop66wvrm",
+    "bcnadvz6tlec7nyjnvae2wmidtqnugiwjipjdtvbp2ibx2o3anxwraayren4kzn3uovjlhd2ssxcnmeuqr4bgjinbuandd2bgmm6jxyadj4",
+    "bcnagx56d6g4j6pycgrzmadxijyr7nm4veuxr422g3fkzpd2uc2dzubikvc7vdyqdl254jrs6vwnh7k534w6sdcuce36rochxd6fjt2egxq",
+    "bcnaboevabbasg2tejeqchv54b7sxccfhecf6v5xbixemki3we7kedpdvgapw6oa3qu7gq25ug6kb55kfp4672ogrvr4wvfji2msv4lao24",
+    "bcnakehvxea6bs6qfjtbwizjmdipdjgwojpihzqmsdaxhu2nhrmh4kvt5ixhm77x5dv7ez64krdj5ewayhtidylw3oqp3v2txio27laadsu",
+    "bcnalt7i4buj6ptjxlrdevpug2nsx7775ihxuw5w4oiocmizfncqkxmzrd4ootlygmnm4r7cvuwfw2riqwlj4ffrmu6mjapog3ynlvzbbmq",
+    "bcnaprqqpeb3zciwqgxtllipyyr6h2gn4lddseltz6s3wihi24inywcyep4zcotmh43kqmlkpx36kz5zrdwsmg6ihaytwpnuiqstyxddr3y",
+    "bcnanswawxlzoy7njhbboi5wygnftgrnxhgfwyahbxduevy3q67aw72vop4ikfnwaoclgneyumz6cei2mkocrklpg7sqen5lzaxp7d5qv7u",
+    "bcnapcnpo4lyiroet5v3g6h4tlphfpshwatsq4gm2ivvfwv4ucbioa4uucpmnhrvqzzecf5tbi4lbyctmvjyaduwejzf5j6cdhlmzrs5lju",
+    "bcnadg273sb535rgp2npt7wldldwvswdj6gibhfo5cpnn4wqngcwwkwhwm2qexocbn3wxuxa34dpd2duyezbmroyxnybd2rkdholdoiukoi",
+    "bcnam544bhsbd5faqfcjtjudebfu5bh27yclxebtximwjrdipkld3izuvgmbthjfu3xxu6tcdu5dbvfxp3gb2vso4npp67dcpbmxobtbd6y",
+    "bcnappflvdvjzdt7y6sbyewztua6x56bak6a2mfdxks4umeqhgprais7c2udtxq7yjyfqeootzfc4g2efgjpcpfzinedbb5rs4ambhuxl44",
+    "bcnaj4mfiu4qjtgap66chva2s7sydmum3qremhd45ss6es674jggmgeywrfujbe5pis3v7ox4fbn235bf5pczfzj7wxorb235r3lpxwwe5i",
+    "bcnai4staatnivhtd4cv5dpmqp6lonoyep5gpz7g4sqq35wfgnkv54bldtwwswas4odimmex47jnyvvdxuklibvec2puqoccwifc26c6rie",
+    "bcnac2do4tff6lxf5icrtczporb2vn4jyw67gc4pmvf6dxk3ccql4dk4qdudgv4wbi46fosef4iaqu353z53hq3gjo2avzlq7hwvy2qcdby",
+    "bcnah3zaefiarno52w4stzb6i24rsenqbe6osxp3pwpphjwq62rl37bm5gyih45wc57cys3spp4376afxied27xuckzd5qmkzpcaa2k33by",
+    "bcnaawsgkzduvotvlpnsp2io4siugdx6jnmv4whxgp36fl4g5nhn5plqpz4d555vuglpjhqczwlmyivj4ggksknusidjx6qa3f5t7noc24y",
+    "bcnam37lngov3lytstbjxq3u7di52taumjc62gftuagjb7vlzk4lh4hwnfapmw4dxjnfsis3kjdnpe6ztn6gtdih34nhdmfomi7aixtydse",
+    "bcnabxxlbjrcb2gq6r6ncnhholzyatqiepvzae3xkk4tmmb6ypv3v4sq2j3mpyziro622e6kvv3der443lmnrr2m7lbbd2b7aqsaleeguv4",
+    "bcnab4unrzwt3mg722fogsbya5bndkod6mmamovwohk7erks6ffqyooti242zbujcesidbyvymmrxirdycvf7oirvi2cuvwi5abhfmzkwg4"
+  ],
+  "claim_count": 500,
   "connector": "procurement",
   "content_drift": null,
-  "disappearances": [],
-  "duration_seconds": 0.368859,
+  "disappearances": [
+    {
+      "artifact_id": "oklahoma_city_ok",
+      "failing_status": "link_rotted",
+      "observed_at": "2026-09-17T02:55:16.457486+00:00"
+    }
+  ],
+  "duration_seconds": 47.217252,
   "mode": "live",
-  "politeness_refusal": "RobotsUnretrievable: robots.txt for 'oklahomacityok.api.civicclerk.com' is unretrievable; crawl permission is NOT granted and the connector refuses to run (SIG-INGEST-012).",
+  "politeness_refusal": null,
   "rate_limit_events": [],
   "refusals": [],
-  "robots_decisions": [],
+  "robots_decisions": [
+    {
+      "host": "oklahomacityok.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://oklahomacityok.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "brooklinema.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://brooklinema.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "coltonca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://coltonca.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "northportal.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://northportal.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "mauicounty.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://mauicounty.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "sanjuancowa.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://sanjuancowa.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "santarosacofl.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://santarosacofl.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "wcid1.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://wcid1.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "norfolkva.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://norfolkva.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "scottsdaleaz.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://scottsdaleaz.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "garlandtx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://garlandtx.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "mcallentx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://mcallentx.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "brownsvilletx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://brownsvilletx.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "amarillotx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://amarillotx.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "charlestonsc.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://charlestonsc.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "columbiasc.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://columbiasc.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "murfreesborotn.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://murfreesborotn.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "mobileal.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://mobileal.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "jacksonms.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://jacksonms.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "fayettevillear.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://fayettevillear.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "vancouverwa.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://vancouverwa.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "springfieldmo.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://springfieldmo.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "greenbaywi.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://greenbaywi.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "lansingmi.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://lansingmi.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "kalamazoomi.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://kalamazoomi.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "fortwaynein.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://fortwaynein.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "roanokeva.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://roanokeva.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "charlottesvilleva.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://charlottesvilleva.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "buffalony.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://buffalony.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "albanyny.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://albanyny.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "springfieldma.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://springfieldma.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "newtonma.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://newtonma.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "manchesternh.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://manchesternh.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "portlandme.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://portlandme.api.civicclerk.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "burlingtonvt.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://burlingtonvt.api.civicclerk.com/robots.txt",
+      "status": 404
+    }
+  ],
   "source_id": "civicclerk",
-  "started_at": "2026-09-17T00:54:21.529865+00:00",
+  "started_at": "2026-09-17T02:55:15.755769+00:00",
   "status_codes": [],
   "urls": []
 }
