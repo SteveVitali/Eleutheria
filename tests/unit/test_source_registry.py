@@ -134,6 +134,21 @@ _FLIPPED_SUBSET = frozenset(
         # flipped on the same GL-GATE-06 municipal-public-record basis
         # (CC0-1.0; packet docs/build/reports/rights/escribe.md).
         "escribe",
+        # P26.7 (2026-09-17): the eight resolved-clear state DOT/511 camera
+        # registries — KY/UT/OR/DC on the public-record/CC0 dedication basis,
+        # IA explicit CC-BY-4.0, IL explicit CC-BY-SA-2.0 (own compartment),
+        # WA/MO conditional public grants evaluated under public terms.
+        # Packets: docs/build/reports/rights/dot_511_<st>.md. LA/GA/AL/TX/MD
+        # stay gated (empty licenseInfo / non-authority publisher / no SPDX
+        # expression for the conditioned terms).
+        "dot_511_ky",
+        "dot_511_il",
+        "dot_511_ut",
+        "dot_511_or",
+        "dot_511_ia",
+        "dot_511_wa",
+        "dot_511_dc",
+        "dot_511_mo",
     }
 )
 
@@ -143,7 +158,8 @@ def test_ingestion_permitted_defaults_false_across_the_seed() -> None:
     # only after a reviewer resolves its posture and flips the flag — as of the
     # RIGHTS.1 re-run, the 2026-09-15 live-ops flips, the GL-GATE-06 blanket
     # disposition (2026-09-16), the P26.2 promoted-source flips (2026-09-17),
-    # and the P26.5 eScribe flip that is exactly this set (44 sources).
+    # and the P26.5 eScribe flip that is exactly this set (44 sources), plus the
+    # P26.7 dot_511 flips (52 sources).
     permitted = {s.id for s in sources() if s.ingestion_permitted}
     assert permitted == set(_FLIPPED_SUBSET)
 

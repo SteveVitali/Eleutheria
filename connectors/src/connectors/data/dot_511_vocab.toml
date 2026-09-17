@@ -1,0 +1,129 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# The versioned `dot_511` connector vocabulary (P26.7 / SOURCES.7) — state DOT /
+# 511 traffic-camera *location registries* (ArcGIS feature layers + per-state
+# 511 JSON APIs). This table is DATA, not code (SIG-ENG-001): the predicate
+# allowlist, the per-state field aliases, and the media-field blocklist are data
+# rows reviewed on their own. Changes after P26.7 are VERSIONED MIGRATIONS (§20),
+# not edits — bump `vocab_version` and add the change, never silently rewrite a
+# row (SIG-INGEST-017).
+#
+# NOTE ON TOML ORDERING: every top-level key MUST appear ABOVE the first [table]
+# header — otherwise TOML nests it under that table.
+
+# The connector's own vocabulary version, stamped onto every run (§20).
+vocab_version = "2026.09.17"
+
+# The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
+# `dot_511` connector may write ONLY the camera-registry surface — a
+# registry-keyed traffic-camera infrastructure row carrying identity, location,
+# roadway, jurisdiction, and operator predicates. `traffic_camera` is the entity
+# assertion itself; the rest are its predicates. Anything else — a feed/image
+# predicate, a person predicate, a deployment inference — is a schema error
+# refused at the ingestion boundary (§10.5 D6).
+predicate_allowlist = [
+  "traffic_camera",
+  "camera_external_ref",
+  "camera_name",
+  "camera_roadway",
+  "camera_direction",
+  "camera_jurisdiction",
+  "camera_county",
+  "camera_operator",
+  "camera_status",
+  "camera_latitude",
+  "camera_longitude",
+  "camera_coordinate_source",
+  "external_id",
+]
+
+# Predicate GENRES this connector MUST NOT write (scope-creep guard): the
+# registry is a LOCATION substrate — it asserts a camera exists at a published
+# coordinate on a roadway. Feed content (image/video/stream URLs), person data,
+# and deployment/audit inferences are refused by construction.
+forbidden_predicate_genres = [
+  "camera_image",
+  "camera_video",
+  "camera_stream",
+  "feed_url",
+  "snapshot",
+  "plate_read",
+  "person",
+  "deployment_exists",
+  "camera_count",
+]
+
+# The sensitivity class applied to every emitted camera coordinate before the
+# claim lands (§43.3, SIG-PUB-004): C1 = "publicly visible hardware on public
+# right-of-way" — pole-mounted DOT cameras, and the operator itself published
+# the coordinate (C2's operator_published_upgrade converges to the same tier-0
+# full precision). A target row may pin a stricter class; the connector applies
+# `policy.sensitivity.apply_tier(geo_tier_for(class))` to every coordinate and
+# emits NOTHING at tier 3 (jurisdiction only).
+default_sensitivity_class = "C1"
+
+# --- field aliases -----------------------------------------------------------
+# Per-state ArcGIS/511 layers name the same fact differently (verified against
+# the live layer schemas, 2026-09-17 — see dot_511_targets.toml observed_fields).
+# Every alias list is ordered: the first present non-empty value wins, and the
+# matched field name is recorded on the claim for provenance.
+
+# Camera identity / stable reference. ArcGIS OBJECTID is the per-layer stable
+# key; feeds may carry a camera id under any of these names.
+id_fields = [
+  "CAMERAID", "cameraId", "attributes_cameraId", "CAM_ID__", "camera_id",
+  "device_id", "AssetID", "Equipment_Name", "Site__", "id", "Id", "ID",
+  "rowid", "OBJECTID", "FID", "GlobalID", "GLOBALID", "ObjectId",
+]
+
+# Explicit latitude fields (checked BEFORE geometry — a published attribute is
+# a stronger provenance claim than the derived geometry).
+lat_fields = [
+  "latitude", "Latitude", "LATITUDE", "attributes_latitude", "geometry_y", "y",
+]
+lon_fields = [
+  "longitude", "Longitude", "LONGITUDE", "attributes_longitude", "geometry_x", "x",
+]
+
+# Roadway / route the camera watches.
+roadway_fields = [
+  "highway", "Route", "roadway", "RoadwayName", "PrimaryRoad", "RouteID",
+  "attributes_route", "Roadway", "ROADWAY", "linear_reference", "route",
+]
+
+# Jurisdiction detail below the state (county/district/region as published).
+county_fields = [
+  "county", "County", "COUNTY", "district", "District", "District_Name",
+  "CamRegion", "REGION", "Jurisdiction", "Organization", "ORG",
+]
+
+# Human-readable camera name / description.
+name_fields = [
+  "name", "Name", "CameraTitle", "attributes_title", "DESCRIPTION",
+  "description", "Description", "CameraLocation", "LOCATION", "location",
+  "Location", "Desc_", "STREETJUNCTIONID",
+]
+
+# Reported camera/device status.
+status_fields = ["status", "Status", "CurrentStatus", "OPERATION_STATUS", "Live"]
+
+# Compass direction the camera faces / roadway direction.
+direction_fields = ["direction", "Direction", "CompassDirection", "DIRECTION"]
+
+# --- the media blocklist ------------------------------------------------------
+# Field names that carry (or point at) feed CONTENT — snapshot/image/video/HLS
+# URLs, file paths, stream references. The connector NEVER follows these, NEVER
+# emits their values, and records only their NAMES on the entity row's
+# `excluded_fields` so a reviewer can see the feed fields were present and
+# deliberately dropped (P26.7 out-of-scope: "we ingest the camera *registry*,
+# never the feed content — Part VIII"). Matching is case-insensitive and also
+# catches `*url*`/`*image*`/`*video*`/`*snapshot*`/`hls*` field-name patterns.
+media_field_names = [
+  "snapshot", "SnapShot", "ImageURL", "ImageName", "ImgPath", "VideoUrl",
+  "VideoURL", "videoId", "attributes_videoId", "hlsurl", "CCTVPublicURL",
+  "attributes_filename", "attributes_publishedImageId", "ImageFileLoc",
+  "ThumbFileLoc", "URL1", "URL2", "Url", "url", "STREAM_ERROR",
+]
+media_field_patterns = ["url", "image", "video", "snapshot", "hls", "stream", "thumb", "imgpath", "fileloc"]

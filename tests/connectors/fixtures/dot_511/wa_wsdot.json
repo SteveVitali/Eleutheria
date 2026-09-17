@@ -1,0 +1,31 @@
+{
+  "displayFieldName": "CameraTitle",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID", "alias": "OBJECTID"},
+    {"name": "CameraTitle", "type": "esriFieldTypeString", "alias": "CameraTitle"},
+    {"name": "ImageURL", "type": "esriFieldTypeString", "alias": "ImageURL"},
+    {"name": "CompassDirection", "type": "esriFieldTypeString", "alias": "CompassDirection"}
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 9001,
+        "CameraTitle": "I-5: Denny Way",
+        "ImageURL": "https://wsdot.example.invalid/img/9001.jpg",
+        "CompassDirection": "N"
+      },
+      "geometry": {"x": -122.3352, "y": 47.6183}
+    },
+    {
+      "attributes": {
+        "OBJECTID": 9002,
+        "CameraTitle": "I-90: Rainier Ave",
+        "ImageURL": "https://wsdot.example.invalid/img/9002.jpg",
+        "CompassDirection": "E"
+      },
+      "geometry": {"x": -122.2871, "y": 47.5911}
+    }
+  ]
+}

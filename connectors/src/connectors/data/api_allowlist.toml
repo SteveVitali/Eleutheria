@@ -175,3 +175,61 @@ endpoint_prefix = "/api/rest/"
 tos_basis = "CourtListener REST API v4 is the documented keyed programmatic API (wiki.free.law); targeted lookups under FLP's published usage terms."
 rate_limit_per_min = 5
 counsel_reviewed = false
+
+# --- P26.7 (SOURCES.7): ArcGIS REST feature-service query endpoints -----------
+# ArcGIS Server/ArcGIS Online REST is the documented programmatic access path
+# for the published DOT camera-registry layers — `/arcgis/rest/…/query` (and the
+# DCGIS equivalent `/dcgis/rest/…/query`) is a documented, unauthenticated read
+# API, not a crawl surface. `services*.arcgis.com` answers robots.txt 403 (no
+# policy exists, ADR-087) and the state-hosted servers 404 — either way these
+# entries record the reviewed API-mode basis rather than relying on the 4xx
+# reading. Registry rows only: the connector never follows the image/video URLs
+# inside them.
+[[api_host]]
+host = "services.arcgis.com"
+endpoint_prefix = "/"
+tos_basis = "ArcGIS Online hosted feature services — the documented REST query API for layers organizations publish publicly (state DOT camera registries)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "services1.arcgis.com"
+endpoint_prefix = "/"
+tos_basis = "ArcGIS Online hosted feature services — the documented REST query API for publicly published layers (GDOT 511, TxDOT CCTV)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "services2.arcgis.com"
+endpoint_prefix = "/"
+tos_basis = "ArcGIS Online hosted feature services — the documented REST query API for publicly published layers (KYTC, IDOT, MoDOT)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "services5.arcgis.com"
+endpoint_prefix = "/"
+tos_basis = "ArcGIS Online hosted feature services — the documented REST query API for publicly published layers (ALDOT TC HFL)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "chartimap1.sha.maryland.gov"
+endpoint_prefix = "/arcgis/rest/"
+tos_basis = "Maryland SHA CHART ArcGIS Server — the documented REST query API for the state-published traffic-camera layer (MD iMAP public data)."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+[[api_host]]
+host = "maps2.dcgis.dc.gov"
+endpoint_prefix = "/dcgis/rest/"
+tos_basis = "DC GIS (OCTO) ArcGIS Server — the documented REST query API for District open data (Level 0 Open / CC0-1.0, dc.gov Terms); DC GIS ToS encourages API use."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "data.wsdot.wa.gov"
+endpoint_prefix = "/arcgis/rest/"
+tos_basis = "WSDOT ArcGIS Server — the documented REST query API for the state-published travel-information cameras feed (low-volume public use terms)."
+rate_limit_per_min = 5
+counsel_reviewed = false

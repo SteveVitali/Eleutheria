@@ -2379,3 +2379,317 @@ auth_model = "none for the public portal"
 verified = true
 last_verified = 2026-09-17
 notes = "P26.3 discovery (records/agenda surface) — the REAL LA City legislative surface, found while routing around the PrimeGov robots wall (P26.3 pivot): lacity.primegov.com is Disallow:/ and lacity is not provisioned on the Legistar shared InSite host (recorded tenant_api_error). cityclerk.lacity.org serves the public CFMS portal (HTTP 200, 2026-09-17); robots.txt answers 404 (no policy — ADR-087). A ColdFusion-era portal — a records lead for a future connector, LINK-postured meanwhile."
+
+# ===========================================================================
+# P26.7 (SOURCES.7) — state DOT / 511 traffic-camera location registries
+# ===========================================================================
+# One source row per state so rights, robots, cadence and the live gate stay
+# per-host granular; all route through the `dot_511` connector over
+# data/dot_511_targets.toml. REGISTRY ROWS ONLY — feed content (image/video/
+# stream fields) is never ingested (Part VIII, P26.7 out-of-scope).
+# FLIPPED rows are GL-GATE-06 resolved-clear dispositions (rights packets:
+# docs/build/reports/rights/dot_511_<st>.md). Unresolved rows stay gated with
+# the blocker named in `notes`.
+
+[sources.dot_511_ky]
+name = "KYTC traffic cameras (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://services2.arcgis.com/CcI36Pduqd0OR4W9/arcgis/rest/services/trafficCamerasCur_Prd/FeatureServer/0"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-17
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-17
+review_packet = "docs/build/reports/rights/dot_511_ky.md"
+notes = "P26.7. FLIPPED 2026-09-17 (GL-GATE-06): item licenseInfo is a KYTC no-warranty disclaimer asserting no use restriction — state public record published openly → CC0-1.0. ArcGIS item 00715d24d2bf42e5abc1fab8a08d45eb (owner kytc.gis_KYTC); 254 cameras observed."
+[sources.dot_511_ky.rights]
+spdx = "CC0-1.0"
+attribution = "Kentucky Transportation Cabinet (KYTC) traffic camera registry"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.arcgis.com/sharing/rest/content/items/00715d24d2bf42e5abc1fab8a08d45eb"
+retrieval_date = 2026-09-17
+
+[sources.dot_511_il]
+name = "IDOT Illinois Gateway traffic cameras (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://services2.arcgis.com/aIrBD8yn1TDTEXoz/arcgis/rest/services/TrafficCamerasTM_Public/FeatureServer/0"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-17
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-17
+review_packet = "docs/build/reports/rights/dot_511_il.md"
+notes = "P26.7. FLIPPED 2026-09-17 (GL-GATE-06): item licenseInfo declares Creative Commons Attribution-ShareAlike 2.0 Generic verbatim — an explicit share-alike licence; lands in the dot511_sharealike compartment, never merged into CC-BY. ArcGIS item 8a885da23dfb46caaa1827ad920fb5b1 (owner IDOTAdmin); 2,937 cameras observed."
+[sources.dot_511_il.rights]
+spdx = "CC-BY-SA-2.0"
+attribution = "Illinois Department of Transportation — Illinois Gateway traffic cameras"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.arcgis.com/sharing/rest/content/items/8a885da23dfb46caaa1827ad920fb5b1"
+retrieval_date = 2026-09-17
+
+[sources.dot_511_ut]
+name = "UDOT Live View cameras (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://services.arcgis.com/pA2nEVnB6tquxgOW/arcgis/rest/services/Live_View_Cameras/FeatureServer/0"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-17
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-17
+review_packet = "docs/build/reports/rights/dot_511_ut.md"
+notes = "P26.7. FLIPPED 2026-09-17 (GL-GATE-06): item licenseInfo is an informational/no-warranty notice asserting no use restriction — state public record → CC0-1.0. ArcGIS item d3f7dae59eba45459bd9ba6a37f6ba56 (owner nlucchetti@utah.gov_uplan); 32 cameras observed. Geometry-only coordinates."
+[sources.dot_511_ut.rights]
+spdx = "CC0-1.0"
+attribution = "Utah Department of Transportation Live View camera registry"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.arcgis.com/sharing/rest/content/items/d3f7dae59eba45459bd9ba6a37f6ba56"
+retrieval_date = 2026-09-17
+
+[sources.dot_511_or]
+name = "ODOT TripCheck cameras (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/TripCheck_Cameras/FeatureServer/0"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-17
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-17
+review_packet = "docs/build/reports/rights/dot_511_or.md"
+notes = "P26.7. FLIPPED 2026-09-17 (GL-GATE-06): item licenseInfo = 'Public' (Oregon_OEM/ODOT org) — state public record published openly → CC0-1.0. ArcGIS item 1e3fb7169cd74127b9c1707258a6e6e9; 1,180 cameras observed."
+[sources.dot_511_or.rights]
+spdx = "CC0-1.0"
+attribution = "Oregon Department of Transportation / Oregon OEM — TripCheck cameras"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.arcgis.com/sharing/rest/content/items/1e3fb7169cd74127b9c1707258a6e6e9"
+retrieval_date = 2026-09-17
+
+[sources.dot_511_la]
+name = "LDOTD traffic cameras (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://services1.arcgis.com/fXHQyq63u0UsTeSM/arcgis/rest/services/DOTD_Traffic_Cameras/FeatureServer/0"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-17
+notes = "P26.7. GATED — ArcGIS item d54ae7413feb45de9c87cb73de38fc64 (GOHSEP-owned) carries EMPTY licenseInfo; no published terms located. Blocker: HG-03-class rights decision for Louisiana DOTD data."
+[sources.dot_511_la.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+retrieval_date = 2026-09-17
+
+[sources.dot_511_ia]
+name = "Iowa DOT traffic cameras (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://services.arcgis.com/8lRhdTsQyJpO52F1/arcgis/rest/services/Traffic_Cameras_View/FeatureServer/0"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-17
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-17
+review_packet = "docs/build/reports/rights/dot_511_ia.md"
+notes = "P26.7. FLIPPED 2026-09-17 (GL-GATE-06): item licenseInfo declares Creative Commons Attribution 4.0 verbatim. ArcGIS item c4063f200a7b4da5826e2ac86c677cf5 (owner IowaDOT_OTO); 1,251 cameras observed."
+[sources.dot_511_ia.rights]
+spdx = "CC-BY-4.0"
+attribution = "Iowa Department of Transportation traffic camera registry"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.arcgis.com/sharing/rest/content/items/c4063f200a7b4da5826e2ac86c677cf5"
+retrieval_date = 2026-09-17
+
+[sources.dot_511_wa]
+name = "WSDOT travel information cameras (+ KC/WSDOT layer)"
+source_kind = "government_portal"
+homepage_url = "https://data.wsdot.wa.gov/arcgis/rest/services/TravelInformation/TravelInfoCamerasWeather/FeatureServer/0"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-17
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-17
+review_packet = "docs/build/reports/rights/dot_511_wa.md"
+notes = "P26.7. FLIPPED 2026-09-17 (GL-GATE-06): WSDOT-published feed 'intended for low volume use; WSDOT may cancel or restrict access' — a conditional public grant evaluated under public terms (no outreach; the low-volume condition is met by the monthly cadence row). State public record → CC0-1.0. Two layers: data.wsdot.wa.gov (1,705, geometry-only) + King County-hosted KC/WSDOT layer (125)."
+[sources.dot_511_wa.rights]
+spdx = "CC0-1.0"
+attribution = "Washington State Department of Transportation travel cameras"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.arcgis.com/sharing/rest/content/items/f562fc9a382549c68093b664d000dc15"
+retrieval_date = 2026-09-17
+
+[sources.dot_511_dc]
+name = "DDOT traffic cameras (DC GIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Transportation_Sensors_WebMercator/MapServer/93"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-17
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-17
+review_packet = "docs/build/reports/rights/dot_511_dc.md"
+notes = "P26.7. FLIPPED 2026-09-17 (GL-GATE-06): DC Data Policy (Mayor's Order 2017-115) + dc.gov Terms of Use — District catalog data is Level 0 Open, 'public domain ... CC0 1.0 Universal dedication'; DC GIS ToS encourages API use, no attribution required → CC0-1.0. 235 cameras observed."
+[sources.dot_511_dc.rights]
+spdx = "CC0-1.0"
+attribution = "District of Columbia (OCTO/DC GIS / DDOT) traffic camera registry"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://dc.gov/node/939602"
+retrieval_date = 2026-09-17
+
+[sources.dot_511_ga]
+name = "GDOT 511 cameras (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://services1.arcgis.com/2iUE8l8JKrP2tygQ/arcgis/rest/services/GDOT_511_Cameras/FeatureServer/0"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-17
+notes = "P26.7. GATED — ArcGIS item 12c979ba84b54b83b834fdd2d861677d (GEMA-owned org) carries EMPTY licenseInfo; no published terms located. Blocker: HG-03-class rights decision for Georgia DOT data."
+[sources.dot_511_ga.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+retrieval_date = 2026-09-17
+
+[sources.dot_511_al]
+name = "ALDOT traffic cameras (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://services5.arcgis.com/P2OFkRrXCz6u4SBf/arcgis/rest/services/ALDOT_TC_HFL_public/FeatureServer/0"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-17
+notes = "P26.7. GATED — ArcGIS item 76cca231f72f446f9735b6e912c04cd0 is published under a county E-911 GIS org account (bce911gis), not an ALDOT-owned org, AND licenseInfo is EMPTY. Blocker: publisher authority + HG-03-class rights decision."
+[sources.dot_511_al.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+retrieval_date = 2026-09-17
+
+[sources.dot_511_mo]
+name = "MoDOT traffic cameras (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://services2.arcgis.com/jWXb6JPWtBjOCalT/arcgis/rest/services/MODOT_Traffic_Cameras/FeatureServer/1"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-17
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-17
+review_packet = "docs/build/reports/rights/dot_511_mo.md"
+notes = "P26.7. FLIPPED 2026-09-17 (GL-GATE-06): Missouri Terms of Use — user agrees to stated conditions; warranty disclaimers + right to modify/discontinue feeds and require termination of use. A conditional public grant evaluated under public terms (no outreach; conditions honoured via recorded notes + monthly cadence). State public record → CC0-1.0. ArcGIS item 38774183927d423488f9e2e707a6eca5 (owner creaml_MOSEMA); 871 cameras observed. NOTE: camera layer is FeatureServer/1, not /0."
+[sources.dot_511_mo.rights]
+spdx = "CC0-1.0"
+attribution = "Missouri Department of Transportation traffic camera registry"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.arcgis.com/sharing/rest/content/items/38774183927d423488f9e2e707a6eca5"
+retrieval_date = 2026-09-17
+
+[sources.dot_511_tx]
+name = "TxDOT CCTV locations (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://services1.arcgis.com/7DRakJXKPEhwv0fM/arcgis/rest/services/TxDOT_CCTV_Locations/FeatureServer/0"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-17
+notes = "P26.7. GATED — ArcGIS item adb3663e850e4f76be44596dbe696a93 is published under a personal account (dkarctur), not a TxDOT-owned org, AND licenseInfo is EMPTY. Blocker: publisher authority + HG-03-class rights decision. drivetexas.org camera API also unreachable on probe (recorded)."
+[sources.dot_511_tx.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+retrieval_date = 2026-09-17
+
+[sources.dot_511_md]
+name = "MD SHA CHART traffic cameras (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://chartimap1.sha.maryland.gov/arcgis/rest/services/CHART/Cameras/MapServer/0"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-17
+notes = "P26.7. GATED — MD iMAP terms are attribution-CONDITIONED ('data can be freely distributed as long as the metadata entry is not modified or deleted; derived data must acknowledge the State of Maryland') with no registered SPDX expression in policy/data/licenses.toml. Blocker: licence-registry row + reviewer decision (HG-03 class). 552 cameras observed; mdgeodata.md.gov iMAP mirror also enumerated."
+[sources.dot_511_md.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+retrieval_date = 2026-09-17

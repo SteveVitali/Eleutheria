@@ -1,0 +1,23 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnajcgfrtggjjgpthm5znz6fmoxvwpo5aw2obawvyz46fvisfwof2kasyco2jaiu35mrdhmlmysnpbna4mlnz4kyle4onsxle2eqqmf65u",
+    "bcnadxslu3nurfrszgk72n33amddyoseb4f7wxojzxjwaekyfchh3ttxwgxiq3mcukqldej575iab3nndkjo4qrgn66daypx2j443fnb3lq"
+  ],
+  "claim_count": 11791,
+  "connector": "dot_511",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [],
+  "duration_seconds": 1.234874,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "dot_511_or",
+  "started_at": "2026-09-17T18:47:18.904710+00:00",
+  "status_codes": [],
+  "urls": []
+}

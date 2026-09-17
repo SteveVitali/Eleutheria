@@ -1,0 +1,53 @@
+{
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 1,
+        "id": "GOOD-1",
+        "name": "I-40 at MM 1",
+        "latitude": 36.10,
+        "longitude": -95.90
+      },
+      "geometry": {"x": -95.90, "y": 36.10}
+    },
+    {
+      "attributes": {
+        "OBJECTID": 2,
+        "name": "no coordinate camera",
+        "latitude": null,
+        "longitude": null
+      },
+      "geometry": null
+    },
+    {
+      "attributes": {
+        "OBJECTID": 3,
+        "id": "BAD-RANGE",
+        "name": "out of range camera",
+        "latitude": 95.50,
+        "longitude": -95.90
+      },
+      "geometry": {"x": -95.90, "y": 95.50}
+    },
+    {
+      "attributes": {
+        "OBJECTID": 4,
+        "id": "BAD-TEXT",
+        "name": "malformed coordinate camera",
+        "latitude": "not-a-number",
+        "longitude": "also-bad"
+      },
+      "geometry": {"x": -95.90, "y": 36.10}
+    },
+    {
+      "attributes": {
+        "name": "no identity camera",
+        "latitude": 36.20,
+        "longitude": -95.80
+      },
+      "geometry": {"x": -95.80, "y": 36.20}
+    }
+  ]
+}

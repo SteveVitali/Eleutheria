@@ -133,6 +133,23 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "eyes_on_flock": "flock_portal",
     "openstates": "accountability",
     "fbi_cde_agency_registry": "agency_registry",
+    # P26.7 (SOURCES.7): state DOT/511 traffic-camera location registries — one
+    # source row per state so rights/robots/cadence stay per-host granular; all
+    # route through the `dot_511` connector over the per-state target registry
+    # (data/dot_511_targets.toml). Only GL-GATE-06-resolved rows are flipped.
+    "dot_511_ky": "dot_511",
+    "dot_511_il": "dot_511",
+    "dot_511_ut": "dot_511",
+    "dot_511_or": "dot_511",
+    "dot_511_la": "dot_511",
+    "dot_511_ia": "dot_511",
+    "dot_511_wa": "dot_511",
+    "dot_511_dc": "dot_511",
+    "dot_511_ga": "dot_511",
+    "dot_511_al": "dot_511",
+    "dot_511_mo": "dot_511",
+    "dot_511_tx": "dot_511",
+    "dot_511_md": "dot_511",
 }
 
 

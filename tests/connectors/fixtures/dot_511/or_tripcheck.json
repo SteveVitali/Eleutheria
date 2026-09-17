@@ -1,0 +1,38 @@
+{
+  "displayFieldName": "attributes_title",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "ObjectId", "type": "esriFieldTypeOID", "alias": "ObjectId"},
+    {"name": "attributes_title", "type": "esriFieldTypeString", "alias": "attributes_title"},
+    {"name": "attributes_route", "type": "esriFieldTypeString", "alias": "attributes_route"},
+    {"name": "attributes_cameraId", "type": "esriFieldTypeString", "alias": "attributes_cameraId"},
+    {"name": "attributes_latitude", "type": "esriFieldTypeDouble", "alias": "attributes_latitude"},
+    {"name": "attributes_longitude", "type": "esriFieldTypeDouble", "alias": "attributes_longitude"},
+    {"name": "attributes_filename", "type": "esriFieldTypeString", "alias": "attributes_filename"},
+    {"name": "attributes_videoId", "type": "esriFieldTypeString", "alias": "attributes_videoId"},
+    {"name": "attributes_publishedImageId", "type": "esriFieldTypeString", "alias": "attributes_publishedImageId"},
+    {"name": "attributes_iconType", "type": "esriFieldTypeString", "alias": "attributes_iconType"},
+    {"name": "geometry_y", "type": "esriFieldTypeDouble", "alias": "geometry_y"},
+    {"name": "geometry_x", "type": "esriFieldTypeDouble", "alias": "geometry_x"}
+  ],
+  "features": [
+    {
+      "attributes": {
+        "ObjectId": 7001,
+        "attributes_title": "I-5 at Salem - Market St",
+        "attributes_route": "I-5",
+        "attributes_cameraId": "CAM-OR-7001",
+        "attributes_latitude": 44.9429,
+        "attributes_longitude": -123.0351,
+        "attributes_filename": "7001.jpg",
+        "attributes_videoId": "vid-7001",
+        "attributes_publishedImageId": "pub-7001",
+        "attributes_iconType": "camera",
+        "geometry_y": 44.9429,
+        "geometry_x": -123.0351
+      },
+      "geometry": {"x": -123.0351, "y": 44.9429}
+    }
+  ]
+}

@@ -58,6 +58,7 @@ from . import atlas as atlas  # noqa: E402,F401
 from . import audit_structural as audit_structural  # noqa: E402,F401
 from . import coarse_international as coarse_international  # noqa: E402,F401
 from . import data_driven as data_driven  # noqa: E402,F401
+from . import dot_511 as dot_511  # noqa: E402,F401
 from . import flock_portal as flock_portal  # noqa: E402,F401
 from . import france_belgium as france_belgium  # noqa: E402,F401
 from . import government_mandated_disclosure as government_mandated_disclosure  # noqa: E402,F401

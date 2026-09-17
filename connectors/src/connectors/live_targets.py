@@ -57,6 +57,14 @@ def live_targets(source_id: str) -> list[dict[str, str]]:
         from .procurement import tenant_targets
 
         return tenant_targets(platform=source_id)
+    if kind == "dot_511_targets":
+        # A dot_511_<st> source's live targets ARE the verified registry rows in
+        # data/dot_511_targets.toml (P26.7): each expands to the deterministic
+        # ArcGIS REST query URL; enumerated non-targets (keyed/refused hosts)
+        # never produce a target.
+        from .dot_511 import registry_targets
+
+        return registry_targets(source_id)
     # Generic document/http targets: an explicit list of {id, url[, kind]} rows.
     # Extra keys (e.g. a POST body's `post_body`, USAspending's `subaward` flag)
     # pass through untouched — they are reviewed data the connector consumes.

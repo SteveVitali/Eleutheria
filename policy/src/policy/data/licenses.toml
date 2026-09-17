@@ -58,6 +58,17 @@ share_alike = false
 attribution_required = true
 relicensable_to = ["LicenceOuverte-2.0"]
 
+# CC-BY-SA-2.0 — the licence the IDOT Illinois Gateway traffic-camera layer is
+# published under (ArcGIS item 8a885da23dfb46caaa1827ad920fb5b1 licenseInfo,
+# retrieved 2026-09-17). Share-alike: relicensable to itself ONLY — it can
+# neither fold into CC-BY-4.0 nor merge with CC-BY-SA-4.0 (a different version
+# is a different licence).
+[licenses."CC-BY-SA-2.0"]
+kind = "data"
+share_alike = true
+attribution_required = true
+relicensable_to = ["CC-BY-SA-2.0"]
+
 # LicenseRef-DerivedFacts-Citations — the ADR-085 basis the counsel-flipped
 # document sources run on (CCOPS filings, pathways pages, madada, the coarse
 # international adapters, declarationcamera_be): SIG emits derived facts and
@@ -110,6 +121,11 @@ source = "SIG"
 license = "CC0-1.0"
 description = "SIG subset dual-licensed CC0 for upstream OSM contribution (SIG-LIC-007a)"
 source = "SIG"
+
+[compartments.dot511_ccbysa2]
+license = "CC-BY-SA-2.0"
+description = "IDOT Illinois Gateway traffic-camera registry (CC-BY-SA-2.0 per the ArcGIS item licence block, P26.7)"
+source = "Illinois Department of Transportation"
 
 [compartments.derived_facts]
 license = "LicenseRef-DerivedFacts-Citations"
