@@ -544,3 +544,49 @@ def test_document_url_uses_captured_fields_only() -> None:
         _document_url({"portalLink": "https://p.example/doc/9"}, index_target, ep2)
         == "https://p.example/doc/9"
     )
+
+
+def test_bounded_window_is_stable_under_shuffled_index_order() -> None:
+    """eScribe's calendar endpoint returns the same meeting SET in a different
+    order per call (verified live 2026-09-17). The bounded selection is a
+    function of the item set — doc_order_fields date desc, id tie-break — so a
+    shuffled index yields the same document window and a re-run dedupes."""
+    from connectors.procurement import _select_document_items
+
+    items = [
+        {"ID": f"id-{n}", "StartDate": f"2026/0{n + 1}/15 10:00:00", "MeetingName": f"M{n}"}
+        for n in range(6)
+    ]
+    cfg = {"doc_order_fields": ["StartDate"]}
+    first = _select_document_items(items, {}, cfg, 3)
+    shuffled = [items[i] for i in (3, 0, 5, 1, 4, 2)]
+    second = _select_document_items(shuffled, {}, cfg, 3)
+    assert [i["ID"] for i, _ in first] == [i["ID"] for i, _ in second]
+    # most-recent-first: the three newest meetings are the window
+    assert {i["ID"] for i, _ in first} == {"id-5", "id-4", "id-3"}
+
+
+def test_same_item_set_reselects_same_documents_end_to_end(pin_tenant: Any) -> None:
+    """End-to-end: two runs over the same meeting set in different payload
+    order fetch the same bounded document set (idempotent window)."""
+    meetings = [
+        {"ID": f"m-{n}", "StartDate": f"2026/0{n + 1}/10 12:00:00", "MeetingName": f"Meeting {n}"}
+        for n in range(5)
+    ]
+
+    def _payload(order: list[int]) -> bytes:
+        return json.dumps({"d": [meetings[i] for i in order]}).encode()
+
+    def _one_run(order: list[int]) -> tuple[Any, _MapTransport]:
+        target = dict(pin_tenant("escribe"))
+        target["doc_per_tenant"] = 2
+        transport = _MapTransport()
+        transport.add("GetCalendarMeetings", 200, _payload(order), "application/json")
+        transport.add("Meeting.aspx", 200, _fixture("escribe_nanaimo_meeting.html"), "text/html")
+        return _run_platform("escribe", transport, target=target)[0], transport
+
+    _r1, t1 = _one_run([0, 1, 2, 3, 4])
+    _r2, t2 = _one_run([4, 2, 0, 3, 1])
+    docs1 = sorted(u for u in t1.requested if "Meeting.aspx" in u)
+    docs2 = sorted(u for u in t2.requested if "Meeting.aspx" in u)
+    assert docs1 == docs2 and len(docs1) == 2

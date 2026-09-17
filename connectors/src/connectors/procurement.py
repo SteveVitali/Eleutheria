@@ -1992,9 +1992,12 @@ def _select_document_items(
     """The bounded ``(item, tier)`` selection for one tenant index (P26.6).
 
     At most ``per_tenant`` items: tier-0 (vocab-/contract-matching) first, then
-    tier-1 in the index's own order (the index endpoints already order by
-    recency — ``$orderby`` on Legistar, the calendar window on eScribe). The
-    selection is deterministic — the same capture yields the same targets.
+    tier-1 in **canonical order** — the reviewed ``doc_order_fields`` date (most
+    recent first) with the item id as tie-break. The order comes from item DATA,
+    never the server's return order: eScribe's ``GetCalendarMeetings`` returns
+    the same meeting set in a different order per call, so position-in-payload
+    would make the bounded window non-idempotent. Given the same item set the
+    selection is identical — re-runs dedupe.
     """
     if per_tenant <= 0:
         return []
@@ -2004,7 +2007,22 @@ def _select_document_items(
             index_target.get("contract_matter_patterns") or cfg.get("contract_matter_patterns", [])
         )
     ]
-    scored = [(_item_relevant(item, patterns), pos, item) for pos, item in enumerate(items)]
+    order_fields = [
+        str(f) for f in (index_target.get("doc_order_fields") or cfg.get("doc_order_fields") or ())
+    ]
+
+    def _date_key(item: Mapping[str, Any]) -> str:
+        for order_field in order_fields:
+            value = _opt_str(item.get(order_field))
+            if value:
+                return value
+        return ""  # no reviewed date — sorts last under the descending order
+
+    # Two stable sorts build the canonical order: id ascending, then date
+    # descending (an empty date key is smallest, so undated items fall last).
+    ordered = sorted(items, key=_agenda_item_id)
+    ordered = sorted(ordered, key=_date_key, reverse=True)
+    scored = [(_item_relevant(item, patterns), pos, item) for pos, item in enumerate(ordered)]
     scored.sort(key=lambda entry: (not entry[0], entry[1]))
     return [(item, 0 if relevant else 1) for relevant, _, item in scored[:per_tenant]]
 
