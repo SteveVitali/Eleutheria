@@ -771,6 +771,7 @@ def _run_live(
                         # empty / timed_out; a persistent 429 lands on
                         # `disappearances` instead, never re-probed).
                         "url": r.get("source_uri"),
+                        "slice": (r.get("provenance") or {}).get("slice"),
                         "query_kind": (r.get("provenance") or {}).get("query_kind"),
                         "ted_keyword": (r.get("provenance") or {}).get("ted_keyword"),
                         "cpv_code": (r.get("provenance") or {}).get("cpv_code"),
