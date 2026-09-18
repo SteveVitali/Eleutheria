@@ -1,0 +1,23 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnaibd7hhoc6f3rrvr3jzgryedd2jxeilodmvjcda7bys4krtfruutj4xq5azj76yzfnwgou74m6b5stxmhfwhayvqntkeb33uqttdcvrq",
+    "bcnakufwh3w73iczrijtolgu5xwmarqcrgv3lzf4vjplkaz23qslvzqsphxofrbcpq3v6l2n4ij2i3a3e2oo3hoggcpdzoblw3tjvrnc5mi"
+  ],
+  "claim_count": 1256,
+  "connector": "dot_511",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [],
+  "duration_seconds": 1.199842,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "camreg_ottawa_on",
+  "started_at": "2026-09-18T02:40:34.743410+00:00",
+  "status_codes": [],
+  "urls": []
+}

@@ -233,3 +233,121 @@ endpoint_prefix = "/arcgis/rest/"
 tos_basis = "WSDOT ArcGIS Server — the documented REST query API for the state-published travel-information cameras feed (low-volume public use terms)."
 rate_limit_per_min = 5
 counsel_reviewed = false
+
+# --- P26.9 (SOURCES.8): municipal / transit / non-US camera registries --------
+# Socrata `/resource/<id>.json` is the documented programmatic rows API for the
+# published open-data datasets (the Socrata SoQL read API — not a crawl
+# surface). ArcGIS `/arcgis/rest/…/query` (and Esri's utility.arcgis.com
+# usrsvcs proxy for AGOL-published layers) is the documented REST query API.
+# Registry rows only: feed/image/iframe URLs inside them are never followed.
+[[api_host]]
+host = "datahub.austintexas.gov"
+endpoint_prefix = "/resource/"
+tos_basis = "City of Austin Socrata open-data portal — the documented SoQL /resource rows API (dataset b4k4-adkb, Public Domain)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "data.nola.gov"
+endpoint_prefix = "/resource/"
+tos_basis = "City of New Orleans Socrata open-data portal — the documented SoQL /resource rows API (dataset te2d-4txp, CC0-1.0)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "data.brla.gov"
+endpoint_prefix = "/resource/"
+tos_basis = "City of Baton Rouge Socrata open-data portal — the documented SoQL /resource rows API (dataset 6z6u-ts44, Public Domain)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "data.winnipeg.ca"
+endpoint_prefix = "/resource/"
+tos_basis = "City of Winnipeg Socrata open-data portal — the documented SoQL /resource rows API (dataset 42pk-2u2c, OGL-Canada-2.0)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "www.data.act.gov.au"
+endpoint_prefix = "/resource/"
+tos_basis = "ACT Government Socrata open-data portal — the documented SoQL /resource rows API (datasets 426s-vdu4 / 5ezj-yjxz, CC-BY-4.0)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "data.cityofchicago.org"
+endpoint_prefix = "/resource/"
+tos_basis = "City of Chicago Socrata open-data portal — the documented SoQL /resource rows API (datasets 4i42-qv3h / thvf-6diy; source gated on terms capture)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "data.calgary.ca"
+endpoint_prefix = "/resource/"
+tos_basis = "City of Calgary Socrata open-data portal — the documented SoQL /resource rows API (datasets k7p9-kppz / dv2f-necx; source gated on terms capture)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "data.edmonton.ca"
+endpoint_prefix = "/resource/"
+tos_basis = "City of Edmonton Socrata open-data portal — the documented SoQL /resource rows API (dataset 7fnd-72gr; source gated — no licence metadata)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "data.honolulu.gov"
+endpoint_prefix = "/resource/"
+tos_basis = "City and County of Honolulu Socrata open-data portal — the documented SoQL /resource rows API (dataset cat5-2v98; source gated — no licence metadata)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "opendata.maryland.gov"
+endpoint_prefix = "/resource/"
+tos_basis = "Maryland Socrata open-data portal — the documented SoQL /resource rows API (dataset hua3-qc8n; source gated — no licence metadata)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "gis.siouxfalls.gov"
+endpoint_prefix = "/arcgis/rest/"
+tos_basis = "City of Sioux Falls ArcGIS Server — the documented REST query API for the city-published traffic camera layer (CC-BY-4.0 on the item licence block)."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+[[api_host]]
+host = "baltegis.baltimorecity.gov"
+endpoint_prefix = "/mapping/rest/"
+tos_basis = "Baltimore City GIS ArcGIS Server — the documented REST query API for the CitiWatch camera layer (CC-BY-3.0 on the item licence block)."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+[[api_host]]
+host = "utility.arcgis.com"
+endpoint_prefix = "/usrsvcs/"
+tos_basis = "Esri utility.arcgis.com usrsvcs proxy — the documented REST query API path serving ArcGIS Online-published layers (Sheffield City Council open data, OGL-3.0)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "services3.arcgis.com"
+endpoint_prefix = "/"
+tos_basis = "ArcGIS Online hosted feature services — the documented REST query API for publicly published layers (HK Transport Dept cameras; source gated on terms capture)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "ww8.yorkmaps.ca"
+endpoint_prefix = "/arcgis/rest/"
+tos_basis = "York Region ArcGIS Server — the documented REST query API for the regional open-data traffic camera layers (source gated on licence-text retrieval)."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+[[api_host]]
+host = "arlgis.arlingtonva.us"
+endpoint_prefix = "/arcgis/rest/"
+tos_basis = "Arlington County ArcGIS Server — the documented REST query API for the county open-data photo-enforcement layers (source gated on disclaimer capture)."
+rate_limit_per_min = 5
+counsel_reviewed = false

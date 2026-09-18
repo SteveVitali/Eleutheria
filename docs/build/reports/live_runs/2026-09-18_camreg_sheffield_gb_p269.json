@@ -1,0 +1,22 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnaimofq6ows3jdzzsaqcnlx5bmwka5p7ubtfnj2wfdib2qx4j7jcybg5ukm2zyvfonkskgrqy6skm2p44ky73zya6knqtswyrirxwxsmi"
+  ],
+  "claim_count": 1908,
+  "connector": "dot_511",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [],
+  "duration_seconds": 0.887349,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "camreg_sheffield_gb",
+  "started_at": "2026-09-18T02:40:36.091350+00:00",
+  "status_codes": [],
+  "urls": []
+}

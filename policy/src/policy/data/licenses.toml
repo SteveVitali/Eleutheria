@@ -86,6 +86,52 @@ share_alike = false
 attribution_required = true
 relicensable_to = ["LicenseRef-DerivedFacts-Citations"]
 
+# --- P26.9 (SOURCES.8) licences ----------------------------------------------
+# OGL-Canada-2.0 — the Open Government Licence - Canada 2.0, declared on the
+# City of Winnipeg open-data portal (data.winnipeg.ca dataset 42pk-2u2c licence
+# metadata, retrieved 2026-09-18). Attribution-only, non-share-alike; recorded
+# under its own expression rather than silently mapped to CC-BY-4.0 (the
+# LicenceOuverte-2.0 precedent) — the relicensable_to set stays self-only until
+# HG-02 counsel confirms the CC-BY compatibility mapping.
+[licenses."OGL-Canada-2.0"]
+kind = "data"
+share_alike = false
+attribution_required = true
+relicensable_to = ["OGL-Canada-2.0"]
+
+# OGL-3.0 — the UK Open Government Licence v3.0, declared verbatim on the
+# Sheffield City Council ArcGIS item c5b5971a1c1248faa95649d081849aa1
+# (retrieved 2026-09-18). Attribution-only, non-share-alike; self-relicensable
+# only pending counsel's compatibility mapping.
+[licenses."OGL-3.0"]
+kind = "data"
+share_alike = false
+attribution_required = true
+relicensable_to = ["OGL-3.0"]
+
+# CC-BY-3.0 — Creative Commons Attribution 3.0 Unported, declared verbatim on
+# the Baltimore CitiWatch item b676679350764f56a990c25a8ce2bda0 (retrieved
+# 2026-09-18). A different CC-BY version is a different licence — it neither
+# folds into CC-BY-4.0 nor merges with it (the CC-BY-SA-2.0 precedent).
+[licenses."CC-BY-3.0"]
+kind = "data"
+share_alike = false
+attribution_required = true
+relicensable_to = ["CC-BY-3.0"]
+
+# LicenseRef-Ottawa-ODL-2.0 — the Open Government Licence - City of Ottawa
+# (v2.0), named by ArcGIS item licenseInfo on Ottawa's open-data org
+# (adf1e7bd0338404196dc0d552aa6c79b, d709c922c64b4c389afac3fb21d481fb; licence
+# text verified 2026-09-18 via the Wayback capture of ottawa.ca open-data
+# page). OGL-family: worldwide, royalty-free, perpetual, non-exclusive use for
+# any lawful purpose + attribution. A municipal LicenseRef (not the federal
+# OGL-Canada expression); self-relicensable only.
+[licenses."LicenseRef-Ottawa-ODL-2.0"]
+kind = "data"
+share_alike = false
+attribution_required = true
+relicensable_to = ["LicenseRef-Ottawa-ODL-2.0"]
+
 # ---------------------------------------------------------------------------
 # The export compartments (SIG-LIC-005 / §42.2). Each mutually-incompatible
 # licence regime present in the corpus gets its own separable compartment, its
@@ -131,3 +177,24 @@ source = "Illinois Department of Transportation"
 license = "LicenseRef-DerivedFacts-Citations"
 description = "SIG-authored derived facts + citations over counsel-approved document sources (ADR-085/ADR-086; upstream bytes never re-hosted)"
 source = "SIG"
+
+# --- P26.9 (SOURCES.8) compartments -------------------------------------------
+[compartments.ogc_canada2]
+license = "OGL-Canada-2.0"
+description = "Municipal camera registries under the Open Government Licence - Canada 2.0 (P26.9)"
+source = "City of Winnipeg"
+
+[compartments.ogl_uk3]
+license = "OGL-3.0"
+description = "UK council camera registries under the Open Government Licence v3.0 (P26.9)"
+source = "Sheffield City Council"
+
+[compartments.ccby3]
+license = "CC-BY-3.0"
+description = "Camera registries under Creative Commons Attribution 3.0 Unported (P26.9)"
+source = "Baltimore City (CitiWatch)"
+
+[compartments.ottawa_odl2]
+license = "LicenseRef-Ottawa-ODL-2.0"
+description = "City of Ottawa camera registries under the Open Government Licence - City of Ottawa v2.0 (P26.9)"
+source = "City of Ottawa"
