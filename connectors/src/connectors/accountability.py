@@ -1546,6 +1546,14 @@ def _bill_claim_rows(
     jurisdiction_id = str(jurisdiction.get("id")) if isinstance(jurisdiction, Mapping) else None
     latest_action = _opt_str(raw.get("latest_action_description"))
     latest_action_date = _opt_str(raw.get("latest_action_date"))
+    # Claims carry NO ``observed_at``: the claim asserts "the OpenStates
+    # record contains this field" — identity is stable bill content, so an
+    # unchanged record digests identically on ANY re-run (SIG-INGEST-003/017;
+    # the atlas optional-observed_at pattern). The observation time lives on
+    # the capture/evidence (claim_evidence → capture → retrieved_at), and the
+    # record's own action date stays verbatim in bill_status_date — never an
+    # observed_at (a bill's latest_action_date is routinely future-dated and
+    # trips claim_observed_not_future).
     spdx = str(openstates_config().get("spdx") or "CC0-1.0")
 
     def _evidence(locator: Mapping[str, Any], **extra: Any) -> dict[str, Any]:
@@ -1639,24 +1647,10 @@ def _bill_claim_rows(
             )
         )
     if latest_action:
-        rows.append(
-            _claim(
-                "bill_status",
-                latest_action,
-                latest_action,
-                row_evidence,
-                observed_at=latest_action_date,
-            )
-        )
+        rows.append(_claim("bill_status", latest_action, latest_action, row_evidence))
     if latest_action_date:
         rows.append(
-            _claim(
-                "bill_status_date",
-                latest_action_date,
-                latest_action_date,
-                row_evidence,
-                observed_at=latest_action_date,
-            )
+            _claim("bill_status_date", latest_action_date, latest_action_date, row_evidence)
         )
     for match in matches:
         rows.append(

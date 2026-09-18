@@ -364,8 +364,12 @@ def test_malformed_capture_is_content_drift() -> None:
 
 
 def test_claims_carry_no_volatile_fields() -> None:
-    """Claim identity is stable bill content — no retrieval timestamps or
-    capture ids may key a claim (the P26.6/P26.8 digest-churn defect class)."""
+    """Claim identity is stable bill content — no retrieval timestamps, no
+    observation time, no capture ids may key a claim (the P26.6/P26.8
+    digest-churn defect class). ``observed_at`` is deliberately absent: the
+    observation time lives on the capture/evidence, so an unchanged record
+    digests identically on ANY re-run — the idempotency the daily API quota
+    requires (the atlas optional-observed_at pattern)."""
     report = run_connector_over_fixture(
         "accountability",
         "openstates",
@@ -376,7 +380,13 @@ def test_claims_carry_no_volatile_fields() -> None:
     )
     claims = [c for c in report.claims if c.get("record_kind") == "claim"]
     for claim in claims:
-        for key in ("retrieved_at", "retrieved_date", "capture_digest", "capture_id"):
+        for key in (
+            "retrieved_at",
+            "retrieved_date",
+            "observed_at",
+            "capture_digest",
+            "capture_id",
+        ):
             assert key not in claim, (key, claim)
             assert key not in (claim.get("evidence") or {}), (key, claim)
 
