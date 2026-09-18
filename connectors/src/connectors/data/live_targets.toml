@@ -526,6 +526,45 @@ kind = "dot_511_targets"
 
 [camreg_hk_hk]
 kind = "dot_511_targets"
+
+# --- P26.13 (SOURCES.12): open-data-catalog sweep yield ----------------------
+# Same "dot_511_targets" kind — the clear-licence point-feature registries the
+# Socrata/ArcGIS-Hub/CKAN catalog sweep qualified (docs/build/reports/
+# catalog_sweep_2026-09-18_reviewed.json).
+
+[camreg_washington_dc]
+kind = "dot_511_targets"
+
+[camreg_nottingham_gb]
+kind = "dot_511_targets"
+
+[camreg_york_gb]
+kind = "dot_511_targets"
+
+[camreg_glasgow_gb]
+kind = "dot_511_targets"
+
+[camreg_northayrshire_gb]
+kind = "dot_511_targets"
+
+[camreg_lambeth_gb]
+kind = "dot_511_targets"
+
+[camreg_peel_on]
+kind = "dot_511_targets"
+
+[camreg_stalbert_ab]
+kind = "dot_511_targets"
+
+[camreg_rochester_ny]
+kind = "dot_511_targets"
+
+[camreg_goldcoast_au]
+kind = "dot_511_targets"
+
+[camreg_puertogaitan_co]
+kind = "dot_511_targets"
+
 # --- P26.10 (SOURCES.9): multi-tenant procurement portals ---------------------
 # Each portal source resolves its live targets from its tenant rows in
 # data/procurement_portal_tenants.toml (kind = "procurement_portal_tenants"):

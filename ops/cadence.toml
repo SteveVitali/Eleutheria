@@ -467,6 +467,90 @@ job = "sig-ingest-camreg-sheffield-gb"
 scheduler = "sig-sched-camreg-sheffield-gb"
 note = "Sheffield CitiWatch/CCTV layer via utility.arcgis.com usrsvcs (212 cams); OGL-3.0 → ogl_uk3 compartment."
 
+# P26.13 (SOURCES.12): catalog-sweep camreg rows — same monthly registry
+# refresh for the GL-GATE-06-resolved rows only. camreg_stalbert_ab gets no
+# job until its verbatim-licence blocker resolves (D-SOURCES.12-1).
+
+[[sources]]
+id = "camreg_washington_dc"
+cadence = "monthly"
+cron = "0 12 28 * *"
+job = "sig-ingest-camreg-washington-dc"
+scheduler = "sig-sched-camreg-washington-dc"
+note = "DC MPD CCTV street cameras MapServer/11 (1,060 cams); CC-BY-4.0."
+
+[[sources]]
+id = "camreg_nottingham_gb"
+cadence = "monthly"
+cron = "0 14 28 * *"
+job = "sig-ingest-camreg-nottingham-gb"
+scheduler = "sig-sched-camreg-nottingham-gb"
+note = "Nottingham CCTV FeatureServer/83 (562 cams); OGL-3.0 → ogl_uk3 compartment."
+
+[[sources]]
+id = "camreg_york_gb"
+cadence = "monthly"
+cron = "0 16 28 * *"
+job = "sig-ingest-camreg-york-gb"
+scheduler = "sig-sched-camreg-york-gb"
+note = "City of York CCTV MapServer/26 (222 cams); OGL-3.0 → ogl_uk3 compartment."
+
+[[sources]]
+id = "camreg_glasgow_gb"
+cadence = "monthly"
+cron = "0 18 28 * *"
+job = "sig-ingest-camreg-glasgow-gb"
+scheduler = "sig-sched-camreg-glasgow-gb"
+note = "Glasgow OPEN_DATA/CCTV MapServer/0 (441 cams); OGL-3.0 → ogl_uk3 compartment."
+
+[[sources]]
+id = "camreg_northayrshire_gb"
+cadence = "monthly"
+cron = "0 20 28 * *"
+job = "sig-ingest-camreg-northayrshire-gb"
+scheduler = "sig-sched-camreg-northayrshire-gb"
+note = "North Ayrshire CCTV Locations MapServer/12 (108 cams); OGL-3.0 → ogl_uk3 compartment."
+
+[[sources]]
+id = "camreg_lambeth_gb"
+cadence = "monthly"
+cron = "0 22 28 * *"
+job = "sig-ingest-camreg-lambeth-gb"
+scheduler = "sig-sched-camreg-lambeth-gb"
+note = "Lambeth parking CCTV MapServer/0 (35 cams); OGL-3.0 → ogl_uk3 compartment; BNG fields, outSR=4326 geometry."
+
+[[sources]]
+id = "camreg_peel_on"
+cadence = "monthly"
+cron = "0 12 29 * *"
+job = "sig-ingest-camreg-peel-on"
+scheduler = "sig-sched-camreg-peel-on"
+note = "Peel Region red-light cameras FeatureServer/0 (37 cams); LicenseRef-Peel-ODL-1.0 → peel_odl1 compartment."
+
+[[sources]]
+id = "camreg_rochester_ny"
+cadence = "monthly"
+cron = "0 14 29 * *"
+job = "sig-ingest-camreg-rochester-ny"
+scheduler = "sig-sched-camreg-rochester-ny"
+note = "Rochester NY BlueLight cameras FeatureServer/0 (177 cams); ODbL-1.0 → osm_physical compartment."
+
+[[sources]]
+id = "camreg_goldcoast_au"
+cadence = "monthly"
+cron = "0 16 29 * *"
+job = "sig-ingest-camreg-goldcoast-au"
+scheduler = "sig-sched-camreg-goldcoast-au"
+note = "Gold Coast Safety Camera Network FeatureServer/0 (624 cams); CC-BY-4.0; MGA56 fields, outSR=4326 geometry."
+
+[[sources]]
+id = "camreg_puertogaitan_co"
+cadence = "monthly"
+cron = "0 18 29 * *"
+job = "sig-ingest-camreg-puertogaitan-co"
+scheduler = "sig-sched-camreg-puertogaitan-co"
+note = "Puerto Gaitán datos.gov.co Socrata fvdt-ftkz (50 cams); CC-BY-SA-4.0 → portal compartment."
+
 [[sources]]
 id = "procportal_austin_tx"
 cadence = "monthly"

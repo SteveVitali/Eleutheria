@@ -1,0 +1,22 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnamvmjtf3gunv5zbrfc3sdevsoyj64n5rtd7ive55lzsp3yiamei5eq75szvh4cs2aaatg5dhbo4g2n53cc24prwovg2jsio6ct2jyshi"
+  ],
+  "claim_count": 4992,
+  "connector": "dot_511",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [],
+  "duration_seconds": 1.825182,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "camreg_goldcoast_au",
+  "started_at": "2026-09-18T11:19:18.393666+00:00",
+  "status_codes": [],
+  "urls": []
+}

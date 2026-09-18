@@ -185,6 +185,23 @@ _FLIPPED_SUBSET = frozenset(
         # machine-readable data" — verbatim in the packet
         # docs/build/reports/rights/congress_gov.md).
         "congress_gov",
+        # P26.13 (SOURCES.12, 2026-09-18): the ten clear-licence registries the
+        # open-data-catalog sweep surfaced — CC-BY-4.0 (DC MPD CCTV, Gold
+        # Coast), OGL-3.0 (Nottingham, York, Glasgow, North Ayrshire,
+        # Lambeth), LicenseRef-Peel-ODL-1.0 (Peel), ODbL-1.0 -> osm_physical
+        # (Rochester NY), CC-BY-SA-4.0 -> portal (Puerto Gaitan). Packets:
+        # docs/build/reports/rights/camreg_<id>.md. camreg_stalbert_ab stays
+        # gated (licence name captured, grant text JS-walled - D-SOURCES.12-1).
+        "camreg_washington_dc",
+        "camreg_nottingham_gb",
+        "camreg_york_gb",
+        "camreg_glasgow_gb",
+        "camreg_northayrshire_gb",
+        "camreg_lambeth_gb",
+        "camreg_peel_on",
+        "camreg_rochester_ny",
+        "camreg_goldcoast_au",
+        "camreg_puertogaitan_co",
     }
 )
 
@@ -196,8 +213,9 @@ def test_ingestion_permitted_defaults_false_across_the_seed() -> None:
     # disposition (2026-09-16), the P26.2 promoted-source flips (2026-09-17),
     # and the P26.5 eScribe flip that is exactly this set (44 sources), plus the
     # P26.7 dot_511 flips (52 sources), the P26.9 camreg_* flips (61 sources),
-    # the P26.10 procportal flips (65 sources), and the P26.12 congress_gov
-    # flip (66 sources).
+    # the P26.10 procportal flips (65 sources), the P26.12 congress_gov
+    # flip (66 sources), and the P26.13 catalog-sweep camreg flips (76
+    # sources).
     permitted = {s.id for s in sources() if s.ingestion_permitted}
     assert permitted == set(_FLIPPED_SUBSET)
 

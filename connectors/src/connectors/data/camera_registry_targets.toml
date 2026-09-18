@@ -187,11 +187,196 @@ object_id_field = "objectid"
 notes = "ArcGIS item c5b5971a1c1248faa95649d081849aa1 'CCTV and Traffic Cameras' declares the Open Government Licence (OGL v3.0) verbatim in licenseInfo. Served through the utility.arcgis.com usrsvcs host (same REST query API)."
 
 # --------------------------------------------------------------------------
+# P26.13 (SOURCES.12) — open-data-catalog sweep yield. These rows came out of
+# the systematic catalog enumeration (docs/build/reports/
+# catalog_sweep_2026-09-18{,_qualified,_reviewed}.json) rather than manual
+# curation: each qualified camera_registry-shaped (point geometry + camera
+# fields), carries a clear verbatim licence grant, and wires through the same
+# `dot_511` connector path. The deferred remainder is named in DEFERRALS
+# D-SOURCES.12-1.
+# --------------------------------------------------------------------------
+
+[[targets]]
+id = "dc_cctv_street_cameras"
+source_id = "camreg_washington_dc"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Transportation_Sensors_WebMercator/MapServer/11"
+layer_url = "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Transportation_Sensors_WebMercator/MapServer/11"
+agency = "District of Columbia (DCGIS / OCTO)"
+state = "DC"
+jurisdiction_scheme = "us.state_abbr"
+observed_count = 1060
+verified = 2026-09-18
+object_id_field = "OBJECTID"
+license_spdx = "CC-BY-4.0"
+notes = "ArcGIS Hub item 2bb8375e31a94067a17911ea70f917ef 'Closed Circuit TV Street Cameras' (owner DCGISopendata) declares 'This work is licensed under a Creative Commons Attribution 4.0 International License' verbatim. Layer 'CCTV - Street Cameras'; ID/NAME/ADDRESS/WARD fields, LATITUDE/LONGITUDE + point geometry. Sibling of the already-wired dot_511_dc traffic layer (MapServer/93) — a distinct MPD CCTV registry."
+
+[[targets]]
+id = "nottingham_gb_cctv_cameras"
+source_id = "camreg_nottingham_gb"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://services.arcgis.com/yvqphKcf9bBSnjX1/arcgis/rest/services/CCTV_Cameras/FeatureServer/83"
+layer_url = "https://services.arcgis.com/yvqphKcf9bBSnjX1/arcgis/rest/services/CCTV_Cameras/FeatureServer/83"
+agency = "Nottingham City Council"
+state = "GB-ENG"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 562
+verified = 2026-09-18
+object_id_field = "OBJECTID"
+license_spdx = "OGL-3.0"
+notes = "ArcGIS Hub item df2bf0314b184b449ff595df02e320cf 'CCTV Cameras' (owner nccgisteam) declares 'Data is released under the terms of the Open Government Licence (OGL)' with the v3 URL verbatim. Location/CameraNum/District_Name fields, Lat/Long + point geometry."
+
+[[targets]]
+id = "york_gb_cctv_cameras"
+source_id = "camreg_york_gb"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://maps.york.gov.uk/arcgis/rest/services/Public/LV_TranStreetCare/MapServer/26"
+layer_url = "https://maps.york.gov.uk/arcgis/rest/services/Public/LV_TranStreetCare/MapServer/26"
+agency = "City of York Council"
+state = "GB-ENG"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 222
+verified = 2026-09-18
+object_id_field = "OBJECTID"
+license_spdx = "OGL-3.0"
+notes = "ArcGIS Hub item 25888f6f64e64cc6a938115a8f12f333 'CCTV' (owner gis_CYC) cites the Open Government Licence (OGL v3.0) under the Ordnance Survey derived-data exemption verbatim. SITE_ID/ASSET_TYPE/ADDRESS_2 fields, point geometry."
+
+[[targets]]
+id = "glasgow_gb_cctv_cameras"
+source_id = "camreg_glasgow_gb"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://www.mapping.glasgow.gov.uk/arcgis_web/rest/services/OPEN_DATA/CCTV/MapServer/0"
+layer_url = "https://www.mapping.glasgow.gov.uk/arcgis_web/rest/services/OPEN_DATA/CCTV/MapServer/0"
+agency = "Glasgow City Council"
+state = "GB-SCT"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 441
+verified = 2026-09-18
+object_id_field = "OBJECTID"
+license_spdx = "OGL-3.0"
+notes = "ArcGIS Hub item 669df23dcc5d48bb98ad1b5d180927c6 'CCTV' (owner GlasgowGIS) declares 'This information is supplied under the Open Government License v3.0' verbatim (OSMA attribution noted). LOCATION/CCTV_NO/DIVISION fields, point geometry (native 27700; outSR=4326)."
+
+[[targets]]
+id = "north_ayrshire_gb_cctv_cameras"
+source_id = "camreg_northayrshire_gb"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://www.maps.north-ayrshire.gov.uk/arcgis/rest/services/AGOL/Open_Data_Portal4/MapServer/12"
+layer_url = "https://www.maps.north-ayrshire.gov.uk/arcgis/rest/services/AGOL/Open_Data_Portal4/MapServer/12"
+agency = "North Ayrshire Council"
+state = "GB-SCT"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 108
+verified = 2026-09-18
+object_id_field = "OBJECTID"
+license_spdx = "OGL-3.0"
+notes = "ArcGIS Hub item 082112796ccd448bb1abba9e9603e9f0 'CCTV Locations' (owner NAC_OpenData) declares 'This information is supplied under the Open Government License v3.0' verbatim with the required Crown-copyright attribution statement. CAMERA_ID/LOCATION/CAMERA_TYPE fields, point geometry."
+
+[[targets]]
+id = "lambeth_gb_cctv_cameras"
+source_id = "camreg_lambeth_gb"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://gis.lambeth.gov.uk/arcgis/rest/services/LambethParkingCCTVCameras/MapServer/0"
+layer_url = "https://gis.lambeth.gov.uk/arcgis/rest/services/LambethParkingCCTVCameras/MapServer/0"
+agency = "London Borough of Lambeth"
+state = "GB-ENG"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 35
+verified = 2026-09-18
+object_id_field = "OBJECTID"
+license_spdx = "OGL-3.0"
+notes = "ArcGIS Hub item 2dd843a8605a4b2981790816ec1b4a57 'Parking CCTV Cameras' (owner opendata@lambeth.gov.uk) carries the Open Government Licence v3.0 URL verbatim in licenseInfo. CCTV_NUMBER/CAMERA_LOCATION fields, point geometry (native 27700; outSR=4326)."
+
+[[targets]]
+id = "peel_on_redlight_cameras"
+source_id = "camreg_peel_on"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://services6.arcgis.com/ONZht79c8QWuX759/arcgis/rest/services/Red_Light_Cameras/FeatureServer/0"
+layer_url = "https://services6.arcgis.com/ONZht79c8QWuX759/arcgis/rest/services/Red_Light_Cameras/FeatureServer/0"
+agency = "Regional Municipality of Peel"
+state = "CA-ON"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 37
+verified = 2026-09-18
+object_id_field = "OBJECTID"
+license_spdx = "LicenseRef-Peel-ODL-1.0"
+notes = "ArcGIS Hub item 36dbfcb33aa2453c8de55e0a34ccfc6a 'Red Light Cameras' (owner RegionofPeel) names the Open Data Licence for The Regional Municipality of Peel (Version 1.0); the grant text ('copy, publish, redistribute, adapt, and use our data for personal or commercial purposes') verified via the Wayback capture of data.peelregion.ca/pages/license — see rights packet. A re-share item (993d92e5…, owner BramptonMaps, bare 'CC BY') points at the same layer; the authoritative item is the one wired. CAMERA_NUM/NAME/Street/Latitude/Longitude fields."
+
+[[targets]]
+id = "rochester_ny_cameras"
+source_id = "camreg_rochester_ny"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://services7.arcgis.com/wMvCpnbQEKXZsPSQ/arcgis/rest/services/Rochester_Cameras/FeatureServer/0"
+layer_url = "https://services7.arcgis.com/wMvCpnbQEKXZsPSQ/arcgis/rest/services/Rochester_Cameras/FeatureServer/0"
+agency = "Rochester Police Department (City of Rochester, NY)"
+state = "NY"
+jurisdiction_scheme = "us.state_abbr"
+observed_count = 177
+verified = 2026-09-18
+object_id_field = "OBJECTID"
+license_spdx = "ODbL-1.0"
+notes = "ArcGIS Hub item 4df36db389e240efa672346101ede541 'Rochester Cameras' (owner rpdny.pub) declares the Open Database License + Database Contents License verbatim (the licenseInfo also carries the RPD accuracy disclaimer — a data-quality statement, not a rights restriction). Rows are RPD BlueLight-program intersection cameras (Address/Type/Program fields), location data only."
+
+[[targets]]
+id = "goldcoast_au_cameras"
+source_id = "camreg_goldcoast_au"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://services-ap1.arcgis.com/lnVW0dLI3fvST2hd/arcgis/rest/services/Camera_view/FeatureServer/0"
+layer_url = "https://services-ap1.arcgis.com/lnVW0dLI3fvST2hd/arcgis/rest/services/Camera_view/FeatureServer/0"
+agency = "City of Gold Coast (Safety Camera Network)"
+state = "AU-QLD"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 624
+verified = 2026-09-18
+object_id_field = "OBJECTID"
+license_spdx = "CC-BY-4.0"
+notes = "ArcGIS Hub item c0e1f02aebe349f0bbe21aadf287a631 'Camera_Open' (owner CoGC_Admin) declares 'This data is licensed under CC BY 4.0' verbatim. City of Gold Coast Safety Camera Network locations (NAME/FOLDERPATH fields — SCN site names like 'Labrador - Harley Park'), point geometry (native MGA56; outSR=4326)."
+
+[[targets]]
+id = "puertogaitan_co_cctv"
+source_id = "camreg_puertogaitan_co"
+kind = "socrata_rows"
+platform = "socrata"
+url = "https://www.datos.gov.co/resource/fvdt-ftkz.json"
+layer_url = "https://www.datos.gov.co/resource/fvdt-ftkz.json"
+agency = "Alcaldía de Puerto Gaitán, Meta"
+state = "CO-MET"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 50
+verified = 2026-09-18
+license_spdx = "CC-BY-SA-4.0"
+notes = "Socrata dataset fvdt-ftkz 'MAPA DE CAMARAS (CCTV) DEL MUNICIPIO' on Colombia's national open-data portal (datos.gov.co); licence metadata declares 'Creative Commons Attribution | Share Alike 4.0 International' (CC-BY-SA-4.0). Spanish schema — latitud/longitud attributes + `georeferencia` GeoJSON point; nombre/sector/propietario fields."
+
+# --------------------------------------------------------------------------
 # GATED rows — the endpoints below are verified live, but the source rows stay
 # `ingestion_permitted=false` until their named rights blockers resolve
-# (GL-GATE-06; DEFERRALS D-SOURCES.8-1). The registry records them so the
-# blocker list is data, not memory.
+# (GL-GATE-06; DEFERRALS D-SOURCES.8-1, D-SOURCES.12-1). The registry records
+# them so the blocker list is data, not memory.
 # --------------------------------------------------------------------------
+
+[[targets]]
+id = "stalbert_ab_photo_enforcement"
+source_id = "camreg_stalbert_ab"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://services1.arcgis.com/fyyY0cNXvmUWvX1x/arcgis/rest/services/Automated_Traffic_Enforcement_Sites/FeatureServer/0"
+layer_url = "https://services1.arcgis.com/fyyY0cNXvmUWvX1x/arcgis/rest/services/Automated_Traffic_Enforcement_Sites/FeatureServer/0"
+agency = "City of St. Albert"
+state = "CA-AB"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 80
+verified = 2026-09-18
+object_id_field = "OBJECTID"
+license_spdx = "LicenseRef-StAlbert-ODL-1.0"
+notes = "ArcGIS Hub item 6f2ca1b545844065b719483d562d553e 'Photo Enforcement Mobile Locations' (owner open@stalbert.ca) names 'City of St. Albert Open Government License' but the grant text could not be captured verbatim — data.stalbert.ca/pages/licence is a JS-rendered shell (HTTP 200, no terms in the served body), the Hub page item is not publicly searchable, and no Wayback capture exists → GATED unresolved_rights (D-SOURCES.12-1). ZoneNo/speedLimit/Location fields, point geometry."
 
 [[targets]]
 id = "chicago_il_speed_cameras"
