@@ -311,7 +311,10 @@ def test_subaward_is_detected_apart_from_a_prime_contract() -> None:
         "capture": None,
     }
     extracted = ProcurementConnector().extract(ctx, parsed)
-    assert extracted[0]["record_kind"] == "subaward"
+    # P26.14: sub-award-shaped rows route to BOTH the notice record (typed
+    # federal-award claims) and the FundingInstrument path.
+    assert any(r["record_kind"] == "subaward" for r in extracted)
+    assert any(r["record_kind"] == "procurement_notice" for r in extracted)
 
 
 # --- AC3: agenda-platform tenant registry (§22.3, SIG-METRIC-002a) ------------
@@ -593,7 +596,10 @@ def test_pipeline_ingests_usaspending_subawards_end_to_end() -> None:
     ctx = _ctx(
         "usaspending",
         fetcher=_fetcher(transport),
-        parameters={"targets": [{"url": url, "subaward": True}]},
+        parameters={
+            "targets": [{"url": url, "subaward": True}],
+            "sweep_expansion": False,
+        },
     )
     report = pipeline.run(ProcurementConnector(), ctx)
     assert report.asserted
@@ -629,7 +635,10 @@ def test_usaspending_post_body_target_posts_and_parses_display_labels() -> None:
     ctx = _ctx(
         "usaspending",
         fetcher=_fetcher(transport),
-        parameters={"targets": [{"url": url, "subaward": True, "post_body": post_body}]},
+        parameters={
+            "targets": [{"url": url, "subaward": True, "post_body": post_body}],
+            "sweep_expansion": False,
+        },
     )
     report = pipeline.run(ProcurementConnector(), ctx)
     assert report.asserted
@@ -639,3 +648,221 @@ def test_usaspending_post_body_target_posts_and_parses_display_labels() -> None:
     assert fi["federal_award_id"] == "ASST_NON_15PBJA-23-GG-01234-JAGX_180"
     recipient = next(c for c in report.claims if c.get("predicate_id") == "recipient")
     assert recipient["value"] == "Oklahoma City Police Department"
+
+
+# --- P26.14 (FEDERAL.1): bounded federal award sweeps --------------------------
+
+
+def test_usaspending_sweep_generates_bounded_slice_targets() -> None:
+    from connectors.procurement import usaspending_award_targets
+
+    targets = usaspending_award_targets()
+    assert targets
+    # Every slice is a POST to the documented search endpoint with the slice
+    # id riding the (never-transmitted) #sig-slice fragment.
+    for t in targets:
+        assert t["kind"] == "usaspending_award_search"
+        assert t["url"].startswith("https://api.usaspending.gov/api/v2/search/spending_by_award/")
+        assert f"#sig-slice={t['id']}" in t["url"]
+        assert t["post_body"]["limit"] <= 100
+        assert t["post_body"]["page"] >= 1
+    kinds = {(t["award_kind"], t.get("slice")) for t in targets}
+    assert ("sub", "subaward_keyword") in kinds
+    assert ("prime", "prime_keyword") in kinds
+    assert ("sub", "awarding_agency") in kinds
+    # Page bounds are enforced: sub keyword slices stop at the reviewed max.
+    sub_pages = {t["page"] for t in targets if t["award_kind"] == "sub" and t.get("index_keyword")}
+    assert max(sub_pages) <= 2
+
+
+def test_prime_slice_is_legal_but_undeclared_prime_is_still_refused() -> None:
+    # SIG-ONTO-033: the sweep MUST pull sub-awards — a declared prime slice of
+    # the reviewed plan is fine; an undeclared prime-only target is refused.
+    from connectors.procurement import usaspending_award_targets
+
+    prime = next(t for t in usaspending_award_targets() if t["award_kind"] == "prime")
+    assert_pulls_subawards(prime)  # declared prime slice: OK
+    with pytest.raises(ValueError):
+        assert_pulls_subawards(
+            {"url": "https://api.usaspending.gov/api/v2/search/", "subaward": False}
+        )
+
+
+def test_discover_expands_usaspending_sweep_and_dedupes() -> None:
+    conn = ProcurementConnector()
+    supplied = {
+        "id": "sub_kw:drone:p1",  # collides with a generated slice id
+        "url": "https://api.usaspending.gov/api/v2/search/spending_by_award/#sig-slice=sub_kw:drone:p1",
+        "kind": "usaspending_award_search",
+        "award_kind": "sub",
+        "subaward": True,
+        "post_body": {"subawards": True, "filters": {"keywords": ["drone"]}},
+    }
+    ctx = _ctx("usaspending", parameters={"targets": [supplied]})
+    targets = conn.discover(ctx)
+    ids = [t.get("id") for t in targets]
+    assert ids.count("sub_kw:drone:p1") == 1  # deduped, not double-fetched
+    assert len(ids) == len(set(ids))
+    # Generated slices present alongside the supplied one.
+    assert any(i.startswith("prime_kw:") for i in ids)
+    assert any(i.startswith("agency:") for i in ids)
+
+
+def test_usaspending_slice_emits_typed_notice_claims_end_to_end() -> None:
+    """A captured award-search slice → typed procurement_notice claims.
+
+    The claim surface must carry award id, recipient, awarding agency,
+    amount, period, description, and the verbatim matched keyword — each with
+    an evidence locator — and must assert NOTHING about deployment.
+    """
+    from connectors import pipeline
+
+    url = "https://api.usaspending.gov/api/v2/search/spending_by_award/#sig-slice=sub_kw:drone:p1"
+    payload = {
+        "results": [
+            {
+                "internal_id": "SUB-OKC-001",
+                "Sub-Award ID": "SUB-OKC-001",
+                "Sub-Awardee Name": "Oklahoma City Police Department",
+                "Sub-Award Date": "2023-06-01",
+                "Sub-Award Amount": 82000.0,
+                "Sub-Award Description": "ALPR cameras for the patrol division",
+                "Awarding Agency": "Department of Justice",
+                "prime_award_generated_internal_id": "ASST_NON_15PBJA-23-GG-01234-JAGX_180",
+            }
+        ],
+        "page_metadata": {"page": 1, "total": 1, "hasNext": False},
+    }
+    transport = _SequenceTransport(
+        {url: [(200, json.dumps(payload).encode("utf-8"), "application/json")]}
+    )
+    post_body = {
+        "subawards": True,
+        "filters": {"keywords": ["drone"], "award_type_codes": ["02"]},
+        "fields": ["Sub-Award ID"],
+        "limit": 100,
+        "page": 1,
+    }
+    ctx = _ctx(
+        "usaspending",
+        fetcher=_fetcher(transport),
+        parameters={
+            "targets": [
+                {
+                    "id": "sub_kw:drone:p1",
+                    "url": url,
+                    "kind": "usaspending_award_search",
+                    "award_kind": "sub",
+                    "subaward": True,
+                    "index_keyword": "drone",
+                    "slice": "subaward_keyword",
+                    "page": 1,
+                    "post_body": post_body,
+                }
+            ],
+            "sweep_expansion": False,
+        },
+    )
+    report = pipeline.run(ProcurementConnector(), ctx)
+    assert report.asserted
+    claims = report.claims
+
+    # The per-slice outcome row is recorded.
+    slice_row = next(c for c in claims if c.get("record_kind") == "usaspending_slice")
+    assert slice_row["items_count"] == 1
+    assert slice_row["provenance"]["index_keyword"] == "drone"
+
+    # The notice subject + typed field claims exist with evidence locators.
+    notice = next(c for c in claims if c.get("record_kind") == "procurement_notice")
+    subject = notice["subject_id"]
+    by_pred = {}
+    for c in claims:
+        if c.get("record_kind") == "claim" and c.get("subject_id") == subject:
+            by_pred.setdefault(c["predicate_id"], []).append(c)
+    assert by_pred["external_id"][0]["value"] == "SUB-OKC-001"
+    assert by_pred["recipient"][0]["value"] == "Oklahoma City Police Department"
+    assert by_pred["funder"][0]["value"] == "Department of Justice"
+    assert by_pred["amount"][0]["value"] == "82000.0"
+    assert by_pred["period"][0]["value"]["start"] == "2023-06-01"
+    assert "ALPR" in by_pred["description"][0]["raw_value"]
+    assert by_pred["federal_award_id"][0]["value"] == "ASST_NON_15PBJA-23-GG-01234-JAGX_180"
+    # Every field claim carries a locator into the captured results array.
+    for pred in ("recipient", "funder", "amount", "description"):
+        assert by_pred[pred][0]["evidence"]["locator"]
+
+    # matched_keyword: raw_value is a VERBATIM literal slice of the record
+    # text — the claim asserts a text match, never a deployment.
+    mk = by_pred["matched_keyword"]
+    assert mk and mk[0]["raw_value"] == "ALPR"
+    assert mk[0]["evidence"]["locator"]
+    assert mk[0]["evidence"]["field"] == "Sub-Award Description"
+
+    # FundingInstrument still flows for sub-award rows (SIG-ONTO-033).
+    fi = next(c for c in claims if c.get("record_kind") == "funding_instrument")
+    assert fi["federal_award_id"] == "ASST_NON_15PBJA-23-GG-01234-JAGX_180"
+
+    # Procured ≠ deployed: no deployment/person/plate predicate anywhere.
+    predicates = {c.get("predicate_id") for c in claims}
+    assert "deployment_exists" not in predicates
+    assert "device_count" not in predicates
+    forbidden = {"deployment_exists", "device_count", "camera_count", "configuration_state"}
+    assert not (predicates & forbidden)
+
+
+def test_prime_slice_normalizes_buyer_not_funder() -> None:
+    """Prime contract-award rows: the awarding agency is the buyer, not funder."""
+    ctx = _ctx("usaspending")
+    raw = {
+        "record_kind": "procurement_notice",
+        "notice_provenance": {
+            "source_uri": "https://api.usaspending.gov/api/v2/search/spending_by_award/#sig-slice=prime_kw:drone:p1",
+            "award_kind": "prime",
+            "slice": "prime_keyword",
+            "index_keyword": "drone",
+        },
+        "row_index": 0,
+        "raw": {
+            "Award ID": "CONT_AWD_123",
+            "Recipient Name": "AeroVironment Inc",
+            "Award Amount": 4500000.0,
+            "Start Date": "2023-01-15",
+            "End Date": "2025-01-14",
+            "Awarding Agency": "Department of Defense",
+            "Description": "Unmanned aerial systems",
+        },
+    }
+    rows = ProcurementConnector().normalize(ctx, [raw])
+    by_pred = {}
+    for r in rows:
+        if r.get("record_kind") == "claim":
+            by_pred.setdefault(r["predicate_id"], []).append(r)
+    assert by_pred["buyer"][0]["value"] == "Department of Defense"
+    assert "funder" not in by_pred
+    assert by_pred["period"][0]["value"]["end"] == "2025-01-14"
+    assert by_pred["external_id"][0]["value"] == "CONT_AWD_123"
+    # The drone literal matches verbatim.
+    assert any(m["raw_value"].lower().startswith("unmanned") for m in by_pred["matched_keyword"])
+
+
+def test_sam_gov_widened_keyword_targets_and_dedupe() -> None:
+    from connectors.procurement import sam_gov_search_targets
+
+    targets = sam_gov_search_targets()
+    assert len(targets) >= 15
+    for t in targets:
+        assert t["url"].startswith("https://api.sam.gov/prod/opportunities/v2/search?")
+        assert "api_key" not in t["url"] and "X-Api-Key" not in t["url"]
+        assert "title=" in t["url"]
+    # discover() dedupes a supplied target that already searches a keyword.
+    supplied_url = (
+        "https://api.sam.gov/prod/opportunities/v2/search?"
+        "limit=25&postedFrom=01%2F01%2F2026&postedTo=12%2F31%2F2026&title=license%20plate%20reader"
+    )
+    ctx = _ctx(
+        "sam_gov",
+        parameters={"targets": [{"id": "s1", "url": supplied_url, "kind": "opportunity_search"}]},
+    )
+    discovered = ProcurementConnector().discover(ctx)
+    lpr = [t for t in discovered if t.get("index_keyword") == "license plate reader"]
+    assert lpr == []  # generated LPR slice suppressed by the supplied search
+    assert any(t.get("index_keyword") == "drone" for t in discovered)

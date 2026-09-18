@@ -40,13 +40,15 @@ targets = [
   { id = "atlas-full", url = "https://www.atlasofsurveillance.org/download.csv", kind = "bulk_csv" },
 ]
 
-# USAspending sub-award search (§23.6, SIG-ONTO-033) — the documented
-# ``/search/spending_by_award/`` POST endpoint (ADR-083 allow-listed:
-# api.usaspending.gov /api; GET is refused upstream, the search is POST-only).
-# Scoped to ASSISTANCE sub-awards on surveillance-relevant keywords — the
-# federal-grant → local-purchase link (Byrne JAG / UASI → a city's ALPR buy).
-# `subaward = true` is the connector-asserted flag (assert_pulls_subawards);
-# `post_body` is sent verbatim as the JSON request body.
+# USAspending award search (§23.6, SIG-ONTO-033; widened P26.14 / FEDERAL.1)
+# — the documented ``/search/spending_by_award/`` POST endpoint (ADR-083
+# allow-listed: api.usaspending.gov /api; GET is refused upstream, the search
+# is POST-only). This seed row is the original bounded sub-award query; the
+# connector's discover() additionally expands the reviewed [usaspending_sweep]
+# plan (keyword × page sub/prime slices + awarding-agency slices, each riding
+# a #sig-slice fragment for per-slice outcome provenance). `subaward = true`
+# is the connector-asserted flag (assert_pulls_subawards); `post_body` is
+# sent verbatim as the JSON request body.
 [usaspending]
 kind = "procurement_api"
 targets = [
