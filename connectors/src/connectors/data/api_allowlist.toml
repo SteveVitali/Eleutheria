@@ -278,7 +278,40 @@ counsel_reviewed = false
 [[api_host]]
 host = "data.cityofchicago.org"
 endpoint_prefix = "/resource/"
-tos_basis = "City of Chicago Socrata open-data portal — the documented SoQL /resource rows API (datasets 4i42-qv3h / thvf-6diy; source gated on terms capture)."
+tos_basis = "City of Chicago Socrata open-data portal — the documented SoQL /resource rows API (datasets 4i42-qv3h / thvf-6diy / rsxa-ify5; all sources gated on terms capture — D-SOURCES.8-1 / D-SOURCES.9-1)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+# P26.10 (SOURCES.9): the four GL-GATE-06-flipped city Socrata contract
+# datasets — each host's /resource/<id>.json is the documented programmatic
+# rows API, bounded per run ($limit + reviewed date DESC). dataset ids are
+# pinned in data/procurement_portal_tenants.toml; the licence basis for each
+# is verbatim in the source's rights packet.
+[[api_host]]
+host = "data.austintexas.gov"
+endpoint_prefix = "/resource/"
+tos_basis = "City of Austin Socrata open-data portal — the documented SoQL /resource rows API (dataset 84ih-p28j 'Contracts', PUBLIC_DOMAIN licence metadata)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "data.sf.gov"
+endpoint_prefix = "/resource/"
+tos_basis = "City and County of San Francisco Socrata open-data portal — the documented SoQL /resource rows API (dataset cqi5-hm2d 'Supplier Contracts', PDDL licence metadata)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "data.kcmo.org"
+endpoint_prefix = "/resource/"
+tos_basis = "Kansas City, MO Socrata open-data portal — the documented SoQL /resource rows API (dataset c46m-hv6s 'List of KCMO City Contracts', CC0-1.0 licence metadata)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "data.cityofnewyork.us"
+endpoint_prefix = "/resource/"
+tos_basis = "City of New York Socrata open-data portal — the documented SoQL /resource rows API (dataset dg92-zbpx 'City Record Online', PUBLIC_DOMAIN licence metadata)."
 rate_limit_per_min = 10
 counsel_reviewed = false
 

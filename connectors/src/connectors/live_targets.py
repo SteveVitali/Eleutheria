@@ -65,6 +65,16 @@ def live_targets(source_id: str) -> list[dict[str, str]]:
         from .dot_511 import registry_targets
 
         return registry_targets(source_id)
+    if kind == "procurement_portal_tenants":
+        # A procurement-portal source's live targets ARE its tenant rows in
+        # data/procurement_portal_tenants.toml (P26.10): each expands to the
+        # tenant's bounded index surfaces (BidNet storefront solicitation
+        # indexes, a Socrata dataset's SoQL slice, a gated portal's own URL —
+        # the refusal/challenge is the recorded outcome). platform_census rows
+        # never produce targets.
+        from .procurement import portal_targets
+
+        return portal_targets(source_id=source_id)
     # Generic document/http targets: an explicit list of {id, url[, kind]} rows.
     # Extra keys (e.g. a POST body's `post_body`, USAspending's `subaward` flag)
     # pass through untouched — they are reviewed data the connector consumes.

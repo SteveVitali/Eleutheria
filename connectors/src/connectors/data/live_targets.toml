@@ -493,3 +493,36 @@ kind = "dot_511_targets"
 
 [camreg_hk_hk]
 kind = "dot_511_targets"
+# --- P26.10 (SOURCES.9): multi-tenant procurement portals ---------------------
+# Each portal source resolves its live targets from its tenant rows in
+# data/procurement_portal_tenants.toml (kind = "procurement_portal_tenants"):
+# BidNet agency storefronts expand to the bounded open/closed/awarded index
+# windows (the portal's own ?keywords= search field — page-1 only, ?page= is
+# robots-disallowed verbatim), each Socrata city dataset expands to one bounded
+# SoQL slice ($limit + reviewed date DESC), and gated Bonfire/OpenGov tenants
+# expand to the portal URL itself so each run records the host's refusal/
+# challenge as first-class data. Gated sources keep their rows — the live gate
+# refuses before any target is read (D-SOURCES.9-1..4).
+[bidnet_direct]
+kind = "procurement_portal_tenants"
+
+[bonfire]
+kind = "procurement_portal_tenants"
+
+[opengov_procurement]
+kind = "procurement_portal_tenants"
+
+[procportal_austin_tx]
+kind = "procurement_portal_tenants"
+
+[procportal_sf_ca]
+kind = "procurement_portal_tenants"
+
+[procportal_kcmo_mo]
+kind = "procurement_portal_tenants"
+
+[procportal_nyc_ny]
+kind = "procurement_portal_tenants"
+
+[procportal_chicago_il]
+kind = "procurement_portal_tenants"

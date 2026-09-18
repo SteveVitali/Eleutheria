@@ -2261,11 +2261,13 @@ default_tier = "R3"
 custody_posture = "LINK"
 compact_status = "not_contacted"
 robots_policy = "honor"
-access_method = "search_api (bid listings)"
+access_method = "per-tenant agency storefronts (solicitation indexes + detail pages; portal's own ?keywords= search)"
 auth_model = "none for public listings"
+cadence = "monthly"
 verified = true
-last_verified = 2026-09-16
-notes = "P26.2 discovery (records/procurement surface). Multi-state public agency bid listings (Maryland Purchasing Group et al.)."
+last_verified = 2026-09-18
+review_packet = "docs/build/reports/rights/bidnet_direct.md"
+notes = "P26.2 discovery; P26.10 tenant expansion (SOURCES.9). BidNet Direct (mdf commerce, the Periscope S2G successor surface) hosts agency storefronts as PATHS under www.bidnetdirect.com — `/<group>/<agency>/solicitations/{open,closed,awarded}-bids` indexes + public detail pages, verified serving 2026-09-18 on 9 registered tenants (data/procurement_portal_tenants.toml). robots.txt: `User-agent: *` allows with Crawl-delay: 5; private/auth/dev paths disallowed and never touched. STAYS GATED — vendor ToS not captured verbatim (D-SOURCES.9-4): unlike the Socrata datasets there is no per-record licence field, so the GL-GATE-06 public-records basis needs the platform terms reviewed first. The connector path + tenant registry exist; the gate refuses live fetches meanwhile."
 
 [sources.periscope_s2g]
 name = "Periscope S2G — eBid procurement portals"
@@ -2279,7 +2281,7 @@ access_method = "per-agency eBid portals"
 auth_model = "none for public listings"
 verified = true
 last_verified = 2026-09-16
-notes = "P26.2 discovery (records/procurement surface). Periscope eBid (BidSync) portals host many public agency solicitations."
+notes = "P26.2 discovery (records/procurement surface). Periscope eBid (BidSync) portals host many public agency solicitations. P26.10 note: periscopeholdings.com's current public product surface IS BidNet Direct (mdf commerce) — the `bidnet_direct` row carries the live tenant registry; this row stays the per-agency eBid-portal lead (rights packet docs/build/reports/rights/periscope_s2g.md, terms still not captured verbatim — D-SOURCES.9-4 class)."
 
 [sources.publicpurchase]
 name = "PublicPurchase — public agency bid portal"
@@ -2362,8 +2364,145 @@ robots_policy = "honor"
 access_method = "per-agency procurement portals"
 auth_model = "none for public listings"
 verified = true
-last_verified = 2026-09-16
-notes = "P26.2 discovery (records/procurement surface). OpenGov (formerly ProcureNow) hosts per-agency public solicitation portals."
+last_verified = 2026-09-18
+review_packet = "docs/build/reports/rights/opengov_procurement.md"
+notes = "P26.2 discovery; P26.10 probe (SOURCES.9). OpenGov (formerly ProcureNow) hosts per-agency /portal/<agency> solicitation portals. STAYS GATED (D-SOURCES.9-3): every probed portal path answers a Cloudflare managed challenge (HTTP 403 cf-mitigated, 2026-09-18 — recorded disappearance, never defeated per SIG-INGEST-013) and /robots.txt returns the SPA HTML shell rather than a robots policy. salt-lake-city registered as the verified tenant row; the gate refuses fetches meanwhile."
+
+
+[sources.bonfire]
+name = "Bonfire — per-tenant procurement portals (*.bonfirehub.com)"
+source_kind = "government_portal"
+homepage_url = "https://bonfirehub.com/"
+default_tier = "R3"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "per-tenant *.bonfirehub.com portals"
+auth_model = "none for public listings"
+verified = true
+last_verified = 2026-09-18
+review_packet = "docs/build/reports/rights/bonfire.md"
+notes = "P26.10 (SOURCES.9). Bonfire (Euna Solutions) serves per-tenant procurement portals on *.bonfirehub.com — tenants enumerated from the crt.sh certificate set (data/procurement_portal_tenants.toml: laurier + columbus verified serving; the remaining certificate names are vendor infra — account/sso/oauth/zendesk/test hosts — recorded in the registry's platform_census). STAYS GATED (D-SOURCES.9-2): both verified tenants answer robots.txt `User-agent: *` / `Disallow: /` — a platform-wide refusal that stands until it changes or an API-mode basis is recorded; every live attempt is a recorded robots refusal, never bypassed."
+
+[sources.procportal_austin_tx]
+name = "City of Austin — Socrata 'Contracts' dataset"
+source_kind = "government_portal"
+homepage_url = "https://data.austintexas.gov/d/84ih-p28j"
+default_tier = "R3"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (socrata /resource rows API — registry dataset only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-18
+review_packet = "docs/build/reports/rights/procportal_austin_tx.md"
+notes = "P26.10 (SOURCES.9). FLIPPED 2026-09-18 (GL-GATE-06): dataset licence metadata is 'Public Domain' (PUBLIC_DOMAIN) verbatim on /api/views/84ih-p28j — municipal procurement records published under an explicit public-domain dedication → CC0-1.0. Dataset 84ih-p28j 'Contracts' (authorized-spending register); host robots.txt allows with Crawl-delay: 1."
+[sources.procportal_austin_tx.rights]
+spdx = "CC0-1.0"
+attribution = "City of Austin, Texas — data.austintexas.gov"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://data.austintexas.gov/api/views/84ih-p28j"
+retrieval_date = 2026-09-18
+
+[sources.procportal_sf_ca]
+name = "City and County of San Francisco — Socrata 'Supplier Contracts' dataset"
+source_kind = "government_portal"
+homepage_url = "https://data.sf.gov/d/cqi5-hm2d"
+default_tier = "R3"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (socrata /resource rows API — registry dataset only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-18
+review_packet = "docs/build/reports/rights/procportal_sf_ca.md"
+notes = "P26.10 (SOURCES.9). FLIPPED 2026-09-18 (GL-GATE-06): dataset licence metadata is 'Open Data Commons Public Domain Dedication and License' (PDDL) verbatim on /api/views/cqi5-hm2d — an explicit public-domain dedication → CC0-1.0. Dataset cqi5-hm2d 'Supplier Contracts' (Controller's contract register); canonical host data.sf.gov (data.sfgov.org redirects, recorded). Host robots.txt allows with Crawl-delay: 1."
+[sources.procportal_sf_ca.rights]
+spdx = "CC0-1.0"
+attribution = "City and County of San Francisco — data.sf.gov"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://data.sf.gov/api/views/cqi5-hm2d"
+retrieval_date = 2026-09-18
+
+[sources.procportal_kcmo_mo]
+name = "Kansas City, MO — Socrata 'List of KCMO City Contracts' dataset"
+source_kind = "government_portal"
+homepage_url = "https://data.kcmo.org/d/c46m-hv6s"
+default_tier = "R3"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (socrata /resource rows API — registry dataset only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-18
+review_packet = "docs/build/reports/rights/procportal_kcmo_mo.md"
+notes = "P26.10 (SOURCES.9). FLIPPED 2026-09-18 (GL-GATE-06): dataset licence metadata is 'Creative Commons 1.0 Universal (Public Domain Dedication)' (CC0_10) verbatim on /api/views/c46m-hv6s → CC0-1.0. Dataset c46m-hv6s 'List of KCMO City Contracts'; host robots.txt allows with Crawl-delay: 1."
+[sources.procportal_kcmo_mo.rights]
+spdx = "CC0-1.0"
+attribution = "City of Kansas City General Services - Procurement — data.kcmo.org"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://data.kcmo.org/api/views/c46m-hv6s"
+retrieval_date = 2026-09-18
+
+[sources.procportal_nyc_ny]
+name = "City of New York — Socrata 'City Record Online' dataset"
+source_kind = "government_portal"
+homepage_url = "https://data.cityofnewyork.us/d/dg92-zbpx"
+default_tier = "R3"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (socrata /resource rows API — registry dataset only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-18
+review_packet = "docs/build/reports/rights/procportal_nyc_ny.md"
+notes = "P26.10 (SOURCES.9). FLIPPED 2026-09-18 (GL-GATE-06): dataset licence metadata is 'Public Domain' (PUBLIC_DOMAIN) verbatim on /api/views/dg92-zbpx — DCAS-published City Record notices under an explicit public-domain dedication → CC0-1.0. Dataset dg92-zbpx 'City Record Online' (solicitation/award notice register); host robots.txt allows with Crawl-delay: 1."
+[sources.procportal_nyc_ny.rights]
+spdx = "CC0-1.0"
+attribution = "Department of Citywide Administrative Services (DCAS) — data.cityofnewyork.us"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://data.cityofnewyork.us/api/views/dg92-zbpx"
+retrieval_date = 2026-09-18
+
+[sources.procportal_chicago_il]
+name = "City of Chicago — Socrata 'Contracts' dataset"
+source_kind = "government_portal"
+homepage_url = "https://data.cityofchicago.org/d/rsxa-ify5"
+default_tier = "R3"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "rest_api (socrata /resource rows API — registry dataset only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+review_packet = "docs/build/reports/rights/procportal_chicago_il.md"
+notes = "P26.10 (SOURCES.9). STAYS GATED (D-SOURCES.9-1): dataset rsxa-ify5 'Contracts' carries NO licence metadata on /api/views — unlike the four flipped Socrata datasets there is no verbatim dedication to evaluate, so the GL-GATE-06 clear-licence basis does not apply and the flip needs the city terms reviewed (counsel-needed flag). Verified surveillance-relevant rows exist ('VIDEO/SURVEILLANCE CAMERA SERVICES', 'VIDEO SURVEILLANCE MANAGEMENT SYSTEM'); the gate refuses fetches meanwhile."
 
 
 [sources.la_city_clerk_cfms]
