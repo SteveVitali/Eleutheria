@@ -1,0 +1,1074 @@
+{
+ "pagination": {
+  "max_page": 2,
+  "page": 2,
+  "per_page": 52,
+  "total_items": 56
+ },
+ "results": [
+  {
+   "classification": "state",
+   "division_id": "ocd-division/country:us/state:wa",
+   "id": "ocd-jurisdiction/country:us/state:wa/government",
+   "latest_bill_update": "2026-09-17T12:32:56.004138+00:00",
+   "latest_people_update": "2026-05-01T08:41:02.876863+00:00",
+   "legislative_sessions": [
+    {
+     "classification": "",
+     "downloads": [],
+     "end_date": "2010-03-11",
+     "identifier": "2009-2010",
+     "name": "2009-2010 Regular Session",
+     "start_date": "2009-01-12"
+    },
+    {
+     "classification": "",
+     "downloads": [],
+     "end_date": "2012-03-08",
+     "identifier": "2011-2012",
+     "name": "2011-2012 Regular Session",
+     "start_date": "2011-01-10"
+    },
+    {
+     "classification": "",
+     "downloads": [],
+     "end_date": "2014-03-14",
+     "identifier": "2013-2014",
+     "name": "2013-2014 Regular Session",
+     "start_date": "2013-01-14"
+    },
+    {
+     "classification": "",
+     "downloads": [],
+     "end_date": "2016-03-10",
+     "identifier": "2015-2016",
+     "name": "2015-2016 Regular Session",
+     "start_date": "2015-01-12"
+    },
+    {
+     "classification": "",
+     "downloads": [
+      {
+       "created_at": "2020-02-24T23:26:52.323942+00:00",
+       "data_type": "csv",
+       "updated_at": "2021-02-01T01:34:03.913127+00:00",
+       "url": "https://data.openstates.org/csv/latest/WA_2017-2018_csv_6PrU7m7S8BCYboMSufEElU.zip"
+      }
+     ],
+     "end_date": "2018-03-08",
+     "identifier": "2017-2018",
+     "name": "2017-2018 Regular Session",
+     "start_date": "2017-01-09"
+    },
+    {
+     "classification": "",
+     "downloads": [
+      {
+       "created_at": "2020-02-24T23:27:13.289888+00:00",
+       "data_type": "csv",
+       "updated_at": "2021-02-01T01:34:54.678726+00:00",
+       "url": "https://data.openstates.org/csv/latest/WA_2019-2020_csv_r1seXIYSNkUJxzXSUPep3.zip"
+      }
+     ],
+     "end_date": "2020-03-12",
+     "identifier": "2019-2020",
+     "name": "2019-2020 Regular Session",
+     "start_date": "2019-01-14"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2020-12-10T18:10:26.611946+00:00",
+       "data_type": "csv",
+       "updated_at": "2022-12-08T07:06:02.172597+00:00",
+       "url": "https://data.openstates.org/csv/latest/WA_2021-2022_csv_2qO8fBkLnzLEBmoW5cXDgf.zip"
+      }
+     ],
+     "end_date": "2022-03-10",
+     "identifier": "2021-2022",
+     "name": "2021-2022 Regular Session",
+     "start_date": "2021-01-11"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2022-12-06T23:07:59.164325+00:00",
+       "data_type": "csv",
+       "updated_at": "2025-06-11T23:15:51.923734+00:00",
+       "url": "https://data.openstates.org/csv/latest/WA_2023-2024_csv_5L2zS7sZbaCMVTWlv9BDVw.zip"
+      }
+     ],
+     "end_date": "2024-03-07",
+     "identifier": "2023-2024",
+     "name": "2023-2024 Regular Session",
+     "start_date": "2023-01-09"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2024-12-03T23:11:00.592878+00:00",
+       "data_type": "csv",
+       "updated_at": "2026-07-21T23:21:21.833866+00:00",
+       "url": "https://data.openstates.org/csv/latest/WA_2025-2026_csv_3M5zMeHyZR6EJAy1iONMVB.zip"
+      }
+     ],
+     "end_date": "2026-03-06",
+     "identifier": "2025-2026",
+     "name": "2025-2026 Regular Session",
+     "start_date": "2025-01-13"
+    }
+   ],
+   "name": "Washington",
+   "url": "http://www.leg.wa.gov"
+  },
+  {
+   "classification": "state",
+   "division_id": "ocd-division/country:us/state:wv",
+   "id": "ocd-jurisdiction/country:us/state:wv/government",
+   "latest_bill_update": "2026-09-18T05:14:10.038079+00:00",
+   "latest_people_update": "2026-05-01T08:46:39.221877+00:00",
+   "legislative_sessions": [
+    {
+     "classification": "primary",
+     "downloads": [],
+     "end_date": "2011-03-18",
+     "identifier": "2011",
+     "name": "2011 Regular Session",
+     "start_date": "2011-01-12"
+    },
+    {
+     "classification": "primary",
+     "downloads": [],
+     "end_date": "2012-03-10",
+     "identifier": "2012",
+     "name": "2012 Regular Session",
+     "start_date": "2012-01-11"
+    },
+    {
+     "classification": "primary",
+     "downloads": [],
+     "end_date": "2013-04-14",
+     "identifier": "2013",
+     "name": "2013 Regular Session",
+     "start_date": "2013-01-09"
+    },
+    {
+     "classification": "primary",
+     "downloads": [],
+     "end_date": "2014-03-10",
+     "identifier": "2014",
+     "name": "2014 Regular Session",
+     "start_date": "2014-01-08"
+    },
+    {
+     "classification": "primary",
+     "downloads": [],
+     "end_date": "2015-03-14",
+     "identifier": "2015",
+     "name": "2015 Regular Session",
+     "start_date": "2015-01-14"
+    },
+    {
+     "classification": "primary",
+     "downloads": [],
+     "end_date": "2016-03-12",
+     "identifier": "2016",
+     "name": "2016 Regular Session",
+     "start_date": "2016-01-13"
+    },
+    {
+     "classification": "special",
+     "downloads": [],
+     "end_date": "2016-06-14",
+     "identifier": "20161S",
+     "name": "2016 First Special Session",
+     "start_date": "2016-05-16"
+    },
+    {
+     "classification": "primary",
+     "downloads": [],
+     "end_date": "2017-04-09",
+     "identifier": "2017",
+     "name": "2017 Regular Session",
+     "start_date": "2017-02-08"
+    },
+    {
+     "classification": "special",
+     "downloads": [
+      {
+       "created_at": "2020-02-24T23:27:55.070539+00:00",
+       "data_type": "csv",
+       "updated_at": "2021-02-01T01:35:36.080677+00:00",
+       "url": "https://data.openstates.org/csv/latest/WV_20171S_csv_3HahWx9PspMvWTDFmn0mpy.zip"
+      }
+     ],
+     "end_date": "2017-06-26",
+     "identifier": "20171S",
+     "name": "2017 First Special Session",
+     "start_date": "2017-05-04"
+    },
+    {
+     "classification": "special",
+     "downloads": [
+      {
+       "created_at": "2020-02-24T23:27:56.474349+00:00",
+       "data_type": "csv",
+       "updated_at": "2021-02-01T01:35:37.824962+00:00",
+       "url": "https://data.openstates.org/csv/latest/WV_20172S_csv_5PAhNHb8vuZsoe3bkCMosF.zip"
+      }
+     ],
+     "end_date": "2017-10-17",
+     "identifier": "20172S",
+     "name": "2017 Second Special Session",
+     "start_date": "2017-10-16"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2020-02-24T23:28:08.614944+00:00",
+       "data_type": "csv",
+       "updated_at": "2021-02-01T01:35:49.796004+00:00",
+       "url": "https://data.openstates.org/csv/latest/WV_2018_csv_2QwthvkjZlNQm1oVsoEYO0.zip"
+      }
+     ],
+     "end_date": "2018-03-10",
+     "identifier": "2018",
+     "name": "2018 Regular Session",
+     "start_date": "2018-01-10"
+    },
+    {
+     "classification": "special",
+     "downloads": [],
+     "end_date": "2018-05-25",
+     "identifier": "20181S",
+     "name": "2018 First Special Session",
+     "start_date": "2018-05-20"
+    },
+    {
+     "classification": "special",
+     "downloads": [
+      {
+       "created_at": "2020-02-24T23:28:12.926402+00:00",
+       "data_type": "csv",
+       "updated_at": "2021-02-01T01:35:50.549033+00:00",
+       "url": "https://data.openstates.org/csv/latest/WV_20182S_csv_53FDB9BwI09yexuZu5aNJB.zip"
+      }
+     ],
+     "end_date": "2018-10-15",
+     "identifier": "20182S",
+     "name": "2018 Second Special Session",
+     "start_date": "2018-06-26"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2020-02-24T23:28:41.622847+00:00",
+       "data_type": "csv",
+       "updated_at": "2021-02-01T01:36:04.809984+00:00",
+       "url": "https://data.openstates.org/csv/latest/WV_2019_csv_5P4TEmPDRFXRPElciZjHXw.zip"
+      }
+     ],
+     "end_date": "2019-03-09",
+     "identifier": "2019",
+     "name": "2019 Regular Session",
+     "start_date": "2019-01-09"
+    },
+    {
+     "classification": "special",
+     "downloads": [
+      {
+       "created_at": "2020-02-24T23:28:55.432353+00:00",
+       "data_type": "csv",
+       "updated_at": "2021-02-01T01:36:06.803155+00:00",
+       "url": "https://data.openstates.org/csv/latest/WV_20191S_csv_3FgKA75C9EWWFlFadRJdKu.zip"
+      }
+     ],
+     "end_date": "2019-07-23",
+     "identifier": "20191S",
+     "name": "2019 First Special Session",
+     "start_date": "2019-03-10"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2020-02-24T23:29:33.838104+00:00",
+       "data_type": "csv",
+       "updated_at": "2021-03-02T00:15:24.392172+00:00",
+       "url": "https://data.openstates.org/csv/latest/WV_2020_csv_5Xx1Nih3RLW0TMFuko0rVJ.zip"
+      }
+     ],
+     "end_date": "2020-03-07",
+     "identifier": "2020",
+     "name": "2020 Regular Session",
+     "start_date": "2020-01-08"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2021-02-10T22:13:10.647602+00:00",
+       "data_type": "csv",
+       "updated_at": "2021-07-01T00:54:51.203398+00:00",
+       "url": "https://data.openstates.org/csv/latest/WV_2021_csv_3t5sgoHiZ0GarhGmsxMGZ7.zip"
+      }
+     ],
+     "end_date": "2021-04-10",
+     "identifier": "2021",
+     "name": "2021 Regular Session",
+     "start_date": "2021-01-13"
+    },
+    {
+     "classification": "special",
+     "downloads": [
+      {
+       "created_at": "2022-01-21T23:15:15.688551+00:00",
+       "data_type": "csv",
+       "updated_at": "2022-04-14T23:09:44.278568+00:00",
+       "url": "https://data.openstates.org/csv/latest/WV_20221S_csv_1smcCedJ4vHO46FSI8PMnM.zip"
+      }
+     ],
+     "end_date": "2022-01-11",
+     "identifier": "20221S",
+     "name": "2022 First Special Session",
+     "start_date": "2021-02-10"
+    },
+    {
+     "classification": "special",
+     "downloads": [
+      {
+       "created_at": "2021-07-01T00:54:55.660342+00:00",
+       "data_type": "csv",
+       "updated_at": "2021-08-01T00:47:38.430869+00:00",
+       "url": "https://data.openstates.org/csv/latest/WV_20211S_csv_2tP1E98lelPw8AzckBkXtD.zip"
+      }
+     ],
+     "end_date": "2021-06-07",
+     "identifier": "20211S",
+     "name": "2021 First Special Session",
+     "start_date": "2021-06-07"
+    },
+    {
+     "classification": "special",
+     "downloads": [
+      {
+       "created_at": "2021-08-01T00:47:51.227191+00:00",
+       "data_type": "csv",
+       "updated_at": "2021-09-01T00:57:47.135405+00:00",
+       "url": "https://data.openstates.org/csv/latest/WV_20212S_csv_4UVDv53LWYFhOk3JJl1gk6.zip"
+      }
+     ],
+     "end_date": "2021-07-24",
+     "identifier": "20212S",
+     "name": "2021 Second Special Session",
+     "start_date": "2021-06-24"
+    },
+    {
+     "classification": "special",
+     "downloads": [
+      {
+       "created_at": "2021-11-01T00:40:56.850119+00:00",
+       "data_type": "csv",
+       "updated_at": "2021-11-01T00:40:56.850148+00:00",
+       "url": "https://data.openstates.org/csv/latest/WV_20213S_csv_7KMz57UqQpyWSUmjZM6FQR.zip"
+      }
+     ],
+     "end_date": "2021-10-20",
+     "identifier": "20213S",
+     "name": "2021 Third Special Session",
+     "start_date": "2021-10-11"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2022-01-21T23:15:12.660573+00:00",
+       "data_type": "csv",
+       "updated_at": "2022-04-27T00:11:40.829560+00:00",
+       "url": "https://data.openstates.org/csv/latest/WV_2022_csv_41dIoXaY4jMNEO7tecCtVQ.zip"
+      }
+     ],
+     "end_date": "2022-03-12",
+     "identifier": "2022",
+     "name": "2022 Regular Session",
+     "start_date": "2022-01-12"
+    },
+    {
+     "classification": "special",
+     "downloads": [
+      {
+       "created_at": "2022-04-28T00:13:03.620548+00:00",
+       "data_type": "csv",
+       "updated_at": "2022-05-15T23:09:42.304541+00:00",
+       "url": "https://data.openstates.org/csv/latest/WV_20222S_csv_19RRURpVTod0z1jzWw0h3y.zip"
+      }
+     ],
+     "end_date": "2022-08-25",
+     "identifier": "20222S",
+     "name": "2022 Second Special Session",
+     "start_date": "2022-06-25"
+    },
+    {
+     "classification": "special",
+     "downloads": [
+      {
+       "created_at": "2022-07-26T09:11:45.385174+00:00",
+       "data_type": "csv",
+       "updated_at": "2022-12-29T23:06:16.347814+00:00",
+       "url": "https://data.openstates.org/csv/latest/WV_20223S_csv_3JI4D7EAVhckqXCazgV6II.zip"
+      }
+     ],
+     "end_date": "2022-08-05",
+     "identifier": "20223S",
+     "name": "2022 Third Special Session",
+     "start_date": "2022-07-25"
+    },
+    {
+     "classification": "special",
+     "downloads": [
+      {
+       "created_at": "2022-09-13T07:10:41.959276+00:00",
+       "data_type": "csv",
+       "updated_at": "2022-12-28T07:06:33.675514+00:00",
+       "url": "https://data.openstates.org/csv/latest/WV_20224S_csv_3ivxZUPAggY4r7SAINVvj.zip"
+      }
+     ],
+     "end_date": "2022-09-16",
+     "identifier": "20224S",
+     "name": "2022 Fourth Special Session",
+     "start_date": "2022-09-12"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2023-01-10T23:05:37.900211+00:00",
+       "data_type": "csv",
+       "updated_at": "2023-05-31T00:15:43.936831+00:00",
+       "url": "https://data.openstates.org/csv/latest/WV_2023_csv_1nmYT7wRvGuYTExC6ZFQcH.zip"
+      }
+     ],
+     "end_date": "2023-03-11",
+     "identifier": "2023",
+     "name": "2023 Regular Session",
+     "start_date": "2023-01-11"
+    },
+    {
+     "classification": "special",
+     "downloads": [
+      {
+       "created_at": "2023-08-09T23:08:04.748180+00:00",
+       "data_type": "csv",
+       "updated_at": "2024-01-04T23:08:01.002166+00:00",
+       "url": "https://data.openstates.org/csv/latest/WV_20231S_csv_B6A0Rjgxoj75ZfSgUJyuh.zip"
+      }
+     ],
+     "end_date": "2023-08-11",
+     "identifier": "20231S",
+     "name": "2023 First Special Session",
+     "start_date": "2023-08-06"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2024-01-03T23:07:37.085703+00:00",
+       "data_type": "csv",
+       "updated_at": "2024-05-23T23:15:05.995664+00:00",
+       "url": "https://data.openstates.org/csv/latest/WV_2024_csv_1EqM0bANDbfB2zAoHAnuYG.zip"
+      }
+     ],
+     "end_date": "2024-03-09",
+     "identifier": "2024",
+     "name": "2024 Regular Session",
+     "start_date": "2024-01-11"
+    },
+    {
+     "classification": "special",
+     "downloads": [
+      {
+       "created_at": "2024-05-21T23:17:05.138379+00:00",
+       "data_type": "csv",
+       "updated_at": "2024-09-23T23:13:16.920218+00:00",
+       "url": "https://data.openstates.org/csv/latest/WV_20241S_csv_4gOaPBfrj5Q0lyZjfMPJOw.zip"
+      }
+     ],
+     "end_date": "2024-05-31",
+     "identifier": "20241S",
+     "name": "2024 First Special Session",
+     "start_date": "2024-05-21"
+    },
+    {
+     "classification": "special",
+     "downloads": [
+      {
+       "created_at": "2024-09-30T23:12:53.469588+00:00",
+       "data_type": "csv",
+       "updated_at": "2024-12-09T23:12:56.071061+00:00",
+       "url": "https://data.openstates.org/csv/latest/WV_20242S_csv_4uB0CwWUjNAeSdKmUmYzOa.zip"
+      }
+     ],
+     "end_date": "2024-10-31",
+     "identifier": "20242S",
+     "name": "2024 Second Special Session",
+     "start_date": "2024-09-30"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2025-01-09T23:12:19.378844+00:00",
+       "data_type": "csv",
+       "updated_at": "2025-11-10T23:15:36.037360+00:00",
+       "url": "https://data.openstates.org/csv/latest/WV_2025_csv_4TzU6EUj2wkOekZdXPpVoW.zip"
+      }
+     ],
+     "end_date": "2025-04-12",
+     "identifier": "2025",
+     "name": "2025 Regular Session",
+     "start_date": "2025-02-12"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2026-01-14T23:19:20.396812+00:00",
+       "data_type": "csv",
+       "updated_at": "2026-09-03T23:24:56.060437+00:00",
+       "url": "https://data.openstates.org/csv/latest/WV_2026_csv_QO7XCpLlCWmezoM6qYSvv.zip"
+      }
+     ],
+     "end_date": "2026-03-14",
+     "identifier": "2026",
+     "name": "2026 Regular Session",
+     "start_date": "2026-01-14"
+    }
+   ],
+   "name": "West Virginia",
+   "url": "http://www.legis.state.wv.us/"
+  },
+  {
+   "classification": "state",
+   "division_id": "ocd-division/country:us/state:wi",
+   "id": "ocd-jurisdiction/country:us/state:wi/government",
+   "latest_bill_update": "2026-09-17T15:48:45.162514+00:00",
+   "latest_people_update": "2026-05-01T08:43:41.399747+00:00",
+   "legislative_sessions": [
+    {
+     "classification": "primary",
+     "downloads": [],
+     "end_date": "2011-01-03",
+     "identifier": "2009 Regular Session",
+     "name": "2009-2010 Regular Session",
+     "start_date": "2009-01-13"
+    },
+    {
+     "classification": "special",
+     "downloads": [],
+     "end_date": "2009-06-27",
+     "identifier": "June 2009 Special Session",
+     "name": "Jun 2009 Special Session",
+     "start_date": "2009-06-27"
+    },
+    {
+     "classification": "special",
+     "downloads": [],
+     "end_date": "2009-12-16",
+     "identifier": "December 2009 Special Session",
+     "name": "Dec 2009 Special Session",
+     "start_date": "2009-12-16"
+    },
+    {
+     "classification": "primary",
+     "downloads": [],
+     "end_date": "2013-01-07",
+     "identifier": "2011 Regular Session",
+     "name": "2011-2012 Regular Session",
+     "start_date": "2011-01-11"
+    },
+    {
+     "classification": "special",
+     "downloads": [],
+     "end_date": "2011-05-11",
+     "identifier": "January 2011 Special Session",
+     "name": "Jan 2011 Special Session",
+     "start_date": "2011-01-18"
+    },
+    {
+     "classification": "special",
+     "downloads": [],
+     "end_date": "2011-11-03",
+     "identifier": "September 2011 Special Session",
+     "name": "Sep 2011 Special Session",
+     "start_date": "2011-10-25"
+    },
+    {
+     "classification": "primary",
+     "downloads": [],
+     "end_date": "2014-01-13",
+     "identifier": "2013 Regular Session",
+     "name": "2013-2014 Regular Session",
+     "start_date": "2013-01-07"
+    },
+    {
+     "classification": "special",
+     "downloads": [],
+     "end_date": "2013-11-12",
+     "identifier": "October 2013 Special Session",
+     "name": "Oct 2013 Special Session",
+     "start_date": "2013-10-15"
+    },
+    {
+     "classification": "special",
+     "downloads": [],
+     "end_date": "2013-12-20",
+     "identifier": "December 2013 Special Session",
+     "name": "Dec 2013 Special Session",
+     "start_date": "2013-12-04"
+    },
+    {
+     "classification": "special",
+     "downloads": [],
+     "end_date": "2014-03-24",
+     "identifier": "January 2014 Special Session",
+     "name": "Jan 2014 Special Session",
+     "start_date": "2014-02-11"
+    },
+    {
+     "classification": "primary",
+     "downloads": [],
+     "end_date": "2016-01-11",
+     "identifier": "2015 Regular Session",
+     "name": "2015-2016 Regular Session",
+     "start_date": "2015-01-05"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2020-02-24T23:27:30.888929+00:00",
+       "data_type": "csv",
+       "updated_at": "2021-02-01T01:35:06.873750+00:00",
+       "url": "https://data.openstates.org/csv/latest/WI_2017 Regular Session_csv_2bKPUt1b2Z2wS0sPbR72yt.zip"
+      }
+     ],
+     "end_date": "2018-05-09",
+     "identifier": "2017 Regular Session",
+     "name": "2017-2018 Regular Session",
+     "start_date": "2017-01-03"
+    },
+    {
+     "classification": "special",
+     "downloads": [
+      {
+       "created_at": "2020-02-24T23:27:18.914211+00:00",
+       "data_type": "csv",
+       "updated_at": "2021-02-01T01:35:30.110008+00:00",
+       "url": "https://data.openstates.org/csv/latest/WI_January 2017 Special Session_csv_SVntqqr2twcid70Hktobk.zip"
+      }
+     ],
+     "end_date": "2017-06-14",
+     "identifier": "January 2017 Special Session",
+     "name": "January 2017 Special Session",
+     "start_date": "2017-01-05"
+    },
+    {
+     "classification": "special",
+     "downloads": [
+      {
+       "created_at": "2020-02-24T23:27:20.310833+00:00",
+       "data_type": "csv",
+       "updated_at": "2021-02-01T01:35:29.374662+00:00",
+       "url": "https://data.openstates.org/csv/latest/WI_August 2017 Special Session_csv_iDApnnsWXHVPizA4JGEaX.zip"
+      }
+     ],
+     "end_date": "2017-09-14",
+     "identifier": "August 2017 Special Session",
+     "name": "August 2017 Special Session",
+     "start_date": "2017-08-01"
+    },
+    {
+     "classification": "special",
+     "downloads": [
+      {
+       "created_at": "2020-02-24T23:27:32.574023+00:00",
+       "data_type": "csv",
+       "updated_at": "2021-02-01T01:35:31.552761+00:00",
+       "url": "https://data.openstates.org/csv/latest/WI_January 2018 Special Session_csv_1cf8UefQhG62mS3ODacLMe.zip"
+      }
+     ],
+     "end_date": "2018-02-27",
+     "identifier": "January 2018 Special Session",
+     "name": "January 2018 Special Session",
+     "start_date": "2018-01-18"
+    },
+    {
+     "classification": "special",
+     "downloads": [
+      {
+       "created_at": "2020-02-24T23:27:33.776704+00:00",
+       "data_type": "csv",
+       "updated_at": "2021-02-01T01:35:32.761640+00:00",
+       "url": "https://data.openstates.org/csv/latest/WI_March 2018 Special Session_csv_7BEhBI3DxCdp4Tcnm3uS4T.zip"
+      }
+     ],
+     "end_date": "2018-03-29",
+     "identifier": "March 2018 Special Session",
+     "name": "March 2018 Special Session",
+     "start_date": "2018-03-15"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2020-02-24T23:27:49.201457+00:00",
+       "data_type": "csv",
+       "updated_at": "2021-02-10T22:12:46.768349+00:00",
+       "url": "https://data.openstates.org/csv/latest/WI_2019_csv_3XOhhe8R3qifwTHpvS5c2t.zip"
+      }
+     ],
+     "end_date": "2020-05-27",
+     "identifier": "2019",
+     "name": "2019-2020 Regular Session",
+     "start_date": "2019-01-07"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2021-02-01T01:35:28.691811+00:00",
+       "data_type": "csv",
+       "updated_at": "2022-12-28T07:06:32.483575+00:00",
+       "url": "https://data.openstates.org/csv/latest/WI_2021_csv_rO4Z8lnQSVZkZzG4VM62M.zip"
+      }
+     ],
+     "end_date": "2022-05-27",
+     "identifier": "2021",
+     "name": "2021-2022 Regular Session",
+     "start_date": "2021-01-04"
+    },
+    {
+     "classification": "special",
+     "downloads": [
+      {
+       "created_at": "2021-03-01T00:17:11.954867+00:00",
+       "data_type": "csv",
+       "updated_at": "2022-12-13T07:06:22.995688+00:00",
+       "url": "https://data.openstates.org/csv/latest/WI_2021S1_csv_7jDuq1iYR43Un2OajJUJyy.zip"
+      }
+     ],
+     "end_date": "2021-02-21",
+     "identifier": "2021S1",
+     "name": "January 2021 Special Session",
+     "start_date": "2021-01-19"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2023-01-04T00:05:55.748236+00:00",
+       "data_type": "csv",
+       "updated_at": "2025-01-10T23:15:37.983344+00:00",
+       "url": "https://data.openstates.org/csv/latest/WI_2023_csv_3qcoxR24Z22u4pjl56iyLb.zip"
+      }
+     ],
+     "end_date": "2024-05-25",
+     "identifier": "2023",
+     "name": "2023-2024 Regular Session",
+     "start_date": "2023-01-03"
+    },
+    {
+     "classification": "special",
+     "downloads": [
+      {
+       "created_at": "2023-10-12T20:24:51.225977+00:00",
+       "data_type": "csv",
+       "updated_at": "2024-08-31T23:12:56.784527+00:00",
+       "url": "https://data.openstates.org/csv/latest/WI_2023S1_csv_7I9rUTwgtS2pn2btYwJPvM.zip"
+      }
+     ],
+     "end_date": "2023-09-22",
+     "identifier": "2023S1",
+     "name": "September 2023 Special Session",
+     "start_date": "2023-09-20"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2025-01-06T23:11:16.883539+00:00",
+       "data_type": "csv",
+       "updated_at": "2026-09-17T23:22:47.525342+00:00",
+       "url": "https://data.openstates.org/csv/latest/WI_2025_csv_6BBfXcYUsVQoUk41K7M0ED.zip"
+      }
+     ],
+     "end_date": "2026-05-25",
+     "identifier": "2025",
+     "name": "2025-2026 Regular Session",
+     "start_date": "2025-01-06"
+    },
+    {
+     "classification": "special",
+     "downloads": [
+      {
+       "created_at": "2026-05-13T23:26:37.251597+00:00",
+       "data_type": "csv",
+       "updated_at": "2026-09-17T23:23:02.373545+00:00",
+       "url": "https://data.openstates.org/csv/latest/WI_2026S1_csv_48WJ3bZP68INJ9ki7W6W3u.zip"
+      }
+     ],
+     "end_date": "2026-05-25",
+     "identifier": "2026S1",
+     "name": "May 2026 Special Session",
+     "start_date": "2026-05-13"
+    }
+   ],
+   "name": "Wisconsin",
+   "url": "http://legis.wisconsin.gov/"
+  },
+  {
+   "classification": "state",
+   "division_id": "ocd-division/country:us/state:wy",
+   "id": "ocd-jurisdiction/country:us/state:wy/government",
+   "latest_bill_update": "2026-09-18T04:56:37.704906+00:00",
+   "latest_people_update": "2026-05-01T08:48:31.101980+00:00",
+   "legislative_sessions": [
+    {
+     "classification": "primary",
+     "downloads": [],
+     "end_date": "2011-03-03",
+     "identifier": "2011",
+     "name": "2011",
+     "start_date": "2011-01-11"
+    },
+    {
+     "classification": "special",
+     "downloads": [],
+     "end_date": "2012-03-09",
+     "identifier": "2012",
+     "name": "2012",
+     "start_date": "2012-02-13"
+    },
+    {
+     "classification": "primary",
+     "downloads": [],
+     "end_date": "2013-02-27",
+     "identifier": "2013",
+     "name": "2013",
+     "start_date": "2013-01-08"
+    },
+    {
+     "classification": "primary",
+     "downloads": [],
+     "end_date": "2014-03-07",
+     "identifier": "2014",
+     "name": "2014",
+     "start_date": "2014-02-10"
+    },
+    {
+     "classification": "primary",
+     "downloads": [],
+     "end_date": "2015-03-12",
+     "identifier": "2015",
+     "name": "2015",
+     "start_date": "2015-01-13"
+    },
+    {
+     "classification": "primary",
+     "downloads": [],
+     "end_date": "2016-03-04",
+     "identifier": "2016",
+     "name": "2016",
+     "start_date": "2016-02-08"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2020-02-24T22:29:27.082557+00:00",
+       "data_type": "csv",
+       "updated_at": "2021-02-01T01:36:35.292585+00:00",
+       "url": "https://data.openstates.org/csv/latest/WY_2017_csv_X962PIqSKg6kzS60ccCcM.zip"
+      }
+     ],
+     "end_date": "2017-03-03",
+     "identifier": "2017",
+     "name": "2017",
+     "start_date": "2017-01-10"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2020-02-24T22:29:43.333359+00:00",
+       "data_type": "csv",
+       "updated_at": "2021-02-01T01:36:40.500116+00:00",
+       "url": "https://data.openstates.org/csv/latest/WY_2018_csv_7GJubzAIqHF84CDxJcgpmR.zip"
+      }
+     ],
+     "end_date": "2018-03-15",
+     "identifier": "2018",
+     "name": "2018",
+     "start_date": "2018-02-12"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2020-02-24T22:29:56.281820+00:00",
+       "data_type": "csv",
+       "updated_at": "2021-02-01T01:36:51.268254+00:00",
+       "url": "https://data.openstates.org/csv/latest/WY_2019_csv_4COF0uQ8DiV07xuN7BVnMb.zip"
+      }
+     ],
+     "end_date": "2019-02-28",
+     "identifier": "2019",
+     "name": "2019 General Session",
+     "start_date": "2019-01-08"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2020-02-24T22:30:11.432471+00:00",
+       "data_type": "csv",
+       "updated_at": "2021-02-01T01:37:07.060458+00:00",
+       "url": "https://data.openstates.org/csv/latest/WY_2020_csv_InmR2k6Nk4lkdbMm86MnX.zip"
+      }
+     ],
+     "end_date": "2020-03-12",
+     "identifier": "2020",
+     "name": "2020 General Session",
+     "start_date": "2020-02-10"
+    },
+    {
+     "classification": "special",
+     "downloads": [
+      {
+       "created_at": "2020-06-01T01:22:43.750834+00:00",
+       "data_type": "csv",
+       "updated_at": "2021-02-01T01:37:07.839477+00:00",
+       "url": "https://data.openstates.org/csv/latest/WY_2020S1_csv_3Hrn5lEsFnX8KxnZV1l2Pt.zip"
+      }
+     ],
+     "end_date": "2020-05-16",
+     "identifier": "2020S1",
+     "name": "2020 Special Session",
+     "start_date": "2020-05-15"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2021-01-01T01:18:53.594450+00:00",
+       "data_type": "csv",
+       "updated_at": "2021-07-01T00:55:19.696766+00:00",
+       "url": "https://data.openstates.org/csv/latest/WY_2021_csv_5tKOEIwG0qHv2Wy5x3dFcJ.zip"
+      }
+     ],
+     "end_date": "2021-04-07",
+     "identifier": "2021",
+     "name": "2021 General Session",
+     "start_date": "2021-01-12"
+    },
+    {
+     "classification": "special",
+     "downloads": [
+      {
+       "created_at": "2021-11-01T00:41:12.278554+00:00",
+       "data_type": "csv",
+       "updated_at": "2022-04-12T23:09:40.840744+00:00",
+       "url": "https://data.openstates.org/csv/latest/WY_2021S1_csv_1PsOAuOkgeFzpaP23qEG9P.zip"
+      }
+     ],
+     "end_date": "2021-11-03",
+     "identifier": "2021S1",
+     "name": "2021 Special Session",
+     "start_date": "2021-10-26"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2022-01-01T00:45:43.813885+00:00",
+       "data_type": "csv",
+       "updated_at": "2022-07-14T23:10:24.623448+00:00",
+       "url": "https://data.openstates.org/csv/latest/WY_2022_csv_6YVDIx9wTiJG0ZNM9ST3vG.zip"
+      }
+     ],
+     "end_date": "2022-03-11",
+     "identifier": "2022",
+     "name": "2022 Regular Session",
+     "start_date": "2022-02-14"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2022-12-03T23:07:05.112776+00:00",
+       "data_type": "csv",
+       "updated_at": "2023-07-25T06:51:36.860488+00:00",
+       "url": "https://data.openstates.org/csv/latest/WY_2023_csv_5JJTeW2VELr6EVUFIDoN1g.zip"
+      }
+     ],
+     "end_date": "2023-03-10",
+     "identifier": "2023",
+     "name": "2023 Regular Session",
+     "start_date": "2023-01-10"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2023-12-04T23:08:27.271888+00:00",
+       "data_type": "csv",
+       "updated_at": "2024-11-22T23:12:32.379236+00:00",
+       "url": "https://data.openstates.org/csv/latest/WY_2024_csv_4UfDOccsW60J23ssuNRUkV.zip"
+      }
+     ],
+     "end_date": "2024-04-08",
+     "identifier": "2024",
+     "name": "2024 Regular Session",
+     "start_date": "2024-02-12"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2024-12-04T23:11:55.983066+00:00",
+       "data_type": "csv",
+       "updated_at": "2025-09-18T23:12:45.459223+00:00",
+       "url": "https://data.openstates.org/csv/latest/WY_2025_csv_4mBFIuogl4Ixrf0kyqRKNQ.zip"
+      }
+     ],
+     "end_date": "2025-03-15",
+     "identifier": "2025",
+     "name": "2025 Regular Session",
+     "start_date": "2025-01-14"
+    },
+    {
+     "classification": "primary",
+     "downloads": [
+      {
+       "created_at": "2025-12-02T23:10:25.792687+00:00",
+       "data_type": "csv",
+       "updated_at": "2026-09-17T23:23:36.559981+00:00",
+       "url": "https://data.openstates.org/csv/latest/WY_2026_csv_5nQmZq1LhK6jFFydeuSuhb.zip"
+      }
+     ],
+     "end_date": "2026-03-06",
+     "identifier": "2026",
+     "name": "2026 Regular Session",
+     "start_date": "2026-02-09"
+    }
+   ],
+   "name": "Wyoming",
+   "url": "http://legisweb.state.wy.us/"
+  }
+ ]
+}

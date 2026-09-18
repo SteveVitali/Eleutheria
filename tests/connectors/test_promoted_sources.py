@@ -363,10 +363,15 @@ def test_eyes_on_flock_snapshot_over_committed_fixture() -> None:
     assert report.claims, "the portal snapshot fixture yields portal-layer claims"
 
 
-# --- openstates: bill index → index_only evidence links (never a statute) -----
+# --- openstates: bill index → typed claims (P26.11) / index_only fallback ------
 
 
 def test_openstates_bill_index_over_fixture() -> None:
+    """P26.11 / SOURCES.10: both fixture titles match the reviewed legislation
+    vocabulary, so the claim-shape map emits typed bill claims (verbatim
+    literals, locators, the bill record as evidence) — a pending bill is still
+    never a §11.14 LegalInstrument (§3.1). The index_only path for unmatched
+    bills is covered in test_openstates_sweep.py."""
     report = run_connector_over_fixture(
         "accountability",
         "openstates",
@@ -375,13 +380,22 @@ def test_openstates_bill_index_over_fixture() -> None:
         kind="bill_search",
         target_url="https://v3.openstates.org/bills?jurisdiction=ok&q=alpr&per_page=10",
     )
-    links = [c for c in report.claims if c.get("record_kind") == "evidence_link"]
-    assert len(links) == 2
-    assert all(link["index_only"] for link in links)
-    # The official legislature page is the primary_record ref; the OpenStates
-    # page is the fallback.
-    assert all(link["source_class"] == "primary_record" for link in links)
-    assert {link["bill_identifier"] for link in links} == {"HB 3101", "SB 2200"}
+    claims = [c for c in report.claims if c.get("record_kind") == "claim"]
+    assert claims, "matching bills emit typed claims under the claim-shape map"
+    subjects = {str(c["subject_id"]) for c in claims}
+    assert len(subjects) == 2  # HB 3101 + SB 2200
+    assert {
+        "bill_identifier",
+        "bill_title",
+        "bill_session",
+        "bill_jurisdiction",
+        "bill_status",
+        "bill_matched_keyword",
+    } <= {c["predicate_id"] for c in claims}
+    assert {c["raw_value"] for c in claims if c["predicate_id"] == "bill_identifier"} == {
+        "HB 3101",
+        "SB 2200",
+    }
     # A bill is never normalized into a LegalInstrument claim (§3.1).
     assert not any(c.get("predicate_id") in {"legal_instrument", "statute"} for c in report.claims)
 

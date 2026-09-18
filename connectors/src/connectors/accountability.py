@@ -59,16 +59,28 @@ from __future__ import annotations
 import csv
 import io
 import json
+import os
+import re
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from functools import cache
 from typing import Any
+from urllib.parse import urlencode
 from uuid import uuid4
+
+from parsing.locator import Locator
 
 from ._data import load_table
 from .curated_index import CuratedIndexEntry
-from .stages import CaptureRef, Connector, FetchResult, RunContext, register
+from .stages import (
+    CaptureRef,
+    Connector,
+    ContentDrift,
+    FetchResult,
+    RunContext,
+    register,
+)
 
 _DETECTOR_VERSION = "connectors.accountability/1"
 
@@ -546,6 +558,45 @@ def openstates_config() -> Mapping[str, Any]:
     return vocab()["openstates"]
 
 
+# --- the surveillance-legislation vocabulary + sweep plan (P26.11 / SOURCES.10)
+
+
+@cache
+def legislation_vocab() -> dict[str, Any]:
+    """The reviewed surveillance-legislation vocabulary (``data/legislation_vocab.toml``).
+
+    The keyword set + claim-shape map the bill-index path scans titles against:
+    DATA, not code (SIG-ENG-001), versioned like the connector vocabulary.
+    """
+    return load_table("legislation_vocab")
+
+
+def legislation_vocab_version() -> str:
+    return str(legislation_vocab()["vocab_version"])
+
+
+def legislation_terms() -> tuple[Mapping[str, Any], ...]:
+    """The reviewed [[terms]] rows — id, label, kind, claim_shape, patterns."""
+    return tuple(legislation_vocab().get("terms", ()))
+
+
+def legislation_forbidden() -> tuple[str, ...]:
+    """The Part VIII forbidden-token guard for emitted literals (§0.7/§43.2)."""
+    return tuple(str(t).lower() for t in legislation_vocab().get("forbidden_tokens", ()))
+
+
+@cache
+def openstates_plan() -> dict[str, Any]:
+    """The reviewed 50-state sweep plan (``data/openstates_plan.toml``, P26.11).
+
+    The query plan is data in the target row: which index seeds the
+    jurisdiction set, how the current-session window resolves, the per-query
+    bounds, and the reviewed query families. Changes are versioned migrations
+    (§20), never silent edits.
+    """
+    return load_table("openstates_plan")
+
+
 def assert_targeted_lookup(target: Mapping[str, Any]) -> Mapping[str, Any]:
     """Return ``target`` if it is a targeted lookup, else raise :class:`CrawlAttempted`.
 
@@ -691,9 +742,9 @@ class AccountabilityConnector(Connector):
             # header — the key resolves from the environment only (HG-09) and
             # never rides in the URL, so no credential lands in the recorded
             # source_uri / run records. Keyless it answers 403, which the shared
-            # layer records as a challenge, never defeated.
-            import os
-
+            # layer records as a challenge, never defeated. The same header
+            # covers the jurisdictions index + the generated bill_search
+            # targets of the 50-state sweep (P26.11).
             key = os.environ.get(str(openstates_config()["api_key_env"]), "").strip()
             if key:
                 return ctx.fetcher.fetch(
@@ -714,8 +765,23 @@ class AccountabilityConnector(Connector):
         kind = _artifact_kind(capture)
         if kind in {"issue_record_csv", "source_index_csv"}:
             return {"kind": kind, "capture": capture, **parse_csv(data)}
-        if kind in {"courtlistener", "abuse_library", "openstates"}:
-            return {"kind": kind, "capture": capture, "payload": json.loads(data)}
+        if kind in {"courtlistener", "abuse_library", "openstates", "openstates_jurisdictions"}:
+            try:
+                payload = json.loads(data)
+            except json.JSONDecodeError as exc:
+                raise ContentDrift(
+                    ctx.source.id,
+                    f"the {kind} capture is not valid JSON",
+                    details=str(exc),
+                ) from exc
+            parsed: dict[str, Any] = {"kind": kind, "capture": capture, "payload": payload}
+            if kind == "openstates":
+                # The bill_search target row the capture fetched (a resolved
+                # continuation target, or a configured one) — the query plan
+                # row (jurisdiction, session window, query family) rides it
+                # onto the emitted bill_query outcome row (P26.11).
+                parsed["target"] = _bill_search_target_for(ctx, capture.source_uri)
+            return parsed
         # geojson / data_dictionary / research_archive: consumed as context.
         return {"kind": kind, "capture": capture, "byte_size": len(data)}
 
@@ -737,20 +803,107 @@ class AccountabilityConnector(Connector):
             entries = payload["entries"] if _has_entries(payload) else [payload]
             return [{"record_kind": "abuse_entry", "raw": dict(e)} for e in entries]
         if kind == "openstates":
-            # The OpenStates v3 bill search: `results` is the bill index page
-            # (P26.2); each bill is an index record, never normalized into a
-            # legal fact (a pending bill is not a statute — §3.1).
+            # The OpenStates v3 bill search (P26.2, widened P26.11): `results`
+            # is the bill index page. An error envelope ({"detail": ...}) or a
+            # changed shape is ContentDrift — the connector fails closed rather
+            # than treating the envelope as a bill record.
             payload = parsed["payload"]
-            objects = payload["results"] if _has_results(payload) else [payload]
-            return [{"record_kind": "bill_index", "raw": dict(o)} for o in objects]
+            if not isinstance(payload, Mapping) or not _has_results(payload):
+                detail = (
+                    str(payload.get("detail"))
+                    if isinstance(payload, Mapping) and payload.get("detail")
+                    else type(payload).__name__
+                )
+                raise ContentDrift(
+                    ctx.source.id,
+                    "the openstates bill_search payload is not a results page",
+                    details=detail,
+                )
+            objects = payload["results"]
+            records: list[Mapping[str, Any]] = [
+                {
+                    "record_kind": "bill_index",
+                    "raw": dict(o),
+                    "row_index": i,
+                    "source_uri": str(parsed["capture"].source_uri),
+                }
+                for i, o in enumerate(objects)
+            ]
+            # The per-QUERY outcome row (P26.11): the sweep's hits/empty
+            # outcome for this jurisdiction × query-family fetch, recorded
+            # with the reviewed plan row + the page's pagination metadata.
+            records.append(
+                {
+                    "record_kind": "bill_query",
+                    "raw": {
+                        "target": parsed.get("target"),
+                        "pagination": (
+                            payload.get("pagination")
+                            if isinstance(payload.get("pagination"), Mapping)
+                            else {}
+                        ),
+                        "result_count": len(objects),
+                        "source_uri": str(parsed["capture"].source_uri),
+                        "capture_digest": str(parsed["capture"].digest),
+                    },
+                }
+            )
+            return records
+        if kind == "openstates_jurisdictions":
+            # The v3 /jurisdictions index that seeds the sweep (P26.11): each
+            # row is a jurisdiction record carrying its legislative_sessions —
+            # the discovery surface discover_more expands into the bounded
+            # bill_search targets. Fail closed on a non-results payload.
+            payload = parsed["payload"]
+            if not isinstance(payload, Mapping) or not _has_results(payload):
+                raise ContentDrift(
+                    ctx.source.id,
+                    "the openstates jurisdictions payload is not a results page",
+                    details=type(payload).__name__,
+                )
+            return [
+                {"record_kind": "jurisdiction_record", "raw": dict(j)} for j in payload["results"]
+            ]
         # A consumed-as-context artifact (geojson / data_dictionary / research_archive).
         return [{"record_kind": "context", "artifact_kind": kind}]
+
+    def discover_more(
+        self, ctx: RunContext, captures: Sequence[CaptureRef]
+    ) -> list[Mapping[str, Any]]:
+        """Expand the captured jurisdictions index into the bounded 50-state
+        bill_search sweep (P26.11 / SOURCES.10).
+
+        The captured ``/jurisdictions`` pages ARE the discovery surface: each
+        jurisdiction row resolves its current-session window (the reviewed
+        regular-class latest-start rule) and expands to one bounded
+        ``bill_search`` target per reviewed query family — jurisdiction +
+        session + OR-batched keyword phrases + per_page ≤ 20 riding the target
+        row as data. The expansion is bounded by the plan's ``max_queries``
+        and recorded on ``ctx.resolved_targets`` so each child's post-capture
+        stages see its query provenance. Exactly one pass — never a crawl.
+        """
+        if ctx.source.id != source_ids().get("openstates"):
+            return []
+        plan = openstates_plan()
+        jurisdictions = _jurisdictions_from_captures(ctx, captures)
+        if not jurisdictions:
+            return []
+        targets: list[Mapping[str, Any]] = _bill_query_targets(jurisdictions, plan)
+        for target in targets:
+            ctx.resolved_targets[str(target["url"])] = target
+        return targets
 
     def normalize(
         self, ctx: RunContext, raw_claims: list[Mapping[str, Any]]
     ) -> list[dict[str, Any]]:
         """Typed rows beside preserved raw values (P2), confined to the allowlist."""
         out: list[dict[str, Any]] = []
+        # Per-page tally for the bill_query outcome row (P26.11): the batch is
+        # one capture's records, so these accumulate within one call.
+        page_indexed = 0
+        page_matched = 0
+        page_terms: set[str] = set()
+        page_suppressed: set[str] = set()
         for raw in raw_claims:
             kind = raw["record_kind"]
             if kind == "issue_record":
@@ -762,7 +915,31 @@ class AccountabilityConnector(Connector):
             elif kind == "abuse_entry":
                 out.append(self._normalize_abuse_entry(ctx, raw["raw"]))
             elif kind == "bill_index":
-                out.append(self._normalize_bill_index(ctx, raw["raw"]))
+                page_indexed += 1
+                rows, terms, suppressed = self._normalize_bill_row(
+                    ctx,
+                    raw["raw"],
+                    int(raw.get("row_index") or 0),
+                    str(raw.get("source_uri") or ""),
+                )
+                out.extend(rows)
+                if terms:
+                    page_matched += 1
+                    page_terms.update(str(t["term_id"]) for t in terms)
+                page_suppressed.update(suppressed)
+            elif kind == "bill_query":
+                out.append(
+                    self._normalize_bill_query(
+                        ctx,
+                        raw["raw"],
+                        indexed=page_indexed,
+                        matched=page_matched,
+                        terms=page_terms,
+                        suppressed=page_suppressed,
+                    )
+                )
+            elif kind == "jurisdiction_record":
+                out.append(self._normalize_jurisdiction(ctx, raw["raw"]))
             # context records carry no claims — they were consumed as authority.
         return out
 
@@ -992,6 +1169,113 @@ class AccountabilityConnector(Connector):
             source_id=ctx.source.id,
         )
 
+    def _normalize_bill_row(
+        self,
+        ctx: RunContext,
+        raw: Mapping[str, Any],
+        row_index: int,
+        source_uri: str,
+    ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], set[str]]:
+        """The claim-shape map applied to one bill record (P26.11 / SOURCES.10).
+
+        The bill's own title/other_titles are scanned against the reviewed
+        ``legislation_vocab.toml`` term set — the verbatim local match, never
+        the API's fuzzy search. A bill matching a ``typed_claim`` term emits
+        the bill-surface claim set; any other bill keeps the P26.4
+        ``index_only`` evidence link unchanged. Returns ``(rows, matches,
+        suppressed_term_ids)`` for the page's bill_query outcome row.
+        """
+        matches, suppressed = _matched_legislation(raw)
+        typed = [m for m in matches if m["claim_shape"] == "typed_claim"]
+        if not typed:
+            return [self._normalize_bill_index(ctx, raw)], [], suppressed
+        return (
+            _bill_claim_rows(ctx.source.id, raw, row_index, source_uri, typed, suppressed),
+            typed,
+            suppressed,
+        )
+
+    def _normalize_bill_query(
+        self,
+        ctx: RunContext,
+        raw: Mapping[str, Any],
+        *,
+        indexed: int,
+        matched: int,
+        terms: set[str],
+        suppressed: set[str],
+    ) -> dict[str, Any]:
+        """The per-query outcome row — the sweep's honest per-state result (P26.11).
+
+        One row per fetched bill_search capture: the reviewed plan row
+        (jurisdiction, resolved session window, query family), the outcome
+        (``matched`` = ≥1 bill emitted typed claims; ``empty`` = none), the
+        page counts, and ``truncated`` when the API's ``total_items`` exceeds
+        the bounded page — recorded, never silently widened. This is a
+        non-claim record: it lands on the fetch record's document_outcomes,
+        not the claim spine.
+        """
+        target = raw.get("target")
+        if not isinstance(target, Mapping):
+            target = {}
+        pagination = raw.get("pagination")
+        if not isinstance(pagination, Mapping):
+            pagination = {}
+        total = pagination.get("total_items")
+        returned = raw.get("result_count")
+        return _stamp(
+            {
+                "record_kind": "bill_query",
+                "url": str(raw.get("source_uri") or target.get("url") or ""),
+                "jurisdiction": _opt_str(target.get("jurisdiction")),
+                "jurisdiction_id": _opt_str(target.get("jurisdiction_id")),
+                "session": _opt_str(target.get("session")),
+                "query_family": _opt_str(target.get("query_family")),
+                "outcome": "matched" if matched else "empty",
+                "total_items": int(total) if isinstance(total, int) else None,
+                "returned_count": int(returned) if isinstance(returned, int) else 0,
+                "bills_indexed": indexed,
+                "bills_matched": matched,
+                "matched_terms": sorted(terms),
+                "suppressed_terms": sorted(suppressed),
+                "truncated": bool(
+                    isinstance(total, int) and isinstance(returned, int) and total > returned
+                ),
+                "plan_version": _opt_str(target.get("plan_version"))
+                or str(openstates_plan()["plan_version"]),
+                "legislation_vocab_version": legislation_vocab_version(),
+                "capture_digest": _opt_str(raw.get("capture_digest")),
+            },
+            source_id=ctx.source.id,
+        )
+
+    def _normalize_jurisdiction(self, ctx: RunContext, raw: Mapping[str, Any]) -> dict[str, Any]:
+        """A /jurisdictions index row — recorded, never normalized to a fact (P26.11).
+
+        The row IS the sweep's discovery surface: it records the jurisdiction,
+        how many sessions the index carries, and the session the reviewed
+        regular-class window rule resolved (or ``None`` when the index has no
+        sessions — a query then runs unfiltered, recorded honestly).
+        """
+        sessions = raw.get("legislative_sessions") or []
+        session = _resolve_session(
+            sessions if isinstance(sessions, list) else [],
+            openstates_plan()["session_window"]["classes"],
+        )
+        return _stamp(
+            {
+                "record_kind": "jurisdiction_index",
+                "subject_id": f"jurisdiction:{ctx.source.id}:{_jurisdiction_abbr(raw.get('id'))}",
+                "jurisdiction_id": _opt_str(raw.get("id")),
+                "jurisdiction_name": _opt_str(raw.get("name")),
+                "classification": _opt_str(raw.get("classification")),
+                "sessions_count": len(sessions) if isinstance(sessions, list) else 0,
+                "session_resolved": session,
+                "plan_version": str(openstates_plan()["plan_version"]),
+            },
+            source_id=ctx.source.id,
+        )
+
     # -- link + load --
     # link() is inherited (identity): SIG-INGEST-034 — the connector emits candidate
     # identifiers and NEVER resolves entities itself; resolution is P03.2/P05.1.
@@ -1009,6 +1293,381 @@ class AccountabilityConnector(Connector):
 
 
 # --- module-private helpers ---------------------------------------------------
+
+
+# --- the surveillance-legislation sweep helpers (P26.11 / SOURCES.10) ---------
+
+
+def _jurisdiction_abbr(ocd_id: Any) -> str:
+    """The two-letter jurisdiction code from an OCD jurisdiction id.
+
+    ``ocd-jurisdiction/country:us/state:tx/government`` → ``tx``;
+    ``district:dc`` → ``dc``; ``territory:pr`` → ``pr``. The code is the
+    ``jurisdiction=<abbr>`` filter the v3 bills endpoint accepts (verified
+    live 2026-09-18 incl. territory ``pr``).
+    """
+    text = str(ocd_id or "")
+    for part in text.split("/"):
+        if part.startswith(("state:", "district:", "territory:")):
+            return part.split(":", 1)[1]
+    return text.rsplit("/", 1)[-1].removesuffix("government").strip(":")
+
+
+def _resolve_session(sessions: Sequence[Mapping[str, Any]], classes: Sequence[str]) -> str | None:
+    """The current-session window for one jurisdiction (the reviewed rule).
+
+    The latest-start session among the reviewed regular classes (``primary`` /
+    ``regular``) — a called/special session never shadows the legislature's
+    main session. With no class match the latest session of ANY class wins; a
+    jurisdiction with no sessions returns ``None`` (the query then runs
+    unfiltered — recorded, never invented). Ordering is canonical:
+    ``(start_date, identifier)`` — a data order, never the server's.
+    """
+    regular = [s for s in sessions if str(s.get("classification") or "") in classes]
+    pool = regular or list(sessions)
+    best = max(
+        pool,
+        key=lambda s: (str(s.get("start_date") or ""), str(s.get("identifier") or "")),
+        default=None,
+    )
+    return _opt_str(best.get("identifier")) if best else None
+
+
+def _jurisdictions_from_captures(
+    ctx: RunContext, captures: Sequence[CaptureRef]
+) -> list[Mapping[str, Any]]:
+    """The jurisdiction rows from the captured /jurisdictions index pages.
+
+    Reads stored captures only (network-isolated, SIG-INGEST-002). Rows are
+    merged + deduped by jurisdiction id and returned in canonical id order —
+    the generated target set is deterministic given the same index content
+    (SIG-INGEST-003). A page that is not a results payload is ContentDrift —
+    fail closed, never a fabricated jurisdiction set.
+    """
+    index_cfg = openstates_plan()["jurisdiction_index"]
+    endpoint = str(index_cfg["endpoint"])
+    rows: dict[str, Mapping[str, Any]] = {}
+    for capture in captures:
+        uri = str(capture.source_uri)
+        if _artifact_kind_of_uri(uri) != "openstates_jurisdictions" or endpoint not in uri:
+            continue
+        try:
+            payload = json.loads(ctx.captures.get(capture.digest))
+        except json.JSONDecodeError as exc:
+            raise ContentDrift(
+                ctx.source.id,
+                "the captured jurisdictions index is not valid JSON",
+                details=str(exc),
+            ) from exc
+        if not isinstance(payload, Mapping) or not _has_results(payload):
+            raise ContentDrift(
+                ctx.source.id,
+                "the captured jurisdictions index is not a results page",
+                details=type(payload).__name__,
+            )
+        for row in payload["results"]:
+            if isinstance(row, Mapping) and row.get("id"):
+                rows[str(row["id"])] = row
+    return [rows[k] for k in sorted(rows)]
+
+
+def _bill_query_targets(
+    jurisdictions: Sequence[Mapping[str, Any]], plan: Mapping[str, Any]
+) -> list[Mapping[str, Any]]:
+    """The bounded per-jurisdiction × per-family bill_search targets (P26.11).
+
+    One target per jurisdiction per reviewed query family — ``q`` is the
+    family's phrases OR'd into a single bounded search (the API's fuzzy
+    recall net; verbatim match attribution is LOCAL on the returned titles).
+    The resolved session window rides the target row verbatim; a
+    session-less jurisdiction queries unfiltered. Hard-bounded by the plan's
+    ``max_queries`` — exceeding it truncates loud, it does not crawl.
+    """
+    cfg = plan["bills_query"]
+    classes = plan["session_window"]["classes"]
+    base = str(openstates_config()["api_base"]).rstrip("/")
+    per_page = int(cfg["per_page"])
+    out: list[Mapping[str, Any]] = []
+    for j in jurisdictions:
+        abbr = _jurisdiction_abbr(j.get("id"))
+        sessions = j.get("legislative_sessions") or []
+        session = _resolve_session(sessions if isinstance(sessions, list) else [], classes)
+        for family in plan["query_families"]:
+            params: dict[str, Any] = {
+                "jurisdiction": abbr,
+                "q": " OR ".join(str(p) for p in family["phrases"]),
+                "per_page": per_page,
+                "sort": str(cfg["sort"]),
+            }
+            if session:
+                params["session"] = session
+            url = f"{base}{cfg['endpoint']}?{urlencode(params)}"
+            out.append(
+                {
+                    "id": f"openstates-bills-{abbr}-{family['id']}",
+                    "url": url,
+                    "kind": "bill_search",
+                    "jurisdiction_id": str(j.get("id") or ""),
+                    "jurisdiction": _opt_str(j.get("name")),
+                    "jurisdiction_abbr": abbr,
+                    "session": session,
+                    "query_family": str(family["id"]),
+                    "query_phrases": [str(p) for p in family["phrases"]],
+                    "per_page": per_page,
+                    "sort": str(cfg["sort"]),
+                    "plan_version": str(plan["plan_version"]),
+                }
+            )
+            if len(out) >= int(cfg["max_queries"]):
+                return out
+    return out
+
+
+def _bill_search_target_for(ctx: RunContext, uri: str) -> Mapping[str, Any] | None:
+    """The bill_search target row a capture fetched (P26.11), or ``None``.
+
+    A resolved continuation target first (the sweep's generated rows carry
+    the query-plan fields), then a configured seed target (a fixture run).
+    """
+    target = ctx.resolved_targets.get(uri)
+    if target is not None and target.get("kind") == "bill_search":
+        return target
+    for candidate in ctx.parameters.get("targets", []):
+        if str(candidate.get("url")) == uri and candidate.get("kind") == "bill_search":
+            return candidate
+    return None
+
+
+def _guard_token(text: str) -> str | None:
+    """The first Part VIII forbidden token in ``text``, or ``None`` (§0.7/§43.2)."""
+    low = text.lower()
+    for token in legislation_forbidden():
+        if token in low:
+            return token
+    return None
+
+
+def _bill_text_fields(raw: Mapping[str, Any]) -> list[tuple[str, str]]:
+    """The verbatim text fields the term scan reads — title first, then
+    the record's alternate titles (each named for its evidence ``field``)."""
+    fields: list[tuple[str, str]] = [("title", str(raw.get("title") or ""))]
+    for i, other in enumerate(raw.get("other_titles") or []):
+        text = other.get("title") if isinstance(other, Mapping) else other
+        if text:
+            fields.append((f"other_titles[{i}]", str(text)))
+    return fields
+
+
+def _matched_legislation(
+    raw: Mapping[str, Any],
+) -> tuple[list[dict[str, Any]], set[str]]:
+    """The verbatim legislation-term matches for one bill record (P26.11).
+
+    The LOCAL scan is the match of record — the v3 ``q`` search is fuzzy (it
+    returns commemorative resolutions for ``facial recognition``), so a claim
+    is minted only where the bill's own title/other_titles literally carries
+    a reviewed pattern. One match per term (title wins over alternates — the
+    canonical field order). A literal tripping the Part VIII guard is
+    suppressed and reported on the second return value, never emitted.
+    """
+    matches: list[dict[str, Any]] = []
+    suppressed: set[str] = set()
+    for term in legislation_terms():
+        for field_name, text in _bill_text_fields(raw):
+            if not text:
+                continue
+            hit = None
+            for pattern in term.get("patterns", ()):
+                found = re.search(str(pattern), text, re.IGNORECASE)
+                if found:
+                    hit = found
+                    break
+            if hit is None:
+                continue
+            literal = hit.group(0)
+            if _guard_token(literal) is not None:
+                suppressed.add(str(term["id"]))
+                break
+            matches.append(
+                {
+                    "term_id": str(term["id"]),
+                    "term_label": str(term.get("label") or term["id"]),
+                    "term_kind": str(term.get("kind") or ""),
+                    "claim_shape": str(term.get("claim_shape") or "index_only"),
+                    "field": field_name,
+                    "literal": literal,
+                    "start": hit.start(),
+                    "end": hit.end(),
+                }
+            )
+            break
+    return matches, suppressed
+
+
+def _bill_record_url(raw: Mapping[str, Any]) -> str:
+    """The bill record URL — the official legislature page first, else the
+    OpenStates record (the P26.4 index-link precedence)."""
+    for src in raw.get("sources") or []:
+        if isinstance(src, Mapping) and src.get("url"):
+            return str(src["url"])
+    return str(raw.get("openstates_url") or raw.get("url") or "")
+
+
+def _bill_claim_rows(
+    source_id: str,
+    raw: Mapping[str, Any],
+    row_index: int,
+    source_uri: str,
+    matches: Sequence[Mapping[str, Any]],
+    suppressed: set[str],
+) -> list[dict[str, Any]]:
+    """The typed claim rows for a bill whose record matched the vocab (P26.11).
+
+    Claims: identifier, title, session, jurisdiction, status (the record's
+    own latest-action text — OpenStates' status surface), status date,
+    external id, and one ``bill_matched_keyword`` per typed term carrying
+    the VERBATIM literal as raw_value with a byte-range-into-field locator.
+    Every claim carries the bill record URL + a row locator into the
+    captured results array (``capture_url`` anchors it). A ``legislative_bill``
+    entity row records the surface — it is PROPOSED law, never a §11.14
+    LegalInstrument claim. No volatile field (no retrieval timestamp, no
+    capture id) touches a claim dict — claim identity is the stable bill
+    content (SIG-INGEST-003/017).
+    """
+    bill_id = str(raw.get("id") or raw.get("identifier") or _slug(str(raw)))
+    subject_id = f"legislative_bill:{source_id}:{bill_id}"
+    record_url = _bill_record_url(raw)
+    jurisdiction = raw.get("jurisdiction")
+    jurisdiction_name = (
+        str(jurisdiction.get("name"))
+        if isinstance(jurisdiction, Mapping)
+        else _opt_str(jurisdiction) or ""
+    )
+    jurisdiction_id = str(jurisdiction.get("id")) if isinstance(jurisdiction, Mapping) else None
+    latest_action = _opt_str(raw.get("latest_action_description"))
+    latest_action_date = _opt_str(raw.get("latest_action_date"))
+    # Claims carry NO ``observed_at``: the claim asserts "the OpenStates
+    # record contains this field" — identity is stable bill content, so an
+    # unchanged record digests identically on ANY re-run (SIG-INGEST-003/017;
+    # the atlas optional-observed_at pattern). The observation time lives on
+    # the capture/evidence (claim_evidence → capture → retrieved_at), and the
+    # record's own action date stays verbatim in bill_status_date — never an
+    # observed_at (a bill's latest_action_date is routinely future-dated and
+    # trips claim_observed_not_future).
+    spdx = str(openstates_config().get("spdx") or "CC0-1.0")
+
+    def _evidence(locator: Mapping[str, Any], **extra: Any) -> dict[str, Any]:
+        ev = {
+            "source_url": record_url,
+            "capture_url": source_uri,
+            "extraction_method": "openstates_bills_json",
+            "locator": dict(locator),
+        }
+        ev.update(extra)
+        return ev
+
+    def _claim(
+        predicate: str,
+        value: Any,
+        raw_value: str,
+        evidence: Mapping[str, Any],
+        **extra: Any,
+    ) -> dict[str, Any]:
+        row: dict[str, Any] = {
+            "record_kind": "claim",
+            "subject_id": subject_id,
+            "predicate_id": assert_predicate_allowed(predicate),
+            "raw_value": raw_value,
+            "value": value,
+            "license": spdx,
+            "evidence_genre": "bill_index",
+            "evidence": dict(evidence),
+        }
+        row.update({k: v for k, v in extra.items() if v is not None})
+        return _stamp(row, source_id=source_id)
+
+    row_evidence = _evidence(Locator.row(row_index).to_row())
+    rows: list[dict[str, Any]] = [
+        _stamp(
+            {
+                "record_kind": "legislative_bill",
+                "subject_id": subject_id,
+                "predicate_id": assert_predicate_allowed("legislative_bill"),
+                "external_id": bill_id,
+                "bill_identifier": _opt_str(raw.get("identifier")),
+                "bill_title": _opt_str(raw.get("title")),
+                "legislative_session": _opt_str(raw.get("session")),
+                "legislative_jurisdiction": jurisdiction_name or None,
+                "latest_action": latest_action,
+                "latest_action_date": latest_action_date,
+                "record_url": record_url,
+                "source_urls": [
+                    str(s["url"])
+                    for s in raw.get("sources") or []
+                    if isinstance(s, Mapping) and s.get("url")
+                ],
+                "matched_terms": sorted(str(m["term_id"]) for m in matches),
+                "suppressed_terms": sorted(suppressed),
+                "evidence_genre": "bill_index",
+                "evidence": row_evidence,
+            },
+            source_id=source_id,
+        )
+    ]
+    rows.append(
+        _claim(
+            "bill_external_id",
+            bill_id,
+            bill_id,
+            row_evidence,
+            candidate_identifier={"scheme": "ocd-bill", "value": bill_id},
+        )
+    )
+    identifier = _opt_str(raw.get("identifier"))
+    if identifier:
+        rows.append(_claim("bill_identifier", identifier, identifier, row_evidence))
+    title = _opt_str(raw.get("title"))
+    if title:
+        rows.append(_claim("bill_title", title, title, row_evidence))
+    session = _opt_str(raw.get("session"))
+    if session:
+        rows.append(_claim("bill_session", session, session, row_evidence))
+    if jurisdiction_name:
+        rows.append(
+            _claim(
+                "bill_jurisdiction",
+                jurisdiction_name,
+                jurisdiction_name,
+                row_evidence,
+                candidate_identifier=(
+                    {"scheme": "openstates.jurisdiction", "value": jurisdiction_id}
+                    if jurisdiction_id
+                    else None
+                ),
+            )
+        )
+    if latest_action:
+        rows.append(_claim("bill_status", latest_action, latest_action, row_evidence))
+    if latest_action_date:
+        rows.append(
+            _claim("bill_status_date", latest_action_date, latest_action_date, row_evidence)
+        )
+    for match in matches:
+        rows.append(
+            _claim(
+                "bill_matched_keyword",
+                match["term_id"],
+                str(match["literal"]),
+                _evidence(
+                    Locator.byte_range(int(match["start"]), int(match["end"])).to_row(),
+                    field=str(match["field"]),
+                    record_row=row_index,
+                ),
+                term_label=match["term_label"],
+                term_kind=match["term_kind"],
+            )
+        )
+    return rows
 
 
 def _stamp(row: dict[str, Any], *, source_id: str) -> dict[str, Any]:
@@ -1034,7 +1693,13 @@ def load_claims_for_l1(claims: Iterable[Mapping[str, Any]]) -> list[dict[str, An
     claim/entity/evidence-link rows get an identity + transaction time; unmapped and
     context rows keep their own keys.
     """
-    stamped_kinds = {"accountability_event", "legal_proceeding", "claim", "evidence_link"}
+    stamped_kinds = {
+        "accountability_event",
+        "legal_proceeding",
+        "legislative_bill",
+        "claim",
+        "evidence_link",
+    }
     out: list[dict[str, Any]] = []
     for claim in claims:
         if claim.get("record_kind") in stamped_kinds:
@@ -1066,6 +1731,10 @@ def _artifact_kind_of_uri(uri: str) -> str:
     low = uri.lower()
     if "courtlistener" in low or "/recap" in low:
         return "courtlistener"
+    # The jurisdictions index that seeds the 50-state sweep (P26.11) — checked
+    # before the generic bill-search kind since both carry "openstates".
+    if "openstates" in low and "/jurisdictions" in low:
+        return "openstates_jurisdictions"
     if "openstates" in low:
         return "openstates"
     if "abuse" in low or "kansas.watch" in low:
@@ -1193,8 +1862,12 @@ __all__ = [
     "factual_epistemic_statuses",
     "forbidden_predicate_genres",
     "is_predicate_allowed",
+    "legislation_terms",
+    "legislation_vocab",
+    "legislation_vocab_version",
     "load_claims_for_l1",
     "openstates_config",
+    "openstates_plan",
     "parse_csv",
     "postures",
     "predicate_allowlist",

@@ -141,3 +141,45 @@ def test_robots_crawl_delay_pins_the_host_budget(transport_factory, json_respons
     )
     fetcher.fetch(url)
     assert limiter.delay_for("portal.example") == pytest.approx(5.0)
+
+
+def test_pinned_api_budget_survives_a_shorter_robots_delay(
+    transport_factory, json_response
+) -> None:  # type: ignore[no-untyped-def]
+    """P26.11: a reviewed rate_limit_per_min pin ratchets UP only — robots can
+    demand slower, never lower the declared API budget."""
+    url = "https://api.example/bills"
+    transport = transport_factory(
+        {url: json_response(url, {"results": []})},
+        robots_text="User-agent: *\nAllow: /\nCrawl-delay: 1\n",
+    )
+    clock = {"t": 100.0}
+    limiter = RateLimiter(now=lambda: clock["t"], sleep=lambda s: None)
+    fetcher = PoliteFetcher(
+        connector_name="toy",
+        connector_version="1",
+        transport=transport,
+        rate_limiter=limiter,
+    )
+    fetcher.set_host_delay("api.example", 12.0)  # the reviewed 5/min budget
+    fetcher.fetch(url)
+    assert limiter.delay_for("api.example") == pytest.approx(12.0)
+
+
+def test_a_slower_robots_delay_still_demands_slower(transport_factory, json_response) -> None:  # type: ignore[no-untyped-def]
+    url = "https://api.example/bills"
+    transport = transport_factory(
+        {url: json_response(url, {"results": []})},
+        robots_text="User-agent: *\nAllow: /\nCrawl-delay: 30\n",
+    )
+    clock = {"t": 100.0}
+    limiter = RateLimiter(now=lambda: clock["t"], sleep=lambda s: None)
+    fetcher = PoliteFetcher(
+        connector_name="toy",
+        connector_version="1",
+        transport=transport,
+        rate_limiter=limiter,
+    )
+    fetcher.set_host_delay("api.example", 12.0)
+    fetcher.fetch(url)
+    assert limiter.delay_for("api.example") == pytest.approx(30.0)
