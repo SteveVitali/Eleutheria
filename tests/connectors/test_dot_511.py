@@ -97,9 +97,11 @@ class MapTransport:
         return dataclasses.replace(result, url=url)
 
 
-def _resp(url: str, body: bytes, status: int = 200) -> FetchResult:
+def _resp(
+    url: str, body: bytes, status: int = 200, retrieved_at: datetime = _RETRIEVED
+) -> FetchResult:
     return FetchResult(
-        url=url, status=status, body=body, media_type="application/json", retrieved_at=_RETRIEVED
+        url=url, status=status, body=body, media_type="application/json", retrieved_at=retrieved_at
     )
 
 
@@ -121,7 +123,12 @@ def _ctx(source_id: str, targets: list[dict[str, Any]], responses: Mapping[str, 
     )
 
 
-def _run_fixture(source_id: str, fixture: str, target_id: str | None = None):
+def _run_fixture(
+    source_id: str,
+    fixture: str,
+    target_id: str | None = None,
+    retrieved_at: datetime = _RETRIEVED,
+):
     """Run the connector end-to-end over one committed fixture (no network).
 
     The fixture body answers the target's page-0 query; any further planned
@@ -134,7 +141,11 @@ def _run_fixture(source_id: str, fixture: str, target_id: str | None = None):
         targets = [t for t in targets if t["id"] == target_id]
     body = _FIX.joinpath(fixture).read_bytes()
     responses = {
-        t["url"]: _resp(t["url"], body if t.get("page", 0) == 0 else b'{"features": []}')
+        t["url"]: _resp(
+            t["url"],
+            body if t.get("page", 0) == 0 else b'{"features": []}',
+            retrieved_at=retrieved_at,
+        )
         for t in targets
     }
     connector, ctx = _ctx(source_id, targets, responses)
@@ -400,6 +411,26 @@ def test_ky_fixture_emits_camera_claims_with_evidence_and_locators() -> None:
     assert entities[0]["subject_id"] == (
         "traffic_camera:dot_511_ky:ky_kytc_traffic_cameras:KYTC-0001"
     )
+
+
+def test_claim_digests_stable_across_retrieval_times() -> None:
+    """P26.8 regression (found live on the hosted re-run): the claim evidence
+    dict carried the capture's ``retrieved_at`` — a volatile per-run timestamp
+    — so ``content_digest`` churned and a re-run over an unchanged registry
+    minted a duplicate claim set. The retrieval timestamp is durable on
+    ``evidence_capture.retrieved_at`` + the run row's fetch record; it must
+    never reach claim identity (the P26.6 ``capture_digest`` precedent)."""
+    from db.claim_sink import content_digest
+
+    first = _run_fixture("dot_511_ky", "ky_kytc.json")
+    second = _run_fixture(
+        "dot_511_ky", "ky_kytc.json", retrieved_at=datetime(2026, 10, 24, tzinfo=UTC)
+    )
+    digests_a = sorted(content_digest(c) for c in _claims(first))
+    digests_b = sorted(content_digest(c) for c in _claims(second))
+    assert digests_a == digests_b and digests_a
+    for claim in _claims(first):
+        assert "retrieved_date" not in claim["evidence"]
 
 
 def test_il_fixture_xy_field_aliases() -> None:
