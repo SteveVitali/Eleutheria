@@ -56,7 +56,7 @@ import json
 import re
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from functools import cache
 from html.parser import HTMLParser
 from typing import Any
@@ -156,6 +156,32 @@ def usaspending_sweep_config() -> Mapping[str, Any]:
 def sam_gov_sweep_config() -> Mapping[str, Any]:
     """The widened SAM.gov keyword plan (``[sam_gov_sweep]`` in the vocab, P26.14)."""
     return vocab().get("sam_gov_sweep", {})
+
+
+def ted_eu_sweep_config() -> Mapping[str, Any]:
+    """The bounded EU tender sweep plan (``[ted_eu_sweep]`` in the vocab, P26.15)."""
+    return vocab().get("ted_eu_sweep", {})
+
+
+def ted_eu_keywords() -> tuple[Mapping[str, Any], ...]:
+    """The reviewed TED surveillance-keyword slices (id / query / patterns)."""
+    return tuple(ted_eu_sweep_config().get("keywords", ()))
+
+
+def ted_eu_cpv_codes() -> tuple[Mapping[str, Any], ...]:
+    """The verified TED CPV slices (8-digit ``code`` + ``label``, P26.15)."""
+    return tuple(ted_eu_sweep_config().get("cpv_codes", ()))
+
+
+def ted_eu_country_map() -> Mapping[str, str]:
+    """The reviewed ISO 3166-1 alpha-3 → alpha-2 map for TED country fields.
+
+    TED returns alpha-3 codes (``POL``); the jurisdiction claim carries the
+    alpha-2 (``PL``) under the P26.9 ``iso.3166_1_alpha2`` scheme. An unmapped
+    alpha-3 keeps its verbatim raw_value and emits no normalized identifier —
+    a code is never fabricated.
+    """
+    return dict(ted_eu_sweep_config().get("country_map", {}))
 
 
 # --- the predicate allowlist (SIG-INGEST-033) ---------------------------------
@@ -768,6 +794,175 @@ def _usaspending_target_for(ctx: RunContext, uri: str) -> Mapping[str, Any] | No
         if str(target.get("url")) == uri:
             return target
     return None
+
+
+# --- the bounded EU tender sweep (P26.15 / SOURCES.14) -------------------------
+
+
+def ted_eu_search_targets(*, today: Any = None) -> list[dict[str, Any]]:
+    """The bounded TED Search-API targets from the reviewed sweep plan (P26.15).
+
+    One POST target per reviewed keyword slice and per verified CPV slice —
+    ``[ted_eu_sweep]`` data, never a code constant. Each target's ``url``
+    carries ``#sig-slice=<id>`` (the P26.14 provenance fragment — never sent
+    on the wire) and its ``post_body`` is the verbatim
+    ``PublicExpertSearchRequestV1`` request: an expert query bounding the
+    slice (``FT~"<phrase>"`` or ``classification-cpv=<code>``, AND a rolling
+    ``publication-date>=<window>`` bound), the reviewed field list, and the
+    PAGE_NUMBER page. ITERATION/scroll mode is never used — the sweep is a
+    bounded window of recent notices, each slice independently auditable.
+    ``today`` is injectable for deterministic tests.
+    """
+    cfg = ted_eu_sweep_config()
+    endpoint = str(cfg["endpoint"])
+    page_size = int(cfg.get("page_size", 250))
+    max_pages = int(cfg.get("max_pages_per_slice", 1))
+    fields = [str(f) for f in cfg.get("fields", ())]
+    window_days = int(cfg.get("search_window_days", 120))
+    if today is None:
+        today = datetime.now(UTC).date()
+    since = (today - timedelta(days=window_days)).strftime("%Y%m%d")
+    date_bound = f"publication-date>={since}"
+
+    def _slice(
+        tid: str,
+        query: str,
+        page: int,
+        extra: dict[str, Any],
+    ) -> dict[str, Any]:
+        return {
+            "id": tid,
+            "url": f"{endpoint}{_SLICE_TAG}{tid}",
+            "kind": "ted_eu_search",
+            "record_kind": "ted_eu_slice",
+            "slice": tid,
+            "page": page,
+            "limit": page_size,
+            "query": query,
+            "post_body": {
+                "query": query,
+                "fields": fields,
+                "page": page,
+                "limit": page_size,
+                "scope": str(cfg.get("scope", "ALL")),
+                "paginationMode": str(cfg.get("pagination_mode", "PAGE_NUMBER")),
+                "onlyLatestVersions": bool(cfg.get("only_latest_versions", True)),
+            },
+            "plan_version": str(cfg.get("version", "")),
+            **extra,
+        }
+
+    targets: list[dict[str, Any]] = []
+    for kw in ted_eu_keywords():
+        kid = str(kw["id"])
+        for page in range(1, max_pages + 1):
+            phrase = str(kw["query"]).replace('"', "'")
+            query = f'FT~"{phrase}" AND {date_bound}'
+            targets.append(
+                _slice(
+                    f"ted_kw:{kid}:p{page}",
+                    query,
+                    page,
+                    {"query_kind": "keyword", "ted_keyword": kid, "keyword_label": kw["query"]},
+                )
+            )
+    for cpv in ted_eu_cpv_codes():
+        code = str(cpv["code"])
+        for page in range(1, max_pages + 1):
+            query = f"classification-cpv={code} AND {date_bound}"
+            targets.append(
+                _slice(
+                    f"ted_cpv:{code}:p{page}",
+                    query,
+                    page,
+                    {"query_kind": "cpv", "cpv_code": code, "cpv_label": cpv.get("label")},
+                )
+            )
+    return targets
+
+
+@cache
+def _compiled_ted_terms() -> tuple[tuple[Mapping[str, Any], tuple[re.Pattern[str], ...]], ...]:
+    """The TED keyword set with compiled case-insensitive patterns (deterministic)."""
+    return tuple(
+        (
+            term,
+            tuple(re.compile(str(p), re.IGNORECASE) for p in term.get("patterns", ())),
+        )
+        for term in ted_eu_keywords()
+    )
+
+
+def scan_ted_content(text: str) -> list[dict[str, Any]]:
+    """Match ``text`` against the reviewed TED keyword patterns (P26.15).
+
+    Same contract as :func:`scan_agenda_content`: one entry per matched term —
+    the FIRST occurrence's verbatim literal slice and its character range into
+    ``text``, plus the total match count — sorted by first occurrence then
+    term id. ``raw_value`` is verbatim by construction: the literal is always
+    a slice of the captured notice text, never the search query.
+    """
+    matches: list[dict[str, Any]] = []
+    for term, patterns in _compiled_ted_terms():
+        first: re.Match[str] | None = None
+        count = 0
+        for pattern in patterns:
+            for m in pattern.finditer(text):
+                count += 1
+                if first is None or m.start() < first.start():
+                    first = m
+        if first is not None:
+            matches.append(
+                {
+                    "term_id": str(term["id"]),
+                    "term_kind": str(term.get("kind") or ""),
+                    "term_label": str(term.get("query") or term["id"]),
+                    "literal": first.group(0),
+                    "start": first.start(),
+                    "end": first.end(),
+                    "match_count": count,
+                }
+            )
+    matches.sort(key=lambda m: (m["start"], m["term_id"]))
+    return matches
+
+
+def _ted_i18n_values(field: Any) -> list[tuple[str, str]]:
+    """The (lang, text) pairs of a TED i18n field ({lang: text | [texts]}).
+
+    A scalar (a non-i18n field or a pre-flattened value) comes back as one
+    ``("", value)`` pair. Deterministic language order — ``eng`` first, then
+    the notice's own languages in sorted order — so extraction is stable
+    across runs and a notice supplying no English text still yields its own
+    verbatim literal.
+    """
+    out: list[tuple[str, str]] = []
+    if isinstance(field, Mapping):
+        langs = sorted(field.keys(), key=lambda k: (k != "eng", str(k)))
+        for lang in langs:
+            value = field[lang]
+            if isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
+                out.extend((str(lang), str(v)) for v in value if v is not None)
+            elif value is not None:
+                out.append((str(lang), str(value)))
+    elif isinstance(field, Sequence) and not isinstance(field, (str, bytes)):
+        out.extend(("", str(v)) for v in field if v is not None)
+    elif field is not None:
+        out.append(("", str(field)))
+    return out
+
+
+def _ted_first_text(field: Any) -> str | None:
+    """The first text of a TED i18n field (eng preferred, else first sorted lang)."""
+    values = _ted_i18n_values(field)
+    return values[0][1] if values else None
+
+
+def _ted_first_seq(field: Any) -> str | None:
+    """The first scalar of a TED array-valued field (e.g. ``buyer-country``)."""
+    if isinstance(field, Sequence) and not isinstance(field, (str, bytes)):
+        return str(field[0]) if field else None
+    return str(field) if field is not None else None
 
 
 # --- the agenda-platform tenant registry (§22.3, this ticket OWNS it) ---------
@@ -1393,6 +1588,19 @@ class ProcurementConnector(Connector):
                     if str(t.get("index_keyword", "")).lower() not in supplied
                 ),
             ]
+        if ctx.source.id == source_ids().get("ted_eu"):
+            # P26.15: append the generated bounded TED sweep targets (11
+            # keyword + 10 verified CPV slices, one PAGE_NUMBER page each) —
+            # dedupe on id so a supplied/explicit target never double-fetches
+            # a slice. `parameters["sweep_expansion"] = False` suppresses
+            # generation — the replay/fixture path's opt-out when it drives
+            # explicit targets only; live runs always expand.
+            if ctx.parameters.get("sweep_expansion", True):
+                seen = {str(t.get("id")) for t in targets if t.get("id")}
+                targets = [
+                    *targets,
+                    *(t for t in ted_eu_search_targets() if str(t.get("id")) not in seen),
+                ]
         return targets
 
     def fetch(self, ctx: RunContext, target: Mapping[str, Any]) -> FetchResult:
@@ -1584,6 +1792,8 @@ class ProcurementConnector(Connector):
             if portal_target.get("kind") == "portal_document":
                 return self._parse_portal_document(ctx, capture, data, portal_target)
             return self._parse_portal_index(ctx, capture, data, portal_target)
+        if ctx.source.id == source_ids().get("ted_eu"):
+            return self._parse_ted_eu_page(ctx, capture, data)
         if _is_json_media(capture.media_type):
             return {"kind": "procurement_payload", "payload": json.loads(data), "capture": capture}
         filename = _filename_from_uri(capture.source_uri)
@@ -1818,6 +2028,66 @@ class ProcurementConnector(Connector):
             f"portal document {source_uri} has no reviewed document genre (platform {platform!r})",
         )
 
+    def _parse_ted_eu_page(
+        self, ctx: RunContext, capture: CaptureRef, data: bytes
+    ) -> dict[str, Any]:
+        """Structure a captured TED Search-API page — fail-closed on drift (P26.15).
+
+        The capture must be a ``ExpertSearchResponse`` object:
+        ``{"notices": [...], "totalNoticeCount": int|null, "timedOut": bool}``.
+        The 400 error envelope (``{"message": …, "error": {…}}`` — verified
+        live 2026-09-18), a non-object payload, a missing/non-list ``notices``
+        member, or a non-object notice row is content drift, never garbage
+        claims — the run fails loud rather than asserting a misread shape.
+        An empty ``notices`` list is an honest empty slice.
+        """
+        source_uri = str(capture.source_uri)
+        try:
+            payload = json.loads(data)
+        except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+            raise ContentDrift(
+                ctx.source.id,
+                f"TED search page {source_uri} is not JSON ({exc}) — the response "
+                "shape changed, this is not an empty result",
+            ) from exc
+        if not isinstance(payload, Mapping):
+            raise ContentDrift(
+                ctx.source.id,
+                f"TED search page {source_uri} is not a JSON object — the response "
+                "shape changed, this is not an empty result",
+                details=str(payload)[:200],
+            )
+        notices = payload.get("notices")
+        if "error" in payload or ("message" in payload and notices is None):
+            raise ContentDrift(
+                ctx.source.id,
+                f"TED search page {source_uri} is an API error envelope "
+                f"({str(payload.get('message'))[:120]!r}) — the request was refused "
+                "by the API, not a result page",
+                details=str(payload)[:200],
+            )
+        if not isinstance(notices, list):
+            raise ContentDrift(
+                ctx.source.id,
+                f"TED search page {source_uri} lacks a `notices` list — the "
+                "ExpertSearchResponse contract changed",
+                details=str(payload)[:200],
+            )
+        for pos, notice in enumerate(notices):
+            if not isinstance(notice, Mapping):
+                raise ContentDrift(
+                    ctx.source.id,
+                    f"TED search page {source_uri} notice[{pos}] is not an object — "
+                    "the NoticeResponse contract changed",
+                    details=str(notice)[:200],
+                )
+        return {
+            "kind": "ted_eu_search",
+            "payload": dict(payload),
+            "capture": capture,
+            "raw_text": utf8_text(data),
+        }
+
     def extract(self, ctx: RunContext, parsed: Mapping[str, Any]) -> list[Mapping[str, Any]]:
         """Raw records with locators, preserving raw values (P2)."""
         if parsed["kind"] == "agenda_document":
@@ -1903,6 +2173,70 @@ class ProcurementConnector(Connector):
                     "target": parsed["target"],
                 }
             ]
+        if parsed["kind"] == "ted_eu_search":
+            # P26.15: one `procurement_notice` raw record per notice in the
+            # captured page, each carrying the sweep-slice provenance recovered
+            # from the recorded source_uri's #sig-slice tag; a `ted_eu_slice`
+            # outcome row trails them (result counts / page bounds / timed_out).
+            capture = parsed["capture"]
+            payload = parsed["payload"]
+            target = _usaspending_target_for(ctx, str(capture.source_uri))
+            prov: dict[str, Any] = {
+                "api": "ted_eu",
+                "source_uri": str(capture.source_uri),
+                "capture_digest": capture.digest,
+                "retrieved_at": (
+                    capture.retrieved_at.isoformat() if capture.retrieved_at else None
+                ),
+                "slice": str(target.get("slice")) if target else None,
+                "query_kind": str(target.get("query_kind")) if target else None,
+                "query": str(target.get("query")) if target else None,
+                "ted_keyword": str(target.get("ted_keyword")) if target else None,
+                "cpv_code": str(target.get("cpv_code")) if target else None,
+                "page": target.get("page") if target else None,
+                "limit": target.get("limit") if target else None,
+                "plan_version": str(target.get("plan_version")) if target else None,
+            }
+            timed_out = bool(payload.get("timedOut"))
+            notices = list(payload.get("notices") or [])
+            total = payload.get("totalNoticeCount")
+            page = int(prov["page"] or 1)
+            limit = int(prov["limit"] or 0)
+            outcome = "timed_out" if timed_out else ("hits" if notices else "empty")
+            records: list[Mapping[str, Any]] = []
+            if not timed_out:
+                # A timed-out page is a partial result set: its outcome is
+                # recorded honestly and its notices are NOT asserted — the next
+                # run re-finds them; asserting a partial page would overstate
+                # the slice's coverage.
+                for pos, notice in enumerate(notices):
+                    records.append(
+                        {
+                            "record_kind": "procurement_notice",
+                            "raw": dict(notice),
+                            "notice_provenance": prov,
+                            "row_index": pos,
+                        }
+                    )
+            records.append(
+                {
+                    "record_kind": "ted_eu_slice",
+                    "source_uri": capture.source_uri,
+                    "capture_digest": capture.digest,
+                    "provenance": prov,
+                    "items_count": len(notices),
+                    "total_notice_count": total,
+                    "timed_out": timed_out,
+                    "outcome": outcome,
+                    # `truncated` documents the bound itself: the query matched
+                    # more notices than the bounded page window retrieved.
+                    "truncated": bool(isinstance(total, int) and limit and page * limit < total),
+                    "page": page,
+                    "limit": limit,
+                    "plan_version": prov["plan_version"],
+                }
+            )
+            return records
         payload = parsed["payload"]
         if ctx.source.id in agenda_platform_sources():
             # An agenda-platform tenant index (P26.2): one `agenda_item` raw
@@ -2021,12 +2355,18 @@ class ProcurementConnector(Connector):
             elif kind == "tenant_api_error":
                 out.append(self._normalize_tenant_error(ctx, raw))
             elif kind == "procurement_notice":
-                if raw.get("notice_provenance"):
+                prov = dict(raw.get("notice_provenance") or {})
+                if prov.get("api") == "ted_eu":
+                    out.extend(self._normalize_ted_eu_notice(ctx, raw))
+                elif raw.get("notice_provenance"):
                     out.extend(self._normalize_usaspending_notice(ctx, raw))
                 else:
                     out.extend(self._normalize_notice(ctx, raw))
             elif kind == "usaspending_slice":
                 # P26.14 per-slice outcome row — run-record data, not a claim.
+                out.append(_stamp(dict(raw), source_id=ctx.source.id))
+            elif kind == "ted_eu_slice":
+                # P26.15 per-slice outcome row — run-record data, not a claim.
                 out.append(_stamp(dict(raw), source_id=ctx.source.id))
             elif kind == "agenda_document":
                 out.extend(self._normalize_agenda_document(ctx, raw))
@@ -3234,6 +3574,293 @@ class ProcurementConnector(Connector):
                 source_id=ctx.source.id,
             )
         )
+        return rows
+
+    def _normalize_ted_eu_notice(
+        self, ctx: RunContext, raw: Mapping[str, Any]
+    ) -> list[dict[str, Any]]:
+        """A TED OJ S notice → a ``procurement_notice`` subject + typed claims (P26.15).
+
+        The EU notice surface: publication number, buyer, country, value (when
+        stated), description, place of performance, matched keyword — each
+        claim carries the source field name and a locator into the captured
+        ``notices`` array. **Procured ≠ deployed**: a tender notice asserts a
+        buyer published procurement text containing a reviewed literal —
+        never that equipment was deployed, operates, or exists in a count.
+        ``matched_keyword`` asserts that the notice's text CONTAINS a reviewed
+        literal (``raw_value`` is the verbatim slice), nothing more.
+        Jurisdiction follows the P26.9 convention: the verbatim alpha-3 code
+        stays ``raw_value``; the normalized ``iso.3166_1_alpha2`` identifier
+        comes from the reviewed country map — never fabricated — and NUTS
+        place-of-performance literals are recorded verbatim (a NUTS code is
+        NOT an ISO 3166-2 subdivision and is never emitted as one).
+        """
+        notice = raw["raw"]
+        prov = dict(raw.get("notice_provenance") or {})
+        row_index = raw.get("row_index")
+
+        pubnum = _opt_str(notice.get("publication-number")) or _digest_of(notice)[:24]
+        subject = f"procurement_notice:{ctx.source.id}:{pubnum}"
+        source_uri = str(prov.get("source_uri") or "")
+        retrieved_date = (str(prov.get("retrieved_at") or "")[:10]) or None
+
+        def _evidence(field: str, locator: Mapping[str, Any]) -> dict[str, Any]:
+            return {
+                "source_url": source_uri,
+                "retrieved_date": retrieved_date,
+                "extraction_method": "json_text",
+                "field": field,
+                "locator": locator,
+                "record_row": row_index,
+                "slice": prov.get("slice"),
+                "query_kind": prov.get("query_kind"),
+                "ted_keyword": prov.get("ted_keyword"),
+                "cpv_code": prov.get("cpv_code"),
+                "capture_digest": prov.get("capture_digest"),
+            }
+
+        # --- the verbatim field surface --------------------------------------
+        buyer = _ted_first_text(notice.get("buyer-name"))
+        buyer_country = _ted_first_seq(notice.get("buyer-country")) or _ted_first_seq(
+            notice.get("organisation-country-buyer")
+        )
+        alpha2 = ted_eu_country_map().get(buyer_country) if buyer_country else None
+        title = _ted_first_text(notice.get("notice-title"))
+        description = _ted_first_text(notice.get("description-proc"))
+        winner = _ted_first_text(notice.get("winner-name"))
+        notice_type = _opt_str(notice.get("notice-type"))
+        pubdate_raw = _opt_str(notice.get("publication-date"))
+        pubdate = pubdate_raw[:10] if pubdate_raw else None
+        total = notice.get("total-value")
+        currency = _ted_first_seq(notice.get("total-value-cur"))
+        deadline = _ted_first_seq(notice.get("deadline-receipt-tender-date-lot"))
+        # Verbatim place-of-performance literals: NUTS codes + city names as the
+        # notice states them, deduped preserving order.
+        place_literals: list[tuple[str, str]] = []
+        for field_name in (
+            "place-of-performance",
+            "place-of-performance-subdiv-lot",
+            "place-of-performance-city-lot",
+            "place-of-performance-country-lot",
+        ):
+            values = notice.get(field_name)
+            if isinstance(values, Sequence) and not isinstance(values, (str, bytes)):
+                place_literals.extend((field_name, str(v)) for v in values if v)
+            elif values:
+                place_literals.append((field_name, str(values)))
+
+        rows: list[dict[str, Any]] = [
+            _stamp(
+                {
+                    "record_kind": "procurement_notice",
+                    "subject_id": subject,
+                    "predicate_id": assert_predicate_allowed("procurement_notice"),
+                    "external_id": pubnum,
+                    "raw_value": pubnum,
+                    "notice_type": notice_type,
+                    "award_kind": "eu_notice",
+                    "provenance": prov,
+                    "row_index": row_index,
+                    "raw": dict(notice),
+                },
+                source_id=ctx.source.id,
+            )
+        ]
+
+        field_claims: list[tuple[str, str, str, Any]] = [
+            ("external_id", "publication-number", pubnum, pubnum),
+        ]
+        if notice_type is not None:
+            field_claims.append(("notice_type", "notice-type", notice_type, notice_type))
+        if title is not None:
+            field_claims.append(("title", "notice-title", title, title))
+        if buyer is not None:
+            field_claims.append(("buyer", "buyer-name", buyer, buyer))
+        if winner is not None:
+            # The winner-name literal IS the awarded seller — the §11.11
+            # `seller` predicate, emitted only on award notices where TED
+            # states a winner (P26.10 vendor precedent).
+            field_claims.append(("seller", "winner-name", winner, winner))
+        if pubdate_raw is not None:
+            field_claims.append(("posted_date", "publication-date", pubdate_raw, pubdate))
+        if deadline is not None:
+            field_claims.append(
+                (
+                    "response_deadline",
+                    "deadline-receipt-tender-date-lot",
+                    deadline,
+                    deadline[:10],
+                )
+            )
+        if total is not None:
+            raw_amount = f"{total} {currency}" if currency else str(total)
+            field_claims.append(("amount", "total-value", raw_amount, raw_amount))
+        if description is not None:
+            field_claims.append(("description", "description-proc", description, description))
+
+        for predicate, field_name, raw_literal, value in field_claims:
+            # Part VIII guard: a literal carrying a forbidden token is
+            # suppressed at the claim surface (the capture keeps the bytes).
+            raw_out = _raw_value_of(raw_literal)
+            suppressed = content_guard_token(raw_out) is not None
+            row: dict[str, Any] = {
+                "record_kind": "claim",
+                "subject_id": subject,
+                "predicate_id": assert_predicate_allowed(predicate),
+                "raw_value": "[suppressed: part-VIII token]" if suppressed else raw_out,
+                "value": None if suppressed else value,
+                "observed_at": retrieved_date,
+                "evidence": _evidence(field_name, Locator.row(int(row_index or 0)).to_row()),
+            }
+            if suppressed:
+                row["part_viii_suppressed"] = True
+            if predicate == "buyer":
+                row["candidate_identifier"] = org_candidate(str(value))
+            if predicate == "seller":
+                row["candidate_identifier"] = org_candidate(
+                    str(value), scheme="procurement.org_name"
+                )
+            rows.append(_stamp(row, source_id=ctx.source.id))
+
+        # classification-cpv — the verbatim CPV codes ARE the notice's product
+        # classification (the §11.11 `products` surface); one claim per code,
+        # deduped, verbatim literal.
+        seen_cpvs: set[str] = set()
+        for _, cpv in _ted_i18n_values(notice.get("classification-cpv")):
+            code = str(cpv).strip()
+            if not code or code in seen_cpvs or content_guard_token(code):
+                continue
+            seen_cpvs.add(code)
+            rows.append(
+                _stamp(
+                    {
+                        "record_kind": "claim",
+                        "subject_id": subject,
+                        "predicate_id": assert_predicate_allowed("products"),
+                        "raw_value": code,
+                        "value": code,
+                        "observed_at": retrieved_date,
+                        "evidence": _evidence(
+                            "classification-cpv",
+                            Locator.row(int(row_index or 0)).to_row(),
+                        ),
+                    },
+                    source_id=ctx.source.id,
+                )
+            )
+
+        # Jurisdiction claim — the verbatim alpha-3 is raw_value; the reviewed
+        # country map supplies the normalized alpha-2 identifier (P26.9
+        # iso.3166_1_alpha2 scheme). An unmapped alpha-3 keeps its verbatim
+        # literal as the value and emits NO normalized identifier — a code is
+        # never fabricated.
+        if buyer_country:
+            row = {
+                "record_kind": "claim",
+                "subject_id": subject,
+                "predicate_id": assert_predicate_allowed("country"),
+                "raw_value": buyer_country,
+                "value": alpha2 or buyer_country,
+                "observed_at": retrieved_date,
+                "evidence": _evidence("buyer-country", Locator.row(int(row_index or 0)).to_row()),
+            }
+            if alpha2:
+                row["candidate_identifier"] = {
+                    "scheme": "iso.3166_1_alpha2",
+                    "value": alpha2,
+                }
+            rows.append(_stamp(row, source_id=ctx.source.id))
+
+        # Verbatim place-of-performance literals (NUTS codes, city names) —
+        # deduped; recorded as stated, never emitted as ISO 3166-2 identifiers.
+        seen_places: set[tuple[str, str]] = set()
+        for field_name, literal in place_literals:
+            if (field_name, literal) in seen_places or content_guard_token(literal):
+                continue
+            seen_places.add((field_name, literal))
+            rows.append(
+                _stamp(
+                    {
+                        "record_kind": "claim",
+                        "subject_id": subject,
+                        "predicate_id": assert_predicate_allowed("place_of_performance"),
+                        "raw_value": literal,
+                        "value": literal,
+                        "observed_at": retrieved_date,
+                        "evidence": _evidence(
+                            field_name, Locator.row(int(row_index or 0)).to_row()
+                        ),
+                    },
+                    source_id=ctx.source.id,
+                )
+            )
+
+        # --- matched keywords: verbatim literals inside the notice text -----
+        # Scan every i18n value of the notice's text fields; a match emits
+        # `matched_keyword` with the verbatim slice as raw_value and a
+        # byte-range locator into the named field's text. The slice's query
+        # rides as provenance regardless — a query term not found verbatim in
+        # the notice is NEVER emitted as a fact claim.
+        matched: list[dict[str, Any]] = []
+        for field_name in ("notice-title", "description-proc"):
+            for lang, text in _ted_i18n_values(notice.get(field_name)):
+                for match in scan_ted_content(text):
+                    matched.append({**match, "field": f"{field_name}.{lang}"})
+        seen_terms: set[tuple[str, str]] = set()
+        for match in matched:
+            key = (str(match["term_id"]), str(match["field"]))
+            if key in seen_terms:
+                continue
+            seen_terms.add(key)
+            literal = str(match["literal"])
+            suppressed = content_guard_token(literal) is not None
+            rows.append(
+                _stamp(
+                    {
+                        "record_kind": "claim",
+                        "subject_id": subject,
+                        "predicate_id": assert_predicate_allowed("matched_keyword"),
+                        "value": match["term_id"],
+                        "raw_value": ("[suppressed: part-VIII token]" if suppressed else literal),
+                        "term_label": match["term_label"],
+                        "term_kind": match["term_kind"],
+                        "observed_at": retrieved_date,
+                        "evidence": _evidence(
+                            str(match["field"]),
+                            Locator.byte_range(int(match["start"]), int(match["end"])).to_row(),
+                        ),
+                        **({"part_viii_suppressed": True} if suppressed else {}),
+                    },
+                    source_id=ctx.source.id,
+                )
+            )
+
+        # --- lifecycle: the notice-type IS the lifecycle signal, verbatim ----
+        # cn-* = contract notice (a call for tenders → rfp_issued); can-* =
+        # contract-award notice (→ awarded); anything else asserts no
+        # transition (a TED type outside the reviewed map says nothing).
+        lifecycle_state = (
+            "awarded"
+            if notice_type and notice_type.startswith("can")
+            else ("rfp_issued" if notice_type and notice_type.startswith("cn") else None)
+        )
+        if lifecycle_state:
+            rows.append(
+                _stamp(
+                    {
+                        "record_kind": "claim",
+                        "subject_id": subject,
+                        "predicate_id": assert_predicate_allowed("lifecycle_transition"),
+                        "raw_value": str(notice_type),
+                        "value": {"state": lifecycle_state, "date": pubdate},
+                        "observed_at": retrieved_date,
+                        "evidence": _evidence(
+                            "notice-type", Locator.row(int(row_index or 0)).to_row()
+                        ),
+                    },
+                    source_id=ctx.source.id,
+                )
+            )
         return rows
 
     def _build_contract(self, ctx: RunContext, raw: Mapping[str, Any]) -> Contract:

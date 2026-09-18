@@ -202,6 +202,12 @@ _FLIPPED_SUBSET = frozenset(
         "camreg_rochester_ny",
         "camreg_goldcoast_au",
         "camreg_puertogaitan_co",
+        # P26.15 (SOURCES.14, 2026-09-18): ted_eu — the EU OJ S procurement
+        # surface (TED Search API, keyless documented public API). Flipped under
+        # the GL-GATE-06 delegated pattern: Commission Decision 2011/833/EU
+        # free-reuse grant + CC-BY-4.0 editorial + CC0-1.0 metadata → CC-BY-4.0.
+        # Packet: docs/build/reports/rights/ted_eu.md.
+        "ted_eu",
     }
 )
 
@@ -214,8 +220,8 @@ def test_ingestion_permitted_defaults_false_across_the_seed() -> None:
     # and the P26.5 eScribe flip that is exactly this set (44 sources), plus the
     # P26.7 dot_511 flips (52 sources), the P26.9 camreg_* flips (61 sources),
     # the P26.10 procportal flips (65 sources), the P26.12 congress_gov
-    # flip (66 sources), and the P26.13 catalog-sweep camreg flips (76
-    # sources).
+    # flip (66 sources), the P26.13 catalog-sweep camreg flips (76 sources),
+    # and the P26.15 ted_eu flip (77 sources).
     permitted = {s.id for s in sources() if s.ingestion_permitted}
     assert permitted == set(_FLIPPED_SUBSET)
 

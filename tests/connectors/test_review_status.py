@@ -196,12 +196,16 @@ def test_review_status_prints_flip_ready_0_and_loadable_65(
     # and flipped the 10 resolved-clear registries (DC/Nottingham/York/
     # Glasgow/North Ayrshire/Lambeth/Peel/Rochester/Gold Coast/Puerto Gaitán;
     # St. Albert stays gated — D-SOURCES.12-1) under the same delegated
-    # pattern (66 → 76 loadable).
+    # pattern (66 → 76 loadable). P26.15 (SOURCES.14) expanded the pre-registered
+    # ted_eu census stub (registered stays 198) — the EU OJ S procurement
+    # surface — flipped under the same GL-GATE-06 delegated pattern
+    # (Commission Decision 2011/833/EU free-reuse grant + CC-BY-4.0 editorial +
+    # CC0-1.0 metadata → CC-BY-4.0; 76 → 77 loadable).
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
     assert "registered sources: 198" in out
     assert "flip-ready: 0" in out
-    assert "loadable now: 76" in out
+    assert "loadable now: 77" in out
 
 
 def test_review_status_loadable_equals_validate() -> None:
@@ -209,7 +213,7 @@ def test_review_status_loadable_equals_validate() -> None:
     from connectors.loader import is_loadable
 
     loadable = [s for s in sources() if is_loadable(s)]
-    assert len(loadable) == 76
+    assert len(loadable) == 77
     assert len(flip_ready()) == 0
 
 

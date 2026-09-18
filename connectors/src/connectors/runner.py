@@ -217,6 +217,11 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "procportal_kcmo_mo": "procurement",
     "procportal_nyc_ny": "procurement",
     "procportal_chicago_il": "procurement",
+    # P26.15 (SOURCES.14): the EU procurement surface — TED (Tenders Electronic
+    # Daily) OJ S notices via the procurement connector's bounded Search-API
+    # sweep (keyless documented POST /v3/notices/search; a tender notice is
+    # procurement evidence only — procured ≠ deployed).
+    "ted_eu": "procurement",
 }
 
 
@@ -760,9 +765,31 @@ def _run_live(
                     if r.get("record_kind") == "bill_query"
                     else {}
                 ),
+                **(
+                    {
+                        # P26.15 — the per-slice TED sweep outcome row (hits /
+                        # empty / timed_out; a persistent 429 lands on
+                        # `disappearances` instead, never re-probed).
+                        "url": r.get("source_uri"),
+                        "query_kind": (r.get("provenance") or {}).get("query_kind"),
+                        "ted_keyword": (r.get("provenance") or {}).get("ted_keyword"),
+                        "cpv_code": (r.get("provenance") or {}).get("cpv_code"),
+                        "query": (r.get("provenance") or {}).get("query"),
+                        "page": r.get("page"),
+                        "limit": r.get("limit"),
+                        "items_count": r.get("items_count"),
+                        "total_notice_count": r.get("total_notice_count"),
+                        "timed_out": r.get("timed_out"),
+                        "truncated": r.get("truncated"),
+                        "plan_version": r.get("plan_version"),
+                    }
+                    if r.get("record_kind") == "ted_eu_slice"
+                    else {}
+                ),
             }
             for r in report.claims
-            if r.get("record_kind") in ("agenda_document", "portal_document", "bill_query")
+            if r.get("record_kind")
+            in ("agenda_document", "portal_document", "bill_query", "ted_eu_slice")
         ],
     )
     write_fetch_record(fetch_record, capture_dir / "live_runs")

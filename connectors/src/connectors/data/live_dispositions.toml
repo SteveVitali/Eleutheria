@@ -338,9 +338,6 @@ disposition = "reference"
 [sources.technopolice_forum]
 disposition = "link_only"
 
-[sources.ted_eu]
-disposition = "reference"
-
 [sources.tips_usa]
 disposition = "link_only"
 
