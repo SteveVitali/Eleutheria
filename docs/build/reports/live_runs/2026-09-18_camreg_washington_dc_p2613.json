@@ -1,0 +1,23 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnan4ykhgo3esuhn6xjv5gsvxudn54llrneggaqvzpybqq2s4ad5kjmdk37e7kqtfgokbu2o56ebnjjvgbil7rgvciocioookar4vvya3y",
+    "bcnacujklcwid36dkkfhorm5lsydpj5bqpxvrwnjwvxwelssupwgcfkwo3m5k2aojcnawpzge2xn44jsazd7woju2sv4ltzwbmq6t5e5iqa"
+  ],
+  "claim_count": 10600,
+  "connector": "dot_511",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [],
+  "duration_seconds": 1.180977,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "camreg_washington_dc",
+  "started_at": "2026-09-18T11:19:04.196157+00:00",
+  "status_codes": [],
+  "urls": []
+}

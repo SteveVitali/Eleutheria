@@ -1,0 +1,22 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnanmz24ke5rhjjflnb5bdga4a6d3fe3thr57dqhz7eonsp3uqw4q7xh4ockehtkxw6xxksr3i3ym2gwl3ntktweafzziacadkuicds2ca"
+  ],
+  "claim_count": 4851,
+  "connector": "dot_511",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [],
+  "duration_seconds": 8.835568,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "camreg_glasgow_gb",
+  "started_at": "2026-09-18T11:19:07.044681+00:00",
+  "status_codes": [],
+  "urls": []
+}

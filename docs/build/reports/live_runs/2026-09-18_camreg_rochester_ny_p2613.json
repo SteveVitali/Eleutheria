@@ -1,0 +1,22 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnanx4p2ht422habzeal2hilq6stso5tcb52mdtotiasmlozqjljjcbi7qc54dtw7idijybmfvu2nibuewfu6yw67qr5jc5kmaj5ucek6q"
+  ],
+  "claim_count": 1593,
+  "connector": "dot_511",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [],
+  "duration_seconds": 0.345045,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "camreg_rochester_ny",
+  "started_at": "2026-09-18T11:19:18.045561+00:00",
+  "status_codes": [],
+  "urls": []
+}

@@ -18,7 +18,17 @@
 # field aliases (Socrata + non-US ArcGIS schemas), the `point_fields` GeoJSON
 # point-object candidates, and the extra media-bearing field names
 # (iframe/photo/media/weathercam/still) — additive only.
-vocab_version = "2026.09.18"
+# 2026.09.18.2 (P26.13 / SOURCES.12): added the catalog-sweep registry aliases
+# — UK council CCTV schemas (CAMERA_ID/CCTV_NUMBER/CCTV_NO/SITE_ID ids,
+# CAMERA_LOCATION/ADDRESS_2 names, WARD/DIVISION/LOCAL_AUTH districts,
+# title-case Lat/Long), the Peel red-light schema (CAMERA_NUM/OBJECTID_1/
+# Street/StrInt*/MUN), the DC MPD CCTV schema (ADDRESS/WARD/PSA/STATUS), the
+# Gold Coast SCN schema (NAME only — geometry carries position), and the
+# Spanish Puerto Gaitán schema (latitud/longitud + `georeferencia` point
+# object, nombre/sector). Projected coordinate fields (EASTING/NORTHING,
+# POINT_X/POINT_Y) are deliberately NOT aliased — the ArcGIS outSR=4326
+# geometry is the coordinate source for those layers. Additive only.
+vocab_version = "2026.09.18.2"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `dot_511` connector may write ONLY the camera-registry surface — a
@@ -85,6 +95,10 @@ id_fields = [
   "intersectionid", "location_id", "ESRI_OID", "esri_oid", "oid",
   "objectid", "globalid", "inventory_item_id", "camera_location_code",
   "location_code",
+  # P26.13: catalog-sweep registries — UK council CCTV id columns, the Peel
+  # red-light intersection id, the second OBJECTID on re-joined layers.
+  "CAMERA_ID", "CAMERA_NUM", "CameraNum", "CCTV_NUMBER", "CCTV_NO",
+  "OBJECTID_1", "SITE_ID", "FID_",
   # The Socrata `:id` pseudo-column — the stable per-row system id, LAST so any
   # publisher-provided id wins over it (e.g. Chicago red-light rows have no
   # publisher id column; the `:id` row ref is the registry key then).
@@ -97,10 +111,16 @@ lat_fields = [
   "latitude", "Latitude", "LATITUDE", "attributes_latitude", "geometry_y", "y",
   # P26.9: Seattle ATSC cam/loc pairs, QLDC numbered coords.
   "Cam_Lat", "cam_lat", "Loc_Lat", "loc_lat", "latitude2", "lat",
+  # P26.13: catalog-sweep registries — Nottingham title-case Lat, the Spanish
+  # Puerto Gaitán schema. (Projected EASTING/NORTHING and POINT_X/POINT_Y are
+  # deliberately absent — outSR=4326 geometry is their coordinate source.)
+  "Lat", "latitud",
 ]
 lon_fields = [
   "longitude", "Longitude", "LONGITUDE", "attributes_longitude", "geometry_x", "x",
   "Cam_Long", "cam_long", "Loc_Long", "loc_long", "longitude2", "lon",
+  # P26.13: Nottingham title-case Long, the Spanish Puerto Gaitán schema.
+  "Long", "longitud",
 ]
 
 # P26.9: Socrata point-object fields — the GeoJSON-ish dict-valued columns a
@@ -112,6 +132,9 @@ lon_fields = [
 point_fields = [
   "the_geom", "point", "geolocation", "geometry_point", "geo_location",
   "geom", "location", "shape",
+  # P26.13: Puerto Gaitán (datos.gov.co) publishes its point under the Spanish
+  # `georeferencia` GeoJSON column.
+  "georeferencia",
 ]
 
 # Roadway / route the camera watches.
@@ -120,6 +143,8 @@ roadway_fields = [
   "attributes_route", "Roadway", "ROADWAY", "linear_reference", "route",
   # P26.9: municipal registries.
   "roadwayname", "primary_st", "road", "street", "route_name",
+  # P26.13: catalog-sweep registries — Peel red-light arms, title-case Street.
+  "Street", "StrInt1", "StrInt2",
 ]
 
 # Jurisdiction detail below the state (county/district/region as published).
@@ -129,6 +154,11 @@ county_fields = [
   # P26.9: municipal/non-US registries.
   "municipality", "suburb", "area", "region", "district_name", "zone",
   "neighborhood", "group_",
+  # P26.13: catalog-sweep registries — DC ward/police-service-area, Glasgow
+  # division/town/local-authority, Peel municipality, North Ayrshire camera
+  # area, Nottingham district code/name, the Spanish `sector`.
+  "WARD", "WARDNAME", "PSA", "DIVISION", "TOWN", "LOCAL_AUTH", "MUN",
+  "CAMERA_AREA", "District_Code", "District_Name", "sector",
 ]
 
 # Human-readable camera name / description.
@@ -144,6 +174,9 @@ name_fields = [
   "intersectionname", "cam_name", "site", "approach", "cross_street",
   "commonname", "camera", "camera_description", "location_description",
   "camloc", "cam_location", "address", "school_name", "junction_blacksite",
+  # P26.13: catalog-sweep registries — title/upper-case address columns (DC
+  # MPD, Rochester, York), Lambeth's CAMERA_LOCATION, the Spanish `nombre`.
+  "ADDRESS", "Address", "ADDRESS_2", "CAMERA_LOCATION", "nombre",
 ]
 
 # Reported camera/device status.
@@ -152,6 +185,8 @@ status_fields = [
   # P26.9: municipal/transit/international registries.
   "comm_status", "camera_status", "lifecyclestatus", "isonline", "offline",
   "undermaintenance", "available", "condition", "operational", "active",
+  # P26.13: DC MPD + Glasgow upper-case STATUS.
+  "STATUS",
 ]
 
 # Compass direction the camera faces / roadway direction.

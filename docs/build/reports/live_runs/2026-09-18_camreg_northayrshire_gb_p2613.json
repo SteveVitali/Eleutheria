@@ -1,0 +1,22 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnajv2iieiwbsrqs4xeapxvpqikxfa3dkk2itshbowxguq7vaoutwxiifnwmigmgn4hx7v2oesemxns2htuijcw5jhxginuo7yiabbh7tu"
+  ],
+  "claim_count": 1080,
+  "connector": "dot_511",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [],
+  "duration_seconds": 0.972222,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "camreg_northayrshire_gb",
+  "started_at": "2026-09-18T11:19:15.883781+00:00",
+  "status_codes": [],
+  "urls": []
+}
