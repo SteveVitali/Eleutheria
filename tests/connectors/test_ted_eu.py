@@ -289,6 +289,33 @@ def test_ted_eu_extract_emits_notice_records_and_slice_outcome() -> None:
         assert rec["row_index"] in (0, 1)
 
 
+def test_ted_eu_generated_slice_provenance_resolves_after_discover() -> None:
+    # A capture for a GENERATED sweep slice (not a parameters target) must
+    # still recover its provenance — discover() registers generated targets
+    # on ctx.resolved_targets so extract's source_uri lookup finds them.
+    conn = ProcurementConnector()
+    ctx = _ctx(parameters={"targets": []})
+    generated = conn.discover(ctx)
+    assert len(generated) == 21
+    cpv_target = next(t for t in generated if t["query_kind"] == "cpv")
+    capture = ctx.captures.put(
+        _fixture_bytes(),
+        media_type="application/json",
+        source_uri=str(cpv_target["url"]),
+    )
+    parsed = conn.parse(ctx, capture)
+    records = conn.extract(ctx, parsed)
+    sl = next(r for r in records if r["record_kind"] == "ted_eu_slice")
+    assert sl["provenance"]["query_kind"] == "cpv"
+    assert sl["provenance"]["cpv_code"] == cpv_target["cpv_code"]
+    assert sl["provenance"]["query"] == cpv_target["query"]
+    # Claims on the notice records carry the same slice provenance.
+    notice = next(r for r in records if r["record_kind"] == "procurement_notice")
+    assert notice["notice_provenance"]["cpv_code"] == cpv_target["cpv_code"]
+    # Never the literal string "None".
+    assert all(v != "None" for v in sl["provenance"].values() if isinstance(v, str))
+
+
 def _normalized(ctx: RunContext) -> list[dict[str, Any]]:
     parsed = _parsed(ctx)
     records = ProcurementConnector().extract(ctx, parsed)

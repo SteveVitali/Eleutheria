@@ -1567,10 +1567,13 @@ class ProcurementConnector(Connector):
             # targets only; live runs always expand.
             if ctx.parameters.get("sweep_expansion", True):
                 seen = {str(t.get("id")) for t in targets if t.get("id")}
-                targets = [
-                    *targets,
-                    *(t for t in usaspending_award_targets() if str(t.get("id")) not in seen),
-                ]
+                generated = [t for t in usaspending_award_targets() if str(t.get("id")) not in seen]
+                targets = [*targets, *generated]
+                # Register generated slices so post-capture stages recover
+                # slice provenance from the capture's source_uri (P26.15 —
+                # the same mechanism discover_more continuations use).
+                for t in generated:
+                    ctx.resolved_targets[str(t["url"])] = t
             for target in targets:
                 assert_pulls_subawards(target)
         if ctx.source.id == source_ids().get("sam_gov"):
@@ -1580,14 +1583,14 @@ class ProcurementConnector(Connector):
             supplied = {
                 t for t in (_sam_gov_title_param(str(x.get("url", ""))) for x in targets) if t
             }
-            targets = [
-                *targets,
-                *(
-                    t
-                    for t in sam_gov_search_targets()
-                    if str(t.get("index_keyword", "")).lower() not in supplied
-                ),
+            generated = [
+                t
+                for t in sam_gov_search_targets()
+                if str(t.get("index_keyword", "")).lower() not in supplied
             ]
+            targets = [*targets, *generated]
+            for t in generated:
+                ctx.resolved_targets[str(t["url"])] = t
         if ctx.source.id == source_ids().get("ted_eu"):
             # P26.15: append the generated bounded TED sweep targets (11
             # keyword + 10 verified CPV slices, one PAGE_NUMBER page each) —
@@ -1597,10 +1600,10 @@ class ProcurementConnector(Connector):
             # explicit targets only; live runs always expand.
             if ctx.parameters.get("sweep_expansion", True):
                 seen = {str(t.get("id")) for t in targets if t.get("id")}
-                targets = [
-                    *targets,
-                    *(t for t in ted_eu_search_targets() if str(t.get("id")) not in seen),
-                ]
+                generated = [t for t in ted_eu_search_targets() if str(t.get("id")) not in seen]
+                targets = [*targets, *generated]
+                for t in generated:
+                    ctx.resolved_targets[str(t["url"])] = t
         return targets
 
     def fetch(self, ctx: RunContext, target: Mapping[str, Any]) -> FetchResult:
@@ -2181,6 +2184,11 @@ class ProcurementConnector(Connector):
             capture = parsed["capture"]
             payload = parsed["payload"]
             target = _usaspending_target_for(ctx, str(capture.source_uri))
+
+            def _str_or_none(key: str) -> str | None:
+                value = target.get(key) if target else None
+                return str(value) if value is not None else None
+
             prov: dict[str, Any] = {
                 "api": "ted_eu",
                 "source_uri": str(capture.source_uri),
@@ -2188,14 +2196,14 @@ class ProcurementConnector(Connector):
                 "retrieved_at": (
                     capture.retrieved_at.isoformat() if capture.retrieved_at else None
                 ),
-                "slice": str(target.get("slice")) if target else None,
-                "query_kind": str(target.get("query_kind")) if target else None,
-                "query": str(target.get("query")) if target else None,
-                "ted_keyword": str(target.get("ted_keyword")) if target else None,
-                "cpv_code": str(target.get("cpv_code")) if target else None,
+                "slice": _str_or_none("slice"),
+                "query_kind": _str_or_none("query_kind"),
+                "query": _str_or_none("query"),
+                "ted_keyword": _str_or_none("ted_keyword"),
+                "cpv_code": _str_or_none("cpv_code"),
                 "page": target.get("page") if target else None,
                 "limit": target.get("limit") if target else None,
-                "plan_version": str(target.get("plan_version")) if target else None,
+                "plan_version": _str_or_none("plan_version"),
             }
             timed_out = bool(payload.get("timedOut"))
             notices = list(payload.get("notices") or [])
