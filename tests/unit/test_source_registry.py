@@ -178,6 +178,13 @@ _FLIPPED_SUBSET = frozenset(
         "procportal_sf_ca",
         "procportal_kcmo_mo",
         "procportal_nyc_ny",
+        # P26.12 (SOURCES.11, 2026-09-18): congress_gov — the federal
+        # legislation sweep, flipped under the same GL-GATE-06 delegated
+        # pattern (US federal public domain, 17 U.S.C. §105 → CC0-1.0; the
+        # documented API's stated purpose is "view, retrieve, and re-use
+        # machine-readable data" — verbatim in the packet
+        # docs/build/reports/rights/congress_gov.md).
+        "congress_gov",
     }
 )
 
@@ -188,7 +195,9 @@ def test_ingestion_permitted_defaults_false_across_the_seed() -> None:
     # RIGHTS.1 re-run, the 2026-09-15 live-ops flips, the GL-GATE-06 blanket
     # disposition (2026-09-16), the P26.2 promoted-source flips (2026-09-17),
     # and the P26.5 eScribe flip that is exactly this set (44 sources), plus the
-    # P26.7 dot_511 flips (52 sources) and the P26.9 camreg_* flips (61 sources).
+    # P26.7 dot_511 flips (52 sources), the P26.9 camreg_* flips (61 sources),
+    # the P26.10 procportal flips (65 sources), and the P26.12 congress_gov
+    # flip (66 sources).
     permitted = {s.id for s in sources() if s.ingestion_permitted}
     assert permitted == set(_FLIPPED_SUBSET)
 

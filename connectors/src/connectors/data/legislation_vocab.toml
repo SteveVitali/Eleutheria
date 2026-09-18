@@ -28,7 +28,13 @@
 # [[terms]] header — otherwise TOML nests it under that table.
 
 # The vocabulary version stamped onto emitted rows (§20).
-vocab_version = "2026.09.18"
+# 2026.09.18.2 (P26.12 / SOURCES.11): +2 federal-specific terms for the
+# Congress.gov sweep — `fisa_702` (foreign intelligence surveillance / FISA /
+# section 702) and `government_surveillance` (warrantless / mass / government
+# surveillance reform — the federal-instrument phrasing federal bill titles
+# carry that the state-ordinance set does not). Shared vocabulary: both
+# terms apply to the OpenStates path too.
+vocab_version = "2026.09.18.2"
 
 # Part VIII §0.7 / §43.2 guard for emitted bill rows (the mechanical form of
 # "no plate / per-trip / per-person / per-search data"). A matched literal or
@@ -222,3 +228,31 @@ kind = "vendor"
 label = "Vigilant Solutions"
 claim_shape = "typed_claim"
 patterns = ["vigilant solutions", "\\bvigilant\\b"]
+
+# --- P26.12 / SOURCES.11 federal additions --------------------------------------
+# Federal bill titles carry instrument phrasing the state-ordinance set does
+# not: FISA reauthorizations and government-wide surveillance reform. Both
+# terms are claim_shape=typed_claim like the rest of the set.
+
+[[terms]]
+id = "fisa_702"
+kind = "instrument"
+label = "FISA / Section 702 (foreign intelligence surveillance)"
+claim_shape = "typed_claim"
+patterns = [
+  "foreign intelligence surveillance", "\\bfisa\\b",
+  "section 702", "title vii of the foreign intelligence",
+  "702 reauthorization",
+]
+
+[[terms]]
+id = "government_surveillance"
+kind = "instrument"
+label = "government / mass / warrantless surveillance reform"
+claim_shape = "typed_claim"
+patterns = [
+  "government surveillance", "mass surveillance",
+  "warrantless surveillance", "surveillance reform",
+  "surveillance transparency", "surveillance accountability",
+  "surveillance state",
+]

@@ -115,7 +115,7 @@ def test_the_seeded_registry_has_no_flip_metadata_violations() -> None:
 def test_validate_passes_on_the_seeded_registry(capsys: pytest.CaptureFixture[str]) -> None:
     assert main(["validate"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 186" in out
+    assert "registered sources: 187" in out
     assert "self-checks OK" in out
 
 
@@ -189,11 +189,14 @@ def test_review_status_prints_flip_ready_0_and_loadable_65(
     # GL-GATE-06 delegated pattern (61 → 65 loadable); bidnet_direct (vendor
     # terms not yet captured verbatim), bonfire (robots Disallow:/), opengov
     # (WAF challenge) and procportal_chicago_il (no licence metadata) stay gated.
+    # P26.12 (SOURCES.11) added congress_gov (186 → 187) — the federal
+    # legislation sweep, flipped under the same GL-GATE-06 delegated pattern
+    # (US federal public domain, 17 U.S.C. §105 → CC0-1.0; 65 → 66 loadable).
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 186" in out
+    assert "registered sources: 187" in out
     assert "flip-ready: 0" in out
-    assert "loadable now: 65" in out
+    assert "loadable now: 66" in out
 
 
 def test_review_status_loadable_equals_validate() -> None:
@@ -201,7 +204,7 @@ def test_review_status_loadable_equals_validate() -> None:
     from connectors.loader import is_loadable
 
     loadable = [s for s in sources() if is_loadable(s)]
-    assert len(loadable) == 65
+    assert len(loadable) == 66
     assert len(flip_ready()) == 0
 
 
