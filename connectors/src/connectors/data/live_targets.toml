@@ -417,3 +417,79 @@ kind = "dot_511_targets"
 
 [dot_511_md]
 kind = "dot_511_targets"
+
+# --- P26.9 (SOURCES.8): municipal / transit / non-US camera registries --------
+# Each `camreg_*` source resolves its live targets from the verified [[targets]]
+# rows of data/camera_registry_targets.toml — the same "dot_511_targets" kind:
+# the merged registry expands ArcGIS layers into paginated /query URLs and
+# Socrata datasets into paginated /resource URLs. Gated sources keep their rows
+# — the live gate refuses the fetch, the registry still records the endpoint.
+
+[camreg_austin_tx]
+kind = "dot_511_targets"
+
+[camreg_nola_la]
+kind = "dot_511_targets"
+
+[camreg_batonrouge_la]
+kind = "dot_511_targets"
+
+[camreg_winnipeg_mb]
+kind = "dot_511_targets"
+
+[camreg_act_au]
+kind = "dot_511_targets"
+
+[camreg_siouxfalls_sd]
+kind = "dot_511_targets"
+
+[camreg_baltimore_md]
+kind = "dot_511_targets"
+
+[camreg_ottawa_on]
+kind = "dot_511_targets"
+
+[camreg_sheffield_gb]
+kind = "dot_511_targets"
+
+[camreg_chicago_il]
+kind = "dot_511_targets"
+
+[camreg_calgary_ab]
+kind = "dot_511_targets"
+
+[camreg_edmonton_ab]
+kind = "dot_511_targets"
+
+[camreg_honolulu_hi]
+kind = "dot_511_targets"
+
+[camreg_md_opendata]
+kind = "dot_511_targets"
+
+[camreg_york_on]
+kind = "dot_511_targets"
+
+[camreg_arlington_va]
+kind = "dot_511_targets"
+
+[camreg_seattle_wa]
+kind = "dot_511_targets"
+
+[camreg_bellevue_wa]
+kind = "dot_511_targets"
+
+[camreg_lexington_ky]
+kind = "dot_511_targets"
+
+[camreg_nzta_nz]
+kind = "dot_511_targets"
+
+[camreg_qldc_au]
+kind = "dot_511_targets"
+
+[camreg_donegal_ie]
+kind = "dot_511_targets"
+
+[camreg_hk_hk]
+kind = "dot_511_targets"

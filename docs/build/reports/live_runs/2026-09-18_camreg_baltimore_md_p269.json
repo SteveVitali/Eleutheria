@@ -1,0 +1,22 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnaj6d3kxj4x62e4bmgu5vp6b5tyf6f3jaak6yk37uskyhpxrdes3fdcfibvpeyaqa423fqibjlw6mawdys2bfek3azxs33smkmxaq5vu4"
+  ],
+  "claim_count": 6888,
+  "connector": "dot_511",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [],
+  "duration_seconds": 0.581757,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "camreg_baltimore_md",
+  "started_at": "2026-09-18T02:40:34.018780+00:00",
+  "status_codes": [],
+  "urls": []
+}

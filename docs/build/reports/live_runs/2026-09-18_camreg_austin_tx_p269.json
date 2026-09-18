@@ -1,0 +1,22 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnamqtfeswjalwqqt5r7y2arz73ut4viocm7ure3gx436siftqpsgc4oujwnnkmkxj6rwycvrzd4ykwr37yk3vuwezz4xrkykluabcs4fi"
+  ],
+  "claim_count": 11054,
+  "connector": "dot_511",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [],
+  "duration_seconds": 1.025757,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "camreg_austin_tx",
+  "started_at": "2026-09-18T02:40:20.856338+00:00",
+  "status_codes": [],
+  "urls": []
+}
