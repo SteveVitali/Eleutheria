@@ -614,3 +614,415 @@ kind = "procurement_api"
 targets = [
   { id = "ted-seed:video-surveillance:p1", url = "https://api.ted.europa.eu/v3/notices/search#sig-slice=ted-seed:video-surveillance:p1", kind = "ted_eu_search", record_kind = "ted_eu_slice", slice = "ted-seed:video-surveillance:p1", query_kind = "keyword", ted_keyword = "video_surveillance", page = 1, limit = 250, plan_version = "2026.09.18.1", query = "FT~\"video surveillance\"", post_body = { query = "FT~\"video surveillance\"", fields = [ "publication-number", "publication-date", "dispatch-date", "notice-type", "form-type", "notice-version", "procedure-identifier", "notice-title", "buyer-name", "buyer-country", "organisation-country-buyer", "place-of-performance", "place-of-performance-city-lot", "place-of-performance-subdiv-lot", "place-of-performance-country-lot", "description-proc", "classification-cpv", "total-value", "total-value-cur", "winner-name", "winner-country", "deadline-receipt-tender-date-lot" ], page = 1, limit = 250, scope = "ALL", paginationMode = "PAGE_NUMBER", onlyLatestVersions = true }, rate_limit_per_min = 30 },
 ]
+
+# --- P26.16 (SOURCES.15): GL-GATE-07 rights batch -------------
+# Same "dot_511_targets" kind — the flipped/registered catalog-sweep
+# registries (docs/build/reports/p2616_dispositions.json).
+
+[camreg_achd_id]
+kind = "dot_511_targets"
+
+[camreg_aikner]
+kind = "dot_511_targets"
+
+[camreg_amber_kh]
+kind = "dot_511_targets"
+
+[camreg_apram_pt]
+kind = "dot_511_targets"
+
+[camreg_arc_1975641302]
+kind = "dot_511_targets"
+
+[camreg_avctransport]
+kind = "dot_511_targets"
+
+[camreg_azdot_az]
+kind = "dot_511_targets"
+
+[camreg_baltimore_atves_md]
+kind = "dot_511_targets"
+
+[camreg_bangla_bd]
+kind = "dot_511_targets"
+
+[camreg_bargabos]
+kind = "dot_511_targets"
+
+[camreg_bedford_gb]
+kind = "dot_511_targets"
+
+[camreg_bettendorf_ia]
+kind = "dot_511_targets"
+
+[camreg_bouhan_jp]
+kind = "dot_511_targets"
+
+[camreg_brea_ca]
+kind = "dot_511_targets"
+
+[camreg_caledon_on]
+kind = "dot_511_targets"
+
+[camreg_caloes_ca]
+kind = "dot_511_targets"
+
+[camreg_camberwell_au]
+kind = "dot_511_targets"
+
+[camreg_camilo_schools]
+kind = "dot_511_targets"
+
+[camreg_carver_mn]
+kind = "dot_511_targets"
+
+[camreg_cclemire]
+kind = "dot_511_targets"
+
+[camreg_chattanooga_tn]
+kind = "dot_511_targets"
+
+[camreg_cheicylia]
+kind = "dot_511_targets"
+
+[camreg_colgis]
+kind = "dot_511_targets"
+
+[camreg_cotgeo]
+kind = "dot_511_targets"
+
+[camreg_cphang]
+kind = "dot_511_targets"
+
+[camreg_cwarcgis]
+kind = "dot_511_targets"
+
+[camreg_dc_dot_dc]
+kind = "dot_511_targets"
+
+[camreg_denver_co]
+kind = "dot_511_targets"
+
+[camreg_dover_gb]
+kind = "dot_511_targets"
+
+[camreg_dubuque_ia]
+kind = "dot_511_targets"
+
+[camreg_duganmeyer]
+kind = "dot_511_targets"
+
+[camreg_durham_gb]
+kind = "dot_511_targets"
+
+[camreg_eastdun_gb]
+kind = "dot_511_targets"
+
+[camreg_ebrgis_la]
+kind = "dot_511_targets"
+
+[camreg_esri_dash]
+kind = "dot_511_targets"
+
+[camreg_esriukpolice_gb]
+kind = "dot_511_targets"
+
+[camreg_essex_gb]
+kind = "dot_511_targets"
+
+[camreg_fifia]
+kind = "dot_511_targets"
+
+[camreg_firemedic]
+kind = "dot_511_targets"
+
+[camreg_fl511_fl]
+kind = "dot_511_targets"
+
+[camreg_forwardalliance]
+kind = "dot_511_targets"
+
+[camreg_freese_dm]
+kind = "dot_511_targets"
+
+[camreg_friendswood_tx]
+kind = "dot_511_targets"
+
+[camreg_gainesville_fl]
+kind = "dot_511_targets"
+
+[camreg_gedling_gb]
+kind = "dot_511_targets"
+
+[camreg_gistel_be]
+kind = "dot_511_targets"
+
+[camreg_gmh_emc_ga]
+kind = "dot_511_targets"
+
+[camreg_guildford_gb]
+kind = "dot_511_targets"
+
+[camreg_gvanmaren]
+kind = "dot_511_targets"
+
+[camreg_helberg]
+kind = "dot_511_targets"
+
+[camreg_indonesia_id]
+kind = "dot_511_targets"
+
+[camreg_infocemosa]
+kind = "dot_511_targets"
+
+[camreg_infraestructura]
+kind = "dot_511_targets"
+
+[camreg_ira]
+kind = "dot_511_targets"
+
+[camreg_jcfd3_or]
+kind = "dot_511_targets"
+
+[camreg_jelenic]
+kind = "dot_511_targets"
+
+[camreg_jmh_us]
+kind = "dot_511_targets"
+
+[camreg_kcmo_mo]
+kind = "dot_511_targets"
+
+[camreg_keizer_or]
+kind = "dot_511_targets"
+
+[camreg_keshan]
+kind = "dot_511_targets"
+
+[camreg_kirkland_wa]
+kind = "dot_511_targets"
+
+[camreg_kosman]
+kind = "dot_511_targets"
+
+[camreg_kunying]
+kind = "dot_511_targets"
+
+[camreg_langan]
+kind = "dot_511_targets"
+
+[camreg_lawrence_ks]
+kind = "dot_511_targets"
+
+[camreg_lenhardt]
+kind = "dot_511_targets"
+
+[camreg_leon_fl]
+kind = "dot_511_targets"
+
+[camreg_lisburn_gb]
+kind = "dot_511_targets"
+
+[camreg_lojic_ky]
+kind = "dot_511_targets"
+
+[camreg_lpd_flock]
+kind = "dot_511_targets"
+
+[camreg_manhattan_ks]
+kind = "dot_511_targets"
+
+[camreg_mark43]
+kind = "dot_511_targets"
+
+[camreg_massdot_ma]
+kind = "dot_511_targets"
+
+[camreg_mbrc_au]
+kind = "dot_511_targets"
+
+[camreg_mctx_tx]
+kind = "dot_511_targets"
+
+[camreg_mhebert]
+kind = "dot_511_targets"
+
+[camreg_mndot_mn]
+kind = "dot_511_targets"
+
+[camreg_monmap_mn]
+kind = "dot_511_targets"
+
+[camreg_mueller_de]
+kind = "dot_511_targets"
+
+[camreg_nashville_tn]
+kind = "dot_511_targets"
+
+[camreg_nitro]
+kind = "dot_511_targets"
+
+[camreg_nola_safety_la]
+kind = "dot_511_targets"
+
+[camreg_nurnazihah]
+kind = "dot_511_targets"
+
+[camreg_nyc_jgrayson_ny]
+kind = "dot_511_targets"
+
+[camreg_nyc_weltia_ny]
+kind = "dot_511_targets"
+
+[camreg_oem_camera]
+kind = "dot_511_targets"
+
+[camreg_olsson]
+kind = "dot_511_targets"
+
+[camreg_oosgis_nl]
+kind = "dot_511_targets"
+
+[camreg_osm_surveillance]
+kind = "dot_511_targets"
+
+[camreg_palmdesert_ca]
+kind = "dot_511_targets"
+
+[camreg_penndot_pa]
+kind = "dot_511_targets"
+
+[camreg_pgcounty_md]
+kind = "dot_511_targets"
+
+[camreg_pipeline_sec]
+kind = "dot_511_targets"
+
+[camreg_plymouth_gb]
+kind = "dot_511_targets"
+
+[camreg_polyu_hk]
+kind = "dot_511_targets"
+
+[camreg_portland_or]
+kind = "dot_511_targets"
+
+[camreg_raleigh_nc]
+kind = "dot_511_targets"
+
+[camreg_ramallah_ps]
+kind = "dot_511_targets"
+
+[camreg_redmond_wa]
+kind = "dot_511_targets"
+
+[camreg_riyadh_sa]
+kind = "dot_511_targets"
+
+[camreg_rjcoleman]
+kind = "dot_511_targets"
+
+[camreg_ruslan]
+kind = "dot_511_targets"
+
+[camreg_salisbury_nc]
+kind = "dot_511_targets"
+
+[camreg_sarasota_fl]
+kind = "dot_511_targets"
+
+[camreg_schellinger]
+kind = "dot_511_targets"
+
+[camreg_sensenet]
+kind = "dot_511_targets"
+
+[camreg_sfoss]
+kind = "dot_511_targets"
+
+[camreg_smart_sky]
+kind = "dot_511_targets"
+
+[camreg_squan]
+kind = "dot_511_targets"
+
+[camreg_stanford_us]
+kind = "dot_511_targets"
+
+[camreg_surrey_bc]
+kind = "dot_511_targets"
+
+[camreg_sweeney]
+kind = "dot_511_targets"
+
+[camreg_tblose]
+kind = "dot_511_targets"
+
+[camreg_thailand_th]
+kind = "dot_511_targets"
+
+[camreg_toronto_on]
+kind = "dot_511_targets"
+
+[camreg_townofws]
+kind = "dot_511_targets"
+
+[camreg_trafficops_ca]
+kind = "dot_511_targets"
+
+[camreg_trpa_us]
+kind = "dot_511_targets"
+
+[camreg_tulane_la]
+kind = "dot_511_targets"
+
+[camreg_txdot_rep_tx]
+kind = "dot_511_targets"
+
+[camreg_uchicago]
+kind = "dot_511_targets"
+
+[camreg_ucsd]
+kind = "dot_511_targets"
+
+[camreg_ukm_my]
+kind = "dot_511_targets"
+
+[camreg_umbc_md]
+kind = "dot_511_targets"
+
+[camreg_univmb_mb]
+kind = "dot_511_targets"
+
+[camreg_uofmd_md]
+kind = "dot_511_targets"
+
+[camreg_vancouver_bc]
+kind = "dot_511_targets"
+
+[camreg_vidya]
+kind = "dot_511_targets"
+
+[camreg_webappfme]
+kind = "dot_511_targets"
+
+[camreg_wellington_nz]
+kind = "dot_511_targets"
+
+[camreg_whatley]
+kind = "dot_511_targets"
+
+[camreg_wim_camera]
+kind = "dot_511_targets"
+
+[camreg_yazid]
+kind = "dot_511_targets"
+
+[camreg_yline]
+kind = "dot_511_targets"
+
+[camreg_yorku]
+kind = "dot_511_targets"
+
+[camreg_zyinger]
+kind = "dot_511_targets"

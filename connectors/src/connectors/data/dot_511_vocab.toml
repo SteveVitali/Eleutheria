@@ -18,6 +18,12 @@
 # field aliases (Socrata + non-US ArcGIS schemas), the `point_fields` GeoJSON
 # point-object candidates, and the extra media-bearing field names
 # (iframe/photo/media/weathercam/still) — additive only.
+# 2026.09.18.3 (P26.16 / SOURCES.15): GL-GATE-07 batch — added
+# the observed id-field aliases (OID/FID2/OBJECTID_12/F__OBJECTID/
+# CEVI_OID/ObjectId2/REC_ID/GLOBAL_ID) and media-blocklist names for
+# device IPs/MACs/serials, stream URIs, and officer/editor name
+# fields observed on batch layers (recorded excluded, never emitted).
+# Additive only.
 # 2026.09.18.2 (P26.13 / SOURCES.12): added the catalog-sweep registry aliases
 # — UK council CCTV schemas (CAMERA_ID/CCTV_NUMBER/CCTV_NO/SITE_ID ids,
 # CAMERA_LOCATION/ADDRESS_2 names, WARD/DIVISION/LOCAL_AUTH districts,
@@ -28,7 +34,7 @@
 # object, nombre/sector). Projected coordinate fields (EASTING/NORTHING,
 # POINT_X/POINT_Y) are deliberately NOT aliased — the ArcGIS outSR=4326
 # geometry is the coordinate source for those layers. Additive only.
-vocab_version = "2026.09.18.2"
+vocab_version = "2026.09.18.3"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `dot_511` connector may write ONLY the camera-registry surface — a
@@ -102,6 +108,8 @@ id_fields = [
   # The Socrata `:id` pseudo-column — the stable per-row system id, LAST so any
   # publisher-provided id wins over it (e.g. Chicago red-light rows have no
   # publisher id column; the `:id` row ref is the registry key then).
+  # P26.16: observed id fields on the GL-GATE-07 batch layers.
+  "OID", "FID2", "OBJECTID_12", "F__OBJECTID", "CEVI_OID", "ObjectId2", "REC_ID", "GLOBAL_ID",
   ":id",
 ]
 
@@ -215,6 +223,9 @@ media_field_names = [
   "iframe", "media", "photo", "photoreference", "weathercam", "link",
   "still_url", "location_assessment", "img", "thumbnail", "videolink",
   "image_file", "stream_url", "cam_url",
+  # P26.16: device network fields + officer/editor person names on
+  # batch layers — recorded on excluded_fields, never emitted.
+  "ip_address", "ipaddress", "camera_ip_address_2", "cameraipaddress", "controlip", "switchip", "multisnsrip", "ptz_ip", "mac_address", "macaddress", "serialnumber", "serialnumberhousing", "serial_no", "encoderpath", "rtsp", "rtsp_uri", "rtmpt", "firmwareversion", "officer", "creator", "editor", "addedby", "modifiedby", "created_user", "last_edited_user", "enteredby", "lastmodifiedby", "lasteditor",
 ]
 media_field_patterns = [
   "url", "image", "video", "snapshot", "screenshot", "hls", "stream", "thumb",

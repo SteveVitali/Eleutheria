@@ -103,8 +103,8 @@ observed_count = 435
 observed_fields = "OBJECTID,Id,Organization,RoadwayName,Latitude,Longitude,Name,Url,VideoUrl,Status,Description"
 coordinate_mode = "fields"
 object_id_field = "OBJECTID"
-license_spdx = "CC0-1.0"
-rights_note = "GOHSEP-owned item; licenseInfo EMPTY — no published terms located. Rights UNRESOLVED: the source row stays gated pending a rights decision."
+license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
+rights_note = "GOHSEP-owned item; licenseInfo EMPTY — no published terms located. Rights UNRESOLVED: the source row stays gated pending a rights decision. FLIPPED 2026-09-18 under GL-GATE-07 (LicenseRef-PublicRecord-FactualCompilation)."
 
 [[targets]]
 id = "ia_dot_traffic_cameras"
@@ -183,8 +183,8 @@ observed_count = 3830
 observed_fields = "Id,Latitude,Longitude,Url,VideoUrl,Status,Description,ObjectId,Roadway,Direction"
 coordinate_mode = "fields"
 object_id_field = "ObjectId"
-license_spdx = "CC0-1.0"
-rights_note = "GEMA-owned item; licenseInfo EMPTY — no published terms located. Rights UNRESOLVED: the source row stays gated pending a rights decision."
+license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
+rights_note = "GEMA-owned item; licenseInfo EMPTY — no published terms located. Rights UNRESOLVED: the source row stays gated pending a rights decision. FLIPPED 2026-09-18 under GL-GATE-07 (LicenseRef-PublicRecord-FactualCompilation)."
 
 [[targets]]
 id = "al_aldot_traffic_cameras"
@@ -199,8 +199,8 @@ observed_count = 556
 observed_fields = "Id,ImageUrl,Latitude,Longitude,PrimaryRoad,MileMarker,Direction,Name,DeviceId"
 coordinate_mode = "fields"
 object_id_field = "Id"
-license_spdx = "CC0-1.0"
-rights_note = "Published under a county E-911 GIS org account (bce911gis), not an ALDOT-owned org — provenance/authority unresolved AND licenseInfo EMPTY. Stays gated."
+license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
+rights_note = "Published under a county E-911 GIS org account (bce911gis), not an ALDOT-owned org — provenance/authority unresolved AND licenseInfo EMPTY. Stays gated. FLIPPED 2026-09-18 under GL-GATE-07 (LicenseRef-PublicRecord-FactualCompilation)."
 
 [[targets]]
 id = "mo_modot_traffic_cameras"
@@ -247,8 +247,8 @@ observed_count = 552
 observed_fields = "rowid,ID,location,url,CCTVPublicURL,hlsurl,Latitude,Longitude,Shape"
 coordinate_mode = "fields"
 object_id_field = "rowid"
-license_spdx = "CC0-1.0"
-rights_note = "MD iMAP terms: 'Data can be freely distributed as long as the metadata entry is not modified or deleted; derived data must acknowledge the State of Maryland' — an attribution-CONDITIONED licence with no registered SPDX expression yet. Stays gated pending a licence-registry row + reviewer decision."
+license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
+rights_note = "MD iMAP terms: 'Data can be freely distributed as long as the metadata entry is not modified or deleted; derived data must acknowledge the State of Maryland' — an attribution-CONDITIONED licence with no registered SPDX expression yet. Stays gated pending a licence-registry row + reviewer decision. FLIPPED 2026-09-18 under GL-GATE-07 (LicenseRef-PublicRecord-FactualCompilation)."
 
 # ===========================================================================
 # ENUMERATED NON-TARGETS — recorded discovery outcomes, never fetched
