@@ -60,10 +60,12 @@ class RunReport:
     captures: list[CaptureRef] = field(default_factory=list)
     disappearances: list[Disappearance] = field(default_factory=list)
     #: Politeness refusals on discovery-continuation targets (P25.5): a resolved
-    #: child document whose host refuses the fetch (robots unretrievable or
-    #: disallowing) is recorded here — a first-class per-document disposition —
-    #: while the run continues to the next resolved target. A refusal on a
-    #: *seed* target still propagates (a refused seed is a refused run).
+    #: child document whose host refuses the fetch (a robots refusal from a
+    #: non-standard fetcher — the shared ``PoliteFetcher`` never refuses post
+    #: GL-GATE-08 / ADR-088) is recorded here — a first-class per-document
+    #: disposition — while the run continues to the next resolved target. A
+    #: refusal on a *seed* target still propagates (a refused seed is a
+    #: refused run).
     refusals: list[dict[str, Any]] = field(default_factory=list)
     #: Per-document content drift on discovery-continuation targets (P26.6): a
     #: resolved child document whose captured bytes no longer parse as the
