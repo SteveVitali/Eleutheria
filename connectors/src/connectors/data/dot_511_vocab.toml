@@ -14,10 +14,13 @@
 # header — otherwise TOML nests it under that table.
 
 # The connector's own vocabulary version, stamped onto every run (§20).
-# 2026.09.18 (P26.9 / SOURCES.8): added the municipal/transit/international
-# field aliases (Socrata + non-US ArcGIS schemas), the `point_fields` GeoJSON
-# point-object candidates, and the extra media-bearing field names
-# (iframe/photo/media/weathercam/still) — additive only.
+# 2026.09.19.1 (P26.16 / SOURCES.15 live pass): added `ObjectID`/`object_id`
+# id aliases (Chattanooga second layer, PG County Socrata) and `location_1`
+# point-object alias (Socrata re-joined point columns); `extract_coordinate`
+# now walks every matching lat/lon alias pair and falls back to the
+# operator-published point geometry when aliased attributes are unusable
+# (DMS text, projected values, swapped columns — recorded coordinate_source).
+# Additive only.
 # 2026.09.18.3 (P26.16 / SOURCES.15): GL-GATE-07 batch — added
 # the observed id-field aliases (OID/FID2/OBJECTID_12/F__OBJECTID/
 # CEVI_OID/ObjectId2/REC_ID/GLOBAL_ID) and media-blocklist names for
@@ -34,7 +37,11 @@
 # object, nombre/sector). Projected coordinate fields (EASTING/NORTHING,
 # POINT_X/POINT_Y) are deliberately NOT aliased — the ArcGIS outSR=4326
 # geometry is the coordinate source for those layers. Additive only.
-vocab_version = "2026.09.18.3"
+# 2026.09.18 (P26.9 / SOURCES.8): added the municipal/transit/international
+# field aliases (Socrata + non-US ArcGIS schemas), the `point_fields` GeoJSON
+# point-object candidates, and the extra media-bearing field names
+# (iframe/photo/media/weathercam/still) — additive only.
+vocab_version = "2026.09.19.1"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `dot_511` connector may write ONLY the camera-registry surface — a
@@ -110,6 +117,9 @@ id_fields = [
   # publisher id column; the `:id` row ref is the registry key then).
   # P26.16: observed id fields on the GL-GATE-07 batch layers.
   "OID", "FID2", "OBJECTID_12", "F__OBJECTID", "CEVI_OID", "ObjectId2", "REC_ID", "GLOBAL_ID",
+  # P26.16 live pass: mixed-case OBJECTID variant (Chattanooga second layer)
+  # and Socrata snake_case (Prince George's County).
+  "ObjectID", "object_id",
   ":id",
 ]
 
@@ -143,6 +153,9 @@ point_fields = [
   # P26.13: Puerto Gaitán (datos.gov.co) publishes its point under the Spanish
   # `georeferencia` GeoJSON column.
   "georeferencia",
+  # P26.16 live pass: Socrata re-joined point columns surface as `location_1`
+  # (Prince George's County) beside the text `location` column.
+  "location_1",
 ]
 
 # Roadway / route the camera watches.

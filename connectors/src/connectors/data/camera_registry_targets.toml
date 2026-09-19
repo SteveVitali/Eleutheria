@@ -860,6 +860,9 @@ state = "LA"
 jurisdiction_scheme = "us.state_abbr"
 observed_count = 118
 verified = 2026-09-18
+# The layer's OID field is `ID` (verified live 2026-09-19 — a bare OBJECTID
+# orderByFields returns a 400 error envelope); fields are ID/IMAGE_VIEW/GEOMETRY.
+object_id_field = "ID"
 license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
 notes = "Arcgis item c686a8a6b41342b7bc4011d16e75f61c 'Traffic Camera' (owner EBRGIS, 118 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 
@@ -3580,6 +3583,9 @@ jurisdiction_scheme = "us.state_abbr"
 observed_count = 205
 verified = 2026-09-18
 object_id_field = "OBJECTID"
+# The layer's maxRecordCount is 200 (verified live 2026-09-19 — a 1,000-row
+# request returns exceededTransferLimit on every page).
+page_size = 200
 license_spdx = "LicenseRef-PublicRecord-FactualCompilation"
 notes = "Arcgis item c83d85929ead4c01b1d684594391cf09 'Intelligent Transportation System (ITS) Cameras' (owner cgis.maps, 205 rows observed 2026-09-18). FLIPPED (GL-GATE-07): LicenseRef-PublicRecord-FactualCompilation."
 

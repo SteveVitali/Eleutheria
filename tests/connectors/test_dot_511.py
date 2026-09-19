@@ -259,6 +259,18 @@ def test_registry_targets_paginate_over_the_transfer_limit() -> None:
     assert len(ky) == 1 and ky[0]["page"] == 0 and ky[0]["page_count"] == 1
 
 
+def test_registry_targets_honor_a_layer_page_size() -> None:
+    """A row's reviewed `page_size` pins the ArcGIS page bound when the
+    layer's own maxRecordCount is below the 1,000 default (P26.16:
+    camreg_portland_or serves 200 rows/page — 205 observed → 2 pages)."""
+    targets = live_targets("camreg_portland_or")
+    assert len(targets) == 2
+    assert [t["page"] for t in targets] == [0, 1]
+    for i, t in enumerate(targets):
+        assert f"resultOffset={i * 200}" in t["url"]
+        assert "resultRecordCount=200" in t["url"]
+
+
 def test_exceeded_transfer_limit_is_content_drift() -> None:
     """A page answering exceededTransferLimit=true means the registry outgrew
     its planned pages — fail loud, never emit a silently truncated registry."""
@@ -379,6 +391,30 @@ def test_extract_coordinate_prefers_explicit_fields() -> None:
 def test_extract_coordinate_geometry_fallback() -> None:
     lat, lon, source = extract_coordinate({}, {"x": -122.33, "y": 47.62})
     assert (lat, lon, source) == (47.62, -122.33, "geometry")
+
+
+def test_extract_coordinate_falls_through_unusable_field_pairs() -> None:
+    """P26.16 live pass: a present-but-unusable aliased pair (DMS text,
+    projected values, swapped columns) falls through to the next pair, then
+    to the operator-published geometry — the recorded coordinate_source is
+    honest about which won."""
+    # DMS-text LATITUDE/LONGITUDE (UKM Malaysia) — non-numeric → geometry wins.
+    lat, lon, source = extract_coordinate(
+        {"LATITUDE": "  2°55'46.73\"N", "LONGITUDE": "101°46'40.23\"E", "Y": 2.93, "X": 101.77},
+        {"x": 101.7778, "y": 2.9296},
+    )
+    assert (lat, lon, source) == (2.9296, 101.7778, "geometry")
+    # Projected x/y attributes (Bangla layer) — out of range → geometry wins.
+    lat, lon, source = extract_coordinate(
+        {"x": 23099.48, "y": 31427.70}, {"x": 103.789, "y": 1.3005}
+    )
+    assert (lat, lon, source) == (1.3005, 103.789, "geometry")
+    # Publisher-swapped Latitude/Longitude values (Zyinger layer) → geometry.
+    lat, lon, source = extract_coordinate(
+        {"Latitude": -119.62969, "Longitude": 37.03394},
+        {"x": -119.62969, "y": 37.03394},
+    )
+    assert (lat, lon, source) == (37.03394, -119.62969, "geometry")
 
 
 @pytest.mark.parametrize(
