@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnaonh7xhk2e77vwfduk5syrqmuz5z4hxkqfokao6m6jgayyfwuxre3hjeosaa4qj5k77gitupqqbncshph7iosnyzbos5t2bsizhuvuau"
+  ],
+  "claims_added": 27,
+  "detail": "",
+  "duration_seconds": 1.788,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnaonh7xhk2e77vwfduk5syrqmuz5z4hxkqfokao6m6jgayyfwuxre3hjeosaa4qj5k77gitupqqbncshph7iosnyzbos5t2bsizhuvuau"
+    ],
+    "claim_count": 27,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 1.786436,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_dubuque_ia",
+    "started_at": "2026-09-19T06:12:57.179982+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_dubuque_ia",
+  "started_at": "2026-09-19T06:12:57+00:00"
+}

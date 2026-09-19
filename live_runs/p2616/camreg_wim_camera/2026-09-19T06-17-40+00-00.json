@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnahwwrmtwpzzdwzue2quaa5pn3hcfmiu4evfrua3nvzfv3f4prtq6rsdrw7zyjiwh3kszjdszyxz6dc6nqk6cnsijcswn5ombe35dhklm"
+  ],
+  "claims_added": 272,
+  "detail": "",
+  "duration_seconds": 0.26,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnahwwrmtwpzzdwzue2quaa5pn3hcfmiu4evfrua3nvzfv3f4prtq6rsdrw7zyjiwh3kszjdszyxz6dc6nqk6cnsijcswn5ombe35dhklm"
+    ],
+    "claim_count": 272,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 0.258961,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_wim_camera",
+    "started_at": "2026-09-19T06:17:40.163828+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_wim_camera",
+  "started_at": "2026-09-19T06:17:40+00:00"
+}

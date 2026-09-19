@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnanpnlpm52il44dt4n2iahlezt7m6wt7dv5d6cfdmjiokrdecdz3wa3a2h352a57hu2wx5sl3fvtal6uchj7bppj2iqq5q74gdyw74t54"
+  ],
+  "claims_added": 7251,
+  "detail": "",
+  "duration_seconds": 0.602,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnanpnlpm52il44dt4n2iahlezt7m6wt7dv5d6cfdmjiokrdecdz3wa3a2h352a57hu2wx5sl3fvtal6uchj7bppj2iqq5q74gdyw74t54"
+    ],
+    "claim_count": 7251,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 0.599813,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_uchicago",
+    "started_at": "2026-09-19T06:17:30.758505+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_uchicago",
+  "started_at": "2026-09-19T06:17:30+00:00"
+}

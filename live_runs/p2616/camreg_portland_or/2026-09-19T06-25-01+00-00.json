@@ -1,0 +1,39 @@
+{
+  "capture_digests": [
+    "bcnae5fci3zdou753q2qpjjodvha3zjmqcfxcdkohuqccobaxd5jic33cynomtz4crbv2fflrm6pkktltv3ab3qsvgxuthz3yih6oib3xiu",
+    "bcnam3sw5775cpkxujaqbbanojc4lp274cbpqzszexyic7ym4x6nhv2m6a7xj337faayfepgbprp3titn375lscpj2c2qcznkl3yrkpji5y"
+  ],
+  "claims_added": 1640,
+  "detail": "",
+  "duration_seconds": 1.28,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnae5fci3zdou753q2qpjjodvha3zjmqcfxcdkohuqccobaxd5jic33cynomtz4crbv2fflrm6pkktltv3ab3qsvgxuthz3yih6oib3xiu",
+      "bcnam3sw5775cpkxujaqbbanojc4lp274cbpqzszexyic7ym4x6nhv2m6a7xj337faayfepgbprp3titn375lscpj2c2qcznkl3yrkpji5y"
+    ],
+    "claim_count": 1640,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 1.218059,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_portland_or",
+    "started_at": "2026-09-19T06:25:01.257120+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_portland_or",
+  "started_at": "2026-09-19T06:25:01+00:00"
+}

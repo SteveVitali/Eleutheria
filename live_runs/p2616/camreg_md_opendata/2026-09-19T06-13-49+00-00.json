@@ -1,0 +1,39 @@
+{
+  "capture_digests": [
+    "bcnaiqs74ktdogbykiltofkkj5faqjrpw6vs7gcczrzczffco5shgksjxt2qpwrhkxp5n7lltkasw6hyyp3xdebjyzlfuyyccoqwbfe63xe",
+    "bcnabj42a44v54raxlxmxbb74yvsfozinekuup72k5wtoohq5p4v3uih3do3fguw5odhm5gfcscfrcyk5p7hcobjxa2ad2n2dazdfqwxi4a"
+  ],
+  "claims_added": 9020,
+  "detail": "",
+  "duration_seconds": 1.655,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnaiqs74ktdogbykiltofkkj5faqjrpw6vs7gcczrzczffco5shgksjxt2qpwrhkxp5n7lltkasw6hyyp3xdebjyzlfuyyccoqwbfe63xe",
+      "bcnabj42a44v54raxlxmxbb74yvsfozinekuup72k5wtoohq5p4v3uih3do3fguw5odhm5gfcscfrcyk5p7hcobjxa2ad2n2dazdfqwxi4a"
+    ],
+    "claim_count": 9020,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 1.652389,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_md_opendata",
+    "started_at": "2026-09-19T06:13:49.149000+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_md_opendata",
+  "started_at": "2026-09-19T06:13:49+00:00"
+}

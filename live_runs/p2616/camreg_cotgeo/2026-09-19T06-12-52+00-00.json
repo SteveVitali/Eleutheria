@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnaacrq4kgaroxbil2m7iwg5nvommvj25dxesifddqahrf32emo3r47frekqeuppshcn62rd3pgmg64hq7dxsa3hdmpfzler5rw24bsidi"
+  ],
+  "claims_added": 2688,
+  "detail": "",
+  "duration_seconds": 0.361,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnaacrq4kgaroxbil2m7iwg5nvommvj25dxesifddqahrf32emo3r47frekqeuppshcn62rd3pgmg64hq7dxsa3hdmpfzler5rw24bsidi"
+    ],
+    "claim_count": 2688,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 0.358662,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_cotgeo",
+    "started_at": "2026-09-19T06:12:52.706523+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_cotgeo",
+  "started_at": "2026-09-19T06:12:52+00:00"
+}

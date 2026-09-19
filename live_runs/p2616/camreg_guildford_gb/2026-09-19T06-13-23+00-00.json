@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnaf6452qqtmzwswx5fks7vecfy4cgxnfu37prthmivlxsnoe2excdcz4mowzlbnjslzuttiqnuoujimcmh4eebxvkzezn3xmo2wr36liy"
+  ],
+  "claims_added": 1211,
+  "detail": "",
+  "duration_seconds": 0.622,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnaf6452qqtmzwswx5fks7vecfy4cgxnfu37prthmivlxsnoe2excdcz4mowzlbnjslzuttiqnuoujimcmh4eebxvkzezn3xmo2wr36liy"
+    ],
+    "claim_count": 1211,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 0.621078,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_guildford_gb",
+    "started_at": "2026-09-19T06:13:23.675649+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_guildford_gb",
+  "started_at": "2026-09-19T06:13:23+00:00"
+}

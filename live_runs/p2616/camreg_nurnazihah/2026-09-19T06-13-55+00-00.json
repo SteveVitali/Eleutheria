@@ -1,0 +1,39 @@
+{
+  "capture_digests": [
+    "bcnajeqolvnqu527cah7lx373h43qcjrwqbndsmtq457j4pc5reexzt6xcmn7sdj6kt7oq72kipicqa7hur6tkmghek5rtxt5lp27f37roy",
+    "bcnaatzn35fqie5ujixqfey3toqlmo7hudujlnzyast6fr6h7rjfxwplery475h6cstwzq3n644yrq67luw6ertun3mhgzjbxslxsd7hlhu"
+  ],
+  "claims_added": 5430,
+  "detail": "",
+  "duration_seconds": 2.583,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnajeqolvnqu527cah7lx373h43qcjrwqbndsmtq457j4pc5reexzt6xcmn7sdj6kt7oq72kipicqa7hur6tkmghek5rtxt5lp27f37roy",
+      "bcnaatzn35fqie5ujixqfey3toqlmo7hudujlnzyast6fr6h7rjfxwplery475h6cstwzq3n644yrq67luw6ertun3mhgzjbxslxsd7hlhu"
+    ],
+    "claim_count": 5430,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 2.580567,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_nurnazihah",
+    "started_at": "2026-09-19T06:13:55.427284+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_nurnazihah",
+  "started_at": "2026-09-19T06:13:55+00:00"
+}

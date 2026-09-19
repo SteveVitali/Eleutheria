@@ -1,0 +1,43 @@
+{
+  "capture_digests": [
+    "bcnah2dszrx7mvhs44xlg44srpj2dywu5udzluiedqu5gp25ahps3bsfq7wmohpar47675dpxjcvmeh3f4bfifyaozzecxrumjl44iq2g4u",
+    "bcnacaomapdbpkm4hwt4xqxommbebsn7v42lzygdehylhczcxf5rddzhhm2wfdtaggnl7lkgqbgppnec4wozh3n5ql5g2dkmsf6owk2dzde",
+    "bcnahch6gm7vu4qnqbbg26iiw6ffr456xwvfbffitvgk5h6id2ittv4txjdlww45wh5ovbc2fxaa3gpep5youyzqmq36pr4qu63ttcgio5m",
+    "bcnamaj4yhbrasddnpe2v4cfgq24zdwelxda266v5sxsudongjgi7422jy6ketjxfczjq6gnawnkdnat6kven5erwkgddrmyxogsn2fufke"
+  ],
+  "claims_added": 3360,
+  "detail": "",
+  "duration_seconds": 3.308,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnah2dszrx7mvhs44xlg44srpj2dywu5udzluiedqu5gp25ahps3bsfq7wmohpar47675dpxjcvmeh3f4bfifyaozzecxrumjl44iq2g4u",
+      "bcnacaomapdbpkm4hwt4xqxommbebsn7v42lzygdehylhczcxf5rddzhhm2wfdtaggnl7lkgqbgppnec4wozh3n5ql5g2dkmsf6owk2dzde",
+      "bcnahch6gm7vu4qnqbbg26iiw6ffr456xwvfbffitvgk5h6id2ittv4txjdlww45wh5ovbc2fxaa3gpep5youyzqmq36pr4qu63ttcgio5m",
+      "bcnamaj4yhbrasddnpe2v4cfgq24zdwelxda266v5sxsudongjgi7422jy6ketjxfczjq6gnawnkdnat6kven5erwkgddrmyxogsn2fufke"
+    ],
+    "claim_count": 3360,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 3.306971,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_baltimore_atves_md",
+    "started_at": "2026-09-19T06:12:28.608634+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_baltimore_atves_md",
+  "started_at": "2026-09-19T06:12:28+00:00"
+}

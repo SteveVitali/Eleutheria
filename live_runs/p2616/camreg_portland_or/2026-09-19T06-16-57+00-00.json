@@ -1,0 +1,14 @@
+{
+  "capture_digests": [],
+  "claims_added": 0,
+  "detail": "",
+  "duration_seconds": 0.589,
+  "exit_code": 5,
+  "fetch_record": {},
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "content_drift",
+  "refusal_reason": "content drift for source 'camreg_portland_or': ArcGIS query page hit the transfer limit — the registry outgrew its planned pages (page 1/1 returned exceededTransferLimit=true; more rows exist beyond the planned resultOffset range — bump the target's observed_count in data/dot_511_targets.toml (never emit a silently truncated registry))",
+  "source": "camreg_portland_or",
+  "started_at": "2026-09-19T06:16:57+00:00"
+}

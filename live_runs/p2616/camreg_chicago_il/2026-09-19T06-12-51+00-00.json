@@ -1,0 +1,39 @@
+{
+  "capture_digests": [
+    "bcnamts7pat4mxikvaq73nabffapwz55cs5ba6eh3wmmnnpfuck5q7rvxhsjfx6yh7ewh5n6ny26ykb2jfxgdcjr7mxghmjqxx25p3j3gw4",
+    "bcnacynxct7o5rpnez25zsdz5b5gmjyclnak43qlyjzfh44fcm4x3ljtzoeskbl2eeau5fnc2c4j6w76i6yah7ejndkhdztuj7q25r5ylqi"
+  ],
+  "claims_added": 4581,
+  "detail": "",
+  "duration_seconds": 1.289,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnamts7pat4mxikvaq73nabffapwz55cs5ba6eh3wmmnnpfuck5q7rvxhsjfx6yh7ewh5n6ny26ykb2jfxgdcjr7mxghmjqxx25p3j3gw4",
+      "bcnacynxct7o5rpnez25zsdz5b5gmjyclnak43qlyjzfh44fcm4x3ljtzoeskbl2eeau5fnc2c4j6w76i6yah7ejndkhdztuj7q25r5ylqi"
+    ],
+    "claim_count": 4581,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 1.285172,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_chicago_il",
+    "started_at": "2026-09-19T06:12:51.074823+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_chicago_il",
+  "started_at": "2026-09-19T06:12:51+00:00"
+}

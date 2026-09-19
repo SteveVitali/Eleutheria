@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnani4fvmpkh3ccqkgzjl5t57q255utm5nvebmkf2q2tfma25ov6j5dmd5qba6zceria2fthgld5i7m3fz5x3offqksqrcfhlb6zygyide"
+  ],
+  "claims_added": 152,
+  "detail": "",
+  "duration_seconds": 0.5,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnani4fvmpkh3ccqkgzjl5t57q255utm5nvebmkf2q2tfma25ov6j5dmd5qba6zceria2fthgld5i7m3fz5x3offqksqrcfhlb6zygyide"
+    ],
+    "claim_count": 152,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 0.499311,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_gistel_be",
+    "started_at": "2026-09-19T06:13:22.729308+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_gistel_be",
+  "started_at": "2026-09-19T06:13:22+00:00"
+}

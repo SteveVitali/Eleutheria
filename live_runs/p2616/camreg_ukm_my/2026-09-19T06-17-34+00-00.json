@@ -1,0 +1,14 @@
+{
+  "capture_digests": [],
+  "claims_added": 0,
+  "detail": "",
+  "duration_seconds": 0.747,
+  "exit_code": 5,
+  "fetch_record": {},
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "content_drift",
+  "refusal_reason": "content drift for source 'camreg_ukm_my': every camera record failed the coordinate/identity policy (387 rejected, 0 emitted — the layer schema likely drifted)",
+  "source": "camreg_ukm_my",
+  "started_at": "2026-09-19T06:17:34+00:00"
+}

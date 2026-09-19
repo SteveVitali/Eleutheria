@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnaknqc7m36bksdxn3lruhhx22dh5apd43ouihn3rkwbjy7wwi2rgrl6oj5wcvc2wx6o4g3ktbmvr2omtvk6irqhmc3adg6d3q4cmddnbm"
+  ],
+  "claims_added": 224,
+  "detail": "",
+  "duration_seconds": 0.522,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnaknqc7m36bksdxn3lruhhx22dh5apd43ouihn3rkwbjy7wwi2rgrl6oj5wcvc2wx6o4g3ktbmvr2omtvk6irqhmc3adg6d3q4cmddnbm"
+    ],
+    "claim_count": 224,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 0.521185,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_manhattan_ks",
+    "started_at": "2026-09-19T06:13:42.589613+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_manhattan_ks",
+  "started_at": "2026-09-19T06:13:42+00:00"
+}

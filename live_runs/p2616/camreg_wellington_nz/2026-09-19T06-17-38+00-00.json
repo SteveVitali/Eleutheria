@@ -1,0 +1,39 @@
+{
+  "capture_digests": [
+    "bcnab5e53zmid36jfpvq2wyhe3ptcwy766ibthvtqo7np6wqpjeve44dx7tcgfaebdvon2ziw4jwnb45y4ob6u74jjoqclzqkqv6unkwi5a",
+    "bcnaf6sbiqoo7od4uxcn47pdumutq5bop2aa2ofee5d7sktvhbidy2iroicspsej27bsbzcdaxwtboiryd4ym5xdwck5r2sjhn4bebsoeoe"
+  ],
+  "claims_added": 2493,
+  "detail": "",
+  "duration_seconds": 0.88,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnab5e53zmid36jfpvq2wyhe3ptcwy766ibthvtqo7np6wqpjeve44dx7tcgfaebdvon2ziw4jwnb45y4ob6u74jjoqclzqkqv6unkwi5a",
+      "bcnaf6sbiqoo7od4uxcn47pdumutq5bop2aa2ofee5d7sktvhbidy2iroicspsej27bsbzcdaxwtboiryd4ym5xdwck5r2sjhn4bebsoeoe"
+    ],
+    "claim_count": 2493,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 0.877782,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_wellington_nz",
+    "started_at": "2026-09-19T06:17:38.585574+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_wellington_nz",
+  "started_at": "2026-09-19T06:17:38+00:00"
+}
