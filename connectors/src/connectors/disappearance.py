@@ -36,6 +36,9 @@ _GONE_STATUSES: dict[int, str] = {404: "link_rotted", 410: "link_rotted"}
 _RESTRICTED_STATUSES: dict[int, str] = {401: "access_restricted", 451: "access_restricted"}
 #: A persistent bot-management challenge is a restricted-access disappearance.
 CHALLENGE_STATUS = "access_restricted"
+#: A transport-level failure (DNS/connect/timeout/TLS) — the artifact could not
+#: be reached at observation time (P26.17 / ADR-088).
+UNREACHABLE_STATUS = "unreachable"
 
 
 def failing_status_for_http(status: int) -> str | None:
@@ -56,11 +59,29 @@ def failing_status_for_error(error: Exception) -> str | None:
     """Map a fetch error onto a failing ``capture_status``, or ``None``.
 
     A persistent bot-management challenge (:class:`ChallengeEncountered`) is a
-    recorded access restriction — SIG never defeats it (SIG-INGEST-013).
+    recorded access restriction — SIG never defeats it (SIG-INGEST-013). A
+    transport-level failure (``httpx.HTTPError`` — DNS, connection refused,
+    timeout, TLS failure) is ``unreachable`` (P26.17 / ADR-088): with robots
+    verdicts non-gating, a host whose policy cannot be retrieved is attempted
+    and its connection-level failure is recorded here, never raised away.
     """
     if isinstance(error, ChallengeEncountered):
         return CHALLENGE_STATUS
+    if _is_transport_error(error):
+        return UNREACHABLE_STATUS
     return None
+
+
+def _is_transport_error(error: Exception) -> bool:
+    """Whether ``error`` is a transport-level failure (httpx on the live path).
+
+    Kept duck-typed on the httpx error family so the live transport's
+    ConnectError/ReadTimeout/TLS failures map to ``unreachable`` without this
+    module hard-depending on the transport's exception tree being importable.
+    """
+    import httpx  # connectors depends on httpx (the live transport)
+
+    return isinstance(error, httpx.HTTPError)
 
 
 @dataclass(frozen=True)
@@ -94,6 +115,7 @@ def note_disappearance(
 
 __all__ = [
     "CHALLENGE_STATUS",
+    "UNREACHABLE_STATUS",
     "Disappearance",
     "failing_status_for_error",
     "failing_status_for_http",

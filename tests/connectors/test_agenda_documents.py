@@ -407,7 +407,7 @@ def test_empty_document_records_empty_outcome(pin_tenant: Any) -> None:
     assert not _claims(report, "content_term")
 
 
-def test_robots_refused_document_records_a_politeness_refusal(pin_tenant: Any) -> None:
+def test_robots_disallowed_document_is_fetched_and_marked(pin_tenant: Any) -> None:
     target = pin_tenant("escribe")
     transport = _MapTransport()
     transport.add(
@@ -416,16 +416,24 @@ def test_robots_refused_document_records_a_politeness_refusal(pin_tenant: Any) -
         _fixture("escribe_victoria_meetings.json"),
         "application/json",
     )
-    # The index path is allowed; the document path is robots-disallowed — the
-    # honest outcome is a recorded per-document politeness refusal, no capture,
-    # no claims, and the run continues.
+    transport.add(
+        "/Meeting.aspx?Id=",
+        200,
+        b"<html><body> </body></html>",
+        "text/html",
+    )
+    # The index path is allowed; the document path is robots-disallowed. Under
+    # GL-GATE-08 / ADR-088 the verdict is recorded — never enforced: the
+    # document is fetched anyway and marked robots_disregarded, so the audit
+    # trail says the refusal was ignored rather than silently bypassed.
     transport.robots_map["escribemeetings.com"] = "User-agent: *\nDisallow: /Meeting.aspx\n"
-    report, _ctx = _run_platform("escribe", transport, target=target)
+    report, ctx = _run_platform("escribe", transport, target=target)
 
-    refusals = [r for r in report.refusals if "Meeting.aspx" in r["url"]]
-    assert refusals, "a robots-disallowed document is a recorded refusal"
-    assert refusals[0]["refusal"] == "RobotsDisallowed"
-    assert not _doc_rows(report)
+    assert not [r for r in report.refusals if "Meeting.aspx" in r["url"]]
+    disregarded = [d for d in ctx.fetcher.robots_disregarded if "Meeting.aspx" in d["url"]]
+    assert disregarded, "a disallowed-by-robots fetch records robots_disregarded"
+    assert disregarded[0]["verdict"] == "disallowed"
+    assert _doc_rows(report), "the document was fetched despite the disallow"
 
 
 def test_document_404_records_a_disappearance_not_a_row(pin_tenant: Any) -> None:

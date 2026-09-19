@@ -97,6 +97,20 @@ def _run(
     *,
     disallow_hosts: frozenset[str] = frozenset(),
 ) -> tuple[Any, MapTransport]:
+    report, transport, _ctx = _run_ctx(
+        source_id, connector_name, targets, responses, disallow_hosts=disallow_hosts
+    )
+    return report, transport
+
+
+def _run_ctx(
+    source_id: str,
+    connector_name: str,
+    targets: list[dict[str, Any]],
+    responses: Mapping[str, FetchResult],
+    *,
+    disallow_hosts: frozenset[str] = frozenset(),
+) -> tuple[Any, MapTransport, RunContext]:
     connector = registered_connectors()[connector_name]()
     source = dataclasses.replace(get(source_id), ingestion_permitted=True)
     transport = MapTransport(responses, disallow_hosts=disallow_hosts)
@@ -113,7 +127,7 @@ def _run(
         claim_sink=InMemoryClaimSink(),
         parameters={"targets": targets},
     )
-    return run(connector, ctx), transport
+    return run(connector, ctx), transport, ctx
 
 
 # --- RAA prefectures: resource index → bounded instrument documents -----------
@@ -240,16 +254,20 @@ def test_raa_child_disappearance_is_recorded_not_fatal() -> None:
     assert any(r.get("record_kind") == "evidence_artifact" for r in report.claims)
 
 
-def test_raa_child_robots_refusal_is_a_per_document_disposition() -> None:
-    report, _ = _run(
+def test_raa_child_robots_disallow_is_recorded_and_fetched() -> None:
+    # GL-GATE-08 / ADR-088: a per-document robots Disallow no longer refuses —
+    # the documents are fetched and each fetch is marked robots_disregarded.
+    report, _, ctx = _run_ctx(
         "raa_prefectures",
         "france_belgium_records",
         _raa_targets(max_documents=2),
         _raa_responses(),
         disallow_hosts=frozenset({"www.yonne.gouv.fr", "www.ain.gouv.fr"}),
     )
-    assert len(report.refusals) == 2
-    assert all(r["refusal"] == "RobotsDisallowed" for r in report.refusals)
+    assert not [r for r in report.refusals if "RobotsDisallowed" in r["refusal"]]
+    disregarded = ctx.fetcher.robots_disregarded
+    assert len(disregarded) == 2
+    assert all(d["verdict"] == "disallowed" for d in disregarded)
     # The seed index fetch still succeeded — the run did not die.
     assert any(r.get("record_kind") == "quality_report" for r in report.claims)
 
