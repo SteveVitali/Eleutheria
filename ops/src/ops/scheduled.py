@@ -100,6 +100,27 @@ class SourceCadence:
 
 
 @dataclass(frozen=True)
+class BatchCadence:
+    """One grouped reingestion batch (``[[batches]]`` row, P26.16 / SOURCES.15).
+
+    The GL-GATE-07 rights batch lands ~150 newly-green camera-registry
+    sources; one Cloud Run job + scheduler per source would be unmanageable,
+    so members run under a single ``sig-ingest-<batch>`` job —
+    ``sig-ops scheduled-ingest --batch <id>`` iterates ``members`` in order
+    and appends one ops/runs row PER MEMBER SOURCE (the per-source audit
+    record is unchanged; batching only groups the job/scheduler count).
+    """
+
+    id: str
+    cadence: str
+    cron: str
+    job: str
+    scheduler: str
+    members: tuple[str, ...]
+    note: str = ""
+
+
+@dataclass(frozen=True)
 class CadenceConfig:
     """The parsed ``ops/cadence.toml``."""
 
@@ -110,6 +131,7 @@ class CadenceConfig:
     probe_targets: tuple[TargetSpec, ...]
     runs_gcs_prefix: str
     sources: tuple[SourceCadence, ...]
+    batches: tuple[BatchCadence, ...] = ()
 
 
 def load_cadence(path: str | Path | None = None) -> CadenceConfig:
@@ -154,6 +176,18 @@ def load_cadence(path: str | Path | None = None) -> CadenceConfig:
         )
         for s in doc.get("sources", [])
     )
+    batches = tuple(
+        BatchCadence(
+            id=str(b["id"]),
+            cadence=str(b["cadence"]),
+            cron=str(b["cron"]),
+            job=str(b["job"]),
+            scheduler=str(b["scheduler"]),
+            members=tuple(str(m) for m in b.get("members", [])),
+            note=str(b.get("note", "")),
+        )
+        for b in doc.get("batches", [])
+    )
     return CadenceConfig(
         probe_job=str(probes.get("job", "sig-probe")),
         probe_scheduler=str(probes.get("scheduler", "sig-sched-probe")),
@@ -162,6 +196,7 @@ def load_cadence(path: str | Path | None = None) -> CadenceConfig:
         probe_targets=targets,
         runs_gcs_prefix=str(runs.get("gcs_prefix", RUN_PREFIX)),
         sources=sources,
+        batches=batches,
     )
 
 
@@ -170,12 +205,15 @@ def unscheduled_live_sources(config: CadenceConfig) -> list[str]:
 
     The drift check: a source that turns green and gains live targets but never
     gets a cadence row is a silent gap — surfaced here and pinned by tests.
+    Batch membership counts as scheduled (P26.16): a ``[[batches]]`` member
+    runs under its batch's ``sig-ingest-<id>`` job.
     """
     from connectors.live_targets import live_targets
     from connectors.loader import is_loadable
     from connectors.registry import sources as registry_sources
 
     scheduled = {s.source for s in config.sources}
+    scheduled.update(m for b in config.batches for m in b.members)
     missing: list[str] = []
     for record in registry_sources():
         if is_loadable(record) and live_targets(record.id) and record.id not in scheduled:
@@ -560,6 +598,7 @@ __all__ = [
     "PROBE_PREFIX",
     "RUN_OUTCOMES",
     "RUN_PREFIX",
+    "BatchCadence",
     "CadenceConfig",
     "RunRow",
     "SourceCadence",

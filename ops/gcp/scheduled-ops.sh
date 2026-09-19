@@ -110,6 +110,35 @@ PY
   )
 }
 
+# Read the grouped-batch table (id|cadence|cron|job|scheduler|member-count) —
+# P26.16 (SOURCES.15): the GL-GATE-07 rights batch groups its newly-green
+# camera-registry sources under ~10 sig-ingest-camreg-batch-* jobs; each batch
+# job runs `scheduled-ingest --batch <id>` which appends one ops/runs row PER
+# MEMBER source.
+read_batch_rows() {
+  (cd "${_here}/../.." && uv run python - "${_here}/../cadence.toml" <<'PY'
+import sys
+import tomllib
+
+with open(sys.argv[1], "rb") as fh:
+    doc = tomllib.load(fh)
+for b in doc.get("batches", []):
+    print(
+        "|".join(
+            [
+                b["id"],
+                b["cadence"],
+                b["cron"],
+                b["job"],
+                b["scheduler"],
+                str(len(b.get("members", []))),
+            ]
+        )
+    )
+PY
+  )
+}
+
 # 1. The Scheduler API + the dedicated least-privilege invoker SA (OIDC only —
 #    no keys, HG-09). Both already exist from P25.7's muckrock wiring; the
 #    describe-guard keeps the apply idempotent.
@@ -193,6 +222,28 @@ while IFS='|' read -r src cad cron job sched existing extra; do
   fi
   sched_upsert "${sched}" "${cron}" "${job}"
 done < <(read_cadence_rows)
+
+# 4. Grouped batches ([[batches]] — P26.16 GL-GATE-07). One job per batch runs
+#    `scheduled-ingest --batch <id>`; the wrapper appends one ops/runs row per
+#    member source. 120m ceiling: a batch carries ~26 registry endpoints.
+_log "-- grouped batches (run rows per member → ops/runs/<source>/) --"
+while IFS='|' read -r bid bcad bcron bjob bsched bcount; do
+  [ -z "${bid}" ] && continue
+  _log "  batch ${bid} (${bcount} member sources, ${bcad} ${bcron}) -> ${bjob}"
+  run gcloud run jobs deploy "${bjob}" \
+    --image "${IMAGE}" --region "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" \
+    --command sh \
+    --args "-c,exec sig-ops scheduled-ingest --batch ${bid} --sink pg" \
+    --tasks 1 --task-timeout 120m --max-retries 0 \
+    --set-cloudsql-instances "${CONN}" \
+    --set-env-vars "${JOB_ENV}" \
+    --set-secrets "SIG_PG_PASSWORD=${SIG_SECRET_PG_PASSWORD}:latest"
+  run gcloud run jobs add-iam-policy-binding "${bjob}" \
+    --project "${SIG_GCP_PROJECT}" --region "${SIG_GCP_REGION}" \
+    --member="serviceAccount:${SIG_SCHEDULER_SA_EMAIL}" \
+    --role=roles/run.invoker
+  sched_upsert "${bsched}" "${bcron}" "${bjob}"
+done < <(read_batch_rows)
 
 _log ""
 if [ "${SIG_GCP_MODE}" = "check" ]; then
