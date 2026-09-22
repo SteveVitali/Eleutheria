@@ -1,0 +1,1478 @@
+{
+  "capture_digests": [
+    "bcnabc5llyp32ohroeud4wfpfwn4lgjck2lyw5tdjun4hgvre63elgjfysfz263d24kldy3kqd7navd3gkwjdd3ykvbsl2tvgrxbfyyyway",
+    "bcnapnawjshxwf3ga7vjrrw3m5u22z553eu7yjqnlpn4zmhalu2a2itnujevo2nfzgl2bhkisxlrjpyaois34bgv7rxkwkqcxv2dnwfwayi",
+    "bcnajfhbr2jgxt6nklgig57qz4ct76x6qqibdssicmda7box3juzahliztomlw2kouilul5lxpws6rquyojbln7pfqwq3qx2ylzki7ybsqe",
+    "bcnalyveuwhzxthn34howlghsh2d32xskomrb4bze53lbyky4wjda6fb6a4xmlpfjqmxgi3t7fkgiciccrxiewgkuckupxv4zq3fnw6yaii",
+    "bcnaji2dr6mftqpbg4apaju7s46fveicw2q5zq7b7p7v24omia3lr4m63mnlg6422vvwhborz4lj623dy4rs2ax6mydgexuhx35jxvdj2ci",
+    "bcnaaluc76pcxfdbgmsjoahzgh327ijhbey3siztkbxkwnj3btyqxpgsu7df6iqulrjxl65iebbbivukzwkgpzsgpavrxqyuarigpppxlsm",
+    "bcnam5zr2mhldqid3xsvzttthlhisz5kpsznypc6l5gprdjbfx42bvcmgdbty3xu2s2vr5v2wp2awy42sns6czbrbxwkofmdid4s4x62qxi",
+    "bcnadzirye7lqjcwgobezte6zeaqjqu7llm3j7g4733xnthouqa6nnkzj2eaizroyqsynvisspjilghsroto7cir3aj4e6hii3lxfwwjvre",
+    "bcnaadf5gsh3z3j4ufnqta3zbvfslmnhl4qaloqnseifoz54rq5mjpvkrdn7ypiwnytdpgh3vl4kz4oz6pj4mpoisnmqtj4g7jlsxnmhy44",
+    "bcnad7na2r45gyovph7jf5ir724ef67t334ecero6bj3jm2wcdcfyznue3jlnuvrm22ywpv5dabmjlntxs24tgf2g2wyiqdjlnc64sobcsy",
+    "bcnan4w5dchyawlu6z6q6cxwfwrvvpylm7d4xshov5av3m6ltbixjv7ddvu5qm52ktvs4wfxl5zrjvawvv7lohpgrcqygusdyyhrhg576ym",
+    "bcnajbpsnttf3u6koud3lx7mm7l7y7cqimgy7wlrqr6qpgm7vvj4dg5ivftzyf46ad35pa47j5ztt3ihqlraqgdekkbeqndc4kifjjq2ksa",
+    "bcnac2xmqgdopof4twj6x5hff4fdcv2vjj4gdjjzhfpfght7b23uljjy46eff73thhcypsckw6euaafrnsi5dnoe3njgr6jc7ufe5d37pga",
+    "bcnalewzjjs2n5nu6uafeyphtce4qjaa3mak6lfll2am2qvyld7q5mbaosrhphtpoc3ikizidzjxglgrf6iopttw5ye7tkkr4tajyyfowv4",
+    "bcnahgymws3elkrjigv2sgrnaajjwzlbpnysma7xot4bkmngjodez7i2k27p3a4ljmxunzqgzpr6adjrel7zy7lo4xyfinpvtajpaeqcwbu",
+    "bcnakmajf5r42f7czkusshwnpcm7dlndfjwptms3h6wgdotvbio7a2at36dd74bkjwg6flv63xpxtppjuid257d5hozq27wmsi3bqslpcaa",
+    "bcnaaoscgv2hsp4yjqgb74sbape6vtszig5a2lvcjl6pu5hqtr2xr4bjohqdxi7e22n36vysohcwulhthvnnd3c74vnlikolqbucixke7ze",
+    "bcnadinekt52qlvl2bp7xofxfwed7xt3qm7gbpqrlml6ctaagdb5pa5lvkhd4ddhgb6bcvqpbbhbnpylqcav2aaitvpi7aiuf34snv2tap4",
+    "bcnapf7vo27g5eqttqxvudfqrheaqjpliiskahqvztuurpkoxouat3rgktaalllcqssbjq6uuectch57y4imntb6ff3e6zvp4i6j7trf6li",
+    "bcnai4jk3744aageqvgfvil6imwq6ezznrq3mvw4m5exa7kkq2fywllxl4e2roskuskjatpwomfg5xi6olu6bjiimkoljxfc4a7k4ijxc3m",
+    "bcnaai3azchb5kyicbpyf3w45fv7aoicdmfvplpzgn56sdcfrije2vi5dxa5o6hq4mdldpyo2ny7ihfyxxry2au5y446cmdnh4ndycf4maq",
+    "bcnabgpy2gsqfk4rg37alwbxneemokzb7xdjfie2kf5cqq5qjxkoy4jdnf7l46gu7d6ltt5blwqjrpmgjlxbtrtp6lv4ygponcw3h4wtuue",
+    "bcnabuelcahnifq4cogj2mx3z2ygxejndcbl6gzqphhcgkls3pacronuyvxqaaymep2wrdzqo4wgnyuql37i3xbdq534atduiodhtdv6cha",
+    "bcnajmnqmo5s73aklweakr52gmnc2frtzqqxwmck67747xsmvdrtl3phhrjxt462us45yzpz24lyzwj56fvule7mdano6bw2y3edck5u6am",
+    "bcnaly5tg7ehj6q7r5djtkgzxtxlfpqafc2iv4mlnmyvu3mhf7viwzv2uh2ugqpwpbhuw4d7hxxaxsb54mqpb6hirdnemts5cayhfrzciei",
+    "bcnadl6qgartmzisybtfw24ajhoczwtutpsksx67hk7o5zgpegzj3jaghvh3n6hxy427war7njb2z4pnpu3nmswultg6ddr2xioa5daltba",
+    "bcnae75ek7n5a6gprlbfnqsibusb3eioanxut6jfkkk7vrdc537hkg5mx6ug5ldesgmhnowaec4ve3wbm23iipegjruht4m33t27qfrlo6u",
+    "bcnao4p7rsxdkhpzeic6aqzyaejev345haem6r3agjx4bqvcl2uegqiuto2nur2s6h5f3nxhaa5wtnbwo53opmty2tnf2sbagr3mbcfzk2u",
+    "bcnahwfwphg7obkrsbaqs6uoowl4rgvj2wbewcaor26eyytqpocjbftulgqubmukysqkveb7pxv6vxiudtlzbrrsyw4cwsjheitio3ya4li",
+    "bcnai7nk4vbsxomm2npr5dwggctk6qzt34dp2qdj6swqht47e572cb3z66kua5kfdfeu2chpjtk6cm32t6w2yiefkvo2xjqs6irxafyjpq4",
+    "bcnaeoimkqcvuj5amp7recsf5tsmsppepzwkivksifia57ftmyilrbkb3usldt2gehji4wjvdntv2eybjteby544bavdv5l7mbzjgmivvba",
+    "bcnaiamzm65jqa56b23e2ddz7lopl6rmw5embvgipvv6jpjf3j24uus3wc374vdjmrxdofzvcux675en6ymg5l6xgerucf6vrh64f2pzlqe",
+    "bcnaoembqwnj2pkggk4jtcmmgmfulykai66vulxmjjzqw6yxlakrvlvbzcdbsss277pfbkzjx4wadni5bpixeuaadf7zkpjwnrqbzsqsium",
+    "bcnano5xtqr3decagyfxstyodxt2ye3ulhybwgotw4lkqfrnsbm7xipjq5omzvvdfwkpli6m57ijewg7tjgbxza3n7ygqezo5xoquxmzkg4",
+    "bcnafxwe5s2mz4kesezyllulqvnptw2zwqcmvf6bjptef5jahirmnjfla3h2hwwgtgmuabuvdv2s3fa24dq5p3y65o6knilxfph5jbwxbjq",
+    "bcnaowr72omb4yw55ulsuqc2w6rw3qkuk6qsjbbgskbsddwtnc4mkkui4qwtduo7q6ozxjbatshi5gcztf2ma3l5mcr4ukmqvzogxjycp4a",
+    "bcnalkhotvdegv4cb4njn5sd4bl56zqjmpbvh4ft72ysibw7hlphq6ia63oy6xonc6qnquwcp2g2vr7z3djez6lqkxej54agtntrrlflyqm",
+    "bcnalyheyzh5tvqhwgnqc73wrz6nfdvl45lyclwupsmpyf3x32ryrbgsock4qk53i3ydnn55i4zladjy7njt7c3zhrbasl5lhkxce7bqugm",
+    "bcnagcz6x5sdzlzuat733nzhueuixobzb6rkr6qtrpw57dqafhytl6dlntqp2vjepp3dofgx7yvcokuuktjrv4b2bvwhqwxsnplxuouw7bq",
+    "bcnabekzkcyrgzxyeqccvuqjhaacpgkaebkty74ny254dogoezmmsvo324zyjr4d2ol2wyenjubsiabefafwbdks5itjk7aubgufdwzaram",
+    "bcnajgcvq2s3kqakfkvvaf4lgafogxdzemu3tafrslslmcwodtkwpmyqhbpeb6s4ygqratoqjazs3fktfw4lq3eiislqfkczozgnhdfon2i",
+    "bcnact4jcq72ftx6bptvbungyspyhq5tpxvg6xa6q3hbzvb3yguc2uuu3rysiye56eti6nz7t4gr7soehczapv4jlcfwf5vgz737rcn3ffu",
+    "bcnamj3pzg7yfocrs35wk35m4t5z4dwh6j2etu33aqtvqg7pxasl2qegzjyw7rsci4rjgksyfplez6pip6hhdxedtyugcbeu3tsozt3ex5a",
+    "bcnaekisezwtxfxs7xigzpzwzw22m6gadgdijnf2ka2itsx5tfl4l6fykrze4v3f3dzihw7egmrbavwu56wjo7qhdwjbwt76x3b5yzqks5q",
+    "bcnaf5p7soymgatisyob4pme2repglxwfl7lkl3rsp4x3jdgjjzfqj2cjehatqfhfie6fm6bna2fegzm665h3r3ah64ikxl6b5t5clcbghm",
+    "bcnageapupbvhgunveiwxxctu5esmofa2dseyqnahvou2ervhjj4hwsrwsxrtdty4zpqmjzd4nlbqvwjp3vtj25yjizbp2izhi5vxw427ja",
+    "bcnapzzwbkxoj65rlkntfljczn3yrh4afwqoekvxa6ercfmzbqq7kqr4vque375crsco3xrv5y3oj6s6x4v5j4cbc5capxug2liand3xqje",
+    "bcnacs5xd2zvuqs2coav76p7vfchbaejwa6dkihrsm2i64wxcodae3htq5hwtx4245pac2fepzlspq5wy2de67t4owc7olmu3t66htz5q2a",
+    "bcnapg3glqwieftdbjnfqjbrtoo2fkpngubv5njauyu2zwk6earixyb5nj4yeq5d56zk764g5dkfzj2fyxhwl4qagfhyrd5g7me6yjyoyjq",
+    "bcnahwfymtzg6dwipavolm2rrpysidoqwlbeko2d35pqb2wbdirhwlxd2zqihbtrab2zahb5kl4kdeprd5lbhm7f3d5kcpgfqnrrh54zfb4",
+    "bcnanawn5xct3k7xxah7ur25vhi3gdpryzooqdosoycvwlufxwkrfeexmewej4vrfby6x6trvcyshb3az5paan5wsypnjor7wlmrx564ioa",
+    "bcnalawkyn264n3xmefelynjhbeu4yzomoycw4zc52o52d3c74ljoprxdjs4wrfulam5tq2s6s4ee2lwzsvhh4h5yu3rbwgqrnpmyxyneru",
+    "bcnab3roqgvzufrooloroytcmokk43buhiwd44qzbvj2xgdze3z7jrdkpdjq6wg2ii4xtvu6eypzacbfiiao2erreiv5ctwj44fbbg4bmpa",
+    "bcnadlreqsf2y6t4ia75hjmkgvvihx24m2n6td4ht56rq55uuq4iv7pir5rzyqnxq3qmhd6x7ztluu4osr6acc4mtccp2w24rr45bwosaxe",
+    "bcnafe4b6oqp4clj2nmjlmaqoiqzab2xbhgqcfnaphl7alugq4g2c6jryvlpjbpxllialg76st7gfwztd4gvuiyhnrbwokhsmq2iq5hpk5u",
+    "bcnafuzmjxq526ozwy234coagxfigbjl7ermlq5xrod2oribnx7pheyqi74qimc4xxlq7ia5h43dvfrjxfzj3p66ffk4h7tg4birhb2epv4",
+    "bcnajmrq67ymztcuehbfhfxd5lt652hbk3wtdhz36f2g4wyyqugdhe7h3sztv4qhg2nzsmjgq7wyrfwbst64amny43vy6s33cstrrrb5fga",
+    "bcnagvkocecieoiedygpf5e3b4ikn5la3sveniltb56swfydrixpeixcxwgr5p26sq2aekmc3jp3mz6jzbuqginxs7rkrlsyha2v4yihdwq",
+    "bcnapelaqhxvcfyys6emkqnqca6cv4y6f2bbjndk3rf4wmjtgxstntzgmimvx3njgfnggurhhgygbfevx6aqtjgwpio5xb2gt7svwrly5iy",
+    "bcnan3fll3iwjdwyugrctb7lx67tae77jqhlks3tlkvzhdabqkgrequirebam4vifbxf63ubwfw2vnnj4bcxhojgd2z5fb3i3slyaviulqm",
+    "bcnabg46lk4n3atcatvjbc5rsu2mfrmotlwzgxmpnuwdzewyp2l5dzbgyjjhj77lcfdtr733mhnq36szygp665dxv6ga6g3h3bk6ifn2dpi",
+    "bcnalewzjjs2n5nu6uafeyphtce4qjaa3mak6lfll2am2qvyld7q5mbaosrhphtpoc3ikizidzjxglgrf6iopttw5ye7tkkr4tajyyfowv4",
+    "bcnaiiv3oamx4mi2g4mdktkciefqhndxlldcx2g6ysneb5ozpfggiawj5cjzwojpk5qclsuaajnfhpsyzvh36iu6ic24fluhn7ryxmw6gpu",
+    "bcnak23lvptv2cpwe6b5mopbx5cuion2djlhjggjho5ax4aw74edytvumvdt7jodrgjwa2edjtzdz3wex5oicjssbdpbt6qm2ar6lf2hbby",
+    "bcnalewzjjs2n5nu6uafeyphtce4qjaa3mak6lfll2am2qvyld7q5mbaosrhphtpoc3ikizidzjxglgrf6iopttw5ye7tkkr4tajyyfowv4",
+    "bcnagp3em4gommi2b3rqstoaoiq3rrv6si67o6gsih6xshon4eexnzbwd46gtasjie3ps2k2dlciywxekunpcekmb7uf7zp226vna4cymdy",
+    "bcnamys7mcgum4s3rjvkjwexbgzadv3t3bmgexydqzpdjjywoxmmamn3i3sp7cb3uvdwejsq3kcjbn4xbgz7lhouieyhfwcmuez2b3zieyq",
+    "bcnahgv5qopibhxni2rqj3usrhopt6e6mtvu265kgsbximpbahcnggkhrdnqhzw3b2rrbsgzhxxwewuc2cfdpdbry73wo3npab7prca26ha",
+    "bcnahnelsyxvqmbi7vxcdh3zvn633czfohhezkavbyztuyckk5iuvjdugvrvhjkg4oegrzbk5kvkxgewpx3ohrnnqssdccezpegf2expjeq",
+    "bcnads3m5c634jaxzyqnsvgrcnguqkx7yqq66nuaizypctqgcrr6fwfy4tdbh4wyayx6xvpiby26c3gvnoc7oi7cwlxehxiaxubztwidgxi",
+    "bcnan7os7sha6xjh75nxwyg2z2l7s52o6dzr6ha7qlx5r6s23pwqxitcbl6xcvcsasg7grk7vtgmcjyekqweqpqezsch47oadr4p6zpl5h4",
+    "bcnaglbeswdwwwnx6dgaqp3wgpaegrbt3ci6dlxreetwkgncatyhvtm2afzjhzgdxjg6g6uzo4dbpfr4imykyk6pgb53lqwlde4m5qxkbyu",
+    "bcnaa4725a6tcq3ydvlbsojy35y3552gre66ff3xc52ra6f42gal2z247odahlbotq54l46viorizr2zpsfdoc3layx34buou623ecpy2b4",
+    "bcnab3kyqhubgbbui4nk5qb2to7sec67fi2kwiveyeghyx4nunjd4gclpqskvqmd6xp344i5cjlcid4l4zcicjb5hrxuo3ejqzp2ideipdm",
+    "bcnalewmjedn7pxbf4pgle3mrpv4pw5palsamueeoj2ypufcedh3rvfyzm3naffnroz7pklul3vrekebq64mohm25f3rfjemt6ujo3y6fym",
+    "bcnaafmb7cjttioarwqflogwwi6ub2oz3lcihlu6zvvs56vf4e6ehgwtziqfe4oellj3w5mypi4ggkzgweej7fsix7xkobw5g57t3ne6aky",
+    "bcnajpneiswg2cvru2557jsc75zrxdduvclo2ix7hqko4o2qodkp37zgoawvptc6cv6bf7bqvxh3apmmx5x2xvg2od2akomnrcuq2jtcwkm",
+    "bcnahx2uygr4ipgdktaotobr4u4ms7fuicrsnhc7xrcqcoka4lj5yflmh3jzbeaof4soujr77kgocsigaerywnktuqvurhcizxm4bf4fo7e",
+    "bcnah6ilb3zsgqdqeb5pyxqodcjjpae6wgdv2frpkjengx2pizzfnpq7y535l4fxt6ruhb4wjs2ffitdtwb52b5nmzlm3x6cpw24q2e5zfe",
+    "bcnadggugboci5jx4ksgeauqybx4f45skrtxyxanrofigib4xmmtnt2fdm6u4ja6be57f5popcvucgnjcfbqtw7mjyqanydm45fs3fvahky",
+    "bcnablu2ubnrhdtsgq77yu23eyb5japv2fe2j746o3qur25awvcflbyft3mogatpn5pybjts2e6jz23it73cubtzvioa5jvfjc24gdnjsjm",
+    "bcnapallrofogrocvan265ejvj4ef6mj7jhzwe4kcn2d7sya5ihzevouaftkcvjhtc73vtmbfr4ybbysgv4dlbgxvkptb4n24h6vy2fzmvi",
+    "bcnab7zmy3kl3nswspwzzc4dc4pp35ax6hp5d3aqdkr474hnq7zyot7qyufsuevd4h2birzuehcf5qcfhafqugslotxwxldo22jodvnk2he",
+    "bcnaataa4ej4qje3smgsmyxnmiyamfr534ypalvmy5vehig4sebvqv6jwifxhu2c2zzju6pxgol4xonh5oxzk4cyxm5nmrtkhc5lauhdjb4",
+    "bcnap4rzu36qnhw7opnqcacizmpr5uxswkwqc7btpv6r2asout43qvvg3ymniudqo6hiiibpsi2jgi677devdn74njfmp6efo6vqkn2io64",
+    "bcnagt2fa6oxniun2mcm22gt7izde5uzw6cwrb23hv7rdv7rkbv5qmx3w43fzzl6se4qpp6y2xdfqefmxuwwuxoo4z45tyg3q6qszhtwgw4",
+    "bcnalewzjjs2n5nu6uafeyphtce4qjaa3mak6lfll2am2qvyld7q5mbaosrhphtpoc3ikizidzjxglgrf6iopttw5ye7tkkr4tajyyfowv4",
+    "bcnadgdtzc2e3igmewvmzffdgsmxcypqtvtkelfvqdqri3a4kbjt5o5mmbyccx6g7me3mmehibvicccm5jscs74zdpmmnb7ggri22mvef24",
+    "bcnaekdjiljwpusoiqmqt2cs7ahl5na6xqi4tphdzo5bubzy6j5t73qwc64hxeozjp7l6i6jw336u7ll7m2pzixutpmrzocp4m4y6hzvkge",
+    "bcnalewzjjs2n5nu6uafeyphtce4qjaa3mak6lfll2am2qvyld7q5mbaosrhphtpoc3ikizidzjxglgrf6iopttw5ye7tkkr4tajyyfowv4",
+    "bcnafnkdgy5eps246eaw5dtbdrkhliytifjg3hkwxfiphoi2r2ec4aftisqsvuqfes23hhr2cslfurbccstzwsw4ex475wqyowgcoxwmbba",
+    "bcnac3qbkefuzn4pifxodkflfjqtsfdyjp5idjkbhsgorso67lyf2r6pxkl3ovrtlqzhplthtxosjapt66lsulimmet3wvllhnmirw4oiyy",
+    "bcnaalvep72qoljulmnizedfhqdt3lp7ljd4l5chqnlajix6elvvw6ckekv3pyf42zb2x55pn45rhv7a6rgv5apxlccyfbsrpn7apzmx2cy",
+    "bcnalewzjjs2n5nu6uafeyphtce4qjaa3mak6lfll2am2qvyld7q5mbaosrhphtpoc3ikizidzjxglgrf6iopttw5ye7tkkr4tajyyfowv4",
+    "bcnaoyribnxua2xufdhbbuwo4cjcfjwsk7feo6vjramxys53k643zktc2te4ifmj4zqpm2c6fglqltaadg7njnkbavhuw6meey6tnyuv4si",
+    "bcnao56cjhw6ebam4drtfsq3ebez63wolvlpswk4hfdfa3xud47nnebvgtx6vdhu7jk6mqvsrsplpetyvgjklec22u7r4r2swowyhmndltq",
+    "bcnacnl3nm57xbiyrcis2ilmewghplp4qsyf74nsmvagkv6bxmww75icfzusnn42low6xju6i7hdhlzts3cx33udy3gqd7vudh5z5ulepxe",
+    "bcnaglmcam43qykl7w5lviqpeskibqlnjlb7gxk56se6t7yu3sgltmd67zizfyyped4stbdcqx3fpqvpa2abnyc2nzvov5nxo5uujdkxesq",
+    "bcnagjlzqvu2ir4ptegvrjju6du7uarwcg4etprnju7mhx7rnmuit7bi6pwubnd6e444oumj4enlgxkhntaanza637q3nflh6osfgzdgqie",
+    "bcnaaivzj6afgzlpcfmtlfldaz7qwsqfguq2yvbqaektantihngitgqs5vcgdemmej4b22guvcwss4bqdqcri4ry4rnfcfscmtkut3rcqdq",
+    "bcnagdwhgkq4ljs224v7ou3zce5smtmjq7tqnkoye5zlkxu4cgrplss7bql3cvgobbj4sqdpt43amzukmzkniglqntvuirxgpv5p7p3lwrq",
+    "bcnacpuli6bvx7jyakvvoryzkpqwmr42cfzomraeelcmh73rro5o5hkae56lvtmsftbeaqyko3sui63dx7r5qbrsz6qxxkwguspcn7t4oki",
+    "bcnaijaj4bdm4dmh6qgm6prhen7ihl3wyrmgw3zscxra2w7s4xpjzxivoez545yfixfou62hxeih27s2tye6bpx24vf73ea5gc7vabfy3oq",
+    "bcnaby36j65ssusajn6hwox6m7u4fadbwfinhc3bz57li64xnxmquxzgajho6z5osxmsntcjul2yvah7bqyu23w6ujo3oljulecbih5txa4",
+    "bcnacljtthgn47wbamc4kdjmomowtg4vau3hrhbxo5s2cmgsofydzpdjea6twdqdu2yg5fnzrzlei3ar4esq7cq3bsnfuaexqvkxgtrqft4",
+    "bcnaf6o3wpwmnbvq3hkq6ss2xl3xdywssy6l2iizdal4b4i3azyce7q5a3wsocz2ocndkrewfrmnlxij26qdxkjzibmvx2jgaxbqbpshfbi",
+    "bcnaljthtzdciuwobakp7znozq2mohtiazdv35nkkrpgc47nw4bd2ue4ol6sc2ifqzp6zok44j4gjqceecreirlfoiby3ludvtzdnue7o6y"
+  ],
+  "claims_added": 231279,
+  "detail": "110 robots verdict(s) disregarded (recorded robots_disregarded); 3 disappearance(s)",
+  "duration_seconds": 768.198,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnabc5llyp32ohroeud4wfpfwn4lgjck2lyw5tdjun4hgvre63elgjfysfz263d24kldy3kqd7navd3gkwjdd3ykvbsl2tvgrxbfyyyway",
+      "bcnapnawjshxwf3ga7vjrrw3m5u22z553eu7yjqnlpn4zmhalu2a2itnujevo2nfzgl2bhkisxlrjpyaois34bgv7rxkwkqcxv2dnwfwayi",
+      "bcnajfhbr2jgxt6nklgig57qz4ct76x6qqibdssicmda7box3juzahliztomlw2kouilul5lxpws6rquyojbln7pfqwq3qx2ylzki7ybsqe",
+      "bcnalyveuwhzxthn34howlghsh2d32xskomrb4bze53lbyky4wjda6fb6a4xmlpfjqmxgi3t7fkgiciccrxiewgkuckupxv4zq3fnw6yaii",
+      "bcnaji2dr6mftqpbg4apaju7s46fveicw2q5zq7b7p7v24omia3lr4m63mnlg6422vvwhborz4lj623dy4rs2ax6mydgexuhx35jxvdj2ci",
+      "bcnaaluc76pcxfdbgmsjoahzgh327ijhbey3siztkbxkwnj3btyqxpgsu7df6iqulrjxl65iebbbivukzwkgpzsgpavrxqyuarigpppxlsm",
+      "bcnam5zr2mhldqid3xsvzttthlhisz5kpsznypc6l5gprdjbfx42bvcmgdbty3xu2s2vr5v2wp2awy42sns6czbrbxwkofmdid4s4x62qxi",
+      "bcnadzirye7lqjcwgobezte6zeaqjqu7llm3j7g4733xnthouqa6nnkzj2eaizroyqsynvisspjilghsroto7cir3aj4e6hii3lxfwwjvre",
+      "bcnaadf5gsh3z3j4ufnqta3zbvfslmnhl4qaloqnseifoz54rq5mjpvkrdn7ypiwnytdpgh3vl4kz4oz6pj4mpoisnmqtj4g7jlsxnmhy44",
+      "bcnad7na2r45gyovph7jf5ir724ef67t334ecero6bj3jm2wcdcfyznue3jlnuvrm22ywpv5dabmjlntxs24tgf2g2wyiqdjlnc64sobcsy",
+      "bcnan4w5dchyawlu6z6q6cxwfwrvvpylm7d4xshov5av3m6ltbixjv7ddvu5qm52ktvs4wfxl5zrjvawvv7lohpgrcqygusdyyhrhg576ym",
+      "bcnajbpsnttf3u6koud3lx7mm7l7y7cqimgy7wlrqr6qpgm7vvj4dg5ivftzyf46ad35pa47j5ztt3ihqlraqgdekkbeqndc4kifjjq2ksa",
+      "bcnac2xmqgdopof4twj6x5hff4fdcv2vjj4gdjjzhfpfght7b23uljjy46eff73thhcypsckw6euaafrnsi5dnoe3njgr6jc7ufe5d37pga",
+      "bcnalewzjjs2n5nu6uafeyphtce4qjaa3mak6lfll2am2qvyld7q5mbaosrhphtpoc3ikizidzjxglgrf6iopttw5ye7tkkr4tajyyfowv4",
+      "bcnahgymws3elkrjigv2sgrnaajjwzlbpnysma7xot4bkmngjodez7i2k27p3a4ljmxunzqgzpr6adjrel7zy7lo4xyfinpvtajpaeqcwbu",
+      "bcnakmajf5r42f7czkusshwnpcm7dlndfjwptms3h6wgdotvbio7a2at36dd74bkjwg6flv63xpxtppjuid257d5hozq27wmsi3bqslpcaa",
+      "bcnaaoscgv2hsp4yjqgb74sbape6vtszig5a2lvcjl6pu5hqtr2xr4bjohqdxi7e22n36vysohcwulhthvnnd3c74vnlikolqbucixke7ze",
+      "bcnadinekt52qlvl2bp7xofxfwed7xt3qm7gbpqrlml6ctaagdb5pa5lvkhd4ddhgb6bcvqpbbhbnpylqcav2aaitvpi7aiuf34snv2tap4",
+      "bcnapf7vo27g5eqttqxvudfqrheaqjpliiskahqvztuurpkoxouat3rgktaalllcqssbjq6uuectch57y4imntb6ff3e6zvp4i6j7trf6li",
+      "bcnai4jk3744aageqvgfvil6imwq6ezznrq3mvw4m5exa7kkq2fywllxl4e2roskuskjatpwomfg5xi6olu6bjiimkoljxfc4a7k4ijxc3m",
+      "bcnaai3azchb5kyicbpyf3w45fv7aoicdmfvplpzgn56sdcfrije2vi5dxa5o6hq4mdldpyo2ny7ihfyxxry2au5y446cmdnh4ndycf4maq",
+      "bcnabgpy2gsqfk4rg37alwbxneemokzb7xdjfie2kf5cqq5qjxkoy4jdnf7l46gu7d6ltt5blwqjrpmgjlxbtrtp6lv4ygponcw3h4wtuue",
+      "bcnabuelcahnifq4cogj2mx3z2ygxejndcbl6gzqphhcgkls3pacronuyvxqaaymep2wrdzqo4wgnyuql37i3xbdq534atduiodhtdv6cha",
+      "bcnajmnqmo5s73aklweakr52gmnc2frtzqqxwmck67747xsmvdrtl3phhrjxt462us45yzpz24lyzwj56fvule7mdano6bw2y3edck5u6am",
+      "bcnaly5tg7ehj6q7r5djtkgzxtxlfpqafc2iv4mlnmyvu3mhf7viwzv2uh2ugqpwpbhuw4d7hxxaxsb54mqpb6hirdnemts5cayhfrzciei",
+      "bcnadl6qgartmzisybtfw24ajhoczwtutpsksx67hk7o5zgpegzj3jaghvh3n6hxy427war7njb2z4pnpu3nmswultg6ddr2xioa5daltba",
+      "bcnae75ek7n5a6gprlbfnqsibusb3eioanxut6jfkkk7vrdc537hkg5mx6ug5ldesgmhnowaec4ve3wbm23iipegjruht4m33t27qfrlo6u",
+      "bcnao4p7rsxdkhpzeic6aqzyaejev345haem6r3agjx4bqvcl2uegqiuto2nur2s6h5f3nxhaa5wtnbwo53opmty2tnf2sbagr3mbcfzk2u",
+      "bcnahwfwphg7obkrsbaqs6uoowl4rgvj2wbewcaor26eyytqpocjbftulgqubmukysqkveb7pxv6vxiudtlzbrrsyw4cwsjheitio3ya4li",
+      "bcnai7nk4vbsxomm2npr5dwggctk6qzt34dp2qdj6swqht47e572cb3z66kua5kfdfeu2chpjtk6cm32t6w2yiefkvo2xjqs6irxafyjpq4",
+      "bcnaeoimkqcvuj5amp7recsf5tsmsppepzwkivksifia57ftmyilrbkb3usldt2gehji4wjvdntv2eybjteby544bavdv5l7mbzjgmivvba",
+      "bcnaiamzm65jqa56b23e2ddz7lopl6rmw5embvgipvv6jpjf3j24uus3wc374vdjmrxdofzvcux675en6ymg5l6xgerucf6vrh64f2pzlqe",
+      "bcnaoembqwnj2pkggk4jtcmmgmfulykai66vulxmjjzqw6yxlakrvlvbzcdbsss277pfbkzjx4wadni5bpixeuaadf7zkpjwnrqbzsqsium",
+      "bcnano5xtqr3decagyfxstyodxt2ye3ulhybwgotw4lkqfrnsbm7xipjq5omzvvdfwkpli6m57ijewg7tjgbxza3n7ygqezo5xoquxmzkg4",
+      "bcnafxwe5s2mz4kesezyllulqvnptw2zwqcmvf6bjptef5jahirmnjfla3h2hwwgtgmuabuvdv2s3fa24dq5p3y65o6knilxfph5jbwxbjq",
+      "bcnaowr72omb4yw55ulsuqc2w6rw3qkuk6qsjbbgskbsddwtnc4mkkui4qwtduo7q6ozxjbatshi5gcztf2ma3l5mcr4ukmqvzogxjycp4a",
+      "bcnalkhotvdegv4cb4njn5sd4bl56zqjmpbvh4ft72ysibw7hlphq6ia63oy6xonc6qnquwcp2g2vr7z3djez6lqkxej54agtntrrlflyqm",
+      "bcnalyheyzh5tvqhwgnqc73wrz6nfdvl45lyclwupsmpyf3x32ryrbgsock4qk53i3ydnn55i4zladjy7njt7c3zhrbasl5lhkxce7bqugm",
+      "bcnagcz6x5sdzlzuat733nzhueuixobzb6rkr6qtrpw57dqafhytl6dlntqp2vjepp3dofgx7yvcokuuktjrv4b2bvwhqwxsnplxuouw7bq",
+      "bcnabekzkcyrgzxyeqccvuqjhaacpgkaebkty74ny254dogoezmmsvo324zyjr4d2ol2wyenjubsiabefafwbdks5itjk7aubgufdwzaram",
+      "bcnajgcvq2s3kqakfkvvaf4lgafogxdzemu3tafrslslmcwodtkwpmyqhbpeb6s4ygqratoqjazs3fktfw4lq3eiislqfkczozgnhdfon2i",
+      "bcnact4jcq72ftx6bptvbungyspyhq5tpxvg6xa6q3hbzvb3yguc2uuu3rysiye56eti6nz7t4gr7soehczapv4jlcfwf5vgz737rcn3ffu",
+      "bcnamj3pzg7yfocrs35wk35m4t5z4dwh6j2etu33aqtvqg7pxasl2qegzjyw7rsci4rjgksyfplez6pip6hhdxedtyugcbeu3tsozt3ex5a",
+      "bcnaekisezwtxfxs7xigzpzwzw22m6gadgdijnf2ka2itsx5tfl4l6fykrze4v3f3dzihw7egmrbavwu56wjo7qhdwjbwt76x3b5yzqks5q",
+      "bcnaf5p7soymgatisyob4pme2repglxwfl7lkl3rsp4x3jdgjjzfqj2cjehatqfhfie6fm6bna2fegzm665h3r3ah64ikxl6b5t5clcbghm",
+      "bcnageapupbvhgunveiwxxctu5esmofa2dseyqnahvou2ervhjj4hwsrwsxrtdty4zpqmjzd4nlbqvwjp3vtj25yjizbp2izhi5vxw427ja",
+      "bcnapzzwbkxoj65rlkntfljczn3yrh4afwqoekvxa6ercfmzbqq7kqr4vque375crsco3xrv5y3oj6s6x4v5j4cbc5capxug2liand3xqje",
+      "bcnacs5xd2zvuqs2coav76p7vfchbaejwa6dkihrsm2i64wxcodae3htq5hwtx4245pac2fepzlspq5wy2de67t4owc7olmu3t66htz5q2a",
+      "bcnapg3glqwieftdbjnfqjbrtoo2fkpngubv5njauyu2zwk6earixyb5nj4yeq5d56zk764g5dkfzj2fyxhwl4qagfhyrd5g7me6yjyoyjq",
+      "bcnahwfymtzg6dwipavolm2rrpysidoqwlbeko2d35pqb2wbdirhwlxd2zqihbtrab2zahb5kl4kdeprd5lbhm7f3d5kcpgfqnrrh54zfb4",
+      "bcnanawn5xct3k7xxah7ur25vhi3gdpryzooqdosoycvwlufxwkrfeexmewej4vrfby6x6trvcyshb3az5paan5wsypnjor7wlmrx564ioa",
+      "bcnalawkyn264n3xmefelynjhbeu4yzomoycw4zc52o52d3c74ljoprxdjs4wrfulam5tq2s6s4ee2lwzsvhh4h5yu3rbwgqrnpmyxyneru",
+      "bcnab3roqgvzufrooloroytcmokk43buhiwd44qzbvj2xgdze3z7jrdkpdjq6wg2ii4xtvu6eypzacbfiiao2erreiv5ctwj44fbbg4bmpa",
+      "bcnadlreqsf2y6t4ia75hjmkgvvihx24m2n6td4ht56rq55uuq4iv7pir5rzyqnxq3qmhd6x7ztluu4osr6acc4mtccp2w24rr45bwosaxe",
+      "bcnafe4b6oqp4clj2nmjlmaqoiqzab2xbhgqcfnaphl7alugq4g2c6jryvlpjbpxllialg76st7gfwztd4gvuiyhnrbwokhsmq2iq5hpk5u",
+      "bcnafuzmjxq526ozwy234coagxfigbjl7ermlq5xrod2oribnx7pheyqi74qimc4xxlq7ia5h43dvfrjxfzj3p66ffk4h7tg4birhb2epv4",
+      "bcnajmrq67ymztcuehbfhfxd5lt652hbk3wtdhz36f2g4wyyqugdhe7h3sztv4qhg2nzsmjgq7wyrfwbst64amny43vy6s33cstrrrb5fga",
+      "bcnagvkocecieoiedygpf5e3b4ikn5la3sveniltb56swfydrixpeixcxwgr5p26sq2aekmc3jp3mz6jzbuqginxs7rkrlsyha2v4yihdwq",
+      "bcnapelaqhxvcfyys6emkqnqca6cv4y6f2bbjndk3rf4wmjtgxstntzgmimvx3njgfnggurhhgygbfevx6aqtjgwpio5xb2gt7svwrly5iy",
+      "bcnan3fll3iwjdwyugrctb7lx67tae77jqhlks3tlkvzhdabqkgrequirebam4vifbxf63ubwfw2vnnj4bcxhojgd2z5fb3i3slyaviulqm",
+      "bcnabg46lk4n3atcatvjbc5rsu2mfrmotlwzgxmpnuwdzewyp2l5dzbgyjjhj77lcfdtr733mhnq36szygp665dxv6ga6g3h3bk6ifn2dpi",
+      "bcnalewzjjs2n5nu6uafeyphtce4qjaa3mak6lfll2am2qvyld7q5mbaosrhphtpoc3ikizidzjxglgrf6iopttw5ye7tkkr4tajyyfowv4",
+      "bcnaiiv3oamx4mi2g4mdktkciefqhndxlldcx2g6ysneb5ozpfggiawj5cjzwojpk5qclsuaajnfhpsyzvh36iu6ic24fluhn7ryxmw6gpu",
+      "bcnak23lvptv2cpwe6b5mopbx5cuion2djlhjggjho5ax4aw74edytvumvdt7jodrgjwa2edjtzdz3wex5oicjssbdpbt6qm2ar6lf2hbby",
+      "bcnalewzjjs2n5nu6uafeyphtce4qjaa3mak6lfll2am2qvyld7q5mbaosrhphtpoc3ikizidzjxglgrf6iopttw5ye7tkkr4tajyyfowv4",
+      "bcnagp3em4gommi2b3rqstoaoiq3rrv6si67o6gsih6xshon4eexnzbwd46gtasjie3ps2k2dlciywxekunpcekmb7uf7zp226vna4cymdy",
+      "bcnamys7mcgum4s3rjvkjwexbgzadv3t3bmgexydqzpdjjywoxmmamn3i3sp7cb3uvdwejsq3kcjbn4xbgz7lhouieyhfwcmuez2b3zieyq",
+      "bcnahgv5qopibhxni2rqj3usrhopt6e6mtvu265kgsbximpbahcnggkhrdnqhzw3b2rrbsgzhxxwewuc2cfdpdbry73wo3npab7prca26ha",
+      "bcnahnelsyxvqmbi7vxcdh3zvn633czfohhezkavbyztuyckk5iuvjdugvrvhjkg4oegrzbk5kvkxgewpx3ohrnnqssdccezpegf2expjeq",
+      "bcnads3m5c634jaxzyqnsvgrcnguqkx7yqq66nuaizypctqgcrr6fwfy4tdbh4wyayx6xvpiby26c3gvnoc7oi7cwlxehxiaxubztwidgxi",
+      "bcnan7os7sha6xjh75nxwyg2z2l7s52o6dzr6ha7qlx5r6s23pwqxitcbl6xcvcsasg7grk7vtgmcjyekqweqpqezsch47oadr4p6zpl5h4",
+      "bcnaglbeswdwwwnx6dgaqp3wgpaegrbt3ci6dlxreetwkgncatyhvtm2afzjhzgdxjg6g6uzo4dbpfr4imykyk6pgb53lqwlde4m5qxkbyu",
+      "bcnaa4725a6tcq3ydvlbsojy35y3552gre66ff3xc52ra6f42gal2z247odahlbotq54l46viorizr2zpsfdoc3layx34buou623ecpy2b4",
+      "bcnab3kyqhubgbbui4nk5qb2to7sec67fi2kwiveyeghyx4nunjd4gclpqskvqmd6xp344i5cjlcid4l4zcicjb5hrxuo3ejqzp2ideipdm",
+      "bcnalewmjedn7pxbf4pgle3mrpv4pw5palsamueeoj2ypufcedh3rvfyzm3naffnroz7pklul3vrekebq64mohm25f3rfjemt6ujo3y6fym",
+      "bcnaafmb7cjttioarwqflogwwi6ub2oz3lcihlu6zvvs56vf4e6ehgwtziqfe4oellj3w5mypi4ggkzgweej7fsix7xkobw5g57t3ne6aky",
+      "bcnajpneiswg2cvru2557jsc75zrxdduvclo2ix7hqko4o2qodkp37zgoawvptc6cv6bf7bqvxh3apmmx5x2xvg2od2akomnrcuq2jtcwkm",
+      "bcnahx2uygr4ipgdktaotobr4u4ms7fuicrsnhc7xrcqcoka4lj5yflmh3jzbeaof4soujr77kgocsigaerywnktuqvurhcizxm4bf4fo7e",
+      "bcnah6ilb3zsgqdqeb5pyxqodcjjpae6wgdv2frpkjengx2pizzfnpq7y535l4fxt6ruhb4wjs2ffitdtwb52b5nmzlm3x6cpw24q2e5zfe",
+      "bcnadggugboci5jx4ksgeauqybx4f45skrtxyxanrofigib4xmmtnt2fdm6u4ja6be57f5popcvucgnjcfbqtw7mjyqanydm45fs3fvahky",
+      "bcnablu2ubnrhdtsgq77yu23eyb5japv2fe2j746o3qur25awvcflbyft3mogatpn5pybjts2e6jz23it73cubtzvioa5jvfjc24gdnjsjm",
+      "bcnapallrofogrocvan265ejvj4ef6mj7jhzwe4kcn2d7sya5ihzevouaftkcvjhtc73vtmbfr4ybbysgv4dlbgxvkptb4n24h6vy2fzmvi",
+      "bcnab7zmy3kl3nswspwzzc4dc4pp35ax6hp5d3aqdkr474hnq7zyot7qyufsuevd4h2birzuehcf5qcfhafqugslotxwxldo22jodvnk2he",
+      "bcnaataa4ej4qje3smgsmyxnmiyamfr534ypalvmy5vehig4sebvqv6jwifxhu2c2zzju6pxgol4xonh5oxzk4cyxm5nmrtkhc5lauhdjb4",
+      "bcnap4rzu36qnhw7opnqcacizmpr5uxswkwqc7btpv6r2asout43qvvg3ymniudqo6hiiibpsi2jgi677devdn74njfmp6efo6vqkn2io64",
+      "bcnagt2fa6oxniun2mcm22gt7izde5uzw6cwrb23hv7rdv7rkbv5qmx3w43fzzl6se4qpp6y2xdfqefmxuwwuxoo4z45tyg3q6qszhtwgw4",
+      "bcnalewzjjs2n5nu6uafeyphtce4qjaa3mak6lfll2am2qvyld7q5mbaosrhphtpoc3ikizidzjxglgrf6iopttw5ye7tkkr4tajyyfowv4",
+      "bcnadgdtzc2e3igmewvmzffdgsmxcypqtvtkelfvqdqri3a4kbjt5o5mmbyccx6g7me3mmehibvicccm5jscs74zdpmmnb7ggri22mvef24",
+      "bcnaekdjiljwpusoiqmqt2cs7ahl5na6xqi4tphdzo5bubzy6j5t73qwc64hxeozjp7l6i6jw336u7ll7m2pzixutpmrzocp4m4y6hzvkge",
+      "bcnalewzjjs2n5nu6uafeyphtce4qjaa3mak6lfll2am2qvyld7q5mbaosrhphtpoc3ikizidzjxglgrf6iopttw5ye7tkkr4tajyyfowv4",
+      "bcnafnkdgy5eps246eaw5dtbdrkhliytifjg3hkwxfiphoi2r2ec4aftisqsvuqfes23hhr2cslfurbccstzwsw4ex475wqyowgcoxwmbba",
+      "bcnac3qbkefuzn4pifxodkflfjqtsfdyjp5idjkbhsgorso67lyf2r6pxkl3ovrtlqzhplthtxosjapt66lsulimmet3wvllhnmirw4oiyy",
+      "bcnaalvep72qoljulmnizedfhqdt3lp7ljd4l5chqnlajix6elvvw6ckekv3pyf42zb2x55pn45rhv7a6rgv5apxlccyfbsrpn7apzmx2cy",
+      "bcnalewzjjs2n5nu6uafeyphtce4qjaa3mak6lfll2am2qvyld7q5mbaosrhphtpoc3ikizidzjxglgrf6iopttw5ye7tkkr4tajyyfowv4",
+      "bcnaoyribnxua2xufdhbbuwo4cjcfjwsk7feo6vjramxys53k643zktc2te4ifmj4zqpm2c6fglqltaadg7njnkbavhuw6meey6tnyuv4si",
+      "bcnao56cjhw6ebam4drtfsq3ebez63wolvlpswk4hfdfa3xud47nnebvgtx6vdhu7jk6mqvsrsplpetyvgjklec22u7r4r2swowyhmndltq",
+      "bcnacnl3nm57xbiyrcis2ilmewghplp4qsyf74nsmvagkv6bxmww75icfzusnn42low6xju6i7hdhlzts3cx33udy3gqd7vudh5z5ulepxe",
+      "bcnaglmcam43qykl7w5lviqpeskibqlnjlb7gxk56se6t7yu3sgltmd67zizfyyped4stbdcqx3fpqvpa2abnyc2nzvov5nxo5uujdkxesq",
+      "bcnagjlzqvu2ir4ptegvrjju6du7uarwcg4etprnju7mhx7rnmuit7bi6pwubnd6e444oumj4enlgxkhntaanza637q3nflh6osfgzdgqie",
+      "bcnaaivzj6afgzlpcfmtlfldaz7qwsqfguq2yvbqaektantihngitgqs5vcgdemmej4b22guvcwss4bqdqcri4ry4rnfcfscmtkut3rcqdq",
+      "bcnagdwhgkq4ljs224v7ou3zce5smtmjq7tqnkoye5zlkxu4cgrplss7bql3cvgobbj4sqdpt43amzukmzkniglqntvuirxgpv5p7p3lwrq",
+      "bcnacpuli6bvx7jyakvvoryzkpqwmr42cfzomraeelcmh73rro5o5hkae56lvtmsftbeaqyko3sui63dx7r5qbrsz6qxxkwguspcn7t4oki",
+      "bcnaijaj4bdm4dmh6qgm6prhen7ihl3wyrmgw3zscxra2w7s4xpjzxivoez545yfixfou62hxeih27s2tye6bpx24vf73ea5gc7vabfy3oq",
+      "bcnaby36j65ssusajn6hwox6m7u4fadbwfinhc3bz57li64xnxmquxzgajho6z5osxmsntcjul2yvah7bqyu23w6ujo3oljulecbih5txa4",
+      "bcnacljtthgn47wbamc4kdjmomowtg4vau3hrhbxo5s2cmgsofydzpdjea6twdqdu2yg5fnzrzlei3ar4esq7cq3bsnfuaexqvkxgtrqft4",
+      "bcnaf6o3wpwmnbvq3hkq6ss2xl3xdywssy6l2iizdal4b4i3azyce7q5a3wsocz2ocndkrewfrmnlxij26qdxkjzibmvx2jgaxbqbpshfbi",
+      "bcnaljthtzdciuwobakp7znozq2mohtiazdv35nkkrpgc47nw4bd2ue4ol6sc2ifqzp6zok44j4gjqceecreirlfoiby3ludvtzdnue7o6y"
+    ],
+    "claim_count": 231279,
+    "connector": "procurement",
+    "content_drift": null,
+    "disappearances": [
+      {
+        "artifact_id": "evanscolorado",
+        "failing_status": "unreachable",
+        "observed_at": "2026-09-19T19:41:17.337417+00:00"
+      },
+      {
+        "artifact_id": "lacera",
+        "failing_status": "unreachable",
+        "observed_at": "2026-09-19T19:42:17.230741+00:00"
+      },
+      {
+        "artifact_id": "sanbernadino",
+        "failing_status": "unreachable",
+        "observed_at": "2026-09-19T19:44:45.004019+00:00"
+      }
+    ],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 767.772853,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [
+      {
+        "host": "lacity.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://lacity.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "lasvegas.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://lasvegas.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "longbeach.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://longbeach.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "cityofpaloalto.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://cityofpaloalto.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "tularecounty.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://tularecounty.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "bedfordoh.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://bedfordoh.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "wmwd.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://wmwd.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "sanantonio.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://sanantonio.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "adamscounty.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://adamscounty.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "albanyca.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://albanyca.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "alexandriava.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://alexandriava.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "arlingtonma.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://arlingtonma.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "atherton.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://atherton.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "awaller.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://awaller.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "baldwinpark.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://baldwinpark.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "bcnv.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://bcnv.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "bedfordcounty.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://bedfordcounty.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "bouldercolorado.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://bouldercolorado.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "calabasas.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://calabasas.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "camarillo.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://camarillo.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "cambridgema.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://cambridgema.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "cathedralcity.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://cathedralcity.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "cccco.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://cccco.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "ccta.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://ccta.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "chambleega.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://chambleega.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "charlestonsc.primegov.com",
+        "outcome": "unretrievable",
+        "robots_url": "https://charlestonsc.primegov.com/robots.txt",
+        "status": 530
+      },
+      {
+        "host": "chinoaz.primegov.com",
+        "outcome": "unretrievable",
+        "robots_url": "https://chinoaz.primegov.com/robots.txt",
+        "status": 530
+      },
+      {
+        "host": "cityofbranson.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://cityofbranson.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "cityofhawthorne.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://cityofhawthorne.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "cityofkyle.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://cityofkyle.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "cityoflancasterca.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://cityoflancasterca.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "cityofmenifee.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://cityofmenifee.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "cityofnorthlasvegas.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://cityofnorthlasvegas.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "cityofoviedo.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://cityofoviedo.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "cityofpalmdesert.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://cityofpalmdesert.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "cityofpetaluma.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://cityofpetaluma.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "cityofpleasantonca.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://cityofpleasantonca.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "cityofsancarlos.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://cityofsancarlos.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "cityofsanmarino.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://cityofsanmarino.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "cityoftemple.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://cityoftemple.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "cityofvernon.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://cityofvernon.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "cityofwestminster.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://cityofwestminster.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "clackamas.primegov.com",
+        "outcome": "unretrievable",
+        "robots_url": "https://clackamas.primegov.com/robots.txt",
+        "status": 530
+      },
+      {
+        "host": "cleanpoweralliance.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://cleanpoweralliance.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "clearfieldcity.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://clearfieldcity.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "coronado.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://coronado.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "cotaticity.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://cotaticity.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "cvrd.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://cvrd.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "cvwd.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://cvwd.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "dpwlacity.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://dpwlacity.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "dwa.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://dwa.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "eastvalley.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://eastvalley.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "ebparks.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://ebparks.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "ecuafl.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://ecuafl.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "edmondswa.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://edmondswa.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "emeryvilleca.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://emeryvilleca.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "epcounty.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://epcounty.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "essexcountynj.primegov.com",
+        "outcome": "unretrievable",
+        "robots_url": "https://essexcountynj.primegov.com/robots.txt",
+        "status": 530
+      },
+      {
+        "host": "evanscolorado.primegov.com",
+        "outcome": "unretrievable",
+        "robots_url": "https://evanscolorado.primegov.com/robots.txt",
+        "status": null
+      },
+      {
+        "host": "everettma.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://everettma.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "everettpublicschools.primegov.com",
+        "outcome": "unretrievable",
+        "robots_url": "https://everettpublicschools.primegov.com/robots.txt",
+        "status": 530
+      },
+      {
+        "host": "fostercity.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://fostercity.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "friscotexas.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://friscotexas.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "gilroy.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://gilroy.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "glendaleca.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://glendaleca.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "glifwc.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://glifwc.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "grandrapidscity.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://grandrapidscity.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "gresham.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://gresham.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "herriman.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://herriman.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "ketchikan.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://ketchikan.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "lacera.primegov.com",
+        "outcome": "unretrievable",
+        "robots_url": "https://lacera.primegov.com/robots.txt",
+        "status": null
+      },
+      {
+        "host": "ladwp.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://ladwp.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "lakeelsinore.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://lakeelsinore.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "lcpa.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://lcpa.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "lomitacity.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://lomitacity.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "longmont.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://longmont.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "maderacounty.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://maderacounty.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "malibucity.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://malibucity.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "mapleridge.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://mapleridge.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "middlesexcountynj.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://middlesexcountynj.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "moorheadmn.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://moorheadmn.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "palmsprings.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://palmsprings.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "paramountcity.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://paramountcity.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "prescottvalley.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://prescottvalley.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "redlandsusd.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://redlandsusd.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "regina.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://regina.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "reno.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://reno.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "saanichca.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://saanichca.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "saccounty.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://saccounty.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "sacog.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://sacog.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "sanbernadino.primegov.com",
+        "outcome": "unretrievable",
+        "robots_url": "https://sanbernadino.primegov.com/robots.txt",
+        "status": null
+      },
+      {
+        "host": "sanbernardino.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://sanbernardino.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "sandiegocounty.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://sandiegocounty.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "sandimasca.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://sandimasca.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "sanmateo.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://sanmateo.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "santa-ana.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://santa-ana.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "scsmi.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://scsmi.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "shastacounty.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://shastacounty.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "shreveportla.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://shreveportla.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "smyrnaga.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://smyrnaga.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "springfieldohio.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://springfieldohio.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "thorntonco.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://thorntonco.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "toaks.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://toaks.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "townoffrisco.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://townoffrisco.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "vancouver.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://vancouver.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "vcera.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://vcera.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "wacotexas.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://wacotexas.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "westhaven.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://westhaven.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "westjordan.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://westjordan.primegov.com/robots.txt",
+        "status": 200
+      },
+      {
+        "host": "worcesterma.primegov.com",
+        "outcome": "retrieved",
+        "robots_url": "https://worcesterma.primegov.com/robots.txt",
+        "status": 200
+      }
+    ],
+    "robots_disregarded": [
+      {
+        "host": "lacity.primegov.com",
+        "url": "https://lacity.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "lasvegas.primegov.com",
+        "url": "https://lasvegas.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "longbeach.primegov.com",
+        "url": "https://longbeach.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "cityofpaloalto.primegov.com",
+        "url": "https://cityofpaloalto.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "tularecounty.primegov.com",
+        "url": "https://tularecounty.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "bedfordoh.primegov.com",
+        "url": "https://bedfordoh.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "wmwd.primegov.com",
+        "url": "https://wmwd.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "sanantonio.primegov.com",
+        "url": "https://sanantonio.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "adamscounty.primegov.com",
+        "url": "https://adamscounty.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "albanyca.primegov.com",
+        "url": "https://albanyca.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "alexandriava.primegov.com",
+        "url": "https://alexandriava.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "arlingtonma.primegov.com",
+        "url": "https://arlingtonma.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "atherton.primegov.com",
+        "url": "https://atherton.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "awaller.primegov.com",
+        "url": "https://awaller.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "baldwinpark.primegov.com",
+        "url": "https://baldwinpark.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "bcnv.primegov.com",
+        "url": "https://bcnv.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "bedfordcounty.primegov.com",
+        "url": "https://bedfordcounty.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "bouldercolorado.primegov.com",
+        "url": "https://bouldercolorado.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "calabasas.primegov.com",
+        "url": "https://calabasas.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "camarillo.primegov.com",
+        "url": "https://camarillo.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "cambridgema.primegov.com",
+        "url": "https://cambridgema.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "cathedralcity.primegov.com",
+        "url": "https://cathedralcity.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "cccco.primegov.com",
+        "url": "https://cccco.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "ccta.primegov.com",
+        "url": "https://ccta.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "chambleega.primegov.com",
+        "url": "https://chambleega.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "charlestonsc.primegov.com",
+        "url": "https://charlestonsc.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "unretrievable"
+      },
+      {
+        "host": "chinoaz.primegov.com",
+        "url": "https://chinoaz.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "unretrievable"
+      },
+      {
+        "host": "cityofbranson.primegov.com",
+        "url": "https://cityofbranson.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "cityofhawthorne.primegov.com",
+        "url": "https://cityofhawthorne.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "cityofkyle.primegov.com",
+        "url": "https://cityofkyle.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "cityoflancasterca.primegov.com",
+        "url": "https://cityoflancasterca.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "cityofmenifee.primegov.com",
+        "url": "https://cityofmenifee.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "cityofnorthlasvegas.primegov.com",
+        "url": "https://cityofnorthlasvegas.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "cityofoviedo.primegov.com",
+        "url": "https://cityofoviedo.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "cityofpalmdesert.primegov.com",
+        "url": "https://cityofpalmdesert.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "cityofpetaluma.primegov.com",
+        "url": "https://cityofpetaluma.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "cityofpleasantonca.primegov.com",
+        "url": "https://cityofpleasantonca.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "cityofsancarlos.primegov.com",
+        "url": "https://cityofsancarlos.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "cityofsanmarino.primegov.com",
+        "url": "https://cityofsanmarino.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "cityoftemple.primegov.com",
+        "url": "https://cityoftemple.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "cityofvernon.primegov.com",
+        "url": "https://cityofvernon.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "cityofwestminster.primegov.com",
+        "url": "https://cityofwestminster.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "clackamas.primegov.com",
+        "url": "https://clackamas.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "unretrievable"
+      },
+      {
+        "host": "cleanpoweralliance.primegov.com",
+        "url": "https://cleanpoweralliance.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "clearfieldcity.primegov.com",
+        "url": "https://clearfieldcity.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "coronado.primegov.com",
+        "url": "https://coronado.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "cotaticity.primegov.com",
+        "url": "https://cotaticity.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "cvrd.primegov.com",
+        "url": "https://cvrd.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "cvwd.primegov.com",
+        "url": "https://cvwd.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "dpwlacity.primegov.com",
+        "url": "https://dpwlacity.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "dwa.primegov.com",
+        "url": "https://dwa.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "eastvalley.primegov.com",
+        "url": "https://eastvalley.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "ebparks.primegov.com",
+        "url": "https://ebparks.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "ecuafl.primegov.com",
+        "url": "https://ecuafl.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "edmondswa.primegov.com",
+        "url": "https://edmondswa.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "emeryvilleca.primegov.com",
+        "url": "https://emeryvilleca.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "epcounty.primegov.com",
+        "url": "https://epcounty.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "essexcountynj.primegov.com",
+        "url": "https://essexcountynj.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "unretrievable"
+      },
+      {
+        "host": "evanscolorado.primegov.com",
+        "url": "https://evanscolorado.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "unretrievable"
+      },
+      {
+        "host": "everettma.primegov.com",
+        "url": "https://everettma.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "everettpublicschools.primegov.com",
+        "url": "https://everettpublicschools.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "unretrievable"
+      },
+      {
+        "host": "fostercity.primegov.com",
+        "url": "https://fostercity.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "friscotexas.primegov.com",
+        "url": "https://friscotexas.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "gilroy.primegov.com",
+        "url": "https://gilroy.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "glendaleca.primegov.com",
+        "url": "https://glendaleca.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "glifwc.primegov.com",
+        "url": "https://glifwc.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "grandrapidscity.primegov.com",
+        "url": "https://grandrapidscity.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "gresham.primegov.com",
+        "url": "https://gresham.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "herriman.primegov.com",
+        "url": "https://herriman.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "ketchikan.primegov.com",
+        "url": "https://ketchikan.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "lacera.primegov.com",
+        "url": "https://lacera.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "unretrievable"
+      },
+      {
+        "host": "ladwp.primegov.com",
+        "url": "https://ladwp.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "lakeelsinore.primegov.com",
+        "url": "https://lakeelsinore.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "lcpa.primegov.com",
+        "url": "https://lcpa.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "lomitacity.primegov.com",
+        "url": "https://lomitacity.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "longmont.primegov.com",
+        "url": "https://longmont.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "maderacounty.primegov.com",
+        "url": "https://maderacounty.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "malibucity.primegov.com",
+        "url": "https://malibucity.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "mapleridge.primegov.com",
+        "url": "https://mapleridge.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "middlesexcountynj.primegov.com",
+        "url": "https://middlesexcountynj.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "moorheadmn.primegov.com",
+        "url": "https://moorheadmn.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "palmsprings.primegov.com",
+        "url": "https://palmsprings.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "paramountcity.primegov.com",
+        "url": "https://paramountcity.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "prescottvalley.primegov.com",
+        "url": "https://prescottvalley.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "redlandsusd.primegov.com",
+        "url": "https://redlandsusd.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "regina.primegov.com",
+        "url": "https://regina.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "reno.primegov.com",
+        "url": "https://reno.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "saanichca.primegov.com",
+        "url": "https://saanichca.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "saccounty.primegov.com",
+        "url": "https://saccounty.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "sacog.primegov.com",
+        "url": "https://sacog.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "sanbernadino.primegov.com",
+        "url": "https://sanbernadino.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "unretrievable"
+      },
+      {
+        "host": "sanbernardino.primegov.com",
+        "url": "https://sanbernardino.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "sandiegocounty.primegov.com",
+        "url": "https://sandiegocounty.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "sandimasca.primegov.com",
+        "url": "https://sandimasca.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "sanmateo.primegov.com",
+        "url": "https://sanmateo.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "santa-ana.primegov.com",
+        "url": "https://santa-ana.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "scsmi.primegov.com",
+        "url": "https://scsmi.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "shastacounty.primegov.com",
+        "url": "https://shastacounty.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "shreveportla.primegov.com",
+        "url": "https://shreveportla.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "smyrnaga.primegov.com",
+        "url": "https://smyrnaga.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "springfieldohio.primegov.com",
+        "url": "https://springfieldohio.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "thorntonco.primegov.com",
+        "url": "https://thorntonco.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "toaks.primegov.com",
+        "url": "https://toaks.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "townoffrisco.primegov.com",
+        "url": "https://townoffrisco.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "vancouver.primegov.com",
+        "url": "https://vancouver.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "vcera.primegov.com",
+        "url": "https://vcera.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "wacotexas.primegov.com",
+        "url": "https://wacotexas.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "westhaven.primegov.com",
+        "url": "https://westhaven.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "westjordan.primegov.com",
+        "url": "https://westjordan.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      },
+      {
+        "host": "worcesterma.primegov.com",
+        "url": "https://worcesterma.primegov.com/api/v2/PublicPortal/search",
+        "verdict": "disallowed"
+      }
+    ],
+    "source_id": "primegov",
+    "started_at": "2026-09-19T19:34:37.870014+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "primegov",
+  "started_at": "2026-09-19T19:34:37+00:00"
+}

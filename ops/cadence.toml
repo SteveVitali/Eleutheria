@@ -93,7 +93,7 @@ cadence = "weekly"               # the RAA index itself is weekly (sources.toml 
 cron = "12 4 * * 3"              # Wednesday 04:12 UTC
 job = "sig-ingest-raa-prefectures"
 scheduler = "sig-sched-raa-prefectures"
-note = "Bounded index→arrêté fan-out (max_documents=8); recorded robots refusals stand."
+note = "Bounded index→arrêté fan-out (max_documents=8); *.gouv.fr document hosts' unretrievable robots is recorded robots_disregarded and the fetch proceeds (GL-GATE-08 / ADR-088)."
 
 [[sources]]
 id = "muckrock"
@@ -223,7 +223,7 @@ cadence = "monthly"
 cron = "0 5 17 * *"
 job = "sig-ingest-ok-statute"
 scheduler = "sig-sched-ok-statute"
-note = "OSCN robots.txt is Disallow:/ — a recorded politeness_refusal until the posture changes."
+note = "OSCN robots.txt is Disallow:/ — probed + recorded, never gating (GL-GATE-08 / ADR-088); fetches proceed marked robots_disregarded."
 
 [[sources]]
 id = "okcpd_policy"
@@ -257,7 +257,7 @@ cadence = "monthly"
 cron = "0 5 21 * *"
 job = "sig-ingest-primegov"
 scheduler = "sig-sched-primegov"
-note = "lacity.primegov.com robots.txt is Disallow:/ — a recorded politeness_refusal until an API-mode basis (ADR-083) or a serving tenant lands."
+note = "PrimeGov tenants answer robots.txt Disallow:/ platform-wide — probed + recorded, never gating (GL-GATE-08 / ADR-088); fetches proceed marked robots_disregarded (D-SOURCES.2-4 resolved)."
 
 [[sources]]
 id = "civicclerk"
@@ -265,7 +265,7 @@ cadence = "monthly"
 cron = "0 5 22 * *"
 job = "sig-ingest-civicclerk"
 scheduler = "sig-sched-civicclerk"
-note = "v1 API is IdentityServer-gated — anonymous reads 404 and the api host serves no robots.txt → a recorded robots_unretrievable until an access path resolves (HG-09)."
+note = "v1 API is IdentityServer-gated — anonymous reads 404 (recorded link_rotted); the api host's absent robots is recorded, never gating (GL-GATE-08 / ADR-088). The credential access path stays HG-09."
 
 [[sources]]
 id = "escribe"

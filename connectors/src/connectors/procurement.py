@@ -1250,8 +1250,9 @@ def portal_targets(source_id: str | None = None) -> list[dict[str, Any]]:
       ``/resource/<id>.json?$limit=N&$order=<date> DESC``, the documented rows
       API on API-mode allow-listed hosts.
     * **bonfire / opengov** — the tenant's portal index URL itself: gated
-      surfaces whose fetches record the robots refusal / WAF challenge as
-      first-class outcomes (``record_refusals`` on every portal target).
+      surfaces whose fetches record the robots verdict (probed + recorded,
+      disregarded per GL-GATE-08 / ADR-088) / WAF challenge as first-class
+      outcomes (``record_refusals`` on every portal target).
 
     All per-tenant/per-run bounds ride the target row as data, from the
     reviewed ``[platform_endpoints.*]`` rows — never code constants.
@@ -1271,7 +1272,10 @@ def portal_targets(source_id: str | None = None) -> list[dict[str, Any]]:
             "buyer_name": row.get("buyer_name"),
             "kind": "portal_index",
             # Per-host robots/WAF verdicts are recorded per tenant — a gated
-            # tenant's refusal never aborts the platform run (P26.3 pattern).
+            # tenant's failure never aborts the platform run (P26.3 pattern;
+            # post-GL-GATE-08 the robots verdict is recorded + disregarded,
+            # and the fetch's honest outcome — capture, access_restricted,
+            # or unreachable — lands per tenant).
             "record_refusals": True,
         }
         for bound_key in ("doc_per_tenant", "doc_run_cap"):
@@ -1927,8 +1931,9 @@ class ProcurementConnector(Connector):
         ``{"error": true, ...}``) or an undecodable body is ContentDrift, and
         an empty array is an honest ``empty`` window. **bonfire / opengov**
         carry no reviewed markup contract — a captured body is ContentDrift by
-        construction (their live outcomes are the recorded robots refusal /
-        WAF challenge, never a fabricated parse).
+        construction (their live outcomes are the recorded robots verdict —
+        disregarded per GL-GATE-08 / ADR-088 — plus the fetch's honest result:
+        a WAF challenge or drift, never a fabricated parse).
         """
         platform = str(target.get("platform") or "")
         source_uri = str(capture.source_uri)

@@ -1,0 +1,14 @@
+{
+  "capture_digests": [],
+  "claims_added": 0,
+  "detail": "",
+  "duration_seconds": 0.409,
+  "exit_code": 5,
+  "fetch_record": {},
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "content_drift",
+  "refusal_reason": "content drift for source 'ccops_sf': index page https://www.sf.gov/surveillance-technology-inventory carries no filing links matching the reviewed discovery spec; the upstream page shape changed — refusing to emit from a drifted index.",
+  "source": "ccops_sf",
+  "started_at": "2026-09-19T19:34:37+00:00"
+}

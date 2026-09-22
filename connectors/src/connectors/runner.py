@@ -584,12 +584,20 @@ class FetchRecord:
     claim_count: int = 0
     rate_limit_events: list[Mapping[str, Any]] = field(default_factory=list)
     robots_decisions: list[Mapping[str, Any]] = field(default_factory=list)
+    #: Per-URL rows for fetches that proceeded despite a non-grant robots
+    #: verdict (GL-GATE-08 / ADR-088): ``{"url", "host", "verdict"}`` with
+    #: verdict ``"disallowed"`` or ``"unretrievable"``. The marker keeps the
+    #: audit trail honest — a claim asserted from such a fetch has provenance
+    #: saying the fetch ignored a refusal.
+    robots_disregarded: list[Mapping[str, Any]] = field(default_factory=list)
     #: Set when the live content no longer matched the connector's expected shape
     #: (P25.1 / ADR-082): the run emitted 0 claims and recorded the drift, loud.
     content_drift: str | None = None
-    #: Set when the politeness layer refused the run outright — a seed target whose
-    #: host's robots.txt could not be retrieved or disallowed the fetch
-    #: (SIG-INGEST-012). The refusal is recorded, never bypassed.
+    #: Set when the politeness layer refused the run outright — a seed target
+    #: whose fetch raised a politeness refusal (SIG-INGEST-012). The refusal is
+    #: recorded, never bypassed. Under GL-GATE-08 / ADR-088 ``PoliteFetcher``
+    #: no longer raises robots refusals — this field is retained for the
+    #: record vocabulary and non-standard fetchers.
     politeness_refusal: str | None = None
     #: Per-document politeness refusals on discovery-continuation targets
     #: (P25.5): a resolved child whose host refuses is a recorded disposition,
@@ -625,6 +633,7 @@ class FetchRecord:
             "claim_count": self.claim_count,
             "rate_limit_events": [dict(e) for e in self.rate_limit_events],
             "robots_decisions": [dict(d) for d in self.robots_decisions],
+            "robots_disregarded": [dict(d) for d in self.robots_disregarded],
             "content_drift": self.content_drift,
             "politeness_refusal": self.politeness_refusal,
             "refusals": [dict(r) for r in self.refusals],
@@ -826,6 +835,7 @@ def _run_live(
                 claim_count=0,
                 rate_limit_events=list(transport.rate_limit_events),
                 robots_decisions=_robots_decisions(fetcher),
+                robots_disregarded=[dict(d) for d in fetcher.robots_disregarded],
                 content_drift=str(drift),
             ),
             capture_dir / "live_runs",
@@ -833,10 +843,11 @@ def _run_live(
         transport.close()
         raise
     except (RobotsUnretrievable, RobotsDisallowed) as exc:
-        # A seed target the politeness layer may not fetch (robots.txt
-        # unavailable or disallowing — SIG-INGEST-012 as amended by ADR-087)
-        # refuses the whole run. Record the refusal loud, never bypass it, then
-        # re-raise so the CLI exits non-zero.
+        # GL-GATE-08 / ADR-088: PoliteFetcher never raises these — robots
+        # verdicts are recorded (robots_disregarded), never enforced. This
+        # path is retained for a non-standard fetcher that still refuses:
+        # record the refusal loud, never bypass it, then re-raise so the CLI
+        # exits non-zero.
         write_fetch_record(
             FetchRecord(
                 source_id=source_id,
@@ -847,6 +858,7 @@ def _run_live(
                 claim_count=0,
                 rate_limit_events=list(transport.rate_limit_events),
                 robots_decisions=_robots_decisions(fetcher),
+                robots_disregarded=[dict(d) for d in fetcher.robots_disregarded],
                 politeness_refusal=f"{type(exc).__name__}: {exc}",
             ),
             capture_dir / "live_runs",
@@ -863,6 +875,7 @@ def _run_live(
         claim_count=len(report.claims),
         rate_limit_events=list(transport.rate_limit_events),
         robots_decisions=_robots_decisions(fetcher),
+        robots_disregarded=[dict(d) for d in fetcher.robots_disregarded],
         refusals=[dict(r) for r in report.refusals],
         disappearances=[
             {

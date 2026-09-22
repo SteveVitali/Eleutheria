@@ -127,7 +127,7 @@ api_base = "https://lacity.primegov.com/api/v2/PublicPortal"
 verified = true
 last_verified = 2026-09-16
 enum_source = "p26_3_seed"
-notes = "PrimeGov tenant — VERIFIED 2026-09-16: POST {api_base}/search returns the real meeting index (bounded body). NOTE: lacity.primegov.com robots.txt is Disallow:/ — a recorded robots refusal stands for crawl mode; API-mode basis needs review."
+notes = "PrimeGov tenant — VERIFIED 2026-09-16: POST {api_base}/search returns the real meeting index (bounded body). lacity.primegov.com robots.txt is Disallow:/ — probed + recorded, and under GL-GATE-08 / ADR-088 (P26.17) it no longer gates: the fetch proceeds marked robots_disregarded."
 
 [tenants.oklahoma_city_ok]
 jurisdiction = "City of Oklahoma City, OK"

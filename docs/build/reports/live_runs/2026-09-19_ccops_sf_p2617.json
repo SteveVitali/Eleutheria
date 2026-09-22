@@ -1,0 +1,28 @@
+{
+  "byte_counts": [],
+  "capture_digests": [],
+  "claim_count": 0,
+  "connector": "government_mandated_disclosure",
+  "content_drift": "content drift for source 'ccops_sf': index page https://www.sf.gov/surveillance-technology-inventory carries no filing links matching the reviewed discovery spec; the upstream page shape changed — refusing to emit from a drifted index.",
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [],
+  "duration_seconds": 0.35088,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [
+    {
+      "host": "www.sf.gov",
+      "outcome": "retrieved",
+      "robots_url": "https://www.sf.gov/robots.txt",
+      "status": 202
+    }
+  ],
+  "robots_disregarded": [],
+  "source_id": "ccops_sf",
+  "started_at": "2026-09-19T19:34:37.826855+00:00",
+  "status_codes": [],
+  "urls": []
+}

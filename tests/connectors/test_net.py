@@ -11,8 +11,6 @@ from connectors.net import (
     ChallengeEncountered,
     PoliteFetcher,
     RateLimiter,
-    RobotsDisallowed,
-    RobotsUnretrievable,
     user_agent,
 )
 from policy.crawler import CircumventionError
@@ -25,12 +23,22 @@ def test_user_agent_carries_a_contact_url() -> None:
     assert DEFAULT_CONTACT_URL in ua
 
 
-def test_unretrievable_robots_refuses_to_run(transport_factory) -> None:  # type: ignore[no-untyped-def]
-    # SIG-INGEST-012: robots.txt unretrievable => permission NOT granted => refuse.
-    transport = transport_factory({}, robots_text=None)
+def test_unretrievable_robots_is_recorded_and_fetched(transport_factory, json_response) -> None:  # type: ignore[no-untyped-def]
+    # GL-GATE-08 / ADR-088: robots.txt unretrievable => the RFC-assumed disallow
+    # is RECORDED (outcome "unretrievable") but never enforced — the fetch
+    # proceeds and is marked robots_disregarded so provenance stays honest.
+    url = "https://portal.example/api"
+    transport = transport_factory({url: json_response(url, {"ok": True})}, robots_text=None)
     fetcher = PoliteFetcher(connector_name="toy", connector_version="1", transport=transport)
-    with pytest.raises(RobotsUnretrievable):
-        fetcher.fetch("https://portal.example/api")
+    result = fetcher.fetch(url)
+    assert result.status == 200
+    outcome = fetcher.robots_outcomes["portal.example"]
+    assert outcome["outcome"] == "unretrievable"
+    assert fetcher.robots_disregarded == [
+        {"url": url, "host": "portal.example", "verdict": "unretrievable"}
+    ]
+    assert fetcher.conduct_decisions[-1]["outcome"] == "robots_disregarded"
+    assert not fetcher.can_fetch(url)  # the recorded verdict is still "no"
 
 
 def test_4xx_robots_means_no_policy_permits_the_fetch(transport_factory, json_response) -> None:  # type: ignore[no-untyped-def]
@@ -54,26 +62,46 @@ def test_4xx_robots_means_no_policy_permits_the_fetch(transport_factory, json_re
 
 
 @pytest.mark.parametrize("status", [429, 500, 503])
-def test_5xx_and_429_robots_are_unavailable_refused(transport_factory, status: int) -> None:  # type: ignore[no-untyped-def]
-    # 429/5xx robots answers are "unavailable", not "no policy" — the run is
-    # still refused (SIG-INGEST-012; the RFC reserves the permit for 4xx).
-    transport = transport_factory({}, robots_text=None, robots_status=status)
+def test_5xx_and_429_robots_are_unavailable_recorded_not_refused(  # type: ignore[no-untyped-def]
+    transport_factory, json_response, status: int
+) -> None:
+    # 429/5xx robots answers are "unavailable", not "no policy" (the RFC
+    # reserves the permit for 4xx) — recorded as such; under GL-GATE-08 /
+    # ADR-088 the fetch still proceeds and is marked robots_disregarded.
+    url = "https://portal.example/api"
+    transport = transport_factory(
+        {url: json_response(url, {"ok": True})}, robots_text=None, robots_status=status
+    )
     fetcher = PoliteFetcher(connector_name="toy", connector_version="1", transport=transport)
-    with pytest.raises(RobotsUnretrievable):
-        fetcher.fetch("https://portal.example/api")
+    result = fetcher.fetch(url)
+    assert result.status == 200
     outcome = fetcher.robots_outcomes["portal.example"]
     assert outcome["outcome"] == "unretrievable"
     assert outcome["status"] == status
+    assert fetcher.robots_disregarded == [
+        {"url": url, "host": "portal.example", "verdict": "unretrievable"}
+    ]
 
 
-def test_robots_disallow_is_honored(transport_factory, json_response) -> None:  # type: ignore[no-untyped-def]
+def test_robots_disallow_is_recorded_and_disregarded(transport_factory, json_response) -> None:  # type: ignore[no-untyped-def]
+    # GL-GATE-08 / ADR-088: a retrieved `Disallow` verdict no longer refuses —
+    # the URL is fetched and the record marks the ignored refusal.
+    url = "https://portal.example/secret"
     transport = transport_factory(
-        {"https://portal.example/secret": json_response("https://portal.example/secret", {})},
+        {url: json_response(url, {})},
         robots_text="User-agent: *\nDisallow: /secret\n",
     )
     fetcher = PoliteFetcher(connector_name="toy", connector_version="1", transport=transport)
-    with pytest.raises(RobotsDisallowed):
-        fetcher.fetch("https://portal.example/secret")
+    result = fetcher.fetch(url)
+    assert result.status == 200
+    assert fetcher.robots_outcomes["portal.example"]["outcome"] == "retrieved"
+    assert fetcher.robots_disregarded == [
+        {"url": url, "host": "portal.example", "verdict": "disallowed"}
+    ]
+    decision = fetcher.conduct_decisions[-1]
+    assert decision["robots_verdict"] == "disallowed"
+    assert decision["outcome"] == "robots_disregarded"
+    assert not fetcher.can_fetch(url)  # verdict semantics preserved
 
 
 def test_a_permitted_fetch_returns_the_bytes(transport_factory, json_response) -> None:  # type: ignore[no-untyped-def]
