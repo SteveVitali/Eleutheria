@@ -735,12 +735,58 @@ def usaspending_award_targets() -> list[dict[str, Any]]:
     return targets
 
 
-def sam_gov_search_targets() -> list[dict[str, Any]]:
-    """The widened SAM.gov opportunity-search targets from the reviewed plan (P26.14).
+def sam_gov_daily_request_budget() -> int | None:
+    """The per-run SAM.gov request budget (P26.19), or ``None`` when unset.
+
+    api.data.gov meters ``sig-sam-gov-key`` per UTC day; a run must fit inside
+    one fresh window with headroom and stop cleanly before the hard 429 wall
+    rather than burning the window into a crash. The budget is the request cap
+    the driver stops the sweep at (:mod:`connectors.pipeline`).
+    """
+    raw = sam_gov_sweep_config().get("daily_request_budget")
+    return int(raw) if raw is not None else None
+
+
+def sam_gov_sweep_plan(
+    keywords: Sequence[str], *, budget: int | None, cursor: int
+) -> tuple[list[str], int]:
+    """Select this run's keyword slice and the offset the next run resumes from.
+
+    A paged cursor over the prioritised keyword space (P26.19): starting at
+    ``cursor`` (mod len), take at most ``budget`` keywords in order, then return
+    ``(selected, next_cursor)`` where ``next_cursor`` points just past the last
+    selected keyword. When ``budget`` is ``None`` or ``>= len(keywords)`` the
+    whole space is covered in one run and ``next_cursor`` wraps to ``0`` — so a
+    single fresh-window run is complete and the cursor never has to persist.
+    When an operator sets ``budget`` below the keyword count, successive daily
+    runs page the remaining keywords over multiple windows, never one run over
+    quota.
+    """
+    kws = [str(k) for k in keywords]
+    n = len(kws)
+    if n == 0:
+        return [], 0
+    start = cursor % n
+    take = n if (budget is None or budget >= n) else max(0, int(budget))
+    if take >= n:
+        return kws[start:] + kws[:start] if start else list(kws), 0
+    rotated = kws[start:] + kws[:start]
+    selected = rotated[:take]
+    return selected, (start + take) % n
+
+
+def sam_gov_search_targets(*, cursor: int = 0) -> list[dict[str, Any]]:
+    """The widened SAM.gov opportunity-search targets from the reviewed plan.
 
     One bounded ``title`` query per reviewed keyword — the API's own search
-    field, with ``limit`` + the posted window bounding every slice. The key is
-    resolved at fetch time onto ``X-Api-Key`` and never touches the URL.
+    field, with ``limit`` + the posted window bounding every slice (P26.14). The
+    key is resolved at fetch time onto ``X-Api-Key`` and never touches the URL.
+
+    Each target is flagged ``quota_governed`` so the driver counts it against the
+    per-run request budget and stops the sweep cleanly at the daily-window wall
+    (P26.19). ``cursor`` rotates the prioritised keyword order so a budget below
+    the keyword count pages coverage across successive daily windows; at the
+    default budget (``>=`` keyword count) the whole space is returned each run.
     """
     cfg = sam_gov_sweep_config()
     base = str(sam_gov_config()["api_base"]).rstrip("/") + str(sam_gov_config()["search_endpoint"])
@@ -748,8 +794,11 @@ def sam_gov_search_targets() -> list[dict[str, Any]]:
     limit = int(cfg.get("limit", 25))
     posted_from = str(cfg.get("posted_from", ""))
     posted_to = str(cfg.get("posted_to", ""))
+    selected, _next = sam_gov_sweep_plan(
+        keywords, budget=sam_gov_daily_request_budget(), cursor=cursor
+    )
     targets: list[dict[str, Any]] = []
-    for kw in keywords:
+    for kw in selected:
         query = urlencode(
             {
                 "limit": limit,
@@ -764,6 +813,9 @@ def sam_gov_search_targets() -> list[dict[str, Any]]:
                 "url": f"{base}?{query}",
                 "kind": "opportunity_search",
                 "index_keyword": kw,
+                # P26.19: opt this slice into the driver's quota-bounded sweep
+                # guard (per-run request budget + clean stop before the 429 wall).
+                "quota_governed": True,
             }
         )
     return targets
@@ -1584,13 +1636,23 @@ class ProcurementConnector(Connector):
             # P26.14: append the widened per-keyword search targets; a supplied
             # target whose `title` param already names a keyword suppresses the
             # generated slice for that keyword (no double-fetch).
+            # P26.19: the sweep is bounded to one daily quota window. Every
+            # opportunity-search slice (supplied or generated) is `quota_governed`
+            # so the driver counts it against `request_budget` and stops cleanly
+            # before the 429 wall; `sweep_cursor` pages the prioritised keyword
+            # space across windows when the budget is below the keyword count.
             supplied = {
                 t for t in (_sam_gov_title_param(str(x.get("url", ""))) for x in targets) if t
             }
+            cursor = int(ctx.parameters.get("sweep_cursor", 0) or 0)
             generated = [
                 t
-                for t in sam_gov_search_targets()
+                for t in sam_gov_search_targets(cursor=cursor)
                 if str(t.get("index_keyword", "")).lower() not in supplied
+            ]
+            targets = [
+                {**t, "quota_governed": True} if t.get("kind") == "opportunity_search" else t
+                for t in targets
             ]
             targets = [*targets, *generated]
             for t in generated:
@@ -4592,6 +4654,10 @@ __all__ = [
     "predicate_allowlist",
     "procurement_states",
     "sam_gov_config",
+    "sam_gov_daily_request_budget",
+    "sam_gov_search_targets",
+    "sam_gov_sweep_config",
+    "sam_gov_sweep_plan",
     "source_ids",
     "tenant_discovery_negatives",
     "tenant_for_uri",
