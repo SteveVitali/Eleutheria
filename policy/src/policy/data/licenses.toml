@@ -271,3 +271,24 @@ source = "US state and municipal portals"
 license = "LicenseRef-OperatorAccepted-DBRight"
 description = "Non-US / unresolved-jurisdiction camera registries — operator-accepted database-right basis (GL-GATE-07)"
 source = "non-US municipal and community portals"
+
+# --- P27.2 (LAUNCH.2) licences/compartments -----------------------------------
+# LicenseRef-MuckRock-API-ToS — the MuckRock API terms of service, recorded
+# 2026-09-15 (docs/build/reports/rights/muckrock.md). Registered so the resolved
+# rights_record has a named licence; the source's recorded disposition is
+# redistributable=false/derivative=false, so the export gate refuses it before
+# compartment math — no compartment is declared for it.
+[licenses."LicenseRef-MuckRock-API-ToS"]
+kind = "data"
+share_alike = false
+attribution_required = true
+relicensable_to = ["LicenseRef-MuckRock-API-ToS"]
+
+# decp_fr resolves to its declared Licence Ouverte 2.0 (ADR-084; reviewed
+# 2026-09-15), which needs its own compartment — recorded under its own
+# expression, self-relicensable only, so it can never silently fold into the
+# permissive CC-BY graph (the LicenceOuverte-2.0 precedent).
+[compartments.france_licence_ouverte]
+license = "LicenceOuverte-2.0"
+description = "French public procurement (DECP) under Licence Ouverte 2.0 (Etalab)"
+source = "data.gouv.fr / Etalab"

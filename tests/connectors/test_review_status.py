@@ -204,10 +204,18 @@ def test_review_status_prints_flip_ready_0_and_loadable_65(
     # P26.16 (SOURCES.15) — the GL-GATE-07 rights batch: +136 new registry
     # rows (198 → 334 registered) and +151 flips (15 pre-registered gated
     # sources + 136 new rows all permitted; 77 → 228 loadable).
+    # P27.2 (LAUNCH.2) — `state_alpr_statute_inventory` rights-reviewed under
+    # GL-GATE-07/HG-03 (LicenseRef-DerivedFacts-Citations; the landed seed
+    # claims resolve via rights_decision, ADR-095). The registry flag stays
+    # false by design: the source is a one-time frozen seed that never
+    # re-fetches (SIG-INGEST-049f) and its terms page Cloudflare-challenges
+    # non-browser fetches — so it sits flip-ready-but-deliberately-unflipped,
+    # the registry's one standing exception.
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
     assert "registered sources: 334" in out
-    assert "flip-ready: 0" in out
+    assert "flip-ready: 1" in out
+    assert "flip-ready: state_alpr_statute_inventory" in out
     assert "loadable now: 228" in out
 
 
@@ -217,7 +225,10 @@ def test_review_status_loadable_equals_validate() -> None:
 
     loadable = [s for s in sources() if is_loadable(s)]
     assert len(loadable) == 228
-    assert len(flip_ready()) == 0
+    # state_alpr_statute_inventory is the single flip-ready row: its rights
+    # resolved for the landed seed claims (P27.2/ADR-095) while the live gate
+    # stays closed by design — one-time seed, never a feed (SIG-INGEST-049f).
+    assert {s.id for s in flip_ready()} == {"state_alpr_statute_inventory"}
 
 
 def test_flip_ready_excludes_permitted_and_undetermined_and_link() -> None:

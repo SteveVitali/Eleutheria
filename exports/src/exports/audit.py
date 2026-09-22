@@ -38,7 +38,7 @@ from datetime import UTC, datetime
 from typing import Any, Protocol
 
 #: The audit output schema version — bumped when the emitted shape changes.
-AUDIT_SCHEMA_VERSION = "p27.1/1.0.0"
+AUDIT_SCHEMA_VERSION = "p27.2/1.0.0"
 
 #: The geolocation predicates coordinates live under (as text) on the claim spine.
 GEO_PREDICATES = ("camera_latitude", "camera_longitude")
@@ -145,6 +145,72 @@ QUERIES: dict[str, str] = {
     ),
 }
 
+#: Effective-rights queries (P27.2 / ADR-095), run only when the spine carries the
+#: `rights_decision` table. A claim's EFFECTIVE rights = the latest decision whose
+#: (source_id, prior_rights_id) matches the claim's recorded rights_id, else the
+#: recorded record. Decisions only ever have UNDETERMINED priors, so an already-
+#: resolved claim (e.g. recorded ODbL) is never re-licensed by construction.
+_EFFECTIVE_CTE = (
+    "WITH latest_decision AS ("
+    "  SELECT DISTINCT ON (rd.source_id, rd.prior_rights_id)"
+    "         rd.source_id, rd.prior_rights_id, rd.rights_id"
+    "    FROM rights_decision rd"
+    "   ORDER BY rd.source_id, rd.prior_rights_id, rd.decided_at DESC, rd.decision_id DESC"
+    "), claim_source AS ("
+    # one deterministic source per claim (claims carry exactly one 'establishes' link
+    # in practice; DISTINCT ON keeps the query honest even if a second ever appears)
+    "  SELECT DISTINCT ON (ce.claim_id) ce.claim_id, ea.source_id"
+    "    FROM claim_evidence ce"
+    "    JOIN evidence_capture ec ON ce.capture_id = ec.capture_id"
+    "    JOIN evidence_artifact ea ON ec.artifact_id = ea.artifact_id"
+    "   WHERE ce.role = 'establishes'"
+    "   ORDER BY ce.claim_id, ea.source_id ASC"
+    ") "
+)
+EFFECTIVE_QUERIES: dict[str, str] = {
+    # The licence mix as RESOLVED through rights_decision — the post-review posture.
+    "effective_licence_mix": (
+        _EFFECTIVE_CTE
+        + "SELECT rr.spdx_expression, rr.redistributable, rr.derivative_permitted, count(*) AS n"
+        "  FROM claim c"
+        "  LEFT JOIN claim_source cs ON cs.claim_id = c.claim_id"
+        "  LEFT JOIN latest_decision ld"
+        "         ON ld.source_id = cs.source_id AND ld.prior_rights_id = c.rights_id"
+        "  JOIN rights_record rr ON rr.rights_id = COALESCE(ld.rights_id, c.rights_id)"
+        " GROUP BY rr.spdx_expression, rr.redistributable, rr.derivative_permitted"
+        " ORDER BY n DESC, rr.spdx_expression ASC"
+    ),
+    # Effective redistributability split (the post-review compartment posture).
+    "effective_redistributable_split": (
+        _EFFECTIVE_CTE + "SELECT rr.redistributable, count(*) AS n"
+        "  FROM claim c"
+        "  LEFT JOIN claim_source cs ON cs.claim_id = c.claim_id"
+        "  LEFT JOIN latest_decision ld"
+        "         ON ld.source_id = cs.source_id AND ld.prior_rights_id = c.rights_id"
+        "  JOIN rights_record rr ON rr.rights_id = COALESCE(ld.rights_id, c.rights_id)"
+        " GROUP BY rr.redistributable ORDER BY n DESC, rr.redistributable ASC"
+    ),
+    # The residue: claims still UNDETERMINED after decisions, by connector.
+    "effective_undetermined_by_connector": (
+        _EFFECTIVE_CTE + "SELECT ir.connector_name, count(*) AS n"
+        "  FROM claim c"
+        "  JOIN ingest_run ir ON c.ingest_run_id = ir.run_id"
+        "  LEFT JOIN claim_source cs ON cs.claim_id = c.claim_id"
+        "  LEFT JOIN latest_decision ld"
+        "         ON ld.source_id = cs.source_id AND ld.prior_rights_id = c.rights_id"
+        "  JOIN rights_record rr ON rr.rights_id = COALESCE(ld.rights_id, c.rights_id)"
+        " WHERE rr.redistributable = 'UNDETERMINED'"
+        " GROUP BY ir.connector_name ORDER BY n DESC, ir.connector_name ASC"
+    ),
+    # The recorded decision rows themselves (the audit trail, verbatim).
+    "rights_decisions": (
+        "SELECT rd.source_id, rr.spdx_expression, rr.redistributable, rd.reviewer,"
+        "       rd.decided_at, rd.prior_rights_id, rd.rights_id"
+        "  FROM rights_decision rd JOIN rights_record rr ON rd.rights_id = rr.rights_id"
+        " ORDER BY rd.source_id ASC, rd.decided_at ASC, rd.decision_id ASC"
+    ),
+}
+
 
 @dataclass(frozen=True)
 class Fraction:
@@ -197,6 +263,19 @@ class ModelingTableRow:
 
 
 @dataclass(frozen=True)
+class DecisionRow:
+    """One recorded rights_decision row (the review audit trail, verbatim)."""
+
+    source_id: str
+    spdx: str
+    redistributable: str
+    reviewer: str
+    decided_at: str
+    prior_rights_id: str
+    rights_id: str
+
+
+@dataclass(frozen=True)
 class SpineAudit:
     """A deterministic, read-only public-surface audit — a point-in-time snapshot of the spine."""
 
@@ -233,10 +312,19 @@ class SpineAudit:
 
     modeling_tables: list[ModelingTableRow]
 
+    # Effective rights (P27.2 / ADR-095). None when the spine predates the
+    # rights_decision change — "not measured" is reported, never a fake zero.
+    effective_licence_mix: list[LicenceRow] | None = None
+    effective_redistributable_split: list[NamedCount] | None = None
+    effective_undetermined_by_connector: list[NamedCount] | None = None
+    rights_decisions: list[DecisionRow] | None = None
+
     # Derived, denominator-bearing headline figures.
     publishable: Fraction = field(init=False)
     undetermined: Fraction = field(init=False)
     geolocated: Fraction = field(init=False)
+    publishable_effective: Fraction | None = field(init=False, default=None)
+    undetermined_effective: Fraction | None = field(init=False, default=None)
 
     def __post_init__(self) -> None:
         publishable_claims = sum(
@@ -260,6 +348,27 @@ class SpineAudit:
             "geolocated",
             Fraction(self.geolocated_entities, self.total_entities, "entities"),
         )
+        if self.effective_licence_mix is not None:
+            eff_publishable = sum(
+                row.claims for row in self.effective_licence_mix if row.redistributable == "yes"
+            )
+            eff_undetermined = sum(
+                row.claims
+                for row in self.effective_licence_mix
+                if row.redistributable == "UNDETERMINED"
+            )
+            object.__setattr__(
+                self,
+                "publishable_effective",
+                Fraction(
+                    eff_publishable, self.total_claims, "claims (effective redistributable=yes)"
+                ),
+            )
+            object.__setattr__(
+                self,
+                "undetermined_effective",
+                Fraction(eff_undetermined, self.total_claims, "claims (effective UNDETERMINED)"),
+            )
 
     # ------------------------------------------------------------------ #
     # Serialisation                                                       #
@@ -297,6 +406,60 @@ class SpineAudit:
             "redistributable_split": [
                 {"name": n.name, "count": n.count} for n in self.redistributable_split
             ],
+            # Effective (post-decision) rights — null when the spine predates
+            # the rights_decision change (reported as not-measured, never faked).
+            "publishable_effective": (
+                None if self.publishable_effective is None else self.publishable_effective.to_json()
+            ),
+            "undetermined_effective": (
+                None
+                if self.undetermined_effective is None
+                else self.undetermined_effective.to_json()
+            ),
+            "effective_licence_mix": (
+                None
+                if self.effective_licence_mix is None
+                else [
+                    {
+                        "spdx": r.spdx,
+                        "redistributable": r.redistributable,
+                        "derivative_permitted": r.derivative_permitted,
+                        "claims": r.claims,
+                    }
+                    for r in self.effective_licence_mix
+                ]
+            ),
+            "effective_redistributable_split": (
+                None
+                if self.effective_redistributable_split is None
+                else [
+                    {"name": n.name, "count": n.count} for n in self.effective_redistributable_split
+                ]
+            ),
+            "effective_undetermined_by_connector": (
+                None
+                if self.effective_undetermined_by_connector is None
+                else [
+                    {"name": n.name, "count": n.count}
+                    for n in self.effective_undetermined_by_connector
+                ]
+            ),
+            "rights_decisions": (
+                None
+                if self.rights_decisions is None
+                else [
+                    {
+                        "source_id": d.source_id,
+                        "spdx": d.spdx,
+                        "redistributable": d.redistributable,
+                        "reviewer": d.reviewer,
+                        "decided_at": d.decided_at,
+                        "prior_rights_id": d.prior_rights_id,
+                        "rights_id": d.rights_id,
+                    }
+                    for d in self.rights_decisions
+                ]
+            ),
             "undetermined_by_connector": [
                 {"name": n.name, "count": n.count} for n in self.undetermined_by_connector
             ],
@@ -347,6 +510,12 @@ class SpineAudit:
         w(f"| sources | {self.total_sources:,} ({self.permitted_sources:,} ingestion_permitted) |")
         w(f"| publishable | {self.publishable.render()} |")
         w(f"| UNDETERMINED rights | {self.undetermined.render()} |")
+        if self.publishable_effective is not None and self.undetermined_effective is not None:
+            w(f"| publishable (effective, post-decision) | {self.publishable_effective.render()} |")
+            w(
+                "| UNDETERMINED rights (effective, post-decision) | "
+                f"{self.undetermined_effective.render()} |"
+            )
         w(f"| geolocated | {self.geolocated.render()} |")
         w("")
         w("## Licence mix (claims by `rights_record.spdx_expression`)")
@@ -370,6 +539,49 @@ class SpineAudit:
         for n in self.undetermined_by_connector:
             w(f"| {n.name} | {n.count:,} |")
         w("")
+        if self.effective_licence_mix is not None:
+            w("## Effective rights — post-decision resolution (P27.2, ADR-095)")
+            w("")
+            w("The spine is append-only: a claim's *recorded* `rights_id` is the provenance")
+            w("of what was known at assertion time and is never rewritten. A recorded")
+            w("`rights_decision` row resolves a source's UNDETERMINED-recorded claims to")
+            w("the reviewed licence; the tables below show the **effective** posture.")
+            w("")
+            n_decisions = len(self.rights_decisions or [])
+            w(f"Recorded `rights_decision` rows: **{n_decisions}**")
+            w("")
+            w("Effective licence mix (as resolved through `rights_decision`):")
+            w("")
+            w("| claims | spdx | redistributable | derivative |")
+            w("|---:|---|---|---|")
+            for r in self.effective_licence_mix:
+                w(f"| {r.claims:,} | {r.spdx} | {r.redistributable} | {r.derivative_permitted} |")
+            w("")
+            w("Effective redistributability split:")
+            w("")
+            w("| redistributable | claims |")
+            w("|---|---:|")
+            for n in self.effective_redistributable_split or []:
+                w(f"| {n.name} | {n.count:,} |")
+            w("")
+            w("Effective UNDETERMINED residue by connector:")
+            w("")
+            w("| connector | UNDETERMINED claims |")
+            w("|---|---:|")
+            for n in self.effective_undetermined_by_connector or []:
+                w(f"| {n.name} | {n.count:,} |")
+            w("")
+            if self.rights_decisions:
+                w("Recorded rights decisions (the review audit trail):")
+                w("")
+                w("| source | spdx | redistributable | reviewer | decided_at |")
+                w("|---|---|---|---|---|")
+                for d in self.rights_decisions:
+                    w(
+                        f"| {d.source_id} | {d.spdx} | {d.redistributable} "
+                        f"| {d.reviewer} | {d.decided_at} |"
+                    )
+                w("")
         w("## Claims by connector (top of the spine — context/denominators)")
         w("")
         w("| connector | claims |")
@@ -423,6 +635,11 @@ class SpineAudit:
         for key in sorted(QUERIES):
             w(f"-- {key}")
             w(QUERIES[key] + ";")
+        if self.effective_licence_mix is not None:
+            w("-- (P27.2) effective-rights queries — run only when rights_decision exists")
+            for key in sorted(EFFECTIVE_QUERIES):
+                w(f"-- {key}")
+                w(EFFECTIVE_QUERIES[key] + ";")
         w("```")
         w("")
         w("## Caveats (observation-level, pre-resolution)")
@@ -432,6 +649,12 @@ class SpineAudit:
         w("  geolocated-entity count is **observation-level**, not a resolved device inventory.")
         w("- Rights → source attribution via `rights_id` alone fans out (many sources share one")
         w("  record); UNDETERMINED is attributed via `ingest_run.connector_name` (per-run).")
+        if self.effective_licence_mix is not None:
+            w("- The **effective** rights view resolves each claim through the latest")
+            w("  `rights_decision` matching `(source, recorded rights_id)`; a decision can")
+            w("  only lift an UNDETERMINED-recorded claim, never relicense a resolved one.")
+            w("  One deterministic source is attributed per claim (`claim_evidence`")
+            w("  'establishes' → `evidence_artifact.source_id`, smallest source_id wins).")
         w("- Coordinates are reported **only in aggregate** (a distinct-subject count + coarse")
         w("  jurisdiction spread); no per-person, per-plate, or raw-coordinate field is emitted.")
         w("- **PROVISIONAL** per the OSM land in flight — re-run this verb after it completes.")
@@ -499,6 +722,35 @@ def build_spine_audit(
         ModelingTableRow(table=t, rows=int(modeling_raw.get(t, 0))) for t in MODELING_TABLES
     ]
 
+    # Effective-rights view (P27.2): present only when run_audit found the
+    # rights_decision table and ran EFFECTIVE_QUERIES.
+    effective_licence_mix = None
+    if raw.get("effective_licence_mix") is not None:
+        effective_licence_mix = [
+            LicenceRow(
+                spdx="(null)" if r[0] is None else str(r[0]),
+                redistributable=str(r[1]),
+                derivative_permitted=str(r[2]),
+                claims=int(r[3]),
+            )
+            for r in raw["effective_licence_mix"]
+        ]
+        effective_licence_mix.sort(key=lambda r: (-r.claims, r.spdx))
+    rights_decisions = None
+    if raw.get("rights_decisions") is not None:
+        rights_decisions = [
+            DecisionRow(
+                source_id=str(r[0]),
+                spdx=str(r[1]),
+                redistributable=str(r[2]),
+                reviewer=str(r[3]),
+                decided_at=str(r[4]),
+                prior_rights_id=str(r[5]),
+                rights_id=str(r[6]),
+            )
+            for r in raw["rights_decisions"]
+        ]
+
     return SpineAudit(
         as_of=as_of,
         generated_at=generated_at,
@@ -524,6 +776,18 @@ def build_spine_audit(
         earliest_observed=earliest,
         latest_observed=latest,
         modeling_tables=modeling_tables,
+        effective_licence_mix=effective_licence_mix,
+        effective_redistributable_split=(
+            None
+            if raw.get("effective_redistributable_split") is None
+            else _named_counts(raw["effective_redistributable_split"])
+        ),
+        effective_undetermined_by_connector=(
+            None
+            if raw.get("effective_undetermined_by_connector") is None
+            else _named_counts(raw["effective_undetermined_by_connector"])
+        ),
+        rights_decisions=rights_decisions,
     )
 
 
@@ -557,7 +821,15 @@ def run_audit(
         "geolocated_entities",
         "value_geom_populated",
     }
-    for key, query in QUERIES.items():
+    queries = dict(QUERIES)
+    # P27.2 effective-rights queries run only on a spine that carries the
+    # rights_decision table; an older spine reports them as not-measured.
+    cur.execute("SELECT to_regclass('rights_decision') IS NOT NULL")
+    has_decisions_row = cur.fetchone()
+    has_decisions = bool(has_decisions_row and has_decisions_row[0])
+    if has_decisions:
+        queries.update(EFFECTIVE_QUERIES)
+    for key, query in queries.items():
         cur.execute(query)
         if key in scalar_keys:
             row = cur.fetchone()
