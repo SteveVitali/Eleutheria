@@ -40,6 +40,20 @@ _TIER_DESCRIPTIONS: dict[str, str] = {
     "partner": "Bulk access under an agreed partner data-use agreement.",
 }
 
+#: Per-compartment licence statement (SIG-LIC-004/010, §42). Each export
+#: compartment is offered under its own licence and kept in a separate file; the
+#: OSM-derived physical layer is a Produced Work under ODbL with attribution +
+#: share-alike (HG-02 disposition), never mixed into the CC-BY graph compartment.
+_LICENSES: dict[str, str] = {
+    "sig_graph": "CC-BY-4.0 — the SIG-produced reconciliation graph (attribution).",
+    "osm_physical": (
+        "ODbL-1.0 — the OpenStreetMap-derived physical device layer, a Produced Work "
+        "offered under ODbL with attribution to © OpenStreetMap contributors and the "
+        "share-alike notice; kept in its own separate compartment (§42, SIG-LIC-004a)."
+    ),
+    "crosswalk": "The most permissive licence its constituents allow (SIG-EXPORT-007).",
+}
+
 
 def acceptable_use_terms() -> TermsResponse:
     """The acceptable-use terms served at ``/terms`` (SIG-API-013)."""
@@ -49,4 +63,5 @@ def acceptable_use_terms() -> TermsResponse:
         prohibitions=list(_PROHIBITIONS),
         remedy=_REMEDY,
         reidentification_prohibited=True,
+        licenses=dict(_LICENSES),
     )

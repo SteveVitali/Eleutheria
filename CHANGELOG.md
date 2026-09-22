@@ -15,6 +15,17 @@ release-readiness chain (Phases 19–20). A buildable, fully-tested reference im
 **not a running service** (nothing deployed; no source fetched live). Full detail:
 [`docs/build/RELEASE_NOTES_v0.1.0.md`](./docs/build/RELEASE_NOTES_v0.1.0.md).
 
+> **P21.4 (first jurisdiction → local staging).** SIG now runs as a composed system
+> for one real jurisdiction (Oklahoma City): `sig-ops up/status/down/seed`
+> (`ops/docker-compose.yml`, PG18+PostGIS + API + static), the export-backed web data
+> layer (`web/src/lib/data.ts`, `SIG_DATA_SOURCE=fixtures|export`), the jurisdiction
+> export with a separate ODbL compartment, and `docs/build/tools/run_okc.sh` driving
+> the whole staging path — the OKC dossier renders the 299-vs-190 contradiction from
+> the export bytes (LD-V08 crossed, ADR-066). **No version bump:** there are no green
+> sources (HG-03 skipped) so this is staging, not live; go-public is gated on HG-01 +
+> HG-11 (`docs/build/PUBLICATION_CHECKLIST.md`). The `0.2.0` "first public jurisdiction"
+> cut-over is a later, human-gated decision.
+
 ### Added
 - **Domain model & ontology.** LinkML ontology + SKOS vocabularies + deterministic generators
   (`ontology/`); the append-only claim/evidence spine L0–L3 with RLS on PostgreSQL 18 + PostGIS

@@ -79,8 +79,19 @@ test("every material figure expands to its reconciliation (SIG-UI-014)", async (
     await expect(fig.getByTestId("recon-rule")).toBeVisible();
     const claims = fig.getByTestId("recon-claim");
     await expect(claims.first()).toBeVisible();
-    // The winning claim is marked, and every claim carries tier, date, and a document link.
-    await expect(fig.locator('[data-winning="true"]')).toHaveCount(1);
+    // A resolved figure marks exactly one winning claim; a genuinely UNRESOLVED
+    // standoff (e.g. 299-vs-190 claimed count, §3.1) marks NONE and is flagged
+    // unresolved instead — both claims are shown with their evidence, no synthetic
+    // winner is invented.
+    const unresolved = (await fig.getAttribute("data-unresolved")) === "true";
+    if (unresolved) {
+      await expect(fig.locator('[data-winning="true"]')).toHaveCount(0);
+      await expect(fig.getByTestId("figure-unresolved")).toBeVisible();
+      await expect(claims).toHaveCount(await claims.count()); // both claims present
+      expect(await claims.count()).toBeGreaterThanOrEqual(2);
+    } else {
+      await expect(fig.locator('[data-winning="true"]')).toHaveCount(1);
+    }
     await expect(claims.first().locator("a")).toHaveAttribute("href", /.+/);
     await expect(claims.first().locator("time")).toHaveAttribute("datetime", /\d{4}-\d{2}-\d{2}/);
   }

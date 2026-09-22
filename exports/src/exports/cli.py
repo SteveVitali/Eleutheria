@@ -53,7 +53,17 @@ def build_parser() -> argparse.ArgumentParser:
     )
     build.add_argument(
         "request_json",
-        help="Path to an export build-request JSON (see exports.bundle_io fields).",
+        nargs="?",
+        default=None,
+        help="Path to an export build-request JSON (see exports.bundle_io fields). "
+        "Optional when --jurisdiction is given (a jurisdiction request is built in-code).",
+    )
+    build.add_argument(
+        "--jurisdiction",
+        default=None,
+        help="Build a jurisdiction release from the committed slice (P21.4): the licence "
+        "compartments (ODbL osm_physical + CC-BY sig_graph) AND web/dossiers.json — the "
+        "web-shaped dossier bundle the static site is built from (SIG_DATA_SOURCE=export).",
     )
     build.add_argument(
         "--out",
@@ -85,20 +95,99 @@ def _run_provo(path: str, fmt: str) -> int:
     return 0
 
 
+def _jurisdiction_request(jurisdiction: str) -> dict[str, object]:
+    """The in-code export build-request for a jurisdiction (P21.4, fixture-backed).
+
+    Two licence compartments: the OSM-derived physical device layer (ODbL 1.0, its
+    OWN separate compartment — §42, HG-02, included in exports with attribution +
+    share-alike) and the SIG graph (CC-BY-4.0). No green sources → fixture values.
+    """
+    if jurisdiction != "okc":
+        raise ValueError("only the 'okc' jurisdiction export is buildable in P21.4")
+    return {
+        "build_spec": {
+            "as_of_snapshot": "2026-08-20",
+            "as_of_belief": "2026-08-20",
+            "ruleset_version": "resolver-ruleset-2026.07",
+            "resolver_version": "p08.1/1.0.0",
+        },
+        "rights": [
+            {
+                "source_id": "osm",
+                "spdx": "ODbL-1.0",
+                "attribution": "© OpenStreetMap contributors, ODbL 1.0 (share-alike)",
+                "redistributable": True,
+                "derivative_permitted": True,
+                "terms_url": "https://opendatacommons.org/licenses/odbl/1-0/",
+                "retrieval_date": "2026-08-20",
+            },
+            {
+                "source_id": "sig",
+                "spdx": "CC-BY-4.0",
+                "attribution": "© SIG",
+                "redistributable": True,
+                "derivative_permitted": True,
+                "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+                "retrieval_date": "2026-08-20",
+            },
+        ],
+        "tables": [
+            {
+                "name": "devices",
+                "kind": "geo",
+                "compartment": "osm_physical",
+                "rows": [
+                    {
+                        "source_id": "osm",
+                        "data": {
+                            "subject_id": "sig:asset:okc-pole-1",
+                            "geometry": {"type": "Point", "coordinates": [-97.5164, 35.4676]},
+                            "jurisdiction": "Oklahoma City, Oklahoma",
+                        },
+                    }
+                ],
+            },
+            {
+                "name": "claims",
+                "kind": "tabular",
+                "rows": [
+                    {
+                        "source_id": "sig",
+                        "data": {
+                            "subject_id": "sig:deployment:okc-okcpd-flock",
+                            "predicate_id": "claimed_device_count",
+                            "value_low": 190,
+                            "value_high": 299,
+                            "resolution_status": "UNRESOLVED",
+                        },
+                    }
+                ],
+            },
+        ],
+    }
+
+
 def _run_build(
-    request_path: str,
+    request_path: str | None,
     out_dir: str,
     zenodo_dry_run: bool,
     store: str | None,
     base_url: str,
     cdn_url: str,
+    jurisdiction: str | None = None,
 ) -> int:
     from .bundle import build_bundle
     from .bundle_io import build_request_from_json
     from .distribution import ObjectStore
 
-    with open(request_path, encoding="utf-8") as fh:
-        doc = json.load(fh)
+    if jurisdiction is not None:
+        doc: dict[str, object] = _jurisdiction_request(jurisdiction)
+    else:
+        if request_path is None:
+            print("sig-exports build: request_json is required unless --jurisdiction is given")
+            return 2
+        with open(request_path, encoding="utf-8") as fh:
+            doc = json.load(fh)
     build_spec, tables, rights, crosswalk = build_request_from_json(doc)
     object_store: ObjectStore | None = None
     if store:
@@ -122,6 +211,24 @@ def _run_build(
         "licenses": sorted(bundle.manifest.licenses()),
         "out_dir": out_dir,
     }
+
+    # A jurisdiction release also emits the web-shaped dossier bundle the static
+    # site reads under SIG_DATA_SOURCE=export (LD-V08). It is JSON derived from the
+    # committed slice + the resolver — the same /v1 dossier contract the fixtures
+    # carry — so `web/` builds identically from fixtures or from the export.
+    if jurisdiction is not None:
+        import os
+
+        from .web_dossier import build_web_dossiers
+
+        dossiers = build_web_dossiers(jurisdiction)
+        web_dir = os.path.join(out_dir, "web")
+        os.makedirs(web_dir, exist_ok=True)
+        with open(os.path.join(web_dir, "dossiers.json"), "w", encoding="utf-8") as fh:
+            json.dump(dossiers, fh, indent=2, ensure_ascii=False)
+        summary["jurisdiction"] = jurisdiction
+        summary["dossiers"] = [d["slug"] for d in dossiers]
+        summary["web_dossiers_path"] = os.path.join(web_dir, "dossiers.json")
     if zenodo_dry_run:
         from .zenodo import FakeZenodoTransport, deposit_release
 
@@ -150,6 +257,7 @@ def main(argv: list[str] | None = None) -> int:
             args.store,
             args.base_url,
             args.cdn_url,
+            jurisdiction=args.jurisdiction,
         )
     parser.print_help()
     return 0

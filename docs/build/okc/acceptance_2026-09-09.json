@@ -1,0 +1,171 @@
+{
+  "api_url": "http://127.0.0.1:8000",
+  "as_of": "2026-09-09",
+  "j1": {
+    "api_contested_count_hop": true,
+    "hop_count": 12,
+    "hops": [
+      "city",
+      "police_agency",
+      "deployment",
+      "contract",
+      "contracted_cameras",
+      "mapped_devices",
+      "sharing_relationships",
+      "network_searches",
+      "retention_settings",
+      "policy",
+      "related_litigation",
+      "replacement_vendor"
+    ],
+    "source_families": [
+      "agency policy",
+      "community field-mapping",
+      "executed contract / procurement record",
+      "investigative journalism",
+      "municipal governance record"
+    ],
+    "status": "pass"
+  },
+  "mode": "fixture-backed (shadow); no green sources \u2014 HG-03 skipped (not live)",
+  "queries": [
+    {
+      "blocker": "",
+      "carrier": "The distinct count predicates (\u00a729.1)",
+      "detail": "resolution_status=UNRESOLVED, agreement=CONTESTED, 2 claims considered; both values retained (True).",
+      "endpoint": "/v1/resolution/sig:deployment:okc-okcpd-flock/claimed_device_count",
+      "id": "Q-6",
+      "in_fixture_subset": true,
+      "question": "How many devices were purchased or reported?",
+      "status": "pass"
+    },
+    {
+      "blocker": "",
+      "carrier": "Role edges: owns, operates (\u00a712.4)",
+      "detail": "3 entity(ies) match 'okc' in the composed spine.",
+      "endpoint": "/v1/search?q=okc",
+      "id": "Q-2",
+      "in_fixture_subset": true,
+      "question": "Which organization owns or operates it?",
+      "status": "pass"
+    },
+    {
+      "blocker": "HG-03-pending: flip a source (e.g. `sig-connectors review-status --source osm`), then `sig-connectors run --source osm --mode live --sink pg --dsn $SIG_STAGING_DSN` to ingest the 'PhysicalAsset geometry (public spine has no geo; osm layer export-only)' carrier.",
+      "carrier": "PhysicalAsset + geometry (\u00a711.8)",
+      "detail": "",
+      "endpoint": "",
+      "id": "Q-1",
+      "in_fixture_subset": false,
+      "question": "Where is a physical surveillance device?",
+      "status": "blocked"
+    },
+    {
+      "blocker": "HG-03-pending: flip a source (e.g. `sig-connectors review-status --source atlas`), then `sig-connectors run --source atlas --mode live --sink pg --dsn $SIG_STAGING_DSN` to ingest the 'Deployment\u2192Technology adoption edge' carrier.",
+      "carrier": "Deployment \u2192 Technology (\u00a711.5)",
+      "detail": "",
+      "endpoint": "",
+      "id": "Q-3",
+      "in_fixture_subset": false,
+      "question": "Which surveillance technology has a given agency adopted?",
+      "status": "blocked"
+    },
+    {
+      "blocker": "HG-03-pending: flip a source (e.g. `sig-connectors review-status --source atlas`), then `sig-connectors run --source atlas --mode live --sink pg --dsn $SIG_STAGING_DSN` to ingest the 'Vendor/Product identity' carrier.",
+      "carrier": "Vendor, Product (\u00a711.2, \u00a711.4)",
+      "detail": "",
+      "endpoint": "",
+      "id": "Q-4",
+      "in_fixture_subset": false,
+      "question": "Which vendor and product are involved?",
+      "status": "blocked"
+    },
+    {
+      "blocker": "HG-03-pending: flip a source (e.g. `sig-connectors review-status --source records-request`), then `sig-connectors run --source records-request --mode live --sink pg --dsn $SIG_STAGING_DSN` to ingest the 'Contract cost/term' carrier.",
+      "carrier": "Contract (\u00a711.11)",
+      "detail": "",
+      "endpoint": "",
+      "id": "Q-5",
+      "in_fixture_subset": false,
+      "question": "What did the deployment cost, and under what contract?",
+      "status": "blocked"
+    },
+    {
+      "blocker": "HG-03-pending: flip a source (e.g. `sig-connectors review-status --source portal`), then `sig-connectors run --source portal --mode live --sink pg --dsn $SIG_STAGING_DSN` to ingest the 'ConfigurationState (retention/search/share)' carrier.",
+      "carrier": "ConfigurationState (\u00a711.15)",
+      "detail": "",
+      "endpoint": "",
+      "id": "Q-7",
+      "in_fixture_subset": false,
+      "question": "What is the system configured to retain, search, or share?",
+      "status": "blocked"
+    },
+    {
+      "blocker": "HG-03-pending: flip a source (e.g. `sig-connectors review-status --source portal`), then `sig-connectors run --source portal --mode live --sink pg --dsn $SIG_STAGING_DSN` to ingest the 'AccessRelationship (configured access)' carrier.",
+      "carrier": "AccessRelationship, configured (\u00a712.5)",
+      "detail": "",
+      "endpoint": "",
+      "id": "Q-8",
+      "in_fixture_subset": false,
+      "question": "Which other organizations can access the data?",
+      "status": "blocked"
+    },
+    {
+      "blocker": "HG-03-pending: flip a source (e.g. `sig-connectors review-status --source usage-audit`), then `sig-connectors run --source usage-audit --mode live --sink pg --dsn $SIG_STAGING_DSN` to ingest the 'UsageAggregate (observed searches)' carrier.",
+      "carrier": "UsageAggregate (\u00a711.16)",
+      "detail": "",
+      "endpoint": "",
+      "id": "Q-9",
+      "in_fixture_subset": false,
+      "question": "Which organizations actually searched the data?",
+      "status": "blocked"
+    },
+    {
+      "blocker": "HG-03-pending: flip a source (e.g. `sig-connectors review-status --source usage-audit`), then `sig-connectors run --source usage-audit --mode live --sink pg --dsn $SIG_STAGING_DSN` to ingest the 'Reason-category aggregates' carrier.",
+      "carrier": "Reason-category aggregates (\u00a711.16, \u00a724.2)",
+      "detail": "",
+      "endpoint": "",
+      "id": "Q-10",
+      "in_fixture_subset": false,
+      "question": "For what stated reasons?",
+      "status": "blocked"
+    },
+    {
+      "blocker": "HG-03-pending: flip a source (e.g. `sig-connectors review-status --source ops-manual`), then `sig-connectors run --source ops-manual --mode live --sink pg --dsn $SIG_STAGING_DSN` to ingest the 'Policy/LegalInstrument' carrier.",
+      "carrier": "Policy, LegalInstrument (\u00a711.13, \u00a711.14)",
+      "detail": "",
+      "endpoint": "",
+      "id": "Q-11",
+      "in_fixture_subset": false,
+      "question": "What policies and legal restrictions govern the system?",
+      "status": "blocked"
+    },
+    {
+      "blocker": "HG-03-pending: flip a source (e.g. `sig-connectors review-status --source council-minutes`), then `sig-connectors run --source council-minutes --mode live --sink pg --dsn $SIG_STAGING_DSN` to ingest the 'Lifecycle/AccountabilityEvent' carrier.",
+      "carrier": "Lifecycle state machine (\u00a713.4) + AccountabilityEvent (\u00a711.17)",
+      "detail": "",
+      "endpoint": "",
+      "id": "Q-12",
+      "in_fixture_subset": false,
+      "question": "Has the deployment been suspended, canceled, replaced, or litigated?",
+      "status": "blocked"
+    },
+    {
+      "blocker": "HG-03-pending: flip a source (e.g. `sig-connectors review-status --source network-graph`), then `sig-connectors run --source network-graph --mode live --sink pg --dsn $SIG_STAGING_DSN` to ingest the 'IntegrationRelationship closure' carrier.",
+      "carrier": "IntegrationRelationship + access-path closure (\u00a730.2)",
+      "detail": "",
+      "endpoint": "",
+      "id": "Q-13",
+      "in_fixture_subset": false,
+      "question": "How does one deployment connect to broader networks?",
+      "status": "blocked"
+    }
+  ],
+  "summary": {
+    "blocked": 11,
+    "failed": 0,
+    "fixture_subset_all_pass": true,
+    "j1_status": "pass",
+    "passed": 2,
+    "total": 13
+  }
+}

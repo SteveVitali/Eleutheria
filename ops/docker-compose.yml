@@ -1,0 +1,59 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# The SIG local runtime composition (P21.4, deliverable 1; ADR-066).
+#
+# This is the zero-cost, one-small-machine staging posture (SIG-STORE-003): no
+# cloud-specific config, everything runs on a laptop with Docker. It owns the
+# stateful, containerised piece of the stack — the PG18+PostGIS claim spine with
+# the real sqitch plan deployed on start (§20.4, §48, SIG-STORE-024/041). The API
+# (uvicorn) and the static server for `web/dist` are launched by `sig-ops up` as
+# host processes (the HG-12 local-staging default: uvicorn + `astro preview`), so
+# they run the *host's* Python/Node toolchain and code at HEAD without baking a
+# platform-specific image. `sig-ops down` stops this compose project AND those host
+# processes, so nothing is left running (the AC: "down leaves no containers").
+#
+# All ports/name are pinned to the `sig` compose project so a worktree's stack is
+# isolated and `docker compose -p sig down -v` is a complete teardown.
+
+name: sig
+
+services:
+  db:
+    image: postgis/postgis:18-3.6
+    environment:
+      POSTGRES_USER: ${SIG_PG_USER:-sig}
+      POSTGRES_PASSWORD: ${SIG_PG_PASSWORD:-sig}
+      POSTGRES_DB: ${SIG_PG_DB:-sig}
+    ports:
+      - "${SIG_PG_PORT:-5432}:5432"
+    volumes:
+      # PG18 places its data in a version subdir; mount the parent so the image's
+      # pg_upgrade-friendly layout is honoured (docker-library/postgres#37).
+      - sig_pg_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${SIG_PG_USER:-sig} -d ${SIG_PG_DB:-sig}"]
+      interval: 3s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+
+  # One-shot: deploy the canonical sqitch plan into the spine, then exit 0.
+  # Re-running is idempotent (sqitch only deploys pending changes), so `sig-ops up`
+  # is safe to call repeatedly. The whole `db/` dir is mounted read-only.
+  sqitch:
+    image: sqitch/sqitch:latest
+    depends_on:
+      db:
+        condition: service_healthy
+    working_dir: /repo
+    volumes:
+      - ../db:/repo:ro
+    command:
+      - deploy
+      - db:pg://${SIG_PG_USER:-sig}:${SIG_PG_PASSWORD:-sig}@db:5432/${SIG_PG_DB:-sig}
+    restart: "no"
+
+volumes:
+  sig_pg_data:

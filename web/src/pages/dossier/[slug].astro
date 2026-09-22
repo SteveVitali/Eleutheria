@@ -17,10 +17,10 @@ import WhatWeDontKnow from "../../components/WhatWeDontKnow.astro";
 import DossierSection from "../../components/DossierSection.astro";
 import ActionBlocks from "../../components/ActionBlocks.astro";
 import { applyPublicationPolicy, dossierLang, dossierJsonPath, dossierPath, dossierPrintPath, sectionTitlesFor, validateDossier } from "../../lib/dossier";
-import { DOSSIERS } from "../../lib/dossier-fixture";
+import { getDossiers } from "../../lib/data";
 
 export function getStaticPaths() {
-  return DOSSIERS.map((d) => ({ params: { slug: d.slug }, props: { dossier: d } }));
+  return getDossiers().map((d) => ({ params: { slug: d.slug }, props: { dossier: d } }));
 }
 
 // Apply the jurisdiction-conditional publication policy in the build-time data path

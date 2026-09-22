@@ -2119,3 +2119,24 @@ until a source's review-status is fully green — `run --mode live` refuses with
 | SIG-INGEST-015 (fetch record: provenance + conduct evidence, no content) | `connectors.runner.FetchRecord`/`write_fetch_record`; `docs/build/live_runs/` | `test_runner.py::test_fetch_record_carries_conduct_evidence_and_no_content` (rate-limit + robots present; no `body`/`content`; dated filename) |
 | HG-09 / RISK-P21-05 (env-only secrets; no token literal; `.env*` ignored) | env names read only; `.gitignore` `.env`/`.env.*`/`*.env` | `tests/connectors/test_secrets.py` (no `SIG_*_TOKEN`/`api_key` literal in `.py`/`.toml`; `.env*` ignored); `git grep 'SIG_MUCKROCK_TOKEN=\|api_key='` empty |
 | Phase gate (§51.3): `make check` green; ADR-065; register + traceability; BACKLOG rows | `make check`; `docs/adr/ADR-065-*.md`; `docs/risk_register.md` `## Phase 21 — Operationalization (P21.3)` (RISK-P21-04/05); `docs/build/LIVE_WIRING_REPORT.md`; `docs/build/BACKLOG.csv` | `make check`; `python docs/build/tools/check_spec_src.py` (64 ADRs); `check_backlog.py` green; BL-023/BL-024/BL-026 noted pending HG-03/HG-09 in the report (live fetch gated) |
+
+# P21.4 — first jurisdiction end to end (Oklahoma City ingest → staging)
+
+P21.4 runs SIG as a composed system for one real jurisdiction and deploys to
+**local staging** (HG-12). No source is green (HG-03 skipped), so the whole path
+runs in `shadow`/seed mode over the committed OKC slice — real staging, not live.
+It owns `ops/docker-compose.yml`, `sig-ops`, and `web/src/lib/data.ts` (ADR-066),
+and crosses `LD-V08`.
+
+| Requirement | Where | Test |
+|---|---|---|
+| Runtime composition: PG18+PostGIS + sqitch on start; `sig-ops up\|status\|down\|seed` (down leaves no containers) | `ops/docker-compose.yml`; `ops/src/ops/cli.py`; `ops/src/ops/seed.py`; `ops/README.md` | live-verified `sig-ops up/status/down` (PG/API/static healthy; teardown clean); `sig-ops seed` loads the OKC slice append-only via `PgClaimSink` |
+| Export-backed web data layer: `SIG_DATA_SOURCE=fixtures\|export` (fixtures the CI default) | `web/src/lib/data.ts`; dossier routes read `getDossiers()` | `web/` builds in both modes; `npm run test:e2e` 172 passed in EACH mode; `check:perf` budgets hold |
+| LD-V08 crossed: the dossier renders from the export bytes (299-vs-190 contradiction, §3.1) | `web/src/lib/data.ts`; `exports/src/exports/web_dossier.py`; `DossierFigure.astro` (unresolved state) | `tests/e2e/test_composed_stack.py::test_s8_web_build_renders_from_export_bytes` (299, 190, both sources + dates from the export) |
+| Jurisdiction export: separate ODbL/CC-BY compartments + `web/dossiers.json` (SIG-LIC-004/010, §42, HG-02) | `sig-exports build --jurisdiction okc`; `exports/src/exports/cli.py`; `exports/src/exports/web_dossier.py` | export emits `osm_physical/` (ODbL) + `sig_graph/` (CC-BY) + `web/dossiers.json`; `S7` licence-split test unchanged |
+| Contradiction survives to the running API (§3.1; SIG-API-002) | `api/src/api/store_pg.py`; `sig-api serve --dsn` | live `/v1/resolution/.../claimed_device_count` → `UNRESOLVED`/`CONTESTED`, both values + sources + dates |
+| J-1 + Q-1…Q-13 against the running API (SIG-CHART-009) | `tests/acceptance/live_api.py`; `docs/build/tools/run_okc.sh` | `docs/build/okc/acceptance_<date>.json` (J-1 pass; Q-2/Q-6 pass; 11 blocked HG-03-pending; fixture-subset all pass); `tests/acceptance/queries/test_acceptance_live_api.py` (env-gated) |
+| The OKC run, end to end | `docs/build/tools/run_okc.sh` | `sh docs/build/tools/run_okc.sh` completes: up+seed → shadow connector runs → resolution match → reconcile resolve → export → web build from export → acceptance → status |
+| `/terms` states the per-compartment licence (SIG-LIC-004/010) | `api/src/api/terms.py`; `api/src/api/models.py::TermsResponse.licenses` | `tests/api/test_api_terms.py` (additive field; existing assertions unchanged) |
+| Publication checklist + first-jurisdiction report + concurrence + hostile-reader review | `docs/build/PUBLICATION_CHECKLIST.md`; `docs/build/FIRST_JURISDICTION_REPORT.md` (8 sections); `docs/build/okc/concurrence.md`; `docs/build/okc/hostile_reader_review.md` | every item ticked or `gate pending: HG-nn` (HG-01/HG-11 pending; HG-02 satisfied; HG-12 local); hostile reader found no uncited claim |
+| Phase gate (§51.3): `make check` green; ADR-066; register + traceability; BACKLOG | `make check`; `docs/adr/ADR-066-*.md` (+ Appendix F, README); `docs/risk_register.md` RISK-P21-06/07; `docs/build/BACKLOG.csv` | `make check`; `python docs/build/tools/check_spec_src.py` (65 ADRs); go-public NOT done (RETURN PASS; HG-01/HG-11/Go-public pending) |

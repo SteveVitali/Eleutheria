@@ -20,13 +20,22 @@ interface Props {
 const { figure } = Astro.props;
 const suffix = figure.unit ? ` ${figure.unit}` : "";
 const lb = figure.lowerBound ? " (lower bound)" : "";
+// A figure can be a genuinely UNRESOLVED standoff: the resolver could pick no
+// winner (e.g. the 299-vs-190 claimed device count — two sources measuring
+// different scopes, §3.1). Such a figure names NO winning claim; it is marked
+// unresolved and shows both claims with their evidence rather than a value. This
+// is distinct from a "contested-but-resolved" figure (a winner + preserved dissent).
+const unresolved = !figure.reconciliation.claims.some(
+  (c) => c.claimId === figure.reconciliation.winningClaimId,
+);
 ---
 
-<details class="sig-recon" data-testid="dossier-figure" data-figure-key={figure.key}>
+<details class="sig-recon" data-testid="dossier-figure" data-figure-key={figure.key} data-unresolved={String(unresolved)}>
   <summary>
     <span class="sig-recon__headline">
       <span class="sig-recon__label">{figure.label}:</span>
       <strong>{figure.value}{suffix}</strong>{lb}
+      {unresolved && <> <span class="sig-recon__unresolved" data-testid="figure-unresolved">unresolved — no single value</span></>}
       {figure.contested && <> <ContestedMarker compact={true} /></>}
     </span>
   </summary>
