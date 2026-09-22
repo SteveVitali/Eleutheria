@@ -631,6 +631,15 @@ class FetchRecord:
     #: deliberately do not carry (a byte-volatile capture id must not key a
     #: claim's content_digest).
     document_outcomes: list[Mapping[str, Any]] = field(default_factory=list)
+    #: Quota-bounded sweep bookkeeping (P26.19): the number of quota-governed
+    #: requests this run ISSUED (a refused request still counts), the per-run
+    #: budget in force, and whether the run stopped at the budget (headroom) or
+    #: at a 429 wall. For a non-sweep source these stay at their defaults.
+    sweep_requests: int = 0
+    sweep_budget: int | None = None
+    budget_reached: bool = False
+    quota_reached: bool = False
+    sweep_skipped: list[Mapping[str, Any]] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         """A JSON-serialisable dict; content is never included (§3.1, §17)."""
@@ -654,6 +663,11 @@ class FetchRecord:
             "disappearances": [dict(d) for d in self.disappearances],
             "document_drift": [dict(d) for d in self.document_drift],
             "document_outcomes": [dict(d) for d in self.document_outcomes],
+            "sweep_requests": self.sweep_requests,
+            "sweep_budget": self.sweep_budget,
+            "budget_reached": self.budget_reached,
+            "quota_reached": self.quota_reached,
+            "sweep_skipped": [dict(s) for s in self.sweep_skipped],
         }
 
 
@@ -803,7 +817,14 @@ def _run_live(
     version = getattr(connector, "version", "1.0.0")
     started = datetime.now(UTC)
     t0 = time.monotonic()
-    transport = HttpxTransport()
+    # RATE-LIMIT HONESTY (P26.19): the SAM.gov sweep rides api.data.gov's daily
+    # request quota, where a 429 means the window is EXHAUSTED — a back-off retry
+    # is a re-probe that re-burns it (the recorded lesson; the P26.14 sweep's
+    # retries wedged the run into a SIGKILL). So the SAM.gov live transport never
+    # retries a 429: the first one surfaces immediately as a challenge and the
+    # driver stops the sweep cleanly. Other sources (Overpass slot-exhaustion
+    # etiquette) keep the default backoff-retry.
+    transport = HttpxTransport(max_retries=0) if source_id == "sam_gov" else HttpxTransport()
     fetcher = PoliteFetcher(
         connector_name=connector.name, connector_version=version, transport=transport
     )
@@ -831,6 +852,15 @@ def _run_live(
     parameters: dict[str, Any] = {"targets": targets}
     if source_id == "muckrock":
         parameters["muckrock_token_cache"] = _muckrock_token_cache(fetcher)
+    if source_id == "sam_gov":
+        # P26.19: bound the sweep to one daily quota window. The driver counts
+        # every quota-governed slice against this budget and stops cleanly before
+        # the 429 wall (headroom under the api.data.gov daily tier).
+        from .procurement import sam_gov_daily_request_budget
+
+        budget = sam_gov_daily_request_budget()
+        if budget is not None:
+            parameters["request_budget"] = budget
     ctx = RunContext(
         source=source,
         run=IngestRun(connector.name, version, code_commit, "r1", "v1", ()),
@@ -963,6 +993,13 @@ def _run_live(
             if r.get("record_kind")
             in ("agenda_document", "portal_document", "bill_query", "ted_eu_slice")
         ],
+        # P26.19 — the quota-bounded sweep record: per-run request count, the
+        # budget, and whether the run stopped at the budget or a 429 wall.
+        sweep_requests=report.sweep_requests,
+        sweep_budget=report.sweep_budget,
+        budget_reached=report.budget_reached,
+        quota_reached=report.quota_reached,
+        sweep_skipped=[dict(s) for s in report.sweep_skipped],
     )
     write_fetch_record(fetch_record, capture_dir / "live_runs")
     transport.close()

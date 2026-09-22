@@ -324,6 +324,57 @@ def test_scheduled_ingest_records_refusals_never_silence() -> None:
     assert boom.outcome == "error" and boom.exit_code == 1 and "kaput" in boom.detail
 
 
+class _SweepFetchRecord:
+    """A fetch record carrying the P26.19 quota-bounded sweep bookkeeping."""
+
+    def __init__(
+        self, *, sweep_requests: int, sweep_budget: int, quota_reached: bool, budget_reached: bool
+    ) -> None:
+        self.sweep_requests = sweep_requests
+        self.sweep_budget = sweep_budget
+        self.quota_reached = quota_reached
+        self.budget_reached = budget_reached
+        self.sweep_skipped = [{"id": "samgov:kw:x", "reason": "quota_reached"}]
+        self.robots_disregarded: list[dict] = []
+
+    def to_dict(self) -> dict[str, object]:
+        return {"claim_count": 0, "sweep_requests": self.sweep_requests}
+
+
+class _SweepReport:
+    def __init__(self, fr: _SweepFetchRecord, claims: int = 0) -> None:
+        self.claims = [{"id": i} for i in range(claims)]
+        self.captures: list[object] = []
+        self.fetch_record = fr
+        self.refusals: list[dict] = []
+        self.disappearances: list[dict] = [{"failing_status": "access_restricted"}]
+
+
+def test_scheduled_ingest_records_quota_reached_honestly() -> None:
+    # P26.19: a run that hit the 429 wall stops cleanly with an honest
+    # quota_reached outcome (exit 0 — never a crash), logs the per-run request
+    # count, and says the deferred slices were NOT re-probed.
+    fr = _SweepFetchRecord(
+        sweep_requests=1, sweep_budget=30, quota_reached=True, budget_reached=False
+    )
+    row = S.scheduled_ingest("sam_gov", runner=lambda *a, **k: _SweepReport(fr))
+    assert row.outcome == "quota_reached" and row.exit_code == 0
+    assert "1/30 sweep request(s)" in row.detail
+    assert "not re-probed" in row.detail
+
+
+def test_scheduled_ingest_ok_run_logs_the_request_count_when_budget_bounded() -> None:
+    # A run that spent its budget with headroom (no 429) stays outcome=ok but
+    # records the deferred-coverage tail + the per-run request count.
+    fr = _SweepFetchRecord(
+        sweep_requests=30, sweep_budget=30, quota_reached=False, budget_reached=True
+    )
+    row = S.scheduled_ingest("sam_gov", runner=lambda *a, **k: _SweepReport(fr))
+    assert row.outcome == "ok" and row.exit_code == 0
+    assert "30/30 sweep request(s)" in row.detail
+    assert "budget_reached" in row.detail
+
+
 def test_store_run_row_writes_local_mirror_and_gcs_object(tmp_path: Path) -> None:
     store = FakeGcs()
     row = S.scheduled_ingest(

@@ -432,6 +432,7 @@ def read_sweep_rows(bucket: GcsBucket, prefix: str) -> list[ProbeResult]:
 #: codes so a scheduled run's row says exactly what a manual run's output says.
 RUN_OUTCOMES = (
     "ok",
+    "quota_reached",
     "gate_refused",
     "no_live_targets",
     "content_drift",
@@ -544,6 +545,20 @@ def scheduled_ingest(
             parts.append(f"{len(report.disappearances)} disappearance(s)")
         if getattr(report, "drifted", None):
             parts.append(f"{len(report.drifted)} document drift(s)")
+        # P26.19 — the quota-bounded sweep outcome. A run that hit the 429 wall
+        # stopped cleanly with an honest ``quota_reached`` outcome (never a crash,
+        # never a re-probe); a run that spent its per-run request budget records
+        # the deferred-coverage tail. The per-run request count is always logged.
+        budget = getattr(fr, "sweep_budget", None)
+        if budget is not None:
+            issued = getattr(fr, "sweep_requests", 0)
+            parts.append(f"{issued}/{budget} sweep request(s)")
+            skipped = list(getattr(fr, "sweep_skipped", None) or [])
+            if getattr(fr, "quota_reached", False):
+                outcome = "quota_reached"
+                parts.append(f"quota_reached — {len(skipped)} slice(s) deferred, not re-probed")
+            elif getattr(fr, "budget_reached", False):
+                parts.append(f"budget_reached — {len(skipped)} slice(s) deferred to next window")
         detail = "; ".join(parts)
     except Exception as exc:  # noqa: BLE001 - the outcome IS the exception class
         name = type(exc).__name__
