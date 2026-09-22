@@ -1612,10 +1612,23 @@ name = "State ALPR statute national inventory"
 source_kind = "government_portal"
 homepage_url = "https://www.ncsl.org/technology-and-communication/automated-license-plate-readers"
 default_tier = "R1"
-custody_posture = "MIRROR"
+custody_posture = "DERIVE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-notes = "SIG-INGEST-049f: the one national inventory — HTML-only, 16 states, FROZEN since 2022-02-03 (predates the recent expansion; missing at least one statute enacted since). One-time seed, never a feed; SIG maintains it onward. Leads to records, not feeds (SIG-INGEST-025a)."
+ingestion_permitted = false
+last_verified = 2026-09-22
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-22
+review_packet = "docs/build/reports/rights/state_alpr_statute_inventory.md"
+notes = "SIG-INGEST-049f: the one national inventory — HTML-only, 16 states, FROZEN since 2022-02-03 (predates the recent expansion; missing at least one statute enacted since). One-time seed, never a feed; SIG maintains it onward. Leads to records, not feeds (SIG-INGEST-025a). REVIEWED 2026-09-22 (P27.2, under GL-GATE-07/HG-03): the seed emits derived facts + statute citations (jurisdiction, instrument_type, effective_from, external_id, citation) — SIG never re-hosts the NCSL page's expressive content, so the derived-facts basis (ADR-085/ADR-086) applies; LicenseRef-DerivedFacts-Citations, derived_facts compartment. NCSL is a private nonprofit — the public-record/factual-compilation basis does NOT apply to its page; the upstream page itself is not re-hosted. NCSL serves a Cloudflare challenge to non-browser fetches — the live terms capture records the challenge bytes honestly (the packet quotes the recorded disposition). The RIGHTS of the already-landed seed claims are resolved (rights_decision, ADR-095); ingestion_permitted stays false — the seed is already landed and never re-fetches, and a live run for this source still refuses (SIG-INGEST-028)."
+
+[sources.state_alpr_statute_inventory.rights]
+spdx = "LicenseRef-DerivedFacts-Citations"
+attribution = "National Conference of State Legislatures — Automated License Plate Readers inventory (derived facts + citations only)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.ncsl.org/terms-of-use"
+retrieval_date = 2026-09-22
 
 # ===========================================================================
 # H4. Future recurring sources — mandated but not yet flowing (§22.6 H4, SIG-INGEST-050)

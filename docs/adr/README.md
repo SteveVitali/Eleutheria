@@ -99,6 +99,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-092](ADR-092-spine-built-export-and-launch-resolution-posture.md) | — | — | Accepted |
 | [ADR-093](ADR-093-information-architecture-redesign-and-national-landing.md) | — | — | Accepted |
 | [ADR-094](ADR-094-maximize-publishable-scope-rights-resolution.md) | — | — | Accepted |
+| [ADR-095](ADR-095-append-only-rights-decision-log.md) | — | — | Accepted |
 
 ## Notes
 
