@@ -1,0 +1,396 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sig.example/schema/public_surface_contracts.schema.json",
+  "title": "SIG public-surface per-page data contracts (P27.1, LAUNCH.1 — FROZEN)",
+  "description": "The frozen data shape each of the ten public web surfaces consumes. This is the interface P27.4 EMITS (the spine-backed export) and P27.5 RENDERS (the static web). Derived from the authoritative web/src/lib/*.ts interfaces + their *-fixture.ts exemplars + the SIG-UI /v1 dossier contract. These shapes are largely count-independent and are the stable contract the rest of the P27 chain inherits; only the row VALUES change when the spine grows (the OSM land / the P27.2 rights pass). Each surface names its source-of-truth TypeScript interface (`x_source`) so a drift check can assert the export still matches the web contract.",
+  "type": "object",
+  "required": [
+    "dossier_index",
+    "jurisdiction_dossier",
+    "map_layer",
+    "network",
+    "data_freshness",
+    "coverage",
+    "watch",
+    "evidence",
+    "corrections",
+    "research_queue"
+  ],
+  "properties": {
+    "dossier_index": {
+      "description": "Surface 1 — the dossier index / national landing list. Page: /dossier + /. Producer: exports.web_dossier.build_web_dossiers → web/dossiers.json.",
+      "x_source": "web/src/lib/dossier.ts#Dossier[] (index via slug/subject_label/jurisdiction/asOf)",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["slug", "subject_label", "jurisdiction", "asOf"],
+        "properties": {
+          "slug": { "type": "string" },
+          "subject_label": { "type": "string" },
+          "jurisdiction": { "type": "string" },
+          "asOf": { "$ref": "#/$defs/AsOfEcho" }
+        }
+      }
+    },
+    "jurisdiction_dossier": {
+      "description": "Surface 2 — the per-jurisdiction dossier (§39.2, twelve sections). Page: /dossier/[slug]. Publication gate applied at build (§43.8, SIG-PUB-017).",
+      "x_source": "web/src/lib/dossier.ts#Dossier",
+      "$ref": "#/$defs/Dossier"
+    },
+    "map_layer": {
+      "description": "Surface 3 — the infrastructure map layer (§39.3). Producer emits GeoJSON + PMTiles (ODbL compartment SEPARATE) + the tabular MapAsset[] equivalent + JurisdictionIndicator roll-up. Coordinates reduced per sensitivity tier (§19.4/§43.3); aggregate/point only, never a per-person field.",
+      "x_source": "web/src/lib/map.ts#MapLayer / MapAsset / JurisdictionIndicator",
+      "type": "object",
+      "required": ["layers", "assets"],
+      "properties": {
+        "layers": { "type": "array", "items": { "$ref": "#/$defs/MapLayer" } },
+        "assets": { "type": "array", "items": { "$ref": "#/$defs/MapAsset" } },
+        "jurisdiction_indicators": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/JurisdictionIndicator" }
+        }
+      }
+    },
+    "network": {
+      "description": "Surface 4 — the sharing-edge network explorer (§39.4). The three §12.2 access-edge types MUST NOT be merged. Access paths carry per-hop evidence (SIG-UI-025).",
+      "x_source": "web/src/lib/network.ts#NetworkNode / NetworkEdge / AccessPath",
+      "type": "object",
+      "required": ["nodes", "edges"],
+      "properties": {
+        "nodes": { "type": "array", "items": { "$ref": "#/$defs/NetworkNode" } },
+        "edges": { "type": "array", "items": { "$ref": "#/$defs/NetworkEdge" } },
+        "access_paths": { "type": "array", "items": { "$ref": "#/$defs/AccessPath" } }
+      }
+    },
+    "data_freshness": {
+      "description": "Surface 5 — data-freshness per source (§32.4). Every FreshnessRow field is required (SIG-METRIC-007); staleness is measured against predicate volatility class, not absolute days.",
+      "x_source": "web/src/lib/metrics.ts#FreshnessRow[]",
+      "type": "array",
+      "items": { "$ref": "#/$defs/FreshnessRow" }
+    },
+    "coverage": {
+      "description": "Surface 6 — coverage metrics (§32.5). NEVER a population total: every metric carries a NAMED denominator (SIG-METRIC-008/009/010). is_population_total MUST be false.",
+      "x_source": "web/src/lib/metrics.ts#CoverageMetric[]",
+      "type": "array",
+      "items": { "$ref": "#/$defs/CoverageMetric" }
+    },
+    "watch": {
+      "description": "Surface 7 — the renewal/contract watch (§39.5). The alert key is the DERIVED notice deadline, not the raw expiry (SIG-UI-014b/026).",
+      "x_source": "web/src/lib/watch.ts#ContractWatchItem[]",
+      "type": "array",
+      "items": { "$ref": "#/$defs/ContractWatchItem" }
+    },
+    "evidence": {
+      "description": "Surface 8 — the evidence recommender (§39.5a) + evidence viewer (§39.6). Ranking MUST NOT use persuasion/sentiment (SIG-UI-027b). Sealed captures carry metadata only, no bytes (§17.5).",
+      "x_source": "web/src/lib/recommender.ts#EvidenceArtifact[] + web/src/lib/evidence-viewer.ts#ClaimView/Capture",
+      "type": "object",
+      "required": ["artifacts"],
+      "properties": {
+        "artifacts": { "type": "array", "items": { "$ref": "#/$defs/EvidenceArtifact" } },
+        "claim_views": { "type": "array", "items": { "$ref": "#/$defs/ClaimView" } }
+      }
+    },
+    "corrections": {
+      "description": "Surface 9 — the public corrections log (§39.8) + transparency report. History is never rewritten: the prior value stays citable at its belief-time (SIG-GOV-005).",
+      "x_source": "web/src/lib/corrections.ts#CorrectionEntry[] + TransparencyReport",
+      "type": "array",
+      "items": { "$ref": "#/$defs/CorrectionEntry" }
+    },
+    "research_queue": {
+      "description": "Surface 10 — the research queue (§39.7). Every task has a testable closing condition (SIG-TASK-002), never 'research this'.",
+      "x_source": "web/src/lib/research-queue.ts#ResearchTaskCard[]",
+      "type": "array",
+      "items": { "$ref": "#/$defs/ResearchTaskCard" }
+    }
+  },
+  "$defs": {
+    "AsOfEcho": {
+      "type": "object",
+      "required": ["as_of_world", "as_of_belief"],
+      "properties": {
+        "as_of_world": { "type": "string" },
+        "as_of_belief": { "type": "string" },
+        "belief_pinned": { "type": "boolean" }
+      }
+    },
+    "Dossier": {
+      "type": "object",
+      "required": [
+        "slug",
+        "subject_label",
+        "jurisdiction",
+        "asOf",
+        "rulesetVersion",
+        "sections",
+        "gaps",
+        "source_families",
+        "authorization",
+        "termination",
+        "legal_regime"
+      ],
+      "properties": {
+        "slug": { "type": "string" },
+        "subject_label": { "type": "string" },
+        "jurisdiction": { "type": "string" },
+        "asOf": { "$ref": "#/$defs/AsOfEcho" },
+        "rulesetVersion": { "type": "string" },
+        "sections": { "type": "array", "items": { "$ref": "#/$defs/Section" } },
+        "gaps": { "type": "array", "items": { "$ref": "#/$defs/Gap" } },
+        "source_families": { "type": "array", "items": { "type": "string" } },
+        "lang": { "type": "string", "description": "BCP-47; defaults to 'en'." },
+        "jurisdictionCode": { "type": "string", "description": "e.g. US/FR/BE; selects the §43.8 publication adapter." }
+      }
+    },
+    "Section": {
+      "type": "object",
+      "required": ["section_id"],
+      "properties": {
+        "section_id": { "type": "string" },
+        "figures": { "type": "array", "items": { "$ref": "#/$defs/Figure" } },
+        "rows": { "type": "array", "items": { "$ref": "#/$defs/Row" } }
+      }
+    },
+    "Figure": {
+      "type": "object",
+      "required": ["key", "label", "value", "support", "evidenceCount", "contested", "reconciliation"],
+      "properties": {
+        "key": { "type": "string" },
+        "label": { "type": "string" },
+        "value": { "type": ["string", "number"] },
+        "unit": { "type": "string" },
+        "lowerBound": { "type": "boolean" },
+        "evidenceCount": { "type": "integer" },
+        "contested": { "type": "boolean" }
+      }
+    },
+    "Row": {
+      "type": "object",
+      "required": ["label", "value"],
+      "properties": {
+        "label": { "type": "string" },
+        "value": { "type": ["string", "number", "null"] },
+        "absence": { "type": "string", "enum": ["NOT_RESEARCHED", "NO_EVIDENCE_FOUND", "UNRESOLVED", "NOT_APPLICABLE"] },
+        "subject_id": { "type": "string" },
+        "predicate_id": { "type": "string" },
+        "documentUrl": { "type": "string" },
+        "note": { "type": "string" },
+        "isPublicEmployeeName": { "type": "boolean" },
+        "withheld": { "type": "boolean" }
+      }
+    },
+    "Gap": {
+      "type": "object",
+      "required": ["label", "kind", "subject_id", "predicate_id"],
+      "properties": {
+        "label": { "type": "string" },
+        "kind": { "type": "string", "enum": ["NOT_RESEARCHED", "NO_EVIDENCE_FOUND", "UNRESOLVED", "NOT_APPLICABLE"] },
+        "subject_id": { "type": "string" },
+        "predicate_id": { "type": "string" },
+        "sources_searched": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "MapLayer": {
+      "type": "object",
+      "required": ["id", "label", "kind", "description"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "kind": { "type": "string", "enum": ["observed", "derived"] },
+        "description": { "type": "string" }
+      }
+    },
+    "MapAsset": {
+      "type": "object",
+      "required": ["id", "label", "jurisdiction", "tier", "lat", "lon", "precision"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "jurisdiction": { "type": "string" },
+        "tier": { "type": "integer", "enum": [0, 1, 2, 3], "description": "§19.4 sensitivity tier; drives coordinate reduction." },
+        "lat": { "type": ["number", "null"], "description": "null when no point is published (tier 3 / mobile / unknown)." },
+        "lon": { "type": ["number", "null"] },
+        "precision": { "type": "string", "description": "Published-precision description for the tabular equivalent." },
+        "locationAbsence": { "type": "string" }
+      }
+    },
+    "JurisdictionIndicator": {
+      "type": "object",
+      "required": ["jurisdiction"],
+      "properties": { "jurisdiction": { "type": "string" } }
+    },
+    "NetworkNode": {
+      "type": "object",
+      "required": ["id", "label", "type"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "type": { "type": "string", "description": "e.g. agency|vendor|rtcc; opaque." }
+      }
+    },
+    "NetworkEdge": {
+      "type": "object",
+      "required": ["from", "to", "access_kind", "relation", "support", "evidence_count"],
+      "properties": {
+        "from": { "type": "string" },
+        "to": { "type": "string" },
+        "access_kind": { "type": "string", "enum": ["configured_access", "observed_use", "declared_policy"], "description": "The three §12.2 edge types MUST NOT be merged." },
+        "relation": { "type": "string" },
+        "evidence_count": { "type": "integer" }
+      }
+    },
+    "AccessPath": {
+      "type": "object",
+      "required": ["hops"],
+      "properties": {
+        "hops": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["from_org", "to_org", "edge_label", "scope", "confidence", "evidence"],
+            "properties": {
+              "from_org": { "type": "string" },
+              "to_org": { "type": "string" },
+              "edge_label": { "type": "string" },
+              "scope": { "type": "string" },
+              "confidence": { "type": "string", "enum": ["possible", "probable", "certain"] },
+              "evidence": { "type": "array", "minItems": 1, "items": { "type": "string" }, "description": "SIG-UI-025: an unexplained hop is a forbidden edge (§3.1)." },
+              "expired": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
+    "FreshnessRow": {
+      "type": "object",
+      "required": ["source", "last_successful_run", "last_content_change", "status", "stale_entity_count", "volatility_class"],
+      "properties": {
+        "source": { "type": "string" },
+        "last_successful_run": { "type": "string" },
+        "last_content_change": { "type": "string" },
+        "status": { "type": "string" },
+        "stale_entity_count": { "type": "integer" },
+        "volatility_class": { "type": "string" }
+      }
+    },
+    "CoverageMetric": {
+      "type": "object",
+      "required": ["id", "kind", "label", "value", "denominator", "population_note", "is_population_total"],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "type": "string", "enum": ["counted_quantity", "records_derived_bound", "reconciliation_ratio", "survey_recall"] },
+        "label": { "type": "string" },
+        "value": { "type": "string" },
+        "denominator": { "type": "string", "description": "REQUIRED named denominator; 'reality'/'all …' is forbidden (SIG-METRIC-009)." },
+        "population_note": { "type": "string" },
+        "is_population_total": { "const": false, "description": "MUST be false — SIG never publishes a population total (SIG-METRIC-010)." }
+      }
+    },
+    "ContractWatchItem": {
+      "type": "object",
+      "required": ["contract_id", "subject_label", "jurisdiction", "termination", "renewal_window_days", "approving_body", "next_scheduled_meeting", "replacement_procurement", "contested"],
+      "properties": {
+        "contract_id": { "type": "string" },
+        "subject_label": { "type": "string" },
+        "jurisdiction": { "type": "string" },
+        "termination": {
+          "type": "object",
+          "properties": {
+            "auto_renews": { "type": "boolean" },
+            "notice_window_days": { "type": ["integer", "null"] },
+            "expiry_date": { "type": ["string", "null"] }
+          }
+        },
+        "renewal_window_days": { "type": ["integer", "null"] },
+        "approving_body": { "type": ["string", "null"] },
+        "next_scheduled_meeting": { "type": ["string", "null"] },
+        "replacement_procurement": { "type": ["string", "null"] },
+        "contested": { "type": "boolean" }
+      }
+    },
+    "EvidenceArtifact": {
+      "type": "object",
+      "required": ["artifact_id", "subject_id", "title", "source", "artifact_type", "directness", "currency", "touches_open_contradiction", "answers_open_task", "capture_status", "permalink", "as_of"],
+      "properties": {
+        "artifact_id": { "type": "string" },
+        "subject_id": { "type": "string" },
+        "title": { "type": "string" },
+        "source": { "type": "string" },
+        "artifact_type": { "type": "string" },
+        "directness": { "type": "string" },
+        "currency": { "type": "string" },
+        "touches_open_contradiction": { "type": "boolean" },
+        "answers_open_task": { "type": "boolean" },
+        "capture_status": { "type": "string" },
+        "permalink": { "type": "string" },
+        "as_of": { "type": "string" }
+      }
+    },
+    "ClaimView": {
+      "type": "object",
+      "required": ["claim_id", "claim_label", "value", "capture", "locator", "extraction_method", "extraction_version", "review_status", "conflicting_claims", "history"],
+      "properties": {
+        "claim_id": { "type": "string" },
+        "claim_label": { "type": "string" },
+        "value": { "type": ["string", "number"] },
+        "capture": { "$ref": "#/$defs/Capture" },
+        "extraction_method": { "type": "string" },
+        "extraction_version": { "type": "string" },
+        "review_status": { "type": "string" },
+        "conflicting_claims": { "type": "array" },
+        "history": { "type": "array" }
+      }
+    },
+    "Capture": {
+      "type": "object",
+      "required": ["capture_id", "artifact_id", "storage_tier", "captured_at", "content_digest", "acquisition_method", "fields"],
+      "properties": {
+        "capture_id": { "type": "string" },
+        "artifact_id": { "type": "string" },
+        "storage_tier": { "type": "string", "description": "'sealed' ⇒ bytes withheld, metadata only (§17.5)." },
+        "captured_at": { "type": "string" },
+        "content_digest": { "type": "string" },
+        "acquisition_method": { "type": "string" },
+        "document_text": { "type": "string", "description": "Absent when sealed." },
+        "sealed_reason": { "type": "string" },
+        "fields": { "type": "object" }
+      }
+    },
+    "CorrectionEntry": {
+      "type": "object",
+      "required": ["id", "subject_id", "subject_label", "what_changed", "corrected_at", "reason", "reported_by", "category", "outcome", "previous_value", "corrected_value", "previous_belief_date", "subject_path"],
+      "properties": {
+        "id": { "type": "string" },
+        "subject_id": { "type": "string" },
+        "subject_label": { "type": "string" },
+        "what_changed": { "type": "string" },
+        "corrected_at": { "type": "string" },
+        "reason": { "type": "string" },
+        "reported_by": { "type": "string", "description": "Role/handle or 'anonymous'; identity never forced (SIG-GOV-002)." },
+        "category": { "type": "string" },
+        "outcome": { "type": "string" },
+        "previous_value": { "type": "string" },
+        "corrected_value": { "type": "string" },
+        "previous_belief_date": { "type": "string", "description": "Belief-time at which the erroneous value still re-resolves (SIG-GOV-005)." },
+        "subject_path": { "type": "string" }
+      }
+    },
+    "ResearchTaskCard": {
+      "type": "object",
+      "required": ["task_type", "subject_id", "subject_label", "closing_condition", "evidence_sought", "assignee_class", "effort_estimate", "geographic_scope", "jurisdiction", "dispositions", "priority"],
+      "properties": {
+        "task_type": { "type": "string" },
+        "subject_id": { "type": "string" },
+        "subject_label": { "type": "string" },
+        "closing_condition": { "type": "string", "description": "Testable; never 'research this' (SIG-TASK-002)." },
+        "evidence_sought": { "type": "string" },
+        "assignee_class": { "type": "string" },
+        "effort_estimate": { "type": "string" },
+        "geographic_scope": { "type": "string" },
+        "jurisdiction": { "type": "string" },
+        "dispositions": { "type": "array", "items": { "type": "string" } },
+        "priority": { "type": "number" }
+      }
+    }
+  }
+}

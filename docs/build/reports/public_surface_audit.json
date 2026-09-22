@@ -1,0 +1,537 @@
+{
+  "as_of": "2026-09-22T16:57:19Z",
+  "claims_by_connector": [
+    {
+      "count": 814066,
+      "name": "dot_511"
+    },
+    {
+      "count": 205184,
+      "name": "procurement"
+    },
+    {
+      "count": 14462,
+      "name": "france_belgium_procurement"
+    },
+    {
+      "count": 11192,
+      "name": "flock_portal"
+    },
+    {
+      "count": 5373,
+      "name": "atlas"
+    },
+    {
+      "count": 4505,
+      "name": "osm"
+    },
+    {
+      "count": 2863,
+      "name": "accountability"
+    },
+    {
+      "count": 1015,
+      "name": "data_driven"
+    },
+    {
+      "count": 851,
+      "name": "coarse_international"
+    },
+    {
+      "count": 108,
+      "name": "state_statute_seed"
+    },
+    {
+      "count": 81,
+      "name": "government_mandated_disclosure"
+    },
+    {
+      "count": 65,
+      "name": "france_belgium_records"
+    },
+    {
+      "count": 11,
+      "name": "france-seed"
+    },
+    {
+      "count": 6,
+      "name": "okcpd_policy"
+    },
+    {
+      "count": 6,
+      "name": "records"
+    },
+    {
+      "count": 5,
+      "name": "okc-seed"
+    },
+    {
+      "count": 3,
+      "name": "ok_statute"
+    },
+    {
+      "count": 3,
+      "name": "pathways"
+    }
+  ],
+  "entity_by_type": [
+    {
+      "count": 92202,
+      "name": "deployment"
+    },
+    {
+      "count": 4,
+      "name": "organization"
+    }
+  ],
+  "freshness": {
+    "earliest_observed": "2020-01-28 00:00:00+00:00",
+    "latest_observed": "2026-09-22 00:00:00+00:00",
+    "observed_claims": 174128
+  },
+  "generated_at": "2026-09-22T16:57:20Z",
+  "geolocated": {
+    "denominator": 92206,
+    "label": "entities",
+    "numerator": 75479,
+    "pct": 81.86
+  },
+  "geolocation": {
+    "geo_claims": [
+      {
+        "count": 93305,
+        "name": "camera_latitude"
+      },
+      {
+        "count": 93305,
+        "name": "camera_longitude"
+      }
+    ],
+    "geolocated_entities": 75479,
+    "jurisdiction_spread": [
+      {
+        "count": 11682,
+        "name": "unresolved"
+      },
+      {
+        "count": 9965,
+        "name": "FL"
+      },
+      {
+        "count": 7049,
+        "name": "GA"
+      },
+      {
+        "count": 6139,
+        "name": "CA"
+      },
+      {
+        "count": 3996,
+        "name": "TX"
+      },
+      {
+        "count": 3446,
+        "name": "IL"
+      },
+      {
+        "count": 2754,
+        "name": "WA"
+      },
+      {
+        "count": 2753,
+        "name": "MD"
+      },
+      {
+        "count": 2110,
+        "name": "TH"
+      },
+      {
+        "count": 1713,
+        "name": "DC"
+      },
+      {
+        "count": 1710,
+        "name": "GB-ENG"
+      },
+      {
+        "count": 1479,
+        "name": "AU-QLD"
+      },
+      {
+        "count": 1418,
+        "name": "OR"
+      },
+      {
+        "count": 1328,
+        "name": "AU-ACT"
+      },
+      {
+        "count": 1249,
+        "name": "PA"
+      },
+      {
+        "count": 1128,
+        "name": "SA"
+      },
+      {
+        "count": 1107,
+        "name": "MO"
+      },
+      {
+        "count": 1067,
+        "name": "LA"
+      },
+      {
+        "count": 1060,
+        "name": "NZ"
+      },
+      {
+        "count": 1002,
+        "name": "IA"
+      },
+      {
+        "count": 996,
+        "name": "CA-ON"
+      },
+      {
+        "count": 995,
+        "name": "MN"
+      },
+      {
+        "count": 845,
+        "name": "MA"
+      },
+      {
+        "count": 829,
+        "name": "CA-BC"
+      },
+      {
+        "count": 795,
+        "name": "CA-MB"
+      },
+      {
+        "count": 629,
+        "name": "US"
+      },
+      {
+        "count": 595,
+        "name": "GB-SCT"
+      },
+      {
+        "count": 587,
+        "name": "KY"
+      },
+      {
+        "count": 585,
+        "name": "NY"
+      },
+      {
+        "count": 556,
+        "name": "AL"
+      },
+      {
+        "count": 526,
+        "name": "AZ"
+      },
+      {
+        "count": 500,
+        "name": "ID"
+      },
+      {
+        "count": 447,
+        "name": "BD"
+      },
+      {
+        "count": 386,
+        "name": "MY"
+      },
+      {
+        "count": 383,
+        "name": "VA"
+      },
+      {
+        "count": 354,
+        "name": "CA-AB"
+      },
+      {
+        "count": 252,
+        "name": "HI"
+      },
+      {
+        "count": 234,
+        "name": "SD"
+      },
+      {
+        "count": 190,
+        "name": "TN"
+      },
+      {
+        "count": 123,
+        "name": "IE-DL"
+      },
+      {
+        "count": 97,
+        "name": "KS"
+      },
+      {
+        "count": 67,
+        "name": "AU-VIC"
+      },
+      {
+        "count": 57,
+        "name": "JP"
+      },
+      {
+        "count": 54,
+        "name": "NL"
+      },
+      {
+        "count": 50,
+        "name": "CO-MET"
+      },
+      {
+        "count": 44,
+        "name": "NC"
+      },
+      {
+        "count": 32,
+        "name": "UT"
+      },
+      {
+        "count": 24,
+        "name": "DE"
+      },
+      {
+        "count": 22,
+        "name": "HK"
+      },
+      {
+        "count": 19,
+        "name": "BE"
+      },
+      {
+        "count": 18,
+        "name": "GB-NIR"
+      },
+      {
+        "count": 14,
+        "name": "CO"
+      },
+      {
+        "count": 12,
+        "name": "GB"
+      },
+      {
+        "count": 6,
+        "name": "PS"
+      },
+      {
+        "count": 1,
+        "name": "PT"
+      }
+    ],
+    "value_geom_populated": 0
+  },
+  "licence_mix": [
+    {
+      "claims": 372869,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "LicenseRef-PublicRecord-FactualCompilation"
+    },
+    {
+      "claims": 256438,
+      "derivative_permitted": "UNDETERMINED",
+      "redistributable": "UNDETERMINED",
+      "spdx": "UNDETERMINED"
+    },
+    {
+      "claims": 225753,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "LicenseRef-OperatorAccepted-DBRight"
+    },
+    {
+      "claims": 82539,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "CC0-1.0"
+    },
+    {
+      "claims": 46992,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "CC-BY-SA-2.0"
+    },
+    {
+      "claims": 44305,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "CC-BY-4.0"
+    },
+    {
+      "claims": 12359,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "OGL-3.0"
+    },
+    {
+      "claims": 11642,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "CC-BY-SA-4.0"
+    },
+    {
+      "claims": 5929,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "ODbL-1.0"
+    },
+    {
+      "claims": 640,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "LicenseRef-StAlbert-ODL-1.0"
+    },
+    {
+      "claims": 333,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "LicenseRef-Peel-ODL-1.0"
+    }
+  ],
+  "modeling_tables": [
+    {
+      "rows": 0,
+      "table": "resolution"
+    },
+    {
+      "rows": 0,
+      "table": "jurisdiction"
+    },
+    {
+      "rows": 0,
+      "table": "coverage_record"
+    },
+    {
+      "rows": 0,
+      "table": "relationship"
+    },
+    {
+      "rows": 0,
+      "table": "organization_relation"
+    },
+    {
+      "rows": 0,
+      "table": "physical_asset"
+    },
+    {
+      "rows": 0,
+      "table": "deployment"
+    },
+    {
+      "rows": 0,
+      "table": "contradiction"
+    },
+    {
+      "rows": 0,
+      "table": "legal_instrument"
+    },
+    {
+      "rows": 0,
+      "table": "policy"
+    }
+  ],
+  "note": "OSM land (camreg_osm_surveillance ~1.37M claims) in flight \u2014 PROVISIONAL pre/mid-OSM snapshot; re-audit required after the land completes (D-P27.1-1)",
+  "publishable": {
+    "denominator": 1059533,
+    "label": "claims (redistributable=yes)",
+    "numerator": 803361,
+    "pct": 75.82
+  },
+  "redistributable_split": [
+    {
+      "count": 803361,
+      "name": "yes"
+    },
+    {
+      "count": 256438,
+      "name": "UNDETERMINED"
+    }
+  ],
+  "schema_version": "p27.1/1.0.0",
+  "sensitivity_by_tier": [
+    {
+      "count": 1059799,
+      "name": "0"
+    }
+  ],
+  "spine_label": "postgresql://sig@127.0.0.1:5433/sig",
+  "totals": {
+    "claims": 1059533,
+    "current_claims": 1059533,
+    "entities": 92206,
+    "permitted_sources": 210,
+    "sources": 210
+  },
+  "undetermined": {
+    "denominator": 1059533,
+    "label": "claims (rights UNDETERMINED)",
+    "numerator": 256438,
+    "pct": 24.2
+  },
+  "undetermined_by_connector": [
+    {
+      "count": 205184,
+      "name": "procurement"
+    },
+    {
+      "count": 34650,
+      "name": "dot_511"
+    },
+    {
+      "count": 14462,
+      "name": "france_belgium_procurement"
+    },
+    {
+      "count": 1015,
+      "name": "data_driven"
+    },
+    {
+      "count": 851,
+      "name": "coarse_international"
+    },
+    {
+      "count": 108,
+      "name": "state_statute_seed"
+    },
+    {
+      "count": 81,
+      "name": "government_mandated_disclosure"
+    },
+    {
+      "count": 65,
+      "name": "france_belgium_records"
+    },
+    {
+      "count": 6,
+      "name": "okcpd_policy"
+    },
+    {
+      "count": 6,
+      "name": "records"
+    },
+    {
+      "count": 4,
+      "name": "france-seed"
+    },
+    {
+      "count": 3,
+      "name": "ok_statute"
+    },
+    {
+      "count": 3,
+      "name": "pathways"
+    }
+  ]
+}
