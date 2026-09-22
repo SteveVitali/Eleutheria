@@ -167,9 +167,17 @@ id routed to a P21 ticket (`LD-V08` → P21.4).
 
 ## (e) Operator signature (GATE HG-14)
 
-The ACCEPTED-deviations list in §(b) is **proposed**. The orchestrator pauses after this ticket and
-presents §(b) to the operator; P20.1 writes the signature here and turns any rejected items into
-backlog rows. This ticket does not tick this line.
+The ACCEPTED-deviations list in §(b) is **proposed**. The orchestrator paused after P19.5 and
+presented §(b) to the operator; the decision is recorded in the build ledger `GATE DECISIONS`
+(HG-14, 2026-09-08) and is transcribed here by P20.1.
 
-- [ ] Operator has reviewed §(b) and accepts the listed deviations (or the exceptions are recorded in
-  the build ledger `GATE DECISIONS`). — **pending operator (HG-14); not ticked by P19.5**
+**Signed: Operator (project maintainer), 2026-09-08 — full 76-row ACCEPTED-deviations list accepted; 0 rejected.**
+
+- Family 1 (75 charter/process/epistemic/publication-safety principles, routing `accepted`) — **ACCEPTED (all 75)**.
+- Family 2 (`SIG-UI-038` zero-JS static map, ADR-051, routing `P20.2:spec`) — **ACCEPTED (pending P20.2 A1)**.
+- Net: the full 76-row ACCEPTED list is signed; **0 rejected**. Because nothing was rejected, there are
+  **no** HG-14-rejection rows in `BACKLOG.csv` (backlog rows are spawned from the risk-register / ADR /
+  LD / matrix sources, which is separate from this signature — see `BACKLOG.csv` + `check_backlog.py`).
+
+- [x] Operator has reviewed §(b) and accepts the listed deviations (recorded in the build ledger
+  `GATE DECISIONS`, HG-14). — **SIGNED (HG-14), 2026-09-08; transcribed by P20.1**
