@@ -15,6 +15,16 @@ icpsr.html
 scratch/
 tmp/
 
+# Secrets — tokens/keys are env-only, never committed (RISK-P21-05, HG-09).
+# SIG_MUCKROCK_TOKEN / SIG_DATA_GOV_KEY / SIG_OVERPASS_ENDPOINT / SIG_CIVICCLERK_BASE
+# are read from the environment; a local .env* file is developer-only and ignored.
+.env
+.env.*
+*.env
+
+# Local live-run capture roots (OCFL captures land here off the committed tree).
+.sig/
+
 # Python / uv
 .venv/
 __pycache__/

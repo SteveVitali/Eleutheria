@@ -2457,6 +2457,7 @@ name = "sig-connectors"
 version = "0.1.0"
 source = { editable = "connectors" }
 dependencies = [
+    { name = "httpx" },
     { name = "sig-db" },
     { name = "sig-evidence" },
     { name = "sig-exports" },
@@ -2468,6 +2469,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "httpx", specifier = ">=0.27" },
     { name = "sig-db", editable = "db" },
     { name = "sig-evidence", editable = "evidence" },
     { name = "sig-exports", editable = "exports" },

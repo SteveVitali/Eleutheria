@@ -15,8 +15,13 @@ orchestration choice is reversible (SIG-INGEST-021, ADR-014). The sub-commands:
   (SIG-INGEST-014/028): ingestion_permitted + compact_status + custody_posture.
 * ``export-check`` — compute the export licence per compartment across the
   registry and exit non-zero on any incompatibility (SIG-LIC-010).
-
-No fetching logic lives in the CLI; source-specific connectors are P04.2+.
+* ``review-status`` — per-source rights-review gate breakdown (P21.1).
+* ``run --source ID --mode live|replay|shadow`` — drive a source connector
+  (P21.3, ADR-065). ``live`` **refuses** (exit 3, with the gate reasons) unless the
+  source's review-status is fully green — a live fetch is impossible without a
+  green review-status (LD-X08); ``replay``/``shadow`` run over a committed fixture
+  under network isolation and never fetch. The run orchestration itself lives in
+  :mod:`connectors.runner`; the CLI only parses args and maps a refusal to exit 3.
 """
 
 from __future__ import annotations
@@ -58,13 +63,26 @@ def build_parser() -> argparse.ArgumentParser:
     rev.add_argument("--source", default=None, help="show one source's five-field gate breakdown")
     runp = sub.add_parser(
         "run",
-        help="run a connector over a fixture and assert claims into the selected sink (P19.4)",
+        help=(
+            "run a source connector in live|replay|shadow mode (P21.3); live refuses "
+            "(exit 3) unless the source's review-status is fully green"
+        ),
     )
-    runp.add_argument("--connector", required=True, help="registered connector name (e.g. atlas)")
     runp.add_argument("--source", required=True, help="source id for the run (SourceRecord)")
-    runp.add_argument("--fixture", required=True, help="path to the committed fixture file")
-    runp.add_argument("--kind", required=True, help="target kind (e.g. bulk_csv, overpass)")
-    runp.add_argument("--media-type", required=True, help="fixture media type")
+    runp.add_argument(
+        "--mode",
+        default="shadow",
+        choices=("live", "replay", "shadow"),
+        help="live (gated), replay, or shadow (default) over a committed fixture",
+    )
+    runp.add_argument(
+        "--connector", default=None, help="registered connector name (else inferred from --source)"
+    )
+    runp.add_argument(
+        "--fixture", default=None, help="committed fixture path (required for replay/shadow)"
+    )
+    runp.add_argument("--kind", default="overpass", help="target kind (e.g. bulk_csv, overpass)")
+    runp.add_argument("--media-type", default="application/json", help="fixture media type")
     runp.add_argument(
         "--sink",
         default="memory",
@@ -72,6 +90,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="claim sink: 'memory' (default) or 'pg' (requires --dsn)",
     )
     runp.add_argument("--dsn", default=None, help="PostgreSQL DSN when --sink pg")
+    runp.add_argument(
+        "--capture-dir",
+        default=None,
+        help="OCFL capture root for a live run (default .sig/captures)",
+    )
+    runp.add_argument(
+        "--wacz", action="store_true", help="also capture HTML pages as WACZ (live, P02.2 path)"
+    )
     return parser
 
 
@@ -192,29 +218,43 @@ def _review_status(source_id: str | None) -> int:
 
 
 def _run(args: argparse.Namespace) -> int:
-    # Import the source connectors so they register (SIG-INGEST-021).
+    # Importing the package registers every source connector (SIG-INGEST-021).
     from pathlib import Path
 
-    from . import atlas, osm  # noqa: F401  (import side effect: @register)
-    from .runner import run_connector_over_fixture
+    from .runner import LiveGateRefused, RunMode, run_source
 
     if args.sink == "pg" and not args.dsn:
         print("--sink pg requires --dsn")
         return 2
-    report = run_connector_over_fixture(
-        args.connector,
-        args.source,
-        Path(args.fixture),
-        media_type=args.media_type,
-        kind=args.kind,
-        sink_kind=args.sink,
-        dsn=args.dsn,
+    try:
+        report = run_source(
+            args.source,
+            mode=RunMode(args.mode),
+            connector_name=args.connector,
+            fixture=Path(args.fixture) if args.fixture else None,
+            media_type=args.media_type,
+            kind=args.kind,
+            sink_kind=args.sink,
+            dsn=args.dsn,
+            capture_dir=Path(args.capture_dir) if args.capture_dir else None,
+            wacz=args.wacz,
+        )
+    except LiveGateRefused as refused:
+        # A live fetch on a non-green source is refused before any egress
+        # (SIG-INGEST-028); exit 3 with the gate reasons (LD-X08 can never recur).
+        print(f"REFUSED: live fetch for source {refused.source_id!r} is gated (exit 3):")
+        for reason in refused.reasons:
+            print(f"  - {reason}")
+        return 3
+    summary = (
+        f"source {args.source!r} [{args.mode}] via connector {report.connector!r}: "
+        f"{len(report.claims)} claim(s), {len(report.captures)} capture(s)"
     )
-    print(
-        f"connector {args.connector!r}: {len(report.claims)} claim(s), "
-        f"{len(report.captures)} capture(s), asserted={report.asserted} "
-        f"(sink={args.sink})"
-    )
+    if report.diff is not None:
+        summary += f", shadow diff changed={report.diff.changed_count}"
+    if report.replay_reproducible is not None:
+        summary += f", replay_reproducible={report.replay_reproducible}"
+    print(summary)
     return 0
 
 

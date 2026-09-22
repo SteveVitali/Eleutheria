@@ -26,6 +26,7 @@ dependencies = [
     "sig-db",
     "sig-parsing",
     "sig-reconcile",
+    "httpx>=0.27",
 ]
 
 [project.scripts]
