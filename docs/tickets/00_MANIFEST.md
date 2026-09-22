@@ -91,7 +91,7 @@ Language is **Python** (TypeScript confined to `web/`), per SIG-ENG-010.
 | 45 | `P18.1__international-framework.md` | 18 | Jurisdiction adapter framework + i18n + jurisdiction-conditional publication |
 | 46 | `P18.2__france-belgium.md` | 18 | France/Belgium connectors + OSM-import study |
 
-### Post-build chain (rows 47–63) — committed from here on
+### Post-build chain (rows 47–65) — committed from here on
 
 Planned 2026-09-08 after PR #46 by the planning sessions recorded in `docs/build/PLANNING_LEDGER.md`
 (the plan-for-the-plan), `docs/build/DECISION_MEMO.md` (the sequence and rationale), `BUILD_INDEX.md`,
@@ -105,7 +105,7 @@ Planned 2026-09-08 after PR #46 by the planning sessions recorded in `docs/build
    *before* the run. Unticked ⇒ the ticket still does everything up to the gate, opens its PR, and reports
    **complete with gate HG-nn pending** (it is added to the build ledger's RETURN PASS table — never `blockedOn`,
    which is reserved for real blocks); the chain never waits. Re-running the same ticket file after ticking is idempotent.
-3. **No ticket merges anything.** All rows 47–63 stack on `devin/p18-2-france-belgium` (PRs #47–#63 on top of
+3. **No ticket merges anything.** All rows 47–65 stack on `devin/p18-2-france-belgium` (PRs #47–#63 on top of
    #20–#46). Integration is an **operator action after the chain**: P20.3 writes the dry-run script and the exact
    bottom-up merge + `v0.1.0` tag procedure (`docs/build/INTEGRATION_PLAN.md` §(d)); the operator runs it.
 4. **Gates pause the orchestrator.** Under `orchestrate-build`, the loop STOPS before every gated ticket, presents
@@ -118,9 +118,9 @@ note, `.agents/scratch/planning/sig-postbuild-build-ledger.md`) that pauses only
 CAPSTONE — then the operator integrates per `docs/build/INTEGRATION_PLAN.md`. Details: `DECISION_MEMO.md` §9. By hand,
 use each ticket's own `Run:` line verbatim — the `live_verification` flag differs per ticket.
 
-Phases 19–21 are not in the spec's Part X; 19 = capstone & consolidation (orchestrate-build CAPSTONE run
+Phases 19–22 are not in the spec's Part X; 19 = capstone & consolidation (orchestrate-build CAPSTONE run
 retroactively), 20 = reconciliation & release, 21 = operationalization toward one real jurisdiction live
-(Oklahoma City, the P06.1 slice). Human prerequisites for Phase 21 are the `HG-` gates, listed with their
+(Oklahoma City, the P06.1 slice), 22 = documentation (human- and agent-facing docs converged on the finished code — last, on purpose). Human prerequisites for Phase 21 are the `HG-` gates, listed with their
 "what unblocks it" in `docs/build/OPERATIONAL_READINESS.md` (P20.1).
 
 | # | Ticket file | Phase | Scope | Gate |
@@ -142,15 +142,17 @@ retroactively), 20 = reconciliation & release, 21 = operationalization toward on
 | 61 | `P21.7__contribution-back-live.md` | 21 | MapRoulette client, OSM changeset feed → `LeverageLedger`, Organised Editing record, usability study protocol + results | HG-08, HG-10 |
 | 62 | `P21.8__data-driven-and-coarse-international.md` | 21 | EFF/MuckRock Data Driven releases connector (`SIG-INGEST-043*`, `044`) with versioned re-ingest; coarse-international content path | HG-03/HG-04 per source |
 | 63 | `P21.9__stage5-pathway-connectors.md` | 21 | Stage-5 connectors for the P17 pathways (RTCC/federation, FR/CSS/forensics, acoustic/drone/location) + the ADR-033-deferred parser layers | HG-03/HG-04 per source |
+| 64 | `P22.1__repo-docs-refresh.md` | 22 | Human-facing docs: full `refresh-repo-docs` audit of README/CONTRIBUTING/CHANGELOG/governance/studies against the finished code; generated/frozen/historical docs report-only; `docs/README.md` map; `DOCS_REFRESH_REPORT.md`; vendored detector | — |
+| 65 | `P22.2__agent-docs-refresh.md` | 22 | Agent-facing docs: `agent-docs` refresh (or clean-slate bootstrap) of the `AGENTS.md` hierarchy + `CLAUDE.md`; `make docs-check` + CI docs step; ADR-072 | option: clean slate (asked at the pause) |
 
 ## Phase gates & special points
-- **Integration is an operator action after the chain** (`docs/build/INTEGRATION_PLAN.md` §(d)); no ticket merges PRs; all rows 47–63 stack on `devin/p18-2-france-belgium`. P20.3 writes the read-only `merge_dryrun.sh` + the bottom-up merge + `v0.1.0` tag/release procedure and bumps versions to `0.1.0`, but merges/tags nothing (HG-05 is the post-chain operator action).
+- **Integration is an operator action after the chain** (`docs/build/INTEGRATION_PLAN.md` §(d)); no ticket merges PRs; all rows 47–65 stack on `devin/p18-2-france-belgium`. P20.3 writes the read-only `merge_dryrun.sh` + the bottom-up merge + `v0.1.0` tag/release procedure and bumps versions to `0.1.0`, but merges/tags nothing (HG-05 is the post-chain operator action).
 - **P06.1 is a hard synchronization barrier** (§54): its written retrospective MUST be committed before any ticket below it starts.
 - Every ticket ends on the universal phase gate (§51.3): CI green incl. data-quality checks, tests for new requirements, ADRs for deviations, traceability + risk register updated.
 - **P11.1 and P11.2 (Flock) depend on an external source** and must never block P12+ (SIG-ENG-035); if the source is unavailable, continue down the list and return.
 - **Ownership note:** the §29.3/§29.7 sharing-edge + snapshot-diff reconciliation logic is owned by **P08.2**; P11.1, P11.2, and P12.2 *consume* it and must not re-implement it.
 - **Post-build chain (47–63):** P19.2 runs in an **independent fresh context** (anti-bias rule of the capstone) and must not read ledger self-assessments before forming verdicts. P19.3 requires Docker and never fabricates green (blocked seams are `xfail`s tagged with an `LD-` id). P19.5's ACCEPTED-deviations list is signed by the operator at the orchestrator pause after P19.5 (HG-14) and recorded by P20.1. No ticket merges PRs; the operator integrates after the chain per `INTEGRATION_PLAN.md`. Gated P21 tickets are complete without their gate (they ship packets/plans/stubs and are listed in the build ledger's RETURN PASS table — not `blockedOn`); re-run the same file once the operator ticks the block.
-- **Requirement-id → ticket index for rows 47–63:** `docs/build/COVERAGE_MATRIX.csv` (P19.2) columns `owning_tickets` and `routing`; rows 1–46 stamp ids in their own files and PR bodies.
+- **Requirement-id → ticket index for rows 47–65:** `docs/build/COVERAGE_MATRIX.csv` (P19.2) columns `owning_tickets` and `routing`; rows 1–46 stamp ids in their own files and PR bodies.
 - **Ownership notes (post-build):** `PgClaimSink`/`PgReadStore` names, the `_compute_on_read` seam and the `--dsn` CLI convention — **P19.4**; `CAPSTONE_CLOSURE.md` + the ACCEPTED list — **P19.5**; `BL-nnn` ids and the `landing` enum — **P20.1**; fold-back requirement ids and Appendix F ↔ `docs/adr/` equivalence — **P20.2**; the review-metadata flip rule and packet format — **P21.1**; `db.annotations` repositories — **P21.2**; `sig-connectors run` and the fetch-record format — **P21.3**; `ops/docker-compose.yml`, `sig-ops`, `web/src/lib/data.ts` — **P21.4**.
 
 ## Spec amendments applied
