@@ -166,6 +166,18 @@ _FLIPPED_SUBSET = frozenset(
         "camreg_baltimore_md",
         "camreg_ottawa_on",
         "camreg_sheffield_gb",
+        # P26.10 (SOURCES.9, 2026-09-18): the four licence-reviewed city Socrata
+        # contract/notice datasets — Austin 'Contracts' PUBLIC_DOMAIN, SF
+        # 'Supplier Contracts' PDDL, KCMO 'List of KCMO City Contracts'
+        # CC0-1.0, NYC 'City Record Online' PUBLIC_DOMAIN; verbatim licence
+        # metadata quoted in docs/build/reports/rights/procportal_<city>.md.
+        # bidnet_direct (vendor terms not captured verbatim), bonfire (robots
+        # Disallow:/), opengov_procurement (WAF challenge) and
+        # procportal_chicago_il (no licence metadata) stay gated.
+        "procportal_austin_tx",
+        "procportal_sf_ca",
+        "procportal_kcmo_mo",
+        "procportal_nyc_ny",
     }
 )
 

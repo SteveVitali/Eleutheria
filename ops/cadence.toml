@@ -455,3 +455,35 @@ cron = "0 4 30 * *"
 job = "sig-ingest-camreg-sheffield-gb"
 scheduler = "sig-sched-camreg-sheffield-gb"
 note = "Sheffield CitiWatch/CCTV layer via utility.arcgis.com usrsvcs (212 cams); OGL-3.0 → ogl_uk3 compartment."
+
+[[sources]]
+id = "procportal_austin_tx"
+cadence = "monthly"
+cron = "0 6 30 * *"
+job = "sig-ingest-procportal-austin-tx"
+scheduler = "sig-sched-procportal-austin-tx"
+note = "Austin Socrata 84ih-p28j 'Contracts'; PUBLIC_DOMAIN metadata — GL-GATE-06 flip, rights packet verbatim."
+
+[[sources]]
+id = "procportal_sf_ca"
+cadence = "monthly"
+cron = "0 8 30 * *"
+job = "sig-ingest-procportal-sf-ca"
+scheduler = "sig-sched-procportal-sf-ca"
+note = "SF Socrata cqi5-hm2d 'Supplier Contracts'; PDDL metadata — GL-GATE-06 flip, rights packet verbatim."
+
+[[sources]]
+id = "procportal_kcmo_mo"
+cadence = "monthly"
+cron = "0 10 30 * *"
+job = "sig-ingest-procportal-kcmo-mo"
+scheduler = "sig-sched-procportal-kcmo-mo"
+note = "KCMO Socrata c46m-hv6s 'List of KCMO City Contracts'; CC0-1.0 metadata — GL-GATE-06 flip, rights packet verbatim."
+
+[[sources]]
+id = "procportal_nyc_ny"
+cadence = "monthly"
+cron = "0 12 30 * *"
+job = "sig-ingest-procportal-nyc-ny"
+scheduler = "sig-sched-procportal-nyc-ny"
+note = "NYC Socrata dg92-zbpx 'City Record Online'; PUBLIC_DOMAIN metadata — GL-GATE-06 flip, rights packet verbatim."

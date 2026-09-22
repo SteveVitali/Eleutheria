@@ -178,6 +178,22 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "camreg_qldc_au": "dot_511",
     "camreg_donegal_ie": "dot_511",
     "camreg_hk_hk": "dot_511",
+    # P26.10 (SOURCES.9): multi-tenant procurement portals — the `procurement`
+    # connector reads its targets from the published portal tenant registry
+    # (data/procurement_portal_tenants.toml, live_targets
+    # kind=procurement_portal_tenants). BidNet storefronts, Bonfire/OpenGov
+    # portals, and city Socrata contract datasets — one source row per
+    # publisher/platform so rights/robots/cadence stay granular; gated rows
+    # stay `ingestion_permitted=false` until their named blocker resolves
+    # (DEFERRALS D-SOURCES.9-1..4).
+    "bidnet_direct": "procurement",
+    "bonfire": "procurement",
+    "opengov_procurement": "procurement",
+    "procportal_austin_tx": "procurement",
+    "procportal_sf_ca": "procurement",
+    "procportal_kcmo_mo": "procurement",
+    "procportal_nyc_ny": "procurement",
+    "procportal_chicago_il": "procurement",
 }
 
 
@@ -692,7 +708,7 @@ def _run_live(
                 "capture_digest": r.get("capture_digest"),
             }
             for r in report.claims
-            if r.get("record_kind") == "agenda_document"
+            if r.get("record_kind") in ("agenda_document", "portal_document")
         ],
     )
     write_fetch_record(fetch_record, capture_dir / "live_runs")

@@ -57,10 +57,6 @@ disposition = "reference"
 disposition = "reference"
 note = "P26.2 discovery (RAA pattern) — Austrian DSB VidReg video-surveillance register"
 
-[sources.bidnet_direct]
-disposition = "link_only"
-note = "P26.2 discovery — public agency bid portal (records/procurement surface)"
-
 [sources.boarddocs]
 disposition = "link_only"
 
@@ -263,10 +259,6 @@ disposition = "link_only"
 
 [sources.omnia_partners]
 disposition = "link_only"
-
-[sources.opengov_procurement]
-disposition = "link_only"
-note = "P26.2 discovery — per-agency public solicitation portals (records/procurement surface)"
 
 [sources.osm_automated_edits_coc]
 disposition = "reference"

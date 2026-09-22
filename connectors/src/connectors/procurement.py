@@ -58,7 +58,9 @@ from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from functools import cache
+from html.parser import HTMLParser
 from typing import Any
+from urllib.parse import urlencode, urljoin
 
 from db.absence import AbsenceState, coverage_kind_for, render_absence
 from evidence.digest import multihash
@@ -794,6 +796,186 @@ def platform_census() -> list[Mapping[str, Any]]:
     return list(agenda_registry().get("platform_census", []))
 
 
+# --- the procurement-portal tenant registry (P26.10 / SOURCES.9, §22.3-class) --
+
+
+@cache
+def portal_registry() -> Mapping[str, Any]:
+    """The published procurement-portal tenant registry (``data/procurement_portal_tenants.toml``).
+
+    Vendor procurement platforms are multi-tenant exactly like the agenda
+    platforms: BidNet Direct hosts agency storefronts as paths under one host,
+    Bonfire serves per-tenant ``*.bonfirehub.com`` portals, OpenGov Procurement
+    serves ``/portal/<agency>`` tenants, and city open-data portals publish
+    Socrata contract/award datasets. No municipality→portal directory exists
+    upstream; this is it. Every row carries ``enum_source`` enumeration
+    provenance, and ``[[platform_census]]`` rows preserve the enumerated hosts
+    that are NOT ingest targets (robots walls, WAF challenges, unreachable
+    names, vendor infrastructure) — a host found and excluded is recorded, not
+    dropped (§3.1, SIG-METRIC-002a).
+    """
+    return load_table("procurement_portal_tenants")
+
+
+def portal_tenants() -> dict[str, Mapping[str, Any]]:
+    """The registered procurement-portal tenants, keyed by tenant id."""
+    return dict(portal_registry().get("tenants", {}))
+
+
+def procurement_portal_sources() -> frozenset[str]:
+    """The registry source ids whose targets are portal tenants (vocab ``procurement_portals``)."""
+    return frozenset(str(s) for s in vocab().get("procurement_portals", ()))
+
+
+def portal_census() -> list[Mapping[str, Any]]:
+    """The enumerated-but-not-ingested procurement-portal census rows (P26.10)."""
+    return list(portal_registry().get("platform_census", []))
+
+
+def portal_targets(source_id: str | None = None) -> list[dict[str, Any]]:
+    """The bounded index targets the portal tenant registry expands to (P26.10).
+
+    One set of targets per registered tenant (filtered to one ``source_id``
+    when given — a live run of ``bidnet_direct`` expands only the BidNet rows,
+    a ``procportal_*`` city source expands only its own dataset row). Every
+    target is the platform's own bounded index surface:
+
+    * **bidnet** — the tenant storefront's server-rendered solicitation
+      indexes: the unfiltered open-bids page-1 plus each reviewed index kind
+      under each reviewed recall keyword (the portal's own public
+      ``?keywords=`` field — a targeted lookup, never a paginated crawl;
+      ``?page=`` is robots-disallowed anyway, verbatim in the packet).
+    * **socrata** — one bounded SoQL slice per dataset:
+      ``/resource/<id>.json?$limit=N&$order=<date> DESC``, the documented rows
+      API on API-mode allow-listed hosts.
+    * **bonfire / opengov** — the tenant's portal index URL itself: gated
+      surfaces whose fetches record the robots refusal / WAF challenge as
+      first-class outcomes (``record_refusals`` on every portal target).
+
+    All per-tenant/per-run bounds ride the target row as data, from the
+    reviewed ``[platform_endpoints.*]`` rows — never code constants.
+    """
+    out: list[dict[str, Any]] = []
+    for tenant_id, row in portal_tenants().items():
+        if source_id is not None and str(row.get("source_id")) != source_id:
+            continue
+        platform = str(row.get("platform") or "")
+        cfg = platform_endpoints().get(platform, {})
+        base: dict[str, Any] = {
+            "tenant_id": tenant_id,
+            "tenant": row.get("tenant") or tenant_id,
+            "platform": platform,
+            "source_id": str(row.get("source_id") or ""),
+            "jurisdiction": row.get("jurisdiction"),
+            "buyer_name": row.get("buyer_name"),
+            "kind": "portal_index",
+            # Per-host robots/WAF verdicts are recorded per tenant — a gated
+            # tenant's refusal never aborts the platform run (P26.3 pattern).
+            "record_refusals": True,
+        }
+        for bound_key in ("doc_per_tenant", "doc_run_cap"):
+            if cfg.get(bound_key) is not None:
+                base[bound_key] = int(cfg[bound_key])
+        if platform == "bidnet":
+            storefront = str(row.get("storefront") or "").rstrip("/")
+            host = str(cfg.get("host") or "www.bidnetdirect.com")
+            group_id = _opt_str(row.get("purchasing_group_id"))
+            unfiltered = {str(k) for k in cfg.get("index_unfiltered_kinds", ())}
+            for index_kind in cfg.get("index_kinds", ()):
+                for keyword in cfg.get("index_keywords", ()):
+                    target = {
+                        **base,
+                        "id": f"{tenant_id}:{index_kind}:kw:{keyword}",
+                        "url": (
+                            f"https://{host}{storefront}/solicitations/{index_kind}-bids"
+                            f"?{urlencode({'keywords': str(keyword)})}"
+                        ),
+                        "index_kind": str(index_kind),
+                        "index_keyword": str(keyword),
+                        "purchasing_group_id": group_id,
+                    }
+                    out.append(target)
+            for index_kind in sorted(unfiltered):
+                out.append(
+                    {
+                        **base,
+                        "id": f"{tenant_id}:{index_kind}",
+                        "url": f"https://{host}{storefront}/solicitations/{index_kind}-bids",
+                        "index_kind": str(index_kind),
+                        "index_keyword": None,
+                        "purchasing_group_id": group_id,
+                    }
+                )
+        elif platform == "socrata":
+            host = str(row.get("host") or "")
+            dataset = str(row.get("dataset") or "")
+            limit = _opt_int(row.get("limit")) or 500
+            date_field = str(row.get("date_field") or "")
+            template = str(
+                cfg.get("index_path_template") or "https://{host}/resource/{dataset}.json"
+            )
+            query = urlencode(
+                {
+                    "$limit": limit,
+                    **({"$order": f"{date_field} DESC"} if date_field else {}),
+                }
+            )
+            out.append(
+                {
+                    **base,
+                    "id": f"{tenant_id}:rows",
+                    "url": f"{template.format(host=host, dataset=dataset)}?{query}",
+                    "index_kind": "rows",
+                    "index_keyword": None,
+                    "host": host,
+                    "dataset": dataset,
+                    "limit": limit,
+                    # The reviewed per-dataset field aliases ride the target —
+                    # extract/normalize read the dataset's own column names
+                    # from the registry row, never hardcoded.
+                    "id_fields": [str(f) for f in row.get("id_fields", ())],
+                    "title_fields": [str(f) for f in row.get("title_fields", ())],
+                    "date_field": date_field or None,
+                    "vendor_field": _opt_str(row.get("vendor_field")),
+                    "amount_field": _opt_str(row.get("amount_field")),
+                    "dept_field": _opt_str(row.get("dept_field")),
+                    "notice_type_field": _opt_str(row.get("notice_type_field")),
+                    "deadline_field": _opt_str(row.get("deadline_field")),
+                    "doc_field": _opt_str(row.get("doc_field")),
+                }
+            )
+        else:
+            # bonfire / opengov — the gated portal surface itself: the target
+            # exists so each run records the host's own verdict (a robots
+            # `Disallow: /` refusal, a WAF challenge) as first-class data.
+            host = str(row.get("host") or "")
+            portal_path = str(row.get("portal_path") or "/portal")
+            url = (
+                f"https://{host}{portal_path}"
+                if platform == "opengov"
+                else f"https://{host}/portal"
+            )
+            out.append(
+                {
+                    **base,
+                    "id": f"{tenant_id}:portal",
+                    "url": url,
+                    "index_kind": "portal",
+                    "index_keyword": None,
+                    "host": host,
+                }
+            )
+    return out
+
+
+def portal_target_for_uri(uri: str) -> Mapping[str, Any] | None:
+    """The portal tenant target whose generated index URL ``uri`` fetches (P26.10)."""
+    for target in portal_targets():
+        if str(target["url"]) == uri:
+            return target
+    return None
+
+
 # --- cooperative-vehicle helpers (SIG-ONTO-032) -------------------------------
 
 
@@ -962,6 +1144,19 @@ class ProcurementConnector(Connector):
                     if str(t.get("tenant_id")) not in seen
                 ),
             ]
+        if ctx.source.id in procurement_portal_sources():
+            # P26.10: a procurement-portal source's targets ARE its tenant rows
+            # (live_targets kind=procurement_portal_tenants); dedupe on the
+            # generated index URL so a supplied target never double-fetches.
+            seen_urls = {str(t.get("url")) for t in targets}
+            targets = [
+                *targets,
+                *(
+                    t
+                    for t in portal_targets(source_id=ctx.source.id)
+                    if str(t.get("url")) not in seen_urls
+                ),
+            ]
         if ctx.source.id == source_ids().get("usaspending"):
             for target in targets:
                 assert_pulls_subawards(target)
@@ -1018,6 +1213,8 @@ class ProcurementConnector(Connector):
         Resolved targets land on ``ctx.resolved_targets`` so the document's
         post-capture stages see the tenant + item provenance.
         """
+        if ctx.source.id in procurement_portal_sources():
+            return self._discover_portal_documents(ctx, captures)
         if ctx.source.id not in agenda_platform_sources():
             return []
         cfg = platform_endpoints().get(ctx.source.id, {})
@@ -1064,6 +1261,78 @@ class ProcurementConnector(Connector):
                     return resolved
         return resolved
 
+    def _discover_portal_documents(
+        self, ctx: RunContext, captures: Sequence[CaptureRef]
+    ) -> list[Mapping[str, Any]]:
+        """Bounded portal detail-document targets from captured tenant indexes (P26.10).
+
+        The portal analogue of the agenda-document continuation: a captured
+        **portal index** (a BidNet storefront solicitation list) is the
+        discovery surface for its item detail pages — each item's
+        ``solicitation-link`` href is the document URL (taken from the item's
+        own link, never constructed). Selection is bounded and deterministic:
+        tier-0 = items whose title matches the reviewed agenda_content_vocab
+        (a surveillance-relevant solicitation title), then canonical order —
+        the item's own ``published``/``closing`` date (most recent first) with
+        the item id as tie-break, never server ordering — capped at
+        ``doc_per_tenant`` per tenant and ``doc_run_cap`` per run, the reviewed
+        bounds riding each target row as data. The same solicitation surfacing
+        under several keyword windows resolves once (dedupe on its detail URL).
+        Socrata datasets resolve nothing — the record IS the document.
+        """
+        resolved: list[Mapping[str, Any]] = []
+        run_cap: int | None = None
+        for capture in captures:
+            index_target = _portal_index_target_for(ctx, capture.source_uri)
+            if index_target is None:
+                continue
+            platform = str(index_target.get("platform") or "")
+            if platform != "bidnet":
+                continue  # only BidNet storefronts fan out to detail pages
+            cfg = platform_endpoints().get(platform, {})
+            if run_cap is None:
+                run_cap = _opt_int(index_target.get("doc_run_cap") or cfg.get("doc_run_cap"))
+            per_tenant = _opt_int(index_target.get("doc_per_tenant") or cfg.get("doc_per_tenant"))
+            if not per_tenant:
+                continue
+            try:
+                items = _bidnet_index_items(
+                    ctx.captures.get(capture.digest),
+                    source_id=ctx.source.id,
+                    source_uri=str(capture.source_uri),
+                )
+            except ContentDrift:
+                continue  # drift is recorded by the index parse, not re-raised here
+            for item, tier in _select_portal_document_items(items, index_target, cfg, per_tenant):
+                url = str(item.get("detail_url") or "")
+                if not url or url in ctx.resolved_targets:
+                    continue
+                item_id = _portal_item_id(item)
+                target: dict[str, Any] = {
+                    "id": f"{index_target.get('tenant_id')}:doc:{item_id}",
+                    "url": url,
+                    "kind": "portal_document",
+                    "platform": platform,
+                    "tenant_id": index_target.get("tenant_id"),
+                    "tenant": index_target.get("tenant"),
+                    "source_id": index_target.get("source_id"),
+                    "jurisdiction": index_target.get("jurisdiction"),
+                    "buyer_name": index_target.get("buyer_name"),
+                    "index_url": str(capture.source_uri),
+                    "index_kind": index_target.get("index_kind"),
+                    "index_keyword": index_target.get("index_keyword"),
+                    "item": dict(item),
+                    "item_id": item_id,
+                    "selection_tier": tier,
+                    "doc_per_tenant": per_tenant,
+                    "doc_run_cap": run_cap,
+                }
+                ctx.resolved_targets[url] = target
+                resolved.append(target)
+                if run_cap is not None and len(resolved) >= run_cap:
+                    return resolved
+        return resolved
+
     # -- interpretation (pure functions of the capture) --
     def parse(self, ctx: RunContext, capture: CaptureRef) -> dict[str, Any]:
         """Structure the captured bytes — a procurement JSON payload, or a document.
@@ -1077,6 +1346,11 @@ class ProcurementConnector(Connector):
         doc_target = _agenda_doc_target(ctx, capture.source_uri)
         if doc_target is not None:
             return self._parse_agenda_document(ctx, capture, data, doc_target)
+        portal_target = _portal_target_for(ctx, capture.source_uri)
+        if portal_target is not None:
+            if portal_target.get("kind") == "portal_document":
+                return self._parse_portal_document(ctx, capture, data, portal_target)
+            return self._parse_portal_index(ctx, capture, data, portal_target)
         if _is_json_media(capture.media_type):
             return {"kind": "procurement_payload", "payload": json.loads(data), "capture": capture}
         filename = _filename_from_uri(capture.source_uri)
@@ -1188,6 +1462,129 @@ class ProcurementConnector(Connector):
             "no reviewed genre (json/html/pdf) fits",
         )
 
+    def _parse_portal_index(
+        self,
+        ctx: RunContext,
+        capture: CaptureRef,
+        data: bytes,
+        target: Mapping[str, Any],
+    ) -> dict[str, Any]:
+        """Structure a captured portal index by platform contract (P26.10).
+
+        Genre is re-derived from the captured bytes, never trusted from the
+        target label. **bidnet** — the storefront's ``mets-table-row`` item
+        markup; a page carrying neither a ``solicitation-link`` item nor the
+        ``id="solicitationList"`` container (present even on a zero-result
+        page) is :class:`ContentDrift`, while a marked-empty list is an honest
+        ``empty`` outcome. **socrata** — the SoQL rows payload MUST decode to a
+        JSON array; an object (Socrata's error envelope answers HTTP 200 with
+        ``{"error": true, ...}``) or an undecodable body is ContentDrift, and
+        an empty array is an honest ``empty`` window. **bonfire / opengov**
+        carry no reviewed markup contract — a captured body is ContentDrift by
+        construction (their live outcomes are the recorded robots refusal /
+        WAF challenge, never a fabricated parse).
+        """
+        platform = str(target.get("platform") or "")
+        source_uri = str(capture.source_uri)
+        if platform == "bidnet":
+            items = _bidnet_index_items(data, source_id=ctx.source.id, source_uri=source_uri)
+            return {
+                "kind": "portal_index",
+                "capture": capture,
+                "target": dict(target),
+                "platform": platform,
+                "items": items,
+                "text": html_text(data),
+                "byte_size": len(data),
+            }
+        if platform == "socrata":
+            try:
+                payload = json.loads(data)
+            except (ValueError, UnicodeDecodeError) as exc:
+                raise ContentDrift(
+                    ctx.source.id,
+                    f"portal index {source_uri} is not parseable JSON (the socrata rows-API genre)",
+                    details=str(exc)[:200],
+                ) from exc
+            if not isinstance(payload, list):
+                raise ContentDrift(
+                    ctx.source.id,
+                    f"portal index {source_uri} is a JSON {type(payload).__name__}, "
+                    "not the socrata rows array (an error envelope is not an index)",
+                    details=str(payload)[:200],
+                )
+            socrata_items: list[dict[str, Any]] = [
+                dict(o) if isinstance(o, Mapping) else {"value": o} for o in payload
+            ]
+            return {
+                "kind": "portal_index",
+                "capture": capture,
+                "target": dict(target),
+                "platform": platform,
+                "items": socrata_items,
+                "text": utf8_text(data),
+                "byte_size": len(data),
+            }
+        raise ContentDrift(
+            ctx.source.id,
+            f"portal index {source_uri} has no reviewed markup contract "
+            f"(platform {platform!r} is a gated surface — its live outcome is the "
+            "recorded refusal/challenge, not a fabricated parse)",
+        )
+
+    def _parse_portal_document(
+        self,
+        ctx: RunContext,
+        capture: CaptureRef,
+        data: bytes,
+        target: Mapping[str, Any],
+    ) -> dict[str, Any]:
+        """Structure a captured portal detail document by genre (P26.10).
+
+        A BidNet detail page is ``doc_genre = "html"``: a non-HTML body is
+        genre drift, and a page without the platform's field markup
+        (``mets-field`` / ``descriptionText`` — the reviewed detail-page
+        contract) is :class:`ContentDrift`. A marked page with no visible text
+        is an honest ``empty`` outcome, never drift.
+        """
+        platform = str(target.get("platform") or "")
+        cfg = platform_endpoints().get(platform, {})
+        source_uri = str(capture.source_uri)
+        media = str(capture.media_type or "").lower()
+        genre = str(cfg.get("doc_genre") or "any")
+        if platform == "bidnet" or genre == "html":
+            if not (
+                "html" in media or "text" in media or media in ("", "application/octet-stream")
+            ):
+                raise ContentDrift(
+                    ctx.source.id,
+                    f"portal document {source_uri} is {capture.media_type!r}, "
+                    f"not an HTML detail page (the {platform} document genre)",
+                )
+            raw_text = utf8_text(data)
+            if "mets-field" not in raw_text and "descriptionText" not in raw_text:
+                raise ContentDrift(
+                    ctx.source.id,
+                    f"portal document {source_uri} lacks the {platform} detail-page "
+                    "field markup (mets-field/descriptionText) — the markup contract "
+                    "changed, this is not an empty notice",
+                    details=raw_text[:200],
+                )
+            return {
+                "kind": "portal_document",
+                "capture": capture,
+                "target": dict(target),
+                "doc_genre": "html",
+                "extraction_method": "selector_template",
+                "text": html_text(data),
+                "pages": None,
+                "byte_size": len(data),
+            }
+        raise ContentDrift(
+            ctx.source.id,
+            f"portal document {source_uri} has no reviewed document genre (platform {platform!r})",
+        )
+
     def extract(self, ctx: RunContext, parsed: Mapping[str, Any]) -> list[Mapping[str, Any]]:
         """Raw records with locators, preserving raw values (P2)."""
         if parsed["kind"] == "agenda_document":
@@ -1219,6 +1616,58 @@ class ProcurementConnector(Connector):
                     "media_type": capture.media_type,
                     "byte_size": parsed["byte_size"],
                     "verdict": parsed["verdict"],
+                }
+            ]
+        if parsed["kind"] == "portal_index":
+            capture = parsed["capture"]
+            target = parsed["target"]
+            items = parsed["items"]
+            out: list[Mapping[str, Any]] = [
+                {
+                    "record_kind": "portal_index",
+                    "source_uri": capture.source_uri,
+                    "capture_digest": capture.digest,
+                    "media_type": capture.media_type,
+                    "retrieved_at": (
+                        capture.retrieved_at.isoformat() if capture.retrieved_at else None
+                    ),
+                    "byte_size": parsed["byte_size"],
+                    "text": parsed["text"],
+                    "items_count": len(items),
+                    "target": target,
+                }
+            ]
+            out.extend(
+                {
+                    "record_kind": "portal_index_item",
+                    "raw": dict(item),
+                    "tenant": target,
+                    "row_index": pos,
+                    "capture_digest": capture.digest,
+                    "retrieved_at": (
+                        capture.retrieved_at.isoformat() if capture.retrieved_at else None
+                    ),
+                }
+                for pos, item in enumerate(items)
+            )
+            return out
+        if parsed["kind"] == "portal_document":
+            capture = parsed["capture"]
+            return [
+                {
+                    "record_kind": "portal_document",
+                    "source_uri": capture.source_uri,
+                    "capture_digest": capture.digest,
+                    "media_type": capture.media_type,
+                    "retrieved_at": (
+                        capture.retrieved_at.isoformat() if capture.retrieved_at else None
+                    ),
+                    "byte_size": parsed["byte_size"],
+                    "doc_genre": parsed["doc_genre"],
+                    "extraction_method": parsed["extraction_method"],
+                    "text": parsed["text"],
+                    "pages": parsed.get("pages"),
+                    "target": parsed["target"],
                 }
             ]
         payload = parsed["payload"]
@@ -1263,11 +1712,11 @@ class ProcurementConnector(Connector):
             objects = list(payload)
         else:
             objects = [payload]
-        out: list[Mapping[str, Any]] = []
+        extracted: list[Mapping[str, Any]] = []
         for obj in objects:
             kind = "subaward" if _looks_like_subaward(obj) else "contract"
-            out.append({"record_kind": kind, "raw": dict(obj)})
-        return out
+            extracted.append({"record_kind": kind, "raw": dict(obj)})
+        return extracted
 
     def normalize(
         self, ctx: RunContext, raw_claims: list[Mapping[str, Any]]
@@ -1288,6 +1737,12 @@ class ProcurementConnector(Connector):
                 out.extend(self._normalize_notice(ctx, raw))
             elif kind == "agenda_document":
                 out.extend(self._normalize_agenda_document(ctx, raw))
+            elif kind == "portal_index":
+                out.append(self._normalize_portal_index(ctx, raw))
+            elif kind == "portal_index_item":
+                out.extend(self._normalize_portal_notice(ctx, raw))
+            elif kind == "portal_document":
+                out.extend(self._normalize_portal_document(ctx, raw))
             else:
                 out.extend(self._normalize_contract(ctx, raw))
         return out
@@ -1673,6 +2128,501 @@ class ProcurementConnector(Connector):
             source_id=ctx.source.id,
         )
 
+    # -- portal normalizers (P26.10 / SOURCES.9) --
+
+    def _normalize_portal_index(self, ctx: RunContext, raw: Mapping[str, Any]) -> dict[str, Any]:
+        """The per-tenant portal index outcome row — one row per captured index.
+
+        Records the honest window outcome: the tenant, the reviewed index kind
+        + keyword (``None`` on the unfiltered window), how many items the page
+        carried, the title-level vocab signal (informational — the claims
+        themselves always come from verbatim document text), and the bounded
+        continuation window it resolved under. An index with zero items is an
+        ``empty`` outcome, never drift (drift already failed closed in parse).
+        """
+        target = raw["target"]
+        tenant_id = str(target.get("tenant_id") or "")
+        platform = str(target.get("platform") or "")
+        index_kind = _opt_str(target.get("index_kind")) or "index"
+        keyword = _opt_str(target.get("index_keyword"))
+        items_count = int(raw.get("items_count") or 0)
+        text = str(raw.get("text") or "")
+        matches = scan_agenda_content(text) if text else []
+        subject = (
+            f"portal_index:{ctx.source.id}:{tenant_id or 'unscoped'}:"
+            f"{index_kind}:{keyword or 'all'}"
+        )
+        jurisdiction = _opt_str(target.get("jurisdiction"))
+        row = _stamp(
+            {
+                "record_kind": "portal_index",
+                "subject_id": subject,
+                "predicate_id": assert_predicate_allowed("portal_index"),
+                "external_id": f"{index_kind}:{keyword or 'all'}",
+                "raw_value": str(raw["source_uri"]),
+                "platform": platform,
+                "tenant_id": tenant_id or None,
+                "jurisdiction": jurisdiction,
+                "index_kind": index_kind,
+                "index_keyword": keyword,
+                "items_count": items_count,
+                "title_matched_terms": sorted({m["term_id"] for m in matches}),
+                "outcome": "empty" if items_count == 0 else "items",
+                "capture_digest": raw.get("capture_digest"),
+                "doc_window": {
+                    "per_tenant": target.get("doc_per_tenant"),
+                    "run_cap": target.get("doc_run_cap"),
+                },
+                "content_vocab_version": content_vocab_version(),
+            },
+            source_id=ctx.source.id,
+        )
+        if jurisdiction:
+            row["jurisdiction_candidate"] = org_candidate(
+                jurisdiction, scheme="portal.jurisdiction_name"
+            )
+        return row
+
+    def _normalize_portal_notice(
+        self, ctx: RunContext, raw: Mapping[str, Any]
+    ) -> list[dict[str, Any]]:
+        """One portal index item → a ``procurement_notice`` subject + claims (P26.10).
+
+        The portal analogue of the SAM ``procurement_notice`` path: a storefront
+        line item or a contract-register row is the dated evidence of a
+        procurement lifecycle event — a solicitation, an award record — never a
+        Contract assertion. Field aliases ride the target (the tenant registry's
+        reviewed column names); the lifecycle transition maps through the
+        platform's reviewed ``notice_map`` — an unlisted kind/type emits the
+        index facts only, never a guessed transition (§3.1).
+        """
+        item = raw["raw"]
+        tenant = raw.get("tenant") or {}
+        tenant_id = str(tenant.get("tenant_id") or "")
+        platform = str(tenant.get("platform") or "")
+        jurisdiction = _opt_str(tenant.get("jurisdiction"))
+        index_kind = _opt_str(tenant.get("index_kind"))
+        external_id = _portal_external_id(item, tenant)
+        subject = f"procurement_notice:{ctx.source.id}:{tenant_id or 'unscoped'}:{external_id}"
+        title = _portal_title(item, tenant)
+        posted = _portal_posted_date(item, tenant)
+        deadline = _first_nonempty(
+            item, ("closing", "due_date", str(tenant.get("deadline_field") or ""))
+        )
+        buyer = _first_nonempty(item, (str(tenant.get("dept_field") or ""),)) or _opt_str(
+            tenant.get("buyer_name")
+        )
+        document = _first_nonempty(
+            item,
+            ("detail_url", str(tenant.get("doc_field") or "")),
+        )
+        notice_type = _portal_notice_type(item, tenant, index_kind)
+        surface: dict[str, Any] = {
+            "external_id": external_id,
+            "notice_type": notice_type,
+            "posted_date": posted,
+            "response_deadline": deadline,
+            "buyer": buyer,
+            "document": document,
+        }
+        vendor = _first_nonempty(item, (str(tenant.get("vendor_field") or ""),))
+        amount = _first_nonempty(item, (str(tenant.get("amount_field") or ""),))
+        rows: list[dict[str, Any]] = [
+            _stamp(
+                {
+                    "record_kind": "procurement_notice",
+                    "subject_id": subject,
+                    "predicate_id": assert_predicate_allowed("procurement_notice"),
+                    "external_id": external_id,
+                    "raw_value": title or external_id,
+                    "predicate_surface": {k: v for k, v in surface.items() if v is not None},
+                    "title": title,
+                    "platform": platform,
+                    "tenant_id": tenant_id or None,
+                    "jurisdiction": jurisdiction,
+                    "index_kind": index_kind,
+                    "index_keyword": _opt_str(tenant.get("index_keyword")),
+                    "row_index": raw.get("row_index"),
+                    "raw": dict(item),
+                },
+                source_id=ctx.source.id,
+            )
+        ]
+        if jurisdiction:
+            rows[0]["jurisdiction_candidate"] = org_candidate(
+                jurisdiction, scheme="portal.jurisdiction_name"
+            )
+        for predicate, value in surface.items():
+            if value is None:
+                continue
+            row: dict[str, Any] = {
+                "record_kind": "claim",
+                "subject_id": subject,
+                "predicate_id": assert_predicate_allowed(predicate),
+                "raw_value": _raw_value_of(value),
+                "value": value,
+                "platform": platform,
+                "tenant_id": tenant_id or None,
+                "jurisdiction": jurisdiction,
+            }
+            if predicate == "buyer":
+                row["candidate_identifier"] = org_candidate(str(value))
+            rows.append(_stamp(row, source_id=ctx.source.id))
+        if vendor:
+            rows.append(
+                _stamp(
+                    {
+                        "record_kind": "claim",
+                        "subject_id": subject,
+                        "predicate_id": assert_predicate_allowed("seller"),
+                        "raw_value": vendor,
+                        "value": vendor,
+                        "platform": platform,
+                        "tenant_id": tenant_id or None,
+                        "jurisdiction": jurisdiction,
+                        "candidate_identifier": org_candidate(
+                            vendor, scheme="procurement.org_name"
+                        ),
+                    },
+                    source_id=ctx.source.id,
+                )
+            )
+        if amount:
+            rows.append(
+                _stamp(
+                    {
+                        "record_kind": "claim",
+                        "subject_id": subject,
+                        "predicate_id": assert_predicate_allowed("amount"),
+                        "raw_value": amount,
+                        "value": amount,
+                        "platform": platform,
+                        "tenant_id": tenant_id or None,
+                        "jurisdiction": jurisdiction,
+                    },
+                    source_id=ctx.source.id,
+                )
+            )
+        state = _portal_lifecycle_state(item, tenant, platform, index_kind)
+        if state:
+            rows.append(
+                _stamp(
+                    {
+                        "record_kind": "claim",
+                        "subject_id": subject,
+                        "predicate_id": assert_predicate_allowed("lifecycle_transition"),
+                        "raw_value": state,
+                        "value": {"state": state, "date": posted},
+                        "platform": platform,
+                        "tenant_id": tenant_id or None,
+                        "jurisdiction": jurisdiction,
+                    },
+                    source_id=ctx.source.id,
+                )
+            )
+        if platform == "socrata":
+            # The register row IS the document: emit its portal_document outcome
+            # row plus verbatim content_term claims scanned over the reviewed
+            # text fields (P26.6 rules — raw_value stays the verbatim literal,
+            # the locator is a byte range into the named record field).
+            rows.extend(self._socrata_record_rows(ctx, raw, subject=subject))
+        return rows
+
+    def _socrata_record_rows(
+        self, ctx: RunContext, raw: Mapping[str, Any], *, subject: str
+    ) -> list[dict[str, Any]]:
+        """The document-level rows for one Socrata register record (P26.10).
+
+        A dataset row carries its own verbatim text — the reviewed
+        ``title_fields`` aliases ride the tenant target — so the record doubles
+        as its document: a ``portal_document`` outcome row (the row's own scan
+        verdict), a ``document`` claim locating the record by ``Locator.row``
+        inside the captured array, and ``content_term`` claims whose
+        ``evidence.locator`` is a byte range into the NAMED field value
+        (``evidence.field``) — every literal verified verbatim by construction.
+        """
+        item = raw["raw"]
+        tenant = raw.get("tenant") or {}
+        tenant_id = str(tenant.get("tenant_id") or "")
+        platform = str(tenant.get("platform") or "")
+        jurisdiction = _opt_str(tenant.get("jurisdiction"))
+        external_id = _portal_external_id(item, tenant)
+        doc_subject = f"portal_document:{ctx.source.id}:{tenant_id or 'unscoped'}:{external_id}"
+        index_url = str(tenant.get("url") or "")
+        row_index = raw.get("row_index")
+        retrieved_date = _opt_str(raw.get("retrieved_at"))
+        retrieved_date = retrieved_date[:10] if retrieved_date else None
+
+        fields = [str(f) for f in tenant.get("title_fields", ()) if str(f)]
+        scanned: list[dict[str, Any]] = []
+        suppressions: list[dict[str, Any]] = []
+        total_len = 0
+        for field_name in fields:
+            value = _opt_str(item.get(field_name))
+            if not value:
+                continue
+            total_len += len(value)
+            for m in scan_agenda_content(value):
+                token = content_guard_token(str(m["literal"])) or content_guard_token(
+                    str(m["term_label"])
+                )
+                if token is not None:
+                    suppressions.append(
+                        {
+                            "term_id": m["term_id"],
+                            "token": token,
+                            "literal": str(m["literal"]),
+                            "field": field_name,
+                        }
+                    )
+                else:
+                    scanned.append({**m, "field": field_name})
+        outcome = "empty" if total_len == 0 else ("matched" if scanned else "no_match")
+        doc_row = _stamp(
+            {
+                "record_kind": "portal_document",
+                "subject_id": doc_subject,
+                "predicate_id": assert_predicate_allowed("document"),
+                "external_id": external_id,
+                "raw_value": index_url,
+                "platform": platform,
+                "tenant_id": tenant_id or None,
+                "jurisdiction": jurisdiction,
+                "index_url": index_url,
+                "index_kind": _opt_str(tenant.get("index_kind")),
+                "index_keyword": None,
+                "notice_subject": subject,
+                "capture_digest": raw.get("capture_digest"),
+                "doc_genre": "json",
+                "extraction_method": "json_text",
+                "row_index": row_index,
+                "text_length": total_len,
+                "matched_terms": sorted({m["term_id"] for m in scanned}),
+                "match_count": sum(int(m["match_count"]) for m in scanned),
+                "fields_scanned": [f for f in fields if _opt_str(item.get(f))],
+                "outcome": outcome,
+                "content_vocab_version": content_vocab_version(),
+            },
+            source_id=ctx.source.id,
+        )
+        if jurisdiction:
+            doc_row["jurisdiction_candidate"] = org_candidate(
+                jurisdiction, scheme="portal.jurisdiction_name"
+            )
+        if suppressions:
+            doc_row["part_viii_suppressions"] = suppressions
+        rows: list[dict[str, Any]] = [doc_row]
+
+        # The record locator: this document is row N of the captured SoQL array.
+        if row_index is not None:
+            rows.append(
+                _stamp(
+                    {
+                        "record_kind": "claim",
+                        "subject_id": subject,
+                        "predicate_id": assert_predicate_allowed("document"),
+                        "value": index_url,
+                        "raw_value": index_url,
+                        "observed_at": retrieved_date,
+                        "platform": platform,
+                        "tenant_id": tenant_id or None,
+                        "jurisdiction": jurisdiction,
+                        "document_subject": doc_subject,
+                        "evidence_genre": "portal_document",
+                        "evidence": {
+                            "source_url": index_url,
+                            "retrieved_date": retrieved_date,
+                            "extraction_method": "json_text",
+                            "locator": Locator.row(int(row_index)).to_row(),
+                        },
+                    },
+                    source_id=ctx.source.id,
+                )
+            )
+        for match in scanned:
+            rows.append(
+                _stamp(
+                    {
+                        "record_kind": "claim",
+                        "subject_id": subject,
+                        "predicate_id": assert_predicate_allowed("content_term"),
+                        "value": match["term_id"],
+                        "raw_value": match["literal"],
+                        "term_label": match["term_label"],
+                        "term_kind": match["term_kind"],
+                        "match_count": match["match_count"],
+                        "observed_at": retrieved_date,
+                        "platform": platform,
+                        "tenant_id": tenant_id or None,
+                        "jurisdiction": jurisdiction,
+                        "document": index_url,
+                        "document_subject": doc_subject,
+                        "evidence_genre": "portal_document",
+                        "evidence": {
+                            "source_url": index_url,
+                            "retrieved_date": retrieved_date,
+                            "extraction_method": "json_text",
+                            "field": match["field"],
+                            "locator": Locator.byte_range(
+                                int(match["start"]), int(match["end"])
+                            ).to_row(),
+                            "record_row": row_index,
+                        },
+                    },
+                    source_id=ctx.source.id,
+                )
+            )
+        return rows
+
+    def _normalize_portal_document(
+        self, ctx: RunContext, raw: Mapping[str, Any]
+    ) -> list[dict[str, Any]]:
+        """A captured portal detail page → doc row + verbatim content claims (P26.10).
+
+        Mirrors ``_normalize_agenda_document``: the ``portal_document`` row
+        records the honest outcome — ``matched`` / ``no_match`` / ``empty`` —
+        and each matched term emits a ``content_term`` claim on the
+        ``procurement_notice`` subject whose ``raw_value`` is the VERBATIM
+        literal slice of the captured text and whose ``evidence.locator`` is a
+        byte range into it (or the PDF page). A literal carrying a Part VIII
+        forbidden token is suppressed and recorded, never emitted (§0.7/§43.2).
+        """
+        target = raw["target"]
+        item = target.get("item") if isinstance(target.get("item"), Mapping) else {}
+        platform = str(target.get("platform") or "")
+        tenant_id = str(target.get("tenant_id") or "")
+        jurisdiction = _opt_str(target.get("jurisdiction"))
+        external_id = str(target.get("item_id") or _portal_item_id(item))
+        notice_subject = (
+            f"procurement_notice:{ctx.source.id}:{tenant_id or 'unscoped'}:{external_id}"
+        )
+        doc_url = str(raw["source_uri"])
+        doc_subject = f"portal_document:{ctx.source.id}:{tenant_id or 'unscoped'}:{external_id}"
+        text = str(raw.get("text") or "")
+        pages = tuple(str(p) for p in (raw.get("pages") or ()))
+        method = str(raw.get("extraction_method") or "")
+        retrieved = _opt_str(raw.get("retrieved_at"))
+        retrieved_date = retrieved[:10] if retrieved else None
+
+        matches = scan_agenda_content(text) if text else []
+        suppressions: list[dict[str, Any]] = []
+        clean: list[Mapping[str, Any]] = []
+        for m in matches:
+            token = content_guard_token(str(m["literal"])) or content_guard_token(
+                str(m["term_label"])
+            )
+            if token is not None:
+                suppressions.append(
+                    {"term_id": m["term_id"], "token": token, "literal": str(m["literal"])}
+                )
+            else:
+                clean.append(m)
+        outcome = "empty" if not text.strip() else ("matched" if clean else "no_match")
+
+        doc_row = _stamp(
+            {
+                "record_kind": "portal_document",
+                "subject_id": doc_subject,
+                "predicate_id": assert_predicate_allowed("document"),
+                "external_id": external_id,
+                "raw_value": doc_url,
+                "platform": platform,
+                "tenant_id": tenant_id or None,
+                "jurisdiction": jurisdiction,
+                "index_url": target.get("index_url"),
+                "index_kind": target.get("index_kind"),
+                "index_keyword": target.get("index_keyword"),
+                "notice_subject": notice_subject,
+                "capture_digest": raw.get("capture_digest"),
+                "media_type": raw.get("media_type"),
+                "byte_size": raw.get("byte_size"),
+                "doc_genre": raw.get("doc_genre"),
+                "extraction_method": method,
+                "text_length": len(text),
+                "matched_terms": [m["term_id"] for m in clean],
+                "match_count": sum(int(m["match_count"]) for m in clean),
+                "outcome": outcome,
+                "selection_tier": target.get("selection_tier"),
+                "doc_window": {
+                    "per_tenant": target.get("doc_per_tenant"),
+                    "run_cap": target.get("doc_run_cap"),
+                },
+                "content_vocab_version": content_vocab_version(),
+            },
+            source_id=ctx.source.id,
+        )
+        if jurisdiction:
+            doc_row["jurisdiction_candidate"] = org_candidate(
+                jurisdiction, scheme="portal.jurisdiction_name"
+            )
+        if suppressions:
+            doc_row["part_viii_suppressions"] = suppressions
+        rows: list[dict[str, Any]] = [doc_row]
+
+        # The document-locator claim: the notice's detail page was captured at
+        # this URL.
+        rows.append(
+            _stamp(
+                {
+                    "record_kind": "claim",
+                    "subject_id": notice_subject,
+                    "predicate_id": assert_predicate_allowed("document"),
+                    "value": doc_url,
+                    "raw_value": doc_url,
+                    "observed_at": retrieved_date,
+                    "platform": platform,
+                    "tenant_id": tenant_id or None,
+                    "jurisdiction": jurisdiction,
+                    "document_subject": doc_subject,
+                    "evidence_genre": "portal_document",
+                    "evidence": {
+                        "source_url": doc_url,
+                        "retrieved_date": retrieved_date,
+                        "extraction_method": method,
+                        "locator": Locator.byte_range(0, len(text)).to_row(),
+                    },
+                },
+                source_id=ctx.source.id,
+            )
+        )
+        for match in clean:
+            locator: Mapping[str, Any] | None = (
+                page_locator_for(pages, str(match["literal"]))
+                if pages
+                else Locator.byte_range(int(match["start"]), int(match["end"])).to_row()
+            )
+            if locator is None:
+                continue  # a literal that cannot be located is never emitted (OL-24-18)
+            rows.append(
+                _stamp(
+                    {
+                        "record_kind": "claim",
+                        "subject_id": notice_subject,
+                        "predicate_id": assert_predicate_allowed("content_term"),
+                        "value": match["term_id"],
+                        "raw_value": match["literal"],
+                        "term_label": match["term_label"],
+                        "term_kind": match["term_kind"],
+                        "match_count": match["match_count"],
+                        "observed_at": retrieved_date,
+                        "platform": platform,
+                        "tenant_id": tenant_id or None,
+                        "jurisdiction": jurisdiction,
+                        "document": doc_url,
+                        "document_subject": doc_subject,
+                        "evidence_genre": "portal_document",
+                        "evidence": {
+                            "source_url": doc_url,
+                            "retrieved_date": retrieved_date,
+                            "extraction_method": method,
+                            "locator": locator,
+                        },
+                    },
+                    source_id=ctx.source.id,
+                )
+            )
+        return rows
+
     def _normalize_notice(self, ctx: RunContext, raw: Mapping[str, Any]) -> list[dict[str, Any]]:
         """A SAM.gov opportunity → a ``procurement_notice`` subject + its claims (P26.2).
 
@@ -2053,6 +3003,292 @@ def _document_url(
                 item_id=value,
             )
     return None
+
+
+# --- procurement-portal helpers (P26.10 / SOURCES.9) ---------------------------
+
+
+def _portal_target_for(ctx: RunContext, uri: str) -> Mapping[str, Any] | None:
+    """The portal target (index OR resolved document) a capture fetched (P26.10).
+
+    Resolved continuation targets first, then the run's configured targets,
+    then the tenant registry row whose generated index URL the capture's
+    ``source_uri`` is exactly.
+    """
+    target = ctx.resolved_targets.get(uri)
+    if target is not None and target.get("kind") in ("portal_index", "portal_document"):
+        return target
+    registry_target = portal_target_for_uri(uri)
+    for candidate in ctx.parameters.get("targets", []):
+        if str(candidate.get("url")) == uri and candidate.get("kind") in (
+            "portal_index",
+            "portal_document",
+        ):
+            # A configured target wins its own fields but inherits the registry
+            # row's tenant context (platform, field aliases, bounds) — a bare
+            # fixture/live target still parses under the reviewed contract.
+            return {**(dict(registry_target) if registry_target else {}), **dict(candidate)}
+    return registry_target
+
+
+def _portal_index_target_for(ctx: RunContext, uri: str) -> Mapping[str, Any] | None:
+    """The ``portal_index`` target row a capture fetched (P26.10) — indexes only."""
+    target = _portal_target_for(ctx, uri)
+    if target is not None and target.get("kind") == "portal_index":
+        return target
+    return None
+
+
+def _portal_item_id(item: Mapping[str, Any]) -> str:
+    """A portal item's external id — solicitation number, detail-id, or digest."""
+    return (
+        _first_nonempty(item, ("sol_num", "id", "external_id", "request_id"))
+        or _opt_str(str(item.get("detail_url") or "").rstrip("/").rsplit("/", 1)[-1].split("?")[0])
+        or _digest_of(item)[:24]
+    )
+
+
+def _portal_external_id(item: Mapping[str, Any], tenant: Mapping[str, Any]) -> str:
+    """The notice's external id via the tenant's reviewed ``id_fields`` aliases."""
+    for key in tenant.get("id_fields", ()):
+        value = _opt_str(item.get(str(key)))
+        if value:
+            return value
+    return _portal_item_id(item)
+
+
+def _portal_title(item: Mapping[str, Any], tenant: Mapping[str, Any]) -> str | None:
+    """The item's title — BidNet ``title`` or the tenant's first title-field alias."""
+    if _opt_str(item.get("title")):
+        return _opt_str(item.get("title"))
+    return _first_nonempty(item, (str(f) for f in tenant.get("title_fields", ())))
+
+
+def _portal_posted_date(item: Mapping[str, Any], tenant: Mapping[str, Any]) -> str | None:
+    """The record's published/posted date — verbatim, never re-formatted (§3.1)."""
+    return _first_nonempty(
+        item, ("published", str(tenant.get("date_field") or ""), "start_date", "posted_date")
+    )
+
+
+def _portal_notice_type(
+    item: Mapping[str, Any], tenant: Mapping[str, Any], index_kind: str | None
+) -> str | None:
+    """The record's notice type, verbatim: a BidNet index kind or the dataset's own type field."""
+    own = _first_nonempty(item, (str(tenant.get("notice_type_field") or ""),))
+    if own:
+        return own
+    if index_kind and index_kind != "rows":
+        return index_kind  # the verbatim index window the record surfaced under
+    # A register row without its own type field asserts no notice_type — the
+    # `contracted` lifecycle transition already records what the register is.
+    return None
+
+
+def _portal_lifecycle_state(
+    item: Mapping[str, Any],
+    tenant: Mapping[str, Any],
+    platform: str,
+    index_kind: str | None,
+) -> str | None:
+    """The reviewed lifecycle state the record's window/type maps to (§13.4).
+
+    Maps through the platform's ``notice_map``: a BidNet ``open`` item is
+    ``rfp_issued`` and an ``awarded`` item is ``awarded`` (``closed`` asserts no
+    transition — closure alone is not a vocabulary state, §3.1); a Socrata
+    register row maps its own notice-type value (normalized) or falls back to
+    ``default`` = ``contracted`` — a row in a contract register IS the city's
+    recorded contract.
+    """
+    notice_map = platform_endpoints().get(platform, {}).get("notice_map", {})
+    if platform == "bidnet":
+        return _opt_str(notice_map.get(str(index_kind or "")))
+    if platform == "socrata":
+        type_field = str(tenant.get("notice_type_field") or "")
+        own = _first_nonempty(item, (type_field,)) if type_field else None
+        if own:
+            # A register carrying its own notice type maps only through the
+            # reviewed vocabulary — an unmapped type (a hearing, a comment
+            # period, an intent-to-award) asserts NO transition (§3.1); it is
+            # not a contracted record just because it sits in the register.
+            return _opt_str(notice_map.get(own.lower().replace(" ", "_")))
+        # No type field reviewed on this dataset: every row in a contract
+        # register IS the city's recorded contract → the default state.
+        return _opt_str(notice_map.get("default"))
+    return None
+
+
+def _mdy_date_key(value: Any) -> str:
+    """An ISO sort key for a BidNet ``MM/DD/YYYY`` date (canonical ordering).
+
+    BidNet storefronts render dates ``05/04/2026`` — a string sort is NOT the
+    chronological order, so the bounded window orders on the parsed date.
+    Unparseable dates sort last (empty key under a descending order).
+    """
+    text = _opt_str(value)
+    if not text:
+        return ""
+    for fmt, n in (("%m/%d/%Y", 10), ("%Y-%m-%d", 10), ("%Y-%m-%dT%H:%M:%S", 19)):
+        try:
+            return datetime.strptime(text[:n], fmt).date().isoformat()
+        except ValueError:
+            continue
+    return ""
+
+
+def _select_portal_document_items(
+    items: Sequence[Mapping[str, Any]],
+    index_target: Mapping[str, Any],
+    cfg: Mapping[str, Any],
+    per_tenant: int,
+) -> list[tuple[Mapping[str, Any], int]]:
+    """The bounded ``(item, tier)`` selection for one portal index (P26.10).
+
+    Mirrors ``_select_document_items``: tier-0 = items whose title matches the
+    reviewed agenda_content_vocab, then canonical order — the reviewed
+    ``doc_order_fields`` date (most recent first, BidNet ``MM/DD/YYYY`` parsed)
+    with the item id as tie-break — never the server's return order. Given the
+    same item set the selection is identical; re-runs dedupe.
+    """
+    if per_tenant <= 0:
+        return []
+    order_fields = [str(f) for f in (cfg.get("doc_order_fields") or ())]
+
+    def _date_key(item: Mapping[str, Any]) -> str:
+        for order_field in order_fields:
+            key = _mdy_date_key(item.get(order_field))
+            if key:
+                return key
+        return ""
+
+    ordered = sorted(items, key=_portal_item_id)
+    ordered = sorted(ordered, key=_date_key, reverse=True)
+
+    def _relevant(item: Mapping[str, Any]) -> bool:
+        title = _opt_str(item.get("title"))
+        return bool(title and scan_agenda_content(title))
+
+    scored = [(_relevant(item), pos, item) for pos, item in enumerate(ordered)]
+    scored.sort(key=lambda entry: (not entry[0], entry[1]))
+    return [(item, 0 if relevant else 1) for relevant, _, item in scored[:per_tenant]]
+
+
+class _BidnetIndexParser(HTMLParser):
+    """The BidNet Direct storefront index markup contract (P26.10).
+
+    Verified markup (2026-09-18): each item is a ``<tr class="mets-table-row">``
+    carrying ``div.sol-num`` (the solicitation number), ``a.solicitation-link``
+    (title + detail-page href), ``span.sol-publication-date`` and
+    ``span.sol-closing-date`` (each ``> span.date-value``), and
+    ``span.sol-region-item``. Fields associate by position inside the row —
+    the parser is a small state machine over the stdlib HTMLParser, never a
+    regex over markup.
+    """
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.items: list[dict[str, Any]] = []
+        self.has_list_container = False
+        self._row: dict[str, Any] | None = None
+        self._field: str | None = None
+        self._buf: list[str] = []
+        self._date_ctx: str | None = None  # "pub" | "close"
+
+    @staticmethod
+    def _classes(attrs: list[tuple[str, str | None]]) -> set[str]:
+        return set((dict(attrs).get("class") or "").split())
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        attr = dict(attrs)
+        classes = self._classes(attrs)
+        if attr.get("id") == "solicitationList":
+            self.has_list_container = True
+        if tag == "tr" and "mets-table-row" in classes:
+            self._row = {
+                "sol_num": None,
+                "title": None,
+                "detail_url": None,
+                "published": None,
+                "closing": None,
+                "region": None,
+            }
+            self._date_ctx = None
+            return
+        if self._row is None:
+            return
+        if "sol-num" in classes:
+            self._field, self._buf = "sol_num", []
+        elif "sol-publication-date" in classes:
+            self._date_ctx = "pub"
+        elif "sol-closing-date" in classes:
+            self._date_ctx = "close"
+        elif "date-value" in classes and self._date_ctx in ("pub", "close"):
+            self._field, self._buf = ("published" if self._date_ctx == "pub" else "closing"), []
+        elif "sol-region-item" in classes:
+            self._field, self._buf = "region", []
+        if tag == "a" and "solicitation-link" in classes:
+            self._field, self._buf = "title", []
+            href = attr.get("href")
+            if href:
+                self._row["detail_url"] = urljoin("https://www.bidnetdirect.com", href)
+
+    def handle_data(self, data: str) -> None:
+        if self._field in ("sol_num", "title", "published", "closing", "region"):
+            self._buf.append(data)
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag == "tr" and self._row is not None:
+            self.items.append(self._row)
+            self._row = None
+            self._field = None
+            self._date_ctx = None
+            return
+        if self._row is None or tag not in ("div", "span", "a"):
+            return
+        if self._field is None:
+            return
+        text = " ".join("".join(self._buf).split()) or None
+        if self._field == "sol_num":
+            self._row["sol_num"] = self._row["sol_num"] or text
+        elif self._field == "title" and tag == "a":
+            self._row["title"] = text
+        elif self._field == "published":
+            self._row["published"] = self._row["published"] or text
+        elif self._field == "closing":
+            self._row["closing"] = self._row["closing"] or text
+        elif self._field == "region":
+            self._row["region"] = self._row["region"] or text
+        self._field = None
+        self._buf = []
+
+
+def _bidnet_index_items(data: bytes, *, source_id: str, source_uri: str) -> list[dict[str, Any]]:
+    """The solicitation items a captured BidNet storefront index carries (P26.10).
+
+    Fail-closed on the reviewed markup contract: a page with neither a
+    ``solicitation-link`` item nor the ``id="solicitationList"`` list container
+    is :class:`ContentDrift` — the markup changed; it is never read as a
+    silent empty index. A container-present page with zero rows is an honest
+    ``empty`` outcome. Items keep only the captured fields — sol_num, title,
+    detail_url (the item's own link, never constructed), published, closing,
+    region — no inference.
+    """
+    parser = _BidnetIndexParser()
+    raw_text = utf8_text(data)
+    try:
+        parser.feed(raw_text)
+    except Exception:
+        pass  # HTMLParser is forgiving; a truncated page yields partial rows
+    items = [item for item in parser.items if item.get("detail_url") or item.get("title")]
+    if not items and not parser.has_list_container:
+        raise ContentDrift(
+            source_id,
+            f"portal index {source_uri} carries neither a solicitation-link "
+            "item nor the solicitationList container — the bidnet index markup "
+            "contract changed, this is not an empty index",
+            details=raw_text[:200],
+        )
+    return items
 
 
 def _stamp(row: dict[str, Any], *, source_id: str) -> dict[str, Any]:

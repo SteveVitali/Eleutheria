@@ -1,0 +1,4055 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu"
+  ],
+  "claim_count": 4517,
+  "connector": "procurement",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    },
+    {
+      "capture_digest": "bcnajqs7qynnobe6bqy263kjwqy5q45jxvo6pwaef7gzblvqc6wzyff4i2jec3trzuqlutauqqn25akfnr6sxiveg43n2cjpbixfsjvxsiu",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "kansas_city_mo",
+      "url": "https://data.kcmo.org/resource/c46m-hv6s.json?%24limit=500&%24order=contract_date+DESC"
+    }
+  ],
+  "duration_seconds": 0.777114,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "procportal_kcmo_mo",
+  "started_at": "2026-09-18T04:49:04.001926+00:00",
+  "status_codes": [],
+  "urls": []
+}
