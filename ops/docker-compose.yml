@@ -55,5 +55,33 @@ services:
       - db:pg://${SIG_PG_USER:-sig}:${SIG_PG_PASSWORD:-sig}@db:5432/${SIG_PG_DB:-sig}
     restart: "no"
 
+  # The AUTHENTICATED curation service (P21.6, ADR-068). It is a SECOND API process,
+  # deliberately separate from the public read API and NEVER world-reachable: it is
+  # published only to 127.0.0.1 (the `127.0.0.1:` host-IP prefix binds the port to
+  # loopback, not 0.0.0.0) and gated on SIG_CURATION_ENABLED=1 (RISK-P21-10, Part VIII
+  # §0.7). `sig-ops up` runs it as a host process by default (host toolchain at HEAD,
+  # matching the read API); this service is the containerised alternative and stays in
+  # the `curation` compose profile so it is only started when explicitly requested.
+  api-curation:
+    profiles: ["curation"]
+    image: python:3.12-slim
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SIG_CURATION_ENABLED: "1"
+      SIG_STAGING_DSN: pg://${SIG_PG_USER:-sig}:${SIG_PG_PASSWORD:-sig}@db:5432/${SIG_PG_DB:-sig}
+    working_dir: /repo
+    volumes:
+      - ..:/repo:ro
+    # Bind to loopback only — the curation surface is authenticated and non-public.
+    ports:
+      - "127.0.0.1:${SIG_CURATION_PORT:-8001}:8001"
+    command:
+      - sh
+      - -c
+      - "pip install -e . && sig-api serve-curation --host 0.0.0.0 --port 8001"
+    restart: unless-stopped
+
 volumes:
   sig_pg_data:

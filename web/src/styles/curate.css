@@ -1,0 +1,100 @@
+/* SPDX-License-Identifier: Apache-2.0
+   Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+   carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+   Curation surface styles (P21.6, §34, ADR-068). Colour-free structural styling for
+   the authenticated /curate/** pages; WCAG 2.2 AA (contrast, focus, target size). Not
+   under the public zero-JS budget but ships no client JS regardless. */
+
+.sig-curate-banner {
+  border: 2px solid currentColor;
+  padding: 0.75rem 1rem;
+  margin: 0 0 1rem;
+  max-width: 60rem;
+}
+
+.sig-curate-nav {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0;
+  margin: 0;
+}
+
+.sig-curate-nav a[aria-current="page"] {
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.sig-compare {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin: 1rem 0;
+}
+
+.sig-compare__side {
+  border: 1px solid currentColor;
+  padding: 1rem;
+  min-width: 16rem;
+  flex: 1 1 20rem;
+}
+
+.sig-suggestion {
+  border: 2px dashed currentColor;
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+  max-width: 60rem;
+}
+
+.sig-decide-form fieldset {
+  border: 1px solid currentColor;
+  margin: 1rem 0;
+  padding: 1rem;
+  max-width: 40rem;
+}
+
+.sig-decide-form label {
+  display: block;
+  margin: 0.5rem 0;
+}
+
+.sig-decide-form textarea,
+.sig-decide-form input[type="text"],
+.sig-decide-form input[type="url"],
+.sig-decide-form input[type="date"],
+.sig-decide-form select {
+  display: block;
+  width: 100%;
+  max-width: 40rem;
+  margin-top: 0.25rem;
+  padding: 0.5rem;
+  box-sizing: border-box;
+}
+
+.sig-decide-form button {
+  margin-top: 1rem;
+  padding: 0.6rem 1.2rem;
+  min-height: 44px; /* WCAG 2.2 AA target size */
+  cursor: pointer;
+}
+
+.sig-contradiction-claims {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin: 1rem 0;
+}
+
+.sig-contradiction-claim {
+  border: 1px solid currentColor;
+  padding: 1rem;
+  flex: 1 1 20rem;
+}
+
+.sig-queue-item {
+  border: 1px solid currentColor;
+  padding: 1rem;
+  margin: 0.75rem 0;
+}

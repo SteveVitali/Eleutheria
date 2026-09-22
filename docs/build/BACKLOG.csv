@@ -7,7 +7,7 @@ BL-005,Persist contributor system to PG (tiers/submissions/revert/anomaly),defer
 BL-006,Persist identity registries and mint surrogate entity_id end-to-end into PG,deferred-feature,RISK-P3-03,SIG-IDENT-020/025,resolution,,P21.2,,M,open
 BL-007,Wire web surfaces to the live /v1 API/exports (replace committed TS fixtures),deferred-feature,RISK-P15-07 RISK-P15-08 RISK-P15-13 RISK-P15-14 RISK-P15-20 RISK-P15-25 RISK-P15-26 RISK-P15-31 RISK-P15-32 LD-V08 RISK-P2-14 RISK-P9-08 RISK-P13-08 RISK-P13-09 RISK-P13-13 ADR-049 ADR-050 ADR-052 ADR-053 ADR-032 ADR-046 ADR-066,SIG-PUB-007 SIG-UI-010,web,OKC-live,P21.4,,L,closed
 BL-008,Project bulk exports / licence compartments from a live ReadStore,deferred-feature,RISK-P14-08 RISK-P14-18,SIG-INGEST-016 SIG-LIC-010,exports,OKC-live,P21.4,,M,open
-BL-009,Curation/review web UI + asset-promotion service,deferred-feature,LD-F05 LD-H04 LD-D04 ADR-030,SIG-PUB-012,web,,P21.6,,M,open
+BL-009,Curation/review web UI shipped (P21.6/ADR-068); asset-promotion service still unwired → P21.7,deferred-feature,LD-F05 LD-H04 LD-D04 ADR-030 ADR-068,SIG-PUB-012,web,,P21.6,,M,closed
 BL-010,Interactive MapLibre map vs zero-JS static PMTiles (spec amendment A1),docs-drift,ADR-051 ADR-018 LD-F09 LD-D11 RISK-P15-21,SIG-UI-038,web,,P20.2,,M,open
 BL-011,ADR Appendix-F <-> docs/adr numbering reconciliation,docs-drift,LD-X04 LD-D03,,docs,,P20.2,,S,open
 BL-012,"Absence-kind not_researched spec wording (SIG-RECON, §32.2)",docs-drift,LD-F14 LD-D08,,docs,,P20.2,,S,open

@@ -1,0 +1,53 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// Task disposition (P21.6, §33.4). A reviewer closes a research task with a disposition
+// from the controlled vocabulary; `resolved_no_evidence_exists` requires the sources
+// searched (SIG-TASK-009) so a negative result becomes data. Zero-JS form.
+import CurateLayout from "../../layouts/CurateLayout.astro";
+import { TASKS, TASK_DISPOSITIONS, curationAction } from "../../lib/curation";
+---
+
+<CurateLayout title="Task dispositions" path="/curate/tasks/">
+  <p>
+    Close a research task with a disposition richer than "done". Choosing
+    <code>resolved_no_evidence_exists</code> requires naming the sources searched — that
+    is how "searched, found nothing" becomes queryable coverage data (SIG-TASK-009).
+  </p>
+
+  {TASKS.map((task) => (
+    <section data-testid="task" data-task-id={task.task_id}>
+      <h2>{task.subject_label}</h2>
+      <p>Kind: <code>{task.kind}</code></p>
+      <p data-testid="task-rationale">{task.rationale}</p>
+
+      <form
+        class="sig-decide-form"
+        method="post"
+        action={curationAction(`task/${encodeURIComponent(task.task_id)}/disposition`)}
+        data-testid="task-form"
+      >
+        <label>
+          Disposition
+          <select name="disposition" required data-testid="task-disposition">
+            <option value="">Choose a disposition…</option>
+            {TASK_DISPOSITIONS.map((d) => (
+              <option value={d}>{d}</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Sources searched (comma-separated; required for "no evidence exists")
+          <input type="text" name="sources_searched" data-testid="task-sources" />
+        </label>
+        <label>
+          Reason
+          <textarea name="reason" rows="3" data-testid="task-reason"></textarea>
+        </label>
+        <button type="submit" data-testid="task-submit">Record disposition</button>
+      </form>
+    </section>
+  ))}
+</CurateLayout>

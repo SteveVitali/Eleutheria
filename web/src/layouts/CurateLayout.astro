@@ -1,0 +1,62 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The curation shell layout (P21.6, §34, ADR-068). Unlike BaseLayout (the public
+// zero-JS shell) these pages are the AUTHENTICATED curation surface: behind auth,
+// under WCAG 2.2 AA, but NOT under the public zero-JS/performance budget (a JS island
+// for keyboard shortcuts/diff views is permitted here). This layout still ships no
+// client JS — every form works without JavaScript (progressive enhancement). The
+// banner states plainly that this surface is not public (Part VIII §0.7).
+import "../styles/epistemic.css";
+import "../styles/curate.css";
+
+interface Props {
+  title: string;
+  path: string;
+}
+const { title, path } = Astro.props;
+const NAV = [
+  { href: "/curate/", label: "Review queue" },
+  { href: "/curate/contradictions/", label: "Contradictions" },
+  { href: "/curate/tasks/", label: "Tasks" },
+  { href: "/curate/submit/", label: "Submit evidence" },
+  { href: "/curate/revert/", label: "Revert" },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{title} · SIG curation</title>
+  </head>
+  <body>
+    <a class="sig-skip-link" href="#main">Skip to main content</a>
+    <header class="sig-header">
+      <p class="sig-curate-banner" role="note" data-testid="curate-auth-banner">
+        <strong>Authenticated curation surface — not public.</strong>
+        Every action lands as an append-only row attributed to the signed-in
+        contributor. Machine suggestions are labelled; a human always decides.
+      </p>
+      <nav aria-label="Curation">
+        <ul class="sig-curate-nav">
+          {NAV.map((item) => (
+            <li>
+              <a href={item.href} aria-current={item.href === path ? "page" : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </header>
+    <main id="main">
+      <h1>{title}</h1>
+      <slot />
+    </main>
+  </body>
+</html>
