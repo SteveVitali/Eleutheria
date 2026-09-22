@@ -1290,3 +1290,20 @@ compensating control that is either a committed tool or an explicit step in the 
 | RISK-P20-03 | **`main` is unprotected.** `main` has no branch protection (`gh api …/branches/main/protection` → 404). A release cut onto an unprotected `main` can be force-pushed or have a non-green merge land, silently breaking the tagged tree; and any account with write access can push directly. | **Recommendation, recorded but NOT applied (an operator decision, not a ticket action):** `docs/build/INTEGRATION_PLAN.md §(d)` step 4 writes the exact `gh api -X PUT …/branches/main/protection` payload (require the `python` + `web` status checks strict, 1 review, block force-pushes and deletions). `docs/build/CI_STATUS.md` restates the recommended settings. Applying it needs repo-admin and is left to the operator so the append-only chain is never coupled to a protection change. |
 | RISK-P20-04 | **The release could imply the graph is live.** A v0.1.0 release of a surveillance-infrastructure project invites the reader to assume it contains live, published data — but nothing is deployed and no source has been fetched (0 loadable, 87 UNDETERMINED). Overclaiming readiness violates the defining standard §3.1. | **Compensating control:** `docs/build/RELEASE_NOTES_v0.1.0.md` states, up front and explicitly, **what is NOT live** — nothing deployed, no live fetch, no jurisdiction published, the one `tests/e2e` `xfail` (`LD-V08` → P21.4), and the MAY-level/deferred surfaces — sourced from `OPERATIONAL_READINESS.md §(a)/(e)` and `SCOPING_NUMBERS §(ii)`. `CHANGELOG.md` carries the same "Known limitations". No synthetic certainty about readiness. |
 | RISK-P20-05 | **The dry-run is stale by the time the operator merges.** `merge_dryrun.sh` is run now over #27–#53, but the operator merges after #55–#63 also exist; a conflict introduced by a later PR would be invisible in this ticket's table. | **Compensating control:** the dry-run is **re-runnable by design** (idempotent, read-only, generic `gh pr list --state open`) and `INTEGRATION_PLAN.md §(d)` step 0 makes `sh docs/build/tools/merge_dryrun.sh` the **first** operator action — it must exit 0 with `conflicts=[none]` for every open PR (and asserts the bottom-up tree equals the top PR) **before** any `gh pr merge` runs. The script exits non-zero on any conflict, so the procedure halts rather than merging blind. |
+
+> **P20.4 annotation — CI-RED-01 (the `python`-job web-build red) is now FIXED.** `docs/build/CI_STATUS.md`
+> flagged one pre-existing `python`-job failure and tracked it "with `RISK-P20-05`/backlog follow-up":
+> `tests/e2e/test_composed_stack.py::test_s8_web_build_emits_dossier_route` shelled `npm --prefix web run
+> build` unconditionally, but the `python` job installs no Node / `web/node_modules` (only the `web` job
+> does), so `npm run build` returned `127` and the assertion failed — identically on #52/#53/#54, a latent
+> harness gap introduced when `tests/e2e` landed (P19.3), not a P20.3 regression. **This annotation is
+> append-only: the RISK-P20-05 row above (the stale-dry-run risk) is unchanged; CI-RED-01 is a distinct
+> issue that CI_STATUS.md happened to file under the RISK-P20-05 follow-up.** P20.4 fixes it by gating the
+> S8 `web_build` fixture on a usable web-build environment (`shutil.which("npm") is None` or missing
+> `web/node_modules` → `pytest.skip(...)`), mirroring the module's existing Docker `_require_or_skip`
+> pattern. Result: the `python` job **skips S8 cleanly** (0 failed) with no loss of coverage — the web
+> build is still fully exercised by the **`web` job** (`npm run build`) and locally, where S8 runs
+> unchanged and ends in the `LD-V08` xfail. No S8 assertion was loosened; `ci.yml`'s job structure is
+> unchanged (adding Node to the `python` job was explicitly *not* the chosen fix). Verified node-present
+> (`make check` = 2418 passed / 1 xfailed, S8 → `LD-V08` xfail) and node-absent (S8 skipped, 0 failed).
+> Landed by `devin/p20-4-fix-ci-e2e-webbuild` (P20.4).

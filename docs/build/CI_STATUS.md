@@ -63,6 +63,23 @@ suites execute (they cannot silently skip).
 > install web deps in the `python` job) is a test/CI change **out of P20.3's scope** (version bump +
 > docs only); it is flagged here for the operator and tracked with `RISK-P20-05`/backlog follow-up.
 
+> **UPDATE (P20.4) — CI-RED-01 is now FIXED (chosen fix: clean skip, not "add Node to the `python`
+> job").** The S8 `web_build` session fixture (`tests/e2e/test_composed_stack.py`) now gates on a
+> usable web-build environment, mirroring the module's existing Docker `_require_or_skip` pattern: if
+> `shutil.which("npm") is None` **or** `web/node_modules` is absent it `pytest.skip(...)`s with a clear
+> reason instead of shelling `npm run build` (which returned `127` in the `python` job). Effect:
+> - **`python` job (no Node):** S8 now **skips cleanly** — 0 failed/errored — so `make test` (and
+>   therefore `verify-gen`) is green in that job. No coverage is lost: the web build is already fully
+>   exercised by the **`web` job** (`npm run build`, ci.yml line ~90) and locally.
+> - **`web` job / local dev (Node present):** S8 runs **exactly as before** and ends in the unchanged
+>   `pytest.xfail("LD-V08: …")`. No S8 assertion was loosened; the `^LD-…:` xfail convention is intact.
+> This is the same "skip when the required environment is absent" philosophy the module already uses for
+> Docker — an honest skip declaring the env is absent, not fabricated green. `ci.yml`'s job structure is
+> unchanged. Tracked as `CI-RED-01` under the `RISK-P20-05` follow-up note in `docs/risk_register.md`.
+> Verified: node-present `make check` = **2418 passed / 1 xfailed** (S8 → `LD-V08` xfail, unchanged);
+> node-absent simulation (`env PATH=…(no npm) uv run pytest tests/e2e/test_composed_stack.py -k s8 -ra`)
+> = **1 skipped, 0 failed**.
+
 ### `web` job — `npm ci → astro check → vitest → build → check:licenses → playwright → lhci`
 
 Confined to `web/` (SIG-ENG-010); Node 22 pinned. **All steps green** on this branch:

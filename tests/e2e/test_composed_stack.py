@@ -24,6 +24,10 @@ and web rendering (``LD-V08``) is P21.4:
 
 Docker gating mirrors ``tests/db/conftest.py``: without a daemon the module
 **skips**; with ``SIG_REQUIRE_DB_TESTS=1`` a missing daemon is a hard failure.
+S8 adds the same "skip when the required environment is absent" gate for the
+``web/`` build (P20.4): without ``npm`` / ``web/node_modules`` the ``web_build``
+fixture **skips cleanly** (the web build is covered by the CI ``web`` job), and
+where the env is present it runs unchanged into the ``LD-V08`` xfail.
 """
 
 from __future__ import annotations
