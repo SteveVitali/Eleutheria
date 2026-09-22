@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnanqehqu7i5ocjoy5d72df7hqlz3mcwzwu3vsmowtmfil4uoqhjpseiqbtyrh5ui2jay32birugrfm6wivnngjjqfublorgpji5fx4eh4"
+  ],
+  "claims_added": 413,
+  "detail": "",
+  "duration_seconds": 0.61,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnanqehqu7i5ocjoy5d72df7hqlz3mcwzwu3vsmowtmfil4uoqhjpseiqbtyrh5ui2jay32birugrfm6wivnngjjqfublorgpji5fx4eh4"
+    ],
+    "claim_count": 413,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 0.608919,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_eastdun_gb",
+    "started_at": "2026-09-19T06:12:59.819312+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_eastdun_gb",
+  "started_at": "2026-09-19T06:12:59+00:00"
+}

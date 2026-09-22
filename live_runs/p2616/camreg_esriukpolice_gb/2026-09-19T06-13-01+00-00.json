@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnaj3cr46loclr3dza6sxdcvfeygg3xltw2kpemsmxg437v4xjj6cb6hyhexz4ubhviowzcamqlpzm4k2uciaesacihy46hdq3gis7ulgi"
+  ],
+  "claims_added": 96,
+  "detail": "",
+  "duration_seconds": 0.532,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnaj3cr46loclr3dza6sxdcvfeygg3xltw2kpemsmxg437v4xjj6cb6hyhexz4ubhviowzcamqlpzm4k2uciaesacihy46hdq3gis7ulgi"
+    ],
+    "claim_count": 96,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 0.530909,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_esriukpolice_gb",
+    "started_at": "2026-09-19T06:13:01.251998+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_esriukpolice_gb",
+  "started_at": "2026-09-19T06:13:01+00:00"
+}

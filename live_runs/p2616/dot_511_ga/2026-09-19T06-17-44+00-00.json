@@ -1,0 +1,51 @@
+{
+  "capture_digests": [
+    "bcnacmtqdi2myobg24t2me5i2ljaydz3jiqczf3qdciwesqwhe3qkzvii2klvwtp4okccqanmsj67fxxss5u3tc24gv5276xcd6imjkxmde",
+    "bcnac2y4glr2ughoawbr75us2yj6gyvhdr7awiq4scuia6a36bte27swpiod2a6sfummwaelsim336mnqw6i5d3gzeqkppcma4i3dipkfhq",
+    "bcnaiz7eoatmviw4qxnli26ru5yoxza2fj7nvmg4lekk54345o6tobzchqq2mkjmu2lolv4dfm5yvtorh5c6z6vwy6rdyhl4wdekgi44fl4",
+    "bcnakoz3lnlrq576rt3sbr5cnrleg3njeqwgud4jd6wd4j3chmoguozw2c6y46s2pk5gvvbwsvj2h34wyncmku4ecue7xdjg5worwvwmiu4",
+    "bcnanxp6tvtdsbmnlailw7qy6rvytxzwungw35fg6lglu4g4m5bbgekhijkbeshru6ngwajevw4yeiaba3j2cqtdjg5iywctfsgzv2zbvra",
+    "bcnaojwwcwwqehhjwlswsfqj6s5nbm6dtyxu3jfztti6drfke4gnfzly4k3jhngymc37vh2ffgsxdgpsadrwepb3ijfz6sfmnlvbwp2dc7a",
+    "bcnalzdeplm42siqnegnan7hysze4vrdbiy6tv5vt3qmjgfxx4qjpeinfmtnxsk5nx7rg34hcm5zllxjvybgsr7ayizeibkwvsfhmkxzzse",
+    "bcnao35436pkirqpeluvlgsgytjg2vjibvmx26c6firn3ip3pe7sd5tywziwzyagiw6fwcfv5qfimybeqbiw4zusx3q3klors25xsqiiv7u"
+  ],
+  "claims_added": 83653,
+  "detail": "",
+  "duration_seconds": 7.346,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnacmtqdi2myobg24t2me5i2ljaydz3jiqczf3qdciwesqwhe3qkzvii2klvwtp4okccqanmsj67fxxss5u3tc24gv5276xcd6imjkxmde",
+      "bcnac2y4glr2ughoawbr75us2yj6gyvhdr7awiq4scuia6a36bte27swpiod2a6sfummwaelsim336mnqw6i5d3gzeqkppcma4i3dipkfhq",
+      "bcnaiz7eoatmviw4qxnli26ru5yoxza2fj7nvmg4lekk54345o6tobzchqq2mkjmu2lolv4dfm5yvtorh5c6z6vwy6rdyhl4wdekgi44fl4",
+      "bcnakoz3lnlrq576rt3sbr5cnrleg3njeqwgud4jd6wd4j3chmoguozw2c6y46s2pk5gvvbwsvj2h34wyncmku4ecue7xdjg5worwvwmiu4",
+      "bcnanxp6tvtdsbmnlailw7qy6rvytxzwungw35fg6lglu4g4m5bbgekhijkbeshru6ngwajevw4yeiaba3j2cqtdjg5iywctfsgzv2zbvra",
+      "bcnaojwwcwwqehhjwlswsfqj6s5nbm6dtyxu3jfztti6drfke4gnfzly4k3jhngymc37vh2ffgsxdgpsadrwepb3ijfz6sfmnlvbwp2dc7a",
+      "bcnalzdeplm42siqnegnan7hysze4vrdbiy6tv5vt3qmjgfxx4qjpeinfmtnxsk5nx7rg34hcm5zllxjvybgsr7ayizeibkwvsfhmkxzzse",
+      "bcnao35436pkirqpeluvlgsgytjg2vjibvmx26c6firn3ip3pe7sd5tywziwzyagiw6fwcfv5qfimybeqbiw4zusx3q3klors25xsqiiv7u"
+    ],
+    "claim_count": 83653,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 7.331962,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "dot_511_ga",
+    "started_at": "2026-09-19T06:17:44.073630+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "dot_511_ga",
+  "started_at": "2026-09-19T06:17:44+00:00"
+}

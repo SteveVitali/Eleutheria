@@ -1,0 +1,47 @@
+{
+  "capture_digests": [
+    "bcnaitfj4kzkqzx5oszhpu4pclbgbfxcdnikoiqktiskn735fvdco3lqglmqbjddgdvlk7kl3o3ujlfsmqumfckbjixwq2jkln7lj4vpqwa",
+    "bcnanwmm6ijmwamkehysebkh2hzwtcykstdxpdent5fudqca2apr7vcspw65mnayvcy75od3izglwv32h77c5tmq2rqdhjywbegurprfibu",
+    "bcnalxzgzrbvke6ko64istdvkbjxuohntwslwm5qg34z3qcjkxkset3ekb34o4vvt56rgxqrc4pmnt35eu6hvtbokq4eb7d752vgzqw6z7y",
+    "bcnal4z3vogj4kly3onumk7ei4x6nlb75yzboepcslt2ubz52ofensp5jjztcy22mgbbyrhqrayaks67zzsxwcimjrwkbq2smyyk4p2svyq",
+    "bcnai5utxxd5uig5spsnxx7ez6knd5f3u5c36ynu2lsvni5yb5klnnaf6aa6sgufp3d4qve7nvdaco7myygqklgdwphiisbczvxn3ftickq",
+    "bcnabgciwakxvdxtx7juxte7k3lckecsaat6oj5vwobecj76myxpsbcbyshcdcuwt6w6y2z2s5l3rutf2u66rjuua7nikkk3r2dhrrdpdsq"
+  ],
+  "claims_added": 62760,
+  "detail": "",
+  "duration_seconds": 6.267,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnaitfj4kzkqzx5oszhpu4pclbgbfxcdnikoiqktiskn735fvdco3lqglmqbjddgdvlk7kl3o3ujlfsmqumfckbjixwq2jkln7lj4vpqwa",
+      "bcnanwmm6ijmwamkehysebkh2hzwtcykstdxpdent5fudqca2apr7vcspw65mnayvcy75od3izglwv32h77c5tmq2rqdhjywbegurprfibu",
+      "bcnalxzgzrbvke6ko64istdvkbjxuohntwslwm5qg34z3qcjkxkset3ekb34o4vvt56rgxqrc4pmnt35eu6hvtbokq4eb7d752vgzqw6z7y",
+      "bcnal4z3vogj4kly3onumk7ei4x6nlb75yzboepcslt2ubz52ofensp5jjztcy22mgbbyrhqrayaks67zzsxwcimjrwkbq2smyyk4p2svyq",
+      "bcnai5utxxd5uig5spsnxx7ez6knd5f3u5c36ynu2lsvni5yb5klnnaf6aa6sgufp3d4qve7nvdaco7myygqklgdwphiisbczvxn3ftickq",
+      "bcnabgciwakxvdxtx7juxte7k3lckecsaat6oj5vwobecj76myxpsbcbyshcdcuwt6w6y2z2s5l3rutf2u66rjuua7nikkk3r2dhrrdpdsq"
+    ],
+    "claim_count": 62760,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 6.25633,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_sfoss",
+    "started_at": "2026-09-19T06:17:06.868447+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_sfoss",
+  "started_at": "2026-09-19T06:17:06+00:00"
+}

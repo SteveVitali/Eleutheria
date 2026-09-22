@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnanhebpi4dfp57zs4tljgdqv3rb27xnt53eupqligvbqq3sc3cz563tb6l6domsqz3p6ft34vcy7a37culb3bnspzlgjfziykrjlqhfpa"
+  ],
+  "claims_added": 9395,
+  "detail": "",
+  "duration_seconds": 3.635,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnanhebpi4dfp57zs4tljgdqv3rb27xnt53eupqligvbqq3sc3cz563tb6l6domsqz3p6ft34vcy7a37culb3bnspzlgjfziykrjlqhfpa"
+    ],
+    "claim_count": 9395,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 3.632568,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_massdot_ma",
+    "started_at": "2026-09-19T06:13:43.710313+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_massdot_ma",
+  "started_at": "2026-09-19T06:13:43+00:00"
+}

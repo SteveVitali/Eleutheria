@@ -1,0 +1,14 @@
+{
+  "capture_digests": [],
+  "claims_added": 0,
+  "detail": "",
+  "duration_seconds": 0.271,
+  "exit_code": 5,
+  "fetch_record": {},
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "content_drift",
+  "refusal_reason": "content drift for source 'camreg_ebrgis_la': ArcGIS query returned an error envelope (code=400 message='Invalid or missing input parameters.')",
+  "source": "camreg_ebrgis_la",
+  "started_at": "2026-09-19T06:13:00+00:00"
+}

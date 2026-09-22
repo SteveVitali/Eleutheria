@@ -253,16 +253,29 @@ def test_registry_targets_paginate_over_the_transfer_limit() -> None:
         assert f"resultOffset={i * 1000}" in t["url"]
         assert "resultRecordCount=1000" in t["url"]
         assert "orderByFields=OBJECTID" in t["url"]
-    # a ≤1,000-row layer stays a single page target
-    ky = live_targets("dot_511_ky")
+    # a ≤1,000-row layer stays a single page target (P26.16 added a second
+    # KYTC republish row to dot_511_ky — pin the original target)
+    ky = [t for t in live_targets("dot_511_ky") if t["id"] == "ky_kytc_traffic_cameras"]
     assert len(ky) == 1 and ky[0]["page"] == 0 and ky[0]["page_count"] == 1
+
+
+def test_registry_targets_honor_a_layer_page_size() -> None:
+    """A row's reviewed `page_size` pins the ArcGIS page bound when the
+    layer's own maxRecordCount is below the 1,000 default (P26.16:
+    camreg_portland_or serves 200 rows/page — 205 observed → 2 pages)."""
+    targets = live_targets("camreg_portland_or")
+    assert len(targets) == 2
+    assert [t["page"] for t in targets] == [0, 1]
+    for i, t in enumerate(targets):
+        assert f"resultOffset={i * 200}" in t["url"]
+        assert "resultRecordCount=200" in t["url"]
 
 
 def test_exceeded_transfer_limit_is_content_drift() -> None:
     """A page answering exceededTransferLimit=true means the registry outgrew
     its planned pages — fail loud, never emit a silently truncated registry."""
     doc = {"features": [], "exceededTransferLimit": True}
-    targets = live_targets("dot_511_ky")
+    targets = [t for t in live_targets("dot_511_ky") if t["id"] == "ky_kytc_traffic_cameras"]
     url = targets[0]["url"]
     connector, ctx = _ctx("dot_511_ky", targets, {url: _resp(url, json.dumps(doc).encode())})
     with pytest.raises(ContentDrift, match="transfer limit"):
@@ -353,7 +366,7 @@ def test_partition_fields_drops_media_values() -> None:
 
 def test_no_claim_carries_a_media_field_value() -> None:
     """The strongest Part VIII check: no emitted value is a feed-content URL."""
-    report = _run_fixture("dot_511_ky", "ky_kytc.json")
+    report = _run_fixture("dot_511_ky", "ky_kytc.json", target_id="ky_kytc_traffic_cameras")
     assert _entities(report)
     for claim in report.claims:
         for value in (claim.get("value"), claim.get("raw_value")):
@@ -378,6 +391,30 @@ def test_extract_coordinate_prefers_explicit_fields() -> None:
 def test_extract_coordinate_geometry_fallback() -> None:
     lat, lon, source = extract_coordinate({}, {"x": -122.33, "y": 47.62})
     assert (lat, lon, source) == (47.62, -122.33, "geometry")
+
+
+def test_extract_coordinate_falls_through_unusable_field_pairs() -> None:
+    """P26.16 live pass: a present-but-unusable aliased pair (DMS text,
+    projected values, swapped columns) falls through to the next pair, then
+    to the operator-published geometry — the recorded coordinate_source is
+    honest about which won."""
+    # DMS-text LATITUDE/LONGITUDE (UKM Malaysia) — non-numeric → geometry wins.
+    lat, lon, source = extract_coordinate(
+        {"LATITUDE": "  2°55'46.73\"N", "LONGITUDE": "101°46'40.23\"E", "Y": 2.93, "X": 101.77},
+        {"x": 101.7778, "y": 2.9296},
+    )
+    assert (lat, lon, source) == (2.9296, 101.7778, "geometry")
+    # Projected x/y attributes (Bangla layer) — out of range → geometry wins.
+    lat, lon, source = extract_coordinate(
+        {"x": 23099.48, "y": 31427.70}, {"x": 103.789, "y": 1.3005}
+    )
+    assert (lat, lon, source) == (1.3005, 103.789, "geometry")
+    # Publisher-swapped Latitude/Longitude values (Zyinger layer) → geometry.
+    lat, lon, source = extract_coordinate(
+        {"Latitude": -119.62969, "Longitude": 37.03394},
+        {"x": -119.62969, "y": 37.03394},
+    )
+    assert (lat, lon, source) == (37.03394, -119.62969, "geometry")
 
 
 @pytest.mark.parametrize(
@@ -425,7 +462,7 @@ def test_emitted_coordinates_pass_the_policy_check() -> None:
 
 
 def test_ky_fixture_emits_camera_claims_with_evidence_and_locators() -> None:
-    report = _run_fixture("dot_511_ky", "ky_kytc.json")
+    report = _run_fixture("dot_511_ky", "ky_kytc.json", target_id="ky_kytc_traffic_cameras")
     entities = _entities(report)
     assert len(entities) == 3
     claims = _claims(report)
@@ -471,9 +508,12 @@ def test_claim_digests_stable_across_retrieval_times() -> None:
     never reach claim identity (the P26.6 ``capture_digest`` precedent)."""
     from db.claim_sink import content_digest
 
-    first = _run_fixture("dot_511_ky", "ky_kytc.json")
+    first = _run_fixture("dot_511_ky", "ky_kytc.json", target_id="ky_kytc_traffic_cameras")
     second = _run_fixture(
-        "dot_511_ky", "ky_kytc.json", retrieved_at=datetime(2026, 10, 24, tzinfo=UTC)
+        "dot_511_ky",
+        "ky_kytc.json",
+        target_id="ky_kytc_traffic_cameras",
+        retrieved_at=datetime(2026, 10, 24, tzinfo=UTC),
     )
     digests_a = sorted(content_digest(c) for c in _claims(first))
     digests_b = sorted(content_digest(c) for c in _claims(second))
@@ -517,7 +557,9 @@ def test_or_fixture_attributes_prefixed_aliases() -> None:
 
 def test_partial_rejections_are_recorded_not_dropped() -> None:
     """A mixed capture: the good camera emits; the bad ones are recorded rows."""
-    report = _run_fixture("dot_511_ky", "mixed_rejections.json")
+    report = _run_fixture(
+        "dot_511_ky", "mixed_rejections.json", target_id="ky_kytc_traffic_cameras"
+    )
     assert len(_entities(report)) == 1
     rejections = _rejections(report)
     reasons = {r["rejection_reason"] for r in rejections}
@@ -529,8 +571,16 @@ def test_partial_rejections_are_recorded_not_dropped() -> None:
 # --- drift: fail loud ----------------------------------------------------------
 
 
+_KY = "ky_kytc_traffic_cameras"
+
+
+def _ky_targets() -> list[dict[str, Any]]:
+    """dot_511_ky's original KYTC target (P26.16 added a second republish row)."""
+    return [t for t in live_targets("dot_511_ky") if t["id"] == _KY]
+
+
 def test_arcgis_error_envelope_is_content_drift() -> None:
-    targets = live_targets("dot_511_ky")
+    targets = _ky_targets()
     url = targets[0]["url"]
     body = _FIX.joinpath("error_envelope.json").read_bytes()
     connector, ctx = _ctx("dot_511_ky", targets, {url: _resp(url, body)})
@@ -539,7 +589,7 @@ def test_arcgis_error_envelope_is_content_drift() -> None:
 
 
 def test_non_json_capture_is_content_drift() -> None:
-    targets = live_targets("dot_511_ky")
+    targets = _ky_targets()
     url = targets[0]["url"]
     connector, ctx = _ctx("dot_511_ky", targets, {url: _resp(url, b"<html>502 Bad Gateway</html>")})
     with pytest.raises(ContentDrift, match="non-JSON"):
@@ -547,7 +597,7 @@ def test_non_json_capture_is_content_drift() -> None:
 
 
 def test_missing_features_list_is_content_drift() -> None:
-    targets = live_targets("dot_511_ky")
+    targets = _ky_targets()
     url = targets[0]["url"]
     connector, ctx = _ctx("dot_511_ky", targets, {url: _resp(url, b'{"results": []}')})
     with pytest.raises(ContentDrift, match="no 'features'"):
@@ -557,7 +607,7 @@ def test_missing_features_list_is_content_drift() -> None:
 def test_all_rejected_records_is_content_drift() -> None:
     """A 100%-rejection feed is a schema change, not an empty registry."""
     doc = {"features": [{"attributes": {"name": "no id, no coords"}, "geometry": None}]}
-    targets = live_targets("dot_511_ky")
+    targets = _ky_targets()
     url = targets[0]["url"]
     connector, ctx = _ctx("dot_511_ky", targets, {url: _resp(url, json.dumps(doc).encode())})
     with pytest.raises(ContentDrift, match="every camera record failed"):
@@ -583,7 +633,7 @@ def test_predicate_allowlist_refuses_feed_content() -> None:
 
 
 def test_allowlisted_predicates_are_the_whole_writeset() -> None:
-    report = _run_fixture("dot_511_ky", "ky_kytc.json")
+    report = _run_fixture("dot_511_ky", "ky_kytc.json", target_id="ky_kytc_traffic_cameras")
     for claim in report.claims:
         assert claim["predicate_id"] in predicate_allowlist()
 
@@ -601,6 +651,11 @@ def test_resolved_sources_are_green_gated_sources_refuse() -> None:
         "dot_511_wa",
         "dot_511_dc",
         "dot_511_mo",
+        # P26.16: the four gated DOT registries flipped under GL-GATE-07.
+        "dot_511_al",
+        "dot_511_ga",
+        "dot_511_la",
+        "dot_511_md",
     }
     gated = set(SOURCE_IDS) - green
     for source_id in green:
@@ -613,7 +668,7 @@ def test_resolved_sources_are_green_gated_sources_refuse() -> None:
 
 
 def test_replay_and_shadow_are_deterministic() -> None:
-    targets = live_targets("dot_511_ky")
+    targets = _ky_targets()
     url = targets[0]["url"]
     body = _FIX.joinpath("ky_kytc.json").read_bytes()
     connector, ctx = _ctx("dot_511_ky", targets, {url: _resp(url, body)})
@@ -821,9 +876,28 @@ def test_camreg_green_sources_pass_gated_ones_refuse() -> None:
         "camreg_rochester_ny",
         "camreg_goldcoast_au",
         "camreg_puertogaitan_co",
+        # P26.16: the GL-GATE-07 rights batch flips the gated remainder —
+        # US rows under LicenseRef-PublicRecord-FactualCompilation, non-US
+        # (incl. stalbert) under LicenseRef-OperatorAccepted-DBRight.
+        "camreg_chicago_il",
+        "camreg_honolulu_hi",
+        "camreg_md_opendata",
+        "camreg_arlington_va",
+        "camreg_seattle_wa",
+        "camreg_lexington_ky",
+        "camreg_calgary_ab",
+        "camreg_york_on",
+        "camreg_nzta_nz",
+        "camreg_donegal_ie",
+        "camreg_stalbert_ab",
     }
     gated = set(CAMREG_SOURCE_IDS + CAMREG_P26_13_SOURCE_IDS) - green
-    assert "camreg_stalbert_ab" in gated  # named licence, uncaptured grant text
+    assert gated == {
+        "camreg_edmonton_ab",
+        "camreg_bellevue_wa",
+        "camreg_qldc_au",
+        "camreg_hk_hk",
+    }
     for source_id in green:
         assert live_gate_reasons(source_id) == [], f"{source_id} should be green"
     for source_id in sorted(gated):

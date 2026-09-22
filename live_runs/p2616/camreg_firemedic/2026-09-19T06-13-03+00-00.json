@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnahze5k7zjwxlxiik5zz3gap2yecyg32fasif2nszb3qhqibeanpzv6ysg72og72n6quco4f76or7jdonfdyj7mh6b4bnd7hzsdrv6jku"
+  ],
+  "claims_added": 4984,
+  "detail": "",
+  "duration_seconds": 0.68,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnahze5k7zjwxlxiik5zz3gap2yecyg32fasif2nszb3qhqibeanpzv6ysg72og72n6quco4f76or7jdonfdyj7mh6b4bnd7hzsdrv6jku"
+    ],
+    "claim_count": 4984,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 0.597725,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_firemedic",
+    "started_at": "2026-09-19T06:13:03.253504+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_firemedic",
+  "started_at": "2026-09-19T06:13:03+00:00"
+}

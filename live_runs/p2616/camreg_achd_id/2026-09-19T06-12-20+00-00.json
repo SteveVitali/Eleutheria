@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnanitjlynopj6pf6mnavx3nsvxmcc2whlqyhcnuy76gwzss7tw7bejy6yagn4eval7muaydtn72hc6kscjlvwm7j2wfyoacfeuh6czae4"
+  ],
+  "claims_added": 1856,
+  "detail": "",
+  "duration_seconds": 0.437,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnanitjlynopj6pf6mnavx3nsvxmcc2whlqyhcnuy76gwzss7tw7bejy6yagn4eval7muaydtn72hc6kscjlvwm7j2wfyoacfeuh6czae4"
+    ],
+    "claim_count": 1856,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 0.35307,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_achd_id",
+    "started_at": "2026-09-19T06:12:20.898416+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_achd_id",
+  "started_at": "2026-09-19T06:12:20+00:00"
+}

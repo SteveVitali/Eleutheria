@@ -1,0 +1,53 @@
+{
+  "capture_digests": [
+    "bcnapzrim5rmv2iky6xvv6ijk4glnluzrinbuuspxw5hjij4g5fgedki67ppshaeodtszw46uu36sweikw5ohvsbczszcczgjfvlzuvf3oy",
+    "bcnamvk77icdqqii4u67cvfea7wpzzghh43hsuwmunn3idjtdmdyq5kxusstnqgg6dercfsvf6j5vemlqqxravuzrecx4ifcph2n3z5zjfa",
+    "bcnaif7576ipx3phly5newu7rjvcjkoooavnpshuas52otnfudhhm62h7tbzvrw6mocxwhs4gtnufzrwsadzzyg7tazuv2hwxv2jhkdl6ky",
+    "bcnaktiokv5mpg664h6gsn4lpr2wzf6pzf54ojodt2nf6txyhrwh5swoznx2bilolfhfhxdtijq6wvvv53svrasynm7spsrn2c5areaowj4",
+    "bcnajlgvexattc7ebppiuld3tnrzdwpgsypal5zo4ygvz7tpyjhwlxnf3jwsg34jb7pwov6bvybeww7mlhpne5kd3tevn23ta2wljd3fg5e",
+    "bcnah6jfoy6izwkkbm7a7rrpt6j4ct2ru6velsouescutdqjbtihktk7njsywb5apnfyoe6enea3qvbp7l4lshx23wd3knkofcp7mt5r3ny",
+    "bcnafe5dp7ngmsnplajfhq6kfnuuxkto23zh47mks2lo5fb2tgdyc5z7mdwgp5tycs75ueuksilzu26que3eu2xwl7er5doza7xqw7moxgq",
+    "bcnaiezxdjef77zg7mrk64rghkheby7qw45phlya25j6aartohzfeoxqakvwcifho2zvftdou3h5yfdotjq7gc46rjcks2jj3mn2nt7tobq",
+    "bcnapagleznclm2f45audkywfpkzsfo3srdh7wtxvrgnubqc4n2uuraq5mws6dq7k2ojtgr6jfnzm2omsm6rc2v52xe3hy7dqmban2kwh5q"
+  ],
+  "claims_added": 2245,
+  "detail": "",
+  "duration_seconds": 7.828,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnapzrim5rmv2iky6xvv6ijk4glnluzrinbuuspxw5hjij4g5fgedki67ppshaeodtszw46uu36sweikw5ohvsbczszcczgjfvlzuvf3oy",
+      "bcnamvk77icdqqii4u67cvfea7wpzzghh43hsuwmunn3idjtdmdyq5kxusstnqgg6dercfsvf6j5vemlqqxravuzrecx4ifcph2n3z5zjfa",
+      "bcnaif7576ipx3phly5newu7rjvcjkoooavnpshuas52otnfudhhm62h7tbzvrw6mocxwhs4gtnufzrwsadzzyg7tazuv2hwxv2jhkdl6ky",
+      "bcnaktiokv5mpg664h6gsn4lpr2wzf6pzf54ojodt2nf6txyhrwh5swoznx2bilolfhfhxdtijq6wvvv53svrasynm7spsrn2c5areaowj4",
+      "bcnajlgvexattc7ebppiuld3tnrzdwpgsypal5zo4ygvz7tpyjhwlxnf3jwsg34jb7pwov6bvybeww7mlhpne5kd3tevn23ta2wljd3fg5e",
+      "bcnah6jfoy6izwkkbm7a7rrpt6j4ct2ru6velsouescutdqjbtihktk7njsywb5apnfyoe6enea3qvbp7l4lshx23wd3knkofcp7mt5r3ny",
+      "bcnafe5dp7ngmsnplajfhq6kfnuuxkto23zh47mks2lo5fb2tgdyc5z7mdwgp5tycs75ueuksilzu26que3eu2xwl7er5doza7xqw7moxgq",
+      "bcnaiezxdjef77zg7mrk64rghkheby7qw45phlya25j6aartohzfeoxqakvwcifho2zvftdou3h5yfdotjq7gc46rjcks2jj3mn2nt7tobq",
+      "bcnapagleznclm2f45audkywfpkzsfo3srdh7wtxvrgnubqc4n2uuraq5mws6dq7k2ojtgr6jfnzm2omsm6rc2v52xe3hy7dqmban2kwh5q"
+    ],
+    "claim_count": 2245,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 7.8261,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_indonesia_id",
+    "started_at": "2026-09-19T06:13:25.859906+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_indonesia_id",
+  "started_at": "2026-09-19T06:13:25+00:00"
+}

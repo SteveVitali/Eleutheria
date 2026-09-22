@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnaomaxz6h7krcu2qvirb4cfmqukiokocflzdmutjzf4o3pssqc6inlscubujhqycp632iww7pr2tb3xkwavrvbhtthbz55m32ft7mv6li"
+  ],
+  "claims_added": 6840,
+  "detail": "",
+  "duration_seconds": 1.492,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnaomaxz6h7krcu2qvirb4cfmqukiokocflzdmutjzf4o3pssqc6inlscubujhqycp632iww7pr2tb3xkwavrvbhtthbz55m32ft7mv6li"
+    ],
+    "claim_count": 6840,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 1.489908,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_mbrc_au",
+    "started_at": "2026-09-19T06:13:47.346802+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_mbrc_au",
+  "started_at": "2026-09-19T06:13:47+00:00"
+}

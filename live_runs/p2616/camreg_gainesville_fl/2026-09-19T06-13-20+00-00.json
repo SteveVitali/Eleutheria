@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnajv7qgfyadkneu2i3t57lwkabeyh3zxo6kodcjtdcptuixrh2ylbwllmxx2dqagnhbpn7tklj656gozaummqbqt576xd4c224irx7v4i"
+  ],
+  "claims_added": 1171,
+  "detail": "",
+  "duration_seconds": 0.384,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnajv7qgfyadkneu2i3t57lwkabeyh3zxo6kodcjtdcptuixrh2ylbwllmxx2dqagnhbpn7tklj656gozaummqbqt576xd4c224irx7v4i"
+    ],
+    "claim_count": 1171,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 0.383359,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_gainesville_fl",
+    "started_at": "2026-09-19T06:13:20.215751+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_gainesville_fl",
+  "started_at": "2026-09-19T06:13:20+00:00"
+}

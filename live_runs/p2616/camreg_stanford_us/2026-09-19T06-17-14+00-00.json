@@ -1,0 +1,39 @@
+{
+  "capture_digests": [
+    "bcnahphnuoo4covkltphshpdydej2l3hnzku3onjhki24dwj6fnmqniilp5bj356wjxu2x5gpmfi63o6u2apnoxbgonfxxu7gn3f7urjy6i",
+    "bcnapggcelipfvehrwvnbyp5hwa2pno6lumegpswfnfhbignptsgeeflkdqgj2iqfwxds25bo6dwhktjwbcmpwfgvnnzeuhduh4adkftr2q"
+  ],
+  "claims_added": 4801,
+  "detail": "",
+  "duration_seconds": 1.497,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnahphnuoo4covkltphshpdydej2l3hnzku3onjhki24dwj6fnmqniilp5bj356wjxu2x5gpmfi63o6u2apnoxbgonfxxu7gn3f7urjy6i",
+      "bcnapggcelipfvehrwvnbyp5hwa2pno6lumegpswfnfhbignptsgeeflkdqgj2iqfwxds25bo6dwhktjwbcmpwfgvnnzeuhduh4adkftr2q"
+    ],
+    "claim_count": 4801,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 1.493987,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_stanford_us",
+    "started_at": "2026-09-19T06:17:14.282415+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_stanford_us",
+  "started_at": "2026-09-19T06:17:14+00:00"
+}
