@@ -11,6 +11,8 @@ the per-test connection is rolled back by the ``conn`` fixture.
 
 from __future__ import annotations
 
+import json
+
 from exports.audit import run_audit
 
 
@@ -156,9 +158,15 @@ def test_audit_over_seeded_spine(conn) -> None:
     assert all(m.empty for m in audit.modeling_tables)
     assert audit.value_geom_populated == 0
 
-    # Deterministic bytes on a re-run over the same (unmutated) spine.
+    # Deterministic output on a re-run over the same (unmutated) spine.
+    # `generated_at` is the one legitimately-varying field (the wall clock), so
+    # compare the JSON with it stripped — every other byte must be stable.
     again = run_audit(conn, as_of="2026-09-22", note="seeded", spine_label="seeded")
-    assert again.to_json_str() == audit.to_json_str()
+    first = json.loads(audit.to_json_str())
+    second = json.loads(again.to_json_str())
+    first.pop("generated_at")
+    second.pop("generated_at")
+    assert first == second
 
 
 def test_audit_does_not_write_to_the_spine(conn) -> None:

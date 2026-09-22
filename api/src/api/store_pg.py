@@ -59,6 +59,14 @@ from typing import Any
 import psycopg
 from db.temporal import AsOf
 from evidence.tiers import CaptureMetadata, StorageTier
+from exports.shaping import (
+    JurisdictionGroup,
+    ShapedDataset,
+    ShapedSite,
+    ShapedSourceFreshness,
+    SharingEdge,
+    run_shaping,
+)
 from inference.coverage import CoverageRecord
 from policy.rights import RightsRecord
 from reconcile.resolve import RESOLVE, Claim
@@ -115,6 +123,14 @@ class _AnnotationView:
     watermark: str
 
 
+@dataclass(frozen=True)
+class _ShapingView:
+    """A served shaped dataset plus the spine watermark it describes (P27.3)."""
+
+    dataset: ShapedDataset
+    watermark: str
+
+
 class PgReadStore:
     """A :class:`~api.store.ReadStore` served from PostgreSQL (P19.4, SIG-API-001)."""
 
@@ -142,6 +158,10 @@ class PgReadStore:
         self._annotation_lock = threading.Lock()
         self._annotation_cache: _AnnotationView | None = None
         self._last_annotation_view: _AnnotationView | None = None
+        # P27.3: the compute-on-read shaped dataset is memoised against the same
+        # spine watermark under the same lock — one shaping pass per instance per
+        # watermark, provably never stale (append-only).
+        self._shaping_cache: _ShapingView | None = None
 
     def close(self) -> None:
         self._conn.close()
@@ -765,6 +785,70 @@ class PgReadStore:
             if t.task_id == task_id:
                 return t
         return None
+
+    # --- export data-shaping enumeration reads (P27.3, LAUNCH.3) --------------
+    #
+    # The reads the export build (P27.4) needs: publishable jurisdictions,
+    # shaped geolocated sites, per-source freshness, and sharing edges. These
+    # are store-only methods — NOT on the ReadStore protocol — because they are
+    # export-build reads, not endpoint seams. All of them draw on one
+    # compute-on-read :class:`exports.shaping.ShapedDataset`, memoised against
+    # the spine watermark exactly like the annotation view (P25.10): the spine
+    # is append-only, so a cache keyed on the watermark is provably never stale.
+    # The shaping itself is read-only (run_shaping sets
+    # default_transaction_read_only) and observation-level (ADR-092) — never a
+    # resolved census.
+
+    def _shaping_view(self) -> _ShapingView:
+        with self._annotation_lock:
+            watermark = self._spine_watermark()
+            cached = self._shaping_cache
+            if cached is None or cached.watermark != watermark:
+                conn = self._connect()
+                try:
+                    dataset = run_shaping(
+                        conn,
+                        as_of=datetime.now(tz=UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                        spine_label="pg-store",
+                    )
+                finally:
+                    conn.close()
+                cached = _ShapingView(dataset=dataset, watermark=watermark)
+                self._shaping_cache = cached
+            return cached
+
+    def shaped_dataset(self) -> ShapedDataset:
+        """The full compute-on-read shaped dataset (sites/jurisdictions/coverage)."""
+        return self._shaping_view().dataset
+
+    def publishable_scopes(self) -> list[str]:
+        """Every subject scope carrying publishable claims, sorted (P27.4 read).
+
+        Superset of :meth:`geolocated_sites`: includes subjects with no
+        coordinate evidence — they are dossier/coverage scopes, not points.
+        """
+        return sorted(s.entity_id for s in self._shaping_view().dataset.sites)
+
+    def geolocated_sites(self) -> list[ShapedSite]:
+        """Every publishable site carrying coordinate evidence (P27.4 read).
+
+        Includes ``conflicted`` sites (coordinate evidence that disagrees stays
+        visible); excludes subjects with no coordinate claims at all — those are
+        coverage-denominator members, not geolocated observations.
+        """
+        return [s for s in self._shaping_view().dataset.sites if s.has_coordinate_claims]
+
+    def publishable_jurisdictions(self) -> list[JurisdictionGroup]:
+        """Per-jurisdiction groups over publishable claims, `unresolved` included."""
+        return list(self._shaping_view().dataset.jurisdictions)
+
+    def sources_with_freshness(self) -> list[ShapedSourceFreshness]:
+        """Per-source freshness inputs (SIG-METRIC-007), volatility-relative."""
+        return list(self._shaping_view().dataset.sources)
+
+    def sharing_edges(self) -> list[SharingEdge]:
+        """Every publishable sharing edge with its access kind (§29.3)."""
+        return list(self._shaping_view().dataset.sharing_edges)
 
     def resolve_id(self, id_type: str, uuid: str) -> IdDescriptor | None:
         row = self._conn.execute(

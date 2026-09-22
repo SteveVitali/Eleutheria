@@ -1,0 +1,565 @@
+{
+  "aggregates": [
+    {
+      "count": 87375,
+      "denominator": 89722,
+      "label": "geolocated site observations",
+      "not_evaluable": 0,
+      "phrase": "87375 of 89722 evaluable geolocated site observations"
+    },
+    {
+      "count": 6934,
+      "denominator": 89722,
+      "label": "site observations in a coordinate cell observed by two or more sources",
+      "not_evaluable": 0,
+      "phrase": "6934 of 89722 evaluable site observations in a coordinate cell observed by two or more sources"
+    },
+    {
+      "count": 89722,
+      "denominator": 89722,
+      "label": "site observations with a resolved jurisdiction",
+      "not_evaluable": 0,
+      "phrase": "89722 of 89722 evaluable site observations with a resolved jurisdiction"
+    },
+    {
+      "count": 379201,
+      "denominator": 379201,
+      "label": "publishable claims carrying source attribution",
+      "not_evaluable": 0,
+      "phrase": "379201 of 379201 evaluable publishable claims carrying source attribution"
+    }
+  ],
+  "metrics": [
+    {
+      "denominator": "evaluable geolocated site observations (of 89722 publishable subjects/observations)",
+      "id": "agg_geolocated_site_observations",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "87375 of 89722 evaluable geolocated site observations"
+    },
+    {
+      "denominator": "evaluable site observations (of 89722 publishable subjects/observations)",
+      "id": "agg_site_observations_in_a_coordinate_cell_observed_by_two_or_more_sources",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "site observations in a coordinate cell observed by two or more sources",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "6934 of 89722 evaluable site observations in a coordinate cell observed by two or more sources"
+    },
+    {
+      "denominator": "evaluable site observations with a resolved jurisdiction (of 89722 publishable subjects/observations)",
+      "id": "agg_site_observations_with_a_resolved_jurisdiction",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "site observations with a resolved jurisdiction",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "89722 of 89722 evaluable site observations with a resolved jurisdiction"
+    },
+    {
+      "denominator": "evaluable publishable claims carrying source attribution (of 379201 publishable subjects/observations)",
+      "id": "agg_publishable_claims_carrying_source_attribution",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "publishable claims carrying source attribution",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "379201 of 379201 evaluable publishable claims carrying source attribution"
+    },
+    {
+      "denominator": "556 publishable subjects asserting jurisdiction 'AL'",
+      "id": "jurisdiction_AL",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in AL",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "556 of 556 evaluable geolocated site observations in AL"
+    },
+    {
+      "denominator": "1328 publishable subjects asserting jurisdiction 'AU-ACT'",
+      "id": "jurisdiction_AU-ACT",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in AU-ACT",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "1299 of 1328 evaluable geolocated site observations in AU-ACT"
+    },
+    {
+      "denominator": "1479 publishable subjects asserting jurisdiction 'AU-QLD'",
+      "id": "jurisdiction_AU-QLD",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in AU-QLD",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "1479 of 1479 evaluable geolocated site observations in AU-QLD"
+    },
+    {
+      "denominator": "67 publishable subjects asserting jurisdiction 'AU-VIC'",
+      "id": "jurisdiction_AU-VIC",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in AU-VIC",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "67 of 67 evaluable geolocated site observations in AU-VIC"
+    },
+    {
+      "denominator": "526 publishable subjects asserting jurisdiction 'AZ'",
+      "id": "jurisdiction_AZ",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in AZ",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "526 of 526 evaluable geolocated site observations in AZ"
+    },
+    {
+      "denominator": "447 publishable subjects asserting jurisdiction 'BD'",
+      "id": "jurisdiction_BD",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in BD",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "447 of 447 evaluable geolocated site observations in BD"
+    },
+    {
+      "denominator": "19 publishable subjects asserting jurisdiction 'BE'",
+      "id": "jurisdiction_BE",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in BE",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "19 of 19 evaluable geolocated site observations in BE"
+    },
+    {
+      "denominator": "6139 publishable subjects asserting jurisdiction 'CA'",
+      "id": "jurisdiction_CA",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in CA",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "6139 of 6139 evaluable geolocated site observations in CA"
+    },
+    {
+      "denominator": "354 publishable subjects asserting jurisdiction 'CA-AB'",
+      "id": "jurisdiction_CA-AB",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in CA-AB",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "354 of 354 evaluable geolocated site observations in CA-AB"
+    },
+    {
+      "denominator": "829 publishable subjects asserting jurisdiction 'CA-BC'",
+      "id": "jurisdiction_CA-BC",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in CA-BC",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "737 of 829 evaluable geolocated site observations in CA-BC"
+    },
+    {
+      "denominator": "795 publishable subjects asserting jurisdiction 'CA-MB'",
+      "id": "jurisdiction_CA-MB",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in CA-MB",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "795 of 795 evaluable geolocated site observations in CA-MB"
+    },
+    {
+      "denominator": "996 publishable subjects asserting jurisdiction 'CA-ON'",
+      "id": "jurisdiction_CA-ON",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in CA-ON",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "996 of 996 evaluable geolocated site observations in CA-ON"
+    },
+    {
+      "denominator": "14 publishable subjects asserting jurisdiction 'CO'",
+      "id": "jurisdiction_CO",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in CO",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "14 of 14 evaluable geolocated site observations in CO"
+    },
+    {
+      "denominator": "50 publishable subjects asserting jurisdiction 'CO-MET'",
+      "id": "jurisdiction_CO-MET",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in CO-MET",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "50 of 50 evaluable geolocated site observations in CO-MET"
+    },
+    {
+      "denominator": "1713 publishable subjects asserting jurisdiction 'DC'",
+      "id": "jurisdiction_DC",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in DC",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "1591 of 1713 evaluable geolocated site observations in DC"
+    },
+    {
+      "denominator": "24 publishable subjects asserting jurisdiction 'DE'",
+      "id": "jurisdiction_DE",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in DE",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "24 of 24 evaluable geolocated site observations in DE"
+    },
+    {
+      "denominator": "9965 publishable subjects asserting jurisdiction 'FL'",
+      "id": "jurisdiction_FL",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in FL",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "8001 of 9965 evaluable geolocated site observations in FL"
+    },
+    {
+      "denominator": "7049 publishable subjects asserting jurisdiction 'GA'",
+      "id": "jurisdiction_GA",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in GA",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "7049 of 7049 evaluable geolocated site observations in GA"
+    },
+    {
+      "denominator": "12 publishable subjects asserting jurisdiction 'GB'",
+      "id": "jurisdiction_GB",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in GB",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "12 of 12 evaluable geolocated site observations in GB"
+    },
+    {
+      "denominator": "1710 publishable subjects asserting jurisdiction 'GB-ENG'",
+      "id": "jurisdiction_GB-ENG",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in GB-ENG",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "1661 of 1710 evaluable geolocated site observations in GB-ENG"
+    },
+    {
+      "denominator": "18 publishable subjects asserting jurisdiction 'GB-NIR'",
+      "id": "jurisdiction_GB-NIR",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in GB-NIR",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "18 of 18 evaluable geolocated site observations in GB-NIR"
+    },
+    {
+      "denominator": "595 publishable subjects asserting jurisdiction 'GB-SCT'",
+      "id": "jurisdiction_GB-SCT",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in GB-SCT",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "595 of 595 evaluable geolocated site observations in GB-SCT"
+    },
+    {
+      "denominator": "252 publishable subjects asserting jurisdiction 'HI'",
+      "id": "jurisdiction_HI",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in HI",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "252 of 252 evaluable geolocated site observations in HI"
+    },
+    {
+      "denominator": "22 publishable subjects asserting jurisdiction 'HK'",
+      "id": "jurisdiction_HK",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in HK",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "22 of 22 evaluable geolocated site observations in HK"
+    },
+    {
+      "denominator": "1002 publishable subjects asserting jurisdiction 'IA'",
+      "id": "jurisdiction_IA",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in IA",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "1002 of 1002 evaluable geolocated site observations in IA"
+    },
+    {
+      "denominator": "500 publishable subjects asserting jurisdiction 'ID'",
+      "id": "jurisdiction_ID",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in ID",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "498 of 500 evaluable geolocated site observations in ID"
+    },
+    {
+      "denominator": "123 publishable subjects asserting jurisdiction 'IE-DL'",
+      "id": "jurisdiction_IE-DL",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in IE-DL",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "123 of 123 evaluable geolocated site observations in IE-DL"
+    },
+    {
+      "denominator": "3446 publishable subjects asserting jurisdiction 'IL'",
+      "id": "jurisdiction_IL",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in IL",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "3446 of 3446 evaluable geolocated site observations in IL"
+    },
+    {
+      "denominator": "57 publishable subjects asserting jurisdiction 'JP'",
+      "id": "jurisdiction_JP",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in JP",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "56 of 57 evaluable geolocated site observations in JP"
+    },
+    {
+      "denominator": "97 publishable subjects asserting jurisdiction 'KS'",
+      "id": "jurisdiction_KS",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in KS",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "97 of 97 evaluable geolocated site observations in KS"
+    },
+    {
+      "denominator": "587 publishable subjects asserting jurisdiction 'KY'",
+      "id": "jurisdiction_KY",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in KY",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "586 of 587 evaluable geolocated site observations in KY"
+    },
+    {
+      "denominator": "1067 publishable subjects asserting jurisdiction 'LA'",
+      "id": "jurisdiction_LA",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in LA",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "1054 of 1067 evaluable geolocated site observations in LA"
+    },
+    {
+      "denominator": "845 publishable subjects asserting jurisdiction 'MA'",
+      "id": "jurisdiction_MA",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in MA",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "845 of 845 evaluable geolocated site observations in MA"
+    },
+    {
+      "denominator": "2753 publishable subjects asserting jurisdiction 'MD'",
+      "id": "jurisdiction_MD",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in MD",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "2752 of 2753 evaluable geolocated site observations in MD"
+    },
+    {
+      "denominator": "995 publishable subjects asserting jurisdiction 'MN'",
+      "id": "jurisdiction_MN",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in MN",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "994 of 995 evaluable geolocated site observations in MN"
+    },
+    {
+      "denominator": "1107 publishable subjects asserting jurisdiction 'MO'",
+      "id": "jurisdiction_MO",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in MO",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "1107 of 1107 evaluable geolocated site observations in MO"
+    },
+    {
+      "denominator": "386 publishable subjects asserting jurisdiction 'MY'",
+      "id": "jurisdiction_MY",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in MY",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "386 of 386 evaluable geolocated site observations in MY"
+    },
+    {
+      "denominator": "44 publishable subjects asserting jurisdiction 'NC'",
+      "id": "jurisdiction_NC",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in NC",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "44 of 44 evaluable geolocated site observations in NC"
+    },
+    {
+      "denominator": "54 publishable subjects asserting jurisdiction 'NL'",
+      "id": "jurisdiction_NL",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in NL",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "54 of 54 evaluable geolocated site observations in NL"
+    },
+    {
+      "denominator": "585 publishable subjects asserting jurisdiction 'NY'",
+      "id": "jurisdiction_NY",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in NY",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "585 of 585 evaluable geolocated site observations in NY"
+    },
+    {
+      "denominator": "1060 publishable subjects asserting jurisdiction 'NZ'",
+      "id": "jurisdiction_NZ",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in NZ",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "1060 of 1060 evaluable geolocated site observations in NZ"
+    },
+    {
+      "denominator": "1418 publishable subjects asserting jurisdiction 'OR'",
+      "id": "jurisdiction_OR",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in OR",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "1418 of 1418 evaluable geolocated site observations in OR"
+    },
+    {
+      "denominator": "1249 publishable subjects asserting jurisdiction 'PA'",
+      "id": "jurisdiction_PA",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in PA",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "1249 of 1249 evaluable geolocated site observations in PA"
+    },
+    {
+      "denominator": "6 publishable subjects asserting jurisdiction 'PS'",
+      "id": "jurisdiction_PS",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in PS",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "6 of 6 evaluable geolocated site observations in PS"
+    },
+    {
+      "denominator": "1 publishable subjects asserting jurisdiction 'PT'",
+      "id": "jurisdiction_PT",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in PT",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "0 of 1 evaluable geolocated site observations in PT"
+    },
+    {
+      "denominator": "1128 publishable subjects asserting jurisdiction 'SA'",
+      "id": "jurisdiction_SA",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in SA",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "1128 of 1128 evaluable geolocated site observations in SA"
+    },
+    {
+      "denominator": "234 publishable subjects asserting jurisdiction 'SD'",
+      "id": "jurisdiction_SD",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in SD",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "234 of 234 evaluable geolocated site observations in SD"
+    },
+    {
+      "denominator": "2110 publishable subjects asserting jurisdiction 'TH'",
+      "id": "jurisdiction_TH",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in TH",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "2109 of 2110 evaluable geolocated site observations in TH"
+    },
+    {
+      "denominator": "190 publishable subjects asserting jurisdiction 'TN'",
+      "id": "jurisdiction_TN",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in TN",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "190 of 190 evaluable geolocated site observations in TN"
+    },
+    {
+      "denominator": "3996 publishable subjects asserting jurisdiction 'TX'",
+      "id": "jurisdiction_TX",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in TX",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "3994 of 3996 evaluable geolocated site observations in TX"
+    },
+    {
+      "denominator": "629 publishable subjects asserting jurisdiction 'US'",
+      "id": "jurisdiction_US",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in US",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "629 of 629 evaluable geolocated site observations in US"
+    },
+    {
+      "denominator": "32 publishable subjects asserting jurisdiction 'UT'",
+      "id": "jurisdiction_UT",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in UT",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "32 of 32 evaluable geolocated site observations in UT"
+    },
+    {
+      "denominator": "383 publishable subjects asserting jurisdiction 'VA'",
+      "id": "jurisdiction_VA",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in VA",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "383 of 383 evaluable geolocated site observations in VA"
+    },
+    {
+      "denominator": "2754 publishable subjects asserting jurisdiction 'WA'",
+      "id": "jurisdiction_WA",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in WA",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "2754 of 2754 evaluable geolocated site observations in WA"
+    },
+    {
+      "denominator": "25925 publishable subjects asserting jurisdiction 'unresolved'",
+      "id": "jurisdiction_unresolved",
+      "is_population_total": false,
+      "kind": "counted_quantity",
+      "label": "geolocated site observations in unresolved",
+      "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
+      "value": "25857 of 25925 evaluable geolocated site observations in unresolved"
+    }
+  ]
+}

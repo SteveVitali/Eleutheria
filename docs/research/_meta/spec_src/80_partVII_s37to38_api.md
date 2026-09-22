@@ -77,6 +77,12 @@ size, but the **manifest of digests** MUST be deposited.
 resolver version)` via the same code path the API uses. A hand-built export is a different dataset
 wearing the same name.
 
+**SIG-EXPORT-012 (MUST).** The public export MUST be **read from the claim spine and shaped at
+build time**: point geometry, jurisdiction grouping, dedup framing, and coverage aggregates are
+computed from raw claims at export build (compute-on-read, ADR-092) with claim-id lineage and
+per-row rights provenance carried through — never hand-edited into `value_geom` or the modeling
+tables, and never written back to the spine.
+
 ### 38.2 Licence computation
 
 **SIG-EXPORT-004 (MUST).** An export bundle's licence MUST be **computed** from the SPDX

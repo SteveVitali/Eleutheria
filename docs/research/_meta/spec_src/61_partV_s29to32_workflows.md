@@ -142,6 +142,13 @@ knows — §14.4); **capability** reconciliation (does org X have capability Y, 
 sources, respecting the marketed-vs-configured distinction of SIG-ONTO-018); and
 **geographic-coverage** reconciliation.
 
+**SIG-RECON-058 (MUST).** A published count of surveillance infrastructure MUST disclose whether it
+is **observation-level** (claims-grouped entities — "N observations across M sources", computed on
+read) or **resolution-backed** (entities merged by a recorded resolution envelope). An
+observation-level count is never presented as a deduplicated device census; cross-source duplicates
+are labelled as shared observation groups, never silently merged. *(Fold-back of ADR-092's launch
+resolution posture — compute-on-read plus honest observation-level framing.)*
+
 ---
 
 ## 30. The inference layer
