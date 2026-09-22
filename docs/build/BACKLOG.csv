@@ -30,8 +30,8 @@ BL-028,Records-request filing/response backend (template outcome log fed live),d
 BL-029,Zenodo live deposit + object store + rendered vector tiles (PMTiles bodies),external-dep,RISK-P14-16 LD-V07 ADR-048 RISK-P14-17 LD-F07 LD-H08 LD-D09 ADR-015,,exports,,P21.5,HG-07,L,open
 BL-030,Zero-cost / degraded-but-alive keepalive tested (SIG-GOV-021),operational-prereq,RISK-P0-12 LD-P07,SIG-GOV-021,ops,,P21.5,,M,open
 BL-031,API rate-limit enforcement + GraphQL (deferred SHOULDs),deferred-feature,RISK-P14-09 RISK-P14-10,,api,,P22+,,S,open
-BL-032,Per-source rights review + registry completion (flip ingestion_permitted),rights/legal,RISK-P0-19 LD-P05,SIG-LIC-001 SIG-INGEST-038,connectors,OKC-live,P21.1,HG-03,L,open
-BL-033,Stage-0 outreach / Eyes-on-Flock archival succession recorded,rights/legal,RISK-P0-20 LD-P01,SIG-CONTRIB-012/012a,connectors,OKC-live,P21.1,HG-04,M,open
+BL-032,Per-source rights review + registry completion (flip ingestion_permitted),rights/legal,RISK-P0-19 LD-P05 ADR-063,SIG-LIC-001 SIG-INGEST-038,connectors,OKC-live,P21.1,HG-03,L,closed
+BL-033,Stage-0 outreach / Eyes-on-Flock archival succession recorded,rights/legal,RISK-P0-20 LD-P01,SIG-CONTRIB-012/012a,connectors,OKC-live,P21.1,HG-04,M,closed
 BL-034,Legal home + counsel launch prerequisites,rights/legal,LD-P02,,docs,OKC-publish,human-gate:HG-01,HG-01,M,open
 BL-035,Counsel disposition: ODbL 4.4(b) derivative / know-your-rights guidance,rights/legal,RISK-P16-16 RISK-P0-11,,docs,OKC-publish,human-gate:HG-02,HG-02,M,open
 BL-036,"Operating governance: board, Code of Conduct, funding policy",operational-prereq,RISK-P0-10,,docs,OKC-publish,human-gate:HG-11,HG-11,M,open

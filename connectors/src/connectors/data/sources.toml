@@ -1499,3 +1499,75 @@ custody_posture = "LINK"
 compact_status = "not_contacted"
 robots_policy = "honor"
 notes = "Vendor-level international dataset (OL-5.3-01); coarse granularity mandatory (SIG-INGEST-042). UNDETERMINED."
+
+# ===========================================================================
+# J. Oklahoma City vertical slice (J-1, docs/slice/P06.1_hardness_precondition.md)
+# ===========================================================================
+# The six OKC critical-path sources registered by P21.1 (SCOPING_NUMBERS §(ii)).
+# All are seeded WITHOUT a [rights] block => UNDETERMINED + redistributable=false,
+# and WITHOUT ingestion_permitted (defaults false, SIG-INGEST-028): a flip is a
+# rights review + Stage-0 outcome (HG-03/HG-04), never a data-seed change. Their
+# rights-review packets are docs/build/rights/<id>.md. The fixture source_ids in
+# tests/acceptance/fixtures/okc_sources.json map to these registry ids
+# (src:okc-procurement -> okc_procurement, etc.; src:deflock -> deflock_repo).
+
+[sources.okc_procurement]
+name = "City of Oklahoma City — procurement / contracts"
+source_kind = "government_portal"
+homepage_url = "https://www.okc.gov/departments/finance/purchasing"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "OKC executed contracts/procurement (Flock Master Agreement C241032), R1. Government records; rights UNDETERMINED pending review (docs/slice/P06.1_hardness_precondition.md, SIG-LIC-004). Packet docs/build/rights/okc_procurement.md."
+
+[sources.okc_council]
+name = "Oklahoma City Council — agendas & minutes (CivicClerk)"
+source_kind = "government_portal"
+homepage_url = "https://oklahomacityok.portal.civicclerk.com/"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "civicclerk (tenant oklahomacityok; see data/agenda_tenants.toml)"
+notes = "OKC council governance records via the CivicClerk tenant oklahomacityok (agenda_tenants.toml). Government records, R2; rights UNDETERMINED pending review (docs/slice/P06.1_hardness_precondition.md, SIG-LIC-004). Packet docs/build/rights/okc_council.md."
+
+[sources.okcpd_policy]
+name = "Oklahoma City Police Department — policy (Operations Manual)"
+source_kind = "government_portal"
+homepage_url = "https://www.okc.gov/departments/police"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "OKCPD agency policy (Operations Manual §5-118, ALPR). Government records, R2; rights UNDETERMINED pending review (docs/slice/P06.1_hardness_precondition.md, SIG-LIC-004). Packet docs/build/rights/okcpd_policy.md."
+
+[sources.ok_statute]
+name = "Oklahoma statutes (47 O.S. §7-606.1 et seq.)"
+source_kind = "government_portal"
+homepage_url = "https://www.oscn.net/applications/oscn/index.asp?ftdb=STOKST47"
+default_tier = "R1"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "Oklahoma statutory / legal regime (ALPR limits), R1. Statutory text; rights UNDETERMINED pending review (docs/slice/P06.1_hardness_precondition.md, SIG-LIC-004). Packet docs/build/rights/ok_statute.md."
+
+[sources.journalrecord]
+name = "The Journal Record (Oklahoma City)"
+source_kind = "news_publisher"
+homepage_url = "https://journalrecord.com/"
+default_tier = "R2"
+custody_posture = "LINK"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "OKC business/legal journalism (R2). LINK-posture candidate: paywalled newspaper — link out, never re-host content. Rights UNDETERMINED pending review (docs/slice/P06.1_hardness_precondition.md, SIG-LIC-004). Packet docs/build/rights/journalrecord.md."
+
+[sources.oklahoman]
+name = "The Oklahoman (oklahoman.com)"
+source_kind = "news_publisher"
+homepage_url = "https://www.oklahoman.com/"
+default_tier = "R4"
+custody_posture = "LINK"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+notes = "OKC daily newspaper (R4). LINK-posture candidate: Gannett/USA TODAY Network copyright — link out, never re-host content. Rights UNDETERMINED pending review (docs/slice/P06.1_hardness_precondition.md, SIG-LIC-004). Packet docs/build/rights/oklahoman.md."
