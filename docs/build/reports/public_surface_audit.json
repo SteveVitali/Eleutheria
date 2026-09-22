@@ -1,8 +1,8 @@
 {
-  "as_of": "2026-09-22T16:57:19Z",
+  "as_of": "2026-09-22 post-P27.2 decisions",
   "claims_by_connector": [
     {
-      "count": 814066,
+      "count": 864066,
       "name": "dot_511"
     },
     {
@@ -74,9 +74,118 @@
       "name": "pathways"
     }
   ],
+  "effective_licence_mix": [
+    {
+      "claims": 372869,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "LicenseRef-PublicRecord-FactualCompilation"
+    },
+    {
+      "claims": 225753,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "LicenseRef-OperatorAccepted-DBRight"
+    },
+    {
+      "claims": 205677,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "CC-BY-4.0"
+    },
+    {
+      "claims": 151906,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "CC0-1.0"
+    },
+    {
+      "claims": 55969,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "ODbL-1.0"
+    },
+    {
+      "claims": 46992,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "CC-BY-SA-2.0"
+    },
+    {
+      "claims": 14465,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "LicenceOuverte-2.0"
+    },
+    {
+      "claims": 14055,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "OGL-3.0"
+    },
+    {
+      "claims": 11642,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "CC-BY-SA-4.0"
+    },
+    {
+      "claims": 6027,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "CC-BY-3.0"
+    },
+    {
+      "claims": 1288,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "OGL-Canada-2.0"
+    },
+    {
+      "claims": 1108,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "LicenseRef-Ottawa-ODL-2.0"
+    },
+    {
+      "claims": 1069,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "LicenseRef-DerivedFacts-Citations"
+    },
+    {
+      "claims": 640,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "LicenseRef-StAlbert-ODL-1.0"
+    },
+    {
+      "claims": 333,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "LicenseRef-Peel-ODL-1.0"
+    },
+    {
+      "claims": 6,
+      "derivative_permitted": "no",
+      "redistributable": "no",
+      "spdx": "LicenseRef-MuckRock-API-ToS"
+    }
+  ],
+  "effective_redistributable_split": [
+    {
+      "count": 1109793,
+      "name": "yes"
+    },
+    {
+      "count": 6,
+      "name": "no"
+    }
+  ],
+  "effective_undetermined_by_connector": [],
   "entity_by_type": [
     {
-      "count": 92202,
+      "count": 99303,
       "name": "deployment"
     },
     {
@@ -89,28 +198,28 @@
     "latest_observed": "2026-09-22 00:00:00+00:00",
     "observed_claims": 174128
   },
-  "generated_at": "2026-09-22T16:57:20Z",
+  "generated_at": "2026-09-22T18:29:25Z",
   "geolocated": {
-    "denominator": 92206,
+    "denominator": 99307,
     "label": "entities",
-    "numerator": 75479,
-    "pct": 81.86
+    "numerator": 82579,
+    "pct": 83.16
   },
   "geolocation": {
     "geo_claims": [
       {
-        "count": 93305,
+        "count": 100405,
         "name": "camera_latitude"
       },
       {
-        "count": 93305,
+        "count": 100405,
         "name": "camera_longitude"
       }
     ],
-    "geolocated_entities": 75479,
+    "geolocated_entities": 82579,
     "jurisdiction_spread": [
       {
-        "count": 11682,
+        "count": 18783,
         "name": "unresolved"
       },
       {
@@ -358,6 +467,12 @@
       "spdx": "CC0-1.0"
     },
     {
+      "claims": 55929,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "ODbL-1.0"
+    },
+    {
       "claims": 46992,
       "derivative_permitted": "yes",
       "redistributable": "yes",
@@ -380,12 +495,6 @@
       "derivative_permitted": "yes",
       "redistributable": "yes",
       "spdx": "CC-BY-SA-4.0"
-    },
-    {
-      "claims": 5929,
-      "derivative_permitted": "yes",
-      "redistributable": "yes",
-      "spdx": "ODbL-1.0"
     },
     {
       "claims": 640,
@@ -442,16 +551,22 @@
       "table": "policy"
     }
   ],
-  "note": "OSM land (camreg_osm_surveillance ~1.37M claims) in flight \u2014 PROVISIONAL pre/mid-OSM snapshot; re-audit required after the land completes (D-P27.1-1)",
+  "note": "P27.2 post-decision re-measure; OSM land in flight \u2014 PROVISIONAL (D-P27.1-1 owes the settled re-audit)",
   "publishable": {
-    "denominator": 1059533,
+    "denominator": 1109799,
     "label": "claims (redistributable=yes)",
-    "numerator": 803361,
-    "pct": 75.82
+    "numerator": 853361,
+    "pct": 76.89
+  },
+  "publishable_effective": {
+    "denominator": 1109799,
+    "label": "claims (effective redistributable=yes)",
+    "numerator": 1109793,
+    "pct": 100.0
   },
   "redistributable_split": [
     {
-      "count": 803361,
+      "count": 853361,
       "name": "yes"
     },
     {
@@ -459,26 +574,325 @@
       "name": "UNDETERMINED"
     }
   ],
-  "schema_version": "p27.1/1.0.0",
+  "rights_decisions": [
+    {
+      "decided_at": "2026-09-22 18:23:44.531653+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca59-b3eb-7eed-b249-821d790160bb",
+      "source_id": "camreg_act_au",
+      "spdx": "CC-BY-4.0"
+    },
+    {
+      "decided_at": "2026-09-22 18:23:55.787550+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca59-cb87-7d77-8309-2fa5e4b2dd8a",
+      "source_id": "camreg_austin_tx",
+      "spdx": "CC0-1.0"
+    },
+    {
+      "decided_at": "2026-09-22 18:24:05.316520+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca59-d13a-73d7-a2fd-aedecf7ce296",
+      "source_id": "camreg_baltimore_md",
+      "spdx": "CC-BY-3.0"
+    },
+    {
+      "decided_at": "2026-09-22 18:24:49.281636+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca5a-0ced-7310-a9c9-cde82f8bdb63",
+      "source_id": "camreg_batonrouge_la",
+      "spdx": "CC0-1.0"
+    },
+    {
+      "decided_at": "2026-09-22 18:24:43.817297+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca5a-06ed-7bc9-ab2c-6ca87cbaa56a",
+      "source_id": "camreg_nola_la",
+      "spdx": "CC0-1.0"
+    },
+    {
+      "decided_at": "2026-09-22 18:24:38.782190+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca5a-0038-7449-80af-47b7744cfadb",
+      "source_id": "camreg_ottawa_on",
+      "spdx": "LicenseRef-Ottawa-ODL-2.0"
+    },
+    {
+      "decided_at": "2026-09-22 18:24:12.281442+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca59-d543-71f3-89e7-761c8ee974b7",
+      "source_id": "camreg_sheffield_gb",
+      "spdx": "OGL-3.0"
+    },
+    {
+      "decided_at": "2026-09-22 18:24:17.031517+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca59-d929-7b4a-8052-ab02c830884d",
+      "source_id": "camreg_siouxfalls_sd",
+      "spdx": "CC-BY-4.0"
+    },
+    {
+      "decided_at": "2026-09-22 18:24:28.816815+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca59-fb59-77d6-acdf-14ce64b7981b",
+      "source_id": "camreg_winnipeg_mb",
+      "spdx": "OGL-Canada-2.0"
+    },
+    {
+      "decided_at": "2026-09-22 18:26:34.282081+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "counsel (HG-02)",
+      "rights_id": "01a0ca5a-2f1f-783a-b535-479a23474792",
+      "source_id": "carnegie_ai_gsi",
+      "spdx": "LicenseRef-DerivedFacts-Citations"
+    },
+    {
+      "decided_at": "2026-09-22 18:26:41.283096+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca5a-3300-7475-af84-8e8e6252954f",
+      "source_id": "ccops_nyc_post",
+      "spdx": "LicenseRef-DerivedFacts-Citations"
+    },
+    {
+      "decided_at": "2026-09-22 18:26:48.531915+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca5a-38dc-762a-a2cf-8f6a87223d17",
+      "source_id": "ccops_seattle",
+      "spdx": "LicenseRef-DerivedFacts-Citations"
+    },
+    {
+      "decided_at": "2026-09-22 18:23:16.565932+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca59-95a5-7b3b-8884-319098456e98",
+      "source_id": "civicclerk",
+      "spdx": "CC0-1.0"
+    },
+    {
+      "decided_at": "2026-09-22 18:23:33.534062+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca59-9f6f-7d7c-b87e-edbff18b007e",
+      "source_id": "decp_fr",
+      "spdx": "LicenceOuverte-2.0"
+    },
+    {
+      "decided_at": "2026-09-22 18:26:24.782882+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca5a-2844-79f3-95de-ba8cd2432dac",
+      "source_id": "eff_data_driven",
+      "spdx": "CC-BY-4.0"
+    },
+    {
+      "decided_at": "2026-09-22 18:23:10.282794+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca59-88f4-7f4e-9b9d-2abfab5b9827",
+      "source_id": "escribe",
+      "spdx": "CC0-1.0"
+    },
+    {
+      "decided_at": "2026-09-22 18:25:15.088199+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "counsel (HG-02)",
+      "rights_id": "01a0ca5a-16b2-71d5-82ef-c113390d67e9",
+      "source_id": "facial_recognition_world_map",
+      "spdx": "LicenseRef-DerivedFacts-Citations"
+    },
+    {
+      "decided_at": "2026-09-22 18:22:35.282266+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca59-62e0-77d7-acac-182a20de0889",
+      "source_id": "legistar",
+      "spdx": "CC0-1.0"
+    },
+    {
+      "decided_at": "2026-09-22 18:27:03.538552+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "counsel (HG-02)",
+      "rights_id": "01a0ca5a-3ebc-789c-8f1e-666a81c936b8",
+      "source_id": "madada",
+      "spdx": "LicenseRef-DerivedFacts-Citations"
+    },
+    {
+      "decided_at": "2026-09-22 18:25:01.534583+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "no",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca5d-3370-7466-b687-eda409c9c7dc",
+      "source_id": "muckrock",
+      "spdx": "LicenseRef-MuckRock-API-ToS"
+    },
+    {
+      "decided_at": "2026-09-22 18:26:16.281803+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca5e-5693-793a-8e0b-9faeae8659a7",
+      "source_id": "okcpd_policy",
+      "spdx": "CC0-1.0"
+    },
+    {
+      "decided_at": "2026-09-22 18:26:00.283202+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca5a-243a-7161-be9a-42a3cdd38a7c",
+      "source_id": "ok_statute",
+      "spdx": "CC0-1.0"
+    },
+    {
+      "decided_at": "2026-09-22 18:25:35.791394+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca5d-b83f-71c7-a9e3-746a77af1bf2",
+      "source_id": "pathways_acoustic_drone_location",
+      "spdx": "LicenseRef-DerivedFacts-Citations"
+    },
+    {
+      "decided_at": "2026-09-22 18:25:21.783864+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca5d-818d-7caf-bfac-78ae827dea42",
+      "source_id": "pathways_rtcc_federation",
+      "spdx": "LicenseRef-DerivedFacts-Citations"
+    },
+    {
+      "decided_at": "2026-09-22 18:23:04.316288+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca59-7d3b-7633-9a91-4a1d9701bd91",
+      "source_id": "procportal_austin_tx",
+      "spdx": "CC0-1.0"
+    },
+    {
+      "decided_at": "2026-09-22 18:22:49.781985+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca59-737a-7c4c-add3-5e11946d47d2",
+      "source_id": "procportal_kcmo_mo",
+      "spdx": "CC0-1.0"
+    },
+    {
+      "decided_at": "2026-09-22 18:22:44.281552+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca59-6ba8-75e2-bb21-fb20964ecbb3",
+      "source_id": "procportal_nyc_ny",
+      "spdx": "CC0-1.0"
+    },
+    {
+      "decided_at": "2026-09-22 18:22:59.031958+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca5b-5009-7cbd-a02c-65658e68da8e",
+      "source_id": "procportal_sf_ca",
+      "spdx": "CC0-1.0"
+    },
+    {
+      "decided_at": "2026-09-22 18:25:49.038835+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca5a-1f79-7292-82f0-59b9c98b946b",
+      "source_id": "raa_prefectures",
+      "spdx": "ODbL-1.0"
+    },
+    {
+      "decided_at": "2026-09-22 18:23:23.294562+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca5b-b0d7-74f1-848f-d937c8c4f0e3",
+      "source_id": "sam_gov",
+      "spdx": "CC0-1.0"
+    },
+    {
+      "decided_at": "2026-09-22 18:25:10.281548+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca5d-54b0-7411-a0b7-551e4ada839f",
+      "source_id": "state_alpr_statute_inventory",
+      "spdx": "LicenseRef-DerivedFacts-Citations"
+    },
+    {
+      "decided_at": "2026-09-22 18:21:49.783932+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca59-591d-7cf7-9a3c-7ddc8bd290f6",
+      "source_id": "ted_eu",
+      "spdx": "CC-BY-4.0"
+    },
+    {
+      "decided_at": "2026-09-22 18:22:21.281883+00:00",
+      "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+      "redistributable": "yes",
+      "reviewer": "maintainer (delegated)",
+      "rights_id": "01a0ca5a-c07a-7c5f-adc9-f87a3a4fa0fd",
+      "source_id": "usaspending",
+      "spdx": "CC0-1.0"
+    }
+  ],
+  "schema_version": "p27.2/1.0.0",
   "sensitivity_by_tier": [
     {
-      "count": 1059799,
+      "count": 1109799,
       "name": "0"
     }
   ],
   "spine_label": "postgresql://sig@127.0.0.1:5433/sig",
   "totals": {
-    "claims": 1059533,
-    "current_claims": 1059533,
-    "entities": 92206,
-    "permitted_sources": 210,
-    "sources": 210
+    "claims": 1109799,
+    "current_claims": 1109799,
+    "entities": 99307,
+    "permitted_sources": 211,
+    "sources": 212
   },
   "undetermined": {
-    "denominator": 1059533,
+    "denominator": 1109799,
     "label": "claims (rights UNDETERMINED)",
     "numerator": 256438,
-    "pct": 24.2
+    "pct": 23.11
   },
   "undetermined_by_connector": [
     {
@@ -533,5 +947,11 @@
       "count": 3,
       "name": "pathways"
     }
-  ]
+  ],
+  "undetermined_effective": {
+    "denominator": 1109799,
+    "label": "claims (effective UNDETERMINED)",
+    "numerator": 0,
+    "pct": 0.0
+  }
 }
