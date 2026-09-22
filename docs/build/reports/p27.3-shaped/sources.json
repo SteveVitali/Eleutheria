@@ -1,0 +1,3388 @@
+{
+  "freshness_rows": [
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_achd_id",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_act_au",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_aikner",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_amber_kh",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_apram_pt",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_arc_1975641302",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_arlington_va",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_austin_tx",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_avctransport",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_azdot_az",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_baltimore_atves_md",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_baltimore_md",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_bangla_bd",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_bargabos",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_batonrouge_la",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_bedford_gb",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_bettendorf_ia",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_bouhan_jp",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_brea_ca",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_caledon_on",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_calgary_ab",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_caloes_ca",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_camberwell_au",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_camilo_schools",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_carver_mn",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_cclemire",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_chattanooga_tn",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_cheicylia",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_chicago_il",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_colgis",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_cotgeo",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_cphang",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_cwarcgis",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_dc_dot_dc",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_denver_co",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_donegal_ie",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_dover_gb",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_dubuque_ia",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_duganmeyer",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_durham_gb",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_eastdun_gb",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_ebrgis_la",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_esri_dash",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_esriukpolice_gb",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_essex_gb",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_fifia",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_firemedic",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_fl511_fl",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_forwardalliance",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_freese_dm",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_friendswood_tx",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_gainesville_fl",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_gedling_gb",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_gistel_be",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_glasgow_gb",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_gmh_emc_ga",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_goldcoast_au",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_guildford_gb",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_gvanmaren",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_helberg",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_honolulu_hi",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_indonesia_id",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_infocemosa",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_infraestructura",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_ira",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_jcfd3_or",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_jelenic",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_jmh_us",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_kcmo_mo",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_keizer_or",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_keshan",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_kirkland_wa",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_kosman",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_kunying",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_lambeth_gb",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_langan",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_lawrence_ks",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_lenhardt",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_leon_fl",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_lexington_ky",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_lisburn_gb",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_lojic_ky",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_lpd_flock",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_manhattan_ks",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_mark43",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_massdot_ma",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_mbrc_au",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_mctx_tx",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_md_opendata",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_mhebert",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_mndot_mn",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_monmap_mn",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_mueller_de",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_nashville_tn",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_nitro",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_nola_la",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_nola_safety_la",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_northayrshire_gb",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_nottingham_gb",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_nurnazihah",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_nyc_jgrayson_ny",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_nyc_weltia_ny",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_nzta_nz",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_oem_camera",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_olsson",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_oosgis_nl",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_osm_surveillance",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_ottawa_on",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_palmdesert_ca",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_peel_on",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_penndot_pa",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_pgcounty_md",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_pipeline_sec",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_plymouth_gb",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_polyu_hk",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_portland_or",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_puertogaitan_co",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_raleigh_nc",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_ramallah_ps",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_redmond_wa",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_riyadh_sa",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_rjcoleman",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_rochester_ny",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_ruslan",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_salisbury_nc",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_sarasota_fl",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_schellinger",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_seattle_wa",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_sensenet",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_sfoss",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_sheffield_gb",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_siouxfalls_sd",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_smart_sky",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_squan",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_stalbert_ab",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_stanford_us",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_surrey_bc",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_sweeney",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_tblose",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_thailand_th",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_toronto_on",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_townofws",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_trafficops_ca",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_trpa_us",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_tulane_la",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_txdot_rep_tx",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_uchicago",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_ucsd",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_ukm_my",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_umbc_md",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_univmb_mb",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_uofmd_md",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_vancouver_bc",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_vidya",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_washington_dc",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_webappfme",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_wellington_nz",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_whatley",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_wim_camera",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_winnipeg_mb",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_yazid",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_yline",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_york_gb",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_york_on",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_yorku",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "camreg_zyinger",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "dot_511_al",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "dot_511_dc",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "dot_511_ga",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "dot_511_ia",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "dot_511_il",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "dot_511_ky",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "dot_511_la",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "dot_511_md",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "dot_511_mo",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "dot_511_or",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "dot_511_ut",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    },
+    {
+      "last_content_change": "",
+      "last_successful_run": "",
+      "source": "dot_511_wa",
+      "stale_entity_count": 0,
+      "status": "degraded",
+      "volatility_class": "unknown"
+    }
+  ],
+  "sources": [
+    {
+      "claims": 696,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_achd_id",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 5374,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_act_au",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 201,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_aikner",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 216,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_amber_kh",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 726,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_apram_pt",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 177,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_arc_1975641302",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 1149,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_arlington_va",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 4020,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_austin_tx",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 27,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_avctransport",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 1578,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_azdot_az",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 1344,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_baltimore_atves_md",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 2583,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_baltimore_md",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 1344,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_bangla_bd",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 27,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_bargabos",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 354,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_batonrouge_la",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 690,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_bedford_gb",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 585,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_bettendorf_ia",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 174,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_bouhan_jp",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 1077,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_brea_ca",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 126,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_caledon_on",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 1096,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_calgary_ab",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 17368,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_caloes_ca",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 201,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_camberwell_au",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 94,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_camilo_schools",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 3660,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_carver_mn",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 6,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_cclemire",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 498,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_chattanooga_tn",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 279,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_cheicylia",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 2036,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_chicago_il",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 60,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_colgis",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 1008,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_cotgeo",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 15,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_cphang",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 28,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_cwarcgis",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 1925,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_dc_dot_dc",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 56,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_denver_co",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 492,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_donegal_ie",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 248,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_dover_gb",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 12,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_dubuque_ia",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 162,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_duganmeyer",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 99,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_durham_gb",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 148,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_eastdun_gb",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 354,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_ebrgis_la",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 1752,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_esri_dash",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 36,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_esriukpolice_gb",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 405,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_essex_gb",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 57,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_fifia",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 1869,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_firemedic",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 37005,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_fl511_fl",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 5487,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_forwardalliance",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 2136,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_freese_dm",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 116,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_friendswood_tx",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 468,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_gainesville_fl",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 276,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_gedling_gb",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 57,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_gistel_be",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 1764,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_glasgow_gb",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 9,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_gmh_emc_ga",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 1872,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_goldcoast_au",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 461,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_guildford_gb",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 36,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_gvanmaren",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 249,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_helberg",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 1008,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_honolulu_hi",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 852,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_indonesia_id",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 1304,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_infocemosa",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 639,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_infraestructura",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 9,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_ira",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 3,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_jcfd3_or",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 1459,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_jelenic",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 100,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_jmh_us",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 944,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_kcmo_mo",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 100,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_keizer_or",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 596,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_keshan",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 228,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_kirkland_wa",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 36,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_kosman",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 15,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_kunying",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 140,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_lambeth_gb",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 3,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_langan",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 207,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_lawrence_ks",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 225,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_lenhardt",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 750,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_leon_fl",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 432,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_lexington_ky",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 72,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_lisburn_gb",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 904,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_lojic_ky",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 90,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_lpd_flock",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 84,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_manhattan_ks",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 2156,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_mark43",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 3039,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_massdot_ma",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 2565,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_mbrc_au",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 423,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_mctx_tx",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 3608,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_md_opendata",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 48,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_mhebert",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 316,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_mndot_mn",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 42,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_monmap_mn",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 96,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_mueller_de",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 72,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_nashville_tn",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 28,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_nitro",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 412,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_nola_la",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 417,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_nola_safety_la",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 432,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_northayrshire_gb",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 2160,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_nottingham_gb",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 2034,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_nurnazihah",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 772,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_nyc_jgrayson_ny",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 860,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_nyc_weltia_ny",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 3132,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_nzta_nz",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 32,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_oem_camera",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 2028,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_olsson",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 162,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_oosgis_nl",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 42774,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_osm_surveillance",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 524,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_ottawa_on",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 200,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_palmdesert_ca",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 111,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_peel_on",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 3747,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_penndot_pa",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 400,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_pgcounty_md",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 9,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_pipeline_sec",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 129,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_plymouth_gb",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 66,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_polyu_hk",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 615,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_portland_or",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 200,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_puertogaitan_co",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 117,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_raleigh_nc",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 18,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_ramallah_ps",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 364,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_redmond_wa",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 3384,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_riyadh_sa",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 120,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_rjcoleman",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 708,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_rochester_ny",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 28,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_ruslan",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 20,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_salisbury_nc",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 904,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_sarasota_fl",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 1128,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_schellinger",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 2982,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_seattle_wa",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 15,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_sensenet",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 20920,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_sfoss",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 848,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_sheffield_gb",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 702,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_siouxfalls_sd",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 3,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_smart_sky",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 20,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_squan",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 320,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_stalbert_ab",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 1856,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_stanford_us",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 2800,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_surrey_bc",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 256,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_sweeney",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 200,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_tblose",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 8388,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_thailand_th",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 966,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_toronto_on",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 48,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_townofws",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 4882,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_trafficops_ca",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 45,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_trpa_us",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 501,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_tulane_la",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 8475,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_txdot_rep_tx",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 3191,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_uchicago",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 7830,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_ucsd",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 1158,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_ukm_my",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 36,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_umbc_md",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 1905,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_univmb_mb",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 4,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_uofmd_md",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 872,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_vancouver_bc",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 6,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_vidya",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 4240,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_washington_dc",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 56,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_webappfme",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 1108,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_wellington_nz",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 103,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_whatley",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 102,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_wim_camera",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 644,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_winnipeg_mb",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 304,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_yazid",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 15,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_yline",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 839,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_york_gb",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 1741,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_york_on",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 684,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_yorku",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 36,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "camreg_zyinger",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 2224,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "dot_511_al",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 1880,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "dot_511_dc",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 28184,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "dot_511_ga",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 10008,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "dot_511_ia",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 23496,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "dot_511_il",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 2032,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "dot_511_ky",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 1740,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "dot_511_la",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 2208,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "dot_511_md",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 6968,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "dot_511_mo",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 9464,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "dot_511_or",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 288,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "dot_511_ut",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    },
+    {
+      "claims": 14640,
+      "last_content_change": null,
+      "last_successful_run": null,
+      "source_id": "dot_511_wa",
+      "stale_count": 0,
+      "staleness_not_evaluable": 0,
+      "status": "degraded",
+      "tracked_count": 0,
+      "volatility_class": "unknown"
+    }
+  ]
+}
