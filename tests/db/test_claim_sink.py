@@ -119,3 +119,216 @@ def test_claim_sink_module_is_append_only() -> None:
     lowered = source.lower()
     assert "update " not in lowered, "claim_sink.py must not issue UPDATE (append-only)"
     assert "delete " not in lowered, "claim_sink.py must not issue DELETE (append-only)"
+
+
+# --- P26.18 / SOURCES.17: chunked commit for very-large sources ----------------
+#
+# `assert_claims` commits in bounded chunks so a source too large for one
+# transaction (OSM's ~1.37M-claim mirror) lands progressively instead of rolling
+# back whole. The invariants these tests pin: counters stay exact across chunk
+# boundaries; a full re-run is +0; an interrupted run (chunks 1..k committed,
+# then a crash) resumes to the SAME final count as an uninterrupted run; and no
+# UPDATE/DELETE is issued at runtime (append-only never bent by chunking).
+
+
+def _synthetic_claims(n: int, *, offset: int = 0) -> list[dict[str, object]]:
+    """`n` distinct connector claims (distinct subject + value → distinct digest)."""
+    return [
+        {
+            "subject_id": f"chunk-subj-{i}",
+            "predicate_id": "sig.test.chunk_flag",
+            "value": f"v-{i}",
+            "source_id": "chunk_test_source",
+            "license": "CC0-1.0",
+            "record_kind": "claim",
+        }
+        for i in range(offset, offset + n)
+    ]
+
+
+def _claim_count(dsn: str) -> int:
+    with psycopg.connect(dsn, autocommit=True) as conn:
+        return int(
+            conn.execute("SELECT count(*) FROM claim WHERE content_digest IS NOT NULL").fetchone()[
+                0
+            ]
+        )
+
+
+def test_commit_chunk_size_rejects_non_positive() -> None:
+    """The chunk size must span at least one claim (no Docker needed)."""
+    from db.claim_sink import PgClaimSink
+
+    for bad in (0, -1):
+        with pytest.raises(ValueError, match="commit_chunk_size"):
+            # Validation happens before the connection is touched, so a sentinel
+            # conn is fine — this stays a pure unit test.
+            PgClaimSink(object(), commit_chunk_size=bad)  # type: ignore[arg-type]
+
+
+def test_chunked_commit_counters_exact_and_idempotent(clean_dsn: str) -> None:
+    """Chunked and single-chunk runs agree on every counter and land the same rows."""
+    from db.claim_sink import PgClaimSink
+
+    claims = _synthetic_claims(25)
+
+    # Chunked run: chunk_size 10 over 25 claims → 3 transactions (10 + 10 + 5).
+    with psycopg.connect(clean_dsn, autocommit=True) as conn:
+        sink = PgClaimSink(
+            conn, connector_name="chunk", code_commit="p26.18-test", commit_chunk_size=10
+        )
+        sink.assert_claims(claims)
+    assert sink.report.considered == 25
+    assert sink.report.inserted == 25
+    assert sink.report.duplicates == 0
+    assert sink.report.non_claim_records == 0
+    assert _claim_count(clean_dsn) == 25
+
+    # Identical re-run (still chunked): +0 — every claim dedupes on its digest
+    # ACROSS the chunk boundaries, counters stay exact.
+    with psycopg.connect(clean_dsn, autocommit=True) as conn:
+        replay = PgClaimSink(
+            conn, connector_name="chunk", code_commit="p26.18-test", commit_chunk_size=10
+        )
+        replay.assert_claims(claims)
+    assert replay.report.considered == 25
+    assert replay.report.inserted == 0
+    assert replay.report.duplicates == 25
+    assert _claim_count(clean_dsn) == 25
+
+
+def test_chunked_matches_single_chunk_row_for_row(clean_dsn: str) -> None:
+    """A tiny chunk size lands byte-for-byte the same claim set as one big chunk."""
+    from db.claim_sink import PgClaimSink
+
+    claims = _synthetic_claims(30, offset=100)
+
+    # Single chunk (chunk_size >= N) — the pre-P26.18 all-in-one behaviour.
+    with psycopg.connect(clean_dsn, autocommit=True) as conn:
+        single = PgClaimSink(
+            conn, connector_name="chunk", code_commit="p26.18-single", commit_chunk_size=10_000
+        )
+        single.assert_claims(claims)
+        single_digests = {
+            r[0]
+            for r in conn.execute(
+                "SELECT content_digest FROM claim WHERE content_digest IS NOT NULL"
+            ).fetchall()
+        }
+    truncate = "TRUNCATE " + ", ".join(_SPINE_TABLES) + " CASCADE"
+    with psycopg.connect(clean_dsn, autocommit=True) as conn:
+        conn.execute(truncate)
+
+    # Small chunks (chunk_size 3 → many transactions).
+    with psycopg.connect(clean_dsn, autocommit=True) as conn:
+        chunked = PgClaimSink(
+            conn, connector_name="chunk", code_commit="p26.18-single", commit_chunk_size=3
+        )
+        chunked.assert_claims(claims)
+        chunked_digests = {
+            r[0]
+            for r in conn.execute(
+                "SELECT content_digest FROM claim WHERE content_digest IS NOT NULL"
+            ).fetchall()
+        }
+    assert single.report.inserted == chunked.report.inserted == 30
+    assert single_digests == chunked_digests, "chunking must not change which claims land"
+
+
+def test_interrupted_run_resumes_to_the_uninterrupted_count(clean_dsn: str) -> None:
+    """A crash after k committed chunks leaves them landed; a re-walk tops up to N."""
+    from db.claim_sink import PgClaimSink
+
+    claims = _synthetic_claims(25, offset=500)
+
+    # 1) Uninterrupted baseline on a clean DB → final count N.
+    with psycopg.connect(clean_dsn, autocommit=True) as conn:
+        baseline = PgClaimSink(
+            conn, connector_name="chunk", code_commit="p26.18-resume", commit_chunk_size=10
+        )
+        baseline.assert_claims(claims)
+    uninterrupted = _claim_count(clean_dsn)
+    assert uninterrupted == 25
+
+    # Reset the spine and replay the crash-then-resume sequence.
+    truncate = "TRUNCATE " + ", ".join(_SPINE_TABLES) + " CASCADE"
+    with psycopg.connect(clean_dsn, autocommit=True) as conn:
+        conn.execute(truncate)
+
+    # 2) Interrupted run: raise partway through the SECOND chunk. Chunk 1 (10
+    #    claims) has already committed; chunk 2's open transaction rolls back.
+    class _SimulatedCrash(RuntimeError):
+        pass
+
+    with psycopg.connect(clean_dsn, autocommit=True) as conn:
+        crashing = PgClaimSink(
+            conn, connector_name="chunk", code_commit="p26.18-resume", commit_chunk_size=10
+        )
+        original_insert = crashing._insert_claim
+        done = {"n": 0}
+
+        def _insert_then_crash(claim: object) -> None:
+            if done["n"] >= 15:  # 10 (chunk 1) + 5 into chunk 2, then crash
+                raise _SimulatedCrash("task deadline (simulated)")
+            done["n"] += 1
+            original_insert(claim)  # type: ignore[arg-type]
+
+        crashing._insert_claim = _insert_then_crash  # type: ignore[assignment]
+        with pytest.raises(_SimulatedCrash):
+            crashing.assert_claims(claims)
+
+    # Only the first, fully-committed chunk survived the crash.
+    partial = _claim_count(clean_dsn)
+    assert partial == 10, "committed chunks persist; the rolled-back chunk left nothing"
+
+    # 3) Resume with a fresh sink over the SAME claims → reaches the exact
+    #    uninterrupted count (already-committed chunk dedupes to +0).
+    with psycopg.connect(clean_dsn, autocommit=True) as conn:
+        resumed = PgClaimSink(
+            conn, connector_name="chunk", code_commit="p26.18-resume", commit_chunk_size=10
+        )
+        resumed.assert_claims(claims)
+    assert resumed.report.inserted == 15
+    assert resumed.report.duplicates == 10
+    assert _claim_count(clean_dsn) == uninterrupted == 25
+
+
+def test_chunked_commit_issues_no_update_or_delete(clean_dsn: str) -> None:
+    """At RUNTIME every statement is INSERT/SELECT and each chunk is its own tx."""
+    from db.claim_sink import PgClaimSink
+
+    class _RecordingConn:
+        """Delegates to a real connection while recording SQL + transaction opens."""
+
+        def __init__(self, real: psycopg.Connection[object]) -> None:
+            self._real = real
+            self.statements: list[str] = []
+            self.transactions = 0
+
+        def execute(self, sql: str, params: object = None):  # type: ignore[no-untyped-def]
+            self.statements.append(sql)
+            return self._real.execute(sql) if params is None else self._real.execute(sql, params)
+
+        def transaction(self):  # type: ignore[no-untyped-def]
+            self.transactions += 1
+            return self._real.transaction()
+
+    claims = _synthetic_claims(12, offset=900)
+    with psycopg.connect(clean_dsn, autocommit=True) as real:
+        rec = _RecordingConn(real)
+        sink = PgClaimSink(
+            rec,  # type: ignore[arg-type]
+            connector_name="chunk",
+            code_commit="p26.18-noupdate",
+            commit_chunk_size=5,
+        )
+        sink.assert_claims(claims)
+
+    assert sink.report.inserted == 12
+    # 12 claims / chunk 5 → 3 transactions (5 + 5 + 2): chunking really happened.
+    assert rec.transactions == 3
+    for stmt in rec.statements:
+        head = stmt.lstrip().upper()
+        assert head.startswith(("INSERT", "SELECT")), f"unexpected statement: {stmt!r}"
+        assert " UPDATE " not in f" {head} " and not head.startswith("UPDATE")
+        assert " DELETE " not in f" {head} " and not head.startswith("DELETE")
