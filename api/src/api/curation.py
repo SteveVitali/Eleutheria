@@ -50,6 +50,7 @@ from resolution.review_queue import ReviewItem, ReviewQueue
 from starlette.responses import JSONResponse, RedirectResponse, Response
 from starlette.routing import Route
 from tasks.contributor import Contributor, ContributorTier, WriteScope, may_write
+from tasks.onboarding import OnboardingTimingAggregate
 from tasks.poisoning import (
     AnomalyDetector,
     ClaimSource,
@@ -462,6 +463,24 @@ def build_curation_router() -> APIRouter:
         evidence_url = (params.get("evidence_url") or params.get("evidence_ref") or "").strip()
         claim = (params.get("claim") or "").strip()
         as_of = (params.get("as_of") or "").strip()
+        # Parse the opt-in, aggregate-only onboarding timing BEFORE any append, so a
+        # malformed value is rejected without leaving a submission row (SIG-CONTRIB-003).
+        opted_in = (params.get("timing_opt_in") or "").strip().lower() in {
+            "1",
+            "true",
+            "on",
+            "yes",
+        }
+        elapsed_minutes: float | None = None
+        if opted_in and (raw := (params.get("elapsed_minutes") or "").strip()):
+            try:
+                elapsed_minutes = float(raw)
+            except ValueError as exc:
+                raise HTTPException(
+                    status_code=400, detail="elapsed_minutes must be a number"
+                ) from exc
+            if elapsed_minutes < 0:
+                raise HTTPException(status_code=400, detail="elapsed_minutes must be >= 0")
         if not evidence_url:
             # The L0 form refuses without evidence — a contribution is a piece of
             # evidence (SIG-CONTRIB-002); no evidence, no submission.
@@ -517,7 +536,28 @@ def build_curation_router() -> APIRouter:
                 "visual_weight": visual_weight(ClaimSource.UNVERIFIED_COMMUNITY),
             },
         )
+        # Opt-in, AGGREGATE-ONLY onboarding timing (SIG-CONTRIB-003, Part VIII §0.7).
+        # The measurement (validated above) is folded into the aggregate histogram
+        # ONLY — it is NEVER written to the append-only submission row above (that
+        # would be a per-user timing row). No identity, no handle, no per-user row.
+        if elapsed_minutes is not None:
+            request.app.state.onboarding_timing.record(elapsed_minutes)
         return _ok(request, {"recorded": record.to_row()}, redirect="/curate/submit/")
+
+    # --- onboarding timing (opt-in, AGGREGATE-ONLY: count + median, no per-user rows)
+    @router.get("/onboarding-timing")
+    def onboarding_timing(
+        request: Request,
+        contributor: Contributor = Depends(authenticated_contributor),
+    ) -> Response:
+        """The opt-in onboarding-timing **aggregate** (SIG-CONTRIB-003, Part VIII §0.7).
+
+        Returns only a count + median (the two numbers the ≤10-minute study gate
+        re-checks). There is deliberately no endpoint that returns any per-user
+        timing — none is stored.
+        """
+        aggregate: OnboardingTimingAggregate = request.app.state.onboarding_timing
+        return JSONResponse(aggregate.to_record())
 
     # --- revert (a new assertion, never a deletion; requires a reason) -------
     @router.post("/revert")
@@ -629,6 +669,9 @@ def create_curation_app(
     if is_enabled:
         app.state.review_queue = review_queue if review_queue is not None else _seed_demo_queue()
         app.state.curation_log = curation_log if curation_log is not None else CurationLog()
+        # Opt-in, AGGREGATE-ONLY onboarding timing (SIG-CONTRIB-003, Part VIII §0.7):
+        # a count + median only — never a per-user row (see the /submission hook).
+        app.state.onboarding_timing = OnboardingTimingAggregate()
         app.include_router(build_curation_router())
 
     # Defence in depth: the curation surface still may never mount a Part VIII

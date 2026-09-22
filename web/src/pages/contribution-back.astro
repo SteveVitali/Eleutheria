@@ -1,0 +1,70 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The §7 contribution-back leverage metric page (P21.7, SIG-CONTRIB-016e/020). Static,
+// zero-JS. It publishes the count of SIG-originated operator-attribution suggestions
+// ACCEPTED UPSTREAM, read from the public OSM changeset feed via the declared hashtag.
+// The count is deliberately auditable: any third party can reconstruct it by filtering
+// OSM's public changeset feed on the hashtag. Metrics are task OUTCOMES, never
+// contributor rankings (SIG-CONTRIB-016g). It reads real data through data.ts `export`
+// mode; the committed fixture backs the default build (SIG-DATA-*, ADR-066).
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getLeverageMetric, dataSource } from "../lib/data";
+
+const metric = getLeverageMetric();
+const source = dataSource();
+const inFlight =
+  metric.attributed_changeset_ids.length - metric.accepted_operator_attributions;
+---
+
+<BaseLayout title="Contribution back" path="/contribution-back/">
+  <p>
+    SIG gives its operator attributions <strong>back to the commons</strong>. It performs
+    <strong>no automated OSM edits</strong>: SIG proposes a specific tag change as a
+    MapRoulette cooperative task, and a human mapper reviews and applies it
+    <strong>in their own account</strong> (SIG-CONTRIB-014/015). The single §7 metric
+    below is the count of those suggestions <strong>accepted upstream</strong>.
+  </p>
+
+  <section class="sig-leverage" data-testid="leverage-metric" data-source={source}>
+    <h2>Operator-attribution suggestions accepted upstream (§7)</h2>
+    <p class="sig-leverage__value">
+      <strong data-testid="leverage-accepted">{metric.accepted_operator_attributions}</strong>
+      accepted upstream
+      <span data-testid="leverage-denominator">
+        of {metric.attributed_changeset_ids.length} attributed changesets
+        {inFlight > 0 ? `(${inFlight} still in flight)` : ""}
+      </span>
+    </p>
+    <p class="sig-leverage__hashtag">
+      Measured from OSM's <strong>public</strong> changeset feed by filtering on the
+      declared changeset hashtag
+      <code data-testid="leverage-hashtag">{metric.hashtag}</code>. Because the hashtag is
+      public, <strong>anyone</strong> — including SIG's critics — can reconstruct this
+      count independently, which is what makes it credible (SIG-CONTRIB-016e).
+    </p>
+
+    <h3>Attributed changesets</h3>
+    <p>
+      Each contribution is attributed to its <strong>public changeset id only</strong> —
+      SIG stores <strong>no OSM usernames</strong> or any other contributor data
+      (Part VIII §0.7). Every attribution cites its changeset (defining standard §3.1).
+    </p>
+    <ul class="sig-leverage__changesets" data-testid="leverage-changesets">
+      {metric.attributed_changeset_ids.map((id) => (
+        <li data-testid="leverage-changeset" data-changeset-id={id}>
+          <a href={`https://www.openstreetmap.org/changeset/${id}`}>changeset {id}</a>
+        </li>
+      ))}
+    </ul>
+
+    <p class="sig-leverage__outcomes" data-testid="leverage-outcomes-note">
+      This is a <strong>task outcome</strong>, not a contributor ranking: SIG keeps
+      <strong>no leaderboards</strong> and no per-mapper rankings (SIG-CONTRIB-016g,
+      §33.6). The activity is disclosed on SIG's
+      <a href="/methodology/">Organised Editing activity page</a>.
+    </p>
+  </section>
+</BaseLayout>

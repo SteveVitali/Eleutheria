@@ -7,7 +7,7 @@ BL-005,Persist contributor system to PG (tiers/submissions/revert/anomaly),defer
 BL-006,Persist identity registries and mint surrogate entity_id end-to-end into PG,deferred-feature,RISK-P3-03,SIG-IDENT-020/025,resolution,,P21.2,,M,open
 BL-007,Wire web surfaces to the live /v1 API/exports (replace committed TS fixtures),deferred-feature,RISK-P15-07 RISK-P15-08 RISK-P15-13 RISK-P15-14 RISK-P15-20 RISK-P15-25 RISK-P15-26 RISK-P15-31 RISK-P15-32 LD-V08 RISK-P2-14 RISK-P9-08 RISK-P13-08 RISK-P13-09 RISK-P13-13 ADR-049 ADR-050 ADR-052 ADR-053 ADR-032 ADR-046 ADR-066,SIG-PUB-007 SIG-UI-010,web,OKC-live,P21.4,,L,closed
 BL-008,Project bulk exports / licence compartments from a live ReadStore,deferred-feature,RISK-P14-08 RISK-P14-18,SIG-INGEST-016 SIG-LIC-010,exports,OKC-live,P21.4,,M,open
-BL-009,Curation/review web UI shipped (P21.6/ADR-068); asset-promotion service still unwired → P21.7,deferred-feature,LD-F05 LD-H04 LD-D04 ADR-030 ADR-068,SIG-PUB-012,web,,P21.6,,M,closed
+BL-009,Curation/review web UI shipped (P21.6/ADR-068); asset-promotion gate SPLIT OUT — separate follow-up (NOT P21.7 contribution-back; still unwired),deferred-feature,LD-F05 LD-H04 LD-D04 ADR-030 ADR-068,SIG-PUB-012,web,,P21.6,,M,closed
 BL-010,Interactive MapLibre map vs zero-JS static PMTiles (spec amendment A1),docs-drift,ADR-051 ADR-018 LD-F09 LD-D11 RISK-P15-21,SIG-UI-038,web,,P20.2,,M,open
 BL-011,ADR Appendix-F <-> docs/adr numbering reconciliation,docs-drift,LD-X04 LD-D03,,docs,,P20.2,,S,open
 BL-012,"Absence-kind not_researched spec wording (SIG-RECON, §32.2)",docs-drift,LD-F14 LD-D08,,docs,,P20.2,,S,open
@@ -36,10 +36,10 @@ BL-034,Legal home + counsel launch prerequisites,rights/legal,LD-P02,,docs,OKC-p
 BL-035,Counsel disposition: ODbL 4.4(b) derivative / know-your-rights guidance,rights/legal,RISK-P16-16 RISK-P0-11,,docs,OKC-publish,human-gate:HG-02,HG-02,M,open
 BL-036,"Operating governance: board, Code of Conduct, funding policy",operational-prereq,RISK-P0-10,,docs,OKC-publish,human-gate:HG-11,HG-11,M,open
 BL-037,"Infra accounts (Zenodo concept DOI, object store, Docker CI runner)",external-dep,LD-P06,,ops,,human-gate:HG-07,HG-07,S,open
-BL-038,OSM/MapRoulette accounts + Organised-Editing activity registration,external-dep,RISK-P16-13 LD-P04,,tasks,,human-gate:HG-08,HG-08,S,open
-BL-039,Live MapRoulette client + OSM changeset feed + published leverage metric,deferred-feature,RISK-P16-14 RISK-P16-15 LD-F11 ADR-055 RISK-P18-14 LD-V09,,tasks,,P21.7,HG-08,L,open
-BL-040,Moderated usability study (>=5 ontology-naive contributors),operational-prereq,RISK-P16-06 LD-P03,,docs,,P21.7,HG-10,M,open
-BL-041,Contributor onboarding: jurisdiction-aware know-your-rights shown,deferred-feature,RISK-P16-08,,web,,P21.7,,S,open
+BL-038,OSM/MapRoulette accounts + Organised-Editing activity registration (client+gate landed P21.7/ADR-069; registration itself gate-pending HG-08),external-dep,RISK-P16-13 LD-P04 ADR-069,,tasks,,human-gate:HG-08,HG-08,S,open
+BL-039,MapRoulette client + OSM changeset feed + §7 leverage metric page LANDED (P21.7/ADR-069; dry-run+fixtures tested); live push/pull gate-pending HG-08,deferred-feature,RISK-P16-14 RISK-P16-15 LD-F11 ADR-055 ADR-069 RISK-P18-14 LD-V09,,tasks,,P21.7,HG-08,L,open
+BL-040,Moderated usability study (>=5 ontology-naive contributors); protocol + opt-in aggregate-only instrumentation LANDED (P21.7/ADR-069); study gate-pending HG-10,operational-prereq,RISK-P16-06 LD-P03 ADR-069,,docs,,P21.7,HG-10,M,open
+BL-041,Contributor onboarding: jurisdiction-aware know-your-rights shown (out of scope P21.7 — separate follow-up),deferred-feature,RISK-P16-08,,web,,P21.x,,S,open
 BL-042,Data Driven + coarse-international + France/Belgium live connectors,deferred-feature,RISK-P18-04 RISK-P18-05 RISK-P18-06 RISK-P18-13 ADR-056 ADR-057,SIG-INGEST-043 SIG-INGEST-049,connectors,,P21.8,HG-03,L,open
 BL-043,Stage-5 pathway connectors persisted to the claim spine,deferred-feature,RISK-P17-02 RISK-P17-03 RISK-P17-08 RISK-P17-09 RISK-P17-13 RISK-P17-14 LD-H12 LD-V10,SIG-INGEST,connectors,,P21.9,HG-03,L,open
 BL-044,"Data completeness as connectors land (crosswalks, vocab, gold sets, category maps)",deferred-feature,RISK-P1-02 RISK-P3-02 RISK-P3-07 RISK-P3-09 RISK-P4-09 RISK-P5-05 RISK-P5-11,,connectors,,P21.3,,M,open

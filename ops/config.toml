@@ -27,3 +27,19 @@ alarm_ratio = 0.8                 # warn at 80% of budget, alarm at 100%
 # cached effectively forever (see exports.push.IMMUTABLE_CACHE_CONTROL).
 provider = "cloudflare"           # R2 + Cloudflare CDN = zero egress to the edge
 cache_control = "public, max-age=31536000, immutable"
+
+[tasks.contribution]
+# The contribution-back live gate (P21.7, §35.2, SIG-CONTRIB-016d, RISK-P16-14).
+# `registered` records whether SIG's OSM Organised Editing activity is genuinely
+# registered in the activities list — an off-repo, human act (HG-08). It STAYS
+# false until the operator files the registration; while false,
+# `sig-tasks maproulette push` REFUSES (exit 3) with the OE-registration reason,
+# so a challenge can never be pushed before the disclosure is live.
+registered = false
+# SIG_OSM_OE_PAGE — the OSM Organised Editing wiki page URL once registered
+# (placeholder until HG-08 provides it). Read for the record; never dereferenced.
+oe_page = ""
+# The MapRoulette account/challenge id recorded after a real push (HG-08). Empty
+# until a live push happens; the runbook (docs/build/CONTRIBUTION_BACK_LIVE.md)
+# records what ran live.
+maproulette_challenge = ""

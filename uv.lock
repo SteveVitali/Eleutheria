@@ -2529,6 +2529,7 @@ dependencies = [
     { name = "rdflib" },
     { name = "sig-policy" },
     { name = "sig-resolution" },
+    { name = "sig-tasks" },
 ]
 
 [package.metadata]
@@ -2539,6 +2540,7 @@ requires-dist = [
     { name = "rdflib", specifier = ">=7.0" },
     { name = "sig-policy", editable = "policy" },
     { name = "sig-resolution", editable = "resolution" },
+    { name = "sig-tasks", editable = "tasks" },
 ]
 
 [[package]]
