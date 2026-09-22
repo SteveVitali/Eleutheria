@@ -1,6 +1,6 @@
 [project]
 name = "sig-evidence"
-version = "0.0.0"
+version = "0.1.0"
 description = "SIG evidence package: the OCFL 1.1 write-once evidence store, content addressing, capture pipeline, and storage tiers (§17)."
 requires-python = ">=3.11"
 # The evidence store is content-addressed (SIG-EVID-003: SHA-2 interop digest
