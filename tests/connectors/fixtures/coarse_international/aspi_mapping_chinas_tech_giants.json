@@ -1,0 +1,20 @@
+{
+  "dataset": "aspi_mapping_chinas_tech_giants",
+  "attribution": "Australian Strategic Policy Institute, Mapping China's Tech Giants",
+  "rows": [
+    {
+      "subject_id": "sig:org:hikvision",
+      "predicate": "operates_in_country",
+      "value": "RS",
+      "raw_value": "Hikvision — Serbia",
+      "attribution": "ASPI"
+    },
+    {
+      "subject_id": "sig:org:huawei",
+      "predicate": "operates_in_country",
+      "value": "ZA",
+      "raw_value": "Huawei — South Africa",
+      "attribution": "ASPI"
+    }
+  ]
+}

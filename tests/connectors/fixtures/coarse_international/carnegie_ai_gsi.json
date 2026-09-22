@@ -1,0 +1,20 @@
+{
+  "dataset": "carnegie_ai_gsi",
+  "attribution": "Carnegie Endowment for International Peace, AI Global Surveillance Index",
+  "rows": [
+    {
+      "subject_id": "jurisdiction:iso.3166-1:CN",
+      "predicate": "uses_ai_surveillance",
+      "value": true,
+      "raw_value": "China — AI surveillance: yes",
+      "attribution": "Carnegie Endowment"
+    },
+    {
+      "subject_id": "jurisdiction:iso.3166-1:US",
+      "predicate": "uses_ai_surveillance",
+      "value": true,
+      "raw_value": "United States — AI surveillance: yes",
+      "attribution": "Carnegie Endowment"
+    }
+  ]
+}
