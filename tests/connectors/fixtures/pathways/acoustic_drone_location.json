@@ -1,0 +1,55 @@
+{
+  "pathway_family": "acoustic_drone_location",
+  "documents": [
+    {
+      "id": "gunshot-detection-deployment-report",
+      "conformance_pathway": "gunshot_detection",
+      "genre": "deployment_report",
+      "kind": "assertions",
+      "source_url": "https://www.documentcloud.org/documents/city-pd-shotspotter-annual-report",
+      "retrieved_date": "2026-08-20",
+      "subject_id": "deployment:gunshot-city-pd",
+      "subject_kind": "deployment",
+      "text": "City PD Annual Surveillance Report. The rooftop acoustic gunshot-detection sensor is currently operating and has been in operation since 2022; the system is live.",
+      "assertions": [
+        {"predicate": "deployed", "value": true, "claim_type": "deployment", "technology": "gunshot-detection-fixed"},
+        {"predicate": "in_operation", "value": true, "claim_type": "deployment"},
+        {"predicate": "vendor_name", "value": "SoundThinking (ShotSpotter)", "claim_type": "vendor_product", "technology": "gunshot-detection-fixed"}
+      ]
+    },
+    {
+      "id": "drones-procurement",
+      "conformance_pathway": "drones",
+      "genre": "procurement_record",
+      "kind": "procurement_table",
+      "source_url": "https://www.documentcloud.org/documents/county-sheriff-dfr-drone-purchase-order",
+      "retrieved_date": "2026-08-20",
+      "subject_id": "deployment:uas-county-sheriff",
+      "subject_kind": "deployment",
+      "technology": "drone-as-first-responder",
+      "text": "Vendor | Product | Contract No | Amount | Date\nAxon | Drone-as-first-responder program | PO-2024-77 | 1,200,000 | 2024-05-01",
+      "columns": {
+        "Vendor": {"predicate": "vendor_name", "claim_type": "vendor_product"},
+        "Product": {"predicate": "product_name", "claim_type": "vendor_product"},
+        "Contract No": {"predicate": "contract_number", "claim_type": "procurement"},
+        "Amount": {"predicate": "contract_amount", "claim_type": "procurement", "value_kind": "amount"},
+        "Date": {"predicate": "procurement_date", "claim_type": "procurement"}
+      }
+    },
+    {
+      "id": "commercial-location-disclosure",
+      "conformance_pathway": "commercial_location",
+      "genre": "vendor_disclosure",
+      "kind": "assertions",
+      "source_url": "https://www.eff.org/deeplinks/2022/08/commercial-location-data-purchase",
+      "retrieved_date": "2026-08-20",
+      "subject_id": "deployment:location-metro-pd",
+      "subject_kind": "deployment",
+      "text": "Press release: the metro PD subscribes to a commercial location-data platform (a data broker) for standing access; the platform resells location data purchased from the adtech bidstream.",
+      "assertions": [
+        {"predicate": "vendor_name", "value": "commercial location-data platform", "claim_type": "vendor_product", "technology": "location-data-subscription"},
+        {"predicate": "subscribes_to", "value": "sys:commercial-location-platform", "claim_type": "vendor_product"}
+      ]
+    }
+  ]
+}

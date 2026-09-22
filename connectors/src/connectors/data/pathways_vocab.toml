@@ -1,0 +1,108 @@
+# SPDX-License-Identifier: Apache-2.0
+# The versioned `pathways` connector vocabulary (§46, P17.x, P21.9).
+# This table is DATA, not code (SIG-ENG-001): the claim-type set, the
+# genre -> permitted-claim-type gate (the mechanical form of the §46 procured!=
+# deployed rule), the predicate allowlist, and the P17 conformance-pathway roster
+# are data rows reviewed on their own. Changes after P21.9 are VERSIONED MIGRATIONS
+# (§20): bump `vocab_version` and add the change, never silently rewrite a row.
+#
+# NOTE ON TOML ORDERING: every top-level key MUST appear ABOVE the first [table]
+# header — otherwise TOML nests it under that table.
+
+# The connector's own vocabulary version, stamped onto every run (§20).
+vocab_version = "2026.09.01"
+
+# The four P17 claim types a Stage-5 pathway connector may emit (§46). `deployment`
+# is the epistemically-loaded one: it may be asserted ONLY from a deployment-genre
+# document (RISK-P21-16). `procured` (a procurement claim) NEVER implies `deployed`.
+claim_types = [
+  "vendor_product",
+  "procurement",
+  "policy",
+  "deployment",
+]
+
+# The genres from which a `deployment` claim may be asserted (RISK-P21-16, §46).
+# Mirrors parsing.genre.DEPLOYMENT_GENRES; a test asserts the two stay in lock-step.
+deployment_genres = ["deployment_report"]
+
+# The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
+# `pathways` connector may write ONLY these P17 pathway predicates. `deployed`
+# / `actually_provides_capability` are deployment predicates and may only ride on a
+# `deployment` claim type (guarded by the genre gate). Writing anything else is a
+# schema error — the D6 admissibility filter enforced at ingest (§10.5).
+predicate_allowlist = [
+  # vendor/product facts (any genre may name a vendor or a product)
+  "vendor_name",
+  "product_name",
+  "technology",
+  # procurement facts (procurement / agenda genres)
+  "contract_amount",
+  "contract_number",
+  "procurement_date",
+  "procured_technology",
+  # policy facts (policy genre)
+  "authorization_state",
+  "retention_period",
+  "use_restriction",
+  "legal_instrument",
+  # integration/federation structural facts
+  "ingests_feed_from",
+  "federates_search_to",
+  "pushes_alerts_to",
+  "enrolls_asset_into",
+  "resells_data_from",
+  "subscribes_to",
+  # deployment facts (deployment-report genre ONLY — RISK-P21-16)
+  "deployed",
+  "actually_provides_capability",
+  "in_operation",
+]
+
+# The deployment predicates: any claim carrying one of these MUST be a `deployment`
+# claim type, and (via the genre gate) may only come from a deployment-genre
+# document. This is the second, predicate-level guard behind procured!=deployed.
+deployment_predicates = [
+  "deployed",
+  "actually_provides_capability",
+  "in_operation",
+]
+
+# The genre -> permitted claim-types gate. A document of genre G may only produce
+# claims whose type is in the list. `deployment` appears ONLY under deployment_report.
+[genre_claim_types]
+procurement_record = ["vendor_product", "procurement"]
+agenda_minutes     = ["vendor_product", "procurement", "policy"]
+policy_document    = ["vendor_product", "policy"]
+vendor_disclosure  = ["vendor_product"]
+deployment_report  = ["vendor_product", "deployment"]
+
+# The P17 conformance-suite pathways, grouped by connector-pathway family (ADR-071:
+# one `pathways` connector, three per-family extractors). The coverage test asserts
+# EVERY pathway here has >=1 connector-produced claim (tests/connectors/
+# test_pathway_coverage.py); the roster mirrors the three tests/ontology/
+# generalization/test_stage5_*.py conformance graphs.
+[conformance_pathways]
+rtcc_federation = [
+  "private_camera_federation",
+  "rtcc_hub",
+  "broker_chain",
+]
+fr_css_forensics = [
+  "face_recognition",
+  "css_and_forensics",
+  "federal_authorization",
+]
+acoustic_drone_location = [
+  "gunshot_detection",
+  "drones",
+  "commercial_location",
+]
+
+# The registry source each pathway family draws its fixtures from (LINK posture,
+# ingestion_permitted=false until a rights packet + operator flip — HG-03). A live
+# run against any of these REFUSES at the loader gate (exit 3) this ticket.
+[sources]
+rtcc_federation = "pathways_rtcc_federation"
+fr_css_forensics = "pathways_fr_css_forensics"
+acoustic_drone_location = "pathways_acoustic_drone_location"

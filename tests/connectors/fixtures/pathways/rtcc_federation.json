@@ -1,0 +1,57 @@
+{
+  "pathway_family": "rtcc_federation",
+  "documents": [
+    {
+      "id": "private-camera-federation-disclosure",
+      "conformance_pathway": "private_camera_federation",
+      "genre": "vendor_disclosure",
+      "kind": "assertions",
+      "source_url": "https://www.eff.org/deeplinks/2022/06/fusus-real-time-crime-centers",
+      "retrieved_date": "2026-08-20",
+      "subject_id": "deployment:private-camera-federation",
+      "subject_kind": "deployment",
+      "text": "Vendor press release: the Fusus real-time crime center integration partner federated a private-camera registry so participating businesses can enroll cameras; the platform ingests a live feed and federates search to the police RTCC.",
+      "assertions": [
+        {"predicate": "vendor_name", "value": "Fusus", "claim_type": "vendor_product"},
+        {"predicate": "product_name", "value": "Community Connect camera registry", "claim_type": "vendor_product", "technology": "private-camera-registry"},
+        {"predicate": "enrolls_asset_into", "value": "sys:community-connect", "claim_type": "vendor_product"},
+        {"predicate": "ingests_feed_from", "value": "sys:community-connect", "claim_type": "vendor_product"},
+        {"predicate": "federates_search_to", "value": "sys:metro-rtcc", "claim_type": "vendor_product"}
+      ]
+    },
+    {
+      "id": "rtcc-hub-procurement",
+      "conformance_pathway": "rtcc_hub",
+      "genre": "procurement_record",
+      "kind": "procurement_table",
+      "source_url": "https://www.documentcloud.org/documents/rtcc-integration-hub-contract",
+      "retrieved_date": "2026-08-20",
+      "subject_id": "deployment:citywide-rtcc-hub",
+      "subject_kind": "deployment",
+      "technology": "rtcc-platform",
+      "text": "Vendor | Product | Contract No | Amount\nFusus | RTCC integration hub platform | C-2023-118 | $250,000",
+      "columns": {
+        "Vendor": {"predicate": "vendor_name", "claim_type": "vendor_product"},
+        "Product": {"predicate": "product_name", "claim_type": "vendor_product"},
+        "Contract No": {"predicate": "contract_number", "claim_type": "procurement"},
+        "Amount": {"predicate": "contract_amount", "claim_type": "procurement", "value_kind": "amount"}
+      }
+    },
+    {
+      "id": "broker-chain-disclosure",
+      "conformance_pathway": "broker_chain",
+      "genre": "vendor_disclosure",
+      "kind": "assertions",
+      "source_url": "https://www.eff.org/deeplinks/2023/10/data-brokers-location-chain",
+      "retrieved_date": "2026-08-20",
+      "subject_id": "chain:commercial-data-broker",
+      "subject_kind": "organization",
+      "text": "Press release: an aggregating data broker resells location data to a productizing platform, and the county sheriff subscribes to the investigative platform host.",
+      "assertions": [
+        {"predicate": "vendor_name", "value": "aggregating data broker", "claim_type": "vendor_product"},
+        {"predicate": "resells_data_from", "value": "org:ad-exchange-bidstream", "claim_type": "vendor_product"},
+        {"predicate": "subscribes_to", "value": "org:productizing-platform", "claim_type": "vendor_product"}
+      ]
+    }
+  ]
+}
