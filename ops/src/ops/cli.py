@@ -115,6 +115,43 @@ def build_parser() -> argparse.ArgumentParser:
     seed = sub.add_parser("seed", help="load a jurisdiction's slice claims into the spine")
     seed.add_argument("--jurisdiction", default="okc", help="jurisdiction slug (default okc)")
     seed.add_argument("--dsn", default=None, help="PostgreSQL DSN (default: SIG_STAGING_DSN/local)")
+
+    egress = sub.add_parser(
+        "egress-report",
+        help="check monthly egress against the ops/config.toml budget (§38.5, RISK-P21-09)",
+    )
+    egress.add_argument(
+        "--config", default=None, help="ops/config.toml path (default: ops/config.toml)"
+    )
+    egress.add_argument(
+        "--usage-gb",
+        type=float,
+        default=None,
+        help="observed monthly egress (GB); omit when no live usage API (gate pending: HG-07).",
+    )
+
+    swh = sub.add_parser(
+        "swh-save", help="build a Software Heritage save-code-now request (SIG-GOV-022/023/024)"
+    )
+    swh.add_argument("--repo-url", default=None, help="the public repository origin URL to save.")
+    swh.add_argument("--visit-type", default="git", help="SWH visit type (default: git).")
+    swh.add_argument(
+        "--now",
+        action="store_true",
+        help="actually submit to Software Heritage (default: print the request only, untriggered).",
+    )
+
+    degraded = sub.add_parser(
+        "degraded",
+        help="build the fully static site with NO API (degraded-but-alive, SIG-GOV-021)",
+    )
+    degraded.add_argument(
+        "--data-source",
+        default="fixtures",
+        choices=["fixtures", "export"],
+        help="fixtures (committed typed fixtures) or export (last committed export snapshot).",
+    )
+    degraded.add_argument("--export-dir", default=None, help="export snapshot dir (export mode).")
     return parser
 
 
@@ -337,6 +374,67 @@ def _cmd_seed(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_egress_report(args: argparse.Namespace) -> int:
+    from .egress import EgressConfig, build_report, exit_code_for
+
+    config_path = args.config or (_COMPOSE_FILE.parent / "config.toml")
+    config = EgressConfig.from_toml(config_path)
+    report = build_report(config, args.usage_gb)
+    print(json.dumps(report.as_json(), indent=2, sort_keys=True))
+    if report.gate_pending:
+        print(
+            "gate pending: HG-07 — no live object-store usage API (no credentials); "
+            f"budget threshold {config.monthly_budget_gb} GB documented, not measured "
+            "(RISK-P21-09).",
+            file=sys.stderr,
+        )
+    return exit_code_for(report)
+
+
+def _cmd_swh_save(args: argparse.Namespace) -> int:
+    from .swh import build_save_request, submit
+
+    repo_url = args.repo_url or os.environ.get("SIG_REPO_URL")
+    if not repo_url:
+        print(
+            "gate pending: no public repository URL to save (pass --repo-url or set "
+            "SIG_REPO_URL). Software Heritage save NOT triggered this run.",
+            file=sys.stderr,
+        )
+        return 4
+    token = os.environ.get("SIG_SWH_TOKEN")
+    request = build_save_request(repo_url, visit_type=args.visit_type, token=token)
+    if not args.now:
+        print(json.dumps(request.as_json(), indent=2, sort_keys=True))
+        print(
+            "(untriggered — re-run with --now to submit to Software Heritage; "
+            "no token is needed for a public repo)",
+            file=sys.stderr,
+        )
+        return 0
+    result = submit(request)
+    print(json.dumps(result, indent=2, sort_keys=True, default=str))
+    return 0
+
+
+def _cmd_degraded(args: argparse.Namespace) -> int:
+    from .degraded import DegradedBuildError, build_static_site
+
+    print("sig-ops degraded: building the fully static site (NO API; last-export banner)")
+    try:
+        dist = build_static_site(
+            repo_root=_REPO_ROOT,
+            data_source=args.data_source,
+            export_dir=args.export_dir,
+        )
+    except DegradedBuildError as exc:
+        print(str(exc), file=sys.stderr)
+        print("sig-ops degraded: FAILED — the site could not be rebuilt.", file=sys.stderr)
+        return 1
+    print(f"sig-ops degraded: OK — static site at {dist} (cost = $0 beyond the static host).")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run the `ops` CLI. Returns a process exit code."""
     parser = build_parser()
@@ -349,5 +447,11 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_down(args)
     if args.command == "seed":
         return _cmd_seed(args)
+    if args.command == "egress-report":
+        return _cmd_egress_report(args)
+    if args.command == "swh-save":
+        return _cmd_swh_save(args)
+    if args.command == "degraded":
+        return _cmd_degraded(args)
     parser.print_help()
     return 0

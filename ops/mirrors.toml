@@ -1,0 +1,46 @@
+# SPDX-License-Identifier: CC-BY-4.0
+# The SIG mirror manifest (P21.5, SIG-GOV-022/023/024, §46.5). Where the dataset and
+# the code live so the project survives the loss of the primary domain. Every entry is
+# a distinct home — "no sole home" (SIG-STORE-004/005). See docs/build/SUCCESSION.md.
+
+[[mirror]]
+name = "zenodo"
+kind = "deposit"
+role = "citable archive (concept + version DOI)"
+# Sandbox until the operator runs a production deposit (RISK-P21-08); the DOI is
+# recorded in docs/build/DEPOSITS.md when minted.
+url = "https://zenodo.org/"                # production; sandbox.zenodo.org until HG-07
+status = "gate-pending: HG-07"
+carries = ["bulk-export release", "manifest.json", "digests.json", "CITATION.cff", "sbom.cdx.json"]
+
+[[mirror]]
+name = "object-store"
+kind = "object-store"
+role = "primary bulk download (zero-egress, content-hash keys)"
+url = "cloudflare-r2:sig-bulk"             # ADR-067; ADR-015 S3/CloudFront is the alternative
+status = "gate-pending: HG-07"
+carries = ["all bulk-export artifacts under <release_id>/<path>.<hash>"]
+
+[[mirror]]
+name = "bittorrent"
+kind = "peer"
+role = "zero-egress offline mirror (.torrent per bulk artifact; DHT/magnet)"
+url = "magnet (trackerless; announce list optional)"
+status = "live (free path — pure-Python bencode, no daemon)"
+carries = ["largest bulk-export artifacts"]
+
+[[mirror]]
+name = "software-heritage"
+kind = "source-archive"
+role = "source-code preservation (save code now)"
+url = "https://archive.softwareheritage.org/"
+status = "gate-pending: no public repo URL saved this run (sig-ops swh-save, untriggered)"
+carries = ["the SIG source repository"]
+
+[[mirror]]
+name = "git-forge"
+kind = "source"
+role = "primary source home"
+url = "https://github.com/SteveVitali/Eleutheria"
+status = "live"
+carries = ["the SIG source repository + committed export snapshots"]

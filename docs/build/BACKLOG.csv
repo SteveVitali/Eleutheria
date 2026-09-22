@@ -27,8 +27,8 @@ BL-025,"Concrete extraction engines (parser layers 3-5, OCR) + model client",def
 BL-026,Live-connector WACZ per PR + byte-identical reproducibility test (SIG-EVID-017),deferred-feature,LD-F02 LD-H02 RISK-P2-09 RISK-P2-10 RISK-P11-07,,evidence,,P21.3,,M,open
 BL-027,"Persist reconcile-workflow outputs (contradictions, sharing edges, tasks, access edges)",deferred-feature,RISK-P11-06 RISK-P11-14 RISK-P12-14 RISK-P10-14 RISK-P10-07 RISK-P12-06 RISK-P12-07,,reconcile,,P21.2,accepted:compute-on-read A5/HG-14,M,closed
 BL-028,Records-request filing/response backend (template outcome log fed live),deferred-feature,ADR-041 RISK-P10-18 RISK-P10-17,,tasks,,P22+,,M,open
-BL-029,Zenodo live deposit + object store + rendered vector tiles (PMTiles bodies),external-dep,RISK-P14-16 LD-V07 ADR-048 RISK-P14-17 LD-F07 LD-H08 LD-D09 ADR-015,,exports,,P21.5,HG-07,L,open
-BL-030,Zero-cost / degraded-but-alive keepalive tested (SIG-GOV-021),operational-prereq,RISK-P0-12 LD-P07,SIG-GOV-021,ops,,P21.5,,M,open
+BL-029,Zenodo live deposit + object store (rendered tiles + dry-run/push-stub DELIVERED P21.5 ADR-067; LIVE deposit+store gate-pending HG-07),external-dep,RISK-P14-16 LD-V07 ADR-048 RISK-P14-17 LD-F07 LD-H08 LD-D09 ADR-015 ADR-067 RISK-P21-08 RISK-P21-09,,exports,,P21.5,HG-07,L,open
+BL-030,Zero-cost / degraded-but-alive keepalive tested (SIG-GOV-021),operational-prereq,RISK-P0-12 LD-P07 ADR-067,SIG-GOV-021,ops,,P21.5,,M,closed
 BL-031,API rate-limit enforcement + GraphQL (deferred SHOULDs),deferred-feature,RISK-P14-09 RISK-P14-10,,api,,P22+,,S,open
 BL-032,Per-source rights review + registry completion (flip ingestion_permitted),rights/legal,RISK-P0-19 LD-P05 ADR-063,SIG-LIC-001 SIG-INGEST-038,connectors,OKC-live,P21.1,HG-03,L,closed
 BL-033,Stage-0 outreach / Eyes-on-Flock archival succession recorded,rights/legal,RISK-P0-20 LD-P01,SIG-CONTRIB-012/012a,connectors,OKC-live,P21.1,HG-04,M,closed

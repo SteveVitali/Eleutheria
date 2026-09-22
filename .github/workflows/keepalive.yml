@@ -1,0 +1,64 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# Dormant-scheduler KEEPALIVE (SIG-GOV-021, RISK-P0-12, LD-P07, ADR-067).
+#
+# The degraded-but-alive mode must be tested, and its known decay path is that free CI
+# schedulers commonly DISABLE dormant scheduled workflows after a period of repository
+# inactivity — which would silently stop a zero-cost pipeline. This monthly job rebuilds
+# the fully static site from the last committed export snapshot and FAILS LOUDLY if it
+# cannot: "a sustainability plan that fails silently is not a plan"
+# (docs/governance/governance-and-code-of-conduct.md).
+#
+# It runs exactly `sig-ops degraded` — the same command an operator runs by hand — so
+# the workflow and the CLI can never drift. Cost: $0 beyond the static host (no DB, no
+# API, one `npm run build` over committed bytes).
+
+name: keepalive
+
+on:
+  schedule:
+    # 07:00 UTC on the 1st of every month — well inside the dormancy window free
+    # schedulers use before disabling inactive workflows.
+    - cron: "0 7 1 * *"
+  # Manual trigger so an operator can prove the keepalive on demand.
+  workflow_dispatch:
+
+concurrency:
+  group: keepalive-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  degraded-rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.6"
+          enable-cache: true
+
+      - name: Install Python (pinned by .python-version)
+        run: uv python install
+
+      - name: Install workspace from the committed lockfile
+        run: make sync
+
+      - name: Install Node (pinned major)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install web from the committed lockfile
+        run: npm --prefix web ci
+
+      # The keepalive itself: rebuild the static site with NO API. `sig-ops degraded`
+      # exits non-zero (this step fails) if the site cannot be rebuilt — the dormant
+      # scheduler / broken pipeline is caught by a RED build, not a dead site.
+      - name: Rebuild the degraded static site (fails loudly if it cannot)
+        run: uv run sig-ops degraded --data-source fixtures

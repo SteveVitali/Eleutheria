@@ -830,3 +830,29 @@ def test_s8_web_build_renders_from_export_bytes(web_build_from_export: _WebBuild
     # Both sources and both dates — every number links claim → evidence (§3.1).
     assert "DeFlock" in html and "Bacy" in html, "both competing sources must be shown"
     assert "2026-08-20" in html and "2026-08-18" in html, "both claim dates must be shown"
+
+
+def test_s8_web_build_consumes_rendered_tiles(web_build_from_export: _WebBuild) -> None:
+    """S8 (P21.5, deliverable 3, LD-F07/H08): the export-built site serves REAL tiles.
+
+    The jurisdiction export renders the ODbL device layer to PMTiles; the web build in
+    ``export`` mode copies it to ``/tiles/sig-infrastructure.pmtiles`` (the self-hosted
+    source the map style declares). Assert the reader opens it with ≥1 layer carrying
+    the ODbL licence + OSM attribution (ADR-048, §42).
+    """
+    import gzip
+    import json
+    import struct
+
+    assert web_build_from_export.returncode == 0
+    tiles = web_build_from_export.dist / "tiles" / "sig-infrastructure.pmtiles"
+    assert tiles.exists(), "the export-built site must serve the rendered PMTiles"
+    data = tiles.read_bytes()
+    assert data[0:7] == b"PMTiles" and data[7] == 3, "a valid PMTiles v3 archive"
+    assert struct.unpack_from("<Q", data, 72)[0] >= 1, "at least one rendered tile"
+    meta_off = struct.unpack_from("<Q", data, 24)[0]
+    meta_len = struct.unpack_from("<Q", data, 32)[0]
+    metadata = json.loads(gzip.decompress(data[meta_off : meta_off + meta_len]))
+    layers = metadata["vector_layers"]
+    assert layers and layers[0]["sig:license"] == "ODbL-1.0", "ODbL layer metadata preserved"
+    assert "openstreetmap" in metadata["attribution"].lower(), "OSM attribution preserved (§42)"
