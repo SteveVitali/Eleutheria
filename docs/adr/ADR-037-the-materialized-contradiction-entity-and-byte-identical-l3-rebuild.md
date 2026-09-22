@@ -107,3 +107,21 @@ written for real (the Python entity is persisted or superseded by an ORM/row sha
 Also revisit if the `input_digest` definition changes (the committed rebuild sample
 must be regenerated) or if a new contradiction detector is added (it must satisfy the
 detector→task contract and appear in `test_detector_task_contract.py`).
+
+### Trigger evaluation — P21.2 (2026): NOT fired
+
+Evaluated at P21.2 (the annotation-persistence ticket). **The trigger did not
+fire.** Per amendment **A5** (ticked at HG-13) and the operator-signed ACCEPTED
+list at **HG-14** (`docs/build/CAPSTONE_CLOSURE.md` §(b)), the compute-on-read
+design is accepted as **conforming**: the `Contradiction` value object stays the
+computation layer and is recomputed on read; the `contradiction` table is not
+written for real, so the entity is neither persisted nor superseded. Persistence
+of the annotation layer is **deferred** (BACKLOG `BL-004`). Consequently P21.2
+shrank to its alignment-test + ADR-note deliverables only.
+
+What P21.2 *did* add is a live-schema guard: `tests/db/test_annotation_alignment.py`
+introspects `information_schema.columns` against this dataclass and asserts the
+persisted projection agrees on names/types/nullability, so the shapes cannot drift
+before persistence lands. That test records `note`/`claim_values`/`evidence` as the
+currently `compute_only` fields; persisting them later (e.g. a nullable `note`
+column) is an additive change that re-arms this trigger.
