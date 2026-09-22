@@ -23,7 +23,9 @@ import re
 import sys
 from pathlib import Path
 
-EXPECTED_ROWS = 668
+# 668 requirement ids at the 46-ticket-build freeze (P19.2), plus the 3 fold-back ids
+# appended by the P20.2 spec reconciliation (SIG-UI-047, SIG-EVID-020, SIG-ENG-039).
+EXPECTED_ROWS = 671
 HEADER = [
     "id", "level", "spec_section", "class", "verdict", "evidence",
     "owning_tickets", "tests", "adrs", "risk_rows", "routing", "note",

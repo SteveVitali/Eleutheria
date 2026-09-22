@@ -14,6 +14,7 @@ standards-based lock export and an SBOM per release.
 ```
 ontology/        LinkML source of truth; vocabularies (SKOS); generated artifacts
 db/              sqitch migrations; RLS policies; DDL
+evidence/        content-addressed evidence blobs; OCFL capture rows; blob dedup (§17, ADR-023)
 connectors/      one package per source; each with fixtures/
 parsing/         format handlers; extraction; locators
 resolution/      entity resolution; blocking; gold set; metrics
@@ -35,6 +36,14 @@ orchestrator import confined to `orchestration/` (SIG-INGEST-021).
 
 **SIG-ENG-014 (MUST).** `policy/` MUST be a real, tested code package — the publication rules,
 sensitivity classification, and licence gates are executable logic, not prose in `docs/`.
+
+**SIG-ENG-039 (MUST).** The Architecture Decision Record index (Appendix F) MUST list **every**
+`docs/adr/ADR-*.md` by its repository number, title, and owning phase, and `docs/adr/README.md`
+is its single source of truth. Any pull request that adds an ADR MUST add its Appendix F row in
+the **same** PR; a CI/consistency check (`docs/build/tools/check_spec_src.py`) MUST assert that
+the set of ADR files and the set of Appendix F rows are equal. Appendix F numbering is the
+repository ADR numbering — earlier "logical" numbering in ledgers is a documented equivalence,
+not a second scheme (ADR-062, LD-X04/LD-D03).
 
 ---
 

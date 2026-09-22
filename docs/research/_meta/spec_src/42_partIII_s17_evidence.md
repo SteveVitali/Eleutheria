@@ -31,6 +31,14 @@ counterparty accepts. SIG carries both rather than choosing.
 not changed produces one stored blob and N capture rows. `(content_digest, source_uri)` is
 unique.
 
+**SIG-EVID-020 (MUST).** The evidence store MUST be its own workspace package (`evidence/`, §47)
+and MUST separate the **content-addressed blob** from the **capture row** that cites it: identical
+bytes captured under different `source_uri`s, or the same source re-fetched unchanged, resolve to a
+**single** stored blob (keyed by the SIG-EVID-002 multihash), while each capture is an independent,
+append-only row carrying its own `source_uri`, `fetched_at`, and provenance. A capture MUST NOT
+duplicate blob bytes, and deleting a capture row MUST NOT delete a blob still referenced by another
+capture. This is the blob-dedup contract the `evidence/` package implements (ADR-023, LD-D02).
+
 ### 17.3 Layout: OCFL
 
 **SIG-EVID-005 (MUST).** Evidence bytes MUST live in an **OCFL 1.1** storage root on

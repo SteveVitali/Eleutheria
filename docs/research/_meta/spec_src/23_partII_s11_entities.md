@@ -75,7 +75,7 @@ are edges, and the entity is not specialized.
 
 | Predicate | Type | Notes |
 |---|---|---|
-| `canonical_name` | literal | **A claim, not a column.** Competing names are competing claims (§8.2) |
+| `canonical_name` | literal (**scalar**) | A **single** resolved display/identity label, held as one scalar per `Organization` for identity and back-compat. The competing names it is chosen from **remain claims** (§8.2); `canonical_name` is the resolver's single preferred label over them, not a repeatable column (ADR-056, LD-D12) |
 | `alias` | literal | Repeatable, with `alias_type` qualifier: `abbreviation`, `former_name`, `slug`, `misspelling`, `local_usage`, `legal_name`, `dba` |
 | `name_lang` | BCP-47 | Multilingual labels |
 | `organization_type` | vocab | Namespaced and extensible: `us.le.municipal_police`, `us.le.sheriff`, `us.le.state_police`, `us.le.university_police`, `us.le.transit_police`, `us.le.school_district_police`, `us.le.tribal_police`, `us.le.federal`, `us.gov.municipality`, `us.gov.county`, `us.gov.special_district`, `us.fusion_center`, `private.company`, `private.hoa`, `private.security_firm`, `private.bid`, `nonprofit`, `hospital`, `university`, `school_district`, `utility`, `transit_agency`, `vendor`, `data_broker`, `fr.police_municipale`, `fr.gendarmerie`, … (§13.7) |

@@ -182,7 +182,9 @@ explanation of why the bytes are withheld (§17.5).
 
 **SIG-UI-031 (MUST).** Task cards MUST state the closing condition, the evidence sought, the
 assignee class, and the effort estimate. MUST support geographic filtering, claiming with expiry,
-and the full disposition vocabulary including "searched, found nothing" (§33.2).
+and the full disposition vocabulary including "searched, found nothing" (§33.2). A **CLI + JSONL
+queue** is a conforming implementation of this research/curation surface for Phase 5 (ADR-030,
+SIG-CONTRIB-002); the interactive web rendering of the queue is deferred to Phase 21 (P21.6).
 
 ### 39.8 Corrections, methodology, and metrics
 
@@ -218,7 +220,19 @@ accessibility requirement and an archival one.
 
 **SIG-UI-038 (MUST).** Maps MUST use an open-source renderer with self-hosted vector tiles
 (§19.5). Third-party tile CDNs MUST NOT be a hard dependency, and basemap attribution MUST be
-correct in every context (SIG-GEO-013).
+correct in every context (SIG-GEO-013). A **zero-JS static map** — a server- or build-time
+rendered image, or self-hosted static PMTiles served without a client-side runtime, always
+paired with the tabular equivalent SIG-UI-037 requires — is a **conforming default** for this
+requirement; a client-side interactive renderer (MapLibre GL) is an **optional
+progressive-enhancement island** (SIG-UI-047), not a precondition of conformance (ADR-051,
+ADR-018, LD-F09).
+
+**SIG-UI-047 (MAY).** An interactive client-side map renderer (MapLibre GL over the self-hosted
+static PMTiles + `/map/style.json` contract of SIG-UI-038/SIG-GEO-012) MAY be shipped as a
+**progressive-enhancement island** layered on top of the zero-JS static default. If shipped it
+MUST NOT become a hard dependency of any core page, MUST keep the zero-JS default fully usable
+with JavaScript disabled (SIG-UI-037), and MUST NOT regress the performance or archivability
+budgets (SIG-UI-041). Building this island is deferred to Phase 21 (ADR-051, ADR-018, LD-F09).
 
 **SIG-UI-039 (MUST).** Every dependency MUST be OSI-licensed. Non-commercial (CC-BY-NC),
 source-available, and dual BUSL licences MUST be excluded — this rules out several popular graph

@@ -25,7 +25,7 @@ Each `BL-` id appears in exactly one theme (validated by `check_backlog.py`). Th
 
 ## T6 — Spec drift
 - **retired mostly by:** P20.2
-- **bl_ids:** BL-010, BL-011, BL-012, BL-045, BL-047, BL-049
+- **bl_ids:** BL-010, BL-011, BL-012, BL-045, BL-047, BL-049, BL-051
 
 ## T7 — Docs hygiene
 - **retired mostly by:** P19.1/P19.5 (done)
