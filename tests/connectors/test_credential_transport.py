@@ -25,7 +25,11 @@ from typing import Any
 from urllib.parse import urlsplit
 
 import pytest
-from connectors.accountability import AccountabilityConnector, openstates_config
+from connectors.accountability import (
+    AccountabilityConnector,
+    congress_gov_config,
+    openstates_config,
+)
 from connectors.agency_registry import AgencyRegistryConnector, cde_config
 from connectors.live_targets import live_targets
 from connectors.procurement import ProcurementConnector, sam_gov_config
@@ -83,6 +87,15 @@ def _keyed_cases() -> list[tuple[str, Any, str, str]]:
             AgencyRegistryConnector(),
             "SIG_DATA_GOV_KEY",
             str(cde_config()["api_key_header"]),
+        ),
+        (
+            # P26.12 — the federal legislation sweep shares the api.data.gov
+            # key with the FBI CDE source; it rides the documented X-Api-Key
+            # header, never the URL.
+            "congress_gov",
+            AccountabilityConnector(),
+            "SIG_DATA_GOV_KEY",
+            str(congress_gov_config()["api_key_header"]),
         ),
     ]
 
