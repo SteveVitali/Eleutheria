@@ -128,6 +128,23 @@ Gate → pause map: **before P20.2** HG-13 (A1–A8) · **after P19.5** HG-14 (A
   rule (recorded, not weakening the record): the robots verdict is still probed
   and recorded per-target for the audit trail, but never blocks a fetch. Requires
   ADR superseding ADR-087's enforcement layer.
+- 2026-09-22 **P27.2 / HG-03 (rights flips)** (operator disposition, recorded verbatim):
+  *"Approve under GL-GATE-07"* — apply the standing 2026-09-18 "err on the side of
+  approving" rule to the P27.1-audited UNDETERMINED government/public-record buckets:
+  flip `procurement` (~205k), `dot_511` (~34.6k), `france_belgium_procurement` (~14.5k).
+  Execution rule (same as GL-GATE-07): US buckets → `LicenseRef-PublicRecord-FactualCompilation`;
+  non-US `france_belgium_procurement` → `LicenseRef-OperatorAccepted-DBRight` (operator
+  accepts the sui generis DB-right risk); reviewer `maintainer (delegated)` + date.
+- 2026-09-22 **P27.2 / HG-02 + Part VIII sign-off** (operator disposition, recorded verbatim):
+  *"I'd prefer to just err on the side of signing off on these now"* — operator SIGNS OFF on
+  the Part-VIII-sensitive classes (`facial_recognition_world_map`, `pathways_rtcc_federation`,
+  `pathways_acoustic_drone_location`, officer/person-naming) for publication now, rather than
+  holding them. Recorded scope note: this is a class-level publication sign-off; the hard
+  Part VIII *data* invariants are enforced mechanically regardless (no person/plate fields,
+  coordinate reduction to sensitivity tier, the per-claim officer-naming `_concurrence_ok`
+  still returns False so individual named-person claims stay unpublished). Counsel (HG-02
+  proper) remains an operator action — this sign-off proceeds under the existing
+  interim/no-counsel posture (cf. D-LEGAL.1-1), recorded, not bypassed.
 
 ## CROSS-CUTTING INVARIANTS (every ticket re-checks; from `docs/tickets/_TEMPLATE.md`)
 - Defining standard (§3.1): no unexplained dots/edges; no silent overwrites; no synthetic certainty; every node has identity; every state has time; every claim has evidence; every inference is labelled; every contradiction stays visible.
