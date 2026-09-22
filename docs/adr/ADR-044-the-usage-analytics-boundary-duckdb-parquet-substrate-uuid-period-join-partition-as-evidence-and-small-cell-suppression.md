@@ -104,3 +104,33 @@ hatch, R6-F45); a partner licence requires a suppression model richer than `(rat
 per-cell differential privacy); the `UsageAggregate` predicate surface (§11.16) changes; the
 resolver contract for supplying org UUIDs to `project_aggregate` changes; or `agg_ruleset_version`
 must bump because the projection rules change (a versioned migration, §20).
+
+## Post-hoc hardening (4493b14, landed on P14.1's branch)
+
+An additive follow-up commit hardened the usage-analytics boundary after P12.1 landed but before
+P14.1's PR, tightening four boundary invariants this ADR already mandates. It is recorded here
+(append-only, P1–P3) rather than in a separate ADR because it added **no new decision** — every
+change enforces a rule the original Decision already made; it closed the gap between the stated
+contract and the executable one:
+
+- **`reason_raw` alongside `reason_category` (§11.16 P2, SIG-STORE-028/030).** The suppression record
+  now carries the source's literal suppression reason next to the normalised category, so the P2
+  raw-preservation rule holds inside the analytics layer too — the normalisation never discards the
+  original wording.
+- **`rights_record` citation on a contractual suppression (§18.4).** When a suppression fires because
+  a partner's terms require it (not SIG's own k-threshold), the suppressed cell cites the governing
+  `rights_record`, so a contractual withholding is attributable rather than anonymous.
+- **Forbidden org-id columns rejected by exact name + relation-name validation (SIG-STORE-028).** The
+  connector textual org-id columns (`searching_org` / `source_org`) are rejected by exact name and
+  every relation name is validated as a SQL identifier, closing the name-join hazard the ADR bars
+  structurally — a name key is a hard `JoinKeyError`, and a crafted relation name cannot smuggle SQL.
+- **COMPLEMENTARY rationale on complementary suppressions (SIG-STORE-030/031).** A cell suppressed only
+  to prevent re-derivation of a suppressed neighbour is stamped with a distinct `COMPLEMENTARY`
+  rationale, so a suppressed cell can never carry a *publish* rationale — non-invertibility is visible
+  in the record, not implicit.
+
+**Why no separate ADR was written then.** The commit made no architectural choice the original ADR
+had not already decided (SIG-STORE-025/026/028/030/031, §11.16, §18.4); it was defect-closing
+hardening on the same boundary, so amending this ADR keeps the boundary's full contract in one place
+rather than scattering an enforcement detail into a standalone record. (The capstone gap analysis
+flagged the un-ADR'd commit as LD-D14; P19.5 closes it with this amendment.)

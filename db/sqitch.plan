@@ -21,3 +21,4 @@ seed_vocab [vocab_registries] 2026-08-27T12:15:00Z Devin <devin@sig-project.org>
 evidence_store [evidence access_control] 2026-08-27T13:30:00Z Devin <devin@sig-project.org> # §17 OCFL dedup blob registry + source_uri uniqueness + access log (SIG-EVID-004/011/012)
 temporal_invariants [claim_append_only resolution] 2026-08-27T14:00:00Z Devin <devin@sig-project.org> # §9.4/§9.6 TI-8 temporally_unanchored flag + as-of query functions (SIG-TIME-007/008/009/013)
 claim_content_digest [claim_append_only] 2026-08-27T15:00:00Z Devin <devin@sig-project.org> # P19.4 idempotency key for PgClaimSink: nullable content_digest + partial UNIQUE (ADR-059)
+review_queue [entity claim] 2026-08-27T16:00:00Z Devin <devin@sig-project.org> # P19.5 PG backend for the internal review queue: review_item + append-only review_decision (ADR-061)
