@@ -94,6 +94,11 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-087](ADR-087-robots-4xx-means-no-policy-exists-rfc-9309-access-result-split.md) | — | — | Accepted |
 | [ADR-088](ADR-088-robots-verdicts-recorded-never-enforced-gl-gate-08.md) | — | — | Accepted |
 | [ADR-089](ADR-089-bounded-quota-aware-sam-gov-sweep.md) | — | — | Accepted |
+| [ADR-090](ADR-090-national-public-surface-from-a-spine-built-export.md) | — | — | Accepted |
+| [ADR-091](ADR-091-static-core-plus-progressive-enhancement-react-islands.md) | — | — | Accepted |
+| [ADR-092](ADR-092-spine-built-export-and-launch-resolution-posture.md) | — | — | Accepted |
+| [ADR-093](ADR-093-information-architecture-redesign-and-national-landing.md) | — | — | Accepted |
+| [ADR-094](ADR-094-maximize-publishable-scope-rights-resolution.md) | — | — | Accepted |
 
 ## Notes
 
