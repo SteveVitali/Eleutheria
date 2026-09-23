@@ -132,7 +132,7 @@ describe("exportable citation list with permalinks + as-of dates (SIG-UI-027c)",
   it("the text export lists permalinks + as-of dates and marks contested artifacts (SIG-UI-008)", () => {
     const text = citationListText(rank(), DECISION_POINT);
     expect(text).toContain("As of 2026-07-01");
-    expect(text).toContain("https://sig.example/evidence/");
+    expect(text).toContain("https://surveillancegraph.org/evidence/");
     expect(text).toContain("directness, recency, and dispute status only");
     // The contested contract artifact carries the persistent marker in the export.
     expect(text).toContain(CONTESTED_MARKER.glyph);

@@ -21,7 +21,7 @@ export const getStaticPaths: GetStaticPaths = () =>
 
 export const GET: APIRoute = ({ props }) => {
   const { jurisdiction } = props as { jurisdiction: string };
-  const origin = new URL(import.meta.env.SITE ?? "https://sig.example").origin;
+  const origin = new URL(import.meta.env.SITE ?? "https://surveillancegraph.org").origin;
   const body = toRss(WATCH_ITEMS, jurisdiction, origin);
   return new Response(body, {
     headers: { "content-type": "application/rss+xml; charset=utf-8" },

@@ -48,7 +48,11 @@ function sigExportTiles() {
 export default defineConfig({
   output: "static",
   integrations: [sigExportTiles()],
-  site: "https://sig.example",
+  // The canonical public origin (P27.6 deliverable 4, ADR-093). This is the real
+  // custom domain the launch surface is cited at; the belief-pinned permalinks
+  // (SIG-UI-035) resolve against it. DNS/TLS cut-over completes in P27.10 — the
+  // origin string is fixed here now so no permalink churns when the domain goes live.
+  site: "https://surveillancegraph.org",
   // Trailing slashes normalised so belief-pinned permalinks are stable across
   // hosts and archives (SIG-UI-035).
   trailingSlash: "always",

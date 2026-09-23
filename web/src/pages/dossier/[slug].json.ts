@@ -17,7 +17,7 @@ export const getStaticPaths: GetStaticPaths = () =>
 
 export const GET: APIRoute = ({ props }) => {
   const { dossier } = props as { dossier: Dossier };
-  const origin = new URL(import.meta.env.SITE ?? "https://sig.example").origin;
+  const origin = new URL(import.meta.env.SITE ?? "https://surveillancegraph.org").origin;
   const body = renderDossierJson(dossier, origin);
   return new Response(JSON.stringify(body, null, 2), {
     headers: { "content-type": "application/json; charset=utf-8" },

@@ -37,17 +37,18 @@ test.describe("support glyph carries its machine-readable payload (SIG-UI-003)",
 
 test.describe("contested marker is persistent across render paths (SIG-UI-008, AC5)", () => {
   test("appears on the detail, the map popup, and the graph list", async ({ page }) => {
+    // P27.6: the reference map/graph exemplars are folded into /visual-language/ (the
+    // reference page); the persistent contested marker (SIG-UI-008) must appear across
+    // all three render paths on that one page — the detail, the map popup, the graph list.
     await page.goto("/visual-language/");
     await expect(page.getByTestId("contested-marker").first()).toBeVisible();
 
-    await page.goto("/reference-map/");
     // The map popup for the contested site carries the marker.
     const popup = page.getByTestId("map-popup");
     await expect(popup.getByTestId("contested-marker")).toHaveCount(1);
 
-    await page.goto("/reference-graph/");
     // The contested edge in the list carries the marker.
-    await expect(page.getByTestId("contested-marker").first()).toBeVisible();
+    await expect(page.getByTestId("graph-edge").getByTestId("contested-marker").first()).toBeVisible();
   });
 });
 
@@ -87,18 +88,22 @@ test.describe("belief-pinned permalink + citation on every page (SIG-UI-035, AC6
 test.describe("absence hatch → research task, end to end (SIG-UI-007, AC4)", () => {
   test("exactly one hatch texture class is used for every absence", async ({ page }) => {
     await page.goto("/visual-language/");
-    const hatches = page.getByTestId("absence-hatch");
-    await expect(hatches).toHaveCount(4); // one per absence kind
-    const kinds = await hatches.evaluateAll((els) =>
+    // The absence-kind demonstration table shows exactly one hatch per kind (SIG-UI-007).
+    // (The page also folds the reference-map exemplar, which carries its own location gap;
+    // scope the "one per kind" count to the demo section.)
+    const demo = page.locator("section[aria-labelledby='absence-heading']");
+    const demoHatches = demo.getByTestId("absence-hatch");
+    await expect(demoHatches).toHaveCount(4); // one per absence kind
+    const kinds = await demoHatches.evaluateAll((els) =>
       els.map((e) => e.getAttribute("data-absence-kind")),
     );
     expect(new Set(kinds)).toEqual(
       new Set(["NOT_RESEARCHED", "NO_EVIDENCE_FOUND", "EVIDENCE_OF_ABSENCE", "UNRESOLVED"]),
     );
-    // Every hatch uses the single shared texture class (SIG-UI-007).
-    const allHatch = await hatches.evaluateAll((els) =>
-      els.every((e) => e.classList.contains("sig-absence-hatch")),
-    );
+    // Every hatch on the page uses the single shared texture class (SIG-UI-007).
+    const allHatch = await page
+      .getByTestId("absence-hatch")
+      .evaluateAll((els) => els.every((e) => e.classList.contains("sig-absence-hatch")));
     expect(allHatch).toBe(true);
   });
 

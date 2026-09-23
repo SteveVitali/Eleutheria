@@ -42,7 +42,8 @@ import type { CorrectionEntry } from "./corrections";
 import type { ResearchTaskCard, JurisdictionClaim } from "./research-queue";
 import type { ProvenanceSummary } from "./provenance";
 import type { HostileReaderReview } from "./editorial";
-import type { MapSite, GraphNode, GraphEdge, EntityFixture } from "./fixtures";
+import type { MapSite, GraphNode, GraphEdge, EntityFixture, AsOfEcho } from "./fixtures";
+import { AS_OF, RULESET_VERSION } from "./fixtures";
 
 // The committed fixtures the data layer serves in `fixtures` mode (and that the P27.5
 // fixture-export harness serialises into the export layout). The PAGES import none of
@@ -331,6 +332,91 @@ export function getDossierIndex(): DossierIndexRow[] {
       })),
     ];
   });
+}
+
+// --------------------------------------------------------------------------- //
+// Site metadata — the belief-pinned citation defaults (P27.6, SIG-UI-048/049,
+// ADR-093). Every page's permalink + citation pins the resolved as-of pair and the
+// ruleset version. These MUST come from the real export MANIFEST, not the frozen
+// `fixtures.ts` demo constant — so a citation captured off the public surface names
+// the belief the surface was actually built at (SIG-UI-035, reproducible).
+//
+//   - `fixtures` mode — the committed `AS_OF` / `RULESET_VERSION` demo constants.
+//   - `export` mode   — `<exportDir>/manifest.json` `reproducibility_inputs`
+//     (`as_of_snapshot` / `as_of_belief` / `ruleset_version`), the four-value
+//     BuildSpec §38.1 the whole release is a pure function of. Fails LOUD if the
+//     manifest is missing or malformed (never a silent fall-back — that would
+//     fabricate the as-of the surface claims to be pinned at).
+// --------------------------------------------------------------------------- //
+
+export interface SiteMetadata {
+  /** The resolved two-axis as-of pair echoed in every citation (SIG-API-005). */
+  asOf: AsOfEcho;
+  /** The reconciliation ruleset version the citation pins to (SIG-UI-035). */
+  rulesetVersion: string;
+}
+
+/** The reproducibility inputs the export manifest carries (a subset; §38.1 BuildSpec). */
+interface ReproducibilityInputs {
+  as_of_snapshot: string;
+  as_of_belief: string;
+  ruleset_version: string;
+}
+
+/**
+ * The belief-pinned citation defaults for every page (P27.6, deliverable 4). In
+ * `export` mode these are read from the real release manifest, so the public
+ * surface's canonical origin, permalink and citation are genuinely citable rather
+ * than demo values (ADR-093 §5).
+ */
+export function getSiteMetadata(): SiteMetadata {
+  if (dataSource() === "fixtures") {
+    return { asOf: AS_OF, rulesetVersion: RULESET_VERSION };
+  }
+  const path = `${exportDir()}/manifest.json`;
+  let raw: string;
+  try {
+    raw = readFileSync(path, "utf-8");
+  } catch (cause) {
+    throw new Error(
+      `SIG_DATA_SOURCE=export but the export manifest is missing: ${path}. ` +
+        "Run `sig-exports build --from-spine --dsn <dsn> --out <dir>` (or the local " +
+        "fixture-equivalent `npm run export:fixtures -- <dir>`) first.",
+      { cause },
+    );
+  }
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch (cause) {
+    throw new Error(`${path}: not valid JSON`, { cause });
+  }
+  const repro = (parsed as { reproducibility_inputs?: Partial<ReproducibilityInputs> })
+    ?.reproducibility_inputs;
+  if (
+    !repro ||
+    typeof repro.as_of_snapshot !== "string" ||
+    typeof repro.as_of_belief !== "string" ||
+    typeof repro.ruleset_version !== "string"
+  ) {
+    throw new Error(
+      `${path}: expected a manifest with reproducibility_inputs ` +
+        "(as_of_snapshot, as_of_belief, ruleset_version) — got a malformed release manifest",
+    );
+  }
+  const asOfWorld = repro.as_of_snapshot.slice(0, 10);
+  const asOfBelief = repro.as_of_belief.slice(0, 10);
+  return {
+    asOf: {
+      as_of_world: asOfWorld,
+      as_of_belief: asOfBelief,
+      world_defaulted: false,
+      belief_defaulted: false,
+      question: `as-of world ${asOfWorld}, belief ${asOfBelief}`,
+      belief_pinned: true,
+    },
+    rulesetVersion: repro.ruleset_version,
+  };
 }
 
 // --------------------------------------------------------------------------- //
