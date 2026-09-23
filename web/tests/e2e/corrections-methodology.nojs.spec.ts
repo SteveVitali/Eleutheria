@@ -17,6 +17,8 @@ test("the research queue renders task cards + dispositions without JS (SIG-UI-03
   await expect(card.getByTestId("evidence-sought")).not.toBeEmpty();
   // The full disposition vocabulary is in the static HTML (a <details> is no-JS usable).
   await expect(page.getByTestId("disposition").first()).toBeAttached();
+  // A task generated over the materialized spine CITES ITS TRIGGER (P29.2) — in the static HTML.
+  await expect(page.getByTestId("task-trigger").first()).toBeAttached();
 });
 
 test("the corrections log lists corrections without JS (SIG-UI-032/037)", async ({ page }) => {

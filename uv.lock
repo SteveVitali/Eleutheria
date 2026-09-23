@@ -2697,10 +2697,14 @@ version = "0.1.0"
 source = { editable = "tasks" }
 dependencies = [
     { name = "sig-inference" },
+    { name = "sig-reconcile" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "sig-inference", editable = "inference" }]
+requires-dist = [
+    { name = "sig-inference", editable = "inference" },
+    { name = "sig-reconcile", editable = "reconcile" },
+]
 
 [[package]]
 name = "six"

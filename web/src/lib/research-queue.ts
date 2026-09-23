@@ -106,6 +106,12 @@ export interface ResearchTaskCard {
   /** The outcomes this task may reach — a subset of the §33.4 vocabulary by assignee. */
   dispositions: Disposition[];
   priority: number;
+  /**
+   * What made the detector fire — the materialized contradiction / coverage gap /
+   * relationship this task cites as its trigger (P29.2, every generated task cites its
+   * trigger). Optional: absent for a legacy or hand-inserted task.
+   */
+  trigger?: { kind: string; ref: string };
 }
 
 /** The set of dispositions a task may reach, by assignee class (§33.4 mirror of catalog). */
