@@ -34,9 +34,12 @@ from __future__ import annotations
 import os
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
-from typing import Any, Protocol
+from typing import TYPE_CHECKING, Any, Protocol
 
 from policy.sensitivity import SensitivityClass, geo_tier_for
+
+if TYPE_CHECKING:
+    import httpx
 
 from .contribution import (
     CHANGESET_HASHTAG,
@@ -53,6 +56,7 @@ __all__ = [
     "ChallengeNotRegisteredError",
     "ChallengeTask",
     "MapRouletteTransport",
+    "HttpxMapRouletteTransport",
     "MapRouletteClient",
     "jurisdiction_hashtag",
     "build_challenge",
@@ -189,6 +193,60 @@ class MapRouletteTransport(Protocol):
     def post(self, url: str, *, json: dict[str, Any], api_key: str) -> dict[str, Any]: ...
 
     def get(self, url: str, *, api_key: str) -> dict[str, Any]: ...
+
+
+@dataclass
+class HttpxMapRouletteTransport:
+    """The concrete ``httpx``-backed live transport (P29.1, HG-08 activation-ready).
+
+    This is the wiring that makes a *real* MapRoulette push/pull possible the moment
+    the operator provides the API key AND registers the OE activity — without it the
+    live branch of :class:`MapRouletteClient` raises "none is wired" (never fabricates a
+    call). It sends the API key as an ``Authorization: Bearer`` header, keeps TLS
+    verification on (never disabled), and never rotates identity — the same
+    no-circumvention posture as
+    :class:`connectors.transports.httpx_transport.HttpxTransport` (§26 Rule 4).
+
+    ``httpx`` is imported lazily (only when a live call is actually made), so importing
+    this module never requires the network stack, and a test can inject a
+    :class:`httpx.Client` wired to :class:`httpx.MockTransport` to assert the request
+    shape without opening a socket. It is still **only** exercised under HG-08 — the CLI
+    wires it, but the registration gate + dry-run posture keep it dormant until then.
+    """
+
+    client: httpx.Client | None = None
+    timeout: float = 60.0
+    user_agent: str = "SIG-contribution-back (+https://sig-project.org)"
+
+    def _headers(self, api_key: str) -> dict[str, str]:
+        return {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "User-Agent": self.user_agent,
+        }
+
+    def post(self, url: str, *, json: dict[str, Any], api_key: str) -> dict[str, Any]:
+        return self._request("POST", url, api_key=api_key, json=json)
+
+    def get(self, url: str, *, api_key: str) -> dict[str, Any]:
+        return self._request("GET", url, api_key=api_key, json=None)
+
+    def _request(
+        self, method: str, url: str, *, api_key: str, json: dict[str, Any] | None
+    ) -> dict[str, Any]:
+        import httpx
+
+        client = self.client or httpx.Client(timeout=self.timeout)
+        owns_client = self.client is None
+        try:
+            resp = client.request(method, url, headers=self._headers(api_key), json=json)
+            resp.raise_for_status()
+            body = resp.json()
+            return dict(body) if isinstance(body, dict) else {"response": body}
+        finally:
+            if owns_client:
+                client.close()
 
 
 @dataclass

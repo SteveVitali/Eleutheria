@@ -60,6 +60,7 @@ registered = false
 # (placeholder until HG-08 provides it). Read for the record; never dereferenced.
 oe_page = ""
 # The MapRoulette account/challenge id recorded after a real push (HG-08). Empty
-# until a live push happens; the runbook (docs/build/CONTRIBUTION_BACK_LIVE.md)
-# records what ran live.
+# until a live push happens; the runbook
+# (docs/build/reports/CONTRIBUTION_BACK_LIVE.md) records what ran live + the exact
+# re-run command (P29.1 wired the transport activation-ready; D-P21.7-1).
 maproulette_challenge = ""
