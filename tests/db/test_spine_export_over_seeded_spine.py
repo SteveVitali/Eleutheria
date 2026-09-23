@@ -388,3 +388,103 @@ def test_spine_export_reads_the_materialized_graph(conn, seeded_export) -> None:
         assert m["is_population_total"] is False
     # The map layer flips to the resolved framing.
     assert json.loads(export.web_artifacts["web/map.json"])["layers"][0]["id"] == "resolved_sites"
+
+
+# --- P28.6: the dossier shows the materialized governance chain -------------- #
+
+_REF_PREDICATES = ("operator", "buyer", "seller", "recipient", "applies_to", "deployments")
+
+
+def _register_ref_predicates(cur) -> None:
+    cur.execute(
+        "INSERT INTO vocab_resolution_strategy(strategy_id,definition) "
+        "VALUES('never_resolve','fixture') ON CONFLICT DO NOTHING"
+    )
+    for pred in _REF_PREDICATES:
+        cur.execute(
+            "INSERT INTO vocab_predicate"
+            "(predicate_id,vocab_version,value_datatype,object_type,definition,"
+            " volatility_class,half_life_days,resolution_strategy) "
+            "VALUES(%s,'1.0.0','entity_ref','entity_ref','fixture','IMMUTABLE',NULL,"
+            "'never_resolve') ON CONFLICT DO NOTHING",
+            (pred,),
+        )
+
+
+def _ref_claim(cur, *, subject, predicate, obj, run_id, rights_id, author_id) -> str:
+    cur.execute(
+        "INSERT INTO claim(subject_id,predicate_id,object_type,object_entity,value_kind,"
+        "value_text,raw_value,observed_at,source_reliability,claim_directness,"
+        "artifact_integrity,asserted_by,assertion_rationale,ingest_run_id,rights_id,"
+        "sensitivity_tier) "
+        "VALUES(%s,%s,'entity_ref',%s,'value',%s,%s,'2026-05-01T00:00:00Z','R1','D1','I1',"
+        "%s,'fixture',%s,%s,0) RETURNING claim_id",
+        (subject, predicate, obj, str(obj), str(obj), author_id, run_id, rights_id),
+    )
+    return str(cur.fetchone()[0])
+
+
+def test_spine_export_enriches_the_dossier_with_the_governance_chain(conn, seeded_export) -> None:
+    """P28.6 AC2 end-to-end over real PG: materialize the accountability chain on the OK
+    deployment, then the OK dossier shows the deployment→vendor→contract→funding→policy→
+    oversight chain (rows citing establishing claims); the NY dossier stays a gap."""
+    from inference.accountability import materialize_accountability_links
+
+    cur = conn.cursor()
+    _register_ref_predicates(cur)
+    rights = _rights(cur, "CC0-1.0", "yes")
+    run = _run(cur, "gov_src")
+    author = _entity(cur, "person")
+    s_osm = seeded_export["osm"]  # a geolocated 'deployment' in the OK bucket
+
+    org = _entity(cur, "organization")
+    vendor = _entity(cur, "organization")
+    contract = _entity(cur, "contract")
+    funding = _entity(cur, "funding_instrument")
+    policy = _entity(cur, "policy")
+    event = _entity(cur, "accountability_event")
+
+    def ref(subject, predicate, obj):
+        return _ref_claim(
+            cur,
+            subject=subject,
+            predicate=predicate,
+            obj=obj,
+            run_id=run,
+            rights_id=rights,
+            author_id=author,
+        )
+
+    c_op = ref(s_osm, "operator", org)
+    c_buy = ref(contract, "buyer", org)
+    c_sell = ref(contract, "seller", vendor)
+    ref(funding, "recipient", org)
+    ref(policy, "applies_to", s_osm)
+    ref(event, "deployments", s_osm)
+
+    summary = materialize_accountability_links(conn)
+    assert summary.inserted == 5  # the full chain over the real spine
+
+    export = run_spine_export(conn, as_of="2026-09-23", note="gov", spine_label="seeded")
+    dossiers = json.loads(export.web_artifacts["web/dossiers.json"])
+    okc = next(d for d in dossiers if d["jurisdiction"] == "OK")
+
+    # The full governance chain is present as a structured field, each segment evidenced.
+    chain = okc["governance_chain"]["segments"]
+    for role in ("vendor", "contract", "funding", "policy", "oversight"):
+        assert chain[role]["status"] == "evidenced", role
+    assert chain["vendor"]["links"][0]["object_id"] == str(vendor)
+    # The vendor link cites operator+buyer+seller (reached through the contract).
+    assert set(chain["vendor"]["links"][0]["establishing_claims"]) == {c_op, c_buy, c_sell}
+
+    # The chain rides the frozen Section/Row contract (no new IA); rows cite their claims.
+    sections = {s["section_id"]: s for s in okc["sections"]}
+    assert any(
+        r["label"] == "Governing policy" and "established by claim(s)" in r["note"]
+        for r in sections["policy"].get("rows", [])
+    )
+    assert any(r["label"] == "Oversight" for r in sections["accountability_events"].get("rows", []))
+
+    # NY has no governance evidence → the dossier is unchanged (honest gap, no chain field).
+    ny = next(d for d in dossiers if d["jurisdiction"] == "NY")
+    assert "governance_chain" not in ny
