@@ -26,7 +26,11 @@ from exports.shaping import (
     build_shaped_dataset,
     parse_shaping_claims,
 )
-from exports.spine_export import build_spine_export
+from exports.spine_export import (
+    build_spine_export,
+    contradictions_visible_metric,
+    resolved_sites_metric,
+)
 from rdflib import Graph
 from support import REPO_ROOT
 
@@ -452,3 +456,193 @@ def test_cli_dsn_without_from_spine_errors(capsys) -> None:  # type: ignore[no-u
     rc = main(["build", "req.json", "--dsn", "postgresql://x", "--out", "/tmp/x"])
     assert rc == 2
     assert "--dsn is only valid with --from-spine" in capsys.readouterr().out
+
+
+# --- P28.5: refresh off the materialized graph (ADR-101) -------------------- #
+
+
+def _materialized_raw(
+    *,
+    resolutions=None,
+    edges=None,
+    contradictions=None,
+    coverage=None,
+) -> dict:
+    return {
+        "materialized_resolutions": resolutions or [],
+        "materialized_edges": edges or [],
+        "materialized_contradictions": contradictions or [],
+        "materialized_coverage": coverage or [],
+    }
+
+
+def test_resolved_sites_metric_frames_n_resolved_from_m_observations() -> None:
+    # Two geolocated sites (A, B); the materialized graph RESOLVED only A.
+    claims = _site("A", "35.46", "-97.51", "Oklahoma") + _site("B", "35.47", "-97.52", "Oklahoma")
+    resolutions = [
+        {
+            "subject_id": "A",
+            "predicate_id": "camera_operator",
+            "resolved": True,
+            "winning_claim": "c1",
+        },
+        {
+            "subject_id": "B",
+            "predicate_id": "camera_operator",
+            "resolved": False,
+            "winning_claim": None,
+        },
+    ]
+    export = _build(claims, _materialized_raw(resolutions=resolutions))
+    coverage = _web(export, "coverage")
+    resolved = next(m for m in coverage if m["id"] == "resolved_sites")
+    # N resolved (1) from M observations (2), N <= M, never a total, named denominator.
+    assert resolved["value"] == "1 resolved sites (from 2 observations)"
+    assert "observation-level sites" in resolved["denominator"]
+    assert resolved["is_population_total"] is False
+    assert "D-R6.1-EVAL" in resolved["population_note"]
+    # The map layer flips to the resolved framing (was observation-level).
+    layers = _web(export, "map")["layers"]
+    assert layers[0]["id"] == "resolved_sites"
+    assert "deduplicated" in layers[0]["description"]
+    # The whole coverage surface still validates against the FROZEN CoverageMetric contract.
+    jsonschema.validate(coverage, _sub(SCHEMA["properties"]["coverage"]))
+
+
+def test_no_materialized_resolution_degrades_to_observation_framing() -> None:
+    # Empty materialized graph: no resolved-site metric, map keeps observation-level framing.
+    claims = _site("A", "35.46", "-97.51", "Oklahoma")
+    export = _build(claims, _materialized_raw())
+    coverage = _web(export, "coverage")
+    assert not any(m["id"] == "resolved_sites" for m in coverage)
+    assert not any(m["id"] == "contradictions_visible" for m in coverage)
+    layers = _web(export, "map")["layers"]
+    assert layers[0]["id"] == "observed_sites"
+    # The compute-on-read shaping coverage metrics are the honest fallback.
+    assert coverage  # the shaping metrics are still present
+
+
+def _dataset_of(claims: list[ShapingClaim]):
+    """Build just the shaped dataset (no export) for the pure-mapper tests."""
+    rows = _rows(claims)
+    raw = {
+        "shaping_claims": rows,
+        "subject_entities": [(s, "deployment") for s in sorted({c.subject_id for c in claims})],
+        "source_stats": [],
+        "source_runs": [],
+        "sharing_edges": [],
+        "spine_watermark": "claims=1",
+    }
+    return build_shaped_dataset(
+        raw, as_of="2026-09-22", generated_at="2026-09-22T00:00:00Z", spine_label="unit"
+    )
+
+
+def test_resolved_sites_metric_none_when_resolution_misses_the_sites() -> None:
+    dataset = _dataset_of(_site("A", "35.46", "-97.51", "Oklahoma"))
+    # A resolution for a subject that is NOT a geolocated site → N = 0 → None (no overclaim).
+    metric = resolved_sites_metric(
+        [{"subject_id": "ORG-1", "resolved": True, "winning_claim": "c"}],
+        dataset,
+    )
+    assert metric is None
+    # A resolved envelope over the site subject IS counted; N never exceeds M.
+    metric2 = resolved_sites_metric(
+        [{"subject_id": "A", "resolved": True, "winning_claim": "c"}],
+        dataset,
+    )
+    assert metric2 is not None
+    assert metric2["value"] == "1 resolved sites (from 1 observations)"
+
+
+def test_contradictions_visible_metric_counts_open_of_recorded() -> None:
+    recorded = [
+        {"contradiction_id": "x1", "status": "open", "claim_ids": ["c1", "c2"]},
+        {"contradiction_id": "x2", "status": "superseded", "claim_ids": ["c3", "c4"]},
+    ]
+    metric = contradictions_visible_metric(recorded)
+    assert metric is not None
+    assert metric["value"] == "1 open of 2 recorded contradictions"
+    assert metric["is_population_total"] is False
+    assert "both evidence sides retained" in metric["denominator"]
+    assert contradictions_visible_metric([]) is None
+
+
+def test_contradictions_surface_on_coverage_when_materialized() -> None:
+    claims = _site("A", "35.46", "-97.51", "Oklahoma")
+    contradictions = [{"contradiction_id": "x1", "status": "open", "claim_ids": ["c1", "c2"]}]
+    export = _build(claims, _materialized_raw(contradictions=contradictions))
+    coverage = _web(export, "coverage")
+    vis = next(m for m in coverage if m["id"] == "contradictions_visible")
+    assert vis["value"] == "1 open of 1 recorded contradictions"
+    jsonschema.validate(coverage, _sub(SCHEMA["properties"]["coverage"]))
+
+
+def test_network_reads_materialized_edges_else_falls_back() -> None:
+    claims = _site("A", "35.46", "-97.51", "Oklahoma")
+    edges = [
+        {
+            "from_entity": "agency:okcpd",
+            "to_entity": "vendor:flock",
+            "edge_type": "configured_access",
+            "access_kind": "configured_access",
+            "direction": "directed",
+            "evidence_claim": "c9",
+        }
+    ]
+    export = _build(claims, _materialized_raw(edges=edges))
+    network = _web(export, "network")
+    assert {n["id"] for n in network["nodes"]} == {"agency:okcpd", "vendor:flock"}
+    assert network["edges"][0]["access_kind"] == "configured_access"
+    assert network["edges"][0]["relation"] == "configured_access"
+    assert network["edges"][0]["support"] == "WEAKLY_SUPPORTED"
+    jsonschema.validate(network, _sub(SCHEMA["properties"]["network"]))
+
+
+def test_coverage_prefers_materialized_rows_when_present() -> None:
+    claims = _site("A", "35.46", "-97.51", "Oklahoma")
+    materialized_coverage = [
+        {
+            "coverage_id": "cov1",
+            "subject_id": None,
+            "subject_class": "deployment",
+            "jurisdiction_id": None,
+            "predicate_id": "camera_device_count",
+            "absence_kind": None,
+            "sources_searched": [],
+            "metric_method": "reconciliation_ratio",
+            "metric_label": "resolved subjects of claimed subjects",
+            "numerator": 38.0,
+            "denominator": 42.0,
+            "not_evaluable": 0.0,
+            "named_denominator": "subjects with a camera_device_count claim",
+            "metric_value": 0.9,
+        },
+        # A negative-space absence row (no metric_method) is NOT a coverage-list metric.
+        {
+            "coverage_id": "cov2",
+            "subject_id": None,
+            "subject_class": "deployment",
+            "jurisdiction_id": None,
+            "predicate_id": "sharing_partner",
+            "absence_kind": "not_researched",
+            "sources_searched": [],
+            "metric_method": None,
+            "metric_label": None,
+            "numerator": None,
+            "denominator": None,
+            "not_evaluable": None,
+            "named_denominator": None,
+            "metric_value": None,
+        },
+    ]
+    export = _build(claims, _materialized_raw(coverage=materialized_coverage))
+    coverage = _web(export, "coverage")
+    mat = next(m for m in coverage if m["id"].startswith("materialized_reconciliation_ratio"))
+    assert mat["kind"] == "reconciliation_ratio"
+    assert mat["value"] == "38 of 42"
+    assert mat["denominator"] == "subjects with a camera_device_count claim"
+    assert mat["is_population_total"] is False
+    # The absence row did not become a metric.
+    assert not any("sharing_partner" in m["id"] for m in coverage)
+    jsonschema.validate(coverage, _sub(SCHEMA["properties"]["coverage"]))
