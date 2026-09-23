@@ -48,6 +48,7 @@ from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
 
+from inference.accountability import read_materialized_accountability_links
 from inference.materialize import read_materialized_coverage
 from policy.licensing import (
     compute_export_license,
@@ -201,6 +202,13 @@ _MATERIALIZED_SEAMS: tuple[tuple[str, str, Any], ...] = (
     ("materialized_edges", "relationship", read_materialized_edges),
     ("materialized_contradictions", "contradiction", read_materialized_contradictions),
     ("materialized_coverage", "coverage_record", read_materialized_coverage),
+    # P28.6 — the L4 accountability links (in the inference.derived_fact table); the
+    # read seam filters to accountability_link:* rows so only governance-chain links load.
+    (
+        "materialized_accountability_links",
+        "derived_fact",
+        read_materialized_accountability_links,
+    ),
 )
 
 
@@ -809,23 +817,144 @@ def _research_queue(raw: Mapping[str, Any]) -> list[dict[str, Any]]:
     return out
 
 
-def _dossiers(dataset: ShapedDataset, as_of: str, belief: datetime | None) -> list[dict[str, Any]]:
+#: The P28.6 governance-chain segments, in chain order, with the dossier section each
+#: link rides into (the frozen ``web/src/lib/dossier.ts`` ``Section``/``Row`` contract —
+#: no new IA). ``chain_role`` is the value_json role the materializer stamps.
+_GOVERNANCE_SEGMENTS: tuple[tuple[str, str, str], ...] = (
+    ("vendor", "what_is_deployed", "Vendor / platform provider"),
+    ("contract", "cost_and_expiry", "Procured under contract"),
+    ("funding", "cost_and_expiry", "Funded by"),
+    ("policy", "policy", "Governing policy"),
+    ("oversight", "accountability_events", "Oversight"),
+)
+
+
+def _governance_by_jurisdiction(
+    dataset: ShapedDataset, accountability_links: Sequence[Mapping[str, Any]]
+) -> dict[str, dict[str, list[Mapping[str, Any]]]]:
+    """Attribute each materialized accountability link to a jurisdiction, by chain role.
+
+    The honest bridge: a link is attributed to a jurisdiction ONLY when its
+    ``deployment_id`` matches a shaped site's ``subject_id`` (the deployment is a
+    geolocated site subject in that bucket). A link whose deployment cannot be proven to
+    sit in a jurisdiction is left unattributed — never guessed onto a dossier. Returns
+    ``{jurisdiction: {chain_role: [link, ...]}}``.
+    """
+    site_jurisdiction: dict[str, str] = {}
+    for site in dataset.sites:
+        # First writer wins deterministically (sites are ordered); a conflicted site keeps
+        # its first bucket — attribution is best-effort and never fabricated. The site's
+        # ``entity_id`` is the deployment/subject entity the accountability link anchors on.
+        site_jurisdiction.setdefault(str(site.entity_id), site.jurisdiction)
+    out: dict[str, dict[str, list[Mapping[str, Any]]]] = {}
+    for link in accountability_links:
+        juris = site_jurisdiction.get(str(link.get("deployment_id")))
+        if juris is None:
+            continue
+        role = str(link.get("chain_role") or "")
+        out.setdefault(juris, {}).setdefault(role, []).append(link)
+    return out
+
+
+def _governance_row(link: Mapping[str, Any], label: str) -> dict[str, Any]:
+    """One governance-chain link as a frozen ``Row`` — always citing its claims (§3.1)."""
+    claims = ", ".join(str(c) for c in (link.get("establishing_claims") or ())) or "(none)"
+    via_bits = []
+    if link.get("via_org"):
+        via_bits.append(f"via operator org {link['via_org']}")
+    if link.get("via_contract"):
+        via_bits.append(f"via contract {link['via_contract']}")
+    via = f" ({'; '.join(via_bits)})" if via_bits else ""
+    return {
+        "label": label,
+        "value": str(link.get("object_id")),
+        "note": (
+            f"Derived accountability link (L4 inference, confidence "
+            f"{link.get('confidence', 'probable')}){via}; established by claim(s) {claims} "
+            "— procured ≠ deployed (§3.1)."
+        ),
+    }
+
+
+def _governance_chain_field(
+    slug: str, by_role: Mapping[str, Sequence[Mapping[str, Any]]]
+) -> dict[str, Any]:
+    """The structured per-dossier governance chain, with honest gaps for empty segments.
+
+    Additive to the dossier JSON: each of the five chain segments lists its evidenced
+    links (object + establishing claims + confidence) or is marked ``not_researched`` —
+    the honest gap the ticket demands, never a fabricated link.
+    """
+    segments: dict[str, Any] = {}
+    for role, _section, _label in _GOVERNANCE_SEGMENTS:
+        links = list(by_role.get(role, ()))
+        if links:
+            segments[role] = {
+                "status": "evidenced",
+                "links": [
+                    {
+                        "object_id": str(link.get("object_id")),
+                        "object_type": link.get("object_type"),
+                        "confidence": link.get("confidence", "probable"),
+                        "establishing_claims": [
+                            str(c) for c in (link.get("establishing_claims") or ())
+                        ],
+                        "via_org": link.get("via_org"),
+                        "via_contract": link.get("via_contract"),
+                    }
+                    for link in links
+                ],
+            }
+        else:
+            segments[role] = {
+                "status": "not_researched",
+                "links": [],
+                "note": (
+                    f"No evidenced {role} link for a resolved deployment in this "
+                    "jurisdiction — an honest gap, not an absence of one (§3.1)."
+                ),
+            }
+    return {"subject_id": f"jurisdiction:{slug}", "segments": segments}
+
+
+def _dossiers(
+    dataset: ShapedDataset,
+    as_of: str,
+    belief: datetime | None,
+    *,
+    accountability_links: Sequence[Mapping[str, Any]] = (),
+) -> list[dict[str, Any]]:
     """Surfaces 1 + 2 — the dossier index / per-jurisdiction dossiers (§39.2).
 
     One dossier per publishable jurisdiction bucket (incl. the honest ``unresolved``
     bucket), in the frozen ``web/src/lib/dossier.ts`` ``Dossier`` contract. Every
     published count is denominated (§32) and gaps stay first-class (§3.1) — nothing
     fabricated, nothing collapsed.
+
+    P28.6: when materialized accountability links exist (P28.6), each dossier is enriched
+    with the deployment→vendor→contract→funding→policy→oversight governance chain — rows
+    riding the frozen ``Section``/``Row`` contract (no new IA), each citing its
+    establishing claims, plus a structured ``governance_chain`` field with honest gaps.
+    An unmaterialized spine (no links) leaves the dossier exactly as before (honest
+    degrade — the surface plumbing is P28.5's; this only fills it where evidence exists).
     """
     echo = _as_of_echo(as_of, belief)
+    governance = _governance_by_jurisdiction(dataset, accountability_links)
     dossiers: list[dict[str, Any]] = []
     for group in dataset.jurisdictions:
         slug = _slugify(group.jurisdiction)
+        by_role = governance.get(group.jurisdiction, {})
+        # Governance-chain rows, keyed by the dossier section they ride into.
+        gov_rows: dict[str, list[dict[str, Any]]] = {}
+        for role, section_id, label in _GOVERNANCE_SEGMENTS:
+            for link in by_role.get(role, ()):
+                gov_rows.setdefault(section_id, []).append(_governance_row(link, label))
         sections: list[dict[str, Any]] = []
         for section_id in _DOSSIER_SECTIONS:
             section: dict[str, Any] = {"section_id": section_id}
+            rows: list[dict[str, Any]] = []
             if section_id == "what_is_deployed":
-                section["rows"] = [
+                rows.append(
                     {
                         "label": "Geolocated site observations",
                         "value": group.sites.phrase(),
@@ -834,21 +963,24 @@ def _dossiers(dataset: ShapedDataset, as_of: str, belief: datetime | None) -> li
                             "resolved device census (SIG-RECON-058)."
                         ),
                     }
-                ]
+                )
             elif section_id == "where_the_hardware_is":
-                section["rows"] = [
+                rows.append(
                     {
                         "label": "Publishable subjects in this jurisdiction",
                         "value": group.subjects,
                     }
-                ]
+                )
             elif section_id == "how_we_know_this":
-                section["rows"] = [
+                rows.append(
                     {
                         "label": "Sources",
                         "value": ", ".join(group.source_ids) or "(none recorded)",
                     }
-                ]
+                )
+            rows.extend(gov_rows.get(section_id, ()))
+            if rows:
+                section["rows"] = rows
             sections.append(section)
         gaps = [
             {
@@ -867,21 +999,24 @@ def _dossiers(dataset: ShapedDataset, as_of: str, belief: datetime | None) -> li
                     "predicate_id": "camera_latitude",
                 }
             )
-        dossiers.append(
-            {
-                "slug": slug,
-                "subject_label": f"Surveillance infrastructure — {group.jurisdiction}",
-                "jurisdiction": group.jurisdiction,
-                "asOf": echo,
-                "rulesetVersion": SHAPING_SCHEMA_VERSION,
-                "sections": sections,
-                "gaps": gaps,
-                "source_families": list(group.source_ids),
-                "authorization": {},
-                "termination": {},
-                "legal_regime": {},
-            }
-        )
+        dossier: dict[str, Any] = {
+            "slug": slug,
+            "subject_label": f"Surveillance infrastructure — {group.jurisdiction}",
+            "jurisdiction": group.jurisdiction,
+            "asOf": echo,
+            "rulesetVersion": SHAPING_SCHEMA_VERSION,
+            "sections": sections,
+            "gaps": gaps,
+            "source_families": list(group.source_ids),
+            "authorization": {},
+            "termination": {},
+            "legal_regime": {},
+        }
+        # Only attach the governance chain where it is materialized for this jurisdiction;
+        # an unmaterialized spine leaves the dossier byte-identical (honest degrade, P28.5).
+        if by_role:
+            dossier["governance_chain"] = _governance_chain_field(slug, by_role)
+        dossiers.append(dossier)
     return dossiers
 
 
@@ -957,6 +1092,7 @@ def build_spine_export(
     m_edges = list(raw.get("materialized_edges") or [])
     m_contradictions = list(raw.get("materialized_contradictions") or [])
     m_coverage = list(raw.get("materialized_coverage") or [])
+    m_acct_links = list(raw.get("materialized_accountability_links") or [])
 
     # Coverage is computed ONCE (materialized when present, else shaping) so the web
     # coverage.json and the sig_graph coverage table never drift.
@@ -1003,7 +1139,7 @@ def build_spine_export(
     bundle = build_bundle(build_spec, tables, rights, registry=registry)
 
     # --- the ten P27.1-contract web surfaces ------------------------------------
-    dossiers = _dossiers(dataset, dataset.as_of, belief)
+    dossiers = _dossiers(dataset, dataset.as_of, belief, accountability_links=m_acct_links)
     surfaces: dict[str, Any] = {
         "dossier_index": _dossier_index(dossiers),
         "dossiers": dossiers,
