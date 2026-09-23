@@ -227,3 +227,164 @@ def test_spine_export_session_is_read_only(conn, seeded_export) -> None:
     cur = conn.cursor()
     cur.execute("SHOW default_transaction_read_only")
     assert cur.fetchone()[0] == "on"
+
+
+# --- P28.5: the export reads the MATERIALIZED graph (ADR-101) --------------- #
+
+_COUNT_PRED = "contracted_device_count"  # resolvable: authoritative_source_wins
+
+
+def _seed_count_predicate(cur) -> None:
+    cur.execute(
+        "INSERT INTO vocab_resolution_strategy(strategy_id,definition) "
+        "VALUES('authoritative_source_wins','fixture') ON CONFLICT DO NOTHING"
+    )
+    cur.execute(
+        "INSERT INTO vocab_predicate"
+        "(predicate_id,vocab_version,value_datatype,object_type,definition,"
+        " volatility_class,half_life_days,resolution_strategy) "
+        "VALUES(%s,'1.0.0','integer','quantity','fixture','IMMUTABLE',365,"
+        "'authoritative_source_wins') ON CONFLICT DO NOTHING",
+        (_COUNT_PRED,),
+    )
+
+
+def _genre_capture(cur, source_id: str, rights_id: str, run_id: str, key: str, genre: str) -> str:
+    """A capture whose artifact_type is a resolver-known genre (for count reconciliation)."""
+    cur.execute(
+        "INSERT INTO evidence_artifact(source_id,stable_locator,artifact_type,"
+        "acquisition_method,primary_or_secondary,rights_id,capture_status) "
+        "VALUES(%s,%s,%s,'records_request','primary',%s,'captured') RETURNING artifact_id",
+        (source_id, f"urn:sig:p285:{key}", genre, rights_id),
+    )
+    artifact_id = cur.fetchone()[0]
+    cur.execute(
+        "INSERT INTO evidence_capture(artifact_id,content_digest,byte_size,media_type,"
+        "retrieved_at,retrieved_by_run_id,ocfl_object_id,ocfl_version,storage_tier,"
+        "capture_method,capture_tool_version,source_uri) "
+        "VALUES(%s,%s,10,'application/json','2026-05-01T00:00:00Z',%s,%s,'v1',"
+        "'public','records_request','sig/0',%s) RETURNING capture_id",
+        (artifact_id, f"digest-{key}", run_id, f"urn:sig:p285:{key}", f"urn:sig:p285:{key}"),
+    )
+    return cur.fetchone()[0]
+
+
+def _count_claim(
+    cur, *, subject, value, run_id, rights_id, author_id, capture_id, reliability="R1"
+) -> None:
+    cur.execute(
+        "INSERT INTO claim(subject_id,predicate_id,object_type,value_kind,value_text,"
+        "value_num,unit,raw_value,observed_at,source_reliability,claim_directness,"
+        "artifact_integrity,asserted_by,assertion_rationale,ingest_run_id,rights_id,"
+        "sensitivity_tier) "
+        "VALUES(%s,%s,'quantity','value',%s,%s,'devices',%s,'2026-05-01T00:00:00Z',%s,"
+        "'D1','I1',%s,'fixture',%s,%s,0) RETURNING claim_id",
+        (
+            subject,
+            _COUNT_PRED,
+            str(value),
+            value,
+            str(value),
+            reliability,
+            author_id,
+            run_id,
+            rights_id,
+        ),
+    )
+    claim_id = cur.fetchone()[0]
+    cur.execute(
+        "INSERT INTO claim_evidence(claim_id,capture_id,role) VALUES(%s,%s,'establishes')",
+        (claim_id, capture_id),
+    )
+
+
+def test_spine_export_reads_the_materialized_graph(conn, seeded_export) -> None:
+    # Add resolvable device-count claims to the geolocated sites, then run the REAL P28.1/3/4
+    # materializers over the spine (SIG-ENG-035, consumed not re-implemented). s_osm agrees
+    # (299/299 → RESOLVED); s_cc0 disagrees (299/190 → a VISIBLE contradiction).
+    from inference.materialize import materialize_coverage
+    from reconcile.materialize import materialize_contradictions, materialize_resolutions
+
+    cur = conn.cursor()
+    _seed_count_predicate(cur)
+    rights = _rights(cur, "CC0-1.0", "yes")
+    run = _run(cur, "count_src")
+    # Two DISTINCT sources (one per genre) so the two count claims are independent evidence —
+    # a same-source pair collapses to one independence class (uncontested). The count claims'
+    # genre must be one the predicate's directness map knows (executed_contract / invoice), so
+    # the §28 resolver adjudicates rather than KeyError-skips.
+    _source(cur, "count_contract", rights)
+    _source(cur, "count_invoice", rights)
+    cap_contract = _genre_capture(
+        cur, "count_contract", rights, run, "contract", "executed_contract"
+    )
+    cap_invoice = _genre_capture(cur, "count_invoice", rights, run, "invoice", "invoice")
+    author = _entity(cur, "person")
+    s_osm, s_cc0 = seeded_export["osm"], seeded_export["cc0"]
+    # s_osm: two agreeing sources → a RESOLVED envelope (a resolved site).
+    _count_claim(
+        cur,
+        subject=s_osm,
+        value=299,
+        run_id=run,
+        rights_id=rights,
+        author_id=author,
+        capture_id=cap_contract,
+    )
+    _count_claim(
+        cur,
+        subject=s_osm,
+        value=299,
+        run_id=run,
+        rights_id=rights,
+        author_id=author,
+        capture_id=cap_invoice,
+    )
+    # s_cc0: 299 vs 190 → a VISIBLE contradiction (both evidence sides retained).
+    _count_claim(
+        cur,
+        subject=s_cc0,
+        value=299,
+        run_id=run,
+        rights_id=rights,
+        author_id=author,
+        capture_id=cap_contract,
+        reliability="R1",
+    )
+    _count_claim(
+        cur,
+        subject=s_cc0,
+        value=190,
+        run_id=run,
+        rights_id=rights,
+        author_id=author,
+        capture_id=cap_invoice,
+        reliability="R2",
+    )
+
+    res = materialize_resolutions(conn)
+    con = materialize_contradictions(conn)
+    cov = materialize_coverage(conn)
+    assert res.inserted >= 1  # at least s_osm's RESOLVED envelope written
+    assert con.inserted >= 1  # s_cc0's 299-vs-190 contradiction written (kept VISIBLE)
+    assert cov.inserted >= 1  # honest §32 coverage rows written
+
+    export = run_spine_export(conn, as_of="2026-09-23", note="materialized", spine_label="seeded")
+    coverage = json.loads(export.web_artifacts["web/coverage.json"])
+
+    # The resolved-site framing rides the frozen CoverageMetric contract (ADR-101): only
+    # s_osm resolved, so N = 1 resolved site; the denominator names the observations; no total.
+    resolved = next(m for m in coverage if m["id"] == "resolved_sites")
+    assert resolved["value"].startswith("1 resolved sites (from ")
+    assert resolved["is_population_total"] is False
+    assert "observation-level sites" in resolved["denominator"]
+    # Contradictions stay VISIBLE — surfaced as an honest counted quantity (§3.1/§31).
+    contradictions = next(m for m in coverage if m["id"] == "contradictions_visible")
+    assert "contradictions" in contradictions["value"]
+    # The materialized §32 coverage rows are read (not the compute-on-read shaping metrics).
+    assert any(m["id"].startswith("materialized_") for m in coverage)
+    # Every coverage metric is still non-total (§32, SIG-METRIC-010).
+    for m in coverage:
+        assert m["is_population_total"] is False
+    # The map layer flips to the resolved framing.
+    assert json.loads(export.web_artifacts["web/map.json"])["layers"][0]["id"] == "resolved_sites"
