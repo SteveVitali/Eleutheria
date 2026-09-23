@@ -32,7 +32,11 @@ path = "/v1/coverage/okc"        # the §32.2 metrics surface over the real spin
 [[probes.targets]]
 name = "sig-web-root"
 kind = "http"
-url_env = "SIG_PROBE_WEB_URL"    # the public static site (nginx + GCS FUSE)
+url_env = "SIG_PROBE_WEB_URL"    # the public static site. Canonical public origin =
+                                 # https://surveillancegraph.org (astro `site`, P27.6); the
+                                 # DNS/TLS cut-over is P27.10, so until it lands the operator
+                                 # sets SIG_PROBE_WEB_URL to the domain (or the *.run.app
+                                 # fallback) — no literal host is baked in (HG-12).
 path = "/"
 
 [[probes.targets]]
@@ -44,6 +48,11 @@ url = "https://storage.googleapis.com/{project}-sig-public/okc/manifest.json"
 name = "sig-public-france-manifest"
 kind = "http"
 url = "https://storage.googleapis.com/{project}-sig-public/france/manifest.json"
+
+[[probes.targets]]
+name = "sig-public-national-manifest"     # P27.8: the NATIONAL published-compartment export
+kind = "http"                             # manifest at the public bucket root — confirms the
+url = "https://storage.googleapis.com/{project}-sig-public/manifest.json"  # real national data is live
 
 [[probes.targets]]
 name = "sig-pg-cloudsql"

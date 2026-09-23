@@ -2611,6 +2611,7 @@ dependencies = [
     { name = "sig-api" },
     { name = "sig-connectors" },
     { name = "sig-db" },
+    { name = "sig-policy" },
 ]
 
 [package.metadata]
@@ -2620,6 +2621,7 @@ requires-dist = [
     { name = "sig-api", editable = "api" },
     { name = "sig-connectors", editable = "connectors" },
     { name = "sig-db", editable = "db" },
+    { name = "sig-policy", editable = "policy" },
 ]
 
 [[package]]
