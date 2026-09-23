@@ -135,6 +135,32 @@ def build_parser() -> argparse.ArgumentParser:
     )
     show = ro_sub.add_parser("show", help="print the folded current state per request")
     show.add_argument("--log", default=None, help="outcome-log path (as for `record`)")
+
+    detect = sub.add_parser(
+        "detect",
+        help="run the §33.2 detector catalog over the materialized spine → the research queue "
+        "(P29.2); records requests are DRAFTED, never sent",
+    )
+    detect.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    detect.add_argument(
+        "--role", default=None, help="optional role to SET ROLE to (read/materialize role)"
+    )
+    detect.add_argument(
+        "--jurisdiction",
+        default=None,
+        help="records-law jurisdiction code (e.g. OK) for records-request drafts; without it "
+        "no draft is made (the loop cannot guess a jurisdiction's records law)",
+    )
+    detect.add_argument(
+        "--now",
+        default=None,
+        help="ISO instant for the run (default: now) — pins snapshot-age comparisons",
+    )
+    detect.add_argument(
+        "--out",
+        default=None,
+        help="write <out>/records_requests.json (the drafted-not-sent records requests)",
+    )
     return parser
 
 
@@ -359,5 +385,47 @@ def main(argv: list[str] | None = None) -> int:
             return _records_outcomes_show(args)
         parser.parse_args([args.command, "--help"])
         return 0
+    if args.command == "detect":
+        return _detect(args)
     parser.print_help()
+    return 0
+
+
+# --------------------------------------------------------------------------- #
+# Detector run → research queue + records-request drafts (P29.2)
+# --------------------------------------------------------------------------- #
+def _detect(args: argparse.Namespace) -> int:
+    """Run the §33.2 detector catalog over the materialized spine → the research queue.
+
+    Materializes deduped `research_task` rows (each citing its trigger) and DRAFTS records
+    requests — never sends one (sending is an operator-gated external side effect). The
+    research queue reaches the public surface through the existing `sig-exports` spine export
+    (`web/research_queue.json`); this command writes only the drafted records requests.
+    """
+    from datetime import datetime
+
+    from .research_pg import materialize_research_queue_from_dsn
+
+    now = datetime.fromisoformat(args.now.replace("Z", "+00:00")) if args.now else None
+    summary, drafts = materialize_research_queue_from_dsn(
+        args.dsn,
+        role=args.role,
+        jurisdiction_key=args.jurisdiction,
+        now=now,
+    )
+    print(json.dumps(summary.as_dict(), indent=2, default=str))
+    if args.out:
+        out_dir = Path(args.out)
+        out_dir.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "status": "drafted",  # DRAFT, NEVER SENT — sending is operator-gated (HG, BL-057)
+            "drafted": len(drafts),
+            "sent": 0,
+            "requests": [d.as_dict() for d in drafts],
+        }
+        (out_dir / "records_requests.json").write_text(
+            json.dumps(payload, indent=2, sort_keys=True)
+        )
+        print(f"# wrote {out_dir / 'records_requests.json'} — {len(drafts)} DRAFTED, 0 sent")
+    print("# records requests are DRAFTED, never sent (operator-gated external side effect).")
     return 0

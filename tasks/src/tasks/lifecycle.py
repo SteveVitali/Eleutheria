@@ -71,6 +71,13 @@ class ResearchTask:
     claimed_at: datetime | None = None
     claim_expires_at: datetime | None = None
     generated_at: datetime | None = None
+    #: What made the detector fire — the trigger this task cites (§33.1). A task
+    #: generated over the materialized spine (P29.2) records the kind (``contradiction``
+    #: / ``coverage`` / ``relationship``) and the id of the materialized row that
+    #: produced it, so every generated task cites its trigger; left ``None`` for a task
+    #: minted from in-memory facts without a materialized provenance.
+    trigger_kind: str | None = None
+    trigger_ref: str | None = None
 
     @property
     def task_type(self) -> str:
@@ -252,6 +259,8 @@ class TaskPool:
         facts: Facts,
         now: datetime,
         jurisdiction_id: str | None = None,
+        trigger_kind: str | None = None,
+        trigger_ref: str | None = None,
     ) -> ResearchTask | None:
         """Generate a task for `(spec, subject_id)`, honoring dedup + rate limit.
 
@@ -259,7 +268,8 @@ class TaskPool:
         suppression, SIG-TASK-007) — no new task, no rate-limit charge. Returns
         `None` if generation is refused by the per-subject rate limiter
         (SIG-TASK-013). Otherwise mints a task at `generated`, priced by the type's
-        `priority_fn`, and records it.
+        `priority_fn`, and records it. `trigger_kind`/`trigger_ref` cite what made the
+        detector fire (the materialized row a P29.2 detector run generated it from).
         """
         key = (spec.task_type, subject_id)
         existing_id = self._by_key.get(key)
@@ -278,6 +288,8 @@ class TaskPool:
             priority=spec.priority(facts),
             status=TaskStatus.GENERATED,
             generated_at=now,
+            trigger_kind=trigger_kind,
+            trigger_ref=trigger_ref,
         )
         self._tasks[task.task_id] = task
         self._by_key[key] = task.task_id
