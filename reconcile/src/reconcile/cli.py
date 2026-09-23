@@ -65,6 +65,17 @@ def build_parser() -> argparse.ArgumentParser:
     edges.add_argument("--jurisdiction", default=None, help="jurisdiction token filter")
     edges.add_argument("--subject", default=None, help="restrict to one subject entity id")
     edges.add_argument("--role", default=None, help="optional role to SET ROLE to")
+
+    contradictions = sub.add_parser(
+        "materialize-contradictions",
+        help="run §29 reconciliation + the §28 resolver over the resolved spine and WRITE the "
+        "VISIBLE §31 contradiction rows (P28.3, append-only, idempotent, lifecycle-aware)",
+    )
+    contradictions.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    contradictions.add_argument("--jurisdiction", default=None, help="jurisdiction token filter")
+    contradictions.add_argument("--subject", default=None, help="restrict to one subject entity id")
+    contradictions.add_argument("--predicate", default=None, help="restrict to one predicate id")
+    contradictions.add_argument("--role", default=None, help="optional role to SET ROLE to")
     return parser
 
 
@@ -182,6 +193,8 @@ def main(argv: list[str] | None = None) -> int:
         return _materialize(args)
     if args.command == "materialize-edges":
         return _materialize_edges(args)
+    if args.command == "materialize-contradictions":
+        return _materialize_contradictions(args)
     parser.print_help()
     return 0
 
@@ -209,6 +222,21 @@ def _materialize_edges(args: argparse.Namespace) -> int:
         args.dsn,
         jurisdiction=args.jurisdiction,
         subject=args.subject,
+        role=args.role,
+    )
+    print(json.dumps(summary.as_dict(), indent=2))
+    return 0
+
+
+def _materialize_contradictions(args: argparse.Namespace) -> int:
+    """Materialize the VISIBLE §31 contradiction rows into the spine (P28.3)."""
+    from .materialize import materialize_contradictions_from_dsn
+
+    summary = materialize_contradictions_from_dsn(
+        args.dsn,
+        jurisdiction=args.jurisdiction,
+        subject=args.subject,
+        predicate=args.predicate,
         role=args.role,
     )
     print(json.dumps(summary.as_dict(), indent=2))

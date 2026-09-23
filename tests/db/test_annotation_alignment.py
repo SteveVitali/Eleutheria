@@ -108,7 +108,11 @@ PAIRS: list[Pair] = [
             "note": "human description recomputed on read; a nullable `note` column is "
             "the additive step when persistence lands (ADR-037 revisit trigger)",
         },
-        unpersisted_columns={},
+        unpersisted_columns={
+            "input_digest": "P28.3 idempotency key (nullable, no default) — a sha256 over "
+            "the contradiction's reproducible detected state; the materializer sets it, "
+            "the value object does not source it (contradiction_materialize sqitch change)",
+        },
     ),
     Pair(
         name="coverage_record",
