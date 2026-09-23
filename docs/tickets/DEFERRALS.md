@@ -44,3 +44,27 @@ work re-run per each ticket's `Run:` line after the operator acts.
 | D-P21.7-2 | P | HG-10 — run the moderated usability study with ≥5 ontology-naïve participants | P21.7 shipped the runnable protocol + opt-in aggregate-only instrumentation; the study was not run | operator schedules ≥5 participants and runs the protocol; results replace "not yet run" | protocol + aggregate-only timing landed; results = gate-pending | OPEN (cites BL-040) |
 | D-P21.8-1 | V | HG-03/HG-04 — live fetch of the data-driven / coarse-international sources (eff_data_driven, aspi, carnegie, facial_recognition_world_map) | P21.8 shipped the `data_driven` connector + coarse path over fixtures + 4 rights packets; no source green | operator flips the sources (per-source HG-03/04) and re-runs P21.8 with green sources | `run --mode live` refuses exit 3 for the new sources; fixtures tested | OPEN (cites BL-042) |
 | D-P21.9-1 | V | HG-03/HG-04 — live fetch of the Stage-5 pathway sources (rtcc_federation / fr_css_forensics / acoustic_drone_location) | P21.9 shipped the `pathways` connector + 3 extractors + parser layers over fixtures + 3 rights packets; sources LINK-posture, UNDETERMINED | operator flips the sources and re-runs P21.9 with green sources | `run --mode live` refuses exit 3 for all 3 sources; shadow diff 0 | OPEN (cites BL-043) |
+
+## Go-live round (Round 3/4) reconciliation — GL-* cross-reference (2026-09-09)
+
+Seeded by `decompose-spec mode=extend` over `~/MetaHarness/sig-golive-spec.md`. The existing
+`D-P21.*` rows above are the go-live return-pass obligations; this maps each to its spec `GL-*`
+id and the manifest chain row that re-runs it (Lane B — no new contract). Append-only: existing
+rows are **not** rewritten. (First column is the GL id so these are not parsed as `D-` rows.)
+
+| GL id | existing DEFERRALS row(s) | manifest row (re-run) | gate(s) | pre-answered? |
+|---|---|---|---|---|
+| GL-RIGHTS-01 | D-P21.1-1, D-P21.1-2 | 71 (`P21.1`) | HG-03, HG-04 | GL-GATE-03 (flip OKC subset first, phased) |
+| GL-LIVE-01 (fetch) | D-P21.3-1, D-P21.3-2 | 73 (`P21.3`) | HG-03, HG-09 | flips via GL-GATE-03; HG-09 tokens = human (ACCT.1) |
+| GL-LIVE-02 | D-P21.4-1, D-P21.4-2, D-P21.4-3 | 74 (`P21.4`) | HG-01, HG-11, HG-02, Go-public | HG-01 interim (GL-GATE-01), HG-02 interim (GL-GATE-02); Go-public human (GL-GATE-05) |
+| GL-INFRA-01 | D-P21.5-1 | 76 (`P21.5`) | HG-07, HG-12, HG-02 | HG-12 host = GL-GATE-04; HG-07 creds = human (ACCT.1) |
+| GL-CONTRIB-01 | D-P21.7-1, D-P21.7-2 | 77 (`P21.7`) | HG-08, HG-10 | none — creds + participants are human (ACCT.1) |
+| GL-SOURCES-01 | D-P21.8-1, D-P21.9-1 | 78 (`P21.8`/`P21.9`) | HG-03/HG-04 per source | GL-GATE-03 (remainder after the OKC subset; news LINK-only) |
+
+New OPEN rows for go-live gates not yet represented above (HG-02, HG-12). HG-01/HG-07/HG-08/
+HG-09/HG-10/HG-11/Go-public are already covered by the `D-P21.*` rows (not duplicated):
+
+| id | kind | item | why deferred | unblocked by | how to verify | proxy now | status |
+|---|---|---|---|---|---|---|---|
+| D-LEGAL.1-1 | P | HG-02 — counsel opinions (ODbL 4.4(b) RISK-P0-01, officer-naming gate, publication tiers + sensitive-coordinate rules, Part VIII of the published surface) | no counsel engaged; GL-GATE-02 records an interim **engineering disposition** (publish-permitting, "not a legal opinion; counsel review recommended before real public exposure"), resting on the built structural safeguards | operator/counsel records dated opinions in a governance doc + GATE DECISIONS (opinion summary); LEGAL.1 (HUMAN-H2) signed | GL-GATE-02 interim engineering disposition in GATE DECISIONS; every artifact labelled "pending counsel" | OPEN |
+| D-ACCT.1-1 | P | HG-12 — a real (zero/low-cost) host + object store + PG target beyond local, and the GCP `apply` | LIVE.2/INFRA.1/DEPLOY.1 need a real host; GL-GATE-04 pre-answers the **host choice** (GCP `zeta-medley-508121-u7`) but the accounts + the `gcloud apply` are operator work; DEPLOY.1 lands IaC in prepare mode | operator provisions GCP + Secret Manager, exports `gcloud` ADC in the run shell; DEPLOY.1 re-run with ADC applies the validated IaC | IaC written+validated (`terraform validate`/dry-run) by DEPLOY.1; `apply` gate-pending; no token literal in any file | OPEN |
