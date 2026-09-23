@@ -34,8 +34,11 @@ tier5_weak = -3.0
 # The published holdout-precision floor for an auto-writing tier. If a run's measured
 # holdout precision for an auto-write tier (0–3) falls below this, that tier is
 # demoted to review (SIG-IDENT-028). Lives with the model so the gate and the model
-# are versioned together.
-auto_write_precision_threshold = 0.97
+# are versioned together. P28.1/ADR-099 raised it 0.97 -> 0.98: an auto-merged
+# surveillance-infrastructure claim that is wrong is a trust-destroying, asymmetrically
+# costly error, so "lean auto" is governed by a HIGH measured floor. PROVISIONAL
+# (LLM-bootstrapped holdout) — D-R6.1-EVAL re-tunes it against real human ground truth.
+auto_write_precision_threshold = 0.98
 
 # The equijoin blocking rules Splink materialises predictions over. These mirror the
 # selective (never suffix-alone / state-alone) rules in blocking_rules.toml and are
