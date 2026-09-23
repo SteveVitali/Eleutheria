@@ -166,7 +166,7 @@ export const CORRECTIONS: CorrectionEntry[] = [
     previous_value: "block-level coordinates published",
     corrected_value: "coordinates suppressed (jurisdiction-centroid only)",
     previous_belief_date: "2026-07-20",
-    subject_path: "/reference-map/",
+    subject_path: "/visual-language/#reference-map",
   },
   {
     id: "corr-2026-07-28-refused",

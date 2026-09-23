@@ -50,6 +50,12 @@ FOLD_BACK_IDS = [
     # P27.4 (ADR-090 export share of D-P27-SPEC-1): the national, whole-graph
     # spine-read export bundle whose breadth is licence-gate-bounded (§38).
     "SIG-EXPORT-013",
+    # P27.6 (ADR-090 UI + ADR-093 shares of D-P27-SPEC-1): the national public
+    # surface with a per-jurisdiction dossier index (§39.2), and the national IA —
+    # grouped nav + national landing (named denominators, no total) + real
+    # manifest-sourced metadata (§39.9).
+    "SIG-UI-048",
+    "SIG-UI-049",
 ]
 EXPECTED_IDS = BASELINE_IDS + len(FOLD_BACK_IDS)
 

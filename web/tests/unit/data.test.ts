@@ -17,8 +17,10 @@ import {
   getMapSites,
   getNetwork,
   getResearchQueue,
+  getSiteMetadata,
   getWatch,
 } from "../../src/lib/data";
+import { AS_OF, RULESET_VERSION } from "../../src/lib/fixtures";
 import { MAP_ASSETS, NETWORK_NODES, ACCESS_PATHS } from "../../src/lib/map-network-fixture";
 import { FRESHNESS_ROWS, COVERAGE_METRICS, CORRECTIONS, RESEARCH_QUEUE } from "../../src/lib/corrections-methodology-fixture";
 import { WATCH_ITEMS, EVIDENCE_ARTIFACTS, CLAIM_VIEWS } from "../../src/lib/watch-evidence-fixture";
@@ -48,6 +50,17 @@ beforeAll(() => {
   w("corrections.json", CORRECTIONS);
   w("research_queue.json", RESEARCH_QUEUE);
   w("dossier_index.json", []);
+  // The release manifest at the export-dir ROOT (getSiteMetadata reads it in export mode).
+  writeFileSync(
+    join(bundle, "manifest.json"),
+    JSON.stringify({
+      reproducibility_inputs: {
+        as_of_snapshot: "2026-09-01",
+        as_of_belief: "2026-09-15",
+        ruleset_version: "resolver-ruleset-2026.09",
+      },
+    }),
+  );
 });
 
 const MISSING = join(tmpdir(), "sig-export-does-not-exist-xyz");
@@ -116,6 +129,42 @@ describe("P27.5 web data layer — malformed artifact fails loud", () => {
     process.env.SIG_DATA_SOURCE = "export";
     process.env.SIG_EXPORT_DIR = bad;
     expect(() => getMapSites()).toThrow(/assets/);
+    rmSync(bad, { recursive: true, force: true });
+  });
+});
+
+describe("P27.6 site metadata — belief-pinned defaults from the export manifest", () => {
+  it("fixtures mode returns the committed AS_OF / RULESET_VERSION constants", () => {
+    process.env.SIG_DATA_SOURCE = "fixtures";
+    const meta = getSiteMetadata();
+    expect(meta.asOf).toEqual(AS_OF);
+    expect(meta.rulesetVersion).toBe(RULESET_VERSION);
+  });
+
+  it("export mode reads reproducibility_inputs from <exportDir>/manifest.json", () => {
+    process.env.SIG_DATA_SOURCE = "export";
+    process.env.SIG_EXPORT_DIR = bundle;
+    const meta = getSiteMetadata();
+    expect(meta.asOf.as_of_world).toBe("2026-09-01");
+    expect(meta.asOf.as_of_belief).toBe("2026-09-15");
+    expect(meta.asOf.belief_pinned).toBe(true);
+    expect(meta.rulesetVersion).toBe("resolver-ruleset-2026.09");
+    // NOT the frozen fixtures constant (real metadata, ADR-093).
+    expect(meta.asOf.as_of_world).not.toBe(AS_OF.as_of_world);
+  });
+
+  it("export mode fails loud when the manifest is missing", () => {
+    process.env.SIG_DATA_SOURCE = "export";
+    process.env.SIG_EXPORT_DIR = MISSING;
+    expect(() => getSiteMetadata()).toThrow(/export manifest is missing/);
+  });
+
+  it("export mode fails loud on a manifest without reproducibility_inputs", () => {
+    const bad = mkdtempSync(join(tmpdir(), "sig-export-badmanifest-"));
+    writeFileSync(join(bad, "manifest.json"), JSON.stringify({ release_id: "x" }));
+    process.env.SIG_DATA_SOURCE = "export";
+    process.env.SIG_EXPORT_DIR = bad;
+    expect(() => getSiteMetadata()).toThrow(/reproducibility_inputs/);
     rmSync(bad, { recursive: true, force: true });
   });
 });

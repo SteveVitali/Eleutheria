@@ -50,7 +50,7 @@ for (let i = 0; i < dossier.sections.length; i += SECTIONS_PER_PAGE) {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{dossier.subject_label} — SIG dossier (print)</title>
-    <link rel="canonical" href={new URL(dossierPath(dossier.slug), Astro.site ?? "https://sig.example").href} />
+    <link rel="canonical" href={new URL(dossierPath(dossier.slug), Astro.site ?? "https://surveillancegraph.org").href} />
   </head>
   <body>
     <div class="sig-print-toolbar" role="note">

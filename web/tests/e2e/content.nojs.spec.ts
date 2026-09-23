@@ -13,17 +13,21 @@ import { test, expect } from "@playwright/test";
 test("reference map has a populated tabular equivalent without JS (SIG-UI-037)", async ({
   page,
 }) => {
-  await page.goto("/reference-map/");
+  // P27.6: folded into /visual-language/ (map↔reference-map duplication resolved).
+  await page.goto("/visual-language/");
   const rows = page.getByTestId("map-row");
   await expect(rows).toHaveCount(3);
-  // The table carries the coordinate/precision detail, not just the map image.
-  await expect(page.locator("table.sig-table")).toContainText("Published precision");
+  // The reference-map's tabular equivalent carries the coordinate/precision detail.
+  await expect(page.locator("table[aria-labelledby='refmap-table-heading']")).toContainText(
+    "Published precision",
+  );
 });
 
 test("reference graph has a populated list equivalent without JS (SIG-UI-037)", async ({
   page,
 }) => {
-  await page.goto("/reference-graph/");
+  // P27.6: folded into /visual-language/ (network↔reference-graph duplication resolved).
+  await page.goto("/visual-language/");
   const edges = page.getByTestId("graph-edge");
   await expect(edges).toHaveCount(2);
   await expect(edges.first()).toContainText("operates devices from");
@@ -33,6 +37,17 @@ test("epistemic fields and support glyph render without JS (SIG-UI-004)", async 
   await page.goto("/visual-language/");
   await expect(page.getByTestId("epistemic-fields").first().locator(".sig-field")).toHaveCount(4);
   await expect(page.getByTestId("support-glyph").first()).toContainText("Support:");
+});
+
+test("national landing renders its counts and dossier index without JS (SIG-UI-049)", async ({
+  page,
+}) => {
+  await page.goto("/");
+  // Named-denominator stats render server-side (no client JS).
+  expect(await page.getByTestId("named-denominator").count()).toBeGreaterThan(0);
+  // The per-jurisdiction dossier index is a real, populated list without JS.
+  await page.goto("/dossier/");
+  expect(await page.getByTestId("dossier-index-item").count()).toBeGreaterThan(0);
 });
 
 test("citation permalink is present without JS (SIG-UI-035)", async ({ page }) => {
