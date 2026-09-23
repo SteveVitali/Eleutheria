@@ -10,6 +10,7 @@
 // invitation, not a dead end. NO_EVIDENCE_FOUND gaps name the sources searched.
 import AbsenceHatch from "./AbsenceHatch.astro";
 import { ABSENCE_KIND_META } from "../lib/epistemic";
+import { emptyState } from "../lib/empty";
 import type { Gap } from "../lib/dossier";
 
 interface Props {
@@ -19,8 +20,14 @@ interface Props {
 }
 
 const { gaps, variant } = Astro.props;
+const noGaps = emptyState("dossierGaps");
 ---
 
+{gaps.length === 0 && (
+  <p class="sig-gaps__none" role="note" data-testid={`what-we-dont-know-${variant}-none`}>
+    {noGaps.body}
+  </p>
+)}
 <ul class="sig-gaps" data-testid={`what-we-dont-know-${variant}`}>
   {gaps.map((g) => (
     <li class="sig-gaps__item" data-gap-kind={g.kind}>

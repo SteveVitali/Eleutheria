@@ -13,6 +13,8 @@
 // bundled, so archivability and the zero-JS budget hold (see ADR for P15.3).
 import BaseLayout from "../layouts/BaseLayout.astro";
 import AbsenceHatch from "../components/AbsenceHatch.astro";
+import EmptyState from "../components/EmptyState.astro";
+import { summariseBy } from "../lib/tables";
 import {
   LAYER_CONTROLS,
   OBSERVED_LAYERS,
@@ -39,8 +41,10 @@ const maxCount = Math.max(1, ...DENSITY_BINS.map((b) => b.deviceCount));
 const bins = DENSITY_BINS.map((b) => ({ bin: b, render: renderBin(b, maxCount) }));
 
 // Build-time cap so the tabular equivalent stays within budget at national scale
-// (tens of thousands of sites, P27.5 d3); the honest total is preserved (P27.7 finalises).
+// (tens of thousands of sites); the honest total is preserved. P27.7 adds a build-time
+// per-jurisdiction summary band so a reader sees the shape before the (capped) rows.
 const locatableRows = capRows(locatable);
+const assetsByJurisdiction = summariseBy(locatable, (a) => a.jurisdiction);
 
 // Which layer id each control governs, for the "bound control" display.
 const boundControl = LAYER_CONTROLS.find(
@@ -143,6 +147,8 @@ const cell = 64;
   </figure>
 
   <h2 id="bins-table-heading">Coverage bins (tabular equivalent)</h2>
+  {bins.length === 0 && <EmptyState surface="mapBins" />}
+  <div class="sig-table-wrap">
   <table class="sig-table" aria-labelledby="bins-table-heading">
     <thead>
       <tr>
@@ -171,17 +177,31 @@ const cell = 64;
       ))}
     </tbody>
   </table>
+  </div>
 
   <!-- The tabular equivalent for the asset points + jurisdiction indicators. -->
   <h2 id="assets-heading">Located assets (tabular equivalent)</h2>
-  {locatableRows.truncated && (
-    <p class="sig-table-note" data-testid="assets-truncation-note">
-      Showing the first {locatableRows.shown} of {locatableRows.total} located assets; the full set is
-      in the export bundle and the API (SIG-UI-037).
-    </p>
-  )}
-  <table class="sig-table" aria-labelledby="assets-heading">
-    <thead>
+  {locatable.length === 0 ? (
+    <EmptyState surface="mapAssets" />
+  ) : (
+    <>
+      <!-- Build-time per-jurisdiction summarisation: the shape before the rows. -->
+      <ul class="sig-table-summary" data-testid="assets-summary">
+        {assetsByJurisdiction.map((b) => (
+          <li data-testid="assets-summary-item" data-jurisdiction={b.label}>
+            <span class="sig-table-summary__count">{b.count}</span> {b.label}
+          </li>
+        ))}
+      </ul>
+      {locatableRows.truncated && (
+        <p class="sig-table-note" data-testid="assets-truncation-note">
+          Showing the first {locatableRows.shown} of {locatableRows.total} located assets; the full set is
+          in the export bundle and the API (SIG-UI-037).
+        </p>
+      )}
+      <div class="sig-table-wrap">
+      <table class="sig-table" aria-labelledby="assets-heading">
+        <thead>
       <tr>
         <th scope="col">Asset</th>
         <th scope="col">Jurisdiction</th>
@@ -202,8 +222,11 @@ const cell = 64;
           <td>{a.precision}</td>
         </tr>
       ))}
-    </tbody>
-  </table>
+        </tbody>
+      </table>
+      </div>
+    </>
+  )}
 
   <!-- No-coordinate assets: jurisdiction indicators, never dropped (SIG-UI-020). -->
   <h2 id="nocoord-heading">Assets without a published point</h2>
@@ -212,6 +235,7 @@ const cell = 64;
     are <strong>not dropped</strong>. They appear as jurisdiction-level indicators, so
     the map does not systematically understate capability (SIG-UI-020).
   </p>
+  {jurisdictionIndicators.length === 0 && <EmptyState surface="mapIndicators" />}
   <ul class="sig-jurisdiction-indicators">
     {jurisdictionIndicators.map((j) => (
       <li data-testid="jurisdiction-indicator" data-count={j.count}>

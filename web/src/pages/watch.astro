@@ -12,6 +12,7 @@
 // every appearance (SIG-UI-008). The list/table is the source of truth (SIG-UI-037).
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ContestedMarker from "../components/ContestedMarker.astro";
+import EmptyState from "../components/EmptyState.astro";
 import {
   resolveWatchItem,
   watchJurisdictions,
@@ -54,6 +55,7 @@ const axisLabels: Record<string, string> = {
 
   <!-- The renewal watch (SIG-UI-026): per contract, the actionable fields. -->
   <h2 id="watch-heading">Contracts on the watch</h2>
+  {WATCH_ITEMS.length === 0 && <EmptyState surface="watch" />}
   <ul class="sig-watch-list" aria-labelledby="watch-heading">
     {WATCH_ITEMS.map((raw) => {
       const item = resolveWatchItem(raw);
@@ -108,6 +110,7 @@ const axisLabels: Record<string, string> = {
     Each subscription contains one dated event per contract, keyed on its decision
     deadline. Add the iCal feed to a calendar app, or the RSS feed to a reader.
   </p>
+  {jurisdictions.length === 0 && <EmptyState surface="watchSubscriptions" />}
   <ul class="sig-subscription-list" aria-labelledby="subscribe-heading">
     {jurisdictions.map((j) => (
       <li class="sig-subscription" data-testid="subscription" data-jurisdiction={j}>
@@ -130,6 +133,7 @@ const axisLabels: Record<string, string> = {
     It <strong>never</strong> ranks by persuasiveness, sentiment, or predicted effect on a
     vote — that would make SIG an advocacy instrument (SIG-UI-027b).
   </p>
+  {ranked.length === 0 && <EmptyState surface="recommender" />}
   <ol class="sig-recommendations" aria-labelledby="recommender-heading">
     {ranked.map((r, i) => (
       <li
@@ -163,6 +167,7 @@ const axisLabels: Record<string, string> = {
     an as-of date, so a citation stays reproducible after SIG corrects itself.
     <a data-testid="citation-export" href={CITATIONS_PATH}>Download as plain text</a>.
   </p>
+  {citations.length === 0 && <EmptyState surface="citations" />}
   <ol class="sig-citation-list" data-testid="citation-list" aria-labelledby="citations-heading">
     {citations.map((c) => (
       <li data-testid="citation-entry" data-artifact-id={c.artifact_id} data-contested={c.contested ? "true" : "false"}>

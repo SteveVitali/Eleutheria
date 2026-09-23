@@ -10,6 +10,7 @@
 // (SIG-TASK-010/011), and exposes the full disposition vocabulary incl. "searched,
 // found nothing" (SIG-TASK-008/009). No volume leaderboard (SIG-TASK-012).
 import BaseLayout from "../layouts/BaseLayout.astro";
+import EmptyState from "../components/EmptyState.astro";
 import {
   claimStatusFor,
   orderQueue,
@@ -50,6 +51,7 @@ const jurisdictions = queueJurisdictions(RESEARCH_QUEUE);
 
   <!-- Geographic filtering (§33.5): the queue's jurisdictions, each a same-page anchor. -->
   <h2 id="filter-heading">Filter by jurisdiction</h2>
+  {jurisdictions.length === 0 && <EmptyState surface="researchFilter" />}
   <ul class="sig-queue-filter" aria-labelledby="filter-heading">
     {jurisdictions.map((j) => (
       <li data-testid="jurisdiction-filter" data-jurisdiction={j}>
@@ -60,6 +62,7 @@ const jurisdictions = queueJurisdictions(RESEARCH_QUEUE);
   </ul>
 
   <h2 id="queue-heading">Open tasks</h2>
+  {ordered.length === 0 && <EmptyState surface="researchQueue" />}
   <ol class="sig-queue" aria-labelledby="queue-heading">
     {ordered.map((card) => {
       const claim = claimStatusFor(card, JURISDICTION_CLAIMS, QUEUE_AS_OF);
