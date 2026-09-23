@@ -1039,3 +1039,138 @@ table.sig-freshness td {
   border-top: 1px solid var(--sig-rule);
   padding-top: var(--sig-space-2);
 }
+
+/* --------------------------------------------------------------------------- *
+ * P27.7 — empty / gap states, large-table UX & responsive polish.
+ *
+ * All chrome here is NEUTRAL greyscale (--sig-ink/paper/muted/rule/focus/panel) —
+ * no --sig-epi-* token is introduced, so saturated colour stays reserved for
+ * epistemic state and data (SIG-UI-006). The empty state reuses the single absence
+ * texture (the hatch, SIG-UI-007). Nothing here ships client JavaScript.
+ * --------------------------------------------------------------------------- */
+
+/* --- Honest empty / partial state (SIG-UI-007, §3.1) ---------------------- */
+.sig-empty {
+  display: flex;
+  gap: var(--sig-space-4);
+  align-items: flex-start;
+  border: 1px dashed var(--sig-epi-absence-ink);
+  border-radius: var(--sig-radius);
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent 0,
+    transparent 6px,
+    color-mix(in srgb, var(--sig-epi-absence-ink) 12%, transparent) 6px,
+    color-mix(in srgb, var(--sig-epi-absence-ink) 12%, transparent) 8px
+  );
+  padding: var(--sig-space-5);
+  margin: var(--sig-space-4) 0;
+}
+.sig-empty__hatch {
+  flex: 0 0 auto;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 4px;
+  border: 1px dashed var(--sig-epi-absence-ink);
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent 0,
+    transparent 4px,
+    color-mix(in srgb, var(--sig-epi-absence-ink) 45%, transparent) 4px,
+    color-mix(in srgb, var(--sig-epi-absence-ink) 45%, transparent) 6px
+  );
+}
+.sig-empty__body {
+  min-width: 0;
+}
+.sig-empty__heading {
+  margin: 0 0 var(--sig-space-2);
+  font-weight: 700;
+}
+.sig-empty__text {
+  margin: 0 0 var(--sig-space-2);
+  max-width: 46rem;
+}
+.sig-empty__cta {
+  margin: 0;
+  font-weight: 600;
+}
+
+/* --- Large-table UX: summary band + static-link sorting (SIG-UI-034/037) --- */
+/* A horizontal-scroll wrapper so a wide table never forces the whole page to
+ * scroll sideways on a small screen (keeps the a11y/perf budget intact). */
+.sig-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: var(--sig-space-4) 0;
+}
+
+/* The build-time grouping / summarisation band shown above a national-scale table. */
+.sig-table-summary {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sig-space-2) var(--sig-space-4);
+  padding: var(--sig-space-3) var(--sig-space-4);
+  margin: var(--sig-space-4) 0;
+  border: 1px solid var(--sig-rule);
+  border-radius: var(--sig-radius);
+  background: var(--sig-panel);
+  font-size: 0.9rem;
+}
+.sig-table-summary__count {
+  font-weight: 700;
+}
+
+/* Static sort links — plain GETs to the pre-rendered sort routes (no JS). */
+.sig-sort {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sig-space-2) var(--sig-space-3);
+  margin: var(--sig-space-4) 0 var(--sig-space-2);
+  font-size: 0.9rem;
+}
+.sig-sort__label {
+  color: var(--sig-muted);
+}
+.sig-sort__link[aria-current="true"] {
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--sig-ink);
+}
+
+.sig-table-note {
+  font-size: 0.9rem;
+  color: var(--sig-muted);
+  margin: var(--sig-space-3) 0;
+}
+
+/* --- Responsive polish ---------------------------------------------------- */
+@media (max-width: 40rem) {
+  main {
+    padding: var(--sig-space-4) var(--sig-space-4) var(--sig-space-6);
+  }
+  .sig-header__bar {
+    padding: var(--sig-space-3) var(--sig-space-4);
+  }
+  .sig-empty {
+    flex-direction: column;
+    gap: var(--sig-space-3);
+    padding: var(--sig-space-4);
+  }
+  table.sig-table,
+  table.sig-freshness {
+    font-size: 0.9rem;
+  }
+}
+
+/* --- Print: sort links + summary band are interactive chrome, not content -- */
+@media print {
+  .sig-sort {
+    display: none !important;
+  }
+  .sig-table-wrap {
+    overflow: visible !important;
+  }
+}

@@ -10,6 +10,7 @@
 // (SIG-METRIC-010) and no capture–recapture estimate (SIG-METRIC-008). Those
 // prohibitions are enforced structurally by assertCoverageMetrics at build.
 import BaseLayout from "../layouts/BaseLayout.astro";
+import EmptyState from "../components/EmptyState.astro";
 import { assertCoverageMetrics } from "../lib/metrics";
 import { getCoverage } from "../lib/data";
 
@@ -36,13 +37,17 @@ assertCoverageMetrics(COVERAGE_METRICS);
     population is unknown.
   </p>
 
-  <ul class="sig-coverage" data-testid="coverage-list">
-    {COVERAGE_METRICS.map((m) => (
-      <li class="sig-coverage-metric" data-testid="coverage-metric" data-kind={m.kind} data-metric-id={m.id}>
-        <h2>{m.label}</h2>
-        <p class="sig-coverage-metric__value" data-testid="coverage-value"><strong>{m.value}</strong> <span data-testid="coverage-denominator">{m.denominator}</span></p>
-        <p class="sig-coverage-metric__note" data-testid="population-note">{m.population_note}</p>
-      </li>
-    ))}
-  </ul>
+  {COVERAGE_METRICS.length === 0 ? (
+    <EmptyState surface="coverage" />
+  ) : (
+    <ul class="sig-coverage" data-testid="coverage-list">
+      {COVERAGE_METRICS.map((m) => (
+        <li class="sig-coverage-metric" data-testid="coverage-metric" data-kind={m.kind} data-metric-id={m.id}>
+          <h2>{m.label}</h2>
+          <p class="sig-coverage-metric__value" data-testid="coverage-value"><strong>{m.value}</strong> <span data-testid="coverage-denominator">{m.denominator}</span></p>
+          <p class="sig-coverage-metric__note" data-testid="population-note">{m.population_note}</p>
+        </li>
+      ))}
+    </ul>
+  )}
 </BaseLayout>

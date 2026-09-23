@@ -10,6 +10,7 @@
 // is not evidence of absence"). Every number flows through the single data seam
 // (ADR-066): committed fixtures by default, real export bytes under SIG_DATA_SOURCE=export.
 import BaseLayout from "../layouts/BaseLayout.astro";
+import EmptyState from "../components/EmptyState.astro";
 import { getCoverage, getDossierIndex, getFreshness } from "../lib/data";
 import { assertCoverageMetrics } from "../lib/metrics";
 import { dossierPath } from "../lib/dossier";
@@ -107,6 +108,7 @@ const ENTRY_POINTS = [
       standard. Browse them all in the <a href="/dossier/">dossier index</a>, or start
       with one:
     </p>
+    {dossierIndex.length === 0 && <EmptyState surface="landingReach" />}
     <ul class="sig-jurisdiction-reach" role="list">
       {dossierIndex.map((d) => (
         <li>

@@ -10,6 +10,7 @@
 // source of truth and the no-JS/screen-reader path (SIG-UI-037).
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SupportGlyph from "../components/SupportGlyph.astro";
+import EmptyState from "../components/EmptyState.astro";
 import {
   ACCESS_EDGE_TYPES,
   ACCESS_EDGE_STYLES,
@@ -41,8 +42,13 @@ const FOCUS_ENTITY_ID = getNetworkFocusEntityId();
 
 const labelOf = (id: string) => NETWORK_NODES.find((n) => n.id === id)?.label ?? id;
 
-// The default surface is an ego network with expansion, never a global graph.
-const ego = egoNetwork(NETWORK_NODES, NETWORK_EDGES, FOCUS_ENTITY_ID, 1);
+// The default surface is an ego network with expansion, never a global graph. When the
+// network is empty (a thin/unresearched jurisdiction), there is nothing to centre on —
+// the page renders an honest empty state instead of computing an ego view (P27.7).
+const hasNetwork = NETWORK_NODES.some((n) => n.id === FOCUS_ENTITY_ID);
+const ego = hasNetwork
+  ? egoNetwork(NETWORK_NODES, NETWORK_EDGES, FOCUS_ENTITY_ID, 1)
+  : { nodes: [], edges: [] };
 
 // Lay the ego nodes out on a circle for the static diagram (center in the middle).
 const others = ego.nodes.filter((n) => n.id !== FOCUS_ENTITY_ID);
@@ -50,7 +56,7 @@ const cx = 200;
 const cy = 150;
 const r = 110;
 const pos = new Map<string, { x: number; y: number }>();
-pos.set(FOCUS_ENTITY_ID, { x: cx, y: cy });
+if (hasNetwork) pos.set(FOCUS_ENTITY_ID, { x: cx, y: cy });
 others.forEach((n, i) => {
   const a = (2 * Math.PI * i) / Math.max(1, others.length);
   pos.set(n.id, { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) });
@@ -65,6 +71,9 @@ others.forEach((n, i) => {
     the equivalent, not a fallback.
   </p>
 
+  {!hasNetwork && <EmptyState surface="network" />}
+
+  {hasNetwork && (
   <section data-testid="network-view" data-default-view={DEFAULT_NETWORK_VIEW}>
     <h2 id="ego-heading">Ego network — {labelOf(FOCUS_ENTITY_ID)}</h2>
     <figure aria-labelledby="ego-caption">
@@ -111,6 +120,7 @@ others.forEach((n, i) => {
       </figcaption>
     </figure>
   </section>
+  )}
 
   <!-- Centrality/hub statistics — each with its ER-quality disclosure INLINE. -->
   <h2 id="centrality-heading">Centrality &amp; hub statistics</h2>
@@ -119,6 +129,7 @@ others.forEach((n, i) => {
     carries its ER-quality disclosure <strong>at the statistic, not in a footnote</strong>
     (SIG-UI-023).
   </p>
+  {CENTRALITY_STATS.length === 0 && <EmptyState surface="centrality" />}
   <ul class="sig-centrality">
     {CENTRALITY_STATS.map((s) => (
       <li class="sig-centrality__item" data-testid="centrality-stat" data-metric={s.metric}>
@@ -163,6 +174,7 @@ others.forEach((n, i) => {
     return (
       <section class="sig-access-group" data-testid="access-edge-group" data-kind={k}>
         <h3>{style.glyph} {style.label}</h3>
+        {edges.length === 0 && <EmptyState surface="accessEdges" />}
         <ul class="sig-edge-list">
           {edges.map((e) => (
             <li data-testid="access-edge" data-kind={e.access_kind}>
@@ -184,6 +196,7 @@ others.forEach((n, i) => {
     <strong>speculative</strong> and excluded from headline figures (SIG-UI-025,
     SIG-RECON-050).
   </p>
+  {ACCESS_PATHS.length === 0 && <EmptyState surface="accessPaths" />}
   <ol class="sig-paths">
     {ACCESS_PATHS.map((p) => (
       <li

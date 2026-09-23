@@ -9,6 +9,7 @@
 // captures) the metadata-only representation. Static, zero-JS (SIG-UI-036/037).
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ContestedMarker from "../../components/ContestedMarker.astro";
+import EmptyState from "../../components/EmptyState.astro";
 import { evidencePath, isClaimContested, isSealed } from "../../lib/evidence-viewer";
 import { getEvidence } from "../../lib/data";
 
@@ -25,6 +26,7 @@ const CLAIM_VIEWS = getEvidence().claimViews;
     history. Sealed captures are shown metadata-only, with an explanation of why the
     bytes are withheld.
   </p>
+  {CLAIM_VIEWS.length === 0 && <EmptyState surface="evidenceIndex" />}
   <ul class="sig-evidence-index">
     {CLAIM_VIEWS.map((view) => (
       <li data-testid="evidence-index-item" data-claim-id={view.claim_id} data-sealed={isSealed(view.capture) ? "true" : "false"}>
