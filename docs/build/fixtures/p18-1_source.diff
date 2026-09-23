@@ -1,0 +1,1475 @@
+diff --git a/connectors/src/connectors/coarse_international.py b/connectors/src/connectors/coarse_international.py
+new file mode 100644
+index 0000000..7cd5ef2
+--- /dev/null
++++ b/connectors/src/connectors/coarse_international.py
+@@ -0,0 +1,170 @@
++# SPDX-License-Identifier: Apache-2.0
++# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
++# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
++"""Coarse international datasets, ingested at explicit coarse granularity (§22.7, §52).
++
++Some international sources are inherently coarse: country-level surveillance
++indices (Carnegie's AI Global Surveillance Index), global facial-recognition maps
++(the Facial Recognition World Map), and vendor-level international datasets (ASPI's
++Mapping China's Tech Giants). SIG-ENG-036 / SIG-INGEST-042 bind their ingestion:
++each MUST enter the graph as a claim carrying its **explicit coarse granularity**
++and MUST NEVER be disaggregated to agency level by inference — a country-level
++index attached to a specific agency would manufacture precision the source never
++had (P4, SIG-ONTO-021).
++
++This module is the claim-shaping layer that enforces that. It does not fetch —
++these sources are registered LINK-posture and ``ingestion_permitted = false`` until
++their rights are reviewed (§22.7) — it owns the **claim shape and the
++anti-disaggregation guard** every coarse-international connector must route through:
++
++* :func:`coarse_claim` stamps each row with the dataset's declared granularity and
++  a subject at that granularity (a country/region Jurisdiction, or a vendor
++  Organization), never an agency.
++* :func:`assert_not_disaggregated` is the hard gate: offering an agency-level
++  subject for a coarse dataset raises :class:`DisaggregationError`, so the P4
++  violation is caught at the seam rather than silently persisted.
++"""
++
++from __future__ import annotations
++
++from dataclasses import dataclass
++from typing import Any
++
++#: The coarse granularities a country/vendor-level international dataset may claim.
++#: `agency`/`device` are deliberately absent — that is the level SIG-INGEST-042
++#: forbids inferring.
++COARSE_GRANULARITIES = frozenset({"country", "region", "vendor"})
++
++#: Subject kinds that represent an agency-level (or finer) disaggregation. Attaching
++#: a coarse dataset's claim to one of these is the inference SIG-ENG-036 prohibits.
++DISAGGREGATED_SUBJECT_KINDS = frozenset(
++    {"agency", "organization", "deployment", "device", "physical_asset"}
++)
++
++#: Subject kinds a coarse claim MAY carry, by granularity.
++_SUBJECT_KIND_FOR_GRANULARITY = {
++    "country": "jurisdiction",
++    "region": "jurisdiction",
++    "vendor": "vendor",
++}
++
++
++class DisaggregationError(Exception):
++    """Raised when a coarse dataset is disaggregated toward agency level (SIG-INGEST-042).
++
++    The mechanical form of SIG-ENG-036: a country-/vendor-level claim MUST NOT be
++    pinned to a specific agency, deployment, or device by inference. Raised naming
++    the dataset and subject so the P4 defect is auditable.
++    """
++
++
++class CoarseGranularityError(Exception):
++    """Raised when a dataset declares a granularity that is not coarse."""
++
++
++@dataclass(frozen=True)
++class CoarseDataset:
++    """A registered coarse international dataset (§22.7, SIG-INGEST-042)."""
++
++    #: The source-registry id this dataset is seeded under.
++    source_id: str
++    #: Human-readable dataset name.
++    name: str
++    #: The dataset's explicit coarse granularity — one of :data:`COARSE_GRANULARITIES`.
++    granularity: str
++
++    def __post_init__(self) -> None:
++        if self.granularity not in COARSE_GRANULARITIES:
++            raise CoarseGranularityError(
++                f"dataset {self.source_id!r} declares granularity {self.granularity!r}; "
++                f"coarse international datasets are one of {sorted(COARSE_GRANULARITIES)} "
++                "(SIG-INGEST-042)."
++            )
++
++
++#: The three coarse international datasets named for Stage 6 (§22.7, OL-5.3-01).
++#: Country-level indices and a global FR map are `country`; the ASPI vendor study
++#: is `vendor`. Each is registered in the source registry (data/sources.toml).
++DATASETS: dict[str, CoarseDataset] = {
++    "carnegie_ai_gsi": CoarseDataset(
++        source_id="carnegie_ai_gsi",
++        name="AI Global Surveillance Index (Carnegie)",
++        granularity="country",
++    ),
++    "facial_recognition_world_map": CoarseDataset(
++        source_id="facial_recognition_world_map",
++        name="Facial Recognition World Map",
++        granularity="country",
++    ),
++    "aspi_mapping_chinas_tech_giants": CoarseDataset(
++        source_id="aspi_mapping_chinas_tech_giants",
++        name="Mapping China's Tech Giants (ASPI)",
++        granularity="vendor",
++    ),
++}
++
++
++def assert_not_disaggregated(dataset: CoarseDataset, subject_kind: str) -> None:
++    """Reject an agency-level subject for a coarse dataset (SIG-ENG-036/INGEST-042).
++
++    A coarse dataset's claim subject must sit at its own granularity — a
++    country/region :class:`Jurisdiction` or a vendor :class:`Organization` — never
++    an agency, deployment, or device. Anything in :data:`DISAGGREGATED_SUBJECT_KINDS`
++    raises :class:`DisaggregationError`.
++    """
++    if subject_kind in DISAGGREGATED_SUBJECT_KINDS:
++        raise DisaggregationError(
++            f"dataset {dataset.source_id!r} is {dataset.granularity}-level; attaching its "
++            f"claim to a {subject_kind!r} subject would disaggregate it to agency level by "
++            "inference (SIG-ENG-036 / SIG-INGEST-042, P4)."
++        )
++    expected = _SUBJECT_KIND_FOR_GRANULARITY[dataset.granularity]
++    if subject_kind != expected:
++        raise DisaggregationError(
++            f"dataset {dataset.source_id!r} is {dataset.granularity}-level; its claim "
++            f"subject must be a {expected!r}, not {subject_kind!r} (SIG-INGEST-042)."
++        )
++
++
++def coarse_claim(
++    dataset: CoarseDataset,
++    *,
++    subject_kind: str,
++    subject_id: str,
++    predicate: str,
++    value: Any,
++    raw_value: str,
++    attribution: str,
++) -> dict[str, Any]:
++    """Build one coarse-granularity claim row (SIG-INGEST-042).
++
++    Routes through :func:`assert_not_disaggregated` so the granularity guard cannot
++    be bypassed, then stamps the row with the dataset's ``granularity``, the raw
++    upstream value (P2), and a ``disaggregation_prohibited`` marker that travels with
++    the claim so no downstream step re-pins it to an agency.
++    """
++    assert_not_disaggregated(dataset, subject_kind)
++    return {
++        "record_kind": "claim",
++        "source_id": dataset.source_id,
++        "subject_kind": subject_kind,
++        "subject_id": subject_id,
++        "predicate_id": predicate,
++        "value": value,
++        "raw_value": raw_value,  # P2: the coarse source value is preserved verbatim
++        "granularity": dataset.granularity,  # SIG-INGEST-042: explicit, never inferred finer
++        "disaggregation_prohibited": True,
++        "source_attribution": attribution,
++    }
++
++
++__all__ = [
++    "COARSE_GRANULARITIES",
++    "DATASETS",
++    "DISAGGREGATED_SUBJECT_KINDS",
++    "CoarseDataset",
++    "CoarseGranularityError",
++    "DisaggregationError",
++    "assert_not_disaggregated",
++    "coarse_claim",
++]
+diff --git a/connectors/src/connectors/data/sources.toml b/connectors/src/connectors/data/sources.toml
+index d00572a..23280e4 100644
+--- a/connectors/src/connectors/data/sources.toml
++++ b/connectors/src/connectors/data/sources.toml
+@@ -1409,3 +1409,38 @@ custody_posture = "REFERENCE"
+ compact_status = "public_terms_only"
+ robots_policy = "honor"
+ notes = "National open procurement data. UNDETERMINED pending reuse-terms review (Licence Ouverte)."
++
++# Coarse international datasets (§22.7, SIG-ENG-036/SIG-INGEST-042). Country-level
++# indices and a global facial-recognition map are country-granularity; the ASPI
++# study is vendor-granularity. Each is LINK posture and UNDETERMINED until its
++# rights are reviewed, and MUST be ingested at its explicit coarse granularity —
++# never disaggregated to agency level by inference (connectors/coarse_international.py).
++[sources.carnegie_ai_gsi]
++name = "AI Global Surveillance Index (Carnegie)"
++source_kind = "academic"
++homepage_url = "https://carnegieendowment.org/2019/09/17/global-expansion-of-ai-surveillance-pub-79847"
++default_tier = "R2"
++custody_posture = "LINK"
++compact_status = "not_contacted"
++robots_policy = "honor"
++notes = "Country-level AI-surveillance index (OL-5.3-01); coarse granularity mandatory (SIG-INGEST-042). UNDETERMINED."
++
++[sources.facial_recognition_world_map]
++name = "Facial Recognition World Map"
++source_kind = "community"
++homepage_url = "https://www.surfshark.com/facial-recognition-map"
++default_tier = "R4"
++custody_posture = "LINK"
++compact_status = "not_contacted"
++robots_policy = "honor"
++notes = "Country-level facial-recognition map (OL-5.3-01); coarse granularity mandatory (SIG-INGEST-042). UNDETERMINED."
++
++[sources.aspi_mapping_chinas_tech_giants]
++name = "Mapping China's Tech Giants (ASPI)"
++source_kind = "academic"
++homepage_url = "https://chinatechmap.aspi.org.au/"
++default_tier = "R2"
++custody_posture = "LINK"
++compact_status = "not_contacted"
++robots_policy = "honor"
++notes = "Vendor-level international dataset (OL-5.3-01); coarse granularity mandatory (SIG-INGEST-042). UNDETERMINED."
+diff --git a/docs/adr/ADR-056-the-jurisdiction-adapter-framework-namespaced-vocabularies-bcp47-labels-and-coarse-international-ingestion.md b/docs/adr/ADR-056-the-jurisdiction-adapter-framework-namespaced-vocabularies-bcp47-labels-and-coarse-international-ingestion.md
+new file mode 100644
+index 0000000..53d939c
+--- /dev/null
++++ b/docs/adr/ADR-056-the-jurisdiction-adapter-framework-namespaced-vocabularies-bcp47-labels-and-coarse-international-ingestion.md
+@@ -0,0 +1,103 @@
++# ADR-056: The jurisdiction adapter framework — country-namespaced vocabularies, BCP-47 labels, and coarse international ingestion
++
++- **Status:** Accepted
++- **Date:** 2026-09-08
++- **Phase:** P18.1
++- **Requirement ids:** SIG-CHART-029, SIG-CHART-030, SIG-ONTO-068, SIG-ONTO-069,
++  SIG-PUB-017, SIG-ENG-036, SIG-INGEST-042; realising §11.1 `Jurisdiction`, §11.2
++  `Organization`, §11.14 `LegalInstrument`
++- **Spec:** docs/2_canonical_design_spec.md §5.3 (international scope), §13.7–13.8
++  (internationalisation of vocabularies + the internationalised acquisition method),
++  §43.8 (jurisdiction-conditional publication), §52 Phase 18; R9 Part I (the 18-item
++  jurisdiction-adapter checklist)
++- **Relates to:** ADR-007 (LinkML as the single ontology source — the enum edits are
++  made in the LinkML source and regenerated), ADR-008 (SKOS for published vocabularies —
++  the namespace hierarchy is published as `skos:broader`), ADR-046 (policy legal
++  instruments — the `LegalInstrument` this namespaces), the publication policy of
++  P13.2/§43 (the jurisdiction-conditional rule this generalises)
++
++## Context
++
++P18.1 **owns the jurisdiction adapter framework** that P18.2 (France/Belgium) is the
++first consumer of. The data model must be international from the beginning
++(SIG-CHART-029) and a US-shaped enum is prohibited (SIG-CHART-030, §5.3). Prior tickets
++had laid pieces — a first-class `Jurisdiction`, a partly-namespaced `AcquisitionMethod`,
++`name_lang`, and the jurisdiction-conditional `publication_permitted` — but there was no
++reusable *adapter* a new country plugs into, no machine-checked "no US-shaped assumption"
++gate, the `LegalInstrumentType` enum was flat, there was no `transliteration_scheme`, and
++the coarse country-/vendor-level international datasets (§22.7) were neither registered nor
++guarded against agency-level disaggregation.
++
++## Decision
++
++1. **Country-namespaced vocabularies with a shared abstract parent, expressed via LinkML
++   `is_a` (SIG-ONTO-068).** The four internationalised enums — `OrganizationType`,
++   `JurisdictionType`, `LegalInstrumentType`, `AcquisitionMethod` — carry a country-neutral
++   **abstract parent** (dotless) and national `<cc>.*` children linked to it by LinkML
++   permissible-value `is_a`. P18.1 adds **non-US** children (`fr.*`, `uk.*`, `de.*`,
++   `eu.*`) and links the existing law-enforcement and records-request terms to their
++   abstract parent; **no `us.*` value is added** (a frozen us.* baseline is asserted by
++   test). The SKOS structural generator publishes `is_a` as `skos:broader`, so the
++   abstract-parent hierarchy (e.g. `us.le.*` **and** `fr.police_municipale` both `broader`
++   than `law_enforcement`) is queryable and cross-country rollups work.
++
++2. **A `transliteration_scheme` qualifier for multilingual labels (SIG-ONTO-069).**
++   `Jurisdiction` and `Organization` — the label-bearing entities the spec names — carry
++   repeatable `name_lang` (BCP-47) and a new repeatable `transliteration_scheme` qualifier,
++   so a romanised/transliterated name records the scheme it was produced under and the
++   original script stays recoverable.
++
++3. **A data-driven jurisdiction adapter framework in `policy/` (SIG-CHART-029/030).**
++   `policy.jurisdiction` defines `JurisdictionAdapter` (jurisdiction levels + code systems,
++   namespaced org/legal-instrument types, records-request vocabulary, default languages,
++   publication profile, local partner), a machine-checked checklist
++   (`adapter_checklist` / `validate_adapter`), and a hard `assert_no_us_shaped_assumption`
++   gate that rejects any non-US adapter reaching for a `us.*` (or other-namespace) term.
++   The adapters are **data** (`policy/data/jurisdiction_adapters.toml`: US, FR, UK), and
++   `sig-policy jurisdiction` validates them all. Publication stays jurisdiction-conditional:
++   `adapter_publication_permitted` binds the data subject's jurisdiction to the adapter and
++   still requires both it and the record's origin to permit publication (SIG-PUB-017), so the
++   FR-GDPR-redacts / US-publishes contrast falls out of the adapter set, not a global rule.
++
++4. **Coarse international ingestion with an anti-disaggregation guard (SIG-ENG-036 /
++   SIG-INGEST-042).** `connectors.coarse_international` stamps every claim from a
++   country-/vendor-level dataset with its **explicit coarse granularity** and refuses, via
++   `assert_not_disaggregated`, any attempt to attach it to an agency/deployment/device — the
++   disaggregation-by-inference §5.3 forbids (P4). The three named datasets (Carnegie AI
++   Global Surveillance Index, Facial Recognition World Map, ASPI Mapping China's Tech Giants)
++   are registered LINK-posture / `ingestion_permitted = false` (§22.7).
++
++## Consequences
++
++- Onboarding a non-US jurisdiction is a data row plus a fixture; the "no US-shaped
++  assumption" property is a *test*, not a hope. A `us.*` term in a non-US adapter, or a
++  silently-widened us.* enum, fails CI.
++- The vocabulary namespace hierarchy is real SKOS, so international rollups ("any
++  law-enforcement organisation, in any country") are expressible.
++- A coarse international index cannot be pinned to an agency by inference anywhere in the
++  ingestion path without raising.
++
++## Deviations
++
++- **`LegalInstrumentType` / `JurisdictionType` were extended additively, not restructured.**
++  Their pre-existing generic terms (`statute`, `municipality`, …) are kept as the shared
++  abstract parents; national children are added under them. Pre-existing `us.gov.*` and the
++  sector `private.*` values are left untouched (back-compat: prior wire names/IDs are not
++  broken, SIG-ENG-003). The abstract-parent + no-widening rules are asserted for the
++  country-namespaced children, which is the SIG-ONTO-068 obligation.
++- **The adapter gates the checklist items expressible from vocabulary + publication data
++  now; the per-source ingestion items** (boundary sources, procurement portals, official
++  gazette, DPA corpora — R9 Part I items 2/4/5/8/13/14/16) are recorded in
++  `CHECKLIST_ITEMS` as owned by each country's connector work (P18.2+), not asserted here.
++- **The coarse-international layer is the claim shape + guard, not a live connector** — the
++  three datasets are `ingestion_permitted = false` pending rights review (§22.7), so live
++  fetch is downstream.
++
++## Revisit trigger
++
++Revisit when P18.2 lands the first live France/Belgium connectors (which will exercise the
++adapter end-to-end: ingest → reconcile → serve for one municipality), when a coarse dataset's
++rights review flips `ingestion_permitted`, or if a new country needs a checklist item the
++framework does not yet gate. Adding a `us.*` vocabulary value, changing the no-US-shaped-
++assumption gate, or relaxing the anti-disaggregation guard is a spec amendment (SIG-ENG-003),
++not an edit here.
+diff --git a/docs/risk_register.md b/docs/risk_register.md
+index e8767fd..7beb588 100644
+--- a/docs/risk_register.md
++++ b/docs/risk_register.md
+@@ -1123,3 +1123,36 @@ impossible to do silently.
+ |---|---|---|---|
+ | RISK-P17-13 | The other Phase-17 technology spans — private-camera federation, RTCC, and the data-broker chain (**P17.1**); facial recognition, cell-site simulators, mobile-device forensics, and federal authorization datasets (**P17.2**) — both landed | Explicitly out of scope for P17.3 (the phase is populated technology-by-technology, OL-17.5-01) | Each has its own ticket; the schema-absorption guarantee proven here (SIG-CHART-027) is the invariant those tickets share. The §22.7 EFF Data Library roster is the registered Phase-17 ingestion backlog (SIG-INGEST-041). |
+ | RISK-P17-14 | The populated constructs are **instance graphs in the conformance suite**, not rows persisted to the claim spine, and there is **no live gunshot/drone/location-data connector** (§23) | P17.3 is the §5.2 expressibility proof, not an ingestion connector; live population arrives with the Stage-5 connectors over the same frozen schema (gunshot detectors already exist in OSM as `gunshot_detector`, R1-F1.3, ready for that connector) | The instance shapes mirror the generated model exactly (they *are* the generated Pydantic classes); persisting them — and wiring a §23 connector that carries the host-role coordinate rule (§43.3) — is additive and needs no schema change, which is precisely what this ticket proves. |
++
++## Phase 18 — International adapter #1 (P18.1 — the jurisdiction adapter framework)
++
++Per §53 / SIG-ENG-031, P18.1's risk-register entries. P18.1 **owns the jurisdiction
++adapter framework** (§5.3) that P18.2 (France/Belgium) is the first consumer of:
++country-namespaced vocabularies under a shared abstract parent (SIG-ONTO-068), BCP-47
++labels with a transliteration qualifier (SIG-ONTO-069), jurisdiction-conditional
++publication (SIG-PUB-017), and coarse international ingestion (SIG-ENG-036/INGEST-042).
++Unlike the P17.x "populated with no schema change" tickets, P18.1 makes **additive
++schema changes** (national enum children via LinkML `is_a`, a `transliteration_scheme`
++slot), so **ADR-056 records the deviation** and `verify-gen` proves the committed
++generated artifacts match a fresh generation.
++
++### The no-US-shaped-assumption guarantee (SIG-CHART-029/030, SIG-ONTO-068)
++
++| id | Risk (what breaks the acceptance gate if unhandled) | Compensating control |
++|---|---|---|
++| RISK-P18-01 | **A US-shaped assumption re-enters through the vocabulary** — a national type added by widening a `us.*` enum, or a non-US adapter that reaches for a `us.*` term — falsifying SIG-CHART-030 / SIG-ONTO-068. | The us.* permissible set of each internationalised enum is **frozen** and asserted (`tests/ontology/test_i18n.py::test_no_us_enum_was_widened`); national children are added only under their own namespace with a country-neutral abstract parent (`::test_every_non_us_national_child_has_a_shared_abstract_parent`); and `policy.jurisdiction.assert_no_us_shaped_assumption` raises on any foreign-namespace term in a non-US adapter (`tests/unit/test_jurisdiction_adapter.py::test_a_us_term_in_a_non_us_adapter_is_rejected`). A regression surfaces as a red test. |
++| RISK-P18-02 | **The adapter checklist drifts from the real ontology** — an adapter declares an org/legal/records term that is not a permissible value of the corresponding enum, so the checklist "passes" against a private string list. | The adapter vocabulary is cross-checked against the LinkML enums (`tests/unit/test_jurisdiction_adapter.py::test_adapter_vocab_terms_are_real_ontology_enum_values`); a typo or a removed enum value fails CI. |
++
++### Additive schema deviation (ADR-056)
++
++| id | Deviation | Why it is safe / bounded | Compensating control |
++|---|---|---|---|
++| RISK-P18-03 | P18.1 edits the LinkML source (enum `is_a` linkage + national children; `transliteration_scheme` slot) and regenerates every artifact — a schema change, unlike P17.x. | Purely **additive**: no existing permissible value, wire name, or slot is removed or renamed (SIG-ENG-003 back-compat); new slots are optional (today's-behaviour default = absent). Pre-existing `us.gov.*` / sector `private.*` values are untouched. | `make check` `verify-gen` proves the committed `ontology/generated` tree equals a fresh byte-deterministic generation; the P02 claim-spine DDL is regenerated from the same source. ADR-056 records the deviation and its revisit trigger. |
++
++### Deferred / out of scope here (SIG-ENG-005)
++
++| id | Requirement | Why not addressed here | Compensating control |
++|---|---|---|---|
++| RISK-P18-04 | The **per-source ingestion checklist items** — boundary sources, Wikidata coverage, the law-enforcement organisation registry, procurement portals, the official gazette, DPA corpora, date/number locale (R9 Part I items 2/4/5/8/11/13/14/16) — are not gated by the framework. | These are per-country *connector* work (the France RAA → arrêté pipeline, DECP procurement, CADA/CNIL corpora), which is **P18.2**, not the framework. | They are recorded in `policy.jurisdiction.CHECKLIST_ITEMS` as items the framework does not yet gate, mapped `None`, so a reader sees exactly what a live onboarding still owes. The adapter ships read-only until a local partner is named (item 18). |
++| RISK-P18-05 | The coarse-international layer is the **claim shape + anti-disaggregation guard**, not a live connector; the three datasets (Carnegie AI GSI, Facial Recognition World Map, ASPI) are registered `ingestion_permitted = false`. | The datasets are LINK-posture / UNDETERMINED pending rights review (§22.7); a live fetch connector is downstream, exactly as the source-registry gate intends. | `connectors.coarse_international.assert_not_disaggregated` refuses agency-level disaggregation at the seam (`tests/connectors/test_coarse_international.py::test_agency_level_disaggregation_is_refused`), so the P4 guarantee holds the moment a connector is wired; the registry rows fail the ingestion gate closed until reviewed. |
++| RISK-P18-06 | **The France/Belgium connectors themselves** (Technopolice, prefectoral-order → LegalInstrument, national procurement → Contract, the ~12,000-camera OSM import study) are not built here. | Explicitly out of scope — **P18.2**. | P18.1 provides the framework (namespaced vocabularies under a national parent, the adapter checklist, coarse-granularity guard) those connectors consume; each will exercise one adapter end-to-end (ingest → reconcile → serve). |
+diff --git a/docs/traceability.md b/docs/traceability.md
+index aec7f28..51a05fa 100644
+--- a/docs/traceability.md
++++ b/docs/traceability.md
+@@ -1848,3 +1848,52 @@ not patched here.
+ |---|---|---|
+ | SIG-ENG-004 (every new requirement has an automated test) | `tests/ontology/generalization/test_stage5_acoustic_drone_location.py` | `make check` (pytest) |
+ | Phase gate: CI green incl. data-quality; no deviation (no ADR needed — no schema change); traceability + risk register updated | this section; `docs/risk_register.md` (Phase 17 — P17.3) | `make check` (lint/format/typecheck/pytest/verify-gen — `verify-gen` proves the ontology is byte-unchanged) |
++
++# P18.1 — Jurisdiction adapter framework (Stage 6, §5.3 / §13.7–13.8 / §43.8)
++
++The reusable framework a new country plugs into with **no US-shaped assumption** (SIG-CHART-029/030):
++the four §13.7 vocabularies country-namespaced under a shared abstract parent, added by national children
++rather than by widening a US enum (SIG-ONTO-068); repeatable BCP-47 labels with a `transliteration_scheme`
++qualifier (SIG-ONTO-069); jurisdiction-conditional publication over the data subject's and the record's
++origin jurisdiction (SIG-PUB-017, §43.8); and coarse country-/vendor-level international datasets ingested at
++explicit coarse granularity, never disaggregated to agency level by inference (SIG-ENG-036/SIG-INGEST-042).
++P18.1 owns this framework; P18.2 (France/Belgium) is its first consumer.
++
++## Country-namespaced vocabularies under a shared abstract parent (SIG-ONTO-068)
++
++| Requirement | Where | Test |
++|---|---|---|
++| SIG-ONTO-068 (organization_type, jurisdiction_type, acquisition_method, legal_instrument_type namespaced by country with a shared abstract parent; national children `<cc>.*` linked via LinkML `is_a`; **no `us.*` enum widened**) | `ontology/schema/common.yaml` `OrganizationType` (`law_enforcement` parent + `fr.police_municipale`/`fr.gendarmerie`/`uk.territorial_police`/`de.landespolizei`), `JurisdictionType` (`fr.region`/`fr.departement`/`fr.commune`/`fr.epci`/`uk.police_force_area`/`de.bundesland`/`de.kreis`/`de.gemeinde`), `LegalInstrumentType` (`fr.arrete_prefectoral`/`fr.cnil_decision`/`uk.surveillance_camera_code`/`eu.ai_act`/`de.landesdatenschutzgesetz`), `AcquisitionMethod` (`records_request` parent + national children); `generate.py::build_structural_skos` publishes `is_a` as `skos:broader` | `tests/ontology/test_i18n.py::test_enum_carries_non_us_national_children`, `::test_every_non_us_national_child_has_a_shared_abstract_parent`, `::test_no_us_enum_was_widened`, `::test_us_law_enforcement_types_share_the_international_abstract_parent`, `::test_records_request_vocabulary_is_internationalised`, `::test_legal_instrument_type_carries_a_national_authorization_instrument` |
++
++## Multilingual labels with BCP-47 tags + transliteration scheme (SIG-ONTO-069)
++
++| Requirement | Where | Test |
++|---|---|---|
++| SIG-ONTO-069 (every label-bearing entity carries repeatable BCP-47 language-tagged labels; transliterations carry a `transliteration_scheme` qualifier; labels round-trip and render) | `ontology/schema/entities.yaml` `Jurisdiction`/`Organization` `name_lang` (range `bcp47`, multivalued) + `transliteration_scheme` (multivalued); generated Pydantic `sig_models.py` | `tests/ontology/test_i18n.py::test_label_bearing_entity_has_bcp47_and_transliteration_slots`, `::test_multilingual_labels_round_trip_and_render` |
++
++## The jurisdiction adapter framework — no US-shaped assumption (SIG-CHART-029/030)
++
++| Requirement | Where | Test |
++|---|---|---|
++| SIG-CHART-029 (a reusable jurisdiction adapter — code system, org types, legal instruments, records-request vocabulary, publication rules — satisfiable with no US-shaped assumption; machine-checked checklist) | `policy.jurisdiction.JurisdictionAdapter`, `CHECKLIST_ITEMS`/`GATED_ITEMS`, `adapter_checklist`, `validate_adapter`, `adapters()`; `policy/data/jurisdiction_adapters.toml` (US/FR/UK); `sig-policy jurisdiction` CLI | `tests/unit/test_jurisdiction_adapter.py::test_every_seeded_adapter_validates`, `::test_an_incomplete_adapter_fails_the_checklist`, `::test_adapter_vocab_terms_are_real_ontology_enum_values` |
++| SIG-CHART-030 (no US-only device schema / no `us.*`-only code path; onboarding a non-US jurisdiction touches no `us.*` term) | `policy.jurisdiction.assert_no_us_shaped_assumption`, `USShapedAssumptionError`; OSM global device schema inherited (SIG-CHART-030, unchanged) | `tests/unit/test_jurisdiction_adapter.py::test_non_us_adapter_has_no_us_shaped_code_path`, `::test_a_us_term_in_a_non_us_adapter_is_rejected`, `::test_non_us_adapters_use_their_own_namespace_for_org_and_legal_types` |
++| §13.8 (the non-US records-request vocabulary is used, including `no_equivalent_available`) | `policy/data/jurisdiction_adapters.toml` (`fr.cada`, `uk.foi`); `ontology/schema/common.yaml` `AcquisitionMethod` (`no_equivalent_available`) | `tests/unit/test_jurisdiction_adapter.py::test_non_us_records_request_vocabulary_is_used`, `::test_no_equivalent_available_is_a_valid_records_regime_declaration` |
++
++## Jurisdiction-conditional publication (SIG-PUB-017, §43.8)
++
++| Requirement | Where | Test |
++|---|---|---|
++| SIG-PUB-017 (publication rules evaluate the data subject's jurisdiction AND the record's origin; different outcomes across regimes — FR-GDPR redacts, US-DEFAULT publishes) | `policy.publication.publication_permitted`; `policy.jurisdiction.adapter_publication_permitted`; `policy/data/jurisdictions.toml` (US/FR/EU/DE/UK) | `tests/unit/test_jurisdiction_adapter.py::test_publication_is_jurisdiction_conditional_across_adapters`; `tests/unit/test_policy_publication.py::test_jurisdiction_conditional_publication` |
++
++## Coarse international datasets — explicit coarse granularity, no disaggregation (SIG-ENG-036 / SIG-INGEST-042)
++
++| Requirement | Where | Test |
++|---|---|---|
++| SIG-ENG-036 / SIG-INGEST-042 (country-/vendor-level datasets ingested as claims with explicit coarse granularity; never disaggregated to agency level by inference) | `connectors.coarse_international` (`CoarseDataset`, `DATASETS`, `coarse_claim`, `assert_not_disaggregated`, `DisaggregationError`); `connectors/data/sources.toml` (`carnegie_ai_gsi`, `facial_recognition_world_map`, `aspi_mapping_chinas_tech_giants`) | `tests/connectors/test_coarse_international.py::test_all_three_named_datasets_are_registered_and_gated`, `::test_country_and_vendor_granularities_are_declared`, `::test_coarse_claim_stamps_explicit_granularity_and_preserves_raw_value`, `::test_agency_level_disaggregation_is_refused`, `::test_country_dataset_rejects_a_vendor_subject_and_vice_versa`, `::test_a_non_coarse_granularity_is_rejected_at_construction` |
++
++## Phase gate (§51.3)
++
++| Requirement | Where | Test |
++|---|---|---|
++| SIG-ENG-004 (every new requirement has an automated test) | `tests/ontology/test_i18n.py`, `tests/unit/test_jurisdiction_adapter.py`, `tests/connectors/test_coarse_international.py`, `tests/unit/test_policy_publication.py` | `make check` (pytest) |
++| Phase gate: CI green incl. data-quality; ADR written for the schema deviation; traceability + risk register updated | this section; `docs/adr/ADR-056-*`; `docs/risk_register.md` (Phase 18 — P18.1) | `make check` (lint/format/typecheck/pytest/verify-gen — `verify-gen` proves the committed generated artifacts match a fresh generation) |
+diff --git a/ontology/src/ontology/generate.py b/ontology/src/ontology/generate.py
+index 970b67b..0b454ae 100644
+--- a/ontology/src/ontology/generate.py
++++ b/ontology/src/ontology/generate.py
+@@ -382,12 +382,18 @@ def build_structural_skos() -> str:
+                 ref = URIRef(f"{scheme_iri}/{pv_name}")
+                 g.add((ref, RDF.type, SKOS.Concept))
+                 g.add((ref, SKOS.inScheme, scheme))
+-                g.add((ref, SKOS.topConceptOf, scheme))
+-                g.add((scheme, SKOS.hasTopConcept, ref))
+                 g.add((ref, SKOS.prefLabel, Literal(pv_name, lang="en")))
+                 g.add((ref, SKOS.notation, Literal(pv_name)))
+                 if pv.description:
+                     g.add((ref, SKOS.definition, Literal(pv.description)))
++                # Country-namespaced children declare their shared abstract parent
++                # via LinkML `is_a` (§13.7, SIG-ONTO-068); publish it as
++                # skos:broader. Only parentless terms are top concepts.
++                if pv.is_a:
++                    g.add((ref, SKOS.broader, URIRef(f"{scheme_iri}/{pv.is_a}")))
++                else:
++                    g.add((ref, SKOS.topConceptOf, scheme))
++                    g.add((scheme, SKOS.hasTopConcept, ref))
+     return _canonical_nt(g)
+ 
+ 
+diff --git a/ontology/src/ontology/schema/common.yaml b/ontology/src/ontology/schema/common.yaml
+index 4b17797..333fba4 100644
+--- a/ontology/src/ontology/schema/common.yaml
++++ b/ontology/src/ontology/schema/common.yaml
+@@ -473,7 +473,12 @@ enums:
+ 
+   # --- Accountability / legal / records enums (§11.14, §11.17-19) -------------
+   LegalInstrumentType:
+-    description: Legal instrument type, internationalized (§11.14, §13.7).
++    description: >-
++      Legal instrument type, internationalized and country-namespaced (§11.14,
++      §13.7, SIG-ONTO-068). The dotless terms are the shared abstract parents;
++      national instruments are `<cc>.*` children linked by `is_a`, added under a
++      national namespace rather than by widening a US-shaped enum (§5.3). P18.2
++      is the first consumer (the French arrêté préfectoral / CNIL decision).
+     permissible_values:
+       statute: {}
+       ordinance: {}
+@@ -481,10 +486,27 @@ enums:
+       executive_order: {}
+       court_order: {}
+       consent_decree: {}
+-      dpa_decision: {}
++      dpa_decision: {description: "A data-protection authority decision (abstract parent)."}
+       code_of_practice: {}
+-      prefectoral_order: {description: "e.g. a French arrêté préfectoral."}
++      prefectoral_order: {description: "A prefectoral order (abstract parent); e.g. a French arrêté préfectoral."}
+       directive: {}
++      # National children under a shared abstract parent (SIG-ONTO-068). No US
++      # child is added here — a US-shaped enum is prohibited (§5.3).
++      fr.arrete_prefectoral:
++        is_a: prefectoral_order
++        description: "France — arrêté préfectoral (the published authorization instrument, §52 Phase 18)."
++      fr.cnil_decision:
++        is_a: dpa_decision
++        description: "France — a CNIL (data-protection authority) decision."
++      uk.surveillance_camera_code:
++        is_a: code_of_practice
++        description: "United Kingdom — the Surveillance Camera Code of Practice."
++      eu.ai_act:
++        is_a: regulation
++        description: "European Union — an EU AI Act obligation."
++      de.landesdatenschutzgesetz:
++        is_a: statute
++        description: "Germany — a Land data-protection statute."
+   AccountabilityEventType:
+     description: Accountability event type (§11.17).
+     permissible_values:
+@@ -611,7 +633,11 @@ enums:
+   # load-bearing terms named in §11 plus at least one non-US namespace to prove
+   # the model is not US-only.
+   JurisdictionType:
+-    description: Jurisdiction type, namespaced per country (§11.1, §13.7).
++    description: >-
++      Jurisdiction type, namespaced per country (§11.1, §13.7, SIG-ONTO-068).
++      The dotless terms are the shared abstract levels every country's hierarchy
++      maps onto; national levels are `<cc>.*` children linked by `is_a`, so a new
++      country plugs its own level names in without widening a US-shaped enum.
+     permissible_values:
+       country: {}
+       state_province: {}
+@@ -626,20 +652,50 @@ enums:
+       metropolitan_area: {}
+       neighborhood: {}
+       unincorporated_area: {}
++      # National levels under the shared abstract levels (SIG-ONTO-068).
++      fr.region:
++        is_a: state_province
++        description: "France — région."
++      fr.departement:
++        is_a: county
++        description: "France — département."
++      fr.commune:
++        is_a: municipality
++        description: "France — commune."
++      fr.epci:
++        is_a: metropolitan_area
++        description: "France — EPCI (intercommunal grouping); a non-tree overlapping parent."
++      uk.police_force_area:
++        is_a: special_district
++        description: "United Kingdom — police force area (a non-tree operational grouping)."
++      de.bundesland:
++        is_a: state_province
++        description: "Germany — Bundesland (state)."
++      de.kreis:
++        is_a: county
++        description: "Germany — Kreis (district)."
++      de.gemeinde:
++        is_a: municipality
++        description: "Germany — Gemeinde (municipality)."
+   OrganizationType:
+     description: >-
+-      Organization type, namespaced and extensible (§11.2, §13.7). "vendor" is a
+-      ROLE, not a subtype (SIG-ONTO-012); it appears here only as an
++      Organization type, namespaced and extensible (§11.2, §13.7, SIG-ONTO-068).
++      "vendor" is a ROLE, not a subtype (SIG-ONTO-012); it appears here only as an
+       organization-classification convenience and never specializes the entity.
+-    permissible_values:
+-      us.le.municipal_police: {}
+-      us.le.sheriff: {}
+-      us.le.state_police: {}
+-      us.le.university_police: {}
+-      us.le.transit_police: {}
+-      us.le.school_district_police: {}
+-      us.le.tribal_police: {}
+-      us.le.federal: {}
++      `law_enforcement` is the shared abstract parent every country's police-force
++      types map onto; national forces are `<cc>.*` children linked by `is_a`,
++      added under a national namespace rather than by widening the `us.*` set.
++    permissible_values:
++      law_enforcement:
++        description: "Abstract parent of every country's law-enforcement organization types (SIG-ONTO-068)."
++      us.le.municipal_police: {is_a: law_enforcement}
++      us.le.sheriff: {is_a: law_enforcement}
++      us.le.state_police: {is_a: law_enforcement}
++      us.le.university_police: {is_a: law_enforcement}
++      us.le.transit_police: {is_a: law_enforcement}
++      us.le.school_district_police: {is_a: law_enforcement}
++      us.le.tribal_police: {is_a: law_enforcement}
++      us.le.federal: {is_a: law_enforcement}
+       us.gov.municipality: {}
+       us.gov.county: {}
+       us.gov.special_district: {}
+@@ -656,21 +712,26 @@ enums:
+       transit_agency: {}
+       vendor: {}
+       data_broker: {}
+-      fr.police_municipale: {}
+-      fr.gendarmerie: {}
++      # National law-enforcement children under the shared abstract parent.
++      fr.police_municipale: {is_a: law_enforcement, description: "France — police municipale."}
++      fr.gendarmerie: {is_a: law_enforcement, description: "France — gendarmerie nationale."}
++      uk.territorial_police: {is_a: law_enforcement, description: "United Kingdom — a territorial police force."}
++      de.landespolizei: {is_a: law_enforcement, description: "Germany — a Land police force."}
+   AcquisitionMethod:
+     description: >-
+-      Acquisition method, internationalized (§13.8). foia_request is US-specific;
+-      the abstract parent is records_request with national children, plus
+-      no_equivalent_available (itself a coverage fact).
++      Acquisition method, internationalized (§13.8, SIG-ONTO-068). foia_request is
++      US-specific; the abstract parent `records_request` carries national children
++      linked by `is_a`, plus `no_equivalent_available` for jurisdictions with no
++      access regime (itself a coverage fact worth recording).
+     permissible_values:
+       records_request: {description: "Abstract parent of all public-records regimes."}
+-      us.foia: {}
+-      us.state_public_records: {}
+-      fr.cada: {}
+-      uk.foi: {}
+-      eu.access_to_documents: {}
+-      no_equivalent_available: {}
++      us.foia: {is_a: records_request}
++      us.state_public_records: {is_a: records_request}
++      fr.cada: {is_a: records_request}
++      uk.foi: {is_a: records_request}
++      eu.access_to_documents: {is_a: records_request}
++      no_equivalent_available:
++        description: "No access regime exists in the jurisdiction — a recorded coverage fact, not a records-request child."
+   Salience:
+     description: Technology salience rating (§13.1, SIG-ONTO-056).
+     permissible_values:
+diff --git a/ontology/src/ontology/schema/entities.yaml b/ontology/src/ontology/schema/entities.yaml
+index 694bf96..6212714 100644
+--- a/ontology/src/ontology/schema/entities.yaml
++++ b/ontology/src/ontology/schema/entities.yaml
+@@ -58,6 +58,15 @@ classes:
+       name_lang:
+         range: bcp47
+         multivalued: true
++        description: Repeatable BCP-47 language tags for the multilingual labels (SIG-ONTO-069).
++      transliteration_scheme:
++        range: string
++        multivalued: true
++        description: >-
++          Repeatable qualifier naming the transliteration scheme a romanised/
++          transliterated label was produced under (e.g. ISO 9, BGN/PCGN); a
++          transliterated name carries it so the original script stays recoverable
++          (SIG-ONTO-069).
+       valid_from:
+         range: edtf
+       valid_to:
+@@ -81,6 +90,14 @@ classes:
+       name_lang:
+         range: bcp47
+         multivalued: true
++        description: Repeatable BCP-47 language tags for the multilingual entity names (SIG-ONTO-069).
++      transliteration_scheme:
++        range: string
++        multivalued: true
++        description: >-
++          Repeatable qualifier naming the transliteration scheme a romanised/
++          transliterated name was produced under (e.g. ISO 9, BGN/PCGN, Hepburn),
++          so the original script stays recoverable (SIG-ONTO-069).
+       organization_type:
+         range: OrganizationType
+       parent_organization:
+diff --git a/policy/src/policy/cli.py b/policy/src/policy/cli.py
+index 4e6b536..a7c208d 100644
+--- a/policy/src/policy/cli.py
++++ b/policy/src/policy/cli.py
+@@ -15,6 +15,7 @@ import argparse
+ from . import __version__
+ from .crawler import conduct_rules
+ from .governance import intake_categories, permitted_outcomes
++from .jurisdiction import AdapterIncomplete, USShapedAssumptionError, adapters, validate_adapter
+ from .licensing import compartments
+ from .threat_model import ThreatModelError, load_threat_model, validate_threat_model
+ 
+@@ -28,6 +29,10 @@ def build_parser() -> argparse.ArgumentParser:
+     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
+     sub = parser.add_subparsers(dest="command")
+     sub.add_parser("validate", help="run the policy data-layer self-checks")
++    sub.add_parser(
++        "jurisdiction",
++        help="validate every jurisdiction adapter against the §5.3 checklist",
++    )
+     return parser
+ 
+ 
+@@ -46,11 +51,35 @@ def _validate() -> int:
+     return 0
+ 
+ 
++def _jurisdiction() -> int:
++    """Validate every seeded jurisdiction adapter against the §5.3 checklist."""
++    all_adapters = adapters()
++    if not all_adapters:
++        print("no jurisdiction adapters registered")
++        return 1
++    for code, adapter in sorted(all_adapters.items()):
++        try:
++            checklist = validate_adapter(adapter)
++        except (USShapedAssumptionError, AdapterIncomplete) as exc:
++            print(f"adapter {code} INVALID: {exc}")
++            return 1
++        satisfied = sum(1 for ok in checklist.values() if ok)
++        print(
++            f"adapter {code} ({adapter.namespace}.*): OK — "
++            f"{satisfied}/{len(checklist)} checklist items, profile "
++            f"{adapter.publication_profile!r}"
++        )
++    print(f"jurisdiction adapters OK: {len(all_adapters)}")
++    return 0
++
++
+ def main(argv: list[str] | None = None) -> int:
+     """Run the `policy` CLI. Returns a process exit code."""
+     parser = build_parser()
+     args = parser.parse_args(argv)
+     if args.command == "validate":
+         return _validate()
++    if args.command == "jurisdiction":
++        return _jurisdiction()
+     parser.print_help()
+     return 0
+diff --git a/policy/src/policy/data/jurisdiction_adapters.toml b/policy/src/policy/data/jurisdiction_adapters.toml
+new file mode 100644
+index 0000000..ba09f60
+--- /dev/null
++++ b/policy/src/policy/data/jurisdiction_adapters.toml
+@@ -0,0 +1,55 @@
++# SPDX-License-Identifier: Apache-2.0
++# The jurisdiction adapter set (§5.3, §13.7-13.8, SIG-CHART-029/030). Each country
++# that plugs into the international data model ships one row here: its jurisdiction
++# levels + code systems, its namespaced organization / legal-instrument types, its
++# records-request vocabulary, its default languages, and the §43.8 publication
++# profile that applies. Data, not code — adding a country is a data row plus a test
++# fixture, never a schema change.
++#
++# Every vocabulary term below is a permissible value of the corresponding ontology
++# enum (JurisdictionType / OrganizationType / LegalInstrumentType / AcquisitionMethod),
++# asserted by tests/unit/test_jurisdiction_adapter.py. A non-US adapter carries ONLY
++# its own `<namespace>.*` terms (plus country-neutral abstract parents and
++# `no_equivalent_available`): a `us.*` term in a non-US row is the US-shaped
++# assumption §5.3 prohibits and the framework rejects it.
++
++# The US baseline (US-DEFAULT profile). The initial focus, but not a privileged
++# shape — it is one adapter among peers.
++[adapters.US]
++namespace = "us"
++jurisdiction_levels = ["country", "state_province", "county", "municipality"]
++national_code_schemes = ["us.census.geoid", "us.fips", "us.gnis", "us.fbi.ori"]
++organization_types = ["us.le.municipal_police", "us.le.sheriff", "us.le.state_police", "us.gov.municipality"]
++legal_instrument_types = ["statute", "ordinance", "executive_order"]
++records_request_methods = ["us.foia", "us.state_public_records"]
++default_languages = ["en-US"]
++publication_profile = "US-DEFAULT"
++local_partner = "SIG core (US)"
++
++# France — the recommended first non-US adapter (§52 Phase 18). Authorization is
++# carried by published prefectural orders (arrêté préfectoral) and data protection
++# by CNIL; the records-request regime is CADA. No `us.*` term appears.
++[adapters.FR]
++namespace = "fr"
++jurisdiction_levels = ["country", "fr.region", "fr.departement", "fr.commune", "fr.epci"]
++national_code_schemes = ["fr.insee", "iso.3166-2", "wikidata.qid"]
++organization_types = ["fr.police_municipale", "fr.gendarmerie"]
++legal_instrument_types = ["fr.arrete_prefectoral", "fr.cnil_decision"]
++records_request_methods = ["fr.cada"]
++default_languages = ["fr-FR"]
++publication_profile = "FR-GDPR"
++local_partner = "La Quadrature du Net (Technopolice)"
++
++# United Kingdom — ISO code GB, vocabulary namespace `uk`. Records requests under
++# the Freedom of Information Act; the Surveillance Camera Code of Practice as the
++# governing instrument.
++[adapters.UK]
++namespace = "uk"
++jurisdiction_levels = ["country", "uk.police_force_area", "municipality"]
++national_code_schemes = ["uk.ons", "iso.3166-2", "wikidata.qid"]
++organization_types = ["uk.territorial_police"]
++legal_instrument_types = ["uk.surveillance_camera_code"]
++records_request_methods = ["uk.foi"]
++default_languages = ["en-GB", "cy-GB"]
++publication_profile = "GB"
++local_partner = "SIG core (UK) — read-only pending local reviewer"
+diff --git a/policy/src/policy/data/jurisdictions.toml b/policy/src/policy/data/jurisdictions.toml
+index 4db3e4c..d875fe8 100644
+--- a/policy/src/policy/data/jurisdictions.toml
++++ b/policy/src/policy/data/jurisdictions.toml
+@@ -20,6 +20,12 @@ public_employee_names_publishable = true
+ [jurisdictions.EU]
+ public_employee_names_publishable = false
+ 
++# France (FR-GDPR profile): redact public-official names by default, publishing
++# only with a documented Art. 6(1)(f) balancing test — so the default posture
++# here is no-publish (§43.8, R9 FR-GDPR profile).
++[jurisdictions.FR]
++public_employee_names_publishable = false
++
+ [jurisdictions.DE]
+ public_employee_names_publishable = false
+ 
+diff --git a/policy/src/policy/jurisdiction.py b/policy/src/policy/jurisdiction.py
+new file mode 100644
+index 0000000..5c1c11d
+--- /dev/null
++++ b/policy/src/policy/jurisdiction.py
+@@ -0,0 +1,257 @@
++# SPDX-License-Identifier: Apache-2.0
++# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
++# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
++"""The jurisdiction adapter framework (§5.3, §13.7–13.8, §43.8).
++
++The data model is international from the beginning (SIG-CHART-029) and MUST NOT
++carry a US-shaped assumption (SIG-CHART-030, §5.3). This module is the reusable
++**jurisdiction adapter** a new country plugs into: it declares, as data, the five
++things onboarding a jurisdiction requires —
++
++1. its **jurisdiction code system(s)** and level hierarchy,
++2. its **organization types** (a national namespace, not a widened US enum),
++3. its **legal-instrument types** (likewise namespaced),
++4. its **records-request vocabulary** (the internationalised acquisition method,
++   including ``no_equivalent_available`` for a jurisdiction with no access regime),
++5. its **publication rules** (the jurisdiction-conditional profile of §43.8).
++
++— and a **machine-checked checklist** (:func:`adapter_checklist`) plus the hard
++no-US-shaped-assumption gate (:func:`assert_no_us_shaped_assumption`) that together
++prove a non-US jurisdiction onboards with **no ``us.*``-only code path**. P18.2
++(France/Belgium) is the first consumer of this framework.
++
++The adapter set is **data, not code** (``policy/data/jurisdiction_adapters.toml``):
++adding a country is a data row and a test fixture, never a schema change. The full
++18-item checklist of the research base (R9 Part I) is recorded in
++:data:`CHECKLIST_ITEMS`; the items expressible as ontology-vocabulary + publication
++data are gated here, and the per-source ingestion items (boundary sources,
++procurement portals, gazette routes, DPA corpora) are owned by each country's
++connector work (Phase 18.2+).
++"""
++
++from __future__ import annotations
++
++from collections.abc import Mapping
++from dataclasses import dataclass
++from functools import cache
++from typing import Any
++
++from ._data import load_table
++from .publication import publication_permitted
++
++#: The US vocabulary namespace. A non-US adapter that reaches for a ``us.*`` term
++#: is exactly the US-shaped assumption §5.3 prohibits.
++US_NAMESPACE = "us"
++
++#: Country-neutral vocabulary terms that are not owned by any single namespace:
++#: the shared abstract parents (dotless, so they carry no prefix) plus the
++#: explicit ``no_equivalent_available`` coverage fact (§13.8). Any adapter may
++#: reference these without it counting as a foreign-namespace borrow.
++SHARED_NEUTRAL_TERMS = frozenset({"no_equivalent_available"})
++
++#: The 18-item jurisdiction-adapter checklist (R9 Part I). Each entry maps its
++#: item to the adapter field that satisfies it, or ``None`` when the item is a
++#: per-source ingestion concern a country's connector work owns (Phase 18.2+),
++#: not something the framework can gate from vocabulary + publication data alone.
++CHECKLIST_ITEMS: dict[str, str | None] = {
++    "jurisdiction_levels": "jurisdiction_levels",  # 1
++    "overlapping_parent_kinds": None,  # 2 — declared with levels; sources per-country
++    "national_code_schemes": "national_code_schemes",  # 3
++    "boundary_source": None,  # 4 — per-source ingestion (P18.2+)
++    "wikidata_coverage_check": None,  # 5 — per-source ingestion (P18.2+)
++    "organization_types": "organization_types",  # 6
++    "organization_identifier_schemes": "national_code_schemes",  # 7
++    "law_enforcement_registry": None,  # 8 — per-source ingestion (P18.2+)
++    "legal_instrument_types": "legal_instrument_types",  # 9
++    "authorization_regime": "legal_instrument_types",  # 10
++    "data_protection_regime": "legal_instrument_types",  # 11
++    "records_request_methods": "records_request_methods",  # 12
++    "procurement_sources": None,  # 13 — per-source ingestion (P18.2+)
++    "official_gazette": None,  # 14 — per-source ingestion (P18.2+)
++    "default_languages": "default_languages",  # 15
++    "date_number_locale": None,  # 16 — per-source ingestion (P18.2+)
++    "publication_profile": "publication_profile",  # 17
++    "local_partner": "local_partner",  # 18
++}
++
++#: The subset the framework gates now (item -> adapter field). The others are
++#: deferred to per-country ingestion and are reported, not asserted.
++GATED_ITEMS: dict[str, str] = {
++    item: fld for item, fld in CHECKLIST_ITEMS.items() if fld is not None
++}
++
++
++class USShapedAssumptionError(Exception):
++    """Raised when a non-US adapter reaches for a ``us.*``-only code path (§5.3).
++
++    The mechanical form of SIG-CHART-030: onboarding a jurisdiction MUST NOT
++    require a US-shaped vocabulary term. Raised naming the offending value so the
++    defect is found here rather than in production.
++    """
++
++
++class AdapterIncomplete(Exception):
++    """Raised when an adapter fails a gated checklist item (SIG-CHART-029)."""
++
++
++@dataclass(frozen=True)
++class JurisdictionAdapter:
++    """One country's plug-in to the international data model (§5.3, §13.7).
++
++    ``code`` is the jurisdiction identifier the publication engine keys on
++    (``policy/data/jurisdictions.toml``, e.g. ``US``/``FR``/``UK``/``DE``);
++    ``namespace`` is the vocabulary prefix its namespaced terms carry (``us``,
++    ``fr``, ``uk``, ``de``) — the two differ deliberately (the UK's ISO code is
++    ``GB`` but its vocabulary namespace is ``uk``).
++    """
++
++    code: str
++    namespace: str
++    #: Ordered coarse→fine `JurisdictionType` levels for the country (§11.1).
++    jurisdiction_levels: tuple[str, ...] = ()
++    #: Code-system / organization-identifier scheme ids (§11.1, §14.2).
++    national_code_schemes: tuple[str, ...] = ()
++    #: `OrganizationType` terms the country introduces (§11.2, §13.7).
++    organization_types: tuple[str, ...] = ()
++    #: `LegalInstrumentType` terms — authorization + data-protection regime (§11.14).
++    legal_instrument_types: tuple[str, ...] = ()
++    #: `AcquisitionMethod` records-request terms, incl. ``no_equivalent_available`` (§13.8).
++    records_request_methods: tuple[str, ...] = ()
++    #: BCP-47 default language tags for labels/presentation (§9.7, SIG-ONTO-069).
++    default_languages: tuple[str, ...] = ()
++    #: Transliteration scheme(s) for non-Latin scripts, if any (SIG-ONTO-069).
++    transliteration_schemes: tuple[str, ...] = ()
++    #: The §43.8 publication profile that applies (e.g. ``US-DEFAULT``, ``FR-GDPR``).
++    publication_profile: str = ""
++    #: The named local partner/reviewer (§7.1 Goal 7); absent ⇒ read-only mode (item 18).
++    local_partner: str = ""
++
++    @property
++    def is_us(self) -> bool:
++        return self.namespace == US_NAMESPACE
++
++    def namespaced_vocab(self) -> tuple[str, ...]:
++        """Every vocabulary term this adapter references, across all five slots."""
++        return (
++            *self.jurisdiction_levels,
++            *self.organization_types,
++            *self.legal_instrument_types,
++            *self.records_request_methods,
++        )
++
++
++def _prefix(term: str) -> str | None:
++    """The namespace segment of a ``<cc>.*`` term, or ``None`` for a dotless one."""
++    return term.split(".", 1)[0] if "." in term else None
++
++
++def assert_no_us_shaped_assumption(adapter: JurisdictionAdapter) -> None:
++    """Gate a non-US adapter against any ``us.*``-only vocabulary term (§5.3).
++
++    A non-US adapter's namespaced terms MUST all carry its own namespace; a
++    dotless term is a country-neutral shared abstract parent and is always
++    admissible, as is an explicitly neutral term (:data:`SHARED_NEUTRAL_TERMS`).
++    A term in any *other* national namespace — most sharply a ``us.*`` term —
++    means the country cannot be onboarded without a US-shaped code path, and
++    raises :class:`USShapedAssumptionError`. A US adapter is exempt (it *is* the
++    ``us`` namespace).
++    """
++    if adapter.is_us:
++        return
++    for term in adapter.namespaced_vocab():
++        if term in SHARED_NEUTRAL_TERMS:
++            continue
++        prefix = _prefix(term)
++        if prefix is None:
++            continue  # a shared abstract parent — country-neutral
++        if prefix != adapter.namespace:
++            raise USShapedAssumptionError(
++                f"adapter {adapter.code!r} (namespace {adapter.namespace!r}) references "
++                f"{term!r}, which is in the {prefix!r} namespace; onboarding it would "
++                f"require a {prefix}.*-shaped code path (§5.3, SIG-CHART-030)."
++            )
++
++
++def adapter_checklist(adapter: JurisdictionAdapter) -> dict[str, bool]:
++    """Evaluate the gated checklist items for ``adapter`` (SIG-CHART-029).
++
++    Returns ``{item: satisfied}`` over :data:`GATED_ITEMS`. An item is satisfied
++    when its backing adapter field is non-empty — a country onboards by supplying
++    its code system, org types, legal instruments, records-request vocabulary,
++    languages, a publication profile, and a named local partner.
++    """
++    result: dict[str, bool] = {}
++    for item, fld in GATED_ITEMS.items():
++        result[item] = bool(getattr(adapter, fld))
++    return result
++
++
++def validate_adapter(adapter: JurisdictionAdapter) -> dict[str, bool]:
++    """Run the full framework gate over ``adapter`` and return its checklist.
++
++    Enforces the no-US-shaped-assumption rule (:func:`assert_no_us_shaped_assumption`)
++    then requires every gated checklist item to pass (:class:`AdapterIncomplete`).
++    This is what a Stage-6 onboarding proves against.
++    """
++    assert_no_us_shaped_assumption(adapter)
++    checklist = adapter_checklist(adapter)
++    missing = sorted(item for item, ok in checklist.items() if not ok)
++    if missing:
++        raise AdapterIncomplete(
++            f"adapter {adapter.code!r} is missing checklist items {missing} "
++            "(§5.3 jurisdiction-adapter checklist, SIG-CHART-029)."
++        )
++    return checklist
++
++
++def _adapter_from_row(code: str, row: Mapping[str, Any]) -> JurisdictionAdapter:
++    def seq(key: str) -> tuple[str, ...]:
++        return tuple(row.get(key, []))
++
++    return JurisdictionAdapter(
++        code=code,
++        namespace=str(row["namespace"]),
++        jurisdiction_levels=seq("jurisdiction_levels"),
++        national_code_schemes=seq("national_code_schemes"),
++        organization_types=seq("organization_types"),
++        legal_instrument_types=seq("legal_instrument_types"),
++        records_request_methods=seq("records_request_methods"),
++        default_languages=seq("default_languages"),
++        transliteration_schemes=seq("transliteration_schemes"),
++        publication_profile=str(row.get("publication_profile", "")),
++        local_partner=str(row.get("local_partner", "")),
++    )
++
++
++@cache
++def adapters() -> dict[str, JurisdictionAdapter]:
++    """The seeded jurisdiction adapters, keyed by jurisdiction code (data table)."""
++    table = load_table("jurisdiction_adapters")
++    return {code: _adapter_from_row(code, row) for code, row in table.get("adapters", {}).items()}
++
++
++def get(code: str) -> JurisdictionAdapter:
++    """Return one adapter by jurisdiction code, or raise :class:`KeyError`."""
++    return adapters()[code]
++
++
++def adapter_publication_permitted(
++    adapter: JurisdictionAdapter,
++    record_origin_jurisdiction: str,
++    *,
++    is_public_employee_name: bool,
++) -> bool:
++    """Jurisdiction-conditional publication for a subject in ``adapter`` (§43.8).
++
++    A thin, adapter-aware wrapper over :func:`policy.publication.publication_permitted`:
++    the data subject's jurisdiction is the adapter's own code, and both it and the
++    record's origin jurisdiction must permit publication (SIG-PUB-017). Keeping the
++    subject jurisdiction bound to the adapter is what makes the France/US contrast —
++    redact-by-default under FR-GDPR vs presumptively-public under US-DEFAULT —
++    fall out of the adapter set rather than a hard-coded global rule.
++    """
++    return publication_permitted(
++        adapter.code,
++        record_origin_jurisdiction,
++        is_public_employee_name=is_public_employee_name,
++    )
+diff --git a/tests/connectors/test_coarse_international.py b/tests/connectors/test_coarse_international.py
+new file mode 100644
+index 0000000..9e570c3
+--- /dev/null
++++ b/tests/connectors/test_coarse_international.py
+@@ -0,0 +1,91 @@
++# SPDX-License-Identifier: Apache-2.0
++# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
++# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
++"""Coarse international datasets (§22.7, §52, SIG-ENG-036/SIG-INGEST-042, P18.1).
++
++Country- and vendor-level international datasets MUST be ingested at explicit
++coarse granularity and MUST NEVER be disaggregated to agency level by inference.
++"""
++
++from __future__ import annotations
++
++import pytest
++from connectors.registry import get
++
++from connectors import coarse_international as ci
++
++
++def test_all_three_named_datasets_are_registered_and_gated() -> None:
++    # §22.7: the coarse datasets are registered LINK-posture and not yet permitted.
++    for sid, dataset in ci.DATASETS.items():
++        rec = get(sid)
++        assert rec.custody_posture.value == "LINK"
++        assert rec.ingestion_permitted is False
++        assert dataset.granularity in ci.COARSE_GRANULARITIES
++
++
++def test_country_and_vendor_granularities_are_declared() -> None:
++    assert ci.DATASETS["carnegie_ai_gsi"].granularity == "country"
++    assert ci.DATASETS["facial_recognition_world_map"].granularity == "country"
++    assert ci.DATASETS["aspi_mapping_chinas_tech_giants"].granularity == "vendor"
++
++
++def test_coarse_claim_stamps_explicit_granularity_and_preserves_raw_value() -> None:
++    dataset = ci.DATASETS["carnegie_ai_gsi"]
++    row = ci.coarse_claim(
++        dataset,
++        subject_kind="jurisdiction",
++        subject_id="jurisdiction:iso.3166-1:CN",
++        predicate="uses_ai_surveillance",
++        value=True,
++        raw_value="China — AI surveillance: yes",
++        attribution="Carnegie Endowment",
++    )
++    assert row["granularity"] == "country"  # explicit, never inferred finer
++    assert row["disaggregation_prohibited"] is True
++    assert row["raw_value"] == "China — AI surveillance: yes"  # P2 preserved
++    assert row["subject_kind"] == "jurisdiction"
++
++
++def test_vendor_dataset_claims_a_vendor_subject() -> None:
++    dataset = ci.DATASETS["aspi_mapping_chinas_tech_giants"]
++    row = ci.coarse_claim(
++        dataset,
++        subject_kind="vendor",
++        subject_id="sig:org:hikvision",
++        predicate="operates_in_country",
++        value="RS",
++        raw_value="Hikvision — Serbia",
++        attribution="ASPI",
++    )
++    assert row["granularity"] == "vendor"
++
++
++@pytest.mark.parametrize("subject_kind", sorted(ci.DISAGGREGATED_SUBJECT_KINDS))
++def test_agency_level_disaggregation_is_refused(subject_kind: str) -> None:
++    # SIG-ENG-036 / SIG-INGEST-042: a country-level index MUST NOT be pinned to an
++    # agency (or deployment/device) by inference — that manufactures precision (P4).
++    dataset = ci.DATASETS["carnegie_ai_gsi"]
++    with pytest.raises(ci.DisaggregationError):
++        ci.coarse_claim(
++            dataset,
++            subject_kind=subject_kind,
++            subject_id="atlas:some-agency",
++            predicate="uses_ai_surveillance",
++            value=True,
++            raw_value="x",
++            attribution="Carnegie",
++        )
++
++
++def test_country_dataset_rejects_a_vendor_subject_and_vice_versa() -> None:
++    # The subject kind must match the dataset's own granularity.
++    with pytest.raises(ci.DisaggregationError):
++        ci.assert_not_disaggregated(ci.DATASETS["carnegie_ai_gsi"], "vendor")
++    with pytest.raises(ci.DisaggregationError):
++        ci.assert_not_disaggregated(ci.DATASETS["aspi_mapping_chinas_tech_giants"], "jurisdiction")
++
++
++def test_a_non_coarse_granularity_is_rejected_at_construction() -> None:
++    with pytest.raises(ci.CoarseGranularityError):
++        ci.CoarseDataset(source_id="x", name="x", granularity="agency")
+diff --git a/tests/ontology/test_i18n.py b/tests/ontology/test_i18n.py
+new file mode 100644
+index 0000000..a63ff1a
+--- /dev/null
++++ b/tests/ontology/test_i18n.py
+@@ -0,0 +1,171 @@
++# SPDX-License-Identifier: Apache-2.0
++# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
++# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
++"""Internationalisation of the ontology (§13.7-13.8, SIG-ONTO-068/069, P18.1).
++
++Two invariants the international data model rests on:
++
++* the four internationalised vocabularies are **country-namespaced under a shared
++  abstract parent** and were extended by adding non-US children, not by widening a
++  US-shaped enum (SIG-ONTO-068, §5.3); and
++* label-bearing entities carry **repeatable BCP-47 language tags** plus a
++  ``transliteration_scheme`` qualifier, and those labels round-trip through the
++  generated model (SIG-ONTO-069).
++"""
++
++from __future__ import annotations
++
++import pytest
++from support import load_generated_pydantic, load_schemaview
++
++# The four §13.7 internationalised vocabularies (SIG-ONTO-068).
++I18N_ENUMS = ("OrganizationType", "JurisdictionType", "LegalInstrumentType", "AcquisitionMethod")
++
++# The country namespaces the international model uses (§13.7). `private`/`gov` are
++# sector namespaces, not country namespaces, and are out of scope for the
++# country-child/abstract-parent rules below.
++COUNTRY_NAMESPACES = frozenset({"us", "fr", "uk", "de", "eu"})
++NON_US_COUNTRY_NAMESPACES = COUNTRY_NAMESPACES - {"us"}
++
++# The us.* permissible values that existed before P18.1, frozen so the "no US enum
++# was widened" guard is falsifiable. P18.1 adds only non-US children; if a later
++# change adds a us.* value it must update this set deliberately.
++FROZEN_US_VALUES: dict[str, frozenset[str]] = {
++    "OrganizationType": frozenset(
++        {
++            "us.le.municipal_police",
++            "us.le.sheriff",
++            "us.le.state_police",
++            "us.le.university_police",
++            "us.le.transit_police",
++            "us.le.school_district_police",
++            "us.le.tribal_police",
++            "us.le.federal",
++            "us.gov.municipality",
++            "us.gov.county",
++            "us.gov.special_district",
++            "us.fusion_center",
++        }
++    ),
++    "JurisdictionType": frozenset(),  # generic levels only; no us.* values
++    "LegalInstrumentType": frozenset(),  # generic parents only; no us.* values
++    "AcquisitionMethod": frozenset({"us.foia", "us.state_public_records"}),
++}
++
++
++@pytest.fixture(scope="module")
++def sv() -> object:
++    return load_schemaview()
++
++
++def _values(sv: object, enum: str) -> dict[str, object]:
++    return dict(sv.get_enum(enum).permissible_values)  # type: ignore[attr-defined]
++
++
++def _prefix(value: str) -> str | None:
++    return value.split(".", 1)[0] if "." in value else None
++
++
++# --- SIG-ONTO-068: country-namespaced enums under a shared abstract parent ----
++
++
++@pytest.mark.parametrize("enum", I18N_ENUMS)
++def test_enum_carries_non_us_national_children(sv: object, enum: str) -> None:
++    # Each internationalised vocabulary carries at least one non-US *country* child,
++    # proving the model is not US-only (§5.3).
++    values = _values(sv, enum)
++    non_us_children = {v for v in values if _prefix(v) in NON_US_COUNTRY_NAMESPACES}
++    assert non_us_children, f"{enum} has no non-US national child (SIG-ONTO-068)"
++
++
++@pytest.mark.parametrize("enum", I18N_ENUMS)
++def test_every_non_us_national_child_has_a_shared_abstract_parent(sv: object, enum: str) -> None:
++    # SIG-ONTO-068 / AC2: the national children added under a country namespace sit
++    # under a shared abstract parent, declared via LinkML `is_a`. The parent is
++    # itself an in-enum permissible value and is country-neutral (dotless).
++    values = _values(sv, enum)
++    national_children = {n for n in values if _prefix(n) in NON_US_COUNTRY_NAMESPACES}
++    assert national_children
++    for name in national_children:
++        parent = getattr(values[name], "is_a", None)
++        assert parent, f"{enum}.{name} has no abstract parent (is_a) (SIG-ONTO-068)"
++        assert parent in values, f"{enum}.{name} parent {parent!r} is not an in-enum term"
++        assert _prefix(parent) is None, f"{enum}.{name} parent {parent!r} must be country-neutral"
++
++
++def test_us_law_enforcement_types_share_the_international_abstract_parent(sv: object) -> None:
++    # The shared-abstract-parent-per-concept claim is cross-country: the US LE types
++    # and the FR/UK/DE LE types all hang off the same `law_enforcement` parent, so a
++    # rollup query spans jurisdictions (SIG-ONTO-068).
++    values = _values(sv, "OrganizationType")
++    assert "law_enforcement" in values
++    for term in ("us.le.municipal_police", "fr.police_municipale", "uk.territorial_police"):
++        assert values[term].is_a == "law_enforcement"  # type: ignore[attr-defined]
++
++
++@pytest.mark.parametrize("enum", I18N_ENUMS)
++def test_no_us_enum_was_widened(sv: object, enum: str) -> None:
++    # SIG-ONTO-068 / P18.1 AC2: types added under a national namespace, NOT by
++    # widening a US enum. The us.* value set must equal the frozen baseline.
++    values = _values(sv, enum)
++    us_values = {v for v in values if _prefix(v) == "us"}
++    assert us_values == FROZEN_US_VALUES[enum], (
++        f"{enum} us.* set changed: added={us_values - FROZEN_US_VALUES[enum]}, "
++        f"removed={FROZEN_US_VALUES[enum] - us_values} (a US enum must not be widened)"
++    )
++
++
++def test_records_request_vocabulary_is_internationalised(sv: object) -> None:
++    # §13.8: the abstract parent `records_request` with national children, plus
++    # `no_equivalent_available` for a jurisdiction with no access regime.
++    values = _values(sv, "AcquisitionMethod")
++    assert "records_request" in values
++    assert "no_equivalent_available" in values
++    national = {v for v in values if _prefix(v) is not None}
++    assert {"fr.cada", "uk.foi"} <= national
++    # every national child hangs off the abstract parent
++    for v in national:
++        assert values[v].is_a == "records_request"  # type: ignore[attr-defined]
++
++
++def test_legal_instrument_type_carries_a_national_authorization_instrument(sv: object) -> None:
++    # §11.14 / §52 Phase 18: the French arrêté préfectoral must have somewhere to
++    # land, namespaced under its abstract parent rather than by a US-shaped enum.
++    values = _values(sv, "LegalInstrumentType")
++    assert "fr.arrete_prefectoral" in values
++    assert values["fr.arrete_prefectoral"].is_a == "prefectoral_order"  # type: ignore[attr-defined]
++
++
++# --- SIG-ONTO-069: BCP-47 multilingual labels + transliteration scheme --------
++
++
++@pytest.mark.parametrize("entity", ["Jurisdiction", "Organization"])
++def test_label_bearing_entity_has_bcp47_and_transliteration_slots(sv: object, entity: str) -> None:
++    slots = {s.name: s for s in sv.class_induced_slots(entity)}  # type: ignore[attr-defined]
++    assert "name_lang" in slots, f"{entity} missing name_lang (SIG-ONTO-069)"
++    assert slots["name_lang"].range == "bcp47"
++    assert slots["name_lang"].multivalued
++    assert "transliteration_scheme" in slots, f"{entity} missing transliteration_scheme"
++    assert slots["transliteration_scheme"].multivalued
++
++
++def test_multilingual_labels_round_trip_and_render() -> None:
++    # A repeatable, language-tagged, transliterated set of names round-trips through
++    # the generated Pydantic model (SIG-ONTO-069) — the "render correctly" AC.
++    models = load_generated_pydantic()
++    org = models.Organization(  # type: ignore[attr-defined]
++        id="sig:org:1",
++        canonical_name="Préfecture de police de Paris",
++        name_lang=["fr-FR", "en-GB", "ja-Latn"],
++        transliteration_scheme=["", "", "Hepburn"],
++    )
++    dumped = org.model_dump()
++    assert dumped["name_lang"] == ["fr-FR", "en-GB", "ja-Latn"]
++    assert dumped["transliteration_scheme"] == ["", "", "Hepburn"]
++    # A jurisdiction's multilingual names round-trip too.
++    juris = models.Jurisdiction(  # type: ignore[attr-defined]
++        id="sig:juris:75056",
++        name=["Paris", "パリ"],
++        name_lang=["fr-FR", "ja-JP"],
++    )
++    assert juris.model_dump()["name_lang"] == ["fr-FR", "ja-JP"]
+diff --git a/tests/unit/test_jurisdiction_adapter.py b/tests/unit/test_jurisdiction_adapter.py
+new file mode 100644
+index 0000000..ff72bfc
+--- /dev/null
++++ b/tests/unit/test_jurisdiction_adapter.py
+@@ -0,0 +1,148 @@
++# SPDX-License-Identifier: Apache-2.0
++# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
++# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
++"""The jurisdiction adapter framework (§5.3, §13.7-13.8, SIG-CHART-029/030, P18.1).
++
++Proves the framework onboards a non-US jurisdiction with **no us.*-only code path**
++(SIG-CHART-029/030), that a seeded adapter's vocabulary terms are real ontology
++enum values (so the checklist gates against the actual schema, not a private
++string list), and that the non-US records-request vocabulary — including
++``no_equivalent_available`` — is usable.
++"""
++
++from __future__ import annotations
++
++import pytest
++from support import load_schemaview
++
++from policy import jurisdiction as jur
++
++NON_US_CODES = ("FR", "UK")
++
++
++@pytest.fixture(scope="module")
++def sv() -> object:
++    return load_schemaview()
++
++
++def _enum_values(sv: object, enum: str) -> set[str]:
++    return set(sv.get_enum(enum).permissible_values)  # type: ignore[attr-defined]
++
++
++# --- SIG-CHART-029: the checklist is satisfiable, no US-shaped assumption ------
++
++
++def test_every_seeded_adapter_validates() -> None:
++    all_adapters = jur.adapters()
++    assert set(all_adapters) >= {"US", "FR", "UK"}
++    for adapter in all_adapters.values():
++        checklist = jur.validate_adapter(adapter)  # raises if incomplete / US-shaped
++        assert all(checklist.values())
++
++
++@pytest.mark.parametrize("code", NON_US_CODES)
++def test_non_us_adapter_has_no_us_shaped_code_path(code: str) -> None:
++    # SIG-CHART-030 / AC1: onboarding a non-US jurisdiction touches no us.* term.
++    adapter = jur.get(code)
++    assert not adapter.is_us
++    jur.assert_no_us_shaped_assumption(adapter)  # does not raise
++    for term in adapter.namespaced_vocab():
++        assert not term.startswith("us."), f"{code} adapter reaches for {term!r}"
++
++
++def test_a_us_term_in_a_non_us_adapter_is_rejected() -> None:
++    # The guard is real: inject a us.* term into a non-US adapter and it raises.
++    fr = jur.get("FR")
++    poisoned = jur.JurisdictionAdapter(
++        code=fr.code,
++        namespace=fr.namespace,
++        jurisdiction_levels=fr.jurisdiction_levels,
++        national_code_schemes=fr.national_code_schemes,
++        organization_types=("us.le.municipal_police",),  # US-shaped assumption
++        legal_instrument_types=fr.legal_instrument_types,
++        records_request_methods=fr.records_request_methods,
++        default_languages=fr.default_languages,
++        publication_profile=fr.publication_profile,
++        local_partner=fr.local_partner,
++    )
++    with pytest.raises(jur.USShapedAssumptionError):
++        jur.assert_no_us_shaped_assumption(poisoned)
++
++
++def test_an_incomplete_adapter_fails_the_checklist() -> None:
++    bare = jur.JurisdictionAdapter(code="ZZ", namespace="zz")
++    with pytest.raises(jur.AdapterIncomplete):
++        jur.validate_adapter(bare)
++
++
++# --- The adapter vocabulary is grounded in the real ontology enums ------------
++
++
++def test_adapter_vocab_terms_are_real_ontology_enum_values(sv: object) -> None:
++    org = _enum_values(sv, "OrganizationType")
++    juris = _enum_values(sv, "JurisdictionType")
++    legal = _enum_values(sv, "LegalInstrumentType")
++    acq = _enum_values(sv, "AcquisitionMethod")
++    for adapter in jur.adapters().values():
++        assert set(adapter.organization_types) <= org, adapter.code
++        assert set(adapter.jurisdiction_levels) <= juris, adapter.code
++        assert set(adapter.legal_instrument_types) <= legal, adapter.code
++        assert set(adapter.records_request_methods) <= acq, adapter.code
++
++
++# --- SIG-ONTO-068 realised: national namespaces, not a widened US enum ---------
++
++
++def test_non_us_adapters_use_their_own_namespace_for_org_and_legal_types() -> None:
++    for code in NON_US_CODES:
++        adapter = jur.get(code)
++        for term in (*adapter.organization_types, *adapter.legal_instrument_types):
++            prefix = term.split(".", 1)[0] if "." in term else None
++            # A namespaced term must carry the adapter's own namespace.
++            if prefix is not None:
++                assert prefix == adapter.namespace, f"{code}: {term!r}"
++
++
++# --- §13.8: the non-US records-request vocabulary, incl. no_equivalent_available
++
++
++def test_non_us_records_request_vocabulary_is_used() -> None:
++    assert jur.get("FR").records_request_methods == ("fr.cada",)
++    assert jur.get("UK").records_request_methods == ("uk.foi",)
++
++
++def test_no_equivalent_available_is_a_valid_records_regime_declaration(sv: object) -> None:
++    # A jurisdiction with no access regime records that fact explicitly (§13.8);
++    # `no_equivalent_available` is a country-neutral term the framework accepts
++    # without it counting as a foreign-namespace borrow.
++    assert "no_equivalent_available" in _enum_values(sv, "AcquisitionMethod")
++    no_regime = jur.JurisdictionAdapter(
++        code="XX",
++        namespace="xx",
++        jurisdiction_levels=("country",),
++        national_code_schemes=("iso.3166-2",),
++        organization_types=("law_enforcement",),
++        legal_instrument_types=("statute",),
++        records_request_methods=("no_equivalent_available",),
++        default_languages=("en",),
++        publication_profile="UNKNOWN",
++        local_partner="read-only",
++    )
++    checklist = jur.validate_adapter(no_regime)  # does not raise
++    assert checklist["records_request_methods"]
++
++
++# --- SIG-PUB-017: jurisdiction-conditional publication via the adapter ---------
++
++
++def test_publication_is_jurisdiction_conditional_across_adapters() -> None:
++    us = jur.get("US")
++    fr = jur.get("FR")
++    # US-DEFAULT: public-official names presumptively publishable.
++    assert jur.adapter_publication_permitted(us, "US", is_public_employee_name=True)
++    # FR-GDPR: redact by default — the same fact is NOT publishable for a FR subject,
++    # nor when the record originates in FR. Different outcomes across regimes.
++    assert not jur.adapter_publication_permitted(fr, "US", is_public_employee_name=True)
++    assert not jur.adapter_publication_permitted(us, "FR", is_public_employee_name=True)
++    # Non-name institutional material is not gated by this rule.
++    assert jur.adapter_publication_permitted(fr, "FR", is_public_employee_name=False)

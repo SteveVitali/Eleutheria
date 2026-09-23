@@ -1,0 +1,1528 @@
+diff --git a/db/src/db/absence.py b/db/src/db/absence.py
+index ff5dad2..72e8ae2 100644
+--- a/db/src/db/absence.py
++++ b/db/src/db/absence.py
+@@ -39,8 +39,19 @@ class AbsenceState(StrEnum):
+     UNRESOLVED = "UNRESOLVED"
+ 
+ 
++# The `coverage_record.absence_kind` vocabulary (§32.1, graph_annotations.sql).
++# NOTE these four are NOT the four §9.5 epistemic *states*: `UNRESOLVED` is a
++# state with no coverage kind (it lives on the L3 resolution row), and
++# `not_applicable` is a coverage kind with no epistemic state (the predicate does
++# not apply to the subject — it is not a species of "unknown").
++NOT_APPLICABLE_KIND = "not_applicable"
++ABSENCE_KINDS: frozenset[str] = frozenset(
++    {"not_researched", "searched_not_found", "evidence_of_absence", NOT_APPLICABLE_KIND}
++)
++
+ # AbsenceState <-> coverage_record.absence_kind (graph_annotations.sql). UNRESOLVED
+ # has no coverage_kind: it lives on the L3 resolution row, not a coverage record.
++# `not_applicable` has no epistemic state: it is a coverage kind, not an "unknown".
+ _STATE_TO_COVERAGE_KIND: dict[AbsenceState, str] = {
+     AbsenceState.NOT_RESEARCHED: "not_researched",
+     AbsenceState.NO_EVIDENCE_FOUND: "searched_not_found",
+@@ -66,18 +77,34 @@ def coverage_kind_for(state: AbsenceState) -> str:
+ 
+ 
+ def state_from_coverage_kind(absence_kind: str) -> AbsenceState:
+-    """Map a `coverage_record.absence_kind` back to its logical state."""
++    """Map a `coverage_record.absence_kind` back to its logical state.
++
++    `not_applicable` is a valid coverage kind but carries no §9.5 epistemic
++    state (it is not a species of "unknown"), so it raises rather than being
++    silently coerced into one.
++    """
+     try:
+         return _COVERAGE_KIND_TO_STATE[absence_kind]
+     except KeyError:
++        if absence_kind == NOT_APPLICABLE_KIND:
++            raise ValueError(
++                f"{absence_kind!r} has no §9.5 epistemic state; the predicate does "
++                "not apply to the subject, which is not a kind of unknown"
++            ) from None
+         raise ValueError(f"unknown coverage absence_kind {absence_kind!r}") from None
+ 
+ 
+ @dataclass(frozen=True)
+ class AbsenceRendering:
+-    """A distinguishable presentation of an absence state (SIG-TIME-012)."""
++    """A distinguishable presentation of an absence state (SIG-TIME-012).
++
++    `state` is the §9.5 epistemic state, or `None` for the `not_applicable`
++    coverage kind, which carries no epistemic state (it is not a kind of
++    "unknown"). Distinguishability keys off `code`, which is never `None` and
++    never shared between two renderings.
++    """
+ 
+-    state: AbsenceState
++    state: AbsenceState | None
+     label: str
+     detail: str
+     # A stable machine token every surface keys off; never NULL, never shared
+@@ -132,3 +159,35 @@ def render_absence(
+         ),
+         code=AbsenceState.UNRESOLVED.value,
+     )
++
++
++# The distinguishable rendering token for the fourth coverage kind. It is neither
++# an `AbsenceState` (not a kind of "unknown") nor blank; it keys off its own token
++# so the API and UI never conflate "does not apply" with "not yet researched".
++NOT_APPLICABLE_CODE = "NOT_APPLICABLE"
++
++
++def render_coverage_kind(
++    absence_kind: str,
++    *,
++    sources_searched: Sequence[str] | None = None,
++) -> AbsenceRendering:
++    """Render any of the four §32.1 coverage `absence_kind`s distinguishably.
++
++    The three "unknown"-family kinds delegate to :func:`render_absence` via their
++    §9.5 state; `not_applicable` — the predicate does not apply to the subject —
++    gets its own distinguishable rendering, because collapsing it into
++    `not_researched` (SIG-TIME-012) would misreport a deliberate non-question as an
++    unmet research obligation. `searched_not_found` still MUST name the sources
++    searched (SIG-TIME-011); an empty `sources_searched` is rejected.
++    """
++    if absence_kind == NOT_APPLICABLE_KIND:
++        return AbsenceRendering(
++            state=None,  # no §9.5 epistemic state: not a kind of "unknown"
++            label="Not applicable",
++            detail="This predicate does not apply to this subject.",
++            code=NOT_APPLICABLE_CODE,
++        )
++    if absence_kind not in ABSENCE_KINDS:
++        raise ValueError(f"unknown coverage absence_kind {absence_kind!r}")
++    return render_absence(state_from_coverage_kind(absence_kind), sources_searched=sources_searched)
+diff --git a/inference/pyproject.toml b/inference/pyproject.toml
+index 532aa5c..2f6e892 100644
+--- a/inference/pyproject.toml
++++ b/inference/pyproject.toml
+@@ -1,13 +1,20 @@
+ [project]
+ name = "sig-inference"
+ version = "0.0.0"
+-description = "SIG inference package (skeleton; see docs/2_canonical_design_spec.md §47)."
++description = "SIG inference package (§32 coverage/quality metrics; §47 L4 derivations)."
+ requires-python = ">=3.11"
+-dependencies = []
++# The coverage-metrics layer (§32) reuses the four-state absence model (sig-db)
++# and the volatility-relative currency derivation (sig-reconcile) rather than
++# duplicating either — freshness is currency, not absolute days (SIG-METRIC-006).
++dependencies = ["sig-db", "sig-reconcile"]
+ 
+ [project.scripts]
+ sig-inference = "inference.cli:main"
+ 
++[tool.uv.sources]
++sig-db = { workspace = true }
++sig-reconcile = { workspace = true }
++
+ [build-system]
+ requires = ["hatchling"]
+ build-backend = "hatchling.build"
+diff --git a/inference/src/inference/__init__.py b/inference/src/inference/__init__.py
+index ed0890b..99bfd25 100644
+--- a/inference/src/inference/__init__.py
++++ b/inference/src/inference/__init__.py
+@@ -1,6 +1,17 @@
+ # SPDX-License-Identifier: Apache-2.0
+ # Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+ # carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+-"""SIG `inference` package (skeleton — no domain logic yet; see §47)."""
++"""SIG `inference` package: §32 coverage, completeness, and quality metrics.
++
++The §47 home for L4 derivations and the derived metrics that summarize the claim
++spine (§32). This package makes negative space queryable rather than editorial:
++
++* :mod:`inference.coverage` — the `CoverageRecord` and discovery-probe negatives.
++* :mod:`inference.denominators` — every published aggregate carries its denominator;
++  per-jurisdiction coverage; provenance completeness.
++* :mod:`inference.freshness` — freshness relative to predicate volatility.
++* :mod:`inference.completeness` — the capture–recapture prohibition and the
++  publishable-completeness guardrails.
++"""
+ 
+ __version__ = "0.0.0"
+diff --git a/inference/src/inference/completeness.py b/inference/src/inference/completeness.py
+new file mode 100644
+index 0000000..ec352c7
+--- /dev/null
++++ b/inference/src/inference/completeness.py
+@@ -0,0 +1,204 @@
++# SPDX-License-Identifier: Apache-2.0
++# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
++# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
++"""Completeness-estimation guardrails — and why capture–recapture is banned (§32.5).
++
++SIG MUST NOT publish a capture–recapture estimate of device population from
++volunteer mapping and vendor portal reporting — **not with a caveat, not with a
++wide interval** (SIG-METRIC-008), and multi-list log-linear models MUST NOT be used
++as a rescue (SIG-METRIC-008a). The Lincoln–Petersen estimator fails here on four
++counts, the first dispositive: portals publish a *count, not an inventory*, so the
++recapture overlap `m₂` is undefined. This module makes the prohibition executable:
++the estimators are functions that always **refuse**, so the ban is a test, not a
++code-review convention.
++
++There is exactly one legitimate two-sample application (SIG-METRIC-008b): a
++records-derived installation list *with locations* for one jurisdiction against a
++**blind** field survey, understood and labelled as measuring **the field survey's
++recall in that jurisdiction** — pre-registered, inside a window shorter than the
++predicate's half-life, never extrapolated. :class:`RecordsDerivedRecall` is that
++object, and it enforces every one of those constraints.
++
++What SIG publishes instead (SIG-METRIC-009): counted quantities with **named
++denominators** (see :mod:`inference.denominators`), records-derived **bounds**,
++per-agency reconciliation ratios, and measured survey recall — **never a total**,
++and never a completeness percentage that implies it knows the denominator of reality
++(SIG-METRIC-010). :func:`assert_no_population_total` is the choke point for that.
++"""
++
++from __future__ import annotations
++
++from dataclasses import dataclass, field
++from enum import StrEnum
++
++__all__ = [
++    "ProhibitedEstimateError",
++    "capture_recapture_population",
++    "multi_list_log_linear_population",
++    "CompletenessMethod",
++    "CompletenessStatement",
++    "assert_no_population_total",
++    "RecordsDerivedRecall",
++]
++
++
++class ProhibitedEstimateError(RuntimeError):
++    """A prohibited completeness/population estimate was attempted (§32.5)."""
++
++
++def capture_recapture_population(*_args: object, **_kwargs: object) -> float:
++    """Refuse a capture–recapture population estimate (SIG-METRIC-008).
++
++    Always raises. Volunteer mapping and vendor portal reporting cannot support
++    Lincoln–Petersen here: linkage is impossible (portals publish a count, not an
++    inventory, so `m₂` is undefined), closure fails for a FAST predicate,
++    independence fails in the direction that *understates* the population, and the
++    blind spots are shared. Not with a caveat, not with a wide interval.
++    """
++    raise ProhibitedEstimateError(
++        "capture–recapture population estimation is prohibited (SIG-METRIC-008): "
++        "portals publish a count, not an inventory, so the recapture overlap is "
++        "undefined; the estimator's known failure mode is understating the very "
++        "thing SIG exists to document. Publish counted quantities with named "
++        "denominators or records-derived bounds instead (SIG-METRIC-009)."
++    )
++
++
++def multi_list_log_linear_population(*_args: object, **_kwargs: object) -> float:
++    """Refuse a multi-list log-linear population estimate (SIG-METRIC-008a).
++
++    Always raises. Multi-list models require three or more lists with
++    individual-level linkage and cannot identify the highest-order interaction —
++    precisely the one that matters, since every available list shares a single
++    latent "public visibility" factor.
++    """
++    raise ProhibitedEstimateError(
++        "multi-list log-linear population estimation is prohibited as a rescue "
++        "(SIG-METRIC-008a): the lists share a single latent visibility factor and "
++        "the decisive highest-order interaction is unidentifiable."
++    )
++
++
++class CompletenessMethod(StrEnum):
++    """The publishable completeness methods (SIG-METRIC-009). None is a total."""
++
++    COUNTED_WITH_DENOMINATOR = "counted_with_denominator"
++    RECORDS_DERIVED_BOUNDS = "records_derived_bounds"
++    RECONCILIATION_RATIO = "reconciliation_ratio"
++    MEASURED_SURVEY_RECALL = "measured_survey_recall"
++
++
++# Tokens that betray an implied "denominator of reality" — forbidden (SIG-METRIC-010).
++_REALITY_DENOMINATORS: frozenset[str] = frozenset(
++    {"", "reality", "true population", "all devices", "total", "everything", "the world"}
++)
++
++
++@dataclass(frozen=True)
++class CompletenessStatement:
++    """A publishable completeness figure that cannot imply it knows reality (§32.5).
++
++    Every statement MUST use one of the four :class:`CompletenessMethod`s, MUST name a
++    concrete denominator (never "reality"/"true population", SIG-METRIC-010), and MUST
++    publish its `violated_assumptions` — the AC is "publishes its violated
++    assumptions, or is omitted", so the field is mandatory (empty means *none known*,
++    which is itself a published claim). A population *total* has no valid method and
++    cannot be constructed.
++    """
++
++    method: CompletenessMethod
++    named_denominator: str
++    value: float
++    violated_assumptions: tuple[str, ...] = field(default_factory=tuple)
++
++    def __post_init__(self) -> None:
++        if not isinstance(self.method, CompletenessMethod):
++            raise ValueError(f"unknown completeness method {self.method!r} (SIG-METRIC-009)")
++        if self.named_denominator.strip().lower() in _REALITY_DENOMINATORS:
++            raise ProhibitedEstimateError(
++                f"named_denominator {self.named_denominator!r} implies a denominator of "
++                "reality (SIG-METRIC-010); publish coverage of *known* entities with an "
++                "explicit statement that the true population is unknown"
++            )
++
++    def as_json(self) -> dict[str, object]:
++        return {
++            "method": self.method.value,
++            "named_denominator": self.named_denominator,
++            "value": self.value,
++            "violated_assumptions": list(self.violated_assumptions),
++        }
++
++
++def assert_no_population_total(statement: object) -> CompletenessStatement:
++    """Refuse to publish anything that is not a denominated completeness statement.
++
++    The choke point for SIG-METRIC-009/010: a bare number, or anything that is not a
++    :class:`CompletenessStatement` with a named (non-reality) denominator, fails here
++    rather than shipping as an implied population total.
++    """
++    if not isinstance(statement, CompletenessStatement):
++        raise ProhibitedEstimateError(
++            "a published completeness figure MUST be a CompletenessStatement with a "
++            f"named denominator (SIG-METRIC-009/010), not a bare "
++            f"{type(statement).__name__}: {statement!r}"
++        )
++    return statement
++
++
++@dataclass(frozen=True)
++class RecordsDerivedRecall:
++    """The one legitimate two-sample estimate: field-survey recall (SIG-METRIC-008b).
++
++    A records-derived installation list *with locations* for one jurisdiction, against
++    a **blind** field survey of that jurisdiction, measuring **the survey's recall** —
++    not the device population. It MUST be pre-registered, conducted inside a window
++    shorter than the predicate's half-life, and MUST NOT be extrapolated to any other
++    jurisdiction. Every one of those constraints is enforced in construction; the
++    published figure is labelled as a measurement of SIG's method, never a total.
++    """
++
++    jurisdiction_id: str
++    predicate_id: str
++    inventory_size: int
++    survey_found_in_inventory: int
++    pre_registered: bool
++    window_days: float
++    predicate_half_life_days: float
++
++    def __post_init__(self) -> None:
++        if not self.pre_registered:
++            raise ProhibitedEstimateError(
++                "records-derived recall MUST be pre-registered (SIG-METRIC-008b); an "
++                "unregistered exercise is not the legitimate application"
++            )
++        if self.inventory_size <= 0:
++            raise ValueError("records-derived recall needs a non-empty inventory (SIG-METRIC-008b)")
++        if not (0 <= self.survey_found_in_inventory <= self.inventory_size):
++            raise ValueError("survey_found_in_inventory out of range [0, inventory_size]")
++        if self.window_days >= self.predicate_half_life_days:
++            raise ProhibitedEstimateError(
++                f"recall window {self.window_days}d is not shorter than the predicate "
++                f"half-life {self.predicate_half_life_days}d (SIG-METRIC-008b): closure "
++                "fails and the estimate is no longer defensible"
++            )
++
++    @property
++    def recall(self) -> float:
++        """The measured recall of the field survey in this jurisdiction."""
++        return self.survey_found_in_inventory / self.inventory_size
++
++    def statement(self) -> CompletenessStatement:
++        """Publish as measured survey recall, denominated by the records inventory.
++
++        Labelled as SIG's method-recall in a named jurisdiction — never extrapolated
++        and never a population total (SIG-METRIC-008b/009).
++        """
++        return CompletenessStatement(
++            method=CompletenessMethod.MEASURED_SURVEY_RECALL,
++            named_denominator=(
++                f"records-derived installation inventory for {self.jurisdiction_id}"
++            ),
++            value=self.recall,
++            violated_assumptions=(),
++        )
+diff --git a/inference/src/inference/coverage.py b/inference/src/inference/coverage.py
+new file mode 100644
+index 0000000..5e207a3
+--- /dev/null
++++ b/inference/src/inference/coverage.py
+@@ -0,0 +1,188 @@
++# SPDX-License-Identifier: Apache-2.0
++# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
++# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
++"""The `CoverageRecord`: negative space made queryable, not editorial (§32.1).
++
++"Not in the Atlas" and "not in the Atlas, not in any portal, and not in three
++years of council minutes" are very different statements (§32, SIG-METRIC-002).
++A `CoverageRecord` is the object that carries that difference: it names the
++subject/predicate that was sought, the way the absence is known (`absence_kind`),
++and — when SIG looked and found nothing — *which sources it searched*.
++
++This is the runtime value object for the §32.1 shape, aligned field-for-field with
++the physical `coverage_record` table (`db/deploy/graph_annotations.sql`) and reusing
++the four-state §9.5 model (:mod:`db.absence`) rather than re-encoding it. Persisting
++it and serving it over HTTP are downstream (the read-API envelope is P14.1); this
++module owns the shape, the validation, and the distinguishable rendering every read
++path consumes.
++
++Two invariants are enforced here rather than left to convention:
++
++* `sources_searched[]` is **required** for `searched_not_found` (SIG-METRIC-001/002)
++  — a `searched_not_found` record without it is rejected, mirroring the DDL CHECK.
++* discovery-probe negatives are **retained**: an enumerated candidate-identifier
++  space keeps its confirmed-absent members as `searched_not_found` records, not only
++  the present ones (SIG-METRIC-002a).
++"""
++
++from __future__ import annotations
++
++from collections.abc import Iterable, Sequence
++from dataclasses import dataclass
++from datetime import datetime
++
++from db.absence import (
++    ABSENCE_KINDS,
++    NOT_APPLICABLE_KIND,
++    AbsenceRendering,
++    AbsenceState,
++    render_coverage_kind,
++    state_from_coverage_kind,
++)
++
++__all__ = [
++    "CoverageRecord",
++    "probe_coverage_records",
++]
++
++#: The `absence_kind` that MUST name the sources searched (SIG-METRIC-001/002).
++_SEARCHED_NOT_FOUND = "searched_not_found"
++
++
++@dataclass(frozen=True)
++class CoverageRecord:
++    """A queryable negative-space record for one subject+predicate (§32.1).
++
++    Field-for-field the `coverage_record` table shape. Either `subject_id` (a
++    concrete entity) or `subject_class` (a class within a jurisdiction) MUST be
++    given — a coverage record with no subject identity is meaningless (§3.1: every
++    node has identity). `sources_searched` is required for `searched_not_found`
++    (SIG-METRIC-001/002) and forbidden-when-empty there; it is optional otherwise.
++    """
++
++    predicate_id: str
++    absence_kind: str
++    subject_id: str | None = None
++    subject_class: str | None = None
++    jurisdiction_id: str | None = None
++    sources_searched: tuple[str, ...] = ()
++    searched_at: datetime | None = None
++    searched_by: str | None = None
++    search_method: str | None = None
++
++    def __post_init__(self) -> None:
++        if self.absence_kind not in ABSENCE_KINDS:
++            raise ValueError(
++                f"absence_kind {self.absence_kind!r} is not one of {sorted(ABSENCE_KINDS)} (§32.1)"
++            )
++        if not (self.subject_id or self.subject_class):
++            raise ValueError(
++                "a CoverageRecord MUST identify a subject (subject_id or "
++                "subject_class); negative space needs a subject (§3.1)"
++            )
++        if self.absence_kind == _SEARCHED_NOT_FOUND and not self.sources_searched:
++            raise ValueError(
++                "sources_searched[] is REQUIRED for absence_kind='searched_not_found' "
++                "(SIG-METRIC-001/002): 'not in the Atlas' and 'not in the Atlas, any "
++                "portal, or three years of minutes' are different statements"
++            )
++
++    @property
++    def epistemic_state(self) -> AbsenceState | None:
++        """The §9.5 state this record encodes, or `None` for `not_applicable`.
++
++        `not_applicable` is a coverage kind, not a kind of "unknown": the predicate
++        simply does not apply to the subject, so it maps to no epistemic state.
++        """
++        if self.absence_kind == NOT_APPLICABLE_KIND:
++            return None
++        return state_from_coverage_kind(self.absence_kind)
++
++    def rendering(self) -> AbsenceRendering:
++        """The distinguishable presentation of this record (SIG-TIME-011/012)."""
++        return render_coverage_kind(
++            self.absence_kind, sources_searched=self.sources_searched or None
++        )
++
++    def public_view(self) -> dict[str, object]:
++        """The API-facing projection (the HTTP envelope itself is P14.1).
++
++        Carries the machine `code` and human `label`/`detail` so a consumer never
++        has to re-derive the §9.5 distinction — and never renders `not_researched`
++        identically to `searched_not_found` (SIG-TIME-012).
++        """
++        rendered = self.rendering()
++        state = self.epistemic_state
++        return {
++            "subject_id": self.subject_id,
++            "subject_class": self.subject_class,
++            "jurisdiction_id": self.jurisdiction_id,
++            "predicate_id": self.predicate_id,
++            "absence_kind": self.absence_kind,
++            "epistemic_state": state.value if state is not None else None,
++            "absence_code": rendered.code,
++            "absence_label": rendered.label,
++            "absence_detail": rendered.detail,
++            "sources_searched": list(self.sources_searched),
++            "searched_at": self.searched_at.isoformat() if self.searched_at else None,
++            "searched_by": self.searched_by,
++            "search_method": self.search_method,
++        }
++
++
++def probe_coverage_records(
++    *,
++    predicate_id: str,
++    candidates: Iterable[str],
++    present: Iterable[str],
++    sources_searched: Sequence[str],
++    subject_class: str | None = None,
++    jurisdiction_id: str | None = None,
++    searched_at: datetime | None = None,
++    searched_by: str | None = None,
++    search_method: str | None = None,
++) -> tuple[CoverageRecord, ...]:
++    """Retain a discovery probe's **negatives** as coverage records (SIG-METRIC-002a).
++
++    A discovery probe enumerates a candidate identifier space — portal slugs, agency
++    identifiers, tenant names — and learns which candidates exist. The confirmed-absent
++    members are the more informative half: they convert "we found N" into "we tested M
++    candidates and N exist", which is a denominator (SIG-METRIC-003) and lets a *new*
++    member be detected later without re-probing the whole space. They MUST be stored,
++    not discarded.
++
++    Returns one `searched_not_found` `CoverageRecord` per confirmed-absent candidate,
++    keyed by the candidate identifier as `subject_id`. Present candidates yield no
++    coverage record (they are positive findings handled elsewhere). Raises if a
++    "present" identifier is not in the candidate space (the probe is inconsistent) or
++    if `sources_searched` is empty (SIG-METRIC-002).
++    """
++    if not sources_searched:
++        raise ValueError(
++            "a discovery probe MUST name the sources searched (SIG-METRIC-002); "
++            "an anonymous negative is rhetoric, not coverage"
++        )
++    candidate_set = tuple(dict.fromkeys(candidates))  # de-dupe, preserve order
++    present_set = set(present)
++    unknown = present_set - set(candidate_set)
++    if unknown:
++        raise ValueError(
++            f"present identifiers {sorted(unknown)} are not in the probed candidate "
++            "space; the probe is inconsistent (SIG-METRIC-002a)"
++        )
++    searched = tuple(sources_searched)
++    return tuple(
++        CoverageRecord(
++            predicate_id=predicate_id,
++            absence_kind=_SEARCHED_NOT_FOUND,
++            subject_id=candidate,
++            subject_class=subject_class,
++            jurisdiction_id=jurisdiction_id,
++            sources_searched=searched,
++            searched_at=searched_at,
++            searched_by=searched_by,
++            search_method=search_method,
++        )
++        for candidate in candidate_set
++        if candidate not in present_set
++    )
+diff --git a/inference/src/inference/denominators.py b/inference/src/inference/denominators.py
+new file mode 100644
+index 0000000..62319f5
+--- /dev/null
++++ b/inference/src/inference/denominators.py
+@@ -0,0 +1,255 @@
++# SPDX-License-Identifier: Apache-2.0
++# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
++# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
++"""Published denominators and per-jurisdiction coverage (§32.2, §32.3).
++
++"37 agencies share data outside their state" is non-conformant. "37 of 214
++evaluable agencies; 1,109 not evaluable for lack of evidence" is conformant
++(SIG-METRIC-003). Every published aggregate MUST carry its denominator *and* the
++count excluded for lack of evidence; a bare count must not be publishable at all.
++
++This module makes that structural: :class:`PublishedAggregate` is the only shape a
++number ships in, and :func:`assert_denominated` refuses a bare ``int`` — so "a bare
++count fails the build" is a type error a test can assert, not a review-time hope.
++On top of it, :func:`jurisdiction_coverage` computes the §32.4 per-jurisdiction
++surface (SIG-METRIC-004) and :func:`provenance_completeness` measures the share of
++published claims with resolvable evidence, targeted at 100% (SIG-METRIC-005).
++"""
++
++from __future__ import annotations
++
++from collections.abc import Iterable, Mapping, Sequence
++from dataclasses import dataclass, field
++
++__all__ = [
++    "PublishedAggregate",
++    "assert_denominated",
++    "AgencyCoverageInput",
++    "JurisdictionCoverage",
++    "jurisdiction_coverage",
++    "ProvenanceCompleteness",
++    "provenance_completeness",
++]
++
++
++@dataclass(frozen=True)
++class PublishedAggregate:
++    """A count that carries its denominator and its not-evaluable count (§32.2).
++
++    `count` is the numerator (subjects satisfying the predicate), `denominator` the
++    evaluable population, `not_evaluable` those excluded for lack of evidence. The
++    three are validated so a published number can never imply a denominator of
++    reality (SIG-METRIC-010): `count <= denominator`, and all are non-negative.
++    """
++
++    label: str
++    count: int
++    denominator: int
++    not_evaluable: int = 0
++
++    def __post_init__(self) -> None:
++        if self.count < 0 or self.denominator < 0 or self.not_evaluable < 0:
++            raise ValueError(f"aggregate {self.label!r} has a negative component")
++        if self.count > self.denominator:
++            raise ValueError(
++                f"aggregate {self.label!r}: count {self.count} exceeds evaluable "
++                f"denominator {self.denominator} — a numerator cannot beat its "
++                "denominator (§32.2)"
++            )
++
++    @property
++    def evaluable(self) -> int:
++        """Alias for the denominator — the evaluable population."""
++        return self.denominator
++
++    def phrase(self) -> str:
++        """The conformant §32.2 phrasing, denominator and not-evaluable inline."""
++        base = f"{self.count} of {self.denominator} evaluable {self.label}"
++        if self.not_evaluable:
++            return f"{base}; {self.not_evaluable} not evaluable for lack of evidence"
++        return base
++
++    def as_json(self) -> dict[str, object]:
++        return {
++            "label": self.label,
++            "count": self.count,
++            "denominator": self.denominator,
++            "not_evaluable": self.not_evaluable,
++            "phrase": self.phrase(),
++        }
++
++
++def assert_denominated(value: object) -> PublishedAggregate:
++    """Refuse to publish a bare count (SIG-METRIC-003).
++
++    Returns `value` unchanged if it is a :class:`PublishedAggregate`; otherwise
++    raises. This is the choke point every published aggregate routes through, so a
++    raw ``int`` (or anything without a denominator) fails the build rather than
++    shipping as "37 agencies share data" with no evaluable population behind it.
++    """
++    if not isinstance(value, PublishedAggregate):
++        raise TypeError(
++            f"a published aggregate MUST be a PublishedAggregate carrying its "
++            f"denominator (§32.2), not a bare {type(value).__name__}: {value!r}"
++        )
++    return value
++
++
++@dataclass(frozen=True)
++class AgencyCoverageInput:
++    """One agency's evidence flags, the input to per-jurisdiction coverage (§32.4).
++
++    `evidence_age_days` is `None` when the agency has no dated evidence — it is then
++    excluded from the mean rather than counted as age zero (a silent zero is how
++    coverage becomes a lie, §32). `weight_class` is the §10.6 class of the agency's
++    best claim, or `None` if it has no claims yet.
++    """
++
++    agency_id: str
++    has_deployment_evidence: bool = False
++    has_contract_evidence: bool = False
++    has_portal_evidence: bool = False
++    has_mapped_devices: bool = False
++    evidence_age_days: int | None = None
++    open_contradictions: int = 0
++    weight_class: str | None = None
++
++
++@dataclass(frozen=True)
++class JurisdictionCoverage:
++    """The computed, publishable per-jurisdiction coverage surface (SIG-METRIC-004)."""
++
++    jurisdiction_id: str
++    agencies_known: int
++    with_deployment_evidence: PublishedAggregate
++    with_contract_evidence: PublishedAggregate
++    with_portal_evidence: PublishedAggregate
++    with_mapped_devices: PublishedAggregate
++    mean_evidence_age_days: float | None
++    open_contradiction_count: int
++    weight_class_distribution: Mapping[str, int]
++
++    def as_json(self) -> dict[str, object]:
++        return {
++            "jurisdiction_id": self.jurisdiction_id,
++            "agencies_known": self.agencies_known,
++            "with_deployment_evidence": self.with_deployment_evidence.as_json(),
++            "with_contract_evidence": self.with_contract_evidence.as_json(),
++            "with_portal_evidence": self.with_portal_evidence.as_json(),
++            "with_mapped_devices": self.with_mapped_devices.as_json(),
++            "mean_evidence_age_days": self.mean_evidence_age_days,
++            "open_contradiction_count": self.open_contradiction_count,
++            "weight_class_distribution": dict(self.weight_class_distribution),
++        }
++
++
++def jurisdiction_coverage(
++    jurisdiction_id: str,
++    agencies: Iterable[AgencyCoverageInput],
++) -> JurisdictionCoverage:
++    """Compute the §32.4 per-jurisdiction coverage from the known agencies.
++
++    Every derived count is a :class:`PublishedAggregate` denominated by the number of
++    agencies known (SIG-METRIC-003/004). The mean evidence age is over agencies with
++    dated evidence only; it is `None` when none have any (never a silent zero).
++    """
++    known = list(agencies)
++    ids = [a.agency_id for a in known]
++    if len(ids) != len(set(ids)):
++        raise ValueError(f"duplicate agency id in jurisdiction {jurisdiction_id!r} coverage")
++    n = len(known)
++
++    def _agg(label: str, predicate: str) -> PublishedAggregate:
++        satisfied = sum(1 for a in known if getattr(a, predicate))
++        # Every known agency is evaluable for "has any X evidence"; none are excluded
++        # for lack of evidence here (absence of evidence is itself the negative answer).
++        return PublishedAggregate(label=label, count=satisfied, denominator=n)
++
++    ages = [a.evidence_age_days for a in known if a.evidence_age_days is not None]
++    mean_age = sum(ages) / len(ages) if ages else None
++
++    distribution: dict[str, int] = {}
++    for a in known:
++        if a.weight_class is not None:
++            distribution[a.weight_class] = distribution.get(a.weight_class, 0) + 1
++
++    return JurisdictionCoverage(
++        jurisdiction_id=jurisdiction_id,
++        agencies_known=n,
++        with_deployment_evidence=_agg(
++            "agencies with deployment evidence", "has_deployment_evidence"
++        ),
++        with_contract_evidence=_agg("agencies with contract evidence", "has_contract_evidence"),
++        with_portal_evidence=_agg("agencies with portal evidence", "has_portal_evidence"),
++        with_mapped_devices=_agg("agencies with mapped devices", "has_mapped_devices"),
++        mean_evidence_age_days=mean_age,
++        open_contradiction_count=sum(a.open_contradictions for a in known),
++        weight_class_distribution=distribution,
++    )
++
++
++@dataclass(frozen=True)
++class ProvenanceCompleteness:
++    """Share of published claims with a resolvable evidence artifact (§32.3).
++
++    Targeted at 100%. Any shortfall is **a defect list, not a statistic**
++    (SIG-METRIC-005): `defects` names the claim ids that lack resolvable evidence,
++    so the shortfall is actionable rather than a number to admire.
++    """
++
++    published_claims: int
++    with_resolvable_evidence: int
++    defects: tuple[str, ...] = field(default_factory=tuple)
++
++    def __post_init__(self) -> None:
++        if self.with_resolvable_evidence > self.published_claims:
++            raise ValueError("more resolvable than published claims (§32.3)")
++        expected_missing = self.published_claims - self.with_resolvable_evidence
++        if len(self.defects) != expected_missing:
++            raise ValueError(
++                f"provenance shortfall is a defect list (SIG-METRIC-005): "
++                f"{expected_missing} claims lack resolvable evidence but "
++                f"{len(self.defects)} are named"
++            )
++
++    @property
++    def share(self) -> float:
++        """Fraction with resolvable evidence in [0, 1]; 1.0 when there are none."""
++        if self.published_claims == 0:
++            return 1.0
++        return self.with_resolvable_evidence / self.published_claims
++
++    @property
++    def is_complete(self) -> bool:
++        """Whether the 100% target is met (SIG-METRIC-005)."""
++        return not self.defects
++
++    def as_json(self) -> dict[str, object]:
++        return {
++            "published_claims": self.published_claims,
++            "with_resolvable_evidence": self.with_resolvable_evidence,
++            "share": self.share,
++            "target": 1.0,
++            "is_complete": self.is_complete,
++            "defects": list(self.defects),
++        }
++
++
++def provenance_completeness(
++    claim_ids: Sequence[str],
++    *,
++    claims_with_resolvable_evidence: Iterable[str],
++) -> ProvenanceCompleteness:
++    """Measure provenance completeness over published claims (SIG-METRIC-005).
++
++    The shortfall is materialized as the list of claim ids lacking resolvable
++    evidence, so it is a defect list to close, not a statistic to publish.
++    """
++    published = list(dict.fromkeys(claim_ids))
++    resolvable = set(claims_with_resolvable_evidence)
++    defects = tuple(cid for cid in published if cid not in resolvable)
++    return ProvenanceCompleteness(
++        published_claims=len(published),
++        with_resolvable_evidence=len(published) - len(defects),
++        defects=defects,
++    )
+diff --git a/inference/src/inference/freshness.py b/inference/src/inference/freshness.py
+new file mode 100644
+index 0000000..7506f0f
+--- /dev/null
++++ b/inference/src/inference/freshness.py
+@@ -0,0 +1,143 @@
++# SPDX-License-Identifier: Apache-2.0
++# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
++# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
++"""Freshness measured relative to predicate volatility, not absolute days (§32.4).
++
++A two-year-old contract *signing date* is fresh; a two-year-old *active device
++count* is historical (SIG-METRIC-006). So freshness MUST be a function of the
++predicate's volatility class and half-life, never a flat age threshold. That
++derivation already exists — it is the §28.3 currency `C1..C4` the resolver uses
++(:func:`reconcile.weight.currency`) — so this module reuses it rather than
++inventing a second, divergent notion of "stale".
++
++On top of the per-claim currency it builds the §32.4 per-source freshness surface
++(SIG-METRIC-007): for each source, the last successful run, the last content change,
++the current status, and the count of entities whose evidence is stale for their
++predicate class — the data a public data-freshness page renders.
++"""
++
++from __future__ import annotations
++
++from collections.abc import Iterable
++from dataclasses import dataclass
++from datetime import date, datetime
++
++from reconcile.weight import currency, predicate_meta
++
++__all__ = [
++    "CURRENCY_LABEL",
++    "STALE_CURRENCIES",
++    "predicate_currency",
++    "is_stale_for_predicate",
++    "SourceFreshness",
++    "source_freshness",
++]
++
++#: Human labels for the §28.3 currency classes (C1..C4).
++CURRENCY_LABEL: dict[str, str] = {
++    "C1": "current",
++    "C2": "aging",
++    "C3": "stale",
++    "C4": "historical",
++}
++
++#: The currency classes that count as "stale for the predicate class" (§32.4).
++#: C1/C2 are still within a useful multiple of the half-life; C3/C4 are not.
++STALE_CURRENCIES: frozenset[str] = frozenset({"C3", "C4"})
++
++
++def predicate_currency(predicate_id: str, *, observed_at: date, as_of: date) -> str:
++    """The currency class `C1..C4` of an observation, per the predicate (SIG-METRIC-006).
++
++    Delegates to the §28.3 derivation over the predicate registry's volatility class
++    and half-life — so the *same* age yields a different currency for a FAST predicate
++    than for an IMMUTABLE one. This is what "relative to volatility, not absolute
++    days" means concretely.
++    """
++    meta = predicate_meta(predicate_id)
++    return currency(
++        volatility_class=meta["volatility_class"],
++        half_life=meta["half_life"],
++        observed_at=observed_at,
++        as_of=as_of,
++    )
++
++
++def is_stale_for_predicate(predicate_id: str, *, observed_at: date, as_of: date) -> bool:
++    """Whether an observation is stale for its predicate class (§32.4, SIG-METRIC-007)."""
++    return (
++        predicate_currency(predicate_id, observed_at=observed_at, as_of=as_of) in STALE_CURRENCIES
++    )
++
++
++@dataclass(frozen=True)
++class SourceFreshness:
++    """The per-source freshness surface a data-freshness page shows (SIG-METRIC-007).
++
++    `stale_count` is the number of entities from this source whose evidence is stale
++    *for their predicate class* — computed via :func:`is_stale_for_predicate`, not a
++    flat age. `status` is the source's own operational status (e.g. `ok`, `degraded`,
++    `blocked`); it is carried verbatim, not inferred here.
++    """
++
++    source_id: str
++    last_successful_run: datetime | None
++    last_content_change: datetime | None
++    status: str
++    stale_count: int
++    tracked_count: int
++
++    def __post_init__(self) -> None:
++        if self.stale_count < 0 or self.tracked_count < 0:
++            raise ValueError(f"source {self.source_id!r} has a negative count")
++        if self.stale_count > self.tracked_count:
++            raise ValueError(
++                f"source {self.source_id!r}: {self.stale_count} stale exceeds "
++                f"{self.tracked_count} tracked"
++            )
++
++    def as_json(self) -> dict[str, object]:
++        return {
++            "source_id": self.source_id,
++            "last_successful_run": (
++                self.last_successful_run.isoformat() if self.last_successful_run else None
++            ),
++            "last_content_change": (
++                self.last_content_change.isoformat() if self.last_content_change else None
++            ),
++            "status": self.status,
++            "stale_count": self.stale_count,
++            "tracked_count": self.tracked_count,
++        }
++
++
++def source_freshness(
++    source_id: str,
++    *,
++    status: str,
++    last_successful_run: datetime | None,
++    last_content_change: datetime | None,
++    observations: Iterable[tuple[str, date]],
++    as_of: date,
++) -> SourceFreshness:
++    """Build the §32.4 freshness surface for one source (SIG-METRIC-007).
++
++    `observations` is `(predicate_id, observed_at)` for each tracked entity; the
++    stale count is those stale for their predicate class as of `as_of`. Freshness is
++    per-predicate volatility throughout — a source of IMMUTABLE contract dates is
++    never stale, however old (SIG-METRIC-006).
++    """
++    obs = list(observations)
++    stale = sum(
++        1
++        for predicate_id, observed_at in obs
++        if is_stale_for_predicate(predicate_id, observed_at=observed_at, as_of=as_of)
++    )
++    return SourceFreshness(
++        source_id=source_id,
++        last_successful_run=last_successful_run,
++        last_content_change=last_content_change,
++        status=status,
++        stale_count=stale,
++        tracked_count=len(obs),
++    )
+diff --git a/tests/inference/test_completeness.py b/tests/inference/test_completeness.py
+new file mode 100644
+index 0000000..a8e441e
+--- /dev/null
++++ b/tests/inference/test_completeness.py
+@@ -0,0 +1,113 @@
++# SPDX-License-Identifier: Apache-2.0
++# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
++# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
++"""Completeness-estimation guardrails and the capture–recapture ban (§32.5).
++
++AC5: any completeness estimate publishes its violated assumptions or is omitted; a
++test asserts no capture–recapture / multi-list population estimate is ever published
++(SIG-METRIC-008/008a). The one legitimate exception is records-derived survey recall
++(SIG-METRIC-008b), and SIG publishes named-denominator figures, never a total
++(SIG-METRIC-009/010).
++"""
++
++from __future__ import annotations
++
++import pytest
++from inference.completeness import (
++    CompletenessMethod,
++    CompletenessStatement,
++    ProhibitedEstimateError,
++    RecordsDerivedRecall,
++    assert_no_population_total,
++    capture_recapture_population,
++    multi_list_log_linear_population,
++)
++
++
++def test_capture_recapture_is_never_published() -> None:
++    """AC5 / SIG-METRIC-008: capture–recapture always refuses — not with a caveat."""
++    with pytest.raises(ProhibitedEstimateError, match="SIG-METRIC-008"):
++        capture_recapture_population(n1=100, n2=80, m2=20)
++
++
++def test_multi_list_log_linear_is_never_published() -> None:
++    """SIG-METRIC-008a: multi-list log-linear rescue also refuses."""
++    with pytest.raises(ProhibitedEstimateError, match="SIG-METRIC-008a"):
++        multi_list_log_linear_population(lists=[[1], [2], [3]])
++
++
++def test_completeness_statement_rejects_a_denominator_of_reality() -> None:
++    """SIG-METRIC-010: no figure may imply it knows the denominator of reality."""
++    for bad in ("reality", "true population", "all devices", "total", ""):
++        with pytest.raises(ProhibitedEstimateError, match="SIG-METRIC-010"):
++            CompletenessStatement(
++                method=CompletenessMethod.COUNTED_WITH_DENOMINATOR,
++                named_denominator=bad,
++                value=0.4,
++            )
++
++
++def test_completeness_statement_with_a_named_denominator_is_publishable() -> None:
++    stmt = CompletenessStatement(
++        method=CompletenessMethod.COUNTED_WITH_DENOMINATOR,
++        named_denominator="agencies known in Oklahoma",
++        value=0.4,
++        violated_assumptions=("portal opt-in is self-selected",),
++    )
++    assert stmt.as_json()["named_denominator"] == "agencies known in Oklahoma"
++    assert stmt.as_json()["violated_assumptions"] == ["portal opt-in is self-selected"]
++    assert assert_no_population_total(stmt) is stmt
++
++
++def test_a_bare_number_is_not_a_publishable_completeness_figure() -> None:
++    """SIG-METRIC-009: only a named-denominator statement may publish."""
++    with pytest.raises(ProhibitedEstimateError, match="SIG-METRIC-009/010"):
++        assert_no_population_total(0.42)
++
++
++# --- the one legitimate exception: records-derived recall (SIG-METRIC-008b) --
++
++
++def test_records_derived_recall_measures_the_survey_not_the_population() -> None:
++    recall = RecordsDerivedRecall(
++        jurisdiction_id="jurisdiction:ok",
++        predicate_id="active_device_count",
++        inventory_size=50,
++        survey_found_in_inventory=40,
++        pre_registered=True,
++        window_days=30,
++        predicate_half_life_days=182.0,
++    )
++    assert recall.recall == pytest.approx(0.8)
++    stmt = recall.statement()
++    # It is published as SIG's method-recall, denominated by the records inventory,
++    # never a population total and never extrapolated beyond the named jurisdiction.
++    assert stmt.method is CompletenessMethod.MEASURED_SURVEY_RECALL
++    assert "jurisdiction:ok" in stmt.named_denominator
++    assert stmt.value == pytest.approx(0.8)
++
++
++def test_records_derived_recall_must_be_pre_registered() -> None:
++    with pytest.raises(ProhibitedEstimateError, match="pre-registered"):
++        RecordsDerivedRecall(
++            jurisdiction_id="j",
++            predicate_id="active_device_count",
++            inventory_size=50,
++            survey_found_in_inventory=40,
++            pre_registered=False,
++            window_days=30,
++            predicate_half_life_days=182.0,
++        )
++
++
++def test_records_derived_recall_window_must_beat_the_half_life() -> None:
++    with pytest.raises(ProhibitedEstimateError, match="SIG-METRIC-008b"):
++        RecordsDerivedRecall(
++            jurisdiction_id="j",
++            predicate_id="active_device_count",
++            inventory_size=50,
++            survey_found_in_inventory=40,
++            pre_registered=True,
++            window_days=200,
++            predicate_half_life_days=182.0,
++        )
+diff --git a/tests/inference/test_coverage.py b/tests/inference/test_coverage.py
+new file mode 100644
+index 0000000..ebba28f
+--- /dev/null
++++ b/tests/inference/test_coverage.py
+@@ -0,0 +1,175 @@
++# SPDX-License-Identifier: Apache-2.0
++# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
++# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
++"""The CoverageRecord: negative space queryable, and probe negatives retained (§32.1).
++
++AC1: a `searched_not_found` record missing `sources_searched[]` is rejected.
++AC3 (API): the four absence kinds render distinguishably; `not_researched` is not
++`searched_not_found`. SIG-METRIC-002a: discovery-probe negatives are retained.
++"""
++
++from __future__ import annotations
++
++from datetime import UTC, datetime
++
++import pytest
++from inference.coverage import CoverageRecord, probe_coverage_records
++
++
++def test_searched_not_found_requires_sources_searched() -> None:
++    """AC1 / SIG-METRIC-001/002: a record missing sources_searched is rejected."""
++    with pytest.raises(ValueError, match="SIG-METRIC-001/002"):
++        CoverageRecord(
++            predicate_id="active_device_count",
++            absence_kind="searched_not_found",
++            subject_id="agency:okcpd",
++        )
++    # With the sources named, it is accepted.
++    rec = CoverageRecord(
++        predicate_id="active_device_count",
++        absence_kind="searched_not_found",
++        subject_id="agency:okcpd",
++        sources_searched=("Atlas", "portal", "council minutes"),
++    )
++    assert rec.sources_searched == ("Atlas", "portal", "council minutes")
++
++
++def test_other_kinds_do_not_require_sources() -> None:
++    for kind in ("not_researched", "evidence_of_absence", "not_applicable"):
++        rec = CoverageRecord(
++            predicate_id="active_device_count",
++            absence_kind=kind,
++            subject_class="agency",
++            jurisdiction_id="jurisdiction:ok",
++        )
++        assert rec.absence_kind == kind
++
++
++def test_coverage_record_requires_a_subject_identity() -> None:
++    with pytest.raises(ValueError, match="identify a subject"):
++        CoverageRecord(predicate_id="active_device_count", absence_kind="not_researched")
++
++
++def test_unknown_absence_kind_is_rejected() -> None:
++    with pytest.raises(ValueError, match="not one of"):
++        CoverageRecord(
++            predicate_id="active_device_count",
++            absence_kind="made_up",
++            subject_id="agency:okcpd",
++        )
++
++
++def test_epistemic_state_maps_kinds_and_not_applicable_is_stateless() -> None:
++    """SIG-TIME-010: kinds map to §9.5 states; `not_applicable` has none."""
++    states = {
++        "not_researched": "NOT_RESEARCHED",
++        "searched_not_found": "NO_EVIDENCE_FOUND",
++        "evidence_of_absence": "EVIDENCE_OF_ABSENCE",
++    }
++    for kind, expected in states.items():
++        rec = CoverageRecord(
++            predicate_id="active_device_count",
++            absence_kind=kind,
++            subject_id="agency:okcpd",
++            sources_searched=("Atlas",) if kind == "searched_not_found" else (),
++        )
++        assert rec.epistemic_state is not None
++        assert rec.epistemic_state.value == expected
++    na = CoverageRecord(
++        predicate_id="active_device_count", absence_kind="not_applicable", subject_id="x"
++    )
++    assert na.epistemic_state is None
++
++
++def test_four_kinds_render_distinguishably_in_the_api_view() -> None:
++    """AC3 (API contract): the four absence kinds do not render identically."""
++
++    def _view(kind: str) -> dict[str, object]:
++        rec = CoverageRecord(
++            predicate_id="active_device_count",
++            absence_kind=kind,
++            subject_id="agency:okcpd",
++            sources_searched=("Atlas",) if kind == "searched_not_found" else (),
++        )
++        return rec.public_view()
++
++    views = [
++        _view(k)
++        for k in ("not_researched", "searched_not_found", "evidence_of_absence", "not_applicable")
++    ]
++    codes = {v["absence_code"] for v in views}
++    labels = {v["absence_label"] for v in views}
++    assert len(codes) == 4
++    assert len(labels) == 4
++    # The two most-conflated states are explicitly distinct in the wire view.
++    assert _view("not_researched")["absence_code"] != _view("searched_not_found")["absence_code"]
++
++
++def test_public_view_carries_the_full_shape() -> None:
++    rec = CoverageRecord(
++        predicate_id="active_device_count",
++        absence_kind="searched_not_found",
++        subject_id="agency:okcpd",
++        jurisdiction_id="jurisdiction:ok",
++        sources_searched=("Atlas", "portal"),
++        searched_at=datetime(2026, 1, 2, tzinfo=UTC),
++        searched_by="pipeline:records",
++        search_method="portal_probe",
++    )
++    view = rec.public_view()
++    assert view["epistemic_state"] == "NO_EVIDENCE_FOUND"
++    assert view["sources_searched"] == ["Atlas", "portal"]
++    assert view["searched_at"] == "2026-01-02T00:00:00+00:00"
++    assert view["search_method"] == "portal_probe"
++
++
++# --- discovery-probe negatives retained (SIG-METRIC-002a) --------------------
++
++
++def test_probe_retains_only_the_confirmed_absent_candidates() -> None:
++    """SIG-METRIC-002a: the 5,011 confirmed-absent slugs are kept, not discarded."""
++    records = probe_coverage_records(
++        predicate_id="portal_exists",
++        candidates=["okc", "tulsa", "norman", "edmond"],
++        present=["okc", "tulsa"],
++        sources_searched=["flock-slug-probe"],
++        subject_class="portal",
++        jurisdiction_id="jurisdiction:ok",
++    )
++    subjects = {r.subject_id for r in records}
++    assert subjects == {"norman", "edmond"}  # only the absent candidates
++    assert all(r.absence_kind == "searched_not_found" for r in records)
++    assert all(r.sources_searched == ("flock-slug-probe",) for r in records)
++
++
++def test_probe_is_a_denominator_present_plus_absent_equals_candidates() -> None:
++    candidates = [f"slug{i}" for i in range(10)]
++    present = ["slug1", "slug7"]
++    records = probe_coverage_records(
++        predicate_id="portal_exists",
++        candidates=candidates,
++        present=present,
++        sources_searched=["probe"],
++    )
++    # tested = present + absent; the negatives are what make it a denominator.
++    assert len(records) + len(present) == len(candidates)
++
++
++def test_probe_rejects_a_present_id_outside_the_candidate_space() -> None:
++    with pytest.raises(ValueError, match="not in the probed candidate"):
++        probe_coverage_records(
++            predicate_id="portal_exists",
++            candidates=["a", "b"],
++            present=["a", "z"],
++            sources_searched=["probe"],
++        )
++
++
++def test_probe_requires_named_sources() -> None:
++    with pytest.raises(ValueError, match="SIG-METRIC-002"):
++        probe_coverage_records(
++            predicate_id="portal_exists",
++            candidates=["a", "b"],
++            present=["a"],
++            sources_searched=[],
++        )
+diff --git a/tests/inference/test_denominators.py b/tests/inference/test_denominators.py
+new file mode 100644
+index 0000000..3a50e56
+--- /dev/null
++++ b/tests/inference/test_denominators.py
+@@ -0,0 +1,121 @@
++# SPDX-License-Identifier: Apache-2.0
++# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
++# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
++"""Published denominators and per-jurisdiction coverage (§32.2, §32.3, §32.4).
++
++AC2: every published aggregate carries a denominator (and its not-evaluable count);
++a bare count fails the build. SIG-METRIC-004: per-jurisdiction coverage is computed.
++SIG-METRIC-005: provenance completeness is measured and a shortfall is a defect list.
++"""
++
++from __future__ import annotations
++
++import pytest
++from inference.denominators import (
++    AgencyCoverageInput,
++    PublishedAggregate,
++    assert_denominated,
++    jurisdiction_coverage,
++    provenance_completeness,
++)
++
++
++def test_published_aggregate_phrase_is_conformant() -> None:
++    """The §32.2 conformant phrasing carries denominator and not-evaluable inline."""
++    agg = PublishedAggregate(label="agencies", count=37, denominator=214, not_evaluable=1109)
++    assert "37 of 214 evaluable agencies" in agg.phrase()
++    assert "1109 not evaluable" in agg.phrase()
++    assert agg.as_json()["denominator"] == 214
++
++
++def test_a_numerator_cannot_exceed_its_denominator() -> None:
++    with pytest.raises(ValueError, match="exceeds evaluable denominator"):
++        PublishedAggregate(label="agencies", count=5, denominator=3)
++
++
++def test_bare_count_is_not_publishable() -> None:
++    """AC2: a bare count fails the build; only a PublishedAggregate may publish."""
++    with pytest.raises(TypeError, match="MUST be a PublishedAggregate"):
++        assert_denominated(37)
++    agg = PublishedAggregate(label="agencies", count=37, denominator=214)
++    assert assert_denominated(agg) is agg
++
++
++def _agencies() -> list[AgencyCoverageInput]:
++    return [
++        AgencyCoverageInput(
++            "a1",
++            has_deployment_evidence=True,
++            has_contract_evidence=True,
++            has_portal_evidence=True,
++            has_mapped_devices=True,
++            evidence_age_days=100,
++            open_contradictions=1,
++            weight_class="W3",
++        ),
++        AgencyCoverageInput(
++            "a2",
++            has_deployment_evidence=True,
++            evidence_age_days=300,
++            open_contradictions=2,
++            weight_class="W1",
++        ),
++        AgencyCoverageInput("a3", weight_class="W1"),  # known, no evidence, no age
++    ]
++
++
++def test_jurisdiction_coverage_denominates_every_count() -> None:
++    """SIG-METRIC-004: each per-jurisdiction count is denominated by agencies known."""
++    cov = jurisdiction_coverage("jurisdiction:ok", _agencies())
++    assert cov.agencies_known == 3
++    assert (cov.with_deployment_evidence.count, cov.with_deployment_evidence.denominator) == (2, 3)
++    assert (cov.with_contract_evidence.count, cov.with_contract_evidence.denominator) == (1, 3)
++    assert (cov.with_portal_evidence.count, cov.with_portal_evidence.denominator) == (1, 3)
++    assert (cov.with_mapped_devices.count, cov.with_mapped_devices.denominator) == (1, 3)
++
++
++def test_jurisdiction_coverage_mean_age_and_distribution() -> None:
++    cov = jurisdiction_coverage("jurisdiction:ok", _agencies())
++    # mean over the two agencies with dated evidence only (never a silent zero for a3).
++    assert cov.mean_evidence_age_days == pytest.approx((100 + 300) / 2)
++    assert cov.open_contradiction_count == 3
++    assert cov.weight_class_distribution == {"W3": 1, "W1": 2}
++
++
++def test_jurisdiction_coverage_mean_age_is_none_when_no_dated_evidence() -> None:
++    cov = jurisdiction_coverage("j", [AgencyCoverageInput("a1"), AgencyCoverageInput("a2")])
++    assert cov.mean_evidence_age_days is None
++
++
++def test_jurisdiction_coverage_rejects_duplicate_agency() -> None:
++    with pytest.raises(ValueError, match="duplicate agency id"):
++        jurisdiction_coverage("j", [AgencyCoverageInput("a1"), AgencyCoverageInput("a1")])
++
++
++# --- provenance completeness (SIG-METRIC-005) --------------------------------
++
++
++def test_provenance_shortfall_is_a_defect_list_not_a_statistic() -> None:
++    """SIG-METRIC-005: a shortfall names the offending claims; it is actionable."""
++    pc = provenance_completeness(
++        ["c1", "c2", "c3", "c4"],
++        claims_with_resolvable_evidence=["c1", "c3"],
++    )
++    assert pc.published_claims == 4
++    assert pc.with_resolvable_evidence == 2
++    assert set(pc.defects) == {"c2", "c4"}  # the defect list, not just "50%"
++    assert pc.share == pytest.approx(0.5)
++    assert pc.is_complete is False
++
++
++def test_provenance_complete_when_all_resolvable() -> None:
++    pc = provenance_completeness(["c1", "c2"], claims_with_resolvable_evidence=["c1", "c2"])
++    assert pc.is_complete is True
++    assert pc.share == 1.0
++    assert pc.defects == ()
++
++
++def test_provenance_empty_is_trivially_complete() -> None:
++    pc = provenance_completeness([], claims_with_resolvable_evidence=[])
++    assert pc.share == 1.0
++    assert pc.is_complete is True
+diff --git a/tests/inference/test_freshness.py b/tests/inference/test_freshness.py
+new file mode 100644
+index 0000000..7e96223
+--- /dev/null
++++ b/tests/inference/test_freshness.py
+@@ -0,0 +1,68 @@
++# SPDX-License-Identifier: Apache-2.0
++# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
++# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
++"""Freshness relative to predicate volatility, not absolute days (§32.4).
++
++AC4: freshness is computed relative to predicate volatility. The canonical example
++(SIG-METRIC-006): a two-year-old contract *signing date* is fresh (IMMUTABLE); a
++two-year-old *active device count* is historical (FAST, six-month half-life).
++"""
++
++from __future__ import annotations
++
++from datetime import UTC, date, datetime
++
++from inference.freshness import (
++    is_stale_for_predicate,
++    predicate_currency,
++    source_freshness,
++)
++
++# Two real registry predicates with opposite volatility (ontology/vocab/predicates.yaml):
++_IMMUTABLE = "contract_signed_date"  # IMMUTABLE, half-life infinite
++_FAST = "active_device_count"  # FAST, half-life 6mo
++
++_OBSERVED = date(2024, 1, 1)
++_TWO_YEARS_LATER = date(2026, 1, 1)
++
++
++def test_same_age_yields_different_currency_by_volatility() -> None:
++    """AC4: identical age, opposite freshness — because volatility differs."""
++    immutable = predicate_currency(_IMMUTABLE, observed_at=_OBSERVED, as_of=_TWO_YEARS_LATER)
++    fast = predicate_currency(_FAST, observed_at=_OBSERVED, as_of=_TWO_YEARS_LATER)
++    assert immutable == "C1"  # a two-year-old contract date is CURRENT
++    assert fast == "C4"  # a two-year-old active count is HISTORICAL
++    assert immutable != fast  # freshness is not a flat age threshold
++
++
++def test_immutable_is_never_stale_however_old() -> None:
++    assert not is_stale_for_predicate(
++        _IMMUTABLE, observed_at=date(2000, 1, 1), as_of=_TWO_YEARS_LATER
++    )
++
++
++def test_fast_predicate_goes_stale_past_its_window() -> None:
++    assert is_stale_for_predicate(_FAST, observed_at=_OBSERVED, as_of=_TWO_YEARS_LATER)
++    # Freshly observed FAST evidence is not stale.
++    assert not is_stale_for_predicate(_FAST, observed_at=date(2025, 12, 20), as_of=_TWO_YEARS_LATER)
++
++
++def test_source_freshness_surface_counts_stale_by_predicate_class() -> None:
++    """SIG-METRIC-007: stale_count is per predicate class, not a flat age."""
++    surface = source_freshness(
++        "source:flock-portal",
++        status="ok",
++        last_successful_run=datetime(2026, 1, 1, tzinfo=UTC),
++        last_content_change=datetime(2025, 12, 1, tzinfo=UTC),
++        observations=[
++            (_IMMUTABLE, date(2019, 1, 1)),  # ancient but IMMUTABLE -> fresh
++            (_FAST, date(2024, 1, 1)),  # two years old FAST -> stale
++            (_FAST, date(2025, 12, 20)),  # recent FAST -> fresh
++        ],
++        as_of=_TWO_YEARS_LATER,
++    )
++    assert surface.tracked_count == 3
++    assert surface.stale_count == 1  # only the old FAST observation
++    assert surface.status == "ok"
++    assert surface.as_json()["stale_count"] == 1
++    assert surface.as_json()["last_successful_run"] == "2026-01-01T00:00:00+00:00"
+diff --git a/tests/unit/test_absence.py b/tests/unit/test_absence.py
+index 4bc053d..48ad84d 100644
+--- a/tests/unit/test_absence.py
++++ b/tests/unit/test_absence.py
+@@ -11,10 +11,14 @@ from __future__ import annotations
+ 
+ import pytest
+ from db.absence import (
++    ABSENCE_KINDS,
++    NOT_APPLICABLE_CODE,
++    NOT_APPLICABLE_KIND,
+     UNRESOLVED_CONTRADICTION_STATE,
+     AbsenceState,
+     coverage_kind_for,
+     render_absence,
++    render_coverage_kind,
+     state_from_coverage_kind,
+ )
+ 
+@@ -77,3 +81,45 @@ def test_coverage_kinds_match_the_schema_vocabulary() -> None:
+     assert coverage_kind_for(AbsenceState.NOT_RESEARCHED) == "not_researched"
+     assert coverage_kind_for(AbsenceState.NO_EVIDENCE_FOUND) == "searched_not_found"
+     assert coverage_kind_for(AbsenceState.EVIDENCE_OF_ABSENCE) == "evidence_of_absence"
++    assert ABSENCE_KINDS == {
++        "not_researched",
++        "searched_not_found",
++        "evidence_of_absence",
++        "not_applicable",
++    }
++
++
++def test_not_applicable_renders_distinguishably_and_has_no_state() -> None:
++    """SIG-METRIC-001/§32.1: `not_applicable` is a fourth coverage kind, distinct
++    from every 'unknown' state — the predicate simply does not apply."""
++    rendered = render_coverage_kind(NOT_APPLICABLE_KIND)
++    assert rendered.code == NOT_APPLICABLE_CODE
++    assert rendered.state is None  # not a kind of "unknown"
++    assert "not apply" in rendered.detail.lower()
++    # It has no §9.5 epistemic state; asking for one is an error, not a silent coerce.
++    with pytest.raises(ValueError, match="epistemic state"):
++        state_from_coverage_kind(NOT_APPLICABLE_KIND)
++
++
++def test_render_coverage_kind_covers_all_four_kinds_distinguishably() -> None:
++    """SIG-TIME-012: all four §32.1 coverage kinds render with distinct codes."""
++    renders = [
++        render_coverage_kind("not_researched"),
++        render_coverage_kind("searched_not_found", sources_searched=["Atlas"]),
++        render_coverage_kind("evidence_of_absence"),
++        render_coverage_kind(NOT_APPLICABLE_KIND),
++    ]
++    codes = {r.code for r in renders}
++    assert len(codes) == 4  # every coverage kind has its own machine token
++    # The two most-conflated kinds are not identical.
++    assert render_coverage_kind("not_researched").code != renders[1].code
++
++
++def test_render_coverage_kind_rejects_searched_not_found_without_sources() -> None:
++    with pytest.raises(ValueError, match="SIG-TIME-011"):
++        render_coverage_kind("searched_not_found")
++
++
++def test_render_coverage_kind_rejects_unknown_kind() -> None:
++    with pytest.raises(ValueError, match="unknown coverage absence_kind"):
++        render_coverage_kind("made_up_kind")

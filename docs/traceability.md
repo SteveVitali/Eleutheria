@@ -2249,3 +2249,21 @@ regenerated `docs/2_canonical_design_spec.md`, `CAPSTONE_CLOSURE.md §(b)` adden
 | APPENDIX-F-01: ADR-072 row added via `spec_src`, spec regenerated | `docs/research/_meta/spec_src/99a_appF_adr.md`; `docs/2_canonical_design_spec.md` | `check_spec_src.py` exit 0 (Appendix F 71 ADRs = docs/adr set; byte-identical repro) |
 | Composed E2E green | `make check` / `make test-db` / `tests/e2e` / `run_okc.sh` | 2718 passed·0 failed·0 xfailed; 120 passed (PG18+PostGIS); 16 passed·0 skipped (S8/LD-V08 ran); OKC 8/8, 299-vs-190 from export, J-1 pass, 0 failed |
 | Pre-existing blocker routed to operator | `docs/build/BACKLOG.csv` (identical to base) | `check_backlog.py` exit 1 (backlog drift, RISK-P20-01) — out of scope; a `P22+` reconciliation ticket closes it |
+
+## Phase 22 — Build memory v2 migration (P22.3, build-memory v2 / ADR-073)
+
+Stamped ids: SIG-ENG-001 (repo executable from its documents), SIG-ENG-003 (decisions are new ADRs, spec
+via `spec_src`→`BUILD.sh`), SIG-ENG-031 (risk register), SIG-ENG-039 (Appendix F ↔ `docs/adr/` in CI);
+build-memory requirement ids BM-MIGE-01..07, BM-COMPAT-04..05.
+
+| Requirement / obligation | Where implemented | Proof |
+|---|---|---|
+| BM-MIGE-01 — retire `.agents/scratch/`; commit build memory under `docs/build/` (move/rename only, byte-identical) | `build-memory migrate` + manual leftover moves + `docs/build/reports/` relocation; mapping + pre-move `sha256` in `docs/build/README.md` | `test ! -d .agents`; `sha256` set comparison 0 differences (189 scratch + 63 report files); `git ls-files docs/build/runs \| wc -l` = 62 |
+| BM-MIGE-02 — machine ledger converted to `docs/build/LEDGER.md` (v2 key set; legacy plan retained; round 2) | `docs/build/LEDGER.md` CURRENT STATE (BM-LEDGER-02 order) + `## LEGACY PLAN` wrapper | `scripts/docs/check-build-memory.sh .` exit 0 (LEDGER key-order check); PHASE LOG carried verbatim incl. P22.1/P22.2/CAPSTONE + new P22.3 |
+| BM-MIGE-03 — `BUILD_INDEX.md` rows 47–66 (one per PHASE-LOG done entry incl. inserts + capstone) | `docs/build/BUILD_INDEX.md` §A.7 (BM-INDEX-01 columns) | `grep -c '^\| '` grew by 23; every `evidence` path exists under `runs/`/`pr/` |
+| BM-MIGE-04 — `docs/tickets/DEFERRALS.md` seeded from RETURN PASS | `docs/tickets/DEFERRALS.md` (12 `D-P21.n-*` OPEN rows, `kind` col, `BL-` cross-refs) | validator DEFERRALS check (unique ids, valid statuses) exit 0 |
+| BM-MIGE-05 — manifest banners + row 66 + `## Plan extensions` + Round-2 tail rows 67–73 | `docs/tickets/00_MANIFEST.md`; `docs/tickets/P23.1..P23.7` | validator manifest↔files both-ways exit 0; `LEDGER.md nextTicket: P23.1` at close |
+| BM-MIGE-06 — ADR-073 + Appendix F row + regenerated ADR index | `docs/adr/ADR-073-*.md`; `docs/research/_meta/spec_src/99a_appF_adr.md`; `docs/adr/README.md` | `check_spec_src.py` exit 0 (**72** ADRs, byte-identical repro); `adr-index --check` diff clean |
+| BM-MIGE-07 — docs to v2 paths (`AGENTS.md`, `docs/README.md`, `docs/build/README.md`) | `AGENTS.md` (build-memory section + DEFERRALS gotcha); `docs/README.md` rows; `docs/build/README.md` | `make docs-check` exit 0 (all three detectors) |
+| SIG-ENG-039 — Appendix F ↔ `docs/adr/` equal | `99a_appF_adr.md` + `docs/adr/` | `check_spec_src.py` exit 0 (72 = 72) |
+| No code change; `make check` green | (no product code touched) | `SIG_REQUIRE_DB_TESTS=1 make check` = 2719 passed, 1 skipped, 0 failed, 0 xfailed (baseline 2718 + ADR-073's 1 parametrized case) |

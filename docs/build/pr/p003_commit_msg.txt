@@ -1,0 +1,34 @@
+P00.3: governance, takedown, and contributor-safety policies
+
+Adopt and publish SIG's prose governance record, with each executable sub-rule
+tested (docs/tickets/P00.3, canonical §45/§46/§34.3).
+
+Executable primitives (policy/governance.py + data/takedown.toml):
+- Corrections preserve history (SIG-GOV-005): a correction is a new assertion
+  with revises, never a delete/overwrite; a query at a prior as_of_belief still
+  returns the old value (mirrors the §16.6 25->225 worked example).
+- Suppression is a primitive distinct from deletion (SIG-GOV-007): removes from
+  public surfaces/exports while retaining internally under the sealed tier, with
+  author + rationale recorded.
+- True deletion (SIG-GOV-008): reserved, two-person-authorized, leaves a
+  tombstone (category + date, never content).
+- Intake categories/SLAs, permitted outcomes (incl. refuse-with-reasoning), and
+  the transparency-report shape are data in takedown.toml (SIG-GOV-001..004/011).
+
+Prose policies (docs/governance/): takedown-corrections-suppression (§45);
+governance & Code of Conduct incl. editorial board, capture resistance, and the
+continuity/degraded-mode posture (§46.2/46.4-46.5); the anti-misuse statement,
+published verbatim as a first-class page (§46.3, SIG-GOV-019); contributor safety
+- PII-minimisation window, pseudonymity, know-your-rights/no-interference, and
+the detained-contributor policy (§34.3). Linked from the repo README + an index.
+
+Phase gate (§51.3): make check green (236 tests); traceability matrix and risk
+register updated for P00.3.
+
+Requirement ids: SIG-GOV-001..011, SIG-GOV-014, SIG-GOV-015, SIG-GOV-016,
+SIG-GOV-019, SIG-GOV-021, SIG-CONTRIB-005, SIG-CONTRIB-006, SIG-CONTRIB-007,
+SIG-CONTRIB-008.
+
+Generated with [Devin](https://devin.ai)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>

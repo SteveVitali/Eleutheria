@@ -1,0 +1,37 @@
+P02.2: the OCFL write-once evidence store (§17)
+
+Implements the byte layer under every claim (SIG-EVID-001..017) as a new
+`evidence/` package plus a `db/` sqitch change (ADR-023):
+
+- Content addressing as multihash, base32-lowercase (evidence.digest): SHA-2
+  interop digest + BLAKE3 fixity; dedup by digest (SIG-EVID-002/003/004).
+- OCFL 1.1 store (evidence.ocfl): one object per source stream, one version per
+  capture, sha512 manifest + BLAKE3 fixity block; readable without SIG's code --
+  a stdlib-only test walks inventory.json version->digest->path (SIG-EVID-005).
+- S3 backend with versioning + governance-mode Object Lock, never compliance,
+  documented default retention (evidence.storage, SIG-EVID-006).
+- Capture pipeline (evidence.capture): the full capture set (WACZ + screenshot +
+  payload + raw HTML -> one artifact, N rows) and a deterministic WARC->WACZ
+  1.1.1 packager; real Playwright capture behind the capture extra (SIG-EVID-007/008).
+- Storage tiers + sealed metadata-only public representation (evidence.tiers,
+  SIG-EVID-009/010); redaction as a new capture w/ parent + version
+  (evidence.redaction, SIG-EVID-011); audited restricted/sealed access with its
+  own retention (evidence.access_log, SIG-EVID-012).
+- Disappearance as an event + research task, never a delete; volatility-scaled
+  link-rot sweep + Wayback (evidence.disappearance, SIG-EVID-013/014/015).
+- ingest_run reproducibility: LC_ALL=C/TZ=UTC, claim-tuple canonicalisation
+  (evidence.ingest_run, SIG-EVID-016/017/018).
+
+DB (db/deploy/evidence_store.sql): evidence_blob dedup registry with the
+(blob_digest, source_uri) uniqueness §17.2 mandates; drops the P02.1
+(content_digest, artifact_id) unique so a re-fetch is one blob / N capture rows;
+redaction-version guard; audited evidence_access_log. Exercised against a real
+PG18 in tests/db/test_evidence_store.py.
+
+Deviations (ADR-023): a new top-level evidence/ package beyond the frozen §47
+layout (§17 needs a home §47 names none); relaxing the P02.1 capture uniqueness
+in favour of blob-level dedup. Traceability + risk-register updated.
+
+Generated with [Devin](https://devin.ai)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>

@@ -1,0 +1,36 @@
+## Summary
+Implements **P07.3** (`docs/tickets/P07.3__procurement-connectors.md`, canonical §23.6 / §11.11 / §11.12 / §22.3): the fourth source connector on the P04.1 framework — the **procurement** channel (cooperative purchasing vehicles, USAspending sub-awards, agenda platforms) — plus the `Contract`/`FundingInstrument` runtime shapes, the published agenda-platform tenant registry, and the `artifact_type` ontology vocabulary. Stacked on P07.2.
+
+## What changed
+- **`connectors/src/connectors/procurement.py`** — `ProcurementConnector` on the eight stages; `Contract` (§11.11) and `FundingInstrument` (§11.12) runtime shapes; USAspending sub-award tracing; agenda-tenant discovery + coverage negatives. Registered in `connectors/__init__.py`.
+- **`connectors/src/connectors/data/procurement_vocab.toml`** — the versioned connector vocabulary (predicate allowlist, acquisition channels, instrument types, sources, sub-award facts).
+- **`connectors/src/connectors/data/agenda_tenants.toml`** — the **published** municipality→platform tenant registry this ticket owns (§22.3).
+- **ontology** — new `ArtifactType` enum (§10.3.2 genres + the SIG-INGEST-047 additions), attached to `EvidenceArtifact.artifact_type`, published as SKOS; committed regenerated artifacts.
+- **docs** — ADR-035, ADR index, `traceability.md` (P07.3), `risk_register.md` (P07.3).
+- **tests** — `tests/connectors/test_procurement.py` (48 tests) + the CLI listing test.
+
+## Design decisions (ADR-035)
+- A `cooperative_piggyback` `Contract` **cannot be constructed without** `parent_cooperative_contract` (SIG-ONTO-032) — a missing local RFP is never read as "no procurement evidence".
+- `FundingInstrument` enforces funder != recipient != purchaser (SIG-ONTO-033); USAspending **sub-awards** are pulled (not only prime awards) and traced to a local deployment via `federal_award_id`.
+- The tenant registry is a published data artifact the connector reads; discovery negatives are retained as `db.absence` `NO_EVIDENCE_FOUND` coverage records (SIG-METRIC-002a), wired ahead of P09.1.
+- `artifact_type` promoted to a controlled ontology enum — its first executable, testable home — carrying the three SIG-INGEST-047 additions. Additive/back-compat; the free-text DB column is unchanged.
+
+## Acceptance criteria → evidence
+| AC | Status | Evidence |
+|---|---|---|
+| Cooperative piggyback sets `parent_cooperative_contract` (deterministic) | ✅ | `Contract.__post_init__`; `test_procurement.py::test_cooperative_piggyback_contract_requires_parent`, `::test_cooperative_vehicle_source_defaults_to_piggyback_and_links_master`, `::test_cooperative_vehicle_without_master_award_is_a_hard_error` |
+| Federal sub-award → `federal_award_id` → deployment for a real case (**agentic**) | ✅ | Verified **live** against USAspending: Byrne JAG `15PBJA22GG02066JAGX` (DOJ) → Orange County Sheriff's Office → local ALPR deployment. `funding_instrument_from_subaward`/`trace_subaward_to_deployment`; `::test_subaward_traces_to_deployment_via_federal_award_id`, `::test_pipeline_ingests_usaspending_subawards_end_to_end` |
+| Agenda-platform tenant registry exists, published, connector reads it (deterministic) | ✅ | `data/agenda_tenants.toml`; `ProcurementConnector.discover`; `::test_agenda_tenant_registry_is_published_and_seeded`, `::test_connector_reads_tenants_from_the_registry` |
+| Sub-awards pulled, not only prime; `FundingInstrument` distinguishes funder (deterministic) | ✅ | `assert_pulls_subawards`; `FundingInstrument.__post_init__`; `::test_usaspending_target_must_pull_subawards`, `::test_subaward_becomes_funding_instrument_distinguishing_funder_from_recipient` |
+| Phase-gate: CI green incl. DQ; automated tests; ADR for deviation; traceability + risk register updated | ✅ | `make check` green (lint/format/typecheck/test/verify-gen); ADR-035; `docs/traceability.md`, `docs/risk_register.md` |
+
+#### Test plan
+- [x] `uv run pytest` — **1254 passed**
+- [x] `ruff check` + `ruff format --check` — clean
+- [x] `uv run mypy -p connectors -p ontology` — clean
+- [x] `make verify-gen` — clean (regenerated ontology artifacts committed)
+- [x] Live USAspending sub-award trace on a real Byrne JAG → sheriff LPR case
+
+Spec: `docs/tickets/P07.3__procurement-connectors.md`
+
+Generated with [Devin](https://devin.ai)

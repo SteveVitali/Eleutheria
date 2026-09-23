@@ -13,6 +13,7 @@ icpsr.html
 
 # Scratch
 scratch/
+docs/build/logs/
 tmp/
 
 # Secrets — tokens/keys are env-only, never committed (RISK-P21-05, HG-09).

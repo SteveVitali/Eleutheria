@@ -1,0 +1,35 @@
+P05.1: probabilistic entity resolution — Splink tiers 4-5 to review, the quality gates
+
+The probabilistic top of the resolution cascade, as pure library code + versioned
+data (mirroring the P03.2 deterministic cascade; connectors/ER are not DB-wired yet —
+the review-queue persistence and curation UI are P05.2):
+
+- Splink 4 on DuckDB as a fully-specified, deterministic matcher (per-level m/u in
+  versioned data), so the match weight and its per-comparison Bayes-factor
+  decomposition are reproducible and explainable (SIG-IDENT-021, SIG-IDENT-025).
+- Tiers 4 (probabilistic) and 5 (weak-signal) create PROPOSED proposals routed to
+  review and never auto-write; tier 6 persists no per-pair record (SIG-IDENT-020).
+- Sized blocking rejected above a documented ceiling; suffix-alone/state-alone
+  prohibited; trigram powers candidate search only, never a decision score
+  (SIG-IDENT-023, SIG-IDENT-024).
+- Gold set: stratified blocked-pair sampling across weight bands, double adjudication
+  with Cohen's kappa, a three-value label vocabulary, written rules, per-label
+  provenance, and a frozen, immutable holdout (SIG-IDENT-027).
+- Quality gates: pairwise P/R/F1 at each tier boundary + B-cubed cluster P/R on the
+  holdout; auto-write tiers demoted to review on a holdout-precision breach; cluster-
+  shape alerts for the bad-merge signatures (SIG-IDENT-028, SIG-IDENT-029).
+- ER as a distinct, re-runnable pipeline stage between normalize() and load() with its
+  own run record, quality report, and rollback; a re-cluster emits new same_as under a
+  new ruleset version without destroying the prior clustering; cluster-shape changes
+  routed through the public-id stability contract (SIG-RECON-001, SIG-RECON-002,
+  SIG-IDENT-032).
+
+ADR-029 records the Splink decision; traceability matrix and risk register updated.
+
+Requirement ids: SIG-IDENT-020, SIG-IDENT-021, SIG-IDENT-023, SIG-IDENT-024,
+SIG-IDENT-025, SIG-IDENT-027, SIG-IDENT-028, SIG-IDENT-029, SIG-IDENT-032,
+SIG-RECON-001, SIG-RECON-002; touches SIG-IDENT-031 (public-id minting reused).
+
+Generated with [Devin](https://devin.ai)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>

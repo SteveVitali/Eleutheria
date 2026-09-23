@@ -1,0 +1,36 @@
+P18.2: the France/Belgium (Technopolice) connectors — prefectural orders → LegalInstrument, DECP → Contract, the non-US records vocabulary, and the OSM import study
+
+The first consumer of the P18.1 adapter framework and its §5.3 stress-test: the
+France/Belgium evidence base carries authorization by published prefectural orders
+and procurement by a national open-data dataset, and both must map onto existing
+entities or it is a §5.3 defect. They map, with no US-shaped assumption:
+
+- connectors.france_belgium: two adapters that reach for no us.* term (the
+  MuckRock/foia_request and USAspending/cooperative-US vocabularies are refused).
+  * france_belgium_records: the LegalInstrument runtime shape (§11.14, first
+    consumer) — a published arrêté préfectoral → instrument_type fr.arrete_prefectoral,
+    a national child of the abstract prefectoral_order parent (abstract_instrument_type
+    rolls it up, AC2); the internationalized acquisition method fr.cada (FR) /
+    no_equivalent_available (BE, the eID-walled register — a known-complete-unknown),
+    never foia_request (§13.8, SIG-ONTO-068).
+  * france_belgium_procurement: a DECP record → the country-neutral Contract (F9.16);
+    a marché riding an accord-cadre is a cooperative_piggyback that MUST set
+    parent_cooperative_contract (SIG-ONTO-032), reached through French open data.
+- Belgium onboarded under the be.* national namespace (JurisdictionType, OrganizationType,
+  LegalInstrumentType) with a BE adapter + BE-GDPR redact-by-default publication; a few
+  fr.* org types added (police_nationale/douanes/prefecture). No us.* enum widened
+  (frozen us.* baseline asserted). Ontology regenerated; verify-gen byte-clean.
+- connectors.osm_import_study: the sous-surveillance.net → OSM import studied as prose
+  (docs/studies/) and data — conventions/consultation/outcome, and the corrections to
+  the outline's number (~12k → ~18k imported/~20k source) and actor (OSM Belgium /
+  User:Vucod, not Technopolice). A gate refuses a SIG-originated contribution at scale
+  until the study is complete (SIG-CONTRIB-016).
+- Source rows raa_prefectures / madada / declarationcamera_be (ingestion_permitted=false).
+
+Requirement ids: SIG-CHART-029, SIG-ONTO-068, SIG-ONTO-032, SIG-CONTRIB-016; §11.14
+LegalInstrument, §13.8 acquisition method, §23.5/§23.6 connectors. ADR-057, traceability,
+and the Phase-18 risk register updated; make check green (2363 passed; verify-gen byte-clean).
+
+Generated with [Devin](https://devin.ai)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>

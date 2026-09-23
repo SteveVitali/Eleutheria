@@ -11,7 +11,7 @@ from pathlib import Path
 from connectors.registry import CompactStatus, registry
 
 _ROOT = Path(__file__).resolve().parents[2]
-_RECORD = _ROOT / "docs/build/STAGE0_OUTREACH_RECORD.md"
+_RECORD = _ROOT / "docs/build/reports/STAGE0_OUTREACH_RECORD.md"
 _LETTER = _ROOT / "docs/governance/stage0-outreach-letter.md"
 
 _VALID_OUTCOMES = {c.value for c in CompactStatus}
