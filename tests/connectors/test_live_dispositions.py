@@ -21,7 +21,7 @@ _SOURCES = Path("connectors/src/connectors/data/sources.toml")
 _DISPOSITIONS = Path("connectors/src/connectors/data/live_dispositions.toml")
 
 VALID_DISPOSITIONS = frozenset({"link_only", "reference", "mirror", "promote"})
-VALID_TICKETS = frozenset({"P25.2", "P25.3", "P25.4", "P25.5", "P25.6"})
+VALID_TICKETS = frozenset({"P25.2", "P25.3", "P25.4", "P25.5", "P25.6", "P29.3"})
 
 
 def _source_ids() -> set[str]:

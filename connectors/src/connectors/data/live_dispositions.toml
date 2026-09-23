@@ -82,8 +82,9 @@ disposition = "reference"
 note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Boston 2021 ordinance)"
 
 [sources.ccops_cambridge]
-disposition = "reference"
-note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Cambridge 2018 ordinance)"
+disposition = "promote"
+class_ticket = "P29.3"
+note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Cambridge 2018 ordinance). P29.3: flipped under GL-GATE-07; promoted for the government_mandated_disclosure connector. Connector wiring + live fetch + dedup-into-resolved deferred (D-R7.3-BREADTH)."
 
 [sources.ccops_davis]
 disposition = "reference"
@@ -98,12 +99,14 @@ disposition = "reference"
 note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Nashville BL2017-1288)"
 
 [sources.ccops_oakland]
-disposition = "reference"
-note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Oakland Ord. 13489, Privacy Advisory Commission)"
+disposition = "promote"
+class_ticket = "P29.3"
+note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Oakland Ord. 13489, Privacy Advisory Commission). P29.3: flipped under GL-GATE-07; promoted for the government_mandated_disclosure connector (index_page → disclosure_document, no bespoke adapter). Connector wiring + live fetch + dedup-into-resolved deferred under OSM-land contention (D-R7.3-BREADTH)."
 
 [sources.ccops_somerville]
-disposition = "reference"
-note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Somerville MA)"
+disposition = "promote"
+class_ticket = "P29.3"
+note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Somerville MA). P29.3: flipped under GL-GATE-07; promoted for the government_mandated_disclosure connector. Connector wiring + live fetch + dedup-into-resolved deferred (D-R7.3-BREADTH)."
 
 [sources.census_gazetteer_tiger]
 disposition = "mirror"
@@ -349,3 +352,32 @@ disposition = "reference"
 
 [sources.wired_shotspotter_leak]
 disposition = "link_only"
+
+# P29.3 (ACTIVATE.3) — new accountability/governance sources, flipped under
+# GL-GATE-07 and promoted for their existing class connector. The connector wiring
+# + live fetch + dedup-into-resolved is deferred under the OSM-land contention
+# (D-R7.3-BREADTH); a live run refuses at the loader gate until wired.
+[sources.dhs_fusion_center_assessments]
+disposition = "promote"
+class_ticket = "P29.3"
+note = "P29.3 — DHS National Network of Fusion Centers assessments; promoted for the accountability connector (targeted report lookup). Deferred: D-R7.3-BREADTH."
+
+[sources.dhs_oig_reports]
+disposition = "promote"
+class_ticket = "P29.3"
+note = "P29.3 — DHS Office of Inspector General oversight reports; promoted for the accountability connector (targeted report lookup). Deferred: D-R7.3-BREADTH."
+
+[sources.fema_hsgp_allocations]
+disposition = "promote"
+class_ticket = "P29.3"
+note = "P29.3 — FEMA Homeland Security Grant Program (HSGP/UASI) allocations (funding leg); promoted for the procurement connector's federal-assistance path. Deferred: D-R7.3-BREADTH."
+
+[sources.gao_surveillance_reports]
+disposition = "promote"
+class_ticket = "P29.3"
+note = "P29.3 — GAO surveillance-technology oversight reports; promoted for the accountability connector (targeted report lookup). Deferred: D-R7.3-BREADTH."
+
+[sources.uk_surveillance_camera_commissioner]
+disposition = "promote"
+class_ticket = "P29.3"
+note = "P29.3 — UK Biometrics & Surveillance Camera Commissioner oversight/policy; promoted for the accountability connector (targeted report lookup). Deferred: D-R7.3-BREADTH."
