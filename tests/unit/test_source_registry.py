@@ -365,6 +365,17 @@ _FLIPPED_SUBSET = frozenset(
         "dot_511_ga",
         "dot_511_la",
         "dot_511_md",
+        # P29.3 (ACTIVATE.3): targeted accountability/governance breadth flipped
+        # under GL-GATE-07 (HG-03, 2026-09-23) — 5 new rows + 3 pre-registered
+        # gated CCOPS discovery rows.
+        "gao_surveillance_reports",
+        "dhs_oig_reports",
+        "dhs_fusion_center_assessments",
+        "fema_hsgp_allocations",
+        "uk_surveillance_camera_commissioner",
+        "ccops_oakland",
+        "ccops_cambridge",
+        "ccops_somerville",
     }
 )
 
