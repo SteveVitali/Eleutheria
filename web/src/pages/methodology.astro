@@ -9,6 +9,7 @@
 // coverage-metrics (§32.5) pages. Linked from every dossier via the base layout's
 // "How we know this" module, satisfying "linked from every dossier".
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { RESOLUTION_EVAL } from "../lib/resolution-eval";
 ---
 
 <BaseLayout title="Methodology" path="/methodology/">
@@ -54,6 +55,33 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     thing SIG exists to document. SIG publishes counted quantities with
     <strong>named denominators</strong> and records-derived bounds instead — never a
     total. See the <a href="/coverage-metrics/">coverage metrics</a>.
+  </p>
+
+  <h2 id="resolution-eval">How well SIG resolves entities (SIG measuring its own method)</h2>
+  <p>
+    SIG resolves many overlapping observations into single entities ("this camera seen by
+    three sources is one camera"). A project that does this <strong>must publish how well
+    its resolver measures against ground truth</strong> — and must say plainly when that
+    ground truth is provisional. These are the current holdout metrics.
+  </p>
+  {RESOLUTION_EVAL.provisional && (
+    <p class="sig-eval-provisional" data-testid="resolution-eval-provisional">
+      <strong>{RESOLUTION_EVAL.disclosure}</strong>
+    </p>
+  )}
+  <ul class="sig-eval" data-testid="resolution-eval">
+    {RESOLUTION_EVAL.metrics.map((m) => (
+      <li class="sig-eval-metric" data-testid="resolution-eval-metric">
+        <span class="sig-eval-metric__label">{m.label}</span>
+        <span class="sig-eval-metric__value"><strong>{m.value}</strong></span>
+        <span class="sig-eval-metric__against">{m.against}</span>
+      </li>
+    ))}
+  </ul>
+  <p>
+    These measure <em>SIG's method</em>, on a named, frozen holdout — never a device
+    population and never a capture–recapture estimate. The full report and its reproducible
+    generator are committed with the build.
   </p>
 
   <h2>Freshness and coverage</h2>

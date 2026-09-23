@@ -127,6 +127,19 @@ test.describe("methodology, data-freshness, coverage-metrics (SIG-UI-034, §32.4
     await page.goto("/methodology/");
     await expect(page.getByTestId("no-capture-recapture")).toContainText("capture–recapture");
   });
+
+  test("methodology surfaces the resolution eval honestly, with the PROVISIONAL disclosure (P28.4)", async ({
+    page,
+  }) => {
+    await page.goto("/methodology/");
+    // SIG measures its own method: the holdout metrics render.
+    const metrics = page.getByTestId("resolution-eval-metric");
+    await expect(metrics.first()).toBeVisible();
+    await expect(page.getByTestId("resolution-eval")).toContainText("0.714"); // Cohen's κ
+    await expect(page.getByTestId("resolution-eval")).toContainText("0.976"); // B-cubed F1
+    // The provisional-eval disclosure is preserved (D-R6.1-EVAL, OPEN).
+    await expect(page.getByTestId("resolution-eval-provisional")).toContainText("PROVISIONAL");
+  });
 });
 
 test.describe("editorial standards (§41, SIG-UI-042/043/045/046)", () => {
