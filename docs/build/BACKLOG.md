@@ -109,8 +109,6 @@ RISK -> `-> BL-nnn` in `docs/risk_register.md` -> the item's landing here.
   - sources: RISK-P16-14 RISK-P16-15 LD-F11 ADR-055 RISK-P18-14 LD-V09
 - **BL-040** — Moderated usability study (>=5 ontology-naive contributors) · _operational-prereq_ · M · status=open · gate HG-10
   - sources: RISK-P16-06 LD-P03
-- **BL-041** — Contributor onboarding: jurisdiction-aware know-your-rights shown · _deferred-feature_ · S · status=open
-  - sources: RISK-P16-08
 
 ## P21.8
 
@@ -163,6 +161,10 @@ RISK -> `-> BL-nnn` in `docs/risk_register.md` -> the item's landing here.
   - sources: RISK-P2-03 RISK-P2-15
 - **BL-049** — Generate physical DDL from LinkML (ontology/db seam, SIG-STORE-045) · _schema-refinement_ · L · status=open
   - sources: RISK-P2-04
+- **BL-041** — Contributor onboarding: jurisdiction-aware know-your-rights shown (out of scope P21.7 — separate follow-up) · _deferred-feature_ · S · status=open
+  - sources: RISK-P16-08
+- **BL-052** — pyproject.toml description reads "skeleton" for five fully-built packages — package metadata contradicts the shipped code · _docs-drift_ · S · status=open
+  - sources: ADR-072
 
 ## P22+ unscheduled (recorded, no P21 ticket owns these)
 
@@ -175,3 +177,5 @@ Recorded per the ticket: unscheduled work with `type` and `size` filled, awaitin
 - **BL-047** — Schema cleanup: legacy succession slots vs reified OrganizationRelationship · _schema-refinement_ · S · sources: RISK-P3-04
 - **BL-048** — Determinism / whole-graph audit CI jobs (resolution rebuild, TI-6/7 audit) · _process_ · M · sources: RISK-P2-03 RISK-P2-15
 - **BL-049** — Generate physical DDL from LinkML (ontology/db seam, SIG-STORE-045) · _schema-refinement_ · L · sources: RISK-P2-04
+- **BL-041** — Contributor onboarding: jurisdiction-aware know-your-rights shown (out of scope P21.7 — separate follow-up) · _deferred-feature_ · S · sources: RISK-P16-08
+- **BL-052** — pyproject.toml description reads "skeleton" for five fully-built packages — package metadata contradicts the shipped code · _docs-drift_ · S · sources: ADR-072

@@ -2235,3 +2235,17 @@ SIG-ENG-031 (risk register). Only `scripts/docs/`, `Makefile`, `.github/workflow
 | ADR-072 documents the gates + revisit trigger (SIG-STORE-007) and is indexed | `docs/adr/ADR-072-documentation-freshness-gates.md`; `docs/adr/README.md` index | `tests/unit/test_policy_adrs.py` (revisit trigger present); grep ADR-072 in README |
 | Risk register maintained (SIG-ENG-031): RISK-P22-03/04 | `docs/risk_register.md` (Phase 22 — Documentation (P22.2)) | present; §53 format |
 | Phase gate (§51.3): `make check` green (unchanged count); ADR-072 indexed; traceability + risk appended | `make check`; ADR-072; this section | `make check` (0 failed / 0 xfailed); `make docs-check` (exit 0) |
+
+# Capstone verification — `sig-postbuild` (composed end-to-end)
+
+Final composed verification of the whole chain (`docs/build/CAPSTONE_VERIFICATION.md`). Two scoped
+integrity gaps closed, then the entire build exercised as one unit with Docker up (29.1.3). No
+requirement ids added; the change is docs/integrity only (`COVERAGE_MATRIX.csv`, `spec_src` + the
+regenerated `docs/2_canonical_design_spec.md`, `CAPSTONE_CLOSURE.md §(b)` addendum, this section).
+
+| Item | Where | Evidence |
+|---|---|---|
+| MATRIX-INT-01: `SIG-STORE-003` COVERED→MET (test-cited), `SIG-UI-047` →`deviated(ADR)`/`MET-DIFFERENTLY`/`P20.2:spec` | `docs/build/COVERAGE_MATRIX.csv` | `check_coverage_matrix.py` exit 0 (`671 rows OK`); MET-DIFFERENTLY 76→77 reconciled by `CAPSTONE_CLOSURE.md §(b)` addendum |
+| APPENDIX-F-01: ADR-072 row added via `spec_src`, spec regenerated | `docs/research/_meta/spec_src/99a_appF_adr.md`; `docs/2_canonical_design_spec.md` | `check_spec_src.py` exit 0 (Appendix F 71 ADRs = docs/adr set; byte-identical repro) |
+| Composed E2E green | `make check` / `make test-db` / `tests/e2e` / `run_okc.sh` | 2718 passed·0 failed·0 xfailed; 120 passed (PG18+PostGIS); 16 passed·0 skipped (S8/LD-V08 ran); OKC 8/8, 299-vs-190 from export, J-1 pass, 0 failed |
+| Pre-existing blocker routed to operator | `docs/build/BACKLOG.csv` (identical to base) | `check_backlog.py` exit 1 (backlog drift, RISK-P20-01) — out of scope; a `P22+` reconciliation ticket closes it |
