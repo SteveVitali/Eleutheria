@@ -13,8 +13,9 @@ from __future__ import annotations
 import argparse
 
 from . import __version__
+from .corrections_intake import known_categories, known_outcomes
 from .crawler import conduct_rules
-from .governance import intake_categories, permitted_outcomes
+from .governance import identity_required_for, intake_categories, permitted_outcomes
 from .jurisdiction import AdapterIncomplete, USShapedAssumptionError, adapters, validate_adapter
 from .licensing import compartments
 from .threat_model import ThreatModelError, load_threat_model, validate_threat_model
@@ -32,6 +33,10 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser(
         "jurisdiction",
         help="validate every jurisdiction adapter against the §5.3 checklist",
+    )
+    sub.add_parser(
+        "corrections",
+        help="the anonymous corrections/dispute intake reference (categories, outcomes, identity)",
     )
     return parser
 
@@ -73,6 +78,27 @@ def _jurisdiction() -> int:
     return 0
 
 
+def _corrections() -> int:
+    """Print the anonymous corrections/dispute intake reference (§45, ADR-100).
+
+    The operator-facing summary of the no-account intake channel: the accepted
+    categories (with which require standing to act on), the permitted outcomes
+    (refusal included), and the identity rule — the operator runbook
+    (`docs/build/reports/CORRECTIONS_TAKEDOWN_RUNBOOK.md`) explains the workflow.
+    """
+    print("anonymous corrections/dispute intake (§45, ADR-100 — no account required)")
+    print("  identity: NOT required except a legal demand needing standing (SIG-GOV-002)")
+    print("  accepted categories (SIG-GOV-001):")
+    for cat in sorted(known_categories()):
+        standing = " [may require standing]" if identity_required_for(cat) else ""
+        print(f"    - {cat}{standing}")
+    print("  permitted outcomes (SIG-GOV-004 — refusal is a real option):")
+    for out in sorted(known_outcomes()):
+        print(f"    - {out}")
+    print("  runbook: docs/build/reports/CORRECTIONS_TAKEDOWN_RUNBOOK.md")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run the `policy` CLI. Returns a process exit code."""
     parser = build_parser()
@@ -81,5 +107,7 @@ def main(argv: list[str] | None = None) -> int:
         return _validate()
     if args.command == "jurisdiction":
         return _jurisdiction()
+    if args.command == "corrections":
+        return _corrections()
     parser.print_help()
     return 0
