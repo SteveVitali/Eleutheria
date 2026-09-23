@@ -3,6 +3,7 @@
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
 import { defineConfig } from "astro/config";
+import react from "@astrojs/react";
 import { cpSync, existsSync, mkdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
@@ -47,7 +48,13 @@ function sigExportTiles() {
 // (SIG-UI-037).
 export default defineConfig({
   output: "static",
-  integrations: [sigExportTiles()],
+  // P27.9 (DECISION-SPA = B, ADR-097 extending ADR-068): React arrives via
+  // @astrojs/react. It renders to STATIC HTML at build time by default (no client
+  // JS) — client JavaScript ships ONLY for components carrying an explicit
+  // `client:*` directive, which in the public surface is exactly the three named
+  // islands (map / network / search). Every other page still ships zero `<script>`
+  // (SIG-UI-036/037); each island preserves its no-JS fallback (SIG-UI-050).
+  integrations: [react(), sigExportTiles()],
   // The canonical public origin (P27.6 deliverable 4, ADR-093). This is the real
   // custom domain the launch surface is cited at; the belief-pinned permalinks
   // (SIG-UI-035) resolve against it. DNS/TLS cut-over completes in P27.10 — the

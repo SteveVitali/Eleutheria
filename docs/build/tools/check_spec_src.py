@@ -56,6 +56,11 @@ FOLD_BACK_IDS = [
     # manifest-sourced metadata (§39.9).
     "SIG-UI-048",
     "SIG-UI-049",
+    # P27.9 (ADR-091 §40 island share of D-P27-SPEC-1 — the final share): the
+    # no-JS-fallback invariant for the three named public interactive islands
+    # (map/graph/search), extending the ADR-068 island allowance; SIG-UI-047 annotated
+    # to record it is realised at Phase 27 (ADR-097).
+    "SIG-UI-050",
 ]
 EXPECTED_IDS = BASELINE_IDS + len(FOLD_BACK_IDS)
 
