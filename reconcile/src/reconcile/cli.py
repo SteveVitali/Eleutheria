@@ -45,6 +45,16 @@ def build_parser() -> argparse.ArgumentParser:
     resolve.add_argument("--subject", default=None, help="restrict to one subject entity id")
     resolve.add_argument("--predicate", default=None, help="restrict to one predicate id")
     resolve.add_argument("--role", default=None, help="optional read role to SET ROLE to")
+
+    materialize = sub.add_parser(
+        "materialize",
+        help="run the §28 resolver over the spine and WRITE the envelopes (P28.1, append-only)",
+    )
+    materialize.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    materialize.add_argument("--jurisdiction", default=None, help="jurisdiction token filter")
+    materialize.add_argument("--subject", default=None, help="restrict to one subject entity id")
+    materialize.add_argument("--predicate", default=None, help="restrict to one predicate id")
+    materialize.add_argument("--role", default=None, help="optional role to SET ROLE to")
     return parser
 
 
@@ -158,5 +168,22 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.command == "resolve":
         return _resolve(args)
+    if args.command == "materialize":
+        return _materialize(args)
     parser.print_help()
+    return 0
+
+
+def _materialize(args: argparse.Namespace) -> int:
+    """Materialize resolution envelopes into the spine (P28.1, ADR-099)."""
+    from .materialize import materialize_from_dsn
+
+    summary = materialize_from_dsn(
+        args.dsn,
+        jurisdiction=args.jurisdiction,
+        subject=args.subject,
+        predicate=args.predicate,
+        role=args.role,
+    )
+    print(json.dumps(summary.as_dict(), indent=2))
     return 0

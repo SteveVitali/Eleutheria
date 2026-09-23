@@ -23,6 +23,13 @@ holdout_fraction = 0.3
 # Target number of pairs sampled from each weight band.
 sample_per_band = 20
 
+# The published LLM-vs-maintainer-seed agreement bar (P28.1/ADR-099, design §2.3). The
+# LLM adjudicator's labels are trusted as gold for the TRAINING partition only when its
+# Cohen's κ against the human seed clears this bar (substantial agreement); below it, the
+# LLM is a SUGGESTER and its pairs route to human review. The frozen holdout is always
+# human-verified regardless. PROVISIONAL — D-R6.1-EVAL revisits it as models drift.
+kappa_bar = 0.7
+
 # The written adjudication rules (SIG-IDENT-027). Deliberately prose: an adjudicator
 # reads these, not code. Defined before the [[band]] tables so it is a root-level key.
 adjudication_rules = """
