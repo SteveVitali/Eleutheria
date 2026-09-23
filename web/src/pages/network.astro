@@ -28,12 +28,16 @@ import {
   SPECULATIVE_HOP_THRESHOLD,
 } from "../lib/network";
 import {
-  NETWORK_NODES,
-  NETWORK_EDGES,
-  CENTRALITY_STATS,
-  ACCESS_PATHS,
-  FOCUS_ENTITY_ID,
-} from "../lib/map-network-fixture";
+  getNetwork,
+  getNetworkCentrality,
+  getNetworkFocusEntityId,
+} from "../lib/data";
+
+// The sharing network + its centrality analytics flow through the single data seam
+// (ADR-066): fixtures by default, real export bytes under SIG_DATA_SOURCE=export.
+const { nodes: NETWORK_NODES, edges: NETWORK_EDGES, accessPaths: ACCESS_PATHS } = getNetwork();
+const CENTRALITY_STATS = getNetworkCentrality();
+const FOCUS_ENTITY_ID = getNetworkFocusEntityId();
 
 const labelOf = (id: string) => NETWORK_NODES.find((n) => n.id === id)?.label ?? id;
 

@@ -27,11 +27,20 @@ import {
   renderBin,
 } from "../lib/map";
 import { MAP_ATTRIBUTION_LINE } from "../lib/map-tiles";
-import { MAP_ASSETS, DENSITY_BINS } from "../lib/map-network-fixture";
+import { getMapSites, getMapDensityBins, capRows } from "../lib/data";
+
+// The map's assets + national-view density bins flow through the single data seam
+// (ADR-066): committed fixtures by default, real export bytes under SIG_DATA_SOURCE=export.
+const MAP_ASSETS = getMapSites();
+const DENSITY_BINS = getMapDensityBins();
 
 const { locatable, jurisdictionIndicators } = partitionByLocatability(MAP_ASSETS);
 const maxCount = Math.max(1, ...DENSITY_BINS.map((b) => b.deviceCount));
 const bins = DENSITY_BINS.map((b) => ({ bin: b, render: renderBin(b, maxCount) }));
+
+// Build-time cap so the tabular equivalent stays within budget at national scale
+// (tens of thousands of sites, P27.5 d3); the honest total is preserved (P27.7 finalises).
+const locatableRows = capRows(locatable);
 
 // Which layer id each control governs, for the "bound control" display.
 const boundControl = LAYER_CONTROLS.find(
@@ -165,6 +174,12 @@ const cell = 64;
 
   <!-- The tabular equivalent for the asset points + jurisdiction indicators. -->
   <h2 id="assets-heading">Located assets (tabular equivalent)</h2>
+  {locatableRows.truncated && (
+    <p class="sig-table-note" data-testid="assets-truncation-note">
+      Showing the first {locatableRows.shown} of {locatableRows.total} located assets; the full set is
+      in the export bundle and the API (SIG-UI-037).
+    </p>
+  )}
   <table class="sig-table" aria-labelledby="assets-heading">
     <thead>
       <tr>
@@ -177,7 +192,7 @@ const cell = 64;
       </tr>
     </thead>
     <tbody>
-      {locatable.map((a) => (
+      {locatableRows.rows.map((a) => (
         <tr data-testid="map-asset-row">
           <th scope="row">{a.label}</th>
           <td>{a.jurisdiction}</td>

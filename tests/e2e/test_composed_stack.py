@@ -409,6 +409,21 @@ def web_build_from_export(tmp_path_factory: pytest.TempPathFactory) -> _WebBuild
     )
     assert built.returncode == 0, f"sig-exports build --jurisdiction okc failed: {built.stderr}"
     assert (export_dir / "web" / "dossiers.json").exists(), "export must emit web/dossiers.json"
+    # P27.5: every public surface now reads through the export data layer, so the bundle
+    # must carry the ten frozen P27.1 surface artifacts (map/network/freshness/coverage/
+    # watch/evidence/corrections/research_queue/dossier_index), not just dossiers.json. The
+    # fixture `--jurisdiction okc` path preserves the pre-P27.5 dossiers/leverage/tiles; the
+    # web-side fixture-export harness OVERLAYS the ten surface JSONs (fixture-equivalent
+    # content, leaving the real dossiers/leverage untouched), so the export-mode build has a
+    # complete bundle without a hosted spine (D-P27.5-1; the spine path is D-P27.4-1).
+    overlay = subprocess.run(
+        ["npm", "--prefix", str(web_dir), "run", "export:fixtures", "--", str(export_dir)],
+        capture_output=True,
+        text=True,
+        cwd=str(REPO_ROOT),
+    )
+    assert overlay.returncode == 0, f"web export:fixtures overlay failed: {overlay.stderr}"
+    assert (export_dir / "web" / "map.json").exists(), "overlay must emit the P27.1 surfaces"
     proc = subprocess.run(
         ["npm", "--prefix", str(web_dir), "run", "build"],
         capture_output=True,

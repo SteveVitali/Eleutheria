@@ -19,11 +19,18 @@ import {
   SEARCHED_FOUND_NOTHING,
 } from "../lib/research-queue";
 import {
-  JURISDICTION_CLAIMS,
-  QUEUE_AS_OF,
-  RESEARCH_QUEUE,
-  RESEARCH_QUEUE_PROVENANCE,
-} from "../lib/corrections-methodology-fixture";
+  getResearchQueue,
+  getJurisdictionClaims,
+  getQueueAsOf,
+  getResearchQueueProvenance,
+} from "../lib/data";
+
+// The queue, its jurisdiction claims, its as-of, and its provenance flow through the
+// single data seam (ADR-066): fixtures by default, export bytes under SIG_DATA_SOURCE=export.
+const RESEARCH_QUEUE = getResearchQueue();
+const JURISDICTION_CLAIMS = getJurisdictionClaims();
+const QUEUE_AS_OF = getQueueAsOf();
+const RESEARCH_QUEUE_PROVENANCE = getResearchQueueProvenance();
 
 const ordered = orderQueue(RESEARCH_QUEUE, JURISDICTION_CLAIMS, QUEUE_AS_OF);
 const jurisdictions = queueJurisdictions(RESEARCH_QUEUE);

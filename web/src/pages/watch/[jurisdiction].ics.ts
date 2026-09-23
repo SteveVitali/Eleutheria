@@ -9,8 +9,12 @@
 // feed is byte-reproducible.
 import type { APIRoute, GetStaticPaths } from "astro";
 import { jurisdictionSlug, toICal, watchJurisdictions } from "../../lib/watch";
-import { WATCH_ITEMS } from "../../lib/watch-evidence-fixture";
+import { getWatch } from "../../lib/data";
 import { AS_OF } from "../../lib/fixtures";
+
+// The watch flows through the single data seam (ADR-066): fixtures by default, export
+// bytes under SIG_DATA_SOURCE=export.
+const WATCH_ITEMS = getWatch();
 
 export const getStaticPaths: GetStaticPaths = () =>
   watchJurisdictions(WATCH_ITEMS).map((jurisdiction) => ({
