@@ -33,6 +33,8 @@ import {
   getNetworkCentrality,
   getNetworkFocusEntityId,
 } from "../lib/data";
+import NetworkIsland from "../islands/NetworkIsland";
+import "../styles/islands.css";
 
 // The sharing network + its centrality analytics flow through the single data seam
 // (ADR-066): fixtures by default, real export bytes under SIG_DATA_SOURCE=export.
@@ -72,6 +74,25 @@ others.forEach((n, i) => {
   </p>
 
   {!hasNetwork && <EmptyState surface="network" />}
+
+  {hasNetwork && (
+  <section class="sig-island sig-graph-island" aria-labelledby="graph-island-heading" data-testid="graph-island-section">
+    <h2 id="graph-island-heading">Interactive explorer</h2>
+    <p class="sig-island__note">
+      An opt-in interactive explorer (P27.9, ADR-097). It opens on an ego network and
+      expands one node at a time — never a national hairball (SIG-UI-021/022). With
+      JavaScript disabled this block is empty and the edge and path <strong>lists
+      below</strong> are the full, usable surface (SIG-UI-037/050).
+    </p>
+    <NetworkIsland
+      client:only="react"
+      nodes={NETWORK_NODES}
+      edges={NETWORK_EDGES}
+      centrality={CENTRALITY_STATS}
+      focusEntityId={FOCUS_ENTITY_ID}
+    />
+  </section>
+  )}
 
   {hasNetwork && (
   <section data-testid="network-view" data-default-view={DEFAULT_NETWORK_VIEW}>

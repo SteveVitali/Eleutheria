@@ -186,8 +186,8 @@ landing here. Regenerate this file after any backlog edit:
 
 ## P27+
 
-- **BL-056** — P27 public-launch readiness: turn the fixture-demo web into a data-driven national public surface over the real ~1.06M-claim spine — ADR-090 (national surface from a spine-built export), ADR-091 (static core + React islands, DECISION-SPA=B), ADR-092 (spine-built export + resolution posture), ADR-093 (IA redesign), ADR-094 (rights resolution); umbrella home for the P27 launch round, manifest rows 117-125 (P27.1..P27.9) · _deferred-feature_ · L · status=open · gate HG-01;HG-11;HG-02;HG-03
-  - sources: ADR-090 ADR-091 ADR-092 ADR-093 ADR-094 ADR-095 ADR-096
+- **BL-056** — P27 public-launch readiness: turn the fixture-demo web into a data-driven national public surface over the real ~1.06M-claim spine — ADR-090 (national surface from a spine-built export), ADR-091 (static core + React islands, DECISION-SPA=B), ADR-092 (spine-built export + resolution posture), ADR-093 (IA redesign), ADR-094 (rights resolution), ADR-097 (three public interactive islands realising ADR-091); umbrella home for the P27 launch round, manifest rows 117-125 (P27.1..P27.9) · _deferred-feature_ · L · status=open · gate HG-01;HG-11;HG-02;HG-03
+  - sources: ADR-090 ADR-091 ADR-092 ADR-093 ADR-094 ADR-095 ADR-096 ADR-097
 
 ## P25+ unscheduled (post-Round-4 manifest — the next planning round owns these)
 
@@ -212,4 +212,4 @@ Triaged by P24.5 (META.1 / GL-META-01, 2026-09-13): each row was checked against
 
 Triaged by P24.5 (META.1 / GL-META-01, 2026-09-13): each row was checked against the tree — none is landed, none is owned by a remaining manifest ticket (rows 84–87 are JURIS.2/CCOPS.1/REC.1/GATE-ACCEPT). `P25+` = the planning round after this manifest, replacing the stale `P22+` bucket (the P22 pass closed unscheduled). Rows conditioned on real post-go-live state are additionally promoted to `docs/tickets/DEFERRALS.md` (D-META.1-*; the BL row stays the normalized-debt record).
 
-- **BL-056** — P27 public-launch readiness: turn the fixture-demo web into a data-driven national public surface over the real ~1.06M-claim spine — ADR-090 (national surface from a spine-built export), ADR-091 (static core + React islands, DECISION-SPA=B), ADR-092 (spine-built export + resolution posture), ADR-093 (IA redesign), ADR-094 (rights resolution); umbrella home for the P27 launch round, manifest rows 117-125 (P27.1..P27.9) · _deferred-feature_ · L · sources: ADR-090 ADR-091 ADR-092 ADR-093 ADR-094 ADR-095 ADR-096
+- **BL-056** — P27 public-launch readiness: turn the fixture-demo web into a data-driven national public surface over the real ~1.06M-claim spine — ADR-090 (national surface from a spine-built export), ADR-091 (static core + React islands, DECISION-SPA=B), ADR-092 (spine-built export + resolution posture), ADR-093 (IA redesign), ADR-094 (rights resolution), ADR-097 (three public interactive islands realising ADR-091); umbrella home for the P27 launch round, manifest rows 117-125 (P27.1..P27.9) · _deferred-feature_ · L · sources: ADR-090 ADR-091 ADR-092 ADR-093 ADR-094 ADR-095 ADR-096 ADR-097

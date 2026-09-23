@@ -4,6 +4,17 @@
     "collect": {
       "staticDistDir": "./dist",
       "numberOfRuns": 1,
+      "//url": "A representative page per budget block (lhci autodiscovery otherwise caps at 5 arbitrary pages and never reaches the islands): public zero-JS content pages, a /curate/** island-allowance page (ADR-068), and the three public interactive islands /map//network//search/ (ADR-097), so every block below is actually exercised.",
+      "url": [
+        "/index.html",
+        "/dossier/oklahoma-city/index.html",
+        "/coverage-metrics/index.html",
+        "/data-freshness/index.html",
+        "/curate/index.html",
+        "/map/index.html",
+        "/network/index.html",
+        "/search/index.html"
+      ],
       "settings": {
         "throttlingMethod": "simulate"
       }
@@ -11,8 +22,8 @@
     "assert": {
       "assertMatrix": [
         {
-          "//": "Public pages: the full zero-JS + performance budget.",
-          "matchingUrlPattern": "^(?:(?!/curate/).)*$",
+          "//": "Public content pages: the full zero-JS + performance budget. Excludes /curate/** (ADR-068) and the three opt-in islands /map//network//search/ (ADR-097) — every other public page ships script size 0.",
+          "matchingUrlPattern": "^(?:(?!/curate/|/map/|/network/|/search/).)*$",
           "assertions": {
             "categories:performance": ["error", { "minScore": 0.9 }],
             "categories:accessibility": ["error", { "minScore": 1 }],
@@ -30,6 +41,17 @@
           "assertions": {
             "categories:accessibility": ["error", { "minScore": 1 }],
             "categories:performance": ["warn", { "minScore": 0.7 }],
+            "unminified-css": "off",
+            "uses-long-cache-ttl": "off",
+            "csp-xss": "off"
+          }
+        },
+        {
+          "//": "The three public interactive islands (/map/, /network/, /search/): the opt-in-island budget (P27.9, ADR-097 extending ADR-068). WCAG 2.2 AA is enforced (a11y 100); performance is advisory and script/total size is NOT asserted (a hydrated MapLibre/React island ships JS by design). Each island preserves a no-JS fallback (SIG-UI-050); every OTHER public page keeps script size 0 under the block above.",
+          "matchingUrlPattern": ".*/(map|network|search)/.*",
+          "assertions": {
+            "categories:accessibility": ["error", { "minScore": 1 }],
+            "categories:performance": ["warn", { "minScore": 0.5 }],
             "unminified-css": "off",
             "uses-long-cache-ttl": "off",
             "csp-xss": "off"

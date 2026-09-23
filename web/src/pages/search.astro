@@ -1,0 +1,86 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The search / filter surface (§40, SIG-UI-040/047 island; P27.9, ADR-097). The
+// OPT-IN interactive island filters the already-published index (dossiers, map
+// sites, sources) in the browser; with JavaScript disabled it degrades to the static
+// BROWSE index below (real GET links to the dossier index, the map and the per-source
+// freshness table) — progressive enhancement, never replacement (SIG-UI-037/050).
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SearchIsland from "../islands/SearchIsland";
+import type { SearchItem } from "../islands/SearchIsland";
+import { getDossierIndex, getMapSites, getFreshness, capRows } from "../lib/data";
+import "../styles/islands.css";
+
+const dossiers = getDossierIndex();
+const sites = getMapSites();
+const sources = getFreshness();
+
+// Cap the map-site rows fed to the client index so the page stays within budget at
+// national scale (tens of thousands of sites); the full set is on /map/ and the API.
+const cappedSites = capRows(sites);
+
+const INDEX: SearchItem[] = [
+  ...dossiers.map((d) => ({
+    kind: "dossier" as const,
+    label: d.subject_label,
+    sublabel: d.jurisdiction,
+    href: `/dossier/${d.slug}/`,
+  })),
+  ...cappedSites.rows.map((s) => ({
+    kind: "site" as const,
+    label: s.label,
+    sublabel: s.jurisdiction,
+    href: "/map/",
+  })),
+  ...sources.map((r) => ({
+    kind: "source" as const,
+    label: r.source,
+    sublabel: `status: ${r.status}`,
+    href: "/data-freshness/",
+  })),
+];
+---
+
+<BaseLayout title="Search" path="/search/">
+  <p>
+    Search the published record — dossiers, map sites and sources. The interactive
+    filter below is an <strong>optional enhancement</strong>; everything it searches is
+    also reachable by browsing, so the record is usable with no client JavaScript
+    (SIG-UI-037).
+  </p>
+
+  <!-- The OPT-IN search island (P27.9, ADR-097). Hydrates only here; empty with JS off. -->
+  <section class="sig-island" aria-labelledby="search-island-heading" data-testid="search-island-section">
+    <h2 id="search-island-heading">Interactive search</h2>
+    <SearchIsland client:only="react" items={INDEX} />
+  </section>
+
+  <!-- The no-JS BROWSE fallback: real GET links, always present (SIG-UI-050). -->
+  <section aria-labelledby="browse-heading" data-testid="search-browse">
+    <h2 id="browse-heading">Browse the record</h2>
+    <p>Without JavaScript, browse the record directly:</p>
+    <ul>
+      <li>
+        <a href="/dossier/">Dossier index</a> — {dossiers.length} jurisdiction dossier{dossiers.length === 1 ? "" : "s"}.
+      </li>
+      <li>
+        <a href="/map/">Infrastructure map</a> — {sites.length} mapped site{sites.length === 1 ? "" : "s"} (tabular equivalent on the page).
+      </li>
+      <li>
+        <a href="/data-freshness/">Sources &amp; data freshness</a> — {sources.length} source{sources.length === 1 ? "" : "s"} with per-source freshness.
+      </li>
+      <li>
+        <a href="/network/">Network explorer</a> and the <a href="/research-queue/">research queue</a> for what is not yet researched.
+      </li>
+    </ul>
+    {cappedSites.truncated && (
+      <p class="sig-island__note" data-testid="search-cap-note">
+        The interactive filter covers the first {cappedSites.shown} of {cappedSites.total} mapped
+        sites; the full set is on the <a href="/map/">map</a> and in the export bundle / API.
+      </p>
+    )}
+  </section>
+</BaseLayout>
