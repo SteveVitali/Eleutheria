@@ -110,6 +110,10 @@ Gate → pause map: **before P20.2** HG-13 (A1–A8) · **after P19.5** HG-14 (A
 
 ## GATE DECISIONS
 
+- 2026-09-22 **P27.8 / HG-01, HG-11, HG-02** (national public cut-over — operator answered the three gate items one by one; carry the OKC go-public dispositions forward for the broader national dataset ~1.06M claims / 210 sources incl. GB/AU/TH/NZ):
+  - **HG-01** (publication go / legal home) — answer: **Carry forward, proceed.** Legal home stays *Steven Vitali, individual maintainer* (named 2026-09-15, D-P21.4-1). Consequence: P27.8 is authorized to build + deploy the national real-data surface to the public buckets (published compartment only). *(The actual hosted deploy/public sync is still infra-gated on GCP ADC in the run shell — HG-12/D-ACCT.1-1; if creds are absent the worker records the hosted cut-over as an honest deferral, never a fabricated green.)*
+  - **HG-11** (reviewer concurrence) — answer: **Carry forward sole-maintainer posture.** Consequence: proceed on the recorded waiver (D-P21.4-2); a second independent reviewer + written concurrence stays owed post-launch, and the published surface makes no two-reviewer claim.
+  - **HG-02** (counsel disposition) — answer: **Carry forward interim engineering dispositions.** Consequence: proceed on the interim publication-permitting dispositions + built safeguards (tier-0 only, coordinate reduction, officer-naming gate, ODbL compartment separation); dated counsel opinions stay owed post-launch (D-LEGAL.1-1). Provided: no counsel opinion (interim engineering disposition only).
 - 2026-09-18 **GL-GATE-07** (operator disposition, recorded verbatim): *"We should
   ungate the D-SOURCES.12-1 257 gated datasets and for all the 'rights review'
   cases we should err on the side of approving them"* — blanket approval of the
