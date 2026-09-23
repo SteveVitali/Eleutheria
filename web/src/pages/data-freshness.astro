@@ -10,10 +10,18 @@
 // dashboard is itself a trust affordance.
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { assertFreshnessRow } from "../lib/metrics";
-import { FRESHNESS_ROWS } from "../lib/corrections-methodology-fixture";
+import { getFreshness, capRows } from "../lib/data";
+
+// The freshness rows flow through the single data seam (ADR-066): fixtures by default,
+// real export bytes under SIG_DATA_SOURCE=export.
+const FRESHNESS_ROWS = getFreshness();
 
 // Enforce the per-source row contract at build (SIG-METRIC-007).
 for (const row of FRESHNESS_ROWS) assertFreshnessRow(row);
+
+// Build-time cap so the national table (~210 sources) stays within budget (P27.5 d3);
+// the honest total is preserved (P27.7 finalises the paginated table).
+const freshnessRows = capRows(FRESHNESS_ROWS);
 ---
 
 <BaseLayout title="Data freshness" path="/data-freshness/">
@@ -23,6 +31,12 @@ for (const row of FRESHNESS_ROWS) assertFreshnessRow(row);
     two-year-old active count is historical (§32.4).
   </p>
 
+  {freshnessRows.truncated && (
+    <p class="sig-table-note" data-testid="freshness-truncation-note">
+      Showing the first {freshnessRows.shown} of {freshnessRows.total} sources; the full set is in the
+      export bundle and the API (SIG-UI-037).
+    </p>
+  )}
   <table class="sig-freshness" data-testid="freshness-table">
     <caption class="sig-visually-hidden">Per-source data freshness</caption>
     <thead>
@@ -36,7 +50,7 @@ for (const row of FRESHNESS_ROWS) assertFreshnessRow(row);
       </tr>
     </thead>
     <tbody>
-      {FRESHNESS_ROWS.map((row) => (
+      {freshnessRows.rows.map((row) => (
         <tr data-testid="freshness-row" data-source={row.source} data-status={row.status}>
           <th scope="row">{row.source}</th>
           <td><time datetime={row.last_successful_run}>{row.last_successful_run}</time></td>

@@ -7,7 +7,11 @@
 // for attaching to public comment. Static-first (SIG-UI-036): emitted at build time.
 import type { APIRoute } from "astro";
 import { citationListText, recommendEvidence } from "../../lib/recommender";
-import { DECISION_POINT, EVIDENCE_ARTIFACTS } from "../../lib/watch-evidence-fixture";
+import { getEvidence, getDecisionPoint } from "../../lib/data";
+
+// The ranked evidence + decision point flow through the single data seam (ADR-066).
+const EVIDENCE_ARTIFACTS = getEvidence().artifacts;
+const DECISION_POINT = getDecisionPoint();
 
 export const GET: APIRoute = () => {
   const ranked = recommendEvidence(EVIDENCE_ARTIFACTS, DECISION_POINT);
