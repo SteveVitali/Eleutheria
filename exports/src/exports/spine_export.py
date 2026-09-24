@@ -60,6 +60,7 @@ from reconcile.materialize import (
     read_materialized_edges,
     read_materialized_resolutions,
 )
+from resolution.camera_sites_pg import read_resolved_site_runs
 
 from . import compartments as C
 from . import provo
@@ -203,6 +204,9 @@ def fetch_export_raw(cur: Any, *, belief: datetime | None = None) -> dict[str, A
 #: is honest absence (``[]``) — never a crash, never a fabricated row (ADR-101).
 _MATERIALIZED_SEAMS: tuple[tuple[str, str, Any], ...] = (
     ("materialized_resolutions", "resolution", read_materialized_resolutions),
+    # P30.2b (ADR-105) — the latest completed camera-site ER run: the auto-written same-device
+    # edges the resolved-site metric clusters (N of M), never a §28 value decision.
+    ("materialized_site_runs", "camera_site_match", read_resolved_site_runs),
     ("materialized_edges", "relationship", read_materialized_edges),
     ("materialized_contradictions", "contradiction", read_materialized_contradictions),
     ("materialized_coverage", "coverage_record", read_materialized_coverage),
@@ -509,38 +513,94 @@ def coverage_metric_from_materialized(row: Mapping[str, Any]) -> dict[str, Any] 
     }
 
 
-def resolved_sites_metric(
-    materialized_resolutions: Sequence[Mapping[str, Any]], dataset: ShapedDataset
+def resolved_site_counts(
+    resolved_site_runs: Sequence[Mapping[str, Any]], dataset: ShapedDataset
 ) -> dict[str, Any] | None:
-    """The honest "N resolved sites (from M observations)" coverage metric (ADR-101, §32).
+    """``M``, ``N`` and the dedup ratio over the export's own sites (P30.2b, ADR-105).
 
-    ``M`` observations = the observation-level sites carrying coordinate claims (the dedup
-    input the launch surface framed as "N observations across M sources"). ``N`` resolved
-    sites = those observation-level sites the materialized resolution graph has RESOLVED into
-    a decision (a materialized ``resolution`` envelope that picked a winning claim). ``N ≤ M``
-    by construction — never an overclaim. Returns ``None`` when no materialized resolution
-    intersects a geolocated site (the empty/degraded hosted state): the surface then keeps the
-    observation-level framing, never a fabricated resolved-site count. The named denominator is
-    the M observations (never a total), and the provisional-eval disclosure is carried
-    (D-R6.1-EVAL) so the framing cannot imply a finality the eval does not have.
+    **The unit.** ``M`` = the observation-level camera records in this export (the sites
+    carrying coordinate claims — each ONE source's row). A **resolved site** is a cluster
+    of those records the latest completed camera-site ER run judged to be the same
+    physical device; ``N`` = the number of such clusters (singletons included), so
+    ``N <= M`` by construction and ``dedup ratio = 1 - N/M``. Only AUTO-WRITTEN same-device
+    edges (tiers whose measured holdout precision cleared the published floor) join
+    records; PROPOSED merges await human review and never cluster. A §28 value decision
+    on one record (ADR-104) is NOT a resolved site and is never counted as one.
+
+    Returns ``None`` when no camera-site ER run has completed (the surface then keeps its
+    observation-level framing — never a fabricated resolved-site count).
     """
-    site_subjects = {s.entity_id for s in dataset.sites if s.has_coordinate_claims}
-    m = len(site_subjects)
-    resolved_subjects = {
-        str(r["subject_id"])
-        for r in materialized_resolutions
-        if r.get("resolved") and str(r.get("subject_id")) in site_subjects
-    }
-    n = len(resolved_subjects)
-    if n == 0 or m == 0:
+    if not resolved_site_runs:
         return None
+    run = resolved_site_runs[0]
+    subjects = sorted({s.entity_id for s in dataset.sites if s.has_coordinate_claims})
+    m = len(subjects)
+    if m == 0:
+        return None
+    in_export = set(subjects)
+    parent: dict[str, str] = {x: x for x in subjects}
+
+    def find(x: str) -> str:
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    merges = 0
+    for left, right in run.get("auto_write_edges") or ():
+        a, b = str(left), str(right)
+        if a not in in_export or b not in in_export:
+            continue
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            lo, hi = sorted((ra, rb))
+            parent[hi] = lo
+            merges += 1
+    n = m - merges
+    return {
+        "observations": m,
+        "resolved_sites": n,
+        "dedup_ratio": 1.0 - n / m,
+        "merges": merges,
+        "proposed": int(run.get("proposed_count") or 0),
+        "run_key": run.get("run_key"),
+    }
+
+
+def resolved_sites_metric(
+    resolved_site_runs: Sequence[Mapping[str, Any]], dataset: ShapedDataset
+) -> dict[str, Any] | None:
+    """The honest "N resolved sites (from M observation-level records)" metric (ADR-105).
+
+    Denominated in ``M`` observation-level camera records (never a total, §32); ``N`` is
+    post-ER clusters of the same physical device (:func:`resolved_site_counts`). An
+    honestly-measured ``N`` close to ``M`` (little true overlap between sources) is
+    reported as such — the dedup ratio is shown, never inflated. Carries the
+    provisional-eval disclosure (D-R6.1-EVAL). ``None`` when no ER run has completed.
+    """
+    counts = resolved_site_counts(resolved_site_runs, dataset)
+    if counts is None:
+        return None
+    m, n = counts["observations"], counts["resolved_sites"]
     return {
         "id": "resolved_sites",
         "kind": "counted_quantity",
-        "label": "resolved sites (deduplicated from observations)",
-        "value": f"{n} resolved sites (from {m} observations)",
-        "denominator": f"{m} observation-level sites carrying coordinate claims",
-        "population_note": _POPULATION_NOTE + _RESOLVED_EVAL_DISCLOSURE,
+        "label": "resolved sites (clusters of observation-level records of the same device)",
+        "value": (
+            f"{n} resolved sites (from {m} observation-level records; "
+            f"dedup ratio {counts['dedup_ratio']:.3f})"
+        ),
+        "denominator": (
+            f"{m} observation-level sites carrying coordinate claims (each one source's record)"
+        ),
+        "population_note": (
+            _POPULATION_NOTE
+            + " A resolved site is a cluster of records judged to describe the same physical "
+            f"device: {counts['merges']} same-device merges were auto-written (only tiers whose "
+            "measured holdout precision cleared the published floor); "
+            f"{counts['proposed']} proposed merges await human review and are not counted."
+            + _RESOLVED_EVAL_DISCLOSURE
+        ),
         "is_population_total": False,
     }
 
@@ -617,12 +677,16 @@ def _network_from_materialized(
     return {"nodes": [nodes[k] for k in sorted(nodes)], "edges": out_edges, "access_paths": []}
 
 
-def _map_layer(dataset: ShapedDataset, *, resolved_sites: int | None = None) -> dict[str, Any]:
+def _map_layer(
+    dataset: ShapedDataset, *, resolved: Mapping[str, Any] | None = None
+) -> dict[str, Any]:
     """Surface 3 — MapLayer / MapAsset / JurisdictionIndicator (§39.3).
 
-    When the materialized resolution graph has resolved sites (``resolved_sites`` set,
-    ADR-101), the layer describes them with the honest resolved framing; otherwise it keeps
-    the launch observation-level description (the honest degraded state, ADR-092).
+    When a camera-site ER run has completed (``resolved`` = :func:`resolved_site_counts`,
+    ADR-105), the layer describes the resolved sites with the honest N-of-M framing; otherwise
+    it keeps the launch observation-level description (the honest degraded state, ADR-092).
+    Assets stay one per observation-level record: each carries ONE record's own point, so no
+    published point ever mixes coordinates from two sources (ADR-104/ADR-105).
     """
     assets: list[dict[str, Any]] = []
     for site in dataset.sites:
@@ -641,16 +705,18 @@ def _map_layer(dataset: ShapedDataset, *, resolved_sites: int | None = None) -> 
                 "conflicted" if site.point_status == "conflicted" else "no_resolved_point"
             )
         assets.append(asset)
-    if resolved_sites:
+    if resolved:
         layers = [
             {
                 "id": "resolved_sites",
                 "label": "Resolved device sites",
                 "kind": "resolved",
                 "description": (
-                    f"{resolved_sites} resolved device sites, deduplicated from observation-"
-                    "level records via the materialized resolution graph (ADR-101). Resolution "
-                    "rests on a provisional eval (D-R6.1-EVAL, OPEN)."
+                    f"{resolved['resolved_sites']} resolved device sites (clusters of the same "
+                    f"physical device) from {resolved['observations']} observation-level "
+                    f"records (dedup ratio {resolved['dedup_ratio']:.3f}), via materialized "
+                    "camera-site entity resolution (ADR-105). Each point shown is one "
+                    "record's own. Resolution rests on a provisional eval (D-R6.1-EVAL, OPEN)."
                 ),
             }
         ]
@@ -709,16 +775,17 @@ def _coverage(
     dataset: ShapedDataset,
     *,
     materialized_coverage: Sequence[Mapping[str, Any]] = (),
-    materialized_resolutions: Sequence[Mapping[str, Any]] = (),
+    resolved_site_runs: Sequence[Mapping[str, Any]] = (),
     materialized_contradictions: Sequence[Mapping[str, Any]] = (),
 ) -> list[dict[str, Any]]:
     """Surface 6 — CoverageMetric[] (§32.5). Named denominators, never a total (ADR-101).
 
     Reads the materialized §32 coverage (P28.4) when present, else the compute-on-read shaping
     metrics (ADR-092, the honest fallback for an unmaterialized spine). Then APPENDS the two
-    materialized-graph counted quantities — the resolved-site framing (P28.1) and contradictions
-    kept visible (P28.3) — each gated on its own materialized input being non-empty, so an empty
-    hosted spine shows neither a fabricated resolved count nor a fabricated contradiction count.
+    materialized-graph counted quantities — the resolved-site framing (post-ER clusters of the
+    same device, P30.2b/ADR-105) and contradictions kept visible (P28.3) — each gated on its own
+    materialized input being non-empty, so an empty hosted spine shows neither a fabricated
+    resolved count nor a fabricated contradiction count.
     """
     if materialized_coverage:
         base: list[dict[str, Any]] = [
@@ -728,7 +795,7 @@ def _coverage(
         ]
     else:
         base = list(dataset.coverage_metrics)
-    resolved = resolved_sites_metric(materialized_resolutions, dataset)
+    resolved = resolved_sites_metric(resolved_site_runs, dataset)
     if resolved is not None:
         base.append(resolved)
     contradictions = contradictions_visible_metric(materialized_contradictions)
@@ -1099,7 +1166,7 @@ def build_spine_export(
     # Read from ``raw`` (populated by ``run_spine_export`` inside the read-only snapshot);
     # each defaults to () so a pure caller / an unmaterialized spine degrades honestly to the
     # compute-on-read shaping layer, never a crash and never a fabricated resolved-site count.
-    m_resolutions = list(raw.get("materialized_resolutions") or [])
+    m_site_runs = list(raw.get("materialized_site_runs") or [])
     m_edges = list(raw.get("materialized_edges") or [])
     m_contradictions = list(raw.get("materialized_contradictions") or [])
     m_coverage = list(raw.get("materialized_coverage") or [])
@@ -1110,11 +1177,10 @@ def build_spine_export(
     coverage_metrics = _coverage(
         dataset,
         materialized_coverage=m_coverage,
-        materialized_resolutions=m_resolutions,
+        resolved_site_runs=m_site_runs,
         materialized_contradictions=m_contradictions,
     )
-    resolved = resolved_sites_metric(m_resolutions, dataset)
-    resolved_site_count = None if resolved is None else int(resolved["value"].split()[0])
+    resolved_counts = resolved_site_counts(m_site_runs, dataset)
 
     # --- the licence-critical path: sites sliced per (source, rights) -----------
     site_rows, site_index, site_exclusions = _slice_sites(
@@ -1154,7 +1220,7 @@ def build_spine_export(
     surfaces: dict[str, Any] = {
         "dossier_index": _dossier_index(dossiers),
         "dossiers": dossiers,
-        "map": _map_layer(dataset, resolved_sites=resolved_site_count),
+        "map": _map_layer(dataset, resolved=resolved_counts),
         # The network reads the materialized §29.3 edges (P28.2) when present, else the
         # compute-on-read shaping envelope (the honest fallback for an unmaterialized spine).
         "network": (
@@ -1528,6 +1594,7 @@ __all__ = [
     "fetch_materialized_graph",
     "coverage_metric_from_materialized",
     "resolved_sites_metric",
+    "resolved_site_counts",
     "contradictions_visible_metric",
     "run_spine_export",
     "digest_web_artifacts",

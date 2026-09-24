@@ -304,6 +304,7 @@ def test_spine_export_reads_the_materialized_graph(conn, seeded_export) -> None:
     # (299/299 → RESOLVED); s_cc0 disagrees (299/190 → a VISIBLE contradiction).
     from inference.materialize import materialize_coverage
     from reconcile.materialize import materialize_contradictions, materialize_resolutions
+    from resolution.camera_sites_pg import materialize_camera_sites
 
     cur = conn.cursor()
     _seed_count_predicate(cur)
@@ -365,6 +366,9 @@ def test_spine_export_reads_the_materialized_graph(conn, seeded_export) -> None:
     res = materialize_resolutions(conn)
     con = materialize_contradictions(conn)
     cov = materialize_coverage(conn)
+    # P30.2b (ADR-105): the camera-site ER run — the only thing that makes a resolved SITE.
+    sites = materialize_camera_sites(conn)
+    assert sites["run_record_inserted"] is True
     assert res.inserted >= 1  # at least s_osm's RESOLVED envelope written
     assert con.inserted >= 1  # s_cc0's 299-vs-190 contradiction written (kept VISIBLE)
     assert cov.inserted >= 1  # honest §32 coverage rows written
@@ -373,14 +377,14 @@ def test_spine_export_reads_the_materialized_graph(conn, seeded_export) -> None:
     coverage = json.loads(export.web_artifacts["web/coverage.json"])
 
     # The resolved-site framing rides the frozen CoverageMetric contract (ADR-101); the
-    # denominator names the observations; no total. Since P30.2a (ADR-104) the camera
-    # coordinate predicates are registered, so BOTH seeded sites carry a materialized
-    # RESOLVED coordinate envelope and N = M = 2. That N counts §28 VALUE decisions within
-    # each site's own record — NOT cross-source deduplication (no entity merge exists);
-    # redefining N as post-ER clusters is P30.2b's deliverable (D-P30.2-3), and P30.3
-    # publishes that measured metric, not this one.
+    # denominator names the observations; no total. Since P30.2b (ADR-105) N counts post-ER
+    # CLUSTERS of the same physical device — never §28 value decisions (which every seeded
+    # site has): the two seeded sites are ~500 km apart, so the ER run merges nothing and the
+    # honest figure is N = M = 2, dedup ratio 0.000.
     resolved = next(m for m in coverage if m["id"] == "resolved_sites")
-    assert resolved["value"] == "2 resolved sites (from 2 observations)"
+    assert resolved["value"] == (
+        "2 resolved sites (from 2 observation-level records; dedup ratio 0.000)"
+    )
     assert resolved["is_population_total"] is False
     assert "observation-level sites" in resolved["denominator"]
     # Contradictions stay VISIBLE — surfaced as an honest counted quantity (§3.1/§31).
