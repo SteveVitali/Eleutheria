@@ -38,10 +38,16 @@ import {
   AttributionControl,
   addProtocol,
   removeProtocol,
+  setWorkerUrl,
 } from "maplibre-gl";
 import type { StyleSpecification, MapGeoJSONFeature } from "maplibre-gl";
 import { Protocol } from "pmtiles";
 import "maplibre-gl/dist/maplibre-gl.css";
+// P30.3: maplibre-gl v6 resolves its worker as `./maplibre-gl-worker.mjs` next to its own
+// module — a file the Astro/Vite bundle never emits, so the GeoJSON worker 404'd and NO point
+// was ever drawn (the map showed an empty background). Bundle the worker (with the shared
+// chunk it imports) as one self-contained file and point maplibre at it explicitly.
+import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import { decodeIslandPoints } from "../lib/map";
 import type { IslandPoint, IslandPointsPayload } from "../lib/map";
 
@@ -110,6 +116,7 @@ export default function MapIsland({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [drawn, setDrawn] = useState(false);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -117,6 +124,7 @@ export default function MapIsland({
 
     // Register the self-hosted static PMTiles protocol (SIG-UI-038) so a basemap
     // archive can be layered in when the export ships one. No network by default.
+    setWorkerUrl(maplibreWorkerUrl);
     const protocol = new Protocol();
     addProtocol("pmtiles", protocol.tile);
 
@@ -255,6 +263,9 @@ export default function MapIsland({
           "The full list, including assets without a published point, is in the table below.",
       );
       setReady(true);
+      // Evidence the points actually reached the renderer (the worker loaded + the source
+      // tiled) — not merely that MapLibre initialised (P30.3: it once hydrated with 0 drawn).
+      map.once("idle", () => setDrawn(map.querySourceFeatures(SIG_SOURCE).length > 0));
     });
 
     return () => {
@@ -277,6 +288,7 @@ export default function MapIsland({
       data-testid="map-island"
       data-ready={ready ? "true" : "false"}
       data-failed={failed ? "true" : "false"}
+      data-drawn={drawn ? "true" : "false"}
       data-point-count={pointCount}
       ref={containerRef}
     />

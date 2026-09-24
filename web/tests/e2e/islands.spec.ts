@@ -35,6 +35,9 @@ test.describe("interactive map island (AC1, AC3)", () => {
     const island = page.getByTestId("map-island");
     await expect(island).toBeVisible();
     await expect(island).toHaveAttribute("data-ready", "true", { timeout: 20_000 });
+    // The points actually reach the renderer (the MapLibre worker loads + the source tiles) —
+    // P30.3: it previously hydrated with the worker 404ing and nothing drawn.
+    await expect(island).toHaveAttribute("data-drawn", "true", { timeout: 30_000 });
     // A real MapLibre canvas is present (the interactive renderer, not the static SVG).
     await expect(page.locator(".maplibregl-canvas")).toBeVisible();
     // Pan/zoom controls are operable.
