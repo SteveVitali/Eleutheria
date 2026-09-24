@@ -12,10 +12,13 @@ from __future__ import annotations
 
 import json
 
+import pytest
 from exports.audit import (
     AUDIT_SCHEMA_VERSION,
     MODELING_TABLES,
     QUERIES,
+    SNAPSHOT_PROVISIONAL,
+    SNAPSHOT_SETTLED,
     Fraction,
     build_spine_audit,
     redact_dsn,
@@ -346,3 +349,69 @@ def test_no_decision_table_reports_not_measured() -> None:
     assert doc["publishable_effective"] is None
     md = a.to_markdown()
     assert "Effective rights" not in md
+
+
+# --------------------------------------------------------------------------- #
+# P30.1 — settled vs provisional snapshot status                               #
+# --------------------------------------------------------------------------- #
+
+
+def _settled_audit():
+    return build_spine_audit(
+        _raw(),
+        as_of="2026-09-24T03:45:00Z",
+        generated_at="2026-09-24T03:45:00Z",
+        spine_label="postgresql://sig@127.0.0.1:5433/sig",
+        note="OSM land complete — re-audit",
+        settled=True,
+    )
+
+
+def test_snapshot_status_defaults_to_provisional() -> None:
+    """Back-compat: an audit that does not assert settled keeps the in-flight caveat."""
+    a = _audit()
+    assert a.snapshot_status == SNAPSHOT_PROVISIONAL
+    assert json.loads(a.to_json_str())["snapshot_status"] == "provisional"
+    md = a.to_markdown()
+    assert "PROVISIONAL" in md
+    assert "SETTLED" not in md
+
+
+def test_settled_snapshot_drops_the_in_flight_caveat_but_keeps_denominators() -> None:
+    a = _settled_audit()
+    doc = json.loads(a.to_json_str())
+    assert doc["snapshot_status"] == SNAPSHOT_SETTLED
+    md = a.to_markdown()
+    assert "SETTLED" in md
+    assert "PROVISIONAL" not in md
+    assert "in flight" not in md.lower()
+    # Settled never means a bare total: the as-of + named-denominator discipline stays.
+    assert "as-of" in md.lower()
+    assert "never a population total" in md
+    assert doc["publishable"]["denominator"] == doc["totals"]["claims"]
+    assert doc["geolocated"]["denominator"] == doc["totals"]["entities"]
+
+
+def test_settled_flag_changes_only_the_status_not_the_numbers() -> None:
+    prov = json.loads(_audit().to_json_str())
+    sett = json.loads(_settled_audit().to_json_str())
+    for key in ("snapshot_status", "as_of", "generated_at", "note"):
+        prov.pop(key)
+        sett.pop(key)
+    assert prov == sett
+
+
+def test_unknown_snapshot_status_is_refused() -> None:
+    import dataclasses
+
+    with pytest.raises(ValueError):
+        dataclasses.replace(_audit(), snapshot_status="final")
+
+
+def test_cli_audit_exposes_the_settled_flag() -> None:
+    from exports.cli import build_parser
+
+    args = build_parser().parse_args(["audit", "--dsn", "postgresql://x@h/db", "--settled"])
+    assert args.settled is True
+    args = build_parser().parse_args(["audit", "--dsn", "postgresql://x@h/db"])
+    assert args.settled is False

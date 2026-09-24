@@ -106,6 +106,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-099](ADR-099-materialize-entity-resolution-at-scale-with-a-measured-eval-loop.md) | — | — | Accepted |
 | [ADR-100](ADR-100-identity-minimization-for-contribution.md) | — | — | Accepted |
 | [ADR-101](ADR-101-public-surface-reads-the-materialized-graph.md) | — | — | Accepted |
+| [ADR-102](ADR-102-temporary-cloud-sql-scale-up-and-settled-audit-snapshot.md) | — | — | Accepted |
 
 ## Notes
 

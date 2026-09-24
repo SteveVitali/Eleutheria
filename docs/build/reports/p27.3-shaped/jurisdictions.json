@@ -935,11 +935,11 @@
       "is_unresolved": true,
       "jurisdiction": "unresolved",
       "sites": {
-        "count": 25857,
-        "denominator": 25925,
+        "count": 166142,
+        "denominator": 166210,
         "label": "geolocated site observations in unresolved",
         "not_evaluable": 0,
-        "phrase": "25857 of 25925 evaluable geolocated site observations in unresolved"
+        "phrase": "166142 of 166210 evaluable geolocated site observations in unresolved"
       },
       "source_ids": [
         "camreg_aikner",
@@ -1001,7 +1001,7 @@
         "camreg_yorku",
         "camreg_zyinger"
       ],
-      "subjects": 25925
+      "subjects": 166210
     }
   ]
 }

@@ -38,7 +38,14 @@ from datetime import UTC, datetime
 from typing import Any, Protocol
 
 #: The audit output schema version — bumped when the emitted shape changes.
-AUDIT_SCHEMA_VERSION = "p27.2/1.0.0"
+AUDIT_SCHEMA_VERSION = "p30.1/1.0.0"
+
+#: Snapshot status labels (P30.1). ``provisional`` (the default) is an as-of snapshot taken
+#: while the spine may still be growing; ``settled`` is asserted by the operator ONLY after the
+#: land it waited on has completed and been verified (D-SOURCES.17-1) — it removes the
+#: in-flight caveat, never the as-of/denominator discipline (§32/SIG-METRIC-008).
+SNAPSHOT_PROVISIONAL = "provisional"
+SNAPSHOT_SETTLED = "settled"
 
 #: The geolocation predicates coordinates live under (as text) on the claim spine.
 GEO_PREDICATES = ("camera_latitude", "camera_longitude")
@@ -319,6 +326,10 @@ class SpineAudit:
     effective_undetermined_by_connector: list[NamedCount] | None = None
     rights_decisions: list[DecisionRow] | None = None
 
+    # P30.1: provisional (default, in-flight caveat rendered) or settled (operator-asserted
+    # after the land completed and was verified; the caveat is replaced by a settled banner).
+    snapshot_status: str = SNAPSHOT_PROVISIONAL
+
     # Derived, denominator-bearing headline figures.
     publishable: Fraction = field(init=False)
     undetermined: Fraction = field(init=False)
@@ -327,6 +338,8 @@ class SpineAudit:
     undetermined_effective: Fraction | None = field(init=False, default=None)
 
     def __post_init__(self) -> None:
+        if self.snapshot_status not in (SNAPSHOT_PROVISIONAL, SNAPSHOT_SETTLED):
+            raise ValueError(f"unknown snapshot_status {self.snapshot_status!r}")
         publishable_claims = sum(
             row.claims for row in self.licence_mix if row.redistributable == "yes"
         )
@@ -376,6 +389,7 @@ class SpineAudit:
     def to_json(self) -> dict[str, Any]:
         return {
             "schema_version": self.schema_version,
+            "snapshot_status": self.snapshot_status,
             "as_of": self.as_of,
             "generated_at": self.generated_at,
             "spine_label": self.spine_label,
@@ -490,16 +504,22 @@ class SpineAudit:
         w = lines.append
         w("# Public-surface data & rights audit — as-of snapshot (P27.1, LAUNCH.1)")
         w("")
-        w("> **PROVISIONAL pre/mid-OSM snapshot.** These are as-of numbers, **not** a settled")
-        w("> launch total. A hosted OSM land (`camreg_osm_surveillance`, ~1.37M claims via the")
-        w("> P26.18 chunked-commit path) may be in flight while this ran, growing the spine")
-        w("> toward ~2.43M claims. **A re-audit (re-run of `sig-exports audit`) after the OSM")
-        w("> land completes is REQUIRED before any export/launch is frozen** (D-P27.1-1).")
+        if self.snapshot_status == SNAPSHOT_SETTLED:
+            w("> **SETTLED snapshot.** Taken after the hosted OSM land (`camreg_osm_surveillance`,")
+            w("> D-SOURCES.17-1) completed and was verified. These are still **as-of** numbers")
+            w("> over an append-only spine that keeps growing with scheduled ingests — every")
+            w("> figure below is a named-denominator count at `as_of`, never a population total.")
+        else:
+            w("> **PROVISIONAL pre/mid-OSM snapshot.** These are as-of numbers, **not** a settled")
+            w("> launch total. A hosted OSM land (`camreg_osm_surveillance`, ~1.37M claims via the")
+            w("> P26.18 chunked-commit path) may be in flight while this ran, growing the spine")
+            w("> toward ~2.43M claims. **A re-audit (re-run of `sig-exports audit`) after the OSM")
+            w("> land completes is REQUIRED before any export/launch is frozen** (D-P27.1-1).")
         w("")
         w(f"- **as_of:** `{self.as_of}` · **generated_at (UTC):** `{self.generated_at}`")
         w(f"- **spine:** `{self.spine_label}`")
         w(f"- **note:** {self.note or '(none)'}")
-        w(f"- **schema:** `{self.schema_version}`")
+        w(f"- **schema:** `{self.schema_version}` · **snapshot:** `{self.snapshot_status}`")
         w("")
         w("## Headline (denominator-bearing — never a bare total, §32/SIG-METRIC-008)")
         w("")
@@ -657,7 +677,11 @@ class SpineAudit:
             w("  'establishes' → `evidence_artifact.source_id`, smallest source_id wins).")
         w("- Coordinates are reported **only in aggregate** (a distinct-subject count + coarse")
         w("  jurisdiction spread); no per-person, per-plate, or raw-coordinate field is emitted.")
-        w("- **PROVISIONAL** per the OSM land in flight — re-run this verb after it completes.")
+        if self.snapshot_status == SNAPSHOT_SETTLED:
+            w("- **SETTLED** — the OSM land completed before this ran; later scheduled ingests")
+            w("  grow the spine additively, so re-run this verb for any newer as-of.")
+        else:
+            w("- **PROVISIONAL** per the OSM land in flight — re-run this verb after it completes.")
         w("")
         return "\n".join(lines)
 
@@ -691,6 +715,7 @@ def build_spine_audit(
     generated_at: str,
     spine_label: str,
     note: str = "",
+    settled: bool = False,
 ) -> SpineAudit:
     """Assemble a :class:`SpineAudit` from already-fetched query rows (pure — no database).
 
@@ -788,6 +813,7 @@ def build_spine_audit(
             else _named_counts(raw["effective_undetermined_by_connector"])
         ),
         rights_decisions=rights_decisions,
+        snapshot_status=SNAPSHOT_SETTLED if settled else SNAPSHOT_PROVISIONAL,
     )
 
 
@@ -797,6 +823,7 @@ def run_audit(
     as_of: str | None = None,
     note: str = "",
     spine_label: str = "(unlabelled spine)",
+    settled: bool = False,
 ) -> SpineAudit:
     """Execute the read-only query set against ``conn`` and assemble the audit.
 
@@ -853,6 +880,7 @@ def run_audit(
         generated_at=generated_at,
         spine_label=spine_label,
         note=note,
+        settled=settled,
     )
 
 
