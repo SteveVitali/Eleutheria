@@ -312,16 +312,17 @@ export const COVERAGE_METRICS: CoverageMetric[] = [
   },
   // The materialized-graph counted quantities the P28.5 surface refresh reads off the
   // resolution / contradiction tables (ADR-101). The resolved-site framing REPLACES the
-  // observation-level framing ("N resolved sites from M observations"), carrying its named
+  // observation-level framing ("N resolved sites from M observation-level records", N = post-ER
+  // clusters of the same physical device, ADR-105), carrying its named
   // denominator (never a total) and the PROVISIONAL resolution-eval disclosure (D-R6.1-EVAL).
   {
     id: "resolved_sites",
     kind: "counted_quantity",
-    label: "resolved sites (deduplicated from observations)",
-    value: "3 resolved sites (from 6 observations)",
-    denominator: "of 6 observation-level sites carrying coordinate claims",
+    label: "resolved sites (clusters of observation-level records of the same device)",
+    value: "5 resolved sites (from 6 observation-level records; dedup ratio 0.167)",
+    denominator: "6 observation-level sites carrying coordinate claims (each one source's record)",
     population_note:
-      "The true population of surveillance devices is unknown; this deduplicates named observations into resolved sites, not a census (SIG-METRIC-008). Resolution rests on a provisional eval (LLM-bootstrapped gold set; D-R6.1-EVAL, OPEN).",
+      "The true population of surveillance devices is unknown. These are recorded observations from named sources — an inventory, not a census or an estimate (SIG-METRIC-008). A resolved site is a cluster of records judged to describe the same physical device: 1 same-device merges were auto-written (only tiers whose measured holdout precision cleared the published floor); 2 proposed merges await human review and are not counted. Resolution rests on a provisional eval (LLM-bootstrapped gold set; D-R6.1-EVAL, OPEN).",
     is_population_total: false,
   },
   {
