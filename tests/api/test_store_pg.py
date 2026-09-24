@@ -426,26 +426,16 @@ def test_a_terminated_backend_does_not_500_the_next_request(seeded: dict[str, An
 
 
 def test_a_connection_dropped_mid_read_is_retried_once(seeded: dict[str, Any]) -> None:
-    """With the checkout check bypassed, the dead connection IS handed out; the
-    read still succeeds because ``_run_read`` retries once on a fresh one."""
+    """The dead connection IS handed out (no checkout check); the read still
+    succeeds because ``_run_read`` purges the dead idle connections and retries
+    once on a fresh one."""
     import uuid
 
     from api.store_pg import PgReadStore
-    from psycopg_pool import ConnectionPool
 
     app_name = f"sig-api-p31-{uuid.uuid4().hex[:8]}"
-    store = PgReadStore(seeded["dsn"], application_name=app_name)
-    store._pool.close()
-    unchecked = ConnectionPool(
-        seeded["dsn"],
-        kwargs={"autocommit": True, "application_name": app_name},
-        min_size=1,
-        max_size=1,
-        check=None,  # no liveness check: the retry is the only defence
-        open=True,
-    )
-    unchecked.wait(timeout=10)
-    counting = _CountingPool(unchecked)
+    store = PgReadStore(seeded["dsn"], application_name=app_name, pool_min=1, pool_max=1)
+    counting = _CountingPool(store._pool)
     store._pool = counting  # type: ignore[assignment]
     try:
         assert store.stored_claim(seeded["claim_id"]) is not None
@@ -455,7 +445,39 @@ def test_a_connection_dropped_mid_read_is_retried_once(seeded: dict[str, Any]) -
         assert claim is not None, "the read answered after the drop"
         assert counting.checkouts == 2, "exactly one retry on a fresh connection"
     finally:
-        unchecked.close()
+        counting._pool.close()
+
+
+def test_a_restart_that_kills_every_pooled_connection_costs_one_fast_retry(
+    seeded: dict[str, Any],
+) -> None:
+    """The hosted roll found this: with the pool's own checkout check, a request
+    after ALL pooled connections died walked the dead ones with a 1 s, 2 s, 4 s
+    backoff and got a 503 after the 10 s timeout. Now the first read purges them
+    all at once and is served on a fresh connection, well inside a second."""
+    import time
+    import uuid
+
+    from api.app import create_app
+    from api.store_pg import PgReadStore
+    from starlette.testclient import TestClient
+
+    app_name = f"sig-api-p31-{uuid.uuid4().hex[:8]}"
+    store = PgReadStore(seeded["dsn"], application_name=app_name, pool_min=5, pool_max=5)
+    store._pool.wait(timeout=20)
+    try:
+        with TestClient(create_app(store)) as client:
+            assert client.get("/v1/crosswalk").status_code == 200
+            killed = _terminate(seeded["dsn"], app_name)
+            assert len(killed) == 5, killed
+            t0 = time.perf_counter()
+            r = client.get("/v1/crosswalk")
+            elapsed = time.perf_counter() - t0
+            assert r.status_code == 200, r.text
+            assert elapsed < 2.0, f"the first request after the restart took {elapsed:.1f}s"
+            assert client.get("/health").json()["status"] == "ok"
+    finally:
+        store.close()
 
 
 @pytest.fixture(scope="module")

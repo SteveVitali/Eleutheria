@@ -56,11 +56,15 @@ class _FakePool:
 
     def __init__(self) -> None:
         self.checkouts = 0
+        self.purges = 0
 
     @contextmanager
     def connection(self, timeout: float | None = None) -> Iterator[_FakeConn]:
         self.checkouts += 1
         yield _FakeConn()
+
+    def check(self) -> None:
+        self.purges += 1
 
 
 def _drop(store: PgReadStore) -> None:
@@ -90,6 +94,7 @@ def test_a_dropped_connection_is_retried_exactly_once() -> None:
 
     assert store._run_read(read) == "ok"
     assert calls == 2 and pool.checkouts == 2, "one retry, on a fresh checkout"
+    assert pool.purges == 1, "dead idle connections are purged before the retry"
     assert getattr(store._local, "conn", None) is None, "the binding is released"
 
 

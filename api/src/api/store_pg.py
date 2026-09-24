@@ -51,11 +51,10 @@ P31.1 (ADR-108) made the store survive a database restart and bounded ``search``
 
 * **Pooled, self-healing connections.** Reads run on a connection checked out of a
   small ``psycopg_pool`` pool per public method. Every new connection re-applies
-  ``SET ROLE`` (``configure``); every checkout is liveness-checked
-  (``ConnectionPool.check_connection``), so a connection the server dropped (Cloud SQL
-  restart, maintenance, ``pg_terminate_backend``) is replaced instead of served. An
-  idempotent read whose connection still dies mid-flight is retried **once** on a
-  fresh connection (only then: a live connection's error is never retried). A store
+  ``SET ROLE`` (``configure``). A read whose connection the server dropped (Cloud SQL
+  restart, maintenance, ``pg_terminate_backend``) purges every dead idle connection
+  (``ConnectionPool.check``) and is retried **once** on a fresh connection (only
+  then: an error on a live connection is never retried). A store
   that cannot answer raises :class:`~api.store.StoreUnavailable` (the app maps it to
   503), never a stale 500. The annotation/shaping surfaces take their lock BEFORE
   checking out a connection, so requests queued on the lock hold none.
@@ -295,9 +294,16 @@ class PgReadStore:
         # recovered from a DB restart, D-P30.4-1). RLS stays enabled: we never set
         # row_security=off. An optional read role (e.g. sig_read_public) makes RLS
         # enforce the public tier ceiling too; `configure` re-applies it on EVERY
-        # new connection, and `check` proves a connection alive on checkout. The
-        # pool opens in the background, so a DB that is down at startup yields
-        # 503s until it returns, never a crash loop.
+        # new connection. The pool opens in the background, so a DB that is down
+        # at startup yields 503s until it returns, never a crash loop.
+        #
+        # Dead connections are purged by `_run_read`, NOT by the pool's `check=`
+        # on checkout: when a DB restart kills every idle connection at once, the
+        # pool's check loop backs off 1 s, 2 s, 4 s ... between failed checks and
+        # gave the first request a 503 after the full 10 s timeout (measured on
+        # the hosted roll, 2026-09-24). Instead, the first read that finds its
+        # connection dead calls `ConnectionPool.check()` (every idle connection
+        # tested at once, dead ones replaced) and retries on a fresh connection.
         self._pool = ConnectionPool(
             dsn,
             kwargs=self._connect_kwargs,
@@ -305,7 +311,6 @@ class PgReadStore:
             max_size=pool_max,
             timeout=pool_timeout,
             configure=self._configure_connection,
-            check=ConnectionPool.check_connection,
             name="sig-api-read",
             open=True,
         )
@@ -341,17 +346,20 @@ class PgReadStore:
             raise RuntimeError("PgReadStore: a read ran outside a pooled checkout")
         return conn
 
-    def _run_read(self, read: Callable[[], _T]) -> _T:
+    def _run_read(self, read: Callable[[], _T], *, timeout: float | None = None) -> _T:
         """Run ``read`` on a pooled connection; retry ONCE if that connection died.
 
-        Re-entrant: if this thread already holds a pooled connection (a nested
-        read), ``read`` runs on it directly and the outer read owns the retry.
+        Before the retry, every idle pooled connection is checked and the dead
+        ones replaced (a restart kills them all together), so the retry gets a
+        live connection. Re-entrant: if this thread already holds a pooled
+        connection (a nested read), ``read`` runs on it directly and the outer
+        read owns the retry. ``timeout`` overrides the pool checkout timeout.
         """
         if getattr(self._local, "conn", None) is not None:
             return read()
 
         def attempt() -> _T:
-            with self._pool.connection() as conn:
+            with self._pool.connection(timeout=timeout) as conn:
                 self._local.conn = conn
                 try:
                     return read()
@@ -362,7 +370,7 @@ class PgReadStore:
                 finally:
                     self._local.conn = None
 
-        return self._retrying(attempt)
+        return self._retrying(attempt, on_lost=self._pool.check)
 
     def _run_compute(self, compute: Callable[[psycopg.Connection], _T]) -> _T:
         """Run a whole-spine compute on a fresh dedicated connection (retry once).
@@ -389,7 +397,7 @@ class PgReadStore:
         return self._retrying(attempt)
 
     @staticmethod
-    def _retrying(attempt: Callable[[], _T]) -> _T:
+    def _retrying(attempt: Callable[[], _T], *, on_lost: Callable[[], None] | None = None) -> _T:
         """The one retry policy (P31.1, ADR-108).
 
         Every read this store serves is idempotent, so ONE retry after the
@@ -406,6 +414,8 @@ class PgReadStore:
             except _ConnectionLost as exc:
                 if n == 2:
                     raise StoreUnavailable("database connection lost") from exc.__cause__
+                if on_lost is not None:
+                    on_lost()
             except psycopg.errors.QueryCanceled as exc:
                 raise StoreQueryTimeout("statement timeout") from exc
             except PoolTimeout as exc:
@@ -415,18 +425,25 @@ class PgReadStore:
         raise AssertionError("unreachable")  # pragma: no cover
 
     def health(self) -> StoreHealth:
-        """A cheap readiness check: can a pooled connection answer ``SELECT 1``?"""
+        """A cheap readiness check: can a pooled connection answer ``SELECT 1``?
+
+        The same path as every read (a dead connection is purged and retried
+        once), with a 3 s checkout budget; the pool counters are read after it.
+        """
+        detail = ""
+        try:
+            self._run_read(
+                lambda: self._conn.execute("SELECT 1").fetchone(),
+                timeout=min(self._pool.timeout, 3.0),
+            )
+        except StoreUnavailable as exc:
+            detail = type(exc.__cause__ or exc).__name__
         stats = self._pool.get_stats()
         pool = {
             k: int(stats.get(k, 0))
             for k in ("pool_min", "pool_max", "pool_size", "pool_available", "requests_waiting")
         }
-        try:
-            with self._pool.connection(timeout=min(self._pool.timeout, 3.0)) as conn:
-                conn.execute("SELECT 1").fetchone()
-        except psycopg.Error as exc:  # PoolTimeout is a psycopg.Error too
-            return StoreHealth(ok=False, backend="postgresql", detail=type(exc).__name__, pool=pool)
-        return StoreHealth(ok=True, backend="postgresql", pool=pool)
+        return StoreHealth(ok=not detail, backend="postgresql", detail=detail, pool=pool)
 
     # --- ReadStore -------------------------------------------------------------
 
