@@ -30,4 +30,13 @@ describe("resolution eval — SIG measuring its own method (§32.5, P28.4)", () 
       expect(m.against.toLowerCase()).not.toContain("total population");
     }
   });
+
+  it("publishes the P30.2b camera-site measurements, including the missed κ bar", () => {
+    const camera = RESOLUTION_EVAL.metrics.filter((m) => m.label.startsWith("camera sites:"));
+    expect(camera.map((m) => m.value)).toEqual(["0.669", "1.000 (70 of 70)", "0.986 (69 of 70)"]);
+    expect(camera[0].against).toContain("suggester only");
+    for (const m of camera.slice(1)) {
+      expect(m.against).toContain("95% lower bound");
+    }
+  });
 });

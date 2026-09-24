@@ -33,6 +33,11 @@ MATERIALIZED = (
     "coverage_record",
     "research_task",
     "inference.derived_fact",
+    # P30.2b (ADR-105): the camera-site same_as decision log, its run record, and the
+    # review-queue proposals the camera-site materializer enqueues.
+    "camera_site_match",
+    "camera_site_run",
+    "review_item",
 )
 SPINE = ("claim", "claim_evidence", "evidence_artifact", "evidence_capture", "entity")
 

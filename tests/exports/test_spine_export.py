@@ -29,6 +29,7 @@ from exports.shaping import (
 from exports.spine_export import (
     build_spine_export,
     contradictions_visible_metric,
+    resolved_site_counts,
     resolved_sites_metric,
 )
 from rdflib import Graph
@@ -468,8 +469,10 @@ def _materialized_raw(
     contradictions=None,
     coverage=None,
     accountability_links=None,
+    site_runs=None,
 ) -> dict:
     return {
+        "materialized_site_runs": site_runs or [],
         "materialized_resolutions": resolutions or [],
         "materialized_edges": edges or [],
         "materialized_contradictions": contradictions or [],
@@ -573,37 +576,71 @@ def test_dossier_unchanged_without_materialized_links() -> None:
     assert all("governance_chain" not in d for d in _web(with_key, "dossiers"))
 
 
-def test_resolved_sites_metric_frames_n_resolved_from_m_observations() -> None:
-    # Two geolocated sites (A, B); the materialized graph RESOLVED only A.
-    claims = _site("A", "35.46", "-97.51", "Oklahoma") + _site("B", "35.47", "-97.52", "Oklahoma")
-    resolutions = [
-        {
-            "subject_id": "A",
-            "predicate_id": "camera_operator",
-            "resolved": True,
-            "winning_claim": "c1",
-        },
-        {
-            "subject_id": "B",
-            "predicate_id": "camera_operator",
-            "resolved": False,
-            "winning_claim": None,
-        },
-    ]
-    export = _build(claims, _materialized_raw(resolutions=resolutions))
+def _site_run(edges, *, proposed=0, m=0, n=0):
+    return {
+        "run_key": "camsite:test",
+        "observation_count": m,
+        "cluster_count": n,
+        "auto_write_tiers": [1, 3],
+        "summary": {},
+        "auto_write_edges": list(edges),
+        "proposed_count": proposed,
+    }
+
+
+def test_resolved_sites_metric_counts_post_er_clusters_of_the_same_device() -> None:
+    # P30.2b / ADR-105: three observation-level records (A, B, C); the camera-site ER run
+    # auto-wrote ONE same-device edge (A~B) and proposed one more (B~C, awaiting review).
+    claims = (
+        _site("A", "35.46", "-97.51", "Oklahoma")
+        + _site("B", "35.46", "-97.51", "Oklahoma")
+        + _site("C", "35.47", "-97.52", "Oklahoma")
+    )
+    export = _build(claims, _materialized_raw(site_runs=[_site_run([("A", "B")], proposed=1)]))
     coverage = _web(export, "coverage")
     resolved = next(m for m in coverage if m["id"] == "resolved_sites")
-    # N resolved (1) from M observations (2), N <= M, never a total, named denominator.
-    assert resolved["value"] == "1 resolved sites (from 2 observations)"
+    # N = 2 clusters from M = 3 records: N <= M, dedup ratio 1 - N/M, never a total.
+    assert resolved["value"] == (
+        "2 resolved sites (from 3 observation-level records; dedup ratio 0.333)"
+    )
     assert "observation-level sites" in resolved["denominator"]
     assert resolved["is_population_total"] is False
+    assert "1 same-device merges were auto-written" in resolved["population_note"]
+    assert "1 proposed merges await human review and are not counted" in resolved["population_note"]
     assert "D-R6.1-EVAL" in resolved["population_note"]
-    # The map layer flips to the resolved framing (was observation-level).
+    # The map layer flips to the resolved framing, one record's own point per asset.
     layers = _web(export, "map")["layers"]
     assert layers[0]["id"] == "resolved_sites"
-    assert "deduplicated" in layers[0]["description"]
+    assert "2 resolved device sites" in layers[0]["description"]
+    assert "from 3 observation-level records" in layers[0]["description"]
     # The whole coverage surface still validates against the FROZEN CoverageMetric contract.
     jsonschema.validate(coverage, _sub(SCHEMA["properties"]["coverage"]))
+
+
+def test_value_decisions_are_never_counted_as_resolved_sites() -> None:
+    # The P30.2a hazard, pinned: every site carries a §28 VALUE decision (a winning claim)
+    # but no camera-site ER run has completed — that is NOT deduplication, so no
+    # resolved-site metric is published (never "M resolved sites" from value decisions).
+    claims = _site("A", "35.46", "-97.51", "Oklahoma") + _site("B", "35.47", "-97.52", "Oklahoma")
+    resolutions = [
+        {"subject_id": s, "predicate_id": p, "resolved": True, "winning_claim": f"c-{s}-{p}"}
+        for s in ("A", "B")
+        for p in ("camera_latitude", "camera_longitude")
+    ]
+    export = _build(claims, _materialized_raw(resolutions=resolutions))
+    assert not any(m["id"] == "resolved_sites" for m in _web(export, "coverage"))
+    assert _web(export, "map")["layers"][0]["id"] == "observed_sites"
+
+
+def test_an_honest_zero_merge_run_reports_n_equal_m() -> None:
+    # An ER run that merged nothing is reported plainly (N = M, ratio 0.000), not hidden
+    # and never inflated.
+    claims = _site("A", "35.46", "-97.51", "Oklahoma") + _site("B", "35.47", "-97.52", "Oklahoma")
+    export = _build(claims, _materialized_raw(site_runs=[_site_run([], proposed=4)]))
+    resolved = next(m for m in _web(export, "coverage") if m["id"] == "resolved_sites")
+    assert resolved["value"] == (
+        "2 resolved sites (from 2 observation-level records; dedup ratio 0.000)"
+    )
 
 
 def test_no_materialized_resolution_degrades_to_observation_framing() -> None:
@@ -635,21 +672,21 @@ def _dataset_of(claims: list[ShapingClaim]):
     )
 
 
-def test_resolved_sites_metric_none_when_resolution_misses_the_sites() -> None:
-    dataset = _dataset_of(_site("A", "35.46", "-97.51", "Oklahoma"))
-    # A resolution for a subject that is NOT a geolocated site → N = 0 → None (no overclaim).
-    metric = resolved_sites_metric(
-        [{"subject_id": "ORG-1", "resolved": True, "winning_claim": "c"}],
-        dataset,
+def test_resolved_sites_metric_ignores_edges_outside_the_export_and_never_exceeds_m() -> None:
+    dataset = _dataset_of(
+        _site("A", "35.46", "-97.51", "Oklahoma") + _site("B", "35.46", "-97.51", "Oklahoma")
     )
-    assert metric is None
-    # A resolved envelope over the site subject IS counted; N never exceeds M.
-    metric2 = resolved_sites_metric(
-        [{"subject_id": "A", "resolved": True, "winning_claim": "c"}],
-        dataset,
-    )
-    assert metric2 is not None
-    assert metric2["value"] == "1 resolved sites (from 1 observations)"
+    # No completed run → None (the observation framing stays; no fabricated count).
+    assert resolved_sites_metric([], dataset) is None
+    # An edge to a subject that is not an exported site cannot merge anything.
+    metric = resolved_sites_metric([_site_run([("A", "ORG-1")])], dataset)
+    assert metric is not None
+    assert metric["value"].startswith("2 resolved sites (from 2 ")
+    # A redundant edge set (A~B twice, B~A) is ONE merge: N = 1 of M = 2.
+    counts = resolved_site_counts([_site_run([("A", "B"), ("A", "B"), ("B", "A")])], dataset)
+    assert counts is not None
+    assert (counts["observations"], counts["resolved_sites"], counts["merges"]) == (2, 1, 1)
+    assert counts["resolved_sites"] <= counts["observations"]
 
 
 def test_contradictions_visible_metric_counts_open_of_recorded() -> None:

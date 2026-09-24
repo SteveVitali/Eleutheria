@@ -64,6 +64,20 @@ import { RESOLUTION_EVAL } from "../lib/resolution-eval";
     its resolver measures against ground truth</strong> — and must say plainly when that
     ground truth is provisional. These are the current holdout metrics.
   </p>
+  <p data-testid="resolved-site-definition">
+    <strong>What a "resolved site" is.</strong> An <em>observation-level record</em> is one
+    source's published row for one camera. A <em>resolved site</em> is a cluster of those
+    records that SIG's camera-site entity resolution judged to describe the <strong>same
+    physical device</strong>. SIG reports <strong>N resolved sites from M observation-level
+    records</strong> (N is never more than M) and the dedup ratio 1 − N/M. Only merges from
+    rules whose measured holdout precision clears the published floor are applied
+    automatically; every other candidate merge waits for human review and is not counted.
+    Two rows from the same source are never merged, a republished copy (mirror) of the same
+    upstream dataset is not treated as independent confirmation, and each point shown is
+    one record's own — never coordinates combined from two sources. Deciding which of one
+    record's own values stands (for example its latest coordinate) is <em>not</em>
+    deduplication and is never counted as a resolved site.
+  </p>
   {RESOLUTION_EVAL.provisional && (
     <p class="sig-eval-provisional" data-testid="resolution-eval-provisional">
       <strong>{RESOLUTION_EVAL.disclosure}</strong>

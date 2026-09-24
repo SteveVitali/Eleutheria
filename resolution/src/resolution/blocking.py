@@ -25,6 +25,7 @@ Splink would materialise, so the ceiling is a real bound on work, not an estimat
 
 from __future__ import annotations
 
+import math
 import tomllib
 from collections import defaultdict
 from collections.abc import Iterable, Mapping, Sequence
@@ -37,6 +38,10 @@ from typing import Any
 __all__ = [
     "BlockingRule",
     "BlockingContext",
+    "GeoGridRule",
+    "geo_grid_pairs",
+    "load_geo_rules",
+    "validate_geo_rule",
     "BlockingRuleRejected",
     "block_key",
     "size_blocking_rule",
@@ -227,6 +232,149 @@ def load_rules() -> tuple[BlockingRule, ...]:
         )
         for entry in _rules()["rule"]
     )
+
+
+# --- Geospatial grid blocking (P30.2b, ADR-105) ------------------------------------
+
+#: Metres per degree used for the coverage check — the conservative lower bounds
+#: (a degree of latitude is shortest at the equator; a degree of longitude is
+#: 111,320 m x cos(latitude) on the WGS84 equatorial radius).
+_M_PER_DEG_LAT_MIN = 110_574.0
+_M_PER_DEG_LON_EQUATOR = 111_320.0
+
+
+@dataclass(frozen=True)
+class GeoGridRule:
+    """A coordinate-grid blocking rule: same or neighbouring cell, different group.
+
+    A record's block is its ``(floor(lat / cell_lat_deg), floor(lon / cell_lon_deg))``
+    cell; its candidates are the records in that cell and the 8 neighbouring cells whose
+    ``exclude_same`` value differs (two rows of one source are two devices, never a
+    candidate). The rule only PROPOSES pairs (SIG-IDENT-024) and is sized against the
+    comparison ceiling before use (SIG-IDENT-023) exactly like the equijoin rules.
+
+    ``covers_radius_m`` is the matcher's outer candidate radius the 3x3 neighbourhood
+    must cover up to ``max_abs_latitude``; :meth:`__post_init__` refuses a cell that
+    does not (an undersized cell would silently miss true candidates).
+    """
+
+    rule_id: str
+    lat_key: str = "latitude"
+    lon_key: str = "longitude"
+    exclude_same: str = "source_id"
+    cell_lat_deg: float = 0.0005
+    cell_lon_deg: float = 0.0016
+    max_abs_latitude: float = 73.0
+    covers_radius_m: float = 50.0
+    description: str = ""
+
+    def __post_init__(self) -> None:
+        if self.cell_lat_deg <= 0 or self.cell_lon_deg <= 0:
+            raise BlockingRuleRejected(f"geo rule {self.rule_id!r}: cell sizes must be positive")
+        if not 0 < self.max_abs_latitude < 90:
+            raise BlockingRuleRejected(
+                f"geo rule {self.rule_id!r}: max_abs_latitude must be in (0, 90)"
+            )
+        lat_m = self.cell_lat_deg * _M_PER_DEG_LAT_MIN
+        lon_m = (
+            self.cell_lon_deg
+            * _M_PER_DEG_LON_EQUATOR
+            * math.cos(math.radians(self.max_abs_latitude))
+        )
+        if min(lat_m, lon_m) < self.covers_radius_m:
+            raise BlockingRuleRejected(
+                f"geo rule {self.rule_id!r}: a {lat_m:.1f} m x {lon_m:.1f} m cell (at "
+                f"{self.max_abs_latitude} deg) does not cover the {self.covers_radius_m} m "
+                "candidate radius — the 3x3 neighbourhood would miss true candidates"
+            )
+
+    def cell(self, record: Record) -> tuple[int, int] | None:
+        """The grid cell of ``record``, or ``None`` when it is not blockable.
+
+        Not blockable: a missing/non-numeric coordinate, an out-of-range one, the
+        null-island placeholder (0, 0), or a latitude beyond ``max_abs_latitude`` (where
+        the cell would no longer cover the candidate radius). Such a record stays a
+        singleton — counted by the caller, never silently mis-blocked.
+        """
+        try:
+            lat = float(record.get(self.lat_key))  # type: ignore[arg-type]
+            lon = float(record.get(self.lon_key))  # type: ignore[arg-type]
+        except (TypeError, ValueError):
+            return None
+        if not (math.isfinite(lat) and math.isfinite(lon)):
+            return None
+        if abs(lat) > self.max_abs_latitude or abs(lon) > 180.0:
+            return None
+        if lat == 0.0 and lon == 0.0:
+            return None
+        return (math.floor(lat / self.cell_lat_deg), math.floor(lon / self.cell_lon_deg))
+
+
+def load_geo_rules() -> tuple[GeoGridRule, ...]:
+    """The committed geospatial blocking rules (``[[geo_rule]]`` in blocking_rules.toml)."""
+    return tuple(
+        GeoGridRule(
+            rule_id=str(entry["rule_id"]),
+            lat_key=str(entry.get("lat_key", "latitude")),
+            lon_key=str(entry.get("lon_key", "longitude")),
+            exclude_same=str(entry.get("exclude_same", "source_id")),
+            cell_lat_deg=float(entry["cell_lat_deg"]),
+            cell_lon_deg=float(entry["cell_lon_deg"]),
+            max_abs_latitude=float(entry["max_abs_latitude"]),
+            covers_radius_m=float(entry["covers_radius_m"]),
+            description=str(entry.get("description", "")),
+        )
+        for entry in _rules().get("geo_rule", [])
+    )
+
+
+def geo_grid_pairs(records: Sequence[Record], rule: GeoGridRule) -> list[tuple[int, int]]:
+    """The distinct candidate index-pairs (``i < j``) ``rule`` proposes over ``records``.
+
+    Same or neighbouring grid cell AND a different ``exclude_same`` value (a record with
+    no value in that key is never paired — a missing source is not a different source).
+    """
+    cells: dict[tuple[int, int], list[int]] = defaultdict(list)
+    for idx, record in enumerate(records):
+        c = rule.cell(record)
+        if c is not None and record.get(rule.exclude_same) not in (None, ""):
+            cells[c].append(idx)
+    pairs: set[tuple[int, int]] = set()
+    for (cx, cy), members in cells.items():
+        for dx in (-1, 0, 1):
+            for dy in (-1, 0, 1):
+                other = cells.get((cx + dx, cy + dy))
+                if not other:
+                    continue
+                for i in members:
+                    group_i = records[i].get(rule.exclude_same)
+                    for j in other:
+                        if j <= i or records[j].get(rule.exclude_same) == group_i:
+                            continue
+                        pairs.add((i, j))
+    return sorted(pairs)
+
+
+def validate_geo_rule(
+    records: Sequence[Record],
+    rule: GeoGridRule,
+    *,
+    context: BlockingContext | None = None,
+) -> list[tuple[int, int]]:
+    """Size ``rule`` over ``records`` and return its pairs, or raise if above the ceiling.
+
+    The comparison count is exact (the distinct candidate pairs the matcher would
+    score), checked against the same documented ceiling as every other rule
+    (SIG-IDENT-023) — an oversized geo rule aborts the run rather than quietly running.
+    """
+    ctx = context if context is not None else BlockingContext.from_data()
+    pairs = geo_grid_pairs(records, rule)
+    if len(pairs) > ctx.comparison_ceiling:
+        raise BlockingRuleRejected(
+            f"blocking rule {rule.rule_id!r} sizes to {len(pairs)} candidate comparisons, "
+            f"above the ceiling of {ctx.comparison_ceiling} (SIG-IDENT-023)"
+        )
+    return pairs
 
 
 def blocked_pairs(
