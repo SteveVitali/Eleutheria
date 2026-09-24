@@ -166,6 +166,33 @@ def build_parser() -> argparse.ArgumentParser:
         help="fixtures (committed typed fixtures) or export (last committed export snapshot).",
     )
     degraded.add_argument("--export-dir", default=None, help="export snapshot dir (export mode).")
+
+    deploy = sub.add_parser(
+        "deploy",
+        help="deploy the API image + static/exports to a hosted target (P24.1, GL-DEPLOY-01)",
+    )
+    deploy.add_argument(
+        "--target",
+        default="gcp",
+        choices=["gcp"],
+        help="hosted target (only 'gcp' is supported; GL-GATE-04).",
+    )
+    deploy.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="print the plan and exit 0 without pushing (forced when no ADC is present).",
+    )
+
+    drill = sub.add_parser(
+        "backup-drill",
+        help="dump the compose PG and restore into a fresh DB, asserting the graph reproduces",
+    )
+    drill.add_argument(
+        "--dsn", default=None, help="source PostgreSQL DSN (default: SIG_STAGING_DSN/local)"
+    )
+    drill.add_argument(
+        "--target-db", default="sig_restore", help="fresh database name to restore into"
+    )
     return parser
 
 
@@ -477,6 +504,62 @@ def _cmd_degraded(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_deploy(args: argparse.Namespace) -> int:
+    from .deploy import adc_present, plan_for
+
+    plan = plan_for(args.target)
+    # In this isolated context there are no Application Default Credentials, so the
+    # command runs in plan mode regardless: it prints the plan and exits 0 without
+    # opening the network. The real push/sync is gate-pending (HG-12 / D-ACCT.1-1).
+    forced = args.dry_run or not adc_present()
+    plan = plan.__class__(
+        target=plan.target,
+        project=plan.project,
+        region=plan.region,
+        steps=plan.steps,
+        dry_run=forced,
+        adc_present=plan.adc_present,
+    )
+    for line in plan.as_lines():
+        print(line)
+    if forced and not plan.adc_present:
+        print(
+            "gate pending: HG-12 / D-ACCT.1-1 — no Application Default Credentials; "
+            "plan printed, nothing pushed. Export ADC + SIG_GCP_PROJECT and re-run "
+            "without --dry-run to apply.",
+            file=sys.stderr,
+        )
+    elif forced:
+        print(
+            "dry-run: plan printed, nothing pushed. Re-run without --dry-run to apply "
+            "(the real push/sync is the operator-gated RETURN PASS action, D-DEPLOY.1-1).",
+            file=sys.stderr,
+        )
+    return 0
+
+
+def _cmd_backup_drill(args: argparse.Namespace) -> int:
+    from .backup import DrillError, restore_drill
+
+    dsn = args.dsn or default_dsn()
+    admin_dsn = dsn  # connect to the source DB to (re)create the fresh target DB
+    print(f"sig-ops backup-drill: pg_dump {dsn} → restore into fresh {args.target_db!r}")
+    try:
+        report = restore_drill(source_dsn=dsn, admin_dsn=admin_dsn, target_dbname=args.target_db)
+    except DrillError as exc:
+        print(f"sig-ops backup-drill: FAILED — {exc}", file=sys.stderr)
+        return 1
+    print(json.dumps(report.as_json(), indent=2, sort_keys=True))
+    if not report.reproduced:
+        print(
+            "sig-ops backup-drill: FAILED — the restored graph did not reproduce.",
+            file=sys.stderr,
+        )
+        return 1
+    print("sig-ops backup-drill: OK — the restored graph reproduces the source cardinality.")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run the `ops` CLI. Returns a process exit code."""
     parser = build_parser()
@@ -495,5 +578,9 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_swh_save(args)
     if args.command == "degraded":
         return _cmd_degraded(args)
+    if args.command == "deploy":
+        return _cmd_deploy(args)
+    if args.command == "backup-drill":
+        return _cmd_backup_drill(args)
     parser.print_help()
     return 0
