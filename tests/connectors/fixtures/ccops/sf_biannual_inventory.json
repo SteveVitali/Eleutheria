@@ -1,0 +1,80 @@
+{
+  "_note": "SF Chapter 19B Biannual Surveillance Technology Inventory Report (2026-03-02, covering 2025-09-02→2026-03-01) — a REPRESENTATIVE EXCERPT of the four appendices (real categories and named technologies from F3.21) plus the report's verbatim compliance breakdown. The inventory is citywide — every department, not just police. Its own row statuses disclose use: 'in use without an approved policy' IS the legally compelled statement of use (never an inference); 'approved'/'draft'/'seeking procurement' statuses are authorization, never deployment evidence. Retrieved 2026-08-20; never fetched live.",
+  "disclosure_source": "sf",
+  "documents": [
+    {
+      "id": "sf-19b-biannual-2026-03",
+      "kind": "inventory_table",
+      "genre": "policy_document",
+      "source_url": "https://media.api.sf.gov/documents/March_2_2026_Biannual_Surveillance_Technology_Inventory_Report.pdf",
+      "retrieved_date": "2026-08-20",
+      "jurisdiction": "sf",
+      "agency": "City and County of San Francisco",
+      "reporting_period": "2025-09-02..2026-03-01",
+      "reports_actual_use": true,
+      "ordinance": {
+        "ordinance_citation": "San Francisco Administrative Code Chapter 19B (Acquisition of Surveillance Technology)",
+        "enacting_body": "San Francisco Board of Supervisors",
+        "oversight_body": "Committee on Information Technology (COIT) / Privacy and Surveillance Advisory Board",
+        "effective_date": "2019-07-15",
+        "reporting_cadence": "biannual"
+      },
+      "text": "Biannual Surveillance Technology Inventory Report, March 2, 2026. The San Francisco Administrative Code via Chapter 19B: Acquisition of Surveillance Technology requires COIT staff to maintain an inventory of all surveillance technologies that departments plan to buy or are using, and to publish a biannual report on the inventory's status. The report includes the name of each technology in the inventory, a general technology category description, the department using or planning to use the technology, and information about where that technology is in the policy creation and approval process. As of March 1, 2026, 66% of surveillance technologies in use or in the process of being procured have a surveillance technology policy approved by the Board of Supervisors, 7% have a draft policy that has been reviewed by the COIT Privacy and Surveillance Advisory Board, 1% is represented by technologies seeking to be procured, and 26% are surveillance technologies currently in use without a policy.",
+      "rows": [
+        {
+          "technology_category": "Data Forensics Software",
+          "technology": "Cellebrite Inseyets",
+          "department": "SFPD",
+          "status": "in_use_without_approved_policy"
+        },
+        {
+          "technology_category": "Biometric Processing Software and/or System",
+          "technology": "Cogent ABIS",
+          "department": "SFPD",
+          "status": "in_use_without_approved_policy"
+        },
+        {
+          "technology_category": "Biometric Processing Software and/or System",
+          "technology": "DataWorksPlus",
+          "department": "SFPD",
+          "status": "in_use_without_approved_policy"
+        },
+        {
+          "technology_category": "Data Analytics Software",
+          "technology": "CellHawk",
+          "department": "SFPD",
+          "status": "in_use_without_approved_policy"
+        },
+        {
+          "technology_category": "Data Analytics Software",
+          "technology": "Penlink",
+          "department": "SFPD",
+          "status": "in_use_without_approved_policy"
+        },
+        {
+          "technology_category": "ALPR",
+          "technology": "Transit-Only Lane Enforcement (TOLE) cameras",
+          "department": "SFMTA",
+          "status": "approved_policy"
+        },
+        {
+          "technology_category": "Social Media Monitoring Software",
+          "technology": "Hootsuite (multi-departmental policy)",
+          "department": "Multiple departments",
+          "status": "approved_policy"
+        },
+        {
+          "technology_category": "Data Analytics Software",
+          "technology": "Video Analytics with AI",
+          "department": "SFPD",
+          "status": "seeking_procurement_or_pilot"
+        }
+      ],
+      "reported_compliance": {
+        "in_use_without_policy_count": 37,
+        "policy_compliance_share": 0.66,
+        "non_compliance_finding": "26% of surveillance technologies in use have no approved policy (as of 2026-03-01)"
+      }
+    }
+  ]
+}

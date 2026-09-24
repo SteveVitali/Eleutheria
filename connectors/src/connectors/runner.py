@@ -75,6 +75,13 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "madada": "france_belgium_records",
     "declarationcamera_be": "france_belgium_records",
     "decp_fr": "france_belgium_procurement",
+    # The CCOPS class (P24.7 / CCOPS.1 / GL-CCOPS-01): the three paying source
+    # adapters of the `government_mandated_disclosure` connector (SIG-INGEST-049c).
+    # All stay `ingestion_permitted=false` (HG-03); replay/shadow run over
+    # committed fixtures in `tests/connectors/fixtures/ccops/`.
+    "ccops_seattle": "government_mandated_disclosure",
+    "ccops_nyc_post": "government_mandated_disclosure",
+    "ccops_sf": "government_mandated_disclosure",
 }
 
 

@@ -1,0 +1,204 @@
+# SPDX-License-Identifier: Apache-2.0
+# The versioned `government_mandated_disclosure` connector vocabulary
+# (§22.6 H3 / SIG-INGEST-049*, P24.7 / CCOPS.1 / GL-CCOPS-01).
+#
+# This table is DATA, not code (SIG-ENG-001): the source-class registration
+# (SIG-INGEST-049), the depth-not-breadth scope numbers (SIG-INGEST-049a), the
+# claim-type set and the genre -> permitted-claim-type gate (the mechanical form
+# of the procured != deployed rule), the predicate allowlist (the SIG-INGEST-049b
+# dossier field list), the per-agency aggregate schema gate (Part VIII), and the
+# field-state vocabulary (mandated != populated) are data rows reviewed on their
+# own. Changes after P24.7 are VERSIONED MIGRATIONS (§20): bump `vocab_version`
+# and add the change, never silently rewrite a row.
+#
+# NOTE ON TOML ORDERING: every top-level key MUST appear ABOVE the first [table]
+# header — otherwise TOML nests it under that table.
+
+# The connector's own vocabulary version, stamped onto every run (§20).
+vocab_version = "2026.09.13"
+
+# The five claim types the connector may emit. `disclosure_use` is the
+# epistemically-loaded one: it may be asserted ONLY where the disclosure itself
+# reports actual use (a deployment-genre document, or a mandated inventory that
+# reports an in-use status — the legally compelled statement of use, never an
+# inference). `compliance_finding` carries the non-compliance metric
+# (SIG-INGEST-049e). An authorization/procurement status NEVER yields
+# `disclosure_use` — procured != deployed.
+claim_types = [
+  "ordinance",
+  "inventory_entry",
+  "disclosure",
+  "disclosure_use",
+  "compliance_finding",
+]
+
+# The genres from which a `disclosure_use` / `compliance_finding` claim may be
+# asserted unconditionally. Mirrors parsing.genre.DEPLOYMENT_GENRES; a test
+# asserts the two stay in lock-step.
+deployment_genres = ["deployment_report"]
+
+# The genres that can NEVER evidence actual use, however labelled: a procurement
+# record evidences a purchase and a vendor disclosure evidences a product — a
+# mandated-disclosure row asserting `in_use` from either is the procured->
+# deployed over-inference this connector refuses (RISK-P21-16 applied to the
+# CCOPS class).
+never_use_genres = ["procurement_record", "vendor_disclosure"]
+
+# The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
+# connector may write ONLY these predicates — the SIG-INGEST-049b dossier field
+# list plus the ordinance/inventory/compliance surface. Writing anything else is
+# a schema error — the D6 admissibility filter enforced at ingest (§10.5).
+predicate_allowlist = [
+  # ordinance facts (the legal instrument the disclosure is mandated by)
+  "ordinance_citation",
+  "enacting_body",
+  "oversight_body",
+  "effective_date",
+  "reporting_cadence",
+  # inventory-entry facts (a technology's status in the mandated inventory)
+  "technology",
+  "technology_category",
+  "approval_status",
+  "vendor_name",
+  "product_name",
+  "policy_status",
+  "pilot_status",
+  "deprecation_reason",
+  # disclosed field facts — the SIG-INGEST-049b dossier fields, recorded as
+  # COMMITMENTS / declared facts (retention, audit, partners, cost, subsidy,
+  # signage, access, training, disparate impact, legal authority)
+  "retention_period",
+  "audit_mechanism",
+  "sharing_partner",
+  "acquisition_cost",
+  "operating_cost",
+  "vendor_subsidy",
+  "signage_visibility",
+  "data_access",
+  "training",
+  "disparate_impact",
+  "legal_authority",
+  # the mandated != populated distinction: records that a mandated field was
+  # `present_but_empty` or `absent` in this filing (never a fabricated value)
+  "disclosure_field_state",
+  # measured-use facts (disclosure_use claims ONLY — the use predicates)
+  "in_use",
+  "usage_count",
+  "complaint_count",
+  "deployment_location",
+  "effectiveness_claim",
+  # the non-compliance metric (SIG-INGEST-049e)
+  "in_use_without_policy_count",
+  "policy_compliance_share",
+  "non_compliance_finding",
+]
+
+# The use predicates: any claim carrying one of these MUST be a `disclosure_use`
+# claim, and (via the document gate) may only come from a disclosure that reports
+# actual use. This is the second, predicate-level guard behind procured!=deployed.
+deployment_predicates = [
+  "in_use",
+  "usage_count",
+  "complaint_count",
+  "deployment_location",
+  "effectiveness_claim",
+]
+
+# The inventory statuses that disclose actual use. Every other status
+# (`approved_policy`, `draft_policy_reviewed`, `seeking_procurement_or_pilot`,
+# `deprecated`) is an authorization/procurement status — never use evidence.
+in_use_statuses = ["in_use", "in_use_without_approved_policy"]
+
+# The field-state vocabulary — mandated != populated (F3.20): a mandated
+# questionnaire field is `answered`, `present_but_empty` (the row exists but the
+# city left it blank — e.g. Seattle's unfilled Fiscal 1.1/1.2 tables), or
+# `absent` (the field is not in the filing). The three are kept distinct and are
+# never conflated with an answer.
+field_states = ["answered", "present_but_empty", "absent"]
+
+# The genre -> permitted claim-types gate. A document of genre G may only produce
+# claims whose type is in the list. `disclosure_use`/`compliance_finding` appear
+# ONLY under deployment_report — the other genres may yield the
+# ordinance/inventory/disclosure surface but never a use or compliance claim.
+[genre_claim_types]
+procurement_record = ["inventory_entry", "disclosure"]
+vendor_disclosure  = ["inventory_entry", "disclosure"]
+agenda_minutes     = ["ordinance", "inventory_entry", "disclosure"]
+policy_document    = ["ordinance", "inventory_entry", "disclosure"]
+deployment_report  = ["ordinance", "inventory_entry", "disclosure", "disclosure_use", "compliance_finding"]
+
+# The per-agency AGGREGATE row schema gate (Part VIII / §18.1-analogue). Every
+# emitted claim MUST carry `agency` + `reporting_period`; `technology` is
+# required for every claim type except `ordinance` (a jurisdiction-scoped fact).
+# `aggregate_level` is stamped `agency_technology_period` — the disclosure's own
+# granularity. The forbidden columns + tokens are the schema property that makes
+# "no person-level or non-aggregate CCOPS data" mechanical, not a policy note.
+[aggregate]
+required_fields = ["agency", "reporting_period"]
+technology_exempt_claim_types = ["ordinance"]
+aggregate_level = "agency_technology_period"
+# Column names / substrings that MUST NEVER appear on an emitted row: a plate, a
+# person, a per-search/per-incident id, an officer or user identity, a raw
+# per-event timestamp, a device serial. A claim carrying any of these would be
+# exactly the person-level / non-aggregate leak Part VIII forbids.
+forbidden_output_columns = [
+  "plate", "plate_hash", "license_plate",
+  "person", "person_name", "individual",
+  "search_id", "incident_id", "case_id", "trip_id",
+  "officer", "officer_name", "user_name", "badge",
+  "device_serial", "imei",
+  "searched_at", "event_timestamp",
+  "home_address",
+]
+# Content tokens refused in a predicate id or a raw value (§0.7 / §43.2,
+# RISK-P0-08): the disclosure emits institutional aggregate facts ONLY.
+forbidden_tokens = [
+  "license plate", "licence plate", "plate number", "license_plate", "plate_number",
+  "per-person", "per_person", "per person",
+  "per-trip", "per_trip", "per trip",
+  "travel history", "travel_history", "individual travel",
+  "per-search", "per_search", "per search", "hotlist hit", "hotlist_hit",
+  "home address", "home_address",
+]
+# Predicate ids that NAME a natural person — refused outright (the officer-naming
+# gate's no-publish default applied at ingest; the connector never emits one).
+person_naming_predicates = ["officer_name", "person_name", "individual_name", "named_individual"]
+
+# SIG-INGEST-049 — the source class registration. Municipal
+# surveillance-ordinance disclosures are their own source class, distinct from
+# both `civil_society_dataset` and `vendor_portal`. `licence: public record` is
+# the CLASS posture (these are statutorily published municipal records); the
+# per-source SPDX stays UNDETERMINED until a rights packet + operator flip
+# (HG-03) — the export gate fails closed (SIG-LIC-004).
+[source_class]
+name = "government_mandated_disclosure"
+licence = "public record"
+format = "pdf"
+extraction = "document_pipeline"
+distinct_from = ["civil_society_dataset", "vendor_portal"]
+
+# SIG-INGEST-049a — depth, not breadth, with the honest numbers carried (F3.19 /
+# F3.27): ~26 jurisdictions ≈ 5% of the US population and ~0.14% of US
+# law-enforcement agencies; ZERO publish machine-readable output; the canonical
+# national list is a JPEG on the ACLU page (revised 2024-11); vocabularies,
+# cadences and scopes differ per city; at least one city runs months past its
+# statutory deadline; at least one blocks automated access. It will never be a
+# national picture — its highest use is calibration, not coverage (049d).
+[scope]
+jurisdictions = 26
+us_population_share = 0.05
+us_agency_share = 0.0014
+machine_readable_outputs = 0
+canonical_list = "ACLU CCOPS national map (JPEG only, revised 2024-11)"
+registry_row_cap = 26
+note = "depth, not breadth — a curated document corpus, never a national picture; highest value is calibration against a legally compelled disclosure (SIG-INGEST-049a/049d)"
+
+# The registry source each paying source adapter draws its fixtures from
+# (SIG-INGEST-049c): Seattle (quarterly + the fixed 50-field SIR), NYC POST Act
+# (42 policies on a stable URL pattern), SF Chapter 19B (biannual citywide
+# inventory with a compliance metric). All stay ingestion_permitted=false until
+# a rights packet + operator flip (HG-03); a live run REFUSES at the gate.
+[sources]
+seattle = "ccops_seattle"
+nyc_post = "ccops_nyc_post"
+sf = "ccops_sf"

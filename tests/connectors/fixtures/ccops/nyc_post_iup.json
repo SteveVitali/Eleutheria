@@ -1,0 +1,48 @@
+{
+  "_note": "NYC POST Act impact & use policy — ALPR, one of the 42 post-final PDFs carrying the synchronised 2026-02-04 revision (F3.24). Excerpted committed capture of a public mandated disclosure; retrieved 2026-08-20; never fetched live. The IUP describes capabilities and rules — a policy document; it does not report measured use (procured != deployed).",
+  "disclosure_source": "nyc_post",
+  "documents": [
+    {
+      "id": "nyc-post-alpr-iup-2026",
+      "kind": "policy_clauses",
+      "genre": "policy_document",
+      "source_url": "https://www.nyc.gov/assets/nypd/downloads/pdf/public_information/post-final/alpr-impact-and-use-policy.pdf",
+      "retrieved_date": "2026-08-20",
+      "jurisdiction": "nyc",
+      "agency": "New York City Police Department",
+      "technology": "Automatic License Plate Readers",
+      "reporting_period": "2026-02-04",
+      "reports_actual_use": false,
+      "ordinance": {
+        "ordinance_citation": "NYC Administrative Code § 14-189 (POST Act)",
+        "enacting_body": "New York City Council",
+        "oversight_body": "New York City Police Department",
+        "effective_date": "2020-06-11",
+        "reporting_cadence": "revised en bloc (2026-02-04)"
+      },
+      "text": "Impact and Use Policy — Automatic License Plate Readers. Published under the Public Oversight of Surveillance Technology (POST) Act, a policy of the New York City Council.\n\nSection 4 Data retention policies\nThe surveillance technology data retention policies provide the retention period for data collected through the technology and the rules regulating that retention.\n\nSection 6 External entity access\nExternal entity access to surveillance technologies data is described, including the rules regulating whether and how external entities may obtain access.\n\nSection 8 Audit and oversight\nThe Department's internal audit and oversight mechanisms for the technology are described, including the offices responsible for audit coverage.\n\nSection 10 Disparate impacts\nThe policy reports the potential disparate impacts of the surveillance technology on protected groups, per the POST Act reporting requirement.\n",
+      "clauses": [
+        {
+          "clause": "4",
+          "predicate": "retention_period",
+          "value": "surveillance technology data retention policies (retention period and retention rules)"
+        },
+        {
+          "clause": "6",
+          "predicate": "data_access",
+          "value": "external entity access to surveillance technologies data"
+        },
+        {
+          "clause": "8",
+          "predicate": "audit_mechanism",
+          "value": "internal audit and oversight mechanisms"
+        },
+        {
+          "clause": "10",
+          "predicate": "disparate_impact",
+          "value": "potential disparate impacts on protected groups"
+        }
+      ]
+    }
+  ]
+}

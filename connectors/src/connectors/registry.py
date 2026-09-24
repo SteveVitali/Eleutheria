@@ -45,6 +45,10 @@ class SourceKind(StrEnum):
     UPSTREAM_PROJECT = "upstream_project"
     VENDOR_SITE = "vendor_site"
     GOVERNMENT_PORTAL = "government_portal"
+    #: Municipal surveillance-ordinance (CCOPS) disclosures — their own source
+    #: class, distinct from civil-society datasets and vendor portals
+    #: (SIG-INGEST-049, P24.7): licence public record, format pdf, document pipeline.
+    GOVERNMENT_MANDATED_DISCLOSURE = "government_mandated_disclosure"
     RECORDS_CHANNEL = "records_channel"
     NEWS_PUBLISHER = "news_publisher"
     COURT_SYSTEM = "court_system"
