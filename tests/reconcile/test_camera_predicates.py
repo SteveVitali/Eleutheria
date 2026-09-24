@@ -17,6 +17,7 @@ resolver (no Postgres; the DB round-trip is ``tests/db/test_resolution_materiali
 
 from __future__ import annotations
 
+import contextlib
 import json
 from datetime import date, datetime
 from pathlib import Path
@@ -270,6 +271,11 @@ class _FakeConn:
         self.rows = rows
         self.sql: list[str] = []
         self.digests: set[str] = set()
+        self.transactions = 0
+
+    def transaction(self) -> contextlib.AbstractContextManager[None]:
+        self.transactions += 1
+        return contextlib.nullcontext()
 
     def execute(self, sql: str, params: tuple[Any, ...] = ()) -> _Result:
         self.sql.append(sql)
@@ -306,13 +312,14 @@ def test_materializer_reads_capture_time_and_upserts_vocab_once() -> None:
     conn = _FakeConn(rows)
     seen: list[tuple[int, int, int]] = []
     summary = materialize_resolutions(
-        conn, as_of=AS_OF, progress=lambda *a: seen.append(a), progress_every=2
+        conn, as_of=AS_OF, progress=lambda *a: seen.append(a), progress_every=2, batch_size=2
     )
     assert summary.inserted == 5 and summary.resolved == 5 and summary.unresolved == 0
     assert CAPTURE_TIME_JOIN in conn.sql[0]
     # one (strategy, rationale, confidence) triple -> its three vocab upserts happen once.
     assert sum(s.startswith("INSERT INTO vocab_") for s in conn.sql) == 3
     assert seen and seen[0][:2] == (2, 5)
+    assert conn.transactions == 3  # 5 envelopes in batches of 2 -> 3 commits
     # re-run over the same claims: +0 (idempotent on input_digest).
     again = materialize_resolutions(conn, as_of=AS_OF)
     assert again.inserted == 0 and again.skipped_existing == 5

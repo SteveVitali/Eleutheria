@@ -391,6 +391,7 @@ def materialize_resolutions(
     role: str | None = None,
     progress: Callable[[int, int, int], None] | None = None,
     progress_every: int = 100_000,
+    batch_size: int = 1_000,
 ) -> MaterializeSummary:
     """Run the §28 resolver over the spine and materialize the envelopes (P28.1).
 
@@ -415,6 +416,27 @@ def materialize_resolutions(
     # distinct triple once per pass instead of three round-trips per envelope — the write
     # path is latency-bound at hosted scale (P30.1/P30.2). Still INSERT ... DO NOTHING only.
     ensured_vocab: set[tuple[str, str, str]] = set()
+    # Envelopes are written in batches of ``batch_size``, one transaction per batch, so a
+    # hosted pass pays one commit per batch rather than one per row. Each insert stays
+    # ``ON CONFLICT (input_digest) DO NOTHING``: a failed batch rolls back whole and a re-run
+    # completes it (+0 for everything already written).
+    pending: list[dict[str, Any]] = []
+
+    def flush() -> tuple[int, int]:
+        added = existing = 0
+        with conn.transaction():
+            for row in pending:
+                vocab_key = (row["strategy_id"], row["rationale_code"], row["confidence"])
+                if vocab_key not in ensured_vocab:
+                    _ensure_vocab(conn, row)
+                    ensured_vocab.add(vocab_key)
+                if _insert_resolution(conn, row):
+                    added += 1
+                else:
+                    existing += 1
+        pending.clear()
+        return added, existing
+
     total = len(groups)
     for (subj, pred), claims in sorted(groups.items()):
         considered += 1
@@ -433,18 +455,19 @@ def materialize_resolutions(
             # No strategy assigned (SIG-RECON-013): recorded, not adjudicated.
             skipped_unresolvable += 1
             continue
-        vocab_key = (row["strategy_id"], row["rationale_code"], row["confidence"])
-        if vocab_key not in ensured_vocab:
-            _ensure_vocab(conn, row)
-            ensured_vocab.add(vocab_key)
-        if _insert_resolution(conn, row):
-            inserted += 1
-        else:
-            skipped_existing += 1
+        pending.append(row)
         if resolved.resolution_status == "RESOLVED":
             resolved_n += 1
         else:
             unresolved_n += 1
+        if len(pending) >= batch_size:
+            added, existing = flush()
+            inserted += added
+            skipped_existing += existing
+    if pending:
+        added, existing = flush()
+        inserted += added
+        skipped_existing += existing
 
     return MaterializeSummary(
         considered_pairs=considered,
