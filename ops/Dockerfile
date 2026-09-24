@@ -45,8 +45,17 @@ COPY evidence ./evidence
 # `sig-ops scheduled-ingest`, which wraps the same gated `connectors.runner`
 # path and appends the WORM run rows to gs://…-sig-restricted/ops/. Secret
 # values still arrive only from Secret Manager env vars (HG-09).
+#
+# P31.2: the install is CONSTRAINED to the committed uv.lock (exported as a
+# constraints file), so an image build is reproducible and a new upstream release
+# cannot break it. Observed 2026-09-24: an unconstrained resolve picked
+# sqlalchemy 2.1.0, whose sdist uv refuses (duplicate normalized extra), and the
+# build failed; the lock pins 2.0.52.
 RUN pip install --no-cache-dir uv \
- && uv pip install --system ./api ./connectors ./ops
+ && uv export --frozen --no-emit-workspace --no-hashes --all-packages --no-dev \
+      -o /tmp/constraints.txt \
+ && uv pip install --system -c /tmp/constraints.txt ./api ./connectors ./ops \
+ && rm /tmp/constraints.txt
 
 # Cloud Run provides $PORT; bind the read API there. When SIG_CLOUDSQL_CONNECTION
 # is set (the Cloud SQL socket instance connection name), assemble the PgReadStore

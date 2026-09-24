@@ -418,8 +418,9 @@ class ShapedSourceFreshness:
             "source": self.freshness.source_id,
             # A value the spine does not record is published as the explicit honest-absence
             # token (P30.3) — never an empty string (a DROPPED field, which the web refuses)
-            # and never a guessed date (§3.1). On the hosted spine every ingest_run row is still
-            # open and most claims carry no observed_at, so these are genuinely not recorded.
+            # and never a guessed date (§3.1). Since P31.2 (ADR-109) the dates come from the
+            # appended ingest_run_completion rows; a source with no completed (or no
+            # claim-inserting) execution keeps the token.
             "last_successful_run": (
                 self.freshness.last_successful_run.isoformat()
                 if self.freshness.last_successful_run
@@ -1352,6 +1353,20 @@ def build_shaped_dataset(
         stats = run_stats.setdefault(str(source_id), {})
         stats["last_successful_run"] = last_successful_run
         stats["status"] = _map_run_status(last_status)
+    # P31.2 / ADR-109: the appended ingest_run_completion rows are the run-lifecycle
+    # record. Where a source has completions, they win. The legacy ingest_run columns
+    # above stay the fallback (a pre-P31.2 spine, or a run inserted already closed).
+    for r in raw.get("source_completions") or []:
+        source_id, last_ok, last_change, last_status = r
+        stats = run_stats.setdefault(str(source_id), {})
+        legacy_ok = stats.get("last_successful_run")
+        if last_ok is not None:
+            stats["last_successful_run"] = last_ok if legacy_ok is None else max(last_ok, legacy_ok)
+        # Content change = the latest completion that INSERTED claims, never merely
+        # the latest completion (a +0 re-run changed nothing).
+        if last_change is not None:
+            stats["last_content_change"] = last_change
+        stats["status"] = _map_run_status(last_status)
     as_of_date = date.fromisoformat(as_of[:10]) if as_of else date.today()
     sources = source_freshness_rows(publishable_claims, run_stats=run_stats, as_of=as_of_date)
 
@@ -1415,6 +1430,44 @@ def _map_run_status(status: Any) -> str:
     return "degraded"  # running / unknown — honest non-ok
 
 
+#: Completion statuses that count as a successful run (the execution ended
+#: normally). Mirrors ``db.run_completion.SUCCESSFUL_STATUSES`` without adding a
+#: direct ``exports → db`` dependency edge; a test pins the two equal.
+SUCCESSFUL_RUN_STATUSES = ("ok", "partial", "quota_reached")
+
+#: Per-source run completion (P31.2 / ADR-109), read only when the
+#: ``ingest_run_completion`` table exists. ``last_successful_run`` = the latest
+#: completion whose execution ended normally. ``last_content_change`` = the latest
+#: completion that inserted > 0 claims. ``last_status`` = the latest completion's
+#: status verbatim. A belief pin (§9.4) also hides completions recorded after it.
+SOURCE_COMPLETIONS_QUERY = (
+    "SELECT source_id,"
+    "       max(finished_at) FILTER (WHERE status = ANY(%s)) AS last_successful_run,"
+    "       max(finished_at) FILTER (WHERE claims_inserted > 0) AS last_content_change,"
+    "       (array_agg(status ORDER BY finished_at DESC, completion_id DESC))[1]"
+    "         AS last_status"
+    "  FROM ingest_run_completion"
+    " WHERE source_id IS NOT NULL{belief}"
+    " GROUP BY source_id ORDER BY source_id"
+)
+
+
+def fetch_source_completions(cur: _Cursor, *, belief: datetime | None = None) -> list[Any]:
+    """The per-source completion stats, or ``[]`` on a spine without the table."""
+    cur.execute("SELECT to_regclass('ingest_run_completion') IS NOT NULL")
+    present = cur.fetchone()
+    if not (present and present[0]):
+        return []
+    if belief is None:
+        cur.execute(SOURCE_COMPLETIONS_QUERY.format(belief=""), (list(SUCCESSFUL_RUN_STATUSES),))
+    else:
+        cur.execute(
+            SOURCE_COMPLETIONS_QUERY.format(belief=" AND recorded_at <= %s::timestamptz"),
+            (list(SUCCESSFUL_RUN_STATUSES), belief),
+        )
+    return list(cur.fetchall())
+
+
 def fetch_shaping_raw(
     cur: _Cursor,
     queries: Mapping[str, str],
@@ -1461,6 +1514,7 @@ def fetch_shaping_raw(
             else:
                 cur.execute(sql, (predicates,))
             raw[key] = cur.fetchall()
+    raw["source_completions"] = fetch_source_completions(cur, belief=belief)
     return raw
 
 
