@@ -170,6 +170,8 @@ def test_resolve_targets_env_then_template_then_skip() -> None:
     assert skipped == []
     assert names["sig-api-root"] == "https://api.test/"
     assert names["sig-api-coverage-okc"] == "https://api.test/v1/coverage/okc"
+    # P31.1: the store-readiness endpoint is probed (not /healthz, ADR-108).
+    assert names["sig-api-health"] == "https://api.test/health"
     assert names["sig-web-root"] == "https://web.test/"
     assert (
         names["sig-public-okc-manifest"]

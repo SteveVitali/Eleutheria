@@ -14,10 +14,11 @@ is mounted (asserted structurally by :mod:`api.prohibitions`).
 
 from __future__ import annotations
 
+import re
 from datetime import date
 
 from evidence.tiers import StorageTier
-from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 from policy.sensitivity import apply_tier, geo_tier_for, published_precision
 from reconcile.resolve import RESOLVE
 from reconcile.snapshot_diff import diff_series
@@ -52,8 +53,22 @@ from .models import (
     TaskResponse,
 )
 from .prohibitions import ProhibitedEndpointError, assert_entity_type_allowed
-from .store import ContradictionRecord, EntityRecord, ReadStore, TaskRecord
+from .store import (
+    SEARCH_DEFAULT_LIMIT,
+    SEARCH_MAX_LIMIT,
+    SEARCH_MIN_QUERY_LENGTH,
+    ContradictionRecord,
+    EntityRecord,
+    InvalidSearchCursor,
+    ReadStore,
+    StoreQueryTimeout,
+    TaskRecord,
+)
 from .tiers import AccessTier, assert_public_visibility, tier_dependency
+
+#: A searchable term has a run of SEARCH_MIN_QUERY_LENGTH letters/digits (P31.1,
+#: ADR-108): the shortest term the trigram index can serve.
+_SEARCHABLE = re.compile(rf"[^\W_]{{{SEARCH_MIN_QUERY_LENGTH}}}")
 
 
 def get_store(request: Request) -> ReadStore:
@@ -216,15 +231,44 @@ def build_router() -> APIRouter:
         )
 
     # --- /search (collection: licence + coverage) -----------------------------
+    # Bounded (P31.1, ADR-108): a minimum query length, a capped page size, and
+    # keyset pagination (``next_cursor``). The page is fetched one row long so
+    # "is there more?" costs no count query.
     @router.get("/search", response_model=SearchResponse)
     def search(
         response: Response,
         q: str = "",
+        limit: int = Query(default=SEARCH_DEFAULT_LIMIT, ge=1, le=SEARCH_MAX_LIMIT),
+        cursor: str | None = None,
         store: ReadStore = Depends(get_store),
         asof: AsOfContext = Depends(as_of_dependency),
         tier: AccessTier = Depends(tier_dependency),
     ) -> SearchResponse:
-        hits = [e for e in store.search(q) if e.visibility is StorageTier.PUBLIC]
+        term = q.strip()
+        page: list[EntityRecord] = []
+        if term:
+            if not _SEARCHABLE.search(term):
+                raise HTTPException(
+                    status_code=422,
+                    detail=(
+                        f"search query must contain at least {SEARCH_MIN_QUERY_LENGTH} "
+                        "consecutive letters or digits; resolve an exact identifier "
+                        "with /id/{type}/{id}"
+                    ),
+                )
+            try:
+                page = store.search(term, limit=limit + 1, after=cursor)
+            except InvalidSearchCursor as exc:
+                raise HTTPException(status_code=422, detail="invalid search cursor") from exc
+            except StoreQueryTimeout as exc:
+                raise HTTPException(
+                    status_code=503,
+                    detail="search exceeded its time budget; use a more specific query",
+                ) from exc
+        has_more = len(page) > limit
+        page = page[:limit]
+        next_cursor = page[-1].entity_id if has_more and page else None
+        hits = [e for e in page if e.visibility is StorageTier.PUBLIC]
         source_ids: tuple[str, ...] = tuple(sorted({s for e in hits for s in e.source_ids}))
         asof.apply_cache(response)
         return SearchResponse(
@@ -241,6 +285,8 @@ def build_router() -> APIRouter:
             coverage=empty_coverage(f"search:{q}"),
             license=license_statement(store.rights_for(source_ids)),
             as_of=asof.echo(),
+            limit=limit,
+            next_cursor=next_cursor,
         )
 
     # --- /dossier (collection) ------------------------------------------------

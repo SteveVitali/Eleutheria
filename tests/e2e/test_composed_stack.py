@@ -765,11 +765,15 @@ def test_s6_api_serves_resolution_envelope_and_families(
     pg_store = PgReadStore(dsn)
     try:
         with TestClient(create_app(pg_store)) as pg_client:
-            # A subject + predicate that S3 wrote to the spine.
-            row = pg_store._conn.execute(  # noqa: SLF001 - test reaches into the store conn
-                "SELECT subject_id, predicate_id FROM claim "
-                "WHERE content_digest IS NOT NULL LIMIT 1"
-            ).fetchone()
+            # A subject + predicate that S3 wrote to the spine (read on a plain
+            # connection: the store's own connections are pooled, P31.1).
+            import psycopg
+
+            with psycopg.connect(dsn) as probe:
+                row = probe.execute(
+                    "SELECT subject_id, predicate_id FROM claim "
+                    "WHERE content_digest IS NOT NULL LIMIT 1"
+                ).fetchone()
             assert row is not None, "S3 must have written claims the API can read"
             subject_id, predicate_id = str(row[0]), str(row[1])
             for path in (
