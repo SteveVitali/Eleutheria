@@ -189,7 +189,7 @@ git push origin v0.1.0
 make sbom                                    # writes sbom.cdx.json (CycloneDX)
 gh release create v0.1.0 \
   --title "SIG v0.1.0" \
-  --notes-file docs/build/RELEASE_NOTES_v0.1.0.md \
+  --notes-file docs/build/reports/RELEASE_NOTES_v0.1.0.md \
   sbom.cdx.json
 
 # 4. (Optional, recommended) Protect main now that it carries the release (RISK-P20-03). NOT applied

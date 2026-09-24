@@ -1,7 +1,7 @@
 [project]
 name = "sig-db"
 version = "0.1.0"
-description = "SIG db package (skeleton; see docs/2_canonical_design_spec.md §47)."
+description = "SIG db package: the append-only PG18+PostGIS claim spine — sqitch migrations, insert-only claim sink, row-level security (§16, §47)."
 requires-python = ">=3.11"
 dependencies = [
     # The canonical store is PostgreSQL 18 + PostGIS (ADR-001); psycopg v3 is the

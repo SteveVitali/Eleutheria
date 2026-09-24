@@ -13,7 +13,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 DATA = json.load(open(ROOT / ".agents/scratch/tools/id_data.json"))
-LISTS = (ROOT / "docs/build/SCOPING_ID_LISTS.md").read_text()
+LISTS = (ROOT / "docs/build/reports/SCOPING_ID_LISTS.md").read_text()
 
 # --- PR number -> ticket label ------------------------------------------------
 PR_TICKET = {}

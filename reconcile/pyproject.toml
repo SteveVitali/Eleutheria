@@ -1,7 +1,7 @@
 [project]
 name = "sig-reconcile"
 version = "0.1.0"
-description = "SIG reconcile package (skeleton; see docs/2_canonical_design_spec.md §47)."
+description = "SIG reconcile package: §29 count reconciliation, sharing-edge and snapshot-diff logic over the claim spine (§47)."
 requires-python = ">=3.11"
 # The reconciliation engine consumes the predicate registry (volatility/half-life/
 # directness) generated from the ontology source, and the canonical EDTF-envelope
