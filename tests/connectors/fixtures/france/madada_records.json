@@ -1,0 +1,10 @@
+{
+  "_note": "P24.6 (JURIS.2) committed fixture for `sig-connectors run --source madada --mode replay|shadow`. A Ma Dada-shaped records-request context: the jurisdiction's records regime is fr.cada (Commission d'accès aux documents administratifs) — never us.foia/foia_request (SIG-ONTO-068). Fixture bytes only — never fetched live (the source stays ingestion_permitted=false, HG-03).",
+  "records_requests": [
+    {
+      "jurisdiction": "FR",
+      "subject": "madada:req/2026-0451",
+      "raw_value": "registre des demandes CADA — vidéoprotection, commune de Gex"
+    }
+  ]
+}
