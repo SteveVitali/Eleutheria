@@ -65,9 +65,10 @@ def _export_dir_display() -> str:
 def build_gcp_plan(*, project: str | None = None, region: str | None = None) -> DeployPlan:
     """Build the ordered GCP deploy plan (image build+push, public build, GCS syncs).
 
-    The public build + compartment partition (steps 5–7) run BEFORE the syncs so the real
+    The public build + compartment partition (steps 5–6) run BEFORE the syncs so the real
     national export drives ``web/dist`` (fail-loud, never fixtures) and the public sync can
-    only ever carry the published compartment (§42; ``ops/src/ops/publish.py``).
+    only ever carry licence-separated, publishable compartments (§42; ADR-106;
+    ``ops/src/ops/publish.py``).
     """
     proj = project or _project()
     reg = region or _region()
@@ -81,9 +82,10 @@ def build_gcp_plan(*, project: str | None = None, region: str | None = None) -> 
         "--min-instances=0  (scale-to-zero API; managed TLS)",
         f"sig-ops publish: build web/dist with SIG_DATA_SOURCE=export SIG_EXPORT_DIR={export_dir}  "
         "(the P27.4 national export — FAILS LOUD if absent, never a fixtures fall-back)",
-        f"sig-ops publish: partition {export_dir} → exports/out/public (published, "
-        "non-share-alike) + exports/out/restricted (ODbL/share-alike/UNDETERMINED, PRIVATE); "
-        "assert public compartment clean",
+        f"sig-ops publish: partition {export_dir} → exports/out/public (licence-separated "
+        "compartments incl. the ODbL/CC-BY-SA layers, each single-licence — ADR-106) + "
+        "exports/out/restricted (UNDETERMINED/excluded/mixed-licence, PRIVATE); assert public "
+        "compartment clean; write LICENCES.json (SPDX licence + attribution per compartment)",
         f"gcloud storage rsync -r -c web/dist gs://{proj}-sig-web  (static site, public-read)",
         f"gcloud storage rsync -r -c exports/out/public "
         f"gs://{proj}-sig-public  (PUBLISHED compartment only, public-read)",

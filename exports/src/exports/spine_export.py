@@ -43,7 +43,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
@@ -374,13 +374,27 @@ def _site_row_data(site: ShapedSite, rights: Mapping[str, Any]) -> dict[str, Any
     }
 
 
+@dataclass(frozen=True)
+class _SiteSlices:
+    """The licence-sliced sites: per-compartment rows, the rights index, the loud exclusions,
+    and — per subject — the licences its PUBLISHED slices carry plus the subjects with any
+    REFUSED slice (ADR-106: the render surfaces never carry a refused subject, and a surface
+    drawing on several licences is labelled with all of them)."""
+
+    rows_by_compartment: dict[str, list[C.ExportRow]]
+    index: dict[str, RightsRecord]
+    exclusions: list[dict[str, Any]]
+    licences_by_subject: dict[str, set[str]]
+    refused_subjects: set[str]
+
+
 def _slice_sites(
     claims: Sequence[ShapingClaim],
     entity_types: Mapping[str, str],
     *,
     retrieval: date,
     registry: Mapping[str, Any] | None,
-) -> tuple[dict[str, list[C.ExportRow]], dict[str, RightsRecord], list[dict[str, Any]]]:
+) -> _SiteSlices:
     """Licence-slice every site per (source, rights_id) into per-compartment rows.
 
     Each source's sites are recomputed from *that source's own* observations
@@ -390,13 +404,23 @@ def _slice_sites(
     surviving slice lands in the compartment its own computed licence declares.
     """
     by_source: dict[str, list[ShapingClaim]] = {}
+    rights_ids_by_source: dict[str, set[str]] = {}
     for claim in claims:
         if claim.publishable and claim.source_id:
             by_source.setdefault(claim.source_id, []).append(claim)
+            rights_ids_by_source.setdefault(claim.source_id, set()).add(claim.effective_rights_id)
+    # A source whose claims carry MORE THAN ONE effective rights record (e.g. a DOT feed with
+    # some rows CC0 and some decision-resolved to a public-record basis) is keyed per
+    # (source, rights_id) slice, so each slice is placed + attributed by ITS OWN record and
+    # two licences are never computed into one compartment file (SIG-LIC-004a). A
+    # single-rights source keeps its plain source id (the common case, unchanged).
+    multi_rights = {s for s, ids in rights_ids_by_source.items() if len(ids) > 1}
 
     rows_by_compartment: dict[str, list[C.ExportRow]] = {}
     index: dict[str, RightsRecord] = {}
     refused: dict[tuple[str, str, str], dict[str, Any]] = {}
+    licences_by_subject: dict[str, set[str]] = {}
+    refused_subjects: set[str] = set()
 
     for source_id in sorted(by_source):
         sites = shape_sites(by_source[source_id], entity_types=entity_types)
@@ -418,16 +442,43 @@ def _slice_sites(
                         },
                     )
                     entry["rows"] = int(entry["rows"]) + 1
+                    refused_subjects.add(site.entity_id)
                     continue
-                compartment = C.compartment_for_license(
-                    compute_export_license([record], registry), None, registry
+                licence = compute_export_license([record], registry)
+                compartment = C.compartment_for_license(licence, None, registry)
+                licences_by_subject.setdefault(site.entity_id, set()).add(licence)
+                slice_key = (
+                    f"{record.source_id}@{rights['rights_id']}"
+                    if record.source_id in multi_rights
+                    else record.source_id
                 )
                 rows_by_compartment.setdefault(compartment, []).append(
-                    C.ExportRow(source_id=record.source_id, data=_site_row_data(site, rights))
+                    C.ExportRow(source_id=slice_key, data=_site_row_data(site, rights))
                 )
-                index.setdefault(record.source_id, record)
+                index.setdefault(slice_key, replace(record, source_id=slice_key))
     exclusions = [refused[k] for k in sorted(refused)]
-    return rows_by_compartment, index, exclusions
+    return _SiteSlices(
+        rows_by_compartment=rows_by_compartment,
+        index=index,
+        exclusions=exclusions,
+        licences_by_subject=licences_by_subject,
+        refused_subjects=refused_subjects,
+    )
+
+
+def surface_license(licences: set[str] | frozenset[str]) -> str:
+    """The honest licence label of a render surface drawing on ``licences`` (ADR-106).
+
+    One licence → that id. Several → an SPDX ``AND`` expression (sorted, deterministic),
+    which marks the file a MIXED-LICENCE artifact: the public-cut-over classifier keeps it
+    out of every public object (it is a build input of the produced-work website, never a
+    downloadable dataset — the per-licence compartments are the downloads). No licence (an
+    empty surface) → SIG's own CC-BY-4.0.
+    """
+    ordered = sorted(licences)
+    if not ordered:
+        return _SIG_SPDX
+    return ordered[0] if len(ordered) == 1 else " AND ".join(ordered)
 
 
 # --------------------------------------------------------------------------- #
@@ -678,7 +729,10 @@ def _network_from_materialized(
 
 
 def _map_layer(
-    dataset: ShapedDataset, *, resolved: Mapping[str, Any] | None = None
+    dataset: ShapedDataset,
+    *,
+    resolved: Mapping[str, Any] | None = None,
+    exclude: set[str] | frozenset[str] = frozenset(),
 ) -> dict[str, Any]:
     """Surface 3 — MapLayer / MapAsset / JurisdictionIndicator (§39.3).
 
@@ -690,6 +744,10 @@ def _map_layer(
     """
     assets: list[dict[str, Any]] = []
     for site in dataset.sites:
+        if site.entity_id in exclude:
+            # A subject with any licence-REFUSED slice never reaches a render surface (its
+            # aggregate point could carry refused bytes) — it is in exclusions.json instead.
+            continue
         asset: dict[str, Any] = {
             "id": site.entity_id,
             "label": site.label or site.entity_id,
@@ -1183,8 +1241,11 @@ def build_spine_export(
     resolved_counts = resolved_site_counts(m_site_runs, dataset)
 
     # --- the licence-critical path: sites sliced per (source, rights) -----------
-    site_rows, site_index, site_exclusions = _slice_sites(
-        claims, entity_types, retrieval=retrieval, registry=registry
+    slices = _slice_sites(claims, entity_types, retrieval=retrieval, registry=registry)
+    site_rows, site_index, site_exclusions = (
+        slices.rows_by_compartment,
+        slices.index,
+        slices.exclusions,
     )
 
     tables: list[C.ExportTable] = []
@@ -1220,7 +1281,7 @@ def build_spine_export(
     surfaces: dict[str, Any] = {
         "dossier_index": _dossier_index(dossiers),
         "dossiers": dossiers,
-        "map": _map_layer(dataset, resolved=resolved_counts),
+        "map": _map_layer(dataset, resolved=resolved_counts, exclude=slices.refused_subjects),
         # The network reads the materialized §29.3 edges (P28.2) when present, else the
         # compute-on-read shaping envelope (the honest fallback for an unmaterialized spine).
         "network": (
@@ -1238,10 +1299,23 @@ def build_spine_export(
     web_artifacts: dict[str, bytes] = {}
     for name, payload in surfaces.items():
         web_artifacts[f"{_WEB_DIR}/{name}.json"] = _web_bytes(payload)
+    # The map surface carries every published subject's own point + label, so it draws on
+    # every site compartment's licence (ODbL OSM points beside CC-BY/CC0/… points) — its
+    # label says so (ADR-106). The other surfaces carry SIG's aggregate framing (counts,
+    # freshness, coverage) and stay SIG CC-BY-4.0.
+    mapped = {
+        site.entity_id for site in dataset.sites if site.entity_id not in slices.refused_subjects
+    }
+    web_licenses = {
+        f"{_WEB_DIR}/map.json": surface_license(
+            {lic for sid in mapped for lic in slices.licences_by_subject.get(sid, ())}
+        )
+    }
 
     # --- per-compartment PMTiles (ODbL attribution on the OSM layer) ------------
     tile_renderers: dict[str, str] = {}
-    tile_artifacts: list[tuple[str, str, bytes]] = []  # (published_path, license, bytes)
+    # (published_path, compartment, license, bytes)
+    tile_artifacts: list[tuple[str, str, str, bytes]] = []
     for pt in bundle.placed:
         if pt.table.name != "sites" or pt.table.kind != "geo":
             continue
@@ -1253,7 +1327,7 @@ def build_spine_export(
         tile_path = f"{_WEB_DIR}/tiles/{pt.compartment}-sites.pmtiles"
         web_artifacts[tile_path] = rendered
         tile_renderers[pt.compartment] = renderer
-        tile_artifacts.append((tile_path, pt.license, rendered))
+        tile_artifacts.append((tile_path, pt.compartment, pt.license, rendered))
 
     # --- the PROV-O lineage (§21.6) --------------------------------------------
     provenance = _provenance_ttl(
@@ -1280,6 +1354,7 @@ def build_spine_export(
         bundle,
         web_artifacts=web_artifacts,
         tile_artifacts=tile_artifacts,
+        web_licenses=web_licenses,
         provenance=provenance,
         exclusions=exclusions,
     )
@@ -1328,9 +1403,10 @@ def _extended_manifest(
     bundle: Bundle,
     *,
     web_artifacts: Mapping[str, bytes],
-    tile_artifacts: Sequence[tuple[str, str, bytes]],
+    tile_artifacts: Sequence[tuple[str, str, str, bytes]],
     provenance: bytes,
     exclusions: Mapping[str, Any],
+    web_licenses: Mapping[str, str] | None = None,
 ) -> Manifest:
     """Extend the bundle manifest with the web JSONs, tiles, provenance, exclusions.
 
@@ -1338,20 +1414,22 @@ def _extended_manifest(
     consumer can verify integrity and know the governing licence of each file
     (SIG-EXPORT-001/006).
     """
-    tile_licenses = {path: lic for path, lic, _ in tile_artifacts}
+    # Each tile is labelled with the compartment its sites were placed in (and that
+    # compartment's licence) — a CC-BY-SA tile is never filed under `sig_graph` (ADR-106).
+    tiles = {path: (comp, lic) for path, comp, lic, _ in tile_artifacts}
+    labels = dict(web_licenses or {})
     artifacts: list[Artifact] = list(bundle.manifest.artifacts)
     for path in sorted(web_artifacts):
         data = web_artifacts[path]
-        if path in tile_licenses:
+        if path in tiles:
+            compartment, license_id = tiles[path]
             artifacts.append(
                 Artifact.of(
                     name=Path(path).name,
                     path=path,
                     media_type="application/vnd.pmtiles",
-                    compartment="osm_physical"
-                    if tile_licenses[path] == "ODbL-1.0"
-                    else "sig_graph",
-                    license=tile_licenses[path],
+                    compartment=compartment,
+                    license=license_id,
                     data=data,
                 )
             )
@@ -1362,7 +1440,7 @@ def _extended_manifest(
                     path=path,
                     media_type="application/json",
                     compartment=_WEB_COMPARTMENT,
-                    license=_SIG_SPDX,
+                    license=labels.get(path, _SIG_SPDX),
                     data=data,
                 )
             )
@@ -1595,6 +1673,7 @@ __all__ = [
     "coverage_metric_from_materialized",
     "resolved_sites_metric",
     "resolved_site_counts",
+    "surface_license",
     "contradictions_visible_metric",
     "run_spine_export",
     "digest_web_artifacts",
