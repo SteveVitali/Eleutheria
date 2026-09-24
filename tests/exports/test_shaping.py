@@ -447,18 +447,23 @@ def test_coverage_metrics_match_the_web_contract() -> None:
 
 
 def test_source_freshness_rows_and_not_evaluable() -> None:
-    claims = _geo("s1", "35.46", "-97.51", "OK")
+    # The camera-registry predicates are registered (P30.2a, ADR-104), so their
+    # staleness is evaluable against the registry volatility; a predicate the
+    # ontology registry does not know is still honestly not-evaluable, never faked.
+    claims = [
+        *_geo("s1", "35.46", "-97.51", "OK"),
+        _claim("s1-x", "s1", "unregistered_predicate_x", value_text="v"),
+    ]
     ds = _dataset(
         claims,
-        source_stats=[("src_a", 3, datetime(2026, 5, 2), 3)],
+        source_stats=[("src_a", 4, datetime(2026, 5, 2), 4)],
         source_runs=[("src_a", datetime(2026, 5, 2), "succeeded")],
     )
     (src,) = ds.sources
     assert src.freshness.source_id == "src_a"
     assert src.freshness.status == "ok"
-    # camera_* predicates are not in the ontology registry: staleness is
-    # honestly not-evaluable, never faked.
-    assert src.staleness_not_evaluable == 3
+    assert src.staleness_not_evaluable == 1  # only the unregistered predicate
+    assert src.volatility_class == "SLOW"  # camera_latitude/longitude (2y) dominate
     row = src.freshness_row()
     assert set(row) == {
         "source",

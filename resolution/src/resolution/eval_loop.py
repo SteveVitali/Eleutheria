@@ -116,6 +116,11 @@ class EvalReport:
     resolved_site_count: int | None = None
     observation_count: int | None = None
     resolutions_materialized: int | None = None
+    #: P30.2a (ADR-104): observation-level sites whose coordinates carry a §28 VALUE
+    #: decision within their own record — NOT deduplication; and the entity-level merges
+    #: (the cross-source dedup that P30.2b measures). ``None`` = not measured.
+    value_resolved_site_count: int | None = None
+    entity_merges: int | None = None
     provisional: bool = True
     notes: tuple[str, ...] = ()
 
@@ -228,6 +233,8 @@ def run_eval(
     resolved_site_count: int | None = None,
     observation_count: int | None = None,
     resolutions_materialized: int | None = None,
+    value_resolved_site_count: int | None = None,
+    entity_merges: int | None = None,
     provisional: bool = True,
     notes: Sequence[str] = (),
 ) -> EvalReport:
@@ -312,6 +319,8 @@ def run_eval(
         resolved_site_count=resolved_site_count,
         observation_count=observation_count,
         resolutions_materialized=resolutions_materialized,
+        value_resolved_site_count=value_resolved_site_count,
+        entity_merges=entity_merges,
         provisional=provisional,
         notes=tuple(extra_notes),
     )
@@ -399,6 +408,13 @@ def render_report_md(report: EvalReport, *, title: str = "Resolution eval report
     lines.append(f"- observations considered: {_na(report.observation_count)}")
     lines.append(f"- resolved sites / decisions: {_na(report.resolved_site_count)}")
     lines.append(f"- resolution envelopes materialized: {_na(report.resolutions_materialized)}")
+    if report.value_resolved_site_count is not None:
+        lines.append(
+            "- sites whose coordinates carry a §28 value decision (within each source's own "
+            f"record — NOT deduplication): {report.value_resolved_site_count}"
+        )
+    if report.entity_merges is not None:
+        lines.append(f"- entity-level merges (cross-source dedup): {report.entity_merges}")
     lines.append(f"- dedup ratio: {_na(report.dedup_ratio, fmt='.3f')}")
     lines.append("")
     if report.notes:
