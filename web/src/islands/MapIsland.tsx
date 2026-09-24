@@ -14,8 +14,12 @@
  * Honest coordinates (§19.4, SIG-GEO-008): the island draws ONLY the tier-reduced,
  * published `lat`/`lon` the data layer already carries — the same points the served
  * PMTiles are rendered from. It never has access to and never draws full-precision
- * geometry, and tier-3 / point-less assets are not passed in at all (they stay as
+ * geometry, and tier-3 / point-less assets are not in its payload at all (they stay as
  * the jurisdiction indicators the static page lists).
+ *
+ * National scale (P30.3, ADR-106): the points are FETCHED from the static
+ * `/map/points.json` (built from the same data seam) on hydration rather than inlined as
+ * props — ~225k located records would otherwise put tens of MB into the page HTML.
  *
  * Archivability (SIG-UI-038): the renderer is self-hosted maplibre-gl over a
  * background base style with NO third-party tile CDN. When the export bundle ships
@@ -34,26 +38,27 @@ import {
   AttributionControl,
   addProtocol,
   removeProtocol,
+  setWorkerUrl,
 } from "maplibre-gl";
 import type { StyleSpecification, MapGeoJSONFeature } from "maplibre-gl";
 import { Protocol } from "pmtiles";
 import "maplibre-gl/dist/maplibre-gl.css";
+// P30.3: maplibre-gl v6 resolves its worker as `./maplibre-gl-worker.mjs` next to its own
+// module — a file the Astro/Vite bundle never emits, so the GeoJSON worker 404'd and NO point
+// was ever drawn (the map showed an empty background). Bundle the worker (with the shared
+// chunk it imports) as one self-contained file and point maplibre at it explicitly.
+import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
+import { decodeIslandPoints } from "../lib/map";
+import type { IslandPoint, IslandPointsPayload } from "../lib/map";
 
 /** The minimal, already-tier-reduced asset shape the island draws (a MapAsset with a point). */
-export interface MapIslandAsset {
-  id: string;
-  label: string;
-  jurisdiction: string;
-  tier: number;
-  lat: number;
-  lon: number;
-  /** The published-precision disclosure (§19.4) — shown in the popup, never a raw figure. */
-  precision: string;
-}
+export type MapIslandAsset = IslandPoint;
 
 export interface MapIslandProps {
-  /** Locatable, tier-reduced assets (lat/lon non-null, tier ≠ 3) — the page pre-filters. */
-  assets: MapIslandAsset[];
+  /** The static points file (`/map/points.json`) — locatable, tier-reduced assets only. */
+  pointsUrl: string;
+  /** How many points the file carries (for the canvas label before the fetch resolves). */
+  pointCount: number;
   /** The ODbL / SIG attribution line rendered in the map control (SIG-GEO-013, §42.3). */
   attribution: string;
   /** The belief-pinned citation permalink for the surface (SIG-UI-035). */
@@ -102,13 +107,16 @@ function backgroundStyle(): StyleSpecification {
 }
 
 export default function MapIsland({
-  assets,
+  pointsUrl,
+  pointCount,
   attribution,
   citationHref,
   hasBasemapTiles,
 }: MapIslandProps): ReactElement {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [ready, setReady] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const [drawn, setDrawn] = useState(false);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -116,14 +124,16 @@ export default function MapIsland({
 
     // Register the self-hosted static PMTiles protocol (SIG-UI-038) so a basemap
     // archive can be layered in when the export ships one. No network by default.
+    setWorkerUrl(maplibreWorkerUrl);
     const protocol = new Protocol();
     addProtocol("pmtiles", protocol.tile);
 
     const map = new MapLibreMap({
       container,
       style: backgroundStyle(),
-      center: assets.length > 0 ? [assets[0]!.lon, assets[0]!.lat] : [-97.5, 39],
-      zoom: assets.length > 0 ? 9 : 3,
+      // A national view; the reader zooms in (the clusters show where the records are).
+      center: [-97.5, 39],
+      zoom: 3,
       attributionControl: false,
       // Keyboard operability (WCAG 2.2 AA): arrow-pan / +- zoom are on by default;
       // the container is focusable and named below so a keyboard user can drive it.
@@ -134,7 +144,26 @@ export default function MapIsland({
       "bottom-right",
     );
 
-    map.on("load", () => {
+    const abort = new AbortController();
+    const pointsReady: Promise<MapIslandAsset[]> = fetch(pointsUrl, { signal: abort.signal })
+      .then((r) => {
+        if (!r.ok) throw new Error(`${pointsUrl}: HTTP ${r.status}`);
+        return r.json() as Promise<IslandPointsPayload>;
+      })
+      .then(decodeIslandPoints);
+    // Handled here too, so a map that never fires `load` (e.g. no WebGL) or an unmount
+    // mid-fetch leaves no unhandled rejection; the `load` handler still awaits the result.
+    pointsReady.catch(() => setFailed(true));
+
+    map.on("load", async () => {
+      let assets: MapIslandAsset[];
+      try {
+        assets = await pointsReady;
+      } catch {
+        // The table below is the full, archivable surface; the island degrades honestly.
+        setFailed(true);
+        return;
+      }
       if (hasBasemapTiles) {
         // Layer in the self-hosted OSM basemap when the export ships it. A missing
         // archive fires a non-fatal error event; the points still render.
@@ -234,13 +263,17 @@ export default function MapIsland({
       canvas.setAttribute("tabindex", "0");
       canvas.setAttribute(
         "aria-label",
-        `Interactive map of ${assets.length} located surveillance assets. ` +
+        `Interactive map of ${assets.length} located surveillance records. ` +
           "The full list, including assets without a published point, is in the table below.",
       );
       setReady(true);
+      // Evidence the points actually reached the renderer (the worker loaded + the source
+      // tiled) — not merely that MapLibre initialised (P30.3: it once hydrated with 0 drawn).
+      map.once("idle", () => setDrawn(map.querySourceFeatures(SIG_SOURCE).length > 0));
     });
 
     return () => {
+      abort.abort();
       map.remove();
       try {
         removeProtocol("pmtiles");
@@ -259,6 +292,9 @@ export default function MapIsland({
       aria-label="Interactive surveillance-infrastructure map (progressive enhancement; the full data is in the table below)"
       data-testid="map-island"
       data-ready={ready ? "true" : "false"}
+      data-failed={failed ? "true" : "false"}
+      data-drawn={drawn ? "true" : "false"}
+      data-point-count={pointCount}
       ref={containerRef}
     />
   );

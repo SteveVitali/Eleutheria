@@ -35,6 +35,9 @@ test.describe("interactive map island (AC1, AC3)", () => {
     const island = page.getByTestId("map-island");
     await expect(island).toBeVisible();
     await expect(island).toHaveAttribute("data-ready", "true", { timeout: 20_000 });
+    // The points actually reach the renderer (the MapLibre worker loads + the source tiles) —
+    // P30.3: it previously hydrated with the worker 404ing and nothing drawn.
+    await expect(island).toHaveAttribute("data-drawn", "true", { timeout: 30_000 });
     // A real MapLibre canvas is present (the interactive renderer, not the static SVG).
     await expect(page.locator(".maplibregl-canvas")).toBeVisible();
     // Pan/zoom controls are operable.
@@ -43,6 +46,22 @@ test.describe("interactive map island (AC1, AC3)", () => {
     await expect(page.locator(".maplibregl-ctrl-attrib")).toContainText("OpenStreetMap");
     // The tabular equivalent is NOT removed — progressive enhancement (SIG-UI-050).
     await expect(page.getByTestId("map-asset-row").first()).toBeVisible();
+  });
+
+  test("fetches its points from the static /map/points.json, not inline props (P30.3)", async ({ page, request }) => {
+    const resp = await request.get("/map/points.json");
+    expect(resp.ok()).toBe(true);
+    const payload = await resp.json();
+    expect(payload.schema).toBe("sig/map-points/1");
+    expect(payload.count).toBeGreaterThan(0);
+    expect(payload.rows).toHaveLength(payload.count);
+    // The rendering data carries the OSM notice (ODbL 4.4(b) produced work, ADR-106).
+    expect(payload.attribution).toContain("OpenStreetMap");
+    // The page itself does not inline the point list (national scale stays light).
+    const html = (await (await page.goto("/map/"))?.text()) ?? "";
+    expect(html).toContain('pointsUrl');
+    expect(html).not.toContain('"assets"');
+    await expect(page.getByTestId("map-island")).toHaveAttribute("data-point-count", String(payload.count));
   });
 });
 

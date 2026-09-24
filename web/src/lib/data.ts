@@ -24,7 +24,7 @@
  * identical in both modes.
  */
 
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { DOSSIERS } from "./dossier-fixture";
 import { JURISDICTION_DOSSIERS } from "./dossier-jurisdiction-fixture";
@@ -42,6 +42,7 @@ import type { CorrectionEntry } from "./corrections";
 import type { ResearchTaskCard, JurisdictionClaim } from "./research-queue";
 import type { ProvenanceSummary } from "./provenance";
 import type { HostileReaderReview } from "./editorial";
+import type { CompartmentTileSource } from "./map-tiles";
 import type { MapSite, GraphNode, GraphEdge, EntityFixture, AsOfEcho } from "./fixtures";
 import { AS_OF, RULESET_VERSION } from "./fixtures";
 
@@ -131,7 +132,15 @@ export function getDossiers(): Dossier[] {
   // SIG-PUB-017 publication-adapter *demonstrations* the shell ships regardless of
   // data source (they show the jurisdiction-conditional withholding, not export
   // data), so they render in both modes and the e2e/a11y surface is identical.
-  return [...(parsed as Dossier[]), ...JURISDICTION_DOSSIERS];
+  // P30.3: the SIG-PUB-017 jurisdiction DEMONSTRATIONS (Paris / Brussels fixture dossiers)
+  // carry demo facts; a real-data build never lists them as dossiers (§3.1). The P27.5
+  // fixture-export harness ships them as an optional presentation artifact instead.
+  return [...(parsed as Dossier[]), ...jurisdictionDemos()];
+}
+
+/** The SIG-PUB-017 demo dossiers in export mode: only when the bundle ships them (P30.3). */
+function jurisdictionDemos(): Dossier[] {
+  return readPresentation<Dossier[]>("jurisdiction_dossiers", []);
 }
 
 /**
@@ -324,7 +333,7 @@ export function getDossierIndex(): DossierIndexRow[] {
     // index echoes them too and the surface is identical in both modes.
     return [
       ...rows,
-      ...JURISDICTION_DOSSIERS.map((d) => ({
+      ...jurisdictionDemos().map((d) => ({
         slug: d.slug,
         subject_label: d.subject_label,
         jurisdiction: d.jurisdiction,
@@ -369,6 +378,33 @@ interface ReproducibilityInputs {
  * surface's canonical origin, permalink and citation are genuinely citable rather
  * than demo values (ADR-093 §5).
  */
+/**
+ * The per-licence-compartment tile archives the export ships (P30.3, ADR-106): every
+ * manifest artifact under `web/tiles/` ending `-sites.pmtiles`, with its ONE licence. The
+ * committed fixtures and a jurisdiction export (one `sig-infrastructure.pmtiles`) yield `[]`,
+ * leaving the committed style untouched.
+ */
+export function getCompartmentTileSources(): CompartmentTileSource[] {
+  if (dataSource() === "fixtures") return [];
+  const path = `${exportDir()}/manifest.json`;
+  let parsed: { artifacts?: Array<{ path?: string; compartment?: string; license?: string }> };
+  try {
+    parsed = JSON.parse(readFileSync(path, "utf-8"));
+  } catch (cause) {
+    throw new Error(`SIG_DATA_SOURCE=export but the export manifest is unreadable: ${path}`, {
+      cause,
+    });
+  }
+  return (parsed.artifacts ?? [])
+    .filter((a) => typeof a.path === "string" && /^web\/tiles\/[^/]+-sites\.pmtiles$/.test(a.path))
+    .map((a) => ({
+      compartment: String(a.compartment),
+      license: String(a.license),
+      path: `/tiles/${a.path!.slice("web/tiles/".length)}`,
+    }))
+    .sort((x, y) => x.compartment.localeCompare(y.compartment));
+}
+
 export function getSiteMetadata(): SiteMetadata {
   if (dataSource() === "fixtures") {
     return { asOf: AS_OF, rulesetVersion: RULESET_VERSION };
@@ -463,22 +499,82 @@ export function capRows<T>(rows: readonly T[], max: number = MAX_TABLE_ROWS): Ca
 // --------------------------------------------------------------------------- //
 
 /** National-zoom density bins for the map (presentation analytic; see D-P27.5-1). */
+/**
+ * P30.3 — an OPTIONAL presentation artifact at `<exportDir>/web/presentation/<name>.json`.
+ * The committed presentation constants below are OKC DEMO values; a real-data build must
+ * never render them as data (§3.1). No `--from-spine` export emits these analytics yet
+ * (D-P27.5-1), so in export mode an ABSENT artifact yields the honest empty `fallback` (each
+ * page shows its empty state); the P27.5 fixture-export harness writes them so the export-mode
+ * test suite still exercises the full surfaces. A PRESENT but malformed file fails loud.
+ */
+function readPresentation<T>(name: string, fallback: T): T {
+  const path = `${exportDir()}/web/presentation/${name}.json`;
+  if (!existsSync(path)) return fallback;
+  try {
+    return JSON.parse(readFileSync(path, "utf-8")) as T;
+  } catch (cause) {
+    throw new Error(`${path}: not valid JSON`, { cause });
+  }
+}
+
+/**
+ * The site-wide "How we know this" default (SIG-UI-044). Fixtures mode → `undefined` (the
+ * component falls back to the committed worked-OKC `DEFAULT_PROVENANCE`). Export mode (P30.3)
+ * → a summary DERIVED from the export, so no national page carries the demo corpus's figures:
+ * the published evidence artifacts, the distinct sources they come from, the ruleset the site
+ * pins, and "not yet human-reviewed" (claim-level evidence is machine-ingested). Evidence
+ * tiers (W1–W3) are not computed for the national corpus yet, so the distribution is reported
+ * honestly as `untiered`; no dated evidence range is recorded (freshness dates are
+ * `not-recorded`), so `date_range` is null. A `presentation/site_provenance.json` overrides.
+ */
+export function getSiteProvenance(): ProvenanceSummary | undefined {
+  if (dataSource() === "fixtures") return undefined;
+  const override = readPresentation<ProvenanceSummary | null>("site_provenance", null);
+  if (override) return override;
+  const artifacts = getEvidence().artifacts;
+  const sources = new Set(artifacts.map((a) => (a as { source?: string }).source ?? ""));
+  sources.delete("");
+  return {
+    artifact_count: artifacts.length,
+    tier_distribution: { untiered: artifacts.length },
+    source_independence_count: sources.size,
+    date_range: null,
+    rules_applied: [getSiteMetadata().rulesetVersion],
+    human_review_status: "unreviewed",
+  };
+}
+
 export function getMapDensityBins(): DensityBin[] {
+  // P30.3: the committed bins are OKC DEMO values; a real-data build must never show them
+  // as data (§3.1). No export emits density bins yet (D-P27.5-1) → honest empty state.
+  if (dataSource() === "export") return readPresentation<DensityBin[]>("density_bins", []);
   return DENSITY_BINS;
 }
 
 /** Centrality/hub statistics for the network explorer (presentation analytic; D-P27.5-1). */
 export function getNetworkCentrality(): CentralityStatistic[] {
+  // P30.3: demo centrality (OKC PD, Flock …) is never shown as national data (D-P27.5-1).
+  if (dataSource() === "export") return readPresentation<CentralityStatistic[]>("centrality", []);
   return CENTRALITY_STATS;
 }
 
 /** The entity the network explorer centers its ego view on by default (SIG-UI-022). */
 export function getNetworkFocusEntityId(): string {
+  // P30.3: in a real-data build the focus is a REAL node of the exported network (or none).
+  if (dataSource() === "export") {
+    const focus = readPresentation<{ id?: string } | null>("focus_entity", null);
+    return focus?.id ?? getNetwork().nodes[0]?.id ?? "";
+  }
   return FOCUS_ENTITY_ID;
 }
 
-/** The upcoming decision the evidence recommender ranks for (§39.5a). */
-export function getDecisionPoint(): DecisionPoint {
+/**
+ * The upcoming decision the evidence recommender ranks for (§39.5a). `null` in a real-data
+ * build: the committed decision point is an OKC DEMO ("OKCPD ALPR contract renewal"), and no
+ * export emits a tracked decision yet — the watch shows an honest "none tracked" (P30.3).
+ */
+export function getDecisionPoint(): DecisionPoint | null {
+  if (dataSource() === "export") return readPresentation<DecisionPoint | null>("decision_point", null);
   return DECISION_POINT;
 }
 
@@ -488,22 +584,33 @@ export function getCaptureDiff(): [Capture, Capture] {
 }
 
 /** The provenance summary for the corrections surface ("How we know this", SIG-UI-044). */
-export function getCorrectionsProvenance(): ProvenanceSummary {
+export function getCorrectionsProvenance(): ProvenanceSummary | undefined {
+  // P30.3: the committed summary describes the DEMO corrections, not the export's.
+  if (dataSource() === "export") {
+    return readPresentation<ProvenanceSummary | null>("corrections_provenance", null) ?? undefined;
+  }
   return CORRECTIONS_PROVENANCE;
 }
 
 /** The provenance summary for the research-queue surface (SIG-UI-044). */
-export function getResearchQueueProvenance(): ProvenanceSummary {
+export function getResearchQueueProvenance(): ProvenanceSummary | undefined {
+  if (dataSource() === "export") {
+    return readPresentation<ProvenanceSummary | null>("research_queue_provenance", null) ?? undefined;
+  }
   return RESEARCH_QUEUE_PROVENANCE;
 }
 
 /** Live jurisdiction claims for the research queue (§33.5, priority not exclusivity). */
 export function getJurisdictionClaims(): JurisdictionClaim[] {
+  if (dataSource() === "export") return readPresentation<JurisdictionClaim[]>("jurisdiction_claims", []);
   return JURISDICTION_CLAIMS;
 }
 
 /** The as-of date the research queue is rendered at. */
 export function getQueueAsOf(): string {
+  if (dataSource() === "export") {
+    return readPresentation<string | null>("queue_as_of", null) ?? getSiteMetadata().asOf.as_of_world;
+  }
   return QUEUE_AS_OF;
 }
 

@@ -16,7 +16,7 @@
 // blank table (SIG-UI-007, §3.1).
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import EmptyState from "../../components/EmptyState.astro";
-import { assertFreshnessRow } from "../../lib/metrics";
+import { assertFreshnessRow, isNotRecorded } from "../../lib/metrics";
 import type { FreshnessRow } from "../../lib/metrics";
 import { getFreshness, capRows } from "../../lib/data";
 import { sortRows, sortHref, summariseBy } from "../../lib/tables";
@@ -73,6 +73,13 @@ const freshnessRows = capRows(sortedRows);
     volatility</strong>, not in absolute days — a two-year-old contract date is fresh; a
     two-year-old active count is historical (§32.4).
   </p>
+  {ALL_ROWS.some((r) => isNotRecorded(r.last_successful_run) || isNotRecorded(r.last_content_change)) && (
+    <p class="sig-table-note" data-testid="not-recorded-note">
+      <strong>"Not recorded"</strong> means the record itself holds no value for that field —
+      for example an ingest run whose completion was never written back, or a source that
+      publishes no observation dates. SIG shows the gap rather than guessing a date (§3.1).
+    </p>
+  )}
 
   {ALL_ROWS.length === 0 ? (
     <EmptyState surface="freshness" />
@@ -134,8 +141,12 @@ const freshnessRows = capRows(sortedRows);
             {freshnessRows.rows.map((row) => (
               <tr data-testid="freshness-row" data-source={row.source} data-status={row.status}>
                 <th scope="row">{row.source}</th>
-                <td><time datetime={row.last_successful_run}>{row.last_successful_run}</time></td>
-                <td><time datetime={row.last_content_change}>{row.last_content_change}</time></td>
+                <td>{isNotRecorded(row.last_successful_run)
+                  ? <span class="sig-not-recorded" data-testid="not-recorded">not recorded</span>
+                  : <time datetime={row.last_successful_run}>{row.last_successful_run}</time>}</td>
+                <td>{isNotRecorded(row.last_content_change)
+                  ? <span class="sig-not-recorded" data-testid="not-recorded">not recorded</span>
+                  : <time datetime={row.last_content_change}>{row.last_content_change}</time>}</td>
                 <td data-testid="freshness-status">{row.status}</td>
                 <td data-testid="stale-count">{row.stale_entity_count}</td>
                 <td>{row.volatility_class}</td>

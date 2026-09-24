@@ -148,5 +148,44 @@ export function assertServingContract(style: MapLibreStyle = PUBLIC_MAP_STYLE): 
   }
 }
 
+/** One per-compartment tile archive the national export ships (P30.3, ADR-106). */
+export interface CompartmentTileSource {
+  /** The licence compartment (e.g. `osm_physical`). */
+  compartment: string;
+  /** The archive's ONE SPDX licence. */
+  license: string;
+  /** Same-origin path, e.g. `/tiles/osm_physical-sites.pmtiles`. */
+  path: string;
+}
+
+/** The attribution a compartment's tile source carries (ODbL → the OSM notice, §42.3). */
+export function compartmentAttribution(license: string): string {
+  return license === "ODbL-1.0" ? OSM_ATTRIBUTION : `${SIG_ATTRIBUTION} (${license})`;
+}
+
+/**
+ * The public style for a build: the committed style when no per-compartment archives
+ * exist (fixtures / a jurisdiction export), else the basemap plus ONE source per licence
+ * compartment, each with its own attribution — the layers are composited on one map (an
+ * ODbL 4.4(b) produced work) but never merged into one archive (ADR-106).
+ */
+export function buildPublicMapStyle(tiles: readonly CompartmentTileSource[]): MapLibreStyle {
+  if (tiles.length === 0) return PUBLIC_MAP_STYLE;
+  const sources: Record<string, MapLibreVectorSource> = {
+    osm_basemap: PUBLIC_MAP_STYLE.sources["osm_basemap"]!,
+  };
+  const layers: MapLibreStyle["layers"] = [PUBLIC_MAP_STYLE.layers[0]!];
+  for (const t of tiles) {
+    const id = `sig_${t.compartment}`;
+    sources[id] = {
+      type: "vector",
+      url: `${PMTILES_PROTOCOL}${t.path}`,
+      attribution: compartmentAttribution(t.license),
+    };
+    layers.push({ id: `sig-sites-${t.compartment}`, type: "circle", source: id, "source-layer": "sites" });
+  }
+  return { ...PUBLIC_MAP_STYLE, sources, layers };
+}
+
 /** The attribution line rendered into the static HTML and print (SIG-GEO-013). */
 export const MAP_ATTRIBUTION_LINE = `${OSM_ATTRIBUTION} · ${SIG_ATTRIBUTION}`;

@@ -414,3 +414,112 @@ export type SharingEdgeView = (typeof SHARING_EDGE_VIEWS)[number];
 
 /** Default to an ego network from a selected entity — never a national hairball. */
 export const DEFAULT_SHARING_EDGE_VIEW: SharingEdgeView = "ego";
+
+// --- The interactive map island's point payload (P30.3, ADR-106) -----------
+
+/**
+ * One point the opt-in map island draws: an already tier-reduced, publishable asset
+ * (§19.4) — the same `locatable` set the tabular equivalent renders.
+ */
+export interface IslandPoint {
+  id: string;
+  label: string;
+  jurisdiction: string;
+  tier: number;
+  lat: number;
+  lon: number;
+  precision: string;
+}
+
+/** The compact row: `[id, label-or-"" (when equal to id), lat, lon, jurisdictionIdx, tier, precisionIdx]`. */
+export type IslandPointRow = [string, string, number, number, number, number, number];
+
+/**
+ * The static `/map/points.json` payload the island FETCHES on hydration (P30.3). At national
+ * scale (~225k located records) inlining the points as island props would put tens of MB into
+ * the page HTML; a separate static file keeps `/map/` light, is fetched only when JavaScript
+ * runs, and leaves the no-JS tabular equivalent untouched (SIG-UI-037/050). It is rendering
+ * data of the public map (an ODbL 4.4(b) produced work, ADR-106) and says so: `attribution`
+ * carries the OpenStreetMap notice; the licence-separated datasets are the export compartments.
+ */
+export interface IslandPointsPayload {
+  schema: "sig/map-points/1";
+  attribution: string;
+  licenceNote: string;
+  count: number;
+  jurisdictions: string[];
+  precisions: string[];
+  rows: IslandPointRow[];
+}
+
+export const ISLAND_POINTS_LICENCE_NOTE =
+  "Rendering data for the SIG public map (a produced work drawing on every licence " +
+  "compartment). OpenStreetMap-derived points are © OpenStreetMap contributors under ODbL-1.0. " +
+  "The downloadable, licence-separated datasets (one licence per compartment) are listed in " +
+  "the export's LICENCES.json.";
+
+/** Round a published coordinate for the renderer only (6 dp ≈ 0.1 m — no precision implied beyond the source). */
+function round6(v: number): number {
+  return Math.round(v * 1e6) / 1e6;
+}
+
+/**
+ * Encode the island's points (locatable assets with a published point only — tier-3 and
+ * point-less assets never reach the island, they stay jurisdiction indicators, SIG-UI-020).
+ */
+export function encodeIslandPoints(
+  assets: readonly MapAsset[],
+  attribution: string,
+): IslandPointsPayload {
+  const jurisdictions: string[] = [];
+  const precisions: string[] = [];
+  const jIdx = new Map<string, number>();
+  const pIdx = new Map<string, number>();
+  const intern = (v: string, list: string[], idx: Map<string, number>): number => {
+    let i = idx.get(v);
+    if (i === undefined) {
+      i = list.length;
+      list.push(v);
+      idx.set(v, i);
+    }
+    return i;
+  };
+  const rows: IslandPointRow[] = [];
+  for (const a of assets) {
+    if (!isLocatable(a) || a.lat === null || a.lon === null) continue;
+    rows.push([
+      a.id,
+      a.label === a.id ? "" : a.label,
+      round6(a.lat),
+      round6(a.lon),
+      intern(a.jurisdiction, jurisdictions, jIdx),
+      a.tier,
+      intern(a.precision, precisions, pIdx),
+    ]);
+  }
+  return {
+    schema: "sig/map-points/1",
+    attribution,
+    licenceNote: ISLAND_POINTS_LICENCE_NOTE,
+    count: rows.length,
+    jurisdictions,
+    precisions,
+    rows,
+  };
+}
+
+/** Decode the payload back into points (fails loud on a foreign schema). */
+export function decodeIslandPoints(payload: IslandPointsPayload): IslandPoint[] {
+  if (payload?.schema !== "sig/map-points/1" || !Array.isArray(payload.rows)) {
+    throw new Error("map points: unexpected payload schema");
+  }
+  return payload.rows.map(([id, label, lat, lon, j, tier, p]) => ({
+    id,
+    label: label === "" ? id : label,
+    lat,
+    lon,
+    jurisdiction: payload.jurisdictions[j] ?? "",
+    tier,
+    precision: payload.precisions[p] ?? "",
+  }));
+}

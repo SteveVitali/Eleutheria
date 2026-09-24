@@ -32,7 +32,6 @@ import { MAP_ATTRIBUTION_LINE } from "../lib/map-tiles";
 import { getMapSites, getMapDensityBins, capRows, getSiteMetadata, dataSource, exportDir } from "../lib/data";
 import { beliefPinnedPermalink } from "../lib/citation";
 import MapIsland from "../islands/MapIsland";
-import type { MapIslandAsset } from "../islands/MapIsland";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import "../styles/islands.css";
@@ -43,6 +42,8 @@ const MAP_ASSETS = getMapSites();
 const DENSITY_BINS = getMapDensityBins();
 
 const { locatable, jurisdictionIndicators } = partitionByLocatability(MAP_ASSETS);
+// id → asset, so the indicator list below is linear at national scale (not a find per id).
+const ASSET_BY_ID = new Map(MAP_ASSETS.map((a) => [a.id, a]));
 const maxCount = Math.max(1, ...DENSITY_BINS.map((b) => b.deviceCount));
 const bins = DENSITY_BINS.map((b) => ({ bin: b, render: renderBin(b, maxCount) }));
 
@@ -64,17 +65,9 @@ const cell = 64;
 // tier-reduced, publishable points (§19.4) — the same `locatable` set the table
 // below renders — so it can never imply more precision than SIG published, and it is
 // a progressive enhancement layered over that table, never a replacement (SIG-UI-050).
-const ISLAND_ASSETS: MapIslandAsset[] = locatable
-  .filter((a) => a.lat !== null && a.lon !== null)
-  .map((a) => ({
-    id: a.id,
-    label: a.label,
-    jurisdiction: a.jurisdiction,
-    tier: a.tier,
-    lat: a.lat as number,
-    lon: a.lon as number,
-    precision: a.precision,
-  }));
+// P30.3 (ADR-106): at national scale the island FETCHES those points from the static
+// /map/points.json (built from the same data seam) instead of carrying them as props.
+const ISLAND_POINT_COUNT = locatable.filter((a) => a.lat !== null && a.lon !== null).length;
 const meta = getSiteMetadata();
 const mapCitationHref = beliefPinnedPermalink({
   path: "/map/",
@@ -104,10 +97,11 @@ const hasBasemapTiles =
        tabular equivalent below is the full, usable surface (SIG-UI-037/050). -->
   <section class="sig-island sig-map-island" aria-labelledby="map-island-heading" data-testid="map-island-section">
     <h2 id="map-island-heading">Interactive map</h2>
-    {ISLAND_ASSETS.length > 0 ? (
+    {ISLAND_POINT_COUNT > 0 ? (
       <MapIsland
         client:only="react"
-        assets={ISLAND_ASSETS}
+        pointsUrl="/map/points.json"
+        pointCount={ISLAND_POINT_COUNT}
         attribution={MAP_ATTRIBUTION_LINE}
         citationHref={mapCitationHref}
         hasBasemapTiles={hasBasemapTiles}
@@ -300,7 +294,7 @@ const hasBasemapTiles =
         published point.
         <ul>
           {j.assetIds.map((id) => {
-            const asset = MAP_ASSETS.find((a) => a.id === id)!;
+            const asset = ASSET_BY_ID.get(id)!;
             return (
               <li>
                 {asset.label} — {asset.precision}
