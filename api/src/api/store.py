@@ -27,6 +27,48 @@ from reconcile.resolve import Claim
 from reconcile.ruleset import Ruleset
 from reconcile.snapshot_diff import Capture
 
+# --- /v1/search bounds (P31.1, ADR-108) ----------------------------------------
+#: The shortest query ``/v1/search`` accepts (after trimming): it must contain a run
+#: of at least this many letters/digits. Three is the trigram length: ``pg_trgm``
+#: extracts trigrams per alphanumeric word, so a term with no such run (``ab``,
+#: ``a-b``, ``a b``) yields no trigram, cannot use the index, and would scan the
+#: whole index. An empty query stays a 200 with no hits.
+SEARCH_MIN_QUERY_LENGTH = 3
+#: The page size ``/v1/search`` serves when the caller does not ask for one.
+SEARCH_DEFAULT_LIMIT = 50
+#: The largest page a caller may ask for (a larger ``limit`` is a 422).
+SEARCH_MAX_LIMIT = 200
+
+
+class StoreUnavailable(RuntimeError):
+    """The backing store could not answer (database down, pool exhausted).
+
+    The API maps it to 503: a transient outage is never reported as a 500 bug
+    (P31.1, D-P30.4-1).
+    """
+
+
+class StoreQueryTimeout(StoreUnavailable):
+    """A bounded query ran past its statement timeout (``/v1/search``, P31.1)."""
+
+
+class InvalidSearchCursor(ValueError):
+    """A ``/v1/search`` ``cursor`` the store cannot have issued (the API maps it to 422)."""
+
+
+@dataclass(frozen=True)
+class StoreHealth:
+    """What ``GET /health`` reports: can the store answer a cheap read right now?
+
+    ``pool`` carries the connection-pool counters for a pooled store (``None`` for a
+    store with no pool), so pool usage is observable without a heavy query.
+    """
+
+    ok: bool
+    backend: str
+    detail: str = ""
+    pool: dict[str, int] | None = None
+
 
 @dataclass(frozen=True)
 class StoredClaim:
@@ -127,7 +169,20 @@ class ReadStore(Protocol):
 
     def captures(self) -> list[Capture]: ...
 
-    def search(self, query: str) -> list[EntityRecord]: ...
+    def search(
+        self, query: str, *, limit: int = SEARCH_DEFAULT_LIMIT, after: str | None = None
+    ) -> list[EntityRecord]:
+        """Up to ``limit`` entities matching ``query``, ordered by ``entity_id``.
+
+        Keyset pagination (P31.1): only entities whose ``entity_id`` sorts after
+        ``after`` are returned. Raises :class:`InvalidSearchCursor` for an ``after``
+        the store could not have issued.
+        """
+        ...
+
+    def health(self) -> StoreHealth:
+        """A cheap readiness check for ``GET /health`` (no heavy query)."""
+        ...
 
     def dossier(self, scope: str) -> DossierRecord | None: ...
 
@@ -248,16 +303,23 @@ class InMemoryStore:
     def captures(self) -> list[Capture]:
         return list(self._snapshot_captures)
 
-    def search(self, query: str) -> list[EntityRecord]:
+    def search(
+        self, query: str, *, limit: int = SEARCH_DEFAULT_LIMIT, after: str | None = None
+    ) -> list[EntityRecord]:
         q = query.strip().lower()
         if not q:
             return []
         hits = [
             e
             for e in self._entities.values()
-            if q in (e.label or "").lower() or q in e.entity_id.lower()
+            if (q in (e.label or "").lower() or q in e.entity_id.lower())
+            and (after is None or e.entity_id > after)
         ]
-        return sorted(hits, key=lambda e: e.entity_id)
+        return sorted(hits, key=lambda e: e.entity_id)[:limit]
+
+    def health(self) -> StoreHealth:
+        # Everything is in memory: there is no connection that could be down.
+        return StoreHealth(ok=True, backend="in-memory")
 
     def dossier(self, scope: str) -> DossierRecord | None:
         return self._dossiers.get(scope)

@@ -306,3 +306,462 @@ def test_watermark_keyed_serve_path_discloses_and_invalidates(
         item = client.get(f"/v1/contradiction/{sorted(ids3)[0]}").json()
         assert item["spine_watermark"] == third["spine_watermark"]
     store.close()
+
+
+# =============================================================================
+# P31.1 (HARDEN.1, ADR-108): DB resilience + bounded search over real PG
+# =============================================================================
+
+_NEEDLE = "p31needle"
+
+
+class _CountingConn:
+    """Proxy that counts every statement a pooled read executes."""
+
+    def __init__(self, conn: Any, counter: _CountingPool) -> None:
+        self._conn = conn
+        self._counter = counter
+
+    def execute(self, *args: Any, **kwargs: Any) -> Any:
+        self._counter.statements += 1
+        return self._conn.execute(*args, **kwargs)
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._conn, name)
+
+
+class _CountingPool:
+    """Wraps the store's real pool: counts checkouts and statements."""
+
+    def __init__(self, pool: Any) -> None:
+        self._pool = pool
+        self.statements = 0
+        self.checkouts = 0
+
+    def connection(self, timeout: float | None = None) -> Any:
+        from contextlib import contextmanager
+
+        @contextmanager
+        def _cm() -> Any:
+            self.checkouts += 1
+            with self._pool.connection() as conn:
+                yield _CountingConn(conn, self)
+
+        return _cm()
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._pool, name)
+
+
+def _terminate(dsn: str, application_name: str) -> list[int]:
+    """Kill every backend carrying ``application_name``; wait until they are gone."""
+    import time
+
+    with psycopg.connect(dsn, autocommit=True) as admin:
+        pids = [
+            int(r[0])
+            for r in admin.execute(
+                "SELECT pid FROM pg_stat_activity WHERE application_name = %s", (application_name,)
+            ).fetchall()
+        ]
+        for pid in pids:
+            admin.execute("SELECT pg_terminate_backend(%s)", (pid,))
+        deadline = time.time() + 10
+        while time.time() < deadline:
+            left = admin.execute(
+                "SELECT count(*) FROM pg_stat_activity WHERE pid = ANY(%s)", (pids,)
+            ).fetchone()[0]
+            if left == 0:
+                break
+            time.sleep(0.05)
+    return pids
+
+
+def test_a_terminated_backend_does_not_500_the_next_request(seeded: dict[str, Any]) -> None:
+    """D-P30.4-1: kill the store's backend between two requests; the second is 200.
+
+    The pre-P31.1 store held ONE long-lived connection and answered every later
+    request with 500 (``server closed the connection unexpectedly``) until the
+    process was recycled. Now the next checkout finds the connection dead, the
+    pool replaces it, and ``SET ROLE`` is re-applied on the replacement.
+    """
+    import uuid
+
+    from api.app import create_app
+    from api.store_pg import PgReadStore
+    from starlette.testclient import TestClient
+
+    app_name = f"sig-api-p31-{uuid.uuid4().hex[:8]}"
+    store = PgReadStore(
+        seeded["dsn"], role="sig_read_public", application_name=app_name, pool_max=2
+    )
+    ent = seeded["entity_id"]
+    try:
+        with TestClient(create_app(store)) as client:
+            before = client.get(f"/v1/entity/deployment/{ent}")
+            assert before.status_code == 200, before.text
+
+            killed = _terminate(seeded["dsn"], app_name)
+            assert killed, "the store must have held at least one backend to kill"
+
+            after = client.get(f"/v1/entity/deployment/{ent}")
+            assert after.status_code == 200, f"reconnect failed: {after.status_code} {after.text}"
+            assert after.json()["entity_id"] == before.json()["entity_id"]
+            assert client.get("/health").json()["status"] == "ok"
+
+            # A NEW backend serves, still under the read role (configure re-ran).
+            with psycopg.connect(seeded["dsn"], autocommit=True) as admin:
+                live = {
+                    int(r[0])
+                    for r in admin.execute(
+                        "SELECT pid FROM pg_stat_activity WHERE application_name = %s",
+                        (app_name,),
+                    ).fetchall()
+                }
+            assert live and not (live & set(killed)), "the killed backends were replaced"
+            role = store._run_read(lambda: store._conn.execute("SELECT current_user").fetchone()[0])
+            assert role == "sig_read_public", "SET ROLE must be re-applied on reconnect"
+    finally:
+        store.close()
+
+
+def test_a_connection_dropped_mid_read_is_retried_once(seeded: dict[str, Any]) -> None:
+    """With the checkout check bypassed, the dead connection IS handed out; the
+    read still succeeds because ``_run_read`` retries once on a fresh one."""
+    import uuid
+
+    from api.store_pg import PgReadStore
+    from psycopg_pool import ConnectionPool
+
+    app_name = f"sig-api-p31-{uuid.uuid4().hex[:8]}"
+    store = PgReadStore(seeded["dsn"], application_name=app_name)
+    store._pool.close()
+    unchecked = ConnectionPool(
+        seeded["dsn"],
+        kwargs={"autocommit": True, "application_name": app_name},
+        min_size=1,
+        max_size=1,
+        check=None,  # no liveness check: the retry is the only defence
+        open=True,
+    )
+    unchecked.wait(timeout=10)
+    counting = _CountingPool(unchecked)
+    store._pool = counting  # type: ignore[assignment]
+    try:
+        assert store.stored_claim(seeded["claim_id"]) is not None
+        _terminate(seeded["dsn"], app_name)
+        counting.checkouts = 0
+        claim = store.stored_claim(seeded["claim_id"])
+        assert claim is not None, "the read answered after the drop"
+        assert counting.checkouts == 2, "exactly one retry on a fresh connection"
+    finally:
+        unchecked.close()
+
+
+@pytest.fixture(scope="module")
+def needles(seeded: dict[str, Any]) -> list[str]:
+    """30 entities whose identifier contains the needle, over 3 sources."""
+    from db.claim_sink import PgClaimSink
+
+    sink = PgClaimSink.from_dsn(
+        seeded["dsn"], connector_name="p31", connector_version="1.0.0", code_commit="p31.1"
+    )
+    sink.assert_claims(
+        [
+            {
+                "record_kind": "claim",
+                "subject_id": f"{_NEEDLE}:deployment:{i:02d}",
+                "predicate_id": _PREDICATE,
+                "value": i,
+                "raw_value": str(i),
+                "source_id": f"p31-src-{i % 3}",
+                "license": "CC-BY-4.0",
+                "source_attribution": f"P31.1 test source {i % 3}",
+                "evidence_genre": "news_article",
+                "observed_at": "2026-09-24",
+                "claim_id": f"p31-needle-{i:02d}",
+                "sys_period": "[x,)",
+            }
+            for i in range(30)
+        ]
+    )
+    with psycopg.connect(seeded["dsn"], autocommit=True) as conn:
+        return sorted(
+            str(r[0])
+            for r in conn.execute(
+                "SELECT DISTINCT entity_id FROM entity_identifier WHERE value LIKE %s",
+                (f"{_NEEDLE}:%",),
+            ).fetchall()
+        )
+
+
+def test_search_is_capped_paginated_and_consistent(
+    seeded: dict[str, Any], needles: list[str]
+) -> None:
+    """D-P30.4-2: the page is capped, the cursor walks every match exactly once, and
+    each hit's label/sources equal the per-entity reads the old N+1 loop issued."""
+    from api.app import create_app
+    from api.store_pg import PgReadStore
+    from starlette.testclient import TestClient
+
+    assert len(needles) == 30
+    store = PgReadStore(seeded["dsn"])
+    try:
+        with TestClient(create_app(store)) as client:
+            seen: list[str] = []
+            cursor = None
+            while True:
+                params: dict[str, Any] = {"q": _NEEDLE, "limit": 7}
+                if cursor:
+                    params["cursor"] = cursor
+                r = client.get("/v1/search", params=params)
+                assert r.status_code == 200, r.text
+                body = r.json()
+                assert len(body["results"]) <= 7 and body["limit"] == 7
+                seen.extend(x["entity_id"] for x in body["results"])
+                cursor = body["next_cursor"]
+                if cursor is None:
+                    break
+            assert seen == needles, "keyset pages cover every match once, in order"
+
+            bad = client.get("/v1/search", params={"q": _NEEDLE, "cursor": "not-a-cursor"})
+            assert bad.status_code == 422
+
+        page = store.search(_NEEDLE, limit=30)
+        for rec in page:
+            label, sources = store._run_read(
+                lambda rec=rec: (
+                    store._label_for(rec.entity_id),
+                    store._source_ids_for_entity(rec.entity_id),
+                )
+            )
+            assert rec.label == label, "set-based label == the per-entity rule"
+            assert list(rec.source_ids) == sources, "set-based sources == per-entity sources"
+        assert {s for rec in page for s in rec.source_ids} == {
+            "p31-src-0",
+            "p31-src-1",
+            "p31-src-2",
+        }
+    finally:
+        store.close()
+
+
+def test_search_statement_count_does_not_grow_with_the_page(
+    seeded: dict[str, Any], needles: list[str]
+) -> None:
+    """No N+1: a 3-row page and a 30-row page cost the same number of statements."""
+    from api.store_pg import PgReadStore
+
+    store = PgReadStore(seeded["dsn"])
+    counting = _CountingPool(store._pool)
+    store._pool = counting  # type: ignore[assignment]
+    try:
+        counts = {}
+        for limit in (3, 30):
+            counting.statements = 0
+            hits = store.search(_NEEDLE, limit=limit)
+            assert len(hits) == limit
+            counts[limit] = counting.statements
+        assert counts[3] == counts[30] == 4, f"timeout + match + labels + sources: {counts}"
+    finally:
+        counting._pool.close()
+
+
+def test_search_statement_timeout_is_a_503_and_does_not_leak(
+    seeded: dict[str, Any], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A search past its statement timeout is a 503 (never retried), and the
+    transaction-local timeout does not leak onto the pooled connection."""
+    import api.store_pg as store_pg
+    from api.app import create_app
+    from starlette.testclient import TestClient
+
+    slow = (
+        "SELECT NULL::uuid, NULL::text FROM pg_sleep(2) "
+        "WHERE %(pattern)s::text IS NOT NULL AND %(limit)s::int > 0"
+    )
+    monkeypatch.setattr(store_pg, "SEARCH_SQL", slow)
+    store = store_pg.PgReadStore(seeded["dsn"], search_timeout_ms=100, pool_max=1)
+    try:
+        with TestClient(create_app(store)) as client:
+            r = client.get("/v1/search", params={"q": _NEEDLE})
+            assert r.status_code == 503, r.text
+            # Same (only) pooled connection afterwards: no statement timeout leaked.
+            timeout = store._run_read(
+                lambda: store._conn.execute("SHOW statement_timeout").fetchone()[0]
+            )
+            assert timeout == "0"
+            assert client.get("/v1/crosswalk").status_code == 200
+    finally:
+        store.close()
+
+
+def test_search_plan_uses_the_trigram_index_at_scale(seeded: dict[str, Any]) -> None:
+    """The planner picks ``entity_identifier_value_trgm_idx`` for a selective term.
+
+    The seeded test spine is a handful of rows, where a scan is rightly cheapest.
+    So this loads 20,000 identifiers shaped like the hosted camera-registry ones
+    INSIDE a transaction, ANALYZEs, EXPLAINs the store's exact search statement
+    (planner settings untouched), and rolls everything back. The hosted plan over
+    247k identifiers is recorded in docs/build/runs/P31.1.md.
+    """
+    from api.store_pg import SEARCH_SQL, like_pattern
+
+    with psycopg.connect(seeded["dsn"]) as conn:  # a transaction, rolled back below
+        try:
+            conn.execute(
+                "WITH e AS (INSERT INTO entity(entity_type) "
+                "           SELECT 'deployment' FROM generate_series(1, 20000) "
+                "           RETURNING entity_id) "
+                "INSERT INTO entity_identifier(entity_id, scheme, value) "
+                "SELECT entity_id, 'sig.connector.subject', "
+                "       'traffic_camera:camreg_bulk:' || md5(entity_id::text) FROM e"
+            )
+            # A bulk insert lands in GIN's pending list (costed as a scan of that
+            # list) until VACUUM merges it; the hosted index is freshly BUILT, so
+            # merge it here to plan against the same shape.
+            conn.execute("SELECT gin_clean_pending_list('entity_identifier_value_trgm_idx')")
+            conn.execute("ANALYZE entity_identifier")
+            conn.execute("ANALYZE entity")
+            cur = psycopg.ClientCursor(conn)
+            cur.execute(
+                "EXPLAIN " + SEARCH_SQL,
+                {"pattern": like_pattern(_NEEDLE), "limit": 51},
+            )
+            plan = "\n".join(r[0] for r in cur.fetchall())
+        finally:
+            conn.rollback()
+    assert "entity_identifier_value_trgm_idx" in plan, plan
+    assert "Seq Scan on entity_identifier" not in plan, plan
+
+
+def test_the_compute_path_reconnects_too(seeded: dict[str, Any]) -> None:
+    """The annotation surface (pooled watermark read + dedicated compute
+    connection) answers 200 after the store's backends are killed."""
+    import uuid
+
+    from api.app import create_app
+    from api.store_pg import PgReadStore
+    from starlette.testclient import TestClient
+
+    app_name = f"sig-api-p31-{uuid.uuid4().hex[:8]}"
+    store = PgReadStore(seeded["dsn"], application_name=app_name, pool_max=2)
+    try:
+        with TestClient(create_app(store)) as client:
+            assert client.get("/v1/contradiction").status_code == 200
+            assert _terminate(seeded["dsn"], app_name), "a pooled backend existed"
+            store._annotation_cache = None  # force the dedicated-connection compute
+            r = client.get("/v1/contradiction")
+            assert r.status_code == 200, r.text
+            assert r.json()["contradictions"], "the served set is intact after reconnect"
+    finally:
+        store.close()
+
+
+def test_queued_annotation_requests_hold_no_pooled_connection(
+    seeded: dict[str, Any], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """While one request computes the annotation set (under the lock), others queue
+    on the lock WITHOUT a pooled connection, so plain reads keep being served."""
+    import threading
+    import time
+
+    from api.app import create_app
+    from api.store_pg import PgReadStore
+    from starlette.testclient import TestClient
+
+    store = PgReadStore(seeded["dsn"], pool_max=2, pool_timeout=3)
+    original = store._compute_on_read
+    started = threading.Event()
+
+    def _slow_compute(conn: Any) -> Any:
+        started.set()
+        time.sleep(3)
+        return original(conn)
+
+    monkeypatch.setattr(store, "_compute_on_read", _slow_compute)
+    try:
+        with TestClient(create_app(store)) as client:
+            results: list[int] = []
+            workers = [
+                threading.Thread(
+                    target=lambda: results.append(client.get("/v1/contradiction").status_code)
+                )
+                for _ in range(4)
+            ]
+            for w in workers:
+                w.start()
+            assert started.wait(10), "the compute started"
+            t0 = time.perf_counter()
+            plain = client.get("/v1/crosswalk")
+            elapsed = time.perf_counter() - t0
+            assert plain.status_code == 200, plain.text
+            assert elapsed < 2.5, f"a plain read waited {elapsed:.1f}s behind the lock queue"
+            for w in workers:
+                w.join(30)
+            assert results == [200, 200, 200, 200]
+            assert store.health().pool["requests_waiting"] == 0  # type: ignore[index]
+    finally:
+        store.close()
+
+
+def test_concurrent_mixed_reads_share_a_small_pool(seeded: dict[str, Any]) -> None:
+    """24 threads of mixed reads over a 2-connection pool: all succeed, and every
+    read ran on the connection its own thread checked out."""
+    from concurrent.futures import ThreadPoolExecutor
+
+    from api.store_pg import PgReadStore
+
+    store = PgReadStore(seeded["dsn"], pool_max=2, pool_timeout=20)
+    ent = seeded["entity_id"]
+
+    def work(i: int) -> bool:
+        kind = i % 4
+        if kind == 0:
+            return store.entity("deployment", ent) is not None
+        if kind == 1:
+            return store.stored_claim(seeded["claim_id"]) is not None
+        if kind == 2:
+            return len(store.search("okc", limit=5)) >= 1
+        return store._run_read(lambda: store._conn is store._local.conn)
+
+    try:
+        with ThreadPoolExecutor(max_workers=24) as pool:
+            outcomes = list(pool.map(work, range(96)))
+        assert all(outcomes), outcomes
+        stats = store.health().pool
+        assert stats is not None and stats["pool_size"] <= 2
+    finally:
+        store.close()
+
+
+def test_search_after_cursor_plan_uses_the_trigram_index(seeded: dict[str, Any]) -> None:
+    """The cursor (page 2+) statement also plans on the trigram index for a
+    selective term, at a hosted-like scale (loaded and rolled back)."""
+    from api.store_pg import SEARCH_AFTER_SQL, like_pattern
+
+    with psycopg.connect(seeded["dsn"]) as conn:
+        try:
+            conn.execute(
+                "WITH e AS (INSERT INTO entity(entity_type) "
+                "           SELECT 'deployment' FROM generate_series(1, 20000) "
+                "           RETURNING entity_id) "
+                "INSERT INTO entity_identifier(entity_id, scheme, value) "
+                "SELECT entity_id, 'sig.connector.subject', "
+                "       'traffic_camera:camreg_bulk:' || md5(entity_id::text) FROM e"
+            )
+            conn.execute("SELECT gin_clean_pending_list('entity_identifier_value_trgm_idx')")
+            conn.execute("ANALYZE entity_identifier")
+            conn.execute("ANALYZE entity")
+            after = conn.execute(
+                "SELECT entity_id FROM entity ORDER BY entity_id LIMIT 1"
+            ).fetchone()[0]
+            cur = psycopg.ClientCursor(conn)
+            cur.execute(
+                "EXPLAIN " + SEARCH_AFTER_SQL,
+                {"pattern": like_pattern(_NEEDLE), "limit": 51, "after": str(after)},
+            )
+            plan = "\n".join(r[0] for r in cur.fetchall())
+        finally:
+            conn.rollback()
+    assert "entity_identifier_value_trgm_idx" in plan, plan

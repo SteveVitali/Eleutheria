@@ -465,7 +465,10 @@ def _store_over(conn) -> PgReadStore:
 
     store = PgReadStore.__new__(PgReadStore)
     store._dsn = "(shared test connection)"
-    store._conn = conn
+    # P31.1: reads run on the thread's bound pooled connection; binding the test
+    # transaction's connection here makes every pooled read re-enter on it.
+    store._local = threading.local()
+    store._local.conn = conn
     store._role = None
     store._ruleset = None
     store._as_of = None
