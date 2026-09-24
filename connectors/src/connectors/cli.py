@@ -336,7 +336,7 @@ def _run(args: argparse.Namespace) -> int:
         return 6
     summary = (
         f"source {args.source!r} [{args.mode}] via connector {report.connector!r}: "
-        f"{len(report.claims)} claim(s), {len(report.captures)} capture(s)"
+        f"{report.emitted} claim(s), {len(report.captures)} capture(s)"
     )
     if report.refusals:
         summary += f", {len(report.refusals)} politeness refusal(s) recorded"

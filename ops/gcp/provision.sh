@@ -97,9 +97,14 @@ provision_compute_decision() {
   _log "note: PG password is injected on the host from Secret Manager (${SIG_SECRET_PG_PASSWORD})."
   # The read API on Cloud Run (min-instances 0, scales to zero) fronts the GCE PG
   # over its internal IP; TLS is the Cloud Run managed default (GL-DEPLOY-01).
+  # P31.4 / ADR-111: the service deploys a pinned digest (SIG_SERVICE_IMAGE: a SHA
+  # tag or @sha256 digest), never `:latest` (ADR-107 §5: a later label-only update
+  # would silently re-resolve a movable tag).
+  local service_image
+  service_image="$(pin_image_digest "${SIG_SERVICE_IMAGE:-${SIG_API_IMAGE}:<sha-tag>}")"
   run gcloud run deploy "${SIG_RUN_SERVICE}" \
     --project "${SIG_GCP_PROJECT}" --region "${SIG_GCP_REGION}" \
-    --image "${SIG_API_IMAGE}:latest" \
+    --image "${service_image}" \
     --min-instances=0 --max-instances=2 --allow-unauthenticated \
     --set-secrets="SIG_PG_PASSWORD=${SIG_SECRET_PG_PASSWORD}:latest"
 }

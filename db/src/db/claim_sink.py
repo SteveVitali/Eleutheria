@@ -62,7 +62,7 @@ from typing import Any
 import psycopg
 
 from .identity_guard import SUBJECT_SCHEME, resolve_identity_batch
-from .run_completion import append_completion
+from .run_completion import SUCCESSFUL_STATUSES, append_completion
 
 #: Columns excluded from the reproducibility payload (SIG-INGEST-003, SIG-EVID-017):
 #: the generated id and the two DB-controlled time columns. Kept byte-identical to
@@ -262,6 +262,39 @@ _LINK_EVIDENCE = (
     "ON CONFLICT (claim_id, capture_id, role) DO NOTHING"
 )
 
+#: The marks a restarted execution resumes from (P31.4 / ADR-111): those of the
+#: executions of the same logical run that started after the last one that
+#: completed. Per target, a ``flushed`` mark wins over a ``captured`` one, and the
+#: latest mark of a state wins. A backfilled completion (P31.2) never names a
+#: logical run, so only live completions close one.
+_RESUME_MARKS = (
+    "WITH runs AS ("
+    " SELECT run_id, started_at FROM ingest_run"
+    " WHERE connector_name = %(connector)s AND connector_version = %(version)s"
+    " AND parameters ->> 'logical_run' = %(logical_run)s AND NOT is_replay"
+    " AND run_id IS DISTINCT FROM %(current)s::uuid"
+    "), done AS ("
+    " SELECT max(r.started_at) AS at FROM runs r"
+    " JOIN ingest_run_completion c ON c.run_id = r.run_id"
+    " WHERE c.backfilled_from IS NULL AND c.status = ANY(%(successful)s::text[])"
+    ") "
+    "SELECT DISTINCT ON (m.target_key) m.target_key, m.state, m.capture_digest, m.source_uri,"
+    " m.media_type, m.byte_size, m.retrieved_at, m.records "
+    "FROM ingest_run_capture m JOIN runs r ON r.run_id = m.run_id "
+    "WHERE r.started_at > COALESCE((SELECT at FROM done), '-infinity'::timestamptz) "
+    "ORDER BY m.target_key, (m.state = 'flushed') DESC, m.recorded_at DESC"
+)
+
+_RECORD_CAPTURE = (
+    "INSERT INTO ingest_run_capture(run_id, target_key, state, capture_digest, source_uri,"
+    " media_type, byte_size, retrieved_at, records) "
+    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) "
+    "ON CONFLICT (run_id, target_key, state) DO NOTHING"
+)
+
+#: The two capture-mark states (the ``ingest_run_capture`` CHECK constraint).
+CAPTURE_MARK_STATES = ("captured", "flushed")
+
 _EXISTING_CLAIMS = (
     "SELECT content_digest, claim_id FROM claim "
     "WHERE content_digest = ANY(%s::text[]) AND content_digest IS NOT NULL"
@@ -298,6 +331,13 @@ class PgClaimSink:
       per-capture flush). Everything handed to one call has committed when it
       returns, in chunks of at most ``commit_chunk_size`` claims. Calling it once
       per capture therefore commits per capture, still under one run.
+
+    **Resume** (P31.4 / ADR-111): a sink built with a ``logical_run`` key (source +
+    cadence window) records it in ``ingest_run.parameters`` and implements the
+    :class:`connectors.stages.CaptureLedger` protocol. :meth:`record_capture`
+    appends a per-target ``ingest_run_capture`` mark, and :meth:`resume_marks`
+    returns the marks an interrupted execution of the same logical run left.
+    Without a ``logical_run`` the sink records no marks and resumes nothing.
     """
 
     def __init__(
@@ -316,6 +356,7 @@ class PgClaimSink:
         insert_batch_size: int = DEFAULT_INSERT_BATCH_SIZE,
         on_duplicates: DuplicateHook | None = None,
         object_resolver: ObjectResolver | None = None,
+        logical_run: str | None = None,
     ) -> None:
         if commit_chunk_size < 1:
             raise ValueError(
@@ -342,6 +383,9 @@ class PgClaimSink:
         # The WORM run row the scheduled wrapper writes for this execution (gs://…),
         # recorded on the run and on its completion so the two cross-reference.
         self._run_record_uri = run_record_uri
+        # P31.4 / ADR-111: the logical run (source + cadence window) this execution
+        # belongs to. Its executions share it; a restart resumes their marks.
+        self._logical_run = logical_run or None
         # Per-instance caches so prerequisites are resolved once, not per claim.
         self._run_id: str | None = None
         self._strategy_ready = False
@@ -555,6 +599,8 @@ class PgClaimSink:
         parameters: dict[str, str] = {"execution_id": self._execution_id}
         if self._run_record_uri:
             parameters["run_record_uri"] = self._run_record_uri
+        if self._logical_run:
+            parameters["logical_run"] = self._logical_run
         environment = {k: os.environ[k] for k in _RECORDED_ENV if os.environ.get(k)}
         inserted = self._conn.execute(
             "INSERT INTO ingest_run"
@@ -599,6 +645,86 @@ class PgClaimSink:
             claims_duplicate=self.report.duplicates,
             run_record_uri=self._run_record_uri,
             detail=detail,
+        )
+
+    # --- resume (P31.4 / ADR-111) ----------------------------------------------
+
+    @property
+    def logical_run(self) -> str | None:
+        """The logical run key (source + cadence window), or ``None`` (no resume)."""
+        return self._logical_run
+
+    def resume_marks(self) -> list[dict[str, Any]]:
+        """The capture marks an interrupted execution of this logical run left.
+
+        One mark per target key: ``flushed`` if any resumable execution flushed the
+        target, else its latest ``captured`` mark. Empty without a logical run, or
+        once an execution of the logical run completed (the next one is a fresh
+        run and never skips). Read-only.
+        """
+        if not self._logical_run:
+            return []
+        rows = self._conn.execute(
+            _RESUME_MARKS,
+            {
+                "connector": self._connector_name,
+                "version": self._connector_version,
+                "logical_run": self._logical_run,
+                "current": self._run_id,
+                "successful": list(SUCCESSFUL_STATUSES),
+            },
+        ).fetchall()
+        keys = (
+            "target_key",
+            "state",
+            "capture_digest",
+            "source_uri",
+            "media_type",
+            "byte_size",
+            "retrieved_at",
+            "records",
+        )
+        return [dict(zip(keys, row, strict=True)) for row in rows]
+
+    def record_capture(
+        self,
+        target_key: str,
+        *,
+        state: str,
+        capture_digest: str,
+        source_uri: str,
+        media_type: str,
+        byte_size: int,
+        retrieved_at: datetime | None = None,
+        records: int | None = None,
+    ) -> None:
+        """Append this execution's ``state`` mark for one fetch target (append-only).
+
+        ``captured`` is written once the target's bytes are in the capture store;
+        ``flushed`` once every claim of the capture has committed, with the number
+        of records the capture emitted. A no-op without a logical run. A second
+        mark of the same state for the same target is +0.
+        """
+        if not self._logical_run:
+            return
+        if state not in CAPTURE_MARK_STATES:
+            raise ValueError(f"capture mark state {state!r} is not one of {CAPTURE_MARK_STATES}")
+        if (state == "flushed") != (records is not None):
+            raise ValueError("a flushed mark carries its record count; a captured mark none")
+        run_id = self._ensure_run()
+        self._conn.execute(
+            _RECORD_CAPTURE,
+            (
+                run_id,
+                target_key,
+                state,
+                capture_digest,
+                source_uri,
+                media_type,
+                byte_size,
+                retrieved_at,
+                records,
+            ),
         )
 
     def _ensure_source(self, source_id: str, rights_id: str) -> None:
@@ -915,6 +1041,7 @@ class PgClaimSink:
 
 
 __all__ = [
+    "CAPTURE_MARK_STATES",
     "DEFAULT_COMMIT_CHUNK_SIZE",
     "DEFAULT_INSERT_BATCH_SIZE",
     "ClaimSinkReport",

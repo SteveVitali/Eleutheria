@@ -51,6 +51,7 @@ from .replay import ShadowDiff, replay, replay_fingerprint, shadow_replay
 from .review import has_review_metadata, has_rights_block
 from .sinks import make_claim_sink
 from .stages import (
+    ArtifactStore,
     ClaimSink,
     Connector,
     ContentDrift,
@@ -640,6 +641,13 @@ class FetchRecord:
     budget_reached: bool = False
     quota_reached: bool = False
     sweep_skipped: list[Mapping[str, Any]] = field(default_factory=list)
+    #: Incremental restart (P31.4 / ADR-111): the number of fetches this execution
+    #: issued, and the targets it did not re-fetch because an interrupted execution
+    #: of the same logical run had already captured (``reprocessed``) or flushed
+    #: (``skipped``) them. The logical run key it resumed under, when it had one.
+    fetches: int = 0
+    resumed: list[Mapping[str, Any]] = field(default_factory=list)
+    logical_run: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         """A JSON-serialisable dict; content is never included (§3.1, §17)."""
@@ -668,6 +676,9 @@ class FetchRecord:
             "budget_reached": self.budget_reached,
             "quota_reached": self.quota_reached,
             "sweep_skipped": [dict(s) for s in self.sweep_skipped],
+            "fetches": self.fetches,
+            "resumed": [dict(r) for r in self.resumed],
+            "logical_run": self.logical_run,
         }
 
 
@@ -710,6 +721,29 @@ class SourceRunReport:
     #: The ``ingest_run`` this execution wrote (PG sink only; P31.2 / ADR-109), so
     #: the scheduled wrapper's WORM run row can name it. ``None`` for other sinks.
     run_id: str | None = None
+    #: Every record the run emitted, exact even when ``claims`` retains only some
+    #: (a live PG run flushes per capture and keeps only what its fetch record
+    #: needs, P31.4). ``None`` = not counted separately: use ``len(claims)``.
+    claim_count: int | None = None
+    #: The P31.4 resume bookkeeping (see :class:`FetchRecord`).
+    fetches: int = 0
+    resumed: list[dict[str, Any]] = field(default_factory=list)
+
+    @property
+    def emitted(self) -> int:
+        """The number of records the run emitted (``claim_count`` or ``len(claims)``)."""
+        return self.claim_count if self.claim_count is not None else len(self.claims)
+
+
+#: The record kinds a live run's fetch record reports per document (P26.6/.11/.15).
+#: A live PG run retains only these in memory (P31.4 / ADR-111).
+_OUTCOME_RECORD_KINDS = frozenset(
+    {"agenda_document", "portal_document", "bill_query", "ted_eu_slice"}
+)
+
+
+def _retain_outcome_record(record: Mapping[str, Any]) -> bool:
+    return record.get("record_kind") in _OUTCOME_RECORD_KINDS
 
 
 def _robots_decisions(fetcher: PoliteFetcher) -> list[Mapping[str, Any]]:
@@ -751,6 +785,8 @@ def run_source(
     code_commit: str = "unknown",
     commit_chunk_size: int | None = None,
     run_record_uri: str | None = None,
+    logical_run: str | None = None,
+    target_limit: int | None = None,
 ) -> SourceRunReport:
     """Run one source in ``live`` / ``replay`` / ``shadow`` mode (P21.3).
 
@@ -762,6 +798,11 @@ def run_source(
     ordinary sources commit in a single chunk — P26.18 / SOURCES.17).
     ``run_record_uri`` (live, PG sink) names the WORM run row the scheduled wrapper
     writes for this execution; it is recorded on the run and its completion.
+    ``logical_run`` (live, PG sink; P31.4 / ADR-111) is the logical run key
+    (source + cadence window): a restarted execution with the same key resumes an
+    interrupted one instead of re-fetching everything. ``target_limit`` bounds a
+    live run to its first N seed targets (a bounded slice; the run completes
+    ``partial``).
     """
     mode = RunMode(mode)
     connector = _connector_for(source_id, connector_name)
@@ -777,6 +818,8 @@ def run_source(
             code_commit=code_commit,
             commit_chunk_size=commit_chunk_size,
             run_record_uri=run_record_uri,
+            logical_run=logical_run,
+            target_limit=target_limit,
         )
 
     if fixture is None:
@@ -797,6 +840,8 @@ def _run_live(
     code_commit: str,
     commit_chunk_size: int | None = None,
     run_record_uri: str | None = None,
+    logical_run: str | None = None,
+    target_limit: int | None = None,
 ) -> SourceRunReport:
     # The gate is checked BEFORE any transport is constructed or any socket is
     # opened (SIG-INGEST-014/028): a non-green source is refused here.
@@ -856,9 +901,12 @@ def _run_live(
         code_commit=code_commit,
         **_chunk_kwargs(commit_chunk_size),
         **({"run_record_uri": run_record_uri} if run_record_uri else {}),
+        **({"logical_run": logical_run} if logical_run and sink_kind == "pg" else {}),
     )
     source = get(source_id)
     parameters: dict[str, Any] = {"targets": targets}
+    if target_limit is not None:
+        parameters["target_limit"] = int(target_limit)
     if source_id == "muckrock":
         parameters["muckrock_token_cache"] = _muckrock_token_cache(fetcher)
     if source_id == "sam_gov":
@@ -870,6 +918,10 @@ def _run_live(
         budget = sam_gov_daily_request_budget()
         if budget is not None:
             parameters["request_budget"] = budget
+    # P31.4 / ADR-111: a PG run flushes each capture's claims as it goes, so it
+    # keeps only the records its fetch record reports and the latest artifact per
+    # stage — memory bounded by one capture, not the whole source.
+    bounded = sink_kind == "pg"
     ctx = RunContext(
         source=source,
         run=IngestRun(connector.name, version, code_commit, "r1", "v1", ()),
@@ -877,6 +929,8 @@ def _run_live(
         captures=captures,
         claim_sink=sink,
         parameters=parameters,
+        artifacts=ArtifactStore(keep_history=not bounded),
+        retain_record=_retain_outcome_record if bounded else None,
     )
     try:
         report = run(connector, ctx)
@@ -931,7 +985,7 @@ def _run_live(
         started_at=started.isoformat(),
         duration_seconds=time.monotonic() - t0,
         capture_digests=[c.digest for c in report.captures],
-        claim_count=len(report.claims),
+        claim_count=report.claim_count,
         rate_limit_events=list(transport.rate_limit_events),
         robots_decisions=_robots_decisions(fetcher),
         robots_disregarded=[dict(d) for d in fetcher.robots_disregarded],
@@ -999,8 +1053,7 @@ def _run_live(
                 ),
             }
             for r in report.claims
-            if r.get("record_kind")
-            in ("agenda_document", "portal_document", "bill_query", "ted_eu_slice")
+            if r.get("record_kind") in _OUTCOME_RECORD_KINDS
         ],
         # P26.19 — the quota-bounded sweep record: per-run request count, the
         # budget, and whether the run stopped at the budget or a 429 wall.
@@ -1009,6 +1062,9 @@ def _run_live(
         budget_reached=report.budget_reached,
         quota_reached=report.quota_reached,
         sweep_skipped=[dict(s) for s in report.sweep_skipped],
+        fetches=report.fetches,
+        resumed=[dict(r) for r in report.resumed],
+        logical_run=getattr(sink, "logical_run", None),
     )
     write_fetch_record(fetch_record, capture_dir / "live_runs")
     transport.close()
@@ -1031,6 +1087,9 @@ def _run_live(
         ],
         drifted=list(report.drifted),
         run_id=getattr(sink, "run_id", None),
+        claim_count=report.claim_count,
+        fetches=report.fetches,
+        resumed=[dict(r) for r in report.resumed],
     )
 
 

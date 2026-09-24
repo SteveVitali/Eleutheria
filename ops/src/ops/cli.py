@@ -55,6 +55,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .gcs import GcsBucket
+    from .scheduled import CadenceConfig
 
 from . import __version__
 from .alerts import Alert
@@ -361,6 +362,24 @@ def build_parser() -> argparse.ArgumentParser:
         help="PG sink: claims committed per transaction (default: $SIG_COMMIT_CHUNK_SIZE "
         "else the sink default; a very-large source commits progressively) — P26.18",
     )
+    ingest.add_argument(
+        "--logical-run",
+        default=None,
+        help="P31.4: pin the logical-run (resume) key; default = the source's cadence "
+        "window, <source>@<last cron fire> (a re-execution in the window resumes)",
+    )
+    ingest.add_argument(
+        "--no-resume",
+        action="store_true",
+        help="P31.4: never resume (no logical-run key, no capture marks)",
+    )
+    ingest.add_argument(
+        "--target-limit",
+        type=int,
+        default=None,
+        help="P31.4: bound the run to its first N fetch targets (a measured slice; "
+        "the completion is recorded partial)",
+    )
 
     sink_bench = sub.add_parser(
         "sink-bench",
@@ -376,6 +395,33 @@ def build_parser() -> argparse.ArgumentParser:
     sink_bench.add_argument(
         "--code-commit", default="sink-bench", help="recorded on each pass's ingest_run"
     )
+
+    roll = sub.add_parser(
+        "roll-jobs",
+        help="P31.4 (ADR-111): roll Cloud Run jobs onto an image BY PINNED DIGEST (never "
+        ":latest): resolve the image, plan each job's before/after digest, mount the GCS "
+        "capture store on scheduled-ingest jobs, apply with `gcloud run jobs update` (all "
+        "other job settings preserved) and verify. Plan-only unless --apply",
+    )
+    roll.add_argument("--image", required=True, help="image ref: a SHA tag or @sha256 digest")
+    roll.add_argument(
+        "--job",
+        action="append",
+        default=[],
+        help="a job to roll (repeatable); default: every cadence.toml job + the probe job",
+    )
+    roll.add_argument("--exclude", action="append", default=[], help="a job to leave as is")
+    roll.add_argument(
+        "--capture-bucket",
+        default=None,
+        help="mount this bucket as the capture store on scheduled-ingest jobs "
+        "(default: SIG_OPS_GCS_BUCKET; pass '' to skip)",
+    )
+    roll.add_argument("--project", default=None, help="GCP project (default: SIG_GCP_PROJECT)")
+    roll.add_argument("--region", default=None, help="region (default: SIG_GCP_REGION)")
+    roll.add_argument("--cadence", default=None, help="ops/cadence.toml path")
+    roll.add_argument("--record", default=None, help="write the before/after JSON record here")
+    roll.add_argument("--apply", action="store_true", help="apply (default: plan only)")
 
     backfill = sub.add_parser(
         "backfill-run-completions",
@@ -1155,6 +1201,10 @@ def _cmd_scheduled_ingest(args: argparse.Namespace) -> int:
         print(f"scheduled-ingest: invalid commit chunk size: {bad}")
         return 2
     local_dir = Path(os.environ.get("SIG_RUN_LOG", str(_STATE_DIR / "runs")))
+    # P31.4 / ADR-111: the capture store. A hosted job mounts the restricted bucket
+    # and points SIG_CAPTURE_DIR into it, so captures survive the execution and a
+    # restart can re-process them; unset, captures stay under the local state dir.
+    capture_dir = Path(os.environ.get("SIG_CAPTURE_DIR") or str(_STATE_DIR / "captures"))
     gcs = _gcs_bucket(args.gcs_bucket)
     exit_code = 0
     for source in members:
@@ -1170,10 +1220,12 @@ def _cmd_scheduled_ingest(args: argparse.Namespace) -> int:
             source,
             sink_kind=args.sink,
             dsn=dsn,
-            capture_dir=_STATE_DIR / "captures",
+            capture_dir=capture_dir,
             commit_chunk_size=commit_chunk_size,
             now=started,
             run_record_uri=run_uri,
+            logical_run=_logical_run_for(cadence, source, started, args),
+            target_limit=args.target_limit,
         )
         written = store_run_row(row, prefix=cadence.runs_gcs_prefix, gcs=gcs, local_dir=local_dir)
         print(json.dumps(row.as_json(), sort_keys=True))
@@ -1187,6 +1239,77 @@ def _cmd_scheduled_ingest(args: argparse.Namespace) -> int:
             file=sys.stderr,
         )
     return exit_code
+
+
+def _logical_run_for(
+    cadence: CadenceConfig, source: str, started: str, args: argparse.Namespace
+) -> str | None:
+    """The run's logical-run key (P31.4 / ADR-111), or ``None`` when it never resumes.
+
+    ``--logical-run`` pins the key; ``--no-resume`` disables resume; otherwise the
+    key is the source's cadence window (``ops.cadence_window``). A source with no
+    cadence row has no window, so it never resumes.
+    """
+    from .cadence_window import cron_for_source, logical_run_key
+
+    if args.no_resume or args.sink != "pg":
+        return None
+    if args.logical_run:
+        return str(args.logical_run)
+    cron = cron_for_source(cadence, source)
+    if cron is None:
+        return None
+    from datetime import datetime
+
+    return logical_run_key(source, cron, datetime.fromisoformat(started.replace("Z", "+00:00")))
+
+
+def _cmd_roll_jobs(args: argparse.Namespace) -> int:
+    """Roll jobs onto a pinned digest (P31.4 / ADR-111); plan-only unless --apply."""
+    from .job_roll import RollError, apply_roll, gcloud_cli, plan_roll, resolve_digest, roll_record
+    from .scheduled import load_cadence
+
+    project = args.project or os.environ.get("SIG_GCP_PROJECT", "")
+    region = args.region or os.environ.get("SIG_GCP_REGION", "us-central1")
+    if not project:
+        print("roll-jobs: --project / SIG_GCP_PROJECT is required")
+        return 2
+    bucket = (
+        args.capture_bucket
+        if args.capture_bucket is not None
+        else os.environ.get("SIG_OPS_GCS_BUCKET", "")
+    ) or None
+    jobs = list(args.job)
+    if not jobs:
+        cadence = load_cadence(args.cadence)
+        jobs = [
+            cadence.probe_job,
+            *(s.job for s in cadence.sources),
+            *(b.job for b in cadence.batches),
+        ]
+    jobs = [j for j in dict.fromkeys(jobs) if j not in set(args.exclude)]
+    try:
+        digest = resolve_digest(args.image, project=project, gcloud=gcloud_cli)
+        plans = plan_roll(
+            jobs, digest, project=project, region=region, gcloud=gcloud_cli, capture_bucket=bucket
+        )
+        for plan in plans:
+            store = " + capture store" if plan.add_capture_store else ""
+            print(f"{plan.job}: {plan.before_image} ({plan.before_digest}) -> {digest}{store}")
+        if args.apply:
+            apply_roll(
+                plans, project=project, region=region, gcloud=gcloud_cli, capture_bucket=bucket
+            )
+    except RollError as exc:
+        print(f"roll-jobs: {exc}")
+        return 1
+    record = roll_record(plans, image_ref=args.image, image_digest=digest, applied=args.apply)
+    if args.record:
+        Path(args.record).write_text(json.dumps(record, indent=2, sort_keys=True) + "\n")
+    verified = sum(1 for p in plans if p.after_image_verified == digest)
+    outcome = f"rolled, {verified} verified" if args.apply else "planned (no --apply)"
+    print(f"roll-jobs: {len(plans)} job(s) {outcome}")
+    return 0
 
 
 def _cmd_sink_bench(args: argparse.Namespace) -> int:
@@ -1394,6 +1517,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_backfill_run_completions(args)
     if args.command == "sink-bench":
         return _cmd_sink_bench(args)
+    if args.command == "roll-jobs":
+        return _cmd_roll_jobs(args)
     if args.command == "alerts":
         return _cmd_alerts(args)
     if args.command == "alert":

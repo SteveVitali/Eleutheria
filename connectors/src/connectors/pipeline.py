@@ -29,6 +29,7 @@ from __future__ import annotations
 import logging
 from collections.abc import Mapping
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Any
 
 from evidence.ingest_run import claim_set_fingerprint
@@ -43,6 +44,7 @@ from .isolation import network_isolated
 from .loader import assert_loadable
 from .net import ChallengeEncountered, RobotsDisallowed, RobotsUnretrievable
 from .stages import (
+    CaptureLedger,
     CaptureRef,
     CompletionRecorder,
     Connector,
@@ -52,6 +54,7 @@ from .stages import (
     Stage,
     StageArtifact,
 )
+from .stages import content_digest as stage_content_digest
 
 _log = logging.getLogger(__name__)
 
@@ -103,6 +106,24 @@ class RunReport:
     #: (set by ``_fetch_or_disappear``), read once per iteration to classify a
     #: 429 wall. Not part of the durable record.
     last_challenge_status: int | None = None
+    #: Every record the post-capture stages emitted (P31.4). A live run may retain
+    #: only some records in :attr:`claims` (``RunContext.retain_record``) so its
+    #: memory stays bounded by one capture; this count is always exact, and a
+    #: target a restarted execution skipped contributes the count its mark recorded.
+    claim_count: int = 0
+    #: The number of ``fetch()`` calls this execution issued (P31.4): a resumed
+    #: execution issues none for the targets it did not re-fetch.
+    fetches: int = 0
+    #: Targets a restarted execution did not fetch (P31.4 / ADR-111), each
+    #: ``{"target", "action", "capture_digest"}``. ``skipped``: an interrupted
+    #: execution of the same logical run had already flushed it, so it is counted
+    #: as seen and not re-walked. ``reprocessed``: it had been captured but not
+    #: flushed, so its claims were re-derived from the stored capture.
+    resumed: list[dict[str, Any]] = field(default_factory=list)
+    #: Set when ``ctx.parameters["target_limit"]`` bounded the run to its first N
+    #: seed targets (a bounded slice). The rest are listed in ``sweep_skipped``
+    #: with reason ``target_limit``, and the run completes ``partial``.
+    target_limited: bool = False
 
     @property
     def fingerprint(self) -> str:
@@ -146,13 +167,19 @@ def completion_status(report: RunReport) -> str:
     """The ``ingest_run_completion`` status for an execution that ran to its end.
 
     ``quota_reached`` if it stopped at a 429 wall. ``partial`` if any target was
-    recorded as a disappearance, refusal or drift, or the request budget deferred
-    a tail of slices. Otherwise ``ok``. (``failed`` is the exception path in
-    :func:`run`.)
+    recorded as a disappearance, refusal or drift, the request budget deferred a
+    tail of slices, or a ``target_limit`` bounded the run. Otherwise ``ok``.
+    (``failed`` is the exception path in :func:`run`.)
     """
     if report.quota_reached:
         return "quota_reached"
-    if report.disappearances or report.refusals or report.drifted or report.budget_reached:
+    if (
+        report.disappearances
+        or report.refusals
+        or report.drifted
+        or report.budget_reached
+        or report.target_limited
+    ):
         return "partial"
     return "ok"
 
@@ -202,11 +229,138 @@ def run(connector: Connector, ctx: RunContext) -> RunReport:
     return report
 
 
+def _target_key(target: Mapping[str, Any]) -> str:
+    """The resume key of one fetch target (P31.4 / ADR-111).
+
+    The target's URL (else its id) plus a digest of the whole target mapping, so two
+    targets that share a URL but differ in any parameter (a page offset, a request
+    body) never share a key. A target whose mapping changes between executions
+    simply does not resume, which is the safe direction.
+    """
+    locator = str(target.get("url") or target.get("id") or target.get("locator") or "target")
+    return f"{locator}#{stage_content_digest(dict(target))[:16]}"
+
+
+def _ledger(ctx: RunContext) -> CaptureLedger | None:
+    """The run's capture ledger, when it resumes (a live run with a logical run key)."""
+    sink = ctx.claim_sink
+    if not ctx.asserts_claims or not isinstance(sink, CaptureLedger):
+        return None
+    return sink if sink.logical_run else None
+
+
+def _mark_capture(ledger: CaptureLedger | None, key: str, capture: CaptureRef, **kw: Any) -> None:
+    if ledger is None:
+        return
+    ledger.record_capture(
+        key,
+        capture_digest=capture.digest,
+        source_uri=capture.source_uri,
+        media_type=capture.media_type,
+        byte_size=capture.byte_size,
+        retrieved_at=capture.retrieved_at,
+        **kw,
+    )
+
+
+def _capture_of(mark: Mapping[str, Any]) -> CaptureRef:
+    retrieved = mark.get("retrieved_at")
+    return CaptureRef(
+        digest=str(mark["capture_digest"]),
+        media_type=str(mark["media_type"]),
+        source_uri=str(mark["source_uri"]),
+        byte_size=int(mark["byte_size"]),
+        retrieved_at=retrieved if isinstance(retrieved, datetime) else None,
+    )
+
+
+def _emit(
+    ctx: RunContext,
+    report: RunReport,
+    ledger: CaptureLedger | None,
+    key: str,
+    capture: CaptureRef,
+    claims: list[dict[str, Any]],
+) -> None:
+    """Flush one capture's claims (P31.4 / ADR-111) and account for them.
+
+    On a live run the claims are asserted now, one ``assert_claims`` call per
+    capture (a commit boundary, ADR-110), and the target's ``flushed`` mark is
+    appended once they have committed. Replay and shadow runs assert nothing
+    (SIG-INGEST-018/019). The report keeps every record unless the context
+    retains only some (bounded memory); the count is always exact.
+    """
+    if ctx.asserts_claims and ctx.claim_sink is not None:
+        ctx.claim_sink.assert_claims(claims)
+        _mark_capture(ledger, key, capture, state="flushed", records=len(claims))
+    report.claim_count += len(claims)
+    retain = ctx.retain_record
+    report.claims.extend(claims if retain is None else [c for c in claims if retain(c)])
+
+
+def _resume_target(
+    connector: Connector,
+    ctx: RunContext,
+    report: RunReport,
+    key: str,
+    mark: Mapping[str, Any] | None,
+) -> tuple[str, CaptureRef | None]:
+    """Apply the resume rule (ADR-111) to one target.
+
+    Returns ``("fetch", None)`` when the target needs a normal fetch: it has no
+    mark, or its stored bytes are gone (an ephemeral capture store, the degraded
+    resume). Returns ``("skipped", None)`` for a target an interrupted execution
+    had flushed: it is recorded as seen (its capture digest and record count go
+    into the report) and not re-walked. Returns ``("reprocess", capture)`` for a
+    target that had been captured but not flushed and whose bytes the store still
+    holds: its claims are re-derived from the stored capture, with no request.
+    """
+    if mark is None:
+        return "fetch", None
+    capture = _capture_of(mark)
+    stored = ctx.captures.has(capture.digest)
+    # A connector that resolves follow-on targets reads every seed capture's bytes
+    # in ``discover_more``, so it can skip a flushed seed only if the bytes remain.
+    needs_bytes = type(connector).discover_more is not Connector.discover_more
+    if mark.get("state") == "flushed" and (stored or not needs_bytes):
+        report.captures.append(capture)
+        report.claim_count += int(mark.get("records") or 0)
+        report.resumed.append(
+            {"target": key, "action": "skipped", "capture_digest": capture.digest}
+        )
+        return "skipped", None
+    if stored:
+        report.resumed.append(
+            {"target": key, "action": "reprocessed", "capture_digest": capture.digest}
+        )
+        return "reprocess", capture
+    return "fetch", None
+
+
 def _run_stages(connector: Connector, ctx: RunContext) -> RunReport:
-    """The body of :func:`run`, after the gate: discover → … → load (+ assert)."""
+    """The body of :func:`run`, after the gate: discover → … → load (+ assert).
+
+    Since P31.4 (ADR-111) each capture's claims are flushed to the sink as soon as
+    the capture is processed, so a live run's memory is bounded by one capture and
+    an interruption loses at most the capture in flight. A live run whose sink
+    carries a logical run key also resumes: targets an interrupted execution of the
+    same logical run had flushed are skipped (and still counted as seen), and
+    targets it had only captured are re-processed from the stored capture.
+    """
     report = RunReport()
+    ledger = _ledger(ctx)
+    marks = {str(m["target_key"]): m for m in ledger.resume_marks()} if ledger else {}
     targets = connector.discover(ctx)
     _addressed(ctx, Stage.DISCOVER, targets)
+
+    # P31.4: a bounded slice — the first N seed targets only (recorded, partial).
+    limit = ctx.parameters.get("target_limit")
+    if isinstance(limit, int) and not isinstance(limit, bool) and 0 <= limit < len(targets):
+        report.target_limited = True
+        report.sweep_skipped.extend(
+            {"id": _target_id(t), "reason": "target_limit"} for t in targets[limit:]
+        )
+        targets = list(targets[:limit])
 
     # P26.19 — quota-bounded sweep guard (opt-in per target via ``quota_governed``
     # + the ``request_budget`` parameter). It bounds a keyword-sweep source (SAM.gov
@@ -218,6 +372,17 @@ def _run_stages(connector: Connector, ctx: RunContext) -> RunReport:
         report.sweep_budget = int(budget)
 
     for target in targets:
+        key = _target_key(target)
+        action, stored = _resume_target(connector, ctx, report, key, marks.get(key))
+        if action == "skipped":
+            continue  # flushed by an interrupted execution: seen, not re-walked
+        if stored is not None:
+            # Captured by an interrupted execution but never flushed: re-derive its
+            # claims from the stored capture. No request is issued.
+            _addressed(ctx, Stage.CAPTURE, stored)
+            report.captures.append(stored)
+            _emit(ctx, report, ledger, key, stored, run_post_capture(connector, ctx, stored))
+            continue
         governed = bool(target.get("quota_governed"))
         if governed and report.quota_reached:
             # RATE-LIMIT HONESTY: a 429 wall was already observed this run — the
@@ -250,7 +415,8 @@ def _run_stages(connector: Connector, ctx: RunContext) -> RunReport:
         capture = connector.capture(ctx, fetched)
         _addressed(ctx, Stage.CAPTURE, capture)
         report.captures.append(capture)
-        report.claims.extend(run_post_capture(connector, ctx, capture))
+        _mark_capture(ledger, key, capture, state="captured")
+        _emit(ctx, report, ledger, key, capture, run_post_capture(connector, ctx, capture))
 
     # Bounded discovery continuation (P25.5): a captured resource index is the
     # discovery surface for its per-document children (RAA index rows, CCOPS
@@ -274,20 +440,28 @@ def _run_stages(connector: Connector, ctx: RunContext) -> RunReport:
             if not url or url in seen:
                 continue
             seen.add(url)
-            fetched = _fetch_or_disappear(connector, ctx, target, report, record_refusals=True)
-            if fetched is None:
-                continue
-            _addressed(ctx, Stage.FETCH, fetched)
-            capture = connector.capture(ctx, fetched)
-            _addressed(ctx, Stage.CAPTURE, capture)
-            report.captures.append(capture)
+            key = _target_key(target)
+            action, child = _resume_target(connector, ctx, report, key, marks.get(key))
+            if action == "skipped":
+                continue  # flushed by an interrupted execution: seen, not re-walked
+            if child is None:
+                fetched = _fetch_or_disappear(connector, ctx, target, report, record_refusals=True)
+                if fetched is None:
+                    continue
+                _addressed(ctx, Stage.FETCH, fetched)
+                child = connector.capture(ctx, fetched)
+                _mark_capture(ledger, key, child, state="captured")
+            _addressed(ctx, Stage.CAPTURE, child)
+            report.captures.append(child)
             try:
-                report.claims.extend(run_post_capture(connector, ctx, capture))
+                claims = run_post_capture(connector, ctx, child)
             except ContentDrift as drift:
                 # P26.6: a resolved child document that doesn't parse as the
                 # platform's genre is a per-document fail-closed disposition —
                 # recorded with its locator, the run continues. Drift on a seed
                 # capture (the loop above) still propagates and fails the run.
+                # A drifted capture is never marked flushed, so a restarted run
+                # re-derives (and re-records) the drift.
                 report.drifted.append(
                     {
                         "id": _target_id(target),
@@ -300,10 +474,12 @@ def _run_stages(connector: Connector, ctx: RunContext) -> RunReport:
                         "observed_at": _now().isoformat(),
                     }
                 )
+                continue
+            _emit(ctx, report, ledger, key, child, claims)
 
     # SIG-INGEST-018/019: replay and shadow runs produce claims but never assert.
+    # A live run has asserted each capture's claims as it went (P31.4).
     if ctx.asserts_claims and ctx.claim_sink is not None:
-        ctx.claim_sink.assert_claims(report.claims)
         report.asserted = True
     return report
 
@@ -334,6 +510,7 @@ def _fetch_or_disappear(
     continues.
     """
     subject_id = target.get("subject_id")
+    report.fetches += 1
     try:
         fetched = connector.fetch(ctx, target)
     except (RobotsUnretrievable, RobotsDisallowed) as exc:
