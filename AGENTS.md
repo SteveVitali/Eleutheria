@@ -57,7 +57,7 @@ Every Python package is `<pkg>/src/<pkg>/…` and exposes a CLI: `uv run python 
 | `.github/workflows/ci.yml` | ~102 | CI: the `python` job mirrors `make check`; the `web` job runs `npm run check` |
 | `connectors/src/connectors/loader.py` | ~170 | the fail-closed ingestion gate (`assert_loadable`, `ingestion_permitted`) |
 | `ontology/src/ontology/generate.py` | ~550 | ontology generation; canonicalises graphs (`to_canonical_graph`) |
-| `db/src/db/claim_sink.py` | ~490 | `PgClaimSink` — insert-only writes to the claim spine |
+| `db/src/db/claim_sink.py` | ~920 | `PgClaimSink` — insert-only, chunk-batched writes to the claim spine |
 | `api/src/api/store_pg.py` | ~1240 | `PgReadStore` — read-only view over the spine (pooled, ADR-108) |
 | `tests/db/conftest.py` | ~230 | PG18+PostGIS testcontainer; `SIG_REQUIRE_DB_TESTS` fail-loud switch |
 | `tests/e2e/test_composed_stack.py` | ~860 | Docker-gated composed-stack e2e; the `LD-`/xfail convention |

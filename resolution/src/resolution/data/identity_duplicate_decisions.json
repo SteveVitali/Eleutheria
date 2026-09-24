@@ -1,0 +1,87 @@
+{
+  "version": 1,
+  "ticket": "P31.3",
+  "adr": "ADR-110",
+  "deferral": "D-P30.4-3",
+  "authority": "Engineering decision with evidence; operator delegated with no per-pair sign-off (LEDGER GATE DECISIONS 2026-09-24, Round 9 ratification Q6).",
+  "reviewer": "engineering:P31.3 (operator-delegated, Q6)",
+  "semantics": "same_as is recorded as review_decision 'accept' and distinct as 'reject' on an er_match review_item. It is append-only: no entity, identifier or claim is changed, and both identifier rows stay.",
+  "evidence_read": "2026-09-24, hosted spine, read-only (READ ONLY transaction as DB user sig over cloud-sql-proxy), plus the WORM run rows under gs://<project>-sig-restricted/ops/runs/camreg_camilo_schools/2026-09-19/",
+  "decisions": [
+    {
+      "scheme": "sig.connector.subject",
+      "value": "traffic_camera:camreg_camilo_schools:camilo_schools_cctv:1",
+      "entities": [
+        "01a0b86b-5798-7947-af59-93a54ebda420",
+        "01a0b86b-f7c4-718d-bf2b-b3a3d46d234d"
+      ],
+      "decision": "same_as",
+      "cause": "race",
+      "rationale": "Race duplicate (ENTITY-RACE-01). Two overlapping scheduled executions of camreg_camilo_schools each checked for the subject, then inserted it. The first ran 06:47:14 to 06:48:06Z; the second started 06:47:54Z, before the first committed. So the second minted a second entity 41 s after the first. It is one camera: the same connector subject string from the same source. The second entity carries 0 claims, because every claim it asserted deduplicated on content_digest against the first execution's rows.",
+      "evidence": {
+        "entity_created_at": {
+          "01a0b86b-5798-7947-af59-93a54ebda420": "2026-09-19T06:47:17.656619Z",
+          "01a0b86b-f7c4-718d-bf2b-b3a3d46d234d": "2026-09-19T06:47:58.660121Z"
+        },
+        "claims_per_entity": {
+          "01a0b86b-5798-7947-af59-93a54ebda420": 7,
+          "01a0b86b-f7c4-718d-bf2b-b3a3d46d234d": 0
+        },
+        "entity_type": "deployment (both)",
+        "identifiers_per_entity": "only this sig.connector.subject identifier (both)",
+        "worm_run_rows": [
+          "ops/runs/camreg_camilo_schools/2026-09-19/2026-09-19T06-47-14+00-00.json: scheduled-ingest live ok, 51.966 s, 249 records, connector dot_511",
+          "ops/runs/camreg_camilo_schools/2026-09-19/2026-09-19T06-47-54+00-00.json: scheduled-ingest live ok, 46.89 s, 249 records, connector dot_511"
+        ],
+        "source_scope": "31 distinct camreg_camilo_schools subject values map to 32 entities; this is the only value with two",
+        "guard_key": "the entity_identity_key backfill keys the value to the earlier entity (01a0b86b-5798-…)"
+      }
+    },
+    {
+      "scheme": "us.state",
+      "value": "OK",
+      "entities": [
+        "01a0a5da-ac97-7089-8ff7-9cde46592701",
+        "01a0a5da-addd-7d25-8c3f-4c40bc77288c"
+      ],
+      "decision": "same_as",
+      "cause": "deliberate",
+      "rationale": "Not a race. us.state is a jurisdiction attribute, not an identity key: many organisations legitimately share us.state=OK, so this scheme is not guarded (ADR-110). The pair exists because the P21.4 seed (ops/src/ops/seed.py, okc_agency_rows) deliberately projects two near-duplicate organisations for the ER match step. They are sig.connector.subject agency:okc:okcpd-1 'Oklahoma City Police Department' and agency:okc:okcpd-2 'Oklahoma City Police Dept'. Each gets the same us.state identifier, in one sequential pass 0.33 s apart. On the identity question the pair poses, they are one agency: the same municipal police department of Oklahoma City, with the same organization_type, the same state, and names that differ only by the abbreviation Dept/Department. So the decision is same_as.",
+      "evidence": {
+        "entity_created_at": {
+          "01a0a5da-ac97-7089-8ff7-9cde46592701": "2026-09-15T16:16:06.807053Z",
+          "01a0a5da-addd-7d25-8c3f-4c40bc77288c": "2026-09-15T16:16:07.133830Z"
+        },
+        "organization": {
+          "01a0a5da-ac97-7089-8ff7-9cde46592701": "us.le.municipal_police / Oklahoma City Police Department (agency:okc:okcpd-1)",
+          "01a0a5da-addd-7d25-8c3f-4c40bc77288c": "us.le.municipal_police / Oklahoma City Police Dept (agency:okc:okcpd-2)"
+        },
+        "claims_per_entity": "0 and 0 (organisation projections for the ER candidate read)",
+        "writer": "ops.seed.seed_jurisdiction (okc slice): the extra identifier ('us.state', 'OK') on each seeded agency row"
+      }
+    },
+    {
+      "scheme": "fr.insee",
+      "value": "01",
+      "entities": [
+        "01a0a5fe-db62-7e7d-b0b8-7f16c2272b11",
+        "01a0a5fe-dc8d-7c9e-9417-24c46b03cc04"
+      ],
+      "decision": "same_as",
+      "cause": "deliberate",
+      "rationale": "Not a race. fr.insee 01 is the INSEE département code for Ain, a jurisdiction attribute shared on purpose, so this scheme is not guarded (ADR-110). The pair exists because the P24.6 France seed (ops/src/ops/seed.py, france_agency_rows) deliberately projects two near-duplicate organisations for the ER match step. They are agency:france:gex-police-municipale-1 'Police municipale de Gex' and agency:france:gex-police-municipale-2 'Police Municipale de la Ville de Gex'. Each gets fr.insee=01, in one sequential pass 0.30 s apart. They are one body: the municipal police of the commune of Gex, with the same organization_type (fr.police_municipale) and the same département, and the names differ only by the 'de la Ville' form. So the decision is same_as.",
+      "evidence": {
+        "entity_created_at": {
+          "01a0a5fe-db62-7e7d-b0b8-7f16c2272b11": "2026-09-15T16:55:38.082924Z",
+          "01a0a5fe-dc8d-7c9e-9417-24c46b03cc04": "2026-09-15T16:55:38.381797Z"
+        },
+        "organization": {
+          "01a0a5fe-db62-7e7d-b0b8-7f16c2272b11": "fr.police_municipale / Police municipale de Gex (agency:france:gex-police-municipale-1)",
+          "01a0a5fe-dc8d-7c9e-9417-24c46b03cc04": "fr.police_municipale / Police Municipale de la Ville de Gex (agency:france:gex-police-municipale-2)"
+        },
+        "claims_per_entity": "0 and 0 (organisation projections for the ER candidate read)",
+        "writer": "ops.seed.seed_jurisdiction (france slice): the extra identifier ('fr.insee', '01') on each seeded agency row"
+      }
+    }
+  ]
+}

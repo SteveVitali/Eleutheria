@@ -34,6 +34,11 @@ Sub-commands expose the identity substrate (§11.1-11.3, §14):
   gold holdout → auto-write only tiers at/above the published floor → materialize the
   same_as decisions + review proposals append-only (+0 on an unchanged re-run). Prints
   one JSON summary (M, N, dedup ratio, per-tier precision, demotions, alerts).
+* ``identity-triage --dsn … [--apply]`` — the P31.3 duplicate-identifier triage
+  (ADR-110): list every ``(scheme, value)`` shared by more than one entity, with its
+  evidence and recorded decision (read-only; exit 1 while any pair is undecided).
+  ``--apply`` appends the committed same_as/distinct decisions through the review
+  queue (+0 on re-run).
 
 With no sub-command it prints help and exits 0 (the SIG-ENG-013 convention).
 """
@@ -146,6 +151,20 @@ def build_parser() -> argparse.ArgumentParser:
         "--dry-run",
         action="store_true",
         help="read + resolve + measure only; write nothing (prints the summary)",
+    )
+    triage = sub.add_parser(
+        "identity-triage",
+        help="P31.3: every (scheme, value) shared by >1 entity, with its evidence and "
+        "recorded same_as/distinct decision (read-only; --apply appends the committed ones)",
+    )
+    triage.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    triage.add_argument(
+        "--decisions", default=None, help="decisions JSON (default: the packaged file)"
+    )
+    triage.add_argument(
+        "--apply",
+        action="store_true",
+        help="append the committed decisions for pairs that have none (default: read-only)",
     )
     return parser
 
@@ -414,9 +433,46 @@ def main(argv: list[str] | None = None) -> int:
         return _run_review(args)
     if args.command == "camera-sites":
         return _run_camera_sites(args)
+    if args.command == "identity-triage":
+        return _run_identity_triage(args)
 
     parser.print_help()
     return 0
+
+
+def _run_identity_triage(args: argparse.Namespace) -> int:
+    """Duplicate-identifier triage (P31.3 / ADR-110, D-P30.4-3)."""
+    import psycopg
+
+    from .identity_triage import apply_decisions, as_report, load_decisions, triage
+
+    decisions = load_decisions(args.decisions)
+    reviewer = "engineering:P31.3 (operator-delegated, Q6)"
+    appended = 0
+    with psycopg.connect(args.dsn) as conn:
+        if not args.apply:
+            conn.execute("SET TRANSACTION READ ONLY")
+            statuses = triage(conn, decisions)
+            conn.rollback()
+        else:
+            # One transaction: every committed decision lands, or none does.
+            statuses = triage(conn, decisions)
+            appended = apply_decisions(PgReviewQueue(conn), statuses, reviewer=reviewer)
+            conn.commit()
+    undecided = [s for s in statuses if not s.recorded]
+    print(
+        json.dumps(
+            {
+                "pairs": as_report(statuses),
+                "pair_count": len(statuses),
+                "appended": appended,
+                "undecided": len(undecided),
+            },
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    return 1 if undecided else 0
 
 
 def _run_camera_sites(args: argparse.Namespace) -> int:

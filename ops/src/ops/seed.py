@@ -322,6 +322,7 @@ def seed_jurisdiction(dsn: str, jurisdiction: str = "okc") -> dict[str, int]:
     """
     import psycopg
     from db.claim_sink import SUBJECT_SCHEME, PgClaimSink
+    from db.identity_guard import resolve_identities
 
     slice_def = _SEED_SLICES[jurisdiction]  # KeyError on an unknown jurisdiction
     sink = PgClaimSink.from_dsn(
@@ -332,31 +333,25 @@ def seed_jurisdiction(dsn: str, jurisdiction: str = "okc") -> dict[str, int]:
     )
     sink.assert_claims(slice_def["claims"])
 
-    # Organisation projections for the ER candidate read (idempotent).
+    # Organisation projections for the ER candidate read (idempotent). The subject
+    # identifiers go through the identity guard (P31.3 / ADR-110), so a concurrent
+    # seed or sink never mints a second entity for one subject. The jurisdiction
+    # identifier (`us.state` / `fr.insee`) is an attribute many organisations share
+    # on purpose, so it is NOT keyed. It is attached only to an entity this call minted.
     extra_scheme, extra_value = slice_def["extra_identifier"]
-    with psycopg.connect(dsn, autocommit=True) as conn:
-        for subject, canonical, org_type in slice_def["agency_rows"]():
-            row = conn.execute(
-                "SELECT entity_id FROM entity_identifier WHERE scheme = %s AND value = %s",
-                (SUBJECT_SCHEME, subject),
-            ).fetchone()
-            if row is None:
-                created = conn.execute(
-                    "INSERT INTO entity(entity_type) VALUES ('organization') RETURNING entity_id"
-                ).fetchone()
-                assert created is not None
-                entity_id = created[0]
-                conn.execute(
-                    "INSERT INTO entity_identifier(entity_id, scheme, value) VALUES (%s, %s, %s)",
-                    (entity_id, SUBJECT_SCHEME, subject),
-                )
+    rows = slice_def["agency_rows"]()
+    with psycopg.connect(dsn, autocommit=True) as conn, conn.transaction():
+        resolved = resolve_identities(
+            conn, SUBJECT_SCHEME, [subject for subject, _, _ in rows], entity_type="organization"
+        )
+        for subject, canonical, org_type in rows:
+            entity_id = resolved.entity_by_value[subject]
+            if subject in resolved.minted:
                 conn.execute(
                     "INSERT INTO entity_identifier(entity_id, scheme, value) VALUES (%s, %s, %s) "
                     "ON CONFLICT DO NOTHING",
                     (entity_id, extra_scheme, extra_value),
                 )
-            else:
-                entity_id = row[0]
             conn.execute(
                 "INSERT INTO organization(entity_id, organization_type, cached_canonical_name) "
                 "VALUES (%s, %s, %s) ON CONFLICT (entity_id) "
