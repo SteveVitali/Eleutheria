@@ -114,6 +114,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-107](ADR-107-cloud-sql-steady-state-tier-after-launch.md) | — | — | Accepted |
 | [ADR-108](ADR-108-api-connection-pool-and-bounded-search.md) | — | — | Accepted |
 | [ADR-109](ADR-109-append-only-ingest-run-completion.md) | — | — | Accepted |
+| [ADR-110](ADR-110-sink-identity-guard-and-batched-writes.md) | — | — | Accepted |
 
 ## Notes
 
