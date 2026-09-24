@@ -134,3 +134,11 @@ Every `evidence` path is a committed file under `docs/build/runs/` or `docs/buil
 | 65 | P22.2 | ticket | `devin/p22-2-agent-docs-refresh` | #67 | `devin/p22-1-repo-docs-refresh` | 2026-09-09 | ADR-072 | — | n-a | `runs/P22.2.md` |
 | CAP | CAPSTONE | capstone | `devin/sig-postbuild-capstone` | #68 | `devin/p22-2-agent-docs-refresh` | 2026-09-09 | — | — (MATRIX-INT-01/APPENDIX-F-01/CHECK-BACKLOG-01 closed) | run | `pr/CAPSTONE.md` |
 | 66 | P22.3 | ticket | `devin/p22-3-build-memory-v2-migration` | #69 | `devin/sig-postbuild-capstone` | 2026-09-09 | ADR-073 | D-P21.1-1..D-P21.9-1 opened (12, from RETURN PASS) → none closed | n-a | `runs/P22.3.md` |
+
+### Go-live round (rows 67–, Round 3/4; markers have no PR — orchestrate-build 2026-09-10)
+
+| 67 | P23.1 | gate | `devin/p23-golive-markers` | — | `svitali/golive-spec-home` | 2026-09-10 | — | REL.1/HG-05 → RETURN PASS (operator-deferred) | skipped-by-operator | `runs/P23.1.md` |
+| 68 | P23.2 | human | `devin/p23-golive-markers` | — | `svitali/golive-spec-home` | 2026-09-10 | — | HG-01 interim (GL-GATE-01); HG-11 pending (D-P21.4-2 OPEN) | recorded-interim | `runs/P23.2.md` |
+| 69 | P23.3 | human | `devin/p23-golive-markers` | — | `svitali/golive-spec-home` | 2026-09-10 | — | HG-02 interim engineering disposition (GL-GATE-02); D-LEGAL.1-1 OPEN | recorded-interim | `runs/P23.3.md` |
+| 70 | P23.4 | human | `devin/p23-golive-markers` | — | `svitali/golive-spec-home` | 2026-09-10 | — | creds provided:no; host GCP (GL-GATE-04); D-ACCT.1-1 OPEN | recorded | `runs/P23.4.md` |
+| 71 | P21.1 | ticket | `devin/p21-1-rights-flip-rerun` | #72 | `devin/p23-golive-markers` | 2026-09-10 | — | RIGHTS.1 flip re-run (GL-RIGHTS-01/GL-GATE-03): OKC subset flipped ingestion_permitted=true (okc_procurement/okc_council/okcpd_policy/ok_statute=CC0-1.0, osm_overpass=ODbL-1.0, deflock_repo=MIT); loadable now 6; D-P21.1-1 DONE, D-P21.1-2 (HG-04) OPEN | flip-done | `runs/P21.1.md` |

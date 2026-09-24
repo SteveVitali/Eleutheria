@@ -111,7 +111,12 @@ compact_status = "public_terms_only"
 robots_policy = "honor"
 access_method = "json_xml_api"
 auth_model = "none"
-notes = "Element extraction. Not yet tested — read etiquette rules first (§22.2)."
+ingestion_permitted = true
+last_verified = 2026-09-10
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-10
+review_packet = "docs/build/reports/rights/osm_overpass.md"
+notes = "Element extraction. Not yet tested — read etiquette rules first (§22.2). FLIPPED to ingestion_permitted=true 2026-09-10 (GL-GATE-03, RIGHTS.1 re-run): OSM data under ODbL-1.0, redistributable + derivative_permitted true per packet; kept in the separate ODbL compartment (§42.3). reviewer role only (Part VIII §0.7)."
 [sources.osm_overpass.rights]
 spdx = "ODbL-1.0"
 attribution = "© OpenStreetMap contributors"
@@ -198,7 +203,11 @@ compact_status = "public_terms_only"
 robots_policy = "honor"
 verified = true
 last_verified = 2026-08-20
-notes = "The real DeFlock code."
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-10
+review_packet = "docs/build/reports/rights/deflock_repo.md"
+notes = "The real DeFlock code. FLIPPED to ingestion_permitted=true 2026-09-10 (GL-GATE-03, RIGHTS.1 re-run): MIT-licensed, redistributable + derivative_permitted true per packet; last_verified 2026-08-20 retained. reviewer role only (Part VIII §0.7)."
 [sources.deflock_repo.rights]
 spdx = "MIT"
 attribution = "FoggedLens / DeFlock"
@@ -1520,7 +1529,19 @@ default_tier = "R1"
 custody_posture = "REFERENCE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-notes = "OKC executed contracts/procurement (Flock Master Agreement C241032), R1. Government records; rights UNDETERMINED pending review (docs/slice/P06.1_hardness_precondition.md, SIG-LIC-004). Packet docs/build/rights/okc_procurement.md."
+ingestion_permitted = true
+last_verified = 2026-09-10
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-10
+review_packet = "docs/build/reports/rights/okc_procurement.md"
+notes = "OKC executed contracts/procurement (Flock Master Agreement C241032), R1. Government records. FLIPPED to ingestion_permitted=true 2026-09-10 (GL-GATE-03, RIGHTS.1 re-run): US municipal government public records are uncopyrightable / public domain (packet okc_procurement.md — public record ⇒ redistributable; derivatives of the underlying facts permitted); recorded as CC0-1.0 (the registry-accepted public-domain expression, policy/data/licenses.toml). reviewer role only (Part VIII §0.7)."
+[sources.okc_procurement.rights]
+spdx = "CC0-1.0"
+attribution = "City of Oklahoma City (public record)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.okc.gov/"
+retrieval_date = 2026-09-10
 
 [sources.okc_council]
 name = "Oklahoma City Council — agendas & minutes (CivicClerk)"
@@ -1531,7 +1552,19 @@ custody_posture = "REFERENCE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
 access_method = "civicclerk (tenant oklahomacityok; see data/agenda_tenants.toml)"
-notes = "OKC council governance records via the CivicClerk tenant oklahomacityok (agenda_tenants.toml). Government records, R2; rights UNDETERMINED pending review (docs/slice/P06.1_hardness_precondition.md, SIG-LIC-004). Packet docs/build/rights/okc_council.md."
+ingestion_permitted = true
+last_verified = 2026-09-10
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-10
+review_packet = "docs/build/reports/rights/okc_council.md"
+notes = "OKC council governance records via the CivicClerk tenant oklahomacityok (agenda_tenants.toml). Government records, R2. FLIPPED to ingestion_permitted=true 2026-09-10 (GL-GATE-03, RIGHTS.1 re-run): US municipal government public records are uncopyrightable / public domain (packet okc_council.md — public record ⇒ redistributable; derivatives of the underlying facts permitted); recorded as CC0-1.0 (registry-accepted public-domain expression). reviewer role only (Part VIII §0.7)."
+[sources.okc_council.rights]
+spdx = "CC0-1.0"
+attribution = "Oklahoma City Council (public record)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://oklahomacityok.portal.civicclerk.com/"
+retrieval_date = 2026-09-10
 
 [sources.okcpd_policy]
 name = "Oklahoma City Police Department — policy (Operations Manual)"
@@ -1541,7 +1574,19 @@ default_tier = "R2"
 custody_posture = "REFERENCE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-notes = "OKCPD agency policy (Operations Manual §5-118, ALPR). Government records, R2; rights UNDETERMINED pending review (docs/slice/P06.1_hardness_precondition.md, SIG-LIC-004). Packet docs/build/rights/okcpd_policy.md."
+ingestion_permitted = true
+last_verified = 2026-09-10
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-10
+review_packet = "docs/build/reports/rights/okcpd_policy.md"
+notes = "OKCPD agency policy (Operations Manual §5-118, ALPR). Government records, R2. FLIPPED to ingestion_permitted=true 2026-09-10 (GL-GATE-03, RIGHTS.1 re-run): US agency policy documents are government public records, uncopyrightable / public domain (packet okcpd_policy.md — public record ⇒ redistributable; derivatives of the underlying facts permitted); recorded as CC0-1.0 (registry-accepted public-domain expression). reviewer role only (Part VIII §0.7)."
+[sources.okcpd_policy.rights]
+spdx = "CC0-1.0"
+attribution = "Oklahoma City Police Department (public record)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.okc.gov/"
+retrieval_date = 2026-09-10
 
 [sources.ok_statute]
 name = "Oklahoma statutes (47 O.S. §7-606.1 et seq.)"
@@ -1551,7 +1596,19 @@ default_tier = "R1"
 custody_posture = "REFERENCE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-notes = "Oklahoma statutory / legal regime (ALPR limits), R1. Statutory text; rights UNDETERMINED pending review (docs/slice/P06.1_hardness_precondition.md, SIG-LIC-004). Packet docs/build/rights/ok_statute.md."
+ingestion_permitted = true
+last_verified = 2026-09-10
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-10
+review_packet = "docs/build/reports/rights/ok_statute.md"
+notes = "Oklahoma statutory / legal regime (ALPR limits), R1. Statutory text. FLIPPED to ingestion_permitted=true 2026-09-10 (GL-GATE-03, RIGHTS.1 re-run): statutes / edicts of government are not copyrightable in the U.S. — public domain (packet ok_statute.md); recorded as CC0-1.0 (registry-accepted public-domain expression); OSCN site terms govern access method only. reviewer role only (Part VIII §0.7)."
+[sources.ok_statute.rights]
+spdx = "CC0-1.0"
+attribution = "State of Oklahoma statutes (OSCN; public domain)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.oscn.net/"
+retrieval_date = 2026-09-10
 
 [sources.journalrecord]
 name = "The Journal Record (Oklahoma City)"

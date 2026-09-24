@@ -53,10 +53,19 @@ def test_source_ids_are_unique() -> None:
 # --- SIG-INGEST-028: ingestion_permitted defaults to false --------------------
 
 
+#: The OKC critical subset flipped by the RIGHTS.1 re-run (GL-GATE-03, 2026-09-10);
+#: every other seeded source stays un-permitted (the flag still defaults false).
+_FLIPPED_OKC_SUBSET = frozenset(
+    {"okc_procurement", "okc_council", "okcpd_policy", "ok_statute", "osm_overpass", "deflock_repo"}
+)
+
+
 def test_ingestion_permitted_defaults_false_across_the_seed() -> None:
-    # Phase 0 seeds the registry; connectors are Phase 4+. No seeded source is
-    # permitted until a reviewer resolves its posture and flips the flag.
-    assert all(s.ingestion_permitted is False for s in sources())
+    # Phase 0 seeds the registry; connectors are Phase 4+. A source is permitted
+    # only after a reviewer resolves its posture and flips the flag — as of the
+    # RIGHTS.1 re-run that is exactly the OKC critical subset, and nothing else.
+    permitted = {s.id for s in sources() if s.ingestion_permitted}
+    assert permitted == set(_FLIPPED_OKC_SUBSET)
 
 
 # --- SIG-INGEST-027: compact_status is a closed vocabulary incl. no_response --
