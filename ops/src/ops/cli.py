@@ -362,6 +362,21 @@ def build_parser() -> argparse.ArgumentParser:
         "else the sink default; a very-large source commits progressively) — P26.18",
     )
 
+    sink_bench = sub.add_parser(
+        "sink-bench",
+        help="P31.3 (ADR-110): fetch ONE green source once through the gated live "
+        "connector, then time N PgClaimSink passes over its real records: claims/min and "
+        "round trips per claim. Pass 1 lands any upstream change; later passes are +0 "
+        "(the idempotency proof). Each pass is a real, completed ingest execution",
+    )
+    sink_bench.add_argument("--source", required=True, help="source id (live-gated)")
+    sink_bench.add_argument("--dsn", default=None, help="PostgreSQL DSN (else SIG_PG_* parts)")
+    sink_bench.add_argument("--passes", type=int, default=2, help="timed PG passes (>= 1)")
+    sink_bench.add_argument("--commit-chunk-size", type=int, default=None)
+    sink_bench.add_argument(
+        "--code-commit", default="sink-bench", help="recorded on each pass's ingest_run"
+    )
+
     backfill = sub.add_parser(
         "backfill-run-completions",
         help="P31.2 (ADR-109): append ingest_run_completion rows for the WORM "
@@ -1174,6 +1189,65 @@ def _cmd_scheduled_ingest(args: argparse.Namespace) -> int:
     return exit_code
 
 
+def _cmd_sink_bench(args: argparse.Namespace) -> int:
+    """Time real-source PgClaimSink passes (P31.3 / ADR-110, the hosted measurement)."""
+    import tempfile
+
+    import psycopg
+    from connectors.runner import RunMode, run_source
+    from connectors.sinks import resolve_commit_chunk_size
+    from connectors.stages import registered_connectors
+    from db.claim_sink import DEFAULT_COMMIT_CHUNK_SIZE
+    from db.sink_bench import run_pass
+
+    if args.passes < 1:
+        print("sink-bench: --passes must be >= 1")
+        return 2
+    dsn = args.dsn or os.environ.get("SIG_STAGING_DSN") or _cloudsql_dsn_from_parts()
+    if not dsn:
+        print("sink-bench: needs --dsn / SIG_STAGING_DSN / SIG_PG_* parts")
+        return 2
+    chunk = resolve_commit_chunk_size(args.commit_chunk_size) or DEFAULT_COMMIT_CHUNK_SIZE
+    started = time.perf_counter()
+    with tempfile.TemporaryDirectory() as captures:
+        # The fetch is the scheduled path's: live gate first, then the politeness
+        # layer. The memory sink asserts nothing, so the timed passes below are the
+        # only writes.
+        report = run_source(
+            args.source, mode=RunMode.LIVE, sink_kind="memory", capture_dir=Path(captures)
+        )
+    fetch_seconds = time.perf_counter() - started
+    version = getattr(registered_connectors()[report.connector], "version", "1.0.0")
+    print(
+        json.dumps(
+            {
+                "phase": "fetch",
+                "source": args.source,
+                "connector": report.connector,
+                "records": len(report.claims),
+                "captures": len(report.captures),
+                "seconds": round(fetch_seconds, 3),
+            },
+            sort_keys=True,
+        ),
+        flush=True,
+    )
+    with psycopg.connect(dsn, autocommit=True) as conn:
+        for n in range(args.passes):
+            result = run_pass(
+                conn,
+                report.claims,
+                label=f"pass-{n + 1}",
+                connector_name=report.connector,
+                connector_version=str(version),
+                code_commit=args.code_commit,
+                commit_chunk_size=chunk,
+                source_id=args.source,
+            )
+            print(result.as_json(), flush=True)
+    return 0
+
+
 def _cmd_cadence(args: argparse.Namespace) -> int:
     from .scheduled import load_cadence, unscheduled_live_sources
 
@@ -1318,6 +1392,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_cadence(args)
     if args.command == "backfill-run-completions":
         return _cmd_backfill_run_completions(args)
+    if args.command == "sink-bench":
+        return _cmd_sink_bench(args)
     if args.command == "alerts":
         return _cmd_alerts(args)
     if args.command == "alert":

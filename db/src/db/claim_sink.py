@@ -16,7 +16,10 @@ or row removal anywhere in this module, SIG-STORE-011/012):
   ``extraction`` that becomes the claim's origin.
 * **L2 identity** — the connector's opaque string ``subject_id`` is resolved to an
   ``entity`` row via ``entity_identifier(scheme='sig.connector.subject')``; the
-  same string always resolves to the same entity (idempotent identity).
+  same string always resolves to the same entity (idempotent identity). Since
+  P31.3 the resolution goes through the **identity guard**
+  (:mod:`db.identity_guard`, ADR-110): the ``entity_identity_key`` primary key
+  makes two concurrent sinks agree on ONE entity per subject.
 * **L1 claim** — the append-only ``claim`` row itself. ``recorded_at`` (its
   ``sys_period`` lower bound) is set **by the database** (``clock_timestamp()``
   default), never by this code.
@@ -29,6 +32,17 @@ insert ``ON CONFLICT DO NOTHING``. Replaying the same run therefore inserts each
 claim exactly once: N>0 rows the first time, 0 new rows on every replay. A
 correction is still a *new* row (a different payload → a different digest).
 
+**Batched writes** (P31.3 / ADR-110, closes D-P30.1-1): the sink used to spend
+three to five round trips per claim (register the predicate, look up the subject,
+insert the claim, link its evidence). Now each claim is *staged* in memory, and at
+the end of its chunk the whole chunk is written with a fixed handful of multi-row
+statements. The predicates go in one ``INSERT … SELECT FROM unnest``. The new
+subjects go through the guard, in up to four statements. The claims go in one
+``INSERT … ON CONFLICT (content_digest) DO NOTHING RETURNING`` per
+``insert_batch_size`` rows. Their ``claim_evidence`` links go in one statement per
+batch. Everything a claim needs still lands in the same chunk transaction as the
+claim.
+
 The connector packages must not import psycopg directly (see
 ``connectors/src/connectors/sinks.py``); they build a sink through that factory,
 which imports this module from the ``db`` package.
@@ -40,13 +54,14 @@ import hashlib
 import json
 import os
 import uuid
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from typing import Any
 
 import psycopg
 
+from .identity_guard import SUBJECT_SCHEME, resolve_identity_batch
 from .run_completion import append_completion
 
 #: Columns excluded from the reproducibility payload (SIG-INGEST-003, SIG-EVID-017):
@@ -62,9 +77,6 @@ _DEFAULT_RELIABILITY = "R3"  # credible secondary source (§10.4)
 _DEFAULT_DIRECTNESS = "D2"  # direct statement in a secondary record (§10.5)
 _DEFAULT_INTEGRITY = "I1"  # intact original capture (§10.6)
 _DEFAULT_ENTITY_TYPE = "deployment"  # the atlas/osm subjects are adoption bridges (§11.7)
-
-#: The identifier scheme the sink keys connector subjects on (idempotent identity).
-SUBJECT_SCHEME = "sig.connector.subject"
 
 #: Environment variables recorded on each ``ingest_run.environment`` (SIG-EVID-018
 #: asks for the locale + timezone; the Cloud Run ids tie a run to its job execution).
@@ -88,6 +100,13 @@ _RECORDED_ENV = (
 #: multiple chunks, which makes their ingest resumable rather than all-or-nothing.
 DEFAULT_COMMIT_CHUNK_SIZE = 10_000
 
+#: Rows per multi-row claim ``INSERT`` inside a chunk (P31.3 / ADR-110). Measured
+#: (docs/build/runs/P31.3.md): 500, 2,000 and 10,000 land 100k claims within the run
+#: to run noise of each other, because the write is DB-bound. They differ only in
+#: round trips (474 / 174 / 94 per 100k claims), which is under 2 s at hosted
+#: latency. 2,000 keeps each statement's parameter arrays bounded.
+DEFAULT_INSERT_BATCH_SIZE = 2_000
+
 
 def content_digest(claim: Mapping[str, Any]) -> str:
     """The sha256 over a claim's reproducible payload (its idempotency key).
@@ -110,6 +129,64 @@ class ClaimSinkReport:
     duplicates: int = 0
     non_claim_records: int = 0
     entities: int = 0
+
+
+@dataclass(frozen=True)
+class EntityRef:
+    """An entity named by an identity-bearing identifier, for the object seam.
+
+    Returned by an ``object_resolver`` (P31.5). The sink resolves it through the
+    identity guard, so an object entity is minted at most once per
+    ``(scheme, value)``, exactly like a subject.
+    """
+
+    scheme: str
+    value: str
+    entity_type: str
+
+
+@dataclass(frozen=True)
+class DuplicateBatch:
+    """The claims of one chunk whose content was already in the spine (P31.7 seam).
+
+    Handed to ``on_duplicates`` INSIDE the chunk transaction, so anything the hook
+    writes through ``conn`` commits or rolls back with the chunk.
+    """
+
+    conn: Any
+    run_id: str
+    #: content_digest -> the ``claim_id`` already stored for it.
+    existing: Mapping[str, str]
+    #: content_digest -> the ``evidence_capture`` this execution would have linked.
+    capture_by_digest: Mapping[str, str]
+
+
+#: Maps a claim record to the entity its object names, or ``None`` for a literal.
+ObjectResolver = Callable[[Mapping[str, Any]], "EntityRef | None"]
+#: Receives each chunk's already-present claims (see :class:`DuplicateBatch`).
+DuplicateHook = Callable[[DuplicateBatch], None]
+
+
+@dataclass(frozen=True)
+class _Staged:
+    """One claim, validated and resolved to its prerequisites, awaiting its chunk write."""
+
+    digest: str
+    subject: str
+    predicate: str
+    value_kind: str
+    value_text: str | None
+    value_int: str | None  # an int value as exact decimal text
+    value_float: str | None  # a float value as its shortest round-trip repr
+    value_bool: str | None
+    raw_value: str
+    observed_at: str | None
+    observed_unknown_reason: str | None
+    extraction_id: str
+    run_id: str
+    rights_id: str
+    capture_id: str
+    object_ref: EntityRef | None
 
 
 def _coerce_observed_at(value: Any) -> datetime | None:
@@ -137,6 +214,60 @@ def _value_datatype(value: Any) -> str:
     return "string"
 
 
+# --- the chunk statements (all INSERT/SELECT; every array is passed as text[] and
+# cast in SQL, so a list that happens to be all-NULL still has a type) -----------
+
+_REGISTER_PREDICATES = (
+    "INSERT INTO vocab_predicate"
+    "(predicate_id, vocab_version, value_datatype, object_type, definition,"
+    " volatility_class, half_life_days, resolution_strategy) "
+    "SELECT p.predicate_id, %s, p.value_datatype, 'literal', p.definition, 'MODERATE', 365,"
+    " 'authoritative_source_wins' "
+    "FROM unnest(%s::text[], %s::text[], %s::text[])"
+    " AS p(predicate_id, value_datatype, definition) "
+    "ORDER BY p.predicate_id "
+    "ON CONFLICT (predicate_id) DO NOTHING"
+)
+
+# The float column goes text -> float8 -> numeric: the same float8 -> numeric
+# assignment cast the row-at-a-time path applied to a Python float, so the stored
+# numeric is byte-identical. An int goes text -> numeric (exact), as before.
+_INSERT_CLAIMS = (
+    "INSERT INTO claim"
+    "(subject_id, predicate_id, object_entity, object_type, value_kind, value_text,"
+    " value_num, value_bool, unit, raw_value, observed_at, observed_unknown_reason,"
+    " source_reliability, claim_directness, artifact_integrity, extraction_id,"
+    " ingest_run_id, rights_id, sensitivity_tier, content_digest) "
+    "SELECT r.subject_id::uuid, r.predicate_id, r.object_entity::uuid,"
+    " CASE WHEN r.object_entity IS NULL THEN 'literal' ELSE 'entity_ref' END,"
+    " r.value_kind::value_kind, r.value_text,"
+    " COALESCE(r.value_int::numeric, r.value_float::float8::numeric), r.value_bool::boolean,"
+    " NULL, r.raw_value, r.observed_at::timestamptz, r.observed_unknown_reason,"
+    " %s, %s, %s, r.extraction_id::uuid, r.run_id::uuid, r.rights_id::uuid, 0,"
+    " r.content_digest "
+    "FROM unnest(%s::text[], %s::text[], %s::text[], %s::text[], %s::text[], %s::text[],"
+    " %s::text[], %s::text[], %s::text[], %s::text[], %s::text[], %s::text[], %s::text[],"
+    " %s::text[], %s::text[]) WITH ORDINALITY AS r(subject_id, predicate_id, object_entity,"
+    " value_kind, value_text, value_int, value_float, value_bool, raw_value, observed_at,"
+    " observed_unknown_reason, extraction_id, run_id, rights_id, content_digest, ord) "
+    "ORDER BY r.ord "
+    "ON CONFLICT (content_digest) WHERE content_digest IS NOT NULL "
+    "DO NOTHING RETURNING claim_id, content_digest"
+)
+
+_LINK_EVIDENCE = (
+    "INSERT INTO claim_evidence(claim_id, capture_id, role) "
+    "SELECT l.claim_id::uuid, l.capture_id::uuid, 'establishes' "
+    "FROM unnest(%s::text[], %s::text[]) AS l(claim_id, capture_id) "
+    "ON CONFLICT (claim_id, capture_id, role) DO NOTHING"
+)
+
+_EXISTING_CLAIMS = (
+    "SELECT content_digest, claim_id FROM claim "
+    "WHERE content_digest = ANY(%s::text[]) AND content_digest IS NOT NULL"
+)
+
+
 class PgClaimSink:
     """A :class:`connectors.stages.ClaimSink` that persists claims to PostgreSQL.
 
@@ -152,6 +283,21 @@ class PgClaimSink:
     same logical execution, and its sink reuses that run. When the execution ends,
     :meth:`record_completion` appends its ``ingest_run_completion`` row;
     ``ingest_run`` itself is never rewritten.
+
+    **Extension points** (P31.3 / ADR-110; the behaviour is unchanged until a caller
+    uses them):
+
+    * ``on_duplicates`` receives each chunk's already-present claims with their
+      stored ``claim_id``s (the P31.7 re-sighting seam). With no hook, the sink does
+      not even look them up.
+    * ``object_resolver`` maps a claim record to the :class:`EntityRef` its object
+      names (the P31.5 entity-ref seam). The object entity is resolved through the
+      identity guard and written as ``object_entity`` with ``object_type
+      'entity_ref'``. With no resolver every object stays a literal.
+    * **Each** :meth:`assert_claims` **call is a commit boundary** (the P31.4
+      per-capture flush). Everything handed to one call has committed when it
+      returns, in chunks of at most ``commit_chunk_size`` claims. Calling it once
+      per capture therefore commits per capture, still under one run.
     """
 
     def __init__(
@@ -167,12 +313,17 @@ class PgClaimSink:
         commit_chunk_size: int = DEFAULT_COMMIT_CHUNK_SIZE,
         execution_id: str | None = None,
         run_record_uri: str | None = None,
+        insert_batch_size: int = DEFAULT_INSERT_BATCH_SIZE,
+        on_duplicates: DuplicateHook | None = None,
+        object_resolver: ObjectResolver | None = None,
     ) -> None:
         if commit_chunk_size < 1:
             raise ValueError(
                 f"commit_chunk_size must be >= 1 (got {commit_chunk_size!r}); a chunk "
                 "spans at least one claim"
             )
+        if insert_batch_size < 1:
+            raise ValueError(f"insert_batch_size must be >= 1 (got {insert_batch_size!r})")
         self._conn = conn
         self._connector_name = connector_name
         self._connector_version = connector_version
@@ -181,6 +332,9 @@ class PgClaimSink:
         self._vocab_version = vocab_version
         self._is_replay = is_replay
         self._commit_chunk_size = commit_chunk_size
+        self._insert_batch_size = insert_batch_size
+        self._on_duplicates = on_duplicates
+        self._object_resolver = object_resolver
         # The execution discriminator (ADR-109): explicit = resume that execution's
         # run; absent = a fresh execution, so a fresh run.
         self._resume_execution = execution_id is not None
@@ -190,10 +344,18 @@ class PgClaimSink:
         self._run_record_uri = run_record_uri
         # Per-instance caches so prerequisites are resolved once, not per claim.
         self._run_id: str | None = None
+        self._strategy_ready = False
         self._rights_by_spdx: dict[str, str] = {}
-        self._entity_by_subject: dict[str, str] = {}
+        self._known_predicates: set[str] = set()
+        # (scheme, value) -> entity_id, filled through the identity guard.
+        self._entity_by_key: dict[tuple[str, str], str] = {}
         # (source_id, artifact_type) -> (capture_id, extraction_id)
         self._capture_by_source: dict[tuple[str, str], tuple[str, str]] = {}
+        # The open chunk: staged claims + the predicates they introduce.
+        self._staged: list[_Staged] = []
+        self._pending_predicates: dict[str, str] = {}
+        # Cache entries added during the open chunk; undone if the chunk rolls back.
+        self._journal: list[tuple[Any, Any]] = []
         self._chunk_exhausted = False
         self.report = ClaimSinkReport()
 
@@ -217,15 +379,16 @@ class PgClaimSink:
         SOURCES.17): each chunk is its own ``self._conn.transaction()``, so a
         very-large source (OSM's ~1.37M-claim mirror) commits progressively
         instead of holding one multi-hour transaction that a Cloud Run task
-        deadline rolls back whole. A claim and **all** its prerequisite/evidence
-        inserts run inside a single ``_insert_claim`` call and therefore land in
-        the SAME chunk transaction — a chunk boundary never bisects a claim
-        (append-only invariant, root AGENTS.md §5). Because every write is
-        content-keyed ``ON CONFLICT DO NOTHING``, chunks that already committed
-        dedupe to +0 on a re-run, so an interrupted run (chunks 1..k committed,
-        process dies) is safe to resume: the re-walk tops up from where it
-        stopped and reaches the same final count. The default leaves every
-        ordinary source committing in one chunk — unchanged behaviour.
+        deadline rolls back whole. Each claim is staged by ``_insert_claim``, and
+        the chunk's staged claims are written together, with all their
+        prerequisite and evidence rows, before the chunk commits. So a claim and
+        everything it needs land in the SAME chunk transaction, and a chunk
+        boundary never bisects a claim (append-only invariant, root AGENTS.md §5).
+        Because every write is content-keyed ``ON CONFLICT DO NOTHING``, chunks
+        that already committed dedupe to +0 on a re-run, so an interrupted run
+        (chunks 1..k committed, process dies) is safe to resume: the re-walk tops
+        up from where it stopped and reaches the same final count. The default
+        leaves every ordinary source committing in one chunk — unchanged behaviour.
 
         ``SinkReport`` counters stay exact across chunk boundaries: they are
         instance state accumulated as each record is considered, independent of
@@ -246,14 +409,16 @@ class PgClaimSink:
             except BaseException:
                 self._restore_chunk_snapshot(snapshot)
                 raise
+            self._journal.clear()
             exhausted = self._chunk_exhausted
 
     def _chunk_snapshot(self) -> tuple[Any, ...]:
+        # The id caches are journaled (undo on rollback) instead of copied, so a
+        # chunk costs O(its own additions), not O(everything cached so far).
+        self._journal.clear()
         return (
             self._run_id,
-            dict(self._rights_by_spdx),
-            dict(self._entity_by_subject),
-            dict(self._capture_by_source),
+            self._strategy_ready,
             self.report.inserted,
             self.report.duplicates,
             self.report.entities,
@@ -262,13 +427,23 @@ class PgClaimSink:
     def _restore_chunk_snapshot(self, snapshot: tuple[Any, ...]) -> None:
         (
             self._run_id,
-            self._rights_by_spdx,
-            self._entity_by_subject,
-            self._capture_by_source,
+            self._strategy_ready,
             self.report.inserted,
             self.report.duplicates,
             self.report.entities,
         ) = snapshot
+        for cache, key in reversed(self._journal):
+            if isinstance(cache, set):
+                cache.discard(key)
+            else:
+                cache.pop(key, None)
+        self._journal.clear()
+        self._staged = []
+        self._pending_predicates = {}
+
+    def _remember(self, cache: dict[Any, Any], key: Any, value: Any) -> None:
+        cache[key] = value
+        self._journal.append((cache, key))
 
     def _assert_chunk(self, remaining: Any, chunk_size: int) -> None:
         """One chunk transaction; sets ``_chunk_exhausted`` when the input ran out."""
@@ -287,13 +462,14 @@ class PgClaimSink:
                 self._insert_claim(claim)
                 committed_this_chunk += 1
                 if committed_this_chunk >= chunk_size:
-                    # Chunk full — close this transaction (the `with` commits
-                    # on exit) and open a fresh one for the next chunk.
+                    # Chunk full — write it, then close this transaction (the
+                    # `with` commits on exit) and open a fresh one for the next.
                     break
             else:
                 # The `for` ran to exhaustion without breaking: this is the
                 # final (possibly partial / empty) chunk.
                 self._chunk_exhausted = True
+            self._write_chunk()
 
     # --- prerequisites (all INSERT ... ON CONFLICT DO NOTHING, append-only) ----
 
@@ -304,21 +480,28 @@ class PgClaimSink:
             (strategy_id, "connector-asserted claim (P19.4 PgClaimSink)"),
         )
 
-    def _ensure_predicate(self, predicate_id: str, value: Any) -> None:
-        self._ensure_resolution_strategy("authoritative_source_wins")
+    def _register_predicates(self) -> None:
+        """Register the chunk's new predicates in one statement (cached per sink)."""
+        pending = self._pending_predicates
+        if not pending:
+            return
+        self._pending_predicates = {}
+        if not self._strategy_ready:
+            self._ensure_resolution_strategy("authoritative_source_wins")
+            self._strategy_ready = True
+        ids = sorted(pending)
         self._conn.execute(
-            "INSERT INTO vocab_predicate"
-            "(predicate_id, vocab_version, value_datatype, object_type, definition,"
-            " volatility_class, half_life_days, resolution_strategy) "
-            "VALUES (%s, %s, %s, 'literal', %s, 'MODERATE', 365,"
-            " 'authoritative_source_wins') ON CONFLICT (predicate_id) DO NOTHING",
+            _REGISTER_PREDICATES,
             (
-                predicate_id,
                 self._vocab_version,
-                _value_datatype(value),
-                f"connector predicate {predicate_id!r} (registered by PgClaimSink)",
+                ids,
+                [pending[p] for p in ids],
+                [f"connector predicate {p!r} (registered by PgClaimSink)" for p in ids],
             ),
         )
+        for predicate in ids:
+            self._known_predicates.add(predicate)
+            self._journal.append((self._known_predicates, predicate))
 
     def _rights_id(self, spdx: str, attribution: str | None) -> str:
         spdx = spdx or "UNDETERMINED"
@@ -333,7 +516,7 @@ class PgClaimSink:
             (spdx,),
         ).fetchone()
         if row is not None:
-            self._rights_by_spdx[spdx] = str(row[0])
+            self._remember(self._rights_by_spdx, spdx, str(row[0]))
             return str(row[0])
         redistributable = "UNDETERMINED" if spdx == "UNDETERMINED" else "yes"
         inserted = self._conn.execute(
@@ -343,7 +526,7 @@ class PgClaimSink:
             (spdx, attribution, redistributable, redistributable, date.today()),
         ).fetchone()
         assert inserted is not None
-        self._rights_by_spdx[spdx] = str(inserted[0])
+        self._remember(self._rights_by_spdx, spdx, str(inserted[0]))
         return str(inserted[0])
 
     @property
@@ -531,39 +714,37 @@ class PgClaimSink:
             ).fetchone()
             assert ex is not None
             extraction_id = str(ex[0])
-        self._capture_by_source[cache_key] = (capture_id, extraction_id)
+        self._remember(self._capture_by_source, cache_key, (capture_id, extraction_id))
         return capture_id, extraction_id
 
-    def _entity_for_subject(self, subject_id: str) -> str:
-        """Resolve a connector subject string to an entity uuid (idempotent)."""
-        cached = self._entity_by_subject.get(subject_id)
-        if cached is not None:
-            return cached
-        row = self._conn.execute(
-            "SELECT entity_id FROM entity_identifier WHERE scheme = %s AND value = %s",
-            (SUBJECT_SCHEME, subject_id),
-        ).fetchone()
-        if row is not None:
-            self._entity_by_subject[subject_id] = str(row[0])
-            return str(row[0])
-        created = self._conn.execute(
-            "INSERT INTO entity(entity_type) VALUES (%s) RETURNING entity_id",
-            (_DEFAULT_ENTITY_TYPE,),
-        ).fetchone()
-        assert created is not None
-        entity_id = str(created[0])
-        self._conn.execute(
-            "INSERT INTO entity_identifier(entity_id, scheme, value) "
-            "VALUES (%s, %s, %s) ON CONFLICT (entity_id, scheme, value) DO NOTHING",
-            (entity_id, SUBJECT_SCHEME, subject_id),
-        )
-        self._entity_by_subject[subject_id] = entity_id
-        self.report.entities += 1
-        return entity_id
+    def _resolve_entities(self, refs: Sequence[tuple[str, str, str]]) -> dict[tuple[str, str], str]:
+        """Resolve ``(scheme, value, entity_type)`` refs to entities through the guard.
 
-    # --- the L1 claim insert ---------------------------------------------------
+        Cached per sink: refs seen before cost nothing, and the rest go through ONE
+        guarded pass (:func:`db.identity_guard.resolve_identity_batch`). One pass for
+        subjects and objects together keeps a single global key order, so concurrent
+        sinks cannot deadlock. It runs only inside a chunk transaction, whose rollback
+        undoes the cache entries (journaled). Entities it mints count in
+        ``report.entities``.
+        """
+        missing = [r for r in refs if (r[0], r[1]) not in self._entity_by_key]
+        if missing:
+            result = resolve_identity_batch(self._conn, missing)
+            for key, entity_id in result.entity_by_key.items():
+                self._remember(self._entity_by_key, key, entity_id)
+            self.report.entities += len(result.minted)
+        return {(r[0], r[1]): self._entity_by_key[(r[0], r[1])] for r in refs}
+
+    # --- the L1 claim write ----------------------------------------------------
 
     def _insert_claim(self, claim: Mapping[str, Any]) -> None:
+        """Stage one claim for its chunk's batched write.
+
+        Resolves the claim's per-run prerequisites (rights, source, evidence chain,
+        run), which are cached, and computes its row. The subject entity, the
+        predicate registration, the claim row and its evidence link are written
+        for the whole chunk by :meth:`_write_chunk`, inside the same transaction.
+        """
         subject = str(claim.get("subject_id") or "")
         predicate = str(claim.get("predicate_id") or "")
         if not subject or not predicate:
@@ -576,8 +757,8 @@ class PgClaimSink:
 
         genre = str(claim.get("evidence_genre") or "connector_run")
         rights_id = self._rights_id(spdx, attribution)
-        self._ensure_predicate(predicate, value)
-        subject_entity = self._entity_for_subject(subject)
+        if predicate not in self._known_predicates:
+            self._pending_predicates.setdefault(predicate, _value_datatype(value))
         capture_id, extraction_id = self._ensure_evidence(source_id, rights_id, genre)
         run_id = self._ensure_run()
 
@@ -591,68 +772,157 @@ class PgClaimSink:
         raw_value = (
             str(raw_field) if raw_field is not None else (str(value) if value is not None else "")
         )
+        value_int: str | None = None
+        value_float: str | None = None
+        value_bool: str | None = None
         if value is not None:
             value_kind = "value"
-            value_text = str(value)
-            value_bool = value if isinstance(value, bool) else None
-            value_num = (
-                value if isinstance(value, (int, float)) and not isinstance(value, bool) else None
-            )
+            value_text: str | None = str(value)
+            if isinstance(value, bool):
+                value_bool = "true" if value else "false"
+            elif isinstance(value, int):
+                value_int = str(int(value))  # int() normalises an int subclass
+            elif isinstance(value, float):
+                # The shortest round-trip text of the double, which float8 parses
+                # back to the same double. float() normalises a float subclass
+                # (e.g. numpy.float64), whose repr is not a number.
+                value_float = repr(float(value))
         elif raw_field is not None and str(raw_field) != "":
             value_kind = "value"
             value_text = str(raw_field)
-            value_bool = None
-            value_num = None
         else:
             # A connector row that asserts a subject/predicate with no value yet
             # (§16.2 'novalue'): every value_* column stays null.
             value_kind = "novalue"
             value_text = None
-            value_bool = None
-            value_num = None
-        digest = content_digest(claim)
-
-        inserted = self._conn.execute(
-            "INSERT INTO claim"
-            "(subject_id, predicate_id, object_type, value_kind, value_text, value_num,"
-            " value_bool, unit, raw_value, observed_at, observed_unknown_reason,"
-            " source_reliability, claim_directness, artifact_integrity, extraction_id,"
-            " ingest_run_id, rights_id, sensitivity_tier, content_digest) "
-            "VALUES (%s, %s, 'literal', %s, %s, %s, %s, NULL, %s, %s, %s,"
-            " %s, %s, %s, %s, %s, %s, 0, %s) "
-            "ON CONFLICT (content_digest) WHERE content_digest IS NOT NULL "
-            "DO NOTHING RETURNING claim_id",
-            (
-                subject_entity,
-                predicate,
-                value_kind,
-                value_text,
-                value_num,
-                value_bool,
-                raw_value,
-                observed_at,
-                observed_unknown_reason,
-                _DEFAULT_RELIABILITY,
-                _DEFAULT_DIRECTNESS,
-                _DEFAULT_INTEGRITY,
-                extraction_id,
-                run_id,
-                rights_id,
-                digest,
-            ),
-        ).fetchone()
-        if inserted is None:
-            self.report.duplicates += 1
-            return
-        claim_id = str(inserted[0])
-        # Link the claim to its establishing capture (§16.5).
-        self._conn.execute(
-            "INSERT INTO claim_evidence(claim_id, capture_id, role) "
-            "VALUES (%s, %s, 'establishes') "
-            "ON CONFLICT (claim_id, capture_id, role) DO NOTHING",
-            (claim_id, capture_id),
+        object_ref = self._object_resolver(claim) if self._object_resolver is not None else None
+        if object_ref is not None and (not object_ref.value or value_kind == "novalue"):
+            # An entity reference needs a named entity and a value to stand for:
+            # without either the claim stays a literal (claim_value_shape).
+            object_ref = None
+        self._staged.append(
+            _Staged(
+                digest=content_digest(claim),
+                subject=subject,
+                predicate=predicate,
+                value_kind=value_kind,
+                value_text=value_text,
+                value_int=value_int,
+                value_float=value_float,
+                value_bool=value_bool,
+                raw_value=raw_value,
+                observed_at=observed_at.isoformat() if observed_at is not None else None,
+                observed_unknown_reason=observed_unknown_reason,
+                extraction_id=extraction_id,
+                run_id=run_id,
+                rights_id=rights_id,
+                capture_id=capture_id,
+                object_ref=object_ref,
+            )
         )
-        self.report.inserted += 1
+
+    def _write_chunk(self) -> None:
+        """Write the open chunk's staged claims (inside its transaction).
+
+        Predicates first, then subject and object entities through the identity
+        guard, then the claims ``ON CONFLICT (content_digest) DO NOTHING`` in
+        ``insert_batch_size`` slices, each followed by the ``claim_evidence`` links
+        of the rows it inserted. The counters are exact. A claim the spine already
+        held, or one repeated earlier in the same chunk, is a duplicate, just as in
+        the row-at-a-time path.
+        """
+        staged, self._staged = self._staged, []
+        if not staged:
+            return
+        self._register_predicates()
+        refs: dict[tuple[str, str], tuple[str, str, str]] = {}
+        for s in staged:
+            subject_key = (SUBJECT_SCHEME, s.subject)
+            refs.setdefault(subject_key, (*subject_key, _DEFAULT_ENTITY_TYPE))
+            if s.object_ref is not None:
+                o = s.object_ref
+                refs.setdefault((o.scheme, o.value), (o.scheme, o.value, o.entity_type))
+        entity_ids = self._resolve_entities(list(refs.values()))
+
+        # Within one chunk the first occurrence of a digest is the one written.
+        unique: list[_Staged] = []
+        seen: set[str] = set()
+        for s in staged:
+            if s.digest not in seen:
+                seen.add(s.digest)
+                unique.append(s)
+
+        inserted: dict[str, str] = {}
+        batch = self._insert_batch_size
+        for start in range(0, len(unique), batch):
+            part = unique[start : start + batch]
+            rows = self._conn.execute(
+                _INSERT_CLAIMS,
+                (
+                    _DEFAULT_RELIABILITY,
+                    _DEFAULT_DIRECTNESS,
+                    _DEFAULT_INTEGRITY,
+                    [entity_ids[(SUBJECT_SCHEME, s.subject)] for s in part],
+                    [s.predicate for s in part],
+                    [
+                        entity_ids[(s.object_ref.scheme, s.object_ref.value)]
+                        if s.object_ref is not None
+                        else None
+                        for s in part
+                    ],
+                    [s.value_kind for s in part],
+                    [s.value_text for s in part],
+                    [s.value_int for s in part],
+                    [s.value_float for s in part],
+                    [s.value_bool for s in part],
+                    [s.raw_value for s in part],
+                    [s.observed_at for s in part],
+                    [s.observed_unknown_reason for s in part],
+                    [s.extraction_id for s in part],
+                    [s.run_id for s in part],
+                    [s.rights_id for s in part],
+                    [s.digest for s in part],
+                ),
+            ).fetchall()
+            if not rows:
+                continue
+            # Link each new claim to its establishing capture (§16.5).
+            capture_of = {s.digest: s.capture_id for s in part}
+            new = {str(r[1]): str(r[0]) for r in rows}
+            self._conn.execute(_LINK_EVIDENCE, (list(new.values()), [capture_of[d] for d in new]))
+            inserted.update(new)
+        self.report.inserted += len(inserted)
+        self.report.duplicates += len(staged) - len(inserted)
+
+        if self._on_duplicates is not None:
+            self._report_duplicates(unique, inserted)
+
+    def _report_duplicates(self, unique: Sequence[_Staged], inserted: Mapping[str, str]) -> None:
+        dup = [s for s in unique if s.digest not in inserted]
+        if not dup or self._on_duplicates is None:
+            return
+        rows = self._conn.execute(_EXISTING_CLAIMS, ([s.digest for s in dup],)).fetchall()
+        existing = {str(r[0]): str(r[1]) for r in rows}
+        run_id = self._ensure_run()
+        self._on_duplicates(
+            DuplicateBatch(
+                conn=self._conn,
+                run_id=run_id,
+                existing=existing,
+                capture_by_digest={s.digest: s.capture_id for s in dup},
+            )
+        )
 
 
-__all__ = ["ClaimSinkReport", "PgClaimSink", "SUBJECT_SCHEME", "content_digest"]
+__all__ = [
+    "DEFAULT_COMMIT_CHUNK_SIZE",
+    "DEFAULT_INSERT_BATCH_SIZE",
+    "ClaimSinkReport",
+    "DuplicateBatch",
+    "DuplicateHook",
+    "EntityRef",
+    "ObjectResolver",
+    "PgClaimSink",
+    "SUBJECT_SCHEME",
+    "content_digest",
+]
