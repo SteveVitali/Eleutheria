@@ -372,10 +372,15 @@ def test_spine_export_reads_the_materialized_graph(conn, seeded_export) -> None:
     export = run_spine_export(conn, as_of="2026-09-23", note="materialized", spine_label="seeded")
     coverage = json.loads(export.web_artifacts["web/coverage.json"])
 
-    # The resolved-site framing rides the frozen CoverageMetric contract (ADR-101): only
-    # s_osm resolved, so N = 1 resolved site; the denominator names the observations; no total.
+    # The resolved-site framing rides the frozen CoverageMetric contract (ADR-101); the
+    # denominator names the observations; no total. Since P30.2a (ADR-104) the camera
+    # coordinate predicates are registered, so BOTH seeded sites carry a materialized
+    # RESOLVED coordinate envelope and N = M = 2. That N counts §28 VALUE decisions within
+    # each site's own record — NOT cross-source deduplication (no entity merge exists);
+    # redefining N as post-ER clusters is P30.2b's deliverable (D-P30.2-3), and P30.3
+    # publishes that measured metric, not this one.
     resolved = next(m for m in coverage if m["id"] == "resolved_sites")
-    assert resolved["value"].startswith("1 resolved sites (from ")
+    assert resolved["value"] == "2 resolved sites (from 2 observations)"
     assert resolved["is_population_total"] is False
     assert "observation-level sites" in resolved["denominator"]
     # Contradictions stay VISIBLE — surfaced as an honest counted quantity (§3.1/§31).

@@ -69,6 +69,7 @@ from exports.shaping import (
 )
 from inference.coverage import CoverageRecord
 from policy.rights import RightsRecord
+from reconcile.materialize import CAPTURE_TIME_JOIN, observation_time
 from reconcile.resolve import RESOLVE, Claim
 from reconcile.ruleset import Ruleset
 from reconcile.snapshot_diff import Capture
@@ -197,7 +198,7 @@ class PgReadStore:
             "SELECT c.claim_id, c.value_kind, c.value_text, c.value_num, c.value_bool, "
             "       c.raw_value, c.observed_at, c.source_reliability, c.artifact_integrity, "
             "       c.review_status, lower(c.valid_period), upper(c.valid_period), "
-            "       ea.source_id, ea.artifact_type "
+            "       ea.source_id, ea.artifact_type, cap.retrieved_at "
             "  FROM claim c "
             "  LEFT JOIN LATERAL ("
             "     SELECT ea.source_id, ea.artifact_type "
@@ -206,7 +207,8 @@ class PgReadStore:
             "       JOIN evidence_artifact ea ON ea.artifact_id = ec.artifact_id "
             "      WHERE ce.claim_id = c.claim_id LIMIT 1"
             "  ) ea ON true "
-            " WHERE c.subject_id = %s AND c.predicate_id = %s "
+            + CAPTURE_TIME_JOIN
+            + " WHERE c.subject_id = %s AND c.predicate_id = %s "
             "   AND c.sensitivity_tier = 0 "  # publication boundary (§0.7)
             "   AND c.sys_period @> %s::timestamptz",  # as-of belief (§9.4)
             (entity_id, predicate_id, as_of_belief),
@@ -228,7 +230,9 @@ class PgReadStore:
                 valid_to,
                 source_id,
                 artifact_type,
+                retrieved_at,
             ) = r
+            obs, basis = observation_time(observed_at, retrieved_at)
             claims.append(
                 Claim(
                     claim_id=str(claim_id),
@@ -238,7 +242,8 @@ class PgReadStore:
                     reliability=reliability,
                     integrity=integrity,
                     genre=artifact_type or "",
-                    observed_at=_as_date(observed_at) if observed_at else date(1970, 1, 1),
+                    observed_at=obs,
+                    observed_at_basis=basis,
                     raw_value=raw_value or "",
                     valid_from=_as_date(valid_from) if valid_from else None,
                     valid_to=_as_date(valid_to) if valid_to else None,
@@ -312,14 +317,15 @@ class PgReadStore:
             "SELECT c.claim_id, c.predicate_id, c.value_kind, c.value_text, c.value_num, "
             "       c.value_bool, c.raw_value, c.observed_at, c.source_reliability, "
             "       c.artifact_integrity, c.review_status, lower(c.sys_period), c.subject_id, "
-            "       ea.source_id, ea.artifact_type "
+            "       ea.source_id, ea.artifact_type, cap.retrieved_at "
             "  FROM claim c "
             "  LEFT JOIN LATERAL ("
             "     SELECT ea.source_id, ea.artifact_type FROM claim_evidence ce "
             "       JOIN evidence_capture ec ON ec.capture_id = ce.capture_id "
             "       JOIN evidence_artifact ea ON ea.artifact_id = ec.artifact_id "
             "      WHERE ce.claim_id = c.claim_id LIMIT 1) ea ON true "
-            " WHERE c.claim_id = %s AND c.sensitivity_tier = 0",
+            + CAPTURE_TIME_JOIN
+            + " WHERE c.claim_id = %s AND c.sensitivity_tier = 0",
             (claim_id,),
         ).fetchone()
         if row is None:
@@ -331,6 +337,7 @@ class PgReadStore:
             ).fetchall()
         )
         asserted_at = row[11] or datetime.now(tz=UTC)
+        obs, basis = observation_time(row[7], row[15])
         claim = Claim(
             claim_id=str(row[0]),
             subject_id=str(row[12]),
@@ -339,7 +346,8 @@ class PgReadStore:
             reliability=row[8],
             integrity=row[9],
             genre=row[14] or "",
-            observed_at=_as_date(row[7]) if row[7] else date(1970, 1, 1),
+            observed_at=obs,
+            observed_at_basis=basis,
             raw_value=row[6] or "",
             review_status=row[10] or "active",
             source_id=row[13] or "",
@@ -588,7 +596,7 @@ class PgReadStore:
             "       c.value_num, c.value_bool, c.raw_value, c.observed_at, "
             "       c.source_reliability, c.artifact_integrity, c.review_status, "
             "       lower(c.valid_period), upper(c.valid_period), "
-            "       ea.source_id, ea.artifact_type "
+            "       ea.source_id, ea.artifact_type, cap.retrieved_at "
             "  FROM claim c "
             "  LEFT JOIN LATERAL ("
             "     SELECT ea.source_id, ea.artifact_type "
@@ -597,7 +605,8 @@ class PgReadStore:
             "       JOIN evidence_artifact ea ON ea.artifact_id = ec.artifact_id "
             "      WHERE ce.claim_id = c.claim_id LIMIT 1"
             "  ) ea ON true "
-            " WHERE c.sensitivity_tier = 0 "  # publication boundary (§0.7)
+            + CAPTURE_TIME_JOIN
+            + " WHERE c.sensitivity_tier = 0 "  # publication boundary (§0.7)
             "   AND c.sys_period @> %s::timestamptz "  # as-of belief (§9.4)
             " ORDER BY c.subject_id, c.predicate_id, c.claim_id",
             (belief,),
@@ -621,8 +630,10 @@ class PgReadStore:
                 valid_to,
                 source_id,
                 artifact_type,
+                retrieved_at,
             ) = r
             sid, pid = str(subject_id), str(predicate_id)
+            obs, basis = observation_time(observed_at, retrieved_at)
             groups.setdefault((sid, pid), []).append(
                 Claim(
                     claim_id=str(claim_id),
@@ -632,7 +643,8 @@ class PgReadStore:
                     reliability=reliability,
                     integrity=integrity,
                     genre=artifact_type or "",
-                    observed_at=_as_date(observed_at) if observed_at else date(1970, 1, 1),
+                    observed_at=obs,
+                    observed_at_basis=basis,
                     raw_value=raw_value or "",
                     valid_from=_as_date(valid_from) if valid_from else None,
                     valid_to=_as_date(valid_to) if valid_to else None,
