@@ -29,7 +29,10 @@
 #   run <step>      execute one step as a job execution with an --args override, where
 #                   <step> ∈ resolution | edges | contradictions | coverage |
 #                   accountability | detect | camera-sites (P30.2b / ADR-105: geospatial
-#                   camera-site entity resolution — the resolved-site clusters). Every step connects as `sig` and runs
+#                   camera-site entity resolution — the resolved-site clusters) |
+#                   run-completions (P31.2 / ADR-109: append ingest_run_completion rows for
+#                   the WORM ops/runs rows that prove an execution finished; one-shot,
+#                   +0 on re-run, never part of `all`). Every step connects as `sig` and runs
 #                   `--role sig_materialize`; the DSN is assembled INSIDE the container
 #                   from $SIG_PG_PASSWORD (Secret Manager) — never on a command line here.
 #   all             schema → image → job → run each step in dependency order.
@@ -84,7 +87,11 @@ step_cmd() {
     detect)         printf 'exec python -m tasks detect --dsn "%s" %s%s' "${DSN}" "${role}" \
                       "${SIG_DETECT_JURISDICTION:+ --jurisdiction ${SIG_DETECT_JURISDICTION}}" ;;
     camera-sites)   printf 'exec python -m resolution camera-sites --dsn "%s" %s' "${DSN}" "${role}" ;;
-    *) _log "ERROR: unknown step '$1' (resolution|edges|contradictions|coverage|accountability|detect|camera-sites)" >&2; exit 64 ;;
+    # P31.2 / ADR-109: the one-shot WORM run-completion backfill (ops/runs → appended
+    # ingest_run_completion rows, +0 on re-run). NOT part of `all`: run it explicitly.
+    run-completions) printf 'exec python -m ops backfill-run-completions --dsn "%s" %s --gcs-bucket %s' \
+                      "${DSN}" "${role}" "${SIG_BUCKET_RESTRICTED}" ;;
+    *) _log "ERROR: unknown step '$1' (resolution|edges|contradictions|coverage|accountability|detect|camera-sites|run-completions)" >&2; exit 64 ;;
   esac
 }
 STEPS="resolution camera-sites edges contradictions coverage accountability detect"

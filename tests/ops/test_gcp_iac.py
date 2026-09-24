@@ -203,3 +203,22 @@ def test_iac_references_secret_manager_and_env_project() -> None:
     assert "--set-secrets=" in provision  # Cloud Run reads secrets by name
     config = (GCP_DIR / "config.sh").read_text(encoding="utf-8")
     assert "SIG_GCP_PROJECT" in config  # the project id is env-parameterised
+
+
+def test_materialize_plans_the_run_completion_backfill_as_the_least_privilege_role() -> None:
+    """P31.2 / ADR-109: the WORM backfill runs next to the DB as sig_materialize."""
+    env = {**_no_adc_env(), "SIG_GCP_PROJECT": "example-proj"}
+    proc = subprocess.run(
+        ["bash", str(GCP_DIR / "materialize.sh"), "--check", "run", "run-completions"],
+        capture_output=True,
+        text=True,
+        check=False,
+        env=env,
+        cwd=str(REPO_ROOT),
+    )
+    assert proc.returncode == 0, proc.stderr
+    plan = proc.stdout
+    assert "python -m ops backfill-run-completions" in plan
+    assert "--role sig_materialize" in plan
+    assert "--gcs-bucket example-proj-sig-restricted" in plan
+    assert "${SIG_PG_PASSWORD}" in plan  # expanded in the container, never here

@@ -362,6 +362,29 @@ def build_parser() -> argparse.ArgumentParser:
         "else the sink default; a very-large source commits progressively) — P26.18",
     )
 
+    backfill = sub.add_parser(
+        "backfill-run-completions",
+        help="P31.2 (ADR-109): append ingest_run_completion rows for the WORM "
+        "ops/runs rows that prove an execution finished (labelled backfilled_from; "
+        "unmatched rows are reported, never guessed; a re-run is +0)",
+    )
+    backfill.add_argument("--dsn", default=None, help="PostgreSQL DSN (else SIG_PG_* parts)")
+    backfill.add_argument(
+        "--role", default=None, help="role to SET ROLE to (hosted: sig_materialize)"
+    )
+    backfill.add_argument(
+        "--gcs-bucket",
+        default=None,
+        help="the restricted bucket holding ops/runs (default: SIG_OPS_GCS_BUCKET)",
+    )
+    backfill.add_argument(
+        "--prefix", default=None, help="run-row prefix (default: cadence.toml [runs])"
+    )
+    backfill.add_argument("--cadence", default=None, help="ops/cadence.toml path")
+    backfill.add_argument(
+        "--dry-run", action="store_true", help="plan + count only; append nothing"
+    )
+
     cadence_cmd = sub.add_parser(
         "cadence",
         help="print the resolved scheduled-ops table from ops/cadence.toml "
@@ -1042,8 +1065,53 @@ def _cmd_probe_history(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cloudsql_dsn_from_parts() -> str | None:
+    """The Cloud SQL unix-socket DSN from the job's ``SIG_PG_*`` env parts (HG-09).
+
+    The password arrives from Secret Manager as ``$SIG_PG_PASSWORD``; it is never a
+    command-line argument. ``None`` when the parts are absent (a local shell).
+    """
+    user = os.environ.get("SIG_PG_USER", "")
+    db = os.environ.get("SIG_PG_DB", "")
+    conn = os.environ.get("SIG_CLOUDSQL_CONNECTION", "")
+    password = os.environ.get("SIG_PG_PASSWORD", "")
+    if user and db and conn:
+        return f"postgresql://{user}:{password}@/{db}?host=/cloudsql/{conn}"
+    return None
+
+
+def _cmd_backfill_run_completions(args: argparse.Namespace) -> int:
+    """P31.2 / ADR-109: append completions for the WORM run rows that prove one."""
+    import psycopg
+    from connectors.runner import CONNECTOR_FOR_SOURCE
+    from psycopg import sql
+
+    from .run_completion import backfill_run_completions, read_worm_rows
+    from .scheduled import load_cadence
+
+    dsn = args.dsn or os.environ.get("SIG_STAGING_DSN") or _cloudsql_dsn_from_parts()
+    if not dsn:
+        print("backfill-run-completions: needs --dsn / SIG_STAGING_DSN / SIG_PG_* parts")
+        return 2
+    gcs = _gcs_bucket(args.gcs_bucket)
+    if gcs is None:
+        print("backfill-run-completions: needs --gcs-bucket / SIG_OPS_GCS_BUCKET (the WORM rows)")
+        return 2
+    prefix = args.prefix or load_cadence(args.cadence).runs_gcs_prefix
+    rows = read_worm_rows(gcs, prefix, connector_for_source=CONNECTOR_FOR_SOURCE)
+    with psycopg.connect(dsn, autocommit=True) as conn:
+        if args.role:
+            # Least privilege (ADR-103): the materialize role may INSERT completions
+            # and read the public tier, nothing else.
+            conn.execute(sql.SQL("SET ROLE {}").format(sql.Identifier(args.role)))
+        report = backfill_run_completions(conn, rows, dry_run=args.dry_run)
+    print(json.dumps(report.as_json(), indent=2, sort_keys=True))
+    return 0
+
+
 def _cmd_scheduled_ingest(args: argparse.Namespace) -> int:
-    from .scheduled import load_cadence, scheduled_ingest, store_run_row
+    from .alerts import utcnow
+    from .scheduled import load_cadence, run_object_uri, scheduled_ingest, store_run_row
 
     cadence = load_cadence(args.cadence)
     if bool(args.source) == bool(args.batch):
@@ -1060,12 +1128,7 @@ def _cmd_scheduled_ingest(args: argparse.Namespace) -> int:
         members = [args.source]
     dsn = args.dsn or os.environ.get("SIG_STAGING_DSN")
     if args.sink == "pg" and not dsn:
-        user = os.environ.get("SIG_PG_USER", "")
-        db = os.environ.get("SIG_PG_DB", "")
-        conn = os.environ.get("SIG_CLOUDSQL_CONNECTION", "")
-        password = os.environ.get("SIG_PG_PASSWORD", "")
-        if user and db and conn:
-            dsn = f"postgresql://{user}:{password}@/{db}?host=/cloudsql/{conn}"
+        dsn = _cloudsql_dsn_from_parts()
     if args.sink == "pg" and not dsn:
         print("scheduled-ingest: --sink pg needs --dsn / SIG_STAGING_DSN / SIG_PG_* parts")
         return 2
@@ -1080,12 +1143,22 @@ def _cmd_scheduled_ingest(args: argparse.Namespace) -> int:
     gcs = _gcs_bucket(args.gcs_bucket)
     exit_code = 0
     for source in members:
+        # P31.2 / ADR-109: the WORM object name is fixed by the start time, so the
+        # execution's completion row can name the run row written just below.
+        started = utcnow()
+        run_uri = (
+            run_object_uri(gcs.bucket, cadence.runs_gcs_prefix, source, started)
+            if gcs is not None
+            else None
+        )
         row = scheduled_ingest(
             source,
             sink_kind=args.sink,
             dsn=dsn,
             capture_dir=_STATE_DIR / "captures",
             commit_chunk_size=commit_chunk_size,
+            now=started,
+            run_record_uri=run_uri,
         )
         written = store_run_row(row, prefix=cadence.runs_gcs_prefix, gcs=gcs, local_dir=local_dir)
         print(json.dumps(row.as_json(), sort_keys=True))
@@ -1243,6 +1316,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_scheduled_ingest(args)
     if args.command == "cadence":
         return _cmd_cadence(args)
+    if args.command == "backfill-run-completions":
+        return _cmd_backfill_run_completions(args)
     if args.command == "alerts":
         return _cmd_alerts(args)
     if args.command == "alert":

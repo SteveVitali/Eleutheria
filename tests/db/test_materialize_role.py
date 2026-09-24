@@ -38,6 +38,8 @@ MATERIALIZED = (
     "camera_site_match",
     "camera_site_run",
     "review_item",
+    # P31.2 (ADR-109): the WORM run-completion backfill appends completions as this role.
+    "ingest_run_completion",
 )
 SPINE = ("claim", "claim_evidence", "evidence_artifact", "evidence_capture", "entity")
 

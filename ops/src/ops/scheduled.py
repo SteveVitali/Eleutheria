@@ -457,6 +457,10 @@ class RunRow:
     refusal_reason: str = ""
     detail: str = ""
     fetch_record: dict[str, Any] = field(default_factory=dict)
+    #: The ``ingest_run`` the execution wrote (P31.2 / ADR-109): the WORM row and
+    #: the spine's completion row name each other. Empty when no run was written
+    #: (a refused run, a memory sink, or an exception before the report).
+    ingest_run_id: str = ""
 
     def as_json(self) -> dict[str, object]:
         return {
@@ -472,6 +476,7 @@ class RunRow:
             "refusal_reason": self.refusal_reason,
             "detail": self.detail,
             "fetch_record": self.fetch_record,
+            "ingest_run_id": self.ingest_run_id,
         }
 
 
@@ -479,6 +484,17 @@ def run_object_name(prefix: str, source: str, ts: str) -> str:
     """``<prefix>/<source>/<date>/<ts>.json`` — a new object per scheduled run."""
     safe_ts = ts.replace(":", "-")
     return f"{prefix.rstrip('/')}/{source}/{ts[:10]}/{safe_ts}.json"
+
+
+def run_object_uri(bucket: str, prefix: str, source: str, ts: str) -> str:
+    """The ``gs://`` URI :func:`store_run_row` will write for a run started at ``ts``.
+
+    The object name is a pure function of ``(prefix, source, started_at)``, so the
+    scheduled wrapper knows the URI *before* the run. It hands the URI to the claim
+    sink, and the execution's ``ingest_run_completion`` row names the WORM run row
+    that records the same execution (P31.2 / ADR-109).
+    """
+    return f"gs://{bucket}/{run_object_name(prefix, source, ts)}"
 
 
 def scheduled_ingest(
@@ -490,6 +506,7 @@ def scheduled_ingest(
     commit_chunk_size: int | None = None,
     runner: Callable[..., Any] | None = None,
     now: str | None = None,
+    run_record_uri: str | None = None,
 ) -> RunRow:
     """Run one source live through the gated connector and shape the run row.
 
@@ -502,6 +519,11 @@ def scheduled_ingest(
     ``commit_chunk_size`` (PG sink) bounds the per-transaction claim count so a
     very-large source commits progressively (P26.18 / SOURCES.17); ``None`` uses
     the sink default (small sources commit in one chunk, unchanged behaviour).
+
+    ``run_record_uri`` (see :func:`run_object_uri`) is passed through to the PG
+    sink, which records it on the execution's ``ingest_run`` and on its appended
+    completion row (P31.2 / ADR-109). The run row records the ``ingest_run_id`` in
+    return.
     """
     if runner is None:
         from connectors.runner import RunMode, run_source
@@ -518,6 +540,8 @@ def scheduled_ingest(
     refusal = ""
     detail = ""
     fetch_record: dict[str, Any] = {}
+    ingest_run_id = ""
+    extra: dict[str, Any] = {"run_record_uri": run_record_uri} if run_record_uri else {}
     try:
         report = runner(
             source_id,
@@ -525,7 +549,9 @@ def scheduled_ingest(
             dsn=dsn,
             capture_dir=capture_dir,
             commit_chunk_size=commit_chunk_size,
+            **extra,
         )
+        ingest_run_id = str(getattr(report, "run_id", None) or "")
         claims = len(report.claims)
         digests = tuple(str(c.digest) for c in report.captures if hasattr(c, "digest"))
         if report.fetch_record is not None:
@@ -590,6 +616,7 @@ def scheduled_ingest(
         refusal_reason=scrub_secrets(refusal),
         detail=scrub_secrets(detail),
         fetch_record=fetch_record,
+        ingest_run_id=ingest_run_id,
     )
 
 
@@ -641,6 +668,7 @@ __all__ = [
     "read_sweep_rows",
     "resolve_targets",
     "run_object_name",
+    "run_object_uri",
     "scheduled_ingest",
     "store_run_row",
     "sweep_object_name",
