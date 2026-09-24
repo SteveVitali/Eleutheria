@@ -113,3 +113,63 @@ pipeline is now a service, not a test.
 
 **Verdict:** staging **complete**; go-public **gated** (HG-01, HG-11, Go-public
 pending). This ticket is complete-with-gates-skipped → **RETURN PASS**.
+
+---
+
+## 2026-09-10 re-run (LIVE.2 / GL-LIVE-02, prepare-only)
+
+*(Lane-B re-run of the same P21.4 contract on branch `devin/p21-4-live2-rerun`,
+base `devin/p21-3-live-wiring-rerun`; append-only. The environment clock read
+2026-09-13, so the regenerated evidence files carry that stamp; the run is the
+chain's LIVE.2 first-jurisdiction staging pass.)*
+
+The full **LOCAL composed staging path was re-run for real** over Docker 29.1.3
+(`sh docs/build/tools/run_okc.sh` end-to-end). Nothing about the gate posture
+changed — this re-confirms the whole ingest→resolve→reconcile→export→build→serve
+system runs as a service, and advances the reports to the **current** interim-gate
+state (HG-01 interim / HG-11 owed / HG-02 interim-disposition / live-fetch pending /
+Go-public reserved to the human). **No product code changed** in this re-run — it is
+re-verification + dated documentation only.
+
+**What ran (re-verified evidence):**
+
+- **Composed pipeline (`run_okc.sh`, 8 steps):** `sig-ops up --seed` (5 OKC claims, 1
+  entity) → shadow connectors `eff_atlas_of_surveillance` + `osm_overpass` (OK,
+  recorded, **NOT live** — HG-03 subset now green but no live fetch: HG-09 tokens +
+  network absent) → `sig-resolution match` (1 PROPOSED proposal enqueued) → `reconcile
+  resolve` (**`claimed_device_count` UNRESOLVED / CONTESTED — 299 vs 190, both retained**)
+  → annotations rebuild **skipped** (P21.2 shrunk → compute-on-read, ADR-059) →
+  `sig-exports build` (13 artifacts, `licenses: ["CC-BY-4.0","ODbL-1.0"]`, separate ODbL
+  compartment) → `SIG_DATA_SOURCE=export` web build (50 pages from export bytes) →
+  acceptance J-1 + Q-1…Q-13 against the running API.
+- **Acceptance (`docs/build/reports/okc/acceptance_2026-09-13.json`):** **2 pass, 11
+  blocked, 0 failed; fixture-subset all pass; J-1 pass (12 hops, 5 source families).**
+  Q-2 pass (owns/operates), Q-6 pass (**299-vs-190 CONTESTED/UNRESOLVED, both retained**);
+  Q-1/3/4/5/7/8/9/10/11/12/13 blocked = `HG-03-pending` with the exact `--mode live`
+  command each (recorded, not failures — no live fetch this run).
+- **Contradiction survives to the page:** the export-built dossier HTML
+  (`web/dist/dossier/oklahoma-city/index.html`) contains `299`, `190`, `contested`,
+  `unresolved`; the `SIG-UI-014` reconciliation e2e (`dossier.spec.ts:71`) passes in
+  **export mode**.
+- **Deterministic ACs re-confirmed:** `sig-ops up/status/down` healthy → clean (no
+  containers remain); `npm run test:e2e` **192 passed in fixtures mode AND 192 passed in
+  export mode** (zero a11y violations, zero-JS held); `npm run check:perf` all Lighthouse
+  budgets hold; `SIG_REQUIRE_DB_TESTS=1 make check` **2767 passed, 2 skipped, 0 failed**
+  (the 2 skips are env-gated: the live-api test — run instead by `run_okc.sh` — and the
+  GCP leak check, `SIG_GCP_PROJECT` unset, correct for prepare-only); `make docs-check`
+  exit 0; `check-build-memory.sh .` no violations.
+
+**Gate state (current, per LEDGER GATE DECISIONS + P23.2/P23.3/P23.4):**
+
+| Gate | State (2026-09-10 re-run) | Note |
+|---|---|---|
+| HG-12 hosting/staging | ✅ satisfied (LOCAL) | composed staging re-run for real over Docker |
+| HG-02 ODbL 4.4(b) | ✅ interim disposition (GL-GATE-02) | OSM in exports, separate ODbL compartment, attribution + share-alike; **pending counsel** (`D-LEGAL.1-1` OPEN) |
+| HG-01 legal home | ⏳ INTERIM only (GL-GATE-01) | maintainer-stewardship interim posture, **not a real named home**; real home required before Go-public (`D-P21.4-1` OPEN) |
+| HG-11 operating governance | ⏳ OWED | two reviewer roles + written concurrence + live takedown contact not established (`D-P21.4-2` OPEN) |
+| Live fetch (HG-09 + network) | ⏳ pending | OKC subset is green (RIGHTS.1) but no tokens + no network egress → shadow/fixture only; no live green fabricated (`D-P21.3-2` OPEN) |
+| Go public | ❌ reserved to the human (GL-GATE-05 / GATE-G2 / P23.6) | impossible until a **real** HG-01 + HG-11; deliverable 7 + `0.2.0` bump NOT done (`D-P21.4-3` OPEN) |
+
+**Re-run verdict:** local staging **complete + re-verified**; go-public **genuinely
+gated**. → **RETURN PASS** (P21.4 stays in RETURN PASS; next chain row is P23.6, the
+Go-public GATE-G2 marker, handled by the orchestrator/operator).

@@ -1,0 +1,6 @@
+--- source=eff_atlas_of_surveillance mode=shadow sink=pg ---
+source 'eff_atlas_of_surveillance' [shadow] via connector 'atlas': 7 claim(s), 1 capture(s), shadow diff changed=0
+STATE: eff_atlas_of_surveillance shadow OK
+--- source=osm_overpass mode=shadow sink=pg ---
+source 'osm_overpass' [shadow] via connector 'osm': 19 claim(s), 1 capture(s), shadow diff changed=0
+STATE: osm_overpass shadow OK
