@@ -52,9 +52,7 @@ def test_role_exists_nologin_nobypassrls_not_superuser(conn: object) -> None:
     assert row is not None, "materialize_role did not create sig_materialize"
     assert row == (False, False, False, False, False)
     # READ is exactly the public read role (tier-0 ceiling).
-    assert conn.execute(
-        "SELECT pg_has_role(%s, 'sig_read_public', 'USAGE')", (ROLE,)
-    ).fetchone()[0]
+    assert conn.execute("SELECT pg_has_role(%s, 'sig_read_public', 'USAGE')", (ROLE,)).fetchone()[0]
     assert not conn.execute(
         "SELECT pg_has_role(%s, 'sig_read_restricted', 'USAGE')", (ROLE,)
     ).fetchone()[0]
@@ -102,9 +100,7 @@ def test_update_and_spine_insert_are_refused_under_the_role(conn: object) -> Non
     conn.rollback()
     conn.execute(f"SET ROLE {ROLE}")
     with pytest.raises(psycopg.errors.InsufficientPrivilege):
-        conn.execute(
-            "INSERT INTO entity(entity_type) VALUES('deployment') RETURNING entity_id"
-        )
+        conn.execute("INSERT INTO entity(entity_type) VALUES('deployment') RETURNING entity_id")
     conn.rollback()
     conn.execute(f"SET ROLE {ROLE}")
     with pytest.raises(psycopg.errors.InsufficientPrivilege):

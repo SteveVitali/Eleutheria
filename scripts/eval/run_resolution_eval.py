@@ -157,7 +157,9 @@ def build() -> tuple:
 #: The committed hosted-scale measurement (P30.2, D-R6.1-EVAL hosted half): the real
 #: numbers read off the hosted spine after the resolution materializer ran next to Cloud
 #: SQL. Committed data, so the report stays a deterministic function of the repo.
-SCALE_JSON = Path("docs/build/reports/p30.2-hosted/resolution_scale.json")
+SCALE_JSON = (
+    Path(__file__).resolve().parents[2] / "docs/build/reports/p30.2-hosted/resolution_scale.json"
+)
 
 _PENDING_SCALE_NOTE = (
     "SCALE over the hosted observations (dedup ratio / resolved-site count) is DEFERRED "
