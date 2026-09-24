@@ -4,7 +4,7 @@
 
 import { defineConfig } from "astro/config";
 import react from "@astrojs/react";
-import { cpSync, existsSync, mkdirSync, readdirSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -34,9 +34,22 @@ function sigExportTiles() {
         // COMPARTMENT (`<compartment>-sites.pmtiles`, e.g. the ODbL osm_physical layer
         // apart from the CC-BY graph) — never a merged, mixed-licence archive. Each is
         // served as its own source with its own attribution (/map/style.json).
-        const perCompartment = existsSync(tilesDir)
-          ? readdirSync(tilesDir).filter((f) => f.endsWith("-sites.pmtiles"))
+        // The SAME list `/map/style.json` is built from (data.ts getCompartmentTileSources):
+        // the manifest's `web/tiles/<compartment>-sites.pmtiles` artifacts — so the style can
+        // never name an archive that was not copied, and no unlisted file is served.
+        const manifestPath = join(exportDir, "manifest.json");
+        const listed = existsSync(manifestPath)
+          ? (JSON.parse(readFileSync(manifestPath, "utf-8")).artifacts ?? [])
+              .map((a) => String(a.path ?? ""))
+              .filter((p) => /^web\/tiles\/[^/]+-sites\.pmtiles$/.test(p))
+              .map((p) => p.slice("web/tiles/".length))
           : [];
+        const perCompartment = listed.filter((f) => existsSync(join(tilesDir, f)));
+        if (perCompartment.length !== listed.length) {
+          throw new Error(
+            `SIG_DATA_SOURCE=export: the manifest lists tile archives missing from ${tilesDir}.`,
+          );
+        }
         if (perCompartment.length === 0) {
           // Fail LOUD (like the dossier data layer): an export build that cannot find
           // its rendered tiles is a build error, never a silently tile-less map.

@@ -263,7 +263,7 @@ def test_map_location_absence_uses_the_web_absence_vocabulary() -> None:
     ]
     assets = {a["id"]: a for a in _web(_build(point_less + conflicted), "map")["assets"]}
     assert assets["N"]["locationAbsence"] == "NO_EVIDENCE_FOUND"
-    assert assets["C"]["locationAbsence"] in kinds
+    assert assets["C"]["locationAbsence"] == "UNRESOLVED"
     assert all(a.get("locationAbsence", "UNRESOLVED") in kinds for a in assets.values())
 
 

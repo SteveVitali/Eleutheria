@@ -13,6 +13,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
 from tasks.cli import main
 
 from tasks import contribution as C
@@ -78,6 +79,11 @@ def test_osm_feed_no_feed_writes_the_honest_empty_metric(capsys, tmp_path: Path)
     assert metric["accepted_operator_attributions"] == 0
     assert metric["attributed_changeset_ids"] == []
     assert metric["hashtag"] == C.CHANGESET_HASHTAG
+
+
+def test_osm_feed_no_feed_and_fixtures_are_mutually_exclusive(tmp_path: Path) -> None:
+    with pytest.raises(SystemExit):
+        main(["osm-feed", "pull", "--no-feed", "--fixtures", "x.xml", "--out", str(tmp_path)])
 
 
 def test_contribution_registered_fails_closed(tmp_path: Path) -> None:

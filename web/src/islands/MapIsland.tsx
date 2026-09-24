@@ -144,12 +144,16 @@ export default function MapIsland({
       "bottom-right",
     );
 
-    const pointsReady: Promise<MapIslandAsset[]> = fetch(pointsUrl)
+    const abort = new AbortController();
+    const pointsReady: Promise<MapIslandAsset[]> = fetch(pointsUrl, { signal: abort.signal })
       .then((r) => {
         if (!r.ok) throw new Error(`${pointsUrl}: HTTP ${r.status}`);
         return r.json() as Promise<IslandPointsPayload>;
       })
       .then(decodeIslandPoints);
+    // Handled here too, so a map that never fires `load` (e.g. no WebGL) or an unmount
+    // mid-fetch leaves no unhandled rejection; the `load` handler still awaits the result.
+    pointsReady.catch(() => setFailed(true));
 
     map.on("load", async () => {
       let assets: MapIslandAsset[];
@@ -269,6 +273,7 @@ export default function MapIsland({
     });
 
     return () => {
+      abort.abort();
       map.remove();
       try {
         removeProtocol("pmtiles");

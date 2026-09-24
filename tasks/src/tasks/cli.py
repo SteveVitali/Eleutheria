@@ -89,11 +89,12 @@ def build_parser() -> argparse.ArgumentParser:
     fpull.add_argument(
         "--since", default=None, help="only changesets closed at/after this ISO time"
     )
-    fpull.add_argument(
+    fsrc = fpull.add_mutually_exclusive_group()
+    fsrc.add_argument(
         "--fixtures", nargs="*", default=None, help="changeset XML fixtures (default: recorded)"
     )
     fpull.add_argument("--out", default=None, help="write <out>/web/leverage.json (export mode)")
-    fpull.add_argument(
+    fsrc.add_argument(
         "--no-feed",
         action="store_true",
         help="write the HONEST empty metric (0 of 0) for a public build while contribution-back "

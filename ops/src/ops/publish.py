@@ -123,6 +123,12 @@ def assert_export_present(export_dir: Path) -> Path:
             f"{export_dir} has no {_MANIFEST}: it is not a real export bundle. Refusing to "
             "build the public site from it (no fixtures fall-back for the public build)."
         )
+    if (export_dir / _WEB_DIR / "presentation").exists():
+        raise PublishError(
+            f"{export_dir}/{_WEB_DIR}/presentation/ exists: that is the fixture-export harness's "
+            "DEMO presentation data (P27.5), never national data. Refusing to build the public "
+            "site from it (P30.3, ADR-106 §6)."
+        )
     if not (export_dir / _WEB_DIR).is_dir():
         raise PublishError(
             f"{export_dir} has no {_WEB_DIR}/ subtree: the web surfaces the site renders are "
@@ -218,8 +224,10 @@ def restriction_reason(
       artifact must carry ONE licence (SIG-EXPORT-005; ODbL never merged with CC-BY, 4.4(a));
     * ``unknown-licence`` — ``UNDETERMINED`` or any licence not in the registry;
     * ``excluded:<key>`` — a recorded export exclusion (counsel-pending, HG-02);
-    * ``compartment-licence-mismatch`` — the artifact sits in a registered
-      ``[compartments.*]`` row that declares a DIFFERENT licence (a mis-filed or merged file).
+    * ``unregistered-compartment`` — no ``[compartments.*]`` row (nor the export's own
+      ``web``/``metadata`` compartments) declares the artifact's compartment;
+    * ``compartment-licence-mismatch`` — the artifact's compartment declares a DIFFERENT
+      licence (a mis-filed or merged file).
 
     Share-alike (ODbL-1.0, CC-BY-SA-*) is NOT itself a reason: those compartments publish as
     their own separate, attributed downloads (operator decision 2026-09-24, D-P30.3-COUNSEL).
@@ -235,10 +243,28 @@ def restriction_reason(
     disposition = license_export_disposition(license_id, reg)
     if disposition is not None:  # counsel-pending / recorded exclusion
         return f"excluded:{disposition['exclusion']}"
-    declared = reg.get("compartments", {}).get(compartment)
-    if declared is not None and declared.get("license") != license_id:
+    declared_license = _declared_compartment_license(compartment, reg)
+    if declared_license is None:  # a compartment nothing declares — never public
+        return "unregistered-compartment"
+    if declared_license != license_id:
         return "compartment-licence-mismatch"
     return None
+
+
+#: The export's OWN non-data compartments (``exports.spine_export``): the SIG render surfaces
+#: (``web``) and the bundle descriptors (``metadata``), both SIG-original CC-BY-4.0. They are not
+#: ``[compartments.*]`` rows (a row there would re-route CC-BY site data into them), so they are
+#: declared here — an artifact in either must carry exactly that licence (e.g. an all-OSM
+#: ``web/map.json`` labelled ODbL-1.0 is a mismatch → restricted, never a second licence in the
+#: public ``web`` compartment).
+_EXPORT_OWN_COMPARTMENTS: dict[str, str] = {"web": "CC-BY-4.0", "metadata": "CC-BY-4.0"}
+
+
+def _declared_compartment_license(compartment: str, reg: dict[str, Any]) -> str | None:
+    declared = reg.get("compartments", {}).get(compartment)
+    if declared is not None:
+        return str(declared.get("license"))
+    return _EXPORT_OWN_COMPARTMENTS.get(compartment)
 
 
 def classify_compartment(
@@ -342,8 +368,12 @@ def partition_export(
         dst_root = public_root if tier == "public" else restricted_root
         dst = dst_root / rel
         dst.parent.mkdir(parents=True, exist_ok=True)
-        if src.is_file():
-            shutil.copy2(src, dst)
+        if not src.is_file():
+            raise PublishError(
+                f"manifest artifact {rel!r} is missing from {export_root} — refusing to publish "
+                "a manifest that lists bytes it does not carry."
+            )
+        shutil.copy2(src, dst)
         (public_arts if tier == "public" else restricted_arts).append(art)
     _write_manifest(public_root, manifest, public_arts)
     _write_manifest(restricted_root, manifest, restricted_arts)
@@ -500,7 +530,35 @@ def run_public_prepare(
     assert_public_clean(pub, registry=registry)
     write_licence_index(pub, registry=registry)
     assert_public_clean(pub, registry=registry)  # the index adds no data byte — re-proven
+    assert_site_matches_partition(dist, pub)
     return PrepareResult(dist=dist, partition=partition)
+
+
+def assert_site_matches_partition(dist: Path, public_root: Path) -> None:
+    """The public SITE may serve no licence compartment the public PARTITION withholds.
+
+    The site is built from the full export, so a compartment moved to restricted (e.g. by a
+    recorded ``export_disposition = "excluded"`` row, the ADR-106 rollback path) must also leave
+    the site: every per-compartment tile archive in ``dist/tiles/`` must be a PUBLIC artifact of
+    the partition (``web/tiles/<name>``), or this raises :class:`CompartmentLeak` before any sync.
+    """
+    manifest = read_manifest(public_root)
+    public_paths = {str(a["path"]) for a in manifest.get("artifacts", [])}
+    tiles_dir = dist / "tiles"
+    leaks = (
+        [
+            f"tiles/{p.name}"
+            for p in sorted(tiles_dir.glob("*-sites.pmtiles"))
+            if f"{_WEB_DIR}/tiles/{p.name}" not in public_paths
+        ]
+        if tiles_dir.is_dir()
+        else []
+    )
+    if leaks:
+        raise CompartmentLeak(
+            "the public site would serve compartments the public partition withholds:\n  "
+            + "\n  ".join(leaks)
+        )
 
 
 __all__ = [
@@ -516,6 +574,7 @@ __all__ = [
     "classify_compartment",
     "restriction_reason",
     "strip_non_public_web",
+    "assert_site_matches_partition",
     "NON_PUBLIC_WEB_PATHS",
     "write_licence_index",
     "LICENCE_INDEX",

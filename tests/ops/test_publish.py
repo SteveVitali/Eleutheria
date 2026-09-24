@@ -197,6 +197,8 @@ def test_build_public_web_fails_loud_on_broken_build(tmp_path: Path) -> None:
         ("web", "ODbL-1.0 OR CC-BY-4.0", "restricted"),  # compound expression
         ("osm_physical", "CC-BY-4.0", "restricted"),  # licence disagrees with compartment
         ("sig_graph", "ODbL-1.0", "restricted"),  # ODbL filed into the CC-BY graph
+        ("web", "ODbL-1.0", "restricted"),  # an all-OSM map surface is not a SIG CC-BY surface
+        ("nowhere", "CC-BY-4.0", "restricted"),  # a compartment nothing declares
     ],
 )
 def test_classify_compartment_against_shipped_licenses(
@@ -214,6 +216,8 @@ def test_classify_compartment_against_shipped_licenses(
         ("web", "CC-BY-4.0 AND ODbL-1.0", "mixed-licence"),
         ("web", ["CC-BY-4.0", "ODbL-1.0"], "mixed-licence"),
         ("sig_graph", "ODbL-1.0", "compartment-licence-mismatch"),
+        ("web", "ODbL-1.0", "compartment-licence-mismatch"),
+        ("nowhere", "CC-BY-4.0", "unregistered-compartment"),
     ],
 )
 def test_restriction_reason_names_why(compartment: str, license_id: object, reason: str) -> None:
@@ -374,6 +378,54 @@ def test_run_public_prepare_end_to_end(tmp_path: Path) -> None:
     P.assert_public_clean(public)  # no raise
     assert (public / P.LICENCE_INDEX).is_file()
     assert result.partition.watermark["release_id"] == "sig-2026-09-22-abcd1234"
+
+
+def test_a_single_licence_non_ccby_map_surface_stays_restricted_and_publish_succeeds(
+    tmp_path: Path,
+) -> None:
+    # Review finding (P30.3): an all-OSM export labels web/map.json ODbL-1.0; it must NOT
+    # become a second licence in the public `web` compartment (which would fail the publish).
+    export = _write_export(
+        tmp_path / "national",
+        [
+            {
+                "path": "osm_physical/sites.csv",
+                "compartment": "osm_physical",
+                "license": "ODbL-1.0",
+            },
+            {"path": "web/map.json", "compartment": "web", "license": "ODbL-1.0"},
+            {"path": "web/coverage.json", "compartment": "web", "license": "CC-BY-4.0"},
+        ],
+    )
+    result = P.partition_export(export, tmp_path / "public", tmp_path / "restricted")
+    assert result.restricted_artifacts == ("web/map.json",)
+    P.assert_public_clean(tmp_path / "public")  # no raise
+
+
+def test_publishing_refuses_the_fixture_harness_presentation_data(tmp_path: Path) -> None:
+    export = _national_bundle(tmp_path / "national")
+    (export / "web" / "presentation").mkdir()
+    with pytest.raises(P.PublishError, match="presentation"):
+        P.assert_export_present(export)
+
+
+def test_partition_fails_loud_on_a_listed_artifact_missing_on_disk(tmp_path: Path) -> None:
+    export = _national_bundle(tmp_path / "national")
+    (export / "portal" / "eyes.csv").unlink()
+    with pytest.raises(P.PublishError, match="missing"):
+        P.partition_export(export, tmp_path / "public", tmp_path / "restricted")
+
+
+def test_the_site_may_not_serve_a_compartment_the_partition_withholds(tmp_path: Path) -> None:
+    export = _national_bundle(tmp_path / "national")
+    P.partition_export(export, tmp_path / "public", tmp_path / "restricted")
+    dist = tmp_path / "dist"
+    (dist / "tiles").mkdir(parents=True)
+    (dist / "tiles" / "osm_physical-sites.pmtiles").write_bytes(b"PMTiles")
+    P.assert_site_matches_partition(dist, tmp_path / "public")  # public tile → fine
+    (dist / "tiles" / "withheld-sites.pmtiles").write_bytes(b"PMTiles")
+    with pytest.raises(P.CompartmentLeak, match="withheld-sites"):
+        P.assert_site_matches_partition(dist, tmp_path / "public")
 
 
 def test_licence_index_labels_every_public_compartment(tmp_path: Path) -> None:
