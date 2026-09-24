@@ -86,7 +86,9 @@ def build_gcp_plan(*, project: str | None = None, region: str | None = None) -> 
         "compartments incl. the ODbL/CC-BY-SA layers, each single-licence — ADR-106) + "
         "exports/out/restricted (UNDETERMINED/excluded/mixed-licence, PRIVATE); assert public "
         "compartment clean; write LICENCES.json (SPDX licence + attribution per compartment)",
-        f"gcloud storage rsync -r -c web/dist gs://{proj}-sig-web  (static site, public-read)",
+        f"gcloud storage rsync -r -c --delete-unmatched-destination-objects web/dist "
+        f"gs://{proj}-sig-web  (static site, public-read; mirrors the build exactly — the "
+        "prior demo pages and the non-public /curate/ shell are removed)",
         f"gcloud storage rsync -r -c exports/out/public "
         f"gs://{proj}-sig-public  (PUBLISHED compartment only, public-read)",
         f"gcloud storage rsync -r -c exports/out/restricted "

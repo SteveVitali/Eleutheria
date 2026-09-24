@@ -168,7 +168,8 @@ export interface Authorization {
  * (`resolveTermination`), never stored, so it can never disagree with the inputs.
  */
 export interface TerminationInput {
-  auto_renews: boolean;
+  /** null = unknown (the record holds no renewal fact) — never defaulted to "no" (§3.1). */
+  auto_renews: boolean | null;
   notice_window_days: number | null;
   expiry_date: string | null;
 }

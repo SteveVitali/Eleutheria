@@ -25,6 +25,9 @@ import {
   renderBin,
   renderModeForZoom,
   DEFAULT_SHARING_EDGE_VIEW,
+  encodeIslandPoints,
+  decodeIslandPoints,
+  ISLAND_POINTS_LICENCE_NOTE,
 } from "../../src/lib/map";
 import type { LayerControl, MapAsset } from "../../src/lib/map";
 import { DENSITY_BINS, LOW_COVERAGE_BIN, LOW_DENSITY_BIN, MAP_ASSETS } from "../../src/lib/map-network-fixture";
@@ -184,5 +187,43 @@ describe("layer catalog + sharing default", () => {
   });
   it("sharing edges default to an ego network, never a hairball (SIG-UI-021)", () => {
     expect(DEFAULT_SHARING_EDGE_VIEW).toBe("ego");
+  });
+});
+
+// --- P30.3 (ADR-106): the island's static points payload -------------------------
+
+describe("island points payload (/map/points.json)", () => {
+  const assets: MapAsset[] = [
+    { id: "a", label: "a", jurisdiction: "OK", tier: 0, lat: 35.123456789, lon: -97.5, precision: "full_precision" },
+    { id: "b", label: "Camera B", jurisdiction: "TX", tier: 1, lat: 30.1, lon: -97.7, precision: "~100 m" },
+    { id: "c", label: "c", jurisdiction: "OK", tier: 0, lat: null, lon: null, precision: "none", locationAbsence: "NO_EVIDENCE_FOUND" },
+    { id: "d", label: "d", jurisdiction: "OK", tier: 3, lat: 35.2, lon: -97.4, precision: "withheld" },
+  ];
+
+  it("carries only locatable points, with the OSM attribution + licence note", () => {
+    const p = encodeIslandPoints(assets, "© OpenStreetMap contributors (ODbL) · SIG");
+    expect(p.schema).toBe("sig/map-points/1");
+    expect(p.count).toBe(2); // no point-less (c) and no tier-3 (d) asset reaches the island
+    expect(p.attribution).toContain("OpenStreetMap");
+    expect(p.licenceNote).toBe(ISLAND_POINTS_LICENCE_NOTE);
+    expect(p.licenceNote).toContain("ODbL-1.0");
+  });
+
+  it("round-trips the published fields (coordinates rounded to 6 dp for the renderer)", () => {
+    const pts = decodeIslandPoints(encodeIslandPoints(assets, "x"));
+    expect(pts.map((x) => x.id)).toEqual(["a", "b"]);
+    expect(pts[0]).toEqual({ id: "a", label: "a", jurisdiction: "OK", tier: 0, lat: 35.123457, lon: -97.5, precision: "full_precision" });
+    expect(pts[1]?.label).toBe("Camera B");
+    expect(pts[1]?.precision).toBe("~100 m");
+  });
+
+  it("interns repeated jurisdictions/precisions (compact at national scale)", () => {
+    const p = encodeIslandPoints(assets, "x");
+    expect(p.jurisdictions).toEqual(["OK", "TX"]);
+    expect(p.precisions).toEqual(["full_precision", "~100 m"]);
+  });
+
+  it("fails loud on a foreign payload", () => {
+    expect(() => decodeIslandPoints({ schema: "nope" } as never)).toThrow(/schema/);
   });
 });

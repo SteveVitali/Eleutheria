@@ -148,6 +148,23 @@ def test_build_public_web_uses_export_mode_and_national_dir(tmp_path: Path) -> N
     assert seen["SIG_EXPORT_DIR"] == str(export)
 
 
+def test_build_public_web_strips_the_non_public_curation_shell(tmp_path: Path) -> None:
+    # P30.3: /curate/** is the authenticated curation surface ("not public", ADR-068).
+    (tmp_path / "web").mkdir()
+    export = _national_bundle(tmp_path / "national")
+
+    def runner(cmd, *, env, **kw):
+        dist = tmp_path / "web" / "dist"
+        (dist / "curate" / "tasks").mkdir(parents=True, exist_ok=True)
+        (dist / "curate" / "index.html").write_text("<html>curation</html>")
+        (dist / "index.html").write_text("<html></html>")
+        return _completed(0)
+
+    dist = P.build_public_web(repo_root=tmp_path, export_dir=export, runner=runner)
+    assert (dist / "index.html").is_file()
+    assert not (dist / "curate").exists()
+
+
 def test_build_public_web_fails_loud_on_broken_build(tmp_path: Path) -> None:
     (tmp_path / "web").mkdir()
     export = _national_bundle(tmp_path / "national")

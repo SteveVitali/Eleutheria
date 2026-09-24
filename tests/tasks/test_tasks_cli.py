@@ -70,6 +70,16 @@ def test_osm_feed_pull_writes_export_json(capsys, tmp_path: Path) -> None:
     assert metric["hashtag"] == C.CHANGESET_HASHTAG
 
 
+def test_osm_feed_no_feed_writes_the_honest_empty_metric(capsys, tmp_path: Path) -> None:
+    # P30.3: a public build must never replay the recorded fixture changesets as real.
+    code = main(["osm-feed", "pull", "--no-feed", "--out", str(tmp_path)])
+    assert code == 0
+    metric = json.loads((tmp_path / "web" / "leverage.json").read_text())
+    assert metric["accepted_operator_attributions"] == 0
+    assert metric["attributed_changeset_ids"] == []
+    assert metric["hashtag"] == C.CHANGESET_HASHTAG
+
+
 def test_contribution_registered_fails_closed(tmp_path: Path) -> None:
     # Absent file → False (fail closed).
     assert C.contribution_registered(tmp_path / "nope.toml") is False

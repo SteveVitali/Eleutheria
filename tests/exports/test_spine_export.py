@@ -227,6 +227,46 @@ def test_dossier_has_twelve_sections_and_first_class_gaps() -> None:
     assert any(g["kind"] == "NOT_RESEARCHED" for g in dossier["gaps"])
 
 
+def test_dossier_action_blocks_are_full_shape_and_explicitly_unknown() -> None:
+    # P30.3: `{}` rendered auto-renewal as "no" (a fabricated fact) and crashed the print
+    # page on `disclosure_duties.length`; every field is now present and explicitly unknown.
+    (d, *_) = _web(_build(_site("A", "35.46", "-97.51", "Oklahoma")), "dossiers")
+    assert d["authorization"] == {
+        "approving_body": None,
+        "vote": None,
+        "consent_agenda": None,
+        "public_comment": None,
+        "date": None,
+    }
+    assert d["termination"] == {
+        "auto_renews": None,
+        "notice_window_days": None,
+        "expiry_date": None,
+    }
+    assert d["legal_regime"] == {
+        "state_statute": None,
+        "local_ordinance": None,
+        "disclosure_duties": [],
+    }
+
+
+def test_map_location_absence_uses_the_web_absence_vocabulary() -> None:
+    # P30.3: "conflicted"/"no_resolved_point" are not §9.5 absence kinds — the national
+    # /map/ build crashed looking them up. Pinned to web `epistemic.ts#ABSENCE_KINDS`.
+    kinds = {"NOT_RESEARCHED", "NO_EVIDENCE_FOUND", "EVIDENCE_OF_ABSENCE", "UNRESOLVED"}
+    point_less = [_claim("N-jur", "N", "camera_jurisdiction", value_text="Oklahoma")]
+    conflicted = [
+        _claim("C-lat1", "C", "camera_latitude", value_text="35.1"),
+        _claim("C-lat2", "C", "camera_latitude", value_text="36.9"),
+        _claim("C-lon", "C", "camera_longitude", value_text="-97.5"),
+        _claim("C-jur", "C", "camera_jurisdiction", value_text="Oklahoma"),
+    ]
+    assets = {a["id"]: a for a in _web(_build(point_less + conflicted), "map")["assets"]}
+    assert assets["N"]["locationAbsence"] == "NO_EVIDENCE_FOUND"
+    assert assets["C"]["locationAbsence"] in kinds
+    assert all(a.get("locationAbsence", "UNRESOLVED") in kinds for a in assets.values())
+
+
 def test_dossier_slugs_are_unique_across_jurisdictions() -> None:
     claims = (
         _site("A", "35.46", "-97.51", "Oklahoma")

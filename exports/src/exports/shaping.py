@@ -137,6 +137,12 @@ class _Connection(Protocol):
 # --------------------------------------------------------------------------- #
 
 
+#: The explicit honest-absence token a freshness field carries when the spine records no
+#: value (web ``metrics.ts#NOT_RECORDED``; SIG-METRIC-007 still SHOWS the field, as "not
+#: recorded", rather than dropping it or guessing a date — §3.1).
+NOT_RECORDED = "not-recorded"
+
+
 @dataclass(frozen=True)
 class ShapingClaim:
     """One spine claim row plus its *effective* rights — the shaping input record.
@@ -410,15 +416,19 @@ class ShapedSourceFreshness:
         """The ``web/src/lib/metrics.ts`` ``FreshnessRow`` contract (SIG-METRIC-007)."""
         return {
             "source": self.freshness.source_id,
+            # A value the spine does not record is published as the explicit honest-absence
+            # token (P30.3) — never an empty string (a DROPPED field, which the web refuses)
+            # and never a guessed date (§3.1). On the hosted spine every ingest_run row is still
+            # open and most claims carry no observed_at, so these are genuinely not recorded.
             "last_successful_run": (
                 self.freshness.last_successful_run.isoformat()
                 if self.freshness.last_successful_run
-                else ""
+                else NOT_RECORDED
             ),
             "last_content_change": (
                 self.freshness.last_content_change.isoformat()
                 if self.freshness.last_content_change
-                else ""
+                else NOT_RECORDED
             ),
             "status": self.freshness.status,
             "stale_entity_count": self.freshness.stale_count,

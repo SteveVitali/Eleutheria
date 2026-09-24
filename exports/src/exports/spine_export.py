@@ -758,9 +758,12 @@ def _map_layer(
             "precision": site.precision,
         }
         if site.latitude is None or site.longitude is None:
-            # An honest reason there is no point (a gap, not a guess, §3.1).
+            # An honest reason there is no point (a gap, not a guess, §3.1), in the web's
+            # §9.5 absence vocabulary (`epistemic.ts#ABSENCE_KINDS`, P30.3): conflicting
+            # coordinate evidence is UNRESOLVED; a record whose named source carries no
+            # coordinate is NO_EVIDENCE_FOUND (the point was looked for in that record).
             asset["locationAbsence"] = (
-                "conflicted" if site.point_status == "conflicted" else "no_resolved_point"
+                "UNRESOLVED" if site.point_status == "conflicted" else "NO_EVIDENCE_FOUND"
             )
         assets.append(asset)
     if resolved:
@@ -1144,9 +1147,14 @@ def _dossiers(
             "sections": sections,
             "gaps": gaps,
             "source_families": list(group.source_ids),
-            "authorization": {},
-            "termination": {},
-            "legal_regime": {},
+            # The three action blocks (SIG-UI-014a) in their FULL contract shape with every
+            # field explicitly UNKNOWN (null / []) — the spine holds no authorization /
+            # termination / legal-regime facts for a jurisdiction yet. An empty object made
+            # the web render "no" for auto-renewal (a fabricated fact) and crash on
+            # `disclosure_duties.length` (P30.3).
+            "authorization": dict(_UNKNOWN_AUTHORIZATION),
+            "termination": dict(_UNKNOWN_TERMINATION),
+            "legal_regime": {**_UNKNOWN_LEGAL_REGIME, "disclosure_duties": []},
         }
         # Only attach the governance chain where it is materialized for this jurisdiction;
         # an unmaterialized spine leaves the dossier byte-identical (honest degrade, P28.5).
@@ -1154,6 +1162,26 @@ def _dossiers(
             dossier["governance_chain"] = _governance_chain_field(slug, by_role)
         dossiers.append(dossier)
     return dossiers
+
+
+#: The web ``dossier.ts`` action-block contracts with every field explicitly unknown.
+_UNKNOWN_AUTHORIZATION: dict[str, Any] = {
+    "approving_body": None,
+    "vote": None,
+    "consent_agenda": None,
+    "public_comment": None,
+    "date": None,
+}
+_UNKNOWN_TERMINATION: dict[str, Any] = {
+    "auto_renews": None,
+    "notice_window_days": None,
+    "expiry_date": None,
+}
+_UNKNOWN_LEGAL_REGIME: dict[str, Any] = {
+    "state_statute": None,
+    "local_ordinance": None,
+    "disclosure_duties": [],
+}
 
 
 def _dossier_index(dossiers: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:

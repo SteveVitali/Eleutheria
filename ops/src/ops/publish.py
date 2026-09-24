@@ -153,12 +153,32 @@ def build_public_web(
     if runner is not None:
         kwargs["runner"] = runner
     try:
-        return build_static_site(**kwargs)
+        dist = build_static_site(**kwargs)
     except DegradedBuildError as exc:
         raise PublishError(
             f"the public export-mode build FAILED: {exc}. The public site is not shipped "
             "off a broken build (never a fixtures fall-back)."
         ) from exc
+    strip_non_public_web(dist)
+    return dist
+
+
+#: Build routes that are NOT public surfaces: the authenticated curation app's static shell
+#: (``/curate/**`` — "Authenticated curation surface — not public", ADR-068; served only by
+#: the loopback curation app). The static build emits them (the web test suite exercises
+#: them), but the PUBLIC origin never carries them (P30.3).
+NON_PUBLIC_WEB_PATHS: tuple[str, ...] = ("curate",)
+
+
+def strip_non_public_web(dist: Path) -> list[str]:
+    """Remove the non-public routes from a built ``web/dist`` before the public sync."""
+    removed: list[str] = []
+    for rel in NON_PUBLIC_WEB_PATHS:
+        target = dist / rel
+        if target.exists():
+            shutil.rmtree(target)
+            removed.append(rel)
+    return removed
 
 
 # --- 2. the published vs restricted compartment partition ---------------------
@@ -495,6 +515,8 @@ __all__ = [
     "build_public_web",
     "classify_compartment",
     "restriction_reason",
+    "strip_non_public_web",
+    "NON_PUBLIC_WEB_PATHS",
     "write_licence_index",
     "LICENCE_INDEX",
     "read_manifest",
