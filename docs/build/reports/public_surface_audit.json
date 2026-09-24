@@ -1,12 +1,12 @@
 {
-  "as_of": "2026-09-22 post-P27.2 decisions",
+  "as_of": "2026-09-24T03:43:19Z",
   "claims_by_connector": [
     {
-      "count": 864066,
+      "count": 2028748,
       "name": "dot_511"
     },
     {
-      "count": 205184,
+      "count": 205521,
       "name": "procurement"
     },
     {
@@ -76,6 +76,12 @@
   ],
   "effective_licence_mix": [
     {
+      "claims": 1220651,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "ODbL-1.0"
+    },
+    {
       "claims": 372869,
       "derivative_permitted": "yes",
       "redistributable": "yes",
@@ -94,16 +100,10 @@
       "spdx": "CC-BY-4.0"
     },
     {
-      "claims": 151906,
+      "claims": 152243,
       "derivative_permitted": "yes",
       "redistributable": "yes",
       "spdx": "CC0-1.0"
-    },
-    {
-      "claims": 55969,
-      "derivative_permitted": "yes",
-      "redistributable": "yes",
-      "spdx": "ODbL-1.0"
     },
     {
       "claims": 46992,
@@ -174,7 +174,7 @@
   ],
   "effective_redistributable_split": [
     {
-      "count": 1109793,
+      "count": 2274812,
       "name": "yes"
     },
     {
@@ -185,7 +185,7 @@
   "effective_undetermined_by_connector": [],
   "entity_by_type": [
     {
-      "count": 99303,
+      "count": 246734,
       "name": "deployment"
     },
     {
@@ -195,31 +195,31 @@
   ],
   "freshness": {
     "earliest_observed": "2020-01-28 00:00:00+00:00",
-    "latest_observed": "2026-09-22 00:00:00+00:00",
-    "observed_claims": 174128
+    "latest_observed": "2026-09-23 00:00:00+00:00",
+    "observed_claims": 174465
   },
-  "generated_at": "2026-09-22T18:29:25Z",
+  "generated_at": "2026-09-24T03:43:20Z",
   "geolocated": {
-    "denominator": 99307,
+    "denominator": 246738,
     "label": "entities",
-    "numerator": 82579,
-    "pct": 83.16
+    "numerator": 230007,
+    "pct": 93.22
   },
   "geolocation": {
     "geo_claims": [
       {
-        "count": 100405,
+        "count": 247833,
         "name": "camera_latitude"
       },
       {
-        "count": 100405,
+        "count": 247833,
         "name": "camera_longitude"
       }
     ],
-    "geolocated_entities": 82579,
+    "geolocated_entities": 230007,
     "jurisdiction_spread": [
       {
-        "count": 18783,
+        "count": 166210,
         "name": "unresolved"
       },
       {
@@ -443,13 +443,19 @@
   },
   "licence_mix": [
     {
+      "claims": 1220611,
+      "derivative_permitted": "yes",
+      "redistributable": "yes",
+      "spdx": "ODbL-1.0"
+    },
+    {
       "claims": 372869,
       "derivative_permitted": "yes",
       "redistributable": "yes",
       "spdx": "LicenseRef-PublicRecord-FactualCompilation"
     },
     {
-      "claims": 256438,
+      "claims": 256775,
       "derivative_permitted": "UNDETERMINED",
       "redistributable": "UNDETERMINED",
       "spdx": "UNDETERMINED"
@@ -465,12 +471,6 @@
       "derivative_permitted": "yes",
       "redistributable": "yes",
       "spdx": "CC0-1.0"
-    },
-    {
-      "claims": 55929,
-      "derivative_permitted": "yes",
-      "redistributable": "yes",
-      "spdx": "ODbL-1.0"
     },
     {
       "claims": 46992,
@@ -551,26 +551,26 @@
       "table": "policy"
     }
   ],
-  "note": "P27.2 post-decision re-measure; OSM land in flight \u2014 PROVISIONAL (D-P27.1-1 owes the settled re-audit)",
+  "note": "P30.1 settled re-audit \u2014 OSM land complete (sig-ingest-camreg-batch-05-tjqdq, 2026-09-24T03:35:13Z); frozen launch baseline",
   "publishable": {
-    "denominator": 1109799,
+    "denominator": 2274818,
     "label": "claims (redistributable=yes)",
-    "numerator": 853361,
-    "pct": 76.89
+    "numerator": 2018043,
+    "pct": 88.71
   },
   "publishable_effective": {
-    "denominator": 1109799,
+    "denominator": 2274818,
     "label": "claims (effective redistributable=yes)",
-    "numerator": 1109793,
+    "numerator": 2274812,
     "pct": 100.0
   },
   "redistributable_split": [
     {
-      "count": 853361,
+      "count": 2018043,
       "name": "yes"
     },
     {
-      "count": 256438,
+      "count": 256775,
       "name": "UNDETERMINED"
     }
   ],
@@ -873,30 +873,31 @@
       "spdx": "CC0-1.0"
     }
   ],
-  "schema_version": "p27.2/1.0.0",
+  "schema_version": "p30.1/1.0.0",
   "sensitivity_by_tier": [
     {
-      "count": 1109799,
+      "count": 2274818,
       "name": "0"
     }
   ],
-  "spine_label": "postgresql://sig@127.0.0.1:5433/sig",
+  "snapshot_status": "settled",
+  "spine_label": "postgresql://sig@127.0.0.1:5439/sig",
   "totals": {
-    "claims": 1109799,
-    "current_claims": 1109799,
-    "entities": 99307,
+    "claims": 2274818,
+    "current_claims": 2274818,
+    "entities": 246738,
     "permitted_sources": 211,
     "sources": 212
   },
   "undetermined": {
-    "denominator": 1109799,
+    "denominator": 2274818,
     "label": "claims (rights UNDETERMINED)",
-    "numerator": 256438,
-    "pct": 23.11
+    "numerator": 256775,
+    "pct": 11.29
   },
   "undetermined_by_connector": [
     {
-      "count": 205184,
+      "count": 205521,
       "name": "procurement"
     },
     {
@@ -949,7 +950,7 @@
     }
   ],
   "undetermined_effective": {
-    "denominator": 1109799,
+    "denominator": 2274818,
     "label": "claims (effective UNDETERMINED)",
     "numerator": 0,
     "pct": 0.0
