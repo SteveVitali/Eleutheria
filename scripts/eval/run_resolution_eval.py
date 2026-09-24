@@ -10,18 +10,22 @@ LLM (rules-encoded) adjudicator, calibrated by Cohen's κ, then measured by the 
 gates on the frozen holdout. Writes the Markdown report to
 ``docs/build/reports/P28.1_resolution_eval.md``.
 
-Deterministic — re-run to regenerate the exact report. The SCALE numbers (dedup ratio /
-resolved-site count over the ~75k hosted observations) require the ``resolution_materialize``
-sqitch change deployed to the hosted spine + an operator-held read/materialize role; that
-live-over-hosted pass is the OPEN deferral D-R6.1-EVAL (see the report + DEFERRALS.md).
+Deterministic — re-run to regenerate the exact report. The SCALE numbers (observations /
+resolved sites / materialized envelopes / dedup ratio) are read from the committed hosted
+measurement ``docs/build/reports/p30.2-hosted/resolution_scale.json`` (P30.2 ran the resolution
+materializer over the settled hosted spine — the hosted-scale half of D-R6.1-EVAL); without that
+file they render ``n/a``, never a fabricated number. The thresholds stay PROVISIONAL (the
+first-principles re-derivation against human ground truth is D-R6.1-EVAL's still-OPEN half).
 
 Run:  uv run python scripts/eval/run_resolution_eval.py
 """
 
 from __future__ import annotations
 
+import json
 from datetime import date
 from pathlib import Path
+from typing import Any
 
 from resolution.adjudicator import (
     CandidatePair,
@@ -150,8 +154,51 @@ def build() -> tuple:
     return pairs, tier_by_pair_id, llm_label_by_pair_id, gold_set, predicted_clusters, gold_clusters
 
 
+#: The committed hosted-scale measurement (P30.2, D-R6.1-EVAL hosted half): the real
+#: numbers read off the hosted spine after the resolution materializer ran next to Cloud
+#: SQL. Committed data, so the report stays a deterministic function of the repo.
+SCALE_JSON = Path("docs/build/reports/p30.2-hosted/resolution_scale.json")
+
+_PENDING_SCALE_NOTE = (
+    "SCALE over the hosted observations (dedup ratio / resolved-site count) is DEFERRED "
+    "to D-R6.1-EVAL: it needs the resolution_materialize sqitch change deployed to the hosted "
+    "spine + an operator-held read/materialize role. Re-run: `sig-reconcile materialize --dsn "
+    "$SIG_PG_DSN` after the migration is deployed. OSM land (D-SOURCES.17-1) still in flight."
+)
+
+
+def load_scale(path: Path = SCALE_JSON) -> dict[str, Any] | None:
+    """The committed hosted-scale measurement, or ``None`` when none has been recorded."""
+    if not path.exists():
+        return None
+    data: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
+    return data
+
+
+def scale_kwargs(scale: dict[str, Any] | None) -> tuple[dict[str, Any], list[str]]:
+    """Map the committed scale measurement onto ``run_eval`` kwargs + report notes."""
+    if scale is None:
+        return (
+            {
+                "observation_count": None,
+                "resolved_site_count": None,
+                "dedup_ratio": None,
+                "resolutions_materialized": None,
+            },
+            [_PENDING_SCALE_NOTE],
+        )
+    kwargs = {
+        "observation_count": int(scale["observation_count"]),
+        "resolved_site_count": int(scale["resolved_site_count"]),
+        "dedup_ratio": float(scale["dedup_ratio"]),
+        "resolutions_materialized": int(scale["resolutions_materialized"]),
+    }
+    return kwargs, [str(n) for n in scale.get("notes", ())]
+
+
 def main() -> int:
     pairs, tier_by_pair_id, llm_label_by_pair_id, gold_set, pred_c, gold_c = build()
+    scale, scale_notes = scale_kwargs(load_scale())
     report = run_eval(
         gold_set=gold_set,
         pairs=pairs,
@@ -161,20 +208,14 @@ def main() -> int:
         llm_adjudicator=LLM.adjudicator_id,
         predicted_clusters=pred_c,
         gold_clusters=gold_c,
-        # Scale numbers over the hosted spine are DEFERRED (D-R6.1-EVAL): the
-        # migration must land on hosted + an operator role must run the materializer.
-        observation_count=None,
-        resolved_site_count=None,
-        dedup_ratio=None,
-        resolutions_materialized=None,
+        # Scale numbers over the hosted spine come from the committed P30.2 measurement
+        # (SCALE_JSON); absent it they stay n/a (never fabricated).
+        **scale,
         notes=[
             "Methodology numbers below are reproducible from this committed bootstrap gold set "
             "(scripts/eval/run_resolution_eval.py). The write path is proven over real PG18+PostGIS "
             "in tests/db/test_resolution_materialize.py (append-only, idempotent +0).",
-            "SCALE over the ~75k hosted observations (dedup ratio / resolved-site count) is DEFERRED "
-            "to D-R6.1-EVAL: it needs the resolution_materialize sqitch change deployed to the hosted "
-            "spine + an operator-held read/materialize role. Re-run: `sig-reconcile materialize --dsn "
-            "$SIG_PG_DSN` after the migration is deployed. OSM land (D-SOURCES.17-1) still in flight.",
+            *scale_notes,
         ],
     )
     md = render_report_md(report, title="P28.1 — Resolution eval report (Round 6 keystone)")

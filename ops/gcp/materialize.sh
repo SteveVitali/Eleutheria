@@ -33,6 +33,11 @@
 #                   from $SIG_PG_PASSWORD (Secret Manager) — never on a command line here.
 #   all             schema → image → job → run each step in dependency order.
 #
+# SIG_DETECT_JURISDICTION (optional, e.g. OK) routes the detector's records-request DRAFTS to
+# that state's records statute. The loop applies it to EVERY records-oriented task, so set it
+# only when the whole queue is that jurisdiction's (P30.2: the single queued task is the OKC
+# 299-vs-190 contradiction); unset, no draft is made. Drafts are never sent (D-R7.2-SEND).
+#
 # Coverage runs with --no-negative-space: on the hosted spine every entity is typed
 # `deployment`, so the P28.4 peer-class rule would emit ~26.7M `not_researched` rows
 # (ADR-103; the refinement is the follow-up D-P30.2-1). Nothing here UPDATEs/DELETEs.
@@ -75,7 +80,8 @@ step_cmd() {
     contradictions) printf 'exec python -m reconcile materialize-contradictions --dsn "%s" %s' "${DSN}" "${role}" ;;
     coverage)       printf 'exec python -m inference materialize-coverage --dsn "%s" %s --no-negative-space' "${DSN}" "${role}" ;;
     accountability) printf 'exec python -m inference materialize-accountability-links --dsn "%s" %s' "${DSN}" "${role}" ;;
-    detect)         printf 'exec python -m tasks detect --dsn "%s" %s' "${DSN}" "${role}" ;;
+    detect)         printf 'exec python -m tasks detect --dsn "%s" %s%s' "${DSN}" "${role}" \
+                      "${SIG_DETECT_JURISDICTION:+ --jurisdiction ${SIG_DETECT_JURISDICTION}}" ;;
     *) _log "ERROR: unknown step '$1' (resolution|edges|contradictions|coverage|accountability|detect)" >&2; exit 64 ;;
   esac
 }

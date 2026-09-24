@@ -291,17 +291,22 @@ def read_predicate_reconciliation(
     claimed_by_pred = {str(r[0]): int(r[1]) for r in claimed}
 
     # Resolved subjects per predicate — restricted to the same jurisdiction scope so the
-    # numerator can never exceed its denominator.
+    # numerator can never exceed its denominator. Only a decision that picked a winning
+    # claim is a "resolved value": a first-class ``unresolved_conflict`` envelope (both
+    # sides retained, §3.1) resolves nothing and must never be counted as resolved
+    # (P30.2 finding COVERAGE-RESOLVED-01 — the hosted 299-vs-190 conflict was counted).
     rparams: list[Any] = []
     rjuris = ""
     if jurisdiction:
         rparams.append(f"%{jurisdiction}%")
         rjuris = (
-            " WHERE r.subject_id IN (SELECT entity_id FROM entity_identifier WHERE value ILIKE %s)"
+            " AND r.subject_id IN (SELECT entity_id FROM entity_identifier WHERE value ILIKE %s)"
         )
     resolved = conn.execute(
         "SELECT r.predicate_id, count(DISTINCT r.subject_id) "
-        "  FROM resolution r" + rjuris + " GROUP BY r.predicate_id",
+        "  FROM resolution r WHERE r.winning_claim IS NOT NULL"
+        + rjuris
+        + " GROUP BY r.predicate_id",
         tuple(rparams),
     ).fetchall()
     resolved_by_pred = {str(r[0]): int(r[1]) for r in resolved}
@@ -507,13 +512,28 @@ def materialize_coverage(
     )
 
 
+#: The identity of one measured coverage quantity — two rows sharing it are successive
+#: measurements of the same thing (the later supersedes the earlier, append-only).
+_COVERAGE_KEY = (
+    "coalesce(metric_method, ''), coalesce(subject_class, ''), "
+    "coalesce(jurisdiction_id::text, ''), coalesce(predicate_id, ''), "
+    "coalesce(subject_id::text, ''), absence_kind, coalesce(named_denominator, '')"
+)
+
+
 def read_materialized_coverage(conn: Any, *, role: str | None = None) -> list[dict[str, Any]]:
-    """Read the materialized coverage rows (the P28.5 surface seam).
+    """Read the CURRENT materialized coverage rows (the P28.5 surface seam).
 
     The real coverage dataset the P28.5 surface refresh consumes to back the coverage +
     "what we don't know" pages: counted quantities with their named denominators and the
     negative space, deterministically ordered. Read-only. Every counted quantity carries a
     named denominator (never a total); every absence carries its absence kind.
+
+    Append-only supersession (P30.2): a changed measurement is a NEW row with a new
+    digest, never an UPDATE — so the table holds every measurement ever taken. The seam
+    returns only the LATEST row per measured quantity (same method, class, jurisdiction,
+    predicate, subject, absence kind and named denominator; latest = highest time-ordered
+    ``uuidv7`` ``coverage_id``). The superseded rows stay in the table as history.
     """
     if role:
         conn.execute(f"SET ROLE {role}")
@@ -522,8 +542,12 @@ def read_materialized_coverage(conn: Any, *, role: str | None = None) -> list[di
         "       predicate_id, absence_kind, sources_searched, "
         "       metric_method, metric_label, numerator, denominator, not_evaluable, "
         "       named_denominator, metric_value "
-        "  FROM coverage_record "
-        " WHERE input_digest IS NOT NULL "
+        "  FROM ("
+        "    SELECT DISTINCT ON (" + _COVERAGE_KEY + ") * "
+        "      FROM coverage_record "
+        "     WHERE input_digest IS NOT NULL "
+        "     ORDER BY " + _COVERAGE_KEY + ", coverage_id DESC"
+        "  ) latest "
         " ORDER BY metric_method NULLS LAST, subject_class, predicate_id, subject_id, coverage_id"
     ).fetchall()
     out: list[dict[str, Any]] = []

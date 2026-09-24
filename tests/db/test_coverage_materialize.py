@@ -223,3 +223,80 @@ def test_read_materialized_coverage_round_trips(conn: object) -> None:
         assert m["named_denominator"]  # every published metric names its denominator
     for a in absences:
         assert a["absence_kind"] == "not_researched"
+
+
+def _resolution(conn: object, subject_id: str, predicate: str, winning_claim: object) -> None:
+    """A materialized §16.4 decision; ``winning_claim=None`` is an unresolved_conflict."""
+    conn.execute(
+        "INSERT INTO vocab_resolution_strategy(strategy_id,definition) "
+        "VALUES('authoritative_source_wins','fixture') ON CONFLICT DO NOTHING"
+    )
+    conn.execute(
+        "INSERT INTO vocab_rationale(rationale_code,template) VALUES('FIXTURE','t') "
+        "ON CONFLICT DO NOTHING"
+    )
+    conn.execute(
+        "INSERT INTO vocab_confidence(confidence,definition) VALUES('probable','d') "
+        "ON CONFLICT DO NOTHING"
+    )
+    conn.execute(
+        "INSERT INTO resolution(subject_id,predicate_id,value_kind,valid_period,winning_claim,"
+        " considered_claims,contradiction_state,strategy_id,rationale_code,rationale_text,"
+        " confidence,evidence_counts,resolver_version,ruleset_version,input_digest) "
+        "VALUES(%s,%s,'value',tstzrange('2026-05-01',NULL,'[)'),%s,'{}',%s,"
+        " 'authoritative_source_wins','FIXTURE','fixture','probable','{}','r','r',%s)",
+        (
+            subject_id,
+            predicate,
+            winning_claim,
+            "uncontested" if winning_claim else "unresolved_conflict",
+            f"fixture-{subject_id}-{predicate}",
+        ),
+    )
+
+
+def _ratio(conn: object, predicate: str) -> tuple[int, int]:
+    row = conn.execute(
+        "SELECT numerator, denominator FROM coverage_record "
+        "WHERE metric_method = 'reconciliation_ratio' AND predicate_id = %s",
+        (predicate,),
+    ).fetchone()
+    assert row is not None
+    return int(row[0]), int(row[1])
+
+
+def test_an_unresolved_conflict_is_never_counted_as_a_resolved_value(conn: object) -> None:
+    """P30.2 finding COVERAGE-RESOLVED-01: the hosted 299-vs-190 ``unresolved_conflict``
+    envelope was counted in the "subjects with a resolved <predicate> value" numerator.
+    Only a decision that picked a winning claim resolves anything (§3.1)."""
+    seeded = _seed_two_subjects(conn)
+    _resolution(conn, seeded["s1"], PRED_A, None)  # unresolved_conflict — no winner
+    _resolution(conn, seeded["s2"], PRED_B, seeded["claim_b"])  # a genuine resolved value
+    materialize_coverage(conn, negative_space=False)
+    assert _ratio(conn, PRED_A) == (0, 1)
+    assert _ratio(conn, PRED_B) == (1, 1)
+
+
+def test_the_read_seam_returns_the_latest_measurement_superseded_rows_stay(conn: object) -> None:
+    """A re-measured quantity is a NEW row (append-only); the seam returns only the latest,
+    and the superseded measurement stays in the table as history."""
+    seeded = _seed_two_subjects(conn)
+    materialize_coverage(conn, negative_space=False)
+    assert _ratio(conn, PRED_B) == (0, 1)
+    # The spine changes: PRED_B is now resolved → a new, superseding measurement row.
+    _resolution(conn, seeded["s2"], PRED_B, seeded["claim_b"])
+    second = materialize_coverage(conn, negative_space=False)
+    assert second.inserted == 1  # only the changed quantity; the rest +0
+    history = conn.execute(
+        "SELECT numerator FROM coverage_record WHERE metric_method = 'reconciliation_ratio' "
+        "AND predicate_id = %s ORDER BY coverage_id",
+        (PRED_B,),
+    ).fetchall()
+    assert [int(r[0]) for r in history] == [0, 1]  # both measurements retained, never updated
+    current = [
+        r
+        for r in read_materialized_coverage(conn)
+        if r["metric_method"] == "reconciliation_ratio" and r["predicate_id"] == PRED_B
+    ]
+    assert len(current) == 1
+    assert current[0]["numerator"] == 1.0
