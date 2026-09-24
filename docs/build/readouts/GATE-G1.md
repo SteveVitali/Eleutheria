@@ -14,7 +14,7 @@ resume prompt this milestone is explicitly deferred: recorded SKIPPED → RETURN
 continues (REL.1 is non-blocking — spec Part I §4: it may precede or follow the go-live work).
 
 ## What would pass it
-The operator performs the merge/tag/release, records the outcome here as PASSED with the `v0.1.0`
+The operator performs the merge/tag/release, records the outcome here as cleared with the `v0.1.0`
 tag + `main` CI link and dates `docs/build/CHANGELOG.md 0.1.0`.
 
 ## Consequence recorded
