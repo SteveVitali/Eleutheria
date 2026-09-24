@@ -161,6 +161,10 @@ def observation_time(observed_at: Any, retrieved_at: Any) -> tuple[date, str]:
     if observed_at:
         return _as_date(observed_at), "claim"
     if retrieved_at:
+        # UTC calendar date, independent of the reading session's time zone, so every
+        # reader (materializer, CLI, API) derives the same date and input_digest.
+        if isinstance(retrieved_at, datetime) and retrieved_at.tzinfo is not None:
+            retrieved_at = retrieved_at.astimezone(UTC)
         return _as_date(retrieved_at), CAPTURE_TIME_BASIS
     return _UNDATED, "claim"
 

@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import contextlib
 import json
-from datetime import date, datetime
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -198,12 +198,39 @@ def test_values_beyond_tolerance_stay_unresolved_and_visible() -> None:
     b = _claim("c-b", 35.4776, source="camreg_okc")  # 0.01 deg (~1.1 km) apart
     res = _resolve("camera_latitude", [a, b])
     assert res.resolution_status == "UNRESOLVED"
+    assert res.unresolved_code == "U2"  # one source vs one equal source: a standoff
     assert res.contradiction_state == "unresolved_conflict"
     assert res.winning_claim_id is None
     assert set(res.considered_claim_ids) == {"c-a", "c-b"}
     found = detected_contradictions(res.subject_id, "camera_latitude", res, [a, b])
     assert [c.contradiction_type for c in found] == ["value_disagreement"]
     assert set(found[0].claim_ids) == {"c-a", "c-b"}
+
+
+def test_two_pools_beyond_tolerance_fire_the_absolute_u4() -> None:
+    # Two sources agree (one pool, two classes) and a third is ~1.1 km away: no U2/U3
+    # standoff, so the absolute-tolerance U4 is what keeps the disagreement unresolved.
+    claims = [
+        _claim("c-a", 35.46760, source="s1"),
+        _claim("c-b", 35.46770, source="s2"),
+        _claim("c-c", 35.47760, source="s3"),
+    ]
+    res = _resolve("camera_latitude", claims)
+    assert res.resolution_status == "UNRESOLVED"
+    assert res.unresolved_code == "U4"
+    assert res.contradiction_state == "unresolved_conflict"
+    assert set(res.dissenting_claim_ids) == {"c-c"}
+
+
+def test_absolute_u4_only_applies_to_tolerance_predicates() -> None:
+    # The same three values on a predicate WITHOUT value_tolerance are exact candidates
+    # judged by the relative U4 (0.03% spread < the SLOW 8% tolerance) — no pooling rule.
+    claims = [
+        _claim("c-a", 35.46760, pred="camera_name", source="s1"),
+        _claim("c-b", 35.46770, pred="camera_name", source="s2"),
+    ]
+    res = _resolve("camera_name", claims)
+    assert "SIG-RECON-014:value_tolerance" not in res.rules_fired
 
 
 def test_a_single_linkage_chain_cannot_hide_a_wide_spread() -> None:
@@ -250,6 +277,9 @@ def test_observation_time_prefers_the_claim_then_the_capture() -> None:
         CAPTURE_TIME_BASIS,
     )
     assert observation_time(None, None) == (date(1970, 1, 1), "claim")
+    # the capture date is the UTC calendar date, whatever the session time zone.
+    late = datetime(2026, 9, 17, 23, 30, tzinfo=timezone(timedelta(hours=-5)))
+    assert observation_time(None, late) == (date(2026, 9, 18), CAPTURE_TIME_BASIS)
 
 
 class _Result:

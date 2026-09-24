@@ -1,12 +1,14 @@
 {
   "schema": "p30.2a/inventory/1.0.0",
-  "label": "before",
-  "measured_at": "2026-09-24T05:48:45Z",
+  "label": "after",
+  "measured_at": "2026-09-24T08:04:16Z",
   "spine": "hosted sig-pg (Cloud SQL, db-custom-2-8192), tier-0 claims, read-only as `sig`",
   "registry": "ontology/generated/registry/predicate_registry.json (at the measuring commit)",
   "registry_artifact_genres": [
     "agency_policy",
     "audit_log",
+    "camera_registry",
+    "connector_run",
     "council_minutes",
     "executed_contract",
     "invoice",
@@ -15,11 +17,11 @@
     "portal_snapshot",
     "vendor_default_page"
   ],
-  "spine_claims_tier0": 2280784,
+  "spine_claims_tier0": 2304784,
   "distinct_predicates": 116,
-  "predicates_with_registry_row": 13,
-  "claims_on_registered_predicates": 11357,
-  "claims_with_a_directness_row": 9,
+  "predicates_with_registry_row": 27,
+  "claims_on_registered_predicates": 2086311,
+  "claims_with_a_directness_row": 2086308,
   "camera_registry_predicates": [
     "external_id",
     "camera_coordinate_source",
@@ -36,8 +38,8 @@
     "camera_type",
     "camera_mount"
   ],
-  "camera_registry_claims": 2050954,
-  "camera_registry_claims_with_registry_row": 0,
+  "camera_registry_claims": 2074954,
+  "camera_registry_claims_with_registry_row": 2074954,
   "definitions": {
     "camera_registry_predicate": "a predicate emitted by the camera-registry connectors (dot_511 / camreg_* / osm camera tags): camera_* plus external_id (which procurement connectors also emit)",
     "has_registry_row": "the predicate has a row in the generated predicate registry the \u00a728 resolver reads (reconcile.weight.predicate_registry)",
@@ -48,95 +50,95 @@
   "predicates": [
     {
       "predicate_id": "external_id",
-      "claims": 263812,
+      "claims": 266812,
       "claims_by_genre": {
-        "camera_registry": 248345,
+        "camera_registry": 251345,
         "connector_run": 15467
       },
-      "observed_at_null": 255561,
-      "subjects": 237972,
-      "has_registry_row": false,
+      "observed_at_null": 258561,
+      "subjects": 238035,
+      "has_registry_row": true,
       "camera_registry_predicate": true,
-      "claims_with_a_directness_row": 0,
-      "claims_admissible_by_directness": 0
+      "claims_with_a_directness_row": 266812,
+      "claims_admissible_by_directness": 266812
     },
     {
       "predicate_id": "camera_coordinate_source",
-      "claims": 248345,
+      "claims": 251345,
       "claims_by_genre": {
-        "camera_registry": 248345
+        "camera_registry": 251345
       },
-      "observed_at_null": 248345,
-      "subjects": 230267,
-      "has_registry_row": false,
+      "observed_at_null": 251345,
+      "subjects": 230330,
+      "has_registry_row": true,
       "camera_registry_predicate": true,
-      "claims_with_a_directness_row": 0,
-      "claims_admissible_by_directness": 0
+      "claims_with_a_directness_row": 251345,
+      "claims_admissible_by_directness": 251345
     },
     {
       "predicate_id": "camera_external_ref",
-      "claims": 248345,
+      "claims": 251345,
       "claims_by_genre": {
-        "camera_registry": 248345
+        "camera_registry": 251345
       },
-      "observed_at_null": 248345,
-      "subjects": 230267,
-      "has_registry_row": false,
+      "observed_at_null": 251345,
+      "subjects": 230330,
+      "has_registry_row": true,
       "camera_registry_predicate": true,
-      "claims_with_a_directness_row": 0,
-      "claims_admissible_by_directness": 0
+      "claims_with_a_directness_row": 251345,
+      "claims_admissible_by_directness": 251345
     },
     {
       "predicate_id": "camera_jurisdiction",
-      "claims": 248345,
+      "claims": 251345,
       "claims_by_genre": {
-        "camera_registry": 248345
+        "camera_registry": 251345
       },
-      "observed_at_null": 248345,
-      "subjects": 230267,
-      "has_registry_row": false,
+      "observed_at_null": 251345,
+      "subjects": 230330,
+      "has_registry_row": true,
       "camera_registry_predicate": true,
-      "claims_with_a_directness_row": 0,
-      "claims_admissible_by_directness": 0
+      "claims_with_a_directness_row": 251345,
+      "claims_admissible_by_directness": 251345
     },
     {
       "predicate_id": "camera_latitude",
-      "claims": 248345,
+      "claims": 251345,
       "claims_by_genre": {
-        "camera_registry": 248345
+        "camera_registry": 251345
       },
-      "observed_at_null": 248345,
-      "subjects": 230267,
-      "has_registry_row": false,
+      "observed_at_null": 251345,
+      "subjects": 230330,
+      "has_registry_row": true,
       "camera_registry_predicate": true,
-      "claims_with_a_directness_row": 0,
-      "claims_admissible_by_directness": 0
+      "claims_with_a_directness_row": 251345,
+      "claims_admissible_by_directness": 251345
     },
     {
       "predicate_id": "camera_longitude",
-      "claims": 248345,
+      "claims": 251345,
       "claims_by_genre": {
-        "camera_registry": 248345
+        "camera_registry": 251345
       },
-      "observed_at_null": 248345,
-      "subjects": 230267,
-      "has_registry_row": false,
+      "observed_at_null": 251345,
+      "subjects": 230330,
+      "has_registry_row": true,
       "camera_registry_predicate": true,
-      "claims_with_a_directness_row": 0,
-      "claims_admissible_by_directness": 0
+      "claims_with_a_directness_row": 251345,
+      "claims_admissible_by_directness": 251345
     },
     {
       "predicate_id": "camera_operator",
-      "claims": 248345,
+      "claims": 251345,
       "claims_by_genre": {
-        "camera_registry": 248345
+        "camera_registry": 251345
       },
-      "observed_at_null": 248345,
-      "subjects": 230267,
-      "has_registry_row": false,
+      "observed_at_null": 251345,
+      "subjects": 230330,
+      "has_registry_row": true,
       "camera_registry_predicate": true,
-      "claims_with_a_directness_row": 0,
-      "claims_admissible_by_directness": 0
+      "claims_with_a_directness_row": 251345,
+      "claims_admissible_by_directness": 251345
     },
     {
       "predicate_id": "camera_direction",
@@ -146,23 +148,23 @@
       },
       "observed_at_null": 164246,
       "subjects": 154000,
-      "has_registry_row": false,
+      "has_registry_row": true,
       "camera_registry_predicate": true,
-      "claims_with_a_directness_row": 0,
-      "claims_admissible_by_directness": 0
+      "claims_with_a_directness_row": 164246,
+      "claims_admissible_by_directness": 164246
     },
     {
       "predicate_id": "camera_name",
-      "claims": 57069,
+      "claims": 60069,
       "claims_by_genre": {
-        "camera_registry": 57069
+        "camera_registry": 60069
       },
-      "observed_at_null": 57069,
-      "subjects": 42416,
-      "has_registry_row": false,
+      "observed_at_null": 60069,
+      "subjects": 42479,
+      "has_registry_row": true,
       "camera_registry_predicate": true,
-      "claims_with_a_directness_row": 0,
-      "claims_admissible_by_directness": 0
+      "claims_with_a_directness_row": 60069,
+      "claims_admissible_by_directness": 60069
     },
     {
       "predicate_id": "products",
@@ -185,10 +187,10 @@
       },
       "observed_at_null": 35489,
       "subjects": 24946,
-      "has_registry_row": false,
+      "has_registry_row": true,
       "camera_registry_predicate": true,
-      "claims_with_a_directness_row": 0,
-      "claims_admissible_by_directness": 0
+      "claims_with_a_directness_row": 35489,
+      "claims_admissible_by_directness": 35489
     },
     {
       "predicate_id": "place_of_performance",
@@ -211,10 +213,10 @@
       },
       "observed_at_null": 20964,
       "subjects": 17534,
-      "has_registry_row": false,
+      "has_registry_row": true,
       "camera_registry_predicate": true,
-      "claims_with_a_directness_row": 0,
-      "claims_admissible_by_directness": 0
+      "claims_with_a_directness_row": 20964,
+      "claims_admissible_by_directness": 20964
     },
     {
       "predicate_id": "camera_status",
@@ -224,10 +226,10 @@
       },
       "observed_at_null": 18531,
       "subjects": 12591,
-      "has_registry_row": false,
+      "has_registry_row": true,
       "camera_registry_predicate": true,
-      "claims_with_a_directness_row": 0,
-      "claims_admissible_by_directness": 0
+      "claims_with_a_directness_row": 18531,
+      "claims_admissible_by_directness": 18531
     },
     {
       "predicate_id": "matched_keyword",
@@ -372,7 +374,7 @@
       "subjects": 4957,
       "has_registry_row": true,
       "camera_registry_predicate": false,
-      "claims_with_a_directness_row": 1,
+      "claims_with_a_directness_row": 5574,
       "claims_admissible_by_directness": 1
     },
     {
@@ -398,7 +400,7 @@
       "subjects": 1758,
       "has_registry_row": true,
       "camera_registry_predicate": false,
-      "claims_with_a_directness_row": 0,
+      "claims_with_a_directness_row": 2906,
       "claims_admissible_by_directness": 0
     },
     {
@@ -490,7 +492,7 @@
       "subjects": 1456,
       "has_registry_row": true,
       "camera_registry_predicate": false,
-      "claims_with_a_directness_row": 0,
+      "claims_with_a_directness_row": 1456,
       "claims_admissible_by_directness": 0
     },
     {
@@ -517,7 +519,7 @@
       "subjects": 1409,
       "has_registry_row": true,
       "camera_registry_predicate": false,
-      "claims_with_a_directness_row": 0,
+      "claims_with_a_directness_row": 1408,
       "claims_admissible_by_directness": 0
     },
     {
@@ -711,10 +713,10 @@
       },
       "observed_at_null": 552,
       "subjects": 550,
-      "has_registry_row": false,
+      "has_registry_row": true,
       "camera_registry_predicate": true,
-      "claims_with_a_directness_row": 0,
-      "claims_admissible_by_directness": 0
+      "claims_with_a_directness_row": 552,
+      "claims_admissible_by_directness": 552
     },
     {
       "predicate_id": "manufacturer",
@@ -880,10 +882,10 @@
       },
       "observed_at_null": 221,
       "subjects": 221,
-      "has_registry_row": false,
+      "has_registry_row": true,
       "camera_registry_predicate": true,
-      "claims_with_a_directness_row": 0,
-      "claims_admissible_by_directness": 0
+      "claims_with_a_directness_row": 221,
+      "claims_admissible_by_directness": 221
     },
     {
       "predicate_id": "ai_surveillance_supplier",
@@ -1314,7 +1316,7 @@
       "subjects": 2,
       "has_registry_row": true,
       "camera_registry_predicate": false,
-      "claims_with_a_directness_row": 1,
+      "claims_with_a_directness_row": 2,
       "claims_admissible_by_directness": 1
     },
     {
@@ -1394,7 +1396,7 @@
       "subjects": 2,
       "has_registry_row": true,
       "camera_registry_predicate": false,
-      "claims_with_a_directness_row": 1,
+      "claims_with_a_directness_row": 2,
       "claims_admissible_by_directness": 1
     },
     {
@@ -1567,5 +1569,5 @@
       "claims_admissible_by_directness": 0
     }
   ],
-  "claims_admissible_by_directness": 9
+  "claims_admissible_by_directness": 2074963
 }

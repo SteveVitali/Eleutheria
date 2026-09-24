@@ -1153,8 +1153,9 @@ def source_freshness_rows(
 
     Staleness uses :func:`inference.freshness.is_stale_for_predicate` — but only
     for predicates the ontology registry knows; a connector predicate with no registry
-    row is counted ``staleness_not_evaluable`` rather than faked (the camera-registry
-    predicates carry registry rows since P30.2a, ADR-104).
+    row is counted ``staleness_not_evaluable`` rather than faked. The camera-registry
+    predicates carry registry rows since P30.2a (ADR-104), but only DATED claims are
+    observations here — an undated claim (no ``observed_at``) is still skipped.
     """
     by_source: dict[str, list[ShapingClaim]] = {}
     for claim in claims:
