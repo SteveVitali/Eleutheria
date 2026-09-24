@@ -22,6 +22,26 @@ endpoint_url = ""                 # e.g. https://<accountid>.r2.cloudflarestorag
 monthly_budget_gb = 100.0         # documented alarm threshold (untested against a real bill)
 alarm_ratio = 0.8                 # warn at 80% of budget, alarm at 100%
 
+[observability]
+# Uptime + error budgets and bounded log retention for the live stack
+# (OBS.1 / GL-OBS-01, ADR-077). The zero-cost posture (SIG-STORE-003) means a
+# FILE, not a paid metrics/log service: `sig-ops probe` appends one JSONL row per
+# service check to the bounded probe log; budgets are a pure function over the
+# rolling window; both the probe log and the recorded-alert ledger are held to
+# this retention policy (age + byte caps, oldest rows drop first).
+uptime_target_pct = 99.0        # monthly uptime SLO; the error budget is 100 - target
+window_days = 30                # the rolling budget window
+retention_days = 30             # probe + alert rows older than this are pruned
+probe_log_max_bytes = 1048576   # the probe log never exceeds 1 MiB
+# The notifier seam (ADR-077): the append-only recorded-alert ledger is always on
+# (.sig/ops/alerts.jsonl, env SIG_ALERT_LOG); every alert is recorded before any
+# external delivery is attempted. The OPTIONAL webhook notifier is env-configured
+# (no paid service; secrets env-only, HG-09 — never committed here):
+#   SIG_ALERT_WEBHOOK_URL    -> POST target (e.g. a free ntfy.sh topic / self-hosted hook)
+#   SIG_ALERT_WEBHOOK_TOKEN  -> optional Bearer token
+# Runtime state files (also env-overridable, gitignored under .sig/):
+#   SIG_PROBE_LOG            -> the bounded probe log (default .sig/ops/probes.jsonl)
+
 [cdn]
 # The CDN in front of the store. Content-hash keys are immutable, so objects are
 # cached effectively forever (see exports.push.IMMUTABLE_CACHE_CONTROL).
