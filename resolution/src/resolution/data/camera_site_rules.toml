@@ -76,6 +76,11 @@ incompatible = [["alpr", "traffic"], ["alpr", "cctv"]]
 class = "alpr"
 source_substrings = ["flock", "alpr", "lpr"]
 operator_substrings = ["alpr", "license plate", "licence plate", "plate reader", "flock"]
+# An explicit device type naming a plate reader classes the record too (an OSM node's
+# operator label is "OpenStreetMap contributors", so only its type can say ALPR). Added
+# after review; no hosted camera_type value matches today (measured: fixed / dome /
+# panning / panorama_with_ptz / destroyed), so no measured pair changes class.
+type_substrings = ["alpr", "anpr", "lpr", "plate"]
 
 [[classes.rule]]
 class = "traffic"
@@ -172,6 +177,10 @@ seed = 30
 # AGAINST the tier (an unverifiable merge is not a verified merge) — the asymmetric
 # cost of a false merge in a surveillance-accountability record (ADR-099, D-R6.1-EVAL).
 strict_precision = true
+# A candidate tier needs at least this many frozen-holdout pairs before its precision can
+# gate auto-write (a 1-of-1 "1.000" is not evidence). The v2 holdout carries 70 per
+# auto-write candidate tier.
+min_holdout_pairs = 50
 
 # The written adjudication rules for camera-site pairs (versioned prose; an
 # adjudicator reads these, not code).

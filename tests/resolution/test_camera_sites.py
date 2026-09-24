@@ -39,6 +39,7 @@ from resolution.camera_sites import (
     cluster_decisions,
     cluster_summary,
     decide_auto_write_tiers,
+    device_class,
     direction_bearing,
     infer_lineages,
     load_camera_gold,
@@ -305,6 +306,21 @@ def test_silence_never_auto_writes() -> None:
     assert all(d.demoted for d in demotions)
 
 
+def test_too_small_a_holdout_never_auto_writes() -> None:
+    # 1 of 1 "= 1.000" is not evidence: the committed rules need 50 holdout pairs per tier.
+    assert RULES.min_holdout_pairs == 50
+    one = TierMeasurement(tier=3, predicted=1, match=1, non_match=0, not_enough_information=0)
+    auto, (d,) = decide_auto_write_tiers(
+        {3: one}, candidate_tiers={3}, threshold=0.98, min_pairs=RULES.min_holdout_pairs
+    )
+    assert auto == frozenset() and d.demoted
+    enough = TierMeasurement(tier=3, predicted=50, match=50, non_match=0, not_enough_information=0)
+    auto2, _ = decide_auto_write_tiers(
+        {3: enough}, candidate_tiers={3}, threshold=0.98, min_pairs=RULES.min_holdout_pairs
+    )
+    assert auto2 == {3}
+
+
 def test_strict_precision_counts_unverifiable_merges_against_the_tier() -> None:
     m = TierMeasurement(tier=3, predicted=50, match=49, non_match=0, not_enough_information=1)
     assert m.precision_strict == pytest.approx(0.98)
@@ -328,29 +344,62 @@ def test_training_pairs_never_score_a_tier() -> None:
     assert measure_tiers(gold, {("a", "b"): 3}) == {}
 
 
+ONE_PAIR = replace(RULES, min_holdout_pairs=1)  # fixture golds hold a single holdout pair
+
+
 def test_a_tier_auto_writes_only_when_its_measured_holdout_clears_the_floor() -> None:
     recs = [_rec("a", "s1"), _rec("b", "s2", 0.3), _rec("c", "s1", 500), _rec("d", "s2", 500.2)]
     good = _gold({("a", "b"): GoldLabel.MATCH})
-    r = resolve_camera_sites(recs, gold=good, threshold=0.98)
+    r = resolve_camera_sites(recs, gold=good, threshold=0.98, rules=ONE_PAIR)
     assert r.auto_write_tiers == {3}
     assert r.observation_count == 4 and r.cluster_count == 2
     assert r.dedup_ratio == pytest.approx(0.5)
     bad = _gold({("a", "b"): GoldLabel.NOT_ENOUGH_INFORMATION})
-    r2 = resolve_camera_sites(recs, gold=bad, threshold=0.98)
+    r2 = resolve_camera_sites(recs, gold=bad, threshold=0.98, rules=ONE_PAIR)
     assert r2.auto_write_tiers == frozenset()
     assert r2.cluster_count == r2.observation_count == 4  # an honest N = M
     assert {d.disposition for d in r2.decisions} == {"proposed"}
 
 
-def test_run_key_is_stable_for_unchanged_input_and_moves_with_it() -> None:
+def test_run_key_is_stable_for_unchanged_input_and_moves_with_every_decision_input() -> None:
     recs = [_rec("a", "s1"), _rec("b", "s2", 0.3)]
-    k1 = run_key(rules_version="2", auto_write_tiers={3}, gold_version="g", records=recs)
-    assert k1 == run_key(
-        rules_version="2", auto_write_tiers={3}, gold_version="g", records=list(reversed(recs))
-    )
-    changed = [recs[0], replace(recs[1], claim_ids=("c-new",))]
-    assert k1 != run_key(rules_version="2", auto_write_tiers={3}, gold_version="g", records=changed)
-    assert k1 != run_key(rules_version="2", auto_write_tiers=(), gold_version="g", records=recs)
+    gold = _gold({("a", "b"): GoldLabel.MATCH})
+
+    def key(records=recs, rules=RULES, tiers=(3,), g=gold):
+        return run_key(rules=rules, auto_write_tiers=tiers, gold=g, records=records)
+
+    k1 = key()
+    assert k1 == key(records=list(reversed(recs)))  # order-free
+    # a change to ANY field a decision can depend on mints a new run (never a stale union)
+    for changed in (
+        replace(recs[1], claim_ids=("c-new",)),
+        replace(recs[1], direction="S"),
+        replace(recs[1], jurisdiction="OR"),
+        replace(recs[1], name="x"),
+        replace(recs[1], operator="ALPR layer"),
+        replace(recs[1], source_id="s3"),
+    ):
+        assert key(records=[recs[0], changed]) != k1
+    assert key(tiers=()) != k1
+    assert key(rules=replace(RULES, near_max_m=20.0)) != k1
+    assert key(g=_gold({("a", "b"): GoldLabel.NON_MATCH})) != k1
+
+
+def test_a_direction_change_moves_the_run_and_its_decision() -> None:
+    # The reviewer's reproduction: the same pair flips from auto_write to a soft conflict,
+    # and it must be a NEW run (the old run's auto_write edge can never be unioned in).
+    recs = [_rec("a", "s1", direction="N"), _rec("b", "s2", 0.3, direction="N")]
+    gold = _gold({("a", "b"): GoldLabel.MATCH})
+    r1 = resolve_camera_sites(recs, gold=gold, threshold=0.98, rules=ONE_PAIR)
+    flipped = [recs[0], replace(recs[1], direction="S")]
+    r2 = resolve_camera_sites(flipped, gold=gold, threshold=0.98, rules=ONE_PAIR)
+    assert r1.decisions[0].disposition == "auto_write"
+    # the flipped pair can no longer auto-write (a soft conflict; and with its gold pair now
+    # soft-conflicted, tier 3 has no scorable evidence either — silence never auto-writes)
+    assert r2.decisions[0].disposition == "proposed"
+    assert "direction" in r2.decisions[0].assessment.soft_conflicts
+    assert r1.run_key != r2.run_key
+    assert (r1.cluster_count, r2.cluster_count) == (1, 2)
 
 
 # --- cluster-shape alerts: chaining along a road -------------------------------------
@@ -390,6 +439,54 @@ def test_an_alerted_cluster_is_demoted_to_review() -> None:
     assert any(a.kind == "elongated_cluster" for a in site_alerts(clusters, edges, by_id, strict))
 
 
+def test_a_single_bridge_join_is_demoted_inside_clustering() -> None:
+    # Two 3-record trees (all six sources distinct, all within a few metres) joined by ONE
+    # edge: the classic bad-merge shape. The clustering must demote EVERY edge of that
+    # cluster to review and return its members to singletons.
+    recs = [_rec(k, f"s-{k}", i * 1.5) for i, k in enumerate("abcdef")]
+    edges = [
+        _pa("a", "b", 3, 1.5),
+        _pa("a", "c", 3, 3.0),
+        _pa("d", "e", 3, 1.5),
+        _pa("d", "f", 3, 3.0),
+        _pa("a", "d", 3, 4.5),  # the bridge
+    ]
+    decisions, clusters, alerts = cluster_decisions(edges, recs, auto_write_tiers={3}, rules=RULES)
+    assert any(a.kind == "single_bridge_join" for a in alerts)
+    assert {d.disposition for d in decisions} == {"proposed"}
+    assert {d.reason for d in decisions} == {"cluster_shape_alert"}
+    assert len(set(clusters.values())) == 6
+
+
+def test_the_run_summary_splits_corroborated_from_one_lineage_sites() -> None:
+    # 25 upstream/mirror copies (one lineage) + one independent source coincident with one.
+    upstream = [_rec(f"u{i:02d}", "dot_511_md", i * 200.0) for i in range(25)]
+    mirror = [_rec(f"m{i:02d}", "camreg_md_mirror", i * 200.0 + 0.2) for i in range(25)]
+    osm = [_rec("zz-osm", "camreg_osm_surveillance", 4000.0 + 0.3)]  # near u20 / m20
+    gold = _gold({("m00", "u00"): GoldLabel.MATCH})
+    r = resolve_camera_sites(upstream + mirror + osm, gold=gold, threshold=0.98, rules=ONE_PAIR)
+    summary = r.summary()
+    assert summary["multi_record_sites_one_lineage_only"] >= 1  # mirror pairs: one observation
+    assert r.lineages["dot_511_md"] == r.lineages["camreg_md_mirror"]
+    assert summary["multi_record_sites_independently_corroborated"] + summary[
+        "multi_record_sites_one_lineage_only"
+    ] == sum(1 for c in set(r.clusters.values()) if list(r.clusters.values()).count(c) >= 2)
+
+
+def test_an_explicit_plate_reader_type_classes_the_record_as_alpr() -> None:
+    osm_alpr = _rec("a", "camreg_osm_surveillance", camera_type="ALPR", operator="OpenStreetMap")
+    traffic = _rec("b", "dot_511_ok", 0.2, operator="Oklahoma Department of Transportation")
+    assert device_class(osm_alpr, RULES) == "alpr"
+    assert assess_pairs([osm_alpr, traffic]) == ()
+
+
+def test_an_exact_distance_tie_is_not_a_nearest_neighbour() -> None:
+    # s2 lists two records at the SAME distance from a: neither is a's nearest.
+    recs = [_rec("a", "s1"), _rec("b", "s2", 10), _rec("c", "s2", -10)]
+    tiers = {k: p.tier for k, p in _by_key(assess_pairs(recs)).items()}
+    assert tiers[("a", "b")] == 5 and tiers[("a", "c")] == 5  # never 4g on a tie
+
+
 def test_same_source_cluster_alert() -> None:
     recs = [_rec("a", "s1"), _rec("b", "s1", 1)]
     by_id = {r.subject_id: r for r in recs}
@@ -426,3 +523,32 @@ def test_the_committed_gold_set_is_double_adjudicated_and_coordinate_free() -> N
         files("resolution").joinpath("data", "camera_site_gold.json").read_text(encoding="utf-8")
     )
     assert raw["rules_version"] == RULES.version
+
+
+def test_the_wilson_bound_states_small_sample_uncertainty() -> None:
+    perfect = TierMeasurement(tier=1, predicted=70, match=70, non_match=0, not_enough_information=0)
+    assert perfect.precision_strict == 1.0
+    assert perfect.wilson_lower_95 == pytest.approx(0.948, abs=1e-3)
+    assert TierMeasurement(1, 0, 0, 0, 0).wilson_lower_95 is None
+
+
+def test_llm_labels_are_reported_as_sensitivity_but_never_gate() -> None:
+    # verifier: match; the (untrusted) LLM: not_enough_information.
+    recs = [_rec("a", "s1"), _rec("b", "s2", 0.3)]
+    r = resolve_camera_sites(
+        recs, gold=_gold({("a", "b"): GoldLabel.MATCH}), threshold=0.98, rules=ONE_PAIR
+    )
+    assert r.auto_write_tiers == {3}
+    assert r.tier_measurements_llm_labels[3].precision_strict == 0.0
+    s = r.summary()
+    assert s["tier_measurements"]["3"]["precision_strict"] == 1.0
+    assert s["tier_measurements_llm_labels"]["3"]["not_enough_information"] == 1
+
+
+def test_the_cli_exposes_the_camera_sites_stage() -> None:
+    from resolution.cli import build_parser
+
+    args = build_parser().parse_args(
+        ["camera-sites", "--dsn", "postgresql://x", "--role", "r", "--dry-run"]
+    )
+    assert (args.command, args.role, args.dry_run) == ("camera-sites", "r", True)

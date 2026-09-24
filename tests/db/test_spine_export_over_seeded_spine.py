@@ -379,8 +379,9 @@ def test_spine_export_reads_the_materialized_graph(conn, seeded_export) -> None:
     # The resolved-site framing rides the frozen CoverageMetric contract (ADR-101); the
     # denominator names the observations; no total. Since P30.2b (ADR-105) N counts post-ER
     # CLUSTERS of the same physical device — never §28 value decisions (which every seeded
-    # site has): the two seeded sites are ~500 km apart, so the ER run merges nothing and the
-    # honest figure is N = M = 2, dedup ratio 0.000.
+    # site has). The committed gold holdout has no evidence over these fixture subjects, so no
+    # tier may auto-write (silence never auto-writes), and the sites are ~500 km apart anyway:
+    # the honest figure is N = M = 2, dedup ratio 0.000.
     resolved = next(m for m in coverage if m["id"] == "resolved_sites")
     assert resolved["value"] == (
         "2 resolved sites (from 2 observation-level records; dedup ratio 0.000)"

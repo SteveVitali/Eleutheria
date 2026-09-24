@@ -29,6 +29,7 @@ from .camera_sites import (
     CameraGoldSet,
     CameraRecord,
     CameraSiteResult,
+    CameraSiteRules,
     SiteDecision,
     decision_digest,
     load_camera_gold,
@@ -43,6 +44,7 @@ __all__ = [
     "materialize_camera_sites_from_dsn",
     "read_resolved_site_runs",
     "review_item_id",
+    "set_role",
 ]
 
 #: The camera-registry predicates a record is assembled from (ADR-104 registry rows).
@@ -79,11 +81,19 @@ _RECORDS_SQL = (
     "     SELECT ea.source_id FROM claim_evidence ce "
     "       JOIN evidence_capture ec ON ec.capture_id = ce.capture_id "
     "       JOIN evidence_artifact ea ON ea.artifact_id = ec.artifact_id "
-    "      WHERE ce.claim_id = c.claim_id LIMIT 1) ea ON true "
+    "      WHERE ce.claim_id = c.claim_id "
+    "      ORDER BY ec.retrieved_at, ea.source_id LIMIT 1) ea ON true "
     " WHERE c.sensitivity_tier = 0 AND upper_inf(c.sys_period) "
     "   AND c.predicate_id = ANY(%s) "
     " ORDER BY c.subject_id, c.predicate_id, c.claim_id DESC"
 )
+
+
+def set_role(conn: Any, role: str) -> None:
+    """``SET ROLE`` with the role name quoted as an identifier (never interpolated raw)."""
+    from psycopg import sql
+
+    conn.execute(sql.SQL("SET ROLE {}").format(sql.Identifier(role)))
 
 
 def _float(value: Any) -> float | None:
@@ -216,7 +226,12 @@ def _review_args(result: CameraSiteResult, d: SiteDecision) -> tuple[Any, ...]:
     )
 
 
-def _active_learning_args(gold: CameraGoldSet, gp: CameraGoldPair) -> tuple[Any, ...]:
+def _active_learning_args(
+    gold: CameraGoldSet, gp: CameraGoldPair, *, also_proposed: bool
+) -> tuple[Any, ...]:
+    """A disputed gold pair's review item. When the pair is ALSO a proposal this run, it
+    gets its own ``…camera_site_disputed:`` id so the adjudicators' labels reach the
+    reviewer instead of colliding (``ON CONFLICT DO NOTHING``) with the proposal item."""
     left, right = sorted((gp.left, gp.right))
     labels = {a.adjudicator: a.label.value for a in gp.adjudications}
     payload = {
@@ -232,8 +247,9 @@ def _active_learning_args(gold: CameraGoldSet, gp: CameraGoldPair) -> tuple[Any,
         f"Same camera? adjudicators disagree ({gold.verifier}: {labels.get(gold.verifier)}; "
         f"{gold.llm}: {labels.get(gold.llm)}) — gold pair {gp.pair_id}"
     )
+    prefix = "er_match:camera_site_disputed" if also_proposed else "er_match:camera_site"
     return (
-        f"er_match:camera_site:{left}:{right}",
+        f"{prefix}:{left}:{right}",
         summary,
         json.dumps([]),
         json.dumps(payload, sort_keys=True),
@@ -247,6 +263,7 @@ def materialize_camera_sites(
     gold: CameraGoldSet | None = None,
     threshold: float | None = None,
     records: Sequence[CameraRecord] | None = None,
+    rules: CameraSiteRules | None = None,
     batch_size: int = 1_000,
     progress: Callable[[str, int, int], None] | None = None,
 ) -> dict[str, Any]:
@@ -257,13 +274,13 @@ def materialize_camera_sites(
     fields plus ``inserted`` / ``skipped_existing`` counts (+0 on an unchanged re-run).
     """
     if role:
-        conn.execute(f"SET ROLE {role}")
+        set_role(conn, role)
     the_gold = gold if gold is not None else load_camera_gold()
     floor = threshold if threshold is not None else read_auto_write_threshold()
     recs = list(records) if records is not None else read_camera_records(conn)
     if progress is not None:
         progress("read", len(recs), 0)
-    result = resolve_camera_sites(recs, gold=the_gold, threshold=floor)
+    result = resolve_camera_sites(recs, gold=the_gold, threshold=floor, rules=rules)
     if progress is not None:
         progress("resolved", len(result.decisions), 0)
 
@@ -290,11 +307,14 @@ def materialize_camera_sites(
     if the_gold is not None:
         present = {r.subject_id for r in recs}
         disputed = set(the_gold.disputed())
+        proposed = {(d.left, d.right) for d in decisions if d.disposition == "proposed"}
         with conn.transaction():
             for gp in the_gold.pairs:
                 if gp.pair_id not in disputed or gp.left not in present or gp.right not in present:
                     continue
-                if conn.execute(_INSERT_REVIEW, _active_learning_args(the_gold, gp)).fetchone():
+                also_proposed = tuple(sorted((gp.left, gp.right))) in proposed
+                args = _active_learning_args(the_gold, gp, also_proposed=also_proposed)
+                if conn.execute(_INSERT_REVIEW, args).fetchone():
                     active += 1
 
     summary = result.summary()
@@ -349,7 +369,7 @@ def read_resolved_site_runs(conn: Any, *, role: str | None = None) -> list[dict[
     form resolved sites; proposed merges await review and are counted, never clustered.
     """
     if role:
-        conn.execute(f"SET ROLE {role}")
+        set_role(conn, role)
     run = conn.execute(
         "SELECT run_key, observation_count, cluster_count, auto_write_tiers, summary "
         "  FROM camera_site_run ORDER BY completed_at DESC, run_key DESC LIMIT 1"

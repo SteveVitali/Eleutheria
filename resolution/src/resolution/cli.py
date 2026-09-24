@@ -428,6 +428,7 @@ def _run_camera_sites(args: argparse.Namespace) -> int:
     from .camera_sites_pg import (
         materialize_camera_sites_from_dsn,
         read_camera_records,
+        set_role,
     )
 
     started = time.monotonic()
@@ -449,7 +450,7 @@ def _run_camera_sites(args: argparse.Namespace) -> int:
 
         with psycopg.connect(args.dsn, autocommit=True) as conn:
             if args.role:
-                conn.execute(f"SET ROLE {args.role}")
+                set_role(conn, args.role)
             records = read_camera_records(conn)
         result = resolve_camera_sites(
             records, gold=load_camera_gold(), threshold=read_auto_write_threshold()

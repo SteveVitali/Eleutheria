@@ -17,12 +17,13 @@ container) and the append-only materializer over PG18+PostGIS, AS the least-priv
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from datetime import date
 
 import psycopg
 import pytest
 from exports.spine_export import run_spine_export
-from resolution.camera_sites import CameraGoldPair, CameraGoldSet
+from resolution.camera_sites import CameraGoldPair, CameraGoldSet, CameraSiteRules
 from resolution.camera_sites_pg import (
     materialize_camera_sites,
     read_camera_records,
@@ -31,6 +32,9 @@ from resolution.camera_sites_pg import (
 from resolution.gold_set import Adjudication, GoldLabel
 
 ROLE = "sig_materialize"
+# The fixture gold holds ONE holdout pair; the committed rules require 50 per tier, so the
+# tests lower that floor explicitly (the production minimum is pinned in the unit tests).
+RULES = replace(CameraSiteRules.from_data(), min_holdout_pairs=1)
 PREDICATES = ("camera_latitude", "camera_longitude", "camera_external_ref", "camera_operator")
 
 
@@ -169,7 +173,7 @@ def test_records_are_read_one_per_subject(conn, camera_spine) -> None:
 
 def test_materialize_as_the_least_privilege_role_and_rerun_plus_zero(conn, camera_spine) -> None:
     gold = _gold(camera_spine, GoldLabel.MATCH)
-    first = materialize_camera_sites(conn, role=ROLE, gold=gold, threshold=0.98)
+    first = materialize_camera_sites(conn, role=ROLE, gold=gold, threshold=0.98, rules=RULES)
     assert first["auto_write_tiers"] == [3]
     # M = 7 records; one same-device merge (a~b) -> N = 6.
     assert first["observation_count_M"] == 7 and first["resolved_site_count_N"] == 6
@@ -188,7 +192,7 @@ def test_materialize_as_the_least_privilege_role_and_rerun_plus_zero(conn, camer
     assert auto[0][4]["rule"] == "3g:coincident_point" and auto[0][5] == 6  # cites its claims
     assert first["incompatible_class_pairs_blocked"] == 1
 
-    again = materialize_camera_sites(conn, role=ROLE, gold=gold, threshold=0.98)
+    again = materialize_camera_sites(conn, role=ROLE, gold=gold, threshold=0.98, rules=RULES)
     assert again["inserted"] == 0
     assert again["skipped_existing"] == first["inserted"]
     assert again["run_record_inserted"] is False
@@ -196,7 +200,8 @@ def test_materialize_as_the_least_privilege_role_and_rerun_plus_zero(conn, camer
 
 
 def test_the_role_cannot_update_or_delete_decisions(conn, camera_spine) -> None:
-    materialize_camera_sites(conn, role=ROLE, gold=_gold(camera_spine, GoldLabel.MATCH))
+    gold = _gold(camera_spine, GoldLabel.MATCH)
+    materialize_camera_sites(conn, role=ROLE, gold=gold, rules=RULES)
     with pytest.raises(psycopg.errors.InsufficientPrivilege):
         conn.execute("UPDATE camera_site_match SET disposition = 'proposed'")
     conn.rollback()
@@ -204,19 +209,20 @@ def test_the_role_cannot_update_or_delete_decisions(conn, camera_spine) -> None:
 
 def test_a_sub_floor_tier_is_proposed_and_enqueued_once(conn, camera_spine) -> None:
     gold = _gold(camera_spine, GoldLabel.NOT_ENOUGH_INFORMATION)
-    first = materialize_camera_sites(conn, role=ROLE, gold=gold, threshold=0.98)
+    first = materialize_camera_sites(conn, role=ROLE, gold=gold, threshold=0.98, rules=RULES)
     assert first["auto_write_tiers"] == [] and first["resolved_site_count_N"] == 7  # honest N=M
     assert first["proposed_decisions"] >= 1 and first["review_items_enqueued"] >= 1
     items = conn.execute(
         "SELECT item_id, kind, payload FROM review_item WHERE item_id LIKE 'er_match:camera_site:%'"
     ).fetchall()
     assert items and all(i[1] == "er_match" for i in items)
-    again = materialize_camera_sites(conn, role=ROLE, gold=gold, threshold=0.98)
+    again = materialize_camera_sites(conn, role=ROLE, gold=gold, threshold=0.98, rules=RULES)
     assert again["review_items_enqueued"] == 0  # one stable item per pair
 
 
 def test_the_export_reads_the_clusters_n_of_m(conn, camera_spine) -> None:
-    materialize_camera_sites(conn, role=ROLE, gold=_gold(camera_spine, GoldLabel.MATCH))
+    gold = _gold(camera_spine, GoldLabel.MATCH)
+    materialize_camera_sites(conn, role=ROLE, gold=gold, rules=RULES)
     conn.execute("RESET ROLE")
     runs = read_resolved_site_runs(conn)
     assert len(runs) == 1 and len(runs[0]["auto_write_edges"]) == 1

@@ -21,7 +21,10 @@ SELECT 1 / (CASE WHEN has_table_privilege('sig_materialize', 'camera_site_match'
                   AND has_table_privilege('sig_materialize', 'review_item', 'INSERT')
                   AND NOT has_table_privilege('sig_materialize', 'camera_site_match', 'UPDATE')
                   AND NOT has_table_privilege('sig_materialize', 'camera_site_match', 'DELETE')
+                  AND NOT has_table_privilege('sig_materialize', 'camera_site_run', 'UPDATE')
+                  AND NOT has_table_privilege('sig_materialize', 'camera_site_run', 'DELETE')
                   AND NOT has_table_privilege('sig_materialize', 'review_item', 'UPDATE')
+                  AND NOT has_table_privilege('sig_materialize', 'review_item', 'DELETE')
                  THEN 1 ELSE 0 END);
 
 ROLLBACK;

@@ -58,7 +58,7 @@ import math
 import tomllib
 from collections import defaultdict
 from collections.abc import Iterable, Mapping, Sequence
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from datetime import date
 from functools import cache
 from importlib.resources import files
@@ -155,6 +155,7 @@ class _ClassRule:
     source_prefixes: tuple[str, ...] = ()
     source_substrings: tuple[str, ...] = ()
     operator_substrings: tuple[str, ...] = ()
+    type_substrings: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -192,6 +193,7 @@ class CameraSiteRules:
     holdout_fraction: float = 0.3
     gold_seed: int = 30
     strict_precision: bool = True
+    min_holdout_pairs: int = 50
 
     @classmethod
     def from_data(cls) -> CameraSiteRules:
@@ -213,6 +215,7 @@ class CameraSiteRules:
                     source_prefixes=tuple(r.get("source_prefixes", ())),
                     source_substrings=tuple(r.get("source_substrings", ())),
                     operator_substrings=tuple(r.get("operator_substrings", ())),
+                    type_substrings=tuple(r.get("type_substrings", ())),
                 )
                 for r in classes["rule"]
             ),
@@ -240,6 +243,7 @@ class CameraSiteRules:
             holdout_fraction=float(d["gold"]["holdout_fraction"]),
             gold_seed=int(d["gold"]["seed"]),
             strict_precision=bool(d["gold"]["strict_precision"]),
+            min_holdout_pairs=int(d["gold"]["min_holdout_pairs"]),
         )
 
     def label(self, tier: int) -> str:
@@ -278,12 +282,15 @@ def device_class(record: CameraRecord, rules: CameraSiteRules) -> str:
     """The recorded device class of ``record`` (first matching rule; else the default)."""
     source = record.source_id.lower()
     operator = (record.operator or "").lower()
+    camera_type = (record.camera_type or "").lower()
     for rule in rules.class_rules:
         if any(source.startswith(p) for p in rule.source_prefixes):
             return rule.name
         if any(s in source for s in rule.source_substrings):
             return rule.name
         if any(s in operator for s in rule.operator_substrings):
+            return rule.name
+        if any(s in camera_type for s in rule.type_substrings):
             return rule.name
     return rules.default_class
 
@@ -522,12 +529,24 @@ def _assess(
             _count_within(na, rules.colocation_m) == 1
             and _count_within(nb, rules.colocation_m) == 1
         )
-        mutual_nearest = bool(na) and bool(nb) and na[0][1] == j and nb[0][1] == i
+        # An exact distance tie is not a nearest neighbour: it fails (conservatively).
+        mutual_nearest = (
+            bool(na)
+            and bool(nb)
+            and na[0][1] == j
+            and nb[0][1] == i
+            and (len(na) < 2 or na[1][0] > na[0][0])
+            and (len(nb) < 2 or nb[1][0] > nb[0][0])
+        )
         unique_near = (
             _count_within(na, rules.near_max_m) == 1 and _count_within(nb, rules.near_max_m) == 1
         )
+        # For the shared-ref tier, "mutually nearest" means no record of the other source is
+        # STRICTLY nearer on either side: a tie (two devices at one point) is resolved by the
+        # shared reference plus the co-location/name rule below, independent of record order.
+        none_strictly_nearer = bool(na) and bool(nb) and na[0][0] >= d and nb[0][0] >= d
         shared_ref_tier = ref_equal
-        if ref_equal and rules.shared_ref_requires_mutual_nearest and not mutual_nearest:
+        if ref_equal and rules.shared_ref_requires_mutual_nearest and not none_strictly_nearer:
             shared_ref_tier = False  # another record of the other source is the nearer copy
         if (
             shared_ref_tier
@@ -893,9 +912,28 @@ class CameraGoldSet:
     verifier: str
     llm: str
     pairs: tuple[CameraGoldPair, ...]
+    digest: str = ""
 
     def holdout(self) -> tuple[CameraGoldPair, ...]:
         return tuple(p for p in self.pairs if p.frozen)
+
+    def content_digest(self) -> str:
+        """The committed file's digest, else a digest of the labels, splits and pairs."""
+        if self.digest:
+            return self.digest
+        body = [
+            (
+                p.pair_id,
+                p.left,
+                p.right,
+                p.frozen,
+                sorted((a.adjudicator, a.label.value) for a in p.adjudications),
+            )
+            for p in self.pairs
+        ]
+        return hashlib.sha256(
+            json.dumps([self.version, self.verifier, self.llm, body]).encode()
+        ).hexdigest()
 
     def kappa(self) -> float:
         a: list[GoldLabel] = []
@@ -969,6 +1007,7 @@ def gold_from_dict(raw: Mapping[str, Any]) -> CameraGoldSet:
             )
         )
     return CameraGoldSet(
+        digest=hashlib.sha256(json.dumps(raw, sort_keys=True).encode()).hexdigest(),
         version=str(raw["version"]),
         rules_version=str(raw["rules_version"]),
         verifier=str(raw["verifier"]),
@@ -1052,12 +1091,13 @@ def decide_auto_write_tiers(
     candidate_tiers: Iterable[int],
     threshold: float,
     strict: bool = True,
+    min_pairs: int = 1,
 ) -> tuple[frozenset[int], tuple[DemotionDecision, ...]]:
     """Which candidate tiers auto-write this run, and the demotion record.
 
-    A candidate tier auto-writes only if it HAS holdout evidence AND its measured
-    precision (strict by default) is at least ``threshold``; a tier with no holdout
-    evidence is recorded as demoted with precision 0.0 — silence never auto-writes.
+    A candidate tier auto-writes only if it has at least ``min_pairs`` holdout pairs AND
+    its measured precision (strict by default) is at least ``threshold``; a tier with no
+    (or too little) holdout evidence is demoted — silence, or 1-of-1, never auto-writes.
     """
     auto: set[int] = set()
     decisions: list[DemotionDecision] = []
@@ -1067,7 +1107,8 @@ def decide_auto_write_tiers(
         if m is not None:
             precision = m.precision_strict if strict else m.precision_decided
         value = 0.0 if precision is None else precision
-        demoted = precision is None or precision < threshold
+        too_few = m is None or m.predicted < min_pairs
+        demoted = precision is None or too_few or precision < threshold
         decisions.append(
             DemotionDecision(tier=tier, precision=value, threshold=threshold, demoted=demoted)
         )
@@ -1094,6 +1135,7 @@ class CameraSiteResult:
     clusters: dict[str, str]
     alerts: tuple[SiteAlert, ...]
     lineages: dict[str, str]
+    sources: dict[str, str]  # subject id -> source id
     auto_write_tiers: frozenset[int]
     demotions: tuple[DemotionDecision, ...]
     tier_measurements: dict[int, TierMeasurement]
@@ -1131,12 +1173,34 @@ class CameraSiteResult:
         for s, lin in self.lineages.items():
             lineage_groups[lin].append(s)
         return {
+            **self.corroboration(),
             "by_tier": dict(sorted(by_tier.items())),
             "proposed_reasons": dict(sorted(reasons.items())),
             "cluster_size_histogram": {str(k): v for k, v in sorted(sizes.items())},
             "mirror_lineages": {
                 k: sorted(v) for k, v in sorted(lineage_groups.items()) if len(v) > 1
             },
+        }
+
+    def corroboration(self) -> dict[str, int]:
+        """Multi-record resolved sites split by INDEPENDENT lineages (hard constraint (c)):
+        a site whose members all come from one mirror lineage is one observation
+        republished, never independently corroborated."""
+        members: dict[str, list[str]] = defaultdict(list)
+        for subject, cid in self.clusters.items():
+            members[cid].append(subject)
+        corroborated = mirror_only = 0
+        for ms in members.values():
+            if len(ms) < 2:
+                continue
+            lineages = {self.lineages.get(self.sources[m], self.sources[m]) for m in ms}
+            if len(lineages) >= 2:
+                corroborated += 1
+            else:
+                mirror_only += 1
+        return {
+            "multi_record_sites_independently_corroborated": corroborated,
+            "multi_record_sites_one_lineage_only": mirror_only,
         }
 
     def summary(self) -> dict[str, Any]:
@@ -1202,35 +1266,42 @@ class CameraSiteResult:
         }
 
 
+def _rules_digest(rules: CameraSiteRules) -> str:
+    return hashlib.sha256(repr(rules).encode()).hexdigest()
+
+
 def run_key(
     *,
-    rules_version: str,
+    rules: CameraSiteRules,
     auto_write_tiers: Iterable[int],
-    gold_version: str | None,
+    gold: CameraGoldSet | None,
     records: Sequence[CameraRecord],
 ) -> str:
-    """The run identity: ruleset + auto-write tiers + gold version + an input digest.
+    """The run identity: every input a decision depends on.
 
-    Two runs over the same inputs share a key (so the re-run is +0); any change in the
-    spine's camera records, the rules or the measured auto-write tiers mints a new key,
-    and readers take the latest COMPLETED run — never a union of stale runs.
+    Digests the resolver version, the FULL rules content, the gold set's content, the
+    measured auto-write tiers and every field of every record (source, coordinates,
+    reference, name, direction, operator, jurisdiction, type, claim ids). Two runs over
+    the same inputs share a key (so the re-run is +0); ANY change a decision could depend
+    on mints a new key, and readers take the latest COMPLETED run whole — never a union of
+    a stale run's edges with a new one's.
     """
     h = hashlib.sha256()
     h.update(
         json.dumps(
             {
-                "rules": rules_version,
                 "resolver": CAMERA_SITE_RESOLVER_VERSION,
+                "rules": _rules_digest(rules),
                 "auto": sorted(auto_write_tiers),
-                "gold": gold_version,
+                "gold": None if gold is None else gold.content_digest(),
             },
             sort_keys=True,
         ).encode()
     )
     for r in sorted(records, key=lambda r: r.subject_id):
-        h.update(r.subject_id.encode())
-        h.update(b"|")
-        h.update(",".join(sorted(r.claim_ids)).encode())
+        fields = asdict(r)
+        fields["claim_ids"] = sorted(r.claim_ids)
+        h.update(json.dumps(fields, sort_keys=True, default=str).encode())
         h.update(b"\n")
     return "camsite:" + h.hexdigest()[:40]
 
@@ -1283,16 +1354,12 @@ def resolve_camera_sites(
         candidate_tiers=rs.candidate_auto_write,
         threshold=threshold,
         strict=rs.strict_precision,
+        min_pairs=rs.min_holdout_pairs,
     )
     decisions, clusters, alerts = cluster_decisions(
         assessed.assessments, records, auto_write_tiers=auto, rules=rs
     )
-    key = run_key(
-        rules_version=rs.version,
-        auto_write_tiers=auto,
-        gold_version=None if gold is None else gold.version,
-        records=records,
-    )
+    key = run_key(rules=rs, auto_write_tiers=auto, gold=gold, records=records)
     return CameraSiteResult(
         rules_version=rs.version,
         resolver_version=CAMERA_SITE_RESOLVER_VERSION,
@@ -1303,6 +1370,7 @@ def resolve_camera_sites(
         clusters=clusters,
         alerts=alerts,
         lineages=assessed.lineages,
+        sources={r.subject_id: r.source_id for r in records},
         auto_write_tiers=auto,
         demotions=demotions,
         tier_measurements=measured,
