@@ -1,0 +1,23 @@
+{
+  "schema": "p30.2/1.0.0",
+  "measured_at": "2026-09-24T04:27:47Z",
+  "spine": "hosted sig-pg (Cloud SQL, db-custom-2-8192)",
+  "execution": "Cloud Run job sig-materialize, execution sig-materialize-725gc (2026-09-24T04:22:51Z -> 04:27:10Z), image sig-api:materialize-3c0900129d5a, role sig_materialize",
+  "spine_claims": 2280784,
+  "spine_entities": 246998,
+  "considered_subject_predicate_groups": 1955004,
+  "skipped_unresolvable_groups": 1954996,
+  "observation_count": 230267,
+  "observation_count_definition": "distinct tier-0 subjects carrying a camera_latitude or camera_longitude claim (the observation-level sites the P28.5 resolved-sites metric uses as its named denominator)",
+  "resolutions_materialized": 8,
+  "resolved_decisions": 7,
+  "unresolved_conflict_decisions": 1,
+  "resolved_site_count": 0,
+  "dedup_ratio": 0.0,
+  "dedup_ratio_definition": "resolved observation-level sites / observation-level sites (0 of 230,267); entity-level merges on the hosted spine (entity.merged_into IS NOT NULL) = 0",
+  "notes": [
+    "HOSTED SCALE (P30.2, 2026-09-24): the resolution materializer ran over the complete settled hosted spine as a Cloud Run job next to Cloud SQL (execution sig-materialize-725gc, 4m19s, role sig_materialize). It considered 1,955,004 (subject, predicate) groups over 2,280,784 tier-0 claims and materialized 8 envelopes (7 resolved, 1 unresolved_conflict — the OKC claimed_device_count 299-vs-190, kept visible); re-run +0.",
+    "Resolved sites = 0 of 230,267 observation-level sites. This is the honest measured number, not a failure of the write path: 1,954,996 of the 1,955,004 groups carry predicates with no row in the resolver's predicate registry (camera_latitude / camera_longitude / camera_operator / external_id / ... — the camera-registry predicates that make up almost the whole spine), so no claim in them is admissible and nothing is adjudicated (SIG-RECON-013: silence in the ruleset is not resolvable). Registering those predicates is an ontology decision owned by the follow-up D-P30.2-3; until it lands the public surface keeps the observation-level framing (P28.5 degrades honestly — no fabricated resolved-site count).",
+    "Dedup ratio 0.000 = 0 resolved sites of 230,267 observation-level sites; no entity-level merge exists on the hosted spine (entity.merged_into = 0). The methodology numbers above (kappa, floor, holdout P/R/F1) remain the PROVISIONAL LLM-bootstrap eval — the first-principles re-derivation against human ground truth is D-R6.1-EVAL's still-OPEN half."
+  ]
+}
