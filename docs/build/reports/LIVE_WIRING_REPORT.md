@@ -122,3 +122,113 @@ sig-connectors run --source osm_overpass --mode live --sink memory ; echo "exit 
 - **RISK-P21-04** (live fetch cadence vs source etiquette → `cadence`/backoff) and **RISK-P21-05** (token leakage → env-only + `.env*` gitignore + no-token-literal test) — `docs/risk_register.md`.
 - Requirement ids stamped: SIG-INGEST-001/002/011/012/013/014/017/018/019/021/027/028/037, SIG-INGEST-045d/045h, SIG-EVID-004/005.
 - Backlog: `docs/build/BACKLOG.csv` rows **BL-023** (transports + OCFL capture store — code delivered) and **BL-026** (WACZ seam + byte-identical reproducibility) landed here; **BL-024** (live token mint + real FETCH) stays open, gated on HG-03/HG-09.
+
+---
+
+## 2026-09-10 — LIVE.1 fetch re-run (prepare-only; append-only, prior body unchanged)
+
+**Status: gate HG-03 CLEARED for the OKC critical-path sources; live fetch still
+pending HG-09 (tokens) + network egress.** This is the Lane-B re-run of the
+already-landed P21.3 contract (manifest row 73, semantic LIVE.1 / GL-LIVE-01),
+run per its verbatim `Run:` line
+(`implement-spec spec=docs/tickets/P21.3__live-connector-wiring.md live_verification=true`).
+The two upstream unblockers arrived since the original run: **RIGHTS.1 / P21.1**
+flipped the OKC critical subset to `ingestion_permitted=true` (HG-03 satisfied,
+GL-GATE-03) and **LIVE.1a / P23.5** added the three OKC document connectors
+(`okc_procurement`, `okcpd_policy`, `ok_statute`) and wired them into the runner.
+**HG-09 tokens are still `provided: no`** (P23.4 / ACCT.1) and this isolated
+context has **no network egress**, so a REAL live fetch STILL cannot run. **No
+live green is fabricated.** No product code changed this re-run — the wiring below
+is verified, not modified.
+
+### What flipped since the original run (per-source gate delta)
+
+`uv run sig-connectors review-status --source <id>` — all five gate fields now
+`True`, `loadable now: True`, for every OKC critical-path source (was
+`REFUSED / gate pending: HG-03` in the prior body's per-source table):
+
+| source (registry id) | connector (live path) | prior state | now | live fetch |
+|---|---|---|---|---|
+| `okc_procurement` | `okc_procurement` (P23.5 doc connector) | gate pending HG-03 | **GATE-CLEARED** (all 5 True, loadable) | pending HG-09 + network |
+| `okcpd_policy` | `okcpd_policy` (P23.5 doc connector) | gate pending HG-03 | **GATE-CLEARED** | pending HG-09 + network |
+| `ok_statute` | `ok_statute` (P23.5 doc connector) | gate pending HG-03 | **GATE-CLEARED** | pending HG-09 + network |
+| `osm_overpass` | `osm` | gate pending HG-03 | **GATE-CLEARED** (ODbL-1.0) | pending HG-09 + network |
+| `deflock_repo` | (registry source; MIT) | not flipped | **GATE-CLEARED** (MIT) | pending network |
+| `okc_council` | `procurement` (CivicClerk tenant) | gate pending HG-03 | **GATE-CLEARED** (CC0-1.0) | pending HG-09 (`SIG_CIVICCLERK_BASE`) + network |
+
+`run --mode live` **no longer refuses these on gate grounds** — the deterministic
+gate check `live_gate_reasons(<id>)` returns `[]` (empty) for all six, i.e. the
+review-status gate passes. The refusal now only fires for still-un-flipped sources
+(verified below). The step past the gate — constructing `HttpxTransport` and
+fetching — is not exercised this run (no tokens, no network; not run to avoid any
+egress).
+
+### Deterministic ACs re-confirmed (still hold; no network)
+
+- **Gate refusal (un-flipped source):** `uv run sig-connectors run --source
+  usaspending --mode live --sink memory` → **exit 3** with the gate reasons
+  (`ingestion_permitted=false`, `rights block is UNDETERMINED`, `no recorded review
+  metadata`) and **no socket opened** (the gate is checked in `_run_live` before any
+  transport is constructed; `tests/connectors/test_runner.py` + `test_isolation.py`
+  assert no egress). The refusal-path tests are pointed at `usaspending` (kept
+  UNDETERMINED) precisely because the OKC sources are now green.
+- **Shadow diff = 0 (every fixture-backed connector):**
+  `run --source osm_overpass --mode shadow` = 19 claims, **diff changed=0**;
+  `eff_atlas_of_surveillance` = 7 claims, **diff=0**;
+  the three OKC document connectors over their committed fixtures
+  (`tests/connectors/fixtures/okc/<id>.json`) each **diff=0**
+  (`okc_procurement` 5 claims, `okcpd_policy` 2, `ok_statute` 2) — fetch → capture →
+  parse (via `sig-parsing`) → emit is byte-identical over the fixtures
+  (`tests/connectors/test_okc_documents.py`, 41 passed).
+- **No token literal / secrets env-only:** `tests/connectors/test_secrets.py`
+  green — no `SIG_*_TOKEN`/`api_key` string-literal in any `.py`/`.toml`
+  (an env read is the sanctioned pattern); `.gitignore` contains `.env` + `.env.*`
+  + `*.env`. (The bare AC grep `SIG_MUCKROCK_TOKEN=\|api_key=` matches only kwarg
+  passing — `api_key=None`, `api_key=self.api_key` — and `.venv/` third-party code,
+  none of which is a hardcoded secret; the test is the precise guard.)
+- **Isolation with the real transport present:** the network-isolation guard still
+  holds with `HttpxTransport` constructed (`test_isolation.py`).
+- **P21.3 deterministic suite:** `uv run pytest tests/connectors -k "transport or
+  capture_ocfl or runner or secrets or isolation or okc_documents"` = **75 passed,
+  1 skipped** (the skip = the `SIG_GCP_PROJECT` leak check, unarmed — benign).
+
+### Exact single command to run each live fetch once HG-09 tokens are exported
+
+Secrets are environment-only (HG-09); export in the run shell, then one command per
+source (nothing is fabricated — these run for real only with tokens + network):
+
+```sh
+# OKC document connectors (now GATE-CLEARED; fetch the cited public PDFs/HTML,
+# capture to OCFL, parse via sig-parsing, emit the fixture-shaped claims):
+sig-connectors run --source okc_procurement --mode live --sink pg --dsn "$SIG_DSN" --capture-dir .sig/captures --wacz
+sig-connectors run --source okcpd_policy    --mode live --sink pg --dsn "$SIG_DSN" --capture-dir .sig/captures --wacz
+sig-connectors run --source ok_statute      --mode live --sink pg --dsn "$SIG_DSN" --capture-dir .sig/captures --wacz
+
+# OSM / DeFlock via Overpass (ODbL compartment; optional endpoint override):
+export SIG_OVERPASS_ENDPOINT="https://overpass-api.de/api/interpreter"   # default public
+sig-connectors run --source osm_overpass --mode live --sink pg --dsn "$SIG_DSN" --capture-dir .sig/captures
+
+# OKC council agenda via CivicClerk tenant oklahomacityok:
+export SIG_CIVICCLERK_BASE="https://oklahomacityok.api.civicclerk.com/v1/Events"   # default from agenda_tenants.toml
+sig-connectors run --source okc_council --mode live --sink pg --dsn "$SIG_DSN" --capture-dir .sig/captures
+```
+
+Each writes a **fetch record** (no content) under `<capture-dir>/live_runs/<date>_<source>.json`
+carrying the URL list, status codes, byte counts, capture digests, claim count,
+duration, and the rate-limit/robots evidence; a second run inserts **0 new claims**
+(idempotent on `content_digest`). Until tokens + network are present, the same
+connectors are exercised over their committed fixtures (shadow/replay, diff = 0),
+which is the standing proxy for the deferred live fetch.
+
+### Honest gate status (no fabricated live green)
+
+- **HG-03 (RIGHTS.1 flips):** CLEARED for the OKC critical subset (D-P21.1-1 DONE).
+- **HG-09 (`SIG_*` API tokens):** `provided: no` (D-P21.3-2 / D-LIVE.1a-1 OPEN) —
+  a real live fetch cannot run.
+- **Network egress:** absent in this isolated context — even token-free public
+  fetches (OSM/DeFlock) cannot run here.
+- The deterministic gate/isolation/shadow ACs (transport, capture, runner,
+  gate-refusal, shadow diff 0, no-token literal) are the honest evidence that the
+  wiring is complete and correct; the live fetch is carried as a RETURN PASS /
+  gate-pending obligation (`D-P21.3-1` PARTIAL, `D-P21.3-2` + `D-LIVE.1a-1` OPEN),
+  **not** a block.
