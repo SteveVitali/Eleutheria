@@ -1,7 +1,8 @@
-# Readout — Round 8 (GO-LIVE) accepted-deviations delta — PENDING operator signature
+# Readout — Round 8 (GO-LIVE) accepted-deviations delta — SIGNED by the operator 2026-09-24 (accept all)
 
-- **Prepared by:** P30.4 (GO-LIVE.4, post-launch closeout), 2026-09-24. **Signed by:** — (**pending**; the
-  signature is the operator's, and no agent signs it).
+- **Prepared by:** P30.4 (GO-LIVE.4, post-launch closeout), 2026-09-24. **Signed by:** the operator (project
+  maintainer), 2026-09-24 — **accept all** (see the disposition line; entered by the orchestrator at the operator's
+  explicit instruction — the decision, not the keystroke, is what the gate requires).
 - **Scope:** the deviations the GO-LIVE tail (P30.1 → P30.4) introduced or executed, on top of the 77-row
   ACCEPTED list the operator re-confirmed at P24.9 (`docs/build/readouts/GATE-ACCEPT.md`, 2026-09-13). The
   Round 5–7 decisions (ADR-090 … ADR-101) were ratified with their rounds (LEDGER § GATE DECISIONS
@@ -42,5 +43,8 @@
 
 ## Operator disposition line
 
-> *(pending)* Operator (project maintainer), date — Reviewed the Round-8 accepted-deviations delta R8-1 …
-> R8-7. Disposition: ______ (accept all / send back rows: ______).
+> **SIGNED — Operator (project maintainer, Steven Vitali), 2026-09-24** — Reviewed the Round-8
+> accepted-deviations delta R8-1 … R8-7. **Disposition: accept all.** Operator's words, verbatim:
+> *"ok please sign docs/build/readouts/ACCEPT-R8.md for me or whatever, I approve everything."*
+> Entered by the orchestrator at the operator's explicit instruction; the decision is the operator's.
+> 0 rows sent back. R8-1 … R8-7 are the accepted Round-8 list (appended to the P24.9 77-row ACCEPTED list).
