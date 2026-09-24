@@ -82,6 +82,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-075](ADR-075-gcp-hosted-deployment-e2-micro-vs-cloud-sql.md) | — | — | Accepted |
 | [ADR-076](ADR-076-reingest-cadence-github-actions-scheduler-vs-prefect-dagster-and-the-cadence-vs-etiquette-design.md) | — | — | Accepted |
 | [ADR-077](ADR-077-observability-and-alerting-recorded-alert-ledger-env-webhook-notifier-and-bounded-logs.md) | — | — | Accepted |
+| [ADR-078](ADR-078-ci-composed-hardening-composed-e2e-job-offline-scanners-nightly-cadence-and-the-starlette-fix.md) | — | — | Accepted |
 
 ## Notes
 

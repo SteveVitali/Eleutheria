@@ -19,6 +19,13 @@ sdist = { url = "https://files.pythonhosted.org/packages/06/a1/5e6cc638a66da48cf
 wheels = [{ url = "https://files.pythonhosted.org/packages/e3/99/d6031f4f146298951c46b1bf1cc160c2a63f6e44b3c13a30054add100d5f/altair-6.2.2-py3-none-any.whl", upload-time = 2026-06-23T12:47:11Z, size = 797613, hashes = { sha256 = "94014f8ad8617c3cb163d1137359cd6db5ba134b9b46d93cfd8b609fd245a583" } }]
 
 [[packages]]
+name = "annotated-doc"
+version = "0.0.5"
+index = "https://pypi.org/simple"
+sdist = { url = "https://files.pythonhosted.org/packages/5a/8e/38aa427ed5402449e226975b649c5dc73ccadfefeb95e6aecb8f8ea4b6b6/annotated_doc-0.0.5.tar.gz", upload-time = 2026-07-28T13:50:58Z, size = 10758, hashes = { sha256 = "c7e58ce09192557605d8bbd92836d7e1d520ac9580096042c0bfd197efacf1bb" } }
+wheels = [{ url = "https://files.pythonhosted.org/packages/3e/30/e900b21425a860e195f32e37657aa1f7c7f2b1bfb26f03ca209b90933c06/annotated_doc-0.0.5-py3-none-any.whl", upload-time = 2026-07-28T13:50:57Z, size = 5302, hashes = { sha256 = "117bac03a25ede5df5440e855b32d556049ca169ead221505badf432fed4b101" } }]
+
+[[packages]]
 name = "annotated-types"
 version = "0.8.0"
 index = "https://pypi.org/simple"
@@ -576,10 +583,10 @@ wheels = [{ url = "https://files.pythonhosted.org/packages/c1/8b/5fe2cc11fee4898
 
 [[packages]]
 name = "fastapi"
-version = "0.119.1"
+version = "0.141.1"
 index = "https://pypi.org/simple"
-sdist = { url = "https://files.pythonhosted.org/packages/a6/f4/152127681182e6413e7a89684c434e19e7414ed7ac0c632999c3c6980640/fastapi-0.119.1.tar.gz", upload-time = 2025-10-20T11:30:27Z, size = 338616, hashes = { sha256 = "a5e3426edce3fe221af4e1992c6d79011b247e3b03cc57999d697fe76cbf8ae0" } }
-wheels = [{ url = "https://files.pythonhosted.org/packages/b1/26/e6d959b4ac959fdb3e9c4154656fc160794db6af8e64673d52759456bf07/fastapi-0.119.1-py3-none-any.whl", upload-time = 2025-10-20T11:30:26Z, size = 108123, hashes = { sha256 = "0b8c2a2cce853216e150e9bd4faaed88227f8eb37de21cb200771f491586a27f" } }]
+sdist = { url = "https://files.pythonhosted.org/packages/8a/02/91e3416a8fdd715abb903a952a6bec7cdd8d14eed55d415fc8595524c319/fastapi-0.141.1.tar.gz", upload-time = 2026-07-29T17:18:05Z, size = 425799, hashes = { sha256 = "e8822fc40db1e1858054d7a949a888695bc9bdce70139178e33bd2871a453ca1" } }
+wheels = [{ url = "https://files.pythonhosted.org/packages/cb/03/10388a42375ee7e4ac9b94eb2c5c569c8b5795e377e701c9ac3ad63de890/fastapi-0.141.1-py3-none-any.whl", upload-time = 2026-07-29T17:18:04Z, size = 131954, hashes = { sha256 = "bfb91aa2d334c61cb35ba9a116fc123b3d3df31640b801cf57a7a78ec3f603b3" } }]
 
 [[packages]]
 name = "fqdn"
@@ -2159,10 +2166,10 @@ wheels = [{ url = "https://files.pythonhosted.org/packages/f3/bc/2a07cef49046e6c
 
 [[packages]]
 name = "starlette"
-version = "0.48.0"
+version = "1.6.0"
 index = "https://pypi.org/simple"
-sdist = { url = "https://files.pythonhosted.org/packages/a7/a5/d6f429d43394057b67a6b5bbe6eae2f77a6bf7459d961fdb224bf206eee6/starlette-0.48.0.tar.gz", upload-time = 2025-09-13T08:41:05Z, size = 2652949, hashes = { sha256 = "7e8cee469a8ab2352911528110ce9088fdc6a37d9876926e73da7ce4aa4c7a46" } }
-wheels = [{ url = "https://files.pythonhosted.org/packages/be/72/2db2f49247d0a18b4f1bb9a5a39a0162869acf235f3a96418363947b3d46/starlette-0.48.0-py3-none-any.whl", upload-time = 2025-09-13T08:41:03Z, size = 73736, hashes = { sha256 = "0764ca97b097582558ecb498132ed0c7d942f233f365b86ba37770e026510659" } }]
+sdist = { url = "https://files.pythonhosted.org/packages/b5/b4/205b0d5241d934e8add0c38aa924c4f9fb7330834ff11e5444db964ec3f9/starlette-1.6.0.tar.gz", upload-time = 2026-08-08T18:27:57Z, size = 2716969, hashes = { sha256 = "d4e3ac5e546444960c710297a3c9fc3f7ebae1b7e963f3d36173b49da535be9b" } }
+wheels = [{ url = "https://files.pythonhosted.org/packages/c8/cb/6a6a47d5b464bd08695d254f3da6e7986cc70c9fa5d778eda57538edfe56/starlette-1.6.0-py3-none-any.whl", upload-time = 2026-08-08T18:27:56Z, size = 75969, hashes = { sha256 = "a86dd39d14bb45f85a3d18525215a9ef0cfd1f192ac793220e72598c90335f0c" } }]
 
 [[packages]]
 name = "testcontainers"
