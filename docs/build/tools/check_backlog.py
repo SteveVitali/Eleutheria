@@ -16,7 +16,7 @@ from anywhere:
 
     python docs/build/tools/check_backlog.py
 
-Exits 0 and prints the four count lines when the backlog is consistent; exits 1
+Exits 0 and prints the five count lines when the backlog is consistent; exits 1
 with the first failing invariant otherwise.
 """
 
@@ -35,6 +35,12 @@ THEMES = ROOT / "docs/build/reports/BACKLOG_THEMES.md"
 RISK = ROOT / "docs/risk_register.md"
 LD = ROOT / "docs/build/reports/LEDGER_DEFERRALS.md"
 ADR_DIR = ROOT / "docs/adr"
+# P24.8 / REC.1 — the fifth source of truth: every OPEN/PARTIAL DEFERRALS row must
+# name its single backlog home (`(cites BL-nnn)` in the row). A `D-*` id cannot
+# live in a `sources` cell (it would be an orphan — only RISK-*/ADR-*/LD-*/LH-*
+# are in the universe), so the cite is how a deferral "appears in exactly one
+# BACKLOG source cell".
+DEFERRALS = ROOT / "docs/tickets/DEFERRALS.md"
 
 # Risk-register subsection headings whose RISK rows are the deferred/unclosed
 # backlog inputs (Load list of the P20.1 ticket).
@@ -108,6 +114,37 @@ def adr_revisit_ids() -> list[str]:
             if m:
                 ids.append(m.group(1))
     return ids
+
+
+# DEFERRALS statuses that still owe work (mirror of check-build-memory.sh's set).
+DEFERRAL_OWED_STATUSES = frozenset({"OPEN", "PARTIAL"})
+_DEFERRAL_ROW = re.compile(r"^\|\s*(D-[A-Z0-9][A-Za-z0-9._-]*)\s*\|")
+_BL_HOME = re.compile(r"BL-\d{3}")
+
+
+def deferral_homes(path: pathlib.Path) -> tuple[list[str], list[str]]:
+    """Return ``(citing, missing)`` — OPEN/PARTIAL DEFERRALS row ids that name at
+    least one ``BL-nnn`` backlog home, and those that name none.
+
+    DONE / WONTFIX / ACCEPTED-SKELETON rows are owed nothing and skipped. The
+    status is the first word of the row's last cell (the same convention
+    ``scripts/docs/check-build-memory.sh`` uses to parse DEFERRALS statuses).
+    """
+    citing: list[str] = []
+    missing: list[str] = []
+    if not path.is_file():
+        return citing, missing
+    for line in path.read_text().splitlines():
+        m = _DEFERRAL_ROW.match(line)
+        if not m:
+            continue
+        cells = [c.strip() for c in line.split("|")]
+        words = cells[-2].split() if len(cells) >= 2 else []
+        status = words[0].upper() if words else ""
+        if status not in DEFERRAL_OWED_STATUSES:
+            continue
+        (citing if _BL_HOME.search(line) else missing).append(m.group(1))
+    return citing, missing
 
 
 def load_rows() -> list[dict[str, str]]:
@@ -209,9 +246,11 @@ def main() -> int:
                     else:
                         theme_owner[bl] = cur
 
+    citing, missing_homes = deferral_homes(DEFERRALS)
     print(f"risk deferred rows: {risk_mapped}/{len(risk_ids)}")
     print(f"ADR revisit triggers: {adr_mapped}/{len(adr)}")
     print(f"LD rows: {ld_mapped}/{len(ld)}")
+    print(f"deferral homes: {len(citing)}/{len(citing) + len(missing_homes)}")
     print(f"duplicate sources: {len(dupes)}")
 
     ok = True
@@ -242,6 +281,12 @@ def main() -> int:
         ok = False
     if dupes:
         print(f"  double-owned sources: {'; '.join(dupes)}", file=sys.stderr)
+        ok = False
+    if missing_homes:
+        print(
+            f"  OPEN/PARTIAL DEFERRALS rows with no BL home: {' '.join(missing_homes)}",
+            file=sys.stderr,
+        )
         ok = False
 
     if not ok:

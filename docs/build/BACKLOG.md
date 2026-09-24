@@ -35,6 +35,13 @@ landing here. Regenerate this file after any backlog edit:
 - **BL-022** — Analytics-boundary post-hoc hardening documented (ADR-044 amend) · _docs-drift_ · S · status=closed
   - sources: LD-D14
 
+## closed-by:P20.2
+
+- **BL-011** — ADR Appendix-F <-> docs/adr numbering reconciliation (Appendix F rebuilt to repo numbering P20.2; check_spec_src.py enforces ADR set == file set — 79 ADRs, exit 0) · _docs-drift_ · S · status=closed
+  - sources: LD-X04 LD-D03
+- **BL-012** — Absence-kind not_researched spec wording (SIG-RECON, §32.2 — A2 APPLIED P20.2: not_researched in the closed absence vocabulary, spec §32.1) · _docs-drift_ · S · status=closed
+  - sources: LD-F14 LD-D08
+
 ## closed-by:P24.5
 
 - **BL-052** — pyproject.toml description reads "skeleton" for five fully-built packages (db, parsing, reconcile, orchestration, policy) — package metadata contradicts the shipped code · _docs-drift_ · S · status=closed
@@ -46,24 +53,12 @@ landing here. Regenerate this file after any backlog edit:
   - sources: RISK-P0-05 RISK-P0-06 RISK-P5-06
 - **BL-002** — Foundational tech-stack/tooling ADRs — decision stands, monitor revisit trigger · _process_ · S · status=accepted
   - sources: ADR-001 ADR-002 ADR-003 ADR-004 ADR-005 ADR-006 ADR-007 ADR-008 ADR-009 ADR-010 ADR-011 ADR-012 ADR-013 ADR-014 ADR-016 ADR-017 ADR-019 ADR-020 ADR-021 ADR-023 ADR-024 ADR-025 ADR-029 ADR-044 ADR-045 ADR-058 ADR-073
+- **BL-010** — Interactive MapLibre map vs zero-JS static PMTiles (spec amendment A1 — APPLIED HG-13 2026-09-08; zero-JS map conforming, SIG-UI-047 MET-DIFFERENTLY signed) · _docs-drift_ · M · status=accepted
+  - sources: ADR-051 ADR-018 LD-F09 LD-D11 RISK-P15-21
 - **BL-013** — verify-gen / RDF-canonicalisation semantics documented (AGENTS.md gotchas) · _docs-drift_ · S · status=closed
   - sources: LD-X03 LD-X07
 - **BL-050** — Recorded ADR-sanctioned spec deviations — no further action · _process_ · S · status=accepted
   - sources: LD-D01 LD-D02 LD-D05 LD-D06 LD-D10 LD-D12 LD-D13
-
-## P20.2
-
-- **BL-010** — Interactive MapLibre map vs zero-JS static PMTiles (spec amendment A1) · _docs-drift_ · M · status=open
-  - sources: ADR-051 ADR-018 LD-F09 LD-D11 RISK-P15-21
-- **BL-011** — ADR Appendix-F <-> docs/adr numbering reconciliation · _docs-drift_ · S · status=open
-  - sources: LD-X04 LD-D03
-- **BL-012** — Absence-kind not_researched spec wording (SIG-RECON, §32.2) · _docs-drift_ · S · status=open
-  - sources: LD-F14 LD-D08
-
-## P20.3
-
-- **BL-051** — Spec-vs-code drift after the P20.2 ticked amendments (unbuilt MAY/deferred surfaces) · _docs-drift_ · S · status=open
-  - sources: RISK-P20-02 ADR-062
 
 ## P21.1
 
@@ -78,21 +73,15 @@ landing here. Regenerate this file after any backlog edit:
   - sources: LD-V05 LD-D07 RISK-P8-09 RISK-P10-08 RISK-P10-13 RISK-P12-13 RISK-P21-03 ADR-036 ADR-037 ADR-038 ADR-039 ADR-040 ADR-031 ADR-059
 - **BL-005** — Persist contributor system to PG (tiers/submissions/revert/anomaly) · _deferred-feature_ · M · status=closed · gate accepted:compute-on-read A5/HG-14
   - sources: RISK-P16-07 LD-F10 ADR-054
-- **BL-006** — Persist identity registries and mint surrogate entity_id end-to-end into PG · _deferred-feature_ · M · status=open
-  - sources: RISK-P3-03
 - **BL-027** — Persist reconcile-workflow outputs (contradictions, sharing edges, tasks, access edges) · _deferred-feature_ · M · status=closed · gate accepted:compute-on-read A5/HG-14
   - sources: RISK-P11-06 RISK-P11-14 RISK-P12-14 RISK-P10-14 RISK-P10-07 RISK-P12-06 RISK-P12-07
 
 ## P21.3
 
-- **BL-023** — Live HTTP transports + OCFL CaptureStore for the connector family · _deferred-feature_ · L · status=open · gate HG-03
+- **BL-023** — Live HTTP transports + OCFL CaptureStore for the connector family — transports/capture/runner + OKC doc connectors LANDED (P21.3 + LIVE.1 re-run + P23.5); the real live fetch stays gate-pending HG-09 tokens + network (D-P21.3-1, D-LIVE.1a-1) · _deferred-feature_ · L · status=open · gate HG-03
   - sources: RISK-P4-04 RISK-P4-05 RISK-P4-06 RISK-P4-10 RISK-P7-15 LD-F03 LD-V03 ADR-026 ADR-027 ADR-028 ADR-042 ADR-034 ADR-035 ADR-043 ADR-065 ADR-074 ADR-076
 - **BL-024** — Live token mint + real FETCH (MuckRock/records/procurement/flock/slice) · _deferred-feature_ · M · status=open · gate HG-09
   - sources: RISK-P7-10 RISK-P7-16 LD-F16 RISK-P11-05 RISK-P11-15 RISK-P13-07 RISK-P6-06
-- **BL-025** — Concrete extraction engines (parser layers 3-5, OCR) + model client · _deferred-feature_ · L · status=open
-  - sources: RISK-P7-05 RISK-P7-11 RISK-P7-17 RISK-P5-10 LD-F17 ADR-033 RISK-P7-06
-- **BL-026** — Live-connector WACZ per PR + byte-identical reproducibility test (SIG-EVID-017) · _deferred-feature_ · M · status=open
-  - sources: LD-F02 LD-H02 RISK-P2-09 RISK-P2-10 RISK-P11-07
 - **BL-044** — Data completeness as connectors land (crosswalks, vocab, gold sets, category maps) · _deferred-feature_ · M · status=open
   - sources: RISK-P1-02 RISK-P3-02 RISK-P3-07 RISK-P3-09 RISK-P4-09 RISK-P5-05 RISK-P5-11
 
@@ -146,7 +135,7 @@ landing here. Regenerate this file after any backlog edit:
 
 ## human-gate:HG-07
 
-- **BL-037** — Infra accounts (Zenodo concept DOI, object store, Docker CI runner) · _external-dep_ · S · status=open · gate HG-07
+- **BL-037** — Infra accounts + host: Zenodo concept DOI, object store, Docker CI runner (HG-07) + real GCP host/apply/deploy + OBS.1 live-side verification (HG-12; homes D-ACCT.1-1, D-DEPLOY.1-1, D-OBS.1-1) · _external-dep_ · S · status=open · gate HG-07 HG-12
   - sources: LD-P06 ADR-075 ADR-077
 
 ## human-gate:HG-08
@@ -163,6 +152,12 @@ landing here. Regenerate this file after any backlog edit:
 
 - **BL-003** — claim table partitioning (deferred; FK contract kept) · _schema-refinement_ · L · status=open
   - sources: LD-F01 ADR-022
+- **BL-006** — Persist identity registries and mint surrogate entity_id end-to-end into PG · _deferred-feature_ · M · status=open
+  - sources: RISK-P3-03
+- **BL-025** — Concrete extraction engines (parser layers 3-5, OCR) + model client — pdf_text/pdf_table/genre layers LANDED (P21.9 + P23.5 + P24.7); OCR + model client remain unscheduled · _deferred-feature_ · L · status=open
+  - sources: RISK-P7-05 RISK-P7-11 RISK-P7-17 RISK-P5-10 LD-F17 ADR-033 RISK-P7-06
+- **BL-026** — Live-connector WACZ per PR + byte-identical reproducibility test (SIG-EVID-017) · _deferred-feature_ · M · status=open
+  - sources: LD-F02 LD-H02 RISK-P2-09 RISK-P2-10 RISK-P11-07
 - **BL-028** — Records-request filing/response backend (template outcome log fed live) · _deferred-feature_ · M · status=open
   - sources: ADR-041 RISK-P10-18 RISK-P10-17
 - **BL-031** — API rate-limit enforcement + GraphQL (deferred SHOULDs) · _deferred-feature_ · S · status=open
@@ -177,6 +172,8 @@ landing here. Regenerate this file after any backlog edit:
   - sources: RISK-P2-03 RISK-P2-15 ADR-078
 - **BL-049** — Generate physical DDL from LinkML (ontology/db seam, SIG-STORE-045) · _schema-refinement_ · L · status=open
   - sources: RISK-P2-04
+- **BL-051** — Spec-vs-code drift after the P20.2 ticked amendments (unbuilt MAY/deferred surfaces) · _docs-drift_ · S · status=open
+  - sources: RISK-P20-02 ADR-062
 - **BL-053** — Third-jurisdiction onboarding + recorded P24.6 couplings (operator selects the jurisdiction; ILIKE '%<j>%' filter is a convention not a structure; §11.14 predicates out-of-ruleset; empty-tile step for a no-OSM-layer jurisdiction) · _process_ · M · status=open
   - sources: ADR-079
 - **BL-054** — CCOPS expansion beyond the three paying sources — remaining ~23 jurisdictions via legislative-platform scrapers (Legistar/Granicus/IQM2/CivicClerk); new extractor kinds per ADR-080 (revisit trigger b); live flips+fetches gate-pending HG-03 · _deferred-feature_ · L · status=open · gate HG-03
@@ -187,6 +184,9 @@ landing here. Regenerate this file after any backlog edit:
 Triaged by P24.5 (META.1 / GL-META-01, 2026-09-13): each row was checked against the tree — none is landed, none is owned by a remaining manifest ticket (rows 84–87 are JURIS.2/CCOPS.1/REC.1/GATE-ACCEPT). `P25+` = the planning round after this manifest, replacing the stale `P22+` bucket (the P22 pass closed unscheduled). Rows conditioned on real post-go-live state are additionally promoted to `docs/tickets/DEFERRALS.md` (D-META.1-*; the BL row stays the normalized-debt record).
 
 - **BL-003** — claim table partitioning (deferred; FK contract kept) · _schema-refinement_ · L · sources: LD-F01 ADR-022
+- **BL-006** — Persist identity registries and mint surrogate entity_id end-to-end into PG · _deferred-feature_ · M · sources: RISK-P3-03
+- **BL-025** — Concrete extraction engines (parser layers 3-5, OCR) + model client — pdf_text/pdf_table/genre layers LANDED (P21.9 + P23.5 + P24.7); OCR + model client remain unscheduled · _deferred-feature_ · L · sources: RISK-P7-05 RISK-P7-11 RISK-P7-17 RISK-P5-10 LD-F17 ADR-033 RISK-P7-06
+- **BL-026** — Live-connector WACZ per PR + byte-identical reproducibility test (SIG-EVID-017) · _deferred-feature_ · M · sources: LD-F02 LD-H02 RISK-P2-09 RISK-P2-10 RISK-P11-07
 - **BL-028** — Records-request filing/response backend (template outcome log fed live) · _deferred-feature_ · M · sources: ADR-041 RISK-P10-18 RISK-P10-17
 - **BL-031** — API rate-limit enforcement + GraphQL (deferred SHOULDs) · _deferred-feature_ · S · sources: RISK-P14-09 RISK-P14-10
 - **BL-041** — Contributor onboarding: jurisdiction-aware know-your-rights shown (out of scope P21.7 — separate follow-up) · _deferred-feature_ · S · sources: RISK-P16-08
@@ -194,5 +194,6 @@ Triaged by P24.5 (META.1 / GL-META-01, 2026-09-13): each row was checked against
 - **BL-047** — Schema cleanup: legacy succession slots vs reified OrganizationRelationship · _schema-refinement_ · S · sources: RISK-P3-04
 - **BL-048** — Determinism / whole-graph audit CI jobs (resolution rebuild, TI-6/7 audit) · _process_ · M · sources: RISK-P2-03 RISK-P2-15 ADR-078
 - **BL-049** — Generate physical DDL from LinkML (ontology/db seam, SIG-STORE-045) · _schema-refinement_ · L · sources: RISK-P2-04
+- **BL-051** — Spec-vs-code drift after the P20.2 ticked amendments (unbuilt MAY/deferred surfaces) · _docs-drift_ · S · sources: RISK-P20-02 ADR-062
 - **BL-053** — Third-jurisdiction onboarding + recorded P24.6 couplings (operator selects the jurisdiction; ILIKE '%<j>%' filter is a convention not a structure; §11.14 predicates out-of-ruleset; empty-tile step for a no-OSM-layer jurisdiction) · _process_ · M · sources: ADR-079
 - **BL-054** — CCOPS expansion beyond the three paying sources — remaining ~23 jurisdictions via legislative-platform scrapers (Legistar/Granicus/IQM2/CivicClerk); new extractor kinds per ADR-080 (revisit trigger b); live flips+fetches gate-pending HG-03 · _deferred-feature_ · L · sources: ADR-080

@@ -163,3 +163,45 @@ def test_run_okc_writes_artifacts_under_reports() -> None:
     assert 'CONNECTOR_LOG="$REPO_ROOT/docs/build/reports/okc/' in text
     # the pre-move output dir must not be recreated as an output target
     assert 'mkdir -p "$REPO_ROOT/docs/build/okc"' not in text
+
+
+# --- P24.8 / REC.1: every owed deferral names its BL home ----------------------
+#
+# A `D-*` id cannot live in a `sources` cell (it would be an orphan — only
+# RISK-*/ADR-*/LD-*/LH-* are in the checker's universe), so an OPEN/PARTIAL
+# DEFERRALS row expresses its backlog home as `(cites BL-nnn)`. These tests pin
+# both the helper's parse and the repo-level invariant — a new owed deferral
+# opened without a cite fails `check_backlog.py` (and `make check`).
+
+
+def test_deferral_homes_parses_owed_rows(tmp_path) -> None:
+    fake = tmp_path / "DEFERRALS.md"
+    fake.write_text(
+        "| id | obligation | compensating control | verify | status |\n"
+        "|---|---|---|---|---|\n"
+        "| D-X-1 | owed thing | ctrl | path | OPEN (cites BL-037) |\n"
+        "| D-X-2 | owed thing | ctrl | path | PARTIAL |\n"
+        "| D-X-3 | owed thing | ctrl | path | OPEN — note (cites BL-033) |\n"
+        "| D-X-4 | done thing | ctrl | path | DONE |\n"
+    )
+    citing, missing = check_backlog.deferral_homes(fake)
+    assert citing == ["D-X-1", "D-X-3"]
+    assert missing == ["D-X-2"]
+
+
+def test_every_owed_deferral_cites_a_bl_home() -> None:
+    citing, missing = check_backlog.deferral_homes(DEFERRALS)
+    assert citing, "expected at least one OPEN/PARTIAL deferral citing a BL home"
+    assert not missing, f"OPEN/PARTIAL DEFERRALS rows with no BL home: {missing}"
+    # every cited home must be a real backlog row
+    text = DEFERRALS.read_text()
+    rows = {r["bl_id"] for r in _rows()}
+    for ln in text.splitlines():
+        if not check_backlog._DEFERRAL_ROW.match(ln):
+            continue
+        cells = [c.strip() for c in ln.split("|")]
+        words = cells[-2].split() if len(cells) >= 2 else []
+        if not words or words[0].upper() not in check_backlog.DEFERRAL_OWED_STATUSES:
+            continue
+        cited = set(re.findall(r"BL-\d{3}", ln))
+        assert cited <= rows, f"{ln[:60]}… cites non-existent BL rows: {cited - rows}"
