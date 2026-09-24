@@ -111,6 +111,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-104](ADR-104-camera-registry-predicates-in-the-predicate-registry.md) | — | — | Accepted |
 | [ADR-105](ADR-105-geospatial-camera-site-entity-resolution.md) | — | — | Accepted |
 | [ADR-106](ADR-106-public-share-alike-compartments-published-separately.md) | — | — | Accepted |
+| [ADR-107](ADR-107-cloud-sql-steady-state-tier-after-launch.md) | — | — | Accepted |
 
 ## Notes
 
