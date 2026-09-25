@@ -148,12 +148,18 @@ def assert_not_deployment_link(link_type: str) -> str:
 #: deployment → org role edges (§12.4): who operates / owns / purchased the deployment.
 #: The join spine — a contract/funding/policy/oversight fact reaches a deployment
 #: through the org that operates it.
+#: P31.5 / ADR-112: ``camera_operator`` is the camera registry's operator attribution —
+#: the same deployment → operating-organisation edge, emitted as an entity-ref claim.
 _OPERATOR_PREDICATES: frozenset[str] = frozenset(
-    {"operator", "owner", "purchaser", "operated_by", "owned_by"}
+    {"operator", "owner", "purchaser", "operated_by", "owned_by", "camera_operator"}
 )
 #: deployment → vendor org, asserted directly on the deployment (§12.4 vendor/platform).
+#: ``seller`` is NOT here (P31.5 / ADR-112): it is a §11.11 *contract* predicate, and a
+#: procurement record that the connector sink typed with the placeholder ``deployment``
+#: must never make its seller a deployment's vendor (procured ≠ deployed). A vendor is
+#: reached through the contract (operator → buyer → seller) instead.
 _VENDOR_PREDICATES: frozenset[str] = frozenset(
-    {"vendor", "seller", "platform_provider", "provides_platform_to"}
+    {"vendor", "platform_provider", "provides_platform_to"}
 )
 #: contract → buyer (the org) / seller (the vendor) (§11.11).
 _CONTRACT_BUYER = "buyer"
@@ -168,6 +174,30 @@ _POLICY_APPLIES = "applies_to"
 #: (§12.4).
 _EVENT_DEPLOYMENTS = "deployments"
 _EVENT_ORGANIZATIONS = "organizations"
+#: The accountability connector's emitted names for the same two §11.17 slots
+#: (P31.5 / ADR-112: ``event_organizations`` entity-ref claims).
+_EVENT_DEPLOYMENT_PREDICATES: frozenset[str] = frozenset({_EVENT_DEPLOYMENTS, "event_deployments"})
+_EVENT_ORGANIZATION_PREDICATES: frozenset[str] = frozenset(
+    {_EVENT_ORGANIZATIONS, "event_organizations"}
+)
+
+#: The entity type the connector claim sink gives every subject it mints (the
+#: ``db.claim_sink`` placeholder). A procurement record's or an accountability
+#: event's subject carries it too, so for those subjects the domain of the predicate
+#: says what the subject is: the subject of a ``buyer``/``seller`` claim is a contract
+#: (§11.11), of a ``recipient``/``funder`` claim a funding instrument (§11.12), of an
+#: ``event_organizations``/``event_deployments`` claim an accountability event
+#: (§11.17) (P31.5 / ADR-112). Such a subject is never a deployment anchor (procured ≠
+#: deployed; an event is not a deployment).
+_PLACEHOLDER_SUBJECT_TYPE = "deployment"
+_SUBJECT_DOMAIN_BY_PREDICATE: dict[str, str] = {
+    "buyer": "contract",
+    "seller": "contract",
+    "recipient": "funding_instrument",
+    "funder": "funding_instrument",
+    "event_organizations": "accountability_event",
+    "event_deployments": "accountability_event",
+}
 _LEGAL_REQUIRES_AUTH = "requires_authorization_of"
 _OVERSIGHT_ROLE_PREDICATES: frozenset[str] = frozenset({"regulator", "auditor"})
 
@@ -182,10 +212,10 @@ ACCOUNTABILITY_PREDICATES: frozenset[str] = frozenset(
         _FUNDING_RECIPIENT,
         _FUNDING_FUNDER,
         _POLICY_APPLIES,
-        _EVENT_DEPLOYMENTS,
-        _EVENT_ORGANIZATIONS,
         _LEGAL_REQUIRES_AUTH,
     }
+    | _EVENT_DEPLOYMENT_PREDICATES
+    | _EVENT_ORGANIZATION_PREDICATES
     | _OVERSIGHT_ROLE_PREDICATES
 )
 
@@ -415,7 +445,18 @@ def assemble_links(anchors: Iterable[str], claims: Iterable[AcctClaim]) -> list[
     deployment``, an ``accountability_event deployments`` reference). Honest gaps: a
     segment with no establishing claim yields no link.
     """
-    anchor_set = {str(a) for a in anchors}
+    claims = list(claims)
+    # A placeholder-typed subject that carries a contract, funding or event predicate
+    # is a procurement record or an accountability event, not a deployment: it is
+    # typed by the predicate's domain and removed from the anchors (procured ≠
+    # deployed, P31.5 / ADR-112).
+    record_subjects = {
+        c.subject_id
+        for c in claims
+        if c.subject_type == _PLACEHOLDER_SUBJECT_TYPE
+        and c.predicate_id in _SUBJECT_DOMAIN_BY_PREDICATE
+    }
+    anchor_set = {str(a) for a in anchors} - record_subjects
 
     # deployment -> [(org, operator_claim_id)]  (the join spine)
     deployment_orgs: dict[str, list[tuple[str, str]]] = {}
@@ -434,26 +475,29 @@ def assemble_links(anchors: Iterable[str], claims: Iterable[AcctClaim]) -> list[
 
     for c in claims:
         p = c.predicate_id
-        if p in _OPERATOR_PREDICATES and c.subject_type == "deployment":
+        subject_type = c.subject_type
+        if subject_type == _PLACEHOLDER_SUBJECT_TYPE and c.subject_id in record_subjects:
+            subject_type = _SUBJECT_DOMAIN_BY_PREDICATE.get(p, subject_type)
+        if p in _OPERATOR_PREDICATES and subject_type == "deployment":
             deployment_orgs.setdefault(c.subject_id, []).append((c.object_id, c.claim_id))
-        elif p in _VENDOR_PREDICATES and c.subject_type == "deployment":
+        elif p in _VENDOR_PREDICATES and subject_type == "deployment":
             direct_vendors.setdefault(c.subject_id, []).append((c.object_id, c.claim_id))
-        elif p == _CONTRACT_BUYER and c.subject_type == "contract":
+        elif p == _CONTRACT_BUYER and subject_type == "contract":
             contracts_by_buyer.setdefault(c.object_id, []).append((c.subject_id, c.claim_id))
-        elif p == _CONTRACT_SELLER and c.subject_type == "contract":
+        elif p == _CONTRACT_SELLER and subject_type == "contract":
             contract_sellers.setdefault(c.subject_id, []).append((c.object_id, c.claim_id))
-        elif p == _FUNDING_RECIPIENT and c.subject_type == "funding_instrument":
+        elif p == _FUNDING_RECIPIENT and subject_type == "funding_instrument":
             funding_by_recipient.setdefault(c.object_id, []).append((c.subject_id, c.claim_id))
-        elif p == _POLICY_APPLIES and c.subject_type == "policy":
+        elif p == _POLICY_APPLIES and subject_type == "policy":
             policy_targets.setdefault(c.subject_id, []).append((c.object_id, c.claim_id))
-        elif p == _EVENT_DEPLOYMENTS:
+        elif p in _EVENT_DEPLOYMENT_PREDICATES:
             # (event, deployments, D) — subject is the oversight entity, object the deployment.
             oversight_by_target.setdefault(c.object_id, []).append(
-                (c.subject_id, c.claim_id, c.subject_type)
+                (c.subject_id, c.claim_id, subject_type)
             )
-        elif p == _EVENT_ORGANIZATIONS:
+        elif p in _EVENT_ORGANIZATION_PREDICATES:
             oversight_by_target.setdefault(c.object_id, []).append(
-                (c.subject_id, c.claim_id, c.subject_type)
+                (c.subject_id, c.claim_id, subject_type)
             )
         elif p == _LEGAL_REQUIRES_AUTH and c.subject_type == "legal_instrument":
             # (legal_instrument, requires_authorization_of, org/deployment).

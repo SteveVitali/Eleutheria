@@ -1,0 +1,3 @@
+id,category,epistemic_status,organizations,source_url
+sig-fixture-inc-1,local_regulation_action,reported,Washington State Department of Transportation; Jane Doe,https://example.invalid/story-1
+sig-fixture-inc-2,wrongful_stop_false_alert,alleged,Police Department,https://example.invalid/story-2

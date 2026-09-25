@@ -116,6 +116,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-109](ADR-109-append-only-ingest-run-completion.md) | — | — | Accepted |
 | [ADR-110](ADR-110-sink-identity-guard-and-batched-writes.md) | — | — | Accepted |
 | [ADR-111](ADR-111-restart-resume-capture-store-and-pinned-job-images.md) | — | — | Accepted |
+| [ADR-112](ADR-112-partner-organisation-entity-ref-claims.md) | — | — | Accepted |
 
 ## Notes
 

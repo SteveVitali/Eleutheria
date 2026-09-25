@@ -78,6 +78,7 @@ from policy.licensing import (
 )
 from policy.sensitivity import apply_tier
 from reconcile.weight import predicate_meta
+from resolution.partner_identity import PARTNER_PREDICATES
 
 from .audit import _EFFECTIVE_CTE, GEO_PREDICATES, JURISDICTION_PREDICATE
 
@@ -616,7 +617,9 @@ QUERIES: dict[str, str] = {
     ),
     # Sharing-edge claims: entity_ref / sharing predicates at the public tier,
     # publishable-effective only (the public dataset never names a partner a
-    # non-redistributable claim asserted).
+    # non-redistributable claim asserted). The P31.5 partner-organisation entity-refs
+    # (a buyer, a seller, a camera's operator — ADR-112) are not sharing edges and
+    # are left out, so they never surface as "unclassified" access edges.
     "sharing_edges": (
         _EFFECTIVE_CTE + "SELECT c.claim_id::text, c.subject_id::text, c.predicate_id,"
         "       COALESCE(c.object_entity::text, c.value_text) AS partner_ref,"
@@ -626,7 +629,9 @@ QUERIES: dict[str, str] = {
         "  LEFT JOIN latest_decision ld"
         "         ON ld.source_id = cs.source_id AND ld.prior_rights_id = c.rights_id"
         "  JOIN rights_record rr ON rr.rights_id = COALESCE(ld.rights_id, c.rights_id)"
-        " WHERE (c.object_entity IS NOT NULL OR c.predicate_id LIKE '%sharing%'"
+        " WHERE ((c.object_entity IS NOT NULL AND c.predicate_id NOT IN ("
+        + ", ".join(f"'{p}'" for p in sorted(PARTNER_PREDICATES))
+        + ")) OR c.predicate_id LIKE '%sharing%'"
         "        OR c.predicate_id LIKE '%partner%')"
         "   AND rr.redistributable = 'yes'"
         "   AND upper_inf(c.sys_period) AND c.sensitivity_tier = 0"

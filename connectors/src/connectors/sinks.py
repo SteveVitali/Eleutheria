@@ -65,14 +65,21 @@ def make_claim_sink(kind: str = "memory", *, dsn: str | None = None, **kwargs: A
     behaviour). ``kind='pg'`` requires a ``dsn`` and returns a ``PgClaimSink`` bound
     to that database; the psycopg import lives behind this branch so the in-memory
     path has no driver dependency.
+
+    The PG sink is built with the production ``object_resolver``
+    (:func:`db.claim_sink.record_object_ref`, P31.5 / ADR-112): an entity-ref claim
+    record that a connector's ``link()`` stage emitted is written with its
+    ``object_entity``; every other record stays a literal. A caller may still pass
+    its own ``object_resolver``.
     """
     if kind == "memory":
         return InMemoryClaimSink()
     if kind == "pg":
         if not dsn:
             raise ValueError("the 'pg' claim sink requires a --dsn connection string")
-        from db.claim_sink import PgClaimSink  # local import: psycopg stays in `db`
+        from db.claim_sink import PgClaimSink, record_object_ref  # psycopg stays in `db`
 
+        kwargs.setdefault("object_resolver", record_object_ref)
         return PgClaimSink.from_dsn(dsn, **kwargs)
     raise ValueError(f"unknown claim-sink kind {kind!r}; expected one of {SINK_KINDS}")
 

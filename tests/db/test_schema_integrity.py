@@ -53,6 +53,15 @@ PREDICATE_NAMED_COLUMN_ALLOWLIST = {
     # crosswalk identity: the request's id in the external records system (MuckRock etc.);
     # `external_id` became a registered predicate in P30.2a (ADR-104).
     ("records_request", "external_id"),
+    # Appendix C.4 typing + contract-lineage columns of the §11.11/§11.12/§11.14/§11.17
+    # sub-tables; the connector claims of the same name became registered predicates in
+    # P31.5 (ADR-112). The columns are the typed identity surface, the claims the evidence.
+    ("contract", "acquisition_channel"),
+    ("contract", "parent_cooperative_contract"),
+    ("contract", "amends_contract"),
+    ("funding_instrument", "instrument_type"),
+    ("legal_instrument", "instrument_type"),
+    ("accountability_event", "event_type"),
 }
 
 

@@ -474,7 +474,12 @@ def test_ky_fixture_emits_camera_claims_with_evidence_and_locators() -> None:
     assert len(by_pred["camera_longitude"]) == 3
     assert len(by_pred["camera_roadway"]) == 3
     assert len(by_pred["camera_jurisdiction"]) == 3
-    assert len(by_pred["camera_operator"]) == 3
+    # P31.5 / ADR-112: each operator text claim is followed by a separate entity-ref
+    # claim naming the same publisher as an organisation; the text claim is unchanged.
+    operator_text = [c for c in by_pred["camera_operator"] if "object_ref" not in c]
+    operator_refs = [c for c in by_pred["camera_operator"] if "object_ref" in c]
+    assert len(operator_text) == 3 and len(operator_refs) == 3
+    assert {c["object_ref"]["value"] for c in operator_refs} == {"kentucky transportation cabinet"}
     assert len(by_pred["camera_external_ref"]) == 3
     assert {c["value"] for c in by_pred["camera_roadway"]} == {"I-65", "I-64", "US-27"}
     assert {c["value"] for c in by_pred["camera_jurisdiction"]} == {"KY"}

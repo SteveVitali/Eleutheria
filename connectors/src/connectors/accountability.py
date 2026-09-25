@@ -70,6 +70,7 @@ from urllib.parse import parse_qs, urlencode, urlsplit
 from uuid import uuid4
 
 from parsing.locator import Locator
+from resolution.partner_identity import partner_ref_rows
 
 from ._data import load_table
 from .curated_index import CuratedIndexEntry
@@ -714,6 +715,10 @@ def canary_findings(parsed: Mapping[str, Any]) -> list[str]:
 
 
 # --- the connector ------------------------------------------------------------
+
+
+#: The partner predicate whose text claims gain entity-ref claims (P31.5).
+_PARTNER_PREDICATES = frozenset({"event_organizations"})
 
 
 @register
@@ -1500,8 +1505,20 @@ class AccountabilityConnector(Connector):
         )
 
     # -- link + load --
-    # link() is inherited (identity): SIG-INGEST-034 — the connector emits candidate
-    # identifiers and NEVER resolves entities itself; resolution is P03.2/P05.1.
+    # SIG-INGEST-034: the connector emits candidate identifiers and NEVER resolves
+    # entities itself; the identity layer decides which named organisations stand as
+    # entities (P31.5 / ADR-112) and the claim sink mints them.
+
+    def link(self, ctx: RunContext, normalized: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """Append the ``event_organizations`` entity-ref claims (P31.5 / ADR-112).
+
+        One entity-ref claim per organisation an accountability event names, each
+        accepted by :func:`resolution.partner_identity.partner_identity`.
+        ``proceeding_parties`` is deliberately excluded: litigants are routinely
+        natural persons (Part VIII), and no organisation marker makes a party list
+        safe to mint from.
+        """
+        return partner_ref_rows(normalized, predicates=_PARTNER_PREDICATES)
 
     def load(self, ctx: RunContext, linked: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Produce the L1 rows; the driver asserts them (live only)."""

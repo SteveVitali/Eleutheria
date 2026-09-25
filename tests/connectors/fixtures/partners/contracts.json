@@ -1,0 +1,41 @@
+{
+  "_note": "P31.5 (DEEPEN.1) committed SYNTHETIC fixture — the shape of a generic procurement contract payload (`results[]` → the §11.11 Contract path of connectors.procurement). The contract ids, amounts and the vendor are invented test data, not evidence; the buyer names are real public bodies so the fixture joins the committed dot_511 WSDOT camera fixture. Rows 2-4 pin the ambiguity and never-a-person rules (ADR-112): a generic buyer, a sole-proprietor seller, a person-shaped seller and a composite buyer stay text only. Never fetched live.",
+  "results": [
+    {
+      "external_id": "SIG-FIXTURE-C-001",
+      "buyer": "Washington State Department of Transportation",
+      "seller": "Example Traffic Camera Systems LLC",
+      "amount": "184500.00",
+      "currency": "USD",
+      "signed_date": "2025-03-14",
+      "start_date": "2025-04-01",
+      "end_date": "2027-03-31",
+      "products": ["traffic camera maintenance"],
+      "acquisition_channel": "competitive_rfp"
+    },
+    {
+      "external_id": "SIG-FIXTURE-C-002",
+      "buyer": "Police Department",
+      "seller": "Jane Q. Public dba JQP Consulting",
+      "amount": "9800.00",
+      "currency": "USD",
+      "signed_date": "2025-05-02"
+    },
+    {
+      "external_id": "SIG-FIXTURE-C-003",
+      "buyer": "City of Example Falls",
+      "seller": "John A. Smith",
+      "amount": "1200.00",
+      "currency": "USD",
+      "signed_date": "2025-06-20"
+    },
+    {
+      "external_id": "SIG-FIXTURE-C-004",
+      "buyer": "King County / WSDOT",
+      "seller": "Example Traffic Camera Systems LLC",
+      "amount": "42000.00",
+      "currency": "USD",
+      "signed_date": "2025-07-09"
+    }
+  ]
+}
