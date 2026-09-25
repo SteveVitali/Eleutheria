@@ -1249,7 +1249,10 @@ predicates:
   volatility_class: FAST
   half_life: 6mo
   resolution_strategy: latest_observation_wins
-  # P31.8 assessment: camera_registry D3; connector_run D3; agenda_document D4; portal_document D3; community_map D3; contract D4; official_statement D2
+  # P31.8 assessment: camera_registry D3; connector_run D3; agenda_document D4; portal_document D3; community_map D3; contract D5; official_statement D2
+  # (contract D5 per §10.5/SIG-EPIS-018's own worked case: a contract is weak support
+  #  — W1-capped dissent, never the resolver — for the CURRENT count; the contracted
+  #  quantity is contracted_device_count, contract D1 there)
   directness:
     executed_contract: D5
     invoice: D4
@@ -1266,7 +1269,7 @@ predicates:
     bill_index: D6
     portal_document: D3
     community_map: D3
-    contract: D4
+    contract: D5
     official_statement: D2
 - predicate_id: installed_device_count
   vocab_version: 1.0.0
@@ -1391,7 +1394,9 @@ predicates:
   volatility_class: FAST
   half_life: 4mo
   resolution_strategy: latest_observation_wins
-  # P31.8 assessment: connector_run D3; agenda_document D4; portal_document D3; contract D4; official_statement D4
+  # P31.8 assessment: connector_run D3; agenda_document D4; portal_document D3; contract D6; official_statement D4
+  # (contract D6 like its executed_contract sibling: a contract does not state the
+  #  portal's configured sharing set — §10.5's matrix row scores it non-probative)
   directness:
     executed_contract: D6
     invoice: D6
@@ -1408,7 +1413,7 @@ predicates:
     bill_index: D6
     portal_document: D3
     community_map: D6
-    contract: D4
+    contract: D6
     official_statement: D4
 - predicate_id: configured_sharing_partner
   vocab_version: 1.0.0
@@ -1424,7 +1429,9 @@ predicates:
   volatility_class: FAST
   half_life: 4mo
   resolution_strategy: latest_observation_wins
-  # P31.8 assessment: agenda_document D4; portal_document D3; contract D4; official_statement D4
+  # P31.8 assessment: agenda_document D4; portal_document D3; contract D6; official_statement D4
+  # (contract D6: the sibling row's executed_contract cell is D6 — a contract does
+  #  not state the configured sharing set; §10.5's matrix agrees)
   directness:
     executed_contract: D6
     invoice: D6
@@ -1441,7 +1448,7 @@ predicates:
     bill_index: D6
     portal_document: D3
     community_map: D6
-    contract: D4
+    contract: D6
     official_statement: D4
   object_kind: entity_ref
   maps_to: configured_sharing_partner_set
