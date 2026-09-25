@@ -40,6 +40,8 @@ def _t(text: str) -> datetime:
         ("0 5 1 1,4,7,10 *", "2026-09-24T00:00", "2026-07-01T05:00"),
         # dom AND dow restricted: either matches (Vixie) — the 2nd, or any Tuesday
         ("0 5 2 * 2", "2026-09-24T00:00", "2026-09-22T05:00"),
+        # "*/2" day-of-month is unrestricted for the OR rule (Vixie): AND with Tuesday
+        ("0 5 */2 * 2", "2026-09-24T00:00", "2026-09-15T05:00"),
         # a trailing comment, as cadence.toml rows carry
         ("0 5 2 * *   # day 2", "2026-09-24T00:00", "2026-09-02T05:00"),
     ],
@@ -116,3 +118,39 @@ def test_the_cli_derives_the_key_from_the_cadence_window() -> None:
     assert _logical_run_for(config, "camreg_osm_surveillance", started, ns(sink="memory")) is None
     assert _logical_run_for(config, "x", started, ns(logical_run="pinned")) == "pinned"
     assert _logical_run_for(config, "unscheduled_source", started, ns()) is None
+
+
+def test_a_bad_cron_costs_only_the_resume_and_the_code_commit_is_passed() -> None:
+    import dataclasses
+
+    from ops.cli import _logical_run_for
+
+    config = load_cadence()
+    broken = dataclasses.replace(
+        config,
+        batches=tuple(dataclasses.replace(b, cron="0 5 * * MON") for b in config.batches),
+    )
+    args = argparse.Namespace(no_resume=False, sink="pg", logical_run=None)
+    assert (
+        _logical_run_for(broken, "camreg_osm_surveillance", "2026-09-25T00:00:00+00:00", args)
+        is None
+    )
+
+    calls: list[dict[str, Any]] = []
+
+    class Report:
+        run_id = ""
+        claims: list[Any] = []
+        captures: list[Any] = []
+        fetch_record = None
+        refusals: list[Any] = []
+        disappearances: list[Any] = []
+
+    def runner(source: str, **kw: Any) -> Report:
+        calls.append(kw)
+        return Report()
+
+    scheduled_ingest("s", runner=runner, code_commit="sha256:abc")
+    assert calls[-1]["code_commit"] == "sha256:abc"
+    scheduled_ingest("s", runner=runner)
+    assert "code_commit" not in calls[-1]

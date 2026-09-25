@@ -12,6 +12,7 @@ from typing import Any
 import pytest
 from ops.job_roll import (
     CAPTURE_ENV,
+    CODE_COMMIT_ENV,
     RollError,
     apply_roll,
     plan_roll,
@@ -25,7 +26,9 @@ OLD = f"{REPO}@sha256:{'a' * 64}"
 NEW = f"{REPO}@sha256:{'b' * 64}"
 
 
-def _job(image: str, *, ingest: bool = True, store: bool = False) -> dict[str, Any]:
+def _job(
+    image: str, *, ingest: bool = True, store: bool = False, commit: str | None = None
+) -> dict[str, Any]:
     container: dict[str, Any] = {
         "image": image,
         "args": ["-c", "exec sig-ops scheduled-ingest --batch b --sink pg" if ingest else "x"],
@@ -35,6 +38,8 @@ def _job(image: str, *, ingest: bool = True, store: bool = False) -> dict[str, A
     if store:
         spec["volumes"] = [{"name": "captures"}]
         container["env"].append({"name": CAPTURE_ENV, "value": "/mnt/captures/evidence/captures"})
+    if commit:
+        container["env"].append({"name": CODE_COMMIT_ENV, "value": commit})
     return {"spec": {"template": {"spec": {"template": {"spec": spec}}}}}
 
 
@@ -61,8 +66,11 @@ class FakeGcloud:
                 if a.startswith("--add-volume="):
                     spec.setdefault("volumes", []).append({"name": "captures"})
                 if a.startswith("--update-env-vars="):
-                    name, value = a.split("=", 1)[1].split("=", 1)
-                    spec["containers"][0]["env"].append({"name": name, "value": value})
+                    for pair in a.split("=", 1)[1].split(","):
+                        name, value = pair.split("=", 1)
+                        env = spec["containers"][0]["env"]
+                        env[:] = [e for e in env if e["name"] != name]
+                        env.append({"name": name, "value": value})
             return ""
         raise AssertionError(args)
 
@@ -115,7 +123,7 @@ def test_roll_records_before_after_adds_the_store_once_and_verifies() -> None:
 
 
 def test_a_roll_is_idempotent() -> None:
-    jobs = {"sig-ingest-x": _job(NEW, store=True)}
+    jobs = {"sig-ingest-x": _job(NEW, store=True, commit=NEW.rsplit("@", 1)[1])}
     gcloud = FakeGcloud(jobs, {})
     plans = plan_roll(list(jobs), NEW, project="p", region="r", gcloud=gcloud, capture_bucket="b")
     assert not plans[0].changes
@@ -147,4 +155,82 @@ def test_update_args_carry_the_capture_store() -> None:
     args = update_args(plans[0], project="p", region="r", capture_bucket="b")
     assert f"--image={NEW}" in args
     assert "--add-volume=name=captures,type=cloud-storage,bucket=b" in args
-    assert f"--update-env-vars={CAPTURE_ENV}=/mnt/captures/evidence/captures" in args
+    env = next(a for a in args if a.startswith("--update-env-vars="))
+    assert f"{CAPTURE_ENV}=/mnt/captures/evidence/captures" in env
+    assert f"{CODE_COMMIT_ENV}={NEW.rsplit('@', 1)[1]}" in env
+
+
+def test_every_rolled_job_records_its_code_identity() -> None:
+    jobs = {"sig-ingest-x": _job(OLD, store=True, commit=OLD.rsplit("@", 1)[1])}
+    gcloud = FakeGcloud(jobs, {})
+    plans = plan_roll(list(jobs), NEW, project="p", region="r", gcloud=gcloud, capture_bucket="b")
+    apply_roll(plans, project="p", region="r", gcloud=gcloud, capture_bucket="b")
+    env = {e["name"]: e["value"] for e in _container_env(jobs["sig-ingest-x"])}
+    assert env[CODE_COMMIT_ENV] == NEW.rsplit("@", 1)[1]
+
+
+def _container_env(job: dict[str, Any]) -> list[dict[str, str]]:
+    return job["spec"]["template"]["spec"]["template"]["spec"]["containers"][0]["env"]
+
+
+def test_a_half_configured_store_adds_only_what_is_missing() -> None:
+    job = _job(OLD)
+    job["spec"]["template"]["spec"]["template"]["spec"]["volumes"] = [{"name": "captures"}]
+    plans = plan_roll(
+        ["j"], NEW, project="p", region="r", gcloud=FakeGcloud({"j": job}, {}), capture_bucket="b"
+    )
+    args = update_args(plans[0], project="p", region="r", capture_bucket="b")
+    assert not any(a.startswith("--add-volume") for a in args)  # the volume exists already
+    assert any(CAPTURE_ENV in a for a in args)
+
+
+def test_an_unresolvable_rollback_digest_refuses_before_any_update() -> None:
+    jobs = {"j": _job(f"{REPO}:gone-tag")}
+    gcloud = FakeGcloud(jobs, {})
+    plans = plan_roll(list(jobs), NEW, project="p", region="r", gcloud=gcloud)
+    assert plans[0].before_digest.startswith("<unresolved")
+    with pytest.raises(RollError, match="rollback"):
+        apply_roll(plans, project="p", region="r", gcloud=gcloud)
+    assert not [c for c in gcloud.calls if c[:3] == ["run", "jobs", "update"]]
+    apply_roll(plans, project="p", region="r", gcloud=gcloud, allow_unresolved_rollback=True)
+    assert plans[0].after_image_verified == NEW
+
+
+def test_the_cli_writes_the_record_even_when_the_roll_fails(tmp_path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    import ops.job_roll as job_roll
+    from ops.cli import main
+
+    jobs = {"a": _job(OLD), "b": _job(OLD)}
+
+    class FailsOnB(FakeGcloud):
+        def __call__(self, args: Sequence[str]) -> str:
+            if args[:4] == ["run", "jobs", "update", "b"]:
+                raise RollError("quota")
+            return super().__call__(args)
+
+    monkeypatch.setattr(job_roll, "gcloud_cli", FailsOnB(jobs, {}))
+    record = tmp_path / "roll.json"
+    rc = main(
+        [
+            "roll-jobs",
+            "--image",
+            NEW,
+            "--job",
+            "a",
+            "--job",
+            "b",
+            "--project",
+            "p",
+            "--capture-bucket",
+            "",
+            "--record",
+            str(record),
+            "--apply",
+        ]
+    )
+    assert rc == 1
+    data = json.loads(record.read_text())
+    assert [(j["job"], j["applied"], j["before_digest"]) for j in data["jobs"]] == [
+        ("a", True, OLD),
+        ("b", False, OLD),
+    ]

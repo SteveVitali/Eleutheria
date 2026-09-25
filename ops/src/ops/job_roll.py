@@ -49,6 +49,10 @@ CAPTURE_MOUNT = "/mnt/captures"
 #: Where the OCFL capture root lives inside the restricted bucket.
 CAPTURE_PREFIX = "evidence/captures"
 CAPTURE_ENV = "SIG_CAPTURE_DIR"
+#: The code identity every rolled job carries (the image digest). A scheduled ingest
+#: records it as its run's ``code_commit``, and a restart only resumes the marks of
+#: executions that ran the same code (ADR-111).
+CODE_COMMIT_ENV = "SIG_CODE_COMMIT"
 
 #: ``gcloud`` runner: args -> stdout (raises on a non-zero exit).
 Gcloud = Callable[[Sequence[str]], str]
@@ -98,16 +102,30 @@ class JobPlan:
 
     job: str
     before_image: str
+    #: The digest ``before_image`` resolved to AT ROLL TIME (for a movable tag such as
+    #: ``:latest`` that is the tag's digest then, the best available rollback target).
     before_digest: str
     after_digest: str
-    add_capture_store: bool = False
+    add_capture_volume: bool = False
+    add_capture_env: bool = False
+    set_code_commit: bool = False
     after_image_verified: str = ""
     applied: bool = False
     notes: list[str] = field(default_factory=list)
 
     @property
+    def add_capture_store(self) -> bool:
+        return self.add_capture_volume or self.add_capture_env
+
+    @property
     def changes(self) -> bool:
-        return self.before_image != self.after_digest or self.add_capture_store
+        return (
+            self.before_image != self.after_digest or self.add_capture_store or self.set_code_commit
+        )
+
+    @property
+    def rollback_resolved(self) -> bool:
+        return bool(DIGEST_REF.match(self.before_digest))
 
 
 def _container(job: Mapping[str, Any]) -> Mapping[str, Any]:
@@ -118,11 +136,19 @@ def _is_scheduled_ingest(job: Mapping[str, Any]) -> bool:
     return any("scheduled-ingest" in str(a) for a in _container(job).get("args", []) or [])
 
 
-def _has_capture_store(job: Mapping[str, Any]) -> bool:
+def _has_capture_volume(job: Mapping[str, Any]) -> bool:
     spec = job["spec"]["template"]["spec"]["template"]["spec"]
-    volumes = {v.get("name") for v in spec.get("volumes", []) or []}
-    env = {e.get("name") for e in _container(job).get("env", []) or []}
-    return CAPTURE_VOLUME in volumes and CAPTURE_ENV in env
+    return CAPTURE_VOLUME in {v.get("name") for v in spec.get("volumes", []) or []}
+
+
+def _env(job: Mapping[str, Any]) -> dict[str, str]:
+    return {
+        str(e.get("name")): str(e.get("value", "")) for e in _container(job).get("env", []) or []
+    }
+
+
+def _has_capture_store(job: Mapping[str, Any]) -> bool:
+    return _has_capture_volume(job) and CAPTURE_ENV in _env(job)
 
 
 def describe_job(job: str, *, project: str, region: str, gcloud: Gcloud) -> dict[str, Any]:
@@ -161,17 +187,23 @@ def plan_roll(
             resolved[before] = (
                 before if DIGEST_REF.match(before) else _resolve_any(before, project, gcloud)
             )
+        store = bool(capture_bucket and _is_scheduled_ingest(job))
         plan = JobPlan(
             job=name,
             before_image=before,
             before_digest=resolved[before],
             after_digest=image_digest,
-            add_capture_store=bool(
-                capture_bucket and _is_scheduled_ingest(job) and not _has_capture_store(job)
-            ),
+            add_capture_volume=store and not _has_capture_volume(job),
+            add_capture_env=store and CAPTURE_ENV not in _env(job),
+            set_code_commit=_env(job).get(CODE_COMMIT_ENV) != _digest_of(image_digest),
         )
         plans.append(plan)
     return plans
+
+
+def _digest_of(ref: str) -> str:
+    """``sha256:<hex>`` of a pinned reference — the code identity a job records."""
+    return ref.rsplit("@", 1)[-1]
 
 
 def _resolve_any(ref: str, project: str, gcloud: Gcloud) -> str:
@@ -203,13 +235,19 @@ def update_args(
         f"--region={region}",
         f"--image={plan.after_digest}",
     ]
-    if plan.add_capture_store and capture_bucket:
+    env: list[str] = []
+    if plan.add_capture_volume and capture_bucket:
         args += [
             "--execution-environment=gen2",
             f"--add-volume=name={CAPTURE_VOLUME},type=cloud-storage,bucket={capture_bucket}",
             f"--add-volume-mount=volume={CAPTURE_VOLUME},mount-path={CAPTURE_MOUNT}",
-            f"--update-env-vars={CAPTURE_ENV}={CAPTURE_MOUNT}/{CAPTURE_PREFIX}",
         ]
+    if plan.add_capture_env and capture_bucket:
+        env.append(f"{CAPTURE_ENV}={CAPTURE_MOUNT}/{CAPTURE_PREFIX}")
+    if plan.set_code_commit:
+        env.append(f"{CODE_COMMIT_ENV}={_digest_of(plan.after_digest)}")
+    if env:
+        args.append("--update-env-vars=" + ",".join(env))
     return args
 
 
@@ -220,8 +258,17 @@ def apply_roll(
     region: str,
     gcloud: Gcloud,
     capture_bucket: str | None = None,
+    allow_unresolved_rollback: bool = False,
 ) -> list[JobPlan]:
-    """Apply every plan that changes something, then verify each job's image."""
+    """Apply every plan that changes something, then verify each job's image.
+
+    Refuses (before touching any job) when a job's current image could not be
+    resolved to a digest, since the roll would then have no rollback target, unless
+    ``allow_unresolved_rollback`` is set.
+    """
+    unresolved = [p.job for p in plans if not p.rollback_resolved]
+    if unresolved and not allow_unresolved_rollback:
+        raise RollError(f"no rollback digest for {unresolved}; pass the explicit override")
     for plan in plans:
         if plan.changes:
             gcloud(update_args(plan, project=project, region=region, capture_bucket=capture_bucket))
@@ -235,18 +282,24 @@ def apply_roll(
             )
         if plan.add_capture_store and not _has_capture_store(job):
             raise RollError(f"{plan.job}: the capture store is not configured after the update")
+        if _env(job).get(CODE_COMMIT_ENV) != _digest_of(plan.after_digest):
+            raise RollError(f"{plan.job}: {CODE_COMMIT_ENV} is not the rolled digest")
     return list(plans)
 
 
 def roll_record(
     plans: Sequence[JobPlan], *, image_ref: str, image_digest: str, applied: bool
 ) -> dict[str, Any]:
-    """The JSON record of a roll: every job's before/after digest (for rollback)."""
+    """The JSON record of a roll: every job's before/after digest (for rollback).
+
+    ``applied`` is what the caller asked for; each job's own ``applied`` says whether
+    its update actually ran (a roll that failed part-way still records every job).
+    """
     return {
         "image_ref": image_ref,
         "image_digest": image_digest,
         "applied": applied,
-        "jobs": [asdict(p) for p in plans],
+        "jobs": [{**asdict(p), "add_capture_store": p.add_capture_store} for p in plans],
     }
 
 
@@ -255,6 +308,7 @@ __all__ = [
     "CAPTURE_MOUNT",
     "CAPTURE_PREFIX",
     "CAPTURE_VOLUME",
+    "CODE_COMMIT_ENV",
     "DIGEST_REF",
     "JobPlan",
     "RollError",

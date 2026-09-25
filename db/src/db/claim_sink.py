@@ -52,6 +52,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import os
 import uuid
 from collections.abc import Callable, Mapping, Sequence
@@ -63,6 +64,8 @@ import psycopg
 
 from .identity_guard import SUBJECT_SCHEME, resolve_identity_batch
 from .run_completion import SUCCESSFUL_STATUSES, append_completion
+
+_log = logging.getLogger(__name__)
 
 #: Columns excluded from the reproducibility payload (SIG-INGEST-003, SIG-EVID-017):
 #: the generated id and the two DB-controlled time columns. Kept byte-identical to
@@ -263,7 +266,9 @@ _LINK_EVIDENCE = (
 )
 
 #: The marks a restarted execution resumes from (P31.4 / ADR-111): those of the
-#: executions of the same logical run that started after the last one that
+#: executions of the same logical run — same connector name, version AND code
+#: commit (the rolled image digest on hosted), so a restart on different code
+#: never keeps pages the old code derived — that started after the last one that
 #: completed. Per target, a ``flushed`` mark wins over a ``captured`` one, and the
 #: latest mark of a state wins. A backfilled completion (P31.2) never names a
 #: logical run, so only live completions close one.
@@ -271,6 +276,7 @@ _RESUME_MARKS = (
     "WITH runs AS ("
     " SELECT run_id, started_at FROM ingest_run"
     " WHERE connector_name = %(connector)s AND connector_version = %(version)s"
+    " AND code_commit = %(code_commit)s"
     " AND parameters ->> 'logical_run' = %(logical_run)s AND NOT is_replay"
     " AND run_id IS DISTINCT FROM %(current)s::uuid"
     "), done AS ("
@@ -662,18 +668,26 @@ class PgClaimSink:
         once an execution of the logical run completed (the next one is a fresh
         run and never skips). Read-only.
         """
-        if not self._logical_run:
+        if not self._logical_run or self._is_replay:
             return []
-        rows = self._conn.execute(
-            _RESUME_MARKS,
-            {
-                "connector": self._connector_name,
-                "version": self._connector_version,
-                "logical_run": self._logical_run,
-                "current": self._run_id,
-                "successful": list(SUCCESSFUL_STATUSES),
-            },
-        ).fetchall()
+        try:
+            rows = self._conn.execute(
+                _RESUME_MARKS,
+                {
+                    "connector": self._connector_name,
+                    "version": self._connector_version,
+                    "code_commit": self._code_commit,
+                    "logical_run": self._logical_run,
+                    "current": self._run_id,
+                    "successful": list(SUCCESSFUL_STATUSES),
+                },
+            ).fetchall()
+        except psycopg.errors.UndefinedTable:
+            # A spine without the ``ingest_run_capture`` change (an image rolled
+            # ahead of its schema): run without resume rather than fail the ingest.
+            _log.warning("ingest_run_capture is absent; running without resume (ADR-111)")
+            self._logical_run = None
+            return []
         keys = (
             "target_key",
             "state",

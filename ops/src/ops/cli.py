@@ -422,6 +422,11 @@ def build_parser() -> argparse.ArgumentParser:
     roll.add_argument("--cadence", default=None, help="ops/cadence.toml path")
     roll.add_argument("--record", default=None, help="write the before/after JSON record here")
     roll.add_argument("--apply", action="store_true", help="apply (default: plan only)")
+    roll.add_argument(
+        "--allow-unresolved-rollback",
+        action="store_true",
+        help="apply even when a job's current image cannot be resolved to a digest",
+    )
 
     backfill = sub.add_parser(
         "backfill-run-completions",
@@ -1195,6 +1200,9 @@ def _cmd_scheduled_ingest(args: argparse.Namespace) -> int:
         return 2
     from connectors.sinks import resolve_commit_chunk_size
 
+    if args.target_limit is not None and args.target_limit < 1:
+        print("scheduled-ingest: --target-limit must be >= 1")
+        return 2
     try:
         commit_chunk_size = resolve_commit_chunk_size(args.commit_chunk_size)
     except ValueError as bad:
@@ -1226,6 +1234,7 @@ def _cmd_scheduled_ingest(args: argparse.Namespace) -> int:
             run_record_uri=run_uri,
             logical_run=_logical_run_for(cadence, source, started, args),
             target_limit=args.target_limit,
+            code_commit=os.environ.get("SIG_CODE_COMMIT", "").strip() or None,
         )
         written = store_run_row(row, prefix=cadence.runs_gcs_prefix, gcs=gcs, local_dir=local_dir)
         print(json.dumps(row.as_json(), sort_keys=True))
@@ -1250,7 +1259,9 @@ def _logical_run_for(
     key is the source's cadence window (``ops.cadence_window``). A source with no
     cadence row has no window, so it never resumes.
     """
-    from .cadence_window import cron_for_source, logical_run_key
+    from datetime import datetime
+
+    from .cadence_window import CronError, cron_for_source, logical_run_key
 
     if args.no_resume or args.sink != "pg":
         return None
@@ -1259,14 +1270,25 @@ def _logical_run_for(
     cron = cron_for_source(cadence, source)
     if cron is None:
         return None
-    from datetime import datetime
-
-    return logical_run_key(source, cron, datetime.fromisoformat(started.replace("Z", "+00:00")))
+    try:
+        return logical_run_key(source, cron, datetime.fromisoformat(started.replace("Z", "+00:00")))
+    except CronError as bad:
+        # An unparseable cron costs only the resume, never the run.
+        print(f"  ! {source}: no logical run ({bad}); running without resume", file=sys.stderr)
+        return None
 
 
 def _cmd_roll_jobs(args: argparse.Namespace) -> int:
     """Roll jobs onto a pinned digest (P31.4 / ADR-111); plan-only unless --apply."""
-    from .job_roll import RollError, apply_roll, gcloud_cli, plan_roll, resolve_digest, roll_record
+    from .job_roll import (
+        JobPlan,
+        RollError,
+        apply_roll,
+        gcloud_cli,
+        plan_roll,
+        resolve_digest,
+        roll_record,
+    )
     from .scheduled import load_cadence
 
     project = args.project or os.environ.get("SIG_GCP_PROJECT", "")
@@ -1288,6 +1310,9 @@ def _cmd_roll_jobs(args: argparse.Namespace) -> int:
             *(b.job for b in cadence.batches),
         ]
     jobs = [j for j in dict.fromkeys(jobs) if j not in set(args.exclude)]
+    plans: list[JobPlan] = []
+    digest = ""
+    failed: str | None = None
     try:
         digest = resolve_digest(args.image, project=project, gcloud=gcloud_cli)
         plans = plan_roll(
@@ -1298,14 +1323,26 @@ def _cmd_roll_jobs(args: argparse.Namespace) -> int:
             print(f"{plan.job}: {plan.before_image} ({plan.before_digest}) -> {digest}{store}")
         if args.apply:
             apply_roll(
-                plans, project=project, region=region, gcloud=gcloud_cli, capture_bucket=bucket
+                plans,
+                project=project,
+                region=region,
+                gcloud=gcloud_cli,
+                capture_bucket=bucket,
+                allow_unresolved_rollback=args.allow_unresolved_rollback,
             )
     except RollError as exc:
-        print(f"roll-jobs: {exc}")
+        failed = str(exc)
+    finally:
+        # Always write the record: a roll that failed part-way still names every
+        # job's rollback digest and which updates ran.
+        if args.record and plans:
+            record = roll_record(
+                plans, image_ref=args.image, image_digest=digest, applied=args.apply
+            )
+            Path(args.record).write_text(json.dumps(record, indent=2, sort_keys=True) + "\n")
+    if failed is not None:
+        print(f"roll-jobs: {failed}")
         return 1
-    record = roll_record(plans, image_ref=args.image, image_digest=digest, applied=args.apply)
-    if args.record:
-        Path(args.record).write_text(json.dumps(record, indent=2, sort_keys=True) + "\n")
     verified = sum(1 for p in plans if p.after_image_verified == digest)
     outcome = f"rolled, {verified} verified" if args.apply else "planned (no --apply)"
     print(f"roll-jobs: {len(plans)} job(s) {outcome}")

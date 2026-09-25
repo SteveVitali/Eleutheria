@@ -509,6 +509,7 @@ def scheduled_ingest(
     run_record_uri: str | None = None,
     logical_run: str | None = None,
     target_limit: int | None = None,
+    code_commit: str | None = None,
 ) -> RunRow:
     """Run one source live through the gated connector and shape the run row.
 
@@ -555,6 +556,10 @@ def scheduled_ingest(
         extra["logical_run"] = logical_run
     if target_limit is not None:
         extra["target_limit"] = target_limit
+    if code_commit:
+        # The rolled image digest (``SIG_CODE_COMMIT``, ADR-111): recorded on the
+        # run, and a restart resumes only the marks of runs on the same code.
+        extra["code_commit"] = code_commit
     try:
         report = runner(
             source_id,

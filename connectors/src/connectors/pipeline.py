@@ -337,6 +337,32 @@ def _resume_target(
     return "fetch", None
 
 
+def _reprocess(
+    connector: Connector, ctx: RunContext, report: RunReport, capture: CaptureRef
+) -> list[dict[str, Any]] | None:
+    """Re-derive a stored capture's claims, or ``None`` if the stored bytes no longer yield.
+
+    An interrupted execution may have captured a transient error page (a WAF page, an
+    ArcGIS error envelope) or left a partly written object. Re-reading those bytes on
+    every restart would pin the run to the failure for the whole cadence window, so
+    any failure here marks the target ``refetched`` and the caller fetches it again,
+    exactly as a run without resume would.
+    """
+    try:
+        return run_post_capture(connector, ctx, capture)
+    except Exception as exc:  # noqa: BLE001 - any failure means "fetch it again"
+        _log.warning(
+            "stored capture %s no longer yields (%s); fetching the target again",
+            capture.digest,
+            type(exc).__name__,
+        )
+        for entry in reversed(report.resumed):
+            if entry["capture_digest"] == capture.digest and entry["action"] == "reprocessed":
+                entry["action"] = "refetched"
+                break
+        return None
+
+
 def _run_stages(connector: Connector, ctx: RunContext) -> RunReport:
     """The body of :func:`run`, after the gate: discover → … → load (+ assert).
 
@@ -378,11 +404,14 @@ def _run_stages(connector: Connector, ctx: RunContext) -> RunReport:
             continue  # flushed by an interrupted execution: seen, not re-walked
         if stored is not None:
             # Captured by an interrupted execution but never flushed: re-derive its
-            # claims from the stored capture. No request is issued.
-            _addressed(ctx, Stage.CAPTURE, stored)
-            report.captures.append(stored)
-            _emit(ctx, report, ledger, key, stored, run_post_capture(connector, ctx, stored))
-            continue
+            # claims from the stored capture. No request is issued. If the stored
+            # bytes no longer yield, fall through to a normal fetch (below).
+            reprocessed = _reprocess(connector, ctx, report, stored)
+            if reprocessed is not None:
+                _addressed(ctx, Stage.CAPTURE, stored)
+                report.captures.append(stored)
+                _emit(ctx, report, ledger, key, stored, reprocessed)
+                continue
         governed = bool(target.get("quota_governed"))
         if governed and report.quota_reached:
             # RATE-LIMIT HONESTY: a 429 wall was already observed this run — the
@@ -444,6 +473,9 @@ def _run_stages(connector: Connector, ctx: RunContext) -> RunReport:
             action, child = _resume_target(connector, ctx, report, key, marks.get(key))
             if action == "skipped":
                 continue  # flushed by an interrupted execution: seen, not re-walked
+            reprocessed = None if child is None else _reprocess(connector, ctx, report, child)
+            if reprocessed is None:
+                child = None  # no stored capture, or its bytes no longer yield: fetch
             if child is None:
                 fetched = _fetch_or_disappear(connector, ctx, target, report, record_refusals=True)
                 if fetched is None:
@@ -454,7 +486,11 @@ def _run_stages(connector: Connector, ctx: RunContext) -> RunReport:
             _addressed(ctx, Stage.CAPTURE, child)
             report.captures.append(child)
             try:
-                claims = run_post_capture(connector, ctx, child)
+                claims = (
+                    reprocessed
+                    if reprocessed is not None
+                    else run_post_capture(connector, ctx, child)
+                )
             except ContentDrift as drift:
                 # P26.6: a resolved child document that doesn't parse as the
                 # platform's genre is a per-document fail-closed disposition —

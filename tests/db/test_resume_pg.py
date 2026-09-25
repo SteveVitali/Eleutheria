@@ -283,3 +283,70 @@ def test_capture_marks_are_append_only(clean_dsn: str) -> None:
                 " source_uri, media_type, byte_size) SELECT run_id, 'x', 'flushed', 'd', 'u',"
                 " 'm', 0 FROM ingest_run LIMIT 1"
             )
+
+
+def _sink(dsn: str, logical_run: str, **kw: Any) -> Any:
+    from db.claim_sink import PgClaimSink
+
+    base = {"connector_name": "rules", "connector_version": "1", "code_commit": "c1"}
+    return PgClaimSink.from_dsn(dsn, logical_run=logical_run, **{**base, **kw})
+
+
+def _mark(sink: Any, key: str, state: str) -> None:
+    sink.record_capture(
+        key,
+        state=state,
+        capture_digest=f"d-{key}",
+        source_uri=f"u-{key}",
+        media_type="application/json",
+        byte_size=1,
+        records=1 if state == "flushed" else None,
+    )
+
+
+def test_the_resume_rule_on_real_pg(clean_dsn: str) -> None:
+    """failed stays resumable; ok/partial close; backfilled completions and other code
+    never count; a flushed mark from an older execution beats a newer captured one."""
+    a = _sink(clean_dsn, "L")
+    _mark(a, "p1", "flushed")
+    _mark(a, "p2", "captured")
+    a.record_completion("failed", detail="OperationalError")  # a surviving failure
+    b = _sink(clean_dsn, "L")
+    marks = {m["target_key"]: m["state"] for m in b.resume_marks()}
+    assert marks == {"p1": "flushed", "p2": "captured"}
+    _mark(b, "p1", "captured")  # newer, but p1 was already flushed by `a`
+    c = _sink(clean_dsn, "L")
+    assert {m["target_key"]: m["state"] for m in c.resume_marks()} == marks
+    # Another code commit, connector version, logical run or a replay never resumes.
+    for other in (
+        _sink(clean_dsn, "L", code_commit="c2"),
+        _sink(clean_dsn, "L", connector_version="2"),
+        _sink(clean_dsn, "L2"),
+        _sink(clean_dsn, "L", is_replay=True),
+    ):
+        assert other.resume_marks() == []
+    # A backfilled completion never closes a logical run.
+    with psycopg.connect(clean_dsn, autocommit=True) as conn:
+        conn.execute(
+            "INSERT INTO ingest_run_completion(run_id, status, claims_inserted, backfilled_from)"
+            " VALUES (%s, 'ok', 0, 'gs://b/ops/runs/x.json')",
+            (b.run_id,),
+        )
+    assert _sink(clean_dsn, "L").resume_marks() != []
+    # A live `partial` completion closes it: the next execution is a fresh run.
+    b.record_completion("partial")
+    assert _sink(clean_dsn, "L").resume_marks() == []
+    for s in (a, b, c):
+        s._conn.close()
+
+
+def test_a_spine_without_the_marks_table_runs_without_resume() -> None:
+    from db.claim_sink import PgClaimSink
+
+    class NoTable:
+        def execute(self, *_: Any, **__: Any) -> Any:
+            raise psycopg.errors.UndefinedTable("relation ingest_run_capture does not exist")
+
+    sink = PgClaimSink(NoTable(), connector_name="x", logical_run="L")  # type: ignore[arg-type]
+    assert sink.resume_marks() == [] and sink.logical_run is None
+    _mark(sink, "p", "captured")  # a no-op now: never touches the missing table

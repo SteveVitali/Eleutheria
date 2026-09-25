@@ -84,7 +84,9 @@ CONN="${SIG_GCP_PROJECT}:${SIG_GCP_REGION}:${SIG_SQL_INSTANCE}"
 CAPTURE_MOUNT="/mnt/captures"
 JOB_ENV="SIG_GCP_PROJECT=${SIG_GCP_PROJECT},SIG_OPS_GCS_BUCKET=${SIG_BUCKET_RESTRICTED},SIG_OPS_CADENCE=/app/ops/cadence.toml,SIG_PG_USER=sig,SIG_PG_DB=${SIG_PG_DB_NAME:-sig},SIG_CLOUDSQL_CONNECTION=${CONN}"
 # The ingest jobs' capture store (P31.4 / ADR-111): the restricted bucket, mounted.
-INGEST_ENV="${JOB_ENV},SIG_CAPTURE_DIR=${CAPTURE_MOUNT}/evidence/captures"
+# SIG_CODE_COMMIT = the deployed digest: runs record it as code_commit, and a restart
+# resumes only the marks of runs on the same code (ADR-111).
+INGEST_ENV="${JOB_ENV},SIG_CAPTURE_DIR=${CAPTURE_MOUNT}/evidence/captures,SIG_CODE_COMMIT=${IMAGE##*@}"
 
 # Resolve a Cloud Run service's deployed URL — never a literal in the repo.
 svc_url() {

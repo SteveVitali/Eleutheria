@@ -164,7 +164,9 @@ class LedgerSink:
                 self.inserted += 1
 
     def record_completion(self, status: str, **_: Any) -> None:
-        self._state.completed.add(self._execution)
+        # As the real SQL: only a non-failed completion closes the logical run.
+        if status != "failed":
+            self._state.completed.add(self._execution)
 
     def resume_marks(self) -> list[Mapping[str, Any]]:
         if self._state.completed:
@@ -507,3 +509,92 @@ def _key_of(target: Mapping[str, Any]) -> str:
     from connectors.pipeline import _target_key
 
     return _target_key(target)
+
+
+class DriftOnce(PagedConnector):
+    """Parsing fails on page 2's first capture (a transient WAF page), never again."""
+
+    name = "paged-drift-once"
+
+    def __init__(self, bad_digests: set[str]) -> None:
+        self._bad = bad_digests
+
+    def parse(self, ctx: RunContext, capture: CaptureRef) -> Any:
+        if capture.digest in self._bad:
+            from connectors.stages import ContentDrift
+
+            raise ContentDrift(ctx.source.id, "HTML error page")
+        return super().parse(ctx, capture)
+
+
+def test_a_bad_stored_capture_is_fetched_again_not_replayed_forever(
+    permitted_source, ingest_run
+) -> None:  # type: ignore[no-untyped-def]
+    from connectors.stages import ContentDrift
+
+    state = LedgerState()
+    captures = InMemoryCaptureStore()
+    page2 = PagedFetcher().fetch(_targets()[2]["url"])
+    bad = {captures.put(page2.body, media_type="application/json", source_uri=page2.url).digest}
+    # Execution 1 captures page 2, the parse drifts: a failed (still resumable) run.
+    with pytest.raises(ContentDrift):
+        run(
+            DriftOnce(bad),
+            _ctx(permitted_source, ingest_run, PagedFetcher(), LedgerSink(state, 1, "w"), captures),
+        )
+    assert state.marks[-1]["state"] == "captured" and not state.completed
+    # Execution 2: the stored bytes still drift, so the page is fetched again (the
+    # upstream now serves good bytes: a different digest), and the run completes.
+    good = PagedFetcher()
+    original = good.fetch
+
+    def fresh(url: str, **kw: Any) -> FetchResult:
+        result = original(url, **kw)
+        if url == _targets()[2]["url"]:
+            return FetchResult(
+                url=url,
+                status=200,
+                body=result.body + b" ",
+                media_type=result.media_type,
+                retrieved_at=result.retrieved_at,
+            )
+        return result
+
+    good.fetch = fresh  # type: ignore[method-assign]
+    report = run(
+        DriftOnce(bad),
+        _ctx(permitted_source, ingest_run, good, LedgerSink(state, 2, "w"), captures),
+    )
+    fetched = sorted(int(u.rsplit("=", 1)[1]) for u in good.calls)
+    assert fetched == [2, 3, 4, 5, 6, 7]  # 0-1 skipped; 2 re-fetched after the bad replay
+    assert [r["action"] for r in report.resumed] == ["skipped", "skipped", "refetched"]
+    assert state.completed == {2}
+
+
+def test_a_failed_completion_keeps_the_logical_run_resumable(permitted_source, ingest_run) -> None:  # type: ignore[no-untyped-def]
+    state = LedgerState()
+    LedgerSink(state, 1, "w").record_completion("failed")
+    assert LedgerSink(state, 2, "w").resume_marks() == [] and not state.completed
+
+
+def test_the_live_runner_helpers() -> None:
+    from connectors.runner import SourceRunReport, _flushed_records, _retain_outcome_record
+
+    assert _retain_outcome_record({"record_kind": "agenda_document"})
+    assert not _retain_outcome_record({"record_kind": "claim"})
+    assert not _retain_outcome_record({"subject_id": "s"})
+
+    class Report:
+        considered = 42
+
+    class PgLike:
+        report = Report()
+
+    assert _flushed_records(PgLike()) == 42  # pages before a failure may have committed
+    mem = InMemoryClaimSink()
+    mem.claims.extend([{"a": 1}, {"b": 2}])
+    assert _flushed_records(mem) == 2
+    r = SourceRunReport(source_id="s", connector="c", mode="live", claims=[{"x": 1}])
+    assert r.emitted == 1
+    r.claim_count = 9
+    assert r.emitted == 9

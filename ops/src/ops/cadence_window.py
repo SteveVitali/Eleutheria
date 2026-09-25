@@ -83,7 +83,9 @@ def _day_matches(cron: str, day: date, fields: tuple[frozenset[int], ...]) -> bo
     dom_field, dow_field = cron.split()[2], cron.split()[4]
     in_dom = day.day in days
     in_dow = (day.isoweekday() % 7) in dows
-    if dom_field != "*" and dow_field != "*":
+    # Vixie cron: a field that starts with "*" (including "*/n") is unrestricted for
+    # this rule; only two restricted fields combine with OR.
+    if not dom_field.startswith("*") and not dow_field.startswith("*"):
         return in_dom or in_dow
     return in_dom and in_dow
 

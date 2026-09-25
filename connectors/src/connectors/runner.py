@@ -746,6 +746,19 @@ def _retain_outcome_record(record: Mapping[str, Any]) -> bool:
     return record.get("record_kind") in _OUTCOME_RECORD_KINDS
 
 
+def _flushed_records(sink: Any) -> int:
+    """Records a sink had flushed when a run raised (P31.4 / ADR-111).
+
+    Since claims are flushed per capture, the captures before a failing one may have
+    committed; the fetch record reports them instead of claiming 0. A PG sink counts
+    records considered; the in-memory sink keeps what it was handed.
+    """
+    report = getattr(sink, "report", None)
+    if report is not None and isinstance(getattr(report, "considered", None), int):
+        return int(report.considered)
+    return len(getattr(sink, "claims", ()) or ())
+
+
 def _robots_decisions(fetcher: PoliteFetcher) -> list[Mapping[str, Any]]:
     """The per-host robots.txt audit rows a live run records (ADR-087).
 
@@ -936,7 +949,7 @@ def _run_live(
         report = run(connector, ctx)
     except ContentDrift as drift:
         # The fetch succeeded but the content no longer matches the parser's shape
-        # (P25.1 / ADR-082): record the drift loud (0 claims), never garbage, then
+        # (P25.1 / ADR-082): record the drift loud, never garbage, then
         # re-raise so the CLI exits non-zero.
         write_fetch_record(
             FetchRecord(
@@ -945,7 +958,8 @@ def _run_live(
                 mode=RunMode.LIVE.value,
                 started_at=started.isoformat(),
                 duration_seconds=time.monotonic() - t0,
-                claim_count=0,
+                # P31.4: pages before the failing one may already have committed.
+                claim_count=_flushed_records(sink),
                 rate_limit_events=list(transport.rate_limit_events),
                 robots_decisions=_robots_decisions(fetcher),
                 robots_disregarded=[dict(d) for d in fetcher.robots_disregarded],
@@ -968,7 +982,8 @@ def _run_live(
                 mode=RunMode.LIVE.value,
                 started_at=started.isoformat(),
                 duration_seconds=time.monotonic() - t0,
-                claim_count=0,
+                # P31.4: pages before the failing one may already have committed.
+                claim_count=_flushed_records(sink),
                 rate_limit_events=list(transport.rate_limit_events),
                 robots_decisions=_robots_decisions(fetcher),
                 robots_disregarded=[dict(d) for d in fetcher.robots_disregarded],
