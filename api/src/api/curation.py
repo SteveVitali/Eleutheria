@@ -45,11 +45,13 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
 
-from fastapi import APIRouter, Depends, FastAPI, Header, HTTPException, Request
+from fastapi import APIRouter, Depends, FastAPI, Header, HTTPException, Query, Request
+from policy.sensitivity import apply_tier
+from resolution.review_pg import PgReviewQueue
 from resolution.review_queue import ReviewItem, ReviewQueue
-from starlette.responses import JSONResponse, RedirectResponse, Response
+from starlette.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
 from starlette.routing import Route
-from tasks.contributor import Contributor, WriteScope, may_write
+from tasks.contributor import Contributor, ContributorTier, WriteScope, may_write
 from tasks.onboarding import OnboardingTimingAggregate
 from tasks.poisoning import (
     AnomalyDetector,
@@ -301,30 +303,164 @@ def _item_to_row(item: ReviewItem, decided: bool) -> dict[str, Any]:
     return row
 
 
+# --------------------------------------------------------------------------- #
+# The PG-backed camera-site queue (P31.10)                                    #
+# --------------------------------------------------------------------------- #
+#: UI decision spellings → the two review_decision values the schema admits.
+#: ``defer``/``unsure`` deliberately map to NOTHING: an unsure review leaves the
+#: item pending and writes no ``review_decision`` (the schema has no third
+#: value; persisting "unsure" would need a new sqitch change + ADR — P31.10).
+_PG_DECIDE = {
+    "accept": "accept",
+    "reject": "reject",
+    "match": "accept",
+    "no-match": "reject",
+    "no_match": "reject",
+}
+_PG_UNDECIDED = frozenset({"defer", "unsure"})
+_PG_DECISIONS = frozenset(_PG_DECIDE) | _PG_UNDECIDED
+
+#: The family shorthands for the PG queue's prefix filter. ``camera-site`` (the
+#: default on a PG-backed queue) is both camera-site families and excludes the
+#: P31.3 ``er_match:identity_duplicate:`` family by construction.
+_QUEUE_FAMILIES = {
+    "camera-site": ("er_match:camera_site:", "er_match:camera_site_disputed:"),
+    "camera-site-proposed": ("er_match:camera_site:",),
+    "camera-site-disputed": ("er_match:camera_site_disputed:",),
+    "identity-duplicate": ("er_match:identity_duplicate:",),
+    "all": None,
+}
+
+#: §19.4 coordinate reduction keyed on the curator's tier (P31.10): anonymous /
+#: registered see a 1 km grid bin, a trusted reviewer the published 2-dp
+#: truncation, and a curator/maintainer (who hold SENSITIVITY_CLASSIFICATION)
+#: the spine precision — camera claims are sensitivity_tier 0 and the public
+#: surface publishes C1 = exact anyway, so the reduction is conservative, never
+#: a leak. The applied tier travels with the view so the reduction is auditable.
+_CURATOR_GEO_TIER = {
+    ContributorTier.ANONYMOUS: 2,
+    ContributorTier.REGISTERED: 2,
+    ContributorTier.TRUSTED_REVIEWER: 1,
+    ContributorTier.CURATOR: 0,
+    ContributorTier.MAINTAINER: 0,
+}
+
+
+def _pg_backed(queue: Any) -> bool:
+    return isinstance(queue, PgReviewQueue)
+
+
+def _reduce_observation(obs: dict[str, Any] | None, geo_tier: int) -> dict[str, Any] | None:
+    """Reduce an observation's coordinates to the curator's §19.4 geo tier."""
+    if obs is None:
+        return None
+    out = dict(obs)
+    lat, lon = out.get("latitude"), out.get("longitude")
+    out["geo_tier"] = geo_tier
+    if lat is None or lon is None:
+        out["location"] = "no_coordinates"
+        out.pop("latitude", None)
+        out.pop("longitude", None)
+        return out
+    reduced = apply_tier(float(lat), float(lon), geo_tier)
+    if reduced is None:
+        out["location"] = "jurisdiction_only"
+        out.pop("latitude", None)
+        out.pop("longitude", None)
+    else:
+        out["latitude"], out["longitude"] = reduced
+    return out
+
+
+def _camera_evidence(
+    queue: PgReviewQueue, item: ReviewItem, contributor: Contributor
+) -> dict[str, Any] | None:
+    """The two-observation evidence view, coordinates at the curator's tier."""
+    from resolution.camera_site_review import pair_evidence
+
+    view = pair_evidence(queue.conn, item)
+    if view is None:
+        return None
+    geo_tier = _CURATOR_GEO_TIER[contributor.tier]
+    view["left_observation"] = _reduce_observation(view.get("left_observation"), geo_tier)
+    view["right_observation"] = _reduce_observation(view.get("right_observation"), geo_tier)
+    view["coordinate_tier"] = geo_tier
+    return view
+
+
+def _family_prefixes(family: str | None, prefix: list[str] | None) -> tuple[str, ...] | None:
+    """Resolve the PG list filter to item-id prefixes (400 on a bad family name)."""
+    if prefix:
+        return tuple(prefix)
+    name = (family or "camera-site").strip().lower()
+    if name not in _QUEUE_FAMILIES:
+        raise HTTPException(
+            status_code=400, detail=f"family must be one of {sorted(_QUEUE_FAMILIES)}"
+        )
+    return _QUEUE_FAMILIES[name]
+
+
 def build_curation_router() -> APIRouter:
     """Assemble the authenticated ``/v1/curation`` router (§34, ADR-068)."""
     router = APIRouter(prefix="/v1/curation")
 
-    def _queue(request: Request) -> ReviewQueue:
+    def _queue(request: Request) -> Any:
         return request.app.state.review_queue
 
     def _log(request: Request) -> CurationLog:
         return request.app.state.curation_log
 
-    # --- review queue: list (filter by tier) ---------------------------------
+    # --- review queue: list (filter by family/prefix, tier, bucket) ---------
     @router.get("/review-queue")
     def review_queue_list(
         request: Request,
         tier: str | None = None,
+        family: str | None = None,
+        prefix: list[str] | None = Query(default=None),
+        bucket: str | None = None,
+        campaign: str | None = None,
+        limit: int | None = None,
         contributor: Contributor = Depends(authenticated_contributor),
     ) -> Response:
         _require_scope(contributor, WriteScope.VERIFY_SUBMISSIONS)
         queue = _queue(request)
         log = _log(request)
+        if _pg_backed(queue):
+            from resolution.camera_site_review import (
+                is_camera_site_item,
+                pending_items,
+                stratum_for,
+            )
+
+            prefixes = _family_prefixes(family, prefix)
+            tier_i = None
+            if tier is not None and tier != "":
+                try:
+                    tier_i = int(tier)
+                except ValueError as exc:
+                    raise HTTPException(status_code=400, detail="tier must be an integer") from exc
+            items = pending_items(
+                queue.conn,
+                prefixes=prefixes or None,
+                tier=tier_i,
+                bucket=bucket,
+                campaign=campaign,
+                limit=limit,
+            )
+            rows = []
+            for it in items:
+                row = _item_to_row(it, False)
+                if is_camera_site_item(it.item_id):
+                    row["stratum"] = stratum_for(it.item_id, it.payload)
+                rows.append(row)
+            filters = {"family": family, "tier": tier, "bucket": bucket, "campaign": campaign}
+            if _wants_html(request):
+                return HTMLResponse(_render_queue_html(rows, filters))
+            return JSONResponse({"pending": rows, "count": len(rows), "filters": filters})
         decided = log.decided_item_ids()
         # RISK-P21-11 (reviewer fatigue): order by |overall_weight| descending so the
         # highest-impact / most-decisive proposals surface first, then by id.
-        items = sorted(
+        demo_items = sorted(
             queue.pending(),
             key=lambda it: (
                 -(abs(it.overall_weight) if it.overall_weight is not None else 0.0),
@@ -332,7 +468,9 @@ def build_curation_router() -> APIRouter:
             ),
         )
         rows = [
-            _item_to_row(it, it.item_id in decided) for it in items if it.item_id not in decided
+            _item_to_row(it, it.item_id in decided)
+            for it in demo_items
+            if it.item_id not in decided
         ]
         if tier:
             wanted = f"tier {tier}"
@@ -351,6 +489,14 @@ def build_curation_router() -> APIRouter:
         item = queue.get(item_id)
         if item is None:
             raise HTTPException(status_code=404, detail="no such review item")
+        if _pg_backed(queue):
+            history = queue.decisions(item_id)
+            row = _item_to_row(item, bool(history))
+            row["history"] = [d.to_row() for d in history]
+            row["evidence"] = _camera_evidence(queue, item, contributor)
+            if _wants_html(request):
+                return HTMLResponse(_render_item_html(row))
+            return JSONResponse(row)
         row = _item_to_row(item, item.item_id in log.decided_item_ids())
         row["history"] = [
             r.to_row() for r in log.records(action="review_decision", target_id=item_id)
@@ -371,13 +517,50 @@ def build_curation_router() -> APIRouter:
         if item is None:
             raise HTTPException(status_code=404, detail="no such review item")
         params = await _read_params(request)
+        reason = (params.get("reason") or params.get("rationale") or "").strip()
+        if _pg_backed(queue):
+            # PG-backed (P31.10): only accept/reject reach review_decision —
+            # "defer"/"unsure" writes NOTHING and leaves the item pending (the
+            # schema's CHECK admits no third state; persisting "unsure" needs a
+            # new sqitch change + ADR, deliberately not built here).
+            decision = (params.get("decision") or "").strip().lower()
+            if decision in _PG_UNDECIDED:
+                return _ok(
+                    request,
+                    {
+                        "item_id": item_id,
+                        "deferred": True,
+                        "review_decision": None,
+                        "pending": True,
+                    },
+                    redirect="/v1/curation/review-queue",
+                )
+            mapped = _PG_DECIDE.get(decision)
+            if mapped is None:
+                raise HTTPException(
+                    status_code=400,
+                    detail=(
+                        f"decision must be one of {sorted(_PG_DECISIONS)} "
+                        "(only accept/reject persist; defer/unsure write nothing)"
+                    ),
+                )
+            try:
+                recorded = queue.decide(
+                    item_id, mapped, reviewer=contributor.handle, rationale=reason or None
+                )
+            except ValueError as exc:
+                raise HTTPException(status_code=400, detail=str(exc)) from exc
+            return _ok(
+                request,
+                {"recorded": recorded.to_row(), "review_decision": mapped},
+                redirect="/v1/curation/review-queue",
+            )
         decision = (params.get("decision") or "").strip().lower()
         if decision not in _ER_DECISIONS:
             raise HTTPException(
                 status_code=400,
                 detail=f"decision must be one of {sorted(_ER_DECISIONS)} (a human choice)",
             )
-        reason = (params.get("reason") or params.get("rationale") or "").strip()
         # A model-assisted proposal's decision MUST log the model/prompt that
         # proposed it (SIG-IDENT-026); the suggestion itself never auto-applies.
         payload: dict[str, Any] = {"decision": decision, "reason": reason}
@@ -587,6 +770,126 @@ def build_curation_router() -> APIRouter:
     return router
 
 
+# --------------------------------------------------------------------------- #
+# Zero-JS HTML review surface (PG-backed queue, Accept: text/html)             #
+# --------------------------------------------------------------------------- #
+# The loopback curation app is the surface a Round-10 reviewer actually works
+# (ADR-068: a separate authenticated process). Plain HTML + POST forms only —
+# no client script anywhere (the zero-JS rule binds here too, it's just the
+# only place forms may live). Coordinates are already reduced to the
+# contributor's geo tier by _camera_evidence before they reach these helpers.
+
+
+def _esc(value: Any) -> str:
+    import html as _html
+
+    return _html.escape("" if value is None else str(value))
+
+
+def _page(title: str, body: str) -> str:
+    return (
+        "<!doctype html><html><head><meta charset='utf-8'>"
+        f"<title>{_esc(title)}</title></head><body>"
+        f"<h1>{_esc(title)}</h1>{body}</body></html>"
+    )
+
+
+def _render_queue_html(rows: list[dict[str, Any]], filters: dict[str, Any]) -> str:
+    """The pending camera-site queue as a zero-JS link list."""
+    f = "".join(f"<li>{_esc(k)}: {_esc(v)}</li>" for k, v in filters.items() if v is not None)
+    items = "".join(
+        f"<tr><td><a href='/v1/curation/review-queue/{_esc(r['item_id'])}'>"
+        f"{_esc(r['item_id'])}</a></td>"
+        f"<td>{_esc(r.get('stratum'))}</td><td>{_esc(r['summary'])}</td></tr>"
+        for r in rows
+    )
+    return _page(
+        "Review queue",
+        f"<p>Pending: {len(rows)}</p>"
+        + (f"<p>Filters</p><ul>{f}</ul>" if f else "")
+        + "<form method='get'><p>Filter: "
+        "<input name='tier' placeholder='tier (e.g. 4)'> "
+        "<input name='bucket' placeholder='bucket (e.g. soft-conflict)'> "
+        "<input name='campaign' placeholder='campaign id'> "
+        "<button type='submit'>Apply</button></p></form>"
+        + "<table><thead><tr><th>item</th><th>stratum</th><th>summary</th></tr>"
+        f"</thead><tbody>{items}</tbody></table>",
+    )
+
+
+def _observation_rows(obs: dict[str, Any] | None) -> str:
+    if obs is None:
+        return "<td>(no observation found)</td>"
+    fields = (
+        "subject_id",
+        "source_id",
+        "external_ref",
+        "name",
+        "roadway",
+        "direction",
+        "operator",
+        "jurisdiction",
+        "camera_type",
+        "latitude",
+        "longitude",
+        "location",
+        "geo_tier",
+    )
+    return (
+        "<td><table>"
+        + "".join(
+            f"<tr><th>{k}</th><td>{_esc(obs.get(k))}</td></tr>"
+            for k in fields
+            if obs.get(k) is not None
+        )
+        + "</table></td>"
+    )
+
+
+def _render_item_html(row: dict[str, Any]) -> str:
+    """One camera-site pair: the two observations side by side + a decide form."""
+    ev = row.get("evidence") or {}
+    evidence_bits = []
+    for key in ("distance_m", "tier", "tier_label", "rule", "reason", "stratum", "score"):
+        if ev.get(key) is not None:
+            evidence_bits.append(f"<li>{key}: {_esc(ev[key])}</li>")
+    soft = ev.get("soft_conflicts") or []
+    if soft:
+        evidence_bits.append(f"<li>soft conflicts: {_esc(', '.join(map(str, soft)))}</li>")
+    labels = ev.get("adjudicator_labels") or {}
+    if labels:
+        bits = ", ".join(f"{_esc(k)}: {_esc(v)}" for k, v in labels.items())
+        evidence_bits.append(f"<li>adjudicator labels: {bits}</li>")
+    history = row.get("history") or []
+    hist = "".join(
+        f"<li>{_esc(h.get('decision'))} by {_esc(h.get('reviewer'))} "
+        f"at {_esc(h.get('decided_at'))} — {_esc(h.get('rationale'))}</li>"
+        for h in history
+    )
+    item_id = _esc(row["item_id"])
+    body = (
+        f"<p>{_esc(row['summary'])}</p>"
+        f"<ul>{''.join(evidence_bits)}</ul>"
+        "<table><thead><tr><th>left observation</th><th>right observation</th></tr></thead>"
+        f"<tbody><tr>{_observation_rows(ev.get('left_observation'))}"
+        f"{_observation_rows(ev.get('right_observation'))}</tr></tbody></table>"
+        + (f"<p>Decision history</p><ul>{hist}</ul>" if hist else "")
+        + (
+            f"<form method='post' action='/v1/curation/review-queue/{item_id}/decide'>"
+            "<fieldset><legend>Decision</legend>"
+            "<label><input type='radio' name='decision' value='match' required> "
+            "Match — the two records are the same camera</label><br>"
+            "<label><input type='radio' name='decision' value='no-match'> "
+            "No match — they are different cameras</label><br>"
+            "<label><input type='radio' name='decision' value='defer'> "
+            "Defer — writes nothing; the item stays pending</label><br>"
+            "<input name='reason' placeholder='reason (recommended)'>"
+            "<button type='submit'>Record decision</button></fieldset></form>"
+        )
+    )
+    return _page(f"Review item {row['item_id']}", body)
+
+
 def _seed_demo_queue() -> ReviewQueue:
     """A small demo review queue so ``sig-api serve-curation`` has something to work.
 
@@ -632,7 +935,8 @@ def _seed_demo_queue() -> ReviewQueue:
 
 def create_curation_app(
     *,
-    review_queue: ReviewQueue | None = None,
+    review_queue: ReviewQueue | PgReviewQueue | None = None,
+    dsn: str | None = None,
     curation_log: CurationLog | None = None,
     tier_token_store: TierTokenStore | None = None,
     enabled: bool | None = None,
@@ -645,6 +949,13 @@ def create_curation_app(
     flag) can never expose it. When enabled, the app authenticates against the
     issue/invite-based, env-provisioned :class:`~api.tier_tokens.TierTokenStore`
     (ADR-100) — injected for tests, else loaded from the environment.
+
+    With ``dsn`` the review queue is the **PostgreSQL** one (P31.10):
+    ``PgReviewQueue`` over ``review_item``/``review_decision``, so the
+    camera-site proposals materialized by ``sig-resolution camera-sites`` are
+    the queue and ``decide`` appends real ``review_decision`` rows. Without a
+    DSN the app keeps the in-memory demo seed + ``CurationLog`` (the JSONL path
+    every existing test drives).
     """
     is_enabled = curation_enabled() if enabled is None else enabled
     store = tier_token_store if tier_token_store is not None else load_tier_token_store()
@@ -676,7 +987,12 @@ def create_curation_app(
         }
 
     if is_enabled:
-        app.state.review_queue = review_queue if review_queue is not None else _seed_demo_queue()
+        if review_queue is not None:
+            app.state.review_queue = review_queue
+        elif dsn:
+            app.state.review_queue = PgReviewQueue.from_dsn(dsn)
+        else:
+            app.state.review_queue = _seed_demo_queue()
         app.state.curation_log = curation_log if curation_log is not None else CurationLog()
         # Opt-in, AGGREGATE-ONLY onboarding timing (SIG-CONTRIB-003, Part VIII §0.7):
         # a count + median only — never a per-user row (see the /submission hook).

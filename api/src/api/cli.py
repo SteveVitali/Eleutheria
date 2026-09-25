@@ -50,6 +50,18 @@ def build_parser() -> argparse.ArgumentParser:
     )
     curate.add_argument("--host", default="127.0.0.1", help="Bind host (default 127.0.0.1).")
     curate.add_argument("--port", type=int, default=8001, help="Bind port (default 8001).")
+    curate.add_argument(
+        "--dsn",
+        default=None,
+        help="Back the review queue with PostgreSQL (P31.10: review_item / "
+        "append-only review_decision) instead of the demo seed queue.",
+    )
+    curate.add_argument(
+        "--role",
+        default=None,
+        help="Optional PostgreSQL role to SET ROLE to on the queue connection "
+        "(e.g. sig_materialize, the least-privilege write role).",
+    )
     return parser
 
 
@@ -76,7 +88,7 @@ def _serve(host: str, port: int, dsn: str | None = None, role: str | None = None
     return 0
 
 
-def _serve_curation(host: str, port: int) -> int:
+def _serve_curation(host: str, port: int, dsn: str | None = None, role: str | None = None) -> int:
     import uvicorn
 
     from .curation import create_curation_app, curation_enabled
@@ -88,7 +100,15 @@ def _serve_curation(host: str, port: int) -> int:
             "on this non-public process only."
         )
         return 3
-    uvicorn.run(create_curation_app(), host=host, port=port)
+    queue = None
+    if dsn:
+        from resolution.camera_sites_pg import set_role
+        from resolution.review_pg import PgReviewQueue
+
+        queue = PgReviewQueue.from_dsn(dsn)
+        if role:
+            set_role(queue.conn, role)
+    uvicorn.run(create_curation_app(review_queue=queue), host=host, port=port)
     return 0
 
 
@@ -99,6 +119,6 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "serve":
         return _serve(args.host, args.port, args.dsn, args.role)
     if args.command == "serve-curation":
-        return _serve_curation(args.host, args.port)
+        return _serve_curation(args.host, args.port, args.dsn, args.role)
     parser.print_help()
     return 0
