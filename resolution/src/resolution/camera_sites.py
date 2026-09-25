@@ -637,20 +637,6 @@ def infer_duplicate_targets(records: Sequence[CameraRecord]) -> dict[str, str]:
     for i, r in enumerate(records):
         by_source[r.source_id].append(i)
 
-    # Target-level proof: two targets of one source whose cited captures share a
-    # content digest served byte-identical content.
-    digests_by_target: dict[tuple[str, str], set[str]] = defaultdict(set)
-    for r in records:
-        if r.target_id:
-            digests_by_target[(r.source_id, r.target_id)].update(r.capture_digests)
-    proven: dict[str, set[frozenset[str]]] = defaultdict(set)
-    for source in sorted(by_source):
-        targets = sorted(t for (s, t) in digests_by_target if s == source)
-        for x_i, t1 in enumerate(targets):
-            for t2 in targets[x_i + 1 :]:
-                if digests_by_target[(source, t1)] & digests_by_target[(source, t2)]:
-                    proven[source].add(frozenset((t1, t2)))
-
     parent: dict[str, str] = {}
 
     def find(x: str) -> str:
@@ -666,24 +652,49 @@ def infer_duplicate_targets(records: Sequence[CameraRecord]) -> dict[str, str]:
             lo, hi = sorted((ra, rb))
             parent[hi] = lo
 
+    def union_group(idxs: list[int]) -> None:
+        for j in idxs[1:]:
+            union(records[idxs[0]].subject_id, records[j].subject_id)
+
+    # Evidence path 1 — row-identical: bucket each source's records by their
+    # row fingerprint; identical rows (with an identifying field) are the same
+    # republished row. Bucketed, never pairwise — a source may carry tens of
+    # thousands of records.
     for source in sorted(by_source):
-        idxs = sorted(by_source[source], key=lambda i: records[i].subject_id)
-        for pos, i in enumerate(idxs):
-            a = records[i]
-            for j in idxs[pos + 1 :]:
-                b = records[j]
-                ref = normalize_ref(a.external_ref)
-                fp_a, fp_b = _row_fingerprint(a), _row_fingerprint(b)
-                row_identical = fp_a == fp_b and (fp_a[0] is not None or bool(fp_a[3]))
-                same_ref = ref is not None and ref == normalize_ref(b.external_ref)
-                proven_targets = (
-                    bool(a.target_id)
-                    and bool(b.target_id)
-                    and a.target_id != b.target_id
-                    and frozenset((a.target_id, b.target_id)) in proven[source]
-                )
-                if row_identical or (proven_targets and same_ref):
-                    union(a.subject_id, b.subject_id)
+        buckets: dict[tuple[Any, ...], list[int]] = defaultdict(list)
+        for i in by_source[source]:
+            buckets[_row_fingerprint(records[i])].append(i)
+        for fp, grp in buckets.items():
+            if len(grp) >= 2 and (fp[0] is not None or bool(fp[3])):
+                union_group(sorted(grp))
+
+    # Evidence path 2 — identical captured content across DISTINCT targets:
+    # (source, ref) buckets hold the records carrying that normalised upstream
+    # reference, keyed by target; two records group only when their targets are
+    # proven byte-identical (share a cited content_digest).
+    digests_by_target: dict[tuple[str, str], set[str]] = defaultdict(set)
+    ref_buckets: dict[tuple[str, str], dict[str, list[int]]] = defaultdict(
+        lambda: defaultdict(list)
+    )
+    for i, r in enumerate(records):
+        if r.target_id:
+            digests_by_target[(r.source_id, r.target_id)].update(r.capture_digests)
+            ref = normalize_ref(r.external_ref)
+            if ref is not None:
+                ref_buckets[(r.source_id, ref)][r.target_id].append(i)
+    for (source, _ref), by_target in sorted(ref_buckets.items()):
+        if len(by_target) < 2:
+            continue
+        # bucket member records by each cited digest of their target
+        by_digest: dict[str, list[int]] = defaultdict(list)
+        for target, idxs in by_target.items():
+            for digest in digests_by_target.get((source, target), ()):
+                by_digest[digest].extend(idxs)
+        for idxs in by_digest.values():
+            # a digest shared across >=2 DISTINCT targets proves the targets
+            # byte-identical — members are the same row republished.
+            if len({records[i].target_id for i in idxs}) >= 2:
+                union_group(sorted(idxs))
 
     members: dict[str, list[str]] = defaultdict(list)
     for r in records:
