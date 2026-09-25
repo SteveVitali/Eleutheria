@@ -62,7 +62,7 @@ artifact_genres:
 - community_map
 - contract
 - official_statement
-count: 127
+count: 180
 predicates:
 - predicate_id: contract_signed_date
   vocab_version: 1.0.0
@@ -3727,3 +3727,1611 @@ predicates:
     official_statement: D1
   object_kind: literal
   maps_to: matched_keyword
+- predicate_id: portal_exists
+  vocab_version: 1.0.0
+  value_datatype: boolean
+  cardinality: single
+  definition: >-
+    Whether the source states the deployment operates a public transparency portal.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/portal_exists
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: latest_observation_wins
+  # P31.8 assessment: connector_run D3; portal_snapshot D2; portal_document D3; official_statement D3; news_article D4; agency_policy D4 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D2
+    council_minutes: D6
+    agency_policy: D4
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D4
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D3
+    community_map: D6
+    contract: D6
+    official_statement: D3
+  object_kind: literal
+- predicate_id: portal_stated_prohibited_use
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: >-
+    A prohibited use the portal states for the deployment's data (verbatim clause).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/portal_stated_prohibited_use
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: latest_observation_wins
+  # P31.8 assessment: connector_run D3; portal_snapshot D3; agency_policy D4; portal_document D3; contract D4; official_statement D4 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D3
+    council_minutes: D6
+    agency_policy: D4
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D3
+    community_map: D6
+    contract: D4
+    official_statement: D4
+  object_kind: literal
+- predicate_id: portal_last_updated_declared
+  vocab_version: 1.0.0
+  value_datatype: edtf
+  cardinality: single
+  definition: >-
+    The freshness stamp the portal declares for its own data (self-reported).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/portal_last_updated_declared
+  volatility_class: VOLATILE
+  half_life: 1mo
+  resolution_strategy: latest_observation_wins
+  # P31.8 assessment: connector_run D3; portal_snapshot D3; portal_document D3 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D3
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D3
+    community_map: D6
+    contract: D6
+    official_statement: D6
+  object_kind: literal
+- predicate_id: vehicles_detected_windowed_count
+  vocab_version: 1.0.0
+  value_datatype: integer
+  cardinality: single
+  definition: >-
+    Windowed vehicles-detected count a portal declares (indexed, not stale — SIG-RECON-011).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/vehicles_detected_windowed_count
+  volatility_class: VOLATILE
+  half_life: 1mo
+  resolution_strategy: interval_union
+  # P31.8 assessment: connector_run D3; portal_snapshot D3; portal_document D4; official_statement D5 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D3
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D4
+    community_map: D6
+    contract: D6
+    official_statement: D5
+  object_kind: literal
+- predicate_id: hotlist_hit_windowed_count
+  vocab_version: 1.0.0
+  value_datatype: integer
+  cardinality: single
+  definition: >-
+    Windowed hotlist-hit count a portal declares (indexed, not stale — SIG-RECON-011).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/hotlist_hit_windowed_count
+  volatility_class: VOLATILE
+  half_life: 1mo
+  resolution_strategy: interval_union
+  # P31.8 assessment: connector_run D3; portal_snapshot D3; portal_document D4; official_statement D5 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D3
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D4
+    community_map: D6
+    contract: D6
+    official_statement: D5
+  object_kind: literal
+- predicate_id: usage_search_windowed_count
+  vocab_version: 1.0.0
+  value_datatype: integer
+  cardinality: single
+  definition: >-
+    Windowed usage-search count a portal declares (indexed, not stale — SIG-RECON-011).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/usage_search_windowed_count
+  volatility_class: VOLATILE
+  half_life: 1mo
+  resolution_strategy: interval_union
+  # P31.8 assessment: connector_run D3; portal_snapshot D3; portal_document D4; official_statement D5 — all other genres D6
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D4
+    community_map: D6
+    contract: D6
+    official_statement: D5
+  object_kind: literal
+  maps_to: windowed_search_count
+- predicate_id: request_text
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: >-
+    The records request's own text, verbatim from the request record.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/request_text
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  # P31.8 assessment: connector_run D1; portal_document D4; official_statement D4 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D1
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D4
+    community_map: D6
+    contract: D6
+    official_statement: D4
+  object_kind: literal
+- predicate_id: requesting_party
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: >-
+    The requesting party the request record names (verbatim; a platform user id is a
+    literal, not an entity).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/requesting_party
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  # P31.8 assessment: connector_run D1; news_article D5; official_statement D5 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D5
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D1
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D6
+    contract: D6
+    official_statement: D5
+  object_kind: literal
+- predicate_id: target_agency
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: >-
+    The agency the request record names as its target (verbatim identifier or name).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/target_agency
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  # P31.8 assessment: connector_run D1; portal_document D4; official_statement D4 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D1
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D4
+    community_map: D6
+    contract: D6
+    official_statement: D4
+  object_kind: literal
+- predicate_id: response_status
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: >-
+    The request's response status as the platform states it (progresses; latest wins).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/response_status
+  volatility_class: MODERATE
+  half_life: 12mo
+  resolution_strategy: latest_observation_wins
+  # P31.8 assessment: connector_run D3; agenda_document D5; portal_document D4; official_statement D4 — all other genres D6
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D5
+    bill_index: D6
+    portal_document: D4
+    community_map: D6
+    contract: D6
+    official_statement: D4
+  object_kind: literal
+  maps_to: records_response_status
+- predicate_id: response_date
+  vocab_version: 1.0.0
+  value_datatype: edtf
+  cardinality: single
+  definition: >-
+    The date the platform states the request was answered.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/response_date
+  volatility_class: MODERATE
+  half_life: 12mo
+  resolution_strategy: latest_observation_wins
+  # P31.8 assessment: connector_run D3; portal_document D4; official_statement D4 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D4
+    community_map: D6
+    contract: D6
+    official_statement: D4
+  object_kind: literal
+- predicate_id: acquisition_method
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: >-
+    The acquisition method a record assigns to the instrument or filing (verbatim code, e.g.
+    'fr.cada').
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/acquisition_method
+  volatility_class: GLACIAL
+  half_life: 10y
+  resolution_strategy: max_support
+  # P31.8 assessment: executed_contract D4; connector_run D3; council_minutes D4; news_article D4; agenda_document D4; portal_document D3; contract D4; official_statement D4; portal_snapshot D3 (a portal capture can quote the acquisition method it declares) — all other genres D6
+  directness:
+    executed_contract: D4
+    invoice: D6
+    portal_snapshot: D3
+    council_minutes: D4
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D4
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D4
+    bill_index: D6
+    portal_document: D3
+    community_map: D6
+    contract: D4
+    official_statement: D4
+  object_kind: literal
+- predicate_id: constrains_technology
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: >-
+    A technology the legal instrument constrains, as the instrument record states it.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/constrains_technology
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  # P31.8 assessment: agency_policy D3; connector_run D3; council_minutes D3; agenda_document D4; bill_index D4; portal_document D4; contract D4; official_statement D4 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D4
+    bill_index: D4
+    portal_document: D4
+    community_map: D6
+    contract: D4
+    official_statement: D4
+  object_kind: literal
+- predicate_id: effective_from
+  vocab_version: 1.0.0
+  value_datatype: edtf
+  cardinality: single
+  definition: >-
+    The date the instrument takes effect, as the record states it.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/effective_from
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  # P31.8 assessment: agency_policy D3; connector_run D3; council_minutes D3; agenda_document D4; bill_index D3; portal_document D4; contract D4; official_statement D4 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D4
+    bill_index: D3
+    portal_document: D4
+    community_map: D6
+    contract: D4
+    official_statement: D4
+  object_kind: literal
+- predicate_id: enacting_body
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: >-
+    The body that enacted the instrument, as the record states it (verbatim).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/enacting_body
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  # P31.8 assessment: agency_policy D3; connector_run D3; council_minutes D3; news_article D4; agenda_document D3; bill_index D3; portal_document D4; contract D5; official_statement D3 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D4
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D3
+    bill_index: D3
+    portal_document: D4
+    community_map: D6
+    contract: D5
+    official_statement: D3
+  object_kind: literal
+- predicate_id: jurisdiction
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: >-
+    The jurisdiction a record assigns to its subject (verbatim name or code).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/jurisdiction
+  volatility_class: GLACIAL
+  half_life: 10y
+  resolution_strategy: max_support
+  # P31.8 assessment: executed_contract D4; invoice D4; portal_snapshot D3; council_minutes D3; agency_policy D3; connector_run D3; news_article D4; agenda_document D4; bill_index D3; portal_document D4; community_map D5; contract D4; official_statement D4 — all other genres D6
+  directness:
+    executed_contract: D4
+    invoice: D4
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D4
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D4
+    bill_index: D3
+    portal_document: D4
+    community_map: D5
+    contract: D4
+    official_statement: D4
+  object_kind: literal
+- predicate_id: citation
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: >-
+    A citation of a legal instrument the record states (verbatim).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/citation
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  # P31.8 assessment: executed_contract D3; invoice D3; portal_snapshot D3; council_minutes D3; agency_policy D3; audit_log D4; news_article D4; connector_run D3; agenda_document D4; bill_index D3; portal_document D4; contract D3; official_statement D3 — all other genres D6
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D4
+    vendor_default_page: D5
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D4
+    bill_index: D3
+    portal_document: D4
+    community_map: D6
+    contract: D3
+    official_statement: D3
+  object_kind: literal
+  maps_to: statutory_citation
+- predicate_id: sunset_date
+  vocab_version: 1.0.0
+  value_datatype: edtf
+  cardinality: single
+  definition: >-
+    The date the instrument sunsets, as the record states it.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/sunset_date
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  # P31.8 assessment: agency_policy D3; connector_run D3; council_minutes D3; agenda_document D4; bill_index D3; contract D5; official_statement D4 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D4
+    bill_index: D3
+    portal_document: D6
+    community_map: D6
+    contract: D5
+    official_statement: D4
+  object_kind: literal
+- predicate_id: as_of
+  vocab_version: 1.0.0
+  value_datatype: edtf
+  cardinality: single
+  definition: >-
+    The 'as of' date a record declares for the data it carries.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/as_of
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  # P31.8 assessment: connector_run D3; portal_snapshot D2; portal_document D3; official_statement D4 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D2
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D3
+    community_map: D6
+    contract: D6
+    official_statement: D4
+  object_kind: literal
+- predicate_id: technology
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: >-
+    A technology the record names for its subject (verbatim name; resolution picks the best-
+    supported, dissenting values stay visible).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/technology
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: max_support
+  # P31.8 assessment: executed_contract D4; invoice D4; portal_snapshot D3; council_minutes D3; agency_policy D3; osm_node_set D4; news_article D3; vendor_default_page D5; camera_registry D4; connector_run D3; agenda_document D3; bill_index D4; portal_document D3; community_map D4; contract D4; official_statement D3 — all other genres D6
+  directness:
+    executed_contract: D4
+    invoice: D4
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D4
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D5
+    camera_registry: D4
+    connector_run: D3
+    agenda_document: D3
+    bill_index: D4
+    portal_document: D3
+    community_map: D4
+    contract: D4
+    official_statement: D3
+  object_kind: literal
+- predicate_id: retention_period
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: >-
+    A retention-period clause a filing or policy states for the subject (verbatim text).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/retention_period
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: latest_observation_wins
+  # P31.8 assessment: executed_contract D4; portal_snapshot D4; council_minutes D3; agency_policy D3; news_article D4; vendor_default_page D5; connector_run D3; agenda_document D5; portal_document D4; contract D4; official_statement D3 — all other genres D6
+  directness:
+    executed_contract: D4
+    invoice: D6
+    portal_snapshot: D4
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D4
+    vendor_default_page: D5
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D5
+    bill_index: D6
+    portal_document: D4
+    community_map: D6
+    contract: D4
+    official_statement: D3
+  object_kind: literal
+- predicate_id: use_restriction
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: >-
+    A use restriction a filing, statute or policy states for the subject (verbatim clause).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/use_restriction
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: max_support
+  # P31.8 assessment: executed_contract D4; council_minutes D3; agency_policy D3; news_article D4; connector_run D3; agenda_document D4; bill_index D4; portal_document D4; contract D3; official_statement D3 — all other genres D6
+  directness:
+    executed_contract: D4
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D4
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D4
+    bill_index: D4
+    portal_document: D4
+    community_map: D6
+    contract: D3
+    official_statement: D3
+  object_kind: literal
+- predicate_id: sharing_restriction
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: >-
+    A sharing restriction a filing, statute or policy states for the subject (verbatim
+    clause).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/sharing_restriction
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: max_support
+  # P31.8 assessment: executed_contract D4; council_minutes D3; agency_policy D3; news_article D4; connector_run D3; agenda_document D4; bill_index D4; portal_document D4; contract D3; official_statement D3 — all other genres D6
+  directness:
+    executed_contract: D4
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D4
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D4
+    bill_index: D4
+    portal_document: D4
+    community_map: D6
+    contract: D3
+    official_statement: D3
+  object_kind: literal
+- predicate_id: legal_authority
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: >-
+    The legal authority a filing or record cites as authorizing the subject (verbatim
+    citation).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/legal_authority
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  # P31.8 assessment: executed_contract D4; council_minutes D4; agency_policy D3; news_article D4; connector_run D3; agenda_document D4; bill_index D4; portal_document D4; contract D4; official_statement D3 — all other genres D6
+  directness:
+    executed_contract: D4
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D4
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D4
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D4
+    bill_index: D4
+    portal_document: D4
+    community_map: D6
+    contract: D4
+    official_statement: D3
+  object_kind: literal
+- predicate_id: ordinance_citation
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: >-
+    The ordinance citation a filing or record states (verbatim).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/ordinance_citation
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  # P31.8 assessment: executed_contract D4; council_minutes D3; agency_policy D3; news_article D4; connector_run D3; agenda_document D3; bill_index D4; portal_document D4; contract D4; official_statement D3 — all other genres D6
+  directness:
+    executed_contract: D4
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D4
+    vendor_default_page: D5
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D3
+    bill_index: D4
+    portal_document: D4
+    community_map: D6
+    contract: D4
+    official_statement: D3
+  object_kind: literal
+  maps_to: statutory_citation
+- predicate_id: disclosure_field_state
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: >-
+    Per-field disclosure-completeness state for a mandated filing
+    ('answered'/'present_but_empty'/'absent'). NOT ADJUDICATED: each claim's discriminating
+    key is the mandated-field name, carried in raw_value, so a per-(subject, predicate)
+    envelope would collapse distinct fields into one 'state' — a fabricated decision.
+    Recorded but deliberately not adjudicated (§12.4, SIG-RECON-013); the claims stay
+    visible on the subject.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/disclosure_field_state
+  volatility_class: MODERATE
+  half_life: 12mo
+  resolution_strategy: never_resolve
+  # P31.8 assessment: agency_policy D3; connector_run D3; agenda_document D4; portal_document D3; official_statement D3 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D4
+    bill_index: D6
+    portal_document: D3
+    community_map: D6
+    contract: D6
+    official_statement: D3
+  object_kind: literal
+- predicate_id: hit_volume_observed
+  vocab_version: 1.0.0
+  value_datatype: integer
+  cardinality: single
+  definition: >-
+    Hit volume a release reports for its subject over the release's own window.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/hit_volume_observed
+  volatility_class: MODERATE
+  half_life: 12mo
+  resolution_strategy: latest_observation_wins
+  # P31.8 assessment: connector_run D3; portal_snapshot D4; news_article D5; portal_document D4; official_statement D4 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D4
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D5
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D4
+    community_map: D6
+    contract: D6
+    official_statement: D4
+  object_kind: literal
+- predicate_id: scan_volume_observed
+  vocab_version: 1.0.0
+  value_datatype: integer
+  cardinality: single
+  definition: >-
+    Scan volume a release reports for its subject over the release's own window.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/scan_volume_observed
+  volatility_class: MODERATE
+  half_life: 12mo
+  resolution_strategy: latest_observation_wins
+  # P31.8 assessment: connector_run D3; portal_snapshot D4; news_article D5; portal_document D4; official_statement D4 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D4
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D5
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D4
+    community_map: D6
+    contract: D6
+    official_statement: D4
+  object_kind: literal
+- predicate_id: non_hit_proportion_observed
+  vocab_version: 1.0.0
+  value_datatype: decimal
+  cardinality: single
+  definition: >-
+    Non-hit proportion a release reports for its subject over the release's own window.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/non_hit_proportion_observed
+  volatility_class: MODERATE
+  half_life: 12mo
+  resolution_strategy: latest_observation_wins
+  # P31.8 assessment: connector_run D3; portal_snapshot D4; news_article D5; portal_document D4; official_statement D4 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D4
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D5
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D4
+    community_map: D6
+    contract: D6
+    official_statement: D4
+  object_kind: literal
+- predicate_id: pooled_lookup_participation
+  vocab_version: 1.0.0
+  value_datatype: boolean
+  cardinality: single
+  definition: >-
+    Whether the release reports the subject participates in a pooled-lookup arrangement.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/pooled_lookup_participation
+  volatility_class: MODERATE
+  half_life: 12mo
+  resolution_strategy: latest_observation_wins
+  # P31.8 assessment: connector_run D3; portal_document D4; official_statement D4 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D4
+    community_map: D6
+    contract: D6
+    official_statement: D4
+  object_kind: literal
+- predicate_id: sharing_partner_degree
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: >-
+    The sharing-partner degree (count bucket) a release reports for its subject.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/sharing_partner_degree
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: max_support
+  # P31.8 assessment: connector_run D3; portal_snapshot D4; news_article D5; portal_document D4; official_statement D4 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D4
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D5
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D4
+    community_map: D6
+    contract: D6
+    official_statement: D4
+  object_kind: literal
+- predicate_id: ai_surveillance_supplier
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: >-
+    A supplier the record attributes an AI-surveillance capability to (verbatim).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/ai_surveillance_supplier
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: max_support
+  # P31.8 assessment: connector_run D3; news_article D4; official_statement D4 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D4
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D6
+    contract: D6
+    official_statement: D4
+  object_kind: literal
+- predicate_id: ai_surveillance_tech_from_china
+  vocab_version: 1.0.0
+  value_datatype: boolean
+  cardinality: single
+  definition: >-
+    Whether the record reports the country sources AI-surveillance technology from China.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/ai_surveillance_tech_from_china
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: max_support
+  # P31.8 assessment: connector_run D3; news_article D4; official_statement D5 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D4
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D6
+    contract: D6
+    official_statement: D5
+  object_kind: literal
+- predicate_id: ai_surveillance_tech_from_us
+  vocab_version: 1.0.0
+  value_datatype: boolean
+  cardinality: single
+  definition: >-
+    Whether the record reports the country sources AI-surveillance technology from the US.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/ai_surveillance_tech_from_us
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: max_support
+  # P31.8 assessment: connector_run D3; news_article D4; official_statement D5 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D4
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D6
+    contract: D6
+    official_statement: D5
+  object_kind: literal
+- predicate_id: uses_ai_surveillance
+  vocab_version: 1.0.0
+  value_datatype: boolean
+  cardinality: single
+  definition: >-
+    Whether the record reports the country uses AI surveillance.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/uses_ai_surveillance
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: max_support
+  # P31.8 assessment: connector_run D3; news_article D4; official_statement D4 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D4
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D6
+    contract: D6
+    official_statement: D4
+  object_kind: literal
+- predicate_id: uses_facial_recognition
+  vocab_version: 1.0.0
+  value_datatype: boolean
+  cardinality: single
+  definition: >-
+    Whether the record reports the country uses facial recognition.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/uses_facial_recognition
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: max_support
+  # P31.8 assessment: connector_run D3; news_article D4; official_statement D4 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D4
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D6
+    contract: D6
+    official_statement: D4
+  object_kind: literal
+- predicate_id: smart_city_surveillance
+  vocab_version: 1.0.0
+  value_datatype: boolean
+  cardinality: single
+  definition: >-
+    Whether the record reports the country runs smart-city surveillance.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/smart_city_surveillance
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: max_support
+  # P31.8 assessment: connector_run D3; news_article D4; official_statement D4 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D4
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D6
+    contract: D6
+    official_statement: D4
+  object_kind: literal
+- predicate_id: smart_policing
+  vocab_version: 1.0.0
+  value_datatype: boolean
+  cardinality: single
+  definition: >-
+    Whether the record reports the country runs smart policing.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/smart_policing
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: max_support
+  # P31.8 assessment: connector_run D3; news_article D4; official_statement D4 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D4
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D6
+    contract: D6
+    official_statement: D4
+  object_kind: literal
+- predicate_id: facial_recognition_status
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: >-
+    The facial-recognition status the record assigns the country (verbatim label).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/facial_recognition_status
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: max_support
+  # P31.8 assessment: connector_run D3; news_article D4; official_statement D4 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D4
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D6
+    contract: D6
+    official_statement: D4
+  object_kind: literal
+- predicate_id: asset_type
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: >-
+    The asset type a map element's tags state (e.g. surveillance:type, verbatim).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/asset_type
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: max_support
+  # P31.8 assessment: osm_node_set D2; camera_registry D3; connector_run D3; community_map D2; news_article D5; official_statement D4 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D2
+    audit_log: D6
+    news_article: D5
+    vendor_default_page: D6
+    camera_registry: D3
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D2
+    contract: D6
+    official_statement: D4
+  object_kind: literal
+- predicate_id: surveillance_zone
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: >-
+    A surveillance-zone tag the map element carries (verbatim; the tag space is polluted
+    with types and booleans — never trusted alone, R1-F1.4).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/surveillance_zone
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: max_support
+  # P31.8 assessment: osm_node_set D2; agency_policy D5; camera_registry D4; connector_run D3; community_map D2; official_statement D5 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D5
+    osm_node_set: D2
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D4
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D2
+    contract: D6
+    official_statement: D5
+  object_kind: literal
+- predicate_id: manufacturer
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: >-
+    The manufacturer the map element's tags state (verbatim; multivalue tags split on ';').
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/manufacturer
+  volatility_class: GLACIAL
+  half_life: 5y
+  resolution_strategy: max_support
+  # P31.8 assessment: osm_node_set D2; camera_registry D3; vendor_default_page D4; connector_run D3; community_map D2; contract D5; official_statement D4 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D2
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D4
+    camera_registry: D3
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D2
+    contract: D5
+    official_statement: D4
+  object_kind: literal
+- predicate_id: manufacturer_qid
+  vocab_version: 1.0.0
+  value_datatype: uriorcurie
+  cardinality: multi
+  definition: >-
+    The manufacturer Wikidata QID the map element's tags state.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/manufacturer_qid
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  # P31.8 assessment: osm_node_set D2; camera_registry D4; connector_run D3; community_map D2 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D2
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D4
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D2
+    contract: D6
+    official_statement: D6
+  object_kind: literal
+- predicate_id: brand
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: >-
+    The brand the map element's tags state (verbatim; multivalue tags split on ';').
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/brand
+  volatility_class: GLACIAL
+  half_life: 5y
+  resolution_strategy: max_support
+  # P31.8 assessment: osm_node_set D2; camera_registry D3; connector_run D3; community_map D2; contract D5; official_statement D4 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D2
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D3
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D2
+    contract: D5
+    official_statement: D4
+  object_kind: literal
+- predicate_id: brand_qid
+  vocab_version: 1.0.0
+  value_datatype: uriorcurie
+  cardinality: multi
+  definition: >-
+    The brand Wikidata QID the map element's tags state.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/brand_qid
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  # P31.8 assessment: osm_node_set D2; camera_registry D4; connector_run D3; community_map D2 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D2
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D4
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D2
+    contract: D6
+    official_statement: D6
+  object_kind: literal
+- predicate_id: operator_stated
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: >-
+    The operator the map element's tags state, verbatim (free text — not a resolved partner
+    identity).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/operator_stated
+  volatility_class: SLOW
+  half_life: 3y
+  resolution_strategy: max_support
+  # P31.8 assessment: osm_node_set D2; camera_registry D2; connector_run D3; agenda_document D5; portal_document D4; community_map D2; contract D5; official_statement D3 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D2
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D2
+    connector_run: D3
+    agenda_document: D5
+    bill_index: D6
+    portal_document: D4
+    community_map: D2
+    contract: D5
+    official_statement: D3
+  object_kind: literal
+- predicate_id: operator_qid
+  vocab_version: 1.0.0
+  value_datatype: uriorcurie
+  cardinality: multi
+  definition: >-
+    The operator Wikidata QID the map element's tags state.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/operator_qid
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  # P31.8 assessment: osm_node_set D2; camera_registry D4; connector_run D3; community_map D2 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D2
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D4
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D2
+    contract: D6
+    official_statement: D6
+  object_kind: literal
+- predicate_id: operator_type
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: >-
+    The operator type the map element's tags state (verbatim).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/operator_type
+  volatility_class: SLOW
+  half_life: 3y
+  resolution_strategy: max_support
+  # P31.8 assessment: osm_node_set D2; camera_registry D4; connector_run D3; community_map D2; official_statement D4 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D2
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D4
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D2
+    contract: D6
+    official_statement: D4
+  object_kind: literal
+- predicate_id: power_arrangement
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: >-
+    The power arrangement the map element's tags state (verbatim).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/power_arrangement
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: max_support
+  # P31.8 assessment: osm_node_set D2; camera_registry D4; connector_run D3; community_map D2 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D2
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D4
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D2
+    contract: D6
+    official_statement: D6
+  object_kind: literal
+- predicate_id: first_observed
+  vocab_version: 1.0.0
+  value_datatype: edtf
+  cardinality: single
+  definition: >-
+    The earliest observation date the map element's tags or history state.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/first_observed
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  # P31.8 assessment: osm_node_set D2; camera_registry D4; connector_run D3; community_map D2 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D2
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D4
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D2
+    contract: D6
+    official_statement: D6
+  object_kind: literal
+- predicate_id: mapping_source
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: >-
+    The source the map element's tags credit for the mapping (verbatim source tag).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/mapping_source
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: max_support
+  # P31.8 assessment: osm_node_set D2; camera_registry D5; connector_run D3; community_map D2 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D2
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D5
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D2
+    contract: D6
+    official_statement: D6
+  object_kind: literal
+- predicate_id: direction
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: >-
+    The facing direction the map element's tags state (bearing or cardinal, verbatim).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/direction
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: max_support
+  # P31.8 assessment: osm_node_set D2; camera_registry D3; connector_run D3; portal_document D5; community_map D2; contract D5; official_statement D5 — all other genres D6
+  directness:
+    executed_contract: D4
+    invoice: D4
+    portal_snapshot: D3
+    council_minutes: D4
+    agency_policy: D6
+    osm_node_set: D2
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D3
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D5
+    community_map: D2
+    contract: D5
+    official_statement: D5
+  object_kind: literal
+  maps_to: camera_direction
+- predicate_id: unmapped_surveillance_tag
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: >-
+    A surveillance tag the element carries that the reviewed vocabulary did not map
+    (verbatim; a research marker, not a classification).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/unmapped_surveillance_tag
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: max_support
+  # P31.8 assessment: osm_node_set D2; camera_registry D4; connector_run D3; community_map D2 — all other genres D6
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D2
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D4
+    connector_run: D3
+    agenda_document: D6
+    bill_index: D6
+    portal_document: D6
+    community_map: D2
+    contract: D6
+    official_statement: D6
+  object_kind: literal
