@@ -1,0 +1,1593 @@
+{
+  "schema": "p31.8/inventory/1.0.0",
+  "label": "before",
+  "measured_at": "2026-09-25T12:34:22Z",
+  "spine": "hosted sig-pg (Cloud SQL), tier-0 claims, read-only as `sig`",
+  "registry": "ontology/generated/registry/predicate_registry.json (at the measuring commit)",
+  "registry_artifact_genres": [
+    "executed_contract",
+    "invoice",
+    "portal_snapshot",
+    "council_minutes",
+    "agency_policy",
+    "osm_node_set",
+    "audit_log",
+    "news_article",
+    "vendor_default_page",
+    "camera_registry",
+    "connector_run"
+  ],
+  "measured_genres": [
+    "agency_policy",
+    "agenda_document",
+    "bill_index",
+    "camera_registry",
+    "community_map",
+    "connector_run",
+    "contract",
+    "executed_contract",
+    "news_article",
+    "official_statement",
+    "portal_document",
+    "portal_snapshot"
+  ],
+  "spine_claims_tier0": 2403886,
+  "distinct_predicates": 118,
+  "predicates_with_registry_row": 56,
+  "claims_on_registered_predicates": 2599222,
+  "claims_with_a_directness_row": 2592223,
+  "claims_admissible_by_directness": 2577798,
+  "definitions": {
+    "has_registry_row": "the predicate has a row in the generated predicate registry the §28 resolver reads",
+    "claims_with_a_directness_row": "claims whose evidence genre has a directness entry on the predicate registry row",
+    "claims_admissible_by_directness": "claims whose genre has a directness entry OTHER than D6 — the claims §28 Phase 1.3 can admit"
+  },
+  "predicates": [
+    {
+      "predicate_id": "camera_operator",
+      "claims": 334668,
+      "claims_by_genre": {
+        "camera_registry": 334668
+      },
+      "observed_at_null": 334668,
+      "subjects": 231769,
+      "has_registry_row": true,
+      "resolution_strategy": "max_support",
+      "claims_with_a_directness_row": 334668,
+      "claims_admissible_by_directness": 334668
+    },
+    {
+      "predicate_id": "external_id",
+      "claims": 295969,
+      "claims_by_genre": {
+        "camera_registry": 280502,
+        "connector_run": 15467
+      },
+      "observed_at_null": 287718,
+      "subjects": 239474,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 295969,
+      "claims_admissible_by_directness": 295969
+    },
+    {
+      "predicate_id": "camera_latitude",
+      "claims": 283201,
+      "claims_by_genre": {
+        "camera_registry": 283201
+      },
+      "observed_at_null": 283201,
+      "subjects": 231769,
+      "has_registry_row": true,
+      "resolution_strategy": "latest_observation_wins",
+      "claims_with_a_directness_row": 283201,
+      "claims_admissible_by_directness": 283201
+    },
+    {
+      "predicate_id": "camera_longitude",
+      "claims": 283195,
+      "claims_by_genre": {
+        "camera_registry": 283195
+      },
+      "observed_at_null": 283195,
+      "subjects": 231769,
+      "has_registry_row": true,
+      "resolution_strategy": "latest_observation_wins",
+      "claims_with_a_directness_row": 283195,
+      "claims_admissible_by_directness": 283195
+    },
+    {
+      "predicate_id": "camera_coordinate_source",
+      "claims": 280502,
+      "claims_by_genre": {
+        "camera_registry": 280502
+      },
+      "observed_at_null": 280502,
+      "subjects": 231769,
+      "has_registry_row": true,
+      "resolution_strategy": "latest_observation_wins",
+      "claims_with_a_directness_row": 280502,
+      "claims_admissible_by_directness": 280502
+    },
+    {
+      "predicate_id": "camera_external_ref",
+      "claims": 280502,
+      "claims_by_genre": {
+        "camera_registry": 280502
+      },
+      "observed_at_null": 280502,
+      "subjects": 231769,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 280502,
+      "claims_admissible_by_directness": 280502
+    },
+    {
+      "predicate_id": "camera_jurisdiction",
+      "claims": 280502,
+      "claims_by_genre": {
+        "camera_registry": 280502
+      },
+      "observed_at_null": 280502,
+      "subjects": 231769,
+      "has_registry_row": true,
+      "resolution_strategy": "max_support",
+      "claims_with_a_directness_row": 280502,
+      "claims_admissible_by_directness": 280502
+    },
+    {
+      "predicate_id": "camera_direction",
+      "claims": 183316,
+      "claims_by_genre": {
+        "camera_registry": 183316
+      },
+      "observed_at_null": 183316,
+      "subjects": 154001,
+      "has_registry_row": true,
+      "resolution_strategy": "max_support",
+      "claims_with_a_directness_row": 183316,
+      "claims_admissible_by_directness": 183316
+    },
+    {
+      "predicate_id": "camera_name",
+      "claims": 65789,
+      "claims_by_genre": {
+        "camera_registry": 65789
+      },
+      "observed_at_null": 65789,
+      "subjects": 42481,
+      "has_registry_row": true,
+      "resolution_strategy": "max_support",
+      "claims_with_a_directness_row": 65789,
+      "claims_admissible_by_directness": 65789
+    },
+    {
+      "predicate_id": "camera_county",
+      "claims": 53014,
+      "claims_by_genre": {
+        "camera_registry": 53014
+      },
+      "observed_at_null": 53014,
+      "subjects": 24946,
+      "has_registry_row": true,
+      "resolution_strategy": "max_support",
+      "claims_with_a_directness_row": 53014,
+      "claims_admissible_by_directness": 53014
+    },
+    {
+      "predicate_id": "products",
+      "claims": 46822,
+      "claims_by_genre": {
+        "connector_run": 46822
+      },
+      "observed_at_null": 1516,
+      "subjects": 2939,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 46822,
+      "claims_admissible_by_directness": 46822
+    },
+    {
+      "predicate_id": "place_of_performance",
+      "claims": 28242,
+      "claims_by_genre": {
+        "connector_run": 28242
+      },
+      "observed_at_null": 0,
+      "subjects": 2287,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 28242,
+      "claims_admissible_by_directness": 28242
+    },
+    {
+      "predicate_id": "camera_roadway",
+      "claims": 22309,
+      "claims_by_genre": {
+        "camera_registry": 22309
+      },
+      "observed_at_null": 22309,
+      "subjects": 17535,
+      "has_registry_row": true,
+      "resolution_strategy": "max_support",
+      "claims_with_a_directness_row": 22309,
+      "claims_admissible_by_directness": 22309
+    },
+    {
+      "predicate_id": "camera_status",
+      "claims": 18656,
+      "claims_by_genre": {
+        "camera_registry": 18656
+      },
+      "observed_at_null": 18656,
+      "subjects": 12591,
+      "has_registry_row": true,
+      "resolution_strategy": "latest_observation_wins",
+      "claims_with_a_directness_row": 18656,
+      "claims_admissible_by_directness": 18656
+    },
+    {
+      "predicate_id": "matched_keyword",
+      "claims": 17968,
+      "claims_by_genre": {
+        "connector_run": 17968
+      },
+      "observed_at_null": 0,
+      "subjects": 1414,
+      "has_registry_row": true,
+      "resolution_strategy": "max_support",
+      "claims_with_a_directness_row": 17968,
+      "claims_admissible_by_directness": 17968
+    },
+    {
+      "predicate_id": "lifecycle_transition",
+      "claims": 15673,
+      "claims_by_genre": {
+        "connector_run": 15673
+      },
+      "observed_at_null": 7786,
+      "subjects": 6461,
+      "has_registry_row": true,
+      "resolution_strategy": "latest_observation_wins",
+      "claims_with_a_directness_row": 15673,
+      "claims_admissible_by_directness": 15673
+    },
+    {
+      "predicate_id": "buyer",
+      "claims": 14582,
+      "claims_by_genre": {
+        "connector_run": 14582
+      },
+      "observed_at_null": 6360,
+      "subjects": 6796,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 14582,
+      "claims_admissible_by_directness": 14582
+    },
+    {
+      "predicate_id": "amount",
+      "claims": 10470,
+      "claims_by_genre": {
+        "connector_run": 10470
+      },
+      "observed_at_null": 4091,
+      "subjects": 5448,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 10470,
+      "claims_admissible_by_directness": 10470
+    },
+    {
+      "predicate_id": "document",
+      "claims": 8560,
+      "claims_by_genre": {
+        "agenda_document": 3037,
+        "connector_run": 3332,
+        "portal_document": 2191
+      },
+      "observed_at_null": 3332,
+      "subjects": 4342,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 3332,
+      "claims_admissible_by_directness": 3332
+    },
+    {
+      "predicate_id": "posted_date",
+      "claims": 8024,
+      "claims_by_genre": {
+        "connector_run": 8024
+      },
+      "observed_at_null": 1728,
+      "subjects": 4014,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 8024,
+      "claims_admissible_by_directness": 8024
+    },
+    {
+      "predicate_id": "description",
+      "claims": 7781,
+      "claims_by_genre": {
+        "connector_run": 7781
+      },
+      "observed_at_null": 59,
+      "subjects": 2975,
+      "has_registry_row": true,
+      "resolution_strategy": "latest_observation_wins",
+      "claims_with_a_directness_row": 7781,
+      "claims_admissible_by_directness": 7781
+    },
+    {
+      "predicate_id": "notice_type",
+      "claims": 6835,
+      "claims_by_genre": {
+        "connector_run": 6835
+      },
+      "observed_at_null": 539,
+      "subjects": 2825,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 6835,
+      "claims_admissible_by_directness": 6835
+    },
+    {
+      "predicate_id": "country",
+      "claims": 6296,
+      "claims_by_genre": {
+        "connector_run": 6296
+      },
+      "observed_at_null": 0,
+      "subjects": 2287,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 6296,
+      "claims_admissible_by_directness": 6296
+    },
+    {
+      "predicate_id": "title",
+      "claims": 6296,
+      "claims_by_genre": {
+        "connector_run": 6296
+      },
+      "observed_at_null": 0,
+      "subjects": 2287,
+      "has_registry_row": true,
+      "resolution_strategy": "latest_observation_wins",
+      "claims_with_a_directness_row": 6296,
+      "claims_admissible_by_directness": 6296
+    },
+    {
+      "predicate_id": "deployment_exists",
+      "claims": 5774,
+      "claims_by_genre": {
+        "agency_policy": 1,
+        "connector_run": 5773
+      },
+      "observed_at_null": 5373,
+      "subjects": 4957,
+      "has_registry_row": true,
+      "resolution_strategy": "max_support",
+      "claims_with_a_directness_row": 5774,
+      "claims_admissible_by_directness": 1
+    },
+    {
+      "predicate_id": "seller",
+      "claims": 5101,
+      "claims_by_genre": {
+        "connector_run": 5101
+      },
+      "observed_at_null": 3088,
+      "subjects": 2788,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 5101,
+      "claims_admissible_by_directness": 5101
+    },
+    {
+      "predicate_id": "portal_last_updated_declared",
+      "claims": 3045,
+      "claims_by_genre": {
+        "connector_run": 3045
+      },
+      "observed_at_null": 3045,
+      "subjects": 1528,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "configured_retention_days",
+      "claims": 2918,
+      "claims_by_genre": {
+        "connector_run": 2918
+      },
+      "observed_at_null": 2918,
+      "subjects": 1464,
+      "has_registry_row": true,
+      "resolution_strategy": "latest_observation_wins",
+      "claims_with_a_directness_row": 2918,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "federal_award_id",
+      "claims": 2906,
+      "claims_by_genre": {
+        "connector_run": 2906
+      },
+      "observed_at_null": 980,
+      "subjects": 1758,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 2906,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "portal_stated_prohibited_use",
+      "claims": 2905,
+      "claims_by_genre": {
+        "connector_run": 2905
+      },
+      "observed_at_null": 2905,
+      "subjects": 1458,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "recipient",
+      "claims": 2895,
+      "claims_by_genre": {
+        "connector_run": 2895
+      },
+      "observed_at_null": 969,
+      "subjects": 1758,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 2895,
+      "claims_admissible_by_directness": 2895
+    },
+    {
+      "predicate_id": "active_device_count",
+      "claims": 2827,
+      "claims_by_genre": {
+        "connector_run": 2826,
+        "official_statement": 1
+      },
+      "observed_at_null": 2826,
+      "subjects": 1419,
+      "has_registry_row": true,
+      "resolution_strategy": "latest_observation_wins",
+      "claims_with_a_directness_row": 2826,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "usage_search_windowed_count",
+      "claims": 2747,
+      "claims_by_genre": {
+        "connector_run": 2747
+      },
+      "observed_at_null": 2747,
+      "subjects": 1380,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "hotlist_hit_windowed_count",
+      "claims": 2549,
+      "claims_by_genre": {
+        "connector_run": 2549
+      },
+      "observed_at_null": 2549,
+      "subjects": 1282,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "response_deadline",
+      "claims": 2527,
+      "claims_by_genre": {
+        "connector_run": 2527
+      },
+      "observed_at_null": 129,
+      "subjects": 987,
+      "has_registry_row": true,
+      "resolution_strategy": "latest_observation_wins",
+      "claims_with_a_directness_row": 2527,
+      "claims_admissible_by_directness": 2527
+    },
+    {
+      "predicate_id": "vehicles_detected_windowed_count",
+      "claims": 2420,
+      "claims_by_genre": {
+        "connector_run": 2420
+      },
+      "observed_at_null": 2420,
+      "subjects": 1216,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "period",
+      "claims": 1926,
+      "claims_by_genre": {
+        "connector_run": 1926
+      },
+      "observed_at_null": 0,
+      "subjects": 879,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 1926,
+      "claims_admissible_by_directness": 1926
+    },
+    {
+      "predicate_id": "content_term",
+      "claims": 1768,
+      "claims_by_genre": {
+        "agenda_document": 1164,
+        "portal_document": 604
+      },
+      "observed_at_null": 0,
+      "subjects": 1011,
+      "has_registry_row": true,
+      "resolution_strategy": "max_support",
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "portal_exists",
+      "claims": 1528,
+      "claims_by_genre": {
+        "connector_run": 1528
+      },
+      "observed_at_null": 1528,
+      "subjects": 1528,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "signed_date",
+      "claims": 1312,
+      "claims_by_genre": {
+        "connector_run": 1312
+      },
+      "observed_at_null": 1312,
+      "subjects": 652,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 1312,
+      "claims_admissible_by_directness": 1312
+    },
+    {
+      "predicate_id": "start_date",
+      "claims": 1312,
+      "claims_by_genre": {
+        "connector_run": 1312
+      },
+      "observed_at_null": 1312,
+      "subjects": 652,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 1312,
+      "claims_admissible_by_directness": 1312
+    },
+    {
+      "predicate_id": "acquisition_channel",
+      "claims": 1306,
+      "claims_by_genre": {
+        "connector_run": 1306
+      },
+      "observed_at_null": 1306,
+      "subjects": 652,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 1306,
+      "claims_admissible_by_directness": 1306
+    },
+    {
+      "predicate_id": "currency",
+      "claims": 1304,
+      "claims_by_genre": {
+        "connector_run": 1304
+      },
+      "observed_at_null": 1304,
+      "subjects": 652,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 1304,
+      "claims_admissible_by_directness": 1304
+    },
+    {
+      "predicate_id": "surveillance_zone",
+      "claims": 1221,
+      "claims_by_genre": {
+        "connector_run": 1221
+      },
+      "observed_at_null": 1221,
+      "subjects": 630,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "award_date",
+      "claims": 1019,
+      "claims_by_genre": {
+        "connector_run": 1019
+      },
+      "observed_at_null": 1019,
+      "subjects": 879,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 1019,
+      "claims_admissible_by_directness": 1019
+    },
+    {
+      "predicate_id": "conditions",
+      "claims": 1005,
+      "claims_by_genre": {
+        "connector_run": 1005
+      },
+      "observed_at_null": 1005,
+      "subjects": 879,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 1005,
+      "claims_admissible_by_directness": 1005
+    },
+    {
+      "predicate_id": "instrument_type",
+      "claims": 974,
+      "claims_by_genre": {
+        "agency_policy": 1,
+        "connector_run": 973
+      },
+      "observed_at_null": 944,
+      "subjects": 909,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 974,
+      "claims_admissible_by_directness": 974
+    },
+    {
+      "predicate_id": "funder",
+      "claims": 947,
+      "claims_by_genre": {
+        "connector_run": 947
+      },
+      "observed_at_null": 947,
+      "subjects": 879,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 947,
+      "claims_admissible_by_directness": 947
+    },
+    {
+      "predicate_id": "asset_type",
+      "claims": 653,
+      "claims_by_genre": {
+        "connector_run": 653
+      },
+      "observed_at_null": 653,
+      "subjects": 651,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "direction",
+      "claims": 623,
+      "claims_by_genre": {
+        "connector_run": 623
+      },
+      "observed_at_null": 623,
+      "subjects": 619,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "camera_type",
+      "claims": 552,
+      "claims_by_genre": {
+        "connector_run": 552
+      },
+      "observed_at_null": 552,
+      "subjects": 550,
+      "has_registry_row": true,
+      "resolution_strategy": "max_support",
+      "claims_with_a_directness_row": 552,
+      "claims_admissible_by_directness": 552
+    },
+    {
+      "predicate_id": "manufacturer",
+      "claims": 528,
+      "claims_by_genre": {
+        "connector_run": 528
+      },
+      "observed_at_null": 528,
+      "subjects": 527,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "manufacturer_qid",
+      "claims": 509,
+      "claims_by_genre": {
+        "connector_run": 509
+      },
+      "observed_at_null": 509,
+      "subjects": 507,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "vendor",
+      "claims": 400,
+      "claims_by_genre": {
+        "connector_run": 400
+      },
+      "observed_at_null": 0,
+      "subjects": 200,
+      "has_registry_row": true,
+      "resolution_strategy": "max_support",
+      "claims_with_a_directness_row": 400,
+      "claims_admissible_by_directness": 400
+    },
+    {
+      "predicate_id": "parent_cooperative_contract",
+      "claims": 392,
+      "claims_by_genre": {
+        "connector_run": 392
+      },
+      "observed_at_null": 392,
+      "subjects": 195,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 392,
+      "claims_admissible_by_directness": 392
+    },
+    {
+      "predicate_id": "renewal_options",
+      "claims": 392,
+      "claims_by_genre": {
+        "connector_run": 392
+      },
+      "observed_at_null": 392,
+      "subjects": 195,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 392,
+      "claims_admissible_by_directness": 392
+    },
+    {
+      "predicate_id": "sharing_partner_degree",
+      "claims": 370,
+      "claims_by_genre": {
+        "connector_run": 370
+      },
+      "observed_at_null": 0,
+      "subjects": 185,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "bill_status",
+      "claims": 350,
+      "claims_by_genre": {
+        "bill_index": 350
+      },
+      "observed_at_null": 350,
+      "subjects": 300,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "bill_status_date",
+      "claims": 350,
+      "claims_by_genre": {
+        "bill_index": 350
+      },
+      "observed_at_null": 350,
+      "subjects": 300,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "bill_external_id",
+      "claims": 348,
+      "claims_by_genre": {
+        "bill_index": 348
+      },
+      "observed_at_null": 348,
+      "subjects": 300,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "bill_identifier",
+      "claims": 348,
+      "claims_by_genre": {
+        "bill_index": 348
+      },
+      "observed_at_null": 348,
+      "subjects": 300,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "bill_jurisdiction",
+      "claims": 348,
+      "claims_by_genre": {
+        "bill_index": 348
+      },
+      "observed_at_null": 348,
+      "subjects": 300,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "bill_matched_keyword",
+      "claims": 348,
+      "claims_by_genre": {
+        "bill_index": 348
+      },
+      "observed_at_null": 348,
+      "subjects": 300,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "bill_session",
+      "claims": 348,
+      "claims_by_genre": {
+        "bill_index": 348
+      },
+      "observed_at_null": 348,
+      "subjects": 300,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "bill_title",
+      "claims": 348,
+      "claims_by_genre": {
+        "bill_index": 348
+      },
+      "observed_at_null": 348,
+      "subjects": 300,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "hit_volume_observed",
+      "claims": 340,
+      "claims_by_genre": {
+        "connector_run": 340
+      },
+      "observed_at_null": 0,
+      "subjects": 170,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "scan_volume_observed",
+      "claims": 338,
+      "claims_by_genre": {
+        "connector_run": 338
+      },
+      "observed_at_null": 0,
+      "subjects": 169,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "non_hit_proportion_observed",
+      "claims": 322,
+      "claims_by_genre": {
+        "connector_run": 322
+      },
+      "observed_at_null": 0,
+      "subjects": 161,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "configured_sharing_partner",
+      "claims": 260,
+      "claims_by_genre": {
+        "connector_run": 260
+      },
+      "observed_at_null": 0,
+      "subjects": 130,
+      "has_registry_row": true,
+      "resolution_strategy": "latest_observation_wins",
+      "claims_with_a_directness_row": 260,
+      "claims_admissible_by_directness": 260
+    },
+    {
+      "predicate_id": "pooled_lookup_participation",
+      "claims": 260,
+      "claims_by_genre": {
+        "connector_run": 260
+      },
+      "observed_at_null": 0,
+      "subjects": 130,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "camera_mount",
+      "claims": 221,
+      "claims_by_genre": {
+        "connector_run": 221
+      },
+      "observed_at_null": 221,
+      "subjects": 221,
+      "has_registry_row": true,
+      "resolution_strategy": "max_support",
+      "claims_with_a_directness_row": 221,
+      "claims_admissible_by_directness": 221
+    },
+    {
+      "predicate_id": "ai_surveillance_supplier",
+      "claims": 207,
+      "claims_by_genre": {
+        "connector_run": 207
+      },
+      "observed_at_null": 0,
+      "subjects": 74,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "facial_recognition_status",
+      "claims": 194,
+      "claims_by_genre": {
+        "connector_run": 194
+      },
+      "observed_at_null": 0,
+      "subjects": 193,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "ai_surveillance_tech_from_china",
+      "claims": 75,
+      "claims_by_genre": {
+        "connector_run": 75
+      },
+      "observed_at_null": 0,
+      "subjects": 75,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "ai_surveillance_tech_from_us",
+      "claims": 75,
+      "claims_by_genre": {
+        "connector_run": 75
+      },
+      "observed_at_null": 0,
+      "subjects": 75,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "bill_chamber",
+      "claims": 75,
+      "claims_by_genre": {
+        "bill_index": 75
+      },
+      "observed_at_null": 75,
+      "subjects": 72,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "smart_city_surveillance",
+      "claims": 75,
+      "claims_by_genre": {
+        "connector_run": 75
+      },
+      "observed_at_null": 0,
+      "subjects": 75,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "smart_policing",
+      "claims": 75,
+      "claims_by_genre": {
+        "connector_run": 75
+      },
+      "observed_at_null": 0,
+      "subjects": 75,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "uses_ai_surveillance",
+      "claims": 75,
+      "claims_by_genre": {
+        "connector_run": 75
+      },
+      "observed_at_null": 0,
+      "subjects": 75,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "uses_facial_recognition",
+      "claims": 75,
+      "claims_by_genre": {
+        "connector_run": 75
+      },
+      "observed_at_null": 0,
+      "subjects": 75,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "disclosure_field_state",
+      "claims": 60,
+      "claims_by_genre": {
+        "connector_run": 60
+      },
+      "observed_at_null": 0,
+      "subjects": 1,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "operator_stated",
+      "claims": 56,
+      "claims_by_genre": {
+        "connector_run": 56
+      },
+      "observed_at_null": 56,
+      "subjects": 56,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "operator_qid",
+      "claims": 34,
+      "claims_by_genre": {
+        "connector_run": 34
+      },
+      "observed_at_null": 34,
+      "subjects": 34,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "jurisdiction",
+      "claims": 29,
+      "claims_by_genre": {
+        "connector_run": 29
+      },
+      "observed_at_null": 0,
+      "subjects": 29,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "acquisition_method",
+      "claims": 26,
+      "claims_by_genre": {
+        "connector_run": 25,
+        "portal_snapshot": 1
+      },
+      "observed_at_null": 0,
+      "subjects": 26,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "effective_from",
+      "claims": 25,
+      "claims_by_genre": {
+        "connector_run": 25
+      },
+      "observed_at_null": 0,
+      "subjects": 25,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "constrains_technology",
+      "claims": 21,
+      "claims_by_genre": {
+        "connector_run": 21
+      },
+      "observed_at_null": 0,
+      "subjects": 21,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "operator_type",
+      "claims": 17,
+      "claims_by_genre": {
+        "connector_run": 17
+      },
+      "observed_at_null": 17,
+      "subjects": 17,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "brand",
+      "claims": 11,
+      "claims_by_genre": {
+        "connector_run": 11
+      },
+      "observed_at_null": 11,
+      "subjects": 11,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "brand_qid",
+      "claims": 11,
+      "claims_by_genre": {
+        "connector_run": 11
+      },
+      "observed_at_null": 11,
+      "subjects": 11,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "citation",
+      "claims": 10,
+      "claims_by_genre": {
+        "connector_run": 10
+      },
+      "observed_at_null": 0,
+      "subjects": 10,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "technology",
+      "claims": 9,
+      "claims_by_genre": {
+        "connector_run": 9
+      },
+      "observed_at_null": 0,
+      "subjects": 4,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "ordinance_citation",
+      "claims": 8,
+      "claims_by_genre": {
+        "connector_run": 8
+      },
+      "observed_at_null": 0,
+      "subjects": 2,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "legal_authority",
+      "claims": 6,
+      "claims_by_genre": {
+        "connector_run": 6
+      },
+      "observed_at_null": 0,
+      "subjects": 1,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "sunset_date",
+      "claims": 5,
+      "claims_by_genre": {
+        "agency_policy": 1,
+        "connector_run": 4
+      },
+      "observed_at_null": 0,
+      "subjects": 5,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "power_arrangement",
+      "claims": 4,
+      "claims_by_genre": {
+        "connector_run": 4
+      },
+      "observed_at_null": 4,
+      "subjects": 4,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "unmapped_surveillance_tag",
+      "claims": 3,
+      "claims_by_genre": {
+        "connector_run": 3
+      },
+      "observed_at_null": 3,
+      "subjects": 2,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "use_restriction",
+      "claims": 3,
+      "claims_by_genre": {
+        "connector_run": 3
+      },
+      "observed_at_null": 0,
+      "subjects": 1,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "authorization_state",
+      "claims": 2,
+      "claims_by_genre": {
+        "agency_policy": 1,
+        "connector_run": 1
+      },
+      "observed_at_null": 0,
+      "subjects": 2,
+      "has_registry_row": true,
+      "resolution_strategy": "latest_observation_wins",
+      "claims_with_a_directness_row": 2,
+      "claims_admissible_by_directness": 1
+    },
+    {
+      "predicate_id": "claimed_device_count",
+      "claims": 2,
+      "claims_by_genre": {
+        "news_article": 2
+      },
+      "observed_at_null": 0,
+      "subjects": 1,
+      "has_registry_row": true,
+      "resolution_strategy": "latest_observation_wins",
+      "claims_with_a_directness_row": 2,
+      "claims_admissible_by_directness": 2
+    },
+    {
+      "predicate_id": "enacting_body",
+      "claims": 2,
+      "claims_by_genre": {
+        "agency_policy": 1,
+        "connector_run": 1
+      },
+      "observed_at_null": 0,
+      "subjects": 2,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "mapping_source",
+      "claims": 2,
+      "claims_by_genre": {
+        "connector_run": 2
+      },
+      "observed_at_null": 2,
+      "subjects": 2,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "retention_period",
+      "claims": 2,
+      "claims_by_genre": {
+        "connector_run": 2
+      },
+      "observed_at_null": 0,
+      "subjects": 1,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "sharing_restriction",
+      "claims": 2,
+      "claims_by_genre": {
+        "connector_run": 2
+      },
+      "observed_at_null": 0,
+      "subjects": 1,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "statutory_citation",
+      "claims": 2,
+      "claims_by_genre": {
+        "agency_policy": 1,
+        "connector_run": 1
+      },
+      "observed_at_null": 0,
+      "subjects": 2,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 2,
+      "claims_admissible_by_directness": 1
+    },
+    {
+      "predicate_id": "as_of",
+      "claims": 1,
+      "claims_by_genre": {
+        "connector_run": 1
+      },
+      "observed_at_null": 0,
+      "subjects": 1,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "contracted_device_count",
+      "claims": 1,
+      "claims_by_genre": {
+        "contract": 1
+      },
+      "observed_at_null": 0,
+      "subjects": 1,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "contract_signed_date",
+      "claims": 1,
+      "claims_by_genre": {
+        "executed_contract": 1
+      },
+      "observed_at_null": 0,
+      "subjects": 1,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 1,
+      "claims_admissible_by_directness": 1
+    },
+    {
+      "predicate_id": "contract_value",
+      "claims": 1,
+      "claims_by_genre": {
+        "executed_contract": 1
+      },
+      "observed_at_null": 0,
+      "subjects": 1,
+      "has_registry_row": true,
+      "resolution_strategy": "authoritative_source_wins",
+      "claims_with_a_directness_row": 1,
+      "claims_admissible_by_directness": 1
+    },
+    {
+      "predicate_id": "first_observed",
+      "claims": 1,
+      "claims_by_genre": {
+        "connector_run": 1
+      },
+      "observed_at_null": 1,
+      "subjects": 1,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "implements_technology",
+      "claims": 1,
+      "claims_by_genre": {
+        "agency_policy": 1
+      },
+      "observed_at_null": 0,
+      "subjects": 1,
+      "has_registry_row": true,
+      "resolution_strategy": "max_support",
+      "claims_with_a_directness_row": 1,
+      "claims_admissible_by_directness": 1
+    },
+    {
+      "predicate_id": "mapped_device_count",
+      "claims": 1,
+      "claims_by_genre": {
+        "community_map": 1
+      },
+      "observed_at_null": 0,
+      "subjects": 1,
+      "has_registry_row": true,
+      "resolution_strategy": "max_support",
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "procurement_state",
+      "claims": 1,
+      "claims_by_genre": {
+        "executed_contract": 1
+      },
+      "observed_at_null": 0,
+      "subjects": 1,
+      "has_registry_row": true,
+      "resolution_strategy": "latest_observation_wins",
+      "claims_with_a_directness_row": 1,
+      "claims_admissible_by_directness": 1
+    },
+    {
+      "predicate_id": "requesting_party",
+      "claims": 1,
+      "claims_by_genre": {
+        "connector_run": 1
+      },
+      "observed_at_null": 1,
+      "subjects": 1,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "request_text",
+      "claims": 1,
+      "claims_by_genre": {
+        "connector_run": 1
+      },
+      "observed_at_null": 1,
+      "subjects": 1,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "response_date",
+      "claims": 1,
+      "claims_by_genre": {
+        "connector_run": 1
+      },
+      "observed_at_null": 1,
+      "subjects": 1,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "response_status",
+      "claims": 1,
+      "claims_by_genre": {
+        "connector_run": 1
+      },
+      "observed_at_null": 1,
+      "subjects": 1,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    },
+    {
+      "predicate_id": "target_agency",
+      "claims": 1,
+      "claims_by_genre": {
+        "connector_run": 1
+      },
+      "observed_at_null": 1,
+      "subjects": 1,
+      "has_registry_row": false,
+      "resolution_strategy": null,
+      "claims_with_a_directness_row": 0,
+      "claims_admissible_by_directness": 0
+    }
+  ]
+}
