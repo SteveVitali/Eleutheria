@@ -71,10 +71,23 @@ CROSSWALK_SCHEMES: Mapping[str, str] = {
 assert set(CROSSWALK_SCHEMES.values()) | {PARTNER_NAME_SCHEME} == PARTNER_ORG_SCHEMES
 
 #: The partner predicates the connectors emit entity-ref claims for (ADR-112 §3, the
-#: re-confirmed connector inventory). Procurement §11.11/§11.12 parties, the
-#: accountability event's organisations (§11.17), and the camera registry's operator.
+#: re-confirmed connector inventory; ADR-113 adds the P31.6 pair). Procurement
+#: §11.11/§11.12 parties, the accountability event's organisations (§11.17), the
+#: camera registry's operator, the Data Driven release's `vendor`, and the §12.2
+#: configured-access edge predicate (named partners — data_driven twins it through
+#: ``partner_ref_rows``; the flock/audit connectors attach the ref on the edge claim
+#: itself, not through this helper). Each connector twins only its own subset.
 PARTNER_PREDICATES: frozenset[str] = frozenset(
-    {"buyer", "seller", "recipient", "funder", "event_organizations", "camera_operator"}
+    {
+        "buyer",
+        "seller",
+        "recipient",
+        "funder",
+        "event_organizations",
+        "camera_operator",
+        "vendor",
+        "configured_sharing_partner",
+    }
 )
 
 _NON_WORD = re.compile(r"[^a-z]")

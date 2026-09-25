@@ -1080,7 +1080,7 @@ predicates:
     news_article: D3
     vendor_default_page: D6
     camera_registry: D6
-    connector_run: D6
+    connector_run: D3
   object_kind: entity_ref
   maps_to: configured_sharing_partner_set
 - predicate_id: configured_access_edge

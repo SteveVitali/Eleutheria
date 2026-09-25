@@ -1173,7 +1173,7 @@
         "agency_policy": "D3",
         "audit_log": "D4",
         "camera_registry": "D6",
-        "connector_run": "D6",
+        "connector_run": "D3",
         "council_minutes": "D4",
         "executed_contract": "D6",
         "invoice": "D6",
