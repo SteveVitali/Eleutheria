@@ -253,8 +253,9 @@ def test_camera_coordinate_resolves_from_its_capture_time_and_reruns_plus_zero(
     assert float(row[0]) == 35.4676
     assert row[1] == "latest_observation_wins"
     assert row[2] == "uncontested"
-    # the capture-time dating is an inference and is labelled on the stored decision.
-    assert "SIG-RECON-008:observed_at=capture_retrieved_at" in row[3]["rules_fired"]
+    # the capture-time dating is an inference and is labelled on the stored decision
+    # (P31.7 / ADR-R9-RESIGHT: the LATEST sighting, now that re-sightings are linked).
+    assert "SIG-RECON-008:observed_at=capture_retrieved_at_latest" in row[3]["rules_fired"]
 
     again = materialize_resolutions(conn, subject=str(subject), as_of=date(2026, 9, 24))
     assert again.inserted == 0 and again.skipped_existing == 1

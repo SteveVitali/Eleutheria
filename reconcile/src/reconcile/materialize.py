@@ -11,9 +11,14 @@ runs the §28 resolver (:func:`reconcile.resolve.RESOLVE`) over the real spine a
 demands:
 
 * **Append-only (ADR-005, §16.4).** A resolution is a stored decision. This module only
-  ``INSERT``s — there is no ``UPDATE``/``DELETE`` path. A genuinely changed input yields
-  a new SIG-RECON-020 ``input_digest`` and a *superseding* decision (close the prior
-  ``sys_period`` first); a re-run over unchanged inputs is a no-op.
+  ``INSERT``s decision rows — there is no ``UPDATE``/``DELETE`` path on them. A
+  genuinely changed input yields a new SIG-RECON-020 ``input_digest`` and a
+  *superseding* decision; since P31.7 (ADR-R9-RESIGHT, when re-sighting links made
+  capture-dated inputs actually change) the prior live ``auto`` decision's
+  ``sys_period`` is closed first by the SECURITY DEFINER
+  ``close_superseded_resolutions`` (§16.4's sanctioned supersession — a closed
+  decision is kept as history, never edited in place or deleted); a re-run over
+  unchanged inputs is a no-op.
 * **Idempotent (+0).** The insert is ``ON CONFLICT (input_digest) DO NOTHING`` against
   the ``resolution_input_digest_key`` partial unique index (the ``resolution_materialize``
   sqitch change), so replaying the materializer over the same claims inserts each
@@ -104,6 +109,13 @@ class MaterializeSummary:
     skipped_unresolvable: int = 0
     resolved: int = 0
     unresolved: int = 0
+    #: Live ``auto`` decisions this pass superseded — their ``sys_period`` was closed
+    #: by ``close_superseded_resolutions`` because the re-sighting-aware
+    #: ``input_digest`` changed (P31.7 / ADR-R9-RESIGHT).
+    superseded: int = 0
+    #: Pairs left to a live NON-``auto`` (human) decision with a different digest:
+    #: never auto-superseded, never crashed on — counted and reported.
+    skipped_pinned: int = 0
 
     @property
     def written(self) -> int:
@@ -117,6 +129,8 @@ class MaterializeSummary:
             "skipped_unresolvable": self.skipped_unresolvable,
             "resolved": self.resolved,
             "unresolved": self.unresolved,
+            "superseded": self.superseded,
+            "skipped_pinned": self.skipped_pinned,
         }
 
 
@@ -128,23 +142,28 @@ def _as_date(value: Any) -> date:
     return date(1970, 1, 1)
 
 
-#: The capture-time fallback for a claim that carries no ``observed_at`` (ADR-104). A
-#: registry connector deliberately keeps the per-run retrieval timestamp out of the claim
-#: (so an unchanged registry does not mint duplicate claims), which leaves
-#: ``claim.observed_at`` NULL; the capture's ``retrieved_at`` is when the source was seen
-#: asserting the value. The EARLIEST capture is used — stable as later captures accrue
-#: (no decision churn) and conservative (currency ages from the first sighting, never
-#: looks fresher than the evidence). The lateral only runs for undated claims. Alias
-#: ``cap``; select ``cap.retrieved_at``.
+#: The capture-time fallback for a claim that carries no ``observed_at`` (ADR-104,
+#: revised by ADR-R9-RESIGHT). A registry connector deliberately keeps the per-run
+#: retrieval timestamp out of the claim (so an unchanged registry does not mint
+#: duplicate claims), which leaves ``claim.observed_at`` NULL; the capture's
+#: ``retrieved_at`` is when the source was seen asserting the value. Since P31.7 every
+#: re-sighting is linked (``record_resightings``), so the LATEST capture is used — the
+#: most recent time the source was seen asserting the value. That is what makes a
+#: reverting A → B → A value resolve to A under ``latest_observation_wins``: the
+#: restated A's latest sighting post-dates B's. The lateral only runs for undated
+#: claims. Alias ``cap``; select ``cap.retrieved_at``.
 CAPTURE_TIME_JOIN = (
     "  LEFT JOIN LATERAL ("
-    "     SELECT min(ec2.retrieved_at) AS retrieved_at FROM claim_evidence ce2 "
+    "     SELECT max(ec2.retrieved_at) AS retrieved_at FROM claim_evidence ce2 "
     "       JOIN evidence_capture ec2 ON ec2.capture_id = ce2.capture_id "
     "      WHERE ce2.claim_id = c.claim_id AND c.observed_at IS NULL) cap ON true "
 )
 
-#: ``Claim.observed_at_basis`` for a claim dated from its capture (labelled by the resolver).
-CAPTURE_TIME_BASIS = "capture_retrieved_at"
+#: ``Claim.observed_at_basis`` for a claim dated from its LATEST sighting's capture
+#: (labelled by the resolver in ``rules_fired``). ADR-104's interim name was
+#: ``capture_retrieved_at`` (earliest capture, before re-sightings were linked); the
+#: new name keeps pre/post-ADR-R9-RESIGHT envelopes distinguishable.
+CAPTURE_TIME_BASIS = "capture_retrieved_at_latest"
 
 #: The pre-ADR-104 placeholder for an undated claim with no capture time either.
 _UNDATED = date(1970, 1, 1)
@@ -154,9 +173,10 @@ def observation_time(observed_at: Any, retrieved_at: Any) -> tuple[date, str]:
     """``(observed_at, basis)`` for the resolver's ``Claim`` (ADR-104).
 
     The claim's own ``observed_at`` when it has one (basis ``"claim"``); else the
-    earliest capture's ``retrieved_at`` (basis ``"capture_retrieved_at"``, which the
-    resolver labels in ``rules_fired``); else the historical 1970 placeholder, which
-    makes the claim HISTORICAL — undated evidence is never treated as current.
+    LATEST sighting capture's ``retrieved_at`` (basis ``CAPTURE_TIME_BASIS``, which
+    the resolver labels in ``rules_fired``; ADR-R9-RESIGHT); else the historical
+    1970 placeholder, which makes the claim HISTORICAL — undated evidence is never
+    treated as current.
     """
     if observed_at:
         return _as_date(observed_at), "claim"
@@ -415,6 +435,7 @@ def materialize_resolutions(
     )
 
     considered = inserted = skipped_existing = skipped_unresolvable = 0
+    superseded = skipped_pinned = 0
     resolved_n = unresolved_n = 0
     # The FK vocab rows are few (strategies x rationale codes x confidences); upsert each
     # distinct triple once per pass instead of three round-trips per envelope — the write
@@ -426,10 +447,37 @@ def materialize_resolutions(
     # completes it (+0 for everything already written).
     pending: list[dict[str, Any]] = []
 
-    def flush() -> tuple[int, int]:
-        added = existing = 0
+    def flush() -> tuple[int, int, int, int]:
+        added = existing = closed = pinned = 0
         with conn.transaction():
+            # Supersession (P31.7 / ADR-R9-RESIGHT): a re-sighting moves a claim's
+            # latest-capture date, which changes the SIG-RECON-020 input_digest —
+            # a genuinely changed input yields a NEW decision row and the prior
+            # live decision's ``sys_period`` is closed first (§16.4), never an
+            # in-place edit. ``close_superseded_resolutions`` is SECURITY DEFINER
+            # so ``sig_materialize`` stays INSERT-only; it closes only live
+            # ``decided_by='auto'`` rows whose digest differs, and reports the
+            # pairs a live non-auto (human) decision still holds — those inserts
+            # are skipped, never crashed on and never silently overridden.
+            transitions = conn.execute(
+                "SELECT subject_id::text, predicate_id, action "
+                "FROM close_superseded_resolutions(%s::uuid[], %s::text[], %s::text[])",
+                (
+                    [row["subject_id"] for row in pending],
+                    [row["predicate_id"] for row in pending],
+                    [row["input_digest"] for row in pending],
+                ),
+            ).fetchall()
+            blocked = {
+                (str(subject_id), predicate_id)
+                for subject_id, predicate_id, action in transitions
+                if action == "blocked"
+            }
+            closed = sum(1 for *_rest, action in transitions if action == "closed")
             for row in pending:
+                if (row["subject_id"], row["predicate_id"]) in blocked:
+                    pinned += 1
+                    continue
                 vocab_key = (row["strategy_id"], row["rationale_code"], row["confidence"])
                 if vocab_key not in ensured_vocab:
                     _ensure_vocab(conn, row)
@@ -439,7 +487,7 @@ def materialize_resolutions(
                 else:
                     existing += 1
         pending.clear()
-        return added, existing
+        return added, existing, closed, pinned
 
     total = len(groups)
     for (subj, pred), claims in sorted(groups.items()):
@@ -465,13 +513,17 @@ def materialize_resolutions(
         else:
             unresolved_n += 1
         if len(pending) >= batch_size:
-            added, existing = flush()
+            added, existing, closed, pinned = flush()
             inserted += added
             skipped_existing += existing
+            superseded += closed
+            skipped_pinned += pinned
     if pending:
-        added, existing = flush()
+        added, existing, closed, pinned = flush()
         inserted += added
         skipped_existing += existing
+        superseded += closed
+        skipped_pinned += pinned
 
     return MaterializeSummary(
         considered_pairs=considered,
@@ -480,6 +532,8 @@ def materialize_resolutions(
         skipped_unresolvable=skipped_unresolvable,
         resolved=resolved_n,
         unresolved=unresolved_n,
+        superseded=superseded,
+        skipped_pinned=skipped_pinned,
     )
 
 
@@ -503,7 +557,10 @@ def read_materialized_resolutions(conn: Any, *, role: str | None = None) -> list
     every row carries its ``contradiction_state`` and confidence, and ``resolved`` is True iff
     the envelope picked a winning claim (an ``unresolved_conflict`` envelope resolves nothing,
     so it is materialized but not counted as a resolved site — contradictions stay visible,
-    §3.1). Only rows the materializer wrote (``input_digest IS NOT NULL``) are returned.
+    §3.1). Only rows the materializer wrote (``input_digest IS NOT NULL``) that are
+    CURRENT — ``upper_inf(sys_period)`` — are returned: a superseded decision (closed
+    ``sys_period``, P31.7 / ADR-R9-RESIGHT) stays in the table as recorded history but
+    is not part of the resolved surface.
     """
     if role:
         conn.execute(f"SET ROLE {role}")
@@ -511,7 +568,7 @@ def read_materialized_resolutions(conn: Any, *, role: str | None = None) -> list
         "SELECT resolution_id::text, subject_id::text, predicate_id, value_kind, "
         "       value_text, value_num, winning_claim::text, contradiction_state, confidence "
         "  FROM resolution "
-        " WHERE input_digest IS NOT NULL "
+        " WHERE input_digest IS NOT NULL AND upper_inf(sys_period) "
         " ORDER BY subject_id, predicate_id, resolution_id"
     ).fetchall()
     out: list[dict[str, Any]] = []
