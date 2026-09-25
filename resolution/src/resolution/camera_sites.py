@@ -32,15 +32,33 @@ The pipeline (every stage pure and deterministic; the PG seam is
    strongest-first under hard constraints (no two records of one source in a cluster,
    bounded span, bounded size); a refused union and every sub-floor tier become
    PROPOSED decisions for human review. Cluster-shape alerts (chaining along a road,
-   oversized clusters, single-bridge joins) demote an alerted cluster's edges to
+   oversized clusters, single-bridge joins) demote an alerted cluster's auto edges to
    review (SIG-IDENT-029).
+5. **Human review (P31.11 / ADR-R9-HUMANER)** — the run consumes the append-only
+   ``review_decision`` history for ``er_match:camera_site*`` items, folded by
+   :func:`fold_human_verdicts` into one :class:`HumanVerdict` per pair. An
+   *accept* applies as a ``human_accept`` edge (``decided_by`` = the curator),
+   a *reject* is recorded as a hard ``cannot_link`` (``human_reject``), and a
+   *conflict* between curators stays proposed and is routed back to review.
+   A human verdict outranks the automatic outcome on the same pair, and an
+   accepted edge that would violate a hard constraint is recorded ``refused``,
+   never silently applied. Zero decisions leave the run byte-identical in
+   outcome to the pre-wiring pipeline.
+6. **Duplicate targets** — :func:`infer_duplicate_targets` records target-level
+   lineage: two records of ONE source whose captured content digests are
+   identical (or whose rows are identical) are the same upstream row
+   republished under two targets — the *only* exception to constraint (a).
 
 **Hard constraints (test-pinned).** (a) Two records of the *same source* are never
 merged — not as a pair and not transitively through a cluster: a source listing two
-cameras at one spot lists two devices. (b) Records of incompatible device classes
+cameras at one spot lists two devices. The sole exception is evidenced
+duplicate-target lineage (:func:`infer_duplicate_targets`): identical capture
+digests or row-identical records prove the source republished its own row, so the
+pair is the same record, not two devices. (b) Records of incompatible device classes
 (the recorded matrix in ``camera_site_rules.toml``) are never candidates, and a soft
 conflict (differing resolved jurisdiction or explicit device type) can never
-auto-write. (c) A mirror of the same upstream dataset is not independent
+auto-write — a human accept may still apply it, since review exists to decide
+exactly those. (c) A mirror of the same upstream dataset is not independent
 corroboration: lineages are inferred from coincident republication, and a cluster's
 ``independent_lineages`` counts lineages, not sources.
 
@@ -72,6 +90,9 @@ from .quality_gates import ClusterShapeContext, DemotionDecision, cluster_shape_
 __all__ = [
     "CAMERA_SITE_RESOLVER_VERSION",
     "CameraRecord",
+    "HumanItem",
+    "HumanVerdict",
+    "HumanVote",
     "CameraSiteRules",
     "PairAssessment",
     "SiteDecision",
@@ -85,6 +106,8 @@ __all__ = [
     "direction_bearing",
     "names_agree",
     "device_class",
+    "fold_human_verdicts",
+    "infer_duplicate_targets",
     "infer_lineages",
     "assess_pairs",
     "cluster_decisions",
@@ -102,7 +125,8 @@ __all__ = [
 ]
 
 #: The resolver version stamped on every decision (bump on a behaviour change).
-CAMERA_SITE_RESOLVER_VERSION = "camera-sites/1.0.0"
+#: 1.1.0 — P31.11: consumes human review verdicts and duplicate-target lineage.
+CAMERA_SITE_RESOLVER_VERSION = "camera-sites/1.1.0"
 
 _EARTH_RADIUS_M = 6_371_008.8
 
@@ -144,6 +168,13 @@ class CameraRecord:
     jurisdiction: str | None = None
     camera_type: str | None = None
     claim_ids: tuple[str, ...] = ()
+    #: P31.11 target-level lineage (ADR-R9-HUMANER): the connector fetch target
+    #: this record's subject was minted under (``traffic_camera:<src>:<target>``
+    #: in the ``sig.connector.subject`` identifier) and the ``content_digest``s
+    #: of the captures its claims cite — the evidence that proves two targets of
+    #: one source republished the same row.
+    target_id: str | None = None
+    capture_digests: tuple[str, ...] = ()
 
     def block_record(self) -> dict[str, Any]:
         return {"latitude": self.latitude, "longitude": self.longitude, "source_id": self.source_id}
@@ -432,6 +463,242 @@ def infer_lineages(
 
 
 # --------------------------------------------------------------------------- #
+# Human review verdicts (P31.11 / ADR-R9-HUMANER)                              #
+# --------------------------------------------------------------------------- #
+
+
+@dataclass(frozen=True)
+class HumanItem:
+    """A camera-site review item bound to a pair (``payload.left``/``right``)."""
+
+    item_id: str
+    left: str
+    right: str
+    tier: int | None = None  # the tier the proposing run recorded (for display)
+    tier_label: str | None = None
+
+
+@dataclass(frozen=True)
+class HumanVote:
+    """One append-only ``review_decision`` row for a camera-site item."""
+
+    item_id: str
+    decision: str  # "accept" | "reject" (the schema's whole vocabulary)
+    reviewer: str  # the pseudonymous curator id (SIG-IDENT-026)
+    decided_at: str  # the DB-stamped timestamp (ordering only)
+
+
+@dataclass(frozen=True)
+class HumanVerdict:
+    """The folded human verdict over one pair of camera records.
+
+    ``verdict`` is ``accept`` / ``reject`` / ``conflict``; ``decided_by`` is the
+    governing item's reviewer(s); ``items`` is the per-item audit trail
+    (``(item_id, item_verdict)`` in decided order) and ``decided_at`` the
+    governing decision's timestamp.
+    """
+
+    left: str
+    right: str
+    verdict: str
+    decided_by: str
+    items: tuple[tuple[str, str], ...]
+    decided_at: str
+    tier: int | None = None
+    tier_label: str | None = None
+
+    @property
+    def key(self) -> tuple[str, str]:
+        return (self.left, self.right)
+
+
+def _item_verdict(votes: Sequence[HumanVote]) -> str:
+    """One item's verdict: accept iff every decision accepts, reject iff every
+    decision rejects, else ``conflict`` (the append-only history disagrees)."""
+    values = {v.decision for v in votes}
+    if values == {"accept"}:
+        return "accept"
+    if values == {"reject"}:
+        return "reject"
+    return "conflict"
+
+
+def fold_human_verdicts(
+    items: Sequence[HumanItem],
+    votes: Sequence[HumanVote],
+) -> tuple[HumanVerdict, ...]:
+    """Fold the append-only decision history into one verdict per pair.
+
+    Both camera-site item families (``er_match:camera_site:`` proposals and the
+    ``er_match:camera_site_disputed:`` routing) bind a pair; the PAIR is what
+    clustering judges. A pair's verdict is the verdict of its most recently
+    decided item — so a conflicted proposal routed back to a disputed item can
+    be resolved by a later clean adjudication there — while a governing item
+    whose own history mixes accept and reject stays ``conflict`` (routed back).
+    A decision on an item that does not bind a pair is never invented into one.
+    """
+    votes_by_item: dict[str, list[HumanVote]] = defaultdict(list)
+    for v in votes:
+        votes_by_item[v.item_id].append(v)
+    items_by_pair: dict[tuple[str, str], list[HumanItem]] = defaultdict(list)
+    for it in items:
+        if it.item_id in votes_by_item:
+            key = (it.left, it.right) if it.left < it.right else (it.right, it.left)
+            items_by_pair[key].append(it)
+    out: list[HumanVerdict] = []
+    for (left, right), pair_items in sorted(items_by_pair.items()):
+        folded: list[tuple[HumanItem, str, str, tuple[str, ...]]] = []
+        for it in sorted(pair_items, key=lambda i: i.item_id):
+            iv = sorted(votes_by_item[it.item_id], key=lambda v: v.decided_at)
+            folded.append(
+                (
+                    it,
+                    _item_verdict(iv),
+                    iv[-1].decided_at,
+                    tuple(sorted({v.reviewer for v in iv})),
+                )
+            )
+        # The most recently decided item governs (a routed-back adjudication
+        # supersedes an earlier conflicted proposal); a timestamp tie between
+        # disagreeing items is itself a conflict (never a coin-flip).
+        folded.sort(key=lambda f: (f[2], f[0].item_id))
+        latest_at = folded[-1][2]
+        top = [f for f in folded if f[2] == latest_at]
+        if len({f[1] for f in top}) > 1:
+            gov_item, gov = top[-1][0], "conflict"
+        else:
+            gov_item, gov = top[-1][0], top[-1][1]
+        reviewers = sorted({r for f in folded for r in f[3]})
+        decided_by = ", ".join(
+            next(f[3] for f in folded if f[0] is gov_item) if gov != "conflict" else reviewers
+        )
+        out.append(
+            HumanVerdict(
+                left=left,
+                right=right,
+                verdict=gov,
+                decided_by=decided_by,
+                items=tuple((f[0].item_id, f[1]) for f in folded),
+                decided_at=latest_at,
+                tier=gov_item.tier,
+                tier_label=gov_item.tier_label,
+            )
+        )
+    return tuple(out)
+
+
+# --------------------------------------------------------------------------- #
+# Duplicate-target lineage (P31.11 / ADR-R9-HUMANER; closes D-P30.2b-3)        #
+# --------------------------------------------------------------------------- #
+
+
+def _norm_text(value: str | None) -> str:
+    return str(value).strip().lower() if value else ""
+
+
+def _row_fingerprint(r: CameraRecord) -> tuple[Any, ...]:
+    """The record's row identity: every compared field, normalised."""
+    return (
+        normalize_ref(r.external_ref),
+        r.latitude,
+        r.longitude,
+        _norm_text(r.name),
+        _norm_text(r.roadway),
+        _norm_text(r.direction),
+        _norm_text(r.operator),
+        _norm_text(r.jurisdiction),
+        _norm_text(r.camera_type),
+    )
+
+
+def infer_duplicate_targets(records: Sequence[CameraRecord]) -> dict[str, str]:
+    """Records that are the SAME upstream row republished under another target.
+
+    Returns ``subject_id -> group root subject_id`` for every member of a
+    duplicate group of size >= 2 (the root maps to itself). Two records of one
+    source join one group only with evidence (ADR-R9-HUMANER, the sole exception
+    to constraint (a)):
+
+    * **row-identical** — the whole projected row is identical (normalised
+      reference, coordinate pair, and every compared attribute), and the row
+      carries an identifying field (a reference or a name) so two content-free
+      coordinate stubs never qualify; or
+    * **identical captured content** — the records' targets are PROVEN
+      duplicate (their cited captures share a ``content_digest``, i.e. the two
+      fetches returned byte-identical content) and the records share the same
+      normalised upstream reference — the same row key under byte-identical
+      targets, surviving trivial per-run parse differences.
+
+    Genuinely distinct devices at one point — different references or any
+    differing field — never group: they stay the separate records constraint
+    (a) demands.
+    """
+    by_source: dict[str, list[int]] = defaultdict(list)
+    for i, r in enumerate(records):
+        by_source[r.source_id].append(i)
+
+    # Target-level proof: two targets of one source whose cited captures share a
+    # content digest served byte-identical content.
+    digests_by_target: dict[tuple[str, str], set[str]] = defaultdict(set)
+    for r in records:
+        if r.target_id:
+            digests_by_target[(r.source_id, r.target_id)].update(r.capture_digests)
+    proven: dict[str, set[frozenset[str]]] = defaultdict(set)
+    for source in sorted(by_source):
+        targets = sorted(t for (s, t) in digests_by_target if s == source)
+        for x_i, t1 in enumerate(targets):
+            for t2 in targets[x_i + 1 :]:
+                if digests_by_target[(source, t1)] & digests_by_target[(source, t2)]:
+                    proven[source].add(frozenset((t1, t2)))
+
+    parent: dict[str, str] = {}
+
+    def find(x: str) -> str:
+        parent.setdefault(x, x)
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    def union(a: str, b: str) -> None:
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            lo, hi = sorted((ra, rb))
+            parent[hi] = lo
+
+    for source in sorted(by_source):
+        idxs = sorted(by_source[source], key=lambda i: records[i].subject_id)
+        for pos, i in enumerate(idxs):
+            a = records[i]
+            for j in idxs[pos + 1 :]:
+                b = records[j]
+                ref = normalize_ref(a.external_ref)
+                fp_a, fp_b = _row_fingerprint(a), _row_fingerprint(b)
+                row_identical = fp_a == fp_b and (fp_a[0] is not None or bool(fp_a[3]))
+                same_ref = ref is not None and ref == normalize_ref(b.external_ref)
+                proven_targets = (
+                    bool(a.target_id)
+                    and bool(b.target_id)
+                    and a.target_id != b.target_id
+                    and frozenset((a.target_id, b.target_id)) in proven[source]
+                )
+                if row_identical or (proven_targets and same_ref):
+                    union(a.subject_id, b.subject_id)
+
+    members: dict[str, list[str]] = defaultdict(list)
+    for r in records:
+        if r.subject_id in parent:
+            members[find(r.subject_id)].append(r.subject_id)
+    out: dict[str, str] = {}
+    for root, ms in members.items():
+        if len(ms) >= 2:
+            root = min(ms)
+            for m in ms:
+                out[m] = root
+    return out
+
+
+# --------------------------------------------------------------------------- #
 # Pair assessment                                                              #
 # --------------------------------------------------------------------------- #
 
@@ -462,6 +729,7 @@ class PairAssessment:
 class _Assessed:
     assessments: tuple[PairAssessment, ...]
     lineages: dict[str, str]
+    duplicate_groups: dict[str, str]  # subject -> dup-group root (P31.11)
     blocking_size: int
     unblockable: int
     incompatible_blocked: int
@@ -469,9 +737,16 @@ class _Assessed:
 
 
 def _neighbour_index(
-    records: Sequence[CameraRecord], pairs: Sequence[tuple[int, int, float]]
+    records: Sequence[CameraRecord],
+    pairs: Sequence[tuple[int, int, float]],
+    eff: Mapping[int, str],
 ) -> dict[int, dict[str, list[tuple[float, int]]]]:
-    """record index -> other source -> [(distance, index)] nearest-first (within radius)."""
+    """record index -> other source -> [(distance, index)] nearest-first (within radius).
+
+    Duplicate-target members of one source count as ONE record (the nearest
+    member stands for the group): a republished row must not count twice
+    against the one-to-one rules (ADR-R9-HUMANER).
+    """
     by_source: dict[int, dict[str, list[tuple[float, int]]]] = defaultdict(
         lambda: defaultdict(list)
     )
@@ -479,8 +754,17 @@ def _neighbour_index(
         by_source[i][records[j].source_id].append((d, j))
         by_source[j][records[i].source_id].append((d, i))
     for per in by_source.values():
-        for lst in per.values():
+        for source, lst in per.items():
             lst.sort()
+            seen: set[str] = set()
+            deduped: list[tuple[float, int]] = []
+            for d, j in lst:
+                e = eff[j]
+                if e in seen:
+                    continue  # another member of the same duplicate group
+                seen.add(e)
+                deduped.append((d, j))
+            per[source] = deduped
     return by_source
 
 
@@ -499,6 +783,14 @@ def _assess(
     index_pairs = validate_geo_rule(block_records, geo_rule, context=blocking_context)
     unblockable = sum(1 for br in block_records if geo_rule.cell(br) is None)
 
+    # P31.11: evidence-based within-source duplicate-target lineage first — it
+    # defines each record's effective identity (subject, or its dup-group root)
+    # for the one-to-one counts and constraint (a) below.
+    dup_groups = infer_duplicate_targets(records)
+    eff: dict[int, str] = {
+        i: dup_groups.get(records[i].subject_id, records[i].subject_id) for i in range(len(records))
+    }
+
     within: list[tuple[int, int, float]] = []
     for i, j in index_pairs:
         a, b = records[i], records[j]
@@ -511,7 +803,7 @@ def _assess(
     lineages = infer_lineages(
         records, [(i, j) for i, j, d in within if d <= rules.coincident_m], rules
     )
-    neigh = _neighbour_index(records, within)
+    neigh = _neighbour_index(records, within, eff)
     classes = [device_class(r, rules) for r in records]
 
     out: list[PairAssessment] = []
@@ -530,11 +822,12 @@ def _assess(
             and _count_within(nb, rules.colocation_m) == 1
         )
         # An exact distance tie is not a nearest neighbour: it fails (conservatively).
+        # Compared on EFFECTIVE identity so a duplicate-target twin counts once.
         mutual_nearest = (
             bool(na)
             and bool(nb)
-            and na[0][1] == j
-            and nb[0][1] == i
+            and eff[na[0][1]] == eff[j]
+            and eff[nb[0][1]] == eff[i]
             and (len(na) < 2 or na[1][0] > na[0][0])
             and (len(nb) < 2 or nb[1][0] > nb[0][0])
         )
@@ -599,10 +892,60 @@ def _assess(
                 evidence_claims=tuple(sorted(set(left.claim_ids) | set(right.claim_ids))),
             )
         )
+    # Duplicate-target edges: each non-root member of a dup group is paired with
+    # the group's root (a star is enough to co-cluster the group; the row is
+    # pairwise auditable). Tier 0 is outside the measured candidate tiers — the
+    # merge is evidence-based (identical captures / identical row), never a
+    # statistical call — and carries its lineage proof in match_evidence.
+    by_subject = {r.subject_id: r for r in records}
+    group_members: dict[str, list[str]] = defaultdict(list)
+    for subject, root in dup_groups.items():
+        group_members[root].append(subject)
+    for root in sorted(group_members):
+        for member in sorted(group_members[root]):
+            if member == root:
+                continue
+            a, b = by_subject[root], by_subject[member]
+            left, right = (a, b) if a.subject_id < b.subject_id else (b, a)
+            d = (
+                haversine_m(a.latitude, a.longitude, b.latitude, b.longitude)  # type: ignore[arg-type]
+                if _valid_point(a) and _valid_point(b)
+                else 0.0
+            )
+            shared_digests = sorted(set(a.capture_digests) & set(b.capture_digests))
+            targets = sorted(t for t in {a.target_id, b.target_id} if t is not None)
+            out.append(
+                PairAssessment(
+                    left=left.subject_id,
+                    right=right.subject_id,
+                    tier=0,
+                    tier_label="0:duplicate_target_of",
+                    distance_m=d,
+                    soft_conflicts=(),
+                    evidence={
+                        "rule": "0:duplicate_target_of",
+                        "distance_m": round(d, 2),
+                        "sources": [left.source_id, right.source_id],
+                        "device_classes": [
+                            device_class(left, rules),
+                            device_class(right, rules),
+                        ],
+                        "targets": targets,
+                        "identical_capture_digests": shared_digests,
+                        "row_identical": _row_fingerprint(a) == _row_fingerprint(b),
+                        "duplicate_group_root": root,
+                        "group_size": len(group_members[root]),
+                        "same_lineage": True,
+                        "rules_version": rules.version,
+                    },
+                    evidence_claims=tuple(sorted(set(left.claim_ids) | set(right.claim_ids))),
+                )
+            )
     out.sort(key=lambda p: (p.left, p.right))
     return _Assessed(
         assessments=tuple(out),
         lineages=lineages,
+        duplicate_groups=dup_groups,
         blocking_size=len(index_pairs),
         unblockable=unblockable,
         incompatible_blocked=incompatible,
@@ -630,15 +973,25 @@ def assess_pairs(
 
 @dataclass(frozen=True)
 class SiteDecision:
-    """A recorded same-device decision: ``auto_write`` (clustered) or ``proposed`` (review).
+    """A recorded same-device decision.
 
-    ``reason`` says why a candidate that could have auto-written was routed to review
-    (a demoted/unmeasured tier, a soft conflict, a refused union, a cluster alert).
+    Dispositions: ``auto_write`` (clustered automatically — measured tiers and
+    evidence-based duplicate-target edges), ``human_accept`` (a curator's
+    accept, clustered, ``decided_by`` the curator), ``proposed`` (review — also
+    a ``human_conflict`` between curators), ``human_reject`` (a curator's
+    reject, recorded as a hard ``cannot_link`` relation — never clusters), and
+    ``refused`` (a human accept that would violate a hard constraint — recorded
+    and refused, never applied). ``reason`` says why a candidate that could have
+    clustered was routed to review or refused (a demoted/unmeasured tier, a
+    soft conflict, a refused union, a cluster alert, a human conflict/refusal).
     """
 
     assessment: PairAssessment
-    disposition: str  # "auto_write" | "proposed"
+    disposition: str  # auto_write | proposed | human_accept | human_reject | refused
     reason: str | None = None
+    relation: str = "same_as"  # "cannot_link" for a human reject
+    decided_by: str = "auto"  # the curator id on human_* / refused rows
+    verdict: HumanVerdict | None = None  # the governing verdict, for audit
 
     @property
     def left(self) -> str:
@@ -659,10 +1012,15 @@ class SiteAlert:
 
 
 class _Clusters:
-    def __init__(self, records: Mapping[str, CameraRecord]) -> None:
+    def __init__(
+        self, records: Mapping[str, CameraRecord], dup: Mapping[str, str] | None = None
+    ) -> None:
         self.parent: dict[str, str] = {s: s for s in records}
         self.members: dict[str, list[str]] = {s: [s] for s in records}
         self.records = records
+        #: subject -> duplicate-group root: members of one group are the same
+        #: upstream row and count as ONE record under constraint (a).
+        self.dup = dup or {}
 
     def find(self, x: str) -> str:
         while self.parent[x] != x:
@@ -676,6 +1034,8 @@ class _Clusters:
             px = self.records[x]
             for y in self.members[rb]:
                 py = self.records[y]
+                if not (_valid_point(px) and _valid_point(py)):
+                    continue  # coord-less members contribute no distance
                 span = max(
                     span,
                     haversine_m(px.latitude, px.longitude, py.latitude, py.longitude),  # type: ignore[arg-type]
@@ -686,9 +1046,13 @@ class _Clusters:
         ra, rb = self.find(a), self.find(b)
         if ra == rb:
             return None
-        sources_a = {self.records[m].source_id for m in self.members[ra]}
-        sources_b = {self.records[m].source_id for m in self.members[rb]}
-        if sources_a & sources_b:
+        # Constraint (a): the joined cluster must hold at most one DISTINCT
+        # record per source — duplicate-target members share one effective
+        # identity (source, dup-root) and so count once (the evidenced exception).
+        by_source: dict[str, set[str]] = defaultdict(set)
+        for m in self.members[ra] + self.members[rb]:
+            by_source[self.records[m].source_id].add(self.dup.get(m, m))
+        if any(len(ids) > 1 for ids in by_source.values()):
             return "cluster_constraint:same_source"
         if len(self.members[ra]) + len(self.members[rb]) > rules.max_size:
             return "cluster_constraint:max_size"
@@ -732,6 +1096,7 @@ def site_alerts(
     edges: Sequence[tuple[str, str]],
     records: Mapping[str, CameraRecord],
     rules: CameraSiteRules,
+    dup: Mapping[str, str] | None = None,
 ) -> list[SiteAlert]:
     """Cluster-shape alerts over would-be resolved sites (SIG-IDENT-029).
 
@@ -755,6 +1120,8 @@ def site_alerts(
         for x_i, x in enumerate(ms):
             for y in ms[x_i + 1 :]:
                 px, py = records[x], records[y]
+                if not (_valid_point(px) and _valid_point(py)):
+                    continue  # coord-less members contribute no distance
                 span = max(
                     span,
                     haversine_m(px.latitude, px.longitude, py.latitude, py.longitude),  # type: ignore[arg-type]
@@ -771,9 +1138,21 @@ def site_alerts(
             alerts.append(
                 SiteAlert(cid, "oversized_cluster", {"size": len(ms), "max_size": rules.max_size})
             )
-        sources = [records[m].source_id for m in ms]
-        if len(set(sources)) < len(sources):
-            alerts.append(SiteAlert(cid, "same_source_cluster", {"sources": sorted(sources)}))
+        # Two members of one source alert only when they are DISTINCT records —
+        # duplicate-target members share one effective identity (dup-root) and
+        # count once; two different effective ids of one source are the breach.
+        dup = dup or {}
+        by_source_eff: dict[str, set[str]] = defaultdict(set)
+        for m in ms:
+            by_source_eff[records[m].source_id].add(dup.get(m, m))
+        if any(len(v) > 1 for v in by_source_eff.values()):
+            alerts.append(
+                SiteAlert(
+                    cid,
+                    "same_source_cluster",
+                    {"sources": sorted(records[m].source_id for m in ms)},
+                )
+            )
     ctx = ClusterShapeContext(
         max_le_cluster_size=10**9,  # the law-enforcement rule does not apply to devices
         substantial_component_size=rules.substantial_component,
@@ -785,53 +1164,179 @@ def site_alerts(
     return alerts
 
 
+def _human_assessment(
+    v: HumanVerdict, by_id: Mapping[str, CameraRecord], classes: Mapping[str, str]
+) -> PairAssessment:
+    """A record-level view for a decided pair that is not a current candidate.
+
+    Carries the pair's recorded tier (from its review item) when known, else
+    tier 0; the evidence notes that the decision came from review, not the
+    tiered matcher this run.
+    """
+    a, b = by_id[v.left], by_id[v.right]
+    d = (
+        haversine_m(a.latitude, a.longitude, b.latitude, b.longitude)  # type: ignore[arg-type]
+        if _valid_point(a) and _valid_point(b)
+        else 0.0
+    )
+    return PairAssessment(
+        left=v.left,
+        right=v.right,
+        tier=v.tier if v.tier is not None else 0,
+        tier_label=v.tier_label or "0:human_review",
+        distance_m=d,
+        soft_conflicts=(),
+        evidence={
+            "rule": "human_review_decision",
+            "distance_m": round(d, 2),
+            "sources": [a.source_id, b.source_id],
+            "device_classes": [classes[v.left], classes[v.right]],
+            "human_items": [[iid, iv] for iid, iv in v.items],
+            "rules_version": "review",
+        },
+        evidence_claims=tuple(sorted(set(a.claim_ids) | set(b.claim_ids))),
+    )
+
+
 def cluster_decisions(
     assessments: Sequence[PairAssessment],
     records: Sequence[CameraRecord],
     *,
     auto_write_tiers: Iterable[int],
     rules: CameraSiteRules | None = None,
+    human_verdicts: Sequence[HumanVerdict] = (),
+    dup_groups: Mapping[str, str] | None = None,
 ) -> tuple[tuple[SiteDecision, ...], dict[str, str], tuple[SiteAlert, ...]]:
-    """Turn assessments into decisions + clusters under the hard constraints.
+    """Turn assessments + human verdicts into decisions + clusters (constraints hold).
 
     Returns ``(decisions, clusters, alerts)`` where ``clusters`` maps every record's
     subject id to its cluster id (the smallest member subject id; a singleton maps to
-    itself). Only ``auto_write`` decisions cluster.
+    itself). Applied edges (``auto_write`` and ``human_accept``) cluster; proposed,
+    rejected and refused pairs never do.
+
+    **Precedence (ADR-R9-HUMANER).** A pair with a human verdict takes the human
+    outcome, whatever the automatic tier would have said — the verdict is applied
+    BEFORE the automatic edges. ``accept`` unions under the hard constraints (a
+    refusal is recorded ``refused``, never applied); ``reject`` is recorded
+    ``human_reject``/``cannot_link`` and the pair never clusters; ``conflict``
+    stays ``proposed``. Tier-0 duplicate-target edges are evidence, not a
+    measured tier — they apply directly, after human verdicts.
     """
     rs = rules or CameraSiteRules.from_data()
     auto = frozenset(auto_write_tiers)
     by_id = {r.subject_id: r for r in records}
-    state = _Clusters(by_id)
+    dup = dict(dup_groups or {})
+    state = _Clusters(by_id, dup)
+    classes = {s: device_class(r, rs) for s, r in by_id.items()}
+    assessed = {p.key: p for p in assessments}
 
-    initial: dict[tuple[str, str], tuple[str, str | None]] = {}
+    # key -> (disposition, reason, relation, decided_by, verdict, assessment)
+    initial: dict[
+        tuple[str, str],
+        tuple[str, str | None, str, str, HumanVerdict | None, PairAssessment],
+    ] = {}
+
+    # 1) Human verdicts first — precedence over every automatic outcome.
+    for v in sorted(human_verdicts, key=lambda v: (v.left, v.right)):
+        if v.left not in by_id or v.right not in by_id:
+            continue  # decided pair absent from this run's records (counted by caller)
+        p = assessed.get(v.key) or _human_assessment(v, by_id, classes)
+        if v.verdict == "accept":
+            if frozenset((classes[v.left], classes[v.right])) in rs.incompatible_classes:
+                initial[v.key] = (
+                    "refused",
+                    "human_refused:incompatible_class",
+                    "same_as",
+                    v.decided_by,
+                    v,
+                    p,
+                )
+                continue
+            refusal = state.refusal(v.left, v.right, rs)
+            if refusal is None:
+                state.union(v.left, v.right)
+                initial[v.key] = ("human_accept", None, "same_as", v.decided_by, v, p)
+            else:
+                initial[v.key] = (
+                    "refused",
+                    f"human_refused:{refusal}",
+                    "same_as",
+                    v.decided_by,
+                    v,
+                    p,
+                )
+        elif v.verdict == "reject":
+            initial[v.key] = (
+                "human_reject",
+                "cannot_link",
+                "cannot_link",
+                v.decided_by,
+                v,
+                p,
+            )
+        else:  # conflict — stays proposed, routed back by the writer
+            initial[v.key] = ("proposed", "human_conflict", "same_as", "auto", v, p)
+
+    # 2) Automatic edges, strongest first, under the same hard constraints.
     ordered = sorted(assessments, key=lambda p: (p.tier, p.distance_m, p.left, p.right))
     for p in ordered:
-        if p.tier not in auto:
-            initial[p.key] = ("proposed", "tier_not_auto_write")
+        if p.key in initial:
+            continue  # a human verdict already owns this pair
+        if p.tier == 0:
+            refusal = state.refusal(p.left, p.right, rs)
+            if refusal is None:
+                state.union(p.left, p.right)
+                initial[p.key] = ("auto_write", None, "same_as", "auto", None, p)
+            else:
+                initial[p.key] = ("proposed", refusal, "same_as", "auto", None, p)
+        elif p.tier not in auto:
+            initial[p.key] = (
+                "proposed",
+                "tier_not_auto_write",
+                "same_as",
+                "auto",
+                None,
+                p,
+            )
         elif p.soft_conflicts:
-            initial[p.key] = ("proposed", "soft_conflict:" + ",".join(p.soft_conflicts))
+            initial[p.key] = (
+                "proposed",
+                "soft_conflict:" + ",".join(p.soft_conflicts),
+                "same_as",
+                "auto",
+                None,
+                p,
+            )
         else:
             refusal = state.refusal(p.left, p.right, rs)
             if refusal is None:
                 state.union(p.left, p.right)
-                initial[p.key] = ("auto_write", None)
+                initial[p.key] = ("auto_write", None, "same_as", "auto", None, p)
             else:
-                initial[p.key] = ("proposed", refusal)
+                initial[p.key] = ("proposed", refusal, "same_as", "auto", None, p)
 
-    auto_edges = [k for k, (disp, _r) in initial.items() if disp == "auto_write"]
-    clusters = _clusters_from_edges(by_id, auto_edges)
-    alerts = site_alerts(clusters, auto_edges, by_id, rs)
+    applied = [k for k, d in initial.items() if d[0] in ("auto_write", "human_accept")]
+    clusters = _clusters_from_edges(by_id, applied)
+    alerts = site_alerts(clusters, applied, by_id, rs, dup)
     alerted = {a.cluster_id for a in alerts}
     if alerted:
-        for k in auto_edges:
-            if clusters[k[0]] in alerted:
-                initial[k] = ("proposed", "cluster_shape_alert")
-        auto_edges = [k for k, (disp, _r) in initial.items() if disp == "auto_write"]
-        clusters = _clusters_from_edges(by_id, auto_edges)
+        for k in applied:
+            d = initial[k]
+            if d[0] == "auto_write" and d[5].tier != 0 and clusters[k[0]] in alerted:
+                initial[k] = ("proposed", "cluster_shape_alert", "same_as", "auto", None, d[5])
+        applied = [k for k, d in initial.items() if d[0] in ("auto_write", "human_accept")]
+        clusters = _clusters_from_edges(by_id, applied)
 
     decisions = tuple(
-        SiteDecision(assessment=p, disposition=initial[p.key][0], reason=initial[p.key][1])
-        for p in sorted(assessments, key=lambda p: (p.left, p.right))
+        SiteDecision(
+            assessment=d[5],
+            disposition=d[0],
+            reason=d[1],
+            relation=d[2],
+            decided_by=d[3],
+            verdict=d[4],
+        )
+        for k, d in sorted(initial.items())
     )
     return decisions, clusters, tuple(alerts)
 
@@ -1149,6 +1654,14 @@ class CameraSiteResult:
     holdout_size: int
     gold_size: int
     disputed: int
+    #: P31.11: subject -> duplicate-group root for every member of an evidenced
+    #: same-row republished group (size >= 2); empty when no duplicate target exists.
+    duplicate_groups: dict[str, str] = field(default_factory=dict)
+    #: P31.11: the folded human verdicts over pairs present in this run's records.
+    human_verdicts: tuple[HumanVerdict, ...] = ()
+    #: P31.11: decided pairs whose records are absent from this run — recorded
+    #: nowhere, counted here so the run admits they were seen and skipped.
+    human_verdicts_unmatched: int = 0
 
     @property
     def dedup_ratio(self) -> float:
@@ -1158,7 +1671,7 @@ class CameraSiteResult:
         by_tier: dict[str, dict[str, int]] = {}
         for d in self.decisions:
             slot = by_tier.setdefault(d.assessment.tier_label, {"auto_write": 0, "proposed": 0})
-            slot[d.disposition] += 1
+            slot[d.disposition] = slot.get(d.disposition, 0) + 1
         reasons: dict[str, int] = defaultdict(int)
         for d in self.decisions:
             if d.reason:
@@ -1205,6 +1718,20 @@ class CameraSiteResult:
 
     def summary(self) -> dict[str, Any]:
         auto = sum(1 for d in self.decisions if d.disposition == "auto_write")
+        human_applied = sum(1 for d in self.decisions if d.disposition == "human_accept")
+        refused = sum(1 for d in self.decisions if d.disposition == "refused")
+        human_rejects = sum(1 for d in self.decisions if d.disposition == "human_reject")
+        proposed = sum(1 for d in self.decisions if d.disposition == "proposed")
+        # Clusters whose membership a human accept decided (the edge endpoints
+        # land in the same cluster — a refused/alerted accept does not count).
+        members_of: dict[str, list[str]] = defaultdict(list)
+        for subject, cid in self.clusters.items():
+            members_of[cid].append(subject)
+        human_clusters: set[str] = set()
+        for d in self.decisions:
+            if d.disposition == "human_accept":
+                human_clusters.add(self.clusters[d.left])
+        dup_groups = set(self.duplicate_groups.values())
         return {
             "rules_version": self.rules_version,
             "resolver_version": self.resolver_version,
@@ -1214,7 +1741,23 @@ class CameraSiteResult:
             "dedup_ratio": round(self.dedup_ratio, 6),
             "decisions": len(self.decisions),
             "auto_write_decisions": auto,
-            "proposed_decisions": len(self.decisions) - auto,
+            "proposed_decisions": proposed,
+            # P31.11 human-review accounting (ADR-R9-HUMANER): verdicts folded
+            # from review_decision, their outcomes, and what they changed.
+            "human_review": {
+                "verdict_pairs": len(self.human_verdicts),
+                "accepts": sum(1 for v in self.human_verdicts if v.verdict == "accept"),
+                "rejects": sum(1 for v in self.human_verdicts if v.verdict == "reject"),
+                "conflicts": sum(1 for v in self.human_verdicts if v.verdict == "conflict"),
+                "unmatched_pairs": self.human_verdicts_unmatched,
+                "accept_edges_applied": human_applied,
+                "accept_edges_refused": refused,
+                "cannot_link_edges": human_rejects,
+                "clusters_with_human_accepts": len(human_clusters),
+                "proposed_awaiting_review": proposed,
+            },
+            "duplicate_target_groups": len(dup_groups),
+            "duplicate_target_records": len(self.duplicate_groups),
             "auto_write_tiers": sorted(self.auto_write_tiers),
             "demotions": [
                 {
@@ -1276,13 +1819,16 @@ def run_key(
     auto_write_tiers: Iterable[int],
     gold: CameraGoldSet | None,
     records: Sequence[CameraRecord],
+    human_verdicts: Sequence[HumanVerdict] = (),
 ) -> str:
     """The run identity: every input a decision depends on.
 
     Digests the resolver version, the FULL rules content, the gold set's content, the
-    measured auto-write tiers and every field of every record (source, coordinates,
-    reference, name, direction, operator, jurisdiction, type, claim ids). Two runs over
-    the same inputs share a key (so the re-run is +0); ANY change a decision could depend
+    measured auto-write tiers, the folded human verdicts (P31.11 — a new review
+    decision changes the outcome, so it must change the key), and every field of
+    every record (source, coordinates, reference, name, direction, operator,
+    jurisdiction, type, claim ids, target id, capture digests). Two runs over the
+    same inputs share a key (so the re-run is +0); ANY change a decision could depend
     on mints a new key, and readers take the latest COMPLETED run whole — never a union of
     a stale run's edges with a new one's.
     """
@@ -1294,6 +1840,19 @@ def run_key(
                 "rules": _rules_digest(rules),
                 "auto": sorted(auto_write_tiers),
                 "gold": None if gold is None else gold.content_digest(),
+                "human": [
+                    {
+                        "left": v.left,
+                        "right": v.right,
+                        "verdict": v.verdict,
+                        "decided_by": v.decided_by,
+                        "items": [list(i) for i in v.items],
+                        "decided_at": v.decided_at,
+                        "tier": v.tier,
+                        "tier_label": v.tier_label,
+                    }
+                    for v in sorted(human_verdicts, key=lambda v: v.key)
+                ],
             },
             sort_keys=True,
         ).encode()
@@ -1313,7 +1872,9 @@ def decision_digest(key: str, d: SiteDecision) -> str:
         "left": d.left,
         "right": d.right,
         "tier": d.assessment.tier,
+        "relation": d.relation,
         "disposition": d.disposition,
+        "decided_by": d.decided_by,
         "reason": d.reason,
         "claims": list(d.assessment.evidence_claims),
     }
@@ -1328,8 +1889,17 @@ def resolve_camera_sites(
     rules: CameraSiteRules | None = None,
     geo_rule: GeoGridRule | None = None,
     blocking_context: BlockingContext | None = None,
+    human_items: Sequence[HumanItem] = (),
+    human_votes: Sequence[HumanVote] = (),
 ) -> CameraSiteResult:
-    """One camera-site ER run: block → assess → measure → decide → cluster (pure)."""
+    """One camera-site ER run: block → assess → measure → decide → cluster (pure).
+
+    ``human_items``/``human_votes`` are the append-only review surface
+    (P31.11): items bind decided pairs, votes are ``review_decision`` rows.
+    Passing none (or votes only, with no binding items) reproduces the
+    pre-wiring run exactly — zero decisions is not a special case.
+    """
+    verdicts = fold_human_verdicts(human_items, human_votes)
     rs = rules or CameraSiteRules.from_data()
     gr = geo_rule or load_geo_rules()[0]
     assessed = _assess(records, rules=rs, geo_rule=gr, blocking_context=blocking_context)
@@ -1356,10 +1926,23 @@ def resolve_camera_sites(
         strict=rs.strict_precision,
         min_pairs=rs.min_holdout_pairs,
     )
+    by_id = {r.subject_id for r in records}
+    matched = [v for v in verdicts if v.left in by_id and v.right in by_id]
     decisions, clusters, alerts = cluster_decisions(
-        assessed.assessments, records, auto_write_tiers=auto, rules=rs
+        assessed.assessments,
+        records,
+        auto_write_tiers=auto,
+        rules=rs,
+        human_verdicts=matched,
+        dup_groups=assessed.duplicate_groups,
     )
-    key = run_key(rules=rs, auto_write_tiers=auto, gold=gold, records=records)
+    key = run_key(
+        rules=rs,
+        auto_write_tiers=auto,
+        gold=gold,
+        records=records,
+        human_verdicts=verdicts,
+    )
     return CameraSiteResult(
         rules_version=rs.version,
         resolver_version=CAMERA_SITE_RESOLVER_VERSION,
@@ -1371,6 +1954,9 @@ def resolve_camera_sites(
         alerts=alerts,
         lineages=assessed.lineages,
         sources={r.subject_id: r.source_id for r in records},
+        duplicate_groups=assessed.duplicate_groups,
+        human_verdicts=tuple(matched),
+        human_verdicts_unmatched=len(verdicts) - len(matched),
         auto_write_tiers=auto,
         demotions=demotions,
         tier_measurements=measured,

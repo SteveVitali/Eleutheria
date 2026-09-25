@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Callable, Sequence
+from dataclasses import replace
 from typing import Any
 
 from .camera_sites import (
@@ -30,6 +31,8 @@ from .camera_sites import (
     CameraRecord,
     CameraSiteResult,
     CameraSiteRules,
+    HumanItem,
+    HumanVote,
     SiteDecision,
     decision_digest,
     load_camera_gold,
@@ -40,6 +43,7 @@ from .eval_loop import read_auto_write_threshold
 __all__ = [
     "CAMERA_PREDICATES",
     "read_camera_records",
+    "read_human_verdicts",
     "materialize_camera_sites",
     "materialize_camera_sites_from_dsn",
     "read_resolved_site_runs",
@@ -88,6 +92,45 @@ _RECORDS_SQL = (
     " ORDER BY c.subject_id, c.predicate_id, c.claim_id DESC"
 )
 
+# P31.11 duplicate-target lineage (ADR-R9-HUMANER): which connector TARGET a
+# record's subject was minted under (the sig.connector.subject identifier is
+# `traffic_camera:<source>:<target>:<ref>`) and which captured contents its
+# claims cite (evidence_capture.content_digest) — the two evidences
+# infer_duplicate_targets consumes.
+_TARGETS_SQL = (
+    "SELECT ei.entity_id::text, ei.value "
+    "  FROM entity_identifier ei "
+    " WHERE ei.scheme = 'sig.connector.subject' "
+    "   AND ei.value LIKE 'traffic_camera:%%' "
+    "   AND ei.entity_id = ANY(%s::uuid[])"
+)
+_DIGESTS_SQL = (
+    "SELECT DISTINCT c.subject_id::text, ec.content_digest "
+    "  FROM claim c "
+    "  JOIN claim_evidence ce ON ce.claim_id = c.claim_id "
+    "  JOIN evidence_capture ec ON ec.capture_id = ce.capture_id "
+    " WHERE c.sensitivity_tier = 0 AND upper_inf(c.sys_period) "
+    "   AND c.predicate_id = ANY(%s)"
+)
+
+# The append-only review surface the run consumes: camera-site items bind a pair
+# (payload.left/right); review_decision rows are the votes (decided_at is
+# DB-stamped — ordering only, never trusted to be unique).
+_REVIEW_ITEMS_SQL = (
+    "SELECT item_id, payload->>'left', payload->>'right', "
+    "       payload->>'tier', payload->>'tier_label' "
+    "  FROM review_item "
+    r" WHERE item_id LIKE 'er_match:camera\_site%%' ESCAPE '\' "
+    " ORDER BY item_id"
+)
+_REVIEW_VOTES_SQL = (
+    "SELECT d.item_id, d.decision, d.reviewer, d.decided_at, d.decision_id::text "
+    "  FROM review_decision d "
+    "  JOIN review_item i ON i.item_id = d.item_id "
+    r" WHERE i.item_id LIKE 'er_match:camera\_site%%' ESCAPE '\' "
+    " ORDER BY d.decided_at, d.decision_id"
+)
+
 
 def set_role(conn: Any, role: str) -> None:
     """``SET ROLE`` with the role name quoted as an identifier (never interpolated raw)."""
@@ -113,6 +156,11 @@ def read_camera_records(conn: Any) -> list[CameraRecord]:
     the latest is the most recent capture of that ONE record); both coordinate axes
     therefore come from the same record — never from two sources. The record's source
     is the source of its coordinate evidence.
+
+    P31.11: each record also carries its target-level lineage evidence — the
+    connector ``target`` its subject was minted under (parsed out of the
+    ``sig.connector.subject`` identifier) and the ``content_digest``s of the
+    captures its claims cite — what :func:`infer_duplicate_targets` consumes.
     """
     rows = conn.execute(_RECORDS_SQL, (list(CAMERA_PREDICATES),)).fetchall()
     by_subject: dict[str, dict[str, Any]] = {}
@@ -122,6 +170,10 @@ def read_camera_records(conn: Any) -> list[CameraRecord]:
         rec["sources"][predicate] = source_id
         if predicate in _EVIDENCE_PREDICATES:
             rec["claims"].append(claim_id)
+    for subject, digest in conn.execute(_DIGESTS_SQL, (list(CAMERA_PREDICATES),)).fetchall():
+        tgt = by_subject.get(subject)
+        if tgt is not None:
+            tgt.setdefault("digests", set()).add(digest)
     out: list[CameraRecord] = []
     for subject in sorted(by_subject):
         rec = by_subject[subject]
@@ -140,10 +192,67 @@ def read_camera_records(conn: Any) -> list[CameraRecord]:
                 latitude=_float(rec.get("camera_latitude")),
                 longitude=_float(rec.get("camera_longitude")),
                 claim_ids=tuple(sorted(rec["claims"])),
+                capture_digests=tuple(sorted(rec.get("digests") or ())),
                 **{field: rec.get(pred) for pred, field in _FIELD.items()},
             )
         )
+    # Target ids: parse the third segment of each record's sig.connector.subject
+    # identifier (traffic_camera:<source>:<target>:<ref>) — the subject string,
+    # not a trusted field, is the lineage anchor.
+    by_id = {r.subject_id: r for r in out}
+    targets: dict[str, str] = {}
+    for entity, value in conn.execute(_TARGETS_SQL, (list(by_id),)).fetchall():
+        parts = str(value).split(":", 3)
+        if entity in by_id and len(parts) >= 4 and parts[0] == "traffic_camera":
+            targets[entity] = parts[2]
+    if targets:
+        out = [replace(r, target_id=targets.get(r.subject_id)) for r in out]
     return out
+
+
+def read_human_verdicts(
+    conn: Any,
+) -> tuple[list[HumanItem], list[HumanVote]]:
+    """The camera-site review surface the run consumes (P31.11 / ADR-R9-HUMANER).
+
+    Items: every ``er_match:camera_site*`` review item (proposals, gold-disputed
+    items, routed-back conflicts) that binds a pair via ``payload.left``/``right``.
+    Votes: every append-only ``review_decision`` row on those items, oldest first.
+    Empty when nothing has been decided — the zero-decision case is the rule,
+    not an exception.
+    """
+    items: list[HumanItem] = []
+    for item_id, left, right, tier, tier_label in conn.execute(_REVIEW_ITEMS_SQL).fetchall():
+        if not left or not right:
+            continue  # an item that binds no pair is never invented into one
+        try:
+            t = int(tier) if tier is not None else None
+        except (TypeError, ValueError):
+            t = None
+        items.append(
+            HumanItem(
+                item_id=str(item_id),
+                left=str(left),
+                right=str(right),
+                tier=t,
+                tier_label=str(tier_label) if tier_label else None,
+            )
+        )
+    votes: list[HumanVote] = []
+    for item_id, decision, reviewer, decided_at, decision_id in conn.execute(
+        _REVIEW_VOTES_SQL
+    ).fetchall():
+        votes.append(
+            HumanVote(
+                item_id=str(item_id),
+                decision=str(decision),
+                reviewer=str(reviewer),
+                # uuidv7 decision_id orders within a decided_at tick; appended so
+                # the fold's ordering is deterministic even on a timestamp tie.
+                decided_at=f"{decided_at.isoformat()}#{decision_id}",
+            )
+        )
+    return items, votes
 
 
 def review_item_id(d: SiteDecision) -> str:
@@ -153,15 +262,26 @@ def review_item_id(d: SiteDecision) -> str:
 
 def _decision_row(result: CameraSiteResult, d: SiteDecision) -> tuple[Any, ...]:
     a = d.assessment
+    ev = dict(a.evidence)
+    if d.verdict is not None:
+        # The human audit trail travels inside match_evidence: which review items
+        # decided the pair and what each folded to (SIG-IDENT-025/026).
+        ev = {
+            **ev,
+            "human_items": [[iid, iv] for iid, iv in d.verdict.items],
+            "decided_at": d.verdict.decided_at,
+        }
     return (
         result.run_key,
         a.left,
         a.right,
         a.tier,
         a.tier_label,
+        d.relation,
         d.disposition,
         d.reason,
-        json.dumps(dict(a.evidence), sort_keys=True),
+        d.decided_by,
+        json.dumps(ev, sort_keys=True),
         list(a.evidence_claims),
         result.rules_version,
         result.resolver_version,
@@ -171,9 +291,9 @@ def _decision_row(result: CameraSiteResult, d: SiteDecision) -> tuple[Any, ...]:
 
 _INSERT_MATCH = (
     "INSERT INTO camera_site_match(run_key, left_entity, right_entity, match_tier, tier_label, "
-    " disposition, disposition_reason, match_evidence, evidence_claims, ruleset_version, "
-    " resolver_version, input_digest) "
-    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s::jsonb, %s::uuid[], %s, %s, %s) "
+    " relation_type, disposition, disposition_reason, decided_by, match_evidence, "
+    " evidence_claims, ruleset_version, resolver_version, input_digest) "
+    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s::jsonb, %s::uuid[], %s, %s, %s) "
     "ON CONFLICT (input_digest) DO NOTHING RETURNING match_id"
 )
 
@@ -222,6 +342,38 @@ def _review_args(result: CameraSiteResult, d: SiteDecision) -> tuple[Any, ...]:
         review_item_id(d),
         summary,
         json.dumps(confidence),
+        json.dumps(payload, sort_keys=True),
+    )
+
+
+def _conflict_review_args(result: CameraSiteResult, d: SiteDecision) -> tuple[Any, ...]:
+    """A human-conflicted pair routed BACK to review (P31.11): two curators
+    disagreed, so the pair is proposed again under its own ``camera_site_conflict``
+    item id — a clean adjudication there supersedes the conflicted proposal's
+    verdict in the next run's fold (latest decided item governs)."""
+    a = d.assessment
+    ev = dict(a.evidence)
+    payload = {
+        "left": a.left,
+        "right": a.right,
+        "tier": a.tier,
+        "tier_label": a.tier_label,
+        "reason": "human_conflict",
+        "evidence": ev,
+        "evidence_claims": list(a.evidence_claims),
+        "human_items": [[iid, iv] for iid, iv in (d.verdict.items if d.verdict else ())],
+        "run_key": result.run_key,
+        "rules_version": result.rules_version,
+    }
+    summary = (
+        f"Same camera? reviewers disagree — adjudicate "
+        f"({ev.get('sources', ['?', '?'])[0]} vs {ev.get('sources', ['?', '?'])[1]}, "
+        f"{ev.get('distance_m', '?')} m apart; {a.tier_label})"
+    )
+    return (
+        f"er_match:camera_site_conflict:{a.left}:{a.right}",
+        summary,
+        json.dumps([]),
         json.dumps(payload, sort_keys=True),
     )
 
@@ -278,9 +430,17 @@ def materialize_camera_sites(
     the_gold = gold if gold is not None else load_camera_gold()
     floor = threshold if threshold is not None else read_auto_write_threshold()
     recs = list(records) if records is not None else read_camera_records(conn)
+    human_items, human_votes = read_human_verdicts(conn)
     if progress is not None:
         progress("read", len(recs), 0)
-    result = resolve_camera_sites(recs, gold=the_gold, threshold=floor, rules=rules)
+    result = resolve_camera_sites(
+        recs,
+        gold=the_gold,
+        threshold=floor,
+        rules=rules,
+        human_items=human_items,
+        human_votes=human_votes,
+    )
     if progress is not None:
         progress("resolved", len(result.decisions), 0)
 
@@ -295,7 +455,16 @@ def materialize_camera_sites(
                 else:
                     skipped += 1
                 if d.disposition == "proposed":
-                    if conn.execute(_INSERT_REVIEW, _review_args(result, d)).fetchone():
+                    # A human conflict is routed back under its own
+                    # camera_site_conflict item (the plain proposal id is the
+                    # already-decided item); every other proposal is the
+                    # ordinary per-pair item.
+                    args = (
+                        _conflict_review_args(result, d)
+                        if d.reason == "human_conflict"
+                        else _review_args(result, d)
+                    )
+                    if conn.execute(_INSERT_REVIEW, args).fetchone():
                         enqueued += 1
         if progress is not None:
             progress("written", start + len(batch), inserted)
@@ -365,8 +534,12 @@ def read_resolved_site_runs(conn: Any, *, role: str | None = None) -> list[dict[
     Returns ``[]`` when no run has completed (the surface then keeps its observation-level
     framing — never a fabricated resolved-site count), else a one-element list:
     ``{run_key, observation_count, cluster_count, auto_write_tiers, summary,
-    auto_write_edges: [(left, right), ...], proposed_count}``. Only ``auto_write`` edges
-    form resolved sites; proposed merges await review and are counted, never clustered.
+    auto_write_edges, human_accept_edges, resolved_edges, proposed_count,
+    cannot_link_count, refused_count}``. P31.11: resolved sites are formed by BOTH
+    ``auto_write`` edges AND valid ``human_accept`` edges (``resolved_edges`` is the
+    union); ``proposed`` merges await review, ``human_reject``/``cannot_link`` pairs
+    are recorded never to cluster, and ``refused`` accept attempts are counted —
+    none of those form sites.
     """
     if role:
         set_role(conn, role)
@@ -376,16 +549,18 @@ def read_resolved_site_runs(conn: Any, *, role: str | None = None) -> list[dict[
     ).fetchone()
     if run is None:
         return []
-    edges = conn.execute(
-        "SELECT left_entity::text, right_entity::text FROM camera_site_match "
-        " WHERE run_key = %s AND disposition = 'auto_write' "
+    rows = conn.execute(
+        "SELECT left_entity::text, right_entity::text, disposition FROM camera_site_match "
+        " WHERE run_key = %s AND disposition IN ('auto_write', 'human_accept', 'proposed', "
+        "                                      'human_reject', 'refused') "
         " ORDER BY left_entity, right_entity",
         (run[0],),
     ).fetchall()
-    proposed = conn.execute(
-        "SELECT count(*) FROM camera_site_match WHERE run_key = %s AND disposition = 'proposed'",
-        (run[0],),
-    ).fetchone()
+    auto_edges = [(str(a), str(b)) for a, b, disp in rows if disp == "auto_write"]
+    human_edges = [(str(a), str(b)) for a, b, disp in rows if disp == "human_accept"]
+    proposed_count = sum(1 for _a, _b, disp in rows if disp == "proposed")
+    cannot_link_count = sum(1 for _a, _b, disp in rows if disp == "human_reject")
+    refused_count = sum(1 for _a, _b, disp in rows if disp == "refused")
     summary = run[4] if isinstance(run[4], dict) else json.loads(run[4] or "{}")
     return [
         {
@@ -394,7 +569,11 @@ def read_resolved_site_runs(conn: Any, *, role: str | None = None) -> list[dict[
             "cluster_count": int(run[2]),
             "auto_write_tiers": [int(t) for t in (run[3] or [])],
             "summary": summary,
-            "auto_write_edges": [(str(a), str(b)) for a, b in edges],
-            "proposed_count": int(proposed[0]) if proposed else 0,
+            "auto_write_edges": auto_edges,
+            "human_accept_edges": human_edges,
+            "resolved_edges": sorted(set(auto_edges) | set(human_edges)),
+            "proposed_count": proposed_count,
+            "cannot_link_count": cannot_link_count,
+            "refused_count": refused_count,
         }
     ]
