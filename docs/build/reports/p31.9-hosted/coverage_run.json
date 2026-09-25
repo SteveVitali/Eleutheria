@@ -1,0 +1,43 @@
+{
+  "job": "sig-materialize",
+  "image": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api@sha256:5dbc7b9a409f1f991ef157a9014f10f5793298395cb3192319ab4ae6f9ef5c6e",
+  "image_tag": "sig-api:materialize-7ba28a404bf1",
+  "cloud_build": "1b5df0fb-2c4a-46be-b401-88f7e774df6a",
+  "role": "sig_materialize",
+  "run_1": {
+    "execution": "sig-materialize-rm7km",
+    "completed": "2026-09-25 ~16:14 ET (exit 0)",
+    "summary_from_logs": {
+      "metrics_considered": 119,
+      "absences_considered": 1035351,
+      "inserted": 1035458,
+      "skipped_existing": 12,
+      "absences_inserted": 1035351,
+      "by_method": {"counted_with_denominator": 1, "reconciliation_ratio": 106}
+    },
+    "note": "the 107 metric rows inserted are append-only supersession measurements (the spine grew 2,280,784 -> 2,403,886 claims since the P30.2 run -> new input digests); 12 unchanged metric digests skipped. absences_inserted equals the committed read-only measure exactly."
+  },
+  "run_2_rerun": {
+    "execution": "sig-materialize-xknjg",
+    "completed": "2026-09-25 ~17:24 ET (exit 0)",
+    "summary_from_logs": {
+      "metrics_considered": 119,
+      "absences_considered": 1035351,
+      "inserted": 0,
+      "skipped_existing": 1035470,
+      "absences_inserted": 0,
+      "by_method": {}
+    },
+    "verdict": "+0 — identical input digests, ON CONFLICT DO NOTHING"
+  },
+  "readback": {
+    "coverage_record_total": 1035576,
+    "not_researched": 1035351,
+    "not_applicable_metric_rows": 225,
+    "distinct_absent_subjects": 241782,
+    "distinct_absent_predicates": 83,
+    "absences_with_undeclared_predicate": 0,
+    "cross_class_bill_pred_on_camera_subject": 0,
+    "vocabulary": [["not_researched", "auto", "inference.materialize (peer-class negative space)"]]
+  }
+}
