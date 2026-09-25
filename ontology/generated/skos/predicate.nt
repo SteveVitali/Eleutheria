@@ -103,6 +103,98 @@
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/award_date> <https://ontology.sig-project.org/schema/resolutionStrategy> "authoritative_source_wins" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/award_date> <https://ontology.sig-project.org/schema/valueDatatype> "edtf" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/award_date> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_chamber> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_chamber> <http://www.w3.org/2004/02/skos/core#definition> "The chamber the bill index assigns the bill to (where a unicameral index omits it, no claim is emitted)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_chamber> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_chamber> <http://www.w3.org/2004/02/skos/core#prefLabel> "bill_chamber"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_chamber> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_chamber> <https://ontology.sig-project.org/schema/halfLife> "infinite" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_chamber> <https://ontology.sig-project.org/schema/objectKind> "literal" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_chamber> <https://ontology.sig-project.org/schema/resolutionStrategy> "authoritative_source_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_chamber> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_chamber> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_external_id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_external_id> <http://www.w3.org/2004/02/skos/core#definition> "The bill index record's own external id (e.g. an OpenStates or Congress id), verbatim." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_external_id> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_external_id> <http://www.w3.org/2004/02/skos/core#prefLabel> "bill_external_id"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_external_id> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_external_id> <https://ontology.sig-project.org/schema/halfLife> "infinite" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_external_id> <https://ontology.sig-project.org/schema/objectKind> "literal" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_external_id> <https://ontology.sig-project.org/schema/resolutionStrategy> "authoritative_source_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_external_id> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_external_id> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_identifier> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_identifier> <http://www.w3.org/2004/02/skos/core#definition> "The bill identifier the index states (e.g. 'HB 2761')." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_identifier> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_identifier> <http://www.w3.org/2004/02/skos/core#prefLabel> "bill_identifier"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_identifier> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_identifier> <https://ontology.sig-project.org/schema/halfLife> "infinite" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_identifier> <https://ontology.sig-project.org/schema/objectKind> "literal" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_identifier> <https://ontology.sig-project.org/schema/resolutionStrategy> "authoritative_source_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_identifier> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_identifier> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_jurisdiction> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_jurisdiction> <http://www.w3.org/2004/02/skos/core#definition> "The jurisdiction the bill index assigns the bill to (a bill never moves legislatures)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_jurisdiction> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_jurisdiction> <http://www.w3.org/2004/02/skos/core#prefLabel> "bill_jurisdiction"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_jurisdiction> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_jurisdiction> <https://ontology.sig-project.org/schema/halfLife> "infinite" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_jurisdiction> <https://ontology.sig-project.org/schema/objectKind> "literal" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_jurisdiction> <https://ontology.sig-project.org/schema/resolutionStrategy> "authoritative_source_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_jurisdiction> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_jurisdiction> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_matched_keyword> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_matched_keyword> <http://www.w3.org/2004/02/skos/core#definition> "The bill's own text matched a reviewed surveillance term (verbatim slice) — a text match, never a deployment." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_matched_keyword> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_matched_keyword> <http://www.w3.org/2004/02/skos/core#prefLabel> "bill_matched_keyword"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_matched_keyword> <https://ontology.sig-project.org/schema/cardinality> "multi" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_matched_keyword> <https://ontology.sig-project.org/schema/halfLife> "infinite" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_matched_keyword> <https://ontology.sig-project.org/schema/mapsTo> <https://ontology.sig-project.org/vocab/predicate/1.0.0/matched_keyword> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_matched_keyword> <https://ontology.sig-project.org/schema/objectKind> "literal" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_matched_keyword> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_matched_keyword> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_matched_keyword> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_session> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_session> <http://www.w3.org/2004/02/skos/core#definition> "The legislative session the bill index assigns the bill to." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_session> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_session> <http://www.w3.org/2004/02/skos/core#prefLabel> "bill_session"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_session> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_session> <https://ontology.sig-project.org/schema/halfLife> "infinite" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_session> <https://ontology.sig-project.org/schema/objectKind> "literal" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_session> <https://ontology.sig-project.org/schema/resolutionStrategy> "authoritative_source_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_session> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_session> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_status> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_status> <http://www.w3.org/2004/02/skos/core#definition> "The bill's status text as the index states it (progresses; latest capture wins)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_status> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_status> <http://www.w3.org/2004/02/skos/core#prefLabel> "bill_status"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_status> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_status> <https://ontology.sig-project.org/schema/halfLife> "12mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_status> <https://ontology.sig-project.org/schema/objectKind> "literal" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_status> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_status> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_status> <https://ontology.sig-project.org/schema/volatilityClass> "MODERATE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_status_date> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_status_date> <http://www.w3.org/2004/02/skos/core#definition> "The date the bill's status last changed as the index states it." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_status_date> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_status_date> <http://www.w3.org/2004/02/skos/core#prefLabel> "bill_status_date"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_status_date> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_status_date> <https://ontology.sig-project.org/schema/halfLife> "12mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_status_date> <https://ontology.sig-project.org/schema/objectKind> "literal" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_status_date> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_status_date> <https://ontology.sig-project.org/schema/valueDatatype> "edtf" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_status_date> <https://ontology.sig-project.org/schema/volatilityClass> "MODERATE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_title> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_title> <http://www.w3.org/2004/02/skos/core#definition> "The bill's title as the index states it." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_title> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_title> <http://www.w3.org/2004/02/skos/core#prefLabel> "bill_title"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_title> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_title> <https://ontology.sig-project.org/schema/halfLife> "2y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_title> <https://ontology.sig-project.org/schema/mapsTo> <https://ontology.sig-project.org/vocab/predicate/1.0.0/title> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_title> <https://ontology.sig-project.org/schema/objectKind> "literal" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_title> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_title> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/bill_title> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/buyer> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/buyer> <http://www.w3.org/2004/02/skos/core#definition> "The purchasing organisation of a contract or procurement notice (§11.11); also written as an organisation entity-ref claim (ADR-112)." .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/buyer> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
