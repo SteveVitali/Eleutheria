@@ -28,8 +28,8 @@ before its entity exists, inside one transaction. So a writer that loses a race
 never leaves an orphan entity behind. **Call this inside a transaction** (the
 sink's chunk transaction) at the default READ COMMITTED isolation.
 
-Only identity-bearing schemes go through the guard. That is ``sig.connector.subject``
-today; P31.5 adds its organisation scheme. Attribute-like schemes such as
+Only identity-bearing schemes go through the guard: ``sig.connector.subject`` and,
+since P31.5 (ADR-112), the partner-organisation schemes. Attribute-like schemes such as
 ``us.state`` or ``fr.insee`` are shared by many entities on purpose and are
 **not** keyed (ADR-110).
 
@@ -45,12 +45,29 @@ from typing import Any
 #: The identifier scheme the claim sink keys connector subjects on.
 SUBJECT_SCHEME = "sig.connector.subject"
 
-#: The identity-bearing schemes the guard keys. The backfill in the sqitch change
-#: keys exactly these. A new scheme joins by a code change here, plus a backfill of
-#: its existing identifiers (P31.5 adds its organisation scheme this way). The guard
-#: refuses any other scheme, so an attribute scheme (``us.state``) can never be
-#: keyed by mistake.
-GUARDED_SCHEMES = frozenset({SUBJECT_SCHEME})
+#: The partner-organisation identity schemes (P31.5 / ADR-112). ``sig.org.name`` is
+#: the normalized-name identifier (``resolution.normalize.normalize_org_name``); the
+#: rest are external crosswalk ids that name exactly one organisation. FIPS is left
+#: out on purpose: a place code is shared by every body in that place (the county
+#: government and its sheriff), so it is an attribute scheme like ``us.state``.
+PARTNER_NAME_SCHEME = "sig.org.name"
+PARTNER_ORG_SCHEMES = frozenset(
+    {
+        PARTNER_NAME_SCHEME,
+        "gleif.lei",
+        "us.sam.uei",
+        "dnb.duns",
+        "us.dla.cage",
+        "us.cgac.agency_code",
+    }
+)
+
+#: The identity-bearing schemes the guard keys. The backfill in the sqitch changes
+#: keys exactly these (``entity_identity_key`` the subjects, ``partner_org_identity_key``
+#: the partner organisations). A new scheme joins by a code change here, plus a
+#: backfill of its existing identifiers. The guard refuses any other scheme, so an
+#: attribute scheme (``us.state``) can never be keyed by mistake.
+GUARDED_SCHEMES = frozenset({SUBJECT_SCHEME} | PARTNER_ORG_SCHEMES)
 
 Key = tuple[str, str]  # (scheme, value)
 
@@ -194,6 +211,8 @@ def resolve_identities(
 
 __all__ = [
     "GUARDED_SCHEMES",
+    "PARTNER_NAME_SCHEME",
+    "PARTNER_ORG_SCHEMES",
     "IdentityBatch",
     "IdentityResolution",
     "SUBJECT_SCHEME",

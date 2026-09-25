@@ -20,6 +20,12 @@ or row removal anywhere in this module, SIG-STORE-011/012):
   P31.3 the resolution goes through the **identity guard**
   (:mod:`db.identity_guard`, ADR-110): the ``entity_identity_key`` primary key
   makes two concurrent sinks agree on ONE entity per subject.
+* **Entity-ref objects** (P31.5 / ADR-112) — a record that carries an
+  ``object_ref`` (a connector's ``link()`` stage adds one to a partner claim) is
+  written with ``object_type='entity_ref'`` and an ``object_entity``: an
+  ``organization`` minted through the same guard, labelled by one
+  ``organization`` row. Every other record stays a literal. A ``person`` object is
+  refused (Part VIII).
 * **L1 claim** — the append-only ``claim`` row itself. ``recorded_at`` (its
   ``sys_period`` lower bound) is set **by the database** (``clock_timestamp()``
   default), never by this code.
@@ -62,7 +68,7 @@ from typing import Any
 
 import psycopg
 
-from .identity_guard import SUBJECT_SCHEME, resolve_identity_batch
+from .identity_guard import PARTNER_NAME_SCHEME, SUBJECT_SCHEME, resolve_identity_batch
 from .run_completion import SUCCESSFUL_STATUSES, append_completion
 
 _log = logging.getLogger(__name__)
@@ -140,12 +146,59 @@ class EntityRef:
 
     Returned by an ``object_resolver`` (P31.5). The sink resolves it through the
     identity guard, so an object entity is minted at most once per
-    ``(scheme, value)``, exactly like a subject.
+    ``(scheme, value)``, exactly like a subject. ``label`` (optional, P31.5 /
+    ADR-112) is the display name an ``organization`` object is first seen under;
+    the sink records it once as the organisation's ``cached_canonical_name``, and
+    ``rules`` (the identity ruleset version that decided it) in its immutable
+    ``identity_basis``.
     """
 
     scheme: str
     value: str
     entity_type: str
+    label: str | None = None
+    rules: str | None = None
+
+
+#: The object entity types the sink never mints (Part VIII). A person entity needs
+#: the §43.4 two-reviewer record; no connector record may create one.
+_REFUSED_OBJECT_TYPES = frozenset({"person"})
+
+#: The ``organization.organization_type`` of a partner organisation minted from a
+#: connector record (ADR-112): the record names the party, not its class, so the
+#: class is recorded as unclassified rather than guessed.
+PARTNER_ORGANIZATION_TYPE = "unclassified"
+
+
+def record_object_ref(claim: Mapping[str, Any]) -> EntityRef | None:
+    """The production ``object_resolver`` (P31.5 / ADR-112).
+
+    Reads the ``object_ref`` a connector's ``link()`` stage attached to an
+    entity-ref claim record (``{"scheme", "value", "entity_type", "label"}``). A
+    record without one, such as every text claim, stays a literal. The identity
+    decision itself (scheme, normalization, the never-a-person rule) is made
+    upstream by ``resolution.partner_identity``. This function only carries it,
+    and refuses a person object outright (Part VIII) instead of minting one.
+    """
+    ref = claim.get("object_ref")
+    if not ref:
+        return None
+    if not isinstance(ref, Mapping):
+        raise ValueError(f"object_ref must be a mapping, got {type(ref).__name__}")
+    scheme = str(ref.get("scheme") or "")
+    value = str(ref.get("value") or "")
+    entity_type = str(ref.get("entity_type") or "")
+    if not scheme or not value or not entity_type:
+        raise ValueError("object_ref needs a scheme, a value and an entity_type")
+    if entity_type in _REFUSED_OBJECT_TYPES:
+        raise ValueError(
+            f"object_ref names a {entity_type!r} entity; the sink never mints one (Part VIII)"
+        )
+    label = ref.get("label")
+    rules = ref.get("rules")
+    return EntityRef(
+        scheme, value, entity_type, str(label) if label else None, str(rules) if rules else None
+    )
 
 
 @dataclass(frozen=True)
@@ -256,6 +309,24 @@ _INSERT_CLAIMS = (
     "ORDER BY r.ord "
     "ON CONFLICT (content_digest) WHERE content_digest IS NOT NULL "
     "DO NOTHING RETURNING claim_id, content_digest"
+)
+
+# A partner organisation's identity row (ADR-112): its first-seen display name as
+# ``cached_canonical_name`` so read surfaces label it, the identity decision as its
+# immutable ``identity_basis`` (SIG-IDENT-012), and the SIG-ONTO-013 review flag for a
+# body known only by name. ``ON CONFLICT DO NOTHING`` keeps the first row: nothing
+# here ever rewrites an organisation. Only entities that really are organisations get
+# a row (an identifier a different writer keyed to another entity type gets none).
+_PARTNER_ORGANIZATIONS = (
+    "INSERT INTO organization"
+    "(entity_id, organization_type, identity_basis, cached_canonical_name,"
+    " publication_review_required) "
+    "SELECT o.entity_id::uuid, %s, o.basis::jsonb, o.label, o.review::boolean "
+    "FROM unnest(%s::text[], %s::text[], %s::text[], %s::text[])"
+    " AS o(entity_id, basis, label, review) "
+    "JOIN entity e ON e.entity_id = o.entity_id::uuid AND e.entity_type = 'organization' "
+    "ORDER BY o.entity_id "
+    "ON CONFLICT (entity_id) DO NOTHING"
 )
 
 _LINK_EVIDENCE = (
@@ -399,6 +470,8 @@ class PgClaimSink:
         self._known_predicates: set[str] = set()
         # (scheme, value) -> entity_id, filled through the identity guard.
         self._entity_by_key: dict[tuple[str, str], str] = {}
+        # Partner organisations whose ``organization`` row this sink has written.
+        self._org_rows: set[str] = set()
         # (source_id, artifact_type) -> (capture_id, extraction_id)
         self._capture_by_source: dict[tuple[str, str], tuple[str, str]] = {}
         # The open chunk: staged claims + the predicates they introduce.
@@ -936,6 +1009,11 @@ class PgClaimSink:
             value_kind = "novalue"
             value_text = None
         object_ref = self._object_resolver(claim) if self._object_resolver is not None else None
+        if object_ref is not None and object_ref.entity_type in _REFUSED_OBJECT_TYPES:
+            raise ValueError(
+                f"object resolver named a {object_ref.entity_type!r} entity; the sink "
+                "never mints one (Part VIII)"
+            )
         if object_ref is not None and (not object_ref.value or value_kind == "novalue"):
             # An entity reference needs a named entity and a value to stand for:
             # without either the claim stays a literal (claim_value_shape).
@@ -983,6 +1061,7 @@ class PgClaimSink:
                 o = s.object_ref
                 refs.setdefault((o.scheme, o.value), (o.scheme, o.value, o.entity_type))
         entity_ids = self._resolve_entities(list(refs.values()))
+        self._write_partner_organizations(staged, entity_ids)
 
         # Within one chunk the first occurrence of a digest is the one written.
         unique: list[_Staged] = []
@@ -1037,6 +1116,47 @@ class PgClaimSink:
         if self._on_duplicates is not None:
             self._report_duplicates(unique, inserted)
 
+    def _write_partner_organizations(
+        self, staged: Sequence[_Staged], entity_ids: Mapping[tuple[str, str], str]
+    ) -> None:
+        """Write the ``organization`` row of each newly seen partner organisation.
+
+        One statement per chunk, only for organisation objects this sink has not
+        written yet (the cache is journaled, so a rolled-back chunk rewrites them).
+        The first label seen wins, and ``ON CONFLICT DO NOTHING`` never replaces a
+        row another run already wrote (ADR-112).
+        """
+        rows: dict[str, tuple[str, str, str]] = {}
+        for s in staged:
+            o = s.object_ref
+            if o is None or o.entity_type != "organization" or not o.label:
+                continue
+            entity_id = entity_ids[(o.scheme, o.value)]
+            if entity_id in self._org_rows or entity_id in rows:
+                continue
+            basis = json.dumps(
+                {"scheme": o.scheme, "value": o.value, "rules": o.rules, "decided_by": "ADR-112"},
+                sort_keys=True,
+            )
+            review = "true" if o.scheme == PARTNER_NAME_SCHEME else "false"
+            rows[entity_id] = (basis, o.label, review)
+        if not rows:
+            return
+        ids = sorted(rows)
+        self._conn.execute(
+            _PARTNER_ORGANIZATIONS,
+            (
+                PARTNER_ORGANIZATION_TYPE,
+                ids,
+                [rows[i][0] for i in ids],
+                [rows[i][1] for i in ids],
+                [rows[i][2] for i in ids],
+            ),
+        )
+        for entity_id in ids:
+            self._org_rows.add(entity_id)
+            self._journal.append((self._org_rows, entity_id))
+
     def _report_duplicates(self, unique: Sequence[_Staged], inserted: Mapping[str, str]) -> None:
         dup = [s for s in unique if s.digest not in inserted]
         if not dup or self._on_duplicates is None:
@@ -1063,7 +1183,9 @@ __all__ = [
     "DuplicateHook",
     "EntityRef",
     "ObjectResolver",
+    "PARTNER_ORGANIZATION_TYPE",
     "PgClaimSink",
     "SUBJECT_SCHEME",
     "content_digest",
+    "record_object_ref",
 ]

@@ -18,6 +18,16 @@
 # owed (D-P30.2a-1). `value_tolerance` (optional) is the predicate's own U4 tolerance
 # (SIG-RECON-014): claims whose values agree within it corroborate one candidate, and a
 # spread beyond it is UNRESOLVED (U4) with both values kept visible.
+#
+# P31.5 / ADR-112: the procurement (§11.11/§11.12 + the notice surface) and accountability
+# (§11.17/§11.18) predicates measured on the hosted spine are registered (the procurement half
+# of D-P30.2a-1; legislation/portal families and the agenda_document/portal_document/bill_index
+# genres are P31.8). Two optional fields: `object_kind` (`entity_ref` for a partner predicate
+# whose claims also name an `organization` entity; `literal` otherwise) and `maps_to` (an existing
+# registry row with the same meaning, whose volatility, strategy and legacy-genre directness the
+# row copies — the resolver keys on the spine predicate id, so the mapping is recorded, not
+# aliased). `connector_run` directness follows ADR-104's rule for an unclassified connector pull:
+# D3 for a record's descriptive facts, D1 for its own identifiers and its own-text matches.
 scheme: predicate
 title: SIG predicate registry (§13.6)
 version: 1.0.0
@@ -33,7 +43,7 @@ artifact_genres:
 - vendor_default_page
 - camera_registry
 - connector_run
-count: 70
+count: 116
 predicates:
 - predicate_id: contract_signed_date
   vocab_version: 1.0.0
@@ -1348,6 +1358,7 @@ predicates:
     vendor_default_page: D6
     camera_registry: D3
     connector_run: D3
+  object_kind: entity_ref
 - predicate_id: camera_jurisdiction
   vocab_version: 1.0.0
   value_datatype: string
@@ -1517,3 +1528,1029 @@ predicates:
     vendor_default_page: D6
     camera_registry: D2
     connector_run: D3
+- predicate_id: buyer
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: The purchasing organisation of a contract or procurement notice (§11.11); also written as
+    an organisation entity-ref claim (ADR-112).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/buyer
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D1
+    invoice: D2
+    portal_snapshot: D3
+    council_minutes: D2
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D4
+    camera_registry: D6
+    connector_run: D3
+  object_kind: entity_ref
+- predicate_id: seller
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: The supplying organisation of a contract or award (§11.11); also written as an organisation
+    entity-ref claim (ADR-112).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/seller
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D1
+    invoice: D2
+    portal_snapshot: D3
+    council_minutes: D2
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D4
+    camera_registry: D6
+    connector_run: D3
+  object_kind: entity_ref
+- predicate_id: funder
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: The paying organisation of a funding instrument (§11.12); also written as an organisation
+    entity-ref claim (ADR-112).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/funder
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D1
+    invoice: D2
+    portal_snapshot: D3
+    council_minutes: D2
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D4
+    camera_registry: D6
+    connector_run: D3
+  object_kind: entity_ref
+- predicate_id: recipient
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: The receiving party of a funding instrument or award (§11.12); also written as an organisation
+    entity-ref claim (ADR-112).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/recipient
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D1
+    invoice: D2
+    portal_snapshot: D3
+    council_minutes: D2
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D4
+    camera_registry: D6
+    connector_run: D3
+  object_kind: entity_ref
+- predicate_id: amount
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: Monetary amount a contract, award or notice states, verbatim (§11.11/§11.12).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/amount
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+  maps_to: contract_value
+- predicate_id: currency
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: Currency of the stated amount (§11.11).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/currency
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D1
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D2
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: signed_date
+  vocab_version: 1.0.0
+  value_datatype: edtf
+  cardinality: single
+  definition: Date a contract was signed (§11.11).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/signed_date
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D1
+    invoice: D3
+    portal_snapshot: D6
+    council_minutes: D2
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+  maps_to: contract_signed_date
+- predicate_id: start_date
+  vocab_version: 1.0.0
+  value_datatype: edtf
+  cardinality: single
+  definition: Contract term start (§11.11).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/start_date
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+  maps_to: contract_start_date
+- predicate_id: end_date
+  vocab_version: 1.0.0
+  value_datatype: edtf
+  cardinality: single
+  definition: Contract term end (§11.11).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/end_date
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+  maps_to: contract_end_date
+- predicate_id: renewal_options
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: Renewal options a contract states (§11.11).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/renewal_options
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D1
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D2
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: products
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: Products or services a contract names, verbatim (§11.11).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/products
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D1
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D2
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: quantities
+  vocab_version: 1.0.0
+  value_datatype: integer
+  cardinality: multi
+  definition: Quantities a contract states for its products (§11.11); a stated quantity, never a deployed
+    count.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/quantities
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D1
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D2
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: document
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: A document a procurement record links or contains (§11.11).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/document
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D3
+    invoice: D6
+    portal_snapshot: D2
+    council_minutes: D3
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: acquisition_channel
+  vocab_version: 1.0.0
+  value_datatype: AcquisitionChannel
+  cardinality: single
+  definition: How the contract was acquired (§11.11 AcquisitionChannel).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/acquisition_channel
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D1
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D2
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: parent_cooperative_contract
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: The cooperative master award a piggyback contract rides (§11.11, SIG-ONTO-032).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/parent_cooperative_contract
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D1
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D2
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: amends_contract
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: The contract this contract amends (§11.11).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/amends_contract
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D1
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D2
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: lifecycle_transition
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: A dated procurement lifecycle transition (§13.4 ProcurementState).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/lifecycle_transition
+  volatility_class: MODERATE
+  half_life: 12mo
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+  maps_to: procurement_state
+- predicate_id: instrument_type
+  vocab_version: 1.0.0
+  value_datatype: FundingInstrumentType
+  cardinality: single
+  definition: Type of a funding instrument (§11.12 FundingInstrumentType).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/instrument_type
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D1
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D2
+    agency_policy: D2
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: program_name
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: Named funding program of a funding instrument (§11.12).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/program_name
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D3
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D3
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D4
+    news_article: D3
+    vendor_default_page: D5
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+  maps_to: funding_program_name
+- predicate_id: award_date
+  vocab_version: 1.0.0
+  value_datatype: edtf
+  cardinality: single
+  definition: Date a funding instrument was awarded (§11.12).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/award_date
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D1
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D2
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: period
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: Period of performance a funding instrument or award states (§11.12).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/period
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D1
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D2
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: conditions
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: Conditions a funding instrument states (§11.12).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/conditions
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D1
+    invoice: D3
+    portal_snapshot: D3
+    council_minutes: D2
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: notice_type
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: Type of a procurement notice as its source states it (solicitation, award notice, ...).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/notice_type
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D3
+    invoice: D6
+    portal_snapshot: D2
+    council_minutes: D3
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: posted_date
+  vocab_version: 1.0.0
+  value_datatype: edtf
+  cardinality: single
+  definition: Date a procurement notice was published.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/posted_date
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D3
+    invoice: D6
+    portal_snapshot: D2
+    council_minutes: D3
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: response_deadline
+  vocab_version: 1.0.0
+  value_datatype: edtf
+  cardinality: single
+  definition: Response deadline a procurement notice states (may be amended).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/response_deadline
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D3
+    invoice: D6
+    portal_snapshot: D2
+    council_minutes: D3
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: title
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: Title a procurement notice states, verbatim.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/title
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D3
+    invoice: D6
+    portal_snapshot: D2
+    council_minutes: D3
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: description
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: Description a procurement record states, verbatim.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/description
+  volatility_class: SLOW
+  half_life: 2y
+  resolution_strategy: latest_observation_wins
+  directness:
+    executed_contract: D3
+    invoice: D6
+    portal_snapshot: D2
+    council_minutes: D3
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: place_of_performance
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: Place-of-performance literal a notice states (NUTS code or city, verbatim).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/place_of_performance
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D3
+    invoice: D6
+    portal_snapshot: D2
+    council_minutes: D3
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: country
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: Country of a notice's buyer (ISO 3166-1 alpha-2 from the reviewed map).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/country
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D3
+    invoice: D6
+    portal_snapshot: D2
+    council_minutes: D3
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: matched_keyword
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: The record's own text contains a reviewed literal (the verbatim slice) — a text match, never
+    a deployment.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/matched_keyword
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: max_support
+  directness:
+    executed_contract: D1
+    invoice: D1
+    portal_snapshot: D1
+    council_minutes: D1
+    agency_policy: D1
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D1
+    vendor_default_page: D1
+    camera_registry: D6
+    connector_run: D1
+  object_kind: literal
+- predicate_id: content_term
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: A captured document contains a reviewed content-vocabulary term (the verbatim literal).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/content_term
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: max_support
+  directness:
+    executed_contract: D1
+    invoice: D1
+    portal_snapshot: D1
+    council_minutes: D1
+    agency_policy: D1
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D1
+    vendor_default_page: D1
+    camera_registry: D6
+    connector_run: D1
+  object_kind: literal
+- predicate_id: event_type
+  vocab_version: 1.0.0
+  value_datatype: AccountabilityEventType
+  cardinality: single
+  definition: Type of an accountability event (§11.17).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/event_type
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: max_support
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D3
+    council_minutes: D2
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D3
+    news_article: D2
+    vendor_default_page: D4
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: event_date
+  vocab_version: 1.0.0
+  value_datatype: edtf
+  cardinality: single
+  definition: Date of an accountability event (§11.17).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/event_date
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D3
+    council_minutes: D2
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D3
+    news_article: D2
+    vendor_default_page: D4
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: event_organizations
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: Organisations an accountability event names (§11.17); each also written as an organisation
+    entity-ref claim (ADR-112).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/event_organizations
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: max_support
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D3
+    council_minutes: D2
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D3
+    news_article: D2
+    vendor_default_page: D4
+    camera_registry: D6
+    connector_run: D3
+  object_kind: entity_ref
+- predicate_id: event_deployments
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: Deployments an accountability event names (§11.17), verbatim.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/event_deployments
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: max_support
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D3
+    council_minutes: D2
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D3
+    news_article: D2
+    vendor_default_page: D4
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: event_technologies
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: Technologies an accountability event names (§11.17), verbatim.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/event_technologies
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: max_support
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D3
+    council_minutes: D2
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D3
+    news_article: D2
+    vendor_default_page: D4
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: affected_party_class
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: Class of party an accountability event affected (§11.17) — a class, never a named individual.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/affected_party_class
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: max_support
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D3
+    council_minutes: D2
+    agency_policy: D3
+    osm_node_set: D6
+    audit_log: D3
+    news_article: D2
+    vendor_default_page: D4
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: proceeding_court
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: Court of a legal proceeding (§11.18).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_court
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D4
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: proceeding_docket_number
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: Docket number of a legal proceeding (identity-bearing; exact match only).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_docket_number
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D1
+  object_kind: literal
+- predicate_id: proceeding_case_name
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: Case name of a legal proceeding (§11.18), verbatim.
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_case_name
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D4
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: proceeding_parties
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: Parties of a legal proceeding (§11.18), verbatim; never an entity (litigants are routinely
+    natural persons, Part VIII).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_parties
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D4
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: proceeding_party_role
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: multi
+  definition: Role of a party in a legal proceeding (§11.18).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_party_role
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D4
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: proceeding_filed_date
+  vocab_version: 1.0.0
+  value_datatype: edtf
+  cardinality: single
+  definition: Filing date of a legal proceeding (§11.18).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_filed_date
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D4
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: proceeding_disposition_date
+  vocab_version: 1.0.0
+  value_datatype: edtf
+  cardinality: single
+  definition: Disposition date of a legal proceeding (§11.18).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_disposition_date
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D4
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D3
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D3
+  object_kind: literal
+- predicate_id: proceeding_courtlistener_id
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: CourtListener id of a legal proceeding (identity-bearing; exact match only).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_courtlistener_id
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D1
+  object_kind: literal
+- predicate_id: proceeding_recap_id
+  vocab_version: 1.0.0
+  value_datatype: string
+  cardinality: single
+  definition: RECAP id of a legal proceeding (identity-bearing; exact match only).
+  skos_concept_iri: https://ontology.sig-project.org/vocab/predicate/1.0.0/proceeding_recap_id
+  volatility_class: IMMUTABLE
+  half_life: infinite
+  resolution_strategy: authoritative_source_wins
+  directness:
+    executed_contract: D6
+    invoice: D6
+    portal_snapshot: D6
+    council_minutes: D6
+    agency_policy: D6
+    osm_node_set: D6
+    audit_log: D6
+    news_article: D6
+    vendor_default_page: D6
+    camera_registry: D6
+    connector_run: D1
+  object_kind: literal

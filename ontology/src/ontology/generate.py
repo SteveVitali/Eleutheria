@@ -319,6 +319,12 @@ def build_predicate_skos() -> str:
         g.add((ref, _sig("resolutionStrategy"), Literal(p["resolution_strategy"])))
         g.add((ref, _sig("valueDatatype"), Literal(p["value_datatype"])))
         g.add((ref, _sig("cardinality"), Literal(p["cardinality"])))
+        # P31.5 / ADR-112: the object kind (entity_ref | literal) and the equal-meaning
+        # registry row, when the source row states them.
+        if p.get("object_kind"):
+            g.add((ref, _sig("objectKind"), Literal(p["object_kind"])))
+        if p.get("maps_to"):
+            g.add((ref, _sig("mapsTo"), URIRef(f"{PRED_SCHEME}/{p['maps_to']}")))
     return _canonical_nt(g)
 
 

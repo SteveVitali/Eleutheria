@@ -44,8 +44,13 @@ the full narrative.
 3. **Entities for identity-bearing identifiers are minted only through the guard.** Call
    `db.identity_guard.resolve_identities` inside a transaction. Never check `entity_identifier`, then
    insert an entity: two writers race, and the spine cannot delete the duplicate (ADR-110).
-   `us.state`-style attribute schemes are not identity keys and are not guarded.
-4. **Analytics run on DuckDB** (`analytics.py`) over parquet — a separate engine from the PG spine;
+   `us.state`-style attribute schemes are not identity keys and are not guarded. A new guarded scheme
+   ships with a sqitch backfill of its existing identifiers (ADR-110 (d); `partner_org_identity_key` for
+   the P31.5 partner-organisation schemes, ADR-112).
+4. **Entity-ref objects come only from a record's `object_ref`** (`record_object_ref`, wired by
+   `connectors.sinks.make_claim_sink`). The sink never mints a `person` object (Part VIII); the identity
+   decision for partner organisations lives in `resolution.partner_identity`, not in `db`.
+5. **Analytics run on DuckDB** (`analytics.py`) over parquet — a separate engine from the PG spine;
    don't conflate the two stores.
 
 ## Terminology

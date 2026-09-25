@@ -73,6 +73,7 @@ from parsing.classification import (
 )
 from parsing.document import html_text, page_locator_for, pdf_text_pages, utf8_text
 from parsing.locator import Locator
+from resolution.partner_identity import partner_ref_rows
 
 from ._data import load_table
 from .stages import (
@@ -225,6 +226,12 @@ def assert_predicate_allowed(predicate: str) -> str:
 
 
 # --- candidate identifiers for the parties (SIG-INGEST-034) -------------------
+
+#: The party predicates whose text claims gain a partner entity-ref claim in
+#: ``link()`` (P31.5 / ADR-112): §11.11 buyer/seller, §11.12 funder/recipient.
+#: ``parent_cooperative_contract`` / ``amends_contract`` name contracts, not
+#: organisations, and stay text.
+PROCUREMENT_PARTNER_PREDICATES = frozenset({"buyer", "seller", "recipient", "funder"})
 
 
 def org_candidate(raw_org: str, *, scheme: str = "procurement.org_name") -> dict[str, str]:
@@ -4028,8 +4035,22 @@ class ProcurementConnector(Connector):
         )
 
     # -- link + load --
-    # link() is inherited (identity): SIG-INGEST-034 — the connector emits candidate
-    # identifiers and NEVER resolves entities itself; resolution is P03.2/P05.1.
+    # SIG-INGEST-034: the connector emits candidate identifiers and NEVER resolves
+    # entities itself. link() asks the identity layer (resolution.partner_identity)
+    # which parties stand as organisations; the claim sink mints them (P31.5).
+
+    def link(self, ctx: RunContext, normalized: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """Append the partner entity-ref claims (P31.5 / ADR-112).
+
+        Each ``buyer`` / ``seller`` / ``recipient`` / ``funder`` text claim whose
+        party :func:`resolution.partner_identity.partner_identity` accepts as an
+        organisation gains a separate entity-ref claim record (same subject,
+        predicate and evidence locators, plus an ``object_ref``). The text claim is
+        unchanged; ambiguous and person-shaped parties stay text only (Part VIII).
+        The connector still never mints an entity: the identity layer decides the
+        identifier and the claim sink resolves it through the identity guard.
+        """
+        return partner_ref_rows(normalized, predicates=PROCUREMENT_PARTNER_PREDICATES)
 
     def load(self, ctx: RunContext, linked: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Produce the L1 rows; the driver asserts them (live only, SIG-INGEST-003)."""
@@ -4629,6 +4650,7 @@ __all__ = [
     "InvalidContract",
     "InvalidFundingInstrument",
     "LifecycleTransition",
+    "PROCUREMENT_PARTNER_PREDICATES",
     "PredicateNotAllowed",
     "ProcurementConnector",
     "SubAward",

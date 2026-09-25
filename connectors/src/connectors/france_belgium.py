@@ -63,10 +63,11 @@ from parsing.classification import FileFormat, classify
 from parsing.document import pdf_text_pages
 from parsing.genre import classify_genre
 from parsing.locator import Locator
+from resolution.partner_identity import partner_ref_rows
 
 from ._data import load_table
 from .disappearance import note_disappearance
-from .procurement import Contract, LifecycleTransition
+from .procurement import PROCUREMENT_PARTNER_PREDICATES, Contract, LifecycleTransition
 from .stages import (
     CaptureRef,
     Connector,
@@ -1580,6 +1581,16 @@ class FranceBelgiumProcurementConnector(Connector):
             out.extend(rows)
             out.append(_stamp(report.to_row(), source_id=ctx.source.id))
         return out
+
+    def link(self, ctx: RunContext, normalized: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """Append the partner entity-ref claims (P31.5 / ADR-112).
+
+        The DECP contract parties go through the same identity rule as the US
+        procurement connector (:func:`resolution.partner_identity.partner_ref_rows`).
+        A DECP party is usually a bare SIRET with no name, which the rule cannot
+        tell from a sole trader's, so it stays text only (Part VIII).
+        """
+        return partner_ref_rows(normalized, predicates=PROCUREMENT_PARTNER_PREDICATES)
 
     def load(self, ctx: RunContext, linked: list[dict[str, Any]]) -> list[dict[str, Any]]:
         return load_claims_for_l1(linked)
