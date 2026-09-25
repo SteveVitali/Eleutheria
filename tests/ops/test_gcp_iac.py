@@ -222,3 +222,75 @@ def test_materialize_plans_the_run_completion_backfill_as_the_least_privilege_ro
     assert "--role sig_materialize" in plan
     assert "--gcs-bucket example-proj-sig-restricted" in plan
     assert "${SIG_PG_PASSWORD}" in plan  # expanded in the container, never here
+
+
+# --- P31.4 / ADR-111: every deploy path pins an image digest, never :latest --------
+
+_DEPLOY_IMAGE = re.compile(r"gcloud run (?:jobs )?deploy \S+ .*?--image (\S+)")
+
+
+@pytest.mark.parametrize(
+    ("script", "args"),
+    [
+        ("scheduled-ops.sh", ["--check"]),
+        ("materialize.sh", ["--check", "job"]),
+        ("export.sh", ["--check", "job"]),
+        ("provision.sh", ["--check"]),
+    ],
+)
+def test_every_planned_deploy_uses_a_pinned_digest(script: str, args: list[str]) -> None:
+    proc = subprocess.run(
+        ["bash", str(GCP_DIR / script), *args],
+        capture_output=True,
+        text=True,
+        check=False,
+        env=_no_adc_env(),
+        cwd=str(REPO_ROOT),
+    )
+    assert proc.returncode == 0, proc.stderr
+    images = _DEPLOY_IMAGE.findall(proc.stdout)
+    assert images, f"{script} planned no deploy"
+    for image in images:
+        assert "@sha256:" in image and not image.endswith(":latest"), (script, image)
+
+
+def test_scheduled_ops_mounts_the_capture_store_on_every_ingest_job() -> None:
+    proc = subprocess.run(
+        ["bash", str(GCP_DIR / "scheduled-ops.sh"), "--check"],
+        capture_output=True,
+        text=True,
+        check=False,
+        env=_no_adc_env(),
+        cwd=str(REPO_ROOT),
+    )
+    ingest = [
+        line for line in proc.stdout.splitlines() if "scheduled-ingest" in line and "deploy" in line
+    ]
+    assert ingest
+    for line in ingest:
+        assert "--add-volume name=captures,type=cloud-storage" in line
+        assert "--add-volume-mount volume=captures,mount-path=/mnt/captures" in line
+        assert "SIG_CAPTURE_DIR=/mnt/captures/evidence/captures" in line
+    batches = [line for line in ingest if "--batch" in line]
+    assert batches and all("--task-timeout 36h" in line for line in batches)  # ADR-107
+
+
+@pytest.mark.parametrize("ref", ["reg/p/sig/sig-api:latest", "reg/p/sig/sig-api"])
+def test_scheduled_ops_refuses_latest_or_untagged(ref: str) -> None:
+    env = {**_no_adc_env(), "SIG_JOB_IMAGE": ref}
+    proc = subprocess.run(
+        ["bash", str(GCP_DIR / "scheduled-ops.sh"), "--check"],
+        capture_output=True,
+        text=True,
+        check=False,
+        env=env,
+        cwd=str(REPO_ROOT),
+    )
+    assert proc.returncode == 2 and "PLAN: gcloud run jobs deploy" not in proc.stdout
+
+
+def test_no_deploy_script_names_latest_as_an_image() -> None:
+    for name in SHELL_SCRIPTS:
+        text = (GCP_DIR / name).read_text()
+        assert not re.search(r"--image\s+\S*:latest", text), name
+        assert "IMAGE}:latest" not in text, name

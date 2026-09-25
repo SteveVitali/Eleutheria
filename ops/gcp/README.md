@@ -27,7 +27,7 @@ the validation test (`tests/ops/test_gcp_iac.py`) shells `terraform validate` wh
 | `provision.sh` | enable APIs · GCS buckets · Artifact Registry · Secret Manager · compute |
 | `backup.sh` | `pg_dump` → GCS backup bucket (+ OCFL sync) · restore drill · Cloud SQL alt |
 | `schedule.sh` | P25.7: the `sig-sched-muckrock` recurring trigger (superseded-in-part by `scheduled-ops.sh`, which verifies rather than recreates it) |
-| `scheduled-ops.sh` | P26.1: `sig-probe` (6-hourly hosted sweep → `ops/probes/` in the restricted bucket + alerts) + per-source `sig-ingest-<id>` jobs/`sig-sched-<id>` triggers from `../cadence.toml` (run rows → `ops/runs/`) |
+| `scheduled-ops.sh` | P26.1: `sig-probe` (6-hourly hosted sweep → `ops/probes/` in the restricted bucket + alerts) + per-source `sig-ingest-<id>` jobs/`sig-sched-<id>` triggers from `../cadence.toml` (run rows → `ops/runs/`). P31.4 (ADR-111): deploys `SIG_JOB_IMAGE` **by pinned digest** (a `:latest` or untagged ref is refused) and mounts the restricted bucket as every ingest job's capture store (`SIG_CAPTURE_DIR`) |
 | `materialize.sh` | P30.2: the hosted Round-6 materialization — `schema` (sqitch deploy as the schema owner, incl. the least-privilege `sig_materialize` role) · `image` (SHA-tagged Cloud Build, never `:latest`) · `job` (`sig-materialize` Cloud Run job next to Cloud SQL) · `run <step>` (resolution / edges / contradictions / coverage / accountability / detect, each `--role sig_materialize`, append-only + idempotent) — ADR-103 |
 | `../Dockerfile` | the Cloud Run API image (built + pushed by `sig-ops deploy`) — also carries `sig-ops` for the scheduled jobs |
 
@@ -37,7 +37,11 @@ bash ops/gcp/backup.sh   --check     # backup + restore-drill plan, no ADC, exit
 bash ops/gcp/scheduled-ops.sh --check # scheduled-ops plan (probe + ingest triggers)
 # operator, with ADC + SIG_GCP_PROJECT exported:
 bash ops/gcp/provision.sh --apply    # provisions for real (gate-pending here)
-bash ops/gcp/scheduled-ops.sh --apply
+SIG_JOB_IMAGE=<sig-api:SHA-tag or @sha256 digest> bash ops/gcp/scheduled-ops.sh --apply
+# roll NEW code onto the EXISTING jobs (image + capture store only; every other job
+# setting, e.g. batch-05's 36 h timeout, is preserved; before/after digests recorded):
+uv run sig-ops roll-jobs --image <SHA tag or digest> --record roll.json          # plan
+uv run sig-ops roll-jobs --image <SHA tag or digest> --record roll.json --apply  # apply + verify
 ```
 
 ## The architecture (DECISION, ADR-075)

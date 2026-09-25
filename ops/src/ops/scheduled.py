@@ -507,6 +507,9 @@ def scheduled_ingest(
     runner: Callable[..., Any] | None = None,
     now: str | None = None,
     run_record_uri: str | None = None,
+    logical_run: str | None = None,
+    target_limit: int | None = None,
+    code_commit: str | None = None,
 ) -> RunRow:
     """Run one source live through the gated connector and shape the run row.
 
@@ -524,6 +527,13 @@ def scheduled_ingest(
     sink, which records it on the execution's ``ingest_run`` and on its appended
     completion row (P31.2 / ADR-109). The run row records the ``ingest_run_id`` in
     return.
+
+    ``logical_run`` (P31.4 / ADR-111, see :mod:`ops.cadence_window`) is the source's
+    cadence-window key: a re-execution inside the same window resumes an
+    interrupted one (flushed pages are skipped but counted as seen; captured pages
+    are re-processed from the stored capture). ``target_limit`` bounds the run to
+    its first N targets (a measured slice). Both are passed only when set, so a
+    runner that predates them is called exactly as before.
     """
     if runner is None:
         from connectors.runner import RunMode, run_source
@@ -542,6 +552,14 @@ def scheduled_ingest(
     fetch_record: dict[str, Any] = {}
     ingest_run_id = ""
     extra: dict[str, Any] = {"run_record_uri": run_record_uri} if run_record_uri else {}
+    if logical_run:
+        extra["logical_run"] = logical_run
+    if target_limit is not None:
+        extra["target_limit"] = target_limit
+    if code_commit:
+        # The rolled image digest (``SIG_CODE_COMMIT``, ADR-111): recorded on the
+        # run, and a restart resumes only the marks of runs on the same code.
+        extra["code_commit"] = code_commit
     try:
         report = runner(
             source_id,
@@ -552,7 +570,10 @@ def scheduled_ingest(
             **extra,
         )
         ingest_run_id = str(getattr(report, "run_id", None) or "")
-        claims = len(report.claims)
+        # P31.4: a live PG run keeps only some records in memory; ``emitted`` is
+        # the exact count (a resumed run includes the pages it skipped).
+        emitted = getattr(report, "emitted", None)
+        claims = int(emitted) if isinstance(emitted, int) else len(report.claims)
         digests = tuple(str(c.digest) for c in report.captures if hasattr(c, "digest"))
         if report.fetch_record is not None:
             fetch_record = dict(report.fetch_record.to_dict())

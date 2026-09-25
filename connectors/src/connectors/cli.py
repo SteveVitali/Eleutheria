@@ -324,7 +324,8 @@ def _run(args: argparse.Namespace) -> int:
         # (P25.1 / ADR-082): fail loud + recorded (a content_drift fetch record),
         # never garbage or a silent zero.
         print(f"CONTENT DRIFT (exit 5): {drift}")
-        print("  recorded in the fetch record (0 claims); no garbage emitted.")
+        print("  recorded in the fetch record; no garbage emitted (pages before the drift may")
+        print("  have committed — the fetch record and the run's completion count them).")
         return 5
     except (RobotsUnretrievable, RobotsDisallowed) as refused:
         # A politeness refusal (SIG-INGEST-012): under GL-GATE-08 / ADR-088 the
@@ -336,7 +337,7 @@ def _run(args: argparse.Namespace) -> int:
         return 6
     summary = (
         f"source {args.source!r} [{args.mode}] via connector {report.connector!r}: "
-        f"{len(report.claims)} claim(s), {len(report.captures)} capture(s)"
+        f"{report.emitted} claim(s), {len(report.captures)} capture(s)"
     )
     if report.refusals:
         summary += f", {len(report.refusals)} politeness refusal(s) recorded"
