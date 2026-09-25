@@ -42,9 +42,13 @@
 # only when the whole queue is that jurisdiction's (P30.2: the single queued task is the OKC
 # 299-vs-190 contradiction); unset, no draft is made. Drafts are never sent (D-R7.2-SEND).
 #
-# Coverage runs with --no-negative-space: on the hosted spine every entity is typed
-# `deployment`, so the P28.4 peer-class rule would emit ~26.7M `not_researched` rows
-# (ADR-103; the refinement is the follow-up D-P30.2-1). Nothing here UPDATEs/DELETEs.
+# Coverage runs WITH negative space since P31.9 / ADR-115: the §32.1 peer class is
+# (entity_type, connector) with a declared per-class tracked-predicate set
+# (inference/data/peer_classes.toml), so the hosted run emits the class-scoped
+# `not_researched` rows measured in
+# docs/build/reports/p31.9-hosted/negative_space_would_be.json —
+# not the ~26.7M rows the unscoped P28.4 rule would have emitted (ADR-103, D-P30.2-1).
+# Nothing here UPDATEs/DELETEs.
 set -euo pipefail
 
 _here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -82,7 +86,7 @@ step_cmd() {
     resolution)     printf 'exec python -m reconcile materialize --dsn "%s" %s' "${DSN}" "${role}" ;;
     edges)          printf 'exec python -m reconcile materialize-edges --dsn "%s" %s' "${DSN}" "${role}" ;;
     contradictions) printf 'exec python -m reconcile materialize-contradictions --dsn "%s" %s' "${DSN}" "${role}" ;;
-    coverage)       printf 'exec python -m inference materialize-coverage --dsn "%s" %s --no-negative-space' "${DSN}" "${role}" ;;
+    coverage)       printf 'exec python -m inference materialize-coverage --dsn "%s" %s' "${DSN}" "${role}" ;;
     accountability) printf 'exec python -m inference materialize-accountability-links --dsn "%s" %s' "${DSN}" "${role}" ;;
     detect)         printf 'exec python -m tasks detect --dsn "%s" %s%s' "${DSN}" "${role}" \
                       "${SIG_DETECT_JURISDICTION:+ --jurisdiction ${SIG_DETECT_JURISDICTION}}" ;;

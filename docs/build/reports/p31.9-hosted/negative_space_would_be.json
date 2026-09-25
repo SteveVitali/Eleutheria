@@ -1,0 +1,45 @@
+{
+  "measured_at": "2026-09-25",
+  "method": "read-only SELECT over the hosted spine (cloud-sql-proxy :5433, role sig_read_public, READ ONLY txn); the same grouping read_negative_space performs, evaluated against the shipped inference/data/peer_classes.toml declaration",
+  "spine": {
+    "tier0_live_claims": 2403886,
+    "distinct_subjects": 248506,
+    "subjects_with_one_connector": 248505,
+    "subjects_with_multiple_connectors": 1
+  },
+  "peer_class_rule": "(entity_type, ingest_run.connector_name); tracked = declared set per class",
+  "would_be_rows": {
+    "dot_511": 907291,
+    "procurement": 118076,
+    "osm": 6548,
+    "flock_portal": 950,
+    "france_belgium_procurement": 914,
+    "coarse_international": 835,
+    "data_driven": 255,
+    "accountability": 228,
+    "france_belgium_records": 166,
+    "state_statute_seed": 46,
+    "france-seed": 33,
+    "government_mandated_disclosure": 9,
+    "atlas": 0,
+    "ok_statute": 0,
+    "okc-seed": 0,
+    "okcpd_policy": 0,
+    "pathways": 0,
+    "records": 0
+  },
+  "total_would_be_rows": 1035351,
+  "unscoped_p28_4_rule_would_be": 26696184,
+  "reduction_factor": 25.8,
+  "bytes": {
+    "estimated_bytes_per_row": 260,
+    "projected_bytes": 269191260,
+    "projected_gib": 0.25,
+    "basis": "~200 B heap payload (uuid subject + predicate + absence_kind + search_method + 64-hex input_digest) + PK + partial-unique index entry; pessimistic 260 B/row",
+    "coverage_record_now_rows": 118,
+    "coverage_record_now_bytes": 131072,
+    "database_now_bytes": 5194645504,
+    "provisioned_disk_gb_live": 15,
+    "fraction_of_disk": 0.018
+  }
+}
