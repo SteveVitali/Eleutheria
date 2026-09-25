@@ -1,0 +1,177 @@
+# Declared §32.1 peer classes (P31.9 / DEEPEN.5, ADR-115).
+#
+# Peer class = (entity_type, connector): a claim SUBJECT belongs to a class iff
+# its entity_type matches and at least one of its tier-0, currently-valid claims
+# was written by an ingest_run whose connector_name is in `connectors`. The
+# negative space of a subject is the UNION of the `tracked` predicate sets of
+# every class it belongs to, minus the predicates it already claims. A
+# predicate absent from `tracked` is NEVER negative space for that class; a
+# subject whose claims all come from undeclared connectors produces no
+# negative-space rows (nothing is declared tracked for it — the honest
+# "no declared coverage surface" state, never a guess).
+#
+# `tracked` is seeded from the measured per-connector emit surface of the
+# hosted spine (2026-09-25: the set of predicates the connector has ever
+# claimed, read-only measurement), MINUS per-claim match/marker bookkeeping
+# predicates whose absence is an extraction outcome, not a research gap —
+# `matched_keyword`, `content_term`, `bill_matched_keyword`,
+# `unmapped_surveillance_tag` (a marker: its absence means the element's tags
+# all mapped). Extending coverage = a data change here + an ADR decision when
+# the rule itself changes (SIG-ENG-001/003).
+#
+# Changes after this declaration are VERSIONED (§20): bump `version`.
+
+version = "1.0.0"
+
+# --- device / deployment observation registries -----------------------------
+
+[[class]]
+entity_type = "deployment"
+connectors = ["dot_511"]        # state-DOT/511 + municipal camera registries
+tracked = [
+  "camera_coordinate_source", "camera_county", "camera_direction",
+  "camera_external_ref", "camera_jurisdiction", "camera_latitude",
+  "camera_longitude", "camera_name", "camera_operator", "camera_roadway",
+  "camera_status", "external_id",
+]
+
+[[class]]
+entity_type = "deployment"
+connectors = ["osm"]            # OpenStreetMap surveillance elements
+tracked = [
+  "asset_type", "brand", "brand_qid", "camera_mount", "camera_type",
+  "description", "direction", "first_observed", "manufacturer",
+  "manufacturer_qid", "mapping_source", "operator_qid", "operator_stated",
+  "operator_type", "power_arrangement", "surveillance_zone",
+]
+
+[[class]]
+entity_type = "deployment"
+connectors = ["atlas"]          # EFF Atlas of Surveillance presence rows
+tracked = ["deployment_exists"]
+
+[[class]]
+entity_type = "deployment"
+connectors = ["flock_portal"]   # vendor transparency portals
+tracked = [
+  "active_device_count", "configured_retention_days",
+  "hotlist_hit_windowed_count", "portal_exists",
+  "portal_last_updated_declared", "portal_stated_prohibited_use",
+  "usage_search_windowed_count", "vehicles_detected_windowed_count",
+]
+
+[[class]]
+entity_type = "deployment"
+connectors = ["data_driven"]    # EFF Data Driven per-agency aggregate rows
+tracked = [
+  "configured_sharing_partner", "deployment_exists", "hit_volume_observed",
+  "non_hit_proportion_observed", "pooled_lookup_participation",
+  "scan_volume_observed", "sharing_partner_degree", "vendor",
+]
+
+[[class]]
+entity_type = "deployment"
+connectors = ["coarse_international"]   # coarse country-level datasets
+tracked = [
+  "ai_surveillance_supplier", "ai_surveillance_tech_from_china",
+  "ai_surveillance_tech_from_us", "facial_recognition_status",
+  "smart_city_surveillance", "smart_policing", "uses_ai_surveillance",
+  "uses_facial_recognition",
+]
+
+# --- procurement / accountability / legislation -----------------------------
+
+[[class]]
+entity_type = "deployment"
+connectors = ["procurement"]    # procurement + agenda-tenant + federal paths
+tracked = [
+  "amount", "award_date", "buyer", "conditions", "country", "description",
+  "document", "external_id", "federal_award_id", "funder", "instrument_type",
+  "lifecycle_transition", "notice_type", "period", "place_of_performance",
+  "posted_date", "products", "recipient", "response_deadline", "seller",
+  "title",
+]
+
+[[class]]
+entity_type = "deployment"
+connectors = ["france_belgium_procurement"]   # DECP national open-data path
+tracked = [
+  "acquisition_channel", "amount", "buyer", "currency", "external_id",
+  "lifecycle_transition", "parent_cooperative_contract", "products",
+  "renewal_options", "seller", "signed_date", "start_date",
+]
+
+[[class]]
+entity_type = "deployment"
+connectors = ["accountability"] # bill-index / docket / targeted lookups
+tracked = [
+  "bill_chamber", "bill_external_id", "bill_identifier", "bill_jurisdiction",
+  "bill_session", "bill_status", "bill_status_date", "bill_title",
+]
+
+[[class]]
+entity_type = "deployment"
+connectors = ["france_belgium_records"]   # arrêté / CADA records path
+tracked = [
+  "acquisition_method", "citation", "effective_from", "external_id",
+  "instrument_type", "jurisdiction", "sunset_date",
+]
+
+[[class]]
+entity_type = "deployment"
+connectors = ["state_statute_seed"]     # committed ALPR statute seed
+tracked = [
+  "as_of", "citation", "constrains_technology", "effective_from",
+  "external_id", "instrument_type", "jurisdiction",
+]
+
+[[class]]
+entity_type = "deployment"
+connectors = ["ok_statute"]             # OK statute document connector
+tracked = ["authorization_state", "statutory_citation", "use_restriction"]
+
+[[class]]
+entity_type = "deployment"
+connectors = ["okcpd_policy"]           # OKC PD policy document connector
+tracked = ["retention_period", "sharing_restriction", "use_restriction"]
+
+[[class]]
+entity_type = "deployment"
+connectors = ["records"]                # released-document / request index
+tracked = [
+  "external_id", "request_text", "requesting_party", "response_date",
+  "response_status", "target_agency",
+]
+
+[[class]]
+entity_type = "deployment"
+connectors = ["government_mandated_disclosure"]   # CCOPS mandated filings
+tracked = [
+  "disclosure_field_state", "enacting_body", "legal_authority",
+  "ordinance_citation", "technology",
+]
+
+[[class]]
+entity_type = "deployment"
+connectors = ["pathways"]               # federation / FR-CSS / acoustic paths
+tracked = ["technology"]
+
+# --- committed jurisdiction seeds (fixture-shaped, no live fetch) -----------
+
+[[class]]
+entity_type = "deployment"
+connectors = ["okc-seed"]               # the committed OKC launch seed
+tracked = [
+  "active_device_count", "claimed_device_count", "contracted_device_count",
+  "mapped_device_count",
+]
+
+[[class]]
+entity_type = "deployment"
+connectors = ["france-seed"]            # the committed France (Gex) seed
+tracked = [
+  "acquisition_method", "authorization_state", "contract_signed_date",
+  "contract_value", "deployment_exists", "enacting_body",
+  "implements_technology", "instrument_type", "procurement_state",
+  "statutory_citation", "sunset_date",
+]
