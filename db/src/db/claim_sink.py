@@ -434,6 +434,7 @@ class PgClaimSink:
         on_duplicates: DuplicateHook | None = None,
         object_resolver: ObjectResolver | None = None,
         logical_run: str | None = None,
+        extra_parameters: Mapping[str, str] | None = None,
     ) -> None:
         if commit_chunk_size < 1:
             raise ValueError(
@@ -463,6 +464,11 @@ class PgClaimSink:
         # P31.4 / ADR-111: the logical run (source + cadence window) this execution
         # belongs to. Its executions share it; a restart resumes their marks.
         self._logical_run = logical_run or None
+        # P31.6 / ADR-113: extra string-valued run parameters merged into
+        # ``ingest_run.parameters`` (e.g. an asserting replay's ``replay_of``
+        # lineage — the run ids its captures came from). Keys the sink already
+        # owns (execution_id / run_record_uri / logical_run) cannot be shadowed.
+        self._extra_parameters = dict(extra_parameters or {})
         # Per-instance caches so prerequisites are resolved once, not per claim.
         self._run_id: str | None = None
         self._strategy_ready = False
@@ -680,6 +686,8 @@ class PgClaimSink:
             parameters["run_record_uri"] = self._run_record_uri
         if self._logical_run:
             parameters["logical_run"] = self._logical_run
+        for key, value in self._extra_parameters.items():
+            parameters.setdefault(key, value)
         environment = {k: os.environ[k] for k in _RECORDED_ENV if os.environ.get(k)}
         inserted = self._conn.execute(
             "INSERT INTO ingest_run"

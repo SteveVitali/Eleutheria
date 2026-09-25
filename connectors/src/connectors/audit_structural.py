@@ -74,6 +74,7 @@ from reconcile.sharing import (
     SharingReconciliation,
     reconcile_sharing,
 )
+from resolution.partner_identity import PartnerIdentity, partner_identity
 
 from ._data import load_table
 from .stages import CaptureRef, Connector, FetchResult, RunContext, register
@@ -777,12 +778,24 @@ def _sharing_edge_rows(reconciled: SharingReconciliation) -> list[dict[str, Any]
     for edge in reconciled.edges:
         rows.append(
             {
-                "record_kind": "configured_access_edge",
+                # P31.6 (ADR-113): the edge is a normal claim row. It used to be a
+                # ``configured_access_edge`` record, which the claim sink dropped as
+                # a non-claim kind — the access relationship never reached the
+                # spine. ``configured_sharing_partner`` is directed
+                # ``subject → to_org`` (the subject's audit row asserts the edge).
+                "record_kind": "claim",
                 "subject_id": f"{ORG_ID_PREFIX}:{edge.from_org}",
                 "predicate_id": assert_predicate_allowed("configured_sharing_partner"),
+                # The partner's organisation name is the literal value the
+                # SharedNetworks cell states (P2: raw value preserved verbatim).
+                "value": edge.to_org,
+                "raw_value": edge.to_org,
                 "from_org": edge.from_org,
                 "to_org": edge.to_org,
                 # §23.7 / SIG-RECON-034: configured access only, never observed_use.
+                # The §29.3 qualifiers travel on the claim record (folded into the
+                # content digest); the edge materializer re-derives the access kind
+                # from the predicate.
                 "access_kind": edge.access_kind,
                 # SIG-RECON-036: a single-snapshot edge's start is UNKNOWN.
                 "valid_from_kind": edge.valid_from_kind,
@@ -1020,6 +1033,32 @@ class AuditStructuralConnector(Connector):
         return reconcile_audit_sharing(parsed, observed_at=observed_at)
 
     # -- link + load --
+    def link(self, ctx: RunContext, normalized: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """Attach the partner-organisation ref to each access-edge claim (P31.6).
+
+        SharedNetworks names a sharing partner by its organisation **name** in a
+        free-text cell — unlike Eyes on Flock's portal slugs — so the entity-ref
+        goes through P31.5's deterministic partner identity
+        (:func:`resolution.partner_identity.partner_identity`, ADR-112): an
+        accepted name attaches a ``sig.org.name`` organisation ref to the claim;
+        a refused one (ambiguous, generic, person-shaped) leaves the claim a
+        literal — the edge is still recorded and the materializer counts it
+        ``skipped_unmapped``, never a fabricated node.
+        """
+        out: list[dict[str, Any]] = []
+        for row in normalized:
+            if (
+                row.get("record_kind") == "claim"
+                and row.get("predicate_id") == "configured_sharing_partner"
+                and not row.get("object_ref")
+            ):
+                ident = partner_identity(str(row.get("to_org") or ""))
+                if isinstance(ident, PartnerIdentity):
+                    row = dict(row)
+                    row["object_ref"] = ident.as_object_ref()
+            out.append(row)
+        return out
+
     def load(self, ctx: RunContext, linked: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Produce the L1 rows; the driver asserts them (live only)."""
         return load_claims_for_l1(linked)

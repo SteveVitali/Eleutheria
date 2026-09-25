@@ -400,6 +400,11 @@ def test_the_real_eff_zip_parses_to_per_agency_aggregates() -> None:
     predicates = {r.get("predicate_id") for r in rows if r.get("record_kind") == "claim"}
     assert predicates <= {
         "deployment_exists",
+        # P31.6 / ADR-113: the release's stated vendor + the NVLS pooled-lookup
+        # edge (the partner is the release's vendor constant — never an
+        # enumerated per-agency partner list, SIG-INGEST-043c).
+        "vendor",
+        "configured_sharing_partner",
         "scan_volume_observed",
         "hit_volume_observed",
         "non_hit_proportion_observed",
@@ -440,3 +445,85 @@ def test_replay_is_reproducible() -> None:
         kind="bulk_file",
     )
     assert report.replay_reproducible is True
+
+
+# --- P31.6 / ADR-113: vendor + NVLS pool claims and their entity-ref twins -----
+
+
+def test_vendor_and_pool_edge_claims_emit_per_agency() -> None:
+    # P31.6: each agency row's stated vendor is a `vendor` claim; an NVLS
+    # pooled-lookup participant additionally asserts the configured_access edge
+    # to the dataset's vendor constant (never an enumerated partner list,
+    # SIG-INGEST-043c). The JSON fixtures name vendors by SLUG ("vigilant"),
+    # which ADR-112's rules refuse (single word) — claims stay literal here.
+    rows = _run_over("release_v1.json")
+    claims = _claims(rows)
+    vendors = [c for c in claims if c.get("predicate_id") == "vendor"]
+    assert {v["value"] for v in vendors} == {"vigilant", "elsag"}
+    # Two agency rows -> exactly two vendor claims (the constant, not a list).
+    assert len(vendors) == 2
+    pools = [c for c in claims if c.get("predicate_id") == "configured_sharing_partner"]
+    assert len(pools) == 2  # both fixture agencies are pooled_lookup_participant
+    for edge in pools:
+        assert edge["access_kind"] == "configured_access"
+        assert edge["edge_scope"] == "vendor_operated_pooled_lookup"
+        assert edge["raw_value"] == "nvls_pooled_lookup_participant"
+    # Single-word vendor slugs are refused by ADR-112 — no twin, no fabrication.
+    assert not [c for c in claims if c.get("object_ref")]
+
+
+def test_link_twins_a_resolvable_vendor_label() -> None:
+    # P31.5/P31.6: the release ZIP path stamps the full vendor label
+    # ("Vigilant Solutions (LEARN)") which partner_identity accepts, so link()
+    # appends the entity-ref twin beside the unchanged literal claim.
+    rows = _run_over("release_v1.json")
+    claims = _claims(rows)
+    vendor_claim = next(c for c in claims if c.get("predicate_id") == "vendor")
+    relabelled = dict(vendor_claim)
+    relabelled["value"] = relabelled["raw_value"] = "Vigilant Solutions (LEARN)"
+    ctx = RunContext(
+        source=dataclasses.replace(get(DATA_DRIVEN_SOURCE_ID), ingestion_permitted=True),
+        run=IngestRun("data_driven", "1.0.0", "deadbeef", "r1", vocab_version(), ()),
+        captures=InMemoryCaptureStore(),
+        claim_sink=InMemoryClaimSink(),
+        parameters={"targets": []},
+    )
+    linked = DataDrivenConnector().link(ctx, [relabelled])
+    assert len(linked) == 2  # the literal + its twin
+    twin = linked[1]
+    assert twin["predicate_id"] == "vendor"
+    assert twin["object_ref"]["scheme"] == "sig.org.name"
+    assert twin["object_ref"]["entity_type"] == "organization"
+    assert twin["object_ref"]["label"] == "Vigilant Solutions (LEARN)"
+    assert linked[0] == relabelled  # the text claim is never touched
+
+
+def test_the_real_zip_vendor_label_mints_twins() -> None:
+    # The real release path (lettered columns + the vocab's vendor_label) emits
+    # resolvable vendor names — link() twins them, which is what feeds the
+    # accountability materializer's has_vendor chain on the hosted spine.
+    from connectors.data_driven import DataDrivenConnector
+
+    zip_bytes = (_FIX / "eff_release_2016_2017.zip").read_bytes()
+    conn = DataDrivenConnector()
+    captures = InMemoryCaptureStore()
+    capture = captures.put(
+        zip_bytes,
+        media_type="application/zip",
+        source_uri="https://www.eff.org/files/2020/01/28/alpr_2016-2017_update.zip",
+    )
+    ctx = RunContext(
+        source=dataclasses.replace(get(DATA_DRIVEN_SOURCE_ID), ingestion_permitted=True),
+        run=IngestRun("data_driven", "1.0.0", "deadbeef", "r1", vocab_version(), ()),
+        captures=captures,
+        claim_sink=InMemoryClaimSink(),
+        parameters={"targets": []},
+    )
+    rows = conn.link(ctx, conn.normalize(ctx, conn.extract(ctx, conn.parse(ctx, capture))))
+    twins = [r for r in rows if r.get("object_ref")]
+    assert twins
+    assert {t["object_ref"]["label"] for t in twins} == {"Vigilant Solutions (LEARN)"}
+    assert {t["predicate_id"] for t in twins} <= {
+        "vendor",
+        "configured_sharing_partner",
+    }

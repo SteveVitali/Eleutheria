@@ -1167,6 +1167,32 @@
       "volatility_class": "FAST"
     },
     {
+      "cardinality": "multi",
+      "definition": "A configured sharing/access partner of the subject — one endpoint of a §12.2 configured_access edge (§29.3 reconciles the set; the subject's own snapshot or audit row asserts the edge). Written as an entity-ref claim under P31.6 / ADR-113 — the partner's portal identifier for portal-sourced edges (Eyes on Flock slugs), else a partner-organisation ref under ADR-112's identity rules (audit workbooks, the NVLS pooled-lookup vendor constant).",
+      "directness": {
+        "agency_policy": "D3",
+        "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
+        "council_minutes": "D4",
+        "executed_contract": "D6",
+        "invoice": "D6",
+        "news_article": "D3",
+        "osm_node_set": "D6",
+        "portal_snapshot": "D1",
+        "vendor_default_page": "D6"
+      },
+      "half_life": "4mo",
+      "maps_to": "configured_sharing_partner_set",
+      "object_kind": "entity_ref",
+      "predicate_id": "configured_sharing_partner",
+      "resolution_strategy": "latest_observation_wins",
+      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner",
+      "value_datatype": "string",
+      "vocab_version": "1.0.0",
+      "volatility_class": "FAST"
+    },
+    {
       "cardinality": "single",
       "definition": "Configured-access sharing edge state.",
       "directness": {
@@ -1804,6 +1830,31 @@
       "value_datatype": "string",
       "vocab_version": "1.0.0",
       "volatility_class": "IMMUTABLE"
+    },
+    {
+      "cardinality": "single",
+      "definition": "The vendor or provider the record states operates or supplies the subject's equipment/service (e.g. the EFF Data Driven release's stated vendor per agency aggregate); written as an organisation entity-ref claim where the name resolves deterministically (P31.6 / ADR-113, under ADR-112's partner-identity rules).",
+      "directness": {
+        "agency_policy": "D4",
+        "audit_log": "D6",
+        "camera_registry": "D6",
+        "connector_run": "D3",
+        "council_minutes": "D4",
+        "executed_contract": "D4",
+        "invoice": "D4",
+        "news_article": "D3",
+        "osm_node_set": "D6",
+        "portal_snapshot": "D3",
+        "vendor_default_page": "D4"
+      },
+      "half_life": "3y",
+      "object_kind": "entity_ref",
+      "predicate_id": "vendor",
+      "resolution_strategy": "max_support",
+      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor",
+      "value_datatype": "string",
+      "vocab_version": "1.0.0",
+      "volatility_class": "SLOW"
     },
     {
       "cardinality": "single",
