@@ -118,6 +118,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-111](ADR-111-restart-resume-capture-store-and-pinned-job-images.md) | — | — | Accepted |
 | [ADR-112](ADR-112-partner-organisation-entity-ref-claims.md) | — | — | Accepted |
 | [ADR-113](ADR-113-asserting-replay-of-persisted-captures.md) | — | — | Accepted |
+| [ADR-114](ADR-114-claim-re-sightings-and-latest-capture-dating.md) | — | — | Accepted |
 
 ## Notes
 

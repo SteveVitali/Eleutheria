@@ -69,17 +69,27 @@ def make_claim_sink(kind: str = "memory", *, dsn: str | None = None, **kwargs: A
     The PG sink is built with the production ``object_resolver``
     (:func:`db.claim_sink.record_object_ref`, P31.5 / ADR-112): an entity-ref claim
     record that a connector's ``link()`` stage emitted is written with its
-    ``object_entity``; every other record stays a literal. A caller may still pass
-    its own ``object_resolver``.
+    ``object_entity``; every other record stays a literal. It also gets the
+    production ``on_duplicates`` hook (:func:`db.claim_sink.record_resightings`,
+    P31.7 / ADR-R9-RESIGHT): every live re-assertion of a stored claim appends the
+    re-sighting's ``claim_evidence`` link to the execution's capture. A caller may
+    still pass its own ``object_resolver`` / ``on_duplicates``. (The asserting
+    ``replay_ingest`` path builds its ``PgClaimSink`` directly, deliberately
+    without the hook — a replay re-reads stored bytes, so it is not a sighting.)
     """
     if kind == "memory":
         return InMemoryClaimSink()
     if kind == "pg":
         if not dsn:
             raise ValueError("the 'pg' claim sink requires a --dsn connection string")
-        from db.claim_sink import PgClaimSink, record_object_ref  # psycopg stays in `db`
+        from db.claim_sink import (  # psycopg stays in `db`
+            PgClaimSink,
+            record_object_ref,
+            record_resightings,
+        )
 
         kwargs.setdefault("object_resolver", record_object_ref)
+        kwargs.setdefault("on_duplicates", record_resightings)
         return PgClaimSink.from_dsn(dsn, **kwargs)
     raise ValueError(f"unknown claim-sink kind {kind!r}; expected one of {SINK_KINDS}")
 
