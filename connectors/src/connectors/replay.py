@@ -20,6 +20,7 @@ transaction time is *unchanged*, and a real change in a derived value is *seen*.
 
 from __future__ import annotations
 
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -51,6 +52,69 @@ def replay(
 def replay_fingerprint(claims: list[dict[str, Any]]) -> str:
     """The order-independent fingerprint of a replayed claim set (SIG-INGEST-003/017)."""
     return claim_set_fingerprint([dict(c) for c in claims])
+
+
+@dataclass
+class AssertingReplayReport:
+    """What an :func:`asserting_replay` pass did (P31.6 / ADR-113)."""
+
+    captures: int = 0
+    #: Claims the reinterpretation produced (asserted + skipped-missing alike).
+    claims: int = 0
+    #: Claims handed to ``ctx.claim_sink`` (0 when no sink is present).
+    asserted: int = 0
+    #: Per-capture reinterpretation failures — ``{"digest", "error"}`` rows, one
+    #: per capture whose stored bytes no longer yield (content drift, an
+    #: unresolvable target). Recorded loudly and the batch continues: earlier
+    #: captures' claims already committed and the re-run is idempotent (+0).
+    errors: list[dict[str, str]] = field(default_factory=list)
+
+
+def asserting_replay(
+    connector: Connector,
+    ctx: RunContext,
+    captures: Iterable[CaptureRef],
+    *,
+    on_capture: Callable[[CaptureRef, list[dict[str, Any]]], None] | None = None,
+) -> AssertingReplayReport:
+    """Re-run the post-capture stages over archived captures AND assert them.
+
+    This is the **named asserting reinterpretation** of P31.6 (ADR-113) — a
+    deliberate, separately-named decision beside :func:`replay`, which stays
+    non-asserting (SIG-INGEST-017/018/019): a connector change that emits
+    strictly additional claim kinds (P31.6's entity-ref claims) is landed by
+    replaying the persisted captures and asserting the new claim set. Each
+    capture's claims are pushed through ``ctx.claim_sink`` — on the hosted path
+    an ``is_replay`` :class:`db.claim_sink.PgClaimSink` that records the original
+    capture lineage — so claims the spine already holds dedupe to +0 and only
+    genuinely new records insert. The source is never contacted: every stage is
+    a pure function of the stored bytes under network isolation
+    (:func:`run_post_capture`).
+
+    ``ctx.replay`` is set: the run IS a replay — assertion here is the explicit
+    contract of this named function, not the generic ``ctx.asserts_claims``
+    live-path flag (which stays False). ``on_capture`` runs after each capture's
+    claims commit, so the driver can record the replay run's own capture
+    lineage marks (``ingest_run_capture``) per flushed capture. A capture whose
+    stored bytes fail reinterpretation is recorded in ``report.errors`` and the
+    batch continues (a re-run still converges, +0).
+    """
+    ctx.replay = True
+    report = AssertingReplayReport()
+    for capture in captures:
+        try:
+            claims = run_post_capture(connector, ctx, capture)
+        except Exception as exc:  # noqa: BLE001 - per-capture drift, recorded loudly
+            report.errors.append({"digest": capture.digest, "error": type(exc).__name__})
+            continue
+        report.captures += 1
+        report.claims += len(claims)
+        if ctx.claim_sink is not None:
+            ctx.claim_sink.assert_claims(claims)
+            report.asserted += len(claims)
+        if on_capture is not None:
+            on_capture(capture, claims)
+    return report
 
 
 @dataclass(frozen=True)
@@ -114,7 +178,9 @@ def shadow_replay(
 
 
 __all__ = [
+    "AssertingReplayReport",
     "ShadowDiff",
+    "asserting_replay",
     "diff_claim_sets",
     "replay",
     "replay_fingerprint",

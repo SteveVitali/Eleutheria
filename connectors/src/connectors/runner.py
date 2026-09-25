@@ -52,6 +52,7 @@ from .review import has_review_metadata, has_rights_block
 from .sinks import make_claim_sink
 from .stages import (
     ArtifactStore,
+    CaptureRef,
     ClaimSink,
     Connector,
     ContentDrift,
@@ -450,7 +451,7 @@ class _StaticFileTransport:
         )
 
 
-def _chunk_kwargs(commit_chunk_size: int | None) -> dict[str, int]:
+def _chunk_kwargs(commit_chunk_size: int | None) -> dict[str, Any]:
     """Kwargs for a PG sink's ``commit_chunk_size`` — empty when unset (default).
 
     Keeps the module default authoritative in ``db.claim_sink``: passing nothing
@@ -1151,6 +1152,214 @@ def _muckrock_token_cache(fetcher: PoliteFetcher) -> Any:
     return MuckRockTokenCache(_RefreshTokenSource())
 
 
+# --- asserting replay (P31.6 / ADR-113) ---------------------------------------
+
+
+@dataclass
+class ReplayIngestReport:
+    """The outcome of one :func:`replay_ingest` execution (P31.6 / ADR-113)."""
+
+    source_id: str
+    connector: str
+    #: The new ``is_replay`` ingest_run this execution wrote under.
+    run_id: str | None = None
+    #: The original (live) runs whose capture marks this replay consumed.
+    replayed_from_runs: tuple[str, ...] = ()
+    #: Distinct persisted captures selected for reinterpretation.
+    captures_considered: int = 0
+    captures_replayed: int = 0
+    #: Capture digests the DB names but the capture store does not hold —
+    #  recorded loudly, never silently skipped.
+    missing_captures: tuple[str, ...] = ()
+    #: Claims the reinterpretation produced / handed to the sink.
+    claims_produced: int = 0
+    claims_asserted: int = 0
+    #: The sink's exact insert/dedupe split (a re-run of the same captures on
+    #  the same code is all ``duplicates`` — the +0 proof).
+    claims_inserted: int = 0
+    claims_duplicate: int = 0
+    status: str = "ok"
+    detail: str = ""
+
+
+def replay_ingest(
+    source_id: str,
+    *,
+    dsn: str,
+    capture_dir: Path | str,
+    run_ids: Sequence[str] | None = None,
+    connector_name: str | None = None,
+    code_commit: str = "unknown",
+    run_record_uri: str | None = None,
+    commit_chunk_size: int | None = None,
+    replay_key: str | None = None,
+) -> ReplayIngestReport:
+    """Re-assert a source's persisted captures as a new ``is_replay`` run (P31.6).
+
+    The named asserting reinterpretation (ADR-113): ``ingest_run_capture`` marks
+    are the only DB link to real OCFL objects (ADR-111), so this selects exactly
+    the capture digests a recorded execution flushed — ``--run-id`` rows, else
+    every non-replay run of the source's logical-run prefix — resolves their
+    bytes from the OCFL capture store (a mounted bucket on hosted), and runs the
+    post-capture stages under network isolation through
+    :func:`connectors.replay.asserting_replay`. NOTHING is fetched: a digest the
+    store does not hold is reported ``missing_captures`` and skipped, never
+    re-acquired (a source without persisted bytes waits for its next cadence
+    run).
+
+    The sink is a fresh ``is_replay`` :class:`PgClaimSink` whose run parameters
+    name the replayed-from runs and whose ``ingest_run_capture`` marks record the
+    original capture lineage under ``replay:``-prefixed target keys. Claims the
+    spine already holds dedupe to +0; only claims the new code adds insert.
+    """
+    import psycopg  # lazy: the PG driver only loads on this hosted path
+    from db.claim_sink import PgClaimSink, record_object_ref
+    from evidence.ocfl import OcflStore
+    from evidence.storage import LocalFileStore
+
+    from .capture_ocfl import OcflCaptureStore
+    from .replay import asserting_replay
+
+    connector = _connector_for(source_id, connector_name)
+    version = getattr(connector, "version", "1.0.0")
+    conn = psycopg.connect(dsn, autocommit=True)
+    if run_ids:
+        rows = conn.execute(
+            "SELECT c.run_id::text, c.target_key, c.capture_digest, c.source_uri,"
+            " c.media_type, c.byte_size, c.retrieved_at"
+            " FROM ingest_run_capture c"
+            " WHERE c.run_id::text = ANY(%s::text[])"
+            " ORDER BY c.run_id, c.target_key",
+            (list(run_ids),),
+        ).fetchall()
+    else:
+        rows = conn.execute(
+            "SELECT c.run_id::text, c.target_key, c.capture_digest, c.source_uri,"
+            " c.media_type, c.byte_size, c.retrieved_at"
+            " FROM ingest_run_capture c"
+            " JOIN ingest_run r ON r.run_id = c.run_id"
+            " WHERE r.connector_name = %s AND NOT r.is_replay"
+            "   AND r.parameters ->> 'logical_run' LIKE %s"
+            " ORDER BY c.run_id, c.target_key",
+            (connector.name, f"{source_id}@%"),
+        ).fetchall()
+
+    # One entry per distinct capture digest: a re-fetched identical body marks
+    # the same content-addressed object, and replaying it twice adds nothing.
+    seen: set[str] = set()
+    marks: list[dict[str, Any]] = []
+    for run_id, target_key, digest, uri, media, size, retrieved in rows:
+        if str(digest) in seen:
+            continue
+        seen.add(str(digest))
+        marks.append(
+            {
+                "run_id": str(run_id),
+                "target_key": str(target_key),
+                "capture_digest": str(digest),
+                "source_uri": str(uri),
+                "media_type": str(media),
+                "byte_size": int(size or 0),
+                "retrieved_at": retrieved,
+            }
+        )
+    replayed_from = sorted({m["run_id"] for m in marks})
+
+    store = OcflStore(LocalFileStore(str(capture_dir)))
+    captures = OcflCaptureStore(store)
+    refs: list[CaptureRef] = []
+    missing: list[str] = []
+    marks_by_digest: dict[str, dict[str, Any]] = {}
+    for mark in marks:
+        ref = CaptureRef(
+            digest=mark["capture_digest"],
+            media_type=mark["media_type"],
+            source_uri=mark["source_uri"],
+            byte_size=mark["byte_size"],
+            retrieved_at=mark["retrieved_at"],
+        )
+        marks_by_digest.setdefault(ref.digest, mark)
+        if captures.has(ref.digest):
+            refs.append(ref)
+        else:
+            missing.append(ref.digest)
+
+    sink = PgClaimSink(
+        conn,
+        connector_name=connector.name,
+        connector_version=version,
+        code_commit=code_commit,
+        is_replay=True,
+        object_resolver=record_object_ref,
+        run_record_uri=run_record_uri,
+        # The replay run's own logical key scopes its lineage marks; live resume
+        # never consumes them (resume_marks excludes is_replay runs, and the key
+        # names a replay window, never a cadence window).
+        logical_run=replay_key or f"{source_id}@replay-p31-6",
+        extra_parameters={
+            "replay_of_runs": ",".join(replayed_from),
+            "replay_source": source_id,
+        },
+        **_chunk_kwargs(commit_chunk_size),
+    )
+    from .live_targets import live_targets
+
+    ctx = RunContext(
+        source=get(source_id),
+        run=IngestRun(connector.name, version, code_commit, "r1", "v1", tuple(sorted(seen))),
+        captures=captures,
+        claim_sink=sink,
+        # The replay never fetches; targets are declarative registry data (URLs +
+        # file-kind metadata — never secrets, HG-09) a connector's post-capture
+        # stages consult to resolve which reviewed target a stored capture came
+        # from (audit file_kind, dot_511 registry rows). ``live_targets`` returns
+        # ``[]`` for an unconfigured source and the connectors' registry-row
+        # fallback then resolves the target, same as the fixture path.
+        parameters={"targets": live_targets(source_id)},
+        artifacts=ArtifactStore(keep_history=False),
+    )
+
+    def _mark_flushed(capture: CaptureRef, claims: list[dict[str, Any]]) -> None:
+        mark = marks_by_digest[capture.digest]
+        # The lineage mark names the ORIGINAL target key and capture digest, so
+        # the replay run's ingest_run_capture rows point back at the live
+        # execution's persisted evidence (ADR-113).
+        sink.record_capture(
+            f"replay:{mark['target_key']}",
+            state="flushed",
+            capture_digest=capture.digest,
+            source_uri=capture.source_uri,
+            media_type=capture.media_type,
+            byte_size=capture.byte_size,
+            retrieved_at=capture.retrieved_at,
+            records=len(claims),
+        )
+
+    outcome = asserting_replay(connector, ctx, refs, on_capture=_mark_flushed)
+    status = "ok" if not missing else "partial"
+    detail = (
+        f"{len(missing)} persisted capture digest(s) absent from the store — skipped"
+        if missing
+        else ""
+    )
+    sink.record_completion(status, source_id=source_id, detail=detail or None)
+    return ReplayIngestReport(
+        source_id=source_id,
+        connector=connector.name,
+        run_id=sink.run_id,
+        replayed_from_runs=tuple(replayed_from),
+        captures_considered=len(marks),
+        captures_replayed=outcome.captures,
+        missing_captures=tuple(sorted(missing)),
+        claims_produced=outcome.claims,
+        claims_asserted=outcome.asserted,
+        claims_inserted=sink.report.inserted,
+        claims_duplicate=sink.report.duplicates,
+        status=status,
+        detail=detail,
+    )
+
+
 def _run_over_fixture(
     source_id: str,
     connector: Connector,
@@ -1213,10 +1422,12 @@ __all__ = [
     "FetchRecord",
     "LIVE_RUNS_DIR",
     "LiveGateRefused",
+    "ReplayIngestReport",
     "RunMode",
     "SourceRunReport",
     "is_review_status_green",
     "live_gate_reasons",
+    "replay_ingest",
     "run_connector_over_fixture",
     "run_seed",
     "run_source",

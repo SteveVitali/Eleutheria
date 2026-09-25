@@ -286,6 +286,17 @@
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_retention_days> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_retention_days> <https://ontology.sig-project.org/schema/valueDatatype> "duration_iso" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_retention_days> <https://ontology.sig-project.org/schema/volatilityClass> "MODERATE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner> <http://www.w3.org/2004/02/skos/core#definition> "A configured sharing/access partner of the subject — one endpoint of a §12.2 configured_access edge (§29.3 reconciles the set; the subject's own snapshot or audit row asserts the edge). Written as an entity-ref claim under P31.6 / ADR-113 — the partner's portal identifier for portal-sourced edges (Eyes on Flock slugs), else a partner-organisation ref under ADR-112's identity rules (audit workbooks, the NVLS pooled-lookup vendor constant)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner> <http://www.w3.org/2004/02/skos/core#prefLabel> "configured_sharing_partner"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner> <https://ontology.sig-project.org/schema/cardinality> "multi" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner> <https://ontology.sig-project.org/schema/halfLife> "4mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner> <https://ontology.sig-project.org/schema/mapsTo> <https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner_set> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner> <https://ontology.sig-project.org/schema/objectKind> "entity_ref" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner> <https://ontology.sig-project.org/schema/volatilityClass> "FAST" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner_set> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner_set> <http://www.w3.org/2004/02/skos/core#definition> "Configured sharing partners (directional)." .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/configured_sharing_partner_set> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
@@ -1068,6 +1079,16 @@
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/title> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/title> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/title> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor> <http://www.w3.org/2004/02/skos/core#definition> "The vendor or provider the record states operates or supplies the subject's equipment/service (e.g. the EFF Data Driven release's stated vendor per agency aggregate); written as an organisation entity-ref claim where the name resolves deterministically (P31.6 / ADR-113, under ADR-112's partner-identity rules)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor> <http://www.w3.org/2004/02/skos/core#prefLabel> "vendor"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor> <https://ontology.sig-project.org/schema/halfLife> "3y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor> <https://ontology.sig-project.org/schema/objectKind> "entity_ref" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor_default_retention> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor_default_retention> <http://www.w3.org/2004/02/skos/core#definition> "Vendor default retention (inference basis only)." .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/vendor_default_retention> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .

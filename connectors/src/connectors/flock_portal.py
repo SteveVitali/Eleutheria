@@ -62,6 +62,7 @@ from functools import cache
 from typing import Any
 from uuid import uuid4
 
+from db.identity_guard import SUBJECT_SCHEME
 from reconcile.sharing import (
     ACCESS_KINDS,
     SharingObservation,
@@ -723,12 +724,24 @@ def _sharing_edge_rows(
         rows.append(
             _stamp(
                 {
-                    "record_kind": "configured_access_edge",
+                    # P31.6 (ADR-113): the edge is a normal claim row. It used to be a
+                    # ``configured_access_edge`` record, which the claim sink dropped
+                    # as a non-claim kind — the access relationship never reached the
+                    # spine. ``configured_sharing_partner`` is directed
+                    # ``subject → to_org`` (the subject's snapshot asserts the edge).
+                    "record_kind": "claim",
                     "subject_id": portal_id(edge.from_org),
                     "predicate_id": assert_predicate_allowed("configured_sharing_partner"),
+                    # The partner's portal slug is the literal value the snapshot
+                    # states (P2: the raw value is preserved verbatim).
+                    "value": edge.to_org,
+                    "raw_value": edge.to_org,
                     "from_org": edge.from_org,
                     "to_org": edge.to_org,
                     # §23.4 / SIG-RECON-034: configured access only, never observed_use.
+                    # The §29.3 qualifiers travel on the claim record (folded into the
+                    # content digest); the edge materializer re-derives the access
+                    # kind from the predicate.
                     "access_kind": edge.access_kind,
                     # SIG-RECON-036: a single-snapshot edge's start is UNKNOWN.
                     "valid_from_kind": edge.valid_from_kind,
@@ -739,6 +752,30 @@ def _sharing_edge_rows(
             )
         )
     return rows
+
+
+def _portal_partner_ref(slug: str) -> dict[str, str]:
+    """The deterministic entity-ref of a partner named by its **portal slug** (P31.6).
+
+    Eyes on Flock sharing lists name partners by their platform slug — an
+    identifier, not a free-text name, so ``partner_identity``'s name rules do not
+    apply (a slug is never normalized into a name). The honest deterministic ref
+    is the partner's own portal key (``sig.connector.subject`` →
+    ``flock_portal:<slug>``): when the partner is itself a portal subject, the
+    guard resolves the SAME entity the portal's own claims key on; when it never
+    appears as a portal, the ref still denotes the body that portal slug
+    identifies on the platform. The entity type stays the connector-subject
+    placeholder ``deployment`` (§11.7) so a minted object is typed exactly like
+    the same identifier minted as a subject.
+    """
+    return {
+        "scheme": SUBJECT_SCHEME,
+        "value": portal_id(slug),
+        "entity_type": "deployment",
+        "label": slug,
+        "basis": "portal_slug_identifier",
+        "rules": "portal_partner_ref/1",
+    }
 
 
 # --- the connector ------------------------------------------------------------
@@ -861,8 +898,30 @@ class FlockPortalConnector(Connector):
         return reconcile_portal_sharing(portals)
 
     # -- link + load --
-    # link() is inherited (identity): the connector emits candidate identifiers (the
-    # portal slug) and NEVER resolves entities itself; that is the identity layer.
+    def link(self, ctx: RunContext, normalized: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """Attach the partner's portal identity to each access-edge claim (P31.6).
+
+        The deterministic ``object_ref`` (:func:`_portal_partner_ref`) turns the
+        ``configured_sharing_partner`` claim into the entity-ref claim the §12.2
+        edge materializer reads. No name resolution runs here — the value is a
+        portal slug (an identifier), and the ref names the same guarded
+        ``sig.connector.subject`` key a portal subject carries, so the partner's
+        own portal entity is the edge endpoint when it exists (SIG-INGEST-034:
+        the connector emits the candidate identifier; the identity guard keys
+        it). Every other row passes through unchanged.
+        """
+        out: list[dict[str, Any]] = []
+        for row in normalized:
+            if (
+                row.get("record_kind") == "claim"
+                and row.get("predicate_id") == "configured_sharing_partner"
+                and not row.get("object_ref")
+                and str(row.get("to_org") or "").strip()
+            ):
+                row = dict(row)
+                row["object_ref"] = _portal_partner_ref(str(row["to_org"]))
+            out.append(row)
+        return out
 
     def load(self, ctx: RunContext, linked: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Produce the L1 rows; the driver asserts them (live only)."""

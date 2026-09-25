@@ -66,6 +66,7 @@ from evidence.digest import multihash
 from resolution.cascade import Candidate, CascadeContext, MatchResult, resolve
 from resolution.identity import Identifier
 from resolution.ori import is_valid_ori
+from resolution.partner_identity import partner_ref_rows
 
 from ._data import load_table
 from .records import RecordsRequest
@@ -78,6 +79,12 @@ DATA_DRIVEN_SOURCE_ID = "eff_data_driven"
 #: The candidate-identifier schemes an agency id routes onto (SIG-INGEST-034).
 ORI_SCHEME = "us.fbi.ori"
 DATA_DRIVEN_AGENCY_SCHEME = "data_driven.agency_name"
+
+#: The partner predicates this connector emits entity-ref twins for (P31.5/P31.6,
+#: ADR-112/ADR-113): ``vendor`` — the release's stated vendor per agency row — and
+#: ``configured_sharing_partner`` — the NVLS pooled-lookup edge, whose partner is
+#: the release's own vendor constant (the pool operator).
+_PARTNER_PREDICATES = frozenset({"vendor", "configured_sharing_partner"})
 
 #: The organisation class the connector keys agency aggregates as, so the P03.2
 #: cascade compares like with like (a law-enforcement agency).
@@ -569,6 +576,12 @@ class DataDrivenConnector(Connector):
         # deployment_exists — a non-Flock vendor deployment (historical).
         if agg.vendor:
             rows.append(self._claim(base, "deployment_exists", value=True, raw_value=agg.vendor))
+            # P31.6 (ADR-113): the release's stated vendor is itself an asserted
+            # fact of the aggregate row (the release documents its scope as
+            # agencies contracting with this vendor). Emitting it lets the
+            # link() partner twin carry the deployment → vendor entity-ref the
+            # accountability materializer's `has_vendor` chain reads.
+            rows.append(self._claim(base, "vendor", value=agg.vendor, raw_value=agg.vendor))
         # aggregate scan/hit-rate observations (SIG-INGEST-043a).
         if agg.detections is not None:
             rows.append(
@@ -613,6 +626,23 @@ class DataDrivenConnector(Connector):
                     raw_value="pooled_lookup_participant",
                 )
             )
+            # P31.6 (ADR-113): the NVLS participation flag is the dataset's own
+            # configured-access signal — membership in the release vendor's
+            # pooled lookup pool. The partner is the single dataset-constant
+            # pool operator (the release's vendor), NOT an enumerated partner
+            # list: the SIG-INGEST-043c boundary holds (one constant endpoint,
+            # never the agency's sharing list). Emitted as a §12.2
+            # configured-access edge claim; link() adds the partner twin.
+            if agg.vendor:
+                edge = self._claim(
+                    base,
+                    "configured_sharing_partner",
+                    value=agg.vendor,
+                    raw_value="nvls_pooled_lookup_participant",
+                )
+                edge["access_kind"] = "configured_access"
+                edge["edge_scope"] = "vendor_operated_pooled_lookup"
+                rows.append(edge)
         # SIG-INGEST-043d: per-column retention window, preserved with its unit,
         # NEVER normalized across vendors' incommensurable units.
         if agg.retention:
@@ -667,29 +697,33 @@ class DataDrivenConnector(Connector):
         (the connector never mints identity itself, SIG-INGEST-034).
         """
         identities = _candidates_from(ctx.parameters.get("sig_identities", []))
-        if not identities:
-            return normalized
-        cascade_ctx = CascadeContext.from_data()
-        # Resolve one match per distinct agency subject, then stamp all its rows.
-        resolved: dict[str, MatchResult] = {}
-        for row in normalized:
-            subject = str(row.get("subject_id", ""))
-            if not subject or subject in resolved:
-                continue
-            candidate = _agency_candidate(row)
-            if candidate is None:
-                continue
-            match = _first_match(candidate, identities, cascade_ctx)
-            if match is not None:
-                resolved[subject] = match
-        for row in normalized:
-            match = resolved.get(str(row.get("subject_id", "")))
-            if match is not None:
-                row["resolved_entity_id"] = match.right
-                row["match_tier"] = match.match_tier
-                row["tier_label"] = match.tier_label
-                row["match_evidence"] = match.match_evidence
-        return normalized
+        if identities:
+            cascade_ctx = CascadeContext.from_data()
+            # Resolve one match per distinct agency subject, then stamp its rows.
+            resolved: dict[str, MatchResult] = {}
+            for row in normalized:
+                subject = str(row.get("subject_id", ""))
+                if not subject or subject in resolved:
+                    continue
+                candidate = _agency_candidate(row)
+                if candidate is None:
+                    continue
+                match = _first_match(candidate, identities, cascade_ctx)
+                if match is not None:
+                    resolved[subject] = match
+            for row in normalized:
+                match = resolved.get(str(row.get("subject_id", "")))
+                if match is not None:
+                    row["resolved_entity_id"] = match.right
+                    row["match_tier"] = match.match_tier
+                    row["tier_label"] = match.tier_label
+                    row["match_evidence"] = match.match_evidence
+        # P31.5/P31.6: entity-ref twins for the partner predicates this connector
+        # emits — ``vendor`` (the release's stated vendor) and
+        # ``configured_sharing_partner`` (the NVLS pooled-lookup edge). Runs
+        # unconditionally: the twin seam is identity to the crosswalk above and
+        # applies whether or not ``sig_identities`` were supplied.
+        return partner_ref_rows(normalized, predicates=_PARTNER_PREDICATES)
 
     def load(self, ctx: RunContext, linked: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Produce the L1 rows; the driver asserts them (live only)."""

@@ -258,7 +258,10 @@ def test_partner_ref_rows_only_touches_the_named_predicates() -> None:
 def test_partner_predicates_are_the_reconfirmed_inventory() -> None:
     # ADR-112 §3: no procurement/accountability path emits `applies_to` or `operator`;
     # the operator edge is the camera registry's `camera_operator`. `proceeding_parties`
-    # (litigants) is excluded under Part VIII.
+    # (litigants) is excluded under Part VIII. P31.6 / ADR-113 added the two access-edge
+    # predicates: `vendor` (the release's stated vendor) and `configured_sharing_partner`
+    # (the directed subject→partner edge claim) — both resolve partner orgs through this
+    # module except `flock_portal` slugs, which resolve through `sig.connector.subject`.
     assert PARTNER_PREDICATES == {
         "buyer",
         "seller",
@@ -266,6 +269,8 @@ def test_partner_predicates_are_the_reconfirmed_inventory() -> None:
         "funder",
         "event_organizations",
         "camera_operator",
+        "vendor",
+        "configured_sharing_partner",
     }
     assert "proceeding_parties" not in PARTNER_PREDICATES
 
