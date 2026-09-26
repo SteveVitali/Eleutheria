@@ -76,7 +76,8 @@ import math
 import tomllib
 from collections import defaultdict
 from collections.abc import Iterable, Mapping, Sequence
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, is_dataclass
+from dataclasses import fields as dc_fields
 from datetime import date
 from functools import cache
 from importlib.resources import files
@@ -1821,7 +1822,31 @@ class CameraSiteResult:
 
 
 def _rules_digest(rules: CameraSiteRules) -> str:
-    return hashlib.sha256(repr(rules).encode()).hexdigest()
+    """The content digest of the full rules object.
+
+    Must be process-stable: ``repr`` of a dataclass leaks set/frozenset
+    iteration order (PYTHONHASHSEED), which minted a different run_key per
+    execution over identical inputs (found by P31.11's +0 re-run verification —
+    P30.2b's two 1.0.0 run keys over one input set were the same defect).
+    Canonicalise instead: sets sort their frozen elements, dataclasses/dicts
+    serialise by sorted field/key name.
+    """
+
+    def freeze(v: Any) -> Any:
+        if isinstance(v, (set, frozenset)):
+            frozen = [freeze(x) for x in v]
+            return sorted(frozen, key=lambda e: json.dumps(e, sort_keys=True, default=str))
+        if is_dataclass(v) and not isinstance(v, type):
+            return {f.name: freeze(getattr(v, f.name)) for f in dc_fields(v)}
+        if isinstance(v, dict):
+            return {str(k): freeze(v[k]) for k in sorted(v, key=str)}
+        if isinstance(v, (list, tuple)):
+            return [freeze(x) for x in v]
+        return v
+
+    return hashlib.sha256(
+        json.dumps(freeze(rules), sort_keys=True, default=str).encode()
+    ).hexdigest()
 
 
 def run_key(

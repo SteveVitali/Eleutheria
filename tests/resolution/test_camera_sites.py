@@ -950,3 +950,21 @@ def test_review_item_args_tolerate_non_matcher_evidence() -> None:
     item_id2, _s2, _c2, payload2 = _conflict_review_args(r2, d2)
     assert item_id2 == "er_match:camera_site_conflict:x1:x2"
     assert "human_conflict" in payload2
+
+
+def test_rules_digest_is_process_stable() -> None:
+    # P31.11 hosted verification caught this: _rules_digest used repr(rules),
+    # whose frozenset/dict iteration order is PYTHONHASHSEED-dependent, minting a
+    # different run_key per Cloud Run execution over byte-identical inputs (the
+    # same defect produced P30.2b's two 1.0.0 run keys). Pin the canonical
+    # digest — a set-order leak changes it.
+    from resolution.camera_sites import _rules_digest
+
+    rules = CameraSiteRules.from_data()
+    assert _rules_digest(rules) == _rules_digest(rules)
+    # The digest must cover the CONTENT, not the repr: two independently
+    # constructed-but-equal rule objects agree, and a changed rule changes it.
+    rules2 = CameraSiteRules.from_data()
+    assert _rules_digest(rules2) == _rules_digest(rules)
+    changed = replace(rules, coincident_m=rules.coincident_m + 1.0)
+    assert _rules_digest(changed) != _rules_digest(rules)
