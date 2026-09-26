@@ -113,60 +113,73 @@ targets = [
 # claims still come only from the curated extraction path; a changed shape fails
 # loud rather than fabricating a claim.
 
-# RAA — the national prefecture gazette index (data.gouv.fr CSV, ODbL-1.0) plus
-# one real prefecture gazette PDF. The index CSV is allow-listed under
-# static.data.gouv.fr /resources/; prefecture hosts are plain CRAWL. Resolving
-# each row's PDF and extracting arrêtés is the owed resource-index adapter.
+# RAA — the national prefecture gazette index (data.gouv.fr CSV, ODbL-1.0). The
+# `resource_index` kind parses the CSV STRICTLY (a changed header is
+# ContentDrift) and fans out to a bounded set of prefecture gazette PDFs — the
+# reviewed bounds live in france_belgium_vocab.toml [raa_index] (max_documents=8,
+# HTTPS-only, departement-pattern rows only), never the full ~22k archive. The
+# index CSV is allow-listed under static.data.gouv.fr /resources/; prefecture
+# hosts are plain CRAWL.
 [raa_prefectures]
-kind = "document"
+kind = "resource_index"
 targets = [
-  { id = "raa-prefectures-index", url = "https://static.data.gouv.fr/resources/recueils-des-actes-administratifs-des-prefectures/20260914-114014/raa-des-prefectures.csv", kind = "document" },
+  { id = "raa-prefectures-index", url = "https://static.data.gouv.fr/resources/recueils-des-actes-administratifs-des-prefectures/20260914-114014/raa-des-prefectures.csv", kind = "resource_index" },
 ]
 
 # MaDada — the platform's own Atom feed of successful requests (the platform
-# publishes it; application/atom+xml). Request bodies stay unre-hosted.
+# publishes it; application/atom+xml). The `feed` kind parses Atom STRICTLY
+# (entry-shape drift is ContentDrift) and emits records_request contexts with
+# fr.cada acquisition — request text (title/summary/content) is NEVER read or
+# retained (france_belgium_vocab.toml [madada_feed] `never_emit`).
 [madada]
-kind = "document"
+kind = "feed"
 targets = [
-  { id = "madada-successful-requests", url = "https://madada.fr/feed/search/%20(latest_status:successful%20OR%20latest_status:partially_successful)", kind = "document" },
+  { id = "madada-successful-requests", url = "https://madada.fr/feed/search/%20(latest_status:successful%20OR%20latest_status:partially_successful)", kind = "feed" },
 ]
 
-# CCOPS — the three mandated-disclosure index pages (ADR-085). nyc.gov answers
-# datacenter/residential egress with a WAF challenge (a recorded disappearance,
-# never defeated — SIG-INGEST-013); sf.gov serves a JS shell (captured as-is).
+# CCOPS — the three mandated-disclosure index pages (ADR-085). The `index_page`
+# kind discovers spec-matching filing links off the captured page and fans out to
+# bounded `disclosure_document` targets (per-source spec in
+# government_mandated_disclosure_vocab.toml [adapters.*]; the live bound is the
+# row's max_documents). nyc.gov answers datacenter/residential egress with a WAF
+# challenge (a recorded disappearance, never defeated — SIG-INGEST-013); sf.gov
+# serves a JS shell (captured as-is).
 [ccops_seattle]
-kind = "document"
+kind = "index_page"
 targets = [
-  { id = "ccops-seattle-sir-index", url = "https://www.seattle.gov/tech/data-privacy/surveillance-technology", kind = "document" },
+  { id = "ccops-seattle-sir-index", url = "https://www.seattle.gov/tech/data-privacy/surveillance-technology", kind = "index_page", max_documents = 6 },
 ]
 [ccops_nyc_post]
-kind = "document"
+kind = "index_page"
 targets = [
-  { id = "ccops-nyc-post-index", url = "https://www.nyc.gov/site/nypd/about/about-nypd/policy/post-act.page", kind = "document" },
+  { id = "ccops-nyc-post-index", url = "https://www.nyc.gov/site/nypd/about/about-nypd/policy/post-act.page", kind = "index_page", max_documents = 6 },
 ]
 [ccops_sf]
-kind = "document"
+kind = "index_page"
 targets = [
-  { id = "ccops-sf-inventory-index", url = "https://www.sf.gov/surveillance-technology-inventory", kind = "document" },
+  { id = "ccops-sf-inventory-index", url = "https://www.sf.gov/surveillance-technology-inventory", kind = "index_page", max_documents = 6 },
 ]
 
 # Pathways — one real upstream document per family (EFF-published; the
-# per-document mixed terms stay visible per ADR-085). documentcloud fixture URLs
-# were placeholders and are NOT registered — only verified-reachable pages.
+# per-document mixed terms stay visible per ADR-085). The `pathway_document`
+# kind re-derives genre from the captured bytes and emits claims only where the
+# document's own text carries a reviewed term (pathways_vocab.toml [adapters.*]).
+# documentcloud fixture URLs were placeholders and are NOT registered — only
+# verified-reachable pages.
 [pathways_rtcc_federation]
-kind = "document"
+kind = "pathway_document"
 targets = [
-  { id = "eff-fusus-rtcc", url = "https://www.eff.org/deeplinks/2023/05/neighborhood-watch-out-cops-are-incorporating-private-cameras-their-real-time", kind = "document" },
+  { id = "eff-fusus-rtcc", url = "https://www.eff.org/deeplinks/2023/05/neighborhood-watch-out-cops-are-incorporating-private-cameras-their-real-time", kind = "pathway_document" },
 ]
 [pathways_fr_css_forensics]
-kind = "document"
+kind = "pathway_document"
 targets = [
-  { id = "eff-face-recognition", url = "https://www.eff.org/issues/face-recognition", kind = "document" },
+  { id = "eff-face-recognition", url = "https://www.eff.org/issues/face-recognition", kind = "pathway_document" },
 ]
 [pathways_acoustic_drone_location]
-kind = "document"
+kind = "pathway_document"
 targets = [
-  { id = "eff-drones", url = "https://www.eff.org/issues/drones", kind = "document" },
+  { id = "eff-drones", url = "https://www.eff.org/issues/drones", kind = "pathway_document" },
 ]
 
 # Coarse international — the upstream index/map/report pages themselves. ASPI's

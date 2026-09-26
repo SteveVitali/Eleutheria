@@ -10,7 +10,10 @@
 # header — otherwise TOML nests it under that table.
 
 # The connector's own vocabulary version, stamped onto every run (§20).
-vocab_version = "2026.09.16"
+# 2026.09.17 — P25.5: added [adapters.*] — the reviewed per-family term lists the
+# live document adapter reads (a captured page yields a technology claim only
+# where its own bytes carry the reviewed literal, located verbatim).
+vocab_version = "2026.09.17"
 
 # The four P17 claim types a Stage-5 pathway connector may emit (§46). `deployment`
 # is the epistemically-loaded one: it may be asserted ONLY from a deployment-genre
@@ -100,6 +103,38 @@ acoustic_drone_location = [
   "gunshot_detection",
   "drones",
   "commercial_location",
+]
+
+# --- P25.5: per-family document-adapter term lists (reviewed data) -------------
+#
+# A captured pathway document yields a claim only where its own bytes carry one
+# of the reviewed literals below — the technology a captured page is ABOUT is
+# never trusted from a fixture label or the URL slug; it is located verbatim in
+# the text (page/byte locator). `pathway` must be a member of the family's
+# [conformance_pathways] roster — a term outside the roster emits nothing.
+# A `deployment` claim is emitted only when the document's re-derived genre is
+# deployment_report (the §46 gate runs on every claim regardless).
+
+[adapters.rtcc_federation]
+technology_terms = [
+  { literal = "real-time crime center", pathway = "rtcc_hub" },
+  { literal = "Fusus", pathway = "private_camera_federation" },
+  { literal = "private camera", pathway = "private_camera_federation" },
+  { literal = "Neighborhood Watch", pathway = "private_camera_federation" },
+]
+
+[adapters.fr_css_forensics]
+technology_terms = [
+  { literal = "face recognition", pathway = "face_recognition" },
+  { literal = "facial recognition", pathway = "face_recognition" },
+]
+
+[adapters.acoustic_drone_location]
+technology_terms = [
+  { literal = "drone", pathway = "drones" },
+  { literal = "gunshot", pathway = "gunshot_detection" },
+  { literal = "ShotSpotter", pathway = "gunshot_detection" },
+  { literal = "location", pathway = "commercial_location" },
 ]
 
 # The registry source each pathway family draws its fixtures from (LINK posture,

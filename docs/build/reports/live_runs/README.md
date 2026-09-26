@@ -8,6 +8,8 @@ evidence (`rate_limit_events` + `robots_decisions`). It contains **no content** 
 **no credential** (SIG-INGEST-015, §3.1, RISK-P21-05). Records are append-only: a
 re-run writes a new dated file, never edits an existing one (P1–P3).
 
-This directory is **empty** while HG-03 is pending: no source has been flipped to a
-green `review-status`, so `run --mode live` refuses (exit 3) and no fetch occurs.
 The format is proven over the local stub in `tests/connectors/test_runner.py`.
+Since the HG-03/HG-02/ADR-085 flips (P25.1–P25.5), real dated records live here —
+including honest non-fetch outcomes (`ccops_sf` SIG-INGEST-012 robots refusal) and
+per-document politeness refusals / `link_rotted` disappearances recorded on the
+parent fetch record (P25.5 live-extraction run, 2026-09-16).

@@ -46,8 +46,14 @@ from typing import Any
 from uuid import uuid4
 
 from evidence.digest import multihash
-from parsing.classification import classify
+from parsing.classification import FileFormat, classify
 from parsing.clauses import clause_claim, find_clause, locate_clauses
+from parsing.document import (
+    byte_range_locator,
+    html_text,
+    page_locator_for,
+    pdf_text_pages,
+)
 from parsing.genre import DEPLOYMENT_GENRES, DocumentGenre, classify_genre
 from parsing.tables import parse_table, table_claims
 
@@ -126,6 +132,22 @@ def all_conformance_pathways() -> frozenset[str]:
 def pathway_family_source(family: str) -> str:
     """The registry source id a pathway family draws its fixtures from (HG-03)."""
     return str(vocab()["sources"][family])
+
+
+def pathway_family_for(source_id: str) -> str | None:
+    """The pathway family a registry source id serves (reverse of ``[sources]``)."""
+    for family, sid in vocab()["sources"].items():
+        if str(sid) == source_id:
+            return str(family)
+    return None
+
+
+def source_adapter(source_id: str) -> Mapping[str, Any] | None:
+    """The reviewed ``[adapters.<family>]`` spec for a source id (P25.5), or ``None``."""
+    family = pathway_family_for(source_id)
+    if family is None:
+        return None
+    return vocab().get("adapters", {}).get(family)
 
 
 # --- the epistemic guard: procured != deployed (§46, RISK-P21-16) -------------
@@ -407,6 +429,121 @@ _EXTRACTORS = {
 }
 
 
+# --- the captured-document adapter (P25.5) -------------------------------------
+#
+# A live pathway capture IS a document: it is read at its text layer
+# (``pdf_text`` for a digital-native PDF, ``selector_template`` for HTML), its
+# genre is RE-DERIVED from the bytes (never trusted from a configured label),
+# and the reviewed ``[adapters.<family>]`` term list locates the technology the
+# document is about — verbatim, with a page/byte locator. A document whose genre
+# permits a ``deployment`` claim AND whose bytes carry a reviewed term yields the
+# deployment claim; a procurement/policy document yields only its genre-permitted
+# claims — procured never implies deployed, on captured bytes exactly as on
+# curated fixtures.
+
+
+def _configured_target(ctx: RunContext, uri: str) -> Mapping[str, Any] | None:
+    resolved = ctx.resolved_targets.get(uri)
+    if resolved is not None:
+        return resolved
+    for target in ctx.parameters.get("targets", []) or ():
+        if str(target.get("url") or "") == uri:
+            return target
+    return None
+
+
+def _retrieved_date(capture: CaptureRef) -> str:
+    if capture.retrieved_at is not None:
+        return capture.retrieved_at.date().isoformat()
+    return datetime.now(UTC).date().isoformat()
+
+
+def _extract_pathway_document(
+    ctx: RunContext, parsed: Mapping[str, Any]
+) -> list[Mapping[str, Any]]:
+    """Field-level claims off a captured pathway document (P25.5).
+
+    One ``vendor_product`` ``technology`` claim per family-roster term found in
+    the bytes (verbatim literal, page/byte locator); one ``deployment``
+    ``deployed`` claim per found term ONLY when the re-derived genre is
+    deployment_report — the genre gate independently refuses a deployment claim
+    that slips through. A document with no text layer or no matching term is an
+    evidence artifact only.
+    """
+    capture = parsed["capture"]
+    data = ctx.captures.get(capture.digest)
+    family = pathway_family_for(ctx.source.id) or ""
+    adapter = source_adapter(ctx.source.id) or {}
+    genre = DocumentGenre(str(parsed.get("genre", "unknown")))
+    record = {
+        "record_kind": "evidence_document",
+        "source_uri": capture.source_uri,
+        "capture_digest": capture.digest,
+        "media_type": capture.media_type,
+        "byte_size": parsed["byte_size"],
+        "verdict": parsed["verdict"],
+        "genre": genre.value,
+    }
+    out: list[Mapping[str, Any]] = [record]
+    pages = tuple(str(p) for p in parsed.get("pages") or ())
+    text = str(parsed.get("text") or "") or "\n".join(pages)
+    method = "pdf_text" if pages else "selector_template"
+    if not adapter or not text.strip():
+        return out
+    roster = set(conformance_pathways().get(family, ()))
+    permitted = genre_claim_types().get(genre, frozenset())
+    seen: set[str] = set()
+    for term in adapter.get("technology_terms", ()):
+        literal = str(term.get("literal") or "")
+        pathway = str(term.get("pathway") or "")
+        if not literal or pathway not in roster or pathway in seen:
+            continue
+        loc = page_locator_for(pages, literal) if pages else byte_range_locator(data, literal)
+        if loc is None:
+            continue
+        seen.add(pathway)
+        doc = DocumentContext(
+            source_id=ctx.source.id,
+            source_url=capture.source_uri,
+            retrieved_date=_retrieved_date(capture),
+            genre=genre,
+            conformance_pathway=pathway,
+            pathway_family=family,
+        )
+        subject_id = f"pathways:{family}:{pathway}"
+        if "vendor_product" in permitted:
+            out.append(
+                pathway_claim(
+                    doc,
+                    claim_type="vendor_product",
+                    subject_kind="technology",
+                    subject_id=subject_id,
+                    predicate="technology",
+                    value=literal,
+                    raw_value=literal,
+                    extraction_method=method,
+                    locator=loc,
+                    technology=literal,
+                )
+            )
+        if genre in DEPLOYMENT_GENRES and "deployment" in permitted:
+            out.append(
+                pathway_claim(
+                    doc,
+                    claim_type="deployment",
+                    subject_kind="deployment",
+                    subject_id=subject_id,
+                    predicate="deployed",
+                    value=True,
+                    raw_value=literal,
+                    extraction_method=method,
+                    locator=loc,
+                    technology=literal,
+                )
+            )
+    return out
+
+
 def extract_documents(parsed: Mapping[str, Any]) -> list[Mapping[str, Any]]:
     """Extract every P17 claim from a fixture's document set (the ADR-071 dispatcher).
 
@@ -482,7 +619,7 @@ def _document_artifact_row(
     engine here (SIG-PARSE-001/002).
     """
     source_uri = str(record["source_uri"])
-    return {
+    row = {
         "record_kind": "evidence_artifact",
         "subject_id": document_artifact_id(source_uri),
         "predicate_id": assert_predicate_allowed("document"),
@@ -495,6 +632,9 @@ def _document_artifact_row(
         "classification": dict(record["verdict"]),
         "raw_value": source_uri,
     }
+    if record.get("genre"):
+        row["document_genre"] = str(record["genre"])
+    return row
 
 
 # --- the connector ------------------------------------------------------------
@@ -525,14 +665,38 @@ class PathwaysConnector(Connector):
     def parse(self, ctx: RunContext, capture: CaptureRef) -> dict[str, Any]:
         """Structure the captured bytes — a curated fixture payload, or an upstream document.
 
-        A JSON capture is the curated ``pathway_family`` payload; anything else (PDF,
-        HTML, a feed) is an upstream document classified via the P07.1 parser — the
-        derived-facts basis permits capturing provenance, never re-hosting the bytes.
+        A JSON capture is the curated ``pathway_family`` payload; anything else
+        (PDF, HTML, a feed) is an upstream document classified via the P07.1
+        parser — the derived-facts basis permits capturing provenance, never
+        re-hosting the bytes. A ``pathway_document`` / ``document`` target
+        additionally re-derives the genre from the bytes and reads the text
+        layer (``pdf_text`` for a digital-native PDF, ``selector_template`` for
+        HTML) so ``extract`` can emit claims from the document itself.
         """
         data = ctx.captures.get(capture.digest)
         if _is_json_media(capture.media_type):
             return parse_pathways(data)
         verdict = classify(_filename_from_uri(capture.source_uri), data)
+        spec = _configured_target(ctx, capture.source_uri)
+        configured_kind = str(spec.get("kind") or "") if spec else ""
+        if configured_kind in {"pathway_document", "document"}:
+            genre = classify_genre(capture.source_uri, data).genre
+            out: dict[str, Any] = {
+                "kind": "pathway_document",
+                "capture": capture,
+                "verdict": verdict.to_row(),
+                "byte_size": len(data),
+                "genre": genre.value,
+            }
+            if verdict.file_format is FileFormat.PDF:
+                pages = pdf_text_pages(data)
+                if any(pages):
+                    out["pages"] = pages
+            elif verdict.file_format is FileFormat.HTML:
+                text = html_text(data)
+                if text:
+                    out["text"] = text
+            return out
         return {
             "kind": "document",
             "capture": capture,
@@ -541,6 +705,8 @@ class PathwaysConnector(Connector):
         }
 
     def extract(self, ctx: RunContext, parsed: Mapping[str, Any]) -> list[Mapping[str, Any]]:
+        if str(parsed.get("kind") or "") == "pathway_document":
+            return _extract_pathway_document(ctx, parsed)
         return extract_documents(parsed)
 
     def normalize(
@@ -554,7 +720,13 @@ class PathwaysConnector(Connector):
         artifact_count = 0
         for claim in raw_claims:
             if claim.get("record_kind") == "evidence_document":
-                out.append({**_document_artifact_row(source_id, claim), "vocab_version": version})
+                out.append(
+                    {
+                        **_document_artifact_row(source_id, claim),
+                        "vocab_version": version,
+                        "license_spdx": ctx.source.rights.spdx,
+                    }
+                )
                 artifact_count += 1
                 continue
             out.append({**claim, "vocab_version": version})

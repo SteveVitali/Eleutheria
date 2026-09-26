@@ -41,3 +41,15 @@ Every **deployment** claim in these fixtures originates ONLY from a `deployment_
 document (the county-sheriff and city-PD annual surveillance reports). The procurement-genre
 fixtures (`rtcc_hub`, `drones`) emit `procurement` + `vendor_product` claims only — never a
 `deployed` claim. `procured` never implies `deployed`.
+
+## P25.5 live-extraction fixtures (added 2026-09-17)
+
+| fixture | document | shape |
+|---|---|---|
+| `eff_rtcc_page.html` | EFF deeplinks page on private-camera federation into real-time crime centers (the registered `pathways_rtcc_federation` live target) | Index/article HTML carrying the reviewed adapter literals ("real-time crime center", "Fusus", "Neighborhood Watch") |
+
+A captured pathway document re-derives its genre from the bytes (the page
+classifies `vendor_disclosure`, never deployment_report) and yields
+`vendor_product`/`technology` claims only where the document's own text carries
+a reviewed literal — a `deployment` claim requires a deployment-report genre
+(§46 gate, unweakened).

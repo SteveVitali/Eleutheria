@@ -1,0 +1,20 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnajrfjln4jeb5wspw7p7qrf7jdxtaoj445z7hxopugqcgkiyz5tr5pu5xqkxlo7erqsr37fj6m3w27ds5lyiz3x2fwt7atmsnaw7qexem"
+  ],
+  "claim_count": 2,
+  "connector": "pathways",
+  "content_drift": null,
+  "disappearances": [],
+  "duration_seconds": 0.130255,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "pathways_fr_css_forensics",
+  "started_at": "2026-09-16T01:42:01.292186+00:00",
+  "status_codes": [],
+  "urls": []
+}

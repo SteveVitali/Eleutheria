@@ -47,7 +47,11 @@ scale (SIG-CONTRIB-016) — lives in :mod:`connectors.osm_import_study`.
 
 from __future__ import annotations
 
+import csv
+import io
 import json
+import re
+import xml.etree.ElementTree as ET
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -55,11 +59,21 @@ from functools import cache
 from typing import Any
 
 from evidence.digest import multihash
-from parsing.classification import classify
+from parsing.classification import FileFormat, classify
+from parsing.document import pdf_text_pages
+from parsing.genre import classify_genre
+from parsing.locator import Locator
 
 from ._data import load_table
 from .procurement import Contract, LifecycleTransition
-from .stages import CaptureRef, Connector, FetchResult, RunContext, register
+from .stages import (
+    CaptureRef,
+    Connector,
+    ContentDrift,
+    FetchResult,
+    RunContext,
+    register,
+)
 
 # --- the versioned vocabulary (data, not code — §20, SIG-ENG-001) -------------
 
@@ -113,6 +127,16 @@ def records_request_method_for(jurisdiction: str) -> str:
     :class:`KeyError` for an unknown jurisdiction rather than guessing a regime.
     """
     return str(vocab()["records_request_methods"][jurisdiction])
+
+
+def raa_index_spec() -> Mapping[str, Any]:
+    """The reviewed RAA resource-index fan-out bounds (``[raa_index]``, P25.5)."""
+    return vocab()["raa_index"]
+
+
+def madada_feed_spec() -> Mapping[str, Any]:
+    """The MaDada Atom safe-metadata contract (``[madada_feed]``, P25.5)."""
+    return vocab()["madada_feed"]
 
 
 # --- the internationalized records-request vocabulary (§13.8, SIG-ONTO-068) ---
@@ -275,6 +299,276 @@ def _document_artifact_row(source_id: str, record: Mapping[str, Any]) -> dict[st
     )
 
 
+# --- the RAA resource-index adapter (P25.5, F9.18) -----------------------------
+#
+# The national RAA index CSV (data.gouv.fr, ODbL-1.0) is the discovery surface for
+# the per-prefecture gazette PDFs: each row names a gazette document by title,
+# URL, departement, and index-update date. The adapter parses the index STRICTLY —
+# a changed header or non-CSV shape is ContentDrift, never an empty selection —
+# and resolves a bounded subset of arrêté-titled rows into instrument_document
+# targets. The LegalInstrument fields (title, departement, effective date sniffed
+# from the title literal, CSI L252 five-year derived sunset) come from the index
+# ROW; the fetched document is the evidence the claim cites.
+
+
+@dataclass(frozen=True)
+class RaaIndexEntry:
+    """One row of the national RAA index CSV (``titre;url;departement;mise_a_jour``)."""
+
+    row: int  # 1-based data-row number in the index — the claim locator
+    titre: str
+    url: str
+    departement: str
+    mise_a_jour: str
+
+
+@dataclass(frozen=True)
+class RaaIndex:
+    """The parsed national RAA index: entries + the malformed-row accounting."""
+
+    entries: tuple[RaaIndexEntry, ...]
+    header: tuple[str, ...]
+    malformed_count: int
+
+    @property
+    def entry_count(self) -> int:
+        return len(self.entries)
+
+
+def parse_raa_index(data: bytes, *, source_id: str) -> RaaIndex:
+    """Parse the national RAA index CSV — STRICT shape validation (fail closed).
+
+    The observed shape is semicolon-delimited UTF-8 with exactly the four columns
+    ``titre;url;departement;mise_a_jour``. A capture whose header is missing or
+    differs, or that is not parseable CSV text at all, is :class:`ContentDrift` —
+    the upstream shape changed and the adapter refuses to guess (never silently
+    zero rows). Rows missing a usable ``url``/``departement`` are counted
+    ``malformed`` and skipped (heterogeneous data is expected), not drift.
+    """
+    try:
+        text = data.decode("utf-8-sig")
+    except UnicodeDecodeError as exc:
+        raise ContentDrift(
+            source_id,
+            "the RAA index is not decodable UTF-8 text",
+            details=str(exc),
+        ) from exc
+    reader = csv.reader(io.StringIO(text), delimiter=";")
+    try:
+        header = next(reader)
+    except StopIteration as exc:
+        raise ContentDrift(source_id, "the RAA index capture is empty") from exc
+    required = [str(c) for c in raa_index_spec()["required_columns"]]
+    header_norm = [str(h).strip().lower() for h in header]
+    if header_norm != required:
+        raise ContentDrift(
+            source_id,
+            "the RAA index header no longer matches "
+            f"{required!r} (got {header_norm!r}) — fail closed, never guess",
+        )
+    entries: list[RaaIndexEntry] = []
+    malformed = 0
+    for i, row in enumerate(reader, start=1):
+        if not row or not any(cell.strip() for cell in row):
+            continue
+        if len(row) != len(required):
+            malformed += 1
+            continue
+        titre, url, departement, mise_a_jour = (cell.strip() for cell in row)
+        if not url.startswith(("http://", "https://")) or not departement:
+            malformed += 1
+            continue
+        entries.append(
+            RaaIndexEntry(
+                row=i, titre=titre, url=url, departement=departement, mise_a_jour=mise_a_jour
+            )
+        )
+    return RaaIndex(entries=tuple(entries), header=tuple(header_norm), malformed_count=malformed)
+
+
+_FRENCH_MONTHS = {
+    "janvier": "01",
+    "février": "02",
+    "fevrier": "02",
+    "mars": "03",
+    "avril": "04",
+    "mai": "05",
+    "juin": "06",
+    "juillet": "07",
+    "août": "08",
+    "aout": "08",
+    "septembre": "09",
+    "octobre": "10",
+    "novembre": "11",
+    "décembre": "12",
+    "decembre": "12",
+}
+
+# Conservative date literals in RAA titres — "du 05 janvier 2026", "du 05/01/2026",
+# "du 05012026", or an ISO "2026-01-05". Nothing else is read as a date.
+_RE_DATE_WORDS = re.compile(
+    r"\bdu\s+(\d{1,2})\s+([a-zA-ZéûôàùçÉÛÔÀÙÇ]+)\s+(\d{4})\b", re.IGNORECASE
+)
+_RE_DATE_ISO = re.compile(r"\b(20\d{2})-(\d{2})-(\d{2})\b")
+_RE_DATE_SLASH = re.compile(r"\b(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{4})\b")
+_RE_DATE_COMPACT = re.compile(r"\b(\d{2})(\d{2})(20\d{2})\b")
+
+
+def _sniff_raa_date(titre: str) -> str | None:
+    """The arrêté date literal inside an RAA ``titre`` — ISO ``YYYY-MM-DD`` or ``None``.
+
+    Only literal date strings in the title are used; the index ``mise_a_jour`` is
+    the *resource update* date, never the instrument's effective date. An
+    unparseable title yields ``None`` (no effective date, no derived sunset) —
+    never a guessed date.
+    """
+    match = _RE_DATE_WORDS.search(titre)
+    if match:
+        day, month_name, year = match.groups()
+        month = _FRENCH_MONTHS.get(month_name.lower())
+        if month:
+            return f"{year}-{month}-{int(day):02d}"
+    match = _RE_DATE_ISO.search(titre)
+    if match:
+        return f"{match.group(1)}-{match.group(2)}-{match.group(3)}"
+    match = _RE_DATE_SLASH.search(titre)
+    if match:
+        day, month, year = match.groups()
+        if 1 <= int(day) <= 31 and 1 <= int(month) <= 12:
+            return f"{year}-{int(month):02d}-{int(day):02d}"
+    match = _RE_DATE_COMPACT.search(titre)
+    if match:
+        day, month, year = match.groups()
+        if 1 <= int(day) <= 31 and 1 <= int(month) <= 12:
+            return f"{year}-{int(month):02d}-{int(day):02d}"
+    return None
+
+
+def resolve_raa_targets(
+    ctx: RunContext, index_capture: CaptureRef, spec: Mapping[str, Any]
+) -> list[dict[str, Any]]:
+    """Resolve the bounded per-prefecture ``instrument_document`` targets (P25.5).
+
+    The bounds are reviewed DATA — the ``[raa_index]`` vocabulary defaults the
+    live-target row may tighten but the adapter never crawls the full ~23k-row
+    index: a departement allowlist, a conservative arrêté titre pattern,
+    https-only document URLs, and a hard ``max_documents`` cap. Each resolved
+    target carries the index row's fields (its provenance) and is registered on
+    ``ctx.resolved_targets`` so the child's post-capture stages see them.
+    """
+    bounds = raa_index_spec()
+    index = parse_raa_index(ctx.captures.get(index_capture.digest), source_id=ctx.source.id)
+    departements = {str(d).strip() for d in spec.get("departements", []) or ()}
+    title_re = re.compile(str(spec.get("title_pattern") or bounds["title_pattern"]), re.I)
+    dept_re = re.compile(str(bounds["departement_pattern"]))
+    doc_url_re = re.compile(str(spec.get("doc_url_pattern") or bounds["doc_url_pattern"]), re.I)
+    require_https = bool(spec.get("require_https", bounds["require_https"]))
+    max_documents = int(spec.get("max_documents", bounds["max_documents"]))
+    out: list[dict[str, Any]] = []
+    for entry in index.entries:
+        if len(out) >= max_documents:
+            break
+        if departements and entry.departement not in departements:
+            continue
+        if not dept_re.match(entry.departement):
+            continue
+        if not title_re.search(entry.titre):
+            continue
+        if not doc_url_re.search(entry.url):
+            continue
+        if require_https and not entry.url.startswith("https://"):
+            continue
+        out.append(
+            {
+                "id": f"raa-arrete:{entry.departement}:{entry.row}",
+                "url": entry.url,
+                "kind": "instrument_document",
+                "index_url": index_capture.source_uri,
+                "index_row": entry.row,
+                "titre": entry.titre,
+                "departement": entry.departement,
+                "mise_a_jour": entry.mise_a_jour,
+            }
+        )
+    return out
+
+
+# --- the MaDada Atom adapter (P25.5) --------------------------------------------
+#
+# The platform publishes an Atom feed of *successful* requests. An entry maps to
+# ONE records-request context (fr.cada) carrying only safe metadata — the atom id,
+# the timestamps, the request-event link. The user-authored <title>/<content> are
+# request text: they are never parsed into a claim, never stored on a raw record,
+# never emitted (the [madada_feed] contract names them `never_emit`).
+
+
+@dataclass(frozen=True)
+class AtomEntry:
+    """The safe metadata of one MaDada feed entry — title/content never carried."""
+
+    row: int  # 1-based entry ordinal in the feed — the claim locator
+    atom_id: str
+    link: str
+    published: str
+    updated: str
+
+
+def parse_atom_feed(data: bytes, *, source_id: str) -> tuple[AtomEntry, ...]:
+    """Parse a MaDada Atom feed — namespace-aware, STRICT shape (fail closed).
+
+    The root must be an Atom ``<feed>``; every ``<entry>`` must carry an ``<id>``
+    and a link. A capture that is not Atom, or an entry missing its identity/
+    link, is :class:`ContentDrift` — the platform changed the feed shape and the
+    adapter refuses to guess. ``<title>``/``<content>`` are deliberately never
+    read into the returned entries: they are user-authored request text and the
+    connector's contract is to never retain them.
+    """
+    ns = str(madada_feed_spec()["namespace"])
+    try:
+        root = ET.fromstring(data.decode("utf-8"))
+    except (UnicodeDecodeError, ET.ParseError) as exc:
+        raise ContentDrift(
+            source_id, "the MaDada feed is not parseable XML", details=str(exc)
+        ) from exc
+    if root.tag != f"{{{ns}}}feed":
+        raise ContentDrift(
+            source_id,
+            f"the MaDada feed root is {root.tag!r}, not the Atom {{{ns}}}feed — "
+            "fail closed, never guess",
+        )
+    entries: list[AtomEntry] = []
+    for i, entry in enumerate(root.findall(f"{{{ns}}}entry"), start=1):
+        atom_id = entry.findtext(f"{{{ns}}}id")
+        link_el = entry.find(f"{{{ns}}}link")
+        link = link_el.get("href") if link_el is not None else None
+        if not atom_id or not link:
+            raise ContentDrift(
+                source_id,
+                f"feed entry #{i} is missing its atom id or link — the entry "
+                "shape changed; fail closed",
+            )
+        entries.append(
+            AtomEntry(
+                row=i,
+                atom_id=str(atom_id),
+                link=str(link),
+                published=str(entry.findtext(f"{{{ns}}}published") or ""),
+                updated=str(entry.findtext(f"{{{ns}}}updated") or ""),
+            )
+        )
+    return tuple(entries)
+
+
+def _atom_entry_subject(entry: AtomEntry) -> str:
+    """The records-request subject for one feed entry (the request-event id)."""
+    match = re.search(r"request_event/(\d+)", entry.link) or re.search(
+        r"InfoRequestEvent/(\d+)", entry.atom_id
+    )
+    if match:
+        return f"madada:request_event/{match.group(1)}"
+    return f"madada:request_event/{multihash(entry.link.encode('utf-8'))[:16]}"
+
+
 # --- candidate identifiers for the parties (SIG-INGEST-034) -------------------
 
 
@@ -419,6 +713,11 @@ class LegalInstrument:
                 row["candidate_identifier"] = org_candidate(value)
             elif predicate == "jurisdiction" and isinstance(value, str):
                 row["candidate_identifier"] = jurisdiction_candidate(value)
+            if predicate == "sunset_date" and self.raw.get("sunset_date_derived"):
+                # The five-year sunset is DERIVED from effective_from (CSI L252),
+                # not read from the document — the claim says so explicitly.
+                row["derived"] = True
+                row["derivation"] = "csi_l252_five_year_validity"
             rows.append(_stamp(row, source_id=self.source_id))
         return rows
 
@@ -617,15 +916,98 @@ class FranceBelgiumRecordsConnector(Connector):
         assert ctx.fetcher is not None, "connectors fetch only through the shared layer"
         return ctx.fetcher.fetch(str(target["url"]))
 
-    def parse(self, ctx: RunContext, capture: CaptureRef) -> dict[str, Any]:
-        """Structure the captured bytes — a JSON payload, or an upstream document.
+    def discover_more(
+        self, ctx: RunContext, captures: Sequence[CaptureRef]
+    ) -> list[Mapping[str, Any]]:
+        """Resolve bounded per-prefecture gazette PDFs from a captured RAA index (P25.5).
 
-        A JSON capture is the arrêtés / records-request payload; anything else
-        (a gazette PDF, an HTML index page, a MaDada Atom feed) is an upstream
-        document classified via the P07.1 parser — the derived-facts basis
-        permits capturing provenance, never re-hosting the bytes.
+        A ``resource_index`` capture IS the discovery surface: its rows are
+        filtered through the reviewed ``[raa_index]`` bounds (departement
+        allowlist, arrêté titre pattern, https-only, ``max_documents`` cap) into
+        ``instrument_document`` targets, each carrying its index row's fields.
+        The pass is network-isolated — a pure function of captured bytes; only
+        the driver's ``fetch()`` egresses for the resolved children.
+        """
+        out: list[Mapping[str, Any]] = []
+        for capture in captures:
+            spec = _configured_target(ctx, capture.source_uri)
+            if not spec or str(spec.get("kind") or "") != "resource_index":
+                continue
+            for target in resolve_raa_targets(ctx, capture, spec):
+                url = str(target["url"])
+                if url not in ctx.resolved_targets:
+                    ctx.resolved_targets[url] = target
+                    out.append(target)
+        return out
+
+    def parse(self, ctx: RunContext, capture: CaptureRef) -> dict[str, Any]:
+        """Structure the captured bytes — a JSON payload, an index, a feed, or a document.
+
+        A JSON capture is the arrêtés / records-request payload. A target whose
+        configured kind is ``resource_index`` is parsed STRICTLY as the RAA index
+        CSV (a changed header is ContentDrift); ``feed`` is the MaDada Atom feed
+        (entry-shape drift is ContentDrift; request text is never read);
+        ``instrument_document`` is a resolved gazette child — classified via
+        P07.1, and a digital-native PDF gets a genre verdict from its own text.
+        Anything else is an upstream document classified via the P07.1 parser —
+        the derived-facts basis permits capturing provenance, never re-hosting
+        the bytes.
         """
         data = ctx.captures.get(capture.digest)
+        target = _configured_target(ctx, capture.source_uri)
+        kind = str(target.get("kind") or "") if target else ""
+        if kind == "resource_index":
+            index = parse_raa_index(data, source_id=ctx.source.id)
+            verdict = classify(_filename_from_uri(capture.source_uri), data)
+            return {
+                "kind": "resource_index",
+                "capture": capture,
+                "verdict": verdict.to_row(),
+                "byte_size": len(data),
+                "header": list(index.header),
+                "entry_count": index.entry_count,
+                "malformed_count": index.malformed_count,
+            }
+        if kind == "feed":
+            entries = parse_atom_feed(data, source_id=ctx.source.id)
+            verdict = classify(_filename_from_uri(capture.source_uri), data)
+            return {
+                "kind": "atom_feed",
+                "capture": capture,
+                "verdict": verdict.to_row(),
+                "byte_size": len(data),
+                "entries": [
+                    {
+                        "row": e.row,
+                        "atom_id": e.atom_id,
+                        "link": e.link,
+                        "published": e.published,
+                        "updated": e.updated,
+                    }
+                    for e in entries
+                ],
+            }
+        if kind == "instrument_document":
+            verdict = classify(_filename_from_uri(capture.source_uri), data)
+            page_count = 0
+            genre: dict[str, Any] | None = None
+            if verdict.file_format is FileFormat.PDF and not verdict.encrypted:
+                pages = pdf_text_pages(data)
+                page_count = len(pages)
+                if any(pages):
+                    genre = classify_genre(
+                        _filename_from_uri(capture.source_uri),
+                        "\n".join(pages).encode("utf-8"),
+                    ).to_row()
+            return {
+                "kind": "instrument_document",
+                "capture": capture,
+                "verdict": verdict.to_row(),
+                "byte_size": len(data),
+                "page_count": page_count,
+                "genre": genre,
+                "target": dict(ctx.resolved_targets.get(capture.source_uri) or target or {}),
+            }
         if _is_json_media(capture.media_type):
             return {"payload": json.loads(data), "capture": capture}
         verdict = classify(_filename_from_uri(capture.source_uri), data)
@@ -640,41 +1022,131 @@ class FranceBelgiumRecordsConnector(Connector):
         """Raw records with their kind, preserving raw values (P2).
 
         A document capture yields one evidence record carrying its provenance
-        and P07.1 verdict. Otherwise the wrapping list key is authoritative —
+        and P07.1 verdict. A ``resource_index`` capture additionally yields an
+        index record (entry/malformed counts). An ``instrument_document``
+        capture yields an evidence record and — only when the document itself
+        supports it (an unencrypted PDF gazette) — a ``prefectoral_order`` raw
+        record whose fields come from the resolved index row (with the derived
+        CSI L252 sunset). An ``atom_feed`` capture yields an evidence record
+        plus one records-request context per entry — safe metadata only, never
+        request text. Otherwise the wrapping list key is authoritative —
         ``prefectoral_orders`` records are prefectural orders and
         ``records_requests`` records are records-request contexts, regardless of
         their inner fields. Only for a bare object/list is the kind inferred (an
         explicit ``record_kind``/``kind``, else a ``jurisdiction`` field marks a
         records-request context).
         """
-        if parsed.get("kind") == "document":
+        kind = parsed.get("kind")
+        if kind in {"document", "resource_index", "instrument_document", "atom_feed"}:
             capture = parsed["capture"]
-            return [
-                {
-                    "record_kind": "evidence_document",
-                    "source_uri": capture.source_uri,
-                    "capture_digest": capture.digest,
-                    "media_type": capture.media_type,
-                    "byte_size": parsed["byte_size"],
-                    "verdict": parsed["verdict"],
-                }
-            ]
+            evidence_document: dict[str, Any] = {
+                "record_kind": "evidence_document",
+                "source_uri": capture.source_uri,
+                "capture_digest": capture.digest,
+                "media_type": capture.media_type,
+                "byte_size": parsed["byte_size"],
+                "verdict": parsed["verdict"],
+            }
+            if kind == "resource_index":
+                return [
+                    evidence_document,
+                    {
+                        "record_kind": "resource_index",
+                        "source_uri": capture.source_uri,
+                        "capture_digest": capture.digest,
+                        "media_type": capture.media_type,
+                        "byte_size": parsed["byte_size"],
+                        "header": parsed["header"],
+                        "entry_count": parsed["entry_count"],
+                        "malformed_count": parsed["malformed_count"],
+                    },
+                ]
+            if kind == "instrument_document":
+                out: list[Mapping[str, Any]] = [evidence_document]
+                target = parsed.get("target") or {}
+                verdict = parsed["verdict"]
+                supports = verdict.get("file_format") == "pdf" and not verdict.get("encrypted")
+                if supports and target.get("url"):
+                    titre = str(target.get("titre") or "")
+                    out.append(
+                        {
+                            "record_kind": "prefectoral_order",
+                            "raw": {
+                                "external_id": str(target["url"]),
+                                "titre": titre,
+                                "departement": str(target.get("departement") or ""),
+                                "effective_from": _sniff_raa_date(titre),
+                                "resource_updated_at": target.get("mise_a_jour"),
+                                "index_url": target.get("index_url"),
+                                "index_row": target.get("index_row"),
+                                "document_url": str(target["url"]),
+                                "document_genre": parsed.get("genre"),
+                                "_media_type": capture.media_type,
+                                "_evidence": {
+                                    "source_url": str(target["url"]),
+                                    "retrieved_date": _retrieved_date(capture),
+                                    "extraction_method": "structured_import",
+                                    # SIG-PARSE-003 rows are 0-based: the index
+                                    # row ordinal minus the header.
+                                    "locator": Locator.row(
+                                        max(0, int(target.get("index_row") or 1) - 1)
+                                    ).to_row(),
+                                },
+                            },
+                        }
+                    )
+                return out
+            # atom_feed: one records-request context per entry — the atom id,
+            # timestamps, and event link ONLY; <title>/<content> are request
+            # text and are never parsed into a record (the [madada_feed]
+            # contract's never_emit list).
+            out = [evidence_document]
+            for entry in parsed.get("entries", []):
+                out.append(
+                    {
+                        "record_kind": "records_request",
+                        "raw": {
+                            "jurisdiction": "FR",
+                            "subject": _atom_entry_subject(
+                                AtomEntry(
+                                    row=int(entry["row"]),
+                                    atom_id=str(entry["atom_id"]),
+                                    link=str(entry["link"]),
+                                    published=str(entry["published"]),
+                                    updated=str(entry["updated"]),
+                                )
+                            ),
+                            "request_url": str(entry["link"]),
+                            "external_id": str(entry["atom_id"]),
+                            "published": str(entry["published"]),
+                            "updated": str(entry["updated"]),
+                            "_media_type": capture.media_type,
+                            "_evidence": {
+                                "source_url": str(entry["link"]),
+                                "retrieved_date": _retrieved_date(capture),
+                                "extraction_method": "structured_import",
+                                "locator": Locator.row(max(0, int(entry["row"]) - 1)).to_row(),
+                            },
+                        },
+                    }
+                )
+            return out
         payload = parsed["payload"]
-        out: list[Mapping[str, Any]] = []
+        out2: list[Mapping[str, Any]] = []
         if isinstance(payload, Mapping) and (
             "prefectoral_orders" in payload or "records_requests" in payload
         ):
             for obj in payload.get("prefectoral_orders", []) or []:
-                out.append({"record_kind": "prefectoral_order", "raw": dict(obj)})
+                out2.append({"record_kind": "prefectoral_order", "raw": dict(obj)})
             for obj in payload.get("records_requests", []) or []:
-                out.append({"record_kind": "records_request", "raw": dict(obj)})
-            return out
+                out2.append({"record_kind": "records_request", "raw": dict(obj)})
+            return out2
         for obj in _decp_or_list(payload, keys=()):
-            kind = obj.get("record_kind") or obj.get("kind")
-            if kind is None:
-                kind = "records_request" if obj.get("jurisdiction") else "prefectoral_order"
-            out.append({"record_kind": str(kind), "raw": dict(obj)})
-        return out
+            kind2 = obj.get("record_kind") or obj.get("kind")
+            if kind2 is None:
+                kind2 = "records_request" if obj.get("jurisdiction") else "prefectoral_order"
+            out2.append({"record_kind": str(kind2), "raw": dict(obj)})
+        return out2
 
     def normalize(
         self, ctx: RunContext, raw_claims: list[Mapping[str, Any]]
@@ -686,6 +1158,28 @@ class FranceBelgiumRecordsConnector(Connector):
             if raw["record_kind"] == "evidence_document":
                 out.append(_document_artifact_row(ctx.source.id, raw))
                 artifact_count += 1
+            elif raw["record_kind"] == "resource_index":
+                # The captured index is an evidence artifact AND a quality datum:
+                # entry/malformed counts record what the index yielded (P25.5).
+                out.append(
+                    _stamp(
+                        {
+                            "record_kind": "quality_report",
+                            "source_id": ctx.source.id,
+                            "capture_digest": str(raw["capture_digest"]),
+                            "media_type": str(raw["media_type"]),
+                            "byte_size": int(raw["byte_size"]),
+                            "capture_kind": "resource_index",
+                            "header": list(raw["header"]),
+                            "entry_count": int(raw["entry_count"]),
+                            "malformed_count": int(raw["malformed_count"]),
+                            "connector_name": self.name,
+                            "connector_version": self.version,
+                            "vocab_version": vocab_version(),
+                        },
+                        source_id=ctx.source.id,
+                    )
+                )
             elif raw["record_kind"] == "records_request":
                 out.extend(self._normalize_records_request(ctx, raw["raw"]))
             else:
@@ -717,11 +1211,12 @@ class FranceBelgiumRecordsConnector(Connector):
     ) -> list[dict[str, Any]]:
         instrument = prefectoral_order_from_raa(raw, source_id=ctx.source.id)
         rows: list[dict[str, Any]] = list(instrument.claim_rows())
+        _merge_evidence(rows, raw)
         claim_count = sum(1 for r in rows if r.get("record_kind") == "claim")
         report = CaptureQualityReport(
             source_id=ctx.source.id,
             capture_digest=_digest_of(raw),
-            media_type="application/json",
+            media_type=str(raw.get("_media_type") or "application/json"),
             byte_size=len(json.dumps(raw, sort_keys=True, default=str)),
             capture_kind="prefectoral_order",
             connector_name=self.name,
@@ -744,9 +1239,10 @@ class FranceBelgiumRecordsConnector(Connector):
             jurisdiction=jurisdiction,
             subject_id=subject_id,
             source_id=ctx.source.id,
-            raw_value=_opt_str(raw.get("raw_value")),
+            raw_value=_opt_str(raw.get("raw_value") or raw.get("request_url")),
             known_complete_unknown=bool(raw.get("known_complete_unknown")),
         )
+        _merge_evidence([row], raw)
         report = CaptureQualityReport(
             source_id=ctx.source.id,
             capture_digest=_digest_of(raw),
@@ -832,6 +1328,42 @@ class FranceBelgiumProcurementConnector(Connector):
 
 
 # --- module-private helpers ---------------------------------------------------
+
+
+def _configured_target(ctx: RunContext, uri: str) -> Mapping[str, Any] | None:
+    """The run-context target spec for a capture URI (configured or resolved, P25.5)."""
+    resolved = ctx.resolved_targets.get(uri)
+    if resolved is not None:
+        return resolved
+    for target in ctx.parameters.get("targets", []) or ():
+        if str(target.get("url") or "") == uri:
+            return target
+    return None
+
+
+def _retrieved_date(capture: CaptureRef) -> str:
+    """The capture's retrieval date (ISO); the run date when not recorded."""
+    if capture.retrieved_at is not None:
+        return capture.retrieved_at.date().isoformat()
+    return datetime.now(UTC).date().isoformat()
+
+
+def _merge_evidence(rows: list[dict[str, Any]], raw: Mapping[str, Any]) -> None:
+    """Attach the document evidence block a resolved record carries (P25.5).
+
+    A ``prefectoral_order`` / ``records_request`` raw record built from a captured
+    document carries ``_evidence`` (source URL + retrieval date + extraction
+    method + locator): every emitted claim row gets it, so the live claim is
+    evidence+timestamp complete (P1–P3). Records without the marker are untouched
+    (the fixture path).
+    """
+    evidence = raw.get("_evidence")
+    if not isinstance(evidence, Mapping):
+        return
+    observed_at = str(evidence.get("retrieved_date") or "")
+    for row in rows:
+        row["evidence"] = dict(evidence)
+        row["observed_at"] = observed_at
 
 
 def _stamp(row: dict[str, Any], *, source_id: str) -> dict[str, Any]:
@@ -937,6 +1469,7 @@ def _plus_years(edtf_date: str, years: int) -> str:
 
 
 __all__ = [
+    "AtomEntry",
     "CaptureQualityReport",
     "Contract",
     "FranceBelgiumProcurementConnector",
@@ -945,6 +1478,8 @@ __all__ = [
     "InvalidLegalInstrument",
     "LegalInstrument",
     "PredicateNotAllowed",
+    "RaaIndex",
+    "RaaIndexEntry",
     "USRecordsMethodError",
     "acquisition_method_claim",
     "acquisition_methods",
@@ -956,9 +1491,14 @@ __all__ = [
     "legal_instrument_predicate_allowlist",
     "legal_instrument_types",
     "load_claims_for_l1",
+    "madada_feed_spec",
+    "parse_atom_feed",
+    "parse_raa_index",
     "prefectoral_order_family",
     "prefectoral_order_from_raa",
+    "raa_index_spec",
     "records_request_method_for",
+    "resolve_raa_targets",
     "source_ids",
     "vocab_version",
 ]

@@ -40,7 +40,7 @@ from .disappearance import (
 )
 from .isolation import network_isolated
 from .loader import assert_loadable
-from .net import ChallengeEncountered
+from .net import ChallengeEncountered, RobotsDisallowed, RobotsUnretrievable
 from .stages import (
     CaptureRef,
     Connector,
@@ -58,6 +58,12 @@ class RunReport:
     claims: list[dict[str, Any]] = field(default_factory=list)
     captures: list[CaptureRef] = field(default_factory=list)
     disappearances: list[Disappearance] = field(default_factory=list)
+    #: Politeness refusals on discovery-continuation targets (P25.5): a resolved
+    #: child document whose host refuses the fetch (robots unretrievable or
+    #: disallowing) is recorded here — a first-class per-document disposition —
+    #: while the run continues to the next resolved target. A refusal on a
+    #: *seed* target still propagates (a refused seed is a refused run).
+    refusals: list[dict[str, Any]] = field(default_factory=list)
     asserted: bool = False
 
     @property
@@ -121,6 +127,30 @@ def run(connector: Connector, ctx: RunContext) -> RunReport:
         report.captures.append(capture)
         report.claims.extend(run_post_capture(connector, ctx, capture))
 
+    # Bounded discovery continuation (P25.5): a captured resource index is the
+    # discovery surface for its per-document children (RAA index rows, CCOPS
+    # linked filings). ``discover_more`` is a pure function of the stored
+    # captures (network-isolated); only ``fetch()`` egresses for the resolved
+    # targets, and exactly one bounded pass runs — never a recursive crawl.
+    with network_isolated():
+        extra = connector.discover_more(ctx, report.captures)
+    if extra:
+        _addressed(ctx, Stage.DISCOVER, extra)
+        seen = {c.source_uri for c in report.captures}
+        for target in extra:
+            url = str(target.get("url", ""))
+            if not url or url in seen:
+                continue
+            seen.add(url)
+            fetched = _fetch_or_disappear(connector, ctx, target, report, record_refusals=True)
+            if fetched is None:
+                continue
+            _addressed(ctx, Stage.FETCH, fetched)
+            capture = connector.capture(ctx, fetched)
+            _addressed(ctx, Stage.CAPTURE, capture)
+            report.captures.append(capture)
+            report.claims.extend(run_post_capture(connector, ctx, capture))
+
     # SIG-INGEST-018/019: replay and shadow runs produce claims but never assert.
     if ctx.asserts_claims and ctx.claim_sink is not None:
         ctx.claim_sink.assert_claims(report.claims)
@@ -133,19 +163,35 @@ def _fetch_or_disappear(
     ctx: RunContext,
     target: Mapping[str, Any],
     report: RunReport,
+    *,
+    record_refusals: bool = False,
 ) -> FetchResult | None:
     """Fetch one target, or record a disappearance and return ``None``.
 
     A gone status (404/410), a restricted status (401/451), or a persistent
     challenge becomes a first-class disappearance event + research task, never a
     swallowed exception (SIG-INGEST-009/010). A robots-disallowed URL is a
-    politeness refusal, not a disappearance, and propagates.
+    politeness refusal, not a disappearance: on a *seed* target it propagates
+    (a refused seed is a refused run); on a discovery-continuation target
+    (``record_refusals=True``) it lands on ``report.refusals`` — a recorded
+    per-document disposition — and the run continues (P25.5).
     """
     subject_id = target.get("subject_id")
-    # A robots-disallowed or robots-unretrievable fetch raises out of the fetcher
-    # and propagates: that is a politeness refusal to run, not a disappearance.
     try:
         fetched = connector.fetch(ctx, target)
+    except (RobotsUnretrievable, RobotsDisallowed) as exc:
+        if not record_refusals:
+            raise  # a politeness refusal on a seed target refuses the run
+        report.refusals.append(
+            {
+                "id": _target_id(target),
+                "url": str(target.get("url", "")),
+                "refusal": type(exc).__name__,
+                "detail": str(exc),
+                "observed_at": _now().isoformat(),
+            }
+        )
+        return None
     except ChallengeEncountered as exc:
         status = failing_status_for_error(exc)
         assert status is not None
