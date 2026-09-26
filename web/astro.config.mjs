@@ -6,14 +6,18 @@ import { defineConfig } from "astro/config";
 import react from "@astrojs/react";
 import { cpSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
+import { join } from "node:path";
 
-// P21.5 (deliverable 3, LD-F07/H08): in `export` mode the static build CONSUMES the
-// rendered vector tiles the jurisdiction export produced. `sig-exports build
-// --jurisdiction <j>` renders the ODbL device layer to
-// `<exportDir>/web/tiles/sig-infrastructure.pmtiles`; this integration copies it to
-// `<dist>/tiles/…` so the map's self-hosted PMTiles source (SIG-UI-038, /map/style.json)
-// resolves to a REAL rendered archive. Fixtures mode (the CI default) is untouched.
+// P21.5 (deliverable 3, LD-F07/H08) + P30.3 (ADR-106) + P31.15 (ADR-R9-TILES): in
+// `export` mode the static build CONSUMES the rendered vector tiles the export
+// produced — ONE archive PER LICENCE COMPARTMENT (`<compartment>-sites.pmtiles`,
+// e.g. the ODbL osm_physical layer apart from the CC-BY graph) — never a merged,
+// mixed-licence archive. Each is served as its own source with its own attribution
+// (/map/style.json), over a plain background with NO basemap (Q8). The copy list is
+// the SAME list `/map/style.json` is built from (data.ts getCompartmentTileSources):
+// the manifest's `web/tiles/<compartment>-sites.pmtiles` artifacts — so the style
+// can never name an archive that was not copied, and no unlisted file is served.
+// Fixtures mode (the CI default) is untouched.
 function sigExportTiles() {
   return {
     name: "sig-export-tiles",
@@ -23,20 +27,7 @@ function sigExportTiles() {
         const repoRoot = fileURLToPath(new URL("../", import.meta.url));
         const exportDir = process.env.SIG_EXPORT_DIR ?? join(repoRoot, "exports/out/okc");
         const tilesDir = join(exportDir, "web", "tiles");
-        const src = join(tilesDir, "sig-infrastructure.pmtiles");
         const destDir = join(fileURLToPath(dir), "tiles");
-        if (existsSync(src)) {
-          mkdirSync(destDir, { recursive: true });
-          cpSync(src, join(destDir, "sig-infrastructure.pmtiles"));
-          return;
-        }
-        // P30.3 (ADR-106): the national spine export renders ONE archive PER LICENCE
-        // COMPARTMENT (`<compartment>-sites.pmtiles`, e.g. the ODbL osm_physical layer
-        // apart from the CC-BY graph) — never a merged, mixed-licence archive. Each is
-        // served as its own source with its own attribution (/map/style.json).
-        // The SAME list `/map/style.json` is built from (data.ts getCompartmentTileSources):
-        // the manifest's `web/tiles/<compartment>-sites.pmtiles` artifacts — so the style can
-        // never name an archive that was not copied, and no unlisted file is served.
         const manifestPath = join(exportDir, "manifest.json");
         const listed = existsSync(manifestPath)
           ? (JSON.parse(readFileSync(manifestPath, "utf-8")).artifacts ?? [])
@@ -54,8 +45,9 @@ function sigExportTiles() {
           // Fail LOUD (like the dossier data layer): an export build that cannot find
           // its rendered tiles is a build error, never a silently tile-less map.
           throw new Error(
-            `SIG_DATA_SOURCE=export but the rendered tiles are missing: ${src} ` +
-              "(or per-compartment <compartment>-sites.pmtiles). Run `sig-exports build` first.",
+            `SIG_DATA_SOURCE=export but the rendered tiles are missing: ` +
+              `no web/tiles/<compartment>-sites.pmtiles under ${exportDir}. ` +
+              "Run `sig-exports build` first.",
           );
         }
         mkdirSync(destDir, { recursive: true });

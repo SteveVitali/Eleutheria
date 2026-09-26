@@ -48,20 +48,26 @@ test.describe("interactive map island (AC1, AC3)", () => {
     await expect(page.getByTestId("map-asset-row").first()).toBeVisible();
   });
 
-  test("fetches its points from the static /map/points.json, not inline props (P30.3)", async ({ page, request }) => {
+  test("the combined /map/points.json is retired — the style carries per-compartment tiles (P31.15, Q9)", async ({ page, request }) => {
+    // Q9 / R8-1 ending: the build no longer emits the licence-mixed rendering object.
     const resp = await request.get("/map/points.json");
-    expect(resp.ok()).toBe(true);
-    const payload = await resp.json();
-    expect(payload.schema).toBe("sig/map-points/1");
-    expect(payload.count).toBeGreaterThan(0);
-    expect(payload.rows).toHaveLength(payload.count);
-    // The rendering data carries the OSM notice (ODbL 4.4(b) produced work, ADR-106).
-    expect(payload.attribution).toContain("OpenStreetMap");
-    // The page itself does not inline the point list (national scale stays light).
+    expect(resp.status()).toBe(404);
+    // The served style names only self-hosted per-compartment PMTiles + a plain
+    // background (Q8 — no basemap, no third-party tile host).
+    const styleResp = await request.get("/map/style.json");
+    expect(styleResp.ok()).toBe(true);
+    const style = await styleResp.json();
+    expect(style.metadata["sig:pmtiles_version"]).toBe(3);
+    for (const src of Object.values(style.sources) as Array<{ url: string; attribution: string }>) {
+      expect(src.url).toMatch(/^pmtiles:\/\/\/tiles\//);
+      expect(src.attribution.length).toBeGreaterThan(0);
+      expect(/odbl/i.test(src.attribution) && !/openstreetmap/i.test(src.attribution)).toBe(false);
+    }
+    // The island never fetches the retired object (fixtures build draws the inline
+    // fallback; export builds draw the archives the style names).
     const html = (await (await page.goto("/map/"))?.text()) ?? "";
-    expect(html).toContain('pointsUrl');
-    expect(html).not.toContain('"assets"');
-    await expect(page.getByTestId("map-island")).toHaveAttribute("data-point-count", String(payload.count));
+    expect(html).not.toContain("points.json");
+    await expect(page.getByTestId("map-island")).toHaveAttribute("data-point-count", /\d+/);
   });
 });
 
