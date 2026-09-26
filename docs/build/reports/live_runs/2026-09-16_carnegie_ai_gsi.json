@@ -1,7 +1,7 @@
 {
   "byte_counts": [],
   "capture_digests": [
-    "bcnaekgoubge4rnbj2nvaxnx542w7yq5tlbzstntkyiqyxm424rroz2h4kefmlqkgmfnjd6qm75qybhgip6vot4oha4al6yglhm2ozelbqe",
+    "bcnam2q4hc525esswdmertzzrcl4ezm3b4kdthjbtuw6zwvfmaiydl25s3svoi2okkaenbubc7cfaf3f57ml5tbgxk5pwbhswa4jrknjbau",
     "bcnap5iwqnkx7qmytg6pbqtfmimmp73ims6pontapdosfgvfd53tjubtotju2gyouqleqxnfuuvk35os62qxcufkyzxmcjzjwr63ssxehwi",
     "bcnahgvdmyk4lkpvuintpdmhjj6xqjo2s5henvmjobxjfioqjrf7r6jd4uns6y3ydkd3rgnqsv6gecoazpjuv5fktysr2zkd4temkrtynrm",
     "bcnagppkzifw7tlaecqftd3n3ab2qgwid4d7jbjfsm54evmzh46mrocj2tpgt3gaphqzijehntaxuke5n5rdphaw7uhncbz7mhhdnwar34q",
@@ -35,14 +35,14 @@
   "connector": "coarse_international",
   "content_drift": null,
   "disappearances": [],
-  "duration_seconds": 28.595925,
+  "duration_seconds": 136.970963,
   "mode": "live",
   "politeness_refusal": null,
   "rate_limit_events": [],
   "refusals": [],
   "robots_decisions": [],
   "source_id": "carnegie_ai_gsi",
-  "started_at": "2026-09-16T03:03:04.805197+00:00",
+  "started_at": "2026-09-16T04:53:15.715248+00:00",
   "status_codes": [],
   "urls": []
 }

@@ -1,0 +1,21 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnafpjeeapzczzkcuytooen4fizscsytat5elhxgjbo6mkbpxkywhyx3s4l6ito5dcwayvjofu4f7cxjidlem6okzjgrr3ynh5xdp6m7vi",
+    "bcnaclwhztrpuzg5hftmd5pb3k2an2pilj7x67tdmyvcvh3ui6sifctdseth2kqz6ka6llk7477v4m2ubbi5ppihphoq4x55bblhuwmqvii"
+  ],
+  "claim_count": 9495,
+  "connector": "france_belgium_procurement",
+  "content_drift": null,
+  "disappearances": [],
+  "duration_seconds": 957.497965,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "decp_fr",
+  "started_at": "2026-09-16T04:35:10.639987+00:00",
+  "status_codes": [],
+  "urls": []
+}

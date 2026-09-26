@@ -65,5 +65,6 @@ from . import osm as osm  # noqa: E402,F401
 from . import pathways as pathways  # noqa: E402,F401
 from . import procurement as procurement  # noqa: E402,F401
 from . import records as records  # noqa: E402,F401
+from . import statute_seed as statute_seed  # noqa: E402,F401
 
 __version__ = "0.0.0"

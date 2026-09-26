@@ -292,9 +292,6 @@ disposition = "reference"
 [sources.sous_surveillance_osm_import]
 disposition = "reference"
 
-[sources.state_alpr_statute_inventory]
-disposition = "mirror"
-
 [sources.surveillance_under_surveillance]
 disposition = "reference"
 

@@ -52,3 +52,16 @@ export SIG_SECRET_API_ENV="sig-api-env"
 # The Astro static site + the export/tile bytes to sync (relative to repo root).
 export SIG_WEB_DIST="web/dist"
 export SIG_EXPORT_DIR="exports/out"
+
+# --- recurring ingestion cadence (P25.7 / LIVE-OPS.7 d5) -----------------------
+# The Cloud Run ingestion jobs exist (P25.2 created `sig-ingest-muckrock`); this
+# wires ONLY the recurring trigger: a Cloud Scheduler HTTP job that invokes the
+# job's :run endpoint with an OIDC-signed call from a dedicated service account
+# (least-privilege: run.invoker on that job only). The cadence matches the
+# source registry `cadence` field (`sig-orchestration interval --source
+# muckrock` → 30 days); the job's targeted-lookup posture is unchanged
+# (SIG-INGEST-036/037 — never a listing crawl).
+export SIG_RUN_JOB_MUCKROCK="sig-ingest-muckrock"
+export SIG_SCHEDULER_SA="sig-scheduler"
+export SIG_SCHEDULER_JOB_MUCKROCK="sig-sched-muckrock"
+export SIG_SCHEDULER_CRON_MUCKROCK="0 6 1 * *"   # monthly, 06:00 UTC

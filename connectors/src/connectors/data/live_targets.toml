@@ -94,16 +94,22 @@ targets = [
 
 # DECP consolidated monthly file — the verbatim F9.16 shape
 # ({"marches":{"marche":[...]}}) the france_belgium procurement connector parses.
-# decp-2024-01.json is the smallest monthly file (~1.4MB); its static URL is
-# pinned to the current data.gouv.fr generation (dataset:
-# donnees-essentielles-de-la-commande-publique-fichiers-consolides). The URL
-# path carries a regeneration timestamp — if Etalab regenerates the resource it
-# 404s (a recorded disappearance, never silent); following the dataset-API
-# indirection to the current URL is owed adapter work.
+# decp-2024-01.json is the smallest monthly file (~1.4MB), a *resource* of the
+# dataset `donnees-essentielles-de-la-commande-publique-fichiers-consolides`.
+#
+# P25.7 dataset-API indirection: the `static.data.gouv.fr/resources/<dataset>/
+# <timestamp>/` URL carries a regeneration timestamp — a republished resource
+# moves URL and the pinned one 404s. The seed target is therefore the dataset
+# document on the documented data.gouv.fr API v1 (`www.data.gouv.fr /api/1/`,
+# allow-listed under ADR-083); the `france_belgium_procurement` connector
+# resolves the reviewed resource's CURRENT `url` from the captured index at run
+# time (`resource_title` is the reviewed selector). A regenerated resource
+# resolves to its new timestamped URL; a removed/renamed resource is a recorded
+# `link_rotted` disappearance — never a silent fallback to a stale URL.
 [decp_fr]
 kind = "procurement"
 targets = [
-  { id = "decp-2024-01", url = "https://static.data.gouv.fr/resources/donnees-essentielles-de-la-commande-publique-fichiers-consolides/20260623-084347/decp-2024-01.json", kind = "contract" },
+  { id = "decp-dataset", url = "https://www.data.gouv.fr/api/1/datasets/donnees-essentielles-de-la-commande-publique-fichiers-consolides/", kind = "dataset_index", resource_title = "decp-2024-01.json", resource_kind = "contract" },
 ]
 
 # --- document-capture targets (P25.5) ------------------------------------------

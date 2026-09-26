@@ -210,3 +210,74 @@ def test_undetermined_rights_are_blocked_from_contribution() -> None:
     assert licensing.permits_osm_contribution(undet) is False
     with pytest.raises(licensing.ContributionGateClosed):
         licensing.assert_contribution_permitted(undet)
+
+
+# --- HG-02 resolved 2026-09-16 (ADR-086): the derived-facts compartment --------
+
+DERIVED_FACTS = "LicenseRef-DerivedFacts-Citations"
+
+
+def test_derived_facts_licence_is_registered_without_an_exclusion() -> None:
+    # HG-02 resolved by counsel 2026-09-16 (ADR-086): the recorded
+    # `counsel_pending` exclusion is replaced by a real licence row — no
+    # disposition, self-relicensable, attribution required.
+    assert licensing.license_export_disposition(DERIVED_FACTS) is None
+    facts = licensing._registry(None)["licenses"][DERIVED_FACTS]
+    assert facts["relicensable_to"] == [DERIVED_FACTS]
+    assert facts["attribution_required"] is True
+
+
+def test_derived_facts_record_is_exportable_into_its_own_licence() -> None:
+    rec = _rec("ccops_like", DERIVED_FACTS)
+    assert licensing.export_refusal_reason(rec) is None
+    licensing.assert_export_permitted([rec])
+    assert licensing.compute_export_license([rec]) == DERIVED_FACTS
+    assert licensing.most_permissive_license([rec]) == DERIVED_FACTS
+
+
+def test_derived_facts_partition_as_exportable_not_refused() -> None:
+    exportable, refused = licensing.partition_exportable(
+        [_rec("ok", "CC-BY-4.0"), _rec("df", DERIVED_FACTS)]
+    )
+    assert [r.source_id for r in exportable] == ["ok", "df"]
+    assert refused == []
+
+
+def test_derived_facts_can_never_merge_into_another_licence() -> None:
+    # relicensable_to is self-only: derived facts + any other licence intersect
+    # to nothing — the basis can never silently fold into CC-BY-4.0 or ODbL.
+    with pytest.raises(licensing.LicenseIncompatibilityError):
+        licensing.compute_export_license([_rec("df", DERIVED_FACTS), _rec("b", "CC-BY-4.0")])
+    with pytest.raises(licensing.LicenseIncompatibilityError):
+        licensing.most_permissive_license([_rec("df", DERIVED_FACTS), _rec("o", "ODbL-1.0")])
+
+
+def test_recorded_exclusion_is_data_not_code() -> None:
+    # The exclusion mechanism evaluates a supplied registry unchanged — a new
+    # recorded exclusion is a data row, never a schema/code change (SIG-LIC-004a).
+    registry = {
+        "licenses": {
+            "LicenseRef-X": {
+                "share_alike": False,
+                "relicensable_to": [],
+                "export_disposition": "excluded",
+                "exclusion": "review_hold",
+                "exclusion_reason": "test exclusion",
+            },
+            "CC-BY-4.0": {"share_alike": False, "relicensable_to": ["CC-BY-4.0"]},
+        }
+    }
+    rec = _rec("x", "LicenseRef-X")
+    assert licensing.export_refusal_reason(rec, registry) == "excluded:review_hold"
+    with pytest.raises(licensing.ExportGateClosed):
+        licensing.compute_export_license([rec], registry=registry)
+
+
+def test_derived_facts_licence_still_blocks_osm_contribution() -> None:
+    # Self-relicensable only — LicenseRef-DerivedFacts-Citations is not
+    # relicensable to ODbL-1.0, so derived-facts sources cannot feed upstream
+    # OSM contribution tasks (SIG-CONTRIB-016f) even after HG-02.
+    rec = _rec("df", DERIVED_FACTS)
+    assert licensing.permits_osm_contribution(rec) is False
+    with pytest.raises(licensing.ContributionGateClosed):
+        licensing.assert_contribution_permitted(rec)

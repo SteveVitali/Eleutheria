@@ -52,3 +52,5 @@ then the loader gate refuses a live fetch (exit 3).
 
 **YES — SIG-LIC-009:** confirm the AIGS Index licence/terms before any flip; a recorded
 reviewer role is not a legal opinion.
+
+**HG-02 resolved 2026-09-16 (counsel, operator-reported):** derived facts/citations publishable — dedicated `derived_facts` compartment (ADR-086); `redistributable` flipped to true on the registry record (it gates SIG's emitted claims; upstream bytes are still never re-hosted — architectural, not flag-borne).

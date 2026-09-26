@@ -123,3 +123,34 @@ def test_most_permissive_prefers_public_domain() -> None:
     # SIG-EXPORT-007: the crosswalk gets the least-constraining licence its inputs allow.
     assert C.most_permissive_license([_rr("a", "CC0-1.0")]) == "CC0-1.0"
     assert C.most_permissive_license([_rr("a", "CC0-1.0"), _rr("b", "CC-BY-4.0")]) == "CC-BY-4.0"
+
+
+# --- HG-02 resolved 2026-09-16 (ADR-086): derived_facts compartment ------------
+
+
+def test_derived_facts_table_places_into_the_dedicated_compartment() -> None:
+    # HG-02 resolved by counsel: the licence is self-relicensable and lands in
+    # the `derived_facts` compartment — visibly separated, never folded into
+    # sig_graph/CC-BY-4.0 (ADR-086).
+    idx = _idx(_rr("ccops_like", "LicenseRef-DerivedFacts-Citations"))
+    table = C.ExportTable("t", (C.ExportRow("ccops_like", {}),))
+    placed = C.place_table(table, idx)
+    assert placed.compartment == "derived_facts"
+    assert placed.license == "LicenseRef-DerivedFacts-Citations"
+
+
+def test_derived_facts_licence_resolves_to_its_own_compartment() -> None:
+    comp = C.compartment_for_license("LicenseRef-DerivedFacts-Citations", None, None)
+    assert comp == "derived_facts"
+
+
+def test_derived_facts_cannot_merge_into_other_compartments() -> None:
+    # relicensable_to is self-only: a derived-facts record + a CC-BY record can
+    # never share an export licence — the licence math intersects to empty.
+    idx = _idx(
+        _rr("ccops_like", "LicenseRef-DerivedFacts-Citations"),
+        _rr("ccby", "CC-BY-4.0"),
+    )
+    table = C.ExportTable("t", (C.ExportRow("ccops_like", {}), C.ExportRow("ccby", {})))
+    with pytest.raises(LicenseIncompatibilityError):
+        C.place_table(table, idx)

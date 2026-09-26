@@ -39,6 +39,10 @@ legal_instrument_predicate_allowlist = [
   "requires_authorization_of",
   "external_id",
   "acquisition_method",
+  # the frozen upstream label a seeded instrument set carries (P25.7 — the NCSL
+  # state-ALPR-statute inventory's `as_of`; the date label is first-class data,
+  # never dropped on load)
+  "as_of",
   # an upstream document capture recorded as an EvidenceArtifact (§10.2) —
   # provenance + P07.1 verdict only; the bytes are never re-hosted
   "document",

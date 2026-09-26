@@ -56,3 +56,5 @@ until a rights review + operator flip. Live run refuses (exit 3) while the gate 
 
 PARTIAL — SIG-LIC-009: municipal-record copyright posture (the City of New York's terms for
 POST Act publications) warrants review before any flip.
+
+**HG-02 resolved 2026-09-16 (counsel, operator-reported):** derived facts/citations publishable — dedicated `derived_facts` compartment (ADR-086); `redistributable` flipped to true on the registry record (it gates SIG's emitted claims; upstream bytes are still never re-hosted — architectural, not flag-borne).

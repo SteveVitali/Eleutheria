@@ -145,6 +145,19 @@ def compartment_for_license(
         return prefer
     matches = sorted(name for name, c in comps.items() if c["license"] == license_id)
     if not matches:
+        # A licence with a RECORDED exclusion (export_disposition="excluded" —
+        # e.g. counsel-pending, HG-02) fails closed *by that decision*, so the
+        # error names it rather than reporting a mere data gap (P25.7).
+        from policy.licensing import license_export_disposition
+
+        disposition = license_export_disposition(license_id, registry)
+        if disposition is not None:
+            raise LicenseIncompatibilityError(
+                f"computed licence {license_id!r} is excluded from every export "
+                f"compartment by a recorded disposition ({disposition['exclusion']}): "
+                f"{disposition['reason']} (SIG-LIC-004a — the exclusion is data, "
+                "not silence)."
+            )
         raise LicenseIncompatibilityError(
             f"computed licence {license_id!r} has no export compartment in licenses.toml "
             "(add a [compartments.*] data row — SIG-LIC-004a)."

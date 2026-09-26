@@ -14,6 +14,7 @@ privacy/epistemic guards are exercised end to end.
 from __future__ import annotations
 
 import dataclasses
+import json
 from collections.abc import Mapping
 from datetime import UTC, datetime
 from pathlib import Path
@@ -634,3 +635,218 @@ def test_pathways_document_shadow_diff_zero() -> None:
     )
     assert report.diff is not None and report.diff.changed_count == 0
     assert any(r.get("record_kind") == "claim" for r in report.claims)
+
+
+# --- DECP dataset-API indirection (P25.7) -------------------------------------
+#
+# The DECP consolidated files are data.gouv.fr *resources* whose static URLs
+# carry a regeneration timestamp — the pinned URL 404s on republish. The seed
+# target is the dataset-API document; the connector resolves the reviewed
+# resource's CURRENT url from the captured index. A regenerated resource still
+# resolves (new URL); a removed resource is a recorded disappearance, never a
+# silent stale-URL fallback.
+
+
+_DECP_API_URL = (
+    "https://www.data.gouv.fr/api/1/datasets/"
+    "donnees-essentielles-de-la-commande-publique-fichiers-consolides/"
+)
+_DECP_RESOURCE_URL = (
+    "https://static.data.gouv.fr/resources/"
+    "donnees-essentielles-de-la-commande-publique-fichiers-consolides/"
+    "20260623-084347/decp-2024-01.json"
+)
+# A regenerated resource moves URL (new timestamp) — the indirection must follow.
+_DECP_RESOURCE_URL_REGEN = (
+    "https://static.data.gouv.fr/resources/"
+    "donnees-essentielles-de-la-commande-publique-fichiers-consolides/"
+    "20260701-120000/decp-2024-01.json"
+)
+
+
+def _decp_targets() -> list[dict[str, Any]]:
+    return [
+        {
+            "id": "decp-dataset",
+            "url": _DECP_API_URL,
+            "kind": "dataset_index",
+            "resource_title": "decp-2024-01.json",
+            "resource_kind": "contract",
+        }
+    ]
+
+
+def _decp_dataset_doc(*, resources: list[dict[str, Any]] | None = None) -> bytes:
+    if resources is None:
+        resources = [
+            {
+                "title": "decp.json",
+                "url": "https://static.data.gouv.fr/resources/x/20260623-084347/decp.json",
+                "id": "r0",
+                "last_modified": "2026-06-23T08:43:47",
+                "format": "json",
+            },
+            {
+                "title": "decp-2024-01.json",
+                "url": _DECP_RESOURCE_URL,
+                "id": "r1",
+                "last_modified": "2026-06-23T08:43:47",
+                "format": "json",
+            },
+        ]
+    return json.dumps(
+        {
+            "id": "5c94d620-11b4-4b1f-9c1d-decp",
+            "title": "Données essentielles de la commande publique",
+            "resources": resources,
+        }
+    ).encode("utf-8")
+
+
+def _decp_responses(
+    dataset: bytes, resource_url: str = _DECP_RESOURCE_URL
+) -> dict[str, FetchResult]:
+    marches = _FRA.joinpath("decp_marches.json").read_bytes()
+    return {
+        _DECP_API_URL: _resp(_DECP_API_URL, dataset, "application/json"),
+        resource_url: _resp(resource_url, marches, "application/json"),
+    }
+
+
+def test_decp_dataset_api_resolves_the_current_resource_url() -> None:
+    """The pinned static URL is no longer fetched: the dataset doc resolves it."""
+    report, transport = _run(
+        "decp_fr",
+        "france_belgium_procurement",
+        _decp_targets(),
+        _decp_responses(_decp_dataset_doc()),
+    )
+    assert transport.request_log == [_DECP_API_URL, _DECP_RESOURCE_URL]
+    contracts = [r for r in report.claims if r.get("record_kind") == "contract"]
+    assert len(contracts) == 2  # the committed decp_marches fixture carries two
+    index_rows = [
+        r
+        for r in report.claims
+        if r.get("record_kind") == "quality_report" and r.get("capture_kind") == "dataset_index"
+    ]
+    assert len(index_rows) == 1
+    assert index_rows[0]["resource_title"] == "decp-2024-01.json"
+    assert index_rows[0]["resource_count"] == 2
+
+
+def test_decp_regenerated_resource_resolves_to_the_new_url() -> None:
+    """A republished resource moves URL; the run follows the index, not a pin."""
+    report, transport = _run(
+        "decp_fr",
+        "france_belgium_procurement",
+        _decp_targets(),
+        _decp_responses(
+            _decp_dataset_doc(
+                resources=[
+                    {
+                        "title": "decp-2024-01.json",
+                        "url": _DECP_RESOURCE_URL_REGEN,
+                        "id": "r9",
+                        "last_modified": "2026-07-01T12:00:00",
+                        "format": "json",
+                    }
+                ]
+            ),
+            resource_url=_DECP_RESOURCE_URL_REGEN,
+        ),
+    )
+    assert transport.request_log == [_DECP_API_URL, _DECP_RESOURCE_URL_REGEN]
+    assert any(r.get("record_kind") == "contract" for r in report.claims)
+    assert not report.disappearances
+
+
+def test_decp_removed_resource_is_a_recorded_disappearance() -> None:
+    """A resource absent from the dataset is a recorded link_rotted event."""
+    report, transport = _run(
+        "decp_fr",
+        "france_belgium_procurement",
+        _decp_targets(),
+        _decp_responses(
+            _decp_dataset_doc(
+                resources=[
+                    {
+                        "title": "decp-2025-01.json",
+                        "url": "https://static.data.gouv.fr/resources/x/t/decp-2025-01.json",
+                        "id": "r2",
+                        "format": "json",
+                    }
+                ]
+            )
+        ),
+    )
+    # The dataset index still fetched; NO static resource URL was ever hit.
+    assert transport.request_log == [_DECP_API_URL]
+    assert len(report.disappearances) == 1
+    event = report.disappearances[0].event
+    assert event.artifact_id == "decp-dataset:decp-2024-01.json"
+    assert event.failing_status == "link_rotted"
+    assert not [r for r in report.claims if r.get("record_kind") == "contract"]
+
+
+def test_decp_ambiguous_resource_selector_fails_loud() -> None:
+    """Two same-titled resources is drift — never a silent pick."""
+    with pytest.raises(ContentDrift):
+        _run(
+            "decp_fr",
+            "france_belgium_procurement",
+            _decp_targets(),
+            _decp_responses(
+                _decp_dataset_doc(
+                    resources=[
+                        {"title": "decp-2024-01.json", "url": "https://static.data.gouv.fr/a"},
+                        {"title": "decp-2024-01.json", "url": "https://static.data.gouv.fr/b"},
+                    ]
+                )
+            ),
+        )
+
+
+@pytest.mark.parametrize(
+    "bad_doc",
+    [
+        b"not json",
+        json.dumps(["not", "an", "object"]).encode(),
+        json.dumps({"id": "x", "resources": {"not": "a list"}}).encode(),
+        json.dumps({"id": "x", "resources": [{"title": "decp-2024-01.json"}]}).encode(),
+        json.dumps({"id": "x", "resources": [{"url": "https://x/y.json"}]}).encode(),
+    ],
+)
+def test_decp_dataset_shape_drift_fails_closed(bad_doc: bytes) -> None:
+    with pytest.raises(ContentDrift):
+        _run(
+            "decp_fr",
+            "france_belgium_procurement",
+            _decp_targets(),
+            {_DECP_API_URL: _resp(_DECP_API_URL, bad_doc, "application/json")},
+        )
+
+
+def test_decp_dataset_selector_is_required_data() -> None:
+    """A dataset_index target without resource_title is drift, not a guess."""
+    targets = [{"id": "decp-dataset", "url": _DECP_API_URL, "kind": "dataset_index"}]
+    with pytest.raises(ContentDrift):
+        _run(
+            "decp_fr",
+            "france_belgium_procurement",
+            targets,
+            {_DECP_API_URL: _resp(_DECP_API_URL, _decp_dataset_doc(), "application/json")},
+        )
+
+
+def test_decp_live_target_is_the_dataset_api_document() -> None:
+    """The configured live target is the allow-listed API doc + the selector."""
+    from connectors.live_targets import live_targets
+
+    targets = live_targets("decp_fr")
+    assert len(targets) == 1
+    target = targets[0]
+    assert target["kind"] == "dataset_index"
+    assert target["url"].startswith("https://www.data.gouv.fr/api/1/datasets/")
+    assert target["resource_title"] == "decp-2024-01.json"
+    # The timestamped static URL is gone from the configuration entirely.
+    assert "static.data.gouv.fr" not in target["url"]

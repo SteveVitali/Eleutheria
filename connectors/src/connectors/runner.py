@@ -89,6 +89,10 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "ccops_seattle": "government_mandated_disclosure",
     "ccops_nyc_post": "government_mandated_disclosure",
     "ccops_sf": "government_mandated_disclosure",
+    # The committed one-time seed (P25.7 / D-CCOPS.1-1, SIG-INGEST-049f): loaded
+    # via `sig-connectors load-seed` / `run_seed` — the packaged asset over the
+    # static transport, never a live fetch.
+    "state_alpr_statute_inventory": "state_statute_seed",
 }
 
 
@@ -189,6 +193,7 @@ def run_connector_over_fixture(
     sink_kind: str = "memory",
     dsn: str | None = None,
     code_commit: str = "unknown",
+    target_url: str | None = None,
 ) -> RunReport:
     """Run ``connector_name`` over ``fixture`` and assert claims into the sink.
 
@@ -226,9 +231,58 @@ def run_connector_over_fixture(
         fetcher=fetcher,
         captures=InMemoryCaptureStore(),
         claim_sink=sink,
-        parameters={"targets": [{"id": "t1", "url": f"https://{source_id}/x", "kind": kind}]},
+        parameters={
+            "targets": [
+                {
+                    "id": "t1",
+                    "url": target_url or f"https://{source_id}/x",
+                    "kind": kind,
+                }
+            ]
+        },
     )
     return run(connector, ctx)
+
+
+def run_seed(
+    source_id: str,
+    *,
+    connector_name: str | None = None,
+    sink_kind: str = "memory",
+    dsn: str | None = None,
+    code_commit: str = "unknown",
+) -> RunReport:
+    """Load a committed one-time seed asset into the claim spine (P25.7).
+
+    The seed is **packaged reviewed data, never a feed**: the ``seeds.toml`` row
+    names the packaged asset + target kind, and the run goes through the same
+    eight-stage pipeline, the same loader gate, and the same append-only
+    ``ClaimSink`` as every source — over the static transport, so no network is
+    ever opened. The in-memory ``ingestion_permitted`` flip is the documented
+    seed carve-out of :func:`run_connector_over_fixture` (SIG-INGEST-028); the
+    registry row stays false — a live run for the seed source is still refused.
+    """
+    from .seeds import seed_asset_path, seed_spec
+
+    spec = seed_spec(source_id)
+    if spec is None:
+        from .seeds import SeedNotRegistered
+
+        raise SeedNotRegistered(f"source {source_id!r} has no committed seed asset in seeds.toml")
+    name = connector_name or CONNECTOR_FOR_SOURCE.get(source_id)
+    if name is None:
+        raise ValueError(f"no connector known for seed source {source_id!r}; pass a connector name")
+    return run_connector_over_fixture(
+        name,
+        source_id,
+        seed_asset_path(source_id),
+        media_type=str(spec["media_type"]),
+        kind=str(spec["kind"]),
+        sink_kind=sink_kind,
+        dsn=dsn,
+        code_commit=code_commit,
+        target_url=str(spec.get("target_url") or "") or None,
+    )
 
 
 # --- the fetch record (P21.3 owns this format; SIG-INGEST-015) ----------------
@@ -637,6 +691,7 @@ __all__ = [
     "is_review_status_green",
     "live_gate_reasons",
     "run_connector_over_fixture",
+    "run_seed",
     "run_source",
     "write_fetch_record",
 ]

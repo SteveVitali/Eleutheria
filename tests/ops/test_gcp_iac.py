@@ -23,8 +23,8 @@ import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 GCP_DIR = REPO_ROOT / "ops" / "gcp"
-SHELL_SCRIPTS = ["config.sh", "lib.sh", "provision.sh", "backup.sh"]
-EXECUTABLE_SCRIPTS = ["provision.sh", "backup.sh"]
+SHELL_SCRIPTS = ["config.sh", "lib.sh", "provision.sh", "backup.sh", "schedule.sh"]
+EXECUTABLE_SCRIPTS = ["provision.sh", "backup.sh", "schedule.sh"]
 
 
 def _no_adc_env() -> dict[str, str]:

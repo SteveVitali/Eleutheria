@@ -58,6 +58,23 @@ share_alike = false
 attribution_required = true
 relicensable_to = ["LicenceOuverte-2.0"]
 
+# LicenseRef-DerivedFacts-Citations — the ADR-085 basis the counsel-flipped
+# document sources run on (CCOPS filings, pathways pages, madada, the coarse
+# international adapters, declarationcamera_be): SIG emits derived facts and
+# citations, never re-hosts the upstream expressive content.
+#
+# HG-02 resolved 2026-09-16 (counsel, recorded in LEDGER GATE DECISIONS +
+# ADR-086): the derived facts/citations MAY be published — in the dedicated
+# `derived_facts` compartment under this expression, self-relicensable only.
+# Keeping the LicenseRef (rather than folding into CC-BY-4.0) is the
+# conservative reading: the basis stays visible and the facts can never merge
+# into sig_graph/osm_physical/portal (the licence math intersects to itself).
+[licenses."LicenseRef-DerivedFacts-Citations"]
+kind = "data"
+share_alike = false
+attribution_required = true
+relicensable_to = ["LicenseRef-DerivedFacts-Citations"]
+
 # ---------------------------------------------------------------------------
 # The export compartments (SIG-LIC-005 / §42.2). Each mutually-incompatible
 # licence regime present in the corpus gets its own separable compartment, its
@@ -92,4 +109,9 @@ source = "SIG"
 [compartments.osm_contribution]
 license = "CC0-1.0"
 description = "SIG subset dual-licensed CC0 for upstream OSM contribution (SIG-LIC-007a)"
+source = "SIG"
+
+[compartments.derived_facts]
+license = "LicenseRef-DerivedFacts-Citations"
+description = "SIG-authored derived facts + citations over counsel-approved document sources (ADR-085/ADR-086; upstream bytes never re-hosted)"
 source = "SIG"

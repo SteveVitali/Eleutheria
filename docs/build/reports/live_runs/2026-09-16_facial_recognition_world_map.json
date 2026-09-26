@@ -13,14 +13,14 @@
   "connector": "coarse_international",
   "content_drift": null,
   "disappearances": [],
-  "duration_seconds": 5.733,
+  "duration_seconds": 61.663221,
   "mode": "live",
   "politeness_refusal": null,
   "rate_limit_events": [],
   "refusals": [],
   "robots_decisions": [],
   "source_id": "facial_recognition_world_map",
-  "started_at": "2026-09-16T03:03:40.596054+00:00",
+  "started_at": "2026-09-16T04:55:32.981539+00:00",
   "status_codes": [],
   "urls": []
 }

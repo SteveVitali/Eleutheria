@@ -93,10 +93,37 @@ def effective_license(record: RightsRecord, registry: Mapping[str, Any] | None =
     return record.spdx
 
 
-def export_refusal_reason(record: RightsRecord) -> str | None:
+def license_export_disposition(
+    license_id: str, registry: Mapping[str, Any] | None = None
+) -> dict[str, Any] | None:
+    """The recorded export disposition for ``license_id``, or ``None``.
+
+    A licence's compartment treatment is **data, not code** (SIG-LIC-004a): a
+    ``[licenses.*]`` row may carry ``export_disposition = "excluded"`` with an
+    ``exclusion`` key and a human-readable ``exclusion_reason`` — a *recorded*
+    exclusion (a decision), as distinct from the fail-closed default of a
+    licence simply absent from the registry (silence). This is where a
+    counsel-pending expression like ``LicenseRef-DerivedFacts-Citations`` is
+    recorded (P25.7, HG-02): the exclusion is deliberate and named, and counsel
+    later replaces it with a real ``relicensable_to`` set + compartment row —
+    a data change, never a code change.
+    """
+    facts = _registry(registry)["licenses"].get(license_id)
+    if not facts or facts.get("export_disposition") != "excluded":
+        return None
+    return {
+        "disposition": "excluded",
+        "exclusion": str(facts.get("exclusion") or "unresolved"),
+        "reason": str(facts.get("exclusion_reason") or ""),
+    }
+
+
+def export_refusal_reason(
+    record: RightsRecord, registry: Mapping[str, Any] | None = None
+) -> str | None:
     """Why ``record`` may not leave the system through an export, or ``None``.
 
-    The three fail-closed conditions of the export gate, in order (§42.2/42.4,
+    The four fail-closed conditions of the export gate, in order (§42.2/42.4,
     Part VIII §0.7 — an export can only ever *reduce* what leaves the system):
 
     * ``UNDETERMINED`` rights (``SIG-LIC-004``);
@@ -104,10 +131,15 @@ def export_refusal_reason(record: RightsRecord) -> str | None:
     * ``derivative_permitted=false`` (``SIG-INGEST-048b`` / ``SIG-LIC-004/010``): an
       export bundle is a derived/aggregated work, so a source that forbids derivatives
       (e.g. the AGPL-3.0 ``sm_alpr`` / ``deflock_app_repo`` code — studyable, never
-      linkable into a derivative) must not travel in one.
+      linkable into a derivative) must not travel in one;
+    * a governing licence whose registry row carries a **recorded exclusion**
+      (``export_disposition = "excluded"`` — e.g. counsel-pending, HG-02): the
+      exclusion is a decision, returned as ``excluded:<exclusion-key>`` so the
+      refusal names the disposition rather than failing on an unknown licence.
 
-    Returned as a short machine-stable reason (``UNDETERMINED`` / ``not-redistributable``
-    / ``derivative_permitted=false``) so the caller can partition and report it.
+    Returned as a short machine-stable reason (``UNDETERMINED`` /
+    ``not-redistributable`` / ``derivative_permitted=false`` /
+    ``excluded:<key>``) so the caller can partition and report it.
     """
     if is_undetermined(record):
         return "UNDETERMINED"
@@ -115,13 +147,18 @@ def export_refusal_reason(record: RightsRecord) -> str | None:
         return "not-redistributable"
     if not record.derivative_permitted:
         return "derivative_permitted=false"
+    disposition = license_export_disposition(effective_license(record, registry), registry)
+    if disposition is not None:
+        return f"excluded:{disposition['exclusion']}"
     return None
 
 
-def assert_export_permitted(records: Iterable[RightsRecord]) -> None:
+def assert_export_permitted(
+    records: Iterable[RightsRecord], registry: Mapping[str, Any] | None = None
+) -> None:
     """Fail closed on any source that may not be published (SIG-LIC-004)."""
     for record in records:
-        reason = export_refusal_reason(record)
+        reason = export_refusal_reason(record, registry)
         if reason == "UNDETERMINED":
             raise ExportGateClosed(
                 f"source {record.source_id!r} has UNDETERMINED rights; the export "
@@ -138,10 +175,20 @@ def assert_export_permitted(records: Iterable[RightsRecord]) -> None:
                 "bundle is a derived work, so the export gate fails closed "
                 "(SIG-INGEST-048b, SIG-LIC-004/010)."
             )
+        if reason is not None and reason.startswith("excluded:"):
+            disposition = license_export_disposition(effective_license(record, registry), registry)
+            detail = (disposition or {}).get("reason") or "no reason recorded"
+            raise ExportGateClosed(
+                f"source {record.source_id!r} is governed by licence "
+                f"{effective_license(record, registry)!r}, whose registry row "
+                f"records an export exclusion ({reason.removeprefix('excluded:')}): "
+                f"{detail} The export gate fails closed by that recorded decision."
+            )
 
 
 def partition_exportable(
     records: Iterable[RightsRecord],
+    registry: Mapping[str, Any] | None = None,
 ) -> tuple[list[RightsRecord], list[tuple[RightsRecord, str]]]:
     """Split ``records`` into (exportable, refused) without raising (§42.2/42.4).
 
@@ -154,7 +201,7 @@ def partition_exportable(
     exportable: list[RightsRecord] = []
     refused: list[tuple[RightsRecord, str]] = []
     for record in records:
-        reason = export_refusal_reason(record)
+        reason = export_refusal_reason(record, registry)
         if reason is None:
             exportable.append(record)
         else:
@@ -174,7 +221,7 @@ def compute_export_license(
     cross-compartment merge through it and asserts the build fails.
     """
     records = list(records)
-    assert_export_permitted(records)
+    assert_export_permitted(records, registry)
     reg = _registry(registry)["licenses"]
 
     if not records:
@@ -221,7 +268,7 @@ def most_permissive_license(
     constituents raise exactly as the ordinary gate does.
     """
     records = list(records)
-    assert_export_permitted(records)
+    assert_export_permitted(records, registry)
     reg = _registry(registry)["licenses"]
 
     if not records:

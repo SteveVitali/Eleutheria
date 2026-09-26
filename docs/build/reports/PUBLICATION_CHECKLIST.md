@@ -66,3 +66,81 @@ modes**; `check:perf` budgets hold; `SIG_REQUIRE_DB_TESTS=1 make check` **2767 p
 the human (GL-GATE-05 / GATE-G2 / P23.6); genuinely gated on a **real** HG-01 legal home + HG-11
 governance. `D-P21.4-1/2/3` stay OPEN. No live fetch (HG-09 tokens + network absent); no public
 cut-over; no `0.2.0` bump. → **RETURN PASS**.
+
+---
+
+## 2026-09-16 — GO-PUBLIC EXECUTED (operator decision; gates dispositioned, not silently dropped)
+
+The operator decided **GO** and directed the remaining human gates be skipped or deferred
+("no need for counsel opinion, legal home, human reviewers, outreach emails — let's just go
+public"). Each gate is recorded below with its honest disposition — nothing here is marked
+satisfied that was not.
+
+### Gate dispositions
+
+| Gate | Disposition | Record |
+|---|---|---|
+| HG-11 (two-reviewer concurrence) | **SKIPPED-BY-OPERATOR** — sole-maintainer posture; no second reviewer, no written concurrence; `concurrence.md` stays a template. The published surface makes no two-reviewer claim (reviewer state derives from recorded review data). | `D-P21.4-2`; LEDGER § GATE DECISIONS |
+| HG-02 remainder (ODbL 4.4(b), officer-naming, publication tiers, Part VIII counsel opinions) | **DEFERRED** — published on the interim engineering dispositions (GL-GATE-02); the derived-facts publication question itself is resolved (counsel → ADR-086). | `D-LEGAL.1-1` |
+| HG-04 (Stage-0 outreach: compact ×19, France operators, CCOPS operators) | **DEFERRED** — `not_contacted` stays the honest published posture; `declarationcamera_be` (eID) and `ccops_sf` (robots) keep their recorded refusals. | `D-P21.1-2`, `D-JURIS.2-2`, `D-CCOPS.1-2` |
+| HG-08 (MapRoulette/OE), HG-10 (usability study) | **DEFERRED** — not read-surface prerequisites. | `D-P21.7-1`, `D-P21.7-2` |
+| DNS / custom domain | **DEFERRED** — the public surface is the run.app URL + the `storage.googleapis.com` bucket endpoints; a custom domain can be added later (registrar action is the operator's). | `D-P21.4-3` note |
+
+### Technical safeguards in force (unchanged by the skips)
+
+- `sig_read_public` role serves tier-0 rows only (RLS); officer-naming gate defaults
+  person-named claims to no-publish; coordinates stay jurisdiction-level.
+- ODbL stays in its own `osm_physical` compartment; the `derived_facts` compartment (ADR-086)
+  is dedicated and never merged into `sig_graph`/`osm_physical`/`portal`.
+- Upstream expressive content is never re-hosted — exports carry SIG's claim rows only.
+- `sig-restricted` and `sig-backups` buckets stay private (verified: anonymous 403).
+
+### Execution + anonymous verification evidence (2026-09-16)
+
+- Export rebuilt deterministically (`sig-exports build --jurisdiction okc` — release
+  `sig-2026-08-20-95c7a19a`, byte-identical to the committed artifacts).
+- Web built from export bytes (`SIG_DATA_SOURCE=export`): 50 pages; full web gate green —
+  typecheck, unit, build, licence check, **192/192 e2e** (chromium + no-JS, axe WCAG 2.2 AA).
+- `web/dist` → `gs://zeta-medley-508121-u7-sig-web` (website config: index.html / 404.html);
+  `exports/out/okc` → `gs://zeta-medley-508121-u7-sig-public/okc`.
+- Public Access Prevention cleared + `allUsers:roles/storage.objectViewer` granted on
+  **sig-web + sig-public only** (the provisioning-script posture; restricted + backups
+  untouched, PAP still enforced).
+- `roles/run.invoker` granted to `allUsers` on `sig-api` (Cloud SQL attachment, Secret
+  Manager binding, `SIG_API_ROLE=sig_read_public` unchanged).
+
+| Endpoint | Result |
+|---|---|
+| `sig-web-873541617837.us-central1.run.app/` — **canonical site** | **200** (anonymous; zero `<script>` verified live) |
+| `…/data-freshness/`, `…/dossier/oklahoma-city/`, `…/editorial-standards/`, `…/map/`, `…/watch/` | **200** each (correct titles); `/data-freshness` (no slash) → **301** to trailing slash |
+| `…/nonexistent-page/` | **404** |
+| `…/_astro/*.css` assets | **200** |
+| `…-sig-public/okc/manifest.json` (bucket endpoint) | **200** |
+| `…-sig-public/okc/web/dossiers.json` (bucket endpoint) | **200** |
+| `…-sig-restricted/probe` | **403** (private — correct) |
+| `…-sig-backups/probe` | **403** (private — correct) |
+| `sig-api-e5ctyx36jq-uc.a.run.app/` | **200** (anonymous) |
+| `…/terms` | **200** |
+| `…/v1/search?q=flock` | **200** |
+| `…/v1/dossier/okc` | **200** |
+| `…/v1/contradiction` | **200** — 1 contradiction returned (299-vs-190, visible as required; ~105 s compute-on-read cold) |
+
+**Serving fix (same day):** the raw bucket endpoints do NOT resolve directory
+indexes — GCS `MainPageSuffix` only applies through a custom domain CNAME'd to
+`c.storage.googleapis.com`, so `/data-freshness/` on `*.storage.googleapis.com`
+404'd (and `/` returned the XML bucket listing). Since DNS is deferred, the site
+is served by a new **`sig-web` Cloud Run service** (`nginx:1.27-alpine`,
+gen2, `--allow-unauthenticated`, port 80) with the `sig-web` bucket mounted
+read-only via Cloud Storage FUSE at `/usr/share/nginx/html` — nginx's native
+`index index.html` resolves every directory URL correctly. The buckets stay
+public-read for direct object access (export artifacts + site files); the
+canonical human-facing site URL is the `sig-web` run.app URL.
+
+### Go / no-go (2026-09-16)
+
+**GO — executed.** Public surface live: static site (`sig-web` Cloud Run service)
++ published export compartment + read-only API, all anonymously reachable;
+private compartments verified closed.
+**Recorded debt:** second reviewer (HG-11), remaining counsel opinions (HG-02 remainder),
+outreach (HG-04), contribution-back credentials (HG-08), usability study (HG-10) — all
+OPEN/DEFERRED in `docs/tickets/DEFERRALS.md`, none claimed done.

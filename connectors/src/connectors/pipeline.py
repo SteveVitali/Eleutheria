@@ -134,6 +134,13 @@ def run(connector: Connector, ctx: RunContext) -> RunReport:
     # targets, and exactly one bounded pass runs — never a recursive crawl.
     with network_isolated():
         extra = connector.discover_more(ctx, report.captures)
+    # A connector may record a disappearance while resolving follow-on targets
+    # (P25.7): a captured upstream index/lookup can report that a reviewed
+    # resource is *gone* — there is no URL left to fetch, so the disposition is
+    # recorded here as first-class data rather than becoming a silent empty run.
+    if ctx.resolved_disappearances:
+        report.disappearances.extend(ctx.resolved_disappearances)
+        ctx.resolved_disappearances.clear()
     if extra:
         _addressed(ctx, Stage.DISCOVER, extra)
         seen = {c.source_uri for c in report.captures}

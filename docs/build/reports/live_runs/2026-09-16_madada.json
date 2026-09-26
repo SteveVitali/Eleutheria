@@ -6,14 +6,15 @@
   "claim_count": 52,
   "connector": "france_belgium_records",
   "content_drift": null,
-  "duration_seconds": 0.910129,
+  "disappearances": [],
+  "duration_seconds": 8.757778,
   "mode": "live",
   "politeness_refusal": null,
   "rate_limit_events": [],
   "refusals": [],
   "robots_decisions": [],
   "source_id": "madada",
-  "started_at": "2026-09-16T01:39:47.764864+00:00",
+  "started_at": "2026-09-16T04:57:11.339635+00:00",
   "status_codes": [],
   "urls": []
 }
