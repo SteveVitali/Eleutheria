@@ -142,6 +142,15 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     # existing api.data.gov key ($SIG_DATA_GOV_KEY) rides the X-Api-Key
     # header, never the URL.
     "congress_gov": "accountability",
+    # P31.12 (BREADTH.1): the four P29.3 GL-GATE-07 rights flips route through
+    # the accountability connector's targeted `oversight_report` lookup — one
+    # reviewed live-targets row per published report (landing page or report
+    # PDF, never an index); an oversight finding is an AccountabilityEvent,
+    # never a deployment claim (procured/reviewed ≠ deployed).
+    "gao_surveillance_reports": "accountability",
+    "dhs_oig_reports": "accountability",
+    "dhs_fusion_center_assessments": "accountability",
+    "uk_surveillance_camera_commissioner": "accountability",
     # P26.7 (SOURCES.7): state DOT/511 traffic-camera location registries — one
     # source row per state so rights/robots/cadence stay per-host granular; all
     # route through the `dot_511` connector over the per-state target registry
@@ -1380,13 +1389,22 @@ def _run_over_fixture(
         # politeness sleeps must not burn real time across tenant fan-out.
         rate_limiter=RateLimiter(sleep=lambda _seconds: None),
     )
+    targets: list[Mapping[str, Any]] = [{"id": "t1", "url": f"https://{source_id}/x", "kind": kind}]
+    if kind == "oversight_report":
+        # P31.12: a targeted report lookup resolves its reviewed live_targets row
+        # (the synthetic fixture URL names no reviewed report). The static
+        # transport serves the fixture bytes for the reviewed URL — fixture runs
+        # never open a socket (SIG-INGEST-011).
+        from .live_targets import live_targets
+
+        targets = [dict(t) for t in live_targets(source_id)]
     ctx = RunContext(
         source=source,
         run=IngestRun(connector.name, version, "unknown", "r1", "v1", ()),
         fetcher=fetcher,
         captures=InMemoryCaptureStore(),
         claim_sink=make_claim_sink("memory"),
-        parameters={"targets": [{"id": "t1", "url": f"https://{source_id}/x", "kind": kind}]},
+        parameters={"targets": targets},
     )
     # Produce the fixture-encoded ("current") claim set + captures via the driver.
     fixture_report = run(connector, ctx)

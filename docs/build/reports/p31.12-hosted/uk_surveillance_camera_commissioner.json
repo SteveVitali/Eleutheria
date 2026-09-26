@@ -1,0 +1,128 @@
+{
+ "source": "uk_surveillance_camera_commissioner",
+ "ticket": "P31.12",
+ "semantic_id": "BREADTH.1",
+ "connector": "accountability",
+ "target_kind": "oversight_report",
+ "image": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api@sha256:d1f943610f668521f157c94d64f7284eb73025870303ee332f3f9450676e473a",
+ "image_tag": "sig-api:ingest-daf83934a7f1",
+ "code_commit": "daf83934a7f1",
+ "executions": [
+  "sig-ingest-uk-surveillance-camera-commissioner-2z6z6",
+  "sig-ingest-uk-surveillance-camera-commissioner-8p76h"
+ ],
+ "ops_runs": [
+  {
+   "started_at": "2026-09-26T03:39:41+00:00",
+   "outcome": "ok",
+   "exit_code": 0,
+   "claims_added": 8,
+   "duration_seconds": 4.692,
+   "ingest_run_id": "01a0dbcc-2cba-7711-966d-b750ecb2b44a",
+   "logical_run": "uk_surveillance_camera_commissioner@2026-09-17T06:09Z",
+   "fetches": 1,
+   "robots_decisions": [
+    {
+     "host": "www.gov.uk",
+     "outcome": "retrieved",
+     "robots_url": "https://www.gov.uk/robots.txt",
+     "status": 200
+    }
+   ],
+   "capture_digests": [
+    "bcnaloxbj5gauiumtc2pokv4izxzxjksi4u4cotffnaeyyux3r6rhflxtfjgxliyo27czkehp5lxtswzpg4743ceokdorf4thiponutgiue"
+   ]
+  },
+  {
+   "started_at": "2026-09-26T03:54:52+00:00",
+   "outcome": "ok",
+   "exit_code": 0,
+   "claims_added": 8,
+   "duration_seconds": 4.491,
+   "ingest_run_id": "01a0dbda-12ab-7e1f-a8b9-3fe55e3771d0",
+   "logical_run": "uk_surveillance_camera_commissioner@2026-09-17T06:09Z",
+   "fetches": 1,
+   "robots_decisions": [
+    {
+     "host": "www.gov.uk",
+     "outcome": "retrieved",
+     "robots_url": "https://www.gov.uk/robots.txt",
+     "status": 200
+    }
+   ],
+   "capture_digests": [
+    "bcnag3nm35v2batipcgppezm53ugojlsc7z4vu7eonu4i66orrtfsjkkmmqdl3hj5i6s5u5nymojjzeb4ggruibkr3lgoexadhvomgmjafy"
+   ]
+  }
+ ],
+ "ingest_run_completions": [
+  {
+   "run_id": "01a0dbcc-2cba-7711-966d-b750ecb2b44a",
+   "status": "ok",
+   "claims_considered": 8,
+   "claims_inserted": 6,
+   "claims_duplicate": 0,
+   "finished_at": "2026-09-26 03:39:46.571433+00:00",
+   "run_record_uri": "gs://zeta-medley-508121-u7-sig-restricted/ops/runs/uk_surveillance_camera_commissioner/2026-09-26/2026-09-26T03-39-41+00-00.json"
+  },
+  {
+   "run_id": "01a0dbda-12ab-7e1f-a8b9-3fe55e3771d0",
+   "status": "ok",
+   "claims_considered": 8,
+   "claims_inserted": 0,
+   "claims_duplicate": 6,
+   "finished_at": "2026-09-26 03:54:57.304287+00:00",
+   "run_record_uri": "gs://zeta-medley-508121-u7-sig-restricted/ops/runs/uk_surveillance_camera_commissioner/2026-09-26/2026-09-26T03-54-52+00-00.json"
+  }
+ ],
+ "captures": [
+  {
+   "content_digest": "ab24eb0d2929c84efe24b3e9ae6ca118a15e22995d0cbbe7ce30d76a3b16ddbe",
+   "media_type": "application/octet-stream",
+   "byte_size": 0,
+   "retrieved_at": "2026-09-26 03:39:46.441199+00:00",
+   "http_status": null
+  }
+ ],
+ "claims_landed_first_run": [
+  {
+   "predicate": "event_date",
+   "object_type": "literal",
+   "value": "2024-01-24"
+  },
+  {
+   "predicate": "event_epistemic_status",
+   "object_type": "literal",
+   "value": "confirmed"
+  },
+  {
+   "predicate": "event_organizations",
+   "object_type": "literal",
+   "value": "['Biometrics and Surveillance Camera Commissioner', 'Home Office']"
+  },
+  {
+   "predicate": "event_organizations",
+   "object_type": "entity_ref",
+   "value": "sig.org.name:home office"
+  },
+  {
+   "predicate": "event_technologies",
+   "object_type": "literal",
+   "value": "['facial recognition']"
+  },
+  {
+   "predicate": "event_type",
+   "object_type": "literal",
+   "value": "audit_finding"
+  }
+ ],
+ "rights_decisions": [
+  {
+   "decision_id": "01a0dbdd-396d-792b-bbd5-06933c9819d4",
+   "spdx": "LicenseRef-OperatorAccepted-DBRight",
+   "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+   "resolved_rights_id": "01a0dbdd-38e1-7932-8842-f64fa74a53f6",
+   "decided_at": "2026-09-26 03:58:23.597586+00:00"
+  }
+ ]
+}

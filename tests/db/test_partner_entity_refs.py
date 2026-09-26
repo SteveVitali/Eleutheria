@@ -90,6 +90,7 @@ def _count(conn: psycopg.Connection[Any], sql: str, params: tuple[Any, ...] = ()
 
 def test_the_sink_writes_entity_ref_claims_beside_unchanged_text_claims(clean_dsn: str) -> None:
     from db.claim_sink import content_digest
+    from partner_fixtures import golden_digest
 
     records = fixture_records()
     text = {
@@ -100,7 +101,17 @@ def test_the_sink_writes_entity_ref_claims_beside_unchanged_text_claims(clean_ds
     }
     refs = {content_digest(r) for rows in records.values() for r in rows if "object_ref" in r}
     golden = {d for v in json.loads(GOLDEN.read_text())["runs"].values() for d in v}
-    assert refs and text <= golden  # the text claims are base-commit records
+    # The text claims are the base-commit records — compared with the stamped
+    # `vocab_version` normalized back (a §20 vocabulary migration restamps record
+    # provenance without changing claim content; `golden_digest` does exactly
+    # that). The stored comparison below keeps the raw digest.
+    text_base = {
+        golden_digest(key, r)
+        for key, rows in records.items()
+        for r in rows
+        if r.get("record_kind", "claim") == "claim" and "object_ref" not in r
+    }
+    assert refs and text_base <= golden
 
     with psycopg.connect(clean_dsn, autocommit=True) as conn:
         _land(conn)

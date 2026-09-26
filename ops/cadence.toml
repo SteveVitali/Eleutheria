@@ -686,3 +686,41 @@ job = "sig-ingest-camreg-batch-08"
 scheduler = "sig-sched-camreg-batch-08"
 members = ["camreg_whatley", "camreg_wim_camera", "camreg_yazid", "camreg_yline", "camreg_york_on", "camreg_yorku", "camreg_zyinger", "dot_511_al", "dot_511_ga", "dot_511_la", "dot_511_md"]
 note = "GL-GATE-07 batch 8/8: 11 target(s) across 11 source(s)."
+
+# --- P31.12 (BREADTH.1): the four P29.3 accountability-breadth flips ----------
+# Targeted oversight-report lookups through the `accountability` connector —
+# one reviewed document per source; a WAF/403 or dead link is the recorded
+# honest outcome, never defeated (SIG-INGEST-013, GL-GATE-08). Oversight
+# reports republish infrequently → monthly cadence.
+
+[[sources]]
+id = "gao_surveillance_reports"
+cadence = "monthly"
+cron = "9 6 14 * *"              # day 14, 06:09 UTC
+job = "sig-ingest-gao-surveillance-reports"
+scheduler = "sig-sched-gao-surveillance-reports"
+note = "GAO-21-518 targeted report lookup; www.gao.gov NetScaler WAF 403s programmatic egress (2026-09-25) — the recorded challenge is the honest outcome until the posture changes."
+
+[[sources]]
+id = "dhs_oig_reports"
+cadence = "monthly"
+cron = "9 6 15 * *"              # day 15, 06:09 UTC
+job = "sig-ingest-dhs-oig-reports"
+scheduler = "sig-sched-dhs-oig-reports"
+note = "DHS OIG-09-12 fusion-center oversight audit PDF (canonical oig.dhs.gov asset URL; the /reports listing 404s — the reviewed row names the document)."
+
+[[sources]]
+id = "dhs_fusion_center_assessments"
+cadence = "monthly"
+cron = "9 6 16 * *"              # day 16, 06:09 UTC
+job = "sig-ingest-dhs-fusion-center-assessments"
+scheduler = "sig-sched-dhs-fusion-center-assessments"
+note = "2021 National Network of Fusion Centers Assessment Summary of Findings PDF; resolves onto the dhs_fusion_centers roster entities."
+
+[[sources]]
+id = "uk_surveillance_camera_commissioner"
+cadence = "monthly"
+cron = "9 6 17 * *"              # day 17, 06:09 UTC
+job = "sig-ingest-uk-surveillance-camera-commissioner"
+scheduler = "sig-sched-uk-surveillance-camera-commissioner"
+note = "BSCC Annual Report 2022/2023 (GOV.UK accessible-HTML edition); LicenseRef-OperatorAccepted-DBRight — derived facts + citations only."
