@@ -152,6 +152,89 @@ re-import then reproduced counts exactly. Keep the schema free of
   `gs://…-sig-public/{okc,france}/` (private under Finish-line A).
 - **Static site** (50 pages, `SIG_DATA_SOURCE=export`) synced to `gs://…-sig-web` (private).
 
+## 8. Scheduled live operations (P26.1 / OPS.2 — applied 2026-09-16)
+
+Everything below is realised by `ops/gcp/scheduled-ops.sh` (`--check` = plan-only,
+`--apply` = operator ADC). The per-source table is data — `ops/cadence.toml`;
+`sig-ops cadence --check` fails on drift between it and the green/live-target set.
+
+### Probe sweep (uptime accumulation)
+
+| piece | value |
+|---|---|
+| Cloud Run job | `sig-probe` — `sig-ops probe-hosted --alert` (same `sig-api` image) |
+| Scheduler trigger | `sig-sched-probe` — `0 */6 * * *` (every 6h, Etc/UTC) |
+| Targets | `sig-api` `/` + `/v1/coverage/okc`, `sig-web` `/`, `sig-public` okc + france manifests, Cloud SQL reachability (`/cloudsql` socket) |
+| Durable record | `gs://…-sig-restricted/ops/probes/<YYYY-MM-DD>/<ts>.jsonl` — one new object per sweep (WORM, never read-modify-write) |
+| Read path | `sig-ops probe-history` (`SIG_OPS_GCS_BUCKET=…-sig-restricted`) → per-target count / latest state / last-N p95 |
+| Failure path | any DOWN target fires a recorded alert through `sig-alerts` (`SIG-ALERT-RECEIVED` in Cloud Logging); job exits non-zero |
+
+### Scheduled reingestion
+
+One `sig-ingest-<source>` Cloud Run job per green live-target source, each running
+`sig-ops scheduled-ingest --source <id> --sink pg` — the same gated
+`connectors.runner` path a manual run takes (a non-green source is refused before
+any socket; refusals/drift/disappearances are recorded, never retried —
+`--max-retries 0`). Every execution appends one run row:
+
+`gs://…-sig-restricted/ops/runs/<source>/<YYYY-MM-DD>/<ts>.json`
+— source, mode, outcome (`ok`/`gate_refused`/`no_live_targets`/`content_drift`/
+`politeness_refusal`/`error`), claims added, capture digests, refusal reason, and
+the embedded fetch record a manual run leaves.
+
+| source | cadence | cron (Etc/UTC) | job | scheduler |
+|---|---|---|---|---|
+| osm_overpass | weekly | `12 4 * * 1` | `sig-ingest-osm-overpass` | `sig-sched-osm-overpass` |
+| decp_fr | weekly | `12 4 * * 2` | `sig-ingest-decp-fr` | `sig-sched-decp-fr` |
+| raa_prefectures | weekly | `12 4 * * 3` | `sig-ingest-raa-prefectures` | `sig-sched-raa-prefectures` |
+| muckrock | monthly | `0 6 1 * *` | `sig-ingest-muckrock` | `sig-sched-muckrock` (P25.7 — verified, not recreated; job upserted to the run-row wrapper, `sig-muckrock-refresh` binding preserved) |
+| eff_atlas_of_surveillance | monthly | `0 5 2 * *` | `sig-ingest-eff-atlas` | `sig-sched-eff-atlas` |
+| usaspending | monthly | `0 5 3 * *` | `sig-ingest-usaspending` | `sig-sched-usaspending` |
+| eff_data_driven | monthly | `0 5 4 * *` | `sig-ingest-eff-data-driven` | `sig-sched-eff-data-driven` |
+| osm_element_history | monthly | `0 5 5 * *` | `sig-ingest-osm-element-history` | `sig-sched-osm-element-history` |
+| madada | monthly | `0 5 7 * *` | `sig-ingest-madada` | `sig-sched-madada` |
+| ccops_seattle | monthly | `0 5 8 * *` | `sig-ingest-ccops-seattle` | `sig-sched-ccops-seattle` |
+| ccops_nyc_post | monthly | `0 5 9 * *` | `sig-ingest-ccops-nyc-post` | `sig-sched-ccops-nyc-post` |
+| ccops_sf | monthly | `0 5 10 * *` | `sig-ingest-ccops-sf` | `sig-sched-ccops-sf` |
+| pathways_rtcc_federation | monthly | `0 5 11 * *` | `sig-ingest-pathways-rtcc` | `sig-sched-pathways-rtcc` |
+| pathways_fr_css_forensics | monthly | `0 5 12 * *` | `sig-ingest-pathways-fr-css` | `sig-sched-pathways-fr-css` |
+| pathways_acoustic_drone_location | monthly | `0 5 13 * *` | `sig-ingest-pathways-drones` | `sig-sched-pathways-drones` |
+| carnegie_ai_gsi | monthly | `0 5 14 * *` | `sig-ingest-carnegie-ai-gsi` | `sig-sched-carnegie-ai-gsi` |
+| facial_recognition_world_map | monthly | `0 5 15 * *` | `sig-ingest-frwm` | `sig-sched-frwm` |
+| aspi_mapping_chinas_tech_giants | monthly | `0 5 16 * *` | `sig-ingest-aspi` | `sig-sched-aspi` |
+| ok_statute | monthly | `0 5 17 * *` | `sig-ingest-ok-statute` | `sig-sched-ok-statute` |
+| okcpd_policy | monthly | `0 5 18 * *` | `sig-ingest-okcpd-policy` | `sig-sched-okcpd-policy` |
+| okc_procurement | monthly | `0 5 19 * *` | `sig-ingest-okc-procurement` | `sig-sched-okc-procurement` |
+
+The 17 green sources WITHOUT live targets (agency_audit_export, gleif, the
+OSM-ecosystem reference sources, …) get no trigger — there is nothing to fetch;
+`live_targets.toml` is the fetchable set and `sig-ops cadence --check` enforces
+the coverage.
+
+### Pause / disable
+
+```bash
+# one trigger:
+gcloud scheduler jobs pause sig-sched-probe \
+  --location us-central1 --project "$SIG_GCP_PROJECT"
+# every scheduled-ops trigger (resume = `jobs resume`):
+for j in $(gcloud scheduler jobs list --location us-central1 \
+    --project "$SIG_GCP_PROJECT" --format='value(name.basename())' | grep '^sig-sched-'); do
+  gcloud scheduler jobs pause "$j" --location us-central1 --project "$SIG_GCP_PROJECT"
+done
+# full teardown of a job (the restricted-bucket objects already written stay):
+gcloud scheduler jobs delete sig-sched-probe --location us-central1 --project "$SIG_GCP_PROJECT"
+gcloud run jobs delete sig-probe --region us-central1 --project "$SIG_GCP_PROJECT"
+```
+
+### Read the ops records
+
+```bash
+gcloud storage ls "gs://$SIG_GCP_PROJECT-sig-restricted/ops/probes/**"
+gcloud storage ls "gs://$SIG_GCP_PROJECT-sig-restricted/ops/runs/**"
+SIG_OPS_GCS_BUCKET="$SIG_GCP_PROJECT-sig-restricted" sig-ops probe-history
+```
+
 ## Remaining (owed, not this ticket)
 
 Zenodo/SWH deposits (HG-07, `D-P21.5-1`); real live source fetches (the placeholder

@@ -65,3 +65,18 @@ export SIG_RUN_JOB_MUCKROCK="sig-ingest-muckrock"
 export SIG_SCHEDULER_SA="sig-scheduler"
 export SIG_SCHEDULER_JOB_MUCKROCK="sig-sched-muckrock"
 export SIG_SCHEDULER_CRON_MUCKROCK="0 6 1 * *"   # monthly, 06:00 UTC
+
+# --- scheduled live operations (P26.1 / OPS.2) ---------------------------------
+# The `sig-probe` hosted-sweep job (every 6h) plus the per-source
+# `sig-ingest-<id>` jobs driven by Cloud Scheduler triggers. The per-source
+# rows — cadence, cron, job/scheduler names — live in `ops/cadence.toml` (the
+# single source of truth, read via tomllib by scheduled-ops.sh); only the
+# job-level constants live here. Alerts route through the existing sig-alerts
+# receiver (P25.8): URL resolved at apply time, token via Secret Manager.
+export SIG_RUN_JOB_PROBE="sig-probe"
+export SIG_SCHEDULER_JOB_PROBE="sig-sched-probe"
+export SIG_SCHEDULER_CRON_PROBE="0 */6 * * *"    # every 6h UTC
+export SIG_ALERTS_SERVICE="sig-alerts"
+export SIG_SECRET_ALERT_HOOK="sig-alert-webhook-token"
+export SIG_WEB_SERVICE="sig-web"
+export SIG_CADENCE_TOML="ops/cadence.toml"

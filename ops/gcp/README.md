@@ -26,13 +26,17 @@ the validation test (`tests/ops/test_gcp_iac.py`) shells `terraform validate` wh
 | `lib.sh` | the `--check` (plan-only, no ADC) vs `--apply` (ADC-gated) plumbing |
 | `provision.sh` | enable APIs · GCS buckets · Artifact Registry · Secret Manager · compute |
 | `backup.sh` | `pg_dump` → GCS backup bucket (+ OCFL sync) · restore drill · Cloud SQL alt |
-| `../Dockerfile` | the Cloud Run API image (built + pushed by `sig-ops deploy`) |
+| `schedule.sh` | P25.7: the `sig-sched-muckrock` recurring trigger (superseded-in-part by `scheduled-ops.sh`, which verifies rather than recreates it) |
+| `scheduled-ops.sh` | P26.1: `sig-probe` (6-hourly hosted sweep → `ops/probes/` in the restricted bucket + alerts) + per-source `sig-ingest-<id>` jobs/`sig-sched-<id>` triggers from `../cadence.toml` (run rows → `ops/runs/`) |
+| `../Dockerfile` | the Cloud Run API image (built + pushed by `sig-ops deploy`) — also carries `sig-ops` for the scheduled jobs |
 
 ```bash
 bash ops/gcp/provision.sh --check    # plan only, no ADC, no network, exit 0
 bash ops/gcp/backup.sh   --check     # backup + restore-drill plan, no ADC, exit 0
+bash ops/gcp/scheduled-ops.sh --check # scheduled-ops plan (probe + ingest triggers)
 # operator, with ADC + SIG_GCP_PROJECT exported:
 bash ops/gcp/provision.sh --apply    # provisions for real (gate-pending here)
+bash ops/gcp/scheduled-ops.sh --apply
 ```
 
 ## The architecture (DECISION, ADR-075)

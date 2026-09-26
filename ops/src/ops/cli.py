@@ -51,6 +51,10 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .gcs import GcsBucket
 
 from . import __version__
 from .alerts import Alert
@@ -244,6 +248,107 @@ def build_parser() -> argparse.ArgumentParser:
     )
     probe.add_argument(
         "--config", default=None, help="ops/config.toml path (default: ops/config.toml)"
+    )
+
+    # --- P26.1 / OPS.2: scheduled live operations (probes + reingestion) ------
+    hosted = sub.add_parser(
+        "probe-hosted",
+        help="sweep the HOSTED targets recorded in ops/cadence.toml (read API, "
+        "sig-web, public export objects, Cloud SQL), append the sweep as a "
+        "per-run object under gs://…-sig-restricted/ops/probes/ (WORM)",
+    )
+    hosted.add_argument(
+        "--cadence",
+        default=None,
+        help="ops/cadence.toml path (default: the packaged file / SIG_OPS_CADENCE)",
+    )
+    hosted.add_argument(
+        "--gcs-bucket",
+        default=None,
+        help="bucket for the sweep object (default: SIG_OPS_GCS_BUCKET; "
+        "unset = local probe log only, no upload)",
+    )
+    hosted.add_argument(
+        "--extra-target",
+        action="append",
+        default=[],
+        metavar="NAME=URL",
+        help="probe an extra ad-hoc http target (repeatable; e.g. a "
+        "deliberately-bad URL for a forced-failure drill)",
+    )
+    hosted.add_argument(
+        "--alert",
+        action="store_true",
+        help="fire a RECORDED alert for each target that is DOWN (through the "
+        "env-configured notifiers — the sig-alerts receiver in deployment).",
+    )
+
+    history = sub.add_parser(
+        "probe-history",
+        help="fold the stored sweep objects (gs://…/ops/probes/) into a "
+        "per-target uptime summary: count, latest state, last-N p95",
+    )
+    history.add_argument(
+        "--cadence",
+        default=None,
+        help="ops/cadence.toml path (for the probe prefix; default packaged)",
+    )
+    history.add_argument(
+        "--gcs-bucket",
+        default=None,
+        help="bucket holding the sweeps (default: SIG_OPS_GCS_BUCKET)",
+    )
+    history.add_argument(
+        "--local",
+        default=None,
+        help="read a local JSONL probe log instead of GCS (offline path)",
+    )
+    history.add_argument(
+        "--last",
+        type=int,
+        default=20,
+        help="latency window per target for the p95 (default: last 20 probes)",
+    )
+
+    ingest = sub.add_parser(
+        "scheduled-ingest",
+        help="run one source live through the gated connector and append the run "
+        "row (source/mode/outcome/claims/capture digests/refusal) under "
+        "gs://…-sig-restricted/ops/runs/ — the scheduled-reingestion audit trail",
+    )
+    ingest.add_argument("--source", required=True, help="source id (live-gated)")
+    ingest.add_argument(
+        "--sink",
+        default="pg",
+        choices=("memory", "pg"),
+        help="claim sink (default pg — the hosted spine)",
+    )
+    ingest.add_argument("--dsn", default=None, help="PostgreSQL DSN for --sink pg")
+    ingest.add_argument(
+        "--gcs-bucket",
+        default=None,
+        help="bucket for the run row (default: SIG_OPS_GCS_BUCKET; unset = local mirror only)",
+    )
+    ingest.add_argument(
+        "--cadence",
+        default=None,
+        help="ops/cadence.toml path (for the runs prefix; default packaged)",
+    )
+
+    cadence_cmd = sub.add_parser(
+        "cadence",
+        help="print the resolved scheduled-ops table from ops/cadence.toml "
+        "(probe sweep + per-source cadence/cron/job/scheduler)",
+    )
+    cadence_cmd.add_argument(
+        "--cadence",
+        default=None,
+        help="ops/cadence.toml path (default: the packaged file / SIG_OPS_CADENCE)",
+    )
+    cadence_cmd.add_argument(
+        "--check",
+        action="store_true",
+        help="exit 1 if any loadable source with live targets lacks a cadence row",
     )
 
     alerts = sub.add_parser(
@@ -545,7 +650,25 @@ def _fire_alert(
 
 
 def _observability_config(config_arg: str | Path | None) -> ObservabilityConfig:
-    return ObservabilityConfig.from_toml(config_arg or (_COMPOSE_FILE.parent / "config.toml"))
+    """Resolve ``ops/config.toml`` → observability config.
+
+    Candidates: explicit arg → ``$SIG_OPS_CONFIG`` → the file next to
+    ``docker-compose.yml`` (repo checkout) → ``./ops/config.toml`` under the CWD
+    (the image's ``WORKDIR /app`` layout). When no file exists at all the
+    documented ``ObservabilityConfig()`` defaults are used (an explicit arg that
+    does not exist still raises — fail closed on a typo, not silently default).
+    """
+    candidates: list[Path] = []
+    if config_arg:
+        candidates.append(Path(config_arg))
+    env_path = os.environ.get("SIG_OPS_CONFIG", "").strip()
+    if env_path:
+        candidates.append(Path(env_path))
+    candidates += [_COMPOSE_FILE.parent / "config.toml", Path.cwd() / "ops" / "config.toml"]
+    resolved = next((c for c in candidates if c.is_file()), None)
+    if resolved is None:
+        return ObservabilityConfig.from_toml(candidates[0]) if config_arg else ObservabilityConfig()
+    return ObservabilityConfig.from_toml(resolved)
 
 
 def _cmd_egress_report(args: argparse.Namespace) -> int:
@@ -736,6 +859,188 @@ def _cmd_probe(args: argparse.Namespace) -> int:
     return 0 if not down else 1
 
 
+# --- P26.1 / OPS.2: scheduled live operations ---------------------------------
+
+
+def _gcs_bucket(bucket_arg: str | None) -> GcsBucket | None:
+    """The configured restricted-bucket handle, or None when unconfigured."""
+    from .gcs import GcsBucket
+
+    name = bucket_arg or os.environ.get("SIG_OPS_GCS_BUCKET", "").strip()
+    return GcsBucket(name) if name else None
+
+
+def _cmd_probe_hosted(args: argparse.Namespace) -> int:
+    from .alerts import alert_exit_code
+    from .gcs import GcsError
+    from .observe import ProbeLog, prune_jsonl
+    from .scheduled import load_cadence, probe_hosted, resolve_targets, upload_sweep
+
+    config = _observability_config(None)
+    cadence = load_cadence(args.cadence)
+    specs = {s.name: s for s in cadence.probe_targets}
+    resolved, skipped = resolve_targets(cadence)
+    targets: list[tuple[str, str, str]] = [(name, specs[name].kind, url) for name, url in resolved]
+    for extra in args.extra_target:
+        if "=" not in extra:
+            print(f"--extra-target must be NAME=URL (got {extra!r})", file=sys.stderr)
+            return 2
+        name, url = extra.split("=", 1)
+        targets.append((name.strip(), "http", url.strip()))
+    for name in skipped:
+        print(
+            f"  ! probe target {name!r} skipped — URL not resolvable (env unset)",
+            file=sys.stderr,
+        )
+    if not targets:
+        print("probe-hosted: no targets resolved — nothing probed (config gap)", file=sys.stderr)
+        return 2
+
+    results = probe_hosted(targets)
+    # Local bounded log (the OBS.1 shape) — always, even before any upload.
+    log = ProbeLog(_probe_log_path())
+    for result in results:
+        log.append(result)
+    dropped = prune_jsonl(log.path, config.retention())
+    for result in results:
+        print(json.dumps(result.as_json(), sort_keys=True))
+    if dropped:
+        print(f"  (retention: pruned {dropped} probe rows)", file=sys.stderr)
+
+    # The durable record: one new timestamped object per sweep (WORM).
+    gcs = _gcs_bucket(args.gcs_bucket)
+    if gcs is None:
+        print(
+            "  ! no GCS bucket configured (--gcs-bucket / SIG_OPS_GCS_BUCKET) — "
+            "sweep recorded locally only",
+            file=sys.stderr,
+        )
+    else:
+        try:
+            name = upload_sweep(gcs, cadence.probe_gcs_prefix, results, results[0].ts)
+            print(f"  sweep stored: gs://{gcs.bucket}/{name}")
+        except GcsError as exc:
+            print(f"  ! sweep upload FAILED (recorded locally): {exc}", file=sys.stderr)
+            return 7
+    down = [r for r in results if not r.ok]
+    if down and args.alert:
+        fired = None
+        for result in down:
+            fired = _fire_alert(
+                "probe-hosted",
+                "critical",
+                f"hosted target {result.service} is DOWN ({result.detail or 'unreachable'})",
+                detail=result.as_json(),
+            )
+        return alert_exit_code(fired)
+    return 0 if not down else 1
+
+
+def _cmd_probe_history(args: argparse.Namespace) -> int:
+    from .gcs import GcsError
+    from .observe import ProbeLog
+    from .scheduled import (
+        fold_probe_history,
+        load_cadence,
+        read_sweep_rows,
+    )
+
+    cadence = load_cadence(args.cadence)
+    if args.local:
+        rows = ProbeLog(Path(args.local)).read()
+        origin = args.local
+    else:
+        gcs = _gcs_bucket(args.gcs_bucket)
+        if gcs is None:
+            print(
+                "probe-history: no GCS bucket configured (--gcs-bucket / "
+                "SIG_OPS_GCS_BUCKET) and no --local log given",
+                file=sys.stderr,
+            )
+            return 2
+        try:
+            rows = read_sweep_rows(gcs, cadence.probe_gcs_prefix)
+        except GcsError as exc:
+            print(f"probe-history: GCS read failed: {exc}", file=sys.stderr)
+            return 1
+        origin = f"gs://{gcs.bucket}/{cadence.probe_gcs_prefix}/"
+    summaries = fold_probe_history(rows, last=args.last)
+    if not summaries:
+        print(f"probe-history: no stored sweeps under {origin}")
+        return 0
+    print(f"probe-history over {origin} (last-{args.last} p95):")
+    print("| target | probes | ok | uptime % | latest | latest state | p95 ms |")
+    print("|---|---|---|---|---|---|---|")
+    for s in summaries:
+        print(
+            f"| {s.target} | {s.probes} | {s.ok} | "
+            f"{s.uptime_pct if s.uptime_pct is not None else '—'} | {s.latest_ts} | "
+            f"{'healthy' if s.latest_ok else 'DOWN'} | "
+            f"{s.p95_ms if s.p95_ms is not None else '—'} |"
+        )
+    return 0
+
+
+def _cmd_scheduled_ingest(args: argparse.Namespace) -> int:
+    from .scheduled import load_cadence, scheduled_ingest, store_run_row
+
+    cadence = load_cadence(args.cadence)
+    dsn = args.dsn or os.environ.get("SIG_STAGING_DSN")
+    if args.sink == "pg" and not dsn:
+        user = os.environ.get("SIG_PG_USER", "")
+        db = os.environ.get("SIG_PG_DB", "")
+        conn = os.environ.get("SIG_CLOUDSQL_CONNECTION", "")
+        password = os.environ.get("SIG_PG_PASSWORD", "")
+        if user and db and conn:
+            dsn = f"postgresql://{user}:{password}@/{db}?host=/cloudsql/{conn}"
+    if args.sink == "pg" and not dsn:
+        print("scheduled-ingest: --sink pg needs --dsn / SIG_STAGING_DSN / SIG_PG_* parts")
+        return 2
+    local_dir = Path(os.environ.get("SIG_RUN_LOG", str(_STATE_DIR / "runs")))
+    row = scheduled_ingest(
+        args.source, sink_kind=args.sink, dsn=dsn, capture_dir=_STATE_DIR / "captures"
+    )
+    gcs = _gcs_bucket(args.gcs_bucket)
+    written = store_run_row(row, prefix=cadence.runs_gcs_prefix, gcs=gcs, local_dir=local_dir)
+    print(json.dumps(row.as_json(), sort_keys=True))
+    for where, loc in written.items():
+        print(f"  run row stored ({where}): {loc}")
+    if gcs is None:
+        print(
+            "  ! no GCS bucket configured — run row recorded locally only",
+            file=sys.stderr,
+        )
+    return row.exit_code
+
+
+def _cmd_cadence(args: argparse.Namespace) -> int:
+    from .scheduled import load_cadence, unscheduled_live_sources
+
+    cadence = load_cadence(args.cadence)
+    print(
+        f"probes: job={cadence.probe_job} scheduler={cadence.probe_scheduler} "
+        f"cron={cadence.probe_schedule!r} → gs://<restricted>/{cadence.probe_gcs_prefix}/"
+    )
+    for spec in cadence.probe_targets:
+        print(f"  target {spec.name} ({spec.kind})")
+    print(f"runs → gs://<restricted>/{cadence.runs_gcs_prefix}/<source>/<date>/<ts>.json")
+    print("scheduled sources:")
+    for s in cadence.sources:
+        marker = " (existing — verify only)" if s.existing else ""
+        print(f"  {s.source:38s} {s.cadence:8s} {s.cron:12s} {s.job} ← {s.scheduler}{marker}")
+    missing = unscheduled_live_sources(cadence)
+    if missing:
+        print(
+            "UNSCHEDULED live-target sources (loadable, in live_targets.toml, no "
+            f"cadence row): {', '.join(missing)}",
+            file=sys.stderr,
+        )
+        return 1 if args.check else 0
+    if args.check:
+        print("cadence check OK — every loadable live-target source has a cadence row")
+    return 0
+
+
 def _cmd_alerts(args: argparse.Namespace) -> int:
     from .alerts import AlertLedger
     from .observe import prune_jsonl
@@ -835,6 +1140,14 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_keepalive_check(args)
     if args.command == "probe":
         return _cmd_probe(args)
+    if args.command == "probe-hosted":
+        return _cmd_probe_hosted(args)
+    if args.command == "probe-history":
+        return _cmd_probe_history(args)
+    if args.command == "scheduled-ingest":
+        return _cmd_scheduled_ingest(args)
+    if args.command == "cadence":
+        return _cmd_cadence(args)
     if args.command == "alerts":
         return _cmd_alerts(args)
     if args.command == "alert":

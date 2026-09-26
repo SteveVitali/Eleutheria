@@ -1,0 +1,242 @@
+# SPDX-License-Identifier: Apache-2.0
+# SIG scheduled live operations (P26.1 / OPS.2). This file is DATA, not code —
+# the operator-revisable record of which hosted targets the `sig-probe` sweep
+# covers and which cadence each green live source runs on. `ops/gcp/
+# scheduled-ops.sh --apply` realises exactly what is recorded here; the
+# `sig-ops cadence` verb prints the resolved table and fails on drift.
+#
+# No secrets and no baked host literals (HG-09/HG-12): target URLs resolve from
+# the job's environment first (`url_env`) — the run.app base URLs are resolved
+# at apply time from `gcloud run services describe` — and `{project}` is filled
+# from $SIG_GCP_PROJECT. The Cloud SQL target's DSN assembles from the standard
+# SIG_PG_* + SIG_CLOUDSQL_CONNECTION env parts at run time (never a literal).
+
+[probes]
+job = "sig-probe"                # Cloud Run job name (same image as sig-ingest-*)
+scheduler = "sig-sched-probe"    # Cloud Scheduler trigger
+schedule = "0 */6 * * *"         # every 6h UTC — uptime accumulation cadence
+gcs_prefix = "ops/probes"        # sweeps land at gs://…-sig-restricted/ops/probes/<date>/<ts>.jsonl
+
+[[probes.targets]]
+name = "sig-api-root"
+kind = "http"
+url_env = "SIG_PROBE_API_URL"    # the deployed read API base URL (no path)
+path = "/"
+
+[[probes.targets]]
+name = "sig-api-coverage-okc"
+kind = "http"
+url_env = "SIG_PROBE_API_URL"
+path = "/v1/coverage/okc"        # the §32.2 metrics surface over the real spine
+
+[[probes.targets]]
+name = "sig-web-root"
+kind = "http"
+url_env = "SIG_PROBE_WEB_URL"    # the public static site (nginx + GCS FUSE)
+path = "/"
+
+[[probes.targets]]
+name = "sig-public-okc-manifest"
+kind = "http"
+url = "https://storage.googleapis.com/{project}-sig-public/okc/manifest.json"
+
+[[probes.targets]]
+name = "sig-public-france-manifest"
+kind = "http"
+url = "https://storage.googleapis.com/{project}-sig-public/france/manifest.json"
+
+[[probes.targets]]
+name = "sig-pg-cloudsql"
+kind = "cloudsql"                # reachability only — SELECT 1 through the job's
+                                 # mounted /cloudsql socket; DSN from env parts
+
+[runs]
+# Every scheduled ingest execution appends one run row here:
+#   gs://…-sig-restricted/ops/runs/<source>/<date>/<ts>.json
+# (source, mode, outcome, claims added, capture digests, refusal reason, and the
+# embedded fetch record a manual `sig-connectors run` leaves — WORM, never
+# read-modify-write.)
+gcs_prefix = "ops/runs"
+
+# --- per-source reingestion cadence ---------------------------------------------
+# One [[sources]] row per GREEN source with live targets (`sig-connectors
+# review-status` ∩ live_targets.toml — `sig-ops cadence --check` fails on drift).
+# `cron` is Etc/UTC. `existing = true` marks a scheduler TRIGGER that already
+# exists (muckrock, P25.7 d5): the trigger is verified, never recreated — but the
+# run job is still upserted onto the `sig-ops scheduled-ingest` wrapper so its
+# executions append ops/runs rows like every other source. `secrets` maps extra
+# env vars to Secret Manager NAMES (never values, HG-09) that the source's live
+# path needs beyond sig-pg-password. Sources whose current posture is a recorded
+# refusal/disappearance (robots, WAF, eID) stay scheduled — the scheduled run's
+# honest record IS the posture-change detector; nothing is ever retried into
+# silence.
+
+[[sources]]
+id = "osm_overpass"
+cadence = "weekly"               # OSM changes continuously (ticket spec)
+cron = "12 4 * * 1"              # Monday 04:12 UTC
+job = "sig-ingest-osm-overpass"
+scheduler = "sig-sched-osm-overpass"
+note = "OKC metro bbox over Overpass; ODbL compartment."
+
+[[sources]]
+id = "decp_fr"
+cadence = "weekly"               # ticket spec (dataset index republishes)
+cron = "12 4 * * 2"              # Tuesday 04:12 UTC
+job = "sig-ingest-decp-fr"
+scheduler = "sig-sched-decp-fr"
+note = "data.gouv.fr dataset-API indirection; regenerated resource = new URL, removed = recorded link_rotted."
+
+[[sources]]
+id = "raa_prefectures"
+cadence = "weekly"               # the RAA index itself is weekly (sources.toml F9.18)
+cron = "12 4 * * 3"              # Wednesday 04:12 UTC
+job = "sig-ingest-raa-prefectures"
+scheduler = "sig-sched-raa-prefectures"
+note = "Bounded index→arrêté fan-out (max_documents=8); recorded robots refusals stand."
+
+[[sources]]
+id = "muckrock"
+cadence = "monthly"              # registry cadence = "monthly" (sources.toml)
+cron = "0 6 1 * *"               # day 1, 06:00 UTC — ALREADY APPLIED by P25.7
+job = "sig-ingest-muckrock"
+scheduler = "sig-sched-muckrock"
+existing = true                  # scheduler trigger: verify only — do not duplicate
+secrets = { SIG_MUCKROCK_REFRESH = "sig-muckrock-refresh" }  # refresh-token env binding
+note = "Cloudflare challenges all egress currently; each run records the honest outcome (never defeated)."
+
+[[sources]]
+id = "eff_atlas_of_surveillance"
+cadence = "monthly"
+cron = "0 5 2 * *"               # day 2, 05:00 UTC
+job = "sig-ingest-eff-atlas"
+scheduler = "sig-sched-eff-atlas"
+note = "Bulk national CSV (~8.5 MB); ODbL-free CC-BY compartment."
+
+[[sources]]
+id = "usaspending"
+cadence = "monthly"
+cron = "0 5 3 * *"
+job = "sig-ingest-usaspending"
+scheduler = "sig-sched-usaspending"
+note = "Sub-award keyword search (POST-only endpoint, ADR-083)."
+
+[[sources]]
+id = "eff_data_driven"
+cadence = "monthly"
+cron = "0 5 4 * *"
+job = "sig-ingest-eff-data-driven"
+scheduler = "sig-sched-eff-data-driven"
+note = "EFF-hosted release zip; lettered-column map, aggregate rows only (RISK-P0-08)."
+
+[[sources]]
+id = "osm_element_history"
+cadence = "monthly"              # element history changes only when elements do
+cron = "0 5 5 * *"
+job = "sig-ingest-osm-element-history"
+scheduler = "sig-sched-osm-element-history"
+note = "API 0.6 history on observed OKC nodes; bulk stays on Overpass."
+
+[[sources]]
+id = "madada"
+cadence = "monthly"
+cron = "0 5 7 * *"
+job = "sig-ingest-madada"
+scheduler = "sig-sched-madada"
+note = "Atom feed of successful requests; request text never retained."
+
+[[sources]]
+id = "ccops_seattle"
+cadence = "monthly"
+cron = "0 5 8 * *"
+job = "sig-ingest-ccops-seattle"
+scheduler = "sig-sched-ccops-seattle"
+note = "SIR index page → bounded disclosure-document fan-out."
+
+[[sources]]
+id = "ccops_nyc_post"
+cadence = "monthly"
+cron = "0 5 9 * *"
+job = "sig-ingest-ccops-nyc-post"
+scheduler = "sig-sched-ccops-nyc-post"
+note = "POST Act index; nyc.gov WAF-challenges datacenter egress — a recorded outcome stands."
+
+[[sources]]
+id = "ccops_sf"
+cadence = "monthly"
+cron = "0 5 10 * *"
+job = "sig-ingest-ccops-sf"
+scheduler = "sig-sched-ccops-sf"
+note = "sf.gov serves a JS shell (202 interstitial recorded, SIG-INGEST-012 confirmed)."
+
+[[sources]]
+id = "pathways_rtcc_federation"
+cadence = "monthly"
+cron = "0 5 11 * *"
+job = "sig-ingest-pathways-rtcc"
+scheduler = "sig-sched-pathways-rtcc"
+note = "EFF-published pathway document; reviewed-term claims only."
+
+[[sources]]
+id = "pathways_fr_css_forensics"
+cadence = "monthly"
+cron = "0 5 12 * *"
+job = "sig-ingest-pathways-fr-css"
+scheduler = "sig-sched-pathways-fr-css"
+note = "EFF face-recognition issue page."
+
+[[sources]]
+id = "pathways_acoustic_drone_location"
+cadence = "monthly"
+cron = "0 5 13 * *"
+job = "sig-ingest-pathways-drones"
+scheduler = "sig-sched-pathways-drones"
+note = "EFF drones issue page."
+
+[[sources]]
+id = "carnegie_ai_gsi"
+cadence = "monthly"
+cron = "0 5 14 * *"
+job = "sig-ingest-carnegie-ai-gsi"
+scheduler = "sig-sched-carnegie-ai-gsi"
+note = "Next.js embedded-dataset page → bounded dataset_chunk discovery."
+
+[[sources]]
+id = "facial_recognition_world_map"
+cadence = "monthly"
+cron = "0 5 15 * *"
+job = "sig-ingest-frwm"
+scheduler = "sig-sched-frwm"
+note = "surfshark map page + 6 reviewed gviz sheet targets (robots-permitted)."
+
+[[sources]]
+id = "aspi_mapping_chinas_tech_giants"
+cadence = "monthly"
+cron = "0 5 16 * *"
+job = "sig-ingest-aspi"
+scheduler = "sig-sched-aspi"
+note = "WAF-403s all egress (policy, proven 2026-09-16) — scheduled run records the posture, never defeats it."
+
+[[sources]]
+id = "ok_statute"
+cadence = "monthly"
+cron = "0 5 17 * *"
+job = "sig-ingest-ok-statute"
+scheduler = "sig-sched-ok-statute"
+note = "OSCN robots.txt is Disallow:/ — a recorded politeness_refusal until the posture changes."
+
+[[sources]]
+id = "okcpd_policy"
+cadence = "monthly"              # manual revisions are rare (ticket spec)
+cron = "0 5 18 * *"
+job = "sig-ingest-okcpd-policy"
+scheduler = "sig-sched-okcpd-policy"
+note = "OKCPD Operations Manual §5-118 PDF; verbatim-literal clause claims."
+
+[[sources]]
+id = "okc_procurement"
+cadence = "monthly"
+cron = "0 5 19 * *"
+job = "sig-ingest-okc-procurement"
+scheduler = "sig-sched-okc-procurement"
+note = "okc.gov edge WAF 403s the index — a recorded link_rotted/access refusal stands."
