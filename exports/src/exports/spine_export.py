@@ -77,7 +77,7 @@ from .shaping import (
     parse_shaping_claims,
     shape_sites,
 )
-from .tiles import ODBL_ATTRIBUTION, render_pmtiles_file
+from .tiles import render_compartment_sites_pmtiles
 
 #: The SIG-original derived record: coverage/jurisdiction/freshness/dossier framings
 #: are SIG's own analytical expression, published CC-BY-4.0 (SIG-LIC-005). The
@@ -1466,25 +1466,11 @@ def _web_bytes(payload: Any) -> bytes:
 def _render_tiles(compartment: str, geojson_bytes: bytes, license_id: str) -> tuple[bytes, str]:
     """Render one compartment's sites.geojson → PMTiles bytes (+ renderer name).
 
-    ODbL keeps its attribution; other compartments get a SIG/CC-BY attribution. The
-    renderer writes through a temp file (``render_pmtiles_file`` uses tippecanoe when
-    present, else the pure-Python encoder).
+    Thin alias over :func:`exports.tiles.render_compartment_sites_pmtiles` (the shared
+    per-compartment renderer — ODbL keeps its OSM notice, slimmed render properties,
+    z0–z14 via tippecanoe or the pure-Python encoder).
     """
-    import tempfile
-
-    attribution = ODBL_ATTRIBUTION if license_id == "ODbL-1.0" else _SIG_ATTRIBUTION
-    with tempfile.TemporaryDirectory() as tmp:
-        src = Path(tmp) / "sites.geojson"
-        src.write_bytes(geojson_bytes)
-        out = Path(tmp) / "sites.pmtiles"
-        renderer = render_pmtiles_file(
-            str(src),
-            str(out),
-            layer_name="sites",
-            license_id=license_id,
-            attribution=attribution,
-        )
-        return out.read_bytes(), renderer
+    return render_compartment_sites_pmtiles(compartment, geojson_bytes, license_id)
 
 
 def _extended_manifest(

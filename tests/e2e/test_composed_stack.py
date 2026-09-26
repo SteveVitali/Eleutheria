@@ -852,19 +852,20 @@ def test_s8_web_build_renders_from_export_bytes(web_build_from_export: _WebBuild
 
 
 def test_s8_web_build_consumes_rendered_tiles(web_build_from_export: _WebBuild) -> None:
-    """S8 (P21.5, deliverable 3, LD-F07/H08): the export-built site serves REAL tiles.
+    """S8 (P21.5, deliverable 3, LD-F07/H08; P31.15): the export-built site serves REAL tiles.
 
-    The jurisdiction export renders the ODbL device layer to PMTiles; the web build in
-    ``export`` mode copies it to ``/tiles/sig-infrastructure.pmtiles`` (the self-hosted
-    source the map style declares). Assert the reader opens it with ≥1 layer carrying
-    the ODbL licence + OSM attribution (ADR-048, §42).
+    The jurisdiction export renders the ODbL device layer to PMTiles at the per-
+    compartment path (ADR-R9-TILES); the web build in ``export`` mode copies
+    ``web/tiles/osm_physical-sites.pmtiles`` to ``/tiles/`` (the self-hosted source
+    the map style declares). Assert the reader opens it with ≥1 layer carrying the
+    ODbL licence + OSM attribution (ADR-048, §42).
     """
     import gzip
     import json
     import struct
 
     assert web_build_from_export.returncode == 0
-    tiles = web_build_from_export.dist / "tiles" / "sig-infrastructure.pmtiles"
+    tiles = web_build_from_export.dist / "tiles" / "osm_physical-sites.pmtiles"
     assert tiles.exists(), "the export-built site must serve the rendered PMTiles"
     data = tiles.read_bytes()
     assert data[0:7] == b"PMTiles" and data[7] == 3, "a valid PMTiles v3 archive"

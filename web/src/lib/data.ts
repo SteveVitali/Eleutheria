@@ -379,10 +379,11 @@ interface ReproducibilityInputs {
  * than demo values (ADR-093 §5).
  */
 /**
- * The per-licence-compartment tile archives the export ships (P30.3, ADR-106): every
- * manifest artifact under `web/tiles/` ending `-sites.pmtiles`, with its ONE licence. The
- * committed fixtures and a jurisdiction export (one `sig-infrastructure.pmtiles`) yield `[]`,
- * leaving the committed style untouched.
+ * The per-licence-compartment tile archives the export ships (P30.3, ADR-106;
+ * P31.15, ADR-R9-TILES): every manifest artifact under `web/tiles/` ending
+ * `-sites.pmtiles`, with its ONE licence. The committed fixtures yield `[]`, which
+ * leaves the background-only style and the island's inline fallback points; an
+ * export build yields one z0–z14 archive per compartment.
  */
 export function getCompartmentTileSources(): CompartmentTileSource[] {
   if (dataSource() === "fixtures") return [];
