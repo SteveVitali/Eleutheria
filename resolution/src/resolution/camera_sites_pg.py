@@ -316,14 +316,16 @@ def _review_args(result: CameraSiteResult, d: SiteDecision) -> tuple[Any, ...]:
         {
             "name": "shared_upstream_ref",
             "weight": 0.0,
-            "detail": str(ev["shared_upstream_ref"] or "none"),
+            # P31.11: tier-0 duplicate-target and human-review proposals carry
+            # lineage/decision evidence, not matcher fields — report honestly.
+            "detail": str(ev.get("shared_upstream_ref") or "none"),
         },
         {
             "name": "one_to_one",
             "weight": 0.0,
             "detail": (
-                f"unique within co-location radius: {ev['unique_within_colocation']}; "
-                f"mutual nearest: {ev['mutual_nearest']}"
+                f"unique within co-location radius: {ev.get('unique_within_colocation', 'n/a')}; "
+                f"mutual nearest: {ev.get('mutual_nearest', 'n/a')}"
             ),
         },
     ]

@@ -904,3 +904,49 @@ def test_a_human_reject_overrides_even_duplicate_target_evidence() -> None:
     (d,) = r.decisions
     assert d.disposition == "human_reject" and d.relation == "cannot_link"
     assert r.clusters["a"] != r.clusters["b"]
+
+
+def test_review_item_args_tolerate_non_matcher_evidence() -> None:
+    # P31.11 regression (hosted crash): tier-0 duplicate-target edges refused by
+    # a hard constraint, and human-verdict proposals on non-candidate pairs,
+    # carry lineage/decision evidence — not matcher fields. The review-item
+    # writer must describe them honestly, never KeyError.
+    from resolution.camera_sites import SiteDecision
+    from resolution.camera_sites_pg import _conflict_review_args, _review_args
+
+    a, b = _dup_pair()
+    r = resolve_camera_sites([a, b], gold=None, threshold=0.98)
+    d = next(x for x in r.decisions if x.assessment.tier == 0)
+    proposed_dup = SiteDecision(
+        assessment=d.assessment,
+        disposition="proposed",
+        reason="cluster_constraint:max_size",
+    )
+    item_id, _summary, _conf, payload = _review_args(r, proposed_dup)
+    assert item_id == f"er_match:camera_site:{a.subject_id}:{b.subject_id}"
+    assert '"rule": "0:duplicate_target_of"' in payload
+
+    # a human conflict on a pair that was never a candidate (decided via a
+    # routed-back item) materializes a conflict review item, not a crash.
+    x1 = _rec("x1", "s1")
+    x2 = _rec("x2", "s2", 0.3)
+    r2 = resolve_camera_sites(
+        [x1, x2],
+        gold=None,
+        threshold=0.98,
+        human_items=[_item("er_match:camera_site:x1:x2", "x1", "x2")],
+        human_votes=[
+            _vote("er_match:camera_site:x1:x2", "accept", reviewer="curator:a"),
+            _vote(
+                "er_match:camera_site:x1:x2",
+                "reject",
+                reviewer="curator:b",
+                at="2026-10-02T00:00:01",
+            ),
+        ],
+    )
+    d2 = next(x for x in r2.decisions if x.verdict is not None)
+    assert d2.disposition == "proposed" and d2.reason == "human_conflict"
+    item_id2, _s2, _c2, payload2 = _conflict_review_args(r2, d2)
+    assert item_id2 == "er_match:camera_site_conflict:x1:x2"
+    assert "human_conflict" in payload2
