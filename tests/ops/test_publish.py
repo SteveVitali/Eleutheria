@@ -263,6 +263,45 @@ def test_partition_places_compartments_correctly(tmp_path: Path) -> None:
     assert result.watermark["ruleset_version"] == "resolver-ruleset-2026.07"
 
 
+def test_web_analytics_partition_like_the_other_web_surfaces(tmp_path: Path) -> None:
+    """P31.14: the ``web/analytics/`` family is a normal manifest-listed artifact —
+    a single known licence in its declared compartment ships public; a compound
+    ``AND`` label in the unregistered ``web_mixed`` partition stays PRIVATE."""
+    export = _write_export(
+        tmp_path / "national",
+        [
+            {
+                "path": "web/analytics/density_bins.json",
+                "compartment": "web_mixed",
+                "license": "CC-BY-4.0 AND ODbL-1.0",
+            },
+            {
+                "path": "web/analytics/centrality.json",
+                "compartment": "web",
+                "license": "CC-BY-4.0",
+            },
+            {
+                "path": "web/analytics/provenance.json",
+                "compartment": "web",
+                "license": "CC-BY-4.0",
+            },
+        ],
+    )
+    result = P.partition_export(export, tmp_path / "public", tmp_path / "restricted")
+    assert set(result.public_artifacts) == {
+        "web/analytics/centrality.json",
+        "web/analytics/provenance.json",
+    }
+    assert set(result.restricted_artifacts) == {"web/analytics/density_bins.json"}
+    P.assert_public_clean(tmp_path / "public")  # the partitioned public tree stays clean
+
+
+def test_assert_export_present_accepts_a_bundle_with_analytics(tmp_path: Path) -> None:
+    root = _national_bundle(tmp_path / "national")
+    (root / "web" / "analytics").mkdir(parents=True)
+    assert P.assert_export_present(root) == root
+
+
 def test_assert_public_clean_passes_on_partitioned_public_tree(tmp_path: Path) -> None:
     export = _national_bundle(tmp_path / "national")
     P.partition_export(export, tmp_path / "public", tmp_path / "restricted")

@@ -486,26 +486,73 @@ export function capRows<T>(rows: readonly T[], max: number = MAX_TABLE_ROWS): Ca
 }
 
 // --------------------------------------------------------------------------- //
-// Auxiliary / presentation data — committed constants, IDENTICAL in both modes.
+// Export-emitted presentation analytics — `<exportDir>/web/analytics/<name>.json`
+// (P31.14 / SURFACE.1, ADR-R9-ANALYTICS; resolves D-P27.5-1).
 //
-// These are NOT part of the frozen P27.1 export contract (the schema deliberately
-// omits them): the national-view density bins and the network centrality/ER-quality
-// analytics are DERIVED presentation aids the export pipeline does not emit yet
-// (D-P27.5-1), and the decision point, capture diff, provenance summaries, jurisdiction
-// claims and editorial constants are page-scoped presentation data, not spine surfaces.
-// They are routed through the data layer so that NO page imports a fixture module
-// directly (the single-seam invariant) — but they carry no export artifact and so
-// never fail loud. Each is honestly the same in `fixtures` and `export` mode.
+// The spine export emits every analytic the surfaces render — the national-view
+// density bins, network centrality + the ego-focus rule, the watch's tracked
+// decision point, the per-surface provenance summaries (with the W4..W0 evidence
+// tiers for "How we know this"), and the research-queue metadata — as a
+// licence-separated, named-denominator artifact family. In `export` mode each
+// getter reads its artifact and FAILS LOUD when it is missing or malformed —
+// exactly like the nine P27.1 surface getters — so no DEMO constant is reachable
+// in an export build. In `fixtures` mode (the CI default) the committed fixture
+// constants serve, as before.
+//
+// The only remaining `web/presentation/` read is `jurisdiction_dossiers` — the
+// SIG-PUB-017 FR/BE demonstration dossiers, intentionally demo (see getDossiers);
+// `ops/publish.py` refuses a `web/presentation/` tree in a public build.
 // --------------------------------------------------------------------------- //
 
-/** National-zoom density bins for the map (presentation analytic; see D-P27.5-1). */
+/** The envelope every `web/analytics/<name>.json` artifact carries (ADR-R9-ANALYTICS). */
+interface AnalyticsEnvelope {
+  schema: string;
+  as_of: string;
+  denominator: string;
+  is_population_total: boolean;
+  source_compartments: string[];
+}
+
+/** Read `<exportDir>/web/analytics/<name>.json`, failing LOUD on a missing or
+ *  malformed artifact — never a silent fall-back (a missing analytic is a build
+ *  error, P31.14). `pick` extracts the payload after the envelope is validated. */
+function readAnalytics<T>(name: string, pick: (envelope: AnalyticsEnvelope & Record<string, unknown>, path: string) => T): T {
+  const path = `${exportDir()}/web/analytics/${name}.json`;
+  let raw: string;
+  try {
+    raw = readFileSync(path, "utf-8");
+  } catch (cause) {
+    throw new Error(
+      `SIG_DATA_SOURCE=export but the analytics artifact is missing: ${path}. ` +
+        "Run `sig-exports build --from-spine --dsn <dsn> --out <dir>` (or, for a local " +
+        "fixture-equivalent bundle, `npm run export:fixtures -- <dir>`) first.",
+      { cause },
+    );
+  }
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch (cause) {
+    throw new Error(`${path}: not valid JSON`, { cause });
+  }
+  const env = parsed as AnalyticsEnvelope & Record<string, unknown>;
+  if (
+    typeof env?.schema !== "string" ||
+    typeof env?.as_of !== "string" ||
+    typeof env?.denominator !== "string" ||
+    !Array.isArray(env?.source_compartments)
+  ) {
+    throw new Error(
+      `${path}: not a valid analytics artifact (needs schema / as_of / denominator / source_compartments)`,
+    );
+  }
+  return pick(env, path);
+}
+
 /**
- * P30.3 — an OPTIONAL presentation artifact at `<exportDir>/web/presentation/<name>.json`.
- * The committed presentation constants below are OKC DEMO values; a real-data build must
- * never render them as data (§3.1). No `--from-spine` export emits these analytics yet
- * (D-P27.5-1), so in export mode an ABSENT artifact yields the honest empty `fallback` (each
- * page shows its empty state); the P27.5 fixture-export harness writes them so the export-mode
- * test suite still exercises the full surfaces. A PRESENT but malformed file fails loud.
+ * The remaining OPTIONAL presentation artifact — the SIG-PUB-017 demo dossiers
+ * (`web/presentation/jurisdiction_dossiers.json`, P30.3). Deliberately demo
+ * content the fixture-export harness ships for the e2e surface; absent → `[]`.
  */
 function readPresentation<T>(name: string, fallback: T): T {
   const path = `${exportDir()}/web/presentation/${name}.json`;
@@ -519,62 +566,66 @@ function readPresentation<T>(name: string, fallback: T): T {
 
 /**
  * The site-wide "How we know this" default (SIG-UI-044). Fixtures mode → `undefined` (the
- * component falls back to the committed worked-OKC `DEFAULT_PROVENANCE`). Export mode (P30.3)
- * → a summary DERIVED from the export, so no national page carries the demo corpus's figures:
- * the published evidence artifacts, the distinct sources they come from, the ruleset the site
- * pins, and "not yet human-reviewed" (claim-level evidence is machine-ingested). Evidence
- * tiers (W1–W3) are not computed for the national corpus yet, so the distribution is reported
- * honestly as `untiered`; no dated evidence range is recorded (freshness dates are
- * `not-recorded`), so `date_range` is null. A `presentation/site_provenance.json` overrides.
+ * component falls back to the committed worked-OKC `DEFAULT_PROVENANCE`). Export mode
+ * (P31.14) → the `surfaces.site` summary the spine export emits — real W4..W0 evidence
+ * tiers over the publishable claims, the published artifacts, the distinct sources,
+ * the dated-observation range, and the honest human-review posture.
  */
 export function getSiteProvenance(): ProvenanceSummary | undefined {
   if (dataSource() === "fixtures") return undefined;
-  const override = readPresentation<ProvenanceSummary | null>("site_provenance", null);
-  if (override) return override;
-  const artifacts = getEvidence().artifacts;
-  const sources = new Set(artifacts.map((a) => (a as { source?: string }).source ?? ""));
-  sources.delete("");
-  return {
-    artifact_count: artifacts.length,
-    tier_distribution: { untiered: artifacts.length },
-    source_independence_count: sources.size,
-    date_range: null,
-    rules_applied: [getSiteMetadata().rulesetVersion],
-    human_review_status: "unreviewed",
-  };
+  return readAnalytics("provenance", (env, path) => {
+    const summary = (env.surfaces as Record<string, unknown> | undefined)?.site;
+    if (summary == null) throw new Error(`${path}: provenance carries no surfaces.site summary`);
+    return summary as ProvenanceSummary;
+  });
 }
 
+/** National-zoom density bins for the map (§19.5 H3 bins, SIG-UI-019; export-emitted, P31.14). */
 export function getMapDensityBins(): DensityBin[] {
-  // P30.3: the committed bins are OKC DEMO values; a real-data build must never show them
-  // as data (§3.1). No export emits density bins yet (D-P27.5-1) → honest empty state.
-  if (dataSource() === "export") return readPresentation<DensityBin[]>("density_bins", []);
+  if (dataSource() === "export") {
+    return readAnalytics("density_bins", (env, path) => {
+      if (!Array.isArray(env.bins)) throw new Error(`${path}: expected a "bins" array`);
+      return env.bins as DensityBin[];
+    });
+  }
   return DENSITY_BINS;
 }
 
-/** Centrality/hub statistics for the network explorer (presentation analytic; D-P27.5-1). */
+/** Centrality/hub statistics for the network explorer (degree over the typed access edges, P31.14). */
 export function getNetworkCentrality(): CentralityStatistic[] {
-  // P30.3: demo centrality (OKC PD, Flock …) is never shown as national data (D-P27.5-1).
-  if (dataSource() === "export") return readPresentation<CentralityStatistic[]>("centrality", []);
+  if (dataSource() === "export") {
+    return readAnalytics("centrality", (env, path) => {
+      if (!Array.isArray(env.statistics)) throw new Error(`${path}: expected a "statistics" array`);
+      return env.statistics as CentralityStatistic[];
+    });
+  }
   return CENTRALITY_STATS;
 }
 
 /** The entity the network explorer centers its ego view on by default (SIG-UI-022). */
 export function getNetworkFocusEntityId(): string {
-  // P30.3: in a real-data build the focus is a REAL node of the exported network (or none).
   if (dataSource() === "export") {
-    const focus = readPresentation<{ id?: string } | null>("focus_entity", null);
-    return focus?.id ?? getNetwork().nodes[0]?.id ?? "";
+    return readAnalytics("centrality", (env, path) => {
+      const focus = env.focus as { entity_id?: unknown } | undefined;
+      if (focus == null) throw new Error(`${path}: expected a "focus" block`);
+      return typeof focus.entity_id === "string" ? focus.entity_id : "";
+    });
   }
   return FOCUS_ENTITY_ID;
 }
 
 /**
- * The upcoming decision the evidence recommender ranks for (§39.5a). `null` in a real-data
- * build: the committed decision point is an OKC DEMO ("OKCPD ALPR contract renewal"), and no
- * export emits a tracked decision yet — the watch shows an honest "none tracked" (P30.3).
+ * The upcoming decision the evidence recommender ranks for (§39.5a): the earliest
+ * derivable decision date the export's renewal watch carries — `null` when none is
+ * tracked (an honest "none tracked", never a fabricated urgency).
  */
 export function getDecisionPoint(): DecisionPoint | null {
-  if (dataSource() === "export") return readPresentation<DecisionPoint | null>("decision_point", null);
+  if (dataSource() === "export") {
+    return readAnalytics("decision_point", (env, path) => {
+      if (!("decision_point" in env)) throw new Error(`${path}: expected a "decision_point" field`);
+      return (env.decision_point ?? null) as DecisionPoint | null;
+    });
+  }
   return DECISION_POINT;
 }
 
@@ -585,9 +636,13 @@ export function getCaptureDiff(): [Capture, Capture] {
 
 /** The provenance summary for the corrections surface ("How we know this", SIG-UI-044). */
 export function getCorrectionsProvenance(): ProvenanceSummary | undefined {
-  // P30.3: the committed summary describes the DEMO corrections, not the export's.
   if (dataSource() === "export") {
-    return readPresentation<ProvenanceSummary | null>("corrections_provenance", null) ?? undefined;
+    return readAnalytics("provenance", (env, path) => {
+      const summary = (env.surfaces as Record<string, unknown> | undefined)?.corrections;
+      if (summary == null)
+        throw new Error(`${path}: provenance carries no surfaces.corrections summary`);
+      return summary as ProvenanceSummary;
+    });
   }
   return CORRECTIONS_PROVENANCE;
 }
@@ -595,21 +650,35 @@ export function getCorrectionsProvenance(): ProvenanceSummary | undefined {
 /** The provenance summary for the research-queue surface (SIG-UI-044). */
 export function getResearchQueueProvenance(): ProvenanceSummary | undefined {
   if (dataSource() === "export") {
-    return readPresentation<ProvenanceSummary | null>("research_queue_provenance", null) ?? undefined;
+    return readAnalytics("provenance", (env, path) => {
+      const summary = (env.surfaces as Record<string, unknown> | undefined)?.research_queue;
+      if (summary == null)
+        throw new Error(`${path}: provenance carries no surfaces.research_queue summary`);
+      return summary as ProvenanceSummary;
+    });
   }
   return RESEARCH_QUEUE_PROVENANCE;
 }
 
 /** Live jurisdiction claims for the research queue (§33.5, priority not exclusivity). */
 export function getJurisdictionClaims(): JurisdictionClaim[] {
-  if (dataSource() === "export") return readPresentation<JurisdictionClaim[]>("jurisdiction_claims", []);
+  if (dataSource() === "export") {
+    return readAnalytics("queue_meta", (env, path) => {
+      if (!Array.isArray(env.jurisdiction_claims))
+        throw new Error(`${path}: expected a "jurisdiction_claims" array`);
+      return env.jurisdiction_claims as JurisdictionClaim[];
+    });
+  }
   return JURISDICTION_CLAIMS;
 }
 
 /** The as-of date the research queue is rendered at. */
 export function getQueueAsOf(): string {
   if (dataSource() === "export") {
-    return readPresentation<string | null>("queue_as_of", null) ?? getSiteMetadata().asOf.as_of_world;
+    return readAnalytics("queue_meta", (env, path) => {
+      if (typeof env.queue_as_of !== "string") throw new Error(`${path}: expected "queue_as_of"`);
+      return env.queue_as_of;
+    });
   }
   return QUEUE_AS_OF;
 }
