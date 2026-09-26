@@ -203,3 +203,106 @@ def test_as_of_belief_returns_historical_value(seeded: dict[str, Any]) -> None:
     assert {299, 190} <= now_values, f"a now-belief read must see the current claims: {now_values}"
     assert 999 not in now_values, "the sealed (tier-2) claim must never be published (§0.7)"
     store.close()
+
+
+def test_watermark_keyed_serve_path_discloses_and_invalidates(
+    pg_dsn: str, seeded: dict[str, Any], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """P25.10: same set as compute-on-read, watermark disclosed, never stale.
+
+    The spine is append-only, so the compute-on-read annotation set is memoised
+    against the spine watermark: repeated reads at one watermark never recompute;
+    a new contradiction-producing claim bumps the watermark and the endpoint
+    reflects it on the next read; the cache can never serve a stale set.
+    """
+    from api.app import create_app
+    from api.store_pg import PgReadStore
+    from db.claim_sink import PgClaimSink
+    from starlette.testclient import TestClient
+
+    store = PgReadStore(pg_dsn)
+    compute_calls = 0
+    original = store._compute_on_read
+
+    def _counting_compute(conn: Any) -> Any:
+        nonlocal compute_calls
+        compute_calls += 1
+        return original(conn)
+
+    monkeypatch.setattr(store, "_compute_on_read", _counting_compute)
+
+    with TestClient(create_app(store)) as client:
+        first = client.get("/v1/contradiction").json()
+        wm1 = first["spine_watermark"]
+        assert wm1 and "claims=" in wm1, f"freshness must be disclosed: {wm1}"
+        ids1 = {c["contradiction_id"] for c in first["contradictions"]}
+        ent = seeded["entity_id"]
+        assert f"contradiction:{ent}:{_PREDICATE}" in ids1
+        assert all(c["spine_watermark"] == wm1 for c in first["contradictions"]), (
+            "every served item states the watermark it was computed at"
+        )
+
+        # A second read at the same watermark is the memoised set, no recompute.
+        second = client.get("/v1/contradiction").json()
+        assert second["spine_watermark"] == wm1
+        assert {c["contradiction_id"] for c in second["contradictions"]} == ids1
+        assert compute_calls == 1, "a same-watermark read must never recompute"
+
+        # /v1/task is the same shape: the shared cached view, same disclosure.
+        tasks = client.get("/v1/task").json()
+        assert tasks["spine_watermark"] == wm1
+        assert compute_calls == 1
+
+        # --- invalidation: a new contradiction-producing claim lands ---------
+        sink = PgClaimSink.from_dsn(
+            pg_dsn, connector_name="okc", connector_version="1.0.0", code_commit="p25.10"
+        )
+        new_subject = "okc:deployment:p25-10-watermark"
+        sink.assert_claims(
+            [
+                {
+                    "record_kind": "claim",
+                    "subject_id": new_subject,
+                    "predicate_id": _PREDICATE,
+                    "value": 11,
+                    "raw_value": "11",
+                    "source_id": "p25-10-src-a",
+                    "license": "CC-BY-4.0",
+                    "source_attribution": "P25.10 test source A",
+                    "evidence_genre": "news_article",
+                    "observed_at": "2026-09-16",
+                    "claim_id": "p25-10-a",
+                    "sys_period": "[x,)",
+                },
+                {
+                    "record_kind": "claim",
+                    "subject_id": new_subject,
+                    "predicate_id": _PREDICATE,
+                    "value": 22,
+                    "raw_value": "22",
+                    "source_id": "p25-10-src-b",
+                    "license": "CC-BY-4.0",
+                    "source_attribution": "P25.10 test source B",
+                    "evidence_genre": "news_article",
+                    "observed_at": "2026-09-16",
+                    "claim_id": "p25-10-b",
+                    "sys_period": "[x,)",
+                },
+            ]
+        )
+
+        # The bumped watermark recomputes exactly once and serves BOTH the old
+        # and the new contradiction; a stale set can never be served.
+        third = client.get("/v1/contradiction").json()
+        assert third["spine_watermark"] != wm1
+        ids3 = {c["contradiction_id"] for c in third["contradictions"]}
+        new_ids = ids3 - ids1
+        assert len(new_ids) == 1, f"exactly one new contradiction appears: {new_ids}"
+        assert new_ids.pop().endswith(f":{_PREDICATE}")
+        assert f"contradiction:{ent}:{_PREDICATE}" in ids3, "the old set is retained"
+        assert compute_calls == 2, "a bumped watermark recomputes exactly once"
+
+        # The single-item route discloses the same watermark.
+        item = client.get(f"/v1/contradiction/{sorted(ids3)[0]}").json()
+        assert item["spine_watermark"] == third["spine_watermark"]
+    store.close()

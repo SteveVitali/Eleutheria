@@ -141,6 +141,25 @@ class ReadStore(Protocol):
 
     def contradiction(self, contradiction_id: str) -> ContradictionRecord | None: ...
 
+    def annotation_watermark(self) -> str | None:
+        """The spine watermark the served contradiction/task set was computed at.
+
+        ``None`` when the store does not derive its annotation set from an
+        append-only spine (e.g. the seeded in-memory store). When set, it states
+        the spine state the served set describes (P25.10, SIG-API-005/006): a
+        cached answer always says which spine state it answers for.
+        """
+        ...
+
+    def warmup(self) -> None:
+        """Optionally pre-compute any expensive derived set in the background.
+
+        A no-op for stores whose surfaces are already materialised. Stores that
+        compute on read (``PgReadStore``) may kick off a single per-instance
+        compute so even the first user request is served warm (P25.10).
+        """
+        ...
+
     def resolve_id(self, id_type: str, uuid: str) -> IdDescriptor | None: ...
 
 
@@ -257,6 +276,14 @@ class InMemoryStore:
 
     def contradiction(self, contradiction_id: str) -> ContradictionRecord | None:
         return self._contradictions.get(contradiction_id)
+
+    def annotation_watermark(self) -> str | None:
+        # Seeded records, not a spine-derived set: there is no watermark to disclose.
+        return None
+
+    def warmup(self) -> None:
+        # Everything is already materialised in memory; nothing to warm.
+        return None
 
     def resolve_id(self, id_type: str, uuid: str) -> IdDescriptor | None:
         return self._ids.get((id_type, uuid))

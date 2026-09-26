@@ -11,6 +11,7 @@ coordinate reduction (SIG-API-012), and the prohibition matcher (SIG-API-012).
 from __future__ import annotations
 
 from datetime import UTC, date, datetime
+from typing import Any
 
 from api.asof import AsOfContext
 from api.dereference import select_media_type
@@ -97,3 +98,18 @@ def test_media_type_selection() -> None:
     assert select_media_type("text/html") == "text/html"
     assert select_media_type(None) == "text/html"
     assert select_media_type("*/*") == "text/html"
+
+
+def test_inmemory_store_discloses_no_watermark(client: Any) -> None:
+    """P25.10: a seeded (non-spine) store has no watermark; the field still echoes."""
+    from api.store import InMemoryStore
+
+    store = InMemoryStore()
+    assert store.annotation_watermark() is None
+    store.warmup()  # a no-op: a materialised store has nothing to compute
+
+    body = client.get("/v1/contradiction").json()
+    assert "spine_watermark" in body, "the freshness field is always present"
+    assert body["spine_watermark"] is None
+    task_body = client.get("/v1/task").json()
+    assert task_body["spine_watermark"] is None

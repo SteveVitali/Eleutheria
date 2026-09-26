@@ -68,7 +68,12 @@ def test_source_ids_are_unique() -> None:
 #: custody; counsel resolved HG-02 on 2026-09-16 (ADR-086) — the derived facts
 #: publish in the dedicated `derived_facts` compartment, so those records are
 #: redistributable (upstream bytes are never re-hosted regardless — no connector
-#: emits them into the spine). Every connector-mapped source is now flipped;
+#: emits them into the spine). GL-GATE-06 (2026-09-16, blanket rights disposition)
+#: then flipped the 13 remaining flip-ready OSM-ecosystem + civic sources
+#: (osm_copyright, osm_taginfo, osmf_licence_guidelines, osm_surveillance_tagging,
+#: osm_replication, osm_automated_edits_coc, sous_surveillance_osm_import,
+#: wikidata_sparql, eyes_on_flock, flock_finder, deflock_app_repo, gleif,
+#: agency_audit_export). Every connector-mapped source is now flipped;
 #: the unmapped remainder stays un-permitted.
 _FLIPPED_SUBSET = frozenset(
     {
@@ -97,6 +102,20 @@ _FLIPPED_SUBSET = frozenset(
         "aspi_mapping_chinas_tech_giants",
         "carnegie_ai_gsi",
         "facial_recognition_world_map",
+        # GL-GATE-06 (2026-09-16): the 13 flip-ready OSM-ecosystem + civic sources.
+        "osm_copyright",
+        "osm_taginfo",
+        "osmf_licence_guidelines",
+        "osm_surveillance_tagging",
+        "osm_replication",
+        "osm_automated_edits_coc",
+        "sous_surveillance_osm_import",
+        "wikidata_sparql",
+        "eyes_on_flock",
+        "flock_finder",
+        "deflock_app_repo",
+        "gleif",
+        "agency_audit_export",
     }
 )
 
@@ -104,7 +123,8 @@ _FLIPPED_SUBSET = frozenset(
 def test_ingestion_permitted_defaults_false_across_the_seed() -> None:
     # Phase 0 seeds the registry; connectors are Phase 4+. A source is permitted
     # only after a reviewer resolves its posture and flips the flag — as of the
-    # RIGHTS.1 re-run plus the 2026-09-15 live-ops flips that is exactly this set.
+    # RIGHTS.1 re-run, the 2026-09-15 live-ops flips, and the GL-GATE-06 blanket
+    # disposition (2026-09-16) that is exactly this set (38 sources).
     permitted = {s.id for s in sources() if s.ingestion_permitted}
     assert permitted == set(_FLIPPED_SUBSET)
 

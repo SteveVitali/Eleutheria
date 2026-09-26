@@ -54,3 +54,25 @@ reachable and reviewed; HG-04 outreach is the honest next step.
 any flip.**
 
 **HG-02 resolved 2026-09-16 (counsel, operator-reported):** derived facts/citations publishable — dedicated `derived_facts` compartment (ADR-086); `redistributable` flipped to true on the registry record (it gates SIG's emitted claims; upstream bytes are still never re-hosted — architectural, not flag-borne).
+
+## eID access-path investigation (2026-09-16)
+
+Operator asked whether the eID wall is crossable. Finding — the wall is real **and**
+structural, so the recorded `NoLiveTargets` posture is correct and likely permanent:
+
+- `declarationcamera.be` is a **declaration filing portal**, not a published
+  register. Citizens file *their own* camera declarations to police; there is no
+  public queryable dataset of registered cameras behind the login — authenticated
+  access reaches only the filer's own declarations, not a national browse.
+- Authentication runs through Belgium's federal CSAM service (SPF BOSA): Belgian
+  eID card, citizen token, or itsme mobile-app code. Non-Belgian nationals can
+  request an alternative identification means from SPF BOSA directly — a manual,
+  human account-registration process.
+- Even with credentials, there is no bulk/public data surface to ingest; the
+  register's contents are visible only to police and the DPA.
+
+**Consequence:** `NoLiveTargets` stands as the honest terminal posture for this
+source. A future Belgian data path would come from a *different* origin (e.g.
+municipal camera registers published under open-data terms), not from
+declarationcamera access. Sources: besafe.be declaration-system docs, ibz.be
+node/1241, anpi.be declaration guidance (all public pages, fetched 2026-09-16).

@@ -306,12 +306,16 @@ class TaskResponse(_Model):
     rationale: str
     coverage: CoverageStatement
     as_of: AsOfEcho
+    #: The spine watermark this task set was computed at (P25.10): a derived
+    #: answer always states which append-only spine state it describes.
+    spine_watermark: str | None = None
 
 
 class TaskCollection(_Model):
     tasks: list[TaskResponse]
     coverage: CoverageStatement
     as_of: AsOfEcho
+    spine_watermark: str | None = None
 
 
 class ContradictionResponse(_Model):
@@ -325,12 +329,15 @@ class ContradictionResponse(_Model):
     claim_ids: list[str]
     coverage: CoverageStatement
     as_of: AsOfEcho
+    #: The spine watermark this contradiction set was computed at (P25.10).
+    spine_watermark: str | None = None
 
 
 class ContradictionCollection(_Model):
     contradictions: list[ContradictionResponse]
     coverage: CoverageStatement
     as_of: AsOfEcho
+    spine_watermark: str | None = None
 
 
 class ChangeEvent(_Model):
