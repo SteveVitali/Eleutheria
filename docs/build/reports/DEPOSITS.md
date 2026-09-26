@@ -15,6 +15,19 @@ swapped for a production token) that appends its row below.
 |---|---|---|---|---|---|
 | 2026-09-09 | sig-2026-08-20-95c7a19a | sandbox-dry-run | 10.5072/zenodo.181709756531953 | 10.5072/zenodo.145822404201517 | 17 |
 | 2026-09-10 | sig-2026-08-20-95c7a19a | dry-run | 10.5281/zenodo.181709756531953 | 10.5281/zenodo.145822404201517 | 16 |
+| 2026-09-15 | sig-2026-08-20-95c7a19a | sandbox | 10.5072/zenodo.603731 | 10.5072/zenodo.603732 | 16 |
+
+## 2026-09-15 — real sandbox deposit published (HG-07, P21.5 re-run)
+
+The operator supplied a correctly-scoped `sandbox.zenodo.org` personal access token
+(`deposit:write`+`deposit:actions`; the first token had no scopes → HTTP 403). The
+row above (`environment = sandbox`, DOIs under `10.5072/…`) is a **real** Zenodo
+sandbox deposition published by `sig-exports deposit --sandbox` — still a *test*
+identifier, **not** the production concept DOI (RISK-P21-08). Fixed a real live-API
+bug this run: Zenodo's bucket file API 404s on object keys containing `/` (the
+export's compartment paths), so deposited filenames are flattened `/`→`__`.
+`D-P21.5-1`'s Zenodo half is DONE; object-store push + live egress + SWH save remain
+gate-pending (HG-07).
 
 ## 2026-09-10 — INFRA.1 (GL-INFRA-01) re-run, prepare-only (append-only)
 

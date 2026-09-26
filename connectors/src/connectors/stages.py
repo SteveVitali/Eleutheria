@@ -116,6 +116,26 @@ def content_digest(payload: Any) -> str:
     return multihash(data.encode("utf-8"))
 
 
+class ContentDrift(ValueError):
+    """Captured live bytes no longer match a connector's expected content shape.
+
+    Raised by a connector's parse/extract when a live fetch returns content that no
+    longer matches the shape the parser was built for (a re-issued PDF, a redesigned
+    page, a structured payload that changed) — instead of emitting garbage or
+    silently zero claims (P25.1 / ADR-082, the "fail loud" rule). Subclasses
+    :class:`ValueError` so existing shape-guard call sites keep their contract; the
+    live runner records it (a `content_drift` note on the fetch record) and the CLI
+    exits non-zero rather than crashing with an opaque traceback.
+    """
+
+    def __init__(self, source_id: str, reason: str, *, details: str = "") -> None:
+        self.source_id = source_id
+        self.reason = reason
+        self.details = details
+        msg = f"content drift for source {source_id!r}: {reason}"
+        super().__init__(f"{msg} ({details})" if details else msg)
+
+
 @dataclass(frozen=True)
 class StageArtifact:
     """A content-addressed artifact persisted by one stage (SIG-INGEST-001)."""
@@ -298,7 +318,13 @@ class Fetcher(Protocol):
     shared seam for an authenticated source (§23.5); most connectors omit them.
     """
 
-    def fetch(self, url: str, *, headers: Mapping[str, str] | None = None) -> FetchResult: ...
+    def fetch(
+        self,
+        url: str,
+        *,
+        headers: Mapping[str, str] | None = None,
+        body: bytes | None = None,
+    ) -> FetchResult: ...
 
 
 # --- run context --------------------------------------------------------------

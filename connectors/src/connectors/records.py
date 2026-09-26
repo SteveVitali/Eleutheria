@@ -907,6 +907,13 @@ class RecordsConnector(Connector):
         """
         platform = str(raw.get("platform") or _platform_for_source(ctx.source.id))
         doc_urls = _released_document_urls(raw)
+        # api_v2 returns its own status vocabulary ("done", "ack", "no_docs", …);
+        # translate through the versioned vocab map. An unmapped raw value passes
+        # through unchanged and fails the §11.19 enum check LOUD — recorded drift,
+        # never a silent coerce. The untouched raw value stays in `raw` (P2).
+        raw_status = _opt_str(raw.get("response_status") or raw.get("status"))
+        if raw_status is not None:
+            raw_status = vocab().get("muckrock_status_map", {}).get(raw_status, raw_status)
         return RecordsRequest(
             external_id=str(raw.get("external_id") or raw.get("id") or raw.get("request_id") or ""),
             platform=platform,
@@ -916,7 +923,7 @@ class RecordsConnector(Connector):
             request_text=_opt_str(raw.get("request_text") or raw.get("title") or raw.get("text")),
             filed_date=_opt_str(raw.get("filed_date") or raw.get("date_submitted")),
             response_date=_opt_str(raw.get("response_date") or raw.get("datetime_done")),
-            response_status=_opt_str(raw.get("response_status") or raw.get("status")),
+            response_status=raw_status,
             statutory_basis=_opt_str(raw.get("statutory_basis")),
             released_documents=tuple(evidence_artifact_id(u) for u in doc_urls),
             raw=dict(raw),

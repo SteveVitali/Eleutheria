@@ -58,7 +58,7 @@ from uuid import uuid4
 from resolution.ori import is_valid_ori
 
 from ._data import load_table
-from .stages import CaptureRef, Connector, FetchResult, RunContext, register
+from .stages import CaptureRef, Connector, ContentDrift, FetchResult, RunContext, register
 
 #: The registry source this connector runs against (§22.6 D; MIRROR + CC-BY-4.0).
 ATLAS_SOURCE_ID = "eff_atlas_of_surveillance"
@@ -252,6 +252,24 @@ def _genre_column(header: Iterable[str]) -> str | None:
     return None
 
 
+def _category_column(header: Iterable[str]) -> str | None:
+    """The feed's category column — the first configured candidate present.
+
+    The upstream renamed the category column ``Type`` -> ``Technology``
+    (observed 2026-09-15, P25.3); the candidate list in ``atlas_vocab.toml``
+    covers every name seen. ``None`` means none of them appear — schema drift,
+    not an empty feed (the caller treats it as :class:`ContentDrift`).
+    """
+    present = set(header)
+    candidates = _columns().get("category_column_candidates")
+    if not candidates:
+        candidates = [_columns()["category_column"]]
+    for name in candidates:
+        if str(name) in present:
+            return str(name)
+    return None
+
+
 # --- CSV parsing + canary -----------------------------------------------------
 
 
@@ -289,10 +307,12 @@ def canary_findings(parsed: Mapping[str, Any]) -> list[str]:
         return ["missing CSV header"]
     cols = _columns()
     agency_col = str(cols["agency_column"])
-    category_col = str(cols["category_column"])
-    for required in (agency_col, category_col):
-        if required not in header:
-            findings.append(f"missing required column {required!r}")
+    category_col = _category_column(header)
+    if agency_col not in header:
+        findings.append(f"missing required column {agency_col!r}")
+    if category_col is None:
+        findings.append(f"missing required column one of {cols['category_column_candidates']!r}")
+        category_col = str(cols["category_column"])  # for the row scan below
     if findings:
         return findings
     for i, row in enumerate(parsed.get("rows", [])):
@@ -414,7 +434,25 @@ class AtlasConnector(Connector):
         header = list(parsed.get("header", []))
         genre_col = _genre_column(header)
         agency_col = str(cols["agency_column"])
-        category_col = str(cols["category_column"])
+        category_col = _category_column(header)
+        # Fail loud on header-level schema drift (P25.3 / ADR-082): a live Atlas CSV
+        # whose columns no longer match must not silently yield 0 claims. A required
+        # column absent from the header is drift; per-row emptiness is not (it is a
+        # softer canary signal handled downstream). The category column resolves
+        # through `category_column_candidates` (the live export renamed Type ->
+        # Technology), so this fires only when NO candidate is present.
+        missing = [agency_col] if agency_col not in header else []
+        if category_col is None:
+            missing.append(f"one of {cols['category_column_candidates']!r}")
+        if missing and parsed.get("rows"):
+            raise ContentDrift(
+                ctx.source.id,
+                f"Atlas CSV is missing required column(s) {missing}",
+                details=f"header={header[:10]} (schema drift — the extractor needs the "
+                "real Atlas columns, P25.3)",
+            )
+        if category_col is None:  # no rows AND no category column: nothing to read
+            return []
         out: list[Mapping[str, Any]] = []
         for row in parsed.get("rows", []):
             agency = str(row.get(agency_col, "")).strip()

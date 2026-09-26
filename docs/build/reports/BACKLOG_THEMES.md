@@ -9,7 +9,7 @@ Each `BL-` id appears in exactly one theme (validated by `check_backlog.py`). Th
 
 ## T2 — Live wiring & connectors
 - **retired mostly by:** P21.3
-- **bl_ids:** BL-015, BL-016, BL-017, BL-018, BL-020, BL-023, BL-024, BL-025, BL-026, BL-028, BL-044, BL-054
+- **bl_ids:** BL-015, BL-016, BL-017, BL-018, BL-020, BL-023, BL-024, BL-025, BL-026, BL-028, BL-044, BL-054, BL-055
 
 ## T3 — Rights, compact & legal
 - **retired mostly by:** P21.1 (+ human gates)

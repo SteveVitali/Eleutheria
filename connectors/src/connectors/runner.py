@@ -42,7 +42,14 @@ from .registry import SourceRecord, get
 from .replay import ShadowDiff, replay, replay_fingerprint, shadow_replay
 from .review import has_review_metadata, has_rights_block
 from .sinks import make_claim_sink
-from .stages import ClaimSink, Connector, InMemoryCaptureStore, RunContext, registered_connectors
+from .stages import (
+    ClaimSink,
+    Connector,
+    ContentDrift,
+    InMemoryCaptureStore,
+    RunContext,
+    registered_connectors,
+)
 
 _ROBOTS_ALLOW_ALL = "User-agent: *\nAllow: /\n"
 
@@ -155,7 +162,12 @@ class _StaticFileTransport:
         return RobotsResult(text=_ROBOTS_ALLOW_ALL)
 
     def request(
-        self, url: str, *, user_agent: str, headers: Mapping[str, str] | None = None
+        self,
+        url: str,
+        *,
+        user_agent: str,
+        headers: Mapping[str, str] | None = None,
+        body: bytes | None = None,
     ) -> FetchResult:
         return FetchResult(
             url=url,
@@ -245,6 +257,9 @@ class FetchRecord:
     claim_count: int = 0
     rate_limit_events: list[Mapping[str, Any]] = field(default_factory=list)
     robots_decisions: list[Mapping[str, Any]] = field(default_factory=list)
+    #: Set when the live content no longer matched the connector's expected shape
+    #: (P25.1 / ADR-082): the run emitted 0 claims and recorded the drift, loud.
+    content_drift: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         """A JSON-serialisable dict; content is never included (§3.1, §17)."""
@@ -261,6 +276,7 @@ class FetchRecord:
             "claim_count": self.claim_count,
             "rate_limit_events": [dict(e) for e in self.rate_limit_events],
             "robots_decisions": [dict(d) for d in self.robots_decisions],
+            "content_drift": self.content_drift,
         }
 
 
@@ -370,9 +386,18 @@ def _run_live(
     if reasons:
         raise LiveGateRefused(source_id, reasons)
 
-    # --- green-source live path (unreachable while no source is flipped) -------
-    # Built with the real HTTP transport + OCFL capture store; kept correct so a
-    # future green flip runs unchanged. Not exercised this run (HG-03 pending).
+    # Real per-source fetch targets come from the declarative live-targets table
+    # (P24.1 / ADR-082) — NOT a placeholder. A green source with no configured
+    # target is refused here rather than fetching a bogus URL (SIG-INGEST-045i).
+    from .live_targets import NoLiveTargets, live_targets
+
+    targets = live_targets(source_id)
+    if not targets:
+        raise NoLiveTargets(source_id)
+
+    # --- green-source live path -----------------------------------------------
+    # The real HTTP transport + OCFL capture store, driven by the configured
+    # targets through the shared politeness layer.
     from evidence.ocfl import OcflStore  # local import: heavy evidence deps
     from evidence.storage import LocalFileStore
 
@@ -397,14 +422,38 @@ def _run_live(
         code_commit=code_commit,
     )
     source = get(source_id)
+    parameters: dict[str, Any] = {"targets": targets}
+    if source_id == "muckrock":
+        parameters["muckrock_token_cache"] = _muckrock_token_cache(fetcher)
     ctx = RunContext(
         source=source,
         run=IngestRun(connector.name, version, code_commit, "r1", "v1", ()),
         fetcher=fetcher,
         captures=captures,
         claim_sink=sink,
+        parameters=parameters,
     )
-    report = run(connector, ctx)
+    try:
+        report = run(connector, ctx)
+    except ContentDrift as drift:
+        # The fetch succeeded but the content no longer matches the parser's shape
+        # (P25.1 / ADR-082): record the drift loud (0 claims), never garbage, then
+        # re-raise so the CLI exits non-zero.
+        write_fetch_record(
+            FetchRecord(
+                source_id=source_id,
+                connector=connector.name,
+                mode=RunMode.LIVE.value,
+                started_at=started.isoformat(),
+                duration_seconds=time.monotonic() - t0,
+                claim_count=0,
+                rate_limit_events=list(transport.rate_limit_events),
+                content_drift=str(drift),
+            ),
+            capture_dir / "live_runs",
+        )
+        transport.close()
+        raise
     fetch_record = FetchRecord(
         source_id=source_id,
         connector=connector.name,
@@ -426,6 +475,49 @@ def _run_live(
         asserted=report.asserted,
         fetch_record=fetch_record,
     )
+
+
+def _muckrock_token_cache(fetcher: PoliteFetcher) -> Any:
+    """Build the refreshing MuckRock JWT cache for a live run (§23.5, F4.2/F4.3).
+
+    The mint exchanges ``$SIG_MUCKROCK_REFRESH`` (a long-lived refresh token,
+    HG-09 env-only) at the documented Squarelet ``/api/refresh/`` endpoint for a
+    5-minute access JWT. The exchange itself rides the shared politeness layer —
+    the accounts host is ADR-083 allow-listed, so the credential exchange is
+    rate-limited and audited like every other egress. A missing refresh token is
+    a loud configuration error, never a silent unauthenticated run.
+    """
+    import os
+
+    from .records import MuckRockTokenCache, muckrock_config
+
+    refresh = os.environ.get("SIG_MUCKROCK_REFRESH", "").strip()
+    if not refresh:
+        raise RuntimeError(
+            "muckrock live run requires $SIG_MUCKROCK_REFRESH (the long-lived "
+            "refresh token that mints the 5-minute api_v2 JWT, §23.5 F4.2/HG-09); "
+            "without it the run would 401 on every data endpoint."
+        )
+    cfg = muckrock_config()
+    refresh_url = str(cfg["token_refresh_url"])
+
+    class _RefreshTokenSource:
+        """Mints an access JWT by POSTing the refresh token through the fetcher."""
+
+        def mint(self) -> str:
+            result = fetcher.fetch(
+                refresh_url,
+                headers={"Content-Type": "application/json"},
+                body=json.dumps({"refresh": refresh}).encode("utf-8"),
+            )
+            if result.status != 200:
+                raise RuntimeError(
+                    f"MuckRock token refresh returned HTTP {result.status}; the "
+                    "access JWT was not minted (§23.5 F4.3) — check the credential."
+                )
+            return str(json.loads(result.body)["access"])
+
+    return MuckRockTokenCache(_RefreshTokenSource())
 
 
 def _run_over_fixture(

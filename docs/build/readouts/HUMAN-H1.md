@@ -23,3 +23,17 @@ the two reviewer roles + concurrence workflow, stands up the takedown/correction
 ## Consequence recorded
 LIVE.2 public publish (P21.4) stays gate-pending on real HG-01 + HG-11 → RETURN PASS; DEFERRALS
 rows `D-P21.4-1` (HG-01), `D-P21.4-2` (HG-11) remain OPEN. Go-public (GATE-G2) stays human.
+
+## Update — 2026-09-15 (operator post-chain action)
+
+- **HG-01 (legal home) — NAMED.** The operator named the legal home: **Steven Vitali**, an
+  individual maintainer operating in a personal capacity, recorded in
+  `docs/governance/governance-and-code-of-conduct.md § Legal home` (SIG-GOV-012). This resolves the
+  GL-GATE-01 interim posture with a real named home. `PUBLICATION_CHECKLIST.md` item 1 is ticked;
+  `D-P21.4-1` flipped to **DONE**; GATE DECISIONS records HG-01 (2026-09-15). Honest scope: an
+  individual as legal home is an **interim** designation carrying personal exposure and is **not**
+  legal advice; a more durable home + HG-02 counsel are recommended before real public exposure.
+- **HG-11 (governance roles + written concurrence + live takedown contact) — DEFERRED by operator.**
+  No named independent reviewers exist yet; the operator chose to defer. `D-P21.4-2` stays **OPEN**
+  (RETURN PASS, not a block). Consequence: Go-public (GATE-G2) remains impossible until HG-11 is
+  established (checklist items 2–3) and counsel supersedes item 4 (HG-02, also deferred).

@@ -18,7 +18,7 @@
 # tables therefore come last.
 
 # The connector's own vocabulary version, stamped onto every run (§20).
-vocab_version = "2026.09.01"
+vocab_version = "2026.09.15"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `records` connector may write ONLY the RecordsRequest predicate surface (§11.19)
@@ -129,3 +129,25 @@ endpoints = [
 # mid-flight. The effective cache TTL (ttl - margin) is therefore < 5 minutes.
 jwt_ttl_seconds        = 300
 refresh_margin_seconds = 30
+
+# Raw MuckRock api_v2 `status` values → the §11.19 RecordsResponseStatus
+# vocabulary. The api_v2 vocabulary is documented (muckrock API docs / DRF
+# choices): submitted/ack/processed/appealing/fix/payment/lawsuit/rejected/
+# no_docs/done/partial/abandoned. The map is DATA — a raw value not listed here
+# passes through unchanged and fails the enum check LOUD (recorded drift,
+# never a silent coerce). `no_docs` maps to `no_responsive_records` — the
+# SIG-ONTO-040 positive coverage finding, never a null.
+[muckrock_status_map]
+submitted  = "filed"
+ack        = "acknowledged"
+processed  = "acknowledged"
+appealing  = "appealed"
+fix        = "acknowledged"
+payment    = "fee_demanded"
+lawsuit    = "appealed"
+rejected   = "denied"
+no_docs    = "no_responsive_records"
+done       = "fulfilled"
+partial    = "partially_fulfilled"
+abandoned  = "abandoned"
+

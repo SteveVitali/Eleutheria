@@ -1,9 +1,41 @@
 # Governance and Code of Conduct
 
 *Adopts docs/2_canonical_design_spec.md §46.2 (SIG-GOV-014…016) and the
-continuity/succession and degraded-mode posture of §46.4–§46.5 (SIG-GOV-021…023).
-The legal-home and legal-defence requirements (SIG-GOV-012/013) are human
-prerequisites tracked in the risk register, not settled by this document.*
+continuity/succession and degraded-mode posture of §46.4–§46.5 (SIG-GOV-021…023).*
+
+## Legal home (SIG-GOV-012)
+
+**The legal home of SIG (Surveillance Infrastructure Graph) is Steven Vitali, an
+individual maintainer, operating the project in a personal capacity (2026-09-15).**
+
+This resolves the interim "independent open-source project under maintainer
+stewardship" posture (GL-GATE-01 / HUMAN-H1) with a real named home for the purpose
+of governance, dispute-resolution escalation (above), and the corrections/takedown
+contact of record.
+
+*Scope note (honest):* naming an individual as the legal home carries real personal
+exposure and is an **interim** designation. It is **not** legal advice, and it does
+not settle the legal-defence posture (SIG-GOV-013), which remains a human
+prerequisite tracked in the risk register. A more durable home (an entity or a
+fiscal-sponsor umbrella) and a counsel opinion (HG-02) are recommended **before real
+public exposure** (Go-public / GATE-G2). Until then the project runs at Finish-line A
+(deployed, access-restricted), not a public launch.
+
+## Reviewer roles & takedown contact (HG-11, interim — 2026-09-15)
+
+**Interim posture, recorded 2026-09-15.** Pending a second independent reviewer:
+
+- **Maintainer / first reviewer of record:** Steven Vitali (the legal home above).
+- **Takedown / corrections contact of record:** Steven Vitali, via the served
+  `/corrections` and `/dispute` mechanisms (SIG-PUB-008); this names a live human
+  behind the already-built mechanism.
+- **Second independent reviewer:** **still owed.** The two-reviewer written-concurrence
+  workflow (`ReviewerConcurrence`, SIG-PUB-008) is not satisfied by a single reviewer.
+
+*Scope note (honest):* one reviewer is an **interim** posture; **Go-public
+(GATE-G2) remains blocked** until a second independent reviewer + written concurrence
+exist (and HG-02 counsel confirms the publication posture). This records who is
+accountable now; it does not satisfy HG-11 for public launch.
 
 ## Decision-making (SIG-GOV-014)
 

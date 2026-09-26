@@ -187,6 +187,19 @@ already-accepted zero-JS-map deviation under its second fold-back id) —
 **77 rows, 0 new since the capstone addendum.** No new deviation requires
 signature beyond what HG-14 already accepted.
 
+### Addendum 2 — operator signature (GATE-ACCEPT / P24.9)
+
+**Confirmed: no change — Operator (project maintainer), 2026-09-13.** The operator reviewed the
+Round 3–4 go-live accepted-deviations delta above and confirmed there is **no change** to the
+accepted-deviations list: the 77-row ACCEPTED list (the signed 76-row §(b) table + the SIG-UI-047
+fold-back, both accepted at HG-14) is current and accepted; **0 new deviations, 0 sent back to
+closure.** Recorded in `docs/build/LEDGER.md § GATE DECISIONS` (P24.9 / GATE-ACCEPT) and
+`docs/build/readouts/GATE-ACCEPT.md`. The go-live round (Rounds 3–4 against
+`docs/3_sig_golive_spec.md`) is **DONE** (`projectStatus: DONE`, BM-TAIL-03).
+
+- [x] Operator has reviewed the Round 3–4 delta and confirms the ACCEPTED list is unchanged
+  (recorded in the build ledger `GATE DECISIONS`, P24.9). — **CONFIRMED "no change" (GATE-ACCEPT), 2026-09-13**
+
 ## (c) Items routed to P21.x (unchanged from the gap analysis)
 
 The gap analysis routed the remaining non-MET rows to later tickets; P19.5 does not change that routing

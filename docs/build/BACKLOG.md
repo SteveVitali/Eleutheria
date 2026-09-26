@@ -123,6 +123,11 @@ landing here. Regenerate this file after any backlog edit:
 - **BL-043** — Stage-5 pathway connectors persisted to the claim spine (LANDED P21.9/ADR-071; RISK-P17-03 retired; live gate-pending HG-03) · _deferred-feature_ · L · status=closed · gate HG-03
   - sources: RISK-P17-02 RISK-P17-03 RISK-P17-08 RISK-P17-09 RISK-P17-13 RISK-P17-14 LD-H12 LD-V10 ADR-071
 
+## P25.1
+
+- **BL-055** — Live-fetch operationalization: Overpass robots/endpoint policy decision + document-connector content-drift hardening; wire real data/live_targets.toml rows + run real fetches into the hosted spine (P25.1..P25.6; findings from the P24.1 live deploy, ADR-082); implements the adopted ADR-083 API-vs-crawl carve-out — the umbrella backlog home for the whole P25 live-fetch series (see SOURCE_LIVE_OPS_MATRIX.md) · _external-dep_ · L · status=open · gate HG-03
+  - sources: ADR-082 ADR-083 ADR-085
+
 ## human-gate:HG-01
 
 - **BL-034** — Legal home + counsel launch prerequisites · _rights/legal_ · M · status=open · gate HG-01
@@ -136,7 +141,7 @@ landing here. Regenerate this file after any backlog edit:
 ## human-gate:HG-07
 
 - **BL-037** — Infra accounts + host: Zenodo concept DOI, object store, Docker CI runner (HG-07) + real GCP host/apply/deploy + OBS.1 live-side verification (HG-12; homes D-ACCT.1-1, D-DEPLOY.1-1, D-OBS.1-1) · _external-dep_ · S · status=open · gate HG-07 HG-12
-  - sources: LD-P06 ADR-075 ADR-077
+  - sources: LD-P06 ADR-075 ADR-077 ADR-081
 
 ## human-gate:HG-08
 
@@ -175,7 +180,7 @@ landing here. Regenerate this file after any backlog edit:
 - **BL-051** — Spec-vs-code drift after the P20.2 ticked amendments (unbuilt MAY/deferred surfaces) · _docs-drift_ · S · status=open
   - sources: RISK-P20-02 ADR-062
 - **BL-053** — Third-jurisdiction onboarding + recorded P24.6 couplings (operator selects the jurisdiction; ILIKE '%<j>%' filter is a convention not a structure; §11.14 predicates out-of-ruleset; empty-tile step for a no-OSM-layer jurisdiction) · _process_ · M · status=open
-  - sources: ADR-079
+  - sources: ADR-079 ADR-084
 - **BL-054** — CCOPS expansion beyond the three paying sources — remaining ~23 jurisdictions via legislative-platform scrapers (Legistar/Granicus/IQM2/CivicClerk); new extractor kinds per ADR-080 (revisit trigger b); live flips+fetches gate-pending HG-03 · _deferred-feature_ · L · status=open · gate HG-03
   - sources: ADR-080
 
@@ -195,5 +200,5 @@ Triaged by P24.5 (META.1 / GL-META-01, 2026-09-13): each row was checked against
 - **BL-048** — Determinism / whole-graph audit CI jobs (resolution rebuild, TI-6/7 audit) · _process_ · M · sources: RISK-P2-03 RISK-P2-15 ADR-078
 - **BL-049** — Generate physical DDL from LinkML (ontology/db seam, SIG-STORE-045) · _schema-refinement_ · L · sources: RISK-P2-04
 - **BL-051** — Spec-vs-code drift after the P20.2 ticked amendments (unbuilt MAY/deferred surfaces) · _docs-drift_ · S · sources: RISK-P20-02 ADR-062
-- **BL-053** — Third-jurisdiction onboarding + recorded P24.6 couplings (operator selects the jurisdiction; ILIKE '%<j>%' filter is a convention not a structure; §11.14 predicates out-of-ruleset; empty-tile step for a no-OSM-layer jurisdiction) · _process_ · M · sources: ADR-079
+- **BL-053** — Third-jurisdiction onboarding + recorded P24.6 couplings (operator selects the jurisdiction; ILIKE '%<j>%' filter is a convention not a structure; §11.14 predicates out-of-ruleset; empty-tile step for a no-OSM-layer jurisdiction) · _process_ · M · sources: ADR-079 ADR-084
 - **BL-054** — CCOPS expansion beyond the three paying sources — remaining ~23 jurisdictions via legislative-platform scrapers (Legistar/Granicus/IQM2/CivicClerk); new extractor kinds per ADR-080 (revisit trigger b); live flips+fetches gate-pending HG-03 · _deferred-feature_ · L · sources: ADR-080

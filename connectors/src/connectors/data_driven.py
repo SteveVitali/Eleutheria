@@ -69,7 +69,7 @@ from resolution.ori import is_valid_ori
 
 from ._data import load_table
 from .records import RecordsRequest
-from .stages import CaptureRef, Connector, FetchResult, RunContext, register
+from .stages import CaptureRef, Connector, ContentDrift, FetchResult, RunContext, register
 
 #: The registry source this connector runs against (§22.6 D; MIRROR candidate,
 #: rights UNDETERMINED until reviewed — SIG-INGEST-028).
@@ -283,6 +283,93 @@ def parse_release(data: bytes) -> dict[str, Any]:
     return payload
 
 
+def _int_or_none(value: str) -> int | None:
+    """A numeric aggregate or ``None`` — "Not Provided"/"*"-marked cells preserved raw."""
+    cleaned = str(value).strip().rstrip("*").replace(",", "")
+    return int(cleaned) if cleaned.isdigit() else None
+
+
+def _release_from_eff_zip(data: bytes, *, source_uri: str) -> dict[str, Any]:
+    """Build a release-manifest dict from the real EFF ZIP (P25.4).
+
+    The upstream release (``alpr_2016-2017_update.zip``) is a zip of CSVs whose
+    data member carries lettered columns ("A. Agency", "C. Direct Sharing", …).
+    The lettered→normalized map is **vocab data** (``[eff_release.columns]``), so
+    an upstream column change is a vocabulary migration, never a silent code
+    rewrite (SIG-ENG-001 / SIG-INGEST-043d). The real upstream header list goes
+    into ``release.columns`` so the aggregate-only guard inspects the columns
+    the file actually shipped (RISK-P0-08).
+    """
+    import csv
+    import io
+    import zipfile
+
+    cfg = vocab()["eff_release"]
+    cols = cfg["columns"]
+    with zipfile.ZipFile(io.BytesIO(data)) as zf:
+        member = next(
+            (n for n in zf.namelist() if n.endswith(str(cfg["member_suffix"]))),
+            None,
+        )
+        if member is None:
+            raise ContentDrift(
+                DATA_DRIVEN_SOURCE_ID,
+                "the EFF release zip carries no data member",
+                details=f"expected a member ending {cfg['member_suffix']!r}; "
+                f"members: {zf.namelist()} (SIG-INGEST-043d)",
+            )
+        text = zf.read(member).decode("utf-8-sig")
+    reader = csv.DictReader(io.StringIO(text))
+    upstream_columns = list(reader.fieldnames or [])
+    agencies: list[dict[str, Any]] = []
+    for row in reader:
+        name = str(row.get(cols["agency"], "")).strip()
+        if not name:
+            continue
+        sharing_link = str(row.get(cols["sharing_link"], "")).strip()
+        agency: dict[str, Any] = {
+            "agency_id": name,
+            "agency_name": name,
+            "state": str(row.get(cols["state"], "")).strip() or None,
+            "vendor": str(cfg["vendor_label"]),
+            "detections": _int_or_none(row.get(cols["detections"], "")),
+            "hits": _int_or_none(row.get(cols["hits"], "")),
+            "sharing_partner_degree": _int_or_none(row.get(cols["sharing_degree"], "")),
+            "pooled_lookup_participant": str(row.get(cols["nvls"], "")).strip().upper() == "Y",
+        }
+        if sharing_link:
+            # The Data Sharing Report link is the records-request provenance for
+            # this agency's row (SIG-INGEST-044) — a documentcloud URL.
+            agency["records_request"] = {
+                "external_id": sharing_link,
+                "platform": "muckrock",  # DocumentCloud is MuckRock's document platform
+                "target_agency": name,
+            }
+        agencies.append(agency)
+    if not agencies:
+        raise ContentDrift(
+            DATA_DRIVEN_SOURCE_ID,
+            "the EFF release zip produced zero agency rows",
+            details="the lettered-column map no longer matches the upstream CSV (SIG-INGEST-043d)",
+        )
+    return {
+        "release": {
+            "release_id": str(cfg["release_id"]),
+            "version": str(cfg["version"]),
+            "retrieved_date": datetime.now(UTC).date().isoformat(),
+            "observed_at": str(cfg["observed_at"]),
+            "data_file_urls": [source_uri] if source_uri else [],
+            "article_url": "",
+            "source_documents_block_automation": bool(
+                vocab().get("source_documents_block_automation", True)
+            ),
+            "source_document_link_count": int(vocab().get("source_document_link_count", 0)),
+            "columns": upstream_columns,
+            "agencies": agencies,
+        }
+    }
+
+
 def _manifest_from(release: Mapping[str, Any]) -> ReleaseManifest:
     return ReleaseManifest(
         release_id=str(release.get("release_id", DATA_DRIVEN_SOURCE_ID)),
@@ -415,8 +502,11 @@ class DataDrivenConnector(Connector):
 
     # -- interpretation (pure functions of the capture) --
     def parse(self, ctx: RunContext, capture: CaptureRef) -> dict[str, Any]:
-        """Structure the captured release manifest JSON."""
-        return parse_release(ctx.captures.get(capture.digest))
+        """Structure the captured release — manifest JSON, or the real EFF ZIP."""
+        data = ctx.captures.get(capture.digest)
+        if data[:4] == b"PK\x03\x04":
+            return _release_from_eff_zip(data, source_uri=capture.source_uri)
+        return parse_release(data)
 
     def extract(self, ctx: RunContext, parsed: Mapping[str, Any]) -> list[Mapping[str, Any]]:
         """Raw per-agency aggregate records with the release provenance, preserving raw values.

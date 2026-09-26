@@ -45,6 +45,8 @@ from functools import cache
 from typing import Any
 from uuid import uuid4
 
+from evidence.digest import multihash
+from parsing.classification import classify
 from parsing.clauses import clause_claim, find_clause, locate_clauses
 from parsing.genre import DEPLOYMENT_GENRES, DocumentGenre, classify_genre
 from parsing.tables import parse_table, table_claims
@@ -412,6 +414,20 @@ def extract_documents(parsed: Mapping[str, Any]) -> list[Mapping[str, Any]]:
     each document's ``kind`` selects the parser-layer extractor. Every claim routes through
     :func:`pathway_claim`, so both epistemic guards run for every claim.
     """
+    if parsed.get("kind") == "document":
+        # A non-JSON capture is an upstream document: one evidence record carrying its
+        # capture provenance + P07.1 verdict; field claims still require the curated path.
+        capture = parsed["capture"]
+        return [
+            {
+                "record_kind": "evidence_document",
+                "source_uri": capture.source_uri,
+                "capture_digest": capture.digest,
+                "media_type": capture.media_type,
+                "byte_size": parsed["byte_size"],
+                "verdict": parsed["verdict"],
+            }
+        ]
     family = str(parsed["pathway_family"])
     source_id = pathway_family_source(family)
     out: list[Mapping[str, Any]] = []
@@ -431,6 +447,54 @@ def parse_pathways(data: bytes) -> dict[str, Any]:
     if "pathway_family" not in payload:
         raise ValueError("a pathways capture must carry a 'pathway_family' (§46, P21.9)")
     return payload
+
+
+def _is_json_media(media_type: str) -> bool:
+    # Only a JSON content type is the curated fixture payload; everything else —
+    # including text/html — is an upstream document routed to the P07.1 classifier.
+    return "json" in media_type.lower()
+
+
+def _filename_from_uri(uri: str) -> str:
+    tail = uri.split("?", 1)[0].rstrip("/").rsplit("/", 1)[-1]
+    return tail or "document"
+
+
+def document_artifact_id(source_uri: str) -> str:
+    """The stable EvidenceArtifact id for an upstream document at ``source_uri``.
+
+    Keyed on the source URI, not the bytes, so the id is stable across
+    re-captures and never depends on capture order (§10.2). Deterministic.
+    """
+    return f"pathways:artifact:{multihash(source_uri.encode('utf-8'))}"
+
+
+def _document_artifact_row(
+    source_id: str,
+    record: Mapping[str, Any],
+) -> dict[str, Any]:
+    """An upstream document capture as an EvidenceArtifact row (§10.2).
+
+    The connector **never re-hosts** the document (the per-source licence is
+    ``LicenseRef-DerivedFacts-Citations``, redistributable=false): the row carries
+    provenance — source URI, content-addressed capture digest, media type, size —
+    and the P07.1 classification verdict, which is recorded but not run to a layer
+    engine here (SIG-PARSE-001/002).
+    """
+    source_uri = str(record["source_uri"])
+    return {
+        "record_kind": "evidence_artifact",
+        "subject_id": document_artifact_id(source_uri),
+        "predicate_id": assert_predicate_allowed("document"),
+        "published_by": source_id,
+        "source_uri": source_uri,
+        "capture_digest": str(record["capture_digest"]),
+        "media_type": str(record["media_type"]),
+        "byte_size": int(record["byte_size"]),
+        "integrity": "captured",
+        "classification": dict(record["verdict"]),
+        "raw_value": source_uri,
+    }
 
 
 # --- the connector ------------------------------------------------------------
@@ -459,7 +523,22 @@ class PathwaysConnector(Connector):
         return ctx.fetcher.fetch(str(target["url"]))
 
     def parse(self, ctx: RunContext, capture: CaptureRef) -> dict[str, Any]:
-        return parse_pathways(ctx.captures.get(capture.digest))
+        """Structure the captured bytes — a curated fixture payload, or an upstream document.
+
+        A JSON capture is the curated ``pathway_family`` payload; anything else (PDF,
+        HTML, a feed) is an upstream document classified via the P07.1 parser — the
+        derived-facts basis permits capturing provenance, never re-hosting the bytes.
+        """
+        data = ctx.captures.get(capture.digest)
+        if _is_json_media(capture.media_type):
+            return parse_pathways(data)
+        verdict = classify(_filename_from_uri(capture.source_uri), data)
+        return {
+            "kind": "document",
+            "capture": capture,
+            "verdict": verdict.to_row(),
+            "byte_size": len(data),
+        }
 
     def extract(self, ctx: RunContext, parsed: Mapping[str, Any]) -> list[Mapping[str, Any]]:
         return extract_documents(parsed)
@@ -470,7 +549,33 @@ class PathwaysConnector(Connector):
         # The claims are already typed+evidenced by pathway_claim; normalize stamps the
         # connector vocabulary version so a versioned re-extraction is a new interpretation.
         version = vocab_version()
-        return [{**claim, "vocab_version": version} for claim in raw_claims]
+        source_id = ctx.source.id
+        out: list[dict[str, Any]] = []
+        artifact_count = 0
+        for claim in raw_claims:
+            if claim.get("record_kind") == "evidence_document":
+                out.append({**_document_artifact_row(source_id, claim), "vocab_version": version})
+                artifact_count += 1
+                continue
+            out.append({**claim, "vocab_version": version})
+        if artifact_count:
+            out.append(
+                {
+                    "record_kind": "quality_report",
+                    "source_id": source_id,
+                    "capture_digest": str(raw_claims[0].get("capture_digest", "")),
+                    "media_type": str(raw_claims[0].get("media_type", "")),
+                    "byte_size": int(raw_claims[0].get("byte_size", 0)),
+                    "capture_kind": "document",
+                    "connector_name": self.name,
+                    "connector_version": self.version,
+                    "vocab_version": version,
+                    "evidence_artifact_count": artifact_count,
+                    "claim_count": len(raw_claims) - artifact_count,
+                    "classification": raw_claims[0].get("verdict"),
+                }
+            )
+        return out
 
     def load(self, ctx: RunContext, linked: list[dict[str, Any]]) -> list[dict[str, Any]]:
         out: list[dict[str, Any]] = []

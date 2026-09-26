@@ -19,7 +19,6 @@ from connectors.net import FetchResult, PoliteFetcher, RobotsResult
 from connectors.pipeline import run
 from connectors.registry import CompactStatus, CustodyPosture, get
 from connectors.replay import shadow_replay
-from connectors.runner import LiveGateRefused, RunMode, run_source
 from connectors.stages import (
     InMemoryCaptureStore,
     InMemoryClaimSink,
@@ -54,9 +53,8 @@ class _StaticTransport:
 def _flipped_ctx(source_id: str, fixture: str) -> tuple[RunContext, Any]:
     """A RunContext for a source the operator has FLIPPED (packet + review, P21.8).
 
-    The registry row stays LINK / not_contacted / false (SIG-INGEST-028); this
-    simulates the post-flip state the REFERENCE-capture path is designed for — a
-    REFERENCE custody posture with a compact status that permits ingestion.
+    The rows are flipped (counsel, 2026-09-15 — ADR-085 basis); this override
+    still exercises the REFERENCE-capture path the connector was designed for.
     """
     transport = _StaticTransport((_FIX / fixture).read_bytes())
     fetcher = PoliteFetcher(
@@ -84,12 +82,15 @@ def _run_over(source_id: str, fixture: str) -> list[dict[str, Any]]:
     return run(ci.CoarseInternationalConnector(), ctx).claims
 
 
-def test_all_three_named_datasets_are_registered_and_gated() -> None:
-    # §22.7: the coarse datasets are registered LINK-posture and not yet permitted.
+def test_all_three_named_datasets_are_registered_and_counsel_flipped() -> None:
+    # Counsel approved ingestion for all three (HG-02, 2026-09-15): DERIVE
+    # custody on the derived-facts basis — coarse country/vendor-level facts
+    # only (SIG-INGEST-042), never the upstream page/dataset bytes.
     for sid, dataset in ci.DATASETS.items():
         rec = get(sid)
-        assert rec.custody_posture.value == "LINK"
-        assert rec.ingestion_permitted is False
+        assert rec.custody_posture.value == "DERIVE"
+        assert rec.ingestion_permitted is True
+        assert rec.rights.spdx == "LicenseRef-DerivedFacts-Citations"
         assert dataset.granularity in ci.COARSE_GRANULARITIES
 
 
@@ -190,18 +191,54 @@ def test_capture_path_runs_over_fixtures_at_coarse_granularity(
         assert c["raw_value"]  # P2 preserved verbatim
 
 
-def test_all_three_coarse_sources_keep_link_posture_and_are_gated() -> None:
-    # P21.8 keeps LINK posture: a live run is refused until a packet + flip.
+def test_all_three_coarse_sources_are_flipped_with_document_targets() -> None:
+    # Counsel-flipped 2026-09-15 (HG-02, derived-facts basis). With the
+    # document-capture path landed (P25.5) each source carries its upstream
+    # index/map page as a live target, fetched as an EvidenceArtifact — the
+    # coarse-granularity guard is unaffected (an artifact asserts no claim).
+    from connectors.live_targets import live_targets
+
     for sid in (
         "carnegie_ai_gsi",
         "facial_recognition_world_map",
         "aspi_mapping_chinas_tech_giants",
     ):
         rec = get(sid)
-        assert rec.custody_posture.value == "LINK"
-        assert rec.ingestion_permitted is False
-        with pytest.raises(LiveGateRefused):
-            run_source(sid, mode=RunMode.LIVE)
+        assert rec.custody_posture.value == "DERIVE"
+        assert rec.ingestion_permitted is True
+        assert live_targets(sid), f"{sid} has no live target registered"
+
+
+class _HtmlTransport(_StaticTransport):
+    def request(self, url: str, *, user_agent: str) -> FetchResult:
+        return FetchResult(
+            url=url,
+            status=200,
+            body=self._body,
+            media_type="text/html",
+            retrieved_at=datetime(2026, 8, 20, tzinfo=UTC),
+        )
+
+
+def test_document_capture_yields_artifact_not_claims() -> None:
+    # A live upstream page (non-JSON — the GSI index page, the FRWM map page) is
+    # captured as an EvidenceArtifact row carrying provenance + the P07.1 verdict;
+    # no coarse claim is fabricated from an unparsed page.
+    ctx, _ = _flipped_ctx("carnegie_ai_gsi", "carnegie_ai_gsi.json")
+    ctx.fetcher = PoliteFetcher(
+        connector_name="coarse_international",
+        connector_version="1.0.0",
+        transport=_HtmlTransport(b"<html><body>AI Global Surveillance Index</body></html>"),
+    )
+    report = run(ci.CoarseInternationalConnector(), ctx)
+    kinds = [row["record_kind"] for row in report.claims]
+    assert "evidence_artifact" in kinds
+    assert "quality_report" in kinds
+    assert "claim" not in kinds
+    artifact = next(r for r in report.claims if r["record_kind"] == "evidence_artifact")
+    assert artifact["predicate_id"] == "document"
+    assert artifact["published_by"] == "carnegie_ai_gsi"
+    assert artifact["classification"]["file_format"] == "html"
 
 
 def test_shadow_replay_over_coarse_fixture_has_zero_diffs() -> None:

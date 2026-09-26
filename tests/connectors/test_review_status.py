@@ -137,21 +137,31 @@ def test_validate_fails_naming_the_offending_id(monkeypatch: pytest.MonkeyPatch)
     assert "okc_procurement_test_flip" in buf.getvalue()
 
 
-# --- flip-ready + loadable counts (post RIGHTS.1 flip re-run, GL-GATE-03) ------
+# --- flip-ready + loadable counts (post RIGHTS.1 + P25 flips, GL-GATE-03) ------
 # The OKC critical subset was flipped 2026-09-10 (okc_procurement/okc_council/
-# okcpd_policy/ok_statute + osm_overpass/deflock_repo): 6 sources are now loadable
-# and the two OSM/community rows left the flip-ready set (flag now true), so
-# flip-ready dropped 18 -> 16 while loadable-now rose 0 -> 6.
+# okcpd_policy/ok_statute + osm_overpass/deflock_repo) = 6 loadable. Then 2026-09-15:
+# two resolved-licence sources (P25.3: eff_atlas_of_surveillance CC-BY-4.0,
+# osm_element_history ODbL) and four B-pass operator-approved flips (usaspending
+# CC0-1.0, fbi_cde_agency_registry CC0-1.0, eff_data_driven CC-BY-4.0, muckrock
+# LicenseRef at REFERENCE) = 12 loadable. The same-day unblock pass (operator
+# determination, ADR-085) flipped the rights-resolved France pair (raa_prefectures
+# ODbL-1.0, decp_fr LicenceOuverte-2.0 — the cohort gate went per-source) plus
+# ccops_seattle/nyc_post/sf and pathways_rtcc/css/acoustic on the derived-facts +
+# mandated-disclosure basis = 20 loadable, 13 flip-ready. Counsel (HG-02) then
+# approved the five held sources (madada, declarationcamera_be, aspi,
+# carnegie_ai_gsi, facial_recognition_world_map — LicenseRef-DerivedFacts-Citations,
+# DERIVE custody) = 25 loadable; flip-ready unchanged at 13 (those five had no
+# rights blocks before counsel, so they were never in the flip-ready set).
 
 
-def test_review_status_prints_flip_ready_16_and_loadable_6(
+def test_review_status_prints_flip_ready_13_and_loadable_25(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
     assert "registered sources: 121" in out
-    assert "flip-ready: 16" in out
-    assert "loadable now: 6" in out
+    assert "flip-ready: 13" in out
+    assert "loadable now: 25" in out
 
 
 def test_review_status_loadable_equals_validate() -> None:
@@ -159,8 +169,8 @@ def test_review_status_loadable_equals_validate() -> None:
     from connectors.loader import is_loadable
 
     loadable = [s for s in sources() if is_loadable(s)]
-    assert len(loadable) == 6
-    assert len(flip_ready()) == 16
+    assert len(loadable) == 25
+    assert len(flip_ready()) == 13
 
 
 def test_flip_ready_excludes_permitted_and_undetermined_and_link() -> None:

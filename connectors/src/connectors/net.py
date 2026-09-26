@@ -33,16 +33,19 @@ from __future__ import annotations
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from typing import Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 from urllib.parse import urlsplit
 from urllib.robotparser import RobotFileParser
 
 from policy.crawler import assert_no_circumvention, robots_permits
 
+from .api_allowlist import api_allow_reason
 from .stages import FetchResult
 
-#: The contact URL the crawler UA carries (Crawler Conduct Rule 1, SIG-INGEST-011).
-DEFAULT_CONTACT_URL = "https://sig-project.org/crawler"
+#: The contact URL the UA carries (Crawler Conduct Rule 1, SIG-INGEST-011). The
+#: path avoids the token "crawler": some API WAFs (e.g. the Overpass front-end)
+#: reject any User-Agent containing it with HTTP 406 (ADR-083 / P25 live finding).
+DEFAULT_CONTACT_URL = "https://sig-project.org/data-collection"
 
 #: Conservative default minimum seconds between requests to one host when the
 #: source publishes no crawl-delay (SIG-INGEST-011 / Rule 3).
@@ -86,7 +89,12 @@ class Transport(Protocol):
     def robots(self, robots_url: str) -> RobotsResult: ...
 
     def request(
-        self, url: str, *, user_agent: str, headers: Mapping[str, str] | None = None
+        self,
+        url: str,
+        *,
+        user_agent: str,
+        headers: Mapping[str, str] | None = None,
+        body: bytes | None = None,
     ) -> FetchResult: ...
 
 
@@ -178,6 +186,9 @@ class PoliteFetcher:
         self._transport = transport
         self._limiter = rate_limiter or RateLimiter()
         self._robots: dict[str, RobotFileParser] = {}
+        #: Auditable conduct decisions (ADR-083): one entry per fetch recording
+        #: whether robots (CRAWL) or the API allow-list (API) governed it.
+        self.conduct_decisions: list[dict[str, str]] = []
 
     @property
     def user_agent_string(self) -> str:
@@ -207,7 +218,13 @@ class PoliteFetcher:
         parser = self._ensure_robots(host, url)
         return parser.can_fetch(self._ua, url)
 
-    def fetch(self, url: str, *, headers: Mapping[str, str] | None = None) -> FetchResult:
+    def fetch(
+        self,
+        url: str,
+        *,
+        headers: Mapping[str, str] | None = None,
+        body: bytes | None = None,
+    ) -> FetchResult:
         """Fetch ``url`` politely: robots-checked, rate-limited, UA-identified.
 
         Optional ``headers`` are per-request request headers passed to the
@@ -217,23 +234,39 @@ class PoliteFetcher:
         client of its own (SIG-INGEST-011). Supplying a credential this way is
         *authentication*, not access-control circumvention (Rule 4 / SIG-INGEST-013).
 
+        A non-``None`` ``body`` makes the request a **POST** (a documented
+        API-mode pattern — e.g. USAspending's ``spending_by_award`` sub-award
+        search, §23.6). POST is still robots-checked / allow-listed and
+        rate-limited exactly as a GET; it is a different verb on a documented
+        endpoint, never a circumvention.
+
         Raises :class:`RobotsUnretrievable` if robots.txt is unavailable,
         :class:`RobotsDisallowed` if it forbids the URL, and
         :class:`ChallengeEncountered` on a bot-management challenge (never
         defeated — SIG-INGEST-013).
         """
         host = _host(url)
-        if not self.can_fetch(url):
-            raise RobotsDisallowed(
-                f"robots.txt disallows {self._ua!r} from fetching {url!r} (Rule 2)."
-            )
-        self._limiter.acquire(host)
-        # Pass headers only when present so a transport that predates the headers
-        # seam (and takes only user_agent) keeps working unchanged (back-compat).
-        if headers is None:
-            result = self._transport.request(url, user_agent=self._ua)
+        # ADR-083 carve-out: an allow-listed API endpoint is API mode (documented,
+        # ToS-governed, rate-limited) — robots governs crawling, not this. A host
+        # off the allow-list stays CRAWL and robots binds (no blanket bypass).
+        api_reason = api_allow_reason(url)
+        if api_reason is not None:
+            self.conduct_decisions.append({"url": url, "mode": "api", "basis": api_reason})
         else:
-            result = self._transport.request(url, user_agent=self._ua, headers=headers)
+            self.conduct_decisions.append({"url": url, "mode": "crawl"})
+            if not self.can_fetch(url):
+                raise RobotsDisallowed(
+                    f"robots.txt disallows {self._ua!r} from fetching {url!r} (Rule 2)."
+                )
+        self._limiter.acquire(host)
+        # Pass headers/body only when present so a transport that predates the
+        # seams (and takes only user_agent) keeps working unchanged (back-compat).
+        kwargs: dict[str, Any] = {}
+        if headers is not None:
+            kwargs["headers"] = headers
+        if body is not None:
+            kwargs["body"] = body
+        result = self._transport.request(url, user_agent=self._ua, **kwargs)
         if _is_challenge(result):
             raise ChallengeEncountered(
                 f"{url!r} returned a bot-management challenge (status {result.status}); "

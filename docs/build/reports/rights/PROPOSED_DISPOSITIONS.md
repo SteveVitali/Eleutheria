@@ -1,0 +1,163 @@
+# Proposed rights dispositions — the B pass (2026-09-15)
+
+> Drafted by the maintainer as the RIGHTS-review pass for the connector-backed
+> UNDETERMINED sources (P25.x). Each row states the **evidence fetched** (terms pages
+> / dataset APIs — permitted research, not ingestion) and a **proposed disposition**.
+> Nothing here flips `ingestion_permitted`: the flip is the operator's call (HG-03).
+> Sources whose packet does not exist yet are marked **NEW PACKET DRAFTED**.
+
+## Flippable-now proposals (resolved licence basis, defensible at maintainer level)
+
+| source | evidence | proposed disposition |
+|---|---|---|
+| `usaspending` | Packet quotes the API terms (DATA Act, Pub. L. 113-101); U.S. federal works are public domain (17 U.S.C. §105). Counsel flag LOW. | **FLIP** — SPDX `CC0-1.0`, redistributable+derivative, REFERENCE custody. Code gap: POST-with-JSON-body (P25.2). |
+| `fbi_cde_agency_registry` | FBI Crime Data Explorer / data.gov — U.S. federal government data (public domain, same §105 basis as usaspending). data.gov key staged. | **FLIP** — SPDX `CC0-1.0`, REFERENCE. NEW PACKET DRAFTED. Code gap: data.gov-key auth wiring (P25.4). |
+| `eff_data_driven` | eff.org/copyright fetched 2026-09-15: *"Any and all original material on the EFF website may be freely distributed at will under CC-BY-4.0, unless otherwise noted."* The release is a joint EFF/MuckRock compilation of agency public-records responses; the underlying records are U.S. government records. Ingest is **aggregate-only** by design (§23.9: scan/hit/degree/retention figures, never per-search/per-plate rows). | **FLIP** — SPDX `CC-BY-4.0` (EFF compilation layer), redistributable+derivative at aggregate granularity only, MIRROR custody. Counsel flag PARTIAL retained (underlying-records nuance) — revisit if counsel disagrees. |
+| `muckrock` | muckrock.com/api fetched 2026-09-15: documented public API; token auth via `accounts.muckrock.com/api/token/` + `/api/refresh/` (matches the staged refresh token); 15 req/min + identifiable-UA ToS; content = FOIA request metadata + released government records. | **FLIP** — SPDX per-document (records metadata listing; released-document contents carry the issuing agency's posture, recorded per document), REFERENCE custody, API-mode fetch under ToS. NEW PACKET DRAFTED. Code gap: JWT refresh flow (P25.2). Counsel flag PARTIAL. |
+
+## Rights resolved, flip deliberately held
+
+| source | evidence | proposed disposition |
+|---|---|---|
+| `raa_prefectures` | data.gouv.fr dataset API 2026-09-15: `license = odc-odbl` → **ODbL-1.0 confirmed** (the registry's SPDX was right). | Rights RESOLVED (ODbL-1.0); **stay unflipped** — the France-cohort invariant (P24.6/D-JURIS.2-1, `test_no_france_source_is_flipped`) holds the flip for the P25.5 France review, which must also resolve the *underlying arrêté PDFs'* posture (the index's ODbL doesn't carry into the gazettes). |
+
+## Escalate / hold (genuine open questions — do NOT flip)
+
+| source | evidence | proposed disposition |
+|---|---|---|
+| `decp_fr` | data.gouv.fr dataset API 2026-09-15: `license = fr-lo` → **Licence Ouverte confirmed**, and `fr-lo`/`lov2` is **not** in `policy/data/licenses.toml`'s accepted SPDX set. | **HOLD — needs an operator/counsel decision:** (a) amend the accepted set to add `LicenceOuverte-2.0` (licenses.toml + ADR + counsel), (b) map LO→CC-BY-4.0 per Etalab's own compatibility guidance (counsel question), or (c) leave UNDETERMINED until HG-02. |
+| `madada` | madada.fr/help/api fetched 2026-09-15: no full API; Atom/JSON feeds + an authorities CSV. Content is **user-authored request text**; `compact_status = not_contacted`. | **LINK-only.** HG-04 outreach owed before any flip; user-authored republication is a real rights risk (SIG-LIC-003). Counsel YES. |
+| `declarationcamera_be` | No packet existed (NEW PACKET DRAFTED). declarationcamera.be is a JS-only citizen site; no terms found. | **LINK-only** pending a real terms page / outreach. Counsel YES. |
+| `aspi_mapping_chinas_tech_giants` | aspi.org.au/copyright → HTTP 403 (terms unfetchable programmatically). | **LINK-only**; coarse vendor-level aggregates only even if flipped later (SIG-INGEST-042). Counsel YES. |
+| `carnegie_ai_gsi` | carnegieendowment.org terms page returned no content to the fetcher. | **LINK-only**; country-level only (SIG-INGEST-042). Counsel YES. |
+| `facial_recognition_world_map` | surfshark.com/facial-recognition-map fetched 2026-09-15: editorial/marketing page, **no data licence stated**; commercial publisher. | **LINK-only**; country-level citation only, no re-host. Counsel YES. |
+| `ccops_seattle`, `ccops_nyc_post`, `ccops_sf` | Packets: ordinance-mandated municipal disclosures (SMC 14.18 / POST Act / SF AC 19B). Municipal-record copyright posture is genuinely uncertain (17 U.S.C. §105 covers federal works only). | **HOLD at REFERENCE-pending-counsel:** the connector emits derived identifiers + citations and never re-hosts documents; flipping on that basis is defensible but the municipal-copyright question is HG-02's. Proposed: defer the flip to counsel; keep fixture-only runs. |
+| `pathways_rtcc_federation`, `pathways_fr_css_forensics`, `pathways_acoustic_drone_location` | Packets: per-document mixed terms (government records + vendor press + advocacy). | **HOLD at current posture:** per-document rights review deferred to P25.5; fixtures remain short paraphrased fact carriers, never verbatim re-hosts. |
+
+## Outcome — operator determinations recorded 2026-09-15
+
+- **FLIPPED (4):** `usaspending` (CC0-1.0), `fbi_cde_agency_registry` (CC0-1.0),
+  `eff_data_driven` (CC-BY-4.0), `muckrock` (`LicenseRef-MuckRock-API-ToS`,
+  REFERENCE, `redistributable=false` — ingestion for evidence/citation only; the
+  export gate fails closed on the non-registered expression until HG-02 resolves
+  the per-document records posture). `rights_reviewed_by = "maintainer
+  (delegated)"`, `rights_reviewed_on = 2026-09-15`; packet Decision lines marked.
+- **`decp_fr` — DECIDED: add `LicenceOuverte-2.0` to the accepted SPDX set**
+  (ADR-084; `relicensable_to` self-only until counsel confirms LO↔CC-BY). Rights
+  RESOLVED on the row; **not flipped** — France-cohort gate (P24.6/D-JURIS.2-1)
+  holds it for P25.5, same as `raa_prefectures` (ODbL confirmed).
+- **Held (9):** madada, declarationcamera_be, aspi, carnegie_ai_gsi,
+  facial_recognition_world_map, ccops×3, pathways×3 — LINK/REFERENCE-pending,
+  counsel or HG-04 outreach owed.
+- **Live-ops state after the pass:** 12 sources flipped/loadable; the four new
+  ones still need their P25.2/P25.4 connector code (POST body, JWT refresh,
+  data.gov-key auth, bulk-file fetch) before a live run emits anything.
+
+## C-pass live-ops outcomes (2026-09-15, later same day)
+
+- **`usaspending` — LIVE DATA LANDED.** POST support added to the shared seam
+  (`PoliteFetcher.fetch(body=)` → `Transport.request(body=)` → `HttpxTransport`
+  POST, conditional-GET bypassed for POST); `/search/spending_by_award/` with
+  `subawards: true` fetched 100 sub-award rows → **1000 emitted rows, 540 claims
+  committed** to the hosted Cloud SQL spine. Sub-award display-label fields
+  (`Sub-Award ID`, `Sub-Awardee Name`, …) now map in `_build_subaward`.
+- **`muckrock` — plumbing done, fetch honestly WAF-blocked.** The
+  `SIG_MUCKROCK_REFRESH` → `accounts.muckrock.com/api/refresh/` → 5-min-JWT flow
+  is wired into the live runner (`muckrock_token_cache` in `ctx.parameters`);
+  the accounts host is ADR-083 allow-listed. But both `accounts.muckrock.com`
+  and `www.muckrock.com/api_v2/` answer programmatic requests with a **Cloudflare
+  challenge (HTTP 403 HTML)** — the run correctly recorded it as a first-class
+  `disappearance` (SIG-INGEST-013: surfaced, never defeated). Live fetch awaits a
+  posture change (MuckRock whitelist request / different vantage point) — a real
+  finding, not a code gap.
+- **`eff_data_driven` — needs a manifest adapter, not just a target.** The real
+  artifact is `https://www.eff.org/files/2020/01/28/alpr_2016-2017_update.zip`
+  (EFF-hosted, CC-BY-4.0). The connector's ingest unit is a *release manifest
+  JSON*; a live run needs a manifest for the real release (or zip/CSV parsing
+  support). Scoped under P25.4.
+- **`fbi_cde_agency_registry` — no claims connector.** It is the ORI9 identity
+  substrate feeding resolution (§14.2), not a claims-emitting source; `run
+  --source` refuses "no connector known" — correct-by-design. Its data.gov-key
+  fetch belongs to a substrate download path, not the claims pipeline (P25.6
+  triage confirms its disposition).
+
+## Unblock-pass determinations (2026-09-15, operator-approved)
+
+The remaining gated cohort resolved — each on a recorded basis, none silently:
+
+- **France cohort → per-source gate.** The P24.6/D-JURIS.2-1 hold is now
+  per-source (operator decision): `raa_prefectures` (ODbL-1.0 confirmed) and
+  `decp_fr` (LicenceOuverte-2.0, ADR-084) **flipped**; `madada` and
+  `declarationcamera_be` stay held (no licence basis — HG-04 outreach owed).
+  `decp_fr` got its first live target — the DECP consolidated monthly file
+  `decp-2024-01.json` (~1.4MB, verbatim F9.16 shape) — and a live run emitted
+  **9,494 claims**. `raa_prefectures` stays replay/shadow: its upstream is the
+  data.gouv.fr dataset-API resource index, not the `prefectoral_orders` shape
+  (resources→orders adapter owed). The regenerated static-URL timestamp
+  caveat is recorded on the target.
+- **CCOPS×3 FLIPPED** (`ccops_seattle`, `ccops_nyc_post`, `ccops_sf`) on the
+  municipal-mandated-disclosure + derived-facts basis — **ADR-085**. SPDX
+  `LicenseRef-DerivedFacts-Citations`; `redistributable=false` (upstream bytes
+  never re-hosted); **counsel flag retained** (HG-02 confirms the
+  municipal-copyright reading before a published compartment). Live runs stay
+  refused on `NoLiveTargets` — upstream is PDF/HTML; document adapters owed.
+- **Pathways×3 FLIPPED** on the same derived-facts + citations basis (ADR-085):
+  DERIVE custody (was LINK), `public_terms_only` compact (per-document upstream
+  terms stay mixed, SIG-LIC-009). Live refused on `NoLiveTargets` pending the
+  same document-adapter work.
+- **Still held (5):** `madada`, `declarationcamera_be`, `aspi_mapping_chinas_tech_giants`,
+  `carnegie_ai_gsi`, `facial_recognition_world_map` — no licence basis; HG-04
+  outreach / counsel required. Not changed by this pass.
+- **`muckrock` — LIVE DATA LANDED via Cloud Run egress.** The Cloudflare 403
+  was local/residential-IP reputation, not a block on documented API access:
+  a Cloud Run job egressing from GCP gets `200 application/json` on
+  `/api_v2/` (probe) and the real fetch (job `sig-ingest-muckrock`, refresh →
+  5-min JWT → request 136412) succeeded — **8 rows / 6 claims committed** to the
+  hosted spine. The run surfaced a real vocab gap: api_v2's raw `status` values
+  (`done`, `ack`, `no_docs`, …) now map through `records_vocab.toml`
+  `[muckrock_status_map]` to the §11.19 enum (vocab 2026.09.15); unmapped values
+  still fail loud. Image: `ops/Dockerfile` now installs `./connectors` so
+  `sig-connectors run` jobs can execute in-cloud.
+
+## Counsel determinations (HG-02, operator-reported 2026-09-15)
+
+Counsel approved ingestion for the five previously held sources — all flipped
+`ingestion_permitted=true` with `rights_reviewed_by = "counsel (HG-02)"`:
+
+- `madada`, `declarationcamera_be` — DERIVE custody, derived-facts only (request
+  metadata / register facts, never user-authored request text),
+  `LicenseRef-DerivedFacts-Citations`, `redistributable=false`.
+- `aspi_mapping_chinas_tech_giants`, `carnegie_ai_gsi`,
+  `facial_recognition_world_map` — same basis; coarse country/vendor-level facts
+  only (SIG-INGEST-042 granularity floor).
+
+**Every connector-mapped source is now flipped (25/25).** Live runs for these
+five still refuse on `NoLiveTargets` — the flips record the rights posture;
+fetch capability needs adapters (madada Atom/CSV→records, the three
+coarse-international page scrapers) or an HG-04 eID path (declarationcamera_be).
+
+## Document-capture path (P25.5, 2026-09-15)
+
+The four document-source connectors (`france_belgium_records`,
+`government_mandated_disclosure`, `pathways`, `coarse_international`) now carry a
+shared **document-capture** path: a non-JSON capture (PDF, HTML, CSV, Atom feed)
+is routed to the P07.1 classifier and emitted as an `evidence_artifact` row —
+provenance only (source URI, content-addressed capture digest, media type,
+verdict); the bytes are never re-hosted and no field claim is fabricated from an
+unparsed document. `document` was added to each connector's predicate allowlist
+(vocabs bumped to 2026.09.16).
+
+Live targets registered (`live_targets.toml`) and **verified live**:
+
+- `raa_prefectures` — the national RAA index CSV (`static.data.gouv.fr`, ODbL).
+- `madada` — the platform's own successful-requests Atom feed.
+- `ccops_seattle`, `ccops_nyc_post` — the mandated-disclosure index pages.
+- `pathways_rtcc_federation` / `pathways_fr_css_forensics` /
+  `pathways_acoustic_drone_location` — one real EFF upstream page per family.
+- `carnegie_ai_gsi`, `facial_recognition_world_map` — the index/map pages.
+
+Honest non-fetch outcomes (recorded, not defeated): `aspi_mapping_chinas_tech_giants`
+— host WAF 403 → disappearance; `ccops_sf` — sf.gov robots.txt unretrievable →
+SIG-INGEST-012 refusal; `declarationcamera_be` — still NoLiveTargets (Belgian
+eID; HG-04). Field-level claims for all of the above still require the curated
+extraction adapters (RAA PDF→arrêté, CCOPS PDF→fields, pathways doc→claims).

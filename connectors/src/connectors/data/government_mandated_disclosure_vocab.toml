@@ -15,7 +15,7 @@
 # header — otherwise TOML nests it under that table.
 
 # The connector's own vocabulary version, stamped onto every run (§20).
-vocab_version = "2026.09.13"
+vocab_version = "2026.09.16"
 
 # The five claim types the connector may emit. `disclosure_use` is the
 # epistemically-loaded one: it may be asserted ONLY where the disclosure itself
@@ -90,6 +90,9 @@ predicate_allowlist = [
   # the non-compliance metric (SIG-INGEST-049e)
   "in_use_without_policy_count",
   "policy_compliance_share",
+  # an upstream document capture recorded as an EvidenceArtifact (§10.2) —
+  # provenance + P07.1 verdict only; the bytes are never re-hosted
+  "document",
   "non_compliance_finding",
 ]
 

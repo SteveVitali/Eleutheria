@@ -55,6 +55,7 @@ from functools import cache
 from typing import Any
 
 from evidence.digest import multihash
+from parsing.classification import classify
 
 from ._data import load_table
 from .procurement import Contract, LifecycleTransition
@@ -223,6 +224,55 @@ def assert_legal_predicate_allowed(predicate: str) -> str:
             "device, and deployment claims are refused."
         )
     return predicate
+
+
+def _is_json_media(media_type: str) -> bool:
+    # Only a JSON content type is the records payload; everything else — a gazette
+    # PDF, an HTML index page, an Atom feed — is an upstream document routed to the
+    # P07.1 classifier.
+    return "json" in media_type.lower()
+
+
+def _filename_from_uri(uri: str) -> str:
+    tail = uri.split("?", 1)[0].rstrip("/").rsplit("/", 1)[-1]
+    return tail or "document"
+
+
+def document_artifact_id(source_uri: str) -> str:
+    """The stable EvidenceArtifact id for an upstream document at ``source_uri``.
+
+    Keyed on the source URI, not the bytes, so the id is stable across
+    re-captures and never depends on capture order (§10.2). Deterministic.
+    """
+    return f"france_belgium:artifact:{multihash(source_uri.encode('utf-8'))}"
+
+
+def _document_artifact_row(source_id: str, record: Mapping[str, Any]) -> dict[str, Any]:
+    """An upstream document capture as an EvidenceArtifact row (§10.2).
+
+    For DERIVE-posture sources (``LicenseRef-DerivedFacts-Citations``,
+    redistributable=false) the bytes are **never re-hosted**: the row carries
+    provenance — source URI, content-addressed capture digest, media type, size —
+    and the P07.1 classification verdict, which is recorded but not run to a layer
+    engine here (SIG-PARSE-001/002).
+    """
+    source_uri = str(record["source_uri"])
+    return _stamp(
+        {
+            "record_kind": "evidence_artifact",
+            "subject_id": document_artifact_id(source_uri),
+            "predicate_id": assert_legal_predicate_allowed("document"),
+            "published_by": source_id,
+            "source_uri": source_uri,
+            "capture_digest": str(record["capture_digest"]),
+            "media_type": str(record["media_type"]),
+            "byte_size": int(record["byte_size"]),
+            "integrity": "captured",
+            "classification": dict(record["verdict"]),
+            "raw_value": source_uri,
+        },
+        source_id=source_id,
+    )
 
 
 # --- candidate identifiers for the parties (SIG-INGEST-034) -------------------
@@ -568,19 +618,47 @@ class FranceBelgiumRecordsConnector(Connector):
         return ctx.fetcher.fetch(str(target["url"]))
 
     def parse(self, ctx: RunContext, capture: CaptureRef) -> dict[str, Any]:
-        """Structure the captured bytes — a JSON payload of arrêtés / records-request contexts."""
+        """Structure the captured bytes — a JSON payload, or an upstream document.
+
+        A JSON capture is the arrêtés / records-request payload; anything else
+        (a gazette PDF, an HTML index page, a MaDada Atom feed) is an upstream
+        document classified via the P07.1 parser — the derived-facts basis
+        permits capturing provenance, never re-hosting the bytes.
+        """
         data = ctx.captures.get(capture.digest)
-        return {"payload": json.loads(data), "capture": capture}
+        if _is_json_media(capture.media_type):
+            return {"payload": json.loads(data), "capture": capture}
+        verdict = classify(_filename_from_uri(capture.source_uri), data)
+        return {
+            "kind": "document",
+            "capture": capture,
+            "verdict": verdict.to_row(),
+            "byte_size": len(data),
+        }
 
     def extract(self, ctx: RunContext, parsed: Mapping[str, Any]) -> list[Mapping[str, Any]]:
         """Raw records with their kind, preserving raw values (P2).
 
-        The wrapping list key is authoritative — ``prefectoral_orders`` records are
-        prefectural orders and ``records_requests`` records are records-request
-        contexts, regardless of their inner fields. Only for a bare object/list is
-        the kind inferred (an explicit ``record_kind``/``kind``, else a
-        ``jurisdiction`` field marks a records-request context).
+        A document capture yields one evidence record carrying its provenance
+        and P07.1 verdict. Otherwise the wrapping list key is authoritative —
+        ``prefectoral_orders`` records are prefectural orders and
+        ``records_requests`` records are records-request contexts, regardless of
+        their inner fields. Only for a bare object/list is the kind inferred (an
+        explicit ``record_kind``/``kind``, else a ``jurisdiction`` field marks a
+        records-request context).
         """
+        if parsed.get("kind") == "document":
+            capture = parsed["capture"]
+            return [
+                {
+                    "record_kind": "evidence_document",
+                    "source_uri": capture.source_uri,
+                    "capture_digest": capture.digest,
+                    "media_type": capture.media_type,
+                    "byte_size": parsed["byte_size"],
+                    "verdict": parsed["verdict"],
+                }
+            ]
         payload = parsed["payload"]
         out: list[Mapping[str, Any]] = []
         if isinstance(payload, Mapping) and (
@@ -603,11 +681,35 @@ class FranceBelgiumRecordsConnector(Connector):
     ) -> list[dict[str, Any]]:
         """Typed rows beside preserved raw values (P2), confined to the allowlist."""
         out: list[dict[str, Any]] = []
+        artifact_count = 0
         for raw in raw_claims:
-            if raw["record_kind"] == "records_request":
+            if raw["record_kind"] == "evidence_document":
+                out.append(_document_artifact_row(ctx.source.id, raw))
+                artifact_count += 1
+            elif raw["record_kind"] == "records_request":
                 out.extend(self._normalize_records_request(ctx, raw["raw"]))
             else:
                 out.extend(self._normalize_prefectoral_order(ctx, raw["raw"]))
+        if artifact_count:
+            out.append(
+                _stamp(
+                    {
+                        "record_kind": "quality_report",
+                        "source_id": ctx.source.id,
+                        "capture_digest": str(raw_claims[0].get("capture_digest", "")),
+                        "media_type": str(raw_claims[0].get("media_type", "")),
+                        "byte_size": int(raw_claims[0].get("byte_size", 0)),
+                        "capture_kind": "document",
+                        "connector_name": self.name,
+                        "connector_version": self.version,
+                        "vocab_version": vocab_version(),
+                        "evidence_artifact_count": artifact_count,
+                        "claim_count": len(raw_claims) - artifact_count,
+                        "classification": raw_claims[0].get("verdict"),
+                    },
+                    source_id=ctx.source.id,
+                )
+            )
         return out
 
     def _normalize_prefectoral_order(

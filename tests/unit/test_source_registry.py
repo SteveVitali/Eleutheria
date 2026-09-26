@@ -53,19 +53,57 @@ def test_source_ids_are_unique() -> None:
 # --- SIG-INGEST-028: ingestion_permitted defaults to false --------------------
 
 
-#: The OKC critical subset flipped by the RIGHTS.1 re-run (GL-GATE-03, 2026-09-10);
-#: every other seeded source stays un-permitted (the flag still defaults false).
-_FLIPPED_OKC_SUBSET = frozenset(
-    {"okc_procurement", "okc_council", "okcpd_policy", "ok_statute", "osm_overpass", "deflock_repo"}
+#: The OKC critical subset flipped by the RIGHTS.1 re-run (GL-GATE-03, 2026-09-10),
+#: plus the resolved-licence live-ops flips (GL-GATE-03, 2026-09-15): eff_atlas
+#: (CC-BY-4.0) and osm_element_history (ODbL-1.0), and the four B-pass
+#: operator-approved flips: usaspending (CC0-1.0), fbi_cde_agency_registry (CC0-1.0),
+#: eff_data_driven (CC-BY-4.0), muckrock (LicenseRef-MuckRock-API-ToS, REFERENCE —
+#: non-redistributable until per-document posture resolves). raa_prefectures
+#: (ODbL-1.0) and decp_fr (LicenceOuverte-2.0, ADR-084) flipped once the France
+#: cohort gate went per-source (operator decision 2026-09-15); ccops_seattle/
+#: nyc_post/sf and pathways_rtcc/css/acoustic flipped on the municipal-mandated-
+#: disclosure basis (ADR-085); and the five held sources flipped 2026-09-15 on
+#: counsel's approval (HG-02): madada, declarationcamera_be, aspi, carnegie_ai_gsi,
+#: facial_recognition_world_map — all LicenseRef-DerivedFacts-Citations, DERIVE
+#: custody, redistributable=false. Every connector-mapped source is now flipped;
+#: the unmapped remainder stays un-permitted.
+_FLIPPED_SUBSET = frozenset(
+    {
+        "okc_procurement",
+        "okc_council",
+        "okcpd_policy",
+        "ok_statute",
+        "osm_overpass",
+        "deflock_repo",
+        "eff_atlas_of_surveillance",
+        "osm_element_history",
+        "usaspending",
+        "fbi_cde_agency_registry",
+        "eff_data_driven",
+        "muckrock",
+        "raa_prefectures",
+        "decp_fr",
+        "ccops_seattle",
+        "ccops_nyc_post",
+        "ccops_sf",
+        "pathways_rtcc_federation",
+        "pathways_fr_css_forensics",
+        "pathways_acoustic_drone_location",
+        "madada",
+        "declarationcamera_be",
+        "aspi_mapping_chinas_tech_giants",
+        "carnegie_ai_gsi",
+        "facial_recognition_world_map",
+    }
 )
 
 
 def test_ingestion_permitted_defaults_false_across_the_seed() -> None:
     # Phase 0 seeds the registry; connectors are Phase 4+. A source is permitted
     # only after a reviewer resolves its posture and flips the flag — as of the
-    # RIGHTS.1 re-run that is exactly the OKC critical subset, and nothing else.
+    # RIGHTS.1 re-run plus the 2026-09-15 live-ops flips that is exactly this set.
     permitted = {s.id for s in sources() if s.ingestion_permitted}
-    assert permitted == set(_FLIPPED_OKC_SUBSET)
+    assert permitted == set(_FLIPPED_SUBSET)
 
 
 # --- SIG-INGEST-027: compact_status is a closed vocabulary incl. no_response --

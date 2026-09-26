@@ -46,6 +46,18 @@ share_alike = false
 attribution_required = false
 relicensable_to = ["CC0-1.0", "CC-BY-4.0", "CC-BY-SA-4.0", "ODbL-1.0"]
 
+# Licence Ouverte 2.0 (Etalab) — the French government's open-data licence,
+# confirmed on data.gouv.fr datasets (e.g. DECP `fr-lo`). Attribution-only,
+# non-share-alike; per Etalab's own guidance it is CC-BY-compatible, but SIG
+# records it under its own expression rather than silently mapping (ADR-084):
+# `relicensable_to` is deliberately just itself until HG-02 counsel confirms
+# the CC-BY-4.0 compatibility mapping.
+[licenses."LicenceOuverte-2.0"]
+kind = "data"
+share_alike = false
+attribution_required = true
+relicensable_to = ["LicenceOuverte-2.0"]
+
 # ---------------------------------------------------------------------------
 # The export compartments (SIG-LIC-005 / §42.2). Each mutually-incompatible
 # licence regime present in the corpus gets its own separable compartment, its

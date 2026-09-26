@@ -8,7 +8,7 @@
 # interpretation, never a destructive overwrite (SIG-INGEST-017/043d).
 
 # The connector's own vocabulary version, stamped onto every run (§20).
-vocab_version = "2026.08.27"
+vocab_version = "2026.09.15"
 
 # The registry source this connector runs against (§22.6 D). The release is a
 # MIRROR candidate whose rights stay UNDETERMINED until reviewed (SIG-INGEST-028).
@@ -79,3 +79,28 @@ source_document_link_count = 463
 # data lives at separate file paths. The connector targets the file artifacts
 # directly and marks the article as CONTEXT, never as the source.
 article_is_context_only = true
+
+# --- The real EFF-hosted release artifact (P25.4, 2026-09-15) ------------------
+# The upstream release is a ZIP of lettered-column CSVs ("EFF-MuckRock
+# 2016-2017 ALPR DATA.csv") fetched from eff.org/files/… — ADR-083/robots-open
+# CRAWL. The connector maps the lettered columns onto per-agency aggregate rows
+# via this data map (never silently: a column-map change is a vocab version
+# bump). All 200 rows are per-agency aggregates; the R-columns are the upstream
+# source-document links (documentcloud — automation-blocked, SIG-INGEST-043c).
+[eff_release]
+member_suffix = "ALPR DATA.csv"   # the data member inside the zip (not Definitions/Field Descriptions)
+release_id    = "eff-muckrock-alpr-2016-2017-update"
+version       = "2016-2017-update"
+observed_at   = "2020-01-28"      # the upstream release date — historical (SIG-INGEST-043)
+# The release's stated scope is agencies contracting with Vigilant Solutions.
+vendor_label  = "Vigilant Solutions (LEARN)"
+
+# Lettered upstream column → normalized agency field. "Not Provided" / "" → null.
+[eff_release.columns]
+agency         = "A. Agency"
+state          = "B. State"
+sharing_degree = "C. Direct Sharing"
+nvls           = "D. NVLS"
+detections     = "G1. 2016-2017 Detections"
+hits           = "G2. 2016-2017 Hits"
+sharing_link   = "R1. Data Sharing Link"

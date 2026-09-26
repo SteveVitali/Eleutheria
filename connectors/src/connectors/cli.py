@@ -221,7 +221,9 @@ def _run(args: argparse.Namespace) -> int:
     # Importing the package registers every source connector (SIG-INGEST-021).
     from pathlib import Path
 
+    from .live_targets import NoLiveTargets
     from .runner import LiveGateRefused, RunMode, run_source
+    from .stages import ContentDrift
 
     if args.sink == "pg" and not args.dsn:
         print("--sink pg requires --dsn")
@@ -246,6 +248,17 @@ def _run(args: argparse.Namespace) -> int:
         for reason in refused.reasons:
             print(f"  - {reason}")
         return 3
+    except NoLiveTargets as missing:
+        # A green source with no configured live target: config gap, not a fetch.
+        print(f"NO LIVE TARGETS (exit 4): {missing}")
+        return 4
+    except ContentDrift as drift:
+        # The fetch succeeded but the content no longer matches the parser's shape
+        # (P25.1 / ADR-082): fail loud + recorded (a content_drift fetch record),
+        # never garbage or a silent zero.
+        print(f"CONTENT DRIFT (exit 5): {drift}")
+        print("  recorded in the fetch record (0 claims); no garbage emitted.")
+        return 5
     summary = (
         f"source {args.source!r} [{args.mode}] via connector {report.connector!r}: "
         f"{len(report.claims)} claim(s), {len(report.captures)} capture(s)"

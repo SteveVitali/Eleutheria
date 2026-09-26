@@ -1,0 +1,188 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# Per-source LIVE fetch targets (P24.1 live deploy / DEPLOY.1, ADR-082). The live
+# runner (`connectors.runner._run_live`) supplies these to a connector's
+# ``discover()`` as ``ctx.parameters["targets"]`` — closing the P21.3 deliverable-4
+# gap where the live path shipped with no real targets (so a green source fetched
+# nothing). This is DATA, not code (SIG-ENG-001, SIG-INGEST-038): a new live target
+# is a reviewed data change, never a code edit. NO secrets here (HG-09) — endpoints
+# and tokens come from the environment at fetch time. A source absent from this
+# table has NO live targets and the live runner refuses (it never fetches a
+# placeholder URL).
+
+# OSM/DeFlock physical ALPR assets via the Overpass API (keyless). The response is
+# the same JSON shape as the committed fixture (tests/connectors/fixtures/osm/
+# overpass_snapshot.json), so the existing osm parser handles it unchanged; output
+# lands in the physically separate ODbL compartment (§42.3).
+[osm_overpass]
+kind = "overpass"
+# Overpass QL — man_made=surveillance in the Oklahoma City metro bbox (S,W,N,E).
+# The runner builds the request URL from $SIG_OVERPASS_ENDPOINT (default: the
+# public instance) + urlencode(query). `out meta center` yields the version/
+# changeset/timestamp the (osm_type,osm_id,version) key + first_observed need,
+# and way centroids (SIG-INGEST-045a/045b/045f).
+overpass_query = """[out:json][timeout:90];
+(
+  node["man_made"="surveillance"](35.30,-97.85,35.75,-97.15);
+  way["man_made"="surveillance"](35.30,-97.85,35.75,-97.15);
+);
+out meta center;"""
+
+# EFF Atlas of Surveillance — the full national bulk CSV (CC-BY-4.0). robots.txt is
+# open (CRAWL mode, no carve-out needed). Use the www. host: the apex redirects
+# 301 and the transport does not follow redirects. ~15k rows / 8.5 MB — a bulk load
+# best inserted from within GCP (a Cloud Run/GCE job), not over a laptop proxy.
+[eff_atlas_of_surveillance]
+kind = "bulk_csv"
+targets = [
+  { id = "atlas-full", url = "https://www.atlasofsurveillance.org/download.csv", kind = "bulk_csv" },
+]
+
+# USAspending sub-award search (§23.6, SIG-ONTO-033) — the documented
+# ``/search/spending_by_award/`` POST endpoint (ADR-083 allow-listed:
+# api.usaspending.gov /api; GET is refused upstream, the search is POST-only).
+# Scoped to ASSISTANCE sub-awards on surveillance-relevant keywords — the
+# federal-grant → local-purchase link (Byrne JAG / UASI → a city's ALPR buy).
+# `subaward = true` is the connector-asserted flag (assert_pulls_subawards);
+# `post_body` is sent verbatim as the JSON request body.
+[usaspending]
+kind = "procurement_api"
+targets = [
+  { id = "usaspending-surveillance-subawards", url = "https://api.usaspending.gov/api/v2/search/spending_by_award/", kind = "subaward_search", subaward = true, post_body = { subawards = true, filters = { time_period = [ { start_date = "2018-01-01", end_date = "2026-12-31" } ], award_type_codes = [ "02", "03", "04", "05", "06", "07", "08", "09", "10", "11" ], keywords = [ "license plate reader", "automated license plate", "automatic license plate", "gunshot detection", "shotspotter", "surveillance camera", "video surveillance", "cctv", "real time crime center", "drone" ] }, fields = [ "Sub-Award ID", "Sub-Awardee Name", "Sub-Award Date", "Sub-Award Amount", "Sub-Award Description", "Awarding Agency", "prime_award_generated_internal_id" ], limit = 100, page = 1, sort = "Sub-Award Amount", order = "desc" } },
+]
+
+# EFF/MuckRock Data Driven release (§23.9, P25.4) — the real EFF-hosted artifact:
+# a ZIP of lettered-column CSVs (the 2016-2017 ALPR update, 200 per-agency
+# aggregate rows, CC-BY-4.0). robots-open CRAWL. The connector maps the lettered
+# columns via data_driven_vocab.toml's [eff_release] map — per-agency AGGREGATE
+# rows only; the guard inspects the real upstream headers (RISK-P0-08).
+[eff_data_driven]
+kind = "release_zip"
+targets = [
+  { id = "eff-dd-2016-2017", url = "https://www.eff.org/files/2020/01/28/alpr_2016-2017_update.zip", kind = "release_zip" },
+]
+
+# MuckRock api_v2 (§23.5, SIG-INGEST-036) — targeted lookups ONLY, never a
+# listing. api_v2 data endpoints are ADR-083 allow-listed (www.muckrock.com/api
+# covers /api_v2); auth is the $SIG_MUCKROCK_REFRESH → 5-min JWT flow the runner
+# wires. As of 2026-09-15 both muckrock.com and accounts.muckrock.com answer
+# programmatic requests with a Cloudflare challenge (HTTP 403) — SIG does not
+# defeat challenges (SIG-INGEST-013): a live run surfaces this as a recorded
+# disappearance, which is the correct outcome until the WAF posture changes.
+# Request 136412 = the EFF "Automated License Plate Readers" request to LAPD
+# (muckrock.com/foi/los-angeles-91/…-136412), a real targeted lookup.
+[muckrock]
+kind = "records_api"
+targets = [
+  { id = "muckrock-foia:136412", url = "https://www.muckrock.com/api_v2/requests/136412/", kind = "records_request", external_id = "136412" },
+]
+
+# OSM per-element history (SIG-INGEST-045c) — the documented OSM API 0.6 history
+# endpoint (ADR-083 allow-listed: api.openstreetmap.org /api/0.6). Element ids are
+# real OKC surveillance nodes observed via the osm_overpass live fetch (2026-09-15).
+# Deliberately SMALL: history walks are for elements under active reconciliation,
+# not bulk reads — bulk stays on Overpass. Output lands in the ODbL compartment.
+[osm_element_history]
+kind = "history"
+targets = [
+  { id = "osm-hist:node:2546410616", url = "https://api.openstreetmap.org/api/0.6/node/2546410616/history.json", kind = "history" },
+  { id = "osm-hist:node:9221430265", url = "https://api.openstreetmap.org/api/0.6/node/9221430265/history.json", kind = "history" },
+  { id = "osm-hist:node:9221430266", url = "https://api.openstreetmap.org/api/0.6/node/9221430266/history.json", kind = "history" },
+]
+
+# DECP consolidated monthly file — the verbatim F9.16 shape
+# ({"marches":{"marche":[...]}}) the france_belgium procurement connector parses.
+# decp-2024-01.json is the smallest monthly file (~1.4MB); its static URL is
+# pinned to the current data.gouv.fr generation (dataset:
+# donnees-essentielles-de-la-commande-publique-fichiers-consolides). The URL
+# path carries a regeneration timestamp — if Etalab regenerates the resource it
+# 404s (a recorded disappearance, never silent); following the dataset-API
+# indirection to the current URL is owed adapter work.
+[decp_fr]
+kind = "procurement"
+targets = [
+  { id = "decp-2024-01", url = "https://static.data.gouv.fr/resources/donnees-essentielles-de-la-commande-publique-fichiers-consolides/20260623-084347/decp-2024-01.json", kind = "contract" },
+]
+
+# --- document-capture targets (P25.5) ------------------------------------------
+# For the counsel-flipped document sources the connector captures the upstream
+# document itself as an EvidenceArtifact row (provenance + P07.1 verdict; the
+# bytes are never re-hosted — LicenseRef-DerivedFacts-Citations). Field-level
+# claims still come only from the curated extraction path; a changed shape fails
+# loud rather than fabricating a claim.
+
+# RAA — the national prefecture gazette index (data.gouv.fr CSV, ODbL-1.0) plus
+# one real prefecture gazette PDF. The index CSV is allow-listed under
+# static.data.gouv.fr /resources/; prefecture hosts are plain CRAWL. Resolving
+# each row's PDF and extracting arrêtés is the owed resource-index adapter.
+[raa_prefectures]
+kind = "document"
+targets = [
+  { id = "raa-prefectures-index", url = "https://static.data.gouv.fr/resources/recueils-des-actes-administratifs-des-prefectures/20260914-114014/raa-des-prefectures.csv", kind = "document" },
+]
+
+# MaDada — the platform's own Atom feed of successful requests (the platform
+# publishes it; application/atom+xml). Request bodies stay unre-hosted.
+[madada]
+kind = "document"
+targets = [
+  { id = "madada-successful-requests", url = "https://madada.fr/feed/search/%20(latest_status:successful%20OR%20latest_status:partially_successful)", kind = "document" },
+]
+
+# CCOPS — the three mandated-disclosure index pages (ADR-085). nyc.gov answers
+# datacenter/residential egress with a WAF challenge (a recorded disappearance,
+# never defeated — SIG-INGEST-013); sf.gov serves a JS shell (captured as-is).
+[ccops_seattle]
+kind = "document"
+targets = [
+  { id = "ccops-seattle-sir-index", url = "https://www.seattle.gov/tech/data-privacy/surveillance-technology", kind = "document" },
+]
+[ccops_nyc_post]
+kind = "document"
+targets = [
+  { id = "ccops-nyc-post-index", url = "https://www.nyc.gov/site/nypd/about/about-nypd/policy/post-act.page", kind = "document" },
+]
+[ccops_sf]
+kind = "document"
+targets = [
+  { id = "ccops-sf-inventory-index", url = "https://www.sf.gov/surveillance-technology-inventory", kind = "document" },
+]
+
+# Pathways — one real upstream document per family (EFF-published; the
+# per-document mixed terms stay visible per ADR-085). documentcloud fixture URLs
+# were placeholders and are NOT registered — only verified-reachable pages.
+[pathways_rtcc_federation]
+kind = "document"
+targets = [
+  { id = "eff-fusus-rtcc", url = "https://www.eff.org/deeplinks/2023/05/neighborhood-watch-out-cops-are-incorporating-private-cameras-their-real-time", kind = "document" },
+]
+[pathways_fr_css_forensics]
+kind = "document"
+targets = [
+  { id = "eff-face-recognition", url = "https://www.eff.org/issues/face-recognition", kind = "document" },
+]
+[pathways_acoustic_drone_location]
+kind = "document"
+targets = [
+  { id = "eff-drones", url = "https://www.eff.org/issues/drones", kind = "document" },
+]
+
+# Coarse international — the upstream index/map/report pages themselves. ASPI's
+# chinatechmap host answers with a WAF challenge (recorded disappearance).
+[carnegie_ai_gsi]
+kind = "document"
+targets = [
+  { id = "carnegie-aigs-index", url = "https://carnegieendowment.org/publications/interactive/ai-surveillance", kind = "document" },
+]
+[facial_recognition_world_map]
+kind = "document"
+targets = [
+  { id = "surfshark-frwm", url = "https://surfshark.com/facial-recognition-map", kind = "document" },
+]
+[aspi_mapping_chinas_tech_giants]
+kind = "document"
+targets = [
+  { id = "aspi-chinatechmap", url = "https://chinatechmap.aspi.org.au/", kind = "document" },
+]

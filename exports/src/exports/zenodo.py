@@ -223,7 +223,11 @@ class ZenodoHttpTransport:
             meta_resp.raise_for_status()
 
             for name, data in sorted(files.items()):
-                up = client.put(f"{bucket_url}/{name}", params=params, content=data)
+                # Zenodo's bucket file API treats the key's "/" as path segments
+                # (a nested compartment path 404s), so flatten the compartment
+                # separator into a filename-safe token (P25 live-deposit finding).
+                object_key = name.replace("/", "__")
+                up = client.put(f"{bucket_url}/{object_key}", params=params, content=data)
                 up.raise_for_status()
 
             published = client.post(

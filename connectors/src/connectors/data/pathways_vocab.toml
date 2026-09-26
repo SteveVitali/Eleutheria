@@ -10,7 +10,7 @@
 # header — otherwise TOML nests it under that table.
 
 # The connector's own vocabulary version, stamped onto every run (§20).
-vocab_version = "2026.09.01"
+vocab_version = "2026.09.16"
 
 # The four P17 claim types a Stage-5 pathway connector may emit (§46). `deployment`
 # is the epistemically-loaded one: it may be asserted ONLY from a deployment-genre
@@ -57,6 +57,9 @@ predicate_allowlist = [
   "deployed",
   "actually_provides_capability",
   "in_operation",
+  # an upstream document capture recorded as an EvidenceArtifact (§10.2) —
+  # provenance + P07.1 verdict only; the bytes are never re-hosted
+  "document",
 ]
 
 # The deployment predicates: any claim carrying one of these MUST be a `deployment`

@@ -46,7 +46,7 @@ from typing import Any
 from uuid import uuid4
 
 from ._data import load_table
-from .stages import CaptureRef, Connector, FetchResult, RunContext, register
+from .stages import CaptureRef, Connector, ContentDrift, FetchResult, RunContext, register
 
 #: The registry source this connector runs against (§22.6; REFERENCE + ODbL-1.0).
 OSM_SOURCE_ID = "osm_overpass"
@@ -499,8 +499,23 @@ class OSMConnector(Connector):
 
     # -- interpretation (pure functions of the capture) --
     def parse(self, ctx: RunContext, capture: CaptureRef) -> Any:
-        """Structure the captured OSM JSON (Overpass snapshot or element history)."""
-        return json.loads(ctx.captures.get(capture.digest))
+        """Structure the captured OSM JSON (Overpass snapshot or element history).
+
+        A live Overpass endpoint can return non-JSON (an HTML error/WAF page, a 429/
+        504 body); rather than crash with an opaque ``JSONDecodeError``, surface it as
+        :class:`ContentDrift` (fail loud, recorded — P25.3 / ADR-082), so the live
+        runner writes a ``content_drift`` fetch record with 0 claims.
+        """
+        data = ctx.captures.get(capture.digest)
+        try:
+            return json.loads(data)
+        except (ValueError, TypeError) as exc:
+            head = data[:64] if isinstance(data, (bytes, bytearray)) else str(data)[:64]
+            raise ContentDrift(
+                ctx.source.id,
+                "Overpass returned non-JSON content (HTML error / WAF page / rate-limit body)",
+                details=f"{len(data)} bytes; starts {head!r} ({exc.__class__.__name__})",
+            ) from exc
 
     def extract(self, ctx: RunContext, parsed: Any) -> list[Mapping[str, Any]]:
         """Raw records with locators, preserving raw values and discarding mapper identity.

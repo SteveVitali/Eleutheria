@@ -39,10 +39,9 @@ flip. A content-fetching connector MUST NOT run against it (loader gate refuses;
 
 ## Decision
 
-- [ ] permit ingestion — reviewer: ____ date: ____
-- SPDX to record: ____   rights_reviewed_by (role, never a name): ____   rights_reviewed_on: ____
-- **Status:** rights UNDETERMINED, `ingestion_permitted = false`. HG-03/HG-04 **pending** (P21.9 ships
-  over committed fixtures; no source flipped).
+- [x] permit ingestion — reviewer: maintainer (delegated), operator-approved 2026-09-15 (ADR-085)
+- SPDX to record: `LicenseRef-DerivedFacts-Citations`   rights_reviewed_by (role, never a name): maintainer (delegated)   rights_reviewed_on: 2026-09-15
+- **Status:** FLIPPED 2026-09-15 on the derived-facts + citations basis (ADR-085): SIG ingests only its own paraphrased fixture records, each citing the upstream document by URL; per-document upstream terms stay mixed (SIG-LIC-009) and upstream bytes are never re-hosted. Counsel flag retained for HG-02.
 
 ## Counsel-needed flag
 
