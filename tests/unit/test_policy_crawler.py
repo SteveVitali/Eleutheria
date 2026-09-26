@@ -23,6 +23,31 @@ def test_robots_unretrievable_is_not_a_grant() -> None:
     assert crawler.robots_permits(False) is False
 
 
+@pytest.mark.parametrize(
+    "retrieved,status,expected",
+    [
+        (True, 200, True),  # a policy body was retrieved — its verdict governs
+        (True, None, True),  # legacy transport: text present, status unknown
+        (False, 404, True),  # RFC 9309 §2.3.1.4: a 4xx means no policy exists
+        (False, 410, True),
+        (False, 403, True),  # still a client error — no policy, not "unavailable"
+        (False, 429, False),  # rate limiting is "unavailable", not "no policy"
+        (False, 500, False),  # server error = unavailable → complete disallow
+        (False, 503, False),
+        (False, None, False),  # connection failure/timeout = unavailable
+        (False, 301, False),  # redirect-chain exhaustion residue = unavailable
+    ],
+)
+def test_robots_access_permits_4xx_is_no_policy_not_unavailable(
+    retrieved: bool, status: int | None, expected: bool
+) -> None:
+    # ADR-087 (P26.3 amendment to SIG-INGEST-012): the RFC 9309 §2.3.1.4
+    # access-result split — a 4xx robots answer (other than 429) means "no
+    # policy exists" → unrestricted; connection failures, 5xx and 429 are
+    # "unavailable" → still fail-closed.
+    assert crawler.robots_access_permits(retrieved=retrieved, status=status) is expected
+
+
 def test_content_signal_parsing() -> None:
     signal = crawler.parse_content_signal("search=yes, ai-train=no, use=reference")
     assert signal == {"search": "yes", "ai-train": "no", "use": "reference"}

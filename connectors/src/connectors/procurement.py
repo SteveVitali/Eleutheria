@@ -597,12 +597,17 @@ def tenant_targets(platform: str | None = None) -> list[dict[str, Any]]:
         index_query = str(endpoint.get("index_query", "")).strip()
         url = f"{api_base}{index_path}" + (f"?{index_query}" if index_query else "")
         target: dict[str, Any] = {
+            "id": tenant_id,
             "tenant_id": tenant_id,
             "platform": platform_id,
             "jurisdiction": row.get("jurisdiction"),
             "url": url,
             "external_id": tenant_id,
             "kind": "agenda_index",
+            # P26.3: each tenant host's own robots.txt decides, and the verdict
+            # is recorded per host (claims / refused / unretrievable) rather
+            # than the first refused tenant aborting the whole platform run.
+            "record_refusals": True,
         }
         if str(endpoint.get("index_method", "")).lower() == "post":
             # e.g. PrimeGov PublicPortal /search — the bounded POST body rides the

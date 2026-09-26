@@ -234,6 +234,9 @@ disposition = "link_only"
 [sources.justfoia]
 disposition = "link_only"
 
+[sources.la_city_clerk_cfms]
+disposition = "link_only"
+
 [sources.la_quadrature_du_net]
 disposition = "link_only"
 

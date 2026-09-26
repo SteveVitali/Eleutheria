@@ -33,6 +33,39 @@ def test_unretrievable_robots_refuses_to_run(transport_factory) -> None:  # type
         fetcher.fetch("https://portal.example/api")
 
 
+def test_4xx_robots_means_no_policy_permits_the_fetch(transport_factory, json_response) -> None:  # type: ignore[no-untyped-def]
+    # ADR-087 / RFC 9309 §2.3.1.4: a 404 robots answer = "no policy exists" →
+    # unrestricted — the fetch proceeds. This is the *.api.civicclerk.com case
+    # (P26.3): the tenant API answers robots.txt with 404, which under the old
+    # reading was refused as "unretrievable".
+    url = "https://tenant.api.example/v1/Events"
+    transport = transport_factory(
+        {url: json_response(url, {"id": "e1", "cameras": 0})},
+        robots_text=None,
+        robots_status=404,
+    )
+    fetcher = PoliteFetcher(connector_name="toy", connector_version="1", transport=transport)
+    result = fetcher.fetch(url)
+    assert result.status == 200
+    # The decision is auditable per host (ADR-087).
+    outcome = fetcher.robots_outcomes["tenant.api.example"]
+    assert outcome["outcome"] == "no_policy_4xx"
+    assert outcome["status"] == 404
+
+
+@pytest.mark.parametrize("status", [429, 500, 503])
+def test_5xx_and_429_robots_are_unavailable_refused(transport_factory, status: int) -> None:  # type: ignore[no-untyped-def]
+    # 429/5xx robots answers are "unavailable", not "no policy" — the run is
+    # still refused (SIG-INGEST-012; the RFC reserves the permit for 4xx).
+    transport = transport_factory({}, robots_text=None, robots_status=status)
+    fetcher = PoliteFetcher(connector_name="toy", connector_version="1", transport=transport)
+    with pytest.raises(RobotsUnretrievable):
+        fetcher.fetch("https://portal.example/api")
+    outcome = fetcher.robots_outcomes["portal.example"]
+    assert outcome["outcome"] == "unretrievable"
+    assert outcome["status"] == status
+
+
 def test_robots_disallow_is_honored(transport_factory, json_response) -> None:  # type: ignore[no-untyped-def]
     transport = transport_factory(
         {"https://portal.example/secret": json_response("https://portal.example/secret", {})},

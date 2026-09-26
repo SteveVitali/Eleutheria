@@ -415,6 +415,17 @@ class SourceRunReport:
     disappearances: list[dict[str, Any]] = field(default_factory=list)
 
 
+def _robots_decisions(fetcher: PoliteFetcher) -> list[Mapping[str, Any]]:
+    """The per-host robots.txt audit rows a live run records (ADR-087).
+
+    Each entry names the host, the robots URL probed, the HTTP status the
+    transport saw (``None`` on a connection-level failure), and the outcome —
+    ``retrieved`` (a policy governs), ``no_policy_4xx`` (RFC 9309 §2.3.1.4: no
+    policy exists), or ``unretrievable`` (not granted, SIG-INGEST-012).
+    """
+    return [{"host": host, **outcome} for host, outcome in fetcher.robots_outcomes.items()]
+
+
 def _connector_for(source_id: str, connector_name: str | None) -> Connector:
     name = connector_name or CONNECTOR_FOR_SOURCE.get(source_id)
     if name is None:
@@ -548,6 +559,7 @@ def _run_live(
                 duration_seconds=time.monotonic() - t0,
                 claim_count=0,
                 rate_limit_events=list(transport.rate_limit_events),
+                robots_decisions=_robots_decisions(fetcher),
                 content_drift=str(drift),
             ),
             capture_dir / "live_runs",
@@ -556,9 +568,9 @@ def _run_live(
         raise
     except (RobotsUnretrievable, RobotsDisallowed) as exc:
         # A seed target the politeness layer may not fetch (robots.txt
-        # unretrievable or disallowing — SIG-INGEST-012) refuses the whole run.
-        # Record the refusal loud, never bypass it, then re-raise so the CLI
-        # exits non-zero.
+        # unavailable or disallowing — SIG-INGEST-012 as amended by ADR-087)
+        # refuses the whole run. Record the refusal loud, never bypass it, then
+        # re-raise so the CLI exits non-zero.
         write_fetch_record(
             FetchRecord(
                 source_id=source_id,
@@ -568,6 +580,7 @@ def _run_live(
                 duration_seconds=time.monotonic() - t0,
                 claim_count=0,
                 rate_limit_events=list(transport.rate_limit_events),
+                robots_decisions=_robots_decisions(fetcher),
                 politeness_refusal=f"{type(exc).__name__}: {exc}",
             ),
             capture_dir / "live_runs",
@@ -583,6 +596,7 @@ def _run_live(
         capture_digests=[c.digest for c in report.captures],
         claim_count=len(report.claims),
         rate_limit_events=list(transport.rate_limit_events),
+        robots_decisions=_robots_decisions(fetcher),
         refusals=[dict(r) for r in report.refusals],
         disappearances=[
             {

@@ -287,10 +287,15 @@ targets = [
 # The three agenda-platform sources take their targets from the published tenant
 # registry (data/agenda_tenants.toml) — kind "agenda_tenants" expands to the
 # platform's tenant index endpoints, never a duplicated list. Legistar is
-# live-verified (2026-09-16); PrimeGov's lacity tenant serves but its robots.txt
-# disallows / (a recorded robots refusal stands); CivicClerk's v1 API is
-# IdentityServer-gated — anonymous reads 404 and the api host serves no
-# robots.txt (a recorded robots-unretrievable refusal stands).
+# live-verified (2026-09-17): Legistar's shared webapi host is ADR-083 API-mode
+# allow-listed (32 verified tenants fetched real matter indexes; `lacity` +
+# `chicago` answer a recorded `tenant_api_error` envelope — not provisioned,
+# recorded not fabricated). CivicClerk tenants answer robots.txt 404 →
+# `no_policy_4xx` under ADR-087 (RFC 9309 §2.3.1.4) and serve real `/v1/Events`
+# indexes (34 verified; `oklahomacityok` answers its index 404 → recorded
+# `link_rotted`). PrimeGov's 9 verified tenants all answer robots.txt
+# `Disallow:/` — 9 recorded politeness refusals, never bypassed (a PublicPortal
+# API-mode basis is the still-open D-SOURCES.2-4 operator decision).
 [legistar]
 kind = "agenda_tenants"
 [primegov]

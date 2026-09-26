@@ -8,17 +8,17 @@
     {
       "artifact_id": "openstates-ok-alpr-bills",
       "failing_status": "access_restricted",
-      "observed_at": "2026-09-17T00:55:09.243419+00:00"
+      "observed_at": "2026-09-17T02:58:12.909061+00:00"
     }
   ],
-  "duration_seconds": 0.332876,
+  "duration_seconds": 0.268965,
   "mode": "live",
   "politeness_refusal": null,
   "rate_limit_events": [],
   "refusals": [],
   "robots_decisions": [],
   "source_id": "openstates",
-  "started_at": "2026-09-17T00:55:08.910447+00:00",
+  "started_at": "2026-09-17T02:58:12.640030+00:00",
   "status_codes": [],
   "urls": []
 }

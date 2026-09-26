@@ -406,7 +406,9 @@ connector. Its operative rules:
 
 1. **Identify.** A descriptive UA with a contact URL and an explanation page. No spoofing.
 2. **Honor `robots.txt`**, including AI-crawler directives and content-signal headers. Where
-   robots.txt is unretrievable, permission is **not granted** (SIG-INGEST-012).
+   robots.txt is *unavailable* — connection failure, redirect exhaustion, 5xx or 429 — permission
+   is **not granted** (SIG-INGEST-012); a 4xx answer means the host publishes no policy and access
+   is unrestricted (RFC 9309 §2.3.1.4, ADR-087).
 3. **Rate-limit conservatively**, per host, with backoff. Never burden a small civic host.
 4. **Never circumvent access controls** — no authentication bypass, no paywall evasion, no
    challenge-solving, no proxy rotation or human-mimicking to defeat bot management.

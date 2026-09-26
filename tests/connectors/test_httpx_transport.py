@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import httpx
 import pytest
-from connectors.net import PoliteFetcher, RobotsDisallowed
+from connectors.net import PoliteFetcher, RobotsDisallowed, RobotsUnretrievable
 from connectors.transports import HttpxTransport, default_user_agent
 from policy.crawler import CircumventionError, circumvention_techniques
 
@@ -137,7 +137,45 @@ def test_robots_unretrievable_returns_none_text() -> None:
         return httpx.Response(404)
 
     transport = HttpxTransport(client=_client(handler))
-    assert transport.robots("https://x.test/robots.txt").text is None
+    result = transport.robots("https://x.test/robots.txt")
+    assert result.text is None
+    # ADR-087: the status is preserved so the fetcher can split "no policy
+    # exists" (4xx) from "unavailable" (5xx/429/connection failure).
+    assert result.status == 404
+
+
+def test_robots_404_permits_the_fetch_end_to_end() -> None:
+    # RFC 9309 §2.3.1.4 through the real transport stack: a host that answers
+    # robots.txt with 404 has no policy — the data fetch proceeds (the
+    # *.api.civicclerk.com tenant surface, P26.3).
+    requested_paths: list[str] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        requested_paths.append(request.url.path)
+        if request.url.path == "/robots.txt":
+            return httpx.Response(404)
+        return httpx.Response(
+            200, text='{"value": []}', headers={"Content-Type": "application/json"}
+        )
+
+    transport = HttpxTransport(client=_client(handler))
+    fetcher = PoliteFetcher(connector_name="test", connector_version="1", transport=transport)
+    result = fetcher.fetch("https://x.test/v1/Events")
+    assert result.status == 200
+    assert requested_paths == ["/robots.txt", "/v1/Events"]
+    assert fetcher.robots_outcomes["x.test"]["outcome"] == "no_policy_4xx"
+
+
+def test_robots_5xx_is_unavailable_refused_end_to_end() -> None:
+    # A 5xx robots answer is "unavailable" — refused, never read as "no policy".
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(503)
+
+    transport = HttpxTransport(client=_client(handler))
+    fetcher = PoliteFetcher(connector_name="test", connector_version="1", transport=transport)
+    with pytest.raises(RobotsUnretrievable):
+        fetcher.fetch("https://x.test/data")
+    assert fetcher.robots_outcomes["x.test"]["outcome"] == "unretrievable"
 
 
 def test_robots_disallowed_path_is_never_requested() -> None:

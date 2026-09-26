@@ -84,9 +84,14 @@ most informative datasets SIG can produce.
 and the network, with per-host budgets, a documented crawler UA carrying a contact URL, and
 crawl-delay honoring. Connectors MUST NOT hold their own HTTP clients.
 
-**SIG-INGEST-012 (MUST).** Where `robots.txt` cannot be retrieved, crawl permission MUST be treated
-as **not granted** and the connector MUST refuse to run. *(REQ-R2-02; this case is real —
-`transparency.flocksafety.com/robots.txt` returns 403, F2.1.)*
+**SIG-INGEST-012 (MUST).** Where `robots.txt` is *unavailable* — a connection failure, a timeout,
+an exhausted redirect chain, or a 5xx/429 server answer — crawl permission MUST be treated as
+**not granted** and the connector MUST refuse to run. Per RFC 9309 §2.3.1.4, a **4xx** robots
+response is not unavailability: it means the host publishes *no policy*, and access is
+unrestricted (ADR-087, P26.3 — the earlier reading conflated "no policy" with "unavailable"; the
+`*.api.civicclerk.com` tenant surface answers robots.txt with 404). Where the 4xx is itself a
+managed challenge (F2.1's Flock portals answer 403 on every path), the data fetch still surfaces
+the challenge and is recorded, never defeated (SIG-INGEST-013). *(REQ-R2-02.)*
 
 **SIG-INGEST-013 (MUST NOT).** SIG MUST NOT operate a crawler that defeats a bot-management
 challenge on any source. *(REQ-R2-01; §26, §46.5.)*

@@ -8,17 +8,17 @@
     {
       "artifact_id": "samgov-lpr-opportunities-2026",
       "failing_status": "link_rotted",
-      "observed_at": "2026-09-17T00:54:53.527859+00:00"
+      "observed_at": "2026-09-17T02:58:12.495440+00:00"
     }
   ],
-  "duration_seconds": 0.139848,
+  "duration_seconds": 0.236938,
   "mode": "live",
   "politeness_refusal": null,
   "rate_limit_events": [],
   "refusals": [],
   "robots_decisions": [],
   "source_id": "sam_gov",
-  "started_at": "2026-09-17T00:54:53.387998+00:00",
+  "started_at": "2026-09-17T02:58:12.258430+00:00",
   "status_codes": [],
   "urls": []
 }

@@ -5,14 +5,133 @@
   "connector": "procurement",
   "content_drift": null,
   "disappearances": [],
-  "duration_seconds": 0.162097,
+  "duration_seconds": 0.515536,
   "mode": "live",
-  "politeness_refusal": "RobotsDisallowed: robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://lacity.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+  "politeness_refusal": null,
   "rate_limit_events": [],
-  "refusals": [],
-  "robots_decisions": [],
+  "refusals": [
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://lacity.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "los_angeles_ca",
+      "observed_at": "2026-09-17T02:53:29.222084+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://lacity.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://lasvegas.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "las_vegas_nv",
+      "observed_at": "2026-09-17T02:53:29.291956+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://lasvegas.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://longbeach.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "long_beach_ca_primegov",
+      "observed_at": "2026-09-17T02:53:29.342028+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://longbeach.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://cityofpaloalto.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "palo_alto_ca",
+      "observed_at": "2026-09-17T02:53:29.394190+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://cityofpaloalto.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://tularecounty.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "tulare_county_ca",
+      "observed_at": "2026-09-17T02:53:29.444585+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://tularecounty.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://bedfordoh.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "bedford_oh",
+      "observed_at": "2026-09-17T02:53:29.491224+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://bedfordoh.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://wmwd.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "western_municipal_water_district_ca",
+      "observed_at": "2026-09-17T02:53:29.545286+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://wmwd.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://sanantonio.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "san_antonio_tx_primegov",
+      "observed_at": "2026-09-17T02:53:29.591228+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://sanantonio.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://adamscounty.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "adams_county_co",
+      "observed_at": "2026-09-17T02:53:29.639891+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://adamscounty.primegov.com/api/v2/PublicPortal/search"
+    }
+  ],
+  "robots_decisions": [
+    {
+      "host": "lacity.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://lacity.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "lasvegas.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://lasvegas.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "longbeach.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://longbeach.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "cityofpaloalto.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://cityofpaloalto.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "tularecounty.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://tularecounty.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "bedfordoh.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://bedfordoh.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "wmwd.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://wmwd.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "sanantonio.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://sanantonio.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "adamscounty.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://adamscounty.primegov.com/robots.txt",
+      "status": 200
+    }
+  ],
   "source_id": "primegov",
-  "started_at": "2026-09-17T00:54:12.293910+00:00",
+  "started_at": "2026-09-17T02:53:29.124230+00:00",
   "status_codes": [],
   "urls": []
 }

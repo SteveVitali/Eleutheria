@@ -44,9 +44,14 @@ class FakeTransport:
         responses: Mapping[str, FetchResult],
         *,
         robots_text: str | None = _ROBOTS_ALLOW_ALL,
+        robots_status: int | None = None,
     ) -> None:
         self._responses = dict(responses)
         self._robots_text = robots_text
+        #: The HTTP status of the robots response (ADR-087): ``None`` models a
+        #: connection-level failure; a 4xx models "no policy exists" (RFC 9309
+        #: §2.3.1.4 — unrestricted); 5xx/429 models "unavailable" (refused).
+        self._robots_status = robots_status
         self.request_log: list[str] = []
         self.robots_log: list[str] = []
         # Per-request headers seen, keyed nothing — appended in request order so a
@@ -55,7 +60,7 @@ class FakeTransport:
 
     def robots(self, robots_url: str) -> RobotsResult:
         self.robots_log.append(robots_url)
-        return RobotsResult(text=self._robots_text)
+        return RobotsResult(text=self._robots_text, status=self._robots_status)
 
     def request(
         self, url: str, *, user_agent: str, headers: Mapping[str, str] | None = None
@@ -200,9 +205,12 @@ def json_response() -> Any:
 @pytest.fixture
 def transport_factory() -> Any:
     def _make(
-        responses: Mapping[str, FetchResult], *, robots_text: str | None = _ROBOTS_ALLOW_ALL
+        responses: Mapping[str, FetchResult],
+        *,
+        robots_text: str | None = _ROBOTS_ALLOW_ALL,
+        robots_status: int | None = None,
     ) -> FakeTransport:
-        return FakeTransport(responses, robots_text=robots_text)
+        return FakeTransport(responses, robots_text=robots_text, robots_status=robots_status)
 
     return _make
 

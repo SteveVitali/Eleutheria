@@ -743,8 +743,9 @@ access_method = "rest_api"
 auth_model = "token for most endpoints"
 rate_limits = "~5/min, 50/hr, 125/day — lookup only, crawling impossible (SIG-INGEST-025)"
 verified = true
-last_verified = 2026-09-16
-notes = "Litigation evidence (§22.3). STAYS GATED (P26.2, 2026-09-16): docket contents are public court records, but API access is now Free Law Project membership-based with binding usage conditions (free.law/membership/allowed-api-usage) — accepting that agreement + holding the credential is an operator decision (HG-09 class), not a GL-GATE-06-covered clear public licence. Mapped to the accountability connector (targeted lookups only, SIG-INGEST-036/037) — the gate refuses live fetches meanwhile."
+last_verified = 2026-09-17
+notes = "Litigation evidence (§22.3). STAYS GATED — P26.3 review (2026-09-17) completed the rights packet with verbatim terms: the FLP membership-based API terms (free.law/membership/allowed-api-usage) intend access for individuals/small orgs and expressly exclude 'building tools for for-profit or non-profit organizations' — SIG's use falls outside membership eligibility, so the flip needs an operator decision on the agreement tier + the credential (HG-09 class), not a GL-GATE-06 clear-licence flip. Keyless probe 2026-09-17: /api/rest/v4/dockets/5/ → 401. Mapped to the accountability connector (targeted lookups only, SIG-INGEST-036/037) — the gate refuses live fetches meanwhile."
+review_packet = "docs/build/reports/rights/courtlistener_recap.md"
 
 # ===========================================================================
 # F. Records, procurement, evidence (§22.6 F, §22.3 SIG-INGEST-026)
@@ -794,8 +795,9 @@ robots_policy = "honor"
 access_method = "search_api + S3 assets"
 auth_model = "none for public"
 verified = true
-last_verified = 2026-09-16
-notes = "Public search + full text. Per-document rights vary — UNDETERMINED at source level. STAYS GATED (P26.2, 2026-09-16): no source-level licence resolves — per-document rights belong to each uploader. api.www.documentcloud.org IS anonymously reachable (verified: /api/documents/20504557/ 200) and robots is Disallow:/ (crawl mode); the document-index connector path exists for a future flip, the gate refuses live fetches meanwhile."
+last_verified = 2026-09-17
+notes = "Public search + full text. Per-document rights vary — UNDETERMINED at source level. STAYS GATED — P26.3 review (2026-09-17) completed the rights packet: the MuckRock ToS (muckrock.com/tos, which governs 'MuckRock, FOIA Machine, or DocumentCloud') expressly excludes 'data mining, robots, or similar data gathering and extraction tools' from the access licence and makes user content personal-use-only — an affirmatively restrictive posture, no GL-GATE-06-covered basis. api.www.documentcloud.org IS anonymously reachable and robots is Disallow:/ (a real policy — a hard refusal, never the ADR-087 4xx case). The document-index connector path exists for a future flip; the gate refuses live fetches meanwhile."
+review_packet = "docs/build/reports/rights/documentcloud.md"
 
 [sources.usaspending]
 name = "USAspending"
@@ -2338,3 +2340,17 @@ verified = true
 last_verified = 2026-09-16
 notes = "P26.2 discovery (records/procurement surface). OpenGov (formerly ProcureNow) hosts per-agency public solicitation portals."
 
+
+[sources.la_city_clerk_cfms]
+name = "LA City Clerk Connect (CFMS) — Los Angeles City legislative file management"
+source_kind = "records_channel"
+homepage_url = "https://cityclerk.lacity.org/lacityclerkconnect/"
+default_tier = "R3"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "council-file management system portal (search + council file PDFs)"
+auth_model = "none for the public portal"
+verified = true
+last_verified = 2026-09-17
+notes = "P26.3 discovery (records/agenda surface) — the REAL LA City legislative surface, found while routing around the PrimeGov robots wall (P26.3 pivot): lacity.primegov.com is Disallow:/ and lacity is not provisioned on the Legistar shared InSite host (recorded tenant_api_error). cityclerk.lacity.org serves the public CFMS portal (HTTP 200, 2026-09-17); robots.txt answers 404 (no policy — ADR-087). A ColdFusion-era portal — a records lead for a future connector, LINK-postured meanwhile."
