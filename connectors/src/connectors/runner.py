@@ -99,6 +99,19 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "ccops_seattle": "government_mandated_disclosure",
     "ccops_nyc_post": "government_mandated_disclosure",
     "ccops_sf": "government_mandated_disclosure",
+    # P31.13 (BREADTH.2): three further CCOPS municipalities whose P29.3 rights
+    # packets flipped (LicenseRef-PublicRecord-FactualCompilation) — same
+    # index→document connector, per-city reviewed spec in
+    # government_mandated_disclosure_vocab.toml [adapters.*]. All stay
+    # `ingestion_permitted=false` (HG-03).
+    "ccops_oakland": "government_mandated_disclosure",
+    "ccops_cambridge": "government_mandated_disclosure",
+    "ccops_somerville": "government_mandated_disclosure",
+    # P31.13 (BREADTH.2): the FEMA Homeland Security Grant Program federal-
+    # assistance allocations surface — the procurement connector's USAspending
+    # award-search path (`award_class = "assistance"` reviewed slices; funder →
+    # recipient FundingInstruments, funding evidence only, never deployment).
+    "fema_hsgp_allocations": "procurement",
     # The committed one-time seed (P25.7 / D-CCOPS.1-1, SIG-INGEST-049f): loaded
     # via `sig-connectors load-seed` / `run_seed` — the packaged asset over the
     # static transport, never a live fetch.
@@ -1390,11 +1403,13 @@ def _run_over_fixture(
         rate_limiter=RateLimiter(sleep=lambda _seconds: None),
     )
     targets: list[Mapping[str, Any]] = [{"id": "t1", "url": f"https://{source_id}/x", "kind": kind}]
-    if kind == "oversight_report":
+    if kind == "oversight_report" or source_id == "fema_hsgp_allocations":
         # P31.12: a targeted report lookup resolves its reviewed live_targets row
-        # (the synthetic fixture URL names no reviewed report). The static
-        # transport serves the fixture bytes for the reviewed URL — fixture runs
-        # never open a socket (SIG-INGEST-011).
+        # (the synthetic fixture URL names no reviewed report). P31.13: FEMA's
+        # reviewed assistance slices are live targets too — the synthetic
+        # fixture row would fail the SIG-ONTO-033 sub-award assertion; the
+        # static transport serves the fixture bytes for the reviewed URL —
+        # fixture runs never open a socket (SIG-INGEST-011).
         from .live_targets import live_targets
 
         targets = [dict(t) for t in live_targets(source_id)]
