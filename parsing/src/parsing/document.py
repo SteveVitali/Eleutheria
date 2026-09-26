@@ -37,6 +37,7 @@ __all__ = [
     "DocumentLink",
     "byte_range_locator",
     "html_links",
+    "html_script_srcs",
     "html_text",
     "page_locator_for",
     "pdf_text_pages",
@@ -182,6 +183,47 @@ def html_links(data: bytes, base_url: str) -> tuple[DocumentLink, ...]:
             continue
         seen.add(resolved)
         out.append(DocumentLink(url=resolved, anchor=anchor, ordinal=len(out)))
+    return tuple(out)
+
+
+class _ScriptSrcParser(HTMLParser):
+    """Collect ``<script src>`` values, in document order (stdlib, deterministic)."""
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.srcs: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag != "script":
+            return
+        src = dict(attrs).get("src")
+        if src:
+            self.srcs.append(src)
+
+
+def html_script_srcs(data: bytes, base_url: str) -> tuple[str, ...]:
+    """Every ``<script src>`` in the capture, resolved against ``base_url``.
+
+    A client-rendered page (a Next.js interactive, a data-driven map) often
+    carries its dataset inside a referenced script chunk — the ``<script src>``
+    list is the discovery surface a connector follows to the embedded data.
+    Absolute/relative srcs resolve with :func:`urllib.parse.urljoin`;
+    schemeless and non-HTTP(S) srcs are dropped; duplicates collapse to their
+    first occurrence (document order preserved). Deterministic, stdlib-only.
+    """
+    parser = _ScriptSrcParser()
+    try:
+        parser.feed(utf8_text(data))
+    except Exception:
+        pass
+    seen: set[str] = set()
+    out: list[str] = []
+    for src in parser.srcs:
+        resolved = urljoin(base_url, src.strip())
+        if not resolved.startswith(("http://", "https://")) or resolved in seen:
+            continue
+        seen.add(resolved)
+        out.append(resolved)
     return tuple(out)
 
 

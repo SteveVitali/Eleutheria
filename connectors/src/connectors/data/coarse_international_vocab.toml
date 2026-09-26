@@ -1,0 +1,337 @@
+# SPDX-License-Identifier: Apache-2.0
+# The versioned `coarse_international` connector vocabulary (§22.7, §52,
+# SIG-ENG-036 / SIG-INGEST-042, P25.4). This table is DATA, not code
+# (SIG-ENG-001): the predicate surface the connector may write, the aggregate-only
+# forbidden-column tokens, and the per-source adapter specs (where each
+# upstream's real data surface lives and how a changed shape fails loud) are data
+# rows reviewed on their own. Changes are VERSIONED MIGRATIONS (§20) — bump
+# `vocab_version` and add the change, never silently rewrite a row.
+#
+# NOTE ON TOML ORDERING: every top-level key MUST appear ABOVE the first [table]
+# header — otherwise TOML nests it under that table.
+
+# The connector's own vocabulary version, stamped onto every run (§20).
+# 2026.09.16 — P25.4: the curated coarse-dataset adapters (the real upstream
+# data surfaces): carnegie_ai_gsi embedded-dataset-page spec +
+# facial_recognition_world_map linked-sheet spec; the predicate allowlist and
+# aggregate-only forbidden-column tokens the curated rows route through.
+vocab_version = "2026.09.16"
+
+# The predicate allowlist the `coarse_international` connector may write
+# (SIG-INGEST-033-analogue — typed claims only). A row carrying a predicate
+# outside this set is refused at the ingest boundary, naming the offender.
+coarse_predicate_allowlist = [
+  # country-level (Carnegie AI GSI / FRWM / curated country rows)
+  "uses_ai_surveillance",            # country is indexed as an AI-surveillance adopter
+  "ai_surveillance_tech_from_china", # upstream flag: supplied by Chinese companies
+  "ai_surveillance_tech_from_us",    # upstream flag: supplied by U.S. companies
+  "smart_city_surveillance",         # upstream flag: "Smart City" / "safe city" sensors
+  "uses_facial_recognition",         # upstream flag: facial recognition systems
+  "smart_policing",                  # upstream flag: "Smart Policing" analytics
+  "ai_surveillance_supplier",        # a company upstream names as relevant in-country
+  "facial_recognition_status",       # FRWM per-country status enum
+  # vendor-level (ASPI / curated vendor rows)
+  "operates_in_country",             # vendor operates in country X (ISO code value)
+]
+
+# The FRWM upstream status literals -> the connector's normalized enum. The
+# upstream's own labels are preserved verbatim in raw_value (P2); only the
+# reviewed literal set maps — an unmapped literal is ContentDrift, never a guess.
+# ("Monitored by Israel" is upstream's own term for the Palestine row.)
+
+# Column-name tokens that mark a NON-aggregate (per-search/per-person) axis
+# (RISK-P0-08 / SIG-INGEST-043-analogue): a live data surface carrying a column
+# named with one of these is refused whole — the coarse datasets are
+# country/vendor aggregates ONLY, never per-person, per-search, or per-device.
+forbidden_column_tokens = [
+  "person", "individual", "officer", "suspect",
+  "search_id", "search_date", "search_time", "query",
+  "plate", "license_plate", "vehicle",
+  "device_id", "camera_id", "serial",
+  "face_id", "biometric_id", "subject_name", "ssn",
+  "latitude", "longitude", "address",
+]
+
+# --- the per-source adapter specs ([adapters.*], P25.4) ------------------------
+#
+# Each flipped coarse source's real data surface and its reviewed bounds. The
+# `kind` selects the adapter:
+#   embedded_dataset_page — the index page's <script src> list is the discovery
+#     surface for the JS chunks; the chunk carrying `entry_marker` holds the
+#     embedded dataset array (a client-rendered Next.js interactive).
+#   sheet_dataset — the page links its full underlying dataset (a Google Sheet);
+#     the per-sheet gviz CSV targets are reviewed seed targets; the page capture
+#     must still carry `page_link_literal` or the shape has drifted.
+#   document — the page is captured as provenance only (no reachable
+#     machine-readable surface).
+
+[adapters.carnegie_ai_gsi]
+kind = "embedded_dataset_page"
+# The index page's <script src> links under this path are the chunk candidates
+# (same-host only, .js only, bounded). 28 observed on 2026-09-15.
+script_src_contains = "/_next/static/chunks/"
+script_src_suffix = ".js"
+same_host = true
+max_chunks = 48
+# The embedded dataset array entries all carry this marker; the strict per-entry
+# shape is {arrayItem:!0,chinese,city,country,description,facial,id,
+# inactiveMapData,mapData,policing,us}. 75 entries observed 2026-09-15; a partial
+# or malformed extraction is ContentDrift, never silent.
+entry_marker = "{arrayItem:!0,"
+min_entries = 60
+# The upstream flag -> predicate map (the index's own layer semantics:
+# chinese="Chinese Technology — countries using Chinese companies to supply
+# their AI surveillance technology"; us="U.S. Technology" likewise;
+# city="Smart City" safe-city sensors; facial="Facial Recognition Systems";
+# policing="Smart Policing" analytics). Entry membership itself emits
+# `membership_predicate`; each company named under the entry's "Relevant
+# Companies" description field emits one `supplier_predicate` claim (verbatim
+# name, "N/A" skipped — it is a non-value, not a company).
+membership_predicate = "uses_ai_surveillance"
+supplier_predicate = "ai_surveillance_supplier"
+[adapters.carnegie_ai_gsi.flag_predicates]
+chinese = "ai_surveillance_tech_from_china"
+us = "ai_surveillance_tech_from_us"
+city = "smart_city_surveillance"
+facial = "uses_facial_recognition"
+policing = "smart_policing"
+
+[adapters.facial_recognition_world_map]
+kind = "sheet_dataset"
+# The map page (surfshark.com/facial-recognition-map) carries no per-country
+# table — it links its compiled dataset. This literal is the page<->dataset
+# binding; a page no longer carrying it is ContentDrift. The literal resolves to
+# the Google Sheet `spreadsheet_id` below (docs.google.com robots Allow:
+# /spreadsheet covers the gviz/tq CSV export route — verified 2026-09-16).
+page_link_literal = "bit.ly/TheFacialRecognitionWorldMap"
+spreadsheet_id = "157mTA67QAMxb0N4e7tO755r9uw2wsaT1z2rcCO1hPIU"
+# The strict sheet contract: every per-continent sheet carries exactly this
+# header; a changed column set is ContentDrift (fail closed, never guess).
+expected_header = ["Country", "Facial recognition status", "Source 1", "Source 2", "Notes"]
+status_predicate = "facial_recognition_status"
+# The six per-continent sheets (gid -> name; the live CSV targets name these).
+# Egypt appears on TWO sheets with disagreeing statuses — an upstream
+# contradiction; both rows emit claims (contradictions stay visible, P3).
+[adapters.facial_recognition_world_map.sheets]
+"689675349" = "North America"
+"520821635" = "South America"
+"102380128" = "Europe"
+"2060189382" = "Middle East & Central Asia"
+"1320430692" = "Rest of Asia and Oceania"
+"0" = "Africa"
+
+[adapters.facial_recognition_world_map.status_map]
+"In use" = "in_use"
+"Approved for use (not implemented)" = "approved_not_implemented"
+"Considering technology" = "considering"
+"Banned" = "banned"
+"No evidence of use" = "no_evidence"
+"Monitored by Israel" = "monitored_by_israel"
+
+# The upstream country name -> the claim's jurisdiction subject code
+# (iso.3166-1 alpha-2; iso.3166-2 for the two UK constituent rows; Kosovo uses
+# the de-facto user-assigned XK code — CLDR/EU practice, noted as such). An
+# unmapped literal is ContentDrift — the connector never guesses a country.
+[adapters.facial_recognition_world_map.countries]
+"Albania" = "iso.3166-1:AL"
+"Algeria" = "iso.3166-1:DZ"
+"Andorra" = "iso.3166-1:AD"
+"Angola" = "iso.3166-1:AO"
+"Antigua and Barbuda" = "iso.3166-1:AG"
+"Argentina" = "iso.3166-1:AR"
+"Armenia" = "iso.3166-1:AM"
+"Australia" = "iso.3166-1:AU"
+"Austria" = "iso.3166-1:AT"
+"Azerbaijan" = "iso.3166-1:AZ"
+"Bahamas" = "iso.3166-1:BS"
+"Bahrain" = "iso.3166-1:BH"
+"Bangladesh" = "iso.3166-1:BD"
+"Barbados" = "iso.3166-1:BB"
+"Belarus" = "iso.3166-1:BY"
+"Belgium" = "iso.3166-1:BE"
+"Belize" = "iso.3166-1:BZ"
+"Benin" = "iso.3166-1:BJ"
+"Bolivia" = "iso.3166-1:BO"
+"Bosnia and Herzegovina" = "iso.3166-1:BA"
+"Botswana" = "iso.3166-1:BW"
+"Brazil" = "iso.3166-1:BR"
+"Brunei" = "iso.3166-1:BN"
+"Bulgaria" = "iso.3166-1:BG"
+"Burkina Faso" = "iso.3166-1:BF"
+"Burundi" = "iso.3166-1:BI"
+"Cambodia" = "iso.3166-1:KH"
+"Cameroon" = "iso.3166-1:CM"
+"Canada" = "iso.3166-1:CA"
+"Cape Verde" = "iso.3166-1:CV"
+"Central African Republic" = "iso.3166-1:CF"
+"Chad" = "iso.3166-1:TD"
+"Chile" = "iso.3166-1:CL"
+"China" = "iso.3166-1:CN"
+"Colombia" = "iso.3166-1:CO"
+"Comoros" = "iso.3166-1:KM"
+"Congo (Democratic Republic of the)" = "iso.3166-1:CD"
+"Congo (Republic of the)" = "iso.3166-1:CG"
+"Costa Rica" = "iso.3166-1:CR"
+"Cote d’Ivoire (Ivory Coast)" = "iso.3166-1:CI"
+"Croatia" = "iso.3166-1:HR"
+"Cuba" = "iso.3166-1:CU"
+"Cyprus" = "iso.3166-1:CY"
+"Czech Republic" = "iso.3166-1:CZ"
+"Denmark" = "iso.3166-1:DK"
+"Djibouti" = "iso.3166-1:DJ"
+"Dominica" = "iso.3166-1:DM"
+"Ecuador" = "iso.3166-1:EC"
+"Egypt" = "iso.3166-1:EG"
+"El Salvador" = "iso.3166-1:SV"
+"England" = "iso.3166-2:GB-ENG"
+"Equatorial Guinea" = "iso.3166-1:GQ"
+"Eritrea" = "iso.3166-1:ER"
+"Estonia" = "iso.3166-1:EE"
+"Ethiopia" = "iso.3166-1:ET"
+"Fiji" = "iso.3166-1:FJ"
+"Finland" = "iso.3166-1:FI"
+"France" = "iso.3166-1:FR"
+"Gabon" = "iso.3166-1:GA"
+"Georgia" = "iso.3166-1:GE"
+"Germany" = "iso.3166-1:DE"
+"Ghana" = "iso.3166-1:GH"
+"Greece" = "iso.3166-1:GR"
+"Grenada" = "iso.3166-1:GD"
+"Guatemala" = "iso.3166-1:GT"
+"Guinea" = "iso.3166-1:GN"
+"Guinea-Bissau" = "iso.3166-1:GW"
+"Guyana" = "iso.3166-1:GY"
+"Haiti" = "iso.3166-1:HT"
+"Honduras" = "iso.3166-1:HN"
+"Hong Kong" = "iso.3166-1:HK"
+"Hungary" = "iso.3166-1:HU"
+"Iceland" = "iso.3166-1:IS"
+"India" = "iso.3166-1:IN"
+"Indonesia" = "iso.3166-1:ID"
+"Iran" = "iso.3166-1:IR"
+"Iraq" = "iso.3166-1:IQ"
+"Ireland" = "iso.3166-1:IE"
+"Israel" = "iso.3166-1:IL"
+"Italy" = "iso.3166-1:IT"
+"Jamaica" = "iso.3166-1:JM"
+"Japan" = "iso.3166-1:JP"
+"Jordan" = "iso.3166-1:JO"
+"Kazakhstan" = "iso.3166-1:KZ"
+"Kenya" = "iso.3166-1:KE"
+"Kiribati" = "iso.3166-1:KI"
+"Kosovo" = "iso.3166-1:XK"
+"Kuwait" = "iso.3166-1:KW"
+"Kyrgyzstan" = "iso.3166-1:KG"
+"Laos" = "iso.3166-1:LA"
+"Latvia" = "iso.3166-1:LV"
+"Lebanon" = "iso.3166-1:LB"
+"Lesotho" = "iso.3166-1:LS"
+"Liberia" = "iso.3166-1:LR"
+"Libya" = "iso.3166-1:LY"
+"Liechtenstein" = "iso.3166-1:LI"
+"Lithuania" = "iso.3166-1:LT"
+"Luxembourg" = "iso.3166-1:LU"
+"Macau" = "iso.3166-1:MO"
+"Madagascar" = "iso.3166-1:MG"
+"Malawi" = "iso.3166-1:MW"
+"Malaysia" = "iso.3166-1:MY"
+"Mali" = "iso.3166-1:ML"
+"Malta" = "iso.3166-1:MT"
+"Marshall Islands" = "iso.3166-1:MH"
+"Mauritania" = "iso.3166-1:MR"
+"Mauritius" = "iso.3166-1:MU"
+"Mexico" = "iso.3166-1:MX"
+"Micronesia, Federated States of" = "iso.3166-1:FM"
+"Moldova" = "iso.3166-1:MD"
+"Monaco" = "iso.3166-1:MC"
+"Mongolia" = "iso.3166-1:MN"
+"Montenegro" = "iso.3166-1:ME"
+"Morocco" = "iso.3166-1:MA"
+"Mozambique" = "iso.3166-1:MZ"
+"Myanmar" = "iso.3166-1:MM"
+"Namibia" = "iso.3166-1:NA"
+"Nauru" = "iso.3166-1:NR"
+"Netherlands" = "iso.3166-1:NL"
+"New Zealand" = "iso.3166-1:NZ"
+"Nicaragua" = "iso.3166-1:NI"
+"Niger" = "iso.3166-1:NE"
+"Nigeria" = "iso.3166-1:NG"
+"North Korea" = "iso.3166-1:KP"
+"North Macedonia" = "iso.3166-1:MK"
+"Norway" = "iso.3166-1:NO"
+"Oman" = "iso.3166-1:OM"
+"Pakistan" = "iso.3166-1:PK"
+"Palau" = "iso.3166-1:PW"
+"Palestine" = "iso.3166-1:PS"
+"Panama" = "iso.3166-1:PA"
+"Papua New Guinea" = "iso.3166-1:PG"
+"Paraguay" = "iso.3166-1:PY"
+"Peru" = "iso.3166-1:PE"
+"Philippines" = "iso.3166-1:PH"
+"Poland" = "iso.3166-1:PL"
+"Portugal" = "iso.3166-1:PT"
+"Qatar" = "iso.3166-1:QA"
+"Romania" = "iso.3166-1:RO"
+"Russia" = "iso.3166-1:RU"
+"Rwanda" = "iso.3166-1:RW"
+"Saint Kitts and Nevis" = "iso.3166-1:KN"
+"Saint Lucia" = "iso.3166-1:LC"
+"Saint Vincent and the Grenadines" = "iso.3166-1:VC"
+"Samoa" = "iso.3166-1:WS"
+"Sao Tome and Principe" = "iso.3166-1:ST"
+"Saudi Arabia" = "iso.3166-1:SA"
+"Scotland" = "iso.3166-2:GB-SCT"
+"Senegal" = "iso.3166-1:SN"
+"Serbia" = "iso.3166-1:RS"
+"Seychelles" = "iso.3166-1:SC"
+"Sierra Leone" = "iso.3166-1:SL"
+"Singapore" = "iso.3166-1:SG"
+"Slovakia" = "iso.3166-1:SK"
+"Slovenia" = "iso.3166-1:SI"
+"Solomon Islands" = "iso.3166-1:SB"
+"Somalia" = "iso.3166-1:SO"
+"South Africa" = "iso.3166-1:ZA"
+"South Korea" = "iso.3166-1:KR"
+"South Sudan" = "iso.3166-1:SS"
+"Spain" = "iso.3166-1:ES"
+"Sri Lanka" = "iso.3166-1:LK"
+"Sudan" = "iso.3166-1:SD"
+"Suriname" = "iso.3166-1:SR"
+"Swaziland (Eswatini)" = "iso.3166-1:SZ"
+"Sweden" = "iso.3166-1:SE"
+"Switzerland" = "iso.3166-1:CH"
+"Syria" = "iso.3166-1:SY"
+"Taiwan" = "iso.3166-1:TW"
+"Tajikistan" = "iso.3166-1:TJ"
+"Tanzania" = "iso.3166-1:TZ"
+"Thailand" = "iso.3166-1:TH"
+"The Gambia" = "iso.3166-1:GM"
+"Timor Leste" = "iso.3166-1:TL"
+"Togo" = "iso.3166-1:TG"
+"Tonga" = "iso.3166-1:TO"
+"Trinidad and Tobago" = "iso.3166-1:TT"
+"Tunisia" = "iso.3166-1:TN"
+"Turkey" = "iso.3166-1:TR"
+"Turkmenistan" = "iso.3166-1:TM"
+"Tuvalu" = "iso.3166-1:TV"
+"Uganda" = "iso.3166-1:UG"
+"Ukraine" = "iso.3166-1:UA"
+"United Arab Emirates" = "iso.3166-1:AE"
+"United States of America" = "iso.3166-1:US"
+"Uruguay" = "iso.3166-1:UY"
+"Uzbekistan" = "iso.3166-1:UZ"
+"Vanuatu" = "iso.3166-1:VU"
+"Venezuela" = "iso.3166-1:VE"
+"Vietnam" = "iso.3166-1:VN"
+"Yemen" = "iso.3166-1:YE"
+"Zambia" = "iso.3166-1:ZM"
+"Zimbabwe" = "iso.3166-1:ZW"
+
+[adapters.aspi_mapping_chinas_tech_giants]
+kind = "document"
+# chinatechmap.aspi.org.au answers programmatic requests with a WAF 403 — from
+# laptop egress AND from a GCP Cloud Run egress probe (2026-09-16, execution
+# aspi-egress-probe: 403 text/html). The block is policy, not vantage; SIG does
+# not defeat WAFs (SIG-INGEST-013). The page stays a document-capture target —
+# disappearance recorded, no claims — until the posture changes or HG-04
+# outreach yields a permitted surface (P25.7 d3).

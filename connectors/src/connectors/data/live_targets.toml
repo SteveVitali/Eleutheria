@@ -182,18 +182,48 @@ targets = [
   { id = "eff-drones", url = "https://www.eff.org/issues/drones", kind = "pathway_document" },
 ]
 
-# Coarse international — the upstream index/map/report pages themselves. ASPI's
-# chinatechmap host answers with a WAF challenge (recorded disappearance).
+# --- coarse international curated adapters (P25.4) -----------------------------
+# The three counsel-flipped coarse sources (HG-02, derived-facts basis) now have
+# per-source adapter specs in coarse_international_vocab.toml [adapters.*] —
+# each page is the discovery surface for its real data surface, parsed STRICTLY
+# (a changed shape is ContentDrift, never silent zero).
+
+# Carnegie AI GSI — the Next.js feature page is an `embedded_dataset_page`: its
+# <script src> chunk links are the discovery surface (discover_more resolves the
+# bounded `dataset_chunk` targets); the chunk carrying the `{arrayItem:!0,`
+# marker embeds the 75-country dataset array. The page itself is captured as an
+# EvidenceArtifact. The publications/interactive URL 301s to the /features/ page
+# (the transport follows redirects) — the canonical surface is below.
 [carnegie_ai_gsi]
 kind = "document"
 targets = [
-  { id = "carnegie-aigs-index", url = "https://carnegieendowment.org/publications/interactive/ai-surveillance", kind = "document" },
+  { id = "carnegie-aigs-index", url = "https://carnegieendowment.org/features/ai-global-surveillance-technology", kind = "document" },
 ]
+
+# Facial Recognition World Map — the surfshark.com map page (`sheet_dataset`):
+# it carries no per-country table but links bit.ly/TheFacialRecognitionWorldMap
+# -> the Google Sheet below (docs.google.com robots Allow: /spreadsheet covers
+# the gviz/tq CSV route). The six per-continent sheets are seed `dataset_csv`
+# targets parsed strictly; the page capture must still carry the link literal
+# or the shape drifted. 194 rows observed 2026-09-16.
 [facial_recognition_world_map]
 kind = "document"
 targets = [
   { id = "surfshark-frwm", url = "https://surfshark.com/facial-recognition-map", kind = "document" },
+  { id = "frwm-sheet:north-america", url = "https://docs.google.com/spreadsheets/d/157mTA67QAMxb0N4e7tO755r9uw2wsaT1z2rcCO1hPIU/gviz/tq?tqx=out:csv&gid=689675349", kind = "dataset_csv", sheet = "North America" },
+  { id = "frwm-sheet:south-america", url = "https://docs.google.com/spreadsheets/d/157mTA67QAMxb0N4e7tO755r9uw2wsaT1z2rcCO1hPIU/gviz/tq?tqx=out:csv&gid=520821635", kind = "dataset_csv", sheet = "South America" },
+  { id = "frwm-sheet:europe", url = "https://docs.google.com/spreadsheets/d/157mTA67QAMxb0N4e7tO755r9uw2wsaT1z2rcCO1hPIU/gviz/tq?tqx=out:csv&gid=102380128", kind = "dataset_csv", sheet = "Europe" },
+  { id = "frwm-sheet:me-central-asia", url = "https://docs.google.com/spreadsheets/d/157mTA67QAMxb0N4e7tO755r9uw2wsaT1z2rcCO1hPIU/gviz/tq?tqx=out:csv&gid=2060189382", kind = "dataset_csv", sheet = "Middle East & Central Asia" },
+  { id = "frwm-sheet:asia-oceania", url = "https://docs.google.com/spreadsheets/d/157mTA67QAMxb0N4e7tO755r9uw2wsaT1z2rcCO1hPIU/gviz/tq?tqx=out:csv&gid=1320430692", kind = "dataset_csv", sheet = "Rest of Asia and Oceania" },
+  { id = "frwm-sheet:africa", url = "https://docs.google.com/spreadsheets/d/157mTA67QAMxb0N4e7tO755r9uw2wsaT1z2rcCO1hPIU/gviz/tq?tqx=out:csv&gid=0", kind = "dataset_csv", sheet = "Africa" },
 ]
+
+# ASPI Mapping China's Tech Giants — chinatechmap.aspi.org.au answers
+# programmatic requests with a WAF challenge (HTTP 403): laptop egress AND a
+# GCP Cloud Run egress probe both 403'd (2026-09-16, job aspi-egress-probe —
+# the block is policy, not vantage). Never defeated (SIG-INGEST-013): the page
+# stays a document target → a recorded disappearance, no claims, until the
+# posture changes or HG-04 outreach yields a permitted surface (P25.7 d3).
 [aspi_mapping_chinas_tech_giants]
 kind = "document"
 targets = [

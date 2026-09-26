@@ -1,0 +1,26 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnaapf652eo5ab7y6ivatqyjm52nmton5gdl52zn6zoyagexhn5hf3wkwjyth7i22yukx6rdwd6gftunzfjhffbtkhxqtga5jbzixxlcgm",
+    "bcnaaf65hax6z653mna2whrouq6nupnurc3zzmnyluqcvzp7bbh2o3lz5rwzz6fnglfdfdtyzoceod2yuzagbyex7c3wj5wjlwc4uybexsm",
+    "bcnab5zhh2bxbre7lydv3kvect5k7l7eqsad7joaoingu7iolmgreb4mm4z23o4pyfeevlt322tgcm2s2qr277itgmd3nf4k3y32752h4lm",
+    "bcnam6fgplqa6fisiwvzmuvyddxflgwvaazlzj4smlqgmrtweenyjoc4xzmucsiuemzkmpzimhn3p5s7i3q6yl72rsjy5uemtw3wqqksqhu",
+    "bcnad3ynqgjqktutxvhxcnn4qfeufwonflqx4nmhkom7yrrlkikytrbp5d27lcj72asygga4kxr2ijwqt53h2fhwcukq5n5lotv7jrqj5qu",
+    "bcnao34t5ifumgduq332ojzttq444n4t2sh4twtedis6e2wygrqhuo545toea5gfi5h4sclvfygewiz7kna6pub2foemplogjhlmryz5ybm",
+    "bcnak324uk77mugecgw4wqc3ruwzib5jttxrjc3gp4nujhxl342vacdv76pejy5k4jzj5ciqhzjv76uk2puggtrvtnprluiv6gesq3d6hdq"
+  ],
+  "claim_count": 202,
+  "connector": "coarse_international",
+  "content_drift": null,
+  "disappearances": [],
+  "duration_seconds": 5.733,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "facial_recognition_world_map",
+  "started_at": "2026-09-16T03:03:40.596054+00:00",
+  "status_codes": [],
+  "urls": []
+}
