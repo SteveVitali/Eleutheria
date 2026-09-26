@@ -1,0 +1,18 @@
+{
+  "byte_counts": [],
+  "capture_digests": [],
+  "claim_count": 0,
+  "connector": "ok_statute",
+  "content_drift": null,
+  "disappearances": [],
+  "duration_seconds": 0.244388,
+  "mode": "live",
+  "politeness_refusal": "RobotsDisallowed: robots.txt disallows 'ok_statute/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://www.oscn.net/applications/oscn/DeliverDocument.asp?CiteID=478582' (Rule 2).",
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "ok_statute",
+  "started_at": "2026-09-16T17:42:24.087035+00:00",
+  "status_codes": [],
+  "urls": []
+}
