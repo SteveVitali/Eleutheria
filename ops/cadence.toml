@@ -289,7 +289,8 @@ cadence = "weekly"
 cron = "0 5 1 * 1"
 job = "sig-ingest-sam-gov"
 scheduler = "sig-sched-sam-gov"
-note = "Bounded opportunity search over the documented public API; key from $SIG_SAM_GOV_KEY (HG-09). Keyless the API 404s — a recorded disappearance."
+secrets = { SIG_SAM_GOV_KEY = "sig-sam-gov-key" }  # keyed live since P26.4 (2026-09-17)
+note = "Bounded opportunity search over the documented public API; key rides the X-Api-Key header from $SIG_SAM_GOV_KEY (HG-09, Secret Manager). Keyless the API 404s — a recorded disappearance."
 
 [[sources]]
 id = "openstates"
@@ -297,4 +298,5 @@ cadence = "weekly"
 cron = "0 5 2 * 2"
 job = "sig-ingest-openstates"
 scheduler = "sig-sched-openstates"
-note = "Bounded state-scoped bill queries over v3; key from $SIG_OPENSTATES_KEY (HG-09). Keyless → 403 challenge, recorded. Bills index as index_only links (a pending bill is not a §11.14 LegalInstrument)."
+secrets = { SIG_OPENSTATES_KEY = "sig-openstates-key" }  # keyed live since P26.4 (2026-09-17)
+note = "Bounded state-scoped bill queries over v3; key rides the X-API-KEY header from $SIG_OPENSTATES_KEY (HG-09, Secret Manager). Keyless → 403 challenge, recorded. Bills index as index_only links (a pending bill is not a §11.14 LegalInstrument)."

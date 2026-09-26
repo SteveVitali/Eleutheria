@@ -58,6 +58,26 @@ RULES: list[tuple[str, re.Pattern[str]]] = [
     ("sig-credential-literal", re.compile(r"SIG_(?!SECRET_)[A-Z0-9_]*(?:TOKEN|KEY|SECRET|PASSWORD)\s*[:=]\s*[\"'][^\"']{8,}")),
 ]
 
+#: A ``secrets = { ENV = "sig-name", … }`` inline-table binding
+#: (``ops/cadence.toml``, the P26.1 mechanism) maps env vars to Secret Manager
+#: resource *names* — names only, never values (HG-09; the same idea as the
+#: ``SIG_SECRET_*`` carve-out above). The exemption holds only when every
+#: quoted value in the binding matches the ``sig-<lowercase-hyphenated>`` name
+#: shape — a real credential value never does.
+_SECRET_NAME_BINDING = re.compile(r"\bsecrets\s*=\s*\{([^}]*)\}")
+_SECRET_NAME_VALUE = re.compile(r"^sig-[a-z0-9-]+$")
+
+
+def _is_secret_name_binding(line: str) -> bool:
+    """True when ``line`` is a ``secrets = { ENV = "sig-name", … }`` binding —
+    every assigned literal is a Secret Manager *name*, never a credential."""
+    match = _SECRET_NAME_BINDING.search(line)
+    if not match:
+        return False
+    values = re.findall(r'=\s*"([^"]+)"', match.group(1))
+    return bool(values) and all(_SECRET_NAME_VALUE.fullmatch(v) for v in values)
+
+
 MAX_BYTES = 1 << 20  # 1 MiB — same per-file ceiling the build-memory scan uses.
 SKIP_PARTS = {".git", "node_modules", "__pycache__", ".venv"}
 
@@ -108,6 +128,8 @@ def _scan_file(path: Path) -> list[tuple[int, str]]:
     findings: list[tuple[int, str]] = []
     for lineno, line in enumerate(text.splitlines(), start=1):
         for rule_id, pattern in RULES:
+            if rule_id == "sig-credential-literal" and _is_secret_name_binding(line):
+                continue  # a Secret Manager *name* binding, never a value
             if pattern.search(line):
                 findings.append((lineno, rule_id))
     return findings

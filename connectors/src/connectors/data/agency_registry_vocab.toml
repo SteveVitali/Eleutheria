@@ -62,6 +62,10 @@ fbi_cde_agency_registry = "fbi_cde_agency_registry"
 api_base = "https://api.usa.gov/crime/fbi/cde"
 by_state_endpoint = "/agency/byStateAbbr/"
 api_key_env = "SIG_DATA_GOV_KEY"
+# The api.data.gov credential header (P26.4): the key rides the request header,
+# never the URL — a keyed query would land in the recorded source_uri / run
+# records (HG-09). The DEMO_KEY fallback travels the same header.
+api_key_header = "X-Api-Key"
 # api.data.gov's published demonstration key — documented public fallback for
 # keyless exploration (heavily rate-limited; it is auth data published upstream,
 # not a secret and not a circumvention).

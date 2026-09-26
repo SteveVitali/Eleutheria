@@ -284,6 +284,10 @@ index_query = "$top=100"
 api_base = "https://api.sam.gov/prod/opportunities/v2"
 search_endpoint = "/search"
 api_key_env = "SIG_SAM_GOV_KEY"
+# The api.data.gov-gateway credential header (P26.4): the key rides the request
+# header, never the URL — a keyed query would land in the recorded source_uri /
+# run records (HG-09). Verified live 2026-09-17: X-Api-Key → 200, keyless → 404.
+api_key_header = "X-Api-Key"
 
 # Reviewed SAM notice type → procurement lifecycle state (§13.4) +
 # acquisition_channel hint. `channel` is emitted only where the notice type ITSELF
