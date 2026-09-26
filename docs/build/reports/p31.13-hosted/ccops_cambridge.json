@@ -1,0 +1,305 @@
+{
+ "source": "ccops_cambridge",
+ "ticket": "P31.13",
+ "semantic_id": "BREADTH.2",
+ "connector": "government_mandated_disclosure",
+ "target_kind": "index_page",
+ "image": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api@sha256:63b809b2ab41b36df4d1fca33f4aa1a22953cf114639f27f0766b9c1245115b6",
+ "image_tag": "sig-api:ingest-26d5ceeeab74",
+ "code_commit": "26d5cee",
+ "executions": [
+  "sig-ingest-ccops-cambridge-8r87w",
+  "sig-ingest-ccops-cambridge-g4nmx"
+ ],
+ "ops_runs": [
+  {
+   "started_at": "2026-09-26T10:00:52+00:00",
+   "outcome": "ok",
+   "exit_code": 0,
+   "claims_added": 42,
+   "duration_seconds": 12.201,
+   "ingest_run_id": "01a0dd29-2835-7059-969e-947a7f21b802",
+   "logical_run": "ccops_cambridge@2026-09-19T06:09Z",
+   "fetches": 2,
+   "robots_decisions": [
+    {
+     "host": "cambridgema.iqm2.com",
+     "outcome": "retrieved",
+     "robots_url": "https://cambridgema.iqm2.com/robots.txt",
+     "status": 200
+    },
+    {
+     "host": "CambridgeMA.IQM2.com",
+     "outcome": "retrieved",
+     "robots_url": "https://CambridgeMA.IQM2.com/robots.txt",
+     "status": 200
+    }
+   ],
+   "capture_digests": [
+    "bcnao7roxlirdah22knp4ndkmesoqeyc747dad6gcbjvtc3cwtpevc7ffdyzutmnn2f7cgpxrfbg36xt4ctavi23ee6ynin2d2axovjat3q",
+    "bcnaav3uwgsg3d5kruxpkjydz6kktvcpgujtcorxjyzr233zkctdao5hofkleus5all6bin5o4xgaekvjztybdnykwk4mkllhs3d4vo3tdi"
+   ]
+  },
+  {
+   "started_at": "2026-09-26T10:17:33+00:00",
+   "outcome": "ok",
+   "exit_code": 0,
+   "claims_added": 42,
+   "duration_seconds": 11.81,
+   "ingest_run_id": "01a0dd38-7010-73ef-ad38-a2a88c0fb5d9",
+   "logical_run": "ccops_cambridge@2026-09-19T06:09Z",
+   "fetches": 2,
+   "robots_decisions": [
+    {
+     "host": "cambridgema.iqm2.com",
+     "outcome": "retrieved",
+     "robots_url": "https://cambridgema.iqm2.com/robots.txt",
+     "status": 200
+    },
+    {
+     "host": "CambridgeMA.IQM2.com",
+     "outcome": "retrieved",
+     "robots_url": "https://CambridgeMA.IQM2.com/robots.txt",
+     "status": 200
+    }
+   ],
+   "capture_digests": [
+    "bcnane25bofibbdbr43ogzqjiaqhlzgxpohvoymfcnp6vxf7xpqsohjfy5hwjts7ui2ddokhs4y4uqcwhhi47vgu2idd2ujx4ht4woutrim",
+    "bcnaav3uwgsg3d5kruxpkjydz6kktvcpgujtcorxjyzr233zkctdao5hofkleus5all6bin5o4xgaekvjztybdnykwk4mkllhs3d4vo3tdi"
+   ]
+  }
+ ],
+ "ingest_run_completions": [
+  {
+   "run_id": "01a0dd29-2835-7059-969e-947a7f21b802",
+   "status": "ok",
+   "claims_considered": 42,
+   "claims_inserted": 37,
+   "claims_duplicate": 0,
+   "finished_at": "2026-09-26 10:01:04.686920+00:00",
+   "run_record_uri": "gs://zeta-medley-508121-u7-sig-restricted/ops/runs/ccops_cambridge/2026-09-26/2026-09-26T10-00-52+00-00.json"
+  },
+  {
+   "run_id": "01a0dd38-7010-73ef-ad38-a2a88c0fb5d9",
+   "status": "ok",
+   "claims_considered": 42,
+   "claims_inserted": 0,
+   "claims_duplicate": 37,
+   "finished_at": "2026-09-26 10:17:45.642841+00:00",
+   "run_record_uri": "gs://zeta-medley-508121-u7-sig-restricted/ops/runs/ccops_cambridge/2026-09-26/2026-09-26T10-17-33+00-00.json"
+  }
+ ],
+ "captures": [
+  {
+   "content_digest": "8fd63f0b4e80b2cefa07641ae9fc7591e6ade55a0b6770a4a3ef32e2abf976e5",
+   "media_type": "application/octet-stream",
+   "byte_size": 0,
+   "retrieved_at": "2026-09-26 10:00:57.300026+00:00",
+   "http_status": null
+  },
+  {
+   "content_digest": "50325af131562668e100a6fb3c68df0dccfc4587eb5f8f5eec200de7ad5fdf87",
+   "media_type": "application/octet-stream",
+   "byte_size": 0,
+   "retrieved_at": "2026-09-26 10:17:38.764699+00:00",
+   "http_status": null
+  }
+ ],
+ "claims_landed_count": 37,
+ "claims_landed_first_run": [
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "enacting_body",
+   "object_type": "literal",
+   "value": "Cambridge City Council"
+  },
+  {
+   "predicate": "ordinance_citation",
+   "object_type": "literal",
+   "value": "Cambridge Municipal Code Chapter 2.128 (Surveillance Technology)"
+  },
+  {
+   "predicate": "ordinance_citation",
+   "object_type": "literal",
+   "value": "Cambridge Municipal Code Chapter 2.128 (Surveillance Technology)"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "Atlas RMV Portal"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "ATLAS RMV Portal (Parking Management)"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "Automated Meter Reading (AMR) System"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "BRIC Omega Dashboard"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "Bus Video Recorders"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "Case Cracker"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "Covert Cameras (Keltech Covert Streetlight Camera)"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "Electronic Poll Pads"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "GPS tracking devices (2)"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "Infraware"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "IP Address Collection Platforms"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "IP Address Collection Platforms (Multiple)"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "Laryngoscopes"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "MAVEN (Massachusetts Virtual Epidemiologic Network)"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "Media Monitoring - Meltwater"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "Media Monitoring \u2013 Meltwater"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "Morpho Automated Fingerprint Identification System"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "Prisoner Transport Security Cameras (Transport Wagon 236"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "RapidSOS Emergency Data Integration System"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "Securly for Chromebooks Web Filter"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "Social Media Monitoring - Meltwater Engage (Powered by Sprout Social)"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "Throwbot XT"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "Trespass Tracking Database"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "TweetDeck"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "WestLaw Public Records Search function"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "Wireless Explosive Ordinance Disposal (EOD) robots with"
+  }
+ ],
+ "rights_decisions": [
+  {
+   "decision_id": "01a0dd37-16bb-7607-912c-1795fa6f1bb6",
+   "spdx": "LicenseRef-PublicRecord-FactualCompilation",
+   "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+   "resolved_rights_id": "01a0dbdd-375d-7059-be20-d60ac5809d78",
+   "decided_at": "2026-09-26 10:16:10.171385+00:00"
+  }
+ ]
+}

@@ -1,0 +1,426 @@
+{
+ "source": "ccops_somerville",
+ "ticket": "P31.13",
+ "semantic_id": "BREADTH.2",
+ "connector": "government_mandated_disclosure",
+ "target_kind": "index_page",
+ "image": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api@sha256:63b809b2ab41b36df4d1fca33f4aa1a22953cf114639f27f0766b9c1245115b6",
+ "image_tag": "sig-api:ingest-26d5ceeeab74",
+ "code_commit": "26d5cee",
+ "executions": [
+  "sig-ingest-ccops-somerville-jgpg6",
+  "sig-ingest-ccops-somerville-qf89s"
+ ],
+ "duplicate_concurrent_executions": [
+  "sig-ingest-ccops-somerville-7t2k4"
+ ],
+ "ops_runs": [
+  {
+   "started_at": "2026-09-26T10:03:57+00:00",
+   "outcome": "ok",
+   "exit_code": 0,
+   "claims_added": 72,
+   "duration_seconds": 19.227,
+   "ingest_run_id": "01a0dd2b-f66a-72c8-b3fd-afb09508b083",
+   "logical_run": "ccops_somerville@2026-09-20T06:09Z",
+   "fetches": 7,
+   "robots_decisions": [
+    {
+     "host": "somervillema.legistar.com",
+     "outcome": "no_policy_4xx",
+     "robots_url": "https://somervillema.legistar.com/robots.txt",
+     "status": 404
+    }
+   ],
+   "capture_digests": [
+    "bcnapxnrpnblqllhind2fm7stotpuurpix7ccoslddbeehoniv3cv7mbj7drxm5g7hjruolh3o7c5sfuproe6swgqbzpyuwemru7wivdbkm",
+    "bcnagm226uo5tczoivlgvcmzwqw2xttkegfrfoharorxaxafuyfutctg26alrl4gdcs3eesefssmamaircyppgbfrziccz43lrx4fz4fpk4",
+    "bcnacts37liikrzkdxf6yvf4ye6kce6p6jcgmwb6fyvxw3ducj7znau5qluwkgqpgtb6tinyasmskix2jvx7fgtqigjin7i54erf3ms472u",
+    "bcnaifyzkdnjyywy4ebmnsblxomkjhix5stb6ncmhwlurry4oda5j5plmvqaflr3gbw4xavhcguguxho4xkyu4t37edbmuwzqtgajw7sf4u",
+    "bcnajh5ciflb6gi6lkczyvpymc7t6pc6h2sp4mvzhxa3nvq55c6bostfsq4im7o4hy24n5h6p63c3bzatdqgkwkhb23oi2t7flzdtpm5yta",
+    "bcnagmd6oyha4rbsoy74quc5khkeweag5jiuw4viyuq6tzq37hv3hswjy7byw2seq2bb3wjaq7xf76wzu6wxilj6rtmkzurg25i6ayldbgy",
+    "bcnamlw2gkvrd23savdgwohu6ubo25eomvtghj5eo7547njmemnnzyudzr4mmo5ncea2q6pjterkry3golmo2cjkq6dy3etv3kqwsqdvidm"
+   ]
+  },
+  {
+   "started_at": "2026-09-26T10:20:15+00:00",
+   "outcome": "error",
+   "exit_code": 1,
+   "claims_added": 0,
+   "duration_seconds": 5.182,
+   "ingest_run_id": null,
+   "logical_run": null,
+   "fetches": null,
+   "robots_decisions": null,
+   "capture_digests": [],
+   "detail": "OSError: [Errno 116] Stale file handle"
+  },
+  {
+   "started_at": "2026-09-26T10:20:16+00:00",
+   "outcome": "ok",
+   "exit_code": 0,
+   "claims_added": 72,
+   "duration_seconds": 16.551,
+   "ingest_run_id": "01a0dd3a-e539-746e-b19a-0092091e9ed2",
+   "logical_run": "ccops_somerville@2026-09-20T06:09Z",
+   "fetches": 7,
+   "robots_decisions": [
+    {
+     "host": "somervillema.legistar.com",
+     "outcome": "no_policy_4xx",
+     "robots_url": "https://somervillema.legistar.com/robots.txt",
+     "status": 404
+    }
+   ],
+   "capture_digests": [
+    "bcnanvciolxpztb2dolxo6gsipdep3vluzvo6ddxeinteh23vkddlxt6vrcfldhpk5b3ifaapqmrz77jhn2i7iaxuqdlf5uky3dl5plcigq",
+    "bcnagm226uo5tczoivlgvcmzwqw2xttkegfrfoharorxaxafuyfutctg26alrl4gdcs3eesefssmamaircyppgbfrziccz43lrx4fz4fpk4",
+    "bcnacts37liikrzkdxf6yvf4ye6kce6p6jcgmwb6fyvxw3ducj7znau5qluwkgqpgtb6tinyasmskix2jvx7fgtqigjin7i54erf3ms472u",
+    "bcnaifyzkdnjyywy4ebmnsblxomkjhix5stb6ncmhwlurry4oda5j5plmvqaflr3gbw4xavhcguguxho4xkyu4t37edbmuwzqtgajw7sf4u",
+    "bcnajh5ciflb6gi6lkczyvpymc7t6pc6h2sp4mvzhxa3nvq55c6bostfsq4im7o4hy24n5h6p63c3bzatdqgkwkhb23oi2t7flzdtpm5yta",
+    "bcnagmd6oyha4rbsoy74quc5khkeweag5jiuw4viyuq6tzq37hv3hswjy7byw2seq2bb3wjaq7xf76wzu6wxilj6rtmkzurg25i6ayldbgy",
+    "bcnamlw2gkvrd23savdgwohu6ubo25eomvtghj5eo7547njmemnnzyudzr4mmo5ncea2q6pjterkry3golmo2cjkq6dy3etv3kqwsqdvidm"
+   ]
+  }
+ ],
+ "ingest_run_completions": [
+  {
+   "run_id": "01a0dd2b-f66a-72c8-b3fd-afb09508b083",
+   "status": "ok",
+   "claims_considered": 72,
+   "claims_inserted": 57,
+   "claims_duplicate": 0,
+   "finished_at": "2026-09-26 10:04:16.392411+00:00",
+   "run_record_uri": "gs://zeta-medley-508121-u7-sig-restricted/ops/runs/ccops_somerville/2026-09-26/2026-09-26T10-03-57+00-00.json"
+  },
+  {
+   "run_id": "01a0dd3a-e539-746e-b19a-0092091e9ed2",
+   "status": "ok",
+   "claims_considered": 72,
+   "claims_inserted": 0,
+   "claims_duplicate": 57,
+   "finished_at": "2026-09-26 10:20:32.421757+00:00",
+   "run_record_uri": "gs://zeta-medley-508121-u7-sig-restricted/ops/runs/ccops_somerville/2026-09-26/2026-09-26T10-20-16+00-00.json"
+  }
+ ],
+ "captures": [
+  {
+   "content_digest": "eb797d76e627f2f0d24a09252fe441293f4e964cf058857002bd0ad8ce1d55ba",
+   "media_type": "application/octet-stream",
+   "byte_size": 0,
+   "retrieved_at": "2026-09-26 10:04:01.149607+00:00",
+   "http_status": null
+  },
+  {
+   "content_digest": "bb5012f4b0bf9aabfe6fda580a119408f632280c1bcbf69d58335358600c260a",
+   "media_type": "application/octet-stream",
+   "byte_size": 0,
+   "retrieved_at": "2026-09-26 10:20:19.560854+00:00",
+   "http_status": null
+  },
+  {
+   "content_digest": "3ad4c2f46ee8a0c87498c1518004ec021df250d57f3d987df22fdf9b8c6e94ff",
+   "media_type": "application/octet-stream",
+   "byte_size": 0,
+   "retrieved_at": "2026-09-26 10:20:19.783189+00:00",
+   "http_status": null
+  }
+ ],
+ "claims_landed_count": 57,
+ "claims_landed_first_run": [
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "disclosure_field_state",
+   "object_type": "literal",
+   "value": "answered"
+  },
+  {
+   "predicate": "enacting_body",
+   "object_type": "literal",
+   "value": "Somerville City Council"
+  },
+  {
+   "predicate": "ordinance_citation",
+   "object_type": "literal",
+   "value": "Somerville Code of Ordinances Chapter 10, Article VI (\u00a710-66)"
+  },
+  {
+   "predicate": "ordinance_citation",
+   "object_type": "literal",
+   "value": "Somerville Code of Ordinances Chapter 10, Article VI (\u00a710-66)"
+  },
+  {
+   "predicate": "ordinance_citation",
+   "object_type": "literal",
+   "value": "Somerville Code of Ordinances Chapter 10, Article VI (\u00a710-66)"
+  },
+  {
+   "predicate": "ordinance_citation",
+   "object_type": "literal",
+   "value": "Somerville Code of Ordinances Chapter 10, Article VI (\u00a710-66)"
+  },
+  {
+   "predicate": "ordinance_citation",
+   "object_type": "literal",
+   "value": "Somerville Code of Ordinances Chapter 10, Article VI (\u00a710-66)"
+  },
+  {
+   "predicate": "ordinance_citation",
+   "object_type": "literal",
+   "value": "Somerville Code of Ordinances Chapter 10, Article VI (\u00a710-66)"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "Advanced/Next Gen 911"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "Homeland Security Cameras"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "ShotSpotter"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "Thermal Imaging Cameras"
+  },
+  {
+   "predicate": "technology",
+   "object_type": "literal",
+   "value": "Video/Photography Drone"
+  }
+ ],
+ "rights_decisions": [
+  {
+   "decision_id": "01a0dd37-189b-72fb-bf33-6ec82f6c9267",
+   "spdx": "LicenseRef-PublicRecord-FactualCompilation",
+   "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+   "resolved_rights_id": "01a0dbdd-3838-71d5-bb25-77bd62231b1b",
+   "decided_at": "2026-09-26 10:16:10.651205+00:00"
+  }
+ ]
+}

@@ -52,7 +52,16 @@
 # +[ted_eu_sweep] the bounded EU tender sweep plan (TED Search API POST
 # /v3/notices/search — keyless documented public API; 11 reviewed keyword
 # slices + 10 verified CPV slices, one PAGE_NUMBER page each).
-vocab_version = "2026.09.18-p26.15"
+# 2026.09.26 (P31.13 / BREADTH.2): +fema_hsgp registry source — the FEMA
+# Homeland Security Grant Program (assistance listing 97.067) federal-
+# assistance allocations leg of the USAspending award-search path. The
+# source's reviewed live-target slices carry `award_class = "assistance"`;
+# normalize() reads that flag to emit the §11.12 FundingInstrument
+# (funder = awarding sub-agency, recipient = the grantee, federal_award_id =
+# the assistance award id) and the disambiguated `funder` predicate —
+# funding evidence only, never deployment (funded ≠ deployed, §3.1/§11.12,
+# SIG-INGEST-033/034).
+vocab_version = "2026.09.26-p31.13"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `procurement` connector may write ONLY the Contract (§11.11) and FundingInstrument
@@ -296,6 +305,14 @@ procportal_chicago_il  = "procportal_chicago_il"
 # P26.15 (SOURCES.14): the EU procurement surface — TED (Tenders Electronic
 # Daily) Search API, the OJ S notices for ~30 European countries.
 ted_eu = "ted_eu"
+
+# P31.13 (BREADTH.2): the FEMA Homeland Security Grant Program allocations
+# surface — USAspending federal-assistance (prime grant) rows for assistance
+# listing 97.067. Same reviewed spending_by_award endpoint as `usaspending`,
+# distinct registry source + distinct reviewed slices (see live_targets.toml);
+# the `award_class = "assistance"` target flag selects the funder→recipient /
+# FundingInstrument normalization leg, never the contract/buyer one.
+fema_hsgp = "fema_hsgp_allocations"
 
 # --- USAspending: sub-awards, not only prime awards (§23.6, SIG-ONTO-033) ------
 # USAspending exposes prime awards AND sub-awards. Sub-awards are the traceable

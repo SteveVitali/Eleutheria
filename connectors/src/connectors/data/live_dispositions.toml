@@ -81,11 +81,6 @@ note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Berkeley O
 disposition = "reference"
 note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Boston 2021 ordinance)"
 
-[sources.ccops_cambridge]
-disposition = "promote"
-class_ticket = "P29.3"
-note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Cambridge 2018 ordinance). P29.3: flipped under GL-GATE-07; promoted for the government_mandated_disclosure connector. Connector wiring + live fetch + dedup-into-resolved deferred (D-R7.3-BREADTH)."
-
 [sources.ccops_davis]
 disposition = "reference"
 note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Davis CA)"
@@ -97,16 +92,6 @@ note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Grand Rapi
 [sources.ccops_nashville]
 disposition = "reference"
 note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Nashville BL2017-1288)"
-
-[sources.ccops_oakland]
-disposition = "promote"
-class_ticket = "P29.3"
-note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Oakland Ord. 13489, Privacy Advisory Commission). P29.3: flipped under GL-GATE-07; promoted for the government_mandated_disclosure connector (index_page → disclosure_document, no bespoke adapter). Connector wiring + live fetch + dedup-into-resolved deferred under OSM-land contention (D-R7.3-BREADTH)."
-
-[sources.ccops_somerville]
-disposition = "promote"
-class_ticket = "P29.3"
-note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Somerville MA). P29.3: flipped under GL-GATE-07; promoted for the government_mandated_disclosure connector. Connector wiring + live fetch + dedup-into-resolved deferred (D-R7.3-BREADTH)."
 
 [sources.census_gazetteer_tiger]
 disposition = "mirror"
@@ -356,13 +341,12 @@ disposition = "link_only"
 # P29.3 (ACTIVATE.3) — new accountability/governance sources, flipped under
 # GL-GATE-07 and promoted for their existing class connector. The connector wiring
 # + live fetch + dedup-into-resolved was deferred under the OSM-land contention
-# (D-R7.3-BREADTH). P31.12 (BREADTH.1) WIRED four of the eight —
+# (D-R7.3-BREADTH). P31.12 (BREADTH.1) wired four of the eight —
 # gao_surveillance_reports, dhs_oig_reports, dhs_fusion_center_assessments and
-# uk_surveillance_camera_commissioner now route through the `accountability`
-# connector's targeted oversight-report path, so their disposition is "live via
-# accountability" and their rows are removed (mapped sources carry none). The
-# remaining four (ccops_*, fema_hsgp_allocations) stay dispositioned for P31.13.
-[sources.fema_hsgp_allocations]
-disposition = "promote"
-class_ticket = "P29.3"
-note = "P29.3 — FEMA Homeland Security Grant Program (HSGP/UASI) allocations (funding leg); promoted for the procurement connector's federal-assistance path. Deferred: D-R7.3-BREADTH."
+# uk_surveillance_camera_commissioner route through the `accountability`
+# connector's targeted oversight-report path. P31.13 (BREADTH.2) wired the
+# remaining four — ccops_oakland, ccops_cambridge and ccops_somerville route
+# through `government_mandated_disclosure` (index_page → disclosure_document)
+# and fema_hsgp_allocations through the `procurement` connector's federal-
+# assistance award-search path — so all eight carry no disposition row (mapped
+# sources carry none). D-R7.3-BREADTH is closed.

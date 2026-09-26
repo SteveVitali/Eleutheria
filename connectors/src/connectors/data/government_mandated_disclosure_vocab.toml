@@ -17,7 +17,15 @@
 # The connector's own vocabulary version, stamped onto every run (§20).
 # 2026.09.17 — P25.5: added [adapters.*] — the reviewed per-source index→document
 # discovery specs and mandated-section lists the live extraction adapter reads.
-vocab_version = "2026.09.17"
+# 2026.09.26 — P31.13 (BREADTH.2): +[sources] oakland / cambridge / somerville
+# and their [adapters.*] — reviewed index→document specs for the Oakland PAC
+# filing index, the Cambridge LegiFile annual surveillance report attachment,
+# and the Somerville Legistar §10-66 annual-report attachments; the new adapter
+# keys `technology_field_pattern` / `technology_field_multi` /
+# `technology_anchor_pattern` / `legal_authority_pattern` carry the reviewed
+# field-literal, anchor-literal and citation patterns these municipalities'
+# filings actually use.
+vocab_version = "2026.09.26"
 
 # The five claim types the connector may emit. `disclosure_use` is the
 # epistemically-loaded one: it may be asserted ONLY where the disclosure itself
@@ -207,6 +215,15 @@ note = "depth, not breadth — a curated document corpus, never a national pictu
 seattle = "ccops_seattle"
 nyc_post = "ccops_nyc_post"
 sf = "ccops_sf"
+# P31.13 (BREADTH.2): the three further CCOPS municipalities whose P29.3
+# GL-GATE-07 rights packets flipped (LicenseRef-PublicRecord-FactualCompilation).
+# Each runs the same index→document adapter; the reviewed per-source specs
+# below carry the municipality's real link shapes, citation literals, and the
+# mandated-questionnaire fields its ordinance's annual report is legally
+# required to answer.
+oakland = "ccops_oakland"
+cambridge = "ccops_cambridge"
+somerville = "ccops_somerville"
 
 # --- P25.5: per-source index→document adapter specs (reviewed data) ------------
 #
@@ -269,3 +286,105 @@ enacting_body = "San Francisco Board of Supervisors"
 doc_url_contains = "/documents/"
 doc_suffixes = [".pdf"]
 mandated_sections = []
+
+# --- P31.13 (BREADTH.2): Oakland / Cambridge / Somerville ----------------------
+# Reviewed 2026-09-26 against the live index surfaces (P29.3 rights packets,
+# LicenseRef-PublicRecord-FactualCompilation). All three publish their mandated
+# filings the way Seattle/SF do — an index page whose <a href> links are the
+# discovery surface; the adapter spec below is the reviewed window per city.
+
+[adapters.oakland]
+jurisdiction = "oakland"
+agency = "Oakland Police Department"
+ordinance_citation = "Oakland Municipal Code Chapter 9.64 (Surveillance Technology Ordinance)"
+ordinance_literals = ["OMC 9.64", "Chapter 9.64", "9.64", "Surveillance Technology Ordinance"]
+enacting_body_literal = "City Council"
+enacting_body = "Oakland City Council"
+# The Privacy Advisory Commission index links every filing under
+# /files/assets/.../documents/pac/*.pdf — the ordinance itself plus the
+# mandated <technology> Annual Report (YYYY) filings (probed 2026-09-26).
+doc_url_contains = "/documents/pac/"
+doc_suffixes = [".pdf"]
+# The annual-report anchors name the technology verbatim:
+# "Automated License Plate Reader Annual Report (2019)(PDF, 226KB)",
+# "Shotspotter Annual Report (2020)", "Mobile ID Annual Report (2020)". The
+# captured literal rides raw_value verbatim; a name colliding with a Part VIII
+# forbidden token (the ALPR filings literally say "license plate") is suppressed
+# at the claim surface and recorded on the artifact — never dropped silently.
+technology_anchor_pattern = '(?i)^\s*(?P<tech>\S.*?)\s+annual\s+report\b'
+# Oakland filings cite the ordinance as "Oakland Municipal Code (OMC) 9.64".
+legal_authority_pattern = '(?:Oakland\s+Municipal\s+Code|O\.?M\.?C\.?)[^\n]{0,10}9\.64|Chapter\s+9\.64'
+# Oakland annual reports are memoranda, not a fixed questionnaire — no mandated
+# field schema to score populated/absent against.
+mandated_sections = []
+
+[adapters.cambridge]
+jurisdiction = "cambridge"
+agency = "City of Cambridge"
+ordinance_citation = "Cambridge Municipal Code Chapter 2.128 (Surveillance Technology)"
+ordinance_literals = ["Chapter 2.128", "2.128"]
+enacting_body_literal = "City Council"
+enacting_body = "Cambridge City Council"
+# The reviewed LegiFile detail page (ID=18518) attaches the combined annual
+# surveillance report via a FileOpen.aspx link (probed 2026-09-26 — HTTP 200,
+# digital-native PDF, 78 pages of per-department questionnaires).
+doc_url_contains = "fileopen.aspx"
+doc_suffixes = [".aspx"]
+# The filing's own questionnaire field — the combined citywide report repeats
+# "Surveillance Technology: <name>" once per department filing; multi captures
+# each declared technology (one `technology` disclosure claim per literal).
+technology_field_pattern = '(?im)surveillance\s+technology\s*:\s*[•\-–\*▪]?\s*([^\n•;]{2,80})'
+technology_field_multi = true
+# The report cites its mandate as "Chapter 2.128" of the municipal code.
+legal_authority_pattern = 'Chapter\s+2\.128|§\s*2\.128'
+# The Chapter 2.128 mandated annual-report questionnaire — the eight questions
+# the filing is legally required to answer (mandated != populated, F3.20); the
+# combined report repeats them once per department and the first occurrence's
+# state is recorded per filing.
+mandated_sections = [
+  { field = "technologies_used", heading = "What Surveillance Technologies has the department used in the last year" },
+  { field = "data_sharing", heading = "Has any Surveillance Technology data been shared with a third-party" },
+  { field = "complaints", heading = "What complaints (if any) has your department received about Surveillance Technology" },
+  { field = "policy_violations", heading = "Were any violations of the Surveillance Use Policy found in the last year" },
+  { field = "effectiveness", heading = "Has Surveillance Technology been effective in achieving its identified purpose" },
+  { field = "records_requests", heading = "Did the department receive any public records requests concerning Surveillance Technology" },
+  { field = "annual_costs", heading = "What were the total annual costs of the Surveillance Technology" },
+  { field = "disparate_impact", heading = "Are any communities disproportionately impacted by Surveillance Technology" },
+]
+
+[adapters.somerville]
+jurisdiction = "somerville"
+agency = "City of Somerville"
+ordinance_citation = "Somerville Code of Ordinances Chapter 10, Article VI (§10-66)"
+ordinance_literals = ["10-66", "§ 10-66", "§10-66"]
+enacting_body_literal = "City Council"
+enacting_body = "Somerville City Council"
+# The reviewed Legistar LegislationDetail page (GUID 11D1E64A-…, ID 7350978)
+# attaches the six §10-66(b) annual-report PDFs as View.ashx file links
+# (probed 2026-09-26 — HTTP 200, digital-native PDFs).
+doc_url_contains = "view.ashx"
+doc_suffixes = [".ashx"]
+# The §10-66 questionnaire's own "Surveillance Technology:" field literal
+# (the ShotSpotter filing reads "Surveillance Technology:  ShotSpotter").
+technology_field_pattern = '(?im)surveillance\s+technology\s*:\s*[•\-–\*▪]?\s*([^\n•;]{2,80})'
+# Fallback: the attachment's own anchor text names the technology
+# ("Revised 2024 Surveillance Technology Annual Report ShotSpotter",
+# "... Annual Report 2024 FLIR v2"). A bare-year residue (the combined
+# "Annual Report 2024" filing) is dropped — a year is not a technology.
+technology_anchor_pattern = '(?i)annual\s+report(?:\s+\d{4})?\s+(?P<tech>\S.*?)\s*(?:\s+v\d+)?$'
+# The filings cite the ordinance as "§10-66" / "10-66".
+legal_authority_pattern = '§\s*10-\d+|10-6\d'
+# The §10-66(b) mandated annual-report questionnaire — the nine questions the
+# ordinance requires each filing to answer (mandated != populated, F3.20);
+# headings are the verbatim clause openings as filed.
+mandated_sections = [
+  { field = "use_description", heading = "A description of how surveillance technology has been used" },
+  { field = "data_sharing", heading = "Whether and how often data acquired through the use of the surveillance technology was shared" },
+  { field = "complaints", heading = "A summary of community complaints or concerns about the surveillance technology" },
+  { field = "audits_violations", heading = "The results of any internal audits" },
+  { field = "effectiveness", heading = "Whether the surveillance technology has been effective at achieving its identified purpose" },
+  { field = "records_requests", heading = "The number of public records requests received by the city" },
+  { field = "annual_costs", heading = "An estimate of the total annual costs for the surveillance technology" },
+  { field = "civil_rights_impact", heading = "Whether the civil rights and liberties of any communities or groups" },
+  { field = "new_agreements", heading = "A disclosure of any new agreements made in the past 12 months" },
+]

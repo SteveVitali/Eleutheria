@@ -38,3 +38,34 @@ targets (`max_documents` in `live_targets.toml`); a captured filing is read via
 captured bytes. The IUP body text in tests is built by
 `tests/support.py::minimal_pdf` — a deterministic one-font PDF — rather than a
 committed binary.
+
+## P31.13 (BREADTH.2) live-extraction fixtures (added 2026-09-26)
+
+Three further CCOPS municipalities whose P29.3 GL-GATE-07 rights packets
+flipped (LicenseRef-PublicRecord-FactualCompilation). Each fixture is a
+committed **excerpt** of the reviewed index surface — the linked filing hrefs
+and anchor texts are the page's own published literals verbatim; surrounding
+page chrome is elided. All probed live 2026-09-26 (HTTP 200).
+
+| fixture | disclosure index | canonical URL | retrieved |
+|---|---|---|---|
+| `oakland_pac_index.html` | Oakland **Privacy Advisory Commission** filing index — OMC Chapter 9.64; links every §9.64 filing under `/files/assets/city/v/1/boards-amp-commissions/documents/pac/*.pdf`: the ordinance itself plus `<technology> Annual Report (YYYY)` filings (ALPR 2019–2021, ShotSpotter 2020–2021, Mobile ID 2020) | `https://www.oaklandca.gov/Government/Boards-Commissions/Privacy-Advisory-Commission` | 2026-09-26 |
+| `cambridge_legifile_index.html` | Cambridge **IQM2 LegiFile detail** page (ID 18518 — the Chapter 2.128 surveillance-oversight ordinance item); the `FileOpen.aspx?Type=4&ID=14080` attachment is the combined citywide **Annual Surveillance Report 02-27-2023** | `https://cambridgema.iqm2.com/Citizens/Detail_LegiFile.aspx?ID=18518&highlightTerms=surveillance` | 2026-09-26 |
+| `somerville_legistar_index.html` | Somerville **Legistar LegislationDetail** page (GUID 11D1E64A-529B-4218-8F99-A3E07B0C1476 / ID 7350978 — the Chapter 10-66 ordinance item); six `View.ashx?M=F&ID=…` §10-66(b) annual-report filings with verbatim anchors | `https://somervillema.legistar.com/LegislationDetail.aspx?GUID=11D1E64A-529B-4218-8F99-A3E07B0C1476&ID=7350978` | 2026-09-26 |
+
+Document bytes in the P31.13 tests are `tests/support.py::minimal_pdf`
+syntheses carrying the filings' own field literals (`Date:` labels,
+`Surveillance Technology:` fields, questionnaire headings) — verified against
+the live documents 2026-09-26: Oakland ALPR/ShotSpotter memos cite `OMC 9.64`
+and carry `DATE: <Month> <D>, <YYYY>`; the Cambridge combined report is the
+eight-question Chapter 2.128 questionnaire repeated per department; each
+Somerville filing is the nine-question §10-66(b) questionnaire verbatim.
+
+The companion federal fixture `tests/connectors/fixtures/fema_hsgp_page1.json`
+is a **synthetic** USAspending `spending_by_award` assistance-page shape
+(display-label fields verified live 2026-09-26; award ids/recipients/amounts
+invented) for the `fema_hsgp_allocations` source — the FEMA Homeland Security
+Grant Program (assistance listing 97.067) prime-grant allocations surface.
+Rights basis: USAspending is federal open data (public domain); the reviewed
+bounded window is two pages under the documented POST endpoint
+(ADR-083 allow-listed).

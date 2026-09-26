@@ -656,6 +656,27 @@ def resolve_index_targets(
 #: A NYC POST Act IUP carries its revision as ``UPDATED: <Month> <D>, <YYYY>``.
 _RE_UPDATED = re.compile(r"UPDATED:\s*([A-Za-z]+)\s+(\d{1,2}),?\s*(\d{4})", re.IGNORECASE)
 _RE_FILENAME_PERIOD = re.compile(r"_(\d{1,2})\.(\d{1,2})\.(\d{2})(?=[_.]|$)")
+#: A filing's own ``Date:``/``DATE:`` field label — the Cambridge annual
+#: surveillance report carries ``Date: 02/27/2023``, the Somerville mandated
+#: annual report ``Date: 2/19/25`` (a two-digit year). The document's declared
+#: date stands in for the reporting period the way the NYC UPDATED: revision
+#: does — verbatim, never inferred (P2).
+_RE_DATE_FIELD_NUMERIC = re.compile(
+    r"\bdate\s*:\s*(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{2,4})\b", re.IGNORECASE
+)
+#: The same field label with a named month — Oakland's ALPR annual report
+#: memorandum carries ``DATE: March 22, 2022``.
+_RE_DATE_FIELD_NAMED = re.compile(
+    r"\bdate\s*:\s*([A-Za-z]+)\s+(\d{1,2}),?\s*(\d{4})", re.IGNORECASE
+)
+#: A date the index link's own anchor text carries — Cambridge's attachment is
+#: titled ``Annual Surveillance Report 02-27-2023`` (M-D-YYYY).
+_RE_ANCHOR_DATE = re.compile(r"(\d{1,2})[-/](\d{1,2})[-/](\d{4})")
+#: A bare four-digit year — annual-report filings name their covered year in
+#: the filename slug (``...-annual-report-2021.pdf``) or the anchor
+#: (``... Annual Report (2019)``). Year granularity is the filing's own
+#: literal, recorded as-is — never re-dated.
+_RE_YEAR = re.compile(r"(?<!\d)(20\d{2})(?!\d)")
 _MONTHS = {
     "january": "01",
     "february": "02",
@@ -672,14 +693,31 @@ _MONTHS = {
 }
 
 
-def _reporting_period(text: str, filename: str) -> str | None:
-    """The filing's revision date — the disclosure's reporting period (ISO).
+def _reporting_period(text: str, filename: str, anchor: str = "") -> str | None:
+    """The filing's own declared date — the disclosure's reporting period (ISO).
 
-    Read from the document's own ``UPDATED:`` literal first, then a filename
-    ``_M.D.YY`` component; ``None`` when neither exists — a claim with no
-    reporting period cannot satisfy the aggregate gate and is not emitted.
+    Read from the document's own literals in precedence order: the ``UPDATED:``
+    revision (NYC), a ``Date:``/``DATE:`` field label in numeric or named-month
+    form (Cambridge ``Date: 02/27/2023``, Somerville ``Date: 2/19/25``, Oakland
+    ``DATE: March 22, 2022``), a filename ``_M.D.YY`` component, an anchor-carried
+    ``M-D-YYYY`` date (``Annual Surveillance Report 02-27-2023``), then a bare
+    covered year in the filename slug or anchor (``...-report-2021.pdf``,
+    ``Annual Report (2019)``). ``None`` when the document carries none — a claim
+    with no reporting period cannot satisfy the aggregate gate and is not
+    emitted; nothing is ever inferred (§3.1).
     """
     match = _RE_UPDATED.search(text)
+    if match:
+        month = _MONTHS.get(match.group(1).lower())
+        if month:
+            return f"{match.group(3)}-{month}-{int(match.group(2)):02d}"
+    match = _RE_DATE_FIELD_NUMERIC.search(text)
+    if match:
+        month, day, year = match.groups()
+        year_num = int(year) + 2000 if len(year) == 2 else int(year)
+        if 1 <= int(month) <= 12 and 1 <= int(day) <= 31:
+            return f"{year_num}-{int(month):02d}-{int(day):02d}"
+    match = _RE_DATE_FIELD_NAMED.search(text)
     if match:
         month = _MONTHS.get(match.group(1).lower())
         if month:
@@ -689,20 +727,52 @@ def _reporting_period(text: str, filename: str) -> str | None:
         month, day, year = match.groups()
         if 1 <= int(month) <= 12 and 1 <= int(day) <= 31:
             return f"20{year}-{int(month):02d}-{int(day):02d}"
+    match = _RE_ANCHOR_DATE.search(anchor)
+    if match:
+        month, day, year = match.groups()
+        if 1 <= int(month) <= 12 and 1 <= int(day) <= 31:
+            return f"{year}-{int(month):02d}-{int(day):02d}"
+    for source in (filename, anchor):
+        match = _RE_YEAR.search(source)
+        if match:
+            return match.group(1)
     return None
 
 
-def _document_technology(
-    filename: str, pages: tuple[str, ...], adapter: Mapping[str, Any]
-) -> tuple[str, str] | None:
-    """The filing's technology name + its raw literal, derived from the document.
+def _clean_tech_literal(text: str) -> str:
+    """Strip questionnaire bullets/trailing punctuation off a technology literal."""
+    return re.sub(r"[\s;,.]+$", "", re.sub(r"^[•\-*▪◦\s]+", "", text.strip()))
 
-    Preferred: the first ALL-CAPS title heading on page 1 (e.g.
-    ``CELL-SITE SIMULATORS:`` → ``Cell-Site Simulators``). Fallback: the filename
-    slug before the adapter's ``technology_filename_marker``
-    (``<tech>-nypd-impact-and-use-policy*.pdf``). ``None`` when the document
-    supplies neither — a claim with no technology cannot satisfy the aggregate
-    gate.
+
+#: The aggregate ``technology`` value a combined multi-department filing carries
+#: on its filing-level claims (the SF ``(citywide inventory)`` precedent): the
+#: disclosure-level claims each name their own technology; the mandated-section
+#: field states belong to the filing, not to any one listed system.
+_COMBINED_FILING_TECH = "(combined filing)"
+
+
+def _document_technologies(
+    filename: str,
+    pages: tuple[str, ...],
+    adapter: Mapping[str, Any],
+    anchor: str = "",
+) -> list[tuple[str, str]]:
+    """Every technology the filing itself names — ``(display, raw literal)`` pairs.
+
+    Read in precedence order, all verbatim from the document (never a fixture
+    label): the first ALL-CAPS title heading on page 1 (NYC IUP — e.g.
+    ``CELL-SITE SIMULATORS:`` → ``Cell-Site Simulators``); the adapter's
+    ``technology_field_pattern`` (the filing's own questionnaire field —
+    Cambridge/Somerville's ``Surveillance Technology: <name>``; captures every
+    occurrence when ``technology_field_multi`` is set — a combined
+    multi-department report names each department's technology); the reviewed
+    ``technology_anchor_pattern`` over the index link's anchor text (Oakland's
+    ``<technology> Annual Report (YYYY)`` / Somerville's
+    ``... Annual Report <technology>`` attachments); then the filename slug
+    before ``technology_filename_marker`` (NYC). An anchor-derived name that is
+    a bare year is dropped — it is the covered year, not a technology. An empty
+    list means the document supplies no technology — a claim with no technology
+    cannot satisfy the aggregate gate.
     """
     if pages:
         for line in pages[0].splitlines()[:12]:
@@ -714,13 +784,44 @@ def _document_technology(
                 and re.search(r"[A-Z]{3}", stripped)
             ):
                 literal = stripped[:-1].strip()
-                return literal.title(), literal
+                return [(literal.title(), literal)]
+    field_pattern = adapter.get("technology_field_pattern")
+    if field_pattern:
+        pattern = re.compile(str(field_pattern))
+        found: list[tuple[str, str]] = []
+        for page in pages:
+            for match in pattern.finditer(page):
+                raw = match.group(1).strip()
+                cleaned = _clean_tech_literal(raw)
+                if cleaned and not re.fullmatch(r"\d{4}", cleaned):
+                    found.append((cleaned, raw))
+        if found:
+            seen: set[str] = set()
+            dedup: list[tuple[str, str]] = []
+            for pair in found:
+                if pair[0].lower() not in seen:
+                    seen.add(pair[0].lower())
+                    dedup.append(pair)
+            return dedup if adapter.get("technology_field_multi") else dedup[:1]
+    anchor_pattern = adapter.get("technology_anchor_pattern")
+    if anchor_pattern and anchor:
+        anchor_match = re.search(str(anchor_pattern), anchor)
+        if anchor_match:
+            if "tech" in anchor_match.groupdict():
+                raw = anchor_match.group("tech")
+            elif anchor_match.lastindex:
+                raw = anchor_match.group(1)
+            else:
+                raw = anchor_match.group(0)
+            cleaned = _clean_tech_literal(str(raw or ""))
+            if cleaned and not re.fullmatch(r"\d{4}", cleaned):
+                return [(cleaned, str(raw).strip())]
     marker = str(adapter.get("technology_filename_marker") or "")
     if marker:
         stem, sep, _ = filename.lower().rsplit("/", 1)[-1].partition(marker)
         if sep and stem:
-            return stem.replace("-", " ").strip().title(), stem
-    return None
+            return [(stem.replace("-", " ").strip().title(), stem)]
+    return []
 
 
 def _normalize_heading(text: str) -> str:
@@ -929,8 +1030,13 @@ def _extract_disclosure_document(
         return out
 
     filename = _filename_from_uri(capture.source_uri)
-    period = _reporting_period(text, filename)
-    tech = _document_technology(filename, pages if pages else (text,), adapter)
+    # The resolved index→document target carries the index link's anchor text —
+    # the reviewed literal an Oakland/Somerville filing derives its technology
+    # and covered-year from when the document itself has no field literal.
+    spec = _configured_target(ctx, capture.source_uri) or {}
+    anchor = str(spec.get("anchor") or "")
+    period = _reporting_period(text, filename, anchor)
+    techs = _document_technologies(filename, pages if pages else (text,), adapter, anchor)
     permitted = genre_claim_types().get(genre, frozenset())
     doc = DocumentContext(
         source_id=ctx.source.id,
@@ -940,7 +1046,7 @@ def _extract_disclosure_document(
         jurisdiction=str(adapter.get("jurisdiction", "")),
         reporting_period=period or _retrieved_date(capture),
         agency=str(adapter.get("agency", "")),
-        technology=tech[0] if tech else None,
+        technology=(techs[0][0] if len(techs) == 1 else (_COMBINED_FILING_TECH if techs else None)),
         # A deployment-genre filing IS a use report; every other genre reports
         # none (the epistemic guard independently refuses a use claim that
         # slips through).
@@ -993,32 +1099,39 @@ def _extract_disclosure_document(
                     technology=None,
                 )
             )
-    if "disclosure" not in permitted or tech is None or period is None:
+    if "disclosure" not in permitted or not techs or period is None:
         return finish()
-    tech_loc = page_locator_for(pages, tech[1]) or Locator.page(1).to_row()
-    emit(
-        lambda: disclosure_claim(
-            doc,
-            claim_type="disclosure",
-            predicate="technology",
-            value=tech[0],
-            raw_value=tech[1],
-            extraction_method=method,
-            locator=tech_loc,
-        )
-    )
-    authority = _RE_LEGAL_AUTHORITY.search(text)
-    if authority:
-        literal = authority.group(1)
+    for tech in techs:
+        tech_loc = page_locator_for(pages, tech[1]) or Locator.page(1).to_row()
         emit(
-            lambda: disclosure_claim(
+            lambda tech=tech, tech_loc=tech_loc: disclosure_claim(
+                doc,
+                claim_type="disclosure",
+                predicate="technology",
+                value=tech[0],
+                raw_value=tech[1],
+                extraction_method=method,
+                locator=tech_loc,
+                technology=tech[0],
+            )
+        )
+    authority_pattern = (
+        re.compile(str(adapter["legal_authority_pattern"]), re.IGNORECASE)
+        if adapter.get("legal_authority_pattern")
+        else _RE_LEGAL_AUTHORITY
+    )
+    authority = authority_pattern.search(text)
+    if authority:
+        literal = authority.group(1) if authority.lastindex else authority.group(0)
+        emit(
+            lambda literal=literal: disclosure_claim(
                 doc,
                 claim_type="disclosure",
                 predicate="legal_authority",
                 value=literal,
                 raw_value=literal,
                 extraction_method=method,
-                locator=page_locator_for(pages, literal) or tech_loc,
+                locator=page_locator_for(pages, literal) or Locator.page(1).to_row(),
             )
         )
     sections = [dict(s) for s in adapter.get("mandated_sections", ())]

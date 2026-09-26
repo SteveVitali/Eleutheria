@@ -28,6 +28,8 @@ Usage::
 
     python3 docs/build/tools/catalog_sweep.py enumerate [--date YYYY-MM-DD]
     python3 docs/build/tools/catalog_sweep.py qualify [--date YYYY-MM-DD]
+    python3 docs/build/tools/catalog_sweep.py review [--date YYYY-MM-DD]
+    python3 docs/build/tools/catalog_sweep.py retry [--date YYYY-MM-DD] [--apply]
 
 ``enumerate`` writes ``docs/build/reports/catalog_sweep_<date>.json`` (every
 candidate dataset: id/portal/title/licence/endpoint + the schema hints needed
@@ -248,9 +250,7 @@ def _arcgis_rows(now: str) -> list[dict[str, Any]]:
         startindex = 1
         while True:
             q = urllib.parse.urlencode({"q": kw, "limit": 100, "startindex": startindex})
-            doc = _get_json(
-                f"https://hub.arcgis.com/api/search/v1/collections/all/items?{q}"
-            )
+            doc = _get_json(f"https://hub.arcgis.com/api/search/v1/collections/all/items?{q}")
             features = doc.get("features") or []
             for f in features:
                 props = f.get("properties") or {}
@@ -510,9 +510,7 @@ def _arcgis_probe(row: dict[str, Any]) -> dict[str, Any]:
             layers = _arcgis_layers(url)
             pick = _pick_camera_layer(layers, str(row.get("title") or ""))
             if pick is None:
-                out["probe_error"] = (
-                    f"no camera-named layer among {len(layers)} service layers"
-                )
+                out["probe_error"] = f"no camera-named layer among {len(layers)} service layers"
                 return out
             layer_url = f"{url}/{pick['id']}"
             out["picked_layer"] = str(pick.get("name") or "")
@@ -560,9 +558,7 @@ def _ckan_probe(row: dict[str, Any]) -> dict[str, Any]:
         for r in (row.get("resources") or [])
         if "/resource/" in r.get("url", "") and r.get("url", "").endswith(".json")
     ]
-    out["licence_verbatim"] = str(
-        row.get("licence_title") or row.get("licence") or ""
-    )
+    out["licence_verbatim"] = str(row.get("licence_title") or row.get("licence") or "")
     if arc:
         out["resource_kind"] = "arcgis_query"
         out["resolved_url"] = arc[0]["url"]
@@ -908,6 +904,223 @@ def cmd_review(date: str) -> int:
     return 0
 
 
+# --- probe-error retry (P31.13 / BREADTH.2, D-SOURCES.12-1) --------------------
+# The 2026-09-18 sweep left 68 `error` rows (transport failures + vanished
+# endpoints). The retry pass re-probes each error row ONCE, records the outcome
+# in a dated artifact, and (--apply) registers the rows that now resolve to a
+# camera-registry shape as `camreg_*` sources with `ingestion_permitted=false`
+# — no rights basis exists for these rows (67/68 carried spdx=null and
+# GL-GATE-07 covered only the 257 gated rows), so nothing is wired or fetched
+# for ingestion; each registration is queued for a reviewer (HG-03). A
+# persistent DNS/SSL/503 is `unreachable`; a vanished endpoint is `link_rotted`.
+
+SOURCES_TOML = REPO / "connectors/src/connectors/data/sources.toml"
+DISPOSITIONS_TOML = REPO / "connectors/src/connectors/data/live_dispositions.toml"
+
+#: Transport-level error signatures → `unreachable` (the endpoint never spoke).
+_UNREACHABLE_MARKERS = (
+    "URLError",
+    "HTTPError",
+    "TimeoutError",
+    "timeout",
+    "nodename nor servname",
+    "SSL",
+    "RemoteDisconnected",
+    "ConnectionError",
+    "Service Unavailable",
+)
+
+
+def _slug(text: str, limit: int = 28) -> str:
+    slug = re.sub(r"[^a-z0-9]+", "_", str(text).lower()).strip("_")
+    return slug[:limit].strip("_") or "row"
+
+
+def _retry_source_id(row: dict[str, Any]) -> str:
+    """A deterministic registry id for a retry success — traceable to the row."""
+    basis = (
+        row.get("owner")
+        or (str(row.get("id") or "") if row.get("catalog") == "ckan_data_gov_uk" else "")
+        or row.get("portal")
+        or row.get("title")
+        or "catalog"
+    )
+    return f"camreg_{_slug(str(basis))}_{str(row.get('id') or 'x')[:6].lower()}"
+
+
+def _classify_retry(row: dict[str, Any], probe: dict[str, Any]) -> str:
+    """The retry outcome for a re-probed error row (same rules as qualify+review)."""
+    err = str(probe.get("probe_error") or "")
+    layer_url = str(probe.get("layer_url") or "")
+    # A live service with no layers at all is a vanished endpoint; a live
+    # service with layers but no camera-named one is a live non-target.
+    if "no camera-named layer among 0" in err:
+        return "link_rotted"
+    if "no camera-named layer" in err:
+        return "non_target"
+    if err and not layer_url:
+        if "404" in err or "410" in err:
+            return "link_rotted"
+        if any(m in err for m in _UNREACHABLE_MARKERS):
+            return "unreachable"
+        return "error"
+    kind = str(probe.get("resource_kind") or "")
+    if row.get("catalog") == "ckan_data_gov_uk" and kind not in ("arcgis_query", "socrata_rows"):
+        return "non_target" if not err else "error"
+    if kind == "arcgis_query" or row.get("catalog") == "arcgis_hub":
+        if str(probe.get("geometry_type") or "") != "esriGeometryPoint":
+            return "non_target"
+    non_reg = _non_registry(row)
+    if non_reg:
+        return "non_target"
+    title = str(row.get("title") or "").lower()
+    if any(pat.search(title) for pat, _ in _REVIEW_NON_REGISTRY):
+        return "non_target"
+    if probe.get("observed_count") in (None, 0):
+        # The layer resolves but the count probe failed — a partial success
+        # still worth registering for review (shape + content are established).
+        return "camera_registry"
+    return "camera_registry"
+
+
+def _registry_row_block(source_id: str, row: dict[str, Any], date: str) -> str:
+    """The sources.toml block for a retry success — fail-closed pending HG-03."""
+    title = str(row.get("title") or "").replace('"', "'")
+    spdx = row.get("spdx") or "UNDETERMINED"
+    licence = str(row.get("licence_verbatim") or row.get("licence") or "")[:400].replace('"', "'")
+    permalink = str(row.get("permalink") or row.get("endpoint") or "")
+    kind = str(row.get("resource_kind") or "arcgis_query")
+    access = (
+        "rest_api (socrata /resource rows — registry rows only)"
+        if kind == "socrata_rows"
+        else "rest_api (arcgis feature layer query — registry rows only)"
+    )
+    count = row.get("observed_count")
+    count_txt = f"; {count} rows observed" if count else ""
+    prior = str(row.get("prior_blocker") or "")[:120].replace('"', "'")
+    return (
+        f"\n[sources.{source_id}]\n"
+        f'name = "{title} (catalog retry {date})"\n'
+        f'source_kind = "government_portal"\n'
+        f'homepage_url = "{permalink}"\n'
+        f'default_tier = "R1"\n'
+        f'custody_posture = "MIRROR"\n'
+        f'compact_status = "not_contacted"\n'
+        f'robots_policy = "honor"\n'
+        f'access_method = "{access}"\n'
+        f'auth_model = "none"\n'
+        f"verified = true\n"
+        f"last_verified = {date}\n"
+        f"ingestion_permitted = false\n"
+        f'notes = "P31.13 catalog probe-error retry {date}: prior probe error '
+        f"({prior}) resolved — point camera-registry layer observed{count_txt}. "
+        f"Licence evidence: '{licence[:200]}' -> spdx {spdx}. NO rights basis — "
+        f'queued for rights review (HG-03); NOT wired, never fetched for ingestion."\n'
+        f"[sources.{source_id}.rights]\n"
+        f'spdx = "{spdx}"\n'
+        f"redistributable = false\n"
+        f"derivative_permitted = false\n"
+        f'terms_url = "{permalink}"\n'
+        f"retrieval_date = {date}\n"
+    )
+
+
+def _disposition_row_block(source_id: str, row: dict[str, Any]) -> str:
+    """The live_dispositions.toml block — promote for the camera-registry path."""
+    title = str(row.get("title") or "").replace('"', "'")[:80]
+    return (
+        f"\n[sources.{source_id}]\n"
+        f'disposition = "promote"\n'
+        f'class_ticket = "P25.3"\n'
+        f'note = "P31.13 catalog retry success: {title} — camera-registry-shaped; '
+        f'candidate for the dot_511 path. Pending rights review (HG-03)."\n'
+    )
+
+
+def cmd_retry(date: str, *, apply: bool = False) -> int:
+    """Re-probe every `error` row of the reviewed artifact once (P31.13)."""
+    reviewed = sorted(REPORTS.glob("catalog_sweep_*_reviewed.json"))[-1]
+    artifact = json.loads(reviewed.read_text(encoding="utf-8"))
+    errors = [r for r in artifact["datasets"] if r.get("shape") == "error"]
+    print(f"retrying {len(errors)} probe-error rows from {reviewed.name}", file=sys.stderr)
+    now = datetime.now(UTC).isoformat()
+    results: list[dict[str, Any]] = []
+    for i, row in enumerate(errors):
+        out = {
+            "id": row.get("id"),
+            "catalog": row.get("catalog"),
+            "portal": row.get("portal"),
+            "title": row.get("title"),
+            "endpoint": row.get("endpoint"),
+            "permalink": row.get("permalink"),
+            "owner": row.get("owner"),
+            "prior_blocker": row.get("blocker"),
+        }
+        catalog = str(row.get("catalog") or "")
+        if catalog == "arcgis_hub":
+            probe = _arcgis_probe(row)
+        elif catalog == "ckan_data_gov_uk":
+            probe = _ckan_probe(row)
+        elif catalog == "socrata":
+            probe = _socrata_probe(row)
+        else:
+            probe = {"probe_error": f"unknown catalog {catalog!r}"}
+        out.update(probe)
+        outcome = _classify_retry(row, probe)
+        out["retry_outcome"] = outcome
+        spdx, how = _review_spdx({**row, **probe})
+        out["spdx"] = spdx
+        if how:
+            out["spdx_basis"] = how
+        if outcome == "camera_registry":
+            out["registered_source_id"] = _retry_source_id(row)
+        results.append(out)
+        print(
+            f"  [{i + 1}/{len(errors)}] {row.get('id')} -> {outcome}",
+            file=sys.stderr,
+        )
+
+    counts: dict[str, int] = {}
+    for r in results:
+        counts[r["retry_outcome"]] = counts.get(r["retry_outcome"], 0) + 1
+    out_doc = {
+        "artifact": "catalog_sweep_retry",
+        "ticket": "P31.13 / BREADTH.2 (D-SOURCES.12-1 engineering remainder)",
+        "retried_at": now,
+        "source_artifact": reviewed.name,
+        "counts": {**counts, "retried": len(results)},
+        "rights_note": (
+            "No retry-success row carries a rights basis (GL-GATE-07 covered only "
+            "the 257 gated rows). Successes are registered ingestion_permitted=false "
+            "and queued for a reviewer (HG-03); nothing is wired or fetched."
+        ),
+        "results": results,
+    }
+    dest = REPORTS / f"catalog_sweep_{date}_retry.json"
+    dest.write_text(json.dumps(out_doc, indent=1, sort_keys=True) + "\n", encoding="utf-8")
+    print(f"wrote {dest}: {out_doc['counts']}", file=sys.stderr)
+
+    if apply:
+        successes = [r for r in results if r["retry_outcome"] == "camera_registry"]
+        if successes:
+            existing = SOURCES_TOML.read_text(encoding="utf-8")
+            disp_text = DISPOSITIONS_TOML.read_text(encoding="utf-8")
+            for r in successes:
+                sid = r["registered_source_id"]
+                if f"[sources.{sid}]" in existing:
+                    r["registration"] = "already_registered"
+                    continue
+                existing += _registry_row_block(sid, r, date)
+                disp_text += _disposition_row_block(sid, r)
+                r["registration"] = "registered_unpermitted"
+                print(f"  registered {sid} (ingestion_permitted=false)", file=sys.stderr)
+            SOURCES_TOML.write_text(existing, encoding="utf-8")
+            DISPOSITIONS_TOML.write_text(disp_text, encoding="utf-8")
+            # Record the registration outcome back into the artifact.
+            dest.write_text(json.dumps(out_doc, indent=1, sort_keys=True) + "\n", encoding="utf-8")
+    return 0
+
+
 def main(argv: list[str]) -> int:
     cmd = argv[1] if len(argv) > 1 else ""
     date = datetime.now(UTC).strftime("%Y-%m-%d")
@@ -919,6 +1132,8 @@ def main(argv: list[str]) -> int:
         return cmd_qualify(date)
     if cmd == "review":
         return cmd_review(date)
+    if cmd == "retry":
+        return cmd_retry(date, apply="--apply" in argv)
     print(__doc__)
     return 2
 
