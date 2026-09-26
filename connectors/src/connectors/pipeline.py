@@ -44,6 +44,7 @@ from .net import ChallengeEncountered, RobotsDisallowed, RobotsUnretrievable
 from .stages import (
     CaptureRef,
     Connector,
+    ContentDrift,
     FetchResult,
     RunContext,
     Stage,
@@ -64,6 +65,13 @@ class RunReport:
     #: while the run continues to the next resolved target. A refusal on a
     #: *seed* target still propagates (a refused seed is a refused run).
     refusals: list[dict[str, Any]] = field(default_factory=list)
+    #: Per-document content drift on discovery-continuation targets (P26.6): a
+    #: resolved child document whose captured bytes no longer parse as the
+    #: platform's expected genre is a recorded disposition — fail-closed, never
+    #: a fabricated extraction — and the run continues to the next resolved
+    #: target. Drift on a *seed* capture still propagates (a drifted seed is a
+    #: drifted run).
+    drifted: list[dict[str, Any]] = field(default_factory=list)
     asserted: bool = False
 
     @property
@@ -156,7 +164,25 @@ def run(connector: Connector, ctx: RunContext) -> RunReport:
             capture = connector.capture(ctx, fetched)
             _addressed(ctx, Stage.CAPTURE, capture)
             report.captures.append(capture)
-            report.claims.extend(run_post_capture(connector, ctx, capture))
+            try:
+                report.claims.extend(run_post_capture(connector, ctx, capture))
+            except ContentDrift as drift:
+                # P26.6: a resolved child document that doesn't parse as the
+                # platform's genre is a per-document fail-closed disposition —
+                # recorded with its locator, the run continues. Drift on a seed
+                # capture (the loop above) still propagates and fails the run.
+                report.drifted.append(
+                    {
+                        "id": _target_id(target),
+                        "url": url,
+                        "platform": target.get("platform"),
+                        "tenant_id": target.get("tenant_id"),
+                        "document_kind": target.get("document_kind"),
+                        "refusal": "ContentDrift",
+                        "detail": str(drift),
+                        "observed_at": _now().isoformat(),
+                    }
+                )
 
     # SIG-INGEST-018/019: replay and shadow runs produce claims but never assert.
     if ctx.asserts_claims and ctx.claim_sink is not None:

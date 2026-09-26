@@ -1,0 +1,1453 @@
+{
+  "byte_counts": [],
+  "capture_digests": [],
+  "claim_count": 0,
+  "connector": "procurement",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "duration_seconds": 32.910367,
+  "gcs_run_row": "gs://zeta-medley-508121-u7-sig-restricted/ops/runs/primegov/2026-09-17/2026-09-17T15-08-12+00-00.json",
+  "mode": "live",
+  "p26_6_execution": true,
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://lacity.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "los_angeles_ca",
+      "observed_at": "2026-09-17T15:08:15.248643+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://lacity.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://lasvegas.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "las_vegas_nv",
+      "observed_at": "2026-09-17T15:08:15.455632+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://lasvegas.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://longbeach.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "long_beach_ca_primegov",
+      "observed_at": "2026-09-17T15:08:15.831507+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://longbeach.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://cityofpaloalto.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "palo_alto_ca",
+      "observed_at": "2026-09-17T15:08:16.209973+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://cityofpaloalto.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://tularecounty.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "tulare_county_ca",
+      "observed_at": "2026-09-17T15:08:16.424274+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://tularecounty.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://bedfordoh.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "bedford_oh",
+      "observed_at": "2026-09-17T15:08:16.824231+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://bedfordoh.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://wmwd.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "western_municipal_water_district_ca",
+      "observed_at": "2026-09-17T15:08:17.187663+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://wmwd.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://sanantonio.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "san_antonio_tx_primegov",
+      "observed_at": "2026-09-17T15:08:17.579263+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://sanantonio.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://adamscounty.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "adams_county_co",
+      "observed_at": "2026-09-17T15:08:17.797160+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://adamscounty.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://albanyca.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "albany_ca",
+      "observed_at": "2026-09-17T15:08:18.010286+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://albanyca.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://alexandriava.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "alexandria_va",
+      "observed_at": "2026-09-17T15:08:18.196066+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://alexandriava.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://arlingtonma.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "arlingtonma",
+      "observed_at": "2026-09-17T15:08:18.539109+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://arlingtonma.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://atherton.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "atherton_ca",
+      "observed_at": "2026-09-17T15:08:18.797628+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://atherton.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://awaller.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "awaller",
+      "observed_at": "2026-09-17T15:08:19.170302+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://awaller.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://baldwinpark.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "baldwinpark",
+      "observed_at": "2026-09-17T15:08:19.394173+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://baldwinpark.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://bcnv.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "bcnv",
+      "observed_at": "2026-09-17T15:08:19.721949+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://bcnv.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://bedfordcounty.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "bedfordcounty",
+      "observed_at": "2026-09-17T15:08:19.916945+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://bedfordcounty.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://bouldercolorado.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "bouldercolorado",
+      "observed_at": "2026-09-17T15:08:20.125546+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://bouldercolorado.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://calabasas.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "calabasas_ca",
+      "observed_at": "2026-09-17T15:08:20.328126+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://calabasas.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://camarillo.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "camarillo_ca",
+      "observed_at": "2026-09-17T15:08:20.577852+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://camarillo.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://cambridgema.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "cambridge_ma",
+      "observed_at": "2026-09-17T15:08:20.938759+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://cambridgema.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://cathedralcity.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "cathedral_city_ca",
+      "observed_at": "2026-09-17T15:08:21.317867+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://cathedralcity.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://cccco.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "cccco",
+      "observed_at": "2026-09-17T15:08:21.660482+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://cccco.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://ccta.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "ccta",
+      "observed_at": "2026-09-17T15:08:22.018562+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://ccta.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://chambleega.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "chamblee_ga",
+      "observed_at": "2026-09-17T15:08:22.359414+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://chambleega.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt for 'charlestonsc.primegov.com' is unavailable (HTTP 530); crawl permission is NOT granted and the connector refuses to run (SIG-INGEST-012, RFC 9309 \u00a72.3.1.4).",
+      "id": "charlestonsc",
+      "observed_at": "2026-09-17T15:08:22.482304+00:00",
+      "refusal": "RobotsUnretrievable",
+      "url": "https://charlestonsc.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt for 'chinoaz.primegov.com' is unavailable (HTTP 530); crawl permission is NOT granted and the connector refuses to run (SIG-INGEST-012, RFC 9309 \u00a72.3.1.4).",
+      "id": "chinoaz",
+      "observed_at": "2026-09-17T15:08:22.608739+00:00",
+      "refusal": "RobotsUnretrievable",
+      "url": "https://chinoaz.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://cityofbranson.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "cityofbranson",
+      "observed_at": "2026-09-17T15:08:22.922339+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://cityofbranson.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://cityofhawthorne.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "cityofhawthorne",
+      "observed_at": "2026-09-17T15:08:23.045857+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://cityofhawthorne.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://cityofkyle.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "cityofkyle",
+      "observed_at": "2026-09-17T15:08:23.282819+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://cityofkyle.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://cityoflancasterca.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "lancaster_ca",
+      "observed_at": "2026-09-17T15:08:23.607078+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://cityoflancasterca.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://cityofmenifee.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "cityofmenifee",
+      "observed_at": "2026-09-17T15:08:23.952749+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://cityofmenifee.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://cityofnorthlasvegas.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "cityofnorthlasvegas",
+      "observed_at": "2026-09-17T15:08:24.085020+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://cityofnorthlasvegas.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://cityofoviedo.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "cityofoviedo",
+      "observed_at": "2026-09-17T15:08:24.277536+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://cityofoviedo.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://cityofpalmdesert.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "cityofpalmdesert",
+      "observed_at": "2026-09-17T15:08:24.586575+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://cityofpalmdesert.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://cityofpetaluma.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "cityofpetaluma",
+      "observed_at": "2026-09-17T15:08:24.768854+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://cityofpetaluma.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://cityofpleasantonca.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "cityofpleasantonca",
+      "observed_at": "2026-09-17T15:08:25.120870+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://cityofpleasantonca.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://cityofsancarlos.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "cityofsancarlos",
+      "observed_at": "2026-09-17T15:08:25.437123+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://cityofsancarlos.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://cityofsanmarino.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "cityofsanmarino",
+      "observed_at": "2026-09-17T15:08:25.801317+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://cityofsanmarino.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://cityoftemple.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "cityoftemple",
+      "observed_at": "2026-09-17T15:08:26.148202+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://cityoftemple.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://cityofvernon.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "cityofvernon",
+      "observed_at": "2026-09-17T15:08:26.452646+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://cityofvernon.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://cityofwestminster.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "cityofwestminster",
+      "observed_at": "2026-09-17T15:08:26.795590+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://cityofwestminster.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt for 'clackamas.primegov.com' is unavailable (HTTP 530); crawl permission is NOT granted and the connector refuses to run (SIG-INGEST-012, RFC 9309 \u00a72.3.1.4).",
+      "id": "clackamas_county_or",
+      "observed_at": "2026-09-17T15:08:26.910137+00:00",
+      "refusal": "RobotsUnretrievable",
+      "url": "https://clackamas.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://cleanpoweralliance.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "cleanpoweralliance",
+      "observed_at": "2026-09-17T15:08:27.101032+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://cleanpoweralliance.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://clearfieldcity.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "clearfieldcity",
+      "observed_at": "2026-09-17T15:08:27.374319+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://clearfieldcity.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://coronado.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "coronado_ca",
+      "observed_at": "2026-09-17T15:08:27.710897+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://coronado.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://cotaticity.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "cotaticity",
+      "observed_at": "2026-09-17T15:08:28.032626+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://cotaticity.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://cvrd.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "cvrd",
+      "observed_at": "2026-09-17T15:08:28.455167+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://cvrd.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://cvwd.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "cvwd",
+      "observed_at": "2026-09-17T15:08:28.839761+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://cvwd.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://dpwlacity.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "dpwlacity",
+      "observed_at": "2026-09-17T15:08:29.186535+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://dpwlacity.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://dwa.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "dwa",
+      "observed_at": "2026-09-17T15:08:29.512903+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://dwa.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://eastvalley.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "eastvalley",
+      "observed_at": "2026-09-17T15:08:29.875304+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://eastvalley.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://ebparks.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "ebparks",
+      "observed_at": "2026-09-17T15:08:30.206121+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://ebparks.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://ecuafl.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "ecuafl",
+      "observed_at": "2026-09-17T15:08:30.422201+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://ecuafl.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://edmondswa.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "edmonds_wa",
+      "observed_at": "2026-09-17T15:08:30.822582+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://edmondswa.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://emeryvilleca.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "emeryvilleca",
+      "observed_at": "2026-09-17T15:08:31.009414+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://emeryvilleca.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://epcounty.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "el_paso_county_co",
+      "observed_at": "2026-09-17T15:08:31.397531+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://epcounty.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt for 'essexcountynj.primegov.com' is unavailable (HTTP 530); crawl permission is NOT granted and the connector refuses to run (SIG-INGEST-012, RFC 9309 \u00a72.3.1.4).",
+      "id": "essex_county_nj",
+      "observed_at": "2026-09-17T15:08:31.543913+00:00",
+      "refusal": "RobotsUnretrievable",
+      "url": "https://essexcountynj.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt for 'evanscolorado.primegov.com' is unavailable (connection failure or timeout); crawl permission is NOT granted and the connector refuses to run (SIG-INGEST-012, RFC 9309 \u00a72.3.1.4).",
+      "id": "evanscolorado",
+      "observed_at": "2026-09-17T15:08:31.590601+00:00",
+      "refusal": "RobotsUnretrievable",
+      "url": "https://evanscolorado.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://everettma.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "everett_ma",
+      "observed_at": "2026-09-17T15:08:31.935383+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://everettma.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt for 'everettpublicschools.primegov.com' is unavailable (HTTP 530); crawl permission is NOT granted and the connector refuses to run (SIG-INGEST-012, RFC 9309 \u00a72.3.1.4).",
+      "id": "everettpublicschools",
+      "observed_at": "2026-09-17T15:08:32.057919+00:00",
+      "refusal": "RobotsUnretrievable",
+      "url": "https://everettpublicschools.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://fostercity.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "fostercity",
+      "observed_at": "2026-09-17T15:08:32.364863+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://fostercity.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://friscotexas.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "friscotexas",
+      "observed_at": "2026-09-17T15:08:32.557754+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://friscotexas.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://gilroy.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "gilroy_ca",
+      "observed_at": "2026-09-17T15:08:32.898661+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://gilroy.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://glendaleca.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "glendale_ca",
+      "observed_at": "2026-09-17T15:08:33.203088+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://glendaleca.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://glifwc.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "glifwc",
+      "observed_at": "2026-09-17T15:08:33.515467+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://glifwc.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://grandrapidscity.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "grandrapidscity",
+      "observed_at": "2026-09-17T15:08:33.847133+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://grandrapidscity.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://gresham.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "gresham",
+      "observed_at": "2026-09-17T15:08:34.175965+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://gresham.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://herriman.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "herriman_ut",
+      "observed_at": "2026-09-17T15:08:34.507808+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://herriman.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://ketchikan.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "ketchikan_ak",
+      "observed_at": "2026-09-17T15:08:34.788444+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://ketchikan.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt for 'lacera.primegov.com' is unavailable (connection failure or timeout); crawl permission is NOT granted and the connector refuses to run (SIG-INGEST-012, RFC 9309 \u00a72.3.1.4).",
+      "id": "lacera",
+      "observed_at": "2026-09-17T15:08:34.839238+00:00",
+      "refusal": "RobotsUnretrievable",
+      "url": "https://lacera.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://ladwp.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "ladwp",
+      "observed_at": "2026-09-17T15:08:35.160540+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://ladwp.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://lakeelsinore.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "lake_elsinore_ca",
+      "observed_at": "2026-09-17T15:08:35.489231+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://lakeelsinore.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://lcpa.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "lcpa",
+      "observed_at": "2026-09-17T15:08:35.825696+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://lcpa.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://lomitacity.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "lomitacity",
+      "observed_at": "2026-09-17T15:08:36.141253+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://lomitacity.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://longmont.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "longmont_co",
+      "observed_at": "2026-09-17T15:08:36.346423+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://longmont.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://maderacounty.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "maderacounty",
+      "observed_at": "2026-09-17T15:08:36.668213+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://maderacounty.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://malibucity.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "malibucity",
+      "observed_at": "2026-09-17T15:08:37.019297+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://malibucity.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://mapleridge.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "maple_ridge_bc",
+      "observed_at": "2026-09-17T15:08:37.487569+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://mapleridge.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://middlesexcountynj.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "middlesex_county_nj",
+      "observed_at": "2026-09-17T15:08:37.706053+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://middlesexcountynj.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://moorheadmn.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "moorhead_mn",
+      "observed_at": "2026-09-17T15:08:37.907841+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://moorheadmn.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://palmsprings.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "palmsprings",
+      "observed_at": "2026-09-17T15:08:38.239811+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://palmsprings.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://paramountcity.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "paramountcity",
+      "observed_at": "2026-09-17T15:08:38.560284+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://paramountcity.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://prescottvalley.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "prescott_valley_az",
+      "observed_at": "2026-09-17T15:08:38.755479+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://prescottvalley.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://redlandsusd.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "redlandsusd",
+      "observed_at": "2026-09-17T15:08:39.075662+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://redlandsusd.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://regina.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "regina_sk",
+      "observed_at": "2026-09-17T15:08:39.512844+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://regina.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://reno.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "reno",
+      "observed_at": "2026-09-17T15:08:39.683981+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://reno.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://saanichca.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "saanichca",
+      "observed_at": "2026-09-17T15:08:40.082686+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://saanichca.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://saccounty.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "saccounty",
+      "observed_at": "2026-09-17T15:08:40.386676+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://saccounty.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://sacog.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "sacog",
+      "observed_at": "2026-09-17T15:08:40.580576+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://sacog.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt for 'sanbernadino.primegov.com' is unavailable (connection failure or timeout); crawl permission is NOT granted and the connector refuses to run (SIG-INGEST-012, RFC 9309 \u00a72.3.1.4).",
+      "id": "sanbernadino",
+      "observed_at": "2026-09-17T15:08:40.634218+00:00",
+      "refusal": "RobotsUnretrievable",
+      "url": "https://sanbernadino.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://sanbernardino.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "sanbernardino",
+      "observed_at": "2026-09-17T15:08:40.833807+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://sanbernardino.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://sandiegocounty.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "sandiegocounty",
+      "observed_at": "2026-09-17T15:08:41.155511+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://sandiegocounty.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://sandimasca.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "san_dimas_ca",
+      "observed_at": "2026-09-17T15:08:41.471983+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://sandimasca.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://sanmateo.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "sanmateo",
+      "observed_at": "2026-09-17T15:08:41.777912+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://sanmateo.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://santa-ana.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "santa_ana",
+      "observed_at": "2026-09-17T15:08:42.123185+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://santa-ana.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://scsmi.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "scsmi",
+      "observed_at": "2026-09-17T15:08:42.414407+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://scsmi.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://shastacounty.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "shastacounty",
+      "observed_at": "2026-09-17T15:08:42.607947+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://shastacounty.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://shreveportla.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "shreveport_la",
+      "observed_at": "2026-09-17T15:08:42.807369+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://shreveportla.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://smyrnaga.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "smyrna_ga",
+      "observed_at": "2026-09-17T15:08:43.097347+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://smyrnaga.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://springfieldohio.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "springfieldohio",
+      "observed_at": "2026-09-17T15:08:43.438562+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://springfieldohio.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://thorntonco.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "thornton_co",
+      "observed_at": "2026-09-17T15:08:43.786771+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://thorntonco.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://toaks.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "toaks",
+      "observed_at": "2026-09-17T15:08:44.127250+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://toaks.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://townoffrisco.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "townoffrisco",
+      "observed_at": "2026-09-17T15:08:44.477670+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://townoffrisco.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://vancouver.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "vancouver",
+      "observed_at": "2026-09-17T15:08:45.040228+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://vancouver.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://vcera.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "vcera",
+      "observed_at": "2026-09-17T15:08:45.262671+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://vcera.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://wacotexas.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "wacotexas",
+      "observed_at": "2026-09-17T15:08:45.601044+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://wacotexas.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://westhaven.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "westhaven",
+      "observed_at": "2026-09-17T15:08:45.786854+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://westhaven.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://westjordan.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "west_jordan_ut",
+      "observed_at": "2026-09-17T15:08:46.030161+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://westjordan.primegov.com/api/v2/PublicPortal/search"
+    },
+    {
+      "detail": "robots.txt disallows 'procurement/1.0.0 (+https://sig-project.org/data-collection)' from fetching 'https://worcesterma.primegov.com/api/v2/PublicPortal/search' (Rule 2).",
+      "id": "worcester_ma",
+      "observed_at": "2026-09-17T15:08:46.306682+00:00",
+      "refusal": "RobotsDisallowed",
+      "url": "https://worcesterma.primegov.com/api/v2/PublicPortal/search"
+    }
+  ],
+  "robots_decisions": [
+    {
+      "host": "lacity.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://lacity.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "lasvegas.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://lasvegas.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "longbeach.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://longbeach.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "cityofpaloalto.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://cityofpaloalto.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "tularecounty.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://tularecounty.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "bedfordoh.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://bedfordoh.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "wmwd.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://wmwd.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "sanantonio.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://sanantonio.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "adamscounty.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://adamscounty.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "albanyca.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://albanyca.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "alexandriava.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://alexandriava.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "arlingtonma.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://arlingtonma.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "atherton.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://atherton.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "awaller.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://awaller.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "baldwinpark.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://baldwinpark.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "bcnv.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://bcnv.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "bedfordcounty.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://bedfordcounty.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "bouldercolorado.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://bouldercolorado.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "calabasas.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://calabasas.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "camarillo.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://camarillo.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "cambridgema.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://cambridgema.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "cathedralcity.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://cathedralcity.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "cccco.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://cccco.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "ccta.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://ccta.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "chambleega.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://chambleega.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "charlestonsc.primegov.com",
+      "outcome": "unretrievable",
+      "robots_url": "https://charlestonsc.primegov.com/robots.txt",
+      "status": 530
+    },
+    {
+      "host": "chinoaz.primegov.com",
+      "outcome": "unretrievable",
+      "robots_url": "https://chinoaz.primegov.com/robots.txt",
+      "status": 530
+    },
+    {
+      "host": "cityofbranson.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://cityofbranson.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "cityofhawthorne.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://cityofhawthorne.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "cityofkyle.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://cityofkyle.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "cityoflancasterca.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://cityoflancasterca.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "cityofmenifee.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://cityofmenifee.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "cityofnorthlasvegas.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://cityofnorthlasvegas.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "cityofoviedo.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://cityofoviedo.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "cityofpalmdesert.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://cityofpalmdesert.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "cityofpetaluma.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://cityofpetaluma.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "cityofpleasantonca.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://cityofpleasantonca.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "cityofsancarlos.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://cityofsancarlos.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "cityofsanmarino.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://cityofsanmarino.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "cityoftemple.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://cityoftemple.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "cityofvernon.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://cityofvernon.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "cityofwestminster.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://cityofwestminster.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "clackamas.primegov.com",
+      "outcome": "unretrievable",
+      "robots_url": "https://clackamas.primegov.com/robots.txt",
+      "status": 530
+    },
+    {
+      "host": "cleanpoweralliance.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://cleanpoweralliance.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "clearfieldcity.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://clearfieldcity.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "coronado.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://coronado.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "cotaticity.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://cotaticity.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "cvrd.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://cvrd.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "cvwd.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://cvwd.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "dpwlacity.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://dpwlacity.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "dwa.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://dwa.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "eastvalley.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://eastvalley.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "ebparks.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://ebparks.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "ecuafl.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://ecuafl.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "edmondswa.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://edmondswa.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "emeryvilleca.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://emeryvilleca.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "epcounty.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://epcounty.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "essexcountynj.primegov.com",
+      "outcome": "unretrievable",
+      "robots_url": "https://essexcountynj.primegov.com/robots.txt",
+      "status": 530
+    },
+    {
+      "host": "evanscolorado.primegov.com",
+      "outcome": "unretrievable",
+      "robots_url": "https://evanscolorado.primegov.com/robots.txt",
+      "status": null
+    },
+    {
+      "host": "everettma.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://everettma.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "everettpublicschools.primegov.com",
+      "outcome": "unretrievable",
+      "robots_url": "https://everettpublicschools.primegov.com/robots.txt",
+      "status": 530
+    },
+    {
+      "host": "fostercity.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://fostercity.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "friscotexas.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://friscotexas.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "gilroy.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://gilroy.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "glendaleca.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://glendaleca.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "glifwc.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://glifwc.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "grandrapidscity.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://grandrapidscity.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "gresham.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://gresham.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "herriman.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://herriman.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "ketchikan.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://ketchikan.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "lacera.primegov.com",
+      "outcome": "unretrievable",
+      "robots_url": "https://lacera.primegov.com/robots.txt",
+      "status": null
+    },
+    {
+      "host": "ladwp.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://ladwp.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "lakeelsinore.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://lakeelsinore.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "lcpa.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://lcpa.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "lomitacity.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://lomitacity.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "longmont.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://longmont.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "maderacounty.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://maderacounty.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "malibucity.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://malibucity.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "mapleridge.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://mapleridge.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "middlesexcountynj.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://middlesexcountynj.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "moorheadmn.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://moorheadmn.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "palmsprings.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://palmsprings.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "paramountcity.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://paramountcity.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "prescottvalley.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://prescottvalley.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "redlandsusd.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://redlandsusd.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "regina.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://regina.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "reno.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://reno.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "saanichca.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://saanichca.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "saccounty.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://saccounty.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "sacog.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://sacog.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "sanbernadino.primegov.com",
+      "outcome": "unretrievable",
+      "robots_url": "https://sanbernadino.primegov.com/robots.txt",
+      "status": null
+    },
+    {
+      "host": "sanbernardino.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://sanbernardino.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "sandiegocounty.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://sandiegocounty.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "sandimasca.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://sandimasca.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "sanmateo.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://sanmateo.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "santa-ana.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://santa-ana.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "scsmi.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://scsmi.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "shastacounty.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://shastacounty.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "shreveportla.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://shreveportla.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "smyrnaga.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://smyrnaga.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "springfieldohio.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://springfieldohio.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "thorntonco.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://thorntonco.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "toaks.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://toaks.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "townoffrisco.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://townoffrisco.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "vancouver.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://vancouver.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "vcera.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://vcera.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "wacotexas.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://wacotexas.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "westhaven.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://westhaven.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "westjordan.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://westjordan.primegov.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "worcesterma.primegov.com",
+      "outcome": "retrieved",
+      "robots_url": "https://worcesterma.primegov.com/robots.txt",
+      "status": 200
+    }
+  ],
+  "source_id": "primegov",
+  "started_at": "2026-09-17T15:08:13.403953+00:00",
+  "status_codes": [],
+  "urls": []
+}

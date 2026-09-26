@@ -1,0 +1,22 @@
+[
+  {
+    "id": 9101,
+    "name": "Council Regular Meeting",
+    "startDateTime": "2026-08-18T09:00:00",
+    "endDateTime": "2026-08-18T12:00:00",
+    "type_name": "Council Meeting",
+    "category": "Council Meetings",
+    "agendaId": 4501,
+    "hasAgenda": true
+  },
+  {
+    "id": 9102,
+    "name": "Budget Committee",
+    "startDateTime": "2026-08-25T13:30:00",
+    "endDateTime": "2026-08-25T15:00:00",
+    "type_name": "Committee Meeting",
+    "category": "Committee Meetings",
+    "agendaId": 0,
+    "hasAgenda": false
+  }
+]

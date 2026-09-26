@@ -1,0 +1,3356 @@
+{
+  "byte_counts": [],
+  "capture_digests": [],
+  "claim_count": 0,
+  "connector": "procurement",
+  "content_drift": null,
+  "disappearances": [
+    {
+      "artifact_id": "oklahoma_city_ok",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:14.454734+00:00"
+    },
+    {
+      "artifact_id": "brookline_ma",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:14.897130+00:00"
+    },
+    {
+      "artifact_id": "colton_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:15.306212+00:00"
+    },
+    {
+      "artifact_id": "northport_al",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:15.723147+00:00"
+    },
+    {
+      "artifact_id": "maui_county_hi",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:16.180902+00:00"
+    },
+    {
+      "artifact_id": "san_juan_county_wa",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:16.579421+00:00"
+    },
+    {
+      "artifact_id": "santa_rosa_county_fl",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:17.036801+00:00"
+    },
+    {
+      "artifact_id": "wcid1",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:18.454339+00:00"
+    },
+    {
+      "artifact_id": "norfolk_va",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:18.862386+00:00"
+    },
+    {
+      "artifact_id": "scottsdale_az",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:19.300477+00:00"
+    },
+    {
+      "artifact_id": "garland_tx",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:19.746003+00:00"
+    },
+    {
+      "artifact_id": "mcallen_tx",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:20.191863+00:00"
+    },
+    {
+      "artifact_id": "brownsville_tx",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:20.616790+00:00"
+    },
+    {
+      "artifact_id": "amarillo_tx",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:21.069843+00:00"
+    },
+    {
+      "artifact_id": "charleston_sc",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:21.513448+00:00"
+    },
+    {
+      "artifact_id": "columbia_sc",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:21.890794+00:00"
+    },
+    {
+      "artifact_id": "murfreesboro_tn",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:22.275489+00:00"
+    },
+    {
+      "artifact_id": "mobile_al",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:22.690868+00:00"
+    },
+    {
+      "artifact_id": "jackson_ms",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:23.091042+00:00"
+    },
+    {
+      "artifact_id": "fayetteville_ar",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:23.520561+00:00"
+    },
+    {
+      "artifact_id": "vancouver_wa",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:23.936523+00:00"
+    },
+    {
+      "artifact_id": "springfield_mo",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:24.351101+00:00"
+    },
+    {
+      "artifact_id": "green_bay_wi",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:24.766933+00:00"
+    },
+    {
+      "artifact_id": "lansing_mi",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:25.207940+00:00"
+    },
+    {
+      "artifact_id": "kalamazoo_mi",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:25.613334+00:00"
+    },
+    {
+      "artifact_id": "fort_wayne_in",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:25.982095+00:00"
+    },
+    {
+      "artifact_id": "roanoke_va",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:26.389242+00:00"
+    },
+    {
+      "artifact_id": "charlottesville_va",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:26.757923+00:00"
+    },
+    {
+      "artifact_id": "buffalo_ny",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:27.175921+00:00"
+    },
+    {
+      "artifact_id": "albany_ny",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:27.524925+00:00"
+    },
+    {
+      "artifact_id": "springfield_ma",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:27.887838+00:00"
+    },
+    {
+      "artifact_id": "newton_ma",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:28.247379+00:00"
+    },
+    {
+      "artifact_id": "manchester_nh",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:28.635715+00:00"
+    },
+    {
+      "artifact_id": "portland_me",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:29.049044+00:00"
+    },
+    {
+      "artifact_id": "burlington_vt",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:29.403830+00:00"
+    },
+    {
+      "artifact_id": "abilene_tx",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:29.848961+00:00"
+    },
+    {
+      "artifact_id": "alachuacofl",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:30.274774+00:00"
+    },
+    {
+      "artifact_id": "alachua_fl",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:30.604308+00:00"
+    },
+    {
+      "artifact_id": "alamogordo_nm",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:30.947913+00:00"
+    },
+    {
+      "artifact_id": "aledo_tx",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:31.315045+00:00"
+    },
+    {
+      "artifact_id": "alpharetta_ga",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:31.712554+00:00"
+    },
+    {
+      "artifact_id": "alvarado_tx",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:32.040366+00:00"
+    },
+    {
+      "artifact_id": "amberley_oh",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:32.414440+00:00"
+    },
+    {
+      "artifact_id": "amelia_county_va",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:32.820460+00:00"
+    },
+    {
+      "artifact_id": "amherst_county_va",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:33.201649+00:00"
+    },
+    {
+      "artifact_id": "anacortes_wa",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:33.597601+00:00"
+    },
+    {
+      "artifact_id": "anna_tx",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:34.060654+00:00"
+    },
+    {
+      "artifact_id": "anne_arundel_county_md",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:34.472971+00:00"
+    },
+    {
+      "artifact_id": "antioch_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:34.847575+00:00"
+    },
+    {
+      "artifact_id": "ascension_parish_la",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:35.218582+00:00"
+    },
+    {
+      "artifact_id": "ashland_or",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:35.566788+00:00"
+    },
+    {
+      "artifact_id": "ashland_wi",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:36.047755+00:00"
+    },
+    {
+      "artifact_id": "ashtabula_oh",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:36.437615+00:00"
+    },
+    {
+      "artifact_id": "athens_oh",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:36.819148+00:00"
+    },
+    {
+      "artifact_id": "auburn_wa",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:37.200795+00:00"
+    },
+    {
+      "artifact_id": "augusta_county_va",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:37.636306+00:00"
+    },
+    {
+      "artifact_id": "avondale_az",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:38.025609+00:00"
+    },
+    {
+      "artifact_id": "baaqmdca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:38.487684+00:00"
+    },
+    {
+      "artifact_id": "bainbridge_island_wa",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:38.870891+00:00"
+    },
+    {
+      "artifact_id": "baker_city_or",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:39.217864+00:00"
+    },
+    {
+      "artifact_id": "balch_springs_tx",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:39.601171+00:00"
+    },
+    {
+      "artifact_id": "baldwin_city_ks",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:39.991715+00:00"
+    },
+    {
+      "artifact_id": "battle_creek_mi",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:40.385490+00:00"
+    },
+    {
+      "artifact_id": "bay_city_mi",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:40.841888+00:00"
+    },
+    {
+      "artifact_id": "bay_harbor_islands_fl",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:41.253366+00:00"
+    },
+    {
+      "artifact_id": "bbrd",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:41.654603+00:00"
+    },
+    {
+      "artifact_id": "beaufort_county_sc",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:42.057221+00:00"
+    },
+    {
+      "artifact_id": "bedford_va",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:42.421157+00:00"
+    },
+    {
+      "artifact_id": "benton_county_or",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:42.784940+00:00"
+    },
+    {
+      "artifact_id": "berkley_mi",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:43.171422+00:00"
+    },
+    {
+      "artifact_id": "bethel_ak",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:43.611561+00:00"
+    },
+    {
+      "artifact_id": "bexley_oh",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:43.984341+00:00"
+    },
+    {
+      "artifact_id": "big_horn_county_mt",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:44.361824+00:00"
+    },
+    {
+      "artifact_id": "big_spring_tx",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:44.766209+00:00"
+    },
+    {
+      "artifact_id": "bixby_ok",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:45.150928+00:00"
+    },
+    {
+      "artifact_id": "black_diamond_wa",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:45.566064+00:00"
+    },
+    {
+      "artifact_id": "blainemn",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:45.941114+00:00"
+    },
+    {
+      "artifact_id": "bloomington_il",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:46.312432+00:00"
+    },
+    {
+      "artifact_id": "brainerd_mn",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:46.684868+00:00"
+    },
+    {
+      "artifact_id": "brec",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:47.072675+00:00"
+    },
+    {
+      "artifact_id": "brenham_tx",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:47.469549+00:00"
+    },
+    {
+      "artifact_id": "bridgewaterma",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:47.855555+00:00"
+    },
+    {
+      "artifact_id": "bristol_ct",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:48.306191+00:00"
+    },
+    {
+      "artifact_id": "brookhavenny",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:48.655101+00:00"
+    },
+    {
+      "artifact_id": "brownsvillepub",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:49.013321+00:00"
+    },
+    {
+      "artifact_id": "brunswick_county_nc",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:49.379755+00:00"
+    },
+    {
+      "artifact_id": "bulloch_county_ga",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:49.806506+00:00"
+    },
+    {
+      "artifact_id": "buncombe_county_nc",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:50.209030+00:00"
+    },
+    {
+      "artifact_id": "butte_county_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:50.613378+00:00"
+    },
+    {
+      "artifact_id": "capaz",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:50.989276+00:00"
+    },
+    {
+      "artifact_id": "carmel_by_the_sea_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:51.381700+00:00"
+    },
+    {
+      "artifact_id": "carmelbytheseeca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:51.736616+00:00"
+    },
+    {
+      "artifact_id": "chaffee_county_co",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:52.077611+00:00"
+    },
+    {
+      "artifact_id": "chambers_county_tx",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:52.475526+00:00"
+    },
+    {
+      "artifact_id": "charleston_wv",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:52.880550+00:00"
+    },
+    {
+      "artifact_id": "cheshire_ct",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:53.293919+00:00"
+    },
+    {
+      "artifact_id": "chester_county_pa",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:53.756414+00:00"
+    },
+    {
+      "artifact_id": "chesterfield_county_va",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:54.142081+00:00"
+    },
+    {
+      "artifact_id": "churchill_county_nv",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:54.622758+00:00"
+    },
+    {
+      "artifact_id": "citrusclerk",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:55.009903+00:00"
+    },
+    {
+      "artifact_id": "clallam_county_wa",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:55.412698+00:00"
+    },
+    {
+      "artifact_id": "clarksville_tn",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:55.789649+00:00"
+    },
+    {
+      "artifact_id": "clay_county_mo",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:56.146306+00:00"
+    },
+    {
+      "artifact_id": "cobb_county_ga",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:56.525927+00:00"
+    },
+    {
+      "artifact_id": "cocoa_beach_fl",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:56.898409+00:00"
+    },
+    {
+      "artifact_id": "columbia_county_ga",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:57.350501+00:00"
+    },
+    {
+      "artifact_id": "columbia_tn",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:57.742289+00:00"
+    },
+    {
+      "artifact_id": "cumberland_county_nc",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:58.221520+00:00"
+    },
+    {
+      "artifact_id": "daly_city_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:58.588779+00:00"
+    },
+    {
+      "artifact_id": "daphne_al",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:58.991584+00:00"
+    },
+    {
+      "artifact_id": "delaware_county_pa",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:59.381736+00:00"
+    },
+    {
+      "artifact_id": "delta_county_co",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:43:59.746134+00:00"
+    },
+    {
+      "artifact_id": "des_moines_wa",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:00.098447+00:00"
+    },
+    {
+      "artifact_id": "destin_fl",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:00.541690+00:00"
+    },
+    {
+      "artifact_id": "do_a_ana_county_nm",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:00.978630+00:00"
+    },
+    {
+      "artifact_id": "douglas_county_ga",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:01.444234+00:00"
+    },
+    {
+      "artifact_id": "duarte_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:01.836163+00:00"
+    },
+    {
+      "artifact_id": "dubuque_county_ia",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:02.230617+00:00"
+    },
+    {
+      "artifact_id": "duncanville_tx",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:02.574908+00:00"
+    },
+    {
+      "artifact_id": "duvalcosb",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:02.978125+00:00"
+    },
+    {
+      "artifact_id": "eagle_mountain_ut",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:03.358643+00:00"
+    },
+    {
+      "artifact_id": "edgewater_co",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:03.776998+00:00"
+    },
+    {
+      "artifact_id": "edina_mn",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:04.151435+00:00"
+    },
+    {
+      "artifact_id": "edinburg_tx",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:04.536049+00:00"
+    },
+    {
+      "artifact_id": "el_cerrito_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:04.932353+00:00"
+    },
+    {
+      "artifact_id": "elkins_wv",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:05.307039+00:00"
+    },
+    {
+      "artifact_id": "emporia_ks",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:05.694416+00:00"
+    },
+    {
+      "artifact_id": "erie_county_pa",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:06.062389+00:00"
+    },
+    {
+      "artifact_id": "escambia_county_fl",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:06.452490+00:00"
+    },
+    {
+      "artifact_id": "essex_county_vt",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:06.852000+00:00"
+    },
+    {
+      "artifact_id": "fairhope_al",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:07.223161+00:00"
+    },
+    {
+      "artifact_id": "fernley_nv",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:07.598630+00:00"
+    },
+    {
+      "artifact_id": "festus_mo",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:08.012085+00:00"
+    },
+    {
+      "artifact_id": "fishers_in",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:08.382026+00:00"
+    },
+    {
+      "artifact_id": "flower_mound_tx",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:08.816338+00:00"
+    },
+    {
+      "artifact_id": "forsyth_county_ga",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:09.150792+00:00"
+    },
+    {
+      "artifact_id": "foster_city_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:09.536633+00:00"
+    },
+    {
+      "artifact_id": "franklin_tn",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:09.921608+00:00"
+    },
+    {
+      "artifact_id": "freeborn_county_mn",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:10.298153+00:00"
+    },
+    {
+      "artifact_id": "frisco_co",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:10.659655+00:00"
+    },
+    {
+      "artifact_id": "georgetown_sc",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:11.014526+00:00"
+    },
+    {
+      "artifact_id": "germantown_wi",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:11.381356+00:00"
+    },
+    {
+      "artifact_id": "gig_harbor_wa",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:11.768377+00:00"
+    },
+    {
+      "artifact_id": "glen_cove_ny",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:12.107865+00:00"
+    },
+    {
+      "artifact_id": "grand_county_ut",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:12.447083+00:00"
+    },
+    {
+      "artifact_id": "grand_junction_co",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:12.824034+00:00"
+    },
+    {
+      "artifact_id": "grand_terrace_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:13.203649+00:00"
+    },
+    {
+      "artifact_id": "granite_shoals_tx",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:14.581136+00:00"
+    },
+    {
+      "artifact_id": "greeley_co",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:14.930635+00:00"
+    },
+    {
+      "artifact_id": "greene_county_va",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:15.391620+00:00"
+    },
+    {
+      "artifact_id": "greenwood_village_co",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:15.769644+00:00"
+    },
+    {
+      "artifact_id": "grimes_county_tx",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:16.134095+00:00"
+    },
+    {
+      "artifact_id": "gulfport_ms",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:16.480915+00:00"
+    },
+    {
+      "artifact_id": "hanover_county_va",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:16.855682+00:00"
+    },
+    {
+      "artifact_id": "harlingen_tx",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:17.237665+00:00"
+    },
+    {
+      "artifact_id": "harrison_county_in",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:17.616301+00:00"
+    },
+    {
+      "artifact_id": "harwich_ma",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:17.988482+00:00"
+    },
+    {
+      "artifact_id": "hattiesburg_ms",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:18.379141+00:00"
+    },
+    {
+      "artifact_id": "heber_ut",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:18.737933+00:00"
+    },
+    {
+      "artifact_id": "henry_county_ga",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:19.139837+00:00"
+    },
+    {
+      "artifact_id": "herman_mn",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:19.536256+00:00"
+    },
+    {
+      "artifact_id": "herndon_va",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:19.922928+00:00"
+    },
+    {
+      "artifact_id": "hillsboroughnj",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:20.303907+00:00"
+    },
+    {
+      "artifact_id": "hinesville_ga",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:20.710792+00:00"
+    },
+    {
+      "artifact_id": "huerfano_county_co",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:21.140780+00:00"
+    },
+    {
+      "artifact_id": "hunterdon_county_nj",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:21.488451+00:00"
+    },
+    {
+      "artifact_id": "inver_grove_heights_mn",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:21.849500+00:00"
+    },
+    {
+      "artifact_id": "independence_mo",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:22.291764+00:00"
+    },
+    {
+      "artifact_id": "irmo_sc",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:22.660173+00:00"
+    },
+    {
+      "artifact_id": "islamorada_fl",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:23.061542+00:00"
+    },
+    {
+      "artifact_id": "ivgid",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:23.434278+00:00"
+    },
+    {
+      "artifact_id": "jackson_county_ms",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:23.794692+00:00"
+    },
+    {
+      "artifact_id": "jackson_mi",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:24.226018+00:00"
+    },
+    {
+      "artifact_id": "jacksonville_beach_fl",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:24.574088+00:00"
+    },
+    {
+      "artifact_id": "jacksonville_tx",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:25.070392+00:00"
+    },
+    {
+      "artifact_id": "jackson_wy",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:25.471678+00:00"
+    },
+    {
+      "artifact_id": "james_city_county_va",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:25.858453+00:00"
+    },
+    {
+      "artifact_id": "juneauak",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:26.246031+00:00"
+    },
+    {
+      "artifact_id": "kalamazoo_county_mi",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:26.603142+00:00"
+    },
+    {
+      "artifact_id": "kaysville_ut",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:27.006770+00:00"
+    },
+    {
+      "artifact_id": "kcata",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:27.377743+00:00"
+    },
+    {
+      "artifact_id": "keizer_or",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:27.757605+00:00"
+    },
+    {
+      "artifact_id": "kenmore_wa",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:28.115565+00:00"
+    },
+    {
+      "artifact_id": "kennedale_tx",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:28.517573+00:00"
+    },
+    {
+      "artifact_id": "kissimmee_fl",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:28.843068+00:00"
+    },
+    {
+      "artifact_id": "lacey_wa",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:29.224129+00:00"
+    },
+    {
+      "artifact_id": "lake_county_fl",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:29.622275+00:00"
+    },
+    {
+      "artifact_id": "lake_geneva_wi",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:30.004688+00:00"
+    },
+    {
+      "artifact_id": "lancaster_county_pa",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:30.404979+00:00"
+    },
+    {
+      "artifact_id": "lawton_ok",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:30.813679+00:00"
+    },
+    {
+      "artifact_id": "layton_ut",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:31.206310+00:00"
+    },
+    {
+      "artifact_id": "lee_county_fl",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:31.617107+00:00"
+    },
+    {
+      "artifact_id": "lincoln_county_or",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:32.002955+00:00"
+    },
+    {
+      "artifact_id": "lincoln_county_sd",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:32.372860+00:00"
+    },
+    {
+      "artifact_id": "livonia_mi",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:32.783018+00:00"
+    },
+    {
+      "artifact_id": "longview_wa",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:33.157573+00:00"
+    },
+    {
+      "artifact_id": "louisa_county_va",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:33.720288+00:00"
+    },
+    {
+      "artifact_id": "louisville_co",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:34.180587+00:00"
+    },
+    {
+      "artifact_id": "macomb_county_mi",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:34.562719+00:00"
+    },
+    {
+      "artifact_id": "madison_county_il",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:34.919017+00:00"
+    },
+    {
+      "artifact_id": "mariposa_county_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:35.338519+00:00"
+    },
+    {
+      "artifact_id": "marquette_mi",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:35.733041+00:00"
+    },
+    {
+      "artifact_id": "maywood_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:36.123420+00:00"
+    },
+    {
+      "artifact_id": "medford_ma",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:36.502570+00:00"
+    },
+    {
+      "artifact_id": "mequon_wi",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:36.894437+00:00"
+    },
+    {
+      "artifact_id": "miami_county_ks",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:37.292144+00:00"
+    },
+    {
+      "artifact_id": "minot_nd",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:37.660400+00:00"
+    },
+    {
+      "artifact_id": "missoula_county_mt",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:38.042780+00:00"
+    },
+    {
+      "artifact_id": "mono_county_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:38.421864+00:00"
+    },
+    {
+      "artifact_id": "monterey_park_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:38.767130+00:00"
+    },
+    {
+      "artifact_id": "montgomery_county_nc",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:39.153172+00:00"
+    },
+    {
+      "artifact_id": "moscow_id",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:39.522389+00:00"
+    },
+    {
+      "artifact_id": "nantucketma",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:39.935792+00:00"
+    },
+    {
+      "artifact_id": "neptune_beach_fl",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:40.326764+00:00"
+    },
+    {
+      "artifact_id": "new_castle_county_de",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:40.803801+00:00"
+    },
+    {
+      "artifact_id": "norcross_ga",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:41.183441+00:00"
+    },
+    {
+      "artifact_id": "north_st_paul_mn",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:41.558168+00:00"
+    },
+    {
+      "artifact_id": "norwalk_ct",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:41.967204+00:00"
+    },
+    {
+      "artifact_id": "oak_harbor_wa",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:42.312666+00:00"
+    },
+    {
+      "artifact_id": "oakland_county_mi",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:42.693953+00:00"
+    },
+    {
+      "artifact_id": "oak_park_mi",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:43.045966+00:00"
+    },
+    {
+      "artifact_id": "ogunquit_me",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:43.482521+00:00"
+    },
+    {
+      "artifact_id": "opa_locka_fl",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:43.899821+00:00"
+    },
+    {
+      "artifact_id": "oregon_city_or",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:44.252587+00:00"
+    },
+    {
+      "artifact_id": "oxford_oh",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:44.595160+00:00"
+    },
+    {
+      "artifact_id": "palm_beach_fl",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:44.979860+00:00"
+    },
+    {
+      "artifact_id": "park_city_ut",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:45.356306+00:00"
+    },
+    {
+      "artifact_id": "parke_county_in",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:45.743495+00:00"
+    },
+    {
+      "artifact_id": "parker_co",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:46.129817+00:00"
+    },
+    {
+      "artifact_id": "pasco_county_fl",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:46.488368+00:00"
+    },
+    {
+      "artifact_id": "pender_county_nc",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:46.863016+00:00"
+    },
+    {
+      "artifact_id": "pharr_tx",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:47.295640+00:00"
+    },
+    {
+      "artifact_id": "pickens_county_sc",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:47.651466+00:00"
+    },
+    {
+      "artifact_id": "pinehurst_nc",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:48.055922+00:00"
+    },
+    {
+      "artifact_id": "pinole_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:48.446893+00:00"
+    },
+    {
+      "artifact_id": "piqua_oh",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:48.866437+00:00"
+    },
+    {
+      "artifact_id": "pitkin_county_co",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:49.269771+00:00"
+    },
+    {
+      "artifact_id": "pleasanton_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:49.672270+00:00"
+    },
+    {
+      "artifact_id": "plymouth_mn",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:50.011781+00:00"
+    },
+    {
+      "artifact_id": "polk_county_nc",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:50.425421+00:00"
+    },
+    {
+      "artifact_id": "porter_county_in",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:50.896800+00:00"
+    },
+    {
+      "artifact_id": "porterville_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:51.246149+00:00"
+    },
+    {
+      "artifact_id": "portofh",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:51.669582+00:00"
+    },
+    {
+      "artifact_id": "post_falls_id",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:52.034163+00:00"
+    },
+    {
+      "artifact_id": "prescott_az",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:52.420076+00:00"
+    },
+    {
+      "artifact_id": "pueblo_county_co",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:52.804694+00:00"
+    },
+    {
+      "artifact_id": "ramapo_ny",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:53.198613+00:00"
+    },
+    {
+      "artifact_id": "rancho_cordova_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:53.615367+00:00"
+    },
+    {
+      "artifact_id": "red_wing_mn",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:54.030664+00:00"
+    },
+    {
+      "artifact_id": "richland_wa",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:54.392626+00:00"
+    },
+    {
+      "artifact_id": "rileycountypolice",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:54.812553+00:00"
+    },
+    {
+      "artifact_id": "rock_county_wi",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:55.146074+00:00"
+    },
+    {
+      "artifact_id": "rock_island_il",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:55.532572+00:00"
+    },
+    {
+      "artifact_id": "roseville_mn",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:55.906028+00:00"
+    },
+    {
+      "artifact_id": "san_angelo_tx",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:56.253492+00:00"
+    },
+    {
+      "artifact_id": "sandy_springs_ga",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:56.630972+00:00"
+    },
+    {
+      "artifact_id": "san_ramon_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:57.000426+00:00"
+    },
+    {
+      "artifact_id": "santa_fe_nm",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:57.340553+00:00"
+    },
+    {
+      "artifact_id": "sccwi",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:57.719852+00:00"
+    },
+    {
+      "artifact_id": "seaside_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:58.099724+00:00"
+    },
+    {
+      "artifact_id": "sedro_woolley_wa",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:58.478817+00:00"
+    },
+    {
+      "artifact_id": "shafter_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:58.866902+00:00"
+    },
+    {
+      "artifact_id": "shawnee_county_ks",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:59.265670+00:00"
+    },
+    {
+      "artifact_id": "shelby_mi",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:44:59.654214+00:00"
+    },
+    {
+      "artifact_id": "south_fulton_ga",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:00.034342+00:00"
+    },
+    {
+      "artifact_id": "southorangetwpnj",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:00.392608+00:00"
+    },
+    {
+      "artifact_id": "southport_nc",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:00.799088+00:00"
+    },
+    {
+      "artifact_id": "spokane_county_wa",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:01.179371+00:00"
+    },
+    {
+      "artifact_id": "stafford_county_va",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:01.534321+00:00"
+    },
+    {
+      "artifact_id": "st_augustine_fl",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:01.913243+00:00"
+    },
+    {
+      "artifact_id": "st_helena_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:02.260943+00:00"
+    },
+    {
+      "artifact_id": "stillwater_ok",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:02.622640+00:00"
+    },
+    {
+      "artifact_id": "st_lawrence_county_ny",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:03.012423+00:00"
+    },
+    {
+      "artifact_id": "st_louis_mo",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:03.374284+00:00"
+    },
+    {
+      "artifact_id": "st_lucie_county_fl",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:03.743621+00:00"
+    },
+    {
+      "artifact_id": "storm_lake_ia",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:04.141541+00:00"
+    },
+    {
+      "artifact_id": "surprise_az",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:04.527509+00:00"
+    },
+    {
+      "artifact_id": "suwannee_county_fl",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:04.902735+00:00"
+    },
+    {
+      "artifact_id": "transportation_agency_for_monterey_county_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:05.295155+00:00"
+    },
+    {
+      "artifact_id": "taylor_tx",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:05.685875+00:00"
+    },
+    {
+      "artifact_id": "tca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:06.051891+00:00"
+    },
+    {
+      "artifact_id": "tdpud",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:06.417264+00:00"
+    },
+    {
+      "artifact_id": "canandaigua_ny",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:06.776432+00:00"
+    },
+    {
+      "artifact_id": "travis_county_tx",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:07.117550+00:00"
+    },
+    {
+      "artifact_id": "trinity_county_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:07.477045+00:00"
+    },
+    {
+      "artifact_id": "twin_falls_id",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:07.896649+00:00"
+    },
+    {
+      "artifact_id": "usbe",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:08.292331+00:00"
+    },
+    {
+      "artifact_id": "vallejo_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:08.687226+00:00"
+    },
+    {
+      "artifact_id": "vestavia_hills_al",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:09.082638+00:00"
+    },
+    {
+      "artifact_id": "vineyard_ut",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:09.426610+00:00"
+    },
+    {
+      "artifact_id": "wasatch_county_ut",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:09.816248+00:00"
+    },
+    {
+      "artifact_id": "washington_county_mn",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:10.188503+00:00"
+    },
+    {
+      "artifact_id": "washtenaw_county_mi",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:10.587641+00:00"
+    },
+    {
+      "artifact_id": "watertown_ma",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:10.938137+00:00"
+    },
+    {
+      "artifact_id": "west_baton_rouge_parish_la",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:11.311651+00:00"
+    },
+    {
+      "artifact_id": "wbtownshipmi",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:11.687321+00:00"
+    },
+    {
+      "artifact_id": "weslaco_tx",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:12.197907+00:00"
+    },
+    {
+      "artifact_id": "wilton_manors_fl",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:12.589483+00:00"
+    },
+    {
+      "artifact_id": "winnetka_il",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:12.961276+00:00"
+    },
+    {
+      "artifact_id": "winter_park_fl",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:13.316046+00:00"
+    },
+    {
+      "artifact_id": "woodland_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:13.739202+00:00"
+    },
+    {
+      "artifact_id": "wycokck",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:14.137334+00:00"
+    },
+    {
+      "artifact_id": "yucca_valley_ca",
+      "failing_status": "access_restricted",
+      "observed_at": "2026-09-17T15:45:14.541199+00:00"
+    }
+  ],
+  "document_drift": [],
+  "duration_seconds": 122.082571,
+  "gcs_run_row": "gs://zeta-medley-508121-u7-sig-restricted/ops/runs/civicclerk/2026-09-17/2026-09-17T15-43-11+00-00.json",
+  "mode": "live",
+  "p26_6_execution": true,
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [
+    {
+      "host": "oklahomacityok.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://oklahomacityok.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "brooklinema.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://brooklinema.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "coltonca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://coltonca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "northportal.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://northportal.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "mauicounty.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://mauicounty.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "sanjuancowa.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://sanjuancowa.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "santarosacofl.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://santarosacofl.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "wcid1.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://wcid1.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "norfolkva.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://norfolkva.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "scottsdaleaz.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://scottsdaleaz.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "garlandtx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://garlandtx.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "mcallentx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://mcallentx.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "brownsvilletx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://brownsvilletx.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "amarillotx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://amarillotx.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "charlestonsc.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://charlestonsc.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "columbiasc.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://columbiasc.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "murfreesborotn.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://murfreesborotn.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "mobileal.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://mobileal.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "jacksonms.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://jacksonms.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "fayettevillear.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://fayettevillear.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "vancouverwa.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://vancouverwa.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "springfieldmo.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://springfieldmo.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "greenbaywi.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://greenbaywi.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "lansingmi.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://lansingmi.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "kalamazoomi.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://kalamazoomi.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "fortwaynein.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://fortwaynein.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "roanokeva.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://roanokeva.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "charlottesvilleva.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://charlottesvilleva.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "buffalony.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://buffalony.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "albanyny.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://albanyny.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "springfieldma.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://springfieldma.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "newtonma.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://newtonma.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "manchesternh.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://manchesternh.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "portlandme.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://portlandme.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "burlingtonvt.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://burlingtonvt.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "abilenetx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://abilenetx.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "alachuacofl.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://alachuacofl.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "alachuafl.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://alachuafl.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "alamogordonm.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://alamogordonm.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "aledotx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://aledotx.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "alpharettaga.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://alpharettaga.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "alvaradotx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://alvaradotx.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "amberleyoh.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://amberleyoh.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "ameliacova.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://ameliacova.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "amherstcova.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://amherstcova.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "anacorteswa.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://anacorteswa.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "annatx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://annatx.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "annearundelcomd.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://annearundelcomd.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "antiochca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://antiochca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "ascensionparishla.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://ascensionparishla.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "ashlandor.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://ashlandor.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "ashlandwi.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://ashlandwi.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "ashtabulaoh.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://ashtabulaoh.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "athensoh.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://athensoh.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "auburnwa.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://auburnwa.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "augustacova.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://augustacova.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "avondaleaz.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://avondaleaz.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "baaqmdca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://baaqmdca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "bainbridgeislandwa.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://bainbridgeislandwa.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "bakercityor.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://bakercityor.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "balchspringstx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://balchspringstx.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "baldwincityks.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://baldwincityks.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "battlecreekmi.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://battlecreekmi.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "baycitymi.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://baycitymi.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "bayharborislandsfl.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://bayharborislandsfl.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "bbrd.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://bbrd.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "beaufortcosc.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://beaufortcosc.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "bedfordva.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://bedfordva.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "bentoncoor.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://bentoncoor.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "berkleymi.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://berkleymi.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "bethelak.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://bethelak.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "bexleyoh.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://bexleyoh.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "bighorncomt.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://bighorncomt.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "bigspringtx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://bigspringtx.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "bixbyok.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://bixbyok.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "blackdiamondwa.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://blackdiamondwa.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "blainemn.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://blainemn.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "bloomingtonil.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://bloomingtonil.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "brainerdmn.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://brainerdmn.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "brec.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://brec.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "brenhamtx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://brenhamtx.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "bridgewaterma.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://bridgewaterma.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "bristolct.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://bristolct.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "brookhavenny.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://brookhavenny.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "brownsvillepub.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://brownsvillepub.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "brunswickconc.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://brunswickconc.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "bullochcoga.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://bullochcoga.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "buncombeconc.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://buncombeconc.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "buttecoca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://buttecoca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "capaz.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://capaz.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "carmelbytheseaca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://carmelbytheseaca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "carmelbytheseeca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://carmelbytheseeca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "chaffeecoco.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://chaffeecoco.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "chamberscotx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://chamberscotx.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "charlestonwv.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://charlestonwv.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "cheshirect.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://cheshirect.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "chestercopa.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://chestercopa.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "chesterfieldcova.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://chesterfieldcova.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "churchillconv.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://churchillconv.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "citrusclerk.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://citrusclerk.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "clallamcowa.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://clallamcowa.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "clarksvilletn.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://clarksvilletn.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "claycomo.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://claycomo.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "cobbcoga.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://cobbcoga.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "cocoabeachfl.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://cocoabeachfl.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "columbiacoga.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://columbiacoga.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "columbiatn.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://columbiatn.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "cumberlandconc.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://cumberlandconc.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "dalycityca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://dalycityca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "daphneal.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://daphneal.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "delawarecopa.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://delawarecopa.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "deltacoco.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://deltacoco.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "desmoineswa.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://desmoineswa.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "destinfl.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://destinfl.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "donaanaconm.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://donaanaconm.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "douglascountyga.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://douglascountyga.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "duarteca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://duarteca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "dubuquecountyia.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://dubuquecountyia.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "duncanvilletx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://duncanvilletx.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "duvalcosb.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://duvalcosb.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "eaglemountainut.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://eaglemountainut.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "edgewaterco.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://edgewaterco.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "edinamn.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://edinamn.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "edinburgtx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://edinburgtx.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "elcerritoca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://elcerritoca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "elkinswv.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://elkinswv.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "emporiaks.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://emporiaks.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "eriecopa.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://eriecopa.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "escambiacofl.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://escambiacofl.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "essexvt.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://essexvt.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "fairhopeal.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://fairhopeal.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "fernleynv.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://fernleynv.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "festusmo.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://festusmo.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "fishersin.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://fishersin.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "flowermoundtx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://flowermoundtx.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "forsythcoga.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://forsythcoga.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "fostercityca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://fostercityca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "franklintn.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://franklintn.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "freeborncomn.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://freeborncomn.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "friscoco.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://friscoco.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "georgetownsc.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://georgetownsc.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "germantownwi.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://germantownwi.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "gigharborwa.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://gigharborwa.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "glencoveny.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://glencoveny.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "grandcountyut.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://grandcountyut.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "grandjunctionco.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://grandjunctionco.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "grandterraceca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://grandterraceca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "graniteshoalstx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://graniteshoalstx.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "greeleyco.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://greeleyco.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "greenecova.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://greenecova.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "greenwoodvillageco.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://greenwoodvillageco.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "grimescotx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://grimescotx.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "gulfportms.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://gulfportms.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "hanovercova.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://hanovercova.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "harlingentx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://harlingentx.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "harrisoncountyin.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://harrisoncountyin.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "harwichma.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://harwichma.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "hattiesburgms.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://hattiesburgms.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "hebercityut.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://hebercityut.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "henrycoga.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://henrycoga.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "hermantownmn.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://hermantownmn.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "herndonva.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://herndonva.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "hillsboroughnj.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://hillsboroughnj.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "hinesvillega.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://hinesvillega.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "huerfanoco.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://huerfanoco.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "hunterdonconj.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://hunterdonconj.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "ighmn.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://ighmn.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "independencemo.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://independencemo.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "irmosc.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://irmosc.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "islamoradafl.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://islamoradafl.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "ivgid.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://ivgid.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "jacksoncoms.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://jacksoncoms.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "jacksonmi.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://jacksonmi.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "jacksonvillebeachfl.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://jacksonvillebeachfl.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "jacksonvilletx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://jacksonvilletx.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "jacksonwy.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://jacksonwy.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "jamescitycova.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://jamescitycova.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "juneauak.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://juneauak.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "kalamazoocomi.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://kalamazoocomi.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "kaysvilleut.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://kaysvilleut.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "kcata.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://kcata.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "keizeror.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://keizeror.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "kenmorewa.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://kenmorewa.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "kennedaletx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://kennedaletx.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "kissimmeefl.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://kissimmeefl.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "laceywa.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://laceywa.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "lakecountyfl.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://lakecountyfl.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "lakegenevawi.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://lakegenevawi.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "lancastercopa.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://lancastercopa.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "lawtonok.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://lawtonok.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "laytonut.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://laytonut.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "leecofl.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://leecofl.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "lincolncoor.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://lincolncoor.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "lincolncosd.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://lincolncosd.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "livoniami.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://livoniami.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "longviewwa.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://longviewwa.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "louisacova.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://louisacova.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "louisvilleco.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://louisvilleco.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "macombcomi.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://macombcomi.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "madisoncoil.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://madisoncoil.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "mariposacoca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://mariposacoca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "marquettemi.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://marquettemi.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "maywoodca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://maywoodca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "medfordma.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://medfordma.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "mequonwi.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://mequonwi.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "miamicoks.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://miamicoks.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "minotnd.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://minotnd.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "missoulacomt.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://missoulacomt.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "monococa.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://monococa.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "montereyparkca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://montereyparkca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "montgomeryconc.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://montgomeryconc.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "moscowid.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://moscowid.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "nantucketma.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://nantucketma.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "neptunebeachfl.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://neptunebeachfl.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "newcastlecode.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://newcastlecode.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "norcrossga.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://norcrossga.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "northstpaulmn.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://northstpaulmn.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "norwalkct.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://norwalkct.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "oakharborwa.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://oakharborwa.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "oaklandcomi.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://oaklandcomi.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "oakparkmi.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://oakparkmi.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "ogunquitme.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://ogunquitme.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "opalockafl.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://opalockafl.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "oregoncityor.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://oregoncityor.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "oxfordoh.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://oxfordoh.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "palmbeachfl.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://palmbeachfl.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "parkcityut.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://parkcityut.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "parkecoin.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://parkecoin.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "parkerco.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://parkerco.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "pascocofl.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pascocofl.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "penderconc.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://penderconc.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "pharrtx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pharrtx.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "pickenscosc.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pickenscosc.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "pinehurstnc.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pinehurstnc.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "pinoleca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pinoleca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "piquaoh.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://piquaoh.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "pitkincoco.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pitkincoco.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "pleasantonca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pleasantonca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "plymouthmn.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://plymouthmn.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "polkconc.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://polkconc.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "portercoin.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://portercoin.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "portervilleca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://portervilleca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "portofh.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://portofh.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "postfallsid.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://postfallsid.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "prescottaz.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://prescottaz.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "pueblococo.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pueblococo.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "ramapony.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://ramapony.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "ranchocordovaca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://ranchocordovaca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "redwingmn.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://redwingmn.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "richlandwa.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://richlandwa.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "rileycountypolice.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://rileycountypolice.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "rockcowi.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://rockcowi.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "rockislandil.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://rockislandil.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "rosevillemn.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://rosevillemn.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "sanangelotx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://sanangelotx.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "sandyspringsga.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://sandyspringsga.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "sanramonca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://sanramonca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "santafenm.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://santafenm.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "sccwi.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://sccwi.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "seasideca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://seasideca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "sedrowoolleywa.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://sedrowoolleywa.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "shafterca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://shafterca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "shawneecoks.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://shawneecoks.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "shelbytwpmi.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://shelbytwpmi.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "southfultonga.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://southfultonga.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "southorangetwpnj.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://southorangetwpnj.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "southportnc.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://southportnc.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "spokanecowa.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://spokanecowa.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "staffordcova.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://staffordcova.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "staugustinefl.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://staugustinefl.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "sthelenaca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://sthelenaca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "stillwaterok.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://stillwaterok.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "stlawrencecony.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://stlawrencecony.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "stlouismo.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://stlouismo.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "stluciecofl.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://stluciecofl.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "stormlakeia.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://stormlakeia.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "surpriseaz.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://surpriseaz.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "suwanneecofl.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://suwanneecofl.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "tamc.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://tamc.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "taylortx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://taylortx.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "tca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://tca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "tdpud.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://tdpud.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "townofcanandaiguany.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://townofcanandaiguany.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "traviscotx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://traviscotx.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "trinitycoca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://trinitycoca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "twinfallsid.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://twinfallsid.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "usbe.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://usbe.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "vallejoca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://vallejoca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "vestaviahillsal.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://vestaviahillsal.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "vineyardut.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://vineyardut.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "wasatchcout.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://wasatchcout.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "washingtoncomn.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://washingtoncomn.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "washtenawcomi.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://washtenawcomi.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "watertownma.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://watertownma.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "wbrla.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://wbrla.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "wbtownshipmi.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://wbtownshipmi.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "weslacotx.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://weslacotx.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "wiltonmanorsfl.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://wiltonmanorsfl.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "winnetkail.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://winnetkail.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "winterparkfl.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://winterparkfl.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "woodlandca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://woodlandca.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "wycokck.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://wycokck.api.civicclerk.com/robots.txt",
+      "status": 403
+    },
+    {
+      "host": "yuccavalleyca.api.civicclerk.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://yuccavalleyca.api.civicclerk.com/robots.txt",
+      "status": 403
+    }
+  ],
+  "source_id": "civicclerk",
+  "started_at": "2026-09-17T15:43:12.463983+00:00",
+  "status_codes": [],
+  "urls": []
+}

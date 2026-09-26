@@ -159,11 +159,15 @@ while IFS='|' read -r src cad cron job sched existing extra; do
   secrets="SIG_PG_PASSWORD=${SIG_SECRET_PG_PASSWORD}:latest"
   [ -n "${extra}" ] && secrets="${secrets},${extra}"
   _log "  ${src} (${cad} ${cron}) -> ${job}"
+  # P26.6: agenda-platform jobs now also fetch the bounded per-tenant document
+  # window (≤ doc_per_tenant docs × tenants, ≤ doc_run_cap/run) on top of the
+  # index sweep — the largest platform (CivicClerk, ~295 index + ≤350 docs)
+  # ran past the 30m ceiling; 60m is the reviewed ingest task bound.
   run gcloud run jobs deploy "${job}" \
     --image "${IMAGE}" --region "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" \
     --command sh \
     --args "-c,exec sig-ops scheduled-ingest --source ${src} --sink pg" \
-    --tasks 1 --task-timeout 30m --max-retries 0 \
+    --tasks 1 --task-timeout 60m --max-retries 0 \
     --set-cloudsql-instances "${CONN}" \
     --set-env-vars "${JOB_ENV}" \
     --set-secrets "${secrets}"

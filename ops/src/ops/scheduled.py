@@ -490,6 +490,8 @@ def scheduled_ingest(
             parts.append(f"{len(report.refusals)} politeness refusal(s)")
         if report.disappearances:
             parts.append(f"{len(report.disappearances)} disappearance(s)")
+        if getattr(report, "drifted", None):
+            parts.append(f"{len(report.drifted)} document drift(s)")
         detail = "; ".join(parts)
     except Exception as exc:  # noqa: BLE001 - the outcome IS the exception class
         name = type(exc).__name__
