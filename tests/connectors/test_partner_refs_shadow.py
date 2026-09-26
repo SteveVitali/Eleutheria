@@ -19,7 +19,7 @@ from typing import Any
 
 import pytest
 from db.claim_sink import content_digest
-from partner_fixtures import GOLDEN, fixture_records
+from partner_fixtures import GOLDEN, fixture_records, golden_digest
 from resolution.partner_identity import PARTNER_PREDICATES
 
 
@@ -39,16 +39,19 @@ def test_the_text_records_are_the_base_commit_records_shadow_diff_zero() -> None
     assert set(records) == set(golden)
     for key, rows in records.items():
         text, _ = _split(rows)
-        assert sorted(content_digest(r) for r in text) == golden[key], key
+        # `golden_digest` normalizes the connector's stamped vocab_version back
+        # to the base-commit value — a §20 vocabulary migration restamps record
+        # provenance without changing claim content.
+        assert sorted(golden_digest(key, r) for r in text) == golden[key], key
 
 
 def test_every_entity_ref_claim_is_a_new_separately_digested_record() -> None:
     golden = {d for digests in _golden().values() for d in digests}
     for key, rows in fixture_records().items():
         text, refs = _split(rows)
-        text_digests = {content_digest(r) for r in text}
+        text_digests = {golden_digest(key, r) for r in text}
         for ref in refs:
-            digest = content_digest(ref)
+            digest = golden_digest(key, ref)
             assert digest not in golden and digest not in text_digests, key
             # It derives from a text claim of the same subject + predicate, with the
             # same evidence locators and provenance, naming one of its parties.
