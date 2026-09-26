@@ -1049,6 +1049,16 @@ compact_status = "not_contacted"
 robots_policy = "honor"
 notes = "Agenda platform named at §22.3 SIG-INGEST-026."
 
+[sources.granicus]
+name = "Granicus"
+source_kind = "government_portal"
+homepage_url = "https://www.granicus.com/"
+default_tier = "R2"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+notes = "Agenda/video platform (§22.3 SIG-INGEST-026; Legistar is the same vendor's legislative product — a separate source row). P26.5 enumeration found ~430 {tenant}.granicus.com hosts; the per-tenant portal answers robots.txt `User-agent: *` / `Disallow: /` platform-wide and exposes no bounded public agenda API — enumerated into the platform census, never a target (robots stands, never bypassed)."
+
 [sources.iqm2]
 name = "IQM2"
 source_kind = "government_portal"
@@ -1062,12 +1072,27 @@ notes = "Agenda platform named at §22.3 SIG-INGEST-026."
 [sources.escribe]
 name = "eScribe"
 source_kind = "government_portal"
-homepage_url = "https://www.escribemeetings.com/"
+homepage_url = "https://pub-<tenant>.escribemeetings.com/"
 default_tier = "R2"
-custody_posture = "LINK"
-compact_status = "not_contacted"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
 robots_policy = "honor"
-notes = "Agenda platform named at §22.3 SIG-INGEST-026."
+access_method = "json webmethod (MeetingsCalendarView.aspx/GetCalendarMeetings)"
+auth_model = "none"
+verified = true
+last_verified = 2026-09-17
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-17
+review_packet = "docs/build/reports/rights/escribe.md"
+notes = "Agenda platform named at §22.3 SIG-INGEST-026; tenant rows live in data/agenda_tenants.toml (P26.5). FLIPPED 2026-09-17 (GL-GATE-06): municipal meeting records are public records → CC0-1.0 (same basis as okc_council/legistar/civicclerk). Live-verified: POST pub-{tenant}.escribemeetings.com/MeetingsCalendarView.aspx/GetCalendarMeetings answers the real meeting index ({d:[…]}) on 68 enumerated tenants; robots.txt carries a PetalBot-only Disallow or 404s — never a SIG-UA disallow."
+[sources.escribe.rights]
+spdx = "CC0-1.0"
+attribution = "Municipal meeting records via eScribe (public record)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://pub-nanaimo.escribemeetings.com/"
+retrieval_date = 2026-09-17
 
 [sources.nextrequest]
 name = "NextRequest"

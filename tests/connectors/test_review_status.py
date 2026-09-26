@@ -115,7 +115,7 @@ def test_the_seeded_registry_has_no_flip_metadata_violations() -> None:
 def test_validate_passes_on_the_seeded_registry(capsys: pytest.CaptureFixture[str]) -> None:
     assert main(["validate"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 143" in out
+    assert "registered sources: 144" in out
     assert "self-checks OK" in out
 
 
@@ -171,12 +171,14 @@ def test_review_status_prints_flip_ready_0_and_loadable_43(
 ) -> None:
     # GL-GATE-06 (2026-09-16) drained flip-ready to 0; the same-day P26.2 pass
     # flipped the five resolved promoted sources (38 → 43 loadable). P26.3's
-    # gated discovery row moved registered 142 → 143; loadable is unchanged.
+    # gated discovery row moved registered 142 → 143; P26.5 added granicus as a
+    # gated/link-only census source (143 → 144) and flipped eScribe on the
+    # municipal-public-record basis (43 → 44 loadable).
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 143" in out
+    assert "registered sources: 144" in out
     assert "flip-ready: 0" in out
-    assert "loadable now: 43" in out
+    assert "loadable now: 44" in out
 
 
 def test_review_status_loadable_equals_validate() -> None:
@@ -184,7 +186,7 @@ def test_review_status_loadable_equals_validate() -> None:
     from connectors.loader import is_loadable
 
     loadable = [s for s in sources() if is_loadable(s)]
-    assert len(loadable) == 43
+    assert len(loadable) == 44
     assert len(flip_ready()) == 0
 
 

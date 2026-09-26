@@ -268,6 +268,14 @@ scheduler = "sig-sched-civicclerk"
 note = "v1 API is IdentityServer-gated — anonymous reads 404 and the api host serves no robots.txt → a recorded robots_unretrievable until an access path resolves (HG-09)."
 
 [[sources]]
+id = "escribe"
+cadence = "monthly"
+cron = "0 5 23 * *"
+job = "sig-ingest-escribe"
+scheduler = "sig-sched-escribe"
+note = "P26.5: pub-{tenant}.escribemeetings.com GetCalendarMeetings JSON webmethod — the tenant's own calendar call, bounded date window; yields real meeting indexes."
+
+[[sources]]
 id = "eyes_on_flock"
 cadence = "weekly"
 cron = "0 5 23 * 0"

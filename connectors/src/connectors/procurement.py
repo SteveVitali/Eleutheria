@@ -599,6 +599,10 @@ def tenant_targets(platform: str | None = None) -> list[dict[str, Any]]:
         target: dict[str, Any] = {
             "id": tenant_id,
             "tenant_id": tenant_id,
+            # The per-tenant slug the platform keys its host/path on (the
+            # matter_link_template's {tenant} slot) — distinct from tenant_id,
+            # which is the registry row key (jurisdiction-shaped).
+            "tenant": row.get("tenant") or tenant_id,
             "platform": platform_id,
             "jurisdiction": row.get("jurisdiction"),
             "url": url,
@@ -670,6 +674,21 @@ def tenant_discovery_negatives() -> list[dict[str, Any]]:
             )
         )
     return rows
+
+
+def platform_census() -> list[Mapping[str, Any]]:
+    """The enumerated-but-not-ingested platform tenant census (P26.5).
+
+    ``[[platform_census]]`` rows record vendor-tenant hosts the P26.5 enumeration
+    *found* but which are NOT live targets — a platform-wide robots ``Disallow: /``
+    (Granicus, PrimeGov-class walls), a platform with no bounded API surface
+    (NovusAGENDA's WebForms postback portal, CivicPlus Agenda Center, IQM2,
+    BoardDocs), or an unreachable host. They are registry data, never targets:
+    :func:`tenant_targets` reads only ``[tenants.*]``. The census keeps the
+    enumeration honest — a host found and excluded is recorded with its
+    ``outcome`` and ``enum_source``, not dropped (§3.1, SIG-METRIC-002a).
+    """
+    return list(agenda_registry().get("platform_census", []))
 
 
 # --- cooperative-vehicle helpers (SIG-ONTO-032) -------------------------------
@@ -932,7 +951,19 @@ class ProcurementConnector(Connector):
                     }
                 ]
             if isinstance(payload, Mapping):
-                objects = list(payload.get("value") or payload.get("results") or [])
+                # The item list lives under a platform-named envelope key —
+                # `items_key` on the reviewed [platform_endpoints.*] row (e.g.
+                # eScribe's ASP.NET webmethod answers {"d": [...]}, P26.5);
+                # the generic `value`/`results` keys cover the OData platforms.
+                items_key = str(platform_endpoints().get(ctx.source.id, {}).get("items_key", ""))
+                if (
+                    items_key
+                    and isinstance(payload.get(items_key), Sequence)
+                    and not isinstance(payload.get(items_key), (str, bytes))
+                ):
+                    objects = list(payload[items_key])
+                else:
+                    objects = list(payload.get("value") or payload.get("results") or [])
             elif isinstance(payload, Sequence) and not isinstance(payload, (str, bytes)):
                 objects = list(payload)
             else:
@@ -1085,6 +1116,7 @@ class ProcurementConnector(Connector):
                     "MatterFile",
                     "MatterId",
                     "id",
+                    "ID",
                     "meetingId",
                     "meeting_id",
                     "event_id",
@@ -1094,10 +1126,12 @@ class ProcurementConnector(Connector):
             or _digest_of(item)[:24]
         )
         type_name = _first_nonempty(
-            item, ("MatterTypeName", "type_name", "category", "categoryName", "info")
+            item,
+            ("MatterTypeName", "type_name", "category", "categoryName", "info", "MeetingType"),
         )
         title = _first_nonempty(
-            item, ("MatterTitle", "MatterName", "meetingTitle", "name", "title")
+            item,
+            ("MatterTitle", "MatterName", "meetingTitle", "name", "title", "MeetingName"),
         )
         doc_link = self._agenda_item_link(item, tenant, platform)
         subject = f"agenda_item:{ctx.source.id}:{tenant_id or 'unscoped'}:{external_id}"
@@ -1114,7 +1148,8 @@ class ProcurementConnector(Connector):
                 "type_name": type_name,
                 "status": _first_nonempty(item, ("MatterStatusName", "status", "meetingStatus")),
                 "introduced": _first_nonempty(
-                    item, ("MatterIntroDate", "startDateTime", "meetingDate")
+                    item,
+                    ("MatterIntroDate", "startDateTime", "meetingDate", "StartDate"),
                 ),
                 "enactment_number": _first_nonempty(item, ("MatterEnactmentNumber",)),
                 "document": doc_link,
@@ -1166,11 +1201,12 @@ class ProcurementConnector(Connector):
     ) -> str | None:
         """The human-readable item link an agenda index row records (never fetched here)."""
         template = platform_endpoints().get(platform, {}).get("matter_link_template")
-        if template and item.get("MatterId"):
+        matter_id = item.get("MatterId") or item.get("ID")
+        if template and matter_id:
             return str(template).format(
                 tenant=tenant.get("tenant") or tenant.get("tenant_id") or "",
-                matter_id=item.get("MatterId"),
-                matter_guid=item.get("MatterGuid") or "",
+                matter_id=matter_id,
+                matter_guid=item.get("MatterGuid") or item.get("Guid") or "",
             )
         for key in ("url", "link", "document_url", "itemsSearchResultsDefaultLinkOnMeetingPortal"):
             if item.get(key):

@@ -303,6 +303,14 @@ kind = "agenda_tenants"
 [civicclerk]
 kind = "agenda_tenants"
 
+# eScribe Meetings (P26.5 / SOURCES.5): tenant rows in agenda_tenants.toml
+# expand to POST pub-{tenant}.escribemeetings.com/MeetingsCalendarView.aspx/
+# GetCalendarMeetings — the JSON webmethod the tenant's own public calendar
+# page calls (verified 2026-09-17 across the enumerated pub-* surface; robots
+# is PetalBot-only or absent → CRAWL mode binds and passes).
+[escribe]
+kind = "agenda_tenants"
+
 # Eyes on Flock — the documented public CC-BY-SA-4.0 JSON API (flipped
 # 2026-09-16 under GL-GATE-06). The host currently answers programmatic egress
 # with a Cloudflare challenge — a recorded disappearance, never defeated

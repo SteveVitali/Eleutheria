@@ -150,9 +150,6 @@ disposition = "reference"
 [sources.equalis_group]
 disposition = "link_only"
 
-[sources.escribe]
-disposition = "link_only"
-
 [sources.eyes_off_cedar_rapids]
 disposition = "link_only"
 
@@ -194,6 +191,9 @@ disposition = "link_only"
 
 [sources.future_statutory_disclosure_2027]
 disposition = "mirror"
+
+[sources.granicus]
+disposition = "link_only"
 
 [sources.gleif]
 disposition = "mirror"

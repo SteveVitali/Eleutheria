@@ -1,0 +1,575 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnalryy4xck5exptifhjnrxxm4wv2hyazpekvpx3lj2xwo6rhi22iigzn7kcvmckkbuxoqvkt5rdbcw6v6sncusb4s4b6gfhvxzypbzyz4",
+    "bcnaae3bw7nhg7u2ly33235565yvhptho4ho4nobrer4kztwtbq5ct4te273f7sijsd6wojz2akt2hlm5ue7oyd77vzz76tnjmedd4ocyjm",
+    "bcnabcpfc5vul3igscuzgtnsbn67cgoolhkt73hed6xpxnaj5lmjmaqui4x7o5ukd3p23ohcoizwkbsvikf2pvcrga35fcby3hxsbkp5xgi",
+    "bcnagxlttcg4pwhc5fqswncs477mdy43mvt7vmy2ibzj2ty4ifvmzgtg4fxeg2d6q3nfsj3lnwlacnst4gsknsbxaeipiv67ygskpmpsj64",
+    "bcnagnxhx33fqdm5vy3o4xnxrszu52cdz6uozmmstnxrgyfx2ztr7rlydfwi2tm76atxxazxuey6bjtvgji6e6xdf7ohn3p23zcwxapib5u",
+    "bcnalryt6bvz3ctzab2vw4kjondm4vhmbc4hfjv3cugpbixyj2fi4hshhl2ndnsr3xh4kqjkrfwiatavhfyc5hb6x3potjpvvrhnlzrlpge",
+    "bcnaarihmvftfc3mxidylhrnmxk5s7sgxfra34jupoibsvqkjlsglgt6jxt73e4fm5tkkdp77mh5y36y5eexyiukknw46mgojhgpcp7h5j4",
+    "bcnap744nc6bkslqia5eho53ah4yk4kus3jpe4b3myg7ae6lupptjpsuftbye3gdc7gn7ji6jexiownxz4i3famu2xfkf7atepuvh472hjm",
+    "bcnapj5vpjs4y5yghn6i3lezxcfw5j7wn45shap7wljsnzhu4oazno2cr74drwu6ex6dx7prrkpmnn6rnwutmkqol2zty5g622ykujojswm",
+    "bcnacvxilzwvvqpvzdo7a5etr65yiqvt2bjv6oqdljagtcwdunqrxlhyjphcfjoqmq2dn2filrunqei7j5y3jgmqruwr5yuf63mrp42bwcm",
+    "bcnapqggw5wimlurz3jbj5kqv3x5mrn5xeariu5xy5sauuwzjftjif66ik6h6y5lztnp33ocn6hbmalhx7orpq22dszp5suuwab4n34huvy",
+    "bcnam5qbcrxuj5767isnjuw7y6sjdlk2sglaotqontmmu7zw56bekk63nmktlvcuacf4okne77kx5scl6njz4tyxt6wggxdm2ywi3ysq5ia",
+    "bcnaivrnon2bb3drfsgksxd3yfcvkdef6z4arkyqcse6curfvd5edbgbr7dgiowbi3uvkxslsp7pkvoadvir7kl4yduz35qxlqxmtridlja",
+    "bcnap433vo7hhjhule5ei7wki35mjnxsdg6y37ykd7gdjczqnoldcy6m2ojrjpsgsy2zxlptf2ohfbw43dqjyf3t72xgpficqgdq76fdqaq",
+    "bcnabcpfc5vul3igscuzgtnsbn67cgoolhkt73hed6xpxnaj5lmjmaqui4x7o5ukd3p23ohcoizwkbsvikf2pvcrga35fcby3hxsbkp5xgi",
+    "bcnagn3ubj7jmrd5mqyt6ze3ysoohnbq3ju23af6ff6f7mmkozqz42rvnjjhjcqt2qaedytvbafo5wpw42z75svbiv7syd3fouvkmnny4e4",
+    "bcnaclwkiwpz23weyt7l47yaqobo3j4yvqsyqpt7qn23c3xqe6cgirdjrilpk7ejafikmz3i4qk2hzmofi3nfxczfbk2iklkks6dsu6pqbu",
+    "bcnapa7zen6zshzlkw3w2tr2js32cf4wuyov446o4br7grwlpx5byjlrdzfsltoo2kzj7l7hsnw5m5kmuu7jdanys4abycxng6l5sowcop4",
+    "bcnap3ouhvcvuluip6h7hvfv43air2lacuoue46avsksxymmbjcrpoqqszsx7ob2zttgtzezzqmhnpnptqrq3bbnb5edbpjmirzjmcpanqq",
+    "bcnajpxppkpmt7efhbfhhm6yk2imq27hsqobl76hdhh25jxe4rnddrdw653zmn4mtgnds3ecocelqtmlsf7wednmh7q5t5lq4jcxhiiupxa",
+    "bcnanznwv6rlgomzl4wbazh7jgce36bm5qd5swsyrltd6iqsmt7l72kzd4i22ki5dkwhwjqd4x3k2w3xyrcfodk5uyyu3qxmf2hjwkfrc7u",
+    "bcnapkyno3ifx57pb26ffbr3kuycgiwsbulthndangz2zr5cdwvf2cnxhkiubutwfevfnxbrscmpuyrvldz54t7zkfptjbjd645d5bgbidu",
+    "bcnacszniniuhbufnxeyirbueqwr2y7kyvpkoxp6gw53zxxafvdx636b6lyukzl4rzox63lwqslpwvmzivwsdyxsavu4ahqh6hrrqpscxca",
+    "bcnak7gbhvhszji3ijfahcc5wsl5xp4juuzozhm7t62doyqd5yeijd2kwbxbcmxfmpqrmzw6jtvh25l2gnraakm2esxznk3lberyi57674m",
+    "bcnahqt3gp2p4o6ofdvml3x4kxfvbcu67jazsdf5wjlsakjwszh7cmp6r2f7pavqrm5clwoe4ca4k5237ovwwuchaauewhpeux5tgaya6dy",
+    "bcnabze4jla5bftipmsl2fqa43tmtlmfvd2tqvniaaulpoe4pkcyv66awo5vpoevjlgmwvxex4wuj3ljx36zbb33s73arrkbdxk3cp3e33u",
+    "bcnaho3ffdzkmidlujtbc6scfwhwynlrrjbgsholpa4ie4pq4goukkgixrn4pendqjyjz5mjrjfdcpkclye2hl7kekld2yzpih2v6w3kiji",
+    "bcnaajrxshxp4dmzf6gywujemwy2wrzkddwak4yb4dsp2vxmhz4ftvcykljzayzmxlmzjb7gtjkqhxqxcplvshyonoplqpgx5ap3hwht6sq",
+    "bcnaeqybdfocgw33pbpndoeh7fh5idco3yat5twajidcaggwfanbeq6hzjhvb37zxmuyursz3vzyupqmq2vfxifmxyst5xi3bda46meoskm",
+    "bcnaktbg4qnujnerorvprynr6eyl4ojb2rukqc6pkgkzyvurwpwzaz5x7h76ojhhna72kprla6lrtjzeufzfyo3qjr5zrkpgeag6j57wf5e",
+    "bcnadogno237fuvtdjxi2x2eqlzesgxkhkyq3b6bcrpc7rairtvnqiirdewfizqiv5azsuffjx25j7hmdi64rwdf3ah37pxthgmyrux75zi",
+    "bcnaooduhmqlrq56e22r3towjlhttcowkkgfbhytdlnqwvez52xl74ctg24ukkjsggmttuirevbbryasbpyo5caenpyq65dortofv2ziyty",
+    "bcnam435gh4z7eul6vzcifxcairw5ldf7eivz5pnjxmoibvccy24sfojtxrioniuy6ob7qkjg24553ws7gkvb3mauyyawer3ex5jfqq6zpu",
+    "bcnabnhgxueb3xcae64r7z6w6fsnrtv3p2tgquod45gyrh4qtnlbiugge5wc3rsrhs6ix3hwdynkxnl2urr4yamwvensjovpuibhqkcdlge",
+    "bcnaok4el3jcpxo3ij3o7ticbqmms2inmlyra73fcg7izhgnewjlflnyqefhmhswqeu5p467pc35hqpirokxujnpl5l32dr55zsfrm4b3gi",
+    "bcnanl3kqusznofol5ui44dc66daj4kox5am4rrryqg2zziygnmwbai7kbdbvneubfwfwhtwpp3ouho4xfshhff2p5l2e4pi4ndafnsyelm",
+    "bcnahpvd75ym2tvcjh64nx5j4vpatx5ohvw2it7ukjm2ou3ta3d7u43zro7tytoaxcgp3xkctve7vaid4bafjfl3tzq426xk3bpqbwo4zja",
+    "bcnagrk53zqe7v74baxjgeohtlqjrdmo2hm4sr32ep75hwutjtzgfeboma6hon2cf66dkr3muyahxympafy4ozqykm5evu6k6fqe5yqe6ta",
+    "bcnaivsq4iyidmrm74dve2wxpmykw73mazan4tnpmkljenqyfbioh2dws7kbakd2w5wa6opveiuuojuotrqkvzly3htvhvk5znf4epueacy",
+    "bcnagg3pmahx34apiigaoupyba4gqatwaqiqcmzog6aw3eas4wbs5m2dtz5dcydzycl7ndnyf3t6nveuxz652ik6rc7tmgxh24on4cquwgy",
+    "bcnaktez3zfon3yjmgfydo5i6bi6sm2r5xd5xa46xwyy5m5xjwawu54vhkg57fx7frtof62r3c5gj3i2lznzsvtqio2juwlzkjnre4hgjly",
+    "bcnaprhhddlbne6nirmwz5yyhhbzie4oga7xjvsz3qbrvl5mc62aow2qpctvpe2thqclchcdev7ndp3cxfchqo63ru4gl3mxadcipdpgmdy",
+    "bcnacjxm3gcvkeqxbqegy2mcgfpnfkj7yascipanht5z2nyrc4ka755agwuezo4gpvjmkyckn6vij5usctq7bcpf2y76daerm36twxnjqju",
+    "bcnaahc4cqowkl7zgq3hy44atd6kgv6vwdfasj4xu6iyvt7zgzsds7m476csxx65xfzbvephdh5em6qmz3wrttvequ7bus5byec3lx3uz4q",
+    "bcnai2hmewo2f2lt5rfkpcmjzfqegk7jh3urilbqwo5t62tk6f7gcfdogaqbbqkufdeiz7dh3725btywmszjd24kpfk2fkcslanns2xiqmu",
+    "bcnacyieebq3ixyqacg35y4jipqniuzw6borqceflec76uduhvihjomuu73kbw7sfpypsghxga46qmvcbd2hotprbyuiqkovy6klyckbspi",
+    "bcnafhhzb5vyzdanqsw7sq4mwcrfidf3p5sq4i5t2rqh2y6xyvuuyzo6eymauni7cx3y6s47hmofhrhq7wtalsh6nxkj7sgh62n4fblhvsu",
+    "bcnaf3lc5qbgivboo7tv6c6bl67ihhhv4xd2ifgakmfq3wz2yutdvabgyktlawbthbrelrez34hjxxvjbxeuqayofjpzgxflajn6g3ofuwm",
+    "bcnajegk3urfg33jtbxsyglxqzee34nxd32w74lxx6ui3ninrj72e5uw2aam5uk5hyy7mn2rohjvik6wjz7q7crv2mcvkqfoa75blipokmm",
+    "bcnab2a2rtzbjzce5g5t2ubmtgp4fw2fxlgzujtz7nwrcdn3wfkdfi4jl3slvigm2juo6brmonszr7bamgboxo2nqjzlwalym375utpgure",
+    "bcnaatfkpazswpipiksrewbohorpcgigdohnjfwiygurgg6qbf4rasxqghqayn6cae3lcpyh7k2iju6z3xca4dqqcqbfcxeamxbqkp7dsrq",
+    "bcnajyfbjboaiz3r7yocligvv32idfdmiixle3imf3j6wume3leielojyxpdjj3creoknleo4itynudvp6ioyuyg56zdgy4okm3oagkvqru",
+    "bcnalp4ufvr5ahnru3nlbzpw3nuryg2vfwcgubrcyp65vl5tort74ztmgyxg3hndg3gy6ji7e5cfecb2ehx43jmqjcmgmt4av6gngjch33a",
+    "bcnakszuo7pi5myee3ututwnu4qtp3wfckqll6ptrn7dq3qjhcmr5rdfmezogvn3gfedoebind32ajgxvd3vsjlpo3ffqhf4a5wbzy7hlli",
+    "bcnag23fhftlc4mlfaq6n3veggp3sgy2e5p5ifnv3ptjnvpdegwmvpi34fv6c5nh7dyswvlmlfiyvrbbsrzglbxosp74vrenwcl6mgozotq",
+    "bcnagahf4whlzj43xjj3yshb4zci2g5p2ihthuqyczf5azb6kr5vmo4u2zfwswgsa7gli64zb6aheunzl57zzmhfapac4cj2p54myvkhlma",
+    "bcnafauu5ml3uhgsnozcmetibfjn5yvd65q2jcpdifrf262m3sfjuobzxk7bwloxbbunbuqygaq5uicous6bun75uyqzqu4c6a6c7phsqw4",
+    "bcnamll5m7fn66ra3nddnr4olcf3alhctamubnthugr7abkavrl3kxez3mym7oawyfgbzkenmqyz435czvyzm3rninwhl4owgxtixwmb3wa",
+    "bcnajisi4kswqnvlfcv5js7xn3lenzpcepyanhr7zocqvygydjlqezugxegf67hpcot32yip62pmddlinvozgnzzvx4xm26ke5tceqsogia",
+    "bcnacfbggj53obwtgjoybumfggujeym523ubc7bbe2oladjz6ysn476fmhel224lpjjadrgsycvx33dy2jhumvn6xddnba44ddkgpkoo5xa",
+    "bcnaosfkimyh6y5yqeq3xmx2vjyschhu46l5pebet7kva3cuaqomriklesmnd2ha52sjn3snv6vped5jhwzp5qp2fcc5szvsaq66ywfvvzu",
+    "bcnahrzdcnzq22t7m6keofruaezqmydlodwe2szmxtfyfdn4ufmd2cd24pcnojvd6tukf66f4x7nr246uj3v26mxt5b7uayuk3gtdfaqc54",
+    "bcnafboj4xj7i3koplwf5ayejghpl66u3auhslprypu5cvynh4szpec24mwj4lxmz4guy5bbh32vnhlrl3veu3byevopeimjcqoigaxvxty",
+    "bcnagneal4ahxbn3idefm4xuz5j6rsx6m2fbzixxxxzczuyghdyipnkgybo76q3ycx56zdtgeppiyb7qsnp2jjoftppbudkcqlw744ba67q",
+    "bcnaciehlgkklo2bn7pe2sg3wgdykherm6xdla2hqs676xgeba62rpwxg5dgich7re2i3kixfxwx34sj422wulcwq2mjzmolv62xt2a6vne",
+    "bcnakmi25tiete3gucvcyttwwtzx4vojf6ewuhilhjvmcqitcldhqpcjsoaryzlgn4hwuesoy6dzlfcnmmovojl57zx7m4y5amk6ivahei4",
+    "bcnaj4z47z2hdic5rraq44xkxiuuewvym744rb4nfs5dbfbelfyqzqqsacuwubjio4hcvwyf32xz42zeskebjl6nxi6drkm34yxn2hrhgx4",
+    "bcnaj5wizxkjbwoowl67ftcukrgrtg5tvcmkabed7eri4ckmhalqj4rqudxuiawcqydinjloszrairj36osy5s4kshhzgtvhrgiqx2z6rk4"
+  ],
+  "claim_count": 15508,
+  "connector": "procurement",
+  "content_drift": null,
+  "disappearances": [],
+  "duration_seconds": 157.518052,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [
+    {
+      "detail": "robots.txt for 'pub-cedarhill.escribemeetings.com' is unavailable (connection failure or timeout); crawl permission is NOT granted and the connector refuses to run (SIG-INGEST-012, RFC 9309 §2.3.1.4).",
+      "id": "cedar_hill_tx",
+      "observed_at": "2026-09-17T06:57:51.060162+00:00",
+      "refusal": "RobotsUnretrievable",
+      "url": "https://pub-cedarhill.escribemeetings.com/MeetingsCalendarView.aspx/GetCalendarMeetings"
+    },
+    {
+      "detail": "robots.txt for 'pub-charlestoncounty.escribemeetings.com' is unavailable (connection failure or timeout); crawl permission is NOT granted and the connector refuses to run (SIG-INGEST-012, RFC 9309 §2.3.1.4).",
+      "id": "charleston_county_sc",
+      "observed_at": "2026-09-17T06:57:51.080712+00:00",
+      "refusal": "RobotsUnretrievable",
+      "url": "https://pub-charlestoncounty.escribemeetings.com/MeetingsCalendarView.aspx/GetCalendarMeetings"
+    },
+    {
+      "detail": "robots.txt for 'pub-cityofmanvel.escribemeetings.com' is unavailable (connection failure or timeout); crawl permission is NOT granted and the connector refuses to run (SIG-INGEST-012, RFC 9309 §2.3.1.4).",
+      "id": "manvel_tx",
+      "observed_at": "2026-09-17T06:57:55.644558+00:00",
+      "refusal": "RobotsUnretrievable",
+      "url": "https://pub-cityofmanvel.escribemeetings.com/MeetingsCalendarView.aspx/GetCalendarMeetings"
+    },
+    {
+      "detail": "robots.txt for 'pub-muskegon.escribemeetings.com' is unavailable (connection failure or timeout); crawl permission is NOT granted and the connector refuses to run (SIG-INGEST-012, RFC 9309 §2.3.1.4).",
+      "id": "muskegon_mi",
+      "observed_at": "2026-09-17T06:59:08.854179+00:00",
+      "refusal": "RobotsUnretrievable",
+      "url": "https://pub-muskegon.escribemeetings.com/MeetingsCalendarView.aspx/GetCalendarMeetings"
+    },
+    {
+      "detail": "robots.txt for 'pub-southlake.escribemeetings.com' is unavailable (connection failure or timeout); crawl permission is NOT granted and the connector refuses to run (SIG-INGEST-012, RFC 9309 §2.3.1.4).",
+      "id": "southlake_tx",
+      "observed_at": "2026-09-17T06:59:49.105291+00:00",
+      "refusal": "RobotsUnretrievable",
+      "url": "https://pub-southlake.escribemeetings.com/MeetingsCalendarView.aspx/GetCalendarMeetings"
+    },
+    {
+      "detail": "robots.txt for 'pub-ssf.escribemeetings.com' is unavailable (connection failure or timeout); crawl permission is NOT granted and the connector refuses to run (SIG-INGEST-012, RFC 9309 §2.3.1.4).",
+      "id": "ssf",
+      "observed_at": "2026-09-17T06:59:49.119873+00:00",
+      "refusal": "RobotsUnretrievable",
+      "url": "https://pub-ssf.escribemeetings.com/MeetingsCalendarView.aspx/GetCalendarMeetings"
+    }
+  ],
+  "robots_decisions": [
+    {
+      "host": "pub-alachuacounty.escribemeetings.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pub-alachuacounty.escribemeetings.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "pub-alamance-nc.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-alamance-nc.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-auroraco.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-auroraco.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-auroraon.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-auroraon.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-banff.escribemeetings.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pub-banff.escribemeetings.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "pub-bouldercounty.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-bouldercounty.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-brampton.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-brampton.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-caledon.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-caledon.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-calgary.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-calgary.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-calmar.escribemeetings.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pub-calmar.escribemeetings.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "pub-cedarhill.escribemeetings.com",
+      "outcome": "unretrievable",
+      "robots_url": "https://pub-cedarhill.escribemeetings.com/robots.txt",
+      "status": null
+    },
+    {
+      "host": "pub-charlestoncounty.escribemeetings.com",
+      "outcome": "unretrievable",
+      "robots_url": "https://pub-charlestoncounty.escribemeetings.com/robots.txt",
+      "status": null
+    },
+    {
+      "host": "pub-cityofgainesville.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-cityofgainesville.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-cityofmanvel.escribemeetings.com",
+      "outcome": "unretrievable",
+      "robots_url": "https://pub-cityofmanvel.escribemeetings.com/robots.txt",
+      "status": null
+    },
+    {
+      "host": "pub-cityofwatsonville.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-cityofwatsonville.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-cobourg.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-cobourg.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-collingwood.escribemeetings.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pub-collingwood.escribemeetings.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "pub-commerce.escribemeetings.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pub-commerce.escribemeetings.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "pub-cornwall.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-cornwall.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-countyofmchenry.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-countyofmchenry.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-crossfield.escribemeetings.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pub-crossfield.escribemeetings.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "pub-detroitmi.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-detroitmi.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-dryden.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-dryden.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-evans.escribemeetings.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pub-evans.escribemeetings.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "pub-forterie.escribemeetings.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pub-forterie.escribemeetings.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "pub-gloucesterva.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-gloucesterva.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-guelph.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-guelph.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-halifax.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-halifax.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-hamilton.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-hamilton.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-hamiltonbm.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-hamiltonbm.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-imperialbeach.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-imperialbeach.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-jeffco.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-jeffco.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-kawarthalakes.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-kawarthalakes.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-knightdalenc.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-knightdalenc.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-lakeshore.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-lakeshore.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-laporte.escribemeetings.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pub-laporte.escribemeetings.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "pub-leduc.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-leduc.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-lincoln.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-lincoln.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-livingston.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-livingston.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-markham.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-markham.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-marvinnc.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-marvinnc.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-mdgreenview.escribemeetings.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pub-mdgreenview.escribemeetings.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "pub-mississauga.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-mississauga.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-missoula.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-missoula.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-muskegon.escribemeetings.com",
+      "outcome": "unretrievable",
+      "robots_url": "https://pub-muskegon.escribemeetings.com/robots.txt",
+      "status": null
+    },
+    {
+      "host": "pub-nationalcity.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-nationalcity.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-northbay.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-northbay.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-oakville.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-oakville.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-orlando.escribemeetings.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pub-orlando.escribemeetings.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "pub-oshawa.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-oshawa.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-ottawa.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-ottawa.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-pasorobles.escribemeetings.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pub-pasorobles.escribemeetings.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "pub-pittmeadows.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-pittmeadows.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-portmoody.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-portmoody.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-regionofwaterloo.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-regionofwaterloo.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-rmwb.escribemeetings.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pub-rmwb.escribemeetings.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "pub-royaloak.escribemeetings.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pub-royaloak.escribemeetings.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "pub-salinecounty.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-salinecounty.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-salmonarm.escribemeetings.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pub-salmonarm.escribemeetings.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "pub-saskatoon.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-saskatoon.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-scugog.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-scugog.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-southlake.escribemeetings.com",
+      "outcome": "unretrievable",
+      "robots_url": "https://pub-southlake.escribemeetings.com/robots.txt",
+      "status": null
+    },
+    {
+      "host": "pub-ssf.escribemeetings.com",
+      "outcome": "unretrievable",
+      "robots_url": "https://pub-ssf.escribemeetings.com/robots.txt",
+      "status": null
+    },
+    {
+      "host": "pub-ssm.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-ssm.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-strathcona.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-strathcona.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-temiskamingshores.escribemeetings.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pub-temiskamingshores.escribemeetings.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "pub-townofgarner.escribemeetings.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pub-townofgarner.escribemeetings.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "pub-townofyarmouth.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-townofyarmouth.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-vaughan.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-vaughan.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-vernon.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-vernon.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-victoria.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-victoria.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-wdc.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-wdc.escribemeetings.com/robots.txt",
+      "status": 200
+    },
+    {
+      "host": "pub-wellesley.escribemeetings.com",
+      "outcome": "no_policy_4xx",
+      "robots_url": "https://pub-wellesley.escribemeetings.com/robots.txt",
+      "status": 404
+    },
+    {
+      "host": "pub-woodstock.escribemeetings.com",
+      "outcome": "retrieved",
+      "robots_url": "https://pub-woodstock.escribemeetings.com/robots.txt",
+      "status": 200
+    }
+  ],
+  "source_id": "escribe",
+  "started_at": "2026-09-17T06:57:31.431366+00:00",
+  "status_codes": [],
+  "urls": []
+}
