@@ -369,3 +369,51 @@ kind = "document"
 targets = [
   { id = "dc-doc-20504557", url = "https://api.www.documentcloud.org/api/documents/20504557/", kind = "document_lookup", external_id = "20504557" },
 ]
+
+# --- P26.7 (SOURCES.7): state DOT/511 traffic-camera registries ---------------
+# Each `dot_511_<st>` source resolves its live targets from the verified
+# [[targets]] rows of data/dot_511_targets.toml (kind = "dot_511_targets") —
+# the same registry that preserves the enumerated keyed/refused/unreachable
+# outcomes. The expansion builds the deterministic ArcGIS REST `query` URL
+# (where=1=1, outFields=*, outSR=4326, returnGeometry) — registry rows only;
+# image/video/stream fields are never fetched (media blocklist, Part VIII).
+# Gated sources (la/ga/al/tx/md) keep their rows so a future HG-03 flip needs no
+# target edit; the live gate refuses before any target is read.
+[dot_511_ky]
+kind = "dot_511_targets"
+
+[dot_511_il]
+kind = "dot_511_targets"
+
+[dot_511_ut]
+kind = "dot_511_targets"
+
+[dot_511_or]
+kind = "dot_511_targets"
+
+[dot_511_la]
+kind = "dot_511_targets"
+
+[dot_511_ia]
+kind = "dot_511_targets"
+
+[dot_511_wa]
+kind = "dot_511_targets"
+
+[dot_511_dc]
+kind = "dot_511_targets"
+
+[dot_511_ga]
+kind = "dot_511_targets"
+
+[dot_511_al]
+kind = "dot_511_targets"
+
+[dot_511_mo]
+kind = "dot_511_targets"
+
+[dot_511_tx]
+kind = "dot_511_targets"
+
+[dot_511_md]
+kind = "dot_511_targets"

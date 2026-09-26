@@ -1,0 +1,49 @@
+{
+  "displayFieldName": "CameraLocation",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID", "alias": "OBJECTID"},
+    {"name": "ImgPath", "type": "esriFieldTypeString", "alias": "ImgPath"},
+    {"name": "CameraLocation", "type": "esriFieldTypeString", "alias": "CameraLocation"},
+    {"name": "CameraDirection", "type": "esriFieldTypeString", "alias": "CameraDirection"},
+    {"name": "y", "type": "esriFieldTypeDouble", "alias": "y"},
+    {"name": "x", "type": "esriFieldTypeDouble", "alias": "x"},
+    {"name": "SnapShot", "type": "esriFieldTypeString", "alias": "SnapShot"},
+    {"name": "WarningAge", "type": "esriFieldTypeInteger", "alias": "WarningAge"},
+    {"name": "TooOld", "type": "esriFieldTypeInteger", "alias": "TooOld"},
+    {"name": "AgeInMinutes", "type": "esriFieldTypeDouble", "alias": "AgeInMinutes"}
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 5501,
+        "ImgPath": "https://idot.example.invalid/img/5501.jpg",
+        "CameraLocation": "I-90/94 at Pershing Rd",
+        "CameraDirection": "N",
+        "y": 41.8277,
+        "x": -87.6445,
+        "SnapShot": "https://idot.example.invalid/snap/5501.jpg",
+        "WarningAge": 15,
+        "TooOld": 0,
+        "AgeInMinutes": 2.5
+      },
+      "geometry": {"x": -87.6445, "y": 41.8277}
+    },
+    {
+      "attributes": {
+        "OBJECTID": 5502,
+        "ImgPath": "https://idot.example.invalid/img/5502.jpg",
+        "CameraLocation": "I-55 at Cicero Ave",
+        "CameraDirection": "S",
+        "y": 41.7442,
+        "x": -87.7456,
+        "SnapShot": "https://idot.example.invalid/snap/5502.jpg",
+        "WarningAge": 15,
+        "TooOld": 0,
+        "AgeInMinutes": 4.0
+      },
+      "geometry": {"x": -87.7456, "y": 41.7442}
+    }
+  ]
+}

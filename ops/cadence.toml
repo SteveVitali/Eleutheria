@@ -308,3 +308,74 @@ job = "sig-ingest-openstates"
 scheduler = "sig-sched-openstates"
 secrets = { SIG_OPENSTATES_KEY = "sig-openstates-key" }  # keyed live since P26.4 (2026-09-17)
 note = "Bounded state-scoped bill queries over v3; key rides the X-API-KEY header from $SIG_OPENSTATES_KEY (HG-09, Secret Manager). Keyless → 403 challenge, recorded. Bills index as index_only links (a pending bill is not a §11.14 LegalInstrument)."
+
+# --- P26.7 (SOURCES.7): yielding state DOT/511 camera registries --------------
+# Monthly cadence for the GL-GATE-06-resolved states (registries change only as
+# operators add/remove cameras). Gated states (la/ga/al/tx/md) get no row — the
+# live gate refuses them before any target is read; a recorded refusal attempt
+# is available via `run --mode live` (exit 3) without a scheduled job.
+# Registry rows only — feed content is never fetched (media blocklist).
+
+[[sources]]
+id = "dot_511_ky"
+cadence = "monthly"
+cron = "0 4 24 * *"
+job = "sig-ingest-dot-511-ky"
+scheduler = "sig-sched-dot-511-ky"
+note = "KYTC ArcGIS layer (254 cams, 2026-09-17); CC0-1.0 public record."
+
+[[sources]]
+id = "dot_511_il"
+cadence = "monthly"
+cron = "0 6 24 * *"
+job = "sig-ingest-dot-511-il"
+scheduler = "sig-sched-dot-511-il"
+note = "IDOT Gateway layer (2,937 cams); CC-BY-SA-2.0 → own compartment."
+
+[[sources]]
+id = "dot_511_ut"
+cadence = "monthly"
+cron = "0 4 25 * *"
+job = "sig-ingest-dot-511-ut"
+scheduler = "sig-sched-dot-511-ut"
+note = "UDOT Live View layer (32 cams, geometry-only coords); CC0-1.0."
+
+[[sources]]
+id = "dot_511_or"
+cadence = "monthly"
+cron = "0 6 25 * *"
+job = "sig-ingest-dot-511-or"
+scheduler = "sig-sched-dot-511-or"
+note = "ODOT TripCheck layer (1,180 cams); 'Public' licenseInfo → CC0-1.0."
+
+[[sources]]
+id = "dot_511_ia"
+cadence = "monthly"
+cron = "0 4 26 * *"
+job = "sig-ingest-dot-511-ia"
+scheduler = "sig-sched-dot-511-ia"
+note = "Iowa DOT layer (1,251 cams); explicit CC-BY-4.0."
+
+[[sources]]
+id = "dot_511_wa"
+cadence = "monthly"
+cron = "0 6 26 * *"
+job = "sig-ingest-dot-511-wa"
+scheduler = "sig-sched-dot-511-wa"
+note = "WSDOT feed (1,705) + KC/WSDOT layer (125); conditional low-volume terms — monthly is low-volume."
+
+[[sources]]
+id = "dot_511_dc"
+cadence = "monthly"
+cron = "0 4 27 * *"
+job = "sig-ingest-dot-511-dc"
+scheduler = "sig-sched-dot-511-dc"
+note = "DC GIS/DDOT layer (235); District Level-0 Open + CC0-1.0 dedication."
+
+[[sources]]
+id = "dot_511_mo"
+cadence = "monthly"
+cron = "0 6 27 * *"
+job = "sig-ingest-dot-511-mo"
+scheduler = "sig-sched-dot-511-mo"
+note = "MoDOT layer (871, FeatureServer/1); conditional public grant evaluated under public terms (disclaimer + revocation) — monthly cadence honours the conditions."

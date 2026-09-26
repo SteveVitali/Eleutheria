@@ -1,0 +1,546 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# The `dot_511` target registry (P26.7 / SOURCES.7) — the SOURCED ENUMERATION of
+# state DOT / 511 traffic-camera registries. This table is DATA, not code
+# (SIG-ENG-001): two row kinds —
+#
+#   [[targets]]     verified camera-registry endpoints belonging to a
+#                   `dot_511_<state>` source row. The connector fetches the
+#                   ArcGIS REST `query` document for the layer — registry rows
+#                   (attributes + point geometry) only, NEVER an image/video URL
+#                   named in them (Part VIII; see the vocab's media blocklist).
+#   [[enumerated]]  discovery outcomes that are NOT fetchable targets — keyed
+#                   APIs, robots-refused hosts, SPA shells, dead endpoints,
+#                   unresolved-rights layers. Preserved loud so the enumeration
+#                   never silently drops a refusal (SIG-INGEST-009/010).
+#
+# `enum_source` records where each endpoint was found (arcgis_hub_search item id,
+# state open-data catalog, vendor-platform probe). `observed_*` fields are the
+# 2026-09-17 live-probe facts the rights/robots decisions rest on.
+#
+# TOML ORDERING: every [[targets]] row precedes the [[enumerated]] section.
+
+# ===========================================================================
+# VERIFIED TARGETS — one per state source row (`dot_511_<st>`)
+# ===========================================================================
+
+[[targets]]
+id = "ky_kytc_traffic_cameras"
+source_id = "dot_511_ky"
+state = "KY"
+agency = "Kentucky Transportation Cabinet"
+platform = "arcgis_feature_layer"
+layer_url = "https://services2.arcgis.com/CcI36Pduqd0OR4W9/arcgis/rest/services/trafficCamerasCur_Prd/FeatureServer/0"
+arcgis_item_id = "00715d24d2bf42e5abc1fab8a08d45eb"
+enum_source = "arcgis_hub_search"
+observed_count = 254
+observed_fields = "OBJECTID,id,name,status,state,district,county,highway,milemarker,description,direction,snapshot,latitude,longitude,updateTS"
+coordinate_mode = "fields"
+object_id_field = "OBJECTID"
+license_spdx = "CC0-1.0"
+rights_note = "Item licenseInfo is a KYTC no-warranty DISCLAIMER asserting no use restriction; state public record published openly → public-record basis (GL-GATE-06)."
+
+[[targets]]
+id = "il_idot_gateway_cameras"
+source_id = "dot_511_il"
+state = "IL"
+agency = "Illinois Department of Transportation"
+platform = "arcgis_feature_layer"
+layer_url = "https://services2.arcgis.com/aIrBD8yn1TDTEXoz/arcgis/rest/services/TrafficCamerasTM_Public/FeatureServer/0"
+arcgis_item_id = "8a885da23dfb46caaa1827ad920fb5b1"
+enum_source = "arcgis_hub_search"
+observed_count = 2937
+observed_fields = "OBJECTID,ImgPath,CameraLocation,CameraDirection,y,x,SnapShot,WarningAge,TooOld,AgeInMinutes"
+coordinate_mode = "fields"
+object_id_field = "OBJECTID"
+license_spdx = "CC-BY-SA-2.0"
+rights_note = "Item licenseInfo declares 'Creative Commons Attribution-ShareAlike 2.0 Generic' verbatim — an explicit share-alike licence (own compartment)."
+
+[[targets]]
+id = "ut_udot_live_view_cameras"
+source_id = "dot_511_ut"
+state = "UT"
+agency = "Utah Department of Transportation"
+platform = "arcgis_feature_layer"
+layer_url = "https://services.arcgis.com/pA2nEVnB6tquxgOW/arcgis/rest/services/Live_View_Cameras/FeatureServer/0"
+arcgis_item_id = "d3f7dae59eba45459bd9ba6a37f6ba56"
+enum_source = "arcgis_hub_search"
+observed_count = 32
+observed_fields = "FID,Site__,Route,MP,Device,County,Est__Cost,Master_Pla,Remarks,UDOT_Maint,Package"
+coordinate_mode = "geometry"
+object_id_field = "FID"
+license_spdx = "CC0-1.0"
+rights_note = "Item licenseInfo is an informational/no-warranty notice ('field verified'), no use restriction; state public record → public-record basis (GL-GATE-06)."
+
+[[targets]]
+id = "or_tripcheck_cameras"
+source_id = "dot_511_or"
+state = "OR"
+agency = "Oregon Department of Transportation (TripCheck)"
+platform = "arcgis_feature_layer"
+layer_url = "https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/TripCheck_Cameras/FeatureServer/0"
+arcgis_item_id = "1e3fb7169cd74127b9c1707258a6e6e9"
+enum_source = "arcgis_hub_search"
+observed_count = 1180
+observed_fields = "geometry_y,geometry_x,attributes_title,attributes_route,attributes_videoId,attributes_longitude,attributes_filename,attributes_cameraId,attributes_publishedImageId,attributes_latitude,attributes_iconType,ObjectId"
+coordinate_mode = "fields"
+object_id_field = "ObjectId"
+license_spdx = "CC0-1.0"
+rights_note = "Item licenseInfo = 'Public' (Oregon_OEM/ODOT); state public record published openly → public-record basis (GL-GATE-06)."
+
+[[targets]]
+id = "la_dotd_traffic_cameras"
+source_id = "dot_511_la"
+state = "LA"
+agency = "Louisiana Department of Transportation and Development"
+platform = "arcgis_feature_layer"
+layer_url = "https://services1.arcgis.com/fXHQyq63u0UsTeSM/arcgis/rest/services/DOTD_Traffic_Cameras/FeatureServer/0"
+arcgis_item_id = "d54ae7413feb45de9c87cb73de38fc64"
+enum_source = "arcgis_hub_search"
+observed_count = 435
+observed_fields = "OBJECTID,Id,Organization,RoadwayName,Latitude,Longitude,Name,Url,VideoUrl,Status,Description"
+coordinate_mode = "fields"
+object_id_field = "OBJECTID"
+license_spdx = "CC0-1.0"
+rights_note = "GOHSEP-owned item; licenseInfo EMPTY — no published terms located. Rights UNRESOLVED: the source row stays gated pending a rights decision."
+
+[[targets]]
+id = "ia_dot_traffic_cameras"
+source_id = "dot_511_ia"
+state = "IA"
+agency = "Iowa Department of Transportation"
+platform = "arcgis_feature_layer"
+layer_url = "https://services.arcgis.com/8lRhdTsQyJpO52F1/arcgis/rest/services/Traffic_Cameras_View/FeatureServer/0"
+arcgis_item_id = "c4063f200a7b4da5826e2ac86c677cf5"
+enum_source = "arcgis_hub_search"
+observed_count = 1251
+observed_fields = "device_id,Desc_,UpdateDate,UpdateTime,UTCoffset,linear_reference,Route,ImageName,ImageURL,VideoURL,ORG,latitude,longitude,Type,FID,REGION,RECORDED,COMMON_ID,FUNCTION"
+coordinate_mode = "fields"
+object_id_field = "FID"
+license_spdx = "CC-BY-4.0"
+rights_note = "Item licenseInfo declares Creative Commons Attribution 4.0 verbatim — resolved-clear licence (GL-GATE-06)."
+
+[[targets]]
+id = "wa_wsdot_travel_cameras"
+source_id = "dot_511_wa"
+state = "WA"
+agency = "Washington State Department of Transportation"
+platform = "arcgis_feature_layer"
+layer_url = "https://data.wsdot.wa.gov/arcgis/rest/services/TravelInformation/TravelInfoCamerasWeather/FeatureServer/0"
+arcgis_item_id = "f562fc9a382549c68093b664d000dc15"
+enum_source = "arcgis_hub_search"
+observed_count = 1705
+observed_fields = "OBJECTID,CameraTitle,ImageURL,CompassDirection"
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+license_spdx = "CC0-1.0"
+rights_note = "WSDOT-published feed 'intended for low volume use; may cancel or restrict access' — a conditional public grant evaluated under public terms (compact=public_terms_only; the monthly cadence row satisfies the low-volume condition). State public record → public-record basis (GL-GATE-06)."
+
+[[targets]]
+id = "wa_kingcounty_traffic_cameras"
+source_id = "dot_511_wa"
+state = "WA"
+agency = "King County / WSDOT"
+platform = "arcgis_feature_layer"
+layer_url = "https://services.arcgis.com/Ej0PsM5Aw677QF1W/arcgis/rest/services/TRAFFICCAMERA_POINT_2029/FeatureServer/0"
+arcgis_item_id = "488167659ce544f3a525d0eb0bb9301c"
+enum_source = "arcgis_hub_search"
+observed_count = 125
+observed_fields = "OBJECTID,AssetID,RouteID,Measure,Offset,Location,ImageURL,CamRegion,Description,Live,Model,Manufacturer,Owner,Jurisdiction,CurrentStatus,IsMobile,CameraMountedBy,MountedOn,PoleMaterial,PoleHeight,BridgeName,BridgeNum,ImageFileLoc,ThumbFileLoc,DBCreateDate"
+coordinate_mode = "geometry"
+object_id_field = "OBJECTID"
+license_spdx = "CC0-1.0"
+rights_note = "King County GIS terms link (kingcounty.gov terms-conditions-copyrights); a KC+WSDOT joint layer supplementing the WSDOT-hosted feed. King County open-data terms are public; conditional posture inherited from the WA source row."
+
+[[targets]]
+id = "dc_ddot_traffic_cameras"
+source_id = "dot_511_dc"
+state = "DC"
+agency = "District Department of Transportation / DC GIS (OCTO)"
+platform = "arcgis_feature_layer"
+layer_url = "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Transportation_Sensors_WebMercator/MapServer/93"
+arcgis_item_id = ""
+enum_source = "state_open_data_catalog"
+observed_count = 235
+observed_fields = "STREETJUNCTIONID,STREETSEGID,FACILITYID,CAMERAID,POLEID,CAMERATYPE,OWNER,LOCATION,MAKE,INSTALLATION_DATE,OPERATION_STATUS,LONGITUDE,LATITUDE,SHAPE,SE_ANNO_CAD_DATA,OBJECTID,GLOBALID,CREATED,EDITED"
+coordinate_mode = "fields"
+object_id_field = "OBJECTID"
+license_spdx = "CC0-1.0"
+rights_note = "DC Data Policy (2017-115) + dc.gov Terms: District catalog data is Level 0 Open and 'public domain ... CC0 1.0 Universal dedication'; DC GIS ToS encourages API use, no attribution required → CC0-1.0 (GL-GATE-06)."
+
+[[targets]]
+id = "ga_gdot_511_cameras"
+source_id = "dot_511_ga"
+state = "GA"
+agency = "Georgia Department of Transportation"
+platform = "arcgis_feature_layer"
+layer_url = "https://services1.arcgis.com/2iUE8l8JKrP2tygQ/arcgis/rest/services/GDOT_511_Cameras/FeatureServer/0"
+arcgis_item_id = "12c979ba84b54b83b834fdd2d861677d"
+enum_source = "arcgis_hub_search"
+observed_count = 3830
+observed_fields = "Id,Latitude,Longitude,Url,VideoUrl,Status,Description,ObjectId,Roadway,Direction"
+coordinate_mode = "fields"
+object_id_field = "ObjectId"
+license_spdx = "CC0-1.0"
+rights_note = "GEMA-owned item; licenseInfo EMPTY — no published terms located. Rights UNRESOLVED: the source row stays gated pending a rights decision."
+
+[[targets]]
+id = "al_aldot_traffic_cameras"
+source_id = "dot_511_al"
+state = "AL"
+agency = "Alabama Department of Transportation"
+platform = "arcgis_feature_layer"
+layer_url = "https://services5.arcgis.com/P2OFkRrXCz6u4SBf/arcgis/rest/services/ALDOT_TC_HFL_public/FeatureServer/0"
+arcgis_item_id = "76cca231f72f446f9735b6e912c04cd0"
+enum_source = "arcgis_hub_search"
+observed_count = 556
+observed_fields = "Id,ImageUrl,Latitude,Longitude,PrimaryRoad,MileMarker,Direction,Name,DeviceId"
+coordinate_mode = "fields"
+object_id_field = "Id"
+license_spdx = "CC0-1.0"
+rights_note = "Published under a county E-911 GIS org account (bce911gis), not an ALDOT-owned org — provenance/authority unresolved AND licenseInfo EMPTY. Stays gated."
+
+[[targets]]
+id = "mo_modot_traffic_cameras"
+source_id = "dot_511_mo"
+state = "MO"
+agency = "Missouri Department of Transportation"
+platform = "arcgis_feature_layer"
+layer_url = "https://services2.arcgis.com/jWXb6JPWtBjOCalT/arcgis/rest/services/MODOT_Traffic_Cameras/FeatureServer/1"
+arcgis_item_id = "38774183927d423488f9e2e707a6eca5"
+enum_source = "arcgis_hub_search"
+observed_count = 871
+observed_fields = "OBJECTID,CAM_ID__,DESCRIPTION,X,Y,URL1,URL2,REFR_RATE_MS,STREAM_ERROR"
+coordinate_mode = "fields"
+object_id_field = "OBJECTID"
+license_spdx = "CC0-1.0"
+rights_note = "MO Terms of Use: user agrees to conditions; warranty disclaimers + right to modify/discontinue feeds and require termination of use — a CONDITIONAL grant evaluated under public terms (compact=public_terms_only; no outreach performed). State public record → public-record basis; the conditional posture is recorded on the source row."
+
+[[targets]]
+id = "tx_txdot_cctv_locations"
+source_id = "dot_511_tx"
+state = "TX"
+agency = "Texas Department of Transportation"
+platform = "arcgis_feature_layer"
+layer_url = "https://services1.arcgis.com/7DRakJXKPEhwv0fM/arcgis/rest/services/TxDOT_CCTV_Locations/FeatureServer/0"
+arcgis_item_id = "adb3663e850e4f76be44596dbe696a93"
+enum_source = "arcgis_hub_search"
+observed_count = 2798
+observed_fields = "OBJECTID,District_Name,Equipment_Name,roadway,Direction,latitude,longitude,GlobalID"
+coordinate_mode = "fields"
+object_id_field = "OBJECTID"
+license_spdx = "CC0-1.0"
+rights_note = "Published under a personal ArcGIS account (dkarctur), not a TxDOT-owned org — provenance/authority unresolved AND licenseInfo EMPTY. Stays gated."
+
+[[targets]]
+id = "md_chart_cameras"
+source_id = "dot_511_md"
+state = "MD"
+agency = "Maryland DOT SHA / CHART"
+platform = "arcgis_feature_layer"
+layer_url = "https://chartimap1.sha.maryland.gov/arcgis/rest/services/CHART/Cameras/MapServer/0"
+arcgis_item_id = ""
+enum_source = "state_open_data_catalog"
+observed_count = 552
+observed_fields = "rowid,ID,location,url,CCTVPublicURL,hlsurl,Latitude,Longitude,Shape"
+coordinate_mode = "fields"
+object_id_field = "rowid"
+license_spdx = "CC0-1.0"
+rights_note = "MD iMAP terms: 'Data can be freely distributed as long as the metadata entry is not modified or deleted; derived data must acknowledge the State of Maryland' — an attribution-CONDITIONED licence with no registered SPDX expression yet. Stays gated pending a licence-registry row + reviewer decision."
+
+# ===========================================================================
+# ENUMERATED NON-TARGETS — recorded discovery outcomes, never fetched
+# ===========================================================================
+# Each row is a probed state 511/DOT camera surface that is NOT an active
+# fetch target. `status` names the recorded outcome:
+#   keyed_api            — endpoint exists but requires a key SIG does not hold
+#                          (HG-09 operator credential act; no secret committed)
+#   robots_unretrievable — robots.txt 5xx / unparseable / connection failure
+#                          (SIG-INGEST-012: not granted → refused, recorded)
+#   spa_shell            — host answers every path with an app shell, no public
+#                          camera JSON located
+#   not_found            — the probed camera endpoint 404s/500s
+#   unreachable          — connection-level failure on probe
+#   unresolved_rights    — located but no terms resolve under GL-GATE-06
+#   access_restricted    — endpoint answered 401/403
+
+[[enumerated]]
+id = "fl511_api"
+state = "FL"
+platform = "state_511_api"
+url = "https://fl511.com/api/v2/get/cameras"
+enum_source = "vendor_platform_probe"
+status = "keyed_api"
+note = "Iteris-platform 511 API answers HTTP 400 '<Error>Invalid Key</Error>' without a key (v1 paths 404). Keyed public API — HG-09 credential act owed."
+
+[[enumerated]]
+id = "511ny_api"
+state = "NY"
+platform = "state_511_api"
+url = "https://511ny.org/api/v2/get/cameras"
+enum_source = "vendor_platform_probe"
+status = "keyed_api"
+note = "Iteris-platform 511 API answers HTTP 400 'Invalid Key' — keyed."
+
+[[enumerated]]
+id = "az511_api"
+state = "AZ"
+platform = "state_511_api"
+url = "https://az511.gov/api/v2/get/cameras"
+enum_source = "vendor_platform_probe"
+status = "keyed_api"
+note = "Iteris-platform 511 API answers HTTP 400 'Invalid Key' — keyed."
+
+[[enumerated]]
+id = "nvroads_api"
+state = "NV"
+platform = "state_511_api"
+url = "https://www.nvroads.com/api/v2/get/cameras"
+enum_source = "vendor_platform_probe"
+status = "keyed_api"
+note = "Iteris-platform 511 API answers HTTP 400 'Invalid Key' — keyed."
+
+[[enumerated]]
+id = "ohgo_api"
+state = "OH"
+platform = "state_511_api"
+url = "https://publicapi.ohgo.com/api/v1/cameras"
+enum_source = "vendor_platform_probe"
+status = "access_restricted"
+note = "OHGO public API answers HTTP 401 'API key required' with a documentation link — keyed public API (robots 404 → no_policy_4xx); HG-09 credential act owed."
+
+[[enumerated]]
+id = "nebraska_511"
+state = "NE"
+platform = "state_511_api"
+url = "https://511.nebraska.gov/api/v2/get/cameras"
+enum_source = "vendor_platform_probe"
+status = "spa_shell"
+note = "New-generation Castle Rock/carsprogram platform: every path returns the Angular app shell; no public camera JSON located (API host api-511x-ne.carsprogram.org unverified)."
+
+[[enumerated]]
+id = "mass511"
+state = "MA"
+platform = "state_511_api"
+url = "https://mass511.com/api/v2/get/cameras"
+enum_source = "vendor_platform_probe"
+status = "spa_shell"
+note = "SPA shell on all paths; no public camera JSON located."
+
+[[enumerated]]
+id = "511mn"
+state = "MN"
+platform = "state_511_api"
+url = "https://511mn.org/api/v2/get/cameras"
+enum_source = "vendor_platform_probe"
+status = "spa_shell"
+note = "SPA shell on all paths; no public camera JSON located."
+
+[[enumerated]]
+id = "511ia_web"
+state = "IA"
+platform = "state_511_api"
+url = "https://511ia.org/api/v2/get/cameras"
+enum_source = "vendor_platform_probe"
+status = "spa_shell"
+note = "SPA shell on all paths; Iowa's ArcGIS layer (dot_511_ia) is the yielding path."
+
+[[enumerated]]
+id = "kandrive"
+state = "KS"
+platform = "state_511_api"
+url = "https://kandrive.gov/api/v2/get/cameras"
+enum_source = "vendor_platform_probe"
+status = "spa_shell"
+note = "SPA shell on all paths; no public camera JSON located."
+
+[[enumerated]]
+id = "cotrip"
+state = "CO"
+platform = "state_511_api"
+url = "https://www.cotrip.org/api/v2/get/cameras"
+enum_source = "vendor_platform_probe"
+status = "spa_shell"
+note = "SPA shell; app config (511.cotrip.org/configs/main.json) points at the CARS Program API host api-511x-co.carsprogram.org — a non-state vendor host whose camera endpoints were not verified. Not wired pending a reviewed basis."
+
+[[enumerated]]
+id = "wv511"
+state = "WV"
+platform = "state_511_api"
+url = "https://wv511.org/api/v2/get/cameras"
+enum_source = "vendor_platform_probe"
+status = "robots_unretrievable"
+note = "robots.txt answers a 200 HTML page (not a robots file) → unparseable policy = not granted (SIG-INGEST-012); camera endpoint probe returned HTTP 500."
+
+[[enumerated]]
+id = "vdot_511"
+state = "VA"
+platform = "state_511_api"
+url = "https://511.vdot.virginia.gov/api/v2/get/cameras"
+enum_source = "vendor_platform_probe"
+status = "robots_unretrievable"
+note = "robots.txt answers an HTML page → unparseable; SPA host."
+
+[[enumerated]]
+id = "smartway_tn"
+state = "TN"
+platform = "state_511_api"
+url = "https://smartway.tn.gov/api/v2/get/cameras"
+enum_source = "vendor_platform_probe"
+status = "robots_unretrievable"
+note = "robots.txt answers HTTP 200 with the Angular app HTML → unparseable policy = not granted (SIG-INGEST-012)."
+
+[[enumerated]]
+id = "drivenc"
+state = "NC"
+platform = "state_511_api"
+url = "https://drivenc.gov/api/v2/get/cameras"
+enum_source = "vendor_platform_probe"
+status = "robots_unretrievable"
+note = "robots.txt answers HTTP 200 with a '302 Found' interstitial body → unparseable; camera API path answers 302 HTML. NCDOT ArcGIS mirrors exist under non-state orgs (runneals) — authority unresolved."
+
+[[enumerated]]
+id = "511pa"
+state = "PA"
+platform = "state_511_api"
+url = "https://511pa.com/api/v2/get/cameras"
+enum_source = "vendor_platform_probe"
+status = "keyed_api"
+note = "Iteris-platform 511 API answers HTTP 400 'Invalid Key' — keyed. A runneals-owned 'PA DOT: Cameras' ArcGIS mirror exists (services.arcgis.com/G4S1dGvn7PIgYd6Y) — non-state publisher, authority unresolved."
+
+[[enumerated]]
+id = "511wi"
+state = "WI"
+platform = "state_511_api"
+url = "https://511wi.gov/api/v2/get/cameras"
+enum_source = "vendor_platform_probe"
+status = "keyed_api"
+note = "Iteris-platform 511 API answers HTTP 400 'Invalid Key' — keyed."
+
+[[enumerated]]
+id = "511alaska"
+state = "AK"
+platform = "state_511_api"
+url = "https://511.alaska.gov/api/v2/get/cameras"
+enum_source = "vendor_platform_probe"
+status = "keyed_api"
+note = "Iteris-platform 511 API answers HTTP 400 'Invalid Key' — keyed."
+
+[[enumerated]]
+id = "ctroads"
+state = "CT"
+platform = "state_511_api"
+url = "https://ctroads.org/api/v2/get/cameras"
+enum_source = "vendor_platform_probe"
+status = "keyed_api"
+note = "Iteris-platform 511 API answers HTTP 400 'Invalid Key' — keyed."
+
+[[enumerated]]
+id = "newengland511"
+state = "ME/NH/VT"
+platform = "state_511_api"
+url = "https://newengland511.org/api/v2/get/cameras"
+enum_source = "vendor_platform_probe"
+status = "keyed_api"
+note = "Iteris-platform tri-state 511 API answers HTTP 400 'Invalid Key' — keyed."
+
+[[enumerated]]
+id = "511nj"
+state = "NJ"
+platform = "state_511_api"
+url = "https://www.511nj.org/api/v2/get/cameras"
+enum_source = "vendor_platform_probe"
+status = "robots_unretrievable"
+note = "robots.txt answers HTTP 403 'Access Denied' HTML — under ADR-087 a 4xx robots answer is no_policy_4xx, but no public camera JSON located; njta_cameras ArcGIS layer is runneals-published (non-state authority, unresolved)."
+
+[[enumerated]]
+id = "wyoroad"
+state = "WY"
+platform = "state_511_api"
+url = "https://www.wyoroad.info/api/v2/get/cameras"
+enum_source = "vendor_platform_probe"
+status = "not_found"
+note = "Camera API path 404s ('Cannot GET'); WYDOT ArcGIS mirror under a non-state account — unresolved."
+
+[[enumerated]]
+id = "goky_ky"
+state = "KY"
+platform = "state_511_api"
+url = "https://goky.ky.gov/api/v2/get/cameras"
+enum_source = "vendor_platform_probe"
+status = "not_found"
+note = "Camera API path 404s; KY's ArcGIS layer (dot_511_ky) is the yielding path."
+
+[[enumerated]]
+id = "nmroads"
+state = "NM"
+platform = "state_511_api"
+url = "https://www.nmroads.com/api/v2/get/cameras"
+enum_source = "vendor_platform_probe"
+status = "not_found"
+note = "Camera API path 404s."
+
+[[enumerated]]
+id = "drivetexas"
+state = "TX"
+platform = "state_511_api"
+url = "https://www.drivetexas.org/api/v2/get/cameras"
+enum_source = "vendor_platform_probe"
+status = "unreachable"
+note = "Connection-level failure on probe (robots unretrievable → refused). The TxDOT ArcGIS layer under a personal account is gated separately (dot_511_tx)."
+
+[[enumerated]]
+id = "caltrans_cctv"
+state = "CA"
+platform = "state_dot_api"
+url = "https://cwwp2.dot.ca.gov/data/cc/cctv/cctvStatusD03.json"
+enum_source = "vendor_platform_probe"
+status = "robots_unretrievable"
+note = "Caltrans Commercial Wholesale Web Portal district CCTV JSON; robots.txt answers HTTP 500 → unretrievable = not granted (SIG-INGEST-012). CalOES hosts a California webcams layer on ArcGIS — authority/scope differs."
+
+[[enumerated]]
+id = "idaho_webcams"
+state = "ID"
+platform = "state_dot_api"
+url = "https://gis2.idaho.gov/arcgis/rest/services/IdahoAGOL/Webcams/MapServer"
+enum_source = "arcgis_hub_search"
+status = "unreachable"
+note = "Idaho AGOL MapServer answered non-JSON on probe — endpoint unreachable/moved."
+
+[[enumerated]]
+id = "fl511_feeds_mapserver"
+state = "FL"
+platform = "arcgis_feature_layer"
+url = "https://map.floridadisaster.org/GIS/rest/services/Events/FL511_Feeds/MapServer"
+enum_source = "arcgis_hub_search"
+status = "unreachable"
+note = "Florida Disaster FL511_Feeds MapServer answered non-JSON on probe — endpoint unreachable/moved."
+
+[[enumerated]]
+id = "ncdot_runneals_mirror"
+state = "NC"
+platform = "arcgis_feature_layer"
+url = "https://services.arcgis.com/NuWFvHYDMVmmxMeM/arcgis/rest/services/NCDOT_Traffic_Cameras/FeatureServer"
+enum_source = "arcgis_hub_search"
+status = "unresolved_rights"
+note = "'NC DOT: Cameras' under the non-state runneals account; layer query answered 'Invalid URL' (moved/stale) AND publisher authority unresolved."
+
+[[enumerated]]
+id = "padot_runneals_mirror"
+state = "PA"
+platform = "arcgis_feature_layer"
+url = "https://services.arcgis.com/G4S1dGvn7PIgYd6Y/arcgis/rest/services/Traffic_Cameras/FeatureServer"
+enum_source = "arcgis_hub_search"
+status = "unresolved_rights"
+note = "'PA DOT: Cameras' under the non-state runneals account; layer query answered 'Invalid URL' AND publisher authority unresolved."
+
+[[enumerated]]
+id = "njta_runneals_mirror"
+state = "NJ"
+platform = "arcgis_feature_layer"
+url = "https://services1.arcgis.com/iUiSOzheYmAN10t4/arcgis/rest/services/njta_cameras/FeatureServer"
+enum_source = "arcgis_hub_search"
+status = "unresolved_rights"
+note = "'NJ DOT: Cameras' (NJ Turnpike) under the non-state runneals account; layer query answered 'Invalid URL' AND publisher authority unresolved."

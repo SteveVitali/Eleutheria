@@ -1,0 +1,24 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnaoik5wf3n3vmwniux6mjzpzi4mwunrldsnxh7hsbj6liroaods3hdrlbelxc7ccefox2zykazwprwwbyou4ryrpoqzazjz3p5tzhfa4u",
+    "bcnajwlbhedlyk4uckgh4nrabkfvsozu7biaivrjq3lmyfdatngplfgvjanvzb6mxqpsaxfep6qhu5n7qtngbjpzsjdrlbl4hdkvtlmv34m",
+    "bcnajozf2rvxcfep5vvekiujr5k5dsjkvh4zixuuounctwdcwjz2otvriaqmnj4dqif4haxdrynbbbqgvmqxxnanjxf3o5hpaz4m555q3ae"
+  ],
+  "claim_count": 18547,
+  "connector": "dot_511",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [],
+  "duration_seconds": 1.625776,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "dot_511_wa",
+  "started_at": "2026-09-17T18:47:21.704503+00:00",
+  "status_codes": [],
+  "urls": []
+}
