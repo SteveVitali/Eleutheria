@@ -1,0 +1,290 @@
+{
+  "run_key": "camsite:f03d71ded186e2f3294530f37b87b708ed59c057",
+  "resolver_version": "camera-sites/1.1.0",
+  "ruleset_version": "2",
+  "gold_set_version": "camera-2",
+  "auto_write_tiers": [
+    1,
+    3
+  ],
+  "observation_count_M": 231769,
+  "cluster_count_N": 223045,
+  "completed_at": "2026-09-26 01:02:26.196241+00:00",
+  "hosted_execution": "sig-materialize-g2qm6",
+  "image": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api:materialize-f9e548f652d2",
+  "plus_zero_rerun": {
+    "execution": "sig-materialize-6tqtv",
+    "inserted": 0,
+    "skipped_existing": 45011,
+    "run_record_inserted": false,
+    "note": "same canonical run_key f03d71de; first stable-key +0 (earlier keys differed due to the repr()/PYTHONHASHSEED defect fixed in f9e548f)"
+  },
+  "hosted_camera_site_review_decisions": 0,
+  "summary": {
+    "kappa": 0.6689490445859873,
+    "by_tier": {
+      "3g:coincident_point": {
+        "proposed": 24,
+        "auto_write": 4693
+      },
+      "4g:proximate_unique": {
+        "proposed": 2083,
+        "auto_write": 0
+      },
+      "0:duplicate_target_of": {
+        "proposed": 26168,
+        "auto_write": 4960
+      },
+      "1g:shared_upstream_ref": {
+        "proposed": 5,
+        "auto_write": 1453
+      },
+      "5g:proximate_candidate": {
+        "proposed": 5625,
+        "auto_write": 0
+      }
+    },
+    "run_key": "camsite:f03d71ded186e2f3294530f37b87b708ed59c057",
+    "decisions": 45011,
+    "demotions": [
+      {
+        "tier": 1,
+        "demoted": false,
+        "precision": 1.0,
+        "threshold": 0.98
+      },
+      {
+        "tier": 3,
+        "demoted": false,
+        "precision": 0.9865,
+        "threshold": 0.98
+      }
+    ],
+    "gold_pairs": 540,
+    "dedup_ratio": 0.037641,
+    "human_review": {
+      "accepts": 0,
+      "rejects": 0,
+      "conflicts": 0,
+      "verdict_pairs": 0,
+      "unmatched_pairs": 0,
+      "cannot_link_edges": 0,
+      "accept_edges_applied": 0,
+      "accept_edges_refused": 0,
+      "proposed_awaiting_review": 33905,
+      "clusters_with_human_accepts": 0
+    },
+    "holdout_pairs": 180,
+    "rules_version": "2",
+    "cluster_alerts": [],
+    "disputed_pairs": 77,
+    "mirror_lineages": {
+      "camreg_cotgeo": [
+        "camreg_cotgeo",
+        "camreg_toronto_on"
+      ],
+      "camreg_mark43": [
+        "camreg_mark43",
+        "camreg_nottingham_gb"
+      ],
+      "camreg_kcmo_mo": [
+        "camreg_kcmo_mo",
+        "dot_511_mo"
+      ],
+      "camreg_nzta_nz": [
+        "camreg_nzta_nz",
+        "camreg_sfoss"
+      ],
+      "camreg_lojic_ky": [
+        "camreg_lojic_ky",
+        "dot_511_ky"
+      ],
+      "camreg_carver_mn": [
+        "camreg_carver_mn",
+        "camreg_mndot_mn"
+      ],
+      "camreg_esri_dash": [
+        "camreg_esri_dash",
+        "camreg_md_opendata",
+        "dot_511_md"
+      ],
+      "camreg_duganmeyer": [
+        "camreg_duganmeyer",
+        "camreg_osm_surveillance"
+      ],
+      "camreg_penndot_pa": [
+        "camreg_penndot_pa",
+        "camreg_ucsd"
+      ],
+      "camreg_batonrouge_la": [
+        "camreg_batonrouge_la",
+        "camreg_ebrgis_la"
+      ],
+      "camreg_washington_dc": [
+        "camreg_washington_dc",
+        "dot_511_dc"
+      ]
+    },
+    "tier6_discarded": 2895,
+    "auto_write_tiers": [
+      1,
+      3
+    ],
+    "gold_set_version": "camera-2",
+    "proposed_reasons": {
+      "tier_not_auto_write": 7708,
+      "soft_conflict:direction": 11,
+      "soft_conflict:jurisdiction": 18,
+      "cluster_constraint:max_span": 26168
+    },
+    "resolver_version": "camera-sites/1.1.0",
+    "tier_measurements": {
+      "1": {
+        "match": 70,
+        "non_match": 0,
+        "predicted": 70,
+        "wilson_lower_95": 0.9479751251327164,
+        "precision_strict": 1.0,
+        "precision_decided": 1.0,
+        "not_enough_information": 0
+      },
+      "3": {
+        "match": 73,
+        "non_match": 0,
+        "predicted": 74,
+        "wilson_lower_95": 0.9273446957024044,
+        "precision_strict": 0.9864864864864865,
+        "precision_decided": 1.0,
+        "not_enough_information": 1
+      },
+      "4": {
+        "match": 6,
+        "non_match": 0,
+        "predicted": 21,
+        "wilson_lower_95": 0.138136757456282,
+        "precision_strict": 0.2857142857142857,
+        "precision_decided": 1.0,
+        "not_enough_information": 15
+      },
+      "5": {
+        "match": 1,
+        "non_match": 0,
+        "predicted": 14,
+        "wilson_lower_95": 0.012721886112291648,
+        "precision_strict": 0.07142857142857142,
+        "precision_decided": 1.0,
+        "not_enough_information": 13
+      }
+    },
+    "proposed_decisions": 33905,
+    "observation_count_M": 231769,
+    "unblockable_records": 15,
+    "auto_write_decisions": 11106,
+    "resolved_site_count_N": 223045,
+    "cluster_size_histogram": {
+      "1": 216534,
+      "2": 4693,
+      "3": 1423,
+      "4": 395
+    },
+    "duplicate_target_groups": 26129,
+    "blocking_candidate_pairs": 30580,
+    "duplicate_target_records": 57257,
+    "tier_measurements_llm_labels": {
+      "1": {
+        "match": 70,
+        "non_match": 0,
+        "predicted": 70,
+        "precision_strict": 1.0,
+        "not_enough_information": 0
+      },
+      "3": {
+        "match": 58,
+        "non_match": 1,
+        "predicted": 74,
+        "precision_strict": 0.7837837837837838,
+        "not_enough_information": 15
+      },
+      "4": {
+        "match": 2,
+        "non_match": 1,
+        "predicted": 21,
+        "precision_strict": 0.09523809523809523,
+        "not_enough_information": 18
+      },
+      "5": {
+        "match": 1,
+        "non_match": 0,
+        "predicted": 14,
+        "precision_strict": 0.07142857142857142,
+        "not_enough_information": 13
+      }
+    },
+    "incompatible_class_pairs_blocked": 0,
+    "multi_record_sites_one_lineage_only": 6237,
+    "multi_record_sites_independently_corroborated": 274
+  },
+  "hosted_executions": [
+    {
+      "execution": "sig-materialize-vj242",
+      "window_utc": "2026-09-25T23:26:59-23:47:40Z",
+      "status": "FAILED",
+      "note": "first 1.1.0 attempt; committed 4,000 camera_site_match rows append-only under camsite:e4e78ad5... then exited (partial run \u2014 left as history, never deleted)",
+      "image_tag": "materialize-3881e5212a0e",
+      "image_digest": "sha256:8ac00b96dd19cfc4199ed18de56597e68679f68271adbdcf43669fff22f3c3ad"
+    },
+    {
+      "execution": "sig-materialize-cgmvm",
+      "window_utc": "2026-09-25T23:51:11-23:56:40Z",
+      "status": "FAILED",
+      "note": "KeyError in _review_args on tier-0 dup-target evidence (no shared_upstream_ref) \u2014 fixed in 7676429; no match rows committed",
+      "image_tag": "materialize-a43ca56101fb",
+      "image_digest": "sha256:62a81daf23d635810ce13ade4748b6ffa9787e94c8eb5a8b5014e4f1de738261"
+    },
+    {
+      "execution": "sig-materialize-hprh9",
+      "window_utc": "2026-09-26T00:03:54-00:13:01Z",
+      "status": "SUCCEEDED",
+      "run_key": "camsite:35ef5b0f8b7c57621f5eb4d7dc9d1b6b6f8927d8",
+      "note": "first complete 1.1.0 run; 45,011 decisions inserted (nondeterministic repr() key \u2014 new process minted a new key)",
+      "image_tag": "materialize-7676429173fc",
+      "image_digest": "sha256:31d0a670a3b3a8a9174bbe6defce4eb3925df1c5c352f4414e658e9a57ddfbdb"
+    },
+    {
+      "execution": "sig-materialize-rwkq6",
+      "window_utc": "2026-09-26T00:14:51-00:22:32Z",
+      "status": "SUCCEEDED",
+      "run_key": "camsite:e4e78ad557aaff5a439135e032198cf9458cc8ab",
+      "note": "recovery: coincidentally minted the partial run's key (small-frozenset repr collision); skipped the 4,000 existing rows and inserted the remaining 41,011 \u2014 append-only recovery proven",
+      "image_tag": "materialize-7676429173fc",
+      "image_digest": "sha256:31d0a670a3b3a8a9174bbe6defce4eb3925df1c5c352f4414e658e9a57ddfbdb"
+    },
+    {
+      "execution": "sig-materialize-7xrmx",
+      "window_utc": "2026-09-26T00:25:58-00:35:06Z",
+      "status": "SUCCEEDED",
+      "run_key": "camsite:5134b46a9cee477c6590da1c675daea6c637cd9d",
+      "note": "stable-input re-run on identical data minted a THIRD key \u2014 exposed the repr()/PYTHONHASHSEED nondeterminism; fixed in f9e548f",
+      "image_tag": "materialize-7676429173fc",
+      "image_digest": "sha256:31d0a670a3b3a8a9174bbe6defce4eb3925df1c5c352f4414e658e9a57ddfbdb"
+    },
+    {
+      "execution": "sig-materialize-g2qm6",
+      "window_utc": "2026-09-26T00:56:12-01:02:33Z",
+      "status": "SUCCEEDED",
+      "run_key": "camsite:f03d71ded186e2f3294530f37b87b708ed59c057",
+      "note": "first run on the fixed image (materialize-f9e548f652d2); canonical rules digest legitimately differs from every repr()-based key, so one final full 45,011-row write",
+      "image_tag": "materialize-f9e548f652d2",
+      "image_digest": "sha256:102389ea74e0893601cd1accfdd7321a7414a556015efff82e58de49914d4424"
+    },
+    {
+      "execution": "sig-materialize-6tqtv",
+      "window_utc": "2026-09-26T01:05:39-01:14:24Z",
+      "status": "SUCCEEDED",
+      "run_key": "camsite:f03d71ded186e2f3294530f37b87b708ed59c057",
+      "note": "TRUE +0 on stable key: inserted 0, skipped_existing 45,011, run_record_inserted false",
+      "image_tag": "materialize-f9e548f652d2",
+      "image_digest": "sha256:102389ea74e0893601cd1accfdd7321a7414a556015efff82e58de49914d4424"
+    }
+  ]
+}
