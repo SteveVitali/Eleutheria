@@ -1,0 +1,22 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnad5bekrqk3kbwrdlbckceuwzclbgxauwblfcnwbycjgqhbtwrvs77qwuxhh42y5eavfbfritcedrxfq22dj77emrefua33j5ysi6fxa4"
+  ],
+  "claim_count": 320,
+  "connector": "dot_511",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [],
+  "duration_seconds": 5.324186,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "dot_511_ut",
+  "started_at": "2026-09-17T19:13:47.884723+00:00",
+  "status_codes": [],
+  "urls": []
+}

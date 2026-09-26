@@ -378,10 +378,21 @@ class CameraRegistryEntry:
         return f"traffic_camera:{self.source_id}:{self.target_id}:{self.camera_ref}"
 
     def evidence(self, source_url: str, retrieved_date: str, feature_index: int) -> dict[str, Any]:
-        """The evidence dict every claim carries — capture URL + row locator."""
+        """The evidence dict every claim carries — capture URL + row locator.
+
+        ``retrieved_date`` is deliberately NOT in the claim dict: it is the
+        capture's per-run retrieval timestamp, and a volatile value inside the
+        claim makes ``content_digest`` churn — a re-run over an unchanged
+        registry would mint duplicate claim rows (the same defect class P26.6
+        fixed by removing ``capture_digest`` from agenda claim evidence). The
+        retrieval timestamp is already durable on ``evidence_capture.
+        retrieved_at`` and the run row's fetch record. The parameter stays in
+        the signature because the raw ``camera_feature`` record keeps the
+        timestamp for provenance — it just never reaches claim identity.
+        """
+        _ = retrieved_date
         return {
             "source_url": source_url,
-            "retrieved_date": retrieved_date,
             "extraction_method": "arcgis_feature_json",
             "locator": Locator.row(feature_index).to_row(),
         }
