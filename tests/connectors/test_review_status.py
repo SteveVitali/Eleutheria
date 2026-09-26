@@ -115,7 +115,7 @@ def test_the_seeded_registry_has_no_flip_metadata_violations() -> None:
 def test_validate_passes_on_the_seeded_registry(capsys: pytest.CaptureFixture[str]) -> None:
     assert main(["validate"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 121" in out
+    assert "registered sources: 142" in out
     assert "self-checks OK" in out
 
 
@@ -153,19 +153,26 @@ def test_validate_fails_naming_the_offending_id(monkeypatch: pytest.MonkeyPatch)
 # DERIVE custody) = 25 loadable; flip-ready unchanged at 13 (those five had no
 # rights blocks before counsel, so they were never in the flip-ready set). The
 # GL-GATE-06 blanket rights disposition (2026-09-16) then flipped all 13
-# flip-ready sources = 38 loadable, 0 flip-ready.
+# flip-ready sources = 38 loadable, 0 flip-ready. P26.2 (SOURCES.2, same-day)
+# then flipped five promoted sources whose rights resolved clear under
+# GL-GATE-06 — legistar/primegov/civicclerk (municipal public records →
+# CC0-1.0, same basis as okc_council), sam_gov (federal public domain,
+# 17 U.S.C. §105), openstates (documented public-domain dedication,
+# open.pluralpolicy.com/data/) — while documentcloud (per-document rights
+# UNDETERMINED) and courtlistener_recap (membership-agreement access, HG-09
+# class) stay gated = 43 loadable, 0 flip-ready.
 
 
-def test_review_status_prints_flip_ready_0_and_loadable_38(
+def test_review_status_prints_flip_ready_0_and_loadable_43(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    # GL-GATE-06 (2026-09-16) flipped the 13 flip-ready sources, so flip-ready
-    # drained to 0 and loadable rose 25 → 38.
+    # GL-GATE-06 (2026-09-16) drained flip-ready to 0; the same-day P26.2 pass
+    # flipped the five resolved promoted sources (38 → 43 loadable).
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 121" in out
+    assert "registered sources: 142" in out
     assert "flip-ready: 0" in out
-    assert "loadable now: 38" in out
+    assert "loadable now: 43" in out
 
 
 def test_review_status_loadable_equals_validate() -> None:
@@ -173,7 +180,7 @@ def test_review_status_loadable_equals_validate() -> None:
     from connectors.loader import is_loadable
 
     loadable = [s for s in sources() if is_loadable(s)]
-    assert len(loadable) == 38
+    assert len(loadable) == 43
     assert len(flip_ready()) == 0
 
 

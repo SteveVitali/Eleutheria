@@ -1,0 +1,23 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnamxlbbsudh2yyhqn365qaoibqcp2hmynohivtujgru2pvkrhmgiquopzuhzu4yxz6e2lly7tpzf6rxg7nvoufje2ben2fq4gjjzytws4",
+    "bcnafffvjijqiszmcturrxrukbodrikrbgcekn3pos5ufld7mqzidvat233vho7onluj5nrghdz3t4ukjvabydb7lmcijbp4y22gbyg3uda",
+    "bcnahaagi5oml475k5dd2klxxt3nkaztwzwef7rpztvpnhlp4ese5yjn2htlp3xmvgsedcmlqlrbwgg3n3fd6r2xe62u3zkwagxvme2j33e",
+    "bcnamy6b565huemocyotdnkbcc6qxfmm5fpjxhdjmxbytspyqm3iifs2ufrliffoupujyrhlatkfhozx6hktx2awwmpnxogerug5pmelkgu"
+  ],
+  "claim_count": 483,
+  "connector": "procurement",
+  "content_drift": null,
+  "disappearances": [],
+  "duration_seconds": 3.778611,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "legistar",
+  "started_at": "2026-09-17T00:53:57.410108+00:00",
+  "status_codes": [],
+  "urls": []
+}

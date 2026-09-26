@@ -50,6 +50,13 @@ def live_targets(source_id: str) -> list[dict[str, str]]:
     kind = str(spec.get("kind", "")).strip()
     if kind == "overpass":
         return _overpass_targets(source_id, spec)
+    if kind == "agenda_tenants":
+        # An agenda-platform source's live targets ARE the published tenant
+        # registry rows (§22.3, P26.2): the connector reads its tenants from
+        # data/agenda_tenants.toml — the target list is never duplicated here.
+        from .procurement import tenant_targets
+
+        return tenant_targets(platform=source_id)
     # Generic document/http targets: an explicit list of {id, url[, kind]} rows.
     # Extra keys (e.g. a POST body's `post_body`, USAspending's `subaward` flag)
     # pass through untouched — they are reviewed data the connector consumes.

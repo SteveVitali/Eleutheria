@@ -1,0 +1,18 @@
+[
+  {
+    "id": 8821,
+    "name": "City Council Regular Meeting",
+    "startDateTime": "2026-08-04T08:30:00",
+    "endDateTime": "2026-08-04T11:30:00",
+    "type_name": "City Council",
+    "category": "Council Meetings"
+  },
+  {
+    "id": 8822,
+    "name": "Finance Committee",
+    "startDateTime": "2026-08-11T10:00:00",
+    "endDateTime": "2026-08-11T11:00:00",
+    "type_name": "Committee Meeting",
+    "category": "Committees"
+  }
+]

@@ -39,7 +39,9 @@ aggregates and configured edges only, never a per-search or per-plate row), and
 :mod:`connectors.accountability` the seventh (P13.1, §23.8 — the Accountability
 Atlas / Abuse Library / CourtListener layer, writing ``AccountabilityEvent`` /
 ``LegalProceeding`` and source-class-tagged evidence links with a REQUIRED,
-verbatim-preserved ``epistemic_status``).
+verbatim-preserved ``epistemic_status``), and :mod:`connectors.agency_registry`
+the ORI9 identity-substrate adapter (P26.2 — the FBI CDE agency registry,
+writing ``agency_registry_entry`` rows and nothing more).
 Importing the package imports the connectors so they appear in the registry
 (``connectors.stages.registered_connectors``) and the CLI.
 """
@@ -51,6 +53,7 @@ Importing the package imports the connectors so they appear in the registry
 # adapter (§52 Phase 18); it reuses connectors.procurement.Contract, which Python
 # imports transitively regardless of registration order here.
 from . import accountability as accountability  # noqa: E402,F401
+from . import agency_registry as agency_registry  # noqa: E402,F401
 from . import atlas as atlas  # noqa: E402,F401
 from . import audit_structural as audit_structural  # noqa: E402,F401
 from . import coarse_international as coarse_international  # noqa: E402,F401

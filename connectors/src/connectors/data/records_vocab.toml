@@ -18,7 +18,10 @@
 # tables therefore come last.
 
 # The connector's own vocabulary version, stamped onto every run (§20).
-vocab_version = "2026.09.15"
+# 2026.09.16 (P26.2 / SOURCES.2): +documentcloud document-index path — a
+# DocumentCloud /api/documents/<id>/ metadata record is a released-document
+# INDEX entry (integrity="index_record"), not a records request.
+vocab_version = "2026.09.16"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `records` connector may write ONLY the RecordsRequest predicate surface (§11.19)
@@ -95,6 +98,17 @@ platforms = [
 muckrock      = "muckrock"
 nextrequest   = "nextrequest"
 documentcloud = "documentcloud"
+
+# DocumentCloud (P26.2 / SOURCES.2): the documented public read API is
+# api.www.documentcloud.org — a single-document lookup `/api/documents/<id>/`
+# returns the released-document metadata record; the search/collection endpoints
+# are enumeration and are refused by assert_targeted_lookup (SIG-INGEST-036/037).
+# Rights stay source-level UNRESOLVED (per-document rights vary — the registry
+# row records it); the connector's index path exists so a flip under HG-03 is
+# executable, not as permission to fetch.
+[documentcloud]
+api_base = "https://api.www.documentcloud.org"
+documents_endpoint = "/api/documents/"
 
 # --- MuckRock api_v2 + short-lived JWT (§23.5, F4.1/F4.2/F4.3) ----------------
 # The outline's api_v1 reference is WRONG: the current, documented MuckRock API is

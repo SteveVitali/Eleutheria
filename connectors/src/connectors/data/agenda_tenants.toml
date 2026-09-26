@@ -26,7 +26,13 @@
 #
 # TOML ORDERING: scalars first, then the [tenants.*] and [negatives.*] tables.
 
-registry_version = "2026.09.01"
+# 2026.09.16 (P26.2 / SOURCES.2): live probe of the shared webapi.legistar.com
+# host — 'chicago' is NOT provisioned there (it answers a 200 error envelope,
+# recorded honestly); 'mesa' + 'sanantonio' verified (real contract-type matter
+# indexes); PrimeGov lacity POST /search verified (real meeting index);
+# CivicClerk {tenant}.api.civicclerk.com/v1/Events still 404s anonymous
+# (IdentityServer-gated surface) — the oklahoma_city row stays verified=false.
+registry_version = "2026.09.16"
 
 # The platforms the discovery probe checks a jurisdiction against, in order. A
 # jurisdiction absent from every one of these becomes a [negatives.*] row.
@@ -47,9 +53,9 @@ jurisdiction = "City of Chicago, IL"
 platform = "legistar"
 tenant = "chicago"
 api_base = "https://webapi.legistar.com/v1/chicago"
-verified = true
-last_verified = 2026-08-20
-notes = "Legistar InSite client 'chicago' (§22.3)."
+verified = false
+last_verified = 2026-09-16
+notes = "Legistar InSite client 'chicago' (§22.3). CORRECTED 2026-09-16: the shared host answers 'LegistarConnectionString setting is not set up in InSite for client chicago' — a 200 error envelope, recorded as a tenant_api_error row, never read as an empty index. chicago.legistar.com itself exists; the shared-host client id does not."
 
 [tenants.seattle_wa]
 jurisdiction = "City of Seattle, WA"
@@ -57,16 +63,35 @@ platform = "legistar"
 tenant = "seattle"
 api_base = "https://webapi.legistar.com/v1/seattle"
 verified = true
-last_verified = 2026-08-20
-notes = "Legistar InSite client 'seattle'."
+last_verified = 2026-09-16
+notes = "Legistar InSite client 'seattle' — live-verified 2026-09-16 (/matters returns the real council index)."
+
+[tenants.mesa_az]
+jurisdiction = "City of Mesa, AZ"
+platform = "legistar"
+tenant = "mesa"
+api_base = "https://webapi.legistar.com/v1/mesa"
+verified = true
+last_verified = 2026-09-16
+notes = "Legistar InSite client 'mesa' — live-verified 2026-09-16; carries Contract/Agreement matter types (contract-family matters emit Contract claims via the reviewed type patterns)."
+
+[tenants.san_antonio_tx]
+jurisdiction = "City of San Antonio, TX"
+platform = "legistar"
+tenant = "sanantonio"
+api_base = "https://webapi.legistar.com/v1/sanantonio"
+verified = true
+last_verified = 2026-09-16
+notes = "Legistar InSite client 'sanantonio' — live-verified 2026-09-16; carries Contract/Agreement/Purchase/Lease/Interlocal/Settlement/Professional Services matter types."
 
 [tenants.los_angeles_ca]
 jurisdiction = "City of Los Angeles, CA"
 platform = "primegov"
 tenant = "lacity"
 api_base = "https://lacity.primegov.com/api/v2/PublicPortal"
-verified = false
-notes = "PrimeGov tenant seed — pending live verification (§22.3)."
+verified = true
+last_verified = 2026-09-16
+notes = "PrimeGov tenant — VERIFIED 2026-09-16: POST {api_base}/search returns the real meeting index (bounded body). NOTE: lacity.primegov.com robots.txt is Disallow:/ — a recorded robots refusal stands for crawl mode; API-mode basis needs review."
 
 [tenants.oklahoma_city_ok]
 jurisdiction = "City of Oklahoma City, OK"
@@ -74,7 +99,8 @@ platform = "civicclerk"
 tenant = "oklahomacityok"
 api_base = "https://oklahomacityok.api.civicclerk.com/v1/Events"
 verified = false
-notes = "CivicClerk tenant seed for the OKC vertical slice (P06.1) — pending live verification. P21.3: tenant NOT verified live this run (HG-03 skip / HG-09 no token — no live probe permitted); verification is gated behind a green review-status for okc_council and SIG_CIVICCLERK_BASE. `verified` stays false rather than asserting a certainty SIG does not have (§3.1)."
+last_verified = 2026-09-16
+notes = "CivicClerk tenant for the OKC vertical slice (P06.1). The v1 API template is confirmed from the portal JS (https://{tenant}.api.civicclerk.com/v1 + /Events, /EventCategories) but EVERY anonymous v1 request 404s across probed tenants (2026-09-16) — the tenant surface is IdentityServer-gated; anonymous access unresolved. `verified` stays false rather than asserting a certainty SIG does not have (§3.1)."
 
 # --- discovery negatives: probed, no platform found (SIG-METRIC-002a) ----------
 # Retained, not discarded: each renders to a NO_EVIDENCE_FOUND coverage record so

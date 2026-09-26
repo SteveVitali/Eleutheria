@@ -1,0 +1,60 @@
+{
+  "results": [
+    {
+      "id": "ocd-bill/ok-2026-ALPR-101",
+      "identifier": "HB 3101",
+      "title": "An Act relating to automated license plate reader data retention",
+      "session": "2026",
+      "jurisdiction": {
+        "id": "ocd-jurisdiction/country:us/state:ok/government",
+        "name": "Oklahoma",
+        "classification": "state"
+      },
+      "from_organization": {
+        "name": "House",
+        "classification": "lower"
+      },
+      "latest_action_description": "Referred to Committee on Public Safety",
+      "latest_action_date": "2026-02-10",
+      "latest_passage_date": "",
+      "openstates_url": "https://openstates.org/ok/bills/2026/HB3101/",
+      "sources": [
+        {
+          "url": "https://www.oklegislature.gov/BillInfo.aspx?Bill=HB3101&Session=2600",
+          "note": "official legislature page"
+        }
+      ]
+    },
+    {
+      "id": "ocd-bill/ok-2026-ALPR-102",
+      "identifier": "SB 2200",
+      "title": "An Act relating to surveillance camera registration",
+      "session": "2026",
+      "jurisdiction": {
+        "id": "ocd-jurisdiction/country:us/state:ok/government",
+        "name": "Oklahoma",
+        "classification": "state"
+      },
+      "from_organization": {
+        "name": "Senate",
+        "classification": "upper"
+      },
+      "latest_action_description": "Introduced",
+      "latest_action_date": "2026-02-03",
+      "latest_passage_date": "",
+      "openstates_url": "https://openstates.org/ok/bills/2026/SB2200/",
+      "sources": [
+        {
+          "url": "https://www.oklegislature.gov/BillInfo.aspx?Bill=SB2200&Session=2600",
+          "note": "official legislature page"
+        }
+      ]
+    }
+  ],
+  "pagination": {
+    "per_page": 10,
+    "page": 1,
+    "max_page": 1,
+    "total_items": 2
+  }
+}

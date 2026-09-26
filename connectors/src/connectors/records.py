@@ -782,6 +782,15 @@ class RecordsConnector(Connector):
         """
         data = ctx.captures.get(capture.digest)
         if _is_json_media(capture.media_type):
+            if ctx.source.id == source_ids().get("documentcloud"):
+                # A DocumentCloud document lookup is a released-document INDEX
+                # record (P26.2), never a records request.
+                return {
+                    "kind": "documentcloud_document",
+                    "payload": json.loads(data),
+                    "capture": capture,
+                    "byte_size": len(data),
+                }
             return {"kind": "records_request", "payload": json.loads(data), "capture": capture}
         filename = _filename_from_uri(capture.source_uri)
         verdict = classify_released_document(filename, data)
@@ -813,6 +822,24 @@ class RecordsConnector(Connector):
                     "records_request_id": _request_id_hint(capture.source_uri),
                 }
             ]
+        if parsed["kind"] == "documentcloud_document":
+            capture = parsed["capture"]
+            payload = parsed["payload"]
+            objects = (
+                list(payload["results"])
+                if isinstance(payload, Mapping) and "results" in payload
+                else [payload]
+            )
+            return [
+                {
+                    "record_kind": "document_index",
+                    "raw": dict(obj),
+                    "source_uri": capture.source_uri,
+                    "capture_digest": capture.digest,
+                    "byte_size": parsed.get("byte_size", len(str(payload))),
+                }
+                for obj in objects
+            ]
         payload = parsed["payload"]
         if isinstance(payload, Mapping) and "results" in payload:
             objects = payload["results"]
@@ -837,6 +864,8 @@ class RecordsConnector(Connector):
         for raw in raw_claims:
             if raw["record_kind"] == "released_document":
                 out.extend(self._normalize_document(ctx, raw))
+            elif raw["record_kind"] == "document_index":
+                out.extend(self._normalize_document_index(ctx, raw))
             else:
                 out.extend(self._normalize_request(ctx, raw))
         return out
@@ -896,6 +925,76 @@ class RecordsConnector(Connector):
             classification=dict(raw["verdict"]),
         )
         return [artifact.to_row(), _stamp(report.to_row(), source_id=ctx.source.id)]
+
+    def _normalize_document_index(
+        self, ctx: RunContext, raw: Mapping[str, Any]
+    ) -> list[dict[str, Any]]:
+        """A DocumentCloud document metadata record → index row + artifact row (P26.2).
+
+        The API lookup returns the released document's *index* record — title,
+        contributor, canonical URL — not the document bytes. The bytes were never
+        fetched: the artifact row is stamped ``integrity="index_record"`` (the
+        metadata capture's digest is the provenance) so a reader can never
+        mistake it for a captured document (§3.1). No RecordsRequest is minted —
+        DocumentCloud hosts *released* documents; no request was observed.
+        """
+        doc = raw["raw"]
+        canonical = _opt_str(
+            doc.get("canonical_url") or doc.get("document_url") or raw.get("source_uri")
+        ) or str(raw["source_uri"])
+        contributor = _opt_str(doc.get("contributor"))
+        if contributor is None:
+            user = doc.get("user")
+            contributor = (
+                _opt_str(user.get("name")) if isinstance(user, Mapping) else _opt_str(user)
+            )
+        if contributor is None:
+            org = doc.get("organization")
+            contributor = _opt_str(org.get("name")) if isinstance(org, Mapping) else _opt_str(org)
+        artifact = EvidenceArtifactRow(
+            artifact_id=evidence_artifact_id(canonical),
+            source_id=ctx.source.id,
+            source_uri=canonical,
+            capture_digest=str(raw["capture_digest"]),
+            media_type="application/pdf",
+            byte_size=int(raw.get("byte_size") or 0),
+            records_request_id="",
+            classification={
+                "verdict": "documentcloud_metadata_index",
+                "access": doc.get("access"),
+                "title": doc.get("title"),
+            },
+            integrity="index_record",
+        )
+        index_row = _stamp(
+            {
+                "record_kind": "document_index",
+                "subject_id": artifact.artifact_id,
+                "predicate_id": assert_predicate_allowed("released_documents"),
+                "external_id": _opt_str(doc.get("id")) or "",
+                "raw_value": canonical,
+                "title": _opt_str(doc.get("title")),
+                "contributor": contributor,
+                "created_at": _opt_str(doc.get("created_at")),
+                "access": _opt_str(doc.get("access")),
+                "asset_url": _opt_str(doc.get("asset_url")),
+                "canonical_url": canonical,
+                "raw": dict(doc),
+            },
+            source_id=ctx.source.id,
+        )
+        report = CaptureQualityReport(
+            source_id=ctx.source.id,
+            capture_digest=str(raw["capture_digest"]),
+            media_type="application/json",
+            byte_size=int(raw.get("byte_size") or 0),
+            capture_kind="released_document",
+            connector_name=self.name,
+            connector_version=self.version,
+            vocab_version=vocab_version(),
+            released_document_count=1,
+        )
+        return [index_row, artifact.to_row(), _stamp(report.to_row(), source_id=ctx.source.id)]
 
     def _build_request(self, ctx: RunContext, raw: Mapping[str, Any]) -> RecordsRequest:
         """Map a raw request object onto the §11.19 runtime shape.

@@ -20,7 +20,10 @@
 # tables therefore come last.
 
 # The connector's own vocabulary version, stamped onto every run (§20).
-vocab_version = "2026.09.01"
+# 2026.09.16 (P26.2 / SOURCES.2): +procurement_notice surface (SAM.gov federal
+# opportunities), +agenda_item index rows + the per-platform index endpoints /
+# reviewed matter-type patterns the agenda-platform tenant path now resolves.
+vocab_version = "2026.09.16"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `procurement` connector may write ONLY the Contract (§11.11) and FundingInstrument
@@ -56,6 +59,15 @@ predicate_allowlist = [
   "period",
   "conditions",
   "federal_award_id",
+  # P26.2 (SOURCES.2): the SAM.gov federal-opportunity surface — a notice is a
+  # dated procurement-lifecycle event (solicitation/award notice), NOT a
+  # contract; `procurement_notice` is the entity assertion, the rest are its
+  # predicates. And `agenda_item` is the agenda-platform index row marker.
+  "procurement_notice",
+  "notice_type",
+  "posted_date",
+  "response_deadline",
+  "agenda_item",
 ]
 
 # Predicate GENRES the procurement connector MUST NOT write (scope-creep guard,
@@ -212,3 +224,74 @@ subaward_id_field      = "internal_id"
 # Sub-awards MUST be pulled: this is the flag the connector asserts on every
 # USAspending target (assert_pulls_subawards).
 subaward = true
+
+# --- Agenda-platform index endpoints (P26.2 / SOURCES.2) ----------------------
+# Each agenda-platform tenant row names the per-tenant api_base; the platform's
+# INDEX endpoint (the public meetings/matters listing the portal itself reads)
+# is appended here — a bounded fetch (top/N or a reviewed POST body), never a
+# crawl. Probed live 2026-09-16: webapi.legistar.com/v1/<client>/matters returns
+# the client's public matter index; lacity.primegov.com PublicPortal /search
+# returns the meeting index; {tenant}.api.civicclerk.com/v1/Events is the
+# portal's own endpoint (the tenant key comes from the portal's embedded
+# config — anonymous requests currently 404, recorded honestly, never faked).
+[platform_endpoints.legistar]
+# InSite API: the tenant matter index is `{api_base}/matters` (OData; $top bounds
+# the pull, $orderby keeps the freshest records first). The bare api_base 404s.
+index_path  = "/matters"
+index_query = "$top=100&$orderby=MatterLastModifiedUtc%20desc"
+# The human-readable legislation detail page for a matter (link, not bytes).
+matter_link_template = "https://{tenant}.legistar.com/LegislationDetail.aspx?ID={matter_id}&GUID={matter_guid}"
+# A matter becomes a Contract claim ONLY when its MatterTypeName matches one of
+# these reviewed type-name substrings (case-insensitive). A municipality's
+# contract-approval instruments carry contract-family type names (Mesa:
+# 'Contract', 'Agreement'; San Antonio: 'Contract', 'Agreement', 'Purchase',
+# 'Lease', 'Interlocal', 'Settlement', 'Professional Services'). An ordinance /
+# resolution / appointment is legislative business, not a contract — it lands as
+# an agenda_index row only, never a Contract (§3.1 — no synthetic certainty).
+contract_matter_patterns = [
+  "contract",
+  "agreement",
+  "purchase",
+  "lease",
+  "interlocal",
+  "professional services",
+  "settlement",
+]
+
+[platform_endpoints.primegov]
+# PrimeGov PublicPortal: POST {api_base}/search returns the tenant meeting index
+# (probed 2026-09-16 — LA City; a bounded body bounds the window).
+index_path = "/search"
+index_method = "post"
+index_body = {}
+# Meeting objects carry no contract-typing — index rows only.
+
+[platform_endpoints.civicclerk]
+# CivicClerk v1: {api_base} already names the Events index (the portal's own
+# endpoint; api_base template is https://{tenant}.api.civicclerk.com/v1/Events).
+index_path = ""
+
+# --- SAM.gov federal opportunities (P26.2 / SOURCES.2) -------------------------
+# The documented public opportunities search (api.sam.gov, open.gsa.gov): a
+# bounded keyword+window query, api_key from $SIG_SAM_GOV_KEY (HG-09, never in a
+# file). A notice is a dated lifecycle event on the procurement track, NOT a
+# contract — `notice_type` → lifecycle state is the reviewed data map below; an
+# unlisted type emits index facts only (never a guessed lifecycle, §3.1).
+[sam_gov]
+api_base = "https://api.sam.gov/prod/opportunities/v2"
+search_endpoint = "/search"
+api_key_env = "SIG_SAM_GOV_KEY"
+
+# Reviewed SAM notice type → procurement lifecycle state (§13.4) +
+# acquisition_channel hint. `channel` is emitted only where the notice type ITSELF
+# declares it (a Justification & Approval notice is a sole-source intent).
+[sam_gov.notice_map]
+Solicitation                        = { state = "rfp_issued" }
+"Combined Synopsis/Solicitation"    = { state = "rfp_issued" }
+Presolicitation                     = { state = "proposed" }
+"Sources Sought"                    = { state = "proposed" }
+"Special Notice"                    = { state = "proposed" }
+"Intent to Bundle Requirements"     = { state = "proposed" }
+"Fair Opportunity / Limited Sources" = { state = "proposed" }
+"Justification"                     = { state = "proposed", channel = "sole_source" }
+"Award Notice"                      = { state = "awarded" }

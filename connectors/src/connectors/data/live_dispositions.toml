@@ -37,6 +37,10 @@ disposition = "reference"
 [sources.alpr_watch_foia_method]
 disposition = "reference"
 
+[sources.amsterdam_camerakaart]
+disposition = "reference"
+note = "P26.2 discovery (RAA pattern) — Amsterdam municipal camera register open data"
+
 [sources.atlas_about]
 disposition = "reference"
 
@@ -48,6 +52,14 @@ disposition = "reference"
 
 [sources.axon_community_connect]
 disposition = "reference"
+
+[sources.austria_vidreg]
+disposition = "reference"
+note = "P26.2 discovery (RAA pattern) — Austrian DSB VidReg video-surveillance register"
+
+[sources.bidnet_direct]
+disposition = "link_only"
+note = "P26.2 discovery — public agency bid portal (records/procurement surface)"
 
 [sources.boarddocs]
 disposition = "link_only"
@@ -61,24 +73,50 @@ disposition = "link_only"
 [sources.ccops_ordinance_disclosures]
 disposition = "mirror"
 
+[sources.ccops_baltimore]
+disposition = "reference"
+note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Baltimore 2020 ordinance)"
+
+[sources.ccops_berkeley]
+disposition = "reference"
+note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Berkeley Ord. 7592)"
+
+[sources.ccops_boston]
+disposition = "reference"
+note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Boston 2021 ordinance)"
+
+[sources.ccops_cambridge]
+disposition = "reference"
+note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Cambridge 2018 ordinance)"
+
+[sources.ccops_davis]
+disposition = "reference"
+note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Davis CA)"
+
+[sources.ccops_grand_rapids]
+disposition = "reference"
+note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Grand Rapids MI)"
+
+[sources.ccops_nashville]
+disposition = "reference"
+note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Nashville BL2017-1288)"
+
+[sources.ccops_oakland]
+disposition = "reference"
+note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Oakland Ord. 13489, Privacy Advisory Commission)"
+
+[sources.ccops_somerville]
+disposition = "reference"
+note = "P26.2 discovery — CCOPS municipal surveillance disclosures (Somerville MA)"
+
 [sources.census_gazetteer_tiger]
 disposition = "mirror"
 
 [sources.census_geocoder]
 disposition = "reference"
 
-[sources.civicclerk]
-disposition = "promote"
-class_ticket = "P25.2"
-note = "P25.2 — agenda-platform tenant path (procurement connector reads agenda_tenants)"
-
 [sources.civicplus]
 disposition = "link_only"
-
-[sources.courtlistener_recap]
-disposition = "promote"
-class_ticket = "P25.2"
-note = "P25.2 — records channel (court records rest_api)"
 
 [sources.deflock]
 disposition = "reference"
@@ -89,13 +127,16 @@ disposition = "reference"
 [sources.deflock_repo]
 disposition = "reference"
 
+[sources.demandstar]
+disposition = "link_only"
+note = "P26.2 discovery — public agency bid portal (records/procurement surface)"
+
+[sources.denmark_politi_cctv]
+disposition = "reference"
+note = "P26.2 discovery (RAA pattern) — Danish national police official CCTV camera map"
+
 [sources.dhs_fusion_centers]
 disposition = "reference"
-
-[sources.documentcloud]
-disposition = "promote"
-class_ticket = "P25.2"
-note = "P25.2 — records channel (released-document host; Cloudflare-blocked 2026-09-15, same posture as muckrock)"
 
 [sources.drivers_against_flock]
 disposition = "link_only"
@@ -118,21 +159,11 @@ disposition = "link_only"
 [sources.eyes_off_eugene]
 disposition = "reference"
 
-[sources.eyes_on_flock]
-disposition = "promote"
-class_ticket = "P25.3"
-note = "P25.3 — upstream_project json_api (community Flock data, physical layer)"
-
 [sources.eyes_on_flock_description]
 disposition = "link_only"
 
 [sources.faa_drone_waivers]
 disposition = "reference"
-
-[sources.fbi_cde_agency_registry]
-disposition = "promote"
-class_ticket = "P25.4"
-note = "P25.4 — data.gov-keyed ORI9 identity substrate (needs a substrate/claims connector; flipped 2026-09-15)"
 
 [sources.flock_ajith_fyi]
 disposition = "link_only"
@@ -209,11 +240,6 @@ disposition = "link_only"
 [sources.leaic_crosswalk]
 disposition = "mirror"
 
-[sources.legistar]
-disposition = "promote"
-class_ticket = "P25.2"
-note = "P25.2 — agenda-platform tenant path"
-
 [sources.monahan_grounding_the_flock]
 disposition = "link_only"
 
@@ -235,10 +261,9 @@ disposition = "link_only"
 [sources.omnia_partners]
 disposition = "link_only"
 
-[sources.openstates]
-disposition = "promote"
-class_ticket = "P25.2"
-note = "P25.2 — records/statute channel (legislative rest_api)"
+[sources.opengov_procurement]
+disposition = "link_only"
+note = "P26.2 discovery — per-agency public solicitation portals (records/procurement surface)"
 
 [sources.osm_automated_edits_coc]
 disposition = "reference"
@@ -264,13 +289,24 @@ disposition = "reference"
 [sources.panopticity]
 disposition = "link_only"
 
-[sources.primegov]
-disposition = "promote"
-class_ticket = "P25.2"
-note = "P25.2 — agenda-platform tenant path"
+[sources.periscope_s2g]
+disposition = "link_only"
+note = "P26.2 discovery — Periscope eBid per-agency procurement portals"
+
+[sources.planetbids]
+disposition = "link_only"
+note = "P26.2 discovery — per-agency PlanetBids procurement portals"
+
+[sources.powerdms_public_portals]
+disposition = "link_only"
+note = "P26.2 discovery — per-agency public policy portals (records surface)"
 
 [sources.private_eyes]
 disposition = "reference"
+
+[sources.publicpurchase]
+disposition = "link_only"
+note = "P26.2 discovery — public agency bid portal (records/procurement surface)"
 
 [sources.r_flocksurveillance]
 disposition = "link_only"
@@ -278,10 +314,9 @@ disposition = "link_only"
 [sources.ringmast4r_flock]
 disposition = "link_only"
 
-[sources.sam_gov]
-disposition = "promote"
-class_ticket = "P25.2"
-note = "P25.2 — federal procurement rest_api"
+[sources.rotterdam_cameraregister]
+disposition = "reference"
+note = "P26.2 discovery (RAA pattern) — Rotterdam municipal camera register"
 
 [sources.sm_alpr]
 disposition = "reference"
@@ -294,6 +329,10 @@ disposition = "reference"
 
 [sources.surveillance_under_surveillance]
 disposition = "reference"
+
+[sources.swagit]
+disposition = "link_only"
+note = "P26.2 discovery — per-tenant municipal meeting video/agenda portals"
 
 [sources.technocarte_update]
 disposition = "link_only"

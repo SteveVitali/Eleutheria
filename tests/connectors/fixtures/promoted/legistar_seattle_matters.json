@@ -1,0 +1,41 @@
+{
+  "odata.metadata": "https://webapi.legistar.com/v1/seattle/$metadata#Matters",
+  "value": [
+    {
+      "MatterId": 11400,
+      "MatterGuid": "A1B2C3D4-0001-4AAA-BBBB-000000000001",
+      "MatterFile": "CB 120512",
+      "MatterTitle": "AN ORDINANCE relating to surveillance technology oversight",
+      "MatterTypeName": "Council Bill",
+      "MatterStatusName": "Passed",
+      "MatterIntroDate": "2026-06-01T00:00:00",
+      "MatterPassedDate": "2026-07-14T00:00:00",
+      "MatterEnactmentNumber": "126900",
+      "MatterBodyName": "City Council"
+    },
+    {
+      "MatterId": 11401,
+      "MatterGuid": "A1B2C3D4-0002-4AAA-BBBB-000000000002",
+      "MatterFile": "C 2501",
+      "MatterTitle": "A contract for automated license plate reader maintenance services",
+      "MatterTypeName": "Contract",
+      "MatterStatusName": "Adopted",
+      "MatterIntroDate": "2026-05-20T00:00:00",
+      "MatterPassedDate": "2026-06-30T00:00:00",
+      "MatterEnactmentNumber": null,
+      "MatterBodyName": "City Council"
+    },
+    {
+      "MatterId": 11402,
+      "MatterGuid": "A1B2C3D4-0003-4AAA-BBBB-000000000003",
+      "MatterFile": "Res 32199",
+      "MatterTitle": "A RESOLUTION appointing members to a board",
+      "MatterTypeName": "Resolution",
+      "MatterStatusName": "Adopted",
+      "MatterIntroDate": "2026-06-10T00:00:00",
+      "MatterPassedDate": "2026-07-01T00:00:00",
+      "MatterEnactmentNumber": null,
+      "MatterBodyName": "City Council"
+    }
+  ]
+}

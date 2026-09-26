@@ -743,8 +743,8 @@ access_method = "rest_api"
 auth_model = "token for most endpoints"
 rate_limits = "~5/min, 50/hr, 125/day — lookup only, crawling impossible (SIG-INGEST-025)"
 verified = true
-last_verified = 2026-08-20
-notes = "Litigation evidence (§22.3)."
+last_verified = 2026-09-16
+notes = "Litigation evidence (§22.3). STAYS GATED (P26.2, 2026-09-16): docket contents are public court records, but API access is now Free Law Project membership-based with binding usage conditions (free.law/membership/allowed-api-usage) — accepting that agreement + holding the credential is an operator decision (HG-09 class), not a GL-GATE-06-covered clear public licence. Mapped to the accountability connector (targeted lookups only, SIG-INGEST-036/037) — the gate refuses live fetches meanwhile."
 
 # ===========================================================================
 # F. Records, procurement, evidence (§22.6 F, §22.3 SIG-INGEST-026)
@@ -794,8 +794,8 @@ robots_policy = "honor"
 access_method = "search_api + S3 assets"
 auth_model = "none for public"
 verified = true
-last_verified = 2026-08-20
-notes = "Public search + full text. Per-document rights vary — UNDETERMINED at source level."
+last_verified = 2026-09-16
+notes = "Public search + full text. Per-document rights vary — UNDETERMINED at source level. STAYS GATED (P26.2, 2026-09-16): no source-level licence resolves — per-document rights belong to each uploader. api.www.documentcloud.org IS anonymously reachable (verified: /api/documents/20504557/ 200) and robots is Disallow:/ (crawl mode); the document-index connector path exists for a future flip, the gate refuses live fetches meanwhile."
 
 [sources.usaspending]
 name = "USAspending"
@@ -831,11 +831,22 @@ custody_posture = "REFERENCE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
 access_method = "rest_api"
-auth_model = "api key"
+auth_model = "api key ($SIG_SAM_GOV_KEY, HG-09 — auth, not the rights basis)"
 rate_limits = "free key = 10 requests/day"
 verified = true
-last_verified = 2026-08-20
-notes = "Vendor identity substrate (§14.2)."
+last_verified = 2026-09-16
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-16
+review_packet = "docs/build/reports/rights/sam_gov.md"
+notes = "Vendor identity substrate + federal opportunity notices (§14.2). FLIPPED 2026-09-16 (GL-GATE-06): US federal government data is public domain (17 U.S.C. §105; the opportunities API is GSA's documented public API) → CC0-1.0 (same basis as usaspending). Keyless the API answers 404 — a recorded disappearance; the key is a free registration, staged as an env secret."
+[sources.sam_gov.rights]
+spdx = "CC0-1.0"
+attribution = "SAM.gov (U.S. General Services Administration — federal public domain)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://open.gsa.gov/api/sam-opportunities/"
+retrieval_date = 2026-09-16
 
 [sources.govspend]
 name = "GovSpend"
@@ -942,8 +953,19 @@ robots_policy = "honor"
 access_method = "rest_api (matters, attachments, histories, events)"
 auth_model = "none"
 verified = true
-last_verified = 2026-08-20
-notes = "Real API, not 'agenda system' (§22.3)."
+last_verified = 2026-09-16
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-16
+review_packet = "docs/build/reports/rights/legistar.md"
+notes = "Real API, not 'agenda system' (§22.3). FLIPPED 2026-09-16 (GL-GATE-06 blanket disposition): the InSite API serves municipal legislative records — US local-government public records — recorded as CC0-1.0 (same basis as okc_council). Live-verified: /matters index answers for seattle/mesa/sanantonio; 'chicago' is NOT provisioned on the shared host (recorded tenant_api_error)."
+[sources.legistar.rights]
+spdx = "CC0-1.0"
+attribution = "Municipal legislative records via Legistar InSite (public record)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://webapi.legistar.com/"
+retrieval_date = 2026-09-16
 
 [sources.primegov]
 name = "PrimeGov"
@@ -956,8 +978,19 @@ robots_policy = "honor"
 access_method = "rest_api (meetings, agendas)"
 auth_model = "none"
 verified = true
-last_verified = 2026-08-20
-notes = "Needs a tenant registry SIG must build and publish (§22.3)."
+last_verified = 2026-09-16
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-16
+review_packet = "docs/build/reports/rights/primegov.md"
+notes = "Tenant registry rows live in data/agenda_tenants.toml (§22.3, P26.2). FLIPPED 2026-09-16 (GL-GATE-06): municipal meeting records are public records → CC0-1.0 (same basis as okc_council). HONEST ACCESS NOTE: lacity.primegov.com serves POST /search live (verified) but its robots.txt is Disallow:/ — fetches refuse in crawl mode; an API-mode basis (ADR-083) is not yet recorded for the PublicPortal surface."
+[sources.primegov.rights]
+spdx = "CC0-1.0"
+attribution = "Municipal meeting records via PrimeGov PublicPortal (public record)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://lacity.primegov.com/Portal/MeetingAccessAndMarkup"
+retrieval_date = 2026-09-16
 
 [sources.civicclerk]
 name = "CivicClerk"
@@ -968,10 +1001,21 @@ custody_posture = "REFERENCE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
 access_method = "rest_api + plaintext file stream"
-auth_model = "none"
+auth_model = "none (portal obtains an IdentityServer session; anonymous v1 reads 404)"
 verified = true
-last_verified = 2026-08-20
-notes = "Meetings + plaintext file stream (§22.3)."
+last_verified = 2026-09-16
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-16
+review_packet = "docs/build/reports/rights/civicclerk.md"
+notes = "Meetings + plaintext file stream (§22.3). FLIPPED 2026-09-16 (GL-GATE-06): municipal meeting records are public records → CC0-1.0 (same basis as okc_council). HONEST ACCESS NOTE (2026-09-16): the v1 API template is confirmed from the portal JS ({tenant}.api.civicclerk.com/v1 + /Events) but anonymous reads 404 on every probed tenant and the api host serves no robots.txt — the tenant surface is IdentityServer-gated; a working access path is unresolved (HG-09 class decision), recorded not faked."
+[sources.civicclerk.rights]
+spdx = "CC0-1.0"
+attribution = "Municipal meeting records via CivicClerk (public record)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://oklahomacityok.portal.civicclerk.com/"
+retrieval_date = 2026-09-16
 
 [sources.civicplus]
 name = "CivicPlus"
@@ -1076,10 +1120,21 @@ custody_posture = "REFERENCE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
 access_method = "rest_api"
-auth_model = "api key (403 without)"
+auth_model = "api key ($SIG_OPENSTATES_KEY, HG-09 — auth, not the rights basis)"
 verified = true
-last_verified = 2026-08-20
-notes = "State legislation."
+last_verified = 2026-09-16
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-16
+review_packet = "docs/build/reports/rights/openstates.md"
+notes = "State legislation. FLIPPED 2026-09-16 (GL-GATE-06): OpenStates publishes its data 'under a public domain dedication' (open.pluralpolicy.com/data/, verbatim, retrieved 2026-09-16) → CC0-1.0. The v3 API is key-gated ($SIG_OPENSTATES_KEY, env only); keyless it answers 403 — a recorded challenge, never defeated. SEMANTIC PATH (P26.2): a bill is an index record, NOT a §11.14 LegalInstrument — emitted as index_only evidence links via the accountability connector (a pending bill is not a statute, §3.1)."
+[sources.openstates.rights]
+spdx = "CC0-1.0"
+attribution = "OpenStates / Plural (public-domain dedication; attribution appreciated)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://open.pluralpolicy.com/data/"
+retrieval_date = 2026-09-16
 
 [sources.fbi_cde_agency_registry]
 name = "FBI CDE agency registry"
@@ -1979,4 +2034,307 @@ redistributable = true
 derivative_permitted = true
 terms_url = "docs/build/reports/rights/pathways_acoustic_drone_location.md"
 retrieval_date = 2026-09-15
+
+# --- P26.2 discovery sweep (SOURCES.2 leg (b), 2026-09-16) --------------------
+# The coverage map widens: more CCOPS-style municipal surveillance disclosures,
+# more national/regional camera registers on the France-RAA pattern, and more
+# records/procurement platform surfaces. Every row enters
+# ingestion_permitted=false behind a rights-packet skeleton
+# (docs/build/reports/rights/<id>.md); `verified` records only that this pass
+# reached the named host (a 403 challenge still counts as reached — recorded,
+# never worked around).
+
+[sources.ccops_oakland]
+name = "CCOPS Oakland — Privacy Advisory Commission surveillance disclosures"
+source_kind = "government_mandated_disclosure"
+homepage_url = "https://www.oaklandca.gov/boards-commissions/privacy-advisory-board"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "document index (ordinance reports + use policies)"
+auth_model = "none"
+verified = true
+last_verified = 2026-09-16
+notes = "P26.2 discovery. Oakland Ordinance 13489 (2018) mandates annual surveillance tech use reports via the Privacy Advisory Commission. Host 403s programmatic agents this pass — recorded challenge, not bypassed."
+
+[sources.ccops_berkeley]
+name = "CCOPS Berkeley — Surveillance Technology Use ordinance disclosures"
+source_kind = "government_mandated_disclosure"
+homepage_url = "https://berkeleyca.gov/"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "document index (ordinance reports)"
+auth_model = "none"
+verified = true
+last_verified = 2026-09-16
+notes = "P26.2 discovery. Berkeley Ordinance 7592 (2018) surveillance-tech disclosures."
+
+[sources.ccops_davis]
+name = "CCOPS Davis — surveillance technology ordinance disclosures"
+source_kind = "government_mandated_disclosure"
+homepage_url = "https://www.cityofdavis.org/"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "document index (ordinance reports)"
+auth_model = "none"
+verified = true
+last_verified = 2026-09-16
+notes = "P26.2 discovery. Davis CA surveillance-technology ordinance reports. Host 403s programmatic agents this pass — recorded challenge."
+
+[sources.ccops_cambridge]
+name = "CCOPS Cambridge MA — surveillance oversight ordinance disclosures"
+source_kind = "government_mandated_disclosure"
+homepage_url = "https://www.cambridgema.gov/"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "document index (ordinance reports)"
+auth_model = "none"
+verified = true
+last_verified = 2026-09-16
+notes = "P26.2 discovery. Cambridge MA ordinance (2018) surveillance-oversight disclosures."
+
+[sources.ccops_boston]
+name = "CCOPS Boston — surveillance oversight ordinance disclosures"
+source_kind = "government_mandated_disclosure"
+homepage_url = "https://www.boston.gov/"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "document index (ordinance reports)"
+auth_model = "none"
+verified = true
+last_verified = 2026-09-16
+notes = "P26.2 discovery. Boston 2021 surveillance-oversight ordinance disclosures."
+
+[sources.ccops_baltimore]
+name = "CCOPS Baltimore — surveillance ordinance disclosures"
+source_kind = "government_mandated_disclosure"
+homepage_url = "https://www.baltimorecity.gov/"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "document index (ordinance reports)"
+auth_model = "none"
+verified = true
+last_verified = 2026-09-16
+notes = "P26.2 discovery. Baltimore 2020 surveillance-ordinance disclosures."
+
+[sources.ccops_nashville]
+name = "CCOPS Nashville — Metro surveillance ordinance disclosures"
+source_kind = "government_mandated_disclosure"
+homepage_url = "https://www.nashville.gov/"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "document index (ordinance reports)"
+auth_model = "none"
+verified = true
+last_verified = 2026-09-16
+notes = "P26.2 discovery. Nashville Metro Ordinance BL2017-1288 surveillance disclosures."
+
+[sources.ccops_grand_rapids]
+name = "CCOPS Grand Rapids — surveillance ordinance disclosures"
+source_kind = "government_mandated_disclosure"
+homepage_url = "https://www.grandrapidsmi.gov/"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "document index (ordinance reports)"
+auth_model = "none"
+verified = true
+last_verified = 2026-09-16
+notes = "P26.2 discovery. Grand Rapids MI surveillance-ordinance disclosures."
+
+[sources.ccops_somerville]
+name = "CCOPS Somerville — surveillance oversight disclosures"
+source_kind = "government_mandated_disclosure"
+homepage_url = "https://www.somervillema.gov/"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "document index (ordinance reports)"
+auth_model = "none"
+verified = true
+last_verified = 2026-09-16
+notes = "P26.2 discovery. Somerville MA surveillance-oversight ordinance disclosures."
+
+[sources.denmark_politi_cctv]
+name = "Denmark National Police — official CCTV camera map"
+source_kind = "government_portal"
+homepage_url = "https://www.politi.dk/da/borgerservice/tv-overvaagning"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "published register/map (tv-overvågning)"
+auth_model = "none"
+verified = true
+last_verified = 2026-09-16
+notes = "P26.2 discovery (RAA pattern). The Danish police publish an official map/register of CCTV camera surveillance under the tv-overvågningsloven — a national register on the France-RAA pattern."
+
+[sources.amsterdam_camerakaart]
+name = "Amsterdam cameraregister — municipal camera map open data"
+source_kind = "government_portal"
+homepage_url = "https://data.amsterdam.nl/"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "municipal open data (camera locations dataset)"
+auth_model = "none"
+verified = true
+last_verified = 2026-09-16
+notes = "P26.2 discovery (RAA pattern). Amsterdam publishes its municipal camera register as open data (data.amsterdam.nl, CC0 open-data catalogue)."
+
+[sources.austria_vidreg]
+name = "Austria VidReg — video-surveillance register"
+source_kind = "government_portal"
+homepage_url = "https://www.dsb.gv.at/"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "published register (VidReg)"
+auth_model = "none"
+verified = true
+last_verified = 2026-09-16
+notes = "P26.2 discovery (RAA pattern). The Austrian data-protection authority maintains the VidReg public register of video-surveillance installations."
+
+[sources.rotterdam_cameraregister]
+name = "Rotterdam cameraregister — municipal camera disclosures"
+source_kind = "government_portal"
+homepage_url = "https://www.rotterdam.nl/"
+default_tier = "R2"
+custody_posture = "REFERENCE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "published register (cameraregister)"
+auth_model = "none"
+verified = true
+last_verified = 2026-09-16
+notes = "P26.2 discovery (RAA pattern). Rotterdam publishes a municipal camera register (host reached 2026-09-16; the exact register path needs a research pass — recorded, not assumed)."
+
+[sources.bidnet_direct]
+name = "BidNet Direct — public agency bid portal"
+source_kind = "government_portal"
+homepage_url = "https://www.bidnetdirect.com/"
+default_tier = "R3"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "search_api (bid listings)"
+auth_model = "none for public listings"
+verified = true
+last_verified = 2026-09-16
+notes = "P26.2 discovery (records/procurement surface). Multi-state public agency bid listings (Maryland Purchasing Group et al.)."
+
+[sources.periscope_s2g]
+name = "Periscope S2G — eBid procurement portals"
+source_kind = "government_portal"
+homepage_url = "https://www.periscopeholdings.com/"
+default_tier = "R3"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "per-agency eBid portals"
+auth_model = "none for public listings"
+verified = true
+last_verified = 2026-09-16
+notes = "P26.2 discovery (records/procurement surface). Periscope eBid (BidSync) portals host many public agency solicitations."
+
+[sources.publicpurchase]
+name = "PublicPurchase — public agency bid portal"
+source_kind = "government_portal"
+homepage_url = "https://www.publicpurchase.com/"
+default_tier = "R3"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "search_api (bid listings)"
+auth_model = "none for public listings"
+verified = true
+last_verified = 2026-09-16
+notes = "P26.2 discovery (records/procurement surface). Public agency bid listings."
+
+[sources.demandstar]
+name = "DemandStar — public agency bid portal"
+source_kind = "government_portal"
+homepage_url = "https://www.demandstar.com/"
+default_tier = "R3"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "search_api (bid listings)"
+auth_model = "none for public listings"
+verified = true
+last_verified = 2026-09-16
+notes = "P26.2 discovery (records/procurement surface). Public agency bid listings."
+
+[sources.planetbids]
+name = "PlanetBids — public agency procurement portals"
+source_kind = "government_portal"
+homepage_url = "https://www.planetbids.com/"
+default_tier = "R3"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "per-agency pbsystem portals"
+auth_model = "none for public listings"
+verified = true
+last_verified = 2026-09-16
+notes = "P26.2 discovery (records/procurement surface). Per-agency PlanetBids portals (many California agencies)."
+
+[sources.powerdms_public_portals]
+name = "PowerDMS public policy portals"
+source_kind = "records_channel"
+homepage_url = "https://powerdms.com/"
+default_tier = "R3"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "per-agency public policy portals"
+auth_model = "none for public portals"
+verified = true
+last_verified = 2026-09-16
+notes = "P26.2 discovery (records surface). Many agencies publish policy manuals (use-of-force, surveillance tech) through PowerDMS public-facing portals — a records surface on the okcpd_policy pattern."
+
+[sources.swagit]
+name = "Swagit — municipal meeting video/agenda portals"
+source_kind = "government_portal"
+homepage_url = "https://www.swagit.com/"
+default_tier = "R3"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "per-tenant streaming portals"
+auth_model = "none for public streams"
+verified = true
+last_verified = 2026-09-16
+notes = "P26.2 discovery (records surface). Per-tenant municipal meeting video/agenda streaming portals (SIG-INGEST-026 class)."
+
+[sources.opengov_procurement]
+name = "OpenGov Procurement — public agency solicitation portals"
+source_kind = "government_portal"
+homepage_url = "https://procurement.opengov.com/"
+default_tier = "R3"
+custody_posture = "LINK"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "per-agency procurement portals"
+auth_model = "none for public listings"
+verified = true
+last_verified = 2026-09-16
+notes = "P26.2 discovery (records/procurement surface). OpenGov (formerly ProcureNow) hosts per-agency public solicitation portals."
 

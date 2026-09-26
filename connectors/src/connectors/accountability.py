@@ -541,6 +541,11 @@ def courtlistener_config() -> Mapping[str, Any]:
     return vocab()["courtlistener"]
 
 
+def openstates_config() -> Mapping[str, Any]:
+    """The OpenStates v3 API facts (``[openstates]`` in the vocab, P26.2)."""
+    return vocab()["openstates"]
+
+
 def assert_targeted_lookup(target: Mapping[str, Any]) -> Mapping[str, Any]:
     """Return ``target`` if it is a targeted lookup, else raise :class:`CrawlAttempted`.
 
@@ -680,7 +685,17 @@ class AccountabilityConnector(Connector):
         assert ctx.fetcher is not None, "connectors fetch only through the shared layer"
         if self._is_courtlistener(ctx, target):
             assert_targeted_lookup(target)
-        return ctx.fetcher.fetch(str(target["url"]))
+        url = str(target["url"])
+        if ctx.source.id == source_ids().get("openstates"):
+            # OpenStates v3 requires an `apikey` parameter (or X-API-KEY header) —
+            # resolved from the environment only (HG-09). Keyless it answers 403,
+            # which the shared layer records as a challenge, never defeated.
+            import os
+
+            key = os.environ.get(str(openstates_config()["api_key_env"]), "").strip()
+            if key and "apikey=" not in url:
+                url += f"{'&' if '?' in url else '?'}apikey={key}"
+        return ctx.fetcher.fetch(url)
 
     # -- interpretation (pure functions of the capture) --
     def parse(self, ctx: RunContext, capture: CaptureRef) -> dict[str, Any]:
@@ -695,7 +710,7 @@ class AccountabilityConnector(Connector):
         kind = _artifact_kind(capture)
         if kind in {"issue_record_csv", "source_index_csv"}:
             return {"kind": kind, "capture": capture, **parse_csv(data)}
-        if kind in {"courtlistener", "abuse_library"}:
+        if kind in {"courtlistener", "abuse_library", "openstates"}:
             return {"kind": kind, "capture": capture, "payload": json.loads(data)}
         # geojson / data_dictionary / research_archive: consumed as context.
         return {"kind": kind, "capture": capture, "byte_size": len(data)}
@@ -717,6 +732,13 @@ class AccountabilityConnector(Connector):
             # (OL-2E-AL-02): each entry is an advocacy-analysis source link.
             entries = payload["entries"] if _has_entries(payload) else [payload]
             return [{"record_kind": "abuse_entry", "raw": dict(e)} for e in entries]
+        if kind == "openstates":
+            # The OpenStates v3 bill search: `results` is the bill index page
+            # (P26.2); each bill is an index record, never normalized into a
+            # legal fact (a pending bill is not a statute — §3.1).
+            payload = parsed["payload"]
+            objects = payload["results"] if _has_results(payload) else [payload]
+            return [{"record_kind": "bill_index", "raw": dict(o)} for o in objects]
         # A consumed-as-context artifact (geojson / data_dictionary / research_archive).
         return [{"record_kind": "context", "artifact_kind": kind}]
 
@@ -735,6 +757,8 @@ class AccountabilityConnector(Connector):
                 out.extend(self._normalize_court_record(ctx, raw["raw"]))
             elif kind == "abuse_entry":
                 out.append(self._normalize_abuse_entry(ctx, raw["raw"]))
+            elif kind == "bill_index":
+                out.append(self._normalize_bill_index(ctx, raw["raw"]))
             # context records carry no claims — they were consumed as authority.
         return out
 
@@ -916,6 +940,54 @@ class AccountabilityConnector(Connector):
             source_id=ctx.source.id,
         )
 
+    def _normalize_bill_index(self, ctx: RunContext, raw: Mapping[str, Any]) -> dict[str, Any]:
+        """An OpenStates bill record as an index-only evidence link (P26.2, §3.1).
+
+        A state bill is **not** a §11.14 LegalInstrument — the frozen
+        LegalInstrumentType vocabulary has no ``bill`` value and asserting
+        ``statute`` for a pending bill would assert an enactment that never
+        happened (no synthetic certainty). The record is what the index *lists*:
+        an ``index_only`` evidence link keyed to the bill, ``primary_record``
+        class when it points at the official legislature page (OpenStates'
+        ``sources``), else the OpenStates page itself. Identifier, title,
+        session, jurisdiction, and latest action ride as recorded index
+        metadata — claims are never minted from them (P13.2 owns policy).
+        """
+        bill_id = str(raw.get("id") or raw.get("identifier") or _slug(str(raw)))
+        # Prefer the official legislature source URL the record names; the
+        # OpenStates page is the fallback locator.
+        ref = ""
+        for src in raw.get("sources") or []:
+            if isinstance(src, Mapping) and src.get("url"):
+                ref = str(src["url"])
+                break
+        ref = ref or str(raw.get("openstates_url") or raw.get("url") or "")
+        jurisdiction = raw.get("jurisdiction")
+        jurisdiction_name = (
+            str(jurisdiction.get("name"))
+            if isinstance(jurisdiction, Mapping)
+            else _opt_str(jurisdiction) or ""
+        )
+        return _stamp(
+            {
+                "record_kind": "evidence_link",
+                "subject_id": f"accountability:{ctx.source.id}:{bill_id}",
+                "predicate_id": assert_predicate_allowed("event_source"),
+                "value": ref or f"openstates:{bill_id}",
+                "source_class": "primary_record" if ref else "advocacy_analysis",
+                "raw_value": ref or bill_id,
+                # SIG-EPIS-030 analogue: an index entry, never normalized to a fact.
+                "index_only": True,
+                "bill_identifier": _opt_str(raw.get("identifier")),
+                "bill_title": _opt_str(raw.get("title")),
+                "legislative_session": _opt_str(raw.get("session")),
+                "legislative_jurisdiction": jurisdiction_name or None,
+                "latest_action": _opt_str(raw.get("latest_action_description")),
+                "latest_action_date": _opt_str(raw.get("latest_action_date")),
+            },
+            source_id=ctx.source.id,
+        )
+
     # -- link + load --
     # link() is inherited (identity): SIG-INGEST-034 — the connector emits candidate
     # identifiers and NEVER resolves entities itself; resolution is P03.2/P05.1.
@@ -990,6 +1062,8 @@ def _artifact_kind_of_uri(uri: str) -> str:
     low = uri.lower()
     if "courtlistener" in low or "/recap" in low:
         return "courtlistener"
+    if "openstates" in low:
+        return "openstates"
     if "abuse" in low or "kansas.watch" in low:
         return "abuse_library"
     if "source_index" in low or "source-index" in low:
@@ -1116,6 +1190,7 @@ __all__ = [
     "forbidden_predicate_genres",
     "is_predicate_allowed",
     "load_claims_for_l1",
+    "openstates_config",
     "parse_csv",
     "postures",
     "predicate_allowlist",

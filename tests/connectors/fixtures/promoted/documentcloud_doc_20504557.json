@@ -1,0 +1,20 @@
+{
+  "id": 20504557,
+  "title": "Example County ALPR Policy Manual Excerpt",
+  "access": "public",
+  "pages": 12,
+  "description": "Released policy document describing automatic license plate reader deployment and retention schedules.",
+  "created_at": "2022-03-15T14:22:00.000Z",
+  "updated_at": "2022-03-15T14:25:00.000Z",
+  "data": {},
+  "user": 12345,
+  "organization": 678,
+  "asset_url": "https://assets.documentcloud.org/documents/20504557/",
+  "canonical_url": "https://www.documentcloud.org/documents/20504557-example-county-alpr-policy-manual-excerpt",
+  "pdf_url": "https://assets.documentcloud.org/documents/20504557/example-county-alpr-policy-manual-excerpt.pdf",
+  "full_text_url": "https://assets.documentcloud.org/documents/20504557/example-county-alpr-policy-manual-excerpt.txt",
+  "language": "eng",
+  "status": "success",
+  "source": "Public records release",
+  "slug": "example-county-alpr-policy-manual-excerpt"
+}

@@ -1,0 +1,18 @@
+{
+  "byte_counts": [],
+  "capture_digests": [],
+  "claim_count": 0,
+  "connector": "procurement",
+  "content_drift": null,
+  "disappearances": [],
+  "duration_seconds": 0.368859,
+  "mode": "live",
+  "politeness_refusal": "RobotsUnretrievable: robots.txt for 'oklahomacityok.api.civicclerk.com' is unretrievable; crawl permission is NOT granted and the connector refuses to run (SIG-INGEST-012).",
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "civicclerk",
+  "started_at": "2026-09-17T00:54:21.529865+00:00",
+  "status_codes": [],
+  "urls": []
+}

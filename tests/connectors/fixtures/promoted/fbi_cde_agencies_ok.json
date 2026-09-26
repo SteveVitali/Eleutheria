@@ -1,0 +1,39 @@
+{
+  "KAY": [
+    {
+      "ori": "OK0360400",
+      "agency_name": "Tonkawa Police Department",
+      "state_abbr": "OK",
+      "state_name": "Oklahoma",
+      "agency_type_name": "City",
+      "is_nibrs": true,
+      "nibrs_start_date": "2009-01-01",
+      "latitude": 36.6784,
+      "longitude": -97.3100
+    },
+    {
+      "ori": "OK0360100",
+      "agency_name": "Kay County Sheriff's Office",
+      "state_abbr": "OK",
+      "state_name": "Oklahoma",
+      "agency_type_name": "County",
+      "is_nibrs": true,
+      "nibrs_start_date": "2011-06-01",
+      "latitude": 36.8134,
+      "longitude": -97.0835
+    }
+  ],
+  "NOBLE": [
+    {
+      "ori": "OK0520200",
+      "agency_name": "Perry Police Department",
+      "state_abbr": "OK",
+      "state_name": "Oklahoma",
+      "agency_type_name": "City",
+      "is_nibrs": false,
+      "nibrs_start_date": null,
+      "latitude": 36.2895,
+      "longitude": -97.2881
+    }
+  ]
+}

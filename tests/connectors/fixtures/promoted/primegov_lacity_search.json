@@ -1,0 +1,18 @@
+[
+  {
+    "meetingId": 5512,
+    "meetingTitle": "City Council Regular Meeting",
+    "meetingDate": "2026-08-12T09:00:00",
+    "meetingStatus": "Published",
+    "departmentName": "Office of the City Clerk",
+    "itemsSearchResultsDefaultLinkOnMeetingPortal": "https://lacity.primegov.com/Portal/Meeting?meetingTemplateId=5512"
+  },
+  {
+    "meetingId": 5513,
+    "meetingTitle": "Public Safety Committee",
+    "meetingDate": "2026-08-19T14:00:00",
+    "meetingStatus": "Published",
+    "departmentName": "Public Safety Committee",
+    "itemsSearchResultsDefaultLinkOnMeetingPortal": "https://lacity.primegov.com/Portal/Meeting?meetingTemplateId=5513"
+  }
+]

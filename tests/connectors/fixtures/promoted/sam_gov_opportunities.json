@@ -1,0 +1,31 @@
+{
+  "totalRecords": 2,
+  "limit": 25,
+  "offset": 0,
+  "opportunitiesData": [
+    {
+      "noticeId": "a1b2c3d4e5f60001",
+      "title": "Automated License Plate Reader System and Services",
+      "solicitationNumber": "FA-2026-LPR-001",
+      "type": "Solicitation",
+      "postedDate": "2026-08-15",
+      "responseDeadLine": "2026-09-30",
+      "fullParentPathName": "DEPT OF DEFENSE.DEPT OF THE AIR FORCE",
+      "subTier": "Air Force Materiel Command",
+      "office": "Example Contracting Office",
+      "uiLink": "https://sam.gov/opp/a1b2c3d4e5f60001/view"
+    },
+    {
+      "noticeId": "a1b2c3d4e5f60002",
+      "title": "Gunshot Detection System Maintenance",
+      "solicitationNumber": "GS-2026-GDS-002",
+      "type": "Award Notice",
+      "postedDate": "2026-08-20",
+      "responseDeadLine": null,
+      "fullParentPathName": "GENERAL SERVICES ADMINISTRATION",
+      "subTier": "Federal Acquisition Service",
+      "office": "Example Office",
+      "uiLink": "https://sam.gov/opp/a1b2c3d4e5f60002/view"
+    }
+  ]
+}
