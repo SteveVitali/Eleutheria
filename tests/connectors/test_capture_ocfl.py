@@ -106,6 +106,33 @@ def test_wacz_is_written_for_html_when_a_builder_is_supplied(
     assert store.resolve(object_id, "v1", WACZ_LOGICAL_PATH).startswith(b"PK-WACZ:")
 
 
+def test_each_put_pins_the_version_it_committed(tmp_path) -> None:  # type: ignore[no-untyped-def]
+    """P32.2 (SIG-TRUST-002): identical bytes acquired twice are TWO immutable
+    occurrences — each ref names the OCFL version THAT acquisition committed."""
+    store = _store(tmp_path)
+    a = store.put(b"occ-bytes", media_type="text/plain", source_uri="https://x.test/o")
+    b = store.put(b"occ-bytes", media_type="text/plain", source_uri="https://x.test/o")
+    assert a.ocfl_version == "v1" and b.ocfl_version == "v2"
+    assert a.ocfl_object_id == b.ocfl_object_id == capture_object_id(a.digest)
+
+
+def test_a_version_pinned_read_never_follows_head(tmp_path) -> None:  # type: ignore[no-untyped-def]
+    """P32.2 (SIG-TRUST-002): a replay reads the occurrence version the original
+    extraction consumed — never a mutable latest sidecar. A second acquisition's
+    metadata (its own retrieved_at) must not bleed into the v1 binding."""
+    store = _store(tmp_path)
+    t1 = datetime(2026, 5, 1, tzinfo=UTC)
+    t2 = datetime(2026, 6, 1, tzinfo=UTC)
+    a = store.put(
+        b"pinned", media_type="text/plain", source_uri="https://x.test/p", retrieved_at=t1
+    )
+    store.put(b"pinned", media_type="text/plain", source_uri="https://x.test/p", retrieved_at=t2)
+    # The head-sidecar is the SECOND acquisition's; the pinned read returns v1's.
+    assert store.metadata(a.digest)["retrieved_at"] == t2.isoformat()
+    assert store.metadata(a.digest, version=a.ocfl_version)["retrieved_at"] == t1.isoformat()
+    assert store.get(a.digest, version=a.ocfl_version) == b"pinned"
+
+
 def test_no_wacz_for_non_html_even_with_a_builder(tmp_path) -> None:  # type: ignore[no-untyped-def]
     def fake_wacz(url: str, data: bytes) -> bytes:  # pragma: no cover - must not run
         raise AssertionError("WACZ must not be built for a non-HTML media type")

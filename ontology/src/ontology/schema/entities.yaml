@@ -652,6 +652,26 @@ classes:
         range: datetime
       content_digest:
         range: string
+      # P32.2 (SIG-TRUST-002): the immutable store occurrence + honest class.
+      ocfl_object_id:
+        range: string
+        description: The OCFL object the capture's bytes were committed under.
+      ocfl_version:
+        range: string
+        description: >-
+          The immutable OCFL version this occurrence IS — a binding pins this
+          version, never a mutable inventory head.
+      source_uri:
+        range: string
+      blob_digest:
+        range: string
+        description: The deduplicated evidence_blob identity the bytes dedup to (SIG-EVID-004).
+      capture_classification:
+        range: CaptureClassification
+      byte_size:
+        range: integer
+      media_type:
+        range: string
   Extraction:
     is_a: Entity
     description: A run that extracted claims from a capture (§10.2).
@@ -660,6 +680,16 @@ classes:
         range: EvidenceCapture
       extraction_method:
         range: string
+      # P32.2: the extractor/config identity the binding records (SIG-TRUST-002).
+      extractor_name:
+        range: string
+      extractor_version:
+        range: string
+      normalizer_version:
+        range: string
+      extraction_config_digest:
+        range: string
+        description: The versioned config identity the extraction ran under.
   Claim:
     is_a: Entity
     description: >-
@@ -682,6 +712,146 @@ classes:
         range: EvidenceRole
       supersedes:
         range: Claim
+      # P32.2 (SIG-TRUST-001): the typed fields the production assertion
+      # envelope preserves — declared, never inferred upward.
+      object_type:
+        range: ClaimObjectType
+      object_entity_ref:
+        range: uriorcurie
+        description: The resolved entity an entity_ref object names; never a person (Part VIII).
+      unit:
+        range: string
+        description: REQUIRED when object_type is quantity (§10.3.5).
+      raw_context:
+        range: string
+        description: The citation anchor within the artifact (P2), as structured text.
+      normalization_id:
+        range: string
+      normalization_version:
+        range: string
+      valid_edtf:
+        range: edtf
+      observed_edtf:
+        range: edtf
+      observed_at_kind:
+        range: ObservedAtKind
+      observed_unknown_reason:
+        range: string
+        description: REQUIRED when observed_at is absent — an absent observation time always says why.
+      source_reliability:
+        range: SourceReliability
+      reliability_provisional:
+        range: boolean
+      claim_directness:
+        range: ClaimDirectness
+      artifact_integrity:
+        range: ArtifactIntegrity
+      legacy_source_tier:
+        range: string
+        description: An upstream's own Tier A-F label, passthrough only — never used in resolution (§10.4).
+      claim_polarity:
+        range: ClaimPolarity
+      rank:
+        range: ClaimRank
+      review_status:
+        range: ReviewStatus
+      sensitivity_tier:
+        range: integer
+        description: The §42 sensitivity tier; absent never silently lowers.
+      assertion_rationale:
+        range: string
+      derived_from_claim_ids:
+        range: Claim
+        multivalued: true
+      revises_claim:
+        range: Claim
+      retraction_of:
+        range: Claim
+      correction_reason:
+        range: string
+        description: REQUIRED when revises_claim is set (§16.6).
+      # SIG-TRUST-001: the named versioned default mapping + explicit basis.
+      assertion_map_id:
+        range: string
+        description: The named versioned mapping the row's defaults were derived under (sig.assertion.map.v1).
+      assertion_map_basis:
+        range: string
+        description: The explicit basis string recording how each absent field was derived.
+  ClaimEvidence:
+    is_a: Entity
+    description: >-
+      One claim↔capture evidence link (§16.5) — P32.2 binds the ACTUAL captured
+      artifact the extraction consumed, with its typed locator and binding
+      classification (SIG-TRUST-002).
+    attributes:
+      claim:
+        range: Claim
+      capture:
+        range: EvidenceCapture
+      extraction:
+        range: Extraction
+      role:
+        range: EvidenceRole
+      locator_kind:
+        range: LocatorKind
+        description: The kind of the typed locator row (locator fields live in the physical jsonb row).
+      extraction_config_digest:
+        range: string
+      extractor_version:
+        range: string
+      binding_status:
+        range: BindingStatus
+      bound_at:
+        range: datetime
+        description: When the binding was asserted — distinct from the capture's retrieval time.
+  ClaimQualifier:
+    is_a: Entity
+    description: >-
+      One typed qualifier statement on a claim (§16.5): the six FIELD_MAP §3
+      categories — instrument lifecycle, execution evidence, money/currency/
+      period, actor roles, capability/modality, clause applicability.
+    attributes:
+      claim:
+        range: Claim
+      qualifier_id:
+        range: predicate_code
+        description: A registered predicate id — unregistered keys quarantine, never guessed.
+      unit:
+        range: string
+      valid_from:
+        range: edtf
+        description: The qualifier's own applicability valid time (e.g. an instrument's effective period).
+      valid_to:
+        range: edtf
+      jurisdiction:
+        range: string
+        description: The applicability jurisdiction the qualifier scopes to.
+      rank:
+        range: ClaimRank
+      extraction:
+        range: Extraction
+  AssertionQuarantine:
+    is_a: Entity
+    description: >-
+      The append-only fail-closed landing for a rejected assertion (SIG-TRUST-001):
+      unknown predicates/types and binding failures land here with reason and full
+      payload — never silently dropped, never public-readable.
+    attributes:
+      reason:
+        range: QuarantineReason
+      connector_name:
+        range: string
+      source_ref:
+        range: Source
+      subject_ref:
+        range: string
+      predicate_id:
+        range: string
+      received_at:
+        range: datetime
+      payload_digest:
+        range: string
+        description: The content-keyed idempotency identity (a re-run is +0).
   Resolution:
     is_a: Entity
     description: A stored current-best decision record (§16.4, L3), not a view.

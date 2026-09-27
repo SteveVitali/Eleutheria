@@ -69,12 +69,25 @@ import logging
 import os
 import uuid
 from collections.abc import Callable, Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 from typing import Any
 
 import psycopg
 
+from .assertion import (
+    ASSERTION_MAP_ID,
+    BINDING_LEGACY,
+    BINDING_REPLAYED,
+    CAPTURE_ACTUAL,
+    CaptureBinding,
+    QuarantineReason,
+    Rejection,
+    TypedAssertion,
+    assertion_from_record,
+    binding_of,
+    quarantine_payload,
+)
 from .identity_guard import PARTNER_NAME_SCHEME, SUBJECT_SCHEME, resolve_identity_batch
 from .run_completion import SUCCESSFUL_STATUSES, append_completion
 
@@ -145,6 +158,9 @@ class ClaimSinkReport:
     duplicates: int = 0
     non_claim_records: int = 0
     entities: int = 0
+    #: Records the adapter failed closed into ``assertion_quarantine`` (P32.2):
+    #: unknown types, bad digests, missing bindings — never silently dropped.
+    quarantined: int = 0
 
 
 @dataclass(frozen=True)
@@ -227,6 +243,14 @@ class DuplicateBatch:
     #: the production re-sighting hook (:func:`record_resightings`) writes nothing
     #: for it. Other hooks may ignore the flag.
     replay: bool = False
+    #: content_digest -> (extraction_id, locator_json, config_digest,
+    #: extractor_version, binding_status) of this execution's binding (P32.2):
+    #: populated when the claims were asserted against an actual capture, so a
+    #: re-sighting's link carries the same typed provenance as its sighting —
+    #: never ``legacy_synthetic`` for a real capture.
+    binding_by_digest: Mapping[str, tuple[str | None, str | None, str | None, str | None, str]] = (
+        field(default_factory=dict)
+    )
 
 
 def record_resightings(batch: DuplicateBatch) -> None:
@@ -255,6 +279,32 @@ def record_resightings(batch: DuplicateBatch) -> None:
     """
     if batch.replay or not batch.existing:
         return
+    if batch.binding_by_digest:
+        # Typed path (P32.2): the re-sighting binds THIS execution's actual
+        # capture occurrence with the same binding classification as a first
+        # sighting — the sighting evidence is real captured bytes, not a
+        # synthetic placeholder.
+        rows = [
+            (claim_id, batch.capture_by_digest[d], *batch.binding_by_digest[d])
+            for d, claim_id in batch.existing.items()
+            if d in batch.capture_by_digest and d in batch.binding_by_digest
+        ]
+        if not rows:
+            return
+        batch.conn.execute(
+            _LINK_EVIDENCE_TYPED,
+            (
+                [r[0] for r in rows],
+                [r[1] for r in rows],
+                [r[2] for r in rows],
+                ["establishes"] * len(rows),
+                [r[3] for r in rows],
+                [r[4] for r in rows],
+                [r[5] for r in rows],
+                [r[6] for r in rows],
+            ),
+        )
+        return
     pairs = [
         (claim_id, batch.capture_by_digest[digest])
         for digest, claim_id in batch.existing.items()
@@ -281,19 +331,15 @@ class _Staged:
     digest: str
     subject: str
     predicate: str
-    value_kind: str
-    value_text: str | None
-    value_int: str | None  # an int value as exact decimal text
-    value_float: str | None  # a float value as its shortest round-trip repr
-    value_bool: str | None
-    raw_value: str
-    observed_at: str | None
-    observed_unknown_reason: str | None
     extraction_id: str
     run_id: str
     rights_id: str
     capture_id: str
     object_ref: EntityRef | None
+    #: The ``sig.assertion/1`` envelope the record was adapted into (P32.2) —
+    #: every typed field the claim row preserves, plus the default-provenance
+    #: map (``typed.defaulted``) stamped on the row.
+    typed: TypedAssertion
 
 
 def _coerce_observed_at(value: Any) -> datetime | None:
@@ -339,24 +385,59 @@ _REGISTER_PREDICATES = (
 # The float column goes text -> float8 -> numeric: the same float8 -> numeric
 # assignment cast the row-at-a-time path applied to a Python float, so the stored
 # numeric is byte-identical. An int goes text -> numeric (exact), as before.
+# P32.2 (SIG-TRUST-001): every typed field the envelope carries now lands on the
+# row — unit, value_json, raw_context, normalization, valid/observed-time
+# kinds + edtf, the R/D/I epistemic axes (per-claim, no longer run defaults),
+# polarity/rank/review_status, sensitivity_tier, the correction/derivation
+# links, and the named versioned default mapping + explicit basis.
 _INSERT_CLAIMS = (
     "INSERT INTO claim"
     "(subject_id, predicate_id, object_entity, object_type, value_kind, value_text,"
-    " value_num, value_bool, unit, raw_value, observed_at, observed_unknown_reason,"
-    " source_reliability, claim_directness, artifact_integrity, extraction_id,"
-    " ingest_run_id, rights_id, sensitivity_tier, content_digest) "
+    " value_num, value_bool, value_json, unit, raw_value, raw_context,"
+    " normalization_id, normalization_version,"
+    " valid_period, valid_edtf, valid_from_kind, valid_to_kind,"
+    " observed_at, observed_edtf, observed_at_kind, observed_unknown_reason,"
+    " source_reliability, reliability_provisional, claim_directness,"
+    " artifact_integrity, legacy_source_tier, claim_polarity, rank, review_status,"
+    " assertion_rationale, derived_from_claim_ids, revises_claim, retraction_of,"
+    " correction_reason,"
+    " extraction_id, ingest_run_id, rights_id, sensitivity_tier, content_digest,"
+    " assertion_map_id, assertion_map_basis) "
     "SELECT r.subject_id::uuid, r.predicate_id, r.object_entity::uuid,"
-    " CASE WHEN r.object_entity IS NULL THEN 'literal' ELSE 'entity_ref' END,"
-    " r.value_kind::value_kind, r.value_text,"
+    " r.object_type, r.value_kind::value_kind, r.value_text,"
     " COALESCE(r.value_int::numeric, r.value_float::float8::numeric), r.value_bool::boolean,"
-    " NULL, r.raw_value, r.observed_at::timestamptz, r.observed_unknown_reason,"
-    " %s, %s, %s, r.extraction_id::uuid, r.run_id::uuid, r.rights_id::uuid, 0,"
-    " r.content_digest "
+    " r.value_json::jsonb, r.unit, r.raw_value, r.raw_context::jsonb,"
+    " r.normalization_id, r.normalization_version,"
+    " tstzrange(r.valid_from::timestamptz, r.valid_to::timestamptz, '[)'),"
+    " r.valid_edtf, r.valid_from_kind, r.valid_to_kind,"
+    " r.observed_at::timestamptz, r.observed_edtf, r.observed_at_kind,"
+    " r.observed_unknown_reason,"
+    " r.source_reliability, r.reliability_provisional::boolean, r.claim_directness,"
+    " r.artifact_integrity, r.legacy_source_tier, r.claim_polarity,"
+    " r.rank::claim_rank, r.review_status::review_status,"
+    " r.assertion_rationale,"
+    " CASE WHEN r.derived IS NULL THEN NULL ELSE ('{' || r.derived || '}')::uuid[] END,"
+    " r.revises_claim::uuid, r.retraction_of::uuid, r.correction_reason,"
+    " r.extraction_id::uuid, r.run_id::uuid, r.rights_id::uuid,"
+    " r.sensitivity_tier::smallint, r.content_digest,"
+    " r.assertion_map_id, r.assertion_map_basis "
     "FROM unnest(%s::text[], %s::text[], %s::text[], %s::text[], %s::text[], %s::text[],"
-    " %s::text[], %s::text[], %s::text[], %s::text[], %s::text[], %s::text[], %s::text[],"
-    " %s::text[], %s::text[]) WITH ORDINALITY AS r(subject_id, predicate_id, object_entity,"
-    " value_kind, value_text, value_int, value_float, value_bool, raw_value, observed_at,"
-    " observed_unknown_reason, extraction_id, run_id, rights_id, content_digest, ord) "
+    " %s::text[], %s::text[], %s::text[], %s::text[], %s::text[], %s::text[],"
+    " %s::text[], %s::text[], %s::text[], %s::text[], %s::text[], %s::text[],"
+    " %s::text[], %s::text[], %s::text[], %s::text[], %s::text[], %s::text[],"
+    " %s::text[], %s::text[], %s::text[], %s::text[], %s::text[], %s::text[],"
+    " %s::text[], %s::text[], %s::text[], %s::text[], %s::text[], %s::text[],"
+    " %s::text[], %s::text[], %s::text[], %s::text[], %s::text[], %s::text[],"
+    " %s::text[], %s::text[]) WITH ORDINALITY AS r("
+    " subject_id, predicate_id, object_entity, object_type, value_kind, value_text,"
+    " value_int, value_float, value_bool, value_json, unit, raw_value, raw_context,"
+    " normalization_id, normalization_version, valid_from, valid_to, valid_edtf,"
+    " valid_from_kind, valid_to_kind, observed_at, observed_edtf, observed_at_kind,"
+    " observed_unknown_reason, source_reliability, reliability_provisional,"
+    " claim_directness, artifact_integrity, legacy_source_tier, claim_polarity, rank,"
+    " review_status, assertion_rationale, derived, revises_claim, retraction_of,"
+    " correction_reason, extraction_id, run_id, rights_id, sensitivity_tier,"
+    " content_digest, assertion_map_id, assertion_map_basis, ord) "
     "ORDER BY r.ord "
     "ON CONFLICT (content_digest) WHERE content_digest IS NOT NULL "
     "DO NOTHING RETURNING claim_id, content_digest"
@@ -387,6 +468,103 @@ _LINK_EVIDENCE = (
     "ON CONFLICT (claim_id, capture_id, role) DO NOTHING"
 )
 
+# P32.2 (SIG-TRUST-002): the typed link — same (claim, capture, role) identity,
+# plus the extraction that consumed the capture, the typed locator, the
+# extractor/config identity, and the binding classification. bound_at defaults
+# to the DB clock (the assertion time, not the observation time).
+_LINK_EVIDENCE_TYPED = (
+    "INSERT INTO claim_evidence"
+    "(claim_id, capture_id, extraction_id, role, locator,"
+    " extraction_config_digest, extractor_version, binding_status) "
+    "SELECT l.claim_id::uuid, l.capture_id::uuid, l.extraction_id::uuid, l.role,"
+    " l.locator::jsonb, l.config_digest, l.extractor_version, l.binding_status "
+    "FROM unnest(%s::text[], %s::text[], %s::text[], %s::text[], %s::text[],"
+    " %s::text[], %s::text[], %s::text[]) AS l(claim_id, capture_id, extraction_id,"
+    " role, locator, config_digest, extractor_version, binding_status) "
+    "ON CONFLICT (claim_id, capture_id, role) DO NOTHING"
+)
+
+# P32.2: typed qualifier rows (the previously unwritten claim_qualifier surface).
+_INSERT_QUALIFIERS = (
+    "INSERT INTO claim_qualifier"
+    "(claim_id, qualifier_id, value_text, value_num, value_bool, value_entity,"
+    " unit, jurisdiction, valid_from, valid_to, extraction_id, rank) "
+    "SELECT q.claim_id::uuid, q.qualifier_id, q.value_text, q.value_num::numeric,"
+    " q.value_bool::boolean, q.value_entity::uuid, q.unit, q.jurisdiction,"
+    " q.valid_from::date, q.valid_to::date, q.extraction_id::uuid, q.rank "
+    "FROM unnest(%s::text[], %s::text[], %s::text[], %s::text[], %s::text[],"
+    " %s::text[], %s::text[], %s::text[], %s::text[], %s::text[], %s::text[],"
+    " %s::text[]) AS q(claim_id, qualifier_id, value_text, value_num, value_bool,"
+    " value_entity, unit, jurisdiction, valid_from, valid_to, extraction_id, rank) "
+    "ON CONFLICT DO NOTHING"
+)
+
+# P32.2: the fail-closed landing for a rejected assertion. payload_digest makes
+# a re-run +0; the row is immutable (trigger) and never public-readable.
+_QUARANTINE = (
+    "INSERT INTO assertion_quarantine"
+    "(run_id, reason, connector_name, source_id, subject_ref, predicate_id,"
+    " payload, payload_digest) "
+    "VALUES (%s, %s, %s, %s, %s, %s, %s::jsonb, %s) "
+    "ON CONFLICT (payload_digest) DO NOTHING RETURNING quarantine_id"
+)
+
+# P32.2: the actual-capture occurrence. The artifact is keyed by the source's
+# real URI (not the sig:connector:* synthetic locator); the blob dedups bytes
+# (one blob row, N immutable capture occurrence rows); the capture row itself
+# is the immutable occurrence — replay resolves the ORIGINAL row by
+# (artifact, digest, retrieved_at) rather than asserting a new one.
+_ACTUAL_ARTIFACT = (
+    "INSERT INTO evidence_artifact"
+    "(source_id, url, stable_locator, artifact_type, acquisition_method,"
+    " primary_or_secondary, rights_id, capture_status) "
+    "VALUES (%s, %s, %s, %s, %s, 'primary', %s, 'captured') "
+    "ON CONFLICT (source_id, stable_locator) DO NOTHING RETURNING artifact_id"
+)
+_ACTUAL_ARTIFACT_ID = (
+    "SELECT artifact_id FROM evidence_artifact WHERE source_id = %s AND stable_locator = %s"
+)
+_ACTUAL_BLOB = (
+    "INSERT INTO evidence_blob"
+    "(blob_digest, source_uri, byte_size, ocfl_object_id, ocfl_version) "
+    "VALUES (%s, %s, %s, %s, %s) ON CONFLICT (blob_digest, source_uri) DO NOTHING"
+)
+_CAPTURE_OCCURRENCE = (
+    "SELECT capture_id, ocfl_version FROM evidence_capture "
+    "WHERE artifact_id = %s AND content_digest = %s AND retrieved_at = %s "
+    "ORDER BY capture_id LIMIT 1"
+)
+_INSERT_OCCURRENCE = (
+    "INSERT INTO evidence_capture"
+    "(artifact_id, content_digest, byte_size, media_type, retrieved_at,"
+    " retrieved_by_run_id, ocfl_object_id, ocfl_version, storage_tier,"
+    " capture_method, capture_tool_version, source_uri, blob_digest,"
+    " capture_classification) "
+    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'public', %s, %s, %s, %s, %s) "
+    "RETURNING capture_id"
+)
+_EXTRACTION_OF = (
+    "SELECT extraction_id FROM extraction "
+    "WHERE capture_id = %s AND run_id = %s AND method = %s "
+    "ORDER BY extracted_at LIMIT 1"
+)
+_INSERT_EXTRACTION = (
+    "INSERT INTO extraction"
+    "(capture_id, method, extractor_name, extractor_version, normalizer_version,"
+    " model_id, prompt_version, parameters, run_id) "
+    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s::jsonb, %s) RETURNING extraction_id"
+)
+
+# vocab_normalization mirrors the vocab_predicate auto-registration posture: a
+# connector-declared normalization id registers (it names WHAT was applied, an
+# honest provenance record) instead of failing the claim on the FK.
+_REGISTER_NORMALIZATIONS = (
+    "INSERT INTO vocab_normalization(normalization_id, definition) "
+    "SELECT n.normalization_id, 'connector-declared normalization' "
+    "FROM unnest(%s::text[]) AS n(normalization_id) "
+    "ON CONFLICT (normalization_id) DO NOTHING"
+)
+
 #: The marks a restarted execution resumes from (P31.4 / ADR-111): those of the
 #: executions of the same logical run — same connector name, version AND code
 #: commit (the rolled image digest on hosted), so a restart on different code
@@ -407,7 +585,8 @@ _RESUME_MARKS = (
     " WHERE c.backfilled_from IS NULL AND c.status = ANY(%(successful)s::text[])"
     ") "
     "SELECT DISTINCT ON (m.target_key) m.target_key, m.state, m.capture_digest, m.source_uri,"
-    " m.media_type, m.byte_size, m.retrieved_at, m.records "
+    " m.media_type, m.byte_size, m.retrieved_at, m.records,"
+    " m.ocfl_object_id, m.ocfl_version, m.run_id::text "
     "FROM ingest_run_capture m JOIN runs r ON r.run_id = m.run_id "
     "WHERE r.started_at > COALESCE((SELECT at FROM done), '-infinity'::timestamptz) "
     "ORDER BY m.target_key, (m.state = 'flushed') DESC, m.recorded_at DESC"
@@ -415,8 +594,8 @@ _RESUME_MARKS = (
 
 _RECORD_CAPTURE = (
     "INSERT INTO ingest_run_capture(run_id, target_key, state, capture_digest, source_uri,"
-    " media_type, byte_size, retrieved_at, records) "
-    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) "
+    " media_type, byte_size, retrieved_at, records, ocfl_object_id, ocfl_version) "
+    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
     "ON CONFLICT (run_id, target_key, state) DO NOTHING"
 )
 
@@ -539,6 +718,14 @@ class PgClaimSink:
         # The open chunk: staged claims + the predicates they introduce.
         self._staged: list[_Staged] = []
         self._pending_predicates: dict[str, str] = {}
+        # P32.2: the binding of the in-flight assert_claims call — the actual
+        # CaptureBinding, a Rejection (the whole call fails closed into
+        # quarantine), or None (the legacy synthetic path).
+        self._active_binding: CaptureBinding | Rejection | None = None
+        # (capture_id, method, config_digest) -> extraction_id, per run.
+        self._extraction_by_key: dict[tuple[str, str, str | None], str] = {}
+        # (source_uri) -> artifact_id of the real-capture artifact.
+        self._artifact_by_uri: dict[tuple[str, str], str] = {}
         # Cache entries added during the open chunk; undone if the chunk rolls back.
         self._journal: list[tuple[Any, Any]] = []
         self._chunk_exhausted = False
@@ -557,8 +744,21 @@ class PgClaimSink:
 
     # --- ClaimSink protocol ----------------------------------------------------
 
-    def assert_claims(self, claims: Sequence[Mapping[str, Any]]) -> None:
+    def assert_claims(self, claims: Sequence[Mapping[str, Any]], *, capture: Any = None) -> None:
         """Persist ``claims`` append-only and idempotently (the L1 write path).
+
+        P32.2 (SIG-TRUST-002): ``capture`` is the actual :class:`CaptureRef` the
+        extractor consumed. When given, every claim binds that capture
+        occurrence — digest, source URI, byte size, retrieval time, OCFL
+        object/version — instead of the synthetic per-run placeholder the
+        pre-P32.2 sink invented. A binding that cannot be normalised fails
+        closed: every record of the call quarantines with the rejection reason,
+        and nothing is silently written against the wrong provenance. Without
+        ``capture`` the legacy path still lands claims, but their
+        ``claim_evidence`` links are honestly classified ``legacy_synthetic``
+        (and the synthetic capture ``synthetic``) — never mistaken for real
+        byte provenance.
+
 
         Commits in **bounded chunks** of ``commit_chunk_size`` claims (P26.18 /
         SOURCES.17): each chunk is its own ``self._conn.transaction()``, so a
@@ -581,21 +781,27 @@ class PgClaimSink:
         count only committed chunks: a chunk that raises restores them (P31.2).
         """
         chunk_size = self._commit_chunk_size
+        self._active_binding = (
+            binding_of(capture, replayed=self._is_replay) if capture is not None else None
+        )
         remaining = iter(claims)
         exhausted = False
-        while not exhausted:
-            # P31.2 / ADR-109: a chunk that raises rolls back everything it wrote,
-            # so the ids cached during it and its inserted/duplicate counts must go
-            # with it. Otherwise a failed run's completion would name a rolled-back
-            # ingest_run, or count claims that never landed.
-            snapshot = self._chunk_snapshot()
-            try:
-                self._assert_chunk(remaining, chunk_size)
-            except BaseException:
-                self._restore_chunk_snapshot(snapshot)
-                raise
-            self._journal.clear()
-            exhausted = self._chunk_exhausted
+        try:
+            while not exhausted:
+                # P31.2 / ADR-109: a chunk that raises rolls back everything it wrote,
+                # so the ids cached during it and its inserted/duplicate counts must go
+                # with it. Otherwise a failed run's completion would name a rolled-back
+                # ingest_run, or count claims that never landed.
+                snapshot = self._chunk_snapshot()
+                try:
+                    self._assert_chunk(remaining, chunk_size)
+                except BaseException:
+                    self._restore_chunk_snapshot(snapshot)
+                    raise
+                self._journal.clear()
+                exhausted = self._chunk_exhausted
+        finally:
+            self._active_binding = None
 
     def _chunk_snapshot(self) -> tuple[Any, ...]:
         # The id caches are journaled (undo on rollback) instead of copied, so a
@@ -834,6 +1040,9 @@ class PgClaimSink:
             "byte_size",
             "retrieved_at",
             "records",
+            "ocfl_object_id",
+            "ocfl_version",
+            "run_id",
         )
         return [dict(zip(keys, row, strict=True)) for row in rows]
 
@@ -848,8 +1057,14 @@ class PgClaimSink:
         byte_size: int,
         retrieved_at: datetime | None = None,
         records: int | None = None,
+        ocfl_object_id: str | None = None,
+        ocfl_version: str | None = None,
     ) -> None:
         """Append this execution's ``state`` mark for one fetch target (append-only).
+
+        The ``ocfl_*`` pair (P32.2) names the immutable store occurrence the
+        mark's bytes were committed under, so a later resume or replay binds
+        THAT version, never whatever a re-fetch moved ``head`` to.
 
         ``captured`` is written once the target's bytes are in the capture store;
         ``flushed`` once every claim of the capture has committed, with the number
@@ -875,6 +1090,8 @@ class PgClaimSink:
                 byte_size,
                 retrieved_at,
                 records,
+                ocfl_object_id,
+                ocfl_version,
             ),
         )
 
@@ -952,9 +1169,10 @@ class PgClaimSink:
                 "INSERT INTO evidence_capture"
                 "(artifact_id, content_digest, byte_size, media_type, retrieved_at,"
                 " retrieved_by_run_id, ocfl_object_id, ocfl_version, storage_tier,"
-                " capture_method, capture_tool_version, source_uri, blob_digest) "
+                " capture_method, capture_tool_version, source_uri, blob_digest,"
+                " capture_classification) "
                 "VALUES (%s, %s, 0, 'application/octet-stream', clock_timestamp(), %s,"
-                " %s, 'v1', 'public', 'connector', %s, %s, %s) RETURNING capture_id",
+                " %s, 'v1', 'public', 'connector', %s, %s, %s, 'synthetic') RETURNING capture_id",
                 (
                     artifact_id,
                     cap_digest,
@@ -1021,12 +1239,34 @@ class PgClaimSink:
         run), which are cached, and computes its row. The subject entity, the
         predicate registration, the claim row and its evidence link are written
         for the whole chunk by :meth:`_write_chunk`, inside the same transaction.
+
+        P32.2 (SIG-TRUST-001/002): the record is first adapted into the
+        ``sig.assertion/1`` envelope — every typed field preserved, every default
+        basis-labelled, every unknown type rejected. A binding that cannot be
+        normalised fails the whole ``assert_claims`` call closed into quarantine;
+        a record-level rejection quarantines just that record and the rest of the
+        chunk still lands (one bad assertion never makes an entity disappear).
         """
-        subject = str(claim.get("subject_id") or "")
-        predicate = str(claim.get("predicate_id") or "")
-        if not subject or not predicate:
-            self.report.non_claim_records += 1
+        active = self._active_binding
+        if isinstance(active, Rejection):
+            # The capture this call's claims were extracted from is unusable —
+            # fail closed into quarantine (a bad digest/missing binding must
+            # never be silently re-anchored to synthetic provenance).
+            self._quarantine(claim, active)
             return
+        source_id_for_q = str(claim.get("source_id") or self._connector_name)
+        adapted = assertion_from_record(
+            claim,
+            binding=active if isinstance(active, CaptureBinding) else None,
+            replayed=self._is_replay,
+        )
+        if isinstance(adapted, Rejection):
+            self._quarantine(claim, adapted, source_id=source_id_for_q)
+            return
+        typed = adapted
+        subject = typed.subject
+        predicate = typed.predicate
+
         value = claim.get("value")
         spdx = str(claim.get("license") or claim.get("spdx") or "UNDETERMINED")
         attribution = claim.get("source_attribution") or claim.get("attribution")
@@ -1036,72 +1276,228 @@ class PgClaimSink:
         rights_id = self._rights_id(spdx, attribution)
         if predicate not in self._known_predicates:
             self._pending_predicates.setdefault(predicate, _value_datatype(value))
-        capture_id, extraction_id = self._ensure_evidence(source_id, rights_id, genre)
         run_id = self._ensure_run()
-
-        observed_at = _coerce_observed_at(claim.get("observed_at"))
-        observed_unknown_reason = (
-            None if observed_at is not None else "connector run did not record an observation time"
-        )
-        # The canonical scalar value: an explicit ``value``, else the P2-preserved
-        # ``raw_value`` (the source's literal text), else no value at all.
-        raw_field = claim.get("raw_value")
-        raw_value = (
-            str(raw_field) if raw_field is not None else (str(value) if value is not None else "")
-        )
-        value_int: str | None = None
-        value_float: str | None = None
-        value_bool: str | None = None
-        if value is not None:
-            value_kind = "value"
-            value_text: str | None = str(value)
-            if isinstance(value, bool):
-                value_bool = "true" if value else "false"
-            elif isinstance(value, int):
-                value_int = str(int(value))  # int() normalises an int subclass
-            elif isinstance(value, float):
-                # The shortest round-trip text of the double, which float8 parses
-                # back to the same double. float() normalises a float subclass
-                # (e.g. numpy.float64), whose repr is not a number.
-                value_float = repr(float(value))
-        elif raw_field is not None and str(raw_field) != "":
-            value_kind = "value"
-            value_text = str(raw_field)
+        if isinstance(active, CaptureBinding):
+            capture_id = self._ensure_actual_capture(
+                active, source_id=source_id, rights_id=rights_id, genre=genre
+            )
+            if capture_id is None:
+                # Occurrence/version resolution failed (the stored occurrence's
+                # OCFL version disagrees with the binding) — quarantine, no claim.
+                self._quarantine(
+                    claim,
+                    Rejection(
+                        QuarantineReason.VERSION_MISMATCH,
+                        "the binding's declared OCFL version disagrees with the "
+                        "stored occurrence's recorded version",
+                        quarantine_payload(
+                            claim, connector_name=self._connector_name, source_id=source_id
+                        ),
+                    ),
+                    source_id=source_id,
+                )
+                return
+            extraction_id = self._ensure_extraction(
+                capture_id,
+                run_id,
+                method=typed.extraction_method,
+                config_digest=typed.extraction_config_digest,
+                extractor_version=typed.extractor_version,
+                model_id=typed.extraction_model_id,
+                prompt_version=typed.extraction_prompt_version,
+            )
         else:
-            # A connector row that asserts a subject/predicate with no value yet
-            # (§16.2 'novalue'): every value_* column stays null.
-            value_kind = "novalue"
-            value_text = None
+            capture_id, extraction_id = self._ensure_evidence(source_id, rights_id, genre)
+
         object_ref = self._object_resolver(claim) if self._object_resolver is not None else None
         if object_ref is not None and object_ref.entity_type in _REFUSED_OBJECT_TYPES:
             raise ValueError(
                 f"object resolver named a {object_ref.entity_type!r} entity; the sink "
                 "never mints one (Part VIII)"
             )
-        if object_ref is not None and (not object_ref.value or value_kind == "novalue"):
+        if object_ref is not None and (not object_ref.value or typed.value_kind == "novalue"):
             # An entity reference needs a named entity and a value to stand for:
             # without either the claim stays a literal (claim_value_shape).
             object_ref = None
+        if object_ref is not None and typed.object_type == "literal" and "object_type" not in claim:
+            # The object seam (P31.5) resolved an entity for this record: the
+            # object_type upgrades to entity_ref with its basis recorded —
+            # a literal a connector explicitly DECLARED is never flipped.
+            typed.object_type = "entity_ref"
+            typed.defaulted["object_type"] = "object_resolver"
         self._staged.append(
             _Staged(
                 digest=content_digest(claim),
                 subject=subject,
                 predicate=predicate,
-                value_kind=value_kind,
-                value_text=value_text,
-                value_int=value_int,
-                value_float=value_float,
-                value_bool=value_bool,
-                raw_value=raw_value,
-                observed_at=observed_at.isoformat() if observed_at is not None else None,
-                observed_unknown_reason=observed_unknown_reason,
                 extraction_id=extraction_id,
                 run_id=run_id,
                 rights_id=rights_id,
                 capture_id=capture_id,
                 object_ref=object_ref,
+                typed=typed,
             )
         )
+
+    def _quarantine(
+        self, record: Mapping[str, Any], rejection: Rejection, *, source_id: str | None = None
+    ) -> None:
+        """Append the rejection to ``assertion_quarantine`` (append-only, +0 re-run)."""
+        run_id = self._ensure_run()
+        payload = rejection.payload or quarantine_payload(
+            record, connector_name=self._connector_name, source_id=source_id
+        )
+        digest = rejection.payload_digest
+        row = self._conn.execute(
+            _QUARANTINE,
+            (
+                run_id,
+                rejection.reason.value,
+                self._connector_name,
+                source_id,
+                str(record.get("subject_id") or "") or None,
+                str(record.get("predicate_id") or "") or None,
+                json.dumps(payload, sort_keys=True, default=str),
+                digest,
+            ),
+        ).fetchone()
+        if row is not None:
+            self.report.quarantined += 1
+
+    def _ensure_actual_capture(
+        self, binding: CaptureBinding, *, source_id: str, rights_id: str, genre: str
+    ) -> str | None:
+        """Resolve/insert the actual ``evidence_capture`` occurrence the binding names.
+
+        The artifact is keyed by the capture's real source URI (never the
+        synthetic ``sig:connector:`` locator); the blob row dedups identical
+        bytes; the capture row is the immutable occurrence — a replay binding
+        resolves the ORIGINAL occurrence row by ``(artifact, digest,
+        retrieved_at)`` instead of asserting a fresh one, so the occurrence's
+        provenance stays the original acquisition's.
+
+        Returns ``None`` when a stored occurrence exists but disagrees with the
+        binding's declared OCFL version (a version mismatch is quarantined by
+        the caller, never silently rebound).
+        """
+        cache_key = (source_id, binding.source_uri)
+        artifact_id = self._artifact_by_uri.get(cache_key)
+        if artifact_id is None:
+            self._ensure_source(source_id, rights_id)
+            acquisition = "replay" if binding.replayed else "http_get"
+            art = self._conn.execute(
+                _ACTUAL_ARTIFACT,
+                (
+                    source_id,
+                    binding.source_uri,
+                    binding.source_uri,
+                    genre,
+                    acquisition,
+                    rights_id,
+                ),
+            ).fetchone()
+            if art is None:
+                art = self._conn.execute(
+                    _ACTUAL_ARTIFACT_ID, (source_id, binding.source_uri)
+                ).fetchone()
+            assert art is not None
+            artifact_id = str(art[0])
+            self._remember(self._artifact_by_uri, cache_key, artifact_id)
+        run_id = self._ensure_run()
+        self._conn.execute(
+            _ACTUAL_BLOB,
+            (
+                binding.digest,
+                binding.source_uri,
+                binding.byte_size,
+                binding.ocfl_object_id,
+                binding.ocfl_version or "v1",
+            ),
+        )
+        retrieved_at = binding.retrieved_at
+        if retrieved_at is not None:
+            row = self._conn.execute(
+                _CAPTURE_OCCURRENCE, (artifact_id, binding.digest, retrieved_at)
+            ).fetchone()
+            if row is not None:
+                stored_version = str(row[1])
+                if binding.ocfl_version is not None and stored_version != binding.ocfl_version:
+                    return None  # version mismatch — quarantined by the caller
+                return str(row[0])
+        method = "replay" if binding.replayed else "http_get"
+        ins = self._conn.execute(
+            _INSERT_OCCURRENCE,
+            (
+                artifact_id,
+                binding.digest,
+                binding.byte_size,
+                binding.media_type,
+                retrieved_at,
+                binding.original_run_id or run_id,
+                binding.ocfl_object_id,
+                binding.ocfl_version or "v1",
+                method,
+                self._connector_version,
+                binding.source_uri,
+                binding.digest,
+                CAPTURE_ACTUAL,
+            ),
+        ).fetchone()
+        assert ins is not None
+        return str(ins[0])
+
+    def _ensure_extraction(
+        self,
+        capture_id: str,
+        run_id: str,
+        *,
+        method: str,
+        config_digest: str | None,
+        extractor_version: str | None,
+        model_id: str | None = None,
+        prompt_version: str | None = None,
+    ) -> str:
+        """Resolve/insert the ``extraction`` for this (capture, run, method, config).
+
+        One extraction row per extraction invocation identity: a replay run
+        writes a NEW row against the same original capture (the original
+        extraction stays linked to the original run), so the extraction's own
+        time is the replay's assertion time while the capture's is the source's
+        observation time.
+        """
+        key = (capture_id, method, config_digest)
+        cached = self._extraction_by_key.get(key)
+        if cached is not None:
+            return cached
+        row = self._conn.execute(_EXTRACTION_OF, (capture_id, run_id, method)).fetchone()
+        if row is not None:
+            extraction_id = str(row[0])
+        else:
+            params = json.dumps(
+                {
+                    "config_digest": config_digest,
+                    "assertion_schema": "sig.assertion/1",
+                },
+                sort_keys=True,
+            )
+            ins = self._conn.execute(
+                _INSERT_EXTRACTION,
+                (
+                    capture_id,
+                    method,
+                    self._connector_name,
+                    extractor_version or self._connector_version,
+                    self._connector_version,
+                    model_id,
+                    prompt_version,
+                    params,
+                    run_id,
+                ),
+            ).fetchone()
+            assert ins is not None
+            extraction_id = str(ins[0])
+        self._remember(self._extraction_by_key, key, extraction_id)
+        return extraction_id
 
     def _write_chunk(self) -> None:
         """Write the open chunk's staged claims (inside its transaction).
@@ -1126,6 +1522,11 @@ class PgClaimSink:
                 refs.setdefault((o.scheme, o.value), (o.scheme, o.value, o.entity_type))
         entity_ids = self._resolve_entities(list(refs.values()))
         self._write_partner_organizations(staged, entity_ids)
+        # Register the normalization ids this chunk declares (the vocab FK on
+        # claim.normalization_id must never fail a valid claim — SIG-TRUST-001).
+        norm_ids = sorted({s.typed.normalization_id for s in staged if s.typed.normalization_id})
+        if norm_ids:
+            self._conn.execute(_REGISTER_NORMALIZATIONS, (norm_ids,))
 
         # Within one chunk the first occurrence of a digest is the one written.
         unique: list[_Staged] = []
@@ -1142,9 +1543,7 @@ class PgClaimSink:
             rows = self._conn.execute(
                 _INSERT_CLAIMS,
                 (
-                    _DEFAULT_RELIABILITY,
-                    _DEFAULT_DIRECTNESS,
-                    _DEFAULT_INTEGRITY,
+                    # --- 44 staged arrays, the WITH ORDINALITY order ---
                     [entity_ids[(SUBJECT_SCHEME, s.subject)] for s in part],
                     [s.predicate for s in part],
                     [
@@ -1153,32 +1552,163 @@ class PgClaimSink:
                         else None
                         for s in part
                     ],
-                    [s.value_kind for s in part],
-                    [s.value_text for s in part],
-                    [s.value_int for s in part],
-                    [s.value_float for s in part],
-                    [s.value_bool for s in part],
-                    [s.raw_value for s in part],
-                    [s.observed_at for s in part],
-                    [s.observed_unknown_reason for s in part],
+                    [s.typed.object_type for s in part],
+                    [s.typed.value_kind for s in part],
+                    [s.typed.value_text for s in part],
+                    [s.typed.value_int for s in part],
+                    [s.typed.value_float for s in part],
+                    [
+                        None if s.typed.value_bool is None else str(s.typed.value_bool).lower()
+                        for s in part
+                    ],
+                    [s.typed.value_json for s in part],
+                    [s.typed.unit for s in part],
+                    [s.typed.raw_value for s in part],
+                    [s.typed.raw_context for s in part],
+                    [s.typed.normalization_id for s in part],
+                    [s.typed.normalization_version for s in part],
+                    [s.typed.valid_from for s in part],
+                    [s.typed.valid_to for s in part],
+                    [s.typed.valid_edtf for s in part],
+                    [s.typed.valid_from_kind for s in part],
+                    [s.typed.valid_to_kind for s in part],
+                    [s.typed.observed_at for s in part],
+                    [s.typed.observed_edtf for s in part],
+                    [s.typed.observed_at_kind for s in part],
+                    [s.typed.observed_unknown_reason for s in part],
+                    [s.typed.source_reliability for s in part],
+                    [str(s.typed.reliability_provisional).lower() for s in part],
+                    [s.typed.claim_directness for s in part],
+                    [s.typed.artifact_integrity for s in part],
+                    [s.typed.legacy_source_tier for s in part],
+                    [s.typed.claim_polarity for s in part],
+                    [s.typed.rank for s in part],
+                    [s.typed.review_status for s in part],
+                    [s.typed.assertion_rationale for s in part],
+                    [",".join(s.typed.derived_from_claim_ids) or None for s in part],
+                    [s.typed.revises_claim for s in part],
+                    [s.typed.retraction_of for s in part],
+                    [s.typed.correction_reason for s in part],
                     [s.extraction_id for s in part],
                     [s.run_id for s in part],
                     [s.rights_id for s in part],
+                    [str(s.typed.sensitivity_tier) for s in part],
                     [s.digest for s in part],
+                    [ASSERTION_MAP_ID] * len(part),
+                    [
+                        s.typed.map_basis(
+                            replayed=s.typed.binding_status == BINDING_REPLAYED,
+                            synthetic=s.typed.binding_status == BINDING_LEGACY,
+                        )
+                        for s in part
+                    ],
                 ),
             ).fetchall()
             if not rows:
                 continue
-            # Link each new claim to its establishing capture (§16.5).
-            capture_of = {s.digest: s.capture_id for s in part}
+            # Link each new claim to the capture its extraction actually consumed
+            # — the typed locator, the extraction identity, and the binding
+            # classification (§16.5; SIG-TRUST-002).
+            by_digest = {s.digest: s for s in part}
             new = {str(r[1]): str(r[0]) for r in rows}
-            self._conn.execute(_LINK_EVIDENCE, (list(new.values()), [capture_of[d] for d in new]))
+            self._conn.execute(
+                _LINK_EVIDENCE_TYPED,
+                (
+                    list(new.values()),
+                    [by_digest[d].capture_id for d in new],
+                    [by_digest[d].extraction_id for d in new],
+                    [by_digest[d].typed.evidence_role for d in new],
+                    [
+                        json.dumps(by_digest[d].typed.locator_row)
+                        if by_digest[d].typed.locator_row
+                        else None
+                        for d in new
+                    ],
+                    [by_digest[d].typed.extraction_config_digest for d in new],
+                    [by_digest[d].typed.extractor_version or self._connector_version for d in new],
+                    [by_digest[d].typed.binding_status for d in new],
+                ),
+            )
             inserted.update(new)
+            self._insert_qualifiers(by_digest, new)
         self.report.inserted += len(inserted)
         self.report.duplicates += len(staged) - len(inserted)
 
         if self._on_duplicates is not None:
             self._report_duplicates(unique, inserted)
+
+    def _insert_qualifiers(
+        self, by_digest: Mapping[str, _Staged], inserted: Mapping[str, str]
+    ) -> None:
+        """Write the chunk's ``claim_qualifier`` rows (the P32.2 typed surface).
+
+        The qualifier vocabulary is the same registered ``vocab_predicate``
+        surface claims name (FIELD_MAP §3): a qualifier id the registry does
+        not know fails closed into ``assertion_quarantine`` naming the claim —
+        never guessed, never registered — while the claim itself still lands.
+        """
+        rows: list[tuple[_Staged, Any]] = []
+        qids = {q.qualifier_id for digest in inserted for q in by_digest[digest].typed.qualifiers}
+        if not qids:
+            return
+        known = {
+            str(r[0])
+            for r in self._conn.execute(
+                "SELECT predicate_id FROM vocab_predicate WHERE predicate_id = ANY(%s::text[])",
+                (sorted(qids),),
+            ).fetchall()
+        }
+        for digest in inserted:
+            staged = by_digest[digest]
+            for q in staged.typed.qualifiers:
+                if q.qualifier_id in known:
+                    rows.append((staged, q))
+                else:
+                    self._quarantine(
+                        {
+                            "subject_id": staged.subject,
+                            "predicate_id": staged.predicate,
+                            "qualifier": {"qualifier_id": q.qualifier_id},
+                        },
+                        Rejection(
+                            QuarantineReason.UNKNOWN_QUALIFIER,
+                            f"qualifier_id {q.qualifier_id!r} is not a registered "
+                            "predicate (vocab_predicate); never guessed",
+                            {
+                                "claim_digest": staged.digest,
+                                "claim_id": inserted[digest],
+                                "qualifier": {
+                                    "qualifier_id": q.qualifier_id,
+                                    "value_text": q.value_text,
+                                    "value_num": q.value_num,
+                                    "value_bool": q.value_bool,
+                                    "value_entity": q.value_entity,
+                                    "unit": q.unit,
+                                    "jurisdiction": q.jurisdiction,
+                                    "rank": q.rank,
+                                },
+                            },
+                        ),
+                    )
+        if not rows:
+            return
+        self._conn.execute(
+            _INSERT_QUALIFIERS,
+            (
+                [inserted[s.digest] for s, _ in rows],
+                [q.qualifier_id for _, q in rows],
+                [q.value_text for _, q in rows],
+                [q.value_num for _, q in rows],
+                [None if q.value_bool is None else str(q.value_bool).lower() for _, q in rows],
+                [q.value_entity for _, q in rows],
+                [q.unit for _, q in rows],
+                [q.jurisdiction for _, q in rows],
+                [q.valid_from.isoformat() if q.valid_from else None for _, q in rows],
+                [q.valid_to.isoformat() if q.valid_to else None for _, q in rows],
+                [s.extraction_id for s, _ in rows],
+                [q.rank for _, q in rows],
+            ),
+        )
 
     def _write_partner_organizations(
         self, staged: Sequence[_Staged], entity_ids: Mapping[tuple[str, str], str]
@@ -1235,6 +1765,16 @@ class PgClaimSink:
                 existing=existing,
                 capture_by_digest={s.digest: s.capture_id for s in dup},
                 replay=self._is_replay,
+                binding_by_digest={
+                    s.digest: (
+                        s.extraction_id,
+                        json.dumps(s.typed.locator_row) if s.typed.locator_row else None,
+                        s.typed.extraction_config_digest,
+                        s.typed.extractor_version or self._connector_version,
+                        s.typed.binding_status,
+                    )
+                    for s in dup
+                },
             )
         )
 

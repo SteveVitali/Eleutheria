@@ -110,7 +110,11 @@ def asserting_replay(
         report.captures += 1
         report.claims += len(claims)
         if ctx.claim_sink is not None:
-            ctx.claim_sink.assert_claims(claims)
+            # P32.2 (SIG-TRUST-002): bind the ORIGINAL capture occurrence —
+            # its digest, retrieval time and OCFL version are the replayed
+            # bytes' provenance; the replay's own assertion time lands on the
+            # claim's sys_period, never in the capture's retrieved_at.
+            ctx.claim_sink.assert_claims(claims, capture=capture)
             report.asserted += len(claims)
         if on_capture is not None:
             on_capture(capture, claims)

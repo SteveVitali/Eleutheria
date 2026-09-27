@@ -197,6 +197,12 @@ class EntityResponse(_Model):
     location: GeoPoint | None
     coverage: CoverageStatement
     as_of: AsOfEcho
+    #: Predicate ids the entity carries claims under but the resolver's registry
+    #: does not know (P32.2 / D-P31.1-3, SIG-TRUST-001): an unregistered
+    #: predicate is surfaced explicitly — its claims stay in the spine for
+    #: quarantine/review — it never 404s the whole entity, and it never gets a
+    #: fabricated fact. Empty when every predicate resolved.
+    unregistered_predicates: list[str] = []
 
 
 class ClaimResponse(_Model):

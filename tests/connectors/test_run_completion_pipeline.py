@@ -32,7 +32,7 @@ class RecordingSink:
         self.completions: list[dict[str, Any]] = []
         self._fail = fail
 
-    def assert_claims(self, claims: Sequence[Mapping[str, Any]]) -> None:
+    def assert_claims(self, claims: Sequence[Mapping[str, Any]], *, capture=None) -> None:
         self.claims.extend(claims)
 
     def record_completion(

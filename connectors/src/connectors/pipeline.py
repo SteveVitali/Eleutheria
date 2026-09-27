@@ -259,6 +259,8 @@ def _mark_capture(ledger: CaptureLedger | None, key: str, capture: CaptureRef, *
         media_type=capture.media_type,
         byte_size=capture.byte_size,
         retrieved_at=capture.retrieved_at,
+        ocfl_object_id=capture.ocfl_object_id,
+        ocfl_version=capture.ocfl_version,
         **kw,
     )
 
@@ -271,6 +273,12 @@ def _capture_of(mark: Mapping[str, Any]) -> CaptureRef:
         source_uri=str(mark["source_uri"]),
         byte_size=int(mark["byte_size"]),
         retrieved_at=retrieved if isinstance(retrieved, datetime) else None,
+        # P32.2: the mark names the original occurrence — its OCFL object and
+        # pinned version, and the run that acquired it — so a reprocessed or
+        # replayed capture binds the ORIGINAL bytes, never the current head.
+        ocfl_object_id=str(mark["ocfl_object_id"]) if mark.get("ocfl_object_id") else None,
+        ocfl_version=str(mark["ocfl_version"]) if mark.get("ocfl_version") else None,
+        original_run_id=str(mark["run_id"]) if mark.get("run_id") else None,
     )
 
 
@@ -291,7 +299,10 @@ def _emit(
     retains only some (bounded memory); the count is always exact.
     """
     if ctx.asserts_claims and ctx.claim_sink is not None:
-        ctx.claim_sink.assert_claims(claims)
+        # P32.2 (SIG-TRUST-002): the sink binds the ACTUAL capture the claims'
+        # extraction consumed — its digest, retrieval time and OCFL version —
+        # rather than inventing a per-run placeholder.
+        ctx.claim_sink.assert_claims(claims, capture=capture)
         _mark_capture(ledger, key, capture, state="flushed", records=len(claims))
     report.claim_count += len(claims)
     retain = ctx.retain_record

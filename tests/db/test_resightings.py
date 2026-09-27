@@ -225,18 +225,25 @@ def test_a_to_b_to_a_resolves_to_a_and_supersedes_the_prior_decision(clean_dsn: 
     as_of = date(2026, 10, 1)
     with psycopg.connect(clean_dsn, autocommit=True) as conn:
         run_ids: list[str] = []
-        for status, when in (
-            ("active", "2026-05-01T00:00:00Z"),  # A: the registry lists it active
-            ("inactive", "2026-06-01T00:00:00Z"),  # B: the registry marks it gone
-            ("active", "2026-07-01T00:00:00Z"),  # A restated — a RE-SIGHTING
+        for i, (status, when) in enumerate(
+            (
+                ("active", "2026-05-01T00:00:00Z"),  # A: the registry lists it active
+                ("inactive", "2026-06-01T00:00:00Z"),  # B: the registry marks it gone
+                ("active", "2026-07-01T00:00:00Z"),  # A restated — a RE-SIGHTING
+            )
         ):
-            sink = PgClaimSink(conn, connector_name="camreg", on_duplicates=record_resightings)
+            # P32.2: claim_evidence is immutable (append-only trigger) — the
+            # third run's link is inserted manually below, at the point in the
+            # scenario where the re-sighting lands, instead of being deleted
+            # and re-inserted.
+            hook = None if i == 2 else record_resightings
+            sink = PgClaimSink(conn, connector_name="camreg", on_duplicates=hook)
             sink.assert_claims(_camera_claims(subject, status))
             _retime_capture(conn, sink.run_id, when)
             run_ids.append(sink.run_id)
 
         assert conn.execute("SELECT count(*) FROM claim").fetchone()[0] == 2  # A and B
-        assert _link_count(conn) == 3  # A links cap1 AND cap3; B links cap2
+        assert _link_count(conn) == 2  # A links cap1 only so far; B links cap2
 
         entity = _subject_entity(conn, subject)
         claim_a = conn.execute("SELECT claim_id FROM claim WHERE value_text = 'active'").fetchone()[
@@ -249,10 +256,6 @@ def test_a_to_b_to_a_resolves_to_a_and_supersedes_the_prior_decision(clean_dsn: 
 
         # First decide the A→B moment (A's restated sighting not yet recorded) —
         # the decision picks B, because A's only sighting (May) predates B's (Jun).
-        conn.execute(
-            "DELETE FROM claim_evidence WHERE claim_id = %s AND capture_id = %s",
-            (claim_a, cap3),
-        )
         first = materialize_resolutions(conn, subject=entity, as_of=as_of)
         assert first.inserted == 1
         row1 = conn.execute(

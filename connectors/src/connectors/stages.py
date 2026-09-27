@@ -190,6 +190,16 @@ class CaptureRef:
     source_uri: str
     byte_size: int
     retrieved_at: datetime | None = None
+    #: The OCFL object + immutable version these bytes were archived under
+    #: (P32.2 / SIG-TRUST-002): ``None`` for the in-memory store, populated by
+    #: ``OcflCaptureStore`` so a claim's evidence binding names the version the
+    #: extractor actually consumed — never a mutable "latest".
+    ocfl_object_id: str | None = None
+    ocfl_version: str | None = None
+    #: On a replayed capture, the ``ingest_run`` that originally acquired the
+    #: bytes — the occurrence stays attributed to its acquisition run while the
+    #: replay asserts its own claims (P32.2).
+    original_run_id: str | None = None
 
     def canonical(self) -> dict[str, Any]:
         # ``retrieved_at`` is retrieval metadata, deliberately excluded from the
@@ -303,7 +313,17 @@ class ClaimSink(Protocol):
     asserted.
     """
 
-    def assert_claims(self, claims: Sequence[Mapping[str, Any]]) -> None: ...
+    def assert_claims(
+        self, claims: Sequence[Mapping[str, Any]], *, capture: CaptureRef | None = None
+    ) -> None:
+        """Persist ``claims``.
+
+        ``capture`` (P32.2 / SIG-TRUST-002) is the actual :class:`CaptureRef`
+        the claims' extraction consumed — the pipeline always names it on a
+        live run, and a replay names the ORIGINAL stored capture occurrence.
+        ``None`` is the pre-P32.2 back-compat path (an honest legacy-synthetic
+        provenance classification, never a fabricated capture).
+        """
 
 
 @runtime_checkable
@@ -356,6 +376,8 @@ class CaptureLedger(Protocol):
         byte_size: int,
         retrieved_at: datetime | None = None,
         records: int | None = None,
+        ocfl_object_id: str | None = None,
+        ocfl_version: str | None = None,
     ) -> Any: ...
 
 
@@ -364,9 +386,14 @@ class InMemoryClaimSink:
 
     def __init__(self) -> None:
         self.claims: list[Mapping[str, Any]] = []
+        #: The ``capture`` argument of each ``assert_claims`` call (P32.2).
+        self.capture_args: list[CaptureRef | None] = []
 
-    def assert_claims(self, claims: Sequence[Mapping[str, Any]]) -> None:
+    def assert_claims(
+        self, claims: Sequence[Mapping[str, Any]], *, capture: CaptureRef | None = None
+    ) -> None:
         self.claims.extend(claims)
+        self.capture_args.append(capture)
 
 
 @runtime_checkable

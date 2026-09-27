@@ -139,6 +139,7 @@ def build_router() -> APIRouter:
             raise HTTPException(status_code=404, detail="entity not found")
         assert_public_visibility(record.visibility)
         facts = []
+        unregistered: list[str] = []
         for predicate_id in record.predicate_ids:
             claims = store.claims_for(entity_id, predicate_id, as_of_belief=asof.asof.belief)
             try:
@@ -150,10 +151,13 @@ def build_router() -> APIRouter:
                     as_of_belief=asof.asof.belief.date(),
                     ruleset=store.ruleset,
                 )
-            except KeyError as exc:
-                raise HTTPException(
-                    status_code=404, detail=f"unknown predicate {predicate_id!r}"
-                ) from exc
+            except KeyError:
+                # P32.2 / D-P31.1-3 (SIG-TRUST-001): an unregistered predicate
+                # must not make an otherwise valid entity disappear — serve the
+                # registered facts and name the unresolved predicates
+                # explicitly instead of a whole-entity 404.
+                unregistered.append(predicate_id)
+                continue
             facts.append(material_fact(resolved))
         rights = store.rights_for(record.source_ids)
         asof.apply_cache(response)
@@ -166,6 +170,7 @@ def build_router() -> APIRouter:
             location=_geo_point(record),
             coverage=coverage_statement(entity_id, store.coverage_for(entity_id)),
             as_of=asof.echo(),
+            unregistered_predicates=unregistered,
         )
 
     # --- /claim (provenance, not a verdict) -----------------------------------
