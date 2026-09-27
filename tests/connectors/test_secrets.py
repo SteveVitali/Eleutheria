@@ -92,16 +92,96 @@ def test_env_files_are_gitignored() -> None:
     assert any(p in patterns for p in (".env.*", ".env*", "*.env"))
 
 
+#: The scoped include list for the project-id leak check (ADR-119, the design's
+#: ADR-R9-LEAKSCOPE; D-P30.4-4; operator Q7 = (a), ratified 2026-09-24). The
+#: check guards the surfaces where a committed literal id is *deployable* —
+#: every §47 package source tree, the schema/sqitch and ontology vocab +
+#: generated trees, the whole ``ops/`` runtime composition, the whole ``web/``
+#: package, the test suite, the CI/dev scripts, and the repo's build/deploy/CI
+#: config files. ``docs/`` — including the append-only build memory under
+#: ``docs/build/``, ``docs/tickets/`` and ``docs/adr/`` — is deliberately out
+#: of scope: the project id is *recorded* there (run ledgers, ADR-098,
+#: DEFERRALS), those records must not be rewritten (P1–P3), and a GCP project
+#: id is not a credential. Root-level prose docs (README/AGENTS/CHANGELOG/
+#: CONTRIBUTING/CITATION/LICENSE) are likewise documentation, not code +
+#: config. The env-only rule itself is unchanged: a literal id in any file
+#: below is a leak — write ``$SIG_GCP_PROJECT`` instead.
+_PROJECT_ID_SCOPE = (
+    # every §47 package source tree (SIG-ENG-012)
+    "api/src",
+    "connectors/src",
+    "db/src",
+    "evidence/src",
+    "exports/src",
+    "inference/src",
+    "ontology/src",
+    "ops/src",
+    "orchestration/src",
+    "parsing/src",
+    "policy/src",
+    "reconcile/src",
+    "resolution/src",
+    "tasks/src",
+    # deployable schema migrations and their config
+    "db/deploy",
+    "db/revert",
+    "db/verify",
+    "db/sqitch.plan",
+    "db/sqitch.conf",
+    # ontology vocabulary + the committed generated artifacts
+    "ontology/vocab",
+    "ontology/generated",
+    # the whole runtime composition (gcp scripts, Dockerfiles, cadence/config)
+    "ops",
+    # the whole web package — source, tests, scripts, config, static assets
+    # (TypeScript is confined to web/, SIG-ENG-010)
+    "web",
+    # the test suite and the CI/dev/doc scripts
+    "tests",
+    "scripts",
+    # repo build/deploy/CI config
+    ".github",
+    "Makefile",
+    "pyproject.toml",
+    "*/pyproject.toml",
+    "uv.lock",
+    "pylock.toml",
+    ".python-version",
+    ".gitignore",
+    ".devinignore",
+    # env files are gitignored; listed so a committed one can never hide an id
+    ".env",
+    ".env.*",
+)
+
+
 def test_gcp_project_id_is_env_resolved_not_committed() -> None:
-    """The real project id appears in no tracked file — only ``$SIG_GCP_PROJECT`` (D3)."""
+    """The real project id appears in no code+config file — only ``$SIG_GCP_PROJECT`` (D3).
+
+    Scoped per ADR-119 / D-P30.4-4 (operator Q7 = (a)): the check greps only the
+    deployable surfaces in ``_PROJECT_ID_SCOPE``. The append-only build memory
+    (`docs/build/`, `docs/tickets/`, `docs/adr/`) is exempt — it records the id
+    as historical fact and cannot be rewritten (P1–P3).
+    """
     project_id = os.environ.get("SIG_GCP_PROJECT", "").strip()
     if not project_id:
         import pytest
 
         pytest.skip("SIG_GCP_PROJECT unset; export it to arm the leak check")
 
+    # Guard: the include list must resolve to real tracked files — a typo'd
+    # pathspec would silently scope the check to nothing.
+    scoped = subprocess.run(
+        ["git", "-C", str(REPO_ROOT), "ls-files", "--", *_PROJECT_ID_SCOPE],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    scoped_files = [line for line in scoped.stdout.splitlines() if line]
+    assert scoped_files, "leak-check scope resolved to zero tracked files"
+
     tracked = subprocess.run(
-        ["git", "-C", str(REPO_ROOT), "grep", "-Il", "--", project_id],
+        ["git", "-C", str(REPO_ROOT), "grep", "-Il", "-e", project_id, "--", *_PROJECT_ID_SCOPE],
         capture_output=True,
         text=True,
         check=False,
@@ -109,7 +189,7 @@ def test_gcp_project_id_is_env_resolved_not_committed() -> None:
     # git grep exits 1 with no output when there is no match — the clean case.
     offenders = [line for line in tracked.stdout.splitlines() if line]
     assert not offenders, (
-        "GCP project id committed literally; write `$SIG_GCP_PROJECT` instead:\n"
+        "GCP project id committed literally in code+config; write `$SIG_GCP_PROJECT` instead:\n"
         + "\n".join(offenders)
     )
 

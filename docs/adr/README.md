@@ -123,6 +123,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-116](ADR-116-human-review-decisions-into-camera-site-clustering.md) | — | — | Accepted |
 | [ADR-117](ADR-117-presentation-analytics-emitted-by-the-spine-export.md) | — | — | Accepted |
 | [ADR-118](ADR-118-per-compartment-vector-tiles-compression-and-points-json-retirement.md) | — | — | Accepted |
+| [ADR-119](ADR-119-project-id-leak-check-scoped-to-code-and-config.md) | — | — | Accepted |
 
 ## Notes
 
