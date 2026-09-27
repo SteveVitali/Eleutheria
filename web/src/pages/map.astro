@@ -17,6 +17,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import AbsenceHatch from "../components/AbsenceHatch.astro";
 import EmptyState from "../components/EmptyState.astro";
+import ViewSwitch from "../components/ViewSwitch.astro";
 import { summariseBy } from "../lib/tables";
 import {
   LAYER_CONTROLS,
@@ -28,12 +29,22 @@ import {
   DEFAULT_SHARING_EDGE_VIEW,
   coverageEncoding,
   islandPoints,
+  boundedJurisdictionIndicators,
   partitionByLocatability,
   readsAsDensity,
   renderBin,
 } from "../lib/map";
 import { MAP_ATTRIBUTION_LINE } from "../lib/map-tiles";
-import { getMapSites, getMapDensityBins, getCompartmentTileSources, capRows, getSiteMetadata } from "../lib/data";
+import {
+  getMapSites,
+  getMapDensityBins,
+  getCompartmentTileSources,
+  getLatestReleaseTarget,
+  getEntityCompartments,
+  releasedRecordHref,
+  capRows,
+  getSiteMetadata,
+} from "../lib/data";
 import { beliefPinnedPermalink } from "../lib/citation";
 import MapIsland from "../islands/MapIsland";
 import "../styles/islands.css";
@@ -44,6 +55,11 @@ const MAP_ASSETS = getMapSites();
 const DENSITY_BINS = getMapDensityBins();
 
 const { locatable, jurisdictionIndicators } = partitionByLocatability(MAP_ASSETS);
+// The no-coordinate enumeration is BOUNDED inline (P32.15, SIG-FIND-005): the
+// honest jurisdiction count is kept, but the id list is capped and the
+// remainder stays navigable through the released compartment browse — the
+// same complete static pagination P32.14 delivered.
+const boundIndicators = boundedJurisdictionIndicators(jurisdictionIndicators);
 // id → asset, so the indicator list below is linear at national scale (not a find per id).
 const ASSET_BY_ID = new Map(MAP_ASSETS.map((a) => [a.id, a]));
 const maxCount = Math.max(1, ...DENSITY_BINS.map((b) => b.deviceCount));
@@ -74,6 +90,19 @@ const cell = 64;
 const TILE_SOURCES = getCompartmentTileSources();
 const ISLAND_POINT_COUNT = locatable.filter((a) => a.lat !== null && a.lon !== null).length;
 const ISLAND_FALLBACK_POINTS = TILE_SOURCES.length === 0 ? islandPoints(locatable) : [];
+
+// P32.15 (SIG-FIND-004): the shared workspace state — the latest activated
+// release the `release=` param defaults to, the compartment set the island's
+// switch governs (tile archives in export mode; the release catalog's
+// compartments otherwise), and the specific released-record hrefs the table
+// links where the release maps an asset id.
+const LATEST = getLatestReleaseTarget();
+const entityComps = LATEST ? getEntityCompartments() : new Map();
+const recordHref = (id: string): string | null =>
+  releasedRecordHref(LATEST, entityComps, id);
+const ISLAND_COMPARTMENTS = TILE_SOURCES.length > 0
+  ? TILE_SOURCES.map((t) => ({ id: t.compartment, license: t.license }))
+  : (LATEST?.compartments.map((c) => ({ id: c.compartment, license: c.license })) ?? []);
 const meta = getSiteMetadata();
 const mapCitationHref = beliefPinnedPermalink({
   path: "/map/",
@@ -92,6 +121,8 @@ const mapCitationHref = beliefPinnedPermalink({
     fallback.
   </p>
 
+  <ViewSwitch view="map" release={LATEST?.publicationId ?? null} />
+
   <!-- The OPT-IN interactive map island (P27.9, ADR-097; exercises SIG-UI-047).
        It hydrates only here; with JavaScript disabled this block is empty and the
        tabular equivalent below is the full, usable surface (SIG-UI-037/050). -->
@@ -105,6 +136,8 @@ const mapCitationHref = beliefPinnedPermalink({
         pointCount={ISLAND_POINT_COUNT}
         attribution={MAP_ATTRIBUTION_LINE}
         citationHref={mapCitationHref}
+        release={LATEST?.publicationId ?? null}
+        compartments={ISLAND_COMPARTMENTS}
       />
     ) : (
       <p class="sig-island__note">No publishable points to draw at this belief; see the tabular equivalent below.</p>
@@ -246,8 +279,21 @@ const mapCitationHref = beliefPinnedPermalink({
       </ul>
       {locatableRows.truncated && (
         <p class="sig-table-note" data-testid="assets-truncation-note">
-          Showing the first {locatableRows.shown} of {locatableRows.total} located assets; the full set is
-          in the export bundle and the API (SIG-UI-037).
+          Showing the first {locatableRows.shown} of {locatableRows.total} located assets
+          {LATEST ? (
+            <>
+              {" "}— every released record remains navigable in the{" "}
+              {LATEST.compartments.map((c, i) => (
+                <>
+                  {i > 0 && " · "}
+                  <a href={c.overviewHref}>compartment browse</a>
+                </>
+              ))}{" "}
+              and the export bundle/API (SIG-UI-037).
+            </>
+          ) : (
+            <>; the full set is in the export bundle and the API (SIG-UI-037).</>
+          )}
         </p>
       )}
       <div class="sig-table-wrap">
@@ -265,7 +311,13 @@ const mapCitationHref = beliefPinnedPermalink({
     <tbody>
       {locatableRows.rows.map((a) => (
         <tr data-testid="map-asset-row">
-          <th scope="row">{a.label}</th>
+          <th scope="row">
+            {recordHref(a.id) ? (
+              <a href={recordHref(a.id)!} data-testid="map-asset-record">{a.label}</a>
+            ) : (
+              a.label
+            )}
+          </th>
           <td>{a.jurisdiction}</td>
           <td>{a.tier}</td>
           <td>{a.lat}</td>
@@ -288,16 +340,17 @@ const mapCitationHref = beliefPinnedPermalink({
   </p>
   {jurisdictionIndicators.length === 0 && <EmptyState surface="mapIndicators" />}
   <ul class="sig-jurisdiction-indicators">
-    {jurisdictionIndicators.map((j) => (
+    {boundIndicators.map((j) => (
       <li data-testid="jurisdiction-indicator" data-count={j.count}>
         <strong>{j.jurisdiction}</strong>: {j.count} asset{j.count === 1 ? "" : "s"} with no
         published point.
         <ul>
-          {j.assetIds.map((id) => {
+          {j.listedIds.map((id) => {
             const asset = ASSET_BY_ID.get(id)!;
+            const href = recordHref(asset.id);
             return (
               <li>
-                {asset.label} — {asset.precision}
+                {href ? <a href={href}>{asset.label}</a> : asset.label} — {asset.precision}
                 {asset.locationAbsence && (
                   <> <AbsenceHatch
                     kind={asset.locationAbsence}
@@ -310,6 +363,26 @@ const mapCitationHref = beliefPinnedPermalink({
             );
           })}
         </ul>
+        {j.truncated && (
+          <p class="sig-table-note" data-testid="indicator-bounds-note">
+            … and {j.count - j.listedIds.length} more in {j.jurisdiction} — every record
+            remains navigable
+            {LATEST ? (
+              <>
+                {" "}in the{" "}
+                {LATEST.compartments.map((c, i) => (
+                  <>
+                    {i > 0 && " · "}
+                    <a href={c.overviewHref}>released compartment browse</a>
+                  </>
+                ))}
+                .
+              </>
+            ) : (
+              <> in the export bundle and the API.</>
+            )}
+          </p>
+        )}
       </li>
     ))}
   </ul>

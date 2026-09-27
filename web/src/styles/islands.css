@@ -150,3 +150,79 @@
   color: var(--sig-muted);
   margin-left: 0.4rem;
 }
+
+/* --- Workspace view switch + shared island state (P32.15, SIG-FIND-004) ----- */
+.sig-view-switch {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--sig-rule);
+  border-radius: 4px;
+  margin: 0.5rem 0 1rem;
+  font-size: 0.9rem;
+}
+.sig-view-switch__note {
+  font-size: 0.78rem;
+  color: var(--sig-muted);
+}
+.sig-view-links {
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+.sig-view-links a,
+.sig-view-links strong {
+  margin-right: 0.75rem;
+}
+.sig-island__compartments {
+  border: 1px solid var(--sig-rule);
+  border-radius: 4px;
+  margin: 0.4rem 0;
+  font-size: 0.85rem;
+}
+.sig-island__compartments label {
+  display: inline-block;
+  margin-right: 1rem;
+  padding: 0.25rem 0;
+}
+.sig-island__focus,
+.sig-search-island__focus {
+  border: 1px solid var(--sig-rule);
+  border-left: 4px solid hsl(28deg 80% 45%);
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  margin: 0.6rem 0;
+  font-size: 0.88rem;
+}
+.sig-island__focus h3,
+.sig-search-island__focus h3 {
+  margin: 0 0 0.3rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--sig-muted);
+}
+.sig-search-island__facets {
+  border: 0;
+  padding: 0;
+  margin: 0.4rem 0;
+  font-size: 0.85rem;
+}
+.sig-search-island__facets legend {
+  padding: 0;
+  font-weight: 600;
+}
+.sig-search-island__facets label {
+  margin-right: 1rem;
+}
+.sig-search-island__focus-btn {
+  margin-left: 0.5rem;
+  font-size: 0.78rem;
+  min-height: 24px;
+}
+.sig-edge-evidence {
+  font-size: 0.8rem;
+  margin-top: 0.2rem;
+}
+.sig-graph-island__edge-evidence {
+  margin: 0.2rem 0 0.4rem 1.2rem;
+  font-size: 0.78rem;
+  color: var(--sig-muted);
+}

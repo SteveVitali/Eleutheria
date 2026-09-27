@@ -11,6 +11,7 @@
 // listed index (never the whole corpus); with JavaScript disabled the forms,
 // browse links and island degrade honestly (SIG-UI-037/050).
 import BaseLayout from "../layouts/BaseLayout.astro";
+import ViewSwitch from "../components/ViewSwitch.astro";
 import SearchIsland from "../islands/SearchIsland";
 import type { SearchItem } from "../islands/SearchIsland";
 import {
@@ -18,7 +19,9 @@ import {
   getMapSites,
   getFreshness,
   getReleaseSearchTargets,
+  getLatestReleaseTarget,
   getEntityCompartments,
+  releasedRecordHref,
   capRows,
 } from "../lib/data";
 import "../styles/islands.css";
@@ -27,18 +30,21 @@ const dossiers = getDossierIndex();
 const sites = getMapSites();
 const sources = getFreshness();
 const targets = getReleaseSearchTargets();
-const latest = targets.length > 0 ? targets[targets.length - 1] : null;
+const latest = getLatestReleaseTarget();
 
 // Specific released-record hrefs where a real activated release maps them —
 // a listed site resolves to /r/<pub>/c/<comp>/entity/<type>/<id>/, never a
 // generic /map/ link when its record is citable.
 const entityComps = latest ? getEntityCompartments() : new Map();
-const siteHref = (id: string): string => {
-  if (!latest) return "/map/";
+const siteHref = (id: string): string =>
+  releasedRecordHref(latest, entityComps, id) ?? "/map/";
+
+// The `focus` id a listed site hands to the workspace: the self-describing
+// record_key where the release maps it (islands resolve its record JSON /
+// routes), else the bare asset id the map island's points carry (fixtures).
+const siteFocusId = (id: string): string => {
   const m = entityComps.get(id);
-  return m
-    ? `/r/${latest.publicationId}/c/${m.compartment}/entity/${m.entityType}/${id}/`
-    : "/map/";
+  return m ? `${m.compartment}:${m.entityType}:${id}` : id;
 };
 
 // Cap the map-site rows fed to the client index so the page stays within budget at
@@ -58,6 +64,7 @@ const INDEX: SearchItem[] = [
     label: s.label,
     sublabel: s.jurisdiction,
     href: siteHref(s.id),
+    focusId: siteFocusId(s.id),
   })),
   ...sources.map((r) => ({
     kind: "source" as const,
@@ -76,6 +83,8 @@ const INDEX: SearchItem[] = [
     (SIG-UI-037): the forms are plain GETs and the static browse pages
     enumerate every released record.
   </p>
+
+  <ViewSwitch view="list" release={latest?.publicationId ?? null} />
 
   <!-- P32.14 (SIG-FIND-003): released-corpus search — the complete corpus, one
        compartment at a time, pinned to an immutable namespace. -->
@@ -128,7 +137,7 @@ const INDEX: SearchItem[] = [
   <!-- The OPT-IN search island (P27.9, ADR-097). Hydrates only here; empty with JS off. -->
   <section class="sig-island" aria-labelledby="search-island-heading" data-testid="search-island-section">
     <h2 id="search-island-heading">Quick filter — the listed index</h2>
-    <SearchIsland client:only="react" items={INDEX} />
+    <SearchIsland client:only="react" items={INDEX} release={latest?.publicationId ?? null} />
   </section>
 
   <!-- The no-JS BROWSE fallback: real GET links, always present (SIG-UI-050). -->

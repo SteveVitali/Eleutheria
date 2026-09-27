@@ -47,11 +47,47 @@
           }
         },
         {
-          "//": "The three public interactive islands (/map/, /network/, /search/): the opt-in-island budget (P27.9, ADR-097 extending ADR-068). WCAG 2.2 AA is enforced (a11y 100); performance is advisory and script/total size is NOT asserted (a hydrated MapLibre/React island ships JS by design). Each island preserves a no-JS fallback (SIG-UI-050); every OTHER public page keeps script size 0 under the block above.",
+          "//": "The three public interactive islands (/map/, /network/, /search/): the opt-in-island budget (P27.9, ADR-097 extending ADR-068). WCAG 2.2 AA is enforced (a11y 100); performance is advisory. Each island preserves a no-JS fallback (SIG-UI-050); every OTHER public page keeps script size 0 under the block above. P32.15 (SIG-FIND-005, ADR-134): explicit per-island script/total ceilings below — measured baselines + headroom recorded in web/tests/e2e/island-budgets.json + docs/build/reports/p32.15-island-budgets.md; asserted again (wire-measured, incl. the map worker) by tests/e2e/budget.spec.ts.",
           "matchingUrlPattern": ".*/(map|network|search)/.*",
           "assertions": {
             "categories:accessibility": ["error", { "minScore": 1 }],
             "categories:performance": ["warn", { "minScore": 0.5 }],
+            "unminified-css": "off",
+            "uses-long-cache-ttl": "off",
+            "csp-xss": "off"
+          }
+        },
+        {
+          "//": "/map/ per-island budget (P32.15): MapLibre+PMTiles island ≈ 1.79 MB raw script-family (incl. the 507 KB worker) at the P32.15 baseline; ceiling 2.0 MB script / 2.3 MB total.",
+          "matchingUrlPattern": ".*/map/.*",
+          "assertions": {
+            "resource-summary:script:size": ["error", { "maxNumericValue": 2000000 }],
+            "resource-summary:total:size": ["error", { "maxNumericValue": 2300000 }],
+            "total-byte-weight": ["error", { "maxNumericValue": 2300000 }],
+            "unminified-css": "off",
+            "uses-long-cache-ttl": "off",
+            "csp-xss": "off"
+          }
+        },
+        {
+          "//": "/network/ per-island budget (P32.15): React+island ≈ 230 KB raw at baseline; ceiling 400 KB script / 450 KB total.",
+          "matchingUrlPattern": ".*/network/.*",
+          "assertions": {
+            "resource-summary:script:size": ["error", { "maxNumericValue": 400000 }],
+            "resource-summary:total:size": ["error", { "maxNumericValue": 450000 }],
+            "total-byte-weight": ["error", { "maxNumericValue": 450000 }],
+            "unminified-css": "off",
+            "uses-long-cache-ttl": "off",
+            "csp-xss": "off"
+          }
+        },
+        {
+          "//": "/search/ per-island budget (P32.15): React+island ≈ 228 KB raw at baseline; ceiling 400 KB script / 450 KB total.",
+          "matchingUrlPattern": ".*/search/.*",
+          "assertions": {
+            "resource-summary:script:size": ["error", { "maxNumericValue": 400000 }],
+            "resource-summary:total:size": ["error", { "maxNumericValue": 450000 }],
+            "total-byte-weight": ["error", { "maxNumericValue": 450000 }],
             "unminified-css": "off",
             "uses-long-cache-ttl": "off",
             "csp-xss": "off"

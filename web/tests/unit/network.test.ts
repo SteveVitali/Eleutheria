@@ -149,3 +149,64 @@ describe("access-path closure: full hops, per-hop evidence, speculative label (S
     expect(pathTemporalStatus(HEADLINE_PATH)).toBe("live");
   });
 });
+
+describe("bounded ego expansion (P32.15, SIG-FIND-005)", () => {
+  it("never draws more than the published bounds — and says the true totals", async () => {
+    const { boundedEgoNetwork, EGO_NODE_LIMIT, EGO_EDGE_LIMIT } = await import(
+      "../../src/lib/network"
+    );
+    expect(EGO_NODE_LIMIT).toBe(50);
+    expect(EGO_EDGE_LIMIT).toBe(100);
+    // A hub with 60 neighbours and one edge each exceeds the node bound.
+    const nodes = [
+      { id: "hub", label: "hub", type: "agency" },
+      ...Array.from({ length: 60 }, (_, i) => ({
+        id: `n${String(i).padStart(2, "0")}`,
+        label: `n${i}`,
+        type: "partner",
+      })),
+    ];
+    const edges = Array.from({ length: 60 }, (_, i) => ({
+      from: "hub",
+      to: `n${String(i).padStart(2, "0")}`,
+      access_kind: "configured_access" as const,
+      relation: "has configured access to",
+      support: "WEAKLY_SUPPORTED" as const,
+      evidence_count: 1,
+      evidence: [`claim:e${i}`],
+    }));
+    const ego = boundedEgoNetwork(nodes, edges, "hub", 1);
+    expect(ego.totalNodes).toBe(61);
+    expect(ego.totalEdges).toBe(60);
+    expect(ego.truncated).toBe(true);
+    expect(ego.nodes.length).toBe(EGO_NODE_LIMIT);
+    expect(ego.edges.length).toBeLessThanOrEqual(EGO_EDGE_LIMIT);
+    // The centre is always kept; the cut is deterministic (id order).
+    expect(ego.nodes.some((n) => n.id === "hub")).toBe(true);
+    const rerun = boundedEgoNetwork(nodes, edges, "hub", 1);
+    expect(rerun.nodes.map((n) => n.id)).toEqual(ego.nodes.map((n) => n.id));
+    // No dangling half-edges: every kept edge is fully inside the kept nodes.
+    const ids = new Set(ego.nodes.map((n) => n.id));
+    for (const e of ego.edges) {
+      expect(ids.has(e.from) && ids.has(e.to)).toBe(true);
+    }
+  });
+
+  it("does not truncate an honest small neighbourhood", async () => {
+    const { boundedEgoNetwork } = await import("../../src/lib/network");
+    const ego = boundedEgoNetwork(NETWORK_NODES, NETWORK_EDGES, "agency:okcpd", 1);
+    expect(ego.truncated).toBe(false);
+    expect(ego.totalNodes).toBe(ego.nodes.length);
+    expect(ego.totalEdges).toBe(ego.edges.length);
+  });
+});
+
+describe("edge evidence is carried, not just counted (SIG-FIND-004)", () => {
+  it("fixture edges name their supporting claims", () => {
+    for (const e of NETWORK_EDGES) {
+      expect(Array.isArray(e.evidence)).toBe(true);
+      expect(e.evidence!.length).toBeGreaterThan(0);
+      expect(e.evidence!.length).toBe(e.evidence_count);
+    }
+  });
+});

@@ -108,6 +108,12 @@ export interface NetworkEdge {
   relation: string;
   support: Support;
   evidence_count: number;
+  /**
+   * The supporting claim ids behind the edge (P32.15, SIG-FIND-004). Optional so
+   * pre-P32.15 `network.json` artifacts still parse — but an edge shown with no
+   * named support is only ever a *count* (§3.1: never an unexplained edge).
+   */
+  evidence?: string[];
 }
 
 /** An independent on/off flag per access edge type — the three filter separately. */
@@ -166,6 +172,72 @@ export function egoNetwork(
   // Keep only edges fully inside the neighbourhood (no dangling half-edges).
   const includedEdges = edges.filter((e) => included.has(e.from) && included.has(e.to));
   return { nodes: includedNodes, edges: includedEdges };
+}
+
+// --- Bounded ego expansion (P32.15, SIG-FIND-005; S4 acceptance budget) ------
+
+/** Initial ego-view bounds: at most this many nodes / edges are drawn, and the
+ *  remainder is reachable through expansion + the continued edge lists — never
+ *  silently dropped and never rendered as an unbounded hairball. */
+export const EGO_NODE_LIMIT = 50;
+export const EGO_EDGE_LIMIT = 100;
+
+export interface BoundedEgo {
+  nodes: NetworkNode[];
+  edges: NetworkEdge[];
+  /** The true neighbourhood size before bounding — always stated honestly. */
+  totalNodes: number;
+  totalEdges: number;
+  truncated: boolean;
+}
+
+/**
+ * The ego neighbourhood under the published bounds (≤50 nodes, ≤100 edges).
+ * Deterministic: neighbours beyond the cap are dropped in id order and edges in
+ * (from,to,access_kind) order, with the true totals reported so the surface can
+ * say "50 of N nodes" rather than imply the whole graph was drawn.
+ */
+export function boundedEgoNetwork(
+  nodes: readonly NetworkNode[],
+  edges: readonly NetworkEdge[],
+  centerId: string,
+  depth = 1,
+  nodeLimit: number = EGO_NODE_LIMIT,
+  edgeLimit: number = EGO_EDGE_LIMIT,
+): BoundedEgo {
+  const ego = egoNetwork(nodes, edges, centerId, depth);
+  const totalNodes = ego.nodes.length;
+  const totalEdges = ego.edges.length;
+
+  let keptNodes = ego.nodes;
+  if (keptNodes.length > nodeLimit) {
+    // The centre is always kept; the rest truncate in deterministic id order.
+    const centre = keptNodes.filter((n) => n.id === centerId);
+    const others = keptNodes
+      .filter((n) => n.id !== centerId)
+      .sort((a, b) => a.id.localeCompare(b.id));
+    keptNodes = [...centre, ...others.slice(0, Math.max(0, nodeLimit - centre.length))];
+  }
+  const keptIds = new Set(keptNodes.map((n) => n.id));
+
+  let keptEdges = ego.edges.filter((e) => keptIds.has(e.from) && keptIds.has(e.to));
+  if (keptEdges.length > edgeLimit) {
+    keptEdges = [...keptEdges]
+      .sort(
+        (a, b) =>
+          a.from.localeCompare(b.from) ||
+          a.to.localeCompare(b.to) ||
+          a.access_kind.localeCompare(b.access_kind),
+      )
+      .slice(0, edgeLimit);
+  }
+  return {
+    nodes: keptNodes,
+    edges: keptEdges,
+    totalNodes,
+    totalEdges,
+    truncated: keptNodes.length < totalNodes || keptEdges.length < totalEdges,
+  };
 }
 
 // --- ER-quality disclosure on EVERY centrality statistic (SIG-UI-023) ------

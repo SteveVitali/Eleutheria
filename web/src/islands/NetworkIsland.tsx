@@ -3,7 +3,8 @@
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
 /**
- * The interactive sharing-network island (P27.9, DECISION-SPA = B, ADR-097).
+ * The interactive sharing-network island (P27.9, DECISION-SPA = B, ADR-097;
+ * P32.15 shared workspace state, SIG-FIND-004/005, ADR-134).
  *
  * PROGRESSIVE ENHANCEMENT, NOT REPLACEMENT (SIG-UI-050): this island hydrates ONLY
  * on `/network/`; the edge lists and hop lists below it are the source of truth and
@@ -15,18 +16,36 @@
  * greyscale-safe). Every centrality statistic shown carries its inline ER-quality
  * disclosure (SIG-UI-023). Keyboard operability (WCAG 2.2 AA): the node selector is a
  * list of real focusable buttons that drive the same focus state as clicking a node.
+ *
+ * Shared URL state (`sig.workspace-state/1`): `focus` names the ego centre — a
+ * deep link, reload or Back/Forward restores it, and the List/Map view links
+ * carry the whole investigation state. The initial neighbourhood is BOUNDED
+ * (≤50 nodes / ≤100 edges, EGO_NODE_LIMIT/EGO_EDGE_LIMIT) with its true totals
+ * stated; expansion pulls one ring at a time by node selection, and the
+ * continued edge lists below carry every edge. Each selected-node edge exposes
+ * its supporting claims — configured access, observed use and declared policy
+ * are never merged and never imply one another (§12.2).
  */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ReactElement } from "react";
 import type { NetworkNode, NetworkEdge, CentralityStatistic, AccessKind } from "../lib/network";
-import { ACCESS_EDGE_STYLES } from "../lib/network";
+import {
+  ACCESS_EDGE_STYLES,
+  boundedEgoNetwork,
+  EGO_EDGE_LIMIT,
+  EGO_NODE_LIMIT,
+} from "../lib/network";
+import { recordRoutes, viewHref, WORKSPACE_VIEWS } from "../lib/workspace-state";
+import { useWorkspaceState } from "./workspace";
 
 export interface NetworkIslandProps {
   nodes: NetworkNode[];
   edges: NetworkEdge[];
   centrality: CentralityStatistic[];
   focusEntityId: string;
+  /** The latest activated publication id for this build, or null (none). */
+  release: string | null;
 }
 
 interface Placed {
@@ -39,36 +58,45 @@ interface Placed {
 const W = 460;
 const H = 340;
 
-function egoOf(
-  nodes: NetworkNode[],
-  edges: NetworkEdge[],
-  focusId: string,
-): { nodes: NetworkNode[]; edges: NetworkEdge[] } {
-  const neighborIds = new Set<string>([focusId]);
-  const egoEdges: NetworkEdge[] = [];
-  for (const e of edges) {
-    if (e.from === focusId || e.to === focusId) {
-      neighborIds.add(e.from);
-      neighborIds.add(e.to);
-      egoEdges.push(e);
-    }
-  }
-  return {
-    nodes: nodes.filter((n) => neighborIds.has(n.id)),
-    edges: egoEdges,
-  };
-}
+const VIEW_LABELS: Record<string, string> = {
+  list: "List",
+  map: "Map",
+  network: "Connections",
+};
 
 export default function NetworkIsland({
   nodes,
   edges,
   centrality,
   focusEntityId,
+  release,
 }: NetworkIslandProps): ReactElement {
-  const [focusId, setFocusId] = useState(focusEntityId);
-  const [selectedId, setSelectedId] = useState(focusEntityId);
+  const { state, issues, update } = useWorkspaceState("network", { release });
 
-  const ego = useMemo(() => egoOf(nodes, edges, focusId), [nodes, edges, focusId]);
+  // `focus` is the ego centre. A URL focus that names no node in this view stays
+  // honest: the default centre renders and the miss is reported (never a
+  // fabricated node), with the released-record link where one resolves.
+  const requestedFocus = state.focus;
+  const focusIsNode = requestedFocus !== null && nodes.some((n) => n.id === requestedFocus);
+  const focusId = focusIsNode ? requestedFocus : focusEntityId;
+  const focusRoutes = useMemo(() => {
+    const rel = state.release ?? release;
+    return rel && requestedFocus ? recordRoutes(rel, requestedFocus) : null;
+  }, [state.release, release, requestedFocus]);
+
+  const ego = useMemo(
+    () =>
+      nodes.some((n) => n.id === focusId)
+        ? boundedEgoNetwork(nodes, edges, focusId, 1)
+        : { nodes: [], edges: [], totalNodes: 0, totalEdges: 0, truncated: false },
+    [nodes, edges, focusId],
+  );
+  // The detail pane inspects whichever node was last picked — a circle click
+  // inspects WITHOUT re-centring (and without a history entry), a node button
+  // re-centres the ego network AND becomes the inspected node.
+  const [inspectId, setInspectId] = useState<string | null>(null);
+  useEffect(() => setInspectId(null), [focusId]);
+  const selectedId = inspectId ?? focusId;
   const labelOf = useMemo(() => {
     const m = new Map(nodes.map((n) => [n.id, n.label]));
     return (id: string) => m.get(id) ?? id;
@@ -98,115 +126,168 @@ export default function NetworkIsland({
   const selectedEdges = ego.edges.filter((e) => e.from === selectedId || e.to === selectedId);
 
   return (
-    <div className="sig-graph-island__layout" data-testid="network-island">
-      <div>
-        <svg
-          className="sig-graph-island__canvas"
-          viewBox={`0 0 ${W} ${H}`}
-          role="img"
-          aria-label={`Interactive ego network around ${labelOf(focusId)}; the full edge and path detail is in the lists below.`}
-        >
-          {ego.edges.map((e, i) => {
-            const a = posOf(e.from);
-            const b = posOf(e.to);
-            if (!a || !b) return null;
-            const style = ACCESS_EDGE_STYLES[e.access_kind];
-            return (
-              <line
-                key={`e-${i}`}
-                x1={a.x}
-                y1={a.y}
-                x2={b.x}
-                y2={b.y}
-                stroke="var(--sig-muted, #666)"
-                strokeWidth={2}
-                strokeDasharray={style.dash || undefined}
-              />
-            );
-          })}
-          {placed.map((p) => (
-            <g key={p.node.id}>
-              <circle
-                cx={p.x}
-                cy={p.y}
-                r={p.center ? 13 : 9}
-                fill={
-                  p.node.id === selectedId
-                    ? "hsl(28deg 80% 50%)"
-                    : "var(--sig-epi-status-resolved, #345)"
-                }
-                stroke="#222"
-                strokeWidth={p.node.id === selectedId ? 2 : 1}
-                style={{ cursor: "pointer" }}
-                onClick={() => setSelectedId(p.node.id)}
-              >
-                <title>{p.node.label}</title>
-              </circle>
-              <text x={p.x} y={p.y - 16} textAnchor="middle" fontSize={9}>
-                {p.node.label}
-              </text>
-            </g>
-          ))}
-        </svg>
-        <p className="sig-island__note">
-          Ego network around <strong>{labelOf(focusId)}</strong>. Select a node to focus its
-          neighbourhood; edge dash patterns encode the access type (see the legend in the list
-          below). This is never a national hairball (SIG-UI-021/022).
+    <div data-testid="network-island">
+      <nav className="sig-view-links" aria-label="Investigation views" data-testid="island-view-links">
+        {WORKSPACE_VIEWS.map((v) =>
+          v === state.view ? (
+            <strong key={v} aria-current="page">{VIEW_LABELS[v]}</strong>
+          ) : (
+            <a key={v} href={viewHref(state, v)} data-testid={`view-link-${v}`}>
+              {VIEW_LABELS[v]}
+            </a>
+          ),
+        )}
+      </nav>
+      {issues.length > 0 && (
+        <p className="sig-island__note" role="status" data-testid="workspace-issues">
+          {issues.join(" ")}
         </p>
-      </div>
+      )}
+      {state.release && (
+        <p className="sig-island__note" data-testid="workspace-release">
+          Release <code>{state.release}</code>
+        </p>
+      )}
+      {requestedFocus !== null && !focusIsNode && (
+        <p className="sig-island__note" role="status" data-testid="graph-focus-miss">
+          <code>{requestedFocus}</code> is not in this network view — showing{" "}
+          {labelOf(focusId)} instead.
+          {focusRoutes ? (
+            <>
+              {" "}
+              <a href={focusRoutes.pageHref} data-testid="focus-record-link">
+                Open the released record
+              </a>
+              .
+            </>
+          ) : null}
+        </p>
+      )}
 
-      <div>
-        <h3 id="graph-island-nodes-heading">Nodes in view</h3>
-        <ul className="sig-graph-island__nodes" aria-labelledby="graph-island-nodes-heading">
-          {ego.nodes.map((n) => (
-            <li key={n.id}>
-              <button
-                type="button"
-                className="sig-graph-node-btn"
-                data-testid="graph-island-node"
-                aria-pressed={n.id === focusId}
-                onClick={() => {
-                  setSelectedId(n.id);
-                  setFocusId(n.id);
-                }}
-              >
-                {n.label} <span className="sig-search-island__kind">{n.type}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-
-        <div className="sig-graph-detail" data-testid="graph-island-detail" aria-live="polite">
-          <h3>{labelOf(selectedId)}</h3>
-          {selectedStats.length === 0 ? (
-            <p>No centrality statistic is published for this node.</p>
-          ) : (
-            <ul>
-              {selectedStats.map((s, i) => (
-                <li key={i} data-testid="graph-island-centrality">
-                  <strong>{s.metric}</strong>: {s.value.toFixed(3)}
-                  <br />
-                  <span data-testid="graph-island-er-disclosure">{s.disclosure}</span>
-                </li>
-              ))}
-            </ul>
+      <div className="sig-graph-island__layout">
+        <div>
+          <svg
+            className="sig-graph-island__canvas"
+            viewBox={`0 0 ${W} ${H}`}
+            role="img"
+            aria-label={`Interactive ego network around ${labelOf(focusId)}; the full edge and path detail is in the lists below.`}
+          >
+            {ego.edges.map((e, i) => {
+              const a = posOf(e.from);
+              const b = posOf(e.to);
+              if (!a || !b) return null;
+              const style = ACCESS_EDGE_STYLES[e.access_kind];
+              return (
+                <line
+                  key={`e-${i}`}
+                  x1={a.x}
+                  y1={a.y}
+                  x2={b.x}
+                  y2={b.y}
+                  stroke="var(--sig-muted, #666)"
+                  strokeWidth={2}
+                  strokeDasharray={style.dash || undefined}
+                />
+              );
+            })}
+            {placed.map((p) => (
+              <g key={p.node.id}>
+                <circle
+                  cx={p.x}
+                  cy={p.y}
+                  r={p.center ? 13 : 9}
+                  fill={
+                    p.node.id === selectedId
+                      ? "hsl(28deg 80% 50%)"
+                      : "var(--sig-epi-status-resolved, #345)"
+                  }
+                  stroke="#222"
+                  strokeWidth={p.node.id === selectedId ? 2 : 1}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => setInspectId(p.node.id)}
+                >
+                  <title>{p.node.label}</title>
+                </circle>
+                <text x={p.x} y={p.y - 16} textAnchor="middle" fontSize={9}>
+                  {p.node.label}
+                </text>
+              </g>
+            ))}
+          </svg>
+          <p className="sig-island__note">
+            Ego network around <strong>{labelOf(focusId)}</strong>. Select a node to focus its
+            neighbourhood; edge dash patterns encode the access type (see the legend in the list
+            below). This is never a national hairball (SIG-UI-021/022).
+          </p>
+          {ego.truncated && (
+            <p className="sig-island__note" role="status" data-testid="graph-bounds-note">
+              Bounded view: showing {ego.nodes.length} of {ego.totalNodes} nodes and{" "}
+              {ego.edges.length} of {ego.totalEdges} edges (limits {EGO_NODE_LIMIT}/
+              {EGO_EDGE_LIMIT}). Select a node to expand one ring; the lists below carry
+              every edge.
+            </p>
           )}
-          <h4>Edges</h4>
-          {selectedEdges.length === 0 ? (
-            <p>No edges to this node in the current view.</p>
-          ) : (
-            <ul>
-              {selectedEdges.map((e, i) => {
-                const style = ACCESS_EDGE_STYLES[e.access_kind as AccessKind];
-                return (
-                  <li key={i}>
-                    <span aria-hidden="true">{style.glyph}</span> {labelOf(e.from)} →{" "}
-                    {labelOf(e.to)}: {e.relation} ({style.label}; {e.evidence_count} evidence)
+        </div>
+
+        <div>
+          <h3 id="graph-island-nodes-heading">Nodes in view</h3>
+          <ul className="sig-graph-island__nodes" aria-labelledby="graph-island-nodes-heading">
+            {ego.nodes.map((n) => (
+              <li key={n.id}>
+                <button
+                  type="button"
+                  className="sig-graph-node-btn"
+                  data-testid="graph-island-node"
+                  aria-pressed={n.id === focusId}
+                  onClick={() => update({ focus: n.id })}
+                >
+                  {n.label} <span className="sig-search-island__kind">{n.type}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+
+          <div className="sig-graph-detail" data-testid="graph-island-detail" aria-live="polite">
+            <h3>{labelOf(selectedId)}</h3>
+            {selectedStats.length === 0 ? (
+              <p>No centrality statistic is published for this node.</p>
+            ) : (
+              <ul>
+                {selectedStats.map((s, i) => (
+                  <li key={i} data-testid="graph-island-centrality">
+                    <strong>{s.metric}</strong>: {s.value.toFixed(3)}
+                    <br />
+                    <span data-testid="graph-island-er-disclosure">{s.disclosure}</span>
                   </li>
-                );
-              })}
-            </ul>
-          )}
+                ))}
+              </ul>
+            )}
+            <h4>Edges</h4>
+            {selectedEdges.length === 0 ? (
+              <p>No edges to this node in the current view.</p>
+            ) : (
+              <ul>
+                {selectedEdges.map((e, i) => {
+                  const style = ACCESS_EDGE_STYLES[e.access_kind as AccessKind];
+                  return (
+                    <li key={i}>
+                      <span aria-hidden="true">{style.glyph}</span> {labelOf(e.from)} →{" "}
+                      {labelOf(e.to)}: {e.relation} ({style.label}; {e.evidence_count} evidence)
+                      {e.evidence && e.evidence.length > 0 && (
+                        <ul className="sig-graph-island__edge-evidence" data-testid="edge-evidence">
+                          {e.evidence.map((claim) => (
+                            <li key={claim}>
+                              <code>{claim}</code>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
         </div>
       </div>
     </div>

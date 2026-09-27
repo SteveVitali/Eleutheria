@@ -1,0 +1,27 @@
+{
+  "schema": "sig.island-budgets/1",
+  "note": "P32.15 (SIG-FIND-005, ADR-134) — the explicit per-island asset budgets. `budget.spec.ts` enforces these against the built site; docs/build/reports/p32.15-island-budgets.md records the measured baselines (map ≈ 1.28 MB raw / ≈ 353 KB gzipped script-family + 507 KB worker, network ≈ 230 KB raw / ≈ 73 KB gz, search ≈ 228 KB raw / ≈ 72 KB gz). The S4 research target is ≤1 MiB compressed initial island assets — every island is inside it; the ceilings below catch regressions, they do not relax the static zero-JS pages (still 0 script bytes / ≤150 KiB).",
+  "islands": {
+    "/map/": {
+      "scriptRawMaxBytes": 2000000,
+      "scriptGzipMaxBytes": 600000,
+      "totalRawMaxBytes": 2300000,
+      "totalGzipMaxBytes": 750000,
+      "documentMaxBytes": 153600
+    },
+    "/network/": {
+      "scriptRawMaxBytes": 400000,
+      "scriptGzipMaxBytes": 140000,
+      "totalRawMaxBytes": 450000,
+      "totalGzipMaxBytes": 160000,
+      "documentMaxBytes": 153600
+    },
+    "/search/": {
+      "scriptRawMaxBytes": 400000,
+      "scriptGzipMaxBytes": 140000,
+      "totalRawMaxBytes": 450000,
+      "totalGzipMaxBytes": 160000,
+      "documentMaxBytes": 153600
+    }
+  }
+}

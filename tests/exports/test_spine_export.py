@@ -881,6 +881,9 @@ def test_network_reads_materialized_edges_else_falls_back() -> None:
     assert network["edges"][0]["access_kind"] == "configured_access"
     assert network["edges"][0]["relation"] == "configured_access"
     assert network["edges"][0]["support"] == "WEAKLY_SUPPORTED"
+    # P32.15 (SIG-FIND-004): the backing claim is emitted so the public surface
+    # can NAME the support — a bare count was the unexplained-edge smell.
+    assert network["edges"][0]["evidence"] == ["c9"]
     jsonschema.validate(network, _sub(SCHEMA["properties"]["network"]))
 
 

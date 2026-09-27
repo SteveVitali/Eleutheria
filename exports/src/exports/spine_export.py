@@ -989,6 +989,9 @@ def _network_from_materialized(
                 # honest §10.7 support floor is the single-source level — never overclaimed.
                 "support": "WEAKLY_SUPPORTED",
                 "evidence_count": 1,
+                # P32.15 (SIG-FIND-004): the supporting claim travels with the
+                # edge so the public surface names it, not just counts it.
+                "evidence": [str(e["evidence_claim"])] if e.get("evidence_claim") else [],
             }
         )
     return {"nodes": [nodes[k] for k in sorted(nodes)], "edges": out_edges, "access_paths": []}
@@ -1084,6 +1087,9 @@ def _network(dataset: ShapedDataset, source_names: Mapping[str, str]) -> dict[st
                 "access_kind": edge.access_kind,
                 "relation": edge.predicate_id,
                 "evidence_count": 1,
+                # P32.15 (SIG-FIND-004): the backing claim id is emitted so the
+                # public surface can name the support, never only count it.
+                "evidence": [edge.claim_id] if edge.claim_id else [],
             }
         )
     return {

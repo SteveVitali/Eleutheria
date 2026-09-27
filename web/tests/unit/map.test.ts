@@ -211,3 +211,34 @@ describe("island fallback points (no tile archives shipped — fixtures mode)", 
     expect(pts[1]?.precision).toBe("~100 m");
   });
 });
+
+describe("bounded jurisdiction indicators (P32.15, SIG-FIND-005)", () => {
+  it("caps the inline enumeration, never the honest count", async () => {
+    const { boundedJurisdictionIndicators, MAX_INDICATOR_ASSETS } = await import(
+      "../../src/lib/map"
+    );
+    expect(MAX_INDICATOR_ASSETS).toBe(50);
+    const indicator = {
+      jurisdiction: "Nowhere",
+      count: 3,
+      assetIds: ["a", "b", "c"],
+    };
+    const small = boundedJurisdictionIndicators([indicator], 2)[0]!;
+    expect(small.count).toBe(3); // the true total is never reduced
+    expect(small.listedIds).toEqual(["a", "b"]);
+    expect(small.truncated).toBe(true);
+    const exact = boundedJurisdictionIndicators([indicator], 3)[0]!;
+    expect(exact.truncated).toBe(false);
+    expect(exact.listedIds).toEqual(["a", "b", "c"]);
+  });
+
+  it("keeps the every-asset-accounted-for invariant on the fixture", async () => {
+    const { boundedJurisdictionIndicators } = await import("../../src/lib/map");
+    const { jurisdictionIndicators } = partitionByLocatability(MAP_ASSETS);
+    const bound = boundedJurisdictionIndicators(jurisdictionIndicators);
+    const listed = bound.reduce((n, j) => n + j.listedIds.length, 0);
+    const total = bound.reduce((n, j) => n + j.count, 0);
+    expect(listed).toBe(Math.min(total, bound.length * 50));
+    expect(total).toBe(MAP_ASSETS.length - partitionByLocatability(MAP_ASSETS).locatable.length);
+  });
+});
