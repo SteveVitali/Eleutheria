@@ -89,8 +89,10 @@ docs-check-agent:
 ## check-build-memory.sh validates the committed docs/build/ + docs/tickets/ +
 ## docs/adr/ layout (allowlist, ticket sequence, DEFERRALS ids, ADR index<->files,
 ## LEDGER key set, secret/size scans). Read-only; exits non-zero on a violation.
+## P32.8 (SIG-MEM-003): the JSON report goes to the caller-selected, per-worktree
+## gitignored logs path — never a shared /tmp file across concurrent worktrees.
 docs-check-build-memory:
-	bash scripts/docs/check-build-memory.sh .
+	bash scripts/docs/check-build-memory.sh . --json docs/build/logs/build-memory-check.json
 
 ## The CI.1 / GL-CI-01 scanning gates (ADR-078) — the same commands CI runs.
 ## `security-scan` runs all three; the nightly workflow does the same. The two

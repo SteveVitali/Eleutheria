@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "6bade66ea020bc854a3ac59f6af6f80ed0bdbf8d",
+  "input_commit": "778a5e2e854cbb579968396b18e343b6899d5a59",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "6d705d6e7f78d152f72e1bc47cfd09684ea1553857b6defd1e3629134e24e8bb"
+      "sha256": "51cb5a724de91bf1bc5a067804485e4f01610ec9f8e501594521bd6c86715a74"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -513,12 +513,16 @@
       "sha256": "c1708cc769655951250cc4dbec7f56c0ec420a7059c8752ec1c94a00b1f69728"
     },
     {
+      "path": "docs/adr/ADR-127-single-writer-closeout-protocol.md",
+      "sha256": "3ef7bf5d9eb712a3915e61fee4b93dfa7ae1ce9a3f0439e154e129e7b85a5fcc"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "82143d87c8e3fae0da378dad6306cb829cf45cecb0bbf026086e382b62f5c8f3"
+      "sha256": "ccaa5be6788f52ccd3ad071fddb67c9520383e4dcb7c830c94708bb7b2b9723c"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "32cbb13a8b349da84a6eb5246875685ce9b6b8e7add96da58dba3ae06b74ed63"
+      "sha256": "f9fd5d580090c2c1409b5320fe99b94087a64b12453075848d2dc885461f0283"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
@@ -526,7 +530,7 @@
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "e2a6876dad248f58b99d0b02df3104ad87398b11fcd4c20c6373616d38931465"
+      "sha256": "01c68694696795fc015f5d0838fee368cd0ee8e3c468124268ed6428d1e1a4ed"
     },
     {
       "path": "docs/build/LEDGER.md",
@@ -1221,6 +1225,10 @@
       "sha256": "a293fdb5db920f4d46b3af5351309eb19071b3bd41c2422f51bf56f1b5f683e7"
     },
     {
+      "path": "docs/build/runs/P32.8.md",
+      "sha256": "e4554c857bc0598f1255a54e1f7877d96836b7d7f182c88bd59822841cc74a74"
+    },
+    {
       "path": "docs/tickets/00_MANIFEST.md",
       "sha256": "c32695818bdeea48e53c5124c26316cfb033a986791240826e3b6bc03fe6cddf"
     },
@@ -1378,7 +1386,7 @@
     },
     {
       "path": "docs/tickets/199_P33.7__round10-repo-docs-refresh.md",
-      "sha256": "d5a4da33bbf0e60099b5890eba2310c4be0c34574219e01b545e4276391be40a"
+      "sha256": "36de22015654e275fc942955213dbad1cb576cfda002fc07c49f93531fac5e79"
     },
     {
       "path": "docs/tickets/200_P33.8__round10-agent-docs-refresh.md",

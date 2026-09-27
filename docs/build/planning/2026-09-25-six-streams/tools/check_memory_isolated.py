@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
-"""Run the current vendored detector without its shared /tmp report collision.
+"""Run the vendored build-memory validator with an isolated, unique report path.
 
-Only the output destination is substituted in a private temporary copy. Detection
-logic and the committed vendored script are unchanged; not the P32.8 writer fix.
+Historical note: before P32.8 the vendored ``check-build-memory.sh`` hard-wrote
+``/tmp/build-memory-check.json``, so concurrent worktrees raced over one shared
+report and this wrapper sed-patched a private copy. P32.8 patched the validator
+itself (SIG-MEM-003, ADR-127): it now accepts ``--json PATH``. The wrapper is
+kept — it names a unique report under the worktree's own gitignored
+``docs/build/logs/`` and prints the parsed counts — but no longer modifies the
+script, so what runs is byte-for-byte the committed validator.
 """
 from __future__ import annotations
 
 import json
-import shutil
 import subprocess
-import tempfile
 import uuid
 from pathlib import Path
 
@@ -20,21 +23,17 @@ def main() -> int:
     report = ROOT / "docs/build/logs" / ("six-stream-memory-" + uuid.uuid4().hex + ".json")
     report.parent.mkdir(parents=True, exist_ok=True)
     source = ROOT / "scripts/docs/check-build-memory.sh"
-    text = source.read_text()
-    needle = "JSON='/tmp/build-memory-check.json'"
-    if text.count(needle) != 1:
-        raise SystemExit("Validator output assignment changed; re-review wrapper before running")
-    # Quote a generated local path as shell data, not executable interpolation.
-    quoted = "'" + str(report).replace("'", "'\"'\"'") + "'"
-    with tempfile.TemporaryDirectory(prefix="sig-memory-check-") as tmp:
-        runner = Path(tmp) / "check-build-memory.sh"
-        runner.write_text(text.replace(needle, "JSON=" + quoted))
-        shutil.copyfile(ROOT / "scripts/docs/adr-index.sh", Path(tmp) / "adr-index.sh")
-        result = subprocess.run(["bash", str(runner), str(ROOT)], cwd=ROOT)
+    result = subprocess.run(
+        ["bash", str(source), str(ROOT), "--json", str(report)], cwd=ROOT
+    )
     if report.exists():
         value = json.loads(report.read_text())
         print("Private report:", report)
-        print("Report counts:", {k: len(value.get(k, [])) for k in ("violations", "warnings")})
+        summary = value.get("summary", {})
+        print(
+            "Report counts:",
+            {"violations": summary.get("violations"), "warnings": summary.get("warnings")},
+        )
     return result.returncode
 
 
