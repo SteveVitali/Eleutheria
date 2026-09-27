@@ -279,6 +279,12 @@
 <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/radio_observation> <http://www.w3.org/2004/02/skos/core#notation> "radio_observation" .
 <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/radio_observation> <http://www.w3.org/2004/02/skos/core#prefLabel> "radio_observation"@en .
 <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/radio_observation> <http://www.w3.org/2004/02/skos/core#topConceptOf> <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0> .
+<https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/recommendation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/recommendation> <http://www.w3.org/2004/02/skos/core#definition> "A recommendation/best-practice document (P32.3 / SIG-TRUST-003): guidance on what SHOULD be deployed — NOT evidence of a deployment, operator, owner, or any operational role (D6 for every predicate)." .
+<https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/recommendation> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0> .
+<https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/recommendation> <http://www.w3.org/2004/02/skos/core#notation> "recommendation" .
+<https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/recommendation> <http://www.w3.org/2004/02/skos/core#prefLabel> "recommendation"@en .
+<https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/recommendation> <http://www.w3.org/2004/02/skos/core#topConceptOf> <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0> .
 <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/regulation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/regulation> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0> .
 <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/regulation> <http://www.w3.org/2004/02/skos/core#notation> "regulation" .
@@ -300,6 +306,18 @@
 <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/statute> <http://www.w3.org/2004/02/skos/core#notation> "statute" .
 <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/statute> <http://www.w3.org/2004/02/skos/core#prefLabel> "statute"@en .
 <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/statute> <http://www.w3.org/2004/02/skos/core#topConceptOf> <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0> .
+<https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/subscription> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/subscription> <http://www.w3.org/2004/02/skos/core#definition> "A subscription/access record (P32.3 / SIG-TRUST-003): proof an account or service tier exists — NOT evidence of a deployment, operator, owner, or any operational role (D6 for every predicate)." .
+<https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/subscription> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0> .
+<https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/subscription> <http://www.w3.org/2004/02/skos/core#notation> "subscription" .
+<https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/subscription> <http://www.w3.org/2004/02/skos/core#prefLabel> "subscription"@en .
+<https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/subscription> <http://www.w3.org/2004/02/skos/core#topConceptOf> <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0> .
+<https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/template> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/template> <http://www.w3.org/2004/02/skos/core#definition> "A vendor/agency TEMPLATE page (P32.3 / SIG-TRUST-003): boilerplate a deployment could copy — NOT evidence of a deployment, operator, owner, or any operational role (D6 for every predicate)." .
+<https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/template> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0> .
+<https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/template> <http://www.w3.org/2004/02/skos/core#notation> "template" .
+<https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/template> <http://www.w3.org/2004/02/skos/core#prefLabel> "template"@en .
+<https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/template> <http://www.w3.org/2004/02/skos/core#topConceptOf> <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0> .
 <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/warrant> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/warrant> <http://www.w3.org/2004/02/skos/core#definition> "A warrant artifact (§23.6, SIG-INGEST-047)." .
 <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/warrant> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0> .
@@ -332,10 +350,13 @@
 <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0> <http://www.w3.org/2004/02/skos/core#hasTopConcept> <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/press_release> .
 <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0> <http://www.w3.org/2004/02/skos/core#hasTopConcept> <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/procurement_aggregator_record> .
 <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0> <http://www.w3.org/2004/02/skos/core#hasTopConcept> <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/radio_observation> .
+<https://ontology.sig-project.org/vocab/ArtifactType/1.0.0> <http://www.w3.org/2004/02/skos/core#hasTopConcept> <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/recommendation> .
 <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0> <http://www.w3.org/2004/02/skos/core#hasTopConcept> <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/regulation> .
 <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0> <http://www.w3.org/2004/02/skos/core#hasTopConcept> <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/screenshot> .
 <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0> <http://www.w3.org/2004/02/skos/core#hasTopConcept> <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/state_auditor_survey> .
 <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0> <http://www.w3.org/2004/02/skos/core#hasTopConcept> <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/statute> .
+<https://ontology.sig-project.org/vocab/ArtifactType/1.0.0> <http://www.w3.org/2004/02/skos/core#hasTopConcept> <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/subscription> .
+<https://ontology.sig-project.org/vocab/ArtifactType/1.0.0> <http://www.w3.org/2004/02/skos/core#hasTopConcept> <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/template> .
 <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0> <http://www.w3.org/2004/02/skos/core#hasTopConcept> <https://ontology.sig-project.org/vocab/ArtifactType/1.0.0/warrant> .
 <https://ontology.sig-project.org/vocab/AuthorizationState/1.0.0/approval_pending> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.sig-project.org/vocab/AuthorizationState/1.0.0/approval_pending> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/AuthorizationState/1.0.0> .

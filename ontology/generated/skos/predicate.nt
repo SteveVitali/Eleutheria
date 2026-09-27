@@ -367,7 +367,7 @@
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_name> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_name> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_operator> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
-<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_operator> <http://www.w3.org/2004/02/skos/core#definition> "Operator of a registry-listed camera as attributed by the registry's publisher (categorical)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_operator> <http://www.w3.org/2004/02/skos/core#definition> "Operator of a registry-listed camera as evidenced by an authoritative operator field (the target's operator key or a feature operator attribute). P32.3 / ADR-122: the registry's publisher label is NOT operator evidence — it lands on `camera_registry_publisher` instead (categorical)." .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_operator> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_operator> <http://www.w3.org/2004/02/skos/core#prefLabel> "camera_operator"@en .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_operator> <https://ontology.sig-project.org/schema/cardinality> "single" .
@@ -376,6 +376,16 @@
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_operator> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_operator> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_operator> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_registry_publisher> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_registry_publisher> <http://www.w3.org/2004/02/skos/core#definition> "The organisation that published this camera-registry artifact — registry PUBLISHER provenance, not an operational role. P32.3 / ADR-122 (SIG-TRUST-003): a publisher label never evidences camera operation, ownership, vendor or access status, and never mints an organisation entity-ref (the OSM contributor label is the canonical case)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_registry_publisher> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_registry_publisher> <http://www.w3.org/2004/02/skos/core#prefLabel> "camera_registry_publisher"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_registry_publisher> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_registry_publisher> <https://ontology.sig-project.org/schema/halfLife> "10y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_registry_publisher> <https://ontology.sig-project.org/schema/objectKind> "literal" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_registry_publisher> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_registry_publisher> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_registry_publisher> <https://ontology.sig-project.org/schema/volatilityClass> "GLACIAL" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_roadway> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_roadway> <http://www.w3.org/2004/02/skos/core#definition> "Roadway named on a registry camera row." .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_roadway> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
@@ -554,6 +564,26 @@
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/contracted_device_count> <https://ontology.sig-project.org/schema/resolutionStrategy> "authoritative_source_wins" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/contracted_device_count> <https://ontology.sig-project.org/schema/valueDatatype> "integer" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/contracted_device_count> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope> <http://www.w3.org/2004/02/skos/core#definition> "Qualifier: the comparability scope a count claim is asserted at (e.g. metro, city_limits, jurisdiction, statewide). P32.3 / SIG-TRUST-004: counts in different scopes answer different questions — they are retained separately and never adjudicated against each other (a scope mismatch is not a contradiction)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope> <http://www.w3.org/2004/02/skos/core#prefLabel> "count_scope"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope> <https://ontology.sig-project.org/schema/halfLife> "10y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope> <https://ontology.sig-project.org/schema/objectKind> "literal" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope> <https://ontology.sig-project.org/schema/resolutionStrategy> "never_resolve" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope> <https://ontology.sig-project.org/schema/volatilityClass> "GLACIAL" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope_detail> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope_detail> <http://www.w3.org/2004/02/skos/core#definition> "Qualifier: the refinement inside a count_scope (e.g. privately_owned, partner_agency, agency_operated). Two counts differ on detail at the same scope label are still different questions (P32.3 / SIG-TRUST-004)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope_detail> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope_detail> <http://www.w3.org/2004/02/skos/core#prefLabel> "count_scope_detail"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope_detail> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope_detail> <https://ontology.sig-project.org/schema/halfLife> "10y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope_detail> <https://ontology.sig-project.org/schema/objectKind> "literal" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope_detail> <https://ontology.sig-project.org/schema/resolutionStrategy> "never_resolve" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope_detail> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/count_scope_detail> <https://ontology.sig-project.org/schema/volatilityClass> "GLACIAL" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/country> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/country> <http://www.w3.org/2004/02/skos/core#definition> "Country of a notice's buyer (ISO 3166-1 alpha-2 from the reviewed map)." .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/country> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
@@ -732,6 +762,16 @@
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/event_type> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/event_type> <https://ontology.sig-project.org/schema/valueDatatype> "AccountabilityEventType" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/event_type> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/evidence_origin> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/evidence_origin> <http://www.w3.org/2004/02/skos/core#definition> "Qualifier: where the evidence behind a claim came from (e.g. seed_fixture, live_capture). P32.3 / SIG-TRUST-004: seed-fixture material is labelled so no read surface presents it as primary live evidence." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/evidence_origin> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/evidence_origin> <http://www.w3.org/2004/02/skos/core#prefLabel> "evidence_origin"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/evidence_origin> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/evidence_origin> <https://ontology.sig-project.org/schema/halfLife> "10y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/evidence_origin> <https://ontology.sig-project.org/schema/objectKind> "literal" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/evidence_origin> <https://ontology.sig-project.org/schema/resolutionStrategy> "never_resolve" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/evidence_origin> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/evidence_origin> <https://ontology.sig-project.org/schema/volatilityClass> "GLACIAL" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/external_id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/external_id> <http://www.w3.org/2004/02/skos/core#definition> "The issuing source's own record identifier (identity-bearing; exact match only)." .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/external_id> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .

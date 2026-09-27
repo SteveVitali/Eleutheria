@@ -294,6 +294,9 @@
                 "state_auditor_survey",
                 "warrant",
                 "procurement_aggregator_record",
+                "template",
+                "subscription",
+                "recommendation",
                 "other"
             ],
             "title": "ArtifactType",

@@ -45,6 +45,9 @@ URI: [sig:enum/ArtifactType](https://ontology.sig-project.org/schema/enum/Artifa
 | state_auditor_survey | None | A state auditor's periodic survey of agency surveillance-technology holdings ... |
 | warrant | None | A warrant artifact (§23 |
 | procurement_aggregator_record | None | A record from the paywalled commercial procurement aggregator carried under a... |
+| template | None | A vendor/agency TEMPLATE page (P32 |
+| subscription | None | A subscription/access record (P32 |
+| recommendation | None | A recommendation/best-practice document (P32 |
 | other | None |  |
 
 
@@ -148,6 +151,21 @@ permissible_values:
     text: procurement_aggregator_record
     description: A record from the paywalled commercial procurement aggregator carried
       under a LINK custody posture (§23.6, SIG-INGEST-047).
+  template:
+    text: template
+    description: 'A vendor/agency TEMPLATE page (P32.3 / SIG-TRUST-003): boilerplate
+      a deployment could copy — NOT evidence of a deployment, operator, owner, or
+      any operational role (D6 for every predicate).'
+  subscription:
+    text: subscription
+    description: 'A subscription/access record (P32.3 / SIG-TRUST-003): proof an account
+      or service tier exists — NOT evidence of a deployment, operator, owner, or any
+      operational role (D6 for every predicate).'
+  recommendation:
+    text: recommendation
+    description: 'A recommendation/best-practice document (P32.3 / SIG-TRUST-003):
+      guidance on what SHOULD be deployed — NOT evidence of a deployment, operator,
+      owner, or any operational role (D6 for every predicate).'
   other:
     text: other
 
