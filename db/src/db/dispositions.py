@@ -45,6 +45,7 @@ from policy.eligibility import (
 __all__ = [
     "DISPOSITION_TABLE",
     "TargetKind",
+    "artifact_eligible_sql",
     "claim_eligible_sql",
     "dispositions_for",
     "effective_dispositions",
@@ -89,6 +90,20 @@ def entity_eligible_sql(id_expr: str) -> str:
         f"          OR (o.publication_review_required"
         f"              AND COALESCE({latest}, '') <> 'allow'))))"
     )
+
+
+def artifact_eligible_sql(id_expr: str) -> str:
+    """SQL boolean — "this evidence artifact / capture / published object may
+    be publicly represented" (current policy) — the inline twin of
+    :func:`policy.eligibility.access_decision` (P32.5/ADR-124).
+
+    Used by the P32.13 evidence-binding export so a ``withhold``/``withdraw``
+    recorded on an artifact drops its public bindings the same way it drops
+    the artifact route — one rule, three carriers (SQL fragment, pure
+    selector, file registry), never a second definition.
+    """
+    latest = _latest_scalar("artifact", id_expr)
+    return f"(COALESCE({latest}, 'allow') NOT IN ('withhold','restrict','withdraw'))"
 
 
 def claim_eligible_sql(claim_alias: str = "c") -> str:

@@ -657,6 +657,24 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="projected free space on the target store (headroom rules evaluated)",
     )
+
+    rserve = sub.add_parser(
+        "release-serve",
+        help="P32.13 (SIG-FIND-001/002, ADR-132): the release-serving barrier — "
+        "apply the current withdrawal registry to a staged public tree and check "
+        "route access BEFORE origin/CDN (offline staging only; GATE-G3 owns publish)",
+    )
+    rsrv = rserve.add_subparsers(dest="serve_command", required=True)
+    rsrv_apply = rsrv.add_parser(
+        "apply", help="re-apply withdrawals to a staged tree + regenerate the nginx deny map"
+    )
+    rsrv_apply.add_argument("--registry", required=True)
+    rsrv_apply.add_argument("--staged", required=True)
+    rsrv_check = rsrv.add_parser(
+        "check", help="the pure route access check under current dispositions"
+    )
+    rsrv_check.add_argument("--registry", required=True)
+    rsrv_check.add_argument("--route", required=True)
     rplan.add_argument(
         "--out",
         required=True,
@@ -1946,5 +1964,17 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_evidence_audit(args)
     if args.command == "recovery-plan":
         return _cmd_recovery_plan(args)
+    if args.command == "release-serve":
+        return _cmd_release_serve(args)
     parser.print_help()
     return 0
+
+
+def _cmd_release_serve(args: argparse.Namespace) -> int:
+    from . import release_serving
+
+    if args.serve_command == "apply":
+        return release_serving.main_apply(args.registry, args.staged)
+    if args.serve_command == "check":
+        return release_serving.main_check(args.registry, args.route)
+    return 2

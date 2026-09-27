@@ -1,0 +1,56 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The activated-release catalog (P32.13 / ADR-132 — SIG-FIND-001/002). Every
+// activated publication namespace is listed with its as-of cuts, record count
+// and compartments. Each release is immutable — withdrawals deny whole
+// artifacts, they never edit bytes. Static, zero-JS.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getReleaseCatalog } from "../../lib/data";
+
+const CATALOG = getReleaseCatalog();
+const PUBS = CATALOG.publications;
+---
+
+<BaseLayout title="Releases" path="/releases/">
+  <p>
+    SIG publishes to <strong>immutable release namespaces</strong>: once a release is
+    activated its bytes never change — every record, evidence anchor and dossier in it
+    resolves to exactly the content the release was built from. Withdrawals deny whole
+    artifacts under the current publication policy; they never rewrite history.
+  </p>
+  {PUBS.length === 0 ? (
+    <p data-testid="releases-empty">
+      <em>No immutable releases are activated for this surface yet.</em>
+    </p>
+  ) : (
+    <ul data-testid="release-catalog">
+      {PUBS.map((e) => (
+        <li data-testid="release-entry">
+          <h2>
+            <a href={`/releases/${e.publication_id}/`} data-testid="release-link">
+              <code>{e.publication_id}</code>
+            </a>
+          </h2>
+          <p>
+            As of world <time datetime={e.reproducibility.as_of_world}>{e.reproducibility.as_of_world}</time>,
+            belief <time datetime={e.reproducibility.as_of_belief}>{e.reproducibility.as_of_belief}</time>;
+            ruleset <code>{e.reproducibility.ruleset_version}</code>; data release{" "}
+            <code>{e.data_release_id}</code>.
+          </p>
+          <p>
+            {e.record_count} records across {e.compartments.length} licence{" "}
+            {e.compartments.length === 1 ? "compartment" : "compartments"}
+            {e.completeness ? ` — completeness: ${e.completeness.state}` : ""}.
+          </p>
+        </li>
+      ))}
+    </ul>
+  )}
+  <p>
+    Cite release URLs, not "latest" aliases — the <code>/entity/</code> convenience
+    views re-target silently when a newer release is activated.
+  </p>
+</BaseLayout>

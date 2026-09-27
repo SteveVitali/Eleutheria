@@ -43,6 +43,8 @@ import type { ResearchTaskCard, JurisdictionClaim } from "./research-queue";
 import type { ProvenanceSummary } from "./provenance";
 import type { HostileReaderReview } from "./editorial";
 import type { CompartmentTileSource } from "./map-tiles";
+import { RELEASE_CATALOG_FIXTURE } from "./releases-fixture";
+import type { ReleaseCatalog } from "./releases";
 import type { MapSite, GraphNode, GraphEdge, EntityFixture, AsOfEcho } from "./fixtures";
 import { AS_OF, RULESET_VERSION } from "./fixtures";
 
@@ -341,6 +343,26 @@ export function getDossierIndex(): DossierIndexRow[] {
       })),
     ];
   });
+}
+
+/**
+ * P32.13 (SIG-FIND-001/002, ADR-132): the activated-release catalog behind
+ * `/releases/`. Fixtures mode returns the demo catalog; export mode reads
+ * `<exportDir>/web/releases.json` when present — an absent file is the honest
+ * empty catalog (no release was ever built from this export), never a
+ * fabricated entry.
+ */
+export function getReleaseCatalog(): ReleaseCatalog {
+  if (dataSource() === "fixtures") return RELEASE_CATALOG_FIXTURE;
+  const path = `${exportDir()}/web/releases.json`;
+  if (!existsSync(path)) {
+    return { schema: "sig.publication-catalog/1", publications: [] };
+  }
+  const parsed = JSON.parse(readFileSync(path, "utf-8")) as ReleaseCatalog;
+  if (!Array.isArray(parsed?.publications)) {
+    throw new Error(`${path}: expected a sig.publication-catalog/1 object`);
+  }
+  return parsed;
 }
 
 // --------------------------------------------------------------------------- //

@@ -49,6 +49,7 @@ from pathlib import Path
 from typing import Any
 
 from db.dispositions import (
+    artifact_eligible_sql,
     claim_eligible_sql,
     eligible_claim_ids,
     eligible_entity_ids,
@@ -202,6 +203,23 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
         "   AND {PUB_CLAIM_GATE}"
         " ORDER BY c.claim_id",
     ),
+    # P32.13 (SIG-FIND-002): claim → capture → artifact bindings for every
+    # publishable claim that backs a released site row — the evidence-anchor
+    # backbone of the released record routes. The artifact side carries the
+    # shared ARTIFACT eligibility gate (the SQL twin of ``access_decision``):
+    # a withheld artifact loses its public bindings exactly as it loses its
+    # route. Claims themselves reach this join already gated (the shaping
+    # ``{PUB_CLAIM_GATE}`` selected the claim set the sites were built from).
+    "evidence_bindings": (
+        "claim_evidence",
+        "SELECT ce.claim_id::text, ce.capture_id::text, ec.artifact_id::text, ce.role"
+        "  FROM claim_evidence ce"
+        "  JOIN evidence_capture ec ON ce.capture_id = ec.capture_id"
+        "  JOIN evidence_artifact ea ON ec.artifact_id = ea.artifact_id"
+        " WHERE ea.sensitivity_tier = 0"
+        "   AND {PUB_ARTIFACT_GATE}"
+        " ORDER BY ce.claim_id, ce.capture_id",
+    ),
 }
 
 
@@ -233,6 +251,9 @@ def fetch_export_raw(cur: Any, *, belief: datetime | None = None) -> dict[str, A
     entity_gate = entity_eligible_sql("ei.entity_id") if (has_registry and has_orgs) else "true"
     claim_gate = claim_eligible_sql("c") if has_registry else "true"
     task_gate = entity_eligible_sql("rt.subject_id") if (has_registry and has_orgs) else "true"
+    # P32.13: the artifact twin of the same rule — one selector, never a
+    # second eligibility definition.
+    artifact_gate = artifact_eligible_sql("ea.artifact_id") if has_registry else "true"
     raw: dict[str, Any] = {}
     for key, (guard, sql) in EXPORT_QUERIES.items():
         cur.execute("SELECT to_regclass(%s) IS NOT NULL", (guard,))
@@ -246,6 +267,7 @@ def fetch_export_raw(cur: Any, *, belief: datetime | None = None) -> dict[str, A
                 .replace("{PUB_ENTITY_GATE}", entity_gate)
                 .replace("{PUB_CLAIM_GATE}", claim_gate)
                 .replace("{PUB_TASK_GATE}", task_gate)
+                .replace("{PUB_ARTIFACT_GATE}", artifact_gate)
                 .replace("upper_inf(c.sys_period)", belief_filter)
             )
             cur.execute(final, tuple([belief] * final.count("%s")) or None)
@@ -617,6 +639,78 @@ def _slice_sites(
         licences_by_subject=licences_by_subject,
         refused_subjects=refused_subjects,
     )
+
+
+def _record_claims(
+    claims: Sequence[ShapingClaim],
+    slices: _SiteSlices,
+    bindings: Sequence[Any],
+    *,
+    retrieval: date,
+    registry: Mapping[str, Any] | None,
+) -> dict[str, dict[str, Any]]:
+    """P32.13 (SIG-FIND-002): the claim anchors + evidence bindings behind
+    every published site row, sliced into per-compartment ``record_claims``
+    payloads — each claim filed under **its own** licence compartment (the
+    same ``compute_export_license`` + ``compartment_for_license`` gate the
+    sites tables pass through; never co-mingled, never silently dropped).
+
+    Rows carry public-safe fields only: the claim anchor (id, predicate,
+    observed date, source) and typed capture/artifact locators — never raw
+    claim literals. A claim whose licence computes to a refused compartment
+    contributes no anchor row (its site slice already dropped the row).
+    """
+    wanted: set[str] = set()
+    for rows in slices.rows_by_compartment.values():
+        for row in rows:
+            wanted.update(str(cid) for cid in (row.data.get("claim_ids") or []))
+    bindings_by_claim: dict[str, list[dict[str, Any]]] = {}
+    for r in bindings or []:
+        cid, cap, art, role = str(r[0]), str(r[1]), str(r[2]), str(r[3])
+        bindings_by_claim.setdefault(cid, []).append(
+            {"capture_id": cap, "artifact_id": art, "role": role}
+        )
+    placement: dict[str, tuple[str | None, str | None]] = {}
+    rows_by_comp: dict[str, list[dict[str, Any]]] = {}
+    lic_by_comp: dict[str, str] = {}
+    for c in sorted(claims, key=lambda c: c.claim_id):
+        if c.claim_id not in wanted or not c.source_id:
+            continue
+        slot = placement.get(c.effective_rights_id)
+        if slot is None:
+            record = RightsRecord(
+                source_id=c.source_id,
+                spdx=c.effective_spdx,
+                attribution=c.effective_attribution,
+                redistributable=str(c.effective_redistributable) == "yes",
+                derivative_permitted=str(c.effective_derivative_permitted) == "yes",
+                terms_url=c.effective_terms_url,
+                retrieval_date=retrieval,
+            )
+            if export_refusal_reason(record, registry) is not None:
+                placement[c.effective_rights_id] = (None, None)
+                continue
+            licence2 = str(compute_export_license([record], registry))
+            comp2 = C.compartment_for_license(licence2, None, registry)
+            slot = (licence2, comp2)
+            placement[c.effective_rights_id] = slot
+        licence, comp = slot
+        if comp is None:
+            continue
+        lic_by_comp[comp] = str(licence)
+        rows_by_comp.setdefault(comp, []).append(
+            {
+                "claim_id": c.claim_id,
+                "entity_id": c.subject_id,
+                "predicate_id": c.predicate_id,
+                "observed_at": c.observed_at.isoformat() if c.observed_at else None,
+                "source_id": c.source_id,
+                "evidence": bindings_by_claim.get(c.claim_id, []),
+            }
+        )
+    return {
+        comp: {"rows": rows, "license": lic_by_comp[comp]} for comp, rows in rows_by_comp.items()
+    }
 
 
 def surface_license(licences: set[str] | frozenset[str]) -> str:
@@ -1531,6 +1625,23 @@ def build_spine_export(
         web_artifacts[art.path] = _web_bytes(art.payload)
         web_licenses[art.path] = art.license
         web_compartments[art.path] = art.compartment
+
+    # --- P32.13 (SIG-FIND-002): per-compartment `record_claims.jsonl` ---------
+    # The claim/evidence anchors behind every published site — filed under the
+    # claim's OWN licence compartment with its checksum in the manifest.
+    for comp, payload in sorted(
+        _record_claims(
+            claims,
+            slices,
+            raw.get("evidence_bindings") or [],
+            retrieval=retrieval,
+            registry=registry,
+        ).items()
+    ):
+        path = f"{comp}/record_claims.jsonl"
+        web_artifacts[path] = b"".join(canonical_json(r) for r in payload["rows"])
+        web_licenses[path] = str(payload["license"])
+        web_compartments[path] = comp
 
     # --- per-compartment PMTiles (ODbL attribution on the OSM layer) ------------
     tile_renderers: dict[str, str] = {}
