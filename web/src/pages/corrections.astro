@@ -76,15 +76,26 @@ const report = transparencyReport(CORRECTIONS);
           </div>
           <div>
             <dt>Value</dt>
-            <dd data-testid="value-change">{e.previous_value} → {e.corrected_value}</dd>
+            <dd data-testid="value-change">
+              {e.previous_withheld ? "withheld" : e.previous_value} → {e.corrected_value}
+            </dd>
           </div>
         </dl>
-        <p class="sig-correction__prior">
-          The value as it stood is still citable:
-          <a data-testid="prior-permalink" href={priorValuePermalink(e, RULESET_VERSION, origin)}>
-            belief-pinned permalink ({e.previous_belief_date})
-          </a>.
-        </p>
+        {e.previous_withheld ? (
+          <p class="sig-correction__prior" data-testid="prior-withheld">
+            The earlier assertion stays on the append-only spine, but its value is
+            withheld from the public surface by current rights and sensitivity
+            policy — it is not re-published here, and no fabricated value stands
+            in its place.
+          </p>
+        ) : (
+          <p class="sig-correction__prior">
+            The value as it stood is still citable:
+            <a data-testid="prior-permalink" href={priorValuePermalink(e, RULESET_VERSION, origin)}>
+              belief-pinned permalink ({e.previous_belief_date})
+            </a>.
+          </p>
+        )}
       </li>
     ))}
   </ol>

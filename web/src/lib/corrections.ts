@@ -179,6 +179,19 @@ export interface CorrectionEntry {
   previous_belief_date: string;
   /** The canonical path of the subject, for the belief-pinned permalink. */
   subject_path: string;
+  /**
+   * P32.16a (SIG-FIND-008): the superseded/retracted assertion this entry
+   * revises — the public corrections log names BOTH sides (§16.6). Absent on
+   * older export bytes and fixtures.
+   */
+  previous_claim_id?: string;
+  /** The claim this entry revises (= previous_claim_id for a revision). */
+  revises_claim?: string;
+  /** The claim this entry retracts (retraction outcome). */
+  retraction_of?: string;
+  /** True when the prior assertion exists but is itself gated — the honest
+   *  withheld marker; its value/date stay off the public surface. */
+  previous_withheld?: boolean;
 }
 
 /**

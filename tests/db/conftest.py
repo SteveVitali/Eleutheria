@@ -144,6 +144,16 @@ def conn(sig_database: dict[str, object]) -> Iterator[object]:
         connection.close()
 
 
+def _id_of(row: object, name: str) -> object:
+    """The generated id off a RETURNING row — works for tuple-row cursors and
+    dict-row connections alike (fixtures run on both)."""
+    if row is None:
+        raise RuntimeError(f"expected a {name} row")
+    if hasattr(row, "keys"):  # dict_row / RealDictCursor
+        return row[name]  # type: ignore[index]
+    return row[0]  # type: ignore[index]
+
+
 def seed_claim_prerequisites(conn: object) -> dict[str, object]:
     """Insert the minimum FK targets a claim needs; return the ids used.
 
@@ -168,17 +178,17 @@ def seed_claim_prerequisites(conn: object) -> dict[str, object]:
         "derivative_permitted,retrieval_date) "
         "VALUES('Apache-2.0','yes','yes','2026-01-01') RETURNING rights_id"
     )
-    rights_id = cur.fetchone()[0]
+    rights_id = _id_of(cur.fetchone(), "rights_id")
     cur.execute(
         "INSERT INTO ingest_run(connector_name,connector_version,code_commit,"
         "ruleset_version,vocab_version,parameters,environment,input_digests) "
         "VALUES('fixture','0','sha','r1','1.0.0','{}','{}','{}') RETURNING run_id"
     )
-    run_id = cur.fetchone()[0]
+    run_id = _id_of(cur.fetchone(), "run_id")
     cur.execute("INSERT INTO entity(entity_type) VALUES('deployment') RETURNING entity_id")
-    subject_id = cur.fetchone()[0]
+    subject_id = _id_of(cur.fetchone(), "entity_id")
     cur.execute("INSERT INTO entity(entity_type) VALUES('person') RETURNING entity_id")
-    author_id = cur.fetchone()[0]
+    author_id = _id_of(cur.fetchone(), "entity_id")
     return {
         "predicate_id": "contracted_camera_count",
         "rights_id": rights_id,
@@ -223,4 +233,4 @@ def insert_claim(
             correction_reason,
         ),
     )
-    return cur.fetchone()[0]
+    return _id_of(cur.fetchone(), "claim_id")

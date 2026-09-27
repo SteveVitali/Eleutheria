@@ -334,4 +334,5 @@ def record_disposition(conn: Any, record: DispositionRecord) -> str:
         vals,
     ).fetchone()
     assert row is not None
-    return str(row[0])
+    # Row-shape agnostic: writers run on tuple-row AND dict-row connections.
+    return str(row["disposition_id"] if hasattr(row, "keys") else row[0])

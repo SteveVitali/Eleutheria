@@ -1009,10 +1009,28 @@ def create_curation_app(
 
             from .intake_moderation import build_intake_moderation_router
 
+            apply_store: Any | None = None
             if isinstance(intake_store, str):
-                intake_store = PgIntakeReviewerStore.from_dsn(intake_store)
+                dsn = intake_store
+                intake_store = PgIntakeReviewerStore.from_dsn(dsn)
+                # P32.16a (SIG-FIND-008): the same DSN also carries the bridge
+                # role — a separate least-privilege session, so apply/publish
+                # never run under the reviewer role's grants.
+                try:
+                    from db.intake_apply import PgIntakeApplicationStore
+
+                    apply_store = PgIntakeApplicationStore.from_dsn(dsn)
+                except Exception:
+                    # The bridge role may not be provisioned yet — the
+                    # moderation surface still works; apply routes stay absent.
+                    apply_store = None
+            elif hasattr(intake_store, "apply") and hasattr(intake_store, "mark_published"):
+                # An injected store (the in-memory test double) that already
+                # satisfies the application contract.
+                apply_store = intake_store
             app.state.intake_store = intake_store
-            app.include_router(build_intake_moderation_router(intake_store))
+            app.state.intake_apply_store = apply_store
+            app.include_router(build_intake_moderation_router(intake_store, apply_store))
 
     # Defence in depth: the curation surface still may never mount a Part VIII
     # prohibited path (SIG-API-012) — assert it structurally at construction.

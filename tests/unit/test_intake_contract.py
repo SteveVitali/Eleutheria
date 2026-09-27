@@ -294,3 +294,165 @@ def test_moderation_detail_contract() -> None:
     with pytest.raises(pint.IntakeFieldError):
         pint.validate_moderation_detail("assigned", {})
     assert pint.validate_moderation_detail("assigned", {"assignee": "rev-7"})["assignee"] == "rev-7"
+
+
+# --------------------------------------------------------------------------- #
+# The P32.16a proposal + publication-linkage contract (SIG-FIND-008)
+# --------------------------------------------------------------------------- #
+_CLAIM = "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+
+
+def _correct_proposal() -> dict:
+    return {
+        "target_kind": "claim",
+        "target_id": _CLAIM,
+        "claim_digest": "a" * 64,
+        "evidence_digest": "b" * 64,
+        "value": {"value_text": "225", "value_num": 225, "unit": "cameras"},
+    }
+
+
+def test_proposal_required_per_outcome() -> None:
+    # refuse carries NO proposal — denial never mutates the graph.
+    with pytest.raises(pint.IntakeFieldError):
+        pint.validate_moderation_detail(
+            "disposition_proposed",
+            {"outcome": "refuse", "reason": "dup", "proposal": {}},
+        )
+    # An applying outcome REQUIRES the proposal.
+    with pytest.raises(pint.IntakeFieldError):
+        pint.validate_moderation_detail(
+            "disposition_proposed", {"outcome": "correct", "reason": "r"}
+        )
+    # And the sanitized proposal round-trips on the detail.
+    ok = pint.validate_moderation_detail(
+        "disposition_proposed",
+        {
+            "outcome": "correct",
+            "reason": "verified",
+            "proposal": _correct_proposal(),
+        },
+    )
+    assert ok["proposal"]["target_id"] == _CLAIM
+
+
+def test_proposal_unknown_and_missing_keys() -> None:
+    with pytest.raises(pint.IntakeFieldError):
+        pint.validate_proposal("correct", {**_correct_proposal(), "pwn": "x"})
+    missing = {k: v for k, v in _correct_proposal().items() if k != "claim_digest"}
+    with pytest.raises(pint.IntakeFieldError):
+        pint.validate_proposal("correct", missing)
+
+
+def test_proposal_fingerprint_and_target_shapes() -> None:
+    bad = _correct_proposal()
+    bad["claim_digest"] = "not-a-digest"
+    with pytest.raises(pint.IntakeFieldError):
+        pint.validate_proposal("correct", bad)
+    bad2 = _correct_proposal()
+    bad2["target_id"] = "free prose"
+    with pytest.raises(pint.IntakeFieldError):
+        pint.validate_proposal("correct", bad2)
+    # A release_artifact target is the p-<64 hex> ADR-132 namespace only.
+    with pytest.raises(pint.IntakeFieldError):
+        pint.validate_proposal(
+            "suppress",
+            {
+                "target_kind": "release_artifact",
+                "target_id": "abc123",
+                "reason_category": "suppressed",
+            },
+        )
+    ok = pint.validate_proposal(
+        "suppress",
+        {
+            "target_kind": "release_artifact",
+            "target_id": "p-" + "c" * 64,
+            "reason_category": "rights_withdrawal",
+        },
+    )
+    assert ok["disposition"] == "withhold"  # the safe default
+
+
+def test_proposal_part_viii_screen() -> None:
+    bad = _correct_proposal()
+    bad["value"] = {"value_text": "the license plate ABC-123"}
+    with pytest.raises(pint.IntakeFieldError):
+        pint.validate_proposal("correct", bad)
+    bad2 = _correct_proposal()
+    bad2["correction_reason"] = "per-trip travel history"
+    with pytest.raises(pint.IntakeFieldError):
+        pint.validate_proposal("correct", bad2)
+
+
+def test_proposal_outcome_shapes() -> None:
+    # correct/annotate target claims only; annotate requires its predicate.
+    bad = _correct_proposal()
+    bad["target_kind"] = "entity"
+    with pytest.raises(pint.IntakeFieldError):
+        pint.validate_proposal("correct", bad)
+    anno = _correct_proposal()
+    anno["predicate_id"] = "camera_count"
+    assert pint.validate_proposal("annotate", anno)["predicate_id"] == "camera_count"
+    missing_pred = {k: v for k, v in anno.items() if k != "predicate_id"}
+    with pytest.raises(pint.IntakeFieldError):
+        pint.validate_proposal("annotate", missing_pred)
+    # delete always lands withdraw — a narrower disposition is refused.
+    with pytest.raises(pint.IntakeFieldError):
+        pint.validate_proposal(
+            "delete",
+            {
+                "target_kind": "claim",
+                "target_id": _CLAIM,
+                "reason_category": "safety_withdrawal",
+                "disposition": "withhold",
+            },
+        )
+    ok = pint.validate_proposal(
+        "delete",
+        {
+            "target_kind": "claim",
+            "target_id": _CLAIM,
+            "reason_category": "safety_withdrawal",
+        },
+    )
+    assert ok["disposition"] == "withdraw"
+    # An unknown reason_category is refused.
+    with pytest.raises(pint.IntakeFieldError):
+        pint.validate_proposal(
+            "suppress",
+            {"target_kind": "claim", "target_id": _CLAIM, "reason_category": "meh"},
+        )
+
+
+def test_publish_linkage_contract() -> None:
+    # At least one of the three linkage forms is required.
+    with pytest.raises(pint.IntakeFieldError):
+        pint.validate_publish_linkage()
+    # The release identity is the ADR-132 namespace, nothing else.
+    with pytest.raises(pint.IntakeFieldError):
+        pint.validate_publish_linkage(publication_id="release-1")
+    ok = pint.validate_publish_linkage(
+        publication_id="p-" + "d" * 64, correction_ref="aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee"
+    )
+    assert ok["publication_id"].startswith("p-") and "correction_ref" in ok
+    # A tombstone is screened like every piece of review-authored text.
+    with pytest.raises(pint.IntakeFieldError):
+        pint.validate_publish_linkage(tombstone="per-person lookup")
+    ok2 = pint.validate_publish_linkage(tombstone="withheld pending legal review")
+    assert ok2["tombstone"] == "withheld pending legal review"
+
+
+def test_bridge_transition_paths() -> None:
+    # applied/published are bridge-only stages in the lifecycle.
+    assert pint.legal_transition("disposition_approved", "applied")
+    assert pint.legal_transition("applied", "published")
+    assert pint.legal_transition("applied", "closed")
+    assert pint.legal_transition("published", "closed")
+    # A superseded approval is recoverable: approved → re-proposed → re-approved.
+    assert pint.legal_transition("disposition_approved", "disposition_proposed")
+    # But the path never skips the approval gate.
+    assert not pint.legal_transition("received", "applied")
+    assert not pint.legal_transition("triaged", "applied")
+    assert not pint.legal_transition("disposition_proposed", "applied")
+    assert not pint.legal_transition("published", "applied")

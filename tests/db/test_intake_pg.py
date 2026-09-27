@@ -559,6 +559,15 @@ def test_durable_submit_restart_receipt_moderation(sig_database: dict[str, objec
                 "reason": "verified fixture",
                 "public_response": "Corrected in the next release.",
                 "public_response_publish": True,
+                # P32.16a: an applying outcome carries the structured proposal
+                # the bridge would validate before any canonical write.
+                "proposal": {
+                    "target_kind": "claim",
+                    "target_id": str(uuid.uuid4()),
+                    "claim_digest": "a" * 64,
+                    "evidence_digest": "b" * 64,
+                    "value": {"value_text": "225", "value_num": 225, "unit": "cameras"},
+                },
             },
         },
         headers={"Authorization": "Bearer reviewer-demo-key"},

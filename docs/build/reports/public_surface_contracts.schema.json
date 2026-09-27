@@ -372,7 +372,11 @@
         "previous_value": { "type": "string" },
         "corrected_value": { "type": "string" },
         "previous_belief_date": { "type": "string", "description": "Belief-time at which the erroneous value still re-resolves (SIG-GOV-005)." },
-        "subject_path": { "type": "string" }
+        "subject_path": { "type": "string" },
+        "previous_claim_id": { "type": "string", "description": "P32.16a (SIG-FIND-008): the superseded/retracted claim this entry revises — the log names BOTH assertions." },
+        "revises_claim": { "type": "string", "description": "The claim this entry revises (= previous_claim_id for a revision)." },
+        "retraction_of": { "type": "string", "description": "The claim this entry retracts (retraction outcome)." },
+        "previous_withheld": { "type": "boolean", "description": "True when the prior assertion exists but is itself gated — its value/date stay off the public surface." }
       }
     },
     "ResearchTaskCard": {
