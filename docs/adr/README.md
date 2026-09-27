@@ -134,6 +134,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-127](ADR-127-single-writer-closeout-protocol.md) | — | — | — |
 | [ADR-128](ADR-128-preregistered-blinded-human-evaluation-campaigns.md) | — | — | — |
 | [ADR-129](ADR-129-design-aware-resolution-evaluation-and-shadow-confidence-gates.md) | — | — | — |
+| [ADR-130](ADR-130-acquisition-reviewed-queue.md) | — | — | — |
 
 ## Notes
 

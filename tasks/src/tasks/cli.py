@@ -169,6 +169,59 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="write <out>/records_requests.json (the drafted-not-sent records requests)",
     )
+
+    acq = sub.add_parser(
+        "acquisition",
+        help="the gap-driven reviewed source-candidate queue (P32.11, §55.6, "
+        "SIG-ACQ-001/002) — read-only; approves nothing",
+    )
+    acq_sub = acq.add_subparsers(dest="acq_command")
+    acq_q = acq_sub.add_parser(
+        "queue",
+        help="the ranked reviewed queue — markdown report (default) or the "
+        "machine projection with --json",
+    )
+    acq_q.add_argument("--json", action="store_true", help="emit the JSON projection")
+    acq_q.add_argument(
+        "--candidates",
+        default=None,
+        help="alternate inventory CSV (default: the committed research CSV)",
+    )
+    acq_q.add_argument(
+        "--out",
+        default=None,
+        help="also write <out>/queue.md and <out>/packets/<id>.md",
+    )
+    acq_ex = acq_sub.add_parser(
+        "explain",
+        help="one candidate: score contributions, gates, registry join, cost, "
+        "uncertainty; --other diffs its assessment against another versioned "
+        "queue file",
+    )
+    acq_ex.add_argument("--candidate", required=True, help="candidate id (e.g. SRC-001)")
+    acq_ex.add_argument(
+        "--other",
+        default=None,
+        metavar="QUEUE_TOML",
+        help="diff this candidate's dimensions against an alternate "
+        "acquisition_queue TOML (versioned-input explainability)",
+    )
+    acq_pk = acq_sub.add_parser(
+        "packet",
+        help="write the operator review packet(s) — organizes what a reviewer "
+        "must decide; authorizes nothing",
+    )
+    acq_pk.add_argument("--candidate", default=None, help="one candidate id (default: all)")
+    acq_pk.add_argument(
+        "--out",
+        default=None,
+        help="packet directory (default: docs/build/reports/acquisition/packets)",
+    )
+    acq_ck = acq_sub.add_parser(
+        "check",
+        help="CI invariants over the queue — exits 1 on any violation",
+    )
+    acq_ck.add_argument("--candidates", default=None, help="alternate inventory CSV (as `queue`)")
     return parser
 
 
@@ -382,10 +435,146 @@ def _records_outcomes_show(args: argparse.Namespace) -> int:
     return 0
 
 
+# --------------------------------------------------------------------------- #
+# Acquisition — the gap-driven reviewed candidate queue (P32.11, §55.6)
+# --------------------------------------------------------------------------- #
+def _acq_entries(args: argparse.Namespace) -> list:
+    from .acquisition import build_queue
+
+    return build_queue(getattr(args, "candidates", None))
+
+
+def _acq_queue(args: argparse.Namespace) -> int:
+    from .acquisition import entries_as_json, queue_report, review_packet
+
+    entries = _acq_entries(args)
+    if args.json:
+        print(json.dumps(entries_as_json(entries), indent=2, sort_keys=True))
+    else:
+        print(queue_report(entries))
+    if args.out:
+        out_dir = Path(args.out)
+        packets = out_dir / "packets"
+        packets.mkdir(parents=True, exist_ok=True)
+        (out_dir / "queue.md").write_text(queue_report(entries))
+        for entry in entries:
+            (packets / f"{entry.passport.candidate_id}.md").write_text(review_packet(entry))
+        print(f"# wrote {out_dir / 'queue.md'} + {len(entries)} packets under {packets}")
+    return 0
+
+
+def _acq_explain(args: argparse.Namespace) -> int:
+    from .acquisition import (
+        DIMENSION_WEIGHTS,
+        DIMENSIONS,
+        diff_assessments,
+        load_candidates,
+        score,
+    )
+
+    entries = _acq_entries(args)
+    entry = next((e for e in entries if e.passport.candidate_id == args.candidate), None)
+    if entry is None:
+        print(f"unknown candidate {args.candidate!r}")
+        return 2
+    p, s = entry.passport, entry.score_result
+    print(f"# {p.candidate_id} — {p.family}")
+    print(
+        f"disposition: {entry.disposition.value}  kind: {entry.kind}  "
+        f"relation: {entry.join.relation.value}"
+    )
+    print(
+        f"score {s.value if s.value is not None else 'unscored'} "
+        f"({s.scoring_version} over {s.assessment_version}, assessor: "
+        f"{p.dimensions.assessor})"
+    )
+    for d in DIMENSIONS:
+        raw = p.dimensions.values.get(d)
+        print(
+            f"  {d}: value={raw if raw is not None else 'unknown'} "
+            f"weight={DIMENSION_WEIGHTS[d]:+d} contribution={s.contributions[d]:+d}"
+        )
+    if s.unscored_dimensions:
+        print(f"  unscored (unknown): {', '.join(s.unscored_dimensions)}")
+    print(f"gates: {', '.join(sorted(g.value for g in entry.gates)) or 'none'}")
+    print(
+        f"cost: estimated={p.cost.estimated_effort} "
+        f"({p.cost.estimated_basis}); measured="
+        f"{p.cost.measured_minutes if p.cost.measured_minutes is not None else 'none yet'}"
+    )
+    print(f"uncertainty: {entry.uncertainty}")
+    if args.other:
+        import tomllib
+
+        other_table = tomllib.loads(Path(args.other).read_text())
+        others = {c.candidate_id: c for c in load_candidates(queue_table=other_table)}
+        other = others.get(args.candidate)
+        if other is None:
+            print(f"candidate {args.candidate!r} not present in {args.other}")
+            return 2
+        deltas = diff_assessments(p.dimensions, other.dimensions)
+        print(f"diff {p.dimensions.version} → {other.dimensions.version}:")
+        if not deltas:
+            print("  (no dimension changes)")
+        for delta in deltas:
+            print(
+                f"  {delta.dimension}: {delta.old} → {delta.new} "
+                f"(weight {delta.weight:+d}, Δ score {delta.delta:+d})"
+            )
+        old_score, new_score = score(p.dimensions), score(other.dimensions)
+        print(f"  score: {old_score.value} → {new_score.value}")
+    return 0
+
+
+def _acq_packet(args: argparse.Namespace) -> int:
+    from .acquisition import review_packet
+
+    entries = _acq_entries(args)
+    out_dir = (
+        Path(args.out) if args.out else _repo_root() / "docs/build/reports/acquisition/packets"
+    )
+    out_dir.mkdir(parents=True, exist_ok=True)
+    written = 0
+    for entry in entries:
+        if args.candidate and entry.passport.candidate_id != args.candidate:
+            continue
+        (out_dir / f"{entry.passport.candidate_id}.md").write_text(review_packet(entry))
+        written += 1
+    if not written:
+        print(f"unknown candidate {args.candidate!r}")
+        return 2
+    print(f"wrote {written} packet(s) under {out_dir} — review inputs; they authorize nothing")
+    return 0
+
+
+def _acq_check(args: argparse.Namespace) -> int:
+    from .acquisition import check_queue
+
+    violations = check_queue(_acq_entries(args))
+    if violations:
+        print("acquisition queue check FAILED:")
+        for v in violations:
+            print(f"  - {v}")
+        return 1
+    print("acquisition queue check: 0 violations")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run the `tasks` CLI. Returns a process exit code (3 = a gated refusal)."""
     parser = build_parser()
     args = parser.parse_args(argv)
+    if args.command == "acquisition":
+        if args.acq_command == "queue":
+            return _acq_queue(args)
+        if args.acq_command == "explain":
+            return _acq_explain(args)
+        if args.acq_command == "packet":
+            return _acq_packet(args)
+        if args.acq_command == "check":
+            return _acq_check(args)
+        parser.parse_args([args.command, "--help"])
+        return 0
     if args.command == "maproulette":
         if args.mr_command == "push":
             return _maproulette_push(args)

@@ -7,7 +7,10 @@ requires-python = ">=3.11"
 # SIG-TASK-009) rather than re-encoding the §32.1 coverage shape. P29.2's detector
 # run reads the Round-6 materialized graph through the reconcile/inference read seams
 # (contradictions/edges/coverage) — CONSUMED, not re-implemented (SIG-ENG-035).
-dependencies = ["sig-inference", "sig-reconcile"]
+# P32.11 (SIG-ACQ-001/002): the acquisition queue joins the committed source
+# registry (`connectors.registry`) and the recorded rights dispositions
+# (`db.rights_decisions`) rather than re-encoding either — consumed, never forked.
+dependencies = ["sig-inference", "sig-reconcile", "sig-connectors", "sig-db"]
 
 [project.scripts]
 sig-tasks = "tasks.cli:main"
@@ -15,6 +18,8 @@ sig-tasks = "tasks.cli:main"
 [tool.uv.sources]
 sig-inference = { workspace = true }
 sig-reconcile = { workspace = true }
+sig-connectors = { workspace = true }
+sig-db = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]

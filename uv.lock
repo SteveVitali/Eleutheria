@@ -2757,12 +2757,16 @@ name = "sig-tasks"
 version = "0.1.0"
 source = { editable = "tasks" }
 dependencies = [
+    { name = "sig-connectors" },
+    { name = "sig-db" },
     { name = "sig-inference" },
     { name = "sig-reconcile" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "sig-connectors", editable = "connectors" },
+    { name = "sig-db", editable = "db" },
     { name = "sig-inference", editable = "inference" },
     { name = "sig-reconcile", editable = "reconcile" },
 ]
