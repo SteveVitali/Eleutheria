@@ -75,6 +75,14 @@ from datetime import UTC, date, datetime
 from typing import Any, Concatenate, ParamSpec, TypeVar
 
 import psycopg
+from db.dispositions import (
+    TargetKind,
+    claim_eligible_sql,
+    effective_dispositions,
+    eligible_claim_ids,
+    eligible_entity_ids,
+    entity_eligible_sql,
+)
 from db.occurrences import (
     BELIEF_NOW,
     BELIEF_PARAM,
@@ -93,6 +101,12 @@ from exports.shaping import (
     run_shaping,
 )
 from inference.coverage import CoverageRecord
+from policy.eligibility import (
+    PublicationDecision,
+    access_decision,
+    claim_publication_decision,
+    organization_publication_decision,
+)
 from policy.rights import RightsRecord
 from psycopg import sql
 from psycopg_pool import ConnectionPool, PoolTimeout
@@ -188,17 +202,26 @@ _SEARCH_MATCH = (
     "SELECT e.entity_id, e.entity_type FROM entity e "
     " WHERE e.entity_id IN ("
     "   SELECT ei.entity_id FROM entity_identifier ei WHERE ei.value ILIKE %(pattern)s)"
+    # P32.5/ADR-124 (SIG-TRUST-006): the shared eligibility selector — a
+    # review-pending/withheld organisation is absent from search, not merely
+    # unlabelled. ``entity_eligible_sql`` is the SAME fragment the exports
+    # inline, so index search and the shaper cannot diverge.
+    "   AND " + entity_eligible_sql("e.entity_id")
 )
 SEARCH_SQL = _SEARCH_MATCH + " ORDER BY e.entity_id LIMIT %(limit)s"
 SEARCH_AFTER_SQL = (
     _SEARCH_MATCH + "   AND e.entity_id > %(after)s::uuid ORDER BY e.entity_id LIMIT %(limit)s"
 )
 # The labels for a whole page, set-based: the same rule as ``_label_for`` (the
-# organization's cached name, else the entity's first identifier by scheme).
+# organization's cached name, else the entity's first identifier by scheme) —
+# BUT a label is itself protected output (D-P31.5-2): an ineligible entity's
+# cached name must never reach this surface even if the match missed it.
 _SEARCH_LABELS_SQL = (
-    "SELECT ids.entity_id, COALESCE(NULLIF(o.cached_canonical_name, ''), ("
+    "SELECT ids.entity_id, CASE WHEN "
+    + entity_eligible_sql("ids.entity_id")
+    + " THEN COALESCE(NULLIF(o.cached_canonical_name, ''), ("
     "   SELECT ei.value FROM entity_identifier ei"
-    "    WHERE ei.entity_id = ids.entity_id ORDER BY ei.scheme LIMIT 1))"
+    "    WHERE ei.entity_id = ids.entity_id ORDER BY ei.scheme LIMIT 1)) END"
     "  FROM unnest(%s::uuid[]) AS ids(entity_id)"
     "  LEFT JOIN organization o ON o.entity_id = ids.entity_id"
 )
@@ -483,6 +506,11 @@ class PgReadStore:
         entity_id = self._resolve_entity(subject_id)
         if entity_id is None:
             return []
+        # P32.5/ADR-124: a withheld entity's assertions are not publicly served —
+        # same selector as ``entity()`` (current dispositions, not belief-pinned:
+        # an access withdrawal overrides historical availability).
+        if not self._entity_publication(entity_id)[1].permitted:
+            return []
         rows = self._conn.execute(
             "SELECT c.claim_id, c.value_kind, c.value_text, c.value_num, c.value_bool, "
             "       c.raw_value, c.observed_at, c.source_reliability, c.artifact_integrity, "
@@ -499,6 +527,7 @@ class PgReadStore:
             + COUNT_QUALIFIER_JOIN
             + " WHERE c.subject_id = %s AND c.predicate_id = %s "
             "   AND c.sensitivity_tier = 0 "  # publication boundary (§0.7)
+            f"  AND {claim_eligible_sql('c')} "  # P32.5 shared selector (current dispositions)
             "   AND c.sys_period @> %s::timestamptz",  # as-of belief (§9.4)
             (as_of_belief, entity_id, predicate_id, as_of_belief),
         ).fetchall()
@@ -568,16 +597,28 @@ class PgReadStore:
         ).fetchone()
         if row is None or (entity_type and row[0] != entity_type):
             return None
+        # P32.5/ADR-124 (SIG-TRUST-006): the shared eligibility selector decides
+        # BEFORE any label/fact is served. A withheld entity answers with an
+        # honest tombstone — entity id + type + the safe reason/policy version —
+        # never its name, facts or sources (the D-P31.5-2 label leak closes here).
+        label, decision = self._entity_publication(resolved)
+        if not decision.permitted:
+            return EntityRecord(
+                entity_id=entity_id,
+                entity_type=row[0],
+                label=None,
+                publication=decision,
+            )
         preds = [
             str(p[0])
             for p in self._conn.execute(
-                "SELECT DISTINCT predicate_id FROM claim "
-                "WHERE subject_id = %s AND sensitivity_tier = 0 ORDER BY predicate_id",
+                "SELECT DISTINCT predicate_id FROM claim c "
+                "WHERE c.subject_id = %s AND c.sensitivity_tier = 0 "
+                f" AND {claim_eligible_sql('c')} ORDER BY predicate_id",
                 (resolved,),
             ).fetchall()
         ]
         sources = self._source_ids_for_entity(resolved)
-        label = self._label_for(resolved)
         # Publication boundary: sensitive coordinates are never returned raw here
         # (jurisdiction-only, §0.7); coordinate claims are reduced upstream (P21.2).
         return EntityRecord(
@@ -588,13 +629,38 @@ class PgReadStore:
             source_ids=tuple(sources),
         )
 
-    def _label_for(self, entity_id: str) -> str | None:
+    def _entity_publication(self, entity_id: str) -> tuple[str | None, PublicationDecision]:
+        """(label-if-permitted, decision) — the shared selector for ONE entity.
+
+        Organisations consume ``publication_review_required``/``status`` plus the
+        current effective ``entity`` disposition (D-P31.5-2); non-organisations
+        carry the disposition branch only. ``access_decision`` applies the same
+        deny set, so a dispositioned camera/deployment tombstones identically.
+        """
         row = self._conn.execute(
-            "SELECT cached_canonical_name FROM organization WHERE entity_id = %s",
+            "SELECT cached_canonical_name, publication_review_required, status"
+            "  FROM organization WHERE entity_id = %s",
             (entity_id,),
         ).fetchone()
-        if row is not None and row[0]:
-            return str(row[0])
+        effective = effective_dispositions(self._conn, TargetKind.ENTITY, [entity_id]).get(
+            entity_id
+        )
+        if row is None:
+            return (None, access_decision(effective))
+        decision = organization_publication_decision(
+            publication_review_required=bool(row[1]),
+            status=None if row[2] is None else str(row[2]),
+            effective=effective,
+        )
+        # The label itself is protected output: only a permitted entity yields it.
+        return (str(row[0]) if (decision.permitted and row[0]) else None, decision)
+
+    def _label_for(self, entity_id: str) -> str | None:
+        label, decision = self._entity_publication(entity_id)
+        if not decision.permitted:
+            return None
+        if label:
+            return label
         ident = self._conn.execute(
             "SELECT value FROM entity_identifier WHERE entity_id = %s ORDER BY scheme LIMIT 1",
             (entity_id,),
@@ -611,6 +677,7 @@ class PgReadStore:
                 "  JOIN evidence_capture ec ON ec.capture_id = ce.capture_id "
                 "  JOIN evidence_artifact ea ON ea.artifact_id = ec.artifact_id "
                 " WHERE c.subject_id = %s AND c.sensitivity_tier = 0 "
+                f"  AND {claim_eligible_sql('c')} "  # P32.5: a withheld claim attributes nothing
                 " ORDER BY ea.source_id",
                 (entity_id,),
             ).fetchall()
@@ -627,7 +694,7 @@ class PgReadStore:
             "       occ.source_id, occ.artifact_type, occ.retrieved_at, occ.capture_id, "
             "       occ.bound_at, "
             "       q.count_scope, q.count_scope_detail, q.count_scope_jurisdiction, "
-            "       q.evidence_origin "
+            "       q.evidence_origin, c.object_entity::text "
             "  FROM claim c "
             + occurrence_lateral(BELIEF_NOW)
             + COUNT_QUALIFIER_JOIN
@@ -666,12 +733,46 @@ class PgReadStore:
             count_scope_jurisdiction=row[20],
             evidence_origin=row[21],
         )
-        return StoredClaim(claim=claim, asserted_at=asserted_at, capture_ids=capture_ids)
+        # P32.5/ADR-124: the shared selector — a claim under a current deny
+        # disposition, or whose subject/referenced entity is withheld, answers
+        # with a truthful tombstone (policy version + safe reason), never its
+        # value. The history stays on the spine; access is what changes.
+        publication = self._claim_publication(claim, object_entity=row[22])
+        return StoredClaim(
+            claim=claim,
+            asserted_at=asserted_at,
+            capture_ids=capture_ids,
+            publication=None if publication.permitted else publication,
+        )
+
+    def _claim_publication(
+        self, claim: Claim, object_entity: str | None = None
+    ) -> PublicationDecision:
+        """The shared claim selector for ONE fetched claim (tombstone detail)."""
+        effective = effective_dispositions(self._conn, TargetKind.CLAIM, [claim.claim_id]).get(
+            claim.claim_id
+        )
+        subject_entity = self._resolve_entity(claim.subject_id)
+        subject_dec = self._entity_publication(subject_entity)[1] if subject_entity else None
+        object_dec = self._entity_publication(object_entity)[1] if object_entity else None
+        return claim_publication_decision(
+            effective=effective, subject=subject_dec, object_entity=object_dec
+        )
 
     @_pooled
     def capture(self, artifact_id: str, capture_id: str) -> CaptureMetadata | None:
         if not (_looks_like_uuid(artifact_id) and _looks_like_uuid(capture_id)):
             return None
+        # P32.5/ADR-124: a recorded disposition on the artifact itself denies the
+        # public capture read — the object stays in the evidence store for the
+        # authorized-review surface (``access_decision`` is the same selector
+        # every path consumes; absent registry/dispositions → allow). Both the
+        # evidence-artifact and release-artifact target kinds are honoured —
+        # a withdrawn release object denies its captures too.
+        for kind in (TargetKind.ARTIFACT, TargetKind.RELEASE_ARTIFACT):
+            eff = effective_dispositions(self._conn, kind, [artifact_id]).get(artifact_id)
+            if not access_decision(eff).permitted:
+                return None
         row = self._conn.execute(
             "SELECT ec.capture_id, ea.source_id, ec.source_uri, ec.retrieved_at, "
             "       ec.content_digest, ec.media_type, ec.storage_tier "
@@ -834,7 +935,8 @@ class PgReadStore:
             subjects = [
                 str(e[0])
                 for e in self._conn.execute(
-                    "SELECT DISTINCT subject_id FROM claim WHERE sensitivity_tier = 0 LIMIT 25"
+                    "SELECT DISTINCT subject_id FROM claim c WHERE c.sensitivity_tier = 0 "
+                    f" AND {claim_eligible_sql('c')} LIMIT 25"
                 ).fetchall()
             ]
         if not subjects:
@@ -876,17 +978,33 @@ class PgReadStore:
             "SELECT contradiction_id, subject_id, predicate_id, contradiction_type, "
             "       status, claim_ids FROM contradiction ORDER BY contradiction_id"
         ).fetchall()
-        return [
-            ContradictionRecord(
-                contradiction_id=str(r[0]),
-                subject_id=str(r[1]),
-                predicate_id=str(r[2]),
-                kind=str(r[3]),
-                state=str(r[4]),
-                claim_ids=tuple(str(x) for x in (r[5] or ())),
+        # P32.5/ADR-124: a withheld claim may not leak through edge topology
+        # either — a contradiction citing a currently-withheld claim is dropped
+        # whole (never partially re-pinned), and a withheld subject entity hides
+        # its pair. Recompute-on-read uses the same claim_eligible_sql selector.
+        all_claims = sorted({str(x) for r in rows for x in (r[5] or ())})
+        ok_claims = eligible_claim_ids(self._conn, all_claims)
+        subjects = sorted({str(r[1]) for r in rows if _looks_like_uuid(str(r[1]))})
+        ok_entities = eligible_entity_ids(self._conn, subjects)
+        out: list[ContradictionRecord] = []
+        for r in rows:
+            ids = tuple(str(x) for x in (r[5] or ()))
+            if any(i not in ok_claims for i in ids):
+                continue
+            sid = str(r[1])
+            if _looks_like_uuid(sid) and sid not in ok_entities:
+                continue
+            out.append(
+                ContradictionRecord(
+                    contradiction_id=str(r[0]),
+                    subject_id=sid,
+                    predicate_id=str(r[2]),
+                    kind=str(r[3]),
+                    state=str(r[4]),
+                    claim_ids=ids,
+                )
             )
-            for r in rows
-        ]
+        return out
 
     def _connect(self) -> psycopg.Connection:
         """A dedicated read connection for the annotation compute (P25.10).
@@ -950,6 +1068,7 @@ class PgReadStore:
             + occurrence_lateral(BELIEF_PARAM)
             + COUNT_QUALIFIER_JOIN
             + " WHERE c.sensitivity_tier = 0 "  # publication boundary (§0.7)
+            f"  AND {claim_eligible_sql('c')} "  # P32.5 shared selector (current dispositions)
             "   AND c.sys_period @> %s::timestamptz "  # as-of belief (§9.4)
             " ORDER BY c.subject_id, c.predicate_id, c.claim_id",
             (belief, belief),
@@ -1147,16 +1266,25 @@ class PgReadStore:
             "SELECT task_id, task_type, status, closing_condition, subject_id "
             "  FROM research_task ORDER BY task_id"
         ).fetchall()
-        return [
-            TaskRecord(
-                task_id=str(r[0]),
-                kind=str(r[1]),
-                status=str(r[2]),
-                rationale=str(r[3]),
-                subject_id=None if r[4] is None else str(r[4]),
+        # P32.5/ADR-124: a task citing a withheld entity is withheld too (the
+        # task itself stays on the spine for review).
+        subjects = sorted({str(r[4]) for r in rows if r[4] and _looks_like_uuid(str(r[4]))})
+        ok_entities = eligible_entity_ids(self._conn, subjects)
+        out: list[TaskRecord] = []
+        for r in rows:
+            sid = None if r[4] is None else str(r[4])
+            if sid and _looks_like_uuid(sid) and sid not in ok_entities:
+                continue
+            out.append(
+                TaskRecord(
+                    task_id=str(r[0]),
+                    kind=str(r[1]),
+                    status=str(r[2]),
+                    rationale=str(r[3]),
+                    subject_id=sid,
+                )
             )
-            for r in rows
-        ]
+        return out
 
     def tasks(self) -> list[TaskRecord]:
         return self._annotation_view().tasks

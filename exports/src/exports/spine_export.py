@@ -48,6 +48,12 @@ from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
 
+from db.dispositions import (
+    claim_eligible_sql,
+    eligible_claim_ids,
+    eligible_entity_ids,
+    entity_eligible_sql,
+)
 from db.occurrences import BELIEF_NOW, BELIEF_PARAM, claim_source_cte
 from inference.accountability import read_materialized_accountability_links
 from inference.materialize import read_materialized_coverage
@@ -127,9 +133,12 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
         "SELECT source_id, name FROM source_registry ORDER BY source_id",
     ),
     # entity_identifier labels — sharing-edge partner display names.
+    # P32.5/ADR-124 (D-P31.5-2): a withheld/review-pending entity contributes NO
+    # label — {PUB_ENTITY_GATE} is the shared selector (``true`` pre-P32.5).
     "entity_labels": (
         "entity_identifier",
-        "SELECT entity_id::text, scheme, value FROM entity_identifier ORDER BY entity_id, scheme",
+        "SELECT ei.entity_id::text, ei.scheme, ei.value FROM entity_identifier ei"
+        " WHERE {PUB_ENTITY_GATE} ORDER BY ei.entity_id, ei.scheme",
     ),
     # research_task rows (§39.7) — the research queue surface. The trailing
     # trigger_kind/trigger_ref (P29.2) cite what made each task's detector fire (the
@@ -137,10 +146,14 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
     # columns, so the query raises and fetch_export_raw degrades it to [] honestly.
     "research_tasks": (
         "research_task",
-        "SELECT task_id::text, task_type, subject_id::text, jurisdiction_id::text, priority,"
-        "       status, disposition, closing_condition, detector_version,"
-        "       trigger_kind, trigger_ref"
-        "  FROM research_task ORDER BY priority DESC, task_id",
+        "SELECT rt.task_id::text, rt.task_type, rt.subject_id::text, rt.jurisdiction_id::text,"
+        "       rt.priority, rt.status, rt.disposition, rt.closing_condition,"
+        "       rt.detector_version, rt.trigger_kind, rt.trigger_ref"
+        "  FROM research_task rt"
+        # P32.5/ADR-124: a task about a withheld subject does not surface on the
+        # public research queue — the subject still exists on the spine for
+        # authorized review (the task's own disposition field is unchanged).
+        " WHERE {PUB_TASK_GATE} ORDER BY rt.priority DESC, rt.task_id",
     ),
     # publishable evidence_artifact metadata (§39.6) — the evidence surface. Bytes
     # never travel; sealed captures stay metadata-only (§17.5).
@@ -162,6 +175,9 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
         "  FROM claim c"
         " WHERE (c.revises_claim IS NOT NULL OR c.retraction_of IS NOT NULL)"
         "   AND c.sensitivity_tier = 0 AND upper_inf(c.sys_period)"
+        # P32.5/ADR-124: a currently-withheld claim does not surface as a public
+        # correction entry (its history stays on the spine; access is gated).
+        "   AND {PUB_CLAIM_GATE}"
         " ORDER BY c.claim_id",
     ),
     # publishable tier-0 claims with the §10.4-§10.6 epistemic axes — the input
@@ -181,6 +197,9 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
         " WHERE c.sensitivity_tier = 0"
         "   AND upper_inf(c.sys_period)"
         "   AND rr.redistributable = 'yes'"
+        # P32.5/ADR-124: a currently-withheld claim never pads the evidence-tier
+        # distribution — the same selector as every other surface.
+        "   AND {PUB_CLAIM_GATE}"
         " ORDER BY c.claim_id",
     ),
 }
@@ -206,6 +225,14 @@ def fetch_export_raw(cur: Any, *, belief: datetime | None = None) -> dict[str, A
     )
     occ_bound = BELIEF_PARAM if belief is not None else BELIEF_NOW
     effective = _LATEST_DECISION_CTE + claim_source_cte(occ_bound)
+    # P32.5/ADR-124: the shared eligibility gates — real fragments when the
+    # registry exists, ``true`` on a pre-P32.5 spine (no dispositions can be
+    # recorded there). The entity gate also needs ``organization``.
+    has_registry = _table_present(cur, "publication_disposition")
+    has_orgs = _table_present(cur, "organization")
+    entity_gate = entity_eligible_sql("ei.entity_id") if (has_registry and has_orgs) else "true"
+    claim_gate = claim_eligible_sql("c") if has_registry else "true"
+    task_gate = entity_eligible_sql("rt.subject_id") if (has_registry and has_orgs) else "true"
     raw: dict[str, Any] = {}
     for key, (guard, sql) in EXPORT_QUERIES.items():
         cur.execute("SELECT to_regclass(%s) IS NOT NULL", (guard,))
@@ -214,14 +241,24 @@ def fetch_export_raw(cur: Any, *, belief: datetime | None = None) -> dict[str, A
             raw[key] = []
             continue
         try:
-            final = sql.replace("{EFFECTIVE}", effective).replace(
-                "upper_inf(c.sys_period)", belief_filter
+            final = (
+                sql.replace("{EFFECTIVE}", effective)
+                .replace("{PUB_ENTITY_GATE}", entity_gate)
+                .replace("{PUB_CLAIM_GATE}", claim_gate)
+                .replace("{PUB_TASK_GATE}", task_gate)
+                .replace("upper_inf(c.sys_period)", belief_filter)
             )
             cur.execute(final, tuple([belief] * final.count("%s")) or None)
             raw[key] = cur.fetchall()
         except Exception:  # noqa: BLE001 - a schema-shape mismatch is honest absence
             raw[key] = []
     return raw
+
+
+def _table_present(cur: Any, table: str) -> bool:
+    cur.execute("SELECT to_regclass(%s) IS NOT NULL", (table,))
+    row = cur.fetchone()
+    return bool(row and row[0])
 
 
 # --------------------------------------------------------------------------- #
@@ -288,6 +325,91 @@ def fetch_materialized_graph(cur: Any) -> dict[str, list[dict[str, Any]]]:
             out[key] = list(seam(cur))
         except Exception:  # noqa: BLE001 - a schema mismatch is honest absence, not a crash
             out[key] = []
+    # P32.5/ADR-124 (SIG-TRUST-006): a withheld entity or claim must not leak
+    # through materialized TOPOLOGY either — edges, accountability links,
+    # contradictions and resolutions citing a currently-withheld target are
+    # dropped whole under the same selector (current dispositions, not the
+    # materialization-time set). The rows stay materialized on the spine; the
+    # public export never names them.
+    return _eligibility_filter_materialized(cur, out)
+
+
+def _eligibility_filter_materialized(
+    cur: Any, out: dict[str, list[dict[str, Any]]]
+) -> dict[str, list[dict[str, Any]]]:
+    """Drop materialized rows that would expose a currently-withheld entity or
+    claim — batch-evaluated through the shared selector (current access policy)."""
+    if not _table_present(cur, "publication_disposition"):
+        return out
+    entity_ids: set[str] = set()
+    claim_ids: set[str] = set()
+    for e in out.get("materialized_edges", []):
+        entity_ids.update((str(e["from_entity"]), str(e["to_entity"])))
+        if e.get("evidence_claim"):
+            claim_ids.add(str(e["evidence_claim"]))
+    for link in out.get("materialized_accountability_links", []):
+        for k in ("deployment_id", "object_id", "via_org", "via_contract"):
+            if link.get(k):
+                entity_ids.add(str(link[k]))
+        claim_ids.update(map(str, link.get("establishing_claims") or ()))
+        claim_ids.update(map(str, link.get("input_claim_ids") or ()))
+    for c in out.get("materialized_contradictions", []):
+        entity_ids.add(str(c["subject_id"]))
+        claim_ids.update(map(str, c.get("claim_ids") or ()))
+    for r in out.get("materialized_resolutions", []):
+        entity_ids.add(str(r["subject_id"]))
+        if r.get("winning_claim"):
+            claim_ids.add(str(r["winning_claim"]))
+    for cov in out.get("materialized_coverage", []):
+        if cov.get("subject_id"):
+            entity_ids.add(str(cov["subject_id"]))
+    ok_entities = eligible_entity_ids(cur, sorted(entity_ids))
+    ok_claims = eligible_claim_ids(cur, sorted(claim_ids))
+
+    def _ent_ok(v: Any) -> bool:
+        # Only entity-shaped (uuid) references are entity-gated — a coverage
+        # metric's jurisdiction/candidate subject string is not an entity leak.
+        s = str(v).strip().lower()
+        if len(s) == 36 and s.count("-") == 4:
+            return s in ok_entities
+        return True
+
+    def _all_ok(ids: Any) -> bool:
+        return all(str(i) in ok_claims for i in (ids or ()))
+
+    out["materialized_edges"] = [
+        e
+        for e in out.get("materialized_edges", [])
+        if _ent_ok(e["from_entity"])
+        and _ent_ok(e["to_entity"])
+        and _all_ok([e.get("evidence_claim")])
+    ]
+    out["materialized_accountability_links"] = [
+        link
+        for link in out.get("materialized_accountability_links", [])
+        if all(
+            _ent_ok(link[k])
+            for k in ("deployment_id", "object_id", "via_org", "via_contract")
+            if link.get(k)
+        )
+        and _all_ok(link.get("establishing_claims"))
+        and _all_ok(link.get("input_claim_ids"))
+    ]
+    out["materialized_contradictions"] = [
+        c
+        for c in out.get("materialized_contradictions", [])
+        if _ent_ok(c["subject_id"]) and _all_ok(c.get("claim_ids"))
+    ]
+    out["materialized_resolutions"] = [
+        r
+        for r in out.get("materialized_resolutions", [])
+        if _ent_ok(r["subject_id"]) and _all_ok([r.get("winning_claim")])
+    ]
+    out["materialized_coverage"] = [
+        cov
+        for cov in out.get("materialized_coverage", [])
+        if not cov.get("subject_id") or _ent_ok(cov["subject_id"])
+    ]
     return out
 
 

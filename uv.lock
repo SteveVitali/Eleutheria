@@ -2559,6 +2559,7 @@ dependencies = [
     { name = "psycopg", extra = ["binary"] },
     { name = "sig-evidence" },
     { name = "sig-parsing" },
+    { name = "sig-policy" },
 ]
 
 [package.metadata]
@@ -2567,6 +2568,7 @@ requires-dist = [
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2" },
     { name = "sig-evidence", editable = "evidence" },
     { name = "sig-parsing", editable = "parsing" },
+    { name = "sig-policy", editable = "policy" },
 ]
 
 [[package]]

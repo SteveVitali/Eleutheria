@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import re
 from datetime import date
+from typing import Any
 
 from evidence.tiers import StorageTier
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
@@ -47,6 +48,7 @@ from .models import (
     ExportDescriptor,
     ExportIndexResponse,
     GeoPoint,
+    PublicationTombstone,
     ResolutionResponse,
     SearchResponse,
     TaskCollection,
@@ -75,6 +77,19 @@ def get_store(request: Request) -> ReadStore:
     """Dependency: the read store the app was built with (SIG-API-001 seam)."""
     store: ReadStore = request.app.state.store
     return store
+
+
+def _tombstone(decision: Any) -> PublicationTombstone:
+    """Render a store ``PublicationDecision`` as the API tombstone model (safe
+    fields only — reason category + authority class + policy version)."""
+    return PublicationTombstone(
+        permitted=False,
+        reason_category=decision.reason_category.value
+        if getattr(decision, "reason_category", None) is not None
+        else None,
+        authority=getattr(decision, "authority", None),
+        policy_version=decision.policy_version,
+    )
 
 
 def build_router() -> APIRouter:
@@ -138,6 +153,22 @@ def build_router() -> APIRouter:
         if record is None:
             raise HTTPException(status_code=404, detail="entity not found")
         assert_public_visibility(record.visibility)
+        # P32.5/ADR-124 (SIG-TRUST-006): the shared eligibility selector withheld
+        # this entity — serve the honest tombstone (id + type + safe reason)
+        # with NO label, facts, sources or location.
+        if record.publication is not None:
+            asof.apply_cache(response)
+            return EntityResponse(
+                entity_id=record.entity_id,
+                entity_type=record.entity_type,
+                label=None,
+                facts=[],
+                attribution=[],
+                location=None,
+                coverage=coverage_statement(entity_id, store.coverage_for(entity_id)),
+                as_of=asof.echo(),
+                publication=_tombstone(record.publication),
+            )
         facts = []
         unregistered: list[str] = []
         for predicate_id in record.predicate_ids:
@@ -188,12 +219,16 @@ def build_router() -> APIRouter:
         c = stored.claim
         rights = store.rights_for((c.source_id,) if c.source_id else ())
         asof.apply_cache(response)
+        # P32.5/ADR-124 (SIG-TRUST-006): a claim withheld under current policy
+        # answers with a truthful tombstone — value/raw_value/evidence links
+        # nulled, the reason category + policy version stated.
+        withheld = stored.publication is not None
         return ClaimResponse(
             claim_id=c.claim_id,
             subject_id=c.subject_id,
             predicate_id=c.predicate_id,
-            value=c.value,
-            raw_value=c.raw_value,
+            value=None if withheld else c.value,
+            raw_value=None if withheld else c.raw_value,
             observed_at=c.observed_at,
             source_id=c.source_id,
             attribution=attribution_for(rights),
@@ -203,10 +238,11 @@ def build_router() -> APIRouter:
             count_scope_detail=c.count_scope_detail,
             count_scope_jurisdiction=c.count_scope_jurisdiction,
             evidence_origin=c.evidence_origin,
-            evidence_capture_ids=list(stored.capture_ids),
+            evidence_capture_ids=[] if withheld else list(stored.capture_ids),
             resolution_ref=f"/v1/resolution/{c.subject_id}/{c.predicate_id}",
             coverage=empty_coverage(f"claim:{claim_id}"),
             as_of=asof.echo(),
+            publication=_tombstone(stored.publication) if withheld else None,
         )
 
     # --- /evidence — tier-gated; sealed bytes never returned (SIG-API-012) ----

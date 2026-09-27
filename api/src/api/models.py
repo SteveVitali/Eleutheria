@@ -181,6 +181,21 @@ class GeoPoint(_Model):
     precision: str
 
 
+class PublicationTombstone(_Model):
+    """The honest marker a withheld resource carries instead of its data
+    (P32.5 / ADR-124, SIG-TRUST-006).
+
+    A public answer for a withdrawn/withheld/review-pending target names the
+    SAFE reason category, the deciding authority class and the policy version —
+    never the privileged rationale and never the withheld bytes/name/value.
+    """
+
+    permitted: bool = False
+    reason_category: str | None
+    authority: str | None
+    policy_version: str
+
+
 class EntityResponse(_Model):
     """An entity resource (§37.3 ``/entity/{type}/{id}``).
 
@@ -203,6 +218,9 @@ class EntityResponse(_Model):
     #: quarantine/review — it never 404s the whole entity, and it never gets a
     #: fabricated fact. Empty when every predicate resolved.
     unregistered_predicates: list[str] = []
+    #: P32.5/ADR-124 (SIG-TRUST-006): set when the shared eligibility selector
+    #: withholds this entity — a truthful tombstone (facts/label stay empty).
+    publication: PublicationTombstone | None = None
 
 
 class ClaimResponse(_Model):
@@ -220,7 +238,7 @@ class ClaimResponse(_Model):
     subject_id: str
     predicate_id: str
     value: Any
-    raw_value: str
+    raw_value: str | None
     observed_at: date
     source_id: str
     #: Structural upstream attribution for this claim's source(s) — the upstream is
@@ -242,6 +260,10 @@ class ClaimResponse(_Model):
     resolution_ref: str
     coverage: CoverageStatement
     as_of: AsOfEcho
+    #: P32.5/ADR-124 (SIG-TRUST-006): set when the shared eligibility selector
+    #: withholds this claim — a truthful tombstone (``value``/``raw_value``
+    #: stay ``null``); the assertion history itself is untouched.
+    publication: PublicationTombstone | None = None
 
 
 class EvidenceResponse(_Model):
