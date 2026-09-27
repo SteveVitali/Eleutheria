@@ -4,7 +4,7 @@ This is a complete **planning/specification package**, not an implemented produc
 
 ## Integrated checkpoint
 
-The operator invoked this handoff after P31.19. The working integration branch is `codex/round10-seed-after-p31-19`, based on `08d87c4`. Read [the import receipt](integration/2026-09-26-after-p31-19.md) for actual validation/PR/transfer status before resuming. The original source-worktree facts below describe preparation, not current execution control.
+The operator invoked this handoff after P31.19. [PR #155](https://github.com/SteveVitali/Eleutheria/pull/155) imports the complete package on `codex/round10-seed-after-p31-19`, based on `08d87c4`; P32.1 / round 10 are prepared. Do not import the source series a second time. Read [the import receipt](integration/2026-09-26-after-p31-19.md) for actual validation/PR/transfer status before resuming. The original source-worktree facts below describe preparation, not current execution control.
 
 ## Location and starting state
 
@@ -22,7 +22,7 @@ The operator invoked this handoff after P31.19. The working integration branch i
 3. `REVIEW_CLOSURE.md` and `VALIDATION.md`, then the specific `research/S1…S6` report needed for the next decision.
 4. `PLAN.json`, `REQUIREMENTS.csv`, canonical §55, and the actual contract in `docs/tickets/`.
 
-The canonical spec was updated through `spec_src/96b_partXI_s55_six_streams.md` and `BUILD.sh`. The builder now resolves its own checkout; the old hardcoded path would have overwritten the other agent's file. This small tooling fix and strict planning/coverage validators are the only executable changes here. Product, database, ingestion and deployment code are unchanged.
+The canonical spec was updated through `spec_src/96b_partXI_s55_six_streams.md` and `BUILD.sh`. The builder now resolves its own checkout; the old hardcoded path would have overwritten the other agent's file. In the original planning series, this small tooling fix and strict planning/coverage validators were the only executable changes. The actual import also repairs the inherited npm lockfile install failure as documented in the receipt, with no existing package version changed. Product, database, ingestion and deployment code are unchanged.
 
 ## Safe integration while P31 is running
 

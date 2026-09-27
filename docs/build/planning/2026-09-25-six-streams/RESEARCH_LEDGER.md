@@ -4,11 +4,11 @@ This is a planning-round research ledger under committed build memory. It does n
 
 ## Current state
 
-- Status: COMPLETE — research/design/contracts; active-chain integration in progress after P31.19 (see integration receipt)
+- Status: COMPLETE — research/design/contracts; imported after P31.19 in PR #155 (final CI/checkout handoff governed by integration receipt)
 - Base: `0e57e6461d6a5db2e8e0042464750ce2ea65db5e`
 - Next: finish the verified PR/checkout handoff in integration/2026-09-26-after-p31-19.md, then P32.1
 - Implementation dispatched: no
-- Active checkout touched: no
+- Active checkout at closeout preparation: still paused and unchanged; authorized transfer follows the final CI/fingerprint guard.
 
 ## Workstreams
 
@@ -22,7 +22,7 @@ This is a planning-round research ledger under committed build memory. It does n
 | S6 | Current-state memory and orchestrator reliability | root | COMPLETE | research/S6-build-memory.md |
 | X1 | Shared decisions, amendments, dependency graph, contracts | root | COMPLETE | DESIGN.md; REQUIREMENTS.csv; PLAN.json |
 | X2 | Independent adversarial review and closure | fresh reviewers | COMPLETE | reviews/ |
-| X3 | Validation and handoff prepared; active-chain import pending | root | READY FOR IMPORT | VALIDATION.md; HANDOFF.md |
+| X3 | Validated active-chain import; resume controls prepared | root | PR #155 OPEN | VALIDATION.md; HANDOFF.md; integration/2026-09-26-after-p31-19.md |
 
 ## Decision register
 
@@ -45,3 +45,5 @@ This is a planning-round research ledger under committed build memory. It does n
 - 2026-09-25: Operator requested a one-instruction future integration after P31.12–P31.19. Added INTEGRATION_RUNBOOK.md, read-only preflight and regression tests; parameterized the new manifest block’s sequence bounds. Import remains pending the explicit clean pause. Source series includes foundation fdc7758 plus this preparation; active execution memory remains untouched.
 
 - 2026-09-27 UTC: Operator paused after P31.19 and authorized integration. Pinned paused tip `08d87c4`, imported both source commits into an isolated child branch, reconciled ADR-120/BL-058/rows 161–200 and preserved current execution evidence. Added explicit closure acceptance for the two otherwise-unscheduled API seams and appended the existing ACCEPT-R8 signature correction. Validation and PR evidence follow in the integration receipt.
+
+- 2026-09-27 UTC: Import committed as `d6c562e` and pushed as stacked PR #155 on the exact P31.19 tip. Integrated verification passed; final closeout prepares P32.1/round-10 controls. The original checkout is transferred only after final-head CI and unchanged-state guard; no implementation is dispatched here.

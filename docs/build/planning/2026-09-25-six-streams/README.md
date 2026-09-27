@@ -2,7 +2,7 @@
 
 All six streams are researched and translated into a coordinated design and actual contracts. Start with [HANDOFF.md](HANDOFF.md) for safe integration with the running Claude orchestrator, then [DESIGN.md](DESIGN.md). The canonical amendment is §55; 38 new requirements are routed to exactly one owner in [REQUIREMENTS.csv](REQUIREMENTS.csv). [PLAN.json](PLAN.json) defines 40 ordered rows: 28 feature contracts, three prerequisite/publication markers, and the full nine-row tail including acceptance.
 
-This package implements planning and validation tooling only. It does not claim completed repairs, human adjudication, acquisition or publication. The existing active checkout/control ledger was left untouched.
+This package implements planning and validation tooling only. It does not claim completed repairs, human adjudication, acquisition or publication. The original research pass left the active checkout/control ledger untouched; the authorized P31.19 import now prepares the Round-10 controls in PR #155, with the guarded transfer recorded separately.
 
 | Stream | Main conclusion | Concrete output and owners |
 |---|---|---|
@@ -17,7 +17,7 @@ The most important corrections to the initial audit are preserved in the researc
 
 Four independent review artifacts and follow-ups led to concrete design fixes. [REVIEW_CLOSURE.md](REVIEW_CLOSURE.md) records them, including release hash self-reference, current withdrawals during rollback, per-source temporal candidate sets, stale-worktree closeout, missing correction application, and candidate-before-sample evaluation ordering. [VALIDATION.md](VALIDATION.md) separates planning/test evidence from future live acceptance.
 
-Existing P31 work keeps its owners. Import this planning branch at a clean ticket boundary; finish P31.19, reconcile the actual landed baseline at P32.1, then run the new sequence. Pending human/source/operational/publication obligations are explicitly registered; no new gate is signed by this package.
+Existing P31 work keeps its owners. P31.19 is complete and the package is imported in [PR #155](https://github.com/SteveVitali/Eleutheria/pull/155); reconcile the actual landed baseline at P32.1, then run the new sequence. Do not repeat the import. Pending human/source/operational/publication obligations are explicitly registered; no new gate is signed by this package.
 
 For the operator’s next ticket-boundary pause, [INTEGRATION_RUNBOOK.md](INTEGRATION_RUNBOOK.md) defines the complete Codex-owned branch/import/stacked-PR/checkout handoff, including all six valid pause boundaries, P31.19 activation, collision handling, validation and recovery. The read-only preflight and its disposable-repository tests live under `tools/`.
 
