@@ -165,6 +165,20 @@ def build_parser() -> argparse.ArgumentParser:
         "--out", required=True, help="output directory for the committed artifact set"
     )
 
+    tpkt = sub.add_parser(
+        "dossier-packet-tulsa",
+        help="P32.19 (SIG-DOS-004, ADR-138): emit the reviewed Tulsa dossier "
+        "evidence set — the sig.dossier-packet/1 (fixture replay over the three "
+        "dossier documents: TPD policies 113C/113E + the MOU template), the "
+        "composed dossier + portfolio + print HTML, the drafted follow-up/"
+        "request queue (drafted, never sent), the evidence pack, and the "
+        "bounded live RETURN PASS packet (D-P32.19-1). Offline only: no fetch, "
+        "no rights flip, no request sent",
+    )
+    tpkt.add_argument(
+        "--out", required=True, help="output directory for the committed artifact set"
+    )
+
     seedfix = sub.add_parser(
         "seed-correct",
         help="P32.18: apply the authored OKC seed-correction packet to a spine "
@@ -948,6 +962,15 @@ def _cmd_seed(args: argparse.Namespace) -> int:
 
 def _cmd_dossier_packet(args: argparse.Namespace) -> int:
     from .dossier_packet import write
+
+    written = write(Path(args.out))
+    for key, path in written.items():
+        print(f"  {key}: {path}")
+    return 0
+
+
+def _cmd_dossier_packet_tulsa(args: argparse.Namespace) -> int:
+    from .tulsa_dossier_packet import write
 
     written = write(Path(args.out))
     for key, path in written.items():
@@ -1979,6 +2002,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_seed(args)
     if args.command == "dossier-packet":
         return _cmd_dossier_packet(args)
+    if args.command == "dossier-packet-tulsa":
+        return _cmd_dossier_packet_tulsa(args)
     if args.command == "seed-correct":
         return _cmd_seed_correct(args)
     if args.command == "egress-report":
