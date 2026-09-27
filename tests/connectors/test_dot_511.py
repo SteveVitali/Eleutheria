@@ -101,6 +101,25 @@ CAMREG_SOURCE_IDS = [
     "camreg_hk_hk",
 ]
 
+#: P26.13 (SOURCES.12) — the open-data-catalog sweep yield: clear-licence
+#: registries qualified out of 3,257 Socrata/ArcGIS-Hub/CKAN candidates
+#: (docs/build/reports/catalog_sweep_2026-09-18_reviewed.json). The first ten
+#: are the GL-GATE-06-resolved (flipped) rows; camreg_stalbert_ab stays gated
+#: (licence named, grant text JS-walled — D-SOURCES.12-1).
+CAMREG_P26_13_SOURCE_IDS = [
+    "camreg_washington_dc",
+    "camreg_nottingham_gb",
+    "camreg_york_gb",
+    "camreg_glasgow_gb",
+    "camreg_northayrshire_gb",
+    "camreg_lambeth_gb",
+    "camreg_peel_on",
+    "camreg_rochester_ny",
+    "camreg_goldcoast_au",
+    "camreg_puertogaitan_co",
+    "camreg_stalbert_ab",
+]
+
 
 class MapTransport:
     """Per-URL canned responses + permissive robots — no real network."""
@@ -612,10 +631,10 @@ def test_replay_and_shadow_are_deterministic() -> None:
 
 
 def test_every_camreg_source_resolves_a_registry_target() -> None:
-    """All 23 municipal/transit/non-US sources have ≥1 verified target row —
-    ArcGIS layers AND Socrata datasets, gated rows included (the endpoint is
-    real; the gate is what stops the fetch)."""
-    for source_id in CAMREG_SOURCE_IDS:
+    """All 23 P26.9 + 11 P26.13 municipal/transit/non-US sources have ≥1
+    verified target row — ArcGIS layers AND Socrata datasets, gated rows
+    included (the endpoint is real; the gate is what stops the fetch)."""
+    for source_id in CAMREG_SOURCE_IDS + CAMREG_P26_13_SOURCE_IDS:
         targets = registry_targets(source_id)
         assert targets, f"{source_id} has no registry target"
         for t in targets:
@@ -791,8 +810,20 @@ def test_camreg_green_sources_pass_gated_ones_refuse() -> None:
         "camreg_baltimore_md",
         "camreg_ottawa_on",
         "camreg_sheffield_gb",
+        # P26.13: the ten GL-GATE-06-resolved catalog-sweep registries.
+        "camreg_washington_dc",
+        "camreg_nottingham_gb",
+        "camreg_york_gb",
+        "camreg_glasgow_gb",
+        "camreg_northayrshire_gb",
+        "camreg_lambeth_gb",
+        "camreg_peel_on",
+        "camreg_rochester_ny",
+        "camreg_goldcoast_au",
+        "camreg_puertogaitan_co",
     }
-    gated = set(CAMREG_SOURCE_IDS) - green
+    gated = set(CAMREG_SOURCE_IDS + CAMREG_P26_13_SOURCE_IDS) - green
+    assert "camreg_stalbert_ab" in gated  # named licence, uncaptured grant text
     for source_id in green:
         assert live_gate_reasons(source_id) == [], f"{source_id} should be green"
     for source_id in sorted(gated):
@@ -814,6 +845,121 @@ def test_socrata_replay_and_shadow_are_deterministic() -> None:
     url = targets[0]["url"]
     body = _FIX.joinpath("austin_socrata.json").read_bytes()
     connector, ctx = _ctx("camreg_austin_tx", targets, {url: _resp(url, body)})
+    fixture_report = run(connector, ctx)
+    replay_a = replay(connector, ctx, fixture_report.captures)
+    replay_b = replay(connector, ctx, fixture_report.captures)
+    assert replay_fingerprint(replay_a) == replay_fingerprint(replay_b)
+    diff = shadow_replay(connector, ctx, fixture_report.captures, fixture_report.claims)
+    assert diff.changed_count == 0, f"shadow diff must be empty: {diff.summary()}"
+
+
+# ============================================================================
+# P26.13 (SOURCES.12) — open-data-catalog sweep registries
+# ============================================================================
+
+
+def test_p26_13_targets_carry_license_spdx_and_jurisdiction_schemes() -> None:
+    """Every sweep-wired target carries its licence id + an ISO/US jurisdiction
+    scheme — the compartment routing and the candidate-identifier scheme are
+    data on the row, not inferred at run time."""
+    expected = {
+        "camreg_washington_dc": ("CC-BY-4.0", "us.state_abbr"),
+        "camreg_nottingham_gb": ("OGL-3.0", "iso.3166_2"),
+        "camreg_york_gb": ("OGL-3.0", "iso.3166_2"),
+        "camreg_glasgow_gb": ("OGL-3.0", "iso.3166_2"),
+        "camreg_northayrshire_gb": ("OGL-3.0", "iso.3166_2"),
+        "camreg_lambeth_gb": ("OGL-3.0", "iso.3166_2"),
+        "camreg_peel_on": ("LicenseRef-Peel-ODL-1.0", "iso.3166_2"),
+        "camreg_rochester_ny": ("ODbL-1.0", "us.state_abbr"),
+        "camreg_goldcoast_au": ("CC-BY-4.0", "iso.3166_2"),
+        "camreg_puertogaitan_co": ("CC-BY-SA-4.0", "iso.3166_2"),
+        "camreg_stalbert_ab": ("LicenseRef-StAlbert-ODL-1.0", "iso.3166_2"),
+    }
+    for source_id, (spdx, scheme) in expected.items():
+        for t in registry_targets(source_id):
+            assert t["license_spdx"] == spdx, f"{source_id} licence drift"
+            assert t["jurisdiction_scheme"] == scheme
+
+
+def test_nottingham_titlecase_latlong_aliases() -> None:
+    """Nottingham's title-case `Lat`/`Long` attributes resolve as field-sourced
+    coordinates (a published attribute beats derived geometry)."""
+    lat, lon, source = extract_coordinate(
+        {
+            "OBJECTID": 7,
+            "CameraNum": "NCC-042",
+            "Location": "Maid Marian Way",
+            "Lat": "52.9532",
+            "Long": "-1.1521",
+            "District_Name": "Castle",
+        },
+        {"x": -1.1521, "y": 52.9532},
+    )
+    assert (lat, lon) == (52.9532, -1.1521)
+    assert source == "fields:Lat/Long"
+
+
+def test_projected_coordinate_fields_fall_back_to_geometry() -> None:
+    """Lambeth EASTING/NORTHING (BNG) and Rochester POINT_X/POINT_Y are NOT
+    lat/lon aliases — the outSR=4326 geometry is the coordinate source and the
+    projected attributes are never read as degrees."""
+    lat, lon, source = extract_coordinate(
+        {
+            "OBJECTID": 1,
+            "CCTV_NUMBER": "LB0001",
+            "CAMERA_LOCATION": "Brixton Road",
+            "EASTING": 531044.0,
+            "NORTHING": 175212.0,
+        },
+        {"x": -0.11459, "y": 51.46127},
+    )
+    assert (lat, lon, source) == (51.46127, -0.11459, "geometry")
+    lat, lon, source = extract_coordinate(
+        {"OBJECTID": 3, "Address": "Main St", "POINT_X": -77.6155, "POINT_Y": 43.1556},
+        {"x": -77.6155, "y": 43.1556},
+    )
+    assert (lat, lon, source) == (43.1556, -77.6155, "geometry")
+
+
+def test_lambeth_arcgis_fixture_emits_camera_claims() -> None:
+    report = _run_fixture("camreg_lambeth_gb", "lambeth_arcgis.json")
+    entities = _entities(report)
+    assert len(entities) == 2
+    assert {e["coordinate_source"] for e in entities} == {"geometry"}
+    assert {e["sensitivity_class"] for e in entities} == {"C1"}
+    refs = {c["value"] for c in _claims(report) if c["predicate_id"] == "camera_external_ref"}
+    assert refs  # CCTV_NUMBER/OBJECTID resolve through the P26.13 aliases
+    names = {c["value"] for c in _claims(report) if c["predicate_id"] == "camera_name"}
+    assert names == {"Brixton Road / Atlantic Road", "Clapham High Street"}
+    jx = [c for c in _claims(report) if c["predicate_id"] == "camera_jurisdiction"][0]
+    assert jx["candidate_identifier"] == {"scheme": "iso.3166_2", "value": "GB-ENG"}
+    for claim in _claims(report):
+        assert claim["evidence"]["extraction_method"] == "arcgis_feature_json"
+
+
+def test_puertogaitan_socrata_fixture_emits_camera_claims() -> None:
+    """The Spanish schema resolves: latitud/longitud field pair wins over the
+    `georeferencia` GeoJSON point, nombre/sector map to name/county, and the
+    Socrata `:id` pseudo-column keys the registry row (no publisher id)."""
+    report = _run_fixture("camreg_puertogaitan_co", "puertogaitan_socrata.json")
+    entities = _entities(report)
+    assert len(entities) == 2
+    assert {e["coordinate_source"] for e in entities} == {"fields:latitud/longitud"}
+    lats = {c["value"] for c in _claims(report) if c["predicate_id"] == "camera_latitude"}
+    assert lats == {4.31899387336601, 4.31661711219549}
+    names = {c["value"] for c in _claims(report) if c["predicate_id"] == "camera_name"}
+    assert names == {"Poste # 43 SENA", "Poste # 35 hotel Best Western"}
+    county = {c["value"] for c in _claims(report) if c["predicate_id"] == "camera_county"}
+    assert county == {"Urbano"}
+    jx = [c for c in _claims(report) if c["predicate_id"] == "camera_jurisdiction"][0]
+    assert jx["candidate_identifier"] == {"scheme": "iso.3166_2", "value": "CO-MET"}
+
+
+def test_p26_13_replay_and_shadow_are_deterministic() -> None:
+    targets = live_targets("camreg_lambeth_gb")
+    url = targets[0]["url"]
+    body = _FIX.joinpath("lambeth_arcgis.json").read_bytes()
+    connector, ctx = _ctx("camreg_lambeth_gb", targets, {url: _resp(url, body)})
     fixture_report = run(connector, ctx)
     replay_a = replay(connector, ctx, fixture_report.captures)
     replay_b = replay(connector, ctx, fixture_report.captures)

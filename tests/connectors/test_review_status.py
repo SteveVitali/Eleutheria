@@ -115,7 +115,7 @@ def test_the_seeded_registry_has_no_flip_metadata_violations() -> None:
 def test_validate_passes_on_the_seeded_registry(capsys: pytest.CaptureFixture[str]) -> None:
     assert main(["validate"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 187" in out
+    assert "registered sources: 198" in out
     assert "self-checks OK" in out
 
 
@@ -192,11 +192,16 @@ def test_review_status_prints_flip_ready_0_and_loadable_65(
     # P26.12 (SOURCES.11) added congress_gov (186 → 187) — the federal
     # legislation sweep, flipped under the same GL-GATE-06 delegated pattern
     # (US federal public domain, 17 U.S.C. §105 → CC0-1.0; 65 → 66 loadable).
+    # P26.13 (SOURCES.12) added the 11 catalog-sweep camreg rows (187 → 198)
+    # and flipped the 10 resolved-clear registries (DC/Nottingham/York/
+    # Glasgow/North Ayrshire/Lambeth/Peel/Rochester/Gold Coast/Puerto Gaitán;
+    # St. Albert stays gated — D-SOURCES.12-1) under the same delegated
+    # pattern (66 → 76 loadable).
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 187" in out
+    assert "registered sources: 198" in out
     assert "flip-ready: 0" in out
-    assert "loadable now: 66" in out
+    assert "loadable now: 76" in out
 
 
 def test_review_status_loadable_equals_validate() -> None:
@@ -204,7 +209,7 @@ def test_review_status_loadable_equals_validate() -> None:
     from connectors.loader import is_loadable
 
     loadable = [s for s in sources() if is_loadable(s)]
-    assert len(loadable) == 66
+    assert len(loadable) == 76
     assert len(flip_ready()) == 0
 
 

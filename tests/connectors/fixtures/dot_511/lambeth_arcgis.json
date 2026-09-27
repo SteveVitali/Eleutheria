@@ -1,0 +1,40 @@
+{
+  "displayFieldName": "CAMERA_LOCATION",
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {"wkid": 4326, "latestWkid": 4326},
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID", "alias": "OBJECTID"},
+    {"name": "NO", "type": "esriFieldTypeInteger", "alias": "NO"},
+    {"name": "CAMERA_TYPE", "type": "esriFieldTypeString", "alias": "CAMERA_TYPE"},
+    {"name": "CCTV_NUMBER", "type": "esriFieldTypeString", "alias": "CCTV_NUMBER"},
+    {"name": "CAMERA_LOCATION", "type": "esriFieldTypeString", "alias": "CAMERA_LOCATION"},
+    {"name": "EASTING", "type": "esriFieldTypeDouble", "alias": "EASTING"},
+    {"name": "NORTHING", "type": "esriFieldTypeDouble", "alias": "NORTHING"}
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 1,
+        "NO": 1,
+        "CAMERA_TYPE": "PTZ",
+        "CCTV_NUMBER": "LB0001",
+        "CAMERA_LOCATION": "Brixton Road / Atlantic Road",
+        "EASTING": 531044.0,
+        "NORTHING": 175212.0
+      },
+      "geometry": {"x": -0.11459, "y": 51.46127}
+    },
+    {
+      "attributes": {
+        "OBJECTID": 2,
+        "NO": 2,
+        "CAMERA_TYPE": "Fixed",
+        "CCTV_NUMBER": "LB0002",
+        "CAMERA_LOCATION": "Clapham High Street",
+        "EASTING": 530016.0,
+        "NORTHING": 176388.0
+      },
+      "geometry": {"x": -0.13241, "y": 51.47288}
+    }
+  ]
+}

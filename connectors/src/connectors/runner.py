@@ -185,6 +185,22 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "camreg_qldc_au": "dot_511",
     "camreg_donegal_ie": "dot_511",
     "camreg_hk_hk": "dot_511",
+    # P26.13 (SOURCES.12): open-data-catalog sweep yield — the clear-licence
+    # point-feature registries qualified by the Socrata/ArcGIS-Hub/CKAN sweep,
+    # routed through the same `dot_511` connector over
+    # data/camera_registry_targets.toml. The gated remainder is named in
+    # DEFERRALS D-SOURCES.12-1.
+    "camreg_washington_dc": "dot_511",
+    "camreg_nottingham_gb": "dot_511",
+    "camreg_york_gb": "dot_511",
+    "camreg_glasgow_gb": "dot_511",
+    "camreg_northayrshire_gb": "dot_511",
+    "camreg_lambeth_gb": "dot_511",
+    "camreg_peel_on": "dot_511",
+    "camreg_stalbert_ab": "dot_511",
+    "camreg_rochester_ny": "dot_511",
+    "camreg_goldcoast_au": "dot_511",
+    "camreg_puertogaitan_co": "dot_511",
     # P26.10 (SOURCES.9): multi-tenant procurement portals — the `procurement`
     # connector reads its targets from the published portal tenant registry
     # (data/procurement_portal_tenants.toml, live_targets

@@ -397,3 +397,64 @@ endpoint_prefix = "/arcgis/rest/"
 tos_basis = "Arlington County ArcGIS Server — the documented REST query API for the county open-data photo-enforcement layers (source gated on disclaimer capture)."
 rate_limit_per_min = 5
 counsel_reviewed = false
+
+# --- P26.13 (SOURCES.12): catalog-sweep camera registries ---------------------
+# The same documented programmatic surfaces the sweep qualified: ArcGIS
+# `/arcgis/rest/…/query` (and the DCGIS `/dcgis/rest/` equivalent already
+# listed above) and Socrata `/resource/<id>.json` SoQL rows. Registry rows
+# only — feed/image URLs inside them are never followed.
+[[api_host]]
+host = "services6.arcgis.com"
+endpoint_prefix = "/"
+tos_basis = "ArcGIS Online hosted feature services — the documented REST query API for publicly published layers (Region of Peel red-light cameras)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "services7.arcgis.com"
+endpoint_prefix = "/"
+tos_basis = "ArcGIS Online hosted feature services — the documented REST query API for publicly published layers (Rochester NY BlueLight cameras)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "services-ap1.arcgis.com"
+endpoint_prefix = "/"
+tos_basis = "ArcGIS Online hosted feature services (Asia-Pacific) — the documented REST query API for publicly published layers (City of Gold Coast Safety Camera Network)."
+rate_limit_per_min = 10
+counsel_reviewed = false
+
+[[api_host]]
+host = "gis.lambeth.gov.uk"
+endpoint_prefix = "/arcgis/rest/"
+tos_basis = "London Borough of Lambeth ArcGIS Server — the documented REST query API for the council-published CCTV layer (OGL v3.0 on the item licence block)."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+[[api_host]]
+host = "maps.york.gov.uk"
+endpoint_prefix = "/arcgis/rest/"
+tos_basis = "City of York Council ArcGIS Server — the documented REST query API for the council-published CCTV layer (OGL v3.0 cited on the item licence block)."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+[[api_host]]
+host = "www.mapping.glasgow.gov.uk"
+endpoint_prefix = "/arcgis_web/rest/"
+tos_basis = "Glasgow City Council ArcGIS Server — the documented REST query API for the council-published OPEN_DATA CCTV layer (OGL v3.0 declared verbatim)."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+[[api_host]]
+host = "www.maps.north-ayrshire.gov.uk"
+endpoint_prefix = "/arcgis/rest/"
+tos_basis = "North Ayrshire Council ArcGIS Server — the documented REST query API for the council-published CCTV layer (OGL v3.0 declared verbatim)."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+[[api_host]]
+host = "www.datos.gov.co"
+endpoint_prefix = "/resource/"
+tos_basis = "Colombia national open-data portal (datos.gov.co) Socrata — the documented SoQL /resource rows API (dataset fvdt-ftkz, CC-BY-SA-4.0 licence metadata). robots.txt permits /resource/ and sets crawl-delay 1 — inside the pinned rate."
+rate_limit_per_min = 10
+counsel_reviewed = false

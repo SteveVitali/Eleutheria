@@ -3369,3 +3369,293 @@ notes = "P26.9. GATED — item 0b05a33ce41d4cb7b75436dabe592c5e (32 rows) licens
 spdx = "UNDETERMINED"
 redistributable = false
 retrieval_date = 2026-09-18
+
+# ---------------------------------------------------------------------------
+# P26.13 (SOURCES.12) — open-data-catalog sweep yield. The systematic catalog
+# enumeration (docs/build/reports/catalog_sweep_2026-09-18*.json, Socrata +
+# ArcGIS Hub + CKAN/data.gov.uk, the ticket's seven-keyword set) surfaced
+# these clear-licence point-feature camera registries; each is FLIPPED under
+# GL-GATE-06 on its verbatim grant. The gated remainder is named in DEFERRALS
+# D-SOURCES.12-1. Same shape as the P26.9 rows: per-publisher source rows
+# routed through the `dot_511` connector over camera_registry_targets.toml.
+# ---------------------------------------------------------------------------
+
+[sources.camreg_washington_dc]
+name = "Washington DC CCTV street cameras (DCGIS ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Transportation_Sensors_WebMercator/MapServer/11"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-18
+review_packet = "docs/build/reports/rights/camreg_washington_dc.md"
+notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item 2bb8375e31a94067a17911ea70f917ef 'Closed Circuit TV Street Cameras' (owner DCGISopendata) declares CC-BY-4.0 verbatim. 1,060 MPD CCTV street cameras; distinct from the already-wired dot_511_dc DDOT traffic layer."
+[sources.camreg_washington_dc.rights]
+spdx = "CC-BY-4.0"
+attribution = "District of Columbia CCTV street camera registry (DCGIS open data)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.arcgis.com/home/item.html?id=2bb8375e31a94067a17911ea70f917ef"
+retrieval_date = 2026-09-18
+
+[sources.camreg_nottingham_gb]
+name = "Nottingham CCTV cameras (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://services.arcgis.com/yvqphKcf9bBSnjX1/arcgis/rest/services/CCTV_Cameras/FeatureServer/83"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-18
+review_packet = "docs/build/reports/rights/camreg_nottingham_gb.md"
+notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item df2bf0314b184b449ff595df02e320cf 'CCTV Cameras' (owner nccgisteam) declares the Open Government Licence v3.0 verbatim. 562 cameras observed."
+[sources.camreg_nottingham_gb.rights]
+spdx = "OGL-3.0"
+attribution = "Nottingham City Council. Contains OS data © Crown copyright [and database right] [year]."
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.arcgis.com/home/item.html?id=df2bf0314b184b449ff595df02e320cf"
+retrieval_date = 2026-09-18
+
+[sources.camreg_york_gb]
+name = "City of York CCTV cameras (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://maps.york.gov.uk/arcgis/rest/services/Public/LV_TranStreetCare/MapServer/26"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-18
+review_packet = "docs/build/reports/rights/camreg_york_gb.md"
+notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item 25888f6f64e64cc6a938115a8f12f333 'CCTV' (owner gis_CYC) cites the Open Government Licence v3.0 under the OS derived-data exemption verbatim. 222 cameras observed."
+[sources.camreg_york_gb.rights]
+spdx = "OGL-3.0"
+attribution = "© Crown copyright and database rights 2017 Ordnance Survey 100020818 (City of York Council CCTV)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.arcgis.com/home/item.html?id=25888f6f64e64cc6a938115a8f12f333"
+retrieval_date = 2026-09-18
+
+[sources.camreg_glasgow_gb]
+name = "Glasgow CCTV cameras (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://www.mapping.glasgow.gov.uk/arcgis_web/rest/services/OPEN_DATA/CCTV/MapServer/0"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-18
+review_packet = "docs/build/reports/rights/camreg_glasgow_gb.md"
+notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item 669df23dcc5d48bb98ad1b5d180927c6 'CCTV' (owner GlasgowGIS) declares the Open Government Licence v3.0 verbatim (One Scotland Mapping Agreement / OS attribution noted). 441 cameras observed."
+[sources.camreg_glasgow_gb.rights]
+spdx = "OGL-3.0"
+attribution = "Glasgow City Council — contains Ordnance Survey data © Crown copyright and database right 2022 (OGL v3.0)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.arcgis.com/home/item.html?id=669df23dcc5d48bb98ad1b5d180927c6"
+retrieval_date = 2026-09-18
+
+[sources.camreg_northayrshire_gb]
+name = "North Ayrshire CCTV cameras (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://www.maps.north-ayrshire.gov.uk/arcgis/rest/services/AGOL/Open_Data_Portal4/MapServer/12"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-18
+review_packet = "docs/build/reports/rights/camreg_northayrshire_gb.md"
+notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item 082112796ccd448bb1abba9e9603e9f0 'CCTV Locations' (owner NAC_OpenData) declares the Open Government Licence v3.0 verbatim with the required attribution statement. 108 cameras observed."
+[sources.camreg_northayrshire_gb.rights]
+spdx = "OGL-3.0"
+attribution = "Copyright North Ayrshire Council, contains Ordnance Survey data © Crown copyright and database right (2018)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.arcgis.com/home/item.html?id=082112796ccd448bb1abba9e9603e9f0"
+retrieval_date = 2026-09-18
+
+[sources.camreg_lambeth_gb]
+name = "Lambeth parking CCTV cameras (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://gis.lambeth.gov.uk/arcgis/rest/services/LambethParkingCCTVCameras/MapServer/0"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-18
+review_packet = "docs/build/reports/rights/camreg_lambeth_gb.md"
+notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item 2dd843a8605a4b2981790816ec1b4a57 'Parking CCTV Cameras' (owner opendata@lambeth.gov.uk) carries the Open Government Licence v3.0 URL verbatim in licenseInfo. 35 cameras observed."
+[sources.camreg_lambeth_gb.rights]
+spdx = "OGL-3.0"
+attribution = "London Borough of Lambeth parking CCTV camera registry (OGL v3.0)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.arcgis.com/home/item.html?id=2dd843a8605a4b2981790816ec1b4a57"
+retrieval_date = 2026-09-18
+
+[sources.camreg_peel_on]
+name = "Peel Region red-light cameras (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://services6.arcgis.com/ONZht79c8QWuX759/arcgis/rest/services/Red_Light_Cameras/FeatureServer/0"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-18
+review_packet = "docs/build/reports/rights/camreg_peel_on.md"
+notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item 36dbfcb33aa2453c8de55e0a34ccfc6a 'Red Light Cameras' (owner RegionofPeel) names the Open Data Licence for The Regional Municipality of Peel v1.0; permissive grant verified via the Wayback capture of data.peelregion.ca/pages/license. 37 cameras observed."
+[sources.camreg_peel_on.rights]
+spdx = "LicenseRef-Peel-ODL-1.0"
+attribution = "Contains information licensed under the Open Data Licence for The Regional Municipality of Peel (Version 1.0)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://data.peelregion.ca/pages/license"
+retrieval_date = 2026-09-18
+
+[sources.camreg_stalbert_ab]
+name = "St. Albert photo enforcement camera sites (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://services1.arcgis.com/fyyY0cNXvmUWvX1x/arcgis/rest/services/Automated_Traffic_Enforcement_Sites/FeatureServer/0"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+notes = "P26.13 catalog sweep. GATED — ArcGIS item 6f2ca1b545844065b719483d562d553e 'Photo Enforcement Mobile Locations' (owner open@stalbert.ca, 80 rows) names 'City of St. Albert Open Government License' (LicenseRef-StAlbert-ODL-1.0) but the licence grant text could not be captured verbatim: data.stalbert.ca/pages/licence is a JS-rendered shell (HTTP 200, no terms in the served body), the Hub page item is not publicly searchable, and no Wayback capture exists. Blocker: verbatim licence-text capture + HG-03-class rights decision (D-SOURCES.12-1)."
+[sources.camreg_stalbert_ab.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+terms_url = "https://data.stalbert.ca/pages/licence"
+retrieval_date = 2026-09-18
+
+[sources.camreg_rochester_ny]
+name = "Rochester NY BlueLight cameras (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://services7.arcgis.com/wMvCpnbQEKXZsPSQ/arcgis/rest/services/Rochester_Cameras/FeatureServer/0"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-18
+review_packet = "docs/build/reports/rights/camreg_rochester_ny.md"
+notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item 4df36db389e240efa672346101ede541 'Rochester Cameras' (owner rpdny.pub) declares ODbL-1.0 + DbCL verbatim (the bundled text is the RPD accuracy disclaimer, not a rights restriction). 177 BlueLight-program intersection cameras; location data only. ODbL-1.0 → osm_physical compartment (never merged into the CC-BY sig_graph compartment)."
+[sources.camreg_rochester_ny.rights]
+spdx = "ODbL-1.0"
+attribution = "City of Rochester NY Police Department camera registry (ODbL-1.0)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.arcgis.com/home/item.html?id=4df36db389e240efa672346101ede541"
+retrieval_date = 2026-09-18
+
+[sources.camreg_goldcoast_au]
+name = "City of Gold Coast Safety Camera Network (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://services-ap1.arcgis.com/lnVW0dLI3fvST2hd/arcgis/rest/services/Camera_view/FeatureServer/0"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-18
+review_packet = "docs/build/reports/rights/camreg_goldcoast_au.md"
+notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item c0e1f02aebe349f0bbe21aadf287a631 'Camera_Open' (owner CoGC_Admin) declares CC-BY-4.0 verbatim. 624 Safety Camera Network locations observed."
+[sources.camreg_goldcoast_au.rights]
+spdx = "CC-BY-4.0"
+attribution = "City of Gold Coast Safety Camera Network registry (CC-BY-4.0)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.arcgis.com/home/item.html?id=c0e1f02aebe349f0bbe21aadf287a631"
+retrieval_date = 2026-09-18
+
+[sources.camreg_puertogaitan_co]
+name = "Puerto Gaitán municipal CCTV map (datos.gov.co Socrata registry)"
+source_kind = "government_portal"
+homepage_url = "https://www.datos.gov.co/d/fvdt-ftkz"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (socrata /resource rows — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-18
+review_packet = "docs/build/reports/rights/camreg_puertogaitan_co.md"
+notes = "P26.13 catalog sweep. FLIPPED 2026-09-18 (GL-GATE-06): Socrata dataset fvdt-ftkz 'MAPA DE CAMARAS (CCTV) DEL MUNICIPIO' (Alcaldía de Puerto Gaitán, Meta) declares CC-BY-SA-4.0 on licence metadata. 50 cameras observed; Spanish schema (latitud/longitud + georeferencia GeoJSON point)."
+[sources.camreg_puertogaitan_co.rights]
+spdx = "CC-BY-SA-4.0"
+attribution = "Alcaldía de Puerto Gaitán, Meta — mapa de cámaras CCTV del municipio (datos.gov.co)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.datos.gov.co/d/fvdt-ftkz"
+retrieval_date = 2026-09-18

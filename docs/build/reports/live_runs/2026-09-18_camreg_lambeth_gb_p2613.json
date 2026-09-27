@@ -1,0 +1,22 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnacz3diuc3oxwvngdr2q2v3ra4rnh2gdwgb4l6lndrqtvigkjzgfzh2dvapwyjx5xj6ha6gxrlkbdwcnb7jc43shejpvgdqzkinen6iee"
+  ],
+  "claim_count": 315,
+  "connector": "dot_511",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [],
+  "duration_seconds": 0.920446,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "camreg_lambeth_gb",
+  "started_at": "2026-09-18T11:19:16.858426+00:00",
+  "status_codes": [],
+  "urls": []
+}

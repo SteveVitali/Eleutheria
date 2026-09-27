@@ -1,0 +1,22 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnagdioe62daazthmlw6h3wh4kmbujsekfuzzkzw6mqiherzbf2x2oivbrbrwr4ilmajydxwnzqajmdy5rd23ml5z36hhgrsvjt32knemu"
+  ],
+  "claim_count": 370,
+  "connector": "dot_511",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [],
+  "duration_seconds": 0.26313,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "camreg_peel_on",
+  "started_at": "2026-09-18T11:19:17.781225+00:00",
+  "status_codes": [],
+  "urls": []
+}

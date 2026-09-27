@@ -1,0 +1,22 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnaojqx5o6zveta7d7c66idt6hb5bosmuu42bsppbpu2f5jpzzjb3qr73zeppeetfnrhpnsz46wddxnrhuacysv73nf6ksfhnk55thb5am"
+  ],
+  "claim_count": 500,
+  "connector": "dot_511",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [],
+  "duration_seconds": 0.34755,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "camreg_puertogaitan_co",
+  "started_at": "2026-09-18T11:19:20.222111+00:00",
+  "status_codes": [],
+  "urls": []
+}

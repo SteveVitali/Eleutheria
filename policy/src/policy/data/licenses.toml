@@ -132,6 +132,34 @@ share_alike = false
 attribution_required = true
 relicensable_to = ["LicenseRef-Ottawa-ODL-2.0"]
 
+# --- P26.13 (SOURCES.12) licences ---------------------------------------------
+# LicenseRef-Peel-ODL-1.0 — the Open Data Licence for The Regional Municipality
+# of Peel (Version 1.0), named verbatim on ArcGIS item
+# 36dbfcb33aa2453c8de55e0a34ccfc6a; the grant text ("Our license allows you to
+# copy, publish, redistribute, adapt, and use our data for personal or
+# commercial purposes") verified 2026-09-18 via the Wayback capture of
+# data.peelregion.ca/pages/license (the live page is JS-rendered). OGL-family:
+# permissive use + attribution. A municipal LicenseRef (not the federal
+# OGL-Canada expression); self-relicensable only.
+[licenses."LicenseRef-Peel-ODL-1.0"]
+kind = "data"
+share_alike = false
+attribution_required = true
+relicensable_to = ["LicenseRef-Peel-ODL-1.0"]
+
+# LicenseRef-StAlbert-ODL-1.0 — the "City of St. Albert Open Government
+# License" named verbatim on ArcGIS item 6f2ca1b545844065b719483d562d553e.
+# The licence grant TEXT could not be captured (data.stalbert.ca/pages/licence
+# is a JS-rendered shell; no Wayback capture) — camreg_stalbert_ab stays gated
+# (D-SOURCES.12-1) and this row is the pre-staged mapping for when a reviewer
+# captures the terms. Registered now so the named licence has a data home;
+# nothing is ingested under it until the rights gate resolves.
+[licenses."LicenseRef-StAlbert-ODL-1.0"]
+kind = "data"
+share_alike = false
+attribution_required = true
+relicensable_to = ["LicenseRef-StAlbert-ODL-1.0"]
+
 # ---------------------------------------------------------------------------
 # The export compartments (SIG-LIC-005 / §42.2). Each mutually-incompatible
 # licence regime present in the corpus gets its own separable compartment, its
@@ -198,3 +226,14 @@ source = "Baltimore City (CitiWatch)"
 license = "LicenseRef-Ottawa-ODL-2.0"
 description = "City of Ottawa camera registries under the Open Government Licence - City of Ottawa v2.0 (P26.9)"
 source = "City of Ottawa"
+
+# --- P26.13 (SOURCES.12) compartments -----------------------------------------
+[compartments.peel_odl1]
+license = "LicenseRef-Peel-ODL-1.0"
+description = "Region of Peel camera registries under the Open Data Licence for The Regional Municipality of Peel v1.0 (P26.13)"
+source = "Regional Municipality of Peel"
+
+[compartments.stalbert_odl1]
+license = "LicenseRef-StAlbert-ODL-1.0"
+description = "City of St. Albert camera registries under the Open Data Licence – City of St. Albert v1.0 (P26.13)"
+source = "City of St. Albert"

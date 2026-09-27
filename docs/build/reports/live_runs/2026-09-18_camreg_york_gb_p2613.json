@@ -1,0 +1,22 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnak23dpjv6tjtg7kmc4qci2n3vf3odruvihywtugbs3ym3ymp2rv2772g5rnpkcfiz4j45a23v73wmkgtweu7rekv3vyplqaapqmr4hjm"
+  ],
+  "claim_count": 1949,
+  "connector": "dot_511",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [],
+  "duration_seconds": 0.825429,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "camreg_york_gb",
+  "started_at": "2026-09-18T11:19:06.216656+00:00",
+  "status_codes": [],
+  "urls": []
+}
