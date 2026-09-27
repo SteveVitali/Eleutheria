@@ -871,3 +871,113 @@ def test_cli_verbs(tmp_path: Path, capsys: pytest.CaptureFixture) -> None:
         )
         == 2
     )
+
+
+# --------------------------------------------------------------------------- #
+# P32.14 / ADR-133 (SIG-FIND-003) — per-compartment FTS5 search index artifacts #
+# --------------------------------------------------------------------------- #
+
+
+def test_release_emits_search_index_per_compartment(tmp_path: Path) -> None:
+    export = _write_export(tmp_path / "export")
+    build = _build(tmp_path, export)
+    pub = build.publication_id
+    integrity = json.loads((build.out_dir / f"releases/{pub}/integrity_manifest.json").read_text())
+    artifact_paths = {a["path"] for a in integrity["artifacts"]}
+    for comp in integrity["compartments"]:
+        cid = comp["compartment"]
+        assert f"r/{pub}/c/{cid}/search_index.sqlite" in artifact_paths
+        assert f"r/{pub}/c/{cid}/search_index.json" in artifact_paths
+        assert comp["search_index_sha256"]
+        assert comp["search_indexed_records"] == comp["record_count"] == 3
+        desc = json.loads((build.out_dir / f"r/{pub}/c/{cid}/search_index.json").read_text())
+        assert desc["scope"]["indexed_records"] == 3
+        assert desc["scope"]["eligible_records"] == 3
+        # every released record is indexed — tail/id reachability proven by
+        # records.index reconciliation + the index scope, never a 500-cap
+        assert desc["scope"]["excluded_records_by_reason"] == {}
+
+
+def test_validate_fails_on_tampered_search_index(tmp_path: Path) -> None:
+    export = _write_export(tmp_path / "export")
+    build = _build(tmp_path, export)
+    pub = build.publication_id
+    victim = build.out_dir / f"r/{pub}/c/sig_graph/search_index.sqlite"
+    victim.write_bytes(victim.read_bytes() + b"tamper")
+    report = validate_release(build.out_dir)
+    assert report.state == "incomplete"
+    assert any("search index" in f or "digest/size mismatch" in f for f in report.failures)
+
+
+def test_validate_fails_on_missing_search_index_descriptor(tmp_path: Path) -> None:
+    export = _write_export(tmp_path / "export")
+    build = _build(tmp_path, export)
+    pub = build.publication_id
+    (build.out_dir / f"r/{pub}/c/sig_graph/search_index.json").unlink()
+    report = validate_release(build.out_dir)
+    assert report.state == "incomplete"
+
+
+def test_search_index_is_withdrawal_denied_whole(tmp_path: Path) -> None:
+    # A release-level withdrawal removes the index artifact bytes whole —
+    # immutable artifacts are denied, never rewritten.
+    registry, pub = _activated_registry(tmp_path)
+    staged = registry / "staged"
+    reg = ReleaseRegistry(registry)
+    from policy.eligibility import new_disposition
+
+    entries = reg.withdrawals() + [
+        new_disposition(
+            target_kind=TargetKind.RELEASE_ARTIFACT,
+            target_id=pub,
+            disposition=Disposition.WITHHOLD,
+            reason_category=ReasonCategory.SAFETY_WITHDRAWAL,
+            authority="test-authority",
+            decided_at=datetime(2026, 9, 28, tzinfo=UTC),
+        )
+    ]
+    reg.save_withdrawals(entries)
+    out = apply_withdrawals(staged, reg.withdrawals())
+    assert out["denied"] > 0
+    # the artifact bytes are gone whole — a content-free tombstone may take
+    # the route, but the indexed labels can never be re-served
+    idx = staged / f"r/{pub}/c/sig_graph/search_index.sqlite"
+    assert not idx.is_file()
+    jidx = staged / f"r/{pub}/c/sig_graph/search_index.json"
+    if jidx.is_file():
+        # .json routes carry the sig.tombstone/1 body instead of bytes
+        assert json.loads(jidx.read_text())["schema"] == "sig.tombstone/1"
+    conf = (staged / "conf/withdrawn_routes.conf").read_text()
+    assert f"location = /r/{pub}/c/sig_graph/search_index.sqlite" in conf
+
+
+def test_duplicate_site_rows_dedupe_to_one_record(tmp_path: Path) -> None:
+    """The portal-compartment shape: the same (entity_type, entity_id) row can
+    appear twice in sites.jsonl (re-extraction through a second rights
+    registration). One namespace = one record — the build merges claim ids,
+    emits one record, counts the drop honestly, and validation stays clean."""
+    export = _write_export(tmp_path / "export", n_records=2)
+    sites = export / "sig_graph" / "sites.jsonl"
+    rows = [json.loads(line) for line in sites.read_text().splitlines()]
+    dupe = dict(rows[0])
+    dupe["rights_id"] = "r2-different-registration"
+    dupe["claim_ids"] = [rows[0]["claim_ids"][0], "claim-src_a-0-extra"]
+    sites.write_text("".join(json.dumps(r) + "\n" for r in [*rows, dupe]))
+
+    build = _build(tmp_path, export)
+    pub = build.publication_id
+    comp = next(c for c in build.report["compartments"] if c["compartment"] == "sig_graph")
+    assert comp["record_count"] == 2
+    assert comp["site_rows"] == 3
+    assert comp["duplicate_rows_dropped"] == 1
+    # one record at the namespace, carrying the merged claim union
+    rec = json.loads(
+        (build.out_dir / f"r/{pub}/c/sig_graph/entity/deployment/ent-src_a-0.json").read_text()
+    )
+    assert sorted(a["claim_id"] for a in rec["claim_anchors"]) == [
+        "claim-src_a-0-a",
+        "claim-src_a-0-b",
+        "claim-src_a-0-extra",
+    ]
+    report = validate_release(build.out_dir)
+    assert report.state == "complete", report.failures

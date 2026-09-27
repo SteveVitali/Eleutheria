@@ -355,6 +355,15 @@ def build_parser() -> argparse.ArgumentParser:
     rmeas.add_argument("--out", required=True)
     rmeas.add_argument("--renderer-revision", required=True)
 
+    rcat = rsub.add_parser(
+        "catalog",
+        help="P32.14: emit the sig.publication-catalog/1 JSON the web layer "
+        "reads (web/releases.json) — activated publications + compartments, "
+        "so the static search/browse surface can pin a real release.",
+    )
+    rcat.add_argument("--registry", required=True)
+    rcat.add_argument("--out", required=True, help="Destination web/releases.json path.")
+
     return parser
 
 
@@ -1166,5 +1175,17 @@ def _run_release(args: argparse.Namespace) -> int:
             renderer_revision=args.renderer_revision,
         )
         print(json.dumps(out, indent=2))
+        return 0
+    if verb == "catalog":
+        # P32.14: the catalog the web data layer reads — activated
+        # publications + compartments, emitted from the registry. An
+        # un-activated registry emits the honest empty catalog.
+        registry = rel.ReleaseRegistry(Path(args.registry))
+        out_path = Path(args.out)
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        from .manifest import canonical_json as _cj
+
+        out_path.write_bytes(_cj(registry.catalog()) + b"\n")
+        print(f"wrote {out_path}")
         return 0
     return 2

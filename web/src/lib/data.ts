@@ -24,7 +24,7 @@
  * identical in both modes.
  */
 
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { DOSSIERS } from "./dossier-fixture";
 import { JURISDICTION_DOSSIERS } from "./dossier-jurisdiction-fixture";
@@ -363,6 +363,86 @@ export function getReleaseCatalog(): ReleaseCatalog {
     throw new Error(`${path}: expected a sig.publication-catalog/1 object`);
   }
   return parsed;
+}
+
+// --------------------------------------------------------------------------- //
+// P32.14 (SIG-FIND-003, ADR-133): released-corpus search + complete browse.
+// The no-JS surface pins REAL activated release namespaces: one GET form per
+// licence compartment targets the release search route (JSON or the no-JS HTML
+// representation the API serves — the static host cannot run it, so `format=html`
+// is carried explicitly), and the compartment overview gives complete static
+// browse pagination that needs no service at all.
+// --------------------------------------------------------------------------- //
+
+export interface ReleaseSearchCompartment {
+  compartment: string;
+  license: string;
+  recordCount: number;
+  /** GET form target — the released-corpus search route (JSON or no-JS HTML). */
+  searchHref: string;
+  /** The compartment overview under the release namespace — complete static browse. */
+  overviewHref: string;
+}
+
+export interface ReleaseSearchTarget {
+  publicationId: string;
+  recordCount: number;
+  landingHref: string;
+  compartments: ReleaseSearchCompartment[];
+}
+
+/**
+ * One released-corpus search target per activated publication, one per
+ * compartment. `SIG_RELEASE_SEARCH_BASE` overrides the route origin at build
+ * time (default: same-origin `/v1/...` — deployment wiring maps it to the read
+ * API that serves the verified indexes; the static build never invents one).
+ */
+export function getReleaseSearchTargets(): ReleaseSearchTarget[] {
+  const base = (process.env.SIG_RELEASE_SEARCH_BASE ?? "").replace(/\/+$/, "");
+  return getReleaseCatalog().publications.map((e) => ({
+    publicationId: e.publication_id,
+    recordCount: e.record_count,
+    landingHref: `/releases/${e.publication_id}/`,
+    compartments: e.compartments.map((c) => ({
+      compartment: c.compartment,
+      license: c.license,
+      recordCount: c.record_count,
+      searchHref: `${base}/v1/releases/${e.publication_id}/compartments/${c.compartment}/search`,
+      overviewHref: `/r/${e.publication_id}/c/${c.compartment}/`,
+    })),
+  }));
+}
+
+/**
+ * `entity_id → {compartment, entity_type}` for every released record — used to
+ * give the interactive island SPECIFIC record hrefs (never `/map/`). Export
+ * mode scans each compartment's `sites.jsonl` (the same bound projection the
+ * release indexes); fixtures mode returns the empty map (the demo catalog is a
+ * stand-in, not a real namespace, so demo items keep generic hrefs).
+ */
+export function getEntityCompartments(): Map<
+  string,
+  { compartment: string; entityType: string }
+> {
+  const out = new Map<string, { compartment: string; entityType: string }>();
+  if (dataSource() === "fixtures") return out;
+  const root = exportDir();
+  for (const entry of readdirSync(root)) {
+    const p = `${root}/${entry}/sites.jsonl`;
+    if (!existsSync(p)) continue;
+    for (const line of readFileSync(p, "utf-8").split("\n")) {
+      const t = line.trim();
+      if (!t) continue;
+      const row = JSON.parse(t) as { entity_id?: unknown; entity_type?: unknown };
+      if (typeof row.entity_id === "string") {
+        out.set(row.entity_id, {
+          compartment: entry,
+          entityType: typeof row.entity_type === "string" ? row.entity_type : "deployment",
+        });
+      }
+    }
+  }
+  return out;
 }
 
 // --------------------------------------------------------------------------- //

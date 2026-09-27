@@ -41,6 +41,7 @@ import os
 import re
 import shutil
 import sys
+import tempfile
 import time
 from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass, field
@@ -75,6 +76,12 @@ from .release_pages import (
     release_landing,
     releases_index,
     tombstone_page,
+)
+from .search_index import (
+    INDEX_DESCRIPTOR_FILE,
+    INDEX_FILE,
+    SEARCH_INDEX_VERSION,
+    build_search_index,
 )
 
 #: Schema ids (the hand-authored ADR-132 vocabulary).
@@ -182,6 +189,7 @@ def descriptor_document(
         "resolver_version": str(repro.get("resolver_version") or ""),
         "policy_version": "publication-eligibility/1",
         "projection_version": "sig.published-record/1",
+        "search_index_version": SEARCH_INDEX_VERSION,
         "renderer": {
             "package": "sig-exports",
             "version": __version__,
@@ -217,6 +225,10 @@ class CompartmentBuild:
     index_rows: list[dict[str, Any]] = field(default_factory=list)
     kinds: dict[str, int] = field(default_factory=dict)
     jurisdictions: dict[str, int] = field(default_factory=dict)
+    search_index_sha256: str = ""
+    search_indexed_records: int = 0
+    site_rows_read: int = 0
+    duplicate_rows_dropped: int = 0
 
 
 @dataclass
@@ -254,6 +266,46 @@ def _source_to_compartment(export_dir: Path, comps: Mapping[str, str]) -> dict[s
             sid = str((row.get("_rights") or {}).get("source_id") or row.get("source_id"))
             out.setdefault(sid, comp)
     return out
+
+
+def _iter_unique_site_rows(path: Path, dropped: dict[str, int]) -> Iterator[dict[str, Any]]:
+    """Yield exactly one site row per (entity_type, entity_id).
+
+    A record namespace can host one record per key; upstream exports can
+    carry the SAME record twice (the ``portal`` compartment re-extracts
+    thousands of deployments through a second rights registration — the
+    rows differ only in ``_rights``/``rights_id``). The first occurrence
+    wins the payload, ``claim_ids`` are unioned across duplicates (sorted,
+    so identical input always merges identically), and every drop is
+    counted honestly in ``dropped`` for the reconciliation report.
+    """
+    counts: dict[tuple[str, str], int] = {}
+    n_read = 0
+    for row in _iter_jsonl(path):
+        n_read += 1
+        key = (str(row.get("entity_type") or ""), str(row.get("entity_id") or ""))
+        counts[key] = counts.get(key, 0) + 1
+    dropped["rows_read"] = n_read
+    dup_keys = {k for k, n in counts.items() if n > 1}
+    if not dup_keys:
+        yield from _iter_jsonl(path)
+        return
+    groups: dict[tuple[str, str], list[dict[str, Any]]] = {k: [] for k in dup_keys}
+    for row in _iter_jsonl(path):
+        key = (str(row.get("entity_type") or ""), str(row.get("entity_id") or ""))
+        if key in dup_keys:
+            groups[key].append(row)
+        else:
+            yield row
+    for key in sorted(groups):
+        rows = groups[key]
+        dropped["duplicate_record_key"] = dropped.get("duplicate_record_key", 0) + len(rows) - 1
+        merged = dict(rows[0])
+        claims: set[str] = set()
+        for r in rows:
+            claims.update(str(c) for c in (r.get("claim_ids") or []))
+        merged["claim_ids"] = sorted(claims)
+        yield merged
 
 
 def _claim_index(export_dir: Path) -> dict[str, dict[str, Any]]:
@@ -308,11 +360,14 @@ def build_release(
     builds: dict[str, CompartmentBuild] = {}
     for comp in sorted(comps):
         cb = CompartmentBuild(compartment=comp, license=comps[comp])
-        for row in _iter_jsonl(export_dir / comp / "sites.jsonl"):
+        dropped: dict[str, int] = {}
+        for row in _iter_unique_site_rows(export_dir / comp / "sites.jsonl", dropped):
             record = record_from_site_row(
                 row, compartment=comp, license_id=comps[comp], claim_index=claim_index
             )
             cb.record_digests.append(record_digest(record))
+        cb.site_rows_read = int(dropped.get("rows_read") or 0)
+        cb.duplicate_rows_dropped = int(dropped.get("duplicate_record_key") or 0)
         builds[comp] = cb
 
     compartment_projections = {
@@ -368,7 +423,8 @@ def build_release(
         cb = builds[comp]
         comp_dir = f"r/{pub}/c/{comp}"
         index_lines: list[dict[str, Any]] = []
-        for row in _iter_jsonl(export_dir / comp / "sites.jsonl"):
+        search_rows: list[dict[str, Any]] = []
+        for row in _iter_unique_site_rows(export_dir / comp / "sites.jsonl", {}):
             record = record_from_site_row(
                 row, compartment=comp, license_id=comps[comp], claim_index=claim_index
             ).bind(pub)
@@ -398,6 +454,22 @@ def build_release(
             jur = str(record.jurisdiction.get("id") or "unreported")
             cb.jurisdictions[jur] = cb.jurisdictions.get(jur, 0) + 1
             total_records += 1
+            # P32.14 (SIG-FIND-003): one normalized index row per eligible
+            # record — unlocated + unreported-jurisdiction records are indexed
+            # by construction (every row of the bound projection).
+            search_rows.append(
+                {
+                    "record_key": record.record_key,
+                    "entity_id": eid,
+                    "entity_type": et,
+                    "label": record.label.get("text"),
+                    "jurisdiction": record.jurisdiction.get("id"),
+                    "location_kind": ("public-point" if row.get("geometry") else "no-public-point"),
+                    "source_id": str(row.get("source_id") or ""),
+                    "technology": str(row.get("technology") or ""),
+                    "claim_ids": [a.claim_id for a in record.claim_anchors],
+                }
+            )
 
         index_bytes = b"".join(
             canonical_json(row) for row in sorted(index_lines, key=lambda r: r["record_key"])
@@ -408,6 +480,36 @@ def build_release(
             compartment=comp,
             licence=comps[comp],
         )
+        # P32.14 (SIG-FIND-003, ADR-133): the deterministic per-compartment
+        # FTS5 search index — a licensed artifact of the same bound
+        # projection, verified by hash before any ro open at serve time.
+        fd, tmp_name = tempfile.mkstemp(suffix=".sqlite", prefix="sig-idx-")
+        os.close(fd)
+        try:
+            idx_descriptor = build_search_index(
+                search_rows,
+                publication_id=pub,
+                compartment=comp,
+                license_id=comps[comp],
+                out=Path(tmp_name),
+            )
+            idx_bytes = Path(tmp_name).read_bytes()
+        finally:
+            Path(tmp_name).unlink(missing_ok=True)
+        emit(
+            f"{comp_dir}/{INDEX_FILE}",
+            idx_bytes,
+            compartment=comp,
+            licence=comps[comp],
+        )
+        emit(
+            f"{comp_dir}/{INDEX_DESCRIPTOR_FILE}",
+            canonical_json(idx_descriptor),
+            compartment=comp,
+            licence=comps[comp],
+        )
+        cb.search_index_sha256 = sha256_hex(idx_bytes)
+        cb.search_indexed_records = int(idx_descriptor["scope"]["indexed_records"])
         emit(
             f"{comp_dir}/index.html",
             compartment_page(
@@ -486,8 +588,12 @@ def build_release(
                 "compartment": comp,
                 "license": comps[comp],
                 "record_count": len(cb.index_rows),
+                "site_rows": cb.site_rows_read,
+                "duplicate_rows_dropped": cb.duplicate_rows_dropped,
                 "artifact_count": 0,  # filled below
                 "index_sha256": sha256_hex(index_bytes),
+                "search_index_sha256": cb.search_index_sha256,
+                "search_indexed_records": cb.search_indexed_records,
             }
         )
 
@@ -582,12 +688,16 @@ def build_release(
                 "compartment": m["compartment"],
                 "license": m["license"],
                 "record_count": m["record_count"],
+                "site_rows": m["site_rows"],
+                "duplicate_rows_dropped": m["duplicate_rows_dropped"],
                 "index_sha256": m["index_sha256"],
+                "search_index_sha256": m["search_index_sha256"],
+                "search_indexed_records": m["search_indexed_records"],
             }
             for m in comp_meta
         ],
         "counts": {
-            "input_records": total_records,
+            "input_records": sum(int(m["site_rows"]) for m in comp_meta),
             "output_records": total_records,
             "evidence_pages": evidence_count,
             "dossier_pages": dossier_count,
@@ -716,6 +826,49 @@ def validate_release(release_dir: Path | str) -> ValidationReport:
             for rel in (str(r.get("path")), str(r.get("json_path"))):
                 if rel == "None" or not (release_dir / rel).exists():
                     failures.append(f"index references missing file: {rel}")
+        # P32.14 (SIG-FIND-003): the per-compartment search index must
+        # reconcile to the same record count and digest before staging.
+        sdesc_rel = f"r/{pub}/c/{cid}/{INDEX_DESCRIPTOR_FILE}"
+        sdesc_path = release_dir / sdesc_rel
+        if not sdesc_path.exists():
+            failures.append(f"missing search index descriptor: {sdesc_rel}")
+        else:
+            try:
+                sdesc = _read_json(sdesc_path)
+                scope = sdesc.get("scope") or {}
+            except Exception:  # noqa: BLE001 - malformed = incomplete
+                scope = {}
+                failures.append(f"search index descriptor not parseable: {sdesc_rel}")
+            if int(scope.get("indexed_records") or -1) != int(comp["record_count"]):
+                failures.append(
+                    f"compartment {cid}: search index scope "
+                    f"{scope.get('indexed_records')} != {comp['record_count']}"
+                )
+            if int(scope.get("eligible_records") or -1) != int(comp["record_count"]):
+                failures.append(
+                    f"compartment {cid}: search index eligible scope "
+                    f"{scope.get('eligible_records')} != {comp['record_count']}"
+                )
+            if scope.get("excluded_records_by_reason"):
+                failures.append(
+                    f"compartment {cid}: search index claims exclusions "
+                    f"{scope['excluded_records_by_reason']} — the released "
+                    "projection must index every eligible record"
+                )
+        sdb_rel = f"r/{pub}/c/{cid}/{INDEX_FILE}"
+        sdb_path = release_dir / sdb_rel
+        if not sdb_path.exists():
+            failures.append(f"missing search index: {sdb_rel}")
+        else:
+            sdigest, _ = _sha256_file(sdb_path)
+            if sdigest != comp.get("search_index_sha256"):
+                failures.append(f"compartment {cid}: search index digest mismatch")
+            n_indexed = comp.get("search_indexed_records")
+            if n_indexed is not None and int(n_indexed) != int(comp["record_count"]):
+                failures.append(
+                    f"compartment {cid}: catalog search_indexed_records "
+                    f"{n_indexed} != {comp['record_count']}"
+                )
     return ValidationReport(
         publication_id=pub,
         state="complete" if not failures else "incomplete",
