@@ -122,6 +122,7 @@ def _select_code(
         "U8": "UNRESOLVED_IRRECONCILABLE",
         "NO_STRATEGY": "UNRESOLVED_NO_STRATEGY",
         "NEVER_RESOLVE": "UNRESOLVED_NO_STRATEGY",
+        "SCOPE_MIXED": "UNRESOLVED_SCOPE_MIXED",
     }[code or "U0"]
 
 

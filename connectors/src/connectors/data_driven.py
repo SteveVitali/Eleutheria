@@ -723,7 +723,7 @@ class DataDrivenConnector(Connector):
         # ``configured_sharing_partner`` (the NVLS pooled-lookup edge). Runs
         # unconditionally: the twin seam is identity to the crosswalk above and
         # applies whether or not ``sig_identities`` were supplied.
-        return partner_ref_rows(normalized, predicates=_PARTNER_PREDICATES)
+        return partner_ref_rows(normalized, predicates=_PARTNER_PREDICATES, scope=ctx.source.id)
 
     def load(self, ctx: RunContext, linked: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Produce the L1 rows; the driver asserts them (live only)."""

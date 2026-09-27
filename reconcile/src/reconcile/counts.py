@@ -25,6 +25,11 @@ import uuid
 from collections.abc import Sequence
 from datetime import date
 
+from .count_scope import (
+    ScopeRelation,
+    compare_scope,
+    scope_key,
+)
 from .model import (
     COUNT_BASIS_MISMATCH,
     PREDICATE_CONFLATION,
@@ -35,6 +40,7 @@ from .model import (
     CountResolution,
     Evidence,
     ResearchTask,
+    ScopedCount,
     UnresolvedDelta,
     predicate_for_basis,
 )
@@ -93,7 +99,15 @@ def _resolve_one_basis(
     *,
     as_of: date,
 ) -> CountResolution:
-    """Resolve a single count predicate from claims that all share its basis."""
+    """Resolve a single count predicate from claims that all share its basis.
+
+    P32.3 (SIG-TRUST-004): comparability is scope-qualified. The admissible
+    claims partition by their declared scope; each scope resolves its own
+    answer and a within-SCOPE disagreement stays a contradiction, while claims
+    in different scopes are never compared — the resolution is ``SCOPE_MIXED``
+    and carries :attr:`CountResolution.scope_partitions` (299 metro vs ~190
+    city: a scope mismatch, not a conflict).
+    """
     predicate_id = predicate_for_basis(basis)
     strategy = predicate_meta(predicate_id)["resolution_strategy"]
     lower_bound = basis == "mapped"  # SIG-RECON-027: mapped is a lower bound only
@@ -114,56 +128,106 @@ def _resolve_one_basis(
             resolution_status="INSUFFICIENT",
         )
 
-    winner, wins = _pick_winner(admissible, strategy=strategy, lower_bound=lower_bound)
-    dissenting = tuple(c for c, _ in admissible if c is not winner)
+    scope_groups: dict[str, list[tuple[CountClaim, int]]] = {}
+    for c, w in admissible:
+        scope_groups.setdefault(scope_key(c.scope), []).append((c, w))
 
     contradictions: list[Contradiction] = []
     tasks: list[ResearchTask] = []
-    # A genuine within-predicate disagreement: two admissible claims on the SAME
-    # basis with different values (mapped is exempt — a higher figure is a better
-    # lower bound, not a disagreement). The disagreement emits a research task and
-    # links it (SIG-RECON-057): the detector never states a conflict without work.
-    distinct_values = {c.value for c, _ in admissible}
-    if len(distinct_values) > 1 and not lower_bound:
-        sorted_values = tuple(sorted(distinct_values))
-        task = ResearchTask(
-            task_id=_task_id(),
-            task_type="reconcile_disagreeing_count",
-            subject_id=subject_id,
-            closing_condition=(
-                f"Obtain a dispositive source reconciling {predicate_id} values {sorted_values}."
-            ),
-            detector_version=DETECTOR_VERSION,
-            priority=0.6,
-            note=f"{predicate_id} carries disagreeing claims {sorted_values}.",
-        )
-        tasks.append(task)
-        contradictions.append(
-            Contradiction(
-                contradiction_type=VALUE_DISAGREEMENT,
-                subject_id=subject_id,
-                predicate_id=predicate_id,
-                claim_values=sorted_values,
-                note=(
-                    f"{predicate_id} carries disagreeing claims "
-                    f"({', '.join(str(v) for v in sorted_values)}); "
-                    "both retained, neither collapsed."
-                ),
-                evidence=tuple(c.evidence for c, _ in admissible),
-                research_task_ids=(task.task_id,),
+    scoped: list[ScopedCount] = []
+    for key, group in scope_groups.items():
+        winner, wins = _pick_winner(group, strategy=strategy, lower_bound=lower_bound)
+        scope = winner.scope
+        scoped.append(
+            ScopedCount(
+                scope=scope,
+                scope_key=key,
+                value=winner.value,
+                weight=wins,
+                winning_claim=winner,
+                dissenting=tuple(c for c, _ in group if c is not winner),
+                claim_count=len(group),
             )
         )
+        # A genuine within-predicate, within-SCOPE disagreement: two admissible
+        # claims on the SAME basis AND the SAME scope with different values
+        # (mapped is exempt — a higher figure is a better lower bound, not a
+        # disagreement). The disagreement emits a research task and links it
+        # (SIG-RECON-057): the detector never states a conflict without work.
+        distinct_values = {c.value for c, _ in group}
+        if len(distinct_values) > 1 and not lower_bound:
+            sorted_values = tuple(sorted(distinct_values))
+            scope_label = scope.label_text() if scope else "undeclared scope"
+            task = ResearchTask(
+                task_id=_task_id(),
+                task_type="reconcile_disagreeing_count",
+                subject_id=subject_id,
+                closing_condition=(
+                    f"Obtain a dispositive source reconciling {predicate_id} "
+                    f"values {sorted_values} at scope {scope_label!r}."
+                ),
+                detector_version=DETECTOR_VERSION,
+                priority=0.6,
+                note=(
+                    f"{predicate_id} carries disagreeing claims {sorted_values} "
+                    f"at scope {scope_label!r}."
+                ),
+            )
+            tasks.append(task)
+            contradictions.append(
+                Contradiction(
+                    contradiction_type=VALUE_DISAGREEMENT,
+                    subject_id=subject_id,
+                    predicate_id=predicate_id,
+                    claim_values=sorted_values,
+                    note=(
+                        f"{predicate_id} carries disagreeing claims "
+                        f"({', '.join(str(v) for v in sorted_values)}) at scope "
+                        f"{scope_label!r}; both retained, neither collapsed."
+                    ),
+                    evidence=tuple(c.evidence for c, _ in group),
+                    research_task_ids=(task.task_id,),
+                )
+            )
 
+    if len(scoped) == 1:
+        only = scoped[0]
+        assert only.winning_claim is not None
+        return CountResolution(
+            count_basis=basis,
+            predicate_id=predicate_id,
+            value=only.value,
+            weight=only.weight,
+            winning_claim=only.winning_claim,
+            dissenting=only.dissenting,
+            lower_bound=lower_bound,
+            rationale=_rationale(basis, only.winning_claim, only.weight or 0, lower_bound),
+            resolution_status="RESOLVED",
+            scope=only.scope,
+            contradictions=tuple(contradictions),
+            tasks=tuple(tasks),
+        )
+
+    # Several declared scopes: every scope keeps its own answer and NOTHING is
+    # adjudicated across scopes — there is no one value (SIG-TRUST-004).
+    scope_labels = ", ".join(
+        (s.scope.label_text() if s.scope else "undeclared scope") for s in scoped
+    )
     return CountResolution(
         count_basis=basis,
         predicate_id=predicate_id,
-        value=winner.value,
-        weight=wins,
-        winning_claim=winner,
-        dissenting=dissenting,
+        value=None,
+        weight=None,
+        winning_claim=None,
+        dissenting=tuple(c for c, _ in admissible),
         lower_bound=lower_bound,
-        rationale=_rationale(basis, winner, wins, lower_bound),
-        resolution_status="RESOLVED",
+        rationale=(
+            f"{predicate_id} is asserted at {len(scoped)} distinct scopes ({scope_labels}); "
+            "each scope keeps its own count — a cross-scope difference is a scope "
+            "mismatch, not a contradiction (SIG-TRUST-004)."
+        ),
+        resolution_status="SCOPE_MIXED",
+        scope_partitions=tuple(scoped),
         contradictions=tuple(contradictions),
         tasks=tuple(tasks),
     )
@@ -246,13 +310,26 @@ def _compute_deltas(
     subject_id: str,
     resolutions: dict[str, CountResolution],
 ) -> tuple[UnresolvedDelta, ...]:
-    """The deltas between resolved predicates — the genuine findings (§29.1)."""
+    """The deltas between resolved predicates — the genuine findings (§29.1).
+
+    P32.3: a delta is only meaningful between resolutions at the SAME scope —
+    "90 active inside city limits" minus "299 mapped across the metro" is a
+    subtraction across scopes, which is not a finding (SIG-TRUST-004).
+    Unscoped-vs-unscoped pairs keep the pre-P32.3 behaviour (their scope was
+    never declared, so nothing is silently dropped); a declared-scope pair must
+    match to compare.
+    """
     out: list[UnresolvedDelta] = []
     for higher, lower in _DELTA_PAIRS:
         hi = resolutions.get(higher)
         lo = resolutions.get(lower)
         if not (hi and lo and hi.value is not None and lo.value is not None):
             continue
+        if not (
+            (hi.scope is None and lo.scope is None)
+            or compare_scope(hi.scope, lo.scope) is ScopeRelation.SAME
+        ):
+            continue  # cross-scope subtraction is not a finding
         delta = hi.value - lo.value
         if delta == 0:
             continue

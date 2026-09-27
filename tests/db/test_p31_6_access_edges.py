@@ -240,7 +240,10 @@ def test_audit_edge_claims_materialize_with_org_partners(clean_dsn: str) -> None
     edges = [r for r in records if r.get("predicate_id") == "configured_sharing_partner"]
     assert edges
     resolved = {r["to_org"]: r.get("object_ref") for r in edges}
-    assert resolved["Shelby County SO"]["scheme"] == "sig.org.name"
+    assert resolved["Shelby County SO"]["scheme"] == "sig.org.name_scoped"
+    # P32.3 / ADR-122: the name-only mint is a source-scoped, unmerged candidate.
+    assert resolved["Shelby County SO"]["value"].endswith("|shelby county so")
+    assert resolved["Shelby County SO"]["candidate"] is True
     assert resolved["Metro PD"] is None  # refused names stay literal claims
 
     with psycopg.connect(clean_dsn, autocommit=True) as conn:
@@ -249,7 +252,8 @@ def test_audit_edge_claims_materialize_with_org_partners(clean_dsn: str) -> None
         # literal claims with no object_entity.
         shelby = conn.execute(
             "SELECT k.entity_id::text FROM entity_identity_key k"
-            " WHERE k.scheme = 'sig.org.name' AND k.value = 'shelby county so'"
+            " WHERE k.scheme = 'sig.org.name_scoped'"
+            "   AND k.value LIKE '%%|shelby county so'"
         ).fetchall()
         assert len(shelby) == 1
         literal = conn.execute(

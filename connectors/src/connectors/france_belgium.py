@@ -1590,7 +1590,9 @@ class FranceBelgiumProcurementConnector(Connector):
         A DECP party is usually a bare SIRET with no name, which the rule cannot
         tell from a sole trader's, so it stays text only (Part VIII).
         """
-        return partner_ref_rows(normalized, predicates=PROCUREMENT_PARTNER_PREDICATES)
+        return partner_ref_rows(
+            normalized, predicates=PROCUREMENT_PARTNER_PREDICATES, scope=ctx.source.id
+        )
 
     def load(self, ctx: RunContext, linked: list[dict[str, Any]]) -> list[dict[str, Any]]:
         return load_claims_for_l1(linked)

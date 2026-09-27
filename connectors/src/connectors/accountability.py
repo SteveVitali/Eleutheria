@@ -1783,7 +1783,7 @@ class AccountabilityConnector(Connector):
         natural persons (Part VIII), and no organisation marker makes a party list
         safe to mint from.
         """
-        return partner_ref_rows(normalized, predicates=_PARTNER_PREDICATES)
+        return partner_ref_rows(normalized, predicates=_PARTNER_PREDICATES, scope=ctx.source.id)
 
     def load(self, ctx: RunContext, linked: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Produce the L1 rows; the driver asserts them (live only)."""

@@ -501,6 +501,11 @@ class CameraRegistryEntry:
     source_id: str
     target_id: str
     state: str
+    #: The registry's PUBLISHER label (the target row's ``agency`` — who
+    #: publishes this camera layer). Provenance only: it becomes a
+    #: ``camera_registry_publisher`` claim, never a ``camera_operator`` claim —
+    #: a publisher is not an evidenced camera operator (P32.3 / SIG-TRUST-003,
+    #: ADR-122). The OSM contributor label is the canonical case.
     agency: str
     latitude: float
     longitude: float
@@ -508,6 +513,10 @@ class CameraRegistryEntry:
     geo_tier: int
     sensitivity_class: str
     license_spdx: str
+    #: An authoritative operator label — set only when the registry evidence
+    #: itself names the camera operator (the target's ``operator`` field or a
+    #: feature ``operator_fields`` value). Only this mints ``camera_operator``.
+    operator: str | None = None
     name: str | None = None
     roadway: str | None = None
     county: str | None = None
@@ -630,7 +639,22 @@ class CameraRegistryEntry:
                 candidate={"scheme": self.jurisdiction_scheme, "value": self.state},
             )
         )
-        rows.append(self._claim("camera_operator", self.agency, self.agency, ev))
+        # P32.3 (SIG-TRUST-003/004): the registry's ``agency`` label is
+        # PUBLISHER provenance, not operator evidence — it lands as
+        # ``camera_registry_publisher`` and never mints an operator
+        # relationship or an organisation entity-ref (an OSM/community
+        # publisher label is not an evidenced camera operator). Only an
+        # authoritative operator field — the target's ``operator`` key or a
+        # feature operator alias — mints ``camera_operator``, which the
+        # ``link()`` stage then twins into an organisation entity-ref.
+        rows.append(self._claim("camera_registry_publisher", self.agency, self.agency, ev))
+        if self.operator:
+            op = self._claim("camera_operator", self.operator, self.operator, ev)
+            if self.state and self.jurisdiction_scheme != "sig.unresolved":
+                # The evidenced jurisdiction anchoring the operator's
+                # scoped-name identity (SIG-TRUST-004).
+                op["partner_jurisdiction"] = f"{self.jurisdiction_scheme}:{self.state}"
+            rows.append(op)
         rows.append(self._claim("camera_latitude", self.latitude, str(self.latitude), ev))
         rows.append(self._claim("camera_longitude", self.longitude, str(self.longitude), ev))
         rows.append(
@@ -907,14 +931,19 @@ class Dot511Connector(Connector):
     # the registry's operator stands as an organisation (P31.5 / ADR-112).
 
     def link(self, ctx: RunContext, normalized: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        """Append the ``camera_operator`` entity-ref claims (P31.5 / ADR-112).
+        """Append the ``camera_operator`` entity-ref claims (P31.5 / ADR-112,
+        role-repaired by P32.3 / ADR-122).
 
-        The operator is the reviewed publisher name of the registry target, the
-        deployment → organisation edge the P28.6 accountability chain joins on.
-        A composite operator ("King County / WSDOT") names two parties and stays
-        text only.
+        Only an authoritative ``camera_operator`` claim twins an organisation
+        entity-ref — the registry PUBLISHER label (``camera_registry_publisher``)
+        is provenance and mints nothing (a community-map publisher is not an
+        evidenced camera operator). Each mint carries the claim's evidenced
+        jurisdiction (``partner_jurisdiction``, e.g. ``us.state_abbr:OK``) so the
+        operator's scoped-name identity stays inside its jurisdiction
+        (SIG-TRUST-004); a composite operator ("King County / WSDOT") names two
+        parties and stays text only.
         """
-        return partner_ref_rows(normalized, predicates=_PARTNER_PREDICATES)
+        return partner_ref_rows(normalized, predicates=_PARTNER_PREDICATES, scope=ctx.source.id)
 
     def load(self, ctx: RunContext, linked: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Produce the L1 rows; the driver asserts them (live only, SIG-INGEST-003)."""
@@ -981,12 +1010,15 @@ def _entry_from_raw(
         text = str(pair[1]).strip()
         return text or None
 
+    operator = str(target.get("operator") or "").strip() or _s("operator_fields")
+
     return CameraRegistryEntry(
         camera_ref=str(ref_pair[1]),
         source_id=source_id,
         target_id=str(target.get("id") or "unknown_target"),
         state=str(target.get("state") or ""),
         agency=str(target.get("agency") or ""),
+        operator=operator,
         latitude=plat,
         longitude=plon,
         coordinate_source=coord_source,

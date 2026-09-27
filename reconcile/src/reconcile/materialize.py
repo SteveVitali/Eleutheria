@@ -159,6 +159,28 @@ CAPTURE_TIME_JOIN = (
     "      WHERE ce2.claim_id = c.claim_id AND c.observed_at IS NULL) cap ON true "
 )
 
+#: The count-scope / evidence-origin qualifiers (P32.3 / SIG-TRUST-004,
+#: ADR-122). Reads the typed ``claim_qualifier`` surface P32.2 added: the
+#: ``count_scope`` qualifier's ``value_text`` is the scope label and its
+#: ``jurisdiction`` column is the evidenced jurisdiction the scope is anchored
+#: to; ``count_scope_detail`` refines the scope (``privately_owned`` …);
+#: ``evidence_origin`` marks seeded/fixture material (``seed_fixture``) so no
+#: read surface presents it as primary live evidence. Alias ``q``; select
+#: ``q.count_scope, q.count_scope_detail, q.count_scope_jurisdiction,
+#: q.evidence_origin``.
+COUNT_QUALIFIER_JOIN = (
+    "  LEFT JOIN LATERAL ("
+    "     SELECT max(CASE WHEN q.qualifier_id = 'count_scope' THEN q.value_text END)"
+    "              AS count_scope,"
+    "            max(CASE WHEN q.qualifier_id = 'count_scope_detail' THEN q.value_text END)"
+    "              AS count_scope_detail,"
+    "            max(CASE WHEN q.qualifier_id = 'count_scope' THEN q.jurisdiction END)"
+    "              AS count_scope_jurisdiction,"
+    "            max(CASE WHEN q.qualifier_id = 'evidence_origin' THEN q.value_text END)"
+    "              AS evidence_origin"
+    "       FROM claim_qualifier q WHERE q.claim_id = c.claim_id) q ON true "
+)
+
 #: ``Claim.observed_at_basis`` for a claim dated from its LATEST sighting's capture
 #: (labelled by the resolver in ``rules_fired``). ADR-104's interim name was
 #: ``capture_retrieved_at`` (earliest capture, before re-sightings were linked); the
@@ -239,7 +261,9 @@ def read_claim_groups(
         "SELECT c.subject_id, c.predicate_id, c.claim_id, c.value_kind, c.value_text, "
         "       c.value_num, c.value_bool, c.raw_value, c.observed_at, c.source_reliability, "
         "       c.artifact_integrity, c.review_status, ea.source_id, ea.artifact_type, "
-        "       cap.retrieved_at "
+        "       cap.retrieved_at, "
+        "       q.count_scope, q.count_scope_detail, q.count_scope_jurisdiction, "
+        "       q.evidence_origin "
         "  FROM claim c "
         "  LEFT JOIN LATERAL ("
         "     SELECT ea.source_id, ea.artifact_type FROM claim_evidence ce "
@@ -247,6 +271,7 @@ def read_claim_groups(
         "       JOIN evidence_artifact ea ON ea.artifact_id = ec.artifact_id "
         "      WHERE ce.claim_id = c.claim_id LIMIT 1) ea ON true "
         + CAPTURE_TIME_JOIN
+        + COUNT_QUALIFIER_JOIN
         + " WHERE "
         + " AND ".join(where)
         + " ORDER BY c.subject_id, c.predicate_id, c.claim_id",
@@ -274,6 +299,10 @@ def read_claim_groups(
                 count_basis=str(r[1]).removesuffix("_device_count")
                 if str(r[1]).endswith("_device_count")
                 else None,
+                count_scope=r[15],
+                count_scope_detail=r[16],
+                count_scope_jurisdiction=r[17],
+                evidence_origin=r[18],
             )
         )
     return groups

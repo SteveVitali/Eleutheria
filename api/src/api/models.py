@@ -228,6 +228,16 @@ class ClaimResponse(_Model):
     attribution: list[Attribution]
     genre: str
     review_status: str
+    #: P32.3 (SIG-TRUST-004): the declared count scope + origin of this claim —
+    #: ``count_scope``/``count_scope_detail`` qualify what the number counts
+    #: (metro vs city limits are different questions, not contradictions), and
+    #: ``evidence_origin`` = ``seed_fixture`` marks seeded material so a public
+    #: surface never presents it as primary live evidence. ``None`` when the
+    #: claim carries no such qualifier.
+    count_scope: str | None = None
+    count_scope_detail: str | None = None
+    count_scope_jurisdiction: str | None = None
+    evidence_origin: str | None = None
     evidence_capture_ids: list[str]
     resolution_ref: str
     coverage: CoverageStatement

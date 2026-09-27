@@ -82,7 +82,16 @@ def test_entity_ref_claims_are_emitted_per_connector_family() -> None:
     assert refs["procurement_contracts"] == Counter({"buyer": 2, "seller": 2})
     assert refs["usaspending_awards"] == Counter({"recipient": 1})
     assert refs["ted_eu"] == Counter({"buyer": 1})
-    assert refs["dot_511_wa"] == Counter({"camera_operator": 2})
+    # P32.3 / SIG-TRUST-003: the WA registry carries no authoritative operator
+    # field — its ``agency`` label lands as ``camera_registry_publisher``
+    # (provenance) and mints NO organisation ref. A publisher is not an
+    # evidenced operator; the KY fixture is the positive case.
+    assert refs["dot_511_wa"] == Counter()
+    wa_text_preds = {
+        r["predicate_id"] for r in fixture_records()["dot_511_wa"] if "object_ref" not in r
+    }
+    assert "camera_registry_publisher" in wa_text_preds
+    assert "camera_operator" not in wa_text_preds
     assert refs["atlas_issue_records"] == Counter({"event_organizations": 1})
     # A DECP party is a bare SIRET: no name, so no identity decision (Part VIII).
     assert refs["decp_fr"] == Counter()

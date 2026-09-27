@@ -75,13 +75,53 @@ def test_at_least_one_genuine_contradiction_rendered_without_collapse() -> None:
     rendered = [r for r in events["rows"] if str(r["label"]).startswith("Contradiction:")]
     assert any("policy_configuration_divergence" in r["label"] for r in rendered)
 
-    # the claimed-count disagreement retains BOTH figures (190 and 299), collapsing neither.
+    # P32.3 / SIG-TRUST-004: the same-SCOPE claimed-count disagreement stays a
+    # contradiction — DeFlock's 299 metro vs The Oklahoman's ~300 metro —
+    # retaining BOTH figures, collapsing neither. The 299-metro vs ~190-city
+    # pair is NOT a contradiction: it is a scope partition (see scope test).
     disagreement = next(
         c for c in graph.contradictions if c.contradiction_type == VALUE_DISAGREEMENT
     )
-    assert set(disagreement.claim_values) == {190, 299}
+    assert set(disagreement.claim_values) == {299, 300}
+    assert "metro" in disagreement.note
     html = render_print_html(dossier)
-    assert "190" in html and "299" in html
+    assert "299" in html and "300" in html
+
+
+def test_cross_scope_counts_partition_not_contradict() -> None:
+    # P32.3 / SIG-TRUST-004: counts at different declared scopes are a scope
+    # mismatch, never a contradiction — and each scope keeps its own answer.
+    graph = slice_mod.build_slice()
+    res = graph.reconciliation.resolutions["claimed"]
+    assert res.resolution_status == "SCOPE_MIXED"
+    assert res.value is None and res.winning_claim is None
+    scope_texts = {part.scope.label_text() for part in res.scope_partitions if part.scope}
+    assert "metro (us.state_abbr:OK)" in scope_texts
+    assert "privately_owned city_limits (us.state_abbr:OK)" in scope_texts
+    # the metro partition keeps the genuine same-scope disagreement visible
+    metro = next(p for p in res.scope_partitions if p.scope and p.scope.label == "metro")
+    assert metro.winning_claim is not None and metro.dissenting
+    assert {c.value for c in (metro.dissenting + (metro.winning_claim,))} == {299, 300}
+
+
+def test_derived_approximate_sum_is_labelled_not_a_claim() -> None:
+    # SIG-DOS-003 / SIG-TRUST-004: the "~190" city figure renders LABELLED as a
+    # derived approximate sum (L4) with its inputs and assumptions — never a
+    # bare number, never a claim.
+    graph = slice_mod.build_slice()
+    (s,) = graph.derived_sums
+    assert s.layer == "L4" and s.is_observation is False
+    assert s.label == "~190" and s.value == 190
+    assert sorted(s.inputs) == [90, 100]
+    assert sorted(s.input_bases) == ["active", "claimed"]
+    assert s.scope is not None and s.scope.label == "city_limits"
+
+    dossier = slice_mod.build_dossier(graph)
+    js = render_json(dossier)
+    deployed = next(s_ for s_ in js["sections"] if s_["id"] == "what_is_deployed")
+    derived = [r for r in deployed["rows"] if "(derived, L4)" in r["label"]]
+    assert derived and derived[0]["value"] == "~190"
+    assert "disjoint" in derived[0]["note"]
 
 
 def test_predicate_conflation_fires_on_deliberate_conflation() -> None:
@@ -117,12 +157,15 @@ def test_result_carries_a_coverage_and_incompleteness_statement() -> None:
 
 def test_unresolved_deltas_become_research_tasks() -> None:
     # §29.1 / SIG-RECON-029: the deltas are the findings, emitted as tasks.
+    # P32.3 / SIG-TRUST-004: a delta is only meaningful at the SAME scope —
+    # "90 active city-limits" minus "299 mapped metro" is a cross-scope
+    # subtraction, NOT a finding, so no delta is emitted for it.
     graph = slice_mod.build_slice()
     rec = graph.reconciliation
-    assert rec.tasks, "expected research tasks from the deltas/disagreements"
-    # the active(90)-vs-mapped(299) surplus is the attribution finding
-    d = next(
-        d for d in rec.unresolved_deltas if (d.higher_basis, d.lower_basis) == ("active", "mapped")
-    )
-    assert d.delta == -209
-    assert d.task in rec.tasks
+    assert rec.tasks, "expected research tasks from the disagreements"
+    assert not any(
+        (d.higher_basis, d.lower_basis) == ("active", "mapped") for d in rec.unresolved_deltas
+    ), "a cross-scope subtraction must not produce a delta"
+    # the research-task machinery still carries the real within-scope finding:
+    # the claimed-metro disagreement (299 vs ~300) links its task.
+    assert any(t.task_type == "reconcile_disagreeing_count" for t in rec.tasks)

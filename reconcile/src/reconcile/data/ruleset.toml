@@ -22,7 +22,7 @@
 # would create two sources of truth. The ordinal weight-composition table is the
 # §10.6 spec constant implemented and pinned to Appendix D.2 in reconcile.weight.
 
-ruleset_version = "2026.1"
+ruleset_version = "2026.2"  # P32.3: +UNRESOLVED_SCOPE_MIXED (SIG-TRUST-004)
 
 # --- numeric tolerance (SIG-RECON-014 U4; §10.7 MINOR_DISAGREEMENT) -----------
 # The relative spread (max-min)/max above which two competing numeric values are
@@ -91,3 +91,4 @@ UNRESOLVED_CONFLATION = "Unresolved. The available claims describe different qua
 UNRESOLVED_BLOCKING = "Unresolved. An open contradiction on {predicate_label} is flagged not-safe-to-publish; {value} from {source} and {dissent_value} from {dissent_source} are both shown with their evidence."
 UNRESOLVED_IRRECONCILABLE = "Unresolved. {value} rests on {source} and {dissent_value} rests on {dissent_source}; the disagreement is first-party on both sides and neither supersedes the other. Both values are shown with their evidence."
 UNRESOLVED_NO_STRATEGY = "Unresolved. The ruleset assigns no resolution strategy for {predicate_label}; SIG records the claims but does not adjudicate this predicate."
+UNRESOLVED_SCOPE_MIXED = "Unresolved. The admissible claims for {predicate_label} are asserted at different declared scopes; each scope's answer is retained — the ruleset does not adjudicate across scopes (count comparability is scope-qualified, SIG-RECON-028)."

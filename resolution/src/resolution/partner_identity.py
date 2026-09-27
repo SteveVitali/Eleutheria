@@ -12,14 +12,29 @@ and under which identifier:
 * **One identifier scheme per partner** (:func:`partner_identity`). An external
   crosswalk id when the record carries one (LEI, UEI, DUNS, CAGE, a federal agency
   code — schemes in :data:`db.identity_guard.PARTNER_ORG_SCHEMES`), otherwise the
-  normalized name under ``sig.org.name`` (:func:`resolution.normalize.normalize_org_name`,
-  SIG-IDENT-022). Two records that normalize to the same name name the same entity;
-  merging anything beyond that is entity resolution (P28.1), not this module.
+  **scope-qualified** normalized name under ``sig.org.name_scoped`` (P32.3 /
+  ADR-122; :func:`resolution.normalize.normalize_org_name`, SIG-IDENT-022).
+
+  P32.3 replaced the global ``sig.org.name`` key: a bare normalized name is NOT an
+  identity — "City of Springfield Police Department" names a different body in
+  every jurisdiction (SIG-TRUST-004). A name-only partner now keys as
+  ``jur:<jurisdiction>|<name>`` when the record's jurisdiction is evidenced, else
+  ``src:<source>|<name>`` inside the source scope that asserted it, and is marked
+  ``candidate`` (unmerged) in its object ref. Two records union only when their
+  scoped keys match byte-for-byte or a recorded identity disposition joins them —
+  identical names across jurisdictions NEVER auto-union. The legacy
+  ``sig.org.name`` scheme stays guarded for already-written rows but nothing new
+  mints it; ``python -m resolution partner-name-audit`` produces the dry-run
+  impact report for those legacy keys.
 * **The ambiguity rule.** A value that is not a name, names several parties, is only
   generic words, or is one bare word stays a text claim.
 * **The never-a-person rule (Part VIII).** A natural-person-shaped or
   sole-proprietor-shaped name never becomes an entity. An organisation needs a
   positive organisation marker. When in doubt the partner stays text.
+* **The role gate (SIG-TRUST-003).** Only a predicate whose object plays an
+  operational organisation role (:mod:`db.organization_roles`) may twin a
+  partner ref. A provenance label — the registry's ``camera_registry_publisher``
+  — is recorded as text and mints nothing: a publisher is not an operator.
 
 The rules are versioned data (``data/partner_identity.toml``). :func:`partner_ref_rows`
 is the connector ``link()`` helper: after each eligible text claim it appends a
@@ -39,7 +54,12 @@ from functools import cache
 from importlib.resources import files
 from typing import Any
 
-from db.identity_guard import PARTNER_NAME_SCHEME, PARTNER_ORG_SCHEMES
+from db.identity_guard import (
+    PARTNER_NAME_SCHEME,
+    PARTNER_NAME_SCOPED_SCHEME,
+    PARTNER_ORG_SCHEMES,
+)
+from db.organization_roles import mints_entity_ref, role_for_predicate
 
 from .normalize import NORMALIZE_RULESET_VERSION, normalize_org_name
 
@@ -47,12 +67,14 @@ __all__ = [
     "CROSSWALK_SCHEMES",
     "PARTNER_ENTITY_TYPE",
     "PARTNER_NAME_SCHEME",
+    "PARTNER_NAME_SCOPED_SCHEME",
     "PARTNER_PREDICATES",
     "PartnerIdentity",
     "PartnerRefusal",
     "partner_identity",
     "partner_ref_rows",
     "partner_rules_version",
+    "scoped_name_key",
 ]
 
 #: The entity type every partner object is minted as (never ``deployment``, never
@@ -68,7 +90,14 @@ CROSSWALK_SCHEMES: Mapping[str, str] = {
     "cage": "us.dla.cage",
     "agency_code": "us.cgac.agency_code",
 }
-assert set(CROSSWALK_SCHEMES.values()) | {PARTNER_NAME_SCHEME} == PARTNER_ORG_SCHEMES
+assert (
+    set(CROSSWALK_SCHEMES.values())
+    | {
+        PARTNER_NAME_SCHEME,
+        PARTNER_NAME_SCOPED_SCHEME,
+    }
+    == PARTNER_ORG_SCHEMES
+)
 
 #: The partner predicates the connectors emit entity-ref claims for (ADR-112 §3, the
 #: re-confirmed connector inventory; ADR-113 adds the P31.6 pair). Procurement
@@ -89,6 +118,35 @@ PARTNER_PREDICATES: frozenset[str] = frozenset(
         "configured_sharing_partner",
     }
 )
+assert all(mints_entity_ref(p) for p in PARTNER_PREDICATES)
+
+_SCOPE_CLEAN = re.compile(r"[^a-z0-9._:-]+")
+
+
+def _scope_token(token: str) -> str:
+    """Normalise a jurisdiction/source token for the scoped-name key."""
+    return _SCOPE_CLEAN.sub("_", str(token).strip().lower()) or "unknown"
+
+
+def scoped_name_key(
+    normalized: str, *, jurisdiction: str | None = None, scope: str | None = None
+) -> tuple[str, str]:
+    """The ``sig.org.name_scoped`` identifier value for a normalized name.
+
+    Returns ``(key, scope_token)`` where ``key`` is ``jur:<jurisdiction>|<name>``
+    when ``jurisdiction`` is evidenced, else ``src:<source>|<name>`` inside the
+    asserting source's scope, else ``src:unknown|<name>``. Identical names in
+    different scopes never collide, so nothing auto-unions across jurisdictions
+    (SIG-TRUST-004).
+    """
+    if jurisdiction:
+        scope_token = f"jur:{_scope_token(jurisdiction)}"
+    elif scope:
+        scope_token = f"src:{_scope_token(scope)}"
+    else:
+        scope_token = "src:unknown"
+    return f"{scope_token}|{normalized}", scope_token
+
 
 _NON_WORD = re.compile(r"[^a-z]")
 
@@ -117,14 +175,22 @@ def _phrases(key: str) -> tuple[tuple[str, ...], ...]:
 
 @dataclass(frozen=True)
 class PartnerIdentity:
-    """A partner that stands as an organisation: its guarded identifier and label."""
+    """A partner that stands as an organisation: its guarded identifier and label.
+
+    ``jurisdiction``/``scope``/``candidate`` (P32.3) carry the identity basis a
+    name-only mint is anchored to; a crosswalk-id mint leaves them unset (the
+    external id is itself the universal scope).
+    """
 
     scheme: str
     value: str
     label: str
-    basis: str  # "crosswalk:<key>" or "normalized_name"
+    basis: str  # "crosswalk:<key>" or "normalized_name_scoped"
+    jurisdiction: str | None = None
+    scope: str | None = None  # "jur:<jurisdiction>" / "src:<source>" / "src:unknown"
+    candidate: bool = False  # name-only mints are unmerged review candidates
 
-    def as_object_ref(self) -> dict[str, str]:
+    def as_object_ref(self, *, role: str | None = None) -> dict[str, Any]:
         """The ``object_ref`` a record carries to the claim sink."""
         return {
             "scheme": self.scheme,
@@ -133,6 +199,10 @@ class PartnerIdentity:
             "label": self.label,
             "basis": self.basis,
             "rules": partner_rules_version(),
+            **({"jurisdiction": self.jurisdiction} if self.jurisdiction else {}),
+            **({"scope": self.scope} if self.scope else {}),
+            **({"candidate": True} if self.candidate else {}),
+            **({"role": role} if role else {}),
         }
 
 
@@ -153,7 +223,11 @@ def _display(name: str) -> str:
 
 
 def partner_identity(
-    name: str, *, crosswalk: Mapping[str, str] | None = None
+    name: str,
+    *,
+    crosswalk: Mapping[str, str] | None = None,
+    jurisdiction: str | None = None,
+    scope: str | None = None,
 ) -> PartnerIdentity | PartnerRefusal:
     """Decide whether ``name`` names an organisation, and under which identifier.
 
@@ -162,6 +236,12 @@ def partner_identity(
     crosswalk id is present: sole traders register for UEIs and SIRETs too, so an id
     never overrides the never-a-person rule. See ``data/partner_identity.toml`` for
     the decision order.
+
+    P32.3: ``jurisdiction`` (evidenced, e.g. ``"us.state_abbr:OK"``) scopes a
+    name-only mint to that jurisdiction; ``scope`` (the asserting source id) is
+    the fallback scope. A name-only result is always ``candidate=True`` — it has
+    NOT been merged with any other entity and stays unmerged until a recorded
+    disposition (SIG-TRUST-004).
     """
     raw = str(name or "")
     label = _display(raw)
@@ -190,7 +270,16 @@ def partner_identity(
         value = str((crosswalk or {}).get(key) or "").strip()
         if value:
             return PartnerIdentity(scheme, value, label, f"crosswalk:{key}")
-    return PartnerIdentity(PARTNER_NAME_SCHEME, normalized, label, "normalized_name")
+    key, scope_token = scoped_name_key(normalized, jurisdiction=jurisdiction, scope=scope)
+    return PartnerIdentity(
+        PARTNER_NAME_SCOPED_SCHEME,
+        key,
+        label,
+        "normalized_name_scoped",
+        jurisdiction=jurisdiction,
+        scope=scope_token,
+        candidate=True,
+    )
 
 
 def _names(value: Any) -> list[str]:
@@ -203,7 +292,11 @@ def _names(value: Any) -> list[str]:
 
 
 def partner_ref_rows(
-    rows: Iterable[Mapping[str, Any]], *, predicates: Iterable[str] = PARTNER_PREDICATES
+    rows: Iterable[Mapping[str, Any]],
+    *,
+    predicates: Iterable[str] = PARTNER_PREDICATES,
+    scope: str | None = None,
+    jurisdiction: str | None = None,
 ) -> list[dict[str, Any]]:
     """Append an entity-ref claim record after each eligible partner text claim.
 
@@ -215,19 +308,44 @@ def partner_ref_rows(
     an ``object_ref``. A list-valued row (an event's organisations) yields one
     record per accepted party. A Part-VIII-suppressed row, an empty value, or a
     refused name adds nothing. The text claim is never touched.
+
+    P32.3 (SIG-TRUST-003/004):
+
+    * the role gate runs on every row — a predicate whose object is a provenance
+      role (``camera_registry_publisher``) or unmapped never mints a ref, even if
+      a caller widens ``predicates`` (``db.organization_roles.mints_entity_ref``);
+    * ``jurisdiction``/``scope`` (or per-row ``partner_jurisdiction``/
+      ``partner_scope``) anchor name-only mints to their evidenced scope, and the
+      minted ref carries the predicate's organisation role;
+    * a per-row ``partner_crosswalk`` mapping (e.g. ``{"uei": "ABC…"}``) takes
+      the crosswalk-id path — two sources asserting the same external id key
+      the same guarded entity and join (SIG-TRUST-004), while name-only mints
+      never do.
     """
     wanted = frozenset(predicates)
     out: list[dict[str, Any]] = []
     for row in rows:
         out.append(dict(row) if not isinstance(row, dict) else row)
-        if row.get("record_kind", "claim") != "claim" or row.get("predicate_id") not in wanted:
+        predicate = row.get("predicate_id")
+        if row.get("record_kind", "claim") != "claim" or predicate not in wanted:
             continue
+        if not mints_entity_ref(str(predicate)):
+            continue  # provenance roles (publisher/host) mint nothing — SIG-TRUST-003
         if row.get("part_viii_suppressed") or row.get("object_ref"):
             continue
+        role = role_for_predicate(str(predicate))
+        row_jurisdiction = row.get("partner_jurisdiction", jurisdiction)
+        row_scope = row.get("partner_scope", scope)
+        row_crosswalk = row.get("partner_crosswalk")
         names = _names(row.get("value"))
         seen: set[tuple[str, str]] = set()
         for party in names:
-            ident = partner_identity(party)
+            ident = partner_identity(
+                party,
+                crosswalk=row_crosswalk if isinstance(row_crosswalk, Mapping) else None,
+                jurisdiction=row_jurisdiction,
+                scope=row_scope,
+            )
             if not isinstance(ident, PartnerIdentity) or (ident.scheme, ident.value) in seen:
                 continue
             seen.add((ident.scheme, ident.value))
@@ -235,6 +353,6 @@ def partner_ref_rows(
             if len(names) > 1 or not isinstance(row.get("value"), str):
                 twin["value"] = party
                 twin["raw_value"] = party
-            twin["object_ref"] = ident.as_object_ref()
+            twin["object_ref"] = ident.as_object_ref(role=str(role) if role else None)
             out.append(twin)
     return out
