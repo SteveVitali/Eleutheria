@@ -4,12 +4,12 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer protocol is `D-R10-MEMORY-1` → P32.8.
-> input_commit: `778a5e2e854cbb579968396b18e343b6899d5a59` · inputs hashed: 500 · wall-clock receipt: `receipt.json`
+> input_commit: `5f4772d8faf37622f28082d3a0c90471e7d4890c` · inputs hashed: 500 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN-PROGRESS` · round `10` · nextTicket `P32.8` · lastCompleted `P32.7`
-- chainTip `devin/p32-7-memory-events-and-current-projection` · returnPass `P31.16(**DONE 2026-09-27 — HG-11 granted by the operator (sign-off commit `81957c2`) + the publish half landed: `REPUBLISH_LIVE_2026-09-27.md`; public partition…` · updatedAt `2026-10-14 — P32.7 (row 167) DONE: PR`
+- projectStatus `IN-PROGRESS` · round `10` · nextTicket `P32.9` · lastCompleted `P32.8`
+- chainTip `devin/p32-8-memory-concurrency-and-recovery` · returnPass `P31.16(**DONE 2026-09-27 — HG-11 granted by the operator (sign-off commit `81957c2`) + the publish half landed: `REPUBLISH_LIVE_2026-09-27.md`; public partition…` · updatedAt `2026-10-15 — P32.8 (row 168) DONE: PR`
 
 ## Obligations
 
