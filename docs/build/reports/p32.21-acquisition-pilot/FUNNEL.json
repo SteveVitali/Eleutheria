@@ -1,0 +1,875 @@
+{
+  "basis": "all capture/extraction counts derive from committed stand-in fixtures replayed through the real connector machinery \u2014 offline replay measurements; captured_live is 0 for every family; no fixture success closes a live outcome",
+  "blocked_targets_visible": [
+    {
+      "candidate_id": "SRC-002",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "Tulsa Flock policies integration and executed contract search",
+      "lineage_group": "tulsa-municipal",
+      "reasons": [
+        "rights undetermined (3 lanes) \u2014 routed to review"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-003",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "San Diego technology inventory and annual reports",
+      "lineage_group": "san-diego-municipal",
+      "reasons": [
+        "recorded 403 on a prior retrieval"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-004",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "San Diego Sunshine Act goods/services contracts",
+      "lineage_group": "san-diego-municipal",
+      "reasons": [
+        "rights undetermined (3 lanes) \u2014 routed to review"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-007",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "Oklahoma DAC UVED program and authority chain",
+      "lineage_group": "oklahoma-state",
+      "reasons": [
+        "rights undetermined (3 lanes) \u2014 routed to review"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-001",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "OKC Flock council amendment policy packet",
+      "lineage_group": "okc-municipal",
+      "reasons": [
+        "recorded 403 on a prior retrieval"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-006",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "Oklahoma OMES statewide contracts and solicitations",
+      "lineage_group": "oklahoma-state",
+      "reasons": [
+        "rights undetermined (3 lanes) \u2014 routed to review"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-011",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "California State Auditor ALPR audit survey and follow-up",
+      "lineage_group": "california-state-auditor",
+      "reasons": [
+        "rights undetermined (3 lanes) \u2014 routed to review"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-012",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "Seattle OIG annual surveillance usage reviews",
+      "lineage_group": "seattle-municipal",
+      "reasons": [
+        "rights undetermined (3 lanes) \u2014 routed to review"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-009",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "Oklahoma JAG-LLE local equipment funding",
+      "lineage_group": "oklahoma-state",
+      "reasons": [
+        "rights undetermined (3 lanes) \u2014 routed to review"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-010",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "Sourcewell public safety cooperative contracts",
+      "lineage_group": "sourcewell-cooperative",
+      "reasons": [
+        "rights undetermined (3 lanes) \u2014 routed to review"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-015",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "NYC DOI OIG-NYPD surveillance oversight",
+      "lineage_group": "nyc-municipal",
+      "reasons": [
+        "rights undetermined (3 lanes) \u2014 routed to review"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-005",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "San Diego Privacy Advisory Board recommendations",
+      "lineage_group": "san-diego-municipal",
+      "reasons": [
+        "rights undetermined (3 lanes) \u2014 routed to review"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-016",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "NYC Comptroller surveillance procurement and audits",
+      "lineage_group": "nyc-municipal",
+      "reasons": [
+        "rights undetermined (3 lanes) \u2014 routed to review"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-022",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "DOJ COPS technology/equipment award documents",
+      "lineage_group": "us-federal-doj-cops",
+      "reasons": [
+        "rights undetermined (3 lanes) \u2014 routed to review"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-008",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "Safe Oklahoma Grant program awards and reports discovery",
+      "lineage_group": "oklahoma-state",
+      "reasons": [
+        "rights undetermined (3 lanes) \u2014 routed to review"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-017",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "Chicago OIG ShotSpotter evaluation and follow-up",
+      "lineage_group": "chicago-municipal",
+      "reasons": [
+        "rights undetermined (3 lanes) \u2014 routed to review"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-018",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "BART surveillance reports policies and public decisions",
+      "lineage_group": "bart-district",
+      "reasons": [
+        "rights undetermined (3 lanes) \u2014 routed to review"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-026",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "UK Algorithmic Transparency Recording Standard public-safety subset",
+      "lineage_group": "uk-government",
+      "reasons": [
+        "rights undetermined (3 lanes) \u2014 routed to review"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-013",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "San Jose privacy decisions and algorithm register",
+      "lineage_group": "san-jose-municipal",
+      "reasons": [
+        "rights undetermined (3 lanes) \u2014 routed to review"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-021",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "Santa Clara County surveillance impact and oversight",
+      "lineage_group": "santa-clara-county",
+      "reasons": [
+        "rights undetermined (3 lanes) \u2014 routed to review"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-024",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "DLA LESO 1033 equipment holdings/transfers subset",
+      "lineage_group": "us-federal-dla",
+      "reasons": [
+        "screening_required \u2014 Part VIII screen owed"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-025",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "FAA Part 107 waiver issued records",
+      "lineage_group": "us-federal-faa",
+      "reasons": [
+        "screening_required \u2014 Part VIII screen owed"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-014",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "Norman police ALPR policy and amendment discovery",
+      "lineage_group": "norman-municipal",
+      "reasons": [
+        "rights undetermined (3 lanes) \u2014 routed to review"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-020",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "Boston annual surveillance report and supplements",
+      "lineage_group": "boston-municipal",
+      "reasons": [
+        "rights undetermined (3 lanes) \u2014 routed to review"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-019",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "Berkeley surveillance annual reports policies MOUs",
+      "lineage_group": "berkeley-municipal",
+      "reasons": [
+        "rights undetermined (3 lanes) \u2014 routed to review"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-023",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "DHS privacy impact assessments commercial LPR",
+      "lineage_group": "us-federal-dhs",
+      "reasons": [
+        "rights undetermined (3 lanes) \u2014 routed to review"
+      ],
+      "retry_budget": 2
+    },
+    {
+      "candidate_id": "SRC-027",
+      "escalation": "recorded rights/operator decision or the records channel \u2014 never a blind retry",
+      "family": "San Diego ALPR network audit metadata and safe aggregate feasibility",
+      "lineage_group": "san-diego-municipal",
+      "reasons": [
+        "prohibited_until_review \u2014 metadata-only path only"
+      ],
+      "retry_budget": 2
+    }
+  ],
+  "families": {
+    "california-state-auditor": {
+      "candidate_ids": [
+        "SRC-011"
+      ],
+      "funnel": {
+        "approval_gate": {
+          "approval_refs": [],
+          "decisions_recorded": 0,
+          "gates": [
+            "municipal_rights_review",
+            "preflight_required",
+            "rights_undetermined"
+          ],
+          "live_slice": "return pass D-P32.21-1 (OPEN, prepared_not_executed)",
+          "undetermined_rights_lanes": 3
+        },
+        "candidate_qualification": {
+          "complete_passports": 1,
+          "excluded_from_batch": [],
+          "hard_refused": [],
+          "kind": "new_target",
+          "qualified_for_review": [
+            "SRC-011"
+          ],
+          "registry_join": "net_new"
+        },
+        "capture": {
+          "basis": "no capture \u2014 the live slice is a gate packet",
+          "captured_live": 0,
+          "captures_offline_fixture": 0,
+          "document_cap": 10,
+          "documents_in_slice": 2,
+          "targets": [
+            "https://information.auditor.ca.gov/reports/2019-118/index.html",
+            "https://information.auditor.ca.gov/reports/2019-118/surveys.html"
+          ]
+        },
+        "discovery": {
+          "basis": "research inventory \u2014 search/selected excerpts are leads, not review",
+          "candidates_researched": 1,
+          "review_depths": {
+            "SRC-011": "primary_search_excerpts"
+          },
+          "urls_researched": 2
+        },
+        "extraction": {
+          "basis": "none \u2014 pending the gated live slice",
+          "claims_emitted": 0,
+          "expected_predicates": [
+            "governance.finding",
+            "oversight.audit",
+            "usage.disclosure"
+          ]
+        },
+        "link_support": {
+          "answers_supported": 0,
+          "expected_gaps": [
+            "P1: California State Auditor ALPR audit \u2014 findings, agency survey answers, recommendations"
+          ],
+          "expected_missing_questions": [
+            "Are respondent agencies' survey answers treated as the Auditor's findings (one provenance) or independently verified \u2014 and under what attribution may findings be quoted?",
+            "Do California State Auditor's terms permit lawful capture and retention of https://information.auditor.ca.gov/reports/2019-118/index.html and its linked artifacts \u2014 including embedded third-party material (vendor exhibits, boilerplate policy text, photographs)?",
+            "Is this municipal/state publication an uncopyrightable edict or public record under the applicable law, or a copyrightable non-edict work (Compendium \u00a7313.6(C)(2))? Municipal publication is not auto-CC0 \u2014 a recorded determination is required.",
+            "May SIG store and publish the factual fields extracted from this document (Historical audit findings and sampled agency disclosures; follow-up discovery) \u2014 and under which attribution and quotation posture?",
+            "Research-recorded unknown: Open access verified via search only; full selected report and state rights review pending",
+            "Which licence compartment and attribution govern claims derived from California State Auditor ALPR audit survey and follow-up, and may the derived artifacts be republished?"
+          ],
+          "status": "pending_live"
+        },
+        "publication_eligibility": {
+          "status": "not_assessed \u2014 pending acquisition + the \u00a75 release gate"
+        }
+      },
+      "lineage_group": "california-state-auditor",
+      "maintenance": {
+        "blocked_or_deferred": {
+          "extra_questions": [
+            "Are respondent agencies' survey answers treated as the Auditor's findings (one provenance) or independently verified \u2014 and under what attribution may findings be quoted?"
+          ],
+          "gates": [
+            "municipal_rights_review",
+            "preflight_required",
+            "rights_undetermined"
+          ],
+          "municipal_rights_review": true,
+          "rights_lanes_undetermined": 3
+        },
+        "cost": {
+          "estimated_basis": "SRC-011: research effort band (source-candidates.csv `effort`); ordinal, not minutes",
+          "estimated_effort": "L-M",
+          "measured_basis": "no approved run measured \u2014 an estimate is never relabelled as a measurement",
+          "measured_minutes": null,
+          "one_time_setup": "L-M",
+          "recurring_maintenance": "the 2019\u20132020 audit is a static historical baseline \u2014 the follow-up page refreshes on new agency responses"
+        },
+        "effort_owner": "D-P32.21-1 + HG-03 operator review",
+        "expected_refresh": "the 2019\u20132020 audit is a static historical baseline \u2014 the follow-up page refreshes on new agency responses",
+        "new_protocol_families": 0,
+        "protocol_count": 2,
+        "protocols": [
+          "html_text",
+          "pdf_text"
+        ],
+        "retry_budget": {
+          "attempted": 0,
+          "per_target": 2,
+          "recorded_failures": []
+        },
+        "target_count": 2
+      },
+      "role": "independent oversight",
+      "slot": "incremental"
+    },
+    "okc": {
+      "candidate_ids": [
+        "SRC-001"
+      ],
+      "funnel": {
+        "approval_gate": {
+          "approval_refs": [],
+          "decisions_recorded": 0,
+          "live_slice": "return pass D-P32.18-1 (OPEN, prepared_not_executed)",
+          "undetermined_rights_lanes": 3
+        },
+        "candidate_qualification": {
+          "complete_passports": 1,
+          "excluded_from_batch": [],
+          "hard_refused": [],
+          "qualified_for_review": [
+            "SRC-001"
+          ]
+        },
+        "capture": {
+          "basis": "offline_replay \u2014 committed stand-in fixtures; never real bytes",
+          "capture_methods": [
+            "html_text",
+            "pdf_text"
+          ],
+          "captured_live": 0,
+          "captures_offline_fixture": 3,
+          "documents": [
+            "okc-council-memo-2026-08",
+            "okc-flock-amendment-2026",
+            "okc-flock-usage-2026"
+          ]
+        },
+        "discovery": {
+          "basis": "offline_replay",
+          "candidates_researched": 1,
+          "urls_researched": 2
+        },
+        "extraction": {
+          "basis": "offline_replay",
+          "claims_by_source": {
+            "bacy": 2,
+            "deflock": 1,
+            "dossier_okc": 16,
+            "ok_statute": 2,
+            "okc-contract-c241032": 1,
+            "okc_procurement": 5,
+            "okcpd_policy": 2,
+            "src:okc-council": 7,
+            "src:oklahoman": 1
+          },
+          "claims_emitted": 37
+        },
+        "link_support": {
+          "answers_supported": 12,
+          "shared_slugs": [
+            "authority",
+            "inventory_count",
+            "procurement_money",
+            "retention",
+            "sharing",
+            "timeline"
+          ],
+          "unique_assertions": 14,
+          "unique_supported_slugs": []
+        },
+        "publication_eligibility": {
+          "completeness": "34/36",
+          "dossier_release_valid": true,
+          "mechanical_complete": true,
+          "note": "a release-valid dossier is not a publication \u2014 no public exposure exists",
+          "pilot_complete": false,
+          "release_violations": 0,
+          "review_status": "not_run"
+        }
+      },
+      "lineage_group": "okc-municipal",
+      "maintenance": {
+        "blocked_or_deferred": {
+          "follow_up_drafts_not_sent": 0,
+          "preflight_exclusions": [],
+          "review_status": "not_run",
+          "rights_lanes_undetermined": 3
+        },
+        "cost": {
+          "estimated_effort": "M",
+          "measured_basis": "no approved run measured \u2014 an estimate is never relabelled as a measurement",
+          "measured_minutes": null,
+          "one_time_setup": "M",
+          "recurring_maintenance": "usage page volatile (the amendment 403 is recorded) \u2014 refresh on publish; council/contract documents are term-bound"
+        },
+        "effort_owner": "D-P32.18-1 + HG-03 operator review",
+        "expected_refresh": "usage page volatile (the amendment 403 is recorded) \u2014 refresh on publish; council/contract documents are term-bound",
+        "new_protocol_families": 0,
+        "protocol_count": 2,
+        "protocols": [
+          "html_text",
+          "pdf_text"
+        ],
+        "retry_budget": {
+          "attempted": 0,
+          "per_target": 2,
+          "recorded_failures": []
+        },
+        "target_count": 6,
+        "target_note": "live slice targets per D-P32.18-1"
+      },
+      "role": "Oklahoma City dossier family (dossier_okc)",
+      "slot": "portfolio"
+    },
+    "oklahoma-state": {
+      "candidate_ids": [
+        "SRC-007",
+        "SRC-006"
+      ],
+      "funnel": {
+        "approval_gate": {
+          "approval_refs": [],
+          "decisions_recorded": 0,
+          "gates": [
+            "municipal_rights_review",
+            "preflight_required",
+            "rights_undetermined"
+          ],
+          "live_slice": "return pass D-P32.21-1 (OPEN, prepared_not_executed)",
+          "undetermined_rights_lanes": 12
+        },
+        "candidate_qualification": {
+          "complete_passports": 4,
+          "excluded_from_batch": [
+            "SRC-009",
+            "SRC-008"
+          ],
+          "hard_refused": [],
+          "kind": "new_target",
+          "qualified_for_review": [
+            "SRC-006",
+            "SRC-007",
+            "SRC-008",
+            "SRC-009"
+          ],
+          "registry_join": "net_new"
+        },
+        "capture": {
+          "basis": "no capture \u2014 the live slice is a gate packet",
+          "captured_live": 0,
+          "captures_offline_fixture": 0,
+          "document_cap": 10,
+          "documents_in_slice": 4,
+          "targets": [
+            "https://oklahoma.gov/dac/about/staff/about-the-uved-program.html",
+            "https://www.oscn.net/applications/oscn/DeliverDocument.asp?CiteID=478582",
+            "https://oklahoma.gov/omes/divisions/central-purchasing/agency-resources/statewide-contracts.html",
+            "https://oklahoma.gov/omes/services/purchasing/solicitations/0900000569.html"
+          ]
+        },
+        "discovery": {
+          "basis": "research inventory \u2014 search/selected excerpts are leads, not review",
+          "candidates_researched": 4,
+          "review_depths": {
+            "SRC-006": "index_opened_other_search_only",
+            "SRC-007": "opened_text"
+          },
+          "urls_researched": 4
+        },
+        "extraction": {
+          "basis": "none \u2014 pending the gated live slice",
+          "claims_emitted": 0,
+          "expected_predicates": [
+            "contract.procurement",
+            "funding.channel",
+            "identity.vendor",
+            "legal.authority",
+            "program.administration",
+            "temporal.applicability"
+          ]
+        },
+        "link_support": {
+          "answers_supported": 0,
+          "expected_gaps": [
+            "P0 dossier: UVED program administrator and the legal authority chain including the applicable statute version",
+            "P1: Oklahoma statewide contract channel for surveillance-equipment vendors (contract ids, vendors, procurement channel)"
+          ],
+          "expected_missing_questions": [
+            "Do Oklahoma District Attorneys Council (DAC \u2014 UVED program)'s terms permit lawful capture and retention of https://oklahoma.gov/dac/about/staff/about-the-uved-program.html and its linked artifacts \u2014 including embedded third-party material (vendor exhibits, boilerplate policy text, photographs)?",
+            "Do Oklahoma Office of Management and Enterprise Services (OMES)'s terms permit lawful capture and retention of https://oklahoma.gov/omes/divisions/central-purchasing/agency-resources/statewide-contracts.html and its linked artifacts \u2014 including embedded third-party material (vendor exhibits, boilerplate policy text, photographs)?",
+            "Does ok_statute's existing coverage (Oklahoma statutes (47 O.S. \u00a77-606.1 et seq.)) already supply any of this candidate's expected claims \u2014 i.e., what is the net-new remainder after deduplication?",
+            "Is this municipal/state publication an uncopyrightable edict or public record under the applicable law, or a copyrightable non-edict work (Compendium \u00a7313.6(C)(2))? Municipal publication is not auto-CC0 \u2014 a recorded determination is required.",
+            "May SIG store and publish the factual fields extracted from this document (Program administrator stated purpose and legal-version discovery) \u2014 and under which attribution and quotation posture?",
+            "May SIG store and publish the factual fields extracted from this document (State contract identifiers vendors procurement channel and documentary leads) \u2014 and under which attribution and quotation posture?",
+            "Research-recorded unknown: Historical version and program procurement not yet reviewed; no personal records",
+            "Research-recorded unknown: Portal access terms and state/vendor document rights unreviewed",
+            "Which licence compartment and attribution govern claims derived from Oklahoma DAC UVED program and authority chain, and may the derived artifacts be republished?",
+            "Which licence compartment and attribution govern claims derived from Oklahoma OMES statewide contracts and solicitations, and may the derived artifacts be republished?",
+            "Which statutory version governs now versus the displayed 2027-01-01 version, and does the UVED program authorize deployments or merely describe the authority chain?"
+          ],
+          "status": "pending_live"
+        },
+        "publication_eligibility": {
+          "status": "not_assessed \u2014 pending acquisition + the \u00a75 release gate"
+        }
+      },
+      "lineage_group": "oklahoma-state",
+      "maintenance": {
+        "blocked_or_deferred": {
+          "extra_questions": [
+            "Which statutory version governs now versus the displayed 2027-01-01 version, and does the UVED program authorize deployments or merely describe the authority chain?"
+          ],
+          "gates": [
+            "municipal_rights_review",
+            "preflight_required",
+            "rights_undetermined"
+          ],
+          "municipal_rights_review": true,
+          "rights_lanes_undetermined": 12
+        },
+        "cost": {
+          "estimated_basis": "SRC-007: research effort band (source-candidates.csv `effort`); ordinal, not minutes; SRC-006: research effort band (source-candidates.csv `effort`); ordinal, not minutes",
+          "estimated_effort": "M",
+          "measured_basis": "no approved run measured \u2014 an estimate is never relabelled as a measurement",
+          "measured_minutes": null,
+          "one_time_setup": "M",
+          "recurring_maintenance": "the statewide-contract index refreshes on posting/solicitation; the DAC program page on program change; the statute record is version-bound \u2014 a new version is a new document"
+        },
+        "effort_owner": "D-P32.21-1 + HG-03 operator review",
+        "expected_refresh": "the statewide-contract index refreshes on posting/solicitation; the DAC program page on program change; the statute record is version-bound \u2014 a new version is a new document",
+        "new_protocol_families": 0,
+        "protocol_count": 2,
+        "protocols": [
+          "html_text",
+          "pdf_text"
+        ],
+        "retry_budget": {
+          "attempted": 0,
+          "per_target": 2,
+          "recorded_failures": []
+        },
+        "target_count": 4
+      },
+      "role": "contract/acquisition chain",
+      "slot": "incremental"
+    },
+    "san-diego": {
+      "candidate_ids": [
+        "SRC-003",
+        "SRC-004",
+        "SRC-005"
+      ],
+      "funnel": {
+        "approval_gate": {
+          "approval_refs": [],
+          "decisions_recorded": 0,
+          "live_slice": "return pass D-P32.20-1 (OPEN, prepared_not_executed)",
+          "undetermined_rights_lanes": 12
+        },
+        "candidate_qualification": {
+          "complete_passports": 4,
+          "excluded_from_batch": [
+            "SRC-027"
+          ],
+          "hard_refused": [
+            "SRC-027"
+          ],
+          "qualified_for_review": [
+            "SRC-003",
+            "SRC-004",
+            "SRC-005"
+          ]
+        },
+        "capture": {
+          "basis": "offline_replay \u2014 committed stand-in fixtures; never real bytes",
+          "capture_methods": [
+            "html_text",
+            "index_page",
+            "pdf_text"
+          ],
+          "captured_live": 0,
+          "captures_offline_fixture": 6,
+          "documents": [
+            "sd-asr-2025-vigilant",
+            "sd-pab-index",
+            "sd-technology-index",
+            "sd-ubicquia-agreement-2023"
+          ]
+        },
+        "discovery": {
+          "basis": "offline_replay",
+          "candidates_researched": 4,
+          "urls_researched": 7
+        },
+        "extraction": {
+          "basis": "offline_replay",
+          "claims_by_source": {
+            "dossier_san_diego": 37
+          },
+          "claims_emitted": 37
+        },
+        "link_support": {
+          "answers_supported": 12,
+          "shared_slugs": [],
+          "unique_assertions": 32,
+          "unique_supported_slugs": [
+            "authority",
+            "external_access",
+            "inventory_count",
+            "operator_buyer_funder",
+            "oversight",
+            "procurement_money",
+            "retention",
+            "sharing",
+            "technologies_products",
+            "timeline"
+          ]
+        },
+        "publication_eligibility": {
+          "completeness": "29/36",
+          "dossier_release_valid": true,
+          "mechanical_complete": true,
+          "note": "a release-valid dossier is not a publication \u2014 no public exposure exists",
+          "pilot_complete": false,
+          "release_violations": 0,
+          "review_status": "not_run"
+        }
+      },
+      "lineage_group": "san-diego-municipal",
+      "maintenance": {
+        "blocked_or_deferred": {
+          "follow_up_drafts_not_sent": 0,
+          "preflight_exclusions": [
+            "SRC-027"
+          ],
+          "review_status": "not_run",
+          "rights_lanes_undetermined": 12
+        },
+        "cost": {
+          "estimated_effort": "H / M",
+          "measured_basis": "no approved run measured \u2014 an estimate is never relabelled as a measurement",
+          "measured_minutes": null,
+          "one_time_setup": "H / M",
+          "recurring_maintenance": "index listings volatile \u2014 refresh on publish; the ASR is annual; the PAB index on recommendation publication"
+        },
+        "effort_owner": "D-P32.20-1 + HG-03 operator review",
+        "expected_refresh": "index listings volatile \u2014 refresh on publish; the ASR is annual; the PAB index on recommendation publication",
+        "new_protocol_families": 0,
+        "protocol_count": 3,
+        "protocols": [
+          "html_text",
+          "index_page",
+          "pdf_text"
+        ],
+        "retry_budget": {
+          "attempted": 0,
+          "per_target": 2,
+          "recorded_failures": [
+            "sd-alpr-use-policy: capture the index-linked ALPR Use Policy (the recorded 403 needs an approved bounded method) \u2014 authority, retention and use/sharing restrict",
+            "sd-pab-recommendation-2025: capture the PAB recommendation (~16 MB \u2014 over the connector's byte bound; needs an approved method) and check council records for adoption/r",
+            "sd-network-audit-links: metadata-only preflight \u2014 never a workbook/row-level target"
+          ]
+        },
+        "target_count": 9,
+        "target_note": "live slice targets per D-P32.20-1"
+      },
+      "role": "San Diego dossier family (dossier_san_diego)",
+      "slot": "portfolio"
+    },
+    "tulsa": {
+      "candidate_ids": [
+        "SRC-002"
+      ],
+      "funnel": {
+        "approval_gate": {
+          "approval_refs": [],
+          "decisions_recorded": 0,
+          "live_slice": "return pass D-P32.19-1 (OPEN, prepared_not_executed)",
+          "undetermined_rights_lanes": 3
+        },
+        "candidate_qualification": {
+          "complete_passports": 1,
+          "excluded_from_batch": [],
+          "hard_refused": [],
+          "qualified_for_review": [
+            "SRC-002"
+          ]
+        },
+        "capture": {
+          "basis": "offline_replay \u2014 committed stand-in fixtures; never real bytes",
+          "capture_methods": [
+            "pdf_text"
+          ],
+          "captured_live": 0,
+          "captures_offline_fixture": 3,
+          "documents": [
+            "tulsa-mou-template",
+            "tulsa-policy-113c",
+            "tulsa-policy-113e"
+          ]
+        },
+        "discovery": {
+          "basis": "offline_replay",
+          "candidates_researched": 1,
+          "urls_researched": 2
+        },
+        "extraction": {
+          "basis": "offline_replay",
+          "claims_by_source": {
+            "dossier_tulsa": 16
+          },
+          "claims_emitted": 16
+        },
+        "link_support": {
+          "answers_supported": 12,
+          "shared_slugs": [],
+          "unique_assertions": 12,
+          "unique_supported_slugs": [
+            "authority",
+            "operator_buyer_funder",
+            "retention",
+            "sharing",
+            "technologies_products",
+            "timeline"
+          ]
+        },
+        "publication_eligibility": {
+          "completeness": "24/36",
+          "dossier_release_valid": true,
+          "mechanical_complete": false,
+          "note": "a release-valid dossier is not a publication \u2014 no public exposure exists",
+          "pilot_complete": false,
+          "release_violations": 0,
+          "review_status": "not_run"
+        }
+      },
+      "lineage_group": "tulsa-municipal",
+      "maintenance": {
+        "blocked_or_deferred": {
+          "follow_up_drafts_not_sent": 0,
+          "preflight_exclusions": [],
+          "review_status": "not_run",
+          "rights_lanes_undetermined": 3
+        },
+        "cost": {
+          "estimated_effort": "M",
+          "measured_basis": "no approved run measured \u2014 an estimate is never relabelled as a measurement",
+          "measured_minutes": null,
+          "one_time_setup": "M",
+          "recurring_maintenance": "policy PDFs + the MOU template \u2014 refresh on policy revision or instrument replacement"
+        },
+        "effort_owner": "D-P32.19-1 + HG-03 operator review",
+        "expected_refresh": "policy PDFs + the MOU template \u2014 refresh on policy revision or instrument replacement",
+        "new_protocol_families": 0,
+        "protocol_count": 1,
+        "protocols": [
+          "pdf_text"
+        ],
+        "retry_budget": {
+          "attempted": 0,
+          "per_target": 2,
+          "recorded_failures": []
+        },
+        "target_count": 6,
+        "target_note": "live slice targets per D-P32.19-1"
+      },
+      "role": "Tulsa dossier family (dossier_tulsa)",
+      "slot": "portfolio"
+    }
+  },
+  "matched_comparison": "not run \u2014 the preregistered S5 matched discovery comparison (two matched pairs, 30 min/arm, blinded error review) was not executed; all results below are descriptive only",
+  "rejected_families_still_visible": {
+    "award_precondition_evidence": [],
+    "note": "the dossier gap ledgers record no traceable award gap \u2014 the S5 funding-family precondition is unmet"
+  },
+  "schema": "acq-pilot-funnel/1",
+  "stages": [
+    "discovery",
+    "candidate_qualification",
+    "approval_gate",
+    "capture",
+    "extraction",
+    "link_support",
+    "publication_eligibility"
+  ],
+  "totals": {
+    "captured_live_all_families": 0,
+    "families": 5,
+    "measured_minutes": null
+  }
+}
