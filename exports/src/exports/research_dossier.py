@@ -405,18 +405,32 @@ def _assertion(claim: Mapping[str, Any], capture: Mapping[str, Any] | None) -> d
     }
 
 
-def _conflicts(assertions: Sequence[Mapping[str, Any]]) -> set[int]:
+def _conflicts(
+    assertions: Sequence[Mapping[str, Any]],
+    *,
+    subjects: Sequence[Any] | None = None,
+) -> set[int]:
     """Indexes of assertions in same-scope/same-period value disagreement.
 
     Only conflict-eligible predicates (a measured single value) participate —
     two verbatim clause texts are two stated rules, never a contradiction.
+
+    ``subjects`` (P32.20) partitions the comparison by the claim's subject:
+    two assertions about DIFFERENT subjects — e.g. the vendor of a hosted
+    subscription versus the component vendor named in a separate contract —
+    describe different measured things and can never be a same-scope
+    conflict. Assertions whose subject is ``None`` still group together,
+    preserving the legacy behaviour for subject-less records.
     """
     flagged: set[int] = set()
     by_scope: dict[tuple[Any, ...], list[int]] = {}
     for i, a in enumerate(assertions):
         if a["value"] is None or a["predicate"] not in _CONFLICT_ELIGIBLE:
             continue
-        by_scope.setdefault(_scope_key(a), []).append(i)
+        key = _scope_key(a)
+        if subjects is not None:
+            key = key + (subjects[i],)
+        by_scope.setdefault(key, []).append(i)
     for idxs in by_scope.values():
         for i in idxs:
             for j in idxs:
@@ -581,8 +595,14 @@ def build_dossier(packet: Mapping[str, Any]) -> dict[str, Any]:
         ]
         # value=None assertions (redacted somevalue) carry no comparable value
         # and are skipped inside _conflicts — the returned indexes address
-        # ``assertion_set`` directly.
-        flagged = _conflicts(assertion_set)
+        # ``assertion_set`` directly. Subjects partition the comparison
+        # (P32.20): claims about different subjects describe different
+        # measured things, so a vendor on a subscription subject can never
+        # "conflict" with a vendor on a contract subject.
+        flagged = _conflicts(
+            assertion_set,
+            subjects=[c.get("subject_id") for c in value_claims],
+        )
         for i in flagged:
             assertion_set[i]["conflicting"] = True
         tasks = _follow_ups_for(follow_ups, qid)

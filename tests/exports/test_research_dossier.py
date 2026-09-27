@@ -530,6 +530,40 @@ def test_different_scope_is_not_a_conflict() -> None:
     assert scopes == {"city_limits", "metro"}
 
 
+def test_different_subjects_are_not_a_conflict() -> None:
+    """P32.20: two conflict-eligible claims about DIFFERENT subjects describe
+    different measured things — a hosted subscription's vendor and a separate
+    contract's component vendor co-exist; only same-subject disagreement flags."""
+    records = [
+        _artifact(),
+        {
+            **_fake_claim("q1", "vendor", "Vendor A", doc="synth-doc"),
+            "subject_id": "sig:deployment:subscription",
+        },
+        {
+            **_fake_claim("q1", "vendor", "Vendor B", doc="synth-doc"),
+            "subject_id": "contract:some-agreement",
+        },
+    ]
+    dossier = build_dossier(_packet(records, unknown_qs=()))
+    q1 = next(a for a in dossier["answers"] if a["question"] == "q1")
+    assert q1["state"] == "supported"
+    assert not any(x.get("conflicting") for x in q1["assertions"])
+    values = sorted(x["value"] for x in q1["assertions"])
+    assert values == ["Vendor A", "Vendor B"]
+    # Same values on the SAME subject still flag — the detector's purpose.
+    same = [
+        _artifact(),
+        _fake_claim("q1", "vendor", "Vendor A", doc="synth-doc"),
+        _fake_claim("q1", "vendor", "Vendor B", doc="synth-doc"),
+    ]
+    q1_same = next(
+        a for a in build_dossier(_packet(same, unknown_qs=()))["answers"] if a["question"] == "q1"
+    )
+    assert q1_same["state"] == "disputed"
+    assert all(x.get("conflicting") for x in q1_same["assertions"])
+
+
 def test_verbatim_clauses_do_not_conflict(okc_records: list[dict[str, Any]]) -> None:
     """Two different stated clause texts are two rules — never a contradiction."""
     dossier = build_dossier(_packet(okc_records))

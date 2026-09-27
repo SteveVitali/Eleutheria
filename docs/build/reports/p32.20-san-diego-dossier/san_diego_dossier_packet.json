@@ -1,0 +1,1552 @@
+{
+  "as_of": {
+    "belief": "2026-10-01",
+    "world": "2026-10-01"
+  },
+  "correction_route": "/corrections/",
+  "declared": {
+    "partial": [
+      {
+        "question": "q1",
+        "rationale": "operator evidenced (SDPD's own report), buyer (City of San Diego) and contracting roles evidenced by the published agreement — but the funder is not evidenced and the execution/signature chain is incomplete"
+      },
+      {
+        "question": "q3",
+        "rationale": "the only device count is 500 streetlight units CONTRACTED under the Ubicquia agreement (count_scope=contracted_units — contracted is not installed); the subscription carries the agency's bounded no-hardware statement; no installed/active/current count exists in the pack"
+      },
+      {
+        "question": "q5",
+        "rationale": "contract value, term and the vendor-side signed date are evidenced, but execution is unverified — the City date is present_but_empty and the instrument stays 'contract', never executed"
+      },
+      {
+        "question": "q6",
+        "rationale": "the published City–Ubicquia agreement is the recorded contracting instrument, but the authority chain beyond it — the ALPR Use Policy's contents (index-linked, uncaptured) and any ordinance/applicability record — is undocumented in the pack"
+      },
+      {
+        "question": "q7",
+        "rationale": "the 60-day period is evidenced but scoped verbatim to the Vigilant LEARN subscription's ALPR data; the streetlight program's own retention rule is not in the pack"
+      },
+      {
+        "question": "q8",
+        "rationale": "the sharing mode is evidenced verbatim — a vendor-hosted national pool shared across subscribing agencies (inbound pooled access for SDPD); the outbound sharing actors and the mode of any SDPD outbound sharing are not evidenced"
+      },
+      {
+        "question": "q10",
+        "rationale": "oversight existence is evidenced (the PAB recommendation's index listing) and the recommendation stays proposed — its content and any adoption/enactment are unevidenced; the ASR self-report stays genre-distinct from oversight"
+      }
+    ]
+  },
+  "dossier_id": "san-diego-sdpd-alpr",
+  "follow_ups": [
+    {
+      "action": "capture the ASR's ALPR-program section (the reported deployment/location figure for the streetlight program) and any installed-device inventory under HG-03 — the contracted 500 stays a contracted scope",
+      "closing_condition": "a scoped installed/active count is captured and rendered with its count_scope, or the documented absence keeps installed counts unknown",
+      "question": "q3"
+    },
+    {
+      "action": "capture the executed signature pages of the Ubicquia agreement (the City side of 'City Date:'), the 2025-12-10 council memorandum and the FY27 budget response under HG-03; the drafted CPRA request (FOLLOW_UP_DRAFTS.json) is the fallback route",
+      "closing_condition": "a captured executed/verified signature page or a recorded council rescission/adoption record resolves the execution state, or it stays unverified",
+      "question": "q5"
+    },
+    {
+      "action": "capture the index-linked ALPR Use Policy (the recorded 403 needs an approved bounded method) and any surveillance-technology ordinance/applicability record",
+      "closing_condition": "policy content is captured with its effective dates, or the retrieval failure is the recorded answer",
+      "question": "q6"
+    },
+    {
+      "action": "obtain the streetlight program's own retention rule (use policy / ASR ALPR section) — the captured 60-day clause is Vigilant-subscription-scoped only",
+      "closing_condition": "a scoped retention value lands for the physical program, or the scope caveat stays declared",
+      "question": "q7"
+    },
+    {
+      "action": "after the SRC-027 content-admissibility + rights decision, pursue a safe agency-level sharing aggregate through an approved workflow (never the row-level workbook); else keep the unknown",
+      "closing_condition": "an approved aggregate names outbound sharing actors/mode, or the unknown is recorded as final with the workbook still unfetched",
+      "question": "q8"
+    },
+    {
+      "action": "capture the PAB recommendation PDF (~16 MB — over the connector's byte bound; needs an approved method) and check council minutes/records for adoption or rejection",
+      "closing_condition": "the recommendation's content lands and its status moves proposed → adopted/rejected only on evidence, or it stays proposed",
+      "question": "q10"
+    }
+  ],
+  "network_audit_preflight": {
+    "acquisition_status": "prohibited_until_review",
+    "deferral": "D-P32.20-1",
+    "dossier_id": "san-diego-sdpd-alpr",
+    "generated_at": "2026-10-01",
+    "permitted_metadata": [
+      "link labels and existence metadata on the public index",
+      "period labels (2024–2026) on the link metadata",
+      "published annual aggregate documents through the normal gate"
+    ],
+    "preconditions": [
+      "explicit content-admissibility decision (HG-03 family)",
+      "source/rights review under D-R10-SOURCES-1",
+      "a bounded acquisition method that never transports workbook bytes — approved aggregate production only"
+    ],
+    "prohibited_content": [
+      "license_plate values",
+      "person or officer identifiers",
+      "per-query / per-search audit rows",
+      "XLSX workbook bytes (ZIP container incl. sharedStrings.xml)",
+      "any row-level network-audit content"
+    ],
+    "question_support": {
+      "q8": "could evidence outbound sharing actors/mode IF an approved safe aggregate exists; otherwise the unknown stands"
+    },
+    "review_basis": "index link labels and acquisition-queue metadata reviewed; no workbook bytes fetched or staged at any point",
+    "rights_posture": "dossier_san_diego stays ingestion_permitted=false; the network-audit family stays prohibited_until_review — this record is a preflight, never a fetch",
+    "safe_aggregate_path": {
+      "description": "a safe annual/agency-level aggregate produced under an approved workflow could close the declared-vs-observed sharing gap on q8; SRC-027 is optional research — the dossier does not depend on it",
+      "status": "open_question"
+    },
+    "schema": "sig.part-viii-preflight/1",
+    "source_reference": "SRC-027 (tasks acquisition queue)",
+    "target_family": "sandiego.gov ALPR index — 2024–2026 SDPD ALPR network-audit spreadsheet links (link/label metadata only)",
+    "workbook_transport": "never"
+  },
+  "notes": [
+    "live_verification=false: every record replays committed fixture bytes; no live fetch, no rights flip, no gate completion",
+    "subscription ≠ hardware: the Vigilant LEARN ASR section carries access_mode=subscription — the connector's hardware guard bars device predicates on it; the only q3 statement is the agency's own bounded 'owns no ALPR cameras or hardware under this arrangement'; no local SDPD device/location assertion exists from the subscription",
+    "prime ≠ component: Ubicquia, Inc. is the named contracting party (seller); Flock Safety, Inc. is the incorporated component supplier — distinct predicates, recorded verbatim",
+    "recommendation ≠ adoption: the PAB recommendation exists and stays proposed; no enactment/adoption evidence is asserted; the ASR self-report and the PAB index are distinct genres",
+    "signature ≠ execution: 'Vendor Date: 12/15/2023' is a vendor-side date verbatim and 'City Date:' is present_but_empty — the instrument is a contract, never executed; stated dates are document dates distinct from the 2026-10-01 replay retrieved/observed date",
+    "Part VIII: the network-audit spreadsheet links (SRC-027) are preflighted metadata-only — no workbook/XLSX/ZIP/sharedStrings or row-level plate/person/query content is transported; row-level acquisition stays prohibited_until_review",
+    "unsupported facts stay unknown with documented search basis + precise follow-up — never zero and never inferred affirmative",
+    "follow-up requests are DRAFTED, never sent — records_requests_sent is 0 (FOLLOW_UP_DRAFTS.json)"
+  ],
+  "records": [
+    {
+      "access_mode": "subscription",
+      "byte_size": 1002,
+      "capture_digest": "bcnahgc5tkk62ylpau3asf4liv3iimswnj6ijg6csyosp3tze4hzgodtbh2r5rfqbmb3pa4pxug3qdprsx6m7dvaouqz3prsrgnffbsrxiq",
+      "connector": "dossier_documents",
+      "document_genre_derived": "deployment_report",
+      "document_id": "sd-asr-2025-vigilant",
+      "evidence_genre": "official_statement",
+      "media_type": "application/pdf",
+      "method": "pdf_text",
+      "record_kind": "evidence_artifact",
+      "retrieved_date": "2026-10-01",
+      "sensitivity_class": "C1",
+      "source_id": "dossier_san_diego",
+      "source_uri": "https://www.sandiego.gov/sites/default/files/sdpd-annual-surveillance-report-2025.pdf",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "configured access to an external/hosted system the document reports — subscription or access is never local hardware",
+      "connector": "dossier_documents",
+      "document_genre": "deployment_report",
+      "document_id": "sd-asr-2025-vigilant",
+      "dossier_field": "q4",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/sites/default/files/sdpd-annual-surveillance-report-2025.pdf"
+      },
+      "evidence_genre": "official_statement",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "configured_access_edge",
+      "raw_value": "subscription access to the Vigilant LEARN database",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "access_edge",
+      "source_id": "dossier_san_diego",
+      "subject_id": "sig:deployment:sdpd-vigilant",
+      "value": true,
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "participation in a pooled/hosted lookup arrangement the document reports — access to shared data, not sensor ownership",
+      "connector": "dossier_documents",
+      "document_genre": "deployment_report",
+      "document_id": "sd-asr-2025-vigilant",
+      "dossier_field": "q4",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/sites/default/files/sdpd-annual-surveillance-report-2025.pdf"
+      },
+      "evidence_genre": "official_statement",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "pooled_lookup_participation",
+      "raw_value": "a shared national database of ALPR scans",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "pooled_lookup",
+      "source_id": "dossier_san_diego",
+      "subject_id": "sig:deployment:sdpd-vigilant",
+      "value": true,
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the data-system scope the document describes (e.g. vendor_cloud_shared for a pooled hosted database)",
+      "connector": "dossier_documents",
+      "document_genre": "deployment_report",
+      "document_id": "sd-asr-2025-vigilant",
+      "dossier_field": "q4",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/sites/default/files/sdpd-annual-surveillance-report-2025.pdf"
+      },
+      "evidence_genre": "official_statement",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "data_system_scope",
+      "raw_value": "hosted vendor database shared across subscribing agencies",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "data_scope",
+      "source_id": "dossier_san_diego",
+      "subject_id": "sig:deployment:sdpd-vigilant",
+      "value": "vendor_cloud_shared",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the product/sub-vendor the document names, for its coverage window — a named role, never an operational relationship",
+      "connector": "dossier_documents",
+      "document_genre": "deployment_report",
+      "document_id": "sd-asr-2025-vigilant",
+      "dossier_field": "q1",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/sites/default/files/sdpd-annual-surveillance-report-2025.pdf"
+      },
+      "evidence_genre": "official_statement",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "vendor",
+      "raw_value": "Vigilant Solutions, a Motorola Solutions company",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "vendor",
+      "source_id": "dossier_san_diego",
+      "subject_id": "sig:deployment:sdpd-vigilant",
+      "value": "Vigilant Solutions",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the product/sub-vendor the document names, for its coverage window — a named role, never an operational relationship",
+      "connector": "dossier_documents",
+      "document_genre": "deployment_report",
+      "document_id": "sd-asr-2025-vigilant",
+      "dossier_field": "q1",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/sites/default/files/sdpd-annual-surveillance-report-2025.pdf"
+      },
+      "evidence_genre": "official_statement",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "object_ref": {
+        "basis": "normalized_name_scoped",
+        "candidate": true,
+        "entity_type": "organization",
+        "jurisdiction": "us.state_abbr:CA",
+        "label": "Vigilant Solutions",
+        "role": "vendor",
+        "rules": "partner_identity/1+normalize/1",
+        "scheme": "sig.org.name_scoped",
+        "scope": "jur:us.state_abbr:ca",
+        "value": "jur:us.state_abbr:ca|vigilant solutions"
+      },
+      "observed_at": "2026-10-01",
+      "predicate_id": "vendor",
+      "raw_value": "Vigilant Solutions, a Motorola Solutions company",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "vendor",
+      "source_id": "dossier_san_diego",
+      "subject_id": "sig:deployment:sdpd-vigilant",
+      "value": "Vigilant Solutions",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the technology/product the document describes — distinct products stay distinct (a fixed ALPR line and an in-car line are not one product)",
+      "connector": "dossier_documents",
+      "document_genre": "deployment_report",
+      "document_id": "sd-asr-2025-vigilant",
+      "dossier_field": "q2",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/sites/default/files/sdpd-annual-surveillance-report-2025.pdf"
+      },
+      "evidence_genre": "official_statement",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "technology",
+      "raw_value": "Vigilant LEARN",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "technology",
+      "source_id": "dossier_san_diego",
+      "subject_id": "sig:deployment:sdpd-vigilant",
+      "value": "Vigilant LEARN",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the reporting period an oversight/report document covers, verbatim",
+      "connector": "dossier_documents",
+      "document_genre": "deployment_report",
+      "document_id": "sd-asr-2025-vigilant",
+      "dossier_field": "q9",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/sites/default/files/sdpd-annual-surveillance-report-2025.pdf"
+      },
+      "evidence_genre": "official_statement",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "period",
+      "raw_value": "Annual Surveillance Report 2025",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "report_period",
+      "source_id": "dossier_san_diego",
+      "subject_id": "sig:deployment:sdpd-vigilant",
+      "value": "2025",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the retention rule the document states for its declared scope; a future-effective statement keeps its stated effective date — never the capture date",
+      "connector": "dossier_documents",
+      "document_genre": "deployment_report",
+      "document_id": "sd-asr-2025-vigilant",
+      "dossier_field": "q7",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/sites/default/files/sdpd-annual-surveillance-report-2025.pdf"
+      },
+      "evidence_genre": "official_statement",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "retention_period",
+      "raw_value": "ALPR data is retained for no more than 60 days",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "retention_period",
+      "source_id": "dossier_san_diego",
+      "subject_id": "sig:deployment:sdpd-vigilant",
+      "value": "60 days",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "access_mode": "document",
+      "byte_size": 965,
+      "capture_digest": "bcnap7tmundad3eb75ztrshepb3ign44iyqtgyofzmta7jhevephpzmoffa7k67ygm4ofg5yhvpiuwzkztkiyhfooe3thboez6edh7tbtdm",
+      "connector": "dossier_documents",
+      "document_genre_derived": "procurement_record",
+      "document_id": "sd-ubicquia-agreement-2023",
+      "evidence_genre": "contract",
+      "media_type": "application/pdf",
+      "method": "pdf_text",
+      "record_kind": "evidence_artifact",
+      "retrieved_date": "2026-10-01",
+      "sensitivity_class": "C1",
+      "source_id": "dossier_san_diego",
+      "source_uri": "https://www.sandiego.gov/sites/default/files/cosd-public-safety-agreement-ubicquia.pdf",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the buying party the instrument names, for its coverage window",
+      "connector": "dossier_documents",
+      "document_genre": "procurement_record",
+      "document_id": "sd-ubicquia-agreement-2023",
+      "dossier_field": "q1",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/sites/default/files/cosd-public-safety-agreement-ubicquia.pdf"
+      },
+      "evidence_genre": "contract",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "buyer",
+      "raw_value": "City of San Diego",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "buyer",
+      "source_id": "dossier_san_diego",
+      "subject_id": "contract:sandiego-ubicquia-ps",
+      "value": "City of San Diego",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the buying party the instrument names, for its coverage window",
+      "connector": "dossier_documents",
+      "document_genre": "procurement_record",
+      "document_id": "sd-ubicquia-agreement-2023",
+      "dossier_field": "q1",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/sites/default/files/cosd-public-safety-agreement-ubicquia.pdf"
+      },
+      "evidence_genre": "contract",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "object_ref": {
+        "basis": "normalized_name_scoped",
+        "candidate": true,
+        "entity_type": "organization",
+        "jurisdiction": "us.state_abbr:CA",
+        "label": "City of San Diego",
+        "role": "buyer",
+        "rules": "partner_identity/1+normalize/1",
+        "scheme": "sig.org.name_scoped",
+        "scope": "jur:us.state_abbr:ca",
+        "value": "jur:us.state_abbr:ca|city of san diego"
+      },
+      "observed_at": "2026-10-01",
+      "predicate_id": "buyer",
+      "raw_value": "City of San Diego",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "buyer",
+      "source_id": "dossier_san_diego",
+      "subject_id": "contract:sandiego-ubicquia-ps",
+      "value": "City of San Diego",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the selling/prime party the instrument names, for its coverage window",
+      "connector": "dossier_documents",
+      "document_genre": "procurement_record",
+      "document_id": "sd-ubicquia-agreement-2023",
+      "dossier_field": "q1",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/sites/default/files/cosd-public-safety-agreement-ubicquia.pdf"
+      },
+      "evidence_genre": "contract",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "seller",
+      "raw_value": "Ubicquia, Inc.",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "seller",
+      "source_id": "dossier_san_diego",
+      "subject_id": "contract:sandiego-ubicquia-ps",
+      "value": "Ubicquia, Inc.",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the selling/prime party the instrument names, for its coverage window",
+      "connector": "dossier_documents",
+      "document_genre": "procurement_record",
+      "document_id": "sd-ubicquia-agreement-2023",
+      "dossier_field": "q1",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/sites/default/files/cosd-public-safety-agreement-ubicquia.pdf"
+      },
+      "evidence_genre": "contract",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "object_ref": {
+        "basis": "normalized_name_scoped",
+        "candidate": true,
+        "entity_type": "organization",
+        "jurisdiction": "us.state_abbr:CA",
+        "label": "Ubicquia, Inc.",
+        "role": "vendor",
+        "rules": "partner_identity/1+normalize/1",
+        "scheme": "sig.org.name_scoped",
+        "scope": "jur:us.state_abbr:ca",
+        "value": "jur:us.state_abbr:ca|ubicquia inc"
+      },
+      "observed_at": "2026-10-01",
+      "predicate_id": "seller",
+      "raw_value": "Ubicquia, Inc.",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "seller",
+      "source_id": "dossier_san_diego",
+      "subject_id": "contract:sandiego-ubicquia-ps",
+      "value": "Ubicquia, Inc.",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the product/sub-vendor the document names, for its coverage window — a named role, never an operational relationship",
+      "connector": "dossier_documents",
+      "document_genre": "procurement_record",
+      "document_id": "sd-ubicquia-agreement-2023",
+      "dossier_field": "q1",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/sites/default/files/cosd-public-safety-agreement-ubicquia.pdf"
+      },
+      "evidence_genre": "contract",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "vendor",
+      "raw_value": "Flock Safety, Inc.",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "vendor",
+      "source_id": "dossier_san_diego",
+      "subject_id": "contract:sandiego-ubicquia-ps",
+      "value": "Flock Safety, Inc.",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the product/sub-vendor the document names, for its coverage window — a named role, never an operational relationship",
+      "connector": "dossier_documents",
+      "document_genre": "procurement_record",
+      "document_id": "sd-ubicquia-agreement-2023",
+      "dossier_field": "q1",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/sites/default/files/cosd-public-safety-agreement-ubicquia.pdf"
+      },
+      "evidence_genre": "contract",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "object_ref": {
+        "basis": "normalized_name_scoped",
+        "candidate": true,
+        "entity_type": "organization",
+        "jurisdiction": "us.state_abbr:CA",
+        "label": "Flock Safety, Inc.",
+        "role": "vendor",
+        "rules": "partner_identity/1+normalize/1",
+        "scheme": "sig.org.name_scoped",
+        "scope": "jur:us.state_abbr:ca",
+        "value": "jur:us.state_abbr:ca|flock safety inc"
+      },
+      "observed_at": "2026-10-01",
+      "predicate_id": "vendor",
+      "raw_value": "Flock Safety, Inc.",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "vendor",
+      "source_id": "dossier_san_diego",
+      "subject_id": "contract:sandiego-ubicquia-ps",
+      "value": "Flock Safety, Inc.",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the stated contract value; an award ceiling stays a ceiling — never expenditure (the verbatim literal is preserved in raw_value)",
+      "connector": "dossier_documents",
+      "document_genre": "procurement_record",
+      "document_id": "sd-ubicquia-agreement-2023",
+      "dossier_field": "q5",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/sites/default/files/cosd-public-safety-agreement-ubicquia.pdf"
+      },
+      "evidence_genre": "contract",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "object_type": "quantity",
+      "observed_at": "2026-10-01",
+      "predicate_id": "contract_value",
+      "raw_value": "not to exceed $11,662,500",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "contract_value",
+      "source_id": "dossier_san_diego",
+      "subject_id": "contract:sandiego-ubicquia-ps",
+      "unit": "USD",
+      "value": 11662500,
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the unit count the instrument contracts for; the count's universe rides in count_scope/count_scope_detail qualifiers — a contracted unit is not an active sensor",
+      "connector": "dossier_documents",
+      "document_genre": "procurement_record",
+      "document_id": "sd-ubicquia-agreement-2023",
+      "dossier_field": "q3",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/sites/default/files/cosd-public-safety-agreement-ubicquia.pdf"
+      },
+      "evidence_genre": "contract",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "contracted_device_count",
+      "qualifiers": [
+        {
+          "qualifier_id": "count_scope",
+          "value": "contracted_units"
+        },
+        {
+          "qualifier_id": "count_scope_detail",
+          "value": "streetlight ALPR units, contracted not installed"
+        }
+      ],
+      "raw_value": "up to 500 units",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "contracted_count",
+      "source_id": "dossier_san_diego",
+      "subject_id": "contract:sandiego-ubicquia-ps",
+      "value": 500,
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the period the record covers, verbatim",
+      "connector": "dossier_documents",
+      "document_genre": "procurement_record",
+      "document_id": "sd-ubicquia-agreement-2023",
+      "dossier_field": "q5",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/sites/default/files/cosd-public-safety-agreement-ubicquia.pdf"
+      },
+      "evidence_genre": "contract",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "period",
+      "raw_value": "five (5) year term",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "coverage_period",
+      "source_id": "dossier_san_diego",
+      "subject_id": "contract:sandiego-ubicquia-ps",
+      "value": "5 years",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the signature date the instrument's signature block states, verbatim — presence of one party's date is not full execution (see execution_state)",
+      "connector": "dossier_documents",
+      "document_genre": "procurement_record",
+      "document_id": "sd-ubicquia-agreement-2023",
+      "dossier_field": "q5",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/sites/default/files/cosd-public-safety-agreement-ubicquia.pdf"
+      },
+      "evidence_genre": "contract",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "signed_date",
+      "raw_value": "Vendor Date: 12/15/2023",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "signed_date",
+      "source_id": "dossier_san_diego",
+      "subject_id": "contract:sandiego-ubicquia-ps",
+      "value": "2023-12-15",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "field 'execution_state' has no existing-predicate mapping; the scoped amendment is recorded on the crosswalk row (scoped vocab proposal (dossier-field-crosswalk/1, 2026-10): add predicate `instrument_execution_state` over a closed ExecutionState enum {verified_executed, par)",
+      "connector": "dossier_documents",
+      "document_genre": "procurement_record",
+      "document_id": "sd-ubicquia-agreement-2023",
+      "dossier_field": "q5",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/sites/default/files/cosd-public-safety-agreement-ubicquia.pdf"
+      },
+      "evidence_genre": "contract",
+      "field_state": "present_but_empty",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "disclosure_field_state",
+      "raw_value": "City Date:",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "execution_state",
+      "source_id": "dossier_san_diego",
+      "subject_id": "contract:sandiego-ubicquia-ps",
+      "value": "execution_state",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "access_mode": "document",
+      "byte_size": 460,
+      "capture_digest": "bcnam7m3jdbew42nnr7wgn4zti7hy3nqvviktzgofg2bixfkezsmp27p2wgb5edvmykxg75epqudn42rh6zjjrx5qtuo2wwntqnipxynipq",
+      "connector": "dossier_documents",
+      "document_genre_derived": "deployment_report",
+      "document_id": "sd-technology-index",
+      "evidence_genre": "portal_document",
+      "media_type": "text/html",
+      "method": "html_text",
+      "record_kind": "evidence_artifact",
+      "retrieved_date": "2026-10-01",
+      "sensitivity_class": "C1",
+      "source_id": "dossier_san_diego",
+      "source_uri": "https://www.sandiego.gov/police/data-transparency/technology",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the index lists this document (existence + link) — the label is verbatim and asserts nothing about the document's contents",
+      "connector": "dossier_documents",
+      "document_genre": "deployment_report",
+      "document_id": "sd-technology-index",
+      "dossier_field": "q10",
+      "evidence": {
+        "extraction_method": "html_text",
+        "locator": {
+          "end": 211,
+          "kind": "byte_range",
+          "start": 199
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/police/data-transparency/technology"
+      },
+      "evidence_genre": "portal_document",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "document",
+      "raw_value": "ALPR Program",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "document",
+      "source_id": "dossier_san_diego",
+      "subject_id": "sig:deployment:sdpd-alpr",
+      "value": "https://www.sandiego.gov/police/data-transparency/technology?tech=alpr",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the listed document's label, verbatim — a version/year inside a label stays text, never a promoted effective date",
+      "connector": "dossier_documents",
+      "document_genre": "deployment_report",
+      "document_id": "sd-technology-index",
+      "dossier_field": "q10",
+      "evidence": {
+        "extraction_method": "html_text",
+        "locator": {
+          "end": 211,
+          "kind": "byte_range",
+          "start": 199
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/police/data-transparency/technology"
+      },
+      "evidence_genre": "portal_document",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "title",
+      "raw_value": "ALPR Program",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "title",
+      "source_id": "dossier_san_diego",
+      "subject_id": "sig:deployment:sdpd-alpr",
+      "value": "ALPR Program",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the index lists this document (existence + link) — the label is verbatim and asserts nothing about the document's contents",
+      "connector": "dossier_documents",
+      "document_genre": "deployment_report",
+      "document_id": "sd-technology-index",
+      "dossier_field": "q10",
+      "evidence": {
+        "extraction_method": "html_text",
+        "locator": {
+          "end": 328,
+          "kind": "byte_range",
+          "start": 297
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/police/data-transparency/technology"
+      },
+      "evidence_genre": "portal_document",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "document",
+      "raw_value": "2025 Annual Surveillance Report",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "document",
+      "source_id": "dossier_san_diego",
+      "subject_id": "sig:deployment:sdpd-alpr",
+      "value": "https://www.sandiego.gov/sites/default/files/sdpd-annual-surveillance-report-2025.pdf",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the listed document's label, verbatim — a version/year inside a label stays text, never a promoted effective date",
+      "connector": "dossier_documents",
+      "document_genre": "deployment_report",
+      "document_id": "sd-technology-index",
+      "dossier_field": "q10",
+      "evidence": {
+        "extraction_method": "html_text",
+        "locator": {
+          "end": 328,
+          "kind": "byte_range",
+          "start": 297
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/police/data-transparency/technology"
+      },
+      "evidence_genre": "portal_document",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "title",
+      "raw_value": "2025 Annual Surveillance Report",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "title",
+      "source_id": "dossier_san_diego",
+      "subject_id": "sig:deployment:sdpd-alpr",
+      "value": "2025 Annual Surveillance Report",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "a posting/publication date the index displays — never promoted to effective",
+      "connector": "dossier_documents",
+      "document_genre": "deployment_report",
+      "document_id": "sd-technology-index",
+      "dossier_field": "q9",
+      "evidence": {
+        "extraction_method": "html_text",
+        "locator": {
+          "end": 353,
+          "kind": "byte_range",
+          "start": 335
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/police/data-transparency/technology"
+      },
+      "evidence_genre": "portal_document",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "posted_date",
+      "raw_value": "Posted: 2026-02-15",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "posted_date",
+      "source_id": "dossier_san_diego",
+      "subject_id": "sig:deployment:sdpd-alpr",
+      "value": "Posted: 2026-02-15",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the index lists this document (existence + link) — the label is verbatim and asserts nothing about the document's contents",
+      "connector": "dossier_documents",
+      "document_genre": "deployment_report",
+      "document_id": "sd-technology-index",
+      "dossier_field": "q10",
+      "evidence": {
+        "extraction_method": "html_text",
+        "locator": {
+          "end": 429,
+          "kind": "byte_range",
+          "start": 414
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/police/data-transparency/technology"
+      },
+      "evidence_genre": "portal_document",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "document",
+      "raw_value": "ALPR Use Policy",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "document",
+      "source_id": "dossier_san_diego",
+      "subject_id": "sig:deployment:sdpd-alpr",
+      "value": "https://www.sandiego.gov/sites/default/files/alpr-use-policy.pdf",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the listed document's label, verbatim — a version/year inside a label stays text, never a promoted effective date",
+      "connector": "dossier_documents",
+      "document_genre": "deployment_report",
+      "document_id": "sd-technology-index",
+      "dossier_field": "q10",
+      "evidence": {
+        "extraction_method": "html_text",
+        "locator": {
+          "end": 429,
+          "kind": "byte_range",
+          "start": 414
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/police/data-transparency/technology"
+      },
+      "evidence_genre": "portal_document",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "title",
+      "raw_value": "ALPR Use Policy",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "title",
+      "source_id": "dossier_san_diego",
+      "subject_id": "sig:deployment:sdpd-alpr",
+      "value": "ALPR Use Policy",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "byte_size": 460,
+      "capture_digest": "bcnam7m3jdbew42nnr7wgn4zti7hy3nqvviktzgofg2bixfkezsmp27p2wgb5edvmykxg75epqudn42rh6zjjrx5qtuo2wwntqnipxynipq",
+      "connector": "dossier_documents",
+      "document_id": "sd-technology-index",
+      "link_count": 3,
+      "listings_resolved": 3,
+      "media_type": "text/html",
+      "record_kind": "index_page",
+      "retrieved_date": "2026-10-01",
+      "source_id": "dossier_san_diego",
+      "source_uri": "https://www.sandiego.gov/police/data-transparency/technology",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "access_mode": "document",
+      "byte_size": 371,
+      "capture_digest": "bcnais6jwoqh5qhgonafhpwkyc4uhmyiqxo47rmfw3wps6uzffxlflh3dybhynokwpnbfscelzl27vtxswltzrq5mepp7qeyskmyotcsjmq",
+      "connector": "dossier_documents",
+      "document_genre_derived": "deployment_report",
+      "document_id": "sd-pab-index",
+      "evidence_genre": "portal_document",
+      "media_type": "text/html",
+      "method": "html_text",
+      "record_kind": "evidence_artifact",
+      "retrieved_date": "2026-10-01",
+      "sensitivity_class": "C1",
+      "source_id": "dossier_san_diego",
+      "source_uri": "https://www.sandiego.gov/pab/reports",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the index lists this document (existence + link) — the label is verbatim and asserts nothing about the document's contents",
+      "connector": "dossier_documents",
+      "document_genre": "deployment_report",
+      "document_id": "sd-pab-index",
+      "dossier_field": "q10",
+      "evidence": {
+        "extraction_method": "html_text",
+        "locator": {
+          "end": 282,
+          "kind": "byte_range",
+          "start": 220
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/pab/reports"
+      },
+      "evidence_genre": "portal_document",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "document",
+      "raw_value": "PAB Recommendation on the 2025 ALPR Annual Surveillance Report",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "document",
+      "source_id": "dossier_san_diego",
+      "subject_id": "sig:deployment:sdpd-alpr",
+      "value": "https://www.sandiego.gov/sites/default/files/pab-final-recommendation-alpr-2025.pdf",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the listed document's label, verbatim — a version/year inside a label stays text, never a promoted effective date",
+      "connector": "dossier_documents",
+      "document_genre": "deployment_report",
+      "document_id": "sd-pab-index",
+      "dossier_field": "q10",
+      "evidence": {
+        "extraction_method": "html_text",
+        "locator": {
+          "end": 282,
+          "kind": "byte_range",
+          "start": 220
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/pab/reports"
+      },
+      "evidence_genre": "portal_document",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "title",
+      "raw_value": "PAB Recommendation on the 2025 ALPR Annual Surveillance Report",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "title",
+      "source_id": "dossier_san_diego",
+      "subject_id": "sig:deployment:sdpd-alpr",
+      "value": "PAB Recommendation on the 2025 ALPR Annual Surveillance Report",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the index lists this document (existence + link) — the label is verbatim and asserts nothing about the document's contents",
+      "connector": "dossier_documents",
+      "document_genre": "deployment_report",
+      "document_id": "sd-pab-index",
+      "dossier_field": "q10",
+      "evidence": {
+        "extraction_method": "html_text",
+        "locator": {
+          "end": 340,
+          "kind": "byte_range",
+          "start": 326
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/pab/reports"
+      },
+      "evidence_genre": "portal_document",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "document",
+      "raw_value": "Annual Reports",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "document",
+      "source_id": "dossier_san_diego",
+      "subject_id": "sig:deployment:sdpd-alpr",
+      "value": "https://www.sandiego.gov/pab/annual-reports",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the listed document's label, verbatim — a version/year inside a label stays text, never a promoted effective date",
+      "connector": "dossier_documents",
+      "document_genre": "deployment_report",
+      "document_id": "sd-pab-index",
+      "dossier_field": "q10",
+      "evidence": {
+        "extraction_method": "html_text",
+        "locator": {
+          "end": 340,
+          "kind": "byte_range",
+          "start": 326
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/pab/reports"
+      },
+      "evidence_genre": "portal_document",
+      "geo_tier": 0,
+      "normalization_id": "dossier-field-crosswalk",
+      "normalization_version": "dossier-field-crosswalk/1",
+      "observed_at": "2026-10-01",
+      "predicate_id": "title",
+      "raw_value": "Annual Reports",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_field": "title",
+      "source_id": "dossier_san_diego",
+      "subject_id": "sig:deployment:sdpd-alpr",
+      "value": "Annual Reports",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "byte_size": 371,
+      "capture_digest": "bcnais6jwoqh5qhgonafhpwkyc4uhmyiqxo47rmfw3wps6uzffxlflh3dybhynokwpnbfscelzl27vtxswltzrq5mepp7qeyskmyotcsjmq",
+      "connector": "dossier_documents",
+      "document_id": "sd-pab-index",
+      "link_count": 2,
+      "listings_resolved": 2,
+      "media_type": "text/html",
+      "record_kind": "index_page",
+      "retrieved_date": "2026-10-01",
+      "source_id": "dossier_san_diego",
+      "source_uri": "https://www.sandiego.gov/pab/reports",
+      "vocab_version": "dossier-documents/1"
+    },
+    {
+      "assertion_rationale": "the reporting agency named on the face of its own published Annual Surveillance Report — an operator attribution, never evidence of a funder or of hardware under the subscription",
+      "connector": "ops.san_diego_dossier_packet",
+      "document_genre": "deployment_report",
+      "document_id": "sd-asr-2025-vigilant",
+      "dossier_field": "q1",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/sites/default/files/sdpd-annual-surveillance-report-2025.pdf"
+      },
+      "evidence_genre": "official_statement",
+      "geo_tier": 0,
+      "object_type": "organization",
+      "observed_at": "2026-10-01",
+      "predicate_id": "asset_operator",
+      "raw_value": "San Diego Police Department",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_id": "dossier_san_diego",
+      "subject_id": "sig:deployment:sdpd-alpr",
+      "value": "San Diego Police Department"
+    },
+    {
+      "assertion_rationale": "the City's own technology index lists the ALPR Program as a surveillance technology — the physical streetlight program, distinct from the Vigilant subscription access (q4)",
+      "connector": "ops.san_diego_dossier_packet",
+      "document_genre": "deployment_report",
+      "document_id": "sd-technology-index",
+      "dossier_field": "q2",
+      "evidence": {
+        "extraction_method": "html_text",
+        "locator": {
+          "end": 211,
+          "kind": "byte_range",
+          "start": 199
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/police/data-transparency/technology"
+      },
+      "evidence_genre": "portal_document",
+      "geo_tier": 0,
+      "observed_at": "2026-10-01",
+      "predicate_id": "technology",
+      "raw_value": "ALPR Program",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_id": "dossier_san_diego",
+      "subject_id": "sig:deployment:sdpd-alpr",
+      "value": "automated license-plate recognition — streetlight-mounted public-safety platform (physical program; distinct from the Vigilant LEARN hosted-database subscription)"
+    },
+    {
+      "assertion_rationale": "the agency's own bounded non-ownership statement — scoped verbatim 'under this arrangement'; it keeps the subscription from minting local hardware without fabricating a universal absence (the streetlight program is separately contracted)",
+      "connector": "ops.san_diego_dossier_packet",
+      "document_genre": "deployment_report",
+      "document_id": "sd-asr-2025-vigilant",
+      "dossier_field": "q3",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/sites/default/files/sdpd-annual-surveillance-report-2025.pdf"
+      },
+      "evidence_genre": "official_statement",
+      "geo_tier": 0,
+      "observed_at": "2026-10-01",
+      "predicate_id": "written_policy_value",
+      "raw_value": "The Department owns no ALPR cameras or hardware under this arrangement.",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_id": "dossier_san_diego",
+      "subject_id": "sig:deployment:sdpd-vigilant",
+      "value": "the Department owns no ALPR cameras or hardware under the Vigilant subscription arrangement (agency-reported, scoped verbatim to this arrangement)"
+    },
+    {
+      "assertion_rationale": "the agreement's own clause structure: Ubicquia is the counterparty ('Vendor'/seller), Flock Safety supplies the incorporated component terms — a vendor mention is never an operational relationship",
+      "connector": "ops.san_diego_dossier_packet",
+      "document_genre": "procurement_record",
+      "document_id": "sd-ubicquia-agreement-2023",
+      "dossier_field": "q1",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/sites/default/files/cosd-public-safety-agreement-ubicquia.pdf"
+      },
+      "evidence_genre": "contract",
+      "geo_tier": 0,
+      "observed_at": "2026-10-01",
+      "predicate_id": "written_policy_value",
+      "raw_value": "The terms and conditions of Flock Safety, Inc. are incorporated by reference.",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_id": "dossier_san_diego",
+      "subject_id": "contract:sandiego-ubicquia-ps",
+      "value": "Ubicquia, Inc. is the named prime contracting party ('Vendor'); Flock Safety, Inc. terms are incorporated by reference as the component supplier — the prime contractor and the component vendor are distinct roles"
+    },
+    {
+      "assertion_rationale": "the agreement is the program's recorded contracting instrument on the City's own portal — cited with the signature gap intact; never an 'executed' label",
+      "connector": "ops.san_diego_dossier_packet",
+      "document_genre": "procurement_record",
+      "document_id": "sd-ubicquia-agreement-2023",
+      "dossier_field": "q6",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/sites/default/files/cosd-public-safety-agreement-ubicquia.pdf"
+      },
+      "evidence_genre": "contract",
+      "geo_tier": 0,
+      "observed_at": "2026-10-01",
+      "predicate_id": "legal_authority",
+      "raw_value": "Public Safety Agreement",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_id": "dossier_san_diego",
+      "subject_id": "sig:deployment:sdpd-alpr",
+      "value": "City of San Diego–Ubicquia public-safety agreement is the program's published contracting instrument (execution unverified — vendor-only signed date; City date blank)"
+    },
+    {
+      "assertion_rationale": "the oversight body's recommendation exists per its own index listing — a proposal is asserted, never adoption: nothing in the pack evidences enactment, and the ASR self-report remains genre-distinct from oversight",
+      "connector": "ops.san_diego_dossier_packet",
+      "document_genre": "deployment_report",
+      "document_id": "sd-pab-index",
+      "dossier_field": "q10",
+      "evidence": {
+        "extraction_method": "html_text",
+        "locator": {
+          "end": 282,
+          "kind": "byte_range",
+          "start": 220
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/pab/reports"
+      },
+      "evidence_genre": "portal_document",
+      "geo_tier": 0,
+      "observed_at": "2026-10-01",
+      "predicate_id": "authorization_state",
+      "raw_value": "PAB Recommendation on the 2025 ALPR Annual Surveillance Report",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_id": "dossier_san_diego",
+      "subject_id": "sig:deployment:sdpd-alpr",
+      "value": "PAB recommendation on the 2025 ALPR Annual Surveillance Report — proposed (existence and verbatim title evidenced; content and any adoption/enactment not evidenced in the pack)"
+    },
+    {
+      "assertion_rationale": "the sharing MODE is stated verbatim (a pooled vendor-hosted database across subscribing agencies); outbound sharing actors are not evidenced — a scoped partial answer, never a silent zero and never a fabricated roster",
+      "connector": "ops.san_diego_dossier_packet",
+      "document_genre": "deployment_report",
+      "document_id": "sd-asr-2025-vigilant",
+      "dossier_field": "q8",
+      "evidence": {
+        "extraction_method": "pdf_text",
+        "locator": {
+          "kind": "page",
+          "page": 1
+        },
+        "retrieved_date": "2026-10-01",
+        "source_url": "https://www.sandiego.gov/sites/default/files/sdpd-annual-surveillance-report-2025.pdf"
+      },
+      "evidence_genre": "official_statement",
+      "geo_tier": 0,
+      "observed_at": "2026-10-01",
+      "predicate_id": "written_policy_value",
+      "raw_value": "hosted vendor database shared across subscribing agencies",
+      "record_kind": "claim",
+      "sensitivity_class": "C1",
+      "source_attribution": "dossier_san_diego",
+      "source_id": "dossier_san_diego",
+      "subject_id": "sig:deployment:sdpd-vigilant",
+      "value": "the Vigilant LEARN database is a vendor-hosted national pool shared across subscribing agencies — an inbound pooled-lookup sharing mode for SDPD; the pack does not evidence which agencies or parties SDPD's own data is shared with"
+    }
+  ],
+  "restricted": [],
+  "review": {
+    "note": "no independent reviewer exists on this build — D-R10-HUMAN-1 OPEN; the mark is honest, never fabricated",
+    "status": "not_run"
+  },
+  "schema": "sig.dossier-packet/1",
+  "search_log": [
+    {
+      "note": "operator evidenced by SDPD's own report; buyer/seller/component-vendor roles evidenced by the agreement — the funder is not evidenced and the execution chain is incomplete → partial",
+      "outcome": "found",
+      "question": "q1",
+      "searched_at": "2026-10-01",
+      "sources_searched": [
+        "sd-asr-2025-vigilant",
+        "sd-ubicquia-agreement-2023",
+        "sd-technology-index",
+        "sd-pab-index"
+      ]
+    },
+    {
+      "note": "two distinct surfaces evidenced: the streetlight ALPR program (index-listed) and the Vigilant LEARN hosted database product — never collapsed into one technology",
+      "outcome": "found",
+      "question": "q2",
+      "searched_at": "2026-10-01",
+      "sources_searched": [
+        "sd-asr-2025-vigilant",
+        "sd-ubicquia-agreement-2023",
+        "sd-technology-index",
+        "sd-pab-index"
+      ]
+    },
+    {
+      "note": "the only count is contracted units (500, scoped contracted_units); the subscription's bounded no-hardware statement is the agency's own; no installed/active count in the pack → partial",
+      "outcome": "found",
+      "question": "q3",
+      "searched_at": "2026-10-01",
+      "sources_searched": [
+        "sd-asr-2025-vigilant",
+        "sd-ubicquia-agreement-2023",
+        "sd-technology-index",
+        "sd-pab-index",
+        "https://www.sandiego.gov/police/data-transparency/technology?tech=alpr",
+        "S2 research bounded pass (sandiego.gov portal, PAB corpus; named leads left as follow-ups, not citations)"
+      ]
+    },
+    {
+      "note": "the ASR evidences configured subscription access, pooled lookup participation and a vendor-cloud-shared data scope — inbound access to the shared database; never a local device or outbound edge",
+      "outcome": "found",
+      "question": "q4",
+      "searched_at": "2026-10-01",
+      "sources_searched": [
+        "sd-asr-2025-vigilant"
+      ]
+    },
+    {
+      "note": "value/term/vendor-signed date evidenced; the City date is present_but_empty — execution unverified, never 'executed'; the 2025-12-10 council memorandum and FY27 budget response are reviewed leads, uncaptured",
+      "outcome": "found",
+      "question": "q5",
+      "searched_at": "2026-10-01",
+      "sources_searched": [
+        "sd-ubicquia-agreement-2023",
+        "S2 research bounded pass (sandiego.gov portal, PAB corpus; named leads left as follow-ups, not citations)"
+      ]
+    },
+    {
+      "note": "the published agreement is the recorded instrument; the index-listed ALPR Use Policy is uncaptured (latest retrieval 403 per research) and no ordinance record is in the pack → partial",
+      "outcome": "found",
+      "question": "q6",
+      "searched_at": "2026-10-01",
+      "sources_searched": [
+        "sd-asr-2025-vigilant",
+        "sd-ubicquia-agreement-2023",
+        "sd-technology-index",
+        "sd-pab-index"
+      ]
+    },
+    {
+      "note": "the only numeric period (60 days) is scoped to the Vigilant LEARN subscription's ALPR data; the streetlight program's retention is not in the pack → partial",
+      "outcome": "found",
+      "question": "q7",
+      "searched_at": "2026-10-01",
+      "sources_searched": [
+        "sd-asr-2025-vigilant",
+        "sd-ubicquia-agreement-2023"
+      ]
+    },
+    {
+      "note": "found the sharing MODE (a vendor-hosted pool shared across subscribing agencies — inbound access for SDPD); the outbound side stays unevidenced: no claim names the agencies or parties SDPD's own data is shared with → declared partial",
+      "outcome": "found",
+      "question": "q8",
+      "searched_at": "2026-10-01",
+      "sources_searched": [
+        "sd-asr-2025-vigilant",
+        "sd-ubicquia-agreement-2023",
+        "sd-technology-index",
+        "sd-pab-index",
+        "S2 research bounded pass (sandiego.gov portal, PAB corpus; named leads left as follow-ups, not citations)"
+      ]
+    },
+    {
+      "note": "the 2024–2026 network-audit workbooks could close the declared-vs-observed sharing gap, but row-level acquisition is prohibited_until_review (plates/person/officer content risk); only link metadata was reviewed — the safe-aggregate path stays an open precondition (follow-up q8)",
+      "outcome": "found",
+      "question": "q8",
+      "searched_at": "2026-10-01",
+      "sources_searched": [
+        "SDPD ALPR index — 2024–2026 network-audit spreadsheet links (SRC-027; link metadata only — workbook bytes never transported)"
+      ]
+    },
+    {
+      "note": "stated dates stay document dates: the 2023-12-15 vendor-signed date, the 2025 report period and the 2026-02-15 posted date are never promoted to the 2026-10-01 replay retrieved/observed date; index currentness is a live-pass question",
+      "outcome": "found",
+      "question": "q9",
+      "searched_at": "2026-10-01",
+      "sources_searched": [
+        "sd-asr-2025-vigilant",
+        "sd-ubicquia-agreement-2023",
+        "sd-technology-index",
+        "sd-pab-index"
+      ]
+    },
+    {
+      "note": "the PAB recommendation exists per its own index listing and stays proposed — its ~16 MB PDF exceeds the bounded fetch limit (uncaptured) and no adoption/enactment record is in the pack",
+      "outcome": "found",
+      "question": "q10",
+      "searched_at": "2026-10-01",
+      "sources_searched": [
+        "sd-asr-2025-vigilant",
+        "sd-ubicquia-agreement-2023",
+        "sd-technology-index",
+        "sd-pab-index",
+        "https://www.sandiego.gov/sites/default/files/pab-final-recommendation-alpr-2025.pdf",
+        "S2 research bounded pass (sandiego.gov portal, PAB corpus; named leads left as follow-ups, not citations)"
+      ]
+    }
+  ],
+  "subject": {
+    "entity_id": "sig:deployment:sdpd-alpr",
+    "jurisdiction": "San Diego, California (us.state_abbr:CA)",
+    "jurisdiction_slug": "san-diego-ca",
+    "label": "San Diego — San Diego Police Department: streetlight/ALPR program (City–Ubicquia) + Vigilant LEARN hosted-database subscription",
+    "slug": "san-diego-sdpd-alpr"
+  }
+}
