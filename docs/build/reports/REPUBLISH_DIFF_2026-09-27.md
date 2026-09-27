@@ -149,9 +149,11 @@ Read-back table counts after the batch: `resolution` 2,134,055 ·
   did not need a recycle — **D-P30.4-1 stays DONE, no regression, not
   reopened.** (Prior proof was the operator-approved backend-kill drill; this
   adds the full-instance-restart observation.)
-- **Cost note:** `sig-pg` remains at `db-custom-2-8192` through the pause —
-  the publish half (or the operator) should return it to the ADR-107 steady
-  state `db-custom-1-3840` after the gate, as the run ledger records.
+- **Scale-back done:** `sig-pg` was returned to the ADR-107 steady state
+  `db-custom-1-3840` at 2026-09-27T01:15Z (UPDATE op 01:15:15→01:19:43Z — a
+  second real restart). `sig-api` rode through again on the same revision
+  `sig-api-00011-wic`; `/v1/coverage/national` 200 immediately after the op
+  completed. Both restart directions exercised, no recycle either way.
 
 ## 7. Freshness change (D-P30.3-1 export half)
 
