@@ -313,9 +313,10 @@ def _run(args: argparse.Namespace) -> int:
         print("  recorded in the fetch record (0 claims); no garbage emitted.")
         return 5
     except (RobotsUnretrievable, RobotsDisallowed) as refused:
-        # The politeness layer refused the run (SIG-INGEST-012): robots.txt could
-        # not be retrieved or disallows the fetch. Recorded on the fetch record;
-        # never bypassed.
+        # A politeness refusal (SIG-INGEST-012): under GL-GATE-08 / ADR-088 the
+        # shared PoliteFetcher never raises these (robots verdicts are recorded
+        # as robots_disregarded, never enforced); this path remains for
+        # non-standard fetcher implementations that still refuse.
         print(f"POLITENESS REFUSAL (exit 6): {refused}")
         print("  recorded in the fetch record; the refusal is never bypassed.")
         return 6

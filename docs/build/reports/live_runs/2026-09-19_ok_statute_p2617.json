@@ -1,0 +1,36 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnamscduwlgs5r4zfyapcwq2up27q4fyjcm653dfcrj7vjxve7tbnh2v3fgg5q4m723fzhk64k6lt4xwvf3ks63qs6x6yhkqyzjctr5ksi"
+  ],
+  "claim_count": 3,
+  "connector": "ok_statute",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [],
+  "duration_seconds": 0.419169,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [
+    {
+      "host": "www.oscn.net",
+      "outcome": "retrieved",
+      "robots_url": "https://www.oscn.net/robots.txt",
+      "status": 200
+    }
+  ],
+  "robots_disregarded": [
+    {
+      "host": "www.oscn.net",
+      "url": "https://www.oscn.net/applications/oscn/DeliverDocument.asp?CiteID=478582",
+      "verdict": "disallowed"
+    }
+  ],
+  "source_id": "ok_statute",
+  "started_at": "2026-09-19T19:34:31.975721+00:00",
+  "status_codes": [],
+  "urls": []
+}

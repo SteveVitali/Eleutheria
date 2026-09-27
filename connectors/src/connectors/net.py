@@ -11,15 +11,22 @@ egress passes through it.
 
 Three rules are enforced here rather than left to prose:
 
-* **Robots is mandatory (SIG-INGEST-012, as amended by ADR-087).** Where
-  ``robots.txt`` is *unavailable* — a connection failure, a timeout, an
-  exhausted redirect chain, or a 5xx/429 server answer — crawl permission is
-  treated as *not granted* and the fetcher refuses to run
-  (:class:`RobotsUnretrievable`), via
-  :func:`policy.crawler.robots_access_permits`. A **4xx** robots response is a
-  different signal: under RFC 9309 §2.3.1.4 it means *no policy exists*, so
-  access is unrestricted (this is how hosts that answer robots.txt with 404 —
-  e.g. the ``*.api.civicclerk.com`` tenant surface — are reached).
+* **Robots is probed and recorded, never enforced (SIG-INGEST-012, as amended
+  by ADR-087 and superseded in its enforcement by ADR-088 / GL-GATE-08).**
+  Every host's ``robots.txt`` is still retrieved once per run and the
+  RFC 9309 §2.3.1.4 access-result split is still recorded per host —
+  ``retrieved`` (a policy governs), ``no_policy_4xx`` (a 4xx answer means no
+  policy exists), ``unretrievable`` (connection failure / 5xx / 429) — via
+  :func:`policy.crawler.robots_access_permits`. Under GL-GATE-08 the operator
+  accepted disregarding robots entirely: a ``Disallow`` verdict — and the
+  RFC-assumed disallow of an *unretrievable* policy — **no longer refuses**
+  the fetch. Instead the fetch proceeds and the record marks it
+  ``robots_disregarded`` (:attr:`PoliteFetcher.robots_disregarded`, the fetch
+  record's field of the same name), so a claim's provenance says the fetch
+  ignored a refusal. The classes :class:`RobotsUnretrievable` /
+  :class:`RobotsDisallowed` are retained for record-vocabulary compatibility —
+  pre-P26.17 fetch records name them — but ``PoliteFetcher`` never raises
+  them.
 * **No challenge-defeating crawler (SIG-INGEST-013 / Rule 4).** The fetcher never
   solves a bot-management challenge or rotates identity: a persistent challenge is
   surfaced as a :class:`ChallengeEncountered` outcome for the disappearance layer
@@ -65,11 +72,24 @@ class RobotsUnretrievable(Exception):
     error, timeout, redirect exhaustion) or the server answered 5xx/429
     (SIG-INGEST-012, RFC 9309 §2.3.1.4). A 4xx answer never raises this: it
     means no policy exists, so access is unrestricted (ADR-087).
+
+    Retained for record-vocabulary compatibility (pre-P26.17 fetch records and
+    the ``politeness_refusal`` run-row outcome name it) and for non-standard
+    fetcher implementations: under GL-GATE-08 / ADR-088 ``PoliteFetcher``
+    itself never raises it — an unretrievable policy is recorded as the
+    ``unretrievable`` per-host outcome and the fetch is attempted anyway
+    (marked ``robots_disregarded``).
     """
 
 
 class RobotsDisallowed(Exception):
-    """Raised when robots.txt disallows the UA from fetching a URL."""
+    """Raised when robots.txt disallows the UA from fetching a URL.
+
+    Retained for record-vocabulary compatibility (pre-P26.17 fetch records name
+    it) and for non-standard fetcher implementations: under GL-GATE-08 /
+    ADR-088 ``PoliteFetcher`` itself never raises it — a ``Disallow`` verdict
+    is recorded and the fetch proceeds marked ``robots_disregarded``.
+    """
 
 
 class ChallengeEncountered(Exception):
@@ -191,10 +211,14 @@ class PoliteFetcher:
     """The shared fetch layer every connector egresses through (SIG-INGEST-011).
 
     Constructed once per run with the connector identity (for the UA) and a
-    transport. On first contact with a host it retrieves and caches robots.txt,
-    refusing to run if it is unretrievable (SIG-INGEST-012) and disallowing URLs
-    robots forbids; it then rate-limits per host before each request and returns
-    the fetched bytes as a :class:`connectors.stages.FetchResult`.
+    transport. On first contact with a host it retrieves and caches robots.txt
+    and records the RFC 9309 §2.3.1.4 outcome per host (ADR-087). Under
+    GL-GATE-08 / ADR-088 the verdict is **probed and recorded, never
+    enforced**: a ``Disallow`` verdict or an unretrievable policy no longer
+    refuses the fetch — the URL is fetched anyway and the fetch is marked
+    ``robots_disregarded`` so provenance says the refusal was ignored. It then
+    rate-limits per host before each request and returns the fetched bytes as
+    a :class:`connectors.stages.FetchResult`.
     """
 
     def __init__(
@@ -224,6 +248,14 @@ class PoliteFetcher:
         #: §2.3.1.4 — the host answered 4xx, no policy exists, unrestricted), or
         #: ``"unretrievable"`` (connection failure / 5xx / 429 — not granted).
         self.robots_outcomes: dict[str, dict[str, Any]] = {}
+        #: Per-URL audit rows for fetches that proceeded despite a non-grant
+        #: (GL-GATE-08 / ADR-088): ``{"url", "host", "verdict"}`` where verdict
+        #: is ``"disallowed"`` (a retrieved policy forbids the URL) or
+        #: ``"unretrievable"`` (no policy could be obtained — the RFC-assumed
+        #: disallow). The live runner writes these into the fetch record's
+        #: ``robots_disregarded`` field so a claim's provenance says the fetch
+        #: ignored a refusal.
+        self.robots_disregarded: list[dict[str, str]] = []
 
     @property
     def user_agent_string(self) -> str:
@@ -245,29 +277,21 @@ class PoliteFetcher:
         robots_url = _robots_url(sample_url)
         result = self._transport.robots(robots_url)
         retrieved = result.text is not None
-        # RFC 9309 §2.3.1.4 access-result split (ADR-087): a 4xx answer means no
-        # policy exists (unrestricted); only an *unavailable* robots.txt —
-        # connection failure, 5xx, 429 — is not an implied grant (SIG-INGEST-012).
+        # RFC 9309 §2.3.1.4 access-result split (ADR-087 — the classification
+        # layer is unchanged): a 4xx answer means no policy exists
+        # (unrestricted); an *unavailable* robots.txt — connection failure,
+        # 5xx, 429 — is the RFC-assumed disallow (SIG-INGEST-012). Under
+        # GL-GATE-08 / ADR-088 neither outcome refuses the fetch: the verdict
+        # is recorded here and a proceeded-despite-non-grant fetch is marked
+        # ``robots_disregarded`` in ``fetch``.
         if not robots_access_permits(retrieved=retrieved, status=result.status):
-            self.robots_outcomes[host] = {
-                "robots_url": robots_url,
-                "status": result.status,
-                "outcome": "unretrievable",
-            }
-            reason = (
-                "connection failure or timeout"
-                if result.status is None
-                else f"HTTP {result.status}"
-            )
-            raise RobotsUnretrievable(
-                f"robots.txt for {host!r} is unavailable ({reason}); crawl "
-                "permission is NOT granted and the connector refuses to run "
-                "(SIG-INGEST-012, RFC 9309 §2.3.1.4)."
-            )
+            outcome = "unretrievable"
+        else:
+            outcome = "retrieved" if retrieved else "no_policy_4xx"
         self.robots_outcomes[host] = {
             "robots_url": robots_url,
             "status": result.status,
-            "outcome": "retrieved" if retrieved else "no_policy_4xx",
+            "outcome": outcome,
         }
         parser = RobotFileParser()
         parser.parse((result.text or "").splitlines())
@@ -277,11 +301,34 @@ class PoliteFetcher:
             self._limiter.set_host_delay(host, float(crawl_delay))
         return parser
 
-    def can_fetch(self, url: str) -> bool:
-        """Whether robots.txt permits the UA to fetch ``url`` (refuses if absent)."""
+    def _robots_verdict(self, url: str) -> str:
+        """The recorded robots verdict for ``url`` — never enforced (ADR-088).
+
+        Probes and caches the host's policy, then classifies the verdict:
+        ``"allowed"`` (a retrieved policy permits the URL), ``"disallowed"`` (a
+        retrieved policy forbids it), ``"no_policy_4xx"`` (the host answered
+        4xx — no policy exists, RFC 9309 §2.3.1.4), or ``"unretrievable"``
+        (the policy could not be obtained — the RFC-assumed disallow).
+        """
         host = _host(url)
         parser = self._ensure_robots(host, url)
-        return parser.can_fetch(self._ua, url)
+        outcome = self.robots_outcomes[host]["outcome"]
+        if outcome == "unretrievable":
+            return "unretrievable"
+        if outcome == "no_policy_4xx":
+            return "no_policy_4xx"
+        return "allowed" if parser.can_fetch(self._ua, url) else "disallowed"
+
+    def can_fetch(self, url: str) -> bool:
+        """Whether robots.txt permits the UA to fetch ``url``.
+
+        Under GL-GATE-08 / ADR-088 this returns the *recorded verdict* only —
+        it never raises and its answer does not gate :meth:`fetch`. ``False``
+        means a retrieved policy disallows the URL or the policy is
+        unretrievable (the RFC-assumed disallow); ``True`` means a retrieved
+        policy allows it or no policy exists (4xx).
+        """
+        return self._robots_verdict(url) in ("allowed", "no_policy_4xx")
 
     def fetch(
         self,
@@ -305,24 +352,36 @@ class PoliteFetcher:
         rate-limited exactly as a GET; it is a different verb on a documented
         endpoint, never a circumvention.
 
-        Raises :class:`RobotsUnretrievable` if robots.txt is unavailable,
-        :class:`RobotsDisallowed` if it forbids the URL, and
-        :class:`ChallengeEncountered` on a bot-management challenge (never
-        defeated — SIG-INGEST-013).
+        Under GL-GATE-08 / ADR-088 robots verdicts are **probed and recorded,
+        never enforced**: this raises :class:`ChallengeEncountered` on a
+        bot-management challenge (never defeated — SIG-INGEST-013) but never
+        raises for a robots outcome. A CRAWL-mode fetch whose verdict is
+        ``disallowed`` or ``unretrievable`` proceeds and is recorded in
+        :attr:`robots_disregarded` — the audit trail says the refusal was
+        ignored rather than pretending it never existed.
         """
         host = _host(url)
         # ADR-083 carve-out: an allow-listed API endpoint is API mode (documented,
         # ToS-governed, rate-limited) — robots governs crawling, not this. A host
-        # off the allow-list stays CRAWL and robots binds (no blanket bypass).
+        # off the allow-list stays CRAWL and its robots verdict is recorded
+        # (post-ADR-088: recorded, never enforced).
         api_reason = api_allow_reason(url)
         if api_reason is not None:
             self.conduct_decisions.append({"url": url, "mode": "api", "basis": api_reason})
         else:
-            self.conduct_decisions.append({"url": url, "mode": "crawl"})
-            if not self.can_fetch(url):
-                raise RobotsDisallowed(
-                    f"robots.txt disallows {self._ua!r} from fetching {url!r} (Rule 2)."
-                )
+            verdict = self._robots_verdict(url)
+            decision: dict[str, str] = {
+                "url": url,
+                "mode": "crawl",
+                "robots_verdict": verdict,
+            }
+            if verdict in ("disallowed", "unretrievable"):
+                # GL-GATE-08: the operator accepted disregarding robots — the
+                # fetch proceeds and the record marks it, so provenance says
+                # the refusal was ignored (never silently bypassed).
+                decision["outcome"] = "robots_disregarded"
+                self.robots_disregarded.append({"url": url, "host": host, "verdict": verdict})
+            self.conduct_decisions.append(decision)
         self._limiter.acquire(host)
         # Pass headers/body only when present so a transport that predates the
         # seams (and takes only user_agent) keeps working unchanged (back-compat).

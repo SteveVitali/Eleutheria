@@ -524,6 +524,14 @@ def scheduled_ingest(
         if report.fetch_record is not None:
             fetch_record = dict(report.fetch_record.to_dict())
         parts: list[str] = []
+        # GL-GATE-08 / ADR-088: robots verdicts are recorded, never enforced —
+        # a run that proceeded despite non-grant verdicts says so in detail.
+        fr = report.fetch_record
+        disregarded = list(getattr(fr, "robots_disregarded", None) or [])
+        if disregarded:
+            parts.append(
+                f"{len(disregarded)} robots verdict(s) disregarded (recorded robots_disregarded)"
+            )
         if report.refusals:
             parts.append(f"{len(report.refusals)} politeness refusal(s)")
         if report.disappearances:

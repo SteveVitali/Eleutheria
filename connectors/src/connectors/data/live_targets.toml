@@ -296,8 +296,10 @@ targets = [
 # `no_policy_4xx` under ADR-087 (RFC 9309 §2.3.1.4) and serve real `/v1/Events`
 # indexes (34 verified; `oklahomacityok` answers its index 404 → recorded
 # `link_rotted`). PrimeGov's 9 verified tenants all answer robots.txt
-# `Disallow:/` — 9 recorded politeness refusals, never bypassed (a PublicPortal
-# API-mode basis is the still-open D-SOURCES.2-4 operator decision).
+# `Disallow:/` — under GL-GATE-08 / ADR-088 the verdict is probed + recorded
+# and the fetch proceeds marked `robots_disregarded` (D-SOURCES.2-4 resolved
+# by the operator's robots-disregard disposition; pre-P26.17 runs recorded
+# these as politeness refusals).
 [legistar]
 kind = "agenda_tenants"
 [primegov]

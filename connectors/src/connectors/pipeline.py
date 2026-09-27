@@ -60,10 +60,12 @@ class RunReport:
     captures: list[CaptureRef] = field(default_factory=list)
     disappearances: list[Disappearance] = field(default_factory=list)
     #: Politeness refusals on discovery-continuation targets (P25.5): a resolved
-    #: child document whose host refuses the fetch (robots unretrievable or
-    #: disallowing) is recorded here — a first-class per-document disposition —
-    #: while the run continues to the next resolved target. A refusal on a
-    #: *seed* target still propagates (a refused seed is a refused run).
+    #: child document whose host refuses the fetch (a robots refusal from a
+    #: non-standard fetcher — the shared ``PoliteFetcher`` never refuses post
+    #: GL-GATE-08 / ADR-088) is recorded here — a first-class per-document
+    #: disposition — while the run continues to the next resolved target. A
+    #: refusal on a *seed* target still propagates (a refused seed is a
+    #: refused run).
     refusals: list[dict[str, Any]] = field(default_factory=list)
     #: Per-document content drift on discovery-continuation targets (P26.6): a
     #: resolved child document whose captured bytes no longer parse as the
@@ -201,20 +203,29 @@ def _fetch_or_disappear(
 ) -> FetchResult | None:
     """Fetch one target, or record a disappearance and return ``None``.
 
-    A gone status (404/410), a restricted status (401/451), or a persistent
-    challenge becomes a first-class disappearance event + research task, never a
-    swallowed exception (SIG-INGEST-009/010). A robots-disallowed URL is a
-    politeness refusal, not a disappearance: on a *seed* target it propagates
-    (a refused seed is a refused run); on a discovery-continuation target
-    (``record_refusals=True``) — or a target that declares
-    ``record_refusals`` itself, as every multi-tenant agenda-platform target
-    does (P26.3: each host's own robots verdict is a recorded per-host
-    outcome) — it lands on ``report.refusals``, and the run continues.
+    A gone status (404/410), a restricted status (401/451), a persistent
+    challenge, or a transport-level failure (``unreachable``, P26.17) becomes a
+    first-class disappearance event + research task, never a swallowed
+    exception (SIG-INGEST-009/010). A robots-disallowed URL was a politeness
+    refusal, not a disappearance — but under GL-GATE-08 / ADR-088 the shared
+    ``PoliteFetcher`` never refuses on robots: the verdict is recorded
+    (``robots_disregarded``) and the fetch proceeds. The refusal path below is
+    retained for non-standard fetcher implementations that still raise: on a
+    *seed* target a refusal propagates (a refused seed is a refused run); on a
+    discovery-continuation target (``record_refusals=True``) — or a target
+    that declares ``record_refusals`` itself, as every multi-tenant
+    agenda-platform target does (P26.3: each host's own robots verdict is a
+    recorded per-host outcome) — it lands on ``report.refusals``, and the run
+    continues.
     """
     subject_id = target.get("subject_id")
     try:
         fetched = connector.fetch(ctx, target)
     except (RobotsUnretrievable, RobotsDisallowed) as exc:
+        # GL-GATE-08 / ADR-088: PoliteFetcher never raises these — a robots
+        # verdict is recorded (robots_disregarded) and the fetch proceeds.
+        # The catch is retained for non-standard fetcher implementations that
+        # still refuse on robots; their refusal is recorded exactly as before.
         if not (record_refusals or target.get("record_refusals")):
             raise  # a politeness refusal on a seed target refuses the run
         report.refusals.append(
@@ -230,6 +241,24 @@ def _fetch_or_disappear(
     except ChallengeEncountered as exc:
         status = failing_status_for_error(exc)
         assert status is not None
+        report.disappearances.append(
+            note_disappearance(
+                artifact_id=_target_id(target),
+                observed_at=_now(),
+                failing_status=status,
+                subject_id=subject_id,
+            )
+        )
+        return None
+    except Exception as exc:
+        # A transport-level failure (httpx.ConnectError/ReadTimeout/TLS, …) is
+        # an `unreachable` disappearance — recorded as data, never a crash that
+        # abandons the remaining targets (P26.17 / ADR-088: with robots
+        # non-gating, unretrievable-policy hosts are attempted and their
+        # honest reachability lands here). Non-transport errors still raise.
+        status = failing_status_for_error(exc)
+        if status is None:
+            raise
         report.disappearances.append(
             note_disappearance(
                 artifact_id=_target_id(target),

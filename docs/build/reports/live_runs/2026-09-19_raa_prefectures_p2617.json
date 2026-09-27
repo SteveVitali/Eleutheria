@@ -1,0 +1,136 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnagszx5cdkwvelcev42iiylisajyjruvt7fdcygsvn3oo2ewuqiudjxui76ja4ftxwx7eqmfezr3oxljnwk7pifvz6fnzb3cg36d3imc4"
+  ],
+  "claim_count": 3,
+  "connector": "france_belgium_records",
+  "content_drift": null,
+  "disappearances": [
+    {
+      "artifact_id": "raa-arrete:16:4360",
+      "failing_status": "unreachable",
+      "observed_at": "2026-09-19T19:35:09.146490+00:00"
+    },
+    {
+      "artifact_id": "raa-arrete:22:5635",
+      "failing_status": "unreachable",
+      "observed_at": "2026-09-19T19:35:09.889886+00:00"
+    },
+    {
+      "artifact_id": "raa-arrete:24:6043",
+      "failing_status": "unreachable",
+      "observed_at": "2026-09-19T19:35:10.695826+00:00"
+    },
+    {
+      "artifact_id": "raa-arrete:24:6044",
+      "failing_status": "unreachable",
+      "observed_at": "2026-09-19T19:35:11.755587+00:00"
+    },
+    {
+      "artifact_id": "raa-arrete:24:6045",
+      "failing_status": "unreachable",
+      "observed_at": "2026-09-19T19:35:12.717296+00:00"
+    },
+    {
+      "artifact_id": "raa-arrete:25:6220",
+      "failing_status": "unreachable",
+      "observed_at": "2026-09-19T19:35:13.466865+00:00"
+    },
+    {
+      "artifact_id": "raa-arrete:28:6792",
+      "failing_status": "unreachable",
+      "observed_at": "2026-09-19T19:35:14.168060+00:00"
+    },
+    {
+      "artifact_id": "raa-arrete:28:6795",
+      "failing_status": "unreachable",
+      "observed_at": "2026-09-19T19:35:15.163340+00:00"
+    }
+  ],
+  "document_drift": [],
+  "document_outcomes": [],
+  "duration_seconds": 7.920291,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [
+    {
+      "host": "www.charente.gouv.fr",
+      "outcome": "unretrievable",
+      "robots_url": "https://www.charente.gouv.fr/robots.txt",
+      "status": null
+    },
+    {
+      "host": "www.cotes-darmor.gouv.fr",
+      "outcome": "unretrievable",
+      "robots_url": "https://www.cotes-darmor.gouv.fr/robots.txt",
+      "status": null
+    },
+    {
+      "host": "www.dordogne.gouv.fr",
+      "outcome": "unretrievable",
+      "robots_url": "https://www.dordogne.gouv.fr/robots.txt",
+      "status": null
+    },
+    {
+      "host": "www.doubs.gouv.fr",
+      "outcome": "unretrievable",
+      "robots_url": "https://www.doubs.gouv.fr/robots.txt",
+      "status": null
+    },
+    {
+      "host": "www.eure-et-loir.gouv.fr",
+      "outcome": "unretrievable",
+      "robots_url": "https://www.eure-et-loir.gouv.fr/robots.txt",
+      "status": null
+    }
+  ],
+  "robots_disregarded": [
+    {
+      "host": "www.charente.gouv.fr",
+      "url": "https://www.charente.gouv.fr/contenu/telechargement/52963/419274/file/AP Modificatif Liste électorale sénatoriales 2026.pdf",
+      "verdict": "unretrievable"
+    },
+    {
+      "host": "www.cotes-darmor.gouv.fr",
+      "url": "https://www.cotes-darmor.gouv.fr/contenu/telechargement/79697/654699/file/recueil-22-2026-198-recueil-des-actes-administratifs.pdf",
+      "verdict": "unretrievable"
+    },
+    {
+      "host": "www.dordogne.gouv.fr",
+      "url": "https://www.dordogne.gouv.fr/contenu/telechargement/52562/407366/file/AP vente-conso alcool VP.pdf",
+      "verdict": "unretrievable"
+    },
+    {
+      "host": "www.dordogne.gouv.fr",
+      "url": "https://www.dordogne.gouv.fr/contenu/telechargement/52564/407376/file/AP nuisance sonore BTP.pdf",
+      "verdict": "unretrievable"
+    },
+    {
+      "host": "www.dordogne.gouv.fr",
+      "url": "https://www.dordogne.gouv.fr/contenu/telechargement/52563/407371/file/AP manif sportives.pdf",
+      "verdict": "unretrievable"
+    },
+    {
+      "host": "www.doubs.gouv.fr",
+      "url": "https://www.doubs.gouv.fr/contenu/telechargement/45935/306349/file/2026-01-23 arrêté préfectoral portant interdiction de rassemblement automobile du 23 au 26 janvier 2026.pdf",
+      "verdict": "unretrievable"
+    },
+    {
+      "host": "www.eure-et-loir.gouv.fr",
+      "url": "https://www.eure-et-loir.gouv.fr/contenu/telechargement/59723/394882/file/Arrêté du 05 janvier 2026 12H15 portant règlementation exceptionnelle de la circulation routière.pdf",
+      "verdict": "unretrievable"
+    },
+    {
+      "host": "www.eure-et-loir.gouv.fr",
+      "url": "https://www.eure-et-loir.gouv.fr/contenu/telechargement/59933/396144/file/2025-12-30-Arrete_DDT-SGREB-2025-365_Peche_2026_signé.pdf",
+      "verdict": "unretrievable"
+    }
+  ],
+  "source_id": "raa_prefectures",
+  "started_at": "2026-09-19T19:35:07.243154+00:00",
+  "status_codes": [],
+  "urls": []
+}

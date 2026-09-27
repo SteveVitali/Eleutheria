@@ -10,9 +10,8 @@ prefix — stays CRAWL and robots binds (no blanket bypass, SIG-INGEST-037).
 
 from __future__ import annotations
 
-import pytest
 from connectors.api_allowlist import api_allow_reason
-from connectors.net import PoliteFetcher, RobotsDisallowed
+from connectors.net import PoliteFetcher
 
 
 def test_allow_listed_api_endpoint_returns_a_tos_basis() -> None:
@@ -44,13 +43,21 @@ def test_api_mode_bypasses_robots_for_the_allow_listed_endpoint(  # type: ignore
     assert fetcher.conduct_decisions[-1]["mode"] == "api"
 
 
-def test_off_allow_list_host_still_honours_robots(transport_factory, json_response) -> None:  # type: ignore[no-untyped-def]
+def test_off_allow_list_host_records_robots_and_fetches(  # type: ignore[no-untyped-def]
+    transport_factory, json_response
+) -> None:
+    # GL-GATE-08 / ADR-088: off the allow-list the fetch stays CRAWL mode and
+    # the robots verdict is recorded — but never enforced; the proceeded
+    # fetch is marked robots_disregarded.
     url = "https://portal.example/api/x"
     transport = transport_factory(
         {url: json_response(url, {})},
         robots_text="User-agent: *\nDisallow: /api\n",
     )
     fetcher = PoliteFetcher(connector_name="toy", connector_version="1", transport=transport)
-    with pytest.raises(RobotsDisallowed):
-        fetcher.fetch(url)
-    assert fetcher.conduct_decisions[-1]["mode"] == "crawl"
+    result = fetcher.fetch(url)
+    assert result.status == 200
+    decision = fetcher.conduct_decisions[-1]
+    assert decision["mode"] == "crawl"
+    assert decision["robots_verdict"] == "disallowed"
+    assert decision["outcome"] == "robots_disregarded"

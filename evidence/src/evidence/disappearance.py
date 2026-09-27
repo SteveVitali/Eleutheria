@@ -21,7 +21,13 @@ from dataclasses import dataclass
 from datetime import datetime
 
 # capture_status values that mean "no longer retrievable" (§17.6, C.3 comment).
-FAILING_STATUSES: frozenset[str] = frozenset({"link_rotted", "access_restricted", "paywalled"})
+# "unreachable" (added P26.17 / ADR-088) records a transport-level failure —
+# DNS, connection refused, timeout — observed when the fetch was attempted;
+# with robots non-gating (GL-GATE-08) it is the honest outcome for a host whose
+# robots could not be retrieved AND whose data endpoint does not answer either.
+FAILING_STATUSES: frozenset[str] = frozenset(
+    {"link_rotted", "access_restricted", "paywalled", "unreachable"}
+)
 DISAPPEARANCE_TASK_TYPE = "source_disappeared"
 _DETECTOR_VERSION = "evidence.disappearance/1"
 

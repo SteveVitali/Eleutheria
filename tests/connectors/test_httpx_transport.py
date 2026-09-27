@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import httpx
 import pytest
-from connectors.net import PoliteFetcher, RobotsDisallowed, RobotsUnretrievable
+from connectors.net import PoliteFetcher
 from connectors.transports import HttpxTransport, default_user_agent
 from policy.crawler import CircumventionError, circumvention_techniques
 
@@ -166,37 +166,49 @@ def test_robots_404_permits_the_fetch_end_to_end() -> None:
     assert fetcher.robots_outcomes["x.test"]["outcome"] == "no_policy_4xx"
 
 
-def test_robots_5xx_is_unavailable_refused_end_to_end() -> None:
-    # A 5xx robots answer is "unavailable" — refused, never read as "no policy".
+def test_robots_5xx_is_unavailable_recorded_not_refused_end_to_end() -> None:
+    # A 5xx robots answer is "unavailable" — never read as "no policy" — and
+    # under GL-GATE-08 / ADR-088 recorded-but-not-enforced: the data fetch
+    # proceeds and is marked robots_disregarded.
     def handler(request: httpx.Request) -> httpx.Response:
-        return httpx.Response(503)
+        if request.url.path == "/robots.txt":
+            return httpx.Response(503)
+        return httpx.Response(200, text="{}", headers={"Content-Type": "application/json"})
 
     transport = HttpxTransport(client=_client(handler))
     fetcher = PoliteFetcher(connector_name="test", connector_version="1", transport=transport)
-    with pytest.raises(RobotsUnretrievable):
-        fetcher.fetch("https://x.test/data")
+    result = fetcher.fetch("https://x.test/data")
+    assert result.status == 200
     assert fetcher.robots_outcomes["x.test"]["outcome"] == "unretrievable"
+    assert fetcher.robots_disregarded == [
+        {"url": "https://x.test/data", "host": "x.test", "verdict": "unretrievable"}
+    ]
 
 
-def test_robots_disallowed_path_is_never_requested() -> None:
-    # AC: a robots-disallowed path is never requested. The PoliteFetcher checks
-    # robots before egress, so the transport's request handler never sees it.
+def test_robots_disallowed_path_is_fetched_and_marked() -> None:
+    # GL-GATE-08 / ADR-088: a robots-disallowed path IS now requested — the
+    # verdict is probed, recorded, and the fetch is marked robots_disregarded
+    # (recorded-not-enforced). The robots probe still precedes egress.
     requested_paths: list[str] = []
 
     def handler(request: httpx.Request) -> httpx.Response:
         requested_paths.append(request.url.path)
         if request.url.path == "/robots.txt":
             return httpx.Response(200, text="User-agent: *\nDisallow: /private\n")
-        return httpx.Response(200, text="should-not-happen")
+        return httpx.Response(200, text="content")
 
     transport = HttpxTransport(client=_client(handler))
     fetcher = PoliteFetcher(connector_name="test", connector_version="1", transport=transport)
-    with pytest.raises(RobotsDisallowed):
-        fetcher.fetch("https://x.test/private/secret")
-    assert "/private/secret" not in requested_paths
-    assert requested_paths == ["/robots.txt"], (
-        "only robots.txt was fetched, never the disallowed URL"
-    )
+    result = fetcher.fetch("https://x.test/private/secret")
+    assert result.status == 200
+    assert requested_paths == ["/robots.txt", "/private/secret"]
+    assert fetcher.robots_disregarded == [
+        {
+            "url": "https://x.test/private/secret",
+            "host": "x.test",
+            "verdict": "disallowed",
+        }
+    ]
 
 
 def test_transport_refuses_a_configured_circumvention_technique() -> None:
