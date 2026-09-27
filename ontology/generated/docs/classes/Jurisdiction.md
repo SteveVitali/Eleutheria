@@ -248,6 +248,7 @@ attributes:
     domain_of:
     - Jurisdiction
     - Organization
+    - ClaimQualifier
     - Edge
     range: edtf
   valid_to:
@@ -256,6 +257,7 @@ attributes:
     domain_of:
     - Jurisdiction
     - Organization
+    - ClaimQualifier
     - Edge
     range: edtf
 
@@ -368,6 +370,7 @@ attributes:
     domain_of:
     - Jurisdiction
     - Organization
+    - ClaimQualifier
     - Edge
     range: edtf
   valid_to:
@@ -377,6 +380,7 @@ attributes:
     domain_of:
     - Jurisdiction
     - Organization
+    - ClaimQualifier
     - Edge
     range: edtf
   id:

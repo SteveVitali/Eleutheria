@@ -324,6 +324,7 @@ attributes:
     - Organization
     - Deployment
     - LegalInstrument
+    - ClaimQualifier
     range: Jurisdiction
   contracted_device_count:
     name: contracted_device_count
@@ -491,6 +492,7 @@ attributes:
     - Organization
     - Deployment
     - LegalInstrument
+    - ClaimQualifier
     range: Jurisdiction
   contracted_device_count:
     name: contracted_device_count

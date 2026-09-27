@@ -38,12 +38,6 @@ URI: [sig:enum/Role](https://ontology.sig-project.org/schema/enum/Role)
 
 
 
-## Slots
-
-| Name | Description |
-| ---  | --- |
-| [role](../slots/role.md) |  |
-
 
 
 

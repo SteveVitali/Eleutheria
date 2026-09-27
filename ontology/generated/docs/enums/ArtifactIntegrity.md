@@ -32,6 +32,7 @@ URI: [sig:enum/ArtifactIntegrity](https://ontology.sig-project.org/schema/enum/A
 | Name | Description |
 | ---  | --- |
 | [integrity](../slots/integrity.md) |  |
+| [artifact_integrity](../slots/artifact_integrity.md) |  |
 
 
 

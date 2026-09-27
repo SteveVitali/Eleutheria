@@ -21,6 +21,7 @@ URI: [sig:slot/sensitivity_tier](https://ontology.sig-project.org/schema/slot/se
 | Name | Description | Modifies Slot |
 | --- | --- | --- |
 | [PhysicalAsset](../classes/PhysicalAsset.md) | A field-observed device; geometry is OPTIONAL and operator absence is a first... |  no  |
+| [Claim](../classes/Claim.md) | An append-only assertion (subject, predicate, value,  |  no  |
 
 
 
@@ -34,19 +35,12 @@ URI: [sig:slot/sensitivity_tier](https://ontology.sig-project.org/schema/slot/se
 | Property | Value |
 | --- | --- |
 | Range | [String](../types/String.md) |
-| Domain Of | [PhysicalAsset](../classes/PhysicalAsset.md) |
+| Domain Of | [PhysicalAsset](../classes/PhysicalAsset.md), [Claim](../classes/Claim.md) |
 
 ### Cardinality and Requirements
 
 | Property | Value |
 | --- | --- |
-### Slot Characteristics
-
-| Property | Value |
-| --- | --- |
-| Owner | [PhysicalAsset](../classes/PhysicalAsset.md) |
-
-
 
 
 
@@ -60,13 +54,6 @@ URI: [sig:slot/sensitivity_tier](https://ontology.sig-project.org/schema/slot/se
 ## Identifier and Mapping Information
 
 
-
-
-
-### Schema Source
-
-
-* from schema: https://ontology.sig-project.org/schema/sig
 
 
 
@@ -86,11 +73,9 @@ URI: [sig:slot/sensitivity_tier](https://ontology.sig-project.org/schema/slot/se
 <details>
 ```yaml
 name: sensitivity_tier
-from_schema: https://ontology.sig-project.org/schema/sig
-rank: 1000
-owner: PhysicalAsset
 domain_of:
 - PhysicalAsset
+- Claim
 range: string
 
 ```

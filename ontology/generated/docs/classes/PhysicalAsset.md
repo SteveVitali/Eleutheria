@@ -258,6 +258,7 @@ attributes:
     rank: 1000
     domain_of:
     - PhysicalAsset
+    - Claim
     range: string
   confirmation_status:
     name: confirmation_status
@@ -376,6 +377,7 @@ attributes:
     owner: PhysicalAsset
     domain_of:
     - PhysicalAsset
+    - Claim
     range: string
   confirmation_status:
     name: confirmation_status

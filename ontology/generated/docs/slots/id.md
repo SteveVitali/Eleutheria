@@ -50,6 +50,9 @@ URI: [sig:slot/id](https://ontology.sig-project.org/schema/slot/id)
 | [EvidenceCapture](../classes/EvidenceCapture.md) | A content-addressed capture of an artifact at a time (§10 |  no  |
 | [Extraction](../classes/Extraction.md) | A run that extracted claims from a capture (§10 |  no  |
 | [Claim](../classes/Claim.md) | An append-only assertion (subject, predicate, value,  |  no  |
+| [ClaimEvidence](../classes/ClaimEvidence.md) | One claim↔capture evidence link (§16 |  no  |
+| [ClaimQualifier](../classes/ClaimQualifier.md) | One typed qualifier statement on a claim (§16 |  no  |
+| [AssertionQuarantine](../classes/AssertionQuarantine.md) | The append-only fail-closed landing for a rejected assertion (SIG-TRUST-001):... |  no  |
 | [Resolution](../classes/Resolution.md) | A stored current-best decision record (§16 |  no  |
 | [Contradiction](../classes/Contradiction.md) | A first-class, addressable contradiction object (§31) |  no  |
 | [ResearchTask](../classes/ResearchTask.md) | [NEW] A research task as an object (§11 |  no  |

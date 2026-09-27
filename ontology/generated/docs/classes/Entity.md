@@ -74,6 +74,12 @@ URI: [sig:class/Entity](https://ontology.sig-project.org/schema/class/Entity)
         click Extraction href "../../classes/Extraction/"
       Entity <|-- Claim
         click Claim href "../../classes/Claim/"
+      Entity <|-- ClaimEvidence
+        click ClaimEvidence href "../../classes/ClaimEvidence/"
+      Entity <|-- ClaimQualifier
+        click ClaimQualifier href "../../classes/ClaimQualifier/"
+      Entity <|-- AssertionQuarantine
+        click AssertionQuarantine href "../../classes/AssertionQuarantine/"
       Entity <|-- Resolution
         click Resolution href "../../classes/Resolution/"
       Entity <|-- Contradiction
@@ -118,6 +124,9 @@ URI: [sig:class/Entity](https://ontology.sig-project.org/schema/class/Entity)
     * [EvidenceCapture](../classes/EvidenceCapture.md)
     * [Extraction](../classes/Extraction.md)
     * [Claim](../classes/Claim.md)
+    * [ClaimEvidence](../classes/ClaimEvidence.md)
+    * [ClaimQualifier](../classes/ClaimQualifier.md)
+    * [AssertionQuarantine](../classes/AssertionQuarantine.md)
     * [Resolution](../classes/Resolution.md)
     * [Contradiction](../classes/Contradiction.md)
     * [ResearchTask](../classes/ResearchTask.md)

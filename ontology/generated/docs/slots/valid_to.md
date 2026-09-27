@@ -27,6 +27,7 @@ URI: [sig:slot/valid_to](https://ontology.sig-project.org/schema/slot/valid_to)
 | --- | --- | --- |
 | [Jurisdiction](../classes/Jurisdiction.md) | [NEW] A first-class jurisdiction with a self-referential hierarchy, a pluggab... |  no  |
 | [Organization](../classes/Organization.md) | The single entity for ALL institutional actors; "vendor" is a role, not a sub... |  no  |
+| [ClaimQualifier](../classes/ClaimQualifier.md) | One typed qualifier statement on a claim (§16 |  no  |
 | [Edge](../classes/Edge.md) | Universal edge requirements (§12 |  no  |
 | [AccessRelationship](../classes/AccessRelationship.md) | A sharing/access relationship; direction, scope, automaticity, and kind are a... |  no  |
 | [IntegrationEdge](../classes/IntegrationEdge.md) | A data-bearing integration edge (§12 |  no  |
@@ -46,7 +47,7 @@ URI: [sig:slot/valid_to](https://ontology.sig-project.org/schema/slot/valid_to)
 | Property | Value |
 | --- | --- |
 | Range | [Edtf](../types/Edtf.md) |
-| Domain Of | [Jurisdiction](../classes/Jurisdiction.md), [Organization](../classes/Organization.md), [Edge](../classes/Edge.md) |
+| Domain Of | [Jurisdiction](../classes/Jurisdiction.md), [Organization](../classes/Organization.md), [ClaimQualifier](../classes/ClaimQualifier.md), [Edge](../classes/Edge.md) |
 
 ### Cardinality and Requirements
 
@@ -97,6 +98,7 @@ rank: 1000
 domain_of:
 - Jurisdiction
 - Organization
+- ClaimQualifier
 - Edge
 range: edtf
 

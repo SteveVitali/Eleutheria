@@ -23,6 +23,7 @@ URI: [sig:slot/jurisdiction](https://ontology.sig-project.org/schema/slot/jurisd
 | [Organization](../classes/Organization.md) | The single entity for ALL institutional actors; "vendor" is a role, not a sub... |  no  |
 | [Deployment](../classes/Deployment.md) | The bridge between organizational adoption and individual devices; creatable ... |  no  |
 | [LegalInstrument](../classes/LegalInstrument.md) | [NEW] Laws and regulations as a modelled entity (§11 |  no  |
+| [ClaimQualifier](../classes/ClaimQualifier.md) | One typed qualifier statement on a claim (§16 |  no  |
 
 
 
@@ -36,7 +37,7 @@ URI: [sig:slot/jurisdiction](https://ontology.sig-project.org/schema/slot/jurisd
 | Property | Value |
 | --- | --- |
 | Range | [String](../types/String.md) |
-| Domain Of | [Organization](../classes/Organization.md), [Deployment](../classes/Deployment.md), [LegalInstrument](../classes/LegalInstrument.md) |
+| Domain Of | [Organization](../classes/Organization.md), [Deployment](../classes/Deployment.md), [LegalInstrument](../classes/LegalInstrument.md), [ClaimQualifier](../classes/ClaimQualifier.md) |
 
 ### Cardinality and Requirements
 
@@ -78,6 +79,7 @@ domain_of:
 - Organization
 - Deployment
 - LegalInstrument
+- ClaimQualifier
 range: string
 
 ```
