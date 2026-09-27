@@ -124,6 +124,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-117](ADR-117-presentation-analytics-emitted-by-the-spine-export.md) | — | — | Accepted |
 | [ADR-118](ADR-118-per-compartment-vector-tiles-compression-and-points-json-retirement.md) | — | — | Accepted |
 | [ADR-119](ADR-119-project-id-leak-check-scoped-to-code-and-config.md) | — | — | Accepted |
+| [ADR-120](ADR-120-six-stream-integrity-investigation-and-memory-extension.md) | — | — | — |
 
 ## Notes
 

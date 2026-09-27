@@ -45,9 +45,9 @@ def test_reserved_set_matches_the_ticket() -> None:
     assert {"SIG-ENG-006", "SIG-ENG-009", "SIG-ENG-028", "SIG-ENG-029"} <= mod.RESERVED
 
 
-def test_fold_back_count_is_three() -> None:
+def test_fold_back_count_includes_declared_extensions() -> None:
     assert mod.EXPECTED_IDS == mod.BASELINE_IDS + len(mod.FOLD_BACK_IDS)
-    assert mod.EXPECTED_IDS == 671
+    assert mod.EXPECTED_IDS == 715
 
 
 def test_appendix_f_ids_parses_rows() -> None:

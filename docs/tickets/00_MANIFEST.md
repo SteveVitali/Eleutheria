@@ -1,5 +1,7 @@
 # SIG build manifest — the ticket chain
 
+> **Current dispatch amendment — Round 10 import (2026-09-27 UTC).** After the completed P31.19 boundary, continue at row 161 / P32.1, then all 40 new rows through P33.8. CURRENT STATE is round 10 / IN-PROGRESS; there is no SETUP or Round-9 CAPSTONE dispatch. Every worker forks from the freshly read ledger chainTip and actual current HEAD, including the planning seed; older fixed-base wording cannot discard it. Physical manifest order controls execution. P31.17 remains dropped; the moved P31.18 scope is now HUMAN-H4 → P32.22a → HUMAN-H5 → P32.23. Existing human decisions and return passes persist; the new markers require their own actual evidence and authority. Integration evidence: `docs/build/planning/2026-09-25-six-streams/integration/2026-09-26-after-p31-19.md`.
+
 This directory is the **execution runbook** for building SIG (Surveillance Infrastructure Graph)
 as a chain of **46 reviewable PRs**. Each `PXX[.Y]__*.md` file is a self-contained `implement-spec`
 contract derived from `docs/2_canonical_design_spec.md` (Part X phases).
@@ -342,6 +344,57 @@ retroactively), 20 = reconciliation & release, 21 = operationalization toward on
 > stay in `round9-drafts/`, marked. Next free ADR at seed: **ADR-112** (minted by the owning tickets in chain order).
 > All Lane **C**. Backlog homes **BL-055/056/057** (no new BL). `nextTicket: P31.5`; `round: 9`; `chainTip:
 > devin/round9-waveb-seed`.
+
+<!-- six-stream-round10:start -->
+
+> **Round 10 — six-stream integrity and investigation plan (2026-09-25; isolated planning branch).** Engineering/specification design is authorized. This extension does not advance CURRENT STATE or sign gates. Reconcile after P31.19 using `docs/build/planning/2026-09-25-six-streams/HANDOFF.md`. The 28 feature contracts, three prerequisite/publication markers and full nine-row tail (including acceptance marker) total 40 new rows.
+
+| # | Ticket file | Phase | Kind | Lane | Scope | Gate |
+|---|---|---|---|---|---|---|
+| 161 | `161_P32.1__baseline-and-memory-audit.md` | 32 | ticket | C | **S6** — Reconcile the landed baseline and parse current obligations; depends P31.19. | none; engineering only |
+| 162 | `162_P32.2__typed-claims-and-capture-bindings.md` | 32 | ticket | C | **S1** — Preserve typed assertions and actual capture provenance; depends P32.1. | none; engineering only |
+| 163 | `163_P32.3__roles-counts-and-organization-identity.md` | 32 | ticket | C | **S1** — Repair role semantics and conservative organization identity; depends P32.2. | none; engineering only |
+| 164 | `164_P32.4__shared-temporal-read-contract.md` | 32 | ticket | C | **S1** — Unify bitemporal occurrence selection across all readers; depends P32.2. | none; engineering only |
+| 165 | `165_P32.5__publication-dispositions-and-filtering.md` | 32 | ticket | C | **S1** — Apply one publication and correction eligibility policy; depends P32.3, P32.4. | none; engineering only |
+| 166 | `166_P32.6__legacy-evidence-audit-and-recovery-plan.md` | 32 | ticket | C | **S1** — Build the legacy evidence audit and recovery planner; depends P32.5. | none; engineering only |
+| 167 | `167_P32.7__memory-events-and-current-projection.md` | 32 | ticket | C | **S6** — Record evidence-backed obligation transitions and current views; depends P32.1. | none; engineering only |
+| 168 | `168_P32.8__memory-concurrency-and-recovery.md` | 32 | ticket | C | **S6** — Make validation and interrupted closeout safe across worktrees; depends P32.7. | engineering may finish in shadow mode; operator ticket-boundary cutover required to activate all workflow entry points (D-R10-MEMORY-1) |
+| 169 | `169_P32.9__human-evaluation-protocol-and-packets.md` | 32 | ticket | C | **S3** — Prepare independent blinded human evaluation campaigns; depends P32.2, P32.3, P31.10, P31.11. | none; engineering only |
+| 170 | `170_P32.10__resolution-evaluator-and-confidence-gates.md` | 32 | ticket | C | **S3** — Implement design-aware resolution evaluation and safe eligibility; depends P32.9. | none; engineering only |
+| 171 | `171_P32.11__gap-driven-source-discovery.md` | 32 | ticket | C | **S5** — Make acquisition a gap-driven reviewed queue; depends P32.1. | none; engineering only |
+| 172 | `172_P32.12__dossier-document-adapters.md` | 32 | ticket | C | **S5** — Add bounded document adapters for the pilot dossiers; depends P32.2, P32.3, P32.11. | none; engineering only |
+| 173 | `173_P32.13__immutable-releases-and-records.md` | 32 | ticket | C | **S4** — Build immutable release namespaces and specific record routes; depends P32.4, P32.5, P31.14, P31.15. | none; engineering only |
+| 174 | `174_P32.14__full-corpus-release-search.md` | 32 | ticket | C | **S4** — Search the full eligible released corpus; depends P32.13. | none; engineering only |
+| 175 | `175_P32.15__coordinated-investigation-workspace.md` | 32 | ticket | C | **S4** — Coordinate investigation views and bounded static navigation; depends P32.13, P32.14, P31.15. | none; engineering only |
+| 176 | `176_P32.16__anonymous-correction-intake.md` | 32 | ticket | C | **S4** — Deliver durable anonymous correction intake and private moderation; depends P32.5, P32.13. | none; engineering only |
+| 177 | `177_P32.16a__reviewed-correction-application.md` | 32 | ticket | C | **S4** — Apply approved corrections through the canonical disposition path; depends P32.16, P32.5. | engineering only; real corrections require authorized curator decision and existing publication policy |
+| 178 | `178_P32.17__dossier-schema-and-completion.md` | 32 | ticket | C | **S2** — Define and render evidence-complete dossier portfolios; depends P32.3, P32.5, P32.13, P32.12. | none; engineering only |
+| 179 | `179_P32.18__oklahoma-city-evidence-dossier.md` | 32 | ticket | C | **S2** — Complete the Oklahoma City dossier and seed correction packet; depends P32.6, P32.12, P32.17. | HG-03/source and evidence-use review for any new capture; HG-11 only at public release |
+| 180 | `180_P32.19__tulsa-evidence-dossier.md` | 32 | ticket | C | **S2** — Complete the Tulsa dossier with template and policy distinctions; depends P32.12, P32.17. | HG-03/source and evidence-use review for new capture; HG-11 at release |
+| 181 | `181_P32.20__san-diego-evidence-dossier.md` | 32 | ticket | C | **S2** — Complete the San Diego dossier across hardware and subscriptions; depends P32.12, P32.17. | HG-03 plus Part VIII structural preflight; HG-11 at release |
+| 182 | `182_P32.21__source-pilot-and-maintenance-decision.md` | 32 | ticket | C | **S5** — Measure a gap-closing acquisition pilot; depends P32.11, P32.12, P32.18, P32.19, P32.20. | HG-03 for new/changed source rights; external access/budget approvals if needed |
+| 183 | `183_P32.22__bounded-recovery-and-activation.md` | 32 | ticket | C | **S1** — Apply bounded integrity recovery and rematerialize a release candidate; depends P32.6, P32.10, P32.17, P32.21. | operator operational approval and source/policy scope; HG-11 not yet exercised |
+| 184 | `184_HUMAN-H4__human-development-and-dossier-review.md` | 32 | human | A | **S3** — Human development review and dossier semantic acceptance; depends P32.9, P32.10, P32.22. | actual human development and dossier semantic review; never guessed past |
+| 185 | `185_P32.22a__candidate-and-confirmatory-frame-freeze.md` | 32 | ticket | C | **S3** — Freeze the candidate and its confirmatory sampling frame; depends HUMAN-H4, P32.10, P32.22. | signed HUMAN-H4 development/dossier readout; operator confirms final campaign workload |
+| 186 | `186_HUMAN-H5__blinded-confirmatory-human-campaign.md` | 32 | human | A | **S3** — Complete blinded confirmatory adjudication for the frozen candidate; depends P32.22a. | actual independent confirmatory human work; never guessed past |
+| 187 | `187_P32.23__human-evaluation-and-rules-decision.md` | 32 | ticket | C | **S3** — Re-derive resolution decisions from independent human evidence; depends HUMAN-H5, P32.22a, P32.10. | signed HUMAN-H5 final campaign and P32.22a frozen candidate/frame; any policy exception requires a new explicit decision |
+| 188 | `188_P32.23a__post-evaluation-release-candidate.md` | 32 | ticket | C | **S1** — Build one release candidate from the final evaluation decision; depends P32.23, P32.15, P32.16, P32.18, P32.19, P32.20, P32.16a. | operator approved bounded materialization scope; no HG-11 publication here |
+| 189 | `189_P32.24__investigation-journey-verification.md` | 32 | ticket | C | **S4** — Verify the public investigation acceptance portfolio; depends P32.14, P32.15, P32.16, P32.18, P32.19, P32.20, P32.23, P32.23a, P32.16a. | none; engineering only |
+| 190 | `190_GATE-G3__round10-publication-gate.md` | 32 | gate | A | **S4** — Review the Round-10 public release and intake operation; depends P32.23a, P32.24. | HG-11; never guessed past |
+| 191 | `191_P32.25__accepted-release-public-verification.md` | 32 | ticket | C | **S1** — Publish and verify the accepted release with rollback; depends GATE-G3. | signed GATE-G3/HG-11 and concrete exposure approvals |
+| 192 | `192_P33.1__round10-independent-gap-analysis.md` | 33 | capstone | C | **X2** — Independent Round-10 gap analysis; depends P32.25. | none; engineering only |
+| 193 | `193_P33.2__round10-composed-verification.md` | 33 | capstone | C | **X2** — Composed Round-10 verification; depends P33.1. | none; engineering only |
+| 194 | `194_P33.3__round10-capstone-closure.md` | 33 | capstone | C | **X2** — Close Round-10 gaps and present acceptance; depends P33.2. | none; engineering only |
+| 195 | `195_GATE-ACCEPT__round10-acceptance.md` | 33 | gate | A | **X2** — Operator accepts Round-10 closure and deviations; depends P33.3. | HG-14 / round acceptance; never guessed past |
+| 196 | `196_P33.4__round10-backlog-and-readiness.md` | 33 | reconcile | C | **X3** — Reconcile backlog and operational readiness; depends GATE-ACCEPT. | none; engineering only |
+| 197 | `197_P33.5__round10-spec-reconciliation.md` | 33 | reconcile | C | **X3** — Reconcile canonical specification to the landed design; depends P33.4. | none; engineering only |
+| 198 | `198_P33.6__round10-integration-plan.md` | 33 | reconcile | C | **X3** — Prepare safe stack integration and operator handoff; depends P33.5. | none; engineering only |
+| 199 | `199_P33.7__round10-repo-docs-refresh.md` | 33 | docs | C | **S6** — Refresh human-facing project documentation; depends P33.6. | none; engineering only |
+| 200 | `200_P33.8__round10-agent-docs-refresh.md` | 33 | docs | C | **S6** — Refresh agent guidance and close the memory chain; depends P33.7. | none; engineering only |
+
+> **Critical sequence:** P32.22 freezes repaired inputs → HUMAN-H4 development labels and dossier semantic review → P32.22a freezes candidate then draws its confirmatory sample → HUMAN-H5 final blinded labels → P32.23 one evaluation → P32.23a rebuilt candidate → P32.24 verification → GATE-G3 HG-11 → P32.25 publication. New memory/evaluation enforcement has explicit shadow/activation decisions. Rights/live/exposure gates remain separate; no marker is guessed past.
+
+<!-- six-stream-round10:end -->
 
 ## Phase gates & special points
 - **Integration is an operator action after the chain** (`docs/build/INTEGRATION_PLAN.md` §(d)); no ticket merges PRs; all rows 47–65 stack on `devin/p18-2-france-belgium`. P20.3 writes the read-only `merge_dryrun.sh` + the bottom-up merge + `v0.1.0` tag/release procedure and bumps versions to `0.1.0`, but merges/tags nothing (HG-05 is the post-chain operator action).

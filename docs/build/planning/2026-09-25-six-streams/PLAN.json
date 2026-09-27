@@ -1,0 +1,1542 @@
+{
+  "schema": "sig.six_stream_plan/v1",
+  "date": "2026-09-25",
+  "baseline": "0e57e6461d6a5db2e8e0042464750ce2ea65db5e",
+  "round": 10,
+  "activation": "Seeded after completed P31.19; resume P32.1 after verified PR/checkout handoff in integration/2026-09-26-after-p31-19.md. CURRENT STATE in docs/build/LEDGER.md is execution authority.",
+  "requirements": {
+    "SIG-MEM-001": {
+      "section": "55.7",
+      "level": "MUST",
+      "text": "At a round boundary, reconcile the actual landed predecessor against the proposed dependency map and record demonstrated defects, hypotheses, already-closed seams and still-owed work separately. A planning branch must not advance another active orchestrator’s control state. Every new requirement has exactly one implementation owner and an explicit verification domain."
+    },
+    "SIG-TRUST-001": {
+      "section": "55.2",
+      "level": "MUST",
+      "text": "The production assertion interface must preserve typed value, raw lexical value, unit, scope, valid time, epistemic axes, sensitivity, compartment and derivation/correction links. Defaults require a named versioned mapping and an explicit basis; absent fields must not silently become stronger evidence or lower sensitivity. Unknown predicate/type combinations fail closed or enter an explicit quarantine, without making an otherwise valid entity disappear."
+    },
+    "SIG-TRUST-002": {
+      "section": "55.2",
+      "level": "MUST",
+      "text": "Every newly asserted claim and live re-sighting must bind the actual captured artifact consumed by extraction, including digest, retrieval time, extractor/config identity and a typed locator or an explicit document-only limitation. Replay retains original observation time and separately records replay assertion time. Legacy synthetic provenance remains identified as legacy; exact replayability must be measured, not inferred from source_id presence."
+    },
+    "SIG-TRUST-003": {
+      "section": "55.2",
+      "level": "MUST",
+      "text": "Publishers, hosts, operators, owners, vendors, prime contractors, funders and access partners must remain distinct roles unless evidence explicitly relates them. Templates, recommendations, awards, subscriptions and deployments retain their different legal/operational status. Count comparison requires compatible subject, capability, population, geography, time and measurement basis; approximate derived sums preserve their inputs, arithmetic and uncertainty."
+    },
+    "SIG-TRUST-004": {
+      "section": "55.2",
+      "level": "MUST",
+      "text": "Organization resolution must prefer scoped external identifiers and treat normalized-name-only identities as review candidates when jurisdiction or institutional scope is unknown or ambiguous. Repairing an existing false union or split must append reviewed identity dispositions and stable-id redirects; it must not overwrite historical entities, keys or claims. A source publisher label is not an identity proof for the observed operator."
+    },
+    "SIG-TRUST-005": {
+      "section": "55.2",
+      "level": "MUST",
+      "text": "Resolver, reconciliation, camera-site materialization, API and export must share one versioned temporal eligibility contract. Eligible occurrences are bounded by belief time and asserted valid-world time; retrieval-time fallback is labeled. Select the latest establishing occurrence within each source assertion/source-record lineage, preserving concurrent independent candidates and atomic fields; explicit resolution policy chooses or abstains. Selection uses occurrence time and deterministic tie-breakers, not claim-id order. Later captures cannot alter a past-belief answer, and A→B→A, replays, corrections and equal timestamps must have cross-consumer conformance tests."
+    },
+    "SIG-TRUST-006": {
+      "section": "55.2",
+      "level": "MUST",
+      "text": "Every public consumer, including indexes, tiles, analytics and relationship endpoints, must apply the same reviewed eligibility/disposition policy. Publication-review flags, sensitivity, rights restrictions and correction/withdrawal state must be consumed, with a recorded policy version and reason. Withheld endpoints cannot leak through labels or edge topology. Historical claims remain append-only; legitimate public withdrawals yield an honest policy-controlled tombstone. Current access withdrawals override historical availability during activation, rollback and every operator-controlled origin/cache/artifact path; deny an unsafe whole artifact rather than rewrite bytes under its identity."
+    },
+    "SIG-TRUST-007": {
+      "section": "55.2",
+      "level": "MUST",
+      "text": "A historical provenance and semantic audit must report a reproducible sampling frame and denominators for exact replayability, locatability, unsupported role mappings, count comparability and publication eligibility. Recovery requires preserved bytes plus provable lineage; unavailable evidence is reported explicitly and cannot be reconstructed by pretending a new fetch is the old capture. Repairs are bounded, resumable, dry-runnable and append-only."
+    },
+    "SIG-TRUST-008": {
+      "section": "55.8",
+      "level": "MUST",
+      "text": "Production recovery and activation must execute from a reviewed, resource-bounded plan with pinned code, input selection, before/after inventory, idempotence proof and rollback via new dispositions or prior released artifacts. Source-rights and operational approvals remain binding. Calendar-dependent checks, including the reserved 2026-10-10 replay, cannot be marked complete before their observed execution."
+    },
+    "SIG-TRUST-009": {
+      "section": "55.8",
+      "level": "MUST",
+      "text": "A new public release requires a complete release candidate, change/withholding summary, verified source and publication authority, evaluation disclosure, tested intake operating ownership, and the existing human publication gate. Publication must be atomic, followed by unauthenticated verification against expected digests and a tested prior-release rollback. A planning artifact, successful build or agent judgment cannot sign this gate."
+    },
+    "SIG-MEM-002": {
+      "section": "55.7",
+      "level": "MUST",
+      "text": "Current obligation and requirement assessments must be derived from explicit evidence-backed transitions, retaining historical statuses and scope-specific assessments. Conflicting legacy status text requires recorded reconciliation; ambiguity stays open. A deterministic current-state view records input hashes and revision, separates fixture/DB/hosted/public evidence, lists every outstanding owner/landing, and detects stale inputs without modifying the control ledger."
+    },
+    "SIG-MEM-003": {
+      "section": "55.7",
+      "level": "MUST",
+      "text": "Build validation and closeout must be safe across worktrees: reports have unique or caller-selected destinations and input identities; control writes use expected-state preconditions and a scoped single-writer protocol. Idempotent recovery keyed by ticket, implementation revision and PR identity must handle interruption between code and memory commits without duplicate advancement, duplicate PR creation or invented closure. Every worker and orchestrator repair path shares one authoritative chain-head check and a prepared/external-known/memory-committed/acknowledged operation protocol. Atomicity is at a validated git tree/commit, not arbitrary uncommitted files; workflow activation stays shadow-only until a verified operator-approved cutover."
+    },
+    "SIG-MEM-004": {
+      "section": "55.7",
+      "level": "MUST",
+      "text": "Repository and agent guidance must state the current implemented architecture and the governing ADR supersession chain, with tested command references. Compact orientation views must preserve links to obligations and full history; they cannot replace mandatory ticket loads or erase uncertainty. Documentation refresh follows actual implementation and validates the nearest-file instruction hierarchy."
+    },
+    "SIG-EVAL-001": {
+      "section": "55.4",
+      "level": "MUST",
+      "text": "Resolution evaluation must use a preregistered campaign with a frozen source snapshot, explicit target population, sampling frame, inclusion probabilities, strata, grouping, split assignment, seed and ruleset identity. Training, calibration and sealed test sets must be separated at entity/component and duplicated upstream-record lineage boundaries; whole source families are held out when claiming unseen-family generalization. A changed model or unblinded test set requires a new evaluation decision; tuning on the test set is prohibited."
+    },
+    "SIG-EVAL-002": {
+      "section": "55.4",
+      "level": "MUST",
+      "text": "Independent human labels must be recorded append-only with pseudonymous reviewer identity, evidence references, reason and one of same-device, different-device or insufficient-evidence. Reviewers are blinded to model/previous-label predictions during first pass; two independent labels and an adjudication process preserve disagreements and abstentions. Evaluation labels are distinct from operational accept/reject decisions; agents and LLMs cannot impersonate human adjudication."
+    },
+    "SIG-EVAL-003": {
+      "section": "55.4",
+      "level": "MUST",
+      "text": "Reports must distinguish auto-positive precision, candidate-generation recall, whole-cluster quality and labelability. They must state numerator, denominator, sampling weights, uncertainty method and population limits. Unresolved/missing evidence cannot be dropped to improve a gate. Correlated pairs and enriched diagnostic samples cannot be treated as independent representative Bernoulli trials without a justified design; a pair sample alone cannot establish whole-cluster recall."
+    },
+    "SIG-EVAL-004": {
+      "section": "55.4",
+      "level": "MUST",
+      "text": "Auto-write eligibility must use a preregistered lower confidence bound of at least 0.98 on strict precision for each authorized tier, with simultaneous-error control across tested tiers and a fixed sampling/stopping rule. Insufficient evidence demotes or retains provisional/review-only status. The interval method must match the sampling design; point estimates, favorable resampling and optional stopping cannot establish eligibility. LLM agreement is supplementary, never a substitute for human ground truth."
+    },
+    "SIG-EVAL-005": {
+      "section": "55.4",
+      "level": "MUST",
+      "text": "A rule/threshold candidate must be derived only from development/calibration data and frozen before its confirmatory sampling frame is drawn. After the independent final campaign, evaluate that fixed candidate once, with a new ADR recording losses, coverage, uncertainty, failures and rollback. Further candidate changes after unsealing require a new independent frame/sample/campaign. Human decisions must be verified through the P31 review-to-clustering seam; failed/inconclusive assessments retain provisional disclosures and owed deferrals."
+    },
+    "SIG-EVAL-006": {
+      "section": "55.4",
+      "level": "MUST",
+      "text": "Published evaluation claims must identify exactly the tiers, populations, geography/source mix, model/ruleset and time window supported by the assessment. Drift in input mix, extraction semantics or matching rules triggers reassessment; successful evaluation of selected camera-site tiers cannot certify organization identities, all graph edges or overall surveillance coverage."
+    },
+    "SIG-ACQ-001": {
+      "section": "55.6",
+      "level": "MUST",
+      "text": "Source discovery must start from a named evidence/question/relationship gap or justified national need, record search provenance and access checks, and distinguish existing registry entries, planned P31 work, mirrors and genuinely new candidates. Candidate value is measured as supported new relationships or closed gaps after deduplication, not raw claim volume."
+    },
+    "SIG-ACQ-002": {
+      "section": "55.6",
+      "level": "MUST",
+      "text": "A candidate must carry authority, target predicates, scope/time, lineage independence, extractability, refresh cost, rights basis and Part VIII preflight before prioritization. Rights and sensitive-data barriers are hard gates, not scores that usefulness can offset. Raw document licensing, factual extraction and public derived-artifact licensing must be assessed separately; municipal publication alone does not imply federal public-domain status."
+    },
+    "SIG-ACQ-003": {
+      "section": "55.6",
+      "level": "MUST",
+      "text": "New acquisition adapters must use the existing connector stages, typed assertion contract, capture store and fail-closed loader. Fixtures must include templates versus executed instruments, publication versus effective dates, subscriptions versus hardware, contractor roles, exceptions and missing/redacted fields. New source rows default to ingestion_permitted=false; fixture success neither clears rights nor proves live access."
+    },
+    "SIG-ACQ-004": {
+      "section": "55.6",
+      "level": "MUST",
+      "text": "A bounded source pilot must publish selection rationale, actual access/capture/extraction/link/publication funnel, unique evidence-lineage contribution, review burden, cost and maintenance outcome. A stop/continue decision must use measured gap closure and failure reasons. Sources owned by P31 are consumed or improved rather than onboarded a second time, and no public-records request or outreach is sent without explicit authority."
+    },
+    "SIG-FIND-001": {
+      "section": "55.5",
+      "level": "MUST",
+      "text": "Public records and citations must bind an immutable release manifest pinning input snapshot, code, ontology, policy, ruleset, world/belief cutoffs, compartment licenses, artifact digests and completeness. A pre-render namespace hashes canonical ID-free projection roots and interpretation/renderer inputs; a separate final integrity digest covers emitted artifact checksums, avoiding self-reference. Serialization and atomic latest-pointer publication are specified. Release-specific content never silently changes; a withdrawn or unavailable artifact returns an honest tombstone or unavailable state."
+    },
+    "SIG-FIND-002": {
+      "section": "55.5",
+      "level": "MUST",
+      "text": "Every eligible public record must have a release- and compartment-specific stable route and evidence/claim anchors, with no-JS access. A citation resolves the represented released bytes and interpretation. Unsupported historical selectors are explicitly rejected or mapped to a real release; an ignored query string cannot masquerade as an as-of answer. Record materialization costs must be measured before production rollout."
+    },
+    "SIG-FIND-003": {
+      "section": "55.5",
+      "level": "MUST",
+      "text": "Search must cover all eligible records in the selected release and compartment, including records without locations, with named totals, exact-id lookup, bounded pagination and specific record links. Index construction and query serving preserve compartment/suppression boundaries and release consistency. Full-corpus discovery cannot be implemented as an unlabeled first-N sample or a current-only API behind a historical page."
+    },
+    "SIG-FIND-004": {
+      "section": "55.5",
+      "level": "MUST",
+      "text": "The existing map/search/network islands must share versioned URL state for release, compartment, query, filters and focused record, restore browser navigation and link to equivalent static records/lists. Connections expose qualified edge evidence and bounded expansion; map proximity and graph reachability cannot imply identity or observed access. P31 tile/compression work and the no-basemap decision remain in force."
+    },
+    "SIG-FIND-005": {
+      "section": "55.5",
+      "level": "MUST",
+      "text": "Public static routes and no-JS pagination must meet the existing 150 KiB/zero-script budget; enhanced routes use explicit per-island budgets and retain complete equivalent navigation. Real-sized release fixtures, WCAG 2.2 AA checks, keyboard flow, back/forward state and missing-location records are required acceptance cases. Budget failures must be repaired or explicitly decided, never hidden by testing only demo data."
+    },
+    "SIG-FIND-006": {
+      "section": "55.5",
+      "level": "MUST",
+      "text": "Anonymous correction intake must provide a durable receipt and restricted moderation workflow independent of claim-spine writes. The first receiver accepts bounded allowlisted fields without uploads or server-side URL fetches, minimizes personal data, enforces abuse/retention controls and preserves reviewer-only publication decisions. Public status/log views contain redacted reviewed dispositions, not raw submissions or private receipt/contact information."
+    },
+    "SIG-FIND-007": {
+      "section": "55.5",
+      "level": "MUST",
+      "text": "The public acceptance portfolio must demonstrate place-to-record-to-evidence, relationship-to-qualified-claim, immutable citation and correction-to-reviewed-disposition journeys on the three dossiers and records outside the old sample. Results distinguish automated conformance, agent walkthroughs and actual independent user testing; missing user participation cannot be represented as usability validation."
+    },
+    "SIG-DOS-001": {
+      "section": "55.3",
+      "level": "MUST",
+      "text": "Each research dossier must answer a fixed schema covering capability, owned/accessed hardware, actors and roles, procurement/funding, legal/operational authority, retention, access/sharing, use/oversight, decision dates, changes and unknowns. Every answer has scope/time and a supported, disputed, derived, unknown, withheld or not-applicable state with evidence; absence of an answer is not evidence of absence."
+    },
+    "SIG-DOS-002": {
+      "section": "55.3",
+      "level": "MUST",
+      "text": "Dossier completion requires a fact-to-capture ledger, source search log, comparability review, currentness assessment and an independent adversarial check of every answer class. Publication is blocked by unsupported affirmative claims, misclassified instruments or unconsumed restrictions. Honest documented unknowns are permitted and must generate specific follow-up tasks rather than artificial completeness scores. The pilot uses the fixed twelve-question S2 rubric: at least 28/36, questions 1/5/7/8 at least 2, with material governance/contract/relationship assertions independently reviewed. Incomplete publication is a distinct explicitly accepted scope and does not satisfy pilot completion."
+    },
+    "SIG-DOS-003": {
+      "section": "55.3",
+      "level": "MUST",
+      "text": "The Oklahoma City dossier must distinguish city-owned cameras, private city cameras, metro observations and partner-agency access; label the approximate derived city sum and do not display it as contradictory to a metro count. It must separately establish dates/scope of retention and sharing provisions, renewal terms and applicability of UVED law, preserving exceptions and unknowns. Secondary reports cannot be labeled executed contracts or council minutes."
+    },
+    "SIG-DOS-004": {
+      "section": "55.3",
+      "level": "MUST",
+      "text": "The Tulsa dossier must separate the public private-camera MOU template from any demonstrated executed agreement, distinguish policy effective dates from capture dates, and leave unsupported counts, spend, sharing and usage unknown. A template proves terms offered, not adoption or an active partner relationship. Completeness includes a precise request/research plan for unavailable facts without sending it automatically."
+    },
+    "SIG-DOS-005": {
+      "section": "55.3",
+      "level": "MUST",
+      "text": "The San Diego dossier must distinguish the physical ALPR/streetlight system from subscription-only access to external plate data, identify prime/subcontractor roles only with evidence, and separate annual self-report, oversight recommendation and enacted policy. Network audit data receives a structural Part VIII preflight before any row-level acquisition; public aggregate evidence never licenses person/plate ingestion."
+    },
+    "SIG-TRUST-010": {
+      "section": "55.8",
+      "level": "MUST",
+      "text": "After the final evaluation decision, materialize the selected or safely demoted rules against the frozen approved inputs and regenerate all affected graph, dossier, record, index, tile and analytics artifacts into one new release candidate. Every artifact must pin the same evaluation result, ruleset and snapshot. Pre-evaluation previews cannot satisfy release acceptance; any changed evaluation-relevant inputs require an explicit reassessment decision."
+    },
+    "SIG-FIND-008": {
+      "section": "55.5",
+      "level": "MUST",
+      "text": "An authorized moderation decision must have an idempotent, audited bridge to the canonical append-only correction/disposition workflow, recording submission, proposal, validation, applied assertion/disposition and resulting release identities. The public receiver has no authority to apply it. A receipt is not a correction, and review completion is distinct from application and publication; crashes/retries cannot duplicate or bypass any transition."
+    },
+    "SIG-EVAL-007": {
+      "section": "55.4",
+      "level": "MUST",
+      "text": "Select and freeze the candidate matcher using development/calibration evidence before defining and drawing its confirmatory auto-positive sampling frame. Pin ruleset, eligible edge/tier populations, inclusion probabilities, grouping, sample sizes, seed and hypothesis family before final human labeling. A candidate change that introduces different positives invalidates the old frame; freeze and redraw a new independent assessment rather than carry unsupported inclusion probabilities. Development and final human work have separate markers/readouts."
+    }
+  },
+  "tickets": [
+    {
+      "id": "P32.1",
+      "title": "Reconcile the landed baseline and parse current obligations",
+      "slug": "baseline-and-memory-audit",
+      "stream": "S6",
+      "depends": [
+        "P31.19"
+      ],
+      "requirements": [
+        "SIG-MEM-001"
+      ],
+      "paths": [
+        "docs/build/LEDGER.md",
+        "docs/tickets/DEFERRALS.md",
+        "docs/build/tools/check_backlog.py",
+        "scripts/docs/check-build-memory.sh",
+        "docs/build/planning/2026-09-25-six-streams/integration/2026-09-26-after-p31-19.md"
+      ],
+      "deliverables": [
+        "Record actual P31.19 tip and compare every DESIGN ownership row to landed code, tests, hosted and public evidence; append any scope reductions before dispatching consumers.",
+        "Implement a read-only strict parser and discrepancy report for manifest, ledger, deferrals, coverage and ADR supersessions; no control-state writes.",
+        "Publish named source funnel and evidence-domain definitions; route D-P31.1-1/D-P31.1-3 and unresolved P31 flags explicitly rather than losing them in a new round.",
+        "Use the imported P31.19 closeout and integration receipt as the execution baseline. Reconcile the appended ACCEPT-R8 correction, exact CI head/evidence and dated source-research limitations; preserve the already-signed approval. Confirm the D-P31.1-3 -> P32.2, D-P31.1-1 -> P32.4 and D-P31.5-2 -> P32.5 closure contracts before dispatch."
+      ],
+      "acceptance": [
+        "Malformed/duplicate obligation ids, OPEN-first/DONE-later conflicts and legacy filename forward dependencies are detected by adversarial fixtures.",
+        "No existing human gate or deferral is closed by parsing; baseline inventory names dates, domains, evidence refs and all unresolved delta decisions."
+      ],
+      "gate": "none; engineering only",
+      "live": "offline-only",
+      "kind": "ticket",
+      "sequence": 161,
+      "filename": "161_P32.1__baseline-and-memory-audit.md"
+    },
+    {
+      "id": "P32.2",
+      "title": "Preserve typed assertions and actual capture provenance",
+      "slug": "typed-claims-and-capture-bindings",
+      "stream": "S1",
+      "depends": [
+        "P32.1"
+      ],
+      "requirements": [
+        "SIG-TRUST-001",
+        "SIG-TRUST-002"
+      ],
+      "paths": [
+        "connectors/src/connectors/runner.py",
+        "connectors/src/connectors/pipeline.py",
+        "db/src/db/claim_sink.py",
+        "ontology/",
+        "evidence/"
+      ],
+      "deliverables": [
+        "Own assertion schema/version and connector-to-sink adapter; preserve all qualifier/epistemic/time/privacy fields with explicit legacy defaults.",
+        "Add actual-capture/locator persistence through LinkML generation and additive sqitch deploy/revert/verify as needed; retain old capture identities and compatible existing fields.",
+        "Bind live repeat occurrences and no-network replay to actual captured bytes/config; distinguish extractor failure from unsupported locator.",
+        "Before adapters, publish field-to-existing-LinkML/DB mapping for dossier instrument lifecycle, execution evidence/status, monetary amount/currency/period, actor roles, capability/modality, clause exceptions and applicability jurisdiction/time. Add only missing typed fields through ontology generation, with unknown/redacted states and no person entity creation.",
+        "Close D-P31.1-3 as a read-compatibility seam: an existing entity with one unregistered predicate must still serve its registered admissible facts through the normal eligibility policy. Keep unknown assertions in the spine/review path with an explicit safe omission/legacy indication; never guess a predicate definition or relax fail-closed new ingestion to achieve this."
+      ],
+      "acceptance": [
+        "An end-to-end PG fixture compares every asserted field and locator to persisted values, including nonzero sensitivity and legal-date qualifiers.",
+        "Two different captures in one execution remain individually attributable; bad digest, unknown predicate/type and missing required binding fail closed or quarantine with reason.",
+        "Repeated ingest is idempotent; replay preserves original observation time; old rows remain readable with honest legacy status.",
+        "Identical bytes acquired twice produce one deduplicated blob and two immutable occurrence identities; each binding resolves the correct immutable occurrence metadata/version, not a mutable latest sidecar.",
+        "A PG-backed entity containing registered and unregistered claims returns its eligible registered facts instead of a whole-entity 404; a truly absent entity still returns 404, restricted claims remain withheld, and the unknown claim remains auditable without exposing its unreviewed content."
+      ],
+      "gate": "none; engineering only",
+      "live": "offline-only",
+      "kind": "ticket",
+      "sequence": 162,
+      "filename": "162_P32.2__typed-claims-and-capture-bindings.md"
+    },
+    {
+      "id": "P32.3",
+      "title": "Repair role semantics and conservative organization identity",
+      "slug": "roles-counts-and-organization-identity",
+      "stream": "S1",
+      "depends": [
+        "P32.2"
+      ],
+      "requirements": [
+        "SIG-TRUST-003",
+        "SIG-TRUST-004"
+      ],
+      "paths": [
+        "connectors/src/connectors/dot_511.py",
+        "resolution/src/resolution/partner_identity.py",
+        "resolution/",
+        "inference/src/inference/accountability.py",
+        "ops/src/ops/seed.py"
+      ],
+      "deliverables": [
+        "Own publisher/operator/owner/vendor/prime/access role mapping and source-artifact genre distinction across adapter output and accountability joins.",
+        "Implement scope-qualified count comparability and explicitly derived approximate sums; stop seed data being presented as primary live evidence.",
+        "Design and implement additive identity ambiguity/disposition hooks with jurisdiction/external-id basis; produce a dry-run impact report for legacy name keys."
+      ],
+      "acceptance": [
+        "OSM-contributor publisher label creates no evidenced camera operator; authoritative operator field still does.",
+        "Identical organization names in different jurisdictions do not automatically union; strong same scoped external id still joins; uncertain identity stays a candidate.",
+        "299 metro versus approximate 90+100 city is scope mismatch, while same-scope contradictory captures remain a contradiction; template/subscription/recommendation negative cases pass."
+      ],
+      "gate": "none; engineering only",
+      "live": "offline-only",
+      "kind": "ticket",
+      "sequence": 163,
+      "filename": "163_P32.3__roles-counts-and-organization-identity.md"
+    },
+    {
+      "id": "P32.4",
+      "title": "Unify bitemporal occurrence selection across all readers",
+      "slug": "shared-temporal-read-contract",
+      "stream": "S1",
+      "depends": [
+        "P32.2"
+      ],
+      "requirements": [
+        "SIG-TRUST-005"
+      ],
+      "paths": [
+        "reconcile/src/reconcile/materialize.py",
+        "resolution/src/resolution/camera_sites_pg.py",
+        "api/src/api/store_pg.py",
+        "exports/src/exports/spine_export.py"
+      ],
+      "deliverables": [
+        "Own eligible-occurrence SQL/function and pure conformance model with explicit belief and valid-world bounds, fallback basis and deterministic ties.",
+        "Wire resolver, camera sites, reconciliation, API and export to the common contract; preserve occurrence and evidence references in output.",
+        "Document transaction/snapshot semantics and index/query-plan budget; no claim-id-as-time assumption.",
+        "Append a per-execution materialization completion/result reference even when a recurring input digest reuses an older camera_site_run result. Current selection follows latest completed execution; idempotent retry does not duplicate results.",
+        "Close D-P31.1-1: replace the measured ~10 s annotation-watermark scan with a bounded, snapshot-consistent version lookup/index/materialized watermark or correctly invalidated cache. Define and test invalidation for new claims, corrections and completed materializations; reuse the shared temporal/eligibility contract rather than inventing a second latest-state definition."
+      ],
+      "acceptance": [
+        "A→B→A selects A now, B at the intermediate belief time, and the original A at the earlier time across every consumer.",
+        "A later capture/replay/correction cannot change frozen past-belief output; equal timestamps have stable ordering; future-effective law is not effective early.",
+        "Fixture and PG parity includes empty history, explicit world intervals and undated fallback; query plan is bounded on representative data.",
+        "Two independent sources disagreeing at one time remain concurrent candidates; coordinate pairs cannot mix occurrences across captures.",
+        "A→B→A that reuses an earlier result digest still appends one latest-execution completion/result reference; retry is +0 and no reader remains on B.",
+        "Annotation/shaping requests no longer scan the full claim spine merely to determine freshness. On a named P31-scale fixture, record the query plan and cold/warm/concurrent latency against an explicit serving budget; a new assertion/correction/completion invalidates exactly the affected cached state without cross-tier or historical-belief leakage. The D-P31.1-1 closure includes measured evidence, not only a cache-presence unit test."
+      ],
+      "gate": "none; engineering only",
+      "live": "offline-only",
+      "kind": "ticket",
+      "sequence": 164,
+      "filename": "164_P32.4__shared-temporal-read-contract.md"
+    },
+    {
+      "id": "P32.5",
+      "title": "Apply one publication and correction eligibility policy",
+      "slug": "publication-dispositions-and-filtering",
+      "stream": "S1",
+      "depends": [
+        "P32.3",
+        "P32.4"
+      ],
+      "requirements": [
+        "SIG-TRUST-006"
+      ],
+      "paths": [
+        "policy/",
+        "api/src/api/store_pg.py",
+        "exports/src/exports/shaping.py",
+        "exports/src/exports/spine_export.py",
+        "db/"
+      ],
+      "deliverables": [
+        "Own append-only assertion/identity correction and public withdrawal disposition contract with policy version and authority.",
+        "Consume publication_review_required and restrictions consistently in public API, exports, analytics, tiles, index inputs and edge endpoints.",
+        "Produce an impact inventory for D-P31.5-2; use P31 closure evidence if already fixed, otherwise explicitly own its remaining consumer seam."
+      ],
+      "acceptance": [
+        "A review-pending org is absent from public labels, search, tiles and edges but remains available to authorized review; allowed identities remain visible.",
+        "Disposition at a later belief time leaves earlier permissible history intact, while safety/rights withdrawal yields a truthful tombstone under the approved policy.",
+        "No public entry point can bypass the common selector; additive migration verifies least privilege and no historical UPDATE/DELETE path.",
+        "Withhold in R2 then attempt rollback to R1: all record/search/tile/archive/compressed-origin paths still deny the affected data under current policy."
+      ],
+      "gate": "none; engineering only",
+      "live": "offline-only",
+      "kind": "ticket",
+      "sequence": 165,
+      "filename": "165_P32.5__publication-dispositions-and-filtering.md"
+    },
+    {
+      "id": "P32.6",
+      "title": "Build the legacy evidence audit and recovery planner",
+      "slug": "legacy-evidence-audit-and-recovery-plan",
+      "stream": "S1",
+      "depends": [
+        "P32.5"
+      ],
+      "requirements": [
+        "SIG-TRUST-007"
+      ],
+      "paths": [
+        "ops/",
+        "evidence/",
+        "db/src/db/claim_sink.py",
+        "docs/build/reports/"
+      ],
+      "deliverables": [
+        "Implement reproducible stratified audit over source family, time before/after persistent capture storage, predicate role and compartment.",
+        "Report capture availability and claim-to-evidence lineage independently; generate bounded replay/repair plans with provenance and semantic dispositions.",
+        "Run dry fixtures for recoverable, digest-mismatched, missing and restricted bytes; write a live return-pass packet rather than re-fetching historical evidence."
+      ],
+      "acceptance": [
+        "Audit denominators reconcile to selected input populations; no exact-replayability score is derived solely from source_id.",
+        "Recovery proposes zero writes for ambiguous lineage, preserves unrecoverable status, and restarts without duplicate dispositions.",
+        "Plan estimates row/disk/time growth and cites actual resource ceilings; live mutation is reserved for P32.22.",
+        "Report semantic support over all sampled eligible claims (unresolved counted as not established), plus conditional adjudicated fidelity and adjudication yield separately; missing/ambiguous evidence cannot inflate fidelity by disappearing."
+      ],
+      "gate": "none; engineering only",
+      "live": "offline-only",
+      "kind": "ticket",
+      "sequence": 166,
+      "filename": "166_P32.6__legacy-evidence-audit-and-recovery-plan.md"
+    },
+    {
+      "id": "P32.7",
+      "title": "Record evidence-backed obligation transitions and current views",
+      "slug": "memory-events-and-current-projection",
+      "stream": "S6",
+      "depends": [
+        "P32.1"
+      ],
+      "requirements": [
+        "SIG-MEM-002"
+      ],
+      "paths": [
+        "docs/build/tools/",
+        "docs/build/reports/",
+        "docs/tickets/DEFERRALS.md",
+        "docs/build/COVERAGE_MATRIX.csv"
+      ],
+      "deliverables": [
+        "Own obligation-event and scoped coverage-assessment schemas plus deterministic current JSON/Markdown projection.",
+        "Reconcile legacy status conflicts against linked evidence, preserving old values/history and explicit ambiguous OPEN outcomes; compatibility status cells update only with matching transition evidence.",
+        "Produce <=250-line/20-KiB orientation view and link-out pages, recording all input hashes and stale-source status; ledger stays control authority.",
+        "Use explicit acyclic input manifest and migration anchors; shadow mode before cutover, one status writer after. Semantic payload timestamps are fixed inputs or separate receipts."
+      ],
+      "acceptance": [
+        "Duplicate event, missing predecessor, competing transitions, missing evidence and fixture-pass-over-hosted-failure cases fail.",
+        "Every owed obligation appears with owner/landing; stale digest is detected and oversized view spills without dropping obligations.",
+        "Historical coverage CSV assessments remain identifiable; new implementation requirements are never marked MET from a planning document."
+      ],
+      "gate": "none; engineering only",
+      "live": "offline-only",
+      "kind": "ticket",
+      "sequence": 167,
+      "filename": "167_P32.7__memory-events-and-current-projection.md"
+    },
+    {
+      "id": "P32.8",
+      "title": "Make validation and interrupted closeout safe across worktrees",
+      "slug": "memory-concurrency-and-recovery",
+      "stream": "S6",
+      "depends": [
+        "P32.7"
+      ],
+      "requirements": [
+        "SIG-MEM-003"
+      ],
+      "paths": [
+        "scripts/docs/",
+        "docs/build/tools/",
+        "docs/build/README.md"
+      ],
+      "deliverables": [
+        "Own caller-selected/unique validation output and checked-input identity, with truthful upstream-vendor patch provenance.",
+        "Add expected-state preconditions and scoped single-writer protocol to repository closeout helpers; document supported single-host assumptions and stale-lock recovery.",
+        "Implement idempotent closeout reconciliation keyed by ticket/implementation/PR; external skill integration is a documented patch/contract, never an unreviewed edit to user-global skills.",
+        "Specify authoritative chain ref, pre-PR operation id and prepared/external-known/memory-committed/acknowledged protocol; a validated git commit is the memory transaction. Ship reviewed skill-entry-point patch/integration instructions; enforce only after operator-approved boundary cutover."
+      ],
+      "acceptance": [
+        "Two worktree validations do not overwrite each other; report and exit severity agree.",
+        "Failure injection at each code/PR/run/index/deferral/ledger boundary resumes to exactly one closeout; stale expected-state fails without partial advancement.",
+        "Different implementation identity for an already-closed ticket is rejected unless a new recorded attempt explains it.",
+        "Two stale worktrees racing compare against one authoritative chain head; ambiguous remote PR success is reconciled before retry; legacy-only/event-only divergence blocks activation."
+      ],
+      "gate": "engineering may finish in shadow mode; operator ticket-boundary cutover required to activate all workflow entry points (D-R10-MEMORY-1)",
+      "live": "offline-only",
+      "kind": "ticket",
+      "sequence": 168,
+      "filename": "168_P32.8__memory-concurrency-and-recovery.md"
+    },
+    {
+      "id": "P32.9",
+      "title": "Prepare independent blinded human evaluation campaigns",
+      "slug": "human-evaluation-protocol-and-packets",
+      "stream": "S3",
+      "depends": [
+        "P32.2",
+        "P32.3",
+        "P31.10",
+        "P31.11"
+      ],
+      "requirements": [
+        "SIG-EVAL-001",
+        "SIG-EVAL-002"
+      ],
+      "paths": [
+        "resolution/src/resolution/camera_sites.py",
+        "resolution/src/resolution/review_pg.py",
+        "api/src/api/curation.py",
+        "docs/build/reports/round9-drafts/P31.18__resolution-eval-from-first-principles.md"
+      ],
+      "deliverables": [
+        "Build tooling for immutable preregistration, lineage/component-disjoint splits, explicit inclusion probabilities and sealed holdout identifiers. HUMAN-H4 supplies development/calibration labels after P32.22; P32.22a freezes candidate then draws final frame/sample; HUMAN-H5 supplies final labels.",
+        "Persist independent same/different/insufficient labels and adjudication separately from operational decisions; first-pass views hide model tier/score and prior labels.",
+        "Ship reviewer rubric, training/pilot packet, pseudonymous reviewer provisioning instructions, measured-time worksheet and human marker packet; recruit nobody and run no agent-as-human campaign.",
+        "Own additive campaign/sample/assignment/attestation/reference-label/adjudication schema and migration, PG/RLS/tier-token access rules, payload hashes and label watermark. Protect held-out labels from operational clustering and model-development views until authorized unsealing."
+      ],
+      "acceptance": [
+        "Seeded repeated sampling is identical; no entity/component/republisher lineage crosses train-test split; manifest tampering is detected.",
+        "Two reviewers cannot see each other’s first-pass labels or model predictions; insufficient labels persist and cannot auto-accept a pair.",
+        "Zero human labels leaves campaign prepared/provisional; P31 operational review remains compatible.",
+        "Real PG tests prove role-isolated reads/writes, append-only supersession, denominator persistence and zero access to sealed reference labels from clustering; reversible deployment follows sqitch constraints without deleting history."
+      ],
+      "gate": "none; engineering only",
+      "live": "offline-only",
+      "kind": "ticket",
+      "sequence": 169,
+      "filename": "169_P32.9__human-evaluation-protocol-and-packets.md"
+    },
+    {
+      "id": "P32.10",
+      "title": "Implement design-aware resolution evaluation and safe eligibility",
+      "slug": "resolution-evaluator-and-confidence-gates",
+      "stream": "S3",
+      "depends": [
+        "P32.9"
+      ],
+      "requirements": [
+        "SIG-EVAL-003",
+        "SIG-EVAL-004"
+      ],
+      "paths": [
+        "resolution/src/resolution/camera_sites.py",
+        "resolution/src/resolution/eval_loop.py",
+        "resolution/src/resolution/gold_set.py"
+      ],
+      "deliverables": [
+        "Implement separate estimands for auto-positive precision, candidate recall and cluster quality with explicit frame/weights and unavailable states.",
+        "Own preregistered confidence/multiplicity/stopping rules; use exact/binomial only for an appropriate independent/equal-probability frame and design-aware alternatives otherwise.",
+        "Add strict unresolved-label handling and fail-safe per-tier demotion; retain historical point-gate metrics as history, not new eligibility evidence.",
+        "Ship confidence policy in shadow/inactive mode until the post-HUMAN-H5 measured P32.23 decision. No newly certified promotion occurs without passing evidence; do not silently mass-demote or replace the existing explicitly PROVISIONAL production policy while merely deploying the evaluator. Any pre-campaign safety demotion is a separate explicit operational decision."
+      ],
+      "acceptance": [
+        "70/70 agent labels cannot certify a human 0.98 lower-bound gate; correct all-success independent sample calculations and two-tier multiplicity examples are tested.",
+        "Correlated/enriched samples cannot select an unjustified iid method; missing labels reduce strict performance or leave evaluation inconclusive, never disappear.",
+        "Sealed test reuse, optional-stopping overrides and zero-sample activation fail; deterministic metric vectors and independent numerical cross-checks pass."
+      ],
+      "gate": "none; engineering only",
+      "live": "offline-only",
+      "kind": "ticket",
+      "sequence": 170,
+      "filename": "170_P32.10__resolution-evaluator-and-confidence-gates.md"
+    },
+    {
+      "id": "P32.11",
+      "title": "Make acquisition a gap-driven reviewed queue",
+      "slug": "gap-driven-source-discovery",
+      "stream": "S5",
+      "depends": [
+        "P32.1"
+      ],
+      "requirements": [
+        "SIG-ACQ-001",
+        "SIG-ACQ-002"
+      ],
+      "paths": [
+        "connectors/src/connectors/data/sources.toml",
+        "connectors/src/connectors/loader.py",
+        "tasks/",
+        "docs/build/planning/2026-09-25-six-streams/data/source-candidates.csv"
+      ],
+      "deliverables": [
+        "Own candidate passport, discovery provenance, duplicate/lineage detection and hard-gated score model; seed from the researched candidate inventory without approving any source.",
+        "Join candidates to existing registry and P31.12/.13 dispositions; prioritize improvements to already-approved sources alongside new targets.",
+        "Record document/fact/derived-publication rights separately and a Part VIII preflight; generate review packets and precise missing questions."
+      ],
+      "acceptance": [
+        "A mirror cannot score as independent corroboration; an existing P31 source cannot be onboarded twice.",
+        "High usefulness cannot override unknown rights or sensitive-data rejection; municipal publication is not auto-CC0.",
+        "Score changes are explainable from versioned inputs; output includes uncertainty and measured-vs-estimated cost."
+      ],
+      "gate": "none; engineering only",
+      "live": "offline-only",
+      "kind": "ticket",
+      "sequence": 171,
+      "filename": "171_P32.11__gap-driven-source-discovery.md"
+    },
+    {
+      "id": "P32.12",
+      "title": "Add bounded document adapters for the pilot dossiers",
+      "slug": "dossier-document-adapters",
+      "stream": "S5",
+      "depends": [
+        "P32.2",
+        "P32.3",
+        "P32.11"
+      ],
+      "requirements": [
+        "SIG-ACQ-003"
+      ],
+      "paths": [
+        "connectors/",
+        "parsing/",
+        "tests/connectors/"
+      ],
+      "deliverables": [
+        "Extend existing document/government-disclosure paths for the three pilot source families; implement one common adapter interface with narrowly scoped format handlers.",
+        "Keep new source rows blocked until reviewed, preserve real artifact genre, legal/operational status and effective dates/exceptions in typed claims.",
+        "Ship compact redacted/allowed fixtures and golden field-to-locator outputs; use captured bytes offline and bounded parser resource limits.",
+        "Own a frozen named-target crosswalk from source field/span to existing predicate, qualifier, role, valid time/applicability and dossier field. Consume P32.2 schema mapping and P32.3 semantics; an unmapped required field fails review and routes a scoped schema amendment, never an ad hoc new ontology.",
+        "Bound implementation to <=2 existing transport/document protocols and <=12 representative allowed/redacted source documents across the three cities. OCR or an additional parser stack is outside this unit and requires a separately sized contract."
+      ],
+      "acceptance": [
+        "Tulsa template produces no executed agreement; San Diego subscription produces no local hardware; OKC future-effective provision/exception keeps scope and date.",
+        "Same fixture replay is deterministic and no-network; malformed/oversized/encrypted document yields an explicit failure without a partial affirmative claim.",
+        "Loader refuses unreviewed source and preserves compartment; existing P31 adapters regressions pass."
+      ],
+      "gate": "none; engineering only",
+      "live": "offline-only",
+      "kind": "ticket",
+      "sequence": 172,
+      "filename": "172_P32.12__dossier-document-adapters.md"
+    },
+    {
+      "id": "P32.13",
+      "title": "Build immutable release namespaces and specific record routes",
+      "slug": "immutable-releases-and-records",
+      "stream": "S4",
+      "depends": [
+        "P32.4",
+        "P32.5",
+        "P31.14",
+        "P31.15"
+      ],
+      "requirements": [
+        "SIG-FIND-001",
+        "SIG-FIND-002"
+      ],
+      "paths": [
+        "exports/",
+        "web/src/lib/citation.ts",
+        "web/src/components/Citation.astro",
+        "web/src/pages/",
+        "ops/"
+      ],
+      "deliverables": [
+        "Own two-stage release identity: pre-render namespace from ID-free canonical projection/interpretation inputs, then final emitted-artifact integrity digest; no hash cycle.",
+        "Emit compartment-specific public records, claim/evidence anchors, immutable routes and explicit unavailable/withdrawn states; measure static generation/storage at representative 230k-record scale before rollout.",
+        "Provide atomic release validation/latest-pointer tooling and unsupported legacy historical-query behavior; latest convenience URLs are not immutable citations."
+      ],
+      "acceptance": [
+        "Rebuild identical inputs produces identical namespace and final bytes; altering parser/policy/projection inputs changes identity, and different bytes under an existing namespace are rejected.",
+        "A cited record beyond the old 500 slice resolves its exact released content offline/no-JS; invalid dates/rulesets do not return an unchanged page labeled historical.",
+        "Incomplete artifact/index compartment fails publication staging; prior-release rollback and tombstone behavior have deterministic tests; measured cost report covers full corpus.",
+        "Hash dependency graph is acyclic and final integrity digest is never embedded in an artifact it hashes; current withdrawal barrier applies before origin/CDN access."
+      ],
+      "gate": "none; engineering only",
+      "live": "offline-only",
+      "kind": "ticket",
+      "sequence": 173,
+      "filename": "173_P32.13__immutable-releases-and-records.md"
+    },
+    {
+      "id": "P32.14",
+      "title": "Search the full eligible released corpus",
+      "slug": "full-corpus-release-search",
+      "stream": "S4",
+      "depends": [
+        "P32.13"
+      ],
+      "requirements": [
+        "SIG-FIND-003"
+      ],
+      "paths": [
+        "exports/",
+        "web/src/pages/search.astro",
+        "web/src/islands/SearchIsland.tsx",
+        "web/src/lib/data.ts"
+      ],
+      "deliverables": [
+        "Own per-compartment deterministic SQLite FTS5 index from released records, normalized identifier/facet tables, exact-id lookup and bounded query cursor contract. Serve verified immutable local index files read-only in existing API package, plus no-JS HTML search route; no extra search cluster.",
+        "Index all eligible record types, including unlocated sites and known unknown jurisdiction; no current-only PG search fallback under released pages.",
+        "Provide complete static browse pagination and bounded enhanced queries; benchmark representative 230k records, all current compartments and eight readers with recorded hardware.",
+        "Measure bounded staging/disk cache and service memory/concurrency on current infrastructure; cold index returns explicit 503/readiness. Additional spend or alternate serving architecture needs a concrete measured decision before exposure."
+      ],
+      "acceptance": [
+        "Export/index/route totals reconcile by record type and compartment; every sampled tail record and every exact id is reachable without truncation.",
+        "Search response <=50 rows and <=100 KiB compressed; target p95 <=500 ms warm with 2 s hard query limit, measured separately from network transfer and index download.",
+        "Cross-compartment/withheld labels cannot leak; page navigation has no duplicates/omissions for a fixed release; empty/unsupported queries are explicit."
+      ],
+      "gate": "none; engineering only",
+      "live": "offline-only",
+      "kind": "ticket",
+      "sequence": 174,
+      "filename": "174_P32.14__full-corpus-release-search.md"
+    },
+    {
+      "id": "P32.15",
+      "title": "Coordinate investigation views and bounded static navigation",
+      "slug": "coordinated-investigation-workspace",
+      "stream": "S4",
+      "depends": [
+        "P32.13",
+        "P32.14",
+        "P31.15"
+      ],
+      "requirements": [
+        "SIG-FIND-004",
+        "SIG-FIND-005"
+      ],
+      "paths": [
+        "web/src/pages/",
+        "web/src/components/",
+        "web/src/lib/",
+        "web/lighthouserc.json"
+      ],
+      "deliverables": [
+        "Own versioned release/compartment/query/filter/focus URL state shared by existing map/search/network islands and equivalent static routes.",
+        "Replace unbounded fallback tables with complete pagination, concise named-denominator landing/navigation, focused record/evidence pane and bounded network expansion.",
+        "Preserve no-basemap, tile-only map and existing island allowances; document measured per-island JS/network budgets without broadly relaxing static limits."
+      ],
+      "acceptance": [
+        "Deep link/back/forward/reload restores selected record and release across all three views; unlocated records remain navigable.",
+        "Static pages meet zero-script/150-KiB budget on full-sized fixtures; existing island budgets and P31 tile contracts hold; keyboard and WCAG 2.2 AA checks pass.",
+        "Graph edge detail distinguishes configured access from observed use and exposes supporting claims; compartment switching updates data and attribution."
+      ],
+      "gate": "none; engineering only",
+      "live": "offline-only",
+      "kind": "ticket",
+      "sequence": 175,
+      "filename": "175_P32.15__coordinated-investigation-workspace.md"
+    },
+    {
+      "id": "P32.16",
+      "title": "Deliver durable anonymous correction intake and private moderation",
+      "slug": "anonymous-correction-intake",
+      "stream": "S4",
+      "depends": [
+        "P32.5",
+        "P32.13"
+      ],
+      "requirements": [
+        "SIG-FIND-006"
+      ],
+      "paths": [
+        "api/",
+        "policy/",
+        "web/src/pages/dispute.astro",
+        "web/src/pages/curate/",
+        "ops/"
+      ],
+      "deliverables": [
+        "Own isolated submission/receipt/moderation storage and a public receiver role with no claim-spine or curator writes; keep existing curation loopback-only.",
+        "Implement no-JS form, allowlisted record/release/evidence-reference fields, bounded narrative, receipt secret and safe status transitions; no uploads or server-side URL fetches.",
+        "Define abuse limits, ephemeral rate identifiers, retention/purge policy, redaction, operating owner and review-response disclosure; prepare deployment/operating gate packet rather than assuming staffing."
+      ],
+      "acceptance": [
+        "Submit→restart→receipt→authorized moderation survives durably; duplicate retries are idempotent and receipt ids do not enumerate others.",
+        "Oversized/spam/script/plate-person payload fixtures cannot enter a public log or claim; rejected fields and moderator redaction have defined safe behavior.",
+        "Receiver credential cannot write claims/review decisions; public status exposes no raw text/contact/network identifiers; unstaffed/unapproved receiver cannot be advertised as operational."
+      ],
+      "gate": "none; engineering only",
+      "live": "offline-only",
+      "kind": "ticket",
+      "sequence": 176,
+      "filename": "176_P32.16__anonymous-correction-intake.md"
+    },
+    {
+      "id": "P32.16a",
+      "title": "Apply approved corrections through the canonical disposition path",
+      "slug": "reviewed-correction-application",
+      "stream": "S4",
+      "depends": [
+        "P32.16",
+        "P32.5"
+      ],
+      "requirements": [
+        "SIG-FIND-008"
+      ],
+      "paths": [
+        "api/src/api/curation.py",
+        "policy/",
+        "db/",
+        "exports/"
+      ],
+      "deliverables": [
+        "Own restricted proposal validation/application bridge from durable moderation to the canonical S1 correction/disposition API or CLI. Separate receipt/review/application/publication status and reference ids.",
+        "Validate reviewer authority, original record/release/evidence, proposed predicate/value/scope and current rights/sensitivity policy; require explicit approval before applying.",
+        "Append application audit/receipt and connect resulting release/public correction log after publication. Do not grant receiver claim/review writes or auto-apply reporter text."
+      ],
+      "acceptance": [
+        "Approve→apply→restart→retry yields one canonical disposition and one stable applied receipt; failed/uncertain transaction reconciles by operation id.",
+        "Unauthorized, stale-record, changed-evidence and unsafe-payload proposals fail without graph mutation; moderator denial does not silently change facts.",
+        "A published correction points to old/new assertion and release identities or safe tombstones; received/reviewed/applied/unpublished states are visibly distinct."
+      ],
+      "gate": "engineering only; real corrections require authorized curator decision and existing publication policy",
+      "live": "offline-only; production application later in explicitly approved scope",
+      "kind": "ticket",
+      "sequence": 177,
+      "filename": "177_P32.16a__reviewed-correction-application.md"
+    },
+    {
+      "id": "P32.17",
+      "title": "Define and render evidence-complete dossier portfolios",
+      "slug": "dossier-schema-and-completion",
+      "stream": "S2",
+      "depends": [
+        "P32.3",
+        "P32.5",
+        "P32.13",
+        "P32.12"
+      ],
+      "requirements": [
+        "SIG-DOS-001",
+        "SIG-DOS-002"
+      ],
+      "paths": [
+        "exports/src/exports/spine_export.py",
+        "exports/src/exports/dossier.py",
+        "web/src/pages/dossier/",
+        "tasks/"
+      ],
+      "deliverables": [
+        "Own dossier answer schema, fact-to-capture ledger, question-level absence/state rules and independent completion checklist.",
+        "Render supported/disputed/derived/unknown/withheld/not-applicable answers, original dates/scope, changes, actor roles, decision windows and precise follow-up tasks.",
+        "Keep inventory overviews visually distinct from reviewed research dossiers; remove hardcoded generic gaps in favor of evidence-backed field states."
+      ],
+      "acceptance": [
+        "Every question appears with a valid state and evidence/search basis; blank fields cannot inflate completeness or imply absence.",
+        "Unsupported affirmative claim or misclassified instrument fails dossier release validation; honest researched unknowns pass with specific follow-up.",
+        "Print/no-JS output preserves qualifiers and citations; same-scope conflicting evidence remains visible.",
+        "Fixed twelve-question rubric yields >=28/36 with questions 1/5/7/8 >=2 for pilot completeness; lower results stay incomplete and cannot satisfy the portfolio gate."
+      ],
+      "gate": "none; engineering only",
+      "live": "offline-only",
+      "kind": "ticket",
+      "sequence": 178,
+      "filename": "178_P32.17__dossier-schema-and-completion.md"
+    },
+    {
+      "id": "P32.18",
+      "title": "Complete the Oklahoma City dossier and seed correction packet",
+      "slug": "oklahoma-city-evidence-dossier",
+      "stream": "S2",
+      "depends": [
+        "P32.6",
+        "P32.12",
+        "P32.17"
+      ],
+      "requirements": [
+        "SIG-DOS-003"
+      ],
+      "paths": [
+        "connectors/src/connectors/data/live_targets.toml",
+        "ops/src/ops/seed.py",
+        "docs/build/planning/2026-09-25-six-streams/research/S2-local-dossiers.md"
+      ],
+      "deliverables": [
+        "Create reviewed pilot evidence pack and ledger for official city page, council memo/amendment, procurement/policy and scoped UVED legal material, with capture availability/signature uncertainty.",
+        "Replace the seeded flagship interpretation through additive dispositions: separate metro/city/owned/private/access scopes and label derived approximate 190.",
+        "Prepare temporal retention/sharing/renewal answers with exact exceptions and authority status; rights/review gaps remain explicit."
+      ],
+      "acceptance": [
+        "Independent reviewer can trace every affirmative/derived answer to qualified source spans or sees an unresolved limitation.",
+        "299 versus 190 is not rendered a genuine count contradiction; 90 owned is not automatically 90 active; journalism is not executed-contract evidence.",
+        "Future-effective UVED language is not generalized to unrelated Flock use; no legal conclusion is inferred from the page alone."
+      ],
+      "gate": "HG-03/source and evidence-use review for any new capture; HG-11 only at public release",
+      "live": "operator-gated: bounded dossier-source capture after rights; otherwise complete fixture/evidence packet and RETURN PASS",
+      "kind": "ticket",
+      "sequence": 179,
+      "filename": "179_P32.18__oklahoma-city-evidence-dossier.md"
+    },
+    {
+      "id": "P32.19",
+      "title": "Complete the Tulsa dossier with template and policy distinctions",
+      "slug": "tulsa-evidence-dossier",
+      "stream": "S2",
+      "depends": [
+        "P32.12",
+        "P32.17"
+      ],
+      "requirements": [
+        "SIG-DOS-004"
+      ],
+      "paths": [
+        "docs/build/planning/2026-09-25-six-streams/research/S2-local-dossiers.md",
+        "connectors/",
+        "exports/"
+      ],
+      "deliverables": [
+        "Create Tulsa fact-to-capture pack from official ALPR policy 113C, technology policy 113E and public private-camera MOU template.",
+        "Separate observed policy/terms from unsupported execution, participants, inventory, spend and use; produce bounded follow-up research/request drafts for gaps.",
+        "Complete independent question-by-question dossier review with currentness and access-status observations."
+      ],
+      "acceptance": [
+        "Unsigned/template document creates no executed contract or actual sharing edge; policy effective and retrieval dates remain separate.",
+        "Unsupported counts/spend/partner/use are unknown with search evidence and precise next action, not zero or inferred affirmative.",
+        "No request is sent; review and publication packets preserve all gate-pending facts."
+      ],
+      "gate": "HG-03/source and evidence-use review for new capture; HG-11 at release",
+      "live": "operator-gated: bounded reviewed source capture; otherwise RETURN PASS",
+      "kind": "ticket",
+      "sequence": 180,
+      "filename": "180_P32.19__tulsa-evidence-dossier.md"
+    },
+    {
+      "id": "P32.20",
+      "title": "Complete the San Diego dossier across hardware and subscriptions",
+      "slug": "san-diego-evidence-dossier",
+      "stream": "S2",
+      "depends": [
+        "P32.12",
+        "P32.17"
+      ],
+      "requirements": [
+        "SIG-DOS-005"
+      ],
+      "paths": [
+        "docs/build/planning/2026-09-25-six-streams/research/S2-local-dossiers.md",
+        "connectors/",
+        "exports/",
+        "policy/"
+      ],
+      "deliverables": [
+        "Build pilot pack from police technology/annual reports, oversight recommendations and Ubicquia agreement, retaining execution/signature uncertainty where unverified.",
+        "Model physical ALPR/streetlight, subscription-only access, prime/vendor role and recommendation/adoption distinctions; link oversight claims to original report spans.",
+        "Preflight any network-audit source using independently supplied safe schema/link metadata only; do not transport an XLSX workbook (including ZIP sharedStrings) before explicit content authorization. SRC-027 is optional metadata-only research and is not necessary for dossier completeness."
+      ],
+      "acceptance": [
+        "Subscription-only program yields no local SDPD hardware assertion; prime contractor and component vendor remain distinguishable.",
+        "Oversight recommendation remains proposed unless enactment evidence exists; unverifiable signature is never called executed.",
+        "Metadata-only preflight cannot fetch raw workbook/plate/person/per-search content; safe annual aggregates can support the dossier. Independent question-level review documents exact acquisition scope."
+      ],
+      "gate": "HG-03 plus Part VIII structural preflight; HG-11 at release",
+      "live": "operator-gated: bounded reviewed documents/aggregate structure only; otherwise RETURN PASS",
+      "kind": "ticket",
+      "sequence": 181,
+      "filename": "181_P32.20__san-diego-evidence-dossier.md"
+    },
+    {
+      "id": "P32.21",
+      "title": "Measure a gap-closing acquisition pilot",
+      "slug": "source-pilot-and-maintenance-decision",
+      "stream": "S5",
+      "depends": [
+        "P32.11",
+        "P32.12",
+        "P32.18",
+        "P32.19",
+        "P32.20"
+      ],
+      "requirements": [
+        "SIG-ACQ-004"
+      ],
+      "paths": [
+        "connectors/",
+        "tasks/",
+        "ops/",
+        "docs/build/reports/"
+      ],
+      "deliverables": [
+        "Select a small first batch from ranked candidates after P31 reconciliation, prioritizing dossier missing relationships and independent evidence lineage; document rejected alternatives.",
+        "Execute approved bounded live slices or produce exact gate packets; record capture/extraction/link/publication funnel and maintenance burden.",
+        "Recommend continue/stop/improve for each target based on unique supported gap closure and costs; expansion beyond batch remains a new scope decision.",
+        "Optionally run the preregistered matched discovery comparison from S5 (two matched task pairs, 30 minutes per arm, same jurisdiction scope and independent blinded error review). If not run, label results descriptive only; neither before/after funnel nor a small exploratory comparison proves causal superiority."
+      ],
+      "acceptance": [
+        "No P31 duplicate onboarding or mirror-as-independent credit; before/after gap ledger reconciles unique contributions.",
+        "Failed/403/rights-blocked targets remain visible with reasons and retry budget; no broad blind crawler runs.",
+        "Rights-gated live work has actual approval refs or explicit OPEN return-pass rows; fixture success cannot close live outcomes.",
+        "Candidate selection enforces all family/document/protocol ceilings and keeps rejected metadata-only SRC-027 outside the acquired batch."
+      ],
+      "gate": "HG-03 for new/changed source rights; external access/budget approvals if needed",
+      "live": "operator-gated: <=2 incremental non-portfolio families, <=10 approved documents/aggregate rows each, <=2 new protocol families; <=5 total families including three pilot cities; no unapproved spending",
+      "kind": "ticket",
+      "sequence": 182,
+      "filename": "182_P32.21__source-pilot-and-maintenance-decision.md"
+    },
+    {
+      "id": "P32.22",
+      "title": "Apply bounded integrity recovery and rematerialize a release candidate",
+      "slug": "bounded-recovery-and-activation",
+      "stream": "S1",
+      "depends": [
+        "P32.6",
+        "P32.10",
+        "P32.17",
+        "P32.21"
+      ],
+      "requirements": [
+        "SIG-TRUST-008"
+      ],
+      "paths": [
+        "ops/",
+        "db/",
+        "resolution/",
+        "exports/"
+      ],
+      "deliverables": [
+        "Reconcile remaining legacy semantic/provenance repairs with actual retained captures and approved policy, then execute only an explicitly bounded selected scope.",
+        "Pin jobs, record before/after inventories/resource use and +0 rerun, and rematerialize in dependency order using the shared temporal/publication contract.",
+        "Freeze an unpublished repaired input snapshot/audit preview with actual source, schema and semantic rules identities; this is the frame for HUMAN-H4. It is not the final release candidate. Keep reserved batch-05 calendar verification unchanged.",
+        "Record which provisional production rules remain active versus new shadow eligibility results. Installing the evaluator does not itself activate a new gate or certify prior auto-writes; an approved safety demotion, if any, is explicitly scoped in this live packet."
+      ],
+      "acceptance": [
+        "Dry-run and applied scope match; missing bytes never trigger undeclared refetch; checkpoint interruption and restart produce no duplicate repair.",
+        "Resource plan fits approved disk/runtime, no person/plate data appear, and every new fact/disposition binds evidence and authority.",
+        "Snapshot digest and population frame are frozen for HUMAN-H4; preview remains explicitly provisional. No public pointer or HG-11 decision is changed; final candidate belongs to P32.23a."
+      ],
+      "gate": "operator operational approval and source/policy scope; HG-11 not yet exercised",
+      "live": "operator-gated: explicit run/source/claim bounds, resource ceiling and abort threshold recorded before execution",
+      "kind": "ticket",
+      "sequence": 183,
+      "filename": "183_P32.22__bounded-recovery-and-activation.md"
+    },
+    {
+      "id": "HUMAN-H4",
+      "title": "Human development review and dossier semantic acceptance",
+      "slug": "human-development-and-dossier-review",
+      "stream": "S3",
+      "depends": [
+        "P32.9",
+        "P32.10",
+        "P32.22"
+      ],
+      "requirements": [],
+      "paths": [
+        "docs/build/planning/2026-09-25-six-streams/research/S3-human-evaluation.md"
+      ],
+      "deliverables": [
+        "Operator assigns independent device-reference reviewers and a separate competent documentary semantic reviewer/adjudicator; records pseudonymous roles, rubric and approved effort budget.",
+        "Using P32.9 tooling and P32.22 repaired snapshot, complete training/pilot/calibration labels only; persist disagreements and insufficient evidence. These labels may inform candidate development and are excluded from the final confirmatory holdout.",
+        "Complete the fixed dossier rubric and material governance/contract/relationship semantic review; device-label expertise is not automatically legal/applicability expertise.",
+        "Record development label/snapshot digests, review limits, and unresolved gaps; release the development set to P32.22a without claiming a completed confirmatory evaluation."
+      ],
+      "acceptance": [
+        "Actual humans, independent label/adjudication process and development partition provenance are recorded; no agent labels count as human.",
+        "Dossier semantic readout records scores, traced material assertions and unresolved applicability/execution issues.",
+        "No final confirmatory sample is drawn before P32.22a freezes the candidate and its eligible population; no pilot label is recycled as sealed test evidence."
+      ],
+      "gate": "actual human development and dossier semantic review; never guessed past",
+      "live": "human-only",
+      "kind": "human",
+      "sequence": 184,
+      "filename": "184_HUMAN-H4__human-development-and-dossier-review.md"
+    },
+    {
+      "id": "P32.22a",
+      "title": "Freeze the candidate and its confirmatory sampling frame",
+      "slug": "candidate-and-confirmatory-frame-freeze",
+      "stream": "S3",
+      "depends": [
+        "HUMAN-H4",
+        "P32.10",
+        "P32.22"
+      ],
+      "requirements": [
+        "SIG-EVAL-007"
+      ],
+      "paths": [
+        "resolution/",
+        "docs/build/reports/",
+        "docs/build/readouts/HUMAN-H4.md"
+      ],
+      "deliverables": [
+        "Use only released development/calibration labels to assess baseline and choose one fixed candidate or retain baseline; document loss tradeoffs and any development uncertainty. Do not inspect final labels, which do not yet exist.",
+        "Run the frozen candidate on the repaired snapshot and materialize its eligible auto-positive edges/tier frame, including attempted-versus-accepted union distinctions. Preregister statistical design, multiplicity, fixed stopping, sample sizes, seed and budgets.",
+        "Draw confirmatory sample and independent reference-neighborhood frame after candidate freeze with recorded inclusion probabilities/group boundaries; seal packet/denominator/manifest digests and transfer blinded packets to HUMAN-H5."
+      ],
+      "acceptance": [
+        "A changed candidate adding new positives cannot reuse an earlier candidate-specific sample; test rejects stale frame and requires a fresh preregistration/draw.",
+        "Candidate rules and frame/population digests precede sample draw and all final labels; development examples cannot cross into final holdout.",
+        "Fixed sample plan matches chosen finite-population/independent/grouped design; no unaffordable/unavailable human budget is assumed approved."
+      ],
+      "gate": "signed HUMAN-H4 development/dossier readout; operator confirms final campaign workload",
+      "live": "offline-only over the frozen approved snapshot; no production rule activation",
+      "kind": "ticket",
+      "sequence": 185,
+      "filename": "185_P32.22a__candidate-and-confirmatory-frame-freeze.md"
+    },
+    {
+      "id": "HUMAN-H5",
+      "title": "Complete blinded confirmatory adjudication for the frozen candidate",
+      "slug": "blinded-confirmatory-human-campaign",
+      "stream": "S3",
+      "depends": [
+        "P32.22a"
+      ],
+      "requirements": [],
+      "paths": [
+        "docs/build/readouts/HUMAN-H5.md",
+        "docs/build/planning/2026-09-25-six-streams/research/S3-human-evaluation.md"
+      ],
+      "deliverables": [
+        "Independent reviewers label the fixed P32.22a sample with model/prior-label predictions hidden; preserve same/different/insufficient and missingness in the original denominator.",
+        "Complete independent second labels and adjudication with evidence under the frozen rubric; record deviations, blinding breaches and label corrections without overwriting history.",
+        "Seal final label watermark/digests, reviewer attestations and campaign completion. Transfer the unopened confirmatory set for P32.23 evaluation of the already-frozen candidate only."
+      ],
+      "acceptance": [
+        "Signed readout identifies candidate, snapshot, sample and label digests; no unapproved extra draws, excluded failures or reused development labels.",
+        "Incomplete/missing/insufficient labels remain represented; actual human work is never supplied by agents; incomplete campaign does not satisfy the gate."
+      ],
+      "gate": "actual independent confirmatory human work; never guessed past",
+      "live": "human-only",
+      "kind": "human",
+      "sequence": 186,
+      "filename": "186_HUMAN-H5__blinded-confirmatory-human-campaign.md"
+    },
+    {
+      "id": "P32.23",
+      "title": "Re-derive resolution decisions from independent human evidence",
+      "slug": "human-evaluation-and-rules-decision",
+      "stream": "S3",
+      "depends": [
+        "HUMAN-H5",
+        "P32.22a",
+        "P32.10"
+      ],
+      "requirements": [
+        "SIG-EVAL-005",
+        "SIG-EVAL-006"
+      ],
+      "paths": [
+        "resolution/",
+        "docs/adr/",
+        "docs/build/reports/",
+        "docs/tickets/DEFERRALS.md"
+      ],
+      "deliverables": [
+        "Consume the signed HUMAN-H5 campaign once to evaluate the exact candidate frozen before sampling by P32.22a. No candidate selection, rule tuning, extra draws or model-development feedback precedes this final evaluation on the held-out labels.",
+        "Write a measured ADR and drift/rollback policy from this single preregistered evaluation, preserving inconclusive/fail outcomes. Any new candidate after seeing the result requires a new independent frame/sample/campaign; final graph/release rematerialization belongs to P32.23a.",
+        "Verify actual human operational decisions propagate through P31.11; close D-R6.1-EVAL/D-P30.2b-1/-2 only to the extent supported, otherwise retain exact remaining obligations."
+      ],
+      "acceptance": [
+        "Metrics identify tier/frame/time/source mix, fixed denominators, intervals, multiplicity and labelability; no model/holdout tuning leakage.",
+        "Failed lower-bound gate demotes or retains provisional/review-only status; small/missing sample cannot silently promote.",
+        "A passed limited tier assessment does not certify org identity or all edges; public disclosure changes only in the gated release."
+      ],
+      "gate": "signed HUMAN-H5 final campaign and P32.22a frozen candidate/frame; any policy exception requires a new explicit decision",
+      "live": "operator-gated: measured rules activation after offline sealed evaluation, no publication",
+      "kind": "ticket",
+      "sequence": 187,
+      "filename": "187_P32.23__human-evaluation-and-rules-decision.md"
+    },
+    {
+      "id": "P32.23a",
+      "title": "Build one release candidate from the final evaluation decision",
+      "slug": "post-evaluation-release-candidate",
+      "stream": "S1",
+      "depends": [
+        "P32.23",
+        "P32.15",
+        "P32.16",
+        "P32.18",
+        "P32.19",
+        "P32.20",
+        "P32.16a"
+      ],
+      "requirements": [
+        "SIG-TRUST-010"
+      ],
+      "paths": [
+        "ops/",
+        "resolution/",
+        "exports/",
+        "web/"
+      ],
+      "deliverables": [
+        "Rematerialize selected/demoted rules in dependency order against approved frozen inputs; append execution completion and preserve audit history.",
+        "Regenerate all candidate compartments, dossier answers, search indexes, specific records, tiles and analytics with one consistent ruleset/evaluation/snapshot identity.",
+        "Produce final unpublished change/suppression/evaluation disclosure and rollback packet; P32.24 validates this exact candidate, GATE-G3 signs it and P32.25 publishes it."
+      ],
+      "acceptance": [
+        "No artifact still cites pre-evaluation preview identities; cross-artifact manifests agree and +0 rematerialization is proven.",
+        "Failed/inconclusive evaluation produces safe provisional/review-only disclosures and cannot reuse a previously optimistic resolved count.",
+        "Changed input affecting the sample population or semantics stops for reassessment rather than silently carrying old eligibility; publication pointer remains unchanged."
+      ],
+      "gate": "operator approved bounded materialization scope; no HG-11 publication here",
+      "live": "operator-gated: frozen selected inputs/rules only, resource bounds from P32.22",
+      "kind": "ticket",
+      "sequence": 188,
+      "filename": "188_P32.23a__post-evaluation-release-candidate.md"
+    },
+    {
+      "id": "P32.24",
+      "title": "Verify the public investigation acceptance portfolio",
+      "slug": "investigation-journey-verification",
+      "stream": "S4",
+      "depends": [
+        "P32.14",
+        "P32.15",
+        "P32.16",
+        "P32.18",
+        "P32.19",
+        "P32.20",
+        "P32.23",
+        "P32.23a",
+        "P32.16a"
+      ],
+      "requirements": [
+        "SIG-FIND-007"
+      ],
+      "paths": [
+        "tests/e2e/",
+        "web/",
+        "docs/build/reports/"
+      ],
+      "deliverables": [
+        "Execute all three documented journeys across three dossiers and representative tail/unlocated/withheld records in one staged release.",
+        "Run no-JS, keyboard, print, back/forward, release-citation and receipt-to-moderation walkthroughs; distinguish automation, agent walkthrough and independent human usability evidence.",
+        "Record actual user study only if volunteers are explicitly available; otherwise provide task protocol and carry UX evidence gap without fabricating satisfaction results."
+      ],
+      "acceptance": [
+        "Every eligible selected record is reachable and citable; relationship interpretation and unknown-state tasks have evidence-grounded expected answers.",
+        "Durable receipt reaches authorized moderation after restart; an approved synthetic proposal traverses P32.16a to one canonical disposition and a staged public correction, while receiver cannot directly change facts. Static and enhanced views agree.",
+        "All material failures receive exact owners/landings and prevent false portfolio PASS; benchmark/readout ties to release digests."
+      ],
+      "gate": "none; engineering only",
+      "live": "offline-only",
+      "kind": "ticket",
+      "sequence": 189,
+      "filename": "189_P32.24__investigation-journey-verification.md"
+    },
+    {
+      "id": "GATE-G3",
+      "title": "Review the Round-10 public release and intake operation",
+      "slug": "round10-publication-gate",
+      "stream": "S4",
+      "depends": [
+        "P32.23a",
+        "P32.24"
+      ],
+      "requirements": [],
+      "paths": [
+        "docs/build/readouts/GATE-G3.md"
+      ],
+      "deliverables": [
+        "Present concrete immutable candidate, change/suppression summary, rights/Part VIII decisions, evaluation posture, measured costs and rollback.",
+        "Present intake operating owner, retention/abuse policy and actual availability; acknowledge still-unknown dossier fields.",
+        "Record operator HG-11 decision and any additional required source/exposure approvals explicitly."
+      ],
+      "acceptance": [
+        "No unresolved public-safety/rights/unsupported-affirmation blocker or OPEN obligation scoped as required-for-publication remains.",
+        "Only actual operator decision signs the gate; absent/declined approval leaves candidate unpublished.",
+        "Three dossiers meet the fixed pilot rubric and independent semantic review, or the operator explicitly records a reduced/incomplete publication scope without claiming pilot completion."
+      ],
+      "gate": "HG-11; never guessed past",
+      "live": "human gate",
+      "kind": "gate",
+      "sequence": 190,
+      "filename": "190_GATE-G3__round10-publication-gate.md"
+    },
+    {
+      "id": "P32.25",
+      "title": "Publish and verify the accepted release with rollback",
+      "slug": "accepted-release-public-verification",
+      "stream": "S1",
+      "depends": [
+        "GATE-G3"
+      ],
+      "requirements": [
+        "SIG-TRUST-009"
+      ],
+      "paths": [
+        "ops/",
+        "exports/",
+        "web/",
+        "docs/build/readouts/GATE-G3.md"
+      ],
+      "deliverables": [
+        "Publish precisely the accepted candidate atomically; expose receiver only within its approved operating packet; record pinned artifact digests and latest-pointer transition.",
+        "Verify public records/search/tiles/citations/withdrawal/disclosures and intake availability with safe synthetic submissions only where the operator authorized test submissions.",
+        "Exercise prior-release rollback in staging and record live rollback instructions; append release evidence and exact residual obligations."
+      ],
+      "acceptance": [
+        "Unauthenticated public reads match approved digests across compartments and citations; no partial release is observable.",
+        "Withheld records/edges remain suppressed, old citations preserve bytes or truthful tombstones, and receiver unavailability has an honest public state.",
+        "If deployment fails, previous release remains/reverts atomically and ticket is not green; no main merge/tag/push occurs."
+      ],
+      "gate": "signed GATE-G3/HG-11 and concrete exposure approvals",
+      "live": "operator-gated: accepted immutable release only",
+      "kind": "ticket",
+      "sequence": 191,
+      "filename": "191_P32.25__accepted-release-public-verification.md"
+    },
+    {
+      "id": "P33.1",
+      "title": "Independent Round-10 gap analysis",
+      "slug": "round10-independent-gap-analysis",
+      "stream": "X2",
+      "depends": [
+        "P32.25"
+      ],
+      "requirements": [],
+      "paths": [
+        "docs/2_canonical_design_spec.md",
+        "docs/build/COVERAGE_MATRIX.csv",
+        "docs/build/CAPSTONE_GAP_ANALYSIS.md"
+      ],
+      "deliverables": [
+        "A fresh reviewer first inspects code/tests/public artifacts without reading run-ledger verdicts; assess all new requirements and affected older obligations.",
+        "Publish MET/MET-DIFFERENTLY/PARTIAL/MISSING/AT-RISK-INTEGRATION with evidence domain, then compare run claims and route discrepancies."
+      ],
+      "acceptance": [
+        "Every requirement and cross-stream seam has an independent verdict and owner; design docs alone are not MET evidence.",
+        "No unsupported acceptance or orphan gap remains; coverage history is preserved."
+      ],
+      "gate": "none; engineering only",
+      "live": "offline-only",
+      "kind": "capstone",
+      "sequence": 192,
+      "filename": "192_P33.1__round10-independent-gap-analysis.md"
+    },
+    {
+      "id": "P33.2",
+      "title": "Composed Round-10 verification",
+      "slug": "round10-composed-verification",
+      "stream": "X2",
+      "depends": [
+        "P33.1"
+      ],
+      "requirements": [],
+      "paths": [
+        "tests/e2e/",
+        "tests/db/",
+        "docs/build/COMPOSED_E2E_REPORT.md"
+      ],
+      "deliverables": [
+        "Run full make check, required Docker DB/composed suites, web gate, spec/coverage/backlog/build-memory checks and release conformance portfolio.",
+        "Exercise capture→claim→temporal/role resolution→eligible release→search/record→correction path in one composed fixture and verify sampled live approved results."
+      ],
+      "acceptance": [
+        "Unavailable Docker/service is explicit failure/unavailable, never silent green; xfails keep exact owed ids and closing owners.",
+        "Tests prove cross-stream contract parity and real-sized budgets; all results tie to code/input/release revision."
+      ],
+      "gate": "none; engineering only",
+      "live": "offline-only",
+      "kind": "capstone",
+      "sequence": 193,
+      "filename": "193_P33.2__round10-composed-verification.md"
+    },
+    {
+      "id": "P33.3",
+      "title": "Close Round-10 gaps and present acceptance",
+      "slug": "round10-capstone-closure",
+      "stream": "X2",
+      "depends": [
+        "P33.2"
+      ],
+      "requirements": [],
+      "paths": [
+        "docs/build/CAPSTONE_CLOSURE.md",
+        "docs/tickets/DEFERRALS.md"
+      ],
+      "deliverables": [
+        "Fix only bounded capstone defects within owned scope; larger work receives complete successor contracts and dependencies.",
+        "Produce acceptance list distinguishing intentional design, unresolved engineering, human/external obligations and dated verification."
+      ],
+      "acceptance": [
+        "All required-for-round blockers resolved with evidence; remaining rows have exact owner/landing/compensating control.",
+        "Acceptance packet is concrete and does not mark operator or calendar work done."
+      ],
+      "gate": "none; engineering only",
+      "live": "offline-only",
+      "kind": "capstone",
+      "sequence": 194,
+      "filename": "194_P33.3__round10-capstone-closure.md"
+    },
+    {
+      "id": "GATE-ACCEPT",
+      "title": "Operator accepts Round-10 closure and deviations",
+      "slug": "round10-acceptance",
+      "stream": "X2",
+      "depends": [
+        "P33.3"
+      ],
+      "requirements": [],
+      "paths": [
+        "docs/build/readouts/ACCEPT-R10.md"
+      ],
+      "deliverables": [
+        "Operator reviews CAPSTONE_CLOSURE, exact remaining obligations and accepted deviations and records the decision."
+      ],
+      "acceptance": [
+        "Actual signed/readout decision exists; no agent signs or assumes silence is approval."
+      ],
+      "gate": "HG-14 / round acceptance; never guessed past",
+      "live": "human gate",
+      "kind": "gate",
+      "sequence": 195,
+      "filename": "195_GATE-ACCEPT__round10-acceptance.md"
+    },
+    {
+      "id": "P33.4",
+      "title": "Reconcile backlog and operational readiness",
+      "slug": "round10-backlog-and-readiness",
+      "stream": "X3",
+      "depends": [
+        "GATE-ACCEPT"
+      ],
+      "requirements": [],
+      "paths": [
+        "docs/build/BACKLOG.csv",
+        "docs/build/BACKLOG.md",
+        "docs/build/OPERATIONAL_READINESS.md",
+        "docs/tickets/DEFERRALS.md"
+      ],
+      "deliverables": [
+        "Normalize new ADR revisit/deferral homes and regenerate backlog mirror; preserve historic outcomes.",
+        "Publish readiness by implemented/fixture/hosted/public/human domains and concrete RETURN PASS commands for any owed work."
+      ],
+      "acceptance": [
+        "Backlog source ownership is unique and no OPEN obligation lacks landing; projectStatus remains honest under BM-TAIL-03."
+      ],
+      "gate": "none; engineering only",
+      "live": "offline-only",
+      "kind": "reconcile",
+      "sequence": 196,
+      "filename": "196_P33.4__round10-backlog-and-readiness.md"
+    },
+    {
+      "id": "P33.5",
+      "title": "Reconcile canonical specification to the landed design",
+      "slug": "round10-spec-reconciliation",
+      "stream": "X3",
+      "depends": [
+        "P33.4"
+      ],
+      "requirements": [],
+      "paths": [
+        "docs/research/_meta/spec_src/",
+        "docs/build/TICKET_VS_SPEC.md",
+        "docs/build/SPEC_RECONCILIATION_PLAN.md"
+      ],
+      "deliverables": [
+        "Reconcile every actual deviation through new ADRs and spec source amendments, preserving old ADR bodies and traceability.",
+        "Regenerate canonical spec and verify requirement, Appendix F, coverage and ownership closure; scope later requests as new work."
+      ],
+      "acceptance": [
+        "Source reproduction is byte-identical; no stale or invented implementation guarantee remains in current docs; historical assessments remain dated."
+      ],
+      "gate": "none; engineering only",
+      "live": "offline-only",
+      "kind": "reconcile",
+      "sequence": 197,
+      "filename": "197_P33.5__round10-spec-reconciliation.md"
+    },
+    {
+      "id": "P33.6",
+      "title": "Prepare safe stack integration and operator handoff",
+      "slug": "round10-integration-plan",
+      "stream": "X3",
+      "depends": [
+        "P33.5"
+      ],
+      "requirements": [],
+      "paths": [
+        "docs/build/INTEGRATION_PLAN.md",
+        "docs/build/reports/"
+      ],
+      "deliverables": [
+        "Produce read-only stack/conflict inspection and ordered integration/rollback instructions from actual PRs and current base.",
+        "Preserve no-merge/tag/push-main boundary and all human/return-pass obligations."
+      ],
+      "acceptance": [
+        "Integration plan identifies every PR/base/dependency and necessary gates; commands are reviewable but no merge executed."
+      ],
+      "gate": "none; engineering only",
+      "live": "offline-only",
+      "kind": "reconcile",
+      "sequence": 198,
+      "filename": "198_P33.6__round10-integration-plan.md"
+    },
+    {
+      "id": "P33.7",
+      "title": "Refresh human-facing project documentation",
+      "slug": "round10-repo-docs-refresh",
+      "stream": "S6",
+      "depends": [
+        "P33.6"
+      ],
+      "requirements": [],
+      "paths": [
+        "README.md",
+        "docs/build/README.md",
+        "docs/build/reports/current/"
+      ],
+      "deliverables": [
+        "Invoke refresh-repo-docs convention and update current architecture/deployment/command/onboarding guidance from landed evidence.",
+        "Preserve build history, name governing ADRs and generate current views with bounded orientation and all obligations linked."
+      ],
+      "acceptance": [
+        "Repository documentation detector passes; every current claim has a code/run/public evidence basis; commands checked in supported environment."
+      ],
+      "gate": "none; engineering only",
+      "live": "offline-only",
+      "kind": "docs",
+      "sequence": 199,
+      "filename": "199_P33.7__round10-repo-docs-refresh.md"
+    },
+    {
+      "id": "P33.8",
+      "title": "Refresh agent guidance and close the memory chain",
+      "slug": "round10-agent-docs-refresh",
+      "stream": "S6",
+      "depends": [
+        "P33.7"
+      ],
+      "requirements": [
+        "SIG-MEM-004"
+      ],
+      "paths": [
+        "AGENTS.md",
+        "web/AGENTS.md",
+        "docs/build/LEDGER.md",
+        "docs/build/BUILD_INDEX.md"
+      ],
+      "deliverables": [
+        "Invoke agent-docs convention; reconcile root/package precedence, public island allowance, current entry points and memory workflow.",
+        "Verify the complete full tail and current-state projection, then set projectStatus only according to actual landed/accepted/owed state."
+      ],
+      "acceptance": [
+        "Nearest-file guidance has no contradictory architecture promise; agent-docs/build-memory/plan validators pass.",
+        "Every landed ticket has run/index evidence; accepted readout exists; incomplete external work remains owned and precisely scheduled."
+      ],
+      "gate": "none; engineering only",
+      "live": "offline-only",
+      "kind": "docs",
+      "sequence": 200,
+      "filename": "200_P33.8__round10-agent-docs-refresh.md"
+    }
+  ],
+  "first_sequence": 161,
+  "last_sequence": 200,
+  "tail": "full9",
+  "planning_adr": "ADR-120",
+  "integration_base": "08d87c4dc22d4c7c505aa19fe28bcf36e84cfe7a"
+}
