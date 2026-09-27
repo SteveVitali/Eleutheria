@@ -21,11 +21,16 @@
 #   service   upsert the `sig-web` Cloud Run service on the pinned digest. The
 #             hand-made service shape is READ LIVE first (the ticket's contract:
 #             "read live and reproduced, not guessed") — the describe output is
-#             logged for the record; the deploy then re-declares the gcsfuse
-#             volume (<project>-sig-web → /mnt/sig-web), unauthenticated access,
-#             and the recorded ingress. Settings this script does not own
-#             (scaling, concurrency, env) are left at the live values — a deploy
-#             updates only what the flags name.
+#             logged for the record. The live shape P31.16 measured is volume
+#             `site` (gcsfuse <project>-sig-web) mounted at
+#             /usr/share/nginx/html on port 80, while the repo-owned image
+#             serves /mnt/sig-web on 8080 — so the deploy removes every live
+#             volume-mount + volume by its LIVE name/path (never a guessed one)
+#             and re-declares the gcsfuse volume (<project>-sig-web →
+#             /mnt/sig-web) with unauthenticated access and the recorded
+#             ingress. Settings this script does not own (scaling, concurrency,
+#             env) are left at the live values — a deploy updates only what the
+#             flags name.
 #   describe  print the live service spec (the read-live record; check mode plans it).
 #   all       image → service
 #
@@ -86,16 +91,45 @@ do_service() {
   local pinned
   pinned="$(pin_image_digest "${IMAGE}")"
   _log "   pinned: ${pinned}"
-  # Reproduce the P30.3 hand-made shape: the gcsfuse volume is re-declared
-  # (remove+add is the repo's idempotent volume convention, scheduled-ops.sh) so a
-  # roll can never strand a stale mount definition; ingress + auth match the
-  # LB→NEG + run.app reachability the live service has. Scaling/env the script
-  # does not own are left at the live values.
+  # Reproduce-and-replace the live mount shape — READ LIVE, never guessed. The
+  # hand-made P30.3 service mounts the same bucket as volume `site` at
+  # /usr/share/nginx/html on port 80; the repo-owned image serves /mnt/sig-web
+  # on 8080. Every CURRENT volume-mount and volume is removed by its live
+  # path/name, then the target gcsfuse volume + mount are declared — the repo's
+  # remove+add idempotent volume convention (scheduled-ops.sh) applied to the
+  # shape the service ACTUALLY has, so a roll is clean on first run and on
+  # re-roll and can never strand a stale mount definition. Ingress + auth match
+  # the LB→NEG + run.app reachability the live service has; scaling/env the
+  # script does not own are left at the live values.
+  local -a rm_args=()
+  if [ "${SIG_GCP_MODE}" = "apply" ]; then
+    local spec_json
+    spec_json="$(gcloud run services describe "${SIG_WEB_SERVICE}" \
+      --region "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" --format json)"
+    local mp vn
+    while IFS= read -r mp; do
+      [ -n "${mp}" ] && rm_args+=(--remove-volume-mount "${mp}")
+    done < <(printf '%s' "${spec_json}" | python3 -c 'import json,sys
+s = json.load(sys.stdin)
+for c in s["spec"]["template"]["spec"].get("containers", []):
+    for m in c.get("volumeMounts", []):
+        print(m["mountPath"])')
+    while IFS= read -r vn; do
+      [ -n "${vn}" ] && rm_args+=(--remove-volume "${vn}")
+    done < <(printf '%s' "${spec_json}" | python3 -c 'import json,sys
+s = json.load(sys.stdin)
+for v in s["spec"]["template"]["spec"].get("volumes", []):
+    print(v["name"])')
+    _log "   live mounts/volumes to replace: ${rm_args[*]:-none}"
+  else
+    _plan "remove every live volume-mount + volume by its live path/name (the describe above), then:"
+  fi
+  # `${rm_args[@]+...}` guards the empty array under bash 3.2 `set -u`.
   run gcloud run deploy "${SIG_WEB_SERVICE}" \
     --image "${pinned}" --region "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" \
     --port 8080 \
     --ingress all --allow-unauthenticated \
-    --remove-volume-mount "${MOUNT}" --remove-volume "${VOLUME_NAME}" \
+    ${rm_args[@]+"${rm_args[@]}"} \
     --add-volume "name=${VOLUME_NAME},type=cloud-storage,bucket=${SIG_BUCKET_WEB}" \
     --add-volume-mount "volume=${VOLUME_NAME},mount-path=${MOUNT}"
 }
