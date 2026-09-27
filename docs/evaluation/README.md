@@ -20,6 +20,7 @@ durable, honest state of a campaign no human has yet joined.
 | [`reviewer-provisioning.md`](./reviewer-provisioning.md) | living | Operator instructions for pseudonymous reviewer accounts (`sig_eval_reviewer`), the `sig.eval_reviewer` tier token, attestations, and deprovisioning. |
 | [`measured-time-worksheet.md`](./measured-time-worksheet.md) | living | The per-item and per-campaign time sheet reviewers and the custodian fill so the campaign's true cost is on the record. |
 | [`human-campaign-marker-packet.md`](./human-campaign-marker-packet.md) | living | The durable campaign marker: states (`tooling_ready`, `awaiting_humans`, …), required fields, and the owned waiting path that keeps deferrals honest. |
+| [`shadow-gate-readout.md`](./shadow-gate-readout.md) | living | P32.10 (SIG-EVAL-003/004, ADR-129): the design-aware estimator + preregistered confidence gate — shipped `shadow`-only, computed and reported, never applied until the measured P32.23 decision. |
 
 ## What this packet is not
 

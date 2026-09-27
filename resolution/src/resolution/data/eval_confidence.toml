@@ -1,0 +1,47 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+#
+# The preregistered confidence/eligibility policy for resolution evaluation
+# (P32.10, ADR-129 — SIG-EVAL-004, §55.4), as **versioned data, not code**.
+# This is the gate the evaluator applies: a preregistered simultaneous lower
+# confidence bound on strict precision per authorized tier, with
+# simultaneous-error control across the tested hypothesis family and a fixed
+# sampling/stopping rule. Changing any value = bump `version` (the design
+# digest covers these fields; a changed policy means a new preregistration).
+#
+# **SHADOW/INACTIVE.** `mode` is "shadow": the evaluator computes what the
+# gate would decide and reports recommendations, but `applied` is always
+# empty — nothing is promoted or demoted, and the explicitly PROVISIONAL
+# production policy (`camera_sites.decide_auto_write_tiers` over the measured
+# point-gate) is untouched. Only the measured post-HUMAN-H5 decision recorded
+# at P32.23 (a new ADR + an authorized operational release) may arm this file.
+# Any pre-campaign safety demotion is a separate explicit operational
+# decision, never an effect of installing the evaluator.
+
+version = "eval-confidence/1"
+
+# "shadow" — report-only; "active" is reserved for the measured P32.23 ADR.
+mode = "shadow"
+
+# Family-wise error budget across EVERY preregistered (tier, scope)
+# hypothesis — all attempted promotions count, including failed ones
+# (SIG-EVAL-004). Allocation is Bonferroni for auditability; per-hypothesis
+# alpha lives in each campaign's preregistered design and must sum to <= this.
+family_alpha = 0.05
+alpha_allocation = "bonferroni"
+
+# The strict-precision floor each tier's simultaneous lower bound must clear.
+threshold = 0.98
+
+# One scheduled analysis over a fixed preregistered sample. Optional stopping,
+# interim looks and sequential methods cannot establish eligibility — an
+# early stop may be taken for feasibility/futility but records no pass.
+stopping_rule = "fixed"
+scheduled_analyses = 1
+
+# The only authority that can flip `mode` — the measured rules decision
+# (ticket P32.23, after HUMAN-H5). evaluator.activate_policy refuses without
+# a recorded reference to that decision + an operational release + a nonzero
+# sample.
+activation_authority = "P32.23-measured-decision"

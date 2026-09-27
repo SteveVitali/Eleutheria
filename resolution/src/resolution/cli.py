@@ -437,6 +437,32 @@ def build_parser() -> argparse.ArgumentParser:
     ev_wm.add_argument("--role", default="sig_eval_custodian", help="role to SET ROLE to")
     ev_wm.add_argument("--campaign-id", required=True)
 
+    ev_gate = ev_sub.add_parser(
+        "gate",
+        help="P32.10: run the design-aware SHADOW evaluation over a campaign's "
+        "released labels and print the confidence-gate report (applies nothing)",
+    )
+    ev_gate.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    ev_gate.add_argument("--role", default="sig_eval_admin", help="role to SET ROLE to")
+    ev_gate.add_argument("--campaign-id", required=True)
+    ev_gate.add_argument(
+        "--design",
+        required=True,
+        help="JSON preregistration record for the SamplingDesign (frozen at prepare time)",
+    )
+    ev_gate.add_argument(
+        "--tiers",
+        default=None,
+        help="optional JSON {pair_id: {tier, scope}} mapping the frozen candidate "
+        "auto-tier/scope onto each sampled pair",
+    )
+    ev_gate.add_argument(
+        "--format",
+        choices=("json", "md"),
+        default="json",
+        help="report format (json payload or markdown)",
+    )
+
     camera = sub.add_parser(
         "camera-sites",
         help="geospatial camera-site entity resolution over the PG spine (P30.2b)",
@@ -1184,6 +1210,50 @@ def _run_eval_watermark(args: argparse.Namespace) -> int:
     return 0
 
 
+def _run_eval_gate(args: argparse.Namespace) -> int:
+    """P32.10 — the SHADOW confidence-gate readout over a campaign.
+
+    Reads the released label/adjudication surface only, materializes eval
+    units (missing/sealed stay in the denominator), runs the preregistered
+    design-aware gate, and prints the report. ``applied`` is always empty —
+    the PROVISIONAL production policy is untouched.
+    """
+    import psycopg
+
+    from .evaluator import render_report_md, report_digest, sampling_design_from_dict
+    from .human_eval_pg import run_shadow_evaluation
+
+    with open(args.design, encoding="utf-8") as fh:
+        design = sampling_design_from_dict(json.load(fh))
+    tier_of_pair: dict[str, int] = {}
+    scope_of_pair: dict[str, str] = {}
+    if args.tiers:
+        with open(args.tiers, encoding="utf-8") as fh:
+            for pair_id, spec in json.load(fh).items():
+                tier_of_pair[pair_id] = int(spec["tier"])
+                scope_of_pair[pair_id] = str(spec.get("scope", "snapshot"))
+    with psycopg.connect(args.dsn, autocommit=True) as conn:
+        report = run_shadow_evaluation(
+            conn,
+            args.campaign_id,
+            design=design,
+            tier_of_pair=tier_of_pair,
+            scope_of_pair=scope_of_pair,
+            role=args.role,
+        )
+    if args.format == "md":
+        print(render_report_md(report))
+    else:
+        print(
+            json.dumps(
+                {**report.payload(), "report_digest": report_digest(report)},
+                indent=2,
+                sort_keys=True,
+            )
+        )
+    return 0
+
+
 def _run_eval(args: argparse.Namespace) -> int:
     handlers = {
         "frame": _run_eval_frame,
@@ -1198,12 +1268,13 @@ def _run_eval(args: argparse.Namespace) -> int:
         "unseal": _run_eval_unseal,
         "verify": _run_eval_verify,
         "watermark": _run_eval_watermark,
+        "gate": _run_eval_gate,
     }
     handler = handlers.get(args.eval_command)
     if handler is None:
         print(
             "usage: sig-resolution eval {frame,prepare,packets,assign,status,export,"
-            "attest,import-labels,adjudicate,unseal,verify,watermark} ..."
+            "attest,import-labels,adjudicate,unseal,verify,watermark,gate} ..."
         )
         return 2
     try:
