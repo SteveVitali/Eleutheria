@@ -75,6 +75,13 @@ from datetime import UTC, date, datetime
 from typing import Any, Concatenate, ParamSpec, TypeVar
 
 import psycopg
+from db.occurrences import (
+    BELIEF_NOW,
+    BELIEF_PARAM,
+    observation_instant,
+    occurrence_lateral,
+    spine_watermark,
+)
 from db.temporal import AsOf
 from evidence.tiers import CaptureMetadata, StorageTier
 from exports.shaping import (
@@ -90,7 +97,6 @@ from policy.rights import RightsRecord
 from psycopg import sql
 from psycopg_pool import ConnectionPool, PoolTimeout
 from reconcile.materialize import (
-    CAPTURE_TIME_JOIN,
     COUNT_QUALIFIER_JOIN,
     observation_time,
 )
@@ -481,23 +487,20 @@ class PgReadStore:
             "SELECT c.claim_id, c.value_kind, c.value_text, c.value_num, c.value_bool, "
             "       c.raw_value, c.observed_at, c.source_reliability, c.artifact_integrity, "
             "       c.review_status, lower(c.valid_period), upper(c.valid_period), "
-            "       ea.source_id, ea.artifact_type, cap.retrieved_at, "
+            "       occ.source_id, occ.artifact_type, occ.retrieved_at, occ.capture_id, "
+            "       occ.bound_at, "
             "       q.count_scope, q.count_scope_detail, q.count_scope_jurisdiction, "
             "       q.evidence_origin "
             "  FROM claim c "
-            "  LEFT JOIN LATERAL ("
-            "     SELECT ea.source_id, ea.artifact_type "
-            "       FROM claim_evidence ce "
-            "       JOIN evidence_capture ec ON ec.capture_id = ce.capture_id "
-            "       JOIN evidence_artifact ea ON ea.artifact_id = ec.artifact_id "
-            "      WHERE ce.claim_id = c.claim_id LIMIT 1"
-            "  ) ea ON true "
-            + CAPTURE_TIME_JOIN
+            # The shared eligible-occurrence lateral (P32.4/ADR-123): the SAME
+            # belief instant bounds the claim's sys_period AND its evidence
+            # bindings, so a later capture/replay cannot re-date this frozen read.
+            + occurrence_lateral(BELIEF_PARAM)
             + COUNT_QUALIFIER_JOIN
             + " WHERE c.subject_id = %s AND c.predicate_id = %s "
             "   AND c.sensitivity_tier = 0 "  # publication boundary (§0.7)
             "   AND c.sys_period @> %s::timestamptz",  # as-of belief (§9.4)
-            (entity_id, predicate_id, as_of_belief),
+            (as_of_belief, entity_id, predicate_id, as_of_belief),
         ).fetchall()
         claims: list[Claim] = []
         for r in rows:
@@ -517,6 +520,8 @@ class PgReadStore:
                 source_id,
                 artifact_type,
                 retrieved_at,
+                occurrence_capture_id,
+                occurrence_bound_at,
                 count_scope,
                 count_scope_detail,
                 count_scope_jurisdiction,
@@ -534,6 +539,12 @@ class PgReadStore:
                     genre=artifact_type or "",
                     observed_at=obs,
                     observed_at_basis=basis,
+                    observed_instant=observation_instant(observed_at, retrieved_at),
+                    occurrence_capture_id=str(occurrence_capture_id)
+                    if occurrence_capture_id is not None
+                    else None,
+                    occurrence_retrieved_at=retrieved_at,
+                    occurrence_bound_at=occurrence_bound_at,
                     raw_value=raw_value or "",
                     valid_from=_as_date(valid_from) if valid_from else None,
                     valid_to=_as_date(valid_to) if valid_to else None,
@@ -613,16 +624,12 @@ class PgReadStore:
             "SELECT c.claim_id, c.predicate_id, c.value_kind, c.value_text, c.value_num, "
             "       c.value_bool, c.raw_value, c.observed_at, c.source_reliability, "
             "       c.artifact_integrity, c.review_status, lower(c.sys_period), c.subject_id, "
-            "       ea.source_id, ea.artifact_type, cap.retrieved_at, "
+            "       occ.source_id, occ.artifact_type, occ.retrieved_at, occ.capture_id, "
+            "       occ.bound_at, "
             "       q.count_scope, q.count_scope_detail, q.count_scope_jurisdiction, "
             "       q.evidence_origin "
             "  FROM claim c "
-            "  LEFT JOIN LATERAL ("
-            "     SELECT ea.source_id, ea.artifact_type FROM claim_evidence ce "
-            "       JOIN evidence_capture ec ON ec.capture_id = ce.capture_id "
-            "       JOIN evidence_artifact ea ON ea.artifact_id = ec.artifact_id "
-            "      WHERE ce.claim_id = c.claim_id LIMIT 1) ea ON true "
-            + CAPTURE_TIME_JOIN
+            + occurrence_lateral(BELIEF_NOW)
             + COUNT_QUALIFIER_JOIN
             + " WHERE c.claim_id = %s AND c.sensitivity_tier = 0",
             (claim_id,),
@@ -647,13 +654,17 @@ class PgReadStore:
             genre=row[14] or "",
             observed_at=obs,
             observed_at_basis=basis,
+            observed_instant=observation_instant(row[7], row[15]),
+            occurrence_capture_id=str(row[16]) if row[16] is not None else None,
+            occurrence_retrieved_at=row[15],
+            occurrence_bound_at=row[17],
             raw_value=row[6] or "",
             review_status=row[10] or "active",
             source_id=row[13] or "",
-            count_scope=row[16],
-            count_scope_detail=row[17],
-            count_scope_jurisdiction=row[18],
-            evidence_origin=row[19],
+            count_scope=row[18],
+            count_scope_detail=row[19],
+            count_scope_jurisdiction=row[20],
+            evidence_origin=row[21],
         )
         return StoredClaim(claim=claim, asserted_at=asserted_at, capture_ids=capture_ids)
 
@@ -896,30 +907,21 @@ class PgReadStore:
         return conn
 
     def _spine_watermark(self) -> str:
-        """A monotone watermark over the append-only spine (P25.10).
+        """The append-only spine watermark (P25.10; bounded since P32.4/D-P31.1-1).
 
-        The spine never lets a claim row change content (``claim_append_only``
-        forbids DELETE and every non-``sys_period`` UPDATE; the one permitted
-        mutation, closing ``sys_period``, is counted separately), so this tuple
-        of row counts plus the latest assertion instant changes iff a row the
-        annotation compute reads has arrived. A cache keyed on it is provably
-        never stale: anything that could change the served set changes the key.
+        Reads the trigger-maintained ``spine_watermark`` table — an O(#facets)
+        probe instead of the six spine-table counts this used to run per
+        request (~10 s measured on the hosted spine). Every watched relation
+        bumps its facet in the same transaction as its write, so the watermark
+        is snapshot-consistent and provably never stale: a new claim, a
+        correction (claim insert or ``sys_period`` close), or a completed
+        materialization changes the disclosed value in exactly one transaction.
+        The watched set is a superset of every relation the cached
+        compute-on-read paths touch (over-invalidation costs a recompute;
+        under-invalidation was the defect). A spine deployed before
+        ``shared_temporal_contract`` falls back to the legacy six-count read.
         """
-        row = self._conn.execute(
-            "SELECT (SELECT count(*) FROM claim),"
-            "       (SELECT count(*) FROM claim WHERE upper(sys_period) IS NOT NULL),"
-            "       (SELECT max(lower(sys_period)) FROM claim),"
-            "       (SELECT count(*) FROM claim_evidence),"
-            "       (SELECT count(*) FROM evidence_capture),"
-            "       (SELECT count(*) FROM evidence_artifact)"
-        ).fetchone()
-        assert row is not None
-        claims, closed, latest, claim_ev, captures, artifacts = row
-        latest_s = latest.isoformat() if latest is not None else "none"
-        return (
-            f"claims={claims} closed={closed} latest_assertion={latest_s} "
-            f"evidence={claim_ev}/{captures}/{artifacts}"
-        )
+        return spine_watermark(self._conn)
 
     def _public_claim_groups(
         self, conn: psycopg.Connection, belief: datetime
@@ -936,23 +938,21 @@ class PgReadStore:
             "       c.value_num, c.value_bool, c.raw_value, c.observed_at, "
             "       c.source_reliability, c.artifact_integrity, c.review_status, "
             "       lower(c.valid_period), upper(c.valid_period), "
-            "       ea.source_id, ea.artifact_type, cap.retrieved_at, "
+            "       occ.source_id, occ.artifact_type, occ.retrieved_at, occ.capture_id, "
+            "       occ.bound_at, "
             "       q.count_scope, q.count_scope_detail, q.count_scope_jurisdiction, "
             "       q.evidence_origin "
             "  FROM claim c "
-            "  LEFT JOIN LATERAL ("
-            "     SELECT ea.source_id, ea.artifact_type "
-            "       FROM claim_evidence ce "
-            "       JOIN evidence_capture ec ON ec.capture_id = ce.capture_id "
-            "       JOIN evidence_artifact ea ON ea.artifact_id = ec.artifact_id "
-            "      WHERE ce.claim_id = c.claim_id LIMIT 1"
-            "  ) ea ON true "
-            + CAPTURE_TIME_JOIN
+            # The shared eligible-occurrence lateral (P32.4/ADR-123): the SAME
+            # belief bounds claims and their evidence bindings — a binding minted
+            # after the pinned belief is invisible here, so a later capture or
+            # replay never re-dates an already-served annotation set.
+            + occurrence_lateral(BELIEF_PARAM)
             + COUNT_QUALIFIER_JOIN
             + " WHERE c.sensitivity_tier = 0 "  # publication boundary (§0.7)
             "   AND c.sys_period @> %s::timestamptz "  # as-of belief (§9.4)
             " ORDER BY c.subject_id, c.predicate_id, c.claim_id",
-            (belief,),
+            (belief, belief),
         ).fetchall()
         groups: dict[tuple[str, str], list[Claim]] = {}
         for r in rows:
@@ -974,6 +974,8 @@ class PgReadStore:
                 source_id,
                 artifact_type,
                 retrieved_at,
+                occurrence_capture_id,
+                occurrence_bound_at,
                 count_scope,
                 count_scope_detail,
                 count_scope_jurisdiction,
@@ -992,6 +994,12 @@ class PgReadStore:
                     genre=artifact_type or "",
                     observed_at=obs,
                     observed_at_basis=basis,
+                    observed_instant=observation_instant(observed_at, retrieved_at),
+                    occurrence_capture_id=str(occurrence_capture_id)
+                    if occurrence_capture_id is not None
+                    else None,
+                    occurrence_retrieved_at=retrieved_at,
+                    occurrence_bound_at=occurrence_bound_at,
                     raw_value=raw_value or "",
                     valid_from=_as_date(valid_from) if valid_from else None,
                     valid_to=_as_date(valid_to) if valid_to else None,

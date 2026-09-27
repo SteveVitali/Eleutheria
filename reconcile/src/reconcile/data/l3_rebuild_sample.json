@@ -1,84 +1,84 @@
 {
-  "_note": "L3 byte-identical rebuild sample (SIG-RECON-020). Regenerate with make gen or the P08.3 generator when the ruleset/resolver version changes. P32.3: repinned at ruleset 2026.2 (+UNRESOLVED_SCOPE_MIXED).",
-  "subject_id": "dep:okc",
-  "predicate_id": "active_device_count",
-  "as_of_world": "2026-09-01",
-  "as_of_belief": "2026-09-01",
-  "ruleset_version": "2026.2",
-  "resolver_version": "p08.1/1.0.0",
-  "claims": [
-    {
-      "claim_id": "claim:portal-2026-07",
-      "subject_id": "dep:okc",
-      "predicate_id": "active_device_count",
-      "value": 38,
-      "reliability": "R2",
-      "integrity": "I1",
-      "genre": "portal_snapshot",
-      "observed_at": "2026-07-01",
-      "source_id": "src:okc-portal",
-      "count_basis": "active",
-      "structured_exact": true
-    },
-    {
-      "claim_id": "claim:minutes-2026-06",
-      "subject_id": "dep:okc",
-      "predicate_id": "active_device_count",
-      "value": 38,
-      "reliability": "R2",
-      "integrity": "I1",
-      "genre": "council_minutes",
-      "observed_at": "2026-06-15",
-      "source_id": "src:okc-council",
-      "count_basis": "active",
-      "structured_exact": false
-    },
-    {
-      "claim_id": "claim:news-2026-05",
-      "subject_id": "dep:okc",
-      "predicate_id": "active_device_count",
-      "value": 40,
-      "reliability": "R4",
-      "integrity": "I1",
-      "genre": "news_article",
-      "observed_at": "2026-05-01",
-      "source_id": "src:local-news",
-      "count_basis": "active",
-      "structured_exact": false
-    }
+ "_note": "L3 byte-identical rebuild sample (SIG-RECON-020). Regenerate with make gen or the P08.3 generator when the ruleset/resolver version changes. P32.3: repinned at ruleset 2026.2 (+UNRESOLVED_SCOPE_MIXED). P32.4: repinned — the digest token now carries the shared-contract ordering instant (ADR-123), so a same-day re-sighting moves input_digest.",
+ "subject_id": "dep:okc",
+ "predicate_id": "active_device_count",
+ "as_of_world": "2026-09-01",
+ "as_of_belief": "2026-09-01",
+ "ruleset_version": "2026.2",
+ "resolver_version": "p08.1/1.0.0",
+ "claims": [
+  {
+   "claim_id": "claim:portal-2026-07",
+   "subject_id": "dep:okc",
+   "predicate_id": "active_device_count",
+   "value": 38,
+   "reliability": "R2",
+   "integrity": "I1",
+   "genre": "portal_snapshot",
+   "observed_at": "2026-07-01",
+   "source_id": "src:okc-portal",
+   "count_basis": "active",
+   "structured_exact": true
+  },
+  {
+   "claim_id": "claim:minutes-2026-06",
+   "subject_id": "dep:okc",
+   "predicate_id": "active_device_count",
+   "value": 38,
+   "reliability": "R2",
+   "integrity": "I1",
+   "genre": "council_minutes",
+   "observed_at": "2026-06-15",
+   "source_id": "src:okc-council",
+   "count_basis": "active",
+   "structured_exact": false
+  },
+  {
+   "claim_id": "claim:news-2026-05",
+   "subject_id": "dep:okc",
+   "predicate_id": "active_device_count",
+   "value": 40,
+   "reliability": "R4",
+   "integrity": "I1",
+   "genre": "news_article",
+   "observed_at": "2026-05-01",
+   "source_id": "src:local-news",
+   "count_basis": "active",
+   "structured_exact": false
+  }
+ ],
+ "expected_input_digest": "27ed6c8f4f25a46ed5822fad343311f55f66efd5368332e624ec953c206d5d3b",
+ "expected_decision_key": [
+  "RESOLVED",
+  "38",
+  "CONFIRMED",
+  "UNCONTESTED",
+  "CURRENT",
+  "uncontested",
+  "latest_observation_wins",
+  "RESOLVED_CONFIRMED_MULTI",
+  "Confirmed. 2 independent sources using different collection methods — src:okc-council, src:okc-portal — record active device count of 38.",
+  "claim:portal-2026-07",
+  [
+   "claim:minutes-2026-06",
+   "claim:news-2026-05",
+   "claim:portal-2026-07"
   ],
-  "expected_input_digest": "392cd039250ffe7d08ee5d49ba6e2f6ffd055087c45474fb3b5bdd08b0a652bc",
-  "expected_decision_key": [
-    "RESOLVED",
-    "38",
-    "CONFIRMED",
-    "UNCONTESTED",
-    "CURRENT",
-    "uncontested",
-    "latest_observation_wins",
-    "RESOLVED_CONFIRMED_MULTI",
-    "Confirmed. 2 independent sources using different collection methods \u2014 src:okc-council, src:okc-portal \u2014 record active device count of 38.",
-    "claim:portal-2026-07",
-    [
-      "claim:minutes-2026-06",
-      "claim:news-2026-05",
-      "claim:portal-2026-07"
-    ],
-    [
-      "claim:minutes-2026-06",
-      "claim:portal-2026-07"
-    ],
-    [],
-    [
-      "claim:minutes-2026-06",
-      "claim:portal-2026-07"
-    ],
-    [
-      "W0-retained",
-      "latest_observation_wins",
-      "SIG-RECON-007"
-    ],
-    null,
-    "392cd039250ffe7d08ee5d49ba6e2f6ffd055087c45474fb3b5bdd08b0a652bc"
-  ]
+  [
+   "claim:minutes-2026-06",
+   "claim:portal-2026-07"
+  ],
+  [],
+  [
+   "claim:minutes-2026-06",
+   "claim:portal-2026-07"
+  ],
+  [
+   "W0-retained",
+   "latest_observation_wins",
+   "SIG-RECON-007"
+  ],
+  null,
+  "27ed6c8f4f25a46ed5822fad343311f55f66efd5368332e624ec953c206d5d3b"
+ ]
 }

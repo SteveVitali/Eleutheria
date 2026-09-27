@@ -21,9 +21,12 @@
 from __future__ import annotations
 
 import json
+import uuid as _uuid
 from collections.abc import Callable, Sequence
 from dataclasses import replace
 from typing import Any
+
+from db.occurrences import BELIEF_NOW, occurrence_lateral
 
 from .camera_sites import (
     CameraGoldPair,
@@ -79,17 +82,34 @@ _EVIDENCE_PREDICATES = frozenset({"camera_latitude", "camera_longitude", "camera
 
 _RECORDS_SQL = (
     "SELECT DISTINCT ON (c.subject_id, c.predicate_id) "
-    "       c.subject_id::text, c.predicate_id, c.value_text, c.claim_id::text, ea.source_id "
+    "       c.subject_id::text, c.predicate_id, c.value_text, c.claim_id::text, "
+    "       occ.source_id, occ.capture_id::text, occ.retrieved_at "
     "  FROM claim c "
-    "  LEFT JOIN LATERAL ("
-    "     SELECT ea.source_id FROM claim_evidence ce "
-    "       JOIN evidence_capture ec ON ec.capture_id = ce.capture_id "
-    "       JOIN evidence_artifact ea ON ea.artifact_id = ec.artifact_id "
-    "      WHERE ce.claim_id = c.claim_id "
-    "      ORDER BY ec.retrieved_at, ea.source_id LIMIT 1) ea ON true "
-    " WHERE c.sensitivity_tier = 0 AND upper_inf(c.sys_period) "
+    + occurrence_lateral(BELIEF_NOW)
+    + " WHERE c.sensitivity_tier = 0 AND upper_inf(c.sys_period) "
     "   AND c.predicate_id = ANY(%s) "
-    " ORDER BY c.subject_id, c.predicate_id, c.claim_id DESC"
+    # P32.4 / ADR-123: per (subject, predicate) the latest *eligible* claim —
+    # the shared contract's ordering instant (the claim's own observed_at, else
+    # its latest eligible establishing occurrence's retrieved_at). claim_id
+    # breaks an exact-time tie only: an id is never a clock (the old
+    # `claim_id DESC` ordering was exactly the defect this closes).
+    " ORDER BY c.subject_id, c.predicate_id, "
+    "          COALESCE(c.observed_at, occ.retrieved_at) DESC NULLS LAST, "
+    "          c.claim_id ASC"
+)
+
+#: The binding detail for the coordinate pair's atomic-occurrence rule: a
+#: latitude/longitude pair is only a point when BOTH selected claims were
+#: established in one common capture (the pair is one source-record occurrence —
+#: never lat from capture X and lon from capture Y). Selected per claim here,
+#: intersected in :func:`read_camera_records`.
+_PAIR_BINDINGS_SQL = (
+    "SELECT ce.claim_id::text, ce.capture_id::text, ec.retrieved_at "
+    "  FROM claim_evidence ce "
+    "  JOIN evidence_capture ec ON ec.capture_id = ce.capture_id "
+    " WHERE ce.role = 'establishes' AND ce.bound_at <= clock_timestamp() "
+    "   AND ce.claim_id = ANY(%s::uuid[]) "
+    " ORDER BY ce.claim_id, ec.retrieved_at DESC NULLS LAST, ce.capture_id ASC"
 )
 
 # P31.11 duplicate-target lineage (ADR-R9-HUMANER): which connector TARGET a
@@ -152,10 +172,16 @@ def read_camera_records(conn: Any) -> list[CameraRecord]:
 
     A record is a subject carrying a ``camera_latitude`` or ``camera_longitude`` claim —
     exactly the M the resolved-site metric is denominated in. Each attribute is the
-    subject's latest current tier-0 claim for that predicate (claim ids are uuidv7, so
-    the latest is the most recent capture of that ONE record); both coordinate axes
-    therefore come from the same record — never from two sources. The record's source
-    is the source of its coordinate evidence.
+    subject's latest *eligible* claim for that predicate under the shared temporal
+    contract (P32.4 / ADR-123): the claim whose own ``observed_at`` — or, for an
+    undated claim, whose latest ``bound_at``-eligible ``establishes`` occurrence's
+    ``retrieved_at`` — is newest. A claim id is never used as a timestamp.
+
+    The coordinate pair is **atomic**: latitude and longitude are read only when
+    the two selected claims were established in a *common* capture (the pair is
+    one source-record occurrence, cited by ``coordinate_capture_id`` /
+    ``coordinate_retrieved_at``); a record whose axes were never asserted
+    together keeps no point rather than mixing occurrences across captures.
 
     P31.11: each record also carries its target-level lineage evidence — the
     connector ``target`` its subject was minted under (parsed out of the
@@ -164,16 +190,33 @@ def read_camera_records(conn: Any) -> list[CameraRecord]:
     """
     rows = conn.execute(_RECORDS_SQL, (list(CAMERA_PREDICATES),)).fetchall()
     by_subject: dict[str, dict[str, Any]] = {}
-    for subject, predicate, value, claim_id, source_id in rows:
+    for subject, predicate, value, claim_id, source_id, capture_id, retrieved_at in rows:
         rec = by_subject.setdefault(subject, {"claims": [], "sources": {}})
         rec[predicate] = value
         rec["sources"][predicate] = source_id
+        rec[f"{predicate}_claim"] = claim_id
+        rec[f"{predicate}_occurrence"] = (capture_id, retrieved_at)
         if predicate in _EVIDENCE_PREDICATES:
             rec["claims"].append(claim_id)
     for subject, digest in conn.execute(_DIGESTS_SQL, (list(CAMERA_PREDICATES),)).fetchall():
         tgt = by_subject.get(subject)
         if tgt is not None:
             tgt.setdefault("digests", set()).add(digest)
+
+    # The atomic pair: bind sets of the two selected coordinate claims.
+    coord_claims = [
+        rec[f"{pred}_claim"]
+        for rec in by_subject.values()
+        for pred in ("camera_latitude", "camera_longitude")
+        if rec.get(f"{pred}_claim")
+    ]
+    bindings: dict[str, list[tuple[str, Any]]] = {}
+    if coord_claims:
+        for claim_id, capture_id, retrieved_at in conn.execute(
+            _PAIR_BINDINGS_SQL, (coord_claims,)
+        ).fetchall():
+            bindings.setdefault(str(claim_id), []).append((str(capture_id), retrieved_at))
+
     out: list[CameraRecord] = []
     for subject in sorted(by_subject):
         rec = by_subject[subject]
@@ -185,14 +228,40 @@ def read_camera_records(conn: Any) -> list[CameraRecord]:
             or sources.get("camera_longitude")
             or next((s for s in sources.values() if s), None)
         )
+        latitude = _float(rec.get("camera_latitude"))
+        longitude = _float(rec.get("camera_longitude"))
+        pair_capture: str | None = None
+        pair_retrieved_at: Any = None
+        lat_claim = rec.get("camera_latitude_claim")
+        lon_claim = rec.get("camera_longitude_claim")
+        if lat_claim and lon_claim:
+            lat_caps = dict(bindings.get(lat_claim, ()))
+            lon_caps = dict(bindings.get(lon_claim, ()))
+            common = [(cap, lat_caps[cap]) for cap in lat_caps.keys() & lon_caps.keys()]
+            if common:
+                # latest common occurrence = the pair's own sighting instant
+                pair_capture, pair_retrieved_at = min(
+                    common,
+                    key=lambda cr: (
+                        0 if cr[1] is not None else 1,
+                        -(cr[1].timestamp()) if cr[1] is not None else 0.0,
+                        cr[0],
+                    ),
+                )
+            else:
+                # Never mix occurrences across captures: no common sighting →
+                # no point (the axis claims stay cited in claim_ids).
+                latitude = longitude = None
         out.append(
             CameraRecord(
                 subject_id=subject,
                 source_id=str(source or ""),
-                latitude=_float(rec.get("camera_latitude")),
-                longitude=_float(rec.get("camera_longitude")),
+                latitude=latitude,
+                longitude=longitude,
                 claim_ids=tuple(sorted(rec["claims"])),
                 capture_digests=tuple(sorted(rec.get("digests") or ())),
+                coordinate_capture_id=pair_capture,
+                coordinate_retrieved_at=pair_retrieved_at,
                 **{field: rec.get(pred) for pred, field in _FIELD.items()},
             )
         )
@@ -418,6 +487,7 @@ def materialize_camera_sites(
     threshold: float | None = None,
     records: Sequence[CameraRecord] | None = None,
     rules: CameraSiteRules | None = None,
+    execution_id: str | None = None,
     batch_size: int = 1_000,
     progress: Callable[[str, int, int], None] | None = None,
 ) -> dict[str, Any]:
@@ -426,6 +496,13 @@ def materialize_camera_sites(
     ``gold`` defaults to the committed camera gold set; ``threshold`` to the published
     auto-write floor. Returns a JSON-able summary: the run's M / N / dedup ratio / eval
     fields plus ``inserted`` / ``skipped_existing`` counts (+0 on an unchanged re-run).
+
+    Every EXECUTION appends its own completion/result reference (P32.4 / ADR-123):
+    ``camera_site_run`` is keyed by the full input digest, so an A→B→A reversion that
+    reuses an older run's result still appends one ``camera_site_execution`` row —
+    readers follow the LATEST completed execution, never the latest distinct run.
+    ``execution_id`` is the idempotency key: retrying the same execution appends +0;
+    a fresh execution (default) mints a uuidv7-style id.
     """
     if role:
         set_role(conn, role)
@@ -489,6 +566,7 @@ def materialize_camera_sites(
                     active += 1
 
     summary = result.summary()
+    execution = execution_id or str(_uuid.uuid4())
     with conn.transaction():
         run_inserted = (
             conn.execute(
@@ -509,6 +587,24 @@ def materialize_camera_sites(
             ).fetchone()
             is not None
         )
+        # One append-only completion/result reference PER EXECUTION (ADR-123):
+        # appended whether the run row was new or reused — the "a new execution
+        # completed" fact itself is the append-only record. Retry of the same
+        # execution_id is +0 (idempotent), a fresh execution appends +1.
+        execution_appended = (
+            conn.execute(
+                "INSERT INTO camera_site_execution(execution_id, run_key, input_count, summary) "
+                "VALUES (%s, %s, %s, %s::jsonb) "
+                "ON CONFLICT (execution_id) DO NOTHING RETURNING execution_id",
+                (
+                    execution,
+                    result.run_key,
+                    result.observation_count,
+                    json.dumps({**summary, "execution_id": execution}, sort_keys=True, default=str),
+                ),
+            ).fetchone()
+            is not None
+        )
     return {
         **summary,
         "inserted": inserted,
@@ -516,6 +612,8 @@ def materialize_camera_sites(
         "review_items_enqueued": enqueued,
         "active_learning_enqueued": active,
         "run_record_inserted": run_inserted,
+        "execution_id": execution,
+        "execution_appended": execution_appended,
     }
 
 
@@ -545,10 +643,26 @@ def read_resolved_site_runs(conn: Any, *, role: str | None = None) -> list[dict[
     """
     if role:
         set_role(conn, role)
-    run = conn.execute(
-        "SELECT run_key, observation_count, cluster_count, auto_write_tiers, summary "
-        "  FROM camera_site_run ORDER BY completed_at DESC, run_key DESC LIMIT 1"
-    ).fetchone()
+    # P32.4 / ADR-123: the LATEST COMPLETED EXECUTION governs current selection —
+    # an A→B→A reversion that reuses an older camera_site_run still leaves a new
+    # execution row naming that run, so the reader never stays on B. A spine
+    # deployed before shared_temporal_contract (no execution rows) falls back to
+    # the latest camera_site_run — the prior contract.
+    has_exec = conn.execute("SELECT to_regclass('camera_site_execution') IS NOT NULL").fetchone()
+    run = None
+    if has_exec and has_exec[0]:
+        run = conn.execute(
+            "SELECT r.run_key, r.observation_count, r.cluster_count, r.auto_write_tiers, "
+            "       r.summary "
+            "  FROM camera_site_execution x "
+            "  JOIN camera_site_run r ON r.run_key = x.run_key "
+            " ORDER BY x.completed_at DESC, x.execution_id DESC LIMIT 1"
+        ).fetchone()
+    if run is None:
+        run = conn.execute(
+            "SELECT run_key, observation_count, cluster_count, auto_write_tiers, summary "
+            "  FROM camera_site_run ORDER BY completed_at DESC, run_key DESC LIMIT 1"
+        ).fetchone()
     if run is None:
         return []
     rows = conn.execute(

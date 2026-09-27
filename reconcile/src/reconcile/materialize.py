@@ -45,6 +45,13 @@ from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 from typing import Any
 
+from db.occurrences import (
+    BELIEF_NOW,
+    BELIEF_PARAM,
+    observation_instant,
+    occurrence_lateral,
+)
+
 from .contradiction import materialize as materialize_contradiction_entity
 from .model import Contradiction
 from .resolve import RESOLVE, Claim, Resolution
@@ -150,14 +157,16 @@ def _as_date(value: Any) -> date:
 #: re-sighting is linked (``record_resightings``), so the LATEST capture is used — the
 #: most recent time the source was seen asserting the value. That is what makes a
 #: reverting A → B → A value resolve to A under ``latest_observation_wins``: the
-#: restated A's latest sighting post-dates B's. The lateral only runs for undated
-#: claims. Alias ``cap``; select ``cap.retrieved_at``.
-CAPTURE_TIME_JOIN = (
-    "  LEFT JOIN LATERAL ("
-    "     SELECT max(ec2.retrieved_at) AS retrieved_at FROM claim_evidence ce2 "
-    "       JOIN evidence_capture ec2 ON ec2.capture_id = ce2.capture_id "
-    "      WHERE ce2.claim_id = c.claim_id AND c.observed_at IS NULL) cap ON true "
-)
+#: restated A's latest sighting post-dates B's.
+#:
+#: P32.4 / ADR-123 replaces the bare ``max(retrieved_at)`` probe with the shared
+#: eligible-occurrence lateral (:func:`db.occurrences.occurrence_lateral`): only
+#: ``role='establishes'`` bindings count (a corroborating/contradicting link is not
+#: a sighting), and ``bound_at <= belief`` so a later capture/replay/correction can
+#: never re-date a frozen past-belief read. Alias ``occ``; the lateral also carries
+#: the source/genre/occurrence refs outputs preserve. This constant is the
+#: current-knowledge variant kept for back-compat imports.
+CAPTURE_TIME_JOIN = occurrence_lateral(BELIEF_NOW)
 
 #: The count-scope / evidence-origin qualifiers (P32.3 / SIG-TRUST-004,
 #: ADR-122). Reads the typed ``claim_qualifier`` surface P32.2 added: the
@@ -257,25 +266,27 @@ def read_claim_groups(
         )
         params.append(f"%{jurisdiction}%")
 
+    # The eligible-occurrence lateral carries its own belief bound — the SAME
+    # instant the ``sys_period @> belief`` filter uses, so a claim and its
+    # evidence bindings are visible at exactly the same knowledge instant
+    # (ADR-123). ``None`` reads current knowledge (``clock_timestamp()``).
+    occ_belief = BELIEF_PARAM if as_of_belief is not None else BELIEF_NOW
+    occ_params = [as_of_belief] if as_of_belief is not None else []
+
     rows = conn.execute(
         "SELECT c.subject_id, c.predicate_id, c.claim_id, c.value_kind, c.value_text, "
         "       c.value_num, c.value_bool, c.raw_value, c.observed_at, c.source_reliability, "
-        "       c.artifact_integrity, c.review_status, ea.source_id, ea.artifact_type, "
-        "       cap.retrieved_at, "
+        "       c.artifact_integrity, c.review_status, occ.source_id, occ.artifact_type, "
+        "       occ.retrieved_at, occ.capture_id, occ.bound_at, "
         "       q.count_scope, q.count_scope_detail, q.count_scope_jurisdiction, "
         "       q.evidence_origin "
         "  FROM claim c "
-        "  LEFT JOIN LATERAL ("
-        "     SELECT ea.source_id, ea.artifact_type FROM claim_evidence ce "
-        "       JOIN evidence_capture ec ON ec.capture_id = ce.capture_id "
-        "       JOIN evidence_artifact ea ON ea.artifact_id = ec.artifact_id "
-        "      WHERE ce.claim_id = c.claim_id LIMIT 1) ea ON true "
-        + CAPTURE_TIME_JOIN
+        + occurrence_lateral(occ_belief)
         + COUNT_QUALIFIER_JOIN
         + " WHERE "
         + " AND ".join(where)
         + " ORDER BY c.subject_id, c.predicate_id, c.claim_id",
-        tuple(params),
+        tuple(occ_params + params),
     ).fetchall()
 
     groups: dict[tuple[str, str], list[Claim]] = {}
@@ -293,16 +304,20 @@ def read_claim_groups(
                 genre=r[13] or "",
                 observed_at=observed_at,
                 observed_at_basis=basis,
+                observed_instant=observation_instant(r[8], r[14]),
+                occurrence_capture_id=str(r[15]) if r[15] is not None else None,
+                occurrence_retrieved_at=r[14],
+                occurrence_bound_at=r[16],
                 raw_value=r[7] or "",
                 review_status=r[11] or "active",
                 source_id=r[12] or "",
                 count_basis=str(r[1]).removesuffix("_device_count")
                 if str(r[1]).endswith("_device_count")
                 else None,
-                count_scope=r[15],
-                count_scope_detail=r[16],
-                count_scope_jurisdiction=r[17],
-                evidence_origin=r[18],
+                count_scope=r[17],
+                count_scope_detail=r[18],
+                count_scope_jurisdiction=r[19],
+                evidence_origin=r[20],
             )
         )
     return groups
@@ -440,6 +455,7 @@ def materialize_resolutions(
     subject: str | None = None,
     predicate: str | None = None,
     as_of: date | None = None,
+    as_of_belief: datetime | None = None,
     ruleset: Ruleset | None = None,
     role: str | None = None,
     progress: Callable[[int, int, int], None] | None = None,
@@ -453,6 +469,12 @@ def materialize_resolutions(
     :class:`MaterializeSummary`; a second call over unchanged claims inserts +0.
     ``progress(considered, total, inserted)`` — if given — is called every
     ``progress_every`` groups so a long hosted pass reports throughput (ETA) as it runs.
+
+    ``as_of_belief`` pins the whole read to one knowledge instant (ADR-123): claims
+    outside ``sys_period @> belief`` are invisible AND evidence bindings with
+    ``bound_at > belief`` are invisible — a later capture/replay/correction cannot
+    re-date or un-see a frozen past-belief materialization. Default ``None`` reads
+    current knowledge, the P28.1 behaviour.
     """
     rs = ruleset or load_ruleset()
     if role:
@@ -460,7 +482,11 @@ def materialize_resolutions(
     as_of_world = as_of or datetime.now(tz=UTC).date()
 
     groups = read_claim_groups(
-        conn, jurisdiction=jurisdiction, subject=subject, predicate=predicate
+        conn,
+        jurisdiction=jurisdiction,
+        subject=subject,
+        predicate=predicate,
+        as_of_belief=as_of_belief,
     )
 
     considered = inserted = skipped_existing = skipped_unresolvable = 0

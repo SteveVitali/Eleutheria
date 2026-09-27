@@ -21,6 +21,10 @@ dependencies = [
     "rdflib>=7.0",
     "sig-policy",
     "sig-resolution",
+    # P32.4 (ADR-123): the shared temporal occurrence contract lives in
+    # db.occurrences — shaping/spine_export compose their claim_source CTE and
+    # lineage-candidate selection from it (leaf-ward, no cycle).
+    "sig-db",
     # P21.7 (ADR-069): a jurisdiction export self-contains the §7 contribution-back
     # leverage metric (web/leverage.json) so the site builds from the export bytes
     # in `export` mode; the metric is produced by tasks.osm_feed over the recorded
@@ -50,6 +54,7 @@ sig-exports = "exports.cli:main"
 [tool.uv.sources]
 sig-policy = { workspace = true }
 sig-resolution = { workspace = true }
+sig-db = { workspace = true }
 sig-tasks = { workspace = true }
 sig-inference = { workspace = true }
 sig-parsing = { workspace = true }

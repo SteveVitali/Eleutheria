@@ -256,7 +256,7 @@ def test_a_replay_inserts_nothing(clean_dsn: str) -> None:
 
 
 def test_the_materializers_run_over_the_emitted_claims(clean_dsn: str) -> None:
-    from exports.shaping import _queries_for
+    from exports.shaping import _queries_for, expand_query
     from inference.accountability import (
         materialize_accountability_links,
         read_materialized_accountability_links,
@@ -431,7 +431,7 @@ def test_the_materializers_run_over_the_emitted_claims(clean_dsn: str) -> None:
         assert materialize_sharing_edges(conn).inserted == 0
 
         # The export's sharing-edge read leaves the partner entity-refs out.
-        shared = conn.execute(_queries_for(True)["sharing_edges"]).fetchall()
+        shared = conn.execute(expand_query(_queries_for(True)["sharing_edges"])).fetchall()
         assert not {r[2] for r in shared} & PARTNER_PREDICATES
 
 

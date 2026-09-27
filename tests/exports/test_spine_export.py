@@ -136,6 +136,9 @@ def _rows(claims: list[ShapingClaim]) -> list[tuple]:
             c.sensitivity_tier,
             c.source_id,
             c.connector_name,
+            c.occurrence_capture_id,
+            c.occurrence_retrieved_at,
+            c.occurrence_bound_at,
             c.effective_rights_id,
             c.effective_spdx,
             c.effective_redistributable,
@@ -257,7 +260,9 @@ def test_map_location_absence_uses_the_web_absence_vocabulary() -> None:
     point_less = [_claim("N-jur", "N", "camera_jurisdiction", value_text="Oklahoma")]
     conflicted = [
         _claim("C-lat1", "C", "camera_latitude", value_text="35.1"),
-        _claim("C-lat2", "C", "camera_latitude", value_text="36.9"),
+        # P32.4: a same-source re-observation supersedes — a real conflict needs
+        # two independent sources to stay concurrent candidates (ADR-123).
+        _claim("C-lat2", "C", "camera_latitude", value_text="36.9", source_id="src_b"),
         _claim("C-lon", "C", "camera_longitude", value_text="-97.5"),
         _claim("C-jur", "C", "camera_jurisdiction", value_text="Oklahoma"),
     ]

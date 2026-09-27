@@ -37,6 +37,8 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any, Protocol
 
+from db.occurrences import BELIEF_NOW, claim_source_cte
+
 #: The audit output schema version — bumped when the emitted shape changes.
 AUDIT_SCHEMA_VERSION = "p30.1/1.0.0"
 
@@ -157,23 +159,23 @@ QUERIES: dict[str, str] = {
 #: (source_id, prior_rights_id) matches the claim's recorded rights_id, else the
 #: recorded record. Decisions only ever have UNDETERMINED priors, so an already-
 #: resolved claim (e.g. recorded ODbL) is never re-licensed by construction.
-_EFFECTIVE_CTE = (
+_LATEST_DECISION_CTE = (
     "WITH latest_decision AS ("
     "  SELECT DISTINCT ON (rd.source_id, rd.prior_rights_id)"
     "         rd.source_id, rd.prior_rights_id, rd.rights_id"
     "    FROM rights_decision rd"
     "   ORDER BY rd.source_id, rd.prior_rights_id, rd.decided_at DESC, rd.decision_id DESC"
-    "), claim_source AS ("
-    # one deterministic source per claim (claims carry exactly one 'establishes' link
-    # in practice; DISTINCT ON keeps the query honest even if a second ever appears)
-    "  SELECT DISTINCT ON (ce.claim_id) ce.claim_id, ea.source_id"
-    "    FROM claim_evidence ce"
-    "    JOIN evidence_capture ec ON ce.capture_id = ec.capture_id"
-    "    JOIN evidence_artifact ea ON ec.artifact_id = ea.artifact_id"
-    "   WHERE ce.role = 'establishes'"
-    "   ORDER BY ce.claim_id, ea.source_id ASC"
     ") "
 )
+#: The effective-rights read = latest rights decision + the claim's source under
+#: the SHARED temporal contract (P32.4 / ADR-123): ``claim_source`` is the
+#: claim's latest *eligible* establishing occurrence (same selection as
+#: ``sig.eligible_occurrence`` / ``db.occurrences.select_occurrence``), which also
+#: carries the occurrence refs (capture_id / retrieved_at / bound_at) consumers
+#: preserve in output. The audit's own reads are current-knowledge
+#: (``clock_timestamp()`` bound); belief-pinned readers compose this CTE with a
+#: parametrized bound.
+_EFFECTIVE_CTE = _LATEST_DECISION_CTE + claim_source_cte(BELIEF_NOW)
 EFFECTIVE_QUERIES: dict[str, str] = {
     # The licence mix as RESOLVED through rights_decision — the post-review posture.
     "effective_licence_mix": (

@@ -127,6 +127,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-120](ADR-120-six-stream-integrity-investigation-and-memory-extension.md) | — | — | — |
 | [ADR-121](ADR-121-typed-assertions-and-actual-capture-bindings.md) | — | — | — |
 | [ADR-122](ADR-122-role-semantics-count-scope-and-conservative-organization-identity.md) | — | — | — |
+| [ADR-123](ADR-123-shared-bitemporal-occurrence-selection.md) | — | — | — |
 
 ## Notes
 

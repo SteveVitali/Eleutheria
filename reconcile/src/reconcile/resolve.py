@@ -31,6 +31,8 @@ from dataclasses import dataclass, field, replace
 from datetime import UTC, date, datetime
 from typing import cast
 
+from db.occurrences import ordering_instant as _contract_ordering_instant
+
 from .model import Contradiction, Evidence, ResearchTask
 from .rationale import render_rationale
 from .ruleset import Ruleset, load_ruleset
@@ -121,6 +123,32 @@ class Claim:
     #: links existed). That is an inference, so the resolver labels it in
     #: ``rules_fired`` (ADR-104) rather than letting it pass as an observation date.
     observed_at_basis: str = "claim"
+    #: The exact ordering instant (P32.4 / SIG-TRUST-005, ADR-123). PG readers
+    #: fill it at full precision (the claim's own ``observed_at`` timestamptz, or
+    #: the latest eligible occurrence's ``retrieved_at`` for undated claims) so
+    #: same-day A → B → A re-sightings order correctly; ``observed_at`` stays the
+    #: date-precision display value ("date-only source values stay date-only").
+    #: ``None`` → ordering falls back to ``observed_at`` at UTC midnight.
+    observed_instant: datetime | None = None
+    #: The selected latest *eligible* establishing occurrence — the
+    #: ``claim_evidence`` capture link that dated the claim (or merely the newest
+    #: sighting, when the claim is self-dated). The shared contract preserves the
+    #: occurrence/evidence references so outputs can cite them.
+    occurrence_capture_id: str | None = None
+    occurrence_retrieved_at: datetime | None = None
+    occurrence_bound_at: datetime | None = None
+
+    @property
+    def ordering_instant(self) -> datetime:
+        """The exact instant used for recency comparisons (ADR-123).
+
+        One comparable axis for mixed date-only/instanced claims: the full-
+        precision ``observed_instant`` when the reader supplied it, else
+        ``observed_at`` at UTC midnight. ``claim_id`` remains the deterministic
+        last-resort tie-break *after* real temporal fields — an id is never a
+        clock.
+        """
+        return _contract_ordering_instant(self.observed_instant, self.observed_at)
 
     @property
     def rank(self) -> int:
@@ -158,9 +186,13 @@ class Claim:
     def digest_token(self) -> str:
         if self.content_hash:
             return f"{self.claim_id}:{self.content_hash}"
+        # The ordering instant is part of the decision input (SIG-RECON-020): a
+        # same-day re-sighting moves it, so it must move the digest too — that is
+        # what mints the NEW resolution row and closes the prior one (P31.7).
+        instant = self.observed_instant.isoformat() if self.observed_instant else ""
         payload = (
             f"{self.predicate_id}|{self.value!r}|{self.raw_value}"
-            f"|{self.observed_at.isoformat()}|{self.source_id}"
+            f"|{self.observed_at.isoformat()}|{instant}|{self.source_id}"
         )
         return f"{self.claim_id}:{hashlib.sha256(payload.encode()).hexdigest()}"
 
@@ -520,12 +552,17 @@ def _admissibility(st: _State, pair: list[Claim]) -> list[Claim]:
         kept.append(c)
 
     # 1.4 supersession: within one source and valid-time, the later observation
-    # supersedes; drop the earlier (claim_id breaks an exact-time tie).
+    # supersedes; drop the earlier. The exact ordering instant (ADR-123) carries
+    # sub-day precision so a same-day re-sighting supersedes; claim_id breaks an
+    # exact-time tie (deterministic — an id is never a timestamp).
     latest: dict[tuple[str, object, object], Claim] = {}
     for c in kept:
         key = (c.source_id, c.valid_from, c.valid_to)
         cur = latest.get(key)
-        if cur is None or (c.observed_at, c.claim_id) > (cur.observed_at, cur.claim_id):
+        if cur is None or (c.ordering_instant, c.claim_id) > (
+            cur.ordering_instant,
+            cur.claim_id,
+        ):
             latest[key] = c
     winners = set(id(c) for c in latest.values())
     result: list[Claim] = []
@@ -793,7 +830,7 @@ def _representative(group: list[tuple[Claim, int]], *, recency: bool) -> Claim:
     IMMUTABLE/GLACIAL predicates so a newer claim gains no edge (SIG-RECON-010)."""
 
     def key(cw: tuple[Claim, int]) -> tuple[object, ...]:
-        observed = -cw[0].observed_at.toordinal() if recency else 0
+        observed = -cw[0].ordering_instant.timestamp() if recency else 0
         return (-cw[1], observed, cw[0].rank, cw[0].claim_id)
 
     return min(group, key=key)[0]
@@ -817,12 +854,12 @@ def _total_order(
     """
     recency = ruleset.recency_breaks_ties(predicate_id)
 
-    def observed_key(cand: Candidate) -> int:
-        return -cand.representative.observed_at.toordinal() if recency else 0
+    def observed_key(cand: Candidate) -> float:
+        return -cand.representative.ordering_instant.timestamp() if recency else 0
 
     def strategy_primary(cand: Candidate) -> tuple[object, ...]:
         if strategy == "latest_observation_wins":
-            return (-cand.representative.observed_at.toordinal(),)
+            return (-cand.representative.ordering_instant.timestamp(),)
         if strategy == "max_support":
             return (-len(cand.supporting_class_ids),)
         if strategy in {"interval_union", "interval_intersection"}:
