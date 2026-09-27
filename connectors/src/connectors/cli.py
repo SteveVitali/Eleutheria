@@ -117,6 +117,13 @@ def build_parser() -> argparse.ArgumentParser:
     runp.add_argument(
         "--wacz", action="store_true", help="also capture HTML pages as WACZ (live, P02.2 path)"
     )
+    runp.add_argument(
+        "--commit-chunk-size",
+        type=int,
+        default=None,
+        help="PG sink: claims committed per transaction (default: $SIG_COMMIT_CHUNK_SIZE "
+        "else the sink default; small sources commit in one chunk) — P26.18",
+    )
     return parser
 
 
@@ -276,10 +283,16 @@ def _run(args: argparse.Namespace) -> int:
     from .live_targets import NoLiveTargets
     from .net import RobotsDisallowed, RobotsUnretrievable
     from .runner import LiveGateRefused, RunMode, run_source
+    from .sinks import resolve_commit_chunk_size
     from .stages import ContentDrift
 
     if args.sink == "pg" and not args.dsn:
         print("--sink pg requires --dsn")
+        return 2
+    try:
+        commit_chunk_size = resolve_commit_chunk_size(args.commit_chunk_size)
+    except ValueError as bad:
+        print(f"invalid commit chunk size: {bad}")
         return 2
     try:
         report = run_source(
@@ -293,6 +306,7 @@ def _run(args: argparse.Namespace) -> int:
             dsn=args.dsn,
             capture_dir=Path(args.capture_dir) if args.capture_dir else None,
             wacz=args.wacz,
+            commit_chunk_size=commit_chunk_size,
         )
     except LiveGateRefused as refused:
         # A live fetch on a non-green source is refused before any egress

@@ -486,6 +486,7 @@ def scheduled_ingest(
     sink_kind: str = "pg",
     dsn: str | None = None,
     capture_dir: Path | None = None,
+    commit_chunk_size: int | None = None,
     runner: Callable[..., Any] | None = None,
     now: str | None = None,
 ) -> RunRow:
@@ -496,6 +497,10 @@ def scheduled_ingest(
     is refused (``gate_refused``) before any socket is opened, and every refusal
     / drift / disappearance the runner records lands verbatim in the run row —
     scheduled runs record refusals exactly like manual ones.
+
+    ``commit_chunk_size`` (PG sink) bounds the per-transaction claim count so a
+    very-large source commits progressively (P26.18 / SOURCES.17); ``None`` uses
+    the sink default (small sources commit in one chunk, unchanged behaviour).
     """
     if runner is None:
         from connectors.runner import RunMode, run_source
@@ -518,6 +523,7 @@ def scheduled_ingest(
             sink_kind=sink_kind,
             dsn=dsn,
             capture_dir=capture_dir,
+            commit_chunk_size=commit_chunk_size,
         )
         claims = len(report.claims)
         digests = tuple(str(c.digest) for c in report.captures if hasattr(c, "digest"))

@@ -62,6 +62,16 @@ _DEFAULT_ENTITY_TYPE = "deployment"  # the atlas/osm subjects are adoption bridg
 #: The identifier scheme the sink keys connector subjects on (idempotent identity).
 SUBJECT_SCHEME = "sig.connector.subject"
 
+#: Default number of claims committed per :meth:`PgClaimSink.assert_claims`
+#: transaction (P26.18 / SOURCES.17). Sized so a chunk commits in well under a
+#: Cloud Run task timeout even on the small ``db-f1-micro`` spine (~20–45
+#: committed claims/s aggregate observed in P26.16 → ~10k claims ≈ 4–8 min),
+#: while leaving every ordinary source — all well below this size — committing
+#: in a *single* chunk, i.e. byte-for-byte the pre-P26.18 all-in-one-transaction
+#: behaviour. Only the handful of very-large sources (OSM's ~1.37M mirror) span
+#: multiple chunks, which makes their ingest resumable rather than all-or-nothing.
+DEFAULT_COMMIT_CHUNK_SIZE = 10_000
+
 
 def content_digest(claim: Mapping[str, Any]) -> str:
     """The sha256 over a claim's reproducible payload (its idempotency key).
@@ -130,7 +140,13 @@ class PgClaimSink:
         ruleset_version: str = "ruleset/1",
         vocab_version: str = "1.0.0",
         is_replay: bool = False,
+        commit_chunk_size: int = DEFAULT_COMMIT_CHUNK_SIZE,
     ) -> None:
+        if commit_chunk_size < 1:
+            raise ValueError(
+                f"commit_chunk_size must be >= 1 (got {commit_chunk_size!r}); a chunk "
+                "spans at least one claim"
+            )
         self._conn = conn
         self._connector_name = connector_name
         self._connector_version = connector_version
@@ -138,6 +154,7 @@ class PgClaimSink:
         self._ruleset_version = ruleset_version
         self._vocab_version = vocab_version
         self._is_replay = is_replay
+        self._commit_chunk_size = commit_chunk_size
         # Per-instance caches so prerequisites are resolved once, not per claim.
         self._run_id: str | None = None
         self._rights_by_spdx: dict[str, str] = {}
@@ -160,16 +177,51 @@ class PgClaimSink:
     # --- ClaimSink protocol ----------------------------------------------------
 
     def assert_claims(self, claims: Sequence[Mapping[str, Any]]) -> None:
-        """Persist ``claims`` append-only and idempotently (the L1 write path)."""
-        with self._conn.transaction():
-            for claim in claims:
-                self.report.considered += 1
-                if claim.get("record_kind", "claim") != "claim":
-                    # unmapped-category / vocabulary-event rows are not L1 claims;
-                    # their task/coverage projections are owned elsewhere (P21.2).
-                    self.report.non_claim_records += 1
-                    continue
-                self._insert_claim(claim)
+        """Persist ``claims`` append-only and idempotently (the L1 write path).
+
+        Commits in **bounded chunks** of ``commit_chunk_size`` claims (P26.18 /
+        SOURCES.17): each chunk is its own ``self._conn.transaction()``, so a
+        very-large source (OSM's ~1.37M-claim mirror) commits progressively
+        instead of holding one multi-hour transaction that a Cloud Run task
+        deadline rolls back whole. A claim and **all** its prerequisite/evidence
+        inserts run inside a single ``_insert_claim`` call and therefore land in
+        the SAME chunk transaction — a chunk boundary never bisects a claim
+        (append-only invariant, root AGENTS.md §5). Because every write is
+        content-keyed ``ON CONFLICT DO NOTHING``, chunks that already committed
+        dedupe to +0 on a re-run, so an interrupted run (chunks 1..k committed,
+        process dies) is safe to resume: the re-walk tops up from where it
+        stopped and reaches the same final count. The default leaves every
+        ordinary source committing in one chunk — unchanged behaviour.
+
+        ``SinkReport`` counters stay exact across chunk boundaries: they are
+        instance state accumulated as each record is considered, independent of
+        how the transactions are split.
+        """
+        chunk_size = self._commit_chunk_size
+        remaining = iter(claims)
+        exhausted = False
+        while not exhausted:
+            committed_this_chunk = 0
+            with self._conn.transaction():
+                for claim in remaining:
+                    self.report.considered += 1
+                    if claim.get("record_kind", "claim") != "claim":
+                        # unmapped-category / vocabulary-event rows are not L1
+                        # claims; their task/coverage projections are owned
+                        # elsewhere (P21.2). They do no spine write, so they do
+                        # not count toward the chunk's claim budget.
+                        self.report.non_claim_records += 1
+                        continue
+                    self._insert_claim(claim)
+                    committed_this_chunk += 1
+                    if committed_this_chunk >= chunk_size:
+                        # Chunk full — close this transaction (the `with` commits
+                        # on exit) and open a fresh one for the next chunk.
+                        break
+                else:
+                    # The `for` ran to exhaustion without breaking: this is the
+                    # final (possibly partial / empty) chunk.
+                    exhausted = True
 
     # --- prerequisites (all INSERT ... ON CONFLICT DO NOTHING, append-only) ----
 

@@ -449,6 +449,16 @@ class _StaticFileTransport:
         )
 
 
+def _chunk_kwargs(commit_chunk_size: int | None) -> dict[str, int]:
+    """Kwargs for a PG sink's ``commit_chunk_size`` — empty when unset (default).
+
+    Keeps the module default authoritative in ``db.claim_sink``: passing nothing
+    lets the sink apply :data:`db.claim_sink.DEFAULT_COMMIT_CHUNK_SIZE`, so the
+    connector layer never hard-codes a chunk size (P26.18 / SOURCES.17).
+    """
+    return {} if commit_chunk_size is None else {"commit_chunk_size": commit_chunk_size}
+
+
 def run_connector_over_fixture(
     connector_name: str,
     source_id: str,
@@ -461,11 +471,14 @@ def run_connector_over_fixture(
     dsn: str | None = None,
     code_commit: str = "unknown",
     target_url: str | None = None,
+    commit_chunk_size: int | None = None,
 ) -> RunReport:
     """Run ``connector_name`` over ``fixture`` and assert claims into the sink.
 
     Either pass a built ``sink`` or a ``sink_kind`` (+ ``dsn`` for ``pg``); a PG
     sink is stamped with the connector identity so its ``ingest_run`` is coherent.
+    ``commit_chunk_size`` (PG sink only) bounds the per-transaction claim count;
+    ``None`` uses the sink's default (small sources commit in one chunk).
     """
     registry = registered_connectors()
     if connector_name not in registry:
@@ -481,6 +494,7 @@ def run_connector_over_fixture(
                 connector_name=connector.name,
                 connector_version=version,
                 code_commit=code_commit,
+                **_chunk_kwargs(commit_chunk_size),
             )
         else:
             sink = make_claim_sink(sink_kind)
@@ -718,13 +732,16 @@ def run_source(
     capture_dir: Path | None = None,
     wacz: bool = False,
     code_commit: str = "unknown",
+    commit_chunk_size: int | None = None,
 ) -> SourceRunReport:
     """Run one source in ``live`` / ``replay`` / ``shadow`` mode (P21.3).
 
     ``live`` refuses (raising :class:`LiveGateRefused`) unless the source's
     review-status is fully green — so a live fetch is impossible without a green
     review-status (LD-X08). ``replay`` / ``shadow`` run over ``fixture`` under the
-    static transport and never touch the network.
+    static transport and never touch the network. ``commit_chunk_size`` bounds
+    the PG sink's per-transaction claim count (``None`` = the sink default, so
+    ordinary sources commit in a single chunk — P26.18 / SOURCES.17).
     """
     mode = RunMode(mode)
     connector = _connector_for(source_id, connector_name)
@@ -738,6 +755,7 @@ def run_source(
             capture_dir=capture_dir,
             wacz=wacz,
             code_commit=code_commit,
+            commit_chunk_size=commit_chunk_size,
         )
 
     if fixture is None:
@@ -756,6 +774,7 @@ def _run_live(
     capture_dir: Path | None,
     wacz: bool,
     code_commit: str,
+    commit_chunk_size: int | None = None,
 ) -> SourceRunReport:
     # The gate is checked BEFORE any transport is constructed or any socket is
     # opened (SIG-INGEST-014/028): a non-green source is refused here.
@@ -806,6 +825,7 @@ def _run_live(
         connector_name=connector.name,
         connector_version=version,
         code_commit=code_commit,
+        **_chunk_kwargs(commit_chunk_size),
     )
     source = get(source_id)
     parameters: dict[str, Any] = {"targets": targets}

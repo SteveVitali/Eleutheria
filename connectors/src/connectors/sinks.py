@@ -20,12 +20,42 @@ pulls in psycopg unless a PG sink is actually requested at runtime.
 
 from __future__ import annotations
 
+import os
+from collections.abc import Mapping
 from typing import Any
 
 from .stages import ClaimSink, InMemoryClaimSink
 
 #: The sink kinds the runner accepts (``--sink``).
 SINK_KINDS = ("memory", "pg")
+
+#: Env var the ops/CLI composition roots read for the PG sink's per-transaction
+#: claim commit size (P26.18 / SOURCES.17). The chunk size is operator config,
+#: not code: hosted jobs set it on the job env; unset ⇒ the ``db.claim_sink``
+#: module default (ordinary sources commit in a single chunk, unchanged).
+ENV_COMMIT_CHUNK_SIZE = "SIG_COMMIT_CHUNK_SIZE"
+
+
+def resolve_commit_chunk_size(
+    explicit: int | None = None, env: Mapping[str, str] | None = None
+) -> int | None:
+    """Resolve the commit chunk size: explicit flag wins, else ``$SIG_COMMIT_CHUNK_SIZE``.
+
+    Returns ``None`` when neither is set, so the sink applies its own default
+    (``db.claim_sink.DEFAULT_COMMIT_CHUNK_SIZE``) — the connector layer never
+    hard-codes a size. A non-numeric or non-positive env value raises
+    ``ValueError`` so a misconfigured job fails loud rather than silently
+    ingesting under a wrong bound.
+    """
+    if explicit is not None:
+        return explicit
+    raw = (os.environ if env is None else env).get(ENV_COMMIT_CHUNK_SIZE, "").strip()
+    if not raw:
+        return None
+    value = int(raw)
+    if value < 1:
+        raise ValueError(f"{ENV_COMMIT_CHUNK_SIZE} must be a positive integer (got {raw!r})")
+    return value
 
 
 def make_claim_sink(kind: str = "memory", *, dsn: str | None = None, **kwargs: Any) -> ClaimSink:
@@ -47,4 +77,9 @@ def make_claim_sink(kind: str = "memory", *, dsn: str | None = None, **kwargs: A
     raise ValueError(f"unknown claim-sink kind {kind!r}; expected one of {SINK_KINDS}")
 
 
-__all__ = ["SINK_KINDS", "make_claim_sink"]
+__all__ = [
+    "ENV_COMMIT_CHUNK_SIZE",
+    "SINK_KINDS",
+    "make_claim_sink",
+    "resolve_commit_chunk_size",
+]

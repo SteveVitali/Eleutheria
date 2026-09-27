@@ -340,6 +340,13 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="ops/cadence.toml path (for the runs prefix; default packaged)",
     )
+    ingest.add_argument(
+        "--commit-chunk-size",
+        type=int,
+        default=None,
+        help="PG sink: claims committed per transaction (default: $SIG_COMMIT_CHUNK_SIZE "
+        "else the sink default; a very-large source commits progressively) — P26.18",
+    )
 
     cadence_cmd = sub.add_parser(
         "cadence",
@@ -1014,12 +1021,23 @@ def _cmd_scheduled_ingest(args: argparse.Namespace) -> int:
     if args.sink == "pg" and not dsn:
         print("scheduled-ingest: --sink pg needs --dsn / SIG_STAGING_DSN / SIG_PG_* parts")
         return 2
+    from connectors.sinks import resolve_commit_chunk_size
+
+    try:
+        commit_chunk_size = resolve_commit_chunk_size(args.commit_chunk_size)
+    except ValueError as bad:
+        print(f"scheduled-ingest: invalid commit chunk size: {bad}")
+        return 2
     local_dir = Path(os.environ.get("SIG_RUN_LOG", str(_STATE_DIR / "runs")))
     gcs = _gcs_bucket(args.gcs_bucket)
     exit_code = 0
     for source in members:
         row = scheduled_ingest(
-            source, sink_kind=args.sink, dsn=dsn, capture_dir=_STATE_DIR / "captures"
+            source,
+            sink_kind=args.sink,
+            dsn=dsn,
+            capture_dir=_STATE_DIR / "captures",
+            commit_chunk_size=commit_chunk_size,
         )
         written = store_run_row(row, prefix=cadence.runs_gcs_prefix, gcs=gcs, local_dir=local_dir)
         print(json.dumps(row.as_json(), sort_keys=True))
