@@ -1,0 +1,60 @@
+{
+  "audit_input_digest": "sha256:9920fd40b88c3faa7c1cf0ce71a79df7d12d3dfe26be7697ff0b84ee54efd98c",
+  "audit_version": "evidence-audit/1",
+  "ceilings": {
+    "exceeds_ceiling": false,
+    "pilot": {
+      "byte_budget": 2147483648,
+      "max_claims": 40,
+      "source": "S1-evidence-integrity research §6",
+      "wall_clock_minutes": 30,
+      "workers": 1
+    },
+    "recovery_batch": {
+      "max_assertions": 10000,
+      "max_distinct_bytes": 262144000,
+      "source": "S1-evidence-integrity research §6",
+      "workers": 1
+    },
+    "storage_headroom": {
+      "min_batch_free_headroom": 0.2,
+      "require_disposition_at_fraction": 0.85,
+      "warn_at_fraction": 0.7
+    }
+  },
+  "commands": [
+    {
+      "command": "uv run sig-ops evidence-audit --dsn $SIG_HOSTED_RO_DSN --capture-dir <mounted OCFL root> --seed p32.6-fixture-seed-v1 --sample <recorded sample size> --roll-boundary <recorded boundary> --out docs/build/reports/<live-audit>/",
+      "notes": "read-only transaction on the hosted replica; records the spine watermark + input digest the plan reconciles against",
+      "step": "audit (read-only)"
+    },
+    {
+      "command": "uv run sig-ops recovery-plan --audit docs/build/reports/<live-audit>/audit_report.json --out docs/build/reports/<live-audit>/ [--applied <resume-digests file>]",
+      "notes": "feeds the applier's recorded action digests back for a +0 re-plan; emits the disposition/repair proposals P32.22 applies",
+      "step": "plan (offline)"
+    }
+  ],
+  "explicit_reservations": [
+    "live recovery mutation is reserved for P32.22 (D-R10-LIVE-1)",
+    "HG gates unchanged: no source-rights flip, no publication, no human label",
+    "API quotas remain unfetched — the audit reads only stored bytes",
+    "a new fetch is NEVER the old capture: missing history is reported, not reconstructed"
+  ],
+  "packet_version": "live-return-pass/1",
+  "pins": {
+    "capture_root": "the mounted OCFL capture root",
+    "code_commit": "616b889c19b587871483930ca358eb35712a2dcf",
+    "policy_version": "publication-eligibility/1",
+    "sqitch_head": "the deployed sqitch change at run time (recorded by the audit)"
+  },
+  "plan_version": "recovery-plan/1",
+  "purpose": "execute the read-only legacy evidence audit + recovery plan against the hosted spine and mounted capture root; mutation stays with P32.22",
+  "verification_checklist": [
+    "population digest + watermark recorded; re-run compares against the same selection",
+    "byte budget ≤ 2 GiB pilot bound honoured; UNVERIFIED (never 'missing') for anything beyond it",
+    "occurrence confidence exact/bounded/unknown reported separately",
+    "zero writes planned for ambiguous lineage; unrecoverable preserved",
+    "second plan over the applier's recorded digests yields +0 proposed writes",
+    "no fetch of historical evidence, no quota-bound API call, no live mutation, no gate signature"
+  ]
+}

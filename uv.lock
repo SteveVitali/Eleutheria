@@ -2668,6 +2668,8 @@ dependencies = [
     { name = "sig-api" },
     { name = "sig-connectors" },
     { name = "sig-db" },
+    { name = "sig-evidence" },
+    { name = "sig-parsing" },
     { name = "sig-policy" },
 ]
 
@@ -2678,6 +2680,8 @@ requires-dist = [
     { name = "sig-api", editable = "api" },
     { name = "sig-connectors", editable = "connectors" },
     { name = "sig-db", editable = "db" },
+    { name = "sig-evidence", editable = "evidence" },
+    { name = "sig-parsing", editable = "parsing" },
     { name = "sig-policy", editable = "policy" },
 ]
 

@@ -1,0 +1,887 @@
+{
+  "adjudication": {
+    "adjudicated": 8,
+    "adjudication_yield": 0.5714285714285714,
+    "conditional_fidelity": 0.5714285714285714,
+    "conditional_fidelity_denominator": 14,
+    "established": 8,
+    "not_established": 0,
+    "sampled_eligible": 14,
+    "support_all": 0.5714285714285714,
+    "targeted_set": [
+      {
+        "adjudication": "not_established",
+        "claim_id": "claim-unsupported-0",
+        "flags": [
+          "unsupported_role_mapping"
+        ],
+        "grade": "source_attributed_only",
+        "occurrence": "bounded"
+      },
+      {
+        "adjudication": "unresolved",
+        "claim_id": "claim-synthetic-0",
+        "flags": [],
+        "grade": "source_attributed_only",
+        "occurrence": "bounded"
+      }
+    ],
+    "unresolved": 6,
+    "unresolved_evidence_unavailable": 6,
+    "unresolved_needs_adjudication": 0
+  },
+  "audit_version": "evidence-audit/1",
+  "census": {
+    "bindings": 16,
+    "by_capture_epoch": {
+      "post_roll": 6,
+      "pre_roll": 10
+    },
+    "by_compartment": {
+      "ontology": 1,
+      "osm_physical": 7,
+      "sig_graph": 8
+    },
+    "by_predicate_role": {
+      "operator": 5,
+      "unmapped": 11
+    },
+    "by_source_family": {
+      "atlas_registry": 10,
+      "osm_overpass": 6
+    },
+    "claims": 16,
+    "claims_with_evidence_links": 16,
+    "establishing_bindings": 16,
+    "reconciles": true
+  },
+  "findings": [
+    {
+      "claim_id": "claim-mismatch-0",
+      "detail": "stored bytes do not match the recorded content_digest",
+      "kind": "digest_mismatch"
+    },
+    {
+      "claim_id": "claim-mismatch-1",
+      "detail": "stored bytes do not match the recorded content_digest",
+      "kind": "digest_mismatch"
+    },
+    {
+      "claim_id": "claim-unsupported-0",
+      "detail": "entity-ref predicate with no verified evidence supporting the role",
+      "kind": "unsupported_role_mapping",
+      "predicate_id": "camera_operator"
+    },
+    {
+      "claim_id": "claim-missing-0",
+      "detail": "recorded capture bytes absent from the probed root",
+      "kind": "missing_bytes"
+    },
+    {
+      "claim_id": "claim-missing-1",
+      "detail": "recorded capture bytes absent from the probed root",
+      "kind": "missing_bytes"
+    }
+  ],
+  "generated_at": null,
+  "input": {
+    "byte_budget": 2147483648,
+    "byte_budget_exhausted": false,
+    "bytes_read": 188,
+    "capture_probe": "ocfl:docs/build/reports/p32.6-legacy-evidence/capture_root",
+    "claim_count": 16,
+    "code_commit": "616b889c19b587871483930ca358eb35712a2dcf",
+    "population_digest": "sha256:9920fd40b88c3faa7c1cf0ce71a79df7d12d3dfe26be7697ff0b84ee54efd98c",
+    "population_source": "input-json:docs/build/reports/p32.6-legacy-evidence/fixture_spine.json",
+    "roll_boundary": "2026-09-25T00:00:00Z",
+    "sample_size_requested": 16,
+    "sampled": 16,
+    "seed": "p32.6-fixture-seed-v1",
+    "targeted": 2,
+    "watermark": {
+      "claim_evidence": {
+        "count": 16,
+        "establishing": 16,
+        "max_bound_at": "2026-10-01T00:00:00Z"
+      },
+      "claims": {
+        "count": 16,
+        "max_asserted_at": "2026-10-01T00:00:00Z"
+      },
+      "evidence_capture": {
+        "actual": 14,
+        "count": 16,
+        "legacy": 0,
+        "max_retrieved_at": "2026-10-01T00:00:00Z",
+        "synthetic": 2
+      },
+      "ingest_run": {
+        "count": 2,
+        "max_started_at": "2026-10-01T00:00:00Z"
+      },
+      "ingest_run_capture": {
+        "count": 12,
+        "max_recorded_at": "2026-10-01T00:00:00Z"
+      },
+      "publication_disposition": {
+        "count": 0,
+        "max_decided_at": null
+      }
+    }
+  },
+  "limitations": [
+    "Offline read-only audit: no live fetch, no spine mutation, no publication change.",
+    "occurrence 'exact' requires post-P31.4 ingest_run_capture marks; pre-roll acquisitions are 'bounded' by construction, not 'exact'.",
+    "Mechanical replay covers byte_range/row/cell locators; page/bbox/dom_path and normalization-level fidelity need the adjudicator instrument (HUMAN-H4).",
+    "unverified captures (no probe mounted / restricted unreadable) are reported as unverified, never counted as missing."
+  ],
+  "metrics": {
+    "by_stratum": {
+      "atlas_registry|post_roll|operator|sig_graph": {
+        "drawn": 1,
+        "exact_replayable": 1,
+        "universe": 1,
+        "unrecoverable": 0,
+        "verified_capture_availability": 1.0
+      },
+      "atlas_registry|post_roll|unmapped|osm_physical": {
+        "drawn": 1,
+        "exact_replayable": 1,
+        "universe": 1,
+        "unrecoverable": 0,
+        "verified_capture_availability": 1.0
+      },
+      "atlas_registry|post_roll|unmapped|sig_graph": {
+        "drawn": 2,
+        "exact_replayable": 0,
+        "universe": 2,
+        "unrecoverable": 0,
+        "verified_capture_availability": 0.5
+      },
+      "atlas_registry|pre_roll|operator|osm_physical": {
+        "drawn": 1,
+        "exact_replayable": 1,
+        "universe": 1,
+        "unrecoverable": 0,
+        "verified_capture_availability": 1.0
+      },
+      "atlas_registry|pre_roll|unmapped|osm_physical": {
+        "drawn": 2,
+        "exact_replayable": 0,
+        "universe": 2,
+        "unrecoverable": 2,
+        "verified_capture_availability": 0.0
+      },
+      "atlas_registry|pre_roll|unmapped|sig_graph": {
+        "drawn": 3,
+        "exact_replayable": 1,
+        "universe": 3,
+        "unrecoverable": 2,
+        "verified_capture_availability": 0.3333333333333333
+      },
+      "osm_overpass|post_roll|operator|osm_physical": {
+        "drawn": 1,
+        "exact_replayable": 1,
+        "universe": 1,
+        "unrecoverable": 0,
+        "verified_capture_availability": 1.0
+      },
+      "osm_overpass|post_roll|unmapped|sig_graph": {
+        "drawn": 1,
+        "exact_replayable": 1,
+        "universe": 1,
+        "unrecoverable": 0,
+        "verified_capture_availability": 1.0
+      },
+      "osm_overpass|pre_roll|operator|osm_physical": {
+        "drawn": 1,
+        "exact_replayable": 0,
+        "universe": 1,
+        "unrecoverable": 0,
+        "verified_capture_availability": null
+      },
+      "osm_overpass|pre_roll|operator|sig_graph": {
+        "drawn": 1,
+        "exact_replayable": 1,
+        "universe": 1,
+        "unrecoverable": 0,
+        "verified_capture_availability": 1.0
+      },
+      "osm_overpass|pre_roll|unmapped|ontology": {
+        "drawn": 1,
+        "exact_replayable": 0,
+        "universe": 1,
+        "unrecoverable": 0,
+        "verified_capture_availability": null
+      },
+      "osm_overpass|pre_roll|unmapped|osm_physical": {
+        "drawn": 1,
+        "exact_replayable": 1,
+        "universe": 1,
+        "unrecoverable": 0,
+        "verified_capture_availability": 1.0
+      }
+    },
+    "exact_locator_coverage": {
+      "denominator": 14,
+      "document_occurrence_without_locator": 0,
+      "fraction": 1.0,
+      "numerator": 14,
+      "weighted_fraction": 1.0
+    },
+    "grade_distribution": {
+      "exact_replayable": 8,
+      "restricted_not_public": 2,
+      "unrecoverable": 4
+    },
+    "legacy_synthetic_exposure": {
+      "denominator": 14,
+      "fraction": 0.0,
+      "numerator": 0,
+      "weighted_fraction": 0.0
+    },
+    "occurrence_confidence": {
+      "bounded": {
+        "denominator": 14,
+        "fraction": 0.0,
+        "numerator": 0,
+        "weighted_fraction": 0.0
+      },
+      "exact": {
+        "denominator": 14,
+        "fraction": 1.0,
+        "numerator": 14,
+        "weighted_fraction": 1.0
+      },
+      "unknown": {
+        "denominator": 14,
+        "fraction": 0.0,
+        "numerator": 0,
+        "weighted_fraction": 0.0
+      }
+    },
+    "occurrence_distribution": {
+      "exact": 14
+    },
+    "publication_eligibility": {
+      "denominator": 14,
+      "fraction": 1.0,
+      "numerator": 14,
+      "weighted_fraction": 1.0
+    },
+    "replay_success": {
+      "denominator": 8,
+      "fraction": 1.0,
+      "numerator": 8,
+      "weighted_fraction": 1.0
+    },
+    "source_attribution": {
+      "denominator": 14,
+      "fraction": 1.0,
+      "numerator": 14,
+      "weighted_fraction": 1.0
+    },
+    "verified_capture_availability": {
+      "denominator": 14,
+      "fraction": 0.6428571428571429,
+      "numerator": 9,
+      "weighted_fraction": 0.6428571428571429
+    }
+  },
+  "strata": [
+    {
+      "capture_epoch": "post_roll",
+      "compartment": "sig_graph",
+      "drawn": 1,
+      "key": "atlas_registry|post_roll|operator|sig_graph",
+      "predicate_role": "operator",
+      "source_family": "atlas_registry",
+      "universe": 1,
+      "weight": 1.0
+    },
+    {
+      "capture_epoch": "post_roll",
+      "compartment": "osm_physical",
+      "drawn": 1,
+      "key": "atlas_registry|post_roll|unmapped|osm_physical",
+      "predicate_role": "unmapped",
+      "source_family": "atlas_registry",
+      "universe": 1,
+      "weight": 1.0
+    },
+    {
+      "capture_epoch": "post_roll",
+      "compartment": "sig_graph",
+      "drawn": 2,
+      "key": "atlas_registry|post_roll|unmapped|sig_graph",
+      "predicate_role": "unmapped",
+      "source_family": "atlas_registry",
+      "universe": 2,
+      "weight": 1.0
+    },
+    {
+      "capture_epoch": "pre_roll",
+      "compartment": "osm_physical",
+      "drawn": 1,
+      "key": "atlas_registry|pre_roll|operator|osm_physical",
+      "predicate_role": "operator",
+      "source_family": "atlas_registry",
+      "universe": 1,
+      "weight": 1.0
+    },
+    {
+      "capture_epoch": "pre_roll",
+      "compartment": "osm_physical",
+      "drawn": 2,
+      "key": "atlas_registry|pre_roll|unmapped|osm_physical",
+      "predicate_role": "unmapped",
+      "source_family": "atlas_registry",
+      "universe": 2,
+      "weight": 1.0
+    },
+    {
+      "capture_epoch": "pre_roll",
+      "compartment": "sig_graph",
+      "drawn": 3,
+      "key": "atlas_registry|pre_roll|unmapped|sig_graph",
+      "predicate_role": "unmapped",
+      "source_family": "atlas_registry",
+      "universe": 3,
+      "weight": 1.0
+    },
+    {
+      "capture_epoch": "post_roll",
+      "compartment": "osm_physical",
+      "drawn": 1,
+      "key": "osm_overpass|post_roll|operator|osm_physical",
+      "predicate_role": "operator",
+      "source_family": "osm_overpass",
+      "universe": 1,
+      "weight": 1.0
+    },
+    {
+      "capture_epoch": "post_roll",
+      "compartment": "sig_graph",
+      "drawn": 1,
+      "key": "osm_overpass|post_roll|unmapped|sig_graph",
+      "predicate_role": "unmapped",
+      "source_family": "osm_overpass",
+      "universe": 1,
+      "weight": 1.0
+    },
+    {
+      "capture_epoch": "pre_roll",
+      "compartment": "osm_physical",
+      "drawn": 1,
+      "key": "osm_overpass|pre_roll|operator|osm_physical",
+      "predicate_role": "operator",
+      "source_family": "osm_overpass",
+      "universe": 1,
+      "weight": 1.0
+    },
+    {
+      "capture_epoch": "pre_roll",
+      "compartment": "sig_graph",
+      "drawn": 1,
+      "key": "osm_overpass|pre_roll|operator|sig_graph",
+      "predicate_role": "operator",
+      "source_family": "osm_overpass",
+      "universe": 1,
+      "weight": 1.0
+    },
+    {
+      "capture_epoch": "pre_roll",
+      "compartment": "ontology",
+      "drawn": 1,
+      "key": "osm_overpass|pre_roll|unmapped|ontology",
+      "predicate_role": "unmapped",
+      "source_family": "osm_overpass",
+      "universe": 1,
+      "weight": 1.0
+    },
+    {
+      "capture_epoch": "pre_roll",
+      "compartment": "osm_physical",
+      "drawn": 1,
+      "key": "osm_overpass|pre_roll|unmapped|osm_physical",
+      "predicate_role": "unmapped",
+      "source_family": "osm_overpass",
+      "universe": 1,
+      "weight": 1.0
+    }
+  ],
+  "units": [
+    {
+      "adjudication": "established",
+      "adjudication_basis": "mechanical replay of located bytes",
+      "capture_checks": [
+        {
+          "byte_size": 19,
+          "capture_id": "cap-r0",
+          "detail": "bytes verified under multihash-sha256-b32",
+          "matched_algorithm": "multihash-sha256-b32",
+          "object_id": "sig:capture:bcnamsipzwmoajpcfeeq7gghtnan32asjdxbzxdraoeuboin4tkncqwjmyzbcotrhbc74nk2lnkpbegv7ivozhotjwzkguat7o4huxbtvhq",
+          "restricted_access": false,
+          "verdict": "verified_bytes",
+          "version": "v1"
+        }
+      ],
+      "claim_id": "claim-rec-0",
+      "flags": [],
+      "grade": "exact_replayable",
+      "in_sample": true,
+      "in_targeted_set": false,
+      "occurrence_confidence": "exact",
+      "predicate_id": "camera_location",
+      "publication_eligible": true,
+      "replay_check": "byte_range[0:10]",
+      "sample_weight": 1.0,
+      "source_family": "atlas_registry",
+      "stratum": "atlas_registry|pre_roll|unmapped|sig_graph",
+      "unresolved_reason": null
+    },
+    {
+      "adjudication": "established",
+      "adjudication_basis": "mechanical replay of located bytes",
+      "capture_checks": [
+        {
+          "byte_size": 19,
+          "capture_id": "cap-r1",
+          "detail": "bytes verified under multihash-sha256-b32",
+          "matched_algorithm": "multihash-sha256-b32",
+          "object_id": "sig:capture:bcnaika7sfcc2n6cqqquqmxiv5hsea3q6y3vxg2msablhilafuwdfyua7btfi56mgayordr2nczetcyftint3kbfclvtczfiqhonurewouu",
+          "restricted_access": false,
+          "verdict": "verified_bytes",
+          "version": "v1"
+        }
+      ],
+      "claim_id": "claim-rec-1",
+      "flags": [],
+      "grade": "exact_replayable",
+      "in_sample": true,
+      "in_targeted_set": false,
+      "occurrence_confidence": "exact",
+      "predicate_id": "camera_operator",
+      "publication_eligible": true,
+      "replay_check": "byte_range[0:10]",
+      "sample_weight": 1.0,
+      "source_family": "atlas_registry",
+      "stratum": "atlas_registry|pre_roll|operator|osm_physical",
+      "unresolved_reason": null
+    },
+    {
+      "adjudication": "established",
+      "adjudication_basis": "mechanical replay of located bytes",
+      "capture_checks": [
+        {
+          "byte_size": 19,
+          "capture_id": "cap-r2",
+          "detail": "bytes verified under multihash-sha256-b32",
+          "matched_algorithm": "multihash-sha256-b32",
+          "object_id": "sig:capture:bcnalbmgw6vi4qeyq6oqdclhbcsxpqva7lxkqkmlyzpcdspetmpw4gwocwm5fdkyf7jljnpmdp63jjoulfvocvdv4lkbpudrcks5yd3ogya",
+          "restricted_access": false,
+          "verdict": "verified_bytes",
+          "version": "v1"
+        }
+      ],
+      "claim_id": "claim-rec-2",
+      "flags": [],
+      "grade": "exact_replayable",
+      "in_sample": true,
+      "in_targeted_set": false,
+      "occurrence_confidence": "exact",
+      "predicate_id": "camera_location",
+      "publication_eligible": true,
+      "replay_check": "byte_range[0:10]",
+      "sample_weight": 1.0,
+      "source_family": "atlas_registry",
+      "stratum": "atlas_registry|post_roll|unmapped|osm_physical",
+      "unresolved_reason": null
+    },
+    {
+      "adjudication": "established",
+      "adjudication_basis": "mechanical replay of located bytes",
+      "capture_checks": [
+        {
+          "byte_size": 19,
+          "capture_id": "cap-r3",
+          "detail": "bytes verified under multihash-sha256-b32",
+          "matched_algorithm": "multihash-sha256-b32",
+          "object_id": "sig:capture:bcnanxzhqdgpsbq6vi2cktpmwsn5547sw4oje2uoz4z2doatutht3gdbf426to64fchn5pczjk3ehk2wq5z7ckwqlw5qz4ws5unhubdincy",
+          "restricted_access": false,
+          "verdict": "verified_bytes",
+          "version": "v1"
+        }
+      ],
+      "claim_id": "claim-rec-3",
+      "flags": [],
+      "grade": "exact_replayable",
+      "in_sample": true,
+      "in_targeted_set": false,
+      "occurrence_confidence": "exact",
+      "predicate_id": "camera_operator",
+      "publication_eligible": true,
+      "replay_check": "byte_range[0:10]",
+      "sample_weight": 1.0,
+      "source_family": "atlas_registry",
+      "stratum": "atlas_registry|post_roll|operator|sig_graph",
+      "unresolved_reason": null
+    },
+    {
+      "adjudication": "established",
+      "adjudication_basis": "mechanical replay of located bytes",
+      "capture_checks": [
+        {
+          "byte_size": 19,
+          "capture_id": "cap-r4",
+          "detail": "bytes verified under multihash-sha256-b32",
+          "matched_algorithm": "multihash-sha256-b32",
+          "object_id": "sig:capture:bcnae2fbyfobbjmgzvqncmbqaoazde3qy2onhfipjm7z4573vof2sg6ui67fseq5jj2obkpfhvty367lqgh54nwmhnriboymmp5mrpnypd4",
+          "restricted_access": false,
+          "verdict": "verified_bytes",
+          "version": "v1"
+        }
+      ],
+      "claim_id": "claim-rec-4",
+      "flags": [],
+      "grade": "exact_replayable",
+      "in_sample": true,
+      "in_targeted_set": false,
+      "occurrence_confidence": "exact",
+      "predicate_id": "camera_location",
+      "publication_eligible": true,
+      "replay_check": "byte_range[0:10]",
+      "sample_weight": 1.0,
+      "source_family": "osm_overpass",
+      "stratum": "osm_overpass|pre_roll|unmapped|osm_physical",
+      "unresolved_reason": null
+    },
+    {
+      "adjudication": "established",
+      "adjudication_basis": "mechanical replay of located bytes",
+      "capture_checks": [
+        {
+          "byte_size": 19,
+          "capture_id": "cap-r5",
+          "detail": "bytes verified under multihash-sha256-b32",
+          "matched_algorithm": "multihash-sha256-b32",
+          "object_id": "sig:capture:bcnajrzns7kmjh7panfftnggehqv5rii3iwtiyucgzwochyivagw3i4cwbp3y36lcccsh5dchktoeb3jzjc3a3i5wvlilmybvp2yurzweem",
+          "restricted_access": false,
+          "verdict": "verified_bytes",
+          "version": "v1"
+        }
+      ],
+      "claim_id": "claim-rec-5",
+      "flags": [],
+      "grade": "exact_replayable",
+      "in_sample": true,
+      "in_targeted_set": false,
+      "occurrence_confidence": "exact",
+      "predicate_id": "camera_operator",
+      "publication_eligible": true,
+      "replay_check": "byte_range[0:10]",
+      "sample_weight": 1.0,
+      "source_family": "osm_overpass",
+      "stratum": "osm_overpass|pre_roll|operator|sig_graph",
+      "unresolved_reason": null
+    },
+    {
+      "adjudication": "established",
+      "adjudication_basis": "mechanical replay of located bytes",
+      "capture_checks": [
+        {
+          "byte_size": 19,
+          "capture_id": "cap-r6",
+          "detail": "bytes verified under multihash-sha256-b32",
+          "matched_algorithm": "multihash-sha256-b32",
+          "object_id": "sig:capture:bcnajzhtyoarfpssrkwbqgm6lcx3sbltz3v5pajr3u6suzr4omohpdad3z54ccgky6awzyhetkqpu2pbg2lmswyuqwfmobuqnesh545au6u",
+          "restricted_access": false,
+          "verdict": "verified_bytes",
+          "version": "v1"
+        }
+      ],
+      "claim_id": "claim-rec-6",
+      "flags": [],
+      "grade": "exact_replayable",
+      "in_sample": true,
+      "in_targeted_set": false,
+      "occurrence_confidence": "exact",
+      "predicate_id": "camera_location",
+      "publication_eligible": true,
+      "replay_check": "byte_range[0:10]",
+      "sample_weight": 1.0,
+      "source_family": "osm_overpass",
+      "stratum": "osm_overpass|post_roll|unmapped|sig_graph",
+      "unresolved_reason": null
+    },
+    {
+      "adjudication": "established",
+      "adjudication_basis": "mechanical replay of located bytes",
+      "capture_checks": [
+        {
+          "byte_size": 19,
+          "capture_id": "cap-r7",
+          "detail": "bytes verified under multihash-sha256-b32",
+          "matched_algorithm": "multihash-sha256-b32",
+          "object_id": "sig:capture:bcnakkpc6owo5iy67fmqzd3abh4mdzphqysfacz5n6swjzvqcvjwimznqii7tlji5gkflef7ck2d4iffwbppjnf2ojbtt5iwwner5clgt2e",
+          "restricted_access": false,
+          "verdict": "verified_bytes",
+          "version": "v1"
+        }
+      ],
+      "claim_id": "claim-rec-7",
+      "flags": [],
+      "grade": "exact_replayable",
+      "in_sample": true,
+      "in_targeted_set": false,
+      "occurrence_confidence": "exact",
+      "predicate_id": "camera_operator",
+      "publication_eligible": true,
+      "replay_check": "byte_range[0:10]",
+      "sample_weight": 1.0,
+      "source_family": "osm_overpass",
+      "stratum": "osm_overpass|post_roll|operator|osm_physical",
+      "unresolved_reason": null
+    },
+    {
+      "adjudication": "unresolved",
+      "adjudication_basis": "evidence unavailable — cannot be adjudicated",
+      "capture_checks": [
+        {
+          "byte_size": 12,
+          "capture_id": "cap-m0",
+          "detail": "stored bytes hash to neither recorded format for content_digest 'bcnafant6nffqinfw4lmznoxijvp7lvsmqjdvlyf4yy3egrdcycc5qnwyn2hy76s2c4w2cjjorfajec6bhjzlikp3ku4m7s2xjkyw2zlcsi'",
+          "matched_algorithm": null,
+          "object_id": "sig:capture:bcnafant6nffqinfw4lmznoxijvp7lvsmqjdvlyf4yy3egrdcycc5qnwyn2hy76s2c4w2cjjorfajec6bhjzlikp3ku4m7s2xjkyw2zlcsi",
+          "restricted_access": false,
+          "verdict": "digest_mismatch",
+          "version": "v1"
+        }
+      ],
+      "claim_id": "claim-mismatch-0",
+      "flags": [
+        "digest_mismatch"
+      ],
+      "grade": "unrecoverable",
+      "in_sample": true,
+      "in_targeted_set": false,
+      "occurrence_confidence": "exact",
+      "predicate_id": "camera_location",
+      "publication_eligible": true,
+      "replay_check": "not_checked",
+      "sample_weight": 1.0,
+      "source_family": "atlas_registry",
+      "stratum": "atlas_registry|pre_roll|unmapped|sig_graph",
+      "unresolved_reason": "evidence_unavailable"
+    },
+    {
+      "adjudication": "unresolved",
+      "adjudication_basis": "evidence unavailable — cannot be adjudicated",
+      "capture_checks": [
+        {
+          "byte_size": 12,
+          "capture_id": "cap-m1",
+          "detail": "stored bytes hash to neither recorded format for content_digest 'bcnaa3uil4eleirs622am6m5ehleuy6nz35g3gwpu6xjqzhw362ktdj5d3rijwhnq755xnqzxfhmvn3l6hl3cu6h6mzarci4klj6w76czg4'",
+          "matched_algorithm": null,
+          "object_id": "sig:capture:bcnaa3uil4eleirs622am6m5ehleuy6nz35g3gwpu6xjqzhw362ktdj5d3rijwhnq755xnqzxfhmvn3l6hl3cu6h6mzarci4klj6w76czg4",
+          "restricted_access": false,
+          "verdict": "digest_mismatch",
+          "version": "v1"
+        }
+      ],
+      "claim_id": "claim-mismatch-1",
+      "flags": [
+        "digest_mismatch"
+      ],
+      "grade": "unrecoverable",
+      "in_sample": true,
+      "in_targeted_set": false,
+      "occurrence_confidence": "exact",
+      "predicate_id": "camera_location",
+      "publication_eligible": true,
+      "replay_check": "not_checked",
+      "sample_weight": 1.0,
+      "source_family": "atlas_registry",
+      "stratum": "atlas_registry|pre_roll|unmapped|sig_graph",
+      "unresolved_reason": "evidence_unavailable"
+    },
+    {
+      "adjudication": "unresolved",
+      "adjudication_basis": "evidence unavailable — cannot be adjudicated",
+      "capture_checks": [
+        {
+          "byte_size": 12,
+          "capture_id": "cap-g0",
+          "detail": "the recorded OCFL object is absent from the probed root",
+          "matched_algorithm": null,
+          "object_id": "sig:capture:bcnahhdnbqgi5t4mle75zmdpbjxfpbp7l52afgvevpu3snxnc53mk5gxyto5ybkfhtpt3rocks2smc6wznivhzyahf3vjxbtybg6kjjmnnu",
+          "restricted_access": false,
+          "verdict": "missing_object",
+          "version": "v1"
+        }
+      ],
+      "claim_id": "claim-missing-0",
+      "flags": [],
+      "grade": "unrecoverable",
+      "in_sample": true,
+      "in_targeted_set": false,
+      "occurrence_confidence": "exact",
+      "predicate_id": "camera_location",
+      "publication_eligible": true,
+      "replay_check": "not_checked",
+      "sample_weight": 1.0,
+      "source_family": "atlas_registry",
+      "stratum": "atlas_registry|pre_roll|unmapped|osm_physical",
+      "unresolved_reason": "evidence_unavailable"
+    },
+    {
+      "adjudication": "unresolved",
+      "adjudication_basis": "evidence unavailable — cannot be adjudicated",
+      "capture_checks": [
+        {
+          "byte_size": 12,
+          "capture_id": "cap-g1",
+          "detail": "the recorded OCFL object is absent from the probed root",
+          "matched_algorithm": null,
+          "object_id": "sig:capture:bcnafewwvodh635w4izt75az2r5sboqo4ajln7ppqczefbpfd4txruugrkcmye3aa3uqzwkck4qtypnt64jadpk3a7orrbbh2o2bh3qpajm",
+          "restricted_access": false,
+          "verdict": "missing_object",
+          "version": "v1"
+        }
+      ],
+      "claim_id": "claim-missing-1",
+      "flags": [],
+      "grade": "unrecoverable",
+      "in_sample": true,
+      "in_targeted_set": false,
+      "occurrence_confidence": "exact",
+      "predicate_id": "camera_location",
+      "publication_eligible": true,
+      "replay_check": "not_checked",
+      "sample_weight": 1.0,
+      "source_family": "atlas_registry",
+      "stratum": "atlas_registry|pre_roll|unmapped|osm_physical",
+      "unresolved_reason": "evidence_unavailable"
+    },
+    {
+      "adjudication": "unresolved",
+      "adjudication_basis": "restricted bytes — public adjudication not permitted",
+      "capture_checks": [
+        {
+          "byte_size": 12,
+          "capture_id": "cap-s0",
+          "detail": "bytes verified under multihash-sha256-b32 (restricted tier — privileged read)",
+          "matched_algorithm": "multihash-sha256-b32",
+          "object_id": "sig:capture:bcnajjj3fsyumcyeub4tg2fmnwnvrozdkkjgr4g5xn3d2zg222uj7tgsgq465gv3hfkmm6hwf7tupci7mat676izewa7xploumc4z5astpu",
+          "restricted_access": true,
+          "verdict": "verified_bytes",
+          "version": "v1"
+        }
+      ],
+      "claim_id": "claim-restricted-0",
+      "flags": [],
+      "grade": "restricted_not_public",
+      "in_sample": true,
+      "in_targeted_set": false,
+      "occurrence_confidence": "exact",
+      "predicate_id": "camera_location",
+      "publication_eligible": true,
+      "replay_check": "not_checked",
+      "sample_weight": 1.0,
+      "source_family": "atlas_registry",
+      "stratum": "atlas_registry|post_roll|unmapped|sig_graph",
+      "unresolved_reason": "evidence_unavailable"
+    },
+    {
+      "adjudication": "unresolved",
+      "adjudication_basis": "restricted bytes — public adjudication not permitted",
+      "capture_checks": [
+        {
+          "byte_size": 11,
+          "capture_id": "cap-s1",
+          "detail": "restricted-tier object not readable at this root; cannot distinguish sealed-from-us from absent — reported unverified",
+          "matched_algorithm": null,
+          "object_id": "sig:capture:bcnag6a5vj6scd7esjrdmoomarvckwrvw7zub6m6l6hp3bmqxrmrst4vxw2ocsxtyxdqcayxwrhyu75g3vg4y5nisxld5dlklfmhx47ltk4",
+          "restricted_access": true,
+          "verdict": "unverified",
+          "version": "v1"
+        }
+      ],
+      "claim_id": "claim-sealed-0",
+      "flags": [
+        "restricted_unverified"
+      ],
+      "grade": "restricted_not_public",
+      "in_sample": true,
+      "in_targeted_set": false,
+      "occurrence_confidence": "exact",
+      "predicate_id": "camera_location",
+      "publication_eligible": true,
+      "replay_check": "not_checked",
+      "sample_weight": 1.0,
+      "source_family": "atlas_registry",
+      "stratum": "atlas_registry|post_roll|unmapped|sig_graph",
+      "unresolved_reason": "evidence_unavailable"
+    },
+    {
+      "adjudication": "not_established",
+      "adjudication_basis": "adjudicator-supplied",
+      "capture_checks": [
+        {
+          "byte_size": 0,
+          "capture_id": "cap-synth-0",
+          "detail": "capture row records no byte-bearing occurrence",
+          "matched_algorithm": null,
+          "object_id": null,
+          "restricted_access": false,
+          "verdict": "no_byte_reference",
+          "version": null
+        }
+      ],
+      "claim_id": "claim-unsupported-0",
+      "flags": [
+        "unsupported_role_mapping"
+      ],
+      "grade": "source_attributed_only",
+      "in_sample": true,
+      "in_targeted_set": true,
+      "occurrence_confidence": "bounded",
+      "predicate_id": "camera_operator",
+      "publication_eligible": true,
+      "replay_check": "not_checked",
+      "sample_weight": null,
+      "source_family": "osm_overpass",
+      "stratum": "osm_overpass|pre_roll|operator|osm_physical",
+      "unresolved_reason": null
+    },
+    {
+      "adjudication": "unresolved",
+      "adjudication_basis": "adjudicator-supplied",
+      "capture_checks": [
+        {
+          "byte_size": 0,
+          "capture_id": "cap-synth-1",
+          "detail": "capture row records no byte-bearing occurrence",
+          "matched_algorithm": null,
+          "object_id": null,
+          "restricted_access": false,
+          "verdict": "no_byte_reference",
+          "version": null
+        }
+      ],
+      "claim_id": "claim-synthetic-0",
+      "flags": [],
+      "grade": "source_attributed_only",
+      "in_sample": true,
+      "in_targeted_set": true,
+      "occurrence_confidence": "bounded",
+      "predicate_id": "camera_location",
+      "publication_eligible": true,
+      "replay_check": "not_checked",
+      "sample_weight": null,
+      "source_family": "osm_overpass",
+      "stratum": "osm_overpass|pre_roll|unmapped|ontology",
+      "unresolved_reason": "needs_adjudication"
+    }
+  ]
+}

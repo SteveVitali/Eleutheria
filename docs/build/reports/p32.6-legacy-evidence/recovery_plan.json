@@ -1,0 +1,493 @@
+{
+  "actions": [
+    {
+      "action_digest": "bd63af57426d81d9b1a1ecbdbb52523d3ddcb03aa93edff187d3b2860a7e7112",
+      "batch_id": null,
+      "claim_id": "claim-rec-0",
+      "kind": "no_write",
+      "proposed_row": {},
+      "provenance": {
+        "flags": [],
+        "grade": "exact_replayable"
+      },
+      "rationale": "no recovery action applies to a exact_replayable unit (exact replay already proven)",
+      "status": "not_applicable",
+      "target_table": null
+    },
+    {
+      "action_digest": "b077b2ba35d10638abc661906aaecb747f47bd2c6c7c3c25e9f3406efecf9579",
+      "batch_id": null,
+      "claim_id": "claim-rec-1",
+      "kind": "no_write",
+      "proposed_row": {},
+      "provenance": {
+        "flags": [],
+        "grade": "exact_replayable"
+      },
+      "rationale": "no recovery action applies to a exact_replayable unit (exact replay already proven)",
+      "status": "not_applicable",
+      "target_table": null
+    },
+    {
+      "action_digest": "e3d3b4664045ca0eb2675dc59f4f5b6891ca568654a96f4c8d81333e7cefb338",
+      "batch_id": null,
+      "claim_id": "claim-rec-2",
+      "kind": "no_write",
+      "proposed_row": {},
+      "provenance": {
+        "flags": [],
+        "grade": "exact_replayable"
+      },
+      "rationale": "no recovery action applies to a exact_replayable unit (exact replay already proven)",
+      "status": "not_applicable",
+      "target_table": null
+    },
+    {
+      "action_digest": "ae10c0dff3f334d636d15222880007b6f90a16fd3e981c9ae411d14cb2b51c92",
+      "batch_id": null,
+      "claim_id": "claim-rec-3",
+      "kind": "no_write",
+      "proposed_row": {},
+      "provenance": {
+        "flags": [],
+        "grade": "exact_replayable"
+      },
+      "rationale": "no recovery action applies to a exact_replayable unit (exact replay already proven)",
+      "status": "not_applicable",
+      "target_table": null
+    },
+    {
+      "action_digest": "62f8ae2699abb5c8b67e452cb14ff2dd1cfc81ef9c74c08cec5ac78ffdc26f64",
+      "batch_id": null,
+      "claim_id": "claim-rec-4",
+      "kind": "no_write",
+      "proposed_row": {},
+      "provenance": {
+        "flags": [],
+        "grade": "exact_replayable"
+      },
+      "rationale": "no recovery action applies to a exact_replayable unit (exact replay already proven)",
+      "status": "not_applicable",
+      "target_table": null
+    },
+    {
+      "action_digest": "092d13e13801fe3fe02be855f9dd9a7c7b9cd45b32f36a4a36311b467bc46cbf",
+      "batch_id": null,
+      "claim_id": "claim-rec-5",
+      "kind": "no_write",
+      "proposed_row": {},
+      "provenance": {
+        "flags": [],
+        "grade": "exact_replayable"
+      },
+      "rationale": "no recovery action applies to a exact_replayable unit (exact replay already proven)",
+      "status": "not_applicable",
+      "target_table": null
+    },
+    {
+      "action_digest": "241e99b3fefb7a4cbd97537026b269e7e7e6bb66e57160ec727ef77bb045d1a4",
+      "batch_id": null,
+      "claim_id": "claim-rec-6",
+      "kind": "no_write",
+      "proposed_row": {},
+      "provenance": {
+        "flags": [],
+        "grade": "exact_replayable"
+      },
+      "rationale": "no recovery action applies to a exact_replayable unit (exact replay already proven)",
+      "status": "not_applicable",
+      "target_table": null
+    },
+    {
+      "action_digest": "543725a6fa82677511d8d7fcfcabff8af0669946a8bb0d5df0b427ce8704dc07",
+      "batch_id": null,
+      "claim_id": "claim-rec-7",
+      "kind": "no_write",
+      "proposed_row": {},
+      "provenance": {
+        "flags": [],
+        "grade": "exact_replayable"
+      },
+      "rationale": "no recovery action applies to a exact_replayable unit (exact replay already proven)",
+      "status": "not_applicable",
+      "target_table": null
+    },
+    {
+      "action_digest": "81d0a942bca02c19fc9f4badc0ba2798869bd513ed90a074873a9e8a094c5b5f",
+      "batch_id": null,
+      "claim_id": "claim-mismatch-0",
+      "kind": "no_write",
+      "proposed_row": {},
+      "provenance": {
+        "capture_checks": [
+          {
+            "byte_size": 12,
+            "capture_id": "cap-m0",
+            "detail": "stored bytes hash to neither recorded format for content_digest 'bcnafant6nffqinfw4lmznoxijvp7lvsmqjdvlyf4yy3egrdcycc5qnwyn2hy76s2c4w2cjjorfajec6bhjzlikp3ku4m7s2xjkyw2zlcsi'",
+            "matched_algorithm": null,
+            "object_id": "sig:capture:bcnafant6nffqinfw4lmznoxijvp7lvsmqjdvlyf4yy3egrdcycc5qnwyn2hy76s2c4w2cjjorfajec6bhjzlikp3ku4m7s2xjkyw2zlcsi",
+            "restricted_access": false,
+            "verdict": "digest_mismatch",
+            "version": "v1"
+          }
+        ],
+        "flags": [
+          "digest_mismatch"
+        ],
+        "grade": "unrecoverable"
+      },
+      "rationale": "stored bytes hash to neither recorded digest format — the bytes are NEVER adopted as the old capture; finding preserved",
+      "status": "digest_mismatch_finding",
+      "target_table": null
+    },
+    {
+      "action_digest": "cd18ef75d02e735a5684165e1ba0e4edad8c6019d12d74a1f782a7552b57c276",
+      "batch_id": null,
+      "claim_id": "claim-mismatch-1",
+      "kind": "no_write",
+      "proposed_row": {},
+      "provenance": {
+        "capture_checks": [
+          {
+            "byte_size": 12,
+            "capture_id": "cap-m1",
+            "detail": "stored bytes hash to neither recorded format for content_digest 'bcnaa3uil4eleirs622am6m5ehleuy6nz35g3gwpu6xjqzhw362ktdj5d3rijwhnq755xnqzxfhmvn3l6hl3cu6h6mzarci4klj6w76czg4'",
+            "matched_algorithm": null,
+            "object_id": "sig:capture:bcnaa3uil4eleirs622am6m5ehleuy6nz35g3gwpu6xjqzhw362ktdj5d3rijwhnq755xnqzxfhmvn3l6hl3cu6h6mzarci4klj6w76czg4",
+            "restricted_access": false,
+            "verdict": "digest_mismatch",
+            "version": "v1"
+          }
+        ],
+        "flags": [
+          "digest_mismatch"
+        ],
+        "grade": "unrecoverable"
+      },
+      "rationale": "stored bytes hash to neither recorded digest format — the bytes are NEVER adopted as the old capture; finding preserved",
+      "status": "digest_mismatch_finding",
+      "target_table": null
+    },
+    {
+      "action_digest": "e8378c8dcfca18dc6b8687c7669b10543ee838a84367bbb3df009144321eb79c",
+      "batch_id": null,
+      "claim_id": "claim-missing-0",
+      "kind": "no_write",
+      "proposed_row": {},
+      "provenance": {
+        "capture_checks": [
+          {
+            "byte_size": 12,
+            "capture_id": "cap-g0",
+            "detail": "the recorded OCFL object is absent from the probed root",
+            "matched_algorithm": null,
+            "object_id": "sig:capture:bcnahhdnbqgi5t4mle75zmdpbjxfpbp7l52afgvevpu3snxnc53mk5gxyto5ybkfhtpt3rocks2smc6wznivhzyahf3vjxbtybg6kjjmnnu",
+            "restricted_access": false,
+            "verdict": "missing_object",
+            "version": "v1"
+          }
+        ],
+        "grade": "unrecoverable"
+      },
+      "rationale": "recorded evidence is absent or unverifiable — unrecoverable status preserved; no reconstruction attempted",
+      "status": "unrecoverable",
+      "target_table": null
+    },
+    {
+      "action_digest": "e07cfc952b1f44be02b1643864825d8ebd8eba735f39092d457dbe34e154f0dc",
+      "batch_id": "batch-1",
+      "claim_id": "claim-missing-0",
+      "kind": "record_disposition",
+      "proposed_row": {
+        "authority": "recovery-plan/1 proposal — requires P32.22 operator authorization",
+        "disposition": "withhold",
+        "policy_version": "publication-eligibility/1",
+        "rationale": "claim's evidence is unverifiable under evidence-audit/1; withheld pending the P32.22 review this plan proposes",
+        "reason_category": "pending_publication_review",
+        "target_id": "claim-missing-0",
+        "target_kind": "claim"
+      },
+      "provenance": {
+        "grade": "unrecoverable",
+        "policy": "publication-eligibility/1"
+      },
+      "rationale": "public claim with unverifiable evidence — proposed withhold disposition for the P32.22 authorized apply (never applied here)",
+      "status": "proposed",
+      "target_table": "publication_disposition"
+    },
+    {
+      "action_digest": "26cc6492a62998bacd371b85b0c0a4a0992307ce7aab5a6c674932b0eec57be5",
+      "batch_id": null,
+      "claim_id": "claim-missing-1",
+      "kind": "no_write",
+      "proposed_row": {},
+      "provenance": {
+        "capture_checks": [
+          {
+            "byte_size": 12,
+            "capture_id": "cap-g1",
+            "detail": "the recorded OCFL object is absent from the probed root",
+            "matched_algorithm": null,
+            "object_id": "sig:capture:bcnafewwvodh635w4izt75az2r5sboqo4ajln7ppqczefbpfd4txruugrkcmye3aa3uqzwkck4qtypnt64jadpk3a7orrbbh2o2bh3qpajm",
+            "restricted_access": false,
+            "verdict": "missing_object",
+            "version": "v1"
+          }
+        ],
+        "grade": "unrecoverable"
+      },
+      "rationale": "recorded evidence is absent or unverifiable — unrecoverable status preserved; no reconstruction attempted",
+      "status": "unrecoverable",
+      "target_table": null
+    },
+    {
+      "action_digest": "4b872ebca2085931f71d99d7f49a1abd672b9fd67a95385d94719af7cc1fe172",
+      "batch_id": "batch-1",
+      "claim_id": "claim-missing-1",
+      "kind": "record_disposition",
+      "proposed_row": {
+        "authority": "recovery-plan/1 proposal — requires P32.22 operator authorization",
+        "disposition": "withhold",
+        "policy_version": "publication-eligibility/1",
+        "rationale": "claim's evidence is unverifiable under evidence-audit/1; withheld pending the P32.22 review this plan proposes",
+        "reason_category": "pending_publication_review",
+        "target_id": "claim-missing-1",
+        "target_kind": "claim"
+      },
+      "provenance": {
+        "grade": "unrecoverable",
+        "policy": "publication-eligibility/1"
+      },
+      "rationale": "public claim with unverifiable evidence — proposed withhold disposition for the P32.22 authorized apply (never applied here)",
+      "status": "proposed",
+      "target_table": "publication_disposition"
+    },
+    {
+      "action_digest": "c1ab4d5061ec4b5cd25b61183594de6e9346acab5250e2f0a1a169afe16abe2e",
+      "batch_id": null,
+      "claim_id": "claim-restricted-0",
+      "kind": "no_write",
+      "proposed_row": {},
+      "provenance": {
+        "capture_checks": [
+          {
+            "byte_size": 12,
+            "capture_id": "cap-s0",
+            "detail": "bytes verified under multihash-sha256-b32 (restricted tier — privileged read)",
+            "matched_algorithm": "multihash-sha256-b32",
+            "object_id": "sig:capture:bcnajjj3fsyumcyeub4tg2fmnwnvrozdkkjgr4g5xn3d2zg222uj7tgsgq465gv3hfkmm6hwf7tupci7mat676izewa7xploumc4z5astpu",
+            "restricted_access": true,
+            "verdict": "verified_bytes",
+            "version": "v1"
+          }
+        ],
+        "grade": "restricted_not_public"
+      },
+      "rationale": "restricted/sealed bytes — privileged verification path only; no public action proposed and access restriction is not evidence loss",
+      "status": "restricted",
+      "target_table": null
+    },
+    {
+      "action_digest": "d6b73076b87a633faa3e3e2a7e86454bdcbeeb2079ce116e061f6de058724848",
+      "batch_id": null,
+      "claim_id": "claim-sealed-0",
+      "kind": "no_write",
+      "proposed_row": {},
+      "provenance": {
+        "capture_checks": [
+          {
+            "byte_size": 11,
+            "capture_id": "cap-s1",
+            "detail": "restricted-tier object not readable at this root; cannot distinguish sealed-from-us from absent — reported unverified",
+            "matched_algorithm": null,
+            "object_id": "sig:capture:bcnag6a5vj6scd7esjrdmoomarvckwrvw7zub6m6l6hp3bmqxrmrst4vxw2ocsxtyxdqcayxwrhyu75g3vg4y5nisxld5dlklfmhx47ltk4",
+            "restricted_access": true,
+            "verdict": "unverified",
+            "version": "v1"
+          }
+        ],
+        "grade": "restricted_not_public"
+      },
+      "rationale": "restricted/sealed bytes — privileged verification path only; no public action proposed and access restriction is not evidence loss",
+      "status": "restricted",
+      "target_table": null
+    },
+    {
+      "action_digest": "a2a5d4f59b37d03ac5c57b10970ce81ebc46ae7c9f8d291971f3ac69e94e638e",
+      "batch_id": null,
+      "claim_id": "claim-unsupported-0",
+      "kind": "no_write",
+      "proposed_row": {},
+      "provenance": {
+        "flags": [
+          "unsupported_role_mapping"
+        ],
+        "grade": "source_attributed_only"
+      },
+      "rationale": "unsupported role mapping with no adjudicator repair — preserved as a finding, never silently re-mapped or upgraded",
+      "status": "unrecoverable",
+      "target_table": null
+    },
+    {
+      "action_digest": "3a48821e9dc95e8b07d6c7834fac3093fff46c4da7a0173e9c6ae88598bc1a0c",
+      "batch_id": null,
+      "claim_id": "claim-synthetic-0",
+      "kind": "no_write",
+      "proposed_row": {},
+      "provenance": {
+        "flags": [],
+        "grade": "source_attributed_only"
+      },
+      "rationale": "no recovery action applies to a source_attributed_only unit",
+      "status": "not_applicable",
+      "target_table": null
+    }
+  ],
+  "batches": [
+    {
+      "actions": [
+        "4b872ebca2085931f71d99d7f49a1abd672b9fd67a95385d94719af7cc1fe172",
+        "e07cfc952b1f44be02b1643864825d8ebd8eba735f39092d457dbe34e154f0dc"
+      ],
+      "batch_id": "batch-1",
+      "distinct_capture_bytes": 0,
+      "write_actions": 2
+    }
+  ],
+  "ceilings": {
+    "exceeds_ceiling": false,
+    "pilot": {
+      "byte_budget": 2147483648,
+      "max_claims": 40,
+      "source": "S1-evidence-integrity research §6",
+      "wall_clock_minutes": 30,
+      "workers": 1
+    },
+    "recovery_batch": {
+      "max_assertions": 10000,
+      "max_distinct_bytes": 262144000,
+      "source": "S1-evidence-integrity research §6",
+      "workers": 1
+    },
+    "storage_headroom": {
+      "min_batch_free_headroom": 0.2,
+      "require_disposition_at_fraction": 0.85,
+      "warn_at_fraction": 0.7
+    }
+  },
+  "estimates": {
+    "distinct_capture_bytes": 0,
+    "estimated_seconds": {
+      "byte_reads": 0.0,
+      "replay_apply": 0.001,
+      "row_writes": 0.001,
+      "total": 0.002
+    },
+    "rates_cited": {
+      "byte_read_bytes_per_s": 52428800,
+      "claim_land_rate_per_min": 180000,
+      "replay_rate_per_min": 138000,
+      "sources": [
+        "ADR-111 hosted sink bench (~179.9k claims/min, dot_511_wa)",
+        "ADR-111 replay pass (~138k records/min end to end)",
+        "conservative 50 MiB/s sequential read on the mounted root"
+      ]
+    },
+    "rows_planned": {
+      "publication_disposition": 2
+    },
+    "storage_projection": {
+      "free_storage_bytes_supplied": false
+    },
+    "total_rows": 2,
+    "write_actions": 2
+  },
+  "generated_at": null,
+  "input": {
+    "applied_digests_supplied": 0,
+    "audit_report_input": {
+      "byte_budget": 2147483648,
+      "byte_budget_exhausted": false,
+      "bytes_read": 188,
+      "capture_probe": "ocfl:docs/build/reports/p32.6-legacy-evidence/capture_root",
+      "claim_count": 16,
+      "code_commit": "616b889c19b587871483930ca358eb35712a2dcf",
+      "population_digest": "sha256:9920fd40b88c3faa7c1cf0ce71a79df7d12d3dfe26be7697ff0b84ee54efd98c",
+      "population_source": "input-json:docs/build/reports/p32.6-legacy-evidence/fixture_spine.json",
+      "roll_boundary": "2026-09-25T00:00:00Z",
+      "sample_size_requested": 16,
+      "sampled": 16,
+      "seed": "p32.6-fixture-seed-v1",
+      "targeted": 2,
+      "watermark": {
+        "claim_evidence": {
+          "count": 16,
+          "establishing": 16,
+          "max_bound_at": "2026-10-01T00:00:00Z"
+        },
+        "claims": {
+          "count": 16,
+          "max_asserted_at": "2026-10-01T00:00:00Z"
+        },
+        "evidence_capture": {
+          "actual": 14,
+          "count": 16,
+          "legacy": 0,
+          "max_retrieved_at": "2026-10-01T00:00:00Z",
+          "synthetic": 2
+        },
+        "ingest_run": {
+          "count": 2,
+          "max_started_at": "2026-10-01T00:00:00Z"
+        },
+        "ingest_run_capture": {
+          "count": 12,
+          "max_recorded_at": "2026-10-01T00:00:00Z"
+        },
+        "publication_disposition": {
+          "count": 0,
+          "max_decided_at": null
+        }
+      }
+    },
+    "audit_version": "evidence-audit/1",
+    "repair_instructions": [],
+    "withhold_unverifiable_public": true
+  },
+  "limitations": [
+    "Dry-run only: no spine mutation, no fetch, no publication change — the authorized apply is P32.22 (D-R10-LIVE-1).",
+    "Dispositions are PROPOSALS: authority string marks them as requiring P32.22 operator authorization; a real decided_by is recorded at apply.",
+    "Estimates cite measured rates; actual hosted throughput is re-measured at apply time under the same pinned image.",
+    "A re-fetch is never proposed: 'recoverable' requires preserved bytes plus provable lineage; missing history stays missing."
+  ],
+  "plan_version": "recovery-plan/1",
+  "resume": {
+    "applied_digest_source": "the applier's resume marker — feed applied digests back via --applied for a +0 re-plan",
+    "input_report_digest": "sha256:9920fd40b88c3faa7c1cf0ce71a79df7d12d3dfe26be7697ff0b84ee54efd98c",
+    "plan_digest_fields": [
+      "kind",
+      "claim_id",
+      "proposed_row"
+    ],
+    "second_run_is_plus_zero": false
+  },
+  "totals": {
+    "actions": 18,
+    "already_applied": 0,
+    "batches": 1,
+    "deferred_ambiguous": 0,
+    "digest_mismatch": 2,
+    "proposed": 2,
+    "restricted": 2,
+    "unrecoverable": 3,
+    "writes_proposed": 2
+  },
+  "zero_write_rules": [
+    "ambiguous_lineage or dangling_capture => NO_WRITE (deferred_ambiguous); a recorded reviewer disposition is required before any binding is proposed",
+    "unrecoverable => NO_WRITE preserving the status; a proposed pending_publication_review disposition only when the claim is currently public",
+    "digest_mismatch => NO_WRITE; stored bytes are NEVER adopted as the old capture",
+    "restricted_not_public => NO_WRITE (restricted); the privileged verification path is noted, no public action proposed",
+    "unsupported_role_mapping without an adjudicator repair => NO_WRITE; never silently re-mapped, upgraded, or silently weakened",
+    "every write action targets an append-only table (claim / claim_evidence / publication_disposition) and carries the provenance its applier re-verifies"
+  ]
+}

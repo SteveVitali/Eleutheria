@@ -552,6 +552,116 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="also run the keepalive verification into the readout (runs the degraded build).",
     )
+
+    audit = sub.add_parser(
+        "evidence-audit",
+        help="P32.6 (SIG-TRUST-007, ADR-125): the offline, read-only, reproducible "
+        "legacy-evidence audit. Loads the spine's claim→evidence lineage through a "
+        "READ-ONLY session (--dsn) or a committed input dump (--input-json), verifies "
+        "recorded capture bytes at their pinned OCFL version (--capture-dir), samples "
+        "deterministically by the recorded seed, and writes audit_report.json + "
+        "AUDIT_REPORT.md. Never fetches, never writes the spine",
+    )
+    src = audit.add_mutually_exclusive_group(required=True)
+    src.add_argument(
+        "--dsn",
+        default=None,
+        help="PostgreSQL DSN; connected with default_transaction_read_only=on "
+        "(else SIG_STAGING_DSN / SIG_PG_* parts)",
+    )
+    src.add_argument(
+        "--input-json",
+        default=None,
+        help="a previously dumped audit input (db.evidence_audit.dump_rows shape) — "
+        "the fully offline/fixture path",
+    )
+    audit.add_argument(
+        "--capture-dir",
+        default=None,
+        help="the OCFL capture root to probe (mounted gcsfuse path or a fixture dir); "
+        "absent → every byte check reports 'unverified', never 'missing'",
+    )
+    audit.add_argument("--seed", required=True, help="the sampling seed (recorded)")
+    audit.add_argument(
+        "--sample",
+        type=int,
+        default=400,
+        help="probability-sample size across strata (default 400; ≥ corpus ⇒ census)",
+    )
+    audit.add_argument(
+        "--roll-boundary",
+        default=None,
+        help="persistent-capture-roll timestamp (default: the 2026-09-25 roll)",
+    )
+    audit.add_argument(
+        "--byte-budget",
+        type=int,
+        default=None,
+        help="max capture bytes read (default: the 2 GiB pilot ceiling)",
+    )
+    audit.add_argument(
+        "--targeted",
+        default=None,
+        help="file of claim ids for the separately-reported targeted set",
+    )
+    audit.add_argument(
+        "--adjudications",
+        default=None,
+        help="JSON {claim_id: established|not_established|unresolved} — the "
+        "adjudicator instrument's verdicts for the semantic metrics",
+    )
+    audit.add_argument(
+        "--claim-ids",
+        default=None,
+        help="file of claim ids selecting a bounded population (default: the corpus)",
+    )
+    audit.add_argument(
+        "--dump-input",
+        default=None,
+        help="also write the loader's input rows here (the reproducible input of record)",
+    )
+    audit.add_argument(
+        "--out",
+        required=True,
+        help="output directory for audit_report.json + AUDIT_REPORT.md",
+    )
+
+    rplan = sub.add_parser(
+        "recovery-plan",
+        help="P32.6 (SIG-TRUST-007, ADR-125): the bounded, dry-run-only recovery "
+        "planner. Reads an evidence-audit report, emits append-only action proposals "
+        "(typed re-bindings, adjudicator-specified repairs, withhold dispositions) "
+        "with zero writes for ambiguous lineage, unrecoverable preserved, batches "
+        "honouring the S1 bounds, and the live return-pass packet. Never writes the spine",
+    )
+    rplan.add_argument("--audit", required=True, help="an audit_report.json to plan over")
+    rplan.add_argument(
+        "--applied",
+        default=None,
+        help="file of action digests already applied (the resume marker → +0 re-plan)",
+    )
+    rplan.add_argument(
+        "--repairs",
+        default=None,
+        help="JSON {claim_id: {revised_fields, basis, locator}} — adjudicator repairs",
+    )
+    rplan.add_argument(
+        "--no-withhold-unverifiable",
+        action="store_true",
+        help="do not propose pending_publication_review dispositions for public "
+        "unverifiable claims",
+    )
+    rplan.add_argument(
+        "--free-storage-bytes",
+        type=int,
+        default=None,
+        help="projected free space on the target store (headroom rules evaluated)",
+    )
+    rplan.add_argument(
+        "--out",
+        required=True,
+        help="output directory for recovery_plan.json + the live return-pass packet",
+    )
     return parser
 
 
@@ -1640,6 +1750,150 @@ def _cmd_dashboard(args: argparse.Namespace) -> int:
     return 0
 
 
+def _git_head() -> str:
+    """The worktree's commit — recorded on the report's input identity."""
+    try:
+        out = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(_REPO_ROOT),
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        return out.stdout.strip()
+    except Exception:
+        return "unknown"
+
+
+def _read_id_file(path: str | None) -> set[str]:
+    """A newline-delimited claim-id file (targeted set / population selection)."""
+    if not path:
+        return set()
+    return {
+        ln.strip()
+        for ln in Path(path).read_text(encoding="utf-8").splitlines()
+        if ln.strip() and not ln.strip().startswith("#")
+    }
+
+
+def _cmd_evidence_audit(args: argparse.Namespace) -> int:
+    """``sig-ops evidence-audit`` — the offline read-only audit (P32.6)."""
+    from . import evidence_audit as ea
+
+    if args.input_json:
+        units, watermark, eligible = ea.load_input_json(args.input_json)
+        input_source = f"input-json:{args.input_json}"
+    else:
+        dsn = args.dsn or default_dsn()
+        try:
+            import psycopg  # lazy — only the live-read path needs the driver
+        except ImportError:
+            print("evidence-audit: psycopg unavailable", file=sys.stderr)
+            return 2
+        # The session is enforced read-only at the libpq level: the audit can
+        # never mutate the spine, even through a code path bug.
+        conn = psycopg.connect(dsn, options="-c default_transaction_read_only=on")
+        from db.evidence_audit import load_audit_input
+
+        ids = _read_id_file(args.claim_ids)
+        load = load_audit_input(conn, claim_ids=sorted(ids) if ids else None)
+        units = ea.units_from_rows(load.rows, load.marks, load.eligible_claim_ids)
+        watermark = load.watermark
+        input_source = "dsn(read-only)"
+        if args.dump_input:
+            from db.evidence_audit import dump_rows
+
+            dump_rows(args.dump_input, load)
+            print(f"evidence-audit: input rows dumped to {args.dump_input}")
+
+    probe: ea.CaptureProbe
+    if args.capture_dir:
+        from evidence.ocfl import OcflStore
+        from evidence.storage import LocalFileStore
+
+        probe = ea.OcflCaptureProbe(
+            OcflStore(LocalFileStore(str(args.capture_dir))),
+            root_desc=str(args.capture_dir),
+        )
+    else:
+        probe = ea.NULL_PROBE
+
+    adjudications = None
+    if args.adjudications:
+        adjudications = {
+            str(k): str(v)
+            for k, v in json.loads(Path(args.adjudications).read_text(encoding="utf-8")).items()
+        }
+
+    report = ea.run_audit(
+        units,
+        probe,
+        seed=str(args.seed),
+        sample_size=int(args.sample),
+        boundary=args.roll_boundary or ea.DEFAULT_ROLL_BOUNDARY,
+        targeted_ids=_read_id_file(args.targeted),
+        adjudications=adjudications,
+        watermark=watermark,
+        input_source=input_source,
+        code_commit=_git_head(),
+        generated_at=None,  # deterministic output; the run ledger records wall time
+        byte_budget=args.byte_budget or ea.PILOT_BYTE_BUDGET,
+    )
+    out = Path(args.out)
+    out.mkdir(parents=True, exist_ok=True)
+    report.write(out / "audit_report.json")
+    (out / "AUDIT_REPORT.md").write_text(ea.render_audit_markdown(report), encoding="utf-8")
+    census = report.census
+    print(
+        "evidence-audit: "
+        f"{census['claims']} claims, {len(report.strata)} strata, "
+        f"{report.input['sampled']} sampled — "
+        f"support_all={report.adjudication['support_all']}, "
+        f"yield={report.adjudication['adjudication_yield']} "
+        f"→ {out}/audit_report.json"
+    )
+    return 0
+
+
+def _cmd_recovery_plan(args: argparse.Namespace) -> int:
+    """``sig-ops recovery-plan`` — the dry-run-only recovery planner (P32.6)."""
+    from . import recovery_plan as rp
+
+    report = rp.load_report(args.audit)
+    applied: set[str] = set()
+    if args.applied:
+        applied = _read_id_file(args.applied)
+    repairs = None
+    if args.repairs:
+        repairs = json.loads(Path(args.repairs).read_text(encoding="utf-8"))
+    plan = rp.build_recovery_plan(
+        report,
+        applied_digests=applied,
+        repair_instructions=repairs,
+        withhold_unverifiable_public=not args.no_withhold_unverifiable,
+        free_storage_bytes=args.free_storage_bytes,
+        generated_at=None,  # deterministic output
+    )
+    out = Path(args.out)
+    out.mkdir(parents=True, exist_ok=True)
+    plan.write(out / "recovery_plan.json")
+    paths = rp.write_live_packet(plan, report, out)
+    # The applier's resume file: the digests this plan proposed.
+    (out / "plan_digests.txt").write_text("\n".join(rp.plan_digests(plan)) + "\n", encoding="utf-8")
+    print(
+        "recovery-plan: "
+        f"{plan.totals['actions']} actions "
+        f"({plan.totals['proposed']} proposed, {plan.totals['already_applied']} "
+        f"already-applied, {plan.totals['deferred_ambiguous']} deferred-ambiguous, "
+        f"{plan.totals['unrecoverable']} unrecoverable, "
+        f"{plan.totals['restricted']} restricted, "
+        f"{plan.totals['digest_mismatch']} digest-mismatch), "
+        f"{plan.totals['batches']} batch(es) "
+        f"→ {out}/recovery_plan.json + {paths['markdown'].name}"
+    )
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run the `ops` CLI. Returns a process exit code."""
     parser = build_parser()
@@ -1688,5 +1942,9 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_alert(args)
     if args.command == "dashboard":
         return _cmd_dashboard(args)
+    if args.command == "evidence-audit":
+        return _cmd_evidence_audit(args)
+    if args.command == "recovery-plan":
+        return _cmd_recovery_plan(args)
     parser.print_help()
     return 0

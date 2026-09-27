@@ -1,0 +1,43 @@
+{
+  "contentDirectory": "content",
+  "digestAlgorithm": "sha512",
+  "fixity": {
+    "blake3": {
+      "6e46dd10defc9b56c29a6ec56b508c21f54c08192194e4df25bf36f0c9c3c279": [
+        "v1/content/metadata.json"
+      ],
+      "8c923e99b7322c8c31dec249e4f3db5f21054388ed5c30533c8b3ae6efbe794d": [
+        "v1/content/capture"
+      ]
+    }
+  },
+  "head": "v1",
+  "id": "sig:capture:bcnakkpc6owo5iy67fmqzd3abh4mdzphqysfacz5n6swjzvqcvjwimznqii7tlji5gkflef7ck2d4iffwbppjnf2ojbtt5iwwner5clgt2e",
+  "manifest": {
+    "27c74670adb75075fad058d5ceaf7b20c4e7786c83bae8a32f626f9782af34c9a33c2046ef60fd2a7878d378e29fec851806bbd9a67878f3a9f1cda4830763fd": [
+      "v1/content/metadata.json"
+    ],
+    "a53c5e759dd463df2b2191ec013f183cbcf0c48a0167adf4ac9cd602aa6c8665b0423f35a51d328ab217e25687c414b60bde96974e48673ea2d66923d12cd3d1": [
+      "v1/content/capture"
+    ]
+  },
+  "type": "https://ocfl.io/1.1/spec/#inventory",
+  "versions": {
+    "v1": {
+      "created": "2026-09-27T07:34:46Z",
+      "message": "",
+      "state": {
+        "27c74670adb75075fad058d5ceaf7b20c4e7786c83bae8a32f626f9782af34c9a33c2046ef60fd2a7878d378e29fec851806bbd9a67878f3a9f1cda4830763fd": [
+          "metadata.json"
+        ],
+        "a53c5e759dd463df2b2191ec013f183cbcf0c48a0167adf4ac9cd602aa6c8665b0423f35a51d328ab217e25687c414b60bde96974e48673ea2d66923d12cd3d1": [
+          "capture"
+        ]
+      },
+      "user": {
+        "address": "https://sig-project.org",
+        "name": "sig-evidence"
+      }
+    }
+  }
+}
