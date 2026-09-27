@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "5f4772d8faf37622f28082d3a0c90471e7d4890c",
+  "input_commit": "fa84bce87e69d6bb53ed6b81803a96c7bdb78c9f",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "51cb5a724de91bf1bc5a067804485e4f01610ec9f8e501594521bd6c86715a74"
+      "sha256": "97c942926eadb811fe4325a25dfd396532858447c61a9857f68027ba9211b552"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -517,12 +517,16 @@
       "sha256": "3ef7bf5d9eb712a3915e61fee4b93dfa7ae1ce9a3f0439e154e129e7b85a5fcc"
     },
     {
+      "path": "docs/adr/ADR-128-preregistered-blinded-human-evaluation-campaigns.md",
+      "sha256": "f1353a3d4faa04fdbcd5011124ddeaf84c3b26a8e20f2dcef7daf905e72d15db"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "ccaa5be6788f52ccd3ad071fddb67c9520383e4dcb7c830c94708bb7b2b9723c"
+      "sha256": "26a96ae777cf40c378ac5db72bcfbcdc987e8ad367a6d140b6d2f2030439510f"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "f9fd5d580090c2c1409b5320fe99b94087a64b12453075848d2dc885461f0283"
+      "sha256": "4feae61d4c97265df7b548fff125482f35671b167afdcbd674dd74af6808fef7"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
@@ -530,7 +534,7 @@
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "01c68694696795fc015f5d0838fee368cd0ee8e3c468124268ed6428d1e1a4ed"
+      "sha256": "9e6c5fa1cdd4337cbc9dc8cc790384674f3d3a369ab116931a7f65acf3f3475e"
     },
     {
       "path": "docs/build/LEDGER.md",
@@ -1229,6 +1233,10 @@
       "sha256": "f34b75ef13135f1d85e8391946c7a7eb3f99eaf0192939da29fdcb64c022eed8"
     },
     {
+      "path": "docs/build/runs/P32.9.md",
+      "sha256": "453daaf8f8bc2197ca15728196463703de68b8361c61f4197dfb41b2d5b98c43"
+    },
+    {
       "path": "docs/tickets/00_MANIFEST.md",
       "sha256": "c32695818bdeea48e53c5124c26316cfb033a986791240826e3b6bc03fe6cddf"
     },
@@ -1394,7 +1402,7 @@
     },
     {
       "path": "docs/tickets/DEFERRALS.md",
-      "sha256": "4fa3213313c2ac8fb094b39b4ff901dee617d258651e5a54fcb491a39ed425a0"
+      "sha256": "0e4e464388a9be7e6f6154d91297aa26b1155f76676901f649351d309fade4df"
     },
     {
       "path": "docs/tickets/P00.1__repo-skeleton.md",
