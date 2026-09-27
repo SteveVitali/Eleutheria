@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "fa84bce87e69d6bb53ed6b81803a96c7bdb78c9f",
+  "input_commit": "b132bbbb8e36951fb5f3a8ec8a392cbb6449fc99",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "97c942926eadb811fe4325a25dfd396532858447c61a9857f68027ba9211b552"
+      "sha256": "89505a21e240b9491edb5d9b861ef7f16e56d7fbadc547cb43f66a9cae248578"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -521,16 +521,20 @@
       "sha256": "f1353a3d4faa04fdbcd5011124ddeaf84c3b26a8e20f2dcef7daf905e72d15db"
     },
     {
+      "path": "docs/adr/ADR-129-design-aware-resolution-evaluation-and-shadow-confidence-gates.md",
+      "sha256": "4cf8a00f454c7afc941dff6837901811512682b387900873cacfa8aa77891733"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "26a96ae777cf40c378ac5db72bcfbcdc987e8ad367a6d140b6d2f2030439510f"
+      "sha256": "1621cf40edc9bc19ab95168c88f4f613d0ec842bad3ebdee328ff5e30db1c714"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "4feae61d4c97265df7b548fff125482f35671b167afdcbd674dd74af6808fef7"
+      "sha256": "daca9475795d729209f21c3fd31415baa08e71502fb629f0ce6f485665f1d7c4"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "3c208022610fc96c2a9a3db64dffd1409af1d180c693b1abb9701201e24284a6"
+      "sha256": "e4deb47935a828a2f09011cb9911de638e518b5d1e488ccbf9ae81da508cac05"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
@@ -538,7 +542,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "121b4d680b9c30ad02321d128c205061ab36b93857deff346084f527255ed1c7"
+      "sha256": "71c1d151a642898587335aaf8320dd1c80c86bb4a56d9fce71f68860a614485a"
     },
     {
       "path": "docs/build/readouts/ACCEPT-R10.md",
@@ -594,7 +598,7 @@
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
-      "sha256": "352b33edc1930502372a92c82ed0d2e22770ba156594de836ecf3fca414522ff"
+      "sha256": "cbbfede59eccf2b29fe9919a23a9b68e15b22b802e19ee2342771125af19c955"
     },
     {
       "path": "docs/build/reports/obligations/governing_adrs.json",
@@ -1205,6 +1209,14 @@
       "sha256": "eb10bf458d8be575456fb8f26e01cc6a20dea3808f51c127630a974c612ff672"
     },
     {
+      "path": "docs/build/runs/P32.10.md",
+      "sha256": "22912148b27b6dff5e8f98a210c2173e5395fe195c6787b81a014d70ec2a6df7"
+    },
+    {
+      "path": "docs/build/runs/P32.10a.md",
+      "sha256": "86b15d15143ac2cebb5b5a4d2738a57fba1fcfa875efe2a85beb2e533bab618a"
+    },
+    {
       "path": "docs/build/runs/P32.2.md",
       "sha256": "04d9e1a11951bc50f1f87c52b1c44254cfef6ae390f2a787318ee244d0aef8c6"
     },
@@ -1234,11 +1246,11 @@
     },
     {
       "path": "docs/build/runs/P32.9.md",
-      "sha256": "453daaf8f8bc2197ca15728196463703de68b8361c61f4197dfb41b2d5b98c43"
+      "sha256": "8780b7d1b2cb78e92f38e317a5b0b23f63d7ec2d1dd6444dbeef2709a72e9990"
     },
     {
       "path": "docs/tickets/00_MANIFEST.md",
-      "sha256": "c32695818bdeea48e53c5124c26316cfb033a986791240826e3b6bc03fe6cddf"
+      "sha256": "a1a5897fec7aa9637d8c0606e21221c5bd760b28fb1f023eb07b12c144693af6"
     },
     {
       "path": "docs/tickets/161_P32.1__baseline-and-memory-audit.md",
@@ -1279,6 +1291,10 @@
     {
       "path": "docs/tickets/170_P32.10__resolution-evaluator-and-confidence-gates.md",
       "sha256": "bd596ec5983b1a62aba79e3bcd89eb6743968b60e3a130872414a9f22fdbeeb4"
+    },
+    {
+      "path": "docs/tickets/170a_P32.10a__disposition-single-clock-authority.md",
+      "sha256": "67a6511777fb0a9e1b39b3f44761928a80c4c575c2522ba831b13ea47387ef0b"
     },
     {
       "path": "docs/tickets/171_P32.11__gap-driven-source-discovery.md",
@@ -1402,7 +1418,7 @@
     },
     {
       "path": "docs/tickets/DEFERRALS.md",
-      "sha256": "0e4e464388a9be7e6f6154d91297aa26b1155f76676901f649351d309fade4df"
+      "sha256": "d6db70ade79a291aa4310153b6bde89ac87f529fa09c136c448898997732c31e"
     },
     {
       "path": "docs/tickets/P00.1__repo-skeleton.md",

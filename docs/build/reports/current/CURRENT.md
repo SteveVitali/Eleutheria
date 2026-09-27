@@ -4,17 +4,17 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer protocol is `D-R10-MEMORY-1` → P32.8.
-> input_commit: `fa84bce87e69d6bb53ed6b81803a96c7bdb78c9f` · inputs hashed: 502 · wall-clock receipt: `receipt.json`
+> input_commit: `b132bbbb8e36951fb5f3a8ec8a392cbb6449fc99` · inputs hashed: 506 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN-PROGRESS` · round `10` · nextTicket `P32.9` · lastCompleted `P32.8`
-- chainTip `devin/p32-8-memory-concurrency-and-recovery` · returnPass `P31.16(**DONE 2026-09-27 — HG-11 granted by the operator (sign-off commit `81957c2`) + the publish half landed: `REPUBLISH_LIVE_2026-09-27.md`; public partition…` · updatedAt `2026-10-15 — P32.8 (row 168) DONE: PR`
+- projectStatus `IN-PROGRESS` · round `10` · nextTicket `P32.11` · lastCompleted `P32.10a`
+- chainTip `devin/p32-10a-disposition-single-clock-authority` · returnPass `P31.16(**DONE 2026-09-27 — HG-11 granted by the operator (sign-off commit `81957c2`) + the publish half landed: `REPUBLISH_LIVE_2026-09-27.md`; public partition…` · updatedAt `2026-09-27 — P32.10a (row 170.5/170a) DONE: PR`
 
 ## Obligations
 
-- 89 obligations · **36 owed** (31 OPEN, 5 PARTIAL) · 53 terminal
-- 89 events (0 transitions beyond anchors) · 7 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 90 obligations · **37 owed** (32 OPEN, 5 PARTIAL) · 53 terminal
+- 90 events (0 transitions beyond anchors) · 7 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
 | obligation | status | owner | landing | how to verify |
 |---|---|---|---|---|
@@ -54,6 +54,7 @@
 | D-R10-MEMORY-1 | OPEN | P32.8 | P32.8 | Both worker closeout and orchestrator repair use one authoritative-chain protocol; stale-worktree/uncertain-PR/crash tests and cutover commit recorded |
 | D-R10-USERS-1 | OPEN | P32.24 | P32.24 | Frozen-release task results with actual numerator/denominator, uncertainty/comprehension failures and accessibility session; no simulated agents counted as user… |
 | D-P32.3-1 | OPEN | operator | BL-058 | every `sig.org.name` key in `entity_identifier` has a recorded disposition (`same_as`/`distinct` decision rows or an accepted "keep" record); the report's `spli… |
+| D-P32.10a-1 | OPEN | engineering | P32.5 | `sqitch verify` over a fully deployed container exits 0 (today: `ERROR: division by zero` at `verify/shared_temporal_contract.sql:30`, `count(*)=28`) |
 ## Known inconsistencies (preserved, never synthesized)
 
 - none — every P32.1 baseline conflict is either reconciled by a recorded event interpretation (old values preserved on the anchor) or documented in `reconciliations.json`; anything new would appear here and fail `verify`
