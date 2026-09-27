@@ -159,8 +159,14 @@ class RateLimiter:
         self._delays: dict[str, float] = {}
 
     def set_host_delay(self, host: str, delay: float) -> None:
-        """Pin a host's crawl-delay (from robots.txt or the registry)."""
-        self._delays[host] = max(delay, 0.0)
+        """Pin a host's crawl-delay (from robots.txt or the registry).
+
+        Ratchets UP only: the strictest reviewed floor wins — a pinned API
+        budget (``rate_limit_per_min`` on the target row, P26.11) is never
+        lowered by a shorter robots crawl-delay, and robots can only demand
+        slower. Politeness always honours the maximum declared delay.
+        """
+        self._delays[host] = max(float(delay), self._delays.get(host, 0.0), 0.0)
 
     def delay_for(self, host: str) -> float:
         return self._delays.get(host, self._default_delay)
@@ -222,6 +228,16 @@ class PoliteFetcher:
     @property
     def user_agent_string(self) -> str:
         return self._ua
+
+    def set_host_delay(self, host: str, delay: float) -> None:
+        """Pin a host's minimum request interval (seconds).
+
+        A reviewed API budget riding the target row (``rate_limit_per_min`` —
+        e.g. OpenStates' declared 5/min for the 50-state sweep, P26.11) is
+        applied here so a long bounded sweep never out-runs the source's ToS
+        rate; robots' crawl-delay still overrides when it demands slower.
+        """
+        self._limiter.set_host_delay(host, float(delay))
 
     def _ensure_robots(self, host: str, sample_url: str) -> RobotFileParser:
         if host in self._robots:

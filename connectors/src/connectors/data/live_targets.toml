@@ -340,13 +340,23 @@ targets = [
   { id = "samgov-lpr-opportunities-2026", url = "https://api.sam.gov/prod/opportunities/v2/search?limit=25&postedFrom=01/01/2026&postedTo=12/31/2026&title=license%20plate%20reader", kind = "opportunity_search" },
 ]
 
-# OpenStates — a bounded state-scoped bill query over the documented v3 API
-# (per_page bound; key from $SIG_OPENSTATES_KEY, HG-09). Keyless → 403
-# challenge, recorded.
+# OpenStates — the 50-state surveillance-legislation sweep (P26.11 / SOURCES.10).
+# The seed targets are the two bounded pages of the documented v3
+# `/jurisdictions` index (52/page = the v3 max; 56 state-classified rows = the
+# 50 states + DC + AS/GU/MP/PR/VI). The connector's bounded `discover_more`
+# reads the captured index and expands it into per-jurisdiction,
+# per-query-family `bill_search` targets — the whole query plan (session
+# window, per_page ≤ 20, OR-batched reviewed keyword phrases, the 240-query
+# run bound) is DATA in `openstates_plan.toml`, never code. The key resolves
+# from $SIG_OPENSTATES_KEY at fetch time (HG-09); it rides the X-API-KEY
+# header, never the URL. `rate_limit_per_min = 5` is the reviewed API budget
+# (api_allowlist.toml) the runner pins on the host so the ~226-request sweep
+# stays under the observed ~10/min throttle. Keyless → 403 challenge, recorded.
 [openstates]
 kind = "document"
 targets = [
-  { id = "openstates-ok-alpr-bills", url = "https://v3.openstates.org/bills?jurisdiction=ok&q=license+plate+reader&per_page=10", kind = "bill_search" },
+  { id = "openstates-jurisdictions-p1", url = "https://v3.openstates.org/jurisdictions?include=legislative_sessions&classification=state&per_page=52&page=1", kind = "jurisdictions_index", rate_limit_per_min = 5 },
+  { id = "openstates-jurisdictions-p2", url = "https://v3.openstates.org/jurisdictions?include=legislative_sessions&classification=state&per_page=52&page=2", kind = "jurisdictions_index", rate_limit_per_min = 5 },
 ]
 
 # CourtListener / RECAP — a targeted docket lookup (dockets/<id>/ names ONE

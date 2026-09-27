@@ -1,0 +1,224 @@
+# SPDX-License-Identifier: Apache-2.0
+# The versioned surveillance-LEGISLATION vocabulary (P26.11 / SOURCES.10) — the
+# reviewed keyword set the `accountability` connector scans OpenStates v3 bill
+# records for, the CLAIM-SHAPE MAP that decides whether a matched bill emits
+# typed claims or stays an index_only evidence link, and the Part VIII guard
+# applied to every emitted literal.
+#
+# This table is DATA, not code (SIG-ENG-001): the term set, the per-term
+# claim_shape, and the guard lists are data rows reviewed on their own.
+# Changes are VERSIONED MIGRATIONS (§20): bump `vocab_version` and add the
+# change, never silently rewrite a row, so a re-extraction under a new
+# vocabulary is a new interpretation, never a destructive overwrite
+# (SIG-INGEST-017).
+#
+# Scope is deliberately surveillance-legislation only: a bill record whose
+# title (or alternate title) matches a [[terms]] pattern emits the reviewed
+# bill-surface claims — identifier, title, session, jurisdiction, status, and
+# one `bill_matched_keyword` claim per matched term carrying the VERBATIM
+# matched literal as raw_value. The match asserts "this bill's record contains
+# this term", never "this technology is deployed" and never "this bill is
+# law" — a pending bill is *proposed* law and is NEVER promoted to a §11.14
+# LegalInstrument (§3.1). The claim-shape map is the reviewed gate on that:
+# a term whose claim_shape is "index_only" surfaces the bill only as an
+# evidence link; a bill matching no typed_claim term keeps the P26.4
+# index_only path unchanged.
+#
+# NOTE ON TOML ORDERING: every top-level key MUST appear ABOVE the first
+# [[terms]] header — otherwise TOML nests it under that table.
+
+# The vocabulary version stamped onto emitted rows (§20).
+vocab_version = "2026.09.18"
+
+# Part VIII §0.7 / §43.2 guard for emitted bill rows (the mechanical form of
+# "no plate / per-trip / per-person / per-search data"). A matched literal or
+# emitted field carrying one of these tokens is SUPPRESSED — the suppression
+# is recorded on the bill's row, never emitted and never a crash. Same set as
+# the P26.6/P26.10 agenda-content guard: "license plate" names a technology
+# and is NOT forbidden; the per-DATUM tokens are.
+forbidden_tokens = [
+  "plate number", "plate_number",
+  "per-person", "per_person", "per person",
+  "per-trip", "per_trip", "per trip",
+  "travel history", "travel_history", "trip history", "individual travel",
+  "per-search", "per_search", "per search", "hotlist hit", "hotlist_hit",
+  "home address", "home_address",
+]
+
+# Predicate ids that NAME a natural person — refused outright (§43.4 default).
+# The legislation path never emits these; the guard exists so a future vocab
+# change cannot smuggle a person-named predicate past review.
+person_naming_predicates = [
+  "officer_name", "person_name", "individual_name", "named_individual",
+]
+
+# The reviewed claim-shape values. "typed_claim" = a matched bill emits the
+# bill-surface claim set (identifier/title/session/jurisdiction/status/
+# matched-keyword) with the bill record as evidence. "index_only" = the bill
+# surfaces only as the P26.4 evidence link — no claim minted. A bill matching
+# terms of both shapes takes the typed_claim path but mints keyword claims
+# only for the typed_claim terms.
+claim_shapes = ["typed_claim", "index_only"]
+
+# --- the surveillance-legislation term set ------------------------------------
+# Each [[terms]] row: a stable machine `id` (the bill_matched_keyword claim's
+# typed value), a human `label`, a coarse `kind`, the reviewed `claim_shape`,
+# and the reviewed regex `patterns` (matched case-insensitively against the
+# bill's title / other_titles — verbatim literals only). The set extends the
+# P26.6 agenda-content vocabulary with LEGISLATIVE phrasing — bill titles say
+# "unmanned aircraft systems", "photographic traffic signal enforcement",
+# "automatic license plate reader data" — plus the ticket's named phrases.
+# Patterns carry word-boundary anchors where a bare substring would
+# false-positive ("uas" inside "persuasion", "lpr" inside "helpreduce").
+
+[[terms]]
+id = "alpr"
+kind = "technology"
+label = "automated license plate reader"
+claim_shape = "typed_claim"
+patterns = [
+  "\\balpr\\b", "\\balprs\\b",
+  "automated license plate", "automatic license plate",
+  "automated licence plate", "automatic licence plate",
+  "license plate reader", "licence plate reader", "license-plate reader",
+  "license plate recognition", "licence plate recognition",
+  "license plate data", "automatic number plate",
+]
+
+[[terms]]
+id = "surveillance_ordinance"
+kind = "instrument"
+label = "surveillance technology ordinance"
+claim_shape = "typed_claim"
+patterns = [
+  "surveillance technolog", "surveillance ordinance",
+  "surveillance equipment", "surveillance oversight",
+  "surveillance policy", "\\bccops\\b",
+  "community control over police surveillance",
+]
+
+[[terms]]
+id = "facial_recognition"
+kind = "technology"
+label = "facial recognition"
+claim_shape = "typed_claim"
+patterns = [
+  "facial recognition", "face recognition", "facial biometric",
+  "facial matching", "biometric surveillance",
+]
+
+[[terms]]
+id = "drone"
+kind = "technology"
+label = "drone / unmanned aerial system"
+claim_shape = "typed_claim"
+patterns = [
+  "\\bdrone\\b", "\\bdrones\\b", "\\buas\\b", "\\bsuas\\b", "\\bsuass\\b",
+  "unmanned aerial", "unmanned aircraft", "unmanned aviation",
+  "small unmanned",
+]
+
+[[terms]]
+id = "body_worn_camera"
+kind = "technology"
+label = "body-worn camera"
+claim_shape = "typed_claim"
+patterns = ["body.?worn", "body camera", "bodycam", "body-worn cam"]
+
+[[terms]]
+id = "gunshot_detection"
+kind = "technology"
+label = "gunshot / acoustic detection (ShotSpotter)"
+claim_shape = "typed_claim"
+patterns = [
+  "shotspotter", "shot spotter", "soundthinking", "acoustic gunshot",
+  "gunshot detection", "gunfire detection", "gunfire locator",
+  "acoustic sensor", "acoustic detection",
+]
+
+[[terms]]
+id = "rtcc"
+kind = "program"
+label = "real-time crime center"
+claim_shape = "typed_claim"
+patterns = [
+  "\\brtcc\\b", "real.?time crime", "real-time crime cent",
+  "crime center", "crime centre",
+]
+
+[[terms]]
+id = "cctv"
+kind = "technology"
+label = "CCTV / video surveillance"
+claim_shape = "typed_claim"
+patterns = [
+  "\\bcctv\\b", "closed.?circuit", "video surveillance",
+  "surveillance camera", "surveillance cameras",
+]
+
+[[terms]]
+id = "automated_traffic_enforcement"
+kind = "technology"
+label = "automatic traffic enforcement"
+claim_shape = "typed_claim"
+patterns = [
+  "automated traffic enforcement", "automatic traffic enforcement",
+  "automated enforcement", "photo enforcement", "photographic traffic",
+  "red.?light camera", "red light camera", "speed camera", "speed cameras",
+  "photo radar", "traffic enforcement camera", "school zone speed",
+]
+
+[[terms]]
+id = "geofence_warrant"
+kind = "instrument"
+label = "geofence warrant"
+claim_shape = "typed_claim"
+patterns = [
+  "\\bgeofence\\b", "geofence warrant", "geo-fence",
+  "reverse location warrant", "geolocation warrant",
+]
+
+[[terms]]
+id = "cell_site_simulator"
+kind = "technology"
+label = "cell-site simulator (Stingray)"
+claim_shape = "typed_claim"
+patterns = [
+  "cell.?site simulator", "\\bstingray\\b", "imsi catcher",
+  "cell site simulator", "cell-site",
+]
+
+[[terms]]
+id = "data_broker"
+kind = "instrument"
+label = "data broker"
+claim_shape = "typed_claim"
+patterns = ["data broker", "data brokerage", "brokered personal data"]
+
+[[terms]]
+id = "predictive_policing"
+kind = "technology"
+label = "predictive policing"
+claim_shape = "typed_claim"
+patterns = ["predictive policing", "\\bpredpol\\b", "predictive analysis"]
+
+[[terms]]
+id = "social_media_monitoring"
+kind = "technology"
+label = "social media monitoring"
+claim_shape = "typed_claim"
+patterns = ["social media monitoring", "social-media monitoring", "\\bgeofeedia\\b"]
+
+[[terms]]
+id = "flock_safety"
+kind = "vendor"
+label = "Flock Safety"
+claim_shape = "typed_claim"
+patterns = ["flock safety", "flock group", "\\bflock\\s+cameras?\\b"]
+
+[[terms]]
+id = "vigilant"
+kind = "vendor"
+label = "Vigilant Solutions"
+claim_shape = "typed_claim"
+patterns = ["vigilant solutions", "\\bvigilant\\b"]

@@ -22,7 +22,14 @@
 # `bill_index` record emitted as an index_only primary_record evidence link (a
 # bill is not a §11.14 LegalInstrument — the frozen LegalInstrumentType
 # vocabulary has no 'bill' and a pending bill is not a statute; §3.1).
-vocab_version = "2026.09.16"
+# 2026.09.18 (P26.11 / SOURCES.10): +legislative_bill surface — a bill record
+# matching a reviewed legislation_vocab.toml term emits the bill-surface
+# claims below (title/session/jurisdiction/status/matched keyword) with the
+# bill record as evidence. `legislative_bill` is NOT a §11.14 LegalInstrument:
+# it is the record of a PROPOSED bill — `bill_status` carries the record's
+# own latest-action text verbatim, never an enactment (§3.1). Bills matching
+# no typed_claim term keep the index_only path unchanged.
+vocab_version = "2026.09.18"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `accountability` connector may write ONLY the AccountabilityEvent (§11.17) and
@@ -55,6 +62,17 @@ predicate_allowlist = [
   "proceeding_posture",
   "proceeding_courtlistener_id",
   "proceeding_recap_id",
+  # P26.11 / SOURCES.10 — the legislative-bill surface (a PROPOSED bill's own
+  # record fields, verbatim; never a §11.14 LegalInstrument):
+  "legislative_bill",
+  "bill_external_id",
+  "bill_identifier",
+  "bill_title",
+  "bill_session",
+  "bill_jurisdiction",
+  "bill_status",
+  "bill_status_date",
+  "bill_matched_keyword",
 ]
 
 # Predicate GENRES the accountability connector MUST NOT write (scope-creep guard,
@@ -238,6 +256,10 @@ collections = [
 api_base = "https://v3.openstates.org"
 bills_endpoint = "/bills"
 api_key_env = "SIG_OPENSTATES_KEY"
+# The licence stamp on OpenStates bill claims (P26.11): OpenStates/Plural
+# dedicates the data to the public domain (open.pluralpolicy.com/data/,
+# rights packet docs/build/reports/rights/openstates.md).
+spdx = "CC0-1.0"
 # The documented v3 credential header (P26.4): the key rides the request
 # header, never the URL — a keyed query would land in the recorded source_uri /
 # run records (HG-09). Verified live 2026-09-17: X-API-KEY → 200, keyless → 403.

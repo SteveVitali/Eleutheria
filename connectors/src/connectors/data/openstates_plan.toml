@@ -1,0 +1,122 @@
+# SPDX-License-Identifier: Apache-2.0
+# The reviewed OpenStates 50-state surveillance-legislation sweep plan
+# (P26.11 / SOURCES.10) — DATA, not code (SIG-ENG-001). This table is the
+# query plan the `accountability` connector's bounded discover_more expands:
+# which index seeds the jurisdiction set, how the "current session window"
+# resolves, the per-query bounds, and the reviewed query families whose
+# phrases are OR'd into one bounded search per jurisdiction.
+#
+# Changes are VERSIONED (§20): bump `plan_version` and add the change, never
+# silently rewrite a row. The plan is deliberately bounded — every bound is
+# named so a run that outgrows it fails loud rather than crawling.
+#
+# All bounds verified live against v3.openstates.org on 2026-09-18:
+#   * /jurisdictions per_page ∈ [1,52] — 52 covers the 56 state-classified
+#     rows in two pages (50 states + DC + AS/GU/MP/PR/VI).
+#   * /bills per_page ∈ [1,20] — NOT 52 (the error envelope says so verbatim).
+#   * `session=<identifier>` accepts the index's own session identifiers;
+#     `q` accepts OR-batched phrases; `sort=latest_action_desc` orders the
+#     bounded window most-recent-action first.
+#   * The API answers ~10 req/min before HTTP 429 — the run honours the
+#     reviewed 5/min budget (the api_allowlist row) through the shared
+#     politeness layer; 226 requests ≈ 45 min inside the 60m task bound.
+
+plan_version = "2026.09.18"
+
+# The v3 jurisdictions index that seeds the sweep. The connector fetches these
+# bounded pages first (they are the live_targets seed rows — keep them in
+# lock-step), then resolves the jurisdiction set + each jurisdiction's current
+# session window from the captured rows.
+[jurisdiction_index]
+endpoint = "/jurisdictions"
+include = "legislative_sessions"
+classification = "state"
+per_page = 52
+pages = [1, 2]
+
+# The "current session window" rule per jurisdiction: the latest-start session
+# among the reviewed REGULAR classes — a called/special session never shadows
+# the legislature's main session (verified live 2026-09-18: TX '892' is the
+# 89th's 2nd called session; the regular '89R' is the window a surveillance
+# bill actually moves through). A jurisdiction whose sessions carry none of
+# these classes falls back to the latest-start session of ANY class; a
+# jurisdiction with NO sessions (AS, MP today) queries without a session
+# filter — recorded as session=null on the query row, never invented.
+[session_window]
+classes = ["primary", "regular"]
+
+# Per-query bounds and the hard run bound.
+[bills_query]
+endpoint = "/bills"
+# v3 bound verified live: per_page must be in [1,20]. One page only — the
+# recency sort puts the current end of the session in the window and the
+# response's `pagination.total_items` records what the window truncated.
+per_page = 20
+sort = "latest_action_desc"
+# Hard bound on generated bill queries: 56 jurisdictions × 4 families = 224.
+# A jurisdiction set that grows past this bound truncates loud (the count is
+# asserted), it does not silently crawl further.
+max_queries = 240
+
+# --- the reviewed query families ------------------------------------------------
+# Each family's `phrases` are OR'd into ONE bounded `q` per jurisdiction — the
+# API-side recall net. Verbatim match attribution is LOCAL: a returned bill
+# only emits a matched-keyword claim when its own title/other_titles matches a
+# [[terms]] pattern in legislation_vocab.toml — the fuzzy v3 search is never
+# trusted as the match (verified live: `q=facial recognition` also returns
+# commemorative resolutions).
+
+[[query_families]]
+id = "plates_traffic_enforcement"
+phrases = [
+  "license plate reader",
+  "automated license plate",
+  "license plate recognition",
+  "traffic enforcement camera",
+  "red light camera",
+  "speed camera",
+  "photo enforcement",
+  "automated traffic enforcement",
+]
+
+[[query_families]]
+id = "surveillance_and_monitoring"
+phrases = [
+  "surveillance technology",
+  "surveillance ordinance",
+  "surveillance equipment",
+  "surveillance camera",
+  "video surveillance",
+  "closed circuit",
+  "real-time crime",
+  "predictive policing",
+  "data broker",
+  "social media monitoring",
+]
+
+[[query_families]]
+id = "biometric_location_tracking"
+phrases = [
+  "facial recognition",
+  "face recognition",
+  "biometric surveillance",
+  "geofence",
+  "cell-site simulator",
+  "cell site simulator",
+  "stingray",
+  "imsi catcher",
+]
+
+[[query_families]]
+id = "drones_bodycam_gunshot"
+phrases = [
+  "drone",
+  "unmanned aerial",
+  "unmanned aircraft",
+  "body-worn camera",
+  "body camera",
+  "shotspotter",
+  "shot spotter",
+  "acoustic gunshot",
+  "gunshot detection",
+]

@@ -32,6 +32,7 @@ from datetime import UTC, datetime
 from enum import StrEnum
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 from evidence.ingest_run import IngestRun
 
@@ -613,6 +614,15 @@ def _run_live(
     fetcher = PoliteFetcher(
         connector_name=connector.name, connector_version=version, transport=transport
     )
+    # A target row may pin its host's minimum request interval — the reviewed
+    # API budget declared on the row (e.g. OpenStates' 5/min for the 50-state
+    # sweep, P26.11; the api_allowlist row is the reviewed source of it). The
+    # politeness layer enforces it so a long bounded sweep never out-runs the
+    # source's ToS rate; rate-limit/backoff events are still recorded.
+    for _t in targets:
+        _rpm = _t.get("rate_limit_per_min")
+        if _rpm:
+            fetcher.set_host_delay(urlsplit(str(_t["url"])).netloc, 60.0 / float(_rpm))
     capture_dir = capture_dir or Path(".sig/captures")
     store = OcflStore(LocalFileStore(str(capture_dir)))
     captures = OcflCaptureStore(store, capture_wacz=wacz)
@@ -700,15 +710,33 @@ def _run_live(
         document_drift=[dict(d) for d in report.drifted],
         document_outcomes=[
             {
-                "url": r.get("raw_value"),
+                "url": r.get("raw_value") or r.get("url"),
                 "platform": r.get("platform"),
                 "tenant_id": r.get("tenant_id"),
                 "outcome": r.get("outcome"),
                 "matched_terms": r.get("matched_terms"),
                 "capture_digest": r.get("capture_digest"),
+                **(
+                    {
+                        # P26.11 — the per-jurisdiction × per-family sweep
+                        # outcome row (hits / empty; a persistent 429 lands on
+                        # `disappearances` instead).
+                        "jurisdiction": r.get("jurisdiction"),
+                        "session": r.get("session"),
+                        "query_family": r.get("query_family"),
+                        "total_items": r.get("total_items"),
+                        "returned_count": r.get("returned_count"),
+                        "bills_indexed": r.get("bills_indexed"),
+                        "bills_matched": r.get("bills_matched"),
+                        "truncated": r.get("truncated"),
+                        "plan_version": r.get("plan_version"),
+                    }
+                    if r.get("record_kind") == "bill_query"
+                    else {}
+                ),
             }
             for r in report.claims
-            if r.get("record_kind") in ("agenda_document", "portal_document")
+            if r.get("record_kind") in ("agenda_document", "portal_document", "bill_query")
         ],
     )
     write_fetch_record(fetch_record, capture_dir / "live_runs")
