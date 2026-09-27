@@ -1,15 +1,19 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 # carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
-"""The `dot_511` connector — state DOT / 511 traffic-camera registries (P26.7 / SOURCES.7).
+"""The `dot_511` connector — camera-location registries (P26.7/P26.9, SOURCES.7/.8).
 
-State DOT and 511 traveler-info systems publish their traffic-camera inventory
-as authoritative operator-published location registries — the closest thing to a
-ground-truth camera census and the physical-layer complement to the
-crowdsourced OSM ``man_made=surveillance`` layer (§23.2). Most states expose the
-registry as a public ArcGIS REST feature layer (``…/FeatureServer|MapServer/<n>/query``);
-some expose keyed per-state 511 JSON APIs (recorded in
-``data/dot_511_targets.toml`` — keyed hosts are enumerated, never wired).
+State DOT and 511 traveler-info systems (P26.7), and municipal, transit-agency,
+and non-US national/provincial operators (P26.9), publish their traffic-camera
+inventory as authoritative operator-published location registries — the closest
+thing to a ground-truth camera census and the physical-layer complement to the
+crowdsourced OSM ``man_made=surveillance`` layer (§23.2). The registries ship in
+two platforms: public ArcGIS REST feature layers
+(``…/FeatureServer|MapServer/<n>/query``) and Socrata ``/resource/<id>.json``
+datasets; keyed JSON APIs and unlicensed frontend payloads are enumerated,
+never wired (``data/dot_511_targets.toml`` for state tiers,
+``data/camera_registry_targets.toml`` for municipal/transit/international
+tiers — one merged registry at read time).
 
 This connector ingests **registry rows only**. Every row is an infrastructure
 fact — a camera exists at an operator-published coordinate on a roadway — and
@@ -82,8 +86,20 @@ def vocab_version() -> str:
 
 @cache
 def target_table() -> dict[str, Any]:
-    """The sourced enumeration registry (``data/dot_511_targets.toml``)."""
-    return load_table("dot_511_targets")
+    """The sourced enumeration registry — merged DOT + municipal tiers (P26.9).
+
+    ``data/dot_511_targets.toml`` (P26.7, state DOT/511 registries) and
+    ``data/camera_registry_targets.toml`` (P26.9, municipal/transit/non-US
+    registries) are one logical registry kept in two files so each tier's
+    enumeration history stays reviewable; every reader sees the union of
+    ``targets`` and ``enumerated`` rows.
+    """
+    merged: dict[str, Any] = {"targets": [], "enumerated": []}
+    for name in ("dot_511_targets", "camera_registry_targets"):
+        table = load_table(name)
+        merged["targets"].extend(table.get("targets", []))
+        merged["enumerated"].extend(table.get("enumerated", []))
+    return merged
 
 
 def predicate_allowlist() -> frozenset[str]:
@@ -129,46 +145,100 @@ _ARCGIS_QUERY_PARAMS = {
 #: silently truncating the registry.
 _ARCGIS_PAGE_SIZE = 1000
 
+#: Socrata page size: the SoQL ``$limit`` cap is 50,000 but a 5,000-row page
+#: keeps each capture modest and every enumerated municipal dataset is <2,000
+#: rows. A page that returns exactly the page size on the LAST planned page is
+#: treated like ArcGIS's ``exceededTransferLimit`` — the registry may have
+#: outgrown its planned pages, so ``parse`` fails loud rather than silently
+#: truncating.
+_SOCRATA_PAGE_SIZE = 5000
+
+
+def _arcgis_pages(row: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Expand one ArcGIS layer row into its deterministic ``/query`` pages."""
+    layer_url = str(row["layer_url"]).rstrip("/")
+    observed = int(row.get("observed_count") or 0)
+    oid_field = str(row.get("object_id_field") or "OBJECTID")
+    pages = max(1, -(-observed // _ARCGIS_PAGE_SIZE))
+    out: list[dict[str, Any]] = []
+    for page in range(pages):
+        params = {
+            **_ARCGIS_QUERY_PARAMS,
+            "orderByFields": oid_field,
+            "resultRecordCount": _ARCGIS_PAGE_SIZE,
+            "resultOffset": page * _ARCGIS_PAGE_SIZE,
+        }
+        out.append(
+            {"url": f"{layer_url}/query?{urlencode(params)}", "page": page, "page_count": pages}
+        )
+    return out
+
+
+def _socrata_pages(row: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Expand one Socrata dataset row into deterministic ``$limit/$offset`` pages.
+
+    ``$select=*,:id`` keeps the publisher's columns AND the Socrata ``:id``
+    row-id (the fallback registry key when a dataset has no id column);
+    ``$order=:id`` makes page offsets stable within a run.
+    """
+    resource_url = str(row["layer_url"]).rstrip("/")
+    observed = int(row.get("observed_count") or 0)
+    pages = max(1, -(-observed // _SOCRATA_PAGE_SIZE))
+    out: list[dict[str, Any]] = []
+    for page in range(pages):
+        params = {
+            "$select": "*,:id",
+            "$order": ":id",
+            "$limit": _SOCRATA_PAGE_SIZE,
+            "$offset": page * _SOCRATA_PAGE_SIZE,
+        }
+        out.append(
+            {"url": f"{resource_url}?{urlencode(params)}", "page": page, "page_count": pages}
+        )
+    return out
+
 
 def registry_targets(source_id: str) -> list[dict[str, Any]]:
-    """The live fetch targets for one ``dot_511_<st>`` source (identifiers, not content).
+    """The live fetch targets for one camera-registry source (identifiers, not content).
 
-    Reads the verified ``[[targets]]`` rows of ``dot_511_targets.toml`` — the same
-    registry that preserves the enumerated non-target outcomes — and expands each
-    layer URL into the deterministic ArcGIS REST ``query`` page URLs. A source
-    whose states' rows are all ``[[enumerated]]`` (keyed, refused, unreachable)
-    has no live targets; the live runner refuses it rather than inventing one.
+    Reads the verified ``[[targets]]`` rows of the merged registry
+    (``dot_511_targets.toml`` + ``camera_registry_targets.toml``) — the same
+    registry that preserves the enumerated non-target outcomes — and expands
+    each row into the deterministic platform URLs. A source whose rows are all
+    ``[[enumerated]]`` (keyed, refused, unreachable) has no live targets; the
+    live runner refuses it rather than inventing one.
 
-    Paging: each layer yields ``ceil(observed_count / 1000)`` page targets (min
-    1), ordered by the layer's object-id field so offsets are stable within a
-    run. All pages of one layer share the registry row's ``id`` — a camera's
-    subject key is page-independent.
+    Paging: an ``arcgis_query`` row yields ``ceil(observed_count / 1000)``
+    page targets ordered by the layer's object-id field; a ``socrata_rows``
+    row yields ``ceil(observed_count / 5000)`` pages ordered by ``:id`` (min 1
+    either way). All pages of one layer share the registry row's ``id`` — a
+    camera's subject key is page-independent.
     """
+    expanders = {"arcgis_query": _arcgis_pages, "socrata_rows": _socrata_pages}
     out: list[dict[str, Any]] = []
     for row in target_table().get("targets", []):
         if str(row.get("source_id")) != source_id:
             continue
-        layer_url = str(row["layer_url"]).rstrip("/")
-        observed = int(row.get("observed_count") or 0)
-        oid_field = str(row.get("object_id_field") or "OBJECTID")
-        pages = max(1, -(-observed // _ARCGIS_PAGE_SIZE))
-        for page in range(pages):
-            params = {
-                **_ARCGIS_QUERY_PARAMS,
-                "orderByFields": oid_field,
-                "resultRecordCount": _ARCGIS_PAGE_SIZE,
-                "resultOffset": page * _ARCGIS_PAGE_SIZE,
-            }
+        kind = str(row.get("kind") or "arcgis_query")
+        expand = expanders.get(kind)
+        if expand is None:
+            raise ValueError(
+                f"registry target {row.get('id')!r} declares unknown kind {kind!r} "
+                f"(known: {sorted(expanders)}) — the connector never fetches an "
+                "unrecognised platform."
+            )
+        for page in expand(row):
             out.append(
                 {
                     "id": str(row["id"]),
-                    "url": f"{layer_url}/query?{urlencode(params)}",
-                    "kind": "arcgis_query",
+                    "url": page["url"],
+                    "kind": kind,
                     "state": str(row["state"]),
                     "agency": str(row["agency"]),
-                    "layer_url": layer_url,
-                    "page": page,
-                    "page_count": pages,
+                    "jurisdiction_scheme": str(row.get("jurisdiction_scheme") or "us.state_abbr"),
+                    "layer_url": str(row["layer_url"]).rstrip("/"),
+                    "page": page["page"],
+                    "page_count": page["page_count"],
                     "license_spdx": str(row.get("license_spdx", "")),
                     "sensitivity_class": str(
                         row.get("sensitivity_class") or vocab()["default_sensitivity_class"]
@@ -262,10 +332,45 @@ class CoordinateRejected(ValueError):
 
 
 def _first_field(fields: Mapping[str, Any], aliases: Iterable[str]) -> tuple[str, Any] | None:
-    """The first present, non-empty aliased field, as ``(name, value)``."""
+    """The first present, non-empty aliased field, as ``(name, value)``.
+
+    Non-scalar values are skipped (P26.9): a GeoJSON dict under a text-aliased
+    name — Socrata's ``location`` point object — is geometry, never a name or
+    id string, and stays available to :func:`socrata_point_geometry`.
+    """
     for name in aliases:
         if name in fields and fields[name] not in (None, ""):
-            return (name, fields[name])
+            value = fields[name]
+            if isinstance(value, (Mapping, list, tuple)):
+                continue
+            return (name, value)
+    return None
+
+
+def socrata_point_geometry(fields: Mapping[str, Any]) -> dict[str, Any] | None:
+    """The ``{"x": lon, "y": lat}`` geometry from a Socrata point-object field (P26.9).
+
+    Socrata rows carry GeoJSON-ish point columns (``the_geom``, ``location``,
+    ``geolocation``, ``geometry_point``, ``geo_location`` — the vocab's
+    ``point_fields``) instead of an ArcGIS ``geometry`` member. The first
+    dict-valued candidate with either GeoJSON ``{"type": "Point",
+    "coordinates": [lon, lat]}`` shape or ``latitude``/``longitude`` keys wins;
+    coordinates are returned in the same ``x``=longitude / ``y``=latitude shape
+    the ArcGIS geometry path produces so downstream validation is identical.
+    """
+    for name in vocab()["point_fields"]:
+        value = fields.get(name)
+        if not isinstance(value, Mapping):
+            continue
+        coords = value.get("coordinates")
+        if (
+            str(value.get("type")).lower() == "point"
+            and isinstance(coords, (list, tuple))
+            and len(coords) >= 2
+        ):
+            return {"x": coords[0], "y": coords[1]}
+        if value.get("latitude") is not None and value.get("longitude") is not None:
+            return {"x": value["longitude"], "y": value["latitude"]}
     return None
 
 
@@ -368,6 +473,14 @@ class CameraRegistryEntry:
     status: str | None = None
     direction: str | None = None
     excluded_fields: tuple[str, ...] = ()
+    #: The candidate-identifier scheme the ``camera_jurisdiction`` claim carries
+    #: (P26.9): ``us.state_abbr`` for US admin-1 codes, ``iso.3166_2`` for
+    #: ISO 3166-2 subdivision codes (CA-ON, AU-ACT, GB-ENG), ``iso.3166_1_alpha2``
+    #: for country-level publishers (NZ, HK).
+    jurisdiction_scheme: str = "us.state_abbr"
+    #: The evidence extraction method stamped per platform (P26.9):
+    #: ``arcgis_feature_json`` or ``socrata_rows_json``.
+    extraction_method: str = "arcgis_feature_json"
 
     def __post_init__(self) -> None:
         if not str(self.camera_ref).strip():
@@ -393,7 +506,7 @@ class CameraRegistryEntry:
         _ = retrieved_date
         return {
             "source_url": source_url,
-            "extraction_method": "arcgis_feature_json",
+            "extraction_method": self.extraction_method,
             "locator": Locator.row(feature_index).to_row(),
         }
 
@@ -473,7 +586,7 @@ class CameraRegistryEntry:
                 self.state,
                 self.state,
                 ev,
-                candidate={"scheme": "us.state_abbr", "value": self.state},
+                candidate={"scheme": self.jurisdiction_scheme, "value": self.state},
             )
         )
         rows.append(self._claim("camera_operator", self.agency, self.agency, ev))
@@ -533,6 +646,10 @@ class Dot511Connector(Connector):
         empty result (P25.1 / ADR-082).
         """
         data = ctx.captures.get(capture.digest)
+        target = _resolve_target(ctx, capture.source_uri)
+        kind = str(target.get("kind") or "arcgis_query")
+        if kind == "socrata_rows":
+            return self._parse_socrata(ctx, capture, data, target)
         try:
             doc = json.loads(data)
         except (ValueError, TypeError) as exc:
@@ -584,6 +701,56 @@ class Dot511Connector(Connector):
                 )
         return {"kind": "arcgis_feature_query", "payload": doc, "capture": capture}
 
+    def _parse_socrata(
+        self, ctx: RunContext, capture: CaptureRef, data: bytes, target: Mapping[str, Any]
+    ) -> dict[str, Any]:
+        """Structure a captured Socrata ``/resource`` row array (pure, P26.9).
+
+        A Socrata error envelope (``{"code": "…", "error": true}``), a non-JSON
+        body, a non-array payload, or a page that returns exactly the page size
+        on the LAST planned page (the registry may have outgrown its planned
+        pages — the Socrata analogue of ``exceededTransferLimit``) is
+        :class:`ContentDrift` — recorded loud, never silently truncated.
+        """
+        try:
+            doc = json.loads(data)
+        except (ValueError, TypeError) as exc:
+            head = data[:64] if isinstance(data, (bytes, bytearray)) else str(data)[:64]
+            raise ContentDrift(
+                ctx.source.id,
+                "Socrata resource returned non-JSON content (HTML error / WAF page)",
+                details=f"{len(data)} bytes; starts {head!r} ({exc.__class__.__name__})",
+            ) from exc
+        if isinstance(doc, Mapping):
+            raise ContentDrift(
+                ctx.source.id,
+                "Socrata resource returned an error envelope",
+                details=(
+                    f"code={doc.get('code')!r} message={str(doc.get('message'))[:120]!r} "
+                    f"(top-level keys: {sorted(doc)})"
+                ),
+            )
+        if not isinstance(doc, list):
+            raise ContentDrift(
+                ctx.source.id,
+                "Socrata resource payload is not a row array",
+                details=f"got {type(doc).__name__}",
+            )
+        page = int(target.get("page") or 0)
+        page_count = int(target.get("page_count") or 1)
+        if len(doc) == _SOCRATA_PAGE_SIZE and page >= page_count - 1:
+            raise ContentDrift(
+                ctx.source.id,
+                "Socrata page filled its $limit — the registry may have outgrown its planned pages",
+                details=(
+                    f"page {page + 1}/{page_count} returned {_SOCRATA_PAGE_SIZE} rows; "
+                    "bump the target's observed_count in "
+                    "data/camera_registry_targets.toml (never emit a silently "
+                    "truncated registry)"
+                ),
+            )
+        return {"kind": "socrata_rows", "payload": {"rows": doc}, "capture": capture}
+
     def extract(self, ctx: RunContext, parsed: Mapping[str, Any]) -> list[Mapping[str, Any]]:
         """Raw camera records with row locators, media fields excluded by name (P2).
 
@@ -598,6 +765,29 @@ class Dot511Connector(Connector):
         target = _resolve_target(ctx, capture.source_uri)
         retrieved = capture.retrieved_at or datetime.now(UTC)
         out: list[Mapping[str, Any]] = []
+        if parsed.get("kind") == "socrata_rows":
+            rows = doc["rows"]
+            for index, row in enumerate(rows):
+                if not isinstance(row, Mapping):
+                    raise ContentDrift(
+                        ctx.source.id,
+                        "a Socrata row is not an object",
+                        details=f"rows[{index}] is {type(row).__name__}",
+                    )
+                fields, excluded = partition_fields(row)
+                out.append(
+                    {
+                        "record_kind": "camera_feature",
+                        "feature_index": index,
+                        "fields": dict(fields),
+                        "excluded_fields": excluded,
+                        "geometry": socrata_point_geometry(fields),
+                        "source_uri": capture.source_uri,
+                        "retrieved_at": retrieved.isoformat(),
+                        "target": dict(target),
+                    }
+                )
+            return out
         for index, feature in enumerate(doc["features"]):
             if not isinstance(feature, Mapping):
                 raise ContentDrift(
@@ -677,6 +867,12 @@ class Dot511Connector(Connector):
 
 # --- module-private helpers ---------------------------------------------------
 
+#: The evidence extraction method each platform kind stamps on claims (P26.9).
+_EXTRACTION_METHODS = {
+    "arcgis_query": "arcgis_feature_json",
+    "socrata_rows": "socrata_rows_json",
+}
+
 
 def _resolve_target(ctx: RunContext, source_uri: str) -> dict[str, Any]:
     """The registry metadata for the target a capture was fetched from.
@@ -747,6 +943,10 @@ def _entry_from_raw(
         status=_s("status_fields"),
         direction=_s("direction_fields"),
         excluded_fields=tuple(raw.get("excluded_fields") or ()),
+        jurisdiction_scheme=str(target.get("jurisdiction_scheme") or "us.state_abbr"),
+        extraction_method=_EXTRACTION_METHODS.get(
+            str(target.get("kind") or "arcgis_query"), "arcgis_feature_json"
+        ),
     )
 
 

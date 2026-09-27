@@ -379,3 +379,79 @@ cron = "0 6 27 * *"
 job = "sig-ingest-dot-511-mo"
 scheduler = "sig-sched-dot-511-mo"
 note = "MoDOT layer (871, FeatureServer/1); conditional public grant evaluated under public terms (disclaimer + revocation) — monthly cadence honours the conditions."
+
+# --- P26.9 (SOURCES.8): municipal / transit / non-US camera registries --------
+# Monthly registry refresh for the GL-GATE-06-resolved rows only — gated rows
+# get no job until their rights blocker resolves (D-SOURCES.8-1/-2).
+
+[[sources]]
+id = "camreg_austin_tx"
+cadence = "monthly"
+cron = "0 4 28 * *"
+job = "sig-ingest-camreg-austin-tx"
+scheduler = "sig-sched-camreg-austin-tx"
+note = "Austin Socrata b4k4-adkb (1,005 cams); Public Domain → CC0-1.0."
+
+[[sources]]
+id = "camreg_nola_la"
+cadence = "monthly"
+cron = "0 6 28 * *"
+job = "sig-ingest-camreg-nola-la"
+scheduler = "sig-sched-camreg-nola-la"
+note = "New Orleans Socrata te2d-4txp (103 cams); CC0-1.0."
+
+[[sources]]
+id = "camreg_batonrouge_la"
+cadence = "monthly"
+cron = "0 8 28 * *"
+job = "sig-ingest-camreg-batonrouge-la"
+scheduler = "sig-sched-camreg-batonrouge-la"
+note = "Baton Rouge Socrata 6z6u-ts44 (118 cams); Public Domain → CC0-1.0."
+
+[[sources]]
+id = "camreg_winnipeg_mb"
+cadence = "monthly"
+cron = "0 10 28 * *"
+job = "sig-ingest-camreg-winnipeg-mb"
+scheduler = "sig-sched-camreg-winnipeg-mb"
+note = "Winnipeg Socrata 42pk-2u2c (161 rows); OGL-Canada-2.0 → ogc_canada2 compartment."
+
+[[sources]]
+id = "camreg_act_au"
+cadence = "monthly"
+cron = "0 4 29 * *"
+job = "sig-ingest-camreg-act-au"
+scheduler = "sig-sched-camreg-act-au"
+note = "ACT Socrata 426s-vdu4 + 5ezj-yjxz (1,381 rows); CC-BY-4.0."
+
+[[sources]]
+id = "camreg_siouxfalls_sd"
+cadence = "monthly"
+cron = "0 6 29 * *"
+job = "sig-ingest-camreg-siouxfalls-sd"
+scheduler = "sig-sched-camreg-siouxfalls-sd"
+note = "Sioux Falls ArcGIS MapServer/8 (234 cams); CC-BY-4.0 on the item licence block."
+
+[[sources]]
+id = "camreg_baltimore_md"
+cadence = "monthly"
+cron = "0 8 29 * *"
+job = "sig-ingest-camreg-baltimore-md"
+scheduler = "sig-sched-camreg-baltimore-md"
+note = "Baltimore CitiWatch FeatureServer/0 (861 cams); CC-BY-3.0 → ccby3 compartment."
+
+[[sources]]
+id = "camreg_ottawa_on"
+cadence = "monthly"
+cron = "0 10 29 * *"
+job = "sig-ingest-camreg-ottawa-on"
+scheduler = "sig-sched-camreg-ottawa-on"
+note = "Ottawa red-light (88) + ASE (60) layers; OGL-City-of-Ottawa-2.0 → ottawa_odl2 compartment."
+
+[[sources]]
+id = "camreg_sheffield_gb"
+cadence = "monthly"
+cron = "0 4 30 * *"
+job = "sig-ingest-camreg-sheffield-gb"
+scheduler = "sig-sched-camreg-sheffield-gb"
+note = "Sheffield CitiWatch/CCTV layer via utility.arcgis.com usrsvcs (212 cams); OGL-3.0 → ogl_uk3 compartment."

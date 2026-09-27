@@ -149,6 +149,23 @@ _FLIPPED_SUBSET = frozenset(
         "dot_511_wa",
         "dot_511_dc",
         "dot_511_mo",
+        # P26.9 (SOURCES.8, 2026-09-18): the nine resolved-clear municipal /
+        # transit / non-US camera registries — Socrata (Austin, NOLA, Baton
+        # Rouge, Sioux Falls), OGL-Canada-2.0 (Winnipeg), CC-BY-4.0 (ACT,
+        # Baltimore), LicenseRef-Ottawa-ODL-2.0 (Ottawa), OGL-3.0 (Sheffield).
+        # Packets: docs/build/reports/rights/camreg_<id>.md. Chicago, Calgary,
+        # Edmonton, Honolulu, MD, York, Arlington, Seattle, Bellevue,
+        # Lexington, NZTA, QLD, Donegal and HK stay gated (unresolved or
+        # restrictive terms — DEFERRALS.md).
+        "camreg_austin_tx",
+        "camreg_nola_la",
+        "camreg_batonrouge_la",
+        "camreg_winnipeg_mb",
+        "camreg_act_au",
+        "camreg_siouxfalls_sd",
+        "camreg_baltimore_md",
+        "camreg_ottawa_on",
+        "camreg_sheffield_gb",
     }
 )
 
@@ -159,7 +176,7 @@ def test_ingestion_permitted_defaults_false_across_the_seed() -> None:
     # RIGHTS.1 re-run, the 2026-09-15 live-ops flips, the GL-GATE-06 blanket
     # disposition (2026-09-16), the P26.2 promoted-source flips (2026-09-17),
     # and the P26.5 eScribe flip that is exactly this set (44 sources), plus the
-    # P26.7 dot_511 flips (52 sources).
+    # P26.7 dot_511 flips (52 sources) and the P26.9 camreg_* flips (61 sources).
     permitted = {s.id for s in sources() if s.ingestion_permitted}
     assert permitted == set(_FLIPPED_SUBSET)
 

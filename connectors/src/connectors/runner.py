@@ -150,6 +150,34 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "dot_511_mo": "dot_511",
     "dot_511_tx": "dot_511",
     "dot_511_md": "dot_511",
+    # P26.9 (SOURCES.8): municipal / transit / non-US camera registries — one
+    # source row per publisher; all route through the `dot_511` connector over
+    # the merged target registry (data/camera_registry_targets.toml). Gated
+    # rows stay `ingestion_permitted=false` until their named rights blocker
+    # resolves (DEFERRALS D-SOURCES.8-1/-2).
+    "camreg_austin_tx": "dot_511",
+    "camreg_nola_la": "dot_511",
+    "camreg_batonrouge_la": "dot_511",
+    "camreg_winnipeg_mb": "dot_511",
+    "camreg_act_au": "dot_511",
+    "camreg_siouxfalls_sd": "dot_511",
+    "camreg_baltimore_md": "dot_511",
+    "camreg_ottawa_on": "dot_511",
+    "camreg_sheffield_gb": "dot_511",
+    "camreg_chicago_il": "dot_511",
+    "camreg_calgary_ab": "dot_511",
+    "camreg_edmonton_ab": "dot_511",
+    "camreg_honolulu_hi": "dot_511",
+    "camreg_md_opendata": "dot_511",
+    "camreg_york_on": "dot_511",
+    "camreg_arlington_va": "dot_511",
+    "camreg_seattle_wa": "dot_511",
+    "camreg_bellevue_wa": "dot_511",
+    "camreg_lexington_ky": "dot_511",
+    "camreg_nzta_nz": "dot_511",
+    "camreg_qldc_au": "dot_511",
+    "camreg_donegal_ie": "dot_511",
+    "camreg_hk_hk": "dot_511",
 }
 
 

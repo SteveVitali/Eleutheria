@@ -73,6 +73,34 @@ SOURCE_IDS = [
     "dot_511_md",
 ]
 
+#: P26.9 (SOURCES.8) — municipal/transit/non-US camera-registry sources; the
+#: first nine are the GL-GATE-06-resolved (flipped) rows, the rest stay gated.
+CAMREG_SOURCE_IDS = [
+    "camreg_austin_tx",
+    "camreg_nola_la",
+    "camreg_batonrouge_la",
+    "camreg_winnipeg_mb",
+    "camreg_act_au",
+    "camreg_siouxfalls_sd",
+    "camreg_baltimore_md",
+    "camreg_ottawa_on",
+    "camreg_sheffield_gb",
+    "camreg_chicago_il",
+    "camreg_calgary_ab",
+    "camreg_edmonton_ab",
+    "camreg_honolulu_hi",
+    "camreg_md_opendata",
+    "camreg_york_on",
+    "camreg_arlington_va",
+    "camreg_seattle_wa",
+    "camreg_bellevue_wa",
+    "camreg_lexington_ky",
+    "camreg_nzta_nz",
+    "camreg_qldc_au",
+    "camreg_donegal_ie",
+    "camreg_hk_hk",
+]
+
 
 class MapTransport:
     """Per-URL canned responses + permissive robots — no real network."""
@@ -143,7 +171,9 @@ def _run_fixture(
     responses = {
         t["url"]: _resp(
             t["url"],
-            body if t.get("page", 0) == 0 else b'{"features": []}',
+            body
+            if t.get("page", 0) == 0
+            else (b"[]" if t.get("kind") == "socrata_rows" else b'{"features": []}'),
             retrieved_at=retrieved_at,
         )
         for t in targets
@@ -568,6 +598,222 @@ def test_replay_and_shadow_are_deterministic() -> None:
     url = targets[0]["url"]
     body = _FIX.joinpath("ky_kytc.json").read_bytes()
     connector, ctx = _ctx("dot_511_ky", targets, {url: _resp(url, body)})
+    fixture_report = run(connector, ctx)
+    replay_a = replay(connector, ctx, fixture_report.captures)
+    replay_b = replay(connector, ctx, fixture_report.captures)
+    assert replay_fingerprint(replay_a) == replay_fingerprint(replay_b)
+    diff = shadow_replay(connector, ctx, fixture_report.captures, fixture_report.claims)
+    assert diff.changed_count == 0, f"shadow diff must be empty: {diff.summary()}"
+
+
+# ============================================================================
+# P26.9 (SOURCES.8) — municipal / transit / non-US camera registries
+# ============================================================================
+
+
+def test_every_camreg_source_resolves_a_registry_target() -> None:
+    """All 23 municipal/transit/non-US sources have ≥1 verified target row —
+    ArcGIS layers AND Socrata datasets, gated rows included (the endpoint is
+    real; the gate is what stops the fetch)."""
+    for source_id in CAMREG_SOURCE_IDS:
+        targets = registry_targets(source_id)
+        assert targets, f"{source_id} has no registry target"
+        for t in targets:
+            assert t["kind"] in ("arcgis_query", "socrata_rows")
+            assert t["url"].startswith(t["layer_url"])
+            assert t["state"] and t["agency"]
+            assert t["jurisdiction_scheme"]
+
+
+def test_socrata_targets_expand_to_paged_resource_urls() -> None:
+    targets = live_targets("camreg_austin_tx")
+    assert len(targets) == 1  # 1,005 observed < 5,000-page
+    t = targets[0]
+    assert t["kind"] == "socrata_rows"
+    assert t["url"].startswith("https://datahub.austintexas.gov/resource/b4k4-adkb.json?")
+    assert "%24select=%2A%2C%3Aid" in t["url"]  # $select=*,:id
+    assert "%24order=%3Aid" in t["url"]  # $order=:id
+    assert "%24limit=5000" in t["url"]
+    assert "%24offset=0" in t["url"]
+    assert t["jurisdiction_scheme"] == "us.state_abbr"
+
+
+def test_iso_jurisdiction_schemes_are_carried() -> None:
+    """Non-US registries carry ISO-3166 candidate schemes, never us.state_abbr."""
+    assert registry_targets("camreg_winnipeg_mb")[0]["jurisdiction_scheme"] == "iso.3166_2"
+    assert registry_targets("camreg_act_au")[0]["jurisdiction_scheme"] == "iso.3166_2"
+    assert registry_targets("camreg_ottawa_on")[0]["jurisdiction_scheme"] == "iso.3166_2"
+    assert registry_targets("camreg_sheffield_gb")[0]["jurisdiction_scheme"] == "iso.3166_2"
+    assert registry_targets("camreg_nzta_nz")[0]["jurisdiction_scheme"] == "iso.3166_1_alpha2"
+
+
+def test_socrata_error_envelope_is_content_drift() -> None:
+    targets = live_targets("camreg_austin_tx")
+    url = targets[0]["url"]
+    body = json.dumps({"code": "dataset.missing", "error": True, "message": "Not found"}).encode()
+    connector, ctx = _ctx("camreg_austin_tx", targets, {url: _resp(url, body)})
+    with pytest.raises(ContentDrift, match="error envelope"):
+        run(connector, ctx)
+
+
+def test_socrata_non_json_is_content_drift() -> None:
+    targets = live_targets("camreg_austin_tx")
+    url = targets[0]["url"]
+    connector, ctx = _ctx("camreg_austin_tx", targets, {url: _resp(url, b"<html>403</html>")})
+    with pytest.raises(ContentDrift, match="non-JSON"):
+        run(connector, ctx)
+
+
+def test_socrata_non_array_payload_is_content_drift() -> None:
+    targets = live_targets("camreg_austin_tx")
+    url = targets[0]["url"]
+    connector, ctx = _ctx("camreg_austin_tx", targets, {url: _resp(url, b'{"results": []}')})
+    with pytest.raises(ContentDrift, match="error envelope"):
+        run(connector, ctx)
+
+
+def test_socrata_full_last_page_is_content_drift() -> None:
+    """A page returning exactly $limit rows on the last planned page is the
+    Socrata analogue of exceededTransferLimit — fail loud, never truncate."""
+    rows = [{"id": str(i), "latitude": 30.2, "longitude": -97.7} for i in range(5000)]
+    targets = live_targets("camreg_austin_tx")  # 1 planned page
+    url = targets[0]["url"]
+    connector, ctx = _ctx("camreg_austin_tx", targets, {url: _resp(url, json.dumps(rows).encode())})
+    with pytest.raises(ContentDrift, match="outgrown its planned pages"):
+        run(connector, ctx)
+
+
+def test_socrata_media_fields_are_dropped() -> None:
+    """image_view / camera_url / iframe values never reach a claim or record."""
+    doc = [
+        {
+            "id": "9",
+            "latitude": 30.1,
+            "longitude": -90.8,
+            "image_view": "https://511la.org/map/Cctv/x",
+            "camera_url": "https://cam.example/9.jpg",
+            "iframe": "<iframe src='https://cam.example/e'></iframe>",
+        }
+    ]
+    targets = live_targets("camreg_batonrouge_la")
+    url = targets[0]["url"]
+    connector, ctx = _ctx(
+        "camreg_batonrouge_la", targets, {url: _resp(url, json.dumps(doc).encode())}
+    )
+    report = run(connector, ctx)
+    entity = _entities(report)[0]
+    assert set(entity["excluded_fields"]) == {"camera_url", "iframe", "image_view"}
+    for claim in report.claims:
+        text = str(claim.get("value")) + str(claim.get("raw_value"))
+        assert "511la.org" not in text and "cam.example" not in text
+
+
+def test_austin_socrata_fixture_emits_camera_claims() -> None:
+    report = _run_fixture("camreg_austin_tx", "austin_socrata.json")
+    entities = _entities(report)
+    assert len(entities) == 2
+    claims = _claims(report)
+    by_pred: dict[str, list[Mapping[str, Any]]] = {}
+    for c in claims:
+        by_pred.setdefault(c["predicate_id"], []).append(c)
+    assert len(by_pred["camera_latitude"]) == 2
+    assert len(by_pred["camera_longitude"]) == 2
+    assert len(by_pred["camera_jurisdiction"]) == 2
+    assert {c["value"] for c in by_pred["camera_jurisdiction"]} == {"TX"}
+    assert by_pred["camera_jurisdiction"][0]["candidate_identifier"] == {
+        "scheme": "us.state_abbr",
+        "value": "TX",
+    }
+    # GeoJSON point under `location` resolves as geometry-source coordinates
+    entity = entities[0]
+    assert entity["coordinate_source"] == "geometry"
+    assert entity["sensitivity_class"] == "C1" and entity["geo_tier"] == 0
+    assert "screenshot_address" in entity["excluded_fields"]
+    for claim in claims:
+        assert claim["evidence"]["extraction_method"] == "socrata_rows_json"
+        assert claim["evidence"]["locator"]["kind"] == "row"
+    assert entity["subject_id"].startswith(
+        "traffic_camera:camreg_austin_tx:austin_tx_traffic_cameras:"
+    )
+
+
+def test_nola_socrata_fixture_field_aliases() -> None:
+    """NOLA's lowercase/other-named fields resolve through the P26.9 aliases."""
+    report = _run_fixture("camreg_nola_la", "nola_socrata.json")
+    entities = _entities(report)
+    assert len(entities) == 2
+    claims = _claims(report)
+    assert {c["value"] for c in claims if c["predicate_id"] == "camera_external_ref"} == {
+        "NO179",
+        "NO173",
+    }
+    names = {c["value"] for c in claims if c["predicate_id"] == "camera_name"}
+    assert names == {"5200 Bullard Ave", "2400 Orleans Ave"}
+    dirs = {c["value"] for c in claims if c["predicate_id"] == "camera_direction"}
+    assert dirs == {"SB", "WB"}
+    lats = {c["value"] for c in claims if c["predicate_id"] == "camera_latitude"}
+    assert lats == {30.031396000519, 29.968552731539}
+
+
+def test_iso3166_jurisdiction_scheme_reaches_the_claim() -> None:
+    """A CA-MB target stamps iso.3166_2 on the camera_jurisdiction candidate."""
+    doc = [
+        {
+            "inventory_item_id": "2242",
+            "camera_description": "Fort & York",
+            "latitude": "49.88996219",
+            "longitude": "-97.13725258",
+            "location": {"type": "Point", "coordinates": [-97.13725258, 49.88996219]},
+            ":id": "row-5krg.u358.f8tv",
+        }
+    ]
+    targets = live_targets("camreg_winnipeg_mb")
+    url = targets[0]["url"]
+    connector, ctx = _ctx(
+        "camreg_winnipeg_mb", targets, {url: _resp(url, json.dumps(doc).encode())}
+    )
+    report = run(connector, ctx)
+    jx = [c for c in _claims(report) if c["predicate_id"] == "camera_jurisdiction"][0]
+    assert jx["candidate_identifier"] == {"scheme": "iso.3166_2", "value": "CA-MB"}
+    assert jx["value"] == "CA-MB"
+    name = [c for c in _claims(report) if c["predicate_id"] == "camera_name"][0]
+    assert name["value"] == "Fort & York"
+
+
+def test_camreg_green_sources_pass_gated_ones_refuse() -> None:
+    green = {
+        "camreg_austin_tx",
+        "camreg_nola_la",
+        "camreg_batonrouge_la",
+        "camreg_winnipeg_mb",
+        "camreg_act_au",
+        "camreg_siouxfalls_sd",
+        "camreg_baltimore_md",
+        "camreg_ottawa_on",
+        "camreg_sheffield_gb",
+    }
+    gated = set(CAMREG_SOURCE_IDS) - green
+    for source_id in green:
+        assert live_gate_reasons(source_id) == [], f"{source_id} should be green"
+    for source_id in sorted(gated):
+        assert live_gate_reasons(source_id), f"{source_id} must stay gated"
+
+
+def test_enumerated_p26_9_negative_outcomes_are_preserved() -> None:
+    rows = {r["id"]: r for r in enumerated_outcomes()}
+    assert "nyc_tmc_cameras" in rows
+    assert "tfl_jamcams" in rows
+    assert "nsw_live_traffic_cameras" in rows
+    assert "qld_qldtraffic_api" in rows
+    statuses = {r["status"] for r in rows.values()}
+    assert {"keyed_api", "unresolved_rights", "access_restricted", "not_found"} <= statuses
+
+
+def test_socrata_replay_and_shadow_are_deterministic() -> None:
+    targets = live_targets("camreg_austin_tx")
+    url = targets[0]["url"]
+    body = _FIX.joinpath("austin_socrata.json").read_bytes()
+    connector, ctx = _ctx("camreg_austin_tx", targets, {url: _resp(url, body)})
     fixture_report = run(connector, ctx)
     replay_a = replay(connector, ctx, fixture_report.captures)
     replay_b = replay(connector, ctx, fixture_report.captures)

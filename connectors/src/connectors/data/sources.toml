@@ -2693,3 +2693,514 @@ notes = "P26.7. GATED — MD iMAP terms are attribution-CONDITIONED ('data can b
 spdx = "UNDETERMINED"
 redistributable = false
 retrieval_date = 2026-09-17
+
+# ---------------------------------------------------------------------------
+# P26.9 (SOURCES.8) — municipal / transit / non-US camera registries.
+# Same shape as the P26.7 DOT rows: per-publisher source rows routed through
+# the `dot_511` connector over the merged target registry
+# (data/camera_registry_targets.toml). Rows FLIPPED under GL-GATE-06 carry the
+# delegated-review packet; GATED rows keep their verified target rows and name
+# their rights blocker (DEFERRALS D-SOURCES.8-1/-2).
+# ---------------------------------------------------------------------------
+
+[sources.camreg_austin_tx]
+name = "Austin traffic cameras (Socrata open-data registry)"
+source_kind = "government_portal"
+homepage_url = "https://datahub.austintexas.gov/d/b4k4-adkb"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (socrata /resource rows — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-18
+review_packet = "docs/build/reports/rights/camreg_austin_tx.md"
+notes = "P26.9. FLIPPED 2026-09-18 (GL-GATE-06): Socrata dataset b4k4-adkb 'Traffic Cameras' carries Public Domain licence metadata (City of Austin Transportation and Public Works). 1,005 cameras observed; GeoJSON point in `location`; supersedes the legacy ATD ArcGIS layer (enumerated)."
+[sources.camreg_austin_tx.rights]
+spdx = "CC0-1.0"
+attribution = "City of Austin traffic camera registry (datahub.austintexas.gov)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://datahub.austintexas.gov/d/b4k4-adkb"
+retrieval_date = 2026-09-18
+
+[sources.camreg_nola_la]
+name = "New Orleans traffic cameras (Socrata open-data registry)"
+source_kind = "government_portal"
+homepage_url = "https://data.nola.gov/d/te2d-4txp"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (socrata /resource rows — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-18
+review_packet = "docs/build/reports/rights/camreg_nola_la.md"
+notes = "P26.9. FLIPPED 2026-09-18 (GL-GATE-06): Socrata dataset te2d-4txp 'Traffic Camera' carries CC0-1.0 licence metadata (City of New Orleans DPW). 103 cameras observed; GeoJSON point in `the_geom`."
+[sources.camreg_nola_la.rights]
+spdx = "CC0-1.0"
+attribution = "City of New Orleans traffic camera registry (data.nola.gov)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://data.nola.gov/d/te2d-4txp"
+retrieval_date = 2026-09-18
+
+[sources.camreg_batonrouge_la]
+name = "Baton Rouge traffic cameras (Socrata open-data registry)"
+source_kind = "government_portal"
+homepage_url = "https://data.brla.gov/d/6z6u-ts44"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (socrata /resource rows — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-18
+review_packet = "docs/build/reports/rights/camreg_batonrouge_la.md"
+notes = "P26.9. FLIPPED 2026-09-18 (GL-GATE-06): Socrata dataset 6z6u-ts44 'Traffic Camera' carries Public Domain licence metadata (City of Baton Rouge / EBR Parish). 118 cameras observed; GeoJSON point in `the_geom`."
+[sources.camreg_batonrouge_la.rights]
+spdx = "CC0-1.0"
+attribution = "City of Baton Rouge traffic camera registry (data.brla.gov)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://data.brla.gov/d/6z6u-ts44"
+retrieval_date = 2026-09-18
+
+[sources.camreg_winnipeg_mb]
+name = "Winnipeg traffic signal cameras (Socrata open-data registry)"
+source_kind = "government_portal"
+homepage_url = "https://data.winnipeg.ca/d/42pk-2u2c"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (socrata /resource rows — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-18
+review_packet = "docs/build/reports/rights/camreg_winnipeg_mb.md"
+notes = "P26.9. FLIPPED 2026-09-18 (GL-GATE-06): Socrata dataset 42pk-2u2c 'Traffic Signal Inventory - Cameras Detail' declares the Open Government Licence - Canada 2.0 on dataset metadata. 161 camera detail rows observed; OGL-Canada-2.0 → ogc_canada2 compartment."
+[sources.camreg_winnipeg_mb.rights]
+spdx = "OGL-Canada-2.0"
+attribution = "Contains information licensed under the Open Government Licence - Canada (City of Winnipeg traffic signal camera inventory)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://data.winnipeg.ca/d/42pk-2u2c"
+retrieval_date = 2026-09-18
+
+[sources.camreg_act_au]
+name = "ACT traffic safety cameras (Socrata open-data registry)"
+source_kind = "government_portal"
+homepage_url = "https://www.data.act.gov.au/d/426s-vdu4"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (socrata /resource rows — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-18
+review_packet = "docs/build/reports/rights/camreg_act_au.md"
+notes = "P26.9. FLIPPED 2026-09-18 (GL-GATE-06): ACT Government open-data datasets 426s-vdu4 (speed camera locations, 1,263 rows) + 5ezj-yjxz (mobile distraction camera locations, 118 rows) both declare CC-BY-4.0 on dataset metadata."
+[sources.camreg_act_au.rights]
+spdx = "CC-BY-4.0"
+attribution = "ACT Government traffic safety camera registries (data.act.gov.au)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.data.act.gov.au/d/426s-vdu4"
+retrieval_date = 2026-09-18
+
+[sources.camreg_siouxfalls_sd]
+name = "Sioux Falls traffic surveillance cameras (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://gis.siouxfalls.gov/arcgis/rest/services/Data/Traffic/MapServer/8"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-18
+review_packet = "docs/build/reports/rights/camreg_siouxfalls_sd.md"
+notes = "P26.9. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item 71ee3a06d0aa476d8c8545761dde916e (owner cityofsiouxfallsgis) licenseInfo declares 'The City of Sioux Falls provides open data licensed under the Creative Commons Attribution 4.0 International License' verbatim. 234 cameras observed; `URL` media field blocklisted."
+[sources.camreg_siouxfalls_sd.rights]
+spdx = "CC-BY-4.0"
+attribution = "City of Sioux Falls traffic surveillance camera registry"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.arcgis.com/sharing/rest/content/items/71ee3a06d0aa476d8c8545761dde916e"
+retrieval_date = 2026-09-18
+
+[sources.camreg_baltimore_md]
+name = "Baltimore CitiWatch cameras (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://baltegis.baltimorecity.gov/mapping/rest/services/CityView/CitiWatchCamera/FeatureServer/0"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-18
+review_packet = "docs/build/reports/rights/camreg_baltimore_md.md"
+notes = "P26.9. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item b676679350764f56a990c25a8ce2bda0 declares 'This work is licensed under a Creative Commons Attribution 3.0 Unported License' verbatim. 861 CitiWatch cameras observed; CC-BY-3.0 → ccby3 compartment."
+[sources.camreg_baltimore_md.rights]
+spdx = "CC-BY-3.0"
+attribution = "Baltimore City CitiWatch camera registry"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.arcgis.com/sharing/rest/content/items/b676679350764f56a990c25a8ce2bda0"
+retrieval_date = 2026-09-18
+
+[sources.camreg_ottawa_on]
+name = "Ottawa enforcement cameras (ArcGIS open-data registry)"
+source_kind = "government_portal"
+homepage_url = "https://open.ottawa.ca/datasets/ottawa::red-light-camera-locations"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-18
+review_packet = "docs/build/reports/rights/camreg_ottawa_on.md"
+notes = "P26.9. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS items adf1e7bd0338404196dc0d552aa6c79b (Red Light Camera Locations, 88) + d709c922c64b4c389afac3fb21d481fb (Automated Speed Enforcement, 60) name the Open Government Licence - City of Ottawa v2.0; licence text verified via Wayback capture (ottawa.ca is JS-rendered). OGL-family permissive + attribution → LicenseRef-Ottawa-ODL-2.0, ottawa_odl2 compartment."
+[sources.camreg_ottawa_on.rights]
+spdx = "LicenseRef-Ottawa-ODL-2.0"
+attribution = "Contains information licensed under the Open Government Licence – City of Ottawa"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://ottawa.ca/en/city-hall/get-know-your-city/open-data#open-data-licence-version-2-0"
+retrieval_date = 2026-09-18
+
+[sources.camreg_sheffield_gb]
+name = "Sheffield CCTV and traffic cameras (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://utility.arcgis.com/usrsvcs/servers/c5b5971a1c1248faa95649d081849aa1/rest/services/AGOL/OpenData/MapServer/7"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-18
+review_packet = "docs/build/reports/rights/camreg_sheffield_gb.md"
+notes = "P26.9. FLIPPED 2026-09-18 (GL-GATE-06): ArcGIS item c5b5971a1c1248faa95649d081849aa1 'CCTV and Traffic Cameras' licenseInfo declares the Open Government Licence (OGL v3.0) verbatim. 212 cameras observed; OGL-3.0 → ogl_uk3 compartment."
+[sources.camreg_sheffield_gb.rights]
+spdx = "OGL-3.0"
+attribution = "Sheffield City Council CCTV and traffic camera registry (Open Government Licence v3.0)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.arcgis.com/sharing/rest/content/items/c5b5971a1c1248faa95649d081849aa1"
+retrieval_date = 2026-09-18
+
+# --- P26.9 GATED rows (endpoints verified; rights blockers named) -------------
+
+[sources.camreg_chicago_il]
+name = "Chicago speed + red-light cameras (Socrata open-data registry)"
+source_kind = "government_portal"
+homepage_url = "https://data.cityofchicago.org/d/4i42-qv3h"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "rest_api (socrata /resource rows — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+notes = "P26.9. GATED — datasets 4i42-qv3h (speed, 209) + thvf-6diy (red-light, 300) carry 'See Terms of Use' licence metadata but the City terms document could not be captured verbatim this run (chicago.gov ToU page 404; Socrata story JS-rendered). Blocker: verbatim terms capture + HG-03-class rights decision (D-SOURCES.8-1)."
+[sources.camreg_chicago_il.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+retrieval_date = 2026-09-18
+
+[sources.camreg_calgary_ab]
+name = "Calgary traffic + intersection safety cameras (Socrata registry)"
+source_kind = "government_portal"
+homepage_url = "https://data.calgary.ca/d/k7p9-kppz"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "rest_api (socrata /resource rows — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+notes = "P26.9. GATED — datasets k7p9-kppz (traffic cameras, 216) + dv2f-necx (intersection safety, 57) carry a Terms-of-Use licence link whose text could not be captured verbatim this run. Blocker: verbatim terms capture + HG-03-class rights decision (D-SOURCES.8-1). `camera_url` media field blocklisted."
+[sources.camreg_calgary_ab.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+retrieval_date = 2026-09-18
+
+[sources.camreg_edmonton_ab]
+name = "Edmonton intersection safety device locations (Socrata registry)"
+source_kind = "government_portal"
+homepage_url = "https://data.edmonton.ca/d/7fnd-72gr"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "rest_api (socrata /resource rows — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+notes = "P26.9. GATED — dataset 7fnd-72gr 'Intersection Safety Device Locations' (67 rows) carries NO licence metadata on the dataset or portal record. Blocker: no licence grant located (D-SOURCES.8-1)."
+[sources.camreg_edmonton_ab.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+retrieval_date = 2026-09-18
+
+[sources.camreg_honolulu_hi]
+name = "Honolulu traffic camera locations (Socrata registry)"
+source_kind = "government_portal"
+homepage_url = "https://data.honolulu.gov/d/cat5-2v98"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "rest_api (socrata /resource rows — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+notes = "P26.9. GATED — dataset cat5-2v98 'Traffic Camera Locations' (253 rows) carries NO licence metadata. Blocker: no licence grant located (D-SOURCES.8-1). url/image media fields blocklisted."
+[sources.camreg_honolulu_hi.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+retrieval_date = 2026-09-18
+
+[sources.camreg_md_opendata]
+name = "Maryland traffic cameras (Socrata open-data mirror)"
+source_kind = "government_portal"
+homepage_url = "https://opendata.maryland.gov/d/hua3-qc8n"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "rest_api (socrata /resource rows — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+notes = "P26.9. GATED — dataset hua3-qc8n 'Traffic Cameras' (451 rows, statewide open-data mirror of the CHART registry also enumerated as dot_511_md) carries NO licence metadata; the CHART layer stays gated under the same iMAP attribution-conditioned terms blocker. Blocker: MD terms/licence row + reviewer decision (D-SOURCES.8-1). url/iframe media fields blocklisted."
+[sources.camreg_md_opendata.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+retrieval_date = 2026-09-18
+
+[sources.camreg_york_on]
+name = "York Region traffic + red-light cameras (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://insights-york.opendata.arcgis.com/datasets/york::traffic-camera"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+notes = "P26.9. GATED — items a30c307c24524130845a7c6095e58997 (Traffic Camera, 394) + a94a1fdce44f4bc391ec4dfb693e1a95 (Red Light Camera, 55) name the 'York Region Open Data Licence' but the licence page was not retrievable this run (404 at probe paths). Blocker: verbatim licence text + HG-03-class decision (D-SOURCES.8-1). photo/photoreference/url media fields blocklisted."
+[sources.camreg_york_on.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+retrieval_date = 2026-09-18
+
+[sources.camreg_arlington_va]
+name = "Arlington County traffic + photo enforcement cameras (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://gisdata-arlgis.opendata.arcgis.com/datasets/arlgis::traffic-cameras"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+notes = "P26.9. GATED — item 10415997f18b4aa09a9b5076a801f93d (Traffic Cameras, 315) + DES photo-red (19) / photo-speed (49) layers name the 'Arlington County data disclaimer' but the disclaimer is behind a WAF/JS wall (arlingtonva.us 403; hub JS-rendered) and could not be captured. Blocker: verbatim terms capture + HG-03-class decision (D-SOURCES.8-1)."
+[sources.camreg_arlington_va.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+retrieval_date = 2026-09-18
+
+[sources.camreg_seattle_wa]
+name = "Seattle traffic + safety cameras (SDOT ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/Traffic_Cameras_CDL/FeatureServer/0"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+notes = "P26.9. GATED — items b90315ad1deb4985aeb3071b8baa06a1 (Traffic Cameras CDL, 662) + f3879db110b84473b4e3d669157c6a39 (ATSC view, 114) carry ONLY a no-warranty disclaimer in licenseInfo — no licence grant located this run; Seattle open-data terms page not retrievable. Blocker: licence grant + HG-03-class decision (D-SOURCES.8-1). URL media field blocklisted."
+[sources.camreg_seattle_wa.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+retrieval_date = 2026-09-18
+
+[sources.camreg_bellevue_wa]
+name = "Bellevue traffic cameras (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://services1.arcgis.com/EYzEZbDhXZjURPbP/arcgis/rest/services/TrafficCameras_Public_View/FeatureServer/0"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+notes = "P26.9. GATED — item d47e172d8d184a208121c69ac7f6d088 licenseInfo carries a no-warranty disclaimer PLUS 'Any commercial use or sale of this map or portions thereof, is prohibited without express written authorization by the City of Bellevue' — a non-commercial restriction, NOT a resolved-clear permissive grant. Blocker: NC-conditioned terms need an outreach/decision path, not a delegated flip (D-SOURCES.8-1). 234 cameras observed."
+[sources.camreg_bellevue_wa.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+retrieval_date = 2026-09-18
+
+[sources.camreg_lexington_ky]
+name = "Lexington traffic camera locations (LFUCG ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://services1.arcgis.com/Mg7DLdfYcSWIaDnu/arcgis/rest/services/Traffic_Camera_Locations_Public_view/FeatureServer/0"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+notes = "P26.9. GATED — item d220ce31999448659626afe990ca1328 embeds the full LFUCG Terms of Use: they permit download/use and derivative works BUT carry an indemnify-AND-defend clause (§VI.B, 'You specifically acknowledge and agree that You have an immediate and independent obligation to defend the LFUCG') — a counsel-class term, not a delegated flip. Blocker: HG-02-class counsel review of the indemnity clause (D-SOURCES.8-1). 108 cameras observed; still_url media field blocklisted."
+[sources.camreg_lexington_ky.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+retrieval_date = 2026-09-18
+
+[sources.camreg_nzta_nz]
+name = "NZTA traffic cameras (ArcGIS public view)"
+source_kind = "government_portal"
+homepage_url = "https://services.arcgis.com/CXBb7LAjgIIdcsPt/arcgis/rest/services/LiveCamerasNZTA_Public_View/FeatureServer/0"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+notes = "P26.9. GATED — item 893d8a697d7f418f87392fb1222f5b95 licenseInfo: 'For access to the Traffic Cameras API and the associated documentation please send a request to Infoconnect@nzta.govt.nz' — access-by-request terms, not an open grant. Blocker: NZTA API-access request + terms (D-SOURCES.8-2). 224 cameras observed; viewurl/imageurl/thumburl media fields blocklisted."
+[sources.camreg_nzta_nz.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+retrieval_date = 2026-09-18
+
+[sources.camreg_qldc_au]
+name = "Queensland CCTV cameras external view (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://services1.arcgis.com/9YyqaQtDdDR8tupG/arcgis/rest/services/CCTV_Cameras_(External_View)/FeatureServer/0"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+notes = "P26.9. GATED — item eebb997724054f8a816efde37a5b40a6 'CCTV Cameras (External View)' (240 rows) licenseInfo says only 'Currently available for external use' — not a licence grant. The authoritative QLDTraffic v1 API is token-gated (enumerated; CC-BY-3.0/4.0 on the CKAN dataset). Blocker: licence grant or QLDTraffic API-key registration + terms (D-SOURCES.8-1/-2)."
+[sources.camreg_qldc_au.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+retrieval_date = 2026-09-18
+
+[sources.camreg_donegal_ie]
+name = "Donegal traffic cameras (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://services2.arcgis.com/WRtfelnPg3R7bCEW/arcgis/rest/services/TrafficCameras/FeatureServer/0"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+notes = "P26.9. GATED — item 15e57299bcd740c0b107be610d99a9ab 'Traffic Cameras' (layer 'Weather_stations', 123 rows) licenseInfo 'No Access Constraints' is not a licence grant. Blocker: no licence grant located (D-SOURCES.8-1)."
+[sources.camreg_donegal_ie.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+retrieval_date = 2026-09-18
+
+[sources.camreg_hk_hk]
+name = "Hong Kong CCTV camera locations (ArcGIS registry)"
+source_kind = "government_portal"
+homepage_url = "https://services3.arcgis.com/6j1KwZfY2fZrfNMR/arcgis/rest/services/CCTV_Camera_Locations_in_Hong_Kong/FeatureServer/0"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "not_contacted"
+robots_policy = "honor"
+access_method = "rest_api (arcgis feature layer query — registry rows only)"
+auth_model = "none"
+cadence = "monthly"
+verified = true
+last_verified = 2026-09-18
+notes = "P26.9. GATED — item 0b05a33ce41d4cb7b75436dabe592c5e (32 rows) licenseInfo defers to data.gov.hk 'Terms and Conditions of Use', not captured verbatim this run. Blocker: verbatim terms capture + HG-03-class decision (D-SOURCES.8-1)."
+[sources.camreg_hk_hk.rights]
+spdx = "UNDETERMINED"
+redistributable = false
+retrieval_date = 2026-09-18

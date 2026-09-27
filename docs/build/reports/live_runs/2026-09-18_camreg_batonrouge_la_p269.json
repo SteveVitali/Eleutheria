@@ -1,0 +1,22 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnaagham4kpydxzmwnnc4tw5sncj3ohaetdudw64j4zfueluq5z35ekrxvyaiqlqi4gbrozxgh4q3zicnm33yrilc4jdi3axbaldw4ylly"
+  ],
+  "claim_count": 944,
+  "connector": "dot_511",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [],
+  "duration_seconds": 0.5808,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "camreg_batonrouge_la",
+  "started_at": "2026-09-18T02:40:25.455338+00:00",
+  "status_codes": [],
+  "urls": []
+}

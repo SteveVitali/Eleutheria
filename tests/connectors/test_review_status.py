@@ -115,7 +115,7 @@ def test_the_seeded_registry_has_no_flip_metadata_violations() -> None:
 def test_validate_passes_on_the_seeded_registry(capsys: pytest.CaptureFixture[str]) -> None:
     assert main(["validate"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 157" in out
+    assert "registered sources: 180" in out
     assert "self-checks OK" in out
 
 
@@ -176,12 +176,17 @@ def test_review_status_prints_flip_ready_0_and_loadable_43(
     # municipal-public-record basis (43 → 44 loadable). P26.7 (SOURCES.7) added
     # 13 state DOT/511 camera-registry rows (144 → 157) and flipped the 8
     # resolved-clear states (KY/IL/UT/OR/IA/WA/DC/MO; LA/GA/AL/TX/MD stay gated)
-    # under the GL-GATE-06 delegated basis (44 → 52 loadable).
+    # under the GL-GATE-06 delegated basis (44 → 52 loadable). P26.9 (SOURCES.8)
+    # added 23 municipal/transit/non-US camera-registry rows (157 → 180) and
+    # flipped the 9 resolved-clear publishers (Austin/NOLA/Baton Rouge/Winnipeg/
+    # ACT/Sioux Falls/Baltimore/Ottawa/Sheffield; Chicago/Calgary/Edmonton/
+    # Honolulu/MD-mirror/York/Arlington/Seattle/Bellevue/Lexington/NZTA/QLDC/
+    # Donegal/HK stay gated) under the same delegated basis (52 → 61 loadable).
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 157" in out
+    assert "registered sources: 180" in out
     assert "flip-ready: 0" in out
-    assert "loadable now: 52" in out
+    assert "loadable now: 61" in out
 
 
 def test_review_status_loadable_equals_validate() -> None:
@@ -189,7 +194,7 @@ def test_review_status_loadable_equals_validate() -> None:
     from connectors.loader import is_loadable
 
     loadable = [s for s in sources() if is_loadable(s)]
-    assert len(loadable) == 52
+    assert len(loadable) == 61
     assert len(flip_ready()) == 0
 
 

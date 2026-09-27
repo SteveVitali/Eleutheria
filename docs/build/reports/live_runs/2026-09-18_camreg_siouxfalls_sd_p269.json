@@ -1,0 +1,22 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnahfga2om6b4lwpobpuxpfo4otvp4vgdfweh5tgmuzbdoll4xqiowujfoxosgmlcnibmxtfmugmhbg7qbk4zgodtcfavxzuunoqhsa6vq"
+  ],
+  "claim_count": 1872,
+  "connector": "dot_511",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [],
+  "duration_seconds": 0.383885,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "camreg_siouxfalls_sd",
+  "started_at": "2026-09-18T02:40:28.245654+00:00",
+  "status_codes": [],
+  "urls": []
+}

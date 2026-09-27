@@ -1,0 +1,22 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnac3ywvsxpxiter2tlrtp7kssxzdiqm5k2dzylto5olhnfmmcbevs3gd57jq4avkevuyvtlvnpdbxe64ivkhbrstrezn4hfuw6s622oa4"
+  ],
+  "claim_count": 1133,
+  "connector": "dot_511",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [],
+  "duration_seconds": 0.330639,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "camreg_nola_la",
+  "started_at": "2026-09-18T02:40:24.981728+00:00",
+  "status_codes": [],
+  "urls": []
+}

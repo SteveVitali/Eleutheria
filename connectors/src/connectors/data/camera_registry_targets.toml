@@ -1,0 +1,632 @@
+# P26.9 — municipal / transit / non-US camera-registry endpoints (the SOURCES.8
+# enumeration registry, sibling to `dot_511_targets.toml`).
+#
+# `[[targets]]` rows are verified endpoint+layer registrations; `kind`
+# determines the platform adapter:
+#   - `arcgis_query`  — an ArcGIS FeatureServer/MapServer layer; `url` is the
+#     layer root and the connector expands it into deterministic paginated
+#     `/query` requests over the observed row count.
+#   - `socrata_rows`  — a Socrata `/resource/<id>.json` dataset; `url` is the
+#     resource root and the connector expands it into deterministic
+#     `$limit/$offset` pages over the observed row count.
+# `platform` records the publishing platform for audit; `jurisdiction_scheme`
+# is the candidate-identifier scheme carried on the `camera_jurisdiction`
+# claim (`us.state_abbr` for US admin-1 codes, `iso.3166_2` for ISO 3166-2
+# subdivision codes, `iso.3166_1_alpha2` for country-level publishers).
+# `observed` is the row count seen at enumeration time; `verified` is the last
+# verification date. These rows are the enumerative audit — every registry the
+# connector fetched is here, and rows for un-yielding/negative outcomes are
+# kept in `[[enumerated]]` rather than silently dropped.
+#
+# REGISTRY-ONLY (Part VIII): these endpoints enumerate camera RECORDS. Camera
+# image / video / feed / HLS / iframe / still fields are NEVER fetched or
+# emitted; field names are matched by the media blocklist and only the NAMES
+# land in `excluded_fields`.
+#
+# A gated source keeps its `[[targets]]` rows — the endpoint is real and
+# verified; the source row's `ingestion_permitted=false` is what stops the
+# fetch (the gate, not the registry, is the control).
+
+[[targets]]
+id = "austin_tx_traffic_cameras"
+source_id = "camreg_austin_tx"
+kind = "socrata_rows"
+platform = "socrata"
+url = "https://datahub.austintexas.gov/resource/b4k4-adkb.json"
+layer_url = "https://datahub.austintexas.gov/resource/b4k4-adkb.json"
+agency = "City of Austin Transportation and Public Works"
+state = "TX"
+jurisdiction_scheme = "us.state_abbr"
+observed_count = 1005
+verified = 2026-09-18
+notes = "Socrata 'Traffic Cameras' dataset b4k4-adkb; Public Domain licence on dataset metadata. GeoJSON point in `location`; camera_name/location_name/comm_status fields; camera_id/atd_location_id are stable refs. Supersedes the legacy ATD ArcGIS layer (enumerated below)."
+
+[[targets]]
+id = "nola_la_traffic_cameras"
+source_id = "camreg_nola_la"
+kind = "socrata_rows"
+platform = "socrata"
+url = "https://data.nola.gov/resource/te2d-4txp.json"
+layer_url = "https://data.nola.gov/resource/te2d-4txp.json"
+agency = "City of New Orleans Department of Public Works"
+state = "LA"
+jurisdiction_scheme = "us.state_abbr"
+observed_count = 103
+verified = 2026-09-18
+notes = "Socrata 'Traffic Camera' dataset te2d-4txp; CC0-1.0 licence on dataset metadata. GeoJSON point in `the_geom`; camid/intersection/roadwayname fields; `location` here is a text address, not geometry."
+
+[[targets]]
+id = "brla_la_traffic_cameras"
+source_id = "camreg_batonrouge_la"
+kind = "socrata_rows"
+platform = "socrata"
+url = "https://data.brla.gov/resource/6z6u-ts44.json"
+layer_url = "https://data.brla.gov/resource/6z6u-ts44.json"
+agency = "City of Baton Rouge / East Baton Rouge Parish"
+state = "LA"
+jurisdiction_scheme = "us.state_abbr"
+observed_count = 118
+verified = 2026-09-18
+notes = "Socrata 'Traffic Camera' dataset 6z6u-ts44; Public Domain licence on dataset metadata. GeoJSON point in `the_geom`; camera_location/camera_number fields."
+
+[[targets]]
+id = "winnipeg_mb_signal_cameras"
+source_id = "camreg_winnipeg_mb"
+kind = "socrata_rows"
+platform = "socrata"
+url = "https://data.winnipeg.ca/resource/42pk-2u2c.json"
+layer_url = "https://data.winnipeg.ca/resource/42pk-2u2c.json"
+agency = "City of Winnipeg Public Works"
+state = "CA-MB"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 161
+verified = 2026-09-18
+notes = "Socrata 'Traffic Signal Inventory - Cameras Detail' dataset 42pk-2u2c; Open Government Licence - Canada 2.0 on dataset metadata. latitude/longitude + `location` GeoJSON point; camera/camera_type fields."
+
+[[targets]]
+id = "act_au_speed_cameras"
+source_id = "camreg_act_au"
+kind = "socrata_rows"
+platform = "socrata"
+url = "https://www.data.act.gov.au/resource/426s-vdu4.json"
+layer_url = "https://www.data.act.gov.au/resource/426s-vdu4.json"
+agency = "ACT Government Justice and Community Safety"
+state = "AU-ACT"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 1263
+verified = 2026-09-18
+notes = "Socrata 'Traffic speed camera locations' dataset 426s-vdu4; CC-BY-4.0 on dataset metadata. latitude/longitude fields; site/suburb/type fields. Row granularity is camera-site history rows (some sites repeat)."
+
+[[targets]]
+id = "act_au_mobile_cameras"
+source_id = "camreg_act_au"
+kind = "socrata_rows"
+platform = "socrata"
+url = "https://www.data.act.gov.au/resource/5ezj-yjxz.json"
+layer_url = "https://www.data.act.gov.au/resource/5ezj-yjxz.json"
+agency = "ACT Government Justice and Community Safety"
+state = "AU-ACT"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 118
+verified = 2026-09-18
+notes = "Socrata 'Mobile Distraction camera locations' dataset 5ezj-yjxz; CC-BY-4.0 on dataset metadata. latitude/longitude + `geolocation` GeoJSON point."
+
+[[targets]]
+id = "siouxfalls_sd_traffic_cameras"
+source_id = "camreg_siouxfalls_sd"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://gis.siouxfalls.gov/arcgis/rest/services/Data/Traffic/MapServer/8"
+layer_url = "https://gis.siouxfalls.gov/arcgis/rest/services/Data/Traffic/MapServer/8"
+agency = "City of Sioux Falls / Sioux Falls Traffic Management"
+state = "SD"
+jurisdiction_scheme = "us.state_abbr"
+observed_count = 234
+verified = 2026-09-18
+object_id_field = "OBJECTID"
+notes = "Item 71ee3a06d0aa476d8c8545761dde916e (owner cityofsiouxfallsgis) declares 'The City of Sioux Falls provides open data licensed under the Creative Commons Attribution 4.0 International License' verbatim. Layer 'Traffic Surveillance Camera'; INTERSECTIONNAME/ASSETID fields; `URL` media field blocklisted."
+
+[[targets]]
+id = "baltimore_md_citiwatch_cameras"
+source_id = "camreg_baltimore_md"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://baltegis.baltimorecity.gov/mapping/rest/services/CityView/CitiWatchCamera/FeatureServer/0"
+layer_url = "https://baltegis.baltimorecity.gov/mapping/rest/services/CityView/CitiWatchCamera/FeatureServer/0"
+agency = "Baltimore City (CitiWatch)"
+state = "MD"
+jurisdiction_scheme = "us.state_abbr"
+observed_count = 861
+verified = 2026-09-18
+object_id_field = "OBJECTID"
+notes = "Item b676679350764f56a990c25a8ce2bda0 declares 'This work is licensed under a Creative Commons Attribution 3.0 Unported License' verbatim. CitiWatch CCTV registry layer 'CCTV_Camera'; CAM_NUMBER/CAM_LOCATION fields."
+
+[[targets]]
+id = "ottawa_on_redlight_cameras"
+source_id = "camreg_ottawa_on"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://services.arcgis.com/G6F8XLCl5KtAlZ2G/arcgis/rest/services/Red_Light_Camera_Locations/FeatureServer/0"
+layer_url = "https://services.arcgis.com/G6F8XLCl5KtAlZ2G/arcgis/rest/services/Red_Light_Camera_Locations/FeatureServer/0"
+agency = "City of Ottawa"
+state = "CA-ON"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 88
+verified = 2026-09-18
+object_id_field = "ObjectId"
+notes = "ArcGIS item adf1e7bd0338404196dc0d552aa6c79b (owner City of Ottawa) licenseInfo names the Open Government Licence - City of Ottawa v2.0 (text verified via Wayback capture; see rights packet). LATITUDE/LONGITUDE + location_desc fields."
+
+[[targets]]
+id = "ottawa_on_ase_cameras"
+source_id = "camreg_ottawa_on"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://services.arcgis.com/G6F8XLCl5KtAlZ2G/arcgis/rest/services/Automated_Speed_Enforcement_Camera_Locations/FeatureServer/0"
+layer_url = "https://services.arcgis.com/G6F8XLCl5KtAlZ2G/arcgis/rest/services/Automated_Speed_Enforcement_Camera_Locations/FeatureServer/0"
+agency = "City of Ottawa"
+state = "CA-ON"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 60
+verified = 2026-09-18
+object_id_field = "ObjectId"
+notes = "ArcGIS item d709c922c64b4c389afac3fb21d481fb 'Automated Speed Enforcement Camera Locations'; same Open Government Licence - City of Ottawa v2.0. Latitude/Longitude + Location_Desc_EN fields."
+
+[[targets]]
+id = "sheffield_gb_cctv_cameras"
+source_id = "camreg_sheffield_gb"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://utility.arcgis.com/usrsvcs/servers/c5b5971a1c1248faa95649d081849aa1/rest/services/AGOL/OpenData/MapServer/7"
+layer_url = "https://utility.arcgis.com/usrsvcs/servers/c5b5971a1c1248faa95649d081849aa1/rest/services/AGOL/OpenData/MapServer/7"
+agency = "Sheffield City Council"
+state = "GB-ENG"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 212
+verified = 2026-09-18
+object_id_field = "objectid"
+notes = "ArcGIS item c5b5971a1c1248faa95649d081849aa1 'CCTV and Traffic Cameras' declares the Open Government Licence (OGL v3.0) verbatim in licenseInfo. Served through the utility.arcgis.com usrsvcs host (same REST query API)."
+
+# --------------------------------------------------------------------------
+# GATED rows — the endpoints below are verified live, but the source rows stay
+# `ingestion_permitted=false` until their named rights blockers resolve
+# (GL-GATE-06; DEFERRALS D-SOURCES.8-1). The registry records them so the
+# blocker list is data, not memory.
+# --------------------------------------------------------------------------
+
+[[targets]]
+id = "chicago_il_speed_cameras"
+source_id = "camreg_chicago_il"
+kind = "socrata_rows"
+platform = "socrata"
+url = "https://data.cityofchicago.org/resource/4i42-qv3h.json"
+layer_url = "https://data.cityofchicago.org/resource/4i42-qv3h.json"
+agency = "City of Chicago Department of Transportation"
+state = "IL"
+jurisdiction_scheme = "us.state_abbr"
+observed_count = 209
+verified = 2026-09-18
+notes = "Socrata 'Speed Camera Locations' dataset 4i42-qv3h; dataset licence is 'See Terms of Use' but the City terms document could not be captured verbatim this run (chicago.gov ToU 404; Socrata story JS-rendered) → GATED unresolved_rights."
+
+[[targets]]
+id = "chicago_il_redlight_cameras"
+source_id = "camreg_chicago_il"
+kind = "socrata_rows"
+platform = "socrata"
+url = "https://data.cityofchicago.org/resource/thvf-6diy.json"
+layer_url = "https://data.cityofchicago.org/resource/thvf-6diy.json"
+agency = "City of Chicago Department of Transportation"
+state = "IL"
+jurisdiction_scheme = "us.state_abbr"
+observed_count = 300
+verified = 2026-09-18
+notes = "Socrata 'Red Light Camera Locations' dataset thvf-6diy; same gated Chicago terms basis."
+
+[[targets]]
+id = "calgary_ab_traffic_cameras"
+source_id = "camreg_calgary_ab"
+kind = "socrata_rows"
+platform = "socrata"
+url = "https://data.calgary.ca/resource/k7p9-kppz.json"
+layer_url = "https://data.calgary.ca/resource/k7p9-kppz.json"
+agency = "City of Calgary"
+state = "CA-AB"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 216
+verified = 2026-09-18
+notes = "Socrata 'Traffic Cameras' dataset k7p9-kppz; dataset carries a Terms-of-Use link whose text could not be captured verbatim this run → GATED unresolved_rights (D-SOURCES.8-1). `camera_url` media field blocklisted."
+
+[[targets]]
+id = "calgary_ab_intersection_cameras"
+source_id = "camreg_calgary_ab"
+kind = "socrata_rows"
+platform = "socrata"
+url = "https://data.calgary.ca/resource/dv2f-necx.json"
+layer_url = "https://data.calgary.ca/resource/dv2f-necx.json"
+agency = "City of Calgary"
+state = "CA-AB"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 57
+verified = 2026-09-18
+notes = "Socrata 'Intersection Safety Cameras' dataset dv2f-necx; same gated terms basis as k7p9-kppz."
+
+[[targets]]
+id = "edmonton_ab_isd_cameras"
+source_id = "camreg_edmonton_ab"
+kind = "socrata_rows"
+platform = "socrata"
+url = "https://data.edmonton.ca/resource/7fnd-72gr.json"
+layer_url = "https://data.edmonton.ca/resource/7fnd-72gr.json"
+agency = "City of Edmonton"
+state = "CA-AB"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 67
+verified = 2026-09-18
+notes = "Socrata 'Intersection Safety Device Locations' dataset 7fnd-72gr; NO licence metadata on the dataset → GATED unresolved_rights. latitude/longitude + geo_location/geometry_point."
+
+[[targets]]
+id = "honolulu_hi_traffic_cameras"
+source_id = "camreg_honolulu_hi"
+kind = "socrata_rows"
+platform = "socrata"
+url = "https://data.honolulu.gov/resource/cat5-2v98.json"
+layer_url = "https://data.honolulu.gov/resource/cat5-2v98.json"
+agency = "City and County of Honolulu"
+state = "HI"
+jurisdiction_scheme = "us.state_abbr"
+observed_count = 253
+verified = 2026-09-18
+notes = "Socrata 'Traffic Camera Locations' dataset cat5-2v98; NO licence metadata on the dataset → GATED unresolved_rights. `location` GeoJSON point; url/image media fields blocklisted."
+
+[[targets]]
+id = "md_opendata_traffic_cameras"
+source_id = "camreg_md_opendata"
+kind = "socrata_rows"
+platform = "socrata"
+url = "https://opendata.maryland.gov/resource/hua3-qc8n.json"
+layer_url = "https://opendata.maryland.gov/resource/hua3-qc8n.json"
+agency = "Maryland Department of Transportation / CHART"
+state = "MD"
+jurisdiction_scheme = "us.state_abbr"
+observed_count = 451
+verified = 2026-09-18
+notes = "Socrata 'Traffic Cameras' dataset hua3-qc8n (statewide open-data mirror of the CHART registry also enumerated as dot_511_md); NO licence metadata → GATED unresolved_rights. url/iframe media fields blocklisted."
+
+[[targets]]
+id = "york_on_traffic_cameras"
+source_id = "camreg_york_on"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://ww8.yorkmaps.ca/arcgis/rest/services/OpenData/Traffic/MapServer/0"
+layer_url = "https://ww8.yorkmaps.ca/arcgis/rest/services/OpenData/Traffic/MapServer/0"
+agency = "Regional Municipality of York"
+state = "CA-ON"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 394
+verified = 2026-09-18
+object_id_field = "ESRI_OID"
+notes = "Item a30c307c24524130845a7c6095e58997 names the 'York Region Open Data Licence' but the licence page was not retrievable this run → GATED. photo/photoreference/url media fields blocklisted."
+
+[[targets]]
+id = "york_on_redlight_cameras"
+source_id = "camreg_york_on"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://ww8.yorkmaps.ca/arcgis/rest/services/OpenData/Traffic/MapServer/1"
+layer_url = "https://ww8.yorkmaps.ca/arcgis/rest/services/OpenData/Traffic/MapServer/1"
+agency = "Regional Municipality of York"
+state = "CA-ON"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 55
+verified = 2026-09-18
+object_id_field = "OBJECTID"
+notes = "Item a94a1fdce44f4bc391ec4dfb693e1a95 'Red Light Camera'; same named-but-unretrievable York Region Open Data Licence → GATED."
+
+[[targets]]
+id = "arlington_va_traffic_cameras"
+source_id = "camreg_arlington_va"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://services1.arcgis.com/JrtUzVcH8S2wnzVH/arcgis/rest/services/Traffic_Cameras/FeatureServer/1"
+layer_url = "https://services1.arcgis.com/JrtUzVcH8S2wnzVH/arcgis/rest/services/Traffic_Cameras/FeatureServer/1"
+agency = "Arlington County DES"
+state = "VA"
+jurisdiction_scheme = "us.state_abbr"
+observed_count = 315
+verified = 2026-09-18
+object_id_field = "OBJECTID"
+notes = "Item 10415997f18b4aa09a9b5076a801f93d names the 'Arlington County data disclaimer' but the disclaimer page is behind a WAF/JS wall and could not be captured → GATED unresolved_rights. `URL` media field blocklisted."
+
+[[targets]]
+id = "arlington_va_photo_red"
+source_id = "camreg_arlington_va"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://arlgis.arlingtonva.us/arcgis/rest/services/Open_Data/od_DES_Signal_PhotoRED_Cameras_pnt/FeatureServer/0"
+layer_url = "https://arlgis.arlingtonva.us/arcgis/rest/services/Open_Data/od_DES_Signal_PhotoRED_Cameras_pnt/FeatureServer/0"
+agency = "Arlington County DES"
+state = "VA"
+jurisdiction_scheme = "us.state_abbr"
+observed_count = 19
+verified = 2026-09-18
+object_id_field = "OBJECTID"
+notes = "DES photo-red enforcement layer; same gated Arlington disclaimer basis."
+
+[[targets]]
+id = "arlington_va_photo_speed"
+source_id = "camreg_arlington_va"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://arlgis.arlingtonva.us/arcgis/rest/services/Open_Data/od_DES_Signal_PhotoSpeed_Cameras_pnt/FeatureServer/0"
+layer_url = "https://arlgis.arlingtonva.us/arcgis/rest/services/Open_Data/od_DES_Signal_PhotoSpeed_Cameras_pnt/FeatureServer/0"
+agency = "Arlington County DES"
+state = "VA"
+jurisdiction_scheme = "us.state_abbr"
+observed_count = 49
+verified = 2026-09-18
+object_id_field = "OBJECTID"
+notes = "DES photo-speed enforcement layer; same gated Arlington disclaimer basis."
+
+[[targets]]
+id = "seattle_wa_cdl_cameras"
+source_id = "camreg_seattle_wa"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/Traffic_Cameras_CDL/FeatureServer/0"
+layer_url = "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/Traffic_Cameras_CDL/FeatureServer/0"
+agency = "Seattle Department of Transportation"
+state = "WA"
+jurisdiction_scheme = "us.state_abbr"
+observed_count = 662
+verified = 2026-09-18
+object_id_field = "OBJECTID"
+notes = "SDOT-hosted 'Traffic Cameras CDL' layer; item licenseInfo carries ONLY a no-warranty disclaimer — no licence grant located this run → GATED unresolved_rights. `URL` media field blocklisted."
+
+[[targets]]
+id = "seattle_wa_atsc_cameras"
+source_id = "camreg_seattle_wa"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/Automatic_Traffic_Safety_Cameras_(ATSC)_view/FeatureServer/0"
+layer_url = "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/Automatic_Traffic_Safety_Cameras_(ATSC)_view/FeatureServer/0"
+agency = "Seattle Department of Transportation"
+state = "WA"
+jurisdiction_scheme = "us.state_abbr"
+observed_count = 114
+verified = 2026-09-18
+object_id_field = "ObjectId"
+notes = "SDOT 'Automatic Traffic Safety Cameras (ATSC) view' layer; Cam_Lat/Cam_Long + Loc_Lat/Loc_Long coordinate fields; same gated no-licence basis."
+
+[[targets]]
+id = "bellevue_wa_traffic_cameras"
+source_id = "camreg_bellevue_wa"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://services1.arcgis.com/EYzEZbDhXZjURPbP/arcgis/rest/services/TrafficCameras_Public_View/FeatureServer/0"
+layer_url = "https://services1.arcgis.com/EYzEZbDhXZjURPbP/arcgis/rest/services/TrafficCameras_Public_View/FeatureServer/0"
+agency = "City of Bellevue Transportation Department"
+state = "WA"
+jurisdiction_scheme = "us.state_abbr"
+observed_count = 234
+verified = 2026-09-18
+object_id_field = "ESRI_OID"
+notes = "Item d47e172d8d184a208121c69ac7f6d088 licenseInfo carries a no-warranty disclaimer PLUS 'Any commercial use or sale of this map or portions thereof, is prohibited without express written authorization' — a non-commercial restriction → GATED (not resolved-clear; D-SOURCES.8-1)."
+
+[[targets]]
+id = "lexington_ky_traffic_cameras"
+source_id = "camreg_lexington_ky"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://services1.arcgis.com/Mg7DLdfYcSWIaDnu/arcgis/rest/services/Traffic_Camera_Locations_Public_view/FeatureServer/0"
+layer_url = "https://services1.arcgis.com/Mg7DLdfYcSWIaDnu/arcgis/rest/services/Traffic_Camera_Locations_Public_view/FeatureServer/0"
+agency = "Lexington-Fayette Urban County Government (LFUCG)"
+state = "KY"
+jurisdiction_scheme = "us.state_abbr"
+observed_count = 108
+verified = 2026-09-18
+object_id_field = "objectid"
+notes = "Item d220ce31999448659626afe990ca1328 embeds the full LFUCG Terms of Use — they contain an indemnify-AND-defend clause (§VI.B) → GATED pending counsel-class review (D-SOURCES.8-1). `still_url` media field blocklisted."
+
+[[targets]]
+id = "nzta_nz_traffic_cameras"
+source_id = "camreg_nzta_nz"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://services.arcgis.com/CXBb7LAjgIIdcsPt/arcgis/rest/services/LiveCamerasNZTA_Public_View/FeatureServer/0"
+layer_url = "https://services.arcgis.com/CXBb7LAjgIIdcsPt/arcgis/rest/services/LiveCamerasNZTA_Public_View/FeatureServer/0"
+agency = "NZ Transport Agency Waka Kotahi"
+state = "NZ"
+jurisdiction_scheme = "iso.3166_1_alpha2"
+observed_count = 224
+verified = 2026-09-18
+object_id_field = "ObjectId"
+notes = "Item 893d8a697d7f418f87392fb1222f5b95 licenseInfo: 'For access to the Traffic Cameras API and the associated documentation please send a request to Infoconnect@nzta.govt.nz' — access-by-request terms → GATED unresolved_rights. viewurl/imageurl/thumburl media fields blocklisted."
+
+[[targets]]
+id = "qldc_au_cctv_cameras"
+source_id = "camreg_qldc_au"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://services1.arcgis.com/9YyqaQtDdDR8tupG/arcgis/rest/services/CCTV_Cameras_(External_View)/FeatureServer/0"
+layer_url = "https://services1.arcgis.com/9YyqaQtDdDR8tupG/arcgis/rest/services/CCTV_Cameras_(External_View)/FeatureServer/0"
+agency = "Queensland Government (QLDCGIS external view)"
+state = "AU-QLD"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 240
+verified = 2026-09-18
+object_id_field = "objectid"
+notes = "Item eebb997724054f8a816efde37a5b40a6 'CCTV Cameras (External View)'; licenseInfo says only 'Currently available for external use' — not a licence grant → GATED unresolved_rights. latitude2/longitude2 fields; the authoritative QLDTraffic API is token-gated (enumerated below)."
+
+[[targets]]
+id = "donegal_ie_traffic_cameras"
+source_id = "camreg_donegal_ie"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://services2.arcgis.com/WRtfelnPg3R7bCEW/arcgis/rest/services/TrafficCameras/FeatureServer/0"
+layer_url = "https://services2.arcgis.com/WRtfelnPg3R7bCEW/arcgis/rest/services/TrafficCameras/FeatureServer/0"
+agency = "Donegal County Council / TII"
+state = "IE-DL"
+jurisdiction_scheme = "iso.3166_2"
+observed_count = 123
+verified = 2026-09-18
+object_id_field = "OBJECTID"
+notes = "Item 15e57299bcd740c0b107be610d99a9ab 'Traffic Cameras' (layer 'Weather_stations' — roadside camera/weather stations); licenseInfo 'No Access Constraints' is not a licence grant → GATED unresolved_rights. WeatherCAM/link fields blocklisted."
+
+[[targets]]
+id = "hk_hk_cctv_cameras"
+source_id = "camreg_hk_hk"
+kind = "arcgis_query"
+platform = "arcgis"
+url = "https://services3.arcgis.com/6j1KwZfY2fZrfNMR/arcgis/rest/services/CCTV_Camera_Locations_in_Hong_Kong/FeatureServer/0"
+layer_url = "https://services3.arcgis.com/6j1KwZfY2fZrfNMR/arcgis/rest/services/CCTV_Camera_Locations_in_Hong_Kong/FeatureServer/0"
+agency = "Hong Kong Transport Department"
+state = "HK"
+jurisdiction_scheme = "iso.3166_1_alpha2"
+observed_count = 32
+verified = 2026-09-18
+object_id_field = "OBJECTID"
+notes = "Item 0b05a33ce41d4cb7b75436dabe592c5e 'CCTV Camera Locations in Hong Kong'; licenseInfo defers to data.gov.hk terms (not captured verbatim this run) → GATED unresolved_rights. Native coords are HK1980 easting/northing; geometry queried with outSR=4326."
+
+# --------------------------------------------------------------------------
+# Enumerated non-yielding outcomes — keyed APIs, refused/gone hosts, WAFs,
+# unsupported frontend payloads. Recorded, never silently dropped.
+# --------------------------------------------------------------------------
+
+[[enumerated]]
+id = "nyc_tmc_cameras"
+platform = "json_api"
+url = "https://webcams.nyctmc.org/api/cameras"
+agency = "New York City Department of Transportation (NYCTMC)"
+state = "NY"
+status = "unresolved_rights"
+verified = 2026-09-18
+notes = "NYC TMC camera registry endpoint: HTTP 200 JSON array (~979 records: id/name/latitude/longitude/area/isOnline/imageUrl). No published terms located for the registry data → GATED. imageUrl media field blocklisted; a `json_rows` adapter would be needed once rights resolve (D-SOURCES.8-1)."
+
+[[enumerated]]
+id = "tfl_jamcams"
+platform = "json_api"
+url = "https://api.tfl.gov.uk/Place/Type/JamCam"
+agency = "Transport for London"
+state = "GB-ENG"
+status = "unresolved_rights"
+verified = 2026-09-18
+notes = "TfL JamCam place API: HTTP 200 JSON (~1.1MB JamCam place records with lat/lon + imageUrl additionalProperty). The tfl.gov.uk terms page returned a 403 verification/WAF wall this run → GATED unresolved_rights (terms not capturable). imageUrl media field blocklisted."
+
+[[enumerated]]
+id = "nsw_live_traffic_cameras"
+platform = "keyed_api"
+url = "https://api.transport.nsw.gov.au/v1/live/cameras"
+agency = "Transport for NSW"
+state = "AU-NSW"
+status = "keyed_api"
+verified = 2026-09-18
+notes = "TfNSW live-traffic camera API: HTTP 401 without an API key (open-data datasets nsw-2-live-traffic-cameras / nsw-rms-live-traffic-cameras carry CC-BY but the API requires registration). robots.txt returned HTTP 500 → no policy recorded. Blocker: API-key registration + terms review (D-SOURCES.8-2)."
+
+[[enumerated]]
+id = "qld_qldtraffic_api"
+platform = "keyed_api"
+url = "https://api.qldtraffic.qld.gov.au/v1/webcams"
+agency = "Queensland Government (QLDTraffic / TMR)"
+state = "AU-QLD"
+status = "keyed_api"
+verified = 2026-09-18
+notes = "QLDTraffic v1 API (webcams + floodcams): HTTP 401 without a token; robots.txt HTTP 403 'Missing Authentication Token' → no policy. CKAN dataset carries CC-BY-3.0/CC-BY-4.0 but the API is token-gated. Blocker: API-key registration + terms review (D-SOURCES.8-2)."
+
+[[enumerated]]
+id = "nzta_cameras_token_layer"
+platform = "arcgis"
+url = "https://services.arcgis.com/XTtANUDT8Va4DLwI/arcgis/rest/services/nzta_cameras/FeatureServer/0"
+agency = "NZ Transport Agency Waka Kotahi"
+state = "NZ"
+status = "access_restricted"
+verified = 2026-09-18
+notes = "NZTA 'nzta_cameras' layer under org XTtANUDT8Va4DLwI: HTTP 499 'Token Required'. The public-view layer is the gated [[targets]] row above."
+
+[[enumerated]]
+id = "drivebc_cameras"
+platform = "open511"
+url = "https://api.drivebc.ca/"
+agency = "Government of British Columbia (DriveBC)"
+state = "CA-BC"
+status = "access_restricted"
+verified = 2026-09-18
+notes = "DriveBC API root returns an Open511-style service index (events/areas) but no open camera registry endpoint resolved this run; the earlier ArcGIS DriveBC_Cameras item 404'd. Recorded for re-enumeration."
+
+[[enumerated]]
+id = "toronto_traffic_cameras"
+platform = "ckan"
+url = "https://ckan0.cf.opendata.inter.prod-toronto.ca/api/3/action/package_show?id=traffic-cameras"
+agency = "City of Toronto Transportation Services"
+state = "CA-ON"
+status = "unreachable"
+verified = 2026-09-18
+notes = "Toronto CKAN production host did not resolve at probe time. Re-enumerate against the Toronto open-data catalog API."
+
+[[enumerated]]
+id = "vancouver_traffic_cameras"
+platform = "opendatasoft"
+url = "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/traffic-cameras/records"
+agency = "City of Vancouver"
+state = "CA-BC"
+status = "not_found"
+verified = 2026-09-18
+notes = "Vancouver Opendatasoft catalog has no 'traffic-cameras' dataset at probe time (dataset id not found). Re-enumerate the catalog."
+
+[[enumerated]]
+id = "montreal_cameras"
+platform = "html"
+url = "https://ville.montreal.qc.ca/circulation/"
+agency = "Ville de Montreal"
+state = "CA-QC"
+status = "access_restricted"
+verified = 2026-09-18
+notes = "Montreal circulation camera endpoints require session/application access; no open registry endpoint located this run."
+
+[[enumerated]]
+id = "wprdc_pittsburgh_cameras"
+platform = "ckan"
+url = "https://data.wprdc.org/api/3/action/package_show?id=traffic-cameras"
+agency = "City of Pittsburgh / WPRDC"
+state = "PA"
+status = "not_found"
+verified = 2026-09-18
+notes = "WPRDC 'traffic-cameras' package returned 404 at probe time."
+
+[[enumerated]]
+id = "vicroads_cameras"
+platform = "html_table"
+url = "https://www.vicroads.vic.gov.au/traffic-and-road-use/traffic-management/cctv-cameras"
+agency = "VicRoads / Department of Transport Victoria"
+state = "AU-VIC"
+status = "unreachable"
+verified = 2026-09-18
+notes = "VicRoads CCTV page was unreachable at probe time; no open registry endpoint located."
+
+[[enumerated]]
+id = "austin_atd_legacy_cameras"
+platform = "arcgis"
+url = "https://services.arcgis.com/0L95CJ0VTaxqcmED/arcgis/rest/services/TRANSPORTATION_traffic_cameras/FeatureServer/0"
+agency = "City of Austin ATD"
+state = "TX"
+status = "access_restricted"
+verified = 2026-09-18
+notes = "Legacy ATD ArcGIS camera layer (item 52f2b5e51b9a4b5e918b0be5646f27b2, 1005 rows, no-warranty disclaimer only) — superseded by the Socrata dataset b4k4-adkb which carries the Public Domain grant; recorded to keep the enumeration honest."
+
+[[enumerated]]
+id = "md_imap_traffic_cameras"
+platform = "arcgis"
+url = "https://mdimap.maryland.gov/arcgis/rest/services/TrafficCameras/FeatureServer"
+agency = "Maryland iMap / MDOT CHART"
+state = "MD"
+status = "unresolved_rights"
+verified = 2026-09-18
+notes = "Maryland iMap 'Traffic Cameras' feature service (item 21d54438d8f8409d8bc6db8207cfaace) — licence text is a spatial-data disclaimer, not a grant; same registry as the gated Socrata mirror. Enumerated for completeness."
+
+[[enumerated]]
+id = "or_oem_traffic_cameras"
+platform = "arcgis"
+url = "https://services1.arcgis.com/1e3fb7169cd74127b9c1707258a6e6e9/arcgis/rest/services/Oregon_Traffic_Cameras/FeatureServer"
+agency = "Oregon OEM"
+state = "OR"
+status = "access_restricted"
+verified = 2026-09-18
+notes = "Oregon OEM camera feature service (item 1e3fb7169cd74127b9c1707258a6e6e9, licence 'Public') — the OR registry is already covered by the flipped dot_511_or TripCheck source; recorded as an enumeration note, not wired."

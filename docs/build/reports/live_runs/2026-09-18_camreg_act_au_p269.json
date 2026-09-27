@@ -1,0 +1,23 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnajsfyv6a5rqupa6t3vmoqihu4a4axtswtka53qyjvive4bnb5shcgt72q5mcfvxciueactbtvnvlsmt7zxb6bmbhctxn2vzbvfqchcja",
+    "bcnao6sqcj3prklmpljgktxsgyyl3crv4msoq33pcwfq7wlw76i3b7v2wr6zmrrbaqr6o4bf7dk5wigthrnpzqtqn33afsmn6evajcgxpuq"
+  ],
+  "claim_count": 12369,
+  "connector": "dot_511",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [],
+  "duration_seconds": 1.171445,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "camreg_act_au",
+  "started_at": "2026-09-18T02:40:26.904006+00:00",
+  "status_codes": [],
+  "urls": []
+}

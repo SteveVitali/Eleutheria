@@ -1,0 +1,22 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnak6wzn6efqe2alcz7zizipiombdaely7af2tzlxs44isdafzpdu5wzuymyde2yeluhvyc6qxghy3da2hql5uph33qtslbgsfikju4tq4"
+  ],
+  "claim_count": 1449,
+  "connector": "dot_511",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [],
+  "duration_seconds": 0.584904,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "camreg_winnipeg_mb",
+  "started_at": "2026-09-18T02:40:26.178696+00:00",
+  "status_codes": [],
+  "urls": []
+}
