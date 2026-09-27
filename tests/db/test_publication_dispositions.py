@@ -18,12 +18,16 @@ Coverage:
   whose belief-time was valid in R1 (the fragment never consults belief);
 * append-only enforcement — no UPDATE/DELETE route (trigger AND privilege);
 * least-privilege grants — public roles hold the safe-column SELECT only
-  (``rationale``/``decided_by`` stay elevated), ``sig_materialize`` holds INSERT.
+  (``rationale``/``decided_by`` stay elevated), ``sig_materialize`` holds INSERT;
+* single clock authority (P32.10a) — ``decided_at`` is stamped by the database
+  on normal writes; a skewed host clock cannot hide a fresh disposition, and a
+  future-dated replay row is recorded history but never the effective
+  disposition on either carrier.
 """
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import UTC, datetime, timedelta
 
 import psycopg
 import pytest
@@ -31,6 +35,7 @@ from conftest import insert_claim, seed_claim_prerequisites
 from db.dispositions import (
     TargetKind,
     claim_eligible_sql,
+    dispositions_for,
     effective_dispositions,
     entity_eligible_sql,
     record_disposition,
@@ -146,6 +151,144 @@ def test_effective_disposition_respects_the_time_pin(conn: object) -> None:
     ).fetchone()
     assert past[0] == "allow"  # the review question
     assert now[0] == "withdraw"  # current access — the rollback rule
+
+
+# --- single clock authority (P32.10a) -----------------------------------------
+
+
+def test_recorded_disposition_is_immediately_visible(conn: object) -> None:
+    """The nominal flake: record a disposition and select it IMMEDIATELY —
+    before the fix, host-stamped `decided_at` could transiently future-date
+    the row against the container's `clock_timestamp()` (the 4 intermittent
+    P32.10 reds). The decision instant is now the database's own stamp."""
+    prereqs = seed_claim_prerequisites(conn)
+    eid = str(prereqs["subject_id"])
+    t0 = conn.execute("SELECT clock_timestamp()").fetchone()[0]
+    did = _record(
+        conn,
+        TargetKind.ENTITY,
+        eid,
+        Disposition.WITHHOLD,
+        ReasonCategory.SAFETY_WITHDRAWAL,
+    )
+    t1 = conn.execute("SELECT clock_timestamp()").fetchone()[0]
+    decided_at = conn.execute(
+        "SELECT decided_at FROM publication_disposition WHERE disposition_id = %s::uuid",
+        (did,),
+    ).fetchone()[0]
+    # stamped by the database, inside the write call
+    assert t0 <= decided_at <= t1
+    # visible to BOTH carriers at once
+    row = conn.execute(
+        "SELECT disposition FROM effective_disposition('entity', %s)", (eid,)
+    ).fetchone()
+    assert row is not None and row[0] == "withhold"
+    eligible = f"SELECT {entity_eligible_sql('%s')}"  # noqa: S608
+    assert conn.execute(eligible, (eid, eid, eid)).fetchone()[0] is False
+
+
+def test_host_clock_skew_cannot_hide_a_recorded_disposition(
+    conn: object, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The deterministic pre-fix failure: fake the host clock one hour AHEAD of
+    the database — the exact skew direction (Docker Desktop VM lag) that made a
+    fresh host-stamped row future-dated and invisible. With the fix the host
+    clock is never consulted: the row is stamped server-side and selected."""
+    real_datetime = datetime
+
+    class _SkewedHostClock(datetime):
+        @classmethod
+        def now(cls, tz: object = None) -> datetime:  # what the defect trusted
+            return real_datetime.now(tz) + timedelta(hours=1)
+
+    monkeypatch.setattr("policy.eligibility.datetime", _SkewedHostClock)
+    prereqs = seed_claim_prerequisites(conn)
+    eid = str(prereqs["subject_id"])
+    _record(
+        conn,
+        TargetKind.ENTITY,
+        eid,
+        Disposition.WITHHOLD,
+        ReasonCategory.SAFETY_WITHDRAWAL,
+    )
+    row = conn.execute(
+        "SELECT disposition FROM effective_disposition('entity', %s)", (eid,)
+    ).fetchone()
+    assert row is not None and row[0] == "withhold"
+    eligible = f"SELECT {entity_eligible_sql('%s')}"  # noqa: S608
+    assert conn.execute(eligible, (eid, eid, eid)).fetchone()[0] is False
+
+
+def test_normal_write_carries_no_host_stamp() -> None:
+    """Structure of the fix (no Docker needed): a normal INSERT must not carry
+    a Python-side `decided_at` — the column is omitted so `DEFAULT
+    clock_timestamp()` stamps it. An explicit value is written only as a
+    replay/migration input. Pre-fix the column always carried a host stamp."""
+    captured: dict[str, object] = {}
+
+    class _StubConn:
+        def execute(self, sql: str, params: object = None) -> _StubConn:
+            captured["sql"], captured["params"] = sql, params
+            return self
+
+        def fetchone(self) -> tuple[str]:
+            return ("00000000-0000-0000-0000-000000000000",)
+
+    normal = new_disposition(
+        target_kind=TargetKind.ENTITY,
+        target_id="x",
+        disposition=Disposition.WITHHOLD,
+        reason_category=ReasonCategory.SAFETY_WITHDRAWAL,
+        authority="reviewer:test",
+    )
+    assert normal.decided_at is None  # un-stamped — the database assigns it
+    record_disposition(_StubConn(), normal)
+    assert "decided_at" not in str(captured["sql"])
+
+    replay = new_disposition(
+        target_kind=TargetKind.ENTITY,
+        target_id="x",
+        disposition=Disposition.WITHHOLD,
+        reason_category=ReasonCategory.SAFETY_WITHDRAWAL,
+        authority="reviewer:test",
+        decided_at=datetime(2026, 6, 1, tzinfo=UTC),
+    )
+    record_disposition(_StubConn(), replay)
+    assert "decided_at" in str(captured["sql"])
+    assert replay.decided_at in captured["params"]
+
+
+def test_decided_at_default_is_the_database_clock(conn: object) -> None:
+    """The schema pin the sqitch change verify asserts: the column carries
+    `DEFAULT clock_timestamp()` — if a later migration dropped it, normal
+    writes would silently need a stamp again."""
+    default = conn.execute(
+        "SELECT column_default FROM information_schema.columns"
+        " WHERE table_name = 'publication_disposition' AND column_name = 'decided_at'"
+    ).fetchone()[0]
+    assert "clock_timestamp" in default
+
+
+def test_future_dated_replay_is_not_the_effective_disposition(conn: object) -> None:
+    """Carrier parity: a replay/migration row stamped in the FUTURE is recorded
+    history (`dispositions_for` shows it — append-only, never rewritten) but is
+    never the CURRENT effective disposition on EITHER carrier
+    (`decided_at <= clock_timestamp()` bounds both)."""
+    prereqs = seed_claim_prerequisites(conn)
+    eid = str(prereqs["subject_id"])
+    _record(
+        conn,
+        TargetKind.ENTITY,
+        eid,
+        Disposition.WITHHOLD,
+        ReasonCategory.SAFETY_WITHDRAWAL,
+        decided_at="2999-01-01T00:00:00+00:00",
+    )
+    history = dispositions_for(conn, TargetKind.ENTITY, [eid])
+    assert [d.disposition for d in history] == [Disposition.WITHHOLD]
+    sql = conn.execute("SELECT * FROM effective_disposition('entity', %s)", (eid,)).fetchall()
+    assert sql == []
+    assert effective_dispositions(conn, TargetKind.ENTITY, [eid]) == {}
 
 
 def test_python_and_sql_effective_agree(conn: object) -> None:

@@ -41,7 +41,7 @@ remains on record — that is the append-only "override" semantics.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import datetime
 from enum import StrEnum
 from typing import Any
 
@@ -106,7 +106,12 @@ class DispositionRecord:
     disposition: Disposition
     reason_category: ReasonCategory
     authority: str
-    decided_at: datetime
+    #: The decision instant. ``None`` means *not yet stamped* — the database
+    #: stamps it at INSERT (``DEFAULT clock_timestamp()``, the single clock
+    #: authority the SQL fragments evaluate; P32.10a). An explicit value is a
+    #: replay/migration input for already-recorded history only; the writer's
+    #: host clock never decides a live write.
+    decided_at: datetime | None
     policy_version: str = POLICY_VERSION
     decided_by: str | None = None
     rationale: str | None = None
@@ -149,8 +154,13 @@ def latest_disposition(
 ) -> DispositionRecord | None:
     """Pure twin of ``sig.effective_disposition``: the latest row decided on or
     before ``at`` (``None`` = current access time). ``seq`` breaks an exact
-    ``decided_at`` tie deterministically."""
-    eligible = [r for r in records if at is None or r.decided_at <= at]
+    ``decided_at`` tie deterministically. An un-stamped record
+    (``decided_at is None`` — not yet written) is never the effective
+    disposition, mirroring ``decided_at <= clock_timestamp()`` which can never
+    see an unstamped or future-dated row."""
+    eligible = [
+        r for r in records if r.decided_at is not None and (at is None or r.decided_at <= at)
+    ]
     if not eligible:
         return None
     return max(eligible, key=lambda r: (r.decided_at, r.seq))
@@ -254,7 +264,15 @@ def new_disposition(
     seq: int = 0,
 ) -> DispositionRecord:
     """Validate + construct one disposition record (the sink validates through the
-    same function the SQL CHECK enforces — no path records a malformed row)."""
+    same function the SQL CHECK enforces — no path records a malformed row).
+
+    ``decided_at`` is left ``None`` for a normal write — the decision instant is
+    stamped by the DATABASE (``DEFAULT clock_timestamp()``, P32.10a: one clock
+    authority, so the writer's host clock can never future-date a fresh row
+    against the server clock the eligibility fragments evaluate). An explicit
+    ``decided_at`` is accepted only as a replay/migration input that re-records
+    already-decided history — never as a substitute "now".
+    """
     if not target_id:
         raise ValueError("disposition target_id is required")
     if not authority:
@@ -265,7 +283,7 @@ def new_disposition(
         disposition=disposition,
         reason_category=reason_category,
         authority=authority,
-        decided_at=decided_at or datetime.now(UTC),
+        decided_at=decided_at,
         policy_version=POLICY_VERSION,
         decided_by=decided_by,
         rationale=rationale,

@@ -21,7 +21,11 @@ Two carriers of ONE rule (the same discipline as ADR-123's temporal contract):
   tests (``tests/db/test_publication_dispositions.py``).
 
 Write path: :func:`record_disposition` — INSERT-only; the table's immutability
-trigger and privilege set admit no UPDATE/DELETE route.
+trigger and privilege set admit no UPDATE/DELETE route. The decision instant is
+stamped by the database (``DEFAULT clock_timestamp()`` — P32.10a single clock
+authority): the writer omits ``decided_at`` so the host clock can never
+future-date a fresh row against the server clock the fragments evaluate; an
+explicit value is accepted only as a documented replay/migration input.
 """
 
 from __future__ import annotations
@@ -209,8 +213,14 @@ def effective_dispositions(
     rows = cur.execute(
         f"SELECT {_SAFE_COLS} FROM {DISPOSITION_TABLE}"
         " WHERE target_kind = %s AND target_id = ANY(%s)"
+        # Carrier parity (P32.10a): the SQL twin bounds
+        # `decided_at <= COALESCE(p_at, clock_timestamp())`; the batch read does
+        # the same so a future-dated replay row is recorded history
+        # (dispositions_for shows it) but never the CURRENT effective
+        # disposition on either carrier.
+        " AND decided_at <= COALESCE(%s::timestamptz, clock_timestamp())"
         " ORDER BY decided_at, disposition_seq",
-        (kind, list(target_ids)),
+        (kind, list(target_ids), at),
     ).fetchall()
     by_target: dict[str, list[DispositionRecord]] = {}
     for r in rows:
@@ -270,27 +280,43 @@ def record_disposition(conn: Any, record: DispositionRecord) -> str:
     by the same rule the SQL CHECK enforces). Returns the new ``disposition_id``.
     A re-issued disposition is a NEW row (``supersedes`` links the old id); no
     UPDATE/DELETE path exists — enforced by trigger AND by privilege.
+
+    Single clock authority (P32.10a): when ``record.decided_at is None`` the
+    ``decided_at`` column is omitted from the INSERT so the database stamps it
+    (``DEFAULT clock_timestamp()``) — the writer's host clock can never
+    future-date a fresh row against the server clock the eligibility fragments
+    evaluate. An explicit ``decided_at`` is written only as a documented
+    replay/migration input that re-records already-decided history.
     """
+    base_cols = (
+        "disposition_id, target_kind, target_id, disposition, reason_category,"
+        " authority, decided_by, rationale, evidence_claim_id, supersedes,"
+        " policy_version"
+    )
+    base_vals = (
+        record.target_kind.value,
+        record.target_id,
+        record.disposition.value,
+        record.reason_category.value,
+        record.authority,
+        record.decided_by,
+        record.rationale,
+        record.evidence_claim_id,
+        record.supersedes,
+        record.policy_version,
+    )
+    cols = base_cols
+    vals: tuple[Any, ...] = base_vals
+    if record.decided_at is not None:
+        # Replay/migration only: an explicit recorded-history instant. Normal
+        # writes omit the column so DEFAULT clock_timestamp() stamps it.
+        cols = f"{base_cols}, decided_at"
+        vals = (*base_vals, record.decided_at)
     row = conn.execute(
-        f"INSERT INTO {DISPOSITION_TABLE} ("
-        "  disposition_id, target_kind, target_id, disposition, reason_category,"
-        "  authority, decided_at, decided_by, rationale, evidence_claim_id,"
-        "  supersedes, policy_version) "
-        "VALUES (gen_random_uuid(), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
+        f"INSERT INTO {DISPOSITION_TABLE} ({cols}) "
+        f"VALUES (gen_random_uuid(), {', '.join(['%s'] * len(vals))}) "
         "RETURNING disposition_id::text",
-        (
-            record.target_kind.value,
-            record.target_id,
-            record.disposition.value,
-            record.reason_category.value,
-            record.authority,
-            record.decided_at,
-            record.decided_by,
-            record.rationale,
-            record.evidence_claim_id,
-            record.supersedes,
-            record.policy_version,
-        ),
+        vals,
     ).fetchone()
     assert row is not None
     return str(row[0])
