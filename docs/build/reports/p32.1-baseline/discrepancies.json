@@ -5,8 +5,8 @@
  "input_digests": {
   "docs/tickets/00_MANIFEST.md": "c32695818bdeea48e53c5124c26316cfb033a986791240826e3b6bc03fe6cddf",
   "docs/tickets/DEFERRALS.md": "1d7adf9f3a696f7c67b0621add5553d01ff3c66c98e242f93c8161b4c80f8202",
-  "docs/build/LEDGER.md": "54e29a0cbe861002f0cc5de4847b783c268946f844cb7b544321c32ee907b997",
-  "docs/build/BUILD_INDEX.md": "0edb41d014fcf4cf0d19bed70a8079bd72a57e2ebc113783b7c08418afb8c68c",
+  "docs/build/LEDGER.md": "c518a195b8c0ccffff2d31a79afd34862ba3b67261baf6b10265943133294fd3",
+  "docs/build/BUILD_INDEX.md": "d773cccd8975a4e340d494dcae566cf4c51fe67e914b3e3dc225458d5c4b755f",
   "docs/build/COVERAGE_MATRIX.csv": "2c84465073bbe4c4cfa24281aa90a195ff29ac689027227e9700c25c269cfcb2",
   "docs/2_canonical_design_spec.md": "b9af35930b6e7aa467dbdef3d8d6e523dbbf4e4cdfe28b237d15d096bf6a9a10",
   "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md": "6a56fd6206fc1d526c091e2948705c15f6122301068ad8fa6c9e2da8447a69e6",
