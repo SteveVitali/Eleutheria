@@ -148,6 +148,16 @@ def sam_gov_config() -> Mapping[str, Any]:
     return vocab()["sam_gov"]
 
 
+def usaspending_sweep_config() -> Mapping[str, Any]:
+    """The bounded federal sweep plan (``[usaspending_sweep]`` in the vocab, P26.14)."""
+    return vocab().get("usaspending_sweep", {})
+
+
+def sam_gov_sweep_config() -> Mapping[str, Any]:
+    """The widened SAM.gov keyword plan (``[sam_gov_sweep]`` in the vocab, P26.14)."""
+    return vocab().get("sam_gov_sweep", {})
+
+
 # --- the predicate allowlist (SIG-INGEST-033) ---------------------------------
 
 
@@ -557,11 +567,207 @@ def assert_pulls_subawards(target: Mapping[str, Any]) -> Mapping[str, Any]:
     federal-grant → local-surveillance link, so it is refused.
     """
     if not target.get("subaward"):
-        raise ValueError(
-            "a USAspending target MUST pull sub-awards (subaward=true), not only prime awards "
-            "(§23.6, SIG-ONTO-033); prime-only would miss the federal-grant → local link."
-        )
+        # P26.14: an explicitly declared prime-award slice of the reviewed
+        # sweep plan is legal — the SIG-ONTO-033 requirement is that the sweep
+        # PULLS sub-awards (the generated plan always includes sub slices),
+        # not that every single target is a sub-award target.
+        if not (
+            str(target.get("kind")) == "usaspending_award_search"
+            and str(target.get("award_kind")) == "prime"
+        ):
+            raise ValueError(
+                "a USAspending target MUST pull sub-awards (subaward=true), not only prime awards "
+                "(§23.6, SIG-ONTO-033); prime-only would miss the federal-grant → local link."
+            )
     return target
+
+
+# --- the bounded federal sweeps (P26.14 / FEDERAL.1) ---------------------------
+
+#: Fragment tag carrying the slice id on generated sweep targets. The fragment
+#: is never sent on the wire (RFC 7230) — it exists so the recorded source_uri
+#: of each capture names the exact sweep slice (keyword/agency/page) that
+#: produced it: the per-slice outcome is recoverable from the fetch record and
+#: every claim carries its slice provenance. One POST target per slice, each
+#: counted once — a refused request is recorded and NEVER re-probed.
+_SLICE_TAG = "#sig-slice="
+
+
+def usaspending_award_targets() -> list[dict[str, Any]]:
+    """The bounded USAspending award-search targets from the reviewed sweep plan (P26.14).
+
+    One POST target per (keyword × page) for sub-award and prime-award slices,
+    plus one (agency × page) slice per reviewed awarding agency — the whole
+    plan is data in ``[usaspending_sweep]`` (keywords, agencies, page bounds,
+    field lists, award-type codes, the time window), never code constants.
+    Every target's ``url`` carries ``#sig-slice=<id>`` so its capture's
+    recorded source_uri names its slice; ``post_body`` is sent verbatim.
+    """
+    cfg = usaspending_sweep_config()
+    bounds = dict(cfg.get("bounds", {}))
+    base = str(usaspending_config()["api_base"]).rstrip("/") + str(
+        usaspending_config()["prime_endpoint"]
+    )
+    keywords = [str(k) for k in cfg.get("keywords", ())]
+    agencies = [str(a.get("name")) for a in cfg.get("agencies", ()) if a.get("name")]
+    page_size = int(bounds.get("page_size", 100))
+    time_period = [dict(t) for t in bounds.get("time_period", ())]
+    sub_codes = [str(c) for c in bounds.get("sub_award_type_codes", ())]
+    prime_codes = [str(c) for c in bounds.get("prime_award_type_codes", ())]
+    sub_fields = [str(f) for f in bounds.get("sub_fields", ())]
+    prime_fields = [str(f) for f in bounds.get("prime_fields", ())]
+    sub_pages = int(bounds.get("sub_max_pages", 1))
+    prime_pages = int(bounds.get("prime_max_pages", 1))
+    agency_pages = int(bounds.get("agency_max_pages", 1))
+
+    def _slice(
+        tid: str,
+        award_kind: str,
+        post_body: dict[str, Any],
+        extra: dict[str, Any],
+    ) -> dict[str, Any]:
+        return {
+            "id": tid,
+            "url": f"{base}{_SLICE_TAG}{tid}",
+            "kind": "usaspending_award_search",
+            "award_kind": award_kind,
+            "subaward": award_kind == "sub",
+            "post_body": post_body,
+            **extra,
+        }
+
+    targets: list[dict[str, Any]] = []
+    for kw in keywords:
+        for page in range(1, sub_pages + 1):
+            tid = f"sub_kw:{kw}:p{page}"
+            targets.append(
+                _slice(
+                    tid,
+                    "sub",
+                    {
+                        "subawards": True,
+                        "filters": {
+                            "time_period": time_period,
+                            "award_type_codes": sub_codes,
+                            "keywords": [kw],
+                        },
+                        "fields": sub_fields,
+                        "limit": page_size,
+                        "page": page,
+                        "sort": "Sub-Award Amount",
+                        "order": "desc",
+                    },
+                    {"index_keyword": kw, "slice": "subaward_keyword", "page": page},
+                )
+            )
+        for page in range(1, prime_pages + 1):
+            tid = f"prime_kw:{kw}:p{page}"
+            targets.append(
+                _slice(
+                    tid,
+                    "prime",
+                    {
+                        "subawards": False,
+                        "filters": {
+                            "time_period": time_period,
+                            "award_type_codes": prime_codes,
+                            "keywords": [kw],
+                        },
+                        "fields": prime_fields,
+                        "limit": page_size,
+                        "page": page,
+                        "sort": "Award Amount",
+                        "order": "desc",
+                    },
+                    {"index_keyword": kw, "slice": "prime_keyword", "page": page},
+                )
+            )
+    for agency in agencies:
+        for page in range(1, agency_pages + 1):
+            tid = f"agency:{agency}:p{page}"
+            targets.append(
+                _slice(
+                    tid,
+                    "sub",
+                    {
+                        "subawards": True,
+                        "filters": {
+                            "time_period": time_period,
+                            "award_type_codes": sub_codes,
+                            "keywords": keywords,
+                            "agencies": [{"type": "awarding", "tier": "toptier", "name": agency}],
+                        },
+                        "fields": sub_fields,
+                        "limit": page_size,
+                        "page": page,
+                        "sort": "Sub-Award Amount",
+                        "order": "desc",
+                    },
+                    {"agency": agency, "slice": "awarding_agency", "page": page},
+                )
+            )
+    return targets
+
+
+def sam_gov_search_targets() -> list[dict[str, Any]]:
+    """The widened SAM.gov opportunity-search targets from the reviewed plan (P26.14).
+
+    One bounded ``title`` query per reviewed keyword — the API's own search
+    field, with ``limit`` + the posted window bounding every slice. The key is
+    resolved at fetch time onto ``X-Api-Key`` and never touches the URL.
+    """
+    cfg = sam_gov_sweep_config()
+    base = str(sam_gov_config()["api_base"]).rstrip("/") + str(sam_gov_config()["search_endpoint"])
+    keywords = [str(k) for k in cfg.get("keywords", ())]
+    limit = int(cfg.get("limit", 25))
+    posted_from = str(cfg.get("posted_from", ""))
+    posted_to = str(cfg.get("posted_to", ""))
+    targets: list[dict[str, Any]] = []
+    for kw in keywords:
+        query = urlencode(
+            {
+                "limit": limit,
+                "postedFrom": posted_from,
+                "postedTo": posted_to,
+                "title": kw,
+            }
+        )
+        targets.append(
+            {
+                "id": f"samgov:kw:{kw}",
+                "url": f"{base}?{query}",
+                "kind": "opportunity_search",
+                "index_keyword": kw,
+            }
+        )
+    return targets
+
+
+def _sam_gov_title_param(url: str) -> str | None:
+    """The decoded ``title`` query param of a SAM.gov search URL (dedupe key)."""
+    from urllib.parse import parse_qs, urlsplit
+
+    try:
+        values = parse_qs(urlsplit(str(url)).query).get("title")
+    except Exception:
+        return None
+    return values[0].strip().lower() if values else None
+
+
+def _usaspending_target_for(ctx: RunContext, uri: str) -> Mapping[str, Any] | None:
+    """The sweep target whose URL (incl. ``#sig-slice``) produced capture ``uri``.
+
+    Post-capture stages recover slice provenance (keyword/agency/page) from
+    the recorded source_uri — the fragment is the bookkeeping annotation that
+    survives into the capture, never the wire request.
+    """
+    resolved = ctx.resolved_targets.get(uri)
+    if resolved is not None:
+        return resolved
+    for target in ctx.parameters.get("targets", ()):
+        if str(target.get("url")) == uri:
+            return target
+    return None
 
 
 # --- the agenda-platform tenant registry (§22.3, this ticket OWNS it) ---------
@@ -1158,8 +1364,35 @@ class ProcurementConnector(Connector):
                 ),
             ]
         if ctx.source.id == source_ids().get("usaspending"):
+            # P26.14: append the generated bounded sweep targets (keyword ×
+            # page sub/prime slices + awarding-agency slices) — dedupe on id
+            # so a supplied/explicit target never double-fetches a slice.
+            # `parameters["sweep_expansion"] = False` suppresses generation —
+            # the replay/fixture path's opt-out when it drives explicit
+            # targets only; live runs always expand.
+            if ctx.parameters.get("sweep_expansion", True):
+                seen = {str(t.get("id")) for t in targets if t.get("id")}
+                targets = [
+                    *targets,
+                    *(t for t in usaspending_award_targets() if str(t.get("id")) not in seen),
+                ]
             for target in targets:
                 assert_pulls_subawards(target)
+        if ctx.source.id == source_ids().get("sam_gov"):
+            # P26.14: append the widened per-keyword search targets; a supplied
+            # target whose `title` param already names a keyword suppresses the
+            # generated slice for that keyword (no double-fetch).
+            supplied = {
+                t for t in (_sam_gov_title_param(str(x.get("url", ""))) for x in targets) if t
+            }
+            targets = [
+                *targets,
+                *(
+                    t
+                    for t in sam_gov_search_targets()
+                    if str(t.get("index_keyword", "")).lower() not in supplied
+                ),
+            ]
         return targets
 
     def fetch(self, ctx: RunContext, target: Mapping[str, Any]) -> FetchResult:
@@ -1699,6 +1932,60 @@ class ProcurementConnector(Connector):
                 }
                 for o in objects
             ]
+        if ctx.source.id == source_ids().get("usaspending"):
+            # P26.14: the bounded award-search payload — `results` is the award
+            # list. Each row emits a `procurement_notice` raw record carrying
+            # its sweep-slice provenance (recovered from the recorded
+            # source_uri's #sig-slice tag) so normalize() can emit the typed
+            # award fields; a sub-award-shaped row ALSO emits a `subaward`
+            # record so the FundingInstrument traceable link (SIG-ONTO-033)
+            # is preserved. A `usaspending_slice` outcome row records the
+            # per-slice result count + page metadata for the run record.
+            capture = parsed["capture"]
+            target = _usaspending_target_for(ctx, str(capture.source_uri)) if capture else None
+            provenance = {
+                "source_uri": str(capture.source_uri) if capture else None,
+                "capture_digest": capture.digest if capture else None,
+                "retrieved_at": (
+                    capture.retrieved_at.isoformat() if capture and capture.retrieved_at else None
+                ),
+                "slice": str(target.get("slice")) if target else None,
+                "award_kind": str(target.get("award_kind")) if target else None,
+                "index_keyword": str(target.get("index_keyword")) if target else None,
+                "agency": str(target.get("agency")) if target else None,
+                "page": target.get("page") if target else None,
+            }
+            objects = list(payload.get("results", [])) if isinstance(payload, Mapping) else []
+            award_records: list[Mapping[str, Any]] = []
+            for pos, obj in enumerate(objects):
+                if not isinstance(obj, Mapping):
+                    obj = {"value": obj}
+                award_records.append(
+                    {
+                        "record_kind": "procurement_notice",
+                        "raw": dict(obj),
+                        "notice_provenance": provenance,
+                        "row_index": pos,
+                    }
+                )
+                if provenance["award_kind"] == "sub" or _looks_like_subaward(obj):
+                    award_records.append({"record_kind": "subaward", "raw": dict(obj)})
+            # The per-slice outcome row trails the result records.
+            award_records.append(
+                {
+                    "record_kind": "usaspending_slice",
+                    "source_uri": capture.source_uri if capture else None,
+                    "capture_digest": capture.digest if capture else None,
+                    "provenance": provenance,
+                    "items_count": len(objects),
+                    "page_metadata": (
+                        dict(payload.get("page_metadata", {}))
+                        if isinstance(payload, Mapping)
+                        else {}
+                    ),
+                }
+            )
+            return award_records
         if ctx.source.id == source_ids().get("sam_gov"):
             # SAM.gov opportunities search — `opportunitiesData` is the notice
             # list (P26.2); a notice is a dated procurement event, not a contract.
@@ -1734,7 +2021,13 @@ class ProcurementConnector(Connector):
             elif kind == "tenant_api_error":
                 out.append(self._normalize_tenant_error(ctx, raw))
             elif kind == "procurement_notice":
-                out.extend(self._normalize_notice(ctx, raw))
+                if raw.get("notice_provenance"):
+                    out.extend(self._normalize_usaspending_notice(ctx, raw))
+                else:
+                    out.extend(self._normalize_notice(ctx, raw))
+            elif kind == "usaspending_slice":
+                # P26.14 per-slice outcome row — run-record data, not a claim.
+                out.append(_stamp(dict(raw), source_id=ctx.source.id))
             elif kind == "agenda_document":
                 out.extend(self._normalize_agenda_document(ctx, raw))
             elif kind == "portal_index":
@@ -2717,6 +3010,230 @@ class ProcurementConnector(Connector):
                         source_id=ctx.source.id,
                     )
                 )
+        return rows
+
+    def _normalize_usaspending_notice(
+        self, ctx: RunContext, raw: Mapping[str, Any]
+    ) -> list[dict[str, Any]]:
+        """A USAspending award row → a ``procurement_notice`` subject + typed claims (P26.14).
+
+        The federal-award notice surface: award/notice id, recipient, awarding
+        agency, amount, period, description, matched keyword — each claim
+        carries the source field name and a locator into the captured
+        ``results`` array. **Procured ≠ deployed**: the claims assert only
+        what the award record literally says — a purchase signal, never
+        deployment, use, or operational status. ``matched_keyword`` claims
+        assert that the record's text CONTAINS a reviewed literal (raw_value
+        is the verbatim slice), nothing more.
+        """
+        notice = raw["raw"]
+        prov = dict(raw.get("notice_provenance") or {})
+        row_index = raw.get("row_index")
+        award_kind = str(prov.get("award_kind") or "prime")
+        is_sub = award_kind == "sub"
+
+        award_id = (
+            _first_nonempty(
+                notice,
+                (
+                    "Sub-Award ID",
+                    "subaward_id",
+                    "Award ID",
+                    "award_id",
+                    "internal_id",
+                    "generated_internal_id",
+                ),
+            )
+            or _digest_of(notice)[:24]
+        )
+        subject = f"procurement_notice:{ctx.source.id}:{award_id}"
+        source_uri = str(prov.get("source_uri") or "")
+        retrieved_date = (str(prov.get("retrieved_at") or "")[:10]) or None
+
+        def _evidence(field: str, locator: Mapping[str, Any]) -> dict[str, Any]:
+            return {
+                "source_url": source_uri,
+                "retrieved_date": retrieved_date,
+                "extraction_method": "json_text",
+                "field": field,
+                "locator": locator,
+                "record_row": row_index,
+                "slice": prov.get("slice"),
+                "index_keyword": prov.get("index_keyword"),
+                "agency": prov.get("agency"),
+                "capture_digest": prov.get("capture_digest"),
+            }
+
+        # --- the typed field surface (source label -> predicate) --------------
+        recipient = _first_nonempty(
+            notice, ("Sub-Awardee Name", "subawardee", "subrecipient_name", "Recipient Name")
+        )
+        agency = _first_nonempty(
+            notice, ("Awarding Agency", "awarding_agency", "Awarding Sub Agency")
+        )
+        amount = _first_nonempty(
+            notice, ("Sub-Award Amount", "subaward_amount", "Award Amount", "amount")
+        )
+        start_date = _first_nonempty(
+            notice, ("Sub-Award Date", "subaward_date", "Start Date", "start_date")
+        )
+        end_date = _first_nonempty(notice, ("End Date", "end_date"))
+        description = _first_nonempty(
+            notice, ("Sub-Award Description", "subaward_description", "Description", "description")
+        )
+        action_date = _first_nonempty(
+            notice, ("Sub-Award Date", "subaward_date", "Start Date", "Action Date")
+        )
+        federal_id = _first_nonempty(
+            notice,
+            ("prime_award_generated_internal_id", "prime_award_id", "federal_award_id"),
+        )
+        notice_type = _first_nonempty(notice, ("Award Type", "award_type")) or (
+            "sub_award" if is_sub else "prime_award"
+        )
+
+        rows: list[dict[str, Any]] = [
+            _stamp(
+                {
+                    "record_kind": "procurement_notice",
+                    "subject_id": subject,
+                    "predicate_id": assert_predicate_allowed("procurement_notice"),
+                    "external_id": award_id,
+                    "raw_value": award_id,
+                    "notice_type": notice_type,
+                    "award_kind": award_kind,
+                    "provenance": prov,
+                    "row_index": row_index,
+                    "raw": dict(notice),
+                },
+                source_id=ctx.source.id,
+            )
+        ]
+
+        field_claims: list[tuple[str, str, str, Any]] = [
+            ("external_id", "Sub-Award ID" if is_sub else "Award ID", award_id, award_id),
+        ]
+        if recipient is not None:
+            field_claims.append(
+                (
+                    "recipient",
+                    "Sub-Awardee Name" if is_sub else "Recipient Name",
+                    recipient,
+                    recipient,
+                )
+            )
+        if agency is not None:
+            # Awarding agency: `funder` on assistance/sub-award rows (it pays
+            # the program), `buyer` on prime contract awards (it purchases).
+            agency_pred = "funder" if is_sub else "buyer"
+            field_claims.append((agency_pred, "Awarding Agency", agency, agency))
+        if amount is not None:
+            field_claims.append(
+                ("amount", "Sub-Award Amount" if is_sub else "Award Amount", amount, amount)
+            )
+        if start_date is not None or end_date is not None:
+            period = {"start": start_date, "end": end_date}
+            field_claims.append(("period", "Start Date/End Date", json.dumps(period), period))
+        if description is not None:
+            field_claims.append(
+                (
+                    "description",
+                    "Sub-Award Description" if is_sub else "Description",
+                    description,
+                    description,
+                )
+            )
+        if federal_id is not None:
+            field_claims.append(
+                ("federal_award_id", "prime_award_generated_internal_id", federal_id, federal_id)
+            )
+
+        for predicate, field_name, raw_literal, value in field_claims:
+            # Part VIII guard: a literal carrying a forbidden token is
+            # suppressed at the claim surface (the capture keeps the bytes;
+            # the claim asserts the field exists without repeating the token).
+            raw_out = _raw_value_of(raw_literal)
+            suppressed = content_guard_token(raw_out) is not None
+            row: dict[str, Any] = {
+                "record_kind": "claim",
+                "subject_id": subject,
+                "predicate_id": assert_predicate_allowed(predicate),
+                "raw_value": "[suppressed: part-VIII token]" if suppressed else raw_out,
+                "value": None if suppressed else value,
+                "observed_at": retrieved_date,
+                "evidence": _evidence(field_name, Locator.row(int(row_index or 0)).to_row()),
+            }
+            if suppressed:
+                row["part_viii_suppressed"] = True
+            if predicate in ("recipient", "buyer", "funder"):
+                row["candidate_identifier"] = org_candidate(str(value))
+            rows.append(_stamp(row, source_id=ctx.source.id))
+
+        # --- matched keywords: verbatim literals inside the record text ------
+        # Scan the record's own text fields; a match emits `matched_keyword`
+        # with the verbatim slice as raw_value and a byte-range locator into
+        # the named field. The slice's index_keyword rides as provenance
+        # regardless (it named the search, it is not itself a fact claim).
+        text_fields = [
+            f
+            for f in (
+                "Sub-Award Description",
+                "Description",
+                "subaward_description",
+                "description",
+                "Award Description",
+            )
+            if _opt_str(notice.get(f))
+        ]
+        matched: list[dict[str, Any]] = []
+        for field_name in text_fields:
+            text = str(notice[field_name])
+            for match in scan_agenda_content(text):
+                matched.append({**match, "field": field_name})
+        seen_terms: set[tuple[str, str]] = set()
+        for match in matched:
+            key = (str(match["term_id"]), str(match["field"]))
+            if key in seen_terms:
+                continue
+            seen_terms.add(key)
+            rows.append(
+                _stamp(
+                    {
+                        "record_kind": "claim",
+                        "subject_id": subject,
+                        "predicate_id": assert_predicate_allowed("matched_keyword"),
+                        "value": match["term_id"],
+                        "raw_value": match["literal"],
+                        "term_label": match["term_label"],
+                        "term_kind": match["term_kind"],
+                        "observed_at": retrieved_date,
+                        "evidence": _evidence(
+                            str(match["field"]),
+                            Locator.byte_range(int(match["start"]), int(match["end"])).to_row(),
+                        ),
+                    },
+                    source_id=ctx.source.id,
+                )
+            )
+
+        # --- lifecycle: a published award row asserts `awarded` --------------
+        rows.append(
+            _stamp(
+                {
+                    "record_kind": "claim",
+                    "subject_id": subject,
+                    "predicate_id": assert_predicate_allowed("lifecycle_transition"),
+                    "raw_value": "awarded",
+                    "value": {"state": "awarded", "date": action_date},
+                    "observed_at": retrieved_date,
+                    "evidence": _evidence(
+                        "Sub-Award Date" if is_sub else "Start Date",
+                        Locator.row(int(row_index or 0)).to_row(),
+                    ),
+                },
+                source_id=ctx.source.id,
+            )
+        )
         return rows
 
     def _build_contract(self, ctx: RunContext, raw: Mapping[str, Any]) -> Contract:
