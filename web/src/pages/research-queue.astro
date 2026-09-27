@@ -24,6 +24,7 @@ import {
   getJurisdictionClaims,
   getQueueAsOf,
   getResearchQueueProvenance,
+  capRows,
 } from "../lib/data";
 
 // The queue, its jurisdiction claims, its as-of, and its provenance flow through the
@@ -35,6 +36,10 @@ const RESEARCH_QUEUE_PROVENANCE = getResearchQueueProvenance();
 
 const ordered = orderQueue(RESEARCH_QUEUE, JURISDICTION_CLAIMS, QUEUE_AS_OF);
 const jurisdictions = queueJurisdictions(RESEARCH_QUEUE);
+// National-scale guard (P27.5 capRows, SIG-UI-037): at ~240k open tasks a real export
+// cannot render every card into one zero-JS page — bound the cards and state the
+// honest total; the full queue ships in the export's web/research_queue.json.
+const capped = capRows(ordered);
 ---
 
 <BaseLayout title="Research queue" path="/research-queue/" provenance={RESEARCH_QUEUE_PROVENANCE}>
@@ -55,7 +60,7 @@ const jurisdictions = queueJurisdictions(RESEARCH_QUEUE);
   <ul class="sig-queue-filter" aria-labelledby="filter-heading">
     {jurisdictions.map((j) => (
       <li data-testid="jurisdiction-filter" data-jurisdiction={j}>
-        <a href={`#jurisdiction-${j.replace(/[^a-zA-Z0-9]+/g, "-")}`}>{j}</a>
+        <a href={`#jurisdiction-${j.replace(/[^a-zA-Z0-9]+/g, "-")}`}>{j === "" ? "Unscoped" : j}</a>
         {" — "}{tasksForJurisdiction(RESEARCH_QUEUE, j).length} task(s)
       </li>
     ))}
@@ -63,8 +68,15 @@ const jurisdictions = queueJurisdictions(RESEARCH_QUEUE);
 
   <h2 id="queue-heading">Open tasks</h2>
   {ordered.length === 0 && <EmptyState surface="researchQueue" />}
+  {capped.truncated && (
+    <p class="sig-table-note" data-testid="queue-truncation-note">
+      Showing the first {capped.shown} of {capped.total} open tasks in queue order
+      (claimed jurisdictions first, then priority); the full queue is in the export
+      bundle's <code>web/research_queue.json</code> (SIG-UI-037).
+    </p>
+  )}
   <ol class="sig-queue" aria-labelledby="queue-heading">
-    {ordered.map((card) => {
+    {capped.rows.map((card) => {
       const claim = claimStatusFor(card, JURISDICTION_CLAIMS, QUEUE_AS_OF);
       return (
         <li

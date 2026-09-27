@@ -173,9 +173,15 @@ def test_resolve_targets_env_then_template_then_skip() -> None:
     # P31.1: the store-readiness endpoint is probed (not /healthz, ADR-108).
     assert names["sig-api-health"] == "https://api.test/health"
     assert names["sig-web-root"] == "https://web.test/"
+    # P31.16: the launch-shape okc/france slice compartments are gone from the national
+    # export; the probes now cover the licence index + a real compartment data file.
     assert (
-        names["sig-public-okc-manifest"]
-        == "https://storage.googleapis.com/proj-x-sig-public/okc/manifest.json"
+        names["sig-public-licences"]
+        == "https://storage.googleapis.com/proj-x-sig-public/LICENCES.json"
+    )
+    assert (
+        names["sig-public-compartment-sites"]
+        == "https://storage.googleapis.com/proj-x-sig-public/peel_odl1/sites.csv"
     )
     assert names["sig-pg-cloudsql"].startswith("postgresql://sig:")
 

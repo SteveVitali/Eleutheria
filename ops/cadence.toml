@@ -49,14 +49,16 @@ url_env = "SIG_PROBE_WEB_URL"    # the public static site. Canonical public orig
 path = "/"
 
 [[probes.targets]]
-name = "sig-public-okc-manifest"
-kind = "http"
-url = "https://storage.googleapis.com/{project}-sig-public/okc/manifest.json"
+name = "sig-public-licences"               # P31.16: the licence-compartment index — the public
+kind = "http"                              # label of the separation contract (was the okc slice
+url = "https://storage.googleapis.com/{project}-sig-public/LICENCES.json"  # manifest; that demo
+                                           # compartment no longer exists in the national export).
 
 [[probes.targets]]
-name = "sig-public-france-manifest"
-kind = "http"
-url = "https://storage.googleapis.com/{project}-sig-public/france/manifest.json"
+name = "sig-public-compartment-sites"      # P31.16: a real single-licence compartment data file —
+kind = "http"                              # compartment bytes are world-readable (was the france
+url = "https://storage.googleapis.com/{project}-sig-public/peel_odl1/sites.csv"  # slice manifest;
+                                           # france now rides inside the national compartments).
 
 [[probes.targets]]
 name = "sig-public-national-manifest"     # P27.8: the NATIONAL published-compartment export
