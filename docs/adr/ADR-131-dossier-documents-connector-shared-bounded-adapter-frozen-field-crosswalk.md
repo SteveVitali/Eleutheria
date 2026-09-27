@@ -1,6 +1,6 @@
 # ADR-131 — The `dossier_documents` connector: one shared bounded adapter over a frozen field crosswalk (P32.12)
 
-- Date: 2026-10-15
+- Date: 2026-09-27
 - Status: accepted (engineering; all three sources stay `ingestion_permitted=false` — fixture success is not a rights decision, a gate flip, or publication approval)
 - Ticket: P32.12 (Round 10 / S5, row 172; requirement SIG-ACQ-003; annotates `D-R10-SOURCES-1`)
 - Base: `30d401d` (the P32.11 chain tip `devin/p32-11-gap-driven-source-discovery`, PR #167)
