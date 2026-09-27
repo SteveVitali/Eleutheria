@@ -27,7 +27,6 @@ from __future__ import annotations
 
 import time
 from collections.abc import Iterator
-from pathlib import Path
 
 import psycopg
 import pytest
@@ -99,8 +98,10 @@ def eval_campaign(conn: object) -> dict[str, object]:
         conn,
         campaign_id=CAMPAIGN,
         sample_rows=rows,
-        denominators={"development": {"s1": {"universe": 2, "drawn": 1}},
-                      "sealed_final": {"s1": {"universe": 4, "drawn": 1}}},
+        denominators={
+            "development": {"s1": {"universe": 2, "drawn": 1}},
+            "sealed_final": {"s1": {"universe": 4, "drawn": 1}},
+        },
         created_by="fixture",
         role=None,
     )
@@ -140,9 +141,16 @@ def _packet_digest(conn: object, sample_id: str) -> str:
     ).fetchone()[0]
 
 
-def _label(conn: object, sample_id: str, reviewer: str, *, label: str = "same",
-           round_: str = "independent_1", supersedes: str | None = None,
-           role: str | None = None) -> str:
+def _label(
+    conn: object,
+    sample_id: str,
+    reviewer: str,
+    *,
+    label: str = "same",
+    round_: str = "independent_1",
+    supersedes: str | None = None,
+    role: str | None = None,
+) -> str:
     pkt = _packet_digest(conn, sample_id)
     out = record_label(
         conn,
@@ -206,8 +214,14 @@ def test_admin_prepares_but_never_sees_base_labels(conn: object) -> None:
     priv = lambda t, p: conn.execute(  # noqa: E731
         "SELECT has_table_privilege('sig_eval_admin', %s, %s)", (t, p)
     ).fetchone()[0]
-    for t in ("human_eval_campaign", "human_eval_manifest", "human_eval_sample",
-              "human_eval_packet", "human_eval_assignment", "human_eval_attestation"):
+    for t in (
+        "human_eval_campaign",
+        "human_eval_manifest",
+        "human_eval_sample",
+        "human_eval_packet",
+        "human_eval_assignment",
+        "human_eval_attestation",
+    ):
         assert priv(t, "SELECT") and priv(t, "INSERT"), t
         assert not priv(t, "UPDATE") and not priv(t, "DELETE"), t
     assert priv("human_eval_label_released", "SELECT")
@@ -227,8 +241,13 @@ def test_reviewer_scoped_writes_no_internals(conn: object) -> None:
     for t in ("human_eval_packet", "human_eval_assignment"):
         assert priv(t, "SELECT")
     # Strata, probabilities, partitions, adjudications, releases, designs: denied.
-    for t in ("human_eval_sample", "human_eval_adjudication", "human_eval_release",
-              "human_eval_campaign", "human_eval_manifest"):
+    for t in (
+        "human_eval_sample",
+        "human_eval_adjudication",
+        "human_eval_release",
+        "human_eval_campaign",
+        "human_eval_manifest",
+    ):
         assert not priv(t, "SELECT"), t
     assert not priv("human_eval_label", "UPDATE")
     assert not priv("human_eval_label", "DELETE")
@@ -238,8 +257,14 @@ def test_custodian_reads_all_writes_decisions_only(conn: object) -> None:
     priv = lambda t, p: conn.execute(  # noqa: E731
         "SELECT has_table_privilege('sig_eval_custodian', %s, %s)", (t, p)
     ).fetchone()[0]
-    for t in ("human_eval_label", "human_eval_adjudication", "human_eval_release",
-              "human_eval_sample", "human_eval_packet", "human_eval_campaign"):
+    for t in (
+        "human_eval_label",
+        "human_eval_adjudication",
+        "human_eval_release",
+        "human_eval_sample",
+        "human_eval_packet",
+        "human_eval_campaign",
+    ):
         assert priv(t, "SELECT"), t
     assert priv("human_eval_release", "INSERT")
     assert priv("human_eval_adjudication", "INSERT")
@@ -249,15 +274,28 @@ def test_custodian_reads_all_writes_decisions_only(conn: object) -> None:
 
 def test_materialize_and_read_roles_have_no_eval_access(conn: object) -> None:
     def priv(role: str, table: str, p: str) -> bool:
-        return conn.execute(
-            "SELECT has_table_privilege(%s, %s, %s)", (role, table, p)
-        ).fetchone()[0]
+        return conn.execute("SELECT has_table_privilege(%s, %s, %s)", (role, table, p)).fetchone()[
+            0
+        ]
 
-    base = ("human_eval_campaign", "human_eval_manifest", "human_eval_sample",
-            "human_eval_packet", "human_eval_assignment", "human_eval_attestation",
-            "human_eval_label", "human_eval_adjudication", "human_eval_release")
-    for role in ("sig_materialize", "sig_read_public", "sig_read_restricted",
-                 "sig_read_sealed", "sig_export"):
+    base = (
+        "human_eval_campaign",
+        "human_eval_manifest",
+        "human_eval_sample",
+        "human_eval_packet",
+        "human_eval_assignment",
+        "human_eval_attestation",
+        "human_eval_label",
+        "human_eval_adjudication",
+        "human_eval_release",
+    )
+    for role in (
+        "sig_materialize",
+        "sig_read_public",
+        "sig_read_restricted",
+        "sig_read_sealed",
+        "sig_export",
+    ):
         for t in base:
             for p in ("SELECT", "INSERT", "UPDATE", "DELETE"):
                 assert not priv(role, t, p), f"{role} must not hold {p} on {t}"
@@ -271,14 +309,26 @@ def test_materialize_and_read_roles_have_no_eval_access(conn: object) -> None:
 # --------------------------------------------------------------------------- #
 # Reviewer isolation — two reviewers cannot see each other's first pass        #
 # --------------------------------------------------------------------------- #
-def test_reviewer_rls_isolates_labels_packets_assignments(conn: object, eval_campaign: dict) -> None:
+def test_reviewer_rls_isolates_labels_packets_assignments(
+    conn: object, eval_campaign: dict
+) -> None:
     assign_reviewers(
-        conn, campaign_id=CAMPAIGN, reviewer_id="rev-a", sample_ids=["hev-dev"],
-        pass_no=1, assigned_by="fixture", role=None,
+        conn,
+        campaign_id=CAMPAIGN,
+        reviewer_id="rev-a",
+        sample_ids=["hev-dev"],
+        pass_no=1,
+        assigned_by="fixture",
+        role=None,
     )
     assign_reviewers(
-        conn, campaign_id=CAMPAIGN, reviewer_id="rev-b", sample_ids=["hev-sealed"],
-        pass_no=1, assigned_by="fixture", role=None,
+        conn,
+        campaign_id=CAMPAIGN,
+        reviewer_id="rev-b",
+        sample_ids=["hev-sealed"],
+        pass_no=1,
+        assigned_by="fixture",
+        role=None,
     )
     _label(conn, "hev-dev", "rev-a", role=None)
     _label(conn, "hev-sealed", "rev-b", role=None)
@@ -286,17 +336,13 @@ def test_reviewer_rls_isolates_labels_packets_assignments(conn: object, eval_cam
     _as_role(conn, "sig_eval_reviewer", "rev-a")
     try:
         # Own label only — rev-b's sealed label does not exist for rev-a.
-        rows = conn.execute(
-            "SELECT reviewer_id, sample_id FROM human_eval_label"
-        ).fetchall()
+        rows = conn.execute("SELECT reviewer_id, sample_id FROM human_eval_label").fetchall()
         assert rows == [("rev-a", "hev-dev")]
         # Only own assignment.
         a = conn.execute("SELECT sample_id FROM human_eval_assignment").fetchall()
         assert a == [("hev-dev",)]
         # Packet for the assigned sample only — the unassigned one is invisible.
-        p = conn.execute(
-            "SELECT sample_id FROM human_eval_packet ORDER BY sample_id"
-        ).fetchall()
+        p = conn.execute("SELECT sample_id FROM human_eval_packet ORDER BY sample_id").fetchall()
         assert p == [("hev-dev",)]
         # Sample internals (strata/probability) are not even grantable.
         _denied(conn, "SELECT * FROM human_eval_sample")
@@ -339,16 +385,26 @@ def test_unset_guc_fails_closed(conn: object, eval_campaign: dict) -> None:
 
 def test_workbook_export_carries_only_blinded_fields(conn: object, eval_campaign: dict) -> None:
     assign_reviewers(
-        conn, campaign_id=CAMPAIGN, reviewer_id="rev-a", sample_ids=["hev-dev"],
-        pass_no=1, assigned_by="fixture", role=None,
+        conn,
+        campaign_id=CAMPAIGN,
+        reviewer_id="rev-a",
+        sample_ids=["hev-dev"],
+        pass_no=1,
+        assigned_by="fixture",
+        role=None,
     )
-    rows = export_workbook(
-        conn, campaign_id=CAMPAIGN, reviewer_id="rev-a", pass_no=1, role=None
-    )
+    rows = export_workbook(conn, campaign_id=CAMPAIGN, reviewer_id="rev-a", pass_no=1, role=None)
     assert len(rows) == 1
     row = rows[0]
-    assert set(row) == {"sample_id", "packet_digest", "packet", "label",
-                        "reason_codes", "evidence_refs", "rubric_version"}
+    assert set(row) == {
+        "sample_id",
+        "packet_digest",
+        "packet",
+        "label",
+        "reason_codes",
+        "evidence_refs",
+        "rubric_version",
+    }
     # The payload carries sides only — no stratum/tier/score/pair ids.
     assert set(row["packet"]) == {"packet_version", "side_a", "side_b"}
 
@@ -356,15 +412,21 @@ def test_workbook_export_carries_only_blinded_fields(conn: object, eval_campaign
 # --------------------------------------------------------------------------- #
 # Append-only supersession + insufficient persistence                          #
 # --------------------------------------------------------------------------- #
-def test_insufficient_label_persists_and_never_auto_accepts(conn: object, eval_campaign: dict) -> None:
+def test_insufficient_label_persists_and_never_auto_accepts(
+    conn: object, eval_campaign: dict
+) -> None:
     # Written through the production path: assign the packet, then the label
     # lands under sig_eval_reviewer + the sig.eval_reviewer GUC — own row only.
     assign_reviewers(
-        conn, campaign_id=CAMPAIGN, reviewer_id="rev-a", sample_ids=["hev-dev"],
-        pass_no=1, assigned_by="fixture", role=None,
+        conn,
+        campaign_id=CAMPAIGN,
+        reviewer_id="rev-a",
+        sample_ids=["hev-dev"],
+        pass_no=1,
+        assigned_by="fixture",
+        role=None,
     )
-    _label(conn, "hev-dev", "rev-a", label="insufficient_evidence",
-           role="sig_eval_reviewer")
+    _label(conn, "hev-dev", "rev-a", label="insufficient_evidence", role="sig_eval_reviewer")
     row = conn.execute(
         "SELECT label FROM human_eval_label WHERE campaign_id=%s AND sample_id='hev-dev'",
         (CAMPAIGN,),
@@ -372,10 +434,13 @@ def test_insufficient_label_persists_and_never_auto_accepts(conn: object, eval_c
     assert row[0] == "insufficient_evidence"
     # It can never surface as an operational accept: the vocabulary is a CHECK
     # boundary, and no write path maps it onto review_decision.
-    assert conn.execute(
-        "SELECT count(*) FROM review_decision rd JOIN review_item ri "
-        "ON ri.item_id = rd.item_id WHERE ri.item_id LIKE 'hev-%'"
-    ).fetchone()[0] == 0
+    assert (
+        conn.execute(
+            "SELECT count(*) FROM review_decision rd JOIN review_item ri "
+            "ON ri.item_id = rd.item_id WHERE ri.item_id LIKE 'hev-%'"
+        ).fetchone()[0]
+        == 0
+    )
 
 
 def test_append_only_supersession(conn: object, eval_campaign: dict) -> None:
@@ -397,26 +462,51 @@ def test_append_only_supersession(conn: object, eval_campaign: dict) -> None:
     conn.rollback()
 
 
-@pytest.mark.parametrize("table", [
-    "human_eval_campaign", "human_eval_manifest", "human_eval_sample",
-    "human_eval_packet", "human_eval_assignment", "human_eval_attestation",
-    "human_eval_label", "human_eval_adjudication", "human_eval_release",
-])
+@pytest.mark.parametrize(
+    "table",
+    [
+        "human_eval_campaign",
+        "human_eval_manifest",
+        "human_eval_sample",
+        "human_eval_packet",
+        "human_eval_assignment",
+        "human_eval_attestation",
+        "human_eval_label",
+        "human_eval_adjudication",
+        "human_eval_release",
+    ],
+)
 def test_every_eval_table_is_immutable(conn: object, eval_campaign: dict, table: str) -> None:
     # Seed one row in each auxiliary table so the UPDATE actually reaches a row
     # (a trigger on an empty table never fires).
     _label(conn, "hev-dev", "rev-a", role=None)
     assign_reviewers(
-        conn, campaign_id=CAMPAIGN, reviewer_id="rev-a", sample_ids=["hev-dev"],
-        pass_no=1, assigned_by="fixture", role=None,
+        conn,
+        campaign_id=CAMPAIGN,
+        reviewer_id="rev-a",
+        sample_ids=["hev-dev"],
+        pass_no=1,
+        assigned_by="fixture",
+        role=None,
     )
     record_adjudication(
-        conn, campaign_id=CAMPAIGN, sample_id="hev-dev", adjudicator_id="adj-1",
-        phase="resolution", label="same", reason="r", evidence_refs=[], role=None,
+        conn,
+        campaign_id=CAMPAIGN,
+        sample_id="hev-dev",
+        adjudicator_id="adj-1",
+        phase="resolution",
+        label="same",
+        reason="r",
+        evidence_refs=[],
+        role=None,
     )
     record_release(
-        conn, campaign_id=CAMPAIGN, scope="development_only",
-        authorized_by="fixture", detail={}, role=None,
+        conn,
+        campaign_id=CAMPAIGN,
+        scope="development_only",
+        authorized_by="fixture",
+        detail={},
+        role=None,
     )
     # The immutability trigger refuses UPDATE/DELETE even for the table owner.
     with pytest.raises(psycopg.errors.RaiseException, match="immutable"):
@@ -438,8 +528,14 @@ def test_sealed_labels_stay_invisible_until_release(conn: object, eval_campaign:
     _label(conn, "hev-sealed", "rev-b", role=None)
     # The adjudication lands through the custodian path it will use in production.
     record_adjudication(
-        conn, campaign_id=CAMPAIGN, sample_id="hev-sealed", adjudicator_id="adj-1",
-        phase="resolution", label="same", reason="settled", evidence_refs=[],
+        conn,
+        campaign_id=CAMPAIGN,
+        sample_id="hev-sealed",
+        adjudicator_id="adj-1",
+        phase="resolution",
+        label="same",
+        reason="settled",
+        evidence_refs=[],
         role="sig_eval_custodian",
     )
     conn.execute("RESET ROLE")
@@ -451,9 +547,9 @@ def test_sealed_labels_stay_invisible_until_release(conn: object, eval_campaign:
             "SELECT sample_id FROM human_eval_label_released ORDER BY sample_id"
         ).fetchall()
         assert rows == [("hev-dev",)]
-        assert conn.execute(
-            "SELECT count(*) FROM human_eval_adjudication_released"
-        ).fetchone()[0] == 0
+        assert (
+            conn.execute("SELECT count(*) FROM human_eval_adjudication_released").fetchone()[0] == 0
+        )
         # No base-table path at all.
         _denied(conn, "SELECT * FROM human_eval_label")
     finally:
@@ -467,47 +563,47 @@ def test_sealed_labels_stay_invisible_until_release(conn: object, eval_campaign:
         _denied(conn, "SELECT * FROM human_eval_sample")
         _denied(conn, "SELECT * FROM human_eval_adjudication")
         _denied(conn, "SELECT * FROM human_eval_release")
-        assert conn.execute(
-            "SELECT count(*) FROM human_eval_label_operational"
-        ).fetchone()[0] == 0
+        assert conn.execute("SELECT count(*) FROM human_eval_label_operational").fetchone()[0] == 0
     finally:
         _reset(conn)
 
     # A non-operational release opens the model-development view, never the
     # operational one — recorded through the custodian path.
     record_release(
-        conn, campaign_id=CAMPAIGN, scope="final",
-        authorized_by="P32.23-gate", detail={}, role="sig_eval_custodian",
+        conn,
+        campaign_id=CAMPAIGN,
+        scope="final",
+        authorized_by="P32.23-gate",
+        detail={},
+        role="sig_eval_custodian",
     )
     conn.execute("RESET ROLE")
     _as_role(conn, "sig_eval_admin")
     try:
         assert {
-            r[0] for r in conn.execute(
-                "SELECT sample_id FROM human_eval_label_released"
-            ).fetchall()
+            r[0] for r in conn.execute("SELECT sample_id FROM human_eval_label_released").fetchall()
         } == {"hev-dev", "hev-sealed"}
     finally:
         _reset(conn)
     conn.execute("SET ROLE sig_materialize")
     try:
-        assert conn.execute(
-            "SELECT count(*) FROM human_eval_label_operational"
-        ).fetchone()[0] == 0
+        assert conn.execute("SELECT count(*) FROM human_eval_label_operational").fetchone()[0] == 0
     finally:
         _reset(conn)
 
     # Only an operational release exposes anything to clustering.
     record_release(
-        conn, campaign_id=CAMPAIGN, scope="operational",
-        authorized_by="P32.23-gate", detail={}, role="sig_eval_custodian",
+        conn,
+        campaign_id=CAMPAIGN,
+        scope="operational",
+        authorized_by="P32.23-gate",
+        detail={},
+        role="sig_eval_custodian",
     )
     conn.execute("RESET ROLE")
     conn.execute("SET ROLE sig_materialize")
     try:
-        rows = conn.execute(
-            "SELECT sample_id, label FROM human_eval_label_operational"
-        ).fetchall()
+        rows = conn.execute("SELECT sample_id, label FROM human_eval_label_operational").fetchall()
         assert set(rows) == {("hev-sealed", "same"), ("hev-dev", "same")}
     finally:
         _reset(conn)
@@ -635,9 +731,10 @@ def test_p31_operational_review_is_untouched(conn: object, eval_campaign: dict) 
         )
     conn.rollback()
     # Eval labels never appear in the operational queue.
-    assert conn.execute(
-        "SELECT count(*) FROM review_item WHERE item_id LIKE 'hev-%'"
-    ).fetchone()[0] == 0
+    assert (
+        conn.execute("SELECT count(*) FROM review_item WHERE item_id LIKE 'hev-%'").fetchone()[0]
+        == 0
+    )
 
 
 # --------------------------------------------------------------------------- #
@@ -673,8 +770,12 @@ def revert_db() -> Iterator[dict[str, object]]:
         while time.time() < deadline:
             try:
                 with psycopg.connect(
-                    host=host, port=port, user=PG_USER, password=PG_PASSWORD,
-                    dbname=PG_DB, connect_timeout=3,
+                    host=host,
+                    port=port,
+                    user=PG_USER,
+                    password=PG_PASSWORD,
+                    dbname=PG_DB,
+                    connect_timeout=3,
                 ):
                     break
             except Exception as exc:  # noqa: BLE001
@@ -747,25 +848,31 @@ def test_revert_drops_only_the_eval_surface_and_keeps_history(revert_db: dict) -
     sqitch("revert", "-y", "--to", "publication_dispositions")
 
     with psycopg.connect(str(revert_db["dsn"]), autocommit=True) as conn:
-        for t in ("human_eval_campaign", "human_eval_sample", "human_eval_label",
-                  "human_eval_release", "human_eval_label_released"):
-            assert conn.execute(
-                "SELECT to_regclass(%s)", (f"public.{t}",)
-            ).fetchone()[0] is None, f"{t} must be dropped by the revert"
+        for t in (
+            "human_eval_campaign",
+            "human_eval_sample",
+            "human_eval_label",
+            "human_eval_release",
+            "human_eval_label_released",
+        ):
+            assert conn.execute("SELECT to_regclass(%s)", (f"public.{t}",)).fetchone()[0] is None, (
+                f"{t} must be dropped by the revert"
+            )
         # Nothing earlier is touched: the claim + operational review history
         # survive byte-for-byte.
         assert conn.execute("SELECT count(*) FROM claim").fetchone()[0] == claim_before
-        assert conn.execute(
-            "SELECT count(*) FROM review_decision"
-        ).fetchone()[0] == review_before
-        assert conn.execute(
-            "SELECT count(*) FROM claim WHERE claim_id = %s", (claim_id,)
-        ).fetchone()[0] == 1
+        assert conn.execute("SELECT count(*) FROM review_decision").fetchone()[0] == review_before
+        assert (
+            conn.execute("SELECT count(*) FROM claim WHERE claim_id = %s", (claim_id,)).fetchone()[
+                0
+            ]
+            == 1
+        )
 
     # And the change re-deploys cleanly (forward path stays migratable).
     sqitch("deploy")
     with psycopg.connect(str(revert_db["dsn"]), autocommit=True) as conn:
-        assert conn.execute(
-            "SELECT to_regclass('public.human_eval_label')"
-        ).fetchone()[0] is not None
+        assert (
+            conn.execute("SELECT to_regclass('public.human_eval_label')").fetchone()[0] is not None
+        )
         assert conn.execute("SELECT count(*) FROM claim").fetchone()[0] == claim_before

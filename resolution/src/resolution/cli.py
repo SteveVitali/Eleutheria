@@ -354,9 +354,7 @@ def build_parser() -> argparse.ArgumentParser:
     ev_export.add_argument("--pass", dest="pass_no", type=int, default=1, choices=(1, 2))
     ev_export.add_argument("--out", default=None, help="output JSONL path (default: stdout)")
 
-    ev_attest = ev_sub.add_parser(
-        "attest", help="record a human-attestation event (append-only)"
-    )
+    ev_attest = ev_sub.add_parser("attest", help="record a human-attestation event (append-only)")
     ev_attest.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
     ev_attest.add_argument("--role", default="sig_eval_admin", help="role to SET ROLE to")
     ev_attest.add_argument("--campaign-id", default=None)
@@ -434,9 +432,7 @@ def build_parser() -> argparse.ArgumentParser:
     ev_verify.add_argument("--role", default="sig_eval_admin", help="role to SET ROLE to")
     ev_verify.add_argument("--campaign-id", required=True)
 
-    ev_wm = ev_sub.add_parser(
-        "watermark", help="print the campaign's chained label watermark"
-    )
+    ev_wm = ev_sub.add_parser("watermark", help="print the campaign's chained label watermark")
     ev_wm.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
     ev_wm.add_argument("--role", default="sig_eval_custodian", help="role to SET ROLE to")
     ev_wm.add_argument("--campaign-id", required=True)
@@ -1205,8 +1201,10 @@ def _run_eval(args: argparse.Namespace) -> int:
     }
     handler = handlers.get(args.eval_command)
     if handler is None:
-        print("usage: sig-resolution eval {frame,prepare,packets,assign,status,export,"
-              "attest,import-labels,adjudicate,unseal,verify,watermark} ...")
+        print(
+            "usage: sig-resolution eval {frame,prepare,packets,assign,status,export,"
+            "attest,import-labels,adjudicate,unseal,verify,watermark} ..."
+        )
         return 2
     try:
         return handler(args)

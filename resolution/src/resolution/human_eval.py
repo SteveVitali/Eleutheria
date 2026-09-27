@@ -449,7 +449,11 @@ def assign_partitions(
             remainder -= targets[name]
         assigned: dict[str, int] = {p: 0 for p in PARTITIONS}
 
-        def deficit(part: str) -> int:
+        def deficit(
+            part: str,
+            targets: dict[str, int] = targets,
+            assigned: dict[str, int] = assigned,
+        ) -> int:
             return targets.get(part, 0) - assigned[part]
 
         for gid in ordered:
@@ -692,9 +696,7 @@ def build_blinded_packet(
     evidence, never ids.
     """
     flip = int(sha256_hex(f"{seed}|{sample_id}|orient")[:8], 16) % 2 == 1
-    a_raw, b_raw = (
-        (right_evidence, left_evidence) if flip else (left_evidence, right_evidence)
-    )
+    a_raw, b_raw = (right_evidence, left_evidence) if flip else (left_evidence, right_evidence)
     side_a = _sanitize(dict(a_raw), "side_a")
     side_b = _sanitize(dict(b_raw), "side_b")
     payload: dict[str, Any] = {
@@ -710,9 +712,7 @@ def assert_blinded(payload: Mapping[str, Any]) -> None:
     """Raise ``ValueError`` if a reviewer payload carries any forbidden key."""
     hits = _scan_forbidden(payload)
     if hits:
-        raise ValueError(
-            "unblinded packet field(s) present: " + ", ".join(sorted(hits))
-        )
+        raise ValueError("unblinded packet field(s) present: " + ", ".join(sorted(hits)))
 
 
 def packet_digest(payload: Mapping[str, Any]) -> str:
@@ -777,10 +777,10 @@ def consensus(labels: Sequence[str]) -> str:
     preserved, never collapsed into agreement, and ``insufficient`` can never
     produce ``same`` (the "cannot auto-accept a pair" invariant).
     """
-    vals = [l for l in labels if l]
-    for l in vals:
-        if l not in REFERENCE_LABELS:
-            raise ValueError(f"unknown label {l!r}")
+    vals = [lab for lab in labels if lab]
+    for lab in vals:
+        if lab not in REFERENCE_LABELS:
+            raise ValueError(f"unknown label {lab!r}")
     if len(vals) < 2:
         return "awaiting_labels"
     first_two = vals[:2]

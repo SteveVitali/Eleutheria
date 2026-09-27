@@ -59,7 +59,10 @@ def test_pairs_sharing_a_subject_group_together() -> None:
     items = _frame(4)
     # p0 (e0~e1) and p1 (e2~e3) share nothing; force e1 == e2 via a new item.
     items[1] = FrameItem(
-        pair_id="p001", left_ref="e1", right_ref="e3", stratum_id="t2",
+        pair_id="p001",
+        left_ref="e1",
+        right_ref="e3",
+        stratum_id="t2",
         source_lineage_ids=("src-1",),
     )
     groups = build_dependency_groups(items)
@@ -71,20 +74,40 @@ def test_pairs_sharing_a_subject_group_together() -> None:
 
 def test_shared_lineage_or_family_groups_transitively() -> None:
     items = [
-        FrameItem(pair_id="p1", left_ref="a1", right_ref="b1", stratum_id="s",
-                  source_lineage_ids=("up-1",)),
-        FrameItem(pair_id="p2", left_ref="a2", right_ref="b2", stratum_id="s",
-                  source_lineage_ids=("up-1",)),
-        FrameItem(pair_id="p3", left_ref="a3", right_ref="b3", stratum_id="s",
-                  republisher_family="fam-x"),
-        FrameItem(pair_id="p4", left_ref="a4", right_ref="b4", stratum_id="s",
-                  republisher_family="fam-x"),
-        FrameItem(pair_id="p5", left_ref="a5", right_ref="b5", stratum_id="s",
-                  source_lineage_ids=("up-2",), republisher_family="fam-x"),
-        FrameItem(pair_id="p6", left_ref="a6", right_ref="b6", stratum_id="s",
-                  mirror_group_id="mir-1"),
-        FrameItem(pair_id="p7", left_ref="a7", right_ref="b7", stratum_id="s",
-                  mirror_group_id="mir-1"),
+        FrameItem(
+            pair_id="p1",
+            left_ref="a1",
+            right_ref="b1",
+            stratum_id="s",
+            source_lineage_ids=("up-1",),
+        ),
+        FrameItem(
+            pair_id="p2",
+            left_ref="a2",
+            right_ref="b2",
+            stratum_id="s",
+            source_lineage_ids=("up-1",),
+        ),
+        FrameItem(
+            pair_id="p3", left_ref="a3", right_ref="b3", stratum_id="s", republisher_family="fam-x"
+        ),
+        FrameItem(
+            pair_id="p4", left_ref="a4", right_ref="b4", stratum_id="s", republisher_family="fam-x"
+        ),
+        FrameItem(
+            pair_id="p5",
+            left_ref="a5",
+            right_ref="b5",
+            stratum_id="s",
+            source_lineage_ids=("up-2",),
+            republisher_family="fam-x",
+        ),
+        FrameItem(
+            pair_id="p6", left_ref="a6", right_ref="b6", stratum_id="s", mirror_group_id="mir-1"
+        ),
+        FrameItem(
+            pair_id="p7", left_ref="a7", right_ref="b7", stratum_id="s", mirror_group_id="mir-1"
+        ),
     ]
     groups = build_dependency_groups(items)
     by_pair = {p: g for g, ps in groups.items() for p in ps}
@@ -109,11 +132,17 @@ def test_partitions_never_split_a_dependency_group() -> None:
     items = _frame(60)
     # Make p005 mirror p006 — they must share a partition whatever the draw.
     items[6] = FrameItem(
-        pair_id="p006", left_ref="e100", right_ref="e101", stratum_id="t1",
+        pair_id="p006",
+        left_ref="e100",
+        right_ref="e101",
+        stratum_id="t1",
         mirror_group_id="shared-copy",
     )
     items[5] = FrameItem(
-        pair_id="p005", left_ref="e98", right_ref="e99", stratum_id="t1",
+        pair_id="p005",
+        left_ref="e98",
+        right_ref="e99",
+        stratum_id="t1",
         mirror_group_id="shared-copy",
     )
     items = homogenize_group_strata(items)
@@ -139,15 +168,16 @@ def test_no_lineage_crosses_the_sealed_boundary() -> None:
 
     sealed_keys = set().union(*(keys(p) for p in sealed)) if sealed else set()
     for p in non_sealed:
-        assert not (keys(p) & sealed_keys), (
-            f"{p} shares entity/lineage/family with a sealed pair"
-        )
+        assert not (keys(p) & sealed_keys), f"{p} shares entity/lineage/family with a sealed pair"
 
 
 def test_holdout_families_are_forced_sealed() -> None:
     items = _frame(40)
     items[0] = FrameItem(
-        pair_id="p000", left_ref="e0", right_ref="e1", stratum_id="t1",
+        pair_id="p000",
+        left_ref="e0",
+        right_ref="e1",
+        stratum_id="t1",
         republisher_family="fam-held-out",
     )
     spec = GroupSpec(holdout_families=("fam-held-out",))
@@ -203,9 +233,7 @@ def test_inclusion_probabilities_and_weights_are_explicit() -> None:
         cell = den[r["partition"]][r["stratum_id"]]
         assert cell["universe"] >= cell["drawn"] > 0
         assert 0 < r["selection_probability"] <= 1.0
-        assert r["weight"] == pytest.approx(
-            cell["universe"] / cell["drawn"]
-        )
+        assert r["weight"] == pytest.approx(cell["universe"] / cell["drawn"])
         assert abs(r["selection_probability"] * r["weight"] - 1.0) < 1e-9
     # Census cells (quota None → everything drawn) honestly report p = 1.
     assert any(r["selection_probability"] == 1.0 for r in rows)
@@ -248,9 +276,7 @@ def test_quota_bounded_draw_records_honest_probability() -> None:
 def _campaign_and_rows():
     items = homogenize_group_strata(_frame(40))
     parts = assign_partitions(items, seed="m", spec=GroupSpec())
-    rows, den = draw_eval_sample(
-        items, parts, campaign_id="camp-m", seed="m", spec=SampleSpec()
-    )
+    rows, den = draw_eval_sample(items, parts, campaign_id="camp-m", seed="m", spec=SampleSpec())
     design = campaign_design(
         purpose="t",
         protocol_digest="pd",
@@ -344,8 +370,17 @@ def test_packet_strips_every_model_and_label_field() -> None:
     side = payload["side_a"]
     assert side["latitude"] == 35.47
     assert side["operator"] == "ODOT"
-    for forbidden in ("tier", "score", "overall_weight", "model_id", "stratum",
-                      "labels", "predicted_cluster", "distance_m", "match_evidence"):
+    for forbidden in (
+        "tier",
+        "score",
+        "overall_weight",
+        "model_id",
+        "stratum",
+        "labels",
+        "predicted_cluster",
+        "distance_m",
+        "match_evidence",
+    ):
         assert forbidden not in side
     # Nested forbidden keys are gone too.
     assert side["nested"] == {"keep": "x"}
@@ -361,12 +396,8 @@ def test_assert_blinded_rejects_leaky_payloads() -> None:
 def test_orientation_is_reproducible_and_seed_varied() -> None:
     left = {"name": "left-side", "latitude": 1.0}
     right = {"name": "right-side", "latitude": 2.0}
-    p1 = build_blinded_packet(
-        sample_id="hev-1", seed="s", left_evidence=left, right_evidence=right
-    )
-    p2 = build_blinded_packet(
-        sample_id="hev-1", seed="s", left_evidence=left, right_evidence=right
-    )
+    p1 = build_blinded_packet(sample_id="hev-1", seed="s", left_evidence=left, right_evidence=right)
+    p2 = build_blinded_packet(sample_id="hev-1", seed="s", left_evidence=left, right_evidence=right)
     assert p1 == p2  # same seed + sample → same packet (reproducible audit)
     flips = {
         build_blinded_packet(
@@ -379,8 +410,10 @@ def test_orientation_is_reproducible_and_seed_varied() -> None:
 
 def test_packet_digest_covers_payload() -> None:
     p = build_blinded_packet(
-        sample_id="hev-1", seed="s",
-        left_evidence={"name": "a"}, right_evidence={"name": "b"},
+        sample_id="hev-1",
+        seed="s",
+        left_evidence={"name": "a"},
+        right_evidence={"name": "b"},
     )
     assert packet_digest(p).startswith("sha256:")
     changed = dict(p, side_a=dict(p["side_a"], name="a2"))
@@ -409,9 +442,14 @@ def _label_row(**kw) -> dict:
 def test_label_digest_rejects_unknown_labels() -> None:
     with pytest.raises(ValueError):
         label_digest(
-            campaign_id="c", sample_id="s", reviewer_id="r", round="independent_1",
+            campaign_id="c",
+            sample_id="s",
+            reviewer_id="r",
+            round="independent_1",
             label="accept",  # the operational vocabulary is not a reference label
-            reason_codes=[], evidence_refs=[], rubric_version="r/1",
+            reason_codes=[],
+            evidence_refs=[],
+            rubric_version="r/1",
             packet_digest="p",
         )
 
@@ -432,9 +470,7 @@ def test_consensus_rules_preserve_abstention_and_disagreement() -> None:
     assert consensus(["same", "different"]) == "needs_adjudication"
     # insufficient never produces a reference label — it goes to adjudication.
     assert consensus(["same", "insufficient_evidence"]) == "needs_adjudication"
-    assert consensus(["insufficient_evidence", "insufficient_evidence"]) == (
-        "needs_adjudication"
-    )
+    assert consensus(["insufficient_evidence", "insufficient_evidence"]) == ("needs_adjudication")
     assert consensus(["same"]) == "awaiting_labels"
     assert consensus([]) == "awaiting_labels"
 

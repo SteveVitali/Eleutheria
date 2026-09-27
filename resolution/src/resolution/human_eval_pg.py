@@ -307,8 +307,7 @@ def write_manifest(
 
 def _read_campaign(conn: Any, campaign_id: str) -> dict[str, Any]:
     row = conn.execute(
-        "SELECT campaign_id, purpose, design, seed FROM human_eval_campaign "
-        "WHERE campaign_id = %s",
+        "SELECT campaign_id, purpose, design, seed FROM human_eval_campaign WHERE campaign_id = %s",
         (campaign_id,),
     ).fetchone()
     if row is None:
@@ -322,9 +321,7 @@ def read_campaign(conn: Any, campaign_id: str, *, role: str | None = _ADMIN) -> 
     return _read_campaign(conn, campaign_id)
 
 
-def read_samples(
-    conn: Any, campaign_id: str, *, role: str | None = _ADMIN
-) -> list[dict[str, Any]]:
+def read_samples(conn: Any, campaign_id: str, *, role: str | None = _ADMIN) -> list[dict[str, Any]]:
     """The campaign's sample rows under the given role (admin/custodian)."""
     _connect(conn, role)
     return _read_samples(conn, campaign_id)
@@ -338,8 +335,7 @@ def _read_samples(conn: Any, campaign_id: str) -> list[dict[str, Any]]:
         " packet_digest"
     )
     rows = conn.execute(
-        f"SELECT {cols} FROM human_eval_sample WHERE campaign_id = %s "
-        "ORDER BY draw_order",
+        f"SELECT {cols} FROM human_eval_sample WHERE campaign_id = %s ORDER BY draw_order",
         (campaign_id,),
     ).fetchall()
     out = []
@@ -424,7 +420,12 @@ def write_packets(
             digest = packet_digest(p["payload"])
             conn.execute(
                 _INSERT_PACKET,
-                (p["campaign_id"], p["sample_id"], digest, json.dumps(p["payload"], sort_keys=True)),
+                (
+                    p["campaign_id"],
+                    p["sample_id"],
+                    digest,
+                    json.dumps(p["payload"], sort_keys=True),
+                ),
             )
             n += 1
     return n
@@ -528,8 +529,7 @@ def record_label(
         conn.execute("SELECT set_config('sig.eval_reviewer', %s, true)", (reviewer_id,))
         _require_attestation(conn, attestation_id, reviewer_id)
         pkt = conn.execute(
-            "SELECT packet_digest FROM human_eval_packet "
-            "WHERE campaign_id = %s AND sample_id = %s",
+            "SELECT packet_digest FROM human_eval_packet WHERE campaign_id = %s AND sample_id = %s",
             (campaign_id, sample_id),
         ).fetchone()
         if pkt is None:
@@ -634,13 +634,9 @@ def campaign_status(conn: Any, campaign_id: str, *, role: str | None = _ADMIN) -
             (campaign_id,),
         ).fetchall()
     )
-    label_view = (
-        "human_eval_label" if role == _CUSTODIAN else "human_eval_label_released"
-    )
+    label_view = "human_eval_label" if role == _CUSTODIAN else "human_eval_label_released"
     adj_view = (
-        "human_eval_adjudication"
-        if role == _CUSTODIAN
-        else "human_eval_adjudication_released"
+        "human_eval_adjudication" if role == _CUSTODIAN else "human_eval_adjudication_released"
     )
     labels = conn.execute(
         f"SELECT count(*) FROM {label_view} WHERE campaign_id = %s", (campaign_id,)
@@ -712,14 +708,11 @@ def export_workbook(
     return out
 
 
-def campaign_watermark(
-    conn: Any, campaign_id: str, *, role: str | None = _CUSTODIAN
-) -> str:
+def campaign_watermark(conn: Any, campaign_id: str, *, role: str | None = _CUSTODIAN) -> str:
     """The chained label watermark over the campaign's labels in append order."""
     _connect(conn, role)
     rows = conn.execute(
-        "SELECT label_digest FROM human_eval_label WHERE campaign_id = %s "
-        "ORDER BY label_seq",
+        "SELECT label_digest FROM human_eval_label WHERE campaign_id = %s ORDER BY label_seq",
         (campaign_id,),
     ).fetchall()
     return label_watermark([{"label_digest": r[0]} for r in rows])
