@@ -940,6 +940,7 @@ def create_curation_app(
     curation_log: CurationLog | None = None,
     tier_token_store: TierTokenStore | None = None,
     enabled: bool | None = None,
+    intake_store: Any | None = None,
 ) -> FastAPI:
     """Build the curation app (ADR-068); routes are absent unless enabled (RISK-P21-10).
 
@@ -998,6 +999,20 @@ def create_curation_app(
         # a count + median only — never a per-user row (see the /submission hook).
         app.state.onboarding_timing = OnboardingTimingAggregate()
         app.include_router(build_curation_router())
+        if intake_store is not None:
+            # The private intake-moderation surface (P32.16/ADR-135): the
+            # restricted reviewer queue + append-only intake events, mounted
+            # only on this authenticated loopback app and only when an intake
+            # reviewer store is wired — never on the public read API or the
+            # anonymous receiver.
+            from db.intake import PgIntakeReviewerStore
+
+            from .intake_moderation import build_intake_moderation_router
+
+            if isinstance(intake_store, str):
+                intake_store = PgIntakeReviewerStore.from_dsn(intake_store)
+            app.state.intake_store = intake_store
+            app.include_router(build_intake_moderation_router(intake_store))
 
     # Defence in depth: the curation surface still may never mount a Part VIII
     # prohibited path (SIG-API-012) — assert it structurally at construction.

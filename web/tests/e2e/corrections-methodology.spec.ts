@@ -96,6 +96,19 @@ test.describe("dispute/correction submission path (SIG-UI-033, §45)", () => {
     await page.goto("/dispute/");
     await expect(page.getByTestId("refusal-outcome")).toBeVisible();
   });
+
+  test("the receiver is honestly described as built but not yet operating (P32.16)", async ({
+    page,
+  }) => {
+    await page.goto("/dispute/");
+    const notice = page.getByTestId("intake-availability");
+    // The page must never advertise an unstaffed/unapproved receiver — the
+    // flip is a later reviewed change gated on D-R10-PUBLISH-1 + staffing.
+    await expect(notice).toHaveAttribute("data-operational", "false");
+    await expect(notice).toContainText("not yet operating");
+    // It must also never present a fake submission path.
+    await expect(page.locator("form")).toHaveCount(0);
+  });
 });
 
 test.describe("methodology, data-freshness, coverage-metrics (SIG-UI-034, §32.4/32.5)", () => {

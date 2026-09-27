@@ -7,6 +7,9 @@ import {
   categoriesByPriority,
   disputeHref,
   DISPUTE_PATH,
+  intakeAvailability,
+  INTAKE_FORM_PATH,
+  INTAKE_STATUS_PATH,
   orderedCorrections,
   priorValuePermalink,
   SUBMISSION_CATEGORIES,
@@ -94,5 +97,22 @@ describe("transparency reporting includes refusals (SIG-GOV-011)", () => {
     expect(sumOut).toBe(report.total);
     // The fixture contains a refusal, and it is counted.
     expect(report.by_outcome.refused).toBeGreaterThanOrEqual(1);
+  });
+});
+
+describe("durable anonymous receiver state (P32.16, ADR-135, SIG-FIND-006)", () => {
+  it("never advertises an unstaffed receiver as operational", () => {
+    const availability = intakeAvailability();
+    // Built but not yet operating: the static page must say so, not promise
+    // liveness it cannot see (S4 §8; the flip is a later reviewed change with
+    // the operating packet approved — D-R10-PUBLISH-1 stays OPEN).
+    expect(availability.operational).toBe(false);
+    expect(availability.note).toMatch(/not yet operating/i);
+    expect(availability.note).toMatch(/staffed/i);
+  });
+
+  it("names the receiver's public paths for the no-JS form + receipt check", () => {
+    expect(INTAKE_FORM_PATH).toBe("/intake/new");
+    expect(INTAKE_STATUS_PATH).toBe("/intake/status");
   });
 });
