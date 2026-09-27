@@ -1,0 +1,180 @@
+{
+  "after": {
+    "california-state-auditor": {
+      "expected_predicates": [
+        "oversight.audit",
+        "governance.finding",
+        "usage.disclosure"
+      ],
+      "expected_unique_contribution": "Historical audit findings and sampled agency disclosures; follow-up discovery",
+      "status": "pending_live \u2014 the gated slice has not run; expectations are never counted as closures",
+      "supported_slugs": [],
+      "unique_supported_slugs": []
+    },
+    "okc": {
+      "basis": "offline_replay \u2014 committed stand-in fixtures",
+      "shared_supported_slugs": [
+        "authority",
+        "inventory_count",
+        "procurement_money",
+        "retention",
+        "sharing",
+        "timeline"
+      ],
+      "supported_slugs": [
+        "authority",
+        "external_access",
+        "operator_buyer_funder",
+        "oversight",
+        "procurement_money",
+        "retention",
+        "sharing",
+        "technologies_products",
+        "timeline",
+        "unknowns_corrections"
+      ],
+      "unique_assertions": 14,
+      "unique_supported_slugs": []
+    },
+    "oklahoma-state": {
+      "expected_predicates": [
+        "legal.authority",
+        "program.administration",
+        "temporal.applicability"
+      ],
+      "expected_unique_contribution": "Program administrator stated purpose and legal-version discovery",
+      "status": "pending_live \u2014 the gated slice has not run; expectations are never counted as closures",
+      "supported_slugs": [],
+      "unique_supported_slugs": []
+    },
+    "san-diego": {
+      "basis": "offline_replay \u2014 committed stand-in fixtures",
+      "shared_supported_slugs": [],
+      "supported_slugs": [
+        "authority",
+        "external_access",
+        "inventory_count",
+        "operator_buyer_funder",
+        "oversight",
+        "procurement_money",
+        "retention",
+        "sharing",
+        "technologies_products",
+        "timeline",
+        "unknowns_corrections"
+      ],
+      "unique_assertions": 32,
+      "unique_supported_slugs": [
+        "authority",
+        "external_access",
+        "inventory_count",
+        "operator_buyer_funder",
+        "oversight",
+        "procurement_money",
+        "retention",
+        "sharing",
+        "technologies_products",
+        "timeline"
+      ]
+    },
+    "tulsa": {
+      "basis": "offline_replay \u2014 committed stand-in fixtures",
+      "shared_supported_slugs": [],
+      "supported_slugs": [
+        "authority",
+        "operator_buyer_funder",
+        "retention",
+        "sharing",
+        "technologies_products",
+        "unknowns_corrections"
+      ],
+      "unique_assertions": 12,
+      "unique_supported_slugs": [
+        "authority",
+        "operator_buyer_funder",
+        "retention",
+        "sharing",
+        "technologies_products",
+        "timeline"
+      ]
+    }
+  },
+  "before": {
+    "california-state-auditor": {
+      "content_window": "2019\u20132020 audit (historical baseline)",
+      "expected_missing_questions": [
+        "Do California State Auditor's terms permit lawful capture and retention of https://information.auditor.ca.gov/reports/2019-118/index.html and its linked artifacts \u2014 including embedded third-party material (vendor exhibits, boilerplate policy text, photographs)?",
+        "May SIG store and publish the factual fields extracted from this document (Historical audit findings and sampled agency disclosures; follow-up discovery) \u2014 and under which attribution and quotation posture?",
+        "Which licence compartment and attribution govern claims derived from California State Auditor ALPR audit survey and follow-up, and may the derived artifacts be republished?",
+        "Is this municipal/state publication an uncopyrightable edict or public record under the applicable law, or a copyrightable non-edict work (Compendium \u00a7313.6(C)(2))? Municipal publication is not auto-CC0 \u2014 a recorded determination is required.",
+        "Research-recorded unknown: Open access verified via search only; full selected report and state rights review pending",
+        "Are respondent agencies' survey answers treated as the Auditor's findings (one provenance) or independently verified \u2014 and under what attribution may findings be quoted?"
+      ],
+      "named_gap": "P1: California State Auditor ALPR audit \u2014 findings, agency survey answers, recommendations",
+      "priority": "P1 bounded pilot"
+    },
+    "okc": {
+      "follow_ups": 5,
+      "missing_questions": [],
+      "partial_or_unknown": [],
+      "review_status": "not_run",
+      "state_before_batch": "dossier family bounded live slice unexecuted \u2014 packet built on committed stand-ins"
+    },
+    "oklahoma-state": {
+      "content_window": "current program pages + displayed 2027-01-01 statute version",
+      "expected_missing_questions": [
+        "Do Oklahoma District Attorneys Council (DAC \u2014 UVED program)'s terms permit lawful capture and retention of https://oklahoma.gov/dac/about/staff/about-the-uved-program.html and its linked artifacts \u2014 including embedded third-party material (vendor exhibits, boilerplate policy text, photographs)?",
+        "May SIG store and publish the factual fields extracted from this document (Program administrator stated purpose and legal-version discovery) \u2014 and under which attribution and quotation posture?",
+        "Which licence compartment and attribution govern claims derived from Oklahoma DAC UVED program and authority chain, and may the derived artifacts be republished?",
+        "Is this municipal/state publication an uncopyrightable edict or public record under the applicable law, or a copyrightable non-edict work (Compendium \u00a7313.6(C)(2))? Municipal publication is not auto-CC0 \u2014 a recorded determination is required.",
+        "Research-recorded unknown: Historical version and program procurement not yet reviewed; no personal records",
+        "Which statutory version governs now versus the displayed 2027-01-01 version, and does the UVED program authorize deployments or merely describe the authority chain?",
+        "Does ok_statute's existing coverage (Oklahoma statutes (47 O.S. \u00a77-606.1 et seq.)) already supply any of this candidate's expected claims \u2014 i.e., what is the net-new remainder after deduplication?"
+      ],
+      "named_gap": "P0 dossier: UVED program administrator and the legal authority chain including the applicable statute version",
+      "priority": "P0 dossier"
+    },
+    "san-diego": {
+      "follow_ups": 6,
+      "missing_questions": [],
+      "partial_or_unknown": [],
+      "review_status": "not_run",
+      "state_before_batch": "dossier family bounded live slice unexecuted \u2014 packet built on committed stand-ins"
+    },
+    "tulsa": {
+      "follow_ups": 8,
+      "missing_questions": [],
+      "partial_or_unknown": [
+        "external_access",
+        "inventory_count",
+        "oversight",
+        "procurement_money"
+      ],
+      "review_status": "not_run",
+      "state_before_batch": "dossier family bounded live slice unexecuted \u2014 packet built on committed stand-ins"
+    }
+  },
+  "reconciliation": {
+    "assertion_sources_partitioned_by_family": true,
+    "double_counted": 0,
+    "mirror_as_independent": 0,
+    "note": "each supported slug's asserting source ids map to exactly one family bucket; a slug supported by multiple families is shared, never double-counted as unique; no batch family is a P31-owned source and no non-independent lineage class entered the batch",
+    "p31_duplicate_onboarding": 0,
+    "supported_question_slugs": [
+      "authority",
+      "external_access",
+      "independent_support",
+      "inventory_count",
+      "operator_buyer_funder",
+      "oversight",
+      "procurement_money",
+      "retention",
+      "sharing",
+      "technologies_products",
+      "timeline",
+      "unknowns_corrections"
+    ],
+    "unique_supported_total": 16
+  },
+  "schema": "acq-pilot-gap-ledger/1"
+}

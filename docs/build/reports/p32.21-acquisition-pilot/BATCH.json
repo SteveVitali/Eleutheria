@@ -1,0 +1,287 @@
+{
+  "ceilings": {
+    "documents_per_family": 10,
+    "incremental_families": 2,
+    "new_protocol_families": 2,
+    "total_families": 5
+  },
+  "families": [
+    {
+      "candidate_ids": [
+        "SRC-001"
+      ],
+      "excluded_candidate_ids": [],
+      "family_id": "okc",
+      "lineage_group": "okc-municipal",
+      "rationale": "the Oklahoma City dossier family is fixed by its landed S2 ticket \u2014 measured, never re-selected; live slice owned by D-P32.18-1",
+      "role": "Oklahoma City dossier family (dossier_okc)",
+      "rule": "P-SEL-1",
+      "slot": "portfolio"
+    },
+    {
+      "candidate_ids": [
+        "SRC-002"
+      ],
+      "excluded_candidate_ids": [],
+      "family_id": "tulsa",
+      "lineage_group": "tulsa-municipal",
+      "rationale": "the Tulsa dossier family is fixed by its landed S2 ticket \u2014 measured, never re-selected; live slice owned by D-P32.19-1",
+      "role": "Tulsa dossier family (dossier_tulsa)",
+      "rule": "P-SEL-1",
+      "slot": "portfolio"
+    },
+    {
+      "candidate_ids": [
+        "SRC-003",
+        "SRC-004",
+        "SRC-005"
+      ],
+      "excluded_candidate_ids": [
+        "SRC-027"
+      ],
+      "family_id": "san-diego",
+      "lineage_group": "san-diego-municipal",
+      "rationale": "the San Diego dossier family is fixed by its landed S2 ticket \u2014 measured, never re-selected; live slice owned by D-P32.20-1",
+      "role": "San Diego dossier family (dossier_san_diego)",
+      "rule": "P-SEL-1",
+      "slot": "portfolio"
+    },
+    {
+      "candidate_ids": [
+        "SRC-007",
+        "SRC-006"
+      ],
+      "excluded_candidate_ids": [
+        "SRC-009",
+        "SRC-008"
+      ],
+      "family_id": "oklahoma-state",
+      "lineage_group": "oklahoma-state",
+      "rationale": "the structured acquisition/procurement shape (S5) \u2014 contract/procurement-chain predicates, the relationship class a dossier's contract-chain gap needs; a net-new target \u2014 a new provenance family; wins the acquisition slot under acq-score/1 rank order (score 23); closes recorded dossier gaps via SRC-007; in-family excluded from the acquired batch: SRC-009, SRC-008",
+      "role": "contract/acquisition chain",
+      "rule": "P-SEL-2",
+      "slot": "incremental"
+    },
+    {
+      "candidate_ids": [
+        "SRC-011"
+      ],
+      "excluded_candidate_ids": [],
+      "family_id": "california-state-auditor",
+      "lineage_group": "california-state-auditor",
+      "rationale": "the independent oversight shape (S5) \u2014 oversight/governance predicates yielding provenance distinct from municipal self-report; a net-new target \u2014 a new provenance family; wins the oversight slot under acq-score/1 rank order (score 23)",
+      "role": "independent oversight",
+      "rule": "P-SEL-3",
+      "slot": "incremental"
+    }
+  ],
+  "rejected_alternatives": [
+    {
+      "candidate_id": "SRC-002",
+      "detail": "inside a pilot-city lineage group \u2014 its targets ride the dossier family's own live return pass, never a new family",
+      "family": "Tulsa Flock policies integration and executed contract search",
+      "lineage_group": "tulsa-municipal",
+      "reason": "portfolio_member",
+      "score": 25
+    },
+    {
+      "candidate_id": "SRC-003",
+      "detail": "inside a pilot-city lineage group \u2014 its targets ride the dossier family's own live return pass, never a new family",
+      "family": "San Diego technology inventory and annual reports",
+      "lineage_group": "san-diego-municipal",
+      "reason": "portfolio_member",
+      "score": 25
+    },
+    {
+      "candidate_id": "SRC-004",
+      "detail": "inside a pilot-city lineage group \u2014 its targets ride the dossier family's own live return pass, never a new family",
+      "family": "San Diego Sunshine Act goods/services contracts",
+      "lineage_group": "san-diego-municipal",
+      "reason": "portfolio_member",
+      "score": 25
+    },
+    {
+      "candidate_id": "SRC-001",
+      "detail": "inside a pilot-city lineage group \u2014 its targets ride the dossier family's own live return pass, never a new family",
+      "family": "OKC Flock council amendment policy packet",
+      "lineage_group": "okc-municipal",
+      "reason": "portfolio_member",
+      "score": 23
+    },
+    {
+      "candidate_id": "SRC-009",
+      "detail": "award/funding family \u2014 S5 admits one only when a named local procurement has a traceable award gap; no dossier gap ledger records one",
+      "family": "Oklahoma JAG-LLE local equipment funding",
+      "lineage_group": "oklahoma-state",
+      "reason": "no_recorded_award_gap",
+      "score": 21
+    },
+    {
+      "candidate_id": "SRC-005",
+      "detail": "inside a pilot-city lineage group \u2014 its targets ride the dossier family's own live return pass, never a new family",
+      "family": "San Diego Privacy Advisory Board recommendations",
+      "lineage_group": "san-diego-municipal",
+      "reason": "portfolio_member",
+      "score": 18
+    },
+    {
+      "candidate_id": "SRC-022",
+      "detail": "award/funding family \u2014 S5 admits one only when a named local procurement has a traceable award gap; no dossier gap ledger records one",
+      "family": "DOJ COPS technology/equipment award documents",
+      "lineage_group": "us-federal-doj-cops",
+      "reason": "no_recorded_award_gap",
+      "score": 17
+    },
+    {
+      "candidate_id": "SRC-008",
+      "detail": "award/funding family \u2014 S5 admits one only when a named local procurement has a traceable award gap; no dossier gap ledger records one",
+      "family": "Safe Oklahoma Grant program awards and reports discovery",
+      "lineage_group": "oklahoma-state",
+      "reason": "no_recorded_award_gap",
+      "score": 16
+    },
+    {
+      "candidate_id": "SRC-026",
+      "detail": "joins to a P31.12/.13-owned source \u2014 consumed/improved under prior decisions only, never re-onboarded (SIG-ACQ-004)",
+      "family": "UK Algorithmic Transparency Recording Standard public-safety subset",
+      "lineage_group": "uk-government",
+      "reason": "p31_owned",
+      "score": 15
+    },
+    {
+      "candidate_id": "SRC-024",
+      "detail": "Part VIII screening is owed work \u2014 an unscreened family cannot enter a bounded batch",
+      "family": "DLA LESO 1033 equipment holdings/transfers subset",
+      "lineage_group": "us-federal-dla",
+      "reason": "preflight_screening_owed",
+      "score": 14
+    },
+    {
+      "candidate_id": "SRC-025",
+      "detail": "Part VIII screening is owed work \u2014 an unscreened family cannot enter a bounded batch",
+      "family": "FAA Part 107 waiver issued records",
+      "lineage_group": "us-federal-faa",
+      "reason": "preflight_screening_owed",
+      "score": 13
+    },
+    {
+      "candidate_id": "SRC-023",
+      "detail": "joins to a P31.12/.13-owned source \u2014 consumed/improved under prior decisions only, never re-onboarded (SIG-ACQ-004)",
+      "family": "DHS privacy impact assessments commercial LPR",
+      "lineage_group": "us-federal-dhs",
+      "reason": "p31_owned",
+      "score": 9
+    },
+    {
+      "candidate_id": "SRC-027",
+      "detail": "prohibited_until_review \u2014 metadata-only research path; an explicit content-admissibility + rights decision is owed before any acquisition",
+      "family": "San Diego ALPR network audit metadata and safe aggregate feasibility",
+      "lineage_group": "san-diego-municipal",
+      "reason": "prohibited_metadata_only",
+      "score": -8
+    },
+    {
+      "candidate_id": "SRC-027",
+      "detail": "inside a pilot-city lineage group \u2014 its targets ride the dossier family's own live return pass, never a new family",
+      "family": "San Diego ALPR network audit metadata and safe aggregate feasibility",
+      "lineage_group": "san-diego-municipal",
+      "reason": "portfolio_member",
+      "score": -8
+    },
+    {
+      "candidate_id": "SRC-012",
+      "detail": "eligible oversight-shape candidate outranked by the selected family under acq-score/1 rank order \u2014 the two incremental slots are full; expansion is a new scope decision",
+      "family": "Seattle OIG annual surveillance usage reviews",
+      "lineage_group": "seattle-municipal",
+      "reason": "capacity",
+      "score": 22
+    },
+    {
+      "candidate_id": "SRC-010",
+      "detail": "eligible acquisition-shape candidate outranked by the selected family under acq-score/1 rank order \u2014 the two incremental slots are full; expansion is a new scope decision",
+      "family": "Sourcewell public safety cooperative contracts",
+      "lineage_group": "sourcewell-cooperative",
+      "reason": "capacity",
+      "score": 20
+    },
+    {
+      "candidate_id": "SRC-015",
+      "detail": "eligible oversight-shape candidate outranked by the selected family under acq-score/1 rank order \u2014 the two incremental slots are full; expansion is a new scope decision",
+      "family": "NYC DOI OIG-NYPD surveillance oversight",
+      "lineage_group": "nyc-municipal",
+      "reason": "capacity",
+      "score": 19
+    },
+    {
+      "candidate_id": "SRC-016",
+      "detail": "eligible oversight-shape candidate outranked by the selected family under acq-score/1 rank order \u2014 the two incremental slots are full; expansion is a new scope decision",
+      "family": "NYC Comptroller surveillance procurement and audits",
+      "lineage_group": "nyc-municipal",
+      "reason": "capacity",
+      "score": 18
+    },
+    {
+      "candidate_id": "SRC-017",
+      "detail": "eligible oversight-shape candidate outranked by the selected family under acq-score/1 rank order \u2014 the two incremental slots are full; expansion is a new scope decision",
+      "family": "Chicago OIG ShotSpotter evaluation and follow-up",
+      "lineage_group": "chicago-municipal",
+      "reason": "capacity",
+      "score": 15
+    },
+    {
+      "candidate_id": "SRC-018",
+      "detail": "eligible oversight-shape candidate outranked by the selected family under acq-score/1 rank order \u2014 the two incremental slots are full; expansion is a new scope decision",
+      "family": "BART surveillance reports policies and public decisions",
+      "lineage_group": "bart-district",
+      "reason": "capacity",
+      "score": 15
+    },
+    {
+      "candidate_id": "SRC-013",
+      "detail": "eligible oversight-shape candidate outranked by the selected family under acq-score/1 rank order \u2014 the two incremental slots are full; expansion is a new scope decision",
+      "family": "San Jose privacy decisions and algorithm register",
+      "lineage_group": "san-jose-municipal",
+      "reason": "capacity",
+      "score": 14
+    },
+    {
+      "candidate_id": "SRC-021",
+      "detail": "eligible oversight-shape candidate outranked by the selected family under acq-score/1 rank order \u2014 the two incremental slots are full; expansion is a new scope decision",
+      "family": "Santa Clara County surveillance impact and oversight",
+      "lineage_group": "santa-clara-county",
+      "reason": "capacity",
+      "score": 14
+    },
+    {
+      "candidate_id": "SRC-014",
+      "detail": "eligible oversight-shape candidate outranked by the selected family under acq-score/1 rank order \u2014 the two incremental slots are full; expansion is a new scope decision",
+      "family": "Norman police ALPR policy and amendment discovery",
+      "lineage_group": "norman-municipal",
+      "reason": "capacity",
+      "score": 12
+    },
+    {
+      "candidate_id": "SRC-020",
+      "detail": "eligible oversight-shape candidate outranked by the selected family under acq-score/1 rank order \u2014 the two incremental slots are full; expansion is a new scope decision",
+      "family": "Boston annual surveillance report and supplements",
+      "lineage_group": "boston-municipal",
+      "reason": "capacity",
+      "score": 12
+    },
+    {
+      "candidate_id": "SRC-019",
+      "detail": "eligible oversight-shape candidate outranked by the selected family under acq-score/1 rank order \u2014 the two incremental slots are full; expansion is a new scope decision",
+      "family": "Berkeley surveillance annual reports policies MOUs",
+      "lineage_group": "berkeley-municipal",
+      "reason": "capacity",
+      "score": 10
+    }
+  ],
+  "schema": "acq-pilot-batch/1",
+  "selection_version": "acq-pilot-select/1",
+  "totals": {
+    "families": 5,
+    "incremental_families": 2,
+    "portfolio_families": 3
+  }
+}
