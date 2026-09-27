@@ -1,0 +1,57 @@
+{
+  "request": {
+    "congress": "119",
+    "contentType": "application/json",
+    "format": "json"
+  },
+  "bills": [
+    {
+      "congress": 119,
+      "type": "S",
+      "number": "1355",
+      "originChamber": "Senate",
+      "originChamberCode": "S",
+      "title": "Government Surveillance Reform Act",
+      "introducedDate": "2025-04-09",
+      "latestAction": {
+        "actionDate": "2025-04-09",
+        "text": "Read twice and referred to the Committee on the Judiciary."
+      },
+      "updateDate": "2025-04-10",
+      "url": "https://api.congress.gov/v3/bill/119/s/1355?format=json"
+    },
+    {
+      "congress": 119,
+      "type": "HR",
+      "number": "4587",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "To amend the Foreign Intelligence Surveillance Act of 1978 to reform the authorities under section 702, and for other purposes.",
+      "introducedDate": "2025-07-21",
+      "latestAction": {
+        "actionDate": "2025-07-21",
+        "text": "Referred to the House Committee on the Judiciary."
+      },
+      "updateDate": "2025-07-22",
+      "url": "https://api.congress.gov/v3/bill/119/hr/4587?format=json"
+    },
+    {
+      "congress": 119,
+      "type": "HRES",
+      "number": "612",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Recognizing the importance of national parks to the United States.",
+      "introducedDate": "2025-07-24",
+      "latestAction": {
+        "actionDate": "2025-07-24",
+        "text": "Referred to the House Committee on Natural Resources."
+      },
+      "updateDate": "2025-07-25",
+      "url": "https://api.congress.gov/v3/bill/119/hres/612?format=json"
+    }
+  ],
+  "pagination": {
+    "count": 3
+  }
+}

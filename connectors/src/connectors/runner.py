@@ -134,6 +134,12 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     "eyes_on_flock": "flock_portal",
     "openstates": "accountability",
     "fbi_cde_agency_registry": "agency_registry",
+    # P26.12 (SOURCES.11): the federal companion to the OpenStates sweep — the
+    # accountability connector's Congress.gov bill-index path. A federal bill
+    # is likewise PROPOSED law, never a §11.14 LegalInstrument (§3.1); the
+    # existing api.data.gov key ($SIG_DATA_GOV_KEY) rides the X-Api-Key
+    # header, never the URL.
+    "congress_gov": "accountability",
     # P26.7 (SOURCES.7): state DOT/511 traffic-camera location registries — one
     # source row per state so rights/robots/cadence stay per-host granular; all
     # route through the `dot_511` connector over the per-state target registry
@@ -729,6 +735,10 @@ def _run_live(
                         "bills_indexed": r.get("bills_indexed"),
                         "bills_matched": r.get("bills_matched"),
                         "truncated": r.get("truncated"),
+                        # P26.12 — the federal page's own fields (congress /
+                        # page offset); absent for the state sweep.
+                        "congress": r.get("congress"),
+                        "page_offset": r.get("page_offset"),
                         "plan_version": r.get("plan_version"),
                     }
                     if r.get("record_kind") == "bill_query"

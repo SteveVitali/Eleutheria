@@ -29,7 +29,13 @@
 # it is the record of a PROPOSED bill — `bill_status` carries the record's
 # own latest-action text verbatim, never an enactment (§3.1). Bills matching
 # no typed_claim term keep the index_only path unchanged.
-vocab_version = "2026.09.18"
+# 2026.09.18.2 (P26.12 / SOURCES.11): +congress_gov — the federal layer: the
+# Congress.gov v3 bill index (api.data.gov keyed, X-Api-Key header) emits the
+# same legislative_bill surface plus `bill_chamber` (the record's verbatim
+# originChamber — the chamber a federal bill carries and a state bill does
+# not surface). A federal bill/resolution is likewise PROPOSED law, never a
+# §11.14 LegalInstrument (§3.1).
+vocab_version = "2026.09.18.2"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `accountability` connector may write ONLY the AccountabilityEvent (§11.17) and
@@ -72,6 +78,9 @@ predicate_allowlist = [
   "bill_jurisdiction",
   "bill_status",
   "bill_status_date",
+  # P26.12 / SOURCES.11 — the federal chamber-of-origin (Congress.gov's
+  # verbatim originChamber: "House" | "Senate"):
+  "bill_chamber",
   "bill_matched_keyword",
 ]
 
@@ -165,6 +174,7 @@ accountability_atlas = "alpr_accountability_atlas"
 abuse_library       = "alpr_abuse_library"
 courtlistener       = "courtlistener_recap"
 openstates          = "openstates"
+congress_gov        = "congress_gov"
 
 # The five artifacts the Accountability Atlas publishes, ALL of which MUST be
 # consumed rather than only the headline CSV (§23.8, OL-2E-AA-02). The data
@@ -264,3 +274,52 @@ spdx = "CC0-1.0"
 # header, never the URL — a keyed query would land in the recorded source_uri /
 # run records (HG-09). Verified live 2026-09-17: X-API-KEY → 200, keyless → 403.
 api_key_header = "X-API-KEY"
+
+# Congress.gov v3 (P26.12 / SOURCES.11): the documented public legislation API
+# (api.congress.gov — Library of Congress / api.data.gov keyed). Federal
+# bill/resolution metadata is US government work (17 U.S.C. §105) → CC0-1.0
+# (rights packet docs/build/reports/rights/congress_gov.md). Keyed access —
+# the SAME api.data.gov key as the FBI CDE source ($SIG_DATA_GOV_KEY, env
+# only, HG-09); verified live 2026-09-18: X-Api-Key → 200, keyless → 403
+# {"error":{"code":"API_KEY_MISSING"}}.
+[congress_gov]
+api_base = "https://api.congress.gov/v3"
+api_key_env = "SIG_DATA_GOV_KEY"
+# The documented api.data.gov credential header (api.data.gov/docs/api-key):
+# the key rides the request header, NEVER the URL — a keyed api_key query
+# parameter would land in the recorded source_uri / run records (HG-09, the
+# P26.4 transport rule).
+api_key_header = "X-Api-Key"
+spdx = "CC0-1.0"
+# The federal jurisdiction label — a reviewed constant (the Congress.gov
+# record names no jurisdiction string; the source IS the US federal
+# legislature). Stamped as bill_jurisdiction, never inferred per-record.
+jurisdiction_label = "United States Congress"
+# The reviewed type → citation-prefix map (the conventional citation form a
+# bill_identifier emits as its TYPED value; the raw_value stays the record's
+# verbatim "TYPE NUMBER"). A type outside the map falls back to the verbatim
+# form — never guessed.
+[congress_gov.type_prefixes]
+HR      = "H.R."
+S       = "S."
+HRES    = "H.Res."
+SRES    = "S.Res."
+HJRES   = "H.J.Res."
+SJRES   = "S.J.Res."
+HCONRES = "H.Con.Res."
+SCONRES = "S.Con.Res."
+# The reviewed type → congress.gov public-page slug map (the derivation of
+# the bill's public record URL:
+# https://www.congress.gov/bill/{ordinal}-congress/{slug}/{number} — the
+# official legislature page, the same precedence the OpenStates path gives
+# the record's own source URL). A type outside the map falls back to the
+# record's verbatim API url — never guessed.
+[congress_gov.type_slugs]
+HR      = "house-bill"
+S       = "senate-bill"
+HRES    = "house-resolution"
+SRES    = "senate-resolution"
+HJRES   = "house-joint-resolution"
+SJRES   = "senate-joint-resolution"
+HCONRES = "house-concurrent-resolution"
+SCONRES = "senate-concurrent-resolution"

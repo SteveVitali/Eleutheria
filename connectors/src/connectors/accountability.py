@@ -66,7 +66,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from functools import cache
 from typing import Any
-from urllib.parse import urlencode
+from urllib.parse import parse_qs, urlencode, urlsplit
 from uuid import uuid4
 
 from parsing.locator import Locator
@@ -558,6 +558,11 @@ def openstates_config() -> Mapping[str, Any]:
     return vocab()["openstates"]
 
 
+def congress_gov_config() -> Mapping[str, Any]:
+    """The Congress.gov v3 API facts (``[congress_gov]`` in the vocab, P26.12)."""
+    return vocab()["congress_gov"]
+
+
 # --- the surveillance-legislation vocabulary + sweep plan (P26.11 / SOURCES.10)
 
 
@@ -595,6 +600,18 @@ def openstates_plan() -> dict[str, Any]:
     (§20), never silent edits.
     """
     return load_table("openstates_plan")
+
+
+@cache
+def congress_gov_plan() -> dict[str, Any]:
+    """The reviewed Congress.gov federal sweep plan (``data/congress_gov_plan.toml``, P26.12).
+
+    The query plan is data in the target row: which congresses the bill index
+    sweeps, the verified page bound (limit ≤ 250), and the hard
+    per-congress page bound that truncates loud rather than crawling. Changes
+    are versioned migrations (§20), never silent edits.
+    """
+    return load_table("congress_gov_plan")
 
 
 def assert_targeted_lookup(target: Mapping[str, Any]) -> Mapping[str, Any]:
@@ -750,6 +767,21 @@ class AccountabilityConnector(Connector):
                 return ctx.fetcher.fetch(
                     url, headers={str(openstates_config()["api_key_header"]): key}
                 )
+        if ctx.source.id == source_ids().get("congress_gov"):
+            # Congress.gov v3 authenticates via the documented api.data.gov
+            # X-Api-Key request header (api.data.gov/docs/api-key) — the
+            # existing sig-data-gov-key secret resolves from the environment
+            # only (HG-09) and NEVER rides an api_key query param, so no
+            # credential lands in the recorded source_uri / run records
+            # (verified live 2026-09-18: header → 200; keyless → 403
+            # API_KEY_MISSING — a recorded challenge, never defeated). The
+            # same header covers the seed congress page + the generated
+            # bill-index pages of the federal sweep (P26.12).
+            key = os.environ.get(str(congress_gov_config()["api_key_env"]), "").strip()
+            if key:
+                return ctx.fetcher.fetch(
+                    url, headers={str(congress_gov_config()["api_key_header"]): key}
+                )
         return ctx.fetcher.fetch(url)
 
     # -- interpretation (pure functions of the capture) --
@@ -765,7 +797,13 @@ class AccountabilityConnector(Connector):
         kind = _artifact_kind(capture)
         if kind in {"issue_record_csv", "source_index_csv"}:
             return {"kind": kind, "capture": capture, **parse_csv(data)}
-        if kind in {"courtlistener", "abuse_library", "openstates", "openstates_jurisdictions"}:
+        if kind in {
+            "courtlistener",
+            "abuse_library",
+            "openstates",
+            "openstates_jurisdictions",
+            "congress_gov_bills",
+        }:
             try:
                 payload = json.loads(data)
             except json.JSONDecodeError as exc:
@@ -781,6 +819,12 @@ class AccountabilityConnector(Connector):
                 # row (jurisdiction, session window, query family) rides it
                 # onto the emitted bill_query outcome row (P26.11).
                 parsed["target"] = _bill_search_target_for(ctx, capture.source_uri)
+            if kind == "congress_gov_bills":
+                # The congress bill-index page target the capture fetched
+                # (a resolved continuation target, or the configured seed) —
+                # the query plan row (congress, page offset, plan version)
+                # rides it onto the emitted bill_query outcome row (P26.12).
+                parsed["target"] = _congress_page_target_for(ctx, capture.source_uri)
             return parsed
         # geojson / data_dictionary / research_archive: consumed as context.
         return {"kind": kind, "capture": capture, "byte_size": len(data)}
@@ -864,6 +908,62 @@ class AccountabilityConnector(Connector):
             return [
                 {"record_kind": "jurisdiction_record", "raw": dict(j)} for j in payload["results"]
             ]
+        if kind == "congress_gov_bills":
+            # The Congress.gov v3 congress-scoped bill index (P26.12):
+            # `bills` is the bill index page. An error envelope
+            # ({"error": {...}} — the api.data.gov error shape) or a changed
+            # shape is ContentDrift — the connector fails closed rather than
+            # treating the envelope as a bill record. An empty `bills` list
+            # is an honest empty page (e.g. a congress with no bills), not
+            # drift.
+            payload = parsed["payload"]
+            if (
+                not isinstance(payload, Mapping)
+                or not isinstance(payload.get("bills"), list)
+                or "error" in payload
+            ):
+                detail = (
+                    json.dumps(payload.get("error"))
+                    if isinstance(payload, Mapping) and payload.get("error")
+                    else type(payload).__name__
+                )
+                raise ContentDrift(
+                    ctx.source.id,
+                    "the congress_gov bill-index payload is not a bills page",
+                    details=detail,
+                )
+            objects = payload["bills"]
+            records = [
+                {
+                    "record_kind": "congress_bill",
+                    "raw": dict(o),
+                    "row_index": i,
+                    "source_uri": str(parsed["capture"].source_uri),
+                }
+                for i, o in enumerate(objects)
+                if isinstance(o, Mapping)
+            ]
+            # The per-PAGE outcome row (P26.12): the sweep's honest
+            # indexed/matched outcome for this congress bill-index page,
+            # recorded with the reviewed plan row + the page's pagination
+            # metadata (total_items = pagination.count).
+            records.append(
+                {
+                    "record_kind": "bill_query",
+                    "raw": {
+                        "target": parsed.get("target"),
+                        "pagination": (
+                            payload.get("pagination")
+                            if isinstance(payload.get("pagination"), Mapping)
+                            else {}
+                        ),
+                        "result_count": len(objects),
+                        "source_uri": str(parsed["capture"].source_uri),
+                        "capture_digest": str(parsed["capture"].digest),
+                    },
+                }
+            )
+            return records
         # A consumed-as-context artifact (geojson / data_dictionary / research_archive).
         return [{"record_kind": "context", "artifact_kind": kind}]
 
@@ -882,6 +982,19 @@ class AccountabilityConnector(Connector):
         and recorded on ``ctx.resolved_targets`` so each child's post-capture
         stages see its query provenance. Exactly one pass — never a crawl.
         """
+        if ctx.source.id == source_ids().get("congress_gov"):
+            # The captured seed page(s) ARE the discovery surface for the
+            # federal sweep (P26.12 / SOURCES.11): each seed's
+            # `pagination.count` names the congress index size, and the
+            # remaining bounded pages are expanded — congress + page offset +
+            # plan version riding the target row as data. Bounded by the
+            # plan's `max_pages_per_congress` and recorded on
+            # `ctx.resolved_targets`. Exactly one pass — never a crawl.
+            plan = congress_gov_plan()
+            page_targets = _congress_page_targets(ctx, captures, plan)
+            for target in page_targets:
+                ctx.resolved_targets[str(target["url"])] = target
+            return page_targets
         if ctx.source.id != source_ids().get("openstates"):
             return []
         plan = openstates_plan()
@@ -917,6 +1030,21 @@ class AccountabilityConnector(Connector):
             elif kind == "bill_index":
                 page_indexed += 1
                 rows, terms, suppressed = self._normalize_bill_row(
+                    ctx,
+                    raw["raw"],
+                    int(raw.get("row_index") or 0),
+                    str(raw.get("source_uri") or ""),
+                )
+                out.extend(rows)
+                if terms:
+                    page_matched += 1
+                    page_terms.update(str(t["term_id"]) for t in terms)
+                page_suppressed.update(suppressed)
+            elif kind == "congress_bill":
+                # The federal layer (P26.12): the same verbatim term scan +
+                # claim-shape map, on the Congress.gov record's own title.
+                page_indexed += 1
+                rows, terms, suppressed = self._normalize_congress_bill_row(
                     ctx,
                     raw["raw"],
                     int(raw.get("row_index") or 0),
@@ -1221,33 +1349,55 @@ class AccountabilityConnector(Connector):
         pagination = raw.get("pagination")
         if not isinstance(pagination, Mapping):
             pagination = {}
+        # OpenStates names the page total `pagination.total_items`; the
+        # Congress.gov index names it `pagination.count` (P26.12).
         total = pagination.get("total_items")
+        if not isinstance(total, int):
+            total = pagination.get("count")
         returned = raw.get("result_count")
-        return _stamp(
-            {
-                "record_kind": "bill_query",
-                "url": str(raw.get("source_uri") or target.get("url") or ""),
-                "jurisdiction": _opt_str(target.get("jurisdiction")),
-                "jurisdiction_id": _opt_str(target.get("jurisdiction_id")),
-                "session": _opt_str(target.get("session")),
-                "query_family": _opt_str(target.get("query_family")),
-                "outcome": "matched" if matched else "empty",
-                "total_items": int(total) if isinstance(total, int) else None,
-                "returned_count": int(returned) if isinstance(returned, int) else 0,
-                "bills_indexed": indexed,
-                "bills_matched": matched,
-                "matched_terms": sorted(terms),
-                "suppressed_terms": sorted(suppressed),
-                "truncated": bool(
-                    isinstance(total, int) and isinstance(returned, int) and total > returned
-                ),
-                "plan_version": _opt_str(target.get("plan_version"))
-                or str(openstates_plan()["plan_version"]),
-                "legislation_vocab_version": legislation_vocab_version(),
-                "capture_digest": _opt_str(raw.get("capture_digest")),
-            },
-            source_id=ctx.source.id,
-        )
+        row: dict[str, Any] = {
+            "record_kind": "bill_query",
+            "url": str(raw.get("source_uri") or target.get("url") or ""),
+            "jurisdiction": _opt_str(target.get("jurisdiction")),
+            "jurisdiction_id": _opt_str(target.get("jurisdiction_id")),
+            "session": _opt_str(target.get("session")),
+            "query_family": _opt_str(target.get("query_family")),
+            "outcome": "matched" if matched else "empty",
+            "total_items": int(total) if isinstance(total, int) else None,
+            "returned_count": int(returned) if isinstance(returned, int) else 0,
+            "bills_indexed": indexed,
+            "bills_matched": matched,
+            "matched_terms": sorted(terms),
+            "suppressed_terms": sorted(suppressed),
+            "truncated": bool(
+                isinstance(total, int) and isinstance(returned, int) and total > returned
+            ),
+            "plan_version": _opt_str(target.get("plan_version"))
+            or (
+                str(congress_gov_plan()["plan_version"])
+                if ctx.source.id == source_ids().get("congress_gov")
+                else str(openstates_plan()["plan_version"])
+            ),
+            "legislation_vocab_version": legislation_vocab_version(),
+            "capture_digest": _opt_str(raw.get("capture_digest")),
+        }
+        # P26.12 — the federal page's own plan-row fields (absent for the
+        # state sweep; only stamped when the target carries them). A target
+        # row without `congress` (e.g. a bare fixture run) still names it in
+        # the URL's /bill/{congress} path — derived, never guessed.
+        for extra in ("congress", "page_offset"):
+            if target.get(extra) is not None:
+                row[extra] = target[extra]
+        if row.get("congress") is None:
+            derived = _congress_number(row["url"])
+            if derived is not None:
+                row["congress"] = derived
+        if row.get("page_offset") is None:
+            qs = parse_qs(urlsplit(row["url"]).query)
+            offset = qs.get("offset", [None])[0]
+            if offset is not None and str(offset).isdigit():
+                row["page_offset"] = int(offset)
+        return _stamp(row, source_id=ctx.source.id)
 
     def _normalize_jurisdiction(self, ctx: RunContext, raw: Mapping[str, Any]) -> dict[str, Any]:
         """A /jurisdictions index row — recorded, never normalized to a fact (P26.11).
@@ -1272,6 +1422,79 @@ class AccountabilityConnector(Connector):
                 "sessions_count": len(sessions) if isinstance(sessions, list) else 0,
                 "session_resolved": session,
                 "plan_version": str(openstates_plan()["plan_version"]),
+            },
+            source_id=ctx.source.id,
+        )
+
+    def _normalize_congress_bill_row(
+        self,
+        ctx: RunContext,
+        raw: Mapping[str, Any],
+        row_index: int,
+        source_uri: str,
+    ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], set[str]]:
+        """The claim-shape map applied to one Congress.gov bill record (P26.12).
+
+        The bill's own title is scanned against the reviewed
+        ``legislation_vocab.toml`` term set — the verbatim local match (the
+        Congress.gov bill list has no server-side keyword query, so LOCAL
+        matching is the only match of record). A bill matching a
+        ``typed_claim`` term emits the federal bill-surface claim set (the
+        P26.11 set + ``bill_chamber``); any other bill keeps the index_only
+        evidence link. Returns ``(rows, matches, suppressed_term_ids)`` for
+        the page's bill_query outcome row.
+        """
+        matches, suppressed = _matched_legislation(raw)
+        typed = [m for m in matches if m["claim_shape"] == "typed_claim"]
+        if not typed:
+            return [self._normalize_congress_bill_index(ctx, raw)], [], suppressed
+        return (
+            _congress_bill_claim_rows(ctx.source.id, raw, row_index, source_uri, typed, suppressed),
+            typed,
+            suppressed,
+        )
+
+    def _normalize_congress_bill_index(
+        self, ctx: RunContext, raw: Mapping[str, Any]
+    ) -> dict[str, Any]:
+        """A Congress.gov bill record as an index-only evidence link (P26.12, §3.1).
+
+        A federal bill/resolution is **not** a §11.14 LegalInstrument — a
+        pending bill is proposed law, never an enactment (the frozen
+        LegalInstrumentType vocabulary has no ``bill``). The record is what
+        the index *lists*: an ``index_only`` evidence link keyed to the bill,
+        ``primary_record`` class — Congress.gov IS the primary record (the
+        Library of Congress / legislative-clerk record itself, not an
+        aggregator). Identifier, title, congress, chamber, and latest action
+        ride as recorded index metadata — claims are never minted from them.
+        """
+        bill_id = _congress_external_id(raw)
+        ref = _congress_public_url(raw) or _opt_str(raw.get("url")) or ""
+        return _stamp(
+            {
+                "record_kind": "evidence_link",
+                "subject_id": f"accountability:{ctx.source.id}:{bill_id}",
+                "predicate_id": assert_predicate_allowed("event_source"),
+                "value": ref or f"congress_gov:{bill_id}",
+                "source_class": "primary_record",
+                "raw_value": ref or bill_id,
+                # SIG-EPIS-030 analogue: an index entry, never normalized to a fact.
+                "index_only": True,
+                "bill_identifier": _congress_identifier(raw)[0],
+                "bill_title": _opt_str(raw.get("title")),
+                "legislative_session": _opt_str(raw.get("congress")),
+                "legislative_jurisdiction": str(congress_gov_config()["jurisdiction_label"]),
+                "bill_chamber": _opt_str(raw.get("originChamber")),
+                "latest_action": _opt_str(
+                    (raw.get("latestAction") or {}).get("text")
+                    if isinstance(raw.get("latestAction"), Mapping)
+                    else None
+                ),
+                "latest_action_date": _opt_str(
+                    (raw.get("latestAction") or {}).get("actionDate")
+                    if isinstance(raw.get("latestAction"), Mapping)
+                    else None
+                ),
             },
             source_id=ctx.source.id,
         )
@@ -1436,6 +1659,341 @@ def _bill_search_target_for(ctx: RunContext, uri: str) -> Mapping[str, Any] | No
         if str(candidate.get("url")) == uri and candidate.get("kind") == "bill_search":
             return candidate
     return None
+
+
+# --- the federal-legislation sweep helpers (P26.12 / SOURCES.11) -------------
+
+
+def _congress_page_target_for(ctx: RunContext, uri: str) -> Mapping[str, Any] | None:
+    """The congress_bill_index target row a capture fetched (P26.12), or ``None``.
+
+    A resolved continuation target first (the sweep's generated page rows
+    carry the query-plan fields), then a configured seed target (a fixture
+    run).
+    """
+    target = ctx.resolved_targets.get(uri)
+    if target is not None and target.get("kind") == "congress_bill_index":
+        return target
+    for candidate in ctx.parameters.get("targets", []):
+        if str(candidate.get("url")) == uri and candidate.get("kind") == "congress_bill_index":
+            return candidate
+    return None
+
+
+def _congress_page_targets(
+    ctx: RunContext, captures: Sequence[CaptureRef], plan: Mapping[str, Any]
+) -> list[Mapping[str, Any]]:
+    """The bounded remaining bill-index pages for the captured seed pages (P26.12).
+
+    Only a capture whose ``source_uri`` is a CONFIGURED seed target
+    (``kind='congress_bill_index'`` in ``ctx.parameters['targets']``) expands —
+    a generated page never re-expands, so exactly one bounded pass happens.
+    Each seed's ``pagination.count`` names its congress index size; the
+    remaining pages (``offset`` steps of ``per_page``) are generated up to
+    the plan's ``max_pages_per_congress`` bound — a count beyond the bound
+    truncates loud on every page's outcome row, it does not crawl. Reads
+    stored captures only (SIG-INGEST-002); a seed capture that is not a
+    bills page is ContentDrift — fail closed, never a fabricated page set.
+    """
+    cfg = plan["bill_index"]
+    per_page = int(cfg["per_page"])
+    max_pages = int(cfg["max_pages_per_congress"])
+    base = str(congress_gov_config()["api_base"]).rstrip("/")
+    endpoint = str(cfg["endpoint"])
+    seeds = {
+        str(t.get("url")): t
+        for t in ctx.parameters.get("targets", [])
+        if t.get("kind") == "congress_bill_index"
+    }
+    out: dict[str, Mapping[str, Any]] = {}
+    for capture in captures:
+        uri = str(capture.source_uri)
+        seed = seeds.get(uri)
+        if seed is None or _artifact_kind_of_uri(uri) != "congress_gov_bills":
+            continue
+        try:
+            payload = json.loads(ctx.captures.get(capture.digest))
+        except json.JSONDecodeError as exc:
+            raise ContentDrift(
+                ctx.source.id,
+                "the captured congress bill-index seed page is not valid JSON",
+                details=str(exc),
+            ) from exc
+        if (
+            not isinstance(payload, Mapping)
+            or not isinstance(payload.get("bills"), list)
+            or "error" in payload
+        ):
+            raise ContentDrift(
+                ctx.source.id,
+                "the captured congress bill-index seed page is not a bills page",
+                details=type(payload).__name__,
+            )
+        pagination = payload.get("pagination")
+        count = (
+            int(pagination["count"])
+            if isinstance(pagination, Mapping) and isinstance(pagination.get("count"), int)
+            else 0
+        )
+        congress = str(seed.get("congress") or _congress_number(uri) or "")
+        if not congress:
+            raise ContentDrift(
+                ctx.source.id,
+                "the congress bill-index seed target names no congress",
+                details=uri,
+            )
+        # The seed IS page 1; generate pages 2..bound (deduped by URL across
+        # seeds — two seeds for one congress yield one page set). The bound is
+        # PER CONGRESS (the plan's `max_pages_per_congress`).
+        bound_items = min(count, max_pages * per_page)
+        generated = 0
+        for offset in range(per_page, bound_items, per_page):
+            url = f"{base}{endpoint}/{congress}?" + urlencode(
+                {"limit": per_page, "offset": offset, "format": "json"}
+            )
+            if url in out or url in seeds:
+                continue
+            out[url] = {
+                "id": f"congress-gov-bill-{congress}-p{offset // per_page + 1}",
+                "url": url,
+                "kind": "congress_bill_index",
+                "congress": congress,
+                "page_offset": offset,
+                "per_page": per_page,
+                "plan_version": str(plan["plan_version"]),
+            }
+            generated += 1
+            if generated >= max_pages - 1:
+                break
+    # Pages emit in numeric offset order (a URL sort would rank offset=1000
+    # before offset=250) — deterministic and semantically paged.
+    return sorted(out.values(), key=lambda t: int(t["page_offset"]))
+
+
+def _congress_number(uri: str) -> str | None:
+    """The congress number from a ``/bill/{congress}`` path segment, or ``None``."""
+    path = uri.split("?", 1)[0].split("#", 1)[0]
+    for part in path.split("/"):
+        if part.isdigit() and 1 <= int(part) <= 200:
+            return part
+    return None
+
+
+def _congress_external_id(raw: Mapping[str, Any]) -> str:
+    """The bill's canonical external id — ``{congress}-{type}-{number}``
+    (the API item path ``/bill/119/s/4342`` lowercased)."""
+    congress = _opt_str(raw.get("congress"))
+    bill_type = _opt_str(raw.get("type"))
+    number = _opt_str(raw.get("number"))
+    if congress and bill_type and number:
+        return f"{congress}-{bill_type.lower()}-{number}"
+    return _slug(str(raw))
+
+
+def _congress_identifier(raw: Mapping[str, Any]) -> tuple[str | None, str | None]:
+    """``(typed, raw)`` bill identifier — the conventional citation form as the
+    typed value (``S. 4342``), the record's verbatim ``"S 4342"`` as raw. A type
+    outside the reviewed prefix map falls back to the verbatim form — never
+    guessed."""
+    bill_type = _opt_str(raw.get("type"))
+    number = _opt_str(raw.get("number"))
+    if not bill_type or not number:
+        return None, None
+    raw_id = f"{bill_type} {number}"
+    prefix = congress_gov_config()["type_prefixes"].get(bill_type)
+    return (f"{prefix} {number}" if prefix else raw_id), raw_id
+
+
+def _congress_ordinal(congress: Any) -> str | None:
+    """``119`` → ``119th`` — the ordinal the congress.gov public page path uses."""
+    try:
+        n = int(str(congress))
+    except (TypeError, ValueError):
+        return None
+    if 10 <= n % 100 <= 20:
+        suffix = "th"
+    else:
+        suffix = {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th")
+    return f"{n}{suffix}"
+
+
+def _congress_public_url(raw: Mapping[str, Any]) -> str | None:
+    """The derived congress.gov public bill page — the official legislature
+    record URL (the same precedence the OpenStates path gives the record's own
+    source URL). The derivation is the reviewed ``type_slugs`` map +
+    ``{ordinal}-congress`` path; a type outside the map yields ``None`` (the
+    caller falls back to the record's verbatim API url — never guessed)."""
+    bill_type = _opt_str(raw.get("type"))
+    number = _opt_str(raw.get("number"))
+    ordinal = _congress_ordinal(raw.get("congress"))
+    slug = congress_gov_config()["type_slugs"].get(str(bill_type)) if bill_type else None
+    if not (slug and number and ordinal):
+        return None
+    return f"https://www.congress.gov/bill/{ordinal}-congress/{slug}/{number}"
+
+
+def _congress_latest_action(raw: Mapping[str, Any]) -> tuple[str | None, str | None]:
+    """``(text, date)`` of the record's latestAction — verbatim, never inferred."""
+    latest = raw.get("latestAction")
+    if not isinstance(latest, Mapping):
+        return None, None
+    return _opt_str(latest.get("text")), _opt_str(latest.get("actionDate"))
+
+
+def _congress_bill_claim_rows(
+    source_id: str,
+    raw: Mapping[str, Any],
+    row_index: int,
+    source_uri: str,
+    matches: Sequence[Mapping[str, Any]],
+    suppressed: set[str],
+) -> list[dict[str, Any]]:
+    """The typed claim rows for a Congress.gov bill matching the vocab (P26.12).
+
+    Claims: external id, identifier (conventional citation as typed, verbatim
+    as raw), title, session (the congress number — the federal session),
+    jurisdiction (the reviewed constant — the source IS the federal
+    legislature), chamber (the record's verbatim originChamber), status (the
+    record's own latest-action text), status date, and one
+    ``bill_matched_keyword`` per typed term carrying the VERBATIM literal as
+    raw_value with a byte-range-into-title locator. Every claim carries the
+    bill's public record URL + a row locator into the captured page
+    (``capture_url`` anchors it). A ``legislative_bill`` entity row records
+    the surface — it is PROPOSED law, never a §11.14 LegalInstrument claim.
+    No volatile field (no retrieval timestamp, no capture id) touches a claim
+    dict — claim identity is the stable bill content (SIG-INGEST-003/017),
+    so an unchanged record digests identically on ANY re-run; the observation
+    time lives on the capture/evidence (claim_evidence → capture →
+    retrieved_at).
+    """
+    bill_id = _congress_external_id(raw)
+    subject_id = f"legislative_bill:{source_id}:{bill_id}"
+    cfg = congress_gov_config()
+    record_url = _congress_public_url(raw) or _opt_str(raw.get("url")) or ""
+    api_url = _opt_str(raw.get("url"))
+    latest_action, latest_action_date = _congress_latest_action(raw)
+    identifier_typed, identifier_raw = _congress_identifier(raw)
+    chamber = _opt_str(raw.get("originChamber"))
+    congress = _opt_str(raw.get("congress"))
+    bill_type = _opt_str(raw.get("type"))
+    number = _opt_str(raw.get("number"))
+    introduced = _opt_str(raw.get("introducedDate"))
+    jurisdiction = str(cfg["jurisdiction_label"])
+    spdx = str(cfg.get("spdx") or "CC0-1.0")
+
+    def _evidence(locator: Mapping[str, Any], **extra: Any) -> dict[str, Any]:
+        ev = {
+            "source_url": record_url,
+            "capture_url": source_uri,
+            "extraction_method": "congress_gov_bill_json",
+            "locator": dict(locator),
+        }
+        ev.update(extra)
+        return ev
+
+    def _claim(
+        predicate: str,
+        value: Any,
+        raw_value: str,
+        evidence: Mapping[str, Any],
+        **extra: Any,
+    ) -> dict[str, Any]:
+        row: dict[str, Any] = {
+            "record_kind": "claim",
+            "subject_id": subject_id,
+            "predicate_id": assert_predicate_allowed(predicate),
+            "raw_value": raw_value,
+            "value": value,
+            "license": spdx,
+            "evidence_genre": "bill_index",
+            "evidence": dict(evidence),
+        }
+        row.update({k: v for k, v in extra.items() if v is not None})
+        return _stamp(row, source_id=source_id)
+
+    row_evidence = _evidence(Locator.row(row_index).to_row())
+    rows: list[dict[str, Any]] = [
+        _stamp(
+            {
+                "record_kind": "legislative_bill",
+                "subject_id": subject_id,
+                "predicate_id": assert_predicate_allowed("legislative_bill"),
+                "external_id": bill_id,
+                "bill_identifier": identifier_typed,
+                "bill_title": _opt_str(raw.get("title")),
+                "legislative_session": congress,
+                "legislative_jurisdiction": jurisdiction,
+                "bill_chamber": chamber,
+                "bill_type": bill_type,
+                "congress": int(congress) if congress and congress.isdigit() else None,
+                "introduced_date": introduced,
+                "latest_action": latest_action,
+                "latest_action_date": latest_action_date,
+                "record_url": record_url,
+                "api_url": api_url,
+                "matched_terms": sorted(str(m["term_id"]) for m in matches),
+                "suppressed_terms": sorted(suppressed),
+                "evidence_genre": "bill_index",
+                "evidence": row_evidence,
+            },
+            source_id=source_id,
+        )
+    ]
+    rows.append(
+        _claim(
+            "bill_external_id",
+            bill_id,
+            bill_id,
+            row_evidence,
+            candidate_identifier=(
+                {
+                    "scheme": "congress.gov.bill",
+                    "value": f"{congress}/{str(bill_type).lower()}/{number}",
+                }
+                if congress and bill_type and number
+                else None
+            ),
+        )
+    )
+    if identifier_typed:
+        rows.append(
+            _claim(
+                "bill_identifier",
+                identifier_typed,
+                identifier_raw or identifier_typed,
+                row_evidence,
+            )
+        )
+    title = _opt_str(raw.get("title"))
+    if title:
+        rows.append(_claim("bill_title", title, title, row_evidence))
+    if congress:
+        rows.append(_claim("bill_session", congress, congress, row_evidence))
+    rows.append(_claim("bill_jurisdiction", jurisdiction, jurisdiction, row_evidence))
+    if chamber:
+        rows.append(_claim("bill_chamber", chamber, chamber, row_evidence))
+    if latest_action:
+        rows.append(_claim("bill_status", latest_action, latest_action, row_evidence))
+    if latest_action_date:
+        rows.append(
+            _claim("bill_status_date", latest_action_date, latest_action_date, row_evidence)
+        )
+    for match in matches:
+        rows.append(
+            _claim(
+                "bill_matched_keyword",
+                match["term_id"],
+                str(match["literal"]),
+                _evidence(
+                    Locator.byte_range(int(match["start"]), int(match["end"])).to_row(),
+                    field=str(match["field"]),
+                    record_row=row_index,
+                ),
+                term_label=match["term_label"],
+                term_kind=match["term_kind"],
+            )
+        )
+    return rows
 
 
 def _guard_token(text: str) -> str | None:
@@ -1731,6 +2289,12 @@ def _artifact_kind_of_uri(uri: str) -> str:
     low = uri.lower()
     if "courtlistener" in low or "/recap" in low:
         return "courtlistener"
+    # The Congress.gov congress-scoped bill index that seeds + fills the
+    # federal sweep (P26.12) — checked before the generic kinds; both the
+    # /v3/bill/{congress} list pages and any /bill item url carry
+    # "congress.gov".
+    if "congress.gov" in low:
+        return "congress_gov_bills"
     # The jurisdictions index that seeds the 50-state sweep (P26.11) — checked
     # before the generic bill-search kind since both carry "openstates".
     if "openstates" in low and "/jurisdictions" in low:
@@ -1855,6 +2419,8 @@ __all__ = [
     "atlas_artifacts",
     "canary_findings",
     "category_crosswalk",
+    "congress_gov_config",
+    "congress_gov_plan",
     "courtlistener_config",
     "crosswalk",
     "epistemic_statuses",

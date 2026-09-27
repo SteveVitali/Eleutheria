@@ -359,6 +359,29 @@ targets = [
   { id = "openstates-jurisdictions-p2", url = "https://v3.openstates.org/jurisdictions?include=legislative_sessions&classification=state&per_page=52&page=2", kind = "jurisdictions_index", rate_limit_per_min = 5 },
 ]
 
+# Congress.gov — the federal surveillance-legislation sweep (P26.12 /
+# SOURCES.11). The seed targets are the page-1 rows of the documented v3
+# congress-scoped bill index (/v3/bill/{congress}?limit=250&offset=0 — one
+# seed per reviewed congress in congress_gov_plan.toml [119 today]; the
+# `congress` field rides the row so the connector never parses it back).
+# The connector's bounded `discover_more` reads each captured seed's
+# `pagination.count` and expands the remaining pages — congress + page
+# offset + per_page ≤ 250 + the 96-page-per-congress bound all DATA in
+# `congress_gov_plan.toml`, never code. There is NO server-side keyword
+# query on the bill list — the verbatim term match is LOCAL on the returned
+# titles (legislation_vocab.toml). The api.data.gov key resolves from
+# $SIG_DATA_GOV_KEY at fetch time (HG-09); it rides the X-Api-Key header,
+# never the URL — no `?api_key=` ever lands in a recorded source_uri.
+# `rate_limit_per_min = 30` is the reviewed API budget (api_allowlist.toml):
+# the documented quota is 5,000 requests/hour and the staged key answers
+# x-ratelimit-limit: 20000 (2026-09-18); the ~77-request sweep stays far
+# inside it. Keyless → 403 API_KEY_MISSING challenge, recorded.
+[congress_gov]
+kind = "document"
+targets = [
+  { id = "congress-gov-bill-119-p1", url = "https://api.congress.gov/v3/bill/119?limit=250&offset=0&format=json", kind = "congress_bill_index", congress = "119", rate_limit_per_min = 30 },
+]
+
 # CourtListener / RECAP — a targeted docket lookup (dockets/<id>/ names ONE
 # resource; assert_targeted_lookup requires the specific id). The source stays
 # GATED (FLP membership-agreement access — operator decision, HG-09 class): a

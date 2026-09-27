@@ -143,6 +143,19 @@ tos_basis = "api.usa.gov/crime is the documented FBI CDE public API (data.gov ke
 rate_limit_per_min = 5
 counsel_reviewed = false
 
+# api.congress.gov — the documented Congress.gov v3 public API
+# (api.congress.gov; Library of Congress) behind the api.data.gov key, which
+# rides the documented X-Api-Key header (P26.12). Documented quota 5,000
+# requests/hour (api.congress.gov README); the reviewed per-minute budget is
+# the politeness layer's pin, far under the hourly window. Federal
+# public-domain data (17 U.S.C. §105).
+[[api_host]]
+host = "api.congress.gov"
+endpoint_prefix = "/v3"
+tos_basis = "api.congress.gov/v3 is the documented Congress.gov public legislation API (Library of Congress); keyed api.data.gov access under the published API docs; federal public-domain data."
+rate_limit_per_min = 30
+counsel_reviewed = false
+
 # Eyes on Flock — the documented public CC-BY-SA-4.0 JSON API
 # (eyesonflock.com/api/v1/data); the host fronts Cloudflare — a challenge is a
 # recorded disappearance, never defeated (SIG-INGEST-013).

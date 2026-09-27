@@ -1,0 +1,65 @@
+# SPDX-License-Identifier: Apache-2.0
+# The reviewed Congress.gov federal surveillance-legislation sweep plan
+# (P26.12 / SOURCES.11) — DATA, not code (SIG-ENG-001). This table is the query
+# plan the `accountability` connector's bounded discover_more expands: which
+# congresses the sweep covers, the per-page bounds, and the hard per-congress
+# page bound that truncates loud rather than crawling.
+#
+# Changes are VERSIONED (§20): bump `plan_version` and add the change, never
+# silently rewrite a row. The plan is deliberately bounded — every bound is
+# named so a run that outgrows it fails loud rather than crawling.
+#
+# All bounds verified live against api.congress.gov/v3 on 2026-09-18 (keyed
+# X-Api-Key, $SIG_DATA_GOV_KEY — the api.data.gov key):
+#   * Auth: `X-Api-Key` request header → 200 (verified); keyless → 403
+#     {"error":{"code":"API_KEY_MISSING"}} — a recorded challenge, never
+#     defeated. The key rides the header, NEVER the URL (HG-09, the P26.4
+#     transport rule), so no credential lands in recorded source_uris.
+#   * Congress scoping is PATH-based — /v3/bill/{congress} (verified: the
+#     `congress` QUERY param on /v3/bill is ignored and returns all 430k
+#     records; /v3/bill/119 returns count=18,887). The list covers every
+#     bill type (HR/S/HRES/SRES/HJRES/SJRES/HCONRES/SCONRES).
+#   * limit ∈ [1,250] — the documented page bound (api.congress.gov README:
+#     "If the limit is adjusted to be greater than 250 results, only 250
+#     results will be returned").
+#   * pagination carries `count` + `next` (offset-based); fromDateTime /
+#     toDateTime filter on updateDate (verified: the 2026-08-01..09-18 window
+#     returned 6,075).
+#   * `sort=updateDate+desc` is a documented parameter but OBSERVED
+#     NON-FUNCTIONAL on the bill list (2026-09-18: updateDate+asc and
+#     updateDate+desc return byte-identical orderings — the list is
+#     API-native order). Recorded honestly; the sweep takes every page up to
+#     the bound, so no result depends on list order.
+#   * There is NO server-side keyword query on the bill list — keyword
+#     filtering is LOCAL against legislation_vocab.toml (the same verbatim
+#     match-of-record rule as P26.11).
+#   * Quota: documented 5,000 requests/hour (api.congress.gov README); the
+#     staged key's response headers observed x-ratelimit-limit: 20000 /
+#     x-ratelimit-remaining ≈ 19986 (2026-09-18). The full current-congress
+#     sweep is ~77 requests — trivially inside the window. Refused requests
+#     still count (the D-SOURCES.10-1 lesson): never re-probe a 429.
+
+plan_version = "2026.09.18"
+
+# The congress-scoped bill index that IS the sweep. One seed page per congress
+# (offset=0 — the live_targets row, kept in lock-step); the connector reads the
+# captured page's pagination.count and expands the remaining bounded pages.
+# congresses = the reviewed term window: the 119th Congress (2025–2027) is the
+# current session; a congress that ENDS stops generating new proposed
+# instruments and its claims are already recorded (append-only), so prior
+# congresses are out of scope this ticket.
+[bill_index]
+endpoint = "/bill"
+congresses = [119]
+# v3 bound verified live: limit must be in [1,250] (the API clamps silently —
+# the bound stays at the documented max).
+per_page = 250
+# Documented sort parameter; observed non-functional on the bill list
+# (2026-09-18) — sent verbatim for the record, never relied on.
+sort = "updateDate+desc"
+# Hard bound on generated pages per congress: 96 pages × 250 = 24,000 bills
+# (~27% headroom over the 18,887 counted 2026-09-18). A congress whose index
+# outgrows the bound truncates loud — every page's outcome row records
+# `truncated` when pagination.count exceeds the bound; the sweep never crawls
+# past it.
+max_pages_per_congress = 96

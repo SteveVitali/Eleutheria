@@ -309,6 +309,17 @@ scheduler = "sig-sched-openstates"
 secrets = { SIG_OPENSTATES_KEY = "sig-openstates-key" }  # keyed live since P26.4 (2026-09-17)
 note = "Bounded state-scoped bill queries over v3; key rides the X-API-KEY header from $SIG_OPENSTATES_KEY (HG-09, Secret Manager). Keyless → 403 challenge, recorded. Bills index as index_only links (a pending bill is not a §11.14 LegalInstrument)."
 
+# --- P26.12 (SOURCES.11): the federal legislation sweep -----------------------
+
+[[sources]]
+id = "congress_gov"
+cadence = "monthly"              # bill text/status churns mid-session; monthly refreshes latestAction
+cron = "0 5 3 * 2"               # day 3, 05:00 UTC — offset from the fbi_cde day-3 slot
+job = "sig-ingest-congress-gov"
+scheduler = "sig-sched-congress-gov"
+secrets = { SIG_DATA_GOV_KEY = "sig-data-gov-key" }  # the existing api.data.gov key (P26.4), HG-09
+note = "Congress-scoped /v3/bill/{congress} pages (limit=250, ≤96/congress); key rides the X-Api-Key header from $SIG_DATA_GOV_KEY — never the URL (P26.4 transport). Keyless → 403 API_KEY_MISSING, recorded. Federal bills index as index_only links / typed legislative_bill claims — proposed law, never a §11.14 LegalInstrument."
+
 # --- P26.7 (SOURCES.7): yielding state DOT/511 camera registries --------------
 # Monthly cadence for the GL-GATE-06-resolved states (registries change only as
 # operators add/remove cameras). Gated states (la/ga/al/tx/md) get no row — the
