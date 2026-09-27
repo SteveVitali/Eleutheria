@@ -1,0 +1,4515 @@
+{
+ "byte_counts": [],
+ "capture_digests": [
+  "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi"
+ ],
+ "claim_count": 4614,
+ "connector": "procurement",
+ "content_drift": null,
+ "disappearances": [],
+ "document_drift": [],
+ "document_outcomes": [
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "cctv"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "body_worn_camera",
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [
+    "contract_notice"
+   ],
+   "outcome": "matched",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  },
+  {
+   "capture_digest": "bcnahtoulsfb3stahc32n3vyiafvfrs2gixma7njwjniesjtjsxngydg5deenmrgglmyei7ikw5eefqb5q7beipiyv7uvnealnktpinesbi",
+   "matched_terms": [],
+   "outcome": "no_match",
+   "platform": "socrata",
+   "tenant_id": "new_york_ny",
+   "url": "https://data.cityofnewyork.us/resource/dg92-zbpx.json?%24limit=500&%24order=start_date+DESC"
+  }
+ ],
+ "duration_seconds": 2.206501,
+ "mode": "live",
+ "politeness_refusal": null,
+ "rate_limit_events": [],
+ "refusals": [],
+ "robots_decisions": [],
+ "source_id": "procportal_nyc_ny",
+ "started_at": "2026-09-18T04:49:22.127551+00:00",
+ "status_codes": [],
+ "urls": [],
+ "note": "P26.10 idempotency re-run: this fetch record is the second of two consecutive live runs against procportal_nyc_ny on 2026-09-18. Both runs emitted claim_count=4614 from the same content-addressed capture \u2014 the append-only emission is stable (started_at/duration_seconds are this run's own)."
+}

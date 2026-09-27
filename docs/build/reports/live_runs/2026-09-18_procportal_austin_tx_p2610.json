@@ -1,0 +1,4439 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy"
+  ],
+  "claim_count": 4720,
+  "connector": "procurement",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    },
+    {
+      "capture_digest": "bcnanxl4v3xga6yffig4hhqgfggeduykzsclzx76krmqvjj2yui5rnkftksephei65bx3eceki3rhfisudyevuyjlhxumnnku7jzgp47dgy",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "austin_tx",
+      "url": "https://data.austintexas.gov/resource/84ih-p28j.json?%24limit=500&%24order=efbgn_dt+DESC"
+    }
+  ],
+  "duration_seconds": 4.463025,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "procportal_austin_tx",
+  "started_at": "2026-09-18T04:48:15.031720+00:00",
+  "status_codes": [],
+  "urls": []
+}

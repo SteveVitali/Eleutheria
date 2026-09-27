@@ -115,7 +115,7 @@ def test_the_seeded_registry_has_no_flip_metadata_violations() -> None:
 def test_validate_passes_on_the_seeded_registry(capsys: pytest.CaptureFixture[str]) -> None:
     assert main(["validate"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 180" in out
+    assert "registered sources: 186" in out
     assert "self-checks OK" in out
 
 
@@ -166,7 +166,7 @@ def test_validate_fails_naming_the_offending_id(monkeypatch: pytest.MonkeyPatch)
 # registered, 43 loadable, 0 flip-ready.
 
 
-def test_review_status_prints_flip_ready_0_and_loadable_43(
+def test_review_status_prints_flip_ready_0_and_loadable_65(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
     # GL-GATE-06 (2026-09-16) drained flip-ready to 0; the same-day P26.2 pass
@@ -182,11 +182,18 @@ def test_review_status_prints_flip_ready_0_and_loadable_43(
     # ACT/Sioux Falls/Baltimore/Ottawa/Sheffield; Chicago/Calgary/Edmonton/
     # Honolulu/MD-mirror/York/Arlington/Seattle/Bellevue/Lexington/NZTA/QLDC/
     # Donegal/HK stay gated) under the same delegated basis (52 → 61 loadable).
+    # P26.10 (SOURCES.9) added 6 procurement-portal rows (180 → 186: bonfire +
+    # five per-city Socrata contract datasets) and flipped the four
+    # licence-reviewed cities (Austin PUBLIC_DOMAIN, SF PDDL, KCMO CC0-1.0,
+    # NYC PUBLIC_DOMAIN — verbatim basis in each rights packet) under the same
+    # GL-GATE-06 delegated pattern (61 → 65 loadable); bidnet_direct (vendor
+    # terms not yet captured verbatim), bonfire (robots Disallow:/), opengov
+    # (WAF challenge) and procportal_chicago_il (no licence metadata) stay gated.
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 180" in out
+    assert "registered sources: 186" in out
     assert "flip-ready: 0" in out
-    assert "loadable now: 61" in out
+    assert "loadable now: 65" in out
 
 
 def test_review_status_loadable_equals_validate() -> None:
@@ -194,7 +201,7 @@ def test_review_status_loadable_equals_validate() -> None:
     from connectors.loader import is_loadable
 
     loadable = [s for s in sources() if is_loadable(s)]
-    assert len(loadable) == 61
+    assert len(loadable) == 65
     assert len(flip_ready()) == 0
 
 

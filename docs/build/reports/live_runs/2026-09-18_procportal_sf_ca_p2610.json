@@ -1,0 +1,4035 @@
+{
+  "byte_counts": [],
+  "capture_digests": [
+    "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che"
+  ],
+  "claim_count": 4414,
+  "connector": "procurement",
+  "content_drift": null,
+  "disappearances": [],
+  "document_drift": [],
+  "document_outcomes": [
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "empty",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [
+        "contract_notice"
+      ],
+      "outcome": "matched",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    },
+    {
+      "capture_digest": "bcnadyrh3rqz354ggibz6cdmmhnodqhp7uenbvxj2irvvl2wwyfvzssgttf2jqydzj25if4pwflwmte7rnschujdkzboatidpmvjdwd4che",
+      "matched_terms": [],
+      "outcome": "no_match",
+      "platform": "socrata",
+      "tenant_id": "san_francisco_ca",
+      "url": "https://data.sf.gov/resource/cqi5-hm2d.json?%24limit=500&%24order=term_start_date+DESC"
+    }
+  ],
+  "duration_seconds": 1.581199,
+  "mode": "live",
+  "politeness_refusal": null,
+  "rate_limit_events": [],
+  "refusals": [],
+  "robots_decisions": [],
+  "source_id": "procportal_sf_ca",
+  "started_at": "2026-09-18T04:49:02.015112+00:00",
+  "status_codes": [],
+  "urls": []
+}

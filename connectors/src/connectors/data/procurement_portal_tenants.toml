@@ -1,0 +1,457 @@
+# SPDX-License-Identifier: Apache-2.0
+# The procurement-portal tenant registry (P26.10 / SOURCES.9) — a PUBLISHED
+# artifact this ticket OWNS, the procurement analogue of agenda_tenants.toml
+# (§22.3). Vendor procurement platforms are multi-tenant exactly like the agenda
+# platforms: BidNet Direct (mdf commerce / Periscope S2G) hosts hundreds of
+# agency storefronts as PATHS under one host, Bonfire serves per-tenant
+# *.bonfirehub.com portals, OpenGov Procurement serves /portal/<agency> tenants
+# behind one host, and city open-data portals publish Socrata contract/award
+# datasets. No municipality->portal directory exists upstream; this is it.
+#
+# This is DATA, not code (SIG-ENG-001): `connectors.procurement.portal_tenants()`
+# loads it and `portal_targets()` expands each row into that tenant's bounded
+# index targets (the connector reads its targets from this registry, never a
+# hardcoded list). Changes are versioned migrations (§20): bump
+# `registry_version`, never silently rewrite a row.
+#
+# `enum_source` is REQUIRED on every row — the enumeration provenance (which
+# index page / certificate-transparency set / catalog query surfaced the
+# tenant). `verified` records whether the tenant's surface was probed live
+# against the shared politeness UA; unverified rows say so (§3.1).
+#
+# `platform` is a coarse family label (bidnet | bonfire | opengov | socrata);
+# `source_id` binds the tenant to its registry source row (data/sources.toml) —
+# the row the loader gate + live runner read. A gated source keeps its tenant
+# rows so a future rights decision needs no registry edit; the live gate refuses
+# before any target is read.
+#
+# [[platform_census]] rows are registry DATA, never targets — portal_targets()
+# reads only [tenants.*]. Each row is a host the enumeration FOUND and EXCLUDED:
+#   robots_disallow_all — the host's robots.txt is `User-agent: *` /
+#                          `Disallow: /` (the refusal stands, never bypassed);
+#   waf_challenged      — the host answers programmatic requests with a WAF/JS
+#                          challenge (HTTP 403 cf-mitigated) — a recorded
+#                          outcome, never defeated (SIG-INGEST-013);
+#   unreachable         — the enumerated name did not answer (NXDOMAIN/timeout);
+#   non_jurisdiction_host — a vendor infra/marketing hostname, not an agency
+#                          tenant;
+#   gated_rights        — enumerated and rights-gated (a named DEFERRALS
+#                          blocker), the row documents the surface.
+#
+# TOML ORDERING: scalars first, then [tenants.*] tables, then
+# [[platform_census]] arrays.
+
+# 2026.09.18 (P26.10 / SOURCES.9): initial registry. Live probes 2026-09-18 with
+# the shared `procurement/1.0.0 (+https://sig-project.org/data-collection)` UA:
+#   * bidnet — agency storefronts enumerated off each purchasing group's public
+#     `/participating-buyers` page (server-rendered tenant list); each
+#     storefront serves its own open/closed/awarded solicitation indexes and
+#     public detail pages (no login wall for notice text; `?keywords=` is the
+#     portal's own bounded search field). www.bidnetdirect.com robots.txt:
+#     `User-agent: *` allows with `Crawl-delay: 5`; private/auth/dev paths are
+#     disallowed and the storefront URLs below never touch them.
+#   * socrata — contract/award datasets enumerated via the documented catalog
+#     discovery API (api.us.socrata.com/api/catalog/v1) per city host; licence
+#     metadata read off `/api/views/<id>` per dataset. Four datasets carry a
+#     public-domain-class licence; Chicago's carries NO licence metadata → the
+#     source stays rights-gated (D-SOURCES.9-1), the tenant row documents it.
+#   * bonfire — both verified *.bonfirehub.com tenants answer robots.txt
+#     `User-agent: *` / `Disallow: /` (platform-wide): every fetch is a recorded
+#     robots refusal while the wall stands (D-SOURCES.9-2).
+#   * opengov — procurement.opengov.com answers every `/portal/<agency>` path
+#     (and robots.txt itself, an HTML 200 SPA shell) behind a Cloudflare managed
+#     challenge (`cf-mitigated: challenge`, HTTP 403) → recorded disappearances
+#     while the posture holds (D-SOURCES.9-3).
+registry_version = "2026.09.18-p26.10"
+
+# --- tenants: jurisdiction -> portal platform + per-tenant surface ------------
+# Each row carries the jurisdiction (a candidate identifier — SIG-INGEST-034),
+# the platform family, the source registry row the gate reads, and the
+# platform-specific facts the target expansion needs (all reviewed data).
+
+# --- BidNet Direct agency storefronts (source_id = bidnet_direct) -------------
+# Storefront = path under https://www.bidnetdirect.com; the tenant's own
+# solicitation indexes are `<storefront>/solicitations/{open,closed,awarded}-bids`
+# — server-rendered `mets-table-row` item lists (verified markup 2026-09-18:
+# `div.sol-num` solicitation number, `a.solicitation-link` title+detail href,
+# `span.sol-publication-date`/`span.sol-closing-date` `span.date-value` dates).
+# `purchasing_group` is the parent state purchasing group (enum provenance).
+
+[tenants.oklahoma_city_ok]
+jurisdiction = "City of Oklahoma City, OK"
+platform = "bidnet"
+source_id = "bidnet_direct"
+tenant = "cityofoklahomacityandtrusts"
+storefront = "/oklahoma/cityofoklahomacityandtrusts"
+purchasing_group = "/oklahoma"
+purchasing_group_id = "93598201"
+buyer_name = "The City of Oklahoma City and Trusts"
+verified = true
+last_verified = 2026-09-18
+enum_source = "https://www.bidnetdirect.com/oklahoma/participating-buyers (live probe 2026-09-18)"
+notes = "Verified serving: 27 open solicitations on the storefront index; keyword search filters server-side (?keywords=camera → 3 items incl. 'EMBARK Vehicle Safety Technology Pilot Program')."
+
+[tenants.lawton_ok]
+jurisdiction = "City of Lawton, OK"
+platform = "bidnet"
+source_id = "bidnet_direct"
+tenant = "cityoflawton"
+storefront = "/oklahoma/cityoflawton"
+purchasing_group = "/oklahoma"
+purchasing_group_id = "93598201"
+buyer_name = "City of Lawton"
+verified = true
+last_verified = 2026-09-18
+enum_source = "https://www.bidnetdirect.com/oklahoma/participating-buyers (live probe 2026-09-18)"
+notes = "Verified serving: 3 open solicitations on the storefront index."
+
+[tenants.tulsa_county_ok]
+jurisdiction = "Tulsa County, OK"
+platform = "bidnet"
+source_id = "bidnet_direct"
+tenant = "tulsa-county"
+storefront = "/oklahoma/tulsa-county"
+purchasing_group = "/oklahoma"
+purchasing_group_id = "93598201"
+buyer_name = "Tulsa County"
+verified = true
+last_verified = 2026-09-18
+enum_source = "https://www.bidnetdirect.com/oklahoma/participating-buyers (live probe 2026-09-18)"
+notes = "Verified serving: index parses, 0 open solicitations at probe time — an honest empty window, never drift."
+
+[tenants.oklahoma_county_ok]
+jurisdiction = "Oklahoma County, OK"
+platform = "bidnet"
+source_id = "bidnet_direct"
+tenant = "oklahomacounty"
+storefront = "/oklahoma/oklahomacounty"
+purchasing_group = "/oklahoma"
+purchasing_group_id = "93598201"
+buyer_name = "Oklahoma County"
+verified = true
+last_verified = 2026-09-18
+enum_source = "https://www.bidnetdirect.com/oklahoma/participating-buyers (live probe 2026-09-18)"
+notes = "Verified serving: index parses, 0 open solicitations at probe time."
+
+[tenants.bexar_county_tx]
+jurisdiction = "Bexar County, TX"
+platform = "bidnet"
+source_id = "bidnet_direct"
+tenant = "bexar-county"
+storefront = "/texas/bexar-county"
+purchasing_group = "/texas"
+purchasing_group_id = "8407551"
+buyer_name = "Bexar County"
+verified = true
+last_verified = 2026-09-18
+enum_source = "https://www.bidnetdirect.com/texas/participating-buyers (live probe 2026-09-18)"
+notes = "Verified serving: index parses, 0 open solicitations at probe time (Bexar County — San Antonio)."
+
+[tenants.cameron_county_tx]
+jurisdiction = "Cameron County, TX"
+platform = "bidnet"
+source_id = "bidnet_direct"
+tenant = "cameron-county"
+storefront = "/texas/cameron-county"
+purchasing_group = "/texas"
+purchasing_group_id = "8407551"
+buyer_name = "Cameron County"
+verified = true
+last_verified = 2026-09-18
+enum_source = "https://www.bidnetdirect.com/texas/participating-buyers (live probe 2026-09-18)"
+notes = "Verified serving: 4 open solicitations on the storefront index (Cameron County — Brownsville)."
+
+[tenants.montgomery_county_md]
+jurisdiction = "Montgomery County, MD"
+platform = "bidnet"
+source_id = "bidnet_direct"
+tenant = "montgomerycounty"
+storefront = "/maryland/montgomerycounty"
+purchasing_group = "/maryland"
+purchasing_group_id = "182876351"
+buyer_name = "Montgomery County"
+verified = true
+last_verified = 2026-09-18
+enum_source = "https://www.bidnetdirect.com/maryland/participating-buyers (live probe 2026-09-18)"
+notes = "Verified serving: 10 open solicitations; keyword search 'surveillance' → 'Security Camera System' (1167294) — a ~1,000-camera parking-facility ALPR/CCTV solicitation with 'License Plate Recognition (LPR)' verbatim in the public detail text."
+
+[tenants.albany_county_ny]
+jurisdiction = "Albany County, NY"
+platform = "bidnet"
+source_id = "bidnet_direct"
+tenant = "albany-county"
+storefront = "/new-york/albany-county"
+purchasing_group = "/new-york"
+purchasing_group_id = "8411151"
+buyer_name = "Albany County"
+verified = true
+last_verified = 2026-09-18
+enum_source = "https://www.bidnetdirect.com/new-york/participating-buyers (live probe 2026-09-18)"
+notes = "Verified serving: 14 open solicitations; keyword search 'surveillance' → 16 closed items incl. school-bus stop-arm enforcement and counter-surveillance kit solicitations."
+
+[tenants.broome_county_ny]
+jurisdiction = "Broome County, NY"
+platform = "bidnet"
+source_id = "bidnet_direct"
+tenant = "broome-county"
+storefront = "/new-york/broome-county"
+purchasing_group = "/new-york"
+purchasing_group_id = "8411151"
+buyer_name = "Broome County"
+verified = true
+last_verified = 2026-09-18
+enum_source = "https://www.bidnetdirect.com/new-york/participating-buyers (live probe 2026-09-18)"
+notes = "Verified serving: 3 open solicitations on the storefront index (Broome County — Binghamton)."
+
+# --- city Socrata contract/award datasets (platform = socrata) -----------------
+# One tenant per city dataset: `host` + `dataset` name the SoQL /resource rows
+# API endpoint (API-mode allow-listed hosts); the reviewed field aliases map
+# the dataset's own column names onto the procurement_notice surface — title
+# fields are scanned verbatim, and `where_terms` is the server-side recall
+# filter (the verbatim vocab scan still decides every emitted claim).
+# `id_fields` = stable external-id candidates; `title_fields`/`desc_fields` =
+# the verbatim text scanned; `date_field` = bounded-window order; `limit` =
+# the per-tenant window cap.
+
+[tenants.austin_tx]
+jurisdiction = "City of Austin, TX"
+platform = "socrata"
+source_id = "procportal_austin_tx"
+tenant = "austin_contracts"
+host = "data.austintexas.gov"
+dataset = "84ih-p28j"
+id_fields = ["doc_id", "doc_cd"]
+title_fields = ["doc_dscr", "contract_synopsis", "cat_dscr"]
+date_field = "efbgn_dt"
+vendor_field = "lgl_nm"
+buyer_name = "City of Austin"
+amount_field = "ma_prch_lmt_am"
+limit = 500
+verified = true
+last_verified = 2026-09-18
+enum_source = "api.us.socrata.com catalog q=contracts @data.austintexas.gov (live probe 2026-09-18)"
+notes = "'Contracts' — authorized-spending register since inception. Dataset licence PUBLIC_DOMAIN → GL-GATE-06 flip. Short title fields rarely carry vocab — an honest low-yield tenant."
+
+[tenants.san_francisco_ca]
+jurisdiction = "City and County of San Francisco, CA"
+platform = "socrata"
+source_id = "procportal_sf_ca"
+tenant = "sf_supplier_contracts"
+host = "data.sf.gov"
+dataset = "cqi5-hm2d"
+id_fields = ["contract_no"]
+title_fields = ["contract_title", "scope_of_work"]
+date_field = "term_start_date"
+vendor_field = "prime_contractor"
+buyer_name = "City and County of San Francisco"
+amount_field = "agreed_amt"
+dept_field = "department"
+limit = 500
+verified = true
+last_verified = 2026-09-18
+enum_source = "api.us.socrata.com catalog q=contracts @data.sf.gov (live probe 2026-09-18)"
+notes = "'Supplier Contracts' — the Controller's contract register. Licence PDDL-1.0 → GL-GATE-06 flip. Verified hits: CCTV maintenance contracts, AXON body-worn cameras (PDBodyWornCameras), transit surveillance MoUs."
+
+[tenants.kansas_city_mo]
+jurisdiction = "Kansas City, MO"
+platform = "socrata"
+source_id = "procportal_kcmo_mo"
+tenant = "kcmo_contracts"
+host = "data.kcmo.org"
+dataset = "c46m-hv6s"
+id_fields = ["contract_number"]
+title_fields = ["description", "alias_nm"]
+date_field = "contract_date"
+vendor_field = "vendor"
+buyer_name = "Kansas City, Missouri"
+amount_field = "contract_amount"
+dept_field = "department"
+limit = 500
+verified = true
+last_verified = 2026-09-18
+enum_source = "api.us.socrata.com catalog q=contracts @data.kcmo.org (live probe 2026-09-18)"
+notes = "'List of KCMO City Contracts'. Licence CC0-1.0 → GL-GATE-06 flip. `description` carries contract-type labels, not prose — an honest zero-match tenant most runs."
+
+[tenants.new_york_ny]
+jurisdiction = "City of New York, NY"
+platform = "socrata"
+source_id = "procportal_nyc_ny"
+tenant = "nyc_crol"
+host = "data.cityofnewyork.us"
+dataset = "dg92-zbpx"
+id_fields = ["request_id"]
+title_fields = ["short_title", "additional_description_1", "additional_description_2", "additional_description_3"]
+date_field = "start_date"
+vendor_field = "vendor_name"
+buyer_name = "City of New York"
+amount_field = "contract_amount"
+dept_field = "agency_name"
+notice_type_field = "type_of_notice_description"
+doc_field = "document_links"
+limit = 500
+verified = true
+last_verified = 2026-09-18
+enum_source = "api.us.socrata.com catalog q=procurement @data.cityofnewyork.us (live probe 2026-09-18)"
+notes = "'City Record Online' — the NYC City Record notice register (solicitations, awards, hearings). Licence PUBLIC_DOMAIN → GL-GATE-06 flip. Verified hits: 'SURVEILLANCE AND MONITORING SYSTEM' (Police Department solicitation), CCTV install/repair notices, access-control awards."
+
+[tenants.chicago_il]
+jurisdiction = "City of Chicago, IL"
+platform = "socrata"
+source_id = "procportal_chicago_il"
+tenant = "chicago_contracts"
+host = "data.cityofchicago.org"
+dataset = "rsxa-ify5"
+id_fields = ["purchase_order_contract_number", "specification_number"]
+title_fields = ["purchase_order_description"]
+date_field = "approval_date"
+vendor_field = "vendor_name"
+buyer_name = "City of Chicago"
+amount_field = "award_amount"
+dept_field = "department"
+limit = 500
+verified = true
+last_verified = 2026-09-18
+enum_source = "api.us.socrata.com catalog q=contracts @data.cityofchicago.org (live probe 2026-09-18)"
+notes = "'Contracts' — awarded contracts/modifications since 1993. GATED: no licence metadata on the dataset or portal record (D-SOURCES.9-1) — verified vocab hits exist ('VIDEO/SURVEILLANCE CAMERA SERVICES', 'VIDEO SURVEILLANCE MANAGEMENT SYSTEM') but the gate refuses before any fetch."
+
+# --- Bonfire portals (source_id = bonfire) -------------------------------------
+# *.bonfirehub.com per-tenant portals. Platform-wide robots `Disallow: /`
+# (verified 2026-09-18 on both rows): every fetch is a recorded robots refusal —
+# the rows exist so each host's verdict is data, never a silent skip.
+
+[tenants.laurier_on]
+jurisdiction = "Wilfrid Laurier University, ON"
+platform = "bonfire"
+source_id = "bonfire"
+tenant = "laurier"
+host = "laurier.bonfirehub.com"
+verified = true
+last_verified = 2026-09-18
+enum_source = "crt.sh %.bonfirehub.com certificate set (enumerated 2026-09-18)"
+notes = "Portal live at /portal (303 → /login/defaultLocation → /portal); robots.txt `User-agent: *` / `Disallow: /` — recorded refusal (D-SOURCES.9-2)."
+
+[tenants.columbus_oh]
+jurisdiction = "Columbus, OH (Bonfire tenant)"
+platform = "bonfire"
+source_id = "bonfire"
+tenant = "columbus"
+host = "columbus.bonfirehub.com"
+verified = true
+last_verified = 2026-09-18
+enum_source = "crt.sh %.bonfirehub.com certificate set (enumerated 2026-09-18)"
+notes = "Portal live at /portal (303 → /login/defaultLocation → /portal); robots.txt `User-agent: *` / `Disallow: /` — recorded refusal (D-SOURCES.9-2)."
+
+# --- OpenGov Procurement portals (source_id = opengov_procurement) -------------
+# /portal/<agency> tenants on procurement.opengov.com — every path answers a
+# Cloudflare managed challenge (HTTP 403 cf-mitigated) to programmatic requests
+# (verified 2026-09-18, SIG UA and a stock browser UA alike). A recorded
+# disappearance, never defeated (SIG-INGEST-013).
+
+[tenants.salt_lake_city_ut]
+jurisdiction = "Salt Lake City, UT"
+platform = "opengov"
+source_id = "opengov_procurement"
+tenant = "salt-lake-city"
+portal_path = "/portal/salt-lake-city"
+host = "procurement.opengov.com"
+verified = true
+last_verified = 2026-09-18
+enum_source = "OpenGov public portal directory (enumerated 2026-09-18)"
+notes = "HTTP 403 Cloudflare managed challenge on /portal/salt-lake-city — recorded disappearance (D-SOURCES.9-3)."
+
+# --- platform census: enumerated hosts that are NOT ingest targets -------------
+# Registry data only — portal_targets() never reads these.
+
+# BidNet *.bidnetdirect.com certificate-transparency set (crt.sh, 2026-09-18):
+# every enumerated subdomain is vendor infrastructure or a marketing surface —
+# agency tenants are PATHS on www.bidnetdirect.com, not subdomains.
+[[platform_census]]
+platform = "bidnet"
+host = "bi.bidnetdirect.com"
+outcome = "non_jurisdiction_host"
+enum_source = "crt.sh %.bidnetdirect.com (2026-09-18)"
+note = "Vendor BI/analytics host, not an agency storefront."
+
+[[platform_census]]
+platform = "bidnet"
+host = "bideval.bidnetdirect.com"
+outcome = "non_jurisdiction_host"
+enum_source = "crt.sh %.bidnetdirect.com (2026-09-18)"
+note = "Vendor bid-evaluation tool host, not an agency storefront."
+
+[[platform_census]]
+platform = "bidnet"
+host = "billing.bidnetdirect.com"
+outcome = "non_jurisdiction_host"
+enum_source = "crt.sh %.bidnetdirect.com (2026-09-18)"
+note = "Vendor billing host — private transactional surface (robots-disallowed class)."
+
+[[platform_census]]
+platform = "bidnet"
+host = "faq.bidnetdirect.com"
+outcome = "non_jurisdiction_host"
+enum_source = "crt.sh %.bidnetdirect.com (2026-09-18)"
+note = "Vendor FAQ/support host, not an agency storefront."
+
+[[platform_census]]
+platform = "bidnet"
+host = "get-government-bids.bidnetdirect.com"
+outcome = "non_jurisdiction_host"
+enum_source = "crt.sh %.bidnetdirect.com (2026-09-18)"
+note = "Vendor marketing landing page, not an agency storefront."
+
+[[platform_census]]
+platform = "bidnet"
+host = "idp.bidnetdirect.com"
+outcome = "non_jurisdiction_host"
+enum_source = "crt.sh %.bidnetdirect.com (2026-09-18)"
+note = "Vendor identity-provider host — auth surface (robots-disallowed class)."
+
+[[platform_census]]
+platform = "bidnet"
+host = "procurement-solution.bidnetdirect.com"
+outcome = "non_jurisdiction_host"
+enum_source = "crt.sh %.bidnetdirect.com (2026-09-18)"
+note = "Vendor product marketing page, not an agency storefront."
+
+[[platform_census]]
+platform = "bidnet"
+host = "webinars.bidnetdirect.com"
+outcome = "non_jurisdiction_host"
+enum_source = "crt.sh %.bidnetdirect.com (2026-09-18)"
+note = "Vendor webinar host, not an agency storefront."
+
+# Bonfire certificate set — remaining names are vendor infra (account/sso/oauth/
+# react-modules/zendesk/academy/community/vendor/pdfdemo/*-test/*-staging).
+[[platform_census]]
+platform = "bonfire"
+host = "centennial.bonfirehub.com"
+outcome = "unreachable"
+enum_source = "crt.sh %.bonfirehub.com (2026-09-18)"
+note = "In the certificate set but NXDOMAIN at probe time — recorded, not dropped."
+
+[[platform_census]]
+platform = "bonfire"
+host = "account.bonfirehub.com"
+outcome = "non_jurisdiction_host"
+enum_source = "crt.sh %.bonfirehub.com (2026-09-18)"
+note = "Vendor account host, not an agency tenant."
+
+[[platform_census]]
+platform = "bonfire"
+host = "sso.bonfirehub.com"
+outcome = "non_jurisdiction_host"
+enum_source = "crt.sh %.bonfirehub.com (2026-09-18)"
+note = "Vendor SSO host — auth surface, not an agency tenant."
+
+# OpenGov — further /portal/<agency> slugs enumerated and probed; all answer the
+# same Cloudflare managed challenge (HTTP 403 cf-mitigated, 2026-09-18). The one
+# registered tenant row above carries the recorded live outcome; the rest are
+# enumerated here so the enumeration is complete without duplicating the same
+# recorded challenge across tenants.
+[[platform_census]]
+platform = "opengov"
+host = "procurement.opengov.com"
+outcome = "waf_challenged"
+enum_source = "OpenGov public portal directory (enumerated 2026-09-18)"
+note = "/portal/{boulder,austin,detroit,sacramento,raleigh,fort-worth,scottsdale,tempe,oklahoma-city} — all HTTP 403 cf-mitigated challenge; never defeated (SIG-INGEST-013)."

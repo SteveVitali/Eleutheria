@@ -34,7 +34,13 @@
 # (doc_per_tenant / doc_run_cap) each platform's index captures fan out under;
 # escribe matter_link_template corrected to the verified Meeting.aspx page
 # (the MeetingsCalendarView.aspx/Meeting link 404s — probed 2026-09-17).
-vocab_version = "2026.09.17-p26.6"
+# 2026.09.18 (P26.10 / SOURCES.9): +portal_index predicate (the per-tenant
+# portal index outcome row), +procurement_portals source set (BidNet agency
+# storefronts, Bonfire/OpenGov portals, city Socrata contract datasets), and
+# the [platform_endpoints.bidnet]/[platform_endpoints.socrata] reviewed
+# endpoint facts — bounded keyword-window searches and SoQL slices, verbatim
+# agenda_content_vocab scans deciding every emitted claim.
+vocab_version = "2026.09.18-p26.10"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `procurement` connector may write ONLY the Contract (§11.11) and FundingInstrument
@@ -83,6 +89,10 @@ predicate_allowlist = [
   # agenda_content_vocab term — the verbatim literal stays raw_value, the term
   # id is the typed value, and the claim carries the document locator.
   "content_term",
+  # P26.10 (SOURCES.9): the per-tenant procurement-portal index outcome row —
+  # one row per captured tenant index recording items/matches/bounds (the
+  # portal analogue of the agenda_index marker).
+  "portal_index",
 ]
 
 # Predicate GENRES the procurement connector MUST NOT write (scope-creep guard,
@@ -200,6 +210,22 @@ agenda_platforms = [
   "escribe",
 ]
 
+# The procurement-portal registry source ids (P26.10 / SOURCES.9, §22.3-class).
+# Procurement portals are multi-tenant exactly like the agenda platforms; the
+# per-tenant registry is data/procurement_portal_tenants.toml and each source
+# below expands to its tenants' bounded index targets. Socrata cities are
+# per-publisher source rows (rights granularity — the P26.9 precedent).
+procurement_portals = [
+  "bidnet_direct",
+  "bonfire",
+  "opengov_procurement",
+  "procportal_austin_tx",
+  "procportal_sf_ca",
+  "procportal_kcmo_mo",
+  "procportal_nyc_ny",
+  "procportal_chicago_il",
+]
+
 # The artifact_type genres this connector may stamp on a captured procurement
 # document (§10.3.2, SIG-INGEST-047). Mirrors the frozen ArtifactType ontology enum;
 # a test asserts these are members of it.
@@ -225,6 +251,18 @@ legistar       = "legistar"
 primegov       = "primegov"
 civicclerk     = "civicclerk"
 escribe        = "escribe"
+
+# Procurement-portal registry sources (P26.10 / SOURCES.9): each maps to its
+# published tenant rows in data/procurement_portal_tenants.toml. The Socrata
+# cities are per-publisher source rows so rights posture stays per-dataset.
+bidnet_direct          = "bidnet_direct"
+bonfire                = "bonfire"
+opengov_procurement    = "opengov_procurement"
+procportal_austin_tx   = "procportal_austin_tx"
+procportal_sf_ca       = "procportal_sf_ca"
+procportal_kcmo_mo     = "procportal_kcmo_mo"
+procportal_nyc_ny      = "procportal_nyc_ny"
+procportal_chicago_il  = "procportal_chicago_il"
 
 # --- USAspending: sub-awards, not only prime awards (§23.6, SIG-ONTO-033) ------
 # USAspending exposes prime awards AND sub-awards. Sub-awards are the traceable
@@ -363,6 +401,75 @@ doc_run_cap      = 300
 # fetches). Canonical order = the item's own StartDate (desc), ID tie-break —
 # the bounded window is a function of the item SET, not server ordering.
 doc_order_fields = ["StartDate"]
+
+# --- Procurement-portal index endpoints (P26.10 / SOURCES.9) ------------------
+# Each portal tenant row names its platform family + surface facts; the
+# platform's INDEX shape is reviewed here — bounded targeted lookups (the
+# portal's own search field / the documented SoQL rows API), never a crawl.
+[platform_endpoints.bidnet]
+# BidNet Direct agency storefronts: `{storefront}/solicitations/{kind}-bids`
+# serves the tenant's server-rendered index (`mets-table-row` items; verified
+# markup 2026-09-18 — `div.sol-num`, `a.solicitation-link`,
+# `span.sol-publication-date`/`span.sol-closing-date` > `span.date-value`).
+# `?keywords=<kw>` is the portal's OWN public search field — a bounded
+# targeted lookup, never a crawl; the reviewed recall set below covers the
+# agenda_content_vocab families (precision comes from the verbatim scan,
+# never the keyword). Page-1 of each index is the reviewed window (25 items —
+# deeper pages are out of scope for a sweep; `?page=` is robots-disallowed
+# anyway). The storefront's open-bids index is additionally fetched
+# unfiltered (the current window regardless of keywords).
+index_kinds = ["open", "closed", "awarded"]
+index_keywords = [
+  "surveillance", "camera", "cctv", "license", "drone", "gunshot",
+  "facial", "stingray", "unmanned", "predictive",
+]
+index_unfiltered_kinds = ["open"]
+host = "www.bidnetdirect.com"
+# Item markup facts (fail-closed): an index page that carries neither a
+# `solicitation-link` item nor the `id="solicitationList"` container (the list
+# region, present even on a zero-result page) is ContentDrift — the markup
+# contract changed, never a silent empty.
+items_marker = "solicitation-link"
+empty_marker = "solicitationList"
+# The detail DOCUMENT is the item's own public detail page — the captured
+# `a.solicitation-link` href (never constructed): `<group>/<agency>/
+# solicitations/<slug>/<id>?purchasingGroupId=<gid>&origin=2`. It serves the
+# verbatim description text to anonymous viewers (verified 2026-09-18). A
+# non-HTML body is genre drift; a page with no item text is `empty`.
+doc_genre = "html"
+doc_per_tenant = 12
+doc_run_cap = 100
+doc_order_fields = ["published", "closing"]
+# index_kind -> procurement lifecycle state (§13.4): an open solicitation is
+# rfp_issued; an awarded bid is awarded. A closed-not-awarded bid asserts no
+# transition (closure alone is not a vocabulary state — §3.1).
+[platform_endpoints.bidnet.notice_map]
+open = "rfp_issued"
+awarded = "awarded"
+
+[platform_endpoints.socrata]
+# City Socrata contract/award datasets: the documented SoQL rows API
+# `https://{host}/resource/{dataset}.json` (API-mode allow-listed hosts). The
+# per-tenant registry row carries the reviewed field aliases + window bound;
+# the connector builds one bounded query per tenant — `$limit` rows ordered
+# by the reviewed date field DESC (recent window, deterministic across
+# re-runs) — and scans each record's reviewed text fields verbatim. A
+# non-array payload is ContentDrift (Socrata error envelopes answer 200 JSON
+# objects, not lists — fail closed).
+index_path_template = "https://{host}/resource/{dataset}.json"
+doc_per_tenant = 0
+doc_run_cap = 0
+# A dataset row is a published award/contract record — `contracted` is the
+# lifecycle state the register itself asserts (an award the city recorded).
+# Rows carrying their own notice-type field (e.g. NYC CROL's
+# type_of_notice_description) map through the tenant's reviewed notice_map.
+[platform_endpoints.socrata.notice_map]
+default = "contracted"
+solicitation = "rfp_issued"
+award = "awarded"
+award_notice = "awarded"
+contract_award = "contracted"
+contract_award_notice = "contracted"
 
 # --- SAM.gov federal opportunities (P26.2 / SOURCES.2) -------------------------
 # The documented public opportunities search (api.sam.gov, open.gsa.gov): a

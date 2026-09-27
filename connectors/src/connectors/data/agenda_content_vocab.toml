@@ -21,7 +21,18 @@
 # header — otherwise TOML nests it under that table.
 
 # The vocabulary version stamped onto emitted rows (§20).
-vocab_version = "2026.09.17"
+# 2026.09.18 (P26.10 / SOURCES.9): additive procurement-prose recall fix — the
+# 2026.09.17 set was reviewed against agenda/minutes phrasing; live procurement
+# records phrase the SAME reviewed technologies differently. Added, never
+# rewritten: `alpr` gains "license plate recognition" / "licence plate
+# recognition" / "\blpr\b" (the dominant US procurement expansion — Montgomery
+# County's parking ALPR solicitation says "License Plate Recognition (LPR)",
+# not "ALPR"); `cctv` gains "security camera" + "surveillance system" (the
+# canonical names for the technology the term was reviewed to cover — a bid
+# titled "Security Camera System" carries no other vocab literal). Both stay
+# verbatim-literal claims: a match still asserts only "this record contains
+# this term".
+vocab_version = "2026.09.18"
 
 # Part VIII §0.7 / §43.2 guard for emitted agenda-content rows (the mechanical
 # form of "no plate / per-trip / per-person / per-search data"). A matched
@@ -67,6 +78,9 @@ patterns = [
   "\\balpr\\b", "\\balprs\\b",
   "automated license plate", "automatic license plate",
   "license plate reader", "licence plate reader", "license-plate reader",
+  # P26.10: the dominant procurement phrasing for the same technology family —
+  # "License Plate Recognition (LPR)" is how US solicitations name ALPR.
+  "license plate recognition", "licence plate recognition", "\\blpr\\b",
 ]
 
 [[terms]]
@@ -133,6 +147,10 @@ label = "CCTV / video surveillance"
 patterns = [
   "\\bcctv\\b", "closed.?circuit", "video surveillance", "surveillance camera",
   "security camera network",
+  # P26.10: procurement prose names the same technology "security camera
+  # (system)" and "(security) surveillance system" — additive recall for the
+  # reviewed term family.
+  "security camera", "surveillance system",
 ]
 
 [[terms]]
