@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnah7dc24et4klrdpu4yn2dqvhaqv3sszwntz2drvfqe5w2llqf6yh3xeohpuurlmc5ayex5auyirfkxcs22eaoi4fswae7njcvsx4r2ja"
+  ],
+  "claims_added": 249,
+  "detail": "",
+  "duration_seconds": 0.608,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnah7dc24et4klrdpu4yn2dqvhaqv3sszwntz2drvfqe5w2llqf6yh3xeohpuurlmc5ayex5auyirfkxcs22eaoi4fswae7njcvsx4r2ja"
+    ],
+    "claim_count": 249,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 0.530162,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_camilo_schools",
+    "started_at": "2026-09-19T06:12:46.161856+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_camilo_schools",
+  "started_at": "2026-09-19T06:12:46+00:00"
+}

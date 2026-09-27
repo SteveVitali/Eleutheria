@@ -1,0 +1,39 @@
+{
+  "capture_digests": [
+    "bcnacjcnj5du6uaef44g3jlz3ehoubwgqmlbdsjd5mxoz3uscevhuxufdi3fi6p32zoropriyj4j7hfwcjqb67yjgtbt3bepwsnehv3spiu",
+    "bcnamhiebkrz4bhemhhovb2t4x62wvzwgevxeyapwoqsx6oyzoagxs6hlryipasfkrkuuyms3w4jm3hco36jdzuoi6fuzfbql6rth7332ka"
+  ],
+  "claims_added": 6862,
+  "detail": "",
+  "duration_seconds": 1.25,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnacjcnj5du6uaef44g3jlz3ehoubwgqmlbdsjd5mxoz3uscevhuxufdi3fi6p32zoropriyj4j7hfwcjqb67yjgtbt3bepwsnehv3spiu",
+      "bcnamhiebkrz4bhemhhovb2t4x62wvzwgevxeyapwoqsx6oyzoagxs6hlryipasfkrkuuyms3w4jm3hco36jdzuoi6fuzfbql6rth7332ka"
+    ],
+    "claim_count": 6862,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 1.24746,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_seattle_wa",
+    "started_at": "2026-09-19T06:17:05.479156+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_seattle_wa",
+  "started_at": "2026-09-19T06:17:05+00:00"
+}

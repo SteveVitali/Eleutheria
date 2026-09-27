@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnajy3u4eyzs33v24tmtvg5ndqxgforciri5cvyuts5mcocogwk4gcostbzbmqofg5zd6yyfmitd6yi2vqvdkvcv4isg6qwgetvgbrrpw4"
+  ],
+  "claims_added": 162,
+  "detail": "",
+  "duration_seconds": 0.79,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnajy3u4eyzs33v24tmtvg5ndqxgforciri5cvyuts5mcocogwk4gcostbzbmqofg5zd6yyfmitd6yi2vqvdkvcv4isg6qwgetvgbrrpw4"
+    ],
+    "claim_count": 162,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 0.788941,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_lisburn_gb",
+    "started_at": "2026-09-19T06:13:40.267718+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_lisburn_gb",
+  "started_at": "2026-09-19T06:13:40+00:00"
+}

@@ -1,0 +1,49 @@
+{
+  "capture_digests": [
+    "bcnao3nbyxt55zqnzv4ej3rlh75zbn7rkstrahjwarlnuzak7e4ky7r27flvemw5so2gnjfdyjvjdizs3f5srbteif6tuytw4rwkdbv23ja",
+    "bcnackzsge5qfnka2x4pj7wpkj4fdtlevvhrl3xb3jqwqks3i7vo7sjjdhv2ucgpsquvrl423sebjpeqpx72wuz2q5lb5wy367kmf7wns4u",
+    "bcnairfhd5mqzezflxnomwy3udfvvblrchmu2zsrfgu672jdfrrdqd6idli36iv2z7bapxmhiijqpwwmwz2ayikp4dfagqfoiknuxr3jh5m",
+    "bcnadqugkrbsc2xu7xbzmizvoeyifqc3iaheimyybzivpoavyzouyskmyk57goldbog4uxwkhdsc6dpwvhicsqcuah4tmpkm2edpmy72foi",
+    "bcnajxxiuby7sxuuujloo6p3pxe2vldr2c6eiuprc2zxtcpehxekrrfsxea47zgjszudtcxfjfahzv5of7nukluz5t4yjjpqlkzinb5dwvy",
+    "bcnak6ojisv2ww7vdeie4kbnn2dqgpj64y2q7xbdxnpm5suae3wsh46s3b7jasflyfykqgsxibddvc3ek2xxunw4ddayvxc3lfwo7hcrlbe",
+    "bcnapwqejghvlsk4zluxolhoqywvant4s3vpgdwweqpmkkcqu6lotzg3gocxwgff2sa4ruesuvnmng6h7ewlywt3ougwiip6ts7nrsmghuy"
+  ],
+  "claims_added": 19086,
+  "detail": "",
+  "duration_seconds": 5.983,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnao3nbyxt55zqnzv4ej3rlh75zbn7rkstrahjwarlnuzak7e4ky7r27flvemw5so2gnjfdyjvjdizs3f5srbteif6tuytw4rwkdbv23ja",
+      "bcnackzsge5qfnka2x4pj7wpkj4fdtlevvhrl3xb3jqwqks3i7vo7sjjdhv2ucgpsquvrl423sebjpeqpx72wuz2q5lb5wy367kmf7wns4u",
+      "bcnairfhd5mqzezflxnomwy3udfvvblrchmu2zsrfgu672jdfrrdqd6idli36iv2z7bapxmhiijqpwwmwz2ayikp4dfagqfoiknuxr3jh5m",
+      "bcnadqugkrbsc2xu7xbzmizvoeyifqc3iaheimyybzivpoavyzouyskmyk57goldbog4uxwkhdsc6dpwvhicsqcuah4tmpkm2edpmy72foi",
+      "bcnajxxiuby7sxuuujloo6p3pxe2vldr2c6eiuprc2zxtcpehxekrrfsxea47zgjszudtcxfjfahzv5of7nukluz5t4yjjpqlkzinb5dwvy",
+      "bcnak6ojisv2ww7vdeie4kbnn2dqgpj64y2q7xbdxnpm5suae3wsh46s3b7jasflyfykqgsxibddvc3ek2xxunw4ddayvxc3lfwo7hcrlbe",
+      "bcnapwqejghvlsk4zluxolhoqywvant4s3vpgdwweqpmkkcqu6lotzg3gocxwgff2sa4ruesuvnmng6h7ewlywt3ougwiip6ts7nrsmghuy"
+    ],
+    "claim_count": 19086,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 5.918564,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_thailand_th",
+    "started_at": "2026-09-19T06:17:18.458139+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_thailand_th",
+  "started_at": "2026-09-19T06:17:18+00:00"
+}

@@ -1,0 +1,39 @@
+{
+  "capture_digests": [
+    "bcnahpnhkv5664itpw6pu276vqcmw67tq2ckzbk4fxkbact5ysley35qmjkvroqp7pcnmtmsfiefyvv6f6ofgpngq2gnvsnoa4vxr2vo75q",
+    "bcnabrowv7oultgy2uhbemzjvjyh7hydrq5ff2geal64sc2d62m7vngyfz7qhumql53ly7shxmocj2k3okfzb6brtjc6vm4q3kwq5ozaj3u"
+  ],
+  "claims_added": 2466,
+  "detail": "",
+  "duration_seconds": 1.194,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnahpnhkv5664itpw6pu276vqcmw67tq2ckzbk4fxkbact5ysley35qmjkvroqp7pcnmtmsfiefyvv6f6ofgpngq2gnvsnoa4vxr2vo75q",
+      "bcnabrowv7oultgy2uhbemzjvjyh7hydrq5ff2geal64sc2d62m7vngyfz7qhumql53ly7shxmocj2k3okfzb6brtjc6vm4q3kwq5ozaj3u"
+    ],
+    "claim_count": 2466,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 1.19201,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_calgary_ab",
+    "started_at": "2026-09-19T06:12:38.853573+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_calgary_ab",
+  "started_at": "2026-09-19T06:12:38+00:00"
+}

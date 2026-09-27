@@ -1,0 +1,39 @@
+{
+  "capture_digests": [
+    "bcnad5teq6fsdize3mfckhy6e5wsaxjeq4owmhafbjftxecwasxk36dkrfwgd3sahg6ljnyo5bkcjay4ults235xrouek67dnbhmehrgafi",
+    "bcnadhekzcki5jqru26khfkdb5h62iq4g6c333o7msunqackczoo2fm3j56xifgytjmcq4mpt5k6lydrlf5zy3x2hcljibj2osyuvcm2j7a"
+  ],
+  "claims_added": 971,
+  "detail": "",
+  "duration_seconds": 1.399,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnad5teq6fsdize3mfckhy6e5wsaxjeq4owmhafbjftxecwasxk36dkrfwgd3sahg6ljnyo5bkcjay4ults235xrouek67dnbhmehrgafi",
+      "bcnadhekzcki5jqru26khfkdb5h62iq4g6c333o7msunqackczoo2fm3j56xifgytjmcq4mpt5k6lydrlf5zy3x2hcljibj2osyuvcm2j7a"
+    ],
+    "claim_count": 971,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 1.333954,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_pgcounty_md",
+    "started_at": "2026-09-19T06:24:58.747385+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_pgcounty_md",
+  "started_at": "2026-09-19T06:24:58+00:00"
+}

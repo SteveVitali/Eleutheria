@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnabxmjt2ay5fn2n5uioq7mrgos5q4rhrntomnj2otdchcxq7x52osdez6iomkzt5mq6pn4z7gkzn3enrzjywi3gmzqiz4zwhvdekjnx4a"
+  ],
+  "claims_added": 432,
+  "detail": "",
+  "duration_seconds": 0.354,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnabxmjt2ay5fn2n5uioq7mrgos5q4rhrntomnj2otdchcxq7x52osdez6iomkzt5mq6pn4z7gkzn3enrzjywi3gmzqiz4zwhvdekjnx4a"
+    ],
+    "claim_count": 432,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 0.353336,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_oosgis_nl",
+    "started_at": "2026-09-19T06:14:02.539047+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_oosgis_nl",
+  "started_at": "2026-09-19T06:14:02+00:00"
+}

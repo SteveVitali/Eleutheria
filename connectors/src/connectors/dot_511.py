@@ -155,18 +155,25 @@ _SOCRATA_PAGE_SIZE = 5000
 
 
 def _arcgis_pages(row: Mapping[str, Any]) -> list[dict[str, Any]]:
-    """Expand one ArcGIS layer row into its deterministic ``/query`` pages."""
+    """Expand one ArcGIS layer row into its deterministic ``/query`` pages.
+
+    ``page_size`` on the row is the reviewed per-layer page bound — pinned
+    when the layer's own ``maxRecordCount`` is below the 1,000 default
+    (P26.16: camreg_portland_or serves 200 rows/page, so a 1,000-row request
+    returns ``exceededTransferLimit`` on every page).
+    """
     layer_url = str(row["layer_url"]).rstrip("/")
     observed = int(row.get("observed_count") or 0)
     oid_field = str(row.get("object_id_field") or "OBJECTID")
-    pages = max(1, -(-observed // _ARCGIS_PAGE_SIZE))
+    page_size = min(_ARCGIS_PAGE_SIZE, max(1, int(row.get("page_size") or _ARCGIS_PAGE_SIZE)))
+    pages = max(1, -(-observed // page_size))
     out: list[dict[str, Any]] = []
     for page in range(pages):
         params = {
             **_ARCGIS_QUERY_PARAMS,
             "orderByFields": oid_field,
-            "resultRecordCount": _ARCGIS_PAGE_SIZE,
-            "resultOffset": page * _ARCGIS_PAGE_SIZE,
+            "resultRecordCount": page_size,
+            "resultOffset": page * page_size,
         }
         out.append(
             {"url": f"{layer_url}/query?{urlencode(params)}", "page": page, "page_count": pages}
@@ -381,36 +388,69 @@ def _as_float(value: Any) -> float | None:
         return None
 
 
+def _matching_fields(fields: Mapping[str, Any], aliases: Iterable[str]) -> list[tuple[str, Any]]:
+    """Every present, non-empty, scalar aliased field, in alias order.
+
+    The plural counterpart of :func:`_first_field` — coordinate extraction
+    walks ALL matching pairs so a present-but-unusable pair (DMS text,
+    projected values, publisher-swapped columns — observed live P26.16)
+    falls through to the next pair instead of hard-rejecting a record whose
+    operator-published point geometry is valid.
+    """
+    out: list[tuple[str, Any]] = []
+    for name in aliases:
+        if name in fields and fields[name] not in (None, ""):
+            value = fields[name]
+            if isinstance(value, (Mapping, list, tuple)):
+                continue
+            out.append((name, value))
+    return out
+
+
 def extract_coordinate(
     fields: Mapping[str, Any], geometry: Mapping[str, Any] | None
 ) -> tuple[float, float, str]:
     """The operator-published ``(lat, lon, coord_source)`` for one feature.
 
     Explicit latitude/longitude attribute fields are preferred — a published
-    attribute is stronger provenance than derived geometry — with the ArcGIS
-    point geometry (``outSR=4326``: ``x``=longitude, ``y``=latitude) as the
-    fallback for geometry-only layers (WSDOT, KC/WSDOT, UDOT). A malformed or
-    out-of-range pair raises :class:`CoordinateRejected` — fail closed.
+    attribute is stronger provenance than derived geometry — tried in alias
+    order until a pair parses numeric and in-range. The ArcGIS point geometry
+    (``outSR=4326``: ``x``=longitude, ``y``=latitude) is the fallback when no
+    attribute pair yields a usable coordinate — geometry-only layers (WSDOT,
+    KC/WSDOT, UDOT) and layers whose aliased columns are unusable (P26.16:
+    DMS-text ``LATITUDE``/``LONGITUDE``, projected ``x``/``y`` attributes,
+    publisher-swapped columns) still carry their real point in geometry.
+    A record with no usable coordinate anywhere raises
+    :class:`CoordinateRejected` — fail closed.
     """
-    lat_pair = _first_field(fields, vocab()["lat_fields"])
-    lon_pair = _first_field(fields, vocab()["lon_fields"])
-    if lat_pair and lon_pair:
-        lat = _as_float(lat_pair[1])
-        lon = _as_float(lon_pair[1])
-        source = f"fields:{lat_pair[0]}/{lon_pair[0]}"
-    elif geometry is not None and geometry.get("x") is not None and geometry.get("y") is not None:
+    lat_pairs = _matching_fields(fields, vocab()["lat_fields"])
+    lon_pairs = _matching_fields(fields, vocab()["lon_fields"])
+    saw_numeric = False
+    for lat_pair in lat_pairs:
+        for lon_pair in lon_pairs:
+            lat = _as_float(lat_pair[1])
+            lon = _as_float(lon_pair[1])
+            if lat is None or lon is None:
+                continue
+            saw_numeric = True
+            if -90.0 <= lat <= 90.0 and -180.0 <= lon <= 180.0:
+                return (lat, lon, f"fields:{lat_pair[0]}/{lon_pair[0]}")
+    if geometry is not None and geometry.get("x") is not None and geometry.get("y") is not None:
         lat = _as_float(geometry.get("y"))
         lon = _as_float(geometry.get("x"))
-        source = "geometry"
-    else:
-        raise CoordinateRejected("missing", "no lat/lon field pair and no point geometry")
-    if lat is None or lon is None:
-        raise CoordinateRejected("malformed", f"{source}: values are not numeric")
-    if not (-90.0 <= lat <= 90.0 and -180.0 <= lon <= 180.0):
+        if lat is None or lon is None:
+            raise CoordinateRejected("malformed", "geometry: values are not numeric")
+        if not (-90.0 <= lat <= 90.0 and -180.0 <= lon <= 180.0):
+            raise CoordinateRejected(
+                "out_of_range", f"geometry: lat={lat} lon={lon} outside valid ranges"
+            )
+        return (lat, lon, "geometry")
+    if lat_pairs and lon_pairs:
         raise CoordinateRejected(
-            "out_of_range", f"{source}: lat={lat} lon={lon} outside valid ranges"
+            "out_of_range" if saw_numeric else "malformed",
+            "every aliased lat/lon field pair failed validation and no point geometry is present",
         )
-    return (lat, lon, source)
+    raise CoordinateRejected("missing", "no lat/lon field pair and no point geometry")
 
 
 def publishable_coordinate(

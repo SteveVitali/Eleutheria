@@ -1,0 +1,39 @@
+{
+  "capture_digests": [
+    "bcnahj4snnuzzot7puxtcfbqktej32m6ct7caycbysjabqizepwwaanz2bf34fjqlt4o4l7c3xhot47day6txoxny5hozlk43ol34iioiuy",
+    "bcnamnzheiasinwc7up6fximh2ktxup7ygwlax2vinoljfhwm5g3pgn2u2gnkuu6dzs2kllo4jzhce5fzomruqroy5exn6jqqiol5qke6km"
+  ],
+  "claims_added": 536,
+  "detail": "",
+  "duration_seconds": 1.379,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnahj4snnuzzot7puxtcfbqktej32m6ct7caycbysjabqizepwwaanz2bf34fjqlt4o4l7c3xhot47day6txoxny5hozlk43ol34iioiuy",
+      "bcnamnzheiasinwc7up6fximh2ktxup7ygwlax2vinoljfhwm5g3pgn2u2gnkuu6dzs2kllo4jzhce5fzomruqroy5exn6jqqiol5qke6km"
+    ],
+    "claim_count": 536,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 1.377314,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_camberwell_au",
+    "started_at": "2026-09-19T06:12:44.447538+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_camberwell_au",
+  "started_at": "2026-09-19T06:12:44+00:00"
+}

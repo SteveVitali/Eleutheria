@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnaf7hthlygw3ivfsvillbfborymy5ukhshk5rlpuzg25hdbybvrdu36vutwwyozau7zxon5wp2xdic6huwoklon6duveyvcalklaysfhi"
+  ],
+  "claims_added": 10,
+  "detail": "",
+  "duration_seconds": 0.361,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnaf7hthlygw3ivfsvillbfborymy5ukhshk5rlpuzg25hdbybvrdu36vutwwyozau7zxon5wp2xdic6huwoklon6duveyvcalklaysfhi"
+    ],
+    "claim_count": 10,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 0.360723,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_uofmd_md",
+    "started_at": "2026-09-19T06:17:37.165945+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_uofmd_md",
+  "started_at": "2026-09-19T06:17:37+00:00"
+}

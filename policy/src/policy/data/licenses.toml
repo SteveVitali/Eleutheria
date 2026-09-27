@@ -237,3 +237,37 @@ source = "Regional Municipality of Peel"
 license = "LicenseRef-StAlbert-ODL-1.0"
 description = "City of St. Albert camera registries under the Open Data Licence – City of St. Albert v1.0 (P26.13)"
 source = "City of St. Albert"
+
+# --- P26.16 (SOURCES.15) licences ---------------------------------------------
+# LicenseRef-PublicRecord-FactualCompilation — the GL-GATE-07 basis for the US
+# rows of the gated catalog-sweep remainder: municipal/state camera-registry
+# rows are public records, and a factual compilation's facts are not
+# copyrightable (Feist). Recorded under its own expression — self-relicensable
+# only — so the basis stays visible and these sources cannot silently fold
+# into the permissive CC-BY graph (the LicenseRef-DerivedFacts precedent).
+[licenses."LicenseRef-PublicRecord-FactualCompilation"]
+kind = "data"
+share_alike = false
+attribution_required = true
+relicensable_to = ["LicenseRef-PublicRecord-FactualCompilation"]
+
+# LicenseRef-OperatorAccepted-DBRight — the GL-GATE-07 basis for the non-US
+# (and unresolved-jurisdiction) rows: the operator explicitly accepts the sui
+# generis database-right risk on EU/UK/AU factual compilations (LEDGER GATE
+# DECISIONS, 2026-09-18). Self-relicensable only.
+[licenses."LicenseRef-OperatorAccepted-DBRight"]
+kind = "data"
+share_alike = false
+attribution_required = true
+relicensable_to = ["LicenseRef-OperatorAccepted-DBRight"]
+
+# --- P26.16 (SOURCES.15) compartments -----------------------------------------
+[compartments.public_record]
+license = "LicenseRef-PublicRecord-FactualCompilation"
+description = "US public-record camera registries — facts not copyrightable (GL-GATE-07)"
+source = "US state and municipal portals"
+
+[compartments.operator_accepted]
+license = "LicenseRef-OperatorAccepted-DBRight"
+description = "Non-US / unresolved-jurisdiction camera registries — operator-accepted database-right basis (GL-GATE-07)"
+source = "non-US municipal and community portals"

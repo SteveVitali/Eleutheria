@@ -1,0 +1,1371 @@
+{
+ "generated_at": "2026-09-19",
+ "scope": "P26.16 GL-GATE-07 rights-batch live sweep (local sink=memory; hosted apply deferred \u2014 corrupt ADC, D-ACCT.1-1/HG-12)",
+ "sources": 151,
+ "outcomes": {
+  "ok": 151
+ },
+ "claims_added_total": 2033676,
+ "captures_total": 389,
+ "per_source": [
+  {
+   "source": "camreg_achd_id",
+   "outcome": "ok",
+   "claims_added": 1856,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_achd_id/"
+  },
+  {
+   "source": "camreg_aikner",
+   "outcome": "ok",
+   "claims_added": 536,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_aikner/"
+  },
+  {
+   "source": "camreg_amber_kh",
+   "outcome": "ok",
+   "claims_added": 576,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_amber_kh/"
+  },
+  {
+   "source": "camreg_apram_pt",
+   "outcome": "ok",
+   "claims_added": 1936,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_apram_pt/"
+  },
+  {
+   "source": "camreg_arc_1975641302",
+   "outcome": "ok",
+   "claims_added": 472,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_arc_1975641302/"
+  },
+  {
+   "source": "camreg_arlington_va",
+   "outcome": "ok",
+   "claims_added": 3508,
+   "captures": 3,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_arlington_va/"
+  },
+  {
+   "source": "camreg_avctransport",
+   "outcome": "ok",
+   "claims_added": 72,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_avctransport/"
+  },
+  {
+   "source": "camreg_azdot_az",
+   "outcome": "ok",
+   "claims_added": 5260,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_azdot_az/"
+  },
+  {
+   "source": "camreg_baltimore_atves_md",
+   "outcome": "ok",
+   "claims_added": 3360,
+   "captures": 4,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_baltimore_atves_md/"
+  },
+  {
+   "source": "camreg_bangla_bd",
+   "outcome": "ok",
+   "claims_added": 3584,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_bangla_bd/"
+  },
+  {
+   "source": "camreg_bargabos",
+   "outcome": "ok",
+   "claims_added": 81,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_bargabos/"
+  },
+  {
+   "source": "camreg_bedford_gb",
+   "outcome": "ok",
+   "claims_added": 1840,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_bedford_gb/"
+  },
+  {
+   "source": "camreg_bettendorf_ia",
+   "outcome": "ok",
+   "claims_added": 1320,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_bettendorf_ia/"
+  },
+  {
+   "source": "camreg_bouhan_jp",
+   "outcome": "ok",
+   "claims_added": 464,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_bouhan_jp/"
+  },
+  {
+   "source": "camreg_brea_ca",
+   "outcome": "ok",
+   "claims_added": 2662,
+   "captures": 4,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_brea_ca/"
+  },
+  {
+   "source": "camreg_caledon_on",
+   "outcome": "ok",
+   "claims_added": 336,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_caledon_on/"
+  },
+  {
+   "source": "camreg_calgary_ab",
+   "outcome": "ok",
+   "claims_added": 2466,
+   "captures": 2,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_calgary_ab/"
+  },
+  {
+   "source": "camreg_caloes_ca",
+   "outcome": "ok",
+   "claims_added": 43420,
+   "captures": 5,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_caloes_ca/"
+  },
+  {
+   "source": "camreg_camberwell_au",
+   "outcome": "ok",
+   "claims_added": 536,
+   "captures": 2,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_camberwell_au/"
+  },
+  {
+   "source": "camreg_camilo_schools",
+   "outcome": "ok",
+   "claims_added": 249,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_camilo_schools/"
+  },
+  {
+   "source": "camreg_carver_mn",
+   "outcome": "ok",
+   "claims_added": 8467,
+   "captures": 2,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_carver_mn/"
+  },
+  {
+   "source": "camreg_cclemire",
+   "outcome": "ok",
+   "claims_added": 18,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_cclemire/"
+  },
+  {
+   "source": "camreg_chattanooga_tn",
+   "outcome": "ok",
+   "claims_added": 1352,
+   "captures": 2,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_chattanooga_tn/"
+  },
+  {
+   "source": "camreg_cheicylia",
+   "outcome": "ok",
+   "claims_added": 1703,
+   "captures": 2,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_cheicylia/"
+  },
+  {
+   "source": "camreg_chicago_il",
+   "outcome": "ok",
+   "claims_added": 4581,
+   "captures": 2,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_chicago_il/"
+  },
+  {
+   "source": "camreg_colgis",
+   "outcome": "ok",
+   "claims_added": 135,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_colgis/"
+  },
+  {
+   "source": "camreg_cotgeo",
+   "outcome": "ok",
+   "claims_added": 2688,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_cotgeo/"
+  },
+  {
+   "source": "camreg_cphang",
+   "outcome": "ok",
+   "claims_added": 45,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_cphang/"
+  },
+  {
+   "source": "camreg_cwarcgis",
+   "outcome": "ok",
+   "claims_added": 63,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_cwarcgis/"
+  },
+  {
+   "source": "camreg_dc_dot_dc",
+   "outcome": "ok",
+   "claims_added": 4995,
+   "captures": 3,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_dc_dot_dc/"
+  },
+  {
+   "source": "camreg_denver_co",
+   "outcome": "ok",
+   "claims_added": 126,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_denver_co/"
+  },
+  {
+   "source": "camreg_donegal_ie",
+   "outcome": "ok",
+   "claims_added": 1107,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_donegal_ie/"
+  },
+  {
+   "source": "camreg_dover_gb",
+   "outcome": "ok",
+   "claims_added": 558,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_dover_gb/"
+  },
+  {
+   "source": "camreg_dubuque_ia",
+   "outcome": "ok",
+   "claims_added": 27,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_dubuque_ia/"
+  },
+  {
+   "source": "camreg_duganmeyer",
+   "outcome": "ok",
+   "claims_added": 432,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_duganmeyer/"
+  },
+  {
+   "source": "camreg_durham_gb",
+   "outcome": "ok",
+   "claims_added": 297,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_durham_gb/"
+  },
+  {
+   "source": "camreg_eastdun_gb",
+   "outcome": "ok",
+   "claims_added": 413,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_eastdun_gb/"
+  },
+  {
+   "source": "camreg_ebrgis_la",
+   "outcome": "ok",
+   "claims_added": 944,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_ebrgis_la/"
+  },
+  {
+   "source": "camreg_esri_dash",
+   "outcome": "ok",
+   "claims_added": 4378,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_esri_dash/"
+  },
+  {
+   "source": "camreg_esriukpolice_gb",
+   "outcome": "ok",
+   "claims_added": 96,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_esriukpolice_gb/"
+  },
+  {
+   "source": "camreg_essex_gb",
+   "outcome": "ok",
+   "claims_added": 1215,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_essex_gb/"
+  },
+  {
+   "source": "camreg_fifia",
+   "outcome": "ok",
+   "claims_added": 171,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_fifia/"
+  },
+  {
+   "source": "camreg_firemedic",
+   "outcome": "ok",
+   "claims_added": 4984,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_firemedic/"
+  },
+  {
+   "source": "camreg_fl511_fl",
+   "outcome": "ok",
+   "claims_added": 116048,
+   "captures": 14,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_fl511_fl/"
+  },
+  {
+   "source": "camreg_forwardalliance",
+   "outcome": "ok",
+   "claims_added": 14632,
+   "captures": 2,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_forwardalliance/"
+  },
+  {
+   "source": "camreg_freese_dm",
+   "outcome": "ok",
+   "claims_added": 6409,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_freese_dm/"
+  },
+  {
+   "source": "camreg_friendswood_tx",
+   "outcome": "ok",
+   "claims_added": 290,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_friendswood_tx/"
+  },
+  {
+   "source": "camreg_gainesville_fl",
+   "outcome": "ok",
+   "claims_added": 1171,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_gainesville_fl/"
+  },
+  {
+   "source": "camreg_gedling_gb",
+   "outcome": "ok",
+   "claims_added": 736,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_gedling_gb/"
+  },
+  {
+   "source": "camreg_gistel_be",
+   "outcome": "ok",
+   "claims_added": 152,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_gistel_be/"
+  },
+  {
+   "source": "camreg_gmh_emc_ga",
+   "outcome": "ok",
+   "claims_added": 24,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_gmh_emc_ga/"
+  },
+  {
+   "source": "camreg_guildford_gb",
+   "outcome": "ok",
+   "claims_added": 1211,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_guildford_gb/"
+  },
+  {
+   "source": "camreg_gvanmaren",
+   "outcome": "ok",
+   "claims_added": 81,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_gvanmaren/"
+  },
+  {
+   "source": "camreg_helberg",
+   "outcome": "ok",
+   "claims_added": 665,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_helberg/"
+  },
+  {
+   "source": "camreg_honolulu_hi",
+   "outcome": "ok",
+   "claims_added": 2269,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_honolulu_hi/"
+  },
+  {
+   "source": "camreg_indonesia_id",
+   "outcome": "ok",
+   "claims_added": 2245,
+   "captures": 9,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_indonesia_id/"
+  },
+  {
+   "source": "camreg_infocemosa",
+   "outcome": "ok",
+   "claims_added": 2934,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_infocemosa/"
+  },
+  {
+   "source": "camreg_infraestructura",
+   "outcome": "ok",
+   "claims_added": 1704,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_infraestructura/"
+  },
+  {
+   "source": "camreg_ira",
+   "outcome": "ok",
+   "claims_added": 27,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_ira/"
+  },
+  {
+   "source": "camreg_jcfd3_or",
+   "outcome": "ok",
+   "claims_added": 9,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_jcfd3_or/"
+  },
+  {
+   "source": "camreg_jelenic",
+   "outcome": "ok",
+   "claims_added": 3284,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_jelenic/"
+  },
+  {
+   "source": "camreg_jmh_us",
+   "outcome": "ok",
+   "claims_added": 250,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_jmh_us/"
+  },
+  {
+   "source": "camreg_kcmo_mo",
+   "outcome": "ok",
+   "claims_added": 2124,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_kcmo_mo/"
+  },
+  {
+   "source": "camreg_keizer_or",
+   "outcome": "ok",
+   "claims_added": 225,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_keizer_or/"
+  },
+  {
+   "source": "camreg_keshan",
+   "outcome": "ok",
+   "claims_added": 1341,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_keshan/"
+  },
+  {
+   "source": "camreg_kirkland_wa",
+   "outcome": "ok",
+   "claims_added": 513,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_kirkland_wa/"
+  },
+  {
+   "source": "camreg_kosman",
+   "outcome": "ok",
+   "claims_added": 81,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_kosman/"
+  },
+  {
+   "source": "camreg_kunying",
+   "outcome": "ok",
+   "claims_added": 40,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_kunying/"
+  },
+  {
+   "source": "camreg_langan",
+   "outcome": "ok",
+   "claims_added": 8,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_langan/"
+  },
+  {
+   "source": "camreg_lawrence_ks",
+   "outcome": "ok",
+   "claims_added": 654,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_lawrence_ks/"
+  },
+  {
+   "source": "camreg_lenhardt",
+   "outcome": "ok",
+   "claims_added": 600,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_lenhardt/"
+  },
+  {
+   "source": "camreg_leon_fl",
+   "outcome": "ok",
+   "claims_added": 2000,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_leon_fl/"
+  },
+  {
+   "source": "camreg_lexington_ky",
+   "outcome": "ok",
+   "claims_added": 972,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_lexington_ky/"
+  },
+  {
+   "source": "camreg_lisburn_gb",
+   "outcome": "ok",
+   "claims_added": 162,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_lisburn_gb/"
+  },
+  {
+   "source": "camreg_lojic_ky",
+   "outcome": "ok",
+   "claims_added": 2848,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_lojic_ky/"
+  },
+  {
+   "source": "camreg_lpd_flock",
+   "outcome": "ok",
+   "claims_added": 240,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_lpd_flock/"
+  },
+  {
+   "source": "camreg_manhattan_ks",
+   "outcome": "ok",
+   "claims_added": 224,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_manhattan_ks/"
+  },
+  {
+   "source": "camreg_mark43",
+   "outcome": "ok",
+   "claims_added": 4961,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_mark43/"
+  },
+  {
+   "source": "camreg_massdot_ma",
+   "outcome": "ok",
+   "claims_added": 9395,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_massdot_ma/"
+  },
+  {
+   "source": "camreg_mbrc_au",
+   "outcome": "ok",
+   "claims_added": 6840,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_mbrc_au/"
+  },
+  {
+   "source": "camreg_mctx_tx",
+   "outcome": "ok",
+   "claims_added": 1128,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_mctx_tx/"
+  },
+  {
+   "source": "camreg_md_opendata",
+   "outcome": "ok",
+   "claims_added": 9020,
+   "captures": 2,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_md_opendata/"
+  },
+  {
+   "source": "camreg_mhebert",
+   "outcome": "ok",
+   "claims_added": 144,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_mhebert/"
+  },
+  {
+   "source": "camreg_mndot_mn",
+   "outcome": "ok",
+   "claims_added": 711,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_mndot_mn/"
+  },
+  {
+   "source": "camreg_monmap_mn",
+   "outcome": "ok",
+   "claims_added": 112,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_monmap_mn/"
+  },
+  {
+   "source": "camreg_mueller_de",
+   "outcome": "ok",
+   "claims_added": 216,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_mueller_de/"
+  },
+  {
+   "source": "camreg_nashville_tn",
+   "outcome": "ok",
+   "claims_added": 192,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_nashville_tn/"
+  },
+  {
+   "source": "camreg_nitro",
+   "outcome": "ok",
+   "claims_added": 63,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_nitro/"
+  },
+  {
+   "source": "camreg_nola_safety_la",
+   "outcome": "ok",
+   "claims_added": 1112,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_nola_safety_la/"
+  },
+  {
+   "source": "camreg_nurnazihah",
+   "outcome": "ok",
+   "claims_added": 5430,
+   "captures": 2,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_nurnazihah/"
+  },
+  {
+   "source": "camreg_nyc_jgrayson_ny",
+   "outcome": "ok",
+   "claims_added": 1737,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_nyc_jgrayson_ny/"
+  },
+  {
+   "source": "camreg_nyc_weltia_ny",
+   "outcome": "ok",
+   "claims_added": 1935,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_nyc_weltia_ny/"
+  },
+  {
+   "source": "camreg_nzta_nz",
+   "outcome": "ok",
+   "claims_added": 9063,
+   "captures": 4,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_nzta_nz/"
+  },
+  {
+   "source": "camreg_oem_camera",
+   "outcome": "ok",
+   "claims_added": 80,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_oem_camera/"
+  },
+  {
+   "source": "camreg_olsson",
+   "outcome": "ok",
+   "claims_added": 6085,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_olsson/"
+  },
+  {
+   "source": "camreg_oosgis_nl",
+   "outcome": "ok",
+   "claims_added": 432,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_oosgis_nl/"
+  },
+  {
+   "source": "camreg_osm_surveillance",
+   "outcome": "ok",
+   "claims_added": 1369210,
+   "captures": 158,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_osm_surveillance/"
+  },
+  {
+   "source": "camreg_palmdesert_ca",
+   "outcome": "ok",
+   "claims_added": 450,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_palmdesert_ca/"
+  },
+  {
+   "source": "camreg_penndot_pa",
+   "outcome": "ok",
+   "claims_added": 10237,
+   "captures": 2,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_penndot_pa/"
+  },
+  {
+   "source": "camreg_pgcounty_md",
+   "outcome": "ok",
+   "claims_added": 971,
+   "captures": 2,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_pgcounty_md/"
+  },
+  {
+   "source": "camreg_pipeline_sec",
+   "outcome": "ok",
+   "claims_added": 24,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_pipeline_sec/"
+  },
+  {
+   "source": "camreg_plymouth_gb",
+   "outcome": "ok",
+   "claims_added": 344,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_plymouth_gb/"
+  },
+  {
+   "source": "camreg_polyu_hk",
+   "outcome": "ok",
+   "claims_added": 176,
+   "captures": 2,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_polyu_hk/"
+  },
+  {
+   "source": "camreg_portland_or",
+   "outcome": "ok",
+   "claims_added": 1640,
+   "captures": 2,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_portland_or/"
+  },
+  {
+   "source": "camreg_raleigh_nc",
+   "outcome": "ok",
+   "claims_added": 312,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_raleigh_nc/"
+  },
+  {
+   "source": "camreg_ramallah_ps",
+   "outcome": "ok",
+   "claims_added": 48,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_ramallah_ps/"
+  },
+  {
+   "source": "camreg_redmond_wa",
+   "outcome": "ok",
+   "claims_added": 819,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_redmond_wa/"
+  },
+  {
+   "source": "camreg_riyadh_sa",
+   "outcome": "ok",
+   "claims_added": 9024,
+   "captures": 2,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_riyadh_sa/"
+  },
+  {
+   "source": "camreg_rjcoleman",
+   "outcome": "ok",
+   "claims_added": 270,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_rjcoleman/"
+  },
+  {
+   "source": "camreg_ruslan",
+   "outcome": "ok",
+   "claims_added": 63,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_ruslan/"
+  },
+  {
+   "source": "camreg_salisbury_nc",
+   "outcome": "ok",
+   "claims_added": 45,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_salisbury_nc/"
+  },
+  {
+   "source": "camreg_sarasota_fl",
+   "outcome": "ok",
+   "claims_added": 2653,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_sarasota_fl/"
+  },
+  {
+   "source": "camreg_schellinger",
+   "outcome": "ok",
+   "claims_added": 2820,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_schellinger/"
+  },
+  {
+   "source": "camreg_seattle_wa",
+   "outcome": "ok",
+   "claims_added": 6862,
+   "captures": 2,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_seattle_wa/"
+  },
+  {
+   "source": "camreg_sensenet",
+   "outcome": "ok",
+   "claims_added": 40,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_sensenet/"
+  },
+  {
+   "source": "camreg_sfoss",
+   "outcome": "ok",
+   "claims_added": 62760,
+   "captures": 6,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_sfoss/"
+  },
+  {
+   "source": "camreg_smart_sky",
+   "outcome": "ok",
+   "claims_added": 8,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_smart_sky/"
+  },
+  {
+   "source": "camreg_squan",
+   "outcome": "ok",
+   "claims_added": 45,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_squan/"
+  },
+  {
+   "source": "camreg_stalbert_ab",
+   "outcome": "ok",
+   "claims_added": 720,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_stalbert_ab/"
+  },
+  {
+   "source": "camreg_stanford_us",
+   "outcome": "ok",
+   "claims_added": 4801,
+   "captures": 2,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_stanford_us/"
+  },
+  {
+   "source": "camreg_surrey_bc",
+   "outcome": "ok",
+   "claims_added": 6315,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_surrey_bc/"
+  },
+  {
+   "source": "camreg_sweeney",
+   "outcome": "ok",
+   "claims_added": 577,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_sweeney/"
+  },
+  {
+   "source": "camreg_tblose",
+   "outcome": "ok",
+   "claims_added": 450,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_tblose/"
+  },
+  {
+   "source": "camreg_thailand_th",
+   "outcome": "ok",
+   "claims_added": 19086,
+   "captures": 7,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_thailand_th/"
+  },
+  {
+   "source": "camreg_toronto_on",
+   "outcome": "ok",
+   "claims_added": 2576,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_toronto_on/"
+  },
+  {
+   "source": "camreg_townofws",
+   "outcome": "ok",
+   "claims_added": 132,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_townofws/"
+  },
+  {
+   "source": "camreg_trafficops_ca",
+   "outcome": "ok",
+   "claims_added": 13733,
+   "captures": 2,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_trafficops_ca/"
+  },
+  {
+   "source": "camreg_trpa_us",
+   "outcome": "ok",
+   "claims_added": 135,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_trpa_us/"
+  },
+  {
+   "source": "camreg_tulane_la",
+   "outcome": "ok",
+   "claims_added": 1336,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_tulane_la/"
+  },
+  {
+   "source": "camreg_txdot_rep_tx",
+   "outcome": "ok",
+   "claims_added": 32140,
+   "captures": 3,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_txdot_rep_tx/"
+  },
+  {
+   "source": "camreg_uchicago",
+   "outcome": "ok",
+   "claims_added": 7251,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_uchicago/"
+  },
+  {
+   "source": "camreg_ucsd",
+   "outcome": "ok",
+   "claims_added": 20880,
+   "captures": 4,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_ucsd/"
+  },
+  {
+   "source": "camreg_ukm_my",
+   "outcome": "ok",
+   "claims_added": 3089,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_ukm_my/"
+  },
+  {
+   "source": "camreg_umbc_md",
+   "outcome": "ok",
+   "claims_added": 96,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_umbc_md/"
+  },
+  {
+   "source": "camreg_univmb_mb",
+   "outcome": "ok",
+   "claims_added": 5080,
+   "captures": 2,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_univmb_mb/"
+  },
+  {
+   "source": "camreg_uofmd_md",
+   "outcome": "ok",
+   "claims_added": 10,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_uofmd_md/"
+  },
+  {
+   "source": "camreg_vancouver_bc",
+   "outcome": "ok",
+   "claims_added": 1962,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_vancouver_bc/"
+  },
+  {
+   "source": "camreg_vidya",
+   "outcome": "ok",
+   "claims_added": 16,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_vidya/"
+  },
+  {
+   "source": "camreg_webappfme",
+   "outcome": "ok",
+   "claims_added": 126,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_webappfme/"
+  },
+  {
+   "source": "camreg_wellington_nz",
+   "outcome": "ok",
+   "claims_added": 2493,
+   "captures": 2,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_wellington_nz/"
+  },
+  {
+   "source": "camreg_whatley",
+   "outcome": "ok",
+   "claims_added": 295,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_whatley/"
+  },
+  {
+   "source": "camreg_wim_camera",
+   "outcome": "ok",
+   "claims_added": 272,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_wim_camera/"
+  },
+  {
+   "source": "camreg_yazid",
+   "outcome": "ok",
+   "claims_added": 684,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_yazid/"
+  },
+  {
+   "source": "camreg_yline",
+   "outcome": "ok",
+   "claims_added": 40,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_yline/"
+  },
+  {
+   "source": "camreg_york_on",
+   "outcome": "ok",
+   "claims_added": 842,
+   "captures": 2,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_york_on/"
+  },
+  {
+   "source": "camreg_yorku",
+   "outcome": "ok",
+   "claims_added": 1539,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_yorku/"
+  },
+  {
+   "source": "camreg_zyinger",
+   "outcome": "ok",
+   "claims_added": 96,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/camreg_zyinger/"
+  },
+  {
+   "source": "dot_511_al",
+   "outcome": "ok",
+   "claims_added": 6084,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/dot_511_al/"
+  },
+  {
+   "source": "dot_511_ga",
+   "outcome": "ok",
+   "claims_added": 83653,
+   "captures": 8,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/dot_511_ga/"
+  },
+  {
+   "source": "dot_511_la",
+   "outcome": "ok",
+   "claims_added": 5220,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/dot_511_la/"
+  },
+  {
+   "source": "dot_511_md",
+   "outcome": "ok",
+   "claims_added": 4968,
+   "captures": 1,
+   "exit_code": 0,
+   "refusal_reason": "",
+   "run_row": "live_runs/p2616/dot_511_md/"
+  }
+ ]
+}

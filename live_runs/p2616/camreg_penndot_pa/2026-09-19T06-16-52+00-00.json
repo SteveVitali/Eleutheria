@@ -1,0 +1,39 @@
+{
+  "capture_digests": [
+    "bcnapt44ccfvc7ohkm4yigjxdl4tbdy5unw5id4tuuaqp3tt5tfkegk2lcxze5wc2m7pwj4vvdspylt25u7ltorryktarnxfmvbfphn433q",
+    "bcnafeeqhjl4eukn666hvzqsstcxtvevz5mzo2rl6akig6wo35vcvyzpdbw7zckrwzyvgxiuwgubohxbntob2ry22hjuhuuqdipkpwlfu6i"
+  ],
+  "claims_added": 10237,
+  "detail": "",
+  "duration_seconds": 1.404,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnapt44ccfvc7ohkm4yigjxdl4tbdy5unw5id4tuuaqp3tt5tfkegk2lcxze5wc2m7pwj4vvdspylt25u7ltorryktarnxfmvbfphn433q",
+      "bcnafeeqhjl4eukn666hvzqsstcxtvevz5mzo2rl6akig6wo35vcvyzpdbw7zckrwzyvgxiuwgubohxbntob2ry22hjuhuuqdipkpwlfu6i"
+    ],
+    "claim_count": 10237,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 1.400055,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_penndot_pa",
+    "started_at": "2026-09-19T06:16:52.715664+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_penndot_pa",
+  "started_at": "2026-09-19T06:16:52+00:00"
+}

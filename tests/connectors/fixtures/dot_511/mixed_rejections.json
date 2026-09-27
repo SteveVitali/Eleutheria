@@ -39,7 +39,7 @@
         "latitude": "not-a-number",
         "longitude": "also-bad"
       },
-      "geometry": {"x": -95.90, "y": 36.10}
+      "geometry": {"x": "n/a", "y": "n/a"}
     },
     {
       "attributes": {

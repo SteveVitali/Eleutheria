@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnaj7msowty6fc3ukbixnkgrxhfztwuv4q3h4vp2ozh6dttj2kon7vtkmr273xy3c6kmvyluzjlyfkmw7bkaqhdbrzf7m2hpi5fu2ilc3e"
+  ],
+  "claims_added": 1112,
+  "detail": "",
+  "duration_seconds": 1.329,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnaj7msowty6fc3ukbixnkgrxhfztwuv4q3h4vp2ozh6dttj2kon7vtkmr273xy3c6kmvyluzjlyfkmw7bkaqhdbrzf7m2hpi5fu2ilc3e"
+    ],
+    "claim_count": 1112,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 1.327368,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_nola_safety_la",
+    "started_at": "2026-09-19T06:13:54.098338+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_nola_safety_la",
+  "started_at": "2026-09-19T06:13:54+00:00"
+}

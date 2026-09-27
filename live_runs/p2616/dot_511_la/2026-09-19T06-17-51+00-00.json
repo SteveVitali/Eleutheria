@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnap5h5qmxaypw2tlxxuahb64fwozq7wqp5ymnsn7zzuebjkxmt5qissssavb6ohlqyuwhjoqsi65m4wvp4bi4mbzntwawgdbtf6pastgm"
+  ],
+  "claims_added": 5220,
+  "detail": "",
+  "duration_seconds": 0.436,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnap5h5qmxaypw2tlxxuahb64fwozq7wqp5ymnsn7zzuebjkxmt5qissssavb6ohlqyuwhjoqsi65m4wvp4bi4mbzntwawgdbtf6pastgm"
+    ],
+    "claim_count": 5220,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 0.433278,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "dot_511_la",
+    "started_at": "2026-09-19T06:17:51.429389+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "dot_511_la",
+  "started_at": "2026-09-19T06:17:51+00:00"
+}

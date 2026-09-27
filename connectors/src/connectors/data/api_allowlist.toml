@@ -471,3 +471,127 @@ endpoint_prefix = "/v3/"
 tos_basis = "TED Search API — the Publications Office's documented public read API for OJ S procurement notices; keyless, freely reusable under Commission Decision 2011/833/EU (SIMAP legal notice); fair-usage limit 700 req/min."
 rate_limit_per_min = 30
 counsel_reviewed = false
+
+# --- P26.16 (SOURCES.15): GL-GATE-07 rights batch -------------
+# ArcGIS `/arcgis/rest/…/query` (+ publisher-hosted variants) and the
+# Socrata `/resource/<id>.json` rows API — the same documented
+# programmatic surfaces as the earlier batches. Registry rows only.
+
+[[api_host]]
+host = "cotinter.leoncountyfl.gov"
+endpoint_prefix = "/cotinter/rest/"
+tos_basis = "Documented REST query API for the publicly published camera-registry layer (GL-GATE-07 batch)."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+[[api_host]]
+host = "data.princegeorgescountymd.gov"
+endpoint_prefix = "/resource/"
+tos_basis = "Documented REST query API for the publicly published camera-registry layer (GL-GATE-07 batch)."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+[[api_host]]
+host = "gedlingmaps.gedling.gov.uk"
+endpoint_prefix = "/arcgis/rest/"
+tos_basis = "Documented REST query API for the publicly published camera-registry layer (GL-GATE-07 batch)."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+[[api_host]]
+host = "gis.achdidaho.org"
+endpoint_prefix = "/server/rest/"
+tos_basis = "Documented REST query API for the publicly published camera-registry layer (GL-GATE-07 batch)."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+[[api_host]]
+host = "gis.co.carver.mn.us"
+endpoint_prefix = "/arcgis_ea/rest/"
+tos_basis = "Documented REST query API for the publicly published camera-registry layer (GL-GATE-07 batch)."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+[[api_host]]
+host = "gis.massdot.state.ma.us"
+endpoint_prefix = "/arcgis/rest/"
+tos_basis = "Documented REST query API for the publicly published camera-registry layer (GL-GATE-07 batch)."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+[[api_host]]
+host = "kygisserver.ky.gov"
+endpoint_prefix = "/arcgis/rest/"
+tos_basis = "Documented REST query API for the publicly published camera-registry layer (GL-GATE-07 batch)."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+[[api_host]]
+host = "map.bedford.gov.uk"
+endpoint_prefix = "/arcgis/rest/"
+tos_basis = "Documented REST query API for the publicly published camera-registry layer (GL-GATE-07 batch)."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+[[api_host]]
+host = "maps.brla.gov"
+endpoint_prefix = "/gis/rest/"
+tos_basis = "Documented REST query API for the publicly published camera-registry layer (GL-GATE-07 batch)."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+[[api_host]]
+host = "maps.kytc.ky.gov"
+endpoint_prefix = "/arcgis/rest/"
+tos_basis = "Documented REST query API for the publicly published camera-registry layer (GL-GATE-07 batch)."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+[[api_host]]
+host = "maps.trpa.org"
+endpoint_prefix = "/server/rest/"
+tos_basis = "Documented REST query API for the publicly published camera-registry layer (GL-GATE-07 batch)."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+[[api_host]]
+host = "services-eu1.arcgis.com"
+endpoint_prefix = "/"
+tos_basis = "Documented REST query API for the publicly published camera-registry layer (GL-GATE-07 batch)."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+[[api_host]]
+host = "services4.arcgis.com"
+endpoint_prefix = "/"
+tos_basis = "Documented REST query API for the publicly published camera-registry layer (GL-GATE-07 batch)."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+[[api_host]]
+host = "services8.arcgis.com"
+endpoint_prefix = "/"
+tos_basis = "Documented REST query API for the publicly published camera-registry layer (GL-GATE-07 batch)."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+[[api_host]]
+host = "services9.arcgis.com"
+endpoint_prefix = "/"
+tos_basis = "Documented REST query API for the publicly published camera-registry layer (GL-GATE-07 batch)."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+[[api_host]]
+host = "spatial.durham.gov.uk"
+endpoint_prefix = "/arcgis/rest/"
+tos_basis = "Documented REST query API for the publicly published camera-registry layer (GL-GATE-07 batch)."
+rate_limit_per_min = 5
+counsel_reviewed = false
+
+[[api_host]]
+host = "www.portlandmaps.com"
+endpoint_prefix = "/od/rest/"
+tos_basis = "Documented REST query API for the publicly published camera-registry layer (GL-GATE-07 batch)."
+rate_limit_per_min = 5
+counsel_reviewed = false

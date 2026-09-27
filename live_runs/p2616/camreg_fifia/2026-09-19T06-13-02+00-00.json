@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnabfaoilnbzhzfo7lti47mvwwyf7iwfeoo7bt3bjpgfounsf4dxxh5gs5ygd6nd5jl6sfk47hgggdi5cdyeaw73f4zuvf7e4i4jmct63i"
+  ],
+  "claims_added": 171,
+  "detail": "",
+  "duration_seconds": 0.461,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnabfaoilnbzhzfo7lti47mvwwyf7iwfeoo7bt3bjpgfounsf4dxxh5gs5ygd6nd5jl6sfk47hgggdi5cdyeaw73f4zuvf7e4i4jmct63i"
+    ],
+    "claim_count": 171,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 0.459909,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_fifia",
+    "started_at": "2026-09-19T06:13:02.459139+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_fifia",
+  "started_at": "2026-09-19T06:13:02+00:00"
+}

@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnabp365mtrwo44wfyxkcelqx3guswxecpoc2kulgvcuylbqtrwghtmjsulr2p2y35ohcij6ws2uddsiomr5zt4nju7zjx7gl3fo4weua4"
+  ],
+  "claims_added": 8,
+  "detail": "",
+  "duration_seconds": 0.327,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnabp365mtrwo44wfyxkcelqx3guswxecpoc2kulgvcuylbqtrwghtmjsulr2p2y35ohcij6ws2uddsiomr5zt4nju7zjx7gl3fo4weua4"
+    ],
+    "claim_count": 8,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 0.326669,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_smart_sky",
+    "started_at": "2026-09-19T06:17:13.142954+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_smart_sky",
+  "started_at": "2026-09-19T06:17:13+00:00"
+}

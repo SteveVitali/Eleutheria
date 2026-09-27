@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnaip2dikal4llqhb7y6gxsmmzj6wkktka5hhyqwm5bejiwjvh3qvbrhejskggl6ow3qdir2ytexe6pekdrh3t66i43q54p47ob6amhifm"
+  ],
+  "claims_added": 40,
+  "detail": "",
+  "duration_seconds": 0.138,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnaip2dikal4llqhb7y6gxsmmzj6wkktka5hhyqwm5bejiwjvh3qvbrhejskggl6ow3qdir2ytexe6pekdrh3t66i43q54p47ob6amhifm"
+    ],
+    "claim_count": 40,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 0.137663,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_sensenet",
+    "started_at": "2026-09-19T06:17:06.730224+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_sensenet",
+  "started_at": "2026-09-19T06:17:06+00:00"
+}

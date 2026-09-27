@@ -1,0 +1,43 @@
+{
+  "capture_digests": [
+    "bcnakvhzj4x3wjnrwl7ic25oujpe75rzp6bv4yrezebptiofsp4atrhnr5zmwl57ngoijgueizlghf2ujh4wvvoqvmypz2divg5beqcgdz4",
+    "bcnam36qoq42ri55yrtnduay7asveiqudvh5qtz3e5zgegvdwgnu6p5b7xnrw6m5trbngxtq7kzu2sjhzdurkdlmvbmvmzpp6ycjwalzdxi",
+    "bcnakvhzj4x3wjnrwl7ic25oujpe75rzp6bv4yrezebptiofsp4atrhnr5zmwl57ngoijgueizlghf2ujh4wvvoqvmypz2divg5beqcgdz4",
+    "bcnam36qoq42ri55yrtnduay7asveiqudvh5qtz3e5zgegvdwgnu6p5b7xnrw6m5trbngxtq7kzu2sjhzdurkdlmvbmvmzpp6ycjwalzdxi"
+  ],
+  "claims_added": 20880,
+  "detail": "",
+  "duration_seconds": 3.253,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnakvhzj4x3wjnrwl7ic25oujpe75rzp6bv4yrezebptiofsp4atrhnr5zmwl57ngoijgueizlghf2ujh4wvvoqvmypz2divg5beqcgdz4",
+      "bcnam36qoq42ri55yrtnduay7asveiqudvh5qtz3e5zgegvdwgnu6p5b7xnrw6m5trbngxtq7kzu2sjhzdurkdlmvbmvmzpp6ycjwalzdxi",
+      "bcnakvhzj4x3wjnrwl7ic25oujpe75rzp6bv4yrezebptiofsp4atrhnr5zmwl57ngoijgueizlghf2ujh4wvvoqvmypz2divg5beqcgdz4",
+      "bcnam36qoq42ri55yrtnduay7asveiqudvh5qtz3e5zgegvdwgnu6p5b7xnrw6m5trbngxtq7kzu2sjhzdurkdlmvbmvmzpp6ycjwalzdxi"
+    ],
+    "claim_count": 20880,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 3.247281,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_ucsd",
+    "started_at": "2026-09-19T06:17:31.361810+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_ucsd",
+  "started_at": "2026-09-19T06:17:31+00:00"
+}

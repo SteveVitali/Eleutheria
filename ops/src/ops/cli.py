@@ -316,7 +316,13 @@ def build_parser() -> argparse.ArgumentParser:
         "row (source/mode/outcome/claims/capture digests/refusal) under "
         "gs://…-sig-restricted/ops/runs/ — the scheduled-reingestion audit trail",
     )
-    ingest.add_argument("--source", required=True, help="source id (live-gated)")
+    ingest.add_argument("--source", default=None, help="source id (live-gated)")
+    ingest.add_argument(
+        "--batch",
+        default=None,
+        help="cadence.toml [[batches]] id — runs every member source in order, "
+        "appending one ops/runs row per member (P26.16 GL-GATE-07 batches)",
+    )
     ingest.add_argument(
         "--sink",
         default="pg",
@@ -985,6 +991,18 @@ def _cmd_scheduled_ingest(args: argparse.Namespace) -> int:
     from .scheduled import load_cadence, scheduled_ingest, store_run_row
 
     cadence = load_cadence(args.cadence)
+    if bool(args.source) == bool(args.batch):
+        print("scheduled-ingest: exactly one of --source / --batch is required")
+        return 2
+    members: list[str] = []
+    if args.batch:
+        batch = next((b for b in cadence.batches if b.id == args.batch), None)
+        if batch is None:
+            print(f"scheduled-ingest: no [[batches]] row with id {args.batch!r}")
+            return 2
+        members = list(batch.members)
+    else:
+        members = [args.source]
     dsn = args.dsn or os.environ.get("SIG_STAGING_DSN")
     if args.sink == "pg" and not dsn:
         user = os.environ.get("SIG_PG_USER", "")
@@ -997,20 +1015,24 @@ def _cmd_scheduled_ingest(args: argparse.Namespace) -> int:
         print("scheduled-ingest: --sink pg needs --dsn / SIG_STAGING_DSN / SIG_PG_* parts")
         return 2
     local_dir = Path(os.environ.get("SIG_RUN_LOG", str(_STATE_DIR / "runs")))
-    row = scheduled_ingest(
-        args.source, sink_kind=args.sink, dsn=dsn, capture_dir=_STATE_DIR / "captures"
-    )
     gcs = _gcs_bucket(args.gcs_bucket)
-    written = store_run_row(row, prefix=cadence.runs_gcs_prefix, gcs=gcs, local_dir=local_dir)
-    print(json.dumps(row.as_json(), sort_keys=True))
-    for where, loc in written.items():
-        print(f"  run row stored ({where}): {loc}")
+    exit_code = 0
+    for source in members:
+        row = scheduled_ingest(
+            source, sink_kind=args.sink, dsn=dsn, capture_dir=_STATE_DIR / "captures"
+        )
+        written = store_run_row(row, prefix=cadence.runs_gcs_prefix, gcs=gcs, local_dir=local_dir)
+        print(json.dumps(row.as_json(), sort_keys=True))
+        for where, loc in written.items():
+            print(f"  run row stored ({where}): {loc}")
+        if row.exit_code:
+            exit_code = exit_code or row.exit_code
     if gcs is None:
         print(
             "  ! no GCS bucket configured — run row recorded locally only",
             file=sys.stderr,
         )
-    return row.exit_code
+    return exit_code
 
 
 def _cmd_cadence(args: argparse.Namespace) -> int:
@@ -1028,6 +1050,13 @@ def _cmd_cadence(args: argparse.Namespace) -> int:
     for s in cadence.sources:
         marker = " (existing — verify only)" if s.existing else ""
         print(f"  {s.source:38s} {s.cadence:8s} {s.cron:12s} {s.job} ← {s.scheduler}{marker}")
+    if cadence.batches:
+        print("scheduled batches (P26.16 GL-GATE-07):")
+        for b in cadence.batches:
+            print(
+                f"  {b.id:38s} {b.cadence:8s} {b.cron:12s} {b.job} ← {b.scheduler}"
+                f"  [{len(b.members)} members]"
+            )
     missing = unscheduled_live_sources(cadence)
     if missing:
         print(

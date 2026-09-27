@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnaj6craveoy5pnaajrxouvqt7bbptga2cmqnrz7wszqhhnltidintdfd6ia6v6xq72kg5dwrjzlq5jj7p5d66po4dzzcougycv27nvfvq"
+  ],
+  "claims_added": 1737,
+  "detail": "",
+  "duration_seconds": 0.368,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnaj6craveoy5pnaajrxouvqt7bbptga2cmqnrz7wszqhhnltidintdfd6ia6v6xq72kg5dwrjzlq5jj7p5d66po4dzzcougycv27nvfvq"
+    ],
+    "claim_count": 1737,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 0.366444,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_nyc_jgrayson_ny",
+    "started_at": "2026-09-19T06:13:58.010711+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_nyc_jgrayson_ny",
+  "started_at": "2026-09-19T06:13:58+00:00"
+}

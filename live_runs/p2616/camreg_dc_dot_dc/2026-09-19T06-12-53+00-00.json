@@ -1,0 +1,41 @@
+{
+  "capture_digests": [
+    "bcnadcjfzaijcaczj7lzp2iekh6dkqxvsj52hgioilohgi44nauzm43yfgeerfxi7htfpk7ptvo37hey6pycga75c4gxea5njqojkgufegi",
+    "bcnamnfzwje4du42lss7icmsa234jexxbrp7fkwagrstjxt2wu2zkfrfr4s3km5iwoixoj3mes44q76gv3pbrptte5dstbq4vfcoxybfb5y",
+    "bcnaajackme434ffublp4avldfngtqozdryfzgh2eyuvvlexvsjjwkzgsegsqbvjitetamugpea7uxrdgjoh4hoq4bbga4nihq6en7hk67a"
+  ],
+  "claims_added": 4995,
+  "detail": "",
+  "duration_seconds": 1.719,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnadcjfzaijcaczj7lzp2iekh6dkqxvsj52hgioilohgi44nauzm43yfgeerfxi7htfpk7ptvo37hey6pycga75c4gxea5njqojkgufegi",
+      "bcnamnfzwje4du42lss7icmsa234jexxbrp7fkwagrstjxt2wu2zkfrfr4s3km5iwoixoj3mes44q76gv3pbrptte5dstbq4vfcoxybfb5y",
+      "bcnaajackme434ffublp4avldfngtqozdryfzgh2eyuvvlexvsjjwkzgsegsqbvjitetamugpea7uxrdgjoh4hoq4bbga4nihq6en7hk67a"
+    ],
+    "claim_count": 4995,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 1.716815,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_dc_dot_dc",
+    "started_at": "2026-09-19T06:12:53.978526+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_dc_dot_dc",
+  "started_at": "2026-09-19T06:12:53+00:00"
+}

@@ -1,0 +1,45 @@
+{
+  "capture_digests": [
+    "bcnaah52khgrchmo453yd7vg7jm4tjfb5xhrddbrlfamg7okojoarbpf37xxgx74wt3e3xkxu2kemrhm7fbaosh3enodjaa5ysip4gdicvy",
+    "bcnagr5dtnok6urnsqreyec3mpy25vu3rlr4klvn5ssmgyhoniy4ufss5jylez5hojaxladznk6ml4osc2g7ri55ncwypfayrd7mtpwyyey",
+    "bcnaopu6wf4bromr77rfdw7be3qdsrcx4zqr3qcma5ip2rippbn4wynrzmtecwwwnzm2t5dmoydiyi7pr7pxazcncobkclduv6y5bwn6jau",
+    "bcnakaicykej7gg4mbgfhoetxyipf5s6yk7nniycb5qkzr63ijjk2mibelotg362vwzmzrlgqngl52rwpo6n2skx63cfh3ejw4hqxtlc7om",
+    "bcnac4iwxitul4q7qjfwdorhhpssifxzhestdrtls6zffsz6j76v4lifayutnbbsmggdlusidsmvchfbzfbktkxhhqqahwnlohs4oxujeam"
+  ],
+  "claims_added": 43420,
+  "detail": "",
+  "duration_seconds": 4.394,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnaah52khgrchmo453yd7vg7jm4tjfb5xhrddbrlfamg7okojoarbpf37xxgx74wt3e3xkxu2kemrhm7fbaosh3enodjaa5ysip4gdicvy",
+      "bcnagr5dtnok6urnsqreyec3mpy25vu3rlr4klvn5ssmgyhoniy4ufss5jylez5hojaxladznk6ml4osc2g7ri55ncwypfayrd7mtpwyyey",
+      "bcnaopu6wf4bromr77rfdw7be3qdsrcx4zqr3qcma5ip2rippbn4wynrzmtecwwwnzm2t5dmoydiyi7pr7pxazcncobkclduv6y5bwn6jau",
+      "bcnakaicykej7gg4mbgfhoetxyipf5s6yk7nniycb5qkzr63ijjk2mibelotg362vwzmzrlgqngl52rwpo6n2skx63cfh3ejw4hqxtlc7om",
+      "bcnac4iwxitul4q7qjfwdorhhpssifxzhestdrtls6zffsz6j76v4lifayutnbbsmggdlusidsmvchfbzfbktkxhhqqahwnlohs4oxujeam"
+    ],
+    "claim_count": 43420,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 4.383528,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_caloes_ca",
+    "started_at": "2026-09-19T06:12:40.047907+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_caloes_ca",
+  "started_at": "2026-09-19T06:12:40+00:00"
+}

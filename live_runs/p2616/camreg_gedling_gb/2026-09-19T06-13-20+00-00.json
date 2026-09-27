@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnabe4kjm2gjvnis5pynkgcj3esixioxxxbif2j6g2b7wpuf2mtbc4oomugyihll2tt3yds6ejmj5b4zkekr2rrfyw3vk6hd554cujlczy"
+  ],
+  "claims_added": 736,
+  "detail": "",
+  "duration_seconds": 2.128,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnabe4kjm2gjvnis5pynkgcj3esixioxxxbif2j6g2b7wpuf2mtbc4oomugyihll2tt3yds6ejmj5b4zkekr2rrfyw3vk6hd554cujlczy"
+    ],
+    "claim_count": 736,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 2.126997,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_gedling_gb",
+    "started_at": "2026-09-19T06:13:20.600643+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_gedling_gb",
+  "started_at": "2026-09-19T06:13:20+00:00"
+}

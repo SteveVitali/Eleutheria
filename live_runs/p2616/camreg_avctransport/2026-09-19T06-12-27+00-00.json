@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnal5wds5cx5hvlbj3a54s5omate5mjtghn6sjvrxmb3ary5muwyavel6ulmqh22a4dg7s3yqd7tkq3xznvxiw666dpr7kr2hlbtbygjne"
+  ],
+  "claims_added": 72,
+  "detail": "",
+  "duration_seconds": 0.457,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnal5wds5cx5hvlbj3a54s5omate5mjtghn6sjvrxmb3ary5muwyavel6ulmqh22a4dg7s3yqd7tkq3xznvxiw666dpr7kr2hlbtbygjne"
+    ],
+    "claim_count": 72,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 0.455421,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_avctransport",
+    "started_at": "2026-09-19T06:12:27.645287+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_avctransport",
+  "started_at": "2026-09-19T06:12:27+00:00"
+}

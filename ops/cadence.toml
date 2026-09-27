@@ -590,3 +590,81 @@ cron = "0 6 5 * *"
 job = "sig-ingest-ted-eu"
 scheduler = "sig-sched-ted-eu"
 note = "TED Search API bounded sweep (POST /v3/notices/search; 22 slices: 11 keyword + 10 CPV + baseline; keyless documented API)."
+
+# --- P26.16 (SOURCES.15): GL-GATE-07 rights-batch cadence ------
+# The flipped + newly-registered camera-registry sources run as
+# grouped sig-ingest-camreg-batch-* jobs (~26 registry endpoints
+# each); every member source still appends its own ops/runs row.
+# `scheduled-ingest --batch <id>` iterates `members` in order.
+
+[[batches]]
+id = "camreg-batch-01"
+cadence = "monthly"
+cron = "7 3 6 * *"
+job = "sig-ingest-camreg-batch-01"
+scheduler = "sig-sched-camreg-batch-01"
+members = ["camreg_achd_id", "camreg_aikner", "camreg_amber_kh", "camreg_apram_pt", "camreg_arc_1975641302", "camreg_arlington_va", "camreg_avctransport", "camreg_azdot_az", "camreg_baltimore_atves_md", "camreg_bangla_bd", "camreg_bargabos", "camreg_bedford_gb", "camreg_bettendorf_ia", "camreg_bouhan_jp", "camreg_brea_ca", "camreg_caledon_on", "camreg_calgary_ab", "camreg_caloes_ca", "camreg_camberwell_au"]
+note = "GL-GATE-07 batch 1/8: 26 target(s) across 19 source(s)."
+
+[[batches]]
+id = "camreg-batch-02"
+cadence = "monthly"
+cron = "14 3 7 * *"
+job = "sig-ingest-camreg-batch-02"
+scheduler = "sig-sched-camreg-batch-02"
+members = ["camreg_camilo_schools", "camreg_carver_mn", "camreg_cclemire", "camreg_chattanooga_tn", "camreg_cheicylia", "camreg_chicago_il", "camreg_colgis", "camreg_cotgeo", "camreg_cphang", "camreg_cwarcgis", "camreg_dc_dot_dc", "camreg_denver_co", "camreg_donegal_ie", "camreg_dover_gb", "camreg_dubuque_ia", "camreg_duganmeyer", "camreg_durham_gb", "camreg_eastdun_gb", "camreg_ebrgis_la", "camreg_esri_dash", "camreg_esriukpolice_gb", "camreg_essex_gb", "camreg_fifia"]
+note = "GL-GATE-07 batch 2/8: 26 target(s) across 23 source(s)."
+
+[[batches]]
+id = "camreg-batch-03"
+cadence = "monthly"
+cron = "21 3 8 * *"
+job = "sig-ingest-camreg-batch-03"
+scheduler = "sig-sched-camreg-batch-03"
+members = ["camreg_firemedic", "camreg_fl511_fl", "camreg_forwardalliance", "camreg_freese_dm", "camreg_friendswood_tx", "camreg_gainesville_fl", "camreg_gedling_gb", "camreg_gistel_be", "camreg_gmh_emc_ga", "camreg_guildford_gb", "camreg_gvanmaren", "camreg_helberg", "camreg_honolulu_hi", "camreg_indonesia_id", "camreg_infocemosa", "camreg_infraestructura"]
+note = "GL-GATE-07 batch 3/8: 26 target(s) across 16 source(s)."
+
+[[batches]]
+id = "camreg-batch-04"
+cadence = "monthly"
+cron = "28 3 9 * *"
+job = "sig-ingest-camreg-batch-04"
+scheduler = "sig-sched-camreg-batch-04"
+members = ["camreg_ira", "camreg_jcfd3_or", "camreg_jelenic", "camreg_jmh_us", "camreg_kcmo_mo", "camreg_keizer_or", "camreg_keshan", "camreg_kirkland_wa", "camreg_kosman", "camreg_kunying", "camreg_langan", "camreg_lawrence_ks", "camreg_lenhardt", "camreg_leon_fl", "camreg_lexington_ky", "camreg_lisburn_gb", "camreg_lojic_ky", "camreg_lpd_flock", "camreg_manhattan_ks", "camreg_mark43", "camreg_massdot_ma", "camreg_mbrc_au", "camreg_mctx_tx", "camreg_md_opendata", "camreg_mhebert", "camreg_mndot_mn"]
+note = "GL-GATE-07 batch 4/8: 26 target(s) across 26 source(s)."
+
+[[batches]]
+id = "camreg-batch-05"
+cadence = "monthly"
+cron = "35 3 10 * *"
+job = "sig-ingest-camreg-batch-05"
+scheduler = "sig-sched-camreg-batch-05"
+members = ["camreg_monmap_mn", "camreg_mueller_de", "camreg_nashville_tn", "camreg_nitro", "camreg_nola_safety_la", "camreg_nurnazihah", "camreg_nyc_jgrayson_ny", "camreg_nyc_weltia_ny", "camreg_nzta_nz", "camreg_oem_camera", "camreg_olsson", "camreg_oosgis_nl", "camreg_osm_surveillance", "camreg_palmdesert_ca", "camreg_penndot_pa", "camreg_pgcounty_md", "camreg_pipeline_sec"]
+note = "GL-GATE-07 batch 5/8: 26 target(s) across 17 source(s)."
+
+[[batches]]
+id = "camreg-batch-06"
+cadence = "monthly"
+cron = "42 3 11 * *"
+job = "sig-ingest-camreg-batch-06"
+scheduler = "sig-sched-camreg-batch-06"
+members = ["camreg_plymouth_gb", "camreg_polyu_hk", "camreg_portland_or", "camreg_raleigh_nc", "camreg_ramallah_ps", "camreg_redmond_wa", "camreg_riyadh_sa", "camreg_rjcoleman", "camreg_ruslan", "camreg_salisbury_nc", "camreg_sarasota_fl", "camreg_schellinger", "camreg_seattle_wa", "camreg_sensenet", "camreg_sfoss", "camreg_smart_sky", "camreg_squan", "camreg_stalbert_ab", "camreg_stanford_us", "camreg_surrey_bc", "camreg_sweeney", "camreg_tblose"]
+note = "GL-GATE-07 batch 6/8: 24 target(s) across 22 source(s)."
+
+[[batches]]
+id = "camreg-batch-07"
+cadence = "monthly"
+cron = "49 3 12 * *"
+job = "sig-ingest-camreg-batch-07"
+scheduler = "sig-sched-camreg-batch-07"
+members = ["camreg_thailand_th", "camreg_toronto_on", "camreg_townofws", "camreg_trafficops_ca", "camreg_trpa_us", "camreg_tulane_la", "camreg_txdot_rep_tx", "camreg_uchicago", "camreg_ucsd", "camreg_ukm_my", "camreg_umbc_md", "camreg_univmb_mb", "camreg_uofmd_md", "camreg_vancouver_bc", "camreg_vidya", "camreg_webappfme", "camreg_wellington_nz"]
+note = "GL-GATE-07 batch 7/8: 26 target(s) across 17 source(s)."
+
+[[batches]]
+id = "camreg-batch-08"
+cadence = "monthly"
+cron = "56 3 13 * *"
+job = "sig-ingest-camreg-batch-08"
+scheduler = "sig-sched-camreg-batch-08"
+members = ["camreg_whatley", "camreg_wim_camera", "camreg_yazid", "camreg_yline", "camreg_york_on", "camreg_yorku", "camreg_zyinger", "dot_511_al", "dot_511_ga", "dot_511_la", "dot_511_md"]
+note = "GL-GATE-07 batch 8/8: 11 target(s) across 11 source(s)."

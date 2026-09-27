@@ -1,0 +1,39 @@
+{
+  "capture_digests": [
+    "bcnagotzjvixk7v65z7oubrpeezvgbryx6t74324rd7p4li23ajud76fhyyin4dig47mn2ckf7lr6lhviqns27ur3lkz5hbyy4s55qa2vgm",
+    "bcnakaokbrfiqyohk2ypdon3e2qdtieptprurecuym7samaxg6xpi2nz4dwn25o3rs5xd3ewezmmih6s5hm2vci6ir56emb5usunfq4syky"
+  ],
+  "claims_added": 13733,
+  "detail": "",
+  "duration_seconds": 1.377,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnagotzjvixk7v65z7oubrpeezvgbryx6t74324rd7p4li23ajud76fhyyin4dig47mn2ckf7lr6lhviqns27ur3lkz5hbyy4s55qa2vgm",
+      "bcnakaokbrfiqyohk2ypdon3e2qdtieptprurecuym7samaxg6xpi2nz4dwn25o3rs5xd3ewezmmih6s5hm2vci6ir56emb5usunfq4syky"
+    ],
+    "claim_count": 13733,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 1.372918,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_trafficops_ca",
+    "started_at": "2026-09-19T06:17:25.536675+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_trafficops_ca",
+  "started_at": "2026-09-19T06:17:25+00:00"
+}

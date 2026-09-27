@@ -1,0 +1,43 @@
+{
+  "capture_digests": [
+    "bcnae3j4ph52ovdhtaavaop6wxwtvcaqwxdi4dylaq4uzu763qtaoiexxhsbacqfacj545dlusplwwozcjldghnsm7j2nvugh6zngaeuwy4",
+    "bcnae3j4ph52ovdhtaavaop6wxwtvcaqwxdi4dylaq4uzu763qtaoiexxhsbacqfacj545dlusplwwozcjldghnsm7j2nvugh6zngaeuwy4",
+    "bcnaodcr4a7k2l55qkrb3vlz4vcy7rcacyamquwwjrinokxhpxmnrl6kyxvkzzwcwpadiyveg6bb3hpny6zmgtkuei4dcv26wlfzvbcdtou",
+    "bcnag2vzmgsdk2s5rpivm2yrcllbhx3zmfpexqkgrhr2roneihubeqiqlsjhlqdzz5ayp7nx5j4itfrvwzhfzw4keso27istexwtdyorr3e"
+  ],
+  "claims_added": 9063,
+  "detail": "",
+  "duration_seconds": 2.63,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnae3j4ph52ovdhtaavaop6wxwtvcaqwxdi4dylaq4uzu763qtaoiexxhsbacqfacj545dlusplwwozcjldghnsm7j2nvugh6zngaeuwy4",
+      "bcnae3j4ph52ovdhtaavaop6wxwtvcaqwxdi4dylaq4uzu763qtaoiexxhsbacqfacj545dlusplwwozcjldghnsm7j2nvugh6zngaeuwy4",
+      "bcnaodcr4a7k2l55qkrb3vlz4vcy7rcacyamquwwjrinokxhpxmnrl6kyxvkzzwcwpadiyveg6bb3hpny6zmgtkuei4dcv26wlfzvbcdtou",
+      "bcnag2vzmgsdk2s5rpivm2yrcllbhx3zmfpexqkgrhr2roneihubeqiqlsjhlqdzz5ayp7nx5j4itfrvwzhfzw4keso27istexwtdyorr3e"
+    ],
+    "claim_count": 9063,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 2.626344,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_nzta_nz",
+    "started_at": "2026-09-19T06:13:58.816775+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_nzta_nz",
+  "started_at": "2026-09-19T06:13:58+00:00"
+}

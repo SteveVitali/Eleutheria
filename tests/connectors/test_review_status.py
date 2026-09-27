@@ -115,7 +115,7 @@ def test_the_seeded_registry_has_no_flip_metadata_violations() -> None:
 def test_validate_passes_on_the_seeded_registry(capsys: pytest.CaptureFixture[str]) -> None:
     assert main(["validate"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 198" in out
+    assert "registered sources: 334" in out
     assert "self-checks OK" in out
 
 
@@ -201,11 +201,14 @@ def test_review_status_prints_flip_ready_0_and_loadable_65(
     # surface — flipped under the same GL-GATE-06 delegated pattern
     # (Commission Decision 2011/833/EU free-reuse grant + CC-BY-4.0 editorial +
     # CC0-1.0 metadata → CC-BY-4.0; 76 → 77 loadable).
+    # P26.16 (SOURCES.15) — the GL-GATE-07 rights batch: +136 new registry
+    # rows (198 → 334 registered) and +151 flips (15 pre-registered gated
+    # sources + 136 new rows all permitted; 77 → 228 loadable).
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 198" in out
+    assert "registered sources: 334" in out
     assert "flip-ready: 0" in out
-    assert "loadable now: 77" in out
+    assert "loadable now: 228" in out
 
 
 def test_review_status_loadable_equals_validate() -> None:
@@ -213,7 +216,7 @@ def test_review_status_loadable_equals_validate() -> None:
     from connectors.loader import is_loadable
 
     loadable = [s for s in sources() if is_loadable(s)]
-    assert len(loadable) == 77
+    assert len(loadable) == 228
     assert len(flip_ready()) == 0
 
 

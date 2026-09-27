@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnaojnvdgoz6b4qr53mfdrtec4zlntfym2w67duuyycet47fz4gslk7rxvxl3dvq2l2cd65evaise44yxpxkylq4urmdrowiotmacb57wa"
+  ],
+  "claims_added": 1704,
+  "detail": "",
+  "duration_seconds": 0.452,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnaojnvdgoz6b4qr53mfdrtec4zlntfym2w67duuyycet47fz4gslk7rxvxl3dvq2l2cd65evaise44yxpxkylq4urmdrowiotmacb57wa"
+    ],
+    "claim_count": 1704,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 0.451109,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_infraestructura",
+    "started_at": "2026-09-19T06:13:34.187373+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_infraestructura",
+  "started_at": "2026-09-19T06:13:34+00:00"
+}

@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnabj25ewl7syb3nyfx3fjbjy2lj4qgjqmwhefz72dj6gjr7gpd7eaniq6jqlip3fbxptlyy4gbb4qyxxl6luu2o3ia3ny76ase2dhq42y"
+  ],
+  "claims_added": 3284,
+  "detail": "",
+  "duration_seconds": 0.48,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnabj25ewl7syb3nyfx3fjbjy2lj4qgjqmwhefz72dj6gjr7gpd7eaniq6jqlip3fbxptlyy4gbb4qyxxl6luu2o3ia3ny76ase2dhq42y"
+    ],
+    "claim_count": 3284,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 0.478826,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_jelenic",
+    "started_at": "2026-09-19T06:13:35.893415+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_jelenic",
+  "started_at": "2026-09-19T06:13:35+00:00"
+}

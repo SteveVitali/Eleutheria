@@ -1,0 +1,41 @@
+{
+  "capture_digests": [
+    "bcnamswlccd4ivnvh7tzkag7l5tlaqh7xl33nvuvbuxa73iqjhzfmql3uf3afalql6irbfxxg4bhyo6dexjekpb7p755tncj4l6a26wppci",
+    "bcnakq7biivh6zmlhsiawzostg2q4ibnehr5sayvecri32it7apon4oxafarpgwdh5h4lsgyjisdgoqliqj3xrfehvhgt46pa3pr2wq4sw4",
+    "bcnacabn7ehlnvr4xjrt2eulrvuhzbbvavu65wegddhfvswhafsaqwkshjzajbist4onabpr5ojxl5ic2yofhsrb3o34b663krdla3axraq"
+  ],
+  "claims_added": 3508,
+  "detail": "",
+  "duration_seconds": 3.644,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnamswlccd4ivnvh7tzkag7l5tlaqh7xl33nvuvbuxa73iqjhzfmql3uf3afalql6irbfxxg4bhyo6dexjekpb7p755tncj4l6a26wppci",
+      "bcnakq7biivh6zmlhsiawzostg2q4ibnehr5sayvecri32it7apon4oxafarpgwdh5h4lsgyjisdgoqliqj3xrfehvhgt46pa3pr2wq4sw4",
+      "bcnacabn7ehlnvr4xjrt2eulrvuhzbbvavu65wegddhfvswhafsaqwkshjzajbist4onabpr5ojxl5ic2yofhsrb3o34b663krdla3axraq"
+    ],
+    "claim_count": 3508,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 3.641886,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_arlington_va",
+    "started_at": "2026-09-19T06:12:24.001171+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_arlington_va",
+  "started_at": "2026-09-19T06:12:24+00:00"
+}

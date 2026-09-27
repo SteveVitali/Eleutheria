@@ -1,0 +1,37 @@
+{
+  "capture_digests": [
+    "bcnall674flreyjmkx7yeyhodfmnq7v7sc4lqkhnmklbcqa6f3jkdbccef357zav6hjgd3u73fvxqhgfclnu4k6p6g6dxquzgvtn6k4azli"
+  ],
+  "claims_added": 450,
+  "detail": "",
+  "duration_seconds": 0.304,
+  "exit_code": 0,
+  "fetch_record": {
+    "byte_counts": [],
+    "capture_digests": [
+      "bcnall674flreyjmkx7yeyhodfmnq7v7sc4lqkhnmklbcqa6f3jkdbccef357zav6hjgd3u73fvxqhgfclnu4k6p6g6dxquzgvtn6k4azli"
+    ],
+    "claim_count": 450,
+    "connector": "dot_511",
+    "content_drift": null,
+    "disappearances": [],
+    "document_drift": [],
+    "document_outcomes": [],
+    "duration_seconds": 0.302399,
+    "mode": "live",
+    "politeness_refusal": null,
+    "rate_limit_events": [],
+    "refusals": [],
+    "robots_decisions": [],
+    "source_id": "camreg_palmdesert_ca",
+    "started_at": "2026-09-19T06:16:52.411530+00:00",
+    "status_codes": [],
+    "urls": []
+  },
+  "kind": "scheduled-ingest",
+  "mode": "live",
+  "outcome": "ok",
+  "refusal_reason": "",
+  "source": "camreg_palmdesert_ca",
+  "started_at": "2026-09-19T06:16:52+00:00"
+}
