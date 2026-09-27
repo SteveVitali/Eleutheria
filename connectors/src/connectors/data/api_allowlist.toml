@@ -458,3 +458,16 @@ endpoint_prefix = "/resource/"
 tos_basis = "Colombia national open-data portal (datos.gov.co) Socrata — the documented SoQL /resource rows API (dataset fvdt-ftkz, CC-BY-SA-4.0 licence metadata). robots.txt permits /resource/ and sets crawl-delay 1 — inside the pinned rate."
 rate_limit_per_min = 10
 counsel_reviewed = false
+
+# api.ted.europa.eu — the documented TED Search API (P26.15): keyless public
+# read API over the OJ S procurement notices (docs.ted.europa.eu/api/latest/
+# search.html: "does not require authentication, making it openly accessible");
+# TED fair-usage policy permits 700 HTTP requests/minute — the reviewed budget
+# is far inside it. api.ted.europa.eu/robots.txt answers 404 (no policy exists,
+# RFC 9309 §2.3.1.4) — API mode governs regardless.
+[[api_host]]
+host = "api.ted.europa.eu"
+endpoint_prefix = "/v3/"
+tos_basis = "TED Search API — the Publications Office's documented public read API for OJ S procurement notices; keyless, freely reusable under Commission Decision 2011/833/EU (SIMAP legal notice); fair-usage limit 700 req/min."
+rate_limit_per_min = 30
+counsel_reviewed = false

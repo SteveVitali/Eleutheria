@@ -1699,14 +1699,30 @@ terms_url = "https://www.openstreetmap.org/copyright"
 retrieval_date = 2026-08-20
 
 [sources.ted_eu]
-name = "TED (EU tenders)"
+name = "TED — Tenders Electronic Daily (EU OJ S procurement notices)"
 source_kind = "government_portal"
 homepage_url = "https://ted.europa.eu/"
 default_tier = "R1"
 custody_posture = "REFERENCE"
 compact_status = "public_terms_only"
 robots_policy = "honor"
-notes = "EU procurement. UNDETERMINED pending reuse-terms review."
+access_method = "rest_api (Search API POST /v3/notices/search, api.ted.europa.eu)"
+auth_model = "none (the Search API is documented keyless — 'does not require authentication', docs.ted.europa.eu/api/latest/search.html; verified live 2026-09-18)"
+rate_limits = "TED fair-usage policy: 700 HTTP requests/minute, 600 notice views per 6 min per IP; reviewed budget 30/min"
+verified = true
+last_verified = 2026-09-18
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-18
+review_packet = "docs/build/reports/rights/ted_eu.md"
+notes = "The EU procurement surface (~30 countries: EU-27 + EEA + candidates — Frontex, Europol, national police, municipalities). P26.15 (SOURCES.14). FLIPPED 2026-09-18 (GL-GATE-06): the SIMAP legal notice resolves verbatim — 'the procurement notices published in the Supplement to the Official Journal of the European Union … can be freely reused, for commercial or non-commercial purposes' (Commission Decision 2011/833/EU), SIMAP editorial content CC-BY-4.0, system metadata CC0-1.0 → CC-BY-4.0 with attribution. Procured ≠ deployed: a tender notice is procurement evidence only — never deployment, device count, or operational state."
+[sources.ted_eu.rights]
+spdx = "CC-BY-4.0"
+attribution = "Publications Office of the European Union — TED (Tenders Electronic Daily); procurement notices freely reusable under Commission Decision 2011/833/EU"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://ted.europa.eu/en/legal-notice"
+retrieval_date = 2026-09-18
 
 [sources.decp_fr]
 name = "DECP (FR procurement)"

@@ -600,3 +600,17 @@ kind = "procurement_portal_tenants"
 
 [procportal_chicago_il]
 kind = "procurement_portal_tenants"
+
+# TED — Tenders Electronic Daily (P26.15, the EU procurement surface). API
+# mode: api.ted.europa.eu is ADR-083 allow-listed (keyless documented Search
+# API; POST-only /v3/notices/search — GET answers 400). This seed row is a
+# bounded baseline slice (page 1 of the highest-signal EU phrasing); the
+# connector's discover() additionally expands the reviewed [ted_eu_sweep] plan
+# (11 keyword + 10 verified CPV slices, one PAGE_NUMBER page each, rolling
+# 120-day publication-date window — the bound lives in the POST body, never
+# in claim identity). `post_body` is sent verbatim as the JSON request body.
+[ted_eu]
+kind = "procurement_api"
+targets = [
+  { id = "ted-seed:video-surveillance:p1", url = "https://api.ted.europa.eu/v3/notices/search#sig-slice=ted-seed:video-surveillance:p1", kind = "ted_eu_search", record_kind = "ted_eu_slice", slice = "ted-seed:video-surveillance:p1", query_kind = "keyword", ted_keyword = "video_surveillance", page = 1, limit = 250, plan_version = "2026.09.18.1", query = "FT~\"video surveillance\"", post_body = { query = "FT~\"video surveillance\"", fields = [ "publication-number", "publication-date", "dispatch-date", "notice-type", "form-type", "notice-version", "procedure-identifier", "notice-title", "buyer-name", "buyer-country", "organisation-country-buyer", "place-of-performance", "place-of-performance-city-lot", "place-of-performance-subdiv-lot", "place-of-performance-country-lot", "description-proc", "classification-cpv", "total-value", "total-value-cur", "winner-name", "winner-country", "deadline-receipt-tender-date-lot" ], page = 1, limit = 250, scope = "ALL", paginationMode = "PAGE_NUMBER", onlyLatestVersions = true }, rate_limit_per_min = 30 },
+]

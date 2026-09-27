@@ -1,0 +1,338 @@
+{
+ "notices": [
+  {
+   "place-of-performance": [
+    "PL822",
+    "POL",
+    "PL822",
+    "POL"
+   ],
+   "notice-type": "can-standard",
+   "place-of-performance-subdiv-lot": [
+    "PL822"
+   ],
+   "publication-number": "351100-2025",
+   "organisation-country-buyer": [
+    "POL"
+   ],
+   "winner-country": [
+    "POL"
+   ],
+   "dispatch-date": "2025-05-29Z",
+   "total-value-cur": [
+    "PLN"
+   ],
+   "place-of-performance-city-lot": [
+    "Przemyśl"
+   ],
+   "procedure-identifier": "d56552c1-e3cd-4ff8-8b7e-5acffc65c3ad",
+   "buyer-country": [
+    "POL"
+   ],
+   "total-value": 1248710.76,
+   "place-of-performance-country-lot": [
+    "POL"
+   ],
+   "classification-cpv": [
+    "32323500",
+    "32260000",
+    "31158100",
+    "32580000",
+    "44512000",
+    "32323500",
+    "32260000",
+    "31158100",
+    "32580000",
+    "44512000"
+   ],
+   "publication-date": "2025-06-02+02:00",
+   "buyer-name": {
+    "pol": [
+     "Bieszczadzki Oddział Straży Granicznej"
+    ]
+   },
+   "notice-version": 1,
+   "links": {
+    "xml": {
+     "MUL": "https://ted.europa.eu/en/notice/351100-2025/xml"
+    },
+    "pdf": {
+     "BUL": "https://ted.europa.eu/bg/notice/351100-2025/pdf",
+     "SPA": "https://ted.europa.eu/es/notice/351100-2025/pdf",
+     "CES": "https://ted.europa.eu/cs/notice/351100-2025/pdf",
+     "DAN": "https://ted.europa.eu/da/notice/351100-2025/pdf",
+     "DEU": "https://ted.europa.eu/de/notice/351100-2025/pdf",
+     "EST": "https://ted.europa.eu/et/notice/351100-2025/pdf",
+     "ELL": "https://ted.europa.eu/el/notice/351100-2025/pdf",
+     "ENG": "https://ted.europa.eu/en/notice/351100-2025/pdf",
+     "FRA": "https://ted.europa.eu/fr/notice/351100-2025/pdf",
+     "GLE": "https://ted.europa.eu/ga/notice/351100-2025/pdf",
+     "HRV": "https://ted.europa.eu/hr/notice/351100-2025/pdf",
+     "ITA": "https://ted.europa.eu/it/notice/351100-2025/pdf",
+     "LAV": "https://ted.europa.eu/lv/notice/351100-2025/pdf",
+     "LIT": "https://ted.europa.eu/lt/notice/351100-2025/pdf",
+     "HUN": "https://ted.europa.eu/hu/notice/351100-2025/pdf",
+     "MLT": "https://ted.europa.eu/mt/notice/351100-2025/pdf",
+     "NLD": "https://ted.europa.eu/nl/notice/351100-2025/pdf",
+     "POL": "https://ted.europa.eu/pl/notice/351100-2025/pdf",
+     "POR": "https://ted.europa.eu/pt/notice/351100-2025/pdf",
+     "RON": "https://ted.europa.eu/ro/notice/351100-2025/pdf",
+     "SLK": "https://ted.europa.eu/sk/notice/351100-2025/pdf",
+     "SLV": "https://ted.europa.eu/sl/notice/351100-2025/pdf",
+     "FIN": "https://ted.europa.eu/fi/notice/351100-2025/pdf",
+     "SWE": "https://ted.europa.eu/sv/notice/351100-2025/pdf"
+    },
+    "pdfs": {
+     "POL": "https://ted.europa.eu/pl/notice/351100-2025/pdfs"
+    },
+    "html": {
+     "BUL": "https://ted.europa.eu/bg/notice/-/detail/351100-2025",
+     "SPA": "https://ted.europa.eu/es/notice/-/detail/351100-2025",
+     "CES": "https://ted.europa.eu/cs/notice/-/detail/351100-2025",
+     "DAN": "https://ted.europa.eu/da/notice/-/detail/351100-2025",
+     "DEU": "https://ted.europa.eu/de/notice/-/detail/351100-2025",
+     "EST": "https://ted.europa.eu/et/notice/-/detail/351100-2025",
+     "ELL": "https://ted.europa.eu/el/notice/-/detail/351100-2025",
+     "ENG": "https://ted.europa.eu/en/notice/-/detail/351100-2025",
+     "FRA": "https://ted.europa.eu/fr/notice/-/detail/351100-2025",
+     "GLE": "https://ted.europa.eu/ga/notice/-/detail/351100-2025",
+     "HRV": "https://ted.europa.eu/hr/notice/-/detail/351100-2025",
+     "ITA": "https://ted.europa.eu/it/notice/-/detail/351100-2025",
+     "LAV": "https://ted.europa.eu/lv/notice/-/detail/351100-2025",
+     "LIT": "https://ted.europa.eu/lt/notice/-/detail/351100-2025",
+     "HUN": "https://ted.europa.eu/hu/notice/-/detail/351100-2025",
+     "MLT": "https://ted.europa.eu/mt/notice/-/detail/351100-2025",
+     "NLD": "https://ted.europa.eu/nl/notice/-/detail/351100-2025",
+     "POL": "https://ted.europa.eu/pl/notice/-/detail/351100-2025",
+     "POR": "https://ted.europa.eu/pt/notice/-/detail/351100-2025",
+     "RON": "https://ted.europa.eu/ro/notice/-/detail/351100-2025",
+     "SLK": "https://ted.europa.eu/sk/notice/-/detail/351100-2025",
+     "SLV": "https://ted.europa.eu/sl/notice/-/detail/351100-2025",
+     "FIN": "https://ted.europa.eu/fi/notice/-/detail/351100-2025",
+     "SWE": "https://ted.europa.eu/sv/notice/-/detail/351100-2025"
+    },
+    "htmlDirect": {
+     "BUL": "https://ted.europa.eu/bg/notice/351100-2025/html",
+     "SPA": "https://ted.europa.eu/es/notice/351100-2025/html",
+     "CES": "https://ted.europa.eu/cs/notice/351100-2025/html",
+     "DAN": "https://ted.europa.eu/da/notice/351100-2025/html",
+     "DEU": "https://ted.europa.eu/de/notice/351100-2025/html",
+     "EST": "https://ted.europa.eu/et/notice/351100-2025/html",
+     "ELL": "https://ted.europa.eu/el/notice/351100-2025/html",
+     "ENG": "https://ted.europa.eu/en/notice/351100-2025/html",
+     "FRA": "https://ted.europa.eu/fr/notice/351100-2025/html",
+     "GLE": "https://ted.europa.eu/ga/notice/351100-2025/html",
+     "HRV": "https://ted.europa.eu/hr/notice/351100-2025/html",
+     "ITA": "https://ted.europa.eu/it/notice/351100-2025/html",
+     "LAV": "https://ted.europa.eu/lv/notice/351100-2025/html",
+     "LIT": "https://ted.europa.eu/lt/notice/351100-2025/html",
+     "HUN": "https://ted.europa.eu/hu/notice/351100-2025/html",
+     "MLT": "https://ted.europa.eu/mt/notice/351100-2025/html",
+     "NLD": "https://ted.europa.eu/nl/notice/351100-2025/html",
+     "POL": "https://ted.europa.eu/pl/notice/351100-2025/html",
+     "POR": "https://ted.europa.eu/pt/notice/351100-2025/html",
+     "RON": "https://ted.europa.eu/ro/notice/351100-2025/html",
+     "SLK": "https://ted.europa.eu/sk/notice/351100-2025/html",
+     "SLV": "https://ted.europa.eu/sl/notice/351100-2025/html",
+     "FIN": "https://ted.europa.eu/fi/notice/351100-2025/html",
+     "SWE": "https://ted.europa.eu/sv/notice/351100-2025/html"
+    }
+   },
+   "winner-name": {
+    "pol": [
+     "Uniforce Spółka z ograniczoną odpowiedzialnością Spółka komandytowa"
+    ]
+   },
+   "notice-title": {
+    "hun": "Lengyelország – Videós felügyeleti rendszerek – Dostawa urządzeń do rozbudowy perymetrycznego systemu nadzoru wizyjnego dla Bieszczadzkiego Oddziału Straży Granicznej.",
+    "lav": "Polija – Videonovērošanas sistēma – Dostawa urządzeń do rozbudowy perymetrycznego systemu nadzoru wizyjnego dla Bieszczadzkiego Oddziału Straży Granicznej.",
+    "swe": "Polen – TV-övervakningssystem – Dostawa urządzeń do rozbudowy perymetrycznego systemu nadzoru wizyjnego dla Bieszczadzkiego Oddziału Straży Granicznej.",
+    "gle": "An Pholainn – Video-surveillance system – Dostawa urządzeń do rozbudowy perymetrycznego systemu nadzoru wizyjnego dla Bieszczadzkiego Oddziału Straży Granicznej.",
+    "ell": "Πολωνία – Σύστημα βιντεοπαρακολούθησης – Dostawa urządzeń do rozbudowy perymetrycznego systemu nadzoru wizyjnego dla Bieszczadzkiego Oddziału Straży Granicznej.",
+    "spa": "Polonia – Sistema de vigilancia por vídeo – Dostawa urządzeń do rozbudowy perymetrycznego systemu nadzoru wizyjnego dla Bieszczadzkiego Oddziału Straży Granicznej.",
+    "est": "Poola – Videoseiresüsteemid – Dostawa urządzeń do rozbudowy perymetrycznego systemu nadzoru wizyjnego dla Bieszczadzkiego Oddziału Straży Granicznej.",
+    "nld": "Polen – Videobewakingsuitrusting – Dostawa urządzeń do rozbudowy perymetrycznego systemu nadzoru wizyjnego dla Bieszczadzkiego Oddziału Straży Granicznej.",
+    "fin": "Puola – Videovalvontajärjestelmä – Dostawa urządzeń do rozbudowy perymetrycznego systemu nadzoru wizyjnego dla Bieszczadzkiego Oddziału Straży Granicznej.",
+    "pol": "Polska – Urządzenia do nadzoru wideo – Dostawa urządzeń do rozbudowy perymetrycznego systemu nadzoru wizyjnego dla Bieszczadzkiego Oddziału Straży Granicznej.",
+    "hrv": "Poljska – Oprema za videonadzor – Dostawa urządzeń do rozbudowy perymetrycznego systemu nadzoru wizyjnego dla Bieszczadzkiego Oddziału Straży Granicznej.",
+    "ces": "Polsko – Kontrolní videosystémy – Dostawa urządzeń do rozbudowy perymetrycznego systemu nadzoru wizyjnego dla Bieszczadzkiego Oddziału Straży Granicznej.",
+    "dan": "Polen – Videoovervågningssystem – Dostawa urządzeń do rozbudowy perymetrycznego systemu nadzoru wizyjnego dla Bieszczadzkiego Oddziału Straży Granicznej.",
+    "ron": "Polonia – Sistem video de supraveghere – Dostawa urządzeń do rozbudowy perymetrycznego systemu nadzoru wizyjnego dla Bieszczadzkiego Oddziału Straży Granicznej.",
+    "por": "Polónia – Sistema de vigilância por vídeo – Dostawa urządzeń do rozbudowy perymetrycznego systemu nadzoru wizyjnego dla Bieszczadzkiego Oddziału Straży Granicznej.",
+    "slk": "Poľsko – Dohľadový videosystém – Dostawa urządzeń do rozbudowy perymetrycznego systemu nadzoru wizyjnego dla Bieszczadzkiego Oddziału Straży Granicznej.",
+    "fra": "Pologne – Système de surveillance vidéo – Dostawa urządzeń do rozbudowy perymetrycznego systemu nadzoru wizyjnego dla Bieszczadzkiego Oddziału Straży Granicznej.",
+    "mlt": "Il-Polonja – Sistema ta' sorveljanza bil-video – Dostawa urządzeń do rozbudowy perymetrycznego systemu nadzoru wizyjnego dla Bieszczadzkiego Oddziału Straży Granicznej.",
+    "deu": "Polen – Video-Überwachungssystem – Dostawa urządzeń do rozbudowy perymetrycznego systemu nadzoru wizyjnego dla Bieszczadzkiego Oddziału Straży Granicznej.",
+    "lit": "Lenkija – Stebėjimo videosistema – Dostawa urządzeń do rozbudowy perymetrycznego systemu nadzoru wizyjnego dla Bieszczadzkiego Oddziału Straży Granicznej.",
+    "ita": "Polonia – Sistema di videosorveglianza – Dostawa urządzeń do rozbudowy perymetrycznego systemu nadzoru wizyjnego dla Bieszczadzkiego Oddziału Straży Granicznej.",
+    "bul": "Полша – Система за видеонаблюдение – Dostawa urządzeń do rozbudowy perymetrycznego systemu nadzoru wizyjnego dla Bieszczadzkiego Oddziału Straży Granicznej.",
+    "slv": "Poljska – Sistem za video nadzor – Dostawa urządzeń do rozbudowy perymetrycznego systemu nadzoru wizyjnego dla Bieszczadzkiego Oddziału Straży Granicznej.",
+    "eng": "Poland – Video-surveillance system – Dostawa urządzeń do rozbudowy perymetrycznego systemu nadzoru wizyjnego dla Bieszczadzkiego Oddziału Straży Granicznej."
+   },
+   "form-type": "result",
+   "description-proc": {
+    "pol": "Przedmiotem zamówienia jest dostawa urządzeń do rozbudowy perymetrycznego systemu nadzoru wizyjnego dla Bieszczadzkiego Oddziału Straży Granicznej w Przemyślu, tj.: 1) Kamer/detektorów wraz z licencją lifetime zgodnie z poniższym ukompletowaniem: regulowany uchwyt, 2 kpl. akumulatorów (2 szt.), nakrętki zabezpieczające (1 szt.),zwanych w OPZ Fotodetektorami – 94 kpl. 2) Mostków z zewnętrzną anteną GSM wraz z licencją lifetime zgodnie z poniższym ukompletowaniem: regulowany uchwyt, 2 kpl. akumulatorów (8 szt.), nakrętki zabezpieczające (4 szt.), znanych w OPZ Punktami dostępowymi GSM – 23 kpl. 3) Ładowarek do 12 akumulatorów – 4 szt. 4) Programatorów Bluetooth – 4 szt. 5) Power-banków zgodnie z poniższym ukompletowaniem: regulowany uchwyt, 2 kpl. akumulatorów (8 szt.), kabel połączeniowy (1 szt.), nakrętki zabezpieczające, zwanych w OPZ Power-bankami do doładowywania ww. urządzeń w terenie – 12 kpl. 6) Kluczy do nakrętek zabezpieczających akumulatorów – 8 szt. Opis przedmiotu zamówienia podstawowego został szczegółowo określony i opisany w Opisie przedmiotu zamówienia, stanowiącym Załącznik nr 5 do SWZ oraz w Tabeli do Formularza ofertowego Załącznik 1a do SWZ."
+   }
+  },
+  {
+   "place-of-performance": [
+    "PL911",
+    "POL",
+    "PL911",
+    "POL"
+   ],
+   "deadline-receipt-tender-date-lot": [
+    "2025-07-09+02:00"
+   ],
+   "notice-type": "cn-standard",
+   "place-of-performance-subdiv-lot": [
+    "PL911"
+   ],
+   "publication-number": "353033-2025",
+   "organisation-country-buyer": [
+    "POL"
+   ],
+   "dispatch-date": "2025-05-29Z",
+   "place-of-performance-city-lot": [
+    "Warszawa i Lublin"
+   ],
+   "procedure-identifier": "9c401eec-92e5-48b7-8bb6-d8a86f0d0452",
+   "buyer-country": [
+    "POL"
+   ],
+   "place-of-performance-country-lot": [
+    "POL"
+   ],
+   "classification-cpv": [
+    "32323500",
+    "32323500"
+   ],
+   "publication-date": "2025-06-02+02:00",
+   "buyer-name": {
+    "pol": [
+     "Polska Agencja Żeglugi Powietrznej"
+    ]
+   },
+   "notice-version": 1,
+   "links": {
+    "xml": {
+     "MUL": "https://ted.europa.eu/en/notice/353033-2025/xml"
+    },
+    "pdf": {
+     "BUL": "https://ted.europa.eu/bg/notice/353033-2025/pdf",
+     "SPA": "https://ted.europa.eu/es/notice/353033-2025/pdf",
+     "CES": "https://ted.europa.eu/cs/notice/353033-2025/pdf",
+     "DAN": "https://ted.europa.eu/da/notice/353033-2025/pdf",
+     "DEU": "https://ted.europa.eu/de/notice/353033-2025/pdf",
+     "EST": "https://ted.europa.eu/et/notice/353033-2025/pdf",
+     "ELL": "https://ted.europa.eu/el/notice/353033-2025/pdf",
+     "ENG": "https://ted.europa.eu/en/notice/353033-2025/pdf",
+     "FRA": "https://ted.europa.eu/fr/notice/353033-2025/pdf",
+     "GLE": "https://ted.europa.eu/ga/notice/353033-2025/pdf",
+     "HRV": "https://ted.europa.eu/hr/notice/353033-2025/pdf",
+     "ITA": "https://ted.europa.eu/it/notice/353033-2025/pdf",
+     "LAV": "https://ted.europa.eu/lv/notice/353033-2025/pdf",
+     "LIT": "https://ted.europa.eu/lt/notice/353033-2025/pdf",
+     "HUN": "https://ted.europa.eu/hu/notice/353033-2025/pdf",
+     "MLT": "https://ted.europa.eu/mt/notice/353033-2025/pdf",
+     "NLD": "https://ted.europa.eu/nl/notice/353033-2025/pdf",
+     "POL": "https://ted.europa.eu/pl/notice/353033-2025/pdf",
+     "POR": "https://ted.europa.eu/pt/notice/353033-2025/pdf",
+     "RON": "https://ted.europa.eu/ro/notice/353033-2025/pdf",
+     "SLK": "https://ted.europa.eu/sk/notice/353033-2025/pdf",
+     "SLV": "https://ted.europa.eu/sl/notice/353033-2025/pdf",
+     "FIN": "https://ted.europa.eu/fi/notice/353033-2025/pdf",
+     "SWE": "https://ted.europa.eu/sv/notice/353033-2025/pdf"
+    },
+    "pdfs": {
+     "POL": "https://ted.europa.eu/pl/notice/353033-2025/pdfs"
+    },
+    "html": {
+     "BUL": "https://ted.europa.eu/bg/notice/-/detail/353033-2025",
+     "SPA": "https://ted.europa.eu/es/notice/-/detail/353033-2025",
+     "CES": "https://ted.europa.eu/cs/notice/-/detail/353033-2025",
+     "DAN": "https://ted.europa.eu/da/notice/-/detail/353033-2025",
+     "DEU": "https://ted.europa.eu/de/notice/-/detail/353033-2025",
+     "EST": "https://ted.europa.eu/et/notice/-/detail/353033-2025",
+     "ELL": "https://ted.europa.eu/el/notice/-/detail/353033-2025",
+     "ENG": "https://ted.europa.eu/en/notice/-/detail/353033-2025",
+     "FRA": "https://ted.europa.eu/fr/notice/-/detail/353033-2025",
+     "GLE": "https://ted.europa.eu/ga/notice/-/detail/353033-2025",
+     "HRV": "https://ted.europa.eu/hr/notice/-/detail/353033-2025",
+     "ITA": "https://ted.europa.eu/it/notice/-/detail/353033-2025",
+     "LAV": "https://ted.europa.eu/lv/notice/-/detail/353033-2025",
+     "LIT": "https://ted.europa.eu/lt/notice/-/detail/353033-2025",
+     "HUN": "https://ted.europa.eu/hu/notice/-/detail/353033-2025",
+     "MLT": "https://ted.europa.eu/mt/notice/-/detail/353033-2025",
+     "NLD": "https://ted.europa.eu/nl/notice/-/detail/353033-2025",
+     "POL": "https://ted.europa.eu/pl/notice/-/detail/353033-2025",
+     "POR": "https://ted.europa.eu/pt/notice/-/detail/353033-2025",
+     "RON": "https://ted.europa.eu/ro/notice/-/detail/353033-2025",
+     "SLK": "https://ted.europa.eu/sk/notice/-/detail/353033-2025",
+     "SLV": "https://ted.europa.eu/sl/notice/-/detail/353033-2025",
+     "FIN": "https://ted.europa.eu/fi/notice/-/detail/353033-2025",
+     "SWE": "https://ted.europa.eu/sv/notice/-/detail/353033-2025"
+    },
+    "htmlDirect": {
+     "BUL": "https://ted.europa.eu/bg/notice/353033-2025/html",
+     "SPA": "https://ted.europa.eu/es/notice/353033-2025/html",
+     "CES": "https://ted.europa.eu/cs/notice/353033-2025/html",
+     "DAN": "https://ted.europa.eu/da/notice/353033-2025/html",
+     "DEU": "https://ted.europa.eu/de/notice/353033-2025/html",
+     "EST": "https://ted.europa.eu/et/notice/353033-2025/html",
+     "ELL": "https://ted.europa.eu/el/notice/353033-2025/html",
+     "ENG": "https://ted.europa.eu/en/notice/353033-2025/html",
+     "FRA": "https://ted.europa.eu/fr/notice/353033-2025/html",
+     "GLE": "https://ted.europa.eu/ga/notice/353033-2025/html",
+     "HRV": "https://ted.europa.eu/hr/notice/353033-2025/html",
+     "ITA": "https://ted.europa.eu/it/notice/353033-2025/html",
+     "LAV": "https://ted.europa.eu/lv/notice/353033-2025/html",
+     "LIT": "https://ted.europa.eu/lt/notice/353033-2025/html",
+     "HUN": "https://ted.europa.eu/hu/notice/353033-2025/html",
+     "MLT": "https://ted.europa.eu/mt/notice/353033-2025/html",
+     "NLD": "https://ted.europa.eu/nl/notice/353033-2025/html",
+     "POL": "https://ted.europa.eu/pl/notice/353033-2025/html",
+     "POR": "https://ted.europa.eu/pt/notice/353033-2025/html",
+     "RON": "https://ted.europa.eu/ro/notice/353033-2025/html",
+     "SLK": "https://ted.europa.eu/sk/notice/353033-2025/html",
+     "SLV": "https://ted.europa.eu/sl/notice/353033-2025/html",
+     "FIN": "https://ted.europa.eu/fi/notice/353033-2025/html",
+     "SWE": "https://ted.europa.eu/sv/notice/353033-2025/html"
+    }
+   },
+   "notice-title": {
+    "hun": "Lengyelország – Videós felügyeleti rendszerek – Zaprojektowanie, dostawa, instalacja oraz konfiguracja i uruchomienie Systemów Vision w lokalizacjach: Lotnisko Chopina w Warszawie (EPWA) oraz Port Lotniczy Lublin S.A.(EPLB) - 2 części zamówienia",
+    "lav": "Polija – Videonovērošanas sistēma – Zaprojektowanie, dostawa, instalacja oraz konfiguracja i uruchomienie Systemów Vision w lokalizacjach: Lotnisko Chopina w Warszawie (EPWA) oraz Port Lotniczy Lublin S.A.(EPLB) - 2 części zamówienia",
+    "swe": "Polen – TV-övervakningssystem – Zaprojektowanie, dostawa, instalacja oraz konfiguracja i uruchomienie Systemów Vision w lokalizacjach: Lotnisko Chopina w Warszawie (EPWA) oraz Port Lotniczy Lublin S.A.(EPLB) - 2 części zamówienia",
+    "gle": "An Pholainn – Video-surveillance system – Zaprojektowanie, dostawa, instalacja oraz konfiguracja i uruchomienie Systemów Vision w lokalizacjach: Lotnisko Chopina w Warszawie (EPWA) oraz Port Lotniczy Lublin S.A.(EPLB) - 2 części zamówienia",
+    "ell": "Πολωνία – Σύστημα βιντεοπαρακολούθησης – Zaprojektowanie, dostawa, instalacja oraz konfiguracja i uruchomienie Systemów Vision w lokalizacjach: Lotnisko Chopina w Warszawie (EPWA) oraz Port Lotniczy Lublin S.A.(EPLB) - 2 części zamówienia",
+    "spa": "Polonia – Sistema de vigilancia por vídeo – Zaprojektowanie, dostawa, instalacja oraz konfiguracja i uruchomienie Systemów Vision w lokalizacjach: Lotnisko Chopina w Warszawie (EPWA) oraz Port Lotniczy Lublin S.A.(EPLB) - 2 części zamówienia",
+    "est": "Poola – Videoseiresüsteemid – Zaprojektowanie, dostawa, instalacja oraz konfiguracja i uruchomienie Systemów Vision w lokalizacjach: Lotnisko Chopina w Warszawie (EPWA) oraz Port Lotniczy Lublin S.A.(EPLB) - 2 części zamówienia",
+    "nld": "Polen – Videobewakingsuitrusting – Zaprojektowanie, dostawa, instalacja oraz konfiguracja i uruchomienie Systemów Vision w lokalizacjach: Lotnisko Chopina w Warszawie (EPWA) oraz Port Lotniczy Lublin S.A.(EPLB) - 2 części zamówienia",
+    "fin": "Puola – Videovalvontajärjestelmä – Zaprojektowanie, dostawa, instalacja oraz konfiguracja i uruchomienie Systemów Vision w lokalizacjach: Lotnisko Chopina w Warszawie (EPWA) oraz Port Lotniczy Lublin S.A.(EPLB) - 2 części zamówienia",
+    "pol": "Polska – Urządzenia do nadzoru wideo – Zaprojektowanie, dostawa, instalacja oraz konfiguracja i uruchomienie Systemów Vision w lokalizacjach: Lotnisko Chopina w Warszawie (EPWA) oraz Port Lotniczy Lublin S.A.(EPLB) - 2 części zamówienia",
+    "hrv": "Poljska – Oprema za videonadzor – Zaprojektowanie, dostawa, instalacja oraz konfiguracja i uruchomienie Systemów Vision w lokalizacjach: Lotnisko Chopina w Warszawie (EPWA) oraz Port Lotniczy Lublin S.A.(EPLB) - 2 części zamówienia",
+    "ces": "Polsko – Kontrolní videosystémy – Zaprojektowanie, dostawa, instalacja oraz konfiguracja i uruchomienie Systemów Vision w lokalizacjach: Lotnisko Chopina w Warszawie (EPWA) oraz Port Lotniczy Lublin S.A.(EPLB) - 2 części zamówienia",
+    "dan": "Polen – Videoovervågningssystem – Zaprojektowanie, dostawa, instalacja oraz konfiguracja i uruchomienie Systemów Vision w lokalizacjach: Lotnisko Chopina w Warszawie (EPWA) oraz Port Lotniczy Lublin S.A.(EPLB) - 2 części zamówienia",
+    "ron": "Polonia – Sistem video de supraveghere – Zaprojektowanie, dostawa, instalacja oraz konfiguracja i uruchomienie Systemów Vision w lokalizacjach: Lotnisko Chopina w Warszawie (EPWA) oraz Port Lotniczy Lublin S.A.(EPLB) - 2 części zamówienia",
+    "por": "Polónia – Sistema de vigilância por vídeo – Zaprojektowanie, dostawa, instalacja oraz konfiguracja i uruchomienie Systemów Vision w lokalizacjach: Lotnisko Chopina w Warszawie (EPWA) oraz Port Lotniczy Lublin S.A.(EPLB) - 2 części zamówienia",
+    "slk": "Poľsko – Dohľadový videosystém – Zaprojektowanie, dostawa, instalacja oraz konfiguracja i uruchomienie Systemów Vision w lokalizacjach: Lotnisko Chopina w Warszawie (EPWA) oraz Port Lotniczy Lublin S.A.(EPLB) - 2 części zamówienia",
+    "fra": "Pologne – Système de surveillance vidéo – Zaprojektowanie, dostawa, instalacja oraz konfiguracja i uruchomienie Systemów Vision w lokalizacjach: Lotnisko Chopina w Warszawie (EPWA) oraz Port Lotniczy Lublin S.A.(EPLB) - 2 części zamówienia",
+    "mlt": "Il-Polonja – Sistema ta' sorveljanza bil-video – Zaprojektowanie, dostawa, instalacja oraz konfiguracja i uruchomienie Systemów Vision w lokalizacjach: Lotnisko Chopina w Warszawie (EPWA) oraz Port Lotniczy Lublin S.A.(EPLB) - 2 części zamówienia",
+    "deu": "Polen – Video-Überwachungssystem – Zaprojektowanie, dostawa, instalacja oraz konfiguracja i uruchomienie Systemów Vision w lokalizacjach: Lotnisko Chopina w Warszawie (EPWA) oraz Port Lotniczy Lublin S.A.(EPLB) - 2 części zamówienia",
+    "lit": "Lenkija – Stebėjimo videosistema – Zaprojektowanie, dostawa, instalacja oraz konfiguracja i uruchomienie Systemów Vision w lokalizacjach: Lotnisko Chopina w Warszawie (EPWA) oraz Port Lotniczy Lublin S.A.(EPLB) - 2 części zamówienia",
+    "ita": "Polonia – Sistema di videosorveglianza – Zaprojektowanie, dostawa, instalacja oraz konfiguracja i uruchomienie Systemów Vision w lokalizacjach: Lotnisko Chopina w Warszawie (EPWA) oraz Port Lotniczy Lublin S.A.(EPLB) - 2 części zamówienia",
+    "bul": "Полша – Система за видеонаблюдение – Zaprojektowanie, dostawa, instalacja oraz konfiguracja i uruchomienie Systemów Vision w lokalizacjach: Lotnisko Chopina w Warszawie (EPWA) oraz Port Lotniczy Lublin S.A.(EPLB) - 2 części zamówienia",
+    "slv": "Poljska – Sistem za video nadzor – Zaprojektowanie, dostawa, instalacja oraz konfiguracja i uruchomienie Systemów Vision w lokalizacjach: Lotnisko Chopina w Warszawie (EPWA) oraz Port Lotniczy Lublin S.A.(EPLB) - 2 części zamówienia",
+    "eng": "Poland – Video-surveillance system – Zaprojektowanie, dostawa, instalacja oraz konfiguracja i uruchomienie Systemów Vision w lokalizacjach: Lotnisko Chopina w Warszawie (EPWA) oraz Port Lotniczy Lublin S.A.(EPLB) - 2 części zamówienia"
+   },
+   "form-type": "competition",
+   "description-proc": {
+    "pol": "Zaprojektowanie, dostawa, instalacja oraz konfiguracja i uruchomienie Systemów Vision w lokalizacjach: Lotnisko Chopina w Warszawie (EPWA) oraz Port Lotniczy Lublin S.A.(EPLB) - 2 części zamówienia, zgodnie z załącznikiem nr 1 do SWZ."
+   }
+  }
+ ],
+ "totalNoticeCount": 1120,
+ "iterationNextToken": null,
+ "timedOut": false
+}

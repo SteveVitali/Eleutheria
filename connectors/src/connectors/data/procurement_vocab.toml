@@ -46,7 +46,13 @@
 # widened SAM.gov keyword set — federal awards emit `procurement_notice`
 # claims only (procured ≠ deployed: a purchase signal, never deployment
 # evidence — SIG-INGEST-033 boundary preserved).
-vocab_version = "2026.09.18-p26.14"
+# 2026.09.18 (P26.15 / SOURCES.14): +place_of_performance predicate (verbatim
+# NUTS/city place-of-performance literals on a TED notice — recorded as the
+# notice states them, never fabricated into an ISO 3166-2 identifier) and
+# +[ted_eu_sweep] the bounded EU tender sweep plan (TED Search API POST
+# /v3/notices/search — keyless documented public API; 11 reviewed keyword
+# slices + 10 verified CPV slices, one PAGE_NUMBER page each).
+vocab_version = "2026.09.18-p26.15"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `procurement` connector may write ONLY the Contract (§11.11) and FundingInstrument
@@ -106,6 +112,16 @@ predicate_allowlist = [
   # deployed (procured ≠ deployed; the claim names a text match, period).
   "description",
   "matched_keyword",
+  # P26.15 (SOURCES.14): the verbatim place-of-performance literals a TED
+  # notice states (NUTS codes, city names) — recorded as stated; a NUTS code
+  # is NOT an ISO 3166-2 identifier and is never emitted as one. `country` is
+  # the normalized jurisdiction claim (the verbatim alpha-3 stays raw_value;
+  # the alpha-2 comes from the reviewed [ted_eu_sweep.country_map]). `title`
+  # is the notice's verbatim notice-title literal (same verbatim-field class
+  # as `description`).
+  "place_of_performance",
+  "country",
+  "title",
 ]
 
 # Predicate GENRES the procurement connector MUST NOT write (scope-creep guard,
@@ -276,6 +292,10 @@ procportal_sf_ca       = "procportal_sf_ca"
 procportal_kcmo_mo     = "procportal_kcmo_mo"
 procportal_nyc_ny      = "procportal_nyc_ny"
 procportal_chicago_il  = "procportal_chicago_il"
+
+# P26.15 (SOURCES.14): the EU procurement surface — TED (Tenders Electronic
+# Daily) Search API, the OJ S notices for ~30 European countries.
+ted_eu = "ted_eu"
 
 # --- USAspending: sub-awards, not only prime awards (§23.6, SIG-ONTO-033) ------
 # USAspending exposes prime awards AND sub-awards. Sub-awards are the traceable
@@ -591,3 +611,238 @@ keywords = [
 limit       = 25
 posted_from = "01/01/2026"
 posted_to   = "12/31/2026"
+
+# ===========================================================================
+# P26.15 (SOURCES.14) — the EU tender sweep: TED (Tenders Electronic Daily)
+# ===========================================================================
+# TED is the EU's procurement surface: every notice published in the Supplement
+# to the Official Journal (OJ S) across ~30 countries — EU-27 + EEA + candidate
+# states — including Frontex, Europol, national police forces, and municipal
+# buyers. The Search API is the documented public reuse surface
+# (docs.ted.europa.eu/api/latest/search.html): "this API ... does not require
+# authentication, making it openly accessible to any system or user" (verbatim,
+# retrieved 2026-09-18; keyless confirmed live 2026-09-18 — an anonymous
+# checkQuerySyntax POST returned 200, no credential anywhere).
+#
+# POST /v3/notices/search — PublicExpertSearchRequestV1 (api-v3.yaml):
+#   query          expert-search string (field=term / FT~"phrase" / AND, OR, IN)
+#   fields         the enum of retrievable notice fields (verified names below)
+#   page / limit   PAGE_NUMBER pagination (≤250 notices/page, ≤10k field values
+#                  per page, ≤15k retrievable per query — all documented bounds)
+#   scope          LATEST | ACTIVE | ALL
+#   paginationMode PAGE_NUMBER (stateless; a page is independently retrievable).
+#                  ITERATION/scroll mode is deliberately never used — the sweep
+#                  is a bounded window, not an unbounded drain.
+# Response: ExpertSearchResponse { notices[], totalNoticeCount,
+#   iterationNextToken, timedOut }; i18n fields map {lang: text|[texts]} over
+#   the notice's own languages (eng when supplied, else the notice's language).
+# Verified live 2026-09-18: buyer-country values are ISO 3166-1 ALPHA-3 codes
+# (POL, MKD, NOR); place-of-performance values are NUTS codes whose 2-letter
+# prefix is the alpha-2 country (PL822 → PL); CPV values are bare 8-digit codes
+# (32323500 — the check digit is not carried).
+#
+# A tender notice is PROCUREMENT EVIDENCE ONLY: it asserts a buyer published a
+# notice containing a reviewed literal — procured ≠ deployed, never a device
+# count, an operational state, or a deployment claim (§3.1, SIG-INGEST-033).
+
+[ted_eu_sweep]
+version          = "2026.09.18.1"
+endpoint         = "https://api.ted.europa.eu/v3/notices/search"
+page_size        = 250        # verified documented bound (api-v3.yaml limit ≤250)
+max_pages_per_slice = 1       # one page per (keyword|CPV) slice — a bounded window
+pagination_mode  = "PAGE_NUMBER"
+scope            = "ALL"
+only_latest_versions = true
+# Rolling publication-date window (days back from the run date): the bound lands
+# in the POST body's expert query, never in claim identity — the same notice
+# re-found next month produces the identical claim (content-keyed dedupe).
+search_window_days = 120
+# The field set each slice requests (all names verified against api-v3.yaml's
+# PublicExpertSearchRequestV1 fields enum + a live 200 response, 2026-09-18).
+# 22 fields × 250/page = 5,500 field-values — inside the 10k/page bound.
+fields = [
+  "publication-number", "publication-date", "dispatch-date",
+  "notice-type", "form-type", "notice-version", "procedure-identifier",
+  "notice-title", "buyer-name", "buyer-country", "organisation-country-buyer",
+  "place-of-performance", "place-of-performance-city-lot",
+  "place-of-performance-subdiv-lot", "place-of-performance-country-lot",
+  "description-proc", "classification-cpv",
+  "total-value", "total-value-cur",
+  "winner-name", "winner-country", "deadline-receipt-tender-date-lot",
+]
+# TED returns ISO 3166-1 ALPHA-3 country codes; the jurisdiction claim is the
+# alpha-2 form (P26.9 convention). The mapping is reviewed data — an unmapped
+# alpha-3 keeps its verbatim raw_value and emits no normalized identifier
+# (never a fabricated code). EU-27 + EEA + UK/CH + candidate states.
+[ted_eu_sweep.country_map]
+AUT = "AT"
+BEL = "BE"
+BGR = "BG"
+HRV = "HR"
+CYP = "CY"
+CZE = "CZ"
+DNK = "DK"
+EST = "EE"
+FIN = "FI"
+FRA = "FR"
+DEU = "DE"
+GRC = "GR"
+HUN = "HU"
+IRL = "IE"
+ITA = "IT"
+LVA = "LV"
+LTU = "LT"
+LUX = "LU"
+MLT = "MT"
+NLD = "NL"
+POL = "PL"
+PRT = "PT"
+ROU = "RO"
+SVK = "SK"
+SVN = "SI"
+ESP = "ES"
+SWE = "SE"
+NOR = "NO"
+ISL = "IS"
+LIE = "LI"
+GBR = "GB"
+CHE = "CH"
+MKD = "MK"
+ALB = "AL"
+SRB = "RS"
+MNE = "ME"
+TUR = "TR"
+UKR = "UA"
+MDA = "MD"
+XKX = "XK"
+BIH = "BA"
+USA = "US"
+CAN = "CA"
+
+# The 11 reviewed surveillance-relevance keyword slices — the ticket's own
+# term set. `query` is the exact phrase sent inside FT~"…"; `patterns` are
+# the case-insensitive verbatim-scan expressions applied to the RETURNED
+# notice text — a matched_keyword claim's raw_value is the literal slice found
+# in the notice, never the query term itself. EU phrasings included
+# ("number-plate recognition", "video surveillance").
+[[ted_eu_sweep.keywords]]
+id = "cctv"
+query = "CCTV"
+kind = "technology"
+patterns = ["\\bcctv\\b", "closed.?circuit television", "closed.?circuit surveillance"]
+
+[[ted_eu_sweep.keywords]]
+id = "surveillance_camera"
+query = "surveillance camera"
+kind = "technology"
+patterns = [
+  "surveillance cameras?", "video surveillance", "surveillance system",
+  "camera surveillance", "surveillance network", "videosurveillance",
+]
+
+[[ted_eu_sweep.keywords]]
+id = "anpr"
+query = "ANPR"
+kind = "technology"
+patterns = ["\\banpr\\b", "automatic number.?plate", "number.?plate recognition"]
+
+[[ted_eu_sweep.keywords]]
+id = "automatic_number_plate"
+query = "automatic number plate"
+kind = "technology"
+patterns = [
+  "automatic number.?plate", "number.?plate recognition",
+  "automatic licence.?plate", "licence.?plate recognition",
+]
+
+[[ted_eu_sweep.keywords]]
+id = "facial_recognition"
+query = "facial recognition"
+kind = "technology"
+patterns = ["facial recognition", "face recognition", "facial biometric"]
+
+[[ted_eu_sweep.keywords]]
+id = "drone"
+query = "drone"
+kind = "technology"
+patterns = ["\\bdrones?\\b", "\\buas\\b", "\\buav\\b", "unmanned aerial", "unmanned aircraft"]
+
+[[ted_eu_sweep.keywords]]
+id = "unmanned_aerial"
+query = "unmanned aerial"
+kind = "technology"
+patterns = ["unmanned aerial", "unmanned aircraft", "unmanned air system"]
+
+[[ted_eu_sweep.keywords]]
+id = "biometric"
+query = "biometric"
+kind = "technology"
+patterns = ["biometrics?", "biometric identif", "biometric recogn"]
+
+[[ted_eu_sweep.keywords]]
+id = "acoustic_gunshot"
+query = "acoustic gunshot"
+kind = "technology"
+patterns = [
+  "acoustic gunshot", "gunshot detection", "gunshot locali[sz]",
+  "gunfire detection", "shot detection",
+]
+
+[[ted_eu_sweep.keywords]]
+id = "predictive_policing"
+query = "predictive policing"
+kind = "technology"
+patterns = ["predictive policing", "\\bpredpol\\b", "predictive analysis"]
+
+[[ted_eu_sweep.keywords]]
+id = "body_worn_camera"
+query = "body-worn camera"
+kind = "technology"
+patterns = ["body.?worn", "body cameras?", "bodycams?", "body-worn cam"]
+
+# The verified CPV slices — 8-digit codes as TED stores/searches them (the
+# check digit is not carried by the API). Verified against the CPV nomenclature
+# listings (simap.ted.europa.eu CPV divisions 32/35/38/42/79) 2026-09-18 —
+# 38000000 was reviewed and REJECTED (it is the whole laboratory/optical/
+# precision-equipment division, not a surveillance code); 32323500
+# "Video-surveillance system" was ADDED — the dominant code on live
+# video-surveillance notices (verified in the 2026-09-18 probe).
+[[ted_eu_sweep.cpv_codes]]
+code = "32323500"
+label = "Video-surveillance system"
+
+[[ted_eu_sweep.cpv_codes]]
+code = "35120000"
+label = "Surveillance and security systems and devices"
+
+[[ted_eu_sweep.cpv_codes]]
+code = "35121000"
+label = "Security equipment"
+
+[[ted_eu_sweep.cpv_codes]]
+code = "35125300"
+label = "Security cameras"
+
+[[ted_eu_sweep.cpv_codes]]
+code = "35613000"
+label = "Unmanned aerial vehicles"
+
+[[ted_eu_sweep.cpv_codes]]
+code = "38651000"
+label = "Cameras"
+
+[[ted_eu_sweep.cpv_codes]]
+code = "42961000"
+label = "Command and control system"
+
+[[ted_eu_sweep.cpv_codes]]
+code = "42961100"
+label = "Access control system"
+
+[[ted_eu_sweep.cpv_codes]]
+code = "42961300"
+label = "Vehicle location system"
+
+[[ted_eu_sweep.cpv_codes]]
+code = "79714000"
+label = "Surveillance services"
