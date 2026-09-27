@@ -126,6 +126,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-119](ADR-119-project-id-leak-check-scoped-to-code-and-config.md) | — | — | Accepted |
 | [ADR-120](ADR-120-six-stream-integrity-investigation-and-memory-extension.md) | — | — | — |
 | [ADR-121](ADR-121-typed-assertions-and-actual-capture-bindings.md) | — | — | — |
+| [ADR-122](ADR-122-role-semantics-count-scope-and-conservative-organization-identity.md) | — | — | — |
 
 ## Notes
 

@@ -1,0 +1,42 @@
+# ADR-122 — Role semantics, scope-qualified counts, and conservative organization identity (P32.3)
+
+- Date: 2026-10-10
+- Status: accepted (engineering; offline-only — no live fetch, publication or gate action)
+- Ticket: P32.3 (Round 10 / S1, row 163; requirements SIG-TRUST-003, SIG-TRUST-004)
+- Base: `5677495` (the P32.2 tip `devin/p32-2-typed-claims-and-capture-bindings`, PR #157)
+
+## Context
+
+Three related evidence-integrity defects survived P32.2:
+
+1. **Role conflation.** The `dot_511` adapter treated a registry's `agency` field as the camera's operator, so a pure provenance label — the canonical case being an OSM contributor/community-map publisher — minted an *evidenced operator* entity-ref and fed the P28.6 accountability join. The publisher/operator/owner/vendor/access distinction existed only informally, split across connector code and the join's private predicate sets.
+2. **Scope-blind counts.** Count comparability was predicate-qualified but not scope-qualified: `299 devices mapped across the metro` and `~190 devices inside city limits` were compared as one question and marked a contradiction, while derived roll-ups like "~190" had no labelled derived representation at all.
+3. **Name-collided identity.** Name-only partner mints keyed on a **global** normalized name (`sig.org.name`): "Springfield Police Department" written in Oklahoma and Illinois silently unioned into one entity, and cross-source identical names merged without any recorded decision. The P31.13 refusal on generic `Federal Emergency Management Agency` had to be preserved while the keying changed.
+
+## Decision
+
+1. **One canonical organisation-role taxonomy.** `db.organization_roles` defines `OrganizationRole` (publisher/host as provenance roles; operator/owner/vendor/prime/funder/access/buyer/recipient/regulated/regulator/auditor/participant as operational roles) plus the predicate→role mapping `ROLE_OF_PREDICATE`. `mints_entity_ref()` is the single rule every consumer shares: `dot_511` emits `camera_registry_publisher` (provenance, D1 from the registry itself) for the `agency` label and mints `camera_operator` **only** when an authoritative operator field (`operator_fields` in `dot_511_vocab.toml`) is populated; `partner_ref_rows` refuses a twin for any provenance-role predicate even if a caller widens its predicate set; the P28.6 join derives its legs from the same mapping and asserts at module load that no provenance-role predicate enters `ACCOUNTABILITY_PREDICATES`. Ontology vocabulary adds `camera_registry_publisher` and three evidence genres (`template`, `subscription`, `recommendation`) that are D6 for every predicate — non-probative by construction.
+2. **Scope-qualified count comparability.** `reconcile.count_scope` adds `CountScope(label, jurisdiction, detail)` — declared on the claim via the new qualifier predicates `count_scope`/`count_scope_detail`, never inferred — with the three-way `compare_scope` (SAME/DIFFERENT/UNKNOWN; an undeclared scope can never establish comparability). `counts._resolve_one_basis` partitions admissible claims by scope: each scope keeps its own winner and within-scope disagreement stays a `VALUE_DISAGREEMENT` contradiction, while a multi-scope group resolves `SCOPE_MIXED` — `value=None`, no adjudication across scopes, `scope_partitions` carries each scope's answer, and a deterministic `clarify_count_scope` research task is emitted (the detector→task contract). Cross-scope `UnresolvedDelta` subtraction is suppressed; unscoped-vs-unscoped keeps the pre-P32.3 behaviour. `DerivedApproximateSum` is the labelled roll-up (always L4, never an observation, names inputs + bases + assumptions) and `derive_approximate_sum` refuses undeclared, mixed, or indistinguishable sub-populations.
+3. **Scope-qualified partner identity, never auto-unioned.** `sig.org.name_scoped` replaces the global `sig.org.name` for new mints: `jur:<jurisdiction>|<normalized name>` when the record's jurisdiction is evidenced, else `src:<source>|<name>` inside the asserting source, else `src:unknown|<name>`. Every name-only mint is `candidate=True` (unmerged, publication-review-required) with its `jurisdiction`/`scope`/`role`/`basis` recorded in the organisation's immutable `identity_basis`; identical names across jurisdictions or sources key differently and NEVER union. Strong external ids keep the crosswalk path (`us.sam.uei`, `gleif.lei`, `dnb.duns`, `us.dla.cage`, `us.cgac.agency_code`): the same id asserted by two sources keys ONE guarded entity — the union a name-only mint refuses. A per-row `partner_crosswalk` mapping is the connector pass-through. The P31.13 generic-FEMA refusal is unchanged (ambiguity precedes the crosswalk).
+4. **Legacy keys are audited, never re-keyed.** The claim spine is append-only and `entity_identity_key` rows are immutable recorded decisions, so `sig.org.name` keys are not rewritten. The new sqitch change `partner_org_scoped_identity_key` only registers the scoped scheme in the guard's backfill contract (keys 0 rows today). `resolution.partner_name_audit` + the `sig-resolution partner-name-audit --dsn …` CLI produce the dry-run impact report — every legacy key, its asserting sources/predicates, the scoped keys it decomposes into, and the split count (the cross-source auto-union exposure) — the evidence a recorded human disposition needs.
+5. **Seed material is labelled, never live evidence.** `ops/seed.py` stamps `evidence_origin=seed_fixture` on its claims (the qualifier vocabulary is registered explicitly via `PgClaimSink.register_vocabulary` — the unknown-qualifier quarantine keeps its teeth), carries honest `count_scope` declarations, and keeps the ODbL compartment separate. API models/routes/store and the export dossier surface `count_scope`/`count_scope_detail`/`count_scope_jurisdiction`/`evidence_origin` and `scope_label`; a scope-partitioned resolution (no single winner) renders its partitions rather than a phantom winning claim.
+
+## Alternatives considered
+
+- **Keep `agency` as the operator with a soft qualifier** — rejected: it is precisely the publisher-as-operator conflation SIG-TRUST-003 forbids; a qualifier would still mint an evidenced relationship the source never asserted.
+- **Compare counts predicate-wise only, ignoring scope** — rejected: `299 metro ≠ ~190 city` would stay a false contradiction, collapsing a scope mismatch into an evidence conflict.
+- **Rewrite legacy `sig.org.name` keys in place** — rejected per SIG-STORE-041/042 and the append-only claim spine: identity decisions are immutable; repair is a recorded disposition informed by the dry-run report.
+- **Union scoped candidates sharing a normalized name** — rejected: that is the auto-union defect itself, merely re-keyed; candidates stay unmerged until evidence (a strong external id or a recorded disposition) joins them.
+- **Sum undeclared scopes optimistically** — rejected: a cross-scope sum is the conflation this ADR exists to prevent; `derive_approximate_sum` fails closed.
+
+## Consequences
+
+- The `dot_511_wa` golden partner-ref digest changed: its `agency` label now lands as `camera_registry_publisher` provenance and mints no operator ref (the fixture carries no authoritative operator field). Digest regeneration covered only that run.
+- Cross-source same-name partners now mint separate candidate entities; accountability links that previously rode name collisions no longer form — the honest gap the conservative posture demands. Links join only through strong external ids or a recorded same_as disposition.
+- `vocab_predicate` gained three qualifier ids and one predicate id; connectors/seed must `register_vocabulary()` qualifier-only ids before asserting claims that carry them.
+- The `l3_rebuild_sample` ruleset version bumped to `2026.2` (the `UNRESOLVED_SCOPE_MIXED` template + rule).
+- Organisation `identity_basis` payloads for name mints now include `jurisdiction`/`scope`/`candidate`/`role`; external-id mints serialize identically to before.
+
+## Revisit trigger
+
+Revisit when a new organisation role or provenance genre is needed (extend `ROLE_OF_PREDICATE` + `artifact_genres` together — the taxonomy is the single mapping), when scoped-name candidates accumulate enough that a disposition workflow (bulk review of `partner-name-audit` output) should be built, when a count scope needs structured geometry (promote `jurisdiction` to an evidenced geofence rather than a token), or when a derived sum must cover overlapping sub-populations (requires explicit double-count evidence, not a relaxed guard).
