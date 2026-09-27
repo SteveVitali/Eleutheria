@@ -61,3 +61,16 @@
   ending, not closed:** the LIVE object still serves until P31.16's republish removes
   it; P31.16 verifies `GET /map/points.json → 404` on both origins and then R8-1 is
   closed with live evidence. Deferral D-P30.3-2 tracks the live half.
+- **R8-1 — CLOSED at P31.16 (2026-09-27), live-verified.** The publish half removed the
+  live object: `GET /map/points.json` → **404** on BOTH
+  `https://surveillancegraph.org` and `https://sig-web-e5ctyx36jq-uc.a.run.app`; the
+  object is absent from `…-sig-web` (deleted by the `web/dist` sync's
+  `--delete-unmatched` pass) and no `points.json` exists anywhere in `…-sig-public`.
+  The map now draws only from the 12 per-compartment PMTiles sources
+  (`/map/style.json`: `sig_ccby3` … `sig_stalbert_odl1`), each a real z0–z14
+  tippecanoe archive serving range requests (206 + `application/vnd.pmtiles`). The
+  mixed 12-licence `web/map.json` (59.9 MB) stays private in the restricted bucket —
+  strict licence separation is true on the live site again. The operator's condition
+  ("retire once per-compartment tiles serve the map") is met in fact; the counsel
+  question (D-P30.3-COUNSEL) is moot for this artifact, which no longer exists.
+  Evidence: `docs/build/reports/REPUBLISH_LIVE_2026-09-27.md` §4.
