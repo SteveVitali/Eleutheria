@@ -325,10 +325,17 @@ def _claims(records: Sequence[Mapping[str, Any]]) -> list[Mapping[str, Any]]:
 
 
 def _scope_labels(claim: Mapping[str, Any]) -> dict[str, str]:
-    """The §29.3 scope qualifiers a claim carries (count universe + detail)."""
+    """The §29.3 scope qualifiers a claim carries (count universe + detail).
+
+    Both qualifier serializations are accepted: the claim-spine row shape
+    (``qualifier_id``) every connector emits, and the packet's predicate-keyed
+    shape (P32.18 — a real emitted record carries ``qualifier_id``; dropping it
+    silently unscopes every count, the exact scope-loss this check exists to
+    prevent).
+    """
     out: dict[str, str] = {}
     for q in claim.get("qualifiers") or ():
-        pred = str(q.get("predicate") or "")
+        pred = str(q.get("predicate") or q.get("qualifier_id") or "")
         if pred in _SCOPE_QUALIFIERS:
             out[pred] = str(q.get("value") or "")
     return out
@@ -692,20 +699,27 @@ def build_dossier(packet: Mapping[str, Any]) -> dict[str, Any]:
                 "inputs": inputs,
                 "note": declared_dv[qid].get("note"),
             }
-            answer["assertions"] = input_assertions
+            # The question's OTHER scoped evidence stays co-visible (P32.18):
+            # a derived answer reports its inputs AND renders the rest of the
+            # question's claims as labelled context — the 299-metro count must
+            # not vanish just because the ~190 roll-up is the headline.
+            context_assertions = [a for a in assertion_set if a["claim_digest"] not in set(inputs)]
+            for a in context_assertions:
+                a["context"] = True
+            answer["assertions"] = input_assertions + context_assertions
             answer["summary"] = str(declared_dv[qid].get("note") or "Derived answer.")
             derived_ok = not missing
             answer["score"] = _score_answer(
                 "derived",
-                input_assertions,
+                list(answer["assertions"]),
                 search_entry=basis,
                 follow_ups=tasks,
                 declared_partial=qid in declared_partial,
                 unresolved_required=unresolved_required,
                 derived_inputs_ok=derived_ok,
             )
-            for a in input_assertions:
-                ledger.append(_ledger_row(qid, a, state="rendered"))
+            # The generic loop below logs every rendered assertion — appending
+            # here as well would double-log the derived inputs (P32.18).
             assertion_set = []
         elif assertion_set:
             answer["state"] = "disputed" if flagged else "supported"
@@ -822,7 +836,12 @@ def build_dossier(packet: Mapping[str, Any]) -> dict[str, Any]:
             for fs in (a.get("field_states") or ())
             if fs["state"] in _FIELD_STATE_UNRESOLVED
         ]
-        unknown_qs = [a["question"] for a in answers if a["state"] == "unknown"]
+        # q12 must not count ITSELF as an unresolved question — its own state is
+        # only now being composed (P32.18: the self-count read "1 unknown" on a
+        # fully-answered packet).
+        unknown_qs = [
+            a["question"] for a in answers if a["state"] == "unknown" and a["question"] != "q12"
+        ]
         q12["state"] = "supported"
         q12["summary"] = (
             f"{len(unresolved_fields)} unresolved field state(s) recorded; "

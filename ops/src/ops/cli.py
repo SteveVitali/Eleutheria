@@ -152,6 +152,38 @@ def build_parser() -> argparse.ArgumentParser:
     seed.add_argument("--jurisdiction", default="okc", help="jurisdiction slug (default okc)")
     seed.add_argument("--dsn", default=None, help="PostgreSQL DSN (default: SIG_STAGING_DSN/local)")
 
+    dpkt = sub.add_parser(
+        "dossier-packet",
+        help="P32.18 (SIG-DOS-003, ADR-137): emit the reviewed Oklahoma City "
+        "dossier evidence set — the sig.dossier-packet/1 (fixture replay over the "
+        "three dossier documents + the shadow-document + P06.1 evidence packs), "
+        "the composed dossier + portfolio + print HTML, the authored "
+        "sig.seed-correction-packet/1, the evidence pack, and the bounded live "
+        "RETURN PASS packet (D-P32.18-1). Offline only: no fetch, no rights flip",
+    )
+    dpkt.add_argument(
+        "--out", required=True, help="output directory for the committed artifact set"
+    )
+
+    seedfix = sub.add_parser(
+        "seed-correct",
+        help="P32.18: apply the authored OKC seed-correction packet to a spine "
+        "holding the legacy (pre-P32.3) rows — §16.6 belief closure on each "
+        "target + appended corrected claims carrying revises_claim + "
+        "correction_reason (append-only; never deletes or mutates history)",
+    )
+    seedfix.add_argument("--dsn", default=None, help="PostgreSQL DSN (else SIG_STAGING_DSN/local)")
+    seedfix.add_argument(
+        "--packet",
+        default=None,
+        help="a sig.seed-correction-packet/1 JSON file (default: the authored OKC packet)",
+    )
+    seedfix.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="resolve the packet's targets and report what would change — no writes",
+    )
+
     egress = sub.add_parser(
         "egress-report",
         help="check monthly egress against the ops/config.toml budget (§38.5, RISK-P21-09)",
@@ -912,6 +944,27 @@ def _cmd_seed(args: argparse.Namespace) -> int:
         f"{report['duplicates']} duplicate(s), {report['entities']} entity(ies)"
     )
     return 0
+
+
+def _cmd_dossier_packet(args: argparse.Namespace) -> int:
+    from .dossier_packet import write
+
+    written = write(Path(args.out))
+    for key, path in written.items():
+        print(f"  {key}: {path}")
+    return 0
+
+
+def _cmd_seed_correct(args: argparse.Namespace) -> int:
+    import json as _json
+
+    from .seed_correction import apply_packet, correction_packet
+
+    packet = _json.loads(Path(args.packet).read_text()) if args.packet else correction_packet()
+    report = apply_packet(args.dsn or default_dsn(), packet, dry_run=args.dry_run)
+    print(_json.dumps(report, indent=2, sort_keys=True, default=str))
+    errors = [c for c in report["corrections"] if c.get("outcome") == "error"]
+    return 1 if errors else 0
 
 
 # --- OBS.1 helpers (alert ledger + probe log live under .sig/ops/, env-overridable) ---
@@ -1924,6 +1977,10 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_down(args)
     if args.command == "seed":
         return _cmd_seed(args)
+    if args.command == "dossier-packet":
+        return _cmd_dossier_packet(args)
+    if args.command == "seed-correct":
+        return _cmd_seed_correct(args)
     if args.command == "egress-report":
         return _cmd_egress_report(args)
     if args.command == "swh-save":

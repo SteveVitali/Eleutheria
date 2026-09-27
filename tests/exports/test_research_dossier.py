@@ -710,7 +710,11 @@ def test_pilot_complete_only_with_completed_review() -> None:
 def test_lower_score_stays_incomplete(okc_records: list[dict[str, Any]]) -> None:
     dossier = build_dossier(_packet(okc_records))
     comp = dossier["completeness"]
-    assert comp["total"] < COMPLETE_TOTAL
+    # The four searched-but-unanswered questions keep the packet incomplete in
+    # the dimension the gate enforces: q1 scores below its required floor even
+    # though the numeric total reaches the 28 line — a total alone never passes.
+    assert comp["per_question"]["q1"] < REQUIRED_MINIMUM["q1"]
+    assert any("q1" in b for b in comp["blocking"])
     assert comp["mechanical_complete"] is False
     assert comp["pilot_complete"] is False
     assert comp["max"] == COMPLETE_MAX == 36

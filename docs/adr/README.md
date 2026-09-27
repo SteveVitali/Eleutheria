@@ -141,6 +141,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-134](ADR-134-coordinated-investigation-workspace-state.md) | — | — | — |
 | [ADR-135](ADR-135-isolated-durable-anonymous-correction-intake.md) | — | — | — |
 | [ADR-136](ADR-136-research-dossier-schema-portfolio-completion-and-eleventh-artifact-class.md) | — | — | — |
+| [ADR-137](ADR-137-oklahoma-city-dossier-packet-and-additive-seed-correction.md) | — | — | — |
 
 ## Notes
 
