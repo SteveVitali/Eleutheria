@@ -57,6 +57,7 @@ export type EmptySurface =
   | "corrections"
   | "researchQueue"
   | "researchFilter"
+  | "researchDossierIndex"
   | "evidenceIndex"
   | "dossierGaps";
 
@@ -158,6 +159,11 @@ const COPY: Record<EmptySurface, EmptyStateCopy> = {
     heading: "No jurisdictions in the queue yet",
     body: "The per-jurisdiction filter appears once the queue has tasks scoped to a place. It has none yet.",
     cta: { href: "/dossier/", label: "Browse the dossiers" },
+  },
+  researchDossierIndex: {
+    heading: "No reviewed research dossiers yet",
+    body: "SIG has not yet published a reviewed research dossier — the evidence-complete twelve-question portfolio. Absence here means none has passed review, not that the questions have no answers; the inventory overviews remain at the dossier index.",
+    cta: { href: "/dossier/", label: "Browse the dossier index" },
   },
   evidenceIndex: {
     heading: "No claims with a full evidence view yet",

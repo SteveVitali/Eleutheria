@@ -1369,12 +1369,71 @@ def _governance_chain_field(
     return {"subject_id": f"jurisdiction:{slug}", "segments": segments}
 
 
+#: coverage_record ``absence_kind`` (§32.1/SIG-METRIC-002) → the web ``Gap.kind``
+#: (§9.5/SIG-UI-007). ``not_applicable`` is not an unknown — it drops out.
+_COVERAGE_ABSENCE_TO_GAP_KIND: dict[str, str | None] = {
+    "not_researched": "NOT_RESEARCHED",
+    "searched_not_found": "NO_EVIDENCE_FOUND",
+    "evidence_of_absence": "EVIDENCE_OF_ABSENCE",
+    "not_applicable": None,
+}
+
+
+def _coverage_gaps(
+    jurisdiction: str,
+    coverage_rows: Sequence[Mapping[str, Any]],
+    *,
+    entity_label_by_id: Mapping[str, str],
+    site_jurisdiction: Mapping[str, str],
+) -> list[dict[str, Any]]:
+    """Evidence-backed dossier gaps (P32.17, SIG-DOS-001): negative-space
+    ``coverage_record`` rows become first-class gaps with their absence kind and
+    the named searched sources — replacing the former hardcoded "Data-sharing
+    partners / NOT_RESEARCHED" row that minted the same generic gap on every
+    jurisdiction regardless of evidence. A spine with no recorded absences emits
+    zero gaps (honest absence, never a fabricated field state).
+    """
+    subjects_in_jurisdiction = {eid for eid, j in site_jurisdiction.items() if j == jurisdiction}
+    out: list[dict[str, Any]] = []
+    seen: set[tuple[str, str]] = set()
+    for row in coverage_rows:
+        kind = _COVERAGE_ABSENCE_TO_GAP_KIND.get(str(row.get("absence_kind") or ""))
+        if kind is None:
+            continue  # a metric row or a not_applicable row is not a gap
+        subject = str(row.get("subject_id") or "")
+        attributed = (
+            entity_label_by_id.get(str(row.get("jurisdiction_id") or "")) == jurisdiction
+            or subject in subjects_in_jurisdiction
+        )
+        if not attributed:
+            continue
+        predicate = str(row.get("predicate_id") or "unrecorded_field")
+        key = (predicate, kind)
+        if key in seen:
+            continue
+        seen.add(key)
+        searched = [str(s) for s in (row.get("sources_searched") or ()) if s]
+        gap: dict[str, Any] = {
+            "label": predicate.replace("_", " "),
+            "kind": kind,
+            "subject_id": subject or f"jurisdiction:{_slugify(jurisdiction)}",
+            "predicate_id": predicate,
+            "note": "Recorded negative-space coverage finding (§32.1).",
+        }
+        if searched:
+            gap["sources_searched"] = searched
+        out.append(gap)
+    return out
+
+
 def _dossiers(
     dataset: ShapedDataset,
     as_of: str,
     belief: datetime | None,
     *,
     accountability_links: Sequence[Mapping[str, Any]] = (),
+    coverage_rows: Sequence[Mapping[str, Any]] = (),
+    entity_labels: Sequence[Sequence[Any]] = (),
 ) -> list[dict[str, Any]]:
     """Surfaces 1 + 2 — the dossier index / per-jurisdiction dossiers (§39.2).
 
@@ -1392,6 +1451,16 @@ def _dossiers(
     """
     echo = _as_of_echo(as_of, belief)
     governance = _governance_by_jurisdiction(dataset, accountability_links)
+    # entity_identifier labels for coverage-row jurisdiction attribution — a row's
+    # ``jurisdiction_id`` is an entity; its display jurisdiction is looked up, never
+    # guessed from the id.
+    entity_label_by_id: dict[str, str] = {}
+    for row in entity_labels:
+        try:
+            entity_label_by_id.setdefault(str(row[0]), str(row[2]))
+        except (TypeError, IndexError):
+            continue
+    site_jurisdiction = {str(s.entity_id): s.jurisdiction for s in dataset.sites}
     dossiers: list[dict[str, Any]] = []
     for group in dataset.jurisdictions:
         slug = _slugify(group.jurisdiction)
@@ -1434,14 +1503,15 @@ def _dossiers(
             if rows:
                 section["rows"] = rows
             sections.append(section)
-        gaps = [
-            {
-                "label": "Data-sharing partners",
-                "kind": "NOT_RESEARCHED",
-                "subject_id": f"jurisdiction:{slug}",
-                "predicate_id": "sharing_partners",
-            }
-        ]
+        # Evidence-backed gaps only (P32.17/SIG-DOS-001): the recorded coverage
+        # absences for this jurisdiction, plus conflicted-subject rows — never a
+        # hardcoded generic gap.
+        gaps = _coverage_gaps(
+            group.jurisdiction,
+            coverage_rows,
+            entity_label_by_id=entity_label_by_id,
+            site_jurisdiction=site_jurisdiction,
+        )
         if group.conflicted_subjects:
             gaps.append(
                 {
@@ -1452,6 +1522,9 @@ def _dossiers(
                 }
             )
         dossier: dict[str, Any] = {
+            # P32.17 (SIG-DOS-003): the §39.2 inventory overview is marked so it
+            # can never be mistaken for a reviewed research-dossier portfolio.
+            "kind": "inventory_overview",
             "slug": slug,
             "subject_label": f"Surveillance infrastructure — {group.jurisdiction}",
             "jurisdiction": group.jurisdiction,
@@ -1537,6 +1610,7 @@ def build_spine_export(
     claims: Sequence[ShapingClaim] | None = None,
     entity_types: Mapping[str, str] | None = None,
     registry: Mapping[str, Any] | None = None,
+    dossier_packets: Sequence[Mapping[str, Any]] | None = None,
 ) -> SpineExport:
     """Assemble the national :class:`SpineExport` (pure — no database).
 
@@ -1548,6 +1622,12 @@ def build_spine_export(
     that reuses the aggregate point). ``raw`` carries the supplementary read sets
     (watch/evidence/corrections/research_queue/source_names) — any missing key is
     honest absence.
+
+    ``dossier_packets`` (P32.17, SIG-DOS-001/002) are the reviewed
+    ``sig.dossier-packet/1`` records the dossier tickets author; when supplied,
+    the portfolio is composed through ``exports.research_dossier`` and emitted
+    as ``web/research_dossiers.json``. Absent input emits no artifact (honest
+    absence — the web getter reads a missing file as an empty portfolio).
     """
     raw = dict(raw or {})
     retrieval = date.fromisoformat(dataset.as_of[:10]) if dataset.as_of else date.today()
@@ -1618,7 +1698,14 @@ def build_spine_export(
     bundle = build_bundle(build_spec, tables, rights, registry=registry)
 
     # --- the ten P27.1-contract web surfaces ------------------------------------
-    dossiers = _dossiers(dataset, dataset.as_of, belief, accountability_links=m_acct_links)
+    dossiers = _dossiers(
+        dataset,
+        dataset.as_of,
+        belief,
+        accountability_links=m_acct_links,
+        coverage_rows=m_coverage,
+        entity_labels=raw.get("entity_labels") or (),
+    )
     surfaces: dict[str, Any] = {
         "dossier_index": _dossier_index(dossiers),
         "dossiers": dossiers,
@@ -1640,6 +1727,18 @@ def build_spine_export(
     web_artifacts: dict[str, bytes] = {}
     for name, payload in surfaces.items():
         web_artifacts[f"{_WEB_DIR}/{name}.json"] = _web_bytes(payload)
+    # P32.17 (SIG-DOS-001/002): reviewed dossier packets compose into the
+    # research-dossier portfolio — a separate artifact class from the §39.2
+    # inventory overviews above. Emitted only when packets are supplied (the
+    # reviewed packets are authored per dossier ticket; an empty input emits no
+    # artifact — honest absence, and the web getter treats a missing file as an
+    # empty portfolio).
+    if dossier_packets:
+        from .research_dossier import build_portfolio, render_portfolio_json
+
+        web_artifacts[f"{_WEB_DIR}/research_dossiers.json"] = render_portfolio_json(
+            build_portfolio(dossier_packets)
+        )
     # The map surface carries every published subject's own point + label, so it draws on
     # every site compartment's licence (ODbL OSM points beside CC-BY/CC0/… points) — its
     # label says so (ADR-106). The other surfaces carry SIG's aggregate framing (counts,
@@ -1952,6 +2051,7 @@ def run_spine_export(
     ruleset_version: str = SHAPING_SCHEMA_VERSION,
     resolver_version: str | None = None,
     dataset_slug: str = "sig",
+    dossier_packets: Sequence[Mapping[str, Any]] | None = None,
 ) -> SpineExport:
     """Execute the read-only reads and assemble the national export.
 
@@ -2023,6 +2123,7 @@ def run_spine_export(
         belief=belief,
         claims=claims,
         entity_types=entity_types,
+        dossier_packets=dossier_packets,
     )
 
 

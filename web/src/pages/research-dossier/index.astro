@@ -1,0 +1,62 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The reviewed research-dossier portfolio index (P32.17, SIG-DOS-001/002) —
+// deliberately a separate surface from /dossier/ (the §39.2 inventory
+// overviews): a research dossier is an evidence-complete twelve-question
+// portfolio in which every answer carries a state, an evidence or search basis,
+// and a fact-to-capture citation. Static-first, zero client JS (SIG-UI-036/037).
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import EmptyState from "../../components/EmptyState.astro";
+import { getResearchDossierPortfolio } from "../../lib/data";
+import {
+  researchDossierPath,
+  researchDossierJsonPath,
+  researchDossierSlug,
+  rubricGateLine,
+} from "../../lib/research-dossier";
+
+const portfolio = getResearchDossierPortfolio();
+const dossiers = [...portfolio.dossiers].sort((a, b) =>
+  researchDossierSlug(a).localeCompare(researchDossierSlug(b)),
+);
+---
+
+<BaseLayout title="Research dossiers" path="/research-dossier/">
+  <p class="sig-lede">
+    A <strong>research dossier</strong> is SIG's evidence-complete portfolio for a
+    deployment: twelve fixed questions, each answered in one of six states —
+    supported, disputed, derived, unknown, withheld, or not applicable — with every
+    affirmative claim bound to captured bytes and every unknown carrying a
+    documented search and a precise follow-up task.
+  </p>
+  <p>
+    This is <strong>not</strong> the <a href="/dossier/">inventory overview</a>, which
+    is built mechanically from published claims. A research dossier exists only when
+    a reviewed packet was authored for it — absence here means none is published,
+    not that the questions have no answers.
+  </p>
+
+  {dossiers.length === 0 && <EmptyState surface="researchDossierIndex" />}
+  <ul class="sig-dossier-index" role="list" data-testid="research-dossier-index">
+    {dossiers.map((d) => (
+      <li class="sig-dossier-index__item" data-testid="research-dossier-item" data-slug={researchDossierSlug(d)}>
+        <a class="sig-dossier-index__link" href={researchDossierPath(researchDossierSlug(d))}>
+          <span class="sig-dossier-index__subject">{d.subject.label}</span>
+          <span class="sig-dossier-index__place">{d.subject.jurisdiction}</span>
+        </a>
+        <span class="sig-dossier-index__meta">
+          rubric {rubricGateLine(d)}
+          <span aria-hidden="true"> · </span>
+          {d.completeness.pilot_complete ? "pilot complete" : "incomplete"}
+          <span aria-hidden="true"> · </span>
+          {d.review_status} review
+          <span aria-hidden="true"> · </span>
+          <a href={researchDossierJsonPath(researchDossierSlug(d))}>JSON</a>
+        </span>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>

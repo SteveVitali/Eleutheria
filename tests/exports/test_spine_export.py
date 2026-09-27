@@ -150,7 +150,11 @@ def _rows(claims: list[ShapingClaim]) -> list[tuple]:
     ]
 
 
-def _build(claims: list[ShapingClaim], raw_over: dict | None = None):
+def _build(
+    claims: list[ShapingClaim],
+    raw_over: dict | None = None,
+    dossier_packets: list[dict] | None = None,
+):
     rows = _rows(claims)
     subjects = sorted({c.subject_id for c in claims})
     raw = {
@@ -177,6 +181,7 @@ def _build(claims: list[ShapingClaim], raw_over: dict | None = None):
         generated_at="2026-09-22T00:00:00Z",
         claims=parse_shaping_claims(rows),
         entity_types={s: "deployment" for s in subjects},
+        dossier_packets=dossier_packets,
     )
 
 
@@ -226,8 +231,93 @@ def test_dossier_has_twelve_sections_and_first_class_gaps() -> None:
         "what_we_dont_know",
         "how_we_know_this",
     ]
-    # An honest gap is first-class (NOT_RESEARCHED), never omitted (§3.1).
-    assert any(g["kind"] == "NOT_RESEARCHED" for g in dossier["gaps"])
+    # P32.17 (SIG-DOS-001): dossier gaps are evidence-backed field states — an
+    # empty spine emits NO gap row (the hardcoded generic "Data-sharing
+    # partners / NOT_RESEARCHED" row is gone; nothing is fabricated).
+    assert dossier["gaps"] == []
+
+
+def test_dossier_gaps_are_evidence_backed_coverage_states() -> None:
+    """P32.17: negative-space coverage_record rows become the dossier's gaps —
+    absence kind + named searched sources, attributed to their jurisdiction by
+    subject or by entity label. Nothing else mints a gap."""
+    claims = _site("A", "35.46", "-97.51", "Oklahoma") + _site(
+        "B", "48.85", "2.35", "Paris", source_id="fr_src", spdx="CC-BY-4.0"
+    )
+    coverage = [
+        {
+            "coverage_id": "cov-1",
+            "subject_id": "A",
+            "subject_class": "deployment",
+            "jurisdiction_id": None,
+            "predicate_id": "retention_period",
+            "absence_kind": "searched_not_found",
+            "sources_searched": ["vendor portal", "council minutes"],
+            "metric_method": None,
+            "metric_label": None,
+            "numerator": None,
+            "denominator": None,
+            "not_evaluable": None,
+            "named_denominator": None,
+            "metric_value": None,
+        },
+        {
+            # An unresearched gap on the OTHER jurisdiction must not leak.
+            "coverage_id": "cov-2",
+            "subject_id": "B",
+            "subject_class": "deployment",
+            "jurisdiction_id": None,
+            "predicate_id": "sharing_partners",
+            "absence_kind": "not_researched",
+            "sources_searched": None,
+            "metric_method": None,
+            "metric_label": None,
+            "numerator": None,
+            "denominator": None,
+            "not_evaluable": None,
+            "named_denominator": None,
+            "metric_value": None,
+        },
+        {
+            # A metric row is not a gap.
+            "coverage_id": "cov-3",
+            "subject_id": "A",
+            "subject_class": "deployment",
+            "jurisdiction_id": None,
+            "predicate_id": "claimed_device_count",
+            "absence_kind": None,
+            "sources_searched": None,
+            "metric_method": "counted_records",
+            "metric_label": "sites",
+            "numerator": 2.0,
+            "denominator": 5.0,
+            "not_evaluable": None,
+            "named_denominator": "registry rows",
+            "metric_value": None,
+        },
+    ]
+    export = _build(claims, {"materialized_coverage": coverage})
+    okc = next(d for d in _web(export, "dossiers") if d["jurisdiction"] == "Oklahoma")
+    assert okc["gaps"] == [
+        {
+            "label": "retention period",
+            "kind": "NO_EVIDENCE_FOUND",
+            "subject_id": "A",
+            "predicate_id": "retention_period",
+            "note": "Recorded negative-space coverage finding (§32.1).",
+            "sources_searched": ["vendor portal", "council minutes"],
+        }
+    ]
+    paris = next(d for d in _web(export, "dossiers") if d["jurisdiction"] == "Paris")
+    assert paris["gaps"] == [
+        {
+            "label": "sharing partners",
+            "kind": "NOT_RESEARCHED",
+            "subject_id": "B",
+            "predicate_id": "sharing_partners",
+            "note": "Recorded negative-space coverage finding (§32.1).",
+        }
+    ]
 
 
 def test_dossier_action_blocks_are_full_shape_and_explicitly_unknown() -> None:

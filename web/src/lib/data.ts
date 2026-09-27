@@ -29,6 +29,11 @@ import { fileURLToPath } from "node:url";
 import { DOSSIERS } from "./dossier-fixture";
 import { JURISDICTION_DOSSIERS } from "./dossier-jurisdiction-fixture";
 import type { Dossier } from "./dossier";
+import { RESEARCH_PORTFOLIO_FIXTURE } from "./research-dossier-fixture";
+import {
+  emptyPortfolio,
+  type ResearchDossierPortfolio,
+} from "./research-dossier";
 import { LEVERAGE_METRIC_FIXTURE, type LeverageMetric } from "./leverage-fixture";
 
 // The per-surface contract types (P27.1) the getters below are typed against.
@@ -143,6 +148,37 @@ export function getDossiers(): Dossier[] {
 /** The SIG-PUB-017 demo dossiers in export mode: only when the bundle ships them (P30.3). */
 function jurisdictionDemos(): Dossier[] {
   return readPresentation<Dossier[]>("jurisdiction_dossiers", []);
+}
+
+/**
+ * The reviewed research-dossier portfolio (P32.17, SIG-DOS-001/002) —
+ * `sig.dossier-portfolio/1`, a SEPARATE artifact class from the §39.2 inventory
+ * dossiers above: an evidence-complete twelve-question portfolio where every
+ * answer carries a state, an evidence or search basis, and a fact-to-capture
+ * citation.
+ *
+ *   - `fixtures` mode — the committed fixture portfolio (exercises all six
+ *     answer states).
+ *   - `export` mode — `<exportDir>/web/research_dossiers.json`, emitted by
+ *     `sig-exports` only when reviewed `sig.dossier-packet/1` inputs were
+ *     supplied. A MISSING artifact is honest absence (no reviewed dossier is
+ *     authored yet) and reads as the empty portfolio — unlike the inventory
+ *     bundle, it is never a build error: packets are authored per dossier
+ *     ticket, not minted mechanically.
+ */
+export function getResearchDossierPortfolio(): ResearchDossierPortfolio {
+  if (dataSource() === "fixtures") return RESEARCH_PORTFOLIO_FIXTURE;
+  const path = `${exportDir()}/web/research_dossiers.json`;
+  try {
+    const parsed = JSON.parse(readFileSync(path, "utf-8")) as ResearchDossierPortfolio;
+    if (!Array.isArray(parsed.dossiers)) {
+      throw new Error(`${path}: .dossiers is not an array`);
+    }
+    return parsed;
+  } catch (cause) {
+    if ((cause as NodeJS.ErrnoException).code === "ENOENT") return emptyPortfolio();
+    throw cause;
+  }
 }
 
 /**

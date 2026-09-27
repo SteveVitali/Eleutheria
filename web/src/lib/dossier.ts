@@ -220,6 +220,13 @@ function subtractDays(isoDate: string, days: number): string {
 export interface Dossier {
   slug: string;
   subject_label: string;
+  /**
+   * The dossier-kind marker (P32.17, SIG-DOS-003): "inventory_overview" for the
+   * §39.2 machine-built dossier — semantically distinct from the reviewed
+   * `sig.research-dossier/1` portfolio. Optional so committed fixtures and older
+   * exports stay valid; an unset kind IS the inventory overview.
+   */
+  kind?: "inventory_overview" | "research_dossier" | string;
   jurisdiction: string;
   asOf: AsOfEcho;
   rulesetVersion: string;

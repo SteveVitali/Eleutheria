@@ -53,6 +53,13 @@ export const DOSSIER_PAGE = `/dossier/${DOSSIER_SLUG}/`;
 export const DOSSIER_PRINT = `/dossier/${DOSSIER_SLUG}/print/`;
 export const DOSSIER_JSON = `/dossier/${DOSSIER_SLUG}.json`;
 
+// The reviewed research-dossier portfolio (P32.17, SIG-DOS-001/002) — the
+// fixture dossier exercising all six answer states.
+export const RESEARCH_INDEX = "/research-dossier/";
+export const RESEARCH_SLUG = "okc-alpr";
+export const RESEARCH_PAGE = `/research-dossier/${RESEARCH_SLUG}/`;
+export const RESEARCH_JSON = `/research-dossier/${RESEARCH_SLUG}.json`;
+
 // One pre-generated task-intake page (SIG-UI-007), built with the same href helper
 // the hatches use, so it always matches a page `getStaticPaths` generated.
 export const TASK_PAGE = absenceTaskHref({

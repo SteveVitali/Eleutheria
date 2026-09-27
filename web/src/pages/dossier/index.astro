@@ -30,7 +30,10 @@ const dossiers = [...getDossierIndex()].sort(
   <p>
     This index lists every jurisdiction SIG has researched to a publishable standard.
     It is not a census: a jurisdiction absent here is one SIG has not yet published,
-    <strong>not</strong> one with no surveillance infrastructure.
+    <strong>not</strong> one with no surveillance infrastructure. These are{" "}
+    <strong>inventory overviews</strong>, built automatically from published claims —
+    the reviewed, evidence-complete twelve-question portfolios are at{" "}
+    <a href="/research-dossier/">the research-dossier index</a>.
   </p>
 
   {dossiers.length === 0 && <EmptyState surface="dossierIndex" />}
