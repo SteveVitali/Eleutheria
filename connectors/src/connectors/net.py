@@ -97,7 +97,17 @@ class ChallengeEncountered(Exception):
 
     The fetcher never defeats it (SIG-INGEST-013); the run records the source as
     facing a persistent challenge (a disappearance datum), it does not retry.
+
+    ``status`` carries the HTTP status that triggered it (401/403/429) so a
+    quota-metered sweep can tell a rate-limit wall (429) apart from an auth
+    challenge (401/403) and stop cleanly on the former without re-probing the
+    exhausted window (the recorded rate-limit lesson, P26.19).
     """
+
+    def __init__(self, message: str, *, status: int | None = None) -> None:
+        super().__init__(message)
+        #: The HTTP status that produced the challenge (``None`` if unknown).
+        self.status = status
 
 
 @dataclass(frozen=True)
@@ -394,7 +404,8 @@ class PoliteFetcher:
         if _is_challenge(result):
             raise ChallengeEncountered(
                 f"{url!r} returned a bot-management challenge (status {result.status}); "
-                "SIG does not defeat challenges (SIG-INGEST-013) — recorded, not retried."
+                "SIG does not defeat challenges (SIG-INGEST-013) — recorded, not retried.",
+                status=result.status,
             )
         return result
 

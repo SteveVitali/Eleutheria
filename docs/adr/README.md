@@ -93,6 +93,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-086](ADR-086-hg02-counsel-resolution-derived-facts-publication-compartment.md) | — | — | Accepted |
 | [ADR-087](ADR-087-robots-4xx-means-no-policy-exists-rfc-9309-access-result-split.md) | — | — | Accepted |
 | [ADR-088](ADR-088-robots-verdicts-recorded-never-enforced-gl-gate-08.md) | — | — | Accepted |
+| [ADR-089](ADR-089-bounded-quota-aware-sam-gov-sweep.md) | — | — | Accepted |
 
 ## Notes
 

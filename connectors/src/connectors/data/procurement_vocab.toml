@@ -611,6 +611,17 @@ keywords = [
 limit       = 25
 posted_from = "01/01/2026"
 posted_to   = "12/31/2026"
+# --- P26.19 (SOURCES.18): bound one run to a single daily quota window --------
+# api.data.gov meters `sig-sam-gov-key` per UTC day (the 429 body names the
+# reset: "You can access API after <date> 00:00:00+0000 UTC"). A run must fit
+# comfortably inside ONE fresh window WITH HEADROOM and never burn it into a
+# failure. `daily_request_budget` is the per-run request cap the sweep stops at
+# BEFORE the hard 429 wall (a refused request still counts, so we never re-probe
+# past it — SIG-INGEST-012/013). It is >= the keyword count above, so one
+# fresh-window run covers the whole prioritised keyword space; if an operator
+# lowers it below the keyword count the persisted `sweep_cursor` pages the
+# remaining keywords across successive daily windows (never one run over quota).
+daily_request_budget = 30
 
 # ===========================================================================
 # P26.15 (SOURCES.14) — the EU tender sweep: TED (Tenders Electronic Daily)

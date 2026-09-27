@@ -75,6 +75,30 @@ class RunReport:
     #: drifted run).
     drifted: list[dict[str, Any]] = field(default_factory=list)
     asserted: bool = False
+    #: Quota-bounded sweep bookkeeping (P26.19). A target flagged
+    #: ``quota_governed`` participates in a per-run request budget: the driver
+    #: counts every such request it ISSUES (a refused request still counts —
+    #: the recorded rate-limit lesson) and stops the sweep cleanly BEFORE the
+    #: hard quota wall. Absent the flag / a ``request_budget`` parameter these
+    #: stay at their defaults and behaviour is byte-for-byte unchanged.
+    sweep_requests: int = 0
+    #: The per-run request budget in force (``ctx.parameters["request_budget"]``)
+    #: or ``None`` when unbounded.
+    sweep_budget: int | None = None
+    #: Set once a governed slice hit the configured budget: the run stopped with
+    #: headroom and the remaining slices are deferred to the next fresh window.
+    budget_reached: bool = False
+    #: Set once a governed slice observed a 429 rate-limit wall: the run stops
+    #: immediately and NEVER re-probes the exhausted window (SIG-INGEST-012/013).
+    quota_reached: bool = False
+    #: Governed slices the driver deliberately did NOT issue (budget spent or
+    #: quota reached), each ``{"id", "reason"}`` — the honest record that the
+    #: coverage tail is deferred, not lost.
+    sweep_skipped: list[dict[str, Any]] = field(default_factory=list)
+    #: Transient: the HTTP status of the most recent challenge the driver saw
+    #: (set by ``_fetch_or_disappear``), read once per iteration to classify a
+    #: 429 wall. Not part of the durable record.
+    last_challenge_status: int | None = None
 
     @property
     def fingerprint(self) -> str:
@@ -127,8 +151,42 @@ def run(connector: Connector, ctx: RunContext) -> RunReport:
     targets = connector.discover(ctx)
     _addressed(ctx, Stage.DISCOVER, targets)
 
+    # P26.19 — quota-bounded sweep guard (opt-in per target via ``quota_governed``
+    # + the ``request_budget`` parameter). It bounds a keyword-sweep source (SAM.gov
+    # over the api.data.gov daily quota) to one fresh window WITH HEADROOM and
+    # stops cleanly rather than burning the window into a 429 crash. Targets that
+    # do not opt in see none of this (``budget`` None / flag absent).
+    budget = ctx.parameters.get("request_budget")
+    if isinstance(budget, int) and not isinstance(budget, bool):
+        report.sweep_budget = int(budget)
+
     for target in targets:
+        governed = bool(target.get("quota_governed"))
+        if governed and report.quota_reached:
+            # RATE-LIMIT HONESTY: a 429 wall was already observed this run — the
+            # window is exhausted, so we NEVER re-probe it. The remaining budgeted
+            # slices are recorded as deferred, not issued (SIG-INGEST-012/013).
+            report.sweep_skipped.append({"id": _target_id(target), "reason": "quota_reached"})
+            continue
+        if (
+            governed
+            and report.sweep_budget is not None
+            and report.sweep_requests >= report.sweep_budget
+        ):
+            # Stop BEFORE the hard wall: the per-run request budget (headroom under
+            # the daily tier) is spent. Remaining slices wait for the next window.
+            report.budget_reached = True
+            report.sweep_skipped.append({"id": _target_id(target), "reason": "budget_reached"})
+            continue
+        report.last_challenge_status = None
+        if governed:
+            # A request we are about to ISSUE counts against the window even if it
+            # is refused — that is the whole lesson (a refused request still burns
+            # the quota). Count before the fetch so a 429 is honestly accounted.
+            report.sweep_requests += 1
         fetched = _fetch_or_disappear(connector, ctx, target, report)
+        if governed and fetched is None and report.last_challenge_status == 429:
+            report.quota_reached = True
         if fetched is None:
             continue
         _addressed(ctx, Stage.FETCH, fetched)
@@ -239,6 +297,10 @@ def _fetch_or_disappear(
         )
         return None
     except ChallengeEncountered as exc:
+        # Surface the raw HTTP status so the driver can tell a 429 quota wall from
+        # a 401/403 auth challenge (P26.19); the disappearance record itself keeps
+        # its coarse ``access_restricted`` classification unchanged.
+        report.last_challenge_status = getattr(exc, "status", None)
         status = failing_status_for_error(exc)
         assert status is not None
         report.disappearances.append(
