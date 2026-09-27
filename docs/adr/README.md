@@ -143,6 +143,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-136](ADR-136-research-dossier-schema-portfolio-completion-and-eleventh-artifact-class.md) | — | — | — |
 | [ADR-137](ADR-137-oklahoma-city-dossier-packet-and-additive-seed-correction.md) | — | — | — |
 | [ADR-138](ADR-138-tulsa-dossier-packet-template-executed-and-honest-unknowns.md) | — | — | — |
+| [ADR-139](ADR-139-san-diego-dossier-packet-subscription-hardware-prime-component-and-proposed-recommendation.md) | — | — | — |
 
 ## Notes
 

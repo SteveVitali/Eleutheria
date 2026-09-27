@@ -1,0 +1,36 @@
+{
+  "acquisition_status": "prohibited_until_review",
+  "deferral": "D-P32.20-1",
+  "dossier_id": "san-diego-sdpd-alpr",
+  "generated_at": "2026-10-01",
+  "permitted_metadata": [
+    "link labels and existence metadata on the public index",
+    "period labels (2024–2026) on the link metadata",
+    "published annual aggregate documents through the normal gate"
+  ],
+  "preconditions": [
+    "explicit content-admissibility decision (HG-03 family)",
+    "source/rights review under D-R10-SOURCES-1",
+    "a bounded acquisition method that never transports workbook bytes — approved aggregate production only"
+  ],
+  "prohibited_content": [
+    "license_plate values",
+    "person or officer identifiers",
+    "per-query / per-search audit rows",
+    "XLSX workbook bytes (ZIP container incl. sharedStrings.xml)",
+    "any row-level network-audit content"
+  ],
+  "question_support": {
+    "q8": "could evidence outbound sharing actors/mode IF an approved safe aggregate exists; otherwise the unknown stands"
+  },
+  "review_basis": "index link labels and acquisition-queue metadata reviewed; no workbook bytes fetched or staged at any point",
+  "rights_posture": "dossier_san_diego stays ingestion_permitted=false; the network-audit family stays prohibited_until_review — this record is a preflight, never a fetch",
+  "safe_aggregate_path": {
+    "description": "a safe annual/agency-level aggregate produced under an approved workflow could close the declared-vs-observed sharing gap on q8; SRC-027 is optional research — the dossier does not depend on it",
+    "status": "open_question"
+  },
+  "schema": "sig.part-viii-preflight/1",
+  "source_reference": "SRC-027 (tasks acquisition queue)",
+  "target_family": "sandiego.gov ALPR index — 2024–2026 SDPD ALPR network-audit spreadsheet links (link/label metadata only)",
+  "workbook_transport": "never"
+}
