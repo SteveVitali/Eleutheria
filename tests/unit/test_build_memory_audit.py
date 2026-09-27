@@ -324,15 +324,18 @@ def test_reports_go_to_caller_provided_paths(tmp_path: pathlib.Path) -> None:
 
 
 def test_real_tree_expected_conflicts_and_zero_errors() -> None:
-    """The real tree at P32.1's baseline: the parser must surface exactly the
-    recorded ambiguities — the four known owed-status rows whose prose later
-    records a dated DONE, the documented Lane-B pointer rows, and P31.17/18
-    named as dropped/moved in P31.19's depends line — and zero errors."""
+    """The real tree after P32.7's recorded reconciliations: the parser must
+    still surface `D-P21.5-1` (the one conflict row whose recorded
+    interpretation is PARTIAL — the dated DONE tokens stay deliberately
+    visible), the documented Lane-B pointer rows, and P31.17/18 named as
+    dropped/moved in P31.19's depends line — and zero errors. The six other
+    former conflict rows were reconciled by obligation-event anchors and their
+    compatibility cells flipped to match (P32.7/ADR-126)."""
     diags, meta = audit_current_state.audit(REPO_ROOT)
     errors = [d for d in diags if d["severity"] == "error"]
     assert errors == [], errors
     flagged = {d["obligation"] for d in _by_check(diags, "deferrals/status-conflict")}
-    assert {"D-P21.4-3", "D-P21.5-1", "D-SOURCES.2-4", "D-R7.3-BREADTH"} <= flagged
+    assert flagged == {"D-P21.5-1"}, flagged
     deps = {d["obligation"] for d in _by_check(diags, "tickets/dependency-not-in-chain")}
     assert {"P31.17", "P31.18"} <= deps
     dupes = {d["obligation"] for d in _by_check(diags, "manifest/duplicate-file")}
@@ -349,16 +352,15 @@ def test_real_tree_expected_conflicts_and_zero_errors() -> None:
 
 
 def test_no_existing_gate_or_deferral_is_closed_by_parsing() -> None:
-    """Parsing preserves every obligation: the three routed engineering rows and
-    the Round-10 prerequisite rows stay OPEN, and the audit does not rewrite any
-    status cell."""
+    """Parsing preserves every obligation: the Round-10 prerequisite rows stay
+    OPEN, and the audit does not rewrite any status cell. (D-P31.1-1,
+    D-P31.1-3 and D-P31.5-2 are DONE — not by parsing: P32.7 recorded
+    evidence-backed reconciliation events for them and updated the
+    compatibility cells to match, the old values preserved on the anchors.)"""
     diags, _ = audit_current_state.audit(REPO_ROOT)  # noqa: F841 — audit must not raise
     obligations = audit_current_state.parse_deferrals(REPO_ROOT, [])
     by_id = {o["id"]: o["status"] for o in obligations}
     for owed in (
-        "D-P31.1-1",
-        "D-P31.1-3",
-        "D-P31.5-2",
         "D-P31.4-1",
         "D-R10-HUMAN-1",
         "D-R10-SOURCES-1",

@@ -1,0 +1,47 @@
+{
+  "schema": "reconciled-conflicts/1",
+  "recorded_by": "P32.7",
+  "note": "P32.1 baseline conflicts that are already reconciled by documentation. These are NOT covered by obligation events (they concern the manifest/ticket surfaces, not deferral status cells); the projection treats them as resolved because the baseline report recorded the reconciliation. The four deferrals/status-conflict rows are covered by obligation-event migration anchors instead.",
+  "documented": [
+    {
+      "check": "manifest/duplicate-file",
+      "obligation": "P21.1__rights-review-and-registry-completion.md",
+      "pointer": "docs/build/reports/p32.1-baseline/RECONCILIATION.md"
+    },
+    {
+      "check": "manifest/duplicate-file",
+      "obligation": "P21.3__live-connector-wiring.md",
+      "pointer": "docs/build/reports/p32.1-baseline/RECONCILIATION.md"
+    },
+    {
+      "check": "manifest/duplicate-file",
+      "obligation": "P21.4__first-jurisdiction-ingest-and-publish.md",
+      "pointer": "docs/build/reports/p32.1-baseline/RECONCILIATION.md"
+    },
+    {
+      "check": "manifest/duplicate-file",
+      "obligation": "P21.5__infra-deposit-and-tiles.md",
+      "pointer": "docs/build/reports/p32.1-baseline/RECONCILIATION.md"
+    },
+    {
+      "check": "manifest/duplicate-file",
+      "obligation": "P21.7__contribution-back-live.md",
+      "pointer": "docs/build/reports/p32.1-baseline/RECONCILIATION.md"
+    },
+    {
+      "check": "manifest/duplicate-file",
+      "obligation": "P21.8__data-driven-and-coarse-international.md",
+      "pointer": "docs/build/reports/p32.1-baseline/RECONCILIATION.md"
+    },
+    {
+      "check": "tickets/dependency-not-in-chain",
+      "obligation": "P31.17",
+      "pointer": "docs/build/reports/p32.1-baseline/RECONCILIATION.md"
+    },
+    {
+      "check": "tickets/dependency-not-in-chain",
+      "obligation": "P31.18",
+      "pointer": "docs/build/reports/p32.1-baseline/RECONCILIATION.md"
+    }
+  ]
+}
