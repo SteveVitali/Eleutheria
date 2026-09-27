@@ -384,6 +384,16 @@ CONNECTOR_FOR_SOURCE: dict[str, str] = {
     # sweep (keyless documented POST /v3/notices/search; a tender notice is
     # procurement evidence only — procured ≠ deployed).
     "ted_eu": "procurement",
+    # P32.12 (ACQ dossier adapters): the three pilot-city dossier document
+    # sources route through the shared `dossier_documents` connector — one
+    # common bounded adapter, per-source reviewed target registries in
+    # data/live_targets.toml (kinds `clause_fields` / `index_listing`, at most
+    # two document protocols). All three stay `ingestion_permitted=false`
+    # (HG-03); replay/shadow run over committed fixtures in
+    # tests/connectors/fixtures/dossier/.
+    "dossier_okc": "dossier_documents",
+    "dossier_tulsa": "dossier_documents",
+    "dossier_san_diego": "dossier_documents",
 }
 
 

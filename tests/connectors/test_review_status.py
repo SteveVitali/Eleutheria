@@ -115,7 +115,9 @@ def test_the_seeded_registry_has_no_flip_metadata_violations() -> None:
 def test_validate_passes_on_the_seeded_registry(capsys: pytest.CaptureFixture[str]) -> None:
     assert main(["validate"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 339" in out
+    # P32.12 added the three gated dossier_* pilot rows (339 → 342 registered;
+    # still ingestion_permitted=false, so loadable is unchanged).
+    assert "registered sources: 342" in out
     assert "self-checks OK" in out
 
 
@@ -220,9 +222,11 @@ def test_review_status_prints_flip_ready_0_and_loadable_65(
     # pre-registered gated CCOPS discovery rows ccops_oakland/ccops_cambridge/
     # ccops_somerville, US municipal → LicenseRef-PublicRecord-FactualCompilation;
     # 228 → 236 loadable). flip-ready stays 1 (the new rows land already flipped).
+    # P32.12 added the three gated dossier_* pilot rows (339 → 342 registered;
+    # all ingestion_permitted=false, so loadable stays 236).
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 339" in out
+    assert "registered sources: 342" in out
     assert "flip-ready: 1" in out
     assert "flip-ready: state_alpr_statute_inventory" in out
     assert "loadable now: 236" in out

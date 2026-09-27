@@ -151,6 +151,16 @@ def _validate() -> int:
         for msg in violations:
             print(f"VALIDATION FAILED: {msg}")
         return 1
+    # P32.12 (SIG-ACQ-003): the frozen dossier field crosswalk must resolve
+    # every configured field to an existing ontology predicate, or carry a
+    # recorded scoped amendment — never an ad-hoc term.
+    from .dossier_documents import check_crosswalk
+
+    crosswalk_violations = check_crosswalk()
+    if crosswalk_violations:
+        for msg in crosswalk_violations:
+            print(f"VALIDATION FAILED: {msg}")
+        return 1
     print("connectors registry self-checks OK")
     return 0
 

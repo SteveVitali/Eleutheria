@@ -18,6 +18,10 @@ requires-python = ">=3.11"
 # edges through the §29.3 sharing-edge reconciler (both owned by P08.2,
 # SIG-RECON-045/034/035/036/037). reconcile depends only on sig-ontology + sig-db
 # and never imports connectors, so there is no cycle.
+# sig-ontology is added by P32.12: the dossier field crosswalk validates its
+# mapped predicates against the committed vocab/predicates.yaml term list via
+# ontology.generate.load_vocab — the same bytes the generators consume, never
+# a re-keyed copy. ontology is the workspace leaf (no cycle).
 dependencies = [
     "sig-policy",
     "sig-evidence",
@@ -26,6 +30,7 @@ dependencies = [
     "sig-db",
     "sig-parsing",
     "sig-reconcile",
+    "sig-ontology",
     "httpx>=0.27",
 ]
 
@@ -40,6 +45,7 @@ sig-exports = { workspace = true }
 sig-db = { workspace = true }
 sig-parsing = { workspace = true }
 sig-reconcile = { workspace = true }
+sig-ontology = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]

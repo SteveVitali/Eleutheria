@@ -1,0 +1,114 @@
+# SPDX-License-Identifier: Apache-2.0
+# The pilot-dossier document-adapter vocabulary (P32.12, §55.6, SIG-ACQ-003).
+# DATA, not code (SIG-ENG-001): the three pilot source families share ONE
+# registered connector (`dossier_documents`) whose per-source behaviour comes
+# from the [adapters.*] blocks below and the frozen field crosswalk in
+# `dossier_field_crosswalk.toml`. The adapter is bounded by construction:
+#   * ≤2 document protocols — `html_text` and `pdf_text` (the existing layer-2
+#     and layer-3 engines; OCR and any new parser stack are out of scope);
+#   * hard resource bounds — a captured document exceeding any bound is an
+#     explicit ContentDrift, never a partial extraction;
+#   * genre guards — the reviewed artifact genre (ADR-122) mechanically bars
+#     claims the document class cannot support: a `template` never asserts an
+#     executed instrument, a `subscription` never asserts local hardware.
+#   * the Part VIII guard is shared with the OKC document connectors
+#     (okc_documents.forbidden_tokens / person-naming gate) — the same law,
+#     consumed not forked.
+
+vocab_version = "dossier-documents/1"
+
+# The two document protocols this adapter is bounded to (the ticket's ≤2
+# protocol cap). `html_text` = layer-2 selector_template text extraction;
+# `pdf_text` = layer-3 digital-native PDF text. Anything else — OCR, image
+# extraction, office formats — is an explicit unsupported-document failure.
+document_protocols = ["html_text", "pdf_text"]
+
+# ADR-122 non-probative artifact genres: every claim a document of one of these
+# genres emits is stamped claim_directness = "D6" (contextual only — the
+# construction in P32.3, made mechanical here instead of left to convention).
+non_probative_genres = ["template", "recommendation", "subscription", "vendor_default_page"]
+
+# Predicates a `template` document may never assert: anything that would read
+# as an EXECUTED instrument (parties, signatures, values, term dates). A
+# template proves structure only — never a signed agreement (S2: a blank MOU
+# is not a participant, a purchase or a deployment).
+template_execution_guard = [
+  "buyer", "seller", "recipient", "vendor", "funder",
+  "signed_date", "contract_signed_date", "contract_value", "contract_start_date",
+  "contract_end_date", "contracted_device_count", "amount", "amends_contract",
+  "lifecycle_transition", "procurement_state",
+]
+
+# Predicates a `subscription`/hosted-access document may never assert: anything
+# that would read as LOCAL OWNED HARDWARE. Database access ≠ sensor inventory
+# (S2: the Vigilant subscription is access without hardware assets).
+subscription_hardware_guard = [
+  "claimed_device_count", "active_device_count", "installed_device_count",
+  "contracted_device_count", "invoiced_device_count", "deployment_exists",
+  "fixed_asset_location", "asset_exists_at_location", "implements_technology",
+]
+
+# The default sensitivity class stamped on every dossier claim (§43.3): C1 —
+# institutional / public-record facts with no per-asset coordinate.
+default_sensitivity_class = "C1"
+
+# The field-state vocabulary the adapter records for configured-but-unanswered
+# fields. `redacted` is a claim-level state (the field exists, its value is
+# withheld): it emits a `somevalue` claim under the mapped predicate — a value
+# exists but is unknown — never a fabricated literal.
+field_states = ["answered", "present_but_empty", "absent", "redacted"]
+
+[resource_bounds]
+# A captured document larger than this is refused before parsing (no partial
+# affirmative claim can come out of an oversized artifact).
+max_document_bytes = 1048576
+# A digital-native PDF deeper than this is refused (the pilot corpus is
+# single-digit-page excerpts; a deeper file is out of the bounded contract).
+max_pdf_pages = 40
+# More configured fields than this on one document target is a review error.
+max_fields_per_document = 64
+# Extracted-text ceiling — a pathological text layer is drift, not evidence.
+max_text_chars = 524288
+# Bounded link fan-out for `index_listing` pages.
+max_index_links = 128
+
+# --- the three pilot families -------------------------------------------------
+# `subject_id`s are the connector's own dossier subject keys: deployment/data-
+# system ids for agency technology/access facts, contract ids for instrument
+# facts. `jurisdiction` anchors name-only partner mints (P32.3 scoped keys).
+
+[adapters.dossier_okc]
+source_id = "dossier_okc"
+jurisdiction = "us.state_abbr:OK"
+predicate_allowlist = [
+  "claimed_device_count", "sharing_partner_degree", "as_of",
+  "retention_period", "use_restriction", "sharing_restriction",
+  "written_policy_value", "effective_from", "authorization_state",
+  "funding_amount", "period", "amends_contract", "lifecycle_transition",
+  "signed_date", "document", "title", "posted_date", "disclosure_field_state",
+  "legal_authority", "citation", "technology", "vendor",
+]
+
+[adapters.dossier_tulsa]
+source_id = "dossier_tulsa"
+jurisdiction = "us.state_abbr:OK"
+predicate_allowlist = [
+  "technology",
+  "retention_period", "use_restriction", "sharing_restriction",
+  "written_policy_value", "effective_from", "enacting_body", "legal_authority",
+  "document", "title", "posted_date", "disclosure_field_state",
+]
+
+[adapters.dossier_san_diego]
+source_id = "dossier_san_diego"
+jurisdiction = "us.state_abbr:CA"
+predicate_allowlist = [
+  "buyer", "seller", "vendor",
+  "contract_value", "contracted_device_count", "contract_start_date",
+  "contract_end_date", "period", "products",
+  "renewal_options", "signed_date", "amends_contract", "lifecycle_transition",
+  "configured_access_edge", "pooled_lookup_participation", "data_system_scope",
+  "technology", "retention_period", "use_restriction", "sharing_restriction",
+  "written_policy_value", "effective_from", "authorization_state",
+  "document", "title", "posted_date", "as_of", "disclosure_field_state",
+]

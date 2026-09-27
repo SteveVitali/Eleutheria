@@ -79,6 +79,18 @@ def _load_vocab(name: str) -> dict[str, Any]:
         return yaml.safe_load(fh)
 
 
+def load_vocab(name: str) -> dict[str, Any]:
+    """Read one committed vocabulary table (``vocab/<name>.yaml``).
+
+    Public sibling of the private loader the generators use: downstream
+    packages that must validate their own data against the committed term
+    lists (e.g. a connector checking that a field crosswalk names only
+    *existing* predicate ids — P32.12) read the same bytes the generators
+    consume, never a re-keyed copy.
+    """
+    return _load_vocab(name)
+
+
 # --- RDF canonicalization -----------------------------------------------------
 def _canonical_nt(graph: Any) -> str:
     """Canonically-labelled, sorted N-Triples — the deterministic RDF form."""
