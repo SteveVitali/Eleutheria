@@ -24,7 +24,13 @@ constituent rights records (§42.4), and every entity response MUST carry upstre
 
 **SIG-API-005 (MUST).** Every read endpoint MUST accept `as_of_world` and `as_of_belief`, defaulted
 explicitly (§9.4), and MUST echo the resolved values back in the response. Omitting them MUST NOT
-mean "latest" implicitly — the response states what it used.
+mean "latest" implicitly — the response states what it used. On **release-namespaced** read
+surfaces (§55.5) the as-of pair is bound *structurally*: an immutable `r/<publication>` release
+pins world/belief cutoffs more strongly than a defaulted parameter, and the release identity the
+response carries IS the resolved value echoed back. A legacy `as_of_world`/`as_of_belief`/`ruleset`
+selector on such a surface MUST resolve through `sig.compat-index/1` to a real release or an honest
+invalid/unavailable/ambiguous answer — a selector is never silently ignored while serving an
+unmarked current-state page (ADR-132, ADR-144).
 
 **SIG-API-006 (MUST).** Responses MUST be cacheable by the full as-of pair. A belief-pinned request
 is immutable and MUST be served with a long cache lifetime; a `now`-pinned request MUST NOT be.
