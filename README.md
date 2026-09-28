@@ -23,7 +23,7 @@ connectors behind the fail-closed `ingestion_permitted` gate.
 `docs/build/reports/REPUBLISH_LIVE_2026-09-27.md`). What is *not* yet public: the Round-10
 provisional-policy release candidate is published to a **staging namespace only** — production
 exposure, the hosted recovery/freeze it depends on, and the independent human evaluation all remain
-open obligations (see *Current state & owed work* below). The anonymous correction receiver is built
+open obligations (see *Deployed state* below). The anonymous correction receiver is built
 but deliberately **not operating** (`/intake/` answers `503 receiver_not_operating` by design).
 
 ## Contents

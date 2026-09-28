@@ -34,8 +34,9 @@ uv run sig-ops down                                             # stop everythin
   -v`, leaving **no containers** and no stray processes.
 - **`seed --jurisdiction okc`** loads the committed Oklahoma City slice into the
   spine append-only via `db.claim_sink.PgClaimSink` — above all the 299-vs-190
-  `claimed_device_count` contradiction (§3.1). It is *not* a live fetch (no green
-  sources; HG-03 skipped): re-running is idempotent (content-digest ON CONFLICT).
+  `claimed_device_count` contradiction (§3.1). It is *not* a live fetch — the
+  slice is committed data, not a network pull — and re-running is idempotent
+  (content-digest ON CONFLICT).
 
 ## Staging endpoints (HG-12: local staging is acceptable)
 
