@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
-  "manifest_inputs": 508,
+  "input_commit": "efa389f942366473cb2131ca4fbaf18445eb67d9",
+  "manifest_inputs": 538,
   "control": {
     "projectStatus": "IN-PROGRESS",
-    "nextTicket": "P32.11",
-    "lastCompleted": "P32.10a",
+    "nextTicket": "P33.2",
+    "lastCompleted": "P33.1",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P31.16(**DONE 2026-09-27 — HG-11 granted by the operator (sign-off commit `81957c2`) + the publish half landed: `REPUBLISH_LIVE_2026-09-27.md`; public partition + export-mode `web/dist` live; `sig-web` on `sha256:d8244804…`; `/map/points.json` 404 both origins → R8-1 CLOSED; D-P30.3-1/-2/-3 + D-P30.2-2 flipped DONE; probe-hosted 7/7 green** · was: SURFACE.3 — **HG-11 PENDING** · pre-gate half DONE 2026-09-27: full re-materialize + run-completions on pinned digest, all +0-verified; restricted re-export `sig-2026-09-27-ce480ab1`; `REPUBLISH_DIFF_2026-09-27.md`; **post-HG-11 publish half** owed — publish the export, roll `sig-web` by digest, retire live `/map/points.json` (closes R8-1), flip the surface halves of D-P30.3-1/-2/-3 + D-P30.2-2, `probe-hosted`), P31.1(**DONE 2026-09-25 — D-P30.4-1 closed by the operator-approved second drill (both sig-api backends terminated on sha256:21bb9526…, first request 200 in 149 ms; LEDGER GATE DECISIONS 2026-09-25 (3)); recorded at the Wave-B seed** · D-P30.4-1 hosted fast-reconnect re-proof on the served image sha256:21bb9526… — at the next sig-pg restart, or a SECOND operator-approved pg_terminate_backend of the application_name='sig-api' backends; the one approved drill ran on the first image: no 500, no redeploy, first request 503 after 10.2 s, since fixed), P27.10(**DONE — D-P27.10-1 closed 2026-09-23; national data live 2026-09-24 via P30.3** · LAUNCH.10 — the custom-domain mapping is APPLIED under operator ADC [external HTTPS LB + serverless NEG, ADR-098; static IP 136.81.80.102 fronts sig-web; www→apex 301; :80 redirect live-verified] and the exact Squarespace DNS records are produced [apex/www A → 136.81.80.102, no verification TXT]; the OPERATOR's Squarespace DNS add + the post-DNS valid-TLS + probe-hosted verification are gate-pending, D-P27.10-1 — HG-11/Go-public, never auto-ticked; Google-managed TLS provisions only after the records resolve; the domain serves the OKC demo until D-P27.8-1 lands, operator-accepted), P27.8(**DONE 2026-09-24 via P30.3 — D-P27.8-1 closed, PR",
@@ -17,24 +17,24 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p18-2-france-belgium",
     "pinnedBaseSha": "1baf05f",
-    "chainTip": "devin/p32-10a-disposition-single-clock-authority",
+    "chainTip": "devin/p33-1-round10-gap-analysis",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "NONE",
     "round": "10",
-    "updatedAt": "2026-09-27 — P32.10a (row 170.5/170a) DONE: PR"
+    "updatedAt": "2026-10-21 — P33.1 (row 192) DONE: PR"
   },
   "counts": {
-    "obligations": 90,
-    "owed": 37,
+    "obligations": 97,
+    "owed": 36,
     "open": 32,
-    "partial": 5,
-    "terminal": 53,
-    "events": 90,
+    "partial": 4,
+    "terminal": 61,
+    "events": 97,
     "transitions": 0,
     "coverage_assessments": 4,
     "coverage_historical_rows": 715,
-    "reconciled_by_event": 7,
+    "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
     "known_inconsistencies": 0,
     "conflicted": 0
@@ -70,9 +70,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 35,
@@ -114,9 +114,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 36,
@@ -158,9 +158,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 37,
@@ -202,9 +202,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 38,
@@ -246,9 +246,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 39,
@@ -290,9 +290,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 40,
@@ -337,8 +337,8 @@
             "docs/build/LEDGER.md"
           ],
           "observed_at": "2026-09-16",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "the cell itself records DONE 2026-09-16 — the operator decided GO at the go-public checkpoint, the GCP cut-over ran and was verified anonymously, and the custom-domain leg was skipped-by-operator (recorded, not silently dropped). Recorded interpretation: terminal DONE; the leading OPEN was stale.",
           "anchor": {
             "row_line": 41,
@@ -383,8 +383,8 @@
             "docs/build/LEDGER.md"
           ],
           "observed_at": "2026-09-16",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "the dated DONE tokens are per-leg discharges — Zenodo deposit (2026-09-15), the GCS object-store push, and the live egress report — while the Software Heritage save-now leg was DECLINED-BY-OPERATOR because the repository is private and that leg reopens if visibility flips, and a non-GCS object-store push remains 'if desired'. Recorded interpretation: PARTIAL — the owed residue is an operator decision, not engineering.",
           "anchor": {
             "row_line": 42,
@@ -426,9 +426,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 43,
@@ -470,9 +470,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 44,
@@ -514,9 +514,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 45,
@@ -558,9 +558,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 47,
@@ -602,9 +602,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 71,
@@ -646,9 +646,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 72,
@@ -690,9 +690,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 73,
@@ -734,9 +734,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 74,
@@ -778,9 +778,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 75,
@@ -822,9 +822,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 76,
@@ -866,9 +866,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 89,
@@ -910,9 +910,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 90,
@@ -954,9 +954,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 101,
@@ -998,9 +998,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 103,
@@ -1042,9 +1042,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 116,
@@ -1086,9 +1086,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 118,
@@ -1130,9 +1130,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 129,
@@ -1174,9 +1174,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 130,
@@ -1218,9 +1218,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 131,
@@ -1265,8 +1265,8 @@
             "docs/build/LEDGER.md"
           ],
           "observed_at": "2026-09-19",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "the cell records DONE 2026-09-19 (P26.17) — RESOLVED-BY-GL-GATE-08: the operator's recorded PrimeGov/robots disposition removed the gate, so the owed ADR-083-style API-mode justification is moot. Recorded interpretation: terminal DONE.",
           "anchor": {
             "row_line": 132,
@@ -1308,9 +1308,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 145,
@@ -1352,9 +1352,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 146,
@@ -1396,9 +1396,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 147,
@@ -1440,9 +1440,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 160,
@@ -1484,9 +1484,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 161,
@@ -1528,9 +1528,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 176,
@@ -1572,9 +1572,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 177,
@@ -1616,9 +1616,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 178,
@@ -1660,9 +1660,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 179,
@@ -1704,9 +1704,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 192,
@@ -1748,9 +1748,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 210,
@@ -1792,9 +1792,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 226,
@@ -1836,9 +1836,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 247,
@@ -1880,9 +1880,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 261,
@@ -1924,9 +1924,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 275,
@@ -1968,9 +1968,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 288,
@@ -2012,9 +2012,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 305,
@@ -2056,9 +2056,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 317,
@@ -2100,9 +2100,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 318,
@@ -2144,13 +2144,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 331,
-            "row_sha256": "15b90c5d6c47c4bb50754a14d19e1e3fe8d9783cf26402747d2df279d8b16e91",
+            "row_sha256": "2aab9b68c019cd96a5de9066812ac1bb7b10de75e38aadd74eb361f92577c0c7",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -2188,9 +2188,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 332,
@@ -2232,9 +2232,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 333,
@@ -2276,9 +2276,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 334,
@@ -2320,9 +2320,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 335,
@@ -2364,9 +2364,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 336,
@@ -2408,9 +2408,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 337,
@@ -2452,9 +2452,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 338,
@@ -2496,9 +2496,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 339,
@@ -2544,8 +2544,8 @@
             "docs/build/reports/p31.13-hosted/VERIFICATION.md"
           ],
           "observed_at": "2026-09-26",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "the cell records DONE 2026-09-26 — all eight accountability-breadth sources landed: P31.12 wired+landed the first four and P31.13 the remaining four under digest-pinned hosted jobs (+0 re-runs, rights_decision rows recorded, materialize +0). Recorded interpretation: terminal DONE.",
           "anchor": {
             "row_line": 340,
@@ -2587,9 +2587,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 355,
@@ -2603,11 +2603,11 @@
     },
     {
       "id": "D-P30.1-2",
-      "status": "OPEN",
+      "status": "DONE",
       "status_source": "event-head D-P30.1-2:e0",
       "kind": "F",
-      "owner": "engineering",
-      "landing": "BL-057, no chain row",
+      "owner": "—",
+      "landing": "—",
       "backlog_home": "BL-057",
       "item": "incremental restarts — stream claims to the sink **per capture** (commit each page's claims as it is fetched) and/or **skip already-captured pages** (content-digest match against `evidence_capture`/the run's prior capture set), so a restart resumes instead of re-fetching all pages and re-walking every record",
       "unblocked_by": "a scheduled connector-pipeline ticket (BL-057), ideally after D-P30.1-1",
@@ -2622,25 +2622,28 @@
           "obligation_id": "D-P30.1-2",
           "seq": 0,
           "expected_previous_event": null,
-          "from_status": "OPEN",
-          "to_status": "OPEN",
+          "from_status": "DONE",
+          "to_status": "DONE",
           "ticket_id": "P32.7",
-          "owner": "engineering",
-          "landing": "BL-057, no chain row",
+          "owner": "—",
+          "landing": "—",
           "backlog_home": "BL-057",
           "evidence_refs": [
-            "docs/tickets/DEFERRALS.md"
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P31.4.md",
+            "tests/connectors/test_incremental_restart.py",
+            "tests/db/test_resume_pg.py"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-09-25",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
+          "reason": "the cell records DONE 2026-09-25 (P31.4 / HARDEN.4 / ADR-111) — memory-bounded resumable ingest with persisted per-target captures (ingest_run_capture + hosted GCS capture store); hosted kill/resume produced the identical output set (+0, same capture digests). Recorded interpretation: terminal DONE.",
           "anchor": {
             "row_line": 356,
-            "row_sha256": "b2852ee3a12ea29c742ca4c0c1c142345c754533b2d9b2dbb130464a7de269c3",
-            "parser_status": "OPEN",
-            "prose_terminal": null,
-            "interpretation": "preserved"
+            "row_sha256": "9b43f0d2d2a53151e2f76c8c9ed66b027975ab6f74109b5ed2594dafa5964351",
+            "parser_status": "DONE",
+            "prose_terminal": "DONE 2026-",
+            "interpretation": "reconciled"
           }
         }
       ]
@@ -2675,9 +2678,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 366,
@@ -2719,9 +2722,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 367,
@@ -2763,9 +2766,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 368,
@@ -2779,11 +2782,11 @@
     },
     {
       "id": "D-P30.2a-1",
-      "status": "OPEN",
+      "status": "DONE",
       "status_source": "event-head D-P30.2a-1:e0",
       "kind": "F",
-      "owner": "engineering",
-      "landing": "BL-057, no chain row",
+      "owner": "—",
+      "landing": "—",
       "backlog_home": "BL-057",
       "item": "(a) assess the directness of every pre-existing registry predicate for the two genres P30.2a added (`camera_registry`, `connector_run` — today the conservative default D6 for all 56) and for the other measured hosted genres not on the axis (`agenda_document` 4,201 / `bill_index` 2,863 / `portal_document` 2,795 claim-evidence links, plus the one-offs `community_map`, `contract`, `official_statement`); (b) register (or map onto existing registry predicates) the ~100 non-camera hosted predicates that still have no registry row (procurement: `products`, `place_of_performance`, `buyer`, `amount`, `title`, …; legislation: `bill_*`; portal: `portal_*`, `*_windowed_count`, …)",
       "unblocked_by": "a registry ticket per connector family (procurement / legislation / portal) — BL-057",
@@ -2798,36 +2801,38 @@
           "obligation_id": "D-P30.2a-1",
           "seq": 0,
           "expected_previous_event": null,
-          "from_status": "OPEN",
-          "to_status": "OPEN",
+          "from_status": "DONE",
+          "to_status": "DONE",
           "ticket_id": "P32.7",
-          "owner": "engineering",
-          "landing": "BL-057, no chain row",
+          "owner": "—",
+          "landing": "—",
           "backlog_home": "BL-057",
           "evidence_refs": [
-            "docs/tickets/DEFERRALS.md"
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P31.8.md",
+            "docs/build/reports/p31.8-hosted/predicate_inventory_after.json"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-09-25",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
+          "reason": "the cell records DONE 2026-09-25 (P31.8 completing P31.5's family half; ADR-112) — all 62 unregistered measured predicates registered, 180x17 genre/directness assessed, hosted materialize +13,131 envelopes then +0, after-inventory 2,623,647/2,623,647 links admissible. Recorded interpretation: terminal DONE.",
           "anchor": {
             "row_line": 378,
-            "row_sha256": "ccddcec6034d1e4b51cd9f0e1919e9c452ff438133e19af1f7d61a151697cfd3",
-            "parser_status": "OPEN",
-            "prose_terminal": null,
-            "interpretation": "preserved"
+            "row_sha256": "0e3e10cf5faaab41c8bfa7a6b3985b4b1019513851d07bc66375e7ebe70eb14b",
+            "parser_status": "DONE",
+            "prose_terminal": "DONE 2026-",
+            "interpretation": "reconciled"
           }
         }
       ]
     },
     {
       "id": "D-P30.2a-2",
-      "status": "OPEN",
+      "status": "DONE",
       "status_source": "event-head D-P30.2a-2:e0",
       "kind": "F",
-      "owner": "engineering",
-      "landing": "BL-057, no chain row",
+      "owner": "—",
+      "landing": "—",
       "backlog_home": "BL-057",
       "item": "record re-sightings: when a connector re-asserts an unchanged value, link the new capture to the existing claim (`claim_evidence`) instead of returning on the duplicate, and re-decide whether the resolver dates an undated claim from its earliest or latest capture (ADR-104 §4)",
       "unblocked_by": "a claim-sink ticket (BL-057)",
@@ -2842,25 +2847,28 @@
           "obligation_id": "D-P30.2a-2",
           "seq": 0,
           "expected_previous_event": null,
-          "from_status": "OPEN",
-          "to_status": "OPEN",
+          "from_status": "DONE",
+          "to_status": "DONE",
           "ticket_id": "P32.7",
-          "owner": "engineering",
-          "landing": "BL-057, no chain row",
+          "owner": "—",
+          "landing": "—",
           "backlog_home": "BL-057",
           "evidence_refs": [
-            "docs/tickets/DEFERRALS.md"
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P31.7.md",
+            "docs/build/reports/p31.7-hosted/VERIFICATION.md",
+            "tests/db/test_resightings.py"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-09-25",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
+          "reason": "the cell records DONE 2026-09-25 (P31.7; ADR-114 revisit trigger recorded) — uncapped re-sighting recording and supersession landed; hosted +232,096 links at 43% of the 15 GB disk projection, under the 50% trigger. Recorded interpretation: terminal DONE.",
           "anchor": {
             "row_line": 379,
-            "row_sha256": "32c0afdef6cb17ddd4c237dc4f29c32ca0ddb5c192dda95053c8ce16655f6140",
-            "parser_status": "OPEN",
-            "prose_terminal": null,
-            "interpretation": "preserved"
+            "row_sha256": "01c56178a9cb46bea91753fb869b4fc0b98ad58ea4604b0d92f96053b25580fc",
+            "parser_status": "DONE",
+            "prose_terminal": "DONE 2026-",
+            "interpretation": "reconciled"
           }
         }
       ]
@@ -2895,9 +2903,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 388,
@@ -2939,9 +2947,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 389,
@@ -2983,9 +2991,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 390,
@@ -3027,9 +3035,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 391,
@@ -3043,11 +3051,11 @@
     },
     {
       "id": "D-P30.3-1",
-      "status": "PARTIAL",
+      "status": "DONE",
       "status_source": "event-head D-P30.3-1:e0",
       "kind": "F",
-      "owner": "engineering",
-      "landing": "BL-056, no chain row",
+      "owner": "—",
+      "landing": "—",
       "backlog_home": "BL-056",
       "item": "record ingest-run completion on the hosted spine so the public freshness page shows a real last-successful-run per source: every hosted `ingest_run` row is still `running` with `finished_at` NULL (20 rows) although the runs completed (GCS run rows `outcome=ok`), and the shaping predicates carry no `observed_at` — so all 178 sources publish `not-recorded` for both dates and `degraded` status",
       "unblocked_by": "a sink change that appends run completion (status + finished_at) and a recorded backfill from the WORM GCS run rows",
@@ -3062,36 +3070,38 @@
           "obligation_id": "D-P30.3-1",
           "seq": 0,
           "expected_previous_event": null,
-          "from_status": "PARTIAL",
-          "to_status": "PARTIAL",
+          "from_status": "DONE",
+          "to_status": "DONE",
           "ticket_id": "P32.7",
-          "owner": "engineering",
-          "landing": "BL-056, no chain row",
+          "owner": "—",
+          "landing": "—",
           "backlog_home": "BL-056",
           "evidence_refs": [
-            "docs/tickets/DEFERRALS.md"
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P31.2.md",
+            "docs/build/reports/REPUBLISH_LIVE_2026-09-27.md"
           ],
           "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
+          "reason": "the cell records DONE 2026-09-27 (P31.16 publish completing P31.2's engine half; ADR-109) — /data-freshness/ serves real last_successful_run ISO dates for all 178 sources from the appended ingest_run_completion spine. Recorded interpretation: terminal DONE.",
           "anchor": {
             "row_line": 392,
-            "row_sha256": "78b7262c1d8a88c09bf08b4c813890c28420be41f8d333657d7f314bc4a26f94",
-            "parser_status": "PARTIAL",
-            "prose_terminal": null,
-            "interpretation": "preserved"
+            "row_sha256": "ecb5441c56f8efd73fabb4ad315649375f55bc6f87640191e68be38d382a9601",
+            "parser_status": "DONE",
+            "prose_terminal": "DONE 2026-",
+            "interpretation": "reconciled"
           }
         }
       ]
     },
     {
       "id": "D-P30.3-2",
-      "status": "OPEN",
+      "status": "DONE",
       "status_source": "event-head D-P30.3-2:e0",
       "kind": "F",
-      "owner": "engineering",
-      "landing": "BL-056, no chain row",
+      "owner": "—",
+      "landing": "—",
       "backlog_home": "BL-056",
       "item": "serve real zoomable vector tiles: the export image has no tippecanoe, so each per-compartment PMTiles is the pure-Python single-z0 archive (coarse, ~10 km grid), and the OSM basemap archive the style names (`/tiles/osm-basemap.pmtiles`) is not produced — the interactive map draws its points from `/map/points.json` (17 MB, served uncompressed by stock nginx) over a plain background",
       "unblocked_by": "add tippecanoe to the export image (or a tile-build job), emit the basemap, enable compression on `sig-web`",
@@ -3106,36 +3116,39 @@
           "obligation_id": "D-P30.3-2",
           "seq": 0,
           "expected_previous_event": null,
-          "from_status": "OPEN",
-          "to_status": "OPEN",
+          "from_status": "DONE",
+          "to_status": "DONE",
           "ticket_id": "P32.7",
-          "owner": "engineering",
-          "landing": "BL-056, no chain row",
+          "owner": "—",
+          "landing": "—",
           "backlog_home": "BL-056",
           "evidence_refs": [
-            "docs/tickets/DEFERRALS.md"
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P31.15.md",
+            "docs/build/reports/REPUBLISH_LIVE_2026-09-27.md",
+            "docs/build/readouts/ACCEPT-R8.md"
           ],
           "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
+          "reason": "the cell records DONE 2026-09-27 (P31.16 publish completing P31.15's engineering half; ADR-118) — the live map draws from per-compartment pmtiles sources, /map/points.json is 404 on both origins, R8-1 recorded CLOSED. Recorded interpretation: terminal DONE.",
           "anchor": {
             "row_line": 393,
-            "row_sha256": "f5a203c991292ee93987eb9ba465d40ef9510f345c0a2b6b040f09562385c23d",
-            "parser_status": "OPEN",
-            "prose_terminal": null,
-            "interpretation": "preserved"
+            "row_sha256": "ca7b612b6d5ff23af3ef99526a023f51cd72c7e6706bb20b45f2766fc4f91495",
+            "parser_status": "DONE",
+            "prose_terminal": "DONE 2026-",
+            "interpretation": "reconciled"
           }
         }
       ]
     },
     {
       "id": "D-P30.3-3",
-      "status": "OPEN",
+      "status": "DONE",
       "status_source": "event-head D-P30.3-3:e0",
       "kind": "F",
-      "owner": "engineering",
-      "landing": "BL-056, no chain row",
+      "owner": "—",
+      "landing": "—",
       "backlog_home": "BL-056",
       "item": "emit the presentation analytics a real-data build now leaves honestly empty (map density bins, network centrality/focus, the watch's tracked decision point, per-surface provenance summaries, evidence tiers W1–W3 for the site-wide \\\"How we know this\\\") from the spine export — extends D-P27.5-1",
       "unblocked_by": "a spine analytics/export pass for each (P27.4 producer)",
@@ -3150,25 +3163,27 @@
           "obligation_id": "D-P30.3-3",
           "seq": 0,
           "expected_previous_event": null,
-          "from_status": "OPEN",
-          "to_status": "OPEN",
+          "from_status": "DONE",
+          "to_status": "DONE",
           "ticket_id": "P32.7",
-          "owner": "engineering",
-          "landing": "BL-056, no chain row",
+          "owner": "—",
+          "landing": "—",
           "backlog_home": "BL-056",
           "evidence_refs": [
-            "docs/tickets/DEFERRALS.md"
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P31.14.md",
+            "docs/build/reports/REPUBLISH_LIVE_2026-09-27.md"
           ],
           "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
+          "reason": "the cell records DONE 2026-09-27 (P31.16 publish completing P31.14's engineering half; ADR-117) — the web/analytics family is live licence-separated and the public surfaces render real values with no not-recorded placeholders. Recorded interpretation: terminal DONE.",
           "anchor": {
             "row_line": 394,
-            "row_sha256": "c7290aa66c06deef29980917123497e2659c110925d6323274e1d8bf2a1327ce",
-            "parser_status": "OPEN",
-            "prose_terminal": null,
-            "interpretation": "preserved"
+            "row_sha256": "e77ddc4f762be63142812ede0e1585e1a762c986bc1fcde6aed2926256c23766",
+            "parser_status": "DONE",
+            "prose_terminal": "DONE 2026-",
+            "interpretation": "reconciled"
           }
         }
       ]
@@ -3203,9 +3218,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 403,
@@ -3247,9 +3262,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 404,
@@ -3291,9 +3306,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 405,
@@ -3335,9 +3350,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 406,
@@ -3383,8 +3398,8 @@
             "docs/adr/ADR-123-shared-bitemporal-occurrence-selection.md"
           ],
           "observed_at": "2026-10-11",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "the cell records DONE 2026-10-11 (P32.4 / ADR-123) — _spine_watermark now reads the trigger-maintained spine_watermark table (bounded by construction); invalidation verified for all three classes on real PG18; the p31-scale-local fixture met the named budget. Composed/hosted latency evidence is reserved to the P32.24/P33.2 e2e rows, which this closure explicitly does not claim. Recorded interpretation: DONE.",
           "anchor": {
             "row_line": 465,
@@ -3398,11 +3413,11 @@
     },
     {
       "id": "D-P31.1-2",
-      "status": "OPEN",
+      "status": "DONE",
       "status_source": "event-head D-P31.1-2:e0",
       "kind": "H",
-      "owner": "engineering (chain seam)",
-      "landing": "P31.4",
+      "owner": "—",
+      "landing": "—",
       "backlog_home": "BL-057",
       "item": "the scheduled `sig-probe` job (every 6 h) runs `sig-api:latest` (`sha256:ebb6dab9…`), whose baked `ops/cadence.toml` predates the new `sig-api-health` probe target, so the scheduled sweep does not probe `/health` yet",
       "unblocked_by": "P31.4 (rolls the jobs by digest)",
@@ -3417,25 +3432,26 @@
           "obligation_id": "D-P31.1-2",
           "seq": 0,
           "expected_previous_event": null,
-          "from_status": "OPEN",
-          "to_status": "OPEN",
+          "from_status": "DONE",
+          "to_status": "DONE",
           "ticket_id": "P32.7",
-          "owner": "engineering (chain seam)",
-          "landing": "P31.4",
+          "owner": "—",
+          "landing": "—",
           "backlog_home": "BL-057",
           "evidence_refs": [
-            "docs/tickets/DEFERRALS.md"
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P31.4.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-09-25",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
+          "reason": "the cell records DONE 2026-09-25 (P31.4) — every sig-api job rolled by pinned digest (never :latest, before/after recorded); sig-probe swept 8/8 ok including sig-api-health. Recorded interpretation: terminal DONE.",
           "anchor": {
             "row_line": 466,
-            "row_sha256": "ea2805ce9d15990486e44c288e03c28eaa6e9bec51b131a9dc003b9a4b994d1f",
-            "parser_status": "OPEN",
-            "prose_terminal": null,
-            "interpretation": "preserved"
+            "row_sha256": "f4a6318d2a79e21cbfd92defbe78e3c6da2a1948cc877a8e26301531496960f4",
+            "parser_status": "DONE",
+            "prose_terminal": "DONE 2026-",
+            "interpretation": "reconciled"
           }
         }
       ]
@@ -3474,8 +3490,8 @@
             "tests/api/test_api_unregistered_predicates.py"
           ],
           "observed_at": "2026-09-28",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "the cell records DONE 2026-09-28 (P32.2, route half; ADR-121 §6) — the entity route resolves each predicate independently; unknown predicates land on an explicit unregistered_predicates field while registered facts flow through the eligibility policy. Recorded interpretation: DONE; composed/hosted verification stays P33.2's.",
           "anchor": {
             "row_line": 467,
@@ -3489,11 +3505,11 @@
     },
     {
       "id": "D-P31.3-1",
-      "status": "OPEN",
+      "status": "DONE",
       "status_source": "event-head D-P31.3-1:e0",
       "kind": "V",
-      "owner": "engineering",
-      "landing": "P31.4",
+      "owner": "—",
+      "landing": "—",
       "backlog_home": "BL-057",
       "item": "the hosted **new-claim land** rate of the batched sink, on `db-custom-1-3840`",
       "unblocked_by": "P31.4's bounded OSM run on the rolled image (it owns the replay readiness and the image roll)",
@@ -3508,25 +3524,26 @@
           "obligation_id": "D-P31.3-1",
           "seq": 0,
           "expected_previous_event": null,
-          "from_status": "OPEN",
-          "to_status": "OPEN",
+          "from_status": "DONE",
+          "to_status": "DONE",
           "ticket_id": "P32.7",
-          "owner": "engineering",
-          "landing": "P31.4",
+          "owner": "—",
+          "landing": "—",
           "backlog_home": "BL-057",
           "evidence_refs": [
-            "docs/tickets/DEFERRALS.md"
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P31.4.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
-          "reason": "migration anchor: raw cell status preserved verbatim",
+          "observed_at": "2026-09-25",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
+          "reason": "the cell records DONE 2026-09-25 (P31.4; ADR-111) — sig-sink-bench on the rolled image through the live gate: 179,882 claims/min, re-run +0, 0 duplicate digests; the later OSM-replay observation point is tracked separately under OPEN D-P31.4-1. Recorded interpretation: terminal DONE.",
           "anchor": {
             "row_line": 491,
-            "row_sha256": "4b3a369743099261d50d79e752146c1ee7013ca54b8a03b6cf4584362f06431f",
-            "parser_status": "OPEN",
-            "prose_terminal": null,
-            "interpretation": "preserved"
+            "row_sha256": "4dcc42dc737f478e35ed17c77205ec52e9f6d0df1afab285ba89d461ac375c3f",
+            "parser_status": "DONE",
+            "prose_terminal": "DONE 2026-",
+            "interpretation": "reconciled"
           }
         }
       ]
@@ -3561,9 +3578,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 500,
@@ -3605,9 +3622,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 508,
@@ -3653,8 +3670,8 @@
             "tests/unit/test_publication_eligibility.py"
           ],
           "observed_at": "2026-10-12",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "the cell records DONE 2026-10-12 (P32.5 / ADR-124) — publication-eligibility/1 + the publication_disposition registry withhold publication_review_required organisations from every public surface until a recorded allow; the flag was NOT declared moot and the owed operator action is recorded in ADR-124. Recorded interpretation: DONE.",
           "anchor": {
             "row_line": 509,
@@ -3696,13 +3713,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 580,
-            "row_sha256": "eefd382e086afba79bf25b852a2b92dbce953d187deceb2c39b1c265b399c18f",
+            "row_sha256": "5cd2857c9533ec8e535b002f65d0f1f7c521caa5be3a4459eab65ae89f7d5ea4",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -3740,13 +3757,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 581,
-            "row_sha256": "148ae4858c80671bd97f4917d5223896eb84522eedd09c94cafa8168dcb86d88",
+            "row_sha256": "d6f335a045cafdec31b6d3d8bc1a7d7be58a13f77f368f9261ea35a6bf97de88",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -3784,13 +3801,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 582,
-            "row_sha256": "78b2e6de32d6d15e28d79af7db2ce58a22577e998cd5a5b3df1168a83beb6b10",
+            "row_sha256": "474c21bee0f1c7ff731b901e7bfc0377ec1a4be2d0d56de41337c5a9ecc44f5e",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -3828,13 +3845,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 583,
-            "row_sha256": "274c488ebc1b3a0cb8568374861034e5532b9aca4cd9f676e9b0be2f8f208132",
+            "row_sha256": "8187f536b675f76a2e7001bae848f941c1bd97753012be34ba00124a4024892d",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -3872,9 +3889,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 584,
@@ -3916,13 +3933,13 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 585,
-            "row_sha256": "19b68d3ad2d798ea1398945c4d525c047e784aecd5d5d6308951f80756733b17",
+            "row_sha256": "3549039b48177f798dc717a3eda107542072039ad88251695e6119e9106b7ca2",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -3960,9 +3977,9 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 623,
@@ -4004,13 +4021,321 @@
           "evidence_refs": [
             "docs/tickets/DEFERRALS.md"
           ],
-          "observed_at": "2026-09-27",
-          "recorded_at": "2026-09-27",
-          "source_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
           "reason": "migration anchor: raw cell status preserved verbatim",
           "anchor": {
             "row_line": 624,
             "row_sha256": "04c5f1fa791dbca6c0ba1b0690e29e922e2680f163d75e00e26bfde291726ed4",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P32.16-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P32.16-1:e0",
+      "kind": "P",
+      "owner": "operator",
+      "landing": "GATE-G3",
+      "backlog_home": "BL-058",
+      "item": "the receiver's operating prerequisites: a named moderation owner (`[intake].owner`), a staffed reviewer rotation covering the published SLAs (`[intake].staffed`), operator ratification of the retention schedule (`[intake].retention_*` mirroring `intake_receiver.toml`), provisioned secrets + the receiver/reviewer DB logins' role grants, and an operator-enumerated list of infra identifier-retention exclusions (LB/proxy/monitoring logs, backup rotation)",
+      "unblocked_by": "the operator's packet review (§1 gate rows) + GATE-G3 (D-R10-PUBLISH-1) public-exposure approval",
+      "verify": "`ops/config.toml [intake]` carries `operational=true`, a named owner and `staffed=true` in a reviewed change; the packet's §7 exclusions are enumerated on file; an unauthenticated probe shows the form accepting and a submitted report reaching the loopback queue",
+      "proxy": "`operational=false` + code-enforced `receiver_not_operating` until the gate flips; the packet + honest `/dispute/` copy are committed",
+      "line": 641,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P32.16-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P32.16-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P32.7",
+          "owner": "operator",
+          "landing": "GATE-G3",
+          "backlog_home": "BL-058",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
+          "reason": "migration anchor: raw cell status preserved verbatim",
+          "anchor": {
+            "row_line": 641,
+            "row_sha256": "0c3e33eb32a3e245cd8d11219a4c0f5f3819928016363c5831b66e381d32831b",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P32.16a-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P32.16a-1:e0",
+      "kind": "V",
+      "owner": "engineering",
+      "landing": "P32.16a",
+      "backlog_home": "BL-058",
+      "item": "whole-plan `sqitch revert` fails at `revert/extensions.sql`: `DROP EXTENSION postgis` is refused because `postgis_topology` and `postgis_tiger_geocoder` depend on it (needs CASCADE or an ordered drop) — pre-existing since the base `extensions` change, invisible to `make check`/`make test-db` (deploy/verify only); every later change reverts cleanly (P32.16a`s own revert is green)",
+      "unblocked_by": "a maintainer decision on the repair shape (CASCADE vs ordered drops vs a new change that owns the teardown)",
+      "verify": "`sqitch revert` over a fully deployed container exits 0 (today: `ERROR: cannot drop extension postgis because other objects depend on it` at `revert/extensions.sql:7`)",
+      "proxy": "P32.16a`s own change verified directly: `sqitch deploy`/`verify`/`revert intake_application_bridge` ok on real PG18",
+      "line": 642,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P32.16a-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P32.16a-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P32.7",
+          "owner": "engineering",
+          "landing": "P32.16a",
+          "backlog_home": "BL-058",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
+          "reason": "migration anchor: raw cell status preserved verbatim",
+          "anchor": {
+            "row_line": 642,
+            "row_sha256": "d48699109241370082a5d0078217e1130e2bef7389fc986dbfa303481d795654",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P32.18-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P32.18-1:e0",
+      "kind": "P",
+      "owner": "operator",
+      "landing": "BL-058",
+      "backlog_home": "BL-058",
+      "item": "the bounded live-source RETURN PASS for the OKC dossier: actual byte captures of the six reviewed targets — the OKCPD Flock usage page, the council memo PDF, the Amendment 1 PDF (signature/execution state on real pages), the OSCN 47 O.S. §7-606.1 statutory version, the 6th-edition ops manual §5-118, and the purchasing index route to executed C241032 (edge WAF may refuse — the refusal is recorded) — replacing the committed stand-ins so the dossier's capture digests bind real bytes",
+      "unblocked_by": "HG-03 operator review per target (published-URL ownership screen) + Part VIII preflight; then the same ticket contract re-dispatched with `live_verification=true`",
+      "verify": "per-target green registry/rights basis; captured digests recorded against the reviewed URLs; a rebuilt `sig.dossier-packet/1` whose fact-to-capture ledger binds real captures; measured acquisition under the family/document/protocol caps",
+      "proxy": "the obligation is committed and machine-checkable — `docs/build/reports/p32.18-okc-dossier/LIVE_RETURN_PASS.json` (`sig.dossier-live-return-pass/1`, `prepared_not_executed`): six targets, goals, preconditions, explicit non-goals (no rights flip, no gate completion, no publication); the offline dossier never presents stand-ins as captured bytes",
+      "line": 643,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P32.18-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P32.18-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P32.7",
+          "owner": "operator",
+          "landing": "BL-058",
+          "backlog_home": "BL-058",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
+          "reason": "migration anchor: raw cell status preserved verbatim",
+          "anchor": {
+            "row_line": 643,
+            "row_sha256": "a95fef18af235cb2d902be178cecf6ad5b33e29cd4dccf14325d184bfc4c46ab",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P32.19-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P32.19-1:e0",
+      "kind": "P",
+      "owner": "operator",
+      "landing": "BL-058",
+      "backlog_home": "BL-058",
+      "item": "the bounded live-source RETURN PASS for the Tulsa dossier: actual byte captures of the three registered dossier targets — TPD Policy 113C, TPD Policy 113E and the public camera-integration MOU template — plus the reviewed leads (the TPD Flock page's registration-vs-integration distinction and operation-since date, the policies index's current-version check on the 2023 files, the Commercial Corridor Safety Guide count lead with its date/scope established), replacing the committed stand-ins so the dossier's capture digests bind real bytes",
+      "unblocked_by": "HG-03 operator review per target (published-URL ownership screen) + Part VIII preflight; then the same ticket contract re-dispatched with `live_verification=true`",
+      "verify": "per-target green registry/rights basis; captured digests recorded against the reviewed URLs; a rebuilt `sig.dossier-packet/1` whose fact-to-capture ledger binds real captures; measured acquisition under the family/document/protocol caps",
+      "proxy": "the obligation is committed and machine-checkable — `docs/build/reports/p32.19-tulsa-dossier/LIVE_RETURN_PASS.json` (`sig.dossier-live-return-pass/1`, `prepared_not_executed`): six targets, goals, preconditions, explicit non-goals (no rights flip, no gate completion, no request sent, no publication); the offline dossier never presents stand-ins as captured bytes",
+      "line": 644,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P32.19-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P32.19-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P32.7",
+          "owner": "operator",
+          "landing": "BL-058",
+          "backlog_home": "BL-058",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
+          "reason": "migration anchor: raw cell status preserved verbatim",
+          "anchor": {
+            "row_line": 644,
+            "row_sha256": "926c3f66af83263bbe32325cc24dca8db745b2429e4fabfd7dea3baef5397243",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P32.20-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P32.20-1:e0",
+      "kind": "P",
+      "owner": "operator",
+      "landing": "BL-058",
+      "backlog_home": "BL-058",
+      "item": "the bounded live-source RETURN PASS for the San Diego dossier: actual byte captures of the four registered dossier targets — the 2025 SDPD Annual Surveillance Report (Vigilant section), the City–Ubicquia public-safety agreement (signature/execution state on real pages), the SDPD technology index and the PAB reports index — plus the reviewed leads (the ALPR Program detail page, the index-linked ALPR Use Policy behind its recorded 403, the ~16 MB PAB recommendation PDF over the byte bound, the 2025-12-10 council memorandum + FY27 budget response, and the 2024–2026 network-audit spreadsheet links **metadata-only** — no workbook/XLSX/ZIP/sharedStrings or row-level plate/person/query content ever), replacing the committed stand-ins so the dossier’s capture digests bind real bytes",
+      "unblocked_by": "HG-03 operator review per target (published-URL ownership screen) + Part VIII preflight + the SRC-027 admissibility decision; then the same ticket contract re-dispatched with `live_verification=true`",
+      "verify": "per-target green registry/rights basis; captured digests recorded against the reviewed URLs; a rebuilt `sig.dossier-packet/1` whose fact-to-capture ledger binds real captures; measured acquisition under the family/document/protocol caps; the PAB recommendation fetched under an approved method",
+      "proxy": "the obligation is committed and machine-checkable — `docs/build/reports/p32.20-san-diego-dossier/LIVE_RETURN_PASS.json` (`sig.dossier-live-return-pass/1`, `prepared_not_executed`): nine targets, goals, preconditions, explicit non-goals (no rights flip, no gate completion, no request sent, no publication, no workbook transport); `PART_VIII_PREFLIGHT.json` records the metadata-only SRC-027 basis; the offline dossier never presents stand-ins as captured bytes",
+      "line": 645,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P32.20-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P32.20-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P32.7",
+          "owner": "operator",
+          "landing": "BL-058",
+          "backlog_home": "BL-058",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
+          "reason": "migration anchor: raw cell status preserved verbatim",
+          "anchor": {
+            "row_line": 645,
+            "row_sha256": "4ec207accea8ef570497ced2cba82c13c43793f34be32610d18e4b7121eef5d5",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P32.21-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P32.21-1:e0",
+      "kind": "P",
+      "owner": "operator",
+      "landing": "BL-058",
+      "backlog_home": "BL-058",
+      "item": "the bounded live slices of the two incremental pilot families: **oklahoma-state** — the OMES statewide-contract index + one statewide-contract document (SRC-006) and the DAC UVED program page + the OSCN statute-version document (SRC-007); **california-state-auditor** — the 2019-118 audit index + the agency-survey page (SRC-011); ≤10 approved documents/aggregate rows per family over the existing html_text/pdf_text protocols, so the funnel's pending-live stages gain real captures, extraction, link-support and measured minutes",
+      "unblocked_by": "HG-03 exact-target review per URL (the three rights lanes separately) + municipal-publication review where observed + Part VIII screening (both families are not_assessed); then the same ticket contract re-dispatched with `live_verification=true`",
+      "verify": "per-target green registry/rights basis; captured digests recorded against the reviewed URLs; the funnel's capture/extraction/link stages populated from real captures with measured_minutes; the document/protocol caps verified on the executed slice",
+      "proxy": "the obligation is committed and machine-checkable — `docs/build/reports/p32.21-acquisition-pilot/ACQ_PILOT_RETURN_PASS.json` (`sig.acq-pilot-return-pass/1`, `prepared_not_executed`): two families, six targets, caps, preconditions, explicit non-goals (no rights flip, no gate completion, no request sent, no spend, no publication, no crawler, no workbook/row-level transport); `check_pilot` fails on any fabricated approval ref or live-capture claim",
+      "line": 660,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P32.21-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P32.21-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P32.7",
+          "owner": "operator",
+          "landing": "BL-058",
+          "backlog_home": "BL-058",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
+          "reason": "migration anchor: raw cell status preserved verbatim",
+          "anchor": {
+            "row_line": 660,
+            "row_sha256": "2b403974608ae5ca39de4dc0141d5d0aaa56e9b5908fdc56cb43519a2d6ba04e",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P32.23a-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P32.23a-1:e0",
+      "kind": "P",
+      "owner": "operator",
+      "landing": "P32.23",
+      "backlog_home": "BL-058",
+      "item": "the production release-candidate build + validation: after the P32.22 live pass freezes the hosted `sig.repaired-snapshot/1`, run `sig-ops release-candidate` over the hosted spine to materialize under `provisional-ruleset/1` (or the then-active decided ruleset if the S3 spine has resumed), regenerate the export + staged release namespace, validate `complete`, and emit the production `CANDIDATE_MANIFEST`/`DISCLOSURE`/`ROLLBACK_PACKET` — with `activate()`/`rollback()` still never called and the hosted `latest.json` byte-checked unchanged",
+      "unblocked_by": "the operator's `D-R10-LIVE-1` execution (hosted bounded recovery + snapshot freeze) + the same ticket contract re-dispatched with `live_verification=true`; if the S3 spine has resumed by then, the measured P32.23 decision replaces `status=deferred` in a NEW candidate (never a mutation of this one)",
+      "verify": "`LIVE_RETURN_PASS.json`'s command sequence runs over the hosted DSN; the produced `CANDIDATE_MANIFEST.json` validates (frame check `consistent`, `materialization.plus_zero`, validation `complete`, `pointer_unchanged: true`, `published: false`); the hosted `r/<pub>` namespace exists unpublished and `latest.json` is byte-identical before/after",
+      "proxy": "the obligation is committed and machine-checkable — `docs/build/reports/p32.23a-release-candidate/LIVE_RETURN_PASS.json` (`candidate-return-pass/1`, `prepared_not_executed`): the hosted freeze + build commands, the verification checklist, and the explicit reservations (no publication, no gate completion, no pointer write, no evaluation claim)",
+      "line": 676,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P32.23a-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P32.23a-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P32.7",
+          "owner": "operator",
+          "landing": "P32.23",
+          "backlog_home": "BL-058",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-21",
+          "recorded_at": "2026-10-21",
+          "source_commit": "e4bd612e69952ba564e9123c61dc31f86a5683dc",
+          "reason": "migration anchor: raw cell status preserved verbatim",
+          "anchor": {
+            "row_line": 676,
+            "row_sha256": "13d813630656ca15113162877cad9f2e93f5f0f27e35ccc5a435b9a31c671da3",
             "parser_status": "OPEN",
             "prose_terminal": null,
             "interpretation": "preserved"
@@ -8093,56 +8418,56 @@
           "label": "historical/csv"
         },
         "SIG-TRUST-001": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "db/src/db/assertion.py:1;db/src/db/claim_sink.py:1;db/deploy/claim_assertion_bindings.sql:1;docs/build/reports/p32.2-assertions/FIELD_MAP.md:1",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-TRUST-002": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "db/src/db/assertion.py:1;db/src/db/claim_sink.py:1;db/deploy/claim_assertion_bindings.sql:1;docs/build/reports/p32.2-assertions/FIELD_MAP.md:1",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-TRUST-003": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "db/src/db/organization_roles.py:1;resolution/src/resolution/partner_identity.py:1;tests/db/test_organization_roles.py:1",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-TRUST-004": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "resolution/src/resolution/partner_identity.py:1;resolution/src/resolution/partner_name_audit.py:1;db/deploy/partner_org_scoped_identity_key.sql:1;reconcile/src/reconcile/count_scope.py:1",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-TRUST-005": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "db/src/db/occurrences.py:1;db/src/db/temporal.py:1;db/deploy/shared_temporal_contract.sql:1;docs/build/reports/p32.4-watermark/RESULTS.md:1",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-TRUST-006": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "policy/src/policy/eligibility.py:1;db/src/db/dispositions.py:1;db/deploy/publication_dispositions.sql:1;db/deploy/disposition_decided_at_authority.sql:1;api/src/api/store_pg.py:1;exports/src/exports/shaping.py:1",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-TRUST-007": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "db/src/db/evidence_audit.py:1;ops/src/ops/evidence_audit.py:1;ops/src/ops/recovery_plan.py:1;docs/build/reports/p32.6-legacy-evidence/audit_report.json:1",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-TRUST-008": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "db/src/db/recovery_apply.py:1;ops/src/ops/recovery_apply.py:1;db/deploy/recovery_apply.sql:1;docs/build/reports/p32.22-bounded-recovery/APPLY_REPORT.json:1",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-TRUST-009": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "ops/src/ops/release_publish_verify.py:1;ops/src/ops/cli.py:1;exports/src/exports/release.py:1;docs/build/reports/p32.25-accepted-release-verification/PUBLISH_PROOF.json:1",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -8177,14 +8502,14 @@
           "label": "historical/csv"
         },
         "SIG-EVAL-003": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "resolution/src/resolution/evaluator.py:1;resolution/src/resolution/data/eval_confidence.toml:1",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-EVAL-004": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "resolution/src/resolution/evaluator.py:1;resolution/src/resolution/data/eval_confidence.toml:1",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -8213,98 +8538,98 @@
           "label": "historical/csv"
         },
         "SIG-ACQ-003": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "connectors/src/connectors/dossier_documents.py:1;connectors/src/connectors/data/dossier_field_crosswalk.toml:1;connectors/src/connectors/data/dossier_documents_vocab.toml:1;connectors/src/connectors/data/live_targets.toml:1;tests/connectors/fixtures/dossier/SOURCES.md:1",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-ACQ-004": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "tasks/src/tasks/acquisition_pilot.py:1;docs/build/reports/p32.21-acquisition-pilot/READOUT.md:1;docs/build/reports/p32.21-acquisition-pilot/BATCH.json:1;docs/build/reports/p32.21-acquisition-pilot/ACQ_PILOT_RETURN_PASS.json:1",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-FIND-001": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "exports/src/exports/release.py:1;exports/src/exports/published_record.py:1;exports/src/exports/release_pages.py:1;exports/src/exports/spine_export.py:1;ops/src/ops/release_serving.py:1;ops/web/nginx.conf:112",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-FIND-002": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "exports/src/exports/release.py:1;exports/src/exports/published_record.py:1;exports/src/exports/release_pages.py:1;exports/src/exports/spine_export.py:1;ops/src/ops/release_serving.py:1;ops/web/nginx.conf:112",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-FIND-003": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "exports/src/exports/search_index.py:1;exports/src/exports/release.py:1;exports/src/exports/release_pages.py:1;api/src/api/release_search.py:1;api/src/api/app.py:1;web/src/pages/search.astro:1",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-FIND-004": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "web/src/lib/workspace-state.ts:1;web/src/islands/workspace.ts:1;web/src/islands/SearchIsland.tsx:1;web/src/islands/MapIsland.tsx:1;web/src/islands/NetworkIsland.tsx:1;web/src/components/ViewSwitch.astro:1;web/src/pages/search.astro:1;web/src/pages/map.astro:1;web/src/pages/network.astro:1;web/src/lib/network.ts:1;web/src/lib/map.ts:1",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-FIND-005": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "web/src/lib/network.ts:1;exports/src/exports/spine_export.py:1;web/src/islands/NetworkIsland.tsx:1;web/src/pages/network.astro:1;web/src/islands/MapIsland.tsx:1;web/lighthouserc.json:1;web/tests/e2e/island-budgets.json:1;web/scripts/measure-island-budgets.mjs:1",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-FIND-006": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "policy/src/policy/intake.py:1;policy/src/policy/data/intake_receiver.toml:1;db/deploy/intake_storage.sql:1;db/src/db/intake.py:1;api/src/api/intake.py:1;api/src/api/intake_moderation.py:1;api/src/api/cli.py:1;api/src/api/curation.py:1;ops/config.toml:1;web/src/lib/corrections.ts:1;web/src/pages/dispute.astro:1",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-FIND-007": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "ops/src/ops/journey_verify.py:1;ops/src/ops/cli.py:1;docs/build/reports/p32.24-investigation-journey-verification/JOURNEY_PORTFOLIO.json:1",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-DOS-001": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "exports/src/exports/research_dossier.py:1;web/src/pages/research-dossier/index.astro:1",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-DOS-002": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "exports/src/exports/research_dossier.py:1",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-DOS-003": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "ops/src/ops/dossier_packet.py:1;ops/src/ops/seed_correction.py:1;exports/src/exports/research_dossier.py:1;connectors/src/connectors/dossier_documents.py:1",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-DOS-004": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "ops/src/ops/tulsa_dossier_packet.py:1;exports/src/exports/research_dossier.py:1;connectors/src/connectors/dossier_documents.py:1",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-DOS-005": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "ops/src/ops/san_diego_dossier_packet.py:1;exports/src/exports/research_dossier.py:1;connectors/src/connectors/dossier_documents.py:1",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-TRUST-010": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "ops/src/ops/release_candidate.py:1;exports/src/exports/release.py:1;exports/src/exports/spine_export.py:1",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-FIND-008": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "db/deploy/intake_application_bridge.sql:1;db/src/db/intake_apply.py:1;policy/src/policy/intake.py:1;api/src/api/intake_moderation.py:1",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -8595,6 +8920,93 @@
         "reason": "the cell records DONE 2026-09-26 — all eight accountability-breadth sources landed: P31.12 wired+landed the first four and P31.13 the remaining four under digest-pinned hosted jobs (+0 re-runs, rights_decision rows recorded, materialize +0). Recorded interpretation: terminal DONE."
       },
       {
+        "obligation": "D-P30.1-2",
+        "event_id": "D-P30.1-2:e0",
+        "interpretation": "reconciled",
+        "from": "DONE",
+        "to": "DONE",
+        "observed_at": "2026-09-25",
+        "evidence_refs": [
+          "docs/tickets/DEFERRALS.md",
+          "docs/build/runs/P31.4.md",
+          "tests/connectors/test_incremental_restart.py",
+          "tests/db/test_resume_pg.py"
+        ],
+        "reason": "the cell records DONE 2026-09-25 (P31.4 / HARDEN.4 / ADR-111) — memory-bounded resumable ingest with persisted per-target captures (ingest_run_capture + hosted GCS capture store); hosted kill/resume produced the identical output set (+0, same capture digests). Recorded interpretation: terminal DONE."
+      },
+      {
+        "obligation": "D-P30.2a-1",
+        "event_id": "D-P30.2a-1:e0",
+        "interpretation": "reconciled",
+        "from": "DONE",
+        "to": "DONE",
+        "observed_at": "2026-09-25",
+        "evidence_refs": [
+          "docs/tickets/DEFERRALS.md",
+          "docs/build/runs/P31.8.md",
+          "docs/build/reports/p31.8-hosted/predicate_inventory_after.json"
+        ],
+        "reason": "the cell records DONE 2026-09-25 (P31.8 completing P31.5's family half; ADR-112) — all 62 unregistered measured predicates registered, 180x17 genre/directness assessed, hosted materialize +13,131 envelopes then +0, after-inventory 2,623,647/2,623,647 links admissible. Recorded interpretation: terminal DONE."
+      },
+      {
+        "obligation": "D-P30.2a-2",
+        "event_id": "D-P30.2a-2:e0",
+        "interpretation": "reconciled",
+        "from": "DONE",
+        "to": "DONE",
+        "observed_at": "2026-09-25",
+        "evidence_refs": [
+          "docs/tickets/DEFERRALS.md",
+          "docs/build/runs/P31.7.md",
+          "docs/build/reports/p31.7-hosted/VERIFICATION.md",
+          "tests/db/test_resightings.py"
+        ],
+        "reason": "the cell records DONE 2026-09-25 (P31.7; ADR-114 revisit trigger recorded) — uncapped re-sighting recording and supersession landed; hosted +232,096 links at 43% of the 15 GB disk projection, under the 50% trigger. Recorded interpretation: terminal DONE."
+      },
+      {
+        "obligation": "D-P30.3-1",
+        "event_id": "D-P30.3-1:e0",
+        "interpretation": "reconciled",
+        "from": "DONE",
+        "to": "DONE",
+        "observed_at": "2026-09-27",
+        "evidence_refs": [
+          "docs/tickets/DEFERRALS.md",
+          "docs/build/runs/P31.2.md",
+          "docs/build/reports/REPUBLISH_LIVE_2026-09-27.md"
+        ],
+        "reason": "the cell records DONE 2026-09-27 (P31.16 publish completing P31.2's engine half; ADR-109) — /data-freshness/ serves real last_successful_run ISO dates for all 178 sources from the appended ingest_run_completion spine. Recorded interpretation: terminal DONE."
+      },
+      {
+        "obligation": "D-P30.3-2",
+        "event_id": "D-P30.3-2:e0",
+        "interpretation": "reconciled",
+        "from": "DONE",
+        "to": "DONE",
+        "observed_at": "2026-09-27",
+        "evidence_refs": [
+          "docs/tickets/DEFERRALS.md",
+          "docs/build/runs/P31.15.md",
+          "docs/build/reports/REPUBLISH_LIVE_2026-09-27.md",
+          "docs/build/readouts/ACCEPT-R8.md"
+        ],
+        "reason": "the cell records DONE 2026-09-27 (P31.16 publish completing P31.15's engineering half; ADR-118) — the live map draws from per-compartment pmtiles sources, /map/points.json is 404 on both origins, R8-1 recorded CLOSED. Recorded interpretation: terminal DONE."
+      },
+      {
+        "obligation": "D-P30.3-3",
+        "event_id": "D-P30.3-3:e0",
+        "interpretation": "reconciled",
+        "from": "DONE",
+        "to": "DONE",
+        "observed_at": "2026-09-27",
+        "evidence_refs": [
+          "docs/tickets/DEFERRALS.md",
+          "docs/build/runs/P31.14.md",
+          "docs/build/reports/REPUBLISH_LIVE_2026-09-27.md"
+        ],
+        "reason": "the cell records DONE 2026-09-27 (P31.16 publish completing P31.14's engineering half; ADR-117) — the web/analytics family is live licence-separated and the public surfaces render real values with no not-recorded placeholders. Recorded interpretation: terminal DONE."
+      },
+      {
         "obligation": "D-P31.1-1",
         "event_id": "D-P31.1-1:e0",
         "interpretation": "reconciled",
@@ -8610,6 +9022,19 @@
         "reason": "the cell records DONE 2026-10-11 (P32.4 / ADR-123) — _spine_watermark now reads the trigger-maintained spine_watermark table (bounded by construction); invalidation verified for all three classes on real PG18; the p31-scale-local fixture met the named budget. Composed/hosted latency evidence is reserved to the P32.24/P33.2 e2e rows, which this closure explicitly does not claim. Recorded interpretation: DONE."
       },
       {
+        "obligation": "D-P31.1-2",
+        "event_id": "D-P31.1-2:e0",
+        "interpretation": "reconciled",
+        "from": "DONE",
+        "to": "DONE",
+        "observed_at": "2026-09-25",
+        "evidence_refs": [
+          "docs/tickets/DEFERRALS.md",
+          "docs/build/runs/P31.4.md"
+        ],
+        "reason": "the cell records DONE 2026-09-25 (P31.4) — every sig-api job rolled by pinned digest (never :latest, before/after recorded); sig-probe swept 8/8 ok including sig-api-health. Recorded interpretation: terminal DONE."
+      },
+      {
         "obligation": "D-P31.1-3",
         "event_id": "D-P31.1-3:e0",
         "interpretation": "reconciled",
@@ -8623,6 +9048,19 @@
           "tests/api/test_api_unregistered_predicates.py"
         ],
         "reason": "the cell records DONE 2026-09-28 (P32.2, route half; ADR-121 §6) — the entity route resolves each predicate independently; unknown predicates land on an explicit unregistered_predicates field while registered facts flow through the eligibility policy. Recorded interpretation: DONE; composed/hosted verification stays P33.2's."
+      },
+      {
+        "obligation": "D-P31.3-1",
+        "event_id": "D-P31.3-1:e0",
+        "interpretation": "reconciled",
+        "from": "DONE",
+        "to": "DONE",
+        "observed_at": "2026-09-25",
+        "evidence_refs": [
+          "docs/tickets/DEFERRALS.md",
+          "docs/build/runs/P31.4.md"
+        ],
+        "reason": "the cell records DONE 2026-09-25 (P31.4; ADR-111) — sig-sink-bench on the rolled image through the live gate: 179,882 claims/min, re-run +0, 0 duplicate digests; the later OSM-replay observation point is tracked separately under OPEN D-P31.4-1. Recorded interpretation: terminal DONE."
       },
       {
         "obligation": "D-P31.5-2",
@@ -8694,10 +9132,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "e5b0568a8b2adb191765fee113da2d2ef3f7dfe9e22fed92d0e2645cae8ebf02",
+  "manifest_sha256": "781b169f95d75b8e374c382bd4e28322e30497f6bb40202f29c37c60b117c5b0",
   "current_md": {
-    "lines": 117,
-    "bytes": 14219,
+    "lines": 116,
+    "bytes": 14079,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": []
   }

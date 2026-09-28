@@ -66,7 +66,16 @@ DEFERRAL_CELL_RE = re.compile(r"^\|\s*([Dd]-[^|\s]*)\s*\|")
 # table row, not a new obligation; the referenced id must exist.
 DEFERRAL_XREF_RE = re.compile(r"^\|\s*`(D-[A-Za-z0-9._-]+)`\s*\|")
 BL_HOME_RE = re.compile(r"BL-\d{3}")
-DATED_TERMINAL_RE = re.compile(r"\b(DONE|WONTFIX|ACCEPTED-SKELETON)\s+20\d\d-")
+DATED_TERMINAL_RE = re.compile(
+    r"\b(DONE|WONTFIX|ACCEPTED-SKELETON)\s+20\d\d-"
+    # P33.1: the same dated-terminal class written as `P31.x (2026-09-25): DONE` —
+    # eight Round-9 rows recorded verified DONEs inside an owed-leading cell and
+    # sailed through both this audit and obligation_events.parse_obligation_rows
+    # as clean OPEN (the parenthesised date precedes the status word). Match the
+    # `(YYYY-MM-DD): TERMINAL` shape too so the word order cannot hide the
+    # disagreement. obligation_events.py reuses this compiled pattern.
+    r"|\(20\d\d-\d\d-\d\d\)\s*:\s*\*{0,2}\s*(DONE|WONTFIX|ACCEPTED-SKELETON)\b"
+)
 
 # Ticket ids that can appear in a `Depends on:` line. `D-*`/`BL-*`/`HG-*`/`GL-*`/
 # `ADR-*`/`SIG-*`/`RISK-*` tokens are stripped first so `D-FEDERAL.1-1` cannot be
