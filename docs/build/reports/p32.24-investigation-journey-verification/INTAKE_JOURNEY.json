@@ -1,0 +1,62 @@
+{
+  "application_id": "01a0e5dd-e0ec-7b70-ba77-e1249fb555aa",
+  "dsn": "localhost:63213/sig",
+  "publication_id": "p-81f1986aac5cb18b29f2dae0458f74d8b639f6efc1a9de35abc38167b126d2dd",
+  "receipt_id": "rct-028d03312ece5e4687e04f425b5d283b",
+  "record_key": "sig_graph:deployment:ent-acc-dep-00",
+  "report_id": "81daa8b8-d442-5526-95d2-64ae5ea1cd39",
+  "schema": "sig.journey-intake-proof/1",
+  "steps": [
+    {
+      "detail": "receipt rct-028d03312ece5e4687e04f425b5d283b committed; public state=received",
+      "ok": true,
+      "step": "submit_durable"
+    },
+    {
+      "detail": "fresh-connection state=received",
+      "ok": true,
+      "step": "survives_restart"
+    },
+    {
+      "detail": "queue rows=1; receipt visible=True",
+      "ok": true,
+      "step": "moderation_queue"
+    },
+    {
+      "detail": "public lifecycle state after approval=decided",
+      "ok": true,
+      "step": "reviewed"
+    },
+    {
+      "detail": "application_id=01a0e5dd-e0ec-7b70-ba77-e1249fb555aa; outcome=correct; result_claim_id=01a0e5dd-e0e9-7559-950d-6fce4ead005f \u2014 one \u00a716.6 close+revises pair under the approving curator, in one txn with the application receipt + the applied event",
+      "ok": true,
+      "step": "applied_canonical"
+    },
+    {
+      "detail": "retry reconciled=True to the same application receipt \u2014 no second canonical write",
+      "ok": true,
+      "step": "exactly_once"
+    },
+    {
+      "detail": "published event links publication_id=p-81f1986aac5cb18b29f2dae0458f74d8b639f6efc1a9de35abc38167b126d2dd + correction_ref=01a0e5dd-e0e9-7559-950d-6fce4ead005f",
+      "ok": true,
+      "step": "published_linkage"
+    },
+    {
+      "detail": "application row outcome=correct; operation_id=op-91e953a2-3e6c-543d-ab3b-549dc8a1282e",
+      "ok": true,
+      "step": "distinct_states"
+    },
+    {
+      "detail": "public lifecycle after publish=resolved \u2014 received/under_review/decided/applied/published stayed visibly distinct",
+      "ok": true,
+      "step": "resolved_state"
+    },
+    {
+      "detail": "receiver-role canonical writes refused live: ['InsufficientPrivilege', 'InsufficientPrivilege', 'InsufficientPrivilege']",
+      "ok": true,
+      "step": "receiver_no_fact_write"
+    }
+  ],
+  "target_claim_id": "01a0e5dd-defb-7c2d-b720-793f80cdae3e"
+}

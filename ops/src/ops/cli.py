@@ -936,6 +936,77 @@ def build_parser() -> argparse.ArgumentParser:
         help="the candidate packet directory (export/, release/, manifest, "
         "disclosure, rollback packet, return-pass)",
     )
+
+    jv = sub.add_parser(
+        "journey-verify",
+        help="P32.24 (SIG-FIND-007, ADR-143): run the public-investigation "
+        "acceptance portfolio — verifies the P32.23a candidate packet's "
+        "digests/identity/deferral posture (read-only), then runs the three "
+        "documented journeys over ONE staged acceptance release it builds + "
+        "stages itself (never the published registry): A discover-inspect-"
+        "trace across three dossiers, B typed relationship traversal, the "
+        "withdrawal barrier, and the no-JS/print/citation walkthroughs. "
+        "Offline only; the intake journey is Docker-gated (journey-intake / "
+        "tests/db) and marked verified_by_test here. Exit 1 on any material "
+        "failure — the report names an owner + landing per failed check",
+    )
+    jv.add_argument(
+        "--candidate",
+        default="docs/build/reports/p32.23a-release-candidate",
+        help="the committed P32.23a candidate packet directory (default: the landed packet)",
+    )
+    jv.add_argument(
+        "--out",
+        required=True,
+        help="the acceptance report directory — JOURNEY_PORTFOLIO.json/.md, "
+        "the corpus export + staged release + staged registry evidence",
+    )
+    jv.add_argument(
+        "--intake-proof",
+        default=None,
+        help="a sig.journey-intake-proof/1 (from journey-intake) to fold into "
+        "the journey-C checks; absent → they stay honestly verified_by_test",
+    )
+    jv.add_argument(
+        "--renderer",
+        default="p32.24",
+        help="the recorded renderer revision (default: p32.24)",
+    )
+
+    ji = sub.add_parser(
+        "journey-intake",
+        help="P32.24 (SIG-FIND-007, journey C): execute the durable "
+        "receipt→moderation→canonical-correction journey end-to-end on a REAL "
+        "PG spine — submit, restart-survival, authorized moderation, the "
+        "exactly-once correct apply, publish linkage, and a live "
+        "receiver-role canonical-write refusal. Emits "
+        "sig.journey-intake-proof/1 JSON",
+    )
+    ji.add_argument(
+        "--dsn",
+        default=None,
+        help="writable PostgreSQL DSN (else SIG_STAGING_DSN/local) — a TEST spine",
+    )
+    ji.add_argument(
+        "--publication",
+        default=None,
+        help="the immutable publication id the report cites (required)",
+    )
+    ji.add_argument(
+        "--record",
+        default=None,
+        help="the cited record_key (default: the acceptance corpus record)",
+    )
+    ji.add_argument(
+        "--key",
+        default=None,
+        help="deterministic report key (default: a fresh nonce)",
+    )
+    ji.add_argument(
+        "--out",
+        default=None,
+        help="write the proof JSON here (default: stdout)",
+    )
     return parser
 
 
@@ -2491,11 +2562,6 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.command == "up":
         return _cmd_up(args)
-    """Run the `ops` CLI. Returns a process exit code."""
-    parser = build_parser()
-    args = parser.parse_args(argv)
-    if args.command == "up":
-        return _cmd_up(args)
     if args.command == "status":
         return _cmd_status(args)
     if args.command == "down":
@@ -2560,6 +2626,10 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_release_candidate(args)
     if args.command == "release-serve":
         return _cmd_release_serve(args)
+    if args.command == "journey-verify":
+        return _cmd_journey_verify(args)
+    if args.command == "journey-intake":
+        return _cmd_journey_intake(args)
     parser.print_help()
     return 0
 
@@ -2572,3 +2642,56 @@ def _cmd_release_serve(args: argparse.Namespace) -> int:
     if args.serve_command == "check":
         return release_serving.main_check(args.registry, args.route)
     return 2
+
+
+def _cmd_journey_verify(args: argparse.Namespace) -> int:
+    from . import journey_verify
+
+    portfolio = journey_verify.run_portfolio(
+        candidate_dir=args.candidate,
+        out_dir=args.out,
+        intake_proof=args.intake_proof,
+        renderer_revision=args.renderer,
+    )
+    summary = portfolio["summary"]
+    counts = summary["counts"]
+    print(
+        f"sig-ops journey-verify: verdict={portfolio['verdict']} "
+        f"(checks={summary['total']}: {counts['pass']} pass, "
+        f"{counts['verified_by_test']} verified-by-test, "
+        f"{counts['deferred']} deferred, {counts['not_applicable']} n/a, "
+        f"{counts['fail']} fail)"
+    )
+    for check in portfolio["checks"]:
+        if check["status"] == "fail":
+            print(
+                f"  FAIL {check['id']}: {check['detail']}\n"
+                f"       owner={check['owner']} landing={check['landing']}"
+            )
+    return 0 if portfolio["verdict"] == "pass" else 1
+
+
+def _cmd_journey_intake(args: argparse.Namespace) -> int:
+    from . import journey_verify
+
+    if not args.publication:
+        print("journey-intake: --publication is required (the cited release id)", file=sys.stderr)
+        return 2
+    proof = journey_verify.run_intake_journey(
+        dsn=args.dsn or default_dsn(),
+        publication_id=args.publication,
+        record_key_value=args.record,
+        report_key=args.key,
+    )
+    body = json.dumps(proof, indent=2, sort_keys=True, default=str)
+    if args.out:
+        out = Path(args.out)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(body + "\n")
+        print(f"sig-ops journey-intake: proof at {out}")
+    else:
+        print(body)
+    failed = [s for s in proof["steps"] if not s.get("ok")]
+    for step in failed:
+        print(f"  FAIL {step['step']}: {step['detail']}", file=sys.stderr)
+    return 0 if not failed else 1

@@ -147,6 +147,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-140](ADR-140-acquisition-pilot-batch-selection-funnel-measurement-and-gate-packets.md) | — | — | — |
 | [ADR-141](ADR-141-bounded-recovery-apply-exactly-once-receipts-and-rematerialization.md) | — | — | — |
 | [ADR-142](ADR-142-release-candidate-identity-deferred-evaluation-and-pointer-immutability.md) | — | — | — |
+| [ADR-143](ADR-143-investigation-journey-acceptance-portfolio-evidence-classes-and-honest-gaps.md) | — | — | — |
 
 ## Notes
 
