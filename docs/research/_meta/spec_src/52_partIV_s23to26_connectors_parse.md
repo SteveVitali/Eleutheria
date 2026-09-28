@@ -209,10 +209,14 @@ Such data MUST be ingested, if at all, as `R3` claims **about the upstream's con
 upstream named as the asserting party and its inference method recorded — never as `R1`/`R2` claims
 about the agency. Where SIG needs the primary record, it MUST obtain it by records request.
 
-**SIG-INGEST-046b (MUST).** A `robots.txt` disallow MUST be honoured **even where the data behind it
-is technically reachable**. That project's exports exist, but its `robots.txt` disallows the API
-path serving them. Reachability is not permission (§26 rule 2). The correct action is to **ask** —
-which is Stage-0 outreach, and which the succession offer (SIG-CONTRIB-013) makes worth answering.
+**SIG-INGEST-046b (MUST).** A `robots.txt` disallow MUST be **recorded** even where the data behind
+it is technically reachable — never silently bypassed. That project's exports exist, but its
+`robots.txt` disallows the API path serving them. Reachability is not permission (§26 rule 2):
+under ADR-088 a fetch that proceeds despite the non-grant verdict carries the `robots_disregarded`
+provenance marker, and the separate affirmative rights reservation is governed by SIG-INGEST-046c
+and the fail-closed ingestion gate (HG-03) — a `robots_disregarded` fetch is never a licence or an
+ingestion clearance. The preferred action remains to **ask** — Stage-0 outreach, which the
+succession offer (SIG-CONTRIB-013) makes worth answering.
 
 **SIG-INGEST-046c (MUST).** An **affirmative machine-readable rights reservation** MUST be honoured
 as a refusal and recorded on the rights record. One ecosystem project combines
@@ -405,10 +409,15 @@ queues, it does not fail, and no claim is emitted with a lower evidentiary stand
 connector. Its operative rules:
 
 1. **Identify.** A descriptive UA with a contact URL and an explanation page. No spoofing.
-2. **Honor `robots.txt`**, including AI-crawler directives and content-signal headers. Where
-   robots.txt is *unavailable* — connection failure, redirect exhaustion, 5xx or 429 — permission
-   is **not granted** (SIG-INGEST-012); a 4xx answer means the host publishes no policy and access
-   is unrestricted (RFC 9309 §2.3.1.4, ADR-087).
+2. **Probe and record `robots.txt`**, including AI-crawler directives and content-signal headers.
+   The per-host verdict MUST be classified per RFC 9309 §2.3.1.4 (`retrieved` / `no_policy_4xx` /
+   `unretrievable`) and recorded on the fetch record (SIG-INGEST-012, ADR-087). Under the
+   operator's GL-GATE-08 disposition (ADR-088) a `disallowed` or `unretrievable` verdict does not
+   gate the fetch — it is marked `robots_disregarded` so the ignored refusal is first-class
+   provenance, never silent. Documented, allow-listed API endpoints run under ADR-083's API mode
+   (robots not applied to the named documented endpoint; rate-limit and no-circumvention still
+   apply). The binding access control is the fail-closed rights gate (`ingestion_permitted`,
+   HG-03), which robots does not replace; rules 3–4 below stand unchanged.
 3. **Rate-limit conservatively**, per host, with backoff. Never burden a small civic host.
 4. **Never circumvent access controls** — no authentication bypass, no paywall evasion, no
    challenge-solving, no proxy rotation or human-mimicking to defeat bot management.

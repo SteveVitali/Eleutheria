@@ -167,3 +167,36 @@ New ids appended to their prefix sequences (never reused, never renumbered — �
 | N-02 | `docs/adr/README.md` index gained the missing **ADR-056** and **ADR-057** rows | The index now lists every ADR file |
 | N-03 | §52 Phase-10 acceptance criterion "All **32** task types" → "All **34** task types" | Aligns Part X with the §33.2 catalog (34 rows) and ADR-040; the 2026-08-26 manifest note now matches the spec text |
 
+
+## G.6 Round-10 landed-design reconciliation (P33.5, 2026-09-28, ADR-145)
+
+The Round-10 tail audited the canonical text against the landed system (ADR-120…144 plus the
+standing record through ACCEPT-R10). Nothing here removes an obligation; every item either aligns
+the text to an already-landed ADR or records a dated state. The landed ADR bodies and the
+P20.2 reconciliation history above are unchanged.
+
+### G.6.1 Amendments applied to `spec_src`
+
+| # | Section | Change | Authorising ADR |
+|---|---|---|---|
+| R10-A1 | §21.5 (SIG-INGEST-012) | Robots verdicts are probed, classified per RFC 9309 §2.3.1.4 and recorded on every fetch; a `disallowed`/`unretrievable` verdict does not refuse — the fetch is stamped `robots_disregarded` (the operator's GL-GATE-08 disposition). The fail-closed rights gate (`ingestion_permitted`, HG-03) is untouched; challenges stay prohibited | ADR-088 (keeps ADR-087) |
+| R10-A2 | §26 rule 2 (SIG-INGEST-036) | "Honor robots.txt" → the probe-and-record posture above; the documented-API allow-list mode (previously only in the ADR register) is written into the policy text | ADR-088, ADR-083 |
+| R10-A3 | §23.7 (SIG-INGEST-046b) | The upstream-specialist robots disallow is a **recorded** verdict, not an enforced refusal; the affirmative-rights-reservation duty (SIG-INGEST-046c) and ask-first posture stand | ADR-088 |
+| R10-A4 | §19.5 (SIG-GEO-012) | PMTiles archives are per-compartment and produced by the pinned tippecanoe build **or** the deterministic pure-Python v3 fallback — not "by tippecanoe" alone | ADR-067, ADR-118 |
+| R10-A5 | §37.2 (SIG-API-005) | Release-namespaced reads bind the as-of pair structurally (the immutable `r/<publication>` pin); legacy `as_of_*` selectors resolve via `sig.compat-index/1` or fail honestly | ADR-132, ADR-133, ADR-144 |
+| R10-A6 | §55.1, §55.8 (SIG-TRUST-009, SIG-TRUST-010), §55.9 | The dated landed-status record: wholesale S3-spine deferral (2026-10-19 dispatch amendment), provisional-basis candidate with `evaluation.status=deferred`, shadow-only evaluator, non-operational intake, GATE-G3's reduced-scope signature, ACCEPT-R10 — all as recorded obligations, not completions | ADR-142, ADR-144 |
+
+### G.6.2 Recorded deviations where the requirement stands
+
+These were audited and deliberately **not** amended — the normative text remains the bar and the
+deviation is an operated-state disposition recorded elsewhere:
+
+| Item | Why no spec change |
+|---|---|
+| `SIG-PUB-008` two-reviewer concurrence | The requirement stands; the sole-maintainer posture is a recorded operator waiver (`D-P21.4-2`, `PUBLICATION_CHECKLIST.md` — WAIVED-BY-OPERATOR). The published surface makes no two-reviewer claim |
+| `SIG-EVAL-001/002` (PARTIAL) and `SIG-EVAL-005/006/007`, `SIG-MEM-004` (MISSING) | Honestly-recorded capstone verdicts over deferred/scheduled owners — obligations, not stale text (`D-R10-HUMAN-1`, `D-R6.1-EVAL`; P33.8) |
+| Deferred/gated live halves (hosted recovery, production candidate/publication, source rights, intake operation, human labels, usability sessions) | Owed work with owners and return passes in `DEFERRALS.md`; the spec never claims them done |
+| P32.10a (inserted ticket) and P33.1's in-ticket repairs | Recorded deviations with no spec-requirement change (manifest, BUILD_INDEX, `CAPSTONE_CLOSURE.md` §(f4)) |
+
+No new requirement id was minted (no new requirement ownership — the count stays **715**);
+requirement verdicts and their dated historical assessments are untouched.
