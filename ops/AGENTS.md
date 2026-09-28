@@ -12,8 +12,9 @@ adds to the root `AGENTS.md`. See `ops/README.md` for the operator runbook.
 
 | File | Lines | Purpose |
 |---|---|---|
-| `ops/src/ops/cli.py` | ~500 | `sig-ops` (`up`, `status`, `down`, `seed`, egress/swh sub-commands) |
-| `ops/src/ops/seed.py` | ~160 | load a jurisdiction slice into the spine via `db.claim_sink.PgClaimSink` |
+| `ops/src/ops/cli.py` | ~2820 | `sig-ops` — the runtime control surface: `up`/`status`/`down`/`seed`, plus the Round-10 verb families (`dossier-packet*`, `recovery-*`, `release-candidate`, `release-serve`, `release-publish`, `journey-verify`, `composed-verify`, `journey-intake`, probes, cadence, alerts, evidence-audit, egress/swh) |
+| `ops/src/ops/recovery_apply.py` · `release_candidate.py` · `release_publish_verify.py` · `composed_verify.py` · `journey_verify.py` | ~n/a | the Round-10 composed machinery — bounded recovery apply, the release-candidate build, publish verification, the 20/20 composed-verification fixture run, and the intake journey harness |
+| `ops/src/ops/seed.py` | ~430 | load a jurisdiction slice into the spine via `db.claim_sink.PgClaimSink` |
 | `ops/src/ops/egress.py` | ~120 | egress accounting / `egress-report` |
 | `ops/src/ops/degraded.py` | ~80 | the degraded / keepalive posture |
 | `ops/src/ops/alerts.py` | ~270 | the notifier seam + recorded-alert ledger (OBS.1, ADR-077) |
@@ -43,6 +44,10 @@ adds to the root `AGENTS.md`. See `ops/README.md` for the operator runbook.
 2. **`seed` is append-only.** It loads slice claims through `PgClaimSink` (insert-only); it never
    updates or deletes spine rows.
 3. **Runtime, not tests.** `sig-ops` is for standing the system up; don't route test logic through it.
+4. **The Round-10 release/candidate/intake verbs are offline or staged, never production.** The
+   composed-verification and dossier-packet runs are fixture-bound by design; the live halves are
+   `prepared_not_executed` RETURN PASS packets (`D-R10-LIVE-1`, `D-P32.23a-1`, `D-R10-PUBLISH-1`,
+   `D-P32.16-1`). A fixture green is never a live/hosted/public pass — don't claim one.
 
 ## Terminology
 

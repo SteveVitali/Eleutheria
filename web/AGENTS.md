@@ -4,15 +4,16 @@
 
 The SIG public web surface: **Astro, static-first, zero-JS-by-default** (SIG-UI-036/037). It consumes
 export artifacts and the epistemic visual language; this is the **only** package where TypeScript is
-allowed (SIG-ENG-010). Node `>=20` (`web/package.json` `engines`). Nearest-file-wins: this file adds
-to the root `AGENTS.md`.
+allowed (SIG-ENG-010). Node `>=22.12.0` (`web/package.json` `engines`, raised by P27.9 for the
+island toolchain). Nearest-file-wins: this file adds to the root `AGENTS.md`.
 
 ## Key Files
 
 | File | Lines | Purpose |
 |---|---|---|
 | `web/package.json` | ~40 | npm scripts + the pinned toolchain (astro, playwright, lhci) |
-| `web/lighthouserc.json` | ~50 | the performance/zero-JS budget matrix (public vs `/curate/**`) |
+| `web/lighthouserc.json` | ~100 | the performance budget matrix: public zero-JS content block, `/curate/**` (ADR-068), the three public islands `/map/`/`/network/`/`/search/` (ADR-097) with per-island script/total ceilings (P32.15, ADR-134) |
+| `web/src/islands/` | ~n/a | the three public React islands (`MapIsland`, `NetworkIsland`, `SearchIsland`), each `client:only` over a preserved no-JS fallback (SIG-UI-050) |
 | `web/src/lib/data.ts` | ~n/a | the data layer: `SIG_DATA_SOURCE=fixtures\|export` switch |
 | `web/scripts/check-licenses.mjs` | ~n/a | the OSI-only dependency licence gate |
 
@@ -36,10 +37,14 @@ Run from repo root with `npm --prefix web run <script>` (or from `web/` with `np
 
 ## Critical Gotchas
 
-1. **Zero-JS budget is a hard contract.** Public pages must render with **no `<script>` tags** and
-   stay within budget; `web/lighthouserc.json` asserts script size `0` and total ≤ 150 KB, and
-   `test:e2e` asserts the no-JS baseline. Adding client JS to a public page fails
-   `test:e2e`/`check:perf`. The `/curate/**` island allowance is the only exception (ADR-068).
+1. **Zero-JS budget is a hard contract on public content pages — named islands are the bounded
+   exceptions.** Public *content* pages must render with **no `<script>` tags** and stay within
+   budget; `web/lighthouserc.json` asserts script size `0` and total ≤ 150 KB on them, and
+   `test:e2e` asserts the no-JS baseline. The allowed islands are `/curate/**` (ADR-068) and the
+   three public interactive islands `/map/`, `/network/`, `/search/` (ADR-097) — each keeps a
+   no-JS fallback (SIG-UI-050) and a measured per-island script/total ceiling (P32.15, ADR-134;
+   baselines in `web/tests/e2e/island-budgets.json`). Adding client JS to any *other* public page
+   fails `test:e2e`/`check:perf`.
 2. **Accessibility is enforced, not aspirational.** `test:e2e` runs `@axe-core/playwright` for
    **WCAG 2.2 AA**; a violation fails the suite.
 3. **Dependency licences are gated.** `check:licenses` (`web/scripts/check-licenses.mjs`) fails on a
@@ -58,4 +63,5 @@ Run from repo root with `npm --prefix web run <script>` (or from `web/` with `np
 ## Don't
 
 - Don't write TypeScript outside `web/`.
-- Don't add runtime JS that breaks the zero-JS, performance, or a11y budgets on public pages.
+- Don't add runtime JS that breaks the zero-JS budget on public content pages, or the per-island
+  script/total + a11y budgets on `/map/`, `/network/`, `/search/`, `/curate/**`.

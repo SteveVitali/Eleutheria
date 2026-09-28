@@ -3,16 +3,18 @@
 ## Purpose
 
 The framework and per-source connectors that acquire evidence from external sources and emit claims
-(§21): the source registry, the eight-stage pipeline, and connectors for OSM, Flock, Atlas, records,
-procurement, France/Belgium, Data Driven, and the broader pathway sources — all behind a fail-closed
-ingestion gate. Nearest-file-wins: this file adds to the root `AGENTS.md`.
+(§21): the source registry, the eight-stage pipeline, and twenty registered connectors
+(`sig-connectors list-connectors` — OSM, Flock, Atlas, records, procurement, France/Belgium,
+Data Driven, mandated disclosure, dossier-document and accountability connectors, and the broader
+pathway sources) — all behind a fail-closed ingestion gate. Nearest-file-wins: this file adds to
+the root `AGENTS.md`.
 
 ## Key Files
 
 | File | Lines | Purpose |
 |---|---|---|
 | `connectors/src/connectors/loader.py` | ~170 | the fail-closed ingestion gate (`assert_loadable`) |
-| `connectors/src/connectors/cli.py` | ~280 | `sig-connectors` (`validate`, `stages`, `gate`, `run`, …) |
+| `connectors/src/connectors/cli.py` | ~380 | `sig-connectors` (`validate`, `stages`, `gate`, `run`, …) |
 | `connectors/src/connectors/data/sources.toml` | — | the source registry (rights + `ingestion_permitted`) |
 
 ## Build & Test

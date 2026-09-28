@@ -776,3 +776,35 @@ row below was closed, opened, re-homed or re-worded.
   counts unchanged from the P33.6 sweep; this ticket adds no backlog source).
 - **`projectStatus` stays `IN-PROGRESS`** (BM-TAIL-03): the register is
   non-empty (36 owed rows + `SIG-MEM-004` scheduled at P33.8).
+
+## P33.8 agent-docs-refresh + memory-chain closeout sweep (2026-09-28)
+
+Recorded after the agent-guidance reconciliation and the final-row closeout
+(`docs/build/runs/P33.8.md`; PR evidence `docs/build/pr/P33.8.md`). This is a
+**sweep record, not a status change**: no row below was closed, opened,
+re-homed or re-worded.
+
+- **Closing the memory chain discharges nothing owed.** The refreshed agent
+  guidance now *describes* the deferred/gated posture accurately — the
+  shadow-mode single-writer protocol (`D-R10-MEMORY-1` OPEN), the deferred S3
+  human spine (`D-R10-HUMAN-1`/`D-R6.1-EVAL`; manifest rows 184–187 stay the
+  recorded re-entry), the `prepared_not_executed` live halves
+  (`D-R10-LIVE-1`, `D-P32.23a-1`), production exposure (`D-R10-PUBLISH-1`),
+  the source-rights and dossier/pilot lanes, the usability sessions
+  (`D-R10-USERS-1`), the reviewer-facing rows (`D-P32.3-1`, `D-P32.16-1`),
+  the repair-shape decisions (`D-P32.10a-1`, `D-P32.16a-1`), and all 18
+  carried-forward pre-R10 rows. Describing an obligation is not satisfying
+  it; every row's `how to verify` cell stands.
+- **`SIG-MEM-004` is now satisfied as scheduled chain work** (manifest row
+  200): it was never a DEFERRALS row, and it is not closed by a deferral
+  flip — the satisfaction evidence is the landed guidance reconciliation +
+  guard tests + this closeout, recorded in `COVERAGE_MATRIX.csv` (MISSING →
+  MET) and `coverage_assessments.jsonl` (`SIG-MEM-004:a2` supersedes `:a1`).
+  The owed register itself is unchanged: **36 rows (32 OPEN + 4 PARTIAL)**.
+- **Backlog-home verification** — `python3 docs/build/tools/check_backlog.py`
+  at this revision exits 0 (`deferral homes: 36/36`, `duplicate sources: 0`,
+  counts unchanged from the P33.7 sweep; this ticket adds no backlog source).
+- **`projectStatus` stays `IN-PROGRESS`** (BM-TAIL-03): the 200-row manifest
+  is exhausted for dispatchable engineering, but the register is non-empty —
+  engineering-chain completion is not project completion. A resume re-enters
+  at row 184 (`HUMAN-H4`) per the 2026-10-19 operator dispatch amendment.
