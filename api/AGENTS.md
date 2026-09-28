@@ -3,26 +3,35 @@
 ## Purpose
 
 The FastAPI **read** surface over the claim spine (§37): as-of queries, dereferenceable resolution
-envelopes, sensitivity-tiered views. It also hosts the **authenticated curation app** — a *separate*
-app/process that is never mounted on the public API (Part VIII §0.7). Nearest-file-wins: this file
-adds to the root `AGENTS.md`.
+envelopes, sensitivity-tiered views, and release-namespaced reads (record/release ids pin a release;
+search runs over per-compartment FTS5 artifacts, ADR-132/133). It also hosts two *separate*
+app/processes never mounted on the public API: the **authenticated curation app** (Part VIII §0.7)
+and the **anonymous correction-intake receiver** — built but deliberately non-operational
+(`[intake].operational=false`; `/intake/new` + `POST /intake/v1/reports` answer
+`503 receiver_not_operating`, ADR-135). Nearest-file-wins: this file adds to the root `AGENTS.md`.
 
 ## Key Files
 
 | File | Lines | Purpose |
 |---|---|---|
-| `api/src/api/app.py` | ~130 | the public read-API FastAPI app factory (+ `GET /health`, the 503 mapping) |
-| `api/src/api/routes.py` | ~520 | read routes (as-of, dereference, terms, prohibitions; bounded `/v1/search`) |
-| `api/src/api/store_pg.py` | ~1240 | `PgReadStore` — read-only view over the PG spine, on a self-healing pool (ADR-108) |
-| `api/src/api/store.py` | ~300 | the in-memory demo store the CLI serves by default |
-| `api/src/api/curation.py` | ~680 | `create_curation_app` — the gated, loopback-only write surface |
+| `api/src/api/app.py` | ~190 | the public read-API FastAPI app factory (+ `GET /health`, the 503 mapping) |
+| `api/src/api/routes.py` | ~570 | read routes (as-of, dereference, terms, prohibitions; bounded `/v1/search`) |
+| `api/src/api/store_pg.py` | ~1410 | `PgReadStore` — read-only view over the PG spine, on a self-healing pool (ADR-108) |
+| `api/src/api/store.py` | ~380 | the in-memory demo store the CLI serves by default |
+| `api/src/api/curation.py` | ~1040 | `create_curation_app` — the gated, loopback-only write surface |
+| `api/src/api/intake.py` + `intake_moderation.py` | ~n/a | the anonymous correction receiver + moderation store (non-operational: `503 receiver_not_operating`) |
+| `api/src/api/release_search.py` | ~n/a | read-only serving of release-pinned per-compartment FTS5 search artifacts |
 | `api/src/api/tiers.py` | ~70 | sensitivity-tier filtering applied at the view layer |
-| `api/src/api/cli.py` | ~100 | `sig-api serve` / `serve-curation` entry point |
+| `api/src/api/cli.py` | ~300 | `sig-api serve` / `serve-curation` / `serve-intake` / `intake-purge` entry point |
 
 ## Build & Test
 
 - CLI: `uv run python -m api --help` / `sig-api serve` (public read API over the demo store),
-  `sig-api serve-curation` (curation app; exits 3 unless `SIG_CURATION_ENABLED=1`).
+  `sig-api serve-curation` (curation app; exits 3 unless `SIG_CURATION_ENABLED=1`),
+  `sig-api serve-intake` (the correction receiver; `SIG_INTAKE_ENABLED=1` mounts the surface, but
+  it answers `503 receiver_not_operating` until both `[intake].operational` in `ops/config.toml`
+  and `SIG_INTAKE_OPERATIONAL=1` are set — the gated operating decision, `D-P32.16-1`),
+  `sig-api intake-purge` (the retention sweep).
 - Tests run under the top-level `make check`: `uv run pytest tests/api`.
 - The `PgReadStore` path is exercised by the Docker-gated DB/e2e suites (`make test-db`,
   `SIG_REQUIRE_DB_TESTS=1 uv run pytest tests/e2e`).

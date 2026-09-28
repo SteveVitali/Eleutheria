@@ -3,7 +3,8 @@
 ## Purpose
 
 Builds versioned bulk-export releases from the claim spine (§38): licence-**compartmented** bundles,
-PROV-O lineage, Frictionless data packages, dossiers, tiles, and (dry-run-by-default) Zenodo
+PROV-O lineage, Frictionless data packages, dossiers, tiles, **immutable releases + addressed
+records + per-compartment FTS5 search indexes** (ADR-132/133), and (dry-run-by-default) Zenodo
 deposits. The export **gate** is where licensing is computed and enforced — the ODbL/OSM compartment
 is kept separate from the rest. Nearest-file-wins: this file adds to the root `AGENTS.md`.
 
@@ -11,11 +12,12 @@ is kept separate from the rest. Nearest-file-wins: this file adds to the root `A
 
 | File | Lines | Purpose |
 |---|---|---|
-| `exports/src/exports/cli.py` | ~500 | `sig-exports` entry point (`build`, `provo`, `deposit`, …) |
+| `exports/src/exports/cli.py` | ~1310 | `sig-exports` entry point (`build`, `release`, `provo`, `deposit`, …) |
+| `exports/src/exports/release.py` · `published_record.py` · `search_index.py` | ~n/a | the immutable release builder (two-stage namespace + integrity manifest, ADR-132), addressable records, and the per-compartment FTS5 search artifacts served read-only by `api/` |
 | `exports/src/exports/bundle.py` | ~340 | assembles a versioned export bundle + manifest |
-| `exports/src/exports/compartments.py` | ~270 | the licence-compartment split (ODbL kept separate) |
+| `exports/src/exports/compartments.py` | ~280 | the licence-compartment split (ODbL kept separate) |
 | `exports/src/exports/manifest.py` | ~210 | the export manifest / release metadata |
-| `exports/src/exports/dossier.py` | ~390 | per-entity dossier rendering (feeds `web/`) |
+| `exports/src/exports/dossier.py` | ~420 | per-entity dossier rendering (feeds `web/`) |
 | `exports/src/exports/provo.py` | ~300 | PROV-O lineage serialisation (§21.6) |
 | `exports/src/exports/deposits.py` | ~70 | Zenodo deposit orchestration (dry-run default) |
 

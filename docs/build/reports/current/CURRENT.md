@@ -4,12 +4,12 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer protocol is `D-R10-MEMORY-1` → P32.8.
-> input_commit: `6e93b0980fa4954a1c58b1515771847a17ee3723` · inputs hashed: 545 · wall-clock receipt: `receipt.json`
+> input_commit: `000fdff012a05e27a77f3ac12474df961346b5a3` · inputs hashed: 546 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN-PROGRESS` · round `10` · nextTicket `P33.8` · lastCompleted `P33.7`
-- chainTip `devin/p33-7-repo-docs-refresh` · returnPass `P31.16(**DONE 2026-09-27 — HG-11 granted by the operator (sign-off commit `81957c2`) + the publish half landed: `REPUBLISH_LIVE_2026-09-27.md`; public partition…` · updatedAt `2026-09-28 — P33.7 (row 199) DONE: PR`
+- projectStatus `IN-PROGRESS` · round `10` · nextTicket `HUMAN-H4` · lastCompleted `P33.8`
+- chainTip `devin/p33-8-agent-docs-refresh` · returnPass `P31.16(**DONE 2026-09-27 — HG-11 granted by the operator (sign-off commit `81957c2`) + the publish half landed: `REPUBLISH_LIVE_2026-09-27.md`; public partition…` · updatedAt `2026-09-28 — P33.8 (row 200, the final manifest row) DONE: PR open on the P33.7 tip (number stamped post-push); engineering-only `live_verification=false`; agen…`
 
 ## Obligations
 
@@ -63,7 +63,7 @@
 | domain | latest recorded evidence | assessments |
 |---|---|---|
 | fixture | mapped: 8 accountability sources wired (P31.12/13, shadow diff=0); e (fixture+implementation · recorded 2026-09-26) | — |
-| implementation | discovered: **339** registered `[sources.*]` + **27** researched candida (implementation · 2026-09-27 · `sources.toml`, `source-candid); reviewed: rights blocks + disposition artifacts per source (`p293_disp (implementation · 2026-09-27); permitted: **236** `ingestion_permitted = true` (of 339) (implementation · 2026-09-27 · counted from `sources.toml`) | SIG-MEM-001=MET (2026-10-14); SIG-MEM-002=MET (2026-10-14); SIG-MEM-003=MISSING (2026-10-14); SIG-MEM-004=MISSING (2026-10-14) |
+| implementation | discovered: **339** registered `[sources.*]` + **27** researched candida (implementation · 2026-09-27 · `sources.toml`, `source-candid); reviewed: rights blocks + disposition artifacts per source (`p293_disp (implementation · 2026-09-27); permitted: **236** `ingestion_permitted = true` (of 339) (implementation · 2026-09-27 · counted from `sources.toml`) | SIG-MEM-001=MET (2026-10-14); SIG-MEM-002=MET (2026-10-14); SIG-MEM-003=MISSING (2026-10-14); SIG-MEM-004=MISSING (2026-10-14); SIG-MEM-004=MET (2026-09-28) |
 | composed-db | — | — |
 | hosted | captured: OCFL-backed captures behind every landed claim; per-job coun (hosted · recorded 2026-09-26 (P31.12/13 run ledgers)); extracted: 2,074,963 admissible claims on the hosted spine (after P30.2 (hosted · recorded 2026-09-24 (P30.2a run)); linked: 1,872,344 envelopes → 227,998 resolved sites (from 230,330 o (hosted · recorded 2026-09-24/25) | — |
 | public | published: national surface live: export `sig-2026-09-27-ce480ab1` publ (public · recorded 2026-09-27 (P31.16 publish half)) | — |
@@ -94,6 +94,7 @@
 | SIG-MEM-002 | implementation | MET | 2026-10-14 | — |
 | SIG-MEM-003 | implementation | MISSING | 2026-10-14 | — |
 | SIG-MEM-004 | implementation | MISSING | 2026-10-14 | — |
+| SIG-MEM-004 | implementation | MET | 2026-09-28 | SIG-MEM-004:a1 |
 - historical CSV: 715 dated rows in `docs/build/COVERAGE_MATRIX.csv` (labelled `historical/csv`, preserved verbatim)
 
 ## Governing ADRs
