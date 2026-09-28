@@ -261,6 +261,149 @@ RECONCILIATIONS: dict[str, dict] = {
             "tests/unit/test_publication_eligibility.py",
         ],
     },
+    # P33.1 defect-sweep findings: eight Round-9 rows recorded verified dated
+    # DONEs inside an owed-leading status cell in the `P31.x (YYYY-MM-DD): DONE`
+    # word order, which the shared DATED_TERMINAL_RE could not see — so the
+    # audit reported them clean and the e0 anchors preserved them as owed.
+    # Each cell's DONE cites named tickets, hosted evidence and tests; each
+    # interpretation is recorded here and each cell was rewritten with the old
+    # value preserved verbatim (P33.1 reconciliation, 2026-10-21).
+    "D-P30.1-2": {
+        "to_status": "DONE",
+        "observed_at": "2026-09-25",
+        "owner": "—",
+        "landing": "—",
+        "reason": (
+            "the cell records DONE 2026-09-25 (P31.4 / HARDEN.4 / ADR-111) — memory-bounded "
+            "resumable ingest with persisted per-target captures (ingest_run_capture + hosted "
+            "GCS capture store); hosted kill/resume produced the identical output set (+0, same "
+            "capture digests). Recorded interpretation: terminal DONE."
+        ),
+        "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P31.4.md",
+            "tests/connectors/test_incremental_restart.py",
+            "tests/db/test_resume_pg.py",
+        ],
+    },
+    "D-P30.2a-1": {
+        "to_status": "DONE",
+        "observed_at": "2026-09-25",
+        "owner": "—",
+        "landing": "—",
+        "reason": (
+            "the cell records DONE 2026-09-25 (P31.8 completing P31.5's family half; ADR-112) — "
+            "all 62 unregistered measured predicates registered, 180x17 genre/directness "
+            "assessed, hosted materialize +13,131 envelopes then +0, after-inventory "
+            "2,623,647/2,623,647 links admissible. Recorded interpretation: terminal DONE."
+        ),
+        "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P31.8.md",
+            "docs/build/reports/p31.8-hosted/predicate_inventory_after.json",
+        ],
+    },
+    "D-P30.2a-2": {
+        "to_status": "DONE",
+        "observed_at": "2026-09-25",
+        "owner": "—",
+        "landing": "—",
+        "reason": (
+            "the cell records DONE 2026-09-25 (P31.7; ADR-114 revisit trigger recorded) — "
+            "uncapped re-sighting recording and supersession landed; hosted +232,096 links at "
+            "43% of the 15 GB disk projection, under the 50% trigger. Recorded interpretation: "
+            "terminal DONE."
+        ),
+        "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P31.7.md",
+            "docs/build/reports/p31.7-hosted/VERIFICATION.md",
+            "tests/db/test_resightings.py",
+        ],
+    },
+    "D-P30.3-1": {
+        "to_status": "DONE",
+        "observed_at": "2026-09-27",
+        "owner": "—",
+        "landing": "—",
+        "reason": (
+            "the cell records DONE 2026-09-27 (P31.16 publish completing P31.2's engine half; "
+            "ADR-109) — /data-freshness/ serves real last_successful_run ISO dates for all 178 "
+            "sources from the appended ingest_run_completion spine. Recorded interpretation: "
+            "terminal DONE."
+        ),
+        "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P31.2.md",
+            "docs/build/reports/REPUBLISH_LIVE_2026-09-27.md",
+        ],
+    },
+    "D-P30.3-2": {
+        "to_status": "DONE",
+        "observed_at": "2026-09-27",
+        "owner": "—",
+        "landing": "—",
+        "reason": (
+            "the cell records DONE 2026-09-27 (P31.16 publish completing P31.15's engineering "
+            "half; ADR-118) — the live map draws from per-compartment pmtiles sources, "
+            "/map/points.json is 404 on both origins, R8-1 recorded CLOSED. Recorded "
+            "interpretation: terminal DONE."
+        ),
+        "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P31.15.md",
+            "docs/build/reports/REPUBLISH_LIVE_2026-09-27.md",
+            "docs/build/readouts/ACCEPT-R8.md",
+        ],
+    },
+    "D-P30.3-3": {
+        "to_status": "DONE",
+        "observed_at": "2026-09-27",
+        "owner": "—",
+        "landing": "—",
+        "reason": (
+            "the cell records DONE 2026-09-27 (P31.16 publish completing P31.14's engineering "
+            "half; ADR-117) — the web/analytics family is live licence-separated and the public "
+            "surfaces render real values with no not-recorded placeholders. Recorded "
+            "interpretation: terminal DONE."
+        ),
+        "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P31.14.md",
+            "docs/build/reports/REPUBLISH_LIVE_2026-09-27.md",
+        ],
+    },
+    "D-P31.1-2": {
+        "to_status": "DONE",
+        "observed_at": "2026-09-25",
+        "owner": "—",
+        "landing": "—",
+        "reason": (
+            "the cell records DONE 2026-09-25 (P31.4) — every sig-api job rolled by pinned "
+            "digest (never :latest, before/after recorded); sig-probe swept 8/8 ok including "
+            "sig-api-health. Recorded interpretation: terminal DONE."
+        ),
+        "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P31.4.md",
+        ],
+    },
+    "D-P31.3-1": {
+        "to_status": "DONE",
+        "observed_at": "2026-09-25",
+        "owner": "—",
+        "landing": "—",
+        "reason": (
+            "the cell records DONE 2026-09-25 (P31.4; ADR-111) — sig-sink-bench on the rolled "
+            "image through the live gate: 179,882 claims/min, re-run +0, 0 duplicate digests; "
+            "the later OSM-replay observation point is tracked separately under OPEN "
+            "D-P31.4-1. Recorded interpretation: terminal DONE."
+        ),
+        "evidence_refs": [
+            "docs/tickets/DEFERRALS.md",
+            "docs/build/runs/P31.4.md",
+        ],
+    },
 }
 
 KIND_DEFAULT_OWNERS = {
