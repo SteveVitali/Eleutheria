@@ -1,0 +1,605 @@
+{
+  "candidate": {
+    "candidate_version": "sig.release-candidate/1",
+    "evaluation_mode": "shadow",
+    "evaluation_policy": "eval-confidence/1",
+    "evaluation_status": "deferred",
+    "frozen_snapshot_digest": "sha256:138714a684982c982610ece27a8215fc93e0c4cc4a220b7574307ad358695d99",
+    "identity_digest": "sha256:bc20d4bfbc3845896b69c6bfde71b2b588d9e15d385d7c956e1c3f9c64bf4f2f",
+    "provisional": true,
+    "published": false,
+    "review_only": true,
+    "ruleset_version": "provisional-ruleset/1"
+  },
+  "deferral_dispositions": [
+    {
+      "disposition": "amended_open",
+      "id": "D-R10-HUMAN-1",
+      "note": "2026-10-19 operator choice: the S3 human-evaluation spine (HUMAN-H4 → P32.22a → HUMAN-H5 → P32.23) is deferred wholesale. There is NO final evaluation decision — this candidate is built under the active PROVISIONAL resolution policy, with the deferral disclosed everywhere the candidate is described."
+    },
+    {
+      "disposition": "open",
+      "id": "D-R6.1-EVAL",
+      "note": "provisional rules remain active; the candidate pins them as provisional-ruleset/1"
+    },
+    {
+      "disposition": "open",
+      "id": "D-R10-LIVE-1",
+      "note": "the production candidate still needs the hosted repaired spine — the return-pass packet pins it"
+    },
+    {
+      "disposition": "open",
+      "id": "D-R10-PUBLISH-1",
+      "note": "publication needs P32.24 validation + GATE-G3 + P32.25"
+    }
+  ],
+  "disclosure": {
+    "candidate_identity_digest": "sha256:bc20d4bfbc3845896b69c6bfde71b2b588d9e15d385d7c956e1c3f9c64bf4f2f",
+    "change_disclosure": {
+      "applied_action_digests": [
+        "17061f1acaa5c4e4b894b7931435a8d9283f1f726f0320aa8f84aee8714b8ee3",
+        "4123531823d809bddc224e022d8c82545eeedceac1949e1635db1e69a34d9547",
+        "423b83b60bdbc0948fd6940abd1a8d3de671c5ac4e0dfd15714e7943895fab7c",
+        "a8e56f9e35addd7616ecba0e290f0f9f61245ab8dc9da09d778081d2b89d702b"
+      ],
+      "audit_history": "append-only — the apply receipts and this execution's ingest_run/completion rows coexist; nothing rewrites history",
+      "candidate_rematerialization_plus_zero": true,
+      "counts": {
+        "already_applied": 0,
+        "applied": 4,
+        "conflict_existing": 0,
+        "skipped": 0
+      },
+      "rerun_plus_zero": true,
+      "source": "P32.22 bounded recovery apply (recovery-apply-report/1)"
+    },
+    "disclosure_version": "sig.candidate-disclosure/1",
+    "evaluation": {
+      "applied": [],
+      "basis": "provisional-policy",
+      "decision": null,
+      "mode": "shadow",
+      "p32_10_confidence_policy_activated": false,
+      "policy_id": "eval-confidence/1",
+      "status": "deferred"
+    },
+    "evaluation_disclosure": "PROVISIONAL EVALUATION BASIS — review-only. The S3 human-evaluation spine is deferred wholesale by explicit operator choice (2026-10-19): there is no final evaluation decision. The camera-site auto-write tiers and the historical 0.98 point-gate remain PROVISIONAL-active (D-R6.1-EVAL stays OPEN) and eval-confidence/1 stays mode=shadow with applied=[] — nothing was promoted, demoted, or certified. Any resolved-sites figure on this candidate is computed from THIS build's materialized export, carries its own denominator, and is provisional/review-only — it is not a certified count, and no figure is carried from any prior preview or evaluation artifact.",
+    "prior_preview_counts_reused": false,
+    "published": false,
+    "records_built": 0,
+    "resolved_sites": null,
+    "resolved_sites_note": "the only resolved-sites figure permitted on this candidate is the one parsed from THIS build's web/coverage.json; no figure from any prior preview/republish artifact is reused (the deferred evaluation cannot inherit an optimistic count)",
+    "statement": "no final evaluation decision exists; this candidate's claims are provisional and review-only; publication requires P32.24 validation + GATE-G3/HG-11 + P32.25 — none of which this build ran",
+    "status": "provisional_review_only",
+    "suppression_disclosure": {
+      "disposition_ids": [
+        "118cc6ef-98c8-4d18-9361-8753948b57b0",
+        "16ad6abe-a0c5-4fda-8e3b-844ac329ceea",
+        "576a2053-3ad7-4284-b7aa-0d199b47d15a"
+      ],
+      "dispositions_recorded": 3,
+      "export_exclusions_generated_at": "2026-09-28T01:48:26Z",
+      "export_exclusions_note": "release candidate — provisional ruleset on the frozen repaired-input snapshot; evaluation deferred (2026-10-19, no final evaluation decision); unpublished",
+      "export_refused_slices": [],
+      "export_refused_totals": {
+        "refused_rows": 0,
+        "refused_slices": 0
+      },
+      "note": "withheld/refused slices are recorded loudly in exclusions.json inside the candidate namespace — never silently dropped"
+    }
+  },
+  "eval_disclosure": "PROVISIONAL EVALUATION BASIS — review-only. The S3 human-evaluation spine is deferred wholesale by explicit operator choice (2026-10-19): there is no final evaluation decision. The camera-site auto-write tiers and the historical 0.98 point-gate remain PROVISIONAL-active (D-R6.1-EVAL stays OPEN) and eval-confidence/1 stays mode=shadow with applied=[] — nothing was promoted, demoted, or certified. Any resolved-sites figure on this candidate is computed from THIS build's materialized export, carries its own denominator, and is provisional/review-only — it is not a certified count, and no figure is carried from any prior preview or evaluation artifact.",
+  "export_manifest": {
+    "artifacts": [
+      {
+        "byte_size": 1708,
+        "compartment": "metadata",
+        "license": "CC-BY-4.0",
+        "media_type": "application/json",
+        "name": "datapackage.json",
+        "path": "datapackage.json",
+        "row_count": null,
+        "sha256": "2166ab0e2ad7956f8301214cf8d4ef9545f30dd70760bf380e9dceeda7639214"
+      },
+      {
+        "byte_size": 321,
+        "compartment": "metadata",
+        "license": "CC-BY-4.0",
+        "media_type": "application/json",
+        "name": "exclusions.json",
+        "path": "exclusions.json",
+        "row_count": null,
+        "sha256": "6e344399acea76d6295ad0ce7d4a66f5ba0e30d7e4a29c800c1e787b04a5e636"
+      },
+      {
+        "byte_size": 1052,
+        "compartment": "metadata",
+        "license": "CC-BY-4.0",
+        "media_type": "text/turtle",
+        "name": "provenance.ttl",
+        "path": "provenance.ttl",
+        "row_count": null,
+        "sha256": "5350595fe8999ce680fb71bd8a408c15211ab6b4cc3a6c1814f24e0755140e28"
+      },
+      {
+        "byte_size": 1536,
+        "compartment": "sig_graph",
+        "license": "CC-BY-4.0",
+        "media_type": "text/csv",
+        "name": "coverage.csv",
+        "path": "sig_graph/coverage.csv",
+        "row_count": 3,
+        "sha256": "6e11f44a716c72b55226c254478609cfa64c421081bb355bccb8214df8d5acff"
+      },
+      {
+        "byte_size": 1995,
+        "compartment": "sig_graph",
+        "license": "CC-BY-4.0",
+        "media_type": "application/x-ndjson",
+        "name": "coverage.jsonl",
+        "path": "sig_graph/coverage.jsonl",
+        "row_count": 3,
+        "sha256": "56acad993e916500ee33a193ef400d96d1bd1aebfc9d8e511fd3782532d7e8d7"
+      },
+      {
+        "byte_size": 2162,
+        "compartment": "sig_graph",
+        "license": "CC-BY-4.0",
+        "media_type": "application/ld+json",
+        "name": "coverage.jsonld",
+        "path": "sig_graph/coverage.jsonld",
+        "row_count": 3,
+        "sha256": "e3be114a524b72bcc61bb51460e192b5de97aae4abf3148d5b7288f4459426f2"
+      },
+      {
+        "byte_size": 3935,
+        "compartment": "sig_graph",
+        "license": "CC-BY-4.0",
+        "media_type": "application/vnd.apache.parquet",
+        "name": "coverage.parquet",
+        "path": "sig_graph/coverage.parquet",
+        "row_count": 3,
+        "sha256": "efb7e82794fe81104e0a44267e12213fb25041ddb850cac75259b053420728a1"
+      },
+      {
+        "byte_size": 8192,
+        "compartment": "sig_graph",
+        "license": "CC-BY-4.0",
+        "media_type": "application/vnd.sqlite3",
+        "name": "coverage.sqlite",
+        "path": "sig_graph/coverage.sqlite",
+        "row_count": 3,
+        "sha256": "c9712aef5d3e4816771123401bb2a920bd602d7cfae4a0bebfd8bea18e6c79aa"
+      },
+      {
+        "byte_size": 590,
+        "compartment": "web",
+        "license": "CC-BY-4.0",
+        "media_type": "application/json",
+        "name": "centrality.json",
+        "path": "web/analytics/centrality.json",
+        "row_count": null,
+        "sha256": "504557de85f63ce5c13a24a5bed8885728e597e9b61d0a2b02d5ce0d75601232"
+      },
+      {
+        "byte_size": 432,
+        "compartment": "web",
+        "license": "CC-BY-4.0",
+        "media_type": "application/json",
+        "name": "decision_point.json",
+        "path": "web/analytics/decision_point.json",
+        "row_count": null,
+        "sha256": "4908f4020bfa671729920c7bb01965d054216742959889617a24f0944ba256d6"
+      },
+      {
+        "byte_size": 556,
+        "compartment": "web",
+        "license": "CC-BY-4.0",
+        "media_type": "application/json",
+        "name": "density_bins.json",
+        "path": "web/analytics/density_bins.json",
+        "row_count": null,
+        "sha256": "7e696a7c5275a7fb16c30310867faac3703016a9a587e3bbdc0a4143725ae3a5"
+      },
+      {
+        "byte_size": 1646,
+        "compartment": "web",
+        "license": "CC-BY-4.0",
+        "media_type": "application/json",
+        "name": "provenance.json",
+        "path": "web/analytics/provenance.json",
+        "row_count": null,
+        "sha256": "a07bffb8c36679e440114dc79561a9fb5a7e55948556e8529dbef1737313039c"
+      },
+      {
+        "byte_size": 309,
+        "compartment": "web",
+        "license": "CC-BY-4.0",
+        "media_type": "application/json",
+        "name": "queue_meta.json",
+        "path": "web/analytics/queue_meta.json",
+        "row_count": null,
+        "sha256": "83278f507c7c16b0102803668e0888681c08550cc9b16432efc9354f2fa0bd97"
+      },
+      {
+        "byte_size": 761,
+        "compartment": "web",
+        "license": "CC-BY-4.0",
+        "media_type": "application/json",
+        "name": "corrections.json",
+        "path": "web/corrections.json",
+        "row_count": null,
+        "sha256": "209be1768d482934b44e6f4524c652af57b110abb3835849d6052a721c029396"
+      },
+      {
+        "byte_size": 1446,
+        "compartment": "web",
+        "license": "CC-BY-4.0",
+        "media_type": "application/json",
+        "name": "coverage.json",
+        "path": "web/coverage.json",
+        "row_count": null,
+        "sha256": "bddddcef25f670666a94e777317f562df151d2a40fdf53fcf5916bfaa3e78029"
+      },
+      {
+        "byte_size": 3,
+        "compartment": "web",
+        "license": "CC-BY-4.0",
+        "media_type": "application/json",
+        "name": "dossier_index.json",
+        "path": "web/dossier_index.json",
+        "row_count": null,
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      },
+      {
+        "byte_size": 3,
+        "compartment": "web",
+        "license": "CC-BY-4.0",
+        "media_type": "application/json",
+        "name": "dossiers.json",
+        "path": "web/dossiers.json",
+        "row_count": null,
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      },
+      {
+        "byte_size": 7543,
+        "compartment": "web",
+        "license": "CC-BY-4.0",
+        "media_type": "application/json",
+        "name": "evidence.json",
+        "path": "web/evidence.json",
+        "row_count": null,
+        "sha256": "665815fed31dd50b88d38050590f261296262ef6849996ff66344155724bc94b"
+      },
+      {
+        "byte_size": 3,
+        "compartment": "web",
+        "license": "CC-BY-4.0",
+        "media_type": "application/json",
+        "name": "freshness.json",
+        "path": "web/freshness.json",
+        "row_count": null,
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      },
+      {
+        "byte_size": 330,
+        "compartment": "web",
+        "license": "CC-BY-4.0",
+        "media_type": "application/json",
+        "name": "map.json",
+        "path": "web/map.json",
+        "row_count": null,
+        "sha256": "81e29d73e0f7a168bd85fb44f56977b5994e5852927f7dcbec64ec9efe06989d"
+      },
+      {
+        "byte_size": 55,
+        "compartment": "web",
+        "license": "CC-BY-4.0",
+        "media_type": "application/json",
+        "name": "network.json",
+        "path": "web/network.json",
+        "row_count": null,
+        "sha256": "1ff91af878646d87c97556a20b0da8f790d98fd50ddb486d1587532a0f746a8e"
+      },
+      {
+        "byte_size": 335519,
+        "compartment": "web",
+        "license": "CC-BY-4.0",
+        "media_type": "application/json",
+        "name": "research_dossiers.json",
+        "path": "web/research_dossiers.json",
+        "row_count": null,
+        "sha256": "d82ff1dfe52fe6f4eb998cc7b3bb777313055153ee842a58c8975a4de99643a1"
+      },
+      {
+        "byte_size": 3,
+        "compartment": "web",
+        "license": "CC-BY-4.0",
+        "media_type": "application/json",
+        "name": "research_queue.json",
+        "path": "web/research_queue.json",
+        "row_count": null,
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      },
+      {
+        "byte_size": 3,
+        "compartment": "web",
+        "license": "CC-BY-4.0",
+        "media_type": "application/json",
+        "name": "watch.json",
+        "path": "web/watch.json",
+        "row_count": null,
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      }
+    ],
+    "concept_id": "sig",
+    "content_key": "518afbaf06f40d5a181a07fb08c06aa2b6424fb4306074b85eb9bb81d5129624",
+    "release_id": "sig-2026-10-19-518afbaf",
+    "reproducibility_inputs": {
+      "as_of_belief": "2026-10-19",
+      "as_of_snapshot": "2026-10-19",
+      "resolver_version": "0.0.0",
+      "ruleset_version": "provisional-ruleset/1"
+    }
+  },
+  "frame_check": {
+    "claims_missing": [],
+    "claims_present": 16,
+    "claims_recorded": 16,
+    "eligibility_matches": true,
+    "eligible_gained": [],
+    "eligible_lost": [],
+    "eligible_now_count": 13,
+    "eligible_recorded_count": 13,
+    "population_digest": "sha256:d9edce6e37e87141cc92d13bf6f35fa70d1ead72b242ba376ae7c10b9a5931d6",
+    "population_digest_matches": true,
+    "population_digest_recorded": "sha256:d9edce6e37e87141cc92d13bf6f35fa70d1ead72b242ba376ae7c10b9a5931d6",
+    "watermark_now": {
+      "claim_evidence": {
+        "count": 17,
+        "establishing": 17,
+        "max_bound_at": "2026-10-01T00:00:00+00:00"
+      },
+      "claims": {
+        "count": 17,
+        "max_asserted_at": "2026-09-28T01:48:25.698327+00:00"
+      },
+      "evidence_capture": {
+        "actual": 14,
+        "count": 16,
+        "legacy": 0,
+        "max_retrieved_at": "2026-10-01T00:00:00+00:00",
+        "synthetic": 2
+      },
+      "ingest_run": {
+        "count": 3,
+        "max_started_at": "2026-09-28T01:48:25.648467+00:00"
+      },
+      "ingest_run_capture": {
+        "count": 14,
+        "max_recorded_at": "2026-10-01T00:00:00+00:00"
+      },
+      "publication_disposition": {
+        "count": 3,
+        "max_decided_at": "2026-09-28T01:48:25.704687+00:00"
+      }
+    },
+    "watermark_recorded": {
+      "claim_evidence": {
+        "count": 17,
+        "establishing": 17,
+        "max_bound_at": "2026-10-01T00:00:00+00:00"
+      },
+      "claims": {
+        "count": 17,
+        "max_asserted_at": "2026-09-27T19:25:47.766422+00:00"
+      },
+      "evidence_capture": {
+        "actual": 14,
+        "count": 16,
+        "legacy": 0,
+        "max_retrieved_at": "2026-10-01T00:00:00+00:00",
+        "synthetic": 2
+      },
+      "ingest_run": {
+        "count": 3,
+        "max_started_at": "2026-09-27T19:25:47.643631+00:00"
+      },
+      "ingest_run_capture": {
+        "count": 14,
+        "max_recorded_at": "2026-10-01T00:00:00+00:00"
+      },
+      "publication_disposition": {
+        "count": 3,
+        "max_decided_at": "2026-09-27T19:25:47.795243+00:00"
+      }
+    }
+  },
+  "identity": {
+    "candidate_version": "sig.release-candidate/1",
+    "code_commit": "a33cd6ec33cf33d69f15d282b8d69aec24dcbfc4",
+    "evaluation": {
+      "activation_attempts_refused": [
+        "confidence policy activation refused — no_measured_decision, no_operational_release, policy_shadow_mode, zero_sample"
+      ],
+      "applied": [],
+      "basis": "provisional-policy",
+      "decision": null,
+      "decision_ref": null,
+      "deferred_by": "2026-10-19 operator choice: the S3 human-evaluation spine (HUMAN-H4 → P32.22a → HUMAN-H5 → P32.23) is deferred wholesale. There is NO final evaluation decision — this candidate is built under the active PROVISIONAL resolution policy, with the deferral disclosed everywhere the candidate is described.",
+      "disclosure": "PROVISIONAL EVALUATION BASIS — review-only. The S3 human-evaluation spine is deferred wholesale by explicit operator choice (2026-10-19): there is no final evaluation decision. The camera-site auto-write tiers and the historical 0.98 point-gate remain PROVISIONAL-active (D-R6.1-EVAL stays OPEN) and eval-confidence/1 stays mode=shadow with applied=[] — nothing was promoted, demoted, or certified. Any resolved-sites figure on this candidate is computed from THIS build's materialized export, carries its own denominator, and is provisional/review-only — it is not a certified count, and no figure is carried from any prior preview or evaluation artifact.",
+      "eval_units": 0,
+      "mode": "shadow",
+      "p32_10_confidence_policy": "installed-but-shadow; NOT activated",
+      "policy_id": "eval-confidence/1",
+      "policy_version": "eval-confidence/1",
+      "provisional_rules_active": [
+        "camera-site auto-write tiers (decide_auto_write_tiers)",
+        "historical point-gate (0.98 auto-write precision floor)"
+      ],
+      "status": "deferred"
+    },
+    "frozen_snapshot": {
+      "claim_count": 16,
+      "post_apply_population_digest": "sha256:d9edce6e37e87141cc92d13bf6f35fa70d1ead72b242ba376ae7c10b9a5931d6",
+      "snapshot_digest": "sha256:138714a684982c982610ece27a8215fc93e0c4cc4a220b7574307ad358695d99",
+      "snapshot_version": "sig.repaired-snapshot/1",
+      "status": "frozen_unpublished"
+    },
+    "identity_digest": "sha256:bc20d4bfbc3845896b69c6bfde71b2b588d9e15d385d7c956e1c3f9c64bf4f2f",
+    "identity_version": "sig.candidate-identity/1",
+    "provisional": true,
+    "published": false,
+    "review_only": true,
+    "ruleset_version": "provisional-ruleset/1"
+  },
+  "inputs": {
+    "apply_report_version": null,
+    "dossier_packets": {
+      "0": "sha256:89f6efa79a4b8050f297bd4a7beac49074e494e41cd5d78c8af069d801ceabd1",
+      "1": "sha256:a3952f7f87e15250c34f3e123afba0ae7627b94830a89e2c2fae68809940e38a",
+      "2": "sha256:5b9edbb7399e890b3c0c6fcb1412d1084c5f7eed55ad4f9c804d3e553aacf0fb"
+    },
+    "post_apply_audit_digest": "sha256:d9edce6e37e87141cc92d13bf6f35fa70d1ead72b242ba376ae7c10b9a5931d6",
+    "recovery_plan_digest": null,
+    "snapshot": {
+      "digest": "sha256:138714a684982c982610ece27a8215fc93e0c4cc4a220b7574307ad358695d99",
+      "predecessor": "P32.22 bounded recovery (frozen repaired-input snapshot; itself 'not_a_release_candidate' by design)",
+      "status": "frozen_unpublished",
+      "version": "sig.repaired-snapshot/1"
+    }
+  },
+  "live_return_pass": {
+    "commands": [
+      {
+        "command": "uv run sig-ops recovery-apply --dsn $SIG_HOSTED_DSN --plan <live-plan> --audit <live-audit> --apply --execution-id <id> --authority <op-ref> --capture-dir <OCFL root> --verify-rerun --rematerialize --out <live-apply>/ && uv run sig-ops recovery-freeze --dsn $SIG_HOSTED_DSN --apply-report <live-apply>/APPLY_REPORT.json --plan <plan> --audit <audit> --out <live-apply>/",
+        "notes": "produces the hosted frozen snapshot — same contract the fixture stage ran",
+        "step": "production bounded apply + freeze (D-R10-LIVE-1)"
+      },
+      {
+        "command": "uv run sig-ops release-candidate --dsn $SIG_HOSTED_DSN --snapshot <live-apply>/REPAIRED_SNAPSHOT.json --plan <plan> --audit <audit> --apply-report <live-apply>/APPLY_REPORT.json --registry <release registry> --out <candidate>/",
+        "notes": "the same frame-verify/+0/stage pipeline; stops fail-closed on changed input or an activated shadow gate",
+        "step": "release candidate over the hosted snapshot"
+      }
+    ],
+    "explicit_reservations": [
+      "D-R10-LIVE-1 stays OPEN until the production stage lands",
+      "no publication, no HG-11 tick, no source-rights flip, no human label",
+      "eval-confidence/1 stays shadow; P32.10 activation needs the measured P32.23 decision (deferred, not skipped forever)"
+    ],
+    "fixture_execution": {
+      "candidate_identity_digest": "sha256:bc20d4bfbc3845896b69c6bfde71b2b588d9e15d385d7c956e1c3f9c64bf4f2f",
+      "frozen_snapshot_digest": "sha256:138714a684982c982610ece27a8215fc93e0c4cc4a220b7574307ad358695d99",
+      "provisional": true
+    },
+    "packet_version": "candidate-return-pass/1",
+    "prerequisite_open_deferrals": [
+      "D-R10-LIVE-1 — the production bounded apply + freeze must land first (the hosted repaired-input snapshot this candidate pins)",
+      "the production snapshot must be sig.repaired-snapshot/1 frozen_unpublished — never a preview identity"
+    ],
+    "purpose": "build the production release candidate over the hosted repaired spine — the SAME pipeline this module ran on the fixture (frame-verify → +0 rematerialize → export → stage → disclose), under recorded operator authorization",
+    "status": "prepared_not_executed",
+    "verification_checklist": [
+      "population frame reconciles to the hosted snapshot, digest-for-digest",
+      "rematerialization dependency order ran; rerun +0",
+      "the release namespace validates; every manifest cites the same candidate identity digest",
+      "eval-confidence/1 is shadow with applied=[] at build time",
+      "latest.json is byte-identical before and after staging",
+      "the disclosure is provisional/review-only; no prior preview count is quoted",
+      "the candidate remains unpublished until P32.24 + GATE-G3 + P32.25"
+    ]
+  },
+  "manifest_version": "sig.candidate-manifest/1",
+  "materialization": {
+    "dependency_order": [
+      "resolution",
+      "camera-sites",
+      "edges",
+      "contradictions",
+      "coverage",
+      "accountability"
+    ],
+    "execution": {
+      "code_commit": "a33cd6ec33cf33d69f15d282b8d69aec24dcbfc4",
+      "completion_id": "01a0e5b2-f5a2-7393-88fe-7075ce174c08",
+      "completion_status": "ok",
+      "ingest_run_id": "01a0e5b2-f5a0-77c5-b511-a210bf9630d6",
+      "sqitch_head": null
+    },
+    "inserted_pass_one": 3,
+    "inserted_rerun": 0,
+    "materialization_version": "sig.candidate-materialization/1",
+    "plus_zero": true
+  },
+  "publication_pointer": {
+    "after": null,
+    "before": null,
+    "note": "latest.json was read before and after staging; the candidate never calls activate()/rollback()",
+    "unchanged": true
+  },
+  "release": {
+    "activated": false,
+    "compartments": [],
+    "descriptor": {
+      "as_of_belief": "2026-10-19",
+      "as_of_world": "2026-10-19",
+      "compartment_projections": {},
+      "content_key": "518afbaf06f40d5a181a07fb08c06aa2b6424fb4306074b85eb9bb81d5129624",
+      "data_release_id": "sig-2026-10-19-518afbaf",
+      "dossier_root": null,
+      "evidence_root": "3013c48f4ba7c85bac4124674cf86dd7369d3e7098e0be26793601ab1fec836b",
+      "input_manifest_sha256": "0e0ca9908173b9afa78c5b90dd42f99f8bbed4819c46b37e5a055ed443c21b6b",
+      "policy_version": "publication-eligibility/1",
+      "projection_version": "sig.published-record/1",
+      "renderer": {
+        "package": "sig-exports",
+        "revision": "a33cd6ec33cf33d69f15d282b8d69aec24dcbfc4",
+        "version": "0.0.0"
+      },
+      "resolver_version": "0.0.0",
+      "ruleset_version": "provisional-ruleset/1",
+      "schema": "sig.publication-descriptor/1",
+      "search_index_version": "release-search-index/1"
+    },
+    "descriptor_sha256": "sha256:17b713cee4f4f605f73d72c6b13c824499d0d35005e4295f86c989e52dc98587",
+    "export_manifest_sha256": "sha256:0e0ca9908173b9afa78c5b90dd42f99f8bbed4819c46b37e5a055ed443c21b6b",
+    "input_export_manifest_sha256": "0e0ca9908173b9afa78c5b90dd42f99f8bbed4819c46b37e5a055ed443c21b6b",
+    "publication_id": "p-17b713cee4f4f605f73d72c6b13c824499d0d35005e4295f86c989e52dc98587",
+    "release_manifest_sha256": "3966c7657b7b30b379c50608e6cb6d35f90b29bd03b0f336716bca48fc9a23ce",
+    "total_records": 0,
+    "unpublished_by_construction": true,
+    "validation_ok": true,
+    "validation_state": "complete"
+  },
+  "rollback_packet": {
+    "candidate": {
+      "candidate_identity_digest": "sha256:bc20d4bfbc3845896b69c6bfde71b2b588d9e15d385d7c956e1c3f9c64bf4f2f",
+      "descriptor_sha256": "sha256:17b713cee4f4f605f73d72c6b13c824499d0d35005e4295f86c989e52dc98587",
+      "disclosure_digest": "sha256:8daf59bed7acdbbd3d6da6912f6d6127dca11939b5c51ffa8d62c39369caa5a2",
+      "publication_id": "p-17b713cee4f4f605f73d72c6b13c824499d0d35005e4295f86c989e52dc98587",
+      "published": false,
+      "release_manifest_sha256": "3966c7657b7b30b379c50608e6cb6d35f90b29bd03b0f336716bca48fc9a23ce"
+    },
+    "change_disclosure_ref": "suppression + change counts live in the companion sig.candidate-disclosure/1 (digest recorded above)",
+    "materialization_plus_zero": true,
+    "pointer_unchanged": true,
+    "preconditions": [
+      "the candidate was actually activated by P32.25 (this build never activates — the packet is preparation, not a mutation)",
+      "operator authorization under the HG-11/GATE-G3 chain"
+    ],
+    "publication_pointer_after_staging": null,
+    "publication_pointer_before": null,
+    "reversal_plan": {
+      "if_no_prior_pointer": "no latest.json existed before this candidate — reversal removes the pointer entirely rather than fabricating a predecessor",
+      "mechanism": "pointer-only reversal through exports.release.rollback on the served registry — the mutable latest.json flips to the recorded prior pointer; the immutable r/<pub> namespace is never deleted (append-only release history)",
+      "steps": [
+        "confirm the candidate publication_id is currently pointed at",
+        "run exports.release.rollback(registry, to=<prior pointer>) or remove latest.json when no prior pointer existed",
+        "re-validate the registry (catalog + compatibility indexes)",
+        "leave the immutable r/<publication_id> tree untouched — it is history, and its manifest/descriptor remain verifiable"
+      ]
+    },
+    "rollback_version": "sig.candidate-rollback/1",
+    "status": "prepared_not_needed"
+  }
+}

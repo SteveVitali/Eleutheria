@@ -1,0 +1,55 @@
+{
+  "candidate_identity_digest": "sha256:bc20d4bfbc3845896b69c6bfde71b2b588d9e15d385d7c956e1c3f9c64bf4f2f",
+  "change_disclosure": {
+    "applied_action_digests": [
+      "17061f1acaa5c4e4b894b7931435a8d9283f1f726f0320aa8f84aee8714b8ee3",
+      "4123531823d809bddc224e022d8c82545eeedceac1949e1635db1e69a34d9547",
+      "423b83b60bdbc0948fd6940abd1a8d3de671c5ac4e0dfd15714e7943895fab7c",
+      "a8e56f9e35addd7616ecba0e290f0f9f61245ab8dc9da09d778081d2b89d702b"
+    ],
+    "audit_history": "append-only — the apply receipts and this execution's ingest_run/completion rows coexist; nothing rewrites history",
+    "candidate_rematerialization_plus_zero": true,
+    "counts": {
+      "already_applied": 0,
+      "applied": 4,
+      "conflict_existing": 0,
+      "skipped": 0
+    },
+    "rerun_plus_zero": true,
+    "source": "P32.22 bounded recovery apply (recovery-apply-report/1)"
+  },
+  "disclosure_version": "sig.candidate-disclosure/1",
+  "evaluation": {
+    "applied": [],
+    "basis": "provisional-policy",
+    "decision": null,
+    "mode": "shadow",
+    "p32_10_confidence_policy_activated": false,
+    "policy_id": "eval-confidence/1",
+    "status": "deferred"
+  },
+  "evaluation_disclosure": "PROVISIONAL EVALUATION BASIS — review-only. The S3 human-evaluation spine is deferred wholesale by explicit operator choice (2026-10-19): there is no final evaluation decision. The camera-site auto-write tiers and the historical 0.98 point-gate remain PROVISIONAL-active (D-R6.1-EVAL stays OPEN) and eval-confidence/1 stays mode=shadow with applied=[] — nothing was promoted, demoted, or certified. Any resolved-sites figure on this candidate is computed from THIS build's materialized export, carries its own denominator, and is provisional/review-only — it is not a certified count, and no figure is carried from any prior preview or evaluation artifact.",
+  "prior_preview_counts_reused": false,
+  "published": false,
+  "records_built": 0,
+  "resolved_sites": null,
+  "resolved_sites_note": "the only resolved-sites figure permitted on this candidate is the one parsed from THIS build's web/coverage.json; no figure from any prior preview/republish artifact is reused (the deferred evaluation cannot inherit an optimistic count)",
+  "statement": "no final evaluation decision exists; this candidate's claims are provisional and review-only; publication requires P32.24 validation + GATE-G3/HG-11 + P32.25 — none of which this build ran",
+  "status": "provisional_review_only",
+  "suppression_disclosure": {
+    "disposition_ids": [
+      "118cc6ef-98c8-4d18-9361-8753948b57b0",
+      "16ad6abe-a0c5-4fda-8e3b-844ac329ceea",
+      "576a2053-3ad7-4284-b7aa-0d199b47d15a"
+    ],
+    "dispositions_recorded": 3,
+    "export_exclusions_generated_at": "2026-09-28T01:48:26Z",
+    "export_exclusions_note": "release candidate — provisional ruleset on the frozen repaired-input snapshot; evaluation deferred (2026-10-19, no final evaluation decision); unpublished",
+    "export_refused_slices": [],
+    "export_refused_totals": {
+      "refused_rows": 0,
+      "refused_slices": 0
+    },
+    "note": "withheld/refused slices are recorded loudly in exclusions.json inside the candidate namespace — never silently dropped"
+  }
+}
