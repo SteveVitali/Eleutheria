@@ -1,0 +1,12 @@
+{
+  "assets": [],
+  "jurisdiction_indicators": [],
+  "layers": [
+    {
+      "description": "Observation-level device sites from named sources — N observations across M sources, never a resolved census (SIG-RECON-058).",
+      "id": "observed_sites",
+      "kind": "observed",
+      "label": "Observed device sites"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "commands": [
+    {
+      "command": "uv run sig-ops recovery-apply --dsn $SIG_HOSTED_DSN --plan <live-plan> --audit <live-audit> --apply --execution-id <id> --authority <op-ref> --capture-dir <OCFL root> --verify-rerun --rematerialize --out <live-apply>/ && uv run sig-ops recovery-freeze --dsn $SIG_HOSTED_DSN --apply-report <live-apply>/APPLY_REPORT.json --plan <plan> --audit <audit> --out <live-apply>/",
+      "notes": "produces the hosted frozen snapshot — same contract the fixture stage ran",
+      "step": "production bounded apply + freeze (D-R10-LIVE-1)"
+    },
+    {
+      "command": "uv run sig-ops release-candidate --dsn $SIG_HOSTED_DSN --snapshot <live-apply>/REPAIRED_SNAPSHOT.json --plan <plan> --audit <audit> --apply-report <live-apply>/APPLY_REPORT.json --registry <release registry> --out <candidate>/",
+      "notes": "the same frame-verify/+0/stage pipeline; stops fail-closed on changed input or an activated shadow gate",
+      "step": "release candidate over the hosted snapshot"
+    }
+  ],
+  "explicit_reservations": [
+    "D-R10-LIVE-1 stays OPEN until the production stage lands",
+    "no publication, no HG-11 tick, no source-rights flip, no human label",
+    "eval-confidence/1 stays shadow; P32.10 activation needs the measured P32.23 decision (deferred, not skipped forever)"
+  ],
+  "fixture_execution": {
+    "candidate_identity_digest": "sha256:bc20d4bfbc3845896b69c6bfde71b2b588d9e15d385d7c956e1c3f9c64bf4f2f",
+    "frozen_snapshot_digest": "sha256:138714a684982c982610ece27a8215fc93e0c4cc4a220b7574307ad358695d99",
+    "provisional": true
+  },
+  "packet_version": "candidate-return-pass/1",
+  "prerequisite_open_deferrals": [
+    "D-R10-LIVE-1 — the production bounded apply + freeze must land first (the hosted repaired-input snapshot this candidate pins)",
+    "the production snapshot must be sig.repaired-snapshot/1 frozen_unpublished — never a preview identity"
+  ],
+  "purpose": "build the production release candidate over the hosted repaired spine — the SAME pipeline this module ran on the fixture (frame-verify → +0 rematerialize → export → stage → disclose), under recorded operator authorization",
+  "status": "prepared_not_executed",
+  "verification_checklist": [
+    "population frame reconciles to the hosted snapshot, digest-for-digest",
+    "rematerialization dependency order ran; rerun +0",
+    "the release namespace validates; every manifest cites the same candidate identity digest",
+    "eval-confidence/1 is shadow with applied=[] at build time",
+    "latest.json is byte-identical before and after staging",
+    "the disclosure is provisional/review-only; no prior preview count is quoted",
+    "the candidate remains unpublished until P32.24 + GATE-G3 + P32.25"
+  ]
+}

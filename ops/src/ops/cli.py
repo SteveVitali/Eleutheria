@@ -869,6 +869,73 @@ def build_parser() -> argparse.ArgumentParser:
     rseed.add_argument(
         "--out", default=None, help="write id_map.json + remapped targeted/adjudications here"
     )
+
+    rcand = sub.add_parser(
+        "release-candidate",
+        help="P32.23a (SIG-TRUST-010, ADR-142): build the ONE unpublished "
+        "release candidate from the frozen repaired-input snapshot. The S3 "
+        "human-evaluation spine is deferred (2026-10-19, no final decision) — "
+        "the candidate runs under the PROVISIONAL ruleset with the deferral "
+        "disclosed everywhere, verifies the frozen population frame "
+        "fail-closed, rematerializes in dependency order + proves +0, exports "
+        "all compartments and stages the release namespace WITHOUT activation "
+        "(latest.json stays byte-identical), and emits the manifest + "
+        "disclosure + rollback packet + the open live return-pass",
+    )
+    rcand.add_argument(
+        "--dsn", default=None, help="writable PostgreSQL DSN (else SIG_STAGING_DSN/local)"
+    )
+    rcand.add_argument(
+        "--snapshot",
+        required=True,
+        help="the frozen sig.repaired-snapshot/1 (REPAIRED_SNAPSHOT.json) to pin",
+    )
+    rcand.add_argument("--plan", default=None, help="the recovery_plan.json the apply executed")
+    rcand.add_argument(
+        "--audit", default=None, help="the post-apply audit_report.json (recorded input)"
+    )
+    rcand.add_argument(
+        "--apply-report",
+        default=None,
+        help="the APPLY_REPORT.json (recorded change/suppression counts)",
+    )
+    rcand.add_argument(
+        "--shadow",
+        default=None,
+        help="a recorded sig.provisional-vs-shadow/1 to pin instead of re-reading "
+        "the installed eval-confidence/1 posture",
+    )
+    rcand.add_argument(
+        "--as-of",
+        default=None,
+        help="the export as-of cut (default: the snapshot watermark date)",
+    )
+    rcand.add_argument(
+        "--registry",
+        default=None,
+        help="the served release registry dir — its latest.json is read before "
+        "and after staging and must stay byte-identical (never written)",
+    )
+    rcand.add_argument(
+        "--role",
+        default=None,
+        help="the materializer role (default: the session login)",
+    )
+    rcand.add_argument(
+        "--dossier-packet",
+        action="append",
+        default=[],
+        help="a committed sig.dossier-packet/1 to compose into the dossier answers (repeatable)",
+    )
+    rcand.add_argument(
+        "--sqitch-head", default=None, help="recorded schema identity for the run row"
+    )
+    rcand.add_argument(
+        "--out",
+        required=True,
+        help="the candidate packet directory (export/, release/, manifest, "
+        "disclosure, rollback packet, return-pass)",
+    )
     return parser
 
 
@@ -2351,7 +2418,79 @@ def _cmd_recovery_fixture_seed(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_release_candidate(args: argparse.Namespace) -> int:
+    """``sig-ops release-candidate`` — the unpublished P32.23a candidate."""
+    from . import release_candidate as rc
+
+    snapshot = json.loads(Path(args.snapshot).read_text(encoding="utf-8"))
+    plan = json.loads(Path(args.plan).read_text(encoding="utf-8")) if args.plan else None
+    audit = json.loads(Path(args.audit).read_text(encoding="utf-8")) if args.audit else None
+    apply_report = (
+        json.loads(Path(args.apply_report).read_text(encoding="utf-8"))
+        if args.apply_report
+        else None
+    )
+    shadow = json.loads(Path(args.shadow).read_text(encoding="utf-8")) if args.shadow else None
+    dossier_packets = [json.loads(Path(p).read_text(encoding="utf-8")) for p in args.dossier_packet]
+
+    dsn = args.dsn or os.environ.get("SIG_STAGING_DSN") or _cloudsql_dsn_from_parts()
+    if not dsn:
+        print(
+            "release-candidate: needs --dsn / SIG_STAGING_DSN / SIG_PG_* parts",
+            file=sys.stderr,
+        )
+        return 2
+    try:
+        import psycopg
+    except ImportError:
+        print("release-candidate: psycopg unavailable", file=sys.stderr)
+        return 2
+
+    conn = psycopg.connect(dsn)
+    try:
+        manifest = rc.run_candidate(
+            conn,
+            snapshot=snapshot,
+            out_dir=args.out,
+            plan=plan,
+            audit=audit,
+            apply_report=apply_report,
+            shadow_report=shadow,
+            registry_dir=args.registry,
+            as_of=args.as_of,
+            role=args.role or None,
+            dossier_packets=dossier_packets,
+            code_commit=_git_head(),
+            sqitch_head=args.sqitch_head,
+            renderer_revision=_git_head(),
+        )
+        conn.commit()
+    except rc.CandidateError as exc:
+        conn.rollback()
+        print(f"release-candidate: REFUSED [{exc.code}] {exc}", file=sys.stderr)
+        return 3
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+    c = manifest["candidate"]
+    print(
+        f"release-candidate: identity {str(c['identity_digest'])[:24]}… — "
+        f"pub {manifest['release']['publication_id']} staged unpublished, "
+        f"materialization +0={manifest['materialization']['plus_zero']}, "
+        f"pointer unchanged={manifest['publication_pointer']['unchanged']} "
+        f"({args.out})"
+    )
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
+    """Run the `ops` CLI. Returns a process exit code."""
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    if args.command == "up":
+        return _cmd_up(args)
     """Run the `ops` CLI. Returns a process exit code."""
     parser = build_parser()
     args = parser.parse_args(argv)
@@ -2417,6 +2556,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_recovery_freeze(args)
     if args.command == "recovery-fixture-seed":
         return _cmd_recovery_fixture_seed(args)
+    if args.command == "release-candidate":
+        return _cmd_release_candidate(args)
     if args.command == "release-serve":
         return _cmd_release_serve(args)
     parser.print_help()

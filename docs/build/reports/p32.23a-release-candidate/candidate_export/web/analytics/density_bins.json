@@ -1,0 +1,11 @@
+{
+  "as_of": "2026-10-19",
+  "bins": [],
+  "coverage_rule": "cell coverage = the number of distinct named sources contributing to the cell: >=3 'high', 2 'partial', 1 'low'; a cell exists only where at least one published point falls — never a searched-empty claim (SIG-UI-018)",
+  "denominator": "0 published observation-level site records with a releasable tier-0 point (licence-refused subjects excluded)",
+  "grid": "h3",
+  "h3_resolution": 3,
+  "is_population_total": false,
+  "schema": "sig/analytics-density-bins/1",
+  "source_compartments": []
+}
