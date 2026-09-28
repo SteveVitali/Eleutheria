@@ -1,0 +1,80 @@
+{
+  "generated_at": "2026-09-28T04:04:55.733274+00:00",
+  "live_rollback_instructions": [
+    {
+      "case": "roll back to a prior activated release",
+      "command": "exports.release.rollback(<registry>, <prior_pub>) \u2014 pointer-only; immutable bytes stay; current withdrawals re-apply under the rollback; receipted under activations/"
+    },
+    {
+      "case": "this candidate has no prior pointer",
+      "command": "exports.release.clear_latest_pointer(<registry>) \u2014 removes latest.json, re-emits the overlay, receipts; the r/<pub> namespace stays reachable as immutable history"
+    },
+    {
+      "case": "post-publish withholding",
+      "command": "record_withdrawal(<registry>, [<disposition>]) \u2014 denied routes tombstone (sig.tombstone/1) + the nginx deny map regenerates; unaffected bytes are untouched"
+    }
+  ],
+  "open_deferrals": [
+    {
+      "id": "D-R10-PUBLISH-1",
+      "note": "release-exposure authorization signed at GATE-G3; the production-exposure half stays OPEN until an actual public serve"
+    },
+    {
+      "id": "D-P32.23a-1",
+      "note": "the production release-candidate build over the hosted repaired snapshot \u2014 the fixture candidate proven here is not it"
+    },
+    {
+      "id": "D-R10-LIVE-1",
+      "note": "hosted production recovery/freeze + final production candidate \u2014 the production public exposure is this return pass"
+    },
+    {
+      "id": "D-P32.16-1",
+      "note": "intake owner/staffing/retention/secrets/role grants/infra-log exclusions unmet \u2014 the receiver stays non-operational"
+    }
+  ],
+  "production_commands": [
+    {
+      "command": "sig-ops release-candidate --dsn <hosted> --out <dir>",
+      "deferral": "D-P32.23a-1 (needs the D-R10-LIVE-1 frozen snapshot)",
+      "step": "produce the production candidate"
+    },
+    {
+      "command": "sig-ops release-publish --candidate <dir> --out <report>  # activate() over the hosted registry",
+      "deferral": "D-R10-PUBLISH-1 production half",
+      "step": "stage the registry"
+    },
+    {
+      "command": "sync staging_registry/staged/ \u2192 the web bucket; include conf/withdrawn_routes.conf in the nginx config",
+      "deferral": "D-R10-PUBLISH-1 production half",
+      "step": "deploy staged tree + deny map"
+    },
+    {
+      "command": "sig-api serve --release-registry <registry>",
+      "deferral": "D-R10-PUBLISH-1 production half",
+      "step": "serve release search"
+    },
+    {
+      "command": "GET /releases/, /releases/<pub>/, every manifest route; compare response sha256 to the approved digests; probe /intake/new \u2192 expect 503 receiver_not_operating",
+      "deferral": "D-R10-PUBLISH-1 production half",
+      "step": "unauthenticated production probe"
+    }
+  ],
+  "schema": "sig.release-publish-return-pass/1",
+  "status": "prepared_not_executed",
+  "subject_publication_id": "p-17b713cee4f4f605f73d72c6b13c824499d0d35005e4295f86c989e52dc98587",
+  "what_this_run_did_not_do": [
+    "no production serve: nothing was deployed, pushed to a bucket, or exposed at any public origin/CDN",
+    "no production candidate: D-P32.23a-1's hosted build over the repaired production snapshot is still owed",
+    "no intake operation: the receiver stays non-operational (D-P32.16-1); no synthetic submission was sent",
+    "no evaluation claim: status=deferred is carried, not resolved",
+    "no human/usability verification: D-R10-USERS-1 stays open",
+    "no merge, tag, or push to main"
+  ],
+  "what_this_run_proved": [
+    "atomic publish of the exact GATE-G3-accepted artifact set in the bounded staging namespace (validate-first, pointer-last)",
+    "unauthenticated reads byte-match the approved digests across every manifest compartment and the immutable citation routes",
+    "the withdrawal barrier, suppressed-slice disclosure, reduced-scope dossier posture and deferred-evaluation disclosure hold on the staged surface",
+    "honest unavailable states: 0 records, no search compartments, no tiles, non-operational intake (verified, never advertised)",
+    "prior-release rollback, no-prior-pointer rollback and the failed-deployment refusal \u2014 all atomic, all receipted"
+  ]
+}
