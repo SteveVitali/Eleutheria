@@ -1,0 +1,56 @@
+{
+  "as_of": "2026-09-28",
+  "denominator": "21 publishable tier-0 claims carrying the epistemic axes (reliability/directness/integrity/observed_at)",
+  "is_population_total": false,
+  "ruleset_version": "p27.3/1.0.0",
+  "schema": "sig/analytics-provenance/1",
+  "source_compartments": [
+    "osm_physical",
+    "sig_graph"
+  ],
+  "surfaces": {
+    "corrections": {
+      "artifact_count": 0,
+      "date_range": null,
+      "denominator": "0 correction/retraction claim rows (§39.8)",
+      "human_review_status": "unreviewed",
+      "rules_applied": [
+        "p27.3/1.0.0"
+      ],
+      "source_independence_count": 0,
+      "tier_distribution": {
+        "untiered": 0
+      }
+    },
+    "research_queue": {
+      "artifact_count": 0,
+      "date_range": null,
+      "denominator": "0 research tasks (§39.7 detector outputs)",
+      "human_review_status": "unreviewed",
+      "rules_applied": [
+        "p27.3/1.0.0"
+      ],
+      "source_independence_count": 0,
+      "tier_distribution": {
+        "untiered": 0
+      }
+    },
+    "site": {
+      "artifact_count": 2,
+      "date_range": {
+        "earliest": "2026-05-01",
+        "latest": "2026-09-21"
+      },
+      "denominator": "21 publishable tier-0 claims carrying the epistemic axes (reliability/directness/integrity/observed_at)",
+      "human_review_status": "unreviewed",
+      "rules_applied": [
+        "p27.3/1.0.0"
+      ],
+      "source_independence_count": 2,
+      "tier_distribution": {
+        "W3": 18,
+        "untiered": 3
+      }
+    }
+  }
+}
