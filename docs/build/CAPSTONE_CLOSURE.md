@@ -304,6 +304,7 @@ signature, no human label, no outreach ran**. A skip is never a pass.
 | gate | command | result | domain |
 |---|---|---|---|
 | local gate | `make check` | **5,506 passed / 3 skipped / 1 warning** (skips env-gated: live API URL, GCP project, credential env vars — recorded, never passes) | deterministic (Docker suites in-suite) |
+| full pytest | `uv run pytest -q` | **5,514 passed / 3 skipped / 1 warning** — re-run caught a missing SPDX header on the new test file (in-flight defect found + fixed; final run clean) | deterministic |
 | spec source | `python3 docs/build/tools/check_spec_src.py` | OK — byte-identical spec (710,858 bytes), 143 ADRs = file set, 715 ids, reference closure | deterministic |
 | spec-source tests | `python3 docs/build/tools/test_check_spec_src.py` | 8 passed | deterministic |
 | coverage | `python3 docs/build/tools/check_coverage_matrix.py docs/build/COVERAGE_MATRIX.csv` | 715 rows OK | deterministic |
