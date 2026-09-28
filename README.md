@@ -12,21 +12,31 @@ claim-level-provenance knowledge graph of surveillance infrastructure.
 
 This repository contains the full **specification and research base** and the **implemented build**:
 all §47 packages built and tested (`make check` green), the claim spine over PostgreSQL 18 + PostGIS,
-the OCFL evidence store, the read API, exports with licence-compartment computation, the zero-JS web
-shell, and twelve fixture-tested connectors. It is a buildable, fully-tested reference implementation —
-**not a running service**: nothing is deployed and no source has been fetched live (see
-*Repository layout & development* and `docs/build/reports/RELEASE_NOTES_v0.1.0.md`).
+the OCFL evidence store, the read API, exports with licence-compartment computation, the Astro web
+surface (zero-JS public content pages plus three opt-in interactive islands), and twenty registered
+connectors behind the fail-closed `ingestion_permitted` gate.
+
+**It is also deployed.** The public surface runs on GCP at
+**[surveillancegraph.org](https://surveillancegraph.org)** — launched 2026-09-24 and republished
+2026-09-27 over a ~2.4M-claim spine assembled from live fetches of the green-reviewed sources
+(`docs/build/reports/LAUNCH_RECORD_2026-09-24.md`,
+`docs/build/reports/REPUBLISH_LIVE_2026-09-27.md`). What is *not* yet public: the Round-10
+provisional-policy release candidate is published to a **staging namespace only** — production
+exposure, the hosted recovery/freeze it depends on, and the independent human evaluation all remain
+open obligations (see *Current state & owed work* below). The anonymous correction receiver is built
+but deliberately **not operating** (`/intake/` answers `503 receiver_not_operating` by design).
 
 ## Contents
 
 | Path | What it is |
 |---|---|
 | `docs/1_deep_research_overview.md` | The source outline: landscape synthesis and project definition (3,314 lines) |
-| `docs/2_canonical_design_spec.md` | **The canonical design and implementation specification** (9,047 lines, 671 numbered requirements) |
+| `docs/2_canonical_design_spec.md` | **The canonical design and implementation specification** (9,377 lines, 715 numbered requirement ids, v1.1.0) |
 | `docs/research/` | The evidence base: 13 research workstreams, 26,818 lines, 501 evidence-formatted findings |
 | `docs/research/_meta/` | Traceability index, adversarial gap analysis, lead-agent spot-checks, and the spec's section sources |
-| `docs/governance/` | The adopted governance and safety policies: takedown/corrections/suppression, governance & Code of Conduct, the anti-misuse statement, contributor safety |
-| `docs/adr/` | Architecture Decision Records (Appendix F) |
+| `docs/governance/` | The adopted governance and safety policies: takedown/corrections/suppression, governance & Code of Conduct, the anti-misuse statement, contributor safety, the intake-receiver operating packet, publication-scope analyses |
+| `docs/evaluation/` | The independent human-evaluation campaign packet: rubric, training pilot, reviewer provisioning, shadow-gate readout (prepared — **no human labels exist yet**) |
+| `docs/adr/` | Architecture Decision Records (144 — Appendix F) |
 | `docs/tickets/` | The ordered ticket backlog — the build's committed contract record (`00_MANIFEST.md` is the order; each `PXX.Y` file is one ticket) |
 | `docs/build/` | Durable build memory: planning ledger, build index, decision memo, capstone/backlog/reconciliation reports, the integration plan and release notes |
 
@@ -46,6 +56,8 @@ shell, and twelve fixture-tested connectors. It is a buildable, fully-tested ref
 - **Part VIII** — governance, safety, and law: licensing, publication policy, threat model, continuity
 - **Part IX** — engineering practice
 - **Part X** — the phased implementation plan
+- **Part XI** — the Round-10 contract extension (§55: typed assertions, dossiers, human evaluation,
+  immutable releases + FTS5 discovery, correction intake, acquisition, build memory)
 - **Appendices A–G** — traceability matrix, the 37 mandatory questions answered, consolidated DDL, a worked example, glossary, ADR index, corrections to the outline
 
 ### Three properties it asserts, and how they are checked
@@ -89,7 +101,7 @@ ADR-023 records the deviation. Each is a plain CLI (`uv run python -m <pkg> --he
 |---|---|
 | `ontology` | The single LinkML source of truth + SKOS vocabularies and the deterministic generators (§20.1, ADR-007). |
 | `db` | The physical claim spine: the L0–L3 schema on PostgreSQL 18 + PostGIS, sqitch migrations, append-only + RLS, and the DuckDB/Parquet analytics boundary (§16, §18, ADR-001). |
-| `connectors` | The eight-stage connector framework, the source registry + fail-closed ingestion gate, and the fixture-tested connectors (§21–§23, ADR-026). |
+| `connectors` | The eight-stage connector framework, the source registry + fail-closed ingestion gate, and twenty registered connectors — fixture-replayable offline; live fetch only where the source's review record is green (§21–§23, ADR-026/088). |
 | `parsing` | The layered document-parsing stack — the §24 parser interface every connector extracts through, incl. the layer-3/4 table + clause engines (ADR-033/071). |
 | `resolution` | The jurisdiction/organization identity registries and deterministic + probabilistic (Splink) entity resolution (§11, §14, ADR-029). |
 | `reconcile` | The deterministic `RESOLVE` engine, the §29 reconciliation workflows, and `Contradiction` as a first-class object (§28–§29, ADR-036/037). |
@@ -99,7 +111,7 @@ ADR-023 records the deviation. Each is a plain CLI (`uv run python -m <pkg> --he
 | `exports` | Bulk export builders with per-compartment licence computation + the ODbL split, Zenodo deposits, object-store push and tiles (§38, §42, ADR-048/067). |
 | `orchestration` | The pipeline-composition boundary — the only package allowed to import a workflow orchestrator (SIG-ENG-013, ADR-016). |
 | `policy` | The executable crawler / licence / publication / threat / sensitivity policy (real tested code, not prose — §42–§46, SIG-ENG-014). |
-| `ops` | Runtime composition (`sig-ops`) of the PG spine + read API + static site, plus deposits/egress/degraded-mode (P21.4/P21.5, ADR-066/067). |
+| `ops` | Runtime composition (`sig-ops`) of the PG spine + read API + static site — deposits/egress/degraded-mode, hosted deploy + scheduled ingest (`ops/gcp/`), recovery/release/dossier-packet verification verbs (P21.4/P21.5/P24.1, ADR-066/067/075/081, Round-10 ADR-125/132/137–139/142/144). |
 | `evidence` | The OCFL 1.1 write-once evidence store: content addressing, the capture pipeline, and sensitivity tiers (§17, ADR-006/023). |
 
 The TypeScript `web/` package (SIG-ENG-010) is the zero-JS-by-default Astro public shell; it consumes
@@ -137,11 +149,9 @@ Run one package's CLI with `uv run python -m <package> --help` (every stage is a
 SIG-ENG-013). The composed end-to-end suite is `SIG_REQUIRE_DB_TESTS=1 uv run pytest tests/e2e`
 (needs Docker).
 
-### Running SIG — three ways
+### Running SIG — three local ways
 
-SIG is a buildable reference implementation, not a running service; nothing is deployed and no
-source has been fetched live (see below). There are three ways to exercise it, in increasing
-scope — all zero-cost and local:
+There are three ways to exercise the build locally, in increasing scope — all zero-cost and local:
 
 1. **Verify the build** — `make check`. Lint, format, type-check, the full unit/integration suite,
    and the generated-artifact gate. This is the CI gate and needs no services.
@@ -157,21 +167,47 @@ scope — all zero-cost and local:
    static host when the dynamic services are down (the $0-beyond-static continuity posture,
    SIG-GOV-021, P21.5).
 
-None of these fetches a live source: no source is "green" (the `ingestion_permitted` gate is still
-fail-closed, HG-03 pending), so every connector run is fixture-backed replay/shadow, not live
-acquisition — see [`docs/build/OPERATIONAL_READINESS.md`](./docs/build/OPERATIONAL_READINESS.md).
+On a clean checkout none of these fetches a live source: the `ingestion_permitted` gate is
+fail-closed per-source (HG-03), so local connector runs are fixture-backed replay/shadow —
+`sig-connectors run --mode live` refuses (exit 3) any source whose review record is not green.
+A subset of sources *is* green-reviewed and the hosted scheduled jobs do fetch them live
+(`docs/build/reports/SOURCE_LIVE_OPS_MATRIX.md`); the remaining gated sources are tracked in
+[`docs/tickets/DEFERRALS.md`](./docs/tickets/DEFERRALS.md). See
+[`docs/build/OPERATIONAL_READINESS.md`](./docs/build/OPERATIONAL_READINESS.md).
+
+#### Deployed state (Round 10, 2026-09-28)
+
+Distinct from the local paths above, the hosted deployment exists and is public:
+
+- **Public surface** — `https://surveillancegraph.org` serves the HG-11-signed national publish
+  (GCP; `docs/build/reports/GCP_DEPLOYMENT.md`, `LAUNCH_RECORD_2026-09-24.md`,
+  `REPUBLISH_LIVE_2026-09-27.md`).
+- **Staging only** — the Round-10 provisional-policy release candidate (`p-17b713…`,
+  `provisional-ruleset/1`, `evaluation.status=deferred`) was published and verified inside a
+  bounded staging registry; it is *staged, not served*. Production exposure is an open operator
+  obligation (`D-R10-PUBLISH-1`, with `D-R10-LIVE-1` + `D-P32.23a-1` upstream).
+- **Built, not operating** — the anonymous correction receiver is implemented and gated off:
+  `[intake].operational=false`, so intake answers `503 receiver_not_operating`
+  (ADR-135; operator packet `docs/governance/intake-receiver-operating-packet.md`; `D-P32.16-1`).
+- **Deferred** — the independent human-evaluation spine (HUMAN-H4 → P32.22a → HUMAN-H5 → P32.23)
+  was deferred wholesale by recorded operator decision; the dossier packets are
+  `mechanical_complete` with `review.status=not_run`. Authoritative current state:
+  [`docs/build/OPERATIONAL_READINESS.md`](./docs/build/OPERATIONAL_READINESS.md) §(f) and
+  [`docs/build/CAPSTONE_CLOSURE.md`](./docs/build/CAPSTONE_CLOSURE.md) §(f).
 
 ### Releases
 
-Versions follow [Semantic Versioning](https://semver.org/); the current version is **0.1.0** (each
-member `pyproject.toml`). The change history is in [`CHANGELOG.md`](./CHANGELOG.md)
-(Keep a Changelog format). No ticket merges, tags, or pushes `main` — the operator **integrates the
-stacked-PR chain and cuts the tag after the build**, following the copy-pasteable procedure in
-[`docs/build/INTEGRATION_PLAN.md`](./docs/build/INTEGRATION_PLAN.md) §(d): re-run
-`sh docs/build/tools/merge_dryrun.sh`, merge the open PRs bottom-up, `make check`, then
-`git tag -a v0.1.0`, `make sbom`, and `gh release create` with
-[`docs/build/reports/RELEASE_NOTES_v0.1.0.md`](./docs/build/reports/RELEASE_NOTES_v0.1.0.md). Contribution workflow:
-[`CONTRIBUTING.md`](./CONTRIBUTING.md).
+Versions follow [Semantic Versioning](https://semver.org/); the declared version is **0.1.0** (each
+member `pyproject.toml`) and **no tag has been cut** — the REL.1 release-marker gate was deferred by
+the operator and `v0.1.0` remains untagged. The change history is in
+[`CHANGELOG.md`](./CHANGELOG.md) (Keep a Changelog format). No ticket merges, tags, or pushes
+`main` — the operator integrates the stacked-PR chain following the current, read-only-verified
+procedure in
+[`docs/build/reports/p33.6-integration-plan/INTEGRATION_PLAN.md`](./docs/build/reports/p33.6-integration-plan/INTEGRATION_PLAN.md)
+(re-run `sh docs/build/tools/merge_dryrun.sh`, retarget + merge the open PRs in ascending order with
+the documented conflict resolutions, then the post-merge verification; it has **no tag step** — the
+P20.3 [`docs/build/INTEGRATION_PLAN.md`](./docs/build/INTEGRATION_PLAN.md) it supersedes is kept as
+the dated record). Contribution workflow: [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
 ## Method note
 

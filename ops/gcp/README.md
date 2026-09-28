@@ -116,3 +116,15 @@ in this isolated context, so the real `apply`/deploy and the real GCS/Cloud-SQL 
 **gate-pending** (`docs/tickets/DEFERRALS.md` → `D-DEPLOY.1-1`, cross-ref `D-ACCT.1-1`). The
 operator exports ADC (`gcloud auth application-default login`) + `SIG_GCP_PROJECT`, then
 re-runs `bash ops/gcp/provision.sh --apply` and `sig-ops deploy --target gcp`.
+
+> **Update 2026-09-28 (P33.7 docs refresh — appended, the section above kept as the P24.1
+> authoring record).** The gated apply has since executed: the operator's ADC ran the
+> deployment on 2026-09-15 under **ADR-081**, which promoted the documented **Cloud SQL +
+> Cloud Run alternative** (~$9/mo — a conscious departure from the e2-micro zero-cost
+> posture above). The executed runbook is
+> `docs/build/reports/GCP_DEPLOYMENT.md` (provision, secrets, deploy, the real Cloud SQL
+> restore drill — `D-DEPLOY.1-1` DONE 2026-09-15); scheduled live ops applied 2026-09-16;
+> go-public executed 2026-09-16 (`docs/build/reports/PUBLICATION_CHECKLIST.md`), domain
+> cut-over + TLS 2026-09-23, national publish 2026-09-24 (`LAUNCH_RECORD_2026-09-24.md`),
+> republish 2026-09-27 (`REPUBLISH_LIVE_2026-09-27.md`) — the public surface serves at
+> `https://surveillancegraph.org`.
