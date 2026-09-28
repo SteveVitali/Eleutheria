@@ -1,0 +1,32 @@
+[
+  {
+    "asOf": {
+      "as_of_belief": "2026-09-28",
+      "as_of_world": "2026-09-28",
+      "belief_pinned": false
+    },
+    "jurisdiction": "us.ok.edmond",
+    "slug": "us-ok-edmond",
+    "subject_label": "Surveillance infrastructure — us.ok.edmond"
+  },
+  {
+    "asOf": {
+      "as_of_belief": "2026-09-28",
+      "as_of_world": "2026-09-28",
+      "belief_pinned": false
+    },
+    "jurisdiction": "us.ok.oklahoma_city",
+    "slug": "us-ok-oklahoma-city",
+    "subject_label": "Surveillance infrastructure — us.ok.oklahoma_city"
+  },
+  {
+    "asOf": {
+      "as_of_belief": "2026-09-28",
+      "as_of_world": "2026-09-28",
+      "belief_pinned": false
+    },
+    "jurisdiction": "us.ok.tulsa",
+    "slug": "us-ok-tulsa",
+    "subject_label": "Surveillance infrastructure — us.ok.tulsa"
+  }
+]

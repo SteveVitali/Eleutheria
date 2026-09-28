@@ -167,3 +167,70 @@ Every composed xfail is listed exactly once. The spine-seam rows (claim sink, re
 The one-time cost is the PG container + sqitch deploy (~7 s); everything downstream is sub-second
 except the Splink match and the static web build. CI (`ubuntu-latest`, Docker present) runs the same
 suite for real via `SIG_REQUIRE_DB_TESTS`.
+
+---
+
+## Round-10 addendum — P33.2 composed verification (row 193, X2 capstone)
+
+P19.3 drove the *first* composed stack over fixture seams; **P33.2** is the Round-10 capstone
+counterpart: the **landed** evidence-first pipeline driven end-to-end over **one composed fixture**
+against a **real PostgreSQL 18 + PostGIS** spine (real `db/sqitch.plan`, no substitutes), under
+`live_verification=false`. The runner is `sig.composed-verification/1`
+(`ops/src/ops/composed_verify.py`, CLI `sig-ops composed-verify --dsn … --out …`); the committed
+proof is `docs/build/reports/p33.2-composed-verification/` (`COMPOSED_VERIFICATION.json` + `.md` +
+the export/release/registry trees it produced).
+
+**Verdict: `pass` — 20/20 checks · publication `p-8414a4165a7866094922585e022be28c755f57da4a1bcb801071b0863e615ffe`.**
+
+### The composed path — one fixture, five legs
+
+`docs/build/fixtures/p33-2_composed_fixture.json` (sha256
+`eb092827da6b4572a0c916b93df3c04ceb3f61a3dac040fa7b4bedb9531c0346`, capture digest
+`bcnaeiqy7lvxjikwbqr3dtv7…`) carries, in one document: an eligible CC-BY-4.0 subject, an eligible
+ODbL subject, a withheld subject, an UNDETERMINED-rights subject, geolocation, jurisdiction/name
+fields, a temporal count restatement, an undated claim (occurrence fallback), publisher/operator/
+vendor role predicates, and typed row locators on every record.
+
+| leg | seam exercised | checks | evidence |
+|---|---|---|---|
+| A | capture → claim | 5/5 | atlas connector through the production pipeline + `PgClaimSink` (document-only binding honestly recorded); fixture claims bound `binding_status=actual_capture` with typed row locators; re-sighting appended +0 claims / second `claim_evidence` link per claim (append-only) |
+| B | temporal + role resolution | 4/4 | pure `occurrences.py` model ≡ `sig.eligible_occurrence` SQL twin at two beliefs; dated → `claim` basis, undated → `capture_retrieved_at_latest`; publisher provenance mints no entity, operator/vendor mint distinct partners (SIG-TRUST-003/005) |
+| C | eligible release | 6/6 | entity WITHHOLD disposition recorded; materialize +35 / rerun +0; spine export → `validate_release` complete (23 artifacts) → activated `p-8414a416…`; eligible subjects published; withheld + UNDETERMINED subjects **loudly excluded** (`exclusions.json` names the refused slice); ODbL rows only in `osm_physical` |
+| D | search / record | 3/3 | released FTS5 index (contract-pinned) returns the record; published record → claim anchors → `claim_evidence` → capture digest == fixture multihash (record→claim→evidence→input bytes); serving barrier `route_access` permitted; current selector resolves the publication |
+| E | correction | 2/2 | durable intake journey (10/10 steps — receipt, restart visibility, moderation, approval, canonical apply, exact-once retry, publication linkage, resolved state, receiver-role write refusals) **against a claim the composed release actually published** (`target_claim_id`); §16.6 close+revises — prior `sys_period` closed, no UPDATE |
+
+### Round-10 gate matrix (this machine, 2026-09-28 UTC; commit `ad0bd84`)
+
+| gate | command | result | domain |
+|---|---|---|---|
+| local gate | `make check` | **5506 passed, 3 skipped, 1 warning** | deterministic (skips env-gated, see below) |
+| DB spine | `SIG_REQUIRE_DB_TESTS=1 uv run pytest tests/db` (= `make test-db`) | **482 passed** in 211 s | **Docker** PG18+PostGIS, real sqitch plan — incl. `test_composed_verification_pg.py` 6/6 on an isolated scratch DB |
+| composed e2e | `SIG_REQUIRE_DB_TESTS=1 uv run pytest tests/e2e -ra` | **16 passed** | Docker |
+| web gate | `npm --prefix web run check` | green (typecheck, unit, build, licenses, e2e) | deterministic |
+| release conformance | `sig-ops release-publish --out <dir>` | **25 checks: 25 pass, 0 fail, 0 deferred, 0 n/a** | deterministic |
+| spec source | `docs/research/_meta/spec_src` check | byte-identical generated spec; 143 ADRs; 715 ids; reference closure | deterministic |
+| coverage matrix | `check_coverage_matrix.py` | 715 rows OK | deterministic |
+| backlog | `check_backlog.py` | 102/102 risks, 143/143 ADR triggers, 90/90 LD rows, 36/36 deferral homes, 0 dup sources | deterministic |
+| planning | planning checks | 40 ordered rows, 38 singly-owned requirements, Round-9 tail, six streams | deterministic |
+| docs freshness | `make docs-check` | 430 repo docs / 8 agent docs, 0 issues | deterministic |
+| build memory | `bash scripts/docs/check-build-memory.sh .` | 0 violations, 0 warnings | deterministic |
+| composed path | `sig-ops composed-verify` | **verdict=pass, 20/20**, `sig.composed-verification/1` | **Docker** PG18 |
+
+**Unavailable / explicitly not-run (never silently green):** `make check`'s 3 skips are env-gated —
+the live acceptance-API test (`SIG_STAGING_API_URL` unset), the GCP secret test (`SIG_GCP_PROJECT`
+unset), and the credential-leak sweep (no `SIG_*` credential vars exported). None is a pass.
+**Live stage not executed:** no hosted probe, no production publication, no live obligation
+discharged — `environment.live_verification=false` is recorded inside the proof JSON; the live
+return pass stays OPEN under **D-R10-LIVE-1** / **D-R10-PUBLISH-1**.
+
+**Isolation note:** the composed verifier *mutates* an append-only spine (claims, bindings,
+materializations, dispositions, corrections). It therefore runs against a **fresh scratch database**
+inside the shared Docker PG instance — full real `db/sqitch.plan` deployed, dropped after
+(`tests/db/test_composed_verification_pg.py`) — and never against the shared test catalog. A rerun
+on a dirty catalog *fails loudly* (duplicate report ids, stale correction targets, accumulated
+evidence) rather than silently green, which is itself evidence the checks are real.
+
+**xfail posture:** every historical `LD-*` composed xfail (LD-F06b, LD-F04, LD-F06, LD-V08 above)
+was closed by its owning ticket long ago; the current e2e suite reports **0 xfailed, 0 skipped**
+under `SIG_REQUIRE_DB_TESTS=1`. No xfail was flipped by P33.2 — this ticket owns no new requirement
+ids and closed no deferred seam.

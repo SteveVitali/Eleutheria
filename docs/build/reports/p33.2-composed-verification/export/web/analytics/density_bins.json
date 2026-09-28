@@ -1,0 +1,27 @@
+{
+  "as_of": "2026-09-28",
+  "bins": [
+    {
+      "coverage": "low",
+      "deviceCount": 1,
+      "h3": "8326c1fffffffff",
+      "jurisdiction": "us.ok.oklahoma_city"
+    },
+    {
+      "coverage": "low",
+      "deviceCount": 1,
+      "h3": "8326eefffffffff",
+      "jurisdiction": "us.ok.tulsa"
+    }
+  ],
+  "coverage_rule": "cell coverage = the number of distinct named sources contributing to the cell: >=3 'high', 2 'partial', 1 'low'; a cell exists only where at least one published point falls — never a searched-empty claim (SIG-UI-018)",
+  "denominator": "2 published observation-level site records with a releasable tier-0 point (licence-refused subjects excluded)",
+  "grid": "h3",
+  "h3_resolution": 3,
+  "is_population_total": false,
+  "schema": "sig/analytics-density-bins/1",
+  "source_compartments": [
+    "osm_physical",
+    "sig_graph"
+  ]
+}

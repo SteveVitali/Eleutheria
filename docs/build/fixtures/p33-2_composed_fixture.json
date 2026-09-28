@@ -1,0 +1,232 @@
+{
+  "schema": "sig.composed-fixture/1",
+  "ticket": "P33.2",
+  "note": "The one composed Round-10 acceptance fixture: a deterministic 'registry export' document asserted through PgClaimSink against a real CaptureRef of THESE bytes. Every claim carries its row locator into this document (claim_evidence.locator, binding_status=actual_capture). Rows exercise: geolocation for the release path, a temporal restatement + re-sighting, the org-role taxonomy (publisher vs operator vs vendor), an eligible ODbL-compartment subject, a withheld subject, and an UNDETERMINED-rights subject the licence gate must exclude loudly. 'undated' rows omit observed_at so the occurrence fallback (capture_retrieved_at_latest) is exercised.",
+  "captured_at": "2026-10-20T00:00:00Z",
+  "rows": [
+    {
+      "subject_id": "fx-dep-released",
+      "predicate_id": "camera_latitude",
+      "value": 35.4676,
+      "raw_value": "35.4676",
+      "observed_at": "2026-05-01T00:00:00Z",
+      "source_reliability": "R2",
+      "license": "CC-BY-4.0"
+    },
+    {
+      "subject_id": "fx-dep-released",
+      "predicate_id": "camera_longitude",
+      "value": -97.5164,
+      "raw_value": "-97.5164",
+      "observed_at": "2026-05-01T00:00:00Z",
+      "source_reliability": "R2",
+      "license": "CC-BY-4.0"
+    },
+    {
+      "subject_id": "fx-dep-released",
+      "predicate_id": "camera_jurisdiction",
+      "value": "us.ok.oklahoma_city",
+      "raw_value": "us.ok.oklahoma_city",
+      "observed_at": "2026-05-01T00:00:00Z",
+      "source_reliability": "R2",
+      "license": "CC-BY-4.0"
+    },
+    {
+      "subject_id": "fx-dep-released",
+      "predicate_id": "camera_name",
+      "value": "P33.2 Composed Fixture Interchange",
+      "raw_value": "P33.2 Composed Fixture Interchange",
+      "observed_at": "2026-05-01T00:00:00Z",
+      "source_reliability": "R2",
+      "license": "CC-BY-4.0"
+    },
+    {
+      "subject_id": "fx-dep-released",
+      "predicate_id": "contracted_camera_count",
+      "value": 25,
+      "unit": "cameras",
+      "raw_value": "25",
+      "observed_at": "2026-05-01T00:00:00Z",
+      "source_reliability": "R2",
+      "license": "CC-BY-4.0",
+      "note": "temporal: first dated count — later restated by the next row, then corrected 25/30→225 by the intake journey"
+    },
+    {
+      "subject_id": "fx-dep-released",
+      "predicate_id": "contracted_camera_count",
+      "value": 30,
+      "unit": "cameras",
+      "raw_value": "30",
+      "observed_at": "2026-06-01T00:00:00Z",
+      "source_reliability": "R2",
+      "license": "CC-BY-4.0",
+      "note": "temporal: the later-dated restatement; the runner re-asserts THIS row against a second capture (a re-sighting adds a second establishing occurrence)"
+    },
+    {
+      "subject_id": "fx-dep-released",
+      "predicate_id": "camera_presence",
+      "value": true,
+      "raw_value": "true",
+      "source_reliability": "R2",
+      "license": "CC-BY-4.0",
+      "note": "undated on purpose — the observation contract falls back to the latest eligible occurrence retrieved_at (basis capture_retrieved_at_latest)"
+    },
+    {
+      "subject_id": "fx-dep-released",
+      "predicate_id": "camera_registry_publisher",
+      "value": "Fixture Registry Publisher",
+      "raw_value": "Fixture Registry Publisher",
+      "observed_at": "2026-05-01T00:00:00Z",
+      "source_reliability": "R2",
+      "license": "CC-BY-4.0",
+      "note": "role leg: PUBLISHER is a provenance role — mints_entity_ref() is False; no object_entity may be created"
+    },
+    {
+      "subject_id": "fx-dep-released",
+      "predicate_id": "camera_operator",
+      "object_type": "entity_ref",
+      "object_ref": {
+        "scheme": "sig.org.name_scoped",
+        "value": "src:fx.registry|fixture operator llc",
+        "entity_type": "organization",
+        "label": "Fixture Operator LLC",
+        "basis": "normalized_name_scoped",
+        "scope": "src:fx.registry",
+        "candidate": true,
+        "role": "operator"
+      },
+      "raw_value": "Fixture Operator LLC",
+      "observed_at": "2026-05-01T00:00:00Z",
+      "source_reliability": "R2",
+      "license": "CC-BY-4.0",
+      "note": "role leg: OPERATOR is operational — mints a partner-org entity candidate"
+    },
+    {
+      "subject_id": "fx-dep-released",
+      "predicate_id": "vendor",
+      "object_type": "entity_ref",
+      "object_ref": {
+        "scheme": "sig.org.name_scoped",
+        "value": "src:fx.registry|fixture vendor corp",
+        "entity_type": "organization",
+        "label": "Fixture Vendor Corp",
+        "basis": "normalized_name_scoped",
+        "scope": "src:fx.registry",
+        "candidate": true,
+        "role": "vendor"
+      },
+      "raw_value": "Fixture Vendor Corp",
+      "observed_at": "2026-05-01T00:00:00Z",
+      "source_reliability": "R2",
+      "license": "CC-BY-4.0",
+      "note": "role leg: VENDOR is a distinct operational role — a second, different partner-org entity"
+    },
+    {
+      "subject_id": "fx-dep-odbl",
+      "predicate_id": "camera_latitude",
+      "value": 36.154,
+      "raw_value": "36.154",
+      "observed_at": "2026-05-01T00:00:00Z",
+      "source_reliability": "R2",
+      "license": "ODbL-1.0",
+      "note": "compartment leg: ODbL-licensed claims ship in the separate osm_physical compartment"
+    },
+    {
+      "subject_id": "fx-dep-odbl",
+      "predicate_id": "camera_longitude",
+      "value": -95.9928,
+      "raw_value": "-95.9928",
+      "observed_at": "2026-05-01T00:00:00Z",
+      "source_reliability": "R2",
+      "license": "ODbL-1.0"
+    },
+    {
+      "subject_id": "fx-dep-odbl",
+      "predicate_id": "camera_jurisdiction",
+      "value": "us.ok.tulsa",
+      "raw_value": "us.ok.tulsa",
+      "observed_at": "2026-05-01T00:00:00Z",
+      "source_reliability": "R2",
+      "license": "ODbL-1.0"
+    },
+    {
+      "subject_id": "fx-dep-odbl",
+      "predicate_id": "camera_name",
+      "value": "P33.2 ODbL Fixture Junction",
+      "raw_value": "P33.2 ODbL Fixture Junction",
+      "observed_at": "2026-05-01T00:00:00Z",
+      "source_reliability": "R2",
+      "license": "ODbL-1.0"
+    },
+    {
+      "subject_id": "fx-dep-withheld",
+      "predicate_id": "camera_latitude",
+      "value": 35.2226,
+      "raw_value": "35.2226",
+      "observed_at": "2026-05-01T00:00:00Z",
+      "source_reliability": "R2",
+      "license": "CC-BY-4.0",
+      "note": "eligibility leg: this whole subject is withheld by an entity-level publication_disposition — the release must not carry it"
+    },
+    {
+      "subject_id": "fx-dep-withheld",
+      "predicate_id": "camera_longitude",
+      "value": -97.4395,
+      "raw_value": "-97.4395",
+      "observed_at": "2026-05-01T00:00:00Z",
+      "source_reliability": "R2",
+      "license": "CC-BY-4.0"
+    },
+    {
+      "subject_id": "fx-dep-withheld",
+      "predicate_id": "camera_jurisdiction",
+      "value": "us.ok.norman",
+      "raw_value": "us.ok.norman",
+      "observed_at": "2026-05-01T00:00:00Z",
+      "source_reliability": "R2",
+      "license": "CC-BY-4.0"
+    },
+    {
+      "subject_id": "fx-dep-withheld",
+      "predicate_id": "camera_name",
+      "value": "P33.2 Withheld Fixture Site",
+      "raw_value": "P33.2 Withheld Fixture Site",
+      "observed_at": "2026-05-01T00:00:00Z",
+      "source_reliability": "R2",
+      "license": "CC-BY-4.0"
+    },
+    {
+      "subject_id": "fx-dep-undetermined",
+      "predicate_id": "camera_latitude",
+      "value": 35.6528,
+      "raw_value": "35.6528",
+      "observed_at": "2026-05-01T00:00:00Z",
+      "source_reliability": "R2",
+      "note": "licence-gate leg: NO license key → UNDETERMINED rights; the runner then records a rights_decision lifting redistribution to 'yes' while the licence stays UNDETERMINED — publishable claims reach slicing and the export gate refuses the slice loudly in exclusions.json (SIG-LIC-004), never silently"
+    },
+    {
+      "subject_id": "fx-dep-undetermined",
+      "predicate_id": "camera_longitude",
+      "value": -97.4781,
+      "raw_value": "-97.4781",
+      "observed_at": "2026-05-01T00:00:00Z",
+      "source_reliability": "R2"
+    },
+    {
+      "subject_id": "fx-dep-undetermined",
+      "predicate_id": "camera_jurisdiction",
+      "value": "us.ok.edmond",
+      "raw_value": "us.ok.edmond",
+      "observed_at": "2026-05-01T00:00:00Z",
+      "source_reliability": "R2"
+    },
+    {
+      "subject_id": "fx-dep-undetermined",
+      "predicate_id": "camera_name",
+      "value": "P33.2 Undetermined Rights Site",
+      "raw_value": "P33.2 Undetermined Rights Site",
+      "observed_at": "2026-05-01T00:00:00Z",
+      "source_reliability": "R2"
+    }
+  ]
+}

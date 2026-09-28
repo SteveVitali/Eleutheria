@@ -1,0 +1,10 @@
+[
+  {
+    "last_content_change": "2026-05-01T00:00:00+00:00",
+    "last_successful_run": "not-recorded",
+    "source": "composed-fixture",
+    "stale_entity_count": 0,
+    "status": "degraded",
+    "volatility_class": "SLOW"
+  }
+]

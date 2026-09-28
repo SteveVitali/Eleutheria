@@ -1,0 +1,41 @@
+{
+  "assets": [
+    {
+      "id": "01a0e6a5-43e4-7571-aefc-d547d140117a",
+      "jurisdiction": "us.ok.tulsa",
+      "label": "P33.2 ODbL Fixture Junction",
+      "lat": 36.154,
+      "lon": -95.9928,
+      "precision": "full_precision",
+      "tier": 0
+    },
+    {
+      "id": "01a0e6a5-43e4-7789-9bd8-24701a5a7c37",
+      "jurisdiction": "us.ok.oklahoma_city",
+      "label": "P33.2 Composed Fixture Interchange",
+      "lat": 35.4676,
+      "lon": -97.5164,
+      "precision": "full_precision",
+      "tier": 0
+    }
+  ],
+  "jurisdiction_indicators": [
+    {
+      "jurisdiction": "us.ok.edmond"
+    },
+    {
+      "jurisdiction": "us.ok.oklahoma_city"
+    },
+    {
+      "jurisdiction": "us.ok.tulsa"
+    }
+  ],
+  "layers": [
+    {
+      "description": "3 resolved device sites (clusters of the same physical device) from 3 observation-level records (dedup ratio 0.000), via materialized camera-site entity resolution (ADR-105). Each point shown is one record's own. Resolution rests on a provisional eval (D-R6.1-EVAL, OPEN).",
+      "id": "resolved_sites",
+      "kind": "resolved",
+      "label": "Resolved device sites"
+    }
+  ]
+}

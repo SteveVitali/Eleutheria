@@ -1,0 +1,272 @@
+[
+  {
+    "asOf": {
+      "as_of_belief": "2026-09-28",
+      "as_of_world": "2026-09-28",
+      "belief_pinned": false
+    },
+    "authorization": {
+      "approving_body": null,
+      "consent_agenda": null,
+      "date": null,
+      "public_comment": null,
+      "vote": null
+    },
+    "gaps": [],
+    "jurisdiction": "us.ok.edmond",
+    "kind": "inventory_overview",
+    "legal_regime": {
+      "disclosure_duties": [],
+      "local_ordinance": null,
+      "state_statute": null
+    },
+    "rulesetVersion": "p27.3/1.0.0",
+    "sections": [
+      {
+        "section_id": "at_a_glance"
+      },
+      {
+        "rows": [
+          {
+            "label": "Geolocated site observations",
+            "note": "Observation-level count from named sources — not a resolved device census (SIG-RECON-058).",
+            "value": "1 of 1 evaluable geolocated site observations in us.ok.edmond"
+          }
+        ],
+        "section_id": "what_is_deployed"
+      },
+      {
+        "section_id": "cost_and_expiry"
+      },
+      {
+        "section_id": "who_else_can_see"
+      },
+      {
+        "section_id": "configuration_and_retention"
+      },
+      {
+        "section_id": "usage"
+      },
+      {
+        "rows": [
+          {
+            "label": "Publishable subjects in this jurisdiction",
+            "value": 1
+          }
+        ],
+        "section_id": "where_the_hardware_is"
+      },
+      {
+        "section_id": "policy"
+      },
+      {
+        "section_id": "accountability_events"
+      },
+      {
+        "section_id": "timeline"
+      },
+      {
+        "section_id": "what_we_dont_know"
+      },
+      {
+        "rows": [
+          {
+            "label": "Sources",
+            "value": "composed-fixture"
+          }
+        ],
+        "section_id": "how_we_know_this"
+      }
+    ],
+    "slug": "us-ok-edmond",
+    "source_families": [
+      "composed-fixture"
+    ],
+    "subject_label": "Surveillance infrastructure — us.ok.edmond",
+    "termination": {
+      "auto_renews": null,
+      "expiry_date": null,
+      "notice_window_days": null
+    }
+  },
+  {
+    "asOf": {
+      "as_of_belief": "2026-09-28",
+      "as_of_world": "2026-09-28",
+      "belief_pinned": false
+    },
+    "authorization": {
+      "approving_body": null,
+      "consent_agenda": null,
+      "date": null,
+      "public_comment": null,
+      "vote": null
+    },
+    "gaps": [],
+    "jurisdiction": "us.ok.oklahoma_city",
+    "kind": "inventory_overview",
+    "legal_regime": {
+      "disclosure_duties": [],
+      "local_ordinance": null,
+      "state_statute": null
+    },
+    "rulesetVersion": "p27.3/1.0.0",
+    "sections": [
+      {
+        "section_id": "at_a_glance"
+      },
+      {
+        "rows": [
+          {
+            "label": "Geolocated site observations",
+            "note": "Observation-level count from named sources — not a resolved device census (SIG-RECON-058).",
+            "value": "1 of 1 evaluable geolocated site observations in us.ok.oklahoma_city"
+          }
+        ],
+        "section_id": "what_is_deployed"
+      },
+      {
+        "section_id": "cost_and_expiry"
+      },
+      {
+        "section_id": "who_else_can_see"
+      },
+      {
+        "section_id": "configuration_and_retention"
+      },
+      {
+        "section_id": "usage"
+      },
+      {
+        "rows": [
+          {
+            "label": "Publishable subjects in this jurisdiction",
+            "value": 1
+          }
+        ],
+        "section_id": "where_the_hardware_is"
+      },
+      {
+        "section_id": "policy"
+      },
+      {
+        "section_id": "accountability_events"
+      },
+      {
+        "section_id": "timeline"
+      },
+      {
+        "section_id": "what_we_dont_know"
+      },
+      {
+        "rows": [
+          {
+            "label": "Sources",
+            "value": "composed-fixture"
+          }
+        ],
+        "section_id": "how_we_know_this"
+      }
+    ],
+    "slug": "us-ok-oklahoma-city",
+    "source_families": [
+      "composed-fixture"
+    ],
+    "subject_label": "Surveillance infrastructure — us.ok.oklahoma_city",
+    "termination": {
+      "auto_renews": null,
+      "expiry_date": null,
+      "notice_window_days": null
+    }
+  },
+  {
+    "asOf": {
+      "as_of_belief": "2026-09-28",
+      "as_of_world": "2026-09-28",
+      "belief_pinned": false
+    },
+    "authorization": {
+      "approving_body": null,
+      "consent_agenda": null,
+      "date": null,
+      "public_comment": null,
+      "vote": null
+    },
+    "gaps": [],
+    "jurisdiction": "us.ok.tulsa",
+    "kind": "inventory_overview",
+    "legal_regime": {
+      "disclosure_duties": [],
+      "local_ordinance": null,
+      "state_statute": null
+    },
+    "rulesetVersion": "p27.3/1.0.0",
+    "sections": [
+      {
+        "section_id": "at_a_glance"
+      },
+      {
+        "rows": [
+          {
+            "label": "Geolocated site observations",
+            "note": "Observation-level count from named sources — not a resolved device census (SIG-RECON-058).",
+            "value": "1 of 1 evaluable geolocated site observations in us.ok.tulsa"
+          }
+        ],
+        "section_id": "what_is_deployed"
+      },
+      {
+        "section_id": "cost_and_expiry"
+      },
+      {
+        "section_id": "who_else_can_see"
+      },
+      {
+        "section_id": "configuration_and_retention"
+      },
+      {
+        "section_id": "usage"
+      },
+      {
+        "rows": [
+          {
+            "label": "Publishable subjects in this jurisdiction",
+            "value": 1
+          }
+        ],
+        "section_id": "where_the_hardware_is"
+      },
+      {
+        "section_id": "policy"
+      },
+      {
+        "section_id": "accountability_events"
+      },
+      {
+        "section_id": "timeline"
+      },
+      {
+        "section_id": "what_we_dont_know"
+      },
+      {
+        "rows": [
+          {
+            "label": "Sources",
+            "value": "composed-fixture"
+          }
+        ],
+        "section_id": "how_we_know_this"
+      }
+    ],
+    "slug": "us-ok-tulsa",
+    "source_families": [
+      "composed-fixture"
+    ],
+    "subject_label": "Surveillance infrastructure — us.ok.tulsa",
+    "termination": {
+      "auto_renews": null,
+      "expiry_date": null,
+      "notice_window_days": null
+    }
+  }
+]
