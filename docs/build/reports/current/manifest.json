@@ -6,11 +6,11 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "e8f8764d53e0d1260d45fa72548c283af4bafe0c",
+  "input_commit": "7a2ff9fa54f05280f12d4ce29eada230d2a550dc",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
-      "sha256": "f010162f767046f9e63cd9ef64bf3bea5460995454bc20e9fdcf14e2a1cd6fa9"
+      "sha256": "bed78ce22b3f96306f88c061e609e7d4c9b0960ee38ec40c05f5a16acebd9810"
     },
     {
       "path": "docs/adr/ADR-001-postgresql-18-+-postgis-as-the-canonical-store.md",
@@ -529,24 +529,80 @@
       "sha256": "1933162bc34f77212e2812c3877f965d542254d7e9ff52ebb22569e8a6151db6"
     },
     {
+      "path": "docs/adr/ADR-131-dossier-documents-connector-shared-bounded-adapter-frozen-field-crosswalk.md",
+      "sha256": "2a7d1f7505ee8f7c4cf5b18e406502fdb9473c84d7a59f80698c0ad136b6d89d"
+    },
+    {
+      "path": "docs/adr/ADR-132-immutable-release-namespaces-and-acyclic-integrity.md",
+      "sha256": "f362292fca493748935fb96d0be9bd320820018ece62231f75b34f2b29db5475"
+    },
+    {
+      "path": "docs/adr/ADR-133-per-compartment-immutable-corpus-search-indexes.md",
+      "sha256": "828408b9b1bbe66f5abdd87790ef1d94cce17987de1b90e86cda3c777a939a9f"
+    },
+    {
+      "path": "docs/adr/ADR-134-coordinated-investigation-workspace-state.md",
+      "sha256": "d95eceab25a30d1e3b03052e13ab68fc7b68c9b1d266d43b1b5d0b1140529c4f"
+    },
+    {
+      "path": "docs/adr/ADR-135-isolated-durable-anonymous-correction-intake.md",
+      "sha256": "97b77ef32c9433328af18ef4e687d573218e4b500f7ae14094820ab79c418e58"
+    },
+    {
+      "path": "docs/adr/ADR-136-research-dossier-schema-portfolio-completion-and-eleventh-artifact-class.md",
+      "sha256": "6799a90a9fa3e2db9d4e3351c1e12464c4d494cc61e58dcd9120d09b7575b354"
+    },
+    {
+      "path": "docs/adr/ADR-137-oklahoma-city-dossier-packet-and-additive-seed-correction.md",
+      "sha256": "46a706724c486f71eee1574e4f38a7ebfda2897edc40c23ba9c1ff686532985b"
+    },
+    {
+      "path": "docs/adr/ADR-138-tulsa-dossier-packet-template-executed-and-honest-unknowns.md",
+      "sha256": "d9a0c492c602e79ed50e89e9f1dffda77933ac78a0b0505b7b42ba3240cec68c"
+    },
+    {
+      "path": "docs/adr/ADR-139-san-diego-dossier-packet-subscription-hardware-prime-component-and-proposed-recommendation.md",
+      "sha256": "11f3956c8376ad1a801bb2aa3ed2474f30b7e7ea44122ab6f29f2ed4de36b2eb"
+    },
+    {
+      "path": "docs/adr/ADR-140-acquisition-pilot-batch-selection-funnel-measurement-and-gate-packets.md",
+      "sha256": "655cbc5bdaf6a256f36a97f6ea29507fe973a034d6eefca0edcb64566526f58a"
+    },
+    {
+      "path": "docs/adr/ADR-141-bounded-recovery-apply-exactly-once-receipts-and-rematerialization.md",
+      "sha256": "82b36f8a09d37695ce59ba1e0fd30f8206bc7aec8a299af38c2613d861fee60e"
+    },
+    {
+      "path": "docs/adr/ADR-142-release-candidate-identity-deferred-evaluation-and-pointer-immutability.md",
+      "sha256": "4d794f813389999ab693ee19dd7981f49f77c2ae9a22ddf7791bf70d4210cd0b"
+    },
+    {
+      "path": "docs/adr/ADR-143-investigation-journey-acceptance-portfolio-evidence-classes-and-honest-gaps.md",
+      "sha256": "3ef52eacfbb22700a4980909f3791e6bc8203c0b5a5ca0d88c0aa995ca133e40"
+    },
+    {
+      "path": "docs/adr/ADR-144-bounded-release-publication-unauthenticated-verification-and-rollback-rehearsal.md",
+      "sha256": "03832e29d027e8e8c1c0681f6decdfa2282a66593d014430d5e365368e5e2278"
+    },
+    {
       "path": "docs/adr/README.md",
-      "sha256": "7afec87ed82ee1d77c0583946021d32cd3a9734b94a480043e7d82cb9923857a"
+      "sha256": "f9cbadcbddac69ce9725ee728f9b62dfe63316a1add7bb6c4b06b79f570eaf61"
     },
     {
       "path": "docs/build/BACKLOG.csv",
-      "sha256": "db3c8baf5467e72c8221541f16f94736f3c1a69020c9e4f8fc0874705639e76a"
+      "sha256": "a7cb9597fcb99cee0568e3de3f60ccab1d22646f9af4ac172f56ed2d7aedd980"
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "e4deb47935a828a2f09011cb9911de638e518b5d1e488ccbf9ae81da508cac05"
+      "sha256": "dbc5bb23b1e08627b2500133af48bd69677a2bbf8e0e785207ae2d52e380a92b"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "627297e5bb485ad400ca66f8feb211fb34da0d17cb7128cd8d0febe72bf20ce7"
+      "sha256": "9e4ef879c44228f17a109c0c8d65ff351e56b16cfa2fc0807f14b2bee08ca551"
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "71c1d151a642898587335aaf8320dd1c80c86bb4a56d9fce71f68860a614485a"
+      "sha256": "64373af244a030a2e4820afe3675362cab014ad50d4a727db668878f3ca8c064"
     },
     {
       "path": "docs/build/readouts/ACCEPT-R10.md",
@@ -570,7 +626,7 @@
     },
     {
       "path": "docs/build/readouts/GATE-G3.md",
-      "sha256": "79a2d79c56923a20bf0aa62bcb56d3cc1ca86ee639fab820646165cd2f4e21c8"
+      "sha256": "960a1180e4cd8da96208311a6bce36e6eeb4e22dd27986208bab70f1f13e29e8"
     },
     {
       "path": "docs/build/readouts/HUMAN-H1.md",
@@ -602,7 +658,7 @@
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
-      "sha256": "df9b2a78354e9a68813a26bbda9701192a2d65cced168efa57a01a4fc0f995d6"
+      "sha256": "1439087e45a405086440329b11e2c064ea4b82eabf5f11f0beee512d9717b8d4"
     },
     {
       "path": "docs/build/reports/obligations/governing_adrs.json",
@@ -1222,11 +1278,71 @@
     },
     {
       "path": "docs/build/runs/P32.11.md",
-      "sha256": "45f6bf05e1ba6e0bad19f164c63ad9339d56f2b6372a6bc700df7cfba1c10aa7"
+      "sha256": "2e5897edf4359fbec37fb44fed2e7fafa3caa2a5adc4785c63e9f6f51e8fca12"
+    },
+    {
+      "path": "docs/build/runs/P32.12.md",
+      "sha256": "1e9f885f82fc01d5541d86355450573740bd2335db4b25bf45e671f1bfdb25ff"
+    },
+    {
+      "path": "docs/build/runs/P32.13.md",
+      "sha256": "f3184f1512bbccdf4e6e0f27a7dac43ba0b00a9bf6c11055bd71aa62899073b2"
+    },
+    {
+      "path": "docs/build/runs/P32.14.md",
+      "sha256": "fb87e5fb08b96d53d9fd4a1e639bcdcdd51320bb5700cf64a88aca3f9f6ce1ac"
+    },
+    {
+      "path": "docs/build/runs/P32.15.md",
+      "sha256": "14b42d16d6212ae4433859bbbc84b73b4fd7a33b9452a93d1deb86351fd31a8a"
+    },
+    {
+      "path": "docs/build/runs/P32.16.md",
+      "sha256": "6aabfd7e28494a5a2b32078ec3b650a01d9e58b0efbffcd0fae074f25542277f"
+    },
+    {
+      "path": "docs/build/runs/P32.16a.md",
+      "sha256": "1d92c98bf986947bec470334571ea45176fc6b6f59ca0c17dce7cd8c041eeb54"
+    },
+    {
+      "path": "docs/build/runs/P32.17.md",
+      "sha256": "bc6d7efd60d55d0a7da9bfcc4a482b1c4fac046bdff5242737f0fbaf7529acf6"
+    },
+    {
+      "path": "docs/build/runs/P32.18.md",
+      "sha256": "2c543d5ac88cd098c07dbe07bff1100ec5958258558b8722f7f7db0a777e7b92"
+    },
+    {
+      "path": "docs/build/runs/P32.19.md",
+      "sha256": "92bd18eb7852a3525a506899c6a98a4754e195a3289987271359ac4bb436a2c9"
     },
     {
       "path": "docs/build/runs/P32.2.md",
       "sha256": "04d9e1a11951bc50f1f87c52b1c44254cfef6ae390f2a787318ee244d0aef8c6"
+    },
+    {
+      "path": "docs/build/runs/P32.20.md",
+      "sha256": "18ea6309866980010c856d9683d58d50eaccb521c8dd36f0825efd90d45ce613"
+    },
+    {
+      "path": "docs/build/runs/P32.21.md",
+      "sha256": "158b3f5e99d78f2d759a50d3f643bd0fa623373edbdd4a61db0abcbc4850a765"
+    },
+    {
+      "path": "docs/build/runs/P32.22.md",
+      "sha256": "24296bc55924173fc2e928bc62695e972cde5832cd54398f6a22dcca5476c48c"
+    },
+    {
+      "path": "docs/build/runs/P32.23a.md",
+      "sha256": "67aa3edf9dd2ca522b7ee9399c89169122751dd0a00472d6fb33aaeea6680470"
+    },
+    {
+      "path": "docs/build/runs/P32.24.md",
+      "sha256": "81b9859791171a338b658841d05e6e9806cc203bed5abe5f165426db16df98a1"
+    },
+    {
+      "path": "docs/build/runs/P32.25.md",
+      "sha256": "c7ccafc815cf267946e8fd47ac241d315321925e2912c75d05a65de824797661"
     },
     {
       "path": "docs/build/runs/P32.3.md",
@@ -1257,8 +1373,12 @@
       "sha256": "8780b7d1b2cb78e92f38e317a5b0b23f63d7ec2d1dd6444dbeef2709a72e9990"
     },
     {
+      "path": "docs/build/runs/P33.1.md",
+      "sha256": "06fc64ffd8ac57c947514c37d58bb83997469b4950a8b1e9b5b7362f0dbda2e7"
+    },
+    {
       "path": "docs/tickets/00_MANIFEST.md",
-      "sha256": "a1a5897fec7aa9637d8c0606e21221c5bd760b28fb1f023eb07b12c144693af6"
+      "sha256": "e493c3d347f2448130702d5f5cbfa88a32755854780556e34957027bc6f0325e"
     },
     {
       "path": "docs/tickets/161_P32.1__baseline-and-memory-audit.md",
@@ -1426,7 +1546,7 @@
     },
     {
       "path": "docs/tickets/DEFERRALS.md",
-      "sha256": "509303ff20a1e29be770b4c46e8ab1b2e1d8b355d72477f7e718b3a64c9dd4b5"
+      "sha256": "5ab4a552ac3ad17728ced23f691d0e7ec9e4b9aea2f142da52bd8876fbada55c"
     },
     {
       "path": "docs/tickets/P00.1__repo-skeleton.md",

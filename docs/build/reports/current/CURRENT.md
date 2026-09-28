@@ -4,17 +4,17 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer protocol is `D-R10-MEMORY-1` → P32.8.
-> input_commit: `e8f8764d53e0d1260d45fa72548c283af4bafe0c` · inputs hashed: 508 · wall-clock receipt: `receipt.json`
+> input_commit: `7a2ff9fa54f05280f12d4ce29eada230d2a550dc` · inputs hashed: 538 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
-- projectStatus `IN-PROGRESS` · round `10` · nextTicket `P32.11` · lastCompleted `P32.10a`
-- chainTip `devin/p32-10a-disposition-single-clock-authority` · returnPass `P31.16(**DONE 2026-09-27 — HG-11 granted by the operator (sign-off commit `81957c2`) + the publish half landed: `REPUBLISH_LIVE_2026-09-27.md`; public partition…` · updatedAt `2026-09-27 — P32.10a (row 170.5/170a) DONE: PR`
+- projectStatus `IN-PROGRESS` · round `10` · nextTicket `P33.2` · lastCompleted `P33.1`
+- chainTip `devin/p33-1-round10-gap-analysis` · returnPass `P31.16(**DONE 2026-09-27 — HG-11 granted by the operator (sign-off commit `81957c2`) + the publish half landed: `REPUBLISH_LIVE_2026-09-27.md`; public partition…` · updatedAt `2026-10-21 — P33.1 (row 192) DONE: PR`
 
 ## Obligations
 
-- 90 obligations · **37 owed** (32 OPEN, 5 PARTIAL) · 53 terminal
-- 90 events (0 transitions beyond anchors) · 7 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
+- 97 obligations · **36 owed** (32 OPEN, 4 PARTIAL) · 61 terminal
+- 97 events (0 transitions beyond anchors) · 15 status conflicts reconciled by recorded events · 8 documented in `reconciliations.json`
 
 | obligation | status | owner | landing | how to verify |
 |---|---|---|---|---|
@@ -36,16 +36,8 @@
 | D-R6.1-EVAL | OPEN | maintainer + reviewers | **Round 10**: the human review campaign → P31.18 re-derivation | after P28.1 lands: re-`build_gold_set` from the live loop's human decisions → re-freeze a versioned holdout → re-measure P/R/F1 + B-cubed + LLM-vs-human κ on th… |
 | D-R7.1-AUTH | OPEN | operator | operator decision | when unblocked: author a NEW ADR + ticket for external-IdP OAuth (pseudonymous subject id + tier only; no passwords/PII) behind anti-poisoning + the safety plan… |
 | D-R7.2-SEND | OPEN | operator | operator action; never automatic | when unblocked: a consenting `Filer` (`consent_granted=True`, `acknowledged_public_act=True`, residency-valid) is bound and `tasks.records_request.RecordsReques… |
-| D-P30.1-2 | OPEN | engineering | BL-057, no chain row | an interrupted large-source run, restarted, issues no fetch for pages already captured and inserts only the uncommitted tail, reaching the same final count as a… |
-| D-P30.2a-1 | OPEN | engineering | BL-057, no chain row | `make gen` + `make verify-gen` clean; re-run the inventory (`docs/build/reports/p30.2a-hosted/`) → claims with a directness row rise; `ops/gcp/materialize.sh --… |
-| D-P30.2a-2 | OPEN | engineering | BL-057, no chain row | a re-ingest of an unchanged registry adds `claim_evidence` rows (+0 claims); a fixture A → B → A resolves to A; the resolution re-run records the new dating bas… |
 | D-P30.2b-1 | OPEN | engineering + reviewers | **Round 10** (human review campaign → P31.18); engineering half landed | an accepted proposal appears as an `auto_write`-equivalent human edge in the next run's clusters (N drops by one), a rejected one never clusters; `camera_site_r… |
 | D-P30.2b-2 | OPEN | engineering | **Round 10** (with the P31.18 evaluation refresh) | a rules-v3 soft conflict for name-level device-kind/place disagreement; measured on a new frozen holdout; tier 3g precision re-measured ≥ 0.98 |
-| D-P30.3-1 | PARTIAL | engineering | BL-056, no chain row | re-run the national export → `web/freshness.json` rows carry ISO dates; `/data-freshness/` shows them, no `not-recorded` for sources with a completed run |
-| D-P30.3-2 | OPEN | engineering | BL-056, no chain row | the per-compartment archives carry z0–z14; the island layers them instead of `points.json`; `/map/points.json` compressed |
-| D-P30.3-3 | OPEN | engineering | BL-056, no chain row | the export writes `web/presentation/*.json`; the pages render them in export mode |
-| D-P31.1-2 | OPEN | engineering (chain seam) | P31.4 | a `gs://…-sig-restricted/ops/probes/…` sweep row with `service = sig-api-health`, `ok = true` |
-| D-P31.3-1 | OPEN | engineering | P31.4 | P31.4's run ledger records the claims/min and round trips per claim for a pass that inserts `N > 0` new claims on the hosted spine, then the +0 re-run |
 | D-P31.4-1 | OPEN | scheduled (cron) | automatic at the 2026-10-10T03:35Z cron; verify per the row's exact command (run rows + `ingest_run_completion`, ≈ 12–15 min expected) | the batch-05 run rows under `gs://…-sig-restricted/ops/runs/camreg_osm_surveillance/2026-10-10/` show `outcome` ok/partial, `fetches` 158 (or fewer only with `r… |
 | D-R10-HUMAN-1 | OPEN | HUMAN-H4 → P32.22a → HUMAN-H5 → P32.23 | HUMAN-H4 → P32.22a → HUMAN-H5 → P32.23 | Signed HUMAN-H4 development/dossier and HUMAN-H5 confirmatory readouts; frozen-candidate-specific sample/label digests; blind/adjudication records; dossier rubr… |
 | D-R10-SOURCES-1 | OPEN | P32.18–21 | P32.18 | Per-target green registry/rights basis; actual captured digests; measured acquisition funnel under the prescribed family/document/protocol caps |
@@ -55,6 +47,13 @@
 | D-R10-USERS-1 | OPEN | P32.24 | P32.24 | Frozen-release task results with actual numerator/denominator, uncertainty/comprehension failures and accessibility session; no simulated agents counted as user… |
 | D-P32.3-1 | OPEN | operator | BL-058 | every `sig.org.name` key in `entity_identifier` has a recorded disposition (`same_as`/`distinct` decision rows or an accepted "keep" record); the report's `spli… |
 | D-P32.10a-1 | OPEN | engineering | P32.5 | `sqitch verify` over a fully deployed container exits 0 (today: `ERROR: division by zero` at `verify/shared_temporal_contract.sql:30`, `count(*)=28`) |
+| D-P32.16-1 | OPEN | operator | GATE-G3 | `ops/config.toml [intake]` carries `operational=true`, a named owner and `staffed=true` in a reviewed change; the packet's §7 exclusions are enumerated on file;… |
+| D-P32.16a-1 | OPEN | engineering | P32.16a | `sqitch revert` over a fully deployed container exits 0 (today: `ERROR: cannot drop extension postgis because other objects depend on it` at `revert/extensions.… |
+| D-P32.18-1 | OPEN | operator | BL-058 | per-target green registry/rights basis; captured digests recorded against the reviewed URLs; a rebuilt `sig.dossier-packet/1` whose fact-to-capture ledger binds… |
+| D-P32.19-1 | OPEN | operator | BL-058 | per-target green registry/rights basis; captured digests recorded against the reviewed URLs; a rebuilt `sig.dossier-packet/1` whose fact-to-capture ledger binds… |
+| D-P32.20-1 | OPEN | operator | BL-058 | per-target green registry/rights basis; captured digests recorded against the reviewed URLs; a rebuilt `sig.dossier-packet/1` whose fact-to-capture ledger binds… |
+| D-P32.21-1 | OPEN | operator | BL-058 | per-target green registry/rights basis; captured digests recorded against the reviewed URLs; the funnel's capture/extraction/link stages populated from real cap… |
+| D-P32.23a-1 | OPEN | operator | P32.23 | `LIVE_RETURN_PASS.json`'s command sequence runs over the hosted DSN; the produced `CANDIDATE_MANIFEST.json` validates (frame check `consistent`, `materializatio… |
 ## Known inconsistencies (preserved, never synthesized)
 
 - none — every P32.1 baseline conflict is either reconciled by a recorded event interpretation (old values preserved on the anchor) or documented in `reconciliations.json`; anything new would appear here and fail `verify`
