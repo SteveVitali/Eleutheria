@@ -11,6 +11,7 @@
 // transparency report — counts by category and outcome, including refusals (SIG-GOV-011).
 import BaseLayout from "../layouts/BaseLayout.astro";
 import DisputeLink from "../components/DisputeLink.astro";
+import EmptyState from "../components/EmptyState.astro";
 import {
   CORRECTION_OUTCOME_META,
   orderedCorrections,
@@ -41,6 +42,7 @@ const report = transparencyReport(CORRECTIONS);
   <DisputeLink />
 
   <h2 id="log-heading">Corrections</h2>
+  {entries.length === 0 && <EmptyState surface="corrections" />}
   <ol class="sig-corrections" aria-labelledby="log-heading">
     {entries.map((e) => (
       <li

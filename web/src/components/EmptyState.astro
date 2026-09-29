@@ -1,0 +1,33 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// A designed, honest empty / partial state (§15, §9.5, SIG-UI-007, the §3.1 defining
+// standard). It renders absence as a VISIBLE, EXPLAINED gap — never a blank section
+// and never a fabricated zero — using the single absence texture (the hatch) so the
+// vocabulary is consistent with every per-field gap. It always carries a clickable
+// task affordance (a plain GET link, no JavaScript — SIG-UI-036/037): a gap is an
+// invitation, not a dead end. The copy is supplied by `lib/empty.ts` (pure, tested).
+import { emptyState } from "../lib/empty";
+import type { EmptySurface } from "../lib/empty";
+
+interface Props {
+  /** The surface whose honest copy to render. */
+  surface: EmptySurface;
+}
+
+const { surface } = Astro.props;
+const copy = emptyState(surface);
+---
+
+<div class="sig-empty" role="note" data-testid="empty-state" data-surface={surface}>
+  <span class="sig-empty__hatch" aria-hidden="true"></span>
+  <div class="sig-empty__body">
+    <p class="sig-empty__heading">{copy.heading}</p>
+    <p class="sig-empty__text">{copy.body}</p>
+    <p class="sig-empty__cta">
+      <a data-testid="empty-state-cta" href={copy.cta.href}>{copy.cta.label}</a>
+    </p>
+  </div>
+</div>

@@ -9,6 +9,7 @@
 // index (through the single data seam, ADR-066) — the flat nav's hardcoded
 // `/dossier/oklahoma-city/` link is replaced by this index.
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import EmptyState from "../../components/EmptyState.astro";
 import { getDossierIndex } from "../../lib/data";
 import { dossierPath, dossierPrintPath } from "../../lib/dossier";
 
@@ -32,6 +33,7 @@ const dossiers = [...getDossierIndex()].sort(
     <strong>not</strong> one with no surveillance infrastructure.
   </p>
 
+  {dossiers.length === 0 && <EmptyState surface="dossierIndex" />}
   <ul class="sig-dossier-index" role="list" data-testid="dossier-index">
     {dossiers.map((d) => (
       <li class="sig-dossier-index__item" data-testid="dossier-index-item" data-slug={d.slug}>

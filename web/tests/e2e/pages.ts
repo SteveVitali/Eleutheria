@@ -85,12 +85,23 @@ export const CURATE_PAGES = [
   "/curate/revert/",
 ] as const;
 
+// The data-freshness table's pre-rendered static sort routes (P27.7): sorting is a
+// plain GET to a distinct page (no client JS), so each sort order must meet WCAG 2.2 AA
+// like the base page. The base `/data-freshness/` is already in SHELL_PAGES.
+export const FRESHNESS_SORT_PAGES = [
+  "/data-freshness/status/",
+  "/data-freshness/stale/",
+  "/data-freshness/volatility/",
+] as const;
+
 // The full a11y surface for the axe sweep: the shell-layout pages, a task-intake
 // page, the jurisdiction-conditional dossiers, the standalone dossier print export,
-// and the curation pages (WCAG 2.2 AA everywhere, SIG-UI-037 + P21.6).
+// the freshness sort routes, and the curation pages (WCAG 2.2 AA everywhere,
+// SIG-UI-037 + P21.6).
 export const A11Y_PAGES = [
   ...ALL_PAGES,
   ...JURISDICTION_DOSSIER_PAGES,
+  ...FRESHNESS_SORT_PAGES,
   DOSSIER_PRINT,
   ...CURATE_PAGES,
 ] as const;

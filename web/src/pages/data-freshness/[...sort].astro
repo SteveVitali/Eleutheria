@@ -1,0 +1,149 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The public data-freshness page (§32.4, SIG-UI-034, SIG-METRIC-006/007). Static, zero-JS.
+// Per source: last successful run, last content change, current status, and the count of
+// entities whose evidence is stale FOR THEIR PREDICATE CLASS — freshness is measured
+// relative to predicate volatility, not absolute days (SIG-METRIC-006).
+//
+// P27.7 large-table UX: at national scale this table is ~210 sources. It carries a
+// build-time grouping/summarisation band (counts by status) so a reader sees the shape
+// first, is SORTABLE via plain GET links to pre-rendered sort routes (no client JS —
+// the ordering is in the HTML, SIG-UI-037), and is capped at build time with an honest
+// "showing N of M". An empty source set renders a designed, honest empty state, never a
+// blank table (SIG-UI-007, §3.1).
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import EmptyState from "../../components/EmptyState.astro";
+import { assertFreshnessRow } from "../../lib/metrics";
+import type { FreshnessRow } from "../../lib/metrics";
+import { getFreshness, capRows } from "../../lib/data";
+import { sortRows, sortHref, summariseBy } from "../../lib/tables";
+import type { SortColumn } from "../../lib/tables";
+
+const BASE_PATH = "/data-freshness/";
+const DEFAULT_SORT = "source";
+
+// The columns the static table can be sorted by (each a pre-rendered route).
+const COLUMNS: SortColumn<FreshnessRow>[] = [
+  { key: "source", label: "Source", value: (r) => r.source },
+  { key: "status", label: "Status", value: (r) => r.status },
+  { key: "stale", label: "Stale entities", value: (r) => r.stale_entity_count, direction: "desc" },
+  { key: "volatility", label: "Volatility class", value: (r) => r.volatility_class },
+];
+
+// One pre-rendered page per sort order: the base path (default sort) plus one route
+// per non-default key. Sorting is therefore a plain GET, archivable and no-JS.
+export function getStaticPaths() {
+  const COLS = [
+    { key: "source" },
+    { key: "status" },
+    { key: "stale" },
+    { key: "volatility" },
+  ];
+  return [
+    { params: { sort: undefined }, props: { sortKey: "source" } },
+    ...COLS.filter((c) => c.key !== "source").map((c) => ({
+      params: { sort: c.key },
+      props: { sortKey: c.key },
+    })),
+  ];
+}
+
+const { sortKey } = Astro.props as { sortKey: string };
+
+// The freshness rows flow through the single data seam (ADR-066): fixtures by default,
+// real export bytes under SIG_DATA_SOURCE=export.
+const ALL_ROWS = getFreshness();
+for (const row of ALL_ROWS) assertFreshnessRow(row);
+
+// Grouping/summarisation over the FULL set (honest counts, computed before capping).
+const byStatus = summariseBy(ALL_ROWS, (r) => r.status);
+const byVolatility = summariseBy(ALL_ROWS, (r) => r.volatility_class);
+
+// Sort (stable, tiebroken on source) then cap for the perf/a11y budget.
+const { rows: sortedRows, active } = sortRows(ALL_ROWS, COLUMNS, sortKey, (r) => r.source);
+const freshnessRows = capRows(sortedRows);
+---
+
+<BaseLayout title="Data freshness" path={BASE_PATH}>
+  <p>
+    How current is each source? Freshness is measured <strong>relative to predicate
+    volatility</strong>, not in absolute days — a two-year-old contract date is fresh; a
+    two-year-old active count is historical (§32.4).
+  </p>
+
+  {ALL_ROWS.length === 0 ? (
+    <EmptyState surface="freshness" />
+  ) : (
+    <>
+      <!-- Build-time grouping/summarisation: the shape of the table before its rows. -->
+      <h2 id="summary-heading">At a glance</h2>
+      <ul class="sig-table-summary" data-testid="freshness-summary" aria-labelledby="summary-heading">
+        {byStatus.map((b) => (
+          <li data-testid="summary-status" data-status={b.label}>
+            <span class="sig-table-summary__count">{b.count}</span> {b.label}
+          </li>
+        ))}
+      </ul>
+      <p class="sig-table-note">
+        Volatility classes:{" "}
+        {byVolatility.map((b, i) => (
+          <span>{i > 0 ? " · " : ""}<strong>{b.count}</strong> {b.label}</span>
+        ))}.
+      </p>
+
+      <!-- Static-link sorting: each is a pre-rendered route (no client JS). -->
+      <nav class="sig-sort" aria-label="Sort the freshness table" data-testid="freshness-sort">
+        <span class="sig-sort__label">Sort by:</span>
+        {COLUMNS.map((c) => (
+          <a
+            class="sig-sort__link"
+            data-testid="sort-link"
+            data-sort-key={c.key}
+            href={sortHref(BASE_PATH, c.key, DEFAULT_SORT)}
+            aria-current={c.key === active.key ? "true" : "false"}
+          >
+            {c.label}{c.direction === "desc" ? " (most first)" : ""}
+          </a>
+        ))}
+      </nav>
+
+      {freshnessRows.truncated && (
+        <p class="sig-table-note" data-testid="freshness-truncation-note">
+          Showing the first {freshnessRows.shown} of {freshnessRows.total} sources (sorted by {active.label.toLowerCase()});
+          the full set is in the export bundle and the API (SIG-UI-037).
+        </p>
+      )}
+
+      <div class="sig-table-wrap">
+        <table class="sig-freshness sig-table" data-testid="freshness-table" data-sort={active.key}>
+          <caption class="sig-visually-hidden">Per-source data freshness, sorted by {active.label.toLowerCase()}</caption>
+          <thead>
+            <tr>
+              <th scope="col">Source</th>
+              <th scope="col">Last successful run</th>
+              <th scope="col">Last content change</th>
+              <th scope="col">Status</th>
+              <th scope="col">Stale entities (for their predicate class)</th>
+              <th scope="col">Volatility class</th>
+            </tr>
+          </thead>
+          <tbody>
+            {freshnessRows.rows.map((row) => (
+              <tr data-testid="freshness-row" data-source={row.source} data-status={row.status}>
+                <th scope="row">{row.source}</th>
+                <td><time datetime={row.last_successful_run}>{row.last_successful_run}</time></td>
+                <td><time datetime={row.last_content_change}>{row.last_content_change}</time></td>
+                <td data-testid="freshness-status">{row.status}</td>
+                <td data-testid="stale-count">{row.stale_entity_count}</td>
+                <td>{row.volatility_class}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
+  )}
+</BaseLayout>
