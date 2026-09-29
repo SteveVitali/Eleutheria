@@ -79,6 +79,22 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="skip the §32.1 negative-space (not_researched) records",
     )
+
+    matacct = sub.add_parser(
+        "materialize-accountability-links",
+        help="materialize the deployment→vendor→contract→funding→policy→oversight chain "
+        "as labelled L4 inference over the resolved spine (P28.6)",
+    )
+    matacct.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    matacct.add_argument(
+        "--jurisdiction", default=None, help="jurisdiction token filter (per-jurisdiction scope)"
+    )
+    matacct.add_argument(
+        "--subject", default=None, help="a single deployment entity id to link (optional)"
+    )
+    matacct.add_argument(
+        "--role", default=None, help="optional read/materialize role to SET ROLE to"
+    )
     return parser
 
 
@@ -271,7 +287,23 @@ def main(argv: list[str] | None = None) -> int:
         return _run_freshness(args)
     if args.command == "materialize-coverage":
         return _run_materialize_coverage(args)
+    if args.command == "materialize-accountability-links":
+        return _run_materialize_accountability_links(args)
     parser.print_help()
+    return 0
+
+
+def _run_materialize_accountability_links(args: argparse.Namespace) -> int:
+    """Materialize the accountability linkage over the resolved spine (P28.6)."""
+    from .accountability import materialize_accountability_links_from_dsn
+
+    summary = materialize_accountability_links_from_dsn(
+        args.dsn,
+        jurisdiction=args.jurisdiction,
+        subject=args.subject,
+        role=args.role,
+    )
+    print(json.dumps(summary.as_dict(), indent=2, default=str))
     return 0
 
 

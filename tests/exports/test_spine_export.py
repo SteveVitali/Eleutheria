@@ -467,13 +467,110 @@ def _materialized_raw(
     edges=None,
     contradictions=None,
     coverage=None,
+    accountability_links=None,
 ) -> dict:
     return {
         "materialized_resolutions": resolutions or [],
         "materialized_edges": edges or [],
         "materialized_contradictions": contradictions or [],
         "materialized_coverage": coverage or [],
+        "materialized_accountability_links": accountability_links or [],
     }
+
+
+def _acct_link(deployment_id, link_type, object_id, object_type, claims, **extra):
+    return {
+        "deployment_id": deployment_id,
+        "predicate_id": f"accountability_link:{link_type}",
+        "link_type": link_type,
+        "chain_role": {
+            "has_vendor": "vendor",
+            "procured_under_contract": "contract",
+            "funded_by": "funding",
+            "governed_by_policy": "policy",
+            "overseen_by": "oversight",
+        }[link_type],
+        "object_id": object_id,
+        "object_type": object_type,
+        "establishing_claims": claims,
+        "confidence": "probable",
+        "via_org": extra.get("via_org"),
+        "via_contract": extra.get("via_contract"),
+    }
+
+
+def test_dossier_governance_chain_enriched_from_materialized_links() -> None:
+    """P28.6 AC2: a dossier shows the deployment→vendor→contract→funding→policy→oversight
+    chain where evidence exists (rows citing establishing claims), and honest gaps for the
+    segments with none; an unmaterialized jurisdiction is left unchanged."""
+    # A is a geolocated deployment in Oklahoma; B in Paris has NO governance links.
+    claims = _site("A", "35.46", "-97.51", "Oklahoma") + _site(
+        "B", "48.85", "2.35", "Paris", source_id="fr_src", spdx="CC-BY-4.0"
+    )
+    links = [
+        _acct_link(
+            "A",
+            "has_vendor",
+            "ven1",
+            "organization",
+            ["c-op", "c-buy", "c-sell"],
+            via_org="org1",
+            via_contract="ct1",
+        ),
+        _acct_link(
+            "A", "procured_under_contract", "ct1", "contract", ["c-op", "c-buy"], via_org="org1"
+        ),
+        _acct_link(
+            "A", "funded_by", "fu1", "funding_instrument", ["c-op", "c-fund"], via_org="org1"
+        ),
+        _acct_link("A", "governed_by_policy", "pol1", "policy", ["c-pol"]),
+        _acct_link("A", "overseen_by", "evt1", "accountability_event", ["c-evt"]),
+    ]
+    export = _build(claims, _materialized_raw(accountability_links=links))
+    dossiers = _web(export, "dossiers")
+    okc = next(d for d in dossiers if d["jurisdiction"] == "Oklahoma")
+    paris = next(d for d in dossiers if d["jurisdiction"] == "Paris")
+
+    # The full chain is present as a structured field, each segment evidenced.
+    chain = okc["governance_chain"]["segments"]
+    assert chain["vendor"]["status"] == "evidenced"
+    assert chain["vendor"]["links"][0]["object_id"] == "ven1"
+    assert chain["vendor"]["links"][0]["establishing_claims"] == ["c-op", "c-buy", "c-sell"]
+    for role in ("vendor", "contract", "funding", "policy", "oversight"):
+        assert chain[role]["status"] == "evidenced"
+
+    # The chain rides the frozen Section/Row contract (no new IA) and every row cites claims.
+    sections = {s["section_id"]: s for s in okc["sections"]}
+    policy_rows = sections["policy"].get("rows", [])
+    assert any(r["label"] == "Governing policy" and r["value"] == "pol1" for r in policy_rows)
+    assert all("established by claim(s)" in r["note"] for r in policy_rows)
+    events_rows = sections["accountability_events"].get("rows", [])
+    assert any(r["label"] == "Oversight" and r["value"] == "evt1" for r in events_rows)
+
+    # Paris has no attributed links → the dossier is unchanged (no governance_chain field).
+    assert "governance_chain" not in paris
+
+
+def test_dossier_governance_chain_honest_gap_when_a_segment_missing() -> None:
+    """A jurisdiction with SOME links shows honest not_researched gaps for the missing ones."""
+    claims = _site("A", "35.46", "-97.51", "Oklahoma")
+    links = [_acct_link("A", "governed_by_policy", "pol1", "policy", ["c-pol"])]
+    export = _build(claims, _materialized_raw(accountability_links=links))
+    okc = next(d for d in _web(export, "dossiers") if d["jurisdiction"] == "Oklahoma")
+    chain = okc["governance_chain"]["segments"]
+    assert chain["policy"]["status"] == "evidenced"
+    for role in ("vendor", "contract", "funding", "oversight"):
+        assert chain[role]["status"] == "not_researched"
+        assert chain[role]["links"] == []
+
+
+def test_dossier_unchanged_without_materialized_links() -> None:
+    """No accountability links → the dossier is byte-identical to today (honest degrade)."""
+    claims = _site("A", "35.46", "-97.51", "Oklahoma")
+    with_key = _build(claims, _materialized_raw())
+    baseline = _build(claims, {})
+    assert _web(with_key, "dossiers") == _web(baseline, "dossiers")
+    assert all("governance_chain" not in d for d in _web(with_key, "dossiers"))
 
 
 def test_resolved_sites_metric_frames_n_resolved_from_m_observations() -> None:

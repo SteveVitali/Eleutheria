@@ -204,6 +204,10 @@ PAIRS: list[Pair] = [
         },
         unpersisted_columns={
             "derived_id": "uuid primary key, server-generated (uuidv7 default)",
+            "input_digest": "P28.6 idempotency key (nullable, no default) — a sha256 over the "
+            "accountability link's reproducible content; the materializer sets it, the "
+            "Inference value object does not source it (accountability_link_materialize sqitch "
+            "change)",
         },
     ),
 ]
