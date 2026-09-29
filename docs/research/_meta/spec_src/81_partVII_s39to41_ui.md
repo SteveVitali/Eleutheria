@@ -251,7 +251,24 @@ static PMTiles + `/map/style.json` contract of SIG-UI-038/SIG-GEO-012) MAY be sh
 **progressive-enhancement island** layered on top of the zero-JS static default. If shipped it
 MUST NOT become a hard dependency of any core page, MUST keep the zero-JS default fully usable
 with JavaScript disabled (SIG-UI-037), and MUST NOT regress the performance or archivability
-budgets (SIG-UI-041). Building this island is deferred to Phase 21 (ADR-051, ADR-018, LD-F09).
+budgets (SIG-UI-041). Building this island was deferred to Phase 21 (ADR-051, ADR-018, LD-F09)
+and, by the A1 disposition, **not built at go-live** (the zero-JS static map was the conforming
+default). It is **realised at Phase 27** (ADR-091 / ADR-097, DECISION-SPA = B) as one of three
+named public progressive-enhancement islands (map / network graph / search), each governed by
+SIG-UI-050 and by its own performance budget, with the ADR-068 island allowance extended from
+`/curate/**` to them; every other public page still ships zero client JavaScript (SIG-UI-036).
+
+**SIG-UI-050 (MUST).** Every public **interactive island** — the map, the network-graph
+explorer, and search (SIG-UI-047), the named set the ADR-068 island allowance is extended to
+(ADR-091 / ADR-097) — MUST be **progressive enhancement, never replacement**: it MUST preserve a
+fully-usable no-JavaScript equivalent on the same page (the tabular equivalent for a map, the list
+equivalent for a graph, the browse index for search — SIG-UI-037), it MUST NOT become a hard
+dependency of any core content, and it MUST keep that page usable with JavaScript disabled. An
+island page carries its **own** performance budget (SIG-UI-041, as `/curate/**` does under
+ADR-068); the island allowance is confined to this named set and **every other public page MUST
+still ship zero client JavaScript** (SIG-UI-036). Adding a fourth public island, or removing an
+island's no-JS fallback, changes this named set only by a new ADR (SIG-ENG-003), never a silent
+edit.
 
 **SIG-UI-039 (MUST).** Every dependency MUST be OSI-licensed. Non-commercial (CC-BY-NC),
 source-available, and dual BUSL licences MUST be excluded — this rules out several popular graph

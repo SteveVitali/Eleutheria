@@ -17,6 +17,7 @@ export const SHELL_PAGES = [
   "/visual-language/",
   "/map/",
   "/network/",
+  "/search/",
   "/watch/",
   "/evidence/",
   "/evidence/active-device-count/",
@@ -105,3 +106,18 @@ export const A11Y_PAGES = [
   DOSSIER_PRINT,
   ...CURATE_PAGES,
 ] as const;
+
+// The three OPT-IN public interactive islands (P27.9, ADR-097). These are the ONLY
+// public pages that ship a hydration `<script>`; every other public page stays
+// zero-JS (SIG-UI-036/037). Each preserves its no-JS fallback (SIG-UI-050).
+export const ISLAND_PAGES = ["/map/", "/network/", "/search/"] as const;
+
+// Every OTHER public page that MUST still ship zero `<script>` (AC2). The `/curate/**`
+// island allowance (ADR-068) is proven separately in curate.nojs.spec.ts; the dossier
+// print export is a standalone document. This is the shell surface minus the islands.
+export const ZERO_JS_PUBLIC_PAGES = [
+  ...ALL_PAGES,
+  ...JURISDICTION_DOSSIER_PAGES,
+  ...FRESHNESS_SORT_PAGES,
+  DOSSIER_PRINT,
+].filter((p) => !(ISLAND_PAGES as readonly string[]).includes(p)) as readonly string[];

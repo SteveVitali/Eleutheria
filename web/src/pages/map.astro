@@ -29,7 +29,13 @@ import {
   renderBin,
 } from "../lib/map";
 import { MAP_ATTRIBUTION_LINE } from "../lib/map-tiles";
-import { getMapSites, getMapDensityBins, capRows } from "../lib/data";
+import { getMapSites, getMapDensityBins, capRows, getSiteMetadata, dataSource, exportDir } from "../lib/data";
+import { beliefPinnedPermalink } from "../lib/citation";
+import MapIsland from "../islands/MapIsland";
+import type { MapIslandAsset } from "../islands/MapIsland";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+import "../styles/islands.css";
 
 // The map's assets + national-view density bins flow through the single data seam
 // (ADR-066): committed fixtures by default, real export bytes under SIG_DATA_SOURCE=export.
@@ -53,6 +59,35 @@ const boundControl = LAYER_CONTROLS.find(
 
 // A tiny static bin strip so the low-coverage≠low-density encoding is visible.
 const cell = 64;
+
+// P27.9 (ADR-097): the OPT-IN interactive map island. It draws ONLY the already
+// tier-reduced, publishable points (§19.4) — the same `locatable` set the table
+// below renders — so it can never imply more precision than SIG published, and it is
+// a progressive enhancement layered over that table, never a replacement (SIG-UI-050).
+const ISLAND_ASSETS: MapIslandAsset[] = locatable
+  .filter((a) => a.lat !== null && a.lon !== null)
+  .map((a) => ({
+    id: a.id,
+    label: a.label,
+    jurisdiction: a.jurisdiction,
+    tier: a.tier,
+    lat: a.lat as number,
+    lon: a.lon as number,
+    precision: a.precision,
+  }));
+const meta = getSiteMetadata();
+const mapCitationHref = beliefPinnedPermalink({
+  path: "/map/",
+  title: "Infrastructure map",
+  asOf: meta.asOf,
+  rulesetVersion: meta.rulesetVersion,
+});
+// The self-hosted OSM basemap PMTiles is layered in only when the export ships it
+// (SIG-UI-038); otherwise the island draws points over a plain background. Detected
+// at build time so the browser never requests a missing archive.
+const hasBasemapTiles =
+  dataSource() === "export" &&
+  existsSync(join(exportDir(), "web", "tiles", "osm-basemap.pmtiles"));
 ---
 
 <BaseLayout title="Infrastructure map" path="/map/">
@@ -63,6 +98,28 @@ const cell = 64;
     shows is also in the tables below</strong> — they are the equivalent, not a
     fallback.
   </p>
+
+  <!-- The OPT-IN interactive map island (P27.9, ADR-097; exercises SIG-UI-047).
+       It hydrates only here; with JavaScript disabled this block is empty and the
+       tabular equivalent below is the full, usable surface (SIG-UI-037/050). -->
+  <section class="sig-island sig-map-island" aria-labelledby="map-island-heading" data-testid="map-island-section">
+    <h2 id="map-island-heading">Interactive map</h2>
+    {ISLAND_ASSETS.length > 0 ? (
+      <MapIsland
+        client:only="react"
+        assets={ISLAND_ASSETS}
+        attribution={MAP_ATTRIBUTION_LINE}
+        citationHref={mapCitationHref}
+        hasBasemapTiles={hasBasemapTiles}
+      />
+    ) : (
+      <p class="sig-island__note">No publishable points to draw at this belief; see the tabular equivalent below.</p>
+    )}
+    <p class="sig-island__note" data-testid="map-island-attribution">
+      {MAP_ATTRIBUTION_LINE}. Interactive rendering is a progressive enhancement;
+      the tables below are the archivable equivalent (SIG-UI-037/038/050).
+    </p>
+  </section>
 
   <!-- Layers (SIG-UI-016): observed layers, plus DERIVED layers flagged distinct. -->
   <h2 id="layers-heading">Layers</h2>
