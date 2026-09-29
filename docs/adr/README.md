@@ -103,6 +103,9 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-096](ADR-096-national-public-cutover-published-compartment.md) | — | — | Accepted |
 | [ADR-097](ADR-097-public-progressive-enhancement-islands-map-graph-search.md) | — | — | Accepted |
 | [ADR-098](ADR-098-custom-domain-cutover-via-external-https-load-balancer.md) | — | — | Accepted |
+| [ADR-099](ADR-099-materialize-entity-resolution-at-scale-with-a-measured-eval-loop.md) | — | — | Accepted |
+| [ADR-100](ADR-100-identity-minimization-for-contribution.md) | — | — | Accepted |
+| [ADR-101](ADR-101-public-surface-reads-the-materialized-graph.md) | — | — | Accepted |
 
 ## Notes
 
