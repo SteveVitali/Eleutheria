@@ -57,17 +57,33 @@ def _gcp_image(project: str, region: str) -> str:
     return f"{region}-docker.pkg.dev/{project}/sig/sig-api"
 
 
+def _export_dir_display() -> str:
+    """The national export dir the public build reads (env override → national default)."""
+    return os.environ.get("SIG_EXPORT_DIR", "").strip() or "exports/out/national"
+
+
 def build_gcp_plan(*, project: str | None = None, region: str | None = None) -> DeployPlan:
-    """Build the ordered GCP deploy plan (image build+push, then GCS syncs)."""
+    """Build the ordered GCP deploy plan (image build+push, public build, GCS syncs).
+
+    The public build + compartment partition (steps 5–7) run BEFORE the syncs so the real
+    national export drives ``web/dist`` (fail-loud, never fixtures) and the public sync can
+    only ever carry the published compartment (§42; ``ops/src/ops/publish.py``).
+    """
     proj = project or _project()
     reg = region or _region()
     image = _gcp_image(proj, reg)
+    export_dir = _export_dir_display()
     steps = [
         f"gcloud auth configure-docker {reg}-docker.pkg.dev  (auth the AR host)",
         f"docker build -t {image}:latest -f ops/Dockerfile .  (build the API image)",
         f"docker push {image}:latest  (push to Artifact Registry)",
         f"gcloud run deploy sig-api --image {image}:latest --region {reg} "
         "--min-instances=0  (scale-to-zero API; managed TLS)",
+        f"sig-ops publish: build web/dist with SIG_DATA_SOURCE=export SIG_EXPORT_DIR={export_dir}  "
+        "(the P27.4 national export — FAILS LOUD if absent, never a fixtures fall-back)",
+        f"sig-ops publish: partition {export_dir} → exports/out/public (published, "
+        "non-share-alike) + exports/out/restricted (ODbL/share-alike/UNDETERMINED, PRIVATE); "
+        "assert public compartment clean",
         f"gcloud storage rsync -r -c web/dist gs://{proj}-sig-web  (static site, public-read)",
         f"gcloud storage rsync -r -c exports/out/public "
         f"gs://{proj}-sig-public  (PUBLISHED compartment only, public-read)",

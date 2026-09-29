@@ -144,3 +144,51 @@ private compartments verified closed.
 **Recorded debt:** second reviewer (HG-11), remaining counsel opinions (HG-02 remainder),
 outreach (HG-04), contribution-back credentials (HG-08), usability study (HG-10) — all
 OPEN/DEFERRED in `docs/tickets/DEFERRALS.md`, none claimed done.
+
+---
+
+## 2026-09-22 — P27.8 (LAUNCH.8): NATIONAL public cut-over — publication gate package (staged, operator tick pending)
+
+The OKC go-public (2026-09-16 section above) took the first jurisdiction public. P27.8 stages the
+**national** real-data surface (~1.06M claims / 210 sources incl. GB/AU/TH/NZ) over the same GCP
+infra. The deterministic machinery is landed + proven; the **hosted cut-over itself is deferred**
+(D-P27.8-1) on the national export prerequisite (D-P27.4-1 → the in-flight OSM land D-SOURCES.17-1).
+The public go is the operator's tick against this package.
+
+### Gate answers (operator, recorded verbatim in `docs/build/LEDGER.md` § GATE DECISIONS, 2026-09-22)
+
+| Gate | Answer | Consequence for the national cut-over |
+|---|---|---|
+| **HG-01** (publication go / legal home) | **Carry forward, proceed** | Legal home stays **Steven Vitali, individual maintainer** (personal capacity, `governance-and-code-of-conduct.md § Legal home`, D-P21.4-1 DONE 2026-09-15). Authorized to build + deploy the national real-data surface to the public buckets (published compartment only). The hosted deploy/sync stays infra-gated on GCP ADC (HG-12 / D-ACCT.1-1). |
+| **HG-11** (reviewer concurrence) | **Carry forward sole-maintainer posture** (D-P21.4-2) | Proceed on the recorded waiver; a second independent reviewer + written concurrence stays owed post-launch. The published surface makes **no two-reviewer claim** (`policy.officer._concurrence_ok` still denies person-named claims). |
+| **HG-02** (counsel disposition) | **Carry forward interim engineering dispositions** (D-LEGAL.1-1) | Proceed on the interim publication-permitting dispositions + built safeguards; dated counsel opinions (ODbL 4.4(b), officer-naming, tiers/coordinates, Part VIII) stay owed post-launch. |
+
+### What goes public (the published compartment only — §42 / Part VIII; ADR-096)
+
+- **Public-read** (`gs://…-sig-web` static site + `gs://…-sig-public` export objects): the CC-BY-4.0
+  SIG-original graph (`sig_graph`), the `web/*.json` render surfaces, and the export descriptors
+  (`metadata`) — every compartment whose licence is **non-share-alike** and carries no export
+  exclusion.
+- **PRIVATE** (`gs://…-sig-restricted`, kept closed): the **ODbL-1.0** OSM-derived layer
+  (`osm_physical`), the **CC-BY-SA-4.0** portal layer, and any UNDETERMINED / counsel-pending /
+  non-redistributable byte. Proven by `ops/src/ops/publish.py:assert_public_clean` (a leak guard
+  that fails loud on any share-alike/UNDETERMINED artifact in the public tree; `tests/ops/test_publish.py`).
+  The national ODbL layer's public release is a dedicated, gated decision pending HG-02 counsel
+  (ADR-096 / D-LEGAL.1-1) — a conservative tightening over §42.3 for the national surface.
+
+### Part VIII safeguards in force (unchanged by the carry-forwards)
+
+- `sig_read_public` role serves tier-0 rows only (RLS); coordinates jurisdiction-level; officer-naming
+  gate defaults person-named claims to no-publish (two-reviewer concurrence absent → denied).
+- The export fail-closed licence gate keeps UNDETERMINED / non-redistributable bytes out of every
+  compartment; the compartment partition keeps ODbL/share-alike out of the public bucket.
+- The public build reads the real national export or **fails loud** — never a fixtures fall-back
+  (§38.1); the public site is never a demo wearing the national name.
+
+### Go / no-go (2026-09-22)
+
+**Staged, gated → RETURN PASS.** The deterministic producer + partition + leak guard + gate package
+are landed and green. The hosted national cut-over is **NOT executed** — it is blocked on the national
+export (`exports/out/national`, D-P27.4-1), which itself waits on the OSM land (D-SOURCES.17-1, LAND IN
+PROGRESS). No live green fabricated, no deployed URL claimed. Re-run command + evidence: `D-P27.8-1`.
+The operator ticks Go-public once the national export exists and the ADC-armed cut-over runs clean.

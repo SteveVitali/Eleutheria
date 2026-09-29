@@ -100,6 +100,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-093](ADR-093-information-architecture-redesign-and-national-landing.md) | — | — | Accepted |
 | [ADR-094](ADR-094-maximize-publishable-scope-rights-resolution.md) | — | — | Accepted |
 | [ADR-095](ADR-095-append-only-rights-decision-log.md) | — | — | Accepted |
+| [ADR-096](ADR-096-national-public-cutover-published-compartment.md) | — | — | Accepted |
 
 ## Notes
 

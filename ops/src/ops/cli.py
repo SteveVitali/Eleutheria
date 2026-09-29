@@ -210,6 +210,20 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="print the plan and exit 0 without pushing (forced when no ADC is present).",
     )
+    deploy.add_argument(
+        "--prepare-only",
+        action="store_true",
+        help="build web/dist from the real national export (SIG_DATA_SOURCE=export, fail-loud "
+        "if absent) + partition the bundle into exports/out/{public,restricted} + PROVE the "
+        "public compartment carries no ODbL/share-alike/UNDETERMINED byte (§42). Network-free; "
+        "no push. The operator runs the gcloud syncs afterwards.",
+    )
+    deploy.add_argument(
+        "--export-dir",
+        default=None,
+        help="the national export the public build reads (default: SIG_EXPORT_DIR / "
+        "exports/out/national). NEVER a fixtures fall-back for the public build.",
+    )
 
     drill = sub.add_parser(
         "backup-drill",
@@ -759,6 +773,9 @@ def _cmd_degraded(args: argparse.Namespace) -> int:
 def _cmd_deploy(args: argparse.Namespace) -> int:
     from .deploy import adc_present, plan_for
 
+    if getattr(args, "prepare_only", False):
+        return _cmd_deploy_prepare(args)
+
     plan = plan_for(args.target)
     # In this isolated context there are no Application Default Credentials, so the
     # command runs in plan mode regardless: it prints the plan and exits 0 without
@@ -787,6 +804,37 @@ def _cmd_deploy(args: argparse.Namespace) -> int:
             "(the real push/sync is the operator-gated RETURN PASS action, D-DEPLOY.1-1).",
             file=sys.stderr,
         )
+    return 0
+
+
+def _cmd_deploy_prepare(args: argparse.Namespace) -> int:
+    """Build + partition + prove-clean the public surface locally (P27.8; network-free)."""
+    from pathlib import Path
+
+    from .publish import PublishError, run_public_prepare
+
+    export_dir = Path(args.export_dir).resolve() if args.export_dir else None
+    print("sig-ops deploy --prepare-only: building the public surface from the real export")
+    try:
+        result = run_public_prepare(repo_root=_REPO_ROOT, export_dir=export_dir)
+    except PublishError as exc:
+        print(str(exc), file=sys.stderr)
+        print(
+            "sig-ops deploy --prepare-only: FAILED — the public surface was NOT produced "
+            "(no fixtures fall-back, no restricted byte published).",
+            file=sys.stderr,
+        )
+        return 1
+    for line in result.as_lines():
+        print(f"  {line}")
+    print(
+        "  built-from watermark: "
+        + json.dumps(result.partition.watermark, sort_keys=True, default=str)
+    )
+    print(
+        "sig-ops deploy --prepare-only: OK — web/dist + exports/out/public ready; the operator "
+        "runs the gcloud syncs (see `sig-ops deploy --target gcp --dry-run`)."
+    )
     return 0
 
 
