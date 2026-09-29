@@ -266,3 +266,83 @@ def test_query_set_covers_the_ticket_deliverables() -> None:
         "value_geom_populated",
     ):
         assert key in QUERIES
+
+
+# --------------------------------------------------------------------------- #
+# P27.2 / ADR-095: the effective (post-decision) rights view                    #
+# --------------------------------------------------------------------------- #
+
+
+def _raw_with_decisions() -> dict[str, object]:
+    raw = _raw()
+    raw["effective_licence_mix"] = [
+        ("LicenseRef-PublicRecord-FactualCompilation", "yes", "yes", 372_869),
+        ("CC0-1.0", "yes", "yes", 300_000),
+        ("CC-BY-4.0", "yes", "yes", 150_000),
+        ("LicenceOuverte-2.0", "yes", "yes", 14_462),
+        ("ODbL-1.0", "yes", "yes", 5_929),
+        ("LicenseRef-MuckRock-API-ToS", "no", "no", 6),
+        (None, "UNDETERMINED", "UNDETERMINED", 200),
+    ]
+    raw["effective_redistributable_split"] = [
+        ("yes", 843_260),
+        ("no", 6),
+        ("UNDETERMINED", 200),
+    ]
+    raw["effective_undetermined_by_connector"] = [("procurement", 200)]
+    raw["rights_decisions"] = [
+        ("ted_eu", "CC-BY-4.0", "yes", "maintainer (delegated)", "2026-09-22T18:00:00Z", "p", "r"),
+        (
+            "muckrock",
+            "LicenseRef-MuckRock-API-ToS",
+            "no",
+            "maintainer (delegated)",
+            "2026-09-22T18:00:00Z",
+            "p",
+            "r",
+        ),
+    ]
+    return raw
+
+
+def _audit_effective():
+    return build_spine_audit(
+        _raw_with_decisions(),
+        as_of="2026-09-22T18:00:00Z",
+        generated_at="2026-09-22T18:00:00Z",
+        spine_label="postgresql://sig@127.0.0.1:5433/sig",
+        note="post-decision",
+    )
+
+
+def test_effective_fractions_carry_denominators() -> None:
+    a = _audit_effective()
+    assert a.publishable_effective is not None
+    assert a.publishable_effective.numerator == 372_869 + 300_000 + 150_000 + 14_462 + 5_929
+    assert a.publishable_effective.denominator == 1_059_533
+    assert a.undetermined_effective is not None
+    assert a.undetermined_effective.numerator == 200
+    assert a.undetermined_effective.denominator == 1_059_533
+    # Recorded (as-asserted) fractions are untouched — the two views never conflate.
+    assert a.undetermined.numerator == 256_172
+
+
+def test_effective_markdown_section_and_decision_trail() -> None:
+    md = _audit_effective().to_markdown()
+    assert "Effective rights" in md
+    assert "post-decision" in md
+    assert "LicenceOuverte-2.0" in md
+    assert "ted_eu" in md and "maintainer (delegated)" in md  # the decision trail is verbatim
+    assert "rights_decision" in md  # the mechanism is named
+
+
+def test_no_decision_table_reports_not_measured() -> None:
+    """A pre-P27.2 spine has no effective view — fields are None, never fake zeros."""
+    a = _audit()  # _raw() carries no effective_* keys
+    assert a.effective_licence_mix is None
+    assert a.publishable_effective is None
+    doc = json.loads(a.to_json_str())
+    assert doc["effective_licence_mix"] is None
+    assert doc["publishable_effective"] is None
+    md = a.to_markdown()
+    assert "Effective rights" not in md

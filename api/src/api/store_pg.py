@@ -359,11 +359,30 @@ class PgReadStore:
     def rights_for(self, source_ids: tuple[str, ...]) -> list[RightsRecord]:
         if not source_ids:
             return []
+        # Effective rights (P27.2/ADR-095): a source whose registry link is an
+        # UNDETERMINED record resolves through the latest rights_decision whose
+        # prior_rights_id is that link. Decisions only ever have UNDETERMINED
+        # priors, so an already-resolved link is never re-licensed. COALESCE falls
+        # back to the recorded link when no decision exists — fail-closed.
+        # On a pre-P27.2 spine (no rights_decision table) the recorded link is used.
+        has_row = self._conn.execute("SELECT to_regclass('rights_decision') IS NOT NULL").fetchone()
+        has_decisions = bool(has_row and has_row[0])
+        if has_decisions:
+            effective = (
+                "COALESCE("
+                " (SELECT rd.rights_id FROM rights_decision rd"
+                "   WHERE rd.source_id = sr.source_id"
+                "     AND rd.prior_rights_id = sr.rights_id"
+                "   ORDER BY rd.decided_at DESC, rd.decision_id DESC LIMIT 1),"
+                " sr.rights_id)"
+            )
+        else:
+            effective = "sr.rights_id"
         rows = self._conn.execute(
             "SELECT sr.source_id, rr.spdx_expression, rr.attribution_text, "
             "       rr.redistributable, rr.derivative_permitted, rr.terms_url, rr.retrieval_date "
             "  FROM source_registry sr "
-            "  JOIN rights_record rr ON rr.rights_id = sr.rights_id "
+            f"  JOIN rights_record rr ON rr.rights_id = {effective} "
             " WHERE sr.source_id = ANY(%s) ORDER BY sr.source_id",
             (list(source_ids),),
         ).fetchall()
