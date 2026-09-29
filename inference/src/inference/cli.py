@@ -48,6 +48,14 @@ def build_parser() -> argparse.ArgumentParser:
 
     ap = sub.add_parser("access-paths", help="enumerate bounded reachability paths (§30.2)")
     ap.add_argument("--input", default=None, help="JSON file of {source, edges[], as_of}")
+    ap.add_argument(
+        "--dsn",
+        default=None,
+        help="PostgreSQL DSN — derive closure over the MATERIALIZED relationship edges (P28.2)",
+    )
+    ap.add_argument("--source", default=None, help="source org (entity id) for the --dsn closure")
+    ap.add_argument("--as-of", default=None, help="ISO as-of date for the --dsn closure")
+    ap.add_argument("--role", default=None, help="optional read role to SET ROLE to (--dsn)")
 
     comp = sub.add_parser("completeness", help="a denominated completeness statement (§32.5)")
     comp.add_argument("--input", default=None, help="JSON file of a completeness statement")
@@ -86,6 +94,8 @@ def _run_coverage(args: argparse.Namespace) -> int:
 
 
 def _run_access_paths(args: argparse.Namespace) -> int:
+    if getattr(args, "dsn", None):
+        return _run_access_paths_over_spine(args)
     payload = _load(args.input)
     if payload is None:
         edges = [
@@ -122,6 +132,38 @@ def _run_access_paths(args: argparse.Namespace) -> int:
         source = str(payload["source"])
         as_of = date.fromisoformat(str(payload.get("as_of", date.today().isoformat())))
     closure = close_access_paths(edges, source=source, as_of=as_of)
+    out = [
+        {
+            "source": p.source,
+            "target": p.target,
+            "hops": [h.hop_view() for h in p.hops],
+            "confidence": p.confidence,
+            "temporal_status": p.temporal_status,
+            "speculative": p.speculative,
+            "is_headline": p.is_headline,
+        }
+        for p in closure.paths
+    ]
+    print(json.dumps(out, indent=2, default=str))
+    return 0
+
+
+def _run_access_paths_over_spine(args: argparse.Namespace) -> int:
+    """Derive access-path closure over the MATERIALIZED relationship edges (P28.2)."""
+    import psycopg  # available via the sig-db dependency (driver stays in `db`)
+
+    from .access_paths import close_access_paths_over_spine
+
+    if not args.source:
+        raise SystemExit("access-paths --dsn requires --source (the accessor entity id)")
+    as_of = date.fromisoformat(args.as_of) if args.as_of else date.today()
+    conn = psycopg.connect(args.dsn, autocommit=True)
+    try:
+        closure = close_access_paths_over_spine(
+            conn, source=str(args.source), as_of=as_of, role=args.role
+        )
+    finally:
+        conn.close()
     out = [
         {
             "source": p.source,

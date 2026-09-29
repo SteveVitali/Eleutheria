@@ -70,6 +70,9 @@ __all__ = [
     "AccessPath",
     "AccessPathClosure",
     "close_access_paths",
+    "DEFAULT_MATERIALIZED_SCOPE",
+    "access_edges_from_materialized",
+    "close_access_paths_over_spine",
 ]
 
 #: The only two edge labels that compose in a reachability chain (SIG-RECON-049 #1).
@@ -472,3 +475,71 @@ def close_access_paths(
     # Deterministic order: shorter paths first, then by node list.
     found.sort(key=lambda p: (p.hop_count, p.orgs))
     return AccessPathClosure(source=source, as_of=as_of, paths=tuple(found))
+
+
+#: The conservative scope for a materialized sharing edge whose ``scope`` is unknown
+#: (the raw §29.3 ``configured_sharing_partner`` claim does not carry a §11.6 scope, so
+#: the materialized ``relationship`` row leaves it NULL). ``partner`` is the §12.5
+#: default for a configured sharing-partner edge; closure only ever *narrows* scope, so
+#: a mid default never lets a chain broaden its reach beyond what an edge attests.
+DEFAULT_MATERIALIZED_SCOPE = "partner"
+
+
+def access_edges_from_materialized(rows: Iterable[dict[str, object]]) -> list[AccessEdge]:
+    """Map materialized ``relationship`` edge rows into closure :class:`AccessEdge` inputs.
+
+    Consumes the dataset produced by
+    :func:`reconcile.materialize.read_materialized_edges` (P28.2). Each edge's
+    ``access_kind`` becomes the ``edge_label`` verbatim — closure decides
+    composability off it and never rewrites it (SIG-ONTO-042): only ``configured_access``
+    (and §12.3 ``federates_search_to``) compose. ``from_entity`` is the accessor and
+    ``to_entity`` the data holder (the connector convention the materializer preserves).
+    Every edge carries its backing ``evidence_claim`` — closure refuses an unevidenced
+    hop (§3.1).
+    """
+    edges: list[AccessEdge] = []
+    for r in rows:
+        evidence_claim = r.get("evidence_claim")
+        evidence = (str(evidence_claim),) if evidence_claim else ()
+        if not evidence:
+            continue  # no unevidenced hop (§3.1, SIG-RECON-049 #5)
+        valid_from = r.get("valid_from")
+        edges.append(
+            AccessEdge(
+                from_org=str(r["from_entity"]),
+                to_org=str(r["to_entity"]),
+                edge_label=str(r["access_kind"]),
+                scope=str(r.get("scope") or DEFAULT_MATERIALIZED_SCOPE),
+                evidence=evidence,
+                confidence="probable",
+                valid_from=date.fromisoformat(str(valid_from)) if valid_from else None,
+                valid_from_kind=str(r.get("valid_from_kind") or "unknown"),
+                valid_to_kind=str(r.get("valid_to_kind") or "ongoing"),
+                edge_id=str(r.get("relationship_id") or ""),
+                asserted_by=str(r.get("asserted_by") or ""),
+            )
+        )
+    return edges
+
+
+def close_access_paths_over_spine(
+    conn: object,
+    *,
+    source: str,
+    as_of: date,
+    target: str | None = None,
+    role: str | None = None,
+) -> AccessPathClosure:
+    """Derive bounded access-path closure over the MATERIALIZED relationship edges (P28.2).
+
+    Reads the materialized §29.3 edges (:func:`reconcile.materialize.read_materialized_edges`)
+    and runs the P12.2 closure (:func:`close_access_paths` — consumed, not
+    re-implemented) from ``source``. The result is a labelled **L4 inference**
+    (SIG-RECON-047), derived-on-read from the stored edges — it feeds the web network
+    island's ``access_paths`` (empty until P28.2). Read-only.
+    """
+    from reconcile.materialize import read_materialized_edges
+
+    rows = read_materialized_edges(conn, role=role)
+    edges = access_edges_from_materialized(rows)
+    return close_access_paths(edges, source=source, as_of=as_of, target=target)
