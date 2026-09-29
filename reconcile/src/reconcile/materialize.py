@@ -39,6 +39,8 @@ from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 from typing import Any
 
+from .contradiction import materialize as materialize_contradiction_entity
+from .model import Contradiction
 from .resolve import RESOLVE, Claim, Resolution
 from .ruleset import Ruleset, load_ruleset
 from .sharing import ACCESS_KINDS, ReconciledEdge, SharingObservation, reconcile_sharing
@@ -59,6 +61,15 @@ __all__ = [
     "materialize_sharing_edges",
     "materialize_sharing_edges_from_dsn",
     "read_materialized_edges",
+    # P28.3 — the first-class, VISIBLE §31 contradiction object
+    "ContradictionMaterializeSummary",
+    "CONTRADICTION_CONFLICT_STATES",
+    "contradiction_input_digest",
+    "contradiction_row",
+    "detected_contradictions",
+    "materialize_contradictions",
+    "materialize_contradictions_from_dsn",
+    "read_materialized_contradictions",
 ]
 
 #: §10.7 support axis → the resolution table's ``confidence`` vocabulary. The support
@@ -132,15 +143,23 @@ def read_claim_groups(
     jurisdiction: str | None = None,
     subject: str | None = None,
     predicate: str | None = None,
+    as_of_belief: datetime | None = None,
 ) -> dict[tuple[str, str], list[Claim]]:
     """Read L0 tier-0 claims from the spine, grouped by ``(subject, predicate)``.
 
     Mirrors the read the read-only ``reconcile resolve`` CLI performs (contradictions
     visible, §3.1): the same lateral-join evidence chain for the source id/genre, the
-    same tier-0-only filter, ordered deterministically.
+    same tier-0-only filter, ordered deterministically. When ``as_of_belief`` is given
+    the read is belief-filtered (``sys_period @> belief``) exactly as
+    ``api.store_pg._public_claim_groups`` does — so a claim whose transaction-time
+    interval has been closed (an append-only retraction) drops out of the current
+    belief; the default (``None``) keeps the P28.1 all-claims behaviour unchanged.
     """
     where = ["c.sensitivity_tier = 0"]
     params: list[Any] = []
+    if as_of_belief is not None:
+        where.append("c.sys_period @> %s::timestamptz")
+        params.append(as_of_belief)
     if subject:
         where.append("c.subject_id = %s")
         params.append(subject)
@@ -757,5 +776,382 @@ def materialize_sharing_edges_from_dsn(dsn: str, **kwargs: Any) -> EdgeMateriali
     conn = psycopg.connect(dsn, autocommit=True)
     try:
         return materialize_sharing_edges(conn, **kwargs)
+    finally:
+        conn.close()
+
+
+# ============================================================================
+# P28.3 — Materialize the first-class, VISIBLE §31 contradiction object.
+#
+# The Appendix C.6 ``contradiction`` table (the point of retiring Risk 3 — a
+# disagreement kept VISIBLE, never silently reconciled, §3.1) has existed since
+# P02.1 but has never held a row: the launch posture computed contradictions on
+# read (ADR-092, ``api.store_pg._compute_on_read``). :func:`materialize_contradictions`
+# runs the SAME detector that compute-on-read uses — the §28 resolver
+# (:func:`reconcile.resolve.RESOLVE`), which itself performs the §29.1 count-basis
+# reconciliation guard and emits :class:`reconcile.model.Contradiction` objects
+# (the 299-vs-190 pattern surfaces here as a within-predicate value disagreement) —
+# over the real (resolved) spine and WRITES each detected contradiction as a durable
+# ``contradiction`` row, honoring every invariant the spine demands:
+#
+# * **Contradictions stay VISIBLE (§3.1).** Both open and settled contradictions are
+#   written and read back; nothing is collapsed to a single value the evidence does
+#   not support. Every row carries BOTH evidence sides in ``claim_ids``.
+# * **Append-only + lifecycle-aware (ADR-005, SIG-RECON-021/055).** This path only
+#   ``INSERT``s — there is no ``UPDATE``/``DELETE``. A contradiction resolved by later
+#   evidence (an OPEN finding the resolver no longer detects over the current spine)
+#   is materialized as a NEW ``superseded`` state row via the model lifecycle
+#   (:meth:`reconcile.model.Contradiction.supersede`); the open row is retained in
+#   history, never deleted.
+# * **Idempotent (+0).** The insert is ``ON CONFLICT (input_digest) DO NOTHING``
+#   against the ``contradiction_input_digest_key`` partial unique index (the
+#   ``contradiction_materialize`` sqitch change). The digest folds in the lifecycle
+#   ``status``, so re-running over an unchanged spine inserts each state exactly once.
+# * **REUSE, not re-implement (SIG-ENG-035).** The §31 entity + content-derived
+#   identity are the P08.3 :func:`reconcile.contradiction.materialize` /
+#   :func:`derive_contradiction_id`; the §29 reconciliation is
+#   :func:`reconcile.resolve.RESOLVE` (which consumes ``reconcile.counts``) and the
+#   detected objects are :class:`reconcile.model.Contradiction`. :func:`contradiction_row`
+#   maps ANY ``reconcile.model.Contradiction`` onto a row, so a contradiction produced
+#   by ``reconcile.counts`` (§29 count reconciliation) or ``reconcile.lifecycle``
+#   (§29.4 procurement-vs-physical) materializes through the same writer.
+#
+# Materializing the research tasks a contradiction generates is a separate concern
+# (the ``research_task`` table + FK linkage); ``research_task_ids`` is left NULL here
+# — the contradiction entity and its visible evidence sides are what this ticket owns.
+# ============================================================================
+
+#: The resolver ``contradiction_state`` values that name a genuine conflict — the
+#: exact set ``api.store_pg._compute_on_read`` surfaces as a contradiction. A
+#: ``uncontested`` / ``none`` / insufficient resolution is NOT a contradiction.
+CONTRADICTION_CONFLICT_STATES: frozenset[str] = frozenset(
+    {"resolved_conflict", "unresolved_conflict"}
+)
+
+
+@dataclass(frozen=True)
+class ContradictionMaterializeSummary:
+    """The outcome of one contradiction materialization pass — every group accounted for."""
+
+    considered_pairs: int = 0
+    detected: int = 0
+    inserted: int = 0
+    skipped_existing: int = 0
+    skipped_unevidenced: int = 0
+    superseded: int = 0
+    by_type: dict[str, int] = field(default_factory=dict)
+
+    @property
+    def written(self) -> int:
+        return self.inserted + self.superseded
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "considered_pairs": self.considered_pairs,
+            "detected": self.detected,
+            "inserted": self.inserted,
+            "skipped_existing": self.skipped_existing,
+            "skipped_unevidenced": self.skipped_unevidenced,
+            "superseded": self.superseded,
+            "by_type": dict(sorted(self.by_type.items())),
+        }
+
+
+def contradiction_input_digest(row: dict[str, Any]) -> str:
+    """A deterministic sha256 over a contradiction's reproducible detected state.
+
+    The idempotency key: two passes over the same detected contradiction in the same
+    lifecycle state (same subject, predicate, type, sorted claim-id set, status,
+    severity) digest identically → the insert is a no-op (+0). A lifecycle transition
+    (``open`` → ``superseded``) changes the ``status`` component → a new digest → a new
+    superseding append-only row, never an edit of the open one.
+    """
+    stable = {
+        "subject_id": row["subject_id"],
+        "predicate_id": row["predicate_id"],
+        "contradiction_type": row["contradiction_type"],
+        "claim_ids": sorted(str(c) for c in row["claim_ids"]),
+        "status": row["status"],
+        "severity": row["severity"],
+    }
+    payload = json.dumps(stable, sort_keys=True, ensure_ascii=False, default=str)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def contradiction_row(detected: Contradiction) -> dict[str, Any] | None:
+    """Map a :class:`reconcile.model.Contradiction` onto a ``contradiction`` table row.
+
+    Mirrors the ``api.store_pg._persisted_contradictions`` shape (subject_id,
+    predicate_id, contradiction_type, status, claim_ids) plus the lifecycle/severity
+    columns. Returns ``None`` for a contradiction with no linked claim ids — a
+    ``contradiction`` row requires ``claim_ids`` NOT NULL and SIG never asserts an
+    unevidenced contradiction (§3.1): both disagreeing sides must resolve to real
+    claim rows. ``input_digest`` is the idempotency key (folds in the lifecycle
+    ``status``). ``research_task_ids`` is left NULL (materializing task rows is a
+    separate concern).
+    """
+    claim_ids = [str(c) for c in detected.claim_ids if c]
+    if not claim_ids:
+        return None
+    row: dict[str, Any] = {
+        "subject_id": detected.subject_id,
+        "predicate_id": detected.predicate_id,
+        "contradiction_type": detected.contradiction_type,
+        "claim_ids": claim_ids,
+        "severity": detected.severity,
+        "status": detected.status,
+        "resolution_note": detected.resolution_note,
+        "resolved_by": detected.resolved_by,
+        "resolved_at": detected.resolved_at,
+    }
+    row["input_digest"] = contradiction_input_digest(row)
+    return row
+
+
+def detected_contradictions(
+    subject_id: str, predicate_id: str, resolved: Resolution, claims: list[Claim]
+) -> list[Contradiction]:
+    """The materializable §31 contradiction entities for one resolved (subject, predicate).
+
+    Mirrors ``api.store_pg._compute_on_read``: the resolver's own emitted §29.1/§28
+    ``Contradiction``s (predicate-conflation / value-domain-mismatch — CONSUMED from
+    :func:`reconcile.resolve.RESOLVE`, which runs the §29 count-basis reconciliation)
+    are materialized with their real types; and a plain within-predicate value
+    disagreement (the 299-vs-190 pattern) — signalled by
+    ``contradiction_state ∈ CONTRADICTION_CONFLICT_STATES`` — is synthesized as a
+    ``value_disagreement`` entity. Each entity is given a stable, content-derived
+    identity by the P08.3 :func:`reconcile.contradiction.materialize` and carries BOTH
+    evidence sides in ``claim_ids`` (the group's considered claims).
+    """
+    considered = tuple(resolved.considered_claim_ids)
+    out: list[Contradiction] = []
+    for c in resolved.contradictions:
+        out.append(materialize_contradiction_entity(c, claim_ids=considered or c.claim_ids))
+    # Mirror api.store_pg._compute_on_read: at most one synthesized record per pair, and
+    # only when the resolver emitted none of its own (predicate-conflation /
+    # value-domain-mismatch already speak for the group).
+    conflict = resolved.contradiction_state in CONTRADICTION_CONFLICT_STATES
+    if not resolved.contradictions and conflict:
+        values = tuple(sorted({repr(c.value) for c in claims}))
+        detected = Contradiction(
+            contradiction_type="value_disagreement",
+            subject_id=subject_id,
+            predicate_id=predicate_id,
+            claim_values=values,
+            note=(
+                f"{predicate_id}: {len(considered)} claims disagree "
+                f"({resolved.contradiction_state}); both retained, neither collapsed (§3.1)."
+            ),
+            severity="notable",
+            status="open",
+            claim_ids=considered,
+        )
+        out.append(materialize_contradiction_entity(detected, claim_ids=considered))
+    return out
+
+
+def _insert_contradiction(conn: Any, row: dict[str, Any]) -> bool:
+    """INSERT one contradiction row, idempotent on ``input_digest``. True iff inserted."""
+    result = conn.execute(
+        "INSERT INTO contradiction"
+        "(subject_id, predicate_id, contradiction_type, claim_ids, severity, status, "
+        " resolution_note, resolved_by, resolved_at, input_digest) "
+        "VALUES (%s, %s, %s, %s::uuid[], %s, %s, %s, %s, %s::timestamptz, %s) "
+        "ON CONFLICT (input_digest) WHERE input_digest IS NOT NULL "
+        "DO NOTHING RETURNING contradiction_id",
+        (
+            row["subject_id"],
+            row["predicate_id"],
+            row["contradiction_type"],
+            row["claim_ids"],
+            row["severity"],
+            row["status"],
+            row["resolution_note"],
+            row["resolved_by"],
+            row["resolved_at"],
+            row["input_digest"],
+        ),
+    ).fetchone()
+    return result is not None
+
+
+def _open_contradictions(conn: Any) -> list[tuple[str, str, str, list[str]]]:
+    """The live (open / under_research) materialized contradictions, for supersession."""
+    rows = conn.execute(
+        "SELECT subject_id::text, predicate_id, contradiction_type, claim_ids "
+        "  FROM contradiction "
+        " WHERE status IN ('open', 'under_research') AND input_digest IS NOT NULL "
+        " ORDER BY subject_id, predicate_id, contradiction_type"
+    ).fetchall()
+    return [(str(r[0]), str(r[1]), str(r[2]), [str(x) for x in (r[3] or ())]) for r in rows]
+
+
+def _superseded_keys(conn: Any) -> set[tuple[str, str, str]]:
+    """The (subject, predicate, type) triples that already carry a superseded row."""
+    rows = conn.execute(
+        "SELECT subject_id::text, predicate_id, contradiction_type "
+        "  FROM contradiction WHERE status = 'superseded' AND input_digest IS NOT NULL"
+    ).fetchall()
+    return {(str(r[0]), str(r[1]), str(r[2])) for r in rows}
+
+
+def materialize_contradictions(
+    conn: Any,
+    *,
+    jurisdiction: str | None = None,
+    subject: str | None = None,
+    predicate: str | None = None,
+    as_of: date | None = None,
+    ruleset: Ruleset | None = None,
+    role: str | None = None,
+) -> ContradictionMaterializeSummary:
+    """Run §29 reconciliation over the spine and materialize contradictions (P28.3).
+
+    Reads tier-0 claims grouped by ``(subject, predicate)``, runs the §28 ``RESOLVE``
+    (the detector ``api.store_pg._compute_on_read`` uses — CONSUMED), and writes an
+    append-only, idempotent ``contradiction`` row for every genuine conflict — kept
+    VISIBLE with both evidence sides, never reconciled away (§3.1). A prior OPEN
+    contradiction the resolver no longer detects over the current spine is materialized
+    as a NEW ``superseded`` state row (never a delete). Returns a summary; a second call
+    over an unchanged spine inserts +0.
+    """
+    rs = ruleset or load_ruleset()
+    if role:
+        conn.execute(f"SET ROLE {role}")
+    belief = datetime.now(tz=UTC)
+    as_of_world = as_of or belief.date()
+
+    # Belief-filtered exactly as api.store_pg._compute_on_read: a claim whose sys_period
+    # was closed (an append-only retraction) is no longer in the current belief, so its
+    # disagreement resolves — the lifecycle transition the supersession pass detects.
+    groups = read_claim_groups(
+        conn,
+        jurisdiction=jurisdiction,
+        subject=subject,
+        predicate=predicate,
+        as_of_belief=belief,
+    )
+
+    considered = detected = inserted = skipped_existing = skipped_unevidenced = 0
+    by_type: dict[str, int] = {}
+    detected_keys: set[tuple[str, str, str]] = set()
+    for (subj, pred), claims in sorted(groups.items()):
+        considered += 1
+        try:
+            resolved = RESOLVE(
+                subj, pred, claims, as_of_world=as_of_world, as_of_belief=as_of_world, ruleset=rs
+            )
+        except KeyError:
+            # Predicate not in the resolver ruleset — not materializable (ADR-092 fallback).
+            continue
+        for entity in detected_contradictions(subj, pred, resolved, claims):
+            detected += 1
+            row = contradiction_row(entity)
+            if row is None:
+                skipped_unevidenced += 1
+                continue
+            detected_keys.add((subj, pred, entity.contradiction_type))
+            if _insert_contradiction(conn, row):
+                inserted += 1
+                by_type[entity.contradiction_type] = by_type.get(entity.contradiction_type, 0) + 1
+            else:
+                skipped_existing += 1
+
+    superseded = _supersede_resolved(conn, detected_keys, as_of=as_of_world)
+
+    return ContradictionMaterializeSummary(
+        considered_pairs=considered,
+        detected=detected,
+        inserted=inserted,
+        skipped_existing=skipped_existing,
+        skipped_unevidenced=skipped_unevidenced,
+        superseded=superseded,
+        by_type=by_type,
+    )
+
+
+def _supersede_resolved(conn: Any, detected_keys: set[tuple[str, str, str]], *, as_of: date) -> int:
+    """Append a ``superseded`` state row for each open contradiction no longer detected.
+
+    Lifecycle-aware + append-only (SIG-RECON-021/055): a contradiction the resolver no
+    longer detects over the current spine (later evidence resolved the disagreement) is
+    NOT deleted — the open row stays visible in history and a NEW ``superseded`` row is
+    appended via the model lifecycle (:meth:`reconcile.model.Contradiction.supersede`).
+    Idempotent: a triple that already carries a superseded row is skipped, so re-runs
+    add +0.
+    """
+    already = _superseded_keys(conn)
+    at = datetime(as_of.year, as_of.month, as_of.day, tzinfo=UTC)
+    superseded = 0
+    for subj, pred, ctype, claim_ids in _open_contradictions(conn):
+        key = (subj, pred, ctype)
+        if key in detected_keys or key in already:
+            continue
+        prior = Contradiction(
+            contradiction_type=ctype,
+            subject_id=subj,
+            predicate_id=pred,
+            claim_values=(),
+            note="superseded by later evidence",
+            status="open",
+            claim_ids=tuple(claim_ids),
+        )
+        settled = prior.supersede(at=at)
+        row = contradiction_row(settled)
+        if row is None:
+            continue
+        row["resolution_note"] = (
+            "no longer detected by the resolver over the current spine — superseded by "
+            "later evidence (append-only; the open finding is retained in history, "
+            "§3.1/SIG-RECON-021)."
+        )
+        row["resolved_by"] = "auto"
+        row["input_digest"] = contradiction_input_digest(row)
+        if _insert_contradiction(conn, row):
+            superseded += 1
+            already.add(key)
+    return superseded
+
+
+def read_materialized_contradictions(conn: Any, *, role: str | None = None) -> list[dict[str, Any]]:
+    """Read the materialized contradictions (the P28.5 surface seam, `_persisted_contradictions`).
+
+    The real, live contradiction dataset the P28.5 surface refresh consumes to render
+    contradictions with their evidence on both sides — mirrors the
+    ``api.store_pg._persisted_contradictions`` projection exactly (contradiction_id,
+    subject_id, predicate_id, contradiction_type, status, claim_ids). Read-only;
+    deterministically ordered; every contradiction — open and settled — is included,
+    nothing suppressed (§3.1/SIG-RECON-055).
+    """
+    if role:
+        conn.execute(f"SET ROLE {role}")
+    rows = conn.execute(
+        "SELECT contradiction_id::text, subject_id::text, predicate_id, contradiction_type, "
+        "       status, severity, claim_ids "
+        "  FROM contradiction "
+        " WHERE input_digest IS NOT NULL "
+        " ORDER BY subject_id, predicate_id, contradiction_type, status, contradiction_id"
+    ).fetchall()
+    return [
+        {
+            "contradiction_id": r[0],
+            "subject_id": r[1],
+            "predicate_id": r[2],
+            "contradiction_type": r[3],
+            "status": r[4],
+            "severity": r[5],
+            "claim_ids": [str(x) for x in (r[6] or ())],
+        }
+        for r in rows
+    ]
+
+
+def materialize_contradictions_from_dsn(dsn: str, **kwargs: Any) -> ContradictionMaterializeSummary:
+    """Open an autocommit connection from ``dsn`` and materialize contradictions (CLI)."""
+    import psycopg  # available via the sig-db dependency (driver stays in `db`)
+
+    conn = psycopg.connect(dsn, autocommit=True)
+    try:
+        return materialize_contradictions(conn, **kwargs)
     finally:
         conn.close()
