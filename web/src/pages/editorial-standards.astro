@@ -16,7 +16,10 @@ import {
   assertReviewReleasable,
   openFindings,
 } from "../lib/editorial";
-import { HOSTILE_READER_REVIEW } from "../lib/corrections-methodology-fixture";
+import { getHostileReaderReview } from "../lib/data";
+
+// The recorded hostile-reader review flows through the single data seam (ADR-066).
+const HOSTILE_READER_REVIEW = getHostileReaderReview();
 
 // SIG-UI-042: release is blocked until every hostile-reader finding is dispositioned.
 // This runs at build, so an undispositioned finding fails the build.

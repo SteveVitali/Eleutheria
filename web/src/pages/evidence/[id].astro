@@ -23,15 +23,18 @@ import {
   sealedMetadata,
 } from "../../lib/evidence-viewer";
 import type { ClaimView } from "../../lib/evidence-viewer";
-import { CLAIM_VIEWS, DIFF_CAPTURES } from "../../lib/watch-evidence-fixture";
+import { getEvidence, getCaptureDiff } from "../../lib/data";
 
+// The evidence claim-views + capture diff flow through the single data seam (ADR-066):
+// fixtures by default, real export bytes under SIG_DATA_SOURCE=export.
 export const getStaticPaths: GetStaticPaths = () =>
-  CLAIM_VIEWS.map((view) => ({ params: { id: view.claim_id }, props: { view } }));
+  getEvidence().claimViews.map((view) => ({ params: { id: view.claim_id }, props: { view } }));
 
 const { view } = Astro.props as { view: ClaimView };
 // Enforce the SIG-UI-028 completeness contract at build: an incomplete view fails the build.
 assertClaimView(view);
 
+const DIFF_CAPTURES = getCaptureDiff();
 const sealed = isSealed(view.capture);
 const highlighted = claimHighlightedDocument(view);
 const meta = sealed ? sealedMetadata(view.capture) : null;

@@ -20,11 +20,13 @@ import {
   itemsForJurisdiction,
 } from "../lib/watch";
 import { recommendEvidence, citationList } from "../lib/recommender";
-import {
-  WATCH_ITEMS,
-  DECISION_POINT,
-  EVIDENCE_ARTIFACTS,
-} from "../lib/watch-evidence-fixture";
+import { getWatch, getEvidence, getDecisionPoint } from "../lib/data";
+
+// The watch, the ranked evidence, and the decision point flow through the single data
+// seam (ADR-066): fixtures by default, real export bytes under SIG_DATA_SOURCE=export.
+const WATCH_ITEMS = getWatch();
+const EVIDENCE_ARTIFACTS = getEvidence().artifacts;
+const DECISION_POINT = getDecisionPoint();
 
 // The static plain-text citation export (SIG-UI-027c); emitted by watch/citations.txt.ts.
 const CITATIONS_PATH = "/watch/citations.txt";

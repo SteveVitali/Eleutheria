@@ -10,7 +10,11 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ContestedMarker from "../../components/ContestedMarker.astro";
 import { evidencePath, isClaimContested, isSealed } from "../../lib/evidence-viewer";
-import { CLAIM_VIEWS } from "../../lib/watch-evidence-fixture";
+import { getEvidence } from "../../lib/data";
+
+// The evidence claim-views flow through the single data seam (ADR-066): fixtures by
+// default, real export bytes under SIG_DATA_SOURCE=export.
+const CLAIM_VIEWS = getEvidence().claimViews;
 ---
 
 <BaseLayout title="Evidence viewer" path="/evidence/">

@@ -12,7 +12,11 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ContestedMarker from "../components/ContestedMarker.astro";
 import AbsenceHatch from "../components/AbsenceHatch.astro";
-import { REFERENCE_MAP_SITES, OKCPD } from "../lib/fixtures";
+import { getReferenceMapSites, getReferenceEntity } from "../lib/data";
+
+// The reference sites + worked entity flow through the single data seam (ADR-066).
+const REFERENCE_MAP_SITES = getReferenceMapSites();
+const OKCPD = getReferenceEntity();
 
 const plotted = REFERENCE_MAP_SITES.filter((s) => s.lat !== null && s.lon !== null);
 const lats = plotted.map((s) => s.lat as number);

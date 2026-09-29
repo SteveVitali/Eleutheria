@@ -11,7 +11,11 @@
 // prohibitions are enforced structurally by assertCoverageMetrics at build.
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { assertCoverageMetrics } from "../lib/metrics";
-import { COVERAGE_METRICS } from "../lib/corrections-methodology-fixture";
+import { getCoverage } from "../lib/data";
+
+// Coverage metrics flow through the single data seam (ADR-066): fixtures by default,
+// real export bytes under SIG_DATA_SOURCE=export.
+const COVERAGE_METRICS = getCoverage();
 
 // A build-time gate: any metric without a named denominator, or claiming a population
 // total, fails the build (SIG-METRIC-009/010).

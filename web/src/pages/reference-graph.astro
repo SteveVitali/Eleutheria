@@ -11,8 +11,11 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SupportGlyph from "../components/SupportGlyph.astro";
 import ContestedMarker from "../components/ContestedMarker.astro";
-import { REFERENCE_GRAPH_NODES, REFERENCE_GRAPH_EDGES } from "../lib/fixtures";
+import { getReferenceGraph } from "../lib/data";
 import { isContested } from "../lib/epistemic";
+
+// The reference sharing graph flows through the single data seam (ADR-066).
+const { nodes: REFERENCE_GRAPH_NODES, edges: REFERENCE_GRAPH_EDGES } = getReferenceGraph();
 
 const nodeLabel = (id: string) => REFERENCE_GRAPH_NODES.find((n) => n.id === id)?.label ?? id;
 const nodeX = (i: number) => 60 + i * 140;

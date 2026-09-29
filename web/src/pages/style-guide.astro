@@ -10,7 +10,10 @@
 // templates SIG ships are gated against the register rules at build time here.
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { REGISTER_RULES, assertRegisterConformant, checkRegisterConformance } from "../lib/editorial";
-import { GENERATED_RATIONALE_TEMPLATES } from "../lib/corrections-methodology-fixture";
+import { getRationaleTemplates } from "../lib/data";
+
+// The generated rationale templates flow through the single data seam (ADR-066).
+const GENERATED_RATIONALE_TEMPLATES = getRationaleTemplates();
 
 // SIG-UI-046: apply the register rules to generated rationale templates too. A template
 // that violates a register rule fails the build rather than shipping as published text.

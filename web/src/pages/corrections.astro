@@ -18,7 +18,12 @@ import {
   transparencyReport,
 } from "../lib/corrections";
 import { RULESET_VERSION } from "../lib/fixtures";
-import { CORRECTIONS, CORRECTIONS_PROVENANCE } from "../lib/corrections-methodology-fixture";
+import { getCorrections, getCorrectionsProvenance } from "../lib/data";
+
+// The corrections log + its provenance summary flow through the single data seam
+// (ADR-066): fixtures by default, real export bytes under SIG_DATA_SOURCE=export.
+const CORRECTIONS = getCorrections();
+const CORRECTIONS_PROVENANCE = getCorrectionsProvenance();
 
 const origin = Astro.site?.origin;
 const entries = orderedCorrections(CORRECTIONS);
