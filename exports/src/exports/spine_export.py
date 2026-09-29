@@ -1,0 +1,1068 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+# carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+"""The spine-backed national export bundle (P27.4, LAUNCH.4).
+
+`sig-exports build --from-spine --dsn <dsn>` reads the shaped spine (P27.3) and
+emits a real, national export bundle — replacing the hardcoded okc/france fixture
+requests — carrying every artifact the ten public surfaces consume, to the frozen
+P27.1 contracts, so the static site is the real graph "by construction" (§38.1,
+SIG-EXPORT-012).
+
+The invariants this module never relaxes (all inherited from §38/§42):
+
+* **Read, never mutate.** :func:`run_spine_export` opens a single
+  ``REPEATABLE READ READ ONLY`` snapshot, runs shaping AND the supplementary reads
+  inside it, and closes it — no ``value_geom``/``resolution`` write, no
+  ``UPDATE``/``DELETE`` anywhere.
+* **Licence compartments never merged; the gate fails closed.** Every site is
+  licence-sliced per ``(source, rights_id)`` pair, each slice's observation
+  envelope recomputed from *that source's own* observations (never a silent
+  cross-source merge), and placed in the compartment its own computed licence
+  declares. A refused record (``UNDETERMINED`` / non-redistributable /
+  derivative-forbidden / recorded-exclusion) is dropped **loudly** into the
+  exclusions report, never co-mingled. :func:`exports.compartments.assert_separated`
+  holds by construction (each compartment file is one licence), so the ODbL layer
+  ships physically apart from the CC-BY graph (SIG-EXPORT-005 / §42.3).
+* **Every row carries rights provenance (SIG-EXPORT-006).** The bundle rows go
+  through :func:`exports.compartments.enrich_rows`, stamping each with its
+  downstream attribution/provenance obligation.
+* **Never a bare total (§32).** Coverage metrics carry named denominators and
+  ``is_population_total: false`` (they come straight from the P27.3 shaping layer,
+  which owns that invariant).
+* **Honest absence.** A public surface whose spine tables are empty emits ``[]`` /
+  a zeroed report — never a fabricated row.
+
+The pure assembler :func:`build_spine_export` builds the :class:`SpineExport` from
+an already-shaped :class:`~exports.shaping.ShapedDataset` plus (optionally) the
+parsed shaping claims and the supplementary raw reads — unit-testable with no
+database. :func:`run_spine_export` is the thin executor that opens the snapshot.
+"""
+
+from __future__ import annotations
+
+import json
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass, field
+from datetime import UTC, date, datetime
+from pathlib import Path
+from typing import Any
+
+from policy.licensing import (
+    compute_export_license,
+    export_refusal_reason,
+)
+from policy.rights import RightsRecord
+
+from . import compartments as C
+from . import provo
+from .bundle import Bundle, build_bundle
+from .manifest import Artifact, BuildSpec, Manifest, canonical_json, sha256_hex
+from .shaping import (
+    LAT_PREDICATE,
+    LON_PREDICATE,
+    SHAPING_SCHEMA_VERSION,
+    ShapedDataset,
+    ShapedSite,
+    ShapingClaim,
+    parse_shaping_claims,
+    shape_sites,
+)
+from .tiles import ODBL_ATTRIBUTION, render_pmtiles_file
+
+#: The SIG-original derived record: coverage/jurisdiction/freshness/dossier framings
+#: are SIG's own analytical expression, published CC-BY-4.0 (SIG-LIC-005). The
+#: licence-bearing GEOMETRY (sites) is sliced per source instead — this record only
+#: governs the derived aggregate/framing tables.
+_SIG_SOURCE_ID = "sig"
+_SIG_SPDX = "CC-BY-4.0"
+_SIG_ATTRIBUTION = "© The SIG project — CC-BY-4.0"
+_SIG_TERMS_URL = "https://creativecommons.org/licenses/by/4.0/"
+
+#: Where the web-consumption JSON bytes live inside the bundle (the static site is
+#: built from these — the same posture as the P21.4 ``web/dossiers.json``).
+_WEB_DIR = "web"
+_WEB_COMPARTMENT = "web"
+_META_COMPARTMENT = "metadata"
+
+#: The twelve dossier sections (§39.2). Order is the canonical render order.
+_DOSSIER_SECTIONS: tuple[str, ...] = (
+    "at_a_glance",
+    "what_is_deployed",
+    "cost_and_expiry",
+    "who_else_can_see",
+    "configuration_and_retention",
+    "usage",
+    "where_the_hardware_is",
+    "policy",
+    "accountability_events",
+    "timeline",
+    "what_we_dont_know",
+    "how_we_know_this",
+)
+
+
+# --------------------------------------------------------------------------- #
+# Supplementary read-only query set (compat-guarded like shaping._queries_for) #
+# --------------------------------------------------------------------------- #
+
+#: The supplementary read-only SELECTs run inside the caller's shaping snapshot.
+#: Each is keyed on a table that a pre-P27.2 / partial spine may not have, so every
+#: one is guarded by ``to_regclass`` before it runs; a missing table is honest
+#: absence (an empty surface), never a fabricated row.
+EXPORT_QUERIES: dict[str, tuple[str, str]] = {
+    # (guard-table, SELECT). source_registry names — node labels + PROV agents.
+    "source_names": (
+        "source_registry",
+        "SELECT source_id, name FROM source_registry ORDER BY source_id",
+    ),
+    # entity_identifier labels — sharing-edge partner display names.
+    "entity_labels": (
+        "entity_identifier",
+        "SELECT entity_id::text, scheme, value FROM entity_identifier ORDER BY entity_id, scheme",
+    ),
+    # research_task rows (§39.7) — the research queue surface.
+    "research_tasks": (
+        "research_task",
+        "SELECT task_id::text, task_type, subject_id::text, jurisdiction_id::text, priority,"
+        "       status, disposition, closing_condition, detector_version"
+        "  FROM research_task ORDER BY priority DESC, task_id",
+    ),
+    # publishable evidence_artifact metadata (§39.6) — the evidence surface. Bytes
+    # never travel; sealed captures stay metadata-only (§17.5).
+    "evidence_artifacts": (
+        "evidence_artifact",
+        "SELECT artifact_id::text, source_id, title, artifact_type, stable_locator,"
+        "       primary_or_secondary, capture_status, published_at_edtf"
+        "  FROM evidence_artifact"
+        " WHERE sensitivity_tier = 0 AND capture_status = 'captured'"
+        " ORDER BY artifact_id",
+    ),
+    # correction claims (§39.8) — new rows with revises_claim / retraction_of; the
+    # prior value stays citable at its belief-time (history never rewritten).
+    "corrections": (
+        "claim",
+        "SELECT c.claim_id::text, c.subject_id::text, c.predicate_id, c.raw_value,"
+        "       c.correction_reason, c.revises_claim::text, c.retraction_of::text,"
+        "       lower(c.sys_period)"
+        "  FROM claim c"
+        " WHERE (c.revises_claim IS NOT NULL OR c.retraction_of IS NOT NULL)"
+        "   AND c.sensitivity_tier = 0 AND upper_inf(c.sys_period)"
+        " ORDER BY c.claim_id",
+    ),
+}
+
+
+def fetch_export_raw(cur: Any, *, belief: datetime | None = None) -> dict[str, Any]:
+    """Fetch every supplementary export query inside the caller's transaction.
+
+    Read-only and snapshot-consistent: the caller runs this inside the SAME
+    ``REPEATABLE READ READ ONLY`` snapshot as shaping, so every emitted artifact
+    describes one spine state. Each query is guarded by ``to_regclass`` — a spine
+    missing a table yields an empty result (honest absence), never an error.
+
+    ``belief`` is accepted for symmetry with shaping; the supplementary tables the
+    launch surfaces read are not belief-partitioned today, so it is currently
+    unused here (the shaping half already pins the belief instant).
+    """
+    del belief  # symmetry with shaping.fetch_shaping_raw; unused for these reads
+    raw: dict[str, Any] = {}
+    for key, (guard, sql) in EXPORT_QUERIES.items():
+        cur.execute("SELECT to_regclass(%s) IS NOT NULL", (guard,))
+        row = cur.fetchone()
+        if not (row and row[0]):
+            raw[key] = []
+            continue
+        try:
+            cur.execute(sql)
+            raw[key] = cur.fetchall()
+        except Exception:  # noqa: BLE001 - a schema-shape mismatch is honest absence
+            raw[key] = []
+    return raw
+
+
+# --------------------------------------------------------------------------- #
+# The built export                                                            #
+# --------------------------------------------------------------------------- #
+
+
+@dataclass(frozen=True)
+class SpineExport:
+    """A built national export: the licence-compartmented bundle plus web bytes.
+
+    ``bundle`` is the §38 licence-computed release (compartmented data tables,
+    Frictionless package, per-artifact manifest). ``web_artifacts`` are the ten
+    P27.1-contract JSONs (+ per-compartment PMTiles) the static site consumes.
+    ``provenance`` is the PROV-O lineage (§21.6). ``exclusions`` is the loud
+    refused-record report. ``manifest`` EXTENDS the bundle manifest with the web
+    artifacts + provenance + exclusions, each with its checksum/compartment/licence.
+    """
+
+    bundle: Bundle
+    web_artifacts: dict[str, bytes]
+    provenance: bytes
+    exclusions: dict[str, Any]
+    manifest: Manifest
+    tile_renderers: dict[str, str] = field(default_factory=dict)
+
+    def write_to(self, out_dir: Path | str) -> Path:
+        """Materialise the whole export under ``out_dir`` (deterministic bytes)."""
+        root = Path(out_dir)
+        # 1) the compartmented bundle data tables + descriptors.
+        for path, data in self.bundle.artifact_bytes.items():
+            target = root / path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(data)
+        # 2) the web-consumption JSONs (+ tiles) and the PROV-O lineage.
+        for path, data in self.web_artifacts.items():
+            target = root / path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(data)
+        (root / "provenance.ttl").write_bytes(self.provenance)
+        (root / "exclusions.json").write_bytes(
+            canonical_json(self.exclusions),
+        )
+        # 3) the EXTENDED manifest (bundle + web + provenance + exclusions).
+        (root / "manifest.json").write_bytes(self.manifest.to_bytes())
+        return root
+
+    def summary(self) -> dict[str, Any]:
+        """A deterministic build summary for the CLI (no timestamps of its own)."""
+        return {
+            "release_id": self.bundle.build_spec.release_id(),
+            "concept_id": self.bundle.build_spec.concept_id(),
+            "artifact_count": len(self.manifest.artifacts),
+            "licenses": sorted(self.manifest.licenses()),
+            "compartments": sorted({a.compartment for a in self.manifest.artifacts}),
+            "web_artifacts": sorted(self.web_artifacts),
+            "tiles": dict(sorted(self.tile_renderers.items())),
+            "excluded_slices": self.exclusions["totals"]["refused_slices"],
+            "excluded_rows": self.exclusions["totals"]["refused_rows"],
+        }
+
+
+# --------------------------------------------------------------------------- #
+# Pure helpers                                                                 #
+# --------------------------------------------------------------------------- #
+
+
+def _record_from_site_rights(r: Mapping[str, Any], *, retrieval: date) -> RightsRecord:
+    """A :class:`RightsRecord` from one of a site's effective-rights dicts."""
+    return RightsRecord(
+        source_id=str(r["source_id"]),
+        spdx=str(r["spdx"]),
+        attribution=str(r.get("attribution", "")),
+        redistributable=str(r.get("redistributable")) == "yes",
+        derivative_permitted=str(r.get("derivative_permitted")) == "yes",
+        terms_url=str(r.get("terms_url", "")),
+        retrieval_date=retrieval,
+    )
+
+
+def _sig_record(retrieval: date) -> RightsRecord:
+    """The SIG-original CC-BY-4.0 record governing the derived framing tables."""
+    return RightsRecord(
+        source_id=_SIG_SOURCE_ID,
+        spdx=_SIG_SPDX,
+        attribution=_SIG_ATTRIBUTION,
+        redistributable=True,
+        derivative_permitted=True,
+        terms_url=_SIG_TERMS_URL,
+        retrieval_date=retrieval,
+    )
+
+
+def _site_row_data(site: ShapedSite, rights: Mapping[str, Any]) -> dict[str, Any]:
+    """The per-(site, source, rights) export row — geometry + provenance keys."""
+    geometry: dict[str, Any] | None = None
+    if site.latitude is not None and site.longitude is not None:
+        geometry = {"type": "Point", "coordinates": [site.longitude, site.latitude]}
+    return {
+        "entity_id": site.entity_id,
+        "entity_type": site.entity_type,
+        "label": site.label,
+        "jurisdiction": site.jurisdiction,
+        "tier": site.sensitivity_tier,
+        "precision": site.precision,
+        "point_status": site.point_status,
+        "n_observation_claims": site.n_observation_claims,
+        "n_sources": site.n_sources,
+        "source_id": str(rights["source_id"]),
+        "rights_id": str(rights["rights_id"]),
+        "spdx": str(rights["spdx"]),
+        "claim_ids": list(site.claim_ids),
+        "geometry": geometry,
+    }
+
+
+def _slice_sites(
+    claims: Sequence[ShapingClaim],
+    entity_types: Mapping[str, str],
+    *,
+    retrieval: date,
+    registry: Mapping[str, Any] | None,
+) -> tuple[dict[str, list[C.ExportRow]], dict[str, RightsRecord], list[dict[str, Any]]]:
+    """Licence-slice every site per (source, rights_id) into per-compartment rows.
+
+    Each source's sites are recomputed from *that source's own* observations
+    (``shape_sites`` over the per-source claim subset — never a silent cross-source
+    merge, so a per-slice envelope reflects only what that source observed). A
+    refused (source, rights) slice is dropped into the exclusions list, loudly; a
+    surviving slice lands in the compartment its own computed licence declares.
+    """
+    by_source: dict[str, list[ShapingClaim]] = {}
+    for claim in claims:
+        if claim.publishable and claim.source_id:
+            by_source.setdefault(claim.source_id, []).append(claim)
+
+    rows_by_compartment: dict[str, list[C.ExportRow]] = {}
+    index: dict[str, RightsRecord] = {}
+    refused: dict[tuple[str, str, str], dict[str, Any]] = {}
+
+    for source_id in sorted(by_source):
+        sites = shape_sites(by_source[source_id], entity_types=entity_types)
+        for site in sites:
+            for rights in site.rights:
+                record = _record_from_site_rights(rights, retrieval=retrieval)
+                reason = export_refusal_reason(record, registry)
+                if reason is not None:
+                    key = (record.source_id, str(rights["rights_id"]), reason)
+                    entry = refused.setdefault(
+                        key,
+                        {
+                            "surface": "sites",
+                            "source_id": record.source_id,
+                            "rights_id": str(rights["rights_id"]),
+                            "spdx": record.spdx,
+                            "reason": reason,
+                            "rows": 0,
+                        },
+                    )
+                    entry["rows"] = int(entry["rows"]) + 1
+                    continue
+                compartment = C.compartment_for_license(
+                    compute_export_license([record], registry), None, registry
+                )
+                rows_by_compartment.setdefault(compartment, []).append(
+                    C.ExportRow(source_id=record.source_id, data=_site_row_data(site, rights))
+                )
+                index.setdefault(record.source_id, record)
+    exclusions = [refused[k] for k in sorted(refused)]
+    return rows_by_compartment, index, exclusions
+
+
+# --------------------------------------------------------------------------- #
+# The ten P27.1-contract web surfaces                                         #
+# --------------------------------------------------------------------------- #
+
+
+def _as_of_echo(as_of: str, belief: datetime | None) -> dict[str, Any]:
+    return {
+        "as_of_world": as_of[:10],
+        "as_of_belief": belief.date().isoformat() if belief is not None else as_of[:10],
+        "belief_pinned": belief is not None,
+    }
+
+
+def _map_layer(dataset: ShapedDataset) -> dict[str, Any]:
+    """Surface 3 — MapLayer / MapAsset / JurisdictionIndicator (§39.3)."""
+    assets: list[dict[str, Any]] = []
+    for site in dataset.sites:
+        asset: dict[str, Any] = {
+            "id": site.entity_id,
+            "label": site.label or site.entity_id,
+            "jurisdiction": site.jurisdiction,
+            "tier": site.sensitivity_tier,
+            "lat": site.latitude,
+            "lon": site.longitude,
+            "precision": site.precision,
+        }
+        if site.latitude is None or site.longitude is None:
+            # An honest reason there is no point (a gap, not a guess, §3.1).
+            asset["locationAbsence"] = (
+                "conflicted" if site.point_status == "conflicted" else "no_resolved_point"
+            )
+        assets.append(asset)
+    layers = [
+        {
+            "id": "observed_sites",
+            "label": "Observed device sites",
+            "kind": "observed",
+            "description": (
+                "Observation-level device sites from named sources — N observations "
+                "across M sources, never a resolved census (SIG-RECON-058)."
+            ),
+        }
+    ]
+    indicators = [{"jurisdiction": j.jurisdiction} for j in dataset.jurisdictions]
+    return {"layers": layers, "assets": assets, "jurisdiction_indicators": indicators}
+
+
+def _network(dataset: ShapedDataset, source_names: Mapping[str, str]) -> dict[str, Any]:
+    """Surface 4 — NetworkNode / NetworkEdge (§39.4). The three §12.2 access-edge
+    types are never merged; an unclassifiable edge carries no typed relationship, so
+    it is honestly absent from the typed network rather than coerced into one."""
+    _ALLOWED = {"configured_access", "observed_use", "declared_policy"}
+    nodes: dict[str, dict[str, Any]] = {}
+    edges: list[dict[str, Any]] = []
+    for edge in dataset.sharing_edges:
+        if edge.access_kind not in _ALLOWED or edge.partner_ref is None:
+            continue
+        src = edge.subject_id
+        dst = edge.partner_ref
+        nodes.setdefault(src, {"id": src, "label": src, "type": "agency"})
+        nodes.setdefault(dst, {"id": dst, "label": source_names.get(dst, dst), "type": "partner"})
+        edges.append(
+            {
+                "from": src,
+                "to": dst,
+                "access_kind": edge.access_kind,
+                "relation": edge.predicate_id,
+                "evidence_count": 1,
+            }
+        )
+    return {
+        "nodes": [nodes[k] for k in sorted(nodes)],
+        "edges": edges,
+        "access_paths": [],
+    }
+
+
+def _freshness(dataset: ShapedDataset) -> list[dict[str, Any]]:
+    """Surface 5 — FreshnessRow[] (§32.4). Straight from the shaping layer."""
+    return [s.freshness_row() for s in dataset.sources]
+
+
+def _coverage(dataset: ShapedDataset) -> list[dict[str, Any]]:
+    """Surface 6 — CoverageMetric[] (§32.5). Named denominators, never a total."""
+    return list(dataset.coverage_metrics)
+
+
+def _watch(raw: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Surface 7 — ContractWatchItem[] (§39.5). Honest absence when the spine has no
+    contracts with a derived notice deadline yet."""
+    out: list[dict[str, Any]] = []
+    for row in raw.get("contract_watch") or []:
+        out.append(dict(row))
+    return out
+
+
+def _evidence(raw: Mapping[str, Any], as_of: str) -> dict[str, Any]:
+    """Surface 8 — EvidenceArtifact[] + ClaimView[] (§39.6). Metadata only; sealed
+    captures never carry bytes (§17.5)."""
+    artifacts: list[dict[str, Any]] = []
+    for r in raw.get("evidence_artifacts") or []:
+        artifact_id, source_id, title, artifact_type, locator, direct, capture_status, published = r
+        artifacts.append(
+            {
+                "artifact_id": str(artifact_id),
+                "subject_id": "",
+                "title": title or str(artifact_id),
+                "source": str(source_id),
+                "artifact_type": str(artifact_type),
+                "directness": str(direct),
+                "currency": str(published or ""),
+                "touches_open_contradiction": False,
+                "answers_open_task": False,
+                "capture_status": str(capture_status),
+                "permalink": str(locator),
+                "as_of": as_of,
+            }
+        )
+    return {"artifacts": artifacts, "claim_views": []}
+
+
+def _corrections(raw: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Surface 9 — CorrectionEntry[] (§39.8). History never rewritten: the prior
+    value stays citable at its belief-time (SIG-GOV-005)."""
+    out: list[dict[str, Any]] = []
+    for r in raw.get("corrections") or []:
+        claim_id, subject_id, predicate_id, raw_value, reason, revises, retraction, recorded = r
+        out.append(
+            {
+                "id": str(claim_id),
+                "subject_id": str(subject_id),
+                "subject_label": str(subject_id),
+                "what_changed": str(predicate_id),
+                "corrected_at": recorded.isoformat() if hasattr(recorded, "isoformat") else "",
+                "reason": str(reason or ""),
+                "reported_by": "anonymous",
+                "category": "retraction" if retraction else "revision",
+                "outcome": "applied",
+                "previous_value": "",
+                "corrected_value": str(raw_value or ""),
+                "previous_belief_date": "",
+                "subject_path": f"/dossier/{subject_id}",
+            }
+        )
+    return out
+
+
+def _research_queue(raw: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Surface 10 — ResearchTaskCard[] (§39.7). Every task has a testable closing
+    condition (SIG-TASK-002)."""
+    out: list[dict[str, Any]] = []
+    for r in raw.get("research_tasks") or []:
+        task_id, task_type, subject_id, jurisdiction_id, priority, status, disp, closing, _det = r
+        out.append(
+            {
+                "task_type": str(task_type),
+                "subject_id": str(subject_id or task_id),
+                "subject_label": str(subject_id or task_id),
+                "closing_condition": str(closing),
+                "evidence_sought": str(task_type),
+                "assignee_class": "contributor",
+                "effort_estimate": "unknown",
+                "geographic_scope": str(jurisdiction_id or ""),
+                "jurisdiction": str(jurisdiction_id or ""),
+                "dispositions": [str(disp)] if disp else [],
+                "priority": float(priority) if priority is not None else 0.0,
+            }
+        )
+    return out
+
+
+def _dossiers(dataset: ShapedDataset, as_of: str, belief: datetime | None) -> list[dict[str, Any]]:
+    """Surfaces 1 + 2 — the dossier index / per-jurisdiction dossiers (§39.2).
+
+    One dossier per publishable jurisdiction bucket (incl. the honest ``unresolved``
+    bucket), in the frozen ``web/src/lib/dossier.ts`` ``Dossier`` contract. Every
+    published count is denominated (§32) and gaps stay first-class (§3.1) — nothing
+    fabricated, nothing collapsed.
+    """
+    echo = _as_of_echo(as_of, belief)
+    dossiers: list[dict[str, Any]] = []
+    for group in dataset.jurisdictions:
+        slug = _slugify(group.jurisdiction)
+        sections: list[dict[str, Any]] = []
+        for section_id in _DOSSIER_SECTIONS:
+            section: dict[str, Any] = {"section_id": section_id}
+            if section_id == "what_is_deployed":
+                section["rows"] = [
+                    {
+                        "label": "Geolocated site observations",
+                        "value": group.sites.phrase(),
+                        "note": (
+                            "Observation-level count from named sources — not a "
+                            "resolved device census (SIG-RECON-058)."
+                        ),
+                    }
+                ]
+            elif section_id == "where_the_hardware_is":
+                section["rows"] = [
+                    {
+                        "label": "Publishable subjects in this jurisdiction",
+                        "value": group.subjects,
+                    }
+                ]
+            elif section_id == "how_we_know_this":
+                section["rows"] = [
+                    {
+                        "label": "Sources",
+                        "value": ", ".join(group.source_ids) or "(none recorded)",
+                    }
+                ]
+            sections.append(section)
+        gaps = [
+            {
+                "label": "Data-sharing partners",
+                "kind": "NOT_RESEARCHED",
+                "subject_id": f"jurisdiction:{slug}",
+                "predicate_id": "sharing_partners",
+            }
+        ]
+        if group.conflicted_subjects:
+            gaps.append(
+                {
+                    "label": "Subjects with conflicting coordinate evidence",
+                    "kind": "UNRESOLVED",
+                    "subject_id": f"jurisdiction:{slug}",
+                    "predicate_id": "camera_latitude",
+                }
+            )
+        dossiers.append(
+            {
+                "slug": slug,
+                "subject_label": f"Surveillance infrastructure — {group.jurisdiction}",
+                "jurisdiction": group.jurisdiction,
+                "asOf": echo,
+                "rulesetVersion": SHAPING_SCHEMA_VERSION,
+                "sections": sections,
+                "gaps": gaps,
+                "source_families": list(group.source_ids),
+                "authorization": {},
+                "termination": {},
+                "legal_regime": {},
+            }
+        )
+    return dossiers
+
+
+def _dossier_index(dossiers: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
+    return [
+        {
+            "slug": d["slug"],
+            "subject_label": d["subject_label"],
+            "jurisdiction": d["jurisdiction"],
+            "asOf": d["asOf"],
+        }
+        for d in dossiers
+    ]
+
+
+def _slugify(text: str) -> str:
+    keep = [c.lower() if c.isalnum() else "-" for c in text]
+    slug = "".join(keep)
+    while "--" in slug:
+        slug = slug.replace("--", "-")
+    return slug.strip("-") or "unresolved"
+
+
+# --------------------------------------------------------------------------- #
+# The build                                                                    #
+# --------------------------------------------------------------------------- #
+
+
+def _table(name: str, rows: Sequence[C.ExportRow], *, kind: str, compartment: str) -> C.ExportTable:
+    return C.ExportTable(name=name, rows=tuple(rows), kind=kind, compartment=compartment)
+
+
+def build_spine_export(
+    dataset: ShapedDataset,
+    raw: Mapping[str, Any] | None = None,
+    *,
+    build_spec: BuildSpec,
+    generated_at: str,
+    note: str = "",
+    belief: datetime | None = None,
+    claims: Sequence[ShapingClaim] | None = None,
+    entity_types: Mapping[str, str] | None = None,
+    registry: Mapping[str, Any] | None = None,
+) -> SpineExport:
+    """Assemble the national :class:`SpineExport` (pure — no database).
+
+    ``dataset`` is the P27.3 shaped dataset (the aggregate national view the web
+    surfaces read). ``claims``/``entity_types`` are the parsed shaping rows used to
+    licence-slice the sites per (source, rights_id) with per-slice envelopes
+    recomputed; when omitted they are re-derived from ``raw['shaping_claims']`` /
+    ``raw['subject_entities']`` if present, else from ``dataset`` (a coarser slice
+    that reuses the aggregate point). ``raw`` carries the supplementary read sets
+    (watch/evidence/corrections/research_queue/source_names) — any missing key is
+    honest absence.
+    """
+    raw = dict(raw or {})
+    retrieval = date.fromisoformat(dataset.as_of[:10]) if dataset.as_of else date.today()
+
+    if claims is None and raw.get("shaping_claims"):
+        claims = parse_shaping_claims(raw["shaping_claims"])
+    if entity_types is None:
+        entity_types = {str(r[0]): str(r[1]) for r in (raw.get("subject_entities") or [])}
+    if claims is None:
+        claims = _claims_from_dataset(dataset)
+
+    source_names = {str(r[0]): str(r[1]) for r in (raw.get("source_names") or [])}
+
+    # --- the licence-critical path: sites sliced per (source, rights) -----------
+    site_rows, site_index, site_exclusions = _slice_sites(
+        claims, entity_types, retrieval=retrieval, registry=registry
+    )
+
+    tables: list[C.ExportTable] = []
+    for compartment in sorted(site_rows):
+        tables.append(_table("sites", site_rows[compartment], kind="geo", compartment=compartment))
+
+    # --- the SIG-derived framing tables (CC-BY-4.0 → sig_graph) ----------------
+    sig = _sig_record(retrieval)
+    sig_rows: dict[str, list[C.ExportRow]] = {
+        "jurisdictions": [
+            C.ExportRow(source_id=_SIG_SOURCE_ID, data=j.as_json()) for j in dataset.jurisdictions
+        ],
+        "coverage": [
+            C.ExportRow(source_id=_SIG_SOURCE_ID, data=dict(m)) for m in dataset.coverage_metrics
+        ],
+        "freshness": [
+            C.ExportRow(source_id=_SIG_SOURCE_ID, data=s.freshness_row()) for s in dataset.sources
+        ],
+        "sharing_edges": [
+            C.ExportRow(source_id=_SIG_SOURCE_ID, data=e.as_json()) for e in dataset.sharing_edges
+        ],
+    }
+    sig_compartment = C.compartment_for_license(
+        compute_export_license([sig], registry), None, registry
+    )
+    for name, rows in sig_rows.items():
+        if rows:
+            tables.append(_table(name, rows, kind="tabular", compartment=sig_compartment))
+
+    rights = [*site_index.values(), sig]
+    bundle = build_bundle(build_spec, tables, rights, registry=registry)
+
+    # --- the ten P27.1-contract web surfaces ------------------------------------
+    dossiers = _dossiers(dataset, dataset.as_of, belief)
+    surfaces: dict[str, Any] = {
+        "dossier_index": _dossier_index(dossiers),
+        "dossiers": dossiers,
+        "map": _map_layer(dataset),
+        "network": _network(dataset, source_names),
+        "freshness": _freshness(dataset),
+        "coverage": _coverage(dataset),
+        "watch": _watch(raw),
+        "evidence": _evidence(raw, dataset.as_of),
+        "corrections": _corrections(raw),
+        "research_queue": _research_queue(raw),
+    }
+    web_artifacts: dict[str, bytes] = {}
+    for name, payload in surfaces.items():
+        web_artifacts[f"{_WEB_DIR}/{name}.json"] = _web_bytes(payload)
+
+    # --- per-compartment PMTiles (ODbL attribution on the OSM layer) ------------
+    tile_renderers: dict[str, str] = {}
+    tile_artifacts: list[tuple[str, str, bytes]] = []  # (published_path, license, bytes)
+    for pt in bundle.placed:
+        if pt.table.name != "sites" or pt.table.kind != "geo":
+            continue
+        geojson_path = f"{pt.compartment}/sites.geojson"
+        geojson_bytes = bundle.artifact_bytes.get(geojson_path)
+        if geojson_bytes is None:
+            continue
+        rendered, renderer = _render_tiles(pt.compartment, geojson_bytes, pt.license)
+        tile_path = f"{_WEB_DIR}/tiles/{pt.compartment}-sites.pmtiles"
+        web_artifacts[tile_path] = rendered
+        tile_renderers[pt.compartment] = renderer
+        tile_artifacts.append((tile_path, pt.license, rendered))
+
+    # --- the PROV-O lineage (§21.6) --------------------------------------------
+    provenance = _provenance_ttl(
+        dataset,
+        source_names,
+        release_id=build_spec.release_id(),
+        generated_at=generated_at,
+    )
+
+    # --- the loud exclusions report --------------------------------------------
+    exclusions = {
+        "schema": "p27.4/exclusions/1.0.0",
+        "as_of": dataset.as_of,
+        "generated_at": generated_at,
+        "note": note,
+        "refused": site_exclusions,
+        "totals": {
+            "refused_slices": len(site_exclusions),
+            "refused_rows": sum(int(e["rows"]) for e in site_exclusions),
+        },
+    }
+
+    manifest = _extended_manifest(
+        bundle,
+        web_artifacts=web_artifacts,
+        tile_artifacts=tile_artifacts,
+        provenance=provenance,
+        exclusions=exclusions,
+    )
+    return SpineExport(
+        bundle=bundle,
+        web_artifacts=web_artifacts,
+        provenance=provenance,
+        exclusions=exclusions,
+        manifest=manifest,
+        tile_renderers=tile_renderers,
+    )
+
+
+def _web_bytes(payload: Any) -> bytes:
+    """Deterministic, human-diffable JSON for a web surface (indented, sorted)."""
+    return (json.dumps(payload, indent=2, sort_keys=True, ensure_ascii=False) + "\n").encode(
+        "utf-8"
+    )
+
+
+def _render_tiles(compartment: str, geojson_bytes: bytes, license_id: str) -> tuple[bytes, str]:
+    """Render one compartment's sites.geojson → PMTiles bytes (+ renderer name).
+
+    ODbL keeps its attribution; other compartments get a SIG/CC-BY attribution. The
+    renderer writes through a temp file (``render_pmtiles_file`` uses tippecanoe when
+    present, else the pure-Python encoder).
+    """
+    import tempfile
+
+    attribution = ODBL_ATTRIBUTION if license_id == "ODbL-1.0" else _SIG_ATTRIBUTION
+    with tempfile.TemporaryDirectory() as tmp:
+        src = Path(tmp) / "sites.geojson"
+        src.write_bytes(geojson_bytes)
+        out = Path(tmp) / "sites.pmtiles"
+        renderer = render_pmtiles_file(
+            str(src),
+            str(out),
+            layer_name="sites",
+            license_id=license_id,
+            attribution=attribution,
+        )
+        return out.read_bytes(), renderer
+
+
+def _extended_manifest(
+    bundle: Bundle,
+    *,
+    web_artifacts: Mapping[str, bytes],
+    tile_artifacts: Sequence[tuple[str, str, bytes]],
+    provenance: bytes,
+    exclusions: Mapping[str, Any],
+) -> Manifest:
+    """Extend the bundle manifest with the web JSONs, tiles, provenance, exclusions.
+
+    Every added artifact carries its checksum + compartment + computed licence, so a
+    consumer can verify integrity and know the governing licence of each file
+    (SIG-EXPORT-001/006).
+    """
+    tile_licenses = {path: lic for path, lic, _ in tile_artifacts}
+    artifacts: list[Artifact] = list(bundle.manifest.artifacts)
+    for path in sorted(web_artifacts):
+        data = web_artifacts[path]
+        if path in tile_licenses:
+            artifacts.append(
+                Artifact.of(
+                    name=Path(path).name,
+                    path=path,
+                    media_type="application/vnd.pmtiles",
+                    compartment="osm_physical"
+                    if tile_licenses[path] == "ODbL-1.0"
+                    else "sig_graph",
+                    license=tile_licenses[path],
+                    data=data,
+                )
+            )
+        else:
+            artifacts.append(
+                Artifact.of(
+                    name=Path(path).name,
+                    path=path,
+                    media_type="application/json",
+                    compartment=_WEB_COMPARTMENT,
+                    license=_SIG_SPDX,
+                    data=data,
+                )
+            )
+    artifacts.append(
+        Artifact.of(
+            name="provenance.ttl",
+            path="provenance.ttl",
+            media_type="text/turtle",
+            compartment=_META_COMPARTMENT,
+            license=_SIG_SPDX,
+            data=provenance,
+        )
+    )
+    artifacts.append(
+        Artifact.of(
+            name="exclusions.json",
+            path="exclusions.json",
+            media_type="application/json",
+            compartment=_META_COMPARTMENT,
+            license=_SIG_SPDX,
+            data=canonical_json(exclusions),
+        )
+    )
+    return Manifest(build_spec=bundle.build_spec, artifacts=tuple(artifacts))
+
+
+def _provenance_ttl(
+    dataset: ShapedDataset,
+    source_names: Mapping[str, str],
+    *,
+    release_id: str,
+    generated_at: str,
+) -> bytes:
+    """Build the PROV-O lineage for the release (§21.6, SIG-INGEST-016).
+
+    Every source the export drew from is a ``prov:Agent``; the export build is a
+    ``prov:Activity``; each source contributes a capture Entity attributed to it and
+    generated by the build. Serialised as canonical N-Triples (a valid Turtle subset)
+    so ``provenance.ttl`` is byte-reproducible (SIG-EXPORT-003).
+    """
+    source_ids: set[str] = set()
+    for site in dataset.sites:
+        source_ids.update(site.source_ids)
+    for s in dataset.sources:
+        source_ids.add(s.freshness.source_id)
+    generated = _parse_instant(generated_at)
+    lineage = provo.Lineage(
+        connectors=[provo.Connector(name="sig-exports", version=SHAPING_SCHEMA_VERSION)],
+        runs=[
+            provo.IngestRun(
+                run_id=release_id,
+                connector_name="sig-exports",
+                started_at=generated,
+                finished_at=generated,
+            )
+        ],
+        sources=[
+            provo.Source(source_id=sid, name=source_names.get(sid)) for sid in sorted(source_ids)
+        ],
+        captures=[
+            provo.Capture(
+                capture_id=f"{release_id}:{sid}",
+                source_id=sid,
+                run_id=release_id,
+                retrieved_at=generated,
+            )
+            for sid in sorted(source_ids)
+        ],
+    )
+    return (provo.export_lineage(lineage, fmt="nt")).encode("utf-8")
+
+
+def _parse_instant(value: str) -> datetime | None:
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except (ValueError, AttributeError):
+        return None
+
+
+def _claims_from_dataset(dataset: ShapedDataset) -> list[ShapingClaim]:
+    """A coarse fallback: reconstruct minimal claims from the aggregate sites.
+
+    Used only when the parsed shaping rows are unavailable — it reuses each site's
+    aggregate point for every one of its (source, rights) slices (no per-source
+    envelope recompute). The production path always passes the real claims.
+    """
+    claims: list[ShapingClaim] = []
+    for site in dataset.sites:
+        for rights in site.rights:
+            sid = str(rights["source_id"])
+            base = f"{site.entity_id}:{sid}:{rights['rights_id']}"
+            if site.latitude is not None:
+                claims.append(
+                    _synthetic_claim(f"{base}:lat", site, sid, rights, LAT_PREDICATE, site.latitude)
+                )
+            if site.longitude is not None:
+                claims.append(
+                    _synthetic_claim(
+                        f"{base}:lon", site, sid, rights, LON_PREDICATE, site.longitude
+                    )
+                )
+    return claims
+
+
+def _synthetic_claim(
+    claim_id: str,
+    site: ShapedSite,
+    source_id: str,
+    rights: Mapping[str, Any],
+    predicate_id: str,
+    value: float,
+) -> ShapingClaim:
+    return ShapingClaim(
+        claim_id=claim_id,
+        subject_id=site.entity_id,
+        predicate_id=predicate_id,
+        value_kind="value",
+        value_text=str(value),
+        value_num=value,
+        raw_value=str(value),
+        observed_at=None,
+        sensitivity_tier=site.sensitivity_tier,
+        source_id=source_id,
+        connector_name=None,
+        effective_rights_id=str(rights["rights_id"]),
+        effective_spdx=str(rights["spdx"]),
+        effective_redistributable=str(rights.get("redistributable", "yes")),
+        effective_derivative_permitted=str(rights.get("derivative_permitted", "yes")),
+        effective_attribution=str(rights.get("attribution", "")),
+        effective_terms_url=str(rights.get("terms_url", "")),
+    )
+
+
+def run_spine_export(
+    conn: Any,
+    *,
+    build_spec: BuildSpec | None = None,
+    as_of: str | None = None,
+    belief: datetime | None = None,
+    note: str = "",
+    spine_label: str = "(unlabelled spine)",
+    ruleset_version: str = SHAPING_SCHEMA_VERSION,
+    resolver_version: str | None = None,
+    dataset_slug: str = "sig",
+) -> SpineExport:
+    """Execute the read-only reads and assemble the national export.
+
+    One ``REPEATABLE READ READ ONLY`` snapshot covers BOTH shaping and the
+    supplementary export reads, so every emitted artifact describes the same spine
+    state. The session is put in read-only mode first — no statement can mutate the
+    append-only spine (§16). When the caller already holds an open transaction (the
+    test seam) the reads run inside it unchanged.
+    """
+    from . import __version__
+    from .shaping import (
+        _queries_for,
+        build_shaped_dataset,
+        fetch_shaping_raw,
+    )
+
+    generated_at = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+    as_of = as_of or generated_at
+
+    cur = conn.cursor()
+    cur.execute("SET default_transaction_read_only = on")
+    status = getattr(getattr(conn, "info", None), "transaction_status", None)
+    snapshot = status is None or int(status) == 0
+    if snapshot:
+        cur.execute("BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY")
+    try:
+        cur.execute("SELECT to_regclass('rights_decision') IS NOT NULL")
+        has_row = cur.fetchone()
+        has_decisions = bool(has_row and has_row[0])
+        shaping_raw = fetch_shaping_raw(cur, _queries_for(has_decisions), belief=belief)
+        export_raw = fetch_export_raw(cur, belief=belief)
+    finally:
+        if snapshot:
+            cur.execute("ROLLBACK")
+
+    dataset = build_shaped_dataset(
+        shaping_raw,
+        as_of=as_of,
+        generated_at=generated_at,
+        spine_label=spine_label,
+        note=note,
+    )
+    claims = parse_shaping_claims(shaping_raw.get("shaping_claims") or [])
+    entity_types = {str(r[0]): str(r[1]) for r in (shaping_raw.get("subject_entities") or [])}
+    # ``fetch_export_raw`` already read source_registry names into
+    # ``export_raw['source_names']`` (compat-guarded); the surface builders consume it.
+
+    if build_spec is None:
+        as_of_snapshot = date.fromisoformat(as_of[:10]) if as_of else date.today()
+        as_of_belief = belief.date() if belief is not None else as_of_snapshot
+        build_spec = BuildSpec(
+            as_of_snapshot=as_of_snapshot,
+            as_of_belief=as_of_belief,
+            ruleset_version=ruleset_version,
+            resolver_version=resolver_version or __version__,
+            dataset_slug=dataset_slug,
+        )
+
+    return build_spine_export(
+        dataset,
+        export_raw,
+        build_spec=build_spec,
+        generated_at=generated_at,
+        note=note,
+        belief=belief,
+        claims=claims,
+        entity_types=entity_types,
+    )
+
+
+def digest_web_artifacts(export: SpineExport) -> dict[str, str]:
+    """The ``path -> sha256`` map of the web artifacts (for a live-run record)."""
+    return {path: sha256_hex(data) for path, data in sorted(export.web_artifacts.items())}
+
+
+__all__ = [
+    "EXPORT_QUERIES",
+    "SpineExport",
+    "build_spine_export",
+    "fetch_export_raw",
+    "run_spine_export",
+    "digest_web_artifacts",
+]

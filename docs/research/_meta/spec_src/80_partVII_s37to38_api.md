@@ -83,6 +83,15 @@ computed from raw claims at export build (compute-on-read, ADR-092) with claim-i
 per-row rights provenance carried through — never hand-edited into `value_geom` or the modeling
 tables, and never written back to the spine.
 
+**SIG-EXPORT-013 (MUST).** The public export MUST be the **national, whole-graph** bundle read
+from the entire publishable claim spine — not a hand-picked jurisdiction slice: a per-jurisdiction
+dossier index over **every** publishable jurisdiction, plus the map, network, data-freshness,
+coverage, watch, evidence, corrections, and research-queue surfaces, each emitted to its frozen
+per-page public-surface contract (P27.1). The bundle's breadth is **bounded by the fail-closed
+licence gate** (§42.4): a source whose effective rights are UNDETERMINED or otherwise
+export-refused is dropped **loudly** into the exclusions report, never widened silently into the
+export — the export never asserts beyond what the committed, publishable evidence supports (ADR-090).
+
 ### 38.2 Licence computation
 
 **SIG-EXPORT-004 (MUST).** An export bundle's licence MUST be **computed** from the SPDX

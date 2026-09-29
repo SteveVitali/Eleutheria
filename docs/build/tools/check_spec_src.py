@@ -47,6 +47,9 @@ FOLD_BACK_IDS = [
     # disclosure rule (§29) and the spine-read, shaped-at-build export (§38.1).
     "SIG-RECON-058",
     "SIG-EXPORT-012",
+    # P27.4 (ADR-090 export share of D-P27-SPEC-1): the national, whole-graph
+    # spine-read export bundle whose breadth is licence-gate-bounded (§38).
+    "SIG-EXPORT-013",
 ]
 EXPECTED_IDS = BASELINE_IDS + len(FOLD_BACK_IDS)
 

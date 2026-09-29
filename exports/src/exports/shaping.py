@@ -71,6 +71,7 @@ from inference.denominators import PublishedAggregate, provenance_completeness
 from inference.freshness import SourceFreshness, source_freshness
 from parsing.claim import ParsedValue
 from policy.licensing import (
+    ExportGateClosed,
     LicenseIncompatibilityError,
     RightsRecord,
     compute_export_license,
@@ -836,12 +837,21 @@ def _site_licence_conflict(records: Sequence[RightsRecord]) -> bool:
     itself stays with the export build — a standalone per-site licence would
     mislead (a lone CC0 site computes to CC-BY-SA under the most-constraining
     rule, although the real table licence is computed over all rows together).
+
+    A site carrying an export-*refused* record (``UNDETERMINED`` /
+    non-derivative / recorded-exclusion) is **not** a licence-mix conflict: that
+    is a publishability decision the export gate makes per (source, rights) at
+    build time (``partition_exportable`` drops it loudly), not a reason to crash
+    site shaping — so ``ExportGateClosed`` is swallowed here and returns ``False``.
     """
     try:
         compute_export_license(records)
         return False
     except LicenseIncompatibilityError:
         return True
+    except ExportGateClosed:
+        # A refused record is handled by the export-time gate, not the mix detector.
+        return False
 
 
 def shape_sites(
@@ -1221,21 +1231,15 @@ def shape_sharing_edges(rows: Sequence[Sequence[Any]]) -> list[SharingEdge]:
     return edges
 
 
-def build_shaped_dataset(
-    raw: Mapping[str, Any],
-    *,
-    as_of: str,
-    generated_at: str,
-    spine_label: str,
-    note: str = "",
-) -> ShapedDataset:
-    """Assemble the :class:`ShapedDataset` from fetched rows (pure — no database).
+def parse_shaping_claims(rows: Sequence[Sequence[Any]]) -> list[ShapingClaim]:
+    """Parse raw ``shaping_claims`` rows into :class:`ShapingClaim` records.
 
-    ``raw`` maps each :data:`QUERIES` key to its fetched result rows. This is the
-    unit-testable core; every decision is a pure function of ``raw``.
+    Extracted for P27.4: the spine-export orchestrator needs the same parsed
+    claims to licence-slice each site per (source, rights) pair — it must not
+    re-derive the parse.
     """
     claims: list[ShapingClaim] = []
-    for r in raw.get("shaping_claims") or []:
+    for r in rows:
         (
             claim_id,
             subject_id,
@@ -1281,6 +1285,23 @@ def build_shaped_dataset(
                 effective_terms_url="" if terms_url is None else str(terms_url),
             )
         )
+    return claims
+
+
+def build_shaped_dataset(
+    raw: Mapping[str, Any],
+    *,
+    as_of: str,
+    generated_at: str,
+    spine_label: str,
+    note: str = "",
+) -> ShapedDataset:
+    """Assemble the :class:`ShapedDataset` from fetched rows (pure — no database).
+
+    ``raw`` maps each :data:`QUERIES` key to its fetched result rows. This is the
+    unit-testable core; every decision is a pure function of ``raw``.
+    """
+    claims = parse_shaping_claims(raw.get("shaping_claims") or [])
 
     entity_types = {str(r[0]): str(r[1]) for r in (raw.get("subject_entities") or [])}
 
@@ -1382,6 +1403,55 @@ def _map_run_status(status: Any) -> str:
     return "degraded"  # running / unknown — honest non-ok
 
 
+def fetch_shaping_raw(
+    cur: _Cursor,
+    queries: Mapping[str, str],
+    *,
+    belief: datetime | None = None,
+) -> dict[str, Any]:
+    """Fetch every shaping query inside the caller's transaction (read-only).
+
+    Extracted for P27.4: :func:`run_spine_export` runs this inside its own
+    ``REPEATABLE READ READ ONLY`` snapshot so the supplementary export reads see
+    the *same* spine state — it must not open a second snapshot.
+
+    The belief predicate is injected into the fixed query text — a constant of
+    this module, never caller SQL.
+    """
+    belief_filter = (
+        "upper_inf(c.sys_period)" if belief is None else "c.sys_period @> %s::timestamptz"
+    )
+    raw: dict[str, Any] = {}
+    predicates = list(SHAPING_PREDICATES)
+    for key, query in queries.items():
+        sql = query.replace("upper_inf(c.sys_period)", belief_filter)
+        if key == "spine_watermark":
+            cur.execute(sql)
+            row = cur.fetchone()
+            raw[key] = (
+                "none"
+                if row is None
+                else (
+                    f"claims={row[0]} closed={row[1]} "
+                    f"latest_assertion={row[2].isoformat() if row[2] else 'none'} "
+                    f"evidence={row[3]}/{row[4]}/{row[5]}"
+                )
+            )
+        elif key == "sharing_edges":
+            if belief is not None:
+                cur.execute(sql, (belief,))
+            else:
+                cur.execute(sql)
+            raw[key] = cur.fetchall()
+        else:
+            if belief is not None:
+                cur.execute(sql, (predicates, belief))
+            else:
+                cur.execute(sql, (predicates,))
+            raw[key] = cur.fetchall()
+    return raw
+
+
 def run_shaping(
     conn: _Connection,
     *,
@@ -1425,39 +1495,7 @@ def run_shaping(
         has_decisions = bool(has_row and has_row[0])
         queries = _queries_for(has_decisions)
 
-        belief_filter = (
-            "upper_inf(c.sys_period)" if belief is None else "c.sys_period @> %s::timestamptz"
-        )
-        raw: dict[str, Any] = {}
-        predicates = list(SHAPING_PREDICATES)
-        for key, query in queries.items():
-            # The belief predicate is injected into the fixed query text — a
-            # constant of this module, never caller SQL.
-            sql = query.replace("upper_inf(c.sys_period)", belief_filter)
-            if key == "spine_watermark":
-                cur.execute(sql)
-                row = cur.fetchone()
-                raw[key] = (
-                    "none"
-                    if row is None
-                    else (
-                        f"claims={row[0]} closed={row[1]} "
-                        f"latest_assertion={row[2].isoformat() if row[2] else 'none'} "
-                        f"evidence={row[3]}/{row[4]}/{row[5]}"
-                    )
-                )
-            elif key == "sharing_edges":
-                if belief is not None:
-                    cur.execute(sql, (belief,))
-                else:
-                    cur.execute(sql)
-                raw[key] = cur.fetchall()
-            else:
-                if belief is not None:
-                    cur.execute(sql, (predicates, belief))
-                else:
-                    cur.execute(sql, (predicates,))
-                raw[key] = cur.fetchall()
+        raw = fetch_shaping_raw(cur, queries, belief=belief)
     finally:
         if snapshot:
             cur.execute("ROLLBACK")  # nothing to commit — the snapshot is spent

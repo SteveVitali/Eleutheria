@@ -67,6 +67,35 @@ def build_parser() -> argparse.ArgumentParser:
         "web-shaped dossier bundle the static site is built from (SIG_DATA_SOURCE=export).",
     )
     build.add_argument(
+        "--from-spine",
+        action="store_true",
+        help="Build the REAL national export by reading the shaped spine (P27.4): every "
+        "public-surface artifact to the frozen P27.1 contracts, licence-compartmented + "
+        "gate-checked. Mutually exclusive with request_json/--jurisdiction; requires --dsn.",
+    )
+    build.add_argument(
+        "--dsn",
+        default=None,
+        help="PostgreSQL DSN for the spine (required with --from-spine) — OMIT the password "
+        "(libpq reads PGPASSWORD from the environment). Read-only: the export runs in a "
+        "READ ONLY session (REPEATABLE READ snapshot over shaping + the supplementary reads).",
+    )
+    build.add_argument(
+        "--as-of",
+        default=None,
+        help="Logical as-of label for the spine snapshot (default: the UTC build time).",
+    )
+    build.add_argument(
+        "--belief",
+        default=None,
+        help="Assertion-time belief instant to pin the read to (ISO-8601; §9.4). Default: current.",
+    )
+    build.add_argument(
+        "--note",
+        default="",
+        help='Free-text provenance note (e.g. "OSM land in flight — provisional as-of").',
+    )
+    build.add_argument(
         "--out",
         required=True,
         help="Output directory the release artifacts + manifest are written to.",
@@ -525,6 +554,51 @@ def _run_build(
     return 0
 
 
+def _run_build_from_spine(
+    dsn: str,
+    out_dir: str,
+    *,
+    as_of: str | None,
+    belief: str | None,
+    note: str,
+) -> int:
+    """Build the real national export from the shaped spine (P27.4, read-only).
+
+    Opens a single ``REPEATABLE READ READ ONLY`` snapshot (``run_spine_export``),
+    shapes + reads the supplementary sets inside it, licence-slices every site, and
+    writes the compartmented bundle + the ten P27.1 web-contract JSONs + per-compartment
+    PMTiles + PROV-O lineage + the loud exclusions report. Never mutates the spine.
+    """
+    from datetime import datetime
+
+    import psycopg
+
+    from .audit import redact_dsn
+    from .spine_export import run_spine_export
+
+    belief_instant = None
+    if belief:
+        belief_instant = datetime.fromisoformat(belief.replace("Z", "+00:00"))
+
+    spine_label = redact_dsn(dsn)
+    conn = psycopg.connect(dsn, autocommit=True)
+    try:
+        export = run_spine_export(
+            conn,
+            as_of=as_of,
+            belief=belief_instant,
+            note=note,
+            spine_label=spine_label,
+        )
+    finally:
+        conn.close()
+
+    export.write_to(out_dir)
+    summary = {"out_dir": out_dir, "spine_label": spine_label, **export.summary()}
+    sys.stdout.write(json.dumps(summary, indent=2, sort_keys=True) + "\n")
+    return 0
+
+
 def _run_deposit(in_dir: str, sandbox: bool, dry_run: bool, deposits_md: str) -> int:
     """Deposit a built export to Zenodo (SIG-EXPORT-002).
 
@@ -789,6 +863,26 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "provo":
         return _run_provo(args.lineage_json, args.format)
     if args.command == "build":
+        if args.from_spine:
+            if args.request_json is not None or args.jurisdiction is not None:
+                print(
+                    "sig-exports build: --from-spine is mutually exclusive with "
+                    "request_json / --jurisdiction"
+                )
+                return 2
+            if not args.dsn:
+                print("sig-exports build: --dsn is required with --from-spine")
+                return 2
+            return _run_build_from_spine(
+                args.dsn,
+                args.out,
+                as_of=args.as_of,
+                belief=args.belief,
+                note=args.note,
+            )
+        if args.dsn is not None:
+            print("sig-exports build: --dsn is only valid with --from-spine")
+            return 2
         return _run_build(
             args.request_json,
             args.out,
