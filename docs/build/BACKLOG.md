@@ -184,6 +184,11 @@ landing here. Regenerate this file after any backlog edit:
 - **BL-054** — CCOPS expansion beyond the three paying sources — remaining ~23 jurisdictions via legislative-platform scrapers (Legistar/Granicus/IQM2/CivicClerk); new extractor kinds per ADR-080 (revisit trigger b); live flips+fetches gate-pending HG-03 · _deferred-feature_ · L · status=open · gate HG-03
   - sources: ADR-080
 
+## P27+
+
+- **BL-056** — P27 public-launch readiness: turn the fixture-demo web into a data-driven national public surface over the real ~1.06M-claim spine — ADR-090 (national surface from a spine-built export), ADR-091 (static core + React islands, DECISION-SPA=B), ADR-092 (spine-built export + resolution posture), ADR-093 (IA redesign), ADR-094 (rights resolution); umbrella home for the P27 launch round, manifest rows 117-125 (P27.1..P27.9) · _deferred-feature_ · L · status=open · gate HG-01;HG-11;HG-02;HG-03
+  - sources: ADR-090 ADR-091 ADR-092 ADR-093 ADR-094
+
 ## P25+ unscheduled (post-Round-4 manifest — the next planning round owns these)
 
 Triaged by P24.5 (META.1 / GL-META-01, 2026-09-13): each row was checked against the tree — none is landed, none is owned by a remaining manifest ticket (rows 84–87 are JURIS.2/CCOPS.1/REC.1/GATE-ACCEPT). `P25+` = the planning round after this manifest, replacing the stale `P22+` bucket (the P22 pass closed unscheduled). Rows conditioned on real post-go-live state are additionally promoted to `docs/tickets/DEFERRALS.md` (D-META.1-*; the BL row stays the normalized-debt record).
@@ -202,3 +207,9 @@ Triaged by P24.5 (META.1 / GL-META-01, 2026-09-13): each row was checked against
 - **BL-051** — Spec-vs-code drift after the P20.2 ticked amendments (unbuilt MAY/deferred surfaces) · _docs-drift_ · S · sources: RISK-P20-02 ADR-062
 - **BL-053** — Third-jurisdiction onboarding + recorded P24.6 couplings (operator selects the jurisdiction; ILIKE '%<j>%' filter is a convention not a structure; §11.14 predicates out-of-ruleset; empty-tile step for a no-OSM-layer jurisdiction) · _process_ · M · sources: ADR-079 ADR-084
 - **BL-054** — CCOPS expansion beyond the three paying sources — remaining ~23 jurisdictions via legislative-platform scrapers (Legistar/Granicus/IQM2/CivicClerk); new extractor kinds per ADR-080 (revisit trigger b); live flips+fetches gate-pending HG-03 · _deferred-feature_ · L · sources: ADR-080
+
+## P27+ unscheduled (post-Round-4 manifest — the next planning round owns these)
+
+Triaged by P24.5 (META.1 / GL-META-01, 2026-09-13): each row was checked against the tree — none is landed, none is owned by a remaining manifest ticket (rows 84–87 are JURIS.2/CCOPS.1/REC.1/GATE-ACCEPT). `P25+` = the planning round after this manifest, replacing the stale `P22+` bucket (the P22 pass closed unscheduled). Rows conditioned on real post-go-live state are additionally promoted to `docs/tickets/DEFERRALS.md` (D-META.1-*; the BL row stays the normalized-debt record).
+
+- **BL-056** — P27 public-launch readiness: turn the fixture-demo web into a data-driven national public surface over the real ~1.06M-claim spine — ADR-090 (national surface from a spine-built export), ADR-091 (static core + React islands, DECISION-SPA=B), ADR-092 (spine-built export + resolution posture), ADR-093 (IA redesign), ADR-094 (rights resolution); umbrella home for the P27 launch round, manifest rows 117-125 (P27.1..P27.9) · _deferred-feature_ · L · sources: ADR-090 ADR-091 ADR-092 ADR-093 ADR-094

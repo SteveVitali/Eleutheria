@@ -17,7 +17,7 @@ Each `BL-` id appears in exactly one theme (validated by `check_backlog.py`). Th
 
 ## T4 — Publication surfaces
 - **retired mostly by:** P21.4
-- **bl_ids:** BL-007, BL-008, BL-009, BL-019, BL-031, BL-046
+- **bl_ids:** BL-007, BL-008, BL-009, BL-019, BL-031, BL-046, BL-056
 
 ## T5 — Infra & cost
 - **retired mostly by:** P21.5
