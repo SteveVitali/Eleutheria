@@ -123,6 +123,24 @@ test.describe("methodology, data-freshness, coverage-metrics (SIG-UI-034, §32.4
     await expect(metric.getByTestId("population-note")).not.toBeEmpty();
   });
 
+  test("coverage surfaces the resolved-site framing + contradictions off the materialized graph (P28.5)", async ({
+    page,
+  }) => {
+    await page.goto("/coverage-metrics/");
+    // The map's observation-level framing is replaced by "N resolved sites (from M
+    // observations)" (ADR-101) — a counted quantity carrying its named denominator, never a
+    // total. It rides the frozen CoverageMetric contract, so it renders on the coverage page.
+    const resolved = page.locator('[data-metric-id="resolved_sites"]');
+    await expect(resolved).toContainText("resolved sites");
+    await expect(resolved).toContainText("observations");
+    await expect(resolved.getByTestId("coverage-denominator")).toContainText("observation-level sites");
+    // Contradictions stay VISIBLE (§3.1): the materialized §31 contradiction object is
+    // surfaced as an honest counted quantity (both evidence sides retained).
+    const contradictions = page.locator('[data-metric-id="contradictions_visible"]');
+    await expect(contradictions).toContainText("contradictions kept visible");
+    await expect(contradictions.getByTestId("coverage-denominator")).toContainText("both evidence sides retained");
+  });
+
   test("methodology states the capture–recapture prohibition (SIG-METRIC-008)", async ({ page }) => {
     await page.goto("/methodology/");
     await expect(page.getByTestId("no-capture-recapture")).toContainText("capture–recapture");

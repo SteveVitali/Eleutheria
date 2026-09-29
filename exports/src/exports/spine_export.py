@@ -48,11 +48,17 @@ from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
 
+from inference.materialize import read_materialized_coverage
 from policy.licensing import (
     compute_export_license,
     export_refusal_reason,
 )
 from policy.rights import RightsRecord
+from reconcile.materialize import (
+    read_materialized_contradictions,
+    read_materialized_edges,
+    read_materialized_resolutions,
+)
 
 from . import compartments as C
 from . import provo
@@ -179,6 +185,63 @@ def fetch_export_raw(cur: Any, *, belief: datetime | None = None) -> dict[str, A
         except Exception:  # noqa: BLE001 - a schema-shape mismatch is honest absence
             raw[key] = []
     return raw
+
+
+# --------------------------------------------------------------------------- #
+# The materialized graph (P28.1-P28.4, ADR-101) — read inside the SAME         #
+# snapshot, degrading HONESTLY to [] when the tables are empty/absent.         #
+# --------------------------------------------------------------------------- #
+
+#: The materialized-graph seams the P28.5 surface reads, keyed by the table whose
+#: ``input_digest`` column the materializer added. Each read is guarded by that
+#: column's existence (a pre-P28 spine lacks it) and wrapped so a schema mismatch
+#: is honest absence (``[]``) — never a crash, never a fabricated row (ADR-101).
+_MATERIALIZED_SEAMS: tuple[tuple[str, str, Any], ...] = (
+    ("materialized_resolutions", "resolution", read_materialized_resolutions),
+    ("materialized_edges", "relationship", read_materialized_edges),
+    ("materialized_contradictions", "contradiction", read_materialized_contradictions),
+    ("materialized_coverage", "coverage_record", read_materialized_coverage),
+)
+
+
+def _has_materialize_column(cur: Any, table: str) -> bool:
+    """True iff ``table`` exists AND carries the materializer's ``input_digest`` column.
+
+    A cheap, non-erroring probe (``information_schema`` returns 0 rows for a missing
+    table/column) so it never poisons the caller's open read-only snapshot — the guard
+    that lets a pre-P28 spine degrade to honest absence rather than aborting the read.
+    """
+    cur.execute(
+        "SELECT EXISTS(SELECT 1 FROM information_schema.columns "
+        "WHERE table_name = %s AND column_name = 'input_digest')",
+        (table,),
+    )
+    row = cur.fetchone()
+    return bool(row and row[0])
+
+
+def fetch_materialized_graph(cur: Any) -> dict[str, list[dict[str, Any]]]:
+    """Read the four materialized-graph tables inside the caller's read-only snapshot.
+
+    Consumes the P28.1-P28.4 read seams (``reconcile.materialize`` /
+    ``inference.materialize`` — SIG-ENG-035, never re-implemented). Runs on the caller's OWN
+    cursor (the same open ``REPEATABLE READ READ ONLY`` snapshot the shaping reads use — a
+    psycopg ``cursor.execute(...)`` returns the cursor, so the seams' ``conn.execute(...).
+    fetchall()`` shape is satisfied). Every read is guarded by the materializer's
+    ``input_digest`` column and wrapped in ``try`` so a spine whose materialized tables are
+    empty or pre-P28 yields ``[]`` — the honest degraded state the hosted spine is in until the
+    deferred hosted materialization runs (D-R6.5-SURFACE), never a crash and never a fabricated
+    resolved-site count.
+    """
+    out: dict[str, list[dict[str, Any]]] = {key: [] for key, _table, _seam in _MATERIALIZED_SEAMS}
+    for key, table, seam in _MATERIALIZED_SEAMS:
+        if not _has_materialize_column(cur, table):
+            continue
+        try:
+            out[key] = list(seam(cur))
+        except Exception:  # noqa: BLE001 - a schema mismatch is honest absence, not a crash
+            out[key] = []
+    return out
 
 
 # --------------------------------------------------------------------------- #
@@ -364,8 +427,191 @@ def _as_of_echo(as_of: str, belief: datetime | None) -> dict[str, Any]:
     }
 
 
-def _map_layer(dataset: ShapedDataset) -> dict[str, Any]:
-    """Surface 3 — MapLayer / MapAsset / JurisdictionIndicator (§39.3)."""
+#: The §32.5 population-note every counted quantity carries: the true population is
+#: unknown, so no figure is a total (SIG-METRIC-008/010).
+_POPULATION_NOTE = (
+    "The true population of surveillance devices is unknown. These are recorded "
+    "observations from named sources — an inventory, not a census or an estimate "
+    "(SIG-METRIC-008)."
+)
+
+#: The provisional-eval disclosure the resolved-site framing carries until D-R6.1-EVAL
+#: closes (ADR-101 §3): a "resolved sites" claim rests on a provisional (LLM-bootstrap)
+#: eval, and the surface says so.
+_RESOLVED_EVAL_DISCLOSURE = (
+    " Resolution rests on a provisional eval (LLM-bootstrapped gold set; D-R6.1-EVAL, OPEN)."
+)
+
+#: ``inference.completeness.CompletenessMethod`` → the web ``metrics.ts#CoverageMetricKind``.
+#: A 1:1 map (both are the four §32.5 legitimate kinds); a value outside it degrades to a
+#: counted quantity rather than fabricating a kind.
+_COMPLETENESS_TO_KIND: dict[str, str] = {
+    "counted_with_denominator": "counted_quantity",
+    "records_derived_bounds": "records_derived_bound",
+    "reconciliation_ratio": "reconciliation_ratio",
+    "measured_survey_recall": "survey_recall",
+}
+
+
+def _fmt_count(value: Any) -> str:
+    """A whole-number-or-decimal count formatter for a metric phrase."""
+    if value is None:
+        return "0"
+    f = float(value)
+    return str(int(f)) if f.is_integer() else f"{f:g}"
+
+
+def coverage_metric_from_materialized(row: Mapping[str, Any]) -> dict[str, Any] | None:
+    """Map one materialized ``coverage_record`` metric row → a web ``CoverageMetric`` (§32.5).
+
+    Only *metric* rows (``metric_method`` set) map to a coverage-page metric; negative-space
+    absence rows (``absence_kind`` set, no method) feed the dossier gaps, not the coverage
+    list, and return ``None``. Every emitted metric carries the row's NAMED denominator
+    (the DB CHECK guarantees it is not a reality/total denominator) and ``is_population_total``
+    is pinned ``false`` — never a total (SIG-METRIC-009/010).
+    """
+    method = row.get("metric_method")
+    if not method:
+        return None
+    named = row.get("named_denominator")
+    if not named:
+        return None  # a metric with no named denominator is not publishable (§32.5)
+    numerator = row.get("numerator")
+    denominator = row.get("denominator")
+    if numerator is not None and denominator is not None:
+        value = f"{_fmt_count(numerator)} of {_fmt_count(denominator)}"
+    elif row.get("metric_value") is not None:
+        value = _fmt_count(row.get("metric_value"))
+    else:
+        value = _fmt_count(numerator)
+    label = row.get("metric_label") or str(method)
+    ident = row.get("predicate_id") or row.get("subject_class") or row.get("coverage_id")
+    return {
+        "id": f"materialized_{method}_{ident}",
+        "kind": _COMPLETENESS_TO_KIND.get(str(method), "counted_quantity"),
+        "label": str(label),
+        "value": value,
+        "denominator": str(named),
+        "population_note": _POPULATION_NOTE,
+        "is_population_total": False,
+    }
+
+
+def resolved_sites_metric(
+    materialized_resolutions: Sequence[Mapping[str, Any]], dataset: ShapedDataset
+) -> dict[str, Any] | None:
+    """The honest "N resolved sites (from M observations)" coverage metric (ADR-101, §32).
+
+    ``M`` observations = the observation-level sites carrying coordinate claims (the dedup
+    input the launch surface framed as "N observations across M sources"). ``N`` resolved
+    sites = those observation-level sites the materialized resolution graph has RESOLVED into
+    a decision (a materialized ``resolution`` envelope that picked a winning claim). ``N ≤ M``
+    by construction — never an overclaim. Returns ``None`` when no materialized resolution
+    intersects a geolocated site (the empty/degraded hosted state): the surface then keeps the
+    observation-level framing, never a fabricated resolved-site count. The named denominator is
+    the M observations (never a total), and the provisional-eval disclosure is carried
+    (D-R6.1-EVAL) so the framing cannot imply a finality the eval does not have.
+    """
+    site_subjects = {s.entity_id for s in dataset.sites if s.has_coordinate_claims}
+    m = len(site_subjects)
+    resolved_subjects = {
+        str(r["subject_id"])
+        for r in materialized_resolutions
+        if r.get("resolved") and str(r.get("subject_id")) in site_subjects
+    }
+    n = len(resolved_subjects)
+    if n == 0 or m == 0:
+        return None
+    return {
+        "id": "resolved_sites",
+        "kind": "counted_quantity",
+        "label": "resolved sites (deduplicated from observations)",
+        "value": f"{n} resolved sites (from {m} observations)",
+        "denominator": f"{m} observation-level sites carrying coordinate claims",
+        "population_note": _POPULATION_NOTE + _RESOLVED_EVAL_DISCLOSURE,
+        "is_population_total": False,
+    }
+
+
+def contradictions_visible_metric(
+    materialized_contradictions: Sequence[Mapping[str, Any]],
+) -> dict[str, Any] | None:
+    """The "contradictions kept visible" coverage metric (P28.3, §3.1/§31).
+
+    Surfaces the materialized §31 contradiction object as a counted quantity: how many
+    recorded contradictions are open, of the full recorded set — both disagreeing sides
+    retained, never silently reconciled (§3.1). Returns ``None`` when the materialized
+    contradiction table is empty (the degraded hosted state), so no fabricated count is
+    shown. The denominator names the recorded contradiction set (never reality); the value
+    is never a total.
+    """
+    recorded = list(materialized_contradictions)
+    k = len(recorded)
+    if k == 0:
+        return None
+    open_states = {"open", "under_research"}
+    open_n = sum(1 for c in recorded if str(c.get("status")) in open_states)
+    return {
+        "id": "contradictions_visible",
+        "kind": "counted_quantity",
+        "label": "contradictions kept visible",
+        "value": f"{open_n} open of {k} recorded contradictions",
+        "denominator": (
+            f"{k} recorded contradictions in the materialized graph "
+            "(both evidence sides retained, §31)"
+        ),
+        "population_note": (
+            "Contradictions are never silently reconciled (§3.1); both disagreeing sides are "
+            "retained. This counts recorded contradictions, not an estimate of every "
+            "disagreement that exists."
+        ),
+        "is_population_total": False,
+    }
+
+
+def _network_from_materialized(
+    edges: Sequence[Mapping[str, Any]], source_names: Mapping[str, str]
+) -> dict[str, Any]:
+    """Build the §39.4 network surface from the materialized ``relationship`` edges (P28.2).
+
+    Consumes ``reconcile.materialize.read_materialized_edges`` (already reconciled through the
+    P08.2 §29.3 reconciler): the three §12.2 access kinds stay separate, every edge carries its
+    backing ``evidence_claim`` (no unevidenced edge, §3.1). An edge whose access kind is not one
+    of the three typed kinds is honestly absent from the typed network rather than coerced.
+    """
+    allowed = {"configured_access", "observed_use", "declared_policy"}
+    nodes: dict[str, dict[str, Any]] = {}
+    out_edges: list[dict[str, Any]] = []
+    for e in edges:
+        access_kind = str(e.get("access_kind"))
+        if access_kind not in allowed:
+            continue
+        src = str(e["from_entity"])
+        dst = str(e["to_entity"])
+        nodes.setdefault(src, {"id": src, "label": source_names.get(src, src), "type": "agency"})
+        nodes.setdefault(dst, {"id": dst, "label": source_names.get(dst, dst), "type": "partner"})
+        out_edges.append(
+            {
+                "from": src,
+                "to": dst,
+                "access_kind": access_kind,
+                "relation": str(e.get("edge_type") or access_kind),
+                # The read seam surfaces one representative backing claim per edge, so the
+                # honest §10.7 support floor is the single-source level — never overclaimed.
+                "support": "WEAKLY_SUPPORTED",
+                "evidence_count": 1,
+            }
+        )
+    return {"nodes": [nodes[k] for k in sorted(nodes)], "edges": out_edges, "access_paths": []}
+
+
+def _map_layer(dataset: ShapedDataset, *, resolved_sites: int | None = None) -> dict[str, Any]:
+    """Surface 3 — MapLayer / MapAsset / JurisdictionIndicator (§39.3).
+
+    When the materialized resolution graph has resolved sites (``resolved_sites`` set,
+    ADR-101), the layer describes them with the honest resolved framing; otherwise it keeps
+    the launch observation-level description (the honest degraded state, ADR-092).
+    """
     assets: list[dict[str, Any]] = []
     for site in dataset.sites:
         asset: dict[str, Any] = {
@@ -383,17 +629,31 @@ def _map_layer(dataset: ShapedDataset) -> dict[str, Any]:
                 "conflicted" if site.point_status == "conflicted" else "no_resolved_point"
             )
         assets.append(asset)
-    layers = [
-        {
-            "id": "observed_sites",
-            "label": "Observed device sites",
-            "kind": "observed",
-            "description": (
-                "Observation-level device sites from named sources — N observations "
-                "across M sources, never a resolved census (SIG-RECON-058)."
-            ),
-        }
-    ]
+    if resolved_sites:
+        layers = [
+            {
+                "id": "resolved_sites",
+                "label": "Resolved device sites",
+                "kind": "resolved",
+                "description": (
+                    f"{resolved_sites} resolved device sites, deduplicated from observation-"
+                    "level records via the materialized resolution graph (ADR-101). Resolution "
+                    "rests on a provisional eval (D-R6.1-EVAL, OPEN)."
+                ),
+            }
+        ]
+    else:
+        layers = [
+            {
+                "id": "observed_sites",
+                "label": "Observed device sites",
+                "kind": "observed",
+                "description": (
+                    "Observation-level device sites from named sources — N observations "
+                    "across M sources, never a resolved census (SIG-RECON-058)."
+                ),
+            }
+        ]
     indicators = [{"jurisdiction": j.jurisdiction} for j in dataset.jurisdictions]
     return {"layers": layers, "assets": assets, "jurisdiction_indicators": indicators}
 
@@ -433,9 +693,36 @@ def _freshness(dataset: ShapedDataset) -> list[dict[str, Any]]:
     return [s.freshness_row() for s in dataset.sources]
 
 
-def _coverage(dataset: ShapedDataset) -> list[dict[str, Any]]:
-    """Surface 6 — CoverageMetric[] (§32.5). Named denominators, never a total."""
-    return list(dataset.coverage_metrics)
+def _coverage(
+    dataset: ShapedDataset,
+    *,
+    materialized_coverage: Sequence[Mapping[str, Any]] = (),
+    materialized_resolutions: Sequence[Mapping[str, Any]] = (),
+    materialized_contradictions: Sequence[Mapping[str, Any]] = (),
+) -> list[dict[str, Any]]:
+    """Surface 6 — CoverageMetric[] (§32.5). Named denominators, never a total (ADR-101).
+
+    Reads the materialized §32 coverage (P28.4) when present, else the compute-on-read shaping
+    metrics (ADR-092, the honest fallback for an unmaterialized spine). Then APPENDS the two
+    materialized-graph counted quantities — the resolved-site framing (P28.1) and contradictions
+    kept visible (P28.3) — each gated on its own materialized input being non-empty, so an empty
+    hosted spine shows neither a fabricated resolved count nor a fabricated contradiction count.
+    """
+    if materialized_coverage:
+        base: list[dict[str, Any]] = [
+            m
+            for m in (coverage_metric_from_materialized(r) for r in materialized_coverage)
+            if m is not None
+        ]
+    else:
+        base = list(dataset.coverage_metrics)
+    resolved = resolved_sites_metric(materialized_resolutions, dataset)
+    if resolved is not None:
+        base.append(resolved)
+    contradictions = contradictions_visible_metric(materialized_contradictions)
+    if contradictions is not None:
+        base.append(contradictions)
+    return base
 
 
 def _watch(raw: Mapping[str, Any]) -> list[dict[str, Any]]:
@@ -662,6 +949,26 @@ def build_spine_export(
 
     source_names = {str(r[0]): str(r[1]) for r in (raw.get("source_names") or [])}
 
+    # --- the materialized graph (P28.1-P28.4, ADR-101) --------------------------
+    # Read from ``raw`` (populated by ``run_spine_export`` inside the read-only snapshot);
+    # each defaults to () so a pure caller / an unmaterialized spine degrades honestly to the
+    # compute-on-read shaping layer, never a crash and never a fabricated resolved-site count.
+    m_resolutions = list(raw.get("materialized_resolutions") or [])
+    m_edges = list(raw.get("materialized_edges") or [])
+    m_contradictions = list(raw.get("materialized_contradictions") or [])
+    m_coverage = list(raw.get("materialized_coverage") or [])
+
+    # Coverage is computed ONCE (materialized when present, else shaping) so the web
+    # coverage.json and the sig_graph coverage table never drift.
+    coverage_metrics = _coverage(
+        dataset,
+        materialized_coverage=m_coverage,
+        materialized_resolutions=m_resolutions,
+        materialized_contradictions=m_contradictions,
+    )
+    resolved = resolved_sites_metric(m_resolutions, dataset)
+    resolved_site_count = None if resolved is None else int(resolved["value"].split()[0])
+
     # --- the licence-critical path: sites sliced per (source, rights) -----------
     site_rows, site_index, site_exclusions = _slice_sites(
         claims, entity_types, retrieval=retrieval, registry=registry
@@ -677,9 +984,7 @@ def build_spine_export(
         "jurisdictions": [
             C.ExportRow(source_id=_SIG_SOURCE_ID, data=j.as_json()) for j in dataset.jurisdictions
         ],
-        "coverage": [
-            C.ExportRow(source_id=_SIG_SOURCE_ID, data=dict(m)) for m in dataset.coverage_metrics
-        ],
+        "coverage": [C.ExportRow(source_id=_SIG_SOURCE_ID, data=dict(m)) for m in coverage_metrics],
         "freshness": [
             C.ExportRow(source_id=_SIG_SOURCE_ID, data=s.freshness_row()) for s in dataset.sources
         ],
@@ -702,10 +1007,16 @@ def build_spine_export(
     surfaces: dict[str, Any] = {
         "dossier_index": _dossier_index(dossiers),
         "dossiers": dossiers,
-        "map": _map_layer(dataset),
-        "network": _network(dataset, source_names),
+        "map": _map_layer(dataset, resolved_sites=resolved_site_count),
+        # The network reads the materialized §29.3 edges (P28.2) when present, else the
+        # compute-on-read shaping envelope (the honest fallback for an unmaterialized spine).
+        "network": (
+            _network_from_materialized(m_edges, source_names)
+            if m_edges
+            else _network(dataset, source_names)
+        ),
         "freshness": _freshness(dataset),
-        "coverage": _coverage(dataset),
+        "coverage": coverage_metrics,
         "watch": _watch(raw),
         "evidence": _evidence(raw, dataset.as_of),
         "corrections": _corrections(raw),
@@ -1014,6 +1325,10 @@ def run_spine_export(
         has_decisions = bool(has_row and has_row[0])
         shaping_raw = fetch_shaping_raw(cur, _queries_for(has_decisions), belief=belief)
         export_raw = fetch_export_raw(cur, belief=belief)
+        # The materialized graph (P28.1-P28.4, ADR-101), read inside the SAME snapshot so
+        # every emitted artifact describes one spine state; empty/absent tables degrade to []
+        # (the honest state until the hosted materialization runs, D-R6.5-SURFACE).
+        export_raw.update(fetch_materialized_graph(cur))
     finally:
         if snapshot:
             cur.execute("ROLLBACK")
@@ -1063,6 +1378,10 @@ __all__ = [
     "SpineExport",
     "build_spine_export",
     "fetch_export_raw",
+    "fetch_materialized_graph",
+    "coverage_metric_from_materialized",
+    "resolved_sites_metric",
+    "contradictions_visible_metric",
     "run_spine_export",
     "digest_web_artifacts",
 ]

@@ -309,6 +309,30 @@ export const COVERAGE_METRICS: CoverageMetric[] = [
     population_note: "This measures the survey's recall on a named subset only; it is NOT extrapolated to any other jurisdiction (SIG-METRIC-008b).",
     is_population_total: false,
   },
+  // The materialized-graph counted quantities the P28.5 surface refresh reads off the
+  // resolution / contradiction tables (ADR-101). The resolved-site framing REPLACES the
+  // observation-level framing ("N resolved sites from M observations"), carrying its named
+  // denominator (never a total) and the PROVISIONAL resolution-eval disclosure (D-R6.1-EVAL).
+  {
+    id: "resolved_sites",
+    kind: "counted_quantity",
+    label: "resolved sites (deduplicated from observations)",
+    value: "3 resolved sites (from 6 observations)",
+    denominator: "of 6 observation-level sites carrying coordinate claims",
+    population_note:
+      "The true population of surveillance devices is unknown; this deduplicates named observations into resolved sites, not a census (SIG-METRIC-008). Resolution rests on a provisional eval (LLM-bootstrapped gold set; D-R6.1-EVAL, OPEN).",
+    is_population_total: false,
+  },
+  {
+    id: "contradictions_visible",
+    kind: "counted_quantity",
+    label: "contradictions kept visible",
+    value: "1 open of 1 recorded contradictions",
+    denominator: "of 1 recorded contradictions in the materialized graph (both evidence sides retained, §31)",
+    population_note:
+      "Contradictions are never silently reconciled (§3.1); both disagreeing sides are retained. This counts recorded contradictions, not an estimate of every disagreement that exists.",
+    is_population_total: false,
+  },
 ];
 
 // --- Generated rationale templates gated by the register rules (SIG-UI-046) --

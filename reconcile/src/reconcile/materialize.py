@@ -51,6 +51,7 @@ __all__ = [
     "read_claim_groups",
     "resolution_row",
     "materialize_resolutions",
+    "read_materialized_resolutions",
     # P28.2 — sharing/access relationship edges
     "EdgeMaterializeSummary",
     "ACCESS_KIND_PREDICATE_HINTS",
@@ -406,6 +407,46 @@ def materialize_from_dsn(dsn: str, **kwargs: Any) -> MaterializeSummary:
         return materialize_resolutions(conn, **kwargs)
     finally:
         conn.close()
+
+
+def read_materialized_resolutions(conn: Any, *, role: str | None = None) -> list[dict[str, Any]]:
+    """Read the materialized ``resolution`` envelopes (the P28.5 surface seam, ADR-101).
+
+    The real resolution dataset the P28.5 surface refresh consumes to derive the honest
+    "N resolved sites (from M observations)" framing off the materialized graph instead of
+    the compute-on-read observation envelope (ADR-092). Read-only; deterministically ordered;
+    every row carries its ``contradiction_state`` and confidence, and ``resolved`` is True iff
+    the envelope picked a winning claim (an ``unresolved_conflict`` envelope resolves nothing,
+    so it is materialized but not counted as a resolved site — contradictions stay visible,
+    §3.1). Only rows the materializer wrote (``input_digest IS NOT NULL``) are returned.
+    """
+    if role:
+        conn.execute(f"SET ROLE {role}")
+    rows = conn.execute(
+        "SELECT resolution_id::text, subject_id::text, predicate_id, value_kind, "
+        "       value_text, value_num, winning_claim::text, contradiction_state, confidence "
+        "  FROM resolution "
+        " WHERE input_digest IS NOT NULL "
+        " ORDER BY subject_id, predicate_id, resolution_id"
+    ).fetchall()
+    out: list[dict[str, Any]] = []
+    for r in rows:
+        out.append(
+            {
+                "resolution_id": r[0],
+                "subject_id": r[1],
+                "predicate_id": r[2],
+                "value_kind": r[3],
+                "value_text": r[4],
+                "value_num": None if r[5] is None else float(r[5]),
+                "winning_claim": None if r[6] is None else str(r[6]),
+                "contradiction_state": r[7],
+                "confidence": r[8],
+                # A resolved decision picked a winning claim; an unresolved_conflict did not.
+                "resolved": r[6] is not None,
+            }
+        )
+    return out
 
 
 # ============================================================================
