@@ -22,7 +22,7 @@ export interface CitationInput {
   origin?: string;
 }
 
-const DEFAULT_ORIGIN = "https://sig.example";
+const DEFAULT_ORIGIN = "https://surveillancegraph.org";
 
 /**
  * The belief-pinned permalink: the canonical path with BOTH as-of axes and the

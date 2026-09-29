@@ -5770,6 +5770,15 @@ displayed, and the renewal watch (§39.5) MUST key its alerts on it.
 `unknown` values — a policy whose configuration evidence is unknown MUST display as "unknown," not
 be omitted.
 
+**SIG-UI-048 (MUST).** The public surface MUST be the **national, whole-graph** record, not a single
+jurisdiction's demo: it MUST present a **per-jurisdiction dossier index** over **every** publishable
+jurisdiction (the SIG-UI-010..015 local dossiers), read from the spine-built export
+(SIG-EXPORT-013), so the local dossier is discoverable at scale. Navigation MUST NOT hardcode a single
+jurisdiction's dossier as the entry point. The index MUST make its own **absence honest**: a
+jurisdiction not listed is one SIG has not yet published to a publishable standard — **not** one with
+no infrastructure — and the index MUST NOT present its membership as a census or a population total
+(§32, SIG-METRIC-010).
+
 ### 39.3 The infrastructure map
 
 **SIG-UI-016 (MUST).** Layers: physical devices; deployments; RTCCs and integration hubs; sharing
@@ -5881,6 +5890,16 @@ page MUST be public and linked from every dossier.
 **SIG-UI-035 (MUST).** Every page MUST expose a belief-pinned permalink and a "cite this page"
 affordance including the as-of pair and the ruleset version. A citation of SIG made today MUST
 remain reproducible after SIG corrects itself (SIG-TIME-008).
+
+**SIG-UI-049 (MUST).** The public surface MUST present a coherent national **information
+architecture**: a **grouped, uncluttered, keyboard-accessible** navigation (not a flat undifferentiated
+link bar); a real **national landing page** that summarises the dataset with **named denominators and
+no population total** (§32, SIG-METRIC-009/010), states the jurisdiction reach, offers entry points to
+the product surfaces, and keeps the epistemic framing ("absence is not evidence of absence"); and
+**real citation metadata** — the canonical site origin and the belief-pinned permalink's as-of pair and
+ruleset version MUST be sourced from the release **manifest** (SIG-EXPORT-003), never a frozen demo
+constant, so the surface a reader cites is pinned to the belief it was actually built at (SIG-UI-035).
+A landed information-architecture decision changes only by a new ADR (SIG-ENG-003), never a silent edit.
 
 ---
 

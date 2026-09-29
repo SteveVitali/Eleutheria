@@ -1,0 +1,50 @@
+---
+// SPDX-License-Identifier: Apache-2.0
+// Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
+// carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
+
+// The per-jurisdiction dossier index (§39.2, SIG-UI-048 / ADR-090+ADR-093): the
+// SIG-UI-010..015 local dossier made discoverable at scale. Static-first, zero client
+// JS (SIG-UI-036/037). It lists every publishable jurisdiction from the P27.4 dossier
+// index (through the single data seam, ADR-066) — the flat nav's hardcoded
+// `/dossier/oklahoma-city/` link is replaced by this index.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getDossierIndex } from "../../lib/data";
+import { dossierPath, dossierPrintPath } from "../../lib/dossier";
+
+// Sorted by jurisdiction then subject for a stable, browseable order at scale.
+const dossiers = [...getDossierIndex()].sort(
+  (a, b) =>
+    a.jurisdiction.localeCompare(b.jurisdiction) || a.subject_label.localeCompare(b.subject_label),
+);
+---
+
+<BaseLayout title="Dossiers" path="/dossier/">
+  <p class="sig-lede">
+    A dossier is SIG's primary public artifact for a jurisdiction: what is deployed, who
+    can see it, what it costs, when it must be decided, and — as a headline, not an
+    appendix — <strong>what SIG does not know</strong>. Every dossier prints to a
+    council-ready PDF and carries a belief-pinned citation.
+  </p>
+  <p>
+    This index lists every jurisdiction SIG has researched to a publishable standard.
+    It is not a census: a jurisdiction absent here is one SIG has not yet published,
+    <strong>not</strong> one with no surveillance infrastructure.
+  </p>
+
+  <ul class="sig-dossier-index" role="list" data-testid="dossier-index">
+    {dossiers.map((d) => (
+      <li class="sig-dossier-index__item" data-testid="dossier-index-item" data-slug={d.slug}>
+        <a class="sig-dossier-index__link" href={dossierPath(d.slug)}>
+          <span class="sig-dossier-index__subject">{d.subject_label}</span>
+          <span class="sig-dossier-index__place">{d.jurisdiction}</span>
+        </a>
+        <span class="sig-dossier-index__meta">
+          as of {d.asOf.as_of_world}
+          <span aria-hidden="true"> · </span>
+          <a href={dossierPrintPath(d.slug)}>print / PDF</a>
+        </span>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>

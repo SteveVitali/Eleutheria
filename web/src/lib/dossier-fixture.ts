@@ -203,7 +203,7 @@ export const OKC_DOSSIER: Dossier = {
       section_id: "where_the_hardware_is",
       rows: [
         { label: "Independently mapped devices", value: 31, note: "A lower bound. See the reference map for locations at published precision." },
-        { label: "Reference map", value: "/reference-map/", documentUrl: "/reference-map/" },
+        { label: "Reference map", value: "/visual-language/#reference-map", documentUrl: "/visual-language/#reference-map" },
       ],
     },
     {

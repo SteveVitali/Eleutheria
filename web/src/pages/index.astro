@@ -3,37 +3,151 @@
 // Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
-// The landing shell. Static-first, zero client JS (SIG-UI-036). The local advocate
-// is the design center (SIG-UI-002): plain-language register, paper-friendly.
+// The national landing page (§39, SIG-UI-049 / ADR-093). Static-first, zero client
+// JS (SIG-UI-036). A real overview of the national dataset: honest headline counts
+// with NAMED denominators and NO total (§32, SIG-METRIC-009/010), the jurisdiction
+// reach, entry points into the product surfaces, and the epistemic framing ("absence
+// is not evidence of absence"). Every number flows through the single data seam
+// (ADR-066): committed fixtures by default, real export bytes under SIG_DATA_SOURCE=export.
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCoverage, getDossierIndex, getFreshness } from "../lib/data";
+import { assertCoverageMetrics } from "../lib/metrics";
+import { dossierPath } from "../lib/dossier";
+
+const coverage = getCoverage();
+// Enforce the §32.5 honesty constraints at build time: a landing metric with a
+// missing/forbidden denominator, or one claiming a population total, fails the build
+// rather than shipping (SIG-METRIC-009/010 — "never a total").
+assertCoverageMetrics(coverage);
+
+const dossierIndex = getDossierIndex();
+const jurisdictions = [...new Set(dossierIndex.map((d) => d.jurisdiction))];
+const sourceCount = getFreshness().length;
+
+// The product entry points (SIG-UI-049 / ADR-093): the four surfaces a first-time
+// reader starts from. Kept distinct from the "how to read" epistemic framing below.
+const ENTRY_POINTS = [
+  {
+    href: "/dossier/",
+    title: "Local dossiers",
+    body:
+      "The project's primary public artifact: per-jurisdiction — what is deployed, who can see it, what it costs, when it must be decided, and what SIG does not know. Each prints to a council-ready PDF.",
+  },
+  {
+    href: "/map/",
+    title: "Infrastructure map",
+    body:
+      "Where the infrastructure is, with a full tabular equivalent. Low coverage is shown as a gap, never as low density.",
+  },
+  {
+    href: "/network/",
+    title: "Sharing network",
+    body:
+      "Who shares data with whom, as an evidence-weighted graph with a list equivalent — never a national hairball.",
+  },
+  {
+    href: "/watch/",
+    title: "Renewal watch",
+    body: "Upcoming contract and authorization decisions, with the evidence a reader needs before each one.",
+  },
+];
 ---
 
 <BaseLayout title="Surveillance Infrastructure Graph" path="/">
-  <p>
-    SIG is an open, vendor-agnostic, temporally versioned record of surveillance
-    infrastructure — what is deployed, where and by whom, how it is connected and
-    governed, and exactly which sources support or contradict every material claim.
-    SIG <strong>reports</strong>; it does not endorse.
+  <p class="sig-lede">
+    SIG is an open, vendor-agnostic, temporally versioned record of public
+    surveillance infrastructure — what is deployed, where and by whom, how it is
+    connected and governed, and exactly which sources support or contradict every
+    material claim. SIG <strong>reports</strong>; it does not endorse.
   </p>
 
-  <h2>How to read this record</h2>
-  <p>
-    Every material claim on this site carries four independent epistemic fields, a
-    support glyph that says <em>why</em> it is trusted, a persistent marker when a
-    value is contested, and an honest, clickable gap wherever SIG has not (yet)
-    looked. Absence of a row is <strong>not</strong> evidence of absence.
-  </p>
-  <ul>
-    <li><a href="/dossier/oklahoma-city/">The local dossier</a> — the project's primary public artifact: what is deployed, who can see it, what it costs and when it must be decided, and <strong>what we don't know</strong>. Prints to a council-ready PDF.</li>
-    <li><a href="/visual-language/">The epistemic visual language</a> — the reference for every field, glyph, marker, and gap.</li>
-    <li><a href="/reference-map/">Reference map</a> — with a full tabular equivalent (usable without JavaScript).</li>
-    <li><a href="/reference-graph/">Reference graph</a> — with a full list equivalent (usable without JavaScript).</li>
-  </ul>
+  <!-- Headline counts: NAMED denominators, NO population total (§32, SIG-METRIC-010). -->
+  <section aria-labelledby="counts-heading" class="sig-landing-section">
+    <h2 id="counts-heading">What the record covers today</h2>
+    <p>
+      Every figure below names <strong>what it is counted against</strong>. SIG never
+      publishes a total: no one knows the true number of surveillance devices, agencies,
+      or jurisdictions that exist, so a bare "total" would be a false certainty.
+    </p>
+    <ul class="sig-stat-grid" role="list">
+      <li class="sig-stat" data-testid="reach-stat">
+        <span class="sig-stat__value">{jurisdictions.length}</span>
+        <span class="sig-stat__label">jurisdictions with a published dossier</span>
+        <span class="sig-stat__denominator" data-testid="named-denominator">
+          of the jurisdictions SIG has researched to a publishable standard
+        </span>
+      </li>
+      <li class="sig-stat" data-testid="sources-stat">
+        <span class="sig-stat__value">{sourceCount}</span>
+        <span class="sig-stat__label">sources tracked for freshness</span>
+        <span class="sig-stat__denominator" data-testid="named-denominator">
+          of the sources SIG monitors — not of all sources that exist
+        </span>
+      </li>
+      {coverage.map((m) => (
+        <li class="sig-stat" data-testid="coverage-stat" data-metric-kind={m.kind}>
+          <span class="sig-stat__value">{m.value}</span>
+          <span class="sig-stat__label">{m.label}</span>
+          <span class="sig-stat__denominator" data-testid="named-denominator">{m.denominator}</span>
+          <span class="sig-stat__note">{m.population_note}</span>
+        </li>
+      ))}
+    </ul>
+    <p class="sig-landing-more">
+      The full, methodology-first breakdown is on the <a href="/coverage-metrics/">coverage metrics</a>
+      page; per-source recency is on <a href="/data-freshness/">data freshness</a>.
+    </p>
+  </section>
 
-  <h2>Reproducible by design</h2>
-  <p>
-    Every page exposes a belief-pinned permalink and a citation you can hand to a
-    council member or cite in a filing. A citation captured today re-resolves to the
-    same belief even after SIG corrects itself. See the citation block below.
-  </p>
+  <!-- Jurisdiction reach: the local dossier made discoverable at scale. -->
+  <section aria-labelledby="reach-heading" class="sig-landing-section">
+    <h2 id="reach-heading">Jurisdiction reach</h2>
+    <p>
+      SIG publishes a dossier per jurisdiction it has researched to a publishable
+      standard. Browse them all in the <a href="/dossier/">dossier index</a>, or start
+      with one:
+    </p>
+    <ul class="sig-jurisdiction-reach" role="list">
+      {dossierIndex.map((d) => (
+        <li>
+          <a href={dossierPath(d.slug)}>{d.subject_label}</a>
+          <span class="sig-jurisdiction-reach__place"> — {d.jurisdiction}</span>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- Entry points into the product surfaces. -->
+  <section aria-labelledby="entry-heading" class="sig-landing-section">
+    <h2 id="entry-heading">Where to start</h2>
+    <ul class="sig-entry-grid" role="list">
+      {ENTRY_POINTS.map((e) => (
+        <li class="sig-entry" data-testid="entry-point">
+          <a class="sig-entry__link" href={e.href}>
+            <span class="sig-entry__title">{e.title}</span>
+            <span class="sig-entry__body">{e.body}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- Epistemic framing: how to read this record. -->
+  <section aria-labelledby="read-heading" class="sig-landing-section">
+    <h2 id="read-heading">How to read this record</h2>
+    <p>
+      Every material claim carries four independent epistemic fields, a support glyph
+      that says <em>why</em> it is trusted, a persistent marker when a value is
+      contested, and an honest, clickable gap wherever SIG has not (yet) looked.
+      <strong>Absence of a row is not evidence of absence</strong> — it is a place SIG
+      has not yet researched, and you can turn it into a research task in one click.
+    </p>
+    <p>
+      The <a href="/visual-language/">epistemic visual language</a> is the reference for
+      every field, glyph, marker, and gap. Every page also exposes a belief-pinned
+      permalink and a citation you can hand to a council member or cite in a filing: a
+      citation captured today re-resolves to the same belief even after SIG corrects
+      itself.
+    </p>
+  </section>
 </BaseLayout>

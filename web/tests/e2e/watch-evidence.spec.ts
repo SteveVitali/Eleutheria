@@ -90,7 +90,7 @@ test.describe("evidence recommender (§39.5a)", () => {
     const body = await txt.text();
     expect(body).toContain("directness, recency, and dispute status only");
     expect(body).toMatch(/As of \d{4}-\d{2}-\d{2}/);
-    expect(body).toContain("https://sig.example/evidence/");
+    expect(body).toContain("https://surveillancegraph.org/evidence/");
   });
 });
 

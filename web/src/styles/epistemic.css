@@ -782,3 +782,260 @@ table.sig-freshness td {
   padding-left: 0.8rem;
   margin: 0.4rem 0;
 }
+
+/* --------------------------------------------------------------------------- *
+ * P27.6 — the launch design system (SIG-UI-049 / ADR-093).
+ *
+ * A cohesive, modern, zero-JS visual system applied site-wide: the grouped header
+ * navigation, the national landing surface, and the per-jurisdiction dossier index.
+ * All chrome uses the NEUTRAL greyscale tokens (--sig-ink/--sig-paper/--sig-muted/
+ * --sig-rule/--sig-focus) — no --sig-epi-* token is introduced here, so saturated
+ * colour stays reserved for epistemic state and data (SIG-UI-006). Layout is fluid
+ * and needs no client JS.
+ * --------------------------------------------------------------------------- */
+
+:root {
+  /* Spacing scale (neutral chrome; no epistemic meaning). */
+  --sig-space-1: 0.25rem;
+  --sig-space-2: 0.5rem;
+  --sig-space-3: 0.75rem;
+  --sig-space-4: 1rem;
+  --sig-space-5: 1.5rem;
+  --sig-space-6: 2rem;
+  --sig-space-7: 3rem;
+  /* A faint neutral wash for cards/panels; greyscale, no hue. */
+  --sig-panel: hsl(0deg 0% 98%);
+  --sig-radius: 8px;
+}
+
+/* --- Header + grouped navigation (SIG-UI-049) ------------------------------ */
+.sig-header {
+  border-bottom: 1px solid var(--sig-rule);
+  background: var(--sig-paper);
+}
+.sig-header__bar {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: var(--sig-space-3) var(--sig-space-5);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sig-space-4) var(--sig-space-6);
+}
+.sig-wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sig-space-2);
+  text-decoration: none;
+  color: var(--sig-ink);
+  font-weight: 700;
+}
+.sig-wordmark__mark {
+  font-size: 1.35rem;
+  letter-spacing: 0.08em;
+}
+.sig-wordmark__full {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--sig-muted);
+}
+.sig-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sig-space-4) var(--sig-space-6);
+  margin-left: auto;
+}
+.sig-nav__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sig-space-1);
+}
+.sig-nav__group-label {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--sig-muted);
+  font-weight: 700;
+}
+.sig-nav__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sig-space-1) var(--sig-space-4);
+}
+.sig-nav__list a {
+  display: inline-block;
+  padding: 0.15rem 0;
+  font-size: 0.92rem;
+  color: var(--sig-focus);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+.sig-nav__list a:hover,
+.sig-nav__list a:focus-visible {
+  border-bottom-color: currentColor;
+}
+
+@media (max-width: 40rem) {
+  .sig-nav {
+    margin-left: 0;
+    width: 100%;
+    flex-direction: column;
+    gap: var(--sig-space-3);
+  }
+}
+
+@media print {
+  .sig-header {
+    display: none !important;
+  }
+}
+
+/* --- Landing surface (SIG-UI-049) ------------------------------------------ */
+.sig-lede {
+  font-size: 1.12rem;
+  line-height: 1.55;
+  max-width: 46rem;
+}
+.sig-landing-section {
+  margin-top: var(--sig-space-7);
+}
+.sig-landing-section > h2 {
+  border-bottom: 1px solid var(--sig-rule);
+  padding-bottom: var(--sig-space-2);
+}
+.sig-landing-more {
+  font-size: 0.9rem;
+  color: var(--sig-muted);
+}
+
+/* Headline counts — named denominators, no total (SIG-METRIC-009/010). */
+.sig-stat-grid {
+  list-style: none;
+  margin: var(--sig-space-4) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--sig-space-4);
+}
+.sig-stat {
+  border: 1px solid var(--sig-rule);
+  border-radius: var(--sig-radius);
+  background: var(--sig-panel);
+  padding: var(--sig-space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sig-space-1);
+}
+.sig-stat__value {
+  font-size: 1.9rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--sig-ink);
+}
+.sig-stat__label {
+  font-weight: 600;
+}
+.sig-stat__denominator {
+  font-size: 0.85rem;
+  color: var(--sig-muted);
+}
+.sig-stat__note {
+  font-size: 0.78rem;
+  color: var(--sig-muted);
+  font-style: italic;
+  margin-top: var(--sig-space-1);
+}
+
+/* Entry-point cards. */
+.sig-entry-grid {
+  list-style: none;
+  margin: var(--sig-space-4) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--sig-space-4);
+}
+.sig-entry {
+  display: flex;
+}
+.sig-entry__link {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sig-space-2);
+  width: 100%;
+  border: 1px solid var(--sig-rule);
+  border-radius: var(--sig-radius);
+  padding: var(--sig-space-4);
+  text-decoration: none;
+  color: var(--sig-ink);
+  background: var(--sig-paper);
+}
+.sig-entry__link:hover,
+.sig-entry__link:focus-visible {
+  border-color: var(--sig-focus);
+}
+.sig-entry__title {
+  font-weight: 700;
+  color: var(--sig-focus);
+}
+.sig-entry__body {
+  font-size: 0.9rem;
+  color: var(--sig-ink);
+}
+
+/* Jurisdiction reach quick-list on the landing page. */
+.sig-jurisdiction-reach {
+  list-style: none;
+  margin: var(--sig-space-3) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: var(--sig-space-2) var(--sig-space-5);
+}
+.sig-jurisdiction-reach__place {
+  color: var(--sig-muted);
+  font-size: 0.9rem;
+}
+
+/* --- Per-jurisdiction dossier index (SIG-UI-048) --------------------------- */
+.sig-dossier-index {
+  list-style: none;
+  margin: var(--sig-space-5) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: var(--sig-space-4);
+}
+.sig-dossier-index__item {
+  border: 1px solid var(--sig-rule);
+  border-radius: var(--sig-radius);
+  padding: var(--sig-space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sig-space-2);
+  background: var(--sig-paper);
+}
+.sig-dossier-index__link {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sig-space-1);
+  text-decoration: none;
+}
+.sig-dossier-index__subject {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--sig-focus);
+}
+.sig-dossier-index__place {
+  color: var(--sig-muted);
+  font-size: 0.9rem;
+}
+.sig-dossier-index__meta {
+  font-size: 0.82rem;
+  color: var(--sig-muted);
+  border-top: 1px solid var(--sig-rule);
+  padding-top: var(--sig-space-2);
+}

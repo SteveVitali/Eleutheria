@@ -12,6 +12,7 @@ import { absenceTaskHref } from "../../src/lib/task";
 // a11y sweep below, not here.
 export const SHELL_PAGES = [
   "/",
+  "/dossier/",
   "/dossier/oklahoma-city/",
   "/visual-language/",
   "/map/",
@@ -29,8 +30,6 @@ export const SHELL_PAGES = [
   "/coverage-metrics/",
   "/editorial-standards/",
   "/style-guide/",
-  "/reference-map/",
-  "/reference-graph/",
 ] as const;
 
 // The seven outline surfaces + the required eighth (the corrections log), asserted to

@@ -32,6 +32,7 @@ import {
 import { WATCH_ITEMS, EVIDENCE_ARTIFACTS, CLAIM_VIEWS } from "../src/lib/watch-evidence-fixture";
 import { DOSSIERS } from "../src/lib/dossier-fixture";
 import { LEVERAGE_METRIC_FIXTURE } from "../src/lib/leverage-fixture";
+import { AS_OF, RULESET_VERSION } from "../src/lib/fixtures";
 
 const outDir = process.argv[2];
 if (!outDir) {
@@ -44,6 +45,30 @@ mkdirSync(webDir, { recursive: true });
 
 function write(name: string, payload: unknown): void {
   writeFileSync(join(webDir, name), JSON.stringify(payload, null, 2) + "\n", "utf-8");
+}
+
+// The release manifest at the export-dir ROOT (the same location `sig-exports build
+// --from-spine` writes it, exports/spine_export.py). The site reads its belief-pinned
+// citation defaults (as_of / ruleset) from `reproducibility_inputs` (P27.6, data.ts
+// getSiteMetadata). Only that subset is fixture-derivable; the real manifest also
+// carries checksums + compartment licences + PROV-O. Leave a real `--from-spine`
+// manifest in place when overlaying one.
+if (!existsSync(join(outDir, "manifest.json"))) {
+  writeFileSync(
+    join(outDir, "manifest.json"),
+    JSON.stringify(
+      {
+        reproducibility_inputs: {
+          as_of_snapshot: AS_OF.as_of_world,
+          as_of_belief: AS_OF.as_of_belief,
+          ruleset_version: RULESET_VERSION,
+        },
+      },
+      null,
+      2,
+    ) + "\n",
+    "utf-8",
+  );
 }
 
 const { jurisdictionIndicators } = partitionByLocatability(MAP_ASSETS);

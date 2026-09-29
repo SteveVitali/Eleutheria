@@ -7,6 +7,14 @@
 // component P15.2–P15.5 consume, over the demo fixture (OKCPD 42-vs-38). This page
 // is the canonical demonstration of SIG-UI-003..009 — later surfaces reference
 // these components; they do not redefine them.
+//
+// P27.6 (SIG-UI-049 / ADR-093 §4): the former standalone `/reference-map/` and
+// `/reference-graph/` demo pages are FOLDED IN here. The product map lives at `/map/`
+// and the product network at `/network/`; the reference exemplars — the map popup and
+// the graph edge list that demonstrate SIG-UI-008's "persistent across render paths"
+// — belong with the rest of the visual-language reference, so the map↔reference-map
+// and network↔reference-graph duplication is resolved (one canonical product surface
+// each; the reference demos fold here).
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SupportGlyph from "../components/SupportGlyph.astro";
 import EpistemicFields from "../components/EpistemicFields.astro";
@@ -14,17 +22,38 @@ import ContestedMarker from "../components/ContestedMarker.astro";
 import AbsenceHatch from "../components/AbsenceHatch.astro";
 import ContradictionRange from "../components/ContradictionRange.astro";
 import { SUPPORT_LEVELS, ABSENCE_KINDS, ABSENCE_KIND_META, isContested } from "../lib/epistemic";
-import { OKCPD } from "../lib/fixtures";
+import {
+  getReferenceEntity,
+  getReferenceMapSites,
+  getReferenceGraph,
+} from "../lib/data";
 
+const OKCPD = getReferenceEntity();
 const fact = OKCPD.facts[0]!;
 const env = fact.envelope;
 const contested = isContested(env.agreement);
+
+// The reference map/graph exemplars, folded from the retired reference-* pages.
+const REFERENCE_MAP_SITES = getReferenceMapSites();
+const { nodes: REFERENCE_GRAPH_NODES, edges: REFERENCE_GRAPH_EDGES } = getReferenceGraph();
+
+const plotted = REFERENCE_MAP_SITES.filter((s) => s.lat !== null && s.lon !== null);
+const lats = plotted.map((s) => s.lat as number);
+const lons = plotted.map((s) => s.lon as number);
+const minLat = Math.min(...lats), maxLat = Math.max(...lats);
+const minLon = Math.min(...lons), maxLon = Math.max(...lons);
+const span = (v: number, lo: number, hi: number) => (hi === lo ? 0.5 : (v - lo) / (hi - lo));
+
+const nodeLabel = (id: string) => REFERENCE_GRAPH_NODES.find((n) => n.id === id)?.label ?? id;
+const nodeX = (i: number) => 60 + i * 140;
 ---
 
 <BaseLayout title="The epistemic visual language" path="/visual-language/">
   <p>
     The project's defining UI problem is communicating uncertainty without false
-    confidence or paralysing hedging. This page is the reference implementation.
+    confidence or paralysing hedging. This page is the reference implementation — every
+    field, glyph, marker, and gap, and the two rendering contexts (a map popup and a
+    graph edge list) where the contested marker must persist.
   </p>
 
   <section aria-labelledby="glyph-heading">
@@ -91,5 +120,151 @@ const contested = isContested(env.agreement);
         ))}
       </tbody>
     </table>
+  </section>
+
+  <!-- Folded reference exemplar: the map popup + its tabular equivalent (SIG-UI-037).
+       The product map is at /map/; this demonstrates the popup's persistent contested
+       marker and the map's mandatory tabular equivalent. -->
+  <section id="reference-map" aria-labelledby="refmap-heading">
+    <h2 id="refmap-heading">Reference map: popup + tabular equivalent (SIG-UI-037)</h2>
+    <p>
+      A static, zero-JS reference map with no third-party tile dependency.
+      <strong>Everything the map shows is also in the table below</strong> — the table is
+      the equivalent, not a fallback. The product map lives at <a href="/map/">/map/</a>.
+    </p>
+    <figure aria-labelledby="refmap-caption">
+      <svg
+        role="img"
+        aria-label="Static map of three reference sites in Oklahoma City; full detail in the table below."
+        viewBox="0 0 400 240"
+        width="400"
+        height="240"
+        style="border:1px solid var(--sig-rule); background: hsl(0deg 0% 97%);"
+      >
+        {plotted.map((s) => (
+          <circle
+            cx={20 + span(s.lon as number, minLon, maxLon) * 360}
+            cy={220 - span(s.lat as number, minLat, maxLat) * 200}
+            r="6"
+            fill="var(--sig-epi-status-resolved)"
+          >
+            <title>{s.label}</title>
+          </circle>
+        ))}
+      </svg>
+      <figcaption id="refmap-caption">
+        Reference sites. Coordinates are reduced to each site's sensitivity tier
+        (§19.4); a site whose location SIG has not confirmed appears as a gap, below.
+      </figcaption>
+    </figure>
+
+    <aside class="sig-popup" data-testid="map-popup" aria-label="Map popup: downtown corridor site">
+      <h3>Popup: fixed ALPR — downtown corridor</h3>
+      <p>
+        Operated by {OKCPD.label}. Active device count:
+        <strong>{String(env.value)}</strong> <ContestedMarker compact={true} />
+      </p>
+    </aside>
+
+    <h3 id="refmap-table-heading">Tabular equivalent</h3>
+    <table class="sig-table" aria-labelledby="refmap-table-heading">
+      <thead>
+        <tr>
+          <th scope="col">Site</th>
+          <th scope="col">Jurisdiction</th>
+          <th scope="col">Latitude</th>
+          <th scope="col">Longitude</th>
+          <th scope="col">Published precision</th>
+        </tr>
+      </thead>
+      <tbody>
+        {REFERENCE_MAP_SITES.map((s) => (
+          <tr data-testid="map-row">
+            <th scope="row">{s.label}</th>
+            <td>{s.jurisdiction}</td>
+            {s.locationAbsence ? (
+              <td colspan="3">
+                <AbsenceHatch
+                  kind={s.locationAbsence}
+                  subject_id={s.id}
+                  predicate_id="location"
+                  predicate_label="Location"
+                />
+              </td>
+            ) : (
+              <>
+                <td>{s.lat}</td>
+                <td>{s.lon}</td>
+                <td>{s.precision}</td>
+              </>
+            )}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Folded reference exemplar: the graph edge list (SIG-UI-037), with the persistent
+       contested marker on a contested edge. The product network is at /network/. -->
+  <section id="reference-graph" aria-labelledby="refgraph-heading">
+    <h2 id="refgraph-heading">Reference graph: diagram + list equivalent (SIG-UI-037)</h2>
+    <p>
+      A static, zero-JS reference relationship graph. <strong>Every edge is also in the
+      list below</strong> — the list is the equivalent, not a fallback. The product
+      network explorer lives at <a href="/network/">/network/</a>.
+    </p>
+    <figure aria-labelledby="refgraph-caption">
+      <svg
+        role="img"
+        aria-label="Static diagram of the reference sharing network; full detail in the list below."
+        viewBox="0 0 400 160"
+        width="400"
+        height="160"
+        style="border:1px solid var(--sig-rule); background: hsl(0deg 0% 97%);"
+      >
+        {REFERENCE_GRAPH_EDGES.map((e) => {
+          const fi = REFERENCE_GRAPH_NODES.findIndex((n) => n.id === e.from);
+          const ti = REFERENCE_GRAPH_NODES.findIndex((n) => n.id === e.to);
+          const midX = (nodeX(fi) + nodeX(ti)) / 2;
+          const edgeContested = isContested(e.agreement);
+          return (
+            <g>
+              <line
+                x1={nodeX(fi)}
+                y1="80"
+                x2={nodeX(ti)}
+                y2="80"
+                stroke="var(--sig-muted)"
+                stroke-width="2"
+                stroke-dasharray={edgeContested ? "4 3" : undefined}
+              />
+              {edgeContested && (
+                <text x={midX} y="72" text-anchor="middle" font-size="13" font-weight="700">
+                  {"≠"}
+                </text>
+              )}
+            </g>
+          );
+        })}
+        {REFERENCE_GRAPH_NODES.map((n, i) => (
+          <g>
+            <circle cx={nodeX(i)} cy="80" r="10" fill="var(--sig-epi-status-resolved)"><title>{n.label}</title></circle>
+            <text x={nodeX(i)} y="110" text-anchor="middle" font-size="10">{n.label}</text>
+          </g>
+        ))}
+      </svg>
+      <figcaption id="refgraph-caption">Nodes are institutions and vendors; edges are declared relationships.</figcaption>
+    </figure>
+
+    <h3 id="refgraph-list-heading">List equivalent</h3>
+    <ul class="sig-edge-list" aria-labelledby="refgraph-list-heading">
+      {REFERENCE_GRAPH_EDGES.map((e) => (
+        <li data-testid="graph-edge">
+          <strong>{nodeLabel(e.from)}</strong> {e.relation} <strong>{nodeLabel(e.to)}</strong>
+          {isContested(e.agreement) && <> <ContestedMarker compact={true} /></>}
+          <div><SupportGlyph support={e.support} evidenceCount={e.evidence_count} /></div>
+        </li>
+      ))}
+    </ul>
   </section>
 </BaseLayout>

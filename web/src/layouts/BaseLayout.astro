@@ -3,18 +3,24 @@
 // Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 // carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 
-// The web shell's base layout (SIG-UI-036/037). It ships NO client JavaScript:
-// there is no `client:*` directive anywhere in the shell, so the built HTML is
-// archivable by default. Every page rendered through this layout carries the
-// citation affordance (SIG-UI-035), a skip link, a document language, and the
-// shared design system — the a11y + no-JS baseline P15.2–P15.5 all inherit.
+// The web shell's base layout (SIG-UI-036/037; the national IA, SIG-UI-049 /
+// ADR-093). It ships NO client JavaScript: there is no `client:*` directive
+// anywhere in the shell, so the built HTML is archivable by default. Every page
+// rendered through this layout carries the citation affordance (SIG-UI-035), a skip
+// link, a document language, the grouped keyboard-accessible navigation, and the
+// shared design system.
+//
+// The belief-pinned citation defaults (the as-of pair + ruleset) come from the
+// export MANIFEST via the data layer (getSiteMetadata), not the frozen fixtures
+// constant, so a citation captured off the public surface names the belief the
+// surface was actually built at (SIG-UI-035, SIG-UI-049 / ADR-093 §5).
 import Citation from "../components/Citation.astro";
 import HowWeKnowThis from "../components/HowWeKnowThis.astro";
 import DisputeLink from "../components/DisputeLink.astro";
 import "../styles/epistemic.css";
-import { AS_OF, RULESET_VERSION } from "../lib/fixtures";
 import type { AsOfEcho } from "../lib/fixtures";
 import type { ProvenanceSummary } from "../lib/provenance";
+import { getSiteMetadata } from "../lib/data";
 
 interface Props {
   title: string;
@@ -29,10 +35,51 @@ interface Props {
 }
 
 const { title, path } = Astro.props;
-const asOf = Astro.props.asOf ?? AS_OF;
-const rulesetVersion = Astro.props.rulesetVersion ?? RULESET_VERSION;
+const siteMeta = getSiteMetadata();
+const asOf = Astro.props.asOf ?? siteMeta.asOf;
+const rulesetVersion = Astro.props.rulesetVersion ?? siteMeta.rulesetVersion;
 const provenance = Astro.props.provenance;
 const lang = Astro.props.lang ?? "en";
+
+// The canonical origin the belief-pinned permalink resolves against (P27.6; DNS
+// cut-over is P27.10). `Astro.site` is set in astro.config.mjs; the literal fallback
+// matches it so a stray host never resurrects the old `sig.example` placeholder.
+const CANONICAL_ORIGIN = "https://surveillancegraph.org";
+
+// The grouped, uncluttered navigation (SIG-UI-049 / ADR-093): product · about the
+// record · reference. Replaces the flat 13-link bar; the Dossiers entry points at
+// the per-jurisdiction index, never a single hardcoded jurisdiction.
+const NAV_GROUPS: { label: string; links: { href: string; label: string }[] }[] = [
+  {
+    label: "Explore",
+    links: [
+      { href: "/map/", label: "Map" },
+      { href: "/network/", label: "Network" },
+      { href: "/dossier/", label: "Dossiers" },
+      { href: "/watch/", label: "Watch" },
+      { href: "/evidence/", label: "Evidence" },
+    ],
+  },
+  {
+    label: "About the record",
+    links: [
+      { href: "/methodology/", label: "Methodology" },
+      { href: "/coverage-metrics/", label: "Coverage" },
+      { href: "/data-freshness/", label: "Data freshness" },
+      { href: "/research-queue/", label: "Research queue" },
+      { href: "/corrections/", label: "Corrections" },
+      { href: "/contribution-back/", label: "Contribution back" },
+    ],
+  },
+  {
+    label: "Reference",
+    links: [
+      { href: "/visual-language/", label: "Visual language" },
+      { href: "/editorial-standards/", label: "Editorial standards" },
+      { href: "/style-guide/", label: "Style guide" },
+    ],
+  },
+];
 ---
 
 <!doctype html>
@@ -43,28 +90,33 @@ const lang = Astro.props.lang ?? "en";
     <title>{title} · SIG</title>
     <meta
       name="description"
-      content="Surveillance Infrastructure Graph — an open, temporally versioned, claim-level-provenance record."
+      content="Surveillance Infrastructure Graph — an open, temporally versioned, claim-level-provenance record of public surveillance infrastructure."
     />
-    <link rel="canonical" href={new URL(path, Astro.site ?? "https://sig.example").href} />
+    <link rel="canonical" href={new URL(path, Astro.site ?? CANONICAL_ORIGIN).href} />
   </head>
   <body>
     <a class="sig-skip-link" href="#main">Skip to main content</a>
     <header class="sig-header">
-      <nav aria-label="Primary">
-        <a href="/">SIG</a>
-        <a href="/dossier/oklahoma-city/">Dossier</a>
-        <a href="/visual-language/">Visual language</a>
-        <a href="/map/">Map</a>
-        <a href="/network/">Network</a>
-        <a href="/watch/">Watch</a>
-        <a href="/evidence/">Evidence</a>
-        <a href="/research-queue/">Research queue</a>
-        <a href="/corrections/">Corrections</a>
-        <a href="/contribution-back/">Contribution back</a>
-        <a href="/methodology/">Methodology</a>
-        <a href="/reference-map/">Reference map</a>
-        <a href="/reference-graph/">Reference graph</a>
-      </nav>
+      <div class="sig-header__bar">
+        <a class="sig-wordmark" href="/" aria-label="SIG — home">
+          <span class="sig-wordmark__mark" aria-hidden="true">SIG</span>
+          <span class="sig-wordmark__full">Surveillance Infrastructure Graph</span>
+        </a>
+        <nav class="sig-nav" aria-label="Primary">
+          {NAV_GROUPS.map((group) => (
+            <div class="sig-nav__group" role="group" aria-label={group.label}>
+              <span class="sig-nav__group-label" aria-hidden="true">{group.label}</span>
+              <ul class="sig-nav__list">
+                {group.links.map((link) => (
+                  <li>
+                    <a href={link.href}>{link.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </nav>
+      </div>
     </header>
     <main id="main">
       <h1>{title}</h1>
