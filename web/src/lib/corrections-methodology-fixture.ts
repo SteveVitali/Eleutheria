@@ -56,6 +56,7 @@ export const RESEARCH_QUEUE: ResearchTaskCard[] = [
     jurisdiction: "Oklahoma City",
     dispositions: dispositionsFor("records_requester"),
     priority: 0.7,
+    trigger: { kind: "contradiction", ref: "policy_configuration_divergence:okcpd:retention" },
   },
   {
     task_type: "contract_expiring",

@@ -389,7 +389,16 @@
         "geographic_scope": { "type": "string" },
         "jurisdiction": { "type": "string" },
         "dispositions": { "type": "array", "items": { "type": "string" } },
-        "priority": { "type": "number" }
+        "priority": { "type": "number" },
+        "trigger": {
+          "description": "P29.2 — what made the detector fire (the materialized contradiction/coverage/relationship the task cites as its trigger). Optional: absent for a legacy/hand-inserted task.",
+          "type": "object",
+          "required": ["kind", "ref"],
+          "properties": {
+            "kind": { "type": "string", "description": "contradiction | coverage | relationship" },
+            "ref": { "type": "string", "description": "the materialized row id" }
+          }
+        }
       }
     }
   }

@@ -4,14 +4,17 @@ version = "0.1.0"
 description = "SIG tasks package: the §33 research-task coordination engine."
 requires-python = ">=3.11"
 # The disposition→data bridge reuses inference's CoverageRecord (P09.1,
-# SIG-TASK-009) rather than re-encoding the §32.1 coverage shape.
-dependencies = ["sig-inference"]
+# SIG-TASK-009) rather than re-encoding the §32.1 coverage shape. P29.2's detector
+# run reads the Round-6 materialized graph through the reconcile/inference read seams
+# (contradictions/edges/coverage) — CONSUMED, not re-implemented (SIG-ENG-035).
+dependencies = ["sig-inference", "sig-reconcile"]
 
 [project.scripts]
 sig-tasks = "tasks.cli:main"
 
 [tool.uv.sources]
 sig-inference = { workspace = true }
+sig-reconcile = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]

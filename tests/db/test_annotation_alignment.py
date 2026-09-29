@@ -175,6 +175,10 @@ PAIRS: list[Pair] = [
             "claimed_at": "claim lifecycle column, nullable (deferred persistence)",
             "claim_expires_at": "claim lifecycle column, nullable (deferred persistence)",
             "generated_at": "server default clock_timestamp()",
+            "trigger_kind": "P29.2 trigger citation, nullable; sourced by the detector run "
+            "(tasks.lifecycle.ResearchTask / tasks.research_pg), not reconcile.model.ResearchTask",
+            "trigger_ref": "P29.2 trigger citation, nullable; sourced by the detector run "
+            "(tasks.lifecycle.ResearchTask / tasks.research_pg), not reconcile.model.ResearchTask",
         },
     ),
     Pair(

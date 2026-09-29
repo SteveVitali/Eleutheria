@@ -100,6 +100,14 @@ const jurisdictions = queueJurisdictions(RESEARCH_QUEUE);
               <dt>Geographic scope</dt>
               <dd>{card.geographic_scope} — {card.jurisdiction}</dd>
             </div>
+            {card.trigger && (
+              <div>
+                <dt>Triggered by</dt>
+                <dd data-testid="task-trigger">
+                  {card.trigger.kind} <code>{card.trigger.ref}</code>
+                </dd>
+              </div>
+            )}
           </dl>
 
           <!-- Claiming with expiry (SIG-TASK-010/011): priority, never exclusivity. -->

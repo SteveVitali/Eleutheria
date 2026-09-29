@@ -128,11 +128,15 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
         "entity_identifier",
         "SELECT entity_id::text, scheme, value FROM entity_identifier ORDER BY entity_id, scheme",
     ),
-    # research_task rows (§39.7) — the research queue surface.
+    # research_task rows (§39.7) — the research queue surface. The trailing
+    # trigger_kind/trigger_ref (P29.2) cite what made each task's detector fire (the
+    # materialized contradiction/coverage/relationship); a pre-P29.2 spine lacks the
+    # columns, so the query raises and fetch_export_raw degrades it to [] honestly.
     "research_tasks": (
         "research_task",
         "SELECT task_id::text, task_type, subject_id::text, jurisdiction_id::text, priority,"
-        "       status, disposition, closing_condition, detector_version"
+        "       status, disposition, closing_condition, detector_version,"
+        "       trigger_kind, trigger_ref"
         "  FROM research_task ORDER BY priority DESC, task_id",
     ),
     # publishable evidence_artifact metadata (§39.6) — the evidence surface. Bytes
@@ -798,22 +802,29 @@ def _research_queue(raw: Mapping[str, Any]) -> list[dict[str, Any]]:
     condition (SIG-TASK-002)."""
     out: list[dict[str, Any]] = []
     for r in raw.get("research_tasks") or []:
-        task_id, task_type, subject_id, jurisdiction_id, priority, status, disp, closing, _det = r
-        out.append(
-            {
-                "task_type": str(task_type),
-                "subject_id": str(subject_id or task_id),
-                "subject_label": str(subject_id or task_id),
-                "closing_condition": str(closing),
-                "evidence_sought": str(task_type),
-                "assignee_class": "contributor",
-                "effort_estimate": "unknown",
-                "geographic_scope": str(jurisdiction_id or ""),
-                "jurisdiction": str(jurisdiction_id or ""),
-                "dispositions": [str(disp)] if disp else [],
-                "priority": float(priority) if priority is not None else 0.0,
-            }
-        )
+        task_id, task_type, subject_id, jurisdiction_id, priority, status, disp, closing, _det = r[
+            :9
+        ]
+        # P29.2: trigger_kind/trigger_ref cite what made the detector fire — present when the
+        # detector run wrote the row, absent (None) for a legacy/hand-inserted row.
+        trigger_kind = r[9] if len(r) > 9 else None
+        trigger_ref = r[10] if len(r) > 10 else None
+        card: dict[str, Any] = {
+            "task_type": str(task_type),
+            "subject_id": str(subject_id or task_id),
+            "subject_label": str(subject_id or task_id),
+            "closing_condition": str(closing),
+            "evidence_sought": str(task_type),
+            "assignee_class": "contributor",
+            "effort_estimate": "unknown",
+            "geographic_scope": str(jurisdiction_id or ""),
+            "jurisdiction": str(jurisdiction_id or ""),
+            "dispositions": [str(disp)] if disp else [],
+            "priority": float(priority) if priority is not None else 0.0,
+        }
+        if trigger_kind:
+            card["trigger"] = {"kind": str(trigger_kind), "ref": str(trigger_ref or "")}
+        out.append(card)
     return out
 
 
