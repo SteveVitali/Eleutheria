@@ -39,7 +39,15 @@ ADR_DIR = ROOT / "docs/adr"
 # The requirement-definition count after the 46-ticket build (P19.2 froze this at 668),
 # plus the fold-back ids this ticket (P20.2) appended to the spec via spec_src.
 BASELINE_IDS = 668
-FOLD_BACK_IDS = ["SIG-UI-047", "SIG-EVID-020", "SIG-ENG-039"]
+FOLD_BACK_IDS = [
+    "SIG-UI-047",
+    "SIG-EVID-020",
+    "SIG-ENG-039",
+    # P27.3 (ADR-092 share of D-P27-SPEC-1): the observation-vs-resolved public
+    # disclosure rule (§29) and the spine-read, shaped-at-build export (§38.1).
+    "SIG-RECON-058",
+    "SIG-EXPORT-012",
+]
 EXPECTED_IDS = BASELINE_IDS + len(FOLD_BACK_IDS)
 
 # RESERVED-but-unassigned ids (§0.3): allocated in drafting, merged before publication,

@@ -166,6 +166,37 @@ def build_parser() -> argparse.ArgumentParser:
         help="What to print to stdout (default: json).",
     )
 
+    shape = subparsers.add_parser(
+        "shape",
+        help="Compute-on-read export data-shaping over the spine (P27.3, LAUNCH.3): "
+        "point geometry, jurisdiction grouping, observation-level dedup framing, and "
+        "coverage aggregates — the shaped dataset P27.4 emits from. Read-only.",
+    )
+    shape.add_argument(
+        "--dsn",
+        required=True,
+        help="PostgreSQL DSN for the spine — OMIT the password (libpq reads "
+        "PGPASSWORD from the environment; secrets never on the command line or in a "
+        "recorded file). Read-only: shaping runs in a READ ONLY session.",
+    )
+    shape.add_argument(
+        "--as-of",
+        default=None,
+        help="Logical as-of label for the snapshot (default: the UTC generation time).",
+    )
+    shape.add_argument(
+        "--note",
+        default="",
+        help='Free-text provenance note (e.g. "OSM land in flight — provisional").',
+    )
+    shape.add_argument(
+        "--out",
+        required=True,
+        help="Directory the shaped dataset is written to (sites.geojson, sites.json, "
+        "jurisdictions.json, coverage.json, sources.json, sharing_edges.json, "
+        "manifest.json). This is the shaped intermediate, not the export bundle.",
+    )
+
     push = subparsers.add_parser(
         "push",
         help="Upload a built export to an S3-compatible store under content-hash keys.",
@@ -611,6 +642,90 @@ def _run_torrent(in_file: str, out: str | None, trackers: list[str]) -> int:
     return 0
 
 
+def _run_shape(dsn: str, as_of: str | None, note: str, out_dir: str) -> int:
+    """Run compute-on-read shaping and write the shaped dataset files (P27.3).
+
+    Read-only: ``run_shaping`` sets ``default_transaction_read_only`` — the
+    session cannot mutate the spine. The artifacts here are the *shaped
+    intermediate* P27.4's bundle builder consumes, not the export bundle itself.
+    """
+    import psycopg
+
+    from .audit import redact_dsn
+    from .shaping import run_shaping
+
+    spine_label = redact_dsn(dsn)
+    conn = psycopg.connect(dsn, autocommit=True)
+    try:
+        dataset = run_shaping(conn, as_of=as_of, note=note, spine_label=spine_label)
+    finally:
+        conn.close()
+
+    os.makedirs(out_dir, exist_ok=True)
+
+    def _write(name: str, payload: dict) -> str:
+        path = os.path.join(out_dir, name)
+        with open(path, "w", encoding="utf-8") as fh:
+            fh.write(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+        return path
+
+    written = {
+        "sites_geojson": _write("sites.geojson", dataset.to_geojson()),
+        "sites": _write("sites.json", {"sites": [s.as_json() for s in dataset.sites]}),
+        "jurisdictions": _write(
+            "jurisdictions.json",
+            {"jurisdictions": [j.as_json() for j in dataset.jurisdictions]},
+        ),
+        "coverage": _write(
+            "coverage.json",
+            {
+                "metrics": list(dataset.coverage_metrics),
+                "aggregates": [a.as_json() for a in dataset.aggregates],
+            },
+        ),
+        "sources": _write(
+            "sources.json",
+            {
+                "sources": [s.as_json() for s in dataset.sources],
+                "freshness_rows": [s.freshness_row() for s in dataset.sources],
+            },
+        ),
+        "sharing_edges": _write(
+            "sharing_edges.json",
+            {"sharing_edges": [e.as_json() for e in dataset.sharing_edges]},
+        ),
+        "manifest": _write(
+            "manifest.json",
+            {
+                "schema_version": dataset.schema_version,
+                "as_of": dataset.as_of,
+                "generated_at": dataset.generated_at,
+                "spine_label": dataset.spine_label,
+                "note": dataset.note,
+                "spine_watermark": dataset.spine_watermark,
+                "observation_level": True,
+                "totals": dataset.to_json()["totals"],
+                "provenance": dataset.provenance,
+            },
+        ),
+    }
+    sys.stdout.write(
+        json.dumps(
+            {
+                "out_dir": out_dir,
+                "written": written,
+                "as_of": dataset.as_of,
+                "spine_watermark": dataset.spine_watermark,
+                "totals": dataset.to_json()["totals"],
+            },
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n"
+    )
+    return 0
+
+
 def _run_push(in_dir: str, store: str, endpoint_url: str | None, provider: str) -> int:
     from .distribution import ObjectStore
     from .push import build_s3_client, push_export_dir, push_summary
@@ -698,6 +813,8 @@ def main(argv: list[str] | None = None) -> int:
             args.markdown_out,
             args.format,
         )
+    if args.command == "shape":
+        return _run_shape(args.dsn, args.as_of, args.note, args.out)
     if args.command == "push":
         return _run_push(args.in_dir, args.store, args.endpoint_url, args.provider)
     parser.print_help()

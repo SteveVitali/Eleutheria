@@ -1,0 +1,26 @@
+{
+  "as_of": "2026-09-22T20:05:53Z",
+  "generated_at": "2026-09-22T20:05:56Z",
+  "note": "P27.3 live verification \u2014 OSM land in flight; provisional",
+  "observation_level": true,
+  "provenance": {
+    "defects": [],
+    "is_complete": true,
+    "published_claims": 379201,
+    "share": 1.0,
+    "target": 1.0,
+    "with_resolvable_evidence": 379201
+  },
+  "schema_version": "p27.3/1.0.0",
+  "spine_label": "postgresql://sig@127.0.0.1:5433/sig",
+  "spine_watermark": "claims=1159799 closed=0 latest_assertion=2026-09-22T19:56:08.308352+00:00 evidence=1159799/247/247",
+  "totals": {
+    "claims_excluded_not_publishable": 0,
+    "claims_read": 379201,
+    "claims_shaped": 379201,
+    "observation_groups_multi_source": 2677,
+    "subjects_conflicted": 2347,
+    "subjects_geolocated": 87375,
+    "subjects_total": 89722
+  }
+}

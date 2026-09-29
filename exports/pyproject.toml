@@ -26,6 +26,14 @@ dependencies = [
     # in `export` mode; the metric is produced by tasks.osm_feed over the recorded
     # changeset feed (fixtures-replay; no live OSM poll, no OSM usernames).
     "sig-tasks",
+    # P27.3 (export data-shaping): the compute-on-read shaper reuses
+    # sig-inference for the §32 primitives (PublishedAggregate denominators,
+    # volatility-relative freshness) and sig-parsing for the ParsedValue
+    # normalization contract (raw-before-typed, SIG-PARSE-004) — both are
+    # leaf-ward of exports (inference → reconcile/db; parsing is a leaf), so
+    # there is no cycle even though api depends on sig-exports.
+    "sig-inference",
+    "sig-parsing",
     "duckdb>=1.0.0",
     # P21.5: the Zenodo deposit REST transport (SIG-EXPORT-002) speaks HTTP over httpx —
     # already available in the workspace (the P14.1 API tests + P21.3 connectors use it);
@@ -42,6 +50,8 @@ sig-exports = "exports.cli:main"
 sig-policy = { workspace = true }
 sig-resolution = { workspace = true }
 sig-tasks = { workspace = true }
+sig-inference = { workspace = true }
+sig-parsing = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]

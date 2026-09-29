@@ -1,0 +1,1007 @@
+{
+  "jurisdictions": [
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "AL",
+      "sites": {
+        "count": 556,
+        "denominator": 556,
+        "label": "geolocated site observations in AL",
+        "not_evaluable": 0,
+        "phrase": "556 of 556 evaluable geolocated site observations in AL"
+      },
+      "source_ids": [
+        "dot_511_al"
+      ],
+      "subjects": 556
+    },
+    {
+      "conflicted_subjects": 29,
+      "is_unresolved": false,
+      "jurisdiction": "AU-ACT",
+      "sites": {
+        "count": 1299,
+        "denominator": 1328,
+        "label": "geolocated site observations in AU-ACT",
+        "not_evaluable": 0,
+        "phrase": "1299 of 1328 evaluable geolocated site observations in AU-ACT"
+      },
+      "source_ids": [
+        "camreg_act_au"
+      ],
+      "subjects": 1328
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "AU-QLD",
+      "sites": {
+        "count": 1479,
+        "denominator": 1479,
+        "label": "geolocated site observations in AU-QLD",
+        "not_evaluable": 0,
+        "phrase": "1479 of 1479 evaluable geolocated site observations in AU-QLD"
+      },
+      "source_ids": [
+        "camreg_goldcoast_au",
+        "camreg_mbrc_au"
+      ],
+      "subjects": 1479
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "AU-VIC",
+      "sites": {
+        "count": 67,
+        "denominator": 67,
+        "label": "geolocated site observations in AU-VIC",
+        "not_evaluable": 0,
+        "phrase": "67 of 67 evaluable geolocated site observations in AU-VIC"
+      },
+      "source_ids": [
+        "camreg_camberwell_au"
+      ],
+      "subjects": 67
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "AZ",
+      "sites": {
+        "count": 526,
+        "denominator": 526,
+        "label": "geolocated site observations in AZ",
+        "not_evaluable": 0,
+        "phrase": "526 of 526 evaluable geolocated site observations in AZ"
+      },
+      "source_ids": [
+        "camreg_azdot_az"
+      ],
+      "subjects": 526
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "BD",
+      "sites": {
+        "count": 447,
+        "denominator": 447,
+        "label": "geolocated site observations in BD",
+        "not_evaluable": 0,
+        "phrase": "447 of 447 evaluable geolocated site observations in BD"
+      },
+      "source_ids": [
+        "camreg_bangla_bd"
+      ],
+      "subjects": 447
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "BE",
+      "sites": {
+        "count": 19,
+        "denominator": 19,
+        "label": "geolocated site observations in BE",
+        "not_evaluable": 0,
+        "phrase": "19 of 19 evaluable geolocated site observations in BE"
+      },
+      "source_ids": [
+        "camreg_gistel_be"
+      ],
+      "subjects": 19
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "CA",
+      "sites": {
+        "count": 6139,
+        "denominator": 6139,
+        "label": "geolocated site observations in CA",
+        "not_evaluable": 0,
+        "phrase": "6139 of 6139 evaluable geolocated site observations in CA"
+      },
+      "source_ids": [
+        "camreg_brea_ca",
+        "camreg_caloes_ca",
+        "camreg_palmdesert_ca",
+        "camreg_trafficops_ca"
+      ],
+      "subjects": 6139
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "CA-AB",
+      "sites": {
+        "count": 354,
+        "denominator": 354,
+        "label": "geolocated site observations in CA-AB",
+        "not_evaluable": 0,
+        "phrase": "354 of 354 evaluable geolocated site observations in CA-AB"
+      },
+      "source_ids": [
+        "camreg_calgary_ab",
+        "camreg_stalbert_ab"
+      ],
+      "subjects": 354
+    },
+    {
+      "conflicted_subjects": 92,
+      "is_unresolved": false,
+      "jurisdiction": "CA-BC",
+      "sites": {
+        "count": 737,
+        "denominator": 829,
+        "label": "geolocated site observations in CA-BC",
+        "not_evaluable": 0,
+        "phrase": "737 of 829 evaluable geolocated site observations in CA-BC"
+      },
+      "source_ids": [
+        "camreg_surrey_bc",
+        "camreg_vancouver_bc"
+      ],
+      "subjects": 829
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "CA-MB",
+      "sites": {
+        "count": 795,
+        "denominator": 795,
+        "label": "geolocated site observations in CA-MB",
+        "not_evaluable": 0,
+        "phrase": "795 of 795 evaluable geolocated site observations in CA-MB"
+      },
+      "source_ids": [
+        "camreg_univmb_mb",
+        "camreg_winnipeg_mb"
+      ],
+      "subjects": 795
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "CA-ON",
+      "sites": {
+        "count": 996,
+        "denominator": 996,
+        "label": "geolocated site observations in CA-ON",
+        "not_evaluable": 0,
+        "phrase": "996 of 996 evaluable geolocated site observations in CA-ON"
+      },
+      "source_ids": [
+        "camreg_caledon_on",
+        "camreg_ottawa_on",
+        "camreg_peel_on",
+        "camreg_toronto_on",
+        "camreg_york_on"
+      ],
+      "subjects": 996
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "CO",
+      "sites": {
+        "count": 14,
+        "denominator": 14,
+        "label": "geolocated site observations in CO",
+        "not_evaluable": 0,
+        "phrase": "14 of 14 evaluable geolocated site observations in CO"
+      },
+      "source_ids": [
+        "camreg_denver_co"
+      ],
+      "subjects": 14
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "CO-MET",
+      "sites": {
+        "count": 50,
+        "denominator": 50,
+        "label": "geolocated site observations in CO-MET",
+        "not_evaluable": 0,
+        "phrase": "50 of 50 evaluable geolocated site observations in CO-MET"
+      },
+      "source_ids": [
+        "camreg_puertogaitan_co"
+      ],
+      "subjects": 50
+    },
+    {
+      "conflicted_subjects": 122,
+      "is_unresolved": false,
+      "jurisdiction": "DC",
+      "sites": {
+        "count": 1591,
+        "denominator": 1713,
+        "label": "geolocated site observations in DC",
+        "not_evaluable": 0,
+        "phrase": "1591 of 1713 evaluable geolocated site observations in DC"
+      },
+      "source_ids": [
+        "camreg_dc_dot_dc",
+        "camreg_washington_dc",
+        "dot_511_dc"
+      ],
+      "subjects": 1713
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "DE",
+      "sites": {
+        "count": 24,
+        "denominator": 24,
+        "label": "geolocated site observations in DE",
+        "not_evaluable": 0,
+        "phrase": "24 of 24 evaluable geolocated site observations in DE"
+      },
+      "source_ids": [
+        "camreg_mueller_de"
+      ],
+      "subjects": 24
+    },
+    {
+      "conflicted_subjects": 1964,
+      "is_unresolved": false,
+      "jurisdiction": "FL",
+      "sites": {
+        "count": 8001,
+        "denominator": 9965,
+        "label": "geolocated site observations in FL",
+        "not_evaluable": 0,
+        "phrase": "8001 of 9965 evaluable geolocated site observations in FL"
+      },
+      "source_ids": [
+        "camreg_fl511_fl",
+        "camreg_gainesville_fl",
+        "camreg_leon_fl",
+        "camreg_sarasota_fl"
+      ],
+      "subjects": 9965
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "GA",
+      "sites": {
+        "count": 7049,
+        "denominator": 7049,
+        "label": "geolocated site observations in GA",
+        "not_evaluable": 0,
+        "phrase": "7049 of 7049 evaluable geolocated site observations in GA"
+      },
+      "source_ids": [
+        "camreg_gmh_emc_ga",
+        "dot_511_ga"
+      ],
+      "subjects": 7049
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "GB",
+      "sites": {
+        "count": 12,
+        "denominator": 12,
+        "label": "geolocated site observations in GB",
+        "not_evaluable": 0,
+        "phrase": "12 of 12 evaluable geolocated site observations in GB"
+      },
+      "source_ids": [
+        "camreg_esriukpolice_gb"
+      ],
+      "subjects": 12
+    },
+    {
+      "conflicted_subjects": 49,
+      "is_unresolved": false,
+      "jurisdiction": "GB-ENG",
+      "sites": {
+        "count": 1661,
+        "denominator": 1710,
+        "label": "geolocated site observations in GB-ENG",
+        "not_evaluable": 0,
+        "phrase": "1661 of 1710 evaluable geolocated site observations in GB-ENG"
+      },
+      "source_ids": [
+        "camreg_bedford_gb",
+        "camreg_dover_gb",
+        "camreg_durham_gb",
+        "camreg_essex_gb",
+        "camreg_gedling_gb",
+        "camreg_guildford_gb",
+        "camreg_lambeth_gb",
+        "camreg_nottingham_gb",
+        "camreg_plymouth_gb",
+        "camreg_sheffield_gb",
+        "camreg_york_gb"
+      ],
+      "subjects": 1710
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "GB-NIR",
+      "sites": {
+        "count": 18,
+        "denominator": 18,
+        "label": "geolocated site observations in GB-NIR",
+        "not_evaluable": 0,
+        "phrase": "18 of 18 evaluable geolocated site observations in GB-NIR"
+      },
+      "source_ids": [
+        "camreg_lisburn_gb"
+      ],
+      "subjects": 18
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "GB-SCT",
+      "sites": {
+        "count": 595,
+        "denominator": 595,
+        "label": "geolocated site observations in GB-SCT",
+        "not_evaluable": 0,
+        "phrase": "595 of 595 evaluable geolocated site observations in GB-SCT"
+      },
+      "source_ids": [
+        "camreg_eastdun_gb",
+        "camreg_glasgow_gb",
+        "camreg_northayrshire_gb"
+      ],
+      "subjects": 595
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "HI",
+      "sites": {
+        "count": 252,
+        "denominator": 252,
+        "label": "geolocated site observations in HI",
+        "not_evaluable": 0,
+        "phrase": "252 of 252 evaluable geolocated site observations in HI"
+      },
+      "source_ids": [
+        "camreg_honolulu_hi"
+      ],
+      "subjects": 252
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "HK",
+      "sites": {
+        "count": 22,
+        "denominator": 22,
+        "label": "geolocated site observations in HK",
+        "not_evaluable": 0,
+        "phrase": "22 of 22 evaluable geolocated site observations in HK"
+      },
+      "source_ids": [
+        "camreg_polyu_hk"
+      ],
+      "subjects": 22
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "IA",
+      "sites": {
+        "count": 1002,
+        "denominator": 1002,
+        "label": "geolocated site observations in IA",
+        "not_evaluable": 0,
+        "phrase": "1002 of 1002 evaluable geolocated site observations in IA"
+      },
+      "source_ids": [
+        "camreg_bettendorf_ia",
+        "camreg_dubuque_ia",
+        "dot_511_ia"
+      ],
+      "subjects": 1002
+    },
+    {
+      "conflicted_subjects": 2,
+      "is_unresolved": false,
+      "jurisdiction": "ID",
+      "sites": {
+        "count": 498,
+        "denominator": 500,
+        "label": "geolocated site observations in ID",
+        "not_evaluable": 0,
+        "phrase": "498 of 500 evaluable geolocated site observations in ID"
+      },
+      "source_ids": [
+        "camreg_achd_id",
+        "camreg_indonesia_id"
+      ],
+      "subjects": 500
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "IE-DL",
+      "sites": {
+        "count": 123,
+        "denominator": 123,
+        "label": "geolocated site observations in IE-DL",
+        "not_evaluable": 0,
+        "phrase": "123 of 123 evaluable geolocated site observations in IE-DL"
+      },
+      "source_ids": [
+        "camreg_donegal_ie"
+      ],
+      "subjects": 123
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "IL",
+      "sites": {
+        "count": 3446,
+        "denominator": 3446,
+        "label": "geolocated site observations in IL",
+        "not_evaluable": 0,
+        "phrase": "3446 of 3446 evaluable geolocated site observations in IL"
+      },
+      "source_ids": [
+        "camreg_chicago_il",
+        "dot_511_il"
+      ],
+      "subjects": 3446
+    },
+    {
+      "conflicted_subjects": 1,
+      "is_unresolved": false,
+      "jurisdiction": "JP",
+      "sites": {
+        "count": 56,
+        "denominator": 57,
+        "label": "geolocated site observations in JP",
+        "not_evaluable": 0,
+        "phrase": "56 of 57 evaluable geolocated site observations in JP"
+      },
+      "source_ids": [
+        "camreg_bouhan_jp"
+      ],
+      "subjects": 57
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "KS",
+      "sites": {
+        "count": 97,
+        "denominator": 97,
+        "label": "geolocated site observations in KS",
+        "not_evaluable": 0,
+        "phrase": "97 of 97 evaluable geolocated site observations in KS"
+      },
+      "source_ids": [
+        "camreg_lawrence_ks",
+        "camreg_manhattan_ks"
+      ],
+      "subjects": 97
+    },
+    {
+      "conflicted_subjects": 1,
+      "is_unresolved": false,
+      "jurisdiction": "KY",
+      "sites": {
+        "count": 586,
+        "denominator": 587,
+        "label": "geolocated site observations in KY",
+        "not_evaluable": 0,
+        "phrase": "586 of 587 evaluable geolocated site observations in KY"
+      },
+      "source_ids": [
+        "camreg_lexington_ky",
+        "camreg_lojic_ky",
+        "dot_511_ky"
+      ],
+      "subjects": 587
+    },
+    {
+      "conflicted_subjects": 13,
+      "is_unresolved": false,
+      "jurisdiction": "LA",
+      "sites": {
+        "count": 1054,
+        "denominator": 1067,
+        "label": "geolocated site observations in LA",
+        "not_evaluable": 0,
+        "phrase": "1054 of 1067 evaluable geolocated site observations in LA"
+      },
+      "source_ids": [
+        "camreg_batonrouge_la",
+        "camreg_ebrgis_la",
+        "camreg_nola_la",
+        "camreg_nola_safety_la",
+        "camreg_tulane_la",
+        "dot_511_la"
+      ],
+      "subjects": 1067
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "MA",
+      "sites": {
+        "count": 845,
+        "denominator": 845,
+        "label": "geolocated site observations in MA",
+        "not_evaluable": 0,
+        "phrase": "845 of 845 evaluable geolocated site observations in MA"
+      },
+      "source_ids": [
+        "camreg_massdot_ma"
+      ],
+      "subjects": 845
+    },
+    {
+      "conflicted_subjects": 1,
+      "is_unresolved": false,
+      "jurisdiction": "MD",
+      "sites": {
+        "count": 2752,
+        "denominator": 2753,
+        "label": "geolocated site observations in MD",
+        "not_evaluable": 0,
+        "phrase": "2752 of 2753 evaluable geolocated site observations in MD"
+      },
+      "source_ids": [
+        "camreg_baltimore_atves_md",
+        "camreg_baltimore_md",
+        "camreg_md_opendata",
+        "camreg_pgcounty_md",
+        "camreg_umbc_md",
+        "camreg_uofmd_md",
+        "dot_511_md"
+      ],
+      "subjects": 2753
+    },
+    {
+      "conflicted_subjects": 1,
+      "is_unresolved": false,
+      "jurisdiction": "MN",
+      "sites": {
+        "count": 994,
+        "denominator": 995,
+        "label": "geolocated site observations in MN",
+        "not_evaluable": 0,
+        "phrase": "994 of 995 evaluable geolocated site observations in MN"
+      },
+      "source_ids": [
+        "camreg_carver_mn",
+        "camreg_mndot_mn",
+        "camreg_monmap_mn"
+      ],
+      "subjects": 995
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "MO",
+      "sites": {
+        "count": 1107,
+        "denominator": 1107,
+        "label": "geolocated site observations in MO",
+        "not_evaluable": 0,
+        "phrase": "1107 of 1107 evaluable geolocated site observations in MO"
+      },
+      "source_ids": [
+        "camreg_kcmo_mo",
+        "dot_511_mo"
+      ],
+      "subjects": 1107
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "MY",
+      "sites": {
+        "count": 386,
+        "denominator": 386,
+        "label": "geolocated site observations in MY",
+        "not_evaluable": 0,
+        "phrase": "386 of 386 evaluable geolocated site observations in MY"
+      },
+      "source_ids": [
+        "camreg_ukm_my"
+      ],
+      "subjects": 386
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "NC",
+      "sites": {
+        "count": 44,
+        "denominator": 44,
+        "label": "geolocated site observations in NC",
+        "not_evaluable": 0,
+        "phrase": "44 of 44 evaluable geolocated site observations in NC"
+      },
+      "source_ids": [
+        "camreg_raleigh_nc",
+        "camreg_salisbury_nc"
+      ],
+      "subjects": 44
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "NL",
+      "sites": {
+        "count": 54,
+        "denominator": 54,
+        "label": "geolocated site observations in NL",
+        "not_evaluable": 0,
+        "phrase": "54 of 54 evaluable geolocated site observations in NL"
+      },
+      "source_ids": [
+        "camreg_oosgis_nl"
+      ],
+      "subjects": 54
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "NY",
+      "sites": {
+        "count": 585,
+        "denominator": 585,
+        "label": "geolocated site observations in NY",
+        "not_evaluable": 0,
+        "phrase": "585 of 585 evaluable geolocated site observations in NY"
+      },
+      "source_ids": [
+        "camreg_nyc_jgrayson_ny",
+        "camreg_nyc_weltia_ny",
+        "camreg_rochester_ny"
+      ],
+      "subjects": 585
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "NZ",
+      "sites": {
+        "count": 1060,
+        "denominator": 1060,
+        "label": "geolocated site observations in NZ",
+        "not_evaluable": 0,
+        "phrase": "1060 of 1060 evaluable geolocated site observations in NZ"
+      },
+      "source_ids": [
+        "camreg_nzta_nz",
+        "camreg_wellington_nz"
+      ],
+      "subjects": 1060
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "OR",
+      "sites": {
+        "count": 1418,
+        "denominator": 1418,
+        "label": "geolocated site observations in OR",
+        "not_evaluable": 0,
+        "phrase": "1418 of 1418 evaluable geolocated site observations in OR"
+      },
+      "source_ids": [
+        "camreg_jcfd3_or",
+        "camreg_keizer_or",
+        "camreg_portland_or",
+        "dot_511_or"
+      ],
+      "subjects": 1418
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "PA",
+      "sites": {
+        "count": 1249,
+        "denominator": 1249,
+        "label": "geolocated site observations in PA",
+        "not_evaluable": 0,
+        "phrase": "1249 of 1249 evaluable geolocated site observations in PA"
+      },
+      "source_ids": [
+        "camreg_penndot_pa"
+      ],
+      "subjects": 1249
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "PS",
+      "sites": {
+        "count": 6,
+        "denominator": 6,
+        "label": "geolocated site observations in PS",
+        "not_evaluable": 0,
+        "phrase": "6 of 6 evaluable geolocated site observations in PS"
+      },
+      "source_ids": [
+        "camreg_ramallah_ps"
+      ],
+      "subjects": 6
+    },
+    {
+      "conflicted_subjects": 1,
+      "is_unresolved": false,
+      "jurisdiction": "PT",
+      "sites": {
+        "count": 0,
+        "denominator": 1,
+        "label": "geolocated site observations in PT",
+        "not_evaluable": 0,
+        "phrase": "0 of 1 evaluable geolocated site observations in PT"
+      },
+      "source_ids": [
+        "camreg_apram_pt"
+      ],
+      "subjects": 1
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "SA",
+      "sites": {
+        "count": 1128,
+        "denominator": 1128,
+        "label": "geolocated site observations in SA",
+        "not_evaluable": 0,
+        "phrase": "1128 of 1128 evaluable geolocated site observations in SA"
+      },
+      "source_ids": [
+        "camreg_riyadh_sa"
+      ],
+      "subjects": 1128
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "SD",
+      "sites": {
+        "count": 234,
+        "denominator": 234,
+        "label": "geolocated site observations in SD",
+        "not_evaluable": 0,
+        "phrase": "234 of 234 evaluable geolocated site observations in SD"
+      },
+      "source_ids": [
+        "camreg_siouxfalls_sd"
+      ],
+      "subjects": 234
+    },
+    {
+      "conflicted_subjects": 1,
+      "is_unresolved": false,
+      "jurisdiction": "TH",
+      "sites": {
+        "count": 2109,
+        "denominator": 2110,
+        "label": "geolocated site observations in TH",
+        "not_evaluable": 0,
+        "phrase": "2109 of 2110 evaluable geolocated site observations in TH"
+      },
+      "source_ids": [
+        "camreg_thailand_th"
+      ],
+      "subjects": 2110
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "TN",
+      "sites": {
+        "count": 190,
+        "denominator": 190,
+        "label": "geolocated site observations in TN",
+        "not_evaluable": 0,
+        "phrase": "190 of 190 evaluable geolocated site observations in TN"
+      },
+      "source_ids": [
+        "camreg_chattanooga_tn",
+        "camreg_nashville_tn"
+      ],
+      "subjects": 190
+    },
+    {
+      "conflicted_subjects": 2,
+      "is_unresolved": false,
+      "jurisdiction": "TX",
+      "sites": {
+        "count": 3994,
+        "denominator": 3996,
+        "label": "geolocated site observations in TX",
+        "not_evaluable": 0,
+        "phrase": "3994 of 3996 evaluable geolocated site observations in TX"
+      },
+      "source_ids": [
+        "camreg_austin_tx",
+        "camreg_friendswood_tx",
+        "camreg_mctx_tx",
+        "camreg_txdot_rep_tx"
+      ],
+      "subjects": 3996
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "US",
+      "sites": {
+        "count": 629,
+        "denominator": 629,
+        "label": "geolocated site observations in US",
+        "not_evaluable": 0,
+        "phrase": "629 of 629 evaluable geolocated site observations in US"
+      },
+      "source_ids": [
+        "camreg_jmh_us",
+        "camreg_stanford_us",
+        "camreg_trpa_us"
+      ],
+      "subjects": 629
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "UT",
+      "sites": {
+        "count": 32,
+        "denominator": 32,
+        "label": "geolocated site observations in UT",
+        "not_evaluable": 0,
+        "phrase": "32 of 32 evaluable geolocated site observations in UT"
+      },
+      "source_ids": [
+        "dot_511_ut"
+      ],
+      "subjects": 32
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "VA",
+      "sites": {
+        "count": 383,
+        "denominator": 383,
+        "label": "geolocated site observations in VA",
+        "not_evaluable": 0,
+        "phrase": "383 of 383 evaluable geolocated site observations in VA"
+      },
+      "source_ids": [
+        "camreg_arlington_va"
+      ],
+      "subjects": 383
+    },
+    {
+      "conflicted_subjects": 0,
+      "is_unresolved": false,
+      "jurisdiction": "WA",
+      "sites": {
+        "count": 2754,
+        "denominator": 2754,
+        "label": "geolocated site observations in WA",
+        "not_evaluable": 0,
+        "phrase": "2754 of 2754 evaluable geolocated site observations in WA"
+      },
+      "source_ids": [
+        "camreg_kirkland_wa",
+        "camreg_redmond_wa",
+        "camreg_seattle_wa",
+        "dot_511_wa"
+      ],
+      "subjects": 2754
+    },
+    {
+      "conflicted_subjects": 68,
+      "is_unresolved": true,
+      "jurisdiction": "unresolved",
+      "sites": {
+        "count": 25857,
+        "denominator": 25925,
+        "label": "geolocated site observations in unresolved",
+        "not_evaluable": 0,
+        "phrase": "25857 of 25925 evaluable geolocated site observations in unresolved"
+      },
+      "source_ids": [
+        "camreg_aikner",
+        "camreg_amber_kh",
+        "camreg_arc_1975641302",
+        "camreg_avctransport",
+        "camreg_bargabos",
+        "camreg_camilo_schools",
+        "camreg_cclemire",
+        "camreg_cheicylia",
+        "camreg_colgis",
+        "camreg_cotgeo",
+        "camreg_cphang",
+        "camreg_cwarcgis",
+        "camreg_duganmeyer",
+        "camreg_esri_dash",
+        "camreg_fifia",
+        "camreg_firemedic",
+        "camreg_forwardalliance",
+        "camreg_freese_dm",
+        "camreg_gvanmaren",
+        "camreg_helberg",
+        "camreg_infocemosa",
+        "camreg_infraestructura",
+        "camreg_ira",
+        "camreg_jelenic",
+        "camreg_keshan",
+        "camreg_kosman",
+        "camreg_kunying",
+        "camreg_langan",
+        "camreg_lenhardt",
+        "camreg_lpd_flock",
+        "camreg_mark43",
+        "camreg_mhebert",
+        "camreg_nitro",
+        "camreg_nurnazihah",
+        "camreg_oem_camera",
+        "camreg_olsson",
+        "camreg_osm_surveillance",
+        "camreg_pipeline_sec",
+        "camreg_rjcoleman",
+        "camreg_ruslan",
+        "camreg_schellinger",
+        "camreg_sensenet",
+        "camreg_sfoss",
+        "camreg_smart_sky",
+        "camreg_squan",
+        "camreg_sweeney",
+        "camreg_tblose",
+        "camreg_townofws",
+        "camreg_uchicago",
+        "camreg_ucsd",
+        "camreg_vidya",
+        "camreg_webappfme",
+        "camreg_whatley",
+        "camreg_wim_camera",
+        "camreg_yazid",
+        "camreg_yline",
+        "camreg_yorku",
+        "camreg_zyinger"
+      ],
+      "subjects": 25925
+    }
+  ]
+}

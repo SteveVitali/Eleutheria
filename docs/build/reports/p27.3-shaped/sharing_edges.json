@@ -1,0 +1,1687 @@
+{
+  "sharing_edges": [
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0ab4e-f7d3-737f-98ec-443104655745",
+      "observed_at": "2026-09-16T00:00:00+00:00",
+      "partner_ref": "shared only with other law enforcement agencies with System Administrator approval",
+      "predicate_id": "sharing_restriction",
+      "source_id": "okcpd_policy",
+      "subject_id": "01a0a5da-9af8-742c-aba9-ca232e4b11bd"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0b2e5-9bfc-7f01-9b7d-4382e5b23f13",
+      "observed_at": "2026-09-18T00:00:00+00:00",
+      "partner_ref": "shared only with other law enforcement agencies with System Administrator approval",
+      "predicate_id": "sharing_restriction",
+      "source_id": "okcpd_policy",
+      "subject_id": "01a0a5da-9af8-742c-aba9-ca232e4b11bd"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a720-9df8-7a87-96f8-662a769c2da2",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "270",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-9b9a-7890-a8ae-99705e6b5368"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a720-a283-79ec-877c-e81c96e18ac1",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "14",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-9f57-7a9e-ba19-ec39ec536938"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a720-a69d-77ae-80a0-64273da2b1f3",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "27",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-a3de-7b32-87d6-40ed55aaf433"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a720-aaf5-7437-9008-a7745762efcb",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "8",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-a81a-7c7f-86f5-ddb863eee645"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a720-ad6c-7985-a5b0-e055cff2066a",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "68",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-abc3-7d0b-9bfa-83c896c47c2e"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a720-b224-7a97-ad27-f2ac1dfead3d",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "817",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-af12-7946-bfe3-1accab0e34ae"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a720-b483-7640-aa24-ea3278238cdc",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "32",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-b39b-7cf7-8668-e0ab079bd512"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a720-b7f0-7c24-9409-eb68c6f98fe4",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "111",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-b540-73a1-b250-0ea35a2ec4f9"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a720-bc2b-7754-b47e-9f9c86d6dfdc",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "183",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-b946-7564-8000-950833eed217"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a720-c286-7fd6-a71c-9f51cdcf4e87",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "2",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-bfcf-7708-99bc-2ee37176f78e"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a720-c98b-7897-9492-39dbcd8faaae",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "298",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-c6cf-7ade-98f4-8e19a872e323"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a720-cd00-7f5f-ae34-60778d5c00aa",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "110",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-ca4d-7eae-a237-1b32afc93975"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a720-d06d-70d8-b4d3-785a832b9ff1",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "0",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-cdc1-77f1-8cd9-4a17f9360b6f"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a720-d3dc-71a3-bb52-40958d82cc55",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "102",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-d128-7858-8a41-f5317aab66ed"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a720-d588-7aac-bf3a-0109858551a2",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "0",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-d49a-7e17-9797-5a8529d097c8"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a720-dc9b-7e8f-8a99-33c29f0d7b17",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "22",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-d9c1-742f-a224-539a41bad678"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a720-e0aa-74fc-ac1b-c3b08db41777",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "136",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-ddf6-7b01-8d95-b49f9106f36a"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a720-e4c5-726b-aa36-a7e74935af7c",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "0",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-e20a-7145-beee-b5e14612a35e"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a720-e838-7528-91e2-172a08d0fddb",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "53",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-e587-7c85-807f-4a1f2baa4a09"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a720-ec53-7836-b2d1-a0885a13b0d5",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "135",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-e99e-7a6a-a611-4aefe4fb972e"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a720-ef35-76db-9786-c9651bbf5674",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "137",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-edb6-7cb8-ab65-5c882b14fb9d"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a720-f2aa-73c3-9c55-d05de208a213",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "0",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-f08d-78f8-89f9-d410cd20eb59"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a720-f618-7acb-8928-87b8a46d3aa0",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "851",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-f367-7a63-9a7f-eaf5f4efb783"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a720-fa23-7f6e-a3e7-1ba4419a53d7",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "804",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-f774-7fcf-b532-d7868d6412d1"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a720-fe4d-77c0-967d-9f0c0128d091",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "196",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-fb87-73ce-a097-cf611375455d"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-01b9-70e8-a53f-c2f3414749e9",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "0",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a720-ffa1-7721-8956-c40d5cf43de9"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-0546-7485-88c8-4fd9a4b69513",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "198",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-027a-7566-b83a-8792f578eb78"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-08b4-7afe-982d-118fbd6f8637",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "201",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-0601-7e30-84d0-78c265a23aac"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-0ccc-70eb-ba8c-2e5695ceff09",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "24",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-0a23-72f1-b803-05ef290ad9e7"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-0f12-7926-8b23-d277855a4de2",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "732",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-0e2f-7014-a68c-e3222ede98d8"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-1154-72b0-a510-f6388d001996",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "53",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-1072-7143-a9c4-6527f559b5c7"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-1564-7754-8b4f-d05430a0a569",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "12",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-12a9-73a8-9ed8-9879054c1f4e"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-196a-7523-85a0-48b1717df344",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "778",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-16bd-7cb1-8078-6a5ee45d11ab"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-1d85-715b-8297-fe6bc164b91b",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "128",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-1aca-73ab-a9fc-9d3b524c23e3"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-20f4-7de2-a339-c5ccf6e9a68e",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "24",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-1e42-7c3f-9046-f7583ba61d06"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-253e-7851-9abe-3dc114c2a757",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "70",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-2256-7f0d-ad48-15bec3d1496a"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-2953-7e0a-ba22-38df04df4e47",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "41",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-2698-77dc-b109-7f46d0ab8545"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-2d57-7739-b2f0-9c4fd2e128c7",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "15",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-2aac-7785-b8b9-5b374e5837ee"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-30cb-7b09-b4ce-79ebdd1a09c4",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "72",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-2e15-77a0-8957-491eadcaa623"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-3443-78bf-b10d-1be4bae0566d",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "0",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-3188-7014-bd52-2bf356c0b6c4"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-386b-77ed-9279-2f43daf117cf",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "33",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-35a9-7022-a421-4f68068710b5"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-3d86-7d0d-ac64-21d901dd9111",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "728",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-3adf-7e29-894a-3a23002d68cb"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-41a0-703a-a389-14f02ec15909",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "133",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-3eef-7a86-b69c-2bc8bfd2d503"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-45a9-7a6d-8e6f-c708857fbd67",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "45",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-4300-789b-8365-1b0a043646ab"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-4b06-7ab7-8eef-c97c41e3010f",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "110",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-4a17-7389-97ee-2a1de2753949"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-4f1c-79fa-8cef-5d1c1fcf9a1b",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "124",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-4c70-7dcc-8b61-aafc6def2ede"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-5336-7adb-beab-0bf8cd1cbd23",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "64",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-508b-7c56-a5d7-3a86d4c8f7ed"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-5697-70f6-b484-7023cf16e7b6",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "38",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-53f0-741c-a878-e7b34b0ed157"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-5a9a-793f-914e-80a160601f1c",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "44",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-57e8-7f6a-8325-ed0ffd6675ff"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-5ea8-7b1e-8f59-551b592e77b8",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "150",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-5bef-7282-b2a1-4df75c34c6bb"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-67c4-7819-85ee-d92517846255",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "267",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-6510-7d91-8500-60d906451c7c"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-6bcf-7ed6-b3f1-7ffd6bcfabee",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "121",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-6913-7edf-b88c-7ca9a0081561"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-6fe9-7c0a-88bc-a4f9ca401a3d",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "0",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-6d32-74df-9eb3-185a5ee6a2db"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-740e-7da6-a284-b4acc777b313",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "431",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-7149-78eb-845f-39e7154fe43b"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-783b-7500-8463-bbb129b4146c",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "18",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-7577-7d62-964a-cd1dcb5d257a"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-7c9c-719b-95a6-b5595e910861",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "11",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-79a4-7016-b4ca-46f51ac6a3ef"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-809d-70b6-80df-63fbc4d3d0c0",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "37",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-7def-7f87-960d-f831521b4ebb"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-84af-7684-8d57-283287009335",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "171",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-81f8-7248-9559-1a339d725139"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-88b9-7a2b-ac93-e479f54722ca",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "0",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-860e-7d25-9583-d72655eb5566"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-8cdb-79d7-b014-74779bdf6b80",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "744",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-8a18-711e-9661-449d070b8cbf"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-8f30-745d-9464-73125f907c47",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "81",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-8e34-7bfa-93b2-1d1204330dd9"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-9405-7ae9-8453-031e360c1020",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "779",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-90a5-7fde-91f4-c9b0702a0047"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-98c8-7354-8a0e-85b87220ff07",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "624",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-9580-7ca0-a6cb-cd7b3f295fd7"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-9c37-7c60-8907-da12db44160f",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "9",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-998b-7a92-ac3c-844dff86be96"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-a033-77f4-a49d-386602fec0c1",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "59",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-9d8b-7b52-963e-53d849540a52"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-a44f-766e-98c8-5930f8a1a264",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "0",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-a1a1-7504-a63f-61788cd45418"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-a7dd-7a84-9867-ef4d53a9be04",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "12",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-a510-775f-aadc-69d311250e03"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-abeb-76ed-80a7-c2cc522e5bec",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "159",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-a932-7a57-a28f-3a4e28aad53c"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-b009-7b00-8052-432a6f00077e",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "79",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-ad45-7f3c-9d04-b25e41f645bb"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-b36d-7c55-91f7-521221277c42",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "138",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-b0c8-76f6-94d5-3d5f537a441c"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-b6d1-77c3-84ac-96d34a44b47e",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "18",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-b427-7a45-bc95-a27388039200"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-ba37-70bf-80c6-8055179a4f21",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "26",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-b789-7ef2-86e8-a5b247f4da53"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-be57-7f8d-9d1c-a6470f521065",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "22",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-bb9a-7770-98a5-fe645371b04b"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-c1c3-7e83-823f-83387469f010",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "68",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-bfa8-7720-b4c4-f514efc90d88"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-c5c8-7488-b2b9-cdd643c8c602",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "43",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-c31b-7ba5-a6dc-7dcf942b00e3"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-c9dd-7b98-828a-ef83093cfc5b",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "34",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-c72c-7ac7-9725-2ccd9c651aa5"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-ce0a-7eac-9ff7-3228cd6af7de",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "102",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-cb35-7d97-a64c-109945684486"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-d508-7a09-87b4-80ac2ae23c5d",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "14",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-d24f-70b1-9125-dd842a900b49"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-d889-782e-ac83-646b72dece2a",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "90",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-d5cc-713a-8da2-fdb3cde060b3"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-dcb9-70a1-acaa-b66ddb07d117",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "65",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-d9f8-74bb-9af8-dce143f8c9d0"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-e056-7941-8ae4-339337f3afb6",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "162",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-dd78-7313-96c9-7bfc5d8af495"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-e467-78b5-bebd-bc7cd353b58c",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "91",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-e1ba-7079-af7c-925b81bb05cb"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-e887-7660-8a7f-f358a1cd61c8",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "82",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-e5c3-778a-94e0-1ee4fda691e2"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-ead7-7158-985f-4e8b9db5f1db",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "155",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-e9ee-732d-aa7a-3238af520432"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-efd1-7c8a-81c3-bc915cdd1906",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "137",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-eef3-7031-aba6-780c3f341272"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-f219-72fd-9ff8-5c36ef46c9e2",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "173",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-f130-7df0-9fa1-a20283ca4c7d"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-f523-7eb8-bfb2-3f5cb6680ab2",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "0",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-f39c-724f-877c-14253c4091fe"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-f934-7b61-aa49-43e78f7d128a",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "88",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-f687-7847-aa70-a6abcdeeb055"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-fd47-7d2e-8cde-0e75eacff2ce",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "21",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-fa85-7708-afaf-93dea8aadd8c"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a721-ff87-7511-988e-f9b8648b3e04",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "38",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a721-fe9c-7790-8322-288f5154f127"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-03a6-712c-a297-6dc3ad9cd1d4",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "11",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-00e0-743f-80f0-4c31aa87cc36"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-07a8-77cd-8349-5a770f9ed3ae",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "24",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-04fb-7274-b1fb-fa50c09e57f0"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-09df-7b8c-9365-cc8e18f4ad08",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "816",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-08fb-71bc-9f45-790d927947ab"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-0d51-76a8-a2fe-2ae89764ebf7",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "34",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-0b4a-705d-aacc-64defa7e10cf"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-1166-7fc9-85a9-a1b3dfafaa2b",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "76",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-0ea9-7dd3-86c0-f0a6fc17fd42"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-1584-72ff-a639-225ca35c8276",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "6",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-12c6-7850-95c8-a4b2a503d7c2"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-18f6-7487-901d-26916b253faf",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "717",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-1643-7f7b-b9b0-6500fc87012e"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-1b3b-70cd-9c24-63ed9d4de831",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "251",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-1a52-7160-9748-eec1a99d2278"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-1ef5-7e62-95ce-f358ef343452",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "3",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-1c0c-77ef-a726-aeb5e7f10859"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-25e9-7c2a-a801-e9160653775e",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "833",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-2325-7ef8-8299-5e052f1832c0"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-2a01-7d46-867b-de35c07e8d65",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "233",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-2745-7497-bdf6-494a2cf08b6d"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-2e01-738c-9286-163894d41b57",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "38",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-2b5b-77c5-9a66-d245f79fabd0"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-3176-7c7b-b30a-bc3dfe17dcde",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "3",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-2ebf-74e1-bdb8-b637cbf3e9de"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-34e1-7037-a23f-c4ac87cd7708",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "46",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-3237-7313-93cc-707d78110d2d"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-38ff-7fcf-9efa-2a0ba1b978de",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "95",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-3647-7990-a0f2-fa193920f868"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-3b37-7a0b-86f8-b3625ccc9c7c",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "101",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-3a57-7130-97c1-8929b9f2052d"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-3f9a-7001-b9db-0d86f577dba2",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "273",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-3eb9-7790-aaa1-80f0d2d81558"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-43a4-7df5-9827-c65350d08645",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "66",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-40f7-714c-b7fd-74ecec3878ff"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-49f8-7bb6-b7b9-6e0ff6556eb0",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "156",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-473c-7805-bd29-092b2303c674"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-4eaa-780d-83a3-9fddad31bc1c",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "60",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-4c02-7a03-8f99-07c190433a03"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-5232-7496-a803-827d705596d9",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "28",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-500b-7f62-899d-45eda7d688c8"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-5468-7b5a-8b78-3b397631c0cc",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "137",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-5389-7b53-b417-db4dca26b713"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-5737-73fb-81d2-dbbdfc660de0",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "814",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-55c1-7c3b-bb4f-32511433a6f8"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-5b5b-77f9-8719-ca265632a4bb",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "34",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-588b-77d9-b131-ec3acd0fb256"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-5f61-7a8f-b8fb-7785db9bb7e8",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "29",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-5cab-74a3-b713-6962243cb0ee"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-6357-7806-a2b0-5a6d65a4f375",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "118",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-60b7-7ab7-86da-3538daa2367e"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-66ba-7535-ada4-f1c3d52b5c57",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "13",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-6410-743c-880c-81ef99b3ac3e"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-6ac9-744d-84e9-e9db24e6046e",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "209",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-6813-77b6-a94c-b18397e98c62"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-6ed4-74b2-b8cc-5dbf74bdaca7",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "136",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-6c20-71c7-b9ad-5b6485cb4472"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-72f1-7b8c-8a8b-8e1d4cc213ec",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "153",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-7034-7426-b90b-7f2090bbeefe"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-76f6-7c39-ae5f-73d5ef284169",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "157",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-7443-7827-938c-6da3c2bece2e"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-7b04-7c8b-a379-f0fd20f9fe65",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "72",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-7845-78b4-a989-b65f8dbde321"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-7f11-77c8-bb36-e52a36ff765d",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "21",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-7c5f-7317-b510-e064ac4ed6b3"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-828d-7cf4-ba3f-e101accbd220",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "61",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-7fd0-7c31-a2d3-9cb6032876e8"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-8611-7c66-b029-71b3ddef0d85",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "2",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-8350-79d8-9685-732cbc302765"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-8851-7d78-a340-0ec68e38e03b",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "182",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-876b-77fb-ab1e-6bd838c1e5b5"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-8c68-7867-8403-5b134ca79449",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "0",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-89b8-78a6-98e6-1008542d7b7b"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-8fd1-7724-9057-733e7319cce9",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "538",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-8d24-7fcf-a50b-da2e106c6405"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-93e0-7746-b4af-3431df6d6a38",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "12",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-912f-72fa-b8ae-e04bc0b0ba3c"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-97fc-79f5-bdb0-99bbe537a065",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "33",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-953c-794b-8d90-0a996d5a13dd"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-9a5e-7bf3-8cc3-9e15e6c20fe0",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "160",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-9978-7d58-b481-72c0b5777e1f"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-9dc5-7c96-9993-845f2cbb88d2",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "838",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-9b22-7b7f-8c48-d20e5ddeb365"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-a4b6-771b-ada8-b537bb0fb47c",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "169",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-a1f9-7fce-8a1e-e4605bafb5e8"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-a8dd-7cf0-8edb-2c99bb9264b3",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "42",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-a60c-7da7-8a5f-759073483d20"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-ab38-7ff2-9c44-d61af9b0d1b2",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "40",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-aa3c-7920-b987-efa220bdae91"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-ad8b-7270-9249-ca5f7fb9efc3",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "100",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-ac9c-7a89-aef2-15e9a5a21fc7"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-b194-7b66-882b-2699f02f22b6",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "8",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-aee2-70cb-8ecc-6c84d9772533"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-b4f2-77a5-b7d2-ad8b07dbe048",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "4",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-b255-728a-b5bd-b9642cf65d1b"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-b868-7400-8bfb-4c06f7f6c836",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "10",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-b5b3-7798-863c-cc4de6a04d0e"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-bbda-7f6e-82e8-d9bf68760c21",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "610",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-b921-7fc2-bad1-35470c3deae6"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-bff4-7437-9ddd-101d5ac27cc0",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "0",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-bd2e-7ddf-8cc3-24376e8efedb"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-c36d-766c-83b5-4cf2e0e27e3e",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "827",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-c0b5-7afb-ae62-e819e3c320fd"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-c5b9-7ad6-bd03-2343cd44fcdc",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "83",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-c4d4-743b-a346-5cf8277d1e2c"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-caf6-7425-9447-d43cd8d9049f",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "59",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-c9fc-7763-b200-0a9a3debe9b8"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-ce76-7315-a18b-3fff23dbab35",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "0",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-cc5c-7f63-9693-77072bf9321b"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-d1ec-71a6-a485-c649561b3ec2",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "110",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-cf35-7c39-9429-12022163753f"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-d567-798e-85a8-72ce5e8fe29d",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "277",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-d2ab-7db7-9bb9-af426132ce49"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-d8d2-70de-b043-265dafbf9524",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "0",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-d624-76f7-b38a-c1827d716e4b"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-dc53-7705-a6f4-19e4420d5590",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "41",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-d99d-7b2c-97cb-fa01013dee38"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-dfcd-7a5b-8689-2341666b3724",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "14",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-dd08-7b72-854e-7dae9ed7e3a6"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-e3fc-7c63-861e-2226aaa86def",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "69",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-e130-7ee7-bd81-2efccf9c748f"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-e80d-7f44-9dd1-fbf0dc48a298",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "55",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-e55a-77c3-b597-ac7bf759b5a1"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-eb84-7415-a553-a1a90970d28b",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "0",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-e8c6-7dc8-98f0-26db025c5b95"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-ed30-7cdf-a5d0-6d645194a527",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "0",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-ec48-73ad-b98d-62ef3907e037"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-ef77-7b85-8651-7d1afc0bbeb6",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "0",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-ee7e-7afe-be3c-a40b2d0ca200"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-f2ed-7f8a-a579-454ba504edcc",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "16",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-f037-779e-8966-c18ff1a9051e"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-f752-7e83-9bb9-da7a570bb1ae",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "113",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-f45f-73cb-b1b9-d08ef4f0182d"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-fb08-7bd4-8e80-9fcd4485e9c2",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "2",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-f817-700d-ab47-46dcf0a2a366"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a722-ff61-7c64-8b51-25c7c5172c0c",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "539",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a722-fcab-7641-af04-4b6c116be329"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-01ad-7c7c-b61a-506ddf152b6a",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "124",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-00c1-7df3-b61d-eddb0fc31d37"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-03f1-7495-a6c2-d97203e43fa4",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "364",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-0309-7fbd-bf16-728804f32a13"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-0788-76fa-aa6c-aee644b8dc82",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "838",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-04ae-7ad5-b5a7-ef5614171dcf"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-0b94-7512-ba9d-6c1a1d1f5abb",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "809",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-08ec-7167-9b2f-a123d71ce551"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-0fb6-7e80-9f51-2fe549095c50",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "213",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-0cf0-7649-93f1-b3f9d462cf76"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-13d4-73fc-bede-4a150086adbb",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "61",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-111c-7371-bd40-5b3dd1130c01"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-180b-79fc-a467-65bb98c6a487",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "2",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-1556-79ff-aa2b-b5aa4c44b013"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-1b83-70a4-a0ad-290a42651e8b",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "563",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-18ca-70e0-a4c8-e8f4ad66a98c"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-1fae-79e2-a0d7-771661302129",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "65",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-1cfd-74c3-86b1-05993503fcbc"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-2325-76e2-af33-d0c5d3af487b",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "83",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-2079-7aa6-a4c6-04ed4f8559e8"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-2759-70fa-817f-3361283f53a0",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "97",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-2485-7158-90e8-f230dc0f9ad0"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-2abe-7c0f-8923-4e96a7809d47",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "1",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-2818-774f-9581-59ab690e07e0"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-2e27-76f0-95cb-432cec9f71a3",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "766",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-2b78-7ace-90d8-6d25f2bfbb6a"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-2fcc-761d-a2f9-e905551c45d4",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "24",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-2ee8-7f8e-9e3d-94e109dbc3c1"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-33fc-7529-b30e-87f769ce842e",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "21",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-3130-70e3-bf42-3b274cad6c09"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-3830-7899-b1ce-77e9daf1205b",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "144",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-355c-7504-b351-8cf49ef22d09"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-3a9c-7b4a-a422-d6f21fa56363",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "1",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-39a3-7d04-b983-0d69370e45c5"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-3e08-7c51-bdde-e44ef68675db",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "14",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-3b58-7a46-b66e-0dc2cf735d40"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-4195-7b5d-94f0-64011aa53642",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "0",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-3f6c-79c3-99eb-fbfd8784baee"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-47ed-7bbe-8893-a838960dd04b",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "105",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-4536-726a-af25-4ded557db3c9"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-4bf2-71ae-aeb9-e79d60babce9",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "125",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-4951-7e3f-9bd9-96e824020410"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-4ffd-7a17-8c9b-68eb20ab8a95",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "301",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-4d49-7a30-b187-d6cdd0a1c53b"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-5707-77a5-a9ed-e5f67058e644",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "0",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-542d-7c12-8fae-c1df6c940c34"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-5b2f-7ccb-be66-071e0e3ed1c4",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "41",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-5877-77a7-aa8d-a1371c5c7963"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-5f47-780d-b083-2be3bda9a16c",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "417",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-5c83-7737-97bf-2778dd78651f"
+    },
+    {
+      "access_kind": "unclassified",
+      "claim_id": "01a0a723-64ae-764a-832c-f1af9b9a37e9",
+      "observed_at": "2020-01-28T00:00:00+00:00",
+      "partner_ref": "324",
+      "predicate_id": "sharing_partner_degree",
+      "source_id": "eff_data_driven",
+      "subject_id": "01a0a723-609f-78f5-9b3c-c093d45b97c4"
+    }
+  ]
+}
