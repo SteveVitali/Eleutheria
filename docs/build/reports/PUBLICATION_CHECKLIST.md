@@ -192,3 +192,46 @@ are landed and green. The hosted national cut-over is **NOT executed** — it is
 export (`exports/out/national`, D-P27.4-1), which itself waits on the OSM land (D-SOURCES.17-1, LAND IN
 PROGRESS). No live green fabricated, no deployed URL claimed. Re-run command + evidence: `D-P27.8-1`.
 The operator ticks Go-public once the national export exists and the ADC-armed cut-over runs clean.
+
+## 2026-09-23 — P27.10 (LAUNCH.10): custom-domain cut-over to surveillancegraph.org (HG-11 / Go-public — DNS action)
+
+The final P27 launch row points the canonical public origin `https://surveillancegraph.org`
+(+ `www`→apex) at the `sig-web` Cloud Run service with Google-managed TLS. Chosen mapping approach:
+an **external HTTPS Application Load Balancer + serverless NEG** (ADR-098) — the Cloud Run domain
+mapping is hard-blocked on interactive Search Console domain verification the cloud-platform ADC
+cannot perform, whereas the LB needs no verification and reserves a real static IP.
+
+**Applied for real (operator ADC, 2026-09-23, project `zeta-medley-508121-u7`, `us-central1`):**
+global static IP `136.81.80.102`, serverless NEG → `sig-web`, backend service, Google-managed
+multi-domain cert `sig-web-cert` (apex + www, PROVISIONING), HTTPS url map (apex→backend, www→apex
+301), HTTP→HTTPS redirect, and the :443/:80 forwarding rules — all idempotent
+(`ops/gcp/domain-mapping.sh`; re-run skips every create). The `:80` LB data path is live-verified
+(`http://136.81.80.102` with Host `surveillancegraph.org` → **301 → https://surveillancegraph.org/**).
+
+### HG-11 / Go-public gate action — the exact Squarespace DNS records the operator adds
+
+The domain's registrar + DNS is Squarespace. These records are **PUBLIC config, never secrets**
+(HG-09). Adding them is the **operator's live decision** (HG-11 / Go-public), never auto-ticked.
+
+| Host | Type | Value | Note |
+|---|---|---|---|
+| `@` (apex) | `A` | `136.81.80.102` | the LB static IP; the apex cannot be a CNAME |
+| `www` | `A` | `136.81.80.102` | same IP; the LB 301-redirects `www`→apex |
+
+No verification `TXT` is needed (the LB path requires none). After the records resolve, Google-managed
+TLS on `sig-web-cert` provisions to ACTIVE (allow up to ~60 min):
+
+```
+gcloud compute ssl-certificates describe sig-web-cert --global \
+  --project zeta-medley-508121-u7 --format='value(managed.status)'   # expect ACTIVE
+```
+
+### Go / no-go (2026-09-23)
+
+**Applied, DNS-gated → RETURN PASS (`D-P27.10-1`).** The mapping IaC is fully applied and the real
+DNS records are produced from the realized IP. **Valid TLS + `probe-hosted` on the custom domain are
+NOT yet green** — Google-managed TLS provisions only after the operator adds the DNS records at
+Squarespace and they resolve; no live TLS/probe green is fabricated. The operator explicitly accepts
+that the domain serves the current OKC demo until the national deploy (`D-P27.8-1`, gated on the OSM
+land) completes. `astro` `site` is already `https://surveillancegraph.org` (P27.6), so no permalink
+churns when the domain goes live. The `*.run.app` origin stays the documented fallback.

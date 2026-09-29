@@ -33,10 +33,13 @@ path = "/v1/coverage/okc"        # the §32.2 metrics surface over the real spin
 name = "sig-web-root"
 kind = "http"
 url_env = "SIG_PROBE_WEB_URL"    # the public static site. Canonical public origin =
-                                 # https://surveillancegraph.org (astro `site`, P27.6); the
-                                 # DNS/TLS cut-over is P27.10, so until it lands the operator
-                                 # sets SIG_PROBE_WEB_URL to the domain (or the *.run.app
-                                 # fallback) — no literal host is baked in (HG-12).
+                                 # https://surveillancegraph.org (astro `site`, P27.6; the
+                                 # P27.10 domain cut-over fronts sig-web with an external
+                                 # HTTPS LB + Google-managed TLS, ADR-098). The operator sets
+                                 # SIG_PROBE_WEB_URL to that domain once the Squarespace DNS
+                                 # records resolve + TLS provisions (D-P27.10-1); the *.run.app
+                                 # URL (https://sig-web-<n>.us-central1.run.app) stays the
+                                 # documented fallback. No literal host is baked in (HG-12).
 path = "/"
 
 [[probes.targets]]

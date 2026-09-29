@@ -80,3 +80,33 @@ export SIG_ALERTS_SERVICE="sig-alerts"
 export SIG_SECRET_ALERT_HOOK="sig-alert-webhook-token"
 export SIG_WEB_SERVICE="sig-web"
 export SIG_CADENCE_TOML="ops/cadence.toml"
+
+# --- custom domain + HTTPS load balancer (P27.10 / LAUNCH.10, ADR-098) ----------
+# The canonical public origin. The domain + its DNS records are PUBLIC config, not
+# secrets (HG-09) — a public domain name is safe to write literally, unlike any
+# credential (which stays a Secret Manager reference by name). Env-overridable so a
+# staging/preview domain can reuse the same IaC.
+export SIG_WEB_DOMAIN="${SIG_WEB_DOMAIN:-surveillancegraph.org}"
+export SIG_WEB_DOMAIN_WWW="${SIG_WEB_DOMAIN_WWW:-www.${SIG_WEB_DOMAIN}}"
+
+# The external HTTPS Application Load Balancer that fronts the sig-web Cloud Run
+# service with Google-managed TLS (ADR-098 — chosen over a Cloud Run domain mapping
+# because the mapping requires interactive Search Console domain verification the
+# cloud-platform ADC cannot perform; the LB needs none and yields a real reserved
+# static IP as the apex/www A-record value). Names are derived, no literal project.
+export SIG_LB_IP="sig-web-ip"                       # reserved global external IPv4
+export SIG_LB_NEG="sig-web-neg"                     # serverless NEG → sig-web (regional)
+export SIG_LB_BACKEND="sig-web-backend"             # global backend service (EXTERNAL_MANAGED)
+export SIG_LB_CERT="sig-web-cert"                   # Google-managed cert (apex + www)
+export SIG_LB_URLMAP="sig-web-urlmap"               # HTTPS url map: apex→backend, www→apex 301
+export SIG_LB_HTTPS_PROXY="sig-web-https-proxy"     # target HTTPS proxy
+export SIG_LB_HTTPS_FR="sig-web-fr-https"           # :443 global forwarding rule
+export SIG_LB_REDIRECT_URLMAP="sig-web-http-redirect" # HTTP url map: :80 → HTTPS 301
+export SIG_LB_HTTP_PROXY="sig-web-http-proxy"       # target HTTP proxy
+export SIG_LB_HTTP_FR="sig-web-fr-http"             # :80 global forwarding rule
+
+# The canonical public origin + the run.app fallback the probe/uptime sweeps watch
+# (P27.10 d4). No host literal is baked into cadence.toml — the operator resolves
+# SIG_PROBE_WEB_URL from this at apply time (the *.run.app URL stays the documented
+# fallback until Google-managed TLS provisions on the domain).
+export SIG_WEB_CANONICAL_URL="https://${SIG_WEB_DOMAIN}"

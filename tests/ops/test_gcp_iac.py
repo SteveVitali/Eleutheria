@@ -30,8 +30,15 @@ SHELL_SCRIPTS = [
     "backup.sh",
     "schedule.sh",
     "scheduled-ops.sh",
+    "domain-mapping.sh",
 ]
-EXECUTABLE_SCRIPTS = ["provision.sh", "backup.sh", "schedule.sh", "scheduled-ops.sh"]
+EXECUTABLE_SCRIPTS = [
+    "provision.sh",
+    "backup.sh",
+    "schedule.sh",
+    "scheduled-ops.sh",
+    "domain-mapping.sh",
+]
 
 
 def _no_adc_env() -> dict[str, str]:
@@ -144,6 +151,45 @@ def test_no_credential_literal_in_the_iac() -> None:
             if _CRED_LITERAL.search(line):
                 offenders.append(f"{path.relative_to(REPO_ROOT)}:{lineno}: {line.strip()}")
     assert not offenders, "credential literal(s) in the IaC:\n" + "\n".join(offenders)
+
+
+def test_domain_mapping_iac_targets_the_custom_domain_and_sig_web() -> None:
+    """The P27.10 LB IaC (ADR-098) fronts sig-web at surveillancegraph.org (+ www).
+
+    The domain-mapping script's dry-run plan must name the custom domain, the
+    Google-managed cert over apex+www, the serverless NEG → the sig-web Cloud Run
+    service, and the www→apex redirect — the deterministic proxy for deliverable (a).
+    The domain lives in config.sh as PUBLIC config (a literal domain is not a secret).
+    """
+    config = (GCP_DIR / "config.sh").read_text(encoding="utf-8")
+    assert "surveillancegraph.org" in config, "custom domain absent from config.sh"
+    assert "SIG_WEB_DOMAIN" in config
+    proc = subprocess.run(
+        ["bash", str(GCP_DIR / "domain-mapping.sh"), "--check"],
+        capture_output=True,
+        text=True,
+        check=False,
+        env={**_no_adc_env(), "SIG_GCP_PROJECT": "sig-test-project"},
+        cwd=str(REPO_ROOT),
+    )
+    assert proc.returncode == 0, f"domain-mapping --check exited {proc.returncode}: {proc.stderr}"
+    plan = proc.stdout
+    assert "ssl-certificates create" in plan  # Google-managed TLS
+    assert "surveillancegraph.org,www.surveillancegraph.org" in plan  # apex + www cert
+    assert "--cloud-run-service=sig-web" in plan  # NEG → the sig-web service
+    assert "www→apex 301" in plan  # www redirects to the apex canonical origin
+    assert "A      " in plan  # the DNS-record block for the operator
+
+
+def test_probe_targets_reference_the_custom_domain() -> None:
+    """`ops/cadence.toml` + config.sh document the canonical custom-domain probe origin (d4)."""
+    cadence = (REPO_ROOT / "ops" / "cadence.toml").read_text(encoding="utf-8")
+    config = (GCP_DIR / "config.sh").read_text(encoding="utf-8")
+    assert "surveillancegraph.org" in cadence, "cadence.toml does not name the canonical origin"
+    assert "SIG_WEB_CANONICAL_URL" in config
+    # No host literal baked into the probe target itself — the web probe still resolves
+    # from the job env (SIG_PROBE_WEB_URL), keeping the run.app fallback available (HG-12).
+    assert "SIG_PROBE_WEB_URL" in cadence
 
 
 def test_iac_references_secret_manager_and_env_project() -> None:
