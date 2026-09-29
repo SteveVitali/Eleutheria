@@ -129,6 +129,43 @@ def build_parser() -> argparse.ArgumentParser:
         "--tracker", action="append", default=[], help="Announce URL (repeatable; may be omitted)."
     )
 
+    audit = subparsers.add_parser(
+        "audit",
+        help="Read-only public-surface data & rights audit over the spine (P27.1, LAUNCH.1).",
+    )
+    audit.add_argument(
+        "--dsn",
+        required=True,
+        help="PostgreSQL DSN for the spine, e.g. postgresql://sig@127.0.0.1:5433/sig — OMIT the "
+        "password (libpq reads PGPASSWORD from the environment; secrets never on the command line "
+        "or in a recorded file). Read-only: the audit runs in a READ ONLY session.",
+    )
+    audit.add_argument(
+        "--as-of",
+        default=None,
+        help="Logical as-of label for the snapshot (default: the UTC generation time). The verb "
+        "also records generated_at; both are printed so a snapshot states which spine state it is.",
+    )
+    audit.add_argument(
+        "--note",
+        default="",
+        help='Free-text provenance note (e.g. "OSM land in flight — provisional snapshot").',
+    )
+    audit.add_argument(
+        "--json-out", default=None, help="Write the deterministic JSON audit to this path."
+    )
+    audit.add_argument(
+        "--markdown-out",
+        default=None,
+        help="Write the Markdown audit (PUBLIC_SURFACE_AUDIT.md body) to this path.",
+    )
+    audit.add_argument(
+        "--format",
+        choices=("json", "markdown"),
+        default="json",
+        help="What to print to stdout (default: json).",
+    )
+
     push = subparsers.add_parser(
         "push",
         help="Upload a built export to an S3-compatible store under content-hash keys.",
@@ -592,6 +629,44 @@ def _run_push(in_dir: str, store: str, endpoint_url: str | None, provider: str) 
     return 0
 
 
+def _run_audit(
+    dsn: str,
+    as_of: str | None,
+    note: str,
+    json_out: str | None,
+    markdown_out: str | None,
+    fmt: str,
+) -> int:
+    """Run the read-only public-surface audit and emit deterministic JSON + Markdown (P27.1)."""
+    import psycopg
+
+    from .audit import redact_dsn, run_audit
+
+    spine_label = redact_dsn(dsn)
+    # autocommit=True + an explicit `SET TRANSACTION READ ONLY` in run_audit: the connection
+    # cannot mutate the spine (append-only invariant held trivially; no INSERT/UPDATE/DELETE).
+    conn = psycopg.connect(dsn, autocommit=True)
+    try:
+        audit = run_audit(conn, as_of=as_of, note=note, spine_label=spine_label)
+    finally:
+        conn.close()
+
+    if json_out:
+        os.makedirs(os.path.dirname(json_out) or ".", exist_ok=True)
+        with open(json_out, "w", encoding="utf-8") as fh:
+            fh.write(audit.to_json_str())
+    if markdown_out:
+        os.makedirs(os.path.dirname(markdown_out) or ".", exist_ok=True)
+        with open(markdown_out, "w", encoding="utf-8") as fh:
+            fh.write(audit.to_markdown())
+
+    if fmt == "markdown":
+        sys.stdout.write(audit.to_markdown())
+    else:
+        sys.stdout.write(audit.to_json_str())
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run the `exports` CLI. Returns a process exit code."""
     parser = build_parser()
@@ -614,6 +689,15 @@ def main(argv: list[str] | None = None) -> int:
         return _run_tiles(args.in_geojson, args.out, args.layer, args.license)
     if args.command == "torrent":
         return _run_torrent(args.in_file, args.out, args.tracker)
+    if args.command == "audit":
+        return _run_audit(
+            args.dsn,
+            args.as_of,
+            args.note,
+            args.json_out,
+            args.markdown_out,
+            args.format,
+        )
     if args.command == "push":
         return _run_push(args.in_dir, args.store, args.endpoint_url, args.provider)
     parser.print_help()
