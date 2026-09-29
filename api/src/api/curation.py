@@ -49,7 +49,7 @@ from fastapi import APIRouter, Depends, FastAPI, Header, HTTPException, Request
 from resolution.review_queue import ReviewItem, ReviewQueue
 from starlette.responses import JSONResponse, RedirectResponse, Response
 from starlette.routing import Route
-from tasks.contributor import Contributor, ContributorTier, WriteScope, may_write
+from tasks.contributor import Contributor, WriteScope, may_write
 from tasks.onboarding import OnboardingTimingAggregate
 from tasks.poisoning import (
     AnomalyDetector,
@@ -68,6 +68,7 @@ from tasks.vocabulary import Disposition
 
 from . import __version__
 from .prohibitions import assert_no_prohibited_routes, route_paths
+from .tier_tokens import DEMO_TOKENS, TierTokenStore, load_tier_token_store
 
 __all__ = [
     "CURATION_ENABLED_ENV",
@@ -96,32 +97,31 @@ def curation_enabled(env: Mapping[str, str] | None = None) -> bool:
 # --------------------------------------------------------------------------- #
 # Authentication: bearer token -> a P16.1 pseudonymous contributor (SIG-CONTRIB-006)
 # --------------------------------------------------------------------------- #
-#: A tiny demo token registry mapping bearer tokens to pseudonymous contributors.
-#: Production wires this to the real tier-token store (P16.1); the mapping shape —
-#: token -> (pseudonymous handle, tier) — is what the service depends on. No
-#: real-name field exists anywhere (SIG-CONTRIB-006, Part VIII §0.7).
-CURATION_KEYS: dict[str, Contributor] = {
-    "anon-demo-key": Contributor(handle="anon-1", tier=ContributorTier.ANONYMOUS),
-    "registered-demo-key": Contributor(handle="registered-1", tier=ContributorTier.REGISTERED),
-    "reviewer-demo-key": Contributor(handle="reviewer-1", tier=ContributorTier.TRUSTED_REVIEWER),
-    "curator-demo-key": Contributor(handle="curator-1", tier=ContributorTier.CURATOR),
-    "maintainer-demo-key": Contributor(handle="maintainer-1", tier=ContributorTier.MAINTAINER),
-}
+#: Back-compat alias for the published **demo** token map (now owned by
+#: :mod:`api.tier_tokens`). The live service authenticates against a
+#: :class:`~api.tier_tokens.TierTokenStore` on ``app.state`` — an issue/invite-based,
+#: env-provisioned, pseudonymous store (ADR-100), NOT this map. No real-name field
+#: exists anywhere (SIG-CONTRIB-006, Part VIII §0.7).
+CURATION_KEYS: dict[str, Contributor] = DEMO_TOKENS
 
 
 def authenticated_contributor(
+    request: Request,
     authorization: str | None = Header(default=None),
 ) -> Contributor:
     """Resolve the bearer token to a contributor; 401 if missing/unknown (§36.1).
 
     The curation surface is authenticated — unlike the public read API there is no
     anonymous fall-through. A missing, malformed, or unknown token is refused with
-    401 so no route runs without an attributable human actor.
+    401 so no route runs without an attributable human actor. The token is resolved
+    against the request app's :class:`~api.tier_tokens.TierTokenStore` (the
+    issue/invite-based, env-provisioned store, ADR-100).
     """
     if not authorization or not authorization.lower().startswith("bearer "):
         raise HTTPException(status_code=401, detail="curation requires a bearer token (§36.1)")
     token = authorization[7:].strip()
-    contributor = CURATION_KEYS.get(token)
+    store: TierTokenStore = request.app.state.tier_token_store
+    contributor = store.resolve(token)
     if contributor is None:
         raise HTTPException(status_code=401, detail="unknown curation token (§36.1)")
     return contributor
@@ -634,6 +634,7 @@ def create_curation_app(
     *,
     review_queue: ReviewQueue | None = None,
     curation_log: CurationLog | None = None,
+    tier_token_store: TierTokenStore | None = None,
     enabled: bool | None = None,
 ) -> FastAPI:
     """Build the curation app (ADR-068); routes are absent unless enabled (RISK-P21-10).
@@ -641,9 +642,12 @@ def create_curation_app(
     When ``enabled`` is false (the default, from ``SIG_CURATION_ENABLED``), the app
     carries **no** ``/v1/curation/*`` routes — the write surface is structurally
     absent, not merely guarded — so the public API process (which never sets the
-    flag) can never expose it.
+    flag) can never expose it. When enabled, the app authenticates against the
+    issue/invite-based, env-provisioned :class:`~api.tier_tokens.TierTokenStore`
+    (ADR-100) — injected for tests, else loaded from the environment.
     """
     is_enabled = curation_enabled() if enabled is None else enabled
+    store = tier_token_store if tier_token_store is not None else load_tier_token_store()
     app = FastAPI(
         title="SIG curation service (authenticated, non-public)",
         version=__version__,
@@ -653,6 +657,7 @@ def create_curation_app(
         ),
     )
     app.state.enabled = is_enabled
+    app.state.tier_token_store = store
 
     @app.get("/")
     def root() -> dict[str, object]:
@@ -660,6 +665,10 @@ def create_curation_app(
             "service": "SIG curation service",
             "enabled": is_enabled,
             "public": False,
+            # Issue/invite-based tier-token store (ADR-100). demo_mode=True means no
+            # real curator token is provisioned (env), so the published demo tokens
+            # are active — never the case in a provisioned deployment.
+            "token_store": "demo" if store.demo_mode else "provisioned",
             "note": (
                 "authenticated, non-public curation surface (ADR-068); "
                 "routes present only when SIG_CURATION_ENABLED=1"

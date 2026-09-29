@@ -184,6 +184,10 @@ class BeliefLog:
                 return t
         return None
 
+    def has_open_belief(self, subject: str) -> bool:
+        """Whether SIG currently holds an open (correctable) belief about ``subject``."""
+        return self._open_id(subject) is not None
+
     def _open_id(self, subject: str) -> int | None:
         for i, a in enumerate(self._assertions):
             if a.subject == subject and a.belief_to is None:

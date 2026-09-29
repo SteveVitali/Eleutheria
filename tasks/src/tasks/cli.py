@@ -38,6 +38,7 @@ from .contribution import (
 from .maproulette import (
     ChallengeNotRegisteredError,
     ChallengeTask,
+    HttpxMapRouletteTransport,
     MapRouletteClient,
     build_challenge,
 )
@@ -197,7 +198,13 @@ def _maproulette_push(args: argparse.Namespace) -> int:
     registered = contribution_registered()
     # `--dry-run` forces the no-network path even if a key is present; without a key
     # the client is already dry-run. The registration gate is checked first either way.
-    client = MapRouletteClient(api_key=None) if args.dry_run else MapRouletteClient.from_env()
+    # HG-08 activation-ready: with a key AND registration, the live push POSTs through
+    # the concrete httpx transport; keyless it stays dry-run and the transport is unused.
+    client = (
+        MapRouletteClient(api_key=None)
+        if args.dry_run
+        else MapRouletteClient.from_env(transport=HttpxMapRouletteTransport())
+    )
     challenge = build_challenge(
         challenge_id=args.challenge,
         name=f"SIG operator attribution — {args.jurisdiction.upper()}",
@@ -224,7 +231,7 @@ def _maproulette_push(args: argparse.Namespace) -> int:
 
 
 def _maproulette_pull(args: argparse.Namespace) -> int:
-    client = MapRouletteClient.from_env()
+    client = MapRouletteClient.from_env(transport=HttpxMapRouletteTransport())
     result = client.pull(challenge_id=args.challenge)
     print(json.dumps(result, indent=2, sort_keys=True))
     if result.get("dry_run"):
