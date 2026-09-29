@@ -133,6 +133,20 @@ PAIRS: list[Pair] = [
         compute_only={},
         unpersisted_columns={
             "coverage_id": "uuid primary key, server-generated (uuidv7 default)",
+            "input_digest": "P28.4 idempotency key (nullable, no default) — a sha256 over "
+            "the coverage row's reproducible content; the materializer sets it, the "
+            "CoverageRecord value object does not source it (coverage_materialize sqitch change)",
+            "metric_method": "P28.4 §32.2/32.5 counted-quantity columns (all nullable) — a "
+            "counted quantity with a named denominator is a distinct coverage shape "
+            "(inference.denominators.PublishedAggregate), not sourced by the negative-space "
+            "CoverageRecord value object; NULL on a negative-space row",
+            "metric_label": "P28.4 counted-quantity label (nullable; NULL on an absence row)",
+            "numerator": "P28.4 counted-quantity numerator (nullable; NULL on an absence row)",
+            "denominator": "P28.4 counted-quantity evaluable denominator (nullable)",
+            "not_evaluable": "P28.4 count excluded for lack of evidence (§32.2, nullable)",
+            "named_denominator": "P28.4 the NAMED denominator, never a total (SIG-METRIC-010; "
+            "nullable; CHECK-pinned non-reality when a metric row)",
+            "metric_value": "P28.4 the ratio/recall/share value (nullable; NULL on an absence row)",
         },
     ),
     Pair(

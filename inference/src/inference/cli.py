@@ -62,6 +62,23 @@ def build_parser() -> argparse.ArgumentParser:
 
     fresh = sub.add_parser("freshness", help="the per-source freshness surface (§32.4)")
     fresh.add_argument("--input", default=None, help="JSON file of a freshness payload")
+
+    matcov = sub.add_parser(
+        "materialize-coverage",
+        help="materialize honest §32 coverage over the resolved spine (P28.4)",
+    )
+    matcov.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    matcov.add_argument(
+        "--jurisdiction", default=None, help="jurisdiction token filter (per-jurisdiction scope)"
+    )
+    matcov.add_argument(
+        "--role", default=None, help="optional read/materialize role to SET ROLE to"
+    )
+    matcov.add_argument(
+        "--no-negative-space",
+        action="store_true",
+        help="skip the §32.1 negative-space (not_researched) records",
+    )
     return parser
 
 
@@ -252,5 +269,21 @@ def main(argv: list[str] | None = None) -> int:
         return _run_completeness(args)
     if args.command == "freshness":
         return _run_freshness(args)
+    if args.command == "materialize-coverage":
+        return _run_materialize_coverage(args)
     parser.print_help()
+    return 0
+
+
+def _run_materialize_coverage(args: argparse.Namespace) -> int:
+    """Materialize honest §32 coverage over the resolved spine (P28.4)."""
+    from .materialize import materialize_coverage_from_dsn
+
+    summary = materialize_coverage_from_dsn(
+        args.dsn,
+        jurisdiction=args.jurisdiction,
+        role=args.role,
+        negative_space=not args.no_negative_space,
+    )
+    print(json.dumps(summary.as_dict(), indent=2, default=str))
     return 0
