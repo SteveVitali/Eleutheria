@@ -1,0 +1,112 @@
+{
+  "schema": "p272-dispositions/1.0.0",
+  "ticket": "P29.3 (ACTIVATE.3)",
+  "gate": "HG-03 per source answered 2026-09-23 ('Flip under GL-GATE-07 + fetch', LEDGER GATE DECISIONS)",
+  "rule": "Per-source recorded disposition wins where reviewed (the ticket's 'evidenced licence basis'); the GL-GATE-07 LicenseRef rule fills the default (US -> LicenseRef-PublicRecord-FactualCompilation, non-US -> LicenseRef-OperatorAccepted-DBRight). Federal-government works record their 17 U.S.C. §105 public-domain basis -> CC0-1.0. Decisions are source-scoped and append-only (rights_decision rows, ADR-095) — a claim's recorded rights_id is never rewritten. The hosted apply (sig-db rights-decisions --apply) is deferred with the live fetch under the OSM-land contention (D-R7.3-BREADTH); these sources hold no hosted claims yet.",
+  "resolutions": [
+    {
+      "source_id": "gao_surveillance_reports",
+      "spdx": "CC0-1.0",
+      "attribution": "U.S. Government Accountability Office (public domain, 17 U.S.C. §105)",
+      "redistributable": "yes",
+      "derivative_permitted": "yes",
+      "terms_url": "https://www.gao.gov/about/reports-testimonies/copyright",
+      "retrieval_date": "2026-09-23",
+      "reviewed_by": "maintainer (delegated)",
+      "reviewed_on": "2026-09-23",
+      "basis": "HG-03 answered 2026-09-23 ('Flip under GL-GATE-07 + fetch'): GAO reports are US-federal-government works (17 U.S.C. §105 -> public domain); the per-source PD packet wins over the GL-GATE-07 US default. Recorded in sources.toml.",
+      "review_packet": "docs/build/reports/rights/annex/p293/gao_surveillance_reports.md"
+    },
+    {
+      "source_id": "dhs_oig_reports",
+      "spdx": "CC0-1.0",
+      "attribution": "U.S. Department of Homeland Security, Office of Inspector General (public domain, 17 U.S.C. §105)",
+      "redistributable": "yes",
+      "derivative_permitted": "yes",
+      "terms_url": "https://www.oig.dhs.gov/foia",
+      "retrieval_date": "2026-09-23",
+      "reviewed_by": "maintainer (delegated)",
+      "reviewed_on": "2026-09-23",
+      "basis": "HG-03 answered 2026-09-23 ('Flip under GL-GATE-07 + fetch'): DHS OIG reports are US-federal-government works (17 U.S.C. §105 -> public domain). Recorded in sources.toml.",
+      "review_packet": "docs/build/reports/rights/annex/p293/dhs_oig_reports.md"
+    },
+    {
+      "source_id": "dhs_fusion_center_assessments",
+      "spdx": "CC0-1.0",
+      "attribution": "U.S. Department of Homeland Security — National Network of Fusion Centers assessment (public domain, 17 U.S.C. §105)",
+      "redistributable": "yes",
+      "derivative_permitted": "yes",
+      "terms_url": "https://www.dhs.gov/foia",
+      "retrieval_date": "2026-09-23",
+      "reviewed_by": "maintainer (delegated)",
+      "reviewed_on": "2026-09-23",
+      "basis": "HG-03 answered 2026-09-23 ('Flip under GL-GATE-07 + fetch'): DHS fusion-center assessments are US-federal-government works (17 U.S.C. §105 -> public domain). Recorded in sources.toml.",
+      "review_packet": "docs/build/reports/rights/annex/p293/dhs_fusion_center_assessments.md"
+    },
+    {
+      "source_id": "fema_hsgp_allocations",
+      "spdx": "CC0-1.0",
+      "attribution": "U.S. Federal Emergency Management Agency — Homeland Security Grant Program allocations (public domain, 17 U.S.C. §105)",
+      "redistributable": "yes",
+      "derivative_permitted": "yes",
+      "terms_url": "https://www.fema.gov/about/website-information/foia",
+      "retrieval_date": "2026-09-23",
+      "reviewed_by": "maintainer (delegated)",
+      "reviewed_on": "2026-09-23",
+      "basis": "HG-03 answered 2026-09-23 ('Flip under GL-GATE-07 + fetch'): FEMA HSGP allocations are US-federal-government works (17 U.S.C. §105 -> public domain). Funding evidence only (funded ≠ deployed). Recorded in sources.toml.",
+      "review_packet": "docs/build/reports/rights/annex/p293/fema_hsgp_allocations.md"
+    },
+    {
+      "source_id": "ccops_oakland",
+      "spdx": "LicenseRef-PublicRecord-FactualCompilation",
+      "attribution": "City of Oakland — Privacy Advisory Commission (surveillance-ordinance disclosures; derived facts + citations only)",
+      "redistributable": "yes",
+      "derivative_permitted": "yes",
+      "terms_url": "https://www.oaklandca.gov/boards-commissions/privacy-advisory-board",
+      "retrieval_date": "2026-09-23",
+      "reviewed_by": "maintainer (delegated)",
+      "reviewed_on": "2026-09-23",
+      "basis": "HG-03 answered 2026-09-23 ('Flip under GL-GATE-07 + fetch'): Oakland municipal public record; facts of a factual compilation not copyrightable (Feist) -> GL-GATE-07 US basis. SIG derives facts + citations, never re-hosts PDFs. Recorded in sources.toml.",
+      "review_packet": "docs/build/reports/rights/annex/p293/ccops_oakland.md"
+    },
+    {
+      "source_id": "ccops_cambridge",
+      "spdx": "LicenseRef-PublicRecord-FactualCompilation",
+      "attribution": "City of Cambridge, MA — surveillance-ordinance disclosures (derived facts + citations only)",
+      "redistributable": "yes",
+      "derivative_permitted": "yes",
+      "terms_url": "https://www.cambridgema.gov/",
+      "retrieval_date": "2026-09-23",
+      "reviewed_by": "maintainer (delegated)",
+      "reviewed_on": "2026-09-23",
+      "basis": "HG-03 answered 2026-09-23 ('Flip under GL-GATE-07 + fetch'): Cambridge municipal public record; facts not copyrightable (Feist) -> GL-GATE-07 US basis. SIG derives facts + citations, never re-hosts PDFs. Recorded in sources.toml.",
+      "review_packet": "docs/build/reports/rights/annex/p293/ccops_cambridge.md"
+    },
+    {
+      "source_id": "ccops_somerville",
+      "spdx": "LicenseRef-PublicRecord-FactualCompilation",
+      "attribution": "City of Somerville, MA — surveillance-ordinance disclosures (derived facts + citations only)",
+      "redistributable": "yes",
+      "derivative_permitted": "yes",
+      "terms_url": "https://www.somervillema.gov/",
+      "retrieval_date": "2026-09-23",
+      "reviewed_by": "maintainer (delegated)",
+      "reviewed_on": "2026-09-23",
+      "basis": "HG-03 answered 2026-09-23 ('Flip under GL-GATE-07 + fetch'): Somerville municipal public record; facts not copyrightable (Feist) -> GL-GATE-07 US basis. SIG derives facts + citations, never re-hosts PDFs. Recorded in sources.toml.",
+      "review_packet": "docs/build/reports/rights/annex/p293/ccops_somerville.md"
+    },
+    {
+      "source_id": "uk_surveillance_camera_commissioner",
+      "spdx": "LicenseRef-OperatorAccepted-DBRight",
+      "attribution": "UK Biometrics & Surveillance Camera Commissioner (Crown copyright, Open Government Licence v3.0; derived facts + citations only)",
+      "redistributable": "yes",
+      "derivative_permitted": "yes",
+      "terms_url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+      "retrieval_date": "2026-09-23",
+      "reviewed_by": "maintainer (delegated)",
+      "reviewed_on": "2026-09-23",
+      "basis": "HG-03 answered 2026-09-23 ('Flip under GL-GATE-07 + fetch'): non-US factual compilation -> GL-GATE-07 non-US basis (operator accepts the sui generis DB-right risk, 2026-09-18); Crown copyright content is OGL v3.0 (corroborating open-licence basis). SIG derives facts + citations, never re-hosts documents. Recorded in sources.toml.",
+      "review_packet": "docs/build/reports/rights/annex/p293/uk_surveillance_camera_commissioner.md"
+    }
+  ]
+}

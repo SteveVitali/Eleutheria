@@ -115,7 +115,7 @@ def test_the_seeded_registry_has_no_flip_metadata_violations() -> None:
 def test_validate_passes_on_the_seeded_registry(capsys: pytest.CaptureFixture[str]) -> None:
     assert main(["validate"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 334" in out
+    assert "registered sources: 339" in out
     assert "self-checks OK" in out
 
 
@@ -211,12 +211,21 @@ def test_review_status_prints_flip_ready_0_and_loadable_65(
     # re-fetches (SIG-INGEST-049f) and its terms page Cloudflare-challenges
     # non-browser fetches — so it sits flip-ready-but-deliberately-unflipped,
     # the registry's one standing exception.
+    # P29.3 (ACTIVATE.3) — targeted accountability/governance breadth under
+    # GL-GATE-07 (HG-03, LEDGER GATE DECISIONS 2026-09-23): +5 new registry rows
+    # (334 → 339: gao_surveillance_reports, dhs_oig_reports,
+    # dhs_fusion_center_assessments, fema_hsgp_allocations — US federal PD /
+    # CC0-1.0; uk_surveillance_camera_commissioner — non-US /
+    # LicenseRef-OperatorAccepted-DBRight) and +8 flips (the 5 new rows + the 3
+    # pre-registered gated CCOPS discovery rows ccops_oakland/ccops_cambridge/
+    # ccops_somerville, US municipal → LicenseRef-PublicRecord-FactualCompilation;
+    # 228 → 236 loadable). flip-ready stays 1 (the new rows land already flipped).
     assert main(["review-status"]) == 0
     out = capsys.readouterr().out
-    assert "registered sources: 334" in out
+    assert "registered sources: 339" in out
     assert "flip-ready: 1" in out
     assert "flip-ready: state_alpr_statute_inventory" in out
-    assert "loadable now: 228" in out
+    assert "loadable now: 236" in out
 
 
 def test_review_status_loadable_equals_validate() -> None:
@@ -224,7 +233,7 @@ def test_review_status_loadable_equals_validate() -> None:
     from connectors.loader import is_loadable
 
     loadable = [s for s in sources() if is_loadable(s)]
-    assert len(loadable) == 228
+    assert len(loadable) == 236
     # state_alpr_statute_inventory is the single flip-ready row: its rights
     # resolved for the landed seed claims (P27.2/ADR-095) while the live gate
     # stays closed by design — one-time seed, never a feed (SIG-INGEST-049f).

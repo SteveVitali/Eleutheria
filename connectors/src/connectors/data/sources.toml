@@ -747,6 +747,139 @@ last_verified = 2026-09-17
 notes = "Litigation evidence (§22.3). STAYS GATED — P26.3 review (2026-09-17) completed the rights packet with verbatim terms: the FLP membership-based API terms (free.law/membership/allowed-api-usage) intend access for individuals/small orgs and expressly exclude 'building tools for for-profit or non-profit organizations' — SIG's use falls outside membership eligibility, so the flip needs an operator decision on the agreement tier + the credential (HG-09 class), not a GL-GATE-06 clear-licence flip. Keyless probe 2026-09-17: /api/rest/v4/dockets/5/ → 401. Mapped to the accountability connector (targeted lookups only, SIG-INGEST-036/037) — the gate refuses live fetches meanwhile."
 review_packet = "docs/build/reports/rights/courtlistener_recap.md"
 
+# P29.3 (ACTIVATE.3) — targeted, relationship-weighted accountability/governance
+# breadth: federal OVERSIGHT, FUNDING and FUSION-CENTER GOVERNANCE sources (NOT
+# commodity camera points). Each is a US-federal-government work: 17 U.S.C. §105
+# places it in the public domain → CC0-1.0 (the per-source packet PD basis wins under
+# the GL-GATE-07 answer, LEDGER GATE DECISIONS 2026-09-23). FLIPPED 2026-09-23. Each
+# lands under the existing `accountability` connector class (targeted-lookup oversight
+# records → AccountabilityEvent, SIG-INGEST-036/037), except the funding source, which
+# lands under the `procurement` connector's federal-assistance path. Relationship-
+# weighted: each resolves onto an existing operator/agency/program/vendor entity via the
+# P28.6 accountability chain (deployment→vendor→contract→FUNDING→policy→OVERSIGHT). The
+# live fetch + dedup-into-resolved is DEFERRED under the OSM-land contention
+# (D-R7.3-BREADTH); a live run refuses at the loader gate until the connector is wired.
+
+[sources.gao_surveillance_reports]
+name = "U.S. Government Accountability Office — surveillance-technology oversight reports (facial recognition, ALPR, DHS grant programs)"
+source_kind = "government_portal"
+homepage_url = "https://www.gao.gov/"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "accountability connector (targeted report lookup); live fetch deferred (D-R7.3-BREADTH)"
+verified = true
+last_verified = 2026-09-23
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-23
+review_packet = "docs/build/reports/rights/annex/p293/gao_surveillance_reports.md"
+notes = "P29.3 (ACTIVATE.3): FLIPPED 2026-09-23 under GL-GATE-07 — federal OVERSIGHT source. Basis: CC0-1.0 (GAO reports are US-federal-government works, 17 U.S.C. §105 → public domain; the per-source PD packet wins over the GL-GATE-07 US default). High-signal oversight of facial recognition (e.g. GAO-21-518), ALPR, and the DHS Homeland Security Grant Program. Connector class: accountability (targeted report lookup, SIG-INGEST-036/037; an oversight finding is an AccountabilityEvent, never a deployment claim — procured/reviewed ≠ deployed). Live fetch + dedup-into-resolved deferred under OSM-land contention (D-R7.3-BREADTH)."
+[sources.gao_surveillance_reports.rights]
+spdx = "CC0-1.0"
+attribution = "U.S. Government Accountability Office (public domain, 17 U.S.C. §105)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.gao.gov/about/reports-testimonies/copyright"
+retrieval_date = 2026-09-23
+
+[sources.dhs_oig_reports]
+name = "DHS Office of Inspector General — oversight reports (fusion centers, grant programs, CBP/ICE surveillance)"
+source_kind = "government_portal"
+homepage_url = "https://www.oig.dhs.gov/reports"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "accountability connector (targeted report lookup); live fetch deferred (D-R7.3-BREADTH)"
+verified = true
+last_verified = 2026-09-23
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-23
+review_packet = "docs/build/reports/rights/annex/p293/dhs_oig_reports.md"
+notes = "P29.3 (ACTIVATE.3): FLIPPED 2026-09-23 under GL-GATE-07 — federal OVERSIGHT source. Basis: CC0-1.0 (DHS OIG reports are US-federal-government works, 17 U.S.C. §105 → public domain). Oversight of fusion centers, the Homeland Security Grant Program, and CBP/ICE surveillance programs. Connector class: accountability (targeted report lookup; an OIG finding is an AccountabilityEvent, never a deployment claim). Live fetch + dedup-into-resolved deferred under OSM-land contention (D-R7.3-BREADTH)."
+[sources.dhs_oig_reports.rights]
+spdx = "CC0-1.0"
+attribution = "U.S. Department of Homeland Security, Office of Inspector General (public domain, 17 U.S.C. §105)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.oig.dhs.gov/foia"
+retrieval_date = 2026-09-23
+
+[sources.dhs_fusion_center_assessments]
+name = "DHS Fusion Center Assessment — National Network of Fusion Centers governance reports"
+source_kind = "government_portal"
+homepage_url = "https://www.dhs.gov/fusion-center-locations-and-contact-information"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "accountability connector (targeted report lookup); live fetch deferred (D-R7.3-BREADTH)"
+verified = true
+last_verified = 2026-09-23
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-23
+review_packet = "docs/build/reports/rights/annex/p293/dhs_fusion_center_assessments.md"
+notes = "P29.3 (ACTIVATE.3): FLIPPED 2026-09-23 under GL-GATE-07 — FUSION-CENTER GOVERNANCE source (complements the existing dhs_fusion_centers roster with the annual governance/assessment layer). Basis: CC0-1.0 (US-federal-government work, 17 U.S.C. §105 → public domain). The DHS National Network of Fusion Centers annual assessment reports the governance/maturity of each named fusion center. Connector class: accountability (targeted report lookup; a governance finding is an AccountabilityEvent). Relationship-weighted: resolves onto the fusion-center entities already registered via dhs_fusion_centers. Live fetch + dedup deferred under OSM-land contention (D-R7.3-BREADTH)."
+[sources.dhs_fusion_center_assessments.rights]
+spdx = "CC0-1.0"
+attribution = "U.S. Department of Homeland Security — National Network of Fusion Centers assessment (public domain, 17 U.S.C. §105)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.dhs.gov/foia"
+retrieval_date = 2026-09-23
+
+[sources.fema_hsgp_allocations]
+name = "FEMA Homeland Security Grant Program (HSGP/UASI) allocations — federal grant funding to fusion centers and RTCCs"
+source_kind = "government_portal"
+homepage_url = "https://www.fema.gov/grants/preparedness/homeland-security"
+default_tier = "R1"
+custody_posture = "MIRROR"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "procurement connector (federal-assistance/allocation path); live fetch deferred (D-R7.3-BREADTH)"
+verified = true
+last_verified = 2026-09-23
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-23
+review_packet = "docs/build/reports/rights/annex/p293/fema_hsgp_allocations.md"
+notes = "P29.3 (ACTIVATE.3): FLIPPED 2026-09-23 under GL-GATE-07 — FUNDING source (the funding leg of the accountability chain). Basis: CC0-1.0 (US-federal-government work, 17 U.S.C. §105 → public domain). FEMA's Homeland Security Grant Program / Urban Area Security Initiative allocation tables record which agencies/urban areas receive federal grant funding that flows to fusion centers and Real-Time Crime Centers — a high-signal, relationship-weighted funding surface (funding → recipient agency). A grant allocation is FUNDING evidence only — never a deployment, device count, or operational state (procured/funded ≠ deployed). Connector class: procurement (federal-assistance path, distinct from the sub-award keyword path usaspending owns). Live fetch + dedup deferred under OSM-land contention (D-R7.3-BREADTH)."
+[sources.fema_hsgp_allocations.rights]
+spdx = "CC0-1.0"
+attribution = "U.S. Federal Emergency Management Agency — Homeland Security Grant Program allocations (public domain, 17 U.S.C. §105)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.fema.gov/about/website-information/foia"
+retrieval_date = 2026-09-23
+
+[sources.uk_surveillance_camera_commissioner]
+name = "UK Biometrics & Surveillance Camera Commissioner — Surveillance Camera Code of Practice compliance & oversight"
+source_kind = "government_portal"
+homepage_url = "https://www.gov.uk/government/organisations/surveillance-camera-commissioner"
+default_tier = "R1"
+custody_posture = "DERIVE"
+compact_status = "public_terms_only"
+robots_policy = "honor"
+access_method = "accountability connector (targeted report lookup); live fetch deferred (D-R7.3-BREADTH)"
+verified = true
+last_verified = 2026-09-23
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-23
+review_packet = "docs/build/reports/rights/annex/p293/uk_surveillance_camera_commissioner.md"
+notes = "P29.3 (ACTIVATE.3): FLIPPED 2026-09-23 under GL-GATE-07 — non-US OVERSIGHT/POLICY source (under-covered jurisdiction: UK). Basis: LicenseRef-OperatorAccepted-DBRight (the GL-GATE-07 non-US default; the operator accepts the sui generis database-right risk, LEDGER GATE DECISIONS 2026-09-18. The packet also records that the underlying content is Crown copyright under the Open Government Licence v3.0 — attribution-only, reuse-permitting — so the operator-accepted basis is conservative). The UK Biometrics & Surveillance Camera Commissioner's compliance reports + the Surveillance Camera Code of Practice are the UK's national surveillance-oversight/policy layer. SIG derives facts + citations, never re-hosts the documents. Connector class: accountability (targeted report lookup; a compliance finding is an AccountabilityEvent). Live fetch + dedup deferred under OSM-land contention (D-R7.3-BREADTH)."
+[sources.uk_surveillance_camera_commissioner.rights]
+spdx = "LicenseRef-OperatorAccepted-DBRight"
+attribution = "UK Biometrics & Surveillance Camera Commissioner (Crown copyright, Open Government Licence v3.0; derived facts + citations only)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+retrieval_date = 2026-09-23
+
 # ===========================================================================
 # F. Records, procurement, evidence (§22.6 F, §22.3 SIG-INGEST-026)
 # ===========================================================================
@@ -1607,6 +1740,7 @@ redistributable = true
 derivative_permitted = true
 terms_url = "https://www.sf.gov/surveillance-technology-inventory"
 retrieval_date = 2026-09-15
+
 [sources.state_alpr_statute_inventory]
 name = "State ALPR statute national inventory"
 source_kind = "government_portal"
@@ -2137,8 +2271,19 @@ robots_policy = "honor"
 access_method = "document index (ordinance reports + use policies)"
 auth_model = "none"
 verified = true
-last_verified = 2026-09-16
-notes = "P26.2 discovery. Oakland Ordinance 13489 (2018) mandates annual surveillance tech use reports via the Privacy Advisory Commission. Host 403s programmatic agents this pass — recorded challenge, not bypassed."
+last_verified = 2026-09-23
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-23
+review_packet = "docs/build/reports/rights/annex/p293/ccops_oakland.md"
+notes = "P26.2 discovery. Oakland Ordinance 13489 (2018) mandates annual surveillance tech use reports via the Privacy Advisory Commission. P29.3 (ACTIVATE.3): FLIPPED 2026-09-23 under GL-GATE-07 — accountability/governance breadth (under-covered oversight jurisdiction; one of the strongest CCOPS oversight regimes). Basis: LicenseRef-PublicRecord-FactualCompilation (Oakland municipal public record; ordinance-mandated use policies + PAC annual surveillance reports are factual disclosures — facts not copyrightable, Feist; SIG derives facts + citations and never re-hosts the PDFs). Connector class: government_mandated_disclosure (no bespoke adapter). The prior-pass host 403 is an ACCESS posture (recorded, never bypassed); the RIGHTS flip is independent. Live fetch + dedup-into-resolved deferred under OSM-land contention (D-R7.3-BREADTH); a live run refuses at the loader gate until wired."
+[sources.ccops_oakland.rights]
+spdx = "LicenseRef-PublicRecord-FactualCompilation"
+attribution = "City of Oakland — Privacy Advisory Commission (surveillance-ordinance disclosures; derived facts + citations only)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.oaklandca.gov/boards-commissions/privacy-advisory-board"
+retrieval_date = 2026-09-23
 
 [sources.ccops_berkeley]
 name = "CCOPS Berkeley — Surveillance Technology Use ordinance disclosures"
@@ -2179,8 +2324,19 @@ robots_policy = "honor"
 access_method = "document index (ordinance reports)"
 auth_model = "none"
 verified = true
-last_verified = 2026-09-16
-notes = "P26.2 discovery. Cambridge MA ordinance (2018) surveillance-oversight disclosures."
+last_verified = 2026-09-23
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-23
+review_packet = "docs/build/reports/rights/annex/p293/ccops_cambridge.md"
+notes = "P26.2 discovery. Cambridge MA ordinance (2018) surveillance-oversight disclosures. P29.3 (ACTIVATE.3): FLIPPED 2026-09-23 under GL-GATE-07 — accountability/governance breadth (under-covered oversight jurisdiction). Basis: LicenseRef-PublicRecord-FactualCompilation (Cambridge municipal public record; ordinance-mandated surveillance-use policies + annual reports are factual disclosures — facts not copyrightable, Feist; SIG derives facts + citations, never re-hosts PDFs). Connector class: government_mandated_disclosure (no bespoke adapter). Live fetch + dedup-into-resolved deferred under OSM-land contention (D-R7.3-BREADTH); a live run refuses at the loader gate until wired."
+[sources.ccops_cambridge.rights]
+spdx = "LicenseRef-PublicRecord-FactualCompilation"
+attribution = "City of Cambridge, MA — surveillance-ordinance disclosures (derived facts + citations only)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.cambridgema.gov/"
+retrieval_date = 2026-09-23
 
 [sources.ccops_boston]
 name = "CCOPS Boston — surveillance oversight ordinance disclosures"
@@ -2249,8 +2405,19 @@ robots_policy = "honor"
 access_method = "document index (ordinance reports)"
 auth_model = "none"
 verified = true
-last_verified = 2026-09-16
-notes = "P26.2 discovery. Somerville MA surveillance-oversight ordinance disclosures."
+last_verified = 2026-09-23
+ingestion_permitted = true
+rights_reviewed_by = "maintainer (delegated)"
+rights_reviewed_on = 2026-09-23
+review_packet = "docs/build/reports/rights/annex/p293/ccops_somerville.md"
+notes = "P26.2 discovery. Somerville MA surveillance-oversight ordinance disclosures. P29.3 (ACTIVATE.3): FLIPPED 2026-09-23 under GL-GATE-07 — accountability/governance breadth (under-covered oversight jurisdiction; Somerville was an early US facial-recognition ban). Basis: LicenseRef-PublicRecord-FactualCompilation (Somerville municipal public record; ordinance-mandated surveillance disclosures are factual — facts not copyrightable, Feist; SIG derives facts + citations, never re-hosts PDFs). Connector class: government_mandated_disclosure (no bespoke adapter). Live fetch + dedup-into-resolved deferred under OSM-land contention (D-R7.3-BREADTH); a live run refuses at the loader gate until wired."
+[sources.ccops_somerville.rights]
+spdx = "LicenseRef-PublicRecord-FactualCompilation"
+attribution = "City of Somerville, MA — surveillance-ordinance disclosures (derived facts + citations only)"
+redistributable = true
+derivative_permitted = true
+terms_url = "https://www.somervillema.gov/"
+retrieval_date = 2026-09-23
 
 [sources.denmark_politi_cctv]
 name = "Denmark National Police — official CCTV camera map"
