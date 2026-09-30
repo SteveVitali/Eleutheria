@@ -31,6 +31,7 @@ from exports.spine_export import (
     contradictions_visible_metric,
     resolved_site_counts,
     resolved_sites_metric,
+    surface_license,
 )
 from rdflib import Graph
 from support import REPO_ROOT
@@ -226,6 +227,46 @@ def test_dossier_has_twelve_sections_and_first_class_gaps() -> None:
     assert any(g["kind"] == "NOT_RESEARCHED" for g in dossier["gaps"])
 
 
+def test_dossier_action_blocks_are_full_shape_and_explicitly_unknown() -> None:
+    # P30.3: `{}` rendered auto-renewal as "no" (a fabricated fact) and crashed the print
+    # page on `disclosure_duties.length`; every field is now present and explicitly unknown.
+    (d, *_) = _web(_build(_site("A", "35.46", "-97.51", "Oklahoma")), "dossiers")
+    assert d["authorization"] == {
+        "approving_body": None,
+        "vote": None,
+        "consent_agenda": None,
+        "public_comment": None,
+        "date": None,
+    }
+    assert d["termination"] == {
+        "auto_renews": None,
+        "notice_window_days": None,
+        "expiry_date": None,
+    }
+    assert d["legal_regime"] == {
+        "state_statute": None,
+        "local_ordinance": None,
+        "disclosure_duties": [],
+    }
+
+
+def test_map_location_absence_uses_the_web_absence_vocabulary() -> None:
+    # P30.3: "conflicted"/"no_resolved_point" are not §9.5 absence kinds — the national
+    # /map/ build crashed looking them up. Pinned to web `epistemic.ts#ABSENCE_KINDS`.
+    kinds = {"NOT_RESEARCHED", "NO_EVIDENCE_FOUND", "EVIDENCE_OF_ABSENCE", "UNRESOLVED"}
+    point_less = [_claim("N-jur", "N", "camera_jurisdiction", value_text="Oklahoma")]
+    conflicted = [
+        _claim("C-lat1", "C", "camera_latitude", value_text="35.1"),
+        _claim("C-lat2", "C", "camera_latitude", value_text="36.9"),
+        _claim("C-lon", "C", "camera_longitude", value_text="-97.5"),
+        _claim("C-jur", "C", "camera_jurisdiction", value_text="Oklahoma"),
+    ]
+    assets = {a["id"]: a for a in _web(_build(point_less + conflicted), "map")["assets"]}
+    assert assets["N"]["locationAbsence"] == "NO_EVIDENCE_FOUND"
+    assert assets["C"]["locationAbsence"] == "UNRESOLVED"
+    assert all(a.get("locationAbsence", "UNRESOLVED") in kinds for a in assets.values())
+
+
 def test_dossier_slugs_are_unique_across_jurisdictions() -> None:
     claims = (
         _site("A", "35.46", "-97.51", "Oklahoma")
@@ -306,6 +347,75 @@ def test_undetermined_record_is_refused() -> None:
     assert "UNDETERMINED" in reasons
 
 
+def test_a_source_with_two_rights_records_is_sliced_per_rights_never_merged() -> None:
+    # P30.3 (hosted finding, dot_511_ky): ONE source whose claims carry two effective rights
+    # records under different licences (CC0 rows + decision-resolved public-record rows). The
+    # per-source rights index used to keep only the first record, so the second licence's
+    # compartment table computed a CC0+PublicRecord mix and the fail-closed gate stopped the
+    # build. Each (source, rights) slice is now placed + attributed by its OWN record.
+    cc0 = _site("K1", "38.2", "-85.7", "Kentucky", source_id="dot_ky", spdx="CC0-1.0")
+    pr = _site(
+        "K2",
+        "38.3",
+        "-85.8",
+        "Kentucky",
+        source_id="dot_ky",
+        spdx="LicenseRef-PublicRecord-FactualCompilation",
+    )
+    export = _build(cc0 + pr)
+    by_comp = {pt.compartment: pt for pt in export.bundle.placed if pt.table.name == "sites"}
+    # CC0 is placed under its most-constraining relicensable target (policy.licensing), the
+    # CC-BY-SA-4.0 `portal` compartment — the point is it is NOT merged with public_record.
+    assert by_comp["portal"].license == "CC-BY-SA-4.0"
+    assert by_comp["public_record"].license == "LicenseRef-PublicRecord-FactualCompilation"
+    assert {r.data["entity_id"] for r in by_comp["portal"].table.rows} == {"K1"}
+    assert {r.data["entity_id"] for r in by_comp["public_record"].table.rows} == {"K2"}
+    # the rows still carry the TRUE source id; only the placement key is per-slice
+    for pt in by_comp.values():
+        assert {r.data["source_id"] for r in pt.table.rows} == {"dot_ky"}
+    assert_separated(export.bundle.placed)
+
+
+def test_a_single_rights_source_keeps_its_plain_source_key() -> None:
+    export = _build(_site("A", "35.46", "-97.51", "Oklahoma", source_id="osm"))
+    rows = [r for pt in export.bundle.placed if pt.table.name == "sites" for r in pt.table.rows]
+    assert {r.source_id for r in rows} == {"osm"}
+
+
+def test_map_surface_is_labelled_with_every_licence_it_draws_on() -> None:
+    # ADR-106: the map render surface carries every published subject's own point, so an
+    # ODbL + CC-BY mix is labelled as BOTH (a mixed-licence artifact the public classifier
+    # keeps out of every public object); the aggregate surfaces stay SIG CC-BY-4.0.
+    claims = _site("A", "35.46", "-97.51", "Oklahoma", source_id="osm", spdx="ODbL-1.0") + _site(
+        "B", "48.85", "2.35", "Paris", source_id="fr", spdx="CC-BY-4.0"
+    )
+    arts = {a.path: a for a in _build(claims).manifest.artifacts}
+    assert arts["web/map.json"].license == "CC-BY-4.0 AND ODbL-1.0"
+    assert arts["web/coverage.json"].license == "CC-BY-4.0"
+    assert arts["web/dossiers.json"].license == "CC-BY-4.0"
+
+
+def test_a_single_licence_map_surface_carries_that_licence() -> None:
+    export = _build(_site("A", "35.46", "-97.51", "Oklahoma", source_id="osm", spdx="ODbL-1.0"))
+    arts = {a.path: a for a in export.manifest.artifacts}
+    assert arts["web/map.json"].license == "ODbL-1.0"
+
+
+def test_a_refused_subject_never_reaches_the_map_surface() -> None:
+    claims = _site("A", "35.46", "-97.51", "Oklahoma") + _site(
+        "R", "10.0", "10.0", "Nowhere", source_id="nd", spdx="CC-BY-4.0", derivative_permitted="no"
+    )
+    export = _build(claims)
+    assert {a["id"] for a in _web(export, "map")["assets"]} == {"A"}
+    assert export.exclusions["totals"]["refused_slices"] == 1
+
+
+def test_surface_license_labels() -> None:
+    assert surface_license(set()) == "CC-BY-4.0"
+    assert surface_license({"ODbL-1.0"}) == "ODbL-1.0"
+    assert surface_license({"ODbL-1.0", "CC0-1.0"}) == "CC0-1.0 AND ODbL-1.0"
+
+
 def test_per_source_slice_recomputes_its_own_envelope() -> None:
     # Two sources disagree on the coordinate of the SAME subject. The aggregate site
     # is conflicted (null point), but each source's slice keeps ITS OWN resolved point
@@ -382,6 +492,15 @@ def test_pmtiles_rendered_per_compartment() -> None:
         a for a in export.manifest.artifacts if a.path == "web/tiles/osm_physical-sites.pmtiles"
     )
     assert osm_tile.license == "ODbL-1.0" and osm_tile.compartment == "osm_physical"
+
+
+def test_a_share_alike_tile_is_filed_under_its_own_compartment() -> None:
+    # ADR-106: a CC-BY-SA-4.0 tile was labelled `sig_graph` (the old ODbL-else-sig_graph
+    # rule); it is now filed under the compartment its sites were placed in.
+    claims = _site("P", "40.0", "-75.0", "Somewhere", source_id="portal", spdx="CC-BY-SA-4.0")
+    export = _build(claims)
+    tile = next(a for a in export.manifest.artifacts if a.path.endswith("-sites.pmtiles"))
+    assert (tile.compartment, tile.license) == ("portal", "CC-BY-SA-4.0")
 
 
 def test_manifest_extends_bundle_with_web_and_provenance_checksums() -> None:

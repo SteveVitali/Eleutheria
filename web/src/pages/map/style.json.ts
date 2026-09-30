@@ -9,11 +9,14 @@
 // serving contract a MapLibre renderer consumes. `assertServingContract` runs at
 // build so an edit that breaks the contract fails the build, not just the tests.
 import type { APIRoute } from "astro";
-import { PUBLIC_MAP_STYLE, assertServingContract } from "../../lib/map-tiles";
+import { assertServingContract, buildPublicMapStyle } from "../../lib/map-tiles";
+import { getCompartmentTileSources } from "../../lib/data";
 
 export const GET: APIRoute = () => {
-  assertServingContract(PUBLIC_MAP_STYLE);
-  return new Response(JSON.stringify(PUBLIC_MAP_STYLE, null, 2), {
+  // P30.3 (ADR-106): a national export contributes one source per licence compartment.
+  const style = buildPublicMapStyle(getCompartmentTileSources());
+  assertServingContract(style);
+  return new Response(JSON.stringify(style, null, 2), {
     headers: { "content-type": "application/json; charset=utf-8" },
   });
 };

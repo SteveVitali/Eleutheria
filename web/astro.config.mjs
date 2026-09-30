@@ -4,7 +4,7 @@
 
 import { defineConfig } from "astro/config";
 import react from "@astrojs/react";
-import { cpSync, existsSync, mkdirSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -22,18 +22,44 @@ function sigExportTiles() {
         if (process.env.SIG_DATA_SOURCE !== "export") return;
         const repoRoot = fileURLToPath(new URL("../", import.meta.url));
         const exportDir = process.env.SIG_EXPORT_DIR ?? join(repoRoot, "exports/out/okc");
-        const src = join(exportDir, "web", "tiles", "sig-infrastructure.pmtiles");
-        if (!existsSync(src)) {
+        const tilesDir = join(exportDir, "web", "tiles");
+        const src = join(tilesDir, "sig-infrastructure.pmtiles");
+        const destDir = join(fileURLToPath(dir), "tiles");
+        if (existsSync(src)) {
+          mkdirSync(destDir, { recursive: true });
+          cpSync(src, join(destDir, "sig-infrastructure.pmtiles"));
+          return;
+        }
+        // P30.3 (ADR-106): the national spine export renders ONE archive PER LICENCE
+        // COMPARTMENT (`<compartment>-sites.pmtiles`, e.g. the ODbL osm_physical layer
+        // apart from the CC-BY graph) — never a merged, mixed-licence archive. Each is
+        // served as its own source with its own attribution (/map/style.json).
+        // The SAME list `/map/style.json` is built from (data.ts getCompartmentTileSources):
+        // the manifest's `web/tiles/<compartment>-sites.pmtiles` artifacts — so the style can
+        // never name an archive that was not copied, and no unlisted file is served.
+        const manifestPath = join(exportDir, "manifest.json");
+        const listed = existsSync(manifestPath)
+          ? (JSON.parse(readFileSync(manifestPath, "utf-8")).artifacts ?? [])
+              .map((a) => String(a.path ?? ""))
+              .filter((p) => /^web\/tiles\/[^/]+-sites\.pmtiles$/.test(p))
+              .map((p) => p.slice("web/tiles/".length))
+          : [];
+        const perCompartment = listed.filter((f) => existsSync(join(tilesDir, f)));
+        if (perCompartment.length !== listed.length) {
+          throw new Error(
+            `SIG_DATA_SOURCE=export: the manifest lists tile archives missing from ${tilesDir}.`,
+          );
+        }
+        if (perCompartment.length === 0) {
           // Fail LOUD (like the dossier data layer): an export build that cannot find
           // its rendered tiles is a build error, never a silently tile-less map.
           throw new Error(
-            `SIG_DATA_SOURCE=export but the rendered tiles are missing: ${src}. ` +
-              "Run `sig-exports build --jurisdiction <j> --out <dir>` first.",
+            `SIG_DATA_SOURCE=export but the rendered tiles are missing: ${src} ` +
+              "(or per-compartment <compartment>-sites.pmtiles). Run `sig-exports build` first.",
           );
         }
-        const destDir = join(fileURLToPath(dir), "tiles");
         mkdirSync(destDir, { recursive: true });
-        cpSync(src, join(destDir, "sig-infrastructure.pmtiles"));
+        for (const f of perCompartment) cpSync(join(tilesDir, f), join(destDir, f));
       },
     },
   };

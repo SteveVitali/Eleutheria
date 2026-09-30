@@ -32,6 +32,7 @@ SHELL_SCRIPTS = [
     "scheduled-ops.sh",
     "domain-mapping.sh",
     "materialize.sh",
+    "export.sh",
 ]
 EXECUTABLE_SCRIPTS = [
     "provision.sh",
@@ -40,6 +41,7 @@ EXECUTABLE_SCRIPTS = [
     "scheduled-ops.sh",
     "domain-mapping.sh",
     "materialize.sh",
+    "export.sh",
 ]
 
 

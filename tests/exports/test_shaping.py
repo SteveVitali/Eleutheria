@@ -475,6 +475,24 @@ def test_source_freshness_rows_and_not_evaluable() -> None:
     }
 
 
+def test_an_unrecorded_freshness_date_is_the_explicit_absence_token_never_blank() -> None:
+    # P30.3: the hosted spine's ingest_run rows are all still open ('running', no finished_at)
+    # and most claims carry no observed_at — the row SHOWS "not recorded" (the explicit token),
+    # never a dropped "" and never a guessed date (§3.1).
+    from exports.shaping import NOT_RECORDED
+
+    ds = _dataset(
+        _geo("s1", "35.46", "-97.51", "OK"),
+        source_stats=[("src_a", 3, None, 0)],
+        source_runs=[("src_a", None, "running")],
+    )
+    (src,) = ds.sources
+    row = src.freshness_row()
+    assert row["last_successful_run"] == NOT_RECORDED
+    assert row["last_content_change"] == NOT_RECORDED
+    assert row["status"] == "degraded"  # the open run row is reported as-is
+
+
 def test_sharing_edges_classified_into_access_kinds() -> None:
     edges = shape_sharing_edges(
         [

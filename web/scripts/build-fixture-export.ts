@@ -22,15 +22,33 @@ import { existsSync, copyFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { MAP_LAYERS, partitionByLocatability } from "../src/lib/map";
-import { MAP_ASSETS, NETWORK_NODES, NETWORK_EDGES, ACCESS_PATHS } from "../src/lib/map-network-fixture";
+import {
+  MAP_ASSETS,
+  NETWORK_NODES,
+  NETWORK_EDGES,
+  ACCESS_PATHS,
+  DENSITY_BINS,
+  CENTRALITY_STATS,
+  FOCUS_ENTITY_ID,
+} from "../src/lib/map-network-fixture";
 import {
   FRESHNESS_ROWS,
   COVERAGE_METRICS,
   CORRECTIONS,
   RESEARCH_QUEUE,
+  CORRECTIONS_PROVENANCE,
+  RESEARCH_QUEUE_PROVENANCE,
+  JURISDICTION_CLAIMS,
+  QUEUE_AS_OF,
 } from "../src/lib/corrections-methodology-fixture";
-import { WATCH_ITEMS, EVIDENCE_ARTIFACTS, CLAIM_VIEWS } from "../src/lib/watch-evidence-fixture";
+import {
+  WATCH_ITEMS,
+  EVIDENCE_ARTIFACTS,
+  CLAIM_VIEWS,
+  DECISION_POINT,
+} from "../src/lib/watch-evidence-fixture";
 import { DOSSIERS } from "../src/lib/dossier-fixture";
+import { JURISDICTION_DOSSIERS } from "../src/lib/dossier-jurisdiction-fixture";
 import { LEVERAGE_METRIC_FIXTURE } from "../src/lib/leverage-fixture";
 import { AS_OF, RULESET_VERSION } from "../src/lib/fixtures";
 
@@ -102,6 +120,22 @@ write(
 // harness OVERLAYS a real `sig-exports build --jurisdiction okc` bundle (which already
 // emits these from build_web_dossiers), we leave the real files in place — only the ten
 // P27.5 surface artifacts are added.
+// P30.3 — the optional presentation analytics (data.ts `readPresentation`): the DEMO
+// constants the fixture bundle carries so the export-mode suite exercises the full
+// surfaces. A real `--from-spine` bundle omits them → each page shows its empty state.
+mkdirSync(join(webDir, "presentation"), { recursive: true });
+const presentation = (name: string, payload: unknown): void =>
+  write(join("presentation", `${name}.json`), payload);
+presentation("density_bins", DENSITY_BINS);
+presentation("centrality", CENTRALITY_STATS);
+presentation("focus_entity", { id: FOCUS_ENTITY_ID });
+presentation("decision_point", DECISION_POINT);
+presentation("corrections_provenance", CORRECTIONS_PROVENANCE);
+presentation("research_queue_provenance", RESEARCH_QUEUE_PROVENANCE);
+presentation("jurisdiction_claims", JURISDICTION_CLAIMS);
+presentation("queue_as_of", QUEUE_AS_OF);
+presentation("jurisdiction_dossiers", JURISDICTION_DOSSIERS);
+
 if (!existsSync(join(webDir, "dossiers.json"))) write("dossiers.json", DOSSIERS);
 if (!existsSync(join(webDir, "leverage.json"))) write("leverage.json", LEVERAGE_METRIC_FIXTURE);
 

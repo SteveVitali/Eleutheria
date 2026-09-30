@@ -26,6 +26,18 @@
 export const SOURCE_STATUSES = ["ok", "degraded", "failing", "retired"] as const;
 export type SourceStatus = (typeof SOURCE_STATUSES)[number];
 
+/**
+ * The explicit honest-absence token for a freshness date the spine does not record
+ * (exports `shaping.NOT_RECORDED`, P30.3). It is SHOWN ("not recorded"), never dropped and
+ * never replaced by a guessed date (§3.1); an empty string is still a dropped field.
+ */
+export const NOT_RECORDED = "not-recorded";
+
+/** True when a freshness date is the explicit honest-absence token. */
+export function isNotRecorded(value: string): boolean {
+  return value === NOT_RECORDED;
+}
+
 /** Per-source freshness row (SIG-METRIC-007). All four fields are required. */
 export interface FreshnessRow {
   source: string;

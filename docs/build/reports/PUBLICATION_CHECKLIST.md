@@ -235,3 +235,84 @@ Squarespace and they resolve; no live TLS/probe green is fabricated. The operato
 that the domain serves the current OKC demo until the national deploy (`D-P27.8-1`, gated on the OSM
 land) completes. `astro` `site` is already `https://surveillancegraph.org` (P27.6), so no permalink
 churns when the domain goes live. The `*.run.app` origin stays the documented fallback.
+
+## 2026-09-24 — P30.3 (GO-LIVE.3): NATIONAL PUBLIC LAUNCH EXECUTED
+
+The national real-data surface is live on `https://surveillancegraph.org` (and the `sig-web` run.app
+fallback), built from the settled, materialized hosted spine. This supersedes the 2026-09-22 staged package
+above (D-P27.8-1 DONE) and the P27.10 interim ("the domain serves the OKC demo").
+
+### Gate answers (LEDGER § GATE DECISIONS)
+
+| Gate | Answer | How it was honoured |
+|---|---|---|
+| **HG-11 / Go-public** (2026-09-23) | *"I give you the launch go approval now."* — with the binding safety framing (compartment separation; export from the settled materialized spine; probe confirms real data on both URLs; HALT on any failure) | all three conditions verified before/after the sync (below); nothing failed, so no halt |
+| **Launch sequencing** (2026-09-24) | *"Fix resolution first, then launch."* | done by P30.2a/P30.2b; the launch publishes P30.2b's measured metric as the export computes it |
+| **Share-alike layers** (2026-09-24) | *"counsel says it's okay and we can publish it all together."* | ADR-106: every layer on ONE public site (ODbL 4.4(b) produced work, "© OpenStreetMap contributors" wherever OSM points render); the downloads stay LICENCE-SEPARATED compartments; ODbL never merged into the CC-BY graph |
+| HG-01 / HG-11 reviewer / HG-02 | carry-forward (2026-09-22) | sole-maintainer posture, interim engineering dispositions — unchanged |
+
+### What went public
+
+- **`gs://…-sig-web`** (site, public-read; mirrored exactly — the prior OKC demo pages and the non-public
+  `/curate/` shell removed; the prior site is kept privately at `gs://…-sig-restricted/rollback/sig-web-pre-p30.3-2026-09-24/`).
+- **`gs://…-sig-public`** (downloads, public-read): the national release `sig-2026-09-24-bd01cb94` —
+  `manifest.json`, `LICENCES.json` (one entry per compartment: SPDX licence, URL, share-alike, attribution),
+  `datapackage.json`, `provenance.ttl`, `exclusions.json` (0 refused), the SIG `web/*.json` surfaces (CC-BY-4.0)
+  and **12 site compartments, each one licence**:
+
+  | compartment | licence | camera-site rows |
+  |---|---|---:|
+  | `osm_physical` | ODbL-1.0 — © OpenStreetMap contributors | 154,705 |
+  | `public_record` | LicenseRef-PublicRecord-FactualCompilation | 38,484 |
+  | `operator_accepted` | LicenseRef-OperatorAccepted-DBRight | 21,682 |
+  | `portal` | CC-BY-SA-4.0 (incl. CC0 feeds placed under their most-constraining target) | 10,052 |
+  | `sig_graph` | CC-BY-4.0 (+ SIG framing tables) | 3,978 |
+  | `dot511_ccbysa2` | CC-BY-SA-2.0 | 3,000 |
+  | `ogl_uk3` | OGL-3.0 | 1,514 |
+  | `ccby3` | CC-BY-3.0 | 861 |
+  | `ogc_canada2` | OGL-Canada-2.0 | 160 |
+  | `ottawa_odl2` | LicenseRef-Ottawa-ODL-2.0 | 146 |
+  | `stalbert_odl1` | LicenseRef-StAlbert-ODL-1.0 | 80 |
+  | `peel_odl1` | LicenseRef-Peel-ODL-1.0 | 37 |
+
+  (Rows are observation-level slices per (source, rights); 230,330 observation-level records → 227,998
+  resolved sites, PROVISIONAL — D-R6.1-EVAL.)
+- **Kept PRIVATE** (`gs://…-sig-restricted`, anonymous GET → 403): `web/map.json`, the map render input
+  labelled with all twelve licences (a mixed-licence file is never a public download); the full unpartitioned
+  bundle under `exports/national/2026-09-24T154017Z/`. Nothing UNDETERMINED or excluded exists in the release
+  (0 refused slices; effective UNDETERMINED 0 per the launch baseline).
+
+### Safety proof (the binding framing)
+
+- (a) **Compartment separation** — export-time `assert_separated` + fail-closed licence gate (it stopped the
+  first hosted build on a real CC0+public-record mix; fixed by per-(source, rights) slicing, never merged);
+  publish-time `assert_public_clean` (one known licence per artifact and per public compartment, no
+  UNDETERMINED/excluded/mixed byte, no stray file) — green; independent re-check: 14 public compartments,
+  one licence each; `web/map.json` absent from the public bucket (404).
+- (b) **Settled, materialized spine** — claims 2,304,784 unchanged since P30.2b, camera-site run
+  `camsite:13bedfe7…` (fh2bh), pg_stat upd/del 0; the export ran in one `REPEATABLE READ READ ONLY` snapshot.
+- (c) **Real data renders on both URLs** — `sig-ops probe-hosted` green on `https://surveillancegraph.org` and
+  `https://sig-web-e5ctyx36jq-uc.a.run.app`; a headless browser on each confirms the headline
+  "227998 resolved sites (from 230330 observation-level records; dedup ratio 0.010)" with the PROVISIONAL
+  disclosure, 225,105 points drawn on the map with "© OpenStreetMap contributors (ODbL)" in the attribution
+  control, zero `<script>` on content pages, and no OKC-demo content; TLS valid (Google Trust Services WR3,
+  apex + www, `sig-web-cert` ACTIVE).
+
+### Part VIII review
+
+Tier-0 only (234,699 of 234,699 public site rows tier 0, `full_precision` per §19.4 tier 0); no person or
+plate fields (row keys are entity/source/rights/geometry only; labels are entity ids); the officer-naming gate
+is unchanged (default no-publish); the export read the spine and wrote nothing.
+
+### Counsel status
+
+Share-alike clearance is **operator-reported** (2026-09-24); no dated written opinion is on file —
+`D-P30.3-COUNSEL` stays OPEN (file it under `docs/governance/`). If the opinion narrows the clearance, an
+`export_disposition = "excluded"` data row moves the affected compartments back to restricted at the next
+deploy (ADR-106 revisit trigger).
+
+### Go / no-go (2026-09-24)
+
+**GO — executed.** Follow-ups (not launch-blocking): D-P30.3-1 (freshness dates not recorded on the hosted
+spine), D-P30.3-2 (zoomable tiles / basemap / compression), D-P30.3-3 (presentation analytics for a
+real-data build), D-P30.2-2 (sharing edges / accountability links), D-R6.1-EVAL (first-principles eval).

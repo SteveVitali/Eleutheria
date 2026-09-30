@@ -14,8 +14,10 @@ const EVIDENCE_ARTIFACTS = getEvidence().artifacts;
 const DECISION_POINT = getDecisionPoint();
 
 export const GET: APIRoute = () => {
-  const ranked = recommendEvidence(EVIDENCE_ARTIFACTS, DECISION_POINT);
-  const body = citationListText(ranked, DECISION_POINT);
+  // No tracked decision in a real-data build yet (P30.3): an honest empty list, never a demo.
+  const body = DECISION_POINT
+    ? citationListText(recommendEvidence(EVIDENCE_ARTIFACTS, DECISION_POINT), DECISION_POINT)
+    : "No upcoming decision is tracked yet, so no evidence is ranked (a gap, not an absence).\n";
   return new Response(body, {
     headers: { "content-type": "text/plain; charset=utf-8" },
   });

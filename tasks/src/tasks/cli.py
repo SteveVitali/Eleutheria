@@ -31,6 +31,7 @@ from policy.sensitivity import SensitivityClass
 from . import __version__
 from .contribution import (
     CHANGESET_HASHTAG,
+    LeverageLedger,
     TagChange,
     TagSuggestion,
     contribution_registered,
@@ -88,10 +89,17 @@ def build_parser() -> argparse.ArgumentParser:
     fpull.add_argument(
         "--since", default=None, help="only changesets closed at/after this ISO time"
     )
-    fpull.add_argument(
+    fsrc = fpull.add_mutually_exclusive_group()
+    fsrc.add_argument(
         "--fixtures", nargs="*", default=None, help="changeset XML fixtures (default: recorded)"
     )
     fpull.add_argument("--out", default=None, help="write <out>/web/leverage.json (export mode)")
+    fsrc.add_argument(
+        "--no-feed",
+        action="store_true",
+        help="write the HONEST empty metric (0 of 0) for a public build while contribution-back "
+        "is not activated (D-P21.7-1, HG-08) — never replays the recorded fixtures (P30.3)",
+    )
 
     ro = sub.add_parser(
         "records-outcomes",
@@ -269,6 +277,18 @@ def _maproulette_pull(args: argparse.Namespace) -> int:
 # OSM changeset feed
 # --------------------------------------------------------------------------- #
 def _osm_feed_pull(args: argparse.Namespace) -> int:
+    if getattr(args, "no_feed", False):
+        # A public build must never publish the recorded FIXTURE changesets as if they were
+        # real upstream acceptances. While the live feed poll is not activated (HG-08,
+        # D-P21.7-1) the true measured state is an empty ledger: 0 of 0.
+        metric = leverage_metric_json(LeverageLedger())
+        print("osm-feed pull --no-feed: contribution-back not activated — 0 attributed changesets")
+        if args.out:
+            out_dir = Path(args.out) / "web"
+            out_dir.mkdir(parents=True, exist_ok=True)
+            (out_dir / "leverage.json").write_text(json.dumps(metric, indent=2, sort_keys=True))
+            print(f"  wrote {out_dir / 'leverage.json'} (data.ts export mode)")
+        return 0
     if args.fixtures:
         paths = [Path(p) for p in args.fixtures]
     else:

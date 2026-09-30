@@ -20,7 +20,7 @@ import DisputeLink from "../components/DisputeLink.astro";
 import "../styles/epistemic.css";
 import type { AsOfEcho } from "../lib/fixtures";
 import type { ProvenanceSummary } from "../lib/provenance";
-import { getSiteMetadata } from "../lib/data";
+import { getSiteMetadata, getSiteProvenance } from "../lib/data";
 
 interface Props {
   title: string;
@@ -38,7 +38,9 @@ const { title, path } = Astro.props;
 const siteMeta = getSiteMetadata();
 const asOf = Astro.props.asOf ?? siteMeta.asOf;
 const rulesetVersion = Astro.props.rulesetVersion ?? siteMeta.rulesetVersion;
-const provenance = Astro.props.provenance;
+// P30.3: a real-data build's site-wide default is derived from the export itself — never
+// the committed OKC demo summary (`DEFAULT_PROVENANCE` stays the fixtures-mode default).
+const provenance = Astro.props.provenance ?? getSiteProvenance();
 const lang = Astro.props.lang ?? "en";
 
 // The canonical origin the belief-pinned permalink resolves against (P27.6; DNS

@@ -33,7 +33,8 @@ const DECISION_POINT = getDecisionPoint();
 const CITATIONS_PATH = "/watch/citations.txt";
 
 const jurisdictions = watchJurisdictions(WATCH_ITEMS);
-const ranked = recommendEvidence(EVIDENCE_ARTIFACTS, DECISION_POINT);
+// No tracked decision (a real-data build before any is recorded, P30.3) → nothing is ranked.
+const ranked = DECISION_POINT ? recommendEvidence(EVIDENCE_ARTIFACTS, DECISION_POINT) : [];
 const citations = citationList(ranked);
 const axisLabels: Record<string, string> = {
   directness: "directness",
@@ -124,10 +125,17 @@ const axisLabels: Record<string, string> = {
 
   <!-- The evidence recommender (SIG-UI-027a/b/c). -->
   <h2 id="recommender-heading">Evidence for the upcoming decision</h2>
-  <p data-testid="decision-point" data-decision-type={DECISION_POINT.decision_type} data-decision-date={DECISION_POINT.date}>
-    Preparing for <strong>{DECISION_POINT.label}</strong> ({DECISION_POINT.decision_type.replace(/_/g, " ")},
-    decision {DECISION_POINT.date}). The most useful evidence artifacts, ranked.
-  </p>
+  {DECISION_POINT ? (
+    <p data-testid="decision-point" data-decision-type={DECISION_POINT.decision_type} data-decision-date={DECISION_POINT.date}>
+      Preparing for <strong>{DECISION_POINT.label}</strong> ({DECISION_POINT.decision_type.replace(/_/g, " ")},
+      decision {DECISION_POINT.date}). The most useful evidence artifacts, ranked.
+    </p>
+  ) : (
+    <p data-testid="no-decision-point">
+      SIG is not yet tracking a dated upcoming decision, so no evidence is ranked for one.
+      That is a gap in the record, not a claim that no decision is pending.
+    </p>
+  )}
   <p class="sig-neutrality-note" data-testid="neutrality-note">
     SIG ranks by <strong>evidentiary directness, recency, and dispute status only</strong>.
     It <strong>never</strong> ranks by persuasiveness, sentiment, or predicted effect on a

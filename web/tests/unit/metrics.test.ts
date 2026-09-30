@@ -7,6 +7,8 @@ import {
   assertCoverageMetric,
   assertCoverageMetrics,
   assertFreshnessRow,
+  isNotRecorded,
+  NOT_RECORDED,
 } from "../../src/lib/metrics";
 import type { CoverageMetric, FreshnessRow } from "../../src/lib/metrics";
 import { COVERAGE_METRICS, FRESHNESS_ROWS } from "../../src/lib/corrections-methodology-fixture";
@@ -19,6 +21,17 @@ describe("data freshness (§32.4, SIG-METRIC-007)", () => {
   it("rejects a row missing a required field", () => {
     const bad = { ...FRESHNESS_ROWS[0]!, last_successful_run: "" } as FreshnessRow;
     expect(() => assertFreshnessRow(bad)).toThrow(/last_successful_run/);
+  });
+
+  it("accepts the explicit honest-absence token (shown as 'not recorded', never a guessed date)", () => {
+    const row = {
+      ...FRESHNESS_ROWS[0]!,
+      last_successful_run: NOT_RECORDED,
+      last_content_change: NOT_RECORDED,
+    } as FreshnessRow;
+    expect(() => assertFreshnessRow(row)).not.toThrow();
+    expect(isNotRecorded(row.last_successful_run)).toBe(true);
+    expect(isNotRecorded("2026-09-24")).toBe(false);
   });
 
   it("staleness is measured against a predicate volatility class, not absolute days", () => {

@@ -10,6 +10,8 @@ import {
   PMTILES_VERSION,
   PUBLIC_MAP_STYLE,
   assertServingContract,
+  buildPublicMapStyle,
+  compartmentAttribution,
   isSelfHostedTileUrl,
 } from "../../src/lib/map-tiles";
 
@@ -51,5 +53,30 @@ describe("static PMTiles v3, self-hosted, OSM-attributed (SIG-GEO-012/013, SIG-U
       },
     };
     expect(() => assertServingContract(bad)).toThrow(/SIG-UI-038/);
+  });
+});
+
+describe("per-licence-compartment tile sources (P30.3, ADR-106)", () => {
+  const tiles = [
+    { compartment: "osm_physical", license: "ODbL-1.0", path: "/tiles/osm_physical-sites.pmtiles" },
+    { compartment: "sig_graph", license: "CC-BY-4.0", path: "/tiles/sig_graph-sites.pmtiles" },
+  ];
+
+  it("no compartment archives → the committed style, unchanged", () => {
+    expect(buildPublicMapStyle([])).toBe(PUBLIC_MAP_STYLE);
+  });
+
+  it("one separately-attributed source per compartment, never a merged archive", () => {
+    const style = buildPublicMapStyle(tiles);
+    expect(() => assertServingContract(style)).not.toThrow();
+    expect(style.sources["sig_osm_physical"]?.attribution).toBe(OSM_ATTRIBUTION);
+    expect(style.sources["sig_sig_graph"]?.attribution).toContain("CC-BY-4.0");
+    expect(style.sources["sig_infrastructure"]).toBeUndefined();
+    expect(style.layers.map((l) => l.source)).toEqual(["osm_basemap", "sig_osm_physical", "sig_sig_graph"]);
+  });
+
+  it("ODbL layers carry the OpenStreetMap notice", () => {
+    expect(compartmentAttribution("ODbL-1.0")).toMatch(/openstreetmap/i);
+    expect(compartmentAttribution("CC-BY-SA-4.0")).toContain("CC-BY-SA-4.0");
   });
 });

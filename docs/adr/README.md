@@ -110,6 +110,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-103](ADR-103-hosted-round6-materialization-least-privilege-role-and-in-gcp-execution.md) | — | — | Accepted |
 | [ADR-104](ADR-104-camera-registry-predicates-in-the-predicate-registry.md) | — | — | Accepted |
 | [ADR-105](ADR-105-geospatial-camera-site-entity-resolution.md) | — | — | Accepted |
+| [ADR-106](ADR-106-public-share-alike-compartments-published-separately.md) | — | — | Accepted |
 
 ## Notes
 
