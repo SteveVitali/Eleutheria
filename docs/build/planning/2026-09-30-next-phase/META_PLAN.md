@@ -894,6 +894,26 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   deployed lines 41–43 must never be edited (correction comments + ADR + new-line guard). Candidate `p-17b713…`: supersede,
   don't re-sign. Hazard: memory dated 10-21 makes the 10-10 replay look overdue. Draft correction ADR in §8; Q-B1-1…4 in §9.
   7 incoming findings.
+- 2026-09-30T18:40Z — **B2 done** (`research/B2-append-only.md`, `data/append_only_violations.csv`): 539 rows over 501 commits;
+  losses in DEFERRALS (14), LEDGER (6 incl. c2055d96's 53 GATE DECISIONS rows — 6 exist nowhere else; GL-GATE-06 orphaned),
+  contracts (6, incl. P25.5 AC weakened+ticked), runs (5), readouts (5), BUILD_INDEX (3), events.jsonl (3; P33.1 flipped 8
+  events in place). Restoration = appended, hash-checked "RESTORED from <sha>^" blocks; guard = `check-append-only` CI
+  check with an `APPEND_ONLY.toml` region policy + a date ≤ commit-date rule. 9 incoming findings.
+- 2026-09-30T18:41Z — **I1 done** (`research/I1-source-coverage.md`, `data/source_coverage.csv`, 369 rows): 218 ingested-live,
+  19 permitted-not-ingested, 101 gated, 4 refused, 27 candidates. Blind spots: Flock only via one mirror (~23% of networks),
+  Axon/Fusus/RTCC nothing, 22 states without a dossier (incl. OK), statutory ALPR/CCOPS reporting thin, 10 states without
+  an official camera registry, procurement cooperatives all gated, zero channels for social-media monitoring/forensics/
+  school surveillance, drones/gunshot/FR/CSS only via Atlas. 9 incoming findings (S1: country/state code collisions, axis-
+  swapped/mislabelled coordinates, only camera registries reach dossiers, all registry cameras typed `traffic_camera`).
+- 2026-09-30T18:42Z — **F2a done** (`research/F2a-verdicts.md`, `data/coverage_delta_F2a.csv`): 49 engineering ids → 7 become MET,
+  35 PARTIAL, 2 MISSING, 2 AT-RISK (new reasons), 1 MET-DIFFERENTLY, 2 N/A; ticket groups proposed. 10 incoming findings.
+- 2026-09-30T18:42Z — **F2b done** (`research/F2b-verdicts.md`, `data/coverage_delta_F2b.csv`): 55 gated/reduced-scope ids →
+  11 MET, 14 MET-ENGINEERED, 14 PARTIAL, 6 MISSING, 4 AT-RISK, 5 WAIVED(ADR), 1 MET-DIFFERENTLY(RISK); verdict vocabulary
+  finalized (+4 matrix columns: required_domain, achieved_domain, owed_legs, accepted_scope). S1: the 75 boilerplate
+  MET-DIFFERENTLY rows are prefix defaults, 7/13 sampled not met. 8 incoming findings.
+- 2026-09-30T18:43Z — **E2 done** (`design/E2-governance-options.md`): 23 memos (+1 side memo on the dispute channel); 8
+  honesty fixes needing no policy decision; operator decisions on governance, legal home, counsel, robots, DB-right,
+  human evaluation, outreach, design center. 3 incoming findings (robots disregarded on 122 hosts; no opt-out mechanism).
 
 ---
 
