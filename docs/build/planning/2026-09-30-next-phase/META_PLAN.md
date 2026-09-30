@@ -1071,6 +1071,14 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   branch has never been pushed) — which trips the repo's secret scan; reworded to a placeholder; `tests/unit/
   test_security_scanners.py` passes (14). Date-guard note: this ledger's pre-correction change-log times will need the
   correction-entry exemption B4's G1 defines.
+- 2026-09-30T18:32:37Z — **J3 done** (`design/J3-transparency-design.md`): all surfaces are export-time static artifacts from one read-only spine
+  snapshot + scrubbed run records, pinned per immutable release — `/sources/` index + per-source pages (one definition of
+  "source count", resolving 178 vs 218), per-record provenance panel + figure→evidence pointers, downloads center (data
+  dictionary, Frictionless + DCAT as linked files, signed sha256 manifests, per-file attribution), `/status/` refreshed every
+  6 h by a batch job, citable copies under `/s/<pub>/`; downloads only behind a $0-egress mirror (R2) + cost kill switch.
+  Tickets TX-01…16 (3 S, 9 M, 4 L); a first subset can ship before G2 step 7. Operator decisions: Q-22a/b, egress host +
+  ceiling, withdraw terms-forbidden sources first, signing-key custody, Zenodo scope. 4 incoming findings (S1: P32.13
+  permalink fix doesn't reach site pages; S1-on-exposure: captures always marked `public`). **G3 dispatched.**
 
 ---
 
