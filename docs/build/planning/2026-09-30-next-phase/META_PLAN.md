@@ -837,6 +837,12 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   (36 owed), 161 requirement rows (incl. 7 N/A-RATIONALE), 36 backlog, 62 risk, 1 open ledger finding, 19 return passes,
   144 ADR triggers, 2 PENDING readouts, 6 manifest rows. Orchestrator ruling on NEW-4: ADR revisit triggers are adjudicated
   by **F3** through their BACKLOG home (each trigger already has exactly one BL row). 5 incoming findings.
+- 2026-09-30T17:12Z — **J1 done** (`research/J1-exposure-inventory.md`): public bulk release (132 files / 1.05 GB, 12 compartments,
+  sha256) is unlinked from the site; no source index or per-source pages; 0/255 public evidence items carry an upstream URL;
+  350 real captures + 387 WORM run records + a 342-source registry exist internally. 13 incoming findings. **Orchestrator
+  severity ruling: J1 NEW-2 (CC-BY `sig_graph` rows and EFF Atlas rows in the live API attributed to "DeFlock community
+  map" — rights records de-duplicated by licence only) = S0 (false public attribution claim live now)**; reported to the
+  operator; remediation needs a code fix + republish (Round-11 early ticket unless the operator wants a hotfix).
 
 ---
 
