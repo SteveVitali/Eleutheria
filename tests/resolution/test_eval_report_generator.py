@@ -79,3 +79,32 @@ def test_committed_report_matches_the_generator(gen) -> None:
     # The committed report's calibration line must match the generator (no drift).
     assert f"Cohen's κ (LLM vs seed): **{report.kappa:.3f}**" in committed
     assert "auto-write precision floor: **0.980**" in md
+
+
+def test_committed_report_carries_the_hosted_scale_measurement(gen) -> None:
+    """P30.2: the Scale section is the committed hosted measurement, never a fabricated
+    number, and the PROVISIONAL-eval disclosure is retained (D-R6.1-EVAL stays OPEN)."""
+    scale = gen.load_scale()
+    assert scale is not None, "the P30.2 hosted-scale measurement is committed"
+    kwargs, notes = gen.scale_kwargs(scale)
+    committed = (
+        Path(__file__).resolve().parents[2]
+        / "docs"
+        / "build"
+        / "reports"
+        / "P28.1_resolution_eval.md"
+    ).read_text(encoding="utf-8")
+    assert f"- observations considered: {kwargs['observation_count']}" in committed
+    assert f"- resolved sites / decisions: {kwargs['resolved_site_count']}" in committed
+    assert f"- resolution envelopes materialized: {kwargs['resolutions_materialized']}" in committed
+    assert f"- dedup ratio: {kwargs['dedup_ratio']:.3f}" in committed
+    assert "**PROVISIONAL**" in committed
+    # N resolved sites can never exceed the M observation-level sites (no overclaim).
+    assert kwargs["resolved_site_count"] <= kwargs["observation_count"]
+    assert all(n in committed for n in notes)
+
+
+def test_scale_is_na_when_no_measurement_is_committed(gen) -> None:
+    kwargs, notes = gen.scale_kwargs(None)
+    assert set(kwargs.values()) == {None}
+    assert notes and "DEFERRED" in notes[0]
