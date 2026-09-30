@@ -631,6 +631,10 @@ docs/build/planning/2026-09-30-next-phase/
 ## 11. Change log
 - 2026-09-30T16:05Z — meta-plan drafted from the 2026-09-30 orientation review (four read-only research passes +
   direct verification). Awaiting GATE-M.
+- 2026-09-30T16:16Z — **GATE-M signed** (§7.1). Planning worktree created (`claude/next-phase-planning` @ `b051732c`).
+- 2026-09-30T16:22Z — **Track 0.1 + 0.2 done** (`baseline/TRACK0_RECORD.md`): on-demand backup `1790785111976` SUCCESSFUL; automated
+  backups enabled (05:00 UTC, 7 retained, no restart); `/curate/` removed from the public web bucket, 404 on both origins.
+  PITR held (enabling it restarts the instance) — operator question. 0.3 pending.
 
 ---
 
