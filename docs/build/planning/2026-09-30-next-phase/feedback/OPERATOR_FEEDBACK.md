@@ -18,4 +18,10 @@ memory findings). D1 is unanchored with respect to the Stream-C browser review (
   contracts govern them, how that has changed over time, and exactly which evidence supports or contradicts each claim.
   It is built first for a local advocate who needs a printable, sourced dossier before a council meeting, and it links to
   existing projects rather than rebuilding what they already do well.
-- **Status:** agent-drafted, awaiting confirmation.
+- **Status:** **confirmed by the operator** (2026-09-30T17:29:54Z), verbatim: *"I confirm U-001."*
+
+### U-002 — Q-D1-02 · Is the design-center user still who we build for first?
+- **Operator, verbatim (2026-09-30T17:29:54Z):** *"yes for Q-D1-02 but also think investigative journalists and other organizers"*
+- **Agent interpretation (labelled):** the local advocate with a council meeting in days stays the design center
+  (SIG-UI-002), with **investigative journalists** and **other organizers** as co-primary audiences to design for —
+  C1's personas already include a journalist (P9) and organizer-like roles; D3 decides how "co-primary" changes priorities.

@@ -660,7 +660,7 @@ Recommendations are mine; decisions are yours. **Q-1…Q-6 block the start of St
 | Q-26 | (from E3) Who gave the counsel determinations recorded in ADR-086 and ADR-106, and would they write a dated opinion? | — | E2 |
 | Q-27 | (from E3) Should the correction-intake receiver open next phase, and who is the backup moderator? | — | G2 |
 | Q-28 | (from E3) Authorize recruiting volunteer reviewers from the DeFlock / EFF / MuckRock communities? (outward contact) | Decide at S5 | F4 |
-| Q-29 | Public contact for corrections/disputes: publish the operator's personal address on the site, or a project alias (e.g. `corrections@surveillancegraph.org` forwarding to it)? | A project alias (safety, spam, succession) | G2, J3 |
+| Q-29 | Public contact for corrections/disputes: publish the operator's personal address on the site, or a project alias (e.g. `corrections@surveillancegraph.org` forwarding to it)? | A project alias (safety, spam, succession) — **ANSWERED: operator's personal address for now** (§7.1) | G2, J3 |
 
 ### 7.1 Decisions recorded at GATE-M (2026-09-30T16:16Z)
 
@@ -715,6 +715,15 @@ And email alerts and anything else can route to 14stevevitali@gmail.com (Steven 
 | Alert / notification routing | **the operator's address (Steven Vitali)** | alert channel(s) and operator notifications route there; whether that address may be *published* on the public site (e.g. `/dispute/`) is Q-29 |
 | Q-D1-01 | **delegated to the agent** | agent-drafted answer recorded as U-001, pending confirmation |
 | `/chrome` | operator connecting Claude in Chrome | C2 starts once the tools are visible |
+
+Operator, verbatim (2026-09-30T17:29:54Z): *"I confirm U-001. And Q-29 just use my personal email for now. And yes for Q-D1-02 but also think
+investigative journalists and other organizers"*
+
+| item | decision | consequence |
+|---|---|---|
+| U-001 | **confirmed** | the agent-drafted "what SIG is for" stands as the operator's answer |
+| Q-29 | **publish the operator's personal address as the public corrections/dispute contact, for now** | Round-11 dispute/intake tickets use it; the agent's safety/spam/succession concern is recorded as an operator-accepted risk with a revisit trigger (alias when volume or exposure grows) |
+| Q-D1-02 | **yes — plus investigative journalists and other organizers** (U-002) | C2 journeys weight the journalist and organizer personas; D3 sets priorities |
 
 ---
 
