@@ -15,11 +15,11 @@
 ```
 projectStatus:   IN_PROGRESS        # NOT_STARTED | IN_PROGRESS | BLOCKED | PAUSED | DONE
 stage:           P                  # M (meta-plan) → P (plan) → B (build artifacts) → HANDOFF
-nextUnit:        A1                 # after Track 0.1/0.2; see §9 for the wave order
-lastCompleted:   GATE-M             # signed 2026-09-30T16:16Z (§7.1)
+nextUnit:        WAVE-2             # A2 A3 B1 B2 C1 E1 E3 E4 G1 H1 (parallel) + D1 interactive; see §9
+lastCompleted:   A1                 # baseline frozen 2026-09-30T16:31:55Z (baseline/BASELINE.md)
 blockedOn:       (nothing)
 pauseRequested:  false
-baseline:        (set by A1)        # commit SHAs, PR/CI state, prod release ids, clock
+baseline:        baseline/baseline.json @ 2026-09-30T16:31:55Z   # delta procedure in BASELINE.md
 planOut:         docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md
 memoryRoot:      docs/build
 round:           11                 # provisional; manifest phases continue at P34, rows at 201
@@ -647,6 +647,10 @@ docs/build/planning/2026-09-30-next-phase/
   PITR held (enabling it restarts the instance) — operator question. 0.3 pending.
 - 2026-09-30T16:32Z — PITR enabled (delegated to agent; one 503 during the restart, self-recovered); 0.3 key stays stale
   (operator); D1 to be collected interactively. D1 questionnaire committed (`a23fca8a`).
+- 2026-09-30T16:36Z — **A1 done**: `baseline/BASELINE.md` + `baseline.json` (196 keys; delta re-run 0 changes). 4 new findings
+  in `findings/incoming/A1.csv` (chain tip not descended from `origin/main` lockfile commit; scheduled `reingest` workflow
+  failing on `main` 6/6; `sig-pg` deletion protection OFF; 9 Cloud Run jobs without triggers). F-12 narrowed: only the
+  `sig-alerts` service uses `:latest`. Chrome tools not connected in this session — operator to run `/chrome` before C2.
 
 ---
 

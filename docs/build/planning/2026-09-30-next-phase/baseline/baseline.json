@@ -1,0 +1,559 @@
+{
+ "_meta": {
+  "row": "A1",
+  "schema": "sig-next-phase-baseline/1",
+  "planning_dir": "docs/build/planning/2026-09-30-next-phase",
+  "clock.start_utc": "2026-09-30T16:22:59Z",
+  "clock.end_utc": "2026-09-30T16:37:01Z",
+  "core_capture": "keys without a _provenance override come from command C30 (a1_delta.py capture) run 2026-09-30T16:31:55Z-16:32:52Z",
+  "delta": "python3 <extracted a1_delta.py> delta docs/build/planning/2026-09-30-next-phase/baseline/baseline.json (BASELINE.md, Delta procedure)",
+  "evidence_dir": "docs/build/logs/next-phase/A1/ (gitignored)",
+  "secrets": "none recorded; SIG_PG_PASSWORD is a Secret Manager secretKeyRef (provided: yes, value not read)"
+ },
+ "_commands": {
+  "C01": {
+   "cmd": "date -u",
+   "at": "2026-09-30T16:22:59Z"
+  },
+  "C02": {
+   "cmd": "git -C /Users/stevenvitali/Eleutheria-next-phase rev-parse HEAD; git rev-parse devin/p33-8-agent-docs-refresh; git rev-parse origin/main; git rev-parse origin/main^{tree}; git rev-parse origin/devin/p31-4-incremental-restart-and-osm-replay-readiness{,^{tree}}; git worktree list",
+   "at": "2026-09-30T16:23:10Z"
+  },
+  "C03": {
+   "cmd": "git ls-remote origin refs/heads/main refs/heads/devin/p33-8-agent-docs-refresh refs/heads/devin/p31-4-incremental-restart-and-osm-replay-readiness refs/heads/claude/next-phase-planning; git log -3 --format=\"%H %P %cI %s\" origin/main; git merge-base origin/main b051732c; git merge-base --is-ancestor d4522d82 b051732c; git log -1 d4522d82",
+   "at": "2026-09-30T16:23:15Z (merge-base/log run immediately after, before C04 at 16:23:35Z)"
+  },
+  "C04": {
+   "cmd": "gh pr list --state all --limit 400 --json number,state,headRefName,baseRefName,mergedAt",
+   "at": "2026-09-30T16:23:35Z"
+  },
+  "C05": {
+   "cmd": "for n in <49 open PRs>; do gh pr checks $n --json name,state,bucket,workflow,completedAt,link; done",
+   "at": "2026-09-30T16:23:46Z..16:24:41Z"
+  },
+  "C06": {
+   "cmd": "gh pr list --state open --limit 400 --json number,headRefName,headRefOid,baseRefName,isDraft,mergeable,updatedAt; git ls-remote origin refs/heads/devin/round9-waveb-seed refs/heads/codex/round10-seed-after-p31-19; git merge-base --is-ancestor 34406ffc origin/main",
+   "at": "2026-09-30T16:24:53Z"
+  },
+  "C07": {
+   "cmd": "shasum -a 256 <file>; wc -c < <file> (control files); git diff --quiet b051732c HEAD -- <control paths>",
+   "at": "2026-09-30T16:25:16Z"
+  },
+  "C08": {
+   "cmd": "sed -n 29,54p docs/build/LEDGER.md | cut -c1-160; sed -n 1,60p docs/build/reports/current/CURRENT.md; python3 csv counts of COVERAGE_MATRIX.csv/BACKLOG.csv; grep -c '^| D-' docs/tickets/DEFERRALS.md; ls docs/adr/ADR-*.md | wc -l",
+   "at": "2026-09-30T16:25:16Z..16:25:34Z (static files, identical to b051732c)"
+  },
+  "C09": {
+   "cmd": "gcloud run services describe sig-web|sig-api --project zeta-medley-508121-u7 --region us-central1 --format=json",
+   "at": "2026-09-30T16:25:34Z..16:25:37Z"
+  },
+  "C10": {
+   "cmd": "gcloud run revisions describe sig-web-00002-5nw|sig-api-00011-wic --format=value(metadata.creationTimestamp,status.imageDigest)",
+   "at": "2026-09-30T16:25:55Z"
+  },
+  "C11": {
+   "cmd": "gcloud sql instances describe sig-pg --project zeta-medley-508121-u7 --format=json",
+   "at": "2026-09-30T16:26:04Z"
+  },
+  "C12": {
+   "cmd": "gcloud sql backups list --instance sig-pg --project zeta-medley-508121-u7",
+   "at": "2026-09-30T16:26:10Z"
+  },
+  "C13": {
+   "cmd": "gcloud scheduler jobs list --location us-central1 --format=json; gcloud run jobs list --region us-central1 --format=json (--project zeta-medley-508121-u7)",
+   "at": "2026-09-30T16:26:18Z..16:26:20Z"
+  },
+  "C14": {
+   "cmd": "gcloud run services list; gcloud run services describe sig-alerts --format=value(...); gcloud run revisions list --service sig-alerts",
+   "at": "2026-09-30T16:26:32Z..16:26:36Z"
+  },
+  "C15": {
+   "cmd": "gcloud storage buckets list; gcloud storage ls gs://zeta-medley-508121-u7-sig-web/; gcloud storage ls -l gs://zeta-medley-508121-u7-sig-web/curate/; gcloud storage ls gs://zeta-medley-508121-u7-sig-public/ and /web/ and 'web/curate/**'; gcloud storage ls -l .../manifest.json .../index.html",
+   "at": "2026-09-30T16:26:42Z..16:26:54Z"
+  },
+  "C16": {
+   "cmd": "curl -sS -D - https://storage.googleapis.com/zeta-medley-508121-u7-sig-public/manifest.json",
+   "at": "2026-09-30T16:27:00Z"
+  },
+  "C17": {
+   "cmd": "curl -sS -D - https://surveillancegraph.org/",
+   "at": "2026-09-30T16:27:09Z"
+  },
+  "C18": {
+   "cmd": "curl https://sig-api-e5ctyx36jq-uc.a.run.app/health; curl -o /dev/null -w %{http_code} https://surveillancegraph.org/curate/ https://sig-web-e5ctyx36jq-uc.a.run.app/curate/ https://sig-web-e5ctyx36jq-uc.a.run.app/",
+   "at": "2026-09-30T16:27:17Z"
+  },
+  "C19": {
+   "cmd": "gcloud beta run domain-mappings list; gcloud compute forwarding-rules list",
+   "at": "2026-09-30T16:27:22Z"
+  },
+  "C20": {
+   "cmd": "gcloud sql operations list --instance sig-pg --limit 6",
+   "at": "2026-09-30T16:27:29Z"
+  },
+  "C21": {
+   "cmd": "git -C /Users/stevenvitali/Eleutheria status --porcelain | wc -l; git -C /Users/stevenvitali/Eleutheria rev-parse HEAD; gh run list --branch main --limit 5 --json ...",
+   "at": "2026-09-30T16:27:36Z"
+  },
+  "C22": {
+   "cmd": "gh run list --workflow reingest --limit 40; gh run view 36705965584 --log-failed; for w in keepalive nightly observability reingest: gh run list --workflow $w --branch main --limit 10",
+   "at": "2026-09-30T16:27:41Z..16:27:56Z"
+  },
+  "C23": {
+   "cmd": "gh api repos/SteveVitali/Eleutheria/commits/main -q .commit.tree.sha; gh api repos/SteveVitali/Eleutheria/commits/devin/p31-4-incremental-restart-and-osm-replay-readiness -q .commit.tree.sha",
+   "at": "2026-09-30T16:28:46Z"
+  },
+  "C24": {
+   "cmd": "python3 docs/build/logs/next-phase/A1/a1_delta.py capture (trial run)",
+   "at": "2026-09-30T16:29:23Z..16:30:22Z"
+  },
+  "C25": {
+   "cmd": "gcloud sql operations list --instance sig-pg; gcloud sql backups list --instance sig-pg; gcloud sql instances describe sig-pg --format=value(state,settingsVersion,PITR,...)",
+   "at": "2026-09-30T16:30:28Z, 16:31:20Z, 16:31:49Z, 16:32:53Z"
+  },
+  "C30": {
+   "cmd": "python3 docs/build/logs/next-phase/A1/a1_delta.py capture > capture_final.json",
+   "at": "2026-09-30T16:31:55Z..16:32:52Z"
+  },
+  "C31": {
+   "cmd": "date -u (A1 end)",
+   "at": "2026-09-30T16:37:01Z"
+  },
+  "C32": {
+   "cmd": "git log --format='%h %cI %s' -4; git show 72b83f24 -- baseline/TRACK0_RECORD.md",
+   "at": "after 2026-09-30T16:36:27Z (git commit time 2026-09-30T12:32:35-04:00)"
+  }
+ },
+ "clock.captured_at_utc": "2026-09-30T16:31:55Z",
+ "gh.ci_all_pass_count": 33,
+ "gh.ci_failing_count": 16,
+ "gh.ci_failing_prs": {
+  "141": [
+   "composed",
+   "web"
+  ],
+  "142": [
+   "composed",
+   "web"
+  ],
+  "143": [
+   "composed",
+   "web"
+  ],
+  "144": [
+   "composed",
+   "web"
+  ],
+  "145": [
+   "composed",
+   "web"
+  ],
+  "146": [
+   "composed",
+   "web"
+  ],
+  "147": [
+   "composed",
+   "web"
+  ],
+  "149": [
+   "composed",
+   "web"
+  ],
+  "150": [
+   "composed",
+   "web"
+  ],
+  "151": [
+   "composed",
+   "web"
+  ],
+  "152": [
+   "composed",
+   "web"
+  ],
+  "153": [
+   "composed",
+   "web"
+  ],
+  "154": [
+   "composed",
+   "web"
+  ],
+  "165": [
+   "python"
+  ],
+  "179": [
+   "python"
+  ],
+  "185": [
+   "python"
+  ]
+ },
+ "gh.lowest_open_base": "devin/round9-waveb-seed",
+ "gh.open_heads_sha256": "8331f062ef276b3cebe456afc4fce61e7291f8ed797588314aebfae2cb20d088",
+ "gh.open_max": 190,
+ "gh.open_min": 141,
+ "gh.pr_closed": 0,
+ "gh.pr_merged": 142,
+ "gh.pr_open": 49,
+ "gh.pr_total": 191,
+ "git.chain_tip_descends_from_origin_main": false,
+ "git.chain_tip_sha_local": "b051732c3c6ed11d7ebb2343a4414f2fc281fd2a",
+ "git.chain_tip_sha_origin": "b051732c3c6ed11d7ebb2343a4414f2fc281fd2a",
+ "git.origin_main_sha": "b7c9e2e3e925ba8220d459de037202f0f03b03f2",
+ "git.origin_main_tree": "53fa9d041b462f06249428d6a379ce5828577b45",
+ "git.origin_main_tree_equals_p31_4_tree": true,
+ "git.p31_4_branch_sha": "d4522d8212fce147e74e74a308d4b9b777c56d55",
+ "git.p31_4_branch_tree": "53fa9d041b462f06249428d6a379ce5828577b45",
+ "git.planning_head_sha": "a23fca8a83996af587c09f070683edf5d6e3d296",
+ "git.worktree_count": 8,
+ "mem.bytes.docs/build/BACKLOG.csv": 41474,
+ "mem.bytes.docs/build/BUILD_INDEX.md": 295436,
+ "mem.bytes.docs/build/COVERAGE_MATRIX.csv": 201858,
+ "mem.bytes.docs/build/LEDGER.md": 679109,
+ "mem.bytes.docs/build/OPERATIONAL_READINESS.md": 42743,
+ "mem.bytes.docs/build/reports/current/CURRENT.md": 14203,
+ "mem.bytes.docs/build/reports/obligations/events.jsonl": 75653,
+ "mem.bytes.docs/tickets/00_MANIFEST.md": 102012,
+ "mem.bytes.docs/tickets/DEFERRALS.md": 339292,
+ "mem.ledger.blockedOn": "(nothing)",
+ "mem.ledger.chainTip": "devin/p33-8-agent-docs-refresh",
+ "mem.ledger.lastCompleted": "P33.8",
+ "mem.ledger.nextTicket": "HUMAN-H4",
+ "mem.ledger.pauseRequested": "false",
+ "mem.ledger.projectStatus": "IN-PROGRESS",
+ "mem.ledger.round": "10",
+ "mem.sha256.docs/build/BACKLOG.csv": "99b2dd03482f9151561ca38345491b0e6c4be95580815a83bc1995faa0192092",
+ "mem.sha256.docs/build/BUILD_INDEX.md": "7830dbc3864bf934dbc6943758a7b4a9bce39f700672cdcde9f5d1533eaad029",
+ "mem.sha256.docs/build/COVERAGE_MATRIX.csv": "11b77c2ce90792c96b8c2b76a4b8a91aebab76111ed24fdbc01028c877942c55",
+ "mem.sha256.docs/build/LEDGER.md": "d459173f7afd5adab36cd42b9ab7600e4c10182305f4c9974a4da6c0f20a1a30",
+ "mem.sha256.docs/build/OPERATIONAL_READINESS.md": "581fcb5558ca77d3e70a911448469aeed918fd050bb5e1108d212a41c371e7ec",
+ "mem.sha256.docs/build/reports/current/CURRENT.md": "0b693e7343a13b4fd5509155fba3a8af18abdce362680a8ebfba44dd5308d8cb",
+ "mem.sha256.docs/build/reports/obligations/events.jsonl": "1439087e45a405086440329b11e2c064ea4b82eabf5f11f0beee512d9717b8d4",
+ "mem.sha256.docs/tickets/00_MANIFEST.md": "e493c3d347f2448130702d5f5cbfa88a32755854780556e34957027bc6f0325e",
+ "mem.sha256.docs/tickets/DEFERRALS.md": "b688f3b49b33d5f5a7f307bbe1b3b6d719300845ac324869fecf91bd6a6cc5aa",
+ "prod.buckets": [
+  "zeta-medley-508121-u7-sig-backups",
+  "zeta-medley-508121-u7-sig-public",
+  "zeta-medley-508121-u7-sig-restricted",
+  "zeta-medley-508121-u7-sig-web",
+  "zeta-medley-508121-u7_cloudbuild"
+ ],
+ "prod.public_manifest.as_of_snapshot": "2026-09-27",
+ "prod.public_manifest.release_id": "sig-2026-09-27-ce480ab1",
+ "prod.public_manifest.ruleset_version": "p27.3/1.0.0",
+ "prod.public_manifest.sha256": "717aeb4499523acf22987428b29f3a46b5ed3aa27a91b1b6e055c7e65aa872d6",
+ "prod.run_jobs.count": 88,
+ "prod.run_jobs.distinct_images": 8,
+ "prod.run_jobs.latest_tag_refs": 0,
+ "prod.scheduler.count": 79,
+ "prod.scheduler.enabled": 79,
+ "prod.sig_alerts.image": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api:latest",
+ "prod.sig_alerts.max_instances": "20",
+ "prod.sig_alerts.min_instances": "unset",
+ "prod.sig_alerts.ready_transition": "2026-09-16T17:46:52.529389Z",
+ "prod.sig_alerts.revision": "sig-alerts-00004-7xv",
+ "prod.sig_api.image": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api@sha256:40a47da8c2cf8f68e84aede7e7e3f9f43a03ed823c83a9924d6535970354b722",
+ "prod.sig_api.max_instances": "2",
+ "prod.sig_api.min_instances": "1",
+ "prod.sig_api.ready_transition": "2026-09-25T14:56:38.871017Z",
+ "prod.sig_api.revision": "sig-api-00011-wic",
+ "prod.sig_pg.backup_enabled": true,
+ "prod.sig_pg.backup_retained": 7,
+ "prod.sig_pg.backup_start_time": "05:00",
+ "prod.sig_pg.backups_count": 2,
+ "prod.sig_pg.backups_successful": 2,
+ "prod.sig_pg.deletion_protection": false,
+ "prod.sig_pg.disk_gb": "15",
+ "prod.sig_pg.pitr_enabled": true,
+ "prod.sig_pg.settings_version": "63",
+ "prod.sig_pg.state": "RUNNABLE",
+ "prod.sig_pg.tier": "db-custom-1-3840",
+ "prod.sig_web.image": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-web@sha256:d8244804eb4fa7db5b0ebe25f0177f4270409e3a6d5f484418efcd03b086ee2b",
+ "prod.sig_web.max_instances": "2",
+ "prod.sig_web.min_instances": "unset",
+ "prod.sig_web.ready_transition": "2026-09-27T01:32:09.206397Z",
+ "prod.sig_web.revision": "sig-web-00002-5nw",
+ "prod.site.api_health_status": 200,
+ "prod.site.curate_apex_status": 404,
+ "prod.site.curate_run_status": 404,
+ "prod.site.home_last_modified": "Sun, 27 Sep 2026 01:33:43 GMT",
+ "prod.site.home_sha256": "a007e380588b13f7928e0c3404587848fb7566e957ab1fb0f99bd27fb51702ab",
+ "prod.site.home_status": 200,
+ "git.planning_branch": "claude/next-phase-planning",
+ "git.planning_head_sha_at_start": "251827b0bd13d262b6d2444f7dff1c2971383757",
+ "git.main_checkout_head": "b051732c3c6ed11d7ebb2343a4414f2fc281fd2a",
+ "git.main_checkout_dirty_files": 0,
+ "git.origin_main_parents": [
+  "42482a77afc1cf49ebc30a3406291ba9fd9287dc",
+  "d4522d8212fce147e74e74a308d4b9b777c56d55"
+ ],
+ "git.origin_main_committed_at": "2026-09-29T22:46:38-04:00",
+ "git.origin_main_subject": "Merge pull request #140 from SteveVitali/devin/p31-4-incremental-restart-and-osm-replay-readiness",
+ "git.merge_base_origin_main_chain_tip": "1378296866fc735b0a7a4180b6ae1733893ba1d3",
+ "git.main_only_commit_absent_from_chain": "d4522d8212fce147e74e74a308d4b9b777c56d55",
+ "git.lowest_open_base_sha": "34406ffc33f84f0762bf96f1f5918adce15bf646",
+ "git.lowest_open_base_on_origin_main": false,
+ "git.planning_branch_on_origin": false,
+ "git.worktrees": [
+  "/Users/stevenvitali/Eleutheria b051732c [devin/p33-8-agent-docs-refresh]",
+  "/Users/stevenvitali/.codex/worktrees/sig-round10-integration/Eleutheria c8d72cc3 (detached)",
+  "/Users/stevenvitali/.codex/worktrees/sig-six-stream-planning/Eleutheria 240129cd [codex/sig-six-stream-research]",
+  "/Users/stevenvitali/ci-worktrees/eleutheria6/p28-5 400f67be [devin/p28-5-refresh-surface-materialized-graph]",
+  "/Users/stevenvitali/ci-worktrees/eleutheria6/p28-6 a671a85a [devin/p28-6-accountability-linkage]",
+  "/Users/stevenvitali/ci-worktrees/eleutheria6/p29-1 215d695e [devin/p29-1-contributor-identity-and-ops]",
+  "/Users/stevenvitali/ci-worktrees/eleutheria7/p29-3 3015937c [devin/p29-3-targeted-source-breadth]",
+  "/Users/stevenvitali/Eleutheria-next-phase 251827b0 [claude/next-phase-planning] (a23fca8a at C30)"
+ ],
+ "gh.open_number_gaps": [
+  148
+ ],
+ "gh.pr_148": "MERGED 2026-09-26T03:07:03Z devin/deploy-gcp-live -> main",
+ "gh.pr_191": "MERGED 2026-09-29T03:15:50Z devin/p27-launch-planning -> main",
+ "gh.last_merged": "#140 2026-09-30T02:46:38Z (after #138 02:46:15Z, #139 02:46:26Z)",
+ "gh.open_stack_contiguous": true,
+ "gh.open_non_devin_base": {
+  "156": "codex/round10-seed-after-p31-19"
+ },
+ "gh.highest_open": "#190 devin/p33-8-agent-docs-refresh -> devin/p33-7-repo-docs-refresh, head b051732c",
+ "gh.open_mergeable": 49,
+ "gh.open_draft": 0,
+ "gh.open_last_updated": "2026-09-28T22:48:14Z",
+ "gh.checks_per_pr": [
+  "python",
+  "docs",
+  "composed",
+  "security",
+  "web"
+ ],
+ "gh.ci_failing_completed_range": "#141-#154: 2026-09-25..09-27; #165: 09-27; #179, #185: 09-28",
+ "gh.main_ci_push_latest": "run 36661393143 CI success on b7c9e2e3 2026-09-30T02:46:41Z",
+ "gh.main_sched_reingest": "6 runs, 6 failure (2026-09-25..2026-09-30); latest 36705965584 \"--sink pg requires --dsn\"",
+ "gh.main_sched_nightly": "6/6 success, latest 2026-09-30T09:05:27Z",
+ "gh.main_sched_observability": "6/6 success, latest 2026-09-30T12:18:36Z",
+ "gh.main_sched_keepalive": "0 runs on main",
+ "mem.control_files_identical_to_chain_tip": true,
+ "mem.ledger.current_state_bytes": 122978,
+ "mem.ledger.updatedAt": "2026-09-28",
+ "mem.current.input_commit": "c77bd45e86075e1568d8f4bdeb3b697856028695",
+ "mem.current.obligations": 97,
+ "mem.current.owed": 36,
+ "mem.current.owed_open": 32,
+ "mem.current.owed_partial": 4,
+ "mem.current.terminal": 61,
+ "mem.current.events": 97,
+ "mem.deferrals.rows": 97,
+ "mem.coverage.rows": 715,
+ "mem.coverage.verdicts": {
+  "MET": 562,
+  "MET-DIFFERENTLY": 77,
+  "PARTIAL": 54,
+  "MISSING": 10,
+  "N/A-RATIONALE": 7,
+  "AT-RISK-INTEGRATION": 5
+ },
+ "mem.coverage.not_met": 69,
+ "mem.backlog.rows": 58,
+ "mem.backlog.status": {
+  "open": 32,
+  "closed": 22,
+  "accepted": 4
+ },
+ "mem.adr.files": 144,
+ "prod.sig_web.image_digest": "sha256:d8244804eb4fa7db5b0ebe25f0177f4270409e3a6d5f484418efcd03b086ee2b",
+ "prod.sig_web.revision_created": "2026-09-27T01:32:03.425187Z",
+ "prod.sig_web.service_max_scale": "20",
+ "prod.sig_web.url": "https://sig-web-e5ctyx36jq-uc.a.run.app",
+ "prod.sig_api.image_digest": "sha256:40a47da8c2cf8f68e84aede7e7e3f9f43a03ed823c83a9924d6535970354b722",
+ "prod.sig_api.revision_created": "2026-09-25T14:55:58.170119Z",
+ "prod.sig_api.service_max_scale": "20",
+ "prod.sig_api.traffic": "100% sig-api-00011-wic (tag p318)",
+ "prod.sig_api.cloudsql_instance": "zeta-medley-508121-u7:us-central1:sig-pg",
+ "prod.sig_api.pg_password_source": "Secret Manager secretKeyRef sig-pg-password:latest (provided: yes; value not read)",
+ "prod.sig_api.url": "https://sig-api-e5ctyx36jq-uc.a.run.app",
+ "prod.sig_alerts.resolved_digest": "sha256:d0ea2deb2f12fe50b0cad072562a03d832b12f61405d37a780b7a4560ddf16dd",
+ "prod.run_services": [
+  "sig-alerts",
+  "sig-api",
+  "sig-web"
+ ],
+ "prod.sig_pg.version": "POSTGRES_18",
+ "prod.sig_pg.edition": "ENTERPRISE",
+ "prod.sig_pg.availability": "ZONAL",
+ "prod.sig_pg.disk_type": "PD_SSD",
+ "prod.sig_pg.disk_autoresize": true,
+ "prod.sig_pg.pitr_enabled_at_C11": false,
+ "prod.sig_pg.settings_version_at_C11": "61",
+ "prod.sig_pg.pitr_update_op": "00f4b787 UPDATE 2026-09-30T16:28:45.745Z -> DONE 16:31:41.502Z (not A1; concurrent Track-0 action)",
+ "prod.sig_pg.transaction_log_retention_days": 7,
+ "prod.sig_pg.transaction_log_storage": "CLOUD_STORAGE",
+ "prod.sig_pg.backups": [
+  "1790785806842 AUTOMATED SUCCESSFUL 16:30:06.842Z-16:31:38.312Z",
+  "1790785111976 ON_DEMAND SUCCESSFUL 16:18:31.976Z-16:20:43.994Z"
+ ],
+ "prod.sig_pg.ipv4_enabled": true,
+ "prod.sig_pg.authorized_networks": 0,
+ "prod.sig_pg.ssl_mode": "ALLOW_UNENCRYPTED_AND_ENCRYPTED",
+ "prod.sig_pg.maintenance_window": "unset",
+ "prod.scheduler.attempted": 45,
+ "prod.scheduler.never_attempted": 34,
+ "prod.scheduler.latest_tag_refs": 0,
+ "prod.scheduler.osm_monthly_replay": "sig-sched-camreg-batch-05 \"35 3 10 * *\" UTC -> job pinned sig-api@sha256:feff986c\u2026",
+ "prod.run_jobs.unscheduled": [
+  "aspi-egress-probe",
+  "ccops-sf-egress-probe",
+  "muckrock-egress-probe",
+  "okc-doc-egress-probe",
+  "sig-export",
+  "sig-ingest-resume-test",
+  "sig-materialize",
+  "sig-replay-ingest",
+  "sig-sink-bench"
+ ],
+ "prod.run_jobs.image_counts": {
+  "sig-api@sha256:6ad5477d\u2026": 71,
+  "sig-api@sha256:63b809b2\u2026": 4,
+  "sig-api@sha256:d1f94361\u2026": 4,
+  "curl:8.10.1": 3,
+  "sig-api@sha256:feff986c\u2026": 3,
+  "sig-api@sha256:1cccde1a\u2026": 1,
+  "sig-api@sha256:e0674d95\u2026": 1,
+  "sig-api:p31-6-184e3644adea@sha256:ad06e964\u2026": 1
+ },
+ "prod.bucket.web_curate_objects": 0,
+ "prod.bucket.public_web_curate_objects": 0,
+ "prod.bucket.web_index_html_updated": "2026-09-27T01:33:57Z",
+ "prod.bucket.public_access_prevention": {
+  "sig-backups": "enforced",
+  "sig-public": "inherited",
+  "sig-restricted": "enforced",
+  "sig-web": "inherited",
+  "_cloudbuild": "inherited"
+ },
+ "prod.public_manifest.last_modified": "Sun, 27 Sep 2026 01:30:28 GMT",
+ "prod.public_manifest.etag": "\"c0dab34f154396b1eb8214b841b9a541\"",
+ "prod.public_manifest.generation": "1790472628538699",
+ "prod.public_manifest.content_key": "ce480ab1134c178964aaac492395bc78ace7ee01357b2c6f2a1887700c9682c2",
+ "prod.public_manifest.artifacts": 132,
+ "prod.public_manifest.as_of_belief": "2026-09-27",
+ "prod.public_manifest.resolver_version": "0.0.0",
+ "prod.site.home_etag": "\"6ab87277-14f54\"",
+ "prod.site.home_bytes": 85844,
+ "prod.site.home_cache_control": "public, max-age=0, must-revalidate",
+ "prod.site.home_script_tags": 0,
+ "prod.site.home_as_of_line": "As of world 2026-09-27, belief 2026-09-27; ruleset p27.3/1.0.0",
+ "prod.site.home_release_id_in_html": false,
+ "prod.site.run_origin_home_status": 200,
+ "prod.site.api_health_body": "status=ok backend=postgresql pool_min=1 pool_max=5",
+ "prod.site.front_door": "global LB forwarding rules sig-web-fr-http/-https 136.81.80.102; 0 Cloud Run domain mappings; API has no custom domain",
+ "_provenance": {
+  "git.planning_branch": "C02",
+  "git.planning_head_sha_at_start": "C02",
+  "git.main_checkout_head": "C21",
+  "git.main_checkout_dirty_files": "C21",
+  "git.origin_main_parents": "C03",
+  "git.origin_main_committed_at": "C03",
+  "git.origin_main_subject": "C03",
+  "git.merge_base_origin_main_chain_tip": "C03",
+  "git.main_only_commit_absent_from_chain": "C03",
+  "git.lowest_open_base_sha": "C06",
+  "git.lowest_open_base_on_origin_main": "C06",
+  "git.planning_branch_on_origin": "C03",
+  "git.worktrees": "C02",
+  "gh.open_number_gaps": "C04",
+  "gh.pr_148": "C04",
+  "gh.pr_191": "C04",
+  "gh.last_merged": "C04",
+  "gh.open_stack_contiguous": "C04",
+  "gh.open_non_devin_base": "C04",
+  "gh.highest_open": "C06",
+  "gh.open_mergeable": "C06",
+  "gh.open_draft": "C06",
+  "gh.open_last_updated": "C06",
+  "gh.checks_per_pr": "C05",
+  "gh.ci_failing_completed_range": "C05",
+  "gh.main_ci_push_latest": "C21",
+  "gh.main_sched_reingest": "C22",
+  "gh.main_sched_nightly": "C22",
+  "gh.main_sched_observability": "C22",
+  "gh.main_sched_keepalive": "C22",
+  "mem.control_files_identical_to_chain_tip": "C07",
+  "mem.ledger.current_state_bytes": "C08",
+  "mem.ledger.updatedAt": "C08",
+  "mem.current.input_commit": "C08",
+  "mem.current.obligations": "C08",
+  "mem.current.owed": "C08",
+  "mem.current.owed_open": "C08",
+  "mem.current.owed_partial": "C08",
+  "mem.current.terminal": "C08",
+  "mem.current.events": "C08",
+  "mem.deferrals.rows": "C08",
+  "mem.coverage.rows": "C08",
+  "mem.coverage.verdicts": "C08",
+  "mem.coverage.not_met": "C08",
+  "mem.backlog.rows": "C08",
+  "mem.backlog.status": "C08",
+  "mem.adr.files": "C08",
+  "prod.sig_web.image_digest": "C09",
+  "prod.sig_web.revision_created": "C10",
+  "prod.sig_web.service_max_scale": "C09",
+  "prod.sig_web.url": "C09",
+  "prod.sig_api.image_digest": "C09",
+  "prod.sig_api.revision_created": "C10",
+  "prod.sig_api.service_max_scale": "C09",
+  "prod.sig_api.traffic": "C09",
+  "prod.sig_api.cloudsql_instance": "C09",
+  "prod.sig_api.pg_password_source": "C09",
+  "prod.sig_api.url": "C09",
+  "prod.sig_alerts.resolved_digest": "C14",
+  "prod.run_services": "C14",
+  "prod.sig_pg.version": "C11",
+  "prod.sig_pg.edition": "C11",
+  "prod.sig_pg.availability": "C11",
+  "prod.sig_pg.disk_type": "C11",
+  "prod.sig_pg.disk_autoresize": "C11",
+  "prod.sig_pg.pitr_enabled_at_C11": "C11",
+  "prod.sig_pg.settings_version_at_C11": "C11",
+  "prod.sig_pg.pitr_update_op": "C25",
+  "prod.sig_pg.transaction_log_retention_days": "C25",
+  "prod.sig_pg.transaction_log_storage": "C25",
+  "prod.sig_pg.backups": "C25",
+  "prod.sig_pg.ipv4_enabled": "C11",
+  "prod.sig_pg.authorized_networks": "C11",
+  "prod.sig_pg.ssl_mode": "C11",
+  "prod.sig_pg.maintenance_window": "C11",
+  "prod.scheduler.attempted": "C13",
+  "prod.scheduler.never_attempted": "C13",
+  "prod.scheduler.latest_tag_refs": "C13",
+  "prod.scheduler.osm_monthly_replay": "C13",
+  "prod.run_jobs.unscheduled": "C13",
+  "prod.run_jobs.image_counts": "C13",
+  "prod.bucket.web_curate_objects": "C15",
+  "prod.bucket.public_web_curate_objects": "C15",
+  "prod.bucket.web_index_html_updated": "C15",
+  "prod.bucket.public_access_prevention": "C15",
+  "prod.public_manifest.last_modified": "C16",
+  "prod.public_manifest.etag": "C16",
+  "prod.public_manifest.generation": "C16",
+  "prod.public_manifest.content_key": "C16",
+  "prod.public_manifest.artifacts": "C16",
+  "prod.public_manifest.as_of_belief": "C16",
+  "prod.public_manifest.resolver_version": "C16",
+  "prod.site.home_etag": "C17",
+  "prod.site.home_bytes": "C17",
+  "prod.site.home_cache_control": "C17",
+  "prod.site.home_script_tags": "C17",
+  "prod.site.home_as_of_line": "C17",
+  "prod.site.home_release_id_in_html": "C17",
+  "prod.site.run_origin_home_status": "C18",
+  "prod.site.api_health_body": "C18",
+  "prod.site.front_door": "C19",
+  "git.planning_head_sha_after_freeze": "C32",
+  "track0.pitr": "C25, C32",
+  "track0.key_rotation": "C32"
+ },
+ "git.planning_head_sha_after_freeze": "72b83f24c11620616967d59150ddd4760eda3c70",
+ "track0.pitr": "enabled by the planning orchestrator (operator-delegated) 16:28:45->16:31:41Z, recorded in TRACK0_RECORD at 72b83f24",
+ "track0.key_rotation": "operator: key can stay stale for now (recorded at 72b83f24)"
+}
