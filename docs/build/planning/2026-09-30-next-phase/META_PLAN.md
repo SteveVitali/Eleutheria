@@ -58,7 +58,11 @@ The next phase must, **in this order of truth**:
    (added at the operator's request, §7.1).
 6. **Make the data radically transparent and exportable** — per-source exploration, links to ground truth, raw
    and derived downloads, and public ingestion logs, metrics and timestamps (added at the operator's request, §7.1).
-7. **Emit a ratified canonical next-phase plan and the build artifacts** (spec amendments, ADRs,
+7. **Make the public site genuinely usable, explorable and inspectable** — a real map, a readable and navigable graph,
+   knowledge-graph search, grouped dossiers with source contributions and embedded visualizations, working watch/evidence/
+   research-queue pages, sortable source tables with downloads and per-source detail pages — so that what the data says
+   and where it came from is laid bare (operator answer U-003, §7.1; Stream K).
+8. **Emit a ratified canonical next-phase plan and the build artifacts** (spec amendments, ADRs,
    manifest rows 201+, ticket contracts, DEFERRALS/BACKLOG mapping, a repaired LEDGER seed) so a fresh
    `orchestrate-build` session can pick up exactly where we left off.
 
@@ -151,6 +155,9 @@ the operator confirms that exact text.
 - **T8 — Coverage has material blind spots: whole geographies and whole technology classes are missing or thin,
   and some high-yield public sources (vendor transparency portals, statutory ALPR reports, grant and procurement
   records) are not yet ingested.** (I1–I7)
+- **T10 — Richer client-side interactivity (beyond today's zero-JS content pages and three bounded islands) is needed to
+  make the graph explorable, and can be adopted without losing accessibility, printability, no-JS fallbacks or performance
+  budgets — if it is designed deliberately.** (K0–K3, K6, K12)
 - **T9 — Radical provenance transparency (every source explorable to its ground truth, raw and derived data
   downloadable where licences allow, ingestion runs visible) is both SIG's clearest differentiator and the fastest
   way to earn trust in its numbers.** (J1–J4, C3)
@@ -587,9 +594,122 @@ timestamps public — for maximal transparency.
   requirements (SIG-*) and the Round-11 ticket outline; interfaces with G3 (release model) and C findings.
 - *Output:* `design/J3-transparency-design.md`.
 
+### K. Product UX: a usable, explorable, inspectable site (added 2026-09-30T21:29:45Z from operator answer U-003)
+
+Goal: every capability the site advertises actually works the way a user expects, and the site becomes richer, more
+interactive, searchable, traversable and inspectable — laying bare what the data says and where it came from. **Every
+operator ask U-003.1…U-003.11 has its own row, its own note, and its own draft requirements and acceptance journeys.** Rows
+reuse (never redo) C1–C6, J1–J4, G3 and F5 outputs and must reconcile with them. Web research runs in headless fresh
+sessions (this session's WebSearch budget is exhausted); browser work uses headless Chrome (Claude in Chrome tools are not
+available to this session).
+
+**K12a — Prior art for explorable knowledge-graph products (web research)** · R · depends A1 · headless session
+- *Method:* study best-in-class public products for map, graph, search, entity pages, source/provenance pages and data
+  downloads — e.g. OpenSanctions, OCCRP Aleph, LittleSis, Wikidata/Reasonator/Scholia, OpenCorporates, ProPublica
+  (Nonprofit Explorer, Dollars for Docs), Our World in Data, Atlas of Surveillance, DeFlock, OpenStreetMap, Kumu/Graph
+  Commons/Linkurious-style explorers, Pagefind/Orama/typesense-style static and hosted search, MapLibre + PMTiles +
+  basemap providers (Protomaps, OpenFreeMap, Stadia, MapTiler; licensing/attribution/cost). For each pattern: what users
+  can do, how it scales, JS/accessibility/performance posture, no-JS fallback, and cost. Logged queries (P15).
+- *Output:* `research/K12a-prior-art.md`, `data/query_log_K12a.csv`.
+
+**K12b — Agentic browser UX review for interactivity and explorability** · R · depends C2 · headless Chrome
+- *Method:* go beyond C2's task verdicts: act as each persona (advocate, journalist, organizer) trying to *explore* — follow
+  every link, try every control, attempt to trace any figure to its source, attempt to answer open-ended questions ("who
+  supplies ALPRs to agencies in Texas and who can search them?"); record friction, dead ends, missing affordances, and
+  **generate the agent's own feature ideas** (e.g. entity pages for agencies/vendors/contracts/policies, comparisons across
+  jurisdictions, timelines, alerts/subscriptions, "ask this graph" journeys, embeddable widgets, share/cite tools).
+- *Output:* `review/K12b-explorability.md`, `findings/incoming/K12b.csv`, `data/k12b_ideas.csv` (idea, persona, value,
+  effort, dependency).
+
+**K0 — Interactive-architecture decision: re-examine the zero-JS constraint** · A/D · depends K12a, J2, C2, C4
+- *Method:* the current rule (public content pages ship no `<script>`; bounded islands on `/map/`, `/network/`,
+  `/search/`, `/curate/**` — AGENTS.md gotcha 6; ADR-068/091/097/134; SIG-UI-036/050; `web/lighthouserc.json`) vs the
+  operator's ask for a richer, explorable site. Options: (a) keep static core + richer islands; (b) progressive
+  enhancement everywhere with a documented JS budget and no-JS fallbacks; (c) an app shell for explore surfaces (map,
+  graph, search, source explorer) alongside static, printable dossiers; (d) full SPA. For each: accessibility, printability,
+  crawlability/citation stability, performance budgets, hosting (static files vs API; client-side indexes vs server
+  search), data sizes (graph/tiles/search index), security, maintenance, and cost. Recommend, with an ADR draft that
+  supersedes/extends ADR-068/091/097/134, the new budgets, and the spec amendments (SIG-UI-036/050 etc.).
+- *Output:* `design/K0-interactive-architecture.md` (incl. ADR draft).
+
+**K1 — The map (U-003.1)** · D · depends K0, K12a, C2 · headless Chrome for inspection
+- Basemap (provider, licence/attribution, cost, offline/self-hosted PMTiles option; reverses Round-9 Q8), place labels and
+  a geocoder/place search, clustering at low zoom, per-layer and per-source toggles, legend, popups linking to entity and
+  source pages, filters (technology class, vendor, agency, source, date), the missing-camera-at-street-zoom defect (C2),
+  mobile, performance (C2: `/map/` over budget on mobile), no-JS fallback, accessibility of map content (tabular alternative).
+- *Output:* `design/K1-map.md`.
+
+**K2 — Network / global graph explorer + entity pages (U-003.2)** · D/A · depends K0, K12a, C3
+- Human-readable labels for every node/edge (derivation rules from entity names/types/jurisdictions; never raw UUIDs),
+  entity detail pages (agencies, vendors, products, contracts, policies, sites, sources) with all claims, sources,
+  contradictions and history; a global graph (or a set of graphs: e.g. vendor↔agency, sharing/access network, funding,
+  governance) that is searchable and navigable (neighborhood expansion, filters, path finding, "who can access what"),
+  scale and performance at SIG's graph size (measure node/edge counts), static vs API-backed, accessibility (list/table
+  views of graphs), and what "laying bare all we know" means per edge type (support glyphs, directness, contradictions).
+- *Output:* `design/K2-graph-and-entities.md`.
+
+**K3 — Knowledge-graph search (U-003.3)** · D/A · depends K0, K12a, C2
+- Scope (entities, places, sources, documents, claims, contracts, policies), place-name and fuzzy matching (C2: "Canberra" →
+  0 results), facets, typed results linking to entity/source/dossier pages, ranking; architecture options (the landed P32.14
+  per-compartment FTS5 over the API; a static client index such as Pagefind; a hosted engine), cost, update cadence with
+  releases (G3), and a first-pass scope that is clearly better than today without "boiling the ocean".
+- *Output:* `design/K3-search.md`.
+
+**K4 — Dossier index grouped by country (U-003.4)** · D · depends C3, I1
+- Country → state/province → county/city hierarchy; one canonical jurisdiction key (fix the ID/MN/DE/CA/TH collisions,
+  C3/I1/F5 PKG-06); `unresolved` presented as a data-quality bucket, not a jurisdiction; counts and coverage per group;
+  city/county dossiers (C5: no city lookup).
+- *Output:* `design/K4-dossier-index.md`.
+
+**K5 — Dossier source-contribution explorer (U-003.5)** · D · depends J3, C3
+- Per dossier: which sources contributed which claims, when (first/last seen, per run), with counts by predicate/technology,
+  links to source pages and ingestion runs (J3), and per-figure provenance (fixing the site-wide "How we know this" block).
+- *Output:* `design/K5-dossier-sources.md`.
+
+**K6 — Dossier embedded visualizations (U-003.6)** · D · depends K0, K1, K2, K3
+- A default per-jurisdiction map, network and in-dossier search; how they stay printable and accessible; performance.
+- *Output:* `design/K6-dossier-visualizations.md`.
+
+**K7 — `/watch` QA and redesign (U-003.7)** · R/D · depends C1 · headless Chrome
+- QA the live page, its iCal/RSS feeds and `watch.json` (C1: `[]`; C5: empty renewal watch); trace the pipeline that should
+  populate it (contract renewals, agenda items, legislation, grants); define what "watch" should do for advocates,
+  journalists and organizers (upcoming decisions, renewals, subscriptions) and the data needed.
+- *Output:* `design/K7-watch.md`.
+
+**K8 — `/evidence` diagnosis and redesign (U-003.8)** · R/D · depends J1, C3 · headless Chrome
+- Why the page shows nothing (C1: 0 claim views; J1: 0/255 public evidence items with an upstream URL; relation to the
+  research queue and publication eligibility), and the target evidence experience (capture viewer, original link,
+  claims supported, hashes) consistent with J3's provenance panel.
+- *Output:* `design/K8-evidence.md`.
+
+**K9 — Sources table (was "data freshness") (U-003.9)** · D · depends J3, J4
+- Sortable/filterable columns; per-source latest-data download and version history over time (J4 raw/derived rights; J3
+  downloads + egress controls); ingestion metrics (runs, claims added/duplicate/rejected, errors, last success, cadence,
+  freshness); ground-truth links (homepage/upstream URL); fix "178 ok / volatility unknown" semantics.
+- *Output:* `design/K9-sources-table.md`.
+
+**K10 — Per-source detail pages (U-003.10)** · D · depends K9, J3
+- Everything in K9 plus full metadata, rights record, robots/opt-out status, ingestion history with per-run metrics and
+  per-file downloads (where licence permits), capture list with hashes, contribution to each dossier, known issues.
+- *Output:* `design/K10-source-pages.md`.
+
+**K11 — Research queue usability (U-003.11)** · R/D · depends C2 · headless Chrome
+- Replace UUIDs with human-readable identifiers and titles; task detail pages (what's unknown, why it matters, which
+  jurisdiction/entity, suggested sources/records requests); grouping, filtering, pagination (the page is ~689 KB); how
+  contributors act on a task.
+- *Output:* `design/K11-research-queue.md`.
+
+**K13 — UX synthesis: information architecture and product spec** · S · depends K0–K12b, C6, J3, G3
+- One coherent site map and navigation, page templates and component inventory, data contracts per page, API needs, JS
+  and performance budgets, accessibility and print rules, content/copy principles, and the incorporation of K12b's ideas
+  (each accepted, deferred or rejected with reason); draft requirements (SIG-UI/SIG-API/SIG-EXPORT drafts) with
+  acceptance journeys per persona; ordered, sized Round-11 ticket outline; interfaces with the safety/honesty wave (G2 step 0),
+  transparency (J3) and releases (G3).
+- *Output:* `design/K13-ux-synthesis.md`, `data/k13_requirements.csv`.
+
 ### S. Synthesis → the canonical next-phase plan
 
-**S1 — Universe consolidation and dispositions** · S · depends A2, A3, B*, C6, D2, E*, F*, G*, H*, I*, J*
+**S1 — Universe consolidation and dispositions** · S · depends A2, A3, B*, C6, D2, E*, F*, G*, H*, I*, J*, K*
 - Merge the universe with every finding (F-ids) and feedback item (U-ids); exactly one disposition each (§8.1);
   re-run the A1 delta and fold in any baseline change. *Done when* the completeness/non-duplication check is green.
 
@@ -743,6 +863,15 @@ investigative journalists and other organizers"*
 | Q-29 | **publish the operator's personal address as the public corrections/dispute contact, for now** | Round-11 dispute/intake tickets use it; the agent's safety/spam/succession concern is recorded as an operator-accepted risk with a revisit trigger (alias when volume or exposure grows) |
 | Q-D1-02 | **yes — plus investigative journalists and other organizers** (U-002) | C2 journeys weight the journalist and organizer personas; D3 sets priorities |
 
+
+Operator answer to Q-D1-03 (2026-09-30T21:29:45Z), logged verbatim as **U-003** in `feedback/OPERATOR_FEEDBACK.md` (11 specific asks + a general
+ask + an instruction to add the agent's own ideas from web research and browser use):
+
+| item | decision | consequence |
+|---|---|---|
+| Stream K (product UX) | **added** — one dedicated row per ask U-003.1…11 (K1–K11) plus K0 architecture, K12a prior art, K12b browser review, K13 synthesis | §1 item 7, T10; waves updated |
+| Basemap | operator wants a real map layer — **reverses the Round-9 Q8 "no basemap" answer** | K1 designs it; new ADR at T1 |
+| Zero-JS on content pages | operator asks to "think and research and reason carefully about perhaps breaking with our no-JS constraints" | K0 re-decides it; ADR at T1 superseding/extending ADR-068/091/097/134 |
 ---
 
 ## 8. Schemas, vocabularies and conventions
@@ -819,6 +948,8 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   - *Wave 4:* B4, B5, C6, F1, F5, G2; **I7, J3** (J3 after C2).
   - *Wave 5:* B6, D2, F4, G3, H2, **I8**, then D3.
   - *Wave 6:* S1 → S2 → S3 → S4 → S5.
+  - *Stream K (added from U-003):* K12a (headless web research) ∥ K12b (browser) → K0 → K1, K2, K3, K4, K5, K7, K8, K9,
+    K11 (parallel) → K6, K10 → K13.
   - *Stage B:* T1 → T2 → T3 → T4 → T5 → T6.
 - **Size.** 55 rows (43 + Streams I and J: 8 + 4), about 47 agent rows plus operator sessions D1, D2, D3, E and I
   rights decisions, S5, GATE-B.
