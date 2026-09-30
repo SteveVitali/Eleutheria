@@ -1059,6 +1059,18 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   listing after one joined city dossier exists; concrete Stage-0 outreach (Atlas, Eyes on Flock, alpr.watch).
   **Risk logged:** the session's WebSearch budget is exhausted — I3–I6 may be limited to direct fetches/catalog APIs;
   their saturation reports decide whether a follow-up search pass is scheduled (S1).
+- 2026-09-30T18:29:12Z — **H2 done** (`design/H2-branch-ci.md`): stacked one-ticket-per-branch policy on #190; CI read against the head SHA (not
+  `gh pr checks`), 60 s poll / 45 min deadline, red → `blockedOn`, one re-run only for listed flakes; workers close only after
+  green; #190 is 5/5 green so no inherited reds. **Seed:** `r11/seed` cut at the planning head at GATE-P (already descended
+  from #190), planning history kept. **Toolchain ticket due before 2026-10-19** (GitHub `ubuntu-latest` → Ubuntu 26): Node 24,
+  pinned uv 0.12.6 + runner image, `pipefail`, real `make ci-local`. Operator settings (after merging): a ruleset that
+  actually targets `main`, no-force-push on `r11/**`, merge commits only, set `SIG_GCP_PROJECT`, check CI billing (an
+  unrecorded billing outage stopped 40 runs 09-17→22). 12 incoming findings.
+  **Fixed in this commit:** H2 found that two planning notes (C1 PROTOCOL.md step 6b, C4 R10_PREVIEW.md row 10) contained
+  `SIG_INTAKE_*_SECRET="$(openssl rand -hex 32)"` — a runtime generator command, **not a secret value** (nothing leaked; the
+  branch has never been pushed) — which trips the repo's secret scan; reworded to a placeholder; `tests/unit/
+  test_security_scanners.py` passes (14). Date-guard note: this ledger's pre-correction change-log times will need the
+  correction-entry exemption B4's G1 defines.
 
 ---
 
