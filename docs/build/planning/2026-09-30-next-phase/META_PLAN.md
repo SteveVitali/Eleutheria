@@ -1337,6 +1337,15 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
 - 2026-09-30T21:41:18Z — **D1 consolidated at the operator's request:** the 19 unanswered questions merged into 10 grouped items (C-1…C-10) + 3
   optional quick facts (F-1…F-3), asked at once; Q-D1-05/14/24 treated as answered by U-003. Mapping in
   `feedback/QUESTIONNAIRE.md` § Consolidated round.
+- 2026-09-30T21:45:37Z — **K12a done** (headless session; `research/K12a-prior-art.md`, 102 logged requests): no comparable product renders a
+  "global graph" of 10^5+ entities — OpenSanctions/ICIJ/OpenCorporates use relationship tables on entity pages + bounded
+  neighborhood graphs, big explorers gated with node caps (Bloom 10k); graph renderers handle ~10^3–10^4 labelled nodes;
+  self-hosted Protomaps world basemap ≈120 GB ≈ $1.80/mo on R2 ($0 egress); Stadia/MapTiler free tiers non-commercial;
+  Nominatim forbids search-as-you-type → static GeoNames gazetteer (CC BY); Pagefind ≈10k-page comfort, reported crash at
+  250–300k pages; several peers invisible without JS. Leaning for K0: static printable citable entity/source/dossier pages +
+  per-page JS budgets for enhancement; app-like explore surfaces (map/graph/search/source explorer) with URL state and no-JS
+  fallbacks; not a full SPA. Live-site notes: `/map/` HTML ≈3.46 MB; `/search/` filters only the first 500 of 232,625 sites.
+  **K0 dispatched.**
 
 ---
 
