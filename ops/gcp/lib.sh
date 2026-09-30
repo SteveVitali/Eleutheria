@@ -75,6 +75,33 @@ parse_mode() {
   export SIG_GCP_MODE
 }
 
+# `pin_image_digest <ref>` — print the pinned `<repo>@sha256:<digest>` a Cloud Run job
+# or service deploys (P31.4 / ADR-111): never `:latest`, never an untagged ref. A
+# digest ref is printed as is; a tag is resolved through Artifact Registry. In check
+# mode nothing is resolved: a placeholder digest is printed so the plan stays offline.
+pin_image_digest() {
+  local ref="$1"
+  case "${ref}" in
+    *@sha256:*) printf '%s' "${ref}"; return 0 ;;
+    *:latest) _log "ERROR: ${ref} is :latest — deploy by pinned digest only (ADR-111)." >&2; return 2 ;;
+  esac
+  case "${ref##*/}" in
+    *:*) ;;
+    *) _log "ERROR: ${ref} has no tag or digest." >&2; return 2 ;;
+  esac
+  if [ "${SIG_GCP_MODE}" = "check" ]; then
+    printf '%s@sha256:<digest-of-%s>' "${ref%:*}" "${ref##*:}"
+    return 0
+  fi
+  local digest
+  digest="$(gcloud artifacts docker images describe "${ref}" --project "${SIG_GCP_PROJECT}" \
+    --format='value(image_summary.fully_qualified_digest)')"
+  case "${digest}" in
+    *@sha256:*) printf '%s' "${digest}" ;;
+    *) _log "ERROR: could not resolve ${ref} to a digest." >&2; return 2 ;;
+  esac
+}
+
 # `banner <title>` — a stable header for the plan output.
 banner() {
   _log "=============================================================="

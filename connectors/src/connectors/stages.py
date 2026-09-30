@@ -27,7 +27,7 @@ from __future__ import annotations
 
 import json
 from abc import ABC, abstractmethod
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import StrEnum
@@ -269,11 +269,20 @@ class ArtifactStore:
     upstream artifact without re-contacting the source.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, *, keep_history: bool = True) -> None:
         self._by_key: dict[tuple[Stage, str], StageArtifact] = {}
         self._latest: dict[Stage, StageArtifact] = {}
+        #: P31.4 / ADR-111: a live run over a very large source keeps only the
+        #: latest artifact per stage, so its memory is bounded by one capture's
+        #: stage outputs rather than every capture's. Each artifact is still
+        #: content-addressed when it is produced; only the retention differs.
+        self._keep_history = keep_history
 
     def put(self, artifact: StageArtifact) -> StageArtifact:
+        if not self._keep_history:
+            previous = self._latest.get(artifact.stage)
+            if previous is not None:
+                self._by_key.pop((previous.stage, previous.digest), None)
         self._by_key[(artifact.stage, artifact.digest)] = artifact
         self._latest[artifact.stage] = artifact
         return artifact
@@ -310,6 +319,43 @@ class CompletionRecorder(Protocol):
 
     def record_completion(
         self, status: str, *, source_id: str | None = None, detail: str | None = None
+    ) -> Any: ...
+
+
+@runtime_checkable
+class CaptureLedger(Protocol):
+    """A claim sink that records per-target capture marks (P31.4 / ADR-111).
+
+    A restarted execution of the same **logical run** (source + cadence window)
+    resumes from the marks an interrupted execution left:
+
+    * ``resume_marks`` returns one mark per target key (a mapping with
+      ``target_key``, ``state``, ``capture_digest``, ``source_uri``,
+      ``media_type``, ``byte_size``, ``retrieved_at`` and ``records``). A
+      ``flushed`` target is skipped but still counted as seen; a ``captured`` one
+      is re-processed from the stored capture when the store still holds it.
+    * ``record_capture`` appends this execution's ``captured`` / ``flushed`` mark.
+
+    ``logical_run`` is ``None`` when the sink has no logical run; the pipeline then
+    neither reads nor writes marks. The PostgreSQL sink implements it.
+    """
+
+    @property
+    def logical_run(self) -> str | None: ...
+
+    def resume_marks(self) -> list[Mapping[str, Any]]: ...
+
+    def record_capture(
+        self,
+        target_key: str,
+        *,
+        state: str,
+        capture_digest: str,
+        source_uri: str,
+        media_type: str,
+        byte_size: int,
+        retrieved_at: datetime | None = None,
+        records: int | None = None,
     ) -> Any: ...
 
 
@@ -378,6 +424,11 @@ class RunContext:
     #: empty selection or a stale-URL fallback. The driver drains this list onto
     #: the run report after the bounded continuation pass.
     resolved_disappearances: list[Any] = field(default_factory=list)
+    #: Which emitted records the run report retains in memory (P31.4 / ADR-111).
+    #: ``None`` (the default) keeps every record, as before. A live run over a PG
+    #: sink flushes each capture's claims as it goes, so it keeps only the records
+    #: its fetch record needs, and its memory is bounded by one capture's claims.
+    retain_record: Callable[[Mapping[str, Any]], bool] | None = None
 
     @property
     def asserts_claims(self) -> bool:
@@ -500,6 +551,7 @@ def stage_names() -> list[str]:
 
 __all__ = [
     "ArtifactStore",
+    "CaptureLedger",
     "CaptureRef",
     "CaptureStore",
     "ClaimSink",

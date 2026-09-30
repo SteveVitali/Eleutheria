@@ -8,7 +8,21 @@
 #
 #   ./scheduled-ops.sh --check    # (default) plan-only: prints every action,
 #                                 # needs NO ADC, opens NO network, exits 0.
-#   ./scheduled-ops.sh --apply    # operator-gated: requires ADC; applies for real.
+#   SIG_JOB_IMAGE=<ref> ./scheduled-ops.sh --apply
+#                                 # operator-gated: requires ADC; applies for real.
+#
+# P31.4 / ADR-111: every job is deployed BY PINNED DIGEST, never `:latest`.
+# SIG_JOB_IMAGE names the image (a SHA tag such as `sig-api:ingest-<sha>`, or an
+# `@sha256:` digest); the script resolves a tag to its digest through Artifact
+# Registry and deploys the digest. `:latest` or an untagged reference is refused.
+# (To roll NEW code onto the EXISTING jobs, prefer `sig-ops roll-jobs --image <ref>`,
+# which changes only the image + capture store and preserves each job's other
+# settings; this script (re)creates jobs from their cadence.toml rows.)
+#
+# Every scheduled-ingest job mounts the restricted bucket (gcsfuse, gen2) as its
+# capture store and points SIG_CAPTURE_DIR into it, so the OCFL captures a run
+# writes survive the execution and a restarted run re-processes them (ADR-111).
+# The mount is removed-then-added, so a re-apply over an existing job is idempotent.
 #
 # What it wires:
 #   * Cloud Run job `sig-probe` — `sig-ops probe-hosted --alert`: sweeps the
@@ -45,9 +59,34 @@ require_adc
 banner "scheduled live operations (P26.1 / OPS.2)"
 
 SIG_SCHEDULER_SA_EMAIL="${SIG_SCHEDULER_SA}@${SIG_GCP_PROJECT}.iam.gserviceaccount.com"
-IMAGE="${SIG_API_IMAGE}:latest"
+: "${SIG_JOB_IMAGE:=}"
+
+# The pinned digest every job deploys (ADR-111; `pin_image_digest`, lib.sh). Check
+# mode needs no registry: an unset SIG_JOB_IMAGE plans with a placeholder digest.
+resolve_job_image() {
+  if [ -z "${SIG_JOB_IMAGE}" ]; then
+    if [ "${SIG_GCP_MODE}" = "check" ]; then
+      printf '%s@sha256:<digest-of-SIG_JOB_IMAGE>' "${SIG_API_IMAGE}"
+      return 0
+    fi
+    _log "ERROR: SIG_JOB_IMAGE must name the image to deploy (a SHA tag or @sha256 digest)." >&2
+    return 2
+  fi
+  pin_image_digest "${SIG_JOB_IMAGE}"
+}
+IMAGE="$(resolve_job_image)"
+case "${IMAGE}" in
+  *@sha256:*) ;;
+  *) _log "ERROR: could not resolve SIG_JOB_IMAGE to a digest (got '${IMAGE}')." >&2; exit 2 ;;
+esac
+_log "job image (pinned digest): ${IMAGE}"
 CONN="${SIG_GCP_PROJECT}:${SIG_GCP_REGION}:${SIG_SQL_INSTANCE}"
+CAPTURE_MOUNT="/mnt/captures"
 JOB_ENV="SIG_GCP_PROJECT=${SIG_GCP_PROJECT},SIG_OPS_GCS_BUCKET=${SIG_BUCKET_RESTRICTED},SIG_OPS_CADENCE=/app/ops/cadence.toml,SIG_PG_USER=sig,SIG_PG_DB=${SIG_PG_DB_NAME:-sig},SIG_CLOUDSQL_CONNECTION=${CONN}"
+# The ingest jobs' capture store (P31.4 / ADR-111): the restricted bucket, mounted.
+# SIG_CODE_COMMIT = the deployed digest: runs record it as code_commit, and a restart
+# resumes only the marks of runs on the same code (ADR-111).
+INGEST_ENV="${JOB_ENV},SIG_CAPTURE_DIR=${CAPTURE_MOUNT}/evidence/captures,SIG_CODE_COMMIT=${IMAGE##*@}"
 
 # Resolve a Cloud Run service's deployed URL — never a literal in the repo.
 svc_url() {
@@ -197,8 +236,12 @@ while IFS='|' read -r src cad cron job sched existing extra; do
     --command sh \
     --args "-c,exec sig-ops scheduled-ingest --source ${src} --sink pg" \
     --tasks 1 --task-timeout 60m --max-retries 0 \
+    --execution-environment gen2 \
+    --remove-volume-mount "${CAPTURE_MOUNT}" --remove-volume captures \
+    --add-volume "name=captures,type=cloud-storage,bucket=${SIG_BUCKET_RESTRICTED}" \
+    --add-volume-mount "volume=captures,mount-path=${CAPTURE_MOUNT}" \
     --set-cloudsql-instances "${CONN}" \
-    --set-env-vars "${JOB_ENV}" \
+    --set-env-vars "${INGEST_ENV}" \
     --set-secrets "${secrets}"
   run gcloud run jobs add-iam-policy-binding "${job}" \
     --project "${SIG_GCP_PROJECT}" --region "${SIG_GCP_REGION}" \
@@ -225,7 +268,9 @@ done < <(read_cadence_rows)
 
 # 4. Grouped batches ([[batches]] — P26.16 GL-GATE-07). One job per batch runs
 #    `scheduled-ingest --batch <id>`; the wrapper appends one ops/runs row per
-#    member source. 120m ceiling: a batch carries ~26 registry endpoints.
+#    member source. 36h ceiling (ADR-107): batch-05 carries the ~1.37M-record OSM
+#    mirror, and the live batch jobs already run 36h (P31.4 aligned this script,
+#    which used to say 120m, with the deployed jobs so a re-apply cannot shrink it).
 _log "-- grouped batches (run rows per member → ops/runs/<source>/) --"
 while IFS='|' read -r bid bcad bcron bjob bsched bcount; do
   [ -z "${bid}" ] && continue
@@ -234,9 +279,13 @@ while IFS='|' read -r bid bcad bcron bjob bsched bcount; do
     --image "${IMAGE}" --region "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" \
     --command sh \
     --args "-c,exec sig-ops scheduled-ingest --batch ${bid} --sink pg" \
-    --tasks 1 --task-timeout 120m --max-retries 0 \
+    --tasks 1 --task-timeout 36h --max-retries 0 \
+    --execution-environment gen2 \
+    --remove-volume-mount "${CAPTURE_MOUNT}" --remove-volume captures \
+    --add-volume "name=captures,type=cloud-storage,bucket=${SIG_BUCKET_RESTRICTED}" \
+    --add-volume-mount "volume=captures,mount-path=${CAPTURE_MOUNT}" \
     --set-cloudsql-instances "${CONN}" \
-    --set-env-vars "${JOB_ENV}" \
+    --set-env-vars "${INGEST_ENV}" \
     --set-secrets "SIG_PG_PASSWORD=${SIG_SECRET_PG_PASSWORD}:latest"
   run gcloud run jobs add-iam-policy-binding "${bjob}" \
     --project "${SIG_GCP_PROJECT}" --region "${SIG_GCP_REGION}" \
