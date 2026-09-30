@@ -1436,6 +1436,17 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
 - 2026-09-30T21:59:00Z — **D1 complete** (U-004…U-015, consolidated round). Decisions recorded in §7.1; rows K14, L1–L3, B7 added; P16 amended;
   C6 may now be shared with the operator (P8 satisfied). D2 (operator reactions) will be one batched packet with the S5
   decision memos to limit operator load; D3 (product direction) drafted by the agent from D1 + C6 + K + I.
+- 2026-09-30T22:02:43Z — L1, L2, B7, D3 dispatched.
+- 2026-09-30T22:02:43Z — **K7 + K8 + K11 done** (`design/K7-watch.md`, `design/K8-evidence.md`, `design/K11-research-queue.md`; asks U-003.7/.8/.11):
+  **/watch** is empty because no exporter populates it (code, not data) — SIG already holds dated items it never routes
+  (SAM.gov deadlines, agenda items, bills, grants); redesign = decision calendar by place/vendor/technology with date-kind +
+  certainty, evidence links, per-place iCal/RSS/JSON/OPML, a daily watch refresh between releases; WX-01…07 (WX-07 empty-state
+  copy first). **/evidence** is empty because the exporter hard-codes an empty claim-view list (not the research queue); it
+  also ignores the 255 published artifacts and every claim points to a synthetic run record; redesign = documents/captures/
+  claims browser with per-document capture history, hashes, supported claims, J4-lane "view original"; EV-01…03. **Research
+  queue:** the export drops labels, catalog fields, jurisdiction and task id; ~99.7% of 243,761 tasks are per-camera tag gaps;
+  redesign = readable ids (the operator's example UUID is Acworth Police Department), detail pages with records-request
+  drafts, ~727 real tasks in paginated place/type/role views, tag gaps grouped as mapping campaigns; RQ-00…05. 15 findings.
 
 ---
 
