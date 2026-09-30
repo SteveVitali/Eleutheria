@@ -849,6 +849,18 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   (H12): some source names under `/dossier/unresolved/` look like personal account handles. Orchestrator note: C3's
   read-only spine queries are within the GATE-M-approved scope (P3 read-only); C3 prefers release files and uses a
   read-only DB path only if one exists without new grants.
+- 2026-09-30T17:40Z — **J2 done** (`research/J2-prior-art.md`, `data/query_log_J2.csv`, 118 logged queries): exemplars —
+  OpenSanctions dataset/entity/issues pages, Transitland content-hashed versions with licence-gated raw downloads,
+  OpenAddresses job records, Overture release notes, OWID bundles; standards: sha256 manifests + Frictionless + SPDX
+  (low), DCAT 3 (low–med), PROV-O (med), DOIs (operator gate); schema.org JSON-LD conflicts with the no-`<script>` rule
+  (needs an ADR or linked metadata files); pitfall: raw audit-log republication (plates/search reasons) — Part VIII scrub.
+- 2026-09-30T17:41Z — **A2 done** (`findings/FINDINGS.csv` + `.md`): F-01…F-43 re-verified (35 verified, 8 amended, 0
+  refuted) + F-44 (S1: `/dossier/id/` merges Idaho+Indonesia, `/dossier/mn/` Minnesota+Mongolia). Severity: 3 × S0
+  (F-01/F-02 remediated; **F-03 dispute channel promised on every page but absent → S0**), 15 × S1. Incoming findings
+  from later rows are merged by the orchestrator (single writer) into FINDINGS.csv at S1 (J1 NEW-2 attribution = S0).
+  **Orchestrator clarification of P3:** read-only `SELECT`s against the hosted database through an EXISTING role and
+  credential path (no new roles/grants, no writes, statement timeouts, off-peak) are within the GATE-M read-only scope;
+  rows that need them (B1 sqitch registry, C3) may use them and must log each query.
 
 ---
 

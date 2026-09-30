@@ -1,0 +1,275 @@
+# Findings register (A2): the 2026-09-30 findings, verified
+
+> Rendered view of [`FINDINGS.csv`](FINDINGS.csv) (schema: META_PLAN §8.2). Row **A2** of `META_PLAN.md`. Generated 2026-09-30T16:59:56Z (`date -u`). The CSV is the source of truth. After A2 only the planning orchestrator appends to it (single writer). Bulky evidence (page captures, CI logs, validator output) lives in `docs/build/logs/next-phase/A2/` (gitignored), cited by file name and sha256 prefix. Baseline keys refer to `../baseline/BASELINE.md` (freeze 2026-09-30T16:31:55Z). `observed_at` is the `date -u` of the primary live read where one was made. Code/git-only rows carry the A2 verification-pass time (2026-09-30T16:56:13Z); rows that cite baseline keys carry the A1 freeze time (2026-09-30T16:31:55Z).
+
+## Summary of changes vs Appendix A
+
+All 39 Appendix-A rows (F-01…F-39) and the four A1 incoming rows (NEW-1…NEW-4 → F-40…F-43) were re-checked against primary evidence: file:line, commits, command output, and about 30 read-only live requests (site, public bucket, API, GitHub, gcloud). **None was refuted.** **35 are verified as stated, 8 are amended and 1 new finding is proposed.** The amended rows are all still substantially true, but a detail differs: **F-17** (the '77 PRs reported' comparison cannot be traced to any source, so it is dropped; 49 open is exact); **F-24** (A2 counts 13 landed tickets with no PHASE LOG entry, not 17; the count depends on method); **F-29** (*both* the GATE-G3 and the ACCEPT-R10 signing commits deleted the 'agent must not sign' line; the '(a)–(c) scope clauses' are really unlabelled checklist annotations and bullets); **F-31** (the robots contradiction is already resolved in spec §26 rule 2 via ADR-088; only the `crawler.py` docstring and the D-SOURCES.9-2 row still contradict it; '§26 rule 7' was a wrong citation; counsel id 'R-01' was not found); **F-32** (the ADR index has 142/144 rows with no ticket and 25 with no status, not '79 rows'); **F-35** (GL-GATE-07/08 are in ADRs and the canonical spec; only GL-GATE-06 is LEDGER-only); **F-39** (Dagster is not wired at all, yet SIG-INGEST-020 is MET on a docstring that says so); **F-40** (the chain/main lockfile divergence is ancestry only: the blobs are byte-identical). Severities were re-assessed rather than copied. Changes: **F-03 S1→S0** (a one-click dispute channel is promised on every page, including for privacy/safety harm, but none exists and the live page gives no notice); **F-07 S2→S1** (every page claims its permalink is reproducible, but the query string is ignored); **F-13 unrated→S3** (a scheduled watch item, not a defect); **F-18 S1→S2** and **F-19 S1→S2** (the fixes or test redesign are known; later heads are green); **F-40 S2→S3**. **F-44 is new (S1, proposed):** the ID and MN dossiers merge Idaho with Indonesia and Minnesota with Mongolia. F-01 and F-02 were **remediated 2026-09-30 per TRACK0_RECORD**; their durable fixes (restore drill, deletion protection, a publish-exclusion regression test on the manual-sync path) go to G1. Inventory findings (F-21 date drift, F-24, F-30 coverage, F-33 backlog) were verified at the headline plus 2–3 concrete instances; their full inventories belong to B1, B3, F2 and F3.
+
+| | S0 | S1 | S2 | S3 | total |
+|---|---|---|---|---|---|
+| verified | 3 | 12 | 16 | 4 | 35 |
+| amended | 0 | 2 | 3 | 3 | 8 |
+| refuted | 0 | 0 | 0 | 0 | 0 |
+| proposed | 0 | 1 | 0 | 0 | 1 |
+| **total** | 3 | 15 | 19 | 7 | 44 |
+
+## S0 — active harm or risk in production now (3)
+
+### Stream C — live product review
+
+**F-03 — Every page advertises a one-click, no-account dispute/correction channel, but live /dispute/ has no form, address or 'not operating' notice, and /intake/ is 404 on both the site and the API**  
+*status* `verified` · *class* live-read; code · *category* truthfulness/governance · *routed* C2; C6; G2; E2; F2 · *spec* SIG-GOV-001; SIG-GOV-003; SIG-FIND-006 · *observed* 2026-09-30T16:39:11Z  
+*surface* https://surveillancegraph.org/dispute/; https://surveillancegraph.org/intake/; web/src/components/DisputeLink.astro:34; README.md:27,190  
+*evidence* GET /dispute/ 200 (16:39:11Z, sha256 0661236c…): 'This channel is reachable in one click from any claim', a 'Submit' heading, 0 &lt;form>, 0 mailto, no contact address and no operating-status notice. The footer 'Dispute or correct this record — one click, no account required.' (web/src/components/DisputeLink.astro:34) appears on /dossier/, /dossier/al/, /methodology/ and other pages. GET /intake/ 404 (16:39:12Z). sig-api /openapi.json (16:41:46Z) has no /intake routes; chain-tip api/src/api defines /intake/new and /intake/v1/reports, which are not deployed. README.md:27,190 says intake 'answers 503 receiver_not_operating', which is true only of the undeployed receiver. The chain-tip web/src/pages/dispute.astro:59-61 (P32.16, unreleased) adds 'The durable anonymous receiver is not yet operating', but the live page predates it. COVERAGE_MATRIX SIG-GOV-001 = MET. Re-rated S1->S0: a false public claim on every page, including for privacy- and safety-harm reports, with no alternative route.
+
+### Stream G — production and operations
+
+**F-01 — Cloud SQL sig-pg had automated backups disabled and 0 backups while ADR-081 says managed backups replaced the drill; the backup bucket held only two 146 KB 5-claim seed dumps from 2026-09-15**  
+*status* `verified` · *class* recorded-execution; live-read; code · *category* operations/data-protection · *routed* G1 · *spec* GL-DEPLOY-01 · *observed* 2026-09-30T16:50:28Z  
+*surface* gcp: Cloud SQL sig-pg; gs://zeta-medley-508121-u7-sig-backups/pg/  
+*evidence* Remediated 2026-09-30 per TRACK0_RECORD; durable fix -> G1. Pre-state (TRACK0_RECORD 0.1, 16:17Z): backupConfiguration.enabled=false, 0 backups. Now: baseline prod.sig_pg.backup_enabled=true, pitr_enabled=true, backups_successful=2 at freeze; A2 re-read 16:50:28Z `gcloud sql instances describe sig-pg` -> backups enabled, PITR true; `gcloud sql backups list` -> 1790785806842 AUTOMATED SUCCESSFUL, 1790785111976 ON_DEMAND SUCCESSFUL. `gcloud storage ls -l gs://…-sig-backups/pg/` (16:38:57Z) -> sig-20260915T124956Z.sql 146109 B + sig-20260915T125252Z.sql 146526 B = the P24.1 seed (DEFERRALS D-DEPLOY.1-1: claims=5). ADR-081:22 'Managed automated backups replace the pg_dump->GCS drill for the DB tier.' Residual for G1: no restore drill on the national spine; deletion protection off (F-42). Logs: docs/build/logs/next-phase/A2/f01_\*.txt
+
+**F-02 — /curate/ demo curation pages (forms posting to 127.0.0.1:8001) were publicly served because the P31.16 republish synced raw web/dist, bypassing the P30.3 strip**  
+*status* `verified` · *class* code; recorded-execution; live-read · *category* exposure/publish-pipeline · *routed* G1; G3 · *observed* 2026-09-30T16:56:13Z  
+*surface* https://surveillancegraph.org/curate/; ops/src/ops/publish.py:168,176; docs/build/reports/REPUBLISH_LIVE_2026-09-27.md:35-40  
+*evidence* Remediated 2026-09-30 per TRACK0_RECORD; durable fix -> G1. ops/src/ops/publish.py:168 calls strip_non_public_web(dist) and :176 NON_PUBLIC_WEB_PATHS=('curate',) (added 950d4ebc, P30.3, 2026-09-24; D-P27.8-1 records the P30.3 web sync with '/curate/ stripped'). REPUBLISH_LIVE_2026-09-27.md:35-40: P31.16 ran `gcloud storage rsync -r --delete-unmatched-destination-objects web/dist/ gs://…-sig-web/` directly, not via sig-ops deploy, so the strip never ran. TRACK0_RECORD 0.2: 8 pages uploaded 2026-09-27T01:33:56-57Z, removed 16:21:34Z. The preserved copy (docs/build/logs/next-phase/track0/curate-backup/) has 7 form actions to http://127.0.0.1:8001/v1/curation/\*. Baseline prod.site.curate_apex_status and curate_run_status = 404 at freeze. ADR-068: /curate/\*\* is the authenticated loopback surface, not public.
+
+## S1 — breaks a core user task or the truth of the record (15)
+
+### Stream B — build truth and orchestration
+
+**F-20 — The chain never consulted GitHub CI: both build skills exclude CI polling by design, and no ledger or run record cites a PR check, so 'green' meant local green**  
+*status* `verified` · *class* code; recorded-execution · *category* process/verification · *routed* B4; B6; H2 · *spec* SIG-ENG-031 · *observed* 2026-09-30T16:56:13Z  
+*surface* ~/agent-skills/skills/orchestrate-build/SKILL.md:313; ~/agent-skills/skills/implement-spec/SKILL.md:410,490; docs/build/LEDGER.md; docs/build/runs/  
+*evidence* orchestrate-build SKILL.md:313 'No merge-main, no CI polling'. implement-spec SKILL.md:410 'Open PR (no merge-main, no CI-poll …)' and :490 'No CI polling. The push triggers CI; if it fails, invoke your fix-CI workflow separately'. In docs/build/LEDGER.md, 'gh pr checks' -> 0 hits and 'CI green|CI red|GitHub checks' -> 0 hits. 0 of the 183 files in docs/build/runs/ mention 'gh pr checks'. Meanwhile 16 PRs were red (F-18, F-19). SIG-ENG-031 requires green CI before a phase is complete.
+
+**F-21 — Future-dated build records: Round-9/10 events are recorded as 2026-10-01…10-21 in commits made 2026-09-25…09-28, and the dates leak into ADR Date headers, §55 spec text, ops constants, db/sqitch.plan, BUILD_INDEX and every obligation event**  
+*status* `verified` · *class* code · *category* memory-integrity/clock · *routed* B1; B4; B5 · *spec* SIG-MEM-002 · *observed* 2026-09-30T16:56:13Z  
+*surface* docs/build/LEDGER.md; docs/build/BUILD_INDEX.md; docs/adr/; db/sqitch.plan:41-52; ops/src/ops/release_candidate.py:7,103,112,125; docs/build/reports/obligations/events.jsonl; docs/research/_meta/spec_src/96b_partXI_s55_six_streams.md:105  
+*evidence* The chain tip b051732c was committed 2026-09-28T18:47:58-04:00. Yet a33cd6ec (2026-09-27T21:27-04:00) records the S3 deferral as '2026-10-19'. 95c8a73f (2026-09-27T23:49-04:00) records GATE-G3 signed '2026-10-19' (readout 'Date: 2026-10-19'). BUILD_INDEX row 151 P31.10 is dated 2026-10-02 (branch tip 4dc4c80a, 2026-09-25) and row 163 P32.3 is dated 2026-10-10 (348764c4, 2026-09-27). All 97 events.jsonl recorded_at = 2026-10-21 (last written 7a2ff9fa, 2026-09-28). 20 ADR Date headers fall in 2026-10. 11 db/sqitch.plan timestamps run 2026-10-02…10-19 (lines 41-52). release_candidate.py embeds '2026-10-19'. spec_src 96b…:105 says 'The landed GATE-G3 signature (2026-10-19)'. LEDGER has 79 October date strings (10-01…10-21). Not re-checked here, and owed to B1's full inventory: the earlier Round-3/P25 episodes, which sqitch changes are deployed on hosted Cloud SQL, and whether the G3-signed identity digest covers the dates.
+
+**F-22 — c2055d96 (2026-09-18) deleted the 53-row append-only GATE DECISIONS table (HG-14 signatures, HG-13 A1–A8, GL-GATE-01…06, HG-02 counsel, HG-11) while recording GL-GATE-07/08; the table was never restored**  
+*status* `verified` · *class* code · *category* memory-integrity/append-only · *routed* B2; B3 · *spec* SIG-MEM-002 · *observed* 2026-09-30T16:56:13Z  
+*surface* docs/build/LEDGER.md @ c2055d96  
+*evidence* git show c2055d96 (2026-09-18T16:14:45-04:00, 'record GL-GATE-07 … + GL-GATE-08'): LEDGER.md +20/−56. It removed the heading '## GATE DECISIONS (append-only; filled by the orchestrator …)', the table header and 53 dated rows (from 2026-09-08): HG-13 ×8, HG-14 ×4 plus a re-sign, HG-02 (counsel) ×2, HG-11 ×3, HG-03 ×2, HG-12 ×2, GL-GATE-01…06 and others (A2/f22_c2055d96_removed.txt). The current tip has 0 occurrences of 'HG-14 | ACCEPTED-deviations'. The rows are recoverable from c2055d96^.
+
+**F-23 — LEDGER is 679 KB with a 123 KB CURRENT STATE of PRIOR chains; its header says 'gitignored, never commit'; the OPERATING MODE resume prompt names a retired .agents/scratch ledger and '17 tickets'; the Round-10 amendment says 'do not resume until Codex reports'; projectStatus IN-PROGRESS is off-enum**  
+*status* `verified` · *class* code · *category* memory-integrity/resume-safety · *routed* B3; T5 · *spec* SIG-MEM-004 · *observed* 2026-09-30T16:56:13Z  
+*surface* docs/build/LEDGER.md:1-52  
+*evidence* Baseline mem.bytes LEDGER = 679,109, and the CURRENT STATE block (lines 29-54) is 122,978 B. LEDGER.md:1 '(orchestrate-build machine state; gitignored, never commit)'. :8 'drives all 17 tickets'. :13 'ledger=.agents/scratch/planning/sig-postbuild-build-ledger.md' (retired per AGENTS.md/ADR-073). :27 'Do not resume until Codex reports the checkout/PR handoff verified.' :34 projectStatus IN-PROGRESS, while build-memory layout.md:109 defines the enum value IN_PROGRESS.
+
+**F-27 — Every build-memory validator passes on a tree containing F-21…F-26 (they check structure, not truth); the 'independent' P33.1 gap analysis missed the future dates and wrote new ones**  
+*status* `verified` · *class* recorded-execution; code · *category* verification-gap · *routed* B4 · *spec* SIG-MEM-002; SIG-MEM-003 · *observed* 2026-09-30T16:46:50Z  
+*surface* scripts/docs/check-build-memory.sh; docs/build/tools/{check_coverage_matrix,check_backlog,check_spec_src,current_projection}.py; docs/build/CAPSTONE_GAP_ANALYSIS.md:318  
+*evidence* 16:45:30Z `bash scripts/docs/check-build-memory.sh .` -> exit 0, 'no violations (0 warning(s))' (A2/f27_check_build_memory.txt). 16:46:50Z: check_coverage_matrix '715 rows OK'; check_backlog 'deferral homes: 36/36'; check_spec_src 'no duplicate / malformed / reserved ids'; current_projection verify 'fresh — 546 input digests match'. CAPSTONE_GAP_ANALYSIS.md:318 '## (k) Round-10 independent gap analysis — P33.1 (2026-10-21)' sits in commit 7a2ff9fa, dated 2026-09-28.
+
+**F-29 — The GATE-G3 and GATE-ACCEPT (ACCEPT-R10) readouts were written by the agent from one-line approvals and signed 'Authority: repository operator'; both signing commits deleted the template line 'an agent must not sign or assume silence is approval'**  
+*status* `amended` · *class* code · *category* governance/gate-integrity · *routed* B4; B5; E1 · *observed* 2026-09-30T16:56:13Z  
+*surface* docs/build/readouts/GATE-G3.md; docs/build/readouts/ACCEPT-R10.md; commits 95c8a73f, 4127dbf3  
+*evidence* In 95c8a73f the LEDGER quotes the operator: 'I sign/accept. Please proceed'. GATE-G3.md holds about 3 KB of agent text (three annotated checklist items, two 'Additional scope' bullets and a Decision paragraph) with no agent-drafted label, closing 'Authority: repository operator. Date: 2026-10-19'. In 4127dbf3 (2026-09-28T14:47-04:00) the LEDGER quotes 'oik looks good, proceed', and ACCEPT-R10.md (1.7 KB) closes 'Authority: repository operator'. Both diffs remove '-An operator or authorized human record supplies the decision; an agent must not sign or assume silence is approval.' AMENDED: the line was deleted from both readouts, not only G3. Appendix A's 'scope clauses (a)–(c)' do not exist as labelled clauses; the scope text is checklist annotations plus bullets.
+
+**F-36 — Gates were largely pre-answered, blanket, pre-authorized or delegated; blockedOn was '(nothing)' in all 194 committed LEDGER versions; human evaluation was deferred repeatedly (four episodes)**  
+*status* `verified` · *class* code; inference · *category* process/gate-integrity · *routed* B5; E3; F4 · *spec* SIG-EVAL-001 · *observed* 2026-09-30T16:56:13Z  
+*surface* docs/build/LEDGER.md (history); docs/tickets/DEFERRALS.md D-R6.1-EVAL  
+*evidence* For each of the 194 commits touching LEDGER.md (git rev-list --count b051732c -- docs/build/LEDGER.md), blockedOn = '(nothing)' in 194/194 (A2/f36_ledger_commits.txt). Gate examples: GL-GATE-07, a blanket approval of 257 datasets that says to 'err on the side of approving' (c2055d96); GATE-G3 signed from 'I sign/accept. Please proceed'; ACCEPT-R10 from 'oik looks good, proceed' (F-29). D-R6.1-EVAL history: opened in Round 6 as a deferred human evaluation; 'deferred to Round 10' (operator Q11, 2026-09-24); the P31.17 first pass dropped (2026-09-25); the S3 spine deferred wholesale (recorded '2026-10-19', committed 2026-09-27). Quantifying 'largely' is left to B5.
+
+### Stream C — live product review
+
+**F-04 — No Oklahoma dossier; 'unresolved' is one of 55 dossier jurisdictions and holds 71.4% of publishable subjects; codes mix US-state and ISO-country schemes with bare labels (ca = California, ca-on = Ontario, de = Germany, sa = Saudi Arabia)**  
+*status* `verified` · *class* live-read; code · *category* truthfulness/information-architecture · *routed* C2; C3; C6 · *spec* SIG-IDENT-006; SIG-UI-002 · *observed* 2026-09-30T16:39:14Z  
+*surface* https://surveillancegraph.org/dossier/; public web/dossiers.json (release sig-2026-09-27-ce480ab1)  
+*evidence* GET /dossier/ (16:39:14Z) lists 55 slugs, including unresolved and us. GET /dossier/ok/ 404 (16:39:15Z). Public web/dossiers.json (16:40:04Z): the 'Publishable subjects' values sum to 232,625, of which unresolved = 166,210 (71.4%). Source families: ca = camreg_brea/caloes/palmdesert/trafficops_ca (California); ca-on = Toronto/Ottawa/Peel/Caledon; de = camreg_mueller_de ('German camera positions', scheme iso.3166_1_alpha2, sources.toml:6004); sa = camreg_riyadh_sa. The index shows bare codes ('Surveillance infrastructure — DE'). The two outright code collisions are split out as F-44.
+
+**F-05 — The 'How we know this' module shows the same site-wide totals on every page (e.g. /dossier/al/ says 218 independent sources; AL has 1), and its tier distribution sums to 2,423,194, 6 short of the 2,423,200 headline**  
+*status* `verified` · *class* live-read · *category* data-truth · *routed* C3; C6 · *spec* SIG-UI-044 · *observed* 2026-09-30T16:39:16Z  
+*surface* every page; https://surveillancegraph.org/dossier/al/  
+*evidence* The module text is identical on /, /dossier/al/, /methodology/, /network/, /dispute/ and /contribution-back/ (fetched 16:39:10-16:39:25Z): 'Artifacts 255 · Tier distribution 2245390×untiered, 2690×W1, 175114×W3 · Independent sources 218 · Date range 2020-01-28 – 2026-09-26'. /dossier/al/ also shows its own 'How we know this — Sources: dot_511_al' (web/dossiers.json al.source_families=[dot_511_al]). 2,245,390 + 2,690 + 175,114 = 2,423,194, against the home coverage-stat '2423200 of 2423200 published tier-0 claims'. SIG-UI-044 requires this module on every page.
+
+**F-06 — /methodology/ reports pairwise P/R/F1 1.000 on 'the frozen, human-verified holdout' directly below a PROVISIONAL note that the gold set is LLM-bootstrapped; the κ row is malformed ('0.714 labelled pairs', count missing)**  
+*status* `verified` · *class* live-read; code · *category* data-truth/epistemic-legibility · *routed* C3; E1; F4 · *spec* SIG-EVAL-001 · *observed* 2026-09-30T16:39:17Z  
+*surface* https://surveillancegraph.org/methodology/; web/src/lib/resolution-eval.ts:56-58,67  
+*evidence* GET /methodology/ (16:39:17Z, sha256 ee703b8c…): 'PROVISIONAL — the gold set is LLM-bootstrapped with a small maintainer seed … (D-R6.1-EVAL, OPEN)', then 'P 1.000 · R 1.000 · F1 1.000 the frozen, human-verified holdout'. The camera-site rows say 'agent-verified 180-pair holdout'. Source: web/src/lib/resolution-eval.ts:67 against:'the frozen, human-verified holdout'; :56-58 has value '0.714' and against 'labelled pairs (bar ≥ 0.70 …)' with no pair count, so the page reads '0.714 labelled pairs'.
+
+**F-07 — Belief-pinned as-of permalinks do not pin: the static nginx ignores the query string, so every as-of URL returns current bytes while each page promises reproducibility**  
+*status* `verified` · *class* live-read; code · *category* truthfulness/citation · *routed* C2; G3; F2 · *spec* SIG-UI-035; SIG-TIME-008 · *observed* 2026-09-30T16:41:00Z  
+*surface* ops/web/nginx.conf:147-148; https://surveillancegraph.org/dossier/al/?as_of_world=…; web/src/components/Citation.astro:60  
+*evidence* ops/web/nginx.conf:147-148 `location / { try_files $uri $uri/ =404; }` does nothing with the query arguments. GET /dossier/al/?as_of_world=2020-01-01&as_of_belief=2020-01-01 (16:41:00Z) is byte-identical to /dossier/al/ (both sha256 87370aa8…; A2/f07_permalink_sha.txt). Every page's citation block says 'Belief-pinned permalink (reproducible after SIG corrects itself)' (Citation.astro:60). COVERAGE_MATRIX has SIG-UI-035 and SIG-TIME-008 = MET. Re-rated S2->S1: a reproducible citation is a design-center task (T7) and the page asserts it. It holds today only because nothing has been republished since 2026-09-27.
+
+**F-44 — Jurisdiction-code collisions merge different places into one public dossier: /dossier/id/ combines Idaho (ACHD) with Indonesia, and /dossier/mn/ combines Minnesota with Mongolia**  
+*status* `proposed` · *class* live-read; code · *category* data-truth/jurisdiction-identity · *routed* C3; C6 · *spec* SIG-IDENT-006 · *observed* 2026-09-30T16:40:04Z  
+*surface* https://surveillancegraph.org/dossier/id/; https://surveillancegraph.org/dossier/mn/; public web/dossiers.json; connectors/src/connectors/data/sources.toml  
+*evidence* web/dossiers.json (release sig-2026-09-27-ce480ab1, fetched 16:40:04Z): id.source_families = [camreg_achd_id, camreg_indonesia_id] (500 publishable subjects); mn.source_families = [camreg_carver_mn, camreg_mndot_mn, camreg_monmap_mn] (995). sources.toml:3959-3976: camreg_achd_id 'Ada County Highway District', scheme us.state_abbr (ID). :5259-5276: camreg_indonesia_id 'Indonesia CCTV camera layers', scheme iso.3166_1_alpha2 (ID). :5961-5978: camreg_monmap_mn 'Mongolia camera locations', scheme iso.3166_1_alpha2 (MN). Dossier labels are bare codes ('Surveillance infrastructure — ID'), so anyone reading the Idaho or Minnesota dossier gets foreign cameras counted in. A2's scan of all 55 dossiers found no other dossier mixing schemes. Found while verifying F-04.
+
+### Stream E — governance and spec contradictions
+
+**F-31 — Spec MUSTs contradicted by operator decisions or operated state: SIG-PUB-008 (sole-maintainer waiver, yet MET), SIG-GOV-012 (legal home = individual), counsel items (HG-02), SIG-CONTRIB-012 (Stage-0 WONTFIX with no ADR), SIG-SEC-003 (no transparency report). The robots item is already amended in spec §26 rule 2 (ADR-088); only code docs and a deferral row still contradict it**  
+*status* `amended` · *class* code · *category* governance/spec-truth · *routed* E1; E2 · *spec* SIG-PUB-008; SIG-GOV-012; SIG-CONTRIB-012; SIG-SEC-003; SIG-INGEST-036; SIG-INGEST-037 · *observed* 2026-09-30T16:56:13Z  
+*surface* docs/2_canonical_design_spec.md:4472-4482,5367,6324,6436,6523; policy/src/policy/crawler.py:9-11; docs/adr/ADR-145:117-123  
+*evidence* PUB-008: spec :6324 'Two independent reviewers MUST concur in writing'; LEDGER:154 HG-11 'Carry forward sole-maintainer posture' (waiver D-P21.4-2); ADR-145:117-121 keeps the MUST as the bar; matrix = MET. GOV-012: spec :6523 requires a fiscal sponsor or entity; LEDGER:153 'Legal home stays Steven Vitali, individual maintainer'; matrix = PARTIAL. CONTRIB-012 (:5367): D-P21.1-2 'WONTFIX 2026-09-16 — SKIPPED-BY-OPERATOR', and no ADR records it; matrix = MISSING. SEC-003 (:6436): matrix = MISSING. AMENDED on robots: §26 rule 2 (:4475-4482) already incorporates GL-GATE-08/ADR-088 ('robots_disregarded'), and ADR-145:122-123 leaves SIG-INGEST-037 (rule 4, circumvention) unchanged. Appendix A's '§26 rule 7' is wrong (rule 7 is 'honour opt-out'). What still contradicts the decision: the crawler.py:9-11 docstring 'Rule 2 — honour robots.txt' and the D-SOURCES.9-2 blocker text (F-28). Counsel id 'R-01' was not found in docs/risk_register.md (RISK-P0-\* rows exist).
+
+### Stream F — obligations and requirements
+
+**F-16 — Round-10 dossier pilots are built from hand-authored stand-in documents (disclosed), yet SIG-TRUST-009/010, FIND-006, DOS-002…005 and ACQ-004 are MET on bounded, fixture or staging scope**  
+*status* `verified` · *class* code; recorded-execution · *category* verdict-truth · *routed* F2; E1; G2 · *spec* SIG-TRUST-009; SIG-TRUST-010; SIG-FIND-006; SIG-DOS-002; SIG-DOS-003; SIG-DOS-004; SIG-DOS-005; SIG-ACQ-004 · *observed* 2026-09-30T16:56:13Z  
+*surface* tests/connectors/fixtures/dossier/SOURCES.md:1-13; docs/build/COVERAGE_MATRIX.csv; docs/2_canonical_design_spec.md:7377,7381  
+*evidence* SOURCES.md:1-13: 'Ten representative allowed/redacted stand-in documents … hand-authored review fixtures … None of these files is a fetched capture'. COVERAGE_MATRIX verdict MET for SIG-TRUST-009 (note 'bounded/staging namespace — NO production serve'), SIG-TRUST-010, SIG-FIND-006, SIG-DOS-002/003/004/005 and SIG-ACQ-004. Spec :7377 records GATE-G3 as 'an explicitly recorded reduced-scope acceptance'. No verdict value separates engineered from live (see the §8.3 MET-ENGINEERED proposal).
+
+**F-30 — 69 not-MET requirement ids; 55 appear in no BACKLOG, DEFERRALS or manifest row; 19 still route to long-landed P21.x tickets; pre-Round-10 verdict notes are stale (e.g. 'web reads fixtures')**  
+*status* `verified` · *class* code · *category* verdict-truth/coverage · *routed* F2; A3 · *spec* SIG-PUB-007; SIG-UI-010; SIG-UI-040; SIG-EPIS-018; SIG-RECON-039; SIG-RECON-040 · *observed* 2026-09-30T16:56:13Z  
+*surface* docs/build/COVERAGE_MATRIX.csv  
+*evidence* COVERAGE_MATRIX.csv (715 rows): PARTIAL 54 + MISSING 10 + AT-RISK-INTEGRATION 5 = 69 (matches baseline). 55 of the 69 ids have no exact or short-form match in BACKLOG.csv, DEFERRALS.md or 00_MANIFEST.md. 19 route to or are owned by P21.x (routing counts: P20.1:backlog 45, P21.5 6, P21.4 4, …). Stale examples: SIG-PUB-007/SIG-UI-010 say 'web/ renders from fixtures … not the live export/API path', but the site has been built with SIG_DATA_SOURCE=export since P30.3 (REPUBLISH_LIVE…:28). SIG-UI-040 says 'search … not wired (web reads fixtures)', but API /v1/search is live and P32.14 release search has landed. SIG-EPIS-018/RECON-039/040 say 'not persisted … is P21'. The full re-audit is owed to F2.
+
+## S2 — degraded quality or debt (19)
+
+### Stream B — build truth and orchestration
+
+**F-10 — REPUBLISH_LIVE_2026-09-27.md says has_vendor accountability links render on /dossier/al/; the live page, and every published dossier, has 0 accountability rows**  
+*status* `verified` · *class* live-read; code · *category* record-truth · *routed* C3; B4 · *observed* 2026-09-30T16:39:16Z  
+*surface* docs/build/reports/REPUBLISH_LIVE_2026-09-27.md:77,141; https://surveillancegraph.org/dossier/al/  
+*evidence* Report :77 'accountability has_vendor links render in the live /dossier/al/ "Accountability events" section' (repeated at :141). GET /dossier/al/ (16:39:16Z): the Accountability events section shows only 'unknown' authorization fields and 0 'vendor' strings. Public web/dossiers.json: accountability_events has rows in 0 of 55 dossiers.
+
+**F-19 — #165, #179 and #185 are red on python on their own heads because tests assert the current state of living build-memory records that later commits changed; 11 test files reference living records**  
+*status* `verified` · *class* live-read; code · *category* CI/test-design · *routed* B4; F5; H1 · *spec* SIG-ENG-031 · *observed* 2026-09-30T16:43:26Z  
+*surface* tests/unit/test_build_memory_audit.py:336; tests/unit/test_capstone_closure_round10.py:162  
+*evidence* gh run view --log-failed: run 36312594389 (#165), test_build_memory_audit.py:336, errors ledger/next-ticket P32.10a and manifest/malformed-row. Run 36366041520 (#179), same test, ledger/done-uncovered P32.22. Run 36467709050 (#185), test_capstone_closure_round10.py:162 'GATE-ACCEPT readout lost its PENDING marker' (readout signed after close in 4127dbf3). The #179/#185 runs completed 2026-09-30T03:07-03:08Z (re-runs). grep of tests/ for LEDGER.md|DEFERRALS.md|00_MANIFEST.md|BUILD_INDEX.md|readouts/|COVERAGE_MATRIX.csv|BACKLOG.csv|OPERATIONAL_READINESS|events.jsonl -> 11 files (A2/f19_living_record_tests.txt). These are string references; not every file is proven to read the live tree. Re-rated S1->S2: test-design debt, and later heads are green.
+
+**F-24 — PHASE LOG is out of date order and some landed tickets have no PHASE LOG entry; BUILD_INDEX lacks the GATE-G3/GATE-ACCEPT rows (190, 195), leaves rows 76–81 at 'PR pending', and reuses sequence 170**  
+*status* `amended` · *class* code · *category* memory-integrity/index · *routed* B3 · *spec* SIG-MEM-001 · *observed* 2026-09-30T16:56:13Z  
+*surface* docs/build/LEDGER.md:243+; docs/build/BUILD_INDEX.md:150-155,242-243,257-264  
+*evidence* 11 date inversions between consecutive PHASE LOG entries, e.g. line 342 P31.10 '2026-10-02' -> 343 P31.11 '2026-09-25', and 386 P24.6 09-14 -> 387 P24.7 09-13. BUILD_INDEX rows 76-81 read 'PR pending' (:150-155). Two rows are numbered 170 (P32.10 #165 and P32.10a #166, :242-243). Row numbers jump 189->191 and 194->196, so there are no GATE-G3/GATE-ACCEPT rows. AMENDED: A2's heuristic finds 13 of 133 BUILD_INDEX ticket rows with no PHASE LOG entry naming them (P25.2/4/6/8/9/10, P26.1/5/7/8/9/10/11), not the 17 in Appendix A. The count depends on method; the exact list is owed to B3.
+
+**F-25 — The LEDGER returnPass key and RETURN PASS table stop at Round 9 (P31.16); the accurate owed/return-pass list is OPERATIONAL_READINESS.md §(f3)**  
+*status* `verified` · *class* code · *category* memory-integrity · *routed* B3; F1 · *spec* SIG-MEM-004 · *observed* 2026-09-30T16:56:13Z  
+*surface* docs/build/LEDGER.md:39,223-242; docs/build/OPERATIONAL_READINESS.md:306  
+*evidence* The RETURN PASS table (LEDGER:223-242) ends at P31.16. No D-R10-\* or P32.\* ids appear in returnPass (:39) or in the table. OPERATIONAL_READINESS.md:306 '### (f3) RETURN PASS — a concrete command for every owed row' (P33.4, 2026-09-28) covers the 36 owed rows (baseline obligations 36).
+
+**F-26 — obligations/events.jsonl, the append-only obligation event ledger, was rewritten wholesale three times after creation; it holds 97 'migration' events and 0 transitions**  
+*status* `verified` · *class* code · *category* memory-integrity/append-only · *routed* B2; B3 · *spec* SIG-MEM-002 · *observed* 2026-09-30T16:56:13Z  
+*surface* docs/build/reports/obligations/events.jsonl  
+*evidence* git log --numstat: 6bade66e (P32.7, 2026-09-27T04:37-04:00) +89; b132bbbb +90/−89; 30d401dc +90/−90; 7a2ff9fa (P33.1, 2026-09-28T01:13-04:00) +97/−90. All 97 events are kind=migration, one per obligation id, with recorded_at 2026-10-21 (F-21). SIG-MEM-002 requires evidence-backed transitions that retain history.
+
+**F-32 — Process requirements unmet while marked MET: check_spec_src.py and the coverage checker are not run in CI (SIG-ENG-039); the ADR index has 142 of 144 rows with no ticket and 25 with no status; traceability.md and risk_register.md are unchanged since 2026-09-14 (SIG-ENG-031); Part X §52 phases stop at 18; TICKET_VS_SPEC.md stops at P18**  
+*status* `amended` · *class* code · *category* process/traceability · *routed* B4; F2 · *spec* SIG-ENG-039; SIG-ENG-031 · *observed* 2026-09-30T16:56:13Z  
+*surface* .github/workflows/ci.yml:36-42; Makefile:74-95; docs/adr/README.md; docs/traceability.md; docs/risk_register.md; docs/2_canonical_design_spec.md:6809-7226; docs/build/TICKET_VS_SPEC.md  
+*evidence* ci.yml runs only make docs-check and check-build-memory.sh. grep of .github, Makefile and tests for check_spec_src|check_coverage_matrix -> 0 hits, yet matrix SIG-ENG-039 = MET (evidence: check_spec_src.py). docs/adr/README.md: 144 rows; Ticket '—' in 142, Status '—' in 25, and ADR-073's title is '—'. AMENDED: Appendix A's '79 rows' could not be reproduced. git log -1: traceability.md f77803df (2026-09-13T23:10-04:00); risk_register.md 9866efae (2026-09-14T01:27-04:00); matrix SIG-ENG-031 = MET. Spec §52 covers Phase 0…18 (:6816-7185), then §55 Round 10 (:7275), so Rounds 2-9 are absent. TICKET_VS_SPEC.md's last phase is P18 (P19.2/P20.2 appear only in passing).
+
+**F-37 — Rounds 5–9 were seeded by ad-hoc planning sessions (only Rounds 3/4 used decompose-spec); the harness changed mid-stream (Claude Code -> Devin, with Codex seeding Round 10); future dating begins in the Devin stretch**  
+*status* `verified` · *class* code; inference · *category* process/orchestration · *routed* B5 · *observed* 2026-09-30T16:56:13Z  
+*surface* docs/tickets/00_MANIFEST.md:439-452; git trailers; docs/build/LEDGER.md:27,43  
+*evidence* 00_MANIFEST.md:439 says Rounds 3+4 were 'seeded by decompose-spec mode=extend'. :443, :445, :446, :448 and :449 say Rounds 5, 6/7, 8, 9A and 9B were 'seeded … by a planning session' ('NOT an implement-spec ticket'). Round 10 was seeded from Codex's six-stream planning (LEDGER:27 'until Codex reports'; branch codex/round10-seed-after-p31-19; .codex/worktrees in baseline). Commit trailers since 09-20: Co-Authored-By Claude on 09-22…09-25 (94 commits) and Devin on 09-22/09-25 (10); on 09-26…09-28, 0 of 112 commits carry any harness trailer. LEDGER:43 dispatchTarget is the 'Devin CLI isolated-subagent primitive'. The first future date is P31.10 (committed 2026-09-25). All but 2 commits (authored 'Devin', 09-27) are authored 'Steve Vitali' whatever the harness, so git cannot reliably attribute agent work. The switch count and the clustering are inference.
+
+**F-38 — The orchestrator made production changes outside ticket scope (Cloud SQL tier scale-up, a second reconnect/terminate drill, sig-api min-instances=1), each on an in-chat operator 'yes'**  
+*status* `verified` · *class* code; operator-statement · *category* process/change-control · *routed* B5; G1 · *observed* 2026-09-30T16:56:13Z  
+*surface* commit 91521187; ~/.claude/projects/-Users-stevenvitali-Eleutheria/memory/sig-queued-build-pipeline.md:31  
+*evidence* In 91521187 (2026-09-24T22:35-04:00) the LEDGER records: '(3) Second reconnect drill: "Yes, run it" — executed by the orchestrator 02:35:09Z: both sig-api backends terminated' and '(4) sig-api min-instances=1: "Yes" — applied 02:34Z (gcloud run services update --min-instances=1; new revision sig-api-00007-gdd)'. Memory note :31: '2026-09-23 ~22:25 — Cloud SQL SCALED UP (operator-approved) … db-f1-micro->db-custom…'. Baseline: sig-api min 1; sig-pg db-custom-1-3840. The changes were operator-approved but fell outside any ticket contract: no run ledger, tests or rollback record.
+
+### Stream C — live product review
+
+**F-08 — /data-freshness/ shows all 178 sources 'ok' with 0 stale entities and every volatility class 'unknown'; the site is frozen at the 2026-09-27 release while the hosted spine keeps ingesting**  
+*status* `verified` · *class* live-read · *category* data-truth/freshness · *routed* C3; G1; G3 · *spec* SIG-METRIC-006; SIG-EPIS-020 · *observed* 2026-09-30T16:39:18Z  
+*surface* https://surveillancegraph.org/data-freshness/  
+*evidence* GET /data-freshness/ (16:39:18Z): 178 source rows; Status ok ×178; Stale entities 0 ×178; Volatility class unknown ×178. Baseline prod.site.home_last_modified = Sun, 27 Sep 2026 01:33:43 GMT; public manifest release_id sig-2026-09-27-ce480ab1. A1 scheduler.json: 45 of 79 jobs attempted, latest attempts 2026-09-30T06:00-12:00Z. Staleness cannot be measured against an unknown volatility class (SIG-METRIC-006/SIG-EPIS-020).
+
+### Stream F — obligations and requirements
+
+**F-28 — Stale or inconsistent obligation records: projection landings still point at P31.18 (moved and never recreated); D-SOURCES.12-1 reads 'nothing actionable remains' yet stays PARTIAL; D-SOURCES.9-2's robots blocker predates GL-GATE-08 and was never re-assessed; D-FEDERAL.1-1's cadence is described three ways**  
+*status* `verified` · *class* code; inference · *category* obligation-truth · *routed* F1; E4 · *spec* SIG-MEM-002; SIG-MEM-004 · *observed* 2026-09-30T16:56:13Z  
+*surface* docs/build/reports/current/CURRENT.md:31-40; docs/tickets/DEFERRALS.md  
+*evidence* CURRENT.md:36,39,40 land D-R6.1-EVAL, D-P30.2b-1 and D-P30.2b-2 on 'P31.18'. 00_MANIFEST.md:345,454 say row 159 P31.18 was 'moved to Round 10', and LEDGER:27 replaces it with HUMAN-H4->P32.22a->HUMAN-H5->P32.23. D-SOURCES.12-1 says 'nothing actionable remains in this row' but its status is PARTIAL (CURRENT.md:34). The D-SOURCES.9-2 blocker 'a platform-wide robots refusal is never bypassed' was added in dee14aa1 (2026-09-18T00:55-04:00); GL-GATE-08 was recorded in c2055d96 at 16:14-04:00 the same day, and the row still reads 'OPEN 2026-09-18'. D-FEDERAL.1-1 variously says 'next monthly sig-sched-sam-gov cron', 'Monday 05:00 UTC cron' and 'successive … daily crons', while the live cron is '0 5 1 \* 1' (F-12). The D-SOURCES.12-1 mis-status is an inference, left to F1.
+
+**F-33 — 32 BACKLOG rows remain open, several apparently satisfied by later rounds but never closed**  
+*status* `verified` · *class* code; live-read; inference · *category* backlog-hygiene · *routed* F3 · *observed* 2026-09-30T16:56:13Z  
+*surface* docs/build/BACKLOG.csv  
+*evidence* BACKLOG.csv, 58 rows: open 32, closed 22, accepted 4 (= baseline). BL-046 'Dereferenceable /id/&lt;type>/&lt;uuid> endpoint' is open while the live sig-api OpenAPI (16:41:46Z) serves /id/{id_type}/{uuid}. BL-056 'turn the fixture-demo web into a data-driven national public …' is open while the national export-mode site has been live since P30.3 (D-P27.8-1 DONE 2026-09-24). BL-023 'Live HTTP transports + OCFL CaptureStore' is open while the ADR-111 GCS capture store and 88 live Run jobs exist. Per-row closure evidence is owed to F3.
+
+### Stream G — production and operations
+
+**F-11 — Served HTML carries no release id or commit stamp; only as-of dates and the ruleset identify the build**  
+*status* `verified` · *class* live-read · *category* provenance · *routed* G3 · *spec* SIG-UI-035 · *observed* 2026-09-30T16:41:00Z  
+*surface* all public pages  
+*evidence* 16 pages fetched 16:39:10-16:41:00Z: 0 matches for 'sig-2026-09', 'ce480ab1' or a commit sha, and no generator meta. Home says 'As of world 2026-09-27, belief 2026-09-27; ruleset p27.3/1.0.0' (baseline: 'no release id in the HTML'). The release id appears only in the bucket manifest.json (baseline prod.public_manifest.release_id).
+
+**F-12 — Ops drift: the sig-alerts service runs sig-api:latest (revision from 2026-09-16, never re-rolled under ADR-111 digest pinning); the live SAM.gov cron differs from ops/cadence.toml:317; ops/gcp/README.md still costs the abandoned e2-micro design at ≈$0/mo**  
+*status* `verified` · *class* live-read; code · *category* operations/config-drift · *routed* G1 · *observed* 2026-09-30T16:31:55Z  
+*surface* gcp: Cloud Run service sig-alerts; Cloud Scheduler sig-sched-sam-gov; ops/cadence.toml:317; ops/gcp/README.md:87-108  
+*evidence* Baseline Cloud Run table: sig-alerts image sig-api:latest, Ready 2026-09-16T17:46:52Z. A1 found no Run job or scheduler on :latest. ADR-111:73-76 says pin_image_digest is 'the one resolution every deploy script uses', including provision.sh services. A1 scheduler.json: sig-sched-sam-gov '0 5 1 \* 1' (fires on the 1st and on Mondays) vs ops/cadence.toml:317 '0 5 \* \* 1' (:321 notes the old '0 5 1 \* 1' was replaced). ops/gcp/README.md:87-101 prices the DECISION design (e2-micro) at '≈ $0/mo' and :106 Cloud SQL db-f1-micro at '~$9+/mo'. Live: db-custom-1-3840 (ADR-107) plus sig-api min-instances 1 (baseline). README last changed 6e93b098 (2026-09-28).
+
+**F-14 — No Round-10 surface is deployed: /releases/, /research-dossier/ and /intake/ return 404; the live API lacks the release-search and intake routes; the live /search/, /map/ and /network/ islands predate P32.14/P32.15**  
+*status* `verified` · *class* live-read; code · *category* activation-gap · *routed* C4; G2 · *spec* SIG-FIND-003; SIG-FIND-004; SIG-FIND-005; SIG-FIND-006; SIG-TRUST-009 · *observed* 2026-09-30T16:41:46Z  
+*surface* https://surveillancegraph.org/{releases,research-dossier,intake}/; sig-api /openapi.json  
+*evidence* GETs 16:39:12-16:39:24Z: /releases/ 404, /research-dossier/ 404, /intake/ 404. sig-api /openapi.json (16:41:46Z, 18 paths) lacks /v1/releases/{publication_id}/compartments/{compartment}/search and /intake/\*, which the chain-tip api/src/api defines. 14 data-testids in the chain-tip search/map/network.astro (release-search\*, hop-evidence, access-path, … from P32.14 0ed6c9dd and P32.15 a78720ab) are absent from the live pages. Baseline: sig-api revision sig-api-00011-wic created 2026-09-25; sig-web content from 2026-09-27.
+
+**F-15 — The GATE-G3-accepted release candidate p-17b713… holds 0 records (16-claim fixture DB, 0 compartments, 0 dossier pages); the P32.25 'publish' went to a staging registry committed in the repo**  
+*status* `verified` · *class* recorded-execution; code · *category* activation-gap/record-truth · *routed* G2; B1 · *spec* SIG-TRUST-009; SIG-TRUST-010 · *observed* 2026-09-30T16:56:13Z  
+*surface* docs/build/reports/p32.25-accepted-release-verification/staging_registry/_release_input/candidate_release/release/build_report.json; docs/build/reports/p32.25-accepted-release-verification/README.md:3-6  
+*evidence* build_report.json: records 0, compartments [], dossier_pages 0, evidence_pages 16, artifacts 18, publication_id p-17b713…. p32.23a-release-candidate/README.md:61: seed_fixture_spine -> p32.22-fixture-seed-v1, 16 claims. p32.25 README:3-6: 'Bounded/staging-namespace proof … No production exposure is claimed (live_verification=false)'. staging_registry/ is committed under docs/build/reports/.
+
+**F-41 — The scheduled GitHub Actions 'reingest' workflow has failed on every run on main (6/6, 2026-09-25…09-30, '--sink pg requires --dsn'), while OPERATIONAL_READINESS still names it the scheduling path**  
+*status* `verified` · *class* live-read; code · *category* operations/CI · *routed* G1; H1 · *observed* 2026-09-30T16:50:20Z  
+*surface* .github/workflows/reingest.yml:81; docs/build/OPERATIONAL_READINESS.md:90  
+*evidence* `gh run list --workflow reingest.yml` (16:50:20Z): 6 runs, all schedule/failure (2026-09-25T10:05:07Z … 2026-09-30T11:01:25Z on b7c9e2e3). A1 log of run 36705965584: 're-ingest aspi_mapping_chinas_tech_giants / --sink pg requires --dsn / exit 2'. reingest.yml:81 runs `sig-connectors run --source "$source" --mode live --sink pg` with no DSN wired. OPERATIONAL_READINESS.md:90 says 'scheduling (P24.2, ADR-076) reingest.yml GHA cron -> …', but live scheduling is 79 Cloud Scheduler jobs (baseline). Related: F-39.
+
+**F-42 — Cloud SQL sig-pg, the sole production claim spine, has deletion protection disabled**  
+*status* `verified` · *class* live-read; inference · *category* operations/data-protection · *routed* G1 · *observed* 2026-09-30T16:50:28Z  
+*surface* gcp: zeta-medley-508121-u7 Cloud SQL sig-pg  
+*evidence* `gcloud sql instances describe sig-pg` (16:50:28Z): settings.deletionProtectionEnabled=false (also false at A1 16:26:04Z and at the freeze); backups enabled, PITR true, 2 backups (A2/f42_sigpg_describe.json). A1: grep -rniE 'deletion.?protection' over docs, ops and .github -> 0. Inference for G1 to confirm: by default Cloud SQL deletes an instance's backups with the instance, so one mistaken delete could still lose the spine and its backups.
+
+### Stream H — integration and CI
+
+**F-17 — origin/main's tree equals the P31.4 tree (#140 merged 2026-09-30T02:46Z); 49 PRs are open (#141–#190 minus #148); build memory records none of the operator's merges**  
+*status* `amended` · *class* live-read; code · *category* integration/memory · *routed* H1; B3 · *observed* 2026-09-30T16:31:55Z  
+*surface* git origin/main b7c9e2e3; GitHub PRs; docs/build/LEDGER.md; docs/build/BUILD_INDEX.md  
+*evidence* Baseline git.origin_main_tree_equals_p31_4_tree=true; gh.pr_open=49 (#141–#190 minus #148, merged 2026-09-26T03:07:03Z); gh.pr_total 191; last merges #138-#140 at 2026-09-30T02:46Z. grep for b7c9e2e3, d4522d82 and '#148' in LEDGER, BUILD_INDEX and CURRENT.md -> 0 hits (the 09-30 merges postdate the 09-28 chain tip; the 09-26 #148 merge does not). AMENDED: Appendix A's 'not the 77 reported' could not be traced to any repo file or operator memory note, so that comparison is dropped.
+
+**F-18 — #141–#147 and #149–#154 (13 PRs) have been red on composed + web since 2026-09-25 because the npm ci lockfile is out of sync (@emnapi/runtime); the fix already exists on main and later in the chain**  
+*status* `verified` · *class* live-read · *category* CI · *routed* H1; H2 · *spec* SIG-ENG-031 · *observed* 2026-09-30T16:43:17Z  
+*surface* GitHub PR checks #141-#154  
+*evidence* Baseline gh.ci_failing_prs: 13 PRs failing composed + web. `gh run view 36092963615 --log-failed` (#141, completed 2026-09-25T04:05Z): 'npm error `npm ci` can only install packages when your package.json and package-lock.json … are in sync', 'Missing: @emnapi/runtime@1.11.3 from lock file' (A2/f18_run36092963615_failed.log, sha256 43df5a0a…). The chain fixed its lockfile at d6c562e5 (2026-09-26, Round-10 seed), and main's d4522d82 lockfile blob is identical (see F-40). Re-rated S1->S2: integration debt with a known fix. Retargeting onto main is expected to clear it (inference; H1 to confirm).
+
+## S3 — polish (7)
+
+### Stream C — live product review
+
+**F-09 — Public-surface polish: raw UUID node labels on /network/; one disclaimer repeated 126× on home; /v1/export advertises a 404 entities.parquet; no sitemap; www redirects to :443; /map/ says 'no client JavaScript' but ships 2 scripts; the Organised-Editing link points to /methodology/**  
+*status* `verified` · *class* live-read · *category* polish · *routed* C2 · *spec* SIG-UI-038; SIG-LIC-007c · *observed* 2026-09-30T16:41:52Z  
+*surface* /network/; /; /map/; /contribution-back/; /sitemap.xml; https://www.surveillancegraph.org/; sig-api /v1/export  
+*evidence* /network/ (16:39:19Z): 654 UUID strings in rendered text (131 distinct), e.g. 'Ego network — 01a0d751-0901-7a6c-8789-06bab8c7456e …'. Home: 'These are recorded observations from named sources — an inventory, not a census or an estimate (SIG-METRIC-008).' appears 126 times. sig-api /v1/export (16:41:46Z) lists href /exports/entities.parquet, and GET /exports/entities.parquet returns 404 (16:41:52Z). /sitemap.xml 404. https://www.surveillancegraph.org/ -> 301 Location https://surveillancegraph.org:443/. /map/ says 'renders as static content with no client JavaScript' and has 2 &lt;script> tags. /contribution-back/ links 'Organised Editing activity page' to /methodology/.
+
+### Stream E — governance and spec contradictions
+
+**F-35 — docs/3_sig_golive_spec.md is neither built nor validated, and GL-GATE-06…08 are absent from it (GL-GATE-06 is recorded only in the LEDGER; 07/08 appear in ADR-088/094/145 and the canonical spec)**  
+*status* `amended` · *class* code · *category* spec-hygiene · *routed* E1; T1 · *spec* GL-GATE-06; GL-GATE-07; GL-GATE-08 · *observed* 2026-09-30T16:56:13Z  
+*surface* docs/3_sig_golive_spec.md; Makefile; .github/workflows/; docs/research/_meta/spec_src/BUILD.sh; docs/build/tools/  
+*evidence* grep for 3_sig_golive_spec in Makefile, .github, scripts, BUILD.sh and docs/build/tools/\*.py -> 0. grep GL-GATE-0[678] in docs/3_sig_golive_spec.md -> 0. Canonical spec: GL-GATE-07 ×1, GL-GATE-08 ×5. ADRs: GL-GATE-07 ×4, GL-GATE-08 ×8. GL-GATE-06 is only in the LEDGER (and in the table deleted by c2055d96, F-22). AMENDED: 'exist only in the LEDGER' holds for GL-GATE-06 only.
+
+### Stream F — obligations and requirements
+
+**F-34 — SIG-EXPORT-012 and SIG-RECON-058 still prescribe ADR-092 compute-on-read, which ADR-099 and ADR-101 superseded for the resolved layer**  
+*status* `verified` · *class* code · *category* spec-drift · *routed* F2; T1 · *spec* SIG-EXPORT-012; SIG-RECON-058 · *observed* 2026-09-30T16:56:13Z  
+*surface* docs/2_canonical_design_spec.md:4901-4906,5643-5647  
+*evidence* Spec :5643-5645 'computed from raw claims at export build (compute-on-read, ADR-092)'; :4901-4906 '(Fold-back of ADR-092's launch resolution posture — compute-on-read …)'. ADR-099:41 'This supersedes ADR-092's compute-on-read posture for …'; ADR-101:36 'Reconcile — and supersede — ADR-092's compute-on-read posture for the resolved layer'. Both ids are MET in the matrix.
+
+**F-39 — orchestration/ is 557 LOC and imports no orchestrator (Dagster is not wired at all), yet SIG-INGEST-020 is MET, citing a docstring that says 'nothing is wired yet'; real scheduling is shell scripts + 88 Cloud Run jobs + 79 Cloud Scheduler jobs**  
+*status* `amended` · *class* code; live-read · *category* verdict-truth/architecture · *routed* F2; E1 · *spec* SIG-INGEST-020; SIG-INGEST-021 · *observed* 2026-09-30T16:56:13Z  
+*surface* orchestration/src/orchestration/pipeline.py:4-15; docs/build/COVERAGE_MATRIX.csv (SIG-INGEST-020)  
+*evidence* wc -l orchestration/src/\*\*/\*.py = 557 (cadence.py 397, cli.py 119, pipeline.py 22, __main__.py 13); no 'import dagster' anywhere. pipeline.py:12-14 'Dagster OSS is the chosen orchestrator (ADR-016 / SIG-INGEST-020), but nothing is wired yet'. Matrix SIG-INGEST-020 = MET with evidence pipeline.py:13. Baseline prod.run_jobs.count 88 and prod.scheduler.count 79. AMENDED: this is not 'glue' around Dagster; there is no Dagster use, and a MET verdict rests on it (SHOULD-level).
+
+### Stream G — production and operations
+
+**F-13 — D-P31.4-1: the first full OSM monthly replay on the resume-capable image fires 2026-10-10T03:35Z (job pinned by digest, 36 h timeout) and can be verified only afterwards**  
+*status* `verified` · *class* live-read; code · *category* scheduled-verification · *routed* G1; F1 · *spec* SIG-TRUST-008 · *observed* 2026-09-30T16:31:55Z  
+*surface* gcp: Cloud Scheduler sig-sched-camreg-batch-05 -> Run job sig-ingest-camreg-batch-05  
+*evidence* A1 scheduler.json: '35 3 10 \* \*' Etc/UTC, scheduleTime 2026-10-10T03:35:00Z, never attempted. runjobs.json: image sig-api@sha256:feff986cf66f…, timeoutSeconds 129600. DEFERRALS D-P31.4-1 (OPEN 2026-09-25) closure: run rows under gs://…-sig-restricted/ops/runs/camreg_osm_surveillance/2026-10-10/, claims_added ≈1.37M, well under 1 h. This is a watch item, not a defect: a legitimately future date (B1 class a). Severity newly assigned (Appendix A had none).
+
+**F-43 — Nine Cloud Run jobs have no scheduler trigger; seven are one-off probe or test jobs left in production**  
+*status* `verified` · *class* live-read · *category* operations/hygiene · *routed* G1 · *observed* 2026-09-30T16:31:55Z  
+*surface* gcp: zeta-medley-508121-u7 Cloud Run jobs (us-central1)  
+*evidence* Baseline: prod.run_jobs.count 88 vs 79 scheduler targets. Unscheduled: 4 egress probes (aspi, ccops-sf, muckrock, okc-doc), sig-ingest-resume-test, sig-sink-bench, sig-replay-ingest, sig-export and sig-materialize. sig-export and sig-materialize are probably intentional manual release jobs (inference). Not re-queried in A2; the baseline key is cited.
+
+### Stream H — integration and CI
+
+**F-40 — origin/main carries operator commit d4522d82 (web lockfile regen, 2026-09-29) that the chain lacks, so chain tip b051732c does not descend from origin/main; the lockfile content is byte-identical to the chain's own fix (d6c562e5)**  
+*status* `amended` · *class* code; live-read · *category* integration · *routed* H1 · *observed* 2026-09-30T16:56:13Z  
+*surface* git: origin/main b7c9e2e3; d4522d82; chain tip b051732c; web/package-lock.json  
+*evidence* A1 NEW-1 (observed 2026-09-30T16:23:15Z). A2 re-run: `git merge-base --is-ancestor b7c9e2e3 b051732c` -> exit 1; merge-base 13782968. git show d4522d82: 2026-09-29T22:35:05-04:00 'web: regenerate package-lock.json (npm ci sync)', 1 file, +51/−19. `git rev-parse` of d4522d82:web/package-lock.json, b051732c:… and d6c562e5:… all give the same blob da838491, so no content conflict is expected on merge (inference; H1 to confirm). INTEGRATION_PLAN.md (2026-09-28) predates d4522d82. AMENDED: re-rated S2->S3, since only the ancestry diverges.
