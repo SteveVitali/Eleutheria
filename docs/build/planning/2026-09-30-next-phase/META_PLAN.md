@@ -1083,6 +1083,17 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   26 S2, 3 S3); 16 ranked product themes; draft requirements with acceptance journeys; 15 quick wins bundled for one
   republish (G2 ACT-06); pre-promotion conditions. Of 89 spec ids the issues cite, 86 read MET in the matrix (→ F2/T4
   re-verdict). **Withheld from the operator until D1 completes (P8)** — D1 stands at 2/25 answered.
+- 2026-09-30T18:35:25Z — **I6 partial (status: in-progress)** (`research/I6-evidence-channels.md`, `data/candidates_I6.csv`, `data/query_log_I6.csv`):
+  the session-wide WebSearch cap (200 calls shared by I3–I6) was reached after 32 I6 searches; 3 of 4 P1 cells unsaturated
+  (C06-G0, C06-GP, C11-GS) + 6 cells below minimum. 43 candidates (31 new, 12 known). Top: Treasury SLFRF project data (271
+  surveillance projects, 38 states); Texas DIR cooperative sales (12.8M lines); DE/CT checkbooks (Public Domain; payments to
+  Flock/Clearview/Cellebrite — first mobile-forensics channel); WA master-contract sales incl. tribes; 5 CCOPS publishers
+  missing (Madison, Detroit, St. Louis, Dayton, Columbia MO); TX MVCPA grants naming Flock grantees; CA BSCC ORT grants;
+  CourtListener bulk (public domain); IIHS red-light camera communities (ontology has no automated-traffic-enforcement
+  term); federal AI use-case inventory. Closed/paywalled: GovSpend/Starbridge/CivicIQ (paid), Pavilion/OMNIA (walls),
+  MuckRock/NCSL/NJ AG (403), Sourcewell/OMNIA (robots-forbid terms). **Plan change:** a follow-up search pass (row
+  **I9 — search saturation pass**, cells left unsaturated by I3–I6) must run in a FRESH session with its own search
+  budget; I7 consolidation proceeds on what exists and re-runs after I9.
 
 ---
 
