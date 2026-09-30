@@ -968,6 +968,12 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   do not hold live (D-P31.1-1 contradiction serve 13.6 s warm; D-P31.5-2 flagged org still named) because the hosted API
   still runs the 09-25 image; **32/36 reachable without recruiting**; dependency-ordered Round-11 path recorded. 8 incoming
   findings (SAM.gov sweep restarts at keyword 0; ADR-124 operator allows missing; MuckRock 0 hosted claims). G2 dispatched.
+- 2026-09-30T20:25Z — **J4 done** (`research/J4-redistribution-matrix.md`, `data/redistribution.csv`, 342 sources): of 237 live/permitted,
+  raw-ok 54, derived-only 172 (SIG's own public-record / operator-accepted-DB-right bases cover facts, not bytes), restricted 10,
+  unknown 1; 5,110 public rows come from sources whose own terms forbid redistribution (S1); full release 1.05 GB ≈ $0.13
+  per download from GCS; egress ≈ $13–600/mo (≈$2.8k worst case) vs ≈$0 via an R2 mirror; scrub and Part VIII rules
+  defined; operator decisions feed Q-22. 7 incoming findings (terms-forbidden sources published; new OSM/"SIG project"
+  misattributions; only 349 of 6,144 capture digests have stored bytes; seed fixture sources served live).
 
 ---
 
