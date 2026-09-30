@@ -1545,6 +1545,20 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   page with per-place lists. Perf: 497 KB → ≈345 KiB (MapLibre ESM split, Preact, JSON style); first-view tiles+glyphs 0.6–0.9 MiB.
   Tickets MAP-00…07. 6 findings (tier property mismatch → every popup "tier 0"; bundle `sites.pmtiles` downloads contain zero
   tiles).
+- 2026-09-30T22:39:02Z — **K2 done** (`design/K2-graph-and-entities.md`; ask U-003.2): label root cause = four faults — the network export looks
+  node names up in the source registry by entity UUID (`spine_export.py:994-995`) while names live in
+  `organization.cached_canonical_name` (API-only); every connector subject typed `deployment`; site labels only from
+  `camera_name` (DOT-511/camreg only) → 82.8% unlabelled; 3,743 labels shared by 11,588 records. Policy: one shared label module
+  (exporter, pages, graphs, search, API), type templates with shown basis, disambiguation, Part VIII person-name screen, never
+  UUID/connector key; URLs `/entity/<type>/<slug>--<hash7>/` (hash frozen). Entity pages in waves (≈2,700 orgs/EFF agencies/
+  Flock portals → ≈3,500 contracts/grants/policies → ≈4,100 Atlas agencies once placed). Measured: 42,488 organization edges in
+  354 components; 0 edges with a valid period, 1.2% dated. Graph set (≤3k nodes each): type map, supply (≈1.4k), access (131 today;
+  state×state once Flock share lists land), funding (703), operators (≈200), governance (≈420), adoption; search-to-node, static
+  per-entity expansion, filters, 3-hop paths, edge→provenance ≤2 actions with or without JS. Tickets GX-01…10 (≈12.5 runs; GX-01
+  labels + GX-02 `/network/` label/date fix fit the first republish). **S1: all 969 referenced organizations are flagged
+  publication-review → once that gate deploys, every organization edge would be withheld.** Other: "OpenStreetMap contributors"
+  recorded as operator of 26,839 cameras; directness/reliability sink defaults on every edge; `/network/` claims "exact" ER
+  (vs SIG-IDENT-030). **K6 dispatched.**
 
 ---
 
