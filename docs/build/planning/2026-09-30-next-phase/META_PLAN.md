@@ -998,6 +998,15 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   J4 20:25Z → 17:55:17Z (56c53158). Entries before 16:58Z were clock-derived and stand. **Rule from here on:** every
   timestamp this orchestrator writes is produced by `date -u` inside the same command that writes it (§9); B4 adds the
   date ≤ commit-time guard that would have caught this.
+- 2026-09-30T17:58:06Z — **I2 done** (`design/I2-source-search-protocol.md`, `data/search_matrix.csv`): 29 technology classes (+multi) mapped to all 36
+  ontology families (new: commercial plate data, traffic enforcement, other biometrics, aerostats, robots, intercept, electronic
+  monitoring, weapon detection); 16 channels (+international map); 14 geography groups (10 priority states; 36 thin top-100
+  cities); **190 matrix cells** — I3 40 (budget 150 queries), I4 74 (170), I5 53 (150), I6 23 (130) — every class×channel×geo
+  combination in exactly one cell (checked). Calibration leads: ArcGIS catalog 1,266 "flock" items (mostly agency layers);
+  Atlas cites 26,294 links (507 Flock portals); MN legislative library ALPR audits; VA State Police ALPR report; 2025 NAMSDL
+  ALPR-law survey; "Connect ‹Place›" Fusus registries; >1,000 DFR waivers. Guardrails: Flock origin portals refused (no
+  scraping/archives); never download plate/audit/student rows; personal-account ArcGIS layers presumed DeFlock/OSM copies.
+  §8.6 candidate schema extended per I2 §12. **I3–I6 dispatched** (parallel).
 
 ---
 
