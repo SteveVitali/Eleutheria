@@ -875,6 +875,13 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   `/task/new/` pages live; `sig-web` bucket publicly readable); G1-07 freshness drift (≤156k new claims since 09-27, no
   republish cadence); G1-08 33 schedules fire for the first time 10-01…10-21 (12 never-run jobs). Ten quick actions
   QA-1…QA-10 proposed (each needs an operator go); est. cost ≈$90–100/mo vs README's ≈$0/$9.
+- 2026-09-30T18:12Z — **B1 done** (`research/B1-date-drift.md`, `data/date_drift.csv`): 2,891 dated occurrences scanned; 595 rows /
+  2,283 occurrences are events recorded on dates they did not happen (memory 322, release-identity 75, code 70, fixture 56,
+  ADR 33, sqitch 18, spec 15, jsonl 6). **Cause evidenced:** agents kept a "chain date" decoupled from the clock ("previous
+  entry + 1 day") and the memory tooling accepts hand-typed dates. Sqitch planned timestamps are hashed into change ids →
+  deployed lines 41–43 must never be edited (correction comments + ADR + new-line guard). Candidate `p-17b713…`: supersede,
+  don't re-sign. Hazard: memory dated 10-21 makes the 10-10 replay look overdue. Draft correction ADR in §8; Q-B1-1…4 in §9.
+  7 incoming findings.
 
 ---
 
