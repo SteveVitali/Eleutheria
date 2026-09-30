@@ -1031,6 +1031,16 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   scripts byte-identical; full round trip passes); D-P32.16a-1 → caused by the test image's pre-installed PostGIS
   dependents — no migration change, run tests + a new CI round-trip job in a `template0` database. PKG-02 (test-pin rewrites)
   must land in or before the Stage-B seed. 5 incoming findings (incl. from-spine export never writes `leverage.json`).
+- 2026-09-30T18:14:39Z — **C2 done** (`review/JOURNEYS.md`, `review/C2_PAGE_INDEX.csv`; headless Chrome 154 + Playwright, axe, Lighthouse; ~140
+  page loads, site unchanged during the run): **31 tasks → 5 success, 15 partial, 11 fail; journalist 0/3, organizer-like
+  personas 0/6.** Worst: resident map/search (no basemap; "Canberra" → 0 results), downloads/API unlinked, agency correction
+  impossible, no sourced headline number for a journalist. **S0:** `/visual-language/` shows test data as real citable
+  facts about OKC PD / Oklahoma County Sheriff / Flock; personal ArcGIS usernames in public source names (confirms C3 NEW-2;
+  redacted). 14 × S1 (non-pinning permalinks; figures don't link to evidence; no links to bulk data/API/terms; map camera
+  missing at street zoom). A11y strong (Lighthouse 1.0 on 14 pages; 7 moderate axe issues); `/map/` mobile 816 KB > 750 KB
+  budget; CLS 0.31–0.33 on `/network/`, `/search/`; print dossiers lack as-of/permalink on p.1 and any licence. 34 incoming
+  findings. **C6, C5 (time-boxed, per Q-18 recommendation) and J3 dispatched.** C6 output is withheld from the operator
+  until D1 completes (P8).
 
 ---
 
