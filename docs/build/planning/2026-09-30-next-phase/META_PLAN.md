@@ -949,6 +949,12 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
 - 2026-09-30T19:41Z — C2 dispatched in **headless Chrome** (Claude-in-Chrome tools never became visible to this session;
   orchestrator judgement per Q-6 — an interactive real-Chrome pass may be added later). D1 continues (U-001 confirmed,
   U-002 recorded; Q-29 answered). F5 dispatched.
+- 2026-09-30T19:55Z — **B5 done** (`research/B5-orchestration-retro.md`): five lessons (verification stopped at the repo boundary;
+  gates became a throughput device — 35/76 gate records answered at a pause with evidence; status words collapsed layers;
+  append-only unenforced; harness/planning switches untracked) and **18 operating rules OM-01…OM-18** (pasteable OPERATING
+  MODE + ticket-template blocks) for Round 11 — to be placed by B3/T5. Operator questions (B5 §8): which harness ran the
+  untrailered stretches; were the full GATE-G3/ACCEPT-R10 texts seen before approval; was the P31.5 pause a harness switch.
+  8 incoming findings.
 
 ---
 
