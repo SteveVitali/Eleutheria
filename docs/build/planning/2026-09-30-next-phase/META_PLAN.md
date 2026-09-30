@@ -1079,6 +1079,10 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   Tickets TX-01…16 (3 S, 9 M, 4 L); a first subset can ship before G2 step 7. Operator decisions: Q-22a/b, egress host +
   ceiling, withdraw terms-forbidden sources first, signing-key custody, Zenodo scope. 4 incoming findings (S1: P32.13
   permalink fix doesn't reach site pages; S1-on-exposure: captures always marked `public`). **G3 dispatched.**
+- 2026-09-30T18:33:21Z — **C6 done** (`review/REVIEW_SYNTHESIS.md`, `data/review_themes.csv`): 87 C-stream findings → 60 unique issues (6 S0, 26 S1,
+  26 S2, 3 S3); 16 ranked product themes; draft requirements with acceptance journeys; 15 quick wins bundled for one
+  republish (G2 ACT-06); pre-promotion conditions. Of 89 spec ids the issues cite, 86 read MET in the matrix (→ F2/T4
+  re-verdict). **Withheld from the operator until D1 completes (P8)** — D1 stands at 2/25 answered.
 
 ---
 
