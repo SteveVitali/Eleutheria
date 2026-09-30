@@ -788,6 +788,8 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   to a **fresh subagent** with a prompt of this shape: *"Execute row `<id>` of `META_PLAN.md`. Read §3 (principles),
   the row block, and only its listed inputs. Write only the row's declared outputs. Get dates from `date -u`. Return
   ≤ 300 words: what you did, the output paths, new finding/universe ids, open questions."*
+- **Clock (added 2026-09-30T17:56:21Z after a self-caught drift).** Every timestamp the orchestrator writes into this directory is produced by
+  `date -u` in the same command that writes it — never typed or estimated.
 - **Single writer.** Only the planning orchestrator edits `META_PLAN.md` (status flips, change log) and appends to
   `findings/FINDINGS.csv`; workers return rows and never write shared files (the Round-10 concurrency lesson).
 - **Parallelism.** Read-only rows with disjoint outputs may run concurrently. Waves:
@@ -974,6 +976,28 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   per download from GCS; egress ≈ $13–600/mo (≈$2.8k worst case) vs ≈$0 via an R2 mirror; scrub and Part VIII rules
   defined; operator decisions feed Q-22. 7 incoming findings (terms-forbidden sources published; new OSM/"SIG project"
   misattributions; only 349 of 6,144 capture digests have stored bytes; seed fixture sources served live).
+- 2026-09-30T17:56:21Z — **F4 done** (`design/F4-s3-spine.md`): recommends **Option B (staged supersession)** — rows 184–187 cannot be re-entered as
+  written (their new prerequisites would be later rows; row 188 already consumed P32.23's output; HUMAN-H4 binds a
+  fixture-only snapshot and couples two unrelated reviews). New non-blocking markers HUMAN-H6 (labelling pilot) and
+  HUMAN-H7 (dossier semantic review); EV1 reviewer labelling surface on an isolated eval DB; EV2 honest auto-write posture +
+  public evaluation report; remaining chain seeded when trigger T-EVAL-1 fires; `nextTicket` at seed = row 201. Effort B:
+  86–197 h (operator 28–61 h), $0–~8k, 3–5 months from recruiting. Q-24: tier 1g, 149 pairs zero-error certifies only
+  ~47% of the time at true 0.995 (~11% with 1% insufficient-evidence) → pilot decides certify vs ~100-pair measure-only.
+  Q-25: operator may hold custodian, method reviewer, one hostile-reader seat (disclosed); labelers + dossier reviewer
+  external. 10 incoming findings, incl. **this ledger's own change log was future-dated** (see correction below).
+- 2026-09-30T17:56:21Z — **CORRECTION (append-only, P2/P7): change-log timestamps from 16:58Z onward were typed by estimate, not read from
+  the clock, and drifted up to ~2.5 h into the future** — the same failure this plan exists to fix (F-21/B1). True times
+  are the planning commits' UTC timestamps (`git log --date=iso-strict`, converted to UTC). Recorded → true:
+  E3 16:58Z → 16:52:52Z (6266f393) · E4 17:02Z → 16:55:28Z (c7c773e8) · H1 17:05Z → 16:56:41Z (ce45d548) ·
+  A3 17:08Z → 16:58:30Z (81050955) · J1 17:12Z → 16:58:41Z (15975da7) · C1 17:20Z → 16:59:25Z (4df1552f) ·
+  J2+A2 17:40Z/17:41Z → 17:01:09Z (5a0015db) · E1 17:48Z → 17:01:53Z (fddfc1b4) · G1 18:00Z → 17:03:33Z (7642f8d1) ·
+  B1 18:12Z → 17:09:11Z (c28756d9) · operator production-fix decision (§7.1) "18:2xZ" → received before 17:10:49Z
+  (e5725b7b) · B2/I1/F2a/F2b/E2 18:40–18:43Z → 17:20:51Z (4aff9a48) · Wave-3/4 dispatch 19:05Z → ≈17:21Z ·
+  F3 19:10Z → 17:28:08Z (dfe34ad9) · C3 19:20Z → 17:29:01Z (e8e6df25) · C4 19:40Z/C2 dispatch 19:41Z → 17:35:35Z
+  (2cf03075) · B5 19:55Z → 17:38:19Z (63d6a404) · B3 20:05Z → 17:39:46Z (1b9b57b2) · F1 20:15Z → 17:42:08Z (41ab9521) ·
+  J4 20:25Z → 17:55:17Z (56c53158). Entries before 16:58Z were clock-derived and stand. **Rule from here on:** every
+  timestamp this orchestrator writes is produced by `date -u` inside the same command that writes it (§9); B4 adds the
+  date ≤ commit-time guard that would have caught this.
 
 ---
 
