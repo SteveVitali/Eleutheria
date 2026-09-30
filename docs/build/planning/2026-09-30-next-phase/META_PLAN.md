@@ -914,6 +914,14 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
 - 2026-09-30T18:43Z — **E2 done** (`design/E2-governance-options.md`): 23 memos (+1 side memo on the dispute channel); 8
   honesty fixes needing no policy decision; operator decisions on governance, legal home, counsel, robots, DB-right,
   human evaluation, outreach, design center. 3 incoming findings (robots disregarded on 122 hosts; no opt-out mechanism).
+- 2026-09-30T19:05Z — Wave 3/4 dispatched: B3, B5, I2, J4, F1. Chrome tools still not visible (awaiting the next operator
+  turn after `/chrome`).
+- 2026-09-30T19:10Z — **F3 done** (`research/F3-backlog.md`, `data/backlog_triage.csv`): 36 BL rows → 10 closed-by-later-round,
+  4 superseded, 2 accepted, 20 still open (BL-001 re-opened); 62 RISK rows → 21 closed, 4 superseded, 1 accepted, 36 re-homed;
+  144 ADR triggers → **68 fired** (42 with no recorded response), 5 superseded, 71 quiet; 58–60 orphan not-MET ids homed.
+  Proposed Round-11 themes: R11-TRUTH, -GOV, -HUMAN, -OPS, -RECORD, -SOURCES, -TRANSPARENCY, -DATAMODEL, -DEBT,
+  OPERATOR-QUEUE, LATER-PHASE, ADR-TRIGGER-REGISTER. 11 incoming findings (incl. live API minting `https://sig.example/id/`
+  placeholder IRIs).
 
 ---
 
