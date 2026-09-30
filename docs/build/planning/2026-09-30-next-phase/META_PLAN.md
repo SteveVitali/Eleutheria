@@ -757,7 +757,8 @@ evidence, disposition, disposition_ref, rationale, stream, priority`.
 
 ### 8.2 Finding (`findings/FINDINGS.csv`)
 `f_id, title, stream, surface (url|path|resource), observed_at (date -u), evidence_class, evidence, severity, category,
-spec_ids, status (proposed|verified|amended|refuted|merged), routed_to, operator_priority`.
+spec_ids, status (proposed|verified|amended|refuted|merged), routed_to, operator_priority, origin_ref` (`origin_ref` added
+by the merge tool: `<row>:<local id>`).
 
 **Severity.** `S0` active harm or risk in production now (data loss, exposure, false public claim) · `S1` breaks a core
 user task or the truth of the record · `S2` degraded quality or debt · `S3` polish.
@@ -1154,6 +1155,9 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   post-promotion failure. **Cadence/sign-off proposal:** monthly on the 15th; early at ≥10% net new claims and ≥14 days; alert
   at 35 days; **Class R** (same signed code, bounded diff, all green) under one revocable standing go vs **Class S** (anything
   else) needs a signed readout. Tickets REL-01…11. 6 incoming findings.
+- 2026-09-30T18:56:45Z — **Findings merged** (orchestrator, single writer): `tools/merge_findings.py` (deterministic, idempotent) appended every
+  row's incoming findings to `findings/FINDINGS.csv` with ids F-045 onward and a new `origin_ref` column (schema §8.2 +1);
+  rendered `findings/REGISTER.md`. **377 findings: 9 × S0, 81 × S1, 211 × S2, 76 × S3.** Re-run after each later row.
 
 ---
 
