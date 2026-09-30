@@ -1041,6 +1041,14 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   budget; CLS 0.31–0.33 on `/network/`, `/search/`; print dossiers lack as-of/permalink on p.1 and any licence. 34 incoming
   findings. **C6, C5 (time-boxed, per Q-18 recommendation) and J3 dispatched.** C6 output is withheld from the operator
   until D1 completes (P8).
+- 2026-09-30T18:23:18Z — **B6 done** (`research/B6-skill-proposals.md`): 25 proposals SK-01…25 (orchestrate-build 8, implement-spec 4, build-memory 9,
+  decompose-spec 1, reconcile-build 2, synthesize-spec 1) — none applied (Q-13). Top: CI at every boundary + loop refuses on
+  red (SK-01/02); append-only + future-date validator (SK-16); clock discipline in worker/layout/templates (SK-09/13); gate
+  hardening incl. `auto` no longer skipping every gate (SK-03/17); layered status + MET-ENGINEERED/WAIVED (SK-19); no
+  out-of-ticket production changes (SK-06); ledger budget/values-only state (SK-14/15); invariant-only tests (SK-12).
+  Must-apply-before-Round-11 sets defined (before Stage B: SK-13,14,17,18,19,20,22; before first dispatch: SK-01,02,03,06,09,10);
+  §5.3 lists the OPERATING MODE overrides if deferred. Skill defects found: `tail=minimal` omits GATE-ACCEPT that DONE
+  requires; `auto` skips every gate; `check-backlog.sh` counts MET-DIFFERENTLY as owed; no template names a date source.
 
 ---
 
