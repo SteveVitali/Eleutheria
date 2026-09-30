@@ -1457,6 +1457,16 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   old slugs resolve (301s; split pages for id/mn; correction pages for bd/nl). K5: one `sig.dossier-sources/1` file per
   dossier (US ≈120–150 KB; ≈11 MB total) with per-run first/last seen, per-figure source breakdown replacing the site-wide
   block; zero-JS baseline. Tickets JUR-01…07, DSRC-01…06. 9 findings (S1: `unresolved` is 91.5% US).
+- 2026-09-30T22:08:27Z — **K0 done** (`design/K0-interactive-architecture.md`): recommendation **"HTML-first page types"** = option (c) built with
+  (b)'s rules — every route has a type and a compressed JS budget: records/print `/r/**`, `…/print/` 0; content pages ≤20 KiB
+  loaded after render (LCP ≤1.5 s, CLS ≤0.02); map ≤360 KiB (today 497 KB; mobile Lighthouse ≥0.75 enforced); graph explorer
+  `/explore/` ≤120 KiB; search ≤60 KiB. **No-JS rule:** every URL shows the same facts, or (explore pages only) a notice linking
+  the static tables/lists/GET forms holding them; every visual has a static SVG + table. Measured deps: MapLibre 6.9 + PMTiles
+  ≈300 KB (after removing a duplicated chunk), Protomaps basemap styles 6.7 KB, Preact 5.4 KB (vs React 65.7 KB), sigma +
+  graphology 37.8 KB, MiniSearch 5.9 KB; rejected cytoscape (141 KB), client-side SQLite (322 KB). Data: static per-release files
+  (pages, neighborhoods, overview graphs, typeahead shards, tiles); API only for full-text search and "sites in this area";
+  +$5–40/mo. ADR draft supersedes the three-island rule and extends the URL-state contract to v2. Guidance for K1/K2/K3/K6/K9/K10
+  recorded. 4 findings (**82.8% of published entities have no label**). **K1, K2, K3, K14 dispatched.**
 
 ---
 
