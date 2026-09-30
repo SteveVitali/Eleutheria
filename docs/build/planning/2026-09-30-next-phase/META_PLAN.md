@@ -1510,6 +1510,17 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   dates; per-point geography + technology typing; entity types; stricter match gating; organization matching; a 17-check
   invariant suite in the release gate (start first). 14 findings. (Side effect: a sub-agent ran Docker suites in throwaway local
   containers and rebuilt gitignored `web/dist`; no tracked file or production touched.)
+- 2026-09-30T22:31:07Z — **K3 done** (`design/K3-search.md`; ask U-003.3; prototype over the live release parquet): first pass = one box over every
+  published record in all 12 compartments + a catalog of places, sources, technology concepts, organizations, evidence documents;
+  typed result cards with why-matched + evidence basis; "Canberra" → ACT place card, "ICE" → expansion + honest "no record",
+  typo suggestions; claim-text/contract search and K2-entity search later. Architecture: release-pinned SQLite FTS behind the
+  API querying all compartments in one request (grouped by licence) + static typeahead for named things only; index 77 MB
+  (+~22 MB claim-id lookup) vs 488.6 MB landed layout; p50 1.45 ms / p95 10.1 ms (warm, laptop); typeahead 815 KB gz over 921
+  shards; ≈$3–5/mo (sig-api 512 MiB → 1 GiB; abuse worst case ≈$140/mo → rate limits). Benchmark: 40 dev queries (30 top-3 +
+  10 no-misleading-hit) — prototype 30/30 vs landed P32.14 6/30, **dev-set only** (tuned on it); a ≥40-query held-out set is
+  required, and with no other humans it must come from the operator or a separate, disclosed agent. Tickets SRCH-01…08.
+  7 findings (results alphabetical with empty labels first; 488.6 MB index on a 512 MiB service; "TX" 422s; release holds no
+  agency/vendor records).
 
 ---
 
