@@ -1180,6 +1180,16 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   policy families (CA SB 34, UT); private-camera registry / Fusus platforms; grant/earmark/state-contract channels. Still
   unsaturated: I3-T01-C07-G0 (still yielding), partial enumerations I6-C06-GP, I6-C11-GS, I3-T01-C11-GS. EDGAR not fetched
   (P16 — needs an operator-approved project contact string; Q-30). 6 incoming findings.
+- 2026-09-30T21:01:37Z — **I9b done** (headless session; `research/I9b-saturation.md`, `data/candidates_I9b.csv`, `data/query_log_I9b.csv`): 132 queries
+  (119 web), 143 fetches; **111 candidates (103 new, 8 related; 10 lead-only; 2 Part-VIII-blocked)**. Top: Dutch gazette ANPR
+  camera plan (~1,202 geocoded — EU ANPR locations); FL red-light camera report (38 jurisdictions); TX Gov't Code 423.008 drone
+  reports; UK Home Office monthly live-FRT CSVs; MN court warrant report (pen registers); MD State Police CSS counts; Memphis
+  >$100K payments incl. Flock; Anchorage surveillance ordinance + $11.8M technology contract; Utah statewide public-notice
+  minutes; NYC City Record Online. I4 P1 social-media purchasing saturated; FAA waivers saturated as far as reachable
+  (faa.gov refuses); I5 P1 thin-city enumerations complete. Still unsaturated: P1 forensics purchasing, school approvals/
+  purchasing (each query still adds agencies, not new channels); 17 P2 cells; a few not started. 8 fetches from the
+  interrupted run lack query lines (NEW-6). **Stream I search phase closed at this depth; residual unsaturated cells carried
+  to I8/S2 as `later-phase` search work. I7 dispatched once over all candidates.**
 
 ---
 
