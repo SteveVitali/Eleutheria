@@ -297,6 +297,22 @@ class ClaimSink(Protocol):
     def assert_claims(self, claims: Sequence[Mapping[str, Any]]) -> None: ...
 
 
+@runtime_checkable
+class CompletionRecorder(Protocol):
+    """A claim sink that also records how an execution finished (P31.2 / ADR-109).
+
+    The pipeline calls :meth:`record_completion` once at the end of every live
+    execution the process survives (success, quota stop, or failure). A sink that
+    does not implement it (the in-memory test sink) records nothing. The
+    PostgreSQL sink appends an ``ingest_run_completion`` row and never rewrites
+    ``ingest_run``.
+    """
+
+    def record_completion(
+        self, status: str, *, source_id: str | None = None, detail: str | None = None
+    ) -> Any: ...
+
+
 class InMemoryClaimSink:
     """A claim sink that records asserted claims in memory (tests)."""
 
@@ -487,6 +503,7 @@ __all__ = [
     "CaptureRef",
     "CaptureStore",
     "ClaimSink",
+    "CompletionRecorder",
     "Connector",
     "EGRESS_STAGE",
     "FetchResult",

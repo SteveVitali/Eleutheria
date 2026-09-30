@@ -38,12 +38,16 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
+import uuid
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from typing import Any
 
 import psycopg
+
+from .run_completion import append_completion
 
 #: Columns excluded from the reproducibility payload (SIG-INGEST-003, SIG-EVID-017):
 #: the generated id and the two DB-controlled time columns. Kept byte-identical to
@@ -61,6 +65,18 @@ _DEFAULT_ENTITY_TYPE = "deployment"  # the atlas/osm subjects are adoption bridg
 
 #: The identifier scheme the sink keys connector subjects on (idempotent identity).
 SUBJECT_SCHEME = "sig.connector.subject"
+
+#: Environment variables recorded on each ``ingest_run.environment`` (SIG-EVID-018
+#: asks for the locale + timezone; the Cloud Run ids tie a run to its job execution).
+#: Only variables that are actually set are recorded, and none of them is a secret.
+_RECORDED_ENV = (
+    "TZ",
+    "LC_ALL",
+    "CLOUD_RUN_JOB",
+    "CLOUD_RUN_EXECUTION",
+    "CLOUD_RUN_TASK_INDEX",
+    "CLOUD_RUN_TASK_ATTEMPT",
+)
 
 #: Default number of claims committed per :meth:`PgClaimSink.assert_claims`
 #: transaction (P26.18 / SOURCES.17). Sized so a chunk commits in well under a
@@ -125,9 +141,17 @@ class PgClaimSink:
     """A :class:`connectors.stages.ClaimSink` that persists claims to PostgreSQL.
 
     Constructed with an open psycopg connection (the factory owns opening it from a
-    DSN). Connector run metadata identifies the ``ingest_run``; if omitted, sane
-    defaults are used and the run is deduplicated on
-    ``(connector_name, connector_version, code_commit)`` so a replay reuses it.
+    DSN). Connector run metadata identifies the ``ingest_run``.
+
+    **One sink = one execution = one ``ingest_run``** (P31.2 / ADR-109). Each sink
+    carries an ``execution_id``, recorded in ``ingest_run.parameters``. If the
+    caller passes none, a fresh one is generated, so two executions of the same
+    connector version get two runs. (Before P31.2 the run was reused by
+    ``(connector, version, commit, is_replay)``, so one row folded many executions
+    together.) A caller that passes an explicit ``execution_id`` is resuming the
+    same logical execution, and its sink reuses that run. When the execution ends,
+    :meth:`record_completion` appends its ``ingest_run_completion`` row;
+    ``ingest_run`` itself is never rewritten.
     """
 
     def __init__(
@@ -141,6 +165,8 @@ class PgClaimSink:
         vocab_version: str = "1.0.0",
         is_replay: bool = False,
         commit_chunk_size: int = DEFAULT_COMMIT_CHUNK_SIZE,
+        execution_id: str | None = None,
+        run_record_uri: str | None = None,
     ) -> None:
         if commit_chunk_size < 1:
             raise ValueError(
@@ -155,12 +181,20 @@ class PgClaimSink:
         self._vocab_version = vocab_version
         self._is_replay = is_replay
         self._commit_chunk_size = commit_chunk_size
+        # The execution discriminator (ADR-109): explicit = resume that execution's
+        # run; absent = a fresh execution, so a fresh run.
+        self._resume_execution = execution_id is not None
+        self._execution_id = execution_id or uuid.uuid4().hex
+        # The WORM run row the scheduled wrapper writes for this execution (gs://…),
+        # recorded on the run and on its completion so the two cross-reference.
+        self._run_record_uri = run_record_uri
         # Per-instance caches so prerequisites are resolved once, not per claim.
         self._run_id: str | None = None
         self._rights_by_spdx: dict[str, str] = {}
         self._entity_by_subject: dict[str, str] = {}
         # (source_id, artifact_type) -> (capture_id, extraction_id)
         self._capture_by_source: dict[tuple[str, str], tuple[str, str]] = {}
+        self._chunk_exhausted = False
         self.report = ClaimSinkReport()
 
     @classmethod
@@ -195,33 +229,71 @@ class PgClaimSink:
 
         ``SinkReport`` counters stay exact across chunk boundaries: they are
         instance state accumulated as each record is considered, independent of
-        how the transactions are split.
+        how the transactions are split. ``inserted``/``duplicates``/``entities``
+        count only committed chunks: a chunk that raises restores them (P31.2).
         """
         chunk_size = self._commit_chunk_size
         remaining = iter(claims)
         exhausted = False
         while not exhausted:
-            committed_this_chunk = 0
-            with self._conn.transaction():
-                for claim in remaining:
-                    self.report.considered += 1
-                    if claim.get("record_kind", "claim") != "claim":
-                        # unmapped-category / vocabulary-event rows are not L1
-                        # claims; their task/coverage projections are owned
-                        # elsewhere (P21.2). They do no spine write, so they do
-                        # not count toward the chunk's claim budget.
-                        self.report.non_claim_records += 1
-                        continue
-                    self._insert_claim(claim)
-                    committed_this_chunk += 1
-                    if committed_this_chunk >= chunk_size:
-                        # Chunk full — close this transaction (the `with` commits
-                        # on exit) and open a fresh one for the next chunk.
-                        break
-                else:
-                    # The `for` ran to exhaustion without breaking: this is the
-                    # final (possibly partial / empty) chunk.
-                    exhausted = True
+            # P31.2 / ADR-109: a chunk that raises rolls back everything it wrote,
+            # so the ids cached during it and its inserted/duplicate counts must go
+            # with it. Otherwise a failed run's completion would name a rolled-back
+            # ingest_run, or count claims that never landed.
+            snapshot = self._chunk_snapshot()
+            try:
+                self._assert_chunk(remaining, chunk_size)
+            except BaseException:
+                self._restore_chunk_snapshot(snapshot)
+                raise
+            exhausted = self._chunk_exhausted
+
+    def _chunk_snapshot(self) -> tuple[Any, ...]:
+        return (
+            self._run_id,
+            dict(self._rights_by_spdx),
+            dict(self._entity_by_subject),
+            dict(self._capture_by_source),
+            self.report.inserted,
+            self.report.duplicates,
+            self.report.entities,
+        )
+
+    def _restore_chunk_snapshot(self, snapshot: tuple[Any, ...]) -> None:
+        (
+            self._run_id,
+            self._rights_by_spdx,
+            self._entity_by_subject,
+            self._capture_by_source,
+            self.report.inserted,
+            self.report.duplicates,
+            self.report.entities,
+        ) = snapshot
+
+    def _assert_chunk(self, remaining: Any, chunk_size: int) -> None:
+        """One chunk transaction; sets ``_chunk_exhausted`` when the input ran out."""
+        committed_this_chunk = 0
+        self._chunk_exhausted = False
+        with self._conn.transaction():
+            for claim in remaining:
+                self.report.considered += 1
+                if claim.get("record_kind", "claim") != "claim":
+                    # unmapped-category / vocabulary-event rows are not L1
+                    # claims; their task/coverage projections are owned
+                    # elsewhere (P21.2). They do no spine write, so they do
+                    # not count toward the chunk's claim budget.
+                    self.report.non_claim_records += 1
+                    continue
+                self._insert_claim(claim)
+                committed_this_chunk += 1
+                if committed_this_chunk >= chunk_size:
+                    # Chunk full — close this transaction (the `with` commits
+                    # on exit) and open a fresh one for the next chunk.
+                    break
+            else:
+                # The `for` ran to exhaustion without breaking: this is the
+                # final (possibly partial / empty) chunk.
+                self._chunk_exhausted = True
 
     # --- prerequisites (all INSERT ... ON CONFLICT DO NOTHING, append-only) ----
 
@@ -274,35 +346,77 @@ class PgClaimSink:
         self._rights_by_spdx[spdx] = str(inserted[0])
         return str(inserted[0])
 
+    @property
+    def run_id(self) -> str | None:
+        """This execution's ``ingest_run`` id, or ``None`` before anything was written."""
+        return self._run_id
+
+    @property
+    def execution_id(self) -> str:
+        """The execution discriminator recorded in ``ingest_run.parameters``."""
+        return self._execution_id
+
     def _ensure_run(self) -> str:
         if self._run_id is not None:
             return self._run_id
-        row = self._conn.execute(
-            "SELECT run_id FROM ingest_run WHERE connector_name = %s "
-            "AND connector_version = %s AND code_commit = %s AND is_replay = %s "
-            "ORDER BY started_at LIMIT 1",
-            (self._connector_name, self._connector_version, self._code_commit, self._is_replay),
-        ).fetchone()
-        if row is not None:
-            self._run_id = str(row[0])
-            return self._run_id
+        if self._resume_execution:
+            # A caller-supplied execution id resumes that execution's run.
+            row = self._conn.execute(
+                "SELECT run_id FROM ingest_run WHERE connector_name = %s "
+                "AND parameters ->> 'execution_id' = %s ORDER BY started_at LIMIT 1",
+                (self._connector_name, self._execution_id),
+            ).fetchone()
+            if row is not None:
+                self._run_id = str(row[0])
+                return self._run_id
+        parameters: dict[str, str] = {"execution_id": self._execution_id}
+        if self._run_record_uri:
+            parameters["run_record_uri"] = self._run_record_uri
+        environment = {k: os.environ[k] for k in _RECORDED_ENV if os.environ.get(k)}
         inserted = self._conn.execute(
             "INSERT INTO ingest_run"
             "(connector_name, connector_version, code_commit, ruleset_version,"
             " vocab_version, parameters, environment, input_digests, is_replay) "
-            "VALUES (%s, %s, %s, %s, %s, '{}', '{}', '{}', %s) RETURNING run_id",
+            "VALUES (%s, %s, %s, %s, %s, %s::jsonb, %s::jsonb, '{}', %s) RETURNING run_id",
             (
                 self._connector_name,
                 self._connector_version,
                 self._code_commit,
                 self._ruleset_version,
                 self._vocab_version,
+                json.dumps(parameters, sort_keys=True),
+                json.dumps(environment, sort_keys=True),
                 self._is_replay,
             ),
         ).fetchone()
         assert inserted is not None
         self._run_id = str(inserted[0])
         return self._run_id
+
+    def record_completion(
+        self, status: str, *, source_id: str | None = None, detail: str | None = None
+    ) -> str | None:
+        """Append this execution's ``ingest_run_completion`` row (ADR-109).
+
+        ``finished_at`` is the database clock at the moment of the call. The counts
+        are this sink's exact report. The run is created if nothing was written yet:
+        an execution that inserted no claims still ran, and it records that. Only
+        one live completion exists per run; a second call returns ``None`` (+0).
+        ``detail`` must stay secret-free, so callers pass an exception class name,
+        never its message.
+        """
+        run_id = self._ensure_run()
+        return append_completion(
+            self._conn,
+            run_id=run_id,
+            source_id=source_id,
+            status=status,
+            claims_considered=self.report.considered,
+            claims_inserted=self.report.inserted,
+            claims_duplicate=self.report.duplicates,
+            run_record_uri=self._run_record_uri,
+            detail=detail,
+        )
 
     def _ensure_source(self, source_id: str, rights_id: str) -> None:
         self._conn.execute(

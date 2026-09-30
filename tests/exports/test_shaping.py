@@ -11,7 +11,7 @@ lives in ``tests/db/test_shaping_spine.py``.
 from __future__ import annotations
 
 import json
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 
 import pytest
 from exports.shaping import (
@@ -491,6 +491,72 @@ def test_an_unrecorded_freshness_date_is_the_explicit_absence_token_never_blank(
     assert row["last_successful_run"] == NOT_RECORDED
     assert row["last_content_change"] == NOT_RECORDED
     assert row["status"] == "degraded"  # the open run row is reported as-is
+
+
+def test_completions_supply_real_freshness_dates_and_status() -> None:
+    # P31.2 / ADR-109: the appended ingest_run_completion rows are the run lifecycle.
+    # (source, last successful finish, last claim-inserting finish, latest status).
+    ok_at = datetime(2026, 9, 21, 4, 16, 24, tzinfo=UTC)
+    changed_at = datetime(2026, 9, 19, 7, 0, tzinfo=UTC)
+    ds = _dataset(
+        [*_geo("s1", "35.46", "-97.51", "OK"), *_geo("s2", "35.47", "-97.52", "OK", source="b")],
+        source_stats=[("src_a", 3, None, 0), ("b", 3, None, 0)],
+        source_runs=[("src_a", None, "running"), ("b", None, "running")],
+        source_completions=[
+            ("src_a", ok_at, changed_at, "ok"),
+            ("b", None, None, "failed"),  # only a failed execution → nothing to show
+        ],
+    )
+    rows = {s.freshness.source_id: s.freshness_row() for s in ds.sources}
+    assert rows["src_a"]["last_successful_run"] == ok_at.isoformat()
+    assert rows["src_a"]["last_content_change"] == changed_at.isoformat()
+    assert rows["src_a"]["status"] == "ok"
+    from exports.shaping import NOT_RECORDED
+
+    assert rows["b"]["last_successful_run"] == NOT_RECORDED
+    assert rows["b"]["last_content_change"] == NOT_RECORDED
+    assert rows["b"]["status"] == "failing"
+
+
+def test_a_plus_zero_rerun_does_not_move_last_content_change() -> None:
+    # last_content_change comes ONLY from a completion that inserted claims; a later
+    # +0 re-run advances last_successful_run but leaves the content date alone. With no
+    # claim-inserting completion the legacy observation date stays the fallback.
+    observed = datetime(2026, 5, 2, tzinfo=UTC)
+    ok_at = datetime(2026, 9, 24, tzinfo=UTC)
+    ds = _dataset(
+        _geo("s1", "35.46", "-97.51", "OK"),
+        source_stats=[("src_a", 3, observed, 3)],
+        source_runs=[],
+        source_completions=[("src_a", ok_at, None, "partial")],
+    )
+    (src,) = ds.sources
+    row = src.freshness_row()
+    assert row["last_successful_run"] == ok_at.isoformat()
+    assert row["last_content_change"] == observed.isoformat()
+    assert row["status"] == "degraded"  # partial / quota_reached are honest non-ok
+
+
+def test_legacy_closed_run_and_completion_take_the_later_success() -> None:
+    legacy = datetime(2026, 9, 25, tzinfo=UTC)
+    ok_at = datetime(2026, 9, 24, tzinfo=UTC)
+    ds = _dataset(
+        _geo("s1", "35.46", "-97.51", "OK"),
+        source_stats=[("src_a", 3, None, 0)],
+        source_runs=[("src_a", legacy, "succeeded")],
+        source_completions=[("src_a", ok_at, None, "ok")],
+    )
+    (src,) = ds.sources
+    assert src.freshness_row()["last_successful_run"] == legacy.isoformat()
+
+
+def test_successful_statuses_agree_with_the_db_vocabulary() -> None:
+    from db.run_completion import COMPLETION_STATUSES, SUCCESSFUL_STATUSES
+    from exports.shaping import SUCCESSFUL_RUN_STATUSES
+
+    assert SUCCESSFUL_RUN_STATUSES == SUCCESSFUL_STATUSES
+    assert set(SUCCESSFUL_STATUSES) < set(COMPLETION_STATUSES)
+    assert "failed" not in SUCCESSFUL_STATUSES
 
 
 def test_sharing_edges_classified_into_access_kinds() -> None:

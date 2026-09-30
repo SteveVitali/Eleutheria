@@ -707,6 +707,9 @@ class SourceRunReport:
     refusals: list[dict[str, Any]] = field(default_factory=list)
     disappearances: list[dict[str, Any]] = field(default_factory=list)
     drifted: list[dict[str, Any]] = field(default_factory=list)
+    #: The ``ingest_run`` this execution wrote (PG sink only; P31.2 / ADR-109), so
+    #: the scheduled wrapper's WORM run row can name it. ``None`` for other sinks.
+    run_id: str | None = None
 
 
 def _robots_decisions(fetcher: PoliteFetcher) -> list[Mapping[str, Any]]:
@@ -747,6 +750,7 @@ def run_source(
     wacz: bool = False,
     code_commit: str = "unknown",
     commit_chunk_size: int | None = None,
+    run_record_uri: str | None = None,
 ) -> SourceRunReport:
     """Run one source in ``live`` / ``replay`` / ``shadow`` mode (P21.3).
 
@@ -756,6 +760,8 @@ def run_source(
     static transport and never touch the network. ``commit_chunk_size`` bounds
     the PG sink's per-transaction claim count (``None`` = the sink default, so
     ordinary sources commit in a single chunk — P26.18 / SOURCES.17).
+    ``run_record_uri`` (live, PG sink) names the WORM run row the scheduled wrapper
+    writes for this execution; it is recorded on the run and its completion.
     """
     mode = RunMode(mode)
     connector = _connector_for(source_id, connector_name)
@@ -770,6 +776,7 @@ def run_source(
             wacz=wacz,
             code_commit=code_commit,
             commit_chunk_size=commit_chunk_size,
+            run_record_uri=run_record_uri,
         )
 
     if fixture is None:
@@ -789,6 +796,7 @@ def _run_live(
     wacz: bool,
     code_commit: str,
     commit_chunk_size: int | None = None,
+    run_record_uri: str | None = None,
 ) -> SourceRunReport:
     # The gate is checked BEFORE any transport is constructed or any socket is
     # opened (SIG-INGEST-014/028): a non-green source is refused here.
@@ -847,6 +855,7 @@ def _run_live(
         connector_version=version,
         code_commit=code_commit,
         **_chunk_kwargs(commit_chunk_size),
+        **({"run_record_uri": run_record_uri} if run_record_uri else {}),
     )
     source = get(source_id)
     parameters: dict[str, Any] = {"targets": targets}
@@ -1021,6 +1030,7 @@ def _run_live(
             for d in report.disappearances
         ],
         drifted=list(report.drifted),
+        run_id=getattr(sink, "run_id", None),
     )
 
 

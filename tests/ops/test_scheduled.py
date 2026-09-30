@@ -499,3 +499,41 @@ def test_cli_scheduled_ingest_refusal_still_stores_the_row(
     assert code == 6  # the connector's own refusal exit code propagates
     stored = json.loads(next(iter(store.objects.values())))
     assert stored["outcome"] == "politeness_refusal"
+
+
+# --- P31.2 / ADR-109: the run row and the completion row name each other -------
+
+
+def test_run_object_uri_is_the_name_store_run_row_writes() -> None:
+    ts = "2026-09-24T20:00:00+00:00"
+    uri = S.run_object_uri("proj-sig-restricted", "ops/runs", "okcpd_policy", ts)
+    assert uri == "gs://proj-sig-restricted/" + S.run_object_name("ops/runs", "okcpd_policy", ts)
+    assert uri.endswith("/okcpd_policy/2026-09-24/2026-09-24T20-00-00+00-00.json")
+
+
+def test_scheduled_ingest_passes_the_run_uri_and_records_the_ingest_run_id() -> None:
+    seen: dict[str, object] = {}
+
+    class _RunReport(_Report):
+        run_id = "0190-run"
+
+    def runner(source: str, **kw: object) -> _Report:
+        seen.update(kw)
+        return _RunReport(2)
+
+    row = S.scheduled_ingest("okcpd_policy", runner=runner, run_record_uri="gs://b/ops/runs/x.json")
+    assert seen["run_record_uri"] == "gs://b/ops/runs/x.json"
+    assert row.ingest_run_id == "0190-run"
+    assert row.as_json()["ingest_run_id"] == "0190-run"
+
+
+def test_scheduled_ingest_without_a_uri_keeps_the_runner_call_unchanged() -> None:
+    seen: dict[str, object] = {}
+
+    def runner(source: str, **kw: object) -> _Report:
+        seen.update(kw)
+        return _Report(1)
+
+    row = S.scheduled_ingest("okcpd_policy", runner=runner)
+    assert "run_record_uri" not in seen  # older runners never see a new kwarg
+    assert row.ingest_run_id == ""  # no run id reported → honest empty

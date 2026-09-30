@@ -26,6 +26,7 @@ workflow orchestrator (SIG-ENG-013).
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from typing import Any
@@ -43,6 +44,7 @@ from .loader import assert_loadable
 from .net import ChallengeEncountered, RobotsDisallowed, RobotsUnretrievable
 from .stages import (
     CaptureRef,
+    CompletionRecorder,
     Connector,
     ContentDrift,
     FetchResult,
@@ -50,6 +52,8 @@ from .stages import (
     Stage,
     StageArtifact,
 )
+
+_log = logging.getLogger(__name__)
 
 
 @dataclass
@@ -138,15 +142,68 @@ def _target_id(target: Mapping[str, Any]) -> str:
     return str(target.get("id") or target.get("locator") or target.get("url") or "target")
 
 
+def completion_status(report: RunReport) -> str:
+    """The ``ingest_run_completion`` status for an execution that ran to its end.
+
+    ``quota_reached`` if it stopped at a 429 wall. ``partial`` if any target was
+    recorded as a disappearance, refusal or drift, or the request budget deferred
+    a tail of slices. Otherwise ``ok``. (``failed`` is the exception path in
+    :func:`run`.)
+    """
+    if report.quota_reached:
+        return "quota_reached"
+    if report.disappearances or report.refusals or report.drifted or report.budget_reached:
+        return "partial"
+    return "ok"
+
+
+def _record_completion(ctx: RunContext, status: str, *, detail: str | None = None) -> None:
+    """Append the execution's completion, if the sink records completions (ADR-109).
+
+    Only a live execution records one: replay and shadow runs assert nothing and
+    have no run to complete. A completion that cannot be written (for example the
+    database connection is already gone) is logged and dropped. It never masks
+    the run's own outcome or exception. The run then honestly has no completion.
+    """
+    sink = ctx.claim_sink
+    if not ctx.asserts_claims or not isinstance(sink, CompletionRecorder):
+        return
+    try:
+        sink.record_completion(status, source_id=ctx.source.id, detail=detail)
+    except Exception as exc:  # noqa: BLE001 - recording must never mask the run outcome
+        _log.warning(
+            "ingest-run completion (%s) for %s not recorded: %s",
+            status,
+            ctx.source.id,
+            type(exc).__name__,
+        )
+
+
 def run(connector: Connector, ctx: RunContext) -> RunReport:
     """Run one connector end-to-end through the eight stages.
 
     Gates before the first fetch, isolates every post-capture stage, records
     disappearances as data, and asserts the claim set only on a live run.
+
+    Every live execution that passed the gate ends by appending its completion to a
+    sink that records completions (P31.2 / ADR-109): the success path records
+    :func:`completion_status`, and an exception records ``failed`` (with the
+    exception's class, never its message) before it propagates. A gate refusal is
+    not an execution, so it records nothing.
     """
     # SIG-INGEST-014/028: the gate is checked once, up front, before any fetch.
     assert_loadable(ctx.source)
+    try:
+        report = _run_stages(connector, ctx)
+    except Exception as exc:
+        _record_completion(ctx, "failed", detail=type(exc).__name__)
+        raise
+    _record_completion(ctx, completion_status(report))
+    return report
 
+
+def _run_stages(connector: Connector, ctx: RunContext) -> RunReport:
+    """The body of :func:`run`, after the gate: discover → … → load (+ assert)."""
     report = RunReport()
     targets = connector.discover(ctx)
     _addressed(ctx, Stage.DISCOVER, targets)
@@ -378,4 +435,4 @@ def run_stage(connector: Connector, ctx: RunContext, stage: Stage, payload: Any 
     return out
 
 
-__all__ = ["RunReport", "run", "run_post_capture", "run_stage"]
+__all__ = ["RunReport", "completion_status", "run", "run_post_capture", "run_stage"]
