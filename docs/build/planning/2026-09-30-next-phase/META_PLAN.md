@@ -1049,6 +1049,16 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   Must-apply-before-Round-11 sets defined (before Stage B: SK-13,14,17,18,19,20,22; before first dispatch: SK-01,02,03,06,09,10);
   §5.3 lists the OPERATING MODE overrides if deferred. Skill defects found: `tail=minimal` omits GATE-ACCEPT that DONE
   requires; `auto` skips every gate; `check-backlog.sh` counts MET-DIFFERENTLY as owed; no template names a date source.
+- 2026-09-30T18:26:15Z — **C5 done** (`research/C5-landscape.md`, 59 logged fetches): SIG fully answers 1/13 core audience tasks on the live site
+  (6 partial, 5 missed, 1 excluded by design); peers already answer agency-level deployed/vendor/sharing/retention/agenda/
+  act; **unanswered across the whole ecosystem: cost + decision date, whether sources disagree, a printable cited one-place
+  brief** — SIG's niche, not yet demonstrated (joined evidence, contradictions, access graph, history and per-claim
+  provenance all absent or empty live). Gaps vs peers: vendor/sharing/retention "unknown" despite ingesting Atlas + Eyes on
+  Flock; no city-level lookup (all 55 dossiers state/national); empty renewal watch; 5 core pages with 0 outbound links.
+  Opportunities: per-dossier "elsewhere" block + claim→original links; ACLU "Get the Flock Out" / Atlas Data Library
+  listing after one joined city dossier exists; concrete Stage-0 outreach (Atlas, Eyes on Flock, alpr.watch).
+  **Risk logged:** the session's WebSearch budget is exhausted — I3–I6 may be limited to direct fetches/catalog APIs;
+  their saturation reports decide whether a follow-up search pass is scheduled (S1).
 
 ---
 
