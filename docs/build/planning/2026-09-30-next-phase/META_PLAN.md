@@ -955,6 +955,13 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   MODE + ticket-template blocks) for Round 11 — to be placed by B3/T5. Operator questions (B5 §8): which harness ran the
   untrailered stretches; were the full GATE-G3/ACCEPT-R10 texts seen before approval; was the P31.5 pause a harness switch.
   8 incoming findings.
+- 2026-09-30T20:05Z — **B3 done** (`design/B3-ledger-redesign.md`): LEDGER 679,109 B (PHASE LOG 72%; CURRENT STATE 122,978 B of
+  which 114,735 B PRIOR chains; ~32k tokens to orient); target: head ≤ 12 KiB, orient ≤ 48 KiB, values-only CURRENT STATE
+  (≤ 256 B/line), head archived byte-for-byte under `reports/memory-repair/` with sha256 pointer, fresh Round-11 OPERATING
+  MODE skeleton (§3.6), appended restorations/corrections/RETURN PASS/PHASE LOG index. `nextTicket` → first Round-11 row
+  with 184–187 marked deferred (alternatives for F4). Shadow mode: split D-R10-MEMORY-1 (repair + enforce obligation
+  events; keep projection as CI-verified orient view; keep closeout journal shadow). Seed = 10 ordered commits C0–C10;
+  early tickets M1–M6; validator requirements V1–V11 for B4. 8 incoming findings. B4 + F4 dispatched.
 
 ---
 
