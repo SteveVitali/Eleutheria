@@ -760,7 +760,19 @@ independent human review. It supersedes F4's external-labeler assumption.
 
 ### S. Synthesis → the canonical next-phase plan
 
-**S1 — Universe consolidation and dispositions** · S · depends A2, A3, B*, C6, D2, E*, F*, G*, H*, I*, J*, K*, L*
+**S1a — Master ticket catalog (added 2026-09-30T23:30:16Z)** · S · depends all design rows
+- Union every stream's ticket outline (B3 C0–C10/M1–M6, B4 guards, F5 PKG-*, G1 QA-*, G2 ACT-*, G3 REL-*, H2 toolchain, I8 acquisition
+  tickets, J3 TX-* (as superseded by K13), K13's 118, L3 CONF-*, E2/E4 honesty fixes, B1 date corrections, F1/F4 dispositions) into
+  `data/ticket_catalog.csv` with de-duplication (one owner per concern), sizes, dependencies, data prerequisites, operator gates,
+  live stages, cost impact, and source-design references. Output also `research/S1a-ticket-catalog.md`.
+
+**S1c — Operator decision catalog (added 2026-09-30T23:30:16Z)** · S · depends all design rows
+- Every decision only the operator can make (E2 governance memos, E4 + I7 rights lines, D-K13-1/D-K2-1/D-K13-4, Q-7…Q-31 still open,
+  B1 Q-B1-*, B4 Q-B4-2, F4/L3 evaluation dispositions, G3 Class R/S rule, H2 repo settings, B6 skill changes (Q-13), D3 open questions,
+  K14 positioning, cost items > $0) → `design/S1c-decision-catalog.md` grouped and ordered for a one-sitting operator review, each
+  with options, recommendation, consequence, and what it unblocks.
+
+**S1b — Universe consolidation and dispositions** · S · depends S1a, A3, A2, D1, F1, F2a/b, F3, I7
 - Merge the universe with every finding (F-ids) and feedback item (U-ids); exactly one disposition each (§8.1);
   re-run the A1 delta and fold in any baseline change. *Done when* the completeness/non-duplication check is green.
 
@@ -1597,6 +1609,23 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   available + contact authorized). EVAL-001 MET-ENGINEERED, 002 PARTIAL, 003 MET, 004 WAIVED(ADR, copy tiers), 005/007 owed,
   006 MET. Tickets CONF-01…14 (CONF-02 in wave 0). 4 findings. **Stream L complete; Stage P research/design rows complete
   except K13.**
+- 2026-09-30T23:30:16Z — **K13 done** (`design/K13-ux-synthesis.md`, `data/k13_requirements.csv` 51, `data/k13_tickets.csv` 118): 32 cross-design
+  conflicts reconciled (one legend: hollow = single source; line pattern = access kind only; currency = muted ink + date/word;
+  raspberry disagreement, amber provisional, hatch absence; one static figure kit FIG-01a/b + per-download CSP; all 23 K9/K10
+  changes adopted over J3, `/data-freshness/` 301 → `/sources/`; one release-pinned search stack shared by search/map/index;
+  one URL-state parameter list; ignored-filter notice in W0 then a test). IA: header = Places · Explore (Map, Graph, Search,
+  Disagreements) · Organizations · Watch · Sources & data · About + search; page types per K0; new route families `/sources/**`,
+  `/entity/**`, `/graphs/**`, `/explore/`, `/disagreements/`, `/changes/`, `/data/`, `/releases/`, `/status/`, `/quality/`,
+  `/s/<pub>/`, `/glossary/`, `/about/`; dossiers `/dossier/<alpha-3>/…` 4 levels; one redirect generator. Shared modules each
+  with one owner ticket. **118 UX tickets ≈102.5 runs: W0 honesty 6/4.5, W1 foundations+data 39/36, W2 core pages 43/37, W3 explore
+  26/22, W4 polish+announce 4/3** (G2/G3/F5/L3/I8-owned tickets listed as dependencies, not counted). Traceability complete for
+  U-003.1–.11, U-003.G, U-004, U-005, U-007; K12b ideas 29 accepted (7 modified), 3 deferred. Operator decisions surfaced:
+  D-K13-1 "global graph" = aggregated overview graphs (spec no-hairball rule, SIG-IDENT-030); **D-K2-1 all 969 organizations
+  flagged publication-review (most blocking)**; D-K13-4 dedup required before announce?; Q-31 DNS move.
+- 2026-09-30T23:30:16Z — **Stage P research/design rows complete** (A1–A3, B1–B7, C1–C6, D1, D3-draft, E1–E4, F1–F5, G1–G3, H1–H2, I1–I9b, J1–J4,
+  K0–K14, L1–L3). D2 folds into the S5 packet. **S-stage restructured for size:** S1a master ticket catalog (union + de-dup of
+  every stream's ticket outline) ∥ S1c operator-decision catalog → S1b universe dispositions + completeness check → S2 themes,
+  waves, round sizing, budget → S3 `NEXT_PHASE_PLAN.md` → S4 three adversarial reviews → S5 operator ratification packet.
 
 ---
 
