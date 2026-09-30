@@ -1626,6 +1626,16 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   K0–K14, L1–L3). D2 folds into the S5 packet. **S-stage restructured for size:** S1a master ticket catalog (union + de-dup of
   every stream's ticket outline) ∥ S1c operator-decision catalog → S1b universe dispositions + completeness check → S2 themes,
   waves, round sizing, budget → S3 `NEXT_PHASE_PLAN.md` → S4 three adversarial reviews → S5 operator ratification packet.
+- 2026-09-30T23:53:52Z — S1a + S1c dispatched.
+- 2026-09-30T23:53:52Z — **S1c done** (`design/S1c-decision-catalog.md`, `data/decision_catalog.csv`): 323 open operator decisions de-duplicated into
+  **87 answer lines** (Part A must-decide 17 lines / 68 decisions ≈22 min; Part B batch approvals with safe defaults 43 / 228 ≈10
+  min; Part C confirmations 11 ≈5 min; D2 reactions 16 ≈6 min → one ≈45-min sitting); 23 items already answered are cited, not
+  re-asked. Surprises flagged: **A-1 is time-sensitive** — verified at this timestamp: 0 Cloud Monitoring alert policies, 0
+  notification channels, and scheduled jobs firing from 2026-10-01T00:00Z, OSM replay 10-10; **the GitHub repo is PUBLIC** (verified
+  via `gh repo view`) — pushing the planning branch would publish the planning findings (incl. security posture) and the operator's
+  address; agent spend is unmeasured (A-2: $300 ceiling = infrastructure only, agent spend reported separately); B-34 does not
+  extend GL-GATE-07 to 21 non-US sources; A-9 recommends "SIG may be commercial"; the EVAL-004 waiver needs the operator's own
+  words; projected infra ≈$100–160/mo (design estimates) — nothing recommended needs an over-$300 approval.
 
 ---
 
