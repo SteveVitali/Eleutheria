@@ -15,15 +15,15 @@
 ```
 projectStatus:   IN_PROGRESS        # NOT_STARTED | IN_PROGRESS | BLOCKED | PAUSED | DONE
 stage:           P                  # M (meta-plan) → P (plan) → B (build artifacts) → HANDOFF
-nextUnit:        WAVE-5             # running: C2 I3 I4 I5 I6 F5 B6 H2 · next: C6 J3 G3 I7 I8 D2 D3 → S1 (§9)
-lastCompleted:   B4                 # 26 of 55 rows done (see §11)
+nextUnit:        WAVE-6-PREP        # running: I7 · operator: D1 (2/25), I9a/I9b fresh sessions · then D2, D3, I8 → S1
+lastCompleted:   G3                 # 39 of 57 rows done or partial (I3–I6 partial; see §11)
 blockedOn:       (nothing)
 pauseRequested:  false
 baseline:        baseline/baseline.json @ 2026-09-30T16:31:55Z   # delta procedure in BASELINE.md
 planOut:         docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md
 memoryRoot:      docs/build
 round:           11                 # provisional; manifest phases continue at P34, rows at 201
-updatedAt:       2026-09-30T18:03:23Z   # written by `date -u` (§9 clock rule)
+updatedAt:       2026-09-30T18:56:01Z   # written by `date -u` (§9 clock rule)
 ```
 
 **Vocabularies.** Row status: `open → in-progress → done | blocked-on-operator | dropped(reason)`;
@@ -1145,6 +1145,15 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   ANPR locations (withheld), most of Asia/ME/Africa (not searched). Registry mislabels: Charlotte NC filed as Charlotte IA;
   "San Bernardino" tenant is the County. P16 audited clean. **I9a/I9b rows added (fresh sessions); I7 dispatched on the
   current ~547 candidates (delta re-run after I9).**
+- 2026-09-30T18:56:01Z — **G3 done** (`design/G3-release-model.md`): release identity = content-addressed `p-<sha256>` + label `sig-YYYY-MM-DD.N`
+  (UTC date from the clock + same-day ordinal) bound to spine snapshot, clean pushed commit, versions, evaluation status and
+  disclosures; one pipeline `sig-ops release cut→build→stage→verify→promote` (private release bucket; private staging; promotion
+  = pointer switch + redeploy); pinned page copies `/s/<pub>/` + visible stamp; API names its release or says "live spine".
+  Promotion gate: integrity, identity/clock, route allow-list, stamp, link crawl, figure↔data parity, API parity, attribution,
+  jurisdiction–coordinate sanity, withdrawal barrier, zero-JS/a11y, secret scan, disclosures, diff sanity; auto-rollback on
+  post-promotion failure. **Cadence/sign-off proposal:** monthly on the 15th; early at ≥10% net new claims and ≥14 days; alert
+  at 35 days; **Class R** (same signed code, bounded diff, all green) under one revocable standing go vs **Class S** (anything
+  else) needs a signed readout. Tickets REL-01…11. 6 incoming findings.
 
 ---
 
