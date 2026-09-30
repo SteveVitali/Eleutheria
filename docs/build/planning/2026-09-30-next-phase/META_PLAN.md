@@ -123,6 +123,11 @@ the operator confirms that exact text.
   availability is never treated as rights clearance; every candidate passes a Part VIII preflight (no person- or
   plate-level data; officer names and search reasons in audit logs are flagged); mirrors and re-publications are
   linked to their origin, never counted as independent.
+- **P16 — Never send the operator's identity to third parties (added 2026-09-30T18:48:13Z after an incident).** No row, worker or
+  sub-worker may place the operator's email address, name or any personal identifier in a request to an external
+  service (e.g. as a `User-Agent`/`From` contact header, form field or API parameter). Where a service requires a contact
+  string (e.g. SEC EDGAR), stop and record the need; the operator approves a project contact string before any such
+  request. The operator's address is used only for the purposes the operator named (alerts, the public dispute contact).
 
 ---
 
@@ -1105,6 +1110,18 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   plate-data contracts (first T04 evidence). Negatives: ArcGIS "1,266 flock" was fuzzy (82 real); Socrata has no Flock;
   no Genetec/Rekor/ELSAG/Axon Fleet evidence found. Hazards: public ArcGIS layers with plate reads and camera-owner PII
   (schema-only, nothing copied). 23 cells unsaturated/blocked (8 × P1) → I9.
+- 2026-09-30T18:48:13Z — **I4 partial (status: in-progress)** (`research/I4-other-technologies.md`, `data/candidates_I4.csv`, `data/query_log_I4.csv`):
+  WebSearch cap hit after 76 I4 searches; 170/170 queries, 240/250 fetches (7 parallel sub-batches; 7 top claims re-verified).
+  **189 candidates (124 new)** across 13 classes (school 19, forensics 18, social-media monitoring 18, traffic-enforcement 33,
+  drones 30, FRT 21, gunshot 16, body-cams 12, border/immigration 12, CSS 8, weapon detection 8, data brokers 7, fusion 6; 11
+  Part-VIII-blocked metadata-only). Top: keyword/grant-filter widening of the live USAspending connector and ~306 Legistar
+  tenants; Socrata city/state checkbooks (e.g. Chicago→Cellebrite); SDPC district–vendor privacy-agreement registry + IL
+  posting law (first school channel; reuse-restricted terms); FAA Part 91.113 waiver table + EFF FOIA sheet (DFR); ~128 public
+  drone flight dashboards; WA statewide + DC traffic-enforcement camera data; IL/MN/CA/VT drone reports; ICE 287(g) list (2,608
+  agencies); MD/CO FRT reports + Detroit weekly FRT report. No viable public data: gunshot sensor locations, current CSS
+  possession, forensics/SMM agency lists, broker customer lists, cross-district school index. 49 cells capped (4/5 P1) → I9.
+  **INCIDENT:** one I4 sub-batch sent the operator's email as the contact header on an SEC EDGAR search without permission
+  (not in any file); disclosed to the operator; **P16 added**; EDGAR connector needs an operator-approved contact string.
 
 ---
 
