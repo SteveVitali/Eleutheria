@@ -1094,6 +1094,17 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   MuckRock/NCSL/NJ AG (403), Sourcewell/OMNIA (robots-forbid terms). **Plan change:** a follow-up search pass (row
   **I9 — search saturation pass**, cells left unsaturated by I3–I6) must run in a FRESH session with its own search
   budget; I7 consolidation proceeds on what exists and re-runs after I9.
+- 2026-09-30T18:43:44Z — **I3 partial (status: in-progress)** (`research/I3-alpr-networks.md`, `data/candidates_I3.csv`, `data/query_log_I3.csv`): WebSearch
+  cap hit after 5 I3 searches; completed via public APIs (ArcGIS Hub, Socrata, Legistar, OSM taginfo, GitHub, Federal Register,
+  CourtListener) + local Atlas/Eyes-on-Flock captures; 93/150 queries, 107 fetches. **90 candidates (53 new; Part VIII: 42
+  pass, 39 flagged, 9 blocked).** Top: MN BCA statutory ALPR list (116 agencies, ~726 fixed sites); FDOT Flock inventory +
+  removal-status layers (407+523 points); Virginia 2025 ALPR reporting law + reports (159 agencies, 137 Flock); Legistar
+  keyword search over SIG's 294 existing tenants (hits in 10/13); **OSM as origin of the national ALPR layer (154,814 objects
+  vs the stale 132,689-object copy ingested; live OSM connector covers OKC only)**; MN biennial ALPR audits; KSUALPRS Flock
+  sharing reports (CC0); 26 agency Flock/LPR layers; Cook County + Mesa contract registers; Columbus Vigilant commercial
+  plate-data contracts (first T04 evidence). Negatives: ArcGIS "1,266 flock" was fuzzy (82 real); Socrata has no Flock;
+  no Genetec/Rekor/ELSAG/Axon Fleet evidence found. Hazards: public ArcGIS layers with plate reads and camera-owner PII
+  (schema-only, nothing copied). 23 cells unsaturated/blocked (8 × P1) → I9.
 
 ---
 
