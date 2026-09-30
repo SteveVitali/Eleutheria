@@ -1487,6 +1487,14 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   (10-19 → mid-Dec, assuming Round 11 starts by 10-14; new jobs created paused, run once by hand; avoid first-run wave, 10-10
   replay, day 6–13 freezes). Coverage: 12/14 blind spots move; 7/10 tier-A + 3/5 tier-B states; 13/36 thin cities; still dark:
   MS, WY, MT, AS, MP, tribal nations, Flock/Axon's own data, EDGAR, court records. 8 findings.
+- 2026-09-30T22:17:00Z — **B7 done** (`research/B7-harness-attribution.md`): 480 chain commits attributed by matching commit hashes against local
+  session records (Claude Code / Devin CLI / Codex) — 477 high confidence, 3 trailer-only. Round 1 → P27.3: Devin CLI (Opus 4.8
+  and `swe-2-high`); P27.4–P31.5: Claude Code (Opus 4.8, then Opus 5.5 from 09-23T22:29Z); **P31.6–P33.8 (140 commits): Devin CLI,
+  one session, `swe-2-high` only**; Round-10 import: Codex (`gpt-6-astra`). B5 §8 answered: the P31.5 pause coincided with the
+  harness switch to the minute (Claude pause 03:21Z → Devin opened 03:56Z → Devin resumed 04:12Z); **the signed GATE-G3 and
+  ACCEPT-R10 readout texts were written 32 s and 51 s AFTER the operator's approvals** — a shorter agent summary preceded each
+  (40 min / 11.5 h earlier); true approval times all 2026-09-28 UTC (S3 deferral 01:15:49Z, GATE-G3 03:49:14Z, ACCEPT-R10
+  18:46:46Z), not 10-19. 4 findings.
 
 ---
 
