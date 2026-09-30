@@ -1495,6 +1495,21 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   ACCEPT-R10 readout texts were written 32 s and 51 s AFTER the operator's approvals** — a shorter agent summary preceded each
   (40 min / 11.5 h earlier); true approval times all 2026-09-28 UTC (S3 deferral 01:15:49Z, GATE-G3 03:49:14Z, ACCEPT-R10
   18:46:46Z), not 10-19. 4 findings.
+- 2026-09-30T22:17:35Z — **L1 done** (`research/L1-pipeline-audit.md`): answer to U-006 — **SIG does not have a deduplicated graph today**: the same
+  camera from different publishers is counted once per publisher everywhere users look (duplicates are only computed for one
+  national count; nothing is merged into one entity); organizations match by exact name only (fuzzy-matcher merge proposals
+  unreviewed); the only relations are 130 sharing edges from one EFF dataset (2016–17 data stamped 2020). Weakest seams:
+  claim/entity creation (keys, types, fingerprints), export (jurisdiction, labels, dates, duplicates lost), source independence
+  (recorded nowhere), field mapping (first matching field wins; unknown predicates accepted), camera-match evaluation. Verified
+  failure modes: claim identity includes row position + page URL (upstream deletion re-creates unchanged facts — probe
+  confirmed); resolver treats copies as independent; key collisions (Legistar contracts not city-scoped; Atlas/EFF agencies not
+  state-scoped; IL DOT keyed on ArcGIS row ids); every entity typed `deployment`; 5,016 extra rows from 2,933 multi-source points +
+  13,724 duplicate rows from two overlapping DeFlock/OSM copies under one source; camera test set labelled twice by one model,
+  holdout has zero negatives; network labels looked up in the wrong table. Only fixture tests. **Ranked fixes:** stable identity
+  keys; reject unknown predicates at write; record source copies/independence; publish deduplicated sites (HG-11); edge labels +
+  dates; per-point geography + technology typing; entity types; stricter match gating; organization matching; a 17-check
+  invariant suite in the release gate (start first). 14 findings. (Side effect: a sub-agent ran Docker suites in throwaway local
+  containers and rebuilt gitignored `web/dist`; no tracked file or production touched.)
 
 ---
 
