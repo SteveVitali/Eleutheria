@@ -541,6 +541,16 @@ make sure you prompt me for my input when you need it and keep me in the loop"*
 | Q-6 | **Agent's judgement; prompt the operator when input is needed; keep the operator in the loop** | D1 = written questionnaire sent early (unanchored by C-stream findings), D2 = walkthrough of findings; progress check-ins at wave boundaries |
 | Q-11 | **Do not merge the PR chain; build on it; the operator merges later** (answers Q-11 and Track 0.4) | Round 11 stacks on the chain tip (PR #190); H1 re-scoped to a record + merge-readiness notes; no merge/retarget/push by any row |
 
+Follow-up, operator verbatim (2026-09-30T16:27Z): *"I'll leave the point-in-time recovery question to you. MapRoulette key
+can stay stale for now. Continue researching/planning. When it's needed, I want you to just interactively collect and log
+my answers to the questionairre interactively in Claude one by one"*
+
+| item | decision | consequence |
+|---|---|---|
+| PITR (Track 0.1 remainder) | **delegated to the agent** → enabled in a quiet window | done 16:28–16:31Z; one 503 during restart, self-recovered (`baseline/TRACK0_RECORD.md`) |
+| Track 0.3 MapRoulette key | **stays unrotated for now** (operator-accepted) | recorded as an accepted risk; G1 carries it |
+| D1 mode | **interactive, one question at a time in the chat, when needed** | the planning orchestrator asks Q-D1-01…25 in order and logs answers verbatim to `feedback/OPERATOR_FEEDBACK.md` |
+
 ---
 
 ## 8. Schemas, vocabularies and conventions
@@ -635,6 +645,8 @@ docs/build/planning/2026-09-30-next-phase/
 - 2026-09-30T16:22Z — **Track 0.1 + 0.2 done** (`baseline/TRACK0_RECORD.md`): on-demand backup `1790785111976` SUCCESSFUL; automated
   backups enabled (05:00 UTC, 7 retained, no restart); `/curate/` removed from the public web bucket, 404 on both origins.
   PITR held (enabling it restarts the instance) — operator question. 0.3 pending.
+- 2026-09-30T16:32Z — PITR enabled (delegated to agent; one 503 during the restart, self-recovered); 0.3 key stays stale
+  (operator); D1 to be collected interactively. D1 questionnaire committed (`a23fca8a`).
 
 ---
 
