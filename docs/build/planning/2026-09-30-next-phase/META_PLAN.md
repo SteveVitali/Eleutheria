@@ -939,6 +939,16 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   conflicted; points outside their jurisdiction (CA←FL 838, GB-ENG axis-swapped 562, TH←HK 155, ID←Indonesia/Idaho);
   "0 stale" when not evaluable; map attribution to "SIG contributors"; API coverage "complete" with 0 evaluated.
   Systemic causes recorded. 21 incoming findings.
+- 2026-09-30T19:40Z — **C4 done** (`review/R10_PREVIEW.md`): all Round-10 surfaces run locally (web fixture mode; release trees;
+  release search API ×3 registries; intake receiver on local PG18 via podman — non-operational 503 and an operational walk).
+  Export-mode build fails (candidate lacks `leverage.json`/tiles). Readiness: 5 surfaces blocked, 6 needs-work, 1 ready
+  (the intake 503 page). 11 × S1 incl. two S0-on-exposure (research dossiers present stand-in documents as real captures
+  with real URLs; the G3-accepted candidate is a fixture with `example.test` evidence), broken release-archive relative
+  links, "Reviewed" headline while review `not_run`, moderator view HTTP 500 on PG, no production routing for `/v1`
+  release search or `/intake`, `rsync --delete` deploy would wipe the release tree. 32 incoming findings.
+- 2026-09-30T19:41Z — C2 dispatched in **headless Chrome** (Claude-in-Chrome tools never became visible to this session;
+  orchestrator judgement per Q-6 — an interactive real-Chrome pass may be added later). D1 continues (U-001 confirmed,
+  U-002 recorded; Q-29 answered). F5 dispatched.
 
 ---
 
