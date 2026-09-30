@@ -1521,6 +1521,19 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   required, and with no other humans it must come from the operator or a separate, disclosed agent. Tickets SRCH-01…08.
   7 findings (results alphabetical with empty labels first; 488.6 MB index on a 512 MiB service; "TX" 422s; release holds no
   agency/vendor records).
+- 2026-09-30T22:31:24Z — **K14 done** (`design/K14-visual-and-onboarding.md`; U-004/U-005/U-007/U-009): positioning (agent-drafted, operator confirms
+  at S5 as D-K14-1): tagline "The evidence behind public surveillance, place by place." + one sentence (what's deployed, who runs
+  it, who can access its data, when it's next decided; every fact linked; disagreements and gaps visible). Landing: tagline +
+  sentence + place search above the fold; three "start here" paths (advocate/journalist/organizer); ≤6 traceable figures; what
+  makes SIG different; one real example place; reading key; trust/method links with the "not independently reviewed" disclosure
+  stated once (126 tiles → `/coverage-metrics/`). Design system: Public Sans (26 KiB), 8-step type scale (from 17), light/dark
+  via OS preference without JS, color only where attention is needed (raspberry disagreement, amber provisional, blue links/data;
+  single-hue evidence-strength ramp + ⊕ glyph; no red), contrast/CVD-checked, within K0's content budget. Copy: caveat once at
+  its number; plain language first, precise definition one click away (published glossary; no-JS hover definitions); methodology
+  text kept verbatim (U-004); shared chrome ≤40 words (from ~110). Onboarding: release-generated example questions that are shown
+  only if they lead to sourced data; capability claims only when the release demonstrates them; structured empty states. Tickets
+  UXK14-1…12. 11 findings (chrome = 36% of words; "contested" color reused for 4 meanings; glossary unpublished; home promises
+  capabilities the release doesn't show).
 
 ---
 
