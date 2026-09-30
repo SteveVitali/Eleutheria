@@ -850,6 +850,7 @@ Recommendations are mine; decisions are yours. **Q-1…Q-6 block the start of St
 | Q-28 | (from E3) Authorize recruiting volunteer reviewers from the DeFlock / EFF / MuckRock communities? (outward contact) | Decide at S5 | F4 |
 | Q-29 | Public contact for corrections/disputes: publish the operator's personal address on the site, or a project alias (e.g. `corrections@surveillancegraph.org` forwarding to it)? | A project alias (safety, spam, succession) — **ANSWERED: operator's personal address for now** (§7.1) | G2, J3 |
 | Q-30 | Approve a project contact string for services that require one (e.g. SEC EDGAR `User-Agent`), per P16 — e.g. `SIG research (surveillancegraph.org) <address you choose>` | A project address or alias, not a personal one | I7, I8 |
+| Q-31 | Move the surveillancegraph.org DNS zone from Squarespace to Cloudflare so an R2 custom domain can serve the basemap, tiles and downloads with $0 egress? (else same-origin GCS at higher cost) | Yes — lowest recurring cost; operator action at the registrar | K1, J3, J4 |
 
 ### 7.1 Decisions recorded at GATE-M (2026-09-30T16:16Z)
 
@@ -1534,6 +1535,16 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   only if they lead to sourced data; capability claims only when the release demonstrates them; structured empty states. Tickets
   UXK14-1…12. 11 findings (chrome = 36% of words; "contested" color reused for 4 meanings; glossary unpublished; home promises
   capabilities the release doesn't show).
+- 2026-09-30T22:36:54Z — **K1 done** (`design/K1-map.md`; ask U-003.1): **root cause of dots vanishing** = tippecanoe 2.79.0 run with default point
+  dropping (`exports/src/exports/tiles.py:621-639`): live tiles hold 0.03% of 227,335 sites at z3 and 25.6% at z12 (the I-80
+  camera is absent at z10–12); no test exercises production tiles. Design: self-hosted Protomaps planet basemap (138.5 GB, ODbL;
+  public-domain boundary fallback) ≈$2/mo now, $3 at 10k sessions, $13 at 100k on R2 — **R2 custom domain needs the DNS zone
+  moved from Squarespace to Cloudflare (Q-31)**; else same-origin GCS ≈$6–43/mo; reverses Round-9 Q8 → new ADR superseding
+  ADR-118 §2. Layers: per-compartment H3 count cells z0–9, every point from z10, hollow symbols for single-source sites; place
+  typeahead, 7 filters, keyboard "sites in view" list, side panel → record/source/dossier pages, `at=` URL state, ≤100 KiB no-JS
+  page with per-place lists. Perf: 497 KB → ≈345 KiB (MapLibre ESM split, Preact, JSON style); first-view tiles+glyphs 0.6–0.9 MiB.
+  Tickets MAP-00…07. 6 findings (tier property mismatch → every popup "tier 0"; bundle `sites.pmtiles` downloads contain zero
+  tiles).
 
 ---
 
