@@ -867,6 +867,14 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   counsel" label is absent; E1-06/08 robots disregarded without the SIG-INGEST-037 counsel step, and the crawler contact
   URL uses the unregistered domain `sig-project.org`; E1-12 required upstream attribution missing in public downloads;
   E1-04 legal home is an individual. 15 incoming findings. E2 dispatched.
+- 2026-09-30T18:00Z — **G1 done** (`research/G1-ops.md`): 17 ops risks, 14 incoming findings. Top: **G1-02 monitoring is silently
+  broken** — `sig-probe` failing every sweep since 09-27 (stale baked-in config), 28 critical alerts went only to a log, no
+  Monitoring policies/channels/uptime checks, `observability.yml` measures nothing; G1-01 every workload runs as the
+  default compute SA with `roles/editor`; G1-03 deletion protection off + backups deleted with instance; G1-04 restore
+  never drilled at scale; G1-05 buckets unversioned ("WORM" claim false); G1-06 non-public routes can ship (six demo
+  `/task/new/` pages live; `sig-web` bucket publicly readable); G1-07 freshness drift (≤156k new claims since 09-27, no
+  republish cadence); G1-08 33 schedules fire for the first time 10-01…10-21 (12 never-run jobs). Ten quick actions
+  QA-1…QA-10 proposed (each needs an operator go); est. cost ≈$90–100/mo vs README's ≈$0/$9.
 
 ---
 
