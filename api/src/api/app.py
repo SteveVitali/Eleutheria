@@ -14,8 +14,8 @@ storage, and the contract is versioned via the ``/v1`` prefix and the app versio
 
 from __future__ import annotations
 
-from fastapi import Depends, FastAPI, Header, HTTPException
-from starlette.responses import HTMLResponse, PlainTextResponse, Response
+from fastapi import Depends, FastAPI, Header, HTTPException, Request
+from starlette.responses import HTMLResponse, JSONResponse, PlainTextResponse, Response
 from starlette.routing import Route
 
 from . import __version__
@@ -28,10 +28,10 @@ from .dereference import (
     render_turtle,
     select_media_type,
 )
-from .models import TermsResponse
+from .models import HealthResponse, TermsResponse
 from .prohibitions import assert_no_prohibited_routes, route_paths
 from .routes import build_router, get_store
-from .store import ReadStore
+from .store import ReadStore, StoreUnavailable
 from .terms import acceptable_use_terms
 
 #: The wire-contract API version (SIG-API-001: the contract is versioned). Bumped
@@ -81,6 +81,34 @@ def create_app(store: ReadStore) -> FastAPI:
     def terms() -> TermsResponse:
         return acceptable_use_terms()
 
+    # --- /health — store readiness (P31.1) -------------------------------------
+    # Not under /v1 and not an as-of envelope: it describes this process and its
+    # database connection, never a device (SIG-API-012 governs device liveness).
+    # `/healthz` is avoided on purpose: Cloud Run reserves some paths ending in
+    # `z`, so a `/healthz` route would never reach the container (ADR-108).
+    @app.get("/health", response_model=HealthResponse)
+    def health(response: Response, store: ReadStore = Depends(get_store)) -> HealthResponse:
+        state = store.health()
+        response.headers["Cache-Control"] = "no-store"
+        if not state.ok:
+            response.status_code = 503
+        return HealthResponse(
+            status="ok" if state.ok else "unavailable",
+            backend=state.backend,
+            detail=state.detail,
+            pool=state.pool,
+        )
+
+    # A store that cannot answer (DB restarting, pool exhausted) is a 503 with a
+    # retry hint, never a 500 (P31.1, D-P30.4-1).
+    @app.exception_handler(StoreUnavailable)
+    def _store_unavailable(_request: Request, exc: StoreUnavailable) -> JSONResponse:
+        return JSONResponse(
+            status_code=503,
+            content={"detail": "the read store is temporarily unavailable; retry shortly"},
+            headers={"Retry-After": "5"},
+        )
+
     # --- / — a minimal service descriptor -------------------------------------
     @app.get("/")
     def root() -> dict[str, object]:
@@ -91,6 +119,7 @@ def create_app(store: ReadStore) -> FastAPI:
             "versioned_base": "/v1",
             "openapi": "/openapi.json",
             "terms": "/terms",
+            "health": "/health",
         }
 
     # Fail closed: no prohibited surface may be mounted (SIG-API-012).

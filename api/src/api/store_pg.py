@@ -46,15 +46,33 @@ P25.10 made that seam bounded-latency without ever serving a stale set:
   that could change the served set changes the key.
 * The served watermark is disclosed on the response (``spine_watermark``), so a
   cached answer always states which spine state it describes (§3.1 freshness).
+
+P31.1 (ADR-108) made the store survive a database restart and bounded ``search``:
+
+* **Pooled, self-healing connections.** Reads run on a connection checked out of a
+  small ``psycopg_pool`` pool per public method. Every new connection re-applies
+  ``SET ROLE`` (``configure``). A read whose connection the server dropped (Cloud SQL
+  restart, maintenance, ``pg_terminate_backend``) purges every dead idle connection
+  (``ConnectionPool.check``) and is retried **once** on a fresh connection (only
+  then: an error on a live connection is never retried). A store
+  that cannot answer raises :class:`~api.store.StoreUnavailable` (the app maps it to
+  503), never a stale 500. The annotation/shaping surfaces take their lock BEFORE
+  checking out a connection, so requests queued on the lock hold none.
+* **Bounded search.** A capped, keyset-paginated query whose labels and sources are
+  fetched set-based (a constant four statements per page, never N+1), under a
+  statement timeout, over the ``entity_identifier_value_trgm_idx`` trigram index.
 """
 
 from __future__ import annotations
 
+import functools
+import os
 import threading
 import uuid as _uuid
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
-from typing import Any
+from typing import Any, Concatenate, ParamSpec, TypeVar
 
 import psycopg
 from db.temporal import AsOf
@@ -69,23 +87,137 @@ from exports.shaping import (
 )
 from inference.coverage import CoverageRecord
 from policy.rights import RightsRecord
+from psycopg import sql
+from psycopg_pool import ConnectionPool, PoolTimeout
 from reconcile.materialize import CAPTURE_TIME_JOIN, observation_time
 from reconcile.resolve import RESOLVE, Claim
 from reconcile.ruleset import Ruleset
 from reconcile.snapshot_diff import Capture
 
 from .store import (
+    SEARCH_DEFAULT_LIMIT,
     ContradictionRecord,
     CrosswalkRecord,
     DossierRecord,
     EntityRecord,
     IdDescriptor,
+    InvalidSearchCursor,
     StoredClaim,
+    StoreHealth,
+    StoreQueryTimeout,
+    StoreUnavailable,
     TaskRecord,
 )
 
 #: The connector subject identifier scheme (kept in step with db.claim_sink).
 _SUBJECT_SCHEME = "sig.connector.subject"
+
+# --- connection pool sizing (P31.1, ADR-108) ------------------------------------
+#
+# Budget: Cloud SQL `db-custom-1-3840` has max_connections = 100, 3 reserved for
+# superusers (ADR-107). Per sig-api instance: POOL_MAX pooled read connections plus
+# at most ONE dedicated compute connection (the annotation/shaping pass, opened and
+# closed per compute). With the defaults and Cloud Run max-instances = 2 that is
+# 2 x (5 + 1) = 12 connections at full scale-out, leaving ~85 for the ingest /
+# materialize / export / probe jobs and operator sessions. During a revision roll
+# old and new instances briefly overlap: 4 x 6 = 24, still well inside the
+# budget. Raise POOL_MAX only with max-instances in view: (POOL_MAX + 1) x
+# max-instances must stay well inside the budget. Overridable per deploy by env
+# (never a code change).
+
+#: Idle connections kept open per instance (the first request after idle is warm).
+DEFAULT_POOL_MIN = 1
+#: Pooled connections per instance (see the budget above).
+DEFAULT_POOL_MAX = 5
+#: Seconds a request waits for a pooled connection before it is a 503.
+DEFAULT_POOL_TIMEOUT_S = 10.0
+#: Seconds a new connection may take to establish (a dead DB fails fast).
+CONNECT_TIMEOUT_S = 5
+#: Statement timeout for each ``search`` statement, in milliseconds.
+DEFAULT_SEARCH_TIMEOUT_MS = 5000
+#: ``application_name`` on every connection this store opens: operators (and the
+#: P31.1 reconnect proof) identify sig-api's own backends in ``pg_stat_activity``.
+DEFAULT_APPLICATION_NAME = "sig-api"
+
+_P = ParamSpec("_P")
+_T = TypeVar("_T")
+
+
+def _pooled(
+    method: Callable[Concatenate[PgReadStore, _P], _T],
+) -> Callable[Concatenate[PgReadStore, _P], _T]:
+    """Run a public read on a pooled connection (retry once on a dropped one).
+
+    Re-entrant: a pooled read called from inside another pooled read reuses the
+    connection its caller already holds (see :meth:`PgReadStore._run_read`).
+    """
+
+    @functools.wraps(method)
+    def wrapper(self: PgReadStore, /, *args: _P.args, **kwargs: _P.kwargs) -> _T:
+        return self._run_read(lambda: method(self, *args, **kwargs))
+
+    return wrapper
+
+
+class _ConnectionLost(Exception):
+    """Internal: the connection a read ran on died under it (safe to retry once)."""
+
+
+def _is_lost(conn: object) -> bool:
+    """True when ``conn`` is unusable (closed, or broken by a server-side drop)."""
+    return bool(getattr(conn, "closed", False) or getattr(conn, "broken", False))
+
+
+# --- bounded search (P31.1, ADR-108) ---------------------------------------------
+#
+# One page of matching entities, keyset-ordered by entity_id. The IN-subquery lets
+# the planner pick either plan that the LIMIT makes cheap: the trigram bitmap scan
+# for a selective term, or an entity_id-ordered walk that stops after LIMIT rows
+# for a term matching most of the spine (e.g. "flock": 134k entities).
+_SEARCH_MATCH = (
+    "SELECT e.entity_id, e.entity_type FROM entity e "
+    " WHERE e.entity_id IN ("
+    "   SELECT ei.entity_id FROM entity_identifier ei WHERE ei.value ILIKE %(pattern)s)"
+)
+SEARCH_SQL = _SEARCH_MATCH + " ORDER BY e.entity_id LIMIT %(limit)s"
+SEARCH_AFTER_SQL = (
+    _SEARCH_MATCH + "   AND e.entity_id > %(after)s::uuid ORDER BY e.entity_id LIMIT %(limit)s"
+)
+# The labels for a whole page, set-based: the same rule as ``_label_for`` (the
+# organization's cached name, else the entity's first identifier by scheme).
+_SEARCH_LABELS_SQL = (
+    "SELECT ids.entity_id, COALESCE(NULLIF(o.cached_canonical_name, ''), ("
+    "   SELECT ei.value FROM entity_identifier ei"
+    "    WHERE ei.entity_id = ids.entity_id ORDER BY ei.scheme LIMIT 1))"
+    "  FROM unnest(%s::uuid[]) AS ids(entity_id)"
+    "  LEFT JOIN organization o ON o.entity_id = ids.entity_id"
+)
+# The public sources for a whole page, set-based: ``_source_ids_for_entity`` per id.
+_SEARCH_SOURCES_SQL = (
+    "SELECT DISTINCT c.subject_id, ea.source_id "
+    "  FROM claim c "
+    "  JOIN claim_evidence ce ON ce.claim_id = c.claim_id "
+    "  JOIN evidence_capture ec ON ec.capture_id = ce.capture_id "
+    "  JOIN evidence_artifact ea ON ea.artifact_id = ec.artifact_id "
+    " WHERE c.subject_id = ANY(%s::uuid[]) AND c.sensitivity_tier = 0 "
+    " ORDER BY c.subject_id, ea.source_id"
+)
+
+
+def like_pattern(term: str) -> str:
+    """``%term%`` with the LIKE metacharacters escaped (a literal substring match)."""
+    escaped = term.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+    return f"%{escaped}%"
+
+
+def _env_int(name: str, default: int) -> int:
+    raw = os.environ.get(name, "").strip()
+    return int(raw) if raw else default
+
+
+def _env_float(name: str, default: float) -> float:
+    raw = os.environ.get(name, "").strip()
+    return float(raw) if raw else default
 
 
 def _looks_like_uuid(value: str) -> bool:
@@ -142,16 +274,48 @@ class PgReadStore:
         ruleset: Ruleset | None = None,
         role: str | None = None,
         as_of: AsOf | None = None,
+        pool_min: int = DEFAULT_POOL_MIN,
+        pool_max: int = DEFAULT_POOL_MAX,
+        pool_timeout: float = DEFAULT_POOL_TIMEOUT_S,
+        search_timeout_ms: int = DEFAULT_SEARCH_TIMEOUT_MS,
+        application_name: str = DEFAULT_APPLICATION_NAME,
     ) -> None:
         self._dsn = dsn
         self._ruleset = ruleset
         self._as_of = as_of
         self._role = role
-        # RLS stays enabled: we never set row_security=off. An optional read role
-        # (e.g. sig_read_public) makes RLS enforce the public tier ceiling too.
-        self._conn = psycopg.connect(dsn, autocommit=True)
-        if role:
-            self._conn.execute(f"SET ROLE {role}")
+        self._search_timeout_ms = search_timeout_ms
+        self._connect_kwargs: dict[str, Any] = {
+            "autocommit": True,
+            "connect_timeout": CONNECT_TIMEOUT_S,
+            "application_name": application_name,
+        }
+        # P31.1: a small pool instead of one long-lived connection (which never
+        # recovered from a DB restart, D-P30.4-1). RLS stays enabled: we never set
+        # row_security=off. An optional read role (e.g. sig_read_public) makes RLS
+        # enforce the public tier ceiling too; `configure` re-applies it on EVERY
+        # new connection. The pool opens in the background, so a DB that is down
+        # at startup yields 503s until it returns, never a crash loop.
+        #
+        # Dead connections are purged by `_run_read`, NOT by the pool's `check=`
+        # on checkout: when a DB restart kills every idle connection at once, the
+        # pool's check loop backs off 1 s, 2 s, 4 s ... between failed checks and
+        # gave the first request a 503 after the full 10 s timeout (measured on
+        # the hosted roll, 2026-09-24). Instead, the first read that finds its
+        # connection dead calls `ConnectionPool.check()` (every idle connection
+        # tested at once, dead ones replaced) and retries on a fresh connection.
+        self._pool = ConnectionPool(
+            dsn,
+            kwargs=self._connect_kwargs,
+            min_size=pool_min,
+            max_size=pool_max,
+            timeout=pool_timeout,
+            configure=self._configure_connection,
+            name="sig-api-read",
+            open=True,
+        )
+        # The connection the current thread's pooled read holds (see `_pooled`).
+        self._local = threading.local()
         # P25.10: the compute-on-read annotation set is memoised against the
         # spine watermark. The lock keeps the per-instance compute to once per
         # watermark under concurrent requests, and the compute itself runs on a
@@ -165,7 +329,121 @@ class PgReadStore:
         self._shaping_cache: _ShapingView | None = None
 
     def close(self) -> None:
-        self._conn.close()
+        self._pool.close()
+
+    # --- connections (P31.1) ---------------------------------------------------
+
+    def _configure_connection(self, conn: psycopg.Connection) -> None:
+        """Prepare a NEW pooled connection: the read role, applied every time."""
+        if self._role:
+            conn.execute(sql.SQL("SET ROLE {}").format(sql.Identifier(self._role)))
+
+    @property
+    def _conn(self) -> psycopg.Connection:
+        """The pooled connection the current thread's read holds."""
+        conn: psycopg.Connection | None = getattr(self._local, "conn", None)
+        if conn is None:
+            raise RuntimeError("PgReadStore: a read ran outside a pooled checkout")
+        return conn
+
+    def _run_read(self, read: Callable[[], _T], *, timeout: float | None = None) -> _T:
+        """Run ``read`` on a pooled connection; retry ONCE if that connection died.
+
+        Before the retry, every idle pooled connection is checked and the dead
+        ones replaced (a restart kills them all together), so the retry gets a
+        live connection. Re-entrant: if this thread already holds a pooled
+        connection (a nested read), ``read`` runs on it directly and the outer
+        read owns the retry. ``timeout`` overrides the pool checkout timeout.
+        """
+        if getattr(self._local, "conn", None) is not None:
+            return read()
+
+        def attempt() -> _T:
+            with self._pool.connection(timeout=timeout) as conn:
+                self._local.conn = conn
+                try:
+                    return read()
+                except psycopg.OperationalError as exc:
+                    if not isinstance(exc, psycopg.errors.QueryCanceled) and _is_lost(conn):
+                        raise _ConnectionLost() from exc
+                    raise
+                finally:
+                    self._local.conn = None
+
+        return self._retrying(attempt, on_lost=self._pool.check)
+
+    def _run_compute(self, compute: Callable[[psycopg.Connection], _T]) -> _T:
+        """Run a whole-spine compute on a fresh dedicated connection (retry once).
+
+        The annotation/shaping compute runs on its own connection (:meth:`_connect`),
+        opened for the compute and closed after, so it is never stale. It gets the
+        same retry-once-on-a-dropped-connection policy as a pooled read.
+        """
+
+        def attempt() -> _T:
+            try:
+                conn = self._connect()
+            except psycopg.OperationalError as exc:
+                raise _ConnectionLost() from exc
+            try:
+                return compute(conn)
+            except psycopg.OperationalError as exc:
+                if not isinstance(exc, psycopg.errors.QueryCanceled) and _is_lost(conn):
+                    raise _ConnectionLost() from exc
+                raise
+            finally:
+                conn.close()
+
+        return self._retrying(attempt)
+
+    @staticmethod
+    def _retrying(attempt: Callable[[], _T], *, on_lost: Callable[[], None] | None = None) -> _T:
+        """The one retry policy (P31.1, ADR-108).
+
+        Every read this store serves is idempotent, so ONE retry after the
+        connection itself died (Cloud SQL restart, ``pg_terminate_backend``) is
+        safe. Nothing else is retried: a statement timeout is a
+        :class:`~api.store.StoreQueryTimeout`; a pool that cannot hand out a
+        connection within its timeout (DB down, pool exhausted) and any other
+        operational error (the connection still alive) are
+        :class:`~api.store.StoreUnavailable`. Each surfaces as a 503, never a 500.
+        """
+        for n in (1, 2):
+            try:
+                return attempt()
+            except _ConnectionLost as exc:
+                if n == 2:
+                    raise StoreUnavailable("database connection lost") from exc.__cause__
+                if on_lost is not None:
+                    on_lost()
+            except psycopg.errors.QueryCanceled as exc:
+                raise StoreQueryTimeout("statement timeout") from exc
+            except PoolTimeout as exc:
+                raise StoreUnavailable("no database connection available") from exc
+            except psycopg.OperationalError as exc:
+                raise StoreUnavailable(f"database error: {type(exc).__name__}") from exc
+        raise AssertionError("unreachable")  # pragma: no cover
+
+    def health(self) -> StoreHealth:
+        """A cheap readiness check: can a pooled connection answer ``SELECT 1``?
+
+        The same path as every read (a dead connection is purged and retried
+        once), with a 3 s checkout budget; the pool counters are read after it.
+        """
+        detail = ""
+        try:
+            self._run_read(
+                lambda: self._conn.execute("SELECT 1").fetchone(),
+                timeout=min(self._pool.timeout, 3.0),
+            )
+        except StoreUnavailable as exc:
+            detail = type(exc.__cause__ or exc).__name__
+        stats = self._pool.get_stats()
+        pool = {
+            k: int(stats.get(k, 0))
+            for k in ("pool_min", "pool_max", "pool_size", "pool_available", "requests_waiting")
+        }
+        return StoreHealth(ok=not detail, backend="postgresql", detail=detail, pool=pool)
 
     # --- ReadStore -------------------------------------------------------------
 
@@ -187,6 +465,7 @@ class PgReadStore:
         ).fetchone()
         return None if row is None else str(row[0])
 
+    @_pooled
     def claims_for(
         self, subject_id: str, predicate_id: str, *, as_of_belief: datetime
     ) -> list[Claim]:
@@ -253,6 +532,7 @@ class PgReadStore:
             )
         return claims
 
+    @_pooled
     def entity(self, entity_type: str, entity_id: str) -> EntityRecord | None:
         resolved = self._resolve_entity(entity_id)
         if resolved is None:
@@ -310,6 +590,7 @@ class PgReadStore:
             ).fetchall()
         ]
 
+    @_pooled
     def stored_claim(self, claim_id: str) -> StoredClaim | None:
         if not _looks_like_uuid(claim_id):
             return None
@@ -354,6 +635,7 @@ class PgReadStore:
         )
         return StoredClaim(claim=claim, asserted_at=asserted_at, capture_ids=capture_ids)
 
+    @_pooled
     def capture(self, artifact_id: str, capture_id: str) -> CaptureMetadata | None:
         if not (_looks_like_uuid(artifact_id) and _looks_like_uuid(capture_id)):
             return None
@@ -384,6 +666,7 @@ class PgReadStore:
             claims_supported=claims_supported,
         )
 
+    @_pooled
     def rights_for(self, source_ids: tuple[str, ...]) -> list[RightsRecord]:
         if not source_ids:
             return []
@@ -429,6 +712,7 @@ class PgReadStore:
             )
         return out
 
+    @_pooled
     def coverage_for(self, scope: str) -> list[CoverageRecord]:
         # Persisted rows if any (P21.2), else compute-on-read (none yet for coverage).
         entity_id = self._resolve_entity(scope.split(":")[0]) or self._resolve_entity(scope)
@@ -456,29 +740,56 @@ class PgReadStore:
         # back-compatible feed (no change events).
         return []
 
-    def search(self, query: str) -> list[EntityRecord]:
-        q = query.strip()
-        if not q:
-            return []
-        rows = self._conn.execute(
-            "SELECT DISTINCT ei.entity_id, e.entity_type "
-            "  FROM entity_identifier ei JOIN entity e ON e.entity_id = ei.entity_id "
-            " WHERE ei.value ILIKE %s ORDER BY ei.entity_id",
-            (f"%{q}%",),
-        ).fetchall()
-        out: list[EntityRecord] = []
-        for r in rows:
-            entity_id = str(r[0])
-            out.append(
-                EntityRecord(
-                    entity_id=entity_id,
-                    entity_type=str(r[1]),
-                    label=self._label_for(entity_id),
-                    source_ids=tuple(self._source_ids_for_entity(entity_id)),
-                )
-            )
-        return out
+    @_pooled
+    def search(
+        self, query: str, *, limit: int = SEARCH_DEFAULT_LIMIT, after: str | None = None
+    ) -> list[EntityRecord]:
+        """One bounded, keyset-paginated page of matches (P31.1, ADR-108).
 
+        A constant four statements per page, whatever the page size (set the
+        statement timeout, then match, labels, sources). The timeout bounds EACH
+        statement; the match is the only statement whose cost depends on the
+        spine, while labels and sources are primary-key lookups over at most
+        ``limit`` ids. The pre-P31.1 shape was an unbounded match plus two
+        follow-up queries PER hit, which ran past the Cloud Run request timeout
+        on a broad term (D-P30.4-2).
+        """
+        q = query.strip()
+        if not q or limit < 1:
+            return []
+        if after is not None and not _looks_like_uuid(after):
+            raise InvalidSearchCursor(after)
+        params: dict[str, Any] = {"pattern": like_pattern(q), "limit": limit}
+        if after is not None:
+            params["after"] = after
+        conn = self._conn
+        with conn.transaction():
+            conn.execute(
+                "SELECT set_config('statement_timeout', %s, true)",
+                (f"{self._search_timeout_ms}ms",),
+            )
+            rows = conn.execute(
+                SEARCH_AFTER_SQL if after is not None else SEARCH_SQL, params
+            ).fetchall()
+            ids = [r[0] for r in rows]
+            labels: dict[str, str | None] = {}
+            sources: dict[str, list[str]] = {}
+            if ids:
+                for entity_id, label in conn.execute(_SEARCH_LABELS_SQL, (ids,)).fetchall():
+                    labels[str(entity_id)] = None if label is None else str(label)
+                for entity_id, source_id in conn.execute(_SEARCH_SOURCES_SQL, (ids,)).fetchall():
+                    sources.setdefault(str(entity_id), []).append(str(source_id))
+        return [
+            EntityRecord(
+                entity_id=str(entity_id),
+                entity_type=str(entity_type),
+                label=labels.get(str(entity_id)),
+                source_ids=tuple(sources.get(str(entity_id), ())),
+            )
+            for entity_id, entity_type in rows
+        ]
+
+    @_pooled
     def dossier(self, scope: str) -> DossierRecord | None:
         entity_id = self._resolve_entity(scope.split(":")[-1]) or self._resolve_entity(scope)
         # A jurisdiction/subject dossier is computed-on-read from its entities'
@@ -508,6 +819,7 @@ class PgReadStore:
             source_ids=tuple(sorted(source_ids)),
         )
 
+    @_pooled
     def crosswalk_rows(self) -> list[CrosswalkRecord]:
         rows = self._conn.execute(
             "SELECT entity_id, scheme, value FROM entity_identifier "
@@ -549,10 +861,16 @@ class PgReadStore:
         The compute runs several statements over the whole spine; on its own
         connection it can never interleave with a per-request read on
         ``self._conn``, and the same read role (RLS ceiling) applies.
+
+        P31.1: it is opened fresh for each compute (:meth:`_run_compute`, which
+        retries once on a dropped connection) and closed after, so it can never be
+        a stale connection. It is deliberately NOT drawn from the pool: the
+        compute runs under the annotation lock for seconds, and it must never
+        compete with request reads for a pool slot. It is the "+1" per instance in
+        the pool budget (module comment above).
         """
-        conn = psycopg.connect(self._dsn, autocommit=True)
-        if self._role:
-            conn.execute(f"SET ROLE {self._role}")
+        conn = psycopg.connect(self._dsn, **self._connect_kwargs)
+        self._configure_connection(conn)
         return conn
 
     def _spine_watermark(self) -> str:
@@ -725,18 +1043,28 @@ class PgReadStore:
         watermark so the spine is re-resolved at most once per instance per
         watermark: never more, and (append-only) never stale. The watermark is
         read BEFORE the data so the disclosed state never overstates freshness.
+
+        P31.1: the lock is taken BEFORE any pooled connection is checked out, so
+        requests queued on the lock hold no connection (a burst of annotation
+        requests can never drain the pool), and the whole-spine compute runs on
+        its own dedicated connection with no pooled connection held.
         """
         with self._annotation_lock:
-            watermark = self._spine_watermark()
-            persisted_c = self._persisted_contradictions()
-            persisted_t = self._persisted_tasks()
+            watermark, persisted_c, persisted_t = self._run_read(
+                lambda: (
+                    self._spine_watermark(),
+                    self._persisted_contradictions(),
+                    self._persisted_tasks(),
+                )
+            )
             if persisted_c and persisted_t:
                 view = _AnnotationView(persisted_c, persisted_t, watermark)
             else:
                 cached = self._annotation_cache
                 if cached is None or cached.watermark != watermark:
-                    with self._connect() as conn:
-                        computed_c, computed_t = self._compute_on_read(conn)
+                    computed_c, computed_t = self._run_compute(
+                        lambda conn: self._compute_on_read(conn)
+                    )
                     cached = _AnnotationView(computed_c, computed_t, watermark)
                     self._annotation_cache = cached
                 view = _AnnotationView(
@@ -812,19 +1140,19 @@ class PgReadStore:
     # resolved census.
 
     def _shaping_view(self) -> _ShapingView:
+        # P31.1: lock first, then a short pooled read, then the compute on its own
+        # connection (the same no-connection-held-while-queued rule as annotations).
         with self._annotation_lock:
-            watermark = self._spine_watermark()
+            watermark = self._run_read(self._spine_watermark)
             cached = self._shaping_cache
             if cached is None or cached.watermark != watermark:
-                conn = self._connect()
-                try:
-                    dataset = run_shaping(
+                dataset = self._run_compute(
+                    lambda conn: run_shaping(
                         conn,
                         as_of=datetime.now(tz=UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
                         spine_label="pg-store",
                     )
-                finally:
-                    conn.close()
+                )
                 cached = _ShapingView(dataset=dataset, watermark=watermark)
                 self._shaping_cache = cached
             return cached
@@ -862,6 +1190,7 @@ class PgReadStore:
         """Every publishable sharing edge with its access kind (§29.3)."""
         return list(self._shaping_view().dataset.sharing_edges)
 
+    @_pooled
     def resolve_id(self, id_type: str, uuid: str) -> IdDescriptor | None:
         row = self._conn.execute(
             "SELECT entity_id FROM entity_identifier WHERE scheme = %s AND value = %s",
@@ -892,8 +1221,21 @@ class PgReadStore:
 
 
 def build_pg_store(dsn: str, *, role: str | None = None) -> PgReadStore:
-    """Convenience builder for ``sig-api serve --dsn`` and tests."""
-    return PgReadStore(dsn, role=role)
+    """Build the store for ``sig-api serve --dsn`` (and tests).
+
+    The pool and search bounds read optional per-deploy overrides from the
+    environment (P31.1, ADR-108): ``SIG_API_POOL_MIN``, ``SIG_API_POOL_MAX``,
+    ``SIG_API_POOL_TIMEOUT_S``, ``SIG_API_SEARCH_TIMEOUT_MS``. Unset, the module
+    defaults apply; they fit the ``max_connections = 100`` budget at max-instances 2.
+    """
+    return PgReadStore(
+        dsn,
+        role=role,
+        pool_min=_env_int("SIG_API_POOL_MIN", DEFAULT_POOL_MIN),
+        pool_max=_env_int("SIG_API_POOL_MAX", DEFAULT_POOL_MAX),
+        pool_timeout=_env_float("SIG_API_POOL_TIMEOUT_S", DEFAULT_POOL_TIMEOUT_S),
+        search_timeout_ms=_env_int("SIG_API_SEARCH_TIMEOUT_MS", DEFAULT_SEARCH_TIMEOUT_MS),
+    )
 
 
 __all__ = ["PgReadStore", "build_pg_store"]

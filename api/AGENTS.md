@@ -11,9 +11,9 @@ adds to the root `AGENTS.md`.
 
 | File | Lines | Purpose |
 |---|---|---|
-| `api/src/api/app.py` | ~100 | the public read-API FastAPI app factory |
-| `api/src/api/routes.py` | ~450 | read routes (as-of, dereference, terms, prohibitions) |
-| `api/src/api/store_pg.py` | ~600 | `PgReadStore` — read-only view over the PG spine |
+| `api/src/api/app.py` | ~130 | the public read-API FastAPI app factory (+ `GET /health`, the 503 mapping) |
+| `api/src/api/routes.py` | ~520 | read routes (as-of, dereference, terms, prohibitions; bounded `/v1/search`) |
+| `api/src/api/store_pg.py` | ~1240 | `PgReadStore` — read-only view over the PG spine, on a self-healing pool (ADR-108) |
 | `api/src/api/store.py` | ~300 | the in-memory demo store the CLI serves by default |
 | `api/src/api/curation.py` | ~680 | `create_curation_app` — the gated, loopback-only write surface |
 | `api/src/api/tiers.py` | ~70 | sensitivity-tier filtering applied at the view layer |
@@ -43,6 +43,12 @@ adds to the root `AGENTS.md`.
    compute-on-read, not stored mutations. Don't add a write path here.
 3. **Sensitivity tiers are enforced at the view layer** (`tiers.py`), backed by RLS in `db/`. A route
    that bypasses the tier filter can leak a coordinate the sensitivity matrix forbids.
+4. **`PgReadStore` reads run on a pooled connection (ADR-108).** Every public read method is wrapped in
+   `@_pooled`, which checks out one connection for the call (`SET ROLE` is re-applied on every new connection);
+   a read whose connection died purges the pool's dead connections and retries once. `self._conn` is only valid inside such a call; a new public read method needs
+   `@_pooled` or it raises `RuntimeError`. Don't reintroduce a long-lived connection: it never recovers from a
+   Cloud SQL restart (D-P30.4-1). `/v1/search` is bounded (min 3 chars, `limit` ≤ 200, `next_cursor`); keep it
+   set-based, never a per-hit follow-up query.
 
 ## Terminology
 

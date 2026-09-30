@@ -30,6 +30,12 @@ url_env = "SIG_PROBE_API_URL"
 path = "/v1/coverage/okc"        # the §32.2 metrics surface over the real spine
 
 [[probes.targets]]
+name = "sig-api-health"          # P31.1 / ADR-108: store readiness. 200 = a pooled DB
+kind = "http"                    # connection answered SELECT 1; 503 = the DB is
+url_env = "SIG_PROBE_API_URL"    # unreachable or the pool is exhausted (DOWN). Not
+path = "/health"                 # /healthz: Cloud Run reserves some paths ending in "z".
+
+[[probes.targets]]
 name = "sig-web-root"
 kind = "http"
 url_env = "SIG_PROBE_WEB_URL"    # the public static site. Canonical public origin =

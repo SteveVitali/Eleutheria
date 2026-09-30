@@ -264,6 +264,26 @@ class SearchResponse(_Model):
     coverage: CoverageStatement
     license: LicenseStatement
     as_of: AsOfEcho
+    #: P31.1 (additive): the page size this response was capped at.
+    limit: int | None = None
+    #: P31.1 (additive): pass as ``cursor`` to fetch the next page; ``None`` when the
+    #: results are complete. Opaque to clients (keyset over ``entity_id``). A page may
+    #: hold fewer than ``limit`` results (even none) while ``next_cursor`` is set, when
+    #: non-public hits were filtered out: keep paging until it is ``None``.
+    next_cursor: str | None = None
+
+
+class HealthResponse(_Model):
+    """``GET /health`` (P31.1): readiness of the read store, never a device signal.
+
+    Not under ``/v1`` and not an as-of envelope: it describes this API process and
+    its database connection, not the graph.
+    """
+
+    status: str  # "ok" | "unavailable"
+    backend: str  # "postgresql" | "in-memory"
+    detail: str = ""
+    pool: dict[str, int] | None = None
 
 
 class CrosswalkRow(_Model):

@@ -239,3 +239,44 @@ SIG_OPS_GCS_BUCKET="$SIG_GCP_PROJECT-sig-restricted" sig-ops probe-history
 
 Zenodo/SWH deposits (HG-07, `D-P21.5-1`); real live source fetches (the placeholder
 target-URL plumbing, `D-P21.3-1`/`D-LIVE.1a-1`); Go-public flip (HG-11 + counsel).
+
+## 9. `sig-api` roll by pinned digest + reconnect drill (P31.1 / HARDEN.1, 2026-09-24)
+
+The first `sig-api` image since 2026-09-16 (operator-approved roll, LEDGER § GATE DECISIONS "Round 9
+ratification" Q2; ADR-108). Built from `git archive HEAD` via Cloud Build, **SHA-tagged, never `:latest`**, deployed
+by digest as a 0 % candidate, smoked on its tag URL, then promoted.
+
+| | digest | revision | tag / commit |
+|---|---|---|---|
+| **serving (P31.1)** | `sha256:21bb952672a264714d4c31c7e2373cdb17b1572da4858e5004f2d29e03fbbfb4` | `sig-api-00008-qir` (100 %, 2026-09-24T19:27Z) | `sig-api:api-10025fbe1fd8` / `10025fb` |
+| first P31.1 roll (superseded) | `sha256:a9ecaad6142d0c62c5498acfa3b8bbfcd80e764fdbb506a146406fd301d255d1` | `sig-api-00005-nem` (100 % 19:19–19:27Z) | `sig-api:api-fe0d4d344f7d` / `fe0d4d3` |
+| **rollback** (the 2026-09-16 image) | `sha256:cc6801119e82a72767f03f5955a36419e22f202166fed7b4d9259a25aec7fac8` | `sig-api-00004-jdj` | untagged |
+| `:latest` (unmoved) | `sha256:ebb6dab99fe689838ab1eb9ccc5fdea64ea5048f2622f4f0f110fa0d6fce487a` | — (still the scheduled jobs' image, P31.4 rolls them) | `latest` |
+
+```bash
+IMG="us-central1-docker.pkg.dev/$SIG_GCP_PROJECT/sig/sig-api"
+# build (SHA tag) — the materialize.sh do_image pattern with tag api-<sha12>, then:
+gcloud artifacts docker images describe "$IMG:api-<sha12>" --project "$SIG_GCP_PROJECT" \
+  --format='value(image_summary.digest)'
+# candidate at 0 % traffic, smoke it on its tag URL, then promote:
+gcloud run services update sig-api --region us-central1 --project "$SIG_GCP_PROJECT" \
+  --image "$IMG@sha256:<digest>" --no-traffic --tag <tag>
+gcloud run services update-traffic sig-api --to-latest --remove-tags <tag> \
+  --region us-central1 --project "$SIG_GCP_PROJECT"
+# ROLLBACK (never a label-only update, which re-resolves :latest — ADR-107 §5):
+gcloud run services update sig-api --region us-central1 --project "$SIG_GCP_PROJECT" \
+  --image "$IMG@sha256:cc6801119e82a72767f03f5955a36419e22f202166fed7b4d9259a25aec7fac8"
+```
+
+- **Access (observed 2026-09-24):** the service IAM policy binds `allUsers` → `roles/run.invoker`, i.e. the API is
+  publicly invokable (the §6 `--no-allow-unauthenticated` above describes the original Finish-line-A deploy).
+- **Health:** `GET /health` (not `/healthz`: Cloud Run's front end answers `/healthz` itself with a 404) → 200 +
+  pool counters, 503 when no pooled connection answers. `probe-hosted` target `sig-api-health`.
+- **After a `sig-pg` restart** the API reconnects on its own (ADR-108); redeploying the serving digest (ADR-107 §5)
+  is now only a fallback. Hosted proof of the served image's fast path is owed (D-P30.4-1, PARTIAL).
+- **Reconnect drill (operator-approved only):** as `sig` over `cloud-sql-proxy`,
+  `SELECT pid, pg_terminate_backend(pid) FROM pg_stat_activity WHERE application_name = 'sig-api' AND usename = 'sig'`
+  (the store tags every connection `application_name = sig-api`; nothing else matches), then time the next
+  DB-backed request. Drill of 2026-09-24T19:19:42Z and its result: `docs/build/runs/P31.1.md`.
+- **Schema:** sqitch change `entity_identifier_value_trgm` (pg_trgm + GIN trigram index, built CONCURRENTLY) deployed
+  with `ops/gcp/materialize.sh --apply schema` at 2026-09-24T19:12:58Z (17 MB).

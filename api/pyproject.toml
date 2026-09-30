@@ -24,6 +24,10 @@ dependencies = [
     "sig-db",
     "sig-resolution",
     "sig-exports",
+    # P31.1 / ADR-108: PgReadStore reads through a small, liveness-checked pool so
+    # the API survives a database restart (D-P30.4-1). >=3.2 for `check=`. LGPL-3.0,
+    # the same licence family as psycopg itself (scripts/ci/license_scan.py).
+    "psycopg-pool>=3.2,<4",
 ]
 
 [project.scripts]
