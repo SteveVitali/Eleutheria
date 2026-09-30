@@ -52,13 +52,21 @@ The next phase must, **in this order of truth**:
    the operator's own feedback** into product requirements.
 4. **Make the spec tell the truth** about operator decisions (amend with ADR-recorded waivers, or keep
    the obligation owed with a real plan).
-5. **Emit a ratified canonical next-phase plan and the build artifacts** (spec amendments, ADRs,
+5. **Close coverage blind spots** — an extremely careful, comprehensive web search for the data sources we are
+   missing (Flock, Axon and other public-private surveillance networks; missing geographies; missing technology
+   classes), reviewed, configured for ingestion and **ingested into production during the Round-11 build**
+   (added at the operator's request, §7.1).
+6. **Make the data radically transparent and exportable** — per-source exploration, links to ground truth, raw
+   and derived downloads, and public ingestion logs, metrics and timestamps (added at the operator's request, §7.1).
+7. **Emit a ratified canonical next-phase plan and the build artifacts** (spec amendments, ADRs,
    manifest rows 201+, ticket contracts, DEFERRALS/BACKLOG mapping, a repaired LEDGER seed) so a fresh
    `orchestrate-build` session can pick up exactly where we left off.
 
 **Out of scope for planning (Stages M/P/B):** implementing fixes, production changes (except Track 0
 items the operator separately approves), merging PRs, signing gates on the operator's behalf, doing or
-simulating human review.
+simulating human review. **New-source ingestion into production is Round-11 build work**: Stage P discovers,
+reviews and designs; the Round-11 tickets configure connectors and run the hosted ingests after the operator's
+per-source rights decisions (HG-03).
 
 ---
 
@@ -110,6 +118,11 @@ the operator confirms that exact text.
   `OPERATIONAL_READINESS.md §(f3)`, and targeted slices (`sed -n`, `grep`) only.
 - **P14 — No secrets.** Session transcripts and GCP reads may surface tokens; never copy a value into any
   artifact (`provided: yes/no` only).
+- **P15 — Source research is reproducible and conservative.** Every search query is logged (engine, query, date,
+  hits kept); every candidate is captured with its URL, publisher, retrieval time and terms/licence text verbatim;
+  availability is never treated as rights clearance; every candidate passes a Part VIII preflight (no person- or
+  plate-level data; officer names and search reasons in audit logs are flagged); mirrors and re-publications are
+  linked to their origin, never counted as independent.
 
 ---
 
@@ -130,6 +143,12 @@ the operator confirms that exact text.
 - **T7 — The live site under-serves the spec's design center — the local advocate with a council meeting
   in days who needs a printable dossier** (`docs/2_canonical_design_spec.md:5721-5730`, SIG-UI-002).
   (C1–C3, D1, D3)
+- **T8 — Coverage has material blind spots: whole geographies and whole technology classes are missing or thin,
+  and some high-yield public sources (vendor transparency portals, statutory ALPR reports, grant and procurement
+  records) are not yet ingested.** (I1–I7)
+- **T9 — Radical provenance transparency (every source explorable to its ground truth, raw and derived data
+  downloadable where licences allow, ingestion runs visible) is both SIG's clearest differentiator and the fastest
+  way to earn trust in its numbers.** (J1–J4, C3)
 
 ---
 
@@ -156,6 +175,10 @@ the operator confirms that exact text.
 | Skills (user-global, read-only here) | `~/agent-skills/skills/{orchestrate-build,implement-spec,decompose-spec,build-memory,reconcile-build,synthesize-spec}` | B5, B6, T3 |
 | 2026-09-30 review (this session) | Appendix A of this document; ephemeral captures in the session scratchpad (`…/scratchpad/live/`, **not durable**) | A2 seeds from it; C2 recaptures |
 | Operator memory notes | `~/.claude/projects/-Users-stevenvitali-Eleutheria/memory/*.md` | B5 context |
+| Source registry + targets | `connectors/src/connectors/data/sources.toml`, `live_targets.toml`, `ops/cadence.toml`, `tasks/src/tasks/data/acquisition_queue.toml` | I1, I7, J4 |
+| Prior source research | `docs/build/planning/2026-09-25-six-streams/research/S5-source-strategy.md` + `data/source-candidates.csv`; `docs/build/reports/{SOURCE_LIVE_OPS_MATRIX,ECOSYSTEM_CONNECTORS,STAGE5_CONNECTORS,RIGHTS_REVIEW_INDEX}.md`; `docs/build/reports/catalog_sweep_*.json`; `docs/build/reports/rights/`, `acquisition/` | I1, I7 |
+| Existing exposure surfaces | `exports/`, `api/`, `web/src/pages/` (downloads, `/data-freshness/`, `/evidence/`), public `manifest.json`, `ingest_run` / `ingest_run_completion` tables, GCS run rows | J1 |
+| The open web | web search + fetch (reproducible query logs, P15) | I2–I6, J2 |
 
 ---
 
@@ -170,6 +193,8 @@ GATE-M ─┬─ Track 0 (operator-approved ops actions; independent of planning
                         ├─ D1 operator feedback (before C6 is shown) ──┤
                         ├─ E1 ─ E2 ; E3 ; E4 ───────────┤              │
                         ├─ G1 ; H1 ─────────────────────┤              │
+                        ├─ I1 ─ I2 ─ I3,I4,I5,I6 ─ I7 ─ I8 ─────────────┤
+                        ├─ J1 ; J2 ─ J4 ─ J3 (after C2) ────────────────┤
                         │                               ▼              ▼
                         └──────────────── F1…F5 · D2 · D3 · G2 · G3 · H2
                                                         │
@@ -421,7 +446,7 @@ Each row block below gives: owner/mode · depends · inputs · method · output 
   cutover D-R10-MEMORY-1; which product fixes (from C4) must land first.
 - *Output:* `design/G2-activation.md`.
 
-**G3 — Release, deploy provenance and versioning model** · D · depends C2, G2
+**G3 — Release, deploy provenance and versioning model** · D · depends C2, G2, J3
 - *Method:* immutable release namespaces (P32.13) vs today's bucket-sync deploy; a release id/commit stamp in every page;
   republish cadence; tags on `main`; rollback.
 - *Output:* `design/G3-release-model.md`.
@@ -443,9 +468,111 @@ chain tip (`devin/p33-8-agent-docs-refresh`, PR #190)*
   new; required checks; how the orchestrator treats red CI (proposed: `blockedOn`).
 - *Output:* `design/H2-branch-ci.md`.
 
+### I. Source discovery and acquisition (added 2026-09-30 at the operator's request, §7.1)
+
+Goal: an extremely careful, rigorous and comprehensive search for the datasets SIG is missing — Flock, Axon and
+other public-private surveillance networks; missing geographies; missing technology classes — ending in a reviewed,
+prioritized acquisition backlog and an ingestion design that Round-11 tickets execute into production.
+
+**I1 — Current source-coverage map** · R, read-only · depends A1
+- *Inputs:* `sources.toml` (every row: ingestion_permitted, review status, licence), `live_targets.toml`,
+  `ops/cadence.toml`, hosted per-source volumes (read-only: public manifest/export freshness, API coverage routes,
+  GCS run rows), `acquisition_queue.toml` (27 Round-10 candidates), catalog sweeps, `SOURCE_LIVE_OPS_MATRIX.md`,
+  six-streams S5 research, the ontology's technology vocabulary.
+- *Method:* a matrix of source × technology class × geography (country / US state / county / city) × publisher
+  type × status (`ingested-live` · `permitted-not-ingested` · `gated` · `candidate` · `refused`); coverage counts per
+  class and geography against explicit denominators (all US states; the largest US cities and counties; agencies
+  known to contract with Flock/Axon/Motorola where evidenced); a ranked blind-spot list.
+- *Output:* `research/I1-source-coverage.md`, `data/source_coverage.csv`.
+
+**I2 — Source-search protocol and taxonomies** · D · depends I1
+- *Method:* define (a) the technology taxonomy (e.g. fixed and mobile ALPR and their sharing networks; RTCC and
+  camera-integration platforms; private-camera registries and partnerships; drones / drone-as-first-responder; gunshot
+  detection; face recognition; cell-site simulators; social-media monitoring; mobile forensics; video analytics;
+  school surveillance; data brokers; body-worn cameras and evidence platforms; fusion centers) mapped to the ontology;
+  (b) the discovery-channel taxonomy (vendor transparency portals; government open-data portals; statutory reporting
+  such as state ALPR audits and policies; CCOPS / surveillance-ordinance annual reports; council agendas; procurement
+  and cooperative contracts; federal and state grants; legislation; court records; records-request corpora; NGO,
+  journalism and academic datasets; crowdsourced maps; international equivalents); (c) the geography frame; (d) the
+  query matrix, snowballing rules, inclusion/exclusion criteria, a saturation stopping rule per cell, and the
+  candidate schema (§8.6); (e) how the fan-out rows split the matrix without overlap.
+- *Output:* `design/I2-source-search-protocol.md`.
+
+**I3–I6 — Deep web research fan-out** · R, web research · each depends I2 · run in parallel, one fresh context each,
+all following the I2 protocol and logging every query (P15)
+- **I3 — ALPR and public-private camera networks:** Flock (per-agency transparency portals at scale, sharing
+  networks, Raven/Aerodome/integration products, customer evidence from procurement and agendas, released audit
+  logs), Motorola Solutions / Vigilant (LEARN sharing), Axon (Fleet in-car ALPR, Fusus RTCC camera registries),
+  Genetec, Rekor, Leonardo/ELSAG and others; statutory ALPR reporting regimes by state.
+- **I4 — Other technology classes:** drones/DFR, gunshot detection, face recognition, RTCC and fusion centers,
+  cell-site simulators, social-media monitoring, forensics, video analytics, school surveillance, data brokers,
+  body-worn cameras and evidence platforms.
+- **I5 — Geography gaps:** the I1 blind spots (US states, counties and cities with zero or thin coverage; tribal and
+  territorial; priority international regions) — find the best sources per gap.
+- **I6 — Cross-cutting evidence channels:** procurement and cooperative contracts (city/state registers, Sourcewell,
+  NASPO, GSA), federal and state grants (DOJ/BJA, COPS, DHS/FEMA beyond what is ingested), legislation and CCOPS
+  reports, court records, records-request corpora (MuckRock, DocumentCloud), NGO/journalism/academic datasets.
+- *Output per row:* `research/I<n>-<slug>.md`, `data/candidates_I<n>.csv` (§8.6), `data/query_log_I<n>.csv`.
+
+**I7 — Candidate consolidation and review packets** · R/D · depends I3–I6
+- *Method:* merge and de-duplicate candidates against the registry, the 27-row acquisition queue and each other
+  (lineage: origin vs mirror); capture terms/licence verbatim; Part VIII preflight; acquisition feasibility (access
+  mode, format, volume, cadence, connector reuse — ArcGIS/Socrata/CKAN/Legistar/document adapters); score with the
+  existing `acq-score/1` model (extended if needed, with rationale); produce the prioritized acquisition backlog and
+  operator-ready HG-03 decision packets (proposed registry rows are written as planning data, never into
+  `sources.toml`).
+- *Output:* `research/I7-candidates.md`, `data/candidates_consolidated.csv`, `design/I7-rights-packets.md`.
+
+**I8 — Acquisition and ingestion design** · D · depends I7, G1
+- *Method:* for the prioritized candidates: connector design (reuse vs new), registry/targets/cadence changes,
+  hosted ingest plan (jobs, digest-pinned images, cadence, volume, Cloud SQL disk/tier headroom, cost), entity
+  resolution impact (dedupe against OSM/DeFlock/existing sites; mirror non-independence), Part VIII enforcement,
+  rematerialization and republish, verification (captures landed, claims > 0, `+0` re-run, coverage movement per
+  blind spot), and the Round-11 ticket outline that configures and ingests them into production.
+- *Output:* `design/I8-acquisition-design.md`.
+
+### J. Data transparency and export surface (added 2026-09-30 at the operator's request, §7.1)
+
+Goal: make the data itself easy to explore and export from the public site — every third-party source explorable,
+linked to its ground truth, raw and derived data downloadable where licences allow, and ingestion logs, metrics and
+timestamps public — for maximal transparency.
+
+**J1 — Current exposure inventory** · R, read-only · depends A1
+- *Method:* what is public today (licence-separated downloads, `manifest.json`, `/data-freshness/`, `/evidence/`, API
+  routes incl. `/v1/export`, citation/as-of blocks) vs what exists only internally (`ingest_run` +
+  `ingest_run_completion`, GCS run rows, OCFL captures and `evidence_capture`, claim provenance, rights records, robots
+  verdicts, probe history); per item: where it lives, whether it could be exposed, and the constraint (licence,
+  Part VIII, restricted compartment, withdrawal barrier, egress cost).
+- *Output:* `research/J1-exposure-inventory.md`.
+
+**J2 — Prior art and standards (web research)** · R · depends A1
+- *Method:* how leading open-data and transparency projects expose sources, provenance, downloads, update logs and
+  data quality (e.g. OpenSanctions dataset pages, OpenStreetMap, Wikidata references, Our World in Data, ProPublica
+  Data Store, OpenCorporates, Atlas of Surveillance, DeFlock); standards (DCAT / DCAT-US, schema.org `Dataset`,
+  Frictionless Data Package, W3C PROV, CSVW); versioned releases, checksums and signing; public status/ingestion
+  pages. Logged queries (P15).
+- *Output:* `research/J2-prior-art.md`.
+
+**J4 — Redistribution and feasibility matrix** · R/D · depends J1, I1
+- *Method:* per registry source: raw-bytes redistribution status (`raw-ok` · `derived-only` · `link-only` ·
+  `restricted`) from recorded licences/terms; volume and egress/storage estimates for raw and derived downloads
+  (§38.5 egress risk); what may be shown of ingestion logs (scrub secrets, internal paths, PII).
+- *Output:* `research/J4-redistribution-matrix.md`, `data/redistribution.csv`.
+
+**J3 — Transparency and export design** · D · depends J1, J2, J4, C2
+- *Method:* the source explorer (index + per-source page: publisher, description, licence and redistribution status,
+  upstream ground-truth links, capture history with timestamps and content hashes, ingestion run log with metrics —
+  fetched, parsed, claims added/duplicate/rejected, errors — freshness and cadence, coverage by geography and
+  technology, sample records, rights-review record, known issues); per-record provenance (claim → capture → upstream
+  URL, retrieval time, hash, "view original"); bulk downloads (per compartment and per release, formats, checksums,
+  data dictionary and schema docs; API parity); how the export pipeline generates all of it from read-only spine
+  views and run records; zero-JS content-page constraints; licence gating; Part VIII and withdrawal; cost. Draft
+  requirements (SIG-*) and the Round-11 ticket outline; interfaces with G3 (release model) and C findings.
+- *Output:* `design/J3-transparency-design.md`.
+
 ### S. Synthesis → the canonical next-phase plan
 
-**S1 — Universe consolidation and dispositions** · S · depends A2, A3, B*, C6, D2, E*, F*, G*, H*
+**S1 — Universe consolidation and dispositions** · S · depends A2, A3, B*, C6, D2, E*, F*, G*, H*, I*, J*
 - Merge the universe with every finding (F-ids) and feedback item (U-ids); exactly one disposition each (§8.1);
   re-run the A1 delta and fold in any baseline change. *Done when* the completeness/non-duplication check is green.
 
@@ -523,6 +650,11 @@ Recommendations are mine; decisions are yours. **Q-1…Q-6 block the start of St
 | Q-16 | Execution harness for Round 11 (Claude Code / Devin / Codex) | Decide after B5 reports | T5 |
 | Q-17 | Naming: Round 11 = phases P34+ and manifest rows 201+? | Yes | T1, T3 |
 | Q-18 | Include the optional landscape scan (C5)? | Yes, time-boxed | C5 |
+| Q-19 | Rights stance for newly discovered sources: apply GL-GATE-07 ("err on the side of approving") by default, or decide per batch? | Per-batch HG-03 packets with GL-GATE-07 as the default; anything flagged by the Part VIII preflight decided individually | I7, I8 |
+| Q-20 | Sources, geographies or vendors you already know are missing (captured via D1 Q-D1-13) | — | I2 |
+| Q-21 | Budget for paid data sources or services (e.g. commercial procurement databases) | Assume zero unless stated | I7 |
+| Q-22 | Transparency defaults: publish raw captured bytes where the licence permits? Publish ingestion run logs (scrubbed)? | Yes to both, licence-gated and scrubbed | J3 |
+| Q-23 | Acceptable Cloud SQL growth/cost for new ingestion (disk 15 GB, `db-custom-1-3840` today) | State a ceiling (feeds Q-10) | I8 |
 
 ### 7.1 Decisions recorded at GATE-M (2026-09-30T16:16Z)
 
@@ -550,6 +682,22 @@ my answers to the questionairre interactively in Claude one by one"*
 | PITR (Track 0.1 remainder) | **delegated to the agent** → enabled in a quiet window | done 16:28–16:31Z; one 503 during restart, self-recovered (`baseline/TRACK0_RECORD.md`) |
 | Track 0.3 MapRoulette key | **stays unrotated for now** (operator-accepted) | recorded as an accepted risk; G1 carries it |
 | D1 mode | **interactive, one question at a time in the chat, when needed** | the planning orchestrator asks Q-D1-01…25 in order and logs answers verbatim to `feedback/OPERATOR_FEEDBACK.md` |
+
+Scope addition, operator verbatim (2026-09-30, during Wave 2): *"Please continue as you are. The
+research/planning/synthesis/design/etc. process so far looks good and should proceed. I want to make on
+adjustment/addition, which is that we should add research/synthesis/design stream(s) to do deep research on the web
+into additional data sources that we might be missing for Flock, Axon, or other public-private surveillance networks.
+We may find that we are missing entire geographies or classes of surveillance technology. I want as part of this next
+pass for us to do an extremely careful, rigorous, and comprehensive search and review of additional datasets we might
+be missing and to configure them for ingestion and ingest them into prod. Additionally, I want us to do some research
+and design work into making the data itself easily exportable from the public website, including the ability to
+explore each third party source, link to the ground truth, download the raw data, and see ingestion logs/metrics/timestamps
+or whatever for maximal transparency. Please continue current work and fold these streams into your process"*
+
+| item | decision | consequence |
+|---|---|---|
+| New Stream I (source discovery and acquisition) | **added** | rows I1–I8 (§6); the resulting sources are configured and ingested into production by Round-11 tickets after per-source HG-03 decisions; §1 item 5, T8, P15, Q-19…Q-21, Q-23 |
+| New Stream J (data transparency and export) | **added** | rows J1–J4 (§6); feeds G3 and the Round-11 product tickets; §1 item 6, T9, Q-22 |
 
 ---
 
@@ -595,6 +743,16 @@ docs/build/planning/2026-09-30-next-phase/
   NEXT_PHASE_PLAN.md        # S3 output (canonical once GATE-P signs)
   HANDOFF.md                # T6
 ```
+Streams I and J write their notes under `research/` and `design/` and their tables under `data/`
+(`source_coverage.csv`, `candidates_I<n>.csv`, `query_log_I<n>.csv`, `candidates_consolidated.csv`,
+`redistribution.csv`).
+
+### 8.6 Source candidate (`data/candidates_*.csv`)
+`cand_id, name, url, publisher, publisher_type (vendor-portal|gov-open-data|statutory-report|ccops-report|agenda|procurement|grant|legislation|court|records-release|ngo|journalism|academic|crowdsourced|other),
+technology_classes, geographies, coverage_estimate, format_access (api|bulk-file|html|pdf|arcgis|socrata|ckan|other),
+update_cadence, volume_estimate, terms_url, terms_verbatim_excerpt, licence_guess, rights_lane, part_viii_flags,
+lineage (origin|mirror-of:<id>|derived-from:<id>), registry_match (new|same-as:<source_id>|related:<source_id>),
+connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, notes`.
 
 ---
 
@@ -608,13 +766,15 @@ docs/build/planning/2026-09-30-next-phase/
   `findings/FINDINGS.csv`; workers return rows and never write shared files (the Round-10 concurrency lesson).
 - **Parallelism.** Read-only rows with disjoint outputs may run concurrently. Waves:
   - *Wave 1:* A1.
-  - *Wave 2:* A2, A3, B1, B2, C1, D1 (operator), E1, E3, E4, G1, H1.
-  - *Wave 3:* B3, C2, C3, C4, (C5), E2, F2, F3.
-  - *Wave 4:* B4, B5, C6, F1, F5, G2.
-  - *Wave 5:* B6, D2, F4, G3, H2, then D3.
+  - *Wave 2:* A2, A3, B1, B2, C1, D1 (operator), E1, E3, E4, G1, H1; **I1, J1, J2** (added).
+  - *Wave 3:* B3, C2, C3, C4, (C5), E2, F2, F3; **I2, J4**.
+  - *Wave 3b:* **I3, I4, I5, I6** (parallel, after I2).
+  - *Wave 4:* B4, B5, C6, F1, F5, G2; **I7, J3** (J3 after C2).
+  - *Wave 5:* B6, D2, F4, G3, H2, **I8**, then D3.
   - *Wave 6:* S1 → S2 → S3 → S4 → S5.
   - *Stage B:* T1 → T2 → T3 → T4 → T5 → T6.
-- **Size.** 43 rows (about 35 agent rows plus operator sessions D1, D2, D3, E decisions, S5, GATE-B).
+- **Size.** 55 rows (43 + Streams I and J: 8 + 4), about 47 agent rows plus operator sessions D1, D2, D3, E and I
+  rights decisions, S5, GATE-B.
 - **Pauses.** The orchestrator stops at GATE-M, at D1 (waiting for the operator), at D2, at S5 and at GATE-B, and
   whenever a row is `blocked-on-operator`. `pauseRequested: true` in the CURRENT STATE block is honoured at the next
   row boundary.
@@ -635,6 +795,9 @@ docs/build/planning/2026-09-30-next-phase/
 | Over-optimism about human work | E3 states effort and sourcing honestly; F4 plans for "none sourced" too |
 | Planning drifts into doing | P3/P10; Track 0 is the only execution path and needs a per-action go |
 | Agent review mistaken for user research | P5 labels agent walkthroughs as such; D-R10-USERS-1 stays owed until real participants exist |
+| Source search is shallow or unreproducible | I2 protocol with a query matrix, saturation stopping rule and logged queries (P15); I7 de-duplicates and checks lineage |
+| New sources raise rights or Part VIII exposure | availability ≠ clearance; Part VIII preflight per candidate; per-batch HG-03 packets (Q-19); nothing enters `sources.toml` during planning |
+| Transparency features leak restricted data or cost too much | J4 redistribution matrix + egress estimates; licence gating, scrubbing and withdrawal barrier in J3 |
 
 ---
 
@@ -651,6 +814,9 @@ docs/build/planning/2026-09-30-next-phase/
   in `findings/incoming/A1.csv` (chain tip not descended from `origin/main` lockfile commit; scheduled `reingest` workflow
   failing on `main` 6/6; `sig-pg` deletion protection OFF; 9 Cloud Run jobs without triggers). F-12 narrowed: only the
   `sig-alerts` service uses `:latest`. Chrome tools not connected in this session — operator to run `/chrome` before C2.
+- 2026-09-30T16:45Z — Wave 2 dispatched (A2, A3, B1, B2, C1, E1, E3, E4, G1, H1). **Scope addition by the operator
+  (§7.1): Stream I (source discovery and acquisition, I1–I8) and Stream J (data transparency and export, J1–J4)**; §1
+  items 5–6, T8–T9, P15, Q-19…Q-23, §8.6, waves and size updated (55 rows).
 
 ---
 
