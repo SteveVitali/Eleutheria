@@ -922,6 +922,14 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   Proposed Round-11 themes: R11-TRUTH, -GOV, -HUMAN, -OPS, -RECORD, -SOURCES, -TRANSPARENCY, -DATAMODEL, -DEBT,
   OPERATOR-QUEUE, LATER-PHASE, ADR-TRIGGER-REGISTER. 11 incoming findings (incl. live API minting `https://sig.example/id/`
   placeholder IRIs).
+- 2026-09-30T19:20Z — **C3 done** (`review/DATA_TRUTH.md`, `data/number_trace.csv`, 453 traced numbers: 378 match, 50 mismatch, 22
+  ambiguous, 2 untraceable, 1 stale). Release files are internally consistent; the defects are page claims and the API.
+  **S0:** C3 NEW-1 the public API `/v1/dossier/{scope}` returns the same placeholder subjects/sources for every scope;
+  C3 NEW-2 personal ArcGIS account handles embedded in public source ids (Part VIII; redacted in the committed CSV).
+  S1: site-wide provenance block on every dossier; "human-verified" holdout false; coverage "resolved" vs 5,290
+  conflicted; points outside their jurisdiction (CA←FL 838, GB-ENG axis-swapped 562, TH←HK 155, ID←Indonesia/Idaho);
+  "0 stale" when not evaluable; map attribution to "SIG contributors"; API coverage "complete" with 0 evaluated.
+  Systemic causes recorded. 21 incoming findings.
 
 ---
 
