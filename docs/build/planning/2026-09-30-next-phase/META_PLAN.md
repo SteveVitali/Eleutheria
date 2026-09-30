@@ -1582,6 +1582,21 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   across K1/K2/K14; four notes each name another as SVG-generator owner; strict CSP would break self-styled SVG downloads).
   **K13 dispatched** (reconciles these).
 - 2026-09-30T23:02:13Z — Findings re-merged (`tools/merge_findings.py`): 
+- 2026-09-30T23:14:38Z — **L3 done** (`design/L3-confidence-program.md`): prerequisites before any evaluation = CP-0 quality harness + read-only
+  audit login → CP-1 claim identity → CP-2 subject keys → CP-4 declared lineage/independence; CP-8 evidence bound to real bytes
+  for any reviewer; camera matching also needs CP-5 geography + CP-6 technology typing (F5); edges/orgs need CP-3 typing, CP-7
+  roles/time, CP-10 org identity; contradictions need CP-9 resolver fixes. **Invariant suite: L1 17 + L2 14 → 23 deduplicated + 4
+  = 27 checks**; mechanical checks gate; "ratchet" mode (no regression past today; hard-enforce when the fixing ticket lands) since
+  29/45 L2 metrics fail today; runs at ingest, nightly DB probe, release gate V15, PR tests over real-data slices; ≤$5/mo.
+  Evaluation: automatic (upstream-id checks, re-fetch samples with exact bounds, synthetic perturbation, known-distinct pairs,
+  invariance, spatial, count reconciliation); agent review = two blind runs, labelled, never gating; operator = blind-first
+  20-item check per signed release (~20–40 min), disclosed non-independent. **Not claimable:** "human-verified"/"certified", any
+  cross-source camera-match precision figure, 0.98 certification. **Auto-write policy:** merge only provable copies of one
+  upstream record; everything else published as "possible duplicate" with ranged counts. Rows 184–187 **superseded, not
+  executed**; no human rows seeded in Round 11; D-R10-HUMAN-1 stays OPEN with trigger T-EVAL-IND (independent reviewers
+  available + contact authorized). EVAL-001 MET-ENGINEERED, 002 PARTIAL, 003 MET, 004 WAIVED(ADR, copy tiers), 005/007 owed,
+  006 MET. Tickets CONF-01…14 (CONF-02 in wave 0). 4 findings. **Stream L complete; Stage P research/design rows complete
+  except K13.**
 
 ---
 
