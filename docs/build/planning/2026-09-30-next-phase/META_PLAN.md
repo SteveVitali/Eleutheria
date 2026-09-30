@@ -655,6 +655,11 @@ Recommendations are mine; decisions are yours. **Q-1…Q-6 block the start of St
 | Q-21 | Budget for paid data sources or services (e.g. commercial procurement databases) | Assume zero unless stated | I7 |
 | Q-22 | Transparency defaults: publish raw captured bytes where the licence permits? Publish ingestion run logs (scrubbed)? | Yes to both, licence-gated and scrubbed | J3 |
 | Q-23 | Acceptable Cloud SQL growth/cost for new ingestion (disk 15 GB, `db-custom-1-3840` today) | State a ceiling (feeds Q-10) | I8 |
+| Q-24 | (from E3) Confirmatory evaluation goal: try to certify the 0.98 auto-write gate, or measure precision only and keep auto-write provisional? Which tier(s)? (149 pairs/tier minimum; certification is unlikely to pass even at true 99% precision) | Decide at S5 with E3 numbers | F4 |
+| Q-25 | (from E3) May the operator hold the custodian / method-reviewer / adjudicator seats with public disclosure? | Custodian + method reviewer yes (disclosed); adjudicator external | F4, E2 |
+| Q-26 | (from E3) Who gave the counsel determinations recorded in ADR-086 and ADR-106, and would they write a dated opinion? | — | E2 |
+| Q-27 | (from E3) Should the correction-intake receiver open next phase, and who is the backup moderator? | — | G2 |
+| Q-28 | (from E3) Authorize recruiting volunteer reviewers from the DeFlock / EFF / MuckRock communities? (outward contact) | Decide at S5 | F4 |
 
 ### 7.1 Decisions recorded at GATE-M (2026-09-30T16:16Z)
 
@@ -817,6 +822,10 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
 - 2026-09-30T16:45Z — Wave 2 dispatched (A2, A3, B1, B2, C1, E1, E3, E4, G1, H1). **Scope addition by the operator
   (§7.1): Stream I (source discovery and acquisition, I1–I8) and Stream J (data transparency and export, J1–J4)**; §1
   items 5–6, T8–T9, P15, Q-19…Q-23, §8.6, waves and size updated (55 rows).
+- 2026-09-30T16:58Z — **E3 done** (`research/E3-human-work.md`): minimal honest human program ≈145–375 person-hours / 3–5 months;
+  $0–1k (volunteer/pro bono) to ~$6k–25k (all paid, web estimates); 0.98 gate needs ≥149 pairs/tier and is unlikely to
+  certify. 8 incoming findings incl. S1: `/editorial-standards/` publicly shows a completed two-reviewer "hostile-reader
+  review" by placeholder reviewers from a fixture. Q-24…Q-28 added.
 
 ---
 
