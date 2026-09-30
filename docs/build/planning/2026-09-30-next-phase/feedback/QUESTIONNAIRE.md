@@ -185,3 +185,25 @@ Any of these works, and partial answers are welcome:
 However you answer, your words are recorded unchanged in `feedback/OPERATOR_FEEDBACK.md`, each
 with a `U-nnn` id. You can add to or correct any answer later, before or after you see the review;
 a correction is recorded alongside the original rather than replacing it.
+
+---
+
+## Consolidated round (operator request, 2026-09-30T21:41:18Z): the remaining questions, asked all at once
+
+Operator, verbatim: *"Since there are 22 more questions to answer, perhaps we can consolidate these questions somewhat and you
+can just ask them all at once and I'll answer all at once"*. Q-D1-05, Q-D1-14 and Q-D1-24 are treated as answered by U-003
+(operator may add to them). Mapping of consolidated items to the original ids:
+
+| item | original questions |
+|---|---|
+| C-1 what works / keep | Q-D1-04 |
+| C-2 would you send it; what worries you | Q-D1-06, Q-D1-07 |
+| C-3 trust and accuracy | Q-D1-08, Q-D1-09, Q-D1-10 |
+| C-4 next-phase outcomes and scope | Q-D1-11, Q-D1-12, Q-D1-13 |
+| C-5 time, money, people | Q-D1-15, Q-D1-16, Q-D1-17 |
+| C-6 visibility and risk tolerance | Q-D1-18 |
+| C-7 red lines; decisions to reopen | Q-D1-19, Q-D1-20 |
+| C-8 agent autonomy | Q-D1-21 |
+| C-9 how the build ran; check-ins | Q-D1-22, Q-D1-23 |
+| C-10 anything else | Q-D1-25 |
+| F-1…F-3 (optional quick facts) | META_PLAN Q-26, Q-30; B5 §8 |

@@ -1334,6 +1334,9 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   13/36 thin cities, 28/29 technology classes; + Tier 2 → 8/10, 25/36, all classes, 18 countries; still dark: MS, WY, MT, KS,
   SD, AS, MP, North Las Vegas, and Flock's own data. 62 terms fetches, no identity sent (P16). 8 incoming findings. **I8
   dispatched.**
+- 2026-09-30T21:41:18Z — **D1 consolidated at the operator's request:** the 19 unanswered questions merged into 10 grouped items (C-1…C-10) + 3
+  optional quick facts (F-1…F-3), asked at once; Q-D1-05/14/24 treated as answered by U-003. Mapping in
+  `feedback/QUESTIONNAIRE.md` § Consolidated round.
 
 ---
 
