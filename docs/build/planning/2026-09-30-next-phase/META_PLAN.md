@@ -132,6 +132,9 @@ the operator confirms that exact text.
   service (e.g. as a `User-Agent`/`From` contact header, form field or API parameter). Where a service requires a contact
   string (e.g. SEC EDGAR), stop and record the need; the operator approves a project contact string before any such
   request. The operator's address is used only for the purposes the operator named (alerts, the public dispute contact).
+  *Amended 2026-09-30T21:59:00Z (U-014):* the operator approved "Steven Vitali" + the operator's address as the project contact string for
+  services that require one (until a `contact@surveillancegraph.org` alias exists); planning rows still make no such
+  requests — this applies to Round-11 connectors.
 
 ---
 
@@ -707,9 +710,57 @@ available to this session).
   transparency (J3) and releases (G3).
 - *Output:* `design/K13-ux-synthesis.md`, `data/k13_requirements.csv`.
 
+**K14 — Visual design, clarity and onboarding narrative (added 2026-09-30T21:59:00Z from U-004/U-007)** · P/D · depends K0, K12a, K12b, C2
+- "Beautiful", intuitive, and clear about what SIG is, why it exists and what it can do: landing/about/how-it-works narrative,
+  first-visit guidance per persona, plain-language layer over the precise definitions the operator values (U-004: keep the
+  technical precision and the methodology/editorial standards), visual design system (type, color incl. dark mode, spacing,
+  components, data-viz conventions for support/contradiction/uncertainty), copy de-verbosing (U-005: UI "confusing and
+  verbose"), and how the design supports public announcement (U-009).
+- *Output:* `design/K14-visual-and-onboarding.md`.
+
+### L. Knowledge-graph correctness and confidence (added 2026-09-30T21:59:00Z from U-006/U-007/U-008)
+
+Goal: the operator is "not that confident" in how disparate sources with disparate schemas become a deduplicated graph of
+relations (U-006) and wants "increased confidence in algorithms used to turn raw ingested data into synthesized knowledge
+graph" (U-007) — with **no humans besides the operator** (U-008). This stream audits the pipeline end to end, measures its
+quality with evidence, and designs a confidence program that is honest about what can and cannot be claimed without
+independent human review. It supersedes F4's external-labeler assumption.
+
+**L1 — Synthesis pipeline audit** · R/A · depends A1
+- Trace, with code and recorded executions, how a source becomes graph facts: connector → capture → parse/extract → typed
+  claims (predicates, qualifiers, directness, time) → identity (crosswalks, entity keys) → resolution (deterministic
+  cascade, Splink tiers, geospatial camera-site ER, auto-write floors) → §28 value resolution and §29 reconciliation →
+  contradictions → materialization (resolution, edges, coverage, accountability) → export shaping → public pages/API.
+  At each seam: the algorithm, its assumptions, known failure modes (e.g. jurisdiction per source; all cameras typed
+  `traffic_camera`; mirror non-independence; entity labels lost; 70% of site rows reaching no dossier), tests that exist, and
+  what is unverified.
+- *Output:* `research/L1-pipeline-audit.md` (with a seam diagram).
+
+**L2 — Measured quality of the live graph** · R, read-only · depends A1, L1 (can start in parallel)
+- Automated, evidence-backed measurements over the release files and read-only hosted queries (existing roles; P3): duplicate
+  and near-duplicate rates, cross-source agreement/disagreement, mirror-vs-origin double counting, spatial sanity
+  (points outside their jurisdiction, axis swaps, precision), type errors, orphan entities/edges, unlabeled nodes, stale
+  edges, claim→evidence completeness, per-source contribution and error rates; sample-based agent inspection clearly
+  labelled as agent review (never "human-verified").
+- *Output:* `research/L2-graph-quality.md`, `data/l2_metrics.csv`.
+
+**L3 — Confidence program without independent humans** · D · depends L1, L2, F4, E3
+- What can honestly raise confidence given only the operator + agents: automated invariants and regression suites over real
+  data, cross-source corroboration scores, conservative auto-write policies, operator-only spot checks with disclosed
+  non-independence, agent-assisted review clearly labelled, public error reporting (intake), and what must stay PROVISIONAL
+  or be disclosed; which SIG-EVAL requirements become WAIVED(ADR) vs owed; replacement for rows 184–187 (reconciling F4).
+- *Output:* `design/L3-confidence-program.md`.
+
+**B7 — Harness attribution for untrailered commits (added 2026-09-30T21:59:00Z from U-015)** · R · depends A1
+- Establish, from git metadata (author/committer, trailers, message style, timestamps vs known session windows, co-located
+  memory/log files, PR metadata), which harness/model produced the untrailered Round 9–10 stretches; state confidence per
+  stretch; and settle B5 §8's questions as far as evidence allows (the operator does not recall whether the full GATE-G3 /
+  ACCEPT-R10 readout texts were seen — record that honestly).
+- *Output:* `research/B7-harness-attribution.md`.
+
 ### S. Synthesis → the canonical next-phase plan
 
-**S1 — Universe consolidation and dispositions** · S · depends A2, A3, B*, C6, D2, E*, F*, G*, H*, I*, J*, K*
+**S1 — Universe consolidation and dispositions** · S · depends A2, A3, B*, C6, D2, E*, F*, G*, H*, I*, J*, K*, L*
 - Merge the universe with every finding (F-ids) and feedback item (U-ids); exactly one disposition each (§8.1);
   re-run the A1 delta and fold in any baseline change. *Done when* the completeness/non-duplication check is green.
 
@@ -872,6 +923,21 @@ ask + an instruction to add the agent's own ideas from web research and browser 
 | Stream K (product UX) | **added** — one dedicated row per ask U-003.1…11 (K1–K11) plus K0 architecture, K12a prior art, K12b browser review, K13 synthesis | §1 item 7, T10; waves updated |
 | Basemap | operator wants a real map layer — **reverses the Round-9 Q8 "no basemap" answer** | K1 designs it; new ADR at T1 |
 | Zero-JS on content pages | operator asks to "think and research and reason carefully about perhaps breaking with our no-JS constraints" | K0 re-decides it; ADR at T1 superseding/extending ADR-068/091/097/134 |
+
+D1 completed (2026-09-30T21:59:00Z) — consolidated answers U-004…U-015 logged verbatim in `feedback/OPERATOR_FEEDBACK.md`. Decisions taken
+from them (agent interpretation labelled there; ratified at S5):
+
+| item | decision | consequence |
+|---|---|---|
+| Q-8 human work | **no humans besides the operator** (U-008) | F4 Option B infeasible now → Stream L (L3) re-plans evaluation; E3's external roles unavailable |
+| Q-10 / Q-23 cost | **target ≤ $300/mo total; up to ~$1,000/mo only for features that merit it, and only with the operator's explicit go after a shown trade-off** (U-008) | every design (G1, I8, J3, K0–K3) states monthly cost; any plan > $300/mo is flagged for approval |
+| Q-26 counsel | **"counsel" so far = the operator; no counsel; don't block on counsel** (U-013) | records and public text must stop implying counsel; counsel-dependent MUSTs → waiver candidates (E2) |
+| Q-28 recruiting | **no** — "no one should be contacted outside the project" (U-011) | no outreach, no recruiting, no records-request sending, no contribution-back posting (waiver/deferral candidates) |
+| Q-30 contact string | **the operator's name + address; plan a `contact@surveillancegraph.org` alias** (U-014) | P16 amended; ops ticket for the alias |
+| Autonomy | **maximal agent autonomy within money transparency and no outside contact** (U-011) | informs Round-11 gates (G3 Class R/S, publication) at S5 |
+| Launch | **public announcement "when the time is right"** (U-009) | S2 defines explicit announce-readiness criteria |
+| Coverage priority | **US-nationwide Flock, Axon and other vendors; high-quality sources** (U-007) | I8 ordering; Flock/Axon terms conflicts (I7) go to S5 as explicit decisions |
+| New rows | **K14, L1–L3, B7 added** | waves updated (§9) |
 ---
 
 ## 8. Schemas, vocabularies and conventions
@@ -950,6 +1016,7 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   - *Wave 6:* S1 → S2 → S3 → S4 → S5.
   - *Stream K (added from U-003):* K12a (headless web research) ∥ K12b (browser) → K0 → K1, K2, K3, K4, K5, K7, K8, K9,
     K11 (parallel) → K6, K10 → K13.
+  - *Stream L (added from U-006/U-007):* L1 ∥ L2 → L3; B7 any time; K14 after K0.
   - *Stage B:* T1 → T2 → T3 → T4 → T5 → T6.
 - **Size.** 55 rows (43 + Streams I and J: 8 + 4), about 47 agent rows plus operator sessions D1, D2, D3, E and I
   rights decisions, S5, GATE-B.
@@ -1366,6 +1433,9 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   not the 255 artifacts; sorts are no-ops; tasks are real questions shown as UUIDs). **32 agent ideas** (top: entity pages;
   date + currency on every relationship; typed search; find-my-place; explain-this-number; all-source pages; per-dossier
   source ledger; map feature pages; tasks as questions with records-request templates; who-can-access-what). 21 findings.
+- 2026-09-30T21:59:00Z — **D1 complete** (U-004…U-015, consolidated round). Decisions recorded in §7.1; rows K14, L1–L3, B7 added; P16 amended;
+  C6 may now be shared with the operator (P8 satisfied). D2 (operator reactions) will be one batched packet with the S5
+  decision memos to limit operator load; D3 (product direction) drafted by the agent from D1 + C6 + K + I.
 
 ---
 

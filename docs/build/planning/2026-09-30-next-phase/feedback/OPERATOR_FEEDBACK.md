@@ -83,3 +83,38 @@ memory findings). D1 is unanchored with respect to the Stream-C browser review (
 - **Decisions implied (to ratify at S5):** reverses the Round-9 "no basemap" answer (Q8, 2026-09-24) → new ADR at T1; the
   zero-JS-on-content-pages rule (AGENTS.md gotcha 6; ADR-068/091/097/134; SIG-UI-036/050) to be re-decided through K0.
 - **Note on anchoring:** by U-003 the operator had seen several S0 findings reported during Stage P (not the C6 synthesis).
+
+### Consolidated round — operator answers, verbatim (2026-09-30T21:58:23Z)
+
+| id | item | operator, verbatim |
+|---|---|---|
+| U-004 | C-1 what works / keep | *"I like how technically precise the language is and how clear the definitions, editorial standards, methodology, etc. are articulated, so that the project can pass open source scrutiny muster."* |
+| U-005 | C-2 would you send it | *"I would not share https://surveillancegraph.org/ as it exists today mainly due to how confusing and verbose the information on the UI (all the things already covered in an earlier long response from me); journalists need to be able to really truly explore the knowledge graph, answer questions that they might have by querying/exploring the data interactively, always with full explicit transparent evidence/lineage/etc."* |
+| U-006 | C-3 trust | *"I'm not that confident because I haven't done a deep audit of the mechanism by which disparate sources with disparate schemas are synthesized into a deduplicated knowledge graph of relations between entities."* |
+| U-007 | C-4 outcomes and scope | *"the main outcomes we want are feature richness (beautiful and useful and intuitive UI/UX that makes it possible to query/explore/navigate the knowledge graph interactively in powerful ways, while maintaining strict standards of evidence/lineage/etc.), correctness and comprehensiveness of the knowledge graph data itself (expansion of _high quality_ sources to maximal degree and increased confidence in algorithms used to turn raw ingested data into synthesized knowledge graph), and generally it just needs to be better at making itself as a website/platform clear to the user so that anyone who visits the site has a beautiful experience and is able to intuitively navigate its rich functionality and so on while also making it very clear what the project is and why it exists and what its capabilities are and so on. And on dataset coverage questions, use your best judgement, but the focus is on rich, US nationwide data on Flock and Axon and likely other vendors which you can use existing or new repo or web research to discover and make judgements about."* |
+| U-008 | C-5 resources | *"don't worry about time limits; ideally we can keep monthly compute/storage/hosting/etc. costs below $300/mo, basically as low as possible, but we are flexible here, and certain features may merit spending upwards of $1,000/mo if we absolutely have to, but we need to take care to reason about these tradeoffs carefully and always check with me before proceeding with increased spend above $300/mo; otherwise, for now, assume we have no humans on our team other than me augmented by agents running frontier models."* |
+| U-009 | C-6 visibility | *"we will announce surveillancegraph.org publicly without holding back when the time is right."* |
+| U-010 | C-7 red lines / reopen | *"nothing to note for now."* |
+| U-011 | C-8 autonomy | *"agents should have maximal autonomy but budgets on money spent should always be made clear and transparent to human who approves any budgets or increases, and no one should be contacted outside the project."* |
+| U-012 | C-9 process | *"previous builds worked pretty well so we can follow the existing patterns."* |
+| U-013 | F-1 counsel | *"\"counsel\" so far is just me (Steven Vitali), we don't have counsel and for now we should just err on the side of not blocking on counsel decisions."* |
+| U-014 | F-2 contact string | *"contact should always just be Steven Vitali at 14stevevitali@gmail.com for now, but actually, maybe we do want to set up a contact@surveillancegraph.org email."* |
+| U-015 | F-3 harness history | *"I have no idea about these questions about round 9 and 10, but the strongest likelihood is that it was Devin who drove this build, but I'll need you to carefully investigate and sort these questions out on your own."* |
+
+**Agent interpretation (labelled; to be ratified at S5):**
+- U-005/U-007: the journalist exploration journey ("query/explore the data interactively … always with full explicit
+  transparent evidence/lineage") becomes a primary acceptance journey alongside the design-center advocate (U-002).
+- U-006/U-007: confidence in the synthesis pipeline (ingest → claims → resolution/dedup → reconciliation → materialized
+  graph) is an explicit outcome → new **Stream L** (audit, measurement, confidence program).
+- U-007: "beautiful", intuitive, and clear about what SIG is/why/capabilities → new row **K14** (visual design + onboarding
+  narrative); coverage priority = US-nationwide Flock/Axon/other vendors (feeds I8 ordering).
+- U-008 + U-011: cost ceiling **$300/mo** without approval; anything above needs the operator's explicit go with the
+  trade-off shown; **no humans besides the operator** → independent human evaluation (F4 Option B) is infeasible → re-plan in
+  Stream L; recruiting (Q-28) = no; **no outside contact** → Stage-0 outreach, records-request sending, contribution-back
+  posting and volunteer recruiting are not done (waiver/deferral candidates at S5).
+- U-011: "maximal autonomy" for agents within those limits (money transparency; no outside contact) — informs Round-11 gates.
+- U-013: past "counsel" records were the operator's own determinations → records and public text must stop implying counsel
+  exists (record-integrity + honesty fix); counsel-dependent spec MUSTs → waiver candidates ("don't block on counsel").
+- U-014: the operator's address is the approved project contact string for services that require one (amends P16); a
+  `contact@surveillancegraph.org` alias is to be planned (ops ticket).
+- U-015: harness attribution for untrailered Round 9–10 commits to be established by the agent → new row **B7**.
