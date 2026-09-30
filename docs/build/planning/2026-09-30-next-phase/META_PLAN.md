@@ -1447,6 +1447,16 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   queue:** the export drops labels, catalog fields, jurisdiction and task id; ~99.7% of 243,761 tasks are per-camera tag gaps;
   redesign = readable ids (the operator's example UUID is Acworth Police Department), detail pages with records-request
   drafts, ~727 real tasks in paginated place/type/role views, tag gaps grouped as mapping campaigns; RQ-00…05. 15 findings.
+- 2026-09-30T22:03:22Z — **K4 + K5 done** (`design/K4-dossier-index.md`, `design/K5-dossier-sources.md`; asks U-003.4/.5): canonical jurisdiction key =
+  ISO 3166-1/-2 + US Census GEOIDs; placement at export by a versioned point-in-polygon rule (located point wins; disagreement
+  shown on both dossiers; axis-swap/sign-flip/(0,0) fall back to declared place, flagged); URLs `/dossier/usa/ca/` (alpha-3
+  country segment); boundaries = Census TIGER/Line 2025 + Gazetteer (US), Natural Earth 10m elsewhere (public domain; GADM/OSM
+  rejected on licence) — needs an HG-03 rights decision. Index: United States → states → counties/cities; other countries →
+  subdivisions; "not yet placed" data-quality section. **PIP on the current release: 91.5% of `unresolved` is in the US —
+  166,210 → ~700; every state + DC gets a dossier (OK: 1,705 records); records fall in 2,482 counties / 9,382 places.** All 55
+  old slugs resolve (301s; split pages for id/mn; correction pages for bd/nl). K5: one `sig.dossier-sources/1` file per
+  dossier (US ≈120–150 KB; ≈11 MB total) with per-run first/last seen, per-figure source breakdown replacing the site-wide
+  block; zero-JS baseline. Tickets JUR-01…07, DSRC-01…06. 9 findings (S1: `unresolved` is 91.5% US).
 
 ---
 
