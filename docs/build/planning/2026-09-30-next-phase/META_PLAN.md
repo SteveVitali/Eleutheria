@@ -829,6 +829,10 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
 - 2026-09-30T17:02Z — **E4 done** (`design/E4-rights-packets.md`): 22 operator decisions (11 rights rows, 6 dossier/pilot batches,
   5 proposed status corrections); 6 already covered by GL-GATE-07 precedent; documentcloud (no-mining terms), courtlistener,
   Part VIII screening and SRC-027 not covered; 11 incoming findings. Decisions deferred to S5 (batched with I7 packets).
+- 2026-09-30T17:05Z — **H1 done** (`design/H1-integration.md`): simulated bottom-up merge `main`@#140→#190 is conflict-free and
+  ends tree-identical to #190; the #141–#154 lockfile red does not affect `main` (`main` keeps its lockfile); transient red
+  on `main` for one step after each of #165/#179/#185; B1 date fixes cannot precede #143 without rewriting history →
+  merge #143–#190 + the correction PR in one sitting; Round 11 should pin the npm/node toolchain. 6 incoming findings.
 
 ---
 
