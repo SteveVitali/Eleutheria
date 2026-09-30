@@ -519,6 +519,18 @@ all following the I2 protocol and logging every query (P15)
   reports, court records, records-request corpora (MuckRock, DocumentCloud), NGO/journalism/academic datasets.
 - *Output per row:* `research/I<n>-<slug>.md`, `data/candidates_I<n>.csv` (§8.6), `data/query_log_I<n>.csv`.
 
+**I9a / I9b — Search saturation pass (added 2026-09-30T18:49:23Z; runs in a FRESH Claude Code session)** · R, web research · depends I3–I6
+- *Why:* the session-wide WebSearch cap (200 calls, shared by I3–I6) was exhausted; many matrix cells are unsaturated
+  (I3: 23 cells incl. 8 P1; I4: 49 cells incl. 4 of 5 P1; I5: 12 cells below minimum + international cells at budget; I6: 3
+  of 4 P1 + 6 below minimum). Each cell list is in the row's research note.
+- *Split (one fresh session each, own search budget):* **I9a** = the unsaturated P1/P2 cells of I3 and I6 (vendor/ALPR
+  networks + cross-cutting channels); **I9b** = the unsaturated P1/P2 cells of I4 and I5 (technology classes + geography
+  gaps; I5's proposed I5a-2 US top-up). P3 cells only if budget remains.
+- *Rules:* same protocol (I2), P15 logging, **P16**; write only `research/I9a-*.md` / `I9b-*.md`, `data/candidates_I9a.csv` /
+  `I9b.csv`, `data/query_log_I9a.csv` / `I9b.csv`, `findings/incoming/I9a.csv` / `I9b.csv`; never edit `META_PLAN.md`, never
+  commit (the planning orchestrator commits — single writer); dedupe against `data/candidates_I3…I6.csv` too.
+- *Then:* I7 re-runs as a delta over the I9 candidates.
+
 **I7 — Candidate consolidation and review packets** · R/D · depends I3–I6
 - *Method:* merge and de-duplicate candidates against the registry, the 27-row acquisition queue and each other
   (lineage: origin vs mirror); capture terms/licence verbatim; Part VIII preflight; acquisition feasibility (access
@@ -1122,6 +1134,17 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   possession, forensics/SMM agency lists, broker customer lists, cross-district school index. 49 cells capped (4/5 P1) → I9.
   **INCIDENT:** one I4 sub-batch sent the operator's email as the contact header on an SEC EDGAR search without permission
   (not in any file); disclosed to the operator; **P16 added**; EDGAR connector needs an operator-approved contact string.
+- 2026-09-30T18:49:23Z — **I5 partial (status: in-progress)** (`research/I5-geography-gaps.md`, `data/candidates_I5.csv`, `data/query_log_I5.csv`):
+  150/150 queries (40 web searches before the cap, 110 catalog/API), 223 fetches; **225 candidates (202 new)**: thin cities 67,
+  UK/CA/AU/NZ/IE 46, state-level 28, counties 25, territories/tribal 18, EU/EEA 18, tier-A/B localities 10, national DOT 5,
+  other top-100 4, rest of world 4. Top: DelDOT FirstMap (445 cams; the DE dossier is currently German cameras), MDOT MiDrive
+  (681), VTrans (88), TxDOT-origin layer (4,243; licence forbids third-party redistribution — conflicts with flipped
+  `camreg_txdot_rep_tx`), Detroit Project Green Light (1,134), Clark County LVMPD Metrocams + ShotSpotter layers, Nashville
+  ALPR council reports, PR legislative investigations (FRT/ALPR/biometrics), NZ Police ANPR audits, UK Parliament written-
+  questions API. Still dark: MS/SC/NH/ME/WY/AR DOT (no key-free feed), RI (names only), AS/MP/GU, most tribal nations, UK/NZ
+  ANPR locations (withheld), most of Asia/ME/Africa (not searched). Registry mislabels: Charlotte NC filed as Charlotte IA;
+  "San Bernardino" tenant is the County. P16 audited clean. **I9a/I9b rows added (fresh sessions); I7 dispatched on the
+  current ~547 candidates (delta re-run after I9).**
 
 ---
 
