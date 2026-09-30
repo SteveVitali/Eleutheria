@@ -1024,6 +1024,13 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   Replays on real history: G1 fails 70 commits, G2 25+20, G3 would have stopped the chain at 4 boundaries. Seed needs a
   ~700-line guard core + conversion of 6 test pins (else the seed goes red). 10 incoming findings (incl. this ledger's
   stale CURRENT STATE — fixed in this commit). **B6 + H2 dispatched.**
+- 2026-09-30T18:04:43Z — **F5 done** (`research/F5-eng-debt.md`, `data/eng_debt.csv`): 58 debt items in 13 packages (largest: PKG-06 jurisdiction +
+  geometry QA, PKG-07 technology typing + backfill, PKG-12 built-but-unwired modules, PKG-04 serving topology + one-owner
+  publish, PKG-10 public number derivations). **Both sqitch defects reproduced and repaired append-only in a throwaway
+  PG18+PostGIS container:** D-P32.10a-1 → `sqitch tag` + `rework shared_temporal_contract` (verify by facet name; landed
+  scripts byte-identical; full round trip passes); D-P32.16a-1 → caused by the test image's pre-installed PostGIS
+  dependents — no migration change, run tests + a new CI round-trip job in a `template0` database. PKG-02 (test-pin rewrites)
+  must land in or before the Stage-B seed. 5 incoming findings (incl. from-spine export never writes `leverage.json`).
 
 ---
 
