@@ -1475,6 +1475,18 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   high-ranked sources ingested or dispositioned, pipeline audit + quality metrics published; (c) what/why above the fold +
   a design system across every page. Open questions for S5: journalist vs organizer weighting; intake opening; Flock/Axon
   terms (facts only from agency pages + records); linking to peers; landing text + announce checklist.
+- 2026-09-30T22:16:30Z — **I8 done** (`design/I8-acquisition-design.md`, `data/acquisition_plan.csv` — 694 rows): **widening** needs code, not just
+  config — Legistar keyword-filtered paged pass over all 306 tenants (+5 label fixes; ≈7.9k claims; 9 thin cities gain agenda
+  evidence), USAspending/NYC City Record vocabulary + body-camera grant filter (≈9.8k), 2026 statute seed (≈150), **OSM as
+  national ALPR origin** (connector + matcher changes, then a national/global run ≈1.1M claims; stale ArcGIS copies demoted to
+  mirrors). **Tier 1 (108)** → 8 family tickets (DOT/CCTV, ALPR/Flock, traffic enforcement, registers, 2 statutory-report groups,
+  CCOPS/policies, grants/council docs) ≈89 new registry rows + 7 datasets under approved sources ≈250k claims. **28 Round-11
+  acquisition tickets** (19 core + 9 conditional on operator rights lines). Tier-2 connector families listed (151 rows in reach;
+  130 later). Capacity: ≈1.5M claims (≈3.8 GB); DB 11–17 GB by year-end vs 15 GB disk with no autoresize cap → recommend a 40 GB
+  cap, grow to 25 GB first, temporary 2-vCPU for the OSM run; +$4–6/mo + $5–10 one-off (within the $300 ceiling). Batches A–D
+  (10-19 → mid-Dec, assuming Round 11 starts by 10-14; new jobs created paused, run once by hand; avoid first-run wave, 10-10
+  replay, day 6–13 freezes). Coverage: 12/14 blind spots move; 7/10 tier-A + 3/5 tier-B states; 13/36 thin cities; still dark:
+  MS, WY, MT, AS, MP, tribal nations, Flock/Axon's own data, EDGAR, court records. 8 findings.
 
 ---
 
