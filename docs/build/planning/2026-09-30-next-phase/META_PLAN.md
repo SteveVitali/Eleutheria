@@ -678,6 +678,7 @@ Recommendations are mine; decisions are yours. **Q-1…Q-6 block the start of St
 | Q-27 | (from E3) Should the correction-intake receiver open next phase, and who is the backup moderator? | — | G2 |
 | Q-28 | (from E3) Authorize recruiting volunteer reviewers from the DeFlock / EFF / MuckRock communities? (outward contact) | Decide at S5 | F4 |
 | Q-29 | Public contact for corrections/disputes: publish the operator's personal address on the site, or a project alias (e.g. `corrections@surveillancegraph.org` forwarding to it)? | A project alias (safety, spam, succession) — **ANSWERED: operator's personal address for now** (§7.1) | G2, J3 |
+| Q-30 | Approve a project contact string for services that require one (e.g. SEC EDGAR `User-Agent`), per P16 — e.g. `SIG research (surveillancegraph.org) <address you choose>` | A project address or alias, not a personal one | I7, I8 |
 
 ### 7.1 Decisions recorded at GATE-M (2026-09-30T16:16Z)
 
@@ -1171,6 +1172,14 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   (`PROMPT_resume.txt`: continue from existing files, no repeated queries). **I7 re-runs ONCE after I9a/I9b finish** (over
   all I3–I6 + I9 candidates, reusing its scratch scripts) to avoid paying for consolidation twice. Cost note for the operator:
   planning agents are expensive; remaining rows are sequenced to avoid duplicate work.
+- 2026-09-30T20:46:58Z — **I9a done** (headless session; `research/I9a-saturation.md`, `data/candidates_I9a.csv`, `data/query_log_I9a.csv`): 98 queries
+  (94 web searches), 84 fetches; **52 candidates (29 new, 23 related, 12 leads-only)**. Top: WA Attorney General statutory ALPR
+  registry (76 agencies + policies); 2025–26 state ALPR laws/orders (WA, NM, OR, CT, KY, ID; MO EO 26-18; FDOT memo — SIG's
+  statute seed is stale past LAPPA 2025, S1); Nebraska Crime Commission (89 per-agency ALPR reports); Illinois State Police
+  (808 cameras, county counts); FDOT removal order (SIG has no "removed camera" lane, S2); VT annual ALPR reports; posted ALPR
+  policy families (CA SB 34, UT); private-camera registry / Fusus platforms; grant/earmark/state-contract channels. Still
+  unsaturated: I3-T01-C07-G0 (still yielding), partial enumerations I6-C06-GP, I6-C11-GS, I3-T01-C11-GS. EDGAR not fetched
+  (P16 — needs an operator-approved project contact string; Q-30). 6 incoming findings.
 
 ---
 
