@@ -861,6 +861,12 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   **Orchestrator clarification of P3:** read-only `SELECT`s against the hosted database through an EXISTING role and
   credential path (no new roles/grants, no writes, statement timeouts, off-peak) are within the GATE-M read-only scope;
   rows that need them (B1 sqitch registry, C3) may use them and must log each query.
+- 2026-09-30T17:48Z — **E1 done** (`research/E1-contradictions.md`): 21 spec↔decision/behaviour contradictions (process 8, legal 4,
+  trust 4, licensing 3, safety 2). Top: E1-02 `/editorial-standards/` presents a fixture two-reviewer "hostile-reader
+  review" as real (**S0**, same as E3 NEW-1); E1-05 publication rests on no counsel opinion and the promised "pending
+  counsel" label is absent; E1-06/08 robots disregarded without the SIG-INGEST-037 counsel step, and the crawler contact
+  URL uses the unregistered domain `sig-project.org`; E1-12 required upstream attribution missing in public downloads;
+  E1-04 legal home is an individual. 15 incoming findings. E2 dispatched.
 
 ---
 
