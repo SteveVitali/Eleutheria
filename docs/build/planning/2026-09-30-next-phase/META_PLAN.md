@@ -1356,6 +1356,16 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   run history, captures, versions, dossier contributions, changelog from DB/release records. 23 explicit changes vs J3 (C-1…C-23).
   Tickets UX9-1…4 (+3e), UX10-1…4. 8 incoming findings (incl. "volatility unknown" is a code bug; 70% of site rows reach no
   dossier because jurisdiction is per-source).
+- 2026-09-30T21:54:56Z — **K12b done** (`review/K12b-explorability.md`, `data/k12b_ideas.csv`, 42 page loads + 8 API GETs): the site hides data SIG
+  already has — the API names the network hub "Vigilant Solutions (LEARN)" and a spoke "Austin Police Department", but
+  `/network/` and search show UUIDs (a labelling bug, S1); the 130 sharing edges come from one 2020 source marked historical
+  yet are shown undated (S1); `/dossier/tx/` says sharing "not researched" while `/network/` holds an Austin edge (S1); 12
+  untraceable sources (S1); zero outbound links; 5,290 "Unresolved" map links 404. Every operator ask U-003.1…11 confirmed,
+  several larger than stated (map popups/keyboard; the graph is one small star; "ICE" search false hits; `us` isn't a national
+  roll-up; non-camera claims never reach dossiers; dated data exists but isn't routed to /watch; /evidence lists claim views
+  not the 255 artifacts; sorts are no-ops; tasks are real questions shown as UUIDs). **32 agent ideas** (top: entity pages;
+  date + currency on every relationship; typed search; find-my-place; explain-this-number; all-source pages; per-dossier
+  source ledger; map feature pages; tasks as questions with records-request templates; who-can-access-what). 21 findings.
 
 ---
 
