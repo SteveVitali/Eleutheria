@@ -843,6 +843,12 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   severity ruling: J1 NEW-2 (CC-BY `sig_graph` rows and EFF Atlas rows in the live API attributed to "DeFlock community
   map" — rights records de-duplicated by licence only) = S0 (false public attribution claim live now)**; reported to the
   operator; remediation needs a code fix + republish (Round-11 early ticket unless the operator wants a hotfix).
+- 2026-09-30T17:20Z — **C1 done** (`review/PROTOCOL.md`, `review/ROUTES.csv`): 36 source route patterns vs 23 built live (208 HTML
+  pages); 12 personas / 31 tasks with release-grounded expected answers; 18 heuristics; 8-dossier sample; C2/C3/C4
+  procedures. Blocking for C2: Claude in Chrome must be connected (`/chrome`). Possible Part VIII issue to verify in C2
+  (H12): some source names under `/dossier/unresolved/` look like personal account handles. Orchestrator note: C3's
+  read-only spine queries are within the GATE-M-approved scope (P3 read-only); C3 prefers release files and uses a
+  read-only DB path only if one exists without new grants.
 
 ---
 
