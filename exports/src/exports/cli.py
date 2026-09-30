@@ -189,6 +189,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="Write the Markdown audit (PUBLIC_SURFACE_AUDIT.md body) to this path.",
     )
     audit.add_argument(
+        "--settled",
+        action="store_true",
+        help="Label the snapshot SETTLED (P30.1): assert ONLY after the land the audit waited on "
+        "has completed and been verified; drops the in-flight caveat, keeps as-of + denominators.",
+    )
+    audit.add_argument(
         "--format",
         choices=("json", "markdown"),
         default="json",
@@ -825,6 +831,7 @@ def _run_audit(
     json_out: str | None,
     markdown_out: str | None,
     fmt: str,
+    settled: bool = False,
 ) -> int:
     """Run the read-only public-surface audit and emit deterministic JSON + Markdown (P27.1)."""
     import psycopg
@@ -836,7 +843,7 @@ def _run_audit(
     # cannot mutate the spine (append-only invariant held trivially; no INSERT/UPDATE/DELETE).
     conn = psycopg.connect(dsn, autocommit=True)
     try:
-        audit = run_audit(conn, as_of=as_of, note=note, spine_label=spine_label)
+        audit = run_audit(conn, as_of=as_of, note=note, spine_label=spine_label, settled=settled)
     finally:
         conn.close()
 
@@ -906,6 +913,7 @@ def main(argv: list[str] | None = None) -> int:
             args.json_out,
             args.markdown_out,
             args.format,
+            args.settled,
         )
     if args.command == "shape":
         return _run_shape(args.dsn, args.as_of, args.note, args.out)

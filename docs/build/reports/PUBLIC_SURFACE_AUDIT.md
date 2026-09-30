@@ -1,38 +1,37 @@
 # Public-surface data & rights audit — as-of snapshot (P27.1, LAUNCH.1)
 
-> **PROVISIONAL pre/mid-OSM snapshot.** These are as-of numbers, **not** a settled
-> launch total. A hosted OSM land (`camreg_osm_surveillance`, ~1.37M claims via the
-> P26.18 chunked-commit path) may be in flight while this ran, growing the spine
-> toward ~2.43M claims. **A re-audit (re-run of `sig-exports audit`) after the OSM
-> land completes is REQUIRED before any export/launch is frozen** (D-P27.1-1).
+> **SETTLED snapshot.** Taken after the hosted OSM land (`camreg_osm_surveillance`,
+> D-SOURCES.17-1) completed and was verified. These are still **as-of** numbers
+> over an append-only spine that keeps growing with scheduled ingests — every
+> figure below is a named-denominator count at `as_of`, never a population total.
 
-- **as_of:** `2026-09-22 post-P27.2 decisions` · **generated_at (UTC):** `2026-09-22T18:29:25Z`
-- **spine:** `postgresql://sig@127.0.0.1:5433/sig`
-- **note:** P27.2 post-decision re-measure; OSM land in flight — PROVISIONAL (D-P27.1-1 owes the settled re-audit)
-- **schema:** `p27.2/1.0.0`
+- **as_of:** `2026-09-24T03:43:19Z` · **generated_at (UTC):** `2026-09-24T03:43:20Z`
+- **spine:** `postgresql://sig@127.0.0.1:5439/sig`
+- **note:** P30.1 settled re-audit — OSM land complete (sig-ingest-camreg-batch-05-tjqdq, 2026-09-24T03:35:13Z); frozen launch baseline
+- **schema:** `p30.1/1.0.0` · **snapshot:** `settled`
 
 ## Headline (denominator-bearing — never a bare total, §32/SIG-METRIC-008)
 
 | metric | value |
 |---|---|
-| total claims | 1,109,799 (1,109,799 current) |
-| total entities | 99,307 |
+| total claims | 2,274,818 (2,274,818 current) |
+| total entities | 246,738 |
 | sources | 212 (211 ingestion_permitted) |
-| publishable | 853,361 of 1,109,799 claims (redistributable=yes) (76.89%) |
-| UNDETERMINED rights | 256,438 of 1,109,799 claims (rights UNDETERMINED) (23.11%) |
-| publishable (effective, post-decision) | 1,109,793 of 1,109,799 claims (effective redistributable=yes) (100.0%) |
-| UNDETERMINED rights (effective, post-decision) | 0 of 1,109,799 claims (effective UNDETERMINED) (0.0%) |
-| geolocated | 82,579 of 99,307 entities (83.16%) |
+| publishable | 2,018,043 of 2,274,818 claims (redistributable=yes) (88.71%) |
+| UNDETERMINED rights | 256,775 of 2,274,818 claims (rights UNDETERMINED) (11.29%) |
+| publishable (effective, post-decision) | 2,274,812 of 2,274,818 claims (effective redistributable=yes) (100.0%) |
+| UNDETERMINED rights (effective, post-decision) | 0 of 2,274,818 claims (effective UNDETERMINED) (0.0%) |
+| geolocated | 230,007 of 246,738 entities (93.22%) |
 
 ## Licence mix (claims by `rights_record.spdx_expression`)
 
 | claims | spdx | redistributable | derivative |
 |---:|---|---|---|
+| 1,220,611 | ODbL-1.0 | yes | yes |
 | 372,869 | LicenseRef-PublicRecord-FactualCompilation | yes | yes |
-| 256,438 | UNDETERMINED | UNDETERMINED | UNDETERMINED |
+| 256,775 | UNDETERMINED | UNDETERMINED | UNDETERMINED |
 | 225,753 | LicenseRef-OperatorAccepted-DBRight | yes | yes |
 | 82,539 | CC0-1.0 | yes | yes |
-| 55,929 | ODbL-1.0 | yes | yes |
 | 46,992 | CC-BY-SA-2.0 | yes | yes |
 | 44,305 | CC-BY-4.0 | yes | yes |
 | 12,359 | OGL-3.0 | yes | yes |
@@ -44,14 +43,14 @@ Redistributability split (compartment posture at claim granularity):
 
 | redistributable | claims |
 |---|---:|
-| yes | 853,361 |
-| UNDETERMINED | 256,438 |
+| yes | 2,018,043 |
+| UNDETERMINED | 256,775 |
 
 ## UNDETERMINED rights by connector (`ingest_run.connector_name`) — the P27.2 worklist
 
 | connector | UNDETERMINED claims |
 |---|---:|
-| procurement | 205,184 |
+| procurement | 205,521 |
 | dot_511 | 34,650 |
 | france_belgium_procurement | 14,462 |
 | data_driven | 1,015 |
@@ -78,11 +77,11 @@ Effective licence mix (as resolved through `rights_decision`):
 
 | claims | spdx | redistributable | derivative |
 |---:|---|---|---|
+| 1,220,651 | ODbL-1.0 | yes | yes |
 | 372,869 | LicenseRef-PublicRecord-FactualCompilation | yes | yes |
 | 225,753 | LicenseRef-OperatorAccepted-DBRight | yes | yes |
 | 205,677 | CC-BY-4.0 | yes | yes |
-| 151,906 | CC0-1.0 | yes | yes |
-| 55,969 | ODbL-1.0 | yes | yes |
+| 152,243 | CC0-1.0 | yes | yes |
 | 46,992 | CC-BY-SA-2.0 | yes | yes |
 | 14,465 | LicenceOuverte-2.0 | yes | yes |
 | 14,055 | OGL-3.0 | yes | yes |
@@ -99,7 +98,7 @@ Effective redistributability split:
 
 | redistributable | claims |
 |---|---:|
-| yes | 1,109,793 |
+| yes | 2,274,812 |
 | no | 6 |
 
 Effective UNDETERMINED residue by connector:
@@ -149,8 +148,8 @@ Recorded rights decisions (the review audit trail):
 
 | connector | claims |
 |---|---:|
-| dot_511 | 864,066 |
-| procurement | 205,184 |
+| dot_511 | 2,028,748 |
+| procurement | 205,521 |
 | france_belgium_procurement | 14,462 |
 | flock_portal | 11,192 |
 | atlas | 5,373 |
@@ -170,20 +169,20 @@ Recorded rights decisions (the review audit trail):
 
 ## Geolocation (aggregate only — Part VIII §0.7 / §19.4 / §43.3)
 
-- distinct geolocated entities: **82,579 of 99,307 entities (83.16%)**
-- `value_geom` populated on **0** of 1,109,799 claims (the assembly gap P27.3 fills)
+- distinct geolocated entities: **230,007 of 246,738 entities (93.22%)**
+- `value_geom` populated on **0** of 2,274,818 claims (the assembly gap P27.3 fills)
 - geolocation claims by predicate:
 
 | predicate | claims |
 |---|---:|
-| camera_latitude | 100,405 |
-| camera_longitude | 100,405 |
+| camera_latitude | 247,833 |
+| camera_longitude | 247,833 |
 
 Jurisdiction spread (`camera_jurisdiction`, coarse label; distinct subjects):
 
 | jurisdiction | distinct subjects |
 |---|---:|
-| unresolved | 18,783 |
+| unresolved | 166,210 |
 | FL | 9,965 |
 | GA | 7,049 |
 | CA | 6,139 |
@@ -241,8 +240,8 @@ Jurisdiction spread (`camera_jurisdiction`, coarse label; distinct subjects):
 
 ## Freshness (§32.4)
 
-- 174,128 of 1,109,799 claims carry `observed_at` (15.69%)
-- observed span: `2020-01-28 00:00:00+00:00` … `2026-09-22 00:00:00+00:00`
+- 174,465 of 2,274,818 claims carry `observed_at` (7.67%)
+- observed span: `2020-01-28 00:00:00+00:00` … `2026-09-23 00:00:00+00:00`
 
 ## Modeling-table population (the shaping gap P27.3 fills)
 
@@ -322,4 +321,5 @@ SELECT rd.source_id, rr.spdx_expression, rr.redistributable, rd.reviewer,       
   'establishes' → `evidence_artifact.source_id`, smallest source_id wins).
 - Coordinates are reported **only in aggregate** (a distinct-subject count + coarse
   jurisdiction spread); no per-person, per-plate, or raw-coordinate field is emitted.
-- **PROVISIONAL** per the OSM land in flight — re-run this verb after it completes.
+- **SETTLED** — the OSM land completed before this ran; later scheduled ingests
+  grow the spine additively, so re-run this verb for any newer as-of.

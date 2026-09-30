@@ -1,70 +1,70 @@
 {
   "aggregates": [
     {
-      "count": 87375,
-      "denominator": 89722,
+      "count": 227660,
+      "denominator": 230007,
       "label": "geolocated site observations",
       "not_evaluable": 0,
-      "phrase": "87375 of 89722 evaluable geolocated site observations"
+      "phrase": "227660 of 230007 evaluable geolocated site observations"
     },
     {
-      "count": 6934,
-      "denominator": 89722,
+      "count": 7133,
+      "denominator": 230007,
       "label": "site observations in a coordinate cell observed by two or more sources",
       "not_evaluable": 0,
-      "phrase": "6934 of 89722 evaluable site observations in a coordinate cell observed by two or more sources"
+      "phrase": "7133 of 230007 evaluable site observations in a coordinate cell observed by two or more sources"
     },
     {
-      "count": 89722,
-      "denominator": 89722,
+      "count": 230007,
+      "denominator": 230007,
       "label": "site observations with a resolved jurisdiction",
       "not_evaluable": 0,
-      "phrase": "89722 of 89722 evaluable site observations with a resolved jurisdiction"
+      "phrase": "230007 of 230007 evaluable site observations with a resolved jurisdiction"
     },
     {
-      "count": 379201,
-      "denominator": 379201,
+      "count": 800056,
+      "denominator": 800056,
       "label": "publishable claims carrying source attribution",
       "not_evaluable": 0,
-      "phrase": "379201 of 379201 evaluable publishable claims carrying source attribution"
+      "phrase": "800056 of 800056 evaluable publishable claims carrying source attribution"
     }
   ],
   "metrics": [
     {
-      "denominator": "evaluable geolocated site observations (of 89722 publishable subjects/observations)",
+      "denominator": "evaluable geolocated site observations (of 230007 publishable subjects/observations)",
       "id": "agg_geolocated_site_observations",
       "is_population_total": false,
       "kind": "counted_quantity",
       "label": "geolocated site observations",
       "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
-      "value": "87375 of 89722 evaluable geolocated site observations"
+      "value": "227660 of 230007 evaluable geolocated site observations"
     },
     {
-      "denominator": "evaluable site observations (of 89722 publishable subjects/observations)",
+      "denominator": "evaluable site observations (of 230007 publishable subjects/observations)",
       "id": "agg_site_observations_in_a_coordinate_cell_observed_by_two_or_more_sources",
       "is_population_total": false,
       "kind": "counted_quantity",
       "label": "site observations in a coordinate cell observed by two or more sources",
       "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
-      "value": "6934 of 89722 evaluable site observations in a coordinate cell observed by two or more sources"
+      "value": "7133 of 230007 evaluable site observations in a coordinate cell observed by two or more sources"
     },
     {
-      "denominator": "evaluable site observations with a resolved jurisdiction (of 89722 publishable subjects/observations)",
+      "denominator": "evaluable site observations with a resolved jurisdiction (of 230007 publishable subjects/observations)",
       "id": "agg_site_observations_with_a_resolved_jurisdiction",
       "is_population_total": false,
       "kind": "counted_quantity",
       "label": "site observations with a resolved jurisdiction",
       "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
-      "value": "89722 of 89722 evaluable site observations with a resolved jurisdiction"
+      "value": "230007 of 230007 evaluable site observations with a resolved jurisdiction"
     },
     {
-      "denominator": "evaluable publishable claims carrying source attribution (of 379201 publishable subjects/observations)",
+      "denominator": "evaluable publishable claims carrying source attribution (of 800056 publishable subjects/observations)",
       "id": "agg_publishable_claims_carrying_source_attribution",
       "is_population_total": false,
       "kind": "counted_quantity",
       "label": "publishable claims carrying source attribution",
       "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
-      "value": "379201 of 379201 evaluable publishable claims carrying source attribution"
+      "value": "800056 of 800056 evaluable publishable claims carrying source attribution"
     },
     {
       "denominator": "556 publishable subjects asserting jurisdiction 'AL'",
@@ -553,13 +553,13 @@
       "value": "2754 of 2754 evaluable geolocated site observations in WA"
     },
     {
-      "denominator": "25925 publishable subjects asserting jurisdiction 'unresolved'",
+      "denominator": "166210 publishable subjects asserting jurisdiction 'unresolved'",
       "id": "jurisdiction_unresolved",
       "is_population_total": false,
       "kind": "counted_quantity",
       "label": "geolocated site observations in unresolved",
       "population_note": "The true population of surveillance devices is unknown. These are recorded observations from named sources \u2014 an observation-level inventory, not a census or an estimate (SIG-METRIC-008).",
-      "value": "25857 of 25925 evaluable geolocated site observations in unresolved"
+      "value": "166142 of 166210 evaluable geolocated site observations in unresolved"
     }
   ]
 }

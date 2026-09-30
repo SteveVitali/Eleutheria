@@ -1,26 +1,26 @@
 {
-  "as_of": "2026-09-22T20:05:53Z",
-  "generated_at": "2026-09-22T20:05:56Z",
-  "note": "P27.3 live verification \u2014 OSM land in flight; provisional",
+  "as_of": "2026-09-24T03:43:19Z",
+  "generated_at": "2026-09-24T03:45:58Z",
+  "note": "P30.1 settled \u2014 OSM land complete (D-SOURCES.17-1); re-derived alongside the settled re-audit (D-P27.1-1)",
   "observation_level": true,
   "provenance": {
     "defects": [],
     "is_complete": true,
-    "published_claims": 379201,
+    "published_claims": 800056,
     "share": 1.0,
     "target": 1.0,
-    "with_resolvable_evidence": 379201
+    "with_resolvable_evidence": 800056
   },
   "schema_version": "p27.3/1.0.0",
-  "spine_label": "postgresql://sig@127.0.0.1:5433/sig",
-  "spine_watermark": "claims=1159799 closed=0 latest_assertion=2026-09-22T19:56:08.308352+00:00 evidence=1159799/247/247",
+  "spine_label": "postgresql://sig@127.0.0.1:5439/sig",
+  "spine_watermark": "claims=2274818 closed=0 latest_assertion=2026-09-24T03:35:06.465199+00:00 evidence=2274818/247/247",
   "totals": {
     "claims_excluded_not_publishable": 0,
-    "claims_read": 379201,
-    "claims_shaped": 379201,
-    "observation_groups_multi_source": 2677,
+    "claims_read": 800056,
+    "claims_shaped": 800056,
+    "observation_groups_multi_source": 2776,
     "subjects_conflicted": 2347,
-    "subjects_geolocated": 87375,
-    "subjects_total": 89722
+    "subjects_geolocated": 227660,
+    "subjects_total": 230007
   }
 }
