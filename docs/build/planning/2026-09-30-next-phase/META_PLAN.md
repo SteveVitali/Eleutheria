@@ -1321,6 +1321,19 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   purchasing (each query still adds agencies, not new channels); 17 P2 cells; a few not started. 8 fetches from the
   interrupted run lack query lines (NEW-6). **Stream I search phase closed at this depth; residual unsaturated cells carried
   to I8/S2 as `later-phase` search work. I7 dispatched once over all candidates.**
+- 2026-09-30T21:37:43Z — **Stream K added** from U-003 (`f1565146`); wave 1 dispatched: K12a (headless web research), K12b (browser explorability +
+  own ideas), K4+K5, K7+K8+K11, K9+K10. K0 follows K12a; then K1, K2, K3, K6; then K13.
+- 2026-09-30T21:37:43Z — **I7 done** (`research/I7-candidates.md`, `data/candidates_consolidated.csv`, `design/I7-rights-packets.md`): 737 inputs → **694
+  unique candidates (532 new, 147 related, 15 same-as)**; 383 proposed source ids (unique, no registry clash). **Tier 1 108,
+  Tier 2 281, Tier 3 259, widening group 46** (26 Legistar tenant items incl. 5 label fixes, 5 USAspending vocabulary, 3 OSM
+  Overpass widenings, NYC City Record, 11 state-ALPR-statute refresh items). Rights: 374 Tier-1/2 candidates → 10 batch lines
+  + 9 Part VIII screen lines + 35 individual lines + Q-30 + 11 conflicts + 4 confirmations (15 map onto E4 lines). 26
+  Part-VIII-blocked (metadata only). Conflicts: TxDOT no-redistribution vs flipped `camreg_txdot_rep_tx`; DocumentCloud
+  no-mining; Sourcewell/OMNIA robots+reproduction bans; Axon/CrimeWatch/Flock automated-access bans; Chicago/Albuquerque/
+  OpenFEMA revocation/destroy clauses; 5 non-commercial publishers. Coverage delta: Tier 1 + widening → 7/10 tier-A states,
+  13/36 thin cities, 28/29 technology classes; + Tier 2 → 8/10, 25/36, all classes, 18 countries; still dark: MS, WY, MT, KS,
+  SD, AS, MP, North Las Vegas, and Flock's own data. 62 terms fetches, no identity sent (P16). 8 incoming findings. **I8
+  dispatched.**
 
 ---
 
