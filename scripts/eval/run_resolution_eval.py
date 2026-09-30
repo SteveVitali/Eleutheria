@@ -34,7 +34,7 @@ from resolution.adjudicator import (
     adjudicate_pairs,
     weights_of,
 )
-from resolution.eval_loop import render_report_md, run_eval
+from resolution.eval_loop import render_camera_site_section, render_report_md, run_eval
 from resolution.gold_set import Adjudication, GoldLabel, build_gold_set
 
 DATED = date(2026, 9, 23)
@@ -157,9 +157,11 @@ def build() -> tuple:
 #: The committed hosted-scale measurement: the real numbers read off the hosted spine after
 #: the resolution materializer ran next to Cloud SQL. Committed data, so the report stays a
 #: deterministic function of the repo. P30.2a (ADR-104) re-measured after registering the
-#: camera-registry predicates; the P30.2 file stays committed as history.
+#: camera-registry predicates; P30.2b (ADR-105) re-measured after the camera-site ENTITY
+#: resolution run (N = post-ER clusters of the same device); the P30.2 / P30.2a files stay
+#: committed as history.
 SCALE_JSON = (
-    Path(__file__).resolve().parents[2] / "docs/build/reports/p30.2a-hosted/resolution_scale.json"
+    Path(__file__).resolve().parents[2] / "docs/build/reports/p30.2b-hosted/resolution_scale.json"
 )
 
 
@@ -236,6 +238,9 @@ def main() -> int:
         ],
     )
     md = render_report_md(report, title="P28.1 — Resolution eval report (Round 6 keystone)")
+    measurement = load_scale()
+    if measurement is not None and "camera_site_run" in measurement:
+        md = md.rstrip("\n") + "\n\n" + render_camera_site_section(measurement)
     out = Path("docs/build/reports/P28.1_resolution_eval.md")
     out.write_text(md + "\n", encoding="utf-8")
     print(f"wrote {out}")

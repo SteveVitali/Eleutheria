@@ -58,6 +58,7 @@ __all__ = [
     "active_learning_pair_ids",
     "run_eval",
     "render_report_md",
+    "render_camera_site_section",
 ]
 
 DEFAULT_KAPPA_BAR = 0.7
@@ -423,4 +424,106 @@ def render_report_md(report: EvalReport, *, title: str = "Resolution eval report
         for n in report.notes:
             lines.append(f"- {n}")
         lines.append("")
+    return "\n".join(lines)
+
+
+def _fmt_prec(value: object) -> str:
+    return "n/a" if value is None else f"{float(value):.3f}"  # type: ignore[arg-type]
+
+
+def render_camera_site_section(measurement: Mapping[str, Any]) -> str:
+    """Render the camera-site entity-resolution section (P30.2b, ADR-105) as Markdown.
+
+    ``measurement`` is the committed hosted measurement (``p30.2b-hosted/
+    resolution_scale.json``): its ``camera_site_run`` block is the hosted run's summary,
+    so every number here is read off the committed file — never recomputed or projected.
+    """
+    run = measurement["camera_site_run"]
+    lines: list[str] = []
+    lines.append("## Camera-site entity resolution (P30.2b, ADR-105)")
+    lines.append("")
+    lines.append(
+        "- **the unit:** an observation-level record is one source's row for one camera; a "
+        "**resolved site** is a cluster of records judged to be the SAME PHYSICAL DEVICE. "
+        "M = observation-level records, N = post-ER clusters (singletons included), N <= M, "
+        "dedup ratio = 1 - N/M. A §28 value decision within one record is never a resolved site."
+    )
+    lines.append(
+        f"- rules `camera_site_rules.toml` v{run['rules_version']}, resolver "
+        f"`{run['resolver_version']}`, run key `{run['run_key']}`"
+    )
+    lines.append(
+        f"- gold set `{run['gold_set_version']}`: {run['gold_pairs']} double-adjudicated pairs, "
+        f"frozen holdout {run['holdout_pairs']} (agent/maintainer-verified)"
+    )
+    kappa = run.get("kappa")
+    bar = float(measurement.get("kappa_bar", DEFAULT_KAPPA_BAR))
+    trusted = kappa is not None and kappa >= bar
+    lines.append(
+        f"- Cohen's κ (blind LLM adjudicator vs agent seed): **{_fmt_prec(kappa)}** (bar ≥ "
+        f"{bar:.2f}) → LLM trusted as gold: **{'yes' if trusted else 'no — suggester only'}**; "
+        f"disputed pairs: {run['disputed_pairs']} (routed to review)"
+    )
+    lines.append("")
+    lines.append("### Per-tier holdout precision (strict: not_enough_information counts against)")
+    lines.append("")
+    lines.append(
+        "| tier | holdout n | match | non_match | NEI | precision | 95% Wilson lower | "
+        "LLM-label sensitivity |"
+    )
+    lines.append("|---|---|---|---|---|---|---|---|")
+    llm = run.get("tier_measurements_llm_labels", {})
+    for tier, m in sorted(run["tier_measurements"].items()):
+        sens = llm.get(tier, {})
+        lines.append(
+            f"| {tier} | {m['predicted']} | {m['match']} | {m['non_match']} | "
+            f"{m['not_enough_information']} | {_fmt_prec(m['precision_strict'])} | "
+            f"{_fmt_prec(m.get('wilson_lower_95'))} | {_fmt_prec(sens.get('precision_strict'))} |"
+        )
+    lines.append("")
+    for d in run["demotions"]:
+        verdict = "DEMOTED → review" if d["demoted"] else "auto-writes"
+        lines.append(
+            f"- tier {d['tier']}: precision {d['precision']:.3f} vs floor "
+            f"{d['threshold']:.3f} → {verdict}"
+        )
+    lines.append(f"- auto-write tiers this run: {run['auto_write_tiers'] or 'none'}")
+    alerts = run.get("cluster_alerts") or []
+    lines.append(
+        "- cluster-shape alerts (chaining / oversized / single-bridge / same-source): "
+        + (", ".join(f"`{a['kind']}` on `{a['cluster_id']}`" for a in alerts) or "none")
+    )
+    lines.append("")
+    lines.append("### Hosted run")
+    lines.append("")
+    lines.append(f"- where: {measurement['execution']}")
+    lines.append(
+        f"- M = **{run['observation_count_M']}** observation-level records → N = "
+        f"**{run['resolved_site_count_N']}** resolved sites; dedup ratio "
+        f"**{run['dedup_ratio']:.4f}** ({run['observation_count_M'] - run['resolved_site_count_N']}"
+        " same-device merges)"
+    )
+    lines.append(
+        f"- decisions: {run['decisions']} ({run['auto_write_decisions']} auto-write, "
+        f"{run['proposed_decisions']} proposed → review)"
+    )
+    for label, slot in run["by_tier"].items():
+        lines.append(f"  - `{label}`: {slot['auto_write']} auto-write, {slot['proposed']} proposed")
+    reasons = ", ".join(f"{k} {v}" for k, v in run["proposed_reasons"].items())
+    lines.append(f"- why proposed: {reasons}")
+    lines.append(f"- cluster sizes: {run['cluster_size_histogram']}")
+    lines.append(
+        f"- blocking: {run['blocking_candidate_pairs']} candidate pairs (sized, ceiling "
+        f"1,000,000); unblockable records {run['unblockable_records']}; incompatible-class "
+        f"pairs blocked {run['incompatible_class_pairs_blocked']}; tier-6 discarded "
+        f"{run['tier6_discarded']}"
+    )
+    lineages = run.get("mirror_lineages") or {}
+    lines.append(
+        "- mirror lineages (counted once — not independent corroboration): "
+        + "; ".join(" = ".join(v) for v in lineages.values())
+    )
+    for note in measurement.get("camera_site_notes", ()):
+        lines.append(f"- {note}")
+    lines.append("")
     return "\n".join(lines)

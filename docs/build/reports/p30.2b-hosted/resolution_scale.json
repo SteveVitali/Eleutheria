@@ -1,0 +1,292 @@
+{
+  "schema": "p30.2b/1.1.0",
+  "measured_at": "2026-09-24T11:43:28Z",
+  "spine": "hosted sig-pg (Cloud SQL, db-custom-2-8192)",
+  "execution": "Cloud Run job sig-materialize, execution sig-materialize-fh2bh (2026-09-24T11:33:44Z -> 11:37:04Z), image sig-api:materialize-7db63484444f (the reviewed code), role sig_materialize; +0 re-run sig-materialize-wrxns (11:37:28Z -> 11:42:40Z) on the same image",
+  "executions": {
+    "sig-materialize-l2frp": "FIRST pass, image materialize-29b75f82fe6b (pre-review code; 11:01:12Z -> 11:06:49Z): run camsite:d30dd458…, M 230,330 -> N 227,999, inserted 13,883, review items 11,547 + 43 active learning — superseded, kept as append-only history",
+    "sig-materialize-8zm8p": "+0 re-run of the first pass (same image): inserted 0, skipped_existing 13,883",
+    "sig-materialize-5dcfm": "an accidental re-execution of the pre-review code (the image tag materialize-29b75f82fe6b was rebuilt from the same unchanged HEAD after a failed local commit; identical source): inserted 0, skipped_existing 13,883 — a second +0 confirmation",
+    "sig-materialize-fh2bh": "FINAL pass on the reviewed code (full-input run key, >= 50 holdout pairs per tier, tie-aware tiers, type-based ALPR class): run camsite:13bedfe7f754a3cf219c90865fc8a81e8eb15135, inserted 13,572, review items 1 new proposal + 34 disputed-pair items (their own ids), run record inserted",
+    "sig-materialize-wrxns": "+0 re-run of the final pass (same image): inserted 0, skipped_existing 13,572, run record not re-inserted"
+  },
+  "schema_deploy": "sqitch deploy --verify of camera_site_resolution as the schema owner sig over cloud-sql-proxy (ops/gcp/materialize.sh --apply schema), 2026-09-24T11:00Z: ok",
+  "spine_claims": 2304784,
+  "spine_entities": 247061,
+  "observation_count": 230330,
+  "observation_count_definition": "distinct tier-0 subjects carrying a camera_latitude or camera_longitude claim (observation-level camera records; each is ONE source's row) — the ER run's M; re-measured read-only: 230330 — re-measured read-only: 230330",
+  "resolved_site_count": 227998,
+  "resolved_site_count_definition": "post-ER clusters of observation-level records judged to be the same physical device (singletons included), from the latest completed camera_site_run's auto-written same_as edges — NOT §28 value decisions",
+  "dedup_ratio": 0.010125,
+  "entity_merges": 2332,
+  "resolutions_materialized": 1872344,
+  "value_resolved_site_count": 230330,
+  "kappa_bar": 0.7,
+  "camera_site_runs_completed": [
+    {
+      "run_key": "camsite:d30dd4589d6dda6cf05961485d8ef08ba37400f3",
+      "M": 230330,
+      "N": 227999,
+      "auto_write_tiers": [
+        1,
+        3
+      ],
+      "completed_at": "2026-09-24 11:06:45.199521+00"
+    },
+    {
+      "run_key": "camsite:13bedfe7f754a3cf219c90865fc8a81e8eb15135",
+      "M": 230330,
+      "N": 227998,
+      "auto_write_tiers": [
+        1,
+        3
+      ],
+      "completed_at": "2026-09-24 11:37:00.35437+00"
+    }
+  ],
+  "camera_site_match_by_disposition_tier": {
+    "auto_write|1g:shared_upstream_ref": 2177,
+    "auto_write|3g:coincident_point": 2496,
+    "proposed|1g:shared_upstream_ref": 236,
+    "proposed|3g:coincident_point": 48,
+    "proposed|4g:proximate_unique": 3104,
+    "proposed|5g:proximate_candidate": 19394
+  },
+  "camera_site_match_rows": 27455,
+  "review_items_camera_site": 11591,
+  "review_items_active_learning": 77,
+  "review_decisions": 0,
+  "pg_stat": {
+    "entity": {
+      "ins": 323036,
+      "upd": 0,
+      "del": 0
+    },
+    "claim": {
+      "ins": 2899033,
+      "upd": 0,
+      "del": 0
+    },
+    "resolution": {
+      "ins": 1872344,
+      "upd": 0,
+      "del": 0
+    },
+    "review_item": {
+      "ins": 11625,
+      "upd": 0,
+      "del": 0
+    },
+    "camera_site_run": {
+      "ins": 2,
+      "upd": 0,
+      "del": 0
+    },
+    "camera_site_match": {
+      "ins": 27455,
+      "upd": 0,
+      "del": 0
+    }
+  },
+  "camera_site_run": {
+    "rules_version": "2",
+    "resolver_version": "camera-sites/1.0.0",
+    "run_key": "camsite:13bedfe7f754a3cf219c90865fc8a81e8eb15135",
+    "observation_count_M": 230330,
+    "resolved_site_count_N": 227998,
+    "dedup_ratio": 0.010125,
+    "decisions": 13572,
+    "auto_write_decisions": 2337,
+    "proposed_decisions": 11235,
+    "auto_write_tiers": [
+      1,
+      3
+    ],
+    "demotions": [
+      {
+        "tier": 1,
+        "precision": 1.0,
+        "threshold": 0.98,
+        "demoted": false
+      },
+      {
+        "tier": 3,
+        "precision": 0.9857,
+        "threshold": 0.98,
+        "demoted": false
+      }
+    ],
+    "tier_measurements": {
+      "1": {
+        "predicted": 70,
+        "match": 70,
+        "non_match": 0,
+        "not_enough_information": 0,
+        "precision_strict": 1.0,
+        "precision_decided": 1.0,
+        "wilson_lower_95": 0.9479751251327164
+      },
+      "3": {
+        "predicted": 70,
+        "match": 69,
+        "non_match": 0,
+        "not_enough_information": 1,
+        "precision_strict": 0.9857142857142858,
+        "precision_decided": 1.0,
+        "wilson_lower_95": 0.9234163029607309
+      },
+      "4": {
+        "predicted": 20,
+        "match": 6,
+        "non_match": 0,
+        "not_enough_information": 14,
+        "precision_strict": 0.3,
+        "precision_decided": 1.0,
+        "wilson_lower_95": 0.14547527396899385
+      },
+      "5": {
+        "predicted": 19,
+        "match": 5,
+        "non_match": 0,
+        "not_enough_information": 14,
+        "precision_strict": 0.2631578947368421,
+        "precision_decided": 1.0,
+        "wilson_lower_95": 0.11806238339540162
+      }
+    },
+    "tier_measurements_llm_labels": {
+      "1": {
+        "predicted": 70,
+        "match": 70,
+        "non_match": 0,
+        "not_enough_information": 0,
+        "precision_strict": 1.0
+      },
+      "3": {
+        "predicted": 70,
+        "match": 56,
+        "non_match": 1,
+        "not_enough_information": 13,
+        "precision_strict": 0.8
+      },
+      "4": {
+        "predicted": 20,
+        "match": 2,
+        "non_match": 1,
+        "not_enough_information": 17,
+        "precision_strict": 0.1
+      },
+      "5": {
+        "predicted": 19,
+        "match": 3,
+        "non_match": 0,
+        "not_enough_information": 16,
+        "precision_strict": 0.15789473684210525
+      }
+    },
+    "cluster_alerts": [],
+    "blocking_candidate_pairs": 30360,
+    "unblockable_records": 15,
+    "incompatible_class_pairs_blocked": 0,
+    "tier6_discarded": 3139,
+    "gold_set_version": "camera-2",
+    "kappa": 0.6689490445859873,
+    "gold_pairs": 540,
+    "holdout_pairs": 180,
+    "disputed_pairs": 77,
+    "multi_record_sites_independently_corroborated": 273,
+    "multi_record_sites_one_lineage_only": 2054,
+    "by_tier": {
+      "1g:shared_upstream_ref": {
+        "auto_write": 1089,
+        "proposed": 235
+      },
+      "3g:coincident_point": {
+        "auto_write": 1248,
+        "proposed": 24
+      },
+      "4g:proximate_unique": {
+        "auto_write": 0,
+        "proposed": 1552
+      },
+      "5g:proximate_candidate": {
+        "auto_write": 0,
+        "proposed": 9424
+      }
+    },
+    "proposed_reasons": {
+      "cluster_constraint:same_source": 233,
+      "soft_conflict:direction": 8,
+      "soft_conflict:jurisdiction": 18,
+      "tier_not_auto_write": 10976
+    },
+    "cluster_size_histogram": {
+      "1": 225671,
+      "2": 2322,
+      "3": 5
+    },
+    "mirror_lineages": {
+      "camreg_batonrouge_la": [
+        "camreg_batonrouge_la",
+        "camreg_ebrgis_la"
+      ],
+      "camreg_carver_mn": [
+        "camreg_carver_mn",
+        "camreg_mndot_mn"
+      ],
+      "camreg_cotgeo": [
+        "camreg_cotgeo",
+        "camreg_toronto_on"
+      ],
+      "camreg_duganmeyer": [
+        "camreg_duganmeyer",
+        "camreg_osm_surveillance"
+      ],
+      "camreg_esri_dash": [
+        "camreg_esri_dash",
+        "camreg_md_opendata",
+        "dot_511_md"
+      ],
+      "camreg_kcmo_mo": [
+        "camreg_kcmo_mo",
+        "dot_511_mo"
+      ],
+      "camreg_lojic_ky": [
+        "camreg_lojic_ky",
+        "dot_511_ky"
+      ],
+      "camreg_mark43": [
+        "camreg_mark43",
+        "camreg_nottingham_gb"
+      ],
+      "camreg_nzta_nz": [
+        "camreg_nzta_nz",
+        "camreg_sfoss"
+      ],
+      "camreg_penndot_pa": [
+        "camreg_penndot_pa",
+        "camreg_ucsd"
+      ],
+      "camreg_washington_dc": [
+        "camreg_washington_dc",
+        "dot_511_dc"
+      ]
+    },
+    "inserted": 13572,
+    "skipped_existing": 0,
+    "review_items_enqueued": 1,
+    "active_learning_enqueued": 34,
+    "run_record_inserted": true
+  },
+  "notes": [
+    "HOSTED CAMERA-SITE ENTITY RESOLUTION (P30.2b, 2026-09-24, ADR-105): the reviewed camera-site ER pass ran as a Cloud Run job next to Cloud SQL (execution sig-materialize-fh2bh, role sig_materialize, image materialize-7db63484444f) over 230,330 observation-level camera records: 30,360 blocked candidate pairs -> 13,572 recorded same_as decisions (2,337 auto-written: tier 1g 1,089 + tier 3g 1,248; 11,235 proposed to human review), N = 227,998 resolved sites, dedup ratio 0.0101 (2,332 same-device merges; cluster sizes 2 x 2,322, 3 x 5); 0 cluster-shape alerts. The +0 re-run (sig-materialize-wrxns) inserted 0. Append-only: n_tup_upd = n_tup_del = 0 on claim, resolution, camera_site_match, camera_site_run and review_item.",
+    "WHAT THE NUMBERS MEAN: about 1% of observation-level camera records are the same device as another source's record under rules whose STRICT holdout precision cleared the 0.98 floor with >= 50 holdout pairs (tier 1g 70/70, tier 3g 69/70 on the frozen agent-verified holdout). Most records have no cross-source counterpart; every uncertain candidate (proximity only, co-located devices, soft conflicts, refused unions) is proposed for review and NOT counted. Of the multi-record sites, 273 span two or more independent lineages and 2054 are republished copies within one lineage (not independent corroboration). Value-resolved coordinates (230,330) remain a separate, non-dedup figure.",
+    "The camera-site eval is PROVISIONAL: the holdout is agent-verified (not field-verified), the blind LLM adjudicator's kappa (0.669) missed the 0.70 bar so it is a suggester only, and tier 3g scores 0.800 under the LLM's labels (it reads sub-metre offsets between republished copies as proximity only) — the first-principles half of D-R6.1-EVAL stays OPEN."
+  ],
+  "camera_site_notes": [
+    "gold history: rules v1 measured tier 1g 0.882 (30/34) and 3g 0.929 (39/42) on the camera-1 holdout (both demoted — nothing would have auto-written); that holdout was then inspected while diagnosing, retired to training, and rules v2 were measured on a fresh 180-pair holdout (camera-2). The later review fixes changed no rule the holdout was drawn for except distance ties (a code-review finding, not a holdout inspection); the gate re-measured the same frozen holdout at run time with an unchanged result for the auto-write tiers.",
+    "review queue: 11,625 camera-site review items in total — 11,591 `er_match:camera_site:` items (proposals + 43 disagreement items from the first pass) and 34 `er_match:camera_site_disputed:` items (disagreements on pairs that are also proposals, first-pass collisions), i.e. all 77 adjudicator-disagreement pairs reach a reviewer with their labels; review decisions recorded so far: 0 (D-P30.2b-1). Proposed reasons this run: cluster_constraint:same_source 233, soft_conflict:direction 8, soft_conflict:jurisdiction 18, tier_not_auto_write 10,976.",
+    "N is the export-facing resolved-site count: exports.spine_export.resolved_sites_metric clusters the export's own sites with the latest completed run's auto-written edges; P30.3 publishes 'N resolved sites (from M observation-level records; dedup ratio r)' with the provisional-eval disclosure."
+  ],
+  "review_items_total": 11625
+}

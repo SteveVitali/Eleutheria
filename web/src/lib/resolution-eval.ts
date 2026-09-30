@@ -76,5 +76,25 @@ export const RESOLUTION_EVAL: ResolutionEval = {
       value: "1.000",
       against: "the frozen holdout (0 tiers demoted below the floor)",
     },
+    // P30.2b (ADR-105) — camera-site entity resolution: which observation-level records are
+    // the SAME physical device. Mirrors the committed hosted measurement + gold set
+    // (`docs/build/reports/p30.2b-hosted/resolution_scale.json`, gold `camera-2`).
+    {
+      label: "camera sites: Cohen's κ (blind LLM adjudicator vs agent seed)",
+      value: "0.669",
+      against:
+        "540 double-adjudicated camera-record pairs (below the 0.70 bar, so the LLM is a suggester only and its disagreements go to human review)",
+    },
+    {
+      label: "camera sites: shared-upstream-id rule (1g) holdout precision",
+      value: "1.000 (70 of 70)",
+      against: "the frozen, agent-verified 180-pair holdout (95% lower bound 0.948); auto-writes",
+    },
+    {
+      label: "camera sites: coincident-point rule (3g) holdout precision",
+      value: "0.986 (69 of 70)",
+      against:
+        "the frozen, agent-verified 180-pair holdout (95% lower bound 0.923; 0.800 if scored with the LLM's labels); auto-writes",
+    },
   ],
 };

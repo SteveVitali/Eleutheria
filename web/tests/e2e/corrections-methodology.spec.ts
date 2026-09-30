@@ -128,11 +128,13 @@ test.describe("methodology, data-freshness, coverage-metrics (SIG-UI-034, §32.4
   }) => {
     await page.goto("/coverage-metrics/");
     // The map's observation-level framing is replaced by "N resolved sites (from M
-    // observations)" (ADR-101) — a counted quantity carrying its named denominator, never a
+    // observation-level records; dedup ratio …)" (ADR-101/ADR-105) — N = post-ER clusters of the
+    // same physical device, a counted quantity carrying its named denominator, never a
     // total. It rides the frozen CoverageMetric contract, so it renders on the coverage page.
     const resolved = page.locator('[data-metric-id="resolved_sites"]');
     await expect(resolved).toContainText("resolved sites");
-    await expect(resolved).toContainText("observations");
+    await expect(resolved).toContainText("observation-level records");
+    await expect(resolved).toContainText("dedup ratio");
     await expect(resolved.getByTestId("coverage-denominator")).toContainText("observation-level sites");
     // Contradictions stay VISIBLE (§3.1): the materialized §31 contradiction object is
     // surfaced as an honest counted quantity (both evidence sides retained).
@@ -157,6 +159,15 @@ test.describe("methodology, data-freshness, coverage-metrics (SIG-UI-034, §32.4
     await expect(page.getByTestId("resolution-eval")).toContainText("0.976"); // B-cubed F1
     // The provisional-eval disclosure is preserved (D-R6.1-EVAL, OPEN).
     await expect(page.getByTestId("resolution-eval-provisional")).toContainText("PROVISIONAL");
+    // P30.2b (ADR-105): the unit is defined — a resolved site is a cluster of records of the
+    // same physical device, N of M; a value decision is never counted as one.
+    const definition = page.getByTestId("resolved-site-definition");
+    await expect(definition).toContainText("same physical device");
+    await expect(definition).toContainText("N resolved sites from M observation-level");
+    await expect(definition).toContainText("is never counted as a resolved site");
+    // …and the camera-site rules' measured holdout precision + the missed κ bar are published.
+    await expect(page.getByTestId("resolution-eval")).toContainText("0.986"); // tier 3g
+    await expect(page.getByTestId("resolution-eval")).toContainText("suggester only");
   });
 });
 

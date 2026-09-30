@@ -44,3 +44,25 @@ rule_id = "name_trigram"
 keys = ["normalized_name"]
 method = "trigram"
 description = "shared name trigram — candidate search only, never a decision score (SIG-IDENT-024)"
+
+# Geospatial blocking for camera-site entity resolution (P30.2b, ADR-105). A record's
+# block is its (lat, lon) grid cell; candidates are the records in the same cell and
+# the 8 neighbouring cells, from a DIFFERENT source (two rows of one source are two
+# devices — never a candidate). The cell is sized so the 3x3 neighbourhood covers the
+# camera matcher's outer candidate radius (camera_site_rules.toml
+# `distance.candidate_max_m` = 50 m): 0.0005 deg of latitude is ~55.6 m, and
+# 0.0016 deg of longitude stays >= 50 m up to `max_abs_latitude`. A record beyond that
+# latitude (or with a null-island / out-of-range coordinate) is NOT blocked — it stays
+# a singleton and is counted, never silently mis-blocked. Blocking only PROPOSES
+# candidates (SIG-IDENT-024); the rule is sized against `comparison_ceiling` above
+# before use (SIG-IDENT-023).
+[[geo_rule]]
+rule_id = "camera_geo_grid"
+lat_key = "latitude"
+lon_key = "longitude"
+exclude_same = "source_id"
+cell_lat_deg = 0.0005
+cell_lon_deg = 0.0016
+max_abs_latitude = 73.0
+covers_radius_m = 50.0
+description = "same or neighbouring ~55 m lat x 0.0016 deg lon grid cell, different source — candidate search only"

@@ -109,6 +109,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-102](ADR-102-temporary-cloud-sql-scale-up-and-settled-audit-snapshot.md) | — | — | Accepted |
 | [ADR-103](ADR-103-hosted-round6-materialization-least-privilege-role-and-in-gcp-execution.md) | — | — | Accepted |
 | [ADR-104](ADR-104-camera-registry-predicates-in-the-predicate-registry.md) | — | — | Accepted |
+| [ADR-105](ADR-105-geospatial-camera-site-entity-resolution.md) | — | — | Accepted |
 
 ## Notes
 

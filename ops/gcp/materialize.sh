@@ -28,7 +28,8 @@
 #                   max-retries 0).
 #   run <step>      execute one step as a job execution with an --args override, where
 #                   <step> ∈ resolution | edges | contradictions | coverage |
-#                   accountability | detect. Every step connects as `sig` and runs
+#                   accountability | detect | camera-sites (P30.2b / ADR-105: geospatial
+#                   camera-site entity resolution — the resolved-site clusters). Every step connects as `sig` and runs
 #                   `--role sig_materialize`; the DSN is assembled INSIDE the container
 #                   from $SIG_PG_PASSWORD (Secret Manager) — never on a command line here.
 #   all             schema → image → job → run each step in dependency order.
@@ -82,10 +83,11 @@ step_cmd() {
     accountability) printf 'exec python -m inference materialize-accountability-links --dsn "%s" %s' "${DSN}" "${role}" ;;
     detect)         printf 'exec python -m tasks detect --dsn "%s" %s%s' "${DSN}" "${role}" \
                       "${SIG_DETECT_JURISDICTION:+ --jurisdiction ${SIG_DETECT_JURISDICTION}}" ;;
-    *) _log "ERROR: unknown step '$1' (resolution|edges|contradictions|coverage|accountability|detect)" >&2; exit 64 ;;
+    camera-sites)   printf 'exec python -m resolution camera-sites --dsn "%s" %s' "${DSN}" "${role}" ;;
+    *) _log "ERROR: unknown step '$1' (resolution|edges|contradictions|coverage|accountability|detect|camera-sites)" >&2; exit 64 ;;
   esac
 }
-STEPS="resolution edges contradictions coverage accountability detect"
+STEPS="resolution camera-sites edges contradictions coverage accountability detect"
 
 do_schema() {
   _log "-- schema: sqitch deploy (as the schema owner, over cloud-sql-proxy :${SIG_PROXY_PORT})"

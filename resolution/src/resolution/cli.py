@@ -29,6 +29,11 @@ Sub-commands expose the identity substrate (§11.1-11.3, §14):
 * ``review {list,show,decide,enqueue} --dsn …`` — the same curation surface backed
   by PostgreSQL (``PgReviewQueue``) instead of a JSON queue file; ``decide --dsn``
   appends exactly one ``review_decision`` row per call (history on repeat).
+* ``camera-sites --dsn … [--role R] [--dry-run]`` — geospatial camera-site entity
+  resolution (P30.2b, ADR-105): block → assess → measure the tiers on the committed
+  gold holdout → auto-write only tiers at/above the published floor → materialize the
+  same_as decisions + review proposals append-only (+0 on an unchanged re-run). Prints
+  one JSON summary (M, N, dedup ratio, per-tier precision, demotions, alerts).
 
 With no sub-command it prints help and exits 0 (the SIG-ENG-013 convention).
 """
@@ -131,6 +136,17 @@ def build_parser() -> argparse.ArgumentParser:
     decide.add_argument("--reviewer", required=True, help="the human reviewer")
     decide.add_argument("--rationale", default=None, help="an optional note / review rationale")
     decide.add_argument("--dsn", default=None, help="use PG (PgReviewQueue), not a file")
+    camera = sub.add_parser(
+        "camera-sites",
+        help="geospatial camera-site entity resolution over the PG spine (P30.2b)",
+    )
+    camera.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    camera.add_argument("--role", default=None, help="optional role to SET ROLE to")
+    camera.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="read + resolve + measure only; write nothing (prints the summary)",
+    )
     return parser
 
 
@@ -396,6 +412,51 @@ def main(argv: list[str] | None = None) -> int:
         return _run_match(args)
     if args.command == "review":
         return _run_review(args)
+    if args.command == "camera-sites":
+        return _run_camera_sites(args)
 
     parser.print_help()
+    return 0
+
+
+def _run_camera_sites(args: argparse.Namespace) -> int:
+    """Camera-site entity resolution over the PG spine (P30.2b, ADR-105)."""
+    import sys
+    import time
+
+    from .camera_sites import resolve_camera_sites
+    from .camera_sites_pg import (
+        materialize_camera_sites_from_dsn,
+        read_camera_records,
+        set_role,
+    )
+
+    started = time.monotonic()
+
+    def _progress(stage: str, done: int, inserted: int) -> None:
+        # stderr, so stdout stays the one JSON summary a caller parses.
+        elapsed = time.monotonic() - started
+        print(
+            f"progress: {stage} {done} (inserted {inserted}), {elapsed:.0f}s",
+            file=sys.stderr,
+            flush=True,
+        )
+
+    if args.dry_run:
+        import psycopg
+
+        from .camera_sites import load_camera_gold
+        from .eval_loop import read_auto_write_threshold
+
+        with psycopg.connect(args.dsn, autocommit=True) as conn:
+            if args.role:
+                set_role(conn, args.role)
+            records = read_camera_records(conn)
+        result = resolve_camera_sites(
+            records, gold=load_camera_gold(), threshold=read_auto_write_threshold()
+        )
+        print(json.dumps({**result.summary(), "dry_run": True}, indent=2, default=str))
+        return 0
+    summary = materialize_camera_sites_from_dsn(args.dsn, role=args.role, progress=_progress)
+    print(json.dumps(summary, indent=2, default=str))
     return 0

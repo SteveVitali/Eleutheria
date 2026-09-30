@@ -125,6 +125,43 @@ def test_value_resolution_is_never_labelled_deduplication(gen) -> None:
         assert kwargs["resolved_site_count"] is None
 
 
+def test_the_resolved_site_count_is_post_er_clusters_not_value_decisions(gen) -> None:
+    """P30.2b (ADR-105): N is the camera-site ER run's clusters — N = M - merges — and it is
+    the hosted run's own figure, never the value-resolved count."""
+    scale = gen.load_scale()
+    run = scale["camera_site_run"]
+    kwargs, _ = gen.scale_kwargs(scale)
+    assert kwargs["observation_count"] == run["observation_count_M"]
+    assert kwargs["resolved_site_count"] == run["resolved_site_count_N"]
+    assert kwargs["entity_merges"] == run["observation_count_M"] - run["resolved_site_count_N"]
+    assert kwargs["resolved_site_count"] <= kwargs["observation_count"]
+    assert round(kwargs["dedup_ratio"], 6) == round(run["dedup_ratio"], 6)
+
+
+def test_committed_report_carries_the_camera_site_section(gen) -> None:
+    from resolution.camera_sites import load_camera_gold
+    from resolution.eval_loop import render_camera_site_section
+
+    scale = gen.load_scale()
+    committed = (
+        Path(__file__).resolve().parents[2] / "docs/build/reports/P28.1_resolution_eval.md"
+    ).read_text(encoding="utf-8")
+    assert render_camera_site_section(scale) in committed
+    run = scale["camera_site_run"]
+    # every auto-write tier cleared the published floor on the frozen holdout
+    for tier in run["auto_write_tiers"]:
+        assert run["tier_measurements"][str(tier)]["precision_strict"] >= 0.98
+    # the run's gold facts are the committed gold set's
+    gold = load_camera_gold()
+    assert gold is not None
+    assert run["gold_set_version"] == gold.version
+    assert (run["gold_pairs"], run["holdout_pairs"]) == (len(gold.pairs), len(gold.holdout()))
+    assert round(run["kappa"], 6) == round(gold.kappa(), 6)
+    # the missed kappa bar is disclosed, never hidden
+    if run["kappa"] < 0.7:
+        assert "suggester only" in committed
+
+
 def test_scale_is_na_when_no_measurement_is_committed(gen) -> None:
     kwargs, notes = gen.scale_kwargs(None)
     assert set(kwargs.values()) == {None}
