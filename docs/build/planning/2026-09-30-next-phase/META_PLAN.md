@@ -1559,6 +1559,18 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   publication-review → once that gate deploys, every organization edge would be withheld.** Other: "OpenStreetMap contributors"
   recorded as operator of 26,839 cameras; directness/reliability sink defaults on every edge; `/network/` claims "exact" ER
   (vs SIG-IDENT-030). **K6 dispatched.**
+- 2026-09-30T22:53:01Z — **L2 done** (`research/L2-graph-quality.md`, `data/l2_metrics.csv` 45 metrics): published rows are faithful to upstream (agent
+  sample 50/50; agent review, not human-verified); errors are in graph synthesis: **13.5% of points have another source's point
+  within 25 m vs 3.75% merged** (exact-coordinate dups 11.9%); **5,278 camera ids each hold several distinct cameras** (non-unique
+  upstream refs; 4,520 span ≥10 km — the 5,290 "conflicted"); 4.6% of placed points lie outside their jurisdiction (2,370 >25 km
+  incl. 562 axis swaps, 14 at (0,0)); 92% of "unresolved" inside a US state; **77% of `traffic_camera` subjects are ALPR/police
+  CCTV/enforcement per their own source**; 74% name the publisher as operator; 83% of nodes have no edges, the rest single-hub
+  stars; 98.8% of edges and 100% of claims undated; **0 of 2.78M claim–evidence links reach real captured bytes**; 2 contradictions,
+  every multi-claim resolution "uncontested"; dossier counts count rows not sites (up to 2.25× KY). Agent sample: 29/29 OSM-origin
+  sites are ALPR; 10/10 sharing edges match EFF but are dated 2020 for 2016–17; 6/10 operator edges = publisher; 0/9 sampled
+  procurement contracts concern surveillance. 14 continuous checks recommended. DB access: Cloud SQL proxy + existing owner login
+  `sig`, `SET ROLE` to the API's public read role, read-only transactions, 60 s timeout, 44 logged queries — **no read-only login
+  exists (NEW-16 → ops ticket)**. 17 findings (7 × S1). **L3 dispatched.**
 
 ---
 
