@@ -1571,6 +1571,16 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   procurement contracts concern surveillance. 14 continuous checks recommended. DB access: Cloud SQL proxy + existing owner login
   `sig`, `SET ROLE` to the API's public read role, read-only transactions, 60 s timeout, 44 logged queries — **no read-only login
   exists (NEW-16 → ops ticket)**. 17 findings (7 × S1). **L3 dispatched.**
+- 2026-09-30T23:01:49Z — **K6 done** (`design/K6-dossier-visualizations.md`; ask U-003.6): twelve-section dossier order kept; "at a glance" = locator +
+  Figure 1 static jurisdiction map (area-aggregated; hollow = single source) + links to map/graph + in-dossier search form;
+  network figures (supply, funding, access ×3 kinds toggled without JS, policy) ≤40 nodes each via grouping + adjacent tables —
+  honest "nothing recorded yet" today (no organization has a place). Dossiers stay content pages (≈5–10 KiB JS vs 20 KiB budget);
+  the ≈345 KiB interactive map loads in place only on a desktop click; phones go to /map/; auto-load + in-page graph explorer
+  rejected. Print: locator on p.1 with the council brief, map leads p.2, figures with caption/attribution/date/permalink, never
+  split. Inline SVG sizes: CA 11.4 KB gz, median state 9.4 KB, GA 25.6 KB (largest), US 19.9 KB; <$1/mo. Tickets VIZ-00…05 (7,
+  ≈5 runs). 4 findings (map/network/search ignore place/source filters they accept; "hollow"/"dashed" semantics inconsistent
+  across K1/K2/K14; four notes each name another as SVG-generator owner; strict CSP would break self-styled SVG downloads).
+  **K13 dispatched** (reconciles these).
 
 ---
 
