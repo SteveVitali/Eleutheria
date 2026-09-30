@@ -1346,6 +1346,16 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   per-page JS budgets for enhancement; app-like explore surfaces (map/graph/search/source explorer) with URL state and no-JS
   fallbacks; not a full SPA. Live-site notes: `/map/` HTML ≈3.46 MB; `/search/` filters only the first 500 of 232,625 sites.
   **K0 dispatched.**
+- 2026-09-30T21:54:16Z — **K9 + K10 done** (`design/K9-sources-table.md`, `design/K10-source-pages.md`; operator asks U-003.9, U-003.10): `/sources/`
+  table of all 342 registry sources (`/data-freshness/` redirects) with 17 columns incl. licence + raw lane, two change dates,
+  real volatility/staleness, published claims, runs, errors, latest download, ground-truth links; no-JS sort/filter via
+  pre-built views + client enhancement per K0; CSV/JSON export. **Version history** = content-addressed per-release per-source
+  slices (≈$0 on R2; ≤~1 GB/yr slices + 0.1–0.7 GB/mo raw captures for raw-ok sources); "latest" = latest release. One source
+  definition with named filters (178 published sites / 218 published claims / 219 ids / 342 registered). K10 per-source page
+  sections incl. honest rights record (GL-GATE-07 delegated flips stated), robots disregard disclosure (Q-22b), per-execution
+  run history, captures, versions, dossier contributions, changelog from DB/release records. 23 explicit changes vs J3 (C-1…C-23).
+  Tickets UX9-1…4 (+3e), UX10-1…4. 8 incoming findings (incl. "volatility unknown" is a code bug; 70% of site rows reach no
+  dossier because jurisdiction is per-source).
 
 ---
 
