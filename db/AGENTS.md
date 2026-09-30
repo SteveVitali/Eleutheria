@@ -12,7 +12,9 @@ the full narrative.
 
 | File | Lines | Purpose |
 |---|---|---|
-| `db/src/db/claim_sink.py` | ~490 | `PgClaimSink` — insert-only writes to the claim spine |
+| `db/src/db/claim_sink.py` | ~920 | `PgClaimSink` — insert-only, chunk-batched writes to the claim spine (ADR-110) |
+| `db/src/db/identity_guard.py` | ~130 | `resolve_identities` — one entity per identity-bearing `(scheme, value)` via `entity_identity_key` (ADR-110) |
+| `db/src/db/sink_bench.py` | ~240 | `sig-db sink-bench` — claims/min + round trips per claim for a sink pass |
 | `db/src/db/analytics.py` | ~n/a | DuckDB analytics commands over parquet (a separate engine) |
 | `db/sqitch.plan` | — | the ordered sqitch migration plan (deploy/revert/verify per change) |
 
@@ -39,7 +41,11 @@ the full narrative.
    and a migration claim-set (SIG-STORE-042), not an in-place edit.
 2. **Append-only.** The claim spine is append-only; corrections are new rows, not updates. Don't add
    `UPDATE`/`DELETE` paths against claim tables (`PgClaimSink` is insert-only by design).
-3. **Analytics run on DuckDB** (`analytics.py`) over parquet — a separate engine from the PG spine;
+3. **Entities for identity-bearing identifiers are minted only through the guard.** Call
+   `db.identity_guard.resolve_identities` inside a transaction. Never check `entity_identifier`, then
+   insert an entity: two writers race, and the spine cannot delete the duplicate (ADR-110).
+   `us.state`-style attribute schemes are not identity keys and are not guarded.
+4. **Analytics run on DuckDB** (`analytics.py`) over parquet — a separate engine from the PG spine;
    don't conflate the two stores.
 
 ## Terminology

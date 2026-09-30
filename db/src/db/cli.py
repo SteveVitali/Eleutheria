@@ -81,7 +81,46 @@ def build_parser() -> argparse.ArgumentParser:
         help="the code commit recorded on the review ingest_run",
     )
 
+    bench = sub.add_parser(
+        "sink-bench",
+        help="time PgClaimSink passes over synthetic OSM-shaped claims: claims/min and "
+        "round trips per claim (P31.3, ADR-110). Writes synthetic claims, so it needs "
+        "--scratch-db and must never target the canonical spine",
+    )
+    bench.add_argument("--dsn", required=True, help="PostgreSQL DSN of a THROWAWAY database")
+    bench.add_argument("--subjects", type=int, default=12_500, help="subjects (8 claims each)")
+    bench.add_argument("--passes", type=int, default=2, help="1 land + (passes-1) +0 replays")
+    bench.add_argument("--commit-chunk-size", type=int, default=10_000)
+    bench.add_argument(
+        "--insert-batch-size", type=int, default=None, help="rows per multi-row claim INSERT"
+    )
+    bench.add_argument("--tag", default="bench", help="subject-id tag (a new tag = new subjects)")
+    bench.add_argument(
+        "--scratch-db",
+        action="store_true",
+        help="acknowledge that --dsn is a throwaway database (required)",
+    )
+
     return parser
+
+
+def _run_sink_bench(args: argparse.Namespace) -> int:
+    if not args.scratch_db:
+        print("sink-bench writes synthetic claims: pass --scratch-db for a throwaway database")
+        return 2
+    from .sink_bench import run_synthetic
+
+    run_synthetic(  # prints one JSON line per pass as it completes
+        args.dsn,
+        subjects=args.subjects,
+        passes=args.passes,
+        commit_chunk_size=args.commit_chunk_size,
+        tag=args.tag,
+        sink_kwargs=(
+            {"insert_batch_size": args.insert_batch_size} if args.insert_batch_size else None
+        ),
+    )
+    return 0
 
 
 def _run_analytics(args: argparse.Namespace) -> int:
@@ -166,5 +205,7 @@ def main(argv: list[str] | None = None) -> int:
         return _run_analytics(args)
     if args.command == "rights-decisions":
         return _run_rights_decisions(args)
+    if args.command == "sink-bench":
+        return _run_sink_bench(args)
     parser.print_help()
     return 0
