@@ -1007,6 +1007,14 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   ALPR-law survey; "Connect ‹Place›" Fusus registries; >1,000 DFR waivers. Guardrails: Flock origin portals refused (no
   scraping/archives); never download plate/audit/student rows; personal-account ArcGIS layers presumed DeFlock/OSM copies.
   §8.6 candidate schema extended per I2 §12. **I3–I6 dispatched** (parallel).
+- 2026-09-30T17:59:15Z — **G2 done** (`design/G2-activation.md`): nine ordered steps behind three gate types (operator go, HG-03 dossier captures,
+  HG-11 exposure): (0) safety+honesty wave → (1) Round-10 schema (sqitch L44–52) + ADR-124 allows + Round-10 API, not before
+  2026-10-14 (after the D-P31.4-1 read-back) → (2) D-R10-LIVE-1 after a restore point → (3) real candidate, true dates,
+  `p-17b713` superseded → (4) C4 blockers → (5) dossier captures (HG-03) → (6) intake operation → (7) exposure (new HG-11 +
+  live rollback rehearsal) → (8) memory split. 25 candidate tickets ACT-01…25; claim rules until step 7 (corrections by
+  email to the operator's address; "reviewed"/"captured <date>" only when true; never "anonymous"). Risks: monthly write
+  window days 6–13, L44 exclusive lock on `claim_evidence`, alerts/restore drill vs 10-10, live nginx can't honour
+  withdrawals. 11 incoming findings.
 
 ---
 
