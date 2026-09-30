@@ -1467,6 +1467,14 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   (pages, neighborhoods, overview graphs, typeahead shards, tiles); API only for full-text search and "sites in this area";
   +$5–40/mo. ADR draft supersedes the three-island rule and extends the URL-state contract to v2. Guidance for K1/K2/K3/K6/K9/K10
   recorded. 4 findings (**82.8% of published entities have no label**). **K1, K2, K3, K14 dispatched.**
+- 2026-09-30T22:09:33Z — **D3 draft done** (`design/D3-product-direction.md`, agent draft for S5 ratification): Round 11 = SIG shows, corrects and
+  opens up the evidence it already holds — safety/honesty → correctness → exploration — while adding high-quality
+  US-nationwide Flock/Axon/other-vendor sources in parallel. Success criteria: (a) 13 timed persona journeys (4 advocate, 5
+  journalist, 4 organizer) pass live + all 11 U-003 asks met, no UUID labels, no undated relationships, evidence ≤2 clicks;
+  (b) zero jurisdiction/geometry errors, every US state has a dossier, Flock/Axon/Motorola exist as vendor entities, I7's
+  high-ranked sources ingested or dispositioned, pipeline audit + quality metrics published; (c) what/why above the fold +
+  a design system across every page. Open questions for S5: journalist vs organizer weighting; intake opening; Flock/Axon
+  terms (facts only from agency pages + records); linking to peers; landing text + announce checklist.
 
 ---
 
