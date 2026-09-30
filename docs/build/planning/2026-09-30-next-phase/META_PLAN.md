@@ -826,6 +826,9 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   $0–1k (volunteer/pro bono) to ~$6k–25k (all paid, web estimates); 0.98 gate needs ≥149 pairs/tier and is unlikely to
   certify. 8 incoming findings incl. S1: `/editorial-standards/` publicly shows a completed two-reviewer "hostile-reader
   review" by placeholder reviewers from a fixture. Q-24…Q-28 added.
+- 2026-09-30T17:02Z — **E4 done** (`design/E4-rights-packets.md`): 22 operator decisions (11 rights rows, 6 dossier/pilot batches,
+  5 proposed status corrections); 6 already covered by GL-GATE-07 precedent; documentcloud (no-mining terms), courtlistener,
+  Part VIII screening and SRC-027 not covered; 11 incoming findings. Decisions deferred to S5 (batched with I7 packets).
 
 ---
 
