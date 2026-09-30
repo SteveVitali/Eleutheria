@@ -154,12 +154,22 @@ def build() -> tuple:
     return pairs, tier_by_pair_id, llm_label_by_pair_id, gold_set, predicted_clusters, gold_clusters
 
 
-#: The committed hosted-scale measurement (P30.2, D-R6.1-EVAL hosted half): the real
-#: numbers read off the hosted spine after the resolution materializer ran next to Cloud
-#: SQL. Committed data, so the report stays a deterministic function of the repo.
+#: The committed hosted-scale measurement: the real numbers read off the hosted spine after
+#: the resolution materializer ran next to Cloud SQL. Committed data, so the report stays a
+#: deterministic function of the repo. P30.2a (ADR-104) re-measured after registering the
+#: camera-registry predicates; the P30.2 file stays committed as history.
 SCALE_JSON = (
-    Path(__file__).resolve().parents[2] / "docs/build/reports/p30.2-hosted/resolution_scale.json"
+    Path(__file__).resolve().parents[2] / "docs/build/reports/p30.2a-hosted/resolution_scale.json"
 )
+
+
+def _opt_int(value: Any) -> int | None:
+    return None if value is None else int(value)
+
+
+def _opt_float(value: Any) -> float | None:
+    return None if value is None else float(value)
+
 
 _PENDING_SCALE_NOTE = (
     "SCALE over the hosted observations (dedup ratio / resolved-site count) is DEFERRED "
@@ -186,14 +196,19 @@ def scale_kwargs(scale: dict[str, Any] | None) -> tuple[dict[str, Any], list[str
                 "resolved_site_count": None,
                 "dedup_ratio": None,
                 "resolutions_materialized": None,
+                "value_resolved_site_count": None,
+                "entity_merges": None,
             },
             [_PENDING_SCALE_NOTE],
         )
     kwargs = {
         "observation_count": int(scale["observation_count"]),
-        "resolved_site_count": int(scale["resolved_site_count"]),
-        "dedup_ratio": float(scale["dedup_ratio"]),
+        # None = not measured (a deduplicated-site count needs entity resolution, P30.2b).
+        "resolved_site_count": _opt_int(scale.get("resolved_site_count")),
+        "dedup_ratio": _opt_float(scale.get("dedup_ratio")),
         "resolutions_materialized": int(scale["resolutions_materialized"]),
+        "value_resolved_site_count": _opt_int(scale.get("value_resolved_site_count")),
+        "entity_merges": _opt_int(scale.get("entity_merges")),
     }
     return kwargs, [str(n) for n in scale.get("notes", ())]
 

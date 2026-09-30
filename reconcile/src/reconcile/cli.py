@@ -17,11 +17,10 @@ from __future__ import annotations
 
 import argparse
 import json
-from datetime import UTC, date, datetime
-from typing import Any
+from datetime import UTC, datetime
 
 from . import __version__
-from .resolve import RESOLVE, Claim
+from .resolve import RESOLVE
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -79,25 +78,6 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _as_date(value: Any) -> date:
-    if isinstance(value, datetime):
-        return value.date()
-    if isinstance(value, date):
-        return value
-    return date(1970, 1, 1)
-
-
-def _value(kind: str, text: Any, num: Any, boolean: Any) -> object:
-    if kind != "value":
-        return None
-    if boolean is not None:
-        return bool(boolean)
-    if num is not None:
-        f = float(num)
-        return int(f) if f.is_integer() else f
-    return text
-
-
 def _resolve(args: argparse.Namespace) -> int:
     import psycopg  # available via the sig-db dependency (driver stays in `db`)
 
@@ -105,55 +85,13 @@ def _resolve(args: argparse.Namespace) -> int:
     if args.role:
         conn.execute(f"SET ROLE {args.role}")
 
-    where = ["c.sensitivity_tier = 0"]
-    params: list[Any] = []
-    if args.subject:
-        where.append("c.subject_id = %s")
-        params.append(args.subject)
-    if args.predicate:
-        where.append("c.predicate_id = %s")
-        params.append(args.predicate)
-    if args.jurisdiction:
-        where.append(
-            "c.subject_id IN (SELECT entity_id FROM entity_identifier WHERE value ILIKE %s)"
-        )
-        params.append(f"%{args.jurisdiction}%")
+    # The same tier-0 read the materializer uses (one reader, so the read-only CLI and the
+    # materialized envelope can never disagree — including the ADR-104 capture-time basis).
+    from .materialize import read_claim_groups
 
-    rows = conn.execute(
-        "SELECT c.subject_id, c.predicate_id, c.claim_id, c.value_kind, c.value_text, "
-        "       c.value_num, c.value_bool, c.raw_value, c.observed_at, c.source_reliability, "
-        "       c.artifact_integrity, c.review_status, ea.source_id, ea.artifact_type "
-        "  FROM claim c "
-        "  LEFT JOIN LATERAL ("
-        "     SELECT ea.source_id, ea.artifact_type FROM claim_evidence ce "
-        "       JOIN evidence_capture ec ON ec.capture_id = ce.capture_id "
-        "       JOIN evidence_artifact ea ON ea.artifact_id = ec.artifact_id "
-        "      WHERE ce.claim_id = c.claim_id LIMIT 1) ea ON true "
-        " WHERE " + " AND ".join(where) + " ORDER BY c.subject_id, c.predicate_id, c.claim_id",
-        tuple(params),
-    ).fetchall()
-
-    groups: dict[tuple[str, str], list[Claim]] = {}
-    for r in rows:
-        key = (str(r[0]), str(r[1]))
-        groups.setdefault(key, []).append(
-            Claim(
-                claim_id=str(r[2]),
-                subject_id=str(r[0]),
-                predicate_id=str(r[1]),
-                value=_value(r[3], r[4], r[5], r[6]),
-                reliability=r[9],
-                integrity=r[10],
-                genre=r[13] or "",
-                observed_at=_as_date(r[8]) if r[8] else date(1970, 1, 1),
-                raw_value=r[7] or "",
-                review_status=r[11] or "active",
-                source_id=r[12] or "",
-                count_basis=str(r[1]).removesuffix("_device_count")
-                if str(r[1]).endswith("_device_count")
-                else None,
-            )
-        )
+    groups = read_claim_groups(
+        conn, jurisdiction=args.jurisdiction, subject=args.subject, predicate=args.predicate
+    )
 
     if not groups:
         print("no claims matched the given filters")
@@ -201,7 +139,21 @@ def main(argv: list[str] | None = None) -> int:
 
 def _materialize(args: argparse.Namespace) -> int:
     """Materialize resolution envelopes into the spine (P28.1, ADR-099)."""
+    import sys
+    import time
+
     from .materialize import materialize_from_dsn
+
+    started = time.monotonic()
+
+    def _progress(considered: int, total: int, inserted: int) -> None:
+        # stderr, so stdout stays the one JSON summary a caller parses.
+        elapsed = time.monotonic() - started
+        print(
+            f"progress: {considered}/{total} groups, {inserted} inserted, {elapsed:.0f}s",
+            file=sys.stderr,
+            flush=True,
+        )
 
     summary = materialize_from_dsn(
         args.dsn,
@@ -209,6 +161,7 @@ def _materialize(args: argparse.Namespace) -> int:
         subject=args.subject,
         predicate=args.predicate,
         role=args.role,
+        progress=_progress,
     )
     print(json.dumps(summary.as_dict(), indent=2))
     return 0

@@ -8,9 +8,11 @@
     "osm_node_set",
     "audit_log",
     "news_article",
-    "vendor_default_page"
+    "vendor_default_page",
+    "camera_registry",
+    "connector_run"
   ],
-  "count": 56,
+  "count": 70,
   "predicates": [
     {
       "cardinality": "single",
@@ -18,6 +20,8 @@
       "directness": {
         "agency_policy": "D6",
         "audit_log": "D6",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D2",
         "executed_contract": "D1",
         "invoice": "D3",
@@ -40,6 +44,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -62,6 +68,8 @@
       "directness": {
         "agency_policy": "D6",
         "audit_log": "D6",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D2",
         "executed_contract": "D1",
         "invoice": "D2",
@@ -84,6 +92,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -106,6 +116,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -128,6 +140,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -150,6 +164,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -172,6 +188,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -194,6 +212,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -216,6 +236,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -238,6 +260,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -260,6 +284,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -282,6 +308,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -304,6 +332,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -326,6 +356,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -348,6 +380,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -370,6 +404,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -392,6 +428,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -414,6 +452,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -436,6 +476,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -458,6 +500,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -480,6 +524,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -502,6 +548,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -524,6 +572,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -546,6 +596,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -568,6 +620,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -590,6 +644,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -612,6 +668,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -634,6 +692,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -656,6 +716,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -678,6 +740,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -700,6 +764,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -722,6 +788,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -744,6 +812,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -766,6 +836,8 @@
       "directness": {
         "agency_policy": "D2",
         "audit_log": "D6",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D4",
         "invoice": "D6",
@@ -788,6 +860,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -810,6 +884,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -832,6 +908,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -854,6 +932,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -876,6 +956,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -898,6 +980,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -920,6 +1004,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -942,6 +1028,8 @@
       "directness": {
         "agency_policy": "D6",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D4",
         "executed_contract": "D5",
         "invoice": "D4",
@@ -964,6 +1052,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -986,6 +1076,8 @@
       "directness": {
         "agency_policy": "D6",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D4",
         "executed_contract": "D3",
         "invoice": "D1",
@@ -1008,6 +1100,8 @@
       "directness": {
         "agency_policy": "D6",
         "audit_log": "D6",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D5",
         "executed_contract": "D5",
         "invoice": "D6",
@@ -1030,6 +1124,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D2",
         "executed_contract": "D4",
         "invoice": "D5",
@@ -1052,6 +1148,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D4",
         "executed_contract": "D6",
         "invoice": "D6",
@@ -1074,6 +1172,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -1096,6 +1196,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -1118,6 +1220,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -1140,6 +1244,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -1162,6 +1268,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -1184,6 +1292,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -1206,6 +1316,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -1228,6 +1340,8 @@
       "directness": {
         "agency_policy": "D3",
         "audit_log": "D4",
+        "camera_registry": "D6",
+        "connector_run": "D6",
         "council_minutes": "D3",
         "executed_contract": "D3",
         "invoice": "D3",
@@ -1243,6 +1357,352 @@
       "value_datatype": "uriorcurie",
       "vocab_version": "1.0.0",
       "volatility_class": "MODERATE"
+    },
+    {
+      "cardinality": "single",
+      "definition": "WGS84 latitude of a registry-listed camera, as published (post-§19.4 tier) by the registry.",
+      "directness": {
+        "agency_policy": "D6",
+        "audit_log": "D6",
+        "camera_registry": "D2",
+        "connector_run": "D3",
+        "council_minutes": "D4",
+        "executed_contract": "D4",
+        "invoice": "D4",
+        "news_article": "D3",
+        "osm_node_set": "D2",
+        "portal_snapshot": "D3",
+        "vendor_default_page": "D6"
+      },
+      "half_life": "2y",
+      "predicate_id": "camera_latitude",
+      "resolution_strategy": "latest_observation_wins",
+      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_latitude",
+      "value_datatype": "decimal",
+      "value_tolerance": {
+        "kind": "absolute",
+        "unit": "degree",
+        "value": 0.0005
+      },
+      "vocab_version": "1.0.0",
+      "volatility_class": "SLOW"
+    },
+    {
+      "cardinality": "single",
+      "definition": "WGS84 longitude of a registry-listed camera, as published (post-§19.4 tier) by the registry.",
+      "directness": {
+        "agency_policy": "D6",
+        "audit_log": "D6",
+        "camera_registry": "D2",
+        "connector_run": "D3",
+        "council_minutes": "D4",
+        "executed_contract": "D4",
+        "invoice": "D4",
+        "news_article": "D3",
+        "osm_node_set": "D2",
+        "portal_snapshot": "D3",
+        "vendor_default_page": "D6"
+      },
+      "half_life": "2y",
+      "predicate_id": "camera_longitude",
+      "resolution_strategy": "latest_observation_wins",
+      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_longitude",
+      "value_datatype": "decimal",
+      "value_tolerance": {
+        "kind": "absolute",
+        "unit": "degree",
+        "value": 0.0005
+      },
+      "vocab_version": "1.0.0",
+      "volatility_class": "SLOW"
+    },
+    {
+      "cardinality": "single",
+      "definition": "Which registry field(s) or geometry produced the published camera coordinate (extraction provenance).",
+      "directness": {
+        "agency_policy": "D6",
+        "audit_log": "D6",
+        "camera_registry": "D1",
+        "connector_run": "D3",
+        "council_minutes": "D6",
+        "executed_contract": "D6",
+        "invoice": "D6",
+        "news_article": "D6",
+        "osm_node_set": "D6",
+        "portal_snapshot": "D6",
+        "vendor_default_page": "D6"
+      },
+      "half_life": "2y",
+      "predicate_id": "camera_coordinate_source",
+      "resolution_strategy": "latest_observation_wins",
+      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_coordinate_source",
+      "value_datatype": "string",
+      "vocab_version": "1.0.0",
+      "volatility_class": "SLOW"
+    },
+    {
+      "cardinality": "single",
+      "definition": "The registry's own key for a camera row (identity-bearing; exact match only).",
+      "directness": {
+        "agency_policy": "D6",
+        "audit_log": "D6",
+        "camera_registry": "D1",
+        "connector_run": "D1",
+        "council_minutes": "D6",
+        "executed_contract": "D6",
+        "invoice": "D6",
+        "news_article": "D6",
+        "osm_node_set": "D6",
+        "portal_snapshot": "D6",
+        "vendor_default_page": "D6"
+      },
+      "half_life": "infinite",
+      "predicate_id": "camera_external_ref",
+      "resolution_strategy": "authoritative_source_wins",
+      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_external_ref",
+      "value_datatype": "string",
+      "vocab_version": "1.0.0",
+      "volatility_class": "IMMUTABLE"
+    },
+    {
+      "cardinality": "single",
+      "definition": "The issuing source's own record identifier (identity-bearing; exact match only).",
+      "directness": {
+        "agency_policy": "D6",
+        "audit_log": "D6",
+        "camera_registry": "D1",
+        "connector_run": "D1",
+        "council_minutes": "D6",
+        "executed_contract": "D6",
+        "invoice": "D6",
+        "news_article": "D6",
+        "osm_node_set": "D6",
+        "portal_snapshot": "D6",
+        "vendor_default_page": "D6"
+      },
+      "half_life": "infinite",
+      "predicate_id": "external_id",
+      "resolution_strategy": "authoritative_source_wins",
+      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/external_id",
+      "value_datatype": "string",
+      "vocab_version": "1.0.0",
+      "volatility_class": "IMMUTABLE"
+    },
+    {
+      "cardinality": "single",
+      "definition": "Operator of a registry-listed camera as attributed by the registry's publisher (categorical).",
+      "directness": {
+        "agency_policy": "D6",
+        "audit_log": "D6",
+        "camera_registry": "D3",
+        "connector_run": "D3",
+        "council_minutes": "D4",
+        "executed_contract": "D4",
+        "invoice": "D4",
+        "news_article": "D3",
+        "osm_node_set": "D3",
+        "portal_snapshot": "D3",
+        "vendor_default_page": "D6"
+      },
+      "half_life": "3y",
+      "predicate_id": "camera_operator",
+      "resolution_strategy": "max_support",
+      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_operator",
+      "value_datatype": "string",
+      "vocab_version": "1.0.0",
+      "volatility_class": "SLOW"
+    },
+    {
+      "cardinality": "single",
+      "definition": "Admin-1/country code of the jurisdiction a registry-listed camera sits in, as attributed by the registry target (categorical).",
+      "directness": {
+        "agency_policy": "D6",
+        "audit_log": "D6",
+        "camera_registry": "D3",
+        "connector_run": "D3",
+        "council_minutes": "D4",
+        "executed_contract": "D4",
+        "invoice": "D4",
+        "news_article": "D3",
+        "osm_node_set": "D3",
+        "portal_snapshot": "D3",
+        "vendor_default_page": "D6"
+      },
+      "half_life": "10y",
+      "predicate_id": "camera_jurisdiction",
+      "resolution_strategy": "max_support",
+      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_jurisdiction",
+      "value_datatype": "string",
+      "vocab_version": "1.0.0",
+      "volatility_class": "GLACIAL"
+    },
+    {
+      "cardinality": "single",
+      "definition": "County / district named on a registry camera row (categorical).",
+      "directness": {
+        "agency_policy": "D6",
+        "audit_log": "D6",
+        "camera_registry": "D2",
+        "connector_run": "D3",
+        "council_minutes": "D4",
+        "executed_contract": "D4",
+        "invoice": "D4",
+        "news_article": "D3",
+        "osm_node_set": "D3",
+        "portal_snapshot": "D3",
+        "vendor_default_page": "D6"
+      },
+      "half_life": "10y",
+      "predicate_id": "camera_county",
+      "resolution_strategy": "max_support",
+      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_county",
+      "value_datatype": "string",
+      "vocab_version": "1.0.0",
+      "volatility_class": "GLACIAL"
+    },
+    {
+      "cardinality": "single",
+      "definition": "Roadway named on a registry camera row.",
+      "directness": {
+        "agency_policy": "D6",
+        "audit_log": "D6",
+        "camera_registry": "D2",
+        "connector_run": "D3",
+        "council_minutes": "D4",
+        "executed_contract": "D4",
+        "invoice": "D4",
+        "news_article": "D3",
+        "osm_node_set": "D3",
+        "portal_snapshot": "D3",
+        "vendor_default_page": "D6"
+      },
+      "half_life": "2y",
+      "predicate_id": "camera_roadway",
+      "resolution_strategy": "max_support",
+      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_roadway",
+      "value_datatype": "string",
+      "vocab_version": "1.0.0",
+      "volatility_class": "SLOW"
+    },
+    {
+      "cardinality": "single",
+      "definition": "Display name / label on a registry camera row.",
+      "directness": {
+        "agency_policy": "D6",
+        "audit_log": "D6",
+        "camera_registry": "D2",
+        "connector_run": "D3",
+        "council_minutes": "D4",
+        "executed_contract": "D4",
+        "invoice": "D4",
+        "news_article": "D3",
+        "osm_node_set": "D3",
+        "portal_snapshot": "D3",
+        "vendor_default_page": "D6"
+      },
+      "half_life": "2y",
+      "predicate_id": "camera_name",
+      "resolution_strategy": "max_support",
+      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_name",
+      "value_datatype": "string",
+      "vocab_version": "1.0.0",
+      "volatility_class": "SLOW"
+    },
+    {
+      "cardinality": "single",
+      "definition": "Facing direction stated on a registry camera row.",
+      "directness": {
+        "agency_policy": "D6",
+        "audit_log": "D6",
+        "camera_registry": "D2",
+        "connector_run": "D3",
+        "council_minutes": "D4",
+        "executed_contract": "D4",
+        "invoice": "D4",
+        "news_article": "D3",
+        "osm_node_set": "D2",
+        "portal_snapshot": "D3",
+        "vendor_default_page": "D6"
+      },
+      "half_life": "2y",
+      "predicate_id": "camera_direction",
+      "resolution_strategy": "max_support",
+      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_direction",
+      "value_datatype": "string",
+      "vocab_version": "1.0.0",
+      "volatility_class": "SLOW"
+    },
+    {
+      "cardinality": "single",
+      "definition": "Operational status stated on a registry camera row (as of the capture).",
+      "directness": {
+        "agency_policy": "D6",
+        "audit_log": "D6",
+        "camera_registry": "D2",
+        "connector_run": "D3",
+        "council_minutes": "D6",
+        "executed_contract": "D6",
+        "invoice": "D6",
+        "news_article": "D3",
+        "osm_node_set": "D4",
+        "portal_snapshot": "D3",
+        "vendor_default_page": "D6"
+      },
+      "half_life": "6mo",
+      "predicate_id": "camera_status",
+      "resolution_strategy": "latest_observation_wins",
+      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_status",
+      "value_datatype": "string",
+      "vocab_version": "1.0.0",
+      "volatility_class": "FAST"
+    },
+    {
+      "cardinality": "single",
+      "definition": "Camera type stated on a registry row or OSM camera tag (categorical).",
+      "directness": {
+        "agency_policy": "D6",
+        "audit_log": "D6",
+        "camera_registry": "D2",
+        "connector_run": "D3",
+        "council_minutes": "D4",
+        "executed_contract": "D4",
+        "invoice": "D4",
+        "news_article": "D3",
+        "osm_node_set": "D2",
+        "portal_snapshot": "D3",
+        "vendor_default_page": "D6"
+      },
+      "half_life": "2y",
+      "predicate_id": "camera_type",
+      "resolution_strategy": "max_support",
+      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_type",
+      "value_datatype": "string",
+      "vocab_version": "1.0.0",
+      "volatility_class": "SLOW"
+    },
+    {
+      "cardinality": "single",
+      "definition": "Mount stated on a registry row or OSM camera tag (categorical).",
+      "directness": {
+        "agency_policy": "D6",
+        "audit_log": "D6",
+        "camera_registry": "D2",
+        "connector_run": "D3",
+        "council_minutes": "D4",
+        "executed_contract": "D4",
+        "invoice": "D4",
+        "news_article": "D3",
+        "osm_node_set": "D2",
+        "portal_snapshot": "D3",
+        "vendor_default_page": "D6"
+      },
+      "half_life": "2y",
+      "predicate_id": "camera_mount",
+      "resolution_strategy": "max_support",
+      "skos_concept_iri": "https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_mount",
+      "value_datatype": "string",
+      "vocab_version": "1.0.0",
+      "volatility_class": "SLOW"
     }
   ],
   "scheme": "predicate",

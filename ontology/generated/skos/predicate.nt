@@ -52,6 +52,123 @@
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/authorization_state> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/authorization_state> <https://ontology.sig-project.org/schema/valueDatatype> "AuthorizationState" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/authorization_state> <https://ontology.sig-project.org/schema/volatilityClass> "MODERATE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_coordinate_source> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_coordinate_source> <http://www.w3.org/2004/02/skos/core#definition> "Which registry field(s) or geometry produced the published camera coordinate (extraction provenance)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_coordinate_source> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_coordinate_source> <http://www.w3.org/2004/02/skos/core#prefLabel> "camera_coordinate_source"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_coordinate_source> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_coordinate_source> <https://ontology.sig-project.org/schema/halfLife> "2y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_coordinate_source> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_coordinate_source> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_coordinate_source> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_county> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_county> <http://www.w3.org/2004/02/skos/core#definition> "County / district named on a registry camera row (categorical)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_county> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_county> <http://www.w3.org/2004/02/skos/core#prefLabel> "camera_county"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_county> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_county> <https://ontology.sig-project.org/schema/halfLife> "10y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_county> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_county> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_county> <https://ontology.sig-project.org/schema/volatilityClass> "GLACIAL" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_direction> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_direction> <http://www.w3.org/2004/02/skos/core#definition> "Facing direction stated on a registry camera row." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_direction> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_direction> <http://www.w3.org/2004/02/skos/core#prefLabel> "camera_direction"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_direction> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_direction> <https://ontology.sig-project.org/schema/halfLife> "2y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_direction> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_direction> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_direction> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_external_ref> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_external_ref> <http://www.w3.org/2004/02/skos/core#definition> "The registry's own key for a camera row (identity-bearing; exact match only)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_external_ref> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_external_ref> <http://www.w3.org/2004/02/skos/core#prefLabel> "camera_external_ref"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_external_ref> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_external_ref> <https://ontology.sig-project.org/schema/halfLife> "infinite" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_external_ref> <https://ontology.sig-project.org/schema/resolutionStrategy> "authoritative_source_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_external_ref> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_external_ref> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_jurisdiction> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_jurisdiction> <http://www.w3.org/2004/02/skos/core#definition> "Admin-1/country code of the jurisdiction a registry-listed camera sits in, as attributed by the registry target (categorical)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_jurisdiction> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_jurisdiction> <http://www.w3.org/2004/02/skos/core#prefLabel> "camera_jurisdiction"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_jurisdiction> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_jurisdiction> <https://ontology.sig-project.org/schema/halfLife> "10y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_jurisdiction> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_jurisdiction> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_jurisdiction> <https://ontology.sig-project.org/schema/volatilityClass> "GLACIAL" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_latitude> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_latitude> <http://www.w3.org/2004/02/skos/core#definition> "WGS84 latitude of a registry-listed camera, as published (post-§19.4 tier) by the registry." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_latitude> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_latitude> <http://www.w3.org/2004/02/skos/core#prefLabel> "camera_latitude"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_latitude> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_latitude> <https://ontology.sig-project.org/schema/halfLife> "2y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_latitude> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_latitude> <https://ontology.sig-project.org/schema/valueDatatype> "decimal" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_latitude> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_longitude> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_longitude> <http://www.w3.org/2004/02/skos/core#definition> "WGS84 longitude of a registry-listed camera, as published (post-§19.4 tier) by the registry." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_longitude> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_longitude> <http://www.w3.org/2004/02/skos/core#prefLabel> "camera_longitude"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_longitude> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_longitude> <https://ontology.sig-project.org/schema/halfLife> "2y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_longitude> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_longitude> <https://ontology.sig-project.org/schema/valueDatatype> "decimal" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_longitude> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_mount> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_mount> <http://www.w3.org/2004/02/skos/core#definition> "Mount stated on a registry row or OSM camera tag (categorical)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_mount> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_mount> <http://www.w3.org/2004/02/skos/core#prefLabel> "camera_mount"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_mount> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_mount> <https://ontology.sig-project.org/schema/halfLife> "2y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_mount> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_mount> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_mount> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_name> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_name> <http://www.w3.org/2004/02/skos/core#definition> "Display name / label on a registry camera row." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_name> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_name> <http://www.w3.org/2004/02/skos/core#prefLabel> "camera_name"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_name> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_name> <https://ontology.sig-project.org/schema/halfLife> "2y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_name> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_name> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_name> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_operator> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_operator> <http://www.w3.org/2004/02/skos/core#definition> "Operator of a registry-listed camera as attributed by the registry's publisher (categorical)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_operator> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_operator> <http://www.w3.org/2004/02/skos/core#prefLabel> "camera_operator"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_operator> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_operator> <https://ontology.sig-project.org/schema/halfLife> "3y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_operator> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_operator> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_operator> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_roadway> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_roadway> <http://www.w3.org/2004/02/skos/core#definition> "Roadway named on a registry camera row." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_roadway> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_roadway> <http://www.w3.org/2004/02/skos/core#prefLabel> "camera_roadway"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_roadway> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_roadway> <https://ontology.sig-project.org/schema/halfLife> "2y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_roadway> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_roadway> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_roadway> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_status> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_status> <http://www.w3.org/2004/02/skos/core#definition> "Operational status stated on a registry camera row (as of the capture)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_status> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_status> <http://www.w3.org/2004/02/skos/core#prefLabel> "camera_status"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_status> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_status> <https://ontology.sig-project.org/schema/halfLife> "6mo" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_status> <https://ontology.sig-project.org/schema/resolutionStrategy> "latest_observation_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_status> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_status> <https://ontology.sig-project.org/schema/volatilityClass> "FAST" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_type> <http://www.w3.org/2004/02/skos/core#definition> "Camera type stated on a registry row or OSM camera tag (categorical)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_type> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_type> <http://www.w3.org/2004/02/skos/core#prefLabel> "camera_type"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_type> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_type> <https://ontology.sig-project.org/schema/halfLife> "2y" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_type> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_type> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/camera_type> <https://ontology.sig-project.org/schema/volatilityClass> "SLOW" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_location_estimate> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_location_estimate> <http://www.w3.org/2004/02/skos/core#definition> "Estimated location of a candidate asset." .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/candidate_location_estimate> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
@@ -187,6 +304,15 @@
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/event_epistemic_status> <https://ontology.sig-project.org/schema/resolutionStrategy> "max_support" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/event_epistemic_status> <https://ontology.sig-project.org/schema/valueDatatype> "EpistemicStatus" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/event_epistemic_status> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/external_id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/external_id> <http://www.w3.org/2004/02/skos/core#definition> "The issuing source's own record identifier (identity-bearing; exact match only)." .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/external_id> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/external_id> <http://www.w3.org/2004/02/skos/core#prefLabel> "external_id"@en .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/external_id> <https://ontology.sig-project.org/schema/cardinality> "single" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/external_id> <https://ontology.sig-project.org/schema/halfLife> "infinite" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/external_id> <https://ontology.sig-project.org/schema/resolutionStrategy> "authoritative_source_wins" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/external_id> <https://ontology.sig-project.org/schema/valueDatatype> "string" .
+<https://ontology.sig-project.org/vocab/predicate/1.0.0/external_id> <https://ontology.sig-project.org/schema/volatilityClass> "IMMUTABLE" .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_award_id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_award_id> <http://www.w3.org/2004/02/skos/core#definition> "USAspending award/sub-award id." .
 <https://ontology.sig-project.org/vocab/predicate/1.0.0/federal_award_id> <http://www.w3.org/2004/02/skos/core#inScheme> <https://ontology.sig-project.org/vocab/predicate/1.0.0> .

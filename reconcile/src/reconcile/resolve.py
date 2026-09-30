@@ -98,6 +98,12 @@ class Claim:
     windowed: bool = False
     content_hash: str = ""
     evidence: Evidence | None = None
+    #: Where ``observed_at`` came from. ``"claim"`` = the claim's own observation time;
+    #: ``"capture_retrieved_at"`` = the claim carried none, so the reader supplied the
+    #: earliest capture's retrieval time — when the source was first seen asserting
+    #: the value. That is an inference, so the resolver labels it in
+    #: ``rules_fired`` (ADR-104) rather than letting it pass as an observation date.
+    observed_at_basis: str = "claim"
 
     @property
     def rank(self) -> int:
@@ -154,6 +160,10 @@ class Candidate:
     #: best weight achieved *within* each supporting class (SIG-RECON-018).
     class_weights: tuple[int, ...]
     class_methods: tuple[str, ...]
+    #: ``(min, max)`` of the member values when the predicate carries an absolute
+    #: ``value_tolerance`` and several agreeing values were pooled into this candidate
+    #: (ADR-104); ``None`` for an exact-value candidate.
+    value_span: tuple[float, float] | None = None
 
 
 @dataclass(frozen=True)
@@ -437,6 +447,10 @@ def _admissibility(st: _State, pair: list[Claim]) -> list[Claim]:
             st.fire("D6-exclude")  # SIG-EPIS-018: admissibility filter, not a weight
             st.drop(c, "D6 non-probative for this predicate")
             continue
+        if c.observed_at_basis != "claim":
+            # The claim carried no observed_at; currency is derived from the capture's
+            # retrieval time instead — an inference, labelled on the record (ADR-104).
+            st.fire(f"SIG-RECON-008:observed_at={c.observed_at_basis}")
         kept.append(c)
 
     # 1.4 supersession: within one source and valid-time, the later observation
@@ -598,12 +612,18 @@ def _candidates(st: _State, admissible: list[Claim], as_of_world: date) -> list[
             continue
         weighted.append((c, w))
 
+    tol = st.ruleset.absolute_tolerance(st.predicate_id)
+    pooled = tol is not None and bool(weighted) and all(_is_numeric(c.value) for c, _ in weighted)
     by_value: dict[object, list[tuple[Claim, int]]] = {}
-    for c, w in weighted:
-        by_value.setdefault(c.value, []).append((c, w))
+    if pooled:
+        assert tol is not None  # narrowed for the type checker
+        by_value = _pool_within_tolerance(st, weighted, tol)
+    else:
+        for c, w in weighted:
+            by_value.setdefault(c.value, []).append((c, w))
 
     candidates: list[Candidate] = []
-    for value, group in by_value.items():
+    for key_value, group in by_value.items():
         # best weight within each independence class (SIG-RECON-018).
         cls_weight: dict[str, int] = {}
         cls_method: dict[str, str] = {}
@@ -614,9 +634,16 @@ def _candidates(st: _State, admissible: list[Claim], as_of_world: date) -> list[
         best_weight = max(w for _, w in group)
         methods = {cls_method[k] for k in cls_weight}
         representative = _representative(group, recency=recency)
+        span: tuple[float, float] | None = None
+        if pooled:
+            nums = [float(cast(float, c.value)) for c, _ in group]
+            span = (min(nums), max(nums))
         candidates.append(
             Candidate(
-                value=value,
+                # A pooled candidate carries its representative claim's OWN value — an
+                # observed value, never a mean: averaging repeated coordinate observations
+                # is exactly how published imprecision is undone (§19.4, SIG-GEO-009).
+                value=representative.value if pooled else key_value,
                 best_weight=best_weight,
                 supporting_class_ids=tuple(sorted(cls_weight)),
                 method_breadth=len(methods),
@@ -624,9 +651,38 @@ def _candidates(st: _State, admissible: list[Claim], as_of_world: date) -> list[
                 supporting_claim_ids=tuple(sorted(c.claim_id for c, _ in group)),
                 class_weights=tuple(cls_weight[k] for k in sorted(cls_weight)),
                 class_methods=tuple(cls_method[k] for k in sorted(cls_weight)),
+                value_span=span,
             )
         )
     return candidates
+
+
+def _pool_within_tolerance(
+    st: _State, weighted: list[tuple[Claim, int]], tol: float
+) -> dict[object, list[tuple[Claim, int]]]:
+    """Pool numeric claim values that agree within the predicate's absolute tolerance.
+
+    Deterministic single-linkage over the sorted values (ties broken by ``claim_id``):
+    a value within ``tol`` of the previous one joins its pool. Adjacent pools are
+    therefore always more than ``tol`` apart, so two pools can never both stand — the
+    U4 test (:func:`_ambiguity`) sees the whole spread and returns UNRESOLVED with both
+    values kept visible. A chain whose total span exceeds ``tol`` is caught by the same
+    test (it uses the pooled members' span, not the representatives), so pooling can
+    never quietly merge values that are far apart (ADR-104).
+    """
+    ordered = sorted(weighted, key=lambda cw: (float(cast(float, cw[0].value)), cw[0].claim_id))
+    pools: dict[object, list[tuple[Claim, int]]] = {}
+    index = -1
+    prev: float | None = None
+    for c, w in ordered:
+        v = float(cast(float, c.value))
+        if prev is None or v - prev > tol:
+            index += 1
+        pools.setdefault(index, []).append((c, w))
+        prev = v
+    if any(len({c.value for c, _ in group}) > 1 for group in pools.values()):
+        st.fire("SIG-RECON-014:value_tolerance")  # agreeing-within-tolerance values pooled
+    return pools
 
 
 def _weight(st: _State, c: Claim, as_of_world: date) -> int | None:
@@ -746,7 +802,22 @@ def _ambiguity(
                 return "U3"
 
     # U4 — numeric predicate, spread beyond tolerance, nothing dispositive.
-    if _is_numeric(winner.value) and winner.best_weight < 4:
+    abs_tol = ruleset.absolute_tolerance(predicate_id)
+    if abs_tol is not None and _is_numeric(winner.value):
+        # The predicate's own absolute tolerance (ADR-104): the spread is taken over
+        # every admissible member value (pooled spans included), so neither a second
+        # pool nor a long single-linkage chain can hide a real disagreement.
+        lo_hi = [
+            cand.value_span
+            if cand.value_span is not None
+            else (float(cast(float, cand.value)), float(cast(float, cand.value)))
+            for cand in ordered
+            if _is_numeric(cand.value)
+        ]
+        spread = max(h for _, h in lo_hi) - min(lo for lo, _ in lo_hi)
+        if winner.best_weight < 4 and spread > abs_tol:
+            return "U4"
+    elif _is_numeric(winner.value) and winner.best_weight < 4:
         nums = [float(cast(float, c.value)) for c in ordered if _is_numeric(c.value)]
         if len(nums) >= 2:
             lo, hi = min(nums), max(nums)

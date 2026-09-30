@@ -1,0 +1,329 @@
+{
+  "schema": "p30.2a/1.0.0",
+  "measured_at": "2026-09-24T08:03:39Z",
+  "spine": "hosted sig-pg (Cloud SQL, db-custom-2-8192)",
+  "execution": "Cloud Run job sig-materialize, execution sig-materialize-c975g (2026-09-24T06:21:27Z -> 08:01:12Z), image sig-api:materialize-419342b09a59, role sig_materialize",
+  "executions": {
+    "sig-materialize-w22ls": "image materialize-6e2fb0161254; FAILED at its first write (06:06:50Z): the Cloud SQL connector reset the connection ('server closed the connection unexpectedly'); 0 rows written",
+    "sig-materialize-hpnc8": "image materialize-6e2fb0161254 (one autocommit per row, ~165 rows/s); CANCELLED at ~06:20Z after writing 85,541 envelopes, to switch to batched writes",
+    "sig-materialize-c975g": "image materialize-419342b09a59 (one transaction per 1,000 rows, ~310 rows/s); the complete pass: considered 1,955,508 groups, inserted 1,786,795, skipped_existing 85,549 (the 85,541 hpnc8 rows + the 8 P30.2 envelopes), skipped_unresolvable 83,164, resolved 1,872,343, unresolved 1",
+    "sig-materialize-8lzql": "+0 RE-RUN on the same image: inserted 0, skipped_existing 1,872,344 (08:03:24Z -> 10:13:41Z)",
+    "sig-materialize-j27zl": "contradictions over the same spine: detected 1 (OKC 299-vs-190), inserted 0, superseded 0"
+  },
+  "spine_claims": 2304784,
+  "spine_entities": 247061,
+  "considered_subject_predicate_groups": 1955508,
+  "skipped_unresolvable_groups": 83164,
+  "observation_count": 230330,
+  "observation_count_definition": "distinct tier-0 subjects carrying a camera_latitude or camera_longitude claim (observation-level camera records; each is ONE source's row)",
+  "resolutions_materialized": 1872344,
+  "resolved_decisions": 1872343,
+  "unresolved_conflict_decisions": 1,
+  "camera_predicate_envelopes": 1872336,
+  "camera_predicate_resolved": 1872336,
+  "camera_predicate_unresolved": 0,
+  "camera_predicate_unresolved_conflict": 0,
+  "envelopes_dated_from_capture": 1869141,
+  "envelopes_with_tolerance_pooling": 0,
+  "by_predicate": {
+    "authorization_state": {
+      "envelopes": 1,
+      "resolved": 1,
+      "unresolved": 0,
+      "by_contradiction_state": {
+        "uncontested": 1
+      },
+      "by_confidence": {
+        "probable": 1
+      }
+    },
+    "camera_coordinate_source": {
+      "envelopes": 230330,
+      "resolved": 230330,
+      "unresolved": 0,
+      "by_contradiction_state": {
+        "uncontested": 230330
+      },
+      "by_confidence": {
+        "strongly_supported": 230330
+      }
+    },
+    "camera_county": {
+      "envelopes": 24946,
+      "resolved": 24946,
+      "unresolved": 0,
+      "by_contradiction_state": {
+        "uncontested": 24946
+      },
+      "by_confidence": {
+        "strongly_supported": 24946
+      }
+    },
+    "camera_direction": {
+      "envelopes": 154000,
+      "resolved": 154000,
+      "unresolved": 0,
+      "by_contradiction_state": {
+        "uncontested": 154000
+      },
+      "by_confidence": {
+        "strongly_supported": 154000
+      }
+    },
+    "camera_external_ref": {
+      "envelopes": 230330,
+      "resolved": 230330,
+      "unresolved": 0,
+      "by_contradiction_state": {
+        "uncontested": 230330
+      },
+      "by_confidence": {
+        "strongly_supported": 230330
+      }
+    },
+    "camera_jurisdiction": {
+      "envelopes": 230330,
+      "resolved": 230330,
+      "unresolved": 0,
+      "by_contradiction_state": {
+        "uncontested": 230330
+      },
+      "by_confidence": {
+        "probable": 230330
+      }
+    },
+    "camera_latitude": {
+      "envelopes": 230330,
+      "resolved": 230330,
+      "unresolved": 0,
+      "by_contradiction_state": {
+        "uncontested": 230330
+      },
+      "by_confidence": {
+        "strongly_supported": 230330
+      }
+    },
+    "camera_longitude": {
+      "envelopes": 230330,
+      "resolved": 230330,
+      "unresolved": 0,
+      "by_contradiction_state": {
+        "uncontested": 230330
+      },
+      "by_confidence": {
+        "strongly_supported": 230330
+      }
+    },
+    "camera_mount": {
+      "envelopes": 221,
+      "resolved": 221,
+      "unresolved": 0,
+      "by_contradiction_state": {
+        "uncontested": 221
+      },
+      "by_confidence": {
+        "probable": 221
+      }
+    },
+    "camera_name": {
+      "envelopes": 42479,
+      "resolved": 42479,
+      "unresolved": 0,
+      "by_contradiction_state": {
+        "uncontested": 42479
+      },
+      "by_confidence": {
+        "strongly_supported": 42479
+      }
+    },
+    "camera_operator": {
+      "envelopes": 230330,
+      "resolved": 230330,
+      "unresolved": 0,
+      "by_contradiction_state": {
+        "uncontested": 230330
+      },
+      "by_confidence": {
+        "probable": 230330
+      }
+    },
+    "camera_roadway": {
+      "envelopes": 17534,
+      "resolved": 17534,
+      "unresolved": 0,
+      "by_contradiction_state": {
+        "uncontested": 17534
+      },
+      "by_confidence": {
+        "strongly_supported": 17534
+      }
+    },
+    "camera_status": {
+      "envelopes": 12591,
+      "resolved": 12591,
+      "unresolved": 0,
+      "by_contradiction_state": {
+        "uncontested": 12591
+      },
+      "by_confidence": {
+        "strongly_supported": 12591
+      }
+    },
+    "camera_type": {
+      "envelopes": 550,
+      "resolved": 550,
+      "unresolved": 0,
+      "by_contradiction_state": {
+        "uncontested": 550
+      },
+      "by_confidence": {
+        "probable": 550
+      }
+    },
+    "claimed_device_count": {
+      "envelopes": 1,
+      "resolved": 0,
+      "unresolved": 1,
+      "by_contradiction_state": {
+        "unresolved_conflict": 1
+      },
+      "by_confidence": {
+        "strongly_supported": 1
+      }
+    },
+    "contract_signed_date": {
+      "envelopes": 1,
+      "resolved": 1,
+      "unresolved": 0,
+      "by_contradiction_state": {
+        "uncontested": 1
+      },
+      "by_confidence": {
+        "strongly_supported": 1
+      }
+    },
+    "contract_value": {
+      "envelopes": 1,
+      "resolved": 1,
+      "unresolved": 0,
+      "by_contradiction_state": {
+        "uncontested": 1
+      },
+      "by_confidence": {
+        "probable": 1
+      }
+    },
+    "deployment_exists": {
+      "envelopes": 1,
+      "resolved": 1,
+      "unresolved": 0,
+      "by_contradiction_state": {
+        "uncontested": 1
+      },
+      "by_confidence": {
+        "probable": 1
+      }
+    },
+    "external_id": {
+      "envelopes": 238035,
+      "resolved": 238035,
+      "unresolved": 0,
+      "by_contradiction_state": {
+        "uncontested": 238035
+      },
+      "by_confidence": {
+        "strongly_supported": 238035
+      }
+    },
+    "implements_technology": {
+      "envelopes": 1,
+      "resolved": 1,
+      "unresolved": 0,
+      "by_contradiction_state": {
+        "uncontested": 1
+      },
+      "by_confidence": {
+        "probable": 1
+      }
+    },
+    "procurement_state": {
+      "envelopes": 1,
+      "resolved": 1,
+      "unresolved": 0,
+      "by_contradiction_state": {
+        "uncontested": 1
+      },
+      "by_confidence": {
+        "probable": 1
+      }
+    },
+    "statutory_citation": {
+      "envelopes": 1,
+      "resolved": 1,
+      "unresolved": 0,
+      "by_contradiction_state": {
+        "uncontested": 1
+      },
+      "by_confidence": {
+        "probable": 1
+      }
+    }
+  },
+  "value_resolved_site_count": 230330,
+  "value_resolved_site_count_definition": "observation-level sites whose camera_latitude AND camera_longitude each carry a materialized §28 decision with a winning claim — value resolution WITHIN one source's record. NOT deduplication.",
+  "resolved_site_count": null,
+  "resolved_site_count_definition": "deduplicated (entity-resolved) sites — clusters of observation-level records judged to be the same physical camera. Not measured: no cross-source camera-site entity resolution has run (P30.2b defines and measures it).",
+  "entity_merges": 0,
+  "dedup_ratio": null,
+  "dedup_ratio_definition": "1 - N/M over post-ER clusters (P30.2b). Not measured here: entity-level merges on the hosted spine (entity.merged_into IS NOT NULL) = 0 because cross-source ER has not run — 'not measured', not 'no duplicates'.",
+  "contradiction_rows": 1,
+  "append_only": {
+    "pg_stat_user_tables": {
+      "claim": {
+        "ins": 2899033,
+        "upd": 0,
+        "del": 0
+      },
+      "contradiction": {
+        "ins": 1,
+        "upd": 0,
+        "del": 0
+      },
+      "resolution": {
+        "ins": 1872344,
+        "upd": 0,
+        "del": 0
+      }
+    },
+    "note": "n_tup_upd = n_tup_del = 0 on claim, resolution, contradiction after the pass"
+  },
+  "rerun": {
+    "execution": "sig-materialize-8lzql",
+    "image": "sig-api:materialize-419342b09a59 (same image as the pass)",
+    "window": "2026-09-24T08:03:24Z -> 10:13:41Z",
+    "considered_pairs": 1955508,
+    "inserted": 0,
+    "skipped_existing": 1872344,
+    "skipped_unresolvable": 83164,
+    "resolved": 1872343,
+    "unresolved": 1,
+    "measured_after": "2026-09-24T10:14:49Z: resolution rows 1,872,344 (unchanged); n_tup_upd = n_tup_del = 0 on claim, resolution, contradiction"
+  },
+  "notes": [
+    "HOSTED SCALE (P30.2a, 2026-09-24, ADR-104): after the 14 camera-registry predicates were registered (and the camera_registry / connector_run genres joined the directness axis), the resolution materializer ran over the complete hosted spine as a Cloud Run job next to Cloud SQL (execution sig-materialize-c975g, 06:21:27Z -> 08:01:12Z, role sig_materialize): 1,955,508 (subject, predicate) groups considered, 1,872,344 envelopes now materialized (1,872,343 with a winning claim, 1 unresolved_conflict — the OKC claimed_device_count 299-vs-190, still kept visible); 83,164 groups on still-unregistered non-camera predicates skipped, not guessed (D-P30.2a-1).",
+    "Camera-predicate envelopes: 1,872,336, every one uncontested (0 unresolved, 0 contradictions, 0 tolerance pools). This is expected and is NOT a quality signal: every hosted camera subject is ONE source's row (0 camera groups carry claims from more than one source), so each envelope adjudicates only that source's own claims — later re-captures supersede earlier ones (§28 Phase 1.4). 1,869,141 envelopes date their claims from the capture's retrieval time (labelled SIG-RECON-008:observed_at=capture_retrieved_at, ADR-104).",
+    "IDEMPOTENT: the re-run on the same image (sig-materialize-8lzql, 08:03:24Z -> 10:13:41Z) inserted 0 and found all 1,872,344 envelopes existing; the contradictions pass (sig-materialize-j27zl) with the camera predicates now admissible detected exactly 1 contradiction (the OKC 299-vs-190, already materialized, kept visible) and inserted 0. Append-only: n_tup_upd = n_tup_del = 0 on claim, resolution and contradiction.",
+    "WHAT THE NUMBERS MEAN: 230,330 of 230,330 observation-level camera sites carry a value-resolved coordinate — §28 VALUE resolution within each source's record. WHAT THEY DO NOT MEAN: they are not resolved/deduplicated sites. No record of one physical camera from different sources has been merged (entity merges = 0); the deduplicated-site count and dedup ratio are 'not measured' (n/a), not zero duplicates. Cross-source camera-site entity resolution is P30.2b; P30.3 must publish P30.2b's measured metric, never '230,330 resolved sites'.",
+    "The methodology numbers above (kappa, floor, holdout P/R/F1) remain the PROVISIONAL LLM-bootstrap eval — the first-principles re-derivation against human ground truth is D-R6.1-EVAL's still-OPEN half."
+  ],
+  "contradictions_pass": {
+    "execution": "sig-materialize-j27zl",
+    "window": "2026-09-24T10:14:34Z -> 10:20:35Z",
+    "considered_pairs": 1955508,
+    "detected": 1,
+    "inserted": 0,
+    "skipped_existing": 1,
+    "superseded": 0,
+    "note": "with the camera predicates now admissible, the §31 contradiction detector still finds exactly the OKC 299-vs-190 disagreement (kept visible); no camera-predicate contradiction exists because every camera subject is single-source"
+  }
+}

@@ -95,6 +95,30 @@ class Ruleset:
         cls = self.volatility_class(predicate_id)
         return self.numeric_tolerance.get(cls, self.numeric_tolerance["default"])
 
+    def absolute_tolerance(self, predicate_id: str) -> float | None:
+        """The predicate's own absolute value tolerance, or ``None`` (ADR-104).
+
+        A registry row MAY carry ``value_tolerance: {kind: absolute, value, unit}`` —
+        "the predicate's tolerance" of SIG-RECON-014 U4, stated in the value's own unit
+        (e.g. degrees for a coordinate). When present it replaces the volatility-class
+        *relative* spread for that predicate: a relative spread is meaningless for a
+        coordinate (0.5° is 1.2% of a latitude of 40° and ~55 km on the ground). Absent,
+        the predicate keeps exact-value candidates and the relative U4 test.
+        """
+        spec = self.predicate(predicate_id).get("value_tolerance")
+        if not spec:
+            return None
+        kind = spec.get("kind")
+        if kind != "absolute":
+            raise ValueError(
+                f"predicate {predicate_id!r} names unknown value_tolerance kind {kind!r} "
+                "(only 'absolute' is defined, ADR-104)"
+            )
+        value = float(spec["value"])
+        if not value > 0:
+            raise ValueError(f"predicate {predicate_id!r} value_tolerance must be > 0")
+        return value
+
     def template(self, rationale_code: str) -> str:
         try:
             return self.templates[rationale_code]

@@ -415,10 +415,13 @@ def test_run_shaping_over_seeded_spine(conn, seeded) -> None:
     assert set(s1.licenses) == {"CC0-1.0", "ODbL-1.0"}  # ODbL propagates, visible
     assert s1.rights  # per-rights provenance for P27.4's compartment gate
 
-    # Freshness rows exist per source and honestly mark registry gaps.
+    # Freshness rows exist per source. The camera-registry predicates carry registry
+    # rows since P30.2a (ADR-104), so their staleness is evaluated against the registry
+    # volatility rather than marked a registry gap.
     sources = {s.freshness.source_id: s for s in ds.sources}
     assert set(sources) == {"camreg_a", "camreg_osm"}
-    assert sources["camreg_a"].staleness_not_evaluable > 0
+    assert sources["camreg_a"].staleness_not_evaluable == 0
+    assert sources["camreg_a"].volatility_class != "unknown"
 
     # Provenance completeness over shaped claims: every claim has a source.
     assert ds.provenance["is_complete"] is True

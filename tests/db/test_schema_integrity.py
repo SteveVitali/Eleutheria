@@ -50,6 +50,9 @@ PREDICATE_NAMED_COLUMN_ALLOWLIST = {
     ("organization", "organization_type"),  # typing column
     ("product", "product_status"),  # typing/status column
     ("funding_instrument", "federal_award_id"),  # crosswalk identifier
+    # crosswalk identity: the request's id in the external records system (MuckRock etc.);
+    # `external_id` became a registered predicate in P30.2a (ADR-104).
+    ("records_request", "external_id"),
 }
 
 

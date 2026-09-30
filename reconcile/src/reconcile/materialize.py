@@ -35,6 +35,7 @@ from __future__ import annotations
 import hashlib
 import json
 import uuid as _uuid
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 from typing import Any
@@ -127,6 +128,47 @@ def _as_date(value: Any) -> date:
     return date(1970, 1, 1)
 
 
+#: The capture-time fallback for a claim that carries no ``observed_at`` (ADR-104). A
+#: registry connector deliberately keeps the per-run retrieval timestamp out of the claim
+#: (so an unchanged registry does not mint duplicate claims), which leaves
+#: ``claim.observed_at`` NULL; the capture's ``retrieved_at`` is when the source was seen
+#: asserting the value. The EARLIEST capture is used — stable as later captures accrue
+#: (no decision churn) and conservative (currency ages from the first sighting, never
+#: looks fresher than the evidence). The lateral only runs for undated claims. Alias
+#: ``cap``; select ``cap.retrieved_at``.
+CAPTURE_TIME_JOIN = (
+    "  LEFT JOIN LATERAL ("
+    "     SELECT min(ec2.retrieved_at) AS retrieved_at FROM claim_evidence ce2 "
+    "       JOIN evidence_capture ec2 ON ec2.capture_id = ce2.capture_id "
+    "      WHERE ce2.claim_id = c.claim_id AND c.observed_at IS NULL) cap ON true "
+)
+
+#: ``Claim.observed_at_basis`` for a claim dated from its capture (labelled by the resolver).
+CAPTURE_TIME_BASIS = "capture_retrieved_at"
+
+#: The pre-ADR-104 placeholder for an undated claim with no capture time either.
+_UNDATED = date(1970, 1, 1)
+
+
+def observation_time(observed_at: Any, retrieved_at: Any) -> tuple[date, str]:
+    """``(observed_at, basis)`` for the resolver's ``Claim`` (ADR-104).
+
+    The claim's own ``observed_at`` when it has one (basis ``"claim"``); else the
+    earliest capture's ``retrieved_at`` (basis ``"capture_retrieved_at"``, which the
+    resolver labels in ``rules_fired``); else the historical 1970 placeholder, which
+    makes the claim HISTORICAL — undated evidence is never treated as current.
+    """
+    if observed_at:
+        return _as_date(observed_at), "claim"
+    if retrieved_at:
+        # UTC calendar date, independent of the reading session's time zone, so every
+        # reader (materializer, CLI, API) derives the same date and input_digest.
+        if isinstance(retrieved_at, datetime) and retrieved_at.tzinfo is not None:
+            retrieved_at = retrieved_at.astimezone(UTC)
+        return _as_date(retrieved_at), CAPTURE_TIME_BASIS
+    return _UNDATED, "claim"
+
+
 def _value(kind: str, text: Any, num: Any, boolean: Any) -> object:
     if kind != "value":
         return None
@@ -176,20 +218,25 @@ def read_claim_groups(
     rows = conn.execute(
         "SELECT c.subject_id, c.predicate_id, c.claim_id, c.value_kind, c.value_text, "
         "       c.value_num, c.value_bool, c.raw_value, c.observed_at, c.source_reliability, "
-        "       c.artifact_integrity, c.review_status, ea.source_id, ea.artifact_type "
+        "       c.artifact_integrity, c.review_status, ea.source_id, ea.artifact_type, "
+        "       cap.retrieved_at "
         "  FROM claim c "
         "  LEFT JOIN LATERAL ("
         "     SELECT ea.source_id, ea.artifact_type FROM claim_evidence ce "
         "       JOIN evidence_capture ec ON ec.capture_id = ce.capture_id "
         "       JOIN evidence_artifact ea ON ea.artifact_id = ec.artifact_id "
         "      WHERE ce.claim_id = c.claim_id LIMIT 1) ea ON true "
-        " WHERE " + " AND ".join(where) + " ORDER BY c.subject_id, c.predicate_id, c.claim_id",
+        + CAPTURE_TIME_JOIN
+        + " WHERE "
+        + " AND ".join(where)
+        + " ORDER BY c.subject_id, c.predicate_id, c.claim_id",
         tuple(params),
     ).fetchall()
 
     groups: dict[tuple[str, str], list[Claim]] = {}
     for r in rows:
         key = (str(r[0]), str(r[1]))
+        observed_at, basis = observation_time(r[8], r[14])
         groups.setdefault(key, []).append(
             Claim(
                 claim_id=str(r[2]),
@@ -199,7 +246,8 @@ def read_claim_groups(
                 reliability=r[9],
                 integrity=r[10],
                 genre=r[13] or "",
-                observed_at=_as_date(r[8]) if r[8] else date(1970, 1, 1),
+                observed_at=observed_at,
+                observed_at_basis=basis,
                 raw_value=r[7] or "",
                 review_status=r[11] or "active",
                 source_id=r[12] or "",
@@ -345,12 +393,17 @@ def materialize_resolutions(
     as_of: date | None = None,
     ruleset: Ruleset | None = None,
     role: str | None = None,
+    progress: Callable[[int, int, int], None] | None = None,
+    progress_every: int = 100_000,
+    batch_size: int = 1_000,
 ) -> MaterializeSummary:
     """Run the §28 resolver over the spine and materialize the envelopes (P28.1).
 
     Reads tier-0 claims grouped by ``(subject, predicate)``, resolves each group, and
     writes the decision as an append-only, idempotent ``resolution`` row. Returns a
     :class:`MaterializeSummary`; a second call over unchanged claims inserts +0.
+    ``progress(considered, total, inserted)`` — if given — is called every
+    ``progress_every`` groups so a long hosted pass reports throughput (ETA) as it runs.
     """
     rs = ruleset or load_ruleset()
     if role:
@@ -363,8 +416,36 @@ def materialize_resolutions(
 
     considered = inserted = skipped_existing = skipped_unresolvable = 0
     resolved_n = unresolved_n = 0
+    # The FK vocab rows are few (strategies x rationale codes x confidences); upsert each
+    # distinct triple once per pass instead of three round-trips per envelope — the write
+    # path is latency-bound at hosted scale (P30.1/P30.2). Still INSERT ... DO NOTHING only.
+    ensured_vocab: set[tuple[str, str, str]] = set()
+    # Envelopes are written in batches of ``batch_size``, one transaction per batch, so a
+    # hosted pass pays one commit per batch rather than one per row. Each insert stays
+    # ``ON CONFLICT (input_digest) DO NOTHING``: a failed batch rolls back whole and a re-run
+    # completes it (+0 for everything already written).
+    pending: list[dict[str, Any]] = []
+
+    def flush() -> tuple[int, int]:
+        added = existing = 0
+        with conn.transaction():
+            for row in pending:
+                vocab_key = (row["strategy_id"], row["rationale_code"], row["confidence"])
+                if vocab_key not in ensured_vocab:
+                    _ensure_vocab(conn, row)
+                    ensured_vocab.add(vocab_key)
+                if _insert_resolution(conn, row):
+                    added += 1
+                else:
+                    existing += 1
+        pending.clear()
+        return added, existing
+
+    total = len(groups)
     for (subj, pred), claims in sorted(groups.items()):
         considered += 1
+        if progress is not None and considered % progress_every == 0:
+            progress(considered, total, inserted)
         try:
             resolved = RESOLVE(
                 subj, pred, claims, as_of_world=as_of_world, as_of_belief=as_of_world, ruleset=rs
@@ -378,15 +459,19 @@ def materialize_resolutions(
             # No strategy assigned (SIG-RECON-013): recorded, not adjudicated.
             skipped_unresolvable += 1
             continue
-        _ensure_vocab(conn, row)
-        if _insert_resolution(conn, row):
-            inserted += 1
-        else:
-            skipped_existing += 1
+        pending.append(row)
         if resolved.resolution_status == "RESOLVED":
             resolved_n += 1
         else:
             unresolved_n += 1
+        if len(pending) >= batch_size:
+            added, existing = flush()
+            inserted += added
+            skipped_existing += existing
+    if pending:
+        added, existing = flush()
+        inserted += added
+        skipped_existing += existing
 
     return MaterializeSummary(
         considered_pairs=considered,
