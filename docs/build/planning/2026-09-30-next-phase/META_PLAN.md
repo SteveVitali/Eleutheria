@@ -660,6 +660,7 @@ Recommendations are mine; decisions are yours. **Q-1…Q-6 block the start of St
 | Q-26 | (from E3) Who gave the counsel determinations recorded in ADR-086 and ADR-106, and would they write a dated opinion? | — | E2 |
 | Q-27 | (from E3) Should the correction-intake receiver open next phase, and who is the backup moderator? | — | G2 |
 | Q-28 | (from E3) Authorize recruiting volunteer reviewers from the DeFlock / EFF / MuckRock communities? (outward contact) | Decide at S5 | F4 |
+| Q-29 | Public contact for corrections/disputes: publish the operator's personal address on the site, or a project alias (e.g. `corrections@surveillancegraph.org` forwarding to it)? | A project alias (safety, spam, succession) | G2, J3 |
 
 ### 7.1 Decisions recorded at GATE-M (2026-09-30T16:16Z)
 
@@ -703,6 +704,17 @@ or whatever for maximal transparency. Please continue current work and fold thes
 |---|---|---|
 | New Stream I (source discovery and acquisition) | **added** | rows I1–I8 (§6); the resulting sources are configured and ingested into production by Round-11 tickets after per-source HG-03 decisions; §1 item 5, T8, P15, Q-19…Q-21, Q-23 |
 | New Stream J (data transparency and export) | **added** | rows J1–J4 (§6); feeds G3 and the Round-11 product tickets; §1 item 6, T9, Q-22 |
+
+Production-fix decision, operator verbatim (2026-09-30T18:2xZ): *"I want to do all of what you are suggesting, but this work
+should be planned/specified in the next round of tickets, not done now. As for what SIG is for, you can draft that yourself.
+And email alerts and anything else can route to 14stevevitali@gmail.com (Steven Vitali). I will try to confirm /chrome now"*
+
+| item | decision | consequence |
+|---|---|---|
+| S0 hotfixes (attribution takedown, `/editorial-standards/` fixture review, `/dispute/` notice) and G1 quick actions QA-1…QA-10 (deletion protection + retain backups, maintenance window, alert channel + policies, uptime/TLS checks, re-roll `sig-probe`, bucket versioning, `sig-web` bucket non-public, disable GitHub `reingest` schedule, restore drill, budget alert) + `/task/new/` demo pages | **all approved in principle, to be specified as Round-11 tickets — not executed now** | no further Track-0 production changes; S2 places them as the first Round-11 wave ("production safety and honesty"); each ticket carries its live stage |
+| Alert / notification routing | **the operator's address (Steven Vitali)** | alert channel(s) and operator notifications route there; whether that address may be *published* on the public site (e.g. `/dispute/`) is Q-29 |
+| Q-D1-01 | **delegated to the agent** | agent-drafted answer recorded as U-001, pending confirmation |
+| `/chrome` | operator connecting Claude in Chrome | C2 starts once the tools are visible |
 
 ---
 
