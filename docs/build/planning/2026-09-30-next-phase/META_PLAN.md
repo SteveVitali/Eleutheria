@@ -15,15 +15,15 @@
 ```
 projectStatus:   IN_PROGRESS        # NOT_STARTED | IN_PROGRESS | BLOCKED | PAUSED | DONE
 stage:           P                  # M (meta-plan) → P (plan) → B (build artifacts) → HANDOFF
-nextUnit:        WAVE-2             # A2 A3 B1 B2 C1 E1 E3 E4 G1 H1 (parallel) + D1 interactive; see §9
-lastCompleted:   A1                 # baseline frozen 2026-09-30T16:31:55Z (baseline/BASELINE.md)
+nextUnit:        WAVE-5             # running: C2 I3 I4 I5 I6 F5 B6 H2 · next: C6 J3 G3 I7 I8 D2 D3 → S1 (§9)
+lastCompleted:   B4                 # 26 of 55 rows done (see §11)
 blockedOn:       (nothing)
 pauseRequested:  false
 baseline:        baseline/baseline.json @ 2026-09-30T16:31:55Z   # delta procedure in BASELINE.md
 planOut:         docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md
 memoryRoot:      docs/build
 round:           11                 # provisional; manifest phases continue at P34, rows at 201
-updatedAt:       2026-09-30T16:05Z
+updatedAt:       2026-09-30T18:03:23Z   # written by `date -u` (§9 clock rule)
 ```
 
 **Vocabularies.** Row status: `open → in-progress → done | blocked-on-operator | dropped(reason)`;
@@ -1015,6 +1015,15 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   email to the operator's address; "reviewed"/"captured <date>" only when true; never "anonymous"). Risks: monthly write
   window days 6–13, L44 exclusive lock on `claim_evidence`, alerts/restore drill vs 10-10, live nginx can't honour
   withdrawals. 11 incoming findings.
+- 2026-09-30T18:03:23Z — **B4 done** (`design/B4-verification.md`): 11 guards G1–G11 (record-dates; append-only incl. insertion-position,
+  living-head archive, sqitch and ticket-id rules; CI at every boundary → `blockedOn`; gate-record/readout authorship;
+  ledger contract (B3 V1–V11 +3); tests pin invariants only; spec/matrix validators in CI + verdict cross-checks; ADR index +
+  fired-trigger register; SIG-ENG-031 amended; production-truth probes placement; no vacuous pass). Coverage: 13/17
+  Appendix-A findings caught (+3 partly, F-38 detect-only); 28/40 new items caught (+7 partly). Not catchable by checks:
+  whether the operator truly said/signed something (Q-B4-2: an operator-only signing key), status meaning, gate wisdom.
+  Replays on real history: G1 fails 70 commits, G2 25+20, G3 would have stopped the chain at 4 boundaries. Seed needs a
+  ~700-line guard core + conversion of 6 test pins (else the seed goes red). 10 incoming findings (incl. this ledger's
+  stale CURRENT STATE — fixed in this commit). **B6 + H2 dispatched.**
 
 ---
 
