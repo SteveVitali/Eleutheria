@@ -962,6 +962,12 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   with 184–187 marked deferred (alternatives for F4). Shadow mode: split D-R10-MEMORY-1 (repair + enforce obligation
   events; keep projection as CI-verified orient view; keep closeout journal shadow). Seed = 10 ordered commits C0–C10;
   early tickets M1–M6; validator requirements V1–V11 for B4. 8 incoming findings. B4 + F4 dispatched.
+- 2026-09-30T20:15Z — **F1 done** (`research/F1-owed-register.md`, `data/owed_register_adjudication.csv`): 36 rows → 9 live-return-pass,
+  8 ticket, 7 operator-action, 4 human-marker, 3 wontfix, 3 later-phase, 2 already-done; proposed corrections D-SOURCES.12-1
+  →DONE, D-SOURCES.7-1→PARTIAL, D-P21.3-2→DONE (hosted jobs already use every credential); 2 of 13 future-dated closures
+  do not hold live (D-P31.1-1 contradiction serve 13.6 s warm; D-P31.5-2 flagged org still named) because the hosted API
+  still runs the 09-25 image; **32/36 reachable without recruiting**; dependency-ordered Round-11 path recorded. 8 incoming
+  findings (SAM.gov sweep restarts at keyword 0; ADR-124 operator allows missing; MuckRock 0 hosted claims). G2 dispatched.
 
 ---
 
