@@ -1581,6 +1581,7 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   ≈5 runs). 4 findings (map/network/search ignore place/source filters they accept; "hollow"/"dashed" semantics inconsistent
   across K1/K2/K14; four notes each name another as SVG-generator owner; strict CSP would break self-styled SVG downloads).
   **K13 dispatched** (reconciles these).
+- 2026-09-30T23:02:13Z — Findings re-merged (`tools/merge_findings.py`): 
 
 ---
 
