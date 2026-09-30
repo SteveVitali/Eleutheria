@@ -1158,6 +1158,13 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
 - 2026-09-30T18:56:45Z — **Findings merged** (orchestrator, single writer): `tools/merge_findings.py` (deterministic, idempotent) appended every
   row's incoming findings to `findings/FINDINGS.csv` with ids F-045 onward and a new `origin_ref` column (schema §8.2 +1);
   rendered `findings/REGISTER.md`. **377 findings: 9 × S0, 81 × S1, 211 × S2, 76 × S3.** Re-run after each later row.
+- 2026-09-30T18:57:40Z — **I9a + I9b launched by the orchestrator as headless fresh sessions** (operator: "I'm confused why you can't just do
+  the Session 1 and Session 2 prompts in sub-agents or fresh sessions you trigger/orchestrate yourself"): subagents share
+  this session's exhausted WebSearch cap, but top-level `claude -p` processes do not (orchestrate-build's `headless` dispatch
+  tier). Launched at 18:57Z from the planning worktree with `--model opus --permission-mode acceptEdits` and a scoped
+  `--allowedTools` list (Read/Write/Edit/Glob/Grep/WebSearch/WebFetch + read-only shell utilities, python3, curl; no git, no
+  gcloud); prompts in `docs/build/logs/next-phase/I9{a,b}/PROMPT.txt`, transcripts in `session.log` (gitignored). The earlier
+  instruction asking the operator to open sessions manually is withdrawn.
 
 ---
 
