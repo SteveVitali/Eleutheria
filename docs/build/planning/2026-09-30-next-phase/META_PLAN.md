@@ -1165,6 +1165,12 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   `--allowedTools` list (Read/Write/Edit/Glob/Grep/WebSearch/WebFetch + read-only shell utilities, python3, curl; no git, no
   gcloud); prompts in `docs/build/logs/next-phase/I9{a,b}/PROMPT.txt`, transcripts in `session.log` (gitignored). The earlier
   instruction asking the operator to open sessions manually is withdrawn.
+- 2026-09-30T20:12:19Z — **Account usage limit hit at ~19:10Z** (Claude monthly/session spend limit; reset ≈20:10Z): I7 (subagent) and both headless
+  I9 sessions stopped mid-row (I7 left scratch scripts in `docs/build/logs/next-phase/I7/`; I9a left 14 candidates + 35 logged
+  queries; I9b nothing). After the reset: I9a/I9b relaunched as headless sessions with resume instructions
+  (`PROMPT_resume.txt`: continue from existing files, no repeated queries). **I7 re-runs ONCE after I9a/I9b finish** (over
+  all I3–I6 + I9 candidates, reusing its scratch scripts) to avoid paying for consolidation twice. Cost note for the operator:
+  planning agents are expensive; remaining rows are sequenced to avoid duplicate work.
 
 ---
 
