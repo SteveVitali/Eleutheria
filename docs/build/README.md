@@ -6,6 +6,7 @@
 # Build memory
 
 <!-- build-memory: v2 -->
+<!-- build-memory-guards: 1 -->
 
 The committed record of **what happened** during this build. The layout contract — the tree, the
 modes, who writes what — is `skills/build-memory/layout.md` (in the `agent-skills` repo); this
