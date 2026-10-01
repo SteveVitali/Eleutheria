@@ -34,10 +34,19 @@ on:
 
 concurrency:
   group: reingest-${{ github.ref }}
-  cancel-in-progress: true
+  # Never cancel a running sweep (P34.1, ADR-151): a scheduled sweep that is
+  # cancelled leaves an unmeasured gap — a started run completes (SIG-ENG-046).
+  cancel-in-progress: false
 
 permissions:
   contents: read
+
+# Workflow-level `bash` = `bash --noprofile --norc -eo pipefail` on the runner
+# (SIG-ENG-046, P34.1): `sig-orchestration due | tee` below then reports a
+# `due` failure instead of exiting 0 through `tee`.
+defaults:
+  run:
+    shell: bash
 
 jobs:
   reingest-due-sources:
@@ -48,10 +57,10 @@ jobs:
       SIG_DATA_GOV_KEY: ${{ secrets.SIG_DATA_GOV_KEY }}
       SIG_OVERPASS_ENDPOINT: ${{ secrets.SIG_OVERPASS_ENDPOINT }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v6
+      - name: Install uv (pinned; matches `[tool.uv] required-version`)
+        uses: astral-sh/setup-uv@v10.2.0
         with:
           version: "0.12.6"
           enable-cache: true

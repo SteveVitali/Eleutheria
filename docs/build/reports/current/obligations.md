@@ -65,5 +65,6 @@
 | D-R11-LATER-21 | OPEN | engineering | trigger: after TC-PIN, before 24.04 end of support | the trigger is recorded as fired (a dated GATE DECISIONS row or the measured fact) → decompose-spec mode=extend seeds the unit's rows; the row closes only by an… |
 | D-R11-LATER-22 | OPEN | the operator (says go after CAP-02 and REVIEW-R11's S0/S1 dispositions) | trigger: CAP-02 passes, REVIEW-R11's S0/S1 findings are fixed or dispositioned (S6-F3) and the operator says go (catalog gate: U-009 operator decision) | the trigger is recorded as fired (a dated GATE DECISIONS row or the measured fact) → decompose-spec mode=extend seeds the unit's rows; the row closes only by an… |
 | D-R11-LIC006-1 | OPEN | PLAN-11B (row 239), to place it in an 11B row — or, only in the operator's own words, a waiver ADR (never by default) | PLAN-11B (to place it in an 11B row) | a landed row whose new sqitch change stores ODbL-compartment physical-asset records in a physically separate table, with a test that no CC-BY table holds them; … |
+| D-P34.1-1 | OPEN | operator merge | the first merge sitting after this PR reaches main; P38.1 audits it | every `CI` workflow run on `main` after the merge shows a non-`cancelled` conclusion (`gh run list --branch main --workflow CI` / the check-runs API); P38.1's a… |
 
 ← back: CURRENT.md

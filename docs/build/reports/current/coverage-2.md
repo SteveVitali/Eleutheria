@@ -2,6 +2,7 @@
 
 | requirement | domain | verdict | assessed_at | supersedes |
 |---|---|---|---|---|
+| SIG-OPS-002 | hosted | MISSING | 2026-10-01 | — |
 | SIG-OPS-003 | hosted | MISSING | 2026-10-01 | — |
 | SIG-OPS-004 | hosted | MISSING | 2026-10-01 | — |
 | SIG-OPS-005 | hosted | MISSING | 2026-10-01 | — |

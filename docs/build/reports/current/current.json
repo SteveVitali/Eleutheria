@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "f96461dd78807b04f707646170690caab1c8d05e",
-  "manifest_inputs": 917,
+  "input_commit": "f02deb01c2ae66ec3142822a33507913e54bddcb",
+  "manifest_inputs": 919,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.1",
-    "lastCompleted": "P33.8",
+    "nextTicket": "P34.2",
+    "lastCompleted": "P34.1",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25",
@@ -17,23 +17,23 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/seed",
+    "chainTip": "r11/P34.1-toolchain-pin-and-ci-hygiene",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-01T19:15:50Z"
+    "updatedAt": "2026-10-01T22:28:11Z"
   },
   "counts": {
-    "obligations": 124,
-    "owed": 63,
-    "open": 59,
+    "obligations": 125,
+    "owed": 64,
+    "open": 60,
     "partial": 4,
     "terminal": 61,
-    "events": 124,
+    "events": 125,
     "transitions": 0,
-    "coverage_assessments": 185,
+    "coverage_assessments": 186,
     "coverage_historical_rows": 777,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
@@ -5531,6 +5531,50 @@
           }
         }
       ]
+    },
+    {
+      "id": "D-P34.1-1",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.1-1:e0",
+      "kind": "V",
+      "owner": "operator merge",
+      "landing": "the first merge sitting after this PR reaches main; P38.1 audits it",
+      "backlog_home": "BL-084",
+      "item": "\"0 cancelled push runs on `main` after merges\" — the SIG-ENG-046 rule that a push run to `main` is never cancelled, observed for real",
+      "unblocked_by": "owner: operator merge; trigger: the first merge sitting after this PR reaches `main`; P38.1 audits it",
+      "verify": "every `CI` workflow run on `main` after the merge shows a non-`cancelled` conclusion (`gh run list --branch main --workflow CI` / the check-runs API); P38.1's audit names this row",
+      "proxy": "the rule is asserted on the workflow by `test_ci_cancel_in_progress_pr_only` and exercised by this PR's own head runs",
+      "line": 974,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.1-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.1-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.1",
+          "owner": "operator merge",
+          "landing": "the first merge sitting after this PR reaches main; P38.1 audits it",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-01",
+          "recorded_at": "2026-10-01",
+          "source_commit": "a7951049dd71d42c1f2927c16c3fa9bcedb00c38",
+          "reason": "migration anchor appended by P34.1 (row 201) for the row it added — appended, never `migrate`; raw cell status preserved verbatim; owner and landing read from the row's owner:/trigger: cell",
+          "anchor": {
+            "row_line": 974,
+            "row_sha256": "618a8cec9f866054f981b3ca3254bf752140e4a8bffbfbf3724a3d8f8191740c",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
     }
   ],
   "coverage": {
@@ -9913,8 +9957,8 @@
           "label": "historical/csv"
         },
         "SIG-ENG-046": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-P34.1-1)",
+          "evidence": "web/.nvmrc:1;web/.npmrc:1;web/package.json:1;pyproject.toml:1;Makefile:1;.github/workflows/ci.yml:1",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -10592,6 +10636,16 @@
         "limitations": "new Round-11 requirement entering the matrix as MISSING with its owner's routing (P34.1); planning never marks it MET (spec §56.9)",
         "supersedes": null,
         "assessment_id": "SIG-ENG-046:r11-1"
+      },
+      {
+        "requirement_id": "SIG-ENG-046",
+        "domain": "implementation",
+        "verdict": "MET-ENGINEERED(D-P34.1-1)",
+        "assessed_at": "2026-10-01",
+        "code_revision": "r11/P34.1-toolchain-pin-and-ci-hygiene @ c2676758c033d36c11e7efe9c7bed51ed9368e7c",
+        "limitations": "engineering legs landed and verified at implementation (5487-test gate, full make ci-local, ci pass #193@1e718a0); the 'zero cancelled push runs on main' clause needs a real merge event and stays owed in D-P34.1-1 (home BL-084; P38.1a audits it) — previous matrix verdict MISSING (routing P34.1)",
+        "supersedes": "SIG-ENG-046:r11-1",
+        "assessment_id": "SIG-ENG-046:r11-2"
       },
       {
         "requirement_id": "SIG-EPIS-009",
@@ -12197,6 +12251,11 @@
           "assessed_at": "2026-10-01"
         },
         {
+          "requirement": "SIG-ENG-046",
+          "verdict": "MET-ENGINEERED(D-P34.1-1)",
+          "assessed_at": "2026-10-01"
+        },
+        {
           "requirement": "SIG-EPIS-012",
           "verdict": "MET",
           "assessed_at": "2026-10-01"
@@ -13411,10 +13470,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "2c2481ee54cfe14c25d6b50a321112992bf1b5bb61d75b2256539a8c5958141a",
+  "manifest_sha256": "96dda5c578ea89b84f1f8790d0d55342b824e6f9666d50d2c4b705aa72708cc8",
   "current_md": {
     "lines": 74,
-    "bytes": 12677,
+    "bytes": 12759,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

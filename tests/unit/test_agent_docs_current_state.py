@@ -74,13 +74,17 @@ def test_web_agents_names_all_island_exceptions_and_node_floor() -> None:
     for island in ("/map/", "/network/", "/search/"):
         assert island in web, f"public island {island} dropped from web guidance"
     assert "ADR-097" in web and "ADR-134" in web and "ADR-068" in web
-    # The node floor the guidance states is the one web/package.json declares
-    # (P27.9 raised it; a toolchain pin may move it) — never a stale range.
-    engines = json.loads(_read("web/package.json"))["engines"]["node"]
-    stated = re.findall(r"`(>=\s*\d+(?:\.\d+)*)`", web)
-    assert engines in stated, f"web/AGENTS.md does not state the engines.node floor {engines!r}"
-    assert all(s == engines for s in stated), (
-        f"web/AGENTS.md states node floors {stated} but web/package.json says {engines!r}"
+    # The toolchain ranges the guidance states are the ones web/package.json
+    # declares (P27.9 raised the floor; P34.1 pins Node 24 + npm 11 as a range
+    # `>=24 <25` / `>=11 <12`) — never a stale range.
+    engines = json.loads(_read("web/package.json"))["engines"]
+    declared = {engines["node"], engines["npm"]}
+    stated = re.findall(r"`(>=\s*\d+(?:\.\d+)*(?:\s*<\s*\d+(?:\.\d+)*)?)`", web)
+    assert engines["node"] in stated, (
+        f"web/AGENTS.md does not state the engines.node range {engines['node']!r}"
+    )
+    assert all(s in declared for s in stated), (
+        f"web/AGENTS.md states toolchain ranges {stated} but web/package.json declares {declared}"
     )
 
 

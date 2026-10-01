@@ -962,3 +962,13 @@ routing pattern for unplaced work (PLAN-11B places it in an 11B row) — agent i
 | id | kind | item | why deferred | unblocked by | how to verify | proxy now | status |
 |---|---|---|---|---|---|---|---|
 | D-R11-LIC006-1 | F | SIG-LIC-006's "physically separate table" clause (§42.3): store the OSM-derived ODbL physical-asset layer in a physically separate table, not only behind the export boundary — the MUST stays owed and is not waived | SEED-12b withheld the drafted §42.3 amendment ("physical ODbL table → export-boundary compartments") because removing the stored-table clause would weaken a MUST that no operator decision covers (plan §6.5; ADR-150 D7; spec Appendix G.7.5); RISK-P4-07 was re-homed BL-046 → BL-092 with no Round-11 owner (SEED-14b) | owner: PLAN-11B (row 239), to place it in an 11B row — or, only in the operator's own words, a waiver ADR (never by default) · trigger: PLAN-11B's dispatch in 11A | a landed row whose new sqitch change stores ODbL-compartment physical-asset records in a physically separate table, with a test that no CC-BY table holds them; SIG-LIC-006's coverage row re-verdicted by a `coverage-assessment/1` event | separation holds at the export boundary today: compartment stamping and the export licence gate (ADR-011; `tests/connectors/test_osm.py`) | OPEN 2026-10-01 (SEED-15; cites BL-092) |
+
+## New owed rows — P34.1 (Round 11 / row 201; recorded 2026-10-01T20:48:14Z; append-only)
+
+Appended by Devin Desktop (`swe-2-high`, sub-agent) at the P34.1 run; nothing above is changed. The row carries
+`owner:` and `trigger:` (DEFERRALS rule 5) and an open `BL-nnn` home (BL-084, the phase-34 home); its lead token
+changes only through an obligation-event transition (ADR-126).
+
+| id | kind | item | why deferred | unblocked by | how to verify | proxy now | status |
+|---|---|---|---|---|---|---|---|
+| D-P34.1-1 | V | "0 cancelled push runs on `main` after merges" — the SIG-ENG-046 rule that a push run to `main` is never cancelled, observed for real | the observation needs a real merge event: the invariant cannot be exercised until the operator merges this PR (OP-08); nothing engineering-side remains | owner: operator merge; trigger: the first merge sitting after this PR reaches `main`; P38.1 audits it | every `CI` workflow run on `main` after the merge shows a non-`cancelled` conclusion (`gh run list --branch main --workflow CI` / the check-runs API); P38.1's audit names this row | the rule is asserted on the workflow by `test_ci_cancel_in_progress_pr_only` and exercised by this PR's own head runs | OPEN (cites BL-084) — created 2026-10-01 by P34.1 per the contract's AC; the post-merge observation is owed, never claimed here |

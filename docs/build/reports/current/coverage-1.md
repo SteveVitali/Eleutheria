@@ -41,6 +41,7 @@
 | SIG-ENG-044 | implementation | MISSING | 2026-10-01 | — |
 | SIG-ENG-045 | composed-db | MISSING | 2026-10-01 | — |
 | SIG-ENG-046 | implementation | MISSING | 2026-10-01 | — |
+| SIG-ENG-046 | implementation | MET-ENGINEERED(D-P34.1-1) | 2026-10-01 | SIG-ENG-046:r11-1 |
 | SIG-EPIS-009 | hosted | PARTIAL | 2026-10-01 | — |
 | SIG-EPIS-012 | implementation | MET | 2026-10-01 | — |
 | SIG-EPIS-018 | implementation | MET | 2026-10-01 | — |
@@ -121,6 +122,5 @@
 | SIG-ONTO-064 | public | PARTIAL | 2026-10-01 | — |
 | SIG-ONTO-065 | public | PARTIAL | 2026-10-01 | — |
 | SIG-OPS-001 | hosted | MISSING | 2026-10-01 | — |
-| SIG-OPS-002 | hosted | MISSING | 2026-10-01 | — |
 
 ← back: CURRENT.md · next page: coverage-2.md

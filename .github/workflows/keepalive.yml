@@ -27,16 +27,24 @@ on:
 
 concurrency:
   group: keepalive-${{ github.ref }}
-  cancel-in-progress: true
+  # Never cancel a running keepalive (P34.1, ADR-151): a scheduled sweep that is
+  # cancelled leaves an unmeasured gap — a started run completes (SIG-ENG-046).
+  cancel-in-progress: false
+
+# Workflow-level `bash` = `bash --noprofile --norc -eo pipefail` on the runner
+# (SIG-ENG-046, P34.1): a failing command on the left of a pipe fails the step.
+defaults:
+  run:
+    shell: bash
 
 jobs:
   degraded-rebuild:
     runs-on: ubuntu-24.04  # pinned (S6R-27: ubuntu-latest moves to Ubuntu 26 on 2026-10-19)
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v6
+      - name: Install uv (pinned; matches `[tool.uv] required-version`)
+        uses: astral-sh/setup-uv@v10.2.0
         with:
           version: "0.12.6"
           enable-cache: true
@@ -47,12 +55,20 @@ jobs:
       - name: Install workspace from the committed lockfile
         run: make sync
 
-      - name: Install Node (pinned major)
-        uses: actions/setup-node@v4
+      - name: Install Node (exact pin from web/.nvmrc)
+        uses: actions/setup-node@v7
         with:
-          node-version: "22"
+          node-version-file: web/.nvmrc
           cache: npm
           cache-dependency-path: web/package-lock.json
+
+      # Same toolchain locally and in CI (SIG-ENG-046): the pinned npm, then the
+      # versions printed so the log records what ran.
+      - name: Install the pinned npm and print the toolchain
+        run: |
+          npm install -g "npm@$(node -p "require('./web/package.json').packageManager.split('@').pop()")"
+          node -v
+          npm -v
 
       - name: Install web from the committed lockfile
         run: npm --prefix web ci
@@ -78,7 +94,7 @@ jobs:
 
       - name: Upload the recorded alert ledger
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: keepalive-alerts
           path: keepalive-alerts.jsonl

@@ -6,8 +6,10 @@
 # "generated artifacts match a fresh generation" gate — run green on the empty
 # skeleton. Install is strictly from the committed lockfile (uv --frozen).
 # Runner: every job pins `ubuntu-24.04` (S6R-27, FEA-16 — the `ubuntu-latest`
-# label moves to Ubuntu 26 from 2026-10-19); P34.1 (TC-PIN) keeps the rest of the
-# toolchain pin.
+# label moves to Ubuntu 26 from 2026-10-19).
+# Toolchain pin (SIG-ENG-046, P34.1, ADR-151): Node from `web/.nvmrc`, npm from
+# `web/package.json` `packageManager`, uv from `pyproject.toml`
+# `[tool.uv] required-version` — the same pins `make ci-local` runs locally.
 
 name: CI
 
@@ -16,34 +18,40 @@ on:
     branches: [main]
   pull_request:
 
+# Workflow-level `bash` = `bash --noprofile --norc -eo pipefail` on the runner
+# (SIG-ENG-046): a failing command on the left of any `| tee`/pipe fails the step.
+defaults:
+  run:
+    shell: bash
+
+# PR runs stay cancellable (a newer head supersedes an older one); a run for a
+# push to `main` is never cancelled — SIG-ENG-046 requires a completed main run.
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   # Documentation freshness gate (P22.2, ADR-072). Runs BOTH vendored detectors
   # (human-facing repo docs from P22.1 + the agent-facing AGENTS.md hierarchy) on
-  # pull requests. Structural checks only — deterministic, no LLM — so drift
-  # (broken references, coverage gaps) is caught at change time, not by a periodic
+  # pull requests AND on pushes to `main` (P34.1 / CF-01, ADR-151 — the guards
+  # judge landed commits too, so a change cannot dodge them by merging).
+  # Structural checks only — deterministic, no LLM — so drift (broken
+  # references, coverage gaps) is caught at change time, not by a periodic
   # sweep. Pure bash + git; no uv/toolchain needed. Kept out of `make check`
   # because the two detectors together take ~30s (>10s), so they run here.
   #
   # Round 11 (SEED-02b; B4 G3/G7, plan App. A T2): `make docs-check` also runs the
   # build-memory history guard on the working tree, the spec-source checker and the
-  # coverage-matrix checker, and the last two steps judge this PR's own commits —
-  # the history guard over base...head (BM-HIST-01) and the OM-01 trailer check.
+  # coverage-matrix checker, and the last steps judge the change's own commits —
+  # on a pull request the history guard runs over base...head (BM-HIST-01) and
+  # the trailer check over the same range; on a push to `main` the guard runs
+  # over the landed head's first-parent diff and the trailer check over the
+  # push's commits (event.before...sha, the landed head itself as fallback).
   # All stdlib python3: the runner's system Python (3.12 on ubuntu-24.04); no uv.
-  #
-  # TODO(P34.1, CF-01): P34.1 (TC-PIN) owns this job's `push` trigger. When it adds
-  # it, it also adds the push-side history step
-  #   bash scripts/docs/check-build-memory.sh . --first-parent ${{ github.sha }}
-  # and rewrites test_ci_docs_job_runs_only_on_pull_requests with its ADR. Not added
-  # by the seed (plan App. A T2: "The `push` trigger is P34.1's, CF-01").
   docs:
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0 # the detectors classify missing refs via git history; the history guards need it
 
@@ -63,7 +71,7 @@ jobs:
       # are all red — never `|| true`. `!cancelled()`: this verdict and the trailer
       # check's are reported even when an earlier docs step is red (the job still fails).
       - name: Build-memory history guard (memory_guard.py over the PR range)
-        if: ${{ !cancelled() }}
+        if: ${{ github.event_name == 'pull_request' && !cancelled() }}
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
@@ -71,24 +79,37 @@ jobs:
           python3 --version
           bash scripts/docs/check-build-memory.sh . --range "$BASE_SHA...$HEAD_SHA" --json docs/build/logs/build-memory-history.json
 
+      # The push-side twin (P34.1 / CF-01): on a push to `main` the guard judges
+      # the landed head's first-parent diff — the same change the PR judged.
+      - name: Build-memory history guard (first-parent diff of the landed head)
+        if: ${{ github.event_name == 'push' && !cancelled() }}
+        run: |
+          python3 --version
+          bash scripts/docs/check-build-memory.sh . --first-parent "${{ github.sha }}" --json docs/build/logs/build-memory-history.json
+
       # OM-01 (plan §3.3; A-21 — commits keep the operator's name as author): every
-      # commit of the PR carries a recognised harness trailer, or is an operator
-      # commit (`Harness: operator`, a valid OP-25 signature, a GitHub merge). Exit 1
-      # (an untrailered agent commit), 3 (vacuous) and 5 (unknown) are red.
+      # commit of the change carries a recognised harness trailer, or is an
+      # operator commit (`Harness: operator`, a valid OP-25 signature, a GitHub
+      # merge). Exit 1 (an untrailered agent commit), 3 (vacuous) and 5 (unknown)
+      # are red. On a push the range is the push's commits (event.before...sha),
+      # falling back to the landed head itself when `before` is absent/zero.
       - name: Commit trailer check (OM-01)
         if: ${{ !cancelled() }}
-        env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        run: python3 docs/build/tools/check_trailers.py --range "$BASE_SHA...$HEAD_SHA" --json docs/build/logs/trailer-check.json
+        run: |
+          base="${{ github.event.pull_request.base.sha || github.event.before }}"
+          head="${{ github.event.pull_request.head.sha || github.sha }}"
+          if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ]; then
+            base="$(git rev-parse HEAD^)"
+          fi
+          python3 docs/build/tools/check_trailers.py --range "$base...$head" --json docs/build/logs/trailer-check.json
 
   python:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v6
+      - name: Install uv (pinned; matches `[tool.uv] required-version`)
+        uses: astral-sh/setup-uv@v10.2.0
         with:
           version: "0.12.6"
           enable-cache: true
@@ -134,10 +155,10 @@ jobs:
   composed:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v6
+      - name: Install uv (pinned; matches `[tool.uv] required-version`)
+        uses: astral-sh/setup-uv@v10.2.0
         with:
           version: "0.12.6"
           enable-cache: true
@@ -148,12 +169,29 @@ jobs:
       - name: Install workspace from the committed lockfile
         run: make sync
 
-      - name: Install Node (pinned major)
-        uses: actions/setup-node@v4
+      - name: Install Node (exact pin from web/.nvmrc)
+        uses: actions/setup-node@v7
         with:
-          node-version: "22"
+          node-version-file: web/.nvmrc
           cache: npm
           cache-dependency-path: web/package-lock.json
+
+      # The same toolchain locally and in CI (SIG-ENG-046): the exact npm of
+      # `web/package.json` `packageManager` is installed, then both versions are
+      # printed so the log records what ran (and a drift is a visible diff).
+      - name: Install the pinned npm and print the toolchain
+        run: |
+          npm install -g "npm@$(node -p "require('./web/package.json').packageManager.split('@').pop()")"
+          node -v
+          npm -v
+
+      # Lockfile truth gate: regenerate the lockfile under the pinned npm and
+      # fail on any diff — a lockfile the pinned toolchain would write
+      # differently is drift, caught at PR time (H1 §2a).
+      - name: Fail on lockfile drift under the pinned toolchain
+        run: |
+          npm --prefix web install --package-lock-only --ignore-scripts
+          git diff --exit-code -- web/package-lock.json
 
       - name: Install web deps (the S8 web-build fixtures need web/node_modules)
         run: npm --prefix web ci
@@ -172,10 +210,10 @@ jobs:
   security:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v6
+      - name: Install uv (pinned; matches `[tool.uv] required-version`)
+        uses: astral-sh/setup-uv@v10.2.0
         with:
           version: "0.12.6"
           enable-cache: true
@@ -210,16 +248,33 @@ jobs:
     runs-on: ubuntu-24.04
     defaults:
       run:
+        shell: bash # keep pipefail under the job's working-directory override
         working-directory: web
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - name: Install Node (pinned major)
-        uses: actions/setup-node@v4
+      - name: Install Node (exact pin from web/.nvmrc)
+        uses: actions/setup-node@v7
         with:
-          node-version: "22"
+          node-version-file: web/.nvmrc
           cache: npm
           cache-dependency-path: web/package-lock.json
+
+      # The same toolchain locally and in CI (SIG-ENG-046): the exact npm of
+      # `web/package.json` `packageManager` is installed, then both versions are
+      # printed so the log records what ran (and a drift is a visible diff).
+      - name: Install the pinned npm and print the toolchain
+        run: |
+          npm install -g "npm@$(node -p "require('./package.json').packageManager.split('@').pop()")"
+          node -v
+          npm -v
+
+      # Lockfile truth gate: regenerate the lockfile under the pinned npm and
+      # fail on any diff — drift is caught at PR time (H1 §2a).
+      - name: Fail on lockfile drift under the pinned toolchain
+        run: |
+          npm install --package-lock-only --ignore-scripts
+          git diff --exit-code -- package-lock.json
 
       - name: Install from the committed lockfile
         run: npm ci

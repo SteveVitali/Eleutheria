@@ -25,10 +25,18 @@ on:
 
 concurrency:
   group: observability-${{ github.ref }}
-  cancel-in-progress: true
+  # Never cancel a running sweep (P34.1, ADR-151): a scheduled sweep that is
+  # cancelled leaves an unmeasured gap — a started run completes (SIG-ENG-046).
+  cancel-in-progress: false
 
 permissions:
   contents: read
+
+# Workflow-level `bash` = `bash --noprofile --norc -eo pipefail` on the runner
+# (SIG-ENG-046, P34.1): a failing command on the left of a pipe fails the step.
+defaults:
+  run:
+    shell: bash
 
 env:
   # The notifier seam (ADR-077): env-only, never literals.
@@ -48,10 +56,10 @@ jobs:
   observe:
     runs-on: ubuntu-24.04  # pinned (S6R-27: ubuntu-latest moves to Ubuntu 26 on 2026-10-19)
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v6
+      - name: Install uv (pinned; matches `[tool.uv] required-version`)
+        uses: astral-sh/setup-uv@v10.2.0
         with:
           version: "0.12.6"
           enable-cache: true
@@ -95,7 +103,7 @@ jobs:
 
       - name: Upload the recorded alerts, metrics log, and readout
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: observability-${{ github.run_id }}
           path: |
