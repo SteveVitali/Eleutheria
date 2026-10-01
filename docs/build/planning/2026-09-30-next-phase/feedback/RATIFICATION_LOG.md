@@ -517,3 +517,24 @@ OGL-Edmonton; R4b Hong Kong flip; R4c QLDC via the QLDTraffic API (CC-BY, now th
 decline (non-commercial, A-9). R5 Chicago procurement portal: flip. R6a BidNet: capture terms first; R6b Periscope:
 superseded."* The operator chose **"As listed, R3 flip"**, so R4b = flip and R4a = decided on the OGL-Edmonton basis are the
 operator's answers as presented (R2a later changed to fetch in round 18).
+
+## Round 27 — Stage-B follow-ups (answered 2026-10-01T13:46:58Z)
+
+Raised by Stage-B units (SEED-12b's withheld MUST-weakening drafts, SEED-11d's ADR-183 scope question, S6R-16).
+
+| line | question (summary) | options offered | operator answer (verbatim) |
+|---|---|---|---|
+| SB-1 (A-11) | SIG-UI-022 makes the ego graph the explorer default; the approved design opens `/network/` on an aggregated overview | Overview as default (Recommended) · Keep ego default | **Overview as default (Recommended)** |
+| SB-2 (A-8) | does the express-terms acceptance cover scheduled refreshes of the same sources? | Yes, same sources (Recommended) · Freeze at today's rows | **Yes, same sources (Recommended)** |
+| SB-3 (round 25) | approve a non-interactive Devin command (via `drive-build --agent-cmd`) as a fallback before the manual tier | Approve headless fallback (Recommended) · Manual tier only | **Approve headless fallback (Recommended)** |
+
+Sentence adopted by selection (agent-drafted, adopted by the operator):
+- **WV-12 (SB-1):** *"I waive SIG-UI-022's ego-network default: the explorer may open on an aggregated overview, with every node drilling to its ego view."*
+
+*Agent interpretation (labelled):* SB-1 → waiver WV-12 (new ADR, next free number after ADR-189; spec note on SIG-UI-022; K2's
+`/network/` → `/explore/?overview=access` redirect allowed; every overview node drills to its ego view). SB-2 → ADR-183's
+acceptance covers the express-terms sources public as of 2026-10-01 **including their scheduled refreshes**; any new source
+follows A-9. SB-3 → fallback order on a failed isolation check: (1) a verified non-interactive Devin command via
+`drive-build.sh --agent-cmd`, (2) the manual tier; T6 verifies whether such a command exists. The other four drafts SEED-12b
+withheld (SIG-LIC-006 physical ODbL table, SIG-INGEST-004 binding-level versions, SIG-ENG-004 MET definition, SIG-ONTO-060
+scope list) keep their MUSTs; the work stays owed (owning tickets / BL rows), so no operator words are needed.

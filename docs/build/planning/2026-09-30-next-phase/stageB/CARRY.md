@@ -36,3 +36,20 @@ Items surfaced by seed units that a later unit (or the operator) must resolve. E
 - T2-α · SEED-08 owns date corrections for runs/pr/readouts/DEFERRALS/manifest; SEED-09 appends index repairs below the DC-BI table under a new header; SEED-10 cites DC-L-01…03 and appends to the memory-repair README · SEED-08/09/10
 - T2-α · CF-03 queue path = `docs/build/reports/memory-repair/pending_transitions.csv` (columns are SEED-04's design, labelled) · SEED-13/14
 - T2-α · full A1 delta incl. GCP + CI keys still owed before T6 · orchestrator (T6)
+- round 27 · WV-12 (SIG-UI-022 ego default waived) → ADR-190 + spec note + G.7 row; ADR-183 append-only clarification that refreshes of the same sources are covered (SB-2) — ADR-183 is a seed ADR, so add a dated `## Clarification` section · SEED-12c
+- round 27 · HANDOFF + OPERATING MODE: fallback order (headless Devin command via `--agent-cmd` if verified at T6, then manual tier) · SEED-17/T6
+- SEED-12b · withheld drafts keep their MUSTs; work owed: SIG-LIC-006 stored-table split (RISK-P4-07 → BL-046), SIG-INGEST-004 add versions to identity in P35.34 (or owed), SIG-ENG-004 verdict N/A-RATIONALE, SIG-ONTO-060 enum read + proposal (ticket) · SEED-13/14
+- SEED-12b · SEED-11d's appended ADR-027 trigger evaluation claims T1 made the LIC-006 amendment — append a correcting line (amendment not made; owed) · SEED-12c
+- SEED-12b · ADR-153 Decision 4 says census demotion "replaces" SIG-IDENT-028's holdout-demotion clause; spec keeps the clause (no waiver) → append clarification to ADR-153 (adds, does not replace) · SEED-12c
+- SEED-12b · outreach (SIG-CHART-033, SIG-INGEST-029/030a, SIG-CONTRIB-012) stays owed later-phase; P36.77 leaves them unmet — list on GATE-ANNOUNCE unmet list · SEED-13/14
+- SEED-02c · CI wiring: `--range base...head` on PRs; `--first-parent` on main pushes (docs job needs a push trigger or new job); python for memory_guard (stdlib) on the runner; exits 3/5 stay red · SEED-02b
+- SEED-02c · stale descriptions: `docs/build/tools/check_backlog.py` L119/131 comment; `CLOSEOUT_WRITER_PROTOCOL.md` contract/patch/3 text · SEED-02b
+- SEED-02c · upstream agent-skills fixes to send later (L2/L3 JSON field shift, check-history `#` comment strip, "Closed" anywhere) · orchestrator (agent-skills follow-up commit, local)
+- SEED-03 · `audit_current_state.py` EXPECTED_KEYS lacks the optional `harness` slot; `current_projection.py` reports INCOMPLETE on the seed LEDGER; remove the two strict xfails in the fix commit · SEED-02b
+- SEED-03 · new rules: closeouts update `docs/build/README.md` "rows 1-N as of" line; new verdict word → extend `check_coverage_matrix.VERDICTS`; source flips record `FLIPPED <date> (<gate|ADR>)`; D-P32.18–21-1 closes only with a transition event · SEED-13 (contract universal ACs) / SEED-17 OPERATING MODE
+- γ · RETURN PASS keyed by Round-11 rows would misfire the lowest-unlanded check → **orchestrator decision: key `returnPass` by the landed Round-10 tickets (P21.5, P31.4, P32.18–P32.22, P32.23a, P32.25 …) with the Round-11 row as the re-run line** · SEED-17 (T5)
+- γ · T5 replaces the OPERATING MODE placeholder (LEDGER lines 6–8); head budget left 8,751 B; confirm `buildWorktree` at T6 · SEED-17/T6
+- β · uncorrected wrong dates outside its paths: `OPERATIONAL_READINESS.md` L266 (rec 210), `COVERAGE_MATRIX.csv` recs 127–132 (SEED-14), `reports/obligations/MIGRATION.md` L55–57 (P34.8) · SEED-14 / P34.8 contract
+- β · DEFERRALS annotations for D-R10-PUBLISH-1 / D-P32.23a-1 (GATE-G3 "satisfied by this signature" no longer holds) and the C-3 bearing on D-LEGAL.1-1 / D-P30.3-COUNSEL · SEED-14
+- β · P34.22a parametrises the `p-17b713` pin in `release_publish_verify.py`; T5 writes the GATE-P rows for C-2/C-3/C-13; PHASE LOG drafts for SEED-08/09 in `runs/SEED-08-09.md` · SEED-13 / SEED-17
+- SEED-02a · conventions for later records (RESTORED caption, `| R<n> |` annotations, DATE CORRECTION wording, gate-marker decision rows need a PHASE LOG pause entry) · SEED-17 OPERATING MODE; guard's 0 `record-shape` candidates for BUILD_INDEX marker rows → check · SEED-02b
