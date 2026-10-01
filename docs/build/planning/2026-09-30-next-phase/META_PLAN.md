@@ -1706,6 +1706,18 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   operator load ≈22–32 h over 18–20 touchpoints; no agent-spend estimate despite a usage limit already hit; P35.63 blocked by
   absolute quality targets; non-linear slip cliffs. Must split before T3: P34.44, P36.9, P36.42, P36.66, P36.72, P37.65, P37.68,
   P38.1, P38.3; multi-leg by wall clock: P34.39, P35.11, P35.61, P35.63, P36.12, P37.2, P37.54.
+- 2026-10-01T01:44:22Z — **S4 coverage review done** (`reviews/S4-coverage.md`): **ratifiable with fixes — 2 BLOCKER, 8 MAJOR, 7 MINOR**; disposition check
+  passes; counts, catalog placement, 36 owed deferrals and the U-003 trace match the CSVs. Blockers: COV-01 §4.4's list of
+  ask-dropping defaults is incomplete and Part B is mislabelled "safe" (missing: run logs D-J3-2, Flock share lists B-25, OPCHECK +
+  failing checks on /quality/ B-31, contact@ alias A-3, Wave D B-11, peer links B-27, search held-out set B-28, US 511 keys B-18);
+  COV-02 hidden critical-path stall — P35.38 hard-depends on OP-11 (register sig-project.org) whose default is "no purchase",
+  blocking 25 later rows incl. the first model release P35.63. Majors: operator's Wave-2 and production-fix asks not in the
+  universe; U-003's "everything advertised should actually work" has no trace/acceptance; Flock/Axon coverage thin (no Axon row);
+  "every S0/S1 fixed in 11A/11B" counts interim/default-dependent fixes; D-SOURCES.8-1 flips 3 non-US sources vs US-first/B-34;
+  six ADRs double-owned + ADR-016 supersession missing; pre-authorisation tie (A-15 vs S5-1/3) and S5-1…4 without defaults; no
+  Stage-B owner records the 24 deferred + 153 later-phase items into the registers.
+- 2026-10-01T01:44:22Z — **S4 summary: 9 BLOCKER, 27 MAJOR, 23 MINOR across three reviews; all three "ratifiable with fixes".** S4c closure dispatched
+  (single writer for plan/CSV/decision-catalog edits).
 
 ---
 
