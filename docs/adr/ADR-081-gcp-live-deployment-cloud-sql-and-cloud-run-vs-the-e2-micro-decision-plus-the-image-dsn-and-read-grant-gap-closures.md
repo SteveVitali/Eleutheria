@@ -33,3 +33,16 @@ Three further gaps surfaced only on a true apply (they were invisible locally be
 ## Revisit trigger
 
 Revisit if: the monthly cost matters enough to move the DB back to the always-free e2-micro (ADR-075) or to Cloud SQL's newer shared-core tiers; **or** Go-public is approved (HG-11 + counsel) and the buckets/Cloud Run must flip to public-read/unauthenticated with a DNS cutover and `v0.2.0`; **or** the cloud restore drill (`D-DEPLOY.1-1` remainder) is executed and this needs updating with its evidence.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** go-public ran without the `v0.2.0` tag (A3 NEW-3); "managed backups replace
+the drill" was untrue until Track 0 enabled backups and PITR on 2026-09-30 (F-01); the only restore drill used
+the 5-claim seed (G1 NEW-14); deletion protection is off (F-42; F3 §5.1). **Answer:** row P34.6 (restore drill
+at scale, restore-point procedure, monthly logical export, deletion protection) writes ADR-175 and appends its
+own `Qualified by ADR-175` line here (plan §7, S6R-24); release versioning is row P34.23 (REL-10) and semver
+tags are the operator's only (B-10; plan §5.8). The decision above stays in force until that answer lands;
+this ADR's body is unchanged (SIG-ENG-003).

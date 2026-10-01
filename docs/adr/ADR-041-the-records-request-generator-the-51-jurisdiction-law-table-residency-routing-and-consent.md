@@ -138,3 +138,15 @@ and geographic-queue claim), when the per-jurisdiction operational fields
 are replaced with reviewed ones, when a jurisdiction's records law materially changes
 (a versioned `records_law.toml` migration), or if a `legal_barrier` coverage kind is
 ever added to the §9.5/§32.1 model (then the residency fact is realigned to it).
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** a records filing/response backend landed (F3 §5.1 cites P25.9). **Answer:**
+SIG sends no records request in Round 11: sending is outreach, owed later-phase with the trigger "the operator
+authorises outside contact" (ADR-171; LATER-04; D-R7.2-SEND stays OPEN); row P37.14 seeds records leads only.
+The counsel review of the operational fields (RISK-P10-16) cannot happen without counsel (F3 §5.4; WV-07,
+ADR-182). The decision stands. The decision above stays in force until that answer lands; this ADR's body is
+unchanged (SIG-ENG-003).

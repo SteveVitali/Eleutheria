@@ -44,3 +44,17 @@ This is a substantive multi-stage program: integrity work precedes public promis
 ## Revisit trigger
 
 Revisit when a selected source/predicate mapping cannot express a material document clause; field evidence invalidates role/count assumptions; a source/ruleset mix drifts beyond the evaluated population; the preregistered gate is inconclusive at the approved human budget; record/index build or serving budgets fail on approved infrastructure; withdrawal cannot be enforced at an operator-controlled origin; staffing/retention cannot support public intake; memory cutover cannot cover every actual writer; or a future user need justifies a separate app. Record a new ADR and scoped ticket; never silently weaken evidence, corpus coverage, licensing, sampling or uncertainty disclosures.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** three clauses are true: staffing cannot support public intake (D-P32.16-1),
+the preregistered gate is likely inconclusive at an affordable human budget (E3 NEW-8), and withdrawal cannot
+yet be enforced at an operator-controlled origin (F3 §5.1). **Answer:** (i) intake stays e-mail-only and the
+receiver dark for Round 11 (B-8; ADR-180, ADR-186; row P37.59 dark); (ii) no human check this round, disclosed
+in every readout, with independent evaluation owed under T-EVAL-IND (B-31; ADR-152; LATER-01; rows 184–187
+superseded); (iii) the serving-topology and release rows P34.40, P34.41, P35.53–P35.55 and P35.59 make nginx
+honour withdrawals, with a 15-minute withdrawal (plan §5.8; ADR-161). The decision above stays in force until
+that answer lands; this ADR's body is unchanged (SIG-ENG-003).

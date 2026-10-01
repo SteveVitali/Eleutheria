@@ -58,3 +58,14 @@ The §47 layout gains a dedicated ingestion/registry package; or the per-source
 row needs a field the `policy.rights.RightsRecord` cannot carry; or the source
 count grows past the point where a single flat TOML is maintainable and the seed
 needs to be partitioned per layer.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): LIKELY FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger likely fired:** a single 7,534-line `sources.toml` holds 342 sources, with
+rights-field drift (E4 NEW-10, B1 NEW-5; F3 §5.1). **Answer:** row P37.6 (registry rights-record hygiene:
+index, packet decision lines, field validation). Partitioning the registry is not planned in Round 11; if
+P37.6 partitions it, P37.6 records that by a new ADR. The decision above stays in force until that answer
+lands; this ADR's body is unchanged (SIG-ENG-003).

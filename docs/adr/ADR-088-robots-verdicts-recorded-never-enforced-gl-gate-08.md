@@ -134,3 +134,12 @@ recorded per-target** for the audit trail, but **never blocks** a fetch.
   per-claim rather than per-record marking), the marker deepens by ADR.
 - RFC 9309 is revised/superseded (ADR-087's own revisit trigger still stands
   for the classification layer this ADR keeps).
+
+## Status updates
+
+- **Status:** Extended by ADR-168 (2026-10-01)
+- **Status note (2026-10-01, Round-11 T1, unit SEED-11d):** Per plan §7 row 168, ADR-168 (collection conduct)
+  re-confirms GL-GATE-08 as is in the operator's adopted A-5 option text (2026-10-01T04:03:25Z), on every host
+  per this ADR (round 26: "All hosts, as ADR-088 (Recommended)", 2026-10-01T06:51:11Z), and adds the rule-7
+  opt-out register, the SIG-INGEST-046c reservation refusal and a user agent naming an owned
+  surveillancegraph.org page. The body above is unchanged (SIG-ENG-003).

@@ -123,3 +123,14 @@ Revisit — in a new ADR — when any of:
 (d) **a consumer needs first-seen** — expose `min(retrieved_at)` alongside rather than reverting the basis;
 (e) **a replay semantics change** — if asserting replays ever represent fresh source contact (they do not
     today), the `batch.replay` exclusion is the single place that policy lives.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): PROSPECTIVELY FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger prospectively fired:** disk is at 6.42 of 15 GB (43%) against the 50%-in-12-months
+threshold, and new ingest is planned (F3 §5.1). **Answer:** the capacity plan — B-11 (cap 40 GB, pre-grow 25
+GB; ADR-173) with plan §5.5 projecting ≈ 12–19 GB at year end (inference). The re-sighting cap is not applied
+pre-emptively (this ADR's own rule). The decision above stays in force until that answer lands; this ADR's
+body is unchanged (SIG-ENG-003).

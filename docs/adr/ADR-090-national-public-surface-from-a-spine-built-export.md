@@ -70,3 +70,13 @@ publishable data — not OKC-only.
   per-jurisdiction framing avoided — re-scope by a new ADR.
 - If the read API is later opened (rate-limited public tier) — revisit whether the surface stays
   build-time-static or gains a served path (would also revisit ADR-092).
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** the read API is publicly invokable — unauthenticated, no rate-limit headers,
+18 routes (live read 2026-09-30T17:07Z; F3 §5.1). **Answer:** row P36.13 writes ADR-176 (API exposure posture:
+enforced rate limits, search 30/min; no Cloud Armor now — B-30). The decision above stays in force until that
+answer lands; this ADR's body is unchanged (SIG-ENG-003).

@@ -130,3 +130,14 @@ the closed S5 vocabulary; or (d) the operator approves a bounded pilot that
 requires a live acquisition stage — at which point `live_verification=true`
 re-dispatch turns the review outputs into acquisition runs under the existing
 loader gate.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** (clause d) the operator directed that new sources be configured and ingested
+into production in Round 11 (META_PLAN §7.1; F3 §5.1). **Answer:** row P35.6 (acquisition plumbing and
+verification harness) and acquisition waves A–D, each activated with one ING-GO per wave and the operator's
+flip list (B-11; ADR-173; OP-26), under the existing loader gate. The decision above stays in force until that
+answer lands; this ADR's body is unchanged (SIG-ENG-003).

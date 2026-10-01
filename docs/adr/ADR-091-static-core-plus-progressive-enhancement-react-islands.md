@@ -67,3 +67,11 @@ table and **rejected**; the operator chose **B — static core + React islands**
 - The operator later wants a full SPA — a new ADR superseding this one **and** SIG-UI-036/037 (with the
   archivability/a11y mitigations spelled out) is required; never a silent stack swap.
 - A fourth public island is proposed — extend the allowance by amending this ADR's named set, not ad hoc.
+
+## Status updates
+
+- **Status:** Superseded by ADR-155 (2026-10-01) — §3–4 only (the named-island rule)
+- **Status note (2026-10-01, Round-11 T1, unit SEED-11d):** Per plan §7 row 155, ADR-155 (HTML-first page
+  types; A-12 "HTML-first page types (Recommended)", 2026-10-01T04:09:43Z) supersedes the rule that the public
+  islands are exactly three and the island allowance extended to them; ADR-068's `/curate/**` allowance is
+  unchanged (K0 §6). The body above is unchanged (SIG-ENG-003).

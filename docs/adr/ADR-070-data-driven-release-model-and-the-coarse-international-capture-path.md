@@ -108,3 +108,15 @@ re-checked against the live response. Also revisit if a Data Driven re-release c
 the column schema (a new digest + a shadow diff surfaces it, RISK-P21-14) or if MuckRock
 begins hosting the release under a distinct, separately-licensed channel worth a
 dedicated registry row.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** HG-03 cleared and Data Driven and the coarse trio are live (F3 §5.1).
+**Answer:** recorded as fired. The re-check of this ADR's assumptions (release digest/version model,
+aggregate-only guard, degree-only sharing posture, coarse anti-disaggregation guard) against the live
+responses is not evidenced in the record, and no Round-11 row is dedicated to it; it stays owed to the next
+ticket that touches `eff_data_driven` or the coarse trio (agent note). The decision above stays in force until
+that answer lands; this ADR's body is unchanged (SIG-ENG-003).

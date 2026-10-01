@@ -166,3 +166,13 @@ requests beyond this delta are scoped as new work, not folded in.
 - Any further spec↔landed drift is found: append to this reconciliation's
   pattern (new ADR + `spec_src` amendment + dated Appendix G note), never a
   silent edit.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** new spec↔landed drift was found (F-31, F-34, E1 NEW-6; F3 §5.1). **Answer:**
+Round-11 T1 amends the spec following this ADR's pattern — new ADRs, `spec_src` amendments and a dated
+Appendix G.7 row set (SEED-12; plan §6.3). The decision above stays in force until that answer lands; this
+ADR's body is unchanged (SIG-ENG-003).

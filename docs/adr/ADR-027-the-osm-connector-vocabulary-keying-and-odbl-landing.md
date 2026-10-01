@@ -131,3 +131,16 @@ gains a physically separate ODbL asset table per §42.3 (superseding the
 connector-layer compartment realisation); or OSM introduces a surveillance
 tagging scheme change large enough that the vocabulary needs a structural
 migration rather than an additive one.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** the live HTTP transport and the OCFL capture store landed (ADR-065) (F3
+§5.1); whether the connector-local 429/504 helpers were retired was not re-verified here. **Answer:** F3
+classified this trigger as needing only a recorded evaluation. The second clause will not fire: T1 amends
+§42.3 from a physical ODbL table to export-boundary compartments (plan §6.3; SEED-12). Wave C makes OSM the
+origin of the national ALPR layer (rows P37.1–P37.2) through this connector's vocabulary and ODbL landing;
+nothing in Round 11 changes this decision. The decision above stays in force until that answer lands; this
+ADR's body is unchanged (SIG-ENG-003).

@@ -125,3 +125,17 @@ persisted projection agrees on names/types/nullability, so the shapes cannot dri
 before persistence lands. That test records `note`/`claim_values`/`evidence` as the
 currently `compute_only` fields; persisting them later (e.g. a nullable `note`
 column) is an additive change that re-arms this trigger.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** annotation persistence arrived: P28.3 materialised the §31 `contradiction`
+object and P28.4 the §32 `coverage_record` rows over the resolved spine, and P29.2 runs the §33 detectors
+writing `research_task` rows (`docs/build/BUILD_INDEX.md` rows 129, 130 and 134 — each under ADR-099's
+materialise posture, no new ADR), which F3 §5.1 reads as re-arming this trigger. **Answer:** F3 classified
+this trigger as needing only a recorded evaluation. The value objects here remain the computation layer, now
+with persisted forms written by those tickets; no Round-11 row changes this decision. The live-over-hosted
+runs stay owed under their own deferrals (D-R6.3-CONTRADICTIONS), unchanged here. The decision above stays in
+force until that answer lands; this ADR's body is unchanged (SIG-ENG-003).

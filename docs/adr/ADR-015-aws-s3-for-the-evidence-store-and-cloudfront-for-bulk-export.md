@@ -25,3 +25,11 @@ All-AWS with direct S3 downloads (unbounded egress bill); a single zero-egress p
 ## Revisit trigger
 
 Monthly egress cost crosses the budgeted threshold, download volume exceeds the modelled TB/month, or a provider changes egress pricing — at which point bulk delivery shifts further to the low-egress mirror and peer-to-peer distribution.
+
+## Status updates
+
+- **Status:** Superseded by ADR-081 (2026-10-01) — in practice
+- **Status note (2026-10-01, Round-11 T1, unit SEED-11d):** Recorded at Round-11 T1 from F3 §5.2 and F-249
+  (NEW-4): S3 and CloudFront were never provisioned; the evidence store and buckets are on GCS under ADR-081's
+  executed deployment (J1 NEW-12). The bulk-download host is decided in Round 11 (A-3: an R2 zero-egress origin,
+  row P35.5). The body above is unchanged (SIG-ENG-003).

@@ -25,3 +25,16 @@ Airflow (heavier, weaker asset model); Prefect (licence/hosting trajectory); bes
 ## Revisit trigger
 
 Dagster moves to a non-OSI licence, its self-hosting economics degrade, or the asset model stops fitting — in which case the confined import boundary lets cron/Prefect replace it.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** Dagster was never deployed; the scheduler of record is Cloud Scheduler (79
+triggers) plus 88 Cloud Run jobs, and the GitHub `reingest.yml` workflow failed 6 of 6 runs on main,
+2026-09-25…09-30 (A1 NEW-2, F-39, F-41; F3 §5.1). **Answer:** row P35.1a writes ADR-174 (scheduler of record:
+Cloud Scheduler + daily live-diff + cron lint), which supersedes this ADR's scheduler clause and ADR-076's
+scheduling path; P35.1a appends that status line here in its own PR (plan §7, S6R-24). P34.4 disables the
+GitHub `reingest` schedule (QA-8) and P35.1b consolidates the scheduler (B-13). The decision above stays in
+force until that answer lands; this ADR's body is unchanged (SIG-ENG-003).

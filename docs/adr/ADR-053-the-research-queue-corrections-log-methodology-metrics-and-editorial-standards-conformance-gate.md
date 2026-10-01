@@ -112,3 +112,14 @@ path (cf. RISK-P14-07/17), swap the committed fixtures for live reads — the vi
 shapes and the executable gates are unchanged. Any change to the register rules, the
 disposition vocabulary, or the coverage-metric kinds is a spec amendment (SIG-ENG-003),
 not an edit here.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** the DB-wired API exists, but demo `/task/new/` pages are public (G1 NEW-7)
+and `/editorial-standards/` shows a fixture review (E1 NEW-1; F3 §5.1). **Answer:** row P34.17 (web honesty
+wave + republish #1): the demo task pages are withdrawn (C-12) and the editorial standards say the
+hostile-reader review is not yet performed (ADR-179). The decision above stays in force until that answer
+lands; this ADR's body is unchanged (SIG-ENG-003).

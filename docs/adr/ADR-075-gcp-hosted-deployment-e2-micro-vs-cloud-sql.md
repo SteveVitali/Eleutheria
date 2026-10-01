@@ -124,3 +124,10 @@ Revisit this decision when any of the following holds:
   prefers `terraform validate` when `*.tf` are present.
 - **A managed restore/PITR requirement appears.** If governance requires point-in-time
   recovery or managed backup SLAs, revisit toward Cloud SQL.
+
+## Status updates
+
+- **Status:** Superseded by ADR-081 (2026-10-01) — the e2-micro DB-tier decision
+- **Status note (2026-10-01, Round-11 T1, unit SEED-11d):** ADR-081 executed Cloud SQL + Cloud Run instead and
+  keeps e2-micro only as a documented cost-down option. Recorded at Round-11 T1 from F3 §5.2 and F-249 (NEW-4).
+  The body above is unchanged (SIG-ENG-003).

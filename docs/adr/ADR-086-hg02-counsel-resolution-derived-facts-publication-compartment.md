@@ -72,3 +72,14 @@ Revisit if counsel refines the publication terms for derived-facts sources (e.g.
 permits folding into CC-BY-4.0, or attaches conditions beyond attribution), or if
 a connector for a derived-facts source is ever changed to emit upstream content
 rather than SIG-authored claims.
+
+## Status updates
+
+- **Status:** Qualified by ADR-167 (2026-10-01)
+- **Status note (2026-10-01, Round-11 T1, unit SEED-11d):** Per plan §7 row 167, ADR-167 (counsel basis)
+  re-records the "counsel" determination this ADR describes as the operator's own determination (no counsel),
+  with the C-3 sentence, agent-drafted and adopted by the operator at 2026-10-01T04:54:19Z (sha256
+  `1461ae213fac4749cd26d24d1ca22de1db893686d1b0fdef88cb64c296eca6c6`): *"The 'counsel' determinations of
+  2026-09-16 and 09-24 were my own; there was no counsel. My 09-28 message 'let's defer all the human review
+  steps and proceed' was my decision to defer the human review legs."* The body above is unchanged
+  (SIG-ENG-003).

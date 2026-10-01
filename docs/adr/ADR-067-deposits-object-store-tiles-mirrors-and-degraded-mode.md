@@ -141,3 +141,15 @@ Revisit this decision when any of the following holds:
 - **The keepalive fails to prevent dormancy.** If the monthly `keepalive.yml` is itself
   disabled by the scheduler despite the cadence, revisit the keepalive mechanism (e.g. an
   external cron/ping) — the decay path SIG-GOV-021 warns about.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** the sandbox credential arrived, the pure-Python tiler was outgrown (→
+ADR-118) and amendment A1 was de facto unticked (→ ADR-097); the production Zenodo deposit and the Software
+Heritage save are still owed, and the repository is now public (F3 §5.1). **Answer:** row P37.55 (history
+scan, SWH save-now, Zenodo production package — B-6 Q-E2-23 a, B-21 = yes, operator-run DOIs OP-19). The
+bulk-download store is the zero-egress R2 host (A-3; row P35.5). The decision above stays in force until that
+answer lands; this ADR's body is unchanged (SIG-ENG-003).

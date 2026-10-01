@@ -24,3 +24,10 @@ Items surfaced by seed units that a later unit (or the operator) must resolve. E
 - SEED-12a · ADRs citing "final id assigned by SEED-12" → update to final ids from `stageB/T1_id_map.csv` · SEED-12c
 - SEED-12a · PLAN-11B / PLAN-11C must register SIG-TRANSP / K13 prefixes in §0.3 · SEED-13 contracts for PLAN-11B/11C
 - SEED-12a · 62 new coverage-matrix rows as MISSING routed to owners · SEED-14 (T4)
+- SEED-11d · guard must accept the appended `## Status updates` blocks and `### Trigger evaluation` subsections on landed ADRs (message sent to SEED-02a) · SEED-02a
+- SEED-11d · SEED-15's `trigger_sha256` must hash revisit-trigger text only up to the first `### Trigger evaluation` · SEED-15
+- SEED-11d · RISK-P15-29 still describes the release gate WV-04 retires → appended correction · SEED-14
+- SEED-11d · counsel-dormant restatements for the 13 ADRs in F3 §5.4 (ADR-182 names them) not appended → append `Qualified by ADR-182` lines · SEED-12c
+- SEED-11d · ADR-032 → ADR-050 supersession line added beyond Appendix A (F-249; ADR-050 "Closes out: ADR-032") — orchestrator keeps it
+- orchestrator · ADR-002 `Qualified by ADR-189` status line appended (WV-11 makes the one exception to it)
+- SEED-11d · **operator question (GATE-B packet):** ADR-183's acceptance covers "all ≈8,088 currently public rows" — do rows re-ingested after 2026-10-01 from the same express-terms sources (e.g. the TxDOT republish refreshing) also fall under it? Recommended reading to offer: yes for the same sources as of 2026-10-01 (they keep refreshing), new sources follow A-9 · GATE-B packet

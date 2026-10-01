@@ -68,3 +68,15 @@ touches `docs/**` only. Part VIII protections were not touched (§0.7).
 Revisit at the next planning pass, or whenever a later ticket adds an ADR or a requirement id (its
 Appendix F row and, if a requirement, its `spec_src` paragraph must land in the same PR — SIG-ENG-039),
 or if an operator later ticks an amendment that this pass left unticked (there are none today).
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** "revisit at the next planning pass" — the Round-11 planning pass is that
+pass; and SIG-ENG-039 is not enforced in CI (F-32; F3 §5.1). **Answer:** Round-11 T1 adds Appendix F rows for
+every new ADR and the SIG-ENG-039 amendment (SEED-12; B4 DRAFT-ENG-4); SEED-02 wires `check_spec_src.py` into
+`make docs-check` and CI; row P34.32 builds the ADR-index generator, the superseded status and the
+trigger-register checker (B4 G8). The decision above stays in force until that answer lands; this ADR's body
+is unchanged (SIG-ENG-003).

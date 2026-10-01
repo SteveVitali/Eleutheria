@@ -150,3 +150,20 @@ document-extraction engines land and the connector must run a layer over a captu
 (Decision 6 / ADR-033 Decision 4); a records source publishes an offered **bulk** channel that
 changes the targeted-lookup calculus (§26 rule 5); or SIG-INGEST-036/037's crawler-conduct
 posture is amended (which is an ADR with counsel, per §26).
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** the live HTTP transport and the OCFL capture store landed (ADR-065), and
+§26's crawler-conduct posture was amended (ADR-083, ADR-087, ADR-088; written into the spec by ADR-145)
+without the counsel this trigger names (F3 §5.1). **Answer:** F3 classified this trigger as needing only a
+recorded evaluation. The counsel condition cannot be met: SIG has no counsel (U-013), and Round 11 waives
+SIG-INGEST-037's counsel clause (WV-07, ADR-182), so crawler-posture changes are recorded as the operator's
+own determinations by ADR — GL-GATE-08 on every host (ADR-168), the terms-conflicted fetch envelope (ADR-184),
+rule 6 for DocumentCloud/MuckRock (ADR-187) and the Flock portal probe (ADR-188); the crawler-policy text and
+the rule-7 opt-out register are rows P36.1a/b. DocumentCloud/MuckRock documents get their own connector (row
+P36.77) under ADR-184 and ADR-187; this connector's MuckRock targeted-lookup decisions are unchanged, and a
+further §26 change re-arms this trigger. The decision above stays in force until that answer lands; this ADR's
+body is unchanged (SIG-ENG-003).

@@ -126,3 +126,15 @@ version bump — namespaces change globally, which is correct but must be
 communicated), if 475k-file static trees exceed hosting limits (a
 packing/sharding scheme would be a new ADR), or if withdrawals gain
 semantics the single `access_decision` rule cannot express.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): LIKELY FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger likely fired:** public bucket origins bypass the nginx deny map: `sig-web` is
+allUsers-readable (G1 NEW-5) and bulk data is served straight from GCS (J1 NEW-12; F3 §5.1). **Answer:** row
+P34.3 makes `sig-web` non-public, P34.21b removes anonymous read/list on the 09-27 release tree, P35.5 moves
+downloads to the zero-egress R2 host, and P35.12 writes ADR-161 (release model v2) and appends its own
+`Extended by ADR-161` line here (plan §7, S6R-24). The decision above stays in force until that answer lands;
+this ADR's body is unchanged (SIG-ENG-003).

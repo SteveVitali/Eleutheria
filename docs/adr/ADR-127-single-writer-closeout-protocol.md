@@ -152,3 +152,10 @@ participates in the build chain (the single-host PID-liveness assumption must
 then be replaced — e.g. by a shared-store lock with fencing tokens); or the
 memory root gains control files beyond LEDGER/BUILD_INDEX/DEFERRALS (extend
 `CONTROL_FILES` and the digest recipe in the same PR).
+
+## Status updates
+
+- **Status:** Superseded by ADR-148 (2026-10-01) — the D-R10-MEMORY-1 cutover statements only
+- **Status note (2026-10-01, Round-11 T1, unit SEED-11d):** Per plan §7 row 148, ADR-148 (build memory v2.1)
+  splits D-R10-MEMORY-1 (B3 option C) and supersedes this ADR's cutover statements; the closeout journal stays
+  in shadow mode (LATER-13), and the protocol design stands. The body above is unchanged (SIG-ENG-003).

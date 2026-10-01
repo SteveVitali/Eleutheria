@@ -90,3 +90,13 @@ resolved, related, contradicted, coverage-measured graph.
   what "resolved" the surface shows to match the new floor.
 - **A materialized layer must front restricted-compartment bytes** — a hard stop requiring a governance
   decision (Part VIII / §42.3), never a producer-config change.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): LIKELY FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger likely fired:** the site has been frozen at 2026-09-27 while the spine ingests daily,
+with no republish cadence (G1 NEW-13; F3 §5.1). **Answer:** republishes #1 and #2 (rows P34.17, P34.21b),
+release model v2 (ADR-161, row P35.12) and release cadence automation (row P36.44, REL-07). The decision above
+stays in force until that answer lands; this ADR's body is unchanged (SIG-ENG-003).
