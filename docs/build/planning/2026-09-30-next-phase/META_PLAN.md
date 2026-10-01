@@ -13,17 +13,17 @@
 ## CURRENT STATE
 
 ```
-projectStatus:   IN_PROGRESS        # NOT_STARTED | IN_PROGRESS | BLOCKED | PAUSED | DONE
+projectStatus:   PAUSED             # NOT_STARTED | IN_PROGRESS | BLOCKED | PAUSED | DONE
 stage:           B                  # M (meta-plan) → P (plan) → B (build artifacts) → HANDOFF
-nextUnit:        T1+T2              # Stage B on branch r11/seed: SEED-11/12 (spec + ADRs) ∥ SEED-01…10,16 (memory repair); SEED-02/03 after T0c
+nextUnit:        resume Stage B  # SEED-02b (finish from wip/seed-02b) ∥ SEED-13b/c/d (11A full contracts) ∥ SEED-14a/b → SEED-13e, SEED-15 → T5 (SEED-17) → T6 → GATE-B
 lastCompleted:   S6c + T0           # plan CANONICAL (S6/S6b/S6c), S6r closed; T0/T0b skills applied; T0c running
-blockedOn:       (nothing)
-pauseRequested:  false
+blockedOn:       account usage limit (weekly; resets 2026-10-07 05:00 America/New_York per the API error) — A-2b: pause and ask
+pauseRequested:  true 
 baseline:        baseline/baseline.json @ 2026-09-30T16:31:55Z   # delta procedure in BASELINE.md
 planOut:         docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md
 memoryRoot:      docs/build
 round:           11                 # provisional; manifest phases continue at P34, rows at 201
-updatedAt:       2026-10-01T07:26:23Z   # written by `date -u` (§9 clock rule)
+updatedAt:       2026-10-01T14:24:47Z   # written by `date -u` (§9 clock rule)
 ```
 
 **Vocabularies.** Row status: `open → in-progress → done | blocked-on-operator | dropped(reason)`;
@@ -1815,6 +1815,22 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   in `stageB/T0c_sync_obligations.md`** (read by SEED-02/03/05/10/13/17); orchestrator override recorded there: the seed keeps
   `dispatchTarget: subagent` / `harness: devin-desktop/swe-2-high/subagent` per round 25. Not run: the cross-harness eval
   (Q-B6-5). Stage B so far: SEED-11a–d, SEED-12a, T2-α (SEED-01/04/06/07) running in parallel.
+
+
+- 2026-10-01T14:24:47Z — **PAUSED on a usage-limit event (A-2b).** Between ≈14:15Z and 14:24Z every running sub-agent failed with HTTP 429
+  ("This request would exceed your account's rate limit" / "You've hit your weekly limit · resets Oct 7 at 5am
+  (America/New_York)"): SEED-02b, SEED-13b, SEED-13c, SEED-13d (+ its nested digest helpers), SEED-14a, SEED-14b. Per the
+  operator's A-2b answer ("Report + pause on limit") the orchestrator stopped dispatching and asks before resuming.
+  **State:** `r11/seed` @ `87128d43`, clean; committed Stage-B units: T0/T0b/T0c (skills 0.5.0), SEED-01…12c, SEED-13a
+  (manifest rows 201–510 + 310 skeletons); guard over `b051732c..HEAD` = 0 violations. **Parked:** SEED-02b's interrupted,
+  unverified work on side branch `wip/seed-02b` (`0f5832aa`: `ci_boundary.py`, `check_trailers.py`, CI wiring incl. other
+  workflows, `audit_current_state`/`current_projection` harness slot, memory_guard landed-at-base fix) — to be finished and
+  verified, not merged as-is. No partial output from SEED-13b/c/d or SEED-14a/b reached the tree. **Remaining Stage B:**
+  SEED-02b (finish), SEED-13b/c/d (11A full contracts, rows 201–260), SEED-14a/b (DEFERRALS; BACKLOG/COVERAGE/risks), then
+  SEED-13e (requirement→ticket index + fresh sizing review), SEED-15 (checkers, ADR_TRIGGERS, check_dispositions), T5
+  (SEED-17: OPERATING MODE, GATE DECISIONS GATE-M/GATE-P + pre-authorization rows, guards marker), T6 (validation, scans,
+  push `r11/seed` + seed PR, Devin Desktop orient dry-run, HANDOFF) and GATE-B. Rough remaining effort ≈ 12–16 sub-agent
+  contexts.
 
 ---
 
