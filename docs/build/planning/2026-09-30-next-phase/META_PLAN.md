@@ -1651,6 +1651,14 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   placement; CAP-01 timing). **Round size ≈6× Round 10 → S2 must structure Round 11 into gated waves/sub-rounds.** S1b dispatched.
 - 2026-10-01T00:09:20Z — **Track 0.5 done** (operator-approved minimal alerting): email channel, uptime checks (site, API /health), alert policies
   (job failures excl. sig-probe, sig-pg disk > 85%, both uptime checks). Recorded in `baseline/TRACK0_RECORD.md` §0.5.
+- 2026-10-01T00:34:22Z — **S1b done** (`universe/UNIVERSE_DISPOSED.csv`, `universe/DISPOSITIONS.md`, `tools/check_dispositions.py` + 36 tests green):
+  **1,159 items, exactly one disposition each, 0 errors** (528 universe + 538 findings (F-535…538 merged from L3) + 28 feedback
+  items + 65 candidate groups covering all 694 candidates): ticket 739, already-done 146, later-phase 153, decision 41,
+  live-return-pass 26, merged-into 24, wontfix 14, operator-action 8, spec-amendment 7, adr-waiver 1. S0/S1 (113): 101 land in the
+  seed or first waves (provisional "first waves" definition S2 must honour), 3 → operator decisions (F-31/Q-7, F-191/OD-12,
+  F-386/D-J3-4), 1 already-done (F-366), 8 L1/L2 correctness findings fixed in L3 waves 2–3 with named wave-1 interim mitigations
+  (S2 to decide pulling earlier). 41 items await 24 decision ids. 61 unsampled MET-DIFFERENTLY rows → SEED-14 re-check. 25 orphan
+  catalog units, each justified by its design row. A1 delta re-run: 0 changed keys. **S2 dispatched.**
 
 ---
 
