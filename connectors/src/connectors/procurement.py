@@ -144,6 +144,27 @@ def usaspending_config() -> Mapping[str, Any]:
     return vocab()["usaspending"]
 
 
+def _usaspending_family_sources() -> frozenset[str]:
+    """The registry sources riding the USAspending award-search path (P31.13).
+
+    ``usaspending`` owns the reviewed surveillance-keyword sweep; the P31.13
+    ``fema_hsgp_allocations`` source rides the same ``spending_by_award``
+    endpoint through its own reviewed live-target rows — the federal-assistance
+    (prime grant) leg, distinct from the sub-award keyword path. Both carry the
+    SIG-ONTO-033 ``assert_pulls_subawards`` contract (the assistance slices are
+    explicitly-declared ``award_kind = "prime"`` + ``award_class =
+    "assistance"`` targets, which the assertion admits).
+    """
+    return frozenset(
+        s
+        for s in (
+            source_ids().get("usaspending"),
+            source_ids().get("fema_hsgp"),
+        )
+        if s
+    )
+
+
 def sam_gov_config() -> Mapping[str, Any]:
     """The SAM.gov opportunity-search facts (``[sam_gov]`` in the vocab, P26.2)."""
     return vocab()["sam_gov"]
@@ -589,6 +610,74 @@ def trace_subaward_to_deployment(
             "recipient": instrument.recipient,
         },
         source_id=instrument.source_id,
+    )
+
+
+def _assistance_program_name(notice: Mapping[str, Any]) -> str | None:
+    """The program-name literal an assistance row's ``Assistance Listings`` field states.
+
+    USAspending returns the field as a list of CFDA objects
+    (``cfda_program_title``); a fixture-shaped row may carry a plain string.
+    Only the row's own verbatim literal lands — nothing is synthesized.
+    """
+    listings = notice.get("Assistance Listings") or notice.get("assistance_listings")
+    if isinstance(listings, str):
+        return _opt_str(listings)
+    if isinstance(listings, Sequence) and not isinstance(listings, (str, bytes)):
+        titles = [
+            str(e.get("cfda_program_title") or e.get("program_title") or "").strip()
+            for e in listings
+            if isinstance(e, Mapping)
+        ]
+        titles = [t for t in titles if t]
+        if titles:
+            return "; ".join(dict.fromkeys(titles))
+    return None
+
+
+def _funding_instrument_from_assistance(
+    notice: Mapping[str, Any], *, source_id: str
+) -> FundingInstrument | None:
+    """Build the §11.12 FundingInstrument a USAspending *assistance* award is (P31.13).
+
+    The awarding sub-agency is the funder (FEMA administers HSGP under DHS),
+    the recipient is the state/urban-area grantee (funder ≠ recipient is the
+    §11.12 invariant the dataclass enforces), ``instrument_type`` is
+    ``federal_grant``, and ``federal_award_id`` is the assistance award id —
+    the traceable link (SIG-ONTO-033). Returns ``None`` when the row lacks a
+    funder or recipient literal — the instrument is emitted only when both
+    parties are evidenced; the typed field claims still land either way.
+    """
+    award_id = _first_nonempty(
+        notice, ("Award ID", "award_id", "generated_internal_id", "internal_id")
+    )
+    funder = _first_nonempty(
+        notice,
+        ("Awarding Sub Agency", "awarding_sub_agency", "Awarding Agency", "awarding_agency"),
+    )
+    recipient = _first_nonempty(
+        notice, ("Recipient Name", "recipient_name", "recipient", "awardee_name")
+    )
+    if award_id is None or funder is None or recipient is None:
+        return None
+    start = _first_nonempty(notice, ("Start Date", "start_date", "action_date"))
+    end = _first_nonempty(notice, ("End Date", "end_date"))
+    period = None
+    if start is not None or end is not None:
+        period = json.dumps({"start": start, "end": end})
+    return FundingInstrument(
+        external_id=str(award_id),
+        source_id=source_id,
+        funder=str(funder),
+        recipient=str(recipient),
+        instrument_type="federal_grant",
+        program_name=_assistance_program_name(notice),
+        amount=_opt_str(notice.get("Award Amount") or notice.get("amount")),
+        award_date=str(start) if start is not None else None,
+        period=period,
+        conditions=_opt_str(notice.get("Description") or notice.get("description")),
+        federal_award_id=str(award_id),
+        raw=dict(notice),
     )
 
 
@@ -1637,6 +1726,11 @@ class ProcurementConnector(Connector):
                 # the same mechanism discover_more continuations use).
                 for t in generated:
                     ctx.resolved_targets[str(t["url"])] = t
+        if ctx.source.id in _usaspending_family_sources():
+            # SIG-ONTO-033 stands across the family — usaspending's reviewed
+            # sweep AND fema_hsgp_allocations' reviewed assistance slices: a
+            # target must pull sub-awards or be an explicitly declared
+            # prime/assistance slice, never an unreviewed prime-only sweep.
             for target in targets:
                 assert_pulls_subawards(target)
         if ctx.source.id == source_ids().get("sam_gov"):
@@ -1682,7 +1776,7 @@ class ProcurementConnector(Connector):
     def fetch(self, ctx: RunContext, target: Mapping[str, Any]) -> FetchResult:
         """Obtain bytes for one target through the shared politeness layer only (SIG-INGEST-011)."""
         assert ctx.fetcher is not None, "connectors fetch only through the shared layer"
-        if ctx.source.id == source_ids().get("usaspending"):
+        if ctx.source.id in _usaspending_family_sources():
             assert_pulls_subawards(target)
         url = str(target["url"])
         headers: dict[str, str] = {}
@@ -2348,7 +2442,7 @@ class ProcurementConnector(Connector):
                 }
                 for o in objects
             ]
-        if ctx.source.id == source_ids().get("usaspending"):
+        if ctx.source.id in _usaspending_family_sources():
             # P26.14: the bounded award-search payload — `results` is the award
             # list. Each row emits a `procurement_notice` raw record carrying
             # its sweep-slice provenance (recovered from the recorded
@@ -2357,6 +2451,10 @@ class ProcurementConnector(Connector):
             # record so the FundingInstrument traceable link (SIG-ONTO-033)
             # is preserved. A `usaspending_slice` outcome row records the
             # per-slice result count + page metadata for the run record.
+            # P31.13: the family includes fema_hsgp_allocations — its targets
+            # carry `award_class = "assistance"` so normalize reads the award
+            # as federal-assistance funding (funder → recipient grant), never
+            # a purchase (procured/funded ≠ deployed).
             capture = parsed["capture"]
             target = _usaspending_target_for(ctx, str(capture.source_uri)) if capture else None
             provenance = {
@@ -2371,6 +2469,10 @@ class ProcurementConnector(Connector):
                 "agency": str(target.get("agency")) if target else None,
                 "page": target.get("page") if target else None,
             }
+            # P31.13: the reviewed award-class marker rides only slices that
+            # declare it — an absent key keeps the P26.14 shadow diff at zero.
+            if target and target.get("award_class"):
+                provenance["award_class"] = str(target["award_class"])
             objects = list(payload.get("results", [])) if isinstance(payload, Mapping) else []
             award_records: list[Mapping[str, Any]] = []
             for pos, obj in enumerate(objects):
@@ -3453,6 +3555,13 @@ class ProcurementConnector(Connector):
         row_index = raw.get("row_index")
         award_kind = str(prov.get("award_kind") or "prime")
         is_sub = award_kind == "sub"
+        # P31.13: a target's reviewed ``award_class = "assistance"`` marks the
+        # federal-assistance path (FEMA HSGP allocations) — the award is a grant
+        # allocation, i.e. a §11.12 FundingInstrument whose funder is the
+        # awarding (sub-)agency and whose recipient is the state/urban-area
+        # grantee — never a purchase, never deployment evidence.
+        award_class = str(prov.get("award_class") or "")
+        is_assistance = award_class == "assistance"
 
         award_id = (
             _first_nonempty(
@@ -3490,9 +3599,24 @@ class ProcurementConnector(Connector):
         recipient = _first_nonempty(
             notice, ("Sub-Awardee Name", "subawardee", "subrecipient_name", "Recipient Name")
         )
-        agency = _first_nonempty(
-            notice, ("Awarding Agency", "awarding_agency", "Awarding Sub Agency")
-        )
+        # P31.13: on an assistance row the administering *sub*-agency (FEMA
+        # under DHS for the Homeland Security Grant Program) is the
+        # funder-of-record — prefer it when the row carries both fields so the
+        # `funder` claim lands the administering office verbatim.
+        if is_assistance:
+            agency_field = (
+                "Awarding Sub Agency"
+                if _opt_str(notice.get("Awarding Sub Agency"))
+                else "Awarding Agency"
+            )
+            agency = _first_nonempty(
+                notice, ("Awarding Sub Agency", "awarding_sub_agency", "Awarding Agency")
+            )
+        else:
+            agency_field = "Awarding Agency"
+            agency = _first_nonempty(
+                notice, ("Awarding Agency", "awarding_agency", "Awarding Sub Agency")
+            )
         amount = _first_nonempty(
             notice, ("Sub-Award Amount", "subaward_amount", "Award Amount", "amount")
         )
@@ -3547,8 +3671,8 @@ class ProcurementConnector(Connector):
         if agency is not None:
             # Awarding agency: `funder` on assistance/sub-award rows (it pays
             # the program), `buyer` on prime contract awards (it purchases).
-            agency_pred = "funder" if is_sub else "buyer"
-            field_claims.append((agency_pred, "Awarding Agency", agency, agency))
+            agency_pred = "funder" if (is_sub or is_assistance) else "buyer"
+            field_claims.append((agency_pred, agency_field, agency, agency))
         if amount is not None:
             field_claims.append(
                 ("amount", "Sub-Award Amount" if is_sub else "Award Amount", amount, amount)
@@ -3590,6 +3714,19 @@ class ProcurementConnector(Connector):
             if predicate in ("recipient", "buyer", "funder"):
                 row["candidate_identifier"] = org_candidate(str(value))
             rows.append(_stamp(row, source_id=ctx.source.id))
+
+        # --- P31.13: an assistance row also carries its §11.12 FundingInstrument
+        # — funder = the awarding sub-agency (FEMA administers HSGP under DHS),
+        # recipient = the grantee (a state administrative agency / urban area),
+        # federal_award_id = the assistance award id, keyed under its own
+        # `funding_instrument:` subject. The rows are funding evidence ONLY:
+        # nothing asserts the recipient purchased, deployed, or operates
+        # anything (funded ≠ deployed, §11.12, SIG-INGEST-034 — the same guard
+        # the sub-award path rides).
+        if is_assistance:
+            instrument = _funding_instrument_from_assistance(notice, source_id=ctx.source.id)
+            if instrument is not None:
+                rows.extend(instrument.claim_rows())
 
         # --- matched keywords: verbatim literals inside the record text ------
         # Scan the record's own text fields; a match emits `matched_keyword`

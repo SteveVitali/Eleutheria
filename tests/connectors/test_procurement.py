@@ -19,6 +19,7 @@ from __future__ import annotations
 import dataclasses
 import json
 from collections.abc import Mapping
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -866,3 +867,231 @@ def test_sam_gov_widened_keyword_targets_and_dedupe() -> None:
     lpr = [t for t in discovered if t.get("index_keyword") == "license plate reader"]
     assert lpr == []  # generated LPR slice suppressed by the supplied search
     assert any(t.get("index_keyword") == "drone" for t in discovered)
+
+
+# --- P31.13 (BREADTH.2): FEMA HSGP assistance allocations ----------------------
+
+_FIXTURES = Path(__file__).parent / "fixtures"
+
+
+def _fema_ctx(**kwargs: Any) -> RunContext:
+    """A RunContext for the fema_hsgp_allocations source (loader gate open in tests)."""
+    return _ctx("fema_hsgp", **kwargs)
+
+
+def _fema_target(page: int = 1) -> dict[str, Any]:
+    """The reviewed assistance-slice target shape (live_targets.toml [fema_hsgp_allocations])."""
+    return {
+        "id": f"fema-hsgp-allocations:p{page}",
+        "url": f"https://api.usaspending.gov/api/v2/search/spending_by_award/#sig-slice=fema_hsgp_allocations:p{page}",
+        "kind": "usaspending_award_search",
+        "award_kind": "prime",
+        "award_class": "assistance",
+        "slice": "hsgp_allocations",
+        "page": page,
+        "post_body": {
+            "subawards": False,
+            "filters": {
+                "award_type_codes": ["02", "03", "04", "05"],
+                "agencies": [
+                    {
+                        "type": "awarding",
+                        "tier": "subtier",
+                        "name": "Federal Emergency Management Agency",
+                    }
+                ],
+                "program_numbers": ["97.067"],
+            },
+            "fields": [
+                "Award ID",
+                "Recipient Name",
+                "Start Date",
+                "End Date",
+                "Award Amount",
+                "Awarding Agency",
+                "Awarding Sub Agency",
+                "Award Type",
+                "Assistance Listings",
+                "Description",
+            ],
+            "limit": 100,
+            "page": page,
+        },
+    }
+
+
+def test_fema_source_is_registered_routed_and_reviewed() -> None:
+    # The registry row rides the procurement connector; its live targets are
+    # the two reviewed assistance slices (award_class="assistance" admits them
+    # under SIG-ONTO-033 as declared prime/assistance targets).
+    from connectors.live_targets import live_targets
+    from connectors.runner import CONNECTOR_FOR_SOURCE
+
+    assert source_ids()["fema_hsgp"] == "fema_hsgp_allocations"
+    assert CONNECTOR_FOR_SOURCE["fema_hsgp_allocations"] == "procurement"
+    targets = live_targets("fema_hsgp_allocations")
+    assert len(targets) == 2
+    for t in targets:
+        assert t["award_class"] == "assistance"
+        assert t["post_body"]["filters"]["program_numbers"] == ["97.067"]
+        # Declared prime/assistance slices satisfy the sub-award mandate as
+        # reviewed bounded slices (the sweep still pulls sub-awards elsewhere).
+        assert_pulls_subawards(t)
+
+
+def test_fema_assistance_row_normalizes_funder_not_buyer() -> None:
+    """Assistance rows: the awarding sub-agency is the FUNDER, never a buyer."""
+    ctx = _fema_ctx()
+    raw = {
+        "record_kind": "procurement_notice",
+        "notice_provenance": {
+            "source_uri": _fema_target()["url"],
+            "award_kind": "prime",
+            "award_class": "assistance",
+            "slice": "hsgp_allocations",
+        },
+        "row_index": 0,
+        "raw": {
+            "Award ID": "SIG-EMW-2024-SS-00001",
+            "Recipient Name": "STATE OF EXAMPLE EMERGENCY MANAGEMENT AGENCY",
+            "Awarding Agency": "Department of Homeland Security",
+            "Awarding Sub Agency": "Federal Emergency Management Agency",
+            "Award Amount": 15250000.0,
+            "Start Date": "2024-10-01",
+            "End Date": "2027-09-30",
+            "Award Type": "02 - BLOCK GRANT",
+            "Assistance Listings": [
+                {
+                    "cfda_number": "97.067",
+                    "cfda_program_title": "HOMELAND SECURITY GRANT PROGRAM",
+                }
+            ],
+            "Description": "HOMELAND SECURITY GRANT PROGRAM ALLOCATION",
+        },
+    }
+    rows = ProcurementConnector().normalize(ctx, [raw])
+    claims = [r for r in rows if r.get("record_kind") == "claim"]
+    by_pred: dict[str, list[dict[str, Any]]] = {}
+    for c in claims:
+        by_pred.setdefault(c["predicate_id"], []).append(c)
+    # The administering sub-agency (FEMA under DHS) is the funder-of-record —
+    # verbatim; a buyer claim would assert a purchase that never happened.
+    assert by_pred["funder"][0]["value"] == "Federal Emergency Management Agency"
+    assert by_pred["funder"][0]["raw_value"] == "Federal Emergency Management Agency"
+    assert "buyer" not in by_pred
+    assert by_pred["recipient"][0]["value"] == "STATE OF EXAMPLE EMERGENCY MANAGEMENT AGENCY"
+    # Party claims carry candidate identifiers, never a resolution (SIG-INGEST-034).
+    assert by_pred["funder"][0]["candidate_identifier"]["scheme"] == "procurement.org_name"
+    assert by_pred["recipient"][0]["candidate_identifier"]["scheme"] == "procurement.org_name"
+    # The §11.12 FundingInstrument lands under its own subject, tracing the
+    # assistance award id as federal_award_id (SIG-ONTO-033).
+    fi = next(r for r in rows if r.get("record_kind") == "funding_instrument")
+    assert fi["subject_id"] == "funding_instrument:fema_hsgp_allocations:SIG-EMW-2024-SS-00001"
+    assert fi["federal_award_id"] == "SIG-EMW-2024-SS-00001"
+    surface = fi["predicate_surface"]
+    assert surface["instrument_type"] == "federal_grant"
+    assert surface["funder"] == "Federal Emergency Management Agency"
+    assert surface["recipient"] == "STATE OF EXAMPLE EMERGENCY MANAGEMENT AGENCY"
+    assert surface["program_name"] == "HOMELAND SECURITY GRANT PROGRAM"
+    # Funding ≠ deployment: no deployment/operational predicate is ever emitted.
+    assert not {
+        "is_deployed",
+        "deployment_status",
+        "device_count",
+        "operates",
+        "technology",
+    } & {c["predicate_id"] for c in claims}
+
+
+def test_fema_row_without_recipient_lands_claims_but_no_instrument() -> None:
+    """A row missing the recipient literal still emits its field claims; the
+    FundingInstrument is emitted only when funder AND recipient are evidenced
+    (§11.12 requires both parties)."""
+    ctx = _fema_ctx()
+    raw = {
+        "record_kind": "procurement_notice",
+        "notice_provenance": {
+            "source_uri": _fema_target()["url"],
+            "award_kind": "prime",
+            "award_class": "assistance",
+            "slice": "hsgp_allocations",
+        },
+        "row_index": 2,
+        "raw": {
+            "Award ID": "SIG-EMW-2022-SS-00003",
+            "Awarding Agency": "Department of Homeland Security",
+            "Awarding Sub Agency": "Federal Emergency Management Agency",
+            "Award Amount": 975000.0,
+            "Start Date": "2022-10-01",
+            "End Date": "2025-09-30",
+            "Award Type": "02 - BLOCK GRANT",
+        },
+    }
+    rows = ProcurementConnector().normalize(ctx, [raw])
+    predicates = {r["predicate_id"] for r in rows if r.get("record_kind") == "claim"}
+    assert "funder" in predicates and "recipient" not in predicates
+    assert not any(r.get("record_kind") == "funding_instrument" for r in rows)
+
+
+def test_fema_hsgp_slice_ingests_end_to_end() -> None:
+    """Fixture page → pipeline → funding instruments + field claims, zero deployment."""
+    from connectors import pipeline
+
+    target = _fema_target()
+    body = _FIXTURES.joinpath("fema_hsgp_page1.json").read_bytes()
+    transport = _SequenceTransport({target["url"]: [(200, body, "application/json")]})
+    ctx = _fema_ctx(
+        fetcher=_fetcher(transport),
+        parameters={"targets": [target], "sweep_expansion": False},
+    )
+    report = pipeline.run(ProcurementConnector(), ctx)
+    assert report.asserted
+    # The reviewed post_body went out verbatim as the request body.
+    assert transport.bodies == [json.dumps(target["post_body"], sort_keys=True).encode("utf-8")]
+    instruments = [r for r in report.claims if r.get("record_kind") == "funding_instrument"]
+    # Rows 1-2 carry funder + recipient literals; row 3 lacks a recipient → no
+    # instrument (its field claims still land — see the unit test above).
+    assert len(instruments) == 2
+    by_ext = {i["external_id"]: i for i in instruments}
+    one = by_ext["SIG-EMW-2024-SS-00001"]
+    assert one["predicate_surface"]["funder"] == "Federal Emergency Management Agency"
+    assert one["predicate_surface"]["recipient"] == "STATE OF EXAMPLE EMERGENCY MANAGEMENT AGENCY"
+    two = by_ext["SIG-EMW-2023-SS-00002"]
+    # No sub-agency field → the awarding agency is the funder literal verbatim.
+    assert two["predicate_surface"]["funder"] == "Department of Homeland Security"
+    assert two["predicate_surface"]["recipient"] == "EXAMPLE METROPOLITAN URBAN AREA WORKING GROUP"
+    assert two["federal_award_id"] == "SIG-EMW-2023-SS-00002"
+    # The per-slice outcome row records the bounded window (SIG-METRIC-002a).
+    slices = [r for r in report.claims if r.get("record_kind") == "usaspending_slice"]
+    assert slices and slices[0]["items_count"] == 3
+    # Procurement/funding ≠ deployment: nothing in the run asserts a deployment.
+    claims = [r for r in report.claims if r.get("record_kind") == "claim"]
+    assert not {
+        "is_deployed",
+        "deployment_status",
+        "device_count",
+        "operates",
+        "technology",
+        "buyer",
+    } & {c["predicate_id"] for c in claims}
+    # Every emitted predicate is inside the allowlist (the allowlist itself is
+    # the contract+funding surface — nothing else can be written).
+    assert all(is_predicate_allowed(c["predicate_id"]) for c in claims)
+
+
+def test_fema_hsgp_shadow_replay_over_the_fixture_diffs_zero() -> None:
+    # `sig-connectors run --mode shadow` over the committed assistance fixture:
+    # the runner resolves the reviewed live_targets slices (the synthetic
+    # fixture row would fail the SIG-ONTO-033 assertion), the static transport
+    # serves the fixture bytes, and the replay diff is 0 (SIG-INGEST-019).
+    from connectors.runner import RunMode, run_source
+
+    report = run_source(
+        "fema_hsgp_allocations",
+        mode=RunMode.SHADOW,
+        fixture=_FIXTURES / "fema_hsgp_page1.json",
+        kind="usaspending_award_search",
+        media_type="application/json",
+    )
+    assert report.connector == "procurement"
+    assert report.diff is not None and report.diff.changed_count == 0

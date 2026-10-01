@@ -29,6 +29,10 @@ from connectors import government_mandated_disclosure as gmd
 
 _FIX = Path(__file__).parent / "fixtures" / "ccops"
 _SOURCES = ("ccops_seattle", "ccops_nyc_post", "ccops_sf")
+# P31.13 (BREADTH.2): the HTML index-page sources — their fixture exercise is
+# index→document fan-out (tests/connectors/test_live_extraction.py), not the
+# JSON disclosure fixtures above.
+_P3113_SOURCES = ("ccops_oakland", "ccops_cambridge", "ccops_somerville")
 _FIXTURES = {
     "ccops_seattle": "seattle_sir.json",
     "ccops_nyc_post": "nyc_post_iup.json",
@@ -117,6 +121,57 @@ def test_sources_are_flipped_on_the_mandated_disclosure_basis() -> None:
         assert rec.ingestion_permitted is True, source_id
         assert rec.rights.spdx == "LicenseRef-DerivedFacts-Citations"
         assert rec.review_packet.startswith("docs/build/reports/rights/")
+
+
+def test_p3113_sources_carry_the_class_route_and_flip() -> None:
+    # P31.13 (BREADTH.2): Oakland / Cambridge / Somerville ride the same source
+    # class + connector; each was flipped under GL-GATE-07 (P29.3 annex packets)
+    # on the public-record factual-compilation basis — operator decisions, never
+    # a code change (HG-03).
+    for source_id in _P3113_SOURCES:
+        rec = get(source_id)
+        assert rec.source_kind is SourceKind.GOVERNMENT_MANDATED_DISCLOSURE
+        assert CONNECTOR_FOR_SOURCE[source_id] == "government_mandated_disclosure"
+        assert rec.ingestion_permitted is True, source_id
+        assert rec.rights.spdx == "LicenseRef-PublicRecord-FactualCompilation"
+        assert rec.review_packet.startswith("docs/build/reports/rights/")
+
+
+@pytest.mark.parametrize("source_id", _P3113_SOURCES)
+def test_p3113_sources_have_bounded_index_targets(source_id: str) -> None:
+    # Each P31.13 source's live target is its reviewed index page — the bounded
+    # discovery surface (`max_documents` caps document fan-out per run).
+    from connectors.live_targets import live_targets
+
+    targets = live_targets(source_id)
+    assert targets, f"{source_id} has no live target registered"
+    assert all(t["kind"] == "index_page" for t in targets)
+    assert all(int(t.get("max_documents", 8)) <= 8 for t in targets)
+
+
+_P3113_INDEX_FIXTURES = {
+    "ccops_oakland": "oakland_pac_index.html",
+    "ccops_cambridge": "cambridge_legifile_index.html",
+    "ccops_somerville": "somerville_legistar_index.html",
+}
+
+
+@pytest.mark.parametrize("source_id", _P3113_SOURCES)
+def test_p3113_shadow_replay_over_the_index_fixture_diffs_zero(source_id: str) -> None:
+    # The real `sig-connectors run --mode shadow` path over the committed HTML
+    # index fixture: loader → capture → parse → extract → normalize → link →
+    # load under the static transport (no socket); replay diff is 0
+    # (SIG-INGEST-019). Discovered document links resolve onto the synthetic
+    # fixture host and are served the same bytes — bounded fan-out holds.
+    report = run_source(
+        source_id,
+        mode=RunMode.SHADOW,
+        fixture=_FIX / _P3113_INDEX_FIXTURES[source_id],
+        kind="index_page",
+        media_type="text/html",
+    )
+    assert report.connector == "government_mandated_disclosure"
+    assert report.diff is not None and report.diff.changed_count == 0
 
 
 # --- the loader gate is fail-closed (HG-03) ------------------------------------

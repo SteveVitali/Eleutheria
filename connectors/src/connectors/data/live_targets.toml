@@ -168,6 +168,64 @@ targets = [
   { id = "ccops-sf-inventory-index", url = "https://www.sf.gov/surveillance-technology-inventory", kind = "index_page", max_documents = 6 },
 ]
 
+# --- P31.13 (BREADTH.2): Oakland / Cambridge / Somerville + FEMA HSGP ---------
+# Three further CCOPS municipalities (P29.3 rights packets flipped —
+# LicenseRef-PublicRecord-FactualCompilation) plus the FEMA Homeland Security
+# Grant Program federal-assistance allocations surface. All probed live
+# 2026-09-26 (HTTP 200 on every reviewed surface below); the per-source
+# discovery spec lives in government_mandated_disclosure_vocab.toml
+# [adapters.*] / the target rows themselves for USAspending.
+
+# Oakland — the Privacy Advisory Commission document index links every §9.64
+# filing under /files/assets/.../documents/pac/*.pdf: the Surveillance
+# Technology Ordinance itself plus the mandated "<technology> Annual Report
+# (YYYY)" filings (ALPR 2019/2020/2021, ShotSpotter 2020–2022, Mobile ID, UAV,
+# cell-site simulator, body-worn camera). max_documents=8 bounds the window to
+# the reviewed anchor set — the page carries ~64 links, most not §9.64 filings.
+[ccops_oakland]
+kind = "index_page"
+targets = [
+  { id = "ccops-oakland-pac-index", url = "https://www.oaklandca.gov/Government/Boards-Commissions/Privacy-Advisory-Commission", kind = "index_page", max_documents = 8, anchor_pattern = '(?i)annual\s+report|surveillance\s+technology\s+ordinance' },
+]
+
+# Cambridge — the reviewed LegiFile detail page (ID 18518 = the surveillance-
+# oversight ordinance filing) attaches the combined citywide annual
+# surveillance report as a FileOpen.aspx PDF (the two FileOpen links on the
+# page; the annual-report anchor selects the filing).
+[ccops_cambridge]
+kind = "index_page"
+targets = [
+  { id = "ccops-cambridge-legifile-18518", url = "https://cambridgema.iqm2.com/Citizens/Detail_LegiFile.aspx?ID=18518&highlightTerms=surveillance", kind = "index_page", max_documents = 2, anchor_pattern = '(?i)annual\s+surveillance\s+report' },
+]
+
+# Somerville — the reviewed Legistar LegislationDetail page (GUID
+# 11D1E64A-529B-4218-8F99-A3E07B0C1476) attaches the six §10-66(b) annual-
+# report filings as View.ashx links ("Revised 2024 Surveillance Technology
+# Annual Report <tech>"). max_documents=6 = the reviewed filing set.
+[ccops_somerville]
+kind = "index_page"
+targets = [
+  { id = "ccops-somerville-legistar-7350978", url = "https://somervillema.legistar.com/LegislationDetail.aspx?GUID=11D1E64A-529B-4218-8F99-A3E07B0C1476&ID=7350978", kind = "index_page", max_documents = 6, anchor_pattern = '(?i)surveillance\s+technology\s+annual\s+report' },
+]
+
+# FEMA Homeland Security Grant Program allocations — USAspending federal-
+# ASSISTANCE (prime grant) rows, assistance listing 97.067 (HOMELAND SECURITY
+# GRANT PROGRAM), awarding sub-agency Federal Emergency Management Agency.
+# Reviewed 2026-09-26: POST /search/spending_by_award/ with subawards=false +
+# assistance award_type_codes returns 1000+ allocations; the reviewed window is
+# the bounded top-two page slice (sort by Award Amount desc — the largest
+# urban-area/state allocations, deterministic and independently auditable).
+# `award_kind = "prime"` + `award_class = "assistance"` admit the slice under
+# assert_pulls_subawards (SIG-ONTO-033) and select the funder→recipient /
+# §11.12 FundingInstrument normalization leg — funding evidence ONLY, an
+# allocation is never deployment evidence (funded ≠ deployed).
+[fema_hsgp_allocations]
+kind = "procurement_api"
+targets = [
+  { id = "fema-hsgp-allocations:p1", url = "https://api.usaspending.gov/api/v2/search/spending_by_award/#sig-slice=fema_hsgp_allocations:p1", kind = "usaspending_award_search", award_kind = "prime", award_class = "assistance", slice = "hsgp_allocations", page = 1, reviewed_assistance_listing = "97.067", post_body = { subawards = false, filters = { time_period = [ { start_date = "2015-01-01", end_date = "2026-12-31" } ], award_type_codes = [ "02", "03", "04", "05" ], agencies = [ { type = "awarding", tier = "subtier", name = "Federal Emergency Management Agency" } ], program_numbers = [ "97.067" ] }, fields = [ "Award ID", "Recipient Name", "Start Date", "End Date", "Award Amount", "Awarding Agency", "Awarding Sub Agency", "Award Type", "Assistance Listings", "Description" ], limit = 100, page = 1, sort = "Award Amount", order = "desc" } },
+  { id = "fema-hsgp-allocations:p2", url = "https://api.usaspending.gov/api/v2/search/spending_by_award/#sig-slice=fema_hsgp_allocations:p2", kind = "usaspending_award_search", award_kind = "prime", award_class = "assistance", slice = "hsgp_allocations", page = 2, reviewed_assistance_listing = "97.067", post_body = { subawards = false, filters = { time_period = [ { start_date = "2015-01-01", end_date = "2026-12-31" } ], award_type_codes = [ "02", "03", "04", "05" ], agencies = [ { type = "awarding", tier = "subtier", name = "Federal Emergency Management Agency" } ], program_numbers = [ "97.067" ] }, fields = [ "Award ID", "Recipient Name", "Start Date", "End Date", "Award Amount", "Awarding Agency", "Awarding Sub Agency", "Award Type", "Assistance Listings", "Description" ], limit = 100, page = 2, sort = "Award Amount", order = "desc" } },
+]
+
 # Pathways — one real upstream document per family (EFF-published; the
 # per-document mixed terms stay visible per ADR-085). The `pathway_document`
 # kind re-derives genre from the captured bytes and emits claims only where the

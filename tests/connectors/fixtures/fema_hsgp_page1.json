@@ -1,0 +1,50 @@
+{
+  "_note": "P31.13 (BREADTH.2) committed SYNTHETIC fixture — the shape of a USAspending /search/spending_by_award/ federal-ASSISTANCE page (results[] carrying the display-label fields the reviewed fema_hsgp_allocations slices request, verified live 2026-09-26). Award ids, recipients, amounts and descriptions are invented test data in the verbatim USAspending style, not evidence; the real response's Assistance Listings shape ([{cfda_number, cfda_program_title}]) and the 97.067 'HOMELAND SECURITY GRANT PROGRAM' title are preserved verbatim. Row 3 deliberately lacks a Recipient Name — the FundingInstrument is emitted only when funder AND recipient are evidenced; its field claims still land. Never fetched live.",
+  "page_metadata": {
+    "page": 1,
+    "hasNext": true,
+    "last_record_unique_id": 3
+  },
+  "results": [
+    {
+      "Award ID": "SIG-EMW-2024-SS-00001",
+      "Recipient Name": "STATE OF EXAMPLE EMERGENCY MANAGEMENT AGENCY",
+      "Start Date": "2024-10-01",
+      "End Date": "2027-09-30",
+      "Award Amount": 15250000.0,
+      "Awarding Agency": "Department of Homeland Security",
+      "Awarding Sub Agency": "Federal Emergency Management Agency",
+      "Award Type": "02 - BLOCK GRANT",
+      "Assistance Listings": [
+        {"cfda_number": "97.067", "cfda_program_title": "HOMELAND SECURITY GRANT PROGRAM"}
+      ],
+      "Description": "HOMELAND SECURITY GRANT PROGRAM - STATE HOMELAND SECURITY PROGRAM ALLOCATION"
+    },
+    {
+      "Award ID": "SIG-EMW-2023-SS-00002",
+      "Recipient Name": "EXAMPLE METROPOLITAN URBAN AREA WORKING GROUP",
+      "Start Date": "2023-10-01",
+      "End Date": "2026-09-30",
+      "Award Amount": 4300000.0,
+      "Awarding Agency": "Department of Homeland Security",
+      "Award Type": "03 - FORMULA GRANT",
+      "Assistance Listings": [
+        {"cfda_number": "97.067", "cfda_program_title": "HOMELAND SECURITY GRANT PROGRAM"}
+      ],
+      "Description": "URBAN AREAS SECURITY INITIATIVE ALLOCATION"
+    },
+    {
+      "Award ID": "SIG-EMW-2022-SS-00003",
+      "Start Date": "2022-10-01",
+      "End Date": "2025-09-30",
+      "Award Amount": 975000.0,
+      "Awarding Agency": "Department of Homeland Security",
+      "Awarding Sub Agency": "Federal Emergency Management Agency",
+      "Award Type": "02 - BLOCK GRANT",
+      "Assistance Listings": [
+        {"cfda_number": "97.067", "cfda_program_title": "HOMELAND SECURITY GRANT PROGRAM"}
+      ],
+      "Description": "OPERATION STONEGARDEN ALLOCATION"
+    }
+  ]
+}

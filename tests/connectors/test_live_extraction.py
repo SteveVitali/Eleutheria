@@ -868,3 +868,484 @@ def test_decp_live_target_is_the_dataset_api_document() -> None:
     assert target["resource_title"] == "decp-2024-01.json"
     # The timestamped static URL is gone from the configuration entirely.
     assert "static.data.gouv.fr" not in target["url"]
+
+
+# --- P31.13 (BREADTH.2): Oakland / Cambridge / Somerville CCOPS filings --------
+
+_OAK_INDEX_URL = (
+    "https://www.oaklandca.gov/Government/Boards-Commissions/Privacy-Advisory-Commission"
+)
+_OAK_ORD_URL = (
+    "https://www.oaklandca.gov/files/assets/city/v/1/boards-amp-commissions/"
+    "documents/pac/omc-9.64-january-2021-005.pdf"
+)
+_OAK_ALPR19_URL = (
+    "https://www.oaklandca.gov/files/assets/city/v/1/boards-amp-commissions/"
+    "documents/pac/automated-license-plate-reader-annual-report-2019.pdf"
+)
+_OAK_ALPR20_URL = _OAK_ALPR19_URL.replace("-2019.pdf", "-2020.pdf")
+_OAK_ALPR21_URL = _OAK_ALPR19_URL.replace("-2019.pdf", "-2021.pdf")
+_OAK_SS20_URL = (
+    "https://www.oaklandca.gov/files/assets/city/v/1/boards-amp-commissions/"
+    "documents/pac/shotspotter-annual-report-2020.pdf"
+)
+_OAK_SS21_URL = _OAK_SS20_URL.replace("-2020.pdf", "-2021.pdf")
+_OAK_MID20_URL = (
+    "https://www.oaklandca.gov/files/assets/city/v/1/boards-amp-commissions/"
+    "documents/pac/mobile-id-annual-report-2020.pdf"
+)
+
+# An Oakland §9.64 annual-report memorandum: the filing's own DATE: field label
+# and the verbatim "Oakland Municipal Code (OMC) 9.64" legal-authority literal.
+_OAK_MEMO = [
+    "CITY OF OAKLAND",
+    "MEMORANDUM",
+    "TO: Honorable City Council",
+    "FROM: Oakland Police Department",
+    "DATE: March 22, 2022",
+    "SUBJECT: Annual report on approved surveillance technology use",
+    "Oakland Municipal Code (OMC) 9.64 requires this annual report",
+    "under the Department's use policy.",
+]
+_OAK_ORD = [
+    "SURVEILLANCE TECHNOLOGY ORDINANCE",
+    "Oakland Municipal Code Chapter 9.64, adopted by the City Council",
+    "as Ordinance 13489, regulates acquisition and use of surveillance",
+    "technology by City departments.",
+]
+
+
+def _oak_responses(status: int = 200) -> dict[str, FetchResult]:
+    index = _CCOPS.joinpath("oakland_pac_index.html").read_bytes()
+    memo = minimal_pdf([_OAK_MEMO])
+    responses = {
+        _OAK_INDEX_URL: _resp(_OAK_INDEX_URL, index, "text/html"),
+        _OAK_ORD_URL: _resp(
+            _OAK_ORD_URL, minimal_pdf([_OAK_ORD]), "application/pdf", status=status
+        ),
+        _OAK_SS20_URL: _resp(_OAK_SS20_URL, memo, "application/pdf", status=status),
+        _OAK_SS21_URL: _resp(_OAK_SS21_URL, memo, "application/pdf", status=status),
+        _OAK_MID20_URL: _resp(_OAK_MID20_URL, memo, "application/pdf", status=status),
+    }
+    for url in (_OAK_ALPR19_URL, _OAK_ALPR20_URL, _OAK_ALPR21_URL):
+        responses[url] = _resp(url, memo, "application/pdf", status=status)
+    return responses
+
+
+def test_oakland_index_discovers_bounded_filings_and_extracts_fields() -> None:
+    report, transport = _run(
+        "ccops_oakland",
+        "government_mandated_disclosure",
+        [
+            {
+                "id": "oak-index",
+                "url": _OAK_INDEX_URL,
+                "kind": "index_page",
+                "max_documents": 5,
+                "anchor_pattern": r"(?i)annual\s+report|surveillance\s+technology\s+ordinance",
+            }
+        ],
+        _oak_responses(),
+    )
+    children = [u for u in transport.request_log if u != _OAK_INDEX_URL]
+    # The reviewed anchor set, in the page's own document order, bounded at 5.
+    assert children == [
+        _OAK_ORD_URL,
+        _OAK_ALPR19_URL,
+        _OAK_ALPR20_URL,
+        _OAK_ALPR21_URL,
+        _OAK_SS20_URL,
+    ]
+    kinds = [r["record_kind"] for r in report.claims]
+    assert "index_page" in kinds and "evidence_artifact" in kinds
+    claims = [r for r in report.claims if r.get("record_kind") == "claim"]
+    assert claims
+
+    ss = [c for c in claims if "shotspotter-annual-report-2020" in str(c["evidence"]["source_url"])]
+    assert ss, "no claims from the ShotSpotter filing"
+    by_pred = {c["predicate_id"]: c for c in ss}
+    assert by_pred["ordinance_citation"]["claim_type"] == "ordinance"
+    assert (
+        by_pred["ordinance_citation"]["value"]
+        == "Oakland Municipal Code Chapter 9.64 (Surveillance Technology Ordinance)"
+    )
+    # The filing's own declared Date: field is the reporting period; the
+    # technology name comes from the index link's anchor text verbatim.
+    assert by_pred["technology"]["value"] == "Shotspotter"
+    assert by_pred["technology"]["raw_value"] == "Shotspotter"
+    assert by_pred["technology"]["reporting_period"] == "2022-03-22"
+    assert "9.64" in by_pred["legal_authority"]["raw_value"]
+    for claim in claims:
+        if claim["claim_type"] == "ordinance":
+            assert claim["agency"] == "Oakland City Council"
+        else:
+            assert claim["agency"] == "Oakland Police Department"
+        assert claim["aggregate_level"] == "agency_technology_period"
+
+    # Part VIII: the ALPR filings' technology literal contains a forbidden
+    # token — suppressed at the claim surface, recorded on the artifact.
+    assert not any(
+        c["predicate_id"] == "technology" and "plate" in str(c.get("value", "")).lower()
+        for c in claims
+    )
+    artifacts = [r for r in report.claims if r.get("record_kind") == "evidence_artifact"]
+    assert any(a.get("part_viii_suppressions") for a in artifacts)
+
+
+def test_oakland_ordinance_doc_carries_no_technology_and_no_field_claims() -> None:
+    # The ordinance itself is a jurisdiction-scoped instrument document, not a
+    # per-technology filing — no `technology`/field claims are fabricated.
+    report, _ = _run(
+        "ccops_oakland",
+        "government_mandated_disclosure",
+        [{"id": "ord", "url": _OAK_ORD_URL, "kind": "disclosure_document"}],
+        {_OAK_ORD_URL: _resp(_OAK_ORD_URL, minimal_pdf([_OAK_ORD]), "application/pdf")},
+    )
+    claims = [r for r in report.claims if r.get("record_kind") == "claim"]
+    assert {c["claim_type"] for c in claims} == {"ordinance"}
+    assert not any(c["predicate_id"] == "technology" for c in claims)
+
+
+_CAM_INDEX_URL = (
+    "https://cambridgema.iqm2.com/Citizens/Detail_LegiFile.aspx"
+    "?ID=18518&highlightTerms=surveillance"
+)
+_CAM_ASR_URL = "https://CambridgeMA.IQM2.com/Citizens/FileOpen.aspx?Type=4&ID=14080"
+
+# The Chapter 2.128 mandated questionnaire — the eight questions the combined
+# citywide filing repeats per department (verbatim from the live filing).
+_CAM_QUESTIONS = [
+    "1. What Surveillance Technologies has the department used in the last year?",
+    "2. Has any Surveillance Technology data been shared with a third-party?",
+    "3. What complaints (if any) has your department received about Surveillance Technology?",
+    "4. Were any violations of the Surveillance Use Policy found in the last year?",
+    "5. Has Surveillance Technology been effective in achieving its identified purpose?",
+    "6. Did the department receive any public records requests concerning Surveillance Technology?",
+    "7. What were the total annual costs of the Surveillance Technology?",
+    "8. Are any communities disproportionately impacted by Surveillance Technology?",
+]
+
+
+def _cam_department_block(tech: str) -> list[str]:
+    return [
+        f"Surveillance Technology: {tech}",
+        *(line for q in _CAM_QUESTIONS for line in (q, "No complaints or violations recorded.")),
+    ]
+
+
+_CAM_LINES = [
+    "CITY OF CAMBRIDGE",
+    "ANNUAL SURVEILLANCE REPORT",
+    "Date: 02/27/2023",
+    "Chapter 2.128 of the Cambridge Municipal Code requires this report.",
+    "Department: Community Development Department",
+    *_cam_department_block("- Media Monitoring - Meltwater"),
+    "Department: Emergency Communications",
+    *_cam_department_block("RapidSOS Emergency Data Integration System"),
+]
+
+
+def test_cambridge_legifile_attachment_resolves_and_extracts() -> None:
+    report, transport = _run(
+        "ccops_cambridge",
+        "government_mandated_disclosure",
+        [
+            {
+                "id": "cam-index",
+                "url": _CAM_INDEX_URL,
+                "kind": "index_page",
+                "max_documents": 2,
+                "anchor_pattern": r"(?i)annual\s+surveillance\s+report",
+            }
+        ],
+        {
+            _CAM_INDEX_URL: _resp(
+                _CAM_INDEX_URL,
+                _CCOPS.joinpath("cambridge_legifile_index.html").read_bytes(),
+                "text/html",
+            ),
+            _CAM_ASR_URL: _resp(_CAM_ASR_URL, minimal_pdf([_CAM_LINES]), "application/pdf"),
+        },
+    )
+    # Only the annual-report attachment resolves — the Type=30 "Printout"
+    # sibling link fails the reviewed anchor pattern.
+    children = [u for u in transport.request_log if u != _CAM_INDEX_URL]
+    assert children == [_CAM_ASR_URL]
+    claims = [r for r in report.claims if r.get("record_kind") == "claim"]
+    assert claims
+    doc_claims = [c for c in claims if "FileOpen" in str(c["evidence"]["source_url"])]
+    assert doc_claims
+    techs = [c for c in doc_claims if c["predicate_id"] == "technology"]
+    # technology_field_multi: each department filing's own field literal lands —
+    # one verbatim technology claim per occurrence, deterministic order.
+    assert [t["value"] for t in techs] == [
+        "Media Monitoring - Meltwater",
+        "RapidSOS Emergency Data Integration System",
+    ]
+    assert techs[0]["raw_value"] == "Media Monitoring - Meltwater"
+    # The filing's own Date: label is the reporting period.
+    assert techs[0]["reporting_period"] == "2023-02-27"
+    authority = next(c for c in doc_claims if c["predicate_id"] == "legal_authority")
+    assert "2.128" in authority["raw_value"]
+    # The combined filing's field-state claims ride the filing-level aggregate
+    # technology marker, not any single listed system.
+    states = {
+        c["raw_value"]: c["value"]
+        for c in doc_claims
+        if c["predicate_id"] == "disclosure_field_state"
+    }
+    assert len(states) == 8
+    assert all(v == "answered" for v in states.values())
+    state_rows = [c for c in doc_claims if c["predicate_id"] == "disclosure_field_state"]
+    assert all(r["technology"] == "(combined filing)" for r in state_rows)
+    for c in doc_claims:
+        if c["claim_type"] == "ordinance":
+            assert c["agency"] == "Cambridge City Council"
+        else:
+            assert c["agency"] == "City of Cambridge"
+
+
+_SOM_INDEX_URL = (
+    "https://somervillema.legistar.com/LegislationDetail.aspx"
+    "?GUID=11D1E64A-529B-4218-8F99-A3E07B0C1476&ID=7350978"
+)
+_SOM_DOC_URLS = {
+    "combined": "https://somervillema.legistar.com/View.ashx?M=F&ID=14108438"
+    "&GUID=0B37E474-C031-4DA6-BD5C-C84B22815A0F",
+    "flir": "https://somervillema.legistar.com/View.ashx?M=F&ID=14108439"
+    "&GUID=65B9E3A5-B6FC-42D0-9A4E-6548DCA63767",
+    "thermal": "https://somervillema.legistar.com/View.ashx?M=F&ID=14108440"
+    "&GUID=1BDBD43D-A25E-413F-828E-47C9E9406E58",
+    "hs_cameras": "https://somervillema.legistar.com/View.ashx?M=F&ID=14108441"
+    "&GUID=EAFCDC4A-2DB5-4B10-91D6-371CE0732080",
+    "nextgen911": "https://somervillema.legistar.com/View.ashx?M=F&ID=14108442"
+    "&GUID=6B59E8EF-417E-492A-B80D-C50A919172FE",
+    "shotspotter": "https://somervillema.legistar.com/View.ashx?M=F&ID=14108443"
+    "&GUID=3AAB9E28-40CC-4A86-A306-3F5E2285E2EE",
+}
+
+# The §10-66(b) mandated questionnaire — the nine questions verbatim (split only
+# for line length; `_normalize_heading` folds whitespace, so a wrapped question
+# still matches its mandated heading contiguously).
+_SOM_QUESTIONS = [
+    "1. A description of how surveillance technology has been used:",
+    "2. Whether and how often data acquired through the use of the surveillance "
+    "technology was shared:",
+    "3. A summary of community complaints or concerns about the surveillance technology, if any:",
+    "4. The results of any internal audits, any information about violations of "
+    "the surveillance use policy,",
+    "5. Whether the surveillance technology has been effective at achieving its "
+    "identified purpose:",
+    "6. The number of public records requests received by the city seeking "
+    "documents concerning it:",
+    "7. An estimate of the total annual costs for the surveillance technology, "
+    "including personnel and other:",
+    "8. Whether the civil rights and liberties of any communities or groups, "
+    "including communities of color, are impacted:",
+    "9. A disclosure of any new agreements made in the past 12 months with "
+    "non-city entities that may acquire data:",
+]
+
+
+def _somerville_filing(tech: str) -> bytes:
+    lines = [
+        "APPENDIX B: CITY OF SOMERVILLE ANNUAL SURVEILLANCE REPORT",
+        "Filed under Ordinance Chapter 10-66 (the surveillance technology ordinance).",
+        "Department/Unit: Somerville Police Department",
+        f"Surveillance Technology: {tech}",
+        "Date: 2/19/25",
+        *(
+            line
+            for q in _SOM_QUESTIONS
+            for line in (q, "Answered in the affirmative per the filed report.")
+        ),
+    ]
+    return minimal_pdf([lines])
+
+
+def _som_responses(status: int = 200) -> dict[str, FetchResult]:
+    index = _CCOPS.joinpath("somerville_legistar_index.html").read_bytes()
+    tech_by_key = {
+        "combined": "Citywide Camera Network",
+        "flir": "FLIR Thermal Imaging Cameras",
+        "thermal": "Thermal Imaging Cameras",
+        "hs_cameras": "Homeland Security Cameras",
+        "nextgen911": "Advanced Next Gen 911",
+        "shotspotter": "ShotSpotter",
+    }
+    responses = {_SOM_INDEX_URL: _resp(_SOM_INDEX_URL, index, "text/html")}
+    for key, url in _SOM_DOC_URLS.items():
+        responses[url] = _resp(
+            url, _somerville_filing(tech_by_key[key]), "application/pdf", status=status
+        )
+    return responses
+
+
+def test_somerville_legistar_filings_fan_out_bounded_and_extract() -> None:
+    report, transport = _run(
+        "ccops_somerville",
+        "government_mandated_disclosure",
+        [
+            {
+                "id": "som-index",
+                "url": _SOM_INDEX_URL,
+                "kind": "index_page",
+                "max_documents": 6,
+                "anchor_pattern": r"(?i)surveillance\s+technology\s+annual\s+report",
+            }
+        ],
+        _som_responses(),
+    )
+    children = [u for u in transport.request_log if u != _SOM_INDEX_URL]
+    # The six §10-66(b) filings in document order; the calendar link is off-spec.
+    assert children == list(_SOM_DOC_URLS.values())
+    claims = [r for r in report.claims if r.get("record_kind") == "claim"]
+    assert claims
+    ss = [c for c in claims if _SOM_DOC_URLS["shotspotter"] == str(c["evidence"]["source_url"])]
+    assert ss, "no claims from the ShotSpotter filing"
+    by_pred = {c["predicate_id"]: c for c in ss}
+    # The filing's own questionnaire field literal + two-digit-year Date label.
+    assert by_pred["technology"]["value"] == "ShotSpotter"
+    assert by_pred["technology"]["raw_value"] == "ShotSpotter"
+    assert by_pred["technology"]["reporting_period"] == "2025-02-19"
+    assert "10-66" in by_pred["legal_authority"]["raw_value"]
+    # The nine §10-66(b) mandated questions: every one is an answered field
+    # (mandated != populated is recorded, never fabricated).
+    states = {
+        c["raw_value"]: c["value"] for c in ss if c["predicate_id"] == "disclosure_field_state"
+    }
+    assert len(states) == 9
+    assert all(v == "answered" for v in states.values())
+    for c in ss:
+        if c["claim_type"] == "ordinance":
+            assert c["agency"] == "Somerville City Council"
+        else:
+            assert c["agency"] == "City of Somerville"
+        assert c["aggregate_level"] == "agency_technology_period"
+    # The combined "Annual Report 2024" filing's anchor yields a bare year —
+    # dropped as a technology; its own field literal is what lands.
+    combined_tech = [
+        c
+        for c in claims
+        if c["predicate_id"] == "technology"
+        and _SOM_DOC_URLS["combined"] == str(c["evidence"]["source_url"])
+    ]
+    assert [c["value"] for c in combined_tech] == ["Citywide Camera Network"]
+
+
+def test_somerville_fan_out_is_bounded_when_over_cap() -> None:
+    report, transport = _run(
+        "ccops_somerville",
+        "government_mandated_disclosure",
+        [
+            {
+                "id": "som-index",
+                "url": _SOM_INDEX_URL,
+                "kind": "index_page",
+                "max_documents": 2,
+                "anchor_pattern": r"(?i)surveillance\s+technology\s+annual\s+report",
+            }
+        ],
+        _som_responses(),
+    )
+    children = [u for u in transport.request_log if u != _SOM_INDEX_URL]
+    assert children == [_SOM_DOC_URLS["combined"], _SOM_DOC_URLS["flir"]]
+
+
+# --- P31.13: reporting-period + multi-technology extraction --------------------
+
+
+def test_reporting_period_reads_the_new_date_and_year_forms() -> None:
+    from connectors.government_mandated_disclosure import _reporting_period
+
+    # The NYC UPDATED: revision literal (pre-existing behaviour).
+    assert _reporting_period("UPDATED: FEBRUARY 4, 2026", "x.pdf") == "2026-02-04"
+    # Cambridge's filing label: `Date: 02/27/2023` (numeric M/D/YYYY).
+    assert _reporting_period("Date: 02/27/2023", "FileOpen.aspx") == "2023-02-27"
+    # Somerville's two-digit year: `Date: 2/19/25`.
+    assert _reporting_period("Date: 2/19/25", "View.ashx") == "2025-02-19"
+    # Oakland's named-month memo date: `DATE: March 22, 2022`.
+    assert _reporting_period("DATE: March 22, 2022", "x.pdf") == "2022-03-22"
+    # An anchor-carried M-D-YYYY date when the document carries none.
+    assert (
+        _reporting_period("no date field", "x.pdf", "Annual Surveillance Report 02-27-2023")
+        == "2023-02-27"
+    )
+    # The covered year in a filename slug / anchor title is the filing's own
+    # year-granularity literal — recorded as-is.
+    assert _reporting_period("no date field", "shotspotter-annual-report-2021.pdf") == "2021"
+    assert _reporting_period("no date field", "x.pdf", "Annual Report (2019)") == "2019"
+    # Nothing declared -> None: a claim with no period is not emitted.
+    assert _reporting_period("no date field", "x.pdf") is None
+
+
+def test_document_technologies_extracts_field_anchor_and_multi() -> None:
+    from connectors.government_mandated_disclosure import (
+        _document_technologies,
+        source_adapter,
+    )
+
+    oak = source_adapter("ccops_oakland")
+    cam = source_adapter("ccops_cambridge")
+    som = source_adapter("ccops_somerville")
+
+    # Anchor-derived (Oakland `<tech> Annual Report (YYYY)`).
+    assert _document_technologies(
+        "x.pdf", ("plain memo text",), oak, "Shotspotter Annual Report (2020)(PDF, 9MB)"
+    ) == [("Shotspotter", "Shotspotter")]
+    # A bare year in the anchor is the covered year, not a technology.
+    assert (
+        _document_technologies("x.pdf", ("plain memo text",), oak, "Surveillance Report 2024") == []
+    )
+    # Field-literal with multi: the combined Cambridge filing names each
+    # department's technology once per occurrence.
+    cam_page = (
+        "Surveillance Technology: • Media Monitoring - Meltwater\n"
+        "Surveillance Technology: RapidSOS Emergency Data Integration System\n"
+        "Surveillance Technology: Media Monitoring - Meltwater"
+    )
+    assert _document_technologies("x.pdf", (cam_page,), cam) == [
+        ("Media Monitoring - Meltwater", "Media Monitoring - Meltwater"),
+        (
+            "RapidSOS Emergency Data Integration System",
+            "RapidSOS Emergency Data Integration System",
+        ),
+    ]
+    # Somerville single-tech field literal (multi unset -> first only).
+    som_page = "Surveillance Technology: ShotSpotter\nSurveillance Technology: FLIR\n"
+    assert _document_technologies("x.pdf", (som_page,), som) == [("ShotSpotter", "ShotSpotter")]
+    # Anchor fallback when the document has no field literal: the Somerville
+    # `... Annual Report <tech>` attachments name the filing verbatim.
+    assert _document_technologies(
+        "View.ashx",
+        ("no field literal on this page",),
+        som,
+        "Revised 2024 Surveillance Technology Annual Report ShotSpotter",
+    ) == [("ShotSpotter", "ShotSpotter")]
+    # A bare-year anchor residue is dropped (the combined city filing).
+    assert (
+        _document_technologies(
+            "View.ashx",
+            ("no field literal on this page",),
+            som,
+            "Revised Surveillance Technology Annual Report 2024",
+        )
+        == []
+    )
+
+
+def test_new_ccops_sources_are_registered_routed_and_gated() -> None:
+    # The three P31.13 sources are registry rows of the mandated-disclosure
+    # class, routed to this connector, and carry reviewed index_page targets.
+    # Their ingestion_permitted flips are the P29.3 GL-GATE-07 rights packets
+    # (operator decisions — never a code change).
+    from connectors.live_targets import live_targets
+    from connectors.runner import CONNECTOR_FOR_SOURCE
+
+    for source_id in ("ccops_oakland", "ccops_cambridge", "ccops_somerville"):
+        assert CONNECTOR_FOR_SOURCE[source_id] == "government_mandated_disclosure"
+        rec = get(source_id)
+        assert rec.ingestion_permitted is True
+        targets = live_targets(source_id)
+        assert targets and all(t["kind"] == "index_page" for t in targets)
+        assert all(t.get("max_documents", 8) <= 8 for t in targets)

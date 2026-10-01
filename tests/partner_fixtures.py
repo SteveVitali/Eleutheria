@@ -158,17 +158,29 @@ def fixture_records() -> dict[str, list[dict[str, Any]]]:
 #: golden must normalize the stamp back (P31.12 bumped it to 2026.09.26.1).
 GOLDEN_ACCOUNTABILITY_VOCAB = "2026.09.18.2"
 
+#: Same normalization for the procurement vocabulary (P31.13 bumped it to
+#: 2026.09.26-p31.13 — the fema_hsgp source row + assistance award-class
+#: handling; a vocabulary migration restamps provenance, never claim content).
+#: Normalization matches on the stamp VALUE, not the run's connector: the
+#: France/Belgium procurement connector stamps the procurement vocab too.
+GOLDEN_PROCUREMENT_VOCAB = "2026.09.18-p26.15"
+
 
 def golden_digest(run_key: str, record: Mapping[str, Any]) -> str:
     """`content_digest` comparable to the base-commit golden for ``run_key``.
 
-    Records from the accountability connector carry its vocabulary version; the
-    golden pins the base-commit stamp, so the field is normalized before
-    digesting. Every other run's records digest exactly as stored.
+    Records stamped with a connector vocabulary version normalize the stamp
+    back to the base-commit value before digesting (the golden pins it); every
+    other field digests exactly as stored.
     """
+    from connectors.accountability import vocab_version as _acc_vv
+    from connectors.procurement import vocab_version as _proc_vv
     from db.claim_sink import content_digest
 
-    runs = {r.key: r for r in fixture_runs()}
-    if runs[run_key].connector is AccountabilityConnector and "vocab_version" in record:
-        record = {**record, "vocab_version": GOLDEN_ACCOUNTABILITY_VOCAB}
+    if "vocab_version" in record:
+        vv = str(record["vocab_version"])
+        if vv == str(_acc_vv()):
+            record = {**record, "vocab_version": GOLDEN_ACCOUNTABILITY_VOCAB}
+        elif vv == str(_proc_vv()):
+            record = {**record, "vocab_version": GOLDEN_PROCUREMENT_VOCAB}
     return content_digest(record)

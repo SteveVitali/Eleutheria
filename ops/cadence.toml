@@ -724,3 +724,41 @@ cron = "9 6 17 * *"              # day 17, 06:09 UTC
 job = "sig-ingest-uk-surveillance-camera-commissioner"
 scheduler = "sig-sched-uk-surveillance-camera-commissioner"
 note = "BSCC Annual Report 2022/2023 (GOV.UK accessible-HTML edition); LicenseRef-OperatorAccepted-DBRight — derived facts + citations only."
+
+# --- P31.13 (BREADTH.2): the remaining four P29.3 flips -----------------------
+# Three CCOPS index→document sources through `government_mandated_disclosure`
+# plus the FEMA HSGP federal-assistance allocations sweep through
+# `procurement`. Filings republish annually → monthly cadence is the
+# posture-change detector; a WAF/404 is the recorded honest outcome.
+
+[[sources]]
+id = "ccops_oakland"
+cadence = "monthly"
+cron = "9 6 18 * *"              # day 18, 06:09 UTC
+job = "sig-ingest-ccops-oakland"
+scheduler = "sig-sched-ccops-oakland"
+note = "Oakland PAC index → bounded §9.64 filing fan-out (max_documents=8; ALPR/ShotSpotter/Mobile-ID annual reports + the ordinance)."
+
+[[sources]]
+id = "ccops_cambridge"
+cadence = "monthly"
+cron = "9 6 19 * *"              # day 19, 06:09 UTC
+job = "sig-ingest-ccops-cambridge"
+scheduler = "sig-sched-ccops-cambridge"
+note = "Cambridge LegiFile 18518 → FileOpen.aspx combined annual-surveillance-report attachment (max_documents=2)."
+
+[[sources]]
+id = "ccops_somerville"
+cadence = "monthly"
+cron = "9 6 20 * *"              # day 20, 06:09 UTC
+job = "sig-ingest-ccops-somerville"
+scheduler = "sig-sched-ccops-somerville"
+note = "Somerville Legistar detail → six §10-66(b) annual-report View.ashx filings (max_documents=6)."
+
+[[sources]]
+id = "fema_hsgp_allocations"
+cadence = "monthly"
+cron = "9 6 21 * *"              # day 21, 06:09 UTC
+job = "sig-ingest-fema-hsgp-allocations"
+scheduler = "sig-sched-fema-hsgp-allocations"
+note = "USAspending assistance-listing 97.067 prime-award slices (bounded 2-page reviewed window); funding evidence only — funded ≠ deployed."
