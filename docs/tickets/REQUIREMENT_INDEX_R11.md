@@ -1,4 +1,4 @@
-<!-- Generated 2026-10-01T16:35:05Z by docs/build/planning/2026-09-30-next-phase/tools/s13e/req_index.py (SEED-13e, Round-11 Stage B T3 close-out); regenerate, do not hand-edit. Planning, not execution evidence. -->
+<!-- Generated 2026-10-01T17:13:33Z by docs/build/planning/2026-09-30-next-phase/tools/s13e/req_index.py (SEED-13e, Round-11 Stage B T3 close-out); regenerate, do not hand-edit. Planning, not execution evidence. -->
 # Round-11 requirement → ticket index (rows 201–510)
 
 A companion of `00_MANIFEST.md` (its `## Requirement-ID → ticket index` points here). It maps every requirement id cited by the 310 Round-11 chain contracts — the 60 full 11A contracts and the 250 `Kind: skeleton` contracts of 11B–tail — to the rows that own, deliver, extend or cite it, checks the 62 spec §56 ids against their `Owner:` lines, and lists every waived or amended id with its ADR (spec Appendix G.7). Skeleton rows name only the ids the plan row, the catalog or a Stage-B carry item gave them; **PLAN-11B, PLAN-11C and PLAN-11D extend this index** when they write their sub-round's contracts (re-run the generator; their own requirement-index deliverables point here). Requirement status stays in `docs/build/COVERAGE_MATRIX.csv` and the coverage-assessment events — nothing here is a verdict.
@@ -12,7 +12,7 @@ A companion of `00_MANIFEST.md` (its `## Requirement-ID → ticket index` points
 - §56 ids with **no chain-row owner**: 4 — SIG-ENG-041 (owner SEED-15), SIG-ENG-044 (owner SEED-02), SIG-MEM-005 (owner SEED-02), SIG-MEM-012 (owner SEED-02) — owned by Stage-B seed units, not by a Round-11 row (spec §56.1 allows a seed-unit owner); they are verdicted at T4/T6 from the seed's own evidence.
 - §56 owner names that are not chain rows: 0.
 - §56 owner rows whose contract does not (yet) list the id as owned: 0.
-- Ids defined before Round 11 that no Round-11 row owns or delivers (cited only): 89 — their owners are the tickets the coverage matrix names (column *matrix `owning_tickets`* in §3, read at HEAD).
+- Ids defined before Round 11 that no Round-11 row owns or delivers (cited only): 88 — their owners are the tickets the coverage matrix names (column *matrix `owning_tickets`* in §3, read at HEAD).
 - Appendix G.7: 16 waived ids (G.7.2), 29 amended ids (G.7.3, incl. the outreach set owed later-phase, R11-A15), 18 ids checked and deliberately not amended (G.7.5; the requirement stands) — table §2.
 
 ## 1. Spec §56 ids (62) — owner check
@@ -312,7 +312,7 @@ A waived clause keeps its requirement text and a dated waiver note in its owning
 | SIG-UI-033 | MUST | — | — | P34.34a (241) | P15.5 | — |
 | SIG-UI-035 | MUST | — | — | P34.34a (241)* | — | R11-A4 AMENDED (no MUST weakened) — ADR-162 |
 | SIG-UI-036 | SHOULD | — | — | P34.34b (242)* | P15.5 | R11-A3 AMENDED (no MUST weakened) — ADR-155 |
-| SIG-UI-040 | SHOULD | — | — | P34.36 (244) | — | — |
+| SIG-UI-040 | SHOULD | P34.48 (240) (delivers) | — | P34.36 (244) | — | — |
 | SIG-UI-041 | MUST | — | — | P34.34b (242) | — | — |
 | SIG-UI-042 | MUST | — | — | P34.17 (220) | P15.5 | R11-W8 WAIVED (clause) — ADR-179 |
 | SIG-UI-044 | MUST | — | — | P36.17 (357)* | P15.5 | R11-A5 AMENDED (no MUST weakened) |

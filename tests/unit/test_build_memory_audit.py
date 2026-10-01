@@ -463,6 +463,74 @@ def test_adr_index_mismatch_and_missing_revisit(tmp_path: pathlib.Path) -> None:
     assert "adr/index-mismatch" in checks
 
 
+RESERVED_NOTES = (
+    "\n## Notes\n\nADR-009 is a skipped number (never assigned).\n"
+    "ADR-002 and ADR-004…ADR-006 are reserved for the chain rows that\n"
+    "write them (noted 2026-10-01); each appears here when its file lands.\n"
+)
+
+
+def _dangling(tmp_path: pathlib.Path, readme: str) -> set[str]:
+    diags, _ = audit_current_state.audit(
+        _tree(
+            tmp_path,
+            {
+                "docs/adr/ADR-001-x.md": "# ADR-001\n\nCites ADR-002, ADR-005, ADR-007 and "
+                "ADR-009.\n\n## Revisit trigger\n\n- t\n",
+                "docs/adr/README.md": readme,
+            },
+        )
+    )
+    return {d["obligation"] for d in _by_check(diags, "adr/dangling-reference")}
+
+
+def test_adr_citation_of_a_missing_number_is_dangling(tmp_path: pathlib.Path) -> None:
+    assert _dangling(tmp_path, "| [ADR-001](ADR-001-x.md) | t |\n") == {
+        "ADR-002",
+        "ADR-005",
+        "ADR-007",
+        "ADR-009",
+    }
+
+
+def test_adr_citation_of_a_number_reserved_in_the_index_notes_is_accepted(
+    tmp_path: pathlib.Path,
+) -> None:
+    """SEED-18a: a number the index Notes record as reserved (a later chain row writes it)
+    resolves; an unreserved missing number (ADR-007, just past the range) and a number
+    recorded only as skipped (ADR-009) still fail."""
+    got = _dangling(tmp_path, "| [ADR-001](ADR-001-x.md) | t |\n" + RESERVED_NOTES)
+    assert got == {"ADR-007", "ADR-009"}
+
+
+def test_reserved_adr_numbers_come_only_from_the_notes_section() -> None:
+    parse = audit_current_state.reserved_adr_numbers
+    assert parse(RESERVED_NOTES) == {"ADR-002", "ADR-004", "ADR-005", "ADR-006"}
+    # the same sentence in the index table (above Notes) or after Notes reserves nothing
+    assert parse("ADR-002 is reserved for a row.\n" + "\n## Notes\n\nnone\n") == set()
+    assert parse("\n## Notes\n\nnone\n\n## Other\n\nADR-003 is reserved.\n") == set()
+    assert parse("ADR-010…ADR-012 are reserved.\n") == set()
+    # ASCII ellipsis and en-dash ranges, comma lists
+    assert parse("## Notes\nADR-010...ADR-011, ADR-020–ADR-021 are reserved.\n") == {
+        "ADR-010",
+        "ADR-011",
+        "ADR-020",
+        "ADR-021",
+    }
+
+
+def test_real_adr_index_reservations_are_read() -> None:
+    """Invariant over the real index: when its Notes state a reservation, the parser reads at
+    least one number from it, so a wording drift cannot silently reserve nothing (the real-tree
+    zero-errors test then fails on any cited number that is neither written nor reserved)."""
+    text = (REPO_ROOT / "docs" / "adr" / "README.md").read_text()
+    notes = text.split("\n## Notes", 1)[1] if "\n## Notes" in text else ""
+    reserved = audit_current_state.reserved_adr_numbers(text)
+    if re.search(r"\b(?:is|are)\s+reserved\b", notes):
+        assert reserved
+    assert all(re.fullmatch(r"ADR-\d{3}", n) for n in reserved)
+
+
 def _digests(root: pathlib.Path) -> dict[str, str]:
     return {
         str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest()

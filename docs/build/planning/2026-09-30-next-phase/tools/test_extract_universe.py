@@ -2,14 +2,25 @@
 """Stdlib tests for the A3 universe extractor: parsers, the exactly-once checker, and the
 reconciliation of the repository universe against the frozen A1 baseline.
 
-Not collected by `make check` (pytest `testpaths = ["tests"]`); run explicitly:
+The universe tests run the extractor over the source bytes UNIVERSE.csv and baseline.json were
+frozen from — the A1/S1b chain tip `b051732c` (BASELINE.md C07: the A3 commit's inputs are
+byte-identical to it) — materialised from git into a temporary directory. They check the
+extractor, not today's living register: Round-11 seed units append DEFERRALS rows, events and
+re-verdicts on purpose, and UNIVERSE_DISPOSED.csv (not UNIVERSE.csv) carries that forward.
+
+Not collected by `make check` (pytest `testpaths = ["tests", "docs/build/tools"]`); run explicitly:
     uv run python -m pytest docs/build/planning/2026-09-30-next-phase/tools/test_extract_universe.py
 """
 
 import copy
 import importlib.util
+import io
 import json
+import shutil
+import subprocess
 import sys
+import tarfile
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -18,6 +29,39 @@ SPEC = importlib.util.spec_from_file_location("extract_universe", HERE / "extrac
 MOD = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = MOD  # dataclasses resolve annotations via sys.modules
 SPEC.loader.exec_module(MOD)
+
+# The S1b snapshot: the A1 baseline's chain tip (BASELINE.md `git.chain_tip_sha_local`).
+SNAPSHOT = "b051732c3c6ed11d7ebb2343a4414f2fc281fd2a"
+# Every path the extractor reads under its root (extract_universe.py module docstring).
+SNAPSHOT_INPUTS = (
+    MOD.DEFERRALS,
+    MOD.MANIFEST,
+    "docs/build/reports/obligations",
+    MOD.COVERAGE,
+    MOD.BACKLOG,
+    MOD.BUILD_INDEX,
+    MOD.READINESS,
+    MOD.SPEC,
+    MOD.RISKS,
+    MOD.LEDGER,
+    MOD.ADR_DIR,
+    MOD.READOUTS,
+)
+
+
+def materialise_snapshot(dest: Path) -> Path:
+    """Extract the extractor's inputs at SNAPSHOT into `dest` (read-only git; fails loudly)."""
+    tar_bytes = subprocess.run(
+        ["git", "-C", str(MOD.ROOT), "archive", "--format=tar", SNAPSHOT, "--", *SNAPSHOT_INPUTS],
+        check=True,
+        capture_output=True,
+    ).stdout
+    with tarfile.open(fileobj=io.BytesIO(tar_bytes)) as tar:
+        if hasattr(tarfile, "data_filter"):
+            tar.extractall(dest, filter="data")
+        else:  # Python without the PEP 706 filters (git archive output is trusted here)
+            tar.extractall(dest)
+    return dest
 
 
 class ParserTests(unittest.TestCase):
@@ -99,12 +143,32 @@ class ParserTests(unittest.TestCase):
 class UniverseTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.items, cls.infos = MOD.build(MOD.ROOT)
+        cls.tmp = Path(tempfile.mkdtemp(prefix="universe-snapshot-"))
+        cls.root = materialise_snapshot(cls.tmp)
+        cls.items, cls.infos = MOD.build(cls.root)
         cls.rows = MOD.to_rows(cls.items)
         cls.baseline = json.loads(MOD.BASELINE.read_text())
 
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmp, ignore_errors=True)
+
     def errors(self, rows):
-        return MOD.check_rows(rows, self.items, self.infos, MOD.ROOT)
+        return MOD.check_rows(rows, self.items, self.infos, self.root)
+
+    def test_snapshot_holds_every_input_and_matches_the_a1_digests(self):
+        for rel in SNAPSHOT_INPUTS:
+            self.assertTrue((self.root / rel).exists(), rel)
+        # A1 digests of the control files the extractor reads (reports/current/CURRENT.md is
+        # tracked by A1 but is not an extractor input, so it is not in the snapshot).
+        read = {
+            k: v
+            for k, v in self.baseline.items()
+            if k.startswith("mem.sha256.")
+            and any(k[len("mem.sha256.") :].startswith(p) for p in SNAPSHOT_INPUTS)
+        }
+        self.assertEqual(len(read), 8)
+        self.assertEqual(MOD.baseline_drift(self.root, read), [])
 
     def test_repository_universe_is_clean(self):
         self.assertEqual(self.errors(self.rows), [])
@@ -112,7 +176,7 @@ class UniverseTests(unittest.TestCase):
         self.assertEqual(recon_errors, [])
 
     def test_committed_csv_is_current_and_deterministic(self):
-        again = MOD.render(MOD.to_rows(MOD.build(MOD.ROOT)[0]))
+        again = MOD.render(MOD.to_rows(MOD.build(self.root)[0]))
         self.assertEqual(again, MOD.render(self.rows))
         self.assertEqual(MOD.OUT.read_text(encoding="utf-8"), again)
 

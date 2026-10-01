@@ -94,14 +94,24 @@ DEP_ID_RE = re.compile(
 SEMANTIC_ID_RE = re.compile(r"\*\*Semantic id:\*\*\s*`?([A-Z][A-Za-z0-9.]*)\b")
 FILENAME_ID_RE = re.compile(r"^(\d{2,3}[a-z]?_)?(.+?)__[^_].*\.md$")
 # Admissible routing sentinels that are not chain-ticket ids.
-# V2 (B3 §3.12/§6; plan §8.6; COV-14): an appended gate-cell token that takes a manifest row out of the
-# `nextTicket` order — `superseded-by(…)` (rows 184–187 in Round 11), `deferred(…)`, or `unused`.
+# V2 (B3 §3.12/§6; plan §8.6; COV-14): an appended gate-cell token that takes a manifest row out
+# of the `nextTicket` order — `superseded-by(…)` (rows 184–187 in Round 11), `deferred(…)`, or
+# `unused`.
 SKIP_TOKEN_RE = re.compile(r"\b(?:superseded-by|deferred)\(|\bunused\b", re.I)
 # A BUILD_INDEX row's ticket cell: its first word (legacy rows read `P00.1 repo-skeleton`).
 INDEX_TICKET_RE = re.compile(r"^\|\s*\d+\s*\|\s*\**([A-Za-z][A-Za-z0-9.-]*)")
 ROUTING_SENTINELS = frozenset({"—", "accepted"})
 SCOPED_ROUTING_RE = re.compile(r"^P\d+\.\d+:.+$")
 PHASE_LOG_DONE_RE = re.compile(r"^-\s*\d{4}-\d{2}-\d{2}\s*—\s*(?:\*\*)?([A-Za-z][A-Za-z0-9.-]*)")
+# ADR numbers the ADR index's `## Notes` section records as reserved — e.g. "ADR-151, ADR-156 and
+# ADR-174…ADR-178 are reserved for the Round-11 chain rows that write them" (SEED-12c; plan §7). A
+# body citation of a reserved number is a forward reference to a decision a later chain row
+# writes, not a dangling one; any other cited number without a file stays an error.
+_ADR_REF_OR_RANGE = r"ADR-(\d{3})(?:\s*(?:…|\.\.\.?|–)\s*ADR-(\d{3}))?"
+_ADR_REF_NC = r"ADR-\d{3}(?:\s*(?:…|\.\.\.?|–)\s*ADR-\d{3})?"
+RESERVED_ADRS_RE = re.compile(
+    rf"({_ADR_REF_NC}(?:\s*(?:,|,?\s+and)\s+{_ADR_REF_NC})*)\s+(?:is|are)\s+reserved\b"
+)
 
 
 def diag(
@@ -232,7 +242,8 @@ def parse_manifest(root: pathlib.Path, diags: list[dict]) -> dict:
         else:
             seen_file[fname] = str(lineno)
         rows.append((first, fname))
-        # V2 (B3 §6; COV-14): a row whose gate cell carries an appended skip token is never `nextTicket`.
+        # V2 (B3 §6; COV-14): a row whose gate cell carries an appended skip token is never
+        # `nextTicket`.
         if SKIP_TOKEN_RE.search(cells[-1] if cells else ""):
             m_skip = FILENAME_ID_RE.match(fname)
             if m_skip:
@@ -585,9 +596,9 @@ def parse_ledger(root: pathlib.Path, manifest: dict, diags: list[dict]) -> dict:
                     )
                 )
     # V2 (B3 §6; COV-14): nextTicket is the lowest chain row (manifest order) that has not landed,
-    # skipping rows whose gate cell carries a superseded-by(…) / deferred(…) / unused token and HUMAN
-    # rows (they never block code tickets, BM-TICKET-05); DONE when none is left. Landed = a BUILD_INDEX
-    # row or a PHASE LOG "done" entry.
+    # skipping rows whose gate cell carries a superseded-by(…) / deferred(…) / unused token and
+    # HUMAN rows (they never block code tickets, BM-TICKET-05); DONE when none is left. Landed = a
+    # BUILD_INDEX row or a PHASE LOG "done" entry.
     if nt and nt != "SETUP" and manifest.get("rows"):
         landed = _landed_ids(root, text)
         skipped = manifest.get("skipped", set())
@@ -852,6 +863,22 @@ def parse_coverage(root: pathlib.Path, manifest: dict, diags: list[dict]) -> Non
 # ── ADRs ─────────────────────────────────────────────────────────────────────
 
 
+def reserved_adr_numbers(readme_text: str) -> set[str]:
+    """ADR numbers the index README's ``## Notes`` section states "is/are reserved" (single
+    numbers, comma/`and` lists and inclusive `ADR-a…ADR-b` ranges). Text outside Notes and
+    other statuses (e.g. "ADR-064 is a skipped number") reserve nothing."""
+    m = re.search(r"^## Notes[ \t]*$(.*?)(?=^## |\Z)", readme_text, re.M | re.S)
+    if not m:
+        return set()
+    reserved: set[str] = set()
+    for stmt in RESERVED_ADRS_RE.finditer(m.group(1)):
+        for ref in re.finditer(_ADR_REF_OR_RANGE, stmt.group(1)):
+            lo = int(ref.group(1))
+            hi = int(ref.group(2)) if ref.group(2) else lo
+            reserved.update(f"ADR-{n:03d}" for n in range(lo, hi + 1))
+    return reserved
+
+
 def parse_adrs(root: pathlib.Path, diags: list[dict]) -> None:
     adr_dir = root / "docs/adr"
     spec = root / "docs/2_canonical_design_spec.md"
@@ -956,10 +983,11 @@ def parse_adrs(root: pathlib.Path, diags: list[dict]) -> None:
                 )
             )
     # dangling cross-references inside ADR bodies (supersession/citation chains
-    # must resolve to real files).
+    # must resolve to real files, or to a number the index Notes record as reserved).
+    reserved = reserved_adr_numbers(readme.read_text()) if readme.is_file() else set()
     for num, p in files.items():
         for ref in sorted(set(re.findall(r"ADR-\d{3}", p.read_text())) - {num}):
-            if ref not in files:
+            if ref not in files and ref not in reserved:
                 diags.append(
                     diag(
                         "adr/dangling-reference",
