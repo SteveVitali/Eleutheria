@@ -29,7 +29,10 @@ the validation test (`tests/ops/test_gcp_iac.py`) shells `terraform validate` wh
 | `schedule.sh` | P25.7: the `sig-sched-muckrock` recurring trigger (superseded-in-part by `scheduled-ops.sh`, which verifies rather than recreates it) |
 | `scheduled-ops.sh` | P26.1: `sig-probe` (6-hourly hosted sweep → `ops/probes/` in the restricted bucket + alerts) + per-source `sig-ingest-<id>` jobs/`sig-sched-<id>` triggers from `../cadence.toml` (run rows → `ops/runs/`). P31.4 (ADR-111): deploys `SIG_JOB_IMAGE` **by pinned digest** (a `:latest` or untagged ref is refused) and mounts the restricted bucket as every ingest job's capture store (`SIG_CAPTURE_DIR`) |
 | `materialize.sh` | P30.2: the hosted Round-6 materialization — `schema` (sqitch deploy as the schema owner, incl. the least-privilege `sig_materialize` role) · `image` (SHA-tagged Cloud Build, never `:latest`) · `job` (`sig-materialize` Cloud Run job next to Cloud SQL) · `run <step>` (resolution / edges / contradictions / coverage / accountability / detect, each `--role sig_materialize`, append-only + idempotent) — ADR-103 |
-| `../Dockerfile` | the Cloud Run API image (built + pushed by `sig-ops deploy`) — also carries `sig-ops` for the scheduled jobs |
+| `export.sh` | P30.3: the national `--from-spine` export Cloud Run job next to Cloud SQL (read-only snapshot; restricted bucket mount) — ADR-106 |
+| `web.sh` | P31.15 (ADR-R9-TILES): the repo-owned `sig-web` image + service path — `image` (Cloud Build `../web/Dockerfile`: nginx + compiled Brotli + `../web/nginx.conf`) · `service` (the hand-made service spec read live, then upserted on the pinned digest with the `<project>-sig-web` gcsfuse mount → `/mnt/sig-web`) · `describe` (the live spec). The roll itself is P31.16's |
+| `../Dockerfile` | the Cloud Run API + export image (built + pushed by `sig-ops deploy` / `export.sh`) — also carries `sig-ops` for the scheduled jobs and the pinned tippecanoe the tile renderer uses |
+| `../web/Dockerfile` | the `sig-web` image: `nginx:1.27.5-alpine` + `ngx_http_brotli_*` compiled from sha256-verified sources against the exact nginx version (Alpine's packaged module is ABI-incompatible) + the repo-owned `../web/nginx.conf` |
 
 ```bash
 bash ops/gcp/provision.sh --check    # plan only, no ADC, no network, exit 0

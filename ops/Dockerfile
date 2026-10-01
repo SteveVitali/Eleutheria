@@ -2,10 +2,42 @@
 # Copyright (C) 2026 The SIG project. Code is Apache-2.0; data and documentation
 # carry per-artifact licences — see LICENSE and docs/2_canonical_design_spec.md §42.
 #
-# The SIG read-API image (P24.1 / DEPLOY.1 / GL-DEPLOY-01, ADR-075). Built + pushed
-# to Artifact Registry by `sig-ops deploy --target gcp`, run on Cloud Run
-# (min-instances 0, scales to zero) with managed TLS. Contains NO secret: the PG
-# password + API env are injected from Secret Manager at deploy time (HG-09).
+# The SIG read-API + export image (P24.1 / DEPLOY.1 / GL-DEPLOY-01, ADR-075). Built
+# + pushed to Artifact Registry by `sig-ops deploy --target gcp`, run on Cloud Run
+# (sig-api min-instances 1 — applied 2026-09-25 after the measured cold-start harm;
+# the other jobs on this image scale to zero) with managed TLS. Contains NO
+# secret: the PG password + API env are injected from Secret Manager at deploy
+# time (HG-09).
+#
+# The same image backs the `sig-exports build` export job (ops/gcp/export.sh), so
+# it carries the tile renderer: a **pinned** tippecanoe built from a
+# sha256-verified source tarball (ADR-R9-TILES). `sig-exports` falls back to its
+# pure-Python z0–z14 encoder when tippecanoe is absent (CI + local builds), so
+# nothing downstream depends on the binary existing.
+
+# --- tippecanoe build stage (pinned source, checksum-verified) -----------------
+FROM python:3.12-slim AS tippecanoe-build
+
+# tippecanoe 2.79.0 — https://github.com/felt/tippecanoe (tag tarball).
+# To bump: update the tag + the tarball sha256 (`curl -fsSL <url> | sha256sum`).
+ARG TIPPECANOE_VERSION=2.79.0
+ARG TIPPECANOE_SHA256=b0fd9df49b6efc988288ea48774822c6de19eb48428017f27ee0b3b01d44f05d
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+      build-essential ca-certificates curl libsqlite3-dev zlib1g-dev \
+ && curl -fsSL \
+      "https://github.com/felt/tippecanoe/archive/refs/tags/${TIPPECANOE_VERSION}.tar.gz" \
+      -o /tmp/tippecanoe.tar.gz \
+ && echo "${TIPPECANOE_SHA256}  /tmp/tippecanoe.tar.gz" | sha256sum -c - \
+ && tar -xzf /tmp/tippecanoe.tar.gz -C /tmp \
+ && make -C "/tmp/tippecanoe-${TIPPECANOE_VERSION}" -j"$(nproc)" tippecanoe \
+ && install -Dm0755 "/tmp/tippecanoe-${TIPPECANOE_VERSION}/tippecanoe" \
+      /usr/local/bin/tippecanoe \
+ && rm -rf "/tmp/tippecanoe-${TIPPECANOE_VERSION}" /tmp/tippecanoe.tar.gz \
+ && apt-get purge -y --auto-remove build-essential libsqlite3-dev zlib1g-dev curl \
+ && rm -rf /var/lib/apt/lists/*
+
 FROM python:3.12-slim
 
 ENV PYTHONUNBUFFERED=1 \
@@ -56,6 +88,15 @@ RUN pip install --no-cache-dir uv \
       -o /tmp/constraints.txt \
  && uv pip install --system -c /tmp/constraints.txt ./api ./connectors ./ops \
  && rm /tmp/constraints.txt
+
+# P31.15 / ADR-R9-TILES: the pinned tippecanoe the export job renders z0–z14
+# per-compartment PMTiles with. tippecanoe links libstdc++/libsqlite3/zlib —
+# install the runtime libs explicitly (libstdc++ is not guaranteed in the slim
+# base).
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends libstdc++6 libsqlite3-0 zlib1g \
+ && rm -rf /var/lib/apt/lists/*
+COPY --from=tippecanoe-build /usr/local/bin/tippecanoe /usr/local/bin/tippecanoe
 
 # Cloud Run provides $PORT; bind the read API there. When SIG_CLOUDSQL_CONNECTION
 # is set (the Cloud SQL socket instance connection name), assemble the PgReadStore

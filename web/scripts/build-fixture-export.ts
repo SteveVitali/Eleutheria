@@ -7,7 +7,7 @@
  *
  * Serialises the committed web fixtures into the P27.1 export layout —
  * `<outDir>/web/<artifact>.json` plus `dossiers.json` / `leverage.json` and a
- * `tiles/sig-infrastructure.pmtiles` — so `SIG_DATA_SOURCE=export
+ * per-compartment `web/tiles/sig_graph-sites.pmtiles` — so `SIG_DATA_SOURCE=export
  * SIG_EXPORT_DIR=<outDir>` can be exercised against REAL on-disk bytes with
  * fixture-equivalent content. This is the P21.4 precedent (`sig-exports build
  * --jurisdiction okc` emits a fixture-equivalent bundle) extended to the ten P27.1
@@ -18,7 +18,8 @@
  * Run:  node <esbuild-bundled>.mjs <outDir>          (see `npm run export:fixtures`)
  */
 
-import { existsSync, copyFileSync, mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, unlinkSync, writeFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
 import { join } from "node:path";
 
 import { MAP_LAYERS, partitionByLocatability } from "../src/lib/map";
@@ -66,6 +67,55 @@ function write(name: string, payload: unknown): void {
   writeFileSync(join(webDir, name), JSON.stringify(payload, null, 2) + "\n", "utf-8");
 }
 
+// The map's per-compartment PMTiles archives the export-tiles Astro integration copies
+// into the build (astro.config.mjs) and `/map/style.json` names (data.ts
+// getCompartmentTileSources). P31.15 (ADR-R9-TILES): the fixture bundle renders a REAL
+// z0–z14 `sig_graph-sites.pmtiles` from the committed fixture points via
+// `sig-exports tiles` — the same renderer a production export uses — so an
+// export-mode build exercises the real tile path. If the renderer cannot run (no uv
+// on PATH) no archive and no manifest row are written: never a fake/byte-empty
+// archive, and an export-mode build then fails LOUD telling the operator to produce
+// real tiles.
+const tilesDir = join(webDir, "tiles");
+const tileArtifacts: Array<{ path: string; compartment: string; license: string }> = [];
+const fixtureSitesGeojson = {
+  type: "FeatureCollection",
+  features: MAP_ASSETS.filter((a) => a.lat !== null && a.lon !== null).map((a) => ({
+    type: "Feature",
+    geometry: { type: "Point", coordinates: [a.lon, a.lat] },
+    properties: {
+      entity_id: a.id,
+      label: a.label,
+      jurisdiction: a.jurisdiction,
+      sensitivity_tier: a.tier,
+      precision: a.precision,
+    },
+  })),
+};
+try {
+  mkdirSync(tilesDir, { recursive: true });
+  const tmpGeojson = join(tilesDir, "sig_graph-sites.geojson");
+  writeFileSync(tmpGeojson, JSON.stringify(fixtureSitesGeojson), "utf-8");
+  const dest = join(tilesDir, "sig_graph-sites.pmtiles");
+  execFileSync(
+    "uv",
+    ["run", "sig-exports", "tiles", "--in", tmpGeojson, "--out", dest,
+     "--layer", "sites", "--license", "CC-BY-4.0"],
+    { stdio: "inherit" },
+  );
+  unlinkSync(tmpGeojson);
+  tileArtifacts.push({
+    path: "web/tiles/sig_graph-sites.pmtiles",
+    compartment: "sig_graph",
+    license: "CC-BY-4.0",
+  });
+} catch {
+  console.warn(
+    "export:fixtures: `sig-exports tiles` could not run — the bundle ships no tile " +
+      "archive (SIG_DATA_SOURCE=export builds will fail loud). Run `uv sync` first.",
+  );
+}
+
 // The release manifest at the export-dir ROOT (the same location `sig-exports build
 // --from-spine` writes it, exports/spine_export.py). The site reads its belief-pinned
 // citation defaults (as_of / ruleset) from `reproducibility_inputs` (P27.6, data.ts
@@ -82,6 +132,7 @@ if (!existsSync(join(outDir, "manifest.json"))) {
           as_of_belief: AS_OF.as_of_belief,
           ruleset_version: RULESET_VERSION,
         },
+        artifacts: tileArtifacts,
       },
       null,
       2,
@@ -204,30 +255,5 @@ write(join("presentation", `jurisdiction_dossiers.json`), JURISDICTION_DOSSIERS)
 
 if (!existsSync(join(webDir, "dossiers.json"))) write("dossiers.json", DOSSIERS);
 if (!existsSync(join(webDir, "leverage.json"))) write("leverage.json", LEVERAGE_METRIC_FIXTURE);
-
-// The map's self-hosted PMTiles archive the export-tiles Astro integration copies into
-// the build (astro.config.mjs). Reuse a real rendered tile if one is on disk; otherwise
-// emit a minimal PMTiles v3 header so the build has a byte-real archive to copy.
-const tilesDir = join(webDir, "tiles");
-mkdirSync(tilesDir, { recursive: true });
-const tileDest = join(tilesDir, "sig-infrastructure.pmtiles");
-// Leave a REAL rendered tile in place when overlaying a `--jurisdiction okc` bundle.
-if (!existsSync(tileDest)) {
-  // Otherwise reuse a real rendered tile if one is on disk (run from web/ or repo root)…
-  const tileCandidates = [
-    join(process.cwd(), "..", "exports", "out", "okc", "web", "tiles", "sig-infrastructure.pmtiles"),
-    join(process.cwd(), "exports", "out", "okc", "web", "tiles", "sig-infrastructure.pmtiles"),
-  ];
-  const realTile = tileCandidates.find((c) => existsSync(c));
-  if (realTile) {
-    copyFileSync(realTile, tileDest);
-  } else {
-    // …or emit a minimal PMTiles v3 header ("PMTiles" magic + version byte 3, 127 bytes).
-    const header = Buffer.alloc(127);
-    header.write("PMTiles", 0, "ascii");
-    header.writeUInt8(3, 7);
-    writeFileSync(tileDest, header);
-  }
-}
 
 console.log(`fixture export bundle written to ${outDir}`);

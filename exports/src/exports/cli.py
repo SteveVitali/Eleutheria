@@ -480,6 +480,52 @@ def _run_build(
         base_url=base_url,
         cdn_url=cdn_url,
     )
+
+    # P31.15 (ADR-R9-TILES): a jurisdiction release also carries the ODbL layer's
+    # REAL per-compartment tile archive — rendered through the same
+    # render_compartment_sites_pmtiles the spine export uses (tippecanoe when
+    # present, else the deterministic pure-Python encoder), at
+    # web/tiles/<compartment>-sites.pmtiles and registered in the manifest so the
+    # web build discovers it from manifest.json alone (getCompartmentTileSources).
+    # The archive rides in the bundle's artifact bytes → write_to materialises it
+    # byte-identically. The ODbL licence + OSM attribution ride in the tile
+    # metadata (§42) — the OSM layer stays its separate compartment.
+    tile_summary: dict[str, object] | None = None
+    if jurisdiction is not None:
+        from dataclasses import replace as _replace
+        from pathlib import Path as _P
+
+        from .formats import FORMATS
+        from .manifest import Artifact
+        from .tiles import render_compartment_sites_pmtiles
+
+        geojson_bytes = bundle.artifact_bytes.get("osm_physical/devices.geojson")
+        if geojson_bytes is not None:
+            tile_bytes, tile_renderer = render_compartment_sites_pmtiles(
+                "osm_physical", geojson_bytes, "ODbL-1.0"
+            )
+            tile_path = "web/tiles/osm_physical-sites.pmtiles"
+            bundle.artifact_bytes[tile_path] = tile_bytes
+            tile_artifact = Artifact.of(
+                name="osm_physical-sites.pmtiles",
+                path=tile_path,
+                media_type=FORMATS["pmtiles"].media_type,
+                compartment="osm_physical",
+                license="ODbL-1.0",
+                data=tile_bytes,
+            )
+            bundle = _replace(
+                bundle,
+                manifest=_replace(
+                    bundle.manifest,
+                    artifacts=bundle.manifest.artifacts + (tile_artifact,),
+                ),
+            )
+            tile_summary = {
+                "path": str(_P(out_dir) / tile_path),
+                "renderer": tile_renderer,
+                "license": "ODbL-1.0",
+            }
     bundle.write_to(out_dir)
 
     summary: dict[str, object] = {
@@ -527,25 +573,8 @@ def _run_build(
             json.dump(leverage, fh, indent=2, sort_keys=True)
         summary["web_leverage_path"] = os.path.join(web_dir, "leverage.json")
 
-        # Render REAL vector tiles for the map (LD-F07/H08 closed, §40, ADR-048/051):
-        # the ODbL physical layer's GeoJSON → a PMTiles v3 archive the web build serves
-        # at /tiles/sig-infrastructure.pmtiles. The ODbL licence + OSM attribution ride
-        # in the tile metadata (§42) — the OSM layer stays its separate compartment.
-        from .tiles import ODBL_ATTRIBUTION, render_pmtiles_file
-
-        geojson_path = os.path.join(out_dir, "osm_physical", "devices.geojson")
-        if os.path.exists(geojson_path):
-            tiles_dir = os.path.join(web_dir, "tiles")
-            os.makedirs(tiles_dir, exist_ok=True)
-            tiles_out = os.path.join(tiles_dir, "sig-infrastructure.pmtiles")
-            renderer = render_pmtiles_file(
-                geojson_path,
-                tiles_out,
-                layer_name="devices",
-                license_id="ODbL-1.0",
-                attribution=ODBL_ATTRIBUTION,
-            )
-            summary["tiles"] = {"path": tiles_out, "renderer": renderer, "license": "ODbL-1.0"}
+        if tile_summary is not None:
+            summary["tiles"] = tile_summary
     if zenodo_dry_run:
         from .zenodo import FakeZenodoTransport, deposit_release
 
@@ -695,10 +724,14 @@ def _run_deposit(in_dir: str, sandbox: bool, dry_run: bool, deposits_md: str) ->
 
 
 def _run_tiles(in_geojson: str, out: str, layer: str, license_id: str) -> int:
+    from .spine_export import _SIG_ATTRIBUTION
     from .tiles import ODBL_ATTRIBUTION, render_pmtiles_file
 
+    # The licence's own attribution — ODbL carries the OSM notice (§42.3); a
+    # non-ODbL layer carries SIG's (P31.15: the CLI honours --license end-to-end).
+    attribution = ODBL_ATTRIBUTION if license_id == "ODbL-1.0" else _SIG_ATTRIBUTION
     renderer = render_pmtiles_file(
-        in_geojson, out, layer_name=layer, license_id=license_id, attribution=ODBL_ATTRIBUTION
+        in_geojson, out, layer_name=layer, license_id=license_id, attribution=attribution
     )
     sys.stdout.write(
         json.dumps({"out": out, "renderer": renderer, "layer": layer, "license": license_id}) + "\n"

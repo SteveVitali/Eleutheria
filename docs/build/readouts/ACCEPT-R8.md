@@ -48,3 +48,16 @@
 > *"ok please sign docs/build/readouts/ACCEPT-R8.md for me or whatever, I approve everything."*
 > Entered by the orchestrator at the operator's explicit instruction; the decision is the operator's.
 > 0 rows sent back. R8-1 … R8-7 are the accepted Round-8 list (appended to the P24.9 77-row ACCEPTED list).
+
+## Status appendix — appended as deviations end (build memory is append-only)
+
+- **R8-1 — ENDING (build side) at P31.15 / ADR-118 (2026-10-05).** The operator's Round-9
+  ratification (LEDGER § GATE DECISIONS 2026-09-24, Q9) answered "retire the combined
+  `/map/points.json` once per-compartment tiles serve the map". P31.15 removed it from
+  the build and the island: the route (`web/src/pages/map/points.json.ts`) is deleted,
+  no `points.json` is emitted (export-mode `dist` verified absent), and the island
+  layers one attributed `pmtiles://` source **per licence compartment** — the public
+  map is back to strict licence separation in the build. **R8-1 stays recorded as
+  ending, not closed:** the LIVE object still serves until P31.16's republish removes
+  it; P31.16 verifies `GET /map/points.json → 404` on both origins and then R8-1 is
+  closed with live evidence. Deferral D-P30.3-2 tracks the live half.

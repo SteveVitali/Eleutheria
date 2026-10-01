@@ -33,6 +33,7 @@ SHELL_SCRIPTS = [
     "domain-mapping.sh",
     "materialize.sh",
     "export.sh",
+    "web.sh",
 ]
 EXECUTABLE_SCRIPTS = [
     "provision.sh",
@@ -42,6 +43,7 @@ EXECUTABLE_SCRIPTS = [
     "domain-mapping.sh",
     "materialize.sh",
     "export.sh",
+    "web.sh",
 ]
 
 
@@ -235,6 +237,7 @@ _DEPLOY_IMAGE = re.compile(r"gcloud run (?:jobs )?deploy \S+ .*?--image (\S+)")
         ("scheduled-ops.sh", ["--check"]),
         ("materialize.sh", ["--check", "job"]),
         ("export.sh", ["--check", "job"]),
+        ("web.sh", ["--check", "service"]),
         ("provision.sh", ["--check"]),
     ],
 )

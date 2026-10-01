@@ -8,9 +8,12 @@
 // low-coverage≠low-density encoding, the national-zoom bins, and the no-coordinate
 // jurisdiction indicators all render server-side, and the TABULAR EQUIVALENT below
 // is the source of truth and the no-JS/screen-reader path (SIG-UI-037). The map is
-// SERVED from self-hosted static PMTiles v3 with OSM attribution — the style is at
-// /map/style.json (SIG-UI-038, SIG-GEO-012/013) — but the maplibre-gl runtime is not
-// bundled, so archivability and the zero-JS budget hold (see ADR for P15.3).
+// SERVED from self-hosted static PMTiles v3 — one z0–z14 archive per licence
+// compartment (P31.15, ADR-R9-TILES) with per-source attribution and NO basemap
+// (Q8) — the style is at /map/style.json (SIG-UI-038, SIG-GEO-012/013); the
+// maplibre-gl runtime reaches the page only inside the `/map` island allowance
+// (SIG-UI-047), so archivability and the zero-JS budget hold. The combined,
+// licence-mixed /map/points.json is retired (Q9 — R8-1 ending).
 import BaseLayout from "../layouts/BaseLayout.astro";
 import AbsenceHatch from "../components/AbsenceHatch.astro";
 import EmptyState from "../components/EmptyState.astro";
@@ -24,16 +27,15 @@ import {
   COVERAGE_LAYER_ID,
   DEFAULT_SHARING_EDGE_VIEW,
   coverageEncoding,
+  islandPoints,
   partitionByLocatability,
   readsAsDensity,
   renderBin,
 } from "../lib/map";
 import { MAP_ATTRIBUTION_LINE } from "../lib/map-tiles";
-import { getMapSites, getMapDensityBins, capRows, getSiteMetadata, dataSource, exportDir } from "../lib/data";
+import { getMapSites, getMapDensityBins, getCompartmentTileSources, capRows, getSiteMetadata } from "../lib/data";
 import { beliefPinnedPermalink } from "../lib/citation";
 import MapIsland from "../islands/MapIsland";
-import { existsSync } from "node:fs";
-import { join } from "node:path";
 import "../styles/islands.css";
 
 // The map's assets + national-view density bins flow through the single data seam
@@ -65,9 +67,13 @@ const cell = 64;
 // tier-reduced, publishable points (§19.4) — the same `locatable` set the table
 // below renders — so it can never imply more precision than SIG published, and it is
 // a progressive enhancement layered over that table, never a replacement (SIG-UI-050).
-// P30.3 (ADR-106): at national scale the island FETCHES those points from the static
-// /map/points.json (built from the same data seam) instead of carrying them as props.
+// P31.15 (ADR-R9-TILES): the island layers the per-compartment PMTiles archives the
+// export ships (one attributed source per compartment — never the retired,
+// licence-mixed /map/points.json). A build with no archives (the fixtures) passes the
+// small inline fallback list instead.
+const TILE_SOURCES = getCompartmentTileSources();
 const ISLAND_POINT_COUNT = locatable.filter((a) => a.lat !== null && a.lon !== null).length;
+const ISLAND_FALLBACK_POINTS = TILE_SOURCES.length === 0 ? islandPoints(locatable) : [];
 const meta = getSiteMetadata();
 const mapCitationHref = beliefPinnedPermalink({
   path: "/map/",
@@ -75,12 +81,6 @@ const mapCitationHref = beliefPinnedPermalink({
   asOf: meta.asOf,
   rulesetVersion: meta.rulesetVersion,
 });
-// The self-hosted OSM basemap PMTiles is layered in only when the export ships it
-// (SIG-UI-038); otherwise the island draws points over a plain background. Detected
-// at build time so the browser never requests a missing archive.
-const hasBasemapTiles =
-  dataSource() === "export" &&
-  existsSync(join(exportDir(), "web", "tiles", "osm-basemap.pmtiles"));
 ---
 
 <BaseLayout title="Infrastructure map" path="/map/">
@@ -100,11 +100,11 @@ const hasBasemapTiles =
     {ISLAND_POINT_COUNT > 0 ? (
       <MapIsland
         client:only="react"
-        pointsUrl="/map/points.json"
+        tiles={TILE_SOURCES}
+        points={ISLAND_FALLBACK_POINTS}
         pointCount={ISLAND_POINT_COUNT}
         attribution={MAP_ATTRIBUTION_LINE}
         citationHref={mapCitationHref}
-        hasBasemapTiles={hasBasemapTiles}
       />
     ) : (
       <p class="sig-island__note">No publishable points to draw at this belief; see the tabular equivalent below.</p>
