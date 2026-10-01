@@ -1760,6 +1760,15 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   `devin/p33-8-agent-docs-refresh` is unchanged at `b051732c`, so the planning base is unaffected (Round 11 stacks on #190); the
   full A1 `--delta` still runs before T6. **S6** (apply ratification) and **T0** (Tier A skill changes on `~/agent-skills` branch
   `claude/r11-skill-tier-a`, local only) dispatched in fresh contexts.
+- 2026-10-01T05:35:43Z — **T0 done** (Tier A skill changes, A-14). `~/agent-skills` branch `claude/r11-skill-tier-a` (local, not pushed;
+  checked out, so live for every Claude Code / Devin session via the `~/.claude/skills` symlinks): `671eaf9` build-memory
+  layout/templates/validator (SK-13, SK-14, SK-17…SK-20), `3a06189` decompose-spec + orchestrate-build text (SK-22, SK-18 Phase 3,
+  SK-19/20), `f70e608` release 0.3.0 + CHANGELOG. Skill tests 11/11 pass (orchestrator re-ran: ALL PASS); validator on this worktree
+  exit 0 before and after (49 new warnings, no new failures). **Stage-B obligation:** the repo's vendored
+  `scripts/docs/check-build-memory.sh` is a locally patched fork (P32.8/ADR-127) already behind upstream; it needs a three-way
+  sync in the seed (else the `harness` key fails its key-order check, READOUT.md's `Status:` comment trips a false "PASSED gate"
+  violation, and the guards marker is inert in CI). Tier B-must (SK-01/02/03/06/09/10) is owed before the first Round-11
+  dispatch; SK-03 (auto-gate pausing) is the most important of those.
 
 ---
 
