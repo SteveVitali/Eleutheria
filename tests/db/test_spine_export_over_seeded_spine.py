@@ -215,6 +215,49 @@ def test_spine_export_over_seeded_spine(conn, seeded_export) -> None:
     for metric in json.loads(export.web_artifacts["web/coverage.json"]):
         assert metric["is_population_total"] is False
 
+    # P31.14: the export emits every presentation analytic the surfaces render —
+    # the web/analytics/ family, schema'd, as-of, named denominators, licence-clean.
+    for name in (
+        "density_bins",
+        "centrality",
+        "decision_point",
+        "provenance",
+        "queue_meta",
+    ):
+        assert f"web/analytics/{name}.json" in export.web_artifacts
+        payload = json.loads(export.web_artifacts[f"web/analytics/{name}.json"])
+        assert payload["schema"].startswith("sig/analytics-")
+        assert payload["as_of"] == "2026-09-23"
+        assert payload["is_population_total"] is False
+        assert payload["denominator"]
+        assert isinstance(payload["source_compartments"], list)
+
+    # Density: only the two licence-clean tier-0 subjects bin; the UNDETERMINED
+    # subject never pads a cell.
+    density = json.loads(export.web_artifacts["web/analytics/density_bins.json"])
+    assert sum(b["deviceCount"] for b in density["bins"]) == 2
+    assert all(set(b) == {"h3", "jurisdiction", "deviceCount", "coverage"} for b in density["bins"])
+    # Two licences feed the bins → both source compartments are named.
+    assert len(density["source_compartments"]) == 2
+    assert "osm_physical" in density["source_compartments"]
+
+    # The mixed ODbL+CC0 analytic is filed as a restricted mixed-licence artifact —
+    # the rendered site reads it as a build input, the downloadable byte stays private.
+    analytics_manifest = {
+        a.path: a for a in export.manifest.artifacts if a.path.startswith("web/analytics/")
+    }
+    assert analytics_manifest["web/analytics/density_bins.json"].compartment == "web_mixed"
+    assert " AND " in analytics_manifest["web/analytics/density_bins.json"].license
+
+    # Provenance: the publishable claims tier by the §10.6 ordinal composition
+    # (the seeded R1/D1/I1 still-current claims → W4); the refused subject's
+    # claims never reach the distribution.
+    provenance = json.loads(export.web_artifacts["web/analytics/provenance.json"])
+    site = provenance["surfaces"]["site"]
+    assert site["tier_distribution"].get("W4", 0) == 6
+    assert "untiered" not in site["tier_distribution"]
+    assert set(provenance["surfaces"]) == {"site", "corrections", "research_queue"}
+
     # Manifest carries provenance + per-artifact checksums/compartments.
     paths = {a.path for a in export.manifest.artifacts}
     assert "provenance.ttl" in paths and "exclusions.json" in paths

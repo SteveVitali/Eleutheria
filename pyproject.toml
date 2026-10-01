@@ -91,6 +91,13 @@ module = ["splink", "splink.*", "duckdb", "duckdb.*", "pandas", "pandas.*", "num
 ignore_missing_imports = true
 follow_imports = "skip"
 
+# The density-bin producer (P31.14) drives the `h3` library for the deterministic
+# §19.5 H3 cells; it ships no type stubs / py.typed marker. Ignore *only* its
+# missing imports — our own code stays fully type-checked.
+[[tool.mypy.overrides]]
+module = ["h3", "h3.*"]
+ignore_missing_imports = true
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["tests"]

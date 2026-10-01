@@ -101,7 +101,7 @@ describe("inline ER-quality disclosure on EVERY centrality statistic (SIG-UI-023
       expect(s.disclosure).toBeTruthy();
       expect(s.disclosure.toLowerCase()).toContain("entity resolution");
       expect(s.disclosure).toContain("F1");
-      expect(s.er_quality.holdout_version).toBeTruthy();
+      expect(s.er_quality?.holdout_version).toBeTruthy();
     }
     expect(() => assertErDisclosures(CENTRALITY_STATS)).not.toThrow();
   });

@@ -62,8 +62,9 @@ from reconcile.materialize import (
 )
 from resolution.camera_sites_pg import read_resolved_site_runs
 
+from . import analytics, provo
 from . import compartments as C
-from . import provo
+from .audit import _EFFECTIVE_CTE
 from .bundle import Bundle, build_bundle
 from .manifest import Artifact, BuildSpec, Manifest, canonical_json, sha256_hex
 from .shaping import (
@@ -160,6 +161,25 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
         "  FROM claim c"
         " WHERE (c.revises_claim IS NOT NULL OR c.retraction_of IS NOT NULL)"
         "   AND c.sensitivity_tier = 0 AND upper_inf(c.sys_period)"
+        " ORDER BY c.claim_id",
+    ),
+    # publishable tier-0 claims with the §10.4-§10.6 epistemic axes — the input
+    # the web/analytics/provenance.json evidence-tier (W4..W0, §10.6) producer
+    # weights (P31.14 / ADR-R9-ANALYTICS). Effective rights apply, so a licence-
+    # refused claim never pads the "How we know this" distribution.
+    "claim_weights": (
+        "claim",
+        _EFFECTIVE_CTE
+        + "SELECT c.claim_id::text, cs.source_id, c.predicate_id, c.source_reliability,"
+        "       c.claim_directness, c.artifact_integrity, c.observed_at, rr.spdx_expression"
+        "  FROM claim c"
+        "  LEFT JOIN claim_source cs ON cs.claim_id = c.claim_id"
+        "  LEFT JOIN latest_decision ld"
+        "         ON ld.source_id = cs.source_id AND ld.prior_rights_id = c.rights_id"
+        "  JOIN rights_record rr ON rr.rights_id = COALESCE(ld.rights_id, c.rights_id)"
+        " WHERE c.sensitivity_tier = 0"
+        "   AND upper_inf(c.sys_period)"
+        "   AND rr.redistributable = 'yes'"
         " ORDER BY c.claim_id",
     ),
 }
@@ -1359,6 +1379,26 @@ def build_spine_export(
         )
     }
 
+    # --- the P31.14 analytics family (web/analytics/<name>.json) ---------------
+    # The presentation analytics the surfaces render — density bins, centrality +
+    # focus, the watch's decision point, per-surface provenance (W4..W0 tiers),
+    # queue metadata — emitted with schema id / as_of / named denominator /
+    # source compartments, licence-labelled like map.json (ADR-R9-ANALYTICS).
+    web_compartments: dict[str, str] = {}
+    for art in analytics.build_analytics(
+        dataset,
+        raw,
+        licences_by_subject=slices.licences_by_subject,
+        refused_subjects=slices.refused_subjects,
+        materialized_edges=m_edges,
+        materialized_site_runs=m_site_runs,
+        ruleset_version=build_spec.ruleset_version,
+        registry=registry,
+    ):
+        web_artifacts[art.path] = _web_bytes(art.payload)
+        web_licenses[art.path] = art.license
+        web_compartments[art.path] = art.compartment
+
     # --- per-compartment PMTiles (ODbL attribution on the OSM layer) ------------
     tile_renderers: dict[str, str] = {}
     # (published_path, compartment, license, bytes)
@@ -1402,6 +1442,7 @@ def build_spine_export(
         web_artifacts=web_artifacts,
         tile_artifacts=tile_artifacts,
         web_licenses=web_licenses,
+        web_compartments=web_compartments,
         provenance=provenance,
         exclusions=exclusions,
     )
@@ -1454,6 +1495,7 @@ def _extended_manifest(
     provenance: bytes,
     exclusions: Mapping[str, Any],
     web_licenses: Mapping[str, str] | None = None,
+    web_compartments: Mapping[str, str] | None = None,
 ) -> Manifest:
     """Extend the bundle manifest with the web JSONs, tiles, provenance, exclusions.
 
@@ -1465,6 +1507,7 @@ def _extended_manifest(
     # compartment's licence) — a CC-BY-SA tile is never filed under `sig_graph` (ADR-106).
     tiles = {path: (comp, lic) for path, comp, lic, _ in tile_artifacts}
     labels = dict(web_licenses or {})
+    compartments_for = dict(web_compartments or {})
     artifacts: list[Artifact] = list(bundle.manifest.artifacts)
     for path in sorted(web_artifacts):
         data = web_artifacts[path]
@@ -1486,7 +1529,7 @@ def _extended_manifest(
                     name=Path(path).name,
                     path=path,
                     media_type="application/json",
-                    compartment=_WEB_COMPARTMENT,
+                    compartment=compartments_for.get(path, _WEB_COMPARTMENT),
                     license=labels.get(path, _SIG_SPDX),
                     data=data,
                 )

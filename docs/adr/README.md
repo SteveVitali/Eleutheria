@@ -121,6 +121,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-114](ADR-114-claim-re-sightings-and-latest-capture-dating.md) | — | — | Accepted |
 | [ADR-115](ADR-115-peer-class-negative-space-declared-tracked-predicates.md) | — | — | Accepted |
 | [ADR-116](ADR-116-human-review-decisions-into-camera-site-clustering.md) | — | — | Accepted |
+| [ADR-117](ADR-117-presentation-analytics-emitted-by-the-spine-export.md) | — | — | Accepted |
 
 ## Notes
 

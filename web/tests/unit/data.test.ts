@@ -10,14 +10,23 @@ import { join } from "node:path";
 import {
   capRows,
   getCorrections,
+  getCorrectionsProvenance,
   getCoverage,
+  getDecisionPoint,
   getDossierIndex,
   getEvidence,
   getFreshness,
+  getJurisdictionClaims,
+  getMapDensityBins,
   getMapSites,
   getNetwork,
+  getNetworkCentrality,
+  getNetworkFocusEntityId,
+  getQueueAsOf,
   getResearchQueue,
+  getResearchQueueProvenance,
   getSiteMetadata,
+  getSiteProvenance,
   getWatch,
 } from "../../src/lib/data";
 import { AS_OF, RULESET_VERSION } from "../../src/lib/fixtures";
@@ -166,6 +175,159 @@ describe("P27.6 site metadata — belief-pinned defaults from the export manifes
     process.env.SIG_EXPORT_DIR = bad;
     expect(() => getSiteMetadata()).toThrow(/reproducibility_inputs/);
     rmSync(bad, { recursive: true, force: true });
+  });
+});
+
+// --- P31.14: the web/analytics/ family -------------------------------------
+
+// A bundle carrying the export-emitted analytics envelopes (the ADR-R9-ANALYTICS
+// shape the getters validate).
+let analyticsBundle: string;
+const ANALYTICS_BINS = [
+  { h3: "8326c2fffffffff", jurisdiction: "Oklahoma", deviceCount: 3, coverage: "low" },
+];
+const ANALYTICS_STATS = [
+  {
+    node_id: "n-okcpd",
+    metric: "degree",
+    value: 4,
+    er_quality: null,
+    disclosure: "Degree over the typed access edges — not a probabilistic ER eval.",
+  },
+];
+const ANALYTICS_DECISION = {
+  decision_type: "renewal",
+  subject_id: "c1",
+  label: "Contract 1",
+  date: "2027-04-01",
+};
+const SITE_PROVENANCE = {
+  artifact_count: 4,
+  tier_distribution: { W4: 6 },
+  source_independence_count: 2,
+  date_range: { earliest: "2026-05-01", latest: "2026-05-01" },
+  rules_applied: ["ruleset/1"],
+  human_review_status: "unreviewed",
+};
+
+function analyticsEnvelope(schema: string, fields: Record<string, unknown>) {
+  return {
+    schema,
+    as_of: "2026-09-22",
+    denominator: "n named units (test)",
+    is_population_total: false,
+    source_compartments: ["sig_graph"],
+    ...fields,
+  };
+}
+
+beforeAll(() => {
+  analyticsBundle = mkdtempSync(join(tmpdir(), "sig-export-analytics-"));
+  const web = join(analyticsBundle, "web", "analytics");
+  mkdirSync(web, { recursive: true });
+  const w = (name: string, payload: unknown) =>
+    writeFileSync(join(web, `${name}.json`), JSON.stringify(payload));
+  w("density_bins", analyticsEnvelope("sig/analytics-density-bins/1", { bins: ANALYTICS_BINS }));
+  w(
+    "centrality",
+    analyticsEnvelope("sig/analytics-centrality/1", {
+      statistics: ANALYTICS_STATS,
+      focus: { entity_id: "n-okcpd", degree: 4, rule: "max degree" },
+    }),
+  );
+  w(
+    "decision_point",
+    analyticsEnvelope("sig/analytics-decision-point/1", {
+      rule: "earliest derivable date",
+      decision_point: ANALYTICS_DECISION,
+    }),
+  );
+  w(
+    "provenance",
+    analyticsEnvelope("sig/analytics-provenance/1", {
+      surfaces: {
+        site: SITE_PROVENANCE,
+        corrections: { artifact_count: 2 },
+        research_queue: { artifact_count: 1 },
+      },
+    }),
+  );
+  w(
+    "queue_meta",
+    analyticsEnvelope("sig/analytics-queue-meta/1", {
+      queue_as_of: "2026-09-22",
+      jurisdiction_claims: [{ jurisdiction_id: "j1" }],
+    }),
+  );
+});
+
+describe("P31.14 web data layer — export mode reads web/analytics/*.json", () => {
+  it("every analytics getter reads its envelope", () => {
+    process.env.SIG_DATA_SOURCE = "export";
+    process.env.SIG_EXPORT_DIR = analyticsBundle;
+    expect(getMapDensityBins()).toEqual(ANALYTICS_BINS);
+    expect(getNetworkCentrality()).toEqual(ANALYTICS_STATS);
+    expect(getNetworkFocusEntityId()).toBe("n-okcpd");
+    expect(getDecisionPoint()).toEqual(ANALYTICS_DECISION);
+    expect(getSiteProvenance()).toEqual(SITE_PROVENANCE);
+    expect(getCorrectionsProvenance()).toEqual({ artifact_count: 2 });
+    expect(getResearchQueueProvenance()).toEqual({ artifact_count: 1 });
+    expect(getJurisdictionClaims()).toEqual([{ jurisdiction_id: "j1" }]);
+    expect(getQueueAsOf()).toBe("2026-09-22");
+  });
+});
+
+describe("P31.14 web data layer — export mode FAILS LOUD on a missing analytic", () => {
+  // The P27.1 `bundle` deliberately carries NO web/analytics/ — each getter must
+  // throw (never a demo constant, never a silent empty state).
+  const cases: [string, () => unknown][] = [
+    ["getMapDensityBins", getMapDensityBins],
+    ["getNetworkCentrality", getNetworkCentrality],
+    ["getNetworkFocusEntityId", getNetworkFocusEntityId],
+    ["getDecisionPoint", getDecisionPoint],
+    ["getSiteProvenance", getSiteProvenance],
+    ["getCorrectionsProvenance", getCorrectionsProvenance],
+    ["getResearchQueueProvenance", getResearchQueueProvenance],
+    ["getJurisdictionClaims", getJurisdictionClaims],
+    ["getQueueAsOf", getQueueAsOf],
+  ];
+  for (const [name, fn] of cases) {
+    it(`${name} throws when the analytics artifact is missing (never demo/empty)`, () => {
+      process.env.SIG_DATA_SOURCE = "export";
+      process.env.SIG_EXPORT_DIR = bundle; // the ten-surface bundle, no analytics
+      expect(() => fn()).toThrow(/analytics artifact is missing/);
+    });
+  }
+
+  it("throws when the whole export dir is missing", () => {
+    process.env.SIG_DATA_SOURCE = "export";
+    process.env.SIG_EXPORT_DIR = MISSING;
+    expect(() => getMapDensityBins()).toThrow(/analytics artifact is missing/);
+  });
+
+  it("a malformed analytics envelope fails loud", () => {
+    const bad = mkdtempSync(join(tmpdir(), "sig-export-badanalytics-"));
+    mkdirSync(join(bad, "web", "analytics"), { recursive: true });
+    writeFileSync(
+      join(bad, "web", "analytics", "density_bins.json"),
+      JSON.stringify({ bins: ANALYTICS_BINS }), // no schema/as_of/denominator/compartments
+    );
+    process.env.SIG_DATA_SOURCE = "export";
+    process.env.SIG_EXPORT_DIR = bad;
+    expect(() => getMapDensityBins()).toThrow(/not a valid analytics artifact/);
+    rmSync(bad, { recursive: true, force: true });
+  });
+});
+
+describe("P31.14 web data layer — fixtures mode still serves the committed constants", () => {
+  it("the analytics getters return their fixture values in fixtures mode", () => {
+    process.env.SIG_DATA_SOURCE = "fixtures";
+    expect(getMapDensityBins().length).toBeGreaterThan(0);
+    expect(getNetworkCentrality().length).toBeGreaterThan(0);
+    expect(getNetworkFocusEntityId()).toBeTruthy();
+    expect(getDecisionPoint()).not.toBeNull();
+    expect(getJurisdictionClaims().length).toBeGreaterThan(0);
+    expect(getQueueAsOf()).toBeTruthy();
   });
 });
 

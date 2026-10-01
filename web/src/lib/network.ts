@@ -200,7 +200,13 @@ export interface CentralityStatistic {
   node_id: string;
   metric: CentralityMetric;
   value: number;
-  er_quality: ErQuality;
+  /**
+   * The measured ER-quality disclosure, or `null` when the statistic does not rest
+   * on a probabilistic entity-resolution eval (P31.14: the export-emitted degree
+   * centrality runs over spine entities minted by deterministic identity
+   * resolution — the disclosure string states that, rather than inventing numbers).
+   */
+  er_quality: ErQuality | null;
   /** The inline disclosure text shown AT the statistic (never a footnote). */
   disclosure: string;
 }
@@ -251,10 +257,13 @@ export function centralityStatistic(
   return { node_id, metric, value, er_quality: er, disclosure: erDisclosureText(er) };
 }
 
-/** Throw if any statistic lacks a non-empty inline ER disclosure (SIG-UI-023). */
+/** Throw if any statistic lacks a non-empty inline ER disclosure (SIG-UI-023).
+ *  An `er_quality: null` stat (a measure that does not rest on a probabilistic
+ *  ER eval, e.g. the export-emitted degree centrality) is admissible only with a
+ *  disclosure that SAYS so — the inline statement is always required. */
 export function assertErDisclosures(stats: readonly CentralityStatistic[]): void {
   for (const s of stats) {
-    if (!s.disclosure || !s.er_quality) {
+    if (!s.disclosure) {
       throw new Error(
         `SIG-UI-023: centrality statistic ${s.metric} for ${s.node_id} is missing its inline ER-quality disclosure.`,
       );

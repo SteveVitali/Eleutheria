@@ -47,6 +47,7 @@ import {
   CLAIM_VIEWS,
   DECISION_POINT,
 } from "../src/lib/watch-evidence-fixture";
+import { DEFAULT_PROVENANCE } from "../src/lib/provenance";
 import { DOSSIERS } from "../src/lib/dossier-fixture";
 import { JURISDICTION_DOSSIERS } from "../src/lib/dossier-jurisdiction-fixture";
 import { LEVERAGE_METRIC_FIXTURE } from "../src/lib/leverage-fixture";
@@ -120,21 +121,86 @@ write(
 // harness OVERLAYS a real `sig-exports build --jurisdiction okc` bundle (which already
 // emits these from build_web_dossiers), we leave the real files in place — only the ten
 // P27.5 surface artifacts are added.
-// P30.3 — the optional presentation analytics (data.ts `readPresentation`): the DEMO
-// constants the fixture bundle carries so the export-mode suite exercises the full
-// surfaces. A real `--from-spine` bundle omits them → each page shows its empty state.
+// P31.14 — the web/analytics/ artifact family (data.ts `readAnalytics`): the export
+// emits the presentation analytics the surfaces render, in the ADR-R9-ANALYTICS
+// envelope (schema / as_of / named denominator / is_population_total / source
+// compartments). The values here are the committed FIXTURE values — this harness is
+// a test seam; production bytes come from `sig-exports build --from-spine`.
+mkdirSync(join(webDir, "analytics"), { recursive: true });
+const FIXTURE_COMPARTMENTS = ["sig_graph"];
+const envelope = (schema: string, denominator: string, fields: Record<string, unknown>) => ({
+  schema,
+  as_of: AS_OF.as_of_world,
+  denominator,
+  is_population_total: false,
+  source_compartments: FIXTURE_COMPARTMENTS,
+  ...fields,
+});
+const analytic = (name: string, payload: unknown): void =>
+  write(join("analytics", `${name}.json`), payload);
+
+analytic(
+  "density_bins",
+  envelope("sig/analytics-density-bins/1", `${DENSITY_BINS.reduce((s, b) => s + b.deviceCount, 0)} published site records with a releasable tier-0 point`, {
+    grid: "h3",
+    h3_resolution: 3,
+    coverage_rule:
+      "cell coverage = the number of distinct named sources contributing to the cell",
+    bins: DENSITY_BINS,
+  }),
+);
+analytic(
+  "centrality",
+  envelope(
+    "sig/analytics-centrality/1",
+    `${NETWORK_EDGES.length} typed access edges between ${NETWORK_NODES.length} entities in the exported sharing network`,
+    {
+      measure: "undirected degree over the typed access edges (fixture values)",
+      statistics: CENTRALITY_STATS,
+      focus: {
+        entity_id: FOCUS_ENTITY_ID,
+        degree: null,
+        rule: "the entity with the highest undirected degree over the typed access edges; ties resolve to the lexically smallest entity id",
+      },
+    },
+  ),
+);
+analytic(
+  "decision_point",
+  envelope("sig/analytics-decision-point/1", `${WATCH_ITEMS.length} contracts on the renewal watch`, {
+    rule: "the earliest derivable next_decision_date across the watch",
+    decision_point: DECISION_POINT,
+  }),
+);
+analytic(
+  "provenance",
+  envelope(
+    "sig/analytics-provenance/1",
+    `${EVIDENCE_ARTIFACTS.length} published evidence artifacts (fixture provenance set)`,
+    {
+      ruleset_version: RULESET_VERSION,
+      surfaces: {
+        site: DEFAULT_PROVENANCE,
+        corrections: CORRECTIONS_PROVENANCE,
+        research_queue: RESEARCH_QUEUE_PROVENANCE,
+      },
+    },
+  ),
+);
+analytic(
+  "queue_meta",
+  envelope(
+    "sig/analytics-queue-meta/1",
+    `${RESEARCH_QUEUE.length} research tasks; jurisdiction claims are community-curation state the claim spine does not carry`,
+    { queue_as_of: QUEUE_AS_OF, jurisdiction_claims: JURISDICTION_CLAIMS },
+  ),
+);
+
+// P30.3 — the SIG-PUB-017 FR/BE demonstration dossiers remain an OPTIONAL
+// presentation overlay (deliberately demo; ops/publish.py refuses the whole
+// web/presentation/ tree in a public build). The analytics moved to web/analytics/.
 mkdirSync(join(webDir, "presentation"), { recursive: true });
-const presentation = (name: string, payload: unknown): void =>
-  write(join("presentation", `${name}.json`), payload);
-presentation("density_bins", DENSITY_BINS);
-presentation("centrality", CENTRALITY_STATS);
-presentation("focus_entity", { id: FOCUS_ENTITY_ID });
-presentation("decision_point", DECISION_POINT);
-presentation("corrections_provenance", CORRECTIONS_PROVENANCE);
-presentation("research_queue_provenance", RESEARCH_QUEUE_PROVENANCE);
-presentation("jurisdiction_claims", JURISDICTION_CLAIMS);
-presentation("queue_as_of", QUEUE_AS_OF);
-presentation("jurisdiction_dossiers", JURISDICTION_DOSSIERS);
+write(join("presentation", `jurisdiction_dossiers.json`), JURISDICTION_DOSSIERS);
 
 if (!existsSync(join(webDir, "dossiers.json"))) write("dossiers.json", DOSSIERS);
 if (!existsSync(join(webDir, "leverage.json"))) write("leverage.json", LEVERAGE_METRIC_FIXTURE);

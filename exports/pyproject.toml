@@ -41,6 +41,7 @@ dependencies = [
     # for the OCFL Object-Lock store — no new native toolchain.
     "httpx>=0.27",
     "boto3>=1.34",
+    "h3>=4.2",
 ]
 
 [project.scripts]
