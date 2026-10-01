@@ -15,15 +15,15 @@
 ```
 projectStatus:   IN_PROGRESS        # NOT_STARTED | IN_PROGRESS | BLOCKED | PAUSED | DONE
 stage:           P                  # M (meta-plan) → P (plan) → B (build artifacts) → HANDOFF
-nextUnit:        WAVE-6-PREP        # running: I7 · operator: D1 (2/25), I9a/I9b fresh sessions · then D2, D3, I8 → S1
-lastCompleted:   G3                 # 39 of 57 rows done or partial (I3–I6 partial; see §11)
+nextUnit:        S5 (GATE-P)        # operator ratification: feedback/RATIFICATION_ANSWERS.md (99 lines) → then Stage B (T0–T6)
+lastCompleted:   S4c                # S4 reviews closed (reviews/REVIEW_CLOSURE.md)
 blockedOn:       (nothing)
 pauseRequested:  false
 baseline:        baseline/baseline.json @ 2026-09-30T16:31:55Z   # delta procedure in BASELINE.md
 planOut:         docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md
 memoryRoot:      docs/build
 round:           11                 # provisional; manifest phases continue at P34, rows at 201
-updatedAt:       2026-09-30T18:56:01Z   # written by `date -u` (§9 clock rule)
+updatedAt:       2026-10-01T02:57:13Z   # written by `date -u` (§9 clock rule)
 ```
 
 **Vocabularies.** Row status: `open → in-progress → done | blocked-on-operator | dropped(reason)`;
@@ -1732,6 +1732,9 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   seed 23.25 runs; infra ≈$123–133/mo; operator ≈25–40 h over ≈24 touchpoints; agent spend ≈380–450 contexts ≈95–270M tokens
   (no dollar figure).** Packet: 346 decision ids in 99 lines (A 24, B 42, C 13, D2 16, S5 4). Checks: `check_dispositions.py`
   OK (36 tests), ordering/DAG 0 errors, silence-default check OK.
+- 2026-10-01T02:57:13Z — **S5 packet ready**: `feedback/RATIFICATION_ANSWERS.md` (fill-in sheet, 99 lines: A 24 · S5 4 · B 42 · C 13 · D2 16, generated from
+  `design/S1c-decision-catalog.md` line tables + plan §4.5) alongside `NEXT_PHASE_PLAN.md` (DRAFT) and the full packet
+  `design/S1c-decision-catalog.md`. D2 is folded in. Awaiting the operator (GATE-P).
 
 ---
 
