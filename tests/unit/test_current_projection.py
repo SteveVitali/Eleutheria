@@ -15,6 +15,7 @@ import importlib.util
 import json
 import pathlib
 
+import pytest
 from support import REPO_ROOT
 
 TOOLS = REPO_ROOT / "docs" / "build" / "tools"
@@ -31,7 +32,7 @@ def _load_tool(name: str):
 current_projection = _load_tool("current_projection")
 obligation_events = _load_tool("obligation_events")
 
-KEYS = """projectStatus: IN-PROGRESS
+KEYS = """projectStatus: IN_PROGRESS
 nextTicket: P9.1
 lastCompleted: P00.2
 blockedOn: —
@@ -396,6 +397,55 @@ def test_control_state_surfaces_advisory(tmp_path: pathlib.Path) -> None:
     assert proj["control"]["nextTicket"] == "P9.1"
     assert "advisory" in proj["authority"]
     assert "LEDGER.md" in proj["authority"]
+
+
+#: The Round-11 seed shape of CURRENT STATE (B3 §3.4; layout BM-LEDGER-02/-08):
+#: values only, `harness` in its slot, an archive pointer comment in the section.
+KEYS_R11 = (
+    KEYS.replace("projectStatus: IN_PROGRESS", "projectStatus: PAUSED")
+    .replace("round: 9", "round: 11\nharness: devin-desktop/swe-2-high/subagent")
+    .replace("updatedAt: 2026-01-05", "updatedAt: 2026-01-05T00:00:00Z")
+)
+
+
+def _r11_tree(root: pathlib.Path) -> pathlib.Path:
+    ledger = (
+        "## CURRENT STATE\n\n```\n"
+        + KEYS_R11
+        + "\n```\n<!-- Rounds 1-10 head archived; sha256 pointer. -->\n\n"
+        + "## PHASE LOG — Round 11\n\n"
+        + "- 2026-01-01 — P00.1 a done (PR #1)\n- 2026-01-02 — P00.2 b done (PR #2)\n"
+    )
+    return _tree(root, {"docs/build/LEDGER.md": ledger})
+
+
+def test_round11_values_only_control_state_projects(tmp_path: pathlib.Path) -> None:
+    """The projection reads the seed's values-only CURRENT STATE — including the
+    new `harness` key — without leaking the archive pointer into a value."""
+    root = _r11_tree(tmp_path)
+    current_projection.generate(root, _out(root))  # exit code: see the xfail below
+    control = json.loads((_out(root) / "current.json").read_text())["control"]
+    assert control["projectStatus"] == "PAUSED"
+    assert control["round"] == "11"
+    assert control["harness"] == "devin-desktop/swe-2-high/subagent"
+    assert control["updatedAt"] == "2026-01-05T00:00:00Z"
+    md = (_out(root) / "CURRENT.md").read_text()
+    assert "projectStatus `PAUSED` · round `11`" in md
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason=(
+        "the projection embeds audit_current_state, whose EXPECTED_KEYS has no slot "
+        "for the optional `harness` key (layout BM-LEDGER-02, skill 0.5.0): the seed "
+        "LEDGER is reported INCOMPLETE (ledger/key-order) — drop this marker with the "
+        "audit fix (SEED-03 report)"
+    ),
+)
+def test_round11_values_only_ledger_generates_and_verifies_clean(tmp_path: pathlib.Path) -> None:
+    root = _r11_tree(tmp_path)
+    assert current_projection.generate(root, _out(root)) == 0
+    assert current_projection.verify(root, _out(root)) == 0
 
 
 def test_evidence_domains_and_releases_recorded_not_measured(tmp_path: pathlib.Path) -> None:

@@ -8,17 +8,23 @@ The strict current-state parser must detect malformed/duplicate obligation ids,
 OPEN-first/DONE-later status conflicts and legacy-filename forward dependencies
 (the case the vendored seq-0 mapping misses), and it must never write or mutate
 control state — including on error. These tests build minimal fixture trees in
-``tmp_path`` and also pin the known real-tree conflicts so a regression that
-stops detecting them fails loudly.
+``tmp_path`` (including the Round-11 values-only CURRENT STATE shape) and run the
+audit over the real tree, where they assert only invariants that hold at every
+commit: zero errors, a LEDGER cursor consistent with the manifest and the index,
+every status conflict documented by a recorded reconciliation, and parsing that
+never changes a row's own leading status (BM-TEST-01; SEED-03 / PKG-02 ED-10).
 """
 
 from __future__ import annotations
 
 import hashlib
 import importlib.util
+import json
 import pathlib
+import re
 import shutil
 
+import pytest
 from support import REPO_ROOT
 
 TOOLS = REPO_ROOT / "docs" / "build" / "tools"
@@ -33,8 +39,9 @@ def _load_tool(name: str):
 
 
 audit_current_state = _load_tool("audit_current_state")
+obligation_events = _load_tool("obligation_events")
 
-KEYS = """projectStatus: IN-PROGRESS
+KEYS = """projectStatus: IN_PROGRESS
 nextTicket: P9.1
 lastCompleted: P00.2
 blockedOn: —
@@ -67,11 +74,45 @@ companions: _TEMPLATE.md
 | 3 | `161_P9.1__c.md` | 9 | c |
 | 4 | `P00.9__later.md` | 0 | a legacy-named ticket inserted late |
 """
+MANIFEST_R11 = MANIFEST + "\n### Round 11 — wave 1\n\n| 5 | `201_P10.1__d.md` | 10 | d |\n"
 
 SPEC = "**SIG-TST-001 (MUST).** One requirement. See ADR-001.\n"
 COVERAGE = (
     "id,level,spec_section,class,verdict,evidence,owning_tickets,tests,adrs,risk_rows,routing,note\n"
     "SIG-TST-001,MUST,§1,covered+tested,MET,t,P00.1,t,ADR-001,—,—,n\n"
+)
+
+# The Round-11 seed shape of CURRENT STATE (B3 §3.4; skill 0.5.0 layout
+# BM-LEDGER-02/-08): values only, `harness` in its optional slot between `round`
+# and `updatedAt`, `projectStatus: PAUSED`, the next row a newly appended one,
+# and the archive pointer comment inside the section.
+KEYS_R11 = """projectStatus: PAUSED
+nextTicket: P10.1
+lastCompleted: P00.2
+blockedOn: (nothing)
+pauseRequested: true
+returnPass: (none)
+manifest: docs/tickets/00_MANIFEST.md
+canonicalSpec: docs/2_canonical_design_spec.md
+memoryRoot: docs/build
+dispatchTarget: subagent
+buildWorktree: .
+buildBranchBase: devin/base
+pinnedBaseSha: deadbeef
+chainTip: r11/seed
+benchmarkSet: N/A
+autonomy: checkpoint
+mergePolicy: NONE
+round: 11
+harness: devin-desktop/swe-2-high/subagent
+updatedAt: 2026-01-03T00:00:00Z"""
+LEDGER_R11 = (
+    "# ledger\n\n## CURRENT STATE\n\n```\n"
+    + KEYS_R11
+    + "\n```\n<!-- Rounds 1-10 head archived; sha256 pointer. -->\n\n"
+    + "## PHASE LOG — Round 9\n\n"
+    + "- 2026-01-01 — P00.1 a done (PR #1)\n- 2026-01-02 — P00.2 b done (PR #2)\n"
+    + "\n## PHASE LOG — Round 11\n\n- 2026-01-03 — SEED-10 repair — head archived\n"
 )
 DEFERRALS = """# deferrals
 
@@ -222,6 +263,63 @@ def test_ledger_index_ahead_and_next_landed(tmp_path: pathlib.Path) -> None:
     assert "ledger/next-landed" in checks
 
 
+def _r11_tree(root: pathlib.Path, ledger: str = LEDGER_R11) -> pathlib.Path:
+    return _tree(
+        root,
+        {
+            "docs/build/LEDGER.md": ledger,
+            "docs/tickets/00_MANIFEST.md": MANIFEST_R11,
+            "docs/tickets/201_P10.1__d.md": "- **Depends on:** P00.2\n",
+        },
+    )
+
+
+def test_round11_values_only_cursor_resolves(tmp_path: pathlib.Path) -> None:
+    """The seed's values-only CURRENT STATE (PAUSED, the next row a newly
+    appended Round-11 row, an archive pointer comment, PHASE LOG regions per
+    round) parses: the cursor checks resolve it without a finding."""
+    diags, _ = audit_current_state.audit(_r11_tree(tmp_path))
+    checks = _checks(diags)
+    for check in (
+        "ledger/next-ticket",
+        "ledger/last-completed",
+        "ledger/next-landed",
+        "ledger/index-ahead",
+        "ledger/done-uncovered",
+    ):
+        assert check not in checks, [d for d in diags if d["check"] == check]
+
+
+def test_round11_cursor_naming_no_chain_row_is_error(tmp_path: pathlib.Path) -> None:
+    ledger = LEDGER_R11.replace("nextTicket: P10.1", "nextTicket: P99.9")
+    diags, _ = audit_current_state.audit(_r11_tree(tmp_path, ledger))
+    assert [d["obligation"] for d in _by_check(diags, "ledger/next-ticket")] == ["P99.9"]
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason=(
+        "audit_current_state.EXPECTED_KEYS has no slot for the optional `harness` key "
+        "(layout BM-LEDGER-02, build-memory skill 0.5.0) — the Round-11 seed LEDGER "
+        "would raise ledger/key-order; fixing the tool turns this XPASS: drop the marker "
+        "with that fix (SEED-03 report)"
+    ),
+)
+def test_round11_harness_slot_passes_key_order(tmp_path: pathlib.Path) -> None:
+    diags, _ = audit_current_state.audit(_r11_tree(tmp_path))
+    assert "ledger/key-order" not in _checks(diags)
+
+
+def test_round11_harness_out_of_its_slot_is_a_key_order_error(tmp_path: pathlib.Path) -> None:
+    """`harness` is optional but only in its slot — after `updatedAt` it is an
+    error today and must stay one once the slot is accepted."""
+    moved = LEDGER_R11.replace("harness: devin-desktop/swe-2-high/subagent\n", "").replace(
+        "updatedAt: 2026-01-03T00:00:00Z", "updatedAt: 2026-01-03T00:00:00Z\nharness: x/y/z"
+    )
+    diags, _ = audit_current_state.audit(_r11_tree(tmp_path, moved))
+    assert "ledger/key-order" in _checks(diags)
+
+
 def test_done_entry_without_evidence_is_error(tmp_path: pathlib.Path) -> None:
     index = (
         "| # | ticket | x | evidence |\n|---|---|---|---|\n| 1 | P00.1 | t | `runs/P00.1.md` |\n"
@@ -323,19 +421,41 @@ def test_reports_go_to_caller_provided_paths(tmp_path: pathlib.Path) -> None:
     assert not (root / "discrepancies.json").exists()
 
 
-def test_real_tree_expected_conflicts_and_zero_errors() -> None:
-    """The real tree after P32.7's recorded reconciliations: the parser must
-    still surface `D-P21.5-1` (the one conflict row whose recorded
-    interpretation is PARTIAL — the dated DONE tokens stay deliberately
-    visible), the documented Lane-B pointer rows, and P31.17/18 named as
-    dropped/moved in P31.19's depends line — and zero errors. The six other
-    former conflict rows were reconciled by obligation-event anchors and their
-    compatibility cells flipped to match (P32.7/ADR-126)."""
+GUARDS_MARKER = "<!-- build-memory-guards: 1 -->"
+PROJECT_STATUSES = frozenset({"NOT_STARTED", "IN_PROGRESS", "BLOCKED", "PAUSED", "DONE"})
+
+
+def test_real_tree_zero_errors_and_every_status_conflict_documented() -> None:
+    """The real tree: zero errors (a true invariant — it caught the #165/#179
+    record defects), and every ``deferrals/status-conflict`` the parser surfaces
+    is reconciled by a recorded interpretation — an obligation-event migration
+    anchor (P32.7/ADR-126) or an entry of ``reconciliations.json`` — so closing
+    such a row never turns this red while an undocumented conflict always does.
+    The documented manifest/ticket conflicts are facts of append-only records
+    (the Lane-B pointer rows; P31.19's depends line), so their detection stays
+    pinned as the parser-regression guard."""
     diags, meta = audit_current_state.audit(REPO_ROOT)
     errors = [d for d in diags if d["severity"] == "error"]
     assert errors == [], errors
-    flagged = {d["obligation"] for d in _by_check(diags, "deferrals/status-conflict")}
-    assert flagged == {"D-P21.5-1"}, flagged
+    obligations = REPO_ROOT / "docs" / "build" / "reports" / "obligations"
+    documented = {
+        (d["check"], d["obligation"])
+        for d in json.loads((obligations / "reconciliations.json").read_text())["documented"]
+    }
+    events, errs = obligation_events.load_jsonl(obligations / "events.jsonl")
+    assert errs == [], errs
+    reconciled = {
+        ev["obligation_id"]
+        for ev in events
+        if ev.get("kind") == "migration"
+        and ev.get("anchor", {}).get("interpretation") in {"reconciled", "ambiguous-open"}
+    }
+    undocumented = [
+        d
+        for d in _by_check(diags, "deferrals/status-conflict")
+        if d["obligation"] not in reconciled and (d["check"], d["obligation"]) not in documented
+    ]
+    assert undocumented == [], undocumented
     deps = {d["obligation"] for d in _by_check(diags, "tickets/dependency-not-in-chain")}
     assert {"P31.17", "P31.18"} <= deps
     dupes = {d["obligation"] for d in _by_check(diags, "manifest/duplicate-file")}
@@ -351,25 +471,55 @@ def test_real_tree_expected_conflicts_and_zero_errors() -> None:
         assert len(meta["input_digests"].get(rel, "")) == 64
 
 
-def test_no_existing_gate_or_deferral_is_closed_by_parsing() -> None:
-    """Parsing preserves every obligation: the Round-10 prerequisite rows stay
-    OPEN, and the audit does not rewrite any status cell. (D-P31.1-1,
-    D-P31.1-3 and D-P31.5-2 are DONE — not by parsing: P32.7 recorded
-    evidence-backed reconciliation events for them and updated the
-    compatibility cells to match, the old values preserved on the anchors.)"""
-    diags, _ = audit_current_state.audit(REPO_ROOT)  # noqa: F841 — audit must not raise
+def test_real_tree_ledger_cursor_is_honest() -> None:
+    """The LEDGER cursor after any closeout, as invariants (this replaces the
+    P33.8 test that pinned the cursor's literal values): no ``ledger/*`` finding
+    of any severity — key order, ``nextTicket`` names a chain row (or DONE /
+    SETUP) that has not landed, ``lastCompleted`` names a landed row with
+    existing evidence, the index does not run ahead, PHASE LOG ``done`` entries
+    are indexed — and the project is never DONE while a row is still next.
+    Under the guards marker (BM-COMPAT-06) ``projectStatus`` is also held to
+    the layout vocabulary; a legacy ledger keeps its legacy spelling."""
+    diags, _ = audit_current_state.audit(REPO_ROOT)
+    findings = [d for d in diags if d["check"].startswith("ledger/")]
+    assert findings == [], findings
+    text = (REPO_ROOT / "docs" / "build" / "LEDGER.md").read_text()
+    status = audit_current_state._lval(text, "projectStatus")
+    upcoming = audit_current_state._lval(text, "nextTicket")
+    assert status, "CURRENT STATE has no projectStatus value"
+    if status.upper() == "DONE":
+        assert upcoming == "DONE", f"projectStatus DONE while nextTicket is {upcoming!r}"
+    readme = (REPO_ROOT / "docs" / "build" / "README.md").read_text()
+    if GUARDS_MARKER in readme:
+        assert status in PROJECT_STATUSES, f"projectStatus {status!r} is off-vocabulary"
+
+
+def test_parsing_preserves_each_rows_own_leading_status() -> None:
+    """Parsing never closes (or opens) an obligation: every DEFERRALS obligation
+    row is parsed, and its parsed status is exactly the row's own leading status
+    token — never a later dated token in the prose (no last-token-wins). This is
+    the invariant the former named-row pin stood in for; closing a row with a
+    recorded transition changes its leading token and so never turns this red."""
+    audit_current_state.audit(REPO_ROOT)  # the audit must not raise on the real tree
     obligations = audit_current_state.parse_deferrals(REPO_ROOT, [])
-    by_id = {o["id"]: o["status"] for o in obligations}
-    for owed in (
-        "D-P31.4-1",
-        "D-R10-HUMAN-1",
-        "D-R10-SOURCES-1",
-        "D-R10-LIVE-1",
-        "D-R10-PUBLISH-1",
-        "D-R10-MEMORY-1",
-        "D-R6.1-EVAL",
-    ):
-        assert by_id[owed] in {"OPEN", "PARTIAL"}, (owed, by_id.get(owed))
+    assert obligations, "DEFERRALS.md parser found no obligation rows — parser broke?"
+    raw: dict[str, str] = {}
+    lines = (REPO_ROOT / "docs" / "tickets" / "DEFERRALS.md").read_text().splitlines()
+    for line in lines:
+        if audit_current_state.DEFERRAL_XREF_RE.match(line):
+            continue
+        m = re.match(r"^\|\s*(D-[^|\s]+)\s*\|", line)
+        if not m:
+            continue
+        oid = m.group(1).rstrip("`*.,;:)")
+        if not audit_current_state.DEFERRAL_ID_RE.match(oid):
+            continue
+        status_cell = line.rstrip().rstrip("|").rsplit("|", 1)[-1]
+        raw.setdefault(oid, (status_cell.split() or [""])[0].upper())
+    parsed = {o["id"]: o["status"] for o in obligations}
+    assert parsed.keys() == raw.keys(), sorted(parsed.keys() ^ raw.keys())
+    changed = {oid: (raw[oid], parsed[oid]) for oid in raw if parsed[oid] != raw[oid]}
+    assert changed == {}, changed
 
 
 def test_tool_is_removed_behavior_fails(tmp_path: pathlib.Path) -> None:

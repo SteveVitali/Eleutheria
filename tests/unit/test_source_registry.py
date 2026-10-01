@@ -5,6 +5,8 @@
 
 from __future__ import annotations
 
+import re
+
 import pytest
 from connectors.registry import (
     RELIABILITY_TIERS,
@@ -17,6 +19,7 @@ from connectors.registry import (
     sources,
 )
 from policy.rights import is_undetermined
+from support import REPO_ROOT
 
 
 def _by_url() -> dict[str, object]:
@@ -53,345 +56,51 @@ def test_source_ids_are_unique() -> None:
 # --- SIG-INGEST-028: ingestion_permitted defaults to false --------------------
 
 
-#: The OKC critical subset flipped by the RIGHTS.1 re-run (GL-GATE-03, 2026-09-10),
-#: plus the resolved-licence live-ops flips (GL-GATE-03, 2026-09-15): eff_atlas
-#: (CC-BY-4.0) and osm_element_history (ODbL-1.0), and the four B-pass
-#: operator-approved flips: usaspending (CC0-1.0), fbi_cde_agency_registry (CC0-1.0),
-#: eff_data_driven (CC-BY-4.0), muckrock (LicenseRef-MuckRock-API-ToS, REFERENCE —
-#: non-redistributable until per-document posture resolves). raa_prefectures
-#: (ODbL-1.0) and decp_fr (LicenceOuverte-2.0, ADR-084) flipped once the France
-#: cohort gate went per-source (operator decision 2026-09-15); ccops_seattle/
-#: nyc_post/sf and pathways_rtcc/css/acoustic flipped on the municipal-mandated-
-#: disclosure basis (ADR-085); and the five held sources flipped 2026-09-15 on
-#: counsel's approval (HG-02): madada, declarationcamera_be, aspi, carnegie_ai_gsi,
-#: facial_recognition_world_map — all LicenseRef-DerivedFacts-Citations, DERIVE
-#: custody; counsel resolved HG-02 on 2026-09-16 (ADR-086) — the derived facts
-#: publish in the dedicated `derived_facts` compartment, so those records are
-#: redistributable (upstream bytes are never re-hosted regardless — no connector
-#: emits them into the spine). GL-GATE-06 (2026-09-16, blanket rights disposition)
-#: then flipped the 13 remaining flip-ready OSM-ecosystem + civic sources
-#: (osm_copyright, osm_taginfo, osmf_licence_guidelines, osm_surveillance_tagging,
-#: osm_replication, osm_automated_edits_coc, sous_surveillance_osm_import,
-#: wikidata_sparql, eyes_on_flock, flock_finder, deflock_app_repo, gleif,
-#: agency_audit_export). P26.2 (2026-09-17) then flipped the five promoted
-#: sources whose rights resolve clear under GL-GATE-06 (legistar, primegov,
-#: civicclerk, sam_gov, openstates). The two promoted-but-unresolved sources
-#: (documentcloud, courtlistener_recap) are connector-mapped yet stay
-#: un-permitted, and the unmapped remainder stays un-permitted.
-_FLIPPED_SUBSET = frozenset(
-    {
-        "okc_procurement",
-        "okc_council",
-        "okcpd_policy",
-        "ok_statute",
-        "osm_overpass",
-        "deflock_repo",
-        "eff_atlas_of_surveillance",
-        "osm_element_history",
-        "usaspending",
-        "fbi_cde_agency_registry",
-        "eff_data_driven",
-        "muckrock",
-        "raa_prefectures",
-        "decp_fr",
-        "ccops_seattle",
-        "ccops_nyc_post",
-        "ccops_sf",
-        "pathways_rtcc_federation",
-        "pathways_fr_css_forensics",
-        "pathways_acoustic_drone_location",
-        "madada",
-        "declarationcamera_be",
-        "aspi_mapping_chinas_tech_giants",
-        "carnegie_ai_gsi",
-        "facial_recognition_world_map",
-        # GL-GATE-06 (2026-09-16): the 13 flip-ready OSM-ecosystem + civic sources.
-        "osm_copyright",
-        "osm_taginfo",
-        "osmf_licence_guidelines",
-        "osm_surveillance_tagging",
-        "osm_replication",
-        "osm_automated_edits_coc",
-        "sous_surveillance_osm_import",
-        "wikidata_sparql",
-        "eyes_on_flock",
-        "flock_finder",
-        "deflock_app_repo",
-        "gleif",
-        "agency_audit_export",
-        # P26.2 (2026-09-17): the promoted sources whose rights resolve to a
-        # resolved-clear licence under GL-GATE-06 — the three agenda platforms
-        # (LicenseRef-PublicAgenda-MeetingRecord), sam_gov (CC0-1.0) and
-        # openstates (CC-BY-4.0). documentcloud + courtlistener_recap stay
-        # gated (per-document licence ambiguity / the FLP membership agreement
-        # is an operator acceptance, not a blanket-clear licence).
-        "legistar",
-        "primegov",
-        "civicclerk",
-        "sam_gov",
-        "openstates",
-        # P26.5 (2026-09-17): eScribe — the fourth enumerated agenda platform —
-        # flipped on the same GL-GATE-06 municipal-public-record basis
-        # (CC0-1.0; packet docs/build/reports/rights/escribe.md).
-        "escribe",
-        # P26.7 (2026-09-17): the eight resolved-clear state DOT/511 camera
-        # registries — KY/UT/OR/DC on the public-record/CC0 dedication basis,
-        # IA explicit CC-BY-4.0, IL explicit CC-BY-SA-2.0 (own compartment),
-        # WA/MO conditional public grants evaluated under public terms.
-        # Packets: docs/build/reports/rights/dot_511_<st>.md. LA/GA/AL/TX/MD
-        # stay gated (empty licenseInfo / non-authority publisher / no SPDX
-        # expression for the conditioned terms).
-        "dot_511_ky",
-        "dot_511_il",
-        "dot_511_ut",
-        "dot_511_or",
-        "dot_511_ia",
-        "dot_511_wa",
-        "dot_511_dc",
-        "dot_511_mo",
-        # P26.9 (SOURCES.8, 2026-09-18): the nine resolved-clear municipal /
-        # transit / non-US camera registries — Socrata (Austin, NOLA, Baton
-        # Rouge, Sioux Falls), OGL-Canada-2.0 (Winnipeg), CC-BY-4.0 (ACT,
-        # Baltimore), LicenseRef-Ottawa-ODL-2.0 (Ottawa), OGL-3.0 (Sheffield).
-        # Packets: docs/build/reports/rights/camreg_<id>.md. Chicago, Calgary,
-        # Edmonton, Honolulu, MD, York, Arlington, Seattle, Bellevue,
-        # Lexington, NZTA, QLD, Donegal and HK stay gated (unresolved or
-        # restrictive terms — DEFERRALS.md).
-        "camreg_austin_tx",
-        "camreg_nola_la",
-        "camreg_batonrouge_la",
-        "camreg_winnipeg_mb",
-        "camreg_act_au",
-        "camreg_siouxfalls_sd",
-        "camreg_baltimore_md",
-        "camreg_ottawa_on",
-        "camreg_sheffield_gb",
-        # P26.10 (SOURCES.9, 2026-09-18): the four licence-reviewed city Socrata
-        # contract/notice datasets — Austin 'Contracts' PUBLIC_DOMAIN, SF
-        # 'Supplier Contracts' PDDL, KCMO 'List of KCMO City Contracts'
-        # CC0-1.0, NYC 'City Record Online' PUBLIC_DOMAIN; verbatim licence
-        # metadata quoted in docs/build/reports/rights/procportal_<city>.md.
-        # bidnet_direct (vendor terms not captured verbatim), bonfire (robots
-        # Disallow:/), opengov_procurement (WAF challenge) and
-        # procportal_chicago_il (no licence metadata) stay gated.
-        "procportal_austin_tx",
-        "procportal_sf_ca",
-        "procportal_kcmo_mo",
-        "procportal_nyc_ny",
-        # P26.12 (SOURCES.11, 2026-09-18): congress_gov — the federal
-        # legislation sweep, flipped under the same GL-GATE-06 delegated
-        # pattern (US federal public domain, 17 U.S.C. §105 → CC0-1.0; the
-        # documented API's stated purpose is "view, retrieve, and re-use
-        # machine-readable data" — verbatim in the packet
-        # docs/build/reports/rights/congress_gov.md).
-        "congress_gov",
-        # P26.13 (SOURCES.12, 2026-09-18): the ten clear-licence registries the
-        # open-data-catalog sweep surfaced — CC-BY-4.0 (DC MPD CCTV, Gold
-        # Coast), OGL-3.0 (Nottingham, York, Glasgow, North Ayrshire,
-        # Lambeth), LicenseRef-Peel-ODL-1.0 (Peel), ODbL-1.0 -> osm_physical
-        # (Rochester NY), CC-BY-SA-4.0 -> portal (Puerto Gaitan). Packets:
-        # docs/build/reports/rights/camreg_<id>.md. camreg_stalbert_ab stays
-        # gated (licence name captured, grant text JS-walled - D-SOURCES.12-1).
-        "camreg_washington_dc",
-        "camreg_nottingham_gb",
-        "camreg_york_gb",
-        "camreg_glasgow_gb",
-        "camreg_northayrshire_gb",
-        "camreg_lambeth_gb",
-        "camreg_peel_on",
-        "camreg_rochester_ny",
-        "camreg_goldcoast_au",
-        "camreg_puertogaitan_co",
-        # P26.15 (SOURCES.14, 2026-09-18): ted_eu — the EU OJ S procurement
-        # surface (TED Search API, keyless documented public API). Flipped under
-        # the GL-GATE-06 delegated pattern: Commission Decision 2011/833/EU
-        # free-reuse grant + CC-BY-4.0 editorial + CC0-1.0 metadata → CC-BY-4.0.
-        # Packet: docs/build/reports/rights/ted_eu.md.
-        "ted_eu",
-        # P26.16 (SOURCES.15, 2026-09-18): the GL-GATE-07 rights batch —
-        # the gated catalog-sweep remainder flipped under the operator's
-        # blanket approval (US: LicenseRef-PublicRecord-FactualCompilation;
-        # non-US/unresolved: LicenseRef-OperatorAccepted-DBRight; OSM-derived:
-        # ODbL-1.0). Packet: docs/build/reports/rights/GL-GATE-07-batch.md +
-        # per-source annexes under rights/annex/p2616/.
-        "camreg_achd_id",
-        "camreg_aikner",
-        "camreg_amber_kh",
-        "camreg_apram_pt",
-        "camreg_arc_1975641302",
-        "camreg_arlington_va",
-        "camreg_avctransport",
-        "camreg_azdot_az",
-        "camreg_baltimore_atves_md",
-        "camreg_bangla_bd",
-        "camreg_bargabos",
-        "camreg_bedford_gb",
-        "camreg_bettendorf_ia",
-        "camreg_bouhan_jp",
-        "camreg_brea_ca",
-        "camreg_caledon_on",
-        "camreg_calgary_ab",
-        "camreg_caloes_ca",
-        "camreg_camberwell_au",
-        "camreg_camilo_schools",
-        "camreg_carver_mn",
-        "camreg_cclemire",
-        "camreg_chattanooga_tn",
-        "camreg_cheicylia",
-        "camreg_chicago_il",
-        "camreg_colgis",
-        "camreg_cotgeo",
-        "camreg_cphang",
-        "camreg_cwarcgis",
-        "camreg_dc_dot_dc",
-        "camreg_denver_co",
-        "camreg_donegal_ie",
-        "camreg_dover_gb",
-        "camreg_dubuque_ia",
-        "camreg_duganmeyer",
-        "camreg_durham_gb",
-        "camreg_eastdun_gb",
-        "camreg_ebrgis_la",
-        "camreg_esri_dash",
-        "camreg_esriukpolice_gb",
-        "camreg_essex_gb",
-        "camreg_fifia",
-        "camreg_firemedic",
-        "camreg_fl511_fl",
-        "camreg_forwardalliance",
-        "camreg_freese_dm",
-        "camreg_friendswood_tx",
-        "camreg_gainesville_fl",
-        "camreg_gedling_gb",
-        "camreg_gistel_be",
-        "camreg_gmh_emc_ga",
-        "camreg_guildford_gb",
-        "camreg_gvanmaren",
-        "camreg_helberg",
-        "camreg_honolulu_hi",
-        "camreg_indonesia_id",
-        "camreg_infocemosa",
-        "camreg_infraestructura",
-        "camreg_ira",
-        "camreg_jcfd3_or",
-        "camreg_jelenic",
-        "camreg_jmh_us",
-        "camreg_kcmo_mo",
-        "camreg_keizer_or",
-        "camreg_keshan",
-        "camreg_kirkland_wa",
-        "camreg_kosman",
-        "camreg_kunying",
-        "camreg_langan",
-        "camreg_lawrence_ks",
-        "camreg_lenhardt",
-        "camreg_leon_fl",
-        "camreg_lexington_ky",
-        "camreg_lisburn_gb",
-        "camreg_lojic_ky",
-        "camreg_lpd_flock",
-        "camreg_manhattan_ks",
-        "camreg_mark43",
-        "camreg_massdot_ma",
-        "camreg_mbrc_au",
-        "camreg_mctx_tx",
-        "camreg_md_opendata",
-        "camreg_mhebert",
-        "camreg_mndot_mn",
-        "camreg_monmap_mn",
-        "camreg_mueller_de",
-        "camreg_nashville_tn",
-        "camreg_nitro",
-        "camreg_nola_safety_la",
-        "camreg_nurnazihah",
-        "camreg_nyc_jgrayson_ny",
-        "camreg_nyc_weltia_ny",
-        "camreg_nzta_nz",
-        "camreg_oem_camera",
-        "camreg_olsson",
-        "camreg_oosgis_nl",
-        "camreg_osm_surveillance",
-        "camreg_palmdesert_ca",
-        "camreg_penndot_pa",
-        "camreg_pgcounty_md",
-        "camreg_pipeline_sec",
-        "camreg_plymouth_gb",
-        "camreg_polyu_hk",
-        "camreg_portland_or",
-        "camreg_raleigh_nc",
-        "camreg_ramallah_ps",
-        "camreg_redmond_wa",
-        "camreg_riyadh_sa",
-        "camreg_rjcoleman",
-        "camreg_ruslan",
-        "camreg_salisbury_nc",
-        "camreg_sarasota_fl",
-        "camreg_schellinger",
-        "camreg_seattle_wa",
-        "camreg_sensenet",
-        "camreg_sfoss",
-        "camreg_smart_sky",
-        "camreg_squan",
-        "camreg_stalbert_ab",
-        "camreg_stanford_us",
-        "camreg_surrey_bc",
-        "camreg_sweeney",
-        "camreg_tblose",
-        "camreg_thailand_th",
-        "camreg_toronto_on",
-        "camreg_townofws",
-        "camreg_trafficops_ca",
-        "camreg_trpa_us",
-        "camreg_tulane_la",
-        "camreg_txdot_rep_tx",
-        "camreg_uchicago",
-        "camreg_ucsd",
-        "camreg_ukm_my",
-        "camreg_umbc_md",
-        "camreg_univmb_mb",
-        "camreg_uofmd_md",
-        "camreg_vancouver_bc",
-        "camreg_vidya",
-        "camreg_webappfme",
-        "camreg_wellington_nz",
-        "camreg_whatley",
-        "camreg_wim_camera",
-        "camreg_yazid",
-        "camreg_yline",
-        "camreg_york_on",
-        "camreg_yorku",
-        "camreg_zyinger",
-        "dot_511_al",
-        "dot_511_ga",
-        "dot_511_la",
-        "dot_511_md",
-        # P29.3 (ACTIVATE.3): targeted accountability/governance breadth flipped
-        # under GL-GATE-07 (HG-03, 2026-09-23) — 5 new rows + 3 pre-registered
-        # gated CCOPS discovery rows.
-        "gao_surveillance_reports",
-        "dhs_oig_reports",
-        "dhs_fusion_center_assessments",
-        "fema_hsgp_allocations",
-        "uk_surveillance_camera_commissioner",
-        "ccops_oakland",
-        "ccops_cambridge",
-        "ccops_somerville",
-    }
-)
+#: The HG-03 tripwire, as an invariant (SEED-03 / PKG-02 ED-12). A source is
+#: permitted only through a reviewed rights decision, and every flip records that
+#: decision in its own registry row: the reviewer and review date, a dated
+#: ``FLIPPED`` note naming the decision (a gate id or an ADR), and the rights
+#: packet when one exists. The decision ids must resolve — an ADR to its file, a
+#: gate id to the LEDGER's GATE DECISIONS section. The permitted set itself is
+#: living product data (every Round-11 flip changes it), so it is not pinned here;
+#: a flip is reviewed in its ``sources.toml`` diff, which this test forces to carry
+#: the decision record. Un-reviewed rows stay ``ingestion_permitted = false``.
+_FLIP_RE = re.compile(r"\bFLIPPED\b.*?\b20\d\d-\d\d-\d\d\b.*")
+_DECISION_RE = re.compile(r"\b(GL-GATE-\d+|HG-\d+|GATE-[A-Z0-9][A-Z0-9.-]*|ADR-\d{3})\b")
 
 
-def test_ingestion_permitted_defaults_false_across_the_seed() -> None:
-    # Phase 0 seeds the registry; connectors are Phase 4+. A source is permitted
-    # only after a reviewer resolves its posture and flips the flag — as of the
-    # RIGHTS.1 re-run, the 2026-09-15 live-ops flips, the GL-GATE-06 blanket
-    # disposition (2026-09-16), the P26.2 promoted-source flips (2026-09-17),
-    # and the P26.5 eScribe flip that is exactly this set (44 sources), plus the
-    # P26.7 dot_511 flips (52 sources), the P26.9 camreg_* flips (61 sources),
-    # the P26.10 procportal flips (65 sources), the P26.12 congress_gov
-    # flip (66 sources), the P26.13 catalog-sweep camreg flips (76 sources),
-    # and the P26.15 ted_eu flip (77 sources).
-    permitted = {s.id for s in sources() if s.ingestion_permitted}
-    assert permitted == set(_FLIPPED_SUBSET)
+def _gate_decisions() -> str:
+    text = (REPO_ROOT / "docs/build/LEDGER.md").read_text(encoding="utf-8")
+    head = re.search(r"(?m)^## GATE DECISIONS[^\n]*\n", text)
+    assert head, "LEDGER.md has no '## GATE DECISIONS' section"
+    rest = text[head.end() :]
+    nxt = re.search(r"(?m)^## ", rest)
+    return rest[: nxt.start()] if nxt else rest
+
+
+def test_every_permitted_source_records_a_resolvable_rights_decision() -> None:
+    decisions = _gate_decisions()
+    permitted = [s for s in sources() if s.ingestion_permitted]
+    problems: list[str] = []
+    for s in permitted:
+        if not (s.rights_reviewed_by and s.rights_reviewed_on):
+            problems.append(f"{s.id}: permitted without a recorded rights reviewer and date")
+        flip = _FLIP_RE.search(s.notes or "")
+        if flip is None:
+            problems.append(f"{s.id}: permitted without a dated FLIPPED decision note")
+            continue
+        cited = _DECISION_RE.findall(flip.group(0))
+        if not cited:
+            problems.append(f"{s.id}: FLIPPED note names no gate or ADR decision")
+        for ref in cited:
+            if ref.startswith("ADR-"):
+                if not list((REPO_ROOT / "docs/adr").glob(f"{ref}-*.md")):
+                    problems.append(f"{s.id}: cites {ref}, which has no ADR file")
+            elif ref not in decisions:
+                problems.append(f"{s.id}: cites {ref}, which no GATE DECISIONS entry records")
+        if s.review_packet and not (REPO_ROOT / s.review_packet.split("#", 1)[0]).is_file():
+            problems.append(f"{s.id}: rights packet {s.review_packet} does not exist")
+    assert not problems, problems[:25]
 
 
 # --- SIG-INGEST-027: compact_status is a closed vocabulary incl. no_response --

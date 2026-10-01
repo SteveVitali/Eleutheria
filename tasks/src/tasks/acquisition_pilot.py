@@ -686,6 +686,50 @@ def _repo_root() -> Path:
     return Path(__file__).resolve().parents[3]
 
 
+# DEFERRALS row statuses (the build-memory audit's vocabulary) and the
+# obligation-event register that records a status change with its evidence.
+_OWED_STATUSES = frozenset({"OPEN", "PARTIAL"})
+_CLOSED_STATUSES = frozenset({"DONE", "WONTFIX", "ACCEPTED-SKELETON"})
+_EVENTS_REL = "docs/build/reports/obligations/events.jsonl"
+_REGISTER_PREFIX = "docs/tickets/"
+
+
+def _evidenced_closures(root: Path) -> dict[str, str]:
+    """obligation id -> the status its latest obligation-event transition records,
+    for transitions that cite at least one existing evidence ref outside the
+    register (the register itself is the claim, not proof). Read-only."""
+    path = root / _EVENTS_REL
+    if not path.is_file():
+        return {}
+    latest: dict[str, dict[str, Any]] = {}
+    for line in path.read_text().splitlines():
+        if not line.strip():
+            continue
+        try:
+            ev = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(ev, dict) or ev.get("kind") != "transition":
+            continue
+        oid, seq = ev.get("obligation_id"), ev.get("seq")
+        if not isinstance(oid, str) or not isinstance(seq, int):
+            continue
+        if oid not in latest or seq > latest[oid]["seq"]:
+            latest[oid] = ev
+    closures: dict[str, str] = {}
+    for oid, ev in latest.items():
+        refs = ev.get("evidence_refs")
+        evidenced = isinstance(refs, list) and any(
+            isinstance(r, str)
+            and not r.startswith(_REGISTER_PREFIX)
+            and (root / r.split("#", 1)[0]).is_file()
+            for r in refs
+        )
+        if evidenced and isinstance(ev.get("to_status"), str):
+            closures[oid] = ev["to_status"]
+    return closures
+
+
 def _load_json(root: Path, rel: str) -> dict[str, Any]:
     path = root / rel
     if not path.exists():
@@ -1744,15 +1788,19 @@ def check_pilot(
         v.append("return pass must be prepared_not_executed")
     if not readout["deferrals"]["opened"]:
         v.append("no OPEN return-pass row recorded for the live slices")
-    # A named deferral is only an explicit OPEN return-pass row when the
-    # register actually carries it OPEN — the check reads the committed
-    # register, never the readout's own claim.
+    # A named deferral is an explicit return-pass row only when the committed
+    # register carries it — the check reads the register, never the readout's
+    # own claim. The row's own leading status decides: OPEN/PARTIAL is the
+    # owed home; a closed row (the return pass ran) passes only when its close
+    # is recorded as an obligation-event transition citing evidence outside
+    # the register — a closure typed into the cell alone is refused.
     base = root or _repo_root()
     deferrals_path = base / "docs/tickets/DEFERRALS.md"
     if not deferrals_path.exists():
         v.append("docs/tickets/DEFERRALS.md missing — cannot verify the OPEN rows")
     else:
         text = deferrals_path.read_text()
+        closures = _evidenced_closures(base)
         for d in readout["deferrals"]["opened"] + readout["deferrals"]["consumed_portfolio"]:
             row = next(
                 (ln for ln in text.splitlines() if ln.startswith(f"| {d} ")),
@@ -1760,8 +1808,18 @@ def check_pilot(
             )
             if row is None:
                 v.append(f"{d}: no DEFERRALS.md row — the gate packet has no OPEN home")
-            elif "OPEN" not in row.rsplit("|", 2)[-2]:
-                v.append(f"{d}: DEFERRALS.md row does not read OPEN")
+                continue
+            words = row.rsplit("|", 2)[-2].replace("*", " ").split()
+            lead = words[0].upper() if words else ""
+            if lead in _OWED_STATUSES:
+                continue
+            if lead not in _CLOSED_STATUSES:
+                v.append(f"{d}: DEFERRALS.md row does not read OPEN (leads {lead!r})")
+            elif closures.get(d) != lead:
+                v.append(
+                    f"{d}: DEFERRALS.md row leads {lead} without an evidence-backed "
+                    f"transition in {_EVENTS_REL} — neither an OPEN home nor a recorded closure"
+                )
     for fam in rp["families"]:
         if fam["approval_refs"]:
             v.append(f"{fam['family']}: an approval ref is claimed — none exists")
