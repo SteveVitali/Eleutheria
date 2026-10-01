@@ -1028,3 +1028,118 @@ kind = "dot_511_targets"
 
 [camreg_zyinger]
 kind = "dot_511_targets"
+
+# ---------------------------------------------------------------------------
+# P31.12 / BREADTH.1 — the four P29.3 accountability-breadth sources (targeted
+# oversight-report lookups through the `accountability` connector). Each target
+# names ONE reviewed published document — a report landing page or the report
+# PDF itself, never an index, listing, or search surface (SIG-INGEST-036/037).
+# The reviewed fields ride the row (SIG-INGEST-038 — data, not code):
+#   external_id       the report's own identifier (GAO/OIG product number or
+#                     the publication slug)
+#   title / literals  the report title and verbatim strings the captured text
+#                     must still carry — a missing literal is ContentDrift,
+#                     fail closed, never a claim beyond the capture (§3.1)
+#   epistemic_status / event_type / event_date / organizations / technologies
+#                     the reviewed §11.17 event fields the one-per-report
+#                     AccountabilityEvent carries (an oversight finding is
+#                     never a deployment, device count, or operational state)
+#   source_class      the OL-2E-AL-03 evidence class (the oversight body's own
+#                     published report is the `primary_record`, SIG-ONTO-039)
+#   review_note       the review provenance + the recorded access posture
+# ---------------------------------------------------------------------------
+
+# GAO — GAO-21-518 "Facial Recognition Technology: Federal Law Enforcement
+# Agencies Should Better Assess Privacy and Other Risks" (published 2021-06-03).
+# Rights: CC0-1.0 (US-federal-government work, 17 U.S.C. §105; the P29.3 packet
+# docs/build/reports/rights/annex/p293/gao_surveillance_reports.md).
+# ACCESS POSTURE (recorded, never defeated): www.gao.gov answers programmatic
+# egress HTTP 403 (NetScaler WAF) as of 2026-09-25 — verified for both the
+# product page and the report PDF. The page text below was reviewed via the
+# public Wayback capture; if the hosted egress sees the same challenge the run
+# records access_restricted honestly — SIG never defeats a challenge
+# (SIG-INGEST-013, GL-GATE-08).
+[gao_surveillance_reports]
+kind = "oversight_report"
+
+[[gao_surveillance_reports.targets]]
+id = "gao-21-518"
+url = "https://www.gao.gov/products/gao-21-518"
+kind = "oversight_report"
+external_id = "gao-21-518"
+title = "Facial Recognition Technology: Federal Law Enforcement Agencies Should Better Assess Privacy and Other Risks"
+literals = [ "GAO-21-518", "Federal Law Enforcement Agencies Should Better Assess Privacy and Other Risks", "Published: Jun 03, 2021" ]
+epistemic_status = "confirmed"
+event_type = "audit_finding"
+event_date = "2021-06-03"
+organizations = [ "U.S. Government Accountability Office", "Federal Bureau of Investigation", "Drug Enforcement Administration" ]
+technologies = [ "facial recognition" ]
+source_class = "primary_record"
+review_note = "GAO-21-518 product page (canonical URL; the report found federal law-enforcement agencies did not track which non-federal facial-recognition systems employees used). www.gao.gov 403s programmatic egress (NetScaler WAF, 2026-09-25) — recorded, never defeated."
+
+# DHS OIG — OIG-09-12 "DHS' Role in State and Local Fusion Centers Is Evolving"
+# (Dec 2008; transmittal letter dated 2008-12-10). Rights: CC0-1.0 (US-federal
+# work; the P29.3 packet). The source's configured /reports listing 404s —
+# the reviewed row names the published report PDF directly (a targeted lookup,
+# never the index).
+[dhs_oig_reports]
+kind = "oversight_report"
+
+[[dhs_oig_reports.targets]]
+id = "oig-09-12"
+url = "https://www.oig.dhs.gov/sites/default/files/assets/Mgmt/OIG_09-12_Dec08.pdf"
+kind = "oversight_report"
+external_id = "oig-09-12"
+title = "DHS' Role in State and Local Fusion Centers Is Evolving"
+literals = [ "OIG-09-12", "State and Local Fusion Centers", "Office of Inspector General" ]
+epistemic_status = "confirmed"
+event_type = "audit_finding"
+event_date = "2008-12-10"
+organizations = [ "U.S. Department of Homeland Security" ]
+source_class = "primary_record"
+review_note = "OIG-09-12 (Dec 2008) — the DHS OIG audit of DHS oversight/guidance to state and local fusion centers (congressional-request review; answers whether DHS provided adequate oversight and what challenges fusion centers faced)."
+
+# DHS fusion-center assessments — the 2021 National Network of Fusion Centers
+# Assessment Summary of Findings (covers FY2021: 2020-10-01 – 2021-09-30).
+# Rights: CC0-1.0 (US-federal work; the P29.3 packet). The report PDF is the
+# reviewed document; the /fusion-center-annual-assessment-final-reports page is
+# the (never-crawled) index naming it.
+[dhs_fusion_center_assessments]
+kind = "oversight_report"
+
+[[dhs_fusion_center_assessments.targets]]
+id = "fusion-assessment-2021"
+url = "https://www.dhs.gov/sites/default/files/2022-12/2021%20Fusion%20Centers%20Assessment%20Summary%20of%20Findings.pdf"
+kind = "oversight_report"
+external_id = "fusion-centers-assessment-2021"
+title = "2021 National Network of Fusion Centers Assessment — Summary of Findings"
+literals = [ "National Network of Fusion Centers Assessment", "Fiscal Year 2021", "evaluates the performance of the state and local fusion centers" ]
+epistemic_status = "confirmed"
+event_type = "audit_finding"
+event_date = "2021"
+organizations = [ "U.S. Department of Homeland Security", "National Network of Fusion Centers" ]
+source_class = "primary_record"
+review_note = "The FY2021 fusion-center maturity/governance assessment summary (DHS-hosted PDF, posted 2022-12); resolves onto the fusion-center entities dhs_fusion_centers already registers."
+
+# UK — Biometrics & Surveillance Camera Commissioner Annual Report 2022/2023
+# (letter dated 2023-10-30, published 2024-01-24; the GOV.UK accessible-HTML
+# edition). Rights: LicenseRef-OperatorAccepted-DBRight (GL-GATE-07 non-US
+# default; underlying content Crown copyright / OGL v3.0 — SIG derives facts +
+# citations only, never re-hosts the document; the P29.3 packet).
+[uk_surveillance_camera_commissioner]
+kind = "oversight_report"
+
+[[uk_surveillance_camera_commissioner.targets]]
+id = "bscc-ar-22-23"
+url = "https://www.gov.uk/government/publications/biometrics-and-surveillance-camera-commissioner-report-2022-to-2023/biometrics-and-surveillance-camera-commissioners-annual-report-2022-to-2023-accessible"
+kind = "oversight_report"
+external_id = "bscc-annual-report-2022-2023"
+title = "Biometrics and Surveillance Camera Commissioner Annual Report 2022/2023"
+literals = [ "Surveillance Camera Commissioner Annual Report", "Protection of Freedoms Act 2012", "Published 24 January 2024" ]
+epistemic_status = "confirmed"
+event_type = "audit_finding"
+event_date = "2024-01-24"
+organizations = [ "Biometrics and Surveillance Camera Commissioner", "Home Office" ]
+technologies = [ "facial recognition" ]
+source_class = "primary_record"
+review_note = "The Commissioner's final combined annual report (April 2022 – March 2023): the statutory PoFA 2012 s21(1)/s35(1) report on oversight of public-space surveillance cameras and biometric material, incl. the live-facial-recognition oversight gap the abolition creates. 'Biometrics and Surveillance Camera Commissioner' is a role-shaped name — partner_identity refuses it, so it lands as the text claim it is; 'Home Office' mints the entity ref."

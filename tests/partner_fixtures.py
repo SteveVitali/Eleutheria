@@ -148,3 +148,27 @@ def run_fixture(run: FixtureRun) -> list[dict[str, Any]]:
 def fixture_records() -> dict[str, list[dict[str, Any]]]:
     """Every fixture run's loaded records, keyed by run."""
     return {run.key: run_fixture(run) for run in fixture_runs()}
+
+
+#: The accountability vocabulary version stamped on records at the P31.5 base
+#: commit (34406ff) the golden digests were computed under. A §20 vocabulary
+#: migration bumps the version `_stamp` writes onto every record — same claim
+#: content under a new provenance stamp, and in production a new append-only
+#: claim row on the next run — so a digest comparison against the base-commit
+#: golden must normalize the stamp back (P31.12 bumped it to 2026.09.26.1).
+GOLDEN_ACCOUNTABILITY_VOCAB = "2026.09.18.2"
+
+
+def golden_digest(run_key: str, record: Mapping[str, Any]) -> str:
+    """`content_digest` comparable to the base-commit golden for ``run_key``.
+
+    Records from the accountability connector carry its vocabulary version; the
+    golden pins the base-commit stamp, so the field is normalized before
+    digesting. Every other run's records digest exactly as stored.
+    """
+    from db.claim_sink import content_digest
+
+    runs = {r.key: r for r in fixture_runs()}
+    if runs[run_key].connector is AccountabilityConnector and "vocab_version" in record:
+        record = {**record, "vocab_version": GOLDEN_ACCOUNTABILITY_VOCAB}
+    return content_digest(record)

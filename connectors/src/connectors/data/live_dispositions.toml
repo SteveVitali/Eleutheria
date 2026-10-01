@@ -355,29 +355,14 @@ disposition = "link_only"
 
 # P29.3 (ACTIVATE.3) — new accountability/governance sources, flipped under
 # GL-GATE-07 and promoted for their existing class connector. The connector wiring
-# + live fetch + dedup-into-resolved is deferred under the OSM-land contention
-# (D-R7.3-BREADTH); a live run refuses at the loader gate until wired.
-[sources.dhs_fusion_center_assessments]
-disposition = "promote"
-class_ticket = "P29.3"
-note = "P29.3 — DHS National Network of Fusion Centers assessments; promoted for the accountability connector (targeted report lookup). Deferred: D-R7.3-BREADTH."
-
-[sources.dhs_oig_reports]
-disposition = "promote"
-class_ticket = "P29.3"
-note = "P29.3 — DHS Office of Inspector General oversight reports; promoted for the accountability connector (targeted report lookup). Deferred: D-R7.3-BREADTH."
-
+# + live fetch + dedup-into-resolved was deferred under the OSM-land contention
+# (D-R7.3-BREADTH). P31.12 (BREADTH.1) WIRED four of the eight —
+# gao_surveillance_reports, dhs_oig_reports, dhs_fusion_center_assessments and
+# uk_surveillance_camera_commissioner now route through the `accountability`
+# connector's targeted oversight-report path, so their disposition is "live via
+# accountability" and their rows are removed (mapped sources carry none). The
+# remaining four (ccops_*, fema_hsgp_allocations) stay dispositioned for P31.13.
 [sources.fema_hsgp_allocations]
 disposition = "promote"
 class_ticket = "P29.3"
 note = "P29.3 — FEMA Homeland Security Grant Program (HSGP/UASI) allocations (funding leg); promoted for the procurement connector's federal-assistance path. Deferred: D-R7.3-BREADTH."
-
-[sources.gao_surveillance_reports]
-disposition = "promote"
-class_ticket = "P29.3"
-note = "P29.3 — GAO surveillance-technology oversight reports; promoted for the accountability connector (targeted report lookup). Deferred: D-R7.3-BREADTH."
-
-[sources.uk_surveillance_camera_commissioner]
-disposition = "promote"
-class_ticket = "P29.3"
-note = "P29.3 — UK Biometrics & Surveillance Camera Commissioner oversight/policy; promoted for the accountability connector (targeted report lookup). Deferred: D-R7.3-BREADTH."

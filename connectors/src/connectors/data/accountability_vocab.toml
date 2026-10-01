@@ -35,7 +35,16 @@
 # originChamber — the chamber a federal bill carries and a state bill does
 # not surface). A federal bill/resolution is likewise PROPOSED law, never a
 # §11.14 LegalInstrument (§3.1).
-vocab_version = "2026.09.18.2"
+# 2026.09.26.1 (P31.12 / BREADTH.1): +oversight_report — the targeted
+# report-lookup path (GAO / DHS OIG / DHS fusion-center assessments / UK
+# Surveillance Camera Commissioner, the P29.3 GL-GATE-07 flips). One reviewed
+# live-targets row per published report (a landing page or the report PDF —
+# never an index/listing); each reviewed `literals` string must survive in the
+# captured text or the capture is ContentDrift (fail closed, §3.1); the row's
+# reviewed §11.17 fields emit one AccountabilityEvent per report. The oversight
+# body's own published report is the `primary_record` of its finding
+# (SIG-ONTO-039).
+vocab_version = "2026.09.26.1"
 
 # The predicate allowlist enforced as a hard schema gate (SIG-INGEST-033): the
 # `accountability` connector may write ONLY the AccountabilityEvent (§11.17) and
@@ -175,6 +184,35 @@ abuse_library       = "alpr_abuse_library"
 courtlistener       = "courtlistener_recap"
 openstates          = "openstates"
 congress_gov        = "congress_gov"
+# P31.12 / BREADTH.1 — the targeted oversight-report lookups (P29.3 rights flips):
+gao_surveillance_reports            = "gao_surveillance_reports"
+dhs_oig_reports                     = "dhs_oig_reports"
+dhs_fusion_center_assessments       = "dhs_fusion_center_assessments"
+uk_surveillance_camera_commissioner = "uk_surveillance_camera_commissioner"
+
+# The `oversight_report` target-kind contract (P31.12 / BREADTH.1, §22.6 E):
+# every target names ONE specific reviewed document — a report landing page or
+# the report PDF itself, never an index or listing (SIG-INGEST-036). The
+# reviewed row (data/live_targets.toml) carries the fields the capture must
+# prove: `external_id` (the report's own identifier — a GAO/OIG product number
+# or the publication slug), `title` + `literals` (verbatim strings that must
+# survive in the captured text; a missing one is ContentDrift), and the §11.17
+# event fields (`event_type`, `epistemic_status`, `event_date`,
+# `organizations`, `technologies`, `affected_party_class`). A target row that
+# does not resolve to a reviewed live-targets entry is refused.
+[oversight_report]
+kind = "oversight_report"
+# The evidence-link class for the oversight body's own published report — the
+# primary record of its finding (SIG-ONTO-039). A target row may override it
+# (e.g. a response document classed `agency_statement`).
+source_class = "primary_record"
+# The registry source ids that run this path (the four P31.12 flips).
+sources = [
+  "gao_surveillance_reports",
+  "dhs_oig_reports",
+  "dhs_fusion_center_assessments",
+  "uk_surveillance_camera_commissioner",
+]
 
 # The five artifacts the Accountability Atlas publishes, ALL of which MUST be
 # consumed rather than only the headline CSV (§23.8, OL-2E-AA-02). The data

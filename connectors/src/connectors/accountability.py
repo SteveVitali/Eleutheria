@@ -69,6 +69,7 @@ from typing import Any
 from urllib.parse import parse_qs, urlencode, urlsplit
 from uuid import uuid4
 
+from parsing.document import html_text, pdf_text_pages
 from parsing.locator import Locator
 from resolution.partner_identity import partner_ref_rows
 
@@ -107,6 +108,16 @@ def vocab_version() -> str:
 def source_ids() -> Mapping[str, str]:
     """The registry source ids the connector runs against (§22.6 E)."""
     return dict(vocab()["sources"])
+
+
+def oversight_report_config() -> Mapping[str, Any]:
+    """The reviewed `oversight_report` target-kind contract (``[oversight_report]``, P31.12)."""
+    return vocab()["oversight_report"]
+
+
+def oversight_report_source_ids() -> frozenset[str]:
+    """The registry source ids that run the targeted oversight-report path (P31.12)."""
+    return frozenset(str(s) for s in oversight_report_config()["sources"])
 
 
 def epistemic_statuses() -> frozenset[str]:
@@ -650,6 +661,120 @@ def assert_targeted_lookup(target: Mapping[str, Any]) -> Mapping[str, Any]:
     return target
 
 
+# --- targeted report-lookup discipline for the oversight-report sources (P31.12) ----
+#
+# GAO / DHS OIG / DHS fusion-center assessments / the UK Surveillance Camera
+# Commissioner publish individual oversight reports (a landing page or the report
+# PDF). The connector looks up ONE reviewed document per target — never an index,
+# listing, or search surface (SIG-INGEST-036/037). The reviewed fields ride the
+# live-targets row (SIG-INGEST-038 — data, not code): the report's own identifier,
+# its title + verbatim literals the capture must carry, and the §11.17 event
+# fields. A capture that does not carry every reviewed literal is NOT the reviewed
+# document — ContentDrift, fail closed (the P25.8 live-clause precedent).
+
+
+class UnreviewedReportTarget(ValueError):
+    """Raised when an ``oversight_report`` target does not resolve to a reviewed row."""
+
+
+def assert_oversight_report_target(target: Mapping[str, Any]) -> Mapping[str, Any]:
+    """Return ``target`` if it is a reviewed oversight-report row, else raise.
+
+    Enumeration shapes (a crawl/list/search mode, a pagination cursor) are refused
+    (SIG-INGEST-036/037). A row missing the reviewed fields — ``external_id``,
+    ``title``, non-empty ``literals``, non-empty ``organizations``, an in-vocabulary
+    ``epistemic_status`` / ``event_type`` / ``source_class`` — is a data error, never
+    a claim (fail closed, §3.1).
+    """
+    mode = str(target.get("mode", "lookup")).lower()
+    if mode in {"crawl", "enumerate", "list", "scrape", "search"}:
+        raise CrawlAttempted(
+            f"target requests mode={mode!r}; oversight reports are targeted lookups of "
+            "specific published documents only, never crawled (§22.2, SIG-INGEST-036/037)."
+        )
+    if "page" in target or "cursor" in target or "offset" in target:
+        raise CrawlAttempted(
+            "target carries a pagination cursor; paging a report index is enumeration, "
+            "which the connector never performs (SIG-INGEST-036/037)."
+        )
+    if str(target.get("kind") or "") != str(oversight_report_config()["kind"]):
+        raise UnreviewedReportTarget(
+            f"target kind {target.get('kind')!r} is not 'oversight_report'"
+        )
+    url = str(target.get("url") or "").strip()
+    if not url.startswith("https://"):
+        raise UnreviewedReportTarget(
+            f"oversight_report target url {url!r} must be an https document URL"
+        )
+    if not str(target.get("external_id") or "").strip():
+        raise UnreviewedReportTarget(
+            "an oversight_report target requires the report's own reviewed `external_id`"
+        )
+    if not str(target.get("title") or "").strip():
+        raise UnreviewedReportTarget("an oversight_report target requires the reviewed `title`")
+    literals = target.get("literals")
+    if (
+        not isinstance(literals, (list, tuple))
+        or not literals
+        or not all(isinstance(lit, str) and lit.strip() for lit in literals)
+    ):
+        raise UnreviewedReportTarget(
+            "an oversight_report target requires non-empty reviewed `literals` — the "
+            "verbatim strings the captured page must still carry"
+        )
+    organizations = target.get("organizations")
+    if not isinstance(organizations, (list, tuple)) or not [
+        o for o in organizations if str(o).strip()
+    ]:
+        raise UnreviewedReportTarget(
+            "an oversight_report target requires reviewed `organizations` — the audited "
+            "agency or program the event names (§11.17 event_organizations)"
+        )
+    epistemic = str(target.get("epistemic_status") or "")
+    if epistemic not in epistemic_statuses():
+        raise UnreviewedReportTarget(
+            f"epistemic_status {epistemic!r} is not in the EpistemicStatus vocabulary "
+            f"{sorted(epistemic_statuses())} (§11.17, SIG-ONTO-038)"
+        )
+    event_type = target.get("event_type")
+    if event_type is not None and str(event_type) not in event_types():
+        raise UnreviewedReportTarget(
+            f"event_type {event_type!r} is not in the AccountabilityEventType vocabulary "
+            f"{sorted(event_types())} (§11.17)"
+        )
+    source_class = str(target.get("source_class") or oversight_report_config()["source_class"])
+    if source_class not in source_classes():
+        raise UnreviewedReportTarget(
+            f"source_class {source_class!r} is not one of the six OL-2E-AL-03 classes "
+            f"{sorted(source_classes())} (SIG-ONTO-039)"
+        )
+    return target
+
+
+def _oversight_report_target_for(ctx: RunContext, uri: str) -> Mapping[str, Any] | None:
+    """The reviewed ``oversight_report`` target row for a capture URI, or ``None``.
+
+    A live or hosted asserting-replay run's targets ARE the reviewed
+    ``live_targets`` rows; a fixture run names the reviewed URL on a bare
+    ``{id,url,kind}`` row — either way the committed live-targets row is
+    authoritative for the report's reviewed fields (SIG-INGEST-038): a fixture
+    row may name the URL, it may not redefine the review.
+    """
+    resolved = ctx.resolved_targets.get(uri)
+    if resolved is not None and resolved.get("kind") == "oversight_report":
+        return resolved
+    for candidate in ctx.parameters.get("targets", []):
+        if str(candidate.get("url")) == uri and candidate.get("external_id"):
+            if candidate.get("kind") == "oversight_report":
+                return candidate
+    from .live_targets import live_targets
+
+    for candidate in live_targets(ctx.source.id):
+        if str(candidate.get("url")) == uri and candidate.get("kind") == "oversight_report":
+            return candidate
+    return None
+
+
 def _is_enumeration_url(url: str) -> bool:
     """Whether a URL is a bare CourtListener collection/listing endpoint (no specific resource)."""
     if not url:
@@ -672,6 +797,64 @@ def _is_enumeration_url(url: str) -> bool:
 
 
 # --- CSV parsing --------------------------------------------------------------
+
+
+def _fold(text: str) -> str:
+    """Whitespace-folded text for literal matching across markup/line breaks."""
+    return re.sub(r"\s+", " ", str(text))
+
+
+def _parse_oversight_report(
+    ctx: RunContext, capture: CaptureRef, target: Mapping[str, Any], data: bytes
+) -> dict[str, Any]:
+    """Text + reviewed-literal verification for one report capture (P31.12).
+
+    HTML pages extract through ``parsing.document.html_text``; a ``%PDF`` byte
+    stream through ``pdf_text_pages`` (it returns no pages for a malformed or
+    text-less PDF — a body that cannot prove its reviewed literals is drift, not
+    a claim). Every reviewed ``literals`` string must survive in the extracted
+    text (whitespace-folded); a missing one means the captured document is not
+    the reviewed report — :class:`ContentDrift`, fail closed, never a claim
+    asserted beyond the capture (§3.1; the P25.8 live-clause precedent).
+    """
+    if data.lstrip()[:4] == b"%PDF":
+        pages = pdf_text_pages(data)
+        if not pages:
+            raise ContentDrift(
+                ctx.source.id,
+                "the report capture is a PDF with no extractable text layer",
+                details=f"{len(data)} bytes",
+            )
+        text = " ".join(pages)
+    else:
+        text = html_text(data)
+    if not text.strip():
+        raise ContentDrift(
+            ctx.source.id,
+            "the report capture carries no text",
+            details=f"{len(data)} bytes",
+        )
+    folded = _fold(text)
+    missing = [
+        i
+        for i, literal in enumerate(target.get("literals") or ())
+        if _fold(str(literal)) not in folded
+    ]
+    if missing:
+        raise ContentDrift(
+            ctx.source.id,
+            "the capture does not carry the reviewed literal(s) the report row names",
+            details=(
+                f"external_id={str(target.get('external_id') or '')!r}; "
+                f"literal index(es) {missing} absent from {len(text)} chars of text"
+            ),
+        )
+    return {
+        "kind": "oversight_report",
+        "capture": capture,
+        "target": target,
+        "byte_size": len(data),
+    }
 
 
 def parse_csv(data: bytes) -> dict[str, Any]:
@@ -751,6 +934,22 @@ class AccountabilityConnector(Connector):
         for target in targets:
             if self._is_courtlistener(ctx, target):
                 assert_targeted_lookup(target)
+        if ctx.source.id in oversight_report_source_ids():
+            # P31.12: every target must resolve to a reviewed oversight_report
+            # live-targets row (SIG-INGEST-038). The resolved row — not the
+            # fetch envelope — is what downstream stages consume.
+            resolved_targets: list[Mapping[str, Any]] = []
+            for target in targets:
+                row = _oversight_report_target_for(ctx, str(target.get("url") or ""))
+                if row is None:
+                    raise UnreviewedReportTarget(
+                        f"target {str(target.get('url') or '')!r} has no reviewed "
+                        f"oversight_report row in live_targets.toml for {ctx.source.id!r}"
+                    )
+                assert_oversight_report_target(row)
+                ctx.resolved_targets[str(row["url"])] = row
+                resolved_targets.append(row)
+            return resolved_targets
         return targets
 
     def fetch(self, ctx: RunContext, target: Mapping[str, Any]) -> FetchResult:
@@ -799,6 +998,21 @@ class AccountabilityConnector(Connector):
         data-dictionary / research-archive artifact is consumed as context (§23.8).
         """
         data = ctx.captures.get(capture.digest)
+        # P31.12: a reviewed oversight-report target parses its own path — the
+        # report's landing page (html_text) or the report PDF (pdf_text_pages),
+        # verified against the reviewed literals before anything is read from it.
+        target = _oversight_report_target_for(ctx, str(capture.source_uri))
+        if target is not None and str(target.get("kind")) == "oversight_report":
+            assert_oversight_report_target(target)
+            return _parse_oversight_report(ctx, capture, target, data)
+        if ctx.source.id in oversight_report_source_ids():
+            # Fail closed: a capture for one of these sources whose URL names no
+            # reviewed report row is never read as generic rows (SIG-INGEST-038).
+            raise ContentDrift(
+                ctx.source.id,
+                "the capture's URL names no reviewed oversight_report target",
+                details=str(capture.source_uri),
+            )
         kind = _artifact_kind(capture)
         if kind in {"issue_record_csv", "source_index_csv"}:
             return {"kind": kind, "capture": capture, **parse_csv(data)}
@@ -837,6 +1051,19 @@ class AccountabilityConnector(Connector):
     def extract(self, ctx: RunContext, parsed: Mapping[str, Any]) -> list[Mapping[str, Any]]:
         """Raw records with locators, preserving raw values (P2)."""
         kind = str(parsed["kind"])
+        if kind == "oversight_report":
+            # One reviewed report row → one raw record. The reviewed fields ride
+            # verbatim (P2 — the row's literals/title are the upstream text the
+            # capture proved); the capture's digest + URI carry the locator.
+            return [
+                {
+                    "record_kind": "oversight_report",
+                    "raw": dict(parsed["target"]),
+                    "source_uri": str(parsed["capture"].source_uri),
+                    "capture_digest": str(parsed["capture"].digest),
+                    "byte_size": int(parsed.get("byte_size") or 0),
+                }
+            ]
         if kind == "issue_record_csv":
             return [{"record_kind": "issue_record", "raw": row} for row in parsed.get("rows", [])]
         if kind == "source_index_csv":
@@ -1024,7 +1251,9 @@ class AccountabilityConnector(Connector):
         page_suppressed: set[str] = set()
         for raw in raw_claims:
             kind = raw["record_kind"]
-            if kind == "issue_record":
+            if kind == "oversight_report":
+                out.extend(self._normalize_oversight_report(ctx, raw))
+            elif kind == "issue_record":
                 out.extend(self._normalize_issue_record(ctx, raw["raw"]))
             elif kind == "source_index":
                 out.append(self._normalize_source_index(ctx, raw["raw"]))
@@ -1206,6 +1435,42 @@ class AccountabilityConnector(Connector):
             },
             source_id=ctx.source.id,
         )
+
+    def _normalize_oversight_report(
+        self, ctx: RunContext, raw: Mapping[str, Any]
+    ) -> list[dict[str, Any]]:
+        """One reviewed oversight report → one §11.17 ``AccountabilityEvent`` (P31.12).
+
+        The reviewed live-targets row IS the claim data (SIG-INGEST-038): the report's
+        own identifier, its §11.17 event fields, and the organisations it audits. The
+        captured page/PDF — already verified to carry the reviewed literals — is the
+        ``primary_record`` evidence link the event's claims rest on (SIG-ONTO-039). An
+        event is never a deployment, device-count, or operational-state claim (the
+        allowlist enforces it; procured/reviewed ≠ deployed).
+        """
+        data = raw["raw"]  # the reviewed target row (SIG-INGEST-038)
+        url = str(raw.get("source_uri") or data.get("url") or "")
+        link = EvidenceLink(
+            source_ref=url,
+            source_class=str(data.get("source_class") or oversight_report_config()["source_class"]),
+            stable_locator=url,
+            note=str(data.get("title") or ""),
+        )
+        event = AccountabilityEventRecord(
+            external_id=str(data["external_id"]),
+            source_id=ctx.source.id,
+            epistemic_status=str(data["epistemic_status"]),
+            event_type=_opt_str(data.get("event_type")),
+            date=_opt_str(data.get("event_date")),
+            organizations=tuple(str(o) for o in data.get("organizations") or ()),
+            technologies=tuple(str(t) for t in data.get("technologies") or ()),
+            affected_party_class=_opt_str(data.get("affected_party_class")),
+            sources=(link,),
+            raw=dict(data),
+        )
+        rows = list(event.claim_rows())
+        rows[0]["title"] = str(data.get("title") or "")
+        return rows
 
     def _normalize_court_record(
         self, ctx: RunContext, raw: Mapping[str, Any]
@@ -2431,6 +2696,8 @@ __all__ = [
     "LegalProceedingRecord",
     "MissingEpistemicStatus",
     "PredicateNotAllowed",
+    "UnreviewedReportTarget",
+    "assert_oversight_report_target",
     "assert_predicate_allowed",
     "assert_targeted_lookup",
     "atlas_artifacts",
@@ -2451,6 +2718,8 @@ __all__ = [
     "load_claims_for_l1",
     "openstates_config",
     "openstates_plan",
+    "oversight_report_config",
+    "oversight_report_source_ids",
     "parse_csv",
     "postures",
     "predicate_allowlist",

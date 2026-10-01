@@ -1,0 +1,138 @@
+{
+ "source": "gao_surveillance_reports",
+ "ticket": "P31.12",
+ "semantic_id": "BREADTH.1",
+ "connector": "accountability",
+ "target_kind": "oversight_report",
+ "image": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api@sha256:d1f943610f668521f157c94d64f7284eb73025870303ee332f3f9450676e473a",
+ "image_tag": "sig-api:ingest-daf83934a7f1",
+ "code_commit": "daf83934a7f1",
+ "executions": [
+  "sig-ingest-gao-surveillance-reports-ll6d8",
+  "sig-ingest-gao-surveillance-reports-9plqg"
+ ],
+ "ops_runs": [
+  {
+   "started_at": "2026-09-26T03:31:06+00:00",
+   "outcome": "ok",
+   "exit_code": 0,
+   "claims_added": 10,
+   "duration_seconds": 5.778,
+   "ingest_run_id": "01a0dbc4-525f-7324-aa3c-b1832e769fab",
+   "logical_run": "gao_surveillance_reports@2026-09-14T06:09Z",
+   "fetches": 1,
+   "robots_decisions": [
+    {
+     "host": "www.gao.gov",
+     "outcome": "retrieved",
+     "robots_url": "https://www.gao.gov/robots.txt",
+     "status": 200
+    }
+   ],
+   "capture_digests": [
+    "bcnacfkyp4bhxxawrggb7xn2en5rdxt5dsgf5ag23o3qmt32ee6u6vujygocqa6drnexxzgvp363rjpzogryiqhcq4wwme4ukwn4upi377y"
+   ]
+  },
+  {
+   "started_at": "2026-09-26T03:45:23+00:00",
+   "outcome": "ok",
+   "exit_code": 0,
+   "claims_added": 10,
+   "duration_seconds": 4.493,
+   "ingest_run_id": "01a0dbd1-6053-7db9-9a18-e08ec2760f65",
+   "logical_run": "gao_surveillance_reports@2026-09-14T06:09Z",
+   "fetches": 1,
+   "robots_decisions": [
+    {
+     "host": "www.gao.gov",
+     "outcome": "retrieved",
+     "robots_url": "https://www.gao.gov/robots.txt",
+     "status": 200
+    }
+   ],
+   "capture_digests": [
+    "bcnacfkyp4bhxxawrggb7xn2en5rdxt5dsgf5ag23o3qmt32ee6u6vujygocqa6drnexxzgvp363rjpzogryiqhcq4wwme4ukwn4upi377y"
+   ]
+  }
+ ],
+ "ingest_run_completions": [
+  {
+   "run_id": "01a0dbc4-525f-7324-aa3c-b1832e769fab",
+   "status": "ok",
+   "claims_considered": 10,
+   "claims_inserted": 8,
+   "claims_duplicate": 0,
+   "finished_at": "2026-09-26 03:31:12.549166+00:00",
+   "run_record_uri": "gs://zeta-medley-508121-u7-sig-restricted/ops/runs/gao_surveillance_reports/2026-09-26/2026-09-26T03-31-06+00-00.json"
+  },
+  {
+   "run_id": "01a0dbd1-6053-7db9-9a18-e08ec2760f65",
+   "status": "ok",
+   "claims_considered": 10,
+   "claims_inserted": 0,
+   "claims_duplicate": 8,
+   "finished_at": "2026-09-26 03:45:27.420676+00:00",
+   "run_record_uri": "gs://zeta-medley-508121-u7-sig-restricted/ops/runs/gao_surveillance_reports/2026-09-26/2026-09-26T03-45-23+00-00.json"
+  }
+ ],
+ "captures": [
+  {
+   "content_digest": "9bac93a94c5158d8e6ac7866939a1d909b5e0ccd0ba7a50b44d67b9c682a6bf2",
+   "media_type": "application/octet-stream",
+   "byte_size": 0,
+   "retrieved_at": "2026-09-26 03:31:11.962365+00:00",
+   "http_status": null
+  }
+ ],
+ "claims_landed_first_run": [
+  {
+   "predicate": "event_date",
+   "object_type": "literal",
+   "value": "2021-06-03"
+  },
+  {
+   "predicate": "event_epistemic_status",
+   "object_type": "literal",
+   "value": "confirmed"
+  },
+  {
+   "predicate": "event_organizations",
+   "object_type": "literal",
+   "value": "['U.S. Government Accountability Office', 'Federal Bureau of Investigation', 'Drug Enforcement Administration']"
+  },
+  {
+   "predicate": "event_organizations",
+   "object_type": "entity_ref",
+   "value": "sig.org.name:u s government accountability office"
+  },
+  {
+   "predicate": "event_organizations",
+   "object_type": "entity_ref",
+   "value": "sig.org.name:federal bureau of investigation"
+  },
+  {
+   "predicate": "event_organizations",
+   "object_type": "entity_ref",
+   "value": "sig.org.name:drug enforcement administration"
+  },
+  {
+   "predicate": "event_technologies",
+   "object_type": "literal",
+   "value": "['facial recognition']"
+  },
+  {
+   "predicate": "event_type",
+   "object_type": "literal",
+   "value": "audit_finding"
+  }
+ ],
+ "rights_decisions": [
+  {
+   "decision_id": "01a0dbdd-2f73-72c3-a10f-66f4a53fb381",
+   "spdx": "CC0-1.0",
+   "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+   "resolved_rights_id": "01a0dbdd-2ecd-73ce-b43e-e5ae0df95aef",
+   "decided_at": "2026-09-26 03:58:21.043186+00:00"
+  }
+ ]
+}

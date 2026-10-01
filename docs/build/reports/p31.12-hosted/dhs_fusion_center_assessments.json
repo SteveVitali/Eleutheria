@@ -1,0 +1,128 @@
+{
+ "source": "dhs_fusion_center_assessments",
+ "ticket": "P31.12",
+ "semantic_id": "BREADTH.1",
+ "connector": "accountability",
+ "target_kind": "oversight_report",
+ "image": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api@sha256:d1f943610f668521f157c94d64f7284eb73025870303ee332f3f9450676e473a",
+ "image_tag": "sig-api:ingest-daf83934a7f1",
+ "code_commit": "daf83934a7f1",
+ "executions": [
+  "sig-ingest-dhs-fusion-center-assessments-tvnh6",
+  "sig-ingest-dhs-fusion-center-assessments-v87mw"
+ ],
+ "ops_runs": [
+  {
+   "started_at": "2026-09-26T03:35:41+00:00",
+   "outcome": "ok",
+   "exit_code": 0,
+   "claims_added": 8,
+   "duration_seconds": 5.008,
+   "ingest_run_id": "01a0dbc8-7fd6-7c3a-92b3-1d7bb4908ec5",
+   "logical_run": "dhs_fusion_center_assessments@2026-09-16T06:09Z",
+   "fetches": 1,
+   "robots_decisions": [
+    {
+     "host": "www.dhs.gov",
+     "outcome": "retrieved",
+     "robots_url": "https://www.dhs.gov/robots.txt",
+     "status": 200
+    }
+   ],
+   "capture_digests": [
+    "bcnaeezkfqxcywm2huhon77nnirbq24qzcppt2dgi5qmhm7hnn6ufh5xjcoommqi22irtbhto37xhtic76t2olf6j6z2c6sshslvww47mmy"
+   ]
+  },
+  {
+   "started_at": "2026-09-26T03:49:42+00:00",
+   "outcome": "ok",
+   "exit_code": 0,
+   "claims_added": 8,
+   "duration_seconds": 5.025,
+   "ingest_run_id": "01a0dbd5-54be-7c84-afc6-0c03302bff6a",
+   "logical_run": "dhs_fusion_center_assessments@2026-09-16T06:09Z",
+   "fetches": 1,
+   "robots_decisions": [
+    {
+     "host": "www.dhs.gov",
+     "outcome": "retrieved",
+     "robots_url": "https://www.dhs.gov/robots.txt",
+     "status": 200
+    }
+   ],
+   "capture_digests": [
+    "bcnaeezkfqxcywm2huhon77nnirbq24qzcppt2dgi5qmhm7hnn6ufh5xjcoommqi22irtbhto37xhtic76t2olf6j6z2c6sshslvww47mmy"
+   ]
+  }
+ ],
+ "ingest_run_completions": [
+  {
+   "run_id": "01a0dbc8-7fd6-7c3a-92b3-1d7bb4908ec5",
+   "status": "ok",
+   "claims_considered": 8,
+   "claims_inserted": 6,
+   "claims_duplicate": 0,
+   "finished_at": "2026-09-26 03:35:46.714927+00:00",
+   "run_record_uri": "gs://zeta-medley-508121-u7-sig-restricted/ops/runs/dhs_fusion_center_assessments/2026-09-26/2026-09-26T03-35-41+00-00.json"
+  },
+  {
+   "run_id": "01a0dbd5-54be-7c84-afc6-0c03302bff6a",
+   "status": "ok",
+   "claims_considered": 8,
+   "claims_inserted": 0,
+   "claims_duplicate": 6,
+   "finished_at": "2026-09-26 03:49:47.645533+00:00",
+   "run_record_uri": "gs://zeta-medley-508121-u7-sig-restricted/ops/runs/dhs_fusion_center_assessments/2026-09-26/2026-09-26T03-49-42+00-00.json"
+  }
+ ],
+ "captures": [
+  {
+   "content_digest": "b29da6111f3c5cffc3696350edfa228c56cfbcb895b60296c820b8eb68f5eb93",
+   "media_type": "application/octet-stream",
+   "byte_size": 0,
+   "retrieved_at": "2026-09-26 03:35:46.588720+00:00",
+   "http_status": null
+  }
+ ],
+ "claims_landed_first_run": [
+  {
+   "predicate": "event_date",
+   "object_type": "literal",
+   "value": "2021"
+  },
+  {
+   "predicate": "event_epistemic_status",
+   "object_type": "literal",
+   "value": "confirmed"
+  },
+  {
+   "predicate": "event_organizations",
+   "object_type": "literal",
+   "value": "['U.S. Department of Homeland Security', 'National Network of Fusion Centers']"
+  },
+  {
+   "predicate": "event_organizations",
+   "object_type": "entity_ref",
+   "value": "sig.org.name:u s department of homeland security"
+  },
+  {
+   "predicate": "event_organizations",
+   "object_type": "entity_ref",
+   "value": "sig.org.name:national network of fusion centers"
+  },
+  {
+   "predicate": "event_type",
+   "object_type": "literal",
+   "value": "audit_finding"
+  }
+ ],
+ "rights_decisions": [
+  {
+   "decision_id": "01a0dbdd-343c-784a-9d1a-5e7a0142c9a6",
+   "spdx": "CC0-1.0",
+   "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+   "resolved_rights_id": "01a0dbdd-33ad-7c70-ab9c-d141ccc2637c",
+   "decided_at": "2026-09-26 03:58:22.268530+00:00"
+  }
+ ]
+}

@@ -1,0 +1,123 @@
+{
+ "source": "dhs_oig_reports",
+ "ticket": "P31.12",
+ "semantic_id": "BREADTH.1",
+ "connector": "accountability",
+ "target_kind": "oversight_report",
+ "image": "us-central1-docker.pkg.dev/zeta-medley-508121-u7/sig/sig-api@sha256:d1f943610f668521f157c94d64f7284eb73025870303ee332f3f9450676e473a",
+ "image_tag": "sig-api:ingest-daf83934a7f1",
+ "code_commit": "daf83934a7f1",
+ "executions": [
+  "sig-ingest-dhs-oig-reports-g6w6g",
+  "sig-ingest-dhs-oig-reports-9dkg7"
+ ],
+ "ops_runs": [
+  {
+   "started_at": "2026-09-26T03:34:27+00:00",
+   "outcome": "ok",
+   "exit_code": 0,
+   "claims_added": 7,
+   "duration_seconds": 5.668,
+   "ingest_run_id": "01a0dbc7-5dd4-759f-a738-c340588afdfa",
+   "logical_run": "dhs_oig_reports@2026-09-15T06:09Z",
+   "fetches": 1,
+   "robots_decisions": [
+    {
+     "host": "www.oig.dhs.gov",
+     "outcome": "retrieved",
+     "robots_url": "https://www.oig.dhs.gov/robots.txt",
+     "status": 200
+    }
+   ],
+   "capture_digests": [
+    "bcnabhgbzja7h35lrn3pmh7q5ao2zqnsbchyr473ainv54w2uqm5hbwchis6lxoxlg424jr3l5demdcnugzmfbfuumq2sbbmpmhoc3nwfla"
+   ]
+  },
+  {
+   "started_at": "2026-09-26T03:48:26+00:00",
+   "outcome": "ok",
+   "exit_code": 0,
+   "claims_added": 7,
+   "duration_seconds": 5.465,
+   "ingest_run_id": "01a0dbd4-2a77-78dc-9dee-088175a5d8d8",
+   "logical_run": "dhs_oig_reports@2026-09-15T06:09Z",
+   "fetches": 1,
+   "robots_decisions": [
+    {
+     "host": "www.oig.dhs.gov",
+     "outcome": "retrieved",
+     "robots_url": "https://www.oig.dhs.gov/robots.txt",
+     "status": 200
+    }
+   ],
+   "capture_digests": [
+    "bcnabhgbzja7h35lrn3pmh7q5ao2zqnsbchyr473ainv54w2uqm5hbwchis6lxoxlg424jr3l5demdcnugzmfbfuumq2sbbmpmhoc3nwfla"
+   ]
+  }
+ ],
+ "ingest_run_completions": [
+  {
+   "run_id": "01a0dbc7-5dd4-759f-a738-c340588afdfa",
+   "status": "ok",
+   "claims_considered": 7,
+   "claims_inserted": 5,
+   "claims_duplicate": 0,
+   "finished_at": "2026-09-26 03:34:32.956241+00:00",
+   "run_record_uri": "gs://zeta-medley-508121-u7-sig-restricted/ops/runs/dhs_oig_reports/2026-09-26/2026-09-26T03-34-27+00-00.json"
+  },
+  {
+   "run_id": "01a0dbd4-2a77-78dc-9dee-088175a5d8d8",
+   "status": "ok",
+   "claims_considered": 7,
+   "claims_inserted": 0,
+   "claims_duplicate": 5,
+   "finished_at": "2026-09-26 03:48:31.891513+00:00",
+   "run_record_uri": "gs://zeta-medley-508121-u7-sig-restricted/ops/runs/dhs_oig_reports/2026-09-26/2026-09-26T03-48-26+00-00.json"
+  }
+ ],
+ "captures": [
+  {
+   "content_digest": "5525187193f8931b64645e5d2fb6d216ca38004f1406ef54a88611436787562d",
+   "media_type": "application/octet-stream",
+   "byte_size": 0,
+   "retrieved_at": "2026-09-26 03:34:32.808320+00:00",
+   "http_status": null
+  }
+ ],
+ "claims_landed_first_run": [
+  {
+   "predicate": "event_date",
+   "object_type": "literal",
+   "value": "2008-12-10"
+  },
+  {
+   "predicate": "event_epistemic_status",
+   "object_type": "literal",
+   "value": "confirmed"
+  },
+  {
+   "predicate": "event_organizations",
+   "object_type": "literal",
+   "value": "['U.S. Department of Homeland Security']"
+  },
+  {
+   "predicate": "event_organizations",
+   "object_type": "entity_ref",
+   "value": "sig.org.name:u s department of homeland security"
+  },
+  {
+   "predicate": "event_type",
+   "object_type": "literal",
+   "value": "audit_finding"
+  }
+ ],
+ "rights_decisions": [
+  {
+   "decision_id": "01a0dbdd-3213-78ce-9449-329e374a67c5",
+   "spdx": "CC0-1.0",
+   "prior_rights_id": "01a0a5fe-cb9d-7320-b174-1b7240d826c7",
+   "resolved_rights_id": "01a0dbdd-315a-75c5-aff9-ee70c6424808",
+   "decided_at": "2026-09-26 03:58:21.715563+00:00"
+  }
+ ]
+}
