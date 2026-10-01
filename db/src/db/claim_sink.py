@@ -38,6 +38,13 @@ insert ``ON CONFLICT DO NOTHING``. Replaying the same run therefore inserts each
 claim exactly once: N>0 rows the first time, 0 new rows on every replay. A
 correction is still a *new* row (a different payload → a different digest).
 
+**Re-sightings** (P31.7 / ADR-R9-RESIGHT): a duplicate claim is still recorded —
+the ``on_duplicates`` hook reports each chunk's already-present claims inside the
+chunk transaction, and the production hook :func:`record_resightings` appends one
+``claim_evidence`` link per re-sighted claim to the execution's own synthetic
+capture. Every sighting stays evidenced, so a restated value's capture-dating
+(``capture_retrieved_at_latest``) reflects when the source last asserted it.
+
 **Batched writes** (P31.3 / ADR-110, closes D-P30.1-1): the sink used to spend
 three to five round trips per claim (register the predicate, look up the subject,
 insert the claim, link its evidence). Now each claim is *staged* in memory, and at
@@ -215,6 +222,50 @@ class DuplicateBatch:
     existing: Mapping[str, str]
     #: content_digest -> the ``evidence_capture`` this execution would have linked.
     capture_by_digest: Mapping[str, str]
+    #: True when this execution is an ``is_replay`` run (ADR-113). A replay
+    #: re-derives stored bytes — it is not the source re-asserting the value — so
+    #: the production re-sighting hook (:func:`record_resightings`) writes nothing
+    #: for it. Other hooks may ignore the flag.
+    replay: bool = False
+
+
+def record_resightings(batch: DuplicateBatch) -> None:
+    """The production ``on_duplicates`` hook (P31.7 / ADR-R9-RESIGHT).
+
+    Every live execution that re-asserts a claim the spine already holds records
+    the re-sighting: one ``claim_evidence`` row (role ``establishes``) linking the
+    existing claim to THIS execution's capture. The link is the primary evidence
+    that the source was seen asserting the value again, which is what the
+    resolver's latest-capture dating (``capture_retrieved_at_latest``) reads —
+    without it, an A → B → A restatement keeps A's original capture date and
+    ``latest_observation_wins`` wrongly prefers B.
+
+    Uncapped and unfiltered (the ratified operator decision, ADR-R9-RESIGHT):
+    every duplicate claim in the batch is linked, with no cadence window and no
+    digest-changed filter. The write reuses ``_LINK_EVIDENCE`` — one statement per
+    chunk, ``ON CONFLICT (claim_id, capture_id, role) DO NOTHING`` — so the same
+    capture re-asserted twice (a resumed execution re-flushing a target) links +0.
+    One link per (claim, capture): the per-``(source, genre, run)`` synthetic
+    capture means at most one link per claim per execution per genre.
+
+    A replay run (``batch.replay``) writes nothing: a replay re-reads stored
+    bytes; it is not the source re-asserting the value, so its captured
+    ``retrieved_at`` (the replay execution time) must never be treated as a
+    fresh sighting of the source.
+    """
+    if batch.replay or not batch.existing:
+        return
+    pairs = [
+        (claim_id, batch.capture_by_digest[digest])
+        for digest, claim_id in batch.existing.items()
+        if digest in batch.capture_by_digest
+    ]
+    if not pairs:
+        return
+    batch.conn.execute(
+        _LINK_EVIDENCE,
+        ([claim_id for claim_id, _ in pairs], [capture_id for _, capture_id in pairs]),
+    )
 
 
 #: Maps a claim record to the entity its object names, or ``None`` for a literal.
@@ -399,7 +450,12 @@ class PgClaimSink:
 
     * ``on_duplicates`` receives each chunk's already-present claims with their
       stored ``claim_id``s (the P31.7 re-sighting seam). With no hook, the sink does
-      not even look them up.
+      not even look them up. The production wiring is
+      :func:`record_resightings` (ADR-R9-RESIGHT): it appends one ``claim_evidence``
+      link per re-sighted claim to the execution's own capture, inside the chunk
+      transaction — uncapped, idempotent on ``(claim, capture, role)``, and silent
+      on ``is_replay`` runs (a replay re-reads stored bytes; it is not a fresh
+      sighting of the source).
     * ``object_resolver`` maps a claim record to the :class:`EntityRef` its object
       names (the P31.5 entity-ref seam). The object entity is resolved through the
       identity guard and written as ``object_entity`` with ``object_type
@@ -1178,6 +1234,7 @@ class PgClaimSink:
                 run_id=run_id,
                 existing=existing,
                 capture_by_digest={s.digest: s.capture_id for s in dup},
+                replay=self._is_replay,
             )
         )
 
@@ -1196,4 +1253,5 @@ __all__ = [
     "SUBJECT_SCHEME",
     "content_digest",
     "record_object_ref",
+    "record_resightings",
 ]

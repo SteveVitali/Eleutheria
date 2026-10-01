@@ -1,0 +1,34 @@
+{
+ "ts": "2026-09-25T08:27:01.492749+00:00",
+ "claim_evidence_rows": 2623647,
+ "claim_evidence_total_bytes": 406708224,
+ "claim_evidence_table_bytes": 201023488,
+ "claim_evidence_index_bytes": 205594624,
+ "claims": 2403886,
+ "database_bytes": 4833670847,
+ "bench_runs": [
+  [
+   "01a0d7aa-6311-7671-b824-c46281eedbe0",
+   "dot_511",
+   null,
+   "running",
+   false,
+   "2026-09-25 08:24:23.05742+00",
+   null
+  ],
+  [
+   "01a0d7aa-ddea-73e8-9b53-6b530c9c7b9b",
+   "dot_511",
+   null,
+   "running",
+   false,
+   "2026-09-25 08:24:54.506253+00",
+   null
+  ]
+ ],
+ "bench_links": [
+  [
+   232096
+  ]
+ ]
+}

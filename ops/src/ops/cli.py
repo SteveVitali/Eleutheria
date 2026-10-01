@@ -1477,7 +1477,7 @@ def _cmd_sink_bench(args: argparse.Namespace) -> int:
     from connectors.runner import RunMode, run_source
     from connectors.sinks import resolve_commit_chunk_size
     from connectors.stages import registered_connectors
-    from db.claim_sink import DEFAULT_COMMIT_CHUNK_SIZE
+    from db.claim_sink import DEFAULT_COMMIT_CHUNK_SIZE, record_resightings
     from db.sink_bench import run_pass
 
     if args.passes < 1:
@@ -1523,6 +1523,10 @@ def _cmd_sink_bench(args: argparse.Namespace) -> int:
                 code_commit=args.code_commit,
                 commit_chunk_size=chunk,
                 source_id=args.source,
+                # P31.7 / ADR-R9-RESIGHT: the bench exercises the production sink
+                # path, which now appends a re-sighting link per duplicate claim —
+                # so its +0 pass is also the bounded claim_evidence growth measure.
+                sink_kwargs={"on_duplicates": record_resightings},
             )
             print(result.as_json(), flush=True)
     return 0

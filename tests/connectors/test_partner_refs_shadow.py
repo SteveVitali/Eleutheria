@@ -140,3 +140,28 @@ def test_the_pg_sink_factory_wires_the_production_object_resolver(
 
     make_claim_sink("pg", dsn="postgresql://x", object_resolver=mine)
     assert seen[-1]["object_resolver"] is mine
+
+
+def test_the_pg_sink_factory_wires_the_resighting_hook(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # P31.7 / ADR-R9-RESIGHT: `make_claim_sink("pg")` builds the sink with
+    # `record_resightings`, so a live re-assertion links the stored claim to the
+    # execution's capture; a caller may still override it.
+    import db.claim_sink as claim_sink
+    from connectors.sinks import make_claim_sink
+
+    seen: list[dict[str, object]] = []
+    monkeypatch.setattr(
+        claim_sink.PgClaimSink,
+        "from_dsn",
+        classmethod(lambda cls, dsn, **kw: seen.append(kw) or object()),
+    )
+    make_claim_sink("pg", dsn="postgresql://x", connector_name="c")
+    assert seen[-1]["on_duplicates"] is claim_sink.record_resightings
+
+    def mine(_batch: object) -> None:
+        return None
+
+    make_claim_sink("pg", dsn="postgresql://x", on_duplicates=mine)
+    assert seen[-1]["on_duplicates"] is mine

@@ -99,9 +99,11 @@ class Claim:
     content_hash: str = ""
     evidence: Evidence | None = None
     #: Where ``observed_at`` came from. ``"claim"`` = the claim's own observation time;
-    #: ``"capture_retrieved_at"`` = the claim carried none, so the reader supplied the
-    #: earliest capture's retrieval time — when the source was first seen asserting
-    #: the value. That is an inference, so the resolver labels it in
+    #: ``"capture_retrieved_at_latest"`` = the claim carried none, so the reader
+    #: supplied the LATEST capture's retrieval time — the most recent sighting of
+    #: the source asserting the value (P31.7 / ADR-R9-RESIGHT; ADR-104's interim
+    #: ``capture_retrieved_at`` basis read the EARLIEST capture, before re-sighting
+    #: links existed). That is an inference, so the resolver labels it in
     #: ``rules_fired`` (ADR-104) rather than letting it pass as an observation date.
     observed_at_basis: str = "claim"
 
