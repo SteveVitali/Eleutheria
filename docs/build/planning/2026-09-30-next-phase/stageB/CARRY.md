@@ -70,3 +70,8 @@ Items surfaced by seed units that a later unit (or the operator) must resolve. E
 - SEED-13c · P34.21b leg-level deps on P34.18 + P34.21a recorded in its contract; add a Plan-extensions note if row-level ordering is needed (row 221 P34.18 precedes P34.21b anyway) · SEED-13e verify order
 - SEED-13c · PLAN-11B ≈104k loaded + ≈56k written per 12-row batch → batches of 8–10 · PLAN-11B contract already notes; SEED-13e sizing review confirms
 - SEED-13c · P34.26 expects the ADR-124 allow DEFERRALS row from SEED-14 · SEED-14a
+- SEED-13d · PLAN-11B (row 239) lacks the **outreach-owed list** for GATE-ANNOUNCE (SIG-CHART-033, SIG-INGEST-029/030a, SIG-CONTRIB-012; P36.77 leaves them unmet) — patch PLAN-11B's contract · SEED-13e
+- SEED-13d · added `live:P34.46` edges on P34.45 (basis label deploys with P34.46's API roll) and P34.43 (`sig_recovery` needs L52) — not in `round11_plan.csv`; tight before GATE-G4 (11A pre-auth expiry) — verify order/feasibility; add Plan-extensions note if needed · SEED-13e
+- SEED-13d · **orchestrator decision (conservative):** P34.40's `/v1/*` LB rule makes the API answer on the main-site host (a public-surface change) → that step is **not** "dark" under the S5-3 pre-authorisation; it needs its own in-ticket go; only the nginx roll runs pre-authorised. Patch P34.40's contract; mention at GATE-B · SEED-13e + GATE-B packet
+- SEED-13d · P34.49's capture-side OSM `user`/`uid` fix → DEFERRALS row, owner PLAN-11B (to place in 11B) · SEED-14a (if still running) else SEED-15/T5
+- SEED-13d · P34.46 measured ≈69k (÷3) per leg; no split; optional seam noted · SEED-13e sizing review
