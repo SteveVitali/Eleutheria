@@ -96,3 +96,7 @@ Items surfaced by seed units that a later unit (or the operator) must resolve. E
 - SEED-15 · P34.48's contract should name SIG-UI-040 (re-verdict routed there) · SEED-18
 - SEED-15 · re-run `req_index.py write` after this commit · SEED-18
 - SEED-15 · vendored `check-build-memory.sh` V2 skip matches skip words anywhere in a row (too broad) → upstream note · orchestrator (agent-skills follow-up)
+- SEED-17 · GATE-M warning (answer dated 2026-09-30; its pause recorded only in META_PLAN) cannot be cleared honestly — no future PHASE LOG "pause" entry may name GATE-M · HANDOFF note
+- SEED-17 · at C10 (GATE-B): append a PHASE LOG `gate`/`pause` entry naming GATE-B dated ≤ the GATE-B decision row, then the `harness-switch` entry (draft in `docs/build/runs/SEED-17.md`) · GATE-B (orchestrator)
+- SEED-17 · confirm at GATE-B: chain lock = `docs/build/LEDGER.md.drive-lock`; B-9 standing go expires at GATE-G4 or 2026-10-31 (whichever first); leg-runner alerts via digest entry until P34.4 lands · GATE-B packet
+- SEED-17 · T6/GATE-B: Devin Desktop checks — loads `~/.claude/skills`? (else append B6 §5.3 overrides to OPERATING_MODE_R11.md), its co-author trailer, headless command for the fallback, scheduled sessions for the leg-runner (OP-24) · GATE-B (operator-run checks)
