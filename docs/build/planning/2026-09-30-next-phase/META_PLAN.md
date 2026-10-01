@@ -1683,6 +1683,18 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   262 rows (≈277 after splits), ≈238.5 runs + seed 20 units/23.2 runs; 5 gates, 11 pauses, 0 HUMAN rows; 1,159 dispositioned items;
   18 Part-A lines (B-24 promoted), 9 descoping defaults flagged; infra ≈$95–133/mo; ≈31 provisional ADRs from ADR-146; one
   requirement waiver (EVAL-004 copy tiers). **S4 dispatched (3 fresh-context adversarial reviews).**
+- 2026-10-01T01:43:21Z — **S4 truth/safety review done** (`reviews/S4-truth-safety.md`): **ratifiable with fixes — 4 BLOCKER, 10 MAJOR, 9 MINOR.** Blockers:
+  TS-01 agent-drafted "fast path"/`continue` could answer lines needing the operator's own words (EVAL-004 waiver, robots, counsel,
+  readout provenance, landing copy); TS-02 defaults-if-unanswered act on silence (robots continuation, personal address to third
+  parties, 49 production rows without per-step go, 58 design decisions incl. Part VIII); TS-03 republish #1 would ship a new false
+  claim ("merges only copies… see /quality/") before it is true; **TS-04 the personal-handle S0 is scoped too narrowly — 41
+  e-mail-shaped ArcGIS owner strings + handles in `connectors/src/connectors/data/camera_registry_targets.toml` on public
+  `origin/main` (+ git history; a planned Software Heritage deposit would make it irreversible), the listable public bucket,
+  target/subject ids and one `camera_operator` value; the operator was never asked about removal now → add an explicit
+  removal-only A-0 line.** Majors TS-05…TS-14 (unlabelled MUST relaxations, blanket rights re-application + Eyes on Flock mirror,
+  Part VIII ordering/redaction, inconsistent record corrections incl. ACCEPT-R8, surviving "counsel" wording, landing overclaims,
+  agent commits authored under the operator's name, S1 false claims live through 11A, pre-authorisation scope + no Class R expiry,
+  §0 count overstatements).
 
 ---
 
