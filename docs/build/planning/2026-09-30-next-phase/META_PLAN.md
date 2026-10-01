@@ -1836,6 +1836,17 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   report usage at each step." Rule from here: ≤ 2 concurrent sub-agents, no nested sub-agents (brief rule 8), per-step usage
   reported from the sub-agent token counts. Order: SEED-02b-finish ∥ SEED-13b → SEED-13c ∥ SEED-13d → SEED-14a ∥ SEED-14b →
   SEED-13e ∥ SEED-15 → T5 → T6.
+- 2026-10-01T14:29:11Z — **Recovery audit (operator asked: "are you sure we recovered and resumed safely/correctly?").** The usage-limit
+  event terminated **11** sub-agents: **6 Stage-B units** — SEED-02b, SEED-13b, SEED-13c, SEED-13d, SEED-14a, SEED-14b — and
+  **5 nested helper agents** that SEED-13c/13d had spawned to digest design notes for their rows ("Digest rows
+  P34.34a–P34.37,P34.41", "P34.38–P34.40", "P34.42a–P34.43,P34.49", "P34.44a–P34.45", "P34.46 and its split"). Checks:
+  (1) no orphaned process from the interrupted agents is running (the only live pytest belongs to the resumed SEED-02b);
+  (2) the only uncommitted changes after the event were SEED-02b's 19 files, parked byte-for-byte on `wip/seed-02b`
+  (`0f5832aa`) and now being re-reviewed by the resumed unit; no contract, DEFERRALS, BACKLOG or COVERAGE file was touched by
+  13b/c/d or 14a/b, and the helpers wrote nothing; (3) commits since `87128d43` (guard: 0 violations) touch only the planning
+  directory, so the committed seed is unchanged. **Disposition:** the 6 units are re-dispatched from scratch (SEED-02b and
+  SEED-13b running; SEED-13c, SEED-13d, SEED-14a, SEED-14b queued, ≤ 2 concurrent per the resume answer); the 5 helpers are
+  **not** re-dispatched — their work was internal to 13c/13d, and brief rule 8 now forbids nested agents.
 
 ---
 
