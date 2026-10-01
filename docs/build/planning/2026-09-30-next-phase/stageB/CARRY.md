@@ -75,3 +75,8 @@ Items surfaced by seed units that a later unit (or the operator) must resolve. E
 - SEED-13d · **orchestrator decision (conservative):** P34.40's `/v1/*` LB rule makes the API answer on the main-site host (a public-surface change) → that step is **not** "dark" under the S5-3 pre-authorisation; it needs its own in-ticket go; only the nginx roll runs pre-authorised. Patch P34.40's contract; mention at GATE-B · SEED-13e + GATE-B packet
 - SEED-13d · P34.49's capture-side OSM `user`/`uid` fix → DEFERRALS row, owner PLAN-11B (to place in 11B) · SEED-14a (if still running) else SEED-15/T5
 - SEED-13d · P34.46 measured ≈69k (÷3) per leg; no split; optional seam noted · SEED-13e sizing review
+- SEED-14a · `obligation_events.py check` reports 26 missing-anchor errors (one per new DEFERRALS row); anchors belong in `events.jsonl` → add to P34.8's contract (append events, never `migrate`); `reports/current/` shows them until then · SEED-13e (patch P34.8 contract) + T6 (projection)
+- SEED-14a · tribal candidate group recorded as moved into Round 11 (I7-S8 = a) but no landing row named; `doj_ctas_awards` is not IND-TRIBAL → PLAN-11B/11C placement note · SEED-13e (patch PLAN-11B contract)
+- SEED-14a · rerun `later_register.py` whenever `UNIVERSE_DISPOSED.csv` / `round11_plan.csv` change (real-tree test fails until then, by design) · SEED-15 / OPERATING MODE
+- SEED-14a · memory-repair README's recorded sha256 of `pending_transitions.csv` differs (expected; append a dated note) · SEED-15
+- β/14a · `OPERATIONAL_READINESS.md` L266 date (rec 210) still uncorrected · SEED-15 (append correction)
