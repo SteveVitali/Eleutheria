@@ -59,3 +59,8 @@ Items surfaced by seed units that a later unit (or the operator) must resolve. E
 - SEED-02b · `--first-parent` replay of single seed commits flags 125 seed-ADR edits (expected); the seed is judged as one range (passes) — note in HANDOFF/PR body · T6
 - SEED-02b · upstream agent-skills: `ci-boundary.sh` doesn't forward `--no-wait/--max-wait/--ledger` to the hook · orchestrator (agent-skills follow-up)
 - SEED-02b · regenerate `docs/build/reports/current/` at the end · T6
+- SEED-13b · **GATE-B packet question:** does the approved OM-20 entry "P34.6 (drill clone)" also cover P34.6's first monthly logical export and the `sig-backups` lifecycle changes? (13b read it as not covering them → in-ticket go) · GATE-B packet
+- SEED-13b · copy-batch file convention `docs/build/reports/copy-batches/batch-01.md` — adopt in OPERATING MODE (T5) · SEED-17
+- SEED-13b · Load counts include a 16 KiB DEFERRALS allowance; re-measure at dispatch (OM rule) · SEED-17 OPERATING MODE
+- SEED-13b · requirement→ticket index across all 60 11A rows + fresh-context Phase-4 sizing review · SEED-13e
+- SEED-13b · stricter windows chosen where row text and plan §8.4/§10.2 disagree (P34.3, P34.4, P34.6); P34.13 `/terms` redirect ships only with notice N-7; P34.4 `gh workflow disable reingest.yml` is a named mutation · note in HANDOFF
