@@ -15,15 +15,15 @@
 ```
 projectStatus:   IN_PROGRESS        # NOT_STARTED | IN_PROGRESS | BLOCKED | PAUSED | DONE
 stage:           P                  # M (meta-plan) → P (plan) → B (build artifacts) → HANDOFF
-nextUnit:        S5 (GATE-P)        # operator ratification: feedback/RATIFICATION_ANSWERS.md (99 lines) → then Stage B (T0–T6)
-lastCompleted:   S4c                # S4 reviews closed (reviews/REVIEW_CLOSURE.md)
+nextUnit:        S6                 # fold the GATE-P answers into NEXT_PHASE_PLAN.md + data (canonical), S6r review → then Stage B (T0–T6)
+lastCompleted:   S5                 # GATE-P: 99 lines answered (feedback/RATIFICATION_LOG.md)
 blockedOn:       (nothing)
 pauseRequested:  false
 baseline:        baseline/baseline.json @ 2026-09-30T16:31:55Z   # delta procedure in BASELINE.md
 planOut:         docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md
 memoryRoot:      docs/build
 round:           11                 # provisional; manifest phases continue at P34, rows at 201
-updatedAt:       2026-10-01T02:57:13Z   # written by `date -u` (§9 clock rule)
+updatedAt:       2026-10-01T05:04:21Z   # written by `date -u` (§9 clock rule)
 ```
 
 **Vocabularies.** Row status: `open → in-progress → done | blocked-on-operator | dropped(reason)`;
@@ -797,6 +797,13 @@ independent human review. It supersedes F4's external-labeler assumption.
 **S5 — Operator ratification (GATE-P)** · O
 - Every open Q answered or explicitly deferred; the operator's words recorded verbatim; the plan frozen as canonical
   for the phase.
+
+**S6 — Apply the ratification (added 2026-10-01T05:04:21Z)** · S · depends S5
+- Fold every answer in `feedback/RATIFICATION_LOG.md` (incl. its labelled interpretations and the 27 deviations from the
+  recommendations) into `NEXT_PHASE_PLAN.md` (status → CANONICAL), `data/round11_plan.csv`, `data/ticket_catalog.csv` and
+  `data/decision_catalog.csv` (new `operator_answer` column); recompute totals (rows, runs, cost, operator load); re-run the
+  checks. **S6r** — one fresh-context consistency review of the revised plan against the log (every answer reflected, no
+  stale recommendation left as if decided, no new contradiction); findings closed before Stage B.
 
 ### T. Translation to build artifacts (Stage B, after GATE-P)
 
@@ -1735,6 +1742,19 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
 - 2026-10-01T02:57:13Z — **S5 packet ready**: `feedback/RATIFICATION_ANSWERS.md` (fill-in sheet, 99 lines: A 24 · S5 4 · B 42 · C 13 · D2 16, generated from
   `design/S1c-decision-catalog.md` line tables + plan §4.5) alongside `NEXT_PHASE_PLAN.md` (DRAFT) and the full packet
   `design/S1c-decision-catalog.md`. D2 is folded in. Awaiting the operator (GATE-P).
+- 2026-10-01T05:04:21Z — **S5 done / GATE-P.** At the operator's request (*"Please interactively raise all the input you need from me so that for
+  each decision, you describe the issue and give your recommendation and other options, and I will select for each my choice or
+  write in a custom response. Then after that you can synthesize and proceed as you see fit"*) all 99 lines were asked in 23
+  AskUserQuestion rounds and logged verbatim with `date -u` in `feedback/RATIFICATION_LOG.md` (commit `de0b3591`). 27 lines
+  differ from the recommendation (table at the log's end); recommendations for A-22, B-18, B-33, B-34, B-36/37 were updated
+  mid-session after earlier answers and the updated recommendation accepted; two cross-answer conflicts (A-8 vs A-9 on live NC
+  rows; B-39 vs B-41 R2a on DocumentCloud) were re-asked and resolved. Headline changes: executor = **Devin Desktop
+  (`swe-2-high`, 256k context) for every ticket + a post-round Claude Code deep review**; no Track-0 production change now
+  (A-0/A-1 → early-11A tickets); GL-GATE-07/08 re-confirmed; the ≈8,088 express-terms rows kept (acceptance recorded);
+  vendor/terms-restricted pages fetched (Flock/Axon, DocumentCloud, Sourcewell/OMNIA; public pages only, Part VIII screen);
+  non-US acquisition kept (N1–N21 flip); WV-01…07 waived; no operator maintainer checks; tagline *"Public surveillance,
+  traced to the documents."* C-10 inspected (local `sig-p332-db` holds sqitch L44–52). B-16: planning branch stays local;
+  backup bundle handed to the operator. Recorded as the GATE-P go: the agent synthesizes and proceeds to Stage B. Next: S6.
 
 ---
 
