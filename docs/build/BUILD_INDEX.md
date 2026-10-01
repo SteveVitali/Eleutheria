@@ -345,3 +345,10 @@ Every `evidence` path is a committed file under `docs/build/runs/` or `docs/buil
 - **158 and 159 — unused.** Row 158 was P31.17 (LLM annotation first pass), dropped by the operator on 2026-09-25 (*"Drop P31.17"*, LEDGER § GATE DECISIONS); row 159 was P31.18 (evaluation re-derivation), moved to Round 10, where its scope became rows 184–187. Neither ran; both drafts stay in `docs/build/reports/round9-drafts/` (manifest: the note above the Round-9 chain rows and the Wave-B Plan-extensions line).
 - **184–187 — never dispatched.** HUMAN-H4, P32.22a, HUMAN-H5 and P32.23 were deferred wholesale by the operator's S3 deferral (*"let's defer all the human review steps and proceed"*, given 2026-09-28T01:15:49Z per B7; the manifest's dispatch amendment; `D-R10-HUMAN-1` and `D-R6.1-EVAL` OPEN) and are superseded by the Round-11 plan (A-6, *"Adopt waiver sentence (Recommended)"*, GATE-P log round 3, 2026-10-01T04:03:25Z; plan §8.6 — SEED-13 appends their `superseded-by(…)` tokens to the manifest). They get a row only if one is ever executed.
 - Every other chain row of the 200-row manifest has exactly one row above (seq 170 is used twice — IR-BI-08), and 190 and 195 now have their marker rows. Checked by the writer against `docs/tickets/00_MANIFEST.md` at `@PRE`.
+
+## Round 11
+
+Opened 2026-10-01T14:10:24Z by Stage-B unit SEED-13a (plan Appendix A T3; T0c sync note) in the build-memory 0.5.0 BM-INDEX-01 shape: twelve columns, the live-verification vocabulary and a `harness` cell (`<harness>/<model-id>/<tier>`, e.g. `devin-desktop/swe-2-high/subagent`). One row is appended per Round-11 chain row (201–510) at that row's close, by its worker — never reconstructed later; `landed` is `date -u +%F` at the close. No row exists yet.
+
+| seq | ticket | kind | branch | PR | base | landed | ADRs | deferrals opened → closed | live verification (live-executed / staging / fixture-only / engineered / n-a / gate-pending) | evidence | harness |
+|---|---|---|---|---|---|---|---|---|---|---|---|
