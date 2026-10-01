@@ -1769,6 +1769,20 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   sync in the seed (else the `harness` key fails its key-order check, READOUT.md's `Status:` comment trips a false "PASSED gate"
   violation, and the guards marker is inert in CI). Tier B-must (SK-01/02/03/06/09/10) is owed before the first Round-11
   dispatch; SK-03 (auto-gate pausing) is the most important of those.
+- 2026-10-01T06:12:51Z — **S6 done** (`91c8de99`: plan CANONICAL; 309 chain rows 201–509, 285.5 runs; `design/S6-ratification-applied.md`;
+  S4c checks copied into `tools/s4c/` so they are committed and re-runnable). S6 flagged two unwaived MUSTs in conflict with
+  answers and one gating question → asked at once (round 24, `4a5e19a5`): WV-08 (GOV-003 SLA times), WV-09 (crawler rule 6 for
+  DocumentCloud/MuckRock), REVIEW-R11 S0/S1 gate GATE-ANNOUNCE. **S6b** (apply round 24) dispatched.
+- 2026-10-01T06:12:51Z — **T0b done** (Tier B-must, A-14): `~/agent-skills` branch `claude/r11-skill-tier-b` (from tier-a; local; checked out =
+  live): `bec6832`, `3e88d3e`, `3971a7d` = release 0.4.0 (SK-01 CI read at every boundary + `ci-boundary.sh`; SK-02
+  `drive-build.sh` enum stop, CI gate, `--print-prompt` manual tier; SK-03 `auto` pauses at gate items unless a live
+  pre-authorization row names them; SK-06 production rule; SK-09 clock; SK-10 honest closeout). All suites pass; validator
+  unchanged on both SIG trees. **Stage-B obligations added:** port the GATE DECISIONS `kind`/pre-authorization check into the
+  vendored validator; LEDGER seed must write `projectStatus: IN_PROGRESS` (enum); SIG needs `docs/build/tools/ci_boundary.py`
+  scoped to Round-11 PRs (B4 G3a) or the red open Round-10 PRs #165/#179/#185 block the first boundary; add
+  `docs/build/tools/record_policy/ci_required.txt`; HANDOFF must describe the **Devin Desktop manual tier** (`drive-build.sh
+  --print-prompt` → paste into one new `swe-2-high` session per ticket; `gh` logged in). **T0c** (the remaining 12 proposals,
+  incl. SK-04 harness key and SK-08 operator digest) dispatched now so Stage B runs on the final skill version.
 
 ---
 
