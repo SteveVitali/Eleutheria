@@ -39,6 +39,7 @@ output. Read this brief, then your unit prompt.
    ~/agent-skills rev-parse --short HEAD>`, `Started:` / `Closed:` from `date -u`; list what you did, the checks you ran with
    their results, and open issues. (Units that share one prompt may share one ledger named in the prompt.)
 7. **Checks:** run the checks your unit names; report failures honestly; do not loosen tests.
+8. **No nested sub-agents** (added 2026-10-01T14:25:28Z after a usage-limit event): do all work in your own context; do not use the Agent/Task tool. Keep reads targeted (read sections, not whole large files) to save tokens.
 
 ## Report back (concise)
 Files written/changed · checks + results · anything you could not do or that another unit/the orchestrator must handle.

@@ -13,17 +13,17 @@
 ## CURRENT STATE
 
 ```
-projectStatus:   PAUSED             # NOT_STARTED | IN_PROGRESS | BLOCKED | PAUSED | DONE
+projectStatus:   IN_PROGRESS        # NOT_STARTED | IN_PROGRESS | BLOCKED | PAUSED | DONE
 stage:           B                  # M (meta-plan) → P (plan) → B (build artifacts) → HANDOFF
 nextUnit:        resume Stage B  # SEED-02b (finish from wip/seed-02b) ∥ SEED-13b/c/d (11A full contracts) ∥ SEED-14a/b → SEED-13e, SEED-15 → T5 (SEED-17) → T6 → GATE-B
 lastCompleted:   S6c + T0           # plan CANONICAL (S6/S6b/S6c), S6r closed; T0/T0b skills applied; T0c running
-blockedOn:       account usage limit (weekly; resets 2026-10-07 05:00 America/New_York per the API error) — A-2b: pause and ask
-pauseRequested:  true 
+blockedOn:       (nothing)
+pauseRequested:  false
 baseline:        baseline/baseline.json @ 2026-09-30T16:31:55Z   # delta procedure in BASELINE.md
 planOut:         docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md
 memoryRoot:      docs/build
 round:           11                 # provisional; manifest phases continue at P34, rows at 201
-updatedAt:       2026-10-01T14:24:47Z   # written by `date -u` (§9 clock rule)
+updatedAt:       2026-10-01T14:25:28Z   # written by `date -u` (§9 clock rule)
 ```
 
 **Vocabularies.** Row status: `open → in-progress → done | blocked-on-operator | dropped(reason)`;
@@ -1831,6 +1831,11 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   (SEED-17: OPERATING MODE, GATE DECISIONS GATE-M/GATE-P + pre-authorization rows, guards marker), T6 (validation, scans,
   push `r11/seed` + seed PR, Devin Desktop orient dry-run, HANDOFF) and GATE-B. Rough remaining effort ≈ 12–16 sub-agent
   contexts.
+- 2026-10-01T14:25:28Z — **Resumed** on the operator's answer to the A-2b pause question (verbatim option): *"Resume now (I added capacity)"* —
+  "You've switched account or enabled extra usage via /rate-limit-options; I resume immediately at ≤2 parallel agents and
+  report usage at each step." Rule from here: ≤ 2 concurrent sub-agents, no nested sub-agents (brief rule 8), per-step usage
+  reported from the sub-agent token counts. Order: SEED-02b-finish ∥ SEED-13b → SEED-13c ∥ SEED-13d → SEED-14a ∥ SEED-14b →
+  SEED-13e ∥ SEED-15 → T5 → T6.
 
 ---
 
