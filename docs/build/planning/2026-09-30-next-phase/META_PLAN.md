@@ -23,7 +23,7 @@ baseline:        baseline/baseline.json @ 2026-09-30T16:31:55Z   # delta procedu
 planOut:         docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md
 memoryRoot:      docs/build
 round:           11                 # provisional; manifest phases continue at P34, rows at 201
-updatedAt:       2026-10-01T14:25:28Z   # written by `date -u` (§9 clock rule)
+updatedAt:       2026-10-01T15:08:54Z   # written by `date -u` (§9 clock rule)
 ```
 
 **Vocabularies.** Row status: `open → in-progress → done | blocked-on-operator | dropped(reason)`;
@@ -1847,6 +1847,13 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   directory, so the committed seed is unchanged. **Disposition:** the 6 units are re-dispatched from scratch (SEED-02b and
   SEED-13b running; SEED-13c, SEED-13d, SEED-14a, SEED-14b queued, ≤ 2 concurrent per the resume answer); the 5 helpers are
   **not** re-dispatched — their work was internal to 13c/13d, and brief rule 8 now forbids nested agents.
+- 2026-10-01T15:08:54Z — **System restart (operator: "carefully resume after interruption (system restart)").** SEED-02b committed
+  (`06724e3b`) before the restart; SEED-13b and SEED-13c were stopped mid-run. Audit at 15:08:24Z: `r11/seed` @ `06724e3b`; no
+  orphaned process; uncommitted = SEED-13b's 20 contract files (rows 201–220), each complete on inspection (109–147 lines,
+  token-counted Load + Size budget present; P34.1 carries the §8.5 isolation check) but without its run ledger or final
+  checks; SEED-13c had written nothing. Both resumed from their saved transcripts (SendMessage) rather than re-dispatched:
+  13b to re-verify its files, run checks and write its ledger; 13c to write rows 221–240 matching 13b's shape. Queue after
+  them: SEED-13d → SEED-14a ∥ SEED-14b → SEED-13e ∥ SEED-15 → T5 → T6 (≤ 2 concurrent).
 
 ---
 
