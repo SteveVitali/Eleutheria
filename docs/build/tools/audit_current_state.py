@@ -686,11 +686,25 @@ def _build_index_rows(root: pathlib.Path) -> list[dict]:
     rows: list[dict] = []
     if not path.is_file():
         return rows
+    # Evidence column by header name when a table declares one (the Round-11
+    # BM-INDEX-01 shape ends `… | evidence | harness |`); otherwise the legacy
+    # last-cell convention.
+    evidence_idx: int | None = None
     for line in path.read_text().splitlines():
+        h = re.match(r"^\|\s*seq\s*\|", line)
+        if h:
+            hcells = [c.strip().lower() for c in line.strip().strip("|").split("|")]
+            evidence_idx = hcells.index("evidence") if "evidence" in hcells else None
+            continue
         m = re.match(r"^\|\s*(\d+)\s*\|\s*([A-Za-z][A-Za-z0-9.-]*)\s*\|", line)
         if m:
             cells = [c.strip() for c in line.strip().strip("|").split("|")]
-            rows.append({"seq": int(m.group(1)), "ticket": m.group(2), "evidence": cells[-1]})
+            ev = (
+                cells[evidence_idx]
+                if (evidence_idx is not None and evidence_idx < len(cells))
+                else cells[-1]
+            )
+            rows.append({"seq": int(m.group(1)), "ticket": m.group(2), "evidence": ev})
     return rows
 
 
