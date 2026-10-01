@@ -482,3 +482,38 @@ recorded per ticket (SK-04/SK-10). The **first Round-11 ticket carries an accept
 fresh** (e.g. the sub-agent cannot see a nonce planted only in the orchestrator's context, and its run ledger records its own
 start), because B7 could not verify Round 10's per-ticket isolation; if the check fails, the orchestrator pauses and the
 operator falls back to the manual tier (`drive-build.sh --print-prompt`). HANDOFF documents both.
+
+## Round 26 — follow-ups from S6r (answered 2026-10-01T06:51:11Z)
+
+S6r (`reviews/S6r-consistency.md`) raised three items that need the operator (S6R-01, S6R-03, S6R-08).
+
+| line | question (summary) | options offered | operator answer (verbatim) |
+|---|---|---|---|
+| S6R-01 (A-17) | SIG-INGEST-035 forbids direct capture from Flock (every portal path returns a bot challenge); rule 4 (no circumvention) unwaived | Keep Flock via aggregator (Recommended) · Waive 035; probe without circumventing | **Waive 035; probe without circumventing** |
+| S6R-03 (WV-06) | deletion vs SIG-GOV-008 scope + SIG-STORE-011 append-only claim table | Narrow purge exception (Recommended) · No spine deletion | **Narrow purge exception (Recommended)** |
+| S6R-08 (A-5) | does GL-GATE-08 "as is" cover new hosts? | All hosts, as ADR-088 (Recommended) · Only the 122 hosts | **All hosts, as ADR-088 (Recommended)** |
+
+Sentences adopted by selection (agent-drafted, adopted by the operator):
+- **WV-10 (S6R-01):** *"I waive INGEST-035's no-direct-capture clause; SIG may fetch Flock portal pages only when served without a challenge, and stops on any challenge."*
+- **WV-11 (S6R-03):** *"I approve one operator-only purge function as the sole exception to SIG-STORE-011, limited to material SIG must not hold (GOV-008), leaving a tombstone and a public log entry."*
+
+*Agent interpretation (labelled):* S6R-01 → P36.74 becomes a **probe-only** connector: it requests Flock portal pages
+gently; any bot challenge / 403 / interstitial ends the attempt and is recorded (no challenge-solving, header spoofing,
+proxy rotation or browser automation to defeat bot management — rule 4 and INGEST-037's anti-circumvention posture stand);
+expected yield today ≈ 0; the Eyes on Flock aggregator remains the Flock portal source; output lands in the CC BY-SA
+compartment (SIG-LIC-004a stands). S6R-03 → P37.71 implements a single DB-enforced, operator-only purge function as the
+sole exception to SIG-STORE-011; scope limited to GOV-008 "material SIG must not hold at all"; tombstone (category + date,
+never content) + public log; never on an OM-20 list; each use needs the operator's in-ticket go. S6R-08 → GL-GATE-08 applies
+to every host per ADR-088 (disallows recorded as `robots_disregarded`, disclosed as host + count); 046c reservations and
+rule-7 opt-outs honoured everywhere.
+
+### Record clarification (S6R-02): B-41 as presented
+
+S6R-02 read E4-R4b's flip as an agent interpretation. The B-41 question the operator answered listed the rows explicitly;
+its text as presented (2026-10-01, round 17) was: *"B-41. Pending source rights rows, updated for your answers. R1 Belgian
+eID leg: close (WONTFIX). R2a DocumentCloud / R2b CourtListener RECAP: decline. R3 dot_511_tx (a second TxDOT republish):
+since you kept the first (A-8), I recommend finding a TxDOT-owned layer first rather than a second republish. R4a Edmonton on
+OGL-Edmonton; R4b Hong Kong flip; R4c QLDC via the QLDTraffic API (CC-BY, now that you'll register AU keys). R4d Bellevue:
+decline (non-commercial, A-9). R5 Chicago procurement portal: flip. R6a BidNet: capture terms first; R6b Periscope:
+superseded."* The operator chose **"As listed, R3 flip"**, so R4b = flip and R4a = decided on the OGL-Edmonton basis are the
+operator's answers as presented (R2a later changed to fetch in round 18).
