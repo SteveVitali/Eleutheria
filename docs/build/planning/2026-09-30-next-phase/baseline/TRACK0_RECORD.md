@@ -62,3 +62,14 @@ procportal-sf-ca, procportal-nyc-ny, procportal-kcmo-mo, procportal-austin-tx, o
 failures of these will now email the operator. Cost: small (4 alert conditions + 2 uptime checks); Google's pricing page could not
 be parsed to quote an exact figure — the Round-11 budget-alert ticket makes it visible. One retry: the disk policy's first filter
 ordering was rejected by the API ("matches more than one metric"); re-ordered (metric.type first) and created.
+
+## Addendum — GATE-P answers on Track-0 candidates (appended 2026-10-01T07:25:50Z)
+
+At GATE-P (`feedback/RATIFICATION_LOG.md`, rounds 1–2) the operator declined every further Track-0 action:
+A-0.1 (repo-tip handle strings) → *"No, wait for P34.18"*; A-0.2 (09-27 release tree in `sig-public`) → *"No, wait for
+P34.21"*; A-0.3 (`/visual-language/` + handle-bearing pages) → *"No, wait for republish"*; A-1 (QA-9 restore drill + TLS-expiry
+alert) → *"None now; ticket it"*; A-2a (budget alert + billing export) → *"Infra only; alert later"* (P34.5). These exposures
+are **unresolved, operator-deferred** (not accepted risks), owned by early-11A rows. A-0.4 (git history) → *"Accept and
+disclose"*: history is retained and disclosed in P34.18's correction note. No production change was made after Track 0.5
+(minimal alerting, 2026-09-30) other than the operator-approved, local-only C-10 inspection of the stopped container
+`sig-p332-db` (no production contact).

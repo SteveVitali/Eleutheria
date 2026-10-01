@@ -14,16 +14,16 @@
 
 ```
 projectStatus:   IN_PROGRESS        # NOT_STARTED | IN_PROGRESS | BLOCKED | PAUSED | DONE
-stage:           P                  # M (meta-plan) → P (plan) → B (build artifacts) → HANDOFF
-nextUnit:        S6                 # fold the GATE-P answers into NEXT_PHASE_PLAN.md + data (canonical), S6r review → then Stage B (T0–T6)
-lastCompleted:   S5                 # GATE-P: 99 lines answered (feedback/RATIFICATION_LOG.md)
+stage:           B                  # M (meta-plan) → P (plan) → B (build artifacts) → HANDOFF
+nextUnit:        T1+T2              # Stage B on branch r11/seed: SEED-11/12 (spec + ADRs) ∥ SEED-01…10,16 (memory repair); SEED-02/03 after T0c
+lastCompleted:   S6c + T0           # plan CANONICAL (S6/S6b/S6c), S6r closed; T0/T0b skills applied; T0c running
 blockedOn:       (nothing)
 pauseRequested:  false
 baseline:        baseline/baseline.json @ 2026-09-30T16:31:55Z   # delta procedure in BASELINE.md
 planOut:         docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md
 memoryRoot:      docs/build
 round:           11                 # provisional; manifest phases continue at P34, rows at 201
-updatedAt:       2026-10-01T05:04:21Z   # written by `date -u` (§9 clock rule)
+updatedAt:       2026-10-01T07:26:23Z   # written by `date -u` (§9 clock rule)
 ```
 
 **Vocabularies.** Row status: `open → in-progress → done | blocked-on-operator | dropped(reason)`;
@@ -1796,6 +1796,16 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   44 ADRs (ADR-146…189), 353 decision ids, operator ≈27–49 h over ≈27–29 touchpoints.** Waiver count in earlier entries of this
   log (seven, nine) is superseded by this entry. One question carried to GATE-B: approve "headless Devin command" as a second
   fallback (S6R-16). Next: wait for T0c, then Stage B (T1…T6).
+- 2026-10-01T07:26:23Z — **Stage B starts** on branch **`r11/seed`**, cut at the planning head `88fc299d` (`claude/next-phase-planning` stays
+  as the GATE-P/S6 pointer). Harness for the seed segment: `claude-code/claude-opus-5-5/subagent` (this orchestrator + fresh
+  sub-agents). **Authority for control-ledger edits (SEED-01 C0 preflight; P10):** the operator's GATE-P instruction, verbatim
+  (S5 request, 2026-09-30): *"Then after that you can synthesize and proceed as you see fit"* — Stage B edits LEDGER,
+  DEFERRALS, the manifest, BACKLOG and COVERAGE_MATRIX on `r11/seed` only; nothing reaches `main` (the operator merges).
+  **T0 checklist:** F-074 correction already appended (17:56:21Z entry above; SEED-04 registers all 24 stamps in
+  `date_corrections.csv`); `make scan-secrets` clean on the planning tree (4,866 files, 0 credential shapes; the
+  `SIG_INTAKE_*` lines were reworded earlier, C-9 confirmed); `baseline/TRACK0_RECORD.md` addendum records A-0/A-1/A-2a as
+  unresolved, operator-deferred, and A-0.4 accept-and-disclose; skills T0/T0b applied, T0c running; the operator's backup
+  bundle exists (`~/SIG-planning-backup-20261001T0503Z.bundle`; refreshed at T6).
 
 ---
 
