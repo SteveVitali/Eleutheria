@@ -443,3 +443,29 @@ sign-off; Stage B's own human items (HG lines, operator-only actions) still paus
 | C-5 | (choice) | omit until written | no "who runs SIG" section |
 | B-18 / B-33 / B-34 / B-36-37 / A-22 | recs updated mid-session after A-7/A-17/B-32/S5-4 answers | updated recs accepted | AU keys; territories = US; N1–N21 flip; TR facts+cite; share lists used |
 
+
+## Round 24 — follow-ups from S6 (answered 2026-10-01T06:05:22Z)
+
+S6 (`design/S6-ratification-applied.md`) found two answers that conflict with spec MUSTs not covered by a waiver, and one open
+gating question.
+
+| line | question (summary) | options offered | operator answer (verbatim) |
+|---|---|---|---|
+| S6-F1 | SIG-GOV-003 (published SLAs by category, privacy/safety first) vs B-8 (no time promises) | Priority order, no times (Recommended) · Keep owed · Publish SLAs after all | **Priority order, no times (Recommended)** |
+| S6-F2 | SIG-INGEST-036 rule 6 ("ask first" for small civil-society projects) vs B-39/R2a (fetch DocumentCloud/MuckRock) + no outside contact | Waive rule 6 for these (Recommended) · Link-only after all | **Waive rule 6 for these (Recommended)** |
+| S6-F3 | does the post-round Claude Code review (REVIEW-R11) gate the announcement? | S0/S1 must be dispositioned (Recommended) · Advisory only | **S0/S1 must be dispositioned (Recommended)** |
+
+Sentences adopted by selection (agent-drafted, adopted by the operator):
+- **S6-F1 (WV-08):** *"I waive GOV-003's response-time SLAs; SIG publishes its handling priority without time commitments."*
+- **S6-F2 (WV-09):** *"I waive crawler rule 6 (ask first) for DocumentCloud/MuckRock; SIG fetches public pages only, gently, and honours any opt-out immediately."*
+
+*Agent interpretation (labelled):* S6-F1 → new waiver WV-08: the corrections page publishes the handling order
+(privacy-harm and safety first, then factual corrections, then other) with no time commitment; GOV-003's priority clause is
+MET-DIFFERENTLY, its SLA clause WAIVED(ADR). S6-F2 → new waiver WV-09 scoped to DocumentCloud/MuckRock only (P36.77 may
+activate after its HG-03 flip); rules 3, 4 and 7 still bind. S6-F3 → REVIEW-R11's S0/S1 findings must each be fixed or
+dispositioned by the operator before GATE-ANNOUNCE; S2/S3 findings feed the next round.
+
+**On "own words by selection" (S6 flag 7).** The operator set this format at S5 (*"I will select for each my choice or write
+in a custom response"*), and every own-words line offered a custom-text option. Selecting a drafted sentence is therefore
+recorded as the operator adopting it as their words; the log labels each as "agent-drafted, adopted by the operator". The
+plan/packet sha256 values S6 computed afterwards are labelled as computed after the fact.
