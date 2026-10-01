@@ -43,13 +43,24 @@ def test_belief_pinned_request_is_reproducible_after_a_correction(
 
 
 def test_now_pinned_request_sees_the_correction(client: TestClient, store: InMemoryStore) -> None:
-    baseline = client.get(_URL).json()["fact"]["envelope"]["value"]
+    baseline = client.get(_URL).json()["fact"]["envelope"]
     store.correct_claim("portal", value=50, asserted_at=CORRECTION_ASSERTED_AT)
-    now = client.get(_URL).json()["fact"]["envelope"]["value"]
-    # The correction moved the resolved value; a now-pinned read is not cached and
-    # reflects it (SIG-API-006).
-    assert now != baseline
-    assert now == 50
+    now = client.get(_URL).json()["fact"]["envelope"]
+    # The correction moved the resolution; a now-pinned read is not cached and
+    # reflects it (SIG-API-006). Since P31.8 completed the genre axis the
+    # contract's figure is admissible (D5, §10.5's own example: weak support for
+    # the CURRENT count, capped W1 — contracted_device_count's job is the
+    # contract's quantity), so the corrected 50 vs the contract's 42 is a spread
+    # beyond the FAST relative tolerance (U4): the honest outcome is UNRESOLVED
+    # with the corrected claim leading and both values kept visible — never a
+    # silently merged answer.
+    assert now["value"] != baseline["value"]
+    assert now["resolution_status"] == "UNRESOLVED"
+    assert now["unresolved_code"] == "U4"
+    corrected = f"portal~corrected@{CORRECTION_ASSERTED_AT.isoformat()}"
+    assert now["supporting_claim_ids"] == [corrected]
+    assert now["dissenting_claim_ids"] == ["contract"]
+    assert corrected in now["considered_claim_ids"]
 
 
 def test_a_correction_is_a_new_claim_never_an_edit(store: InMemoryStore) -> None:

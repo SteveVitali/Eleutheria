@@ -62,6 +62,16 @@ PREDICATE_NAMED_COLUMN_ALLOWLIST = {
     ("funding_instrument", "instrument_type"),
     ("legal_instrument", "instrument_type"),
     ("accountability_event", "event_type"),
+    # P31.8 (SIG-STORE-046): the `citation`/`first_observed`/`response_status`
+    # predicates registered for the records/legal families are the CLAIM surface;
+    # these columns are the entities' own typed identity/bookkeeping:
+    # `legal_instrument.citation` is the instrument's own canonical citation (the
+    # row IS the instrument), `records_request.response_status` is the request's
+    # workflow column, and `physical_asset.first_observed` is the cached
+    # first-observation timestamp — none is a writable claim-bearing attribute.
+    ("legal_instrument", "citation"),
+    ("physical_asset", "first_observed"),
+    ("records_request", "response_status"),
 }
 
 

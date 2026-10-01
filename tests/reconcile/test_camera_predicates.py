@@ -136,79 +136,45 @@ def test_strategy_choices_per_predicate_class() -> None:
     assert rs.volatility_class("camera_status") == "FAST"
 
 
-#: The procurement + accountability rows P31.5 registered with an assessed `connector_run`
-#: directness (ADR-112 §6). Explicit, so a later row is not exempted by accident.
-P31_5_ASSESSED = frozenset(
-    {
-        "buyer",
-        "seller",
-        "funder",
-        "recipient",
-        "amount",
-        "currency",
-        "signed_date",
-        "start_date",
-        "end_date",
-        "renewal_options",
-        "products",
-        "quantities",
-        "document",
-        "acquisition_channel",
-        "parent_cooperative_contract",
-        "amends_contract",
-        "lifecycle_transition",
-        "instrument_type",
-        "program_name",
-        "award_date",
-        "period",
-        "conditions",
-        "notice_type",
-        "posted_date",
-        "response_deadline",
-        "title",
-        "description",
-        "place_of_performance",
-        "country",
-        "matched_keyword",
-        "content_term",
-        "event_type",
-        "event_date",
-        "event_organizations",
-        "event_deployments",
-        "event_technologies",
-        "affected_party_class",
-        "proceeding_court",
-        "proceeding_docket_number",
-        "proceeding_case_name",
-        "proceeding_parties",
-        "proceeding_party_role",
-        "proceeding_filed_date",
-        "proceeding_disposition_date",
-        "proceeding_courtlistener_id",
-        "proceeding_recap_id",
-    }
-)
-
-
-#: The P31.6 rows registered with an assessed `connector_run` directness (ADR-113):
-#: `vendor` follows the partner family (a connector run is mid-directness evidence
-#: for a stated vendor, like buyer/seller); `configured_sharing_partner` likewise
-#: (the run emits the edge claim from the audited/parsed artifact — the snapshot
-#: itself stays the D1 genre).
-P31_6_ASSESSED = frozenset({"vendor", "configured_sharing_partner"})
-
-
-def test_pre_existing_predicates_read_d6_for_the_new_genres() -> None:
-    # Behaviour-preserving: before P30.2a a claim in these genres was dropped (no
-    # directness row); now it is dropped as D6. The assessment is owed (D-P30.2a-1).
-    # P31.5 / ADR-112 assessed the procurement + accountability family it registered;
-    # P31.6 / ADR-113 assessed its two rows; every other pre-existing row is still D6.
-    camera = set(_measured_camera_predicates())
-    for pid, row in predicate_registry().items():
-        if pid in camera or pid in P31_5_ASSESSED or pid in P31_6_ASSESSED:
-            continue
-        assert row["directness"]["camera_registry"] == "D6", pid
-        assert row["directness"]["connector_run"] == "D6", pid
+def test_p31_8_assessed_the_owed_camera_registry_and_connector_run_cells() -> None:
+    # D-P30.2a-1 closed in P31.8: the remaining pre-existing rows no longer read
+    # the P30.2a blanket D6 for camera_registry/connector_run — the cells are
+    # assessed under ADR-104's rule (a connector pull is D3 for a record's
+    # descriptive facts, D1 for its own identifiers; a camera registry bears on
+    # camera-record facts and device counts, nothing else). The full
+    # measured-pair admissibility invariant lives in
+    # tests/ontology/test_predicate_registry_p318.py.
+    reg = predicate_registry()
+    # identifiers: the pull IS the record -> D1.
+    assert reg["federal_award_id"]["directness"]["connector_run"] == "D1"
+    assert reg["organization_ori"]["directness"]["connector_run"] == "D1"
+    # descriptive facts: the pull strongly implies the record's fields -> D3.
+    for pid in (
+        "deployment_exists",
+        "contract_value",
+        "statutory_citation",
+        "configured_retention_days",
+        "active_device_count",
+        "windowed_search_count",
+        "asset_data_controller",  # admitted, then never_resolve fires (§12.4)
+    ):
+        assert reg[pid]["directness"]["connector_run"] == "D3", pid
+    # a camera registry enumerates devices and states locations/operators; it
+    # says nothing about procurement or proceedings.
+    assert reg["active_device_count"]["directness"]["camera_registry"] == "D3"
+    assert reg["fixed_asset_location"]["directness"]["camera_registry"] == "D2"
+    assert reg["proceeding_posture"]["directness"]["camera_registry"] == "D6"
+    assert reg["contract_value"]["directness"]["camera_registry"] == "D6"
+    # the measured genres beyond the P31.5 axis are on every row.
+    for row in reg.values():
+        assert {
+            "agenda_document",
+            "bill_index",
+            "portal_document",
+            "community_map",
+            "contract",
+            "official_statement",
+        } <= set(row["directness"])
 
 
 def test_absolute_tolerance_rejects_an_unknown_kind(monkeypatch: pytest.MonkeyPatch) -> None:
