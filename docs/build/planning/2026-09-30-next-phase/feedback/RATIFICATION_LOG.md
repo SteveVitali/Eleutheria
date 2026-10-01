@@ -469,3 +469,16 @@ dispositioned by the operator before GATE-ANNOUNCE; S2/S3 findings feed the next
 in a custom response"*), and every own-words line offered a custom-text option. Selecting a drafted sentence is therefore
 recorded as the operator adopting it as their words; the log labels each as "agent-drafted, adopted by the operator". The
 plan/packet sha256 values S6 computed afterwards are labelled as computed after the fact.
+
+## Round 25 — Devin Desktop dispatch mode (answered 2026-10-01T06:14:06Z)
+
+| line | question (summary) | options offered | operator answer (verbatim) |
+|---|---|---|---|
+| A-15 (dispatch) | how Devin Desktop runs tickets in fresh contexts | Orchestrator + sub-agents (Recommended) · Manual tier, one session per ticket · Headless Devin command | **Orchestrator + sub-agents (Recommended)** |
+
+*Agent interpretation (labelled):* LEDGER `dispatchTarget: subagent`; one Devin Desktop orchestrator session (`swe-2-high`)
+runs orchestrate-build and dispatches each ticket to a fresh sub-agent; CI is read at every boundary (SK-01); harness + model
+recorded per ticket (SK-04/SK-10). The **first Round-11 ticket carries an acceptance check that the sub-agent context is
+fresh** (e.g. the sub-agent cannot see a nonce planted only in the orchestrator's context, and its run ledger records its own
+start), because B7 could not verify Round 10's per-ticket isolation; if the check fails, the orchestrator pauses and the
+operator falls back to the manual tier (`drive-build.sh --print-prompt`). HANDOFF documents both.
