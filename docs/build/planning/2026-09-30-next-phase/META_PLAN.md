@@ -951,6 +951,9 @@ from them (agent interpretation labelled there; ratified at S5):
 | Launch | **public announcement "when the time is right"** (U-009) | S2 defines explicit announce-readiness criteria |
 | Coverage priority | **US-nationwide Flock, Axon and other vendors; high-quality sources** (U-007) | I8 ordering; Flock/Axon terms conflicts (I7) go to S5 as explicit decisions |
 | New rows | **K14, L1–L3, B7 added** | waves updated (§9) |
+
+Track 0.5, operator verbatim (2026-10-01T00:09:20Z): *"yes you can set up minimal alerting now to 14stevevitali@gmail.com"* → email channel + 2 uptime
+checks + 4 alert policies created (`baseline/TRACK0_RECORD.md` §0.5); restore drill not included (stays a Round-11 ticket).
 ---
 
 ## 8. Schemas, vocabularies and conventions
@@ -1646,6 +1649,8 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   15 owner gaps assigned; **17 conflicts left for S2** (seed guard core; ADR date-footer vs frozen policy; seed register edits
   needing obligation events before M3; harness key form; REL-04b vs REL-06; D3 US-only vs I8 international waves; restoration
   placement; CAP-01 timing). **Round size ≈6× Round 10 → S2 must structure Round 11 into gated waves/sub-rounds.** S1b dispatched.
+- 2026-10-01T00:09:20Z — **Track 0.5 done** (operator-approved minimal alerting): email channel, uptime checks (site, API /health), alert policies
+  (job failures excl. sig-probe, sig-pg disk > 85%, both uptime checks). Recorded in `baseline/TRACK0_RECORD.md` §0.5.
 
 ---
 

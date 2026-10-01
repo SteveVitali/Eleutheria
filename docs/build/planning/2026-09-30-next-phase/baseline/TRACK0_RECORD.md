@@ -40,3 +40,25 @@ exclusion is fixed and regression-tested. Other routes that may be internal-only
 ## 0.3 / 0.4
 - 0.3 (MapRoulette key rotation) — operator, verbatim (2026-09-30): *"MapRoulette key can stay stale for now."* Recorded; no action (routed to G1 secret hygiene as a known accepted risk).
 - 0.4 — answered at GATE-M: no merge; Round 11 builds on the chain.
+
+## 0.5 — Minimal alerting (operator-approved 2026-10-01T00:09:20Z)
+
+Authority: operator, verbatim: *"yes you can set up minimal alerting now to 14stevevitali@gmail.com"* (asked because 0 alert
+policies / 0 notification channels existed while the first-run schedule wave starts 2026-10-01 and the OSM replay runs 10-10).
+Scope taken: alerts only — the optional restore drill was **not** included in the approval and was not done (stays a Round-11 ticket).
+
+| resource | id | detail |
+|---|---|---|
+| notification channel (email → the operator's address) | `notificationChannels/10808426210098728267` | "SIG operator email (Track 0.5)" |
+| uptime check — site | `uptimeCheckConfigs/sig-site-surveillancegraph-org-F2yZbTB73dw` | HTTPS GET https://surveillancegraph.org/ every 5 min, 10 s timeout |
+| uptime check — API | `uptimeCheckConfigs/sig-api-health-or4_q7yICx4` | HTTPS GET https://sig-api-e5ctyx36jq-uc.a.run.app/health every 5 min |
+| alert policy — job failures | `alertPolicies/7285515107319155929` | `run.googleapis.com/job/completed_execution_count` result=failed > 0 per job / 5 min; **excludes `sig-probe`** (fails every sweep since 09-27 — stale baked-in config; Round-11 fix) ; auto-close 30 min |
+| alert policy — disk | `alertPolicies/10812940548821947108` | `cloudsql.../disk/utilization` > 0.85 for 10 min on sig-pg (15 GB, auto-resize ON, no limit) |
+| alert policy — site uptime | `alertPolicies/10812940548821949519` | check failing from >1 region (20-min window) |
+| alert policy — API uptime | `alertPolicies/1149999306662850342` | same |
+
+Recent failure context (last 40 executions): sig-probe 12 failures; one failure each for sig-ingest-sam-gov, raa-prefectures,
+procportal-sf-ca, procportal-nyc-ny, procportal-kcmo-mo, procportal-austin-tx, osm-overpass, openstates, decp-fr — future
+failures of these will now email the operator. Cost: small (4 alert conditions + 2 uptime checks); Google's pricing page could not
+be parsed to quote an exact figure — the Round-11 budget-alert ticket makes it visible. One retry: the disk policy's first filter
+ordering was rejected by the API ("matches more than one metric"); re-ordered (metric.type first) and created.
