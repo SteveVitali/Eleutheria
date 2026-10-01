@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "03effc4d03dd584d742b451f0ecf97dadd4d69d3",
+  "input_commit": "f333b03e73cbb8db8d935d2a2f9ca5bbaf89b5b3",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -746,7 +746,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "54f4bbfac4cf3ceab0958f44fdaeacf3e491ae60d2cdad2c3929a503fef6d00a"
+      "sha256": "6e516f292dc7589fb9b6f00b2764d02016a24020837329e79486dabc5c297ce6"
     },
     {
       "path": "docs/build/readouts/ACCEPT-R10.md",
@@ -1942,7 +1942,7 @@
     },
     {
       "path": "docs/tickets/232_P34.27__remaining-append-only-restorations.md",
-      "sha256": "2454b2729923a57dbabcbc3645b0d07002a14580a642b9b2f6464e5f75f10b85"
+      "sha256": "e6ec95870298861113c23236353320aebde71b5088aa9fa5c64e4065cb4b64ca"
     },
     {
       "path": "docs/tickets/233_P34.28__readout-authorship-and-signed-gate-check.md",
@@ -2010,7 +2010,7 @@
     },
     {
       "path": "docs/tickets/249_P34.40__serving-topology-dark.md",
-      "sha256": "810d5b0004f487e3572fb2a31260bb913428c6b74e1110d09a06423522055aac"
+      "sha256": "fdfa8baa4ef702e8d39910ee74475c576bff1e5e5d431581caae19a3dcd05407"
     },
     {
       "path": "docs/tickets/250_P34.41__withdrawal-barrier-bytes.md",

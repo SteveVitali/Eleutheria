@@ -296,3 +296,7 @@ manifest row and not operator work; ≈ 8–12 contexts sized by its own meta-pl
   `docs/build/runs/SEED-17.md` § Draft.
 - Machine state: `docs/build/LEDGER.md` (head + CURRENT STATE), manifest `docs/tickets/00_MANIFEST.md`, register
   `docs/tickets/DEFERRALS.md`.
+
+## Merge-sitting guidance (GATE-B packet Q-10; recorded 2026-10-01T18:11:04Z)
+
+Merging #180 now conflicts once in `docs/build/BUILD_INDEX.md` (row 183: `b01ef231` on #179 vs the stack's later text): take the **stack's side** at #180; the simulation then runs clean to #190 and differs from #190 only in `docs/build/readouts/ACCEPT-R10.md`. At the seed PR's merge, resolve `ACCEPT-R10.md` to the **seed's text** (GB-Q9 (ii) *"Keep the chain's record (Recommended)"*). Agents never merge.

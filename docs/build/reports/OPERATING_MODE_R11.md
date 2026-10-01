@@ -137,9 +137,9 @@ in-ticket go.
 
 **OM-20 in force for 11A.** The thirteen pre-authorised rows are GATE DECISIONS `### Round 11` rows of kind
 `pre-authorization`, one per row id, each with `expires: GATE-G4` and `voided-by:` (a red probe, a failed restore
-point, a production read that contradicts a record). P34.40's row covers **only its `sig-web` nginx roll (L1)**: the
-`/v1/*` load-balancer step (L2) changes what the main-site host answers and needs its own in-ticket go (orchestrator's
-conservative reading, SEED-13d; raised in the GATE-B packet). P34.6's row covers the drill clone only. A row not on a
+point, a production read that contradicts a record). P34.40's rows cover **both legs**: the `sig-web` nginx roll (L1, S5-3) and the `/v1/*` load-balancer step (L2), the latter
+by the operator's GATE-B answer GB-Q4 *"All of P34.40 pre-approved"* (2026-10-01T18:11:04Z), superseding the orchestrator's earlier
+conservative L1-only reading. P34.6's row covers the drill clone only. A row not on a
 live list pauses in-ticket for the operator's go; a pre-authorised step that meets a new fact stops and asks.
 
 ## 4. Skill rules (build-memory 0.5.0; T0c)

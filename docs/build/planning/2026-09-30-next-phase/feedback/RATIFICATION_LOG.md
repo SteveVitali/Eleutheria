@@ -538,3 +538,30 @@ follows A-9. SB-3 → fallback order on a failed isolation check: (1) a verified
 `drive-build.sh --agent-cmd`, (2) the manual tier; T6 verifies whether such a command exists. The other four drafts SEED-12b
 withheld (SIG-LIC-006 physical ODbL table, SIG-INGEST-004 binding-level versions, SIG-ENG-004 MET definition, SIG-ONTO-060
 scope list) keep their MUSTs; the work stays owed (owning tickets / BL rows), so no operator words are needed.
+
+## Round 28 — GATE-B packet, pre-push and scope questions (answered 2026-10-01T18:11:04Z)
+
+From `stageB/GATEB_PACKET.md` (SEED-18b) and `stageB/PREPUSH_SCAN.md`. Q-8 (Devin Desktop checks) and Q-12 (GATE-B go) are
+asked after the push and the seed PR's CI; Q-10 is merge-sitting guidance (no answer needed).
+
+| line | question (summary) | options offered | operator answer (verbatim) |
+|---|---|---|---|
+| GB-Q1 | 12 lines in 5 planning files record service URLs of public layers exposing plate reads / LPR hits / CFS rows / registrant PII (Part VIII pointers); push publishes them | Forward-fix before push (Recommended) · Rewrite unpushed history · Publish as recorded | **Publish as recorded** |
+| GB-Q2 | 31 personal-looking `camreg_*` ids in 113 lines / 27 files (already public) + 2 new individual-looking ArcGIS owner usernames | Ids as recorded; fix 2 usernames (Recommended) · Tokenise every occurrence · Publish everything as recorded | **Publish everything as recorded** |
+| GB-Q3 | does "P34.6 (drill clone)" also cover P34.6's first monthly export + `sig-backups` lifecycle changes? | Drill clone only (Recommended) · Cover both too | **Drill clone only (Recommended)** |
+| GB-Q4 | P34.40's `/v1/*` LB rule (public-surface change) — covered by "P34.40 (dark LB/nginx)"? | /v1/* needs its own go (Recommended) · All of P34.40 pre-approved | **All of P34.40 pre-approved** |
+| GB-Q5/6/7 | chain lock path; B-9 expiry (GATE-G4 or 2026-10-31, whichever first); leg-runner alerts via digest until P34.4 | Confirm all three (Recommended) · Confirm, with changes | **Confirm all three (Recommended)** |
+| GB-Q9 (i) | were the 00:58–01:01Z pushes to #179/#165/#185 (`b01ef231`, `f8377011`, `4a2ce75d`) made at the operator's direction? | Yes, at my direction · Don't recall | **Yes, at my direction** (tool not named) |
+| GB-Q9 (ii) | which ACCEPT-R10 record stands after the merges | Keep the chain's record (Recommended) · Keep PENDING · Decide at the merge sitting | **Keep the chain's record (Recommended)** |
+| GB-Q11 | approve SEED-17's draft `harness-switch` entry | Approve as written (Recommended) · Edit it | **Approve as written (Recommended)** |
+
+*Agent interpretation (labelled):* GB-Q1/Q2 → the seed is pushed **as recorded** (no redaction): the Part VIII layer
+pointers and the personal-looking handles / two owner usernames become public with the planning directory; the seed PR body
+discloses both (the operator chose against both recommendations). The rows themselves were never copied, and P34.18 still
+re-keys the 31 ids. GB-Q3 → P34.6's export and lifecycle change each need an in-ticket go. GB-Q4 → **P34.40's L2 `/v1/*`
+step is pre-authorised** with L1 under the S5-3 list (expires GATE-G4; same voided-by conditions); recorded as an appended
+GATE DECISIONS pre-authorization row; P34.40's contract and the OPERATING MODE line updated. GB-Q9 → the three pushes
+recorded as made at the operator's direction (tool unrecorded); at the seed PR's merge `ACCEPT-R10.md` resolves to the
+chain's text, and P34.27 appends a dated annotation naming `4a2ce75d` and why it is superseded. GB-Q11 → C10 appends the
+draft verbatim.
+
