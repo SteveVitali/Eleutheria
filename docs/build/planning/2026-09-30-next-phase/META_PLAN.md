@@ -1806,6 +1806,15 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   `SIG_INTAKE_*` lines were reworded earlier, C-9 confirmed); `baseline/TRACK0_RECORD.md` addendum records A-0/A-1/A-2a as
   unresolved, operator-deferred, and A-0.4 accept-and-disclose; skills T0/T0b applied, T0c running; the operator's backup
   bundle exists (`~/SIG-planning-backup-20261001T0503Z.bundle`; refreshed at T6).
+- 2026-10-01T07:44:27Z — **T0c done** (remaining 12 B6 proposals; release 0.5.0 completes B6): `~/agent-skills` branch `claude/r11-skill-rest`
+  (local; checked out = live): `c814f8d`, `fee87b1`, `4129756`, `e172f52`, `4140fda`, `8aeb6dc`. SK-04 harness identity, SK-05
+  repair discipline, SK-07 orient budget, SK-08 digest (`digest.sh`), SK-11, SK-12, SK-15 validator checks (vocabularies
+  warn unless the guards marker is present), SK-16 history mode (`check-history.sh`), SK-21 adr-index, SK-23, SK-24, SK-25.
+  Suites pass; both SIG trees 0 violations / 73 warnings. A read-only replay over SIG's 479 first-parent commits flags every
+  B4 oracle commit (incl. `c2055d96` at its merge). **The full sync list, new SIG files and the seed LEDGER key contract are
+  in `stageB/T0c_sync_obligations.md`** (read by SEED-02/03/05/10/13/17); orchestrator override recorded there: the seed keeps
+  `dispatchTarget: subagent` / `harness: devin-desktop/swe-2-high/subagent` per round 25. Not run: the cross-harness eval
+  (Q-B6-5). Stage B so far: SEED-11a–d, SEED-12a, T2-α (SEED-01/04/06/07) running in parallel.
 
 ---
 
