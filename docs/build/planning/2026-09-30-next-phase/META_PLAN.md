@@ -1755,6 +1755,11 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   non-US acquisition kept (N1–N21 flip); WV-01…07 waived; no operator maintainer checks; tagline *"Public surveillance,
   traced to the documents."* C-10 inspected (local `sig-p332-db` holds sqitch L44–52). B-16: planning branch stays local;
   backup bundle handed to the operator. Recorded as the GATE-P go: the agent synthesizes and proceeds to Stage B. Next: S6.
+- 2026-10-01T05:08:27Z — **Baseline delta (read-only, `git ls-remote` / `gh pr list`).** The operator's integration moved: `origin/main` = `00f67f4b`
+  (merge of #154 at 2026-10-01T04:26:00Z; #141–#154 merged 04:25–04:26Z), 36 PRs open (#155–#190). The chain tip
+  `devin/p33-8-agent-docs-refresh` is unchanged at `b051732c`, so the planning base is unaffected (Round 11 stacks on #190); the
+  full A1 `--delta` still runs before T6. **S6** (apply ratification) and **T0** (Tier A skill changes on `~/agent-skills` branch
+  `claude/r11-skill-tier-a`, local only) dispatched in fresh contexts.
 
 ---
 
