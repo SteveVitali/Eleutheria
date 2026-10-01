@@ -1636,6 +1636,16 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   address; agent spend is unmeasured (A-2: $300 ceiling = infrastructure only, agent spend reported separately); B-34 does not
   extend GL-GATE-07 to 21 non-US sources; A-9 recommends "SIG may be commercial"; the EVAL-004 waiver needs the operator's own
   words; projected infra ≈$100–160/mo (design estimates) — nothing recommended needs an over-$300 approval.
+- 2026-10-01T00:02:28Z — **S1a done** (`data/ticket_catalog.csv` 317 rows, `research/S1a-ticket-catalog.md`): all 441 source ids from 22 families
+  present (nothing dropped); **seed 20 units / 23.2 runs; Round-11 repo tickets 252 / 234.5 runs** (34 early R11 / 29.5 runs; 11
+  conditional / 10.5; 15 size-L likely to split); operator actions 23; later 22 / 25.0 runs (each with a trigger). R11 runs by
+  theme: UX-CORE 56.5, SOURCES 29.5, TRANSPARENCY 26.5, DATA-CORRECTNESS 23.5, RELEASE-OPS 22.0, R10-ACTIVATION 19.0, SAFETY-
+  HONESTY 18.0, UX-EXPLORE 17.5, MEMORY-TRUTH 10.0, DEBT 5.5, GOVERNANCE-RECORDS 4.5, CI-TOOLCHAIN 2.0. Cost +$33.69/mo over
+  G1's unverified $90–100 baseline ≈ $124–134/mo (risk only if Q-31 DNS move declined or abuse on public buckets before the
+  budget alert/kill switch). 91 multi-stream merges; DAG 317 nodes / 749 edges, acyclic; longest seed→R11 chain 21.2 runs.
+  15 owner gaps assigned; **17 conflicts left for S2** (seed guard core; ADR date-footer vs frozen policy; seed register edits
+  needing obligation events before M3; harness key form; REL-04b vs REL-06; D3 US-only vs I8 international waves; restoration
+  placement; CAP-01 timing). **Round size ≈6× Round 10 → S2 must structure Round 11 into gated waves/sub-rounds.** S1b dispatched.
 
 ---
 
