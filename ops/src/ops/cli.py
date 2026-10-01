@@ -381,6 +381,49 @@ def build_parser() -> argparse.ArgumentParser:
         "the completion is recorded partial)",
     )
 
+    replay = sub.add_parser(
+        "replay-ingest",
+        help="P31.6 / ADR-113: the asserting replay — re-run a source's PERSISTED "
+        "captures (ingest_run_capture digests resolved from the mounted OCFL "
+        "capture store) through the post-capture stages and assert the new claim "
+        "set as a fresh is_replay ingest_run. Never fetches: a digest absent from "
+        "the store is reported missing and skipped",
+    )
+    replay.add_argument("--source", required=True, help="source id to replay")
+    replay.add_argument(
+        "--run-id",
+        action="append",
+        default=None,
+        help="replay only these ingest_run ids' capture marks (repeatable; "
+        "default: every non-replay run of the source's logical-run prefix)",
+    )
+    replay.add_argument(
+        "--replay-key",
+        default=None,
+        help="the replay run's logical_run key scoping its lineage marks "
+        "(default <source>@replay-p31-6)",
+    )
+    replay.add_argument(
+        "--dsn", default=None, help="PostgreSQL DSN (else SIG_STAGING_DSN / SIG_PG_* parts)"
+    )
+    replay.add_argument(
+        "--gcs-bucket",
+        default=None,
+        help="bucket for the run row (default: SIG_OPS_GCS_BUCKET; unset = local mirror only)",
+    )
+    replay.add_argument(
+        "--cadence",
+        default=None,
+        help="ops/cadence.toml path (for the runs prefix; default packaged)",
+    )
+    replay.add_argument(
+        "--commit-chunk-size",
+        type=int,
+        default=None,
+        help="PG sink: claims committed per transaction (default: $SIG_COMMIT_CHUNK_SIZE "
+        "else the sink default)",
+    )
+
     sink_bench = sub.add_parser(
         "sink-bench",
         help="P31.3 (ADR-110): fetch ONE green source once through the gated live "
@@ -1250,6 +1293,83 @@ def _cmd_scheduled_ingest(args: argparse.Namespace) -> int:
     return exit_code
 
 
+def _cmd_replay_ingest(args: argparse.Namespace) -> int:
+    """P31.6 / ADR-113: the asserting replay over persisted captures."""
+    from connectors.runner import replay_ingest
+    from connectors.sinks import resolve_commit_chunk_size
+
+    from .alerts import utcnow
+    from .scheduled import RunRow, load_cadence, run_object_uri, store_run_row
+
+    dsn = args.dsn or os.environ.get("SIG_STAGING_DSN") or _cloudsql_dsn_from_parts()
+    if not dsn:
+        print("replay-ingest: needs --dsn / SIG_STAGING_DSN / SIG_PG_* parts")
+        return 2
+    try:
+        commit_chunk_size = resolve_commit_chunk_size(args.commit_chunk_size)
+    except ValueError as bad:
+        print(f"replay-ingest: invalid commit chunk size: {bad}")
+        return 2
+    capture_dir = Path(os.environ.get("SIG_CAPTURE_DIR") or str(_STATE_DIR / "captures"))
+    gcs = _gcs_bucket(args.gcs_bucket)
+    cadence = load_cadence(args.cadence)
+    local_dir = Path(os.environ.get("SIG_RUN_LOG", str(_STATE_DIR / "runs")))
+    started = utcnow()
+    t0 = time.monotonic()
+    run_uri = (
+        run_object_uri(gcs.bucket, cadence.runs_gcs_prefix, args.source, started)
+        if gcs is not None
+        else None
+    )
+    outcome = "ok"
+    exit_code = 0
+    detail = ""
+    run_id = ""
+    claims = 0
+    try:
+        report = replay_ingest(
+            args.source,
+            dsn=dsn,
+            capture_dir=capture_dir,
+            run_ids=list(args.run_id or []) or None,
+            code_commit=os.environ.get("SIG_CODE_COMMIT", "").strip() or "unknown",
+            run_record_uri=run_uri,
+            commit_chunk_size=commit_chunk_size,
+            replay_key=args.replay_key,
+        )
+        run_id = report.run_id or ""
+        claims = report.claims_inserted
+        outcome = report.status
+        parts = [
+            f"replayed {report.captures_replayed}/{report.captures_considered} captures",
+            f"inserted {report.claims_inserted} / duplicate {report.claims_duplicate}",
+            f"replay_of={','.join(report.replayed_from_runs) or 'none'}",
+        ]
+        if report.detail:
+            parts.append(report.detail)
+        detail = "; ".join(parts)
+    except Exception as exc:  # noqa: BLE001 - the outcome IS the exception class
+        outcome, exit_code = "error", 1
+        detail = f"{type(exc).__name__}: {exc}"
+    row = RunRow(
+        kind="replay-ingest",
+        source=args.source,
+        mode="replay",
+        outcome=outcome,
+        exit_code=exit_code,
+        started_at=started,
+        duration_seconds=time.monotonic() - t0,
+        claims_added=claims,
+        detail=detail,
+        ingest_run_id=run_id,
+    )
+    written = store_run_row(row, prefix=cadence.runs_gcs_prefix, gcs=gcs, local_dir=local_dir)
+    print(json.dumps(row.as_json(), sort_keys=True))
+    for where, loc in written.items():
+        print(f"  run row stored ({where}): {loc}")
+    return exit_code
+
+
 def _logical_run_for(
     cadence: CadenceConfig, source: str, started: str, args: argparse.Namespace
 ) -> str | None:
@@ -1548,6 +1668,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_probe_history(args)
     if args.command == "scheduled-ingest":
         return _cmd_scheduled_ingest(args)
+    if args.command == "replay-ingest":
+        return _cmd_replay_ingest(args)
     if args.command == "cadence":
         return _cmd_cadence(args)
     if args.command == "backfill-run-completions":

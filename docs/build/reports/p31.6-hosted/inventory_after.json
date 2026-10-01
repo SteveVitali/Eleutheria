@@ -1,0 +1,148 @@
+{
+ "measured": "2026-09-25 post live-run + materialization",
+ "project": "zeta-medley-508121-u7",
+ "claim_totals": {
+  "claims": 2391551,
+  "with_object_entity": 29826
+ },
+ "partner_predicates": [
+  {
+   "predicate": "buyer",
+   "claims": 14582,
+   "with_object_entity": 0
+  },
+  {
+   "predicate": "camera_operator",
+   "claims": 285328,
+   "with_object_entity": 29496
+  },
+  {
+   "predicate": "configured_sharing_partner",
+   "claims": 260,
+   "with_object_entity": 130
+  },
+  {
+   "predicate": "funder",
+   "claims": 947,
+   "with_object_entity": 0
+  },
+  {
+   "predicate": "recipient",
+   "claims": 2895,
+   "with_object_entity": 0
+  },
+  {
+   "predicate": "seller",
+   "claims": 5101,
+   "with_object_entity": 0
+  },
+  {
+   "predicate": "vendor",
+   "claims": 400,
+   "with_object_entity": 200
+  }
+ ],
+ "entities": {
+  "deployment": 248507,
+  "organization": 8
+ },
+ "runs": [
+  {
+   "run_id": "01a0d74b-4213-719a-8627-5eef5b2e972a",
+   "connector": "dot_511",
+   "logical_run": "camreg_osm_surveillance@replay-p31-6",
+   "is_replay": "True",
+   "replay_source": "camreg_osm_surveillance",
+   "replay_of_runs": "01a0d5cf-1833-7148-add7-391217ca6ba2,01a0d5d3-0688-73f8-a6a9-ce086d84b946",
+   "status": "ok",
+   "claims_considered": "246848",
+   "claims_inserted": "26839",
+   "claims_duplicate": "193170",
+   "detail": null,
+   "run_record_uri": "gs://zeta-medley-508121-u7-sig-restricted/ops/runs/camreg_osm_surveillance/2026-09-25/2026-09-25T06-40-22+00-00.json",
+   "finished_at": "2026-09-25 06:41:56.702473+00"
+  },
+  {
+   "run_id": "01a0d74e-9a7a-7467-9e19-e33bf14b0e8a",
+   "connector": "dot_511",
+   "logical_run": "dot_511_or@replay-p31-6",
+   "is_replay": "True",
+   "replay_source": "dot_511_or",
+   "replay_of_runs": "01a0d72a-59f5-7df5-b34e-b2ca3e32b80e",
+   "status": "ok",
+   "claims_considered": "13068",
+   "claims_inserted": "1188",
+   "claims_duplicate": "10692",
+   "detail": null,
+   "run_record_uri": "gs://zeta-medley-508121-u7-sig-restricted/ops/runs/dot_511_or/2026-09-25/2026-09-25T06-44-04+00-00.json",
+   "finished_at": "2026-09-25 06:44:10.620574+00"
+  },
+  {
+   "run_id": "01a0d74e-99ef-7700-9e42-0b5cc8919458",
+   "connector": "dot_511",
+   "logical_run": "dot_511_ut@replay-p31-6",
+   "is_replay": "True",
+   "replay_source": "dot_511_ut",
+   "replay_of_runs": "01a0d6bc-0616-7cd6-9ab9-ceca1dcbfe14",
+   "status": "ok",
+   "claims_considered": "13285",
+   "claims_inserted": "1469",
+   "claims_duplicate": "10347",
+   "detail": null,
+   "run_record_uri": "gs://zeta-medley-508121-u7-sig-restricted/ops/runs/dot_511_ut/2026-09-25/2026-09-25T06-44-04+00-00.json",
+   "finished_at": "2026-09-25 06:44:10.980402+00"
+  },
+  {
+   "run_id": "01a0d751-06fc-7236-8e2c-1c9658dd9de0",
+   "connector": "data_driven",
+   "logical_run": "eff_data_driven@2026-09-04T05:00Z",
+   "is_replay": "False",
+   "replay_source": null,
+   "replay_of_runs": null,
+   "status": "ok",
+   "claims_considered": "1863",
+   "claims_inserted": "1675",
+   "claims_duplicate": "0",
+   "detail": null,
+   "run_record_uri": "gs://zeta-medley-508121-u7-sig-restricted/ops/runs/eff_data_driven/2026-09-25/2026-09-25T06-46-43+00-00.json",
+   "finished_at": "2026-09-25 06:46:47.915982+00"
+  },
+  {
+   "run_id": "01a0d751-0da5-7404-a2c9-d2ebdcb38196",
+   "connector": "flock_portal",
+   "logical_run": "eyes_on_flock@2026-09-23T05:00Z",
+   "is_replay": "False",
+   "replay_source": null,
+   "replay_of_runs": null,
+   "status": "ok",
+   "claims_considered": "11976",
+   "claims_inserted": "9746",
+   "claims_duplicate": "1517",
+   "detail": null,
+   "run_record_uri": "gs://zeta-medley-508121-u7-sig-restricted/ops/runs/eyes_on_flock/2026-09-25/2026-09-25T06-46-43+00-00.json",
+   "finished_at": "2026-09-25 06:46:54.102766+00"
+  }
+ ],
+ "replay_capture_marks": 35,
+ "relationship": {
+  "rows": 130,
+  "distinct_input_digests": 130,
+  "with_evidence_claim": 130
+ },
+ "relationship_by_type": {
+  "configured_access": 130
+ },
+ "derived_fact": {
+  "rows": 200,
+  "distinct_input_digests": 200
+ },
+ "derived_fact_by_rule": [
+  {
+   "predicate": "accountability_link:has_vendor",
+   "rule": "accountability_linkage/\u00a713",
+   "n": 200
+  }
+ ],
+ "edges_backed_by_entity_ref_claim": 130,
+ "links_backed_by_entity_ref_claim": 200
+}

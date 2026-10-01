@@ -294,6 +294,29 @@ while IFS='|' read -r bid bcad bcron bjob bsched bcount; do
   sched_upsert "${bsched}" "${bcron}" "${bjob}"
 done < <(read_batch_rows)
 
+# 5. The asserting-replay job (P31.6 / ADR-113). `sig-ops replay-ingest` re-runs a
+#    source's PERSISTED captures (the ingest_run_capture digests resolved from the
+#    mounted OCFL store) through the post-capture stages and asserts the new claim
+#    set under a fresh is_replay ingest_run — never a fetch. The job mounts the same
+#    restricted captures bucket the ingest jobs write, but has NO scheduler trigger
+#    and NO invoker binding for the scheduler SA: a replay is a named, operator-run
+#    decision, executed explicitly:
+#      gcloud run jobs execute sig-replay-ingest \
+#        --args "-c,exec sig-ops replay-ingest --source <id> [--run-id <uuid>]"
+_log "-- sig-replay-ingest (asserting replay over persisted captures, operator-run) --"
+run gcloud run jobs deploy "${SIG_RUN_JOB_REPLAY}" \
+  --image "${IMAGE}" --region "${SIG_GCP_REGION}" --project "${SIG_GCP_PROJECT}" \
+  --command sh \
+  --args "-c,echo 'replay-ingest needs --source (operator-run; see ADR-113)' && exit 64" \
+  --tasks 1 --task-timeout 60m --max-retries 0 \
+  --execution-environment gen2 \
+  --remove-volume-mount "${CAPTURE_MOUNT}" --remove-volume captures \
+  --add-volume "name=captures,type=cloud-storage,bucket=${SIG_BUCKET_RESTRICTED}" \
+  --add-volume-mount "volume=captures,mount-path=${CAPTURE_MOUNT}" \
+  --set-cloudsql-instances "${CONN}" \
+  --set-env-vars "${INGEST_ENV}" \
+  --set-secrets "SIG_PG_PASSWORD=${SIG_SECRET_PG_PASSWORD}:latest"
+
 _log ""
 if [ "${SIG_GCP_MODE}" = "check" ]; then
   _log "check OK — plan printed, no ADC used, no network touched. Real apply is"

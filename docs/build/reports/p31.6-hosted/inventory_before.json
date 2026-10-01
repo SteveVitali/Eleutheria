@@ -1,0 +1,122 @@
+{
+ "measured": "2026-09-26 pre-replay baseline",
+ "project": "zeta-medley-508121-u7",
+ "claim_totals": [
+  {
+   "claims": 2350634,
+   "with_object_entity": 0
+  }
+ ],
+ "partner_predicate_claims": [
+  {
+   "predicate": "camera_operator",
+   "claims": 255832,
+   "with_object_entity": 0
+  },
+  {
+   "predicate": "buyer",
+   "claims": 14582,
+   "with_object_entity": 0
+  },
+  {
+   "predicate": "seller",
+   "claims": 5101,
+   "with_object_entity": 0
+  },
+  {
+   "predicate": "recipient",
+   "claims": 2895,
+   "with_object_entity": 0
+  },
+  {
+   "predicate": "funder",
+   "claims": 947,
+   "with_object_entity": 0
+  }
+ ],
+ "ingest_runs": [
+  {
+   "total": 37,
+   "is_replay": 0
+  }
+ ],
+ "capture_marks_by_run": [
+  {
+   "run_id": "01a0d5cf-1833-7148-add7-391217ca6ba2",
+   "connector": "dot_511",
+   "logical_run": "camreg_osm_surveillance@2026-09-10T03:35Z",
+   "started_at": "2026-09-24 23:45:14.291095+00:00",
+   "marks": 31,
+   "distinct_digests": 16
+  },
+  {
+   "run_id": "01a0d5d3-0688-73f8-a6a9-ce086d84b946",
+   "connector": "dot_511",
+   "logical_run": "camreg_osm_surveillance@2026-09-10T03:35Z",
+   "started_at": "2026-09-24 23:49:31.912265+00:00",
+   "marks": 29,
+   "distinct_digests": 15
+  },
+  {
+   "run_id": "01a0d5d7-fa94-762a-9e47-3a215ffb36ab",
+   "connector": "dot_511",
+   "logical_run": "camreg_osm_surveillance@2026-09-10T03:35Z",
+   "started_at": "2026-09-24 23:54:56.532402+00:00",
+   "marks": 60,
+   "distinct_digests": 30
+  },
+  {
+   "run_id": "01a0d62a-3d57-736d-889e-ce7a8cfd6e27",
+   "connector": "dot_511",
+   "logical_run": "camreg_osm_surveillance@2026-09-10T03:35Z",
+   "started_at": "2026-09-25 01:24:47.575236+00:00",
+   "marks": 60,
+   "distinct_digests": 30
+  },
+  {
+   "run_id": "01a0d633-122e-720e-9163-bb74672c1c3e",
+   "connector": "dot_511",
+   "logical_run": "camreg_osm_surveillance@2026-09-10T03:35Z",
+   "started_at": "2026-09-25 01:34:26.350145+00:00",
+   "marks": 30,
+   "distinct_digests": 15
+  },
+  {
+   "run_id": "01a0d637-19ab-7fc5-80c3-3641fa0325e2",
+   "connector": "dot_511",
+   "logical_run": "camreg_osm_surveillance@2026-09-10T03:35Z",
+   "started_at": "2026-09-25 01:38:50.412011+00:00",
+   "marks": 30,
+   "distinct_digests": 15
+  },
+  {
+   "run_id": "01a0d6bc-0616-7cd6-9ab9-ceca1dcbfe14",
+   "connector": "dot_511",
+   "logical_run": "dot_511_ut@2026-09-25T04:00Z",
+   "started_at": "2026-09-25 04:04:01.686818+00:00",
+   "marks": 6,
+   "distinct_digests": 3
+  },
+  {
+   "run_id": "01a0d72a-59f5-7df5-b34e-b2ca3e32b80e",
+   "connector": "dot_511",
+   "logical_run": "dot_511_or@2026-09-25T06:00Z",
+   "started_at": "2026-09-25 06:04:32.117890+00:00",
+   "marks": 4,
+   "distinct_digests": 2
+  }
+ ],
+ "distinct_capture_digests": 35,
+ "relationship_rows": 0,
+ "accountability_links": 0,
+ "entity_counts": [
+  [
+   "deployment",
+   248496
+  ],
+  [
+   "organization",
+   4
+  ]
+ ]
+}

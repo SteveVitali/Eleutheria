@@ -90,3 +90,54 @@ def test_shadow_replay_reports_delta_without_asserting(make_context, toy_connect
     # Nothing was asserted to the sink in shadow mode.
     assert list(ctx.claim_sink.claims) == []
     assert ctx.shadow is True
+
+
+# --- asserting replay (P31.6 / ADR-113) ---------------------------------------
+
+
+def test_asserting_replay_asserts_each_captures_claims(make_context, toy_connector) -> None:  # type: ignore[no-untyped-def]
+    # ADR-113: the NAMED asserting reinterpretation — claims the post-capture
+    # stages re-derive ARE handed to the claim sink, under ctx.replay=True.
+    from connectors.replay import asserting_replay
+
+    ctx = make_context()
+    capture = _archive(ctx, {"id": "p1", "cameras": 7})
+    report = asserting_replay(toy_connector, ctx, [capture])
+
+    assert report.captures == 1
+    assert report.claims > 0
+    assert report.asserted == report.claims
+    assert list(ctx.claim_sink.claims)  # the sink got the re-derived claims
+    assert ctx.replay is True and ctx.shadow is False
+
+
+def test_asserting_replay_is_network_isolated(make_context, leaky_connector) -> None:  # type: ignore[no-untyped-def]
+    # ADR-113: asserting is still pure reinterpretation — a post-capture network
+    # call is refused exactly like the non-asserting replay's (SIG-INGEST-018).
+    from connectors.replay import asserting_replay
+
+    ctx = make_context()
+    capture = _archive(ctx, {"id": "p1", "cameras": 1})
+    report = asserting_replay(leaky_connector, ctx, [capture])
+    # The leaky stage's egress is blocked; the failure is recorded per capture
+    # (reported loudly) and nothing was asserted.
+    assert report.captures == 0
+    assert report.errors and report.errors[0]["digest"] == capture.digest
+    assert list(ctx.claim_sink.claims) == []
+
+
+def test_asserting_replay_reports_each_flushed_capture(make_context, toy_connector) -> None:  # type: ignore[no-untyped-def]
+    # ADR-113: on_capture runs after each capture's claims commit so the driver
+    # can write the replay run's own capture-lineage marks.
+    from connectors.replay import asserting_replay
+
+    ctx = make_context()
+    capture = _archive(ctx, {"id": "p1", "cameras": 3})
+    seen: list[tuple[str, int]] = []
+    asserting_replay(
+        toy_connector,
+        ctx,
+        [capture],
+        on_capture=lambda c, claims: seen.append((c.digest, len(claims))),
+    )
+    assert seen == [(capture.digest, len(ctx.claim_sink.claims))]

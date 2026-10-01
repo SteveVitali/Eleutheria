@@ -27,6 +27,12 @@ source_id = "eff_data_driven"
 # * retention_window_observed  — per-column retention window w/ its unit (043d)
 predicate_allowlist = [
   "deployment_exists",
+  # P31.6 (ADR-113): the release's stated vendor as a claim (the partner twin
+  # carries the deployment→vendor entity-ref) and the NVLS pooled-lookup edge —
+  # the partner is the release's vendor constant, never an enumerated partner
+  # list (the SIG-INGEST-043c boundary holds: no per-agency edge list).
+  "vendor",
+  "configured_sharing_partner",
   "scan_volume_observed",
   "hit_volume_observed",
   "non_hit_proportion_observed",

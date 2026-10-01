@@ -72,7 +72,7 @@
       "camera_registry",
       "connector_run"
     ],
-    "count": 116,
+    "count": 118,
     "ids": [
       "acquisition_channel",
       "active_device_count",
@@ -105,6 +105,7 @@
       "conditions",
       "configured_access_edge",
       "configured_retention_days",
+      "configured_sharing_partner",
       "configured_sharing_partner_set",
       "content_term",
       "contract_end_date",
@@ -187,6 +188,7 @@
       "statutory_citation",
       "subscribed_hotlist_topic",
       "title",
+      "vendor",
       "vendor_default_retention",
       "windowed_search_count",
       "written_policy_value"

@@ -190,14 +190,22 @@ P31_5_ASSESSED = frozenset(
 )
 
 
+#: The P31.6 rows registered with an assessed `connector_run` directness (ADR-113):
+#: `vendor` follows the partner family (a connector run is mid-directness evidence
+#: for a stated vendor, like buyer/seller); `configured_sharing_partner` likewise
+#: (the run emits the edge claim from the audited/parsed artifact — the snapshot
+#: itself stays the D1 genre).
+P31_6_ASSESSED = frozenset({"vendor", "configured_sharing_partner"})
+
+
 def test_pre_existing_predicates_read_d6_for_the_new_genres() -> None:
     # Behaviour-preserving: before P30.2a a claim in these genres was dropped (no
     # directness row); now it is dropped as D6. The assessment is owed (D-P30.2a-1).
     # P31.5 / ADR-112 assessed the procurement + accountability family it registered;
-    # every other pre-existing row is still D6.
+    # P31.6 / ADR-113 assessed its two rows; every other pre-existing row is still D6.
     camera = set(_measured_camera_predicates())
     for pid, row in predicate_registry().items():
-        if pid in camera or pid in P31_5_ASSESSED:
+        if pid in camera or pid in P31_5_ASSESSED or pid in P31_6_ASSESSED:
             continue
         assert row["directness"]["camera_registry"] == "D6", pid
         assert row["directness"]["connector_run"] == "D6", pid

@@ -244,15 +244,37 @@ def test_sharednetworks_edges_are_configured_access_directional_single_snapshot(
     # SIG-ONTO-042/044, SIG-RECON-034/036: configured access only, directional,
     # single-snapshot edges carry valid_from_kind='unknown'.
     report = _run_over("SharedNetworks.csv", file_kind="shared_networks", observed_at="2026-08-01")
-    edges = _by_kind(report.claims, "configured_access_edge")
+    edges = [c for c in report.claims if c.get("predicate_id") == "configured_sharing_partner"]
     assert edges
     for e in edges:
+        # P31.6 / ADR-113: edges are claim rows now (the old
+        # ``configured_access_edge`` record kind was dropped by the claim sink).
+        assert e["record_kind"] == "claim"
         assert e["access_kind"] == "configured_access"
         assert e["valid_from_kind"] == "unknown"
-        assert e["predicate_id"] == "configured_sharing_partner"
+        assert e["value"] == e["to_org"] == e["raw_value"]
     directed = {(e["from_org"], e["to_org"]) for e in edges}
     assert ("Springfield PD", "Shelby County SO") in directed
     assert ("Springfield PD", "Metro PD") in directed
+
+
+def test_sharednetworks_edge_partners_resolve_through_p31_5_identity() -> None:
+    # P31.6 / ADR-113: SharedNetworks names partners by ORGANISATION NAME, so the
+    # entity-ref goes through ADR-112's deterministic partner identity — an
+    # accepted name attaches a sig.org.name ref; a refused name (Springfield PD /
+    # Metro PD are person-shaped, "Unknown" is generic) stays a literal.
+    report = _run_over("SharedNetworks.csv", file_kind="shared_networks", observed_at="2026-08-01")
+    edges = [c for c in report.claims if c.get("predicate_id") == "configured_sharing_partner"]
+    resolved = {e["to_org"]: e.get("object_ref") for e in edges}
+    assert resolved["Shelby County SO"] is not None
+    shelby = resolved["Shelby County SO"]
+    assert shelby["scheme"] == "sig.org.name"
+    assert shelby["entity_type"] == "organization"
+    assert shelby["label"] == "Shelby County SO"
+    # Refusals stay text-only — the claim is still asserted, the materializer
+    # counts it skipped_unmapped rather than fabricating a node.
+    for refused in ("Metro PD",):
+        assert resolved[refused] is None
 
 
 def test_blank_sharing_cells_are_negatives_not_unknown_edges() -> None:
@@ -279,7 +301,10 @@ def test_connector_streams_only_deterministic_edges_for_sharing() -> None:
     # asymmetry findings/tasks are the §29.3 reconciler's to emit (owned by P08.2).
     report = _run_over("SharedNetworks.csv", file_kind="shared_networks", observed_at="2026-08-01")
     kinds = {c.get("record_kind") for c in report.claims}
-    assert kinds == {"configured_access_edge"}
+    # P31.6: the edges stream as claim records (the old configured_access_edge
+    # non-claim kind is gone — it was dropped by the claim sink).
+    assert kinds == {"claim"}
+    assert all(c["predicate_id"] == "configured_sharing_partner" for c in report.claims)
 
 
 # --- AC4: `***` redaction is distinguished from empty (SIG-INGEST-046) ---------

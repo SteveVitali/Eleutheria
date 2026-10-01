@@ -388,12 +388,41 @@ def test_connector_streams_only_deterministic_edges_for_sharing() -> None:
     # asymmetry findings/tasks are the §29.3 reconciler's to emit (owned by P08.2),
     # so they are not folded into the connector's non-reproducible L1 output.
     _, report = _run_over("snapshot_2026_08.json")
-    edges = _by_kind(_claims(report), "configured_access_edge")
+    edges = [c for c in _claims(report) if c.get("predicate_id") == "configured_sharing_partner"]
     assert edges
     for e in edges:
+        # P31.6 / ADR-113: edges are claim rows now (the old
+        # ``configured_access_edge`` record kind was dropped by the claim sink).
+        assert e["record_kind"] == "claim"
         assert e["access_kind"] == "configured_access"
         assert e["valid_from_kind"] == "unknown"
-        assert e["predicate_id"] == "configured_sharing_partner"
+        # The literal value is the partner's portal slug, verbatim.
+        assert e["value"] == e["to_org"] == e["raw_value"]
+
+
+def test_sharing_edge_claims_carry_the_partners_portal_entity_ref() -> None:
+    # P31.6 / ADR-113: Eyes on Flock names a partner by its portal SLUG, so the
+    # deterministic entity-ref is the partner's own portal key — the same
+    # guarded sig.connector.subject identifier the partner's portal claims key
+    # on when it is itself a subject.
+    _, report = _run_over("snapshot_2026_08.json")
+    edges = [c for c in _claims(report) if c.get("predicate_id") == "configured_sharing_partner"]
+    assert edges
+    for e in edges:
+        ref = e["object_ref"]
+        assert ref == {
+            "scheme": "sig.connector.subject",
+            "value": portal_id(e["to_org"]),
+            "entity_type": "deployment",
+            "label": e["to_org"],
+            "basis": "portal_slug_identifier",
+            "rules": "portal_partner_ref/1",
+        }
+    # okc-pd -> tulsa-pd is directional: the ref keys tulsa-pd's own portal entity.
+    okc_tulsa = [e for e in edges if e["from_org"] == "okc-pd" and e["to_org"] == "tulsa-pd"]
+    assert okc_tulsa
+    assert okc_tulsa[0]["subject_id"] == portal_id("okc-pd")
+    assert okc_tulsa[0]["object_ref"]["value"] == portal_id("tulsa-pd")
 
 
 # --- predicate allowlist + forbidden write-set --------------------------------

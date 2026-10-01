@@ -76,6 +76,11 @@ export SIG_SCHEDULER_CRON_MUCKROCK="0 6 1 * *"   # monthly, 06:00 UTC
 export SIG_RUN_JOB_PROBE="sig-probe"
 export SIG_SCHEDULER_JOB_PROBE="sig-sched-probe"
 export SIG_SCHEDULER_CRON_PROBE="0 */6 * * *"    # every 6h UTC
+# P31.6 / ADR-113: the asserting-replay job — `sig-ops replay-ingest` over the
+# persisted OCFL captures (ingest_run_capture digests), writing a fresh
+# is_replay ingest_run. Operator-invoked only: deployed here, NEVER scheduled
+# (a replay is a named decision, not a cadence).
+export SIG_RUN_JOB_REPLAY="sig-replay-ingest"
 export SIG_ALERTS_SERVICE="sig-alerts"
 export SIG_SECRET_ALERT_HOOK="sig-alert-webhook-token"
 export SIG_WEB_SERVICE="sig-web"
