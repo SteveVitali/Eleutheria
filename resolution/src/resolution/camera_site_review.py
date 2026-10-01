@@ -6,12 +6,15 @@
 Everything the PG-backed curation surface, the stratified campaign sampler, and
 the offline JSONL path need that is *specific to camera-site review items*:
 
-* **Family/stratum vocabulary.** The camera-site queue is two item-id families
-  — ``er_match:camera_site:`` (proposals) and ``er_match:camera_site_disputed:``
-  (adjudicator disagreements that are also proposals) — and the P31.3
+* **Family/stratum vocabulary.** The camera-site queue is three item-id families
+  — ``er_match:camera_site:`` (proposals), ``er_match:camera_site_disputed:``
+  (adjudicator disagreements that are also proposals) and
+  ``er_match:camera_site_conflict:`` (P31.11: curator disagreements routed back
+  for a clean adjudication) — and the P31.3
   ``er_match:identity_duplicate:`` family is *excluded* from it. A review
-  **stratum** is a predicate, not a partition: ``disputed`` (the disputed
-  prefix or an ``active_learning:adjudicator_disagreement`` reason),
+  **stratum** is a predicate, not a partition: ``disputed`` (the disputed or
+  conflict prefixes, an ``active_learning:adjudicator_disagreement`` reason, or
+  a ``human_conflict`` route-back),
   ``soft-conflict`` (``reason`` ``soft_conflict:*``), or the match tier
   ``1g``/``3g``/``4g``/``5g``. A soft-conflicted 3g proposal is in *both* ``3g``
   and ``soft-conflict`` — tier-3 proposals on the real spine ARE the
@@ -50,6 +53,7 @@ from .review_queue import ACCEPT, REJECT, ReviewItem
 __all__ = [
     "CAMERA_SITE_ITEM_PREFIX",
     "CAMERA_SITE_DISPUTED_PREFIX",
+    "CAMERA_SITE_CONFLICT_PREFIX",
     "IDENTITY_DUPLICATE_PREFIX",
     "CAMERA_SITE_PREFIXES",
     "DEFAULT_STRATA",
@@ -71,12 +75,21 @@ CAMERA_SITE_ITEM_PREFIX = "er_match:camera_site:"
 #: Disputed gold pairs that are ALSO proposals get their own id family so the
 #: adjudicators' labels reach the reviewer (camera_sites_pg._active_learning_args).
 CAMERA_SITE_DISPUTED_PREFIX = "er_match:camera_site_disputed:"
+#: P31.11 (ADR-R9-HUMANER): pairs two curators disagreed on are routed BACK under
+#: their own id family — a clean adjudication there supersedes the conflicted
+#: proposal's verdict in the next run's fold (latest decided item governs).
+CAMERA_SITE_CONFLICT_PREFIX = "er_match:camera_site_conflict:"
 #: The P31.3 identity-triage family — a different queue, excluded from the
 #: camera-site surface even though it shares the two tables.
 IDENTITY_DUPLICATE_PREFIX = "er_match:identity_duplicate:"
-#: Both camera-site families (the disputed prefix does not start with the plain
-#: one — "camera_site_" vs "camera_site:" — so LIKE-prefix matching is disjoint).
-CAMERA_SITE_PREFIXES = (CAMERA_SITE_ITEM_PREFIX, CAMERA_SITE_DISPUTED_PREFIX)
+#: All three camera-site families (the suffixed prefixes do not start with the
+#: plain one — "camera_site_" vs "camera_site:" — so LIKE-prefix matching is
+#: disjoint between them).
+CAMERA_SITE_PREFIXES = (
+    CAMERA_SITE_ITEM_PREFIX,
+    CAMERA_SITE_DISPUTED_PREFIX,
+    CAMERA_SITE_CONFLICT_PREFIX,
+)
 
 #: The stratum names the sampler knows (spec §6 Q11 design). Tiers 1g/3g are
 #: auto-write tiers — included on purpose so humans AUDIT them.
@@ -104,10 +117,10 @@ def stratum_for(item_id: str, payload: Mapping[str, Any]) -> str:
     falls to its match tier (``{tier}g``), or ``other`` when the proposal
     carries no tier (shouldn't happen for a camera-site proposal).
     """
-    if item_id.startswith(CAMERA_SITE_DISPUTED_PREFIX):
+    if item_id.startswith((CAMERA_SITE_DISPUTED_PREFIX, CAMERA_SITE_CONFLICT_PREFIX)):
         return "disputed"
     reason = str(payload.get("reason") or "")
-    if reason == _DISPUTED_REASON:
+    if reason in (_DISPUTED_REASON, "human_conflict"):
         return "disputed"
     if reason.startswith("soft_conflict:"):
         return "soft-conflict"
@@ -121,8 +134,8 @@ def _strata_case(alias: str = "ri") -> str:
     """The SQL CASE that mirrors :func:`stratum_for` for set-based filtering."""
     return (
         "CASE"
-        f" WHEN {alias}.item_id LIKE %s THEN 'disputed'"  # camera_site_disputed:
-        f" WHEN {alias}.payload->>'reason' = %s THEN 'disputed'"
+        f" WHEN {alias}.item_id LIKE ANY(%s) THEN 'disputed'"  # *_disputed: / *_conflict:
+        f" WHEN {alias}.payload->>'reason' = ANY(%s) THEN 'disputed'"
         f" WHEN {alias}.payload->>'reason' LIKE %s THEN 'soft-conflict'"
         f" WHEN {alias}.payload->>'tier' ~ '^-?[0-9]+$'"
         f" THEN ({alias}.payload->>'tier') || 'g'"
@@ -131,7 +144,11 @@ def _strata_case(alias: str = "ri") -> str:
 
 
 def _strata_params() -> tuple[Any, ...]:
-    return (CAMERA_SITE_DISPUTED_PREFIX + "%", _DISPUTED_REASON, "soft_conflict:%")
+    return (
+        [CAMERA_SITE_DISPUTED_PREFIX + "%", CAMERA_SITE_CONFLICT_PREFIX + "%"],
+        [_DISPUTED_REASON, "human_conflict"],
+        "soft_conflict:%",
+    )
 
 
 def parse_strata(spec: str | None) -> list[tuple[str, int | None]]:

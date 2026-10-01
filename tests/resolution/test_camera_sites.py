@@ -33,6 +33,8 @@ from resolution.camera_sites import (
     CameraGoldSet,
     CameraRecord,
     CameraSiteRules,
+    HumanItem,
+    HumanVote,
     PairAssessment,
     TierMeasurement,
     assess_pairs,
@@ -41,6 +43,8 @@ from resolution.camera_sites import (
     decide_auto_write_tiers,
     device_class,
     direction_bearing,
+    fold_human_verdicts,
+    infer_duplicate_targets,
     infer_lineages,
     load_camera_gold,
     measure_tiers,
@@ -552,3 +556,415 @@ def test_the_cli_exposes_the_camera_sites_stage() -> None:
         ["camera-sites", "--dsn", "postgresql://x", "--role", "r", "--dry-run"]
     )
     assert (args.command, args.role, args.dry_run) == ("camera-sites", "r", True)
+
+
+# --- P31.11: human review decisions into clustering (ADR-R9-HUMANER) ---------------
+
+
+def _item(item_id: str, left: str, right: str, tier: int | None = None) -> HumanItem:
+    return HumanItem(
+        item_id=item_id,
+        left=left,
+        right=right,
+        tier=tier,
+        tier_label=RULES.label(tier) if tier is not None else None,
+    )
+
+
+def _vote(
+    item_id: str, decision: str, reviewer: str = "curator:one", at: str = "2026-10-01T00:00:00"
+) -> HumanVote:
+    return HumanVote(item_id=item_id, decision=decision, reviewer=reviewer, decided_at=at)
+
+
+def _proposal_id(left: str, right: str) -> str:
+    a, b = sorted((left, right))
+    return f"er_match:camera_site:{a}:{b}"
+
+
+def test_a_human_accept_clusters_a_proposed_pair_and_names_the_curator() -> None:
+    # No gold -> silence never auto-writes, so the pair is proposed; the curator's
+    # accept then applies it as a human edge under the same constraints.
+    recs = [_rec("a", "s1"), _rec("b", "s2", 0.3)]
+    items = [_item(_proposal_id("a", "b"), "a", "b", tier=3)]
+    votes = [_vote(_proposal_id("a", "b"), "accept", reviewer="curator:kim")]
+    r = resolve_camera_sites(recs, gold=None, threshold=0.98, human_items=items, human_votes=votes)
+    (d,) = r.decisions
+    assert d.disposition == "human_accept" and d.relation == "same_as"
+    assert d.decided_by == "curator:kim"
+    assert r.clusters["a"] == r.clusters["b"] and r.cluster_count == 1
+    hr = r.summary()["human_review"]
+    assert hr["accepts"] == 1 and hr["accept_edges_applied"] == 1
+    assert hr["clusters_with_human_accepts"] == 1
+    assert r.run_key != run_key(
+        rules=RULES, auto_write_tiers=frozenset(), gold=None, records=recs
+    )  # the verdict is a run input
+
+
+def test_a_human_reject_is_a_recorded_cannot_link_that_never_clusters() -> None:
+    recs = [_rec("a", "s1"), _rec("b", "s2", 0.3)]
+    iid = _proposal_id("a", "b")
+    r = resolve_camera_sites(
+        recs,
+        gold=None,
+        threshold=0.98,
+        human_items=[_item(iid, "a", "b")],
+        human_votes=[_vote(iid, "reject", reviewer="curator:kim")],
+    )
+    (d,) = r.decisions
+    assert d.disposition == "human_reject" and d.relation == "cannot_link"
+    assert d.decided_by == "curator:kim"
+    assert r.clusters["a"] != r.clusters["b"] and r.cluster_count == 2
+    hr = r.summary()["human_review"]
+    assert hr["rejects"] == 1 and hr["cannot_link_edges"] == 1
+
+
+def test_a_reject_beats_an_automatic_tier_that_would_have_auto_written() -> None:
+    # Tier 3 measured clean on the holdout, but the curator rejected the pair:
+    # the human verdict outranks the automatic outcome on the same pair.
+    recs = [_rec("a", "s1"), _rec("b", "s2", 0.3)]
+    gold = _gold({("a", "b"): GoldLabel.MATCH})
+    auto_only = resolve_camera_sites(recs, gold=gold, threshold=0.98, rules=ONE_PAIR)
+    assert auto_only.decisions[0].disposition == "auto_write"
+    iid = _proposal_id("a", "b")
+    r = resolve_camera_sites(
+        recs,
+        gold=gold,
+        threshold=0.98,
+        rules=ONE_PAIR,
+        human_items=[_item(iid, "a", "b", tier=3)],
+        human_votes=[_vote(iid, "reject")],
+    )
+    assert r.decisions[0].disposition == "human_reject"
+    assert r.cluster_count == 2
+
+
+def test_an_accept_beats_a_soft_conflict_that_would_have_stayed_proposed() -> None:
+    recs = [_rec("a", "s1", jurisdiction="WA"), _rec("b", "s2", 0.3, jurisdiction="OR")]
+    iid = _proposal_id("a", "b")
+    gold = _gold({("a", "b"): GoldLabel.MATCH})
+    r = resolve_camera_sites(
+        recs,
+        gold=gold,
+        threshold=0.98,
+        rules=ONE_PAIR,
+        human_items=[_item(iid, "a", "b", tier=3)],
+        human_votes=[_vote(iid, "accept")],
+    )
+    # review exists to decide exactly the soft-conflicted pairs — accept applies.
+    assert r.decisions[0].disposition == "human_accept"
+    assert r.clusters["a"] == r.clusters["b"]
+
+
+def test_no_decision_leaves_the_proposal_proposed() -> None:
+    recs = [_rec("a", "s1"), _rec("b", "s2", 0.3)]
+    r = resolve_camera_sites(
+        recs,
+        gold=None,
+        threshold=0.98,
+        human_items=[_item(_proposal_id("a", "b"), "a", "b")],  # item, no vote
+        human_votes=[],
+    )
+    (d,) = r.decisions
+    assert d.disposition == "proposed" and r.human_verdicts == ()
+    assert r.summary()["human_review"]["proposed_awaiting_review"] == 1
+
+
+def test_zero_decisions_reproduce_the_pre_wiring_run() -> None:
+    # With no votes anywhere, the whole run is identical to the pre-wiring
+    # pipeline: same decisions, same clusters, same key.
+    recs = [_rec("a", "s1"), _rec("b", "s2", 0.3), _rec("c", "s1", 500), _rec("d", "s2", 500.2)]
+    gold = _gold({("a", "b"): GoldLabel.MATCH})
+    plain = resolve_camera_sites(recs, gold=gold, threshold=0.98, rules=ONE_PAIR)
+    wired = resolve_camera_sites(
+        recs,
+        gold=gold,
+        threshold=0.98,
+        rules=ONE_PAIR,
+        # items exist (they were enqueued) but nothing was ever decided
+        human_items=[_item("er_match:camera_site:a:b", "a", "b", tier=3)],
+        human_votes=[],
+    )
+    assert wired.run_key == plain.run_key
+    assert wired.decisions == plain.decisions
+    assert wired.clusters == plain.clusters
+    assert wired.summary()["human_review"]["verdict_pairs"] == 0
+
+
+def test_conflicting_human_decisions_stay_proposed_for_adjudication() -> None:
+    recs = [_rec("a", "s1"), _rec("b", "s2", 0.3)]
+    iid = _proposal_id("a", "b")
+    votes = [
+        _vote(iid, "accept", reviewer="curator:kim", at="2026-10-01T00:00:00"),
+        _vote(iid, "reject", reviewer="curator:lee", at="2026-10-02T00:00:00"),
+    ]
+    r = resolve_camera_sites(
+        recs, gold=None, threshold=0.98, human_items=[_item(iid, "a", "b")], human_votes=votes
+    )
+    (d,) = r.decisions
+    assert d.disposition == "proposed" and d.reason == "human_conflict"
+    assert r.clusters["a"] != r.clusters["b"]
+    hr = r.summary()["human_review"]
+    assert hr["conflicts"] == 1 and hr["accept_edges_applied"] == 0
+
+
+def test_an_accept_violating_constraint_a_is_recorded_refused_never_applied() -> None:
+    # A curator may accept, but constraint (a) still binds: two DISTINCT same-source
+    # records never merge — the attempt is recorded 'refused' with the constraint named.
+    recs = [_rec("a", "s1", external_ref="7"), _rec("b", "s1", 0.3, external_ref="8")]
+    iid = _proposal_id("a", "b")
+    r = resolve_camera_sites(
+        recs,
+        gold=None,
+        threshold=0.98,
+        human_items=[_item(iid, "a", "b")],
+        human_votes=[_vote(iid, "accept", reviewer="curator:kim")],
+    )
+    (d,) = r.decisions
+    assert d.disposition == "refused"
+    assert d.reason == "human_refused:cluster_constraint:same_source"
+    assert d.decided_by == "curator:kim" and d.relation == "same_as"
+    assert r.clusters["a"] != r.clusters["b"]
+    hr = r.summary()["human_review"]
+    assert hr["accepts"] == 1 and hr["accept_edges_refused"] == 1
+    assert hr["accept_edges_applied"] == 0
+
+
+def test_an_accept_across_incompatible_classes_is_refused() -> None:
+    alpr = _rec("a", "camreg_lpd_flock", operator="community ALPR layer")
+    traffic = _rec("b", "dot_511_ok", 0.2, operator="Oklahoma Department of Transportation")
+    iid = _proposal_id("a", "b")
+    r = resolve_camera_sites(
+        [alpr, traffic],
+        gold=None,
+        threshold=0.98,
+        human_items=[_item(iid, "a", "b")],
+        human_votes=[_vote(iid, "accept")],
+    )
+    (d,) = r.decisions
+    assert d.disposition == "refused" and d.reason == "human_refused:incompatible_class"
+
+
+def test_a_decided_pair_absent_from_the_run_is_counted_not_invented() -> None:
+    recs = [_rec("a", "s1"), _rec("b", "s2", 0.3)]
+    ghost = _item("er_match:camera_site:x:y", "x", "y")  # records not in this run
+    r = resolve_camera_sites(
+        recs,
+        gold=None,
+        threshold=0.98,
+        human_items=[ghost],
+        human_votes=[_vote("er_match:camera_site:x:y", "accept")],
+    )
+    assert r.human_verdicts == () and r.human_verdicts_unmatched == 1
+    assert r.summary()["human_review"]["unmatched_pairs"] == 1
+
+
+def test_the_latest_decided_item_governs_a_routed_back_conflict() -> None:
+    # accept on the proposal, reject on the routed-back conflict item decided
+    # later -> the later adjudication governs (reject).
+    recs = [_rec("a", "s1"), _rec("b", "s2", 0.3)]
+    prop = _proposal_id("a", "b")
+    conf = "er_match:camera_site_conflict:a:b"
+    items = [_item(prop, "a", "b"), _item(conf, "a", "b")]
+    votes = [
+        _vote(prop, "accept", at="2026-10-01T00:00:00"),
+        _vote(conf, "reject", reviewer="curator:arbiter", at="2026-10-03T00:00:00"),
+    ]
+    r = resolve_camera_sites(recs, gold=None, threshold=0.98, human_items=items, human_votes=votes)
+    (d,) = r.decisions
+    assert d.disposition == "human_reject" and d.decided_by == "curator:arbiter"
+    assert d.verdict is not None and len(d.verdict.items) == 2
+
+
+def test_fold_human_verdicts_item_and_pair_rules() -> None:
+    it = "er_match:camera_site:a:b"
+    # accept iff every vote accepts; reject iff every vote rejects; else conflict.
+    (v,) = fold_human_verdicts(
+        [_item(it, "b", "a")],
+        [_vote(it, "accept"), _vote(it, "accept", "curator:two", "2026-10-02")],
+    )
+    assert v.verdict == "accept" and v.left == "a" and v.right == "b"
+    assert v.decided_by == "curator:one, curator:two"
+    (v,) = fold_human_verdicts(
+        [_item(it, "a", "b")],
+        [_vote(it, "reject"), _vote(it, "accept", at="2026-10-02T00:00:00")],
+    )
+    assert v.verdict == "conflict"
+    # a vote on an item that binds no pair is never invented into one
+    assert fold_human_verdicts([], [_vote(it, "accept")]) == ()
+    # a timestamp tie between disagreeing items is itself a conflict, never a coin-flip
+    it2 = "er_match:camera_site_disputed:a:b"
+    (v,) = fold_human_verdicts(
+        [_item(it, "a", "b"), _item(it2, "a", "b")],
+        [_vote(it, "accept"), _vote(it2, "reject")],
+    )
+    assert v.verdict == "conflict"
+
+
+def test_human_decisions_do_not_break_cluster_id_stability() -> None:
+    # Cluster ids are the smallest member subject id — adding a human accept must
+    # not churn the public identity of a site between identical re-runs.
+    recs = [_rec("a", "s1"), _rec("b", "s2", 0.3), _rec("c", "s3", 1000)]
+    iid = _proposal_id("a", "b")
+    kwargs = dict(
+        gold=None,
+        threshold=0.98,
+        human_items=[_item(iid, "a", "b")],
+        human_votes=[_vote(iid, "accept")],
+    )
+    r1 = resolve_camera_sites(recs, **kwargs)
+    r2 = resolve_camera_sites(recs, **kwargs)
+    assert r1.run_key == r2.run_key and r1.clusters == r2.clusters
+    assert r1.clusters["a"] == "a" == r1.clusters["b"]
+    assert r1.clusters["c"] == "c"
+
+
+# --- P31.11: duplicate-target lineage (closes D-P30.2b-3) --------------------------
+
+
+def _dup_pair(**kw) -> list[CameraRecord]:
+    """Two records of ONE source republished under two targets."""
+    a = _rec("a", "camreg_ucsd", external_ref="cam-7", name="I-5 / Gilman", **kw)
+    b = _rec("b", "camreg_ucsd", 0.0, external_ref="cam-7", name="I-5 / Gilman", **kw)
+    return [a, b]
+
+
+def test_identical_captured_content_makes_the_same_row_one_record() -> None:
+    a, b = _dup_pair()
+    a = replace(a, target_id="ucsd_traffic_camera", capture_digests=("h1", "h2"))
+    b = replace(b, target_id="ucsd_traffic_camera_wfl", capture_digests=("h2", "h3"))
+    assert infer_duplicate_targets([a, b]) == {"a": "a", "b": "a"}
+    r = resolve_camera_sites([a, b], gold=None, threshold=0.98)
+    assert r.cluster_count == 1 and r.clusters["a"] == r.clusters["b"]
+    (d,) = r.decisions
+    assert d.disposition == "auto_write" and d.assessment.tier == 0
+    assert d.assessment.tier_label == "0:duplicate_target_of"
+    ev = d.assessment.evidence
+    assert ev["identical_capture_digests"] == ["h2"]
+    s = r.summary()
+    assert s["duplicate_target_groups"] == 1 and s["duplicate_target_records"] == 2
+
+
+def test_row_identical_same_source_records_are_one_lineage() -> None:
+    # No capture digests needed: the whole projected row is identical.
+    a, b = _dup_pair()
+    assert infer_duplicate_targets([a, b]) == {"a": "a", "b": "a"}
+    r = resolve_camera_sites([a, b], gold=None, threshold=0.98)
+    assert r.cluster_count == 1
+    (d,) = r.decisions
+    assert d.assessment.evidence["row_identical"] is True
+
+
+def test_distinct_same_source_devices_never_group() -> None:
+    # Same source, same point, DIFFERENT rows: genuinely two devices — the
+    # exception is evidence-narrow and these stay separate (constraint (a)).
+    a = _rec("a", "camreg_ucsd", external_ref="cam-7", name="I-5 / Gilman")
+    b = _rec("b", "camreg_ucsd", 0.2, external_ref="cam-8", name="I-5 / Gilman NB")
+    assert infer_duplicate_targets([a, b]) == {}
+    r = resolve_camera_sites([a, b], gold=None, threshold=0.98)
+    assert r.cluster_count == 2 and r.decisions == ()
+    # Content-free stubs with no identifying field also never group.
+    s1, s2 = _rec("x", "s", north_m=1000), _rec("y", "s", north_m=1000)
+    assert infer_duplicate_targets([s1, s2]) == {}
+    # And identical bytes under DIFFERENT refs are two rows, not one.
+    c = replace(a, target_id="t1", capture_digests=("h",))
+    d = replace(b, target_id="t2", capture_digests=("h",))
+    assert infer_duplicate_targets([c, d]) == {}
+
+
+def test_a_duplicate_group_counts_once_under_constraint_a() -> None:
+    # a,b are one republished row of s1; c is s2's coincident record. The group
+    # counts as ONE s1 record, so c may cluster with it — and both a and b end
+    # up in the site (they are the same row, not two s1 devices).
+    a, b = _dup_pair()
+    c = _rec("c", "s2", 0.3)
+    r = resolve_camera_sites(
+        [a, b, c],
+        gold=_gold({("a", "c"): GoldLabel.MATCH}),
+        threshold=0.98,
+        rules=ONE_PAIR,
+    )
+    assert r.cluster_count == 1
+    assert r.clusters["a"] == r.clusters["b"] == r.clusters["c"]
+    assert not any(x.kind == "same_source_cluster" for x in r.alerts)
+
+
+def test_a_human_reject_overrides_even_duplicate_target_evidence() -> None:
+    # The fold precedes the dup edge for the SAME pair: a curator's reject is
+    # recorded cannot-link and the pair is not merged by its own dup edge.
+    a, b = _dup_pair()
+    iid = _proposal_id("a", "b")
+    r = resolve_camera_sites(
+        [a, b],
+        gold=None,
+        threshold=0.98,
+        human_items=[_item(iid, "a", "b")],
+        human_votes=[_vote(iid, "reject")],
+    )
+    (d,) = r.decisions
+    assert d.disposition == "human_reject" and d.relation == "cannot_link"
+    assert r.clusters["a"] != r.clusters["b"]
+
+
+def test_review_item_args_tolerate_non_matcher_evidence() -> None:
+    # P31.11 regression (hosted crash): tier-0 duplicate-target edges refused by
+    # a hard constraint, and human-verdict proposals on non-candidate pairs,
+    # carry lineage/decision evidence — not matcher fields. The review-item
+    # writer must describe them honestly, never KeyError.
+    from resolution.camera_sites import SiteDecision
+    from resolution.camera_sites_pg import _conflict_review_args, _review_args
+
+    a, b = _dup_pair()
+    r = resolve_camera_sites([a, b], gold=None, threshold=0.98)
+    d = next(x for x in r.decisions if x.assessment.tier == 0)
+    proposed_dup = SiteDecision(
+        assessment=d.assessment,
+        disposition="proposed",
+        reason="cluster_constraint:max_size",
+    )
+    item_id, _summary, _conf, payload = _review_args(r, proposed_dup)
+    assert item_id == f"er_match:camera_site:{a.subject_id}:{b.subject_id}"
+    assert '"rule": "0:duplicate_target_of"' in payload
+
+    # a human conflict on a pair that was never a candidate (decided via a
+    # routed-back item) materializes a conflict review item, not a crash.
+    x1 = _rec("x1", "s1")
+    x2 = _rec("x2", "s2", 0.3)
+    r2 = resolve_camera_sites(
+        [x1, x2],
+        gold=None,
+        threshold=0.98,
+        human_items=[_item("er_match:camera_site:x1:x2", "x1", "x2")],
+        human_votes=[
+            _vote("er_match:camera_site:x1:x2", "accept", reviewer="curator:a"),
+            _vote(
+                "er_match:camera_site:x1:x2",
+                "reject",
+                reviewer="curator:b",
+                at="2026-10-02T00:00:01",
+            ),
+        ],
+    )
+    d2 = next(x for x in r2.decisions if x.verdict is not None)
+    assert d2.disposition == "proposed" and d2.reason == "human_conflict"
+    item_id2, _s2, _c2, payload2 = _conflict_review_args(r2, d2)
+    assert item_id2 == "er_match:camera_site_conflict:x1:x2"
+    assert "human_conflict" in payload2
+
+
+def test_rules_digest_is_process_stable() -> None:
+    # P31.11 hosted verification caught this: _rules_digest used repr(rules),
+    # whose frozenset/dict iteration order is PYTHONHASHSEED-dependent, minting a
+    # different run_key per Cloud Run execution over byte-identical inputs (the
+    # same defect produced P30.2b's two 1.0.0 run keys). Pin the canonical
+    # digest — a set-order leak changes it.
+    from resolution.camera_sites import _rules_digest
+
+    rules = CameraSiteRules.from_data()
+    assert _rules_digest(rules) == _rules_digest(rules)
+    # The digest must cover the CONTENT, not the repr: two independently
+    # constructed-but-equal rule objects agree, and a changed rule changes it.
+    rules2 = CameraSiteRules.from_data()
+    assert _rules_digest(rules2) == _rules_digest(rules)
+    changed = replace(rules, coincident_m=rules.coincident_m + 1.0)
+    assert _rules_digest(changed) != _rules_digest(rules)

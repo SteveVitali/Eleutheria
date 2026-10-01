@@ -745,14 +745,20 @@ def _run_camera_sites(args: argparse.Namespace) -> int:
         import psycopg
 
         from .camera_sites import load_camera_gold
+        from .camera_sites_pg import read_human_verdicts
         from .eval_loop import read_auto_write_threshold
 
         with psycopg.connect(args.dsn, autocommit=True) as conn:
             if args.role:
                 set_role(conn, args.role)
             records = read_camera_records(conn)
+            human_items, human_votes = read_human_verdicts(conn)
         result = resolve_camera_sites(
-            records, gold=load_camera_gold(), threshold=read_auto_write_threshold()
+            records,
+            gold=load_camera_gold(),
+            threshold=read_auto_write_threshold(),
+            human_items=human_items,
+            human_votes=human_votes,
         )
         print(json.dumps({**result.summary(), "dry_run": True}, indent=2, default=str))
         return 0

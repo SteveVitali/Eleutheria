@@ -573,10 +573,14 @@ def resolved_site_counts(
     carrying coordinate claims — each ONE source's row). A **resolved site** is a cluster
     of those records the latest completed camera-site ER run judged to be the same
     physical device; ``N`` = the number of such clusters (singletons included), so
-    ``N <= M`` by construction and ``dedup ratio = 1 - N/M``. Only AUTO-WRITTEN same-device
-    edges (tiers whose measured holdout precision cleared the published floor) join
-    records; PROPOSED merges await human review and never cluster. A §28 value decision
-    on one record (ADR-104) is NOT a resolved site and is never counted as one.
+    ``N <= M`` by construction and ``dedup ratio = 1 - N/M``. The edges that join
+    records are the AUTO-WRITTEN same-device edges (tiers whose measured holdout
+    precision cleared the published floor) PLUS every valid human-accepted edge
+    (P31.11/ADR-R9-HUMANER, ``human_accept`` — a curator's recorded decision,
+    applied under the same hard constraints). PROPOSED merges await human review,
+    human REJECTS (cannot-link) and refused accept attempts are recorded but never
+    cluster. A §28 value decision on one record (ADR-104) is NOT a resolved site
+    and is never counted as one.
 
     Returns ``None`` when no camera-site ER run has completed (the surface then keeps its
     observation-level framing — never a fabricated resolved-site count).
@@ -597,23 +601,35 @@ def resolved_site_counts(
             x = parent[x]
         return x
 
-    merges = 0
-    for left, right in run.get("auto_write_edges") or ():
-        a, b = str(left), str(right)
-        if a not in in_export or b not in in_export:
-            continue
-        ra, rb = find(a), find(b)
-        if ra != rb:
-            lo, hi = sorted((ra, rb))
-            parent[hi] = lo
-            merges += 1
+    merges = auto_merges = human_merges = 0
+    for kind, edges in (
+        ("auto", run.get("auto_write_edges") or ()),
+        ("human", run.get("human_accept_edges") or ()),
+    ):
+        for left, right in edges:
+            a, b = str(left), str(right)
+            if a not in in_export or b not in in_export:
+                continue
+            ra, rb = find(a), find(b)
+            if ra != rb:
+                lo, hi = sorted((ra, rb))
+                parent[hi] = lo
+                merges += 1
+                if kind == "auto":
+                    auto_merges += 1
+                else:
+                    human_merges += 1
     n = m - merges
     return {
         "observations": m,
         "resolved_sites": n,
         "dedup_ratio": 1.0 - n / m,
         "merges": merges,
+        "auto_merges": auto_merges,
+        "human_merges": human_merges,
         "proposed": int(run.get("proposed_count") or 0),
+        "refused": int(run.get("refused_count") or 0),
+        "cannot_link": int(run.get("cannot_link_count") or 0),
         "run_key": run.get("run_key"),
     }
 
@@ -647,10 +663,13 @@ def resolved_sites_metric(
         "population_note": (
             _POPULATION_NOTE
             + " A resolved site is a cluster of records judged to describe the same physical "
-            f"device: {counts['merges']} same-device merges were auto-written (only tiers whose "
-            "measured holdout precision cleared the published floor); "
-            f"{counts['proposed']} proposed merges await human review and are not counted."
-            + _RESOLVED_EVAL_DISCLOSURE
+            f"device: {counts['auto_merges']} same-device merges were auto-written (only tiers "
+            "whose measured holdout precision cleared the published floor) and "
+            f"{counts['human_merges']} were accepted in human review under the same hard "
+            f"constraints; {counts['proposed']} proposed merges still await review and are not "
+            f"counted, {counts['cannot_link']} reviewer rejects are recorded as cannot-link and "
+            f"{counts['refused']} accepted merges were refused by the hard constraints — none of "
+            "these cluster." + _RESOLVED_EVAL_DISCLOSURE
         ),
         "is_population_total": False,
     }
