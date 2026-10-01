@@ -80,3 +80,8 @@ Items surfaced by seed units that a later unit (or the operator) must resolve. E
 - SEED-14a · rerun `later_register.py` whenever `UNIVERSE_DISPOSED.csv` / `round11_plan.csv` change (real-tree test fails until then, by design) · SEED-15 / OPERATING MODE
 - SEED-14a · memory-repair README's recorded sha256 of `pending_transitions.csv` differs (expected; append a dated note) · SEED-15
 - β/14a · `OPERATIONAL_READINESS.md` L266 date (rec 210) still uncorrected · SEED-15 (append correction)
+- SEED-14b · checker changes (list in `docs/build/runs/SEED-14b.md`): `check_coverage_matrix.py` 777 spec-derived rows, 16-column header, new verdict grammar, routing accepting `BL-nnn`/`SEED-nn`/letter-suffixed tickets; `check_backlog.py` landing pattern + open-home rule · SEED-15
+- SEED-14b · **orchestrator decision:** 52 open/partial DEFERRALS rows now cite only closed BL rows → SEED-15 appends `(cites BL-nnn)` re-homing annotations (append-only; map in SEED-14b's ledger) · SEED-15
+- SEED-14b · `obligation_events.py`: add new verdict words + letter-suffixed id parsing; append the 26 anchors for SEED-14a's new rows (append events, never `migrate`) — **in the seed** so T6 is green (P34.8 contract notes it) · SEED-15
+- SEED-14b · SIG-LIC-006 stored-table split (BL-092) has no Round-11 owner → DEFERRALS row owner PLAN-11B (place in 11B) or LATER with trigger; MUST stays owed · SEED-15
+- SEED-14b · EVAL-001 stays PARTIAL until `/methodology/` stops claiming a human-verified holdout (Wave-0 honesty row owns it); EVAL-003/006 → P37.44 · noted
