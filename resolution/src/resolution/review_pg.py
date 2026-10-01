@@ -54,6 +54,16 @@ class PgReviewQueue:
     def __init__(self, conn: Any) -> None:
         self._conn = conn
 
+    @property
+    def conn(self) -> Any:
+        """The open psycopg connection this queue wraps (for same-session reads).
+
+        The camera-site evidence view and the campaign sampler share the queue's
+        connection rather than opening a second one (P31.10). Reads through it
+        are subject to whatever role/RLS the session carries.
+        """
+        return self._conn
+
     @classmethod
     def from_dsn(cls, dsn: str) -> PgReviewQueue:
         """Open an autocommit connection from ``dsn`` and wrap it in a PG queue."""

@@ -46,6 +46,7 @@ With no sub-command it prints help and exits 0 (the SIG-ENG-013 convention).
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 from typing import Any
@@ -128,6 +129,24 @@ def build_parser() -> argparse.ArgumentParser:
     review_list = review_sub.add_parser("list", help="list pending proposals with confidence")
     review_list.add_argument("queue", nargs="?", help="the JSON queue file")
     review_list.add_argument("--dsn", default=None, help="use PG (PgReviewQueue), not a file")
+    review_list.add_argument(
+        "--prefix",
+        default=None,
+        action="append",
+        help="(PG) item_id prefix filter, repeatable — e.g. er_match:camera_site:",
+    )
+    review_list.add_argument(
+        "--tier", type=int, default=None, help="(PG) payload match-tier filter (e.g. 4)"
+    )
+    review_list.add_argument(
+        "--bucket",
+        default=None,
+        help="(PG) stratum filter (1g/3g/4g/5g/soft-conflict/disputed/other)",
+    )
+    review_list.add_argument(
+        "--campaign", default=None, help="(PG) restrict to a drawn campaign's items"
+    )
+    review_list.add_argument("--limit", type=int, default=None, help="(PG) cap the listing")
 
     show = review_sub.add_parser("show", help="show one proposal's confidence explanation")
     show.add_argument("queue", nargs="?", help="the JSON queue file")
@@ -141,6 +160,87 @@ def build_parser() -> argparse.ArgumentParser:
     decide.add_argument("--reviewer", required=True, help="the human reviewer")
     decide.add_argument("--rationale", default=None, help="an optional note / review rationale")
     decide.add_argument("--dsn", default=None, help="use PG (PgReviewQueue), not a file")
+
+    # P31.10: the stratified campaign sampler + the offline JSONL path. The
+    # sampler draws a seeded, reproducible sample of PENDING camera-site items
+    # across strata (1g/3g/4g/5g + soft-conflict + disputed) and — only with
+    # --campaign — tags it append-only in review_campaign/_item (a re-draw of
+    # the same design under the same id is +0; a different design under a taken
+    # id is refused). Default --n is the §6 Q11 ~400-pair Round-10 design; this
+    # command PREPARES a campaign, it never runs one (no decisions exist here).
+    sample = review_sub.add_parser(
+        "sample",
+        help="draw a stratified, seeded sample of pending camera-site items "
+        "(P31.10; --campaign tags it append-only for the Round-10 review)",
+    )
+    sample.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    sample.add_argument("--role", default=None, help="optional role to SET ROLE to")
+    sample.add_argument(
+        "--strata",
+        default=None,
+        help="comma list of stratum[:count] (default: all of "
+        "1g,3g,4g,5g,soft-conflict,disputed; 'name:all' draws a whole stratum)",
+    )
+    sample.add_argument(
+        "--n",
+        type=int,
+        default=400,
+        help="unique-item target (default 400 — the §6 Q11 Round-10 design)",
+    )
+    sample.add_argument(
+        "--seed", default="0", help="the sample seed (reproducible for a fixed seed)"
+    )
+    sample.add_argument(
+        "--campaign",
+        default=None,
+        help="campaign id to materialize append-only (omit to print a dry run)",
+    )
+    sample.add_argument(
+        "--purpose",
+        default="prepared for Round 10 (P31.10 tooling; the human review campaign is Round 10)",
+        help="the campaign's recorded purpose label",
+    )
+    sample.add_argument(
+        "--created-by",
+        default="sig-resolution review sample",
+        help="the tool/engineering actor recorded on the campaign row (never a person)",
+    )
+    sample.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="print the draw summary without writing any campaign rows",
+    )
+
+    export = review_sub.add_parser(
+        "export",
+        help="export pending review items as a JSONL labelling session (P31.10)",
+    )
+    export.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    export.add_argument("--role", default=None, help="optional role to SET ROLE to")
+    export.add_argument("--campaign", default=None, help="export a drawn campaign's items")
+    export.add_argument(
+        "--prefix",
+        default=None,
+        action="append",
+        help="item_id prefix filter, repeatable (default: the camera-site families)",
+    )
+    export.add_argument("--tier", type=int, default=None, help="payload match-tier filter")
+    export.add_argument("--bucket", default=None, help="stratum filter")
+    export.add_argument("--out", default=None, help="the JSONL output path (default: stdout)")
+
+    imp = review_sub.add_parser(
+        "import",
+        help="import a JSONL labelling session as append-only decisions (P31.10)",
+    )
+    imp.add_argument("path", help="the JSONL labelling file")
+    imp.add_argument("--dsn", required=True, help="PostgreSQL DSN of the claim spine")
+    imp.add_argument("--role", default=None, help="optional role to SET ROLE to")
+    imp.add_argument(
+        "--reviewer",
+        required=True,
+        help="the pseudonymous reviewer handle recorded on every appended decision",
+    )
+
     camera = sub.add_parser(
         "camera-sites",
         help="geospatial camera-site entity resolution over the PG spine (P30.2b)",
@@ -260,7 +360,20 @@ def _run_review_pg(args: argparse.Namespace) -> int:
         print(f"enqueued {added} PROPOSED proposal(s); {len(queue.pending())} pending in PG")
         return 0
     if args.review_command == "list":
-        pending = queue.pending()
+        filters = [args.prefix, args.tier, args.bucket, args.campaign, args.limit]
+        if any(f is not None for f in filters):
+            from .camera_site_review import pending_items
+
+            pending = pending_items(
+                queue.conn,
+                prefixes=args.prefix,
+                tier=args.tier,
+                bucket=args.bucket,
+                campaign=args.campaign,
+                limit=args.limit,
+            )
+        else:
+            pending = queue.pending()
         if not pending:
             print("(no pending proposals)")
             return 0
@@ -295,7 +408,137 @@ def _run_review_pg(args: argparse.Namespace) -> int:
     return 2
 
 
+def _run_review_sample(args: argparse.Namespace) -> int:
+    """Draw the stratified, seeded camera-site sample; optionally tag a campaign.
+
+    Read-only unless ``--campaign`` is given: the draw itself never writes, and
+    ``--dry-run`` forces a print-only run even with ``--campaign``. The default
+    ``--n 400`` is the §6 Q11 design — the Round-10 campaign design; this
+    tooling prepares the sample, it never runs a review (no decisions here).
+    """
+    import psycopg
+
+    from .camera_site_review import (
+        CAMERA_SITE_PREFIXES,
+        draw_sample,
+        materialize_campaign,
+        parse_strata,
+        pending_items,
+        stratum_for,
+    )
+    from .camera_sites_pg import set_role
+
+    try:
+        strata = parse_strata(args.strata)
+    except ValueError as exc:
+        print(str(exc))
+        return 2
+    with psycopg.connect(args.dsn, autocommit=True) as conn:
+        if args.role:
+            set_role(conn, args.role)
+        pending = pending_items(conn, prefixes=CAMERA_SITE_PREFIXES)
+        universe: dict[str, int] = {}
+        for it in pending:
+            s = stratum_for(it.item_id, it.payload)
+            universe[s] = universe.get(s, 0) + 1
+        drawn = draw_sample(conn, strata, n=args.n, seed=args.seed)
+        union = sorted({i for ids in drawn.values() for i in ids})
+        design = {
+            "strata": [{"name": n_, "requested": r} for n_, r in strata],
+            "n": args.n,
+            "seed": args.seed,
+            "universe_pending": universe,
+            "drawn_by_stratum": {k: len(v) for k, v in drawn.items()},
+            "unique_drawn": len(union),
+        }
+        design["design_digest"] = hashlib.sha256(
+            json.dumps(
+                {"strata": design["strata"], "seed": args.seed, "n": args.n, "items": union},
+                sort_keys=True,
+            ).encode()
+        ).hexdigest()
+        summary: dict[str, Any] = {
+            "seed": args.seed,
+            "n": args.n,
+            "strata": {
+                name: {
+                    "available": sum(
+                        1 for i in pending if stratum_for(i.item_id, i.payload) == name
+                    ),
+                    "drawn": len(drawn.get(name, [])),
+                }
+                for name, _r in strata
+            },
+            "unique_drawn": len(union),
+            "design_digest": design["design_digest"],
+        }
+        if args.campaign and not args.dry_run:
+            result = materialize_campaign(
+                conn,
+                campaign_id=args.campaign,
+                purpose=args.purpose,
+                design=design,
+                created_by=args.created_by,
+                drawn=drawn,
+            )
+            summary["campaign"] = result
+            summary["purpose"] = args.purpose
+        else:
+            summary["campaign"] = None
+            summary["dry_run"] = True
+    print(json.dumps(summary, indent=2, sort_keys=True))
+    return 0
+
+
+def _run_review_export(args: argparse.Namespace) -> int:
+    """Serialise pending items to a JSONL labelling session (blank decisions)."""
+    import psycopg
+
+    from .camera_site_review import CAMERA_SITE_PREFIXES, export_rows
+    from .camera_sites_pg import set_role
+
+    with psycopg.connect(args.dsn, autocommit=True) as conn:
+        if args.role:
+            set_role(conn, args.role)
+        rows = export_rows(
+            conn,
+            campaign=args.campaign,
+            prefixes=args.prefix or CAMERA_SITE_PREFIXES,
+            tier=args.tier,
+            bucket=args.bucket,
+        )
+    text = "".join(json.dumps(r, sort_keys=True) + "\n" for r in rows)
+    if args.out:
+        with open(args.out, "w", encoding="utf-8") as fh:
+            fh.write(text)
+        print(f"exported {len(rows)} pending item(s) to {args.out}")
+    else:
+        print(text, end="")
+    return 0
+
+
+def _run_review_import(args: argparse.Namespace) -> int:
+    """Append a JSONL labelling session's decisions via PgReviewQueue.decide."""
+    from .camera_site_review import import_decisions
+    from .camera_sites_pg import set_role
+
+    with open(args.path, encoding="utf-8") as fh:
+        rows = [json.loads(line) for line in fh if line.strip()]
+    queue = PgReviewQueue.from_dsn(args.dsn)
+    if args.role:
+        set_role(queue.conn, args.role)
+    result = import_decisions(queue, rows, reviewer=args.reviewer)
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 1 if result["errors"] else 0
+
+
 def _run_review(args: argparse.Namespace) -> int:
+    if args.review_command == "sample":
+        return _run_review_sample(args)
+    if args.review_command == "export":
+        return _run_review_export(args)
+    if args.review_command == "import":
+        return _run_review_import(args)
     if getattr(args, "dsn", None):
         return _run_review_pg(args)
     if args.review_command == "enqueue":
