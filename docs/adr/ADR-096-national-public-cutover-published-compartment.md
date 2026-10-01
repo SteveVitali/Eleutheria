@@ -72,3 +72,10 @@ compartment" and a proof that nothing else leaks into a public object (§42 / Pa
   a new ADR (the ODbL layer then ships as a separate public file per §42.3).
 - A new non-share-alike licence must nonetheless stay private (e.g. a sensitive government feed) — the
   licence-only rule no longer suffices and a per-compartment restriction flag is introduced in a new ADR.
+
+## Status updates
+
+- **Status:** Superseded by ADR-106 (2026-10-01) — §Decision 1 only
+- **Status note (2026-10-01, Round-11 T1, unit SEED-11d):** ADR-106's Supersedes field names ADR-096 §Decision
+  1 (the classifier rule "a compartment is public iff its licence is non-share_alike"); Decisions 2 and 3 stand.
+  Recorded at Round-11 T1 from F3 §5.2 and F-249 (NEW-4). The body above is unchanged (SIG-ENG-003).

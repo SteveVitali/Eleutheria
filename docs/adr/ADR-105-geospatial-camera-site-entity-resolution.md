@@ -150,3 +150,22 @@ new mirror family) or a cluster-shape alert fires; (e) the site-name/device-kind
 are encoded; (f) a published surface needs one point per resolved site (use `representative_point`); (g) a spine
 state can recur (retraction-driven) often enough that "latest completed run" needs a per-execution
 completion record.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): LIKELY FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger likely fired:** (clause d) overlapping DeFlock/OSM ArcGIS republishes (I1 NEW-5) and
+coordinate axis swaps (I1 NEW-2) change the overlap shape (F3 §5.1). **Answer:** row P35.46 (derivation
+collapse + possible duplicates in the spine, ruleset v3) re-measures the tiers under ADR-153, which supersedes
+this ADR's §5 (status update below). The decision above stays in force until that answer lands; this ADR's
+body is unchanged (SIG-ENG-003).
+
+## Status updates
+
+- **Status:** Superseded by ADR-153 (2026-10-01) — §5 only (the measured auto-write gate)
+- **Status note (2026-10-01, Round-11 T1, unit SEED-11d):** Per plan §7 row 153, ADR-153 (derivation, not
+  identity: ruleset v3 auto-collapses only C0–C2 census-verified copies; SIG-EVAL-004's lower bound waived for
+  C0–C2 in the operator's adopted words, A-6) supersedes §5; the rest of this ADR stands. ADR-153 is written by
+  SEED-11 in the same seed. The body above is unchanged (SIG-ENG-003).

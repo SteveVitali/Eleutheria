@@ -88,3 +88,13 @@ outcomes): the flips + review metadata land on `sources.toml` (with `last_verifi
 `STAGE0_OUTREACH_RECORD.md` gains dated rows, and `validate` then shows
 `loadable now ≥ 1`. Also revisit if the packet set widens beyond the 27 critical-path
 sources (P22+ backlog).
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** HG-03 was answered and the packet set widened to 342 sources, but
+`RIGHTS_REVIEW_INDEX.md` was never regenerated (E4 NEW-6; F3 §5.1). **Answer:** row P37.6 regenerates the
+index (with packet decision lines and field validation); the operator executes each wave's flip list (OP-26).
+The decision above stays in force until that answer lands; this ADR's body is unchanged (SIG-ENG-003).

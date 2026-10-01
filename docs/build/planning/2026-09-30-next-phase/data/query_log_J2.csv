@@ -1,0 +1,119 @@
+query_id,engine_or_tool,query_or_url,run_at,hits_kept,notes
+J2-Q001,WebFetch,https://surveillancegraph.org/,2026-09-30T16:44:43Z,1,SIG context: nav structure; counts (178 tracked sources; 255 artifacts)
+J2-Q002,WebFetch,https://surveillancegraph.org/data-freshness/,2026-09-30T16:44:43Z,1,SIG context: per-source last-run/last-change/status table; volatility class unknown for all
+J2-Q003,WebFetch,https://surveillancegraph.org/evidence/,2026-09-30T16:44:43Z,1,SIG context: evidence viewer states no claims with full evidence view published for this build
+J2-Q004,WebFetch,https://surveillancegraph.org/methodology/,2026-09-30T16:44:43Z,1,SIG context: belief-pinned permalink citation; no download links on page
+J2-Q005,WebFetch,https://surveillancegraph.org/dossier/,2026-09-30T16:44:43Z,1,SIG context: dossier index; print/PDF per entry
+J2-Q006,WebFetch,https://surveillancegraph.org/downloads/,2026-09-30T16:44:43Z,0,HTTP 404 - no /downloads/ route
+J2-Q007,WebFetch,https://surveillancegraph.org/dossier/az/,2026-09-30T16:44:43Z,1,SIG context: source shown as bare id camreg_azdot_az; /dossier/az.json and print PDF
+J2-Q008,WebFetch,https://surveillancegraph.org/manifest.json,2026-09-30T16:44:43Z,0,HTTP 404 at site root (manifest may live under a release path - J1 owns inventory)
+J2-Q009,WebFetch,https://www.opensanctions.org/datasets/us_ofac_sdn/,2026-09-30T16:45:24Z,1,OpenSanctions source page fields (publisher; frequency; last processed/changed; counts; downloads; licence)
+J2-Q010,WebFetch,https://www.opensanctions.org/datasets/us_ofac_sdn/issues/,2026-09-30T16:45:24Z,0,HTTP 404 - issues live under /issues/<dataset>
+J2-Q011,WebFetch,https://www.opensanctions.org/docs/bulk/,2026-09-30T16:45:24Z,1,Bulk formats; collections vs datasets; non-commercial free
+J2-Q012,WebFetch,https://www.opensanctions.org/licensing/,2026-09-30T16:45:24Z,1,CC BY-NC 4.0 plus commercial licences
+J2-Q013,WebFetch,https://www.opensanctions.org/datasets/us_ofac_sdn/,2026-09-30T16:45:24Z,1,Second pass: hyperlinks (artifact URLs per version; source.xml; statistics; delta)
+J2-Q014,WebFetch,https://www.opensanctions.org/docs/statements/,2026-09-30T16:45:24Z,1,Statement model: per-value dataset/first_seen/last_seen/original_value
+J2-Q015,WebFetch,https://data.opensanctions.org/datasets/latest/us_ofac_sdn/index.json,2026-09-30T16:45:24Z,1,Machine-readable dataset metadata incl. issue_count; resources with checksum+size; delta_url
+J2-Q016,WebFetch,https://www.opensanctions.org/docs/bulk/delta/,2026-09-30T16:45:24Z,1,Delta files ADD/MOD/DEL; last 100 versions indexed
+J2-Q017,WebFetch,https://www.opensanctions.org/datasets/us_ofac_sdn/statistics/,2026-09-30T16:45:24Z,1,Per-run change statistics page
+J2-Q018,WebSearch,"opensanctions.org dataset ""issues"" warnings errors crawler page",2026-09-30T16:45:24Z,3,Found /issues/ overview and per-dataset issue pages
+J2-Q019,WebFetch,https://www.opensanctions.org/changelog/,2026-09-30T16:45:24Z,0,HTTP 404 (changelog link seen on dataset page not reachable at this path)
+J2-Q020,WebFetch,https://www.opensanctions.org/issues/,2026-09-30T16:45:24Z,1,Cross-dataset warnings/errors overview; active/deprecated/KYB sections
+J2-Q021,WebFetch,https://www.opensanctions.org/issues/ua_war_sanctions,2026-09-30T16:45:24Z,1,Per-dataset issue page + issues.json per version (issue rows loaded dynamically; not seen verbatim)
+J2-Q022,WebFetch,https://www.opensanctions.org/entities/Q7747/,2026-09-30T16:46:18Z,1,Entity page: per-value source attribution; Data sources; first seen/last change; source links; raw data explorer; equivalent API request
+J2-Q023,WebFetch,https://www.openstreetmap.org/copyright,2026-09-30T16:46:38Z,1,ODbL; attribution; share-alike; contributors (third-party sources) acknowledgement
+J2-Q024,WebFetch,https://wiki.openstreetmap.org/wiki/Planet.osm/diffs,2026-09-30T16:46:38Z,1,Replication diffs minute/hour/day; state.txt sequenceNumber+timestamp
+J2-Q025,WebFetch,https://planet.openstreetmap.org/,2026-09-30T16:46:38Z,1,Weekly planet; md5; torrents; third-party extracts recommended
+J2-Q026,WebFetch,https://wiki.openstreetmap.org/wiki/Changeset,2026-09-30T16:46:38Z,1,Changeset metadata incl source tag; discussions
+J2-Q027,WebFetch,https://osmfoundation.org/wiki/Licence/Community_Guidelines/Collective_Database_Guideline_Guideline,2026-09-30T16:46:38Z,1,Collective vs derivative DB; share-alike scope
+J2-Q028,WebFetch,https://osmfoundation.org/wiki/Licence/Attribution_Guidelines,2026-09-30T16:46:38Z,1,Attribution for downloads (readme/metadata) and maps
+J2-Q029,WebFetch,https://www.wikidata.org/wiki/Help:Sources,2026-09-30T16:47:04Z,1,Per-statement references: P248 stated in; P854 reference URL; P813 retrieved; P1065 archive URL
+J2-Q030,WebFetch,https://www.wikidata.org/wiki/Wikidata:Database_download,2026-09-30T16:47:04Z,1,Weekly JSON/RDF dumps; truthy vs full; CC0; incremental daily; torrent
+J2-Q031,WebSearch,"Wikidata references quality study proportion of statements unreferenced ""imported from Wikimedia project""",2026-09-30T16:47:04Z,2,Kept RQSS paper and Wikimedia grant page
+J2-Q032,WebFetch,https://researchportal.hw.ac.uk/en/publications/rqss-referencing-quality-scoring-system-for-wikidata/,2026-09-30T16:47:04Z,1,RQSS: avg referencing quality 0.58/1; >73% statements have provenance metadata
+J2-Q033,WebFetch,https://meta.wikimedia.org/wiki/Grants:Project/Finding_References_and_Sources_for_Wikidata,2026-09-30T16:47:04Z,1,50% unreferenced (Jul 2016); ~34% of references point to Wikimedia projects
+J2-Q034,WebFetch,https://ourworldindata.org/grapher/life-expectancy,2026-09-30T16:47:32Z,1,OWID chart: sources w/ retrieved dates; processing notes; last updated / next expected update; citation; ZIP download
+J2-Q035,WebFetch,https://docs.owid.io/projects/etl/api/chart-api/,2026-09-30T16:47:32Z,1,Chart API .csv/.metadata.json/.zip with README; lastUpdated/nextUpdate
+J2-Q036,WebFetch,https://docs.owid.io/projects/etl/architecture/,2026-09-30T16:47:53Z,1,ETL stages snapshot/meadow/garden/grapher; public owid/etl repo (landing page only)
+J2-Q037,WebFetch,https://ourworldindata.org/faqs,2026-09-30T16:47:53Z,1,CC BY for OWID data; third-party data under providers' own terms
+J2-Q038,WebFetch,https://docs.owid.io/projects/etl/architecture/metadata/reference/,2026-09-30T16:47:53Z,1,Origin metadata fields (producer; url_main; url_download; date_accessed; date_published; license; version_producer)
+J2-Q039,WebFetch,https://www.propublica.org/datastore/,2026-09-30T16:48:03Z,0,301 redirect to projects.propublica.org/datastore/
+J2-Q040,WebFetch,https://projects.propublica.org/datastore/,2026-09-30T16:48:03Z,1,Data Store archived / no longer updated; per-dataset source; date range; rows; terms; free vs premium
+J2-Q041,WebFetch,https://opencorporates.com/info/our-data,2026-09-30T16:48:03Z,0,Redirects to /pricing/ - no provenance content
+J2-Q042,WebSearch,OpenCorporates provenance every piece of data source URL retrieved date company page,2026-09-30T16:48:03Z,1,Kept API reference
+J2-Q043,WebFetch,https://api.opencorporates.com/documentation/API-Reference,2026-09-30T16:48:22Z,1,Provenance object (source_url; confidence; source_type; actor_type; log_message; created_at); source block (retrieved_at; publisher; terms)
+J2-Q044,WebFetch,https://atlasofsurveillance.org/,2026-09-30T16:48:33Z,1,EFF Atlas: map/search/data library; CC-BY
+J2-Q045,WebFetch,https://atlasofsurveillance.org/methodology,2026-09-30T16:48:33Z,1,Crowdsourced + aggregated; double-checked by interns; stated limitations; corrections by email
+J2-Q046,WebFetch,https://atlasofsurveillance.org/data-library,2026-09-30T16:48:33Z,1,Downloads CSV/XLSX/PDF; update 'Regularly'; no central data dictionary; few per-record source columns
+J2-Q047,WebFetch,https://deflock.me/,2026-09-30T16:48:33Z,0,301 redirect to deflock.org
+J2-Q048,WebSearch,DeFlock ALPR map OpenStreetMap data source methodology criticism accuracy,2026-09-30T16:48:33Z,4,Kept OSM wiki Deflock; GitHub; OSM community thread; SAN article
+J2-Q049,WebFetch,https://deflock.org/,2026-09-30T16:48:33Z,0,JS-rendered - no substantive content retrieved (INACCESSIBLE to fetcher)
+J2-Q050,WebFetch,https://wiki.openstreetmap.org/wiki/Deflock,2026-09-30T16:48:33Z,1,DeFlock is an OSM editor; created_by changeset tag; surveillance:type=ALPR
+J2-Q051,WebFetch,https://community.openstreetmap.org/t/unverified-flock-cameras-causing-mass-panic/146534,2026-09-30T16:48:33Z,1,Unverified nodes rendered without trust labels -> misinformation; proposed verified/unverified labels
+J2-Q052,WebFetch,https://san.com/cc/flock-threatens-website-hosting-license-plate-data-accidentally-leaked-by-cops/,2026-09-30T16:48:33Z,1,HaveIBeenFlocked: unredacted FOIA audit logs (plates + search reasons) republished - Part VIII pitfall exemplar
+J2-Q053,WebFetch,https://github.com/FoggedLens/deflock,2026-09-30T16:49:19Z,1,DeFlock: OSM via Overpass; cached in Cloudflare R2; MIT code; no documented export or cadence
+J2-Q054,WebFetch,https://www.muckrock.com/foi/list/,2026-09-30T16:49:31Z,0,HTTP 403 (INACCESSIBLE)
+J2-Q055,WebFetch,https://www.documentcloud.org/help/faq/,2026-09-30T16:49:31Z,0,301 redirect to help.muckrock.com (Notion)
+J2-Q056,WebFetch,https://help.muckrock.com/Frequently-Asked-Questions-19ef889269638193975edda45199e14e,2026-09-30T16:49:31Z,0,Notion JS shell - no content (INACCESSIBLE)
+J2-Q057,WebSearch,DocumentCloud access levels public private organization redaction original PDF text download API,2026-09-30T16:49:31Z,1,Kept readthedocs documents reference (snippets not cited)
+J2-Q058,WebFetch,https://next.www.documentcloud.org/help/faq,2026-09-30T16:49:46Z,0,HTTP 403 (INACCESSIBLE)
+J2-Q059,WebFetch,https://documentcloud.readthedocs.io/en/latest/documents.html,2026-09-30T16:49:46Z,1,DocumentCloud document attrs: access public/private/organization; pdf_url; full_text_url; source; published_url
+J2-Q060,WebFetch,https://catalog.data.gov/dataset/?q=license+plate+reader,2026-09-30T16:49:46Z,1,Search results show publisher/formats/last updated (irrelevant topical matches)
+J2-Q061,WebFetch,https://data.gov/dataset/electric-vehicle-population-data,2026-09-30T16:49:46Z,0,HTTP 404
+J2-Q062,WebFetch,https://resources.data.gov/resources/dcat-us/,2026-09-30T16:49:46Z,1,DCAT-US 1.1 required fields; accessLevel public/restricted public/non-public; accrualPeriodicity; data.json
+J2-Q063,WebFetch,https://catalog.data.gov/dataset/electric-vehicle-population-data,2026-09-30T16:50:17Z,1,CKAN dataset page: first published; last updated; catalog last checked; raw harvest record link; ODbL licence
+J2-Q064,WebSearch,DCAT-US 3.0 specification released GSA data.gov,2026-09-30T16:50:17Z,1,Kept resources.data.gov/resources/dcat-us3/
+J2-Q065,WebFetch,https://resources.data.gov/resources/dcat-us3/,2026-09-30T16:50:17Z,1,DCAT-US 3: profile of DCAT 3; dataset series; DataService; hasQualityMeasurement; wasGeneratedBy; checksum; access/use restrictions
+J2-Q066,WebFetch,https://pdap.io/,2026-09-30T16:50:31Z,0,JS shell - no content (INACCESSIBLE to fetcher)
+J2-Q067,WebFetch,https://www.transit.land/documentation/concepts/feed-versions,2026-09-30T16:50:31Z,0,404 page
+J2-Q068,WebSearch,"Transitland feed version sha1 fetched_at archived redistribution license ""redistribution_allowed""",2026-09-30T16:50:31Z,3,Kept static-gtfs-feed-versions; source-feeds; BART feed page
+J2-Q069,WebSearch,Police Data Accessibility Project data sources database fields record type access type update frequency docs,2026-09-30T16:50:31Z,0,Only secondary press; not cited
+J2-Q070,WebFetch,https://www.transit.land/documentation/concepts/static-gtfs-feed-versions,2026-09-30T16:50:53Z,1,Hourly check; new version on change keyed by SHA1; historic versions paywalled; licence can block redistribution
+J2-Q071,WebFetch,https://www.transit.land/documentation/concepts/source-feeds/,2026-09-30T16:50:53Z,1,Per-feed licence fields (spdx; redistribution_allowed; create_derived_products; attribution_text...); no download if redistribution_allowed=no
+J2-Q072,WebFetch,https://www.transit.land/onestop-id/f-9q9-bart,2026-09-30T16:50:53Z,1,Feed page: last fetch; licence summary; versions table Added/SHA1/date range/download; edit via GitHub atlas
+J2-Q073,WebFetch,https://batch.openaddresses.io/data,2026-09-30T16:51:06Z,0,JS shell only (INACCESSIBLE to fetcher; used API instead)
+J2-Q074,WebFetch,https://www.surveillancewatch.io/,2026-09-30T16:51:06Z,0,JS shell only (INACCESSIBLE to fetcher)
+J2-Q075,WebFetch,https://batch.openaddresses.io/api/data?source=us/ca/san_francisco,2026-09-30T16:51:06Z,1,Per-source/layer data rows: updated; job; validated/pmtiles/preview flags; size
+J2-Q076,WebFetch,https://openaddresses.io/,2026-09-30T16:51:06Z,1,All data openly licensed; most sources attribution-only
+J2-Q077,WebFetch,https://batch.openaddresses.io/api/job/920578,2026-09-30T16:51:22Z,1,Job record: status; source definition pinned to git commit; count; bounds; licence; loglink; version
+J2-Q078,WebFetch,https://www.w3.org/TR/vocab-dcat-3/,2026-09-30T16:51:30Z,1,DCAT 3 Rec 2024-08-22: DatasetSeries; DataService; versioning props; spdx:checksum; downloadURL vs accessURL; license/rights/accessRights
+J2-Q079,WebFetch,https://developers.google.com/search/docs/appearance/structured-data/dataset,2026-09-30T16:51:30Z,1,Google Dataset: name+description required; distribution DataDownload; license URL; supports JSON-LD/DCAT/CSVW
+J2-Q080,WebFetch,https://datapackage.org/standard/data-package/,2026-09-30T16:51:30Z,1,Data Package v2 descriptor; licenses; sources; version; created
+J2-Q081,WebFetch,https://www.w3.org/TR/tabular-data-primer/,2026-09-30T16:51:30Z,1,CSVW: csv-metadata.json; tableSchema columns datatype/required/keys; aboutUrl/propertyUrl; Recs Dec 2015
+J2-Q082,WebFetch,https://www.w3.org/TR/prov-o/,2026-09-30T16:51:30Z,1,PROV-O Rec 2013-04-30: wasDerivedFrom; hadPrimarySource; generatedAtTime; Bundle (provenance of provenance)
+J2-Q083,WebFetch,https://datapackage.org/standard/data-resource/,2026-09-30T16:51:53Z,1,Resource hash (MD5 default; algorithm prefix); bytes; mediatype; per-resource licenses and sources
+J2-Q084,WebFetch,https://docs.sigstore.dev/cosign/signing/signing_with_blobs/,2026-09-30T16:51:53Z,1,cosign sign-blob keyless/key-based; bundle incl transparency-log proof
+J2-Q085,WebFetch,https://jedisct1.github.io/minisign/,2026-09-30T16:51:53Z,1,minisign Ed25519; trusted comments; signify-compatible
+J2-Q086,WebFetch,https://help.zenodo.org/docs/deposit/describe-records/reserve-doi/,2026-09-30T16:51:53Z,1,DOI per upload; reserve DOI pre-publication
+J2-Q087,WebSearch,"Zenodo concept DOI version DOI ""all versions"" help new version record",2026-09-30T16:51:53Z,1,Kept Zenodo support article
+J2-Q088,WebFetch,https://schema.org/Dataset,2026-09-30T16:51:53Z,1,schema.org Dataset props: distribution; isBasedOn; sdDatePublished; creditText; conditionsOfAccess; correction; measurementTechnique
+J2-Q089,WebFetch,https://support.zenodo.org/help/en-gb/1-upload-deposit/97-what-is-doi-versioning,2026-09-30T16:52:14Z,1,Concept DOI vs version DOI
+J2-Q090,WebFetch,https://docs.github.com/en/repositories/archiving-a-github-repository/referencing-and-citing-content,2026-09-30T16:52:14Z,1,Zenodo-GitHub integration mints DOI per GitHub release
+J2-Q091,WebFetch,https://cloud.google.com/storage/docs/requester-pays,2026-09-30T16:52:25Z,0,301 redirect to docs.cloud.google.com
+J2-Q092,WebFetch,https://aws.amazon.com/opendata/open-data-sponsorship-program/,2026-09-30T16:52:25Z,1,AWS ODP covers storing+sharing high-value cloud-optimised open datasets; eligibility
+J2-Q093,WebFetch,https://source.coop/,2026-09-30T16:52:25Z,1,Source Cooperative nonprofit S3-compatible open-data hosting; pricing TBA
+J2-Q094,WebFetch,https://docs.cloud.google.com/storage/docs/requester-pays,2026-09-30T16:52:46Z,1,Requester Pays shifts egress/ops to requester; no anonymous access
+J2-Q095,WebSearch,"OpenSanctions licence criticism non-commercial ""CC BY-NC"" open data community debate",2026-09-30T16:52:46Z,0,Snippets only; FAQ page fetched next returned nav only - not cited
+J2-Q096,WebFetch,https://www.opensanctions.org/faq/37/terms,2026-09-30T16:52:46Z,0,Returned navigation only - no terms text
+J2-Q097,WebFetch,https://docs.overturemaps.org/attribution/,2026-09-30T16:52:58Z,1,Per-theme licences (ODbL / CDLA-P-2.0 / CC BY per country) and attribution; NOTICE.txt
+J2-Q098,WebFetch,https://docs.overturemaps.org/release/latest/,2026-09-30T16:52:58Z,0,HTTP 404
+J2-Q099,WebFetch,https://dumps.wikimedia.org/backup-index.html,2026-09-30T16:52:58Z,1,Public dump-job status per wiki with completion timestamps; rate-limit note
+J2-Q100,WebSearch,"Overture Maps release notes changelog ""sources"" property record_id dataset schema docs.overturemaps.org",2026-09-30T16:52:58Z,3,Kept 2024-07-22.0 and 2026-05-20 release notes; GERS changelog
+J2-Q101,WebFetch,https://docs.overturemaps.org/release-notes/,2026-09-30T16:53:17Z,0,HTTP 404
+J2-Q102,WebFetch,https://docs.overturemaps.org/blog/2024-07-22.0/,2026-09-30T16:53:17Z,1,Record-level sources: dataset; record_id; update_time; confidence
+J2-Q103,WebFetch,https://docs.overturemaps.org/blog/2026/05/20/release-notes/,2026-09-30T16:53:17Z,1,Release id + schema version; per-theme changes; deprecations with removal date; release paths
+J2-Q104,WebFetch,https://docs.overturemaps.org/gers/changelog/,2026-09-30T16:53:17Z,1,Per-release ID changelog added/removed/data_changed/unchanged; columns_changed
+J2-Q105,WebFetch,https://www.opensanctions.org/reference/,2026-09-30T16:53:35Z,1,Data dictionary generated from FtM model; JSON model file; per-schema property tables with counts
+J2-Q106,WebFetch,https://www.openstreetmap.org/api/0.6/changeset/1,2026-09-30T16:53:35Z,1,API responses carry copyright/attribution/license attributes inline
+J2-Q107,WebFetch,https://planet.openstreetmap.org/replication/minute/state.txt,2026-09-30T16:53:35Z,0,302 redirect to OSMF S3 bucket
+J2-Q108,WebFetch,https://osm-planet-eu-central-1.s3.dualstack.eu-central-1.amazonaws.com/planet/replication/minute/state.txt,2026-09-30T16:53:54Z,1,Live state.txt: sequenceNumber=7309165; timestamp 2026-09-30T16:53:01Z
+J2-Q109,WebSearch,OpenStreetMap planet files hosted AWS open data sponsorship S3 osm-planet mirror bandwidth,2026-09-30T16:53:54Z,1,Kept registry.opendata.aws/osm
+J2-Q110,WebFetch,https://registry.opendata.aws/osm/,2026-09-30T16:53:54Z,1,OSMF planet/replication in S3 eu-central-1 + us-west-2; SNS notifications
+J2-Q111,WebSearch,OpenStreetMap redaction API hidden versions history dumps licence violation Data Working Group,2026-09-30T16:54:11Z,1,Kept OSMF DWG page
+J2-Q112,WebSearch,Open Data Portal Watch metadata quality CKAN portals outdated metadata study,2026-09-30T16:54:11Z,1,Kept WU research portal record (JDIQ 2016)
+J2-Q113,WebFetch,https://csrc.nist.gov/news/2022/nist-transitioning-away-from-sha-1-for-all-apps,2026-09-30T16:54:11Z,1,NIST SHA-1 retirement by 2030-12-31; SHA-2/SHA-3
+J2-Q114,WebFetch,https://osmfoundation.org/wiki/Data_Working_Group,2026-09-30T16:54:22Z,1,Redaction hides historical versions; 'cannot be shown as it has been redacted' message; DMCA handling
+J2-Q115,WebFetch,https://research.wu.ac.at/en/publications/automated-quality-assessment-of-metadata-across-open-data-portals-3/,2026-09-30T16:54:22Z,1,Neumaier et al JDIQ 2016: 260+ portals / 1.1M datasets; metadata quality issues incl retrievability
+J2-Q116,WebFetch,https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations/using-artifact-attestations-to-establish-provenance-for-builds,2026-09-30T16:54:36Z,1,GitHub artifact attestations (actions/attest); gh attestation verify; arbitrary-file support not explicit
+J2-Q117,WebFetch,https://datacite-metadata-schema.readthedocs.io/en/4.5/appendices/appendix-1/relationType/,2026-09-30T16:54:36Z,1,DataCite relationTypes IsDerivedFrom/IsNewVersionOf/IsPartOf/IsObsoletedBy etc
+J2-Q118,WebSearch,"""Atlas of Surveillance"" data accuracy criticism outdated entries limitations researchers",2026-09-30T16:54:36Z,0,No relevant hits (health-surveillance noise); rely on AoS self-stated limitations

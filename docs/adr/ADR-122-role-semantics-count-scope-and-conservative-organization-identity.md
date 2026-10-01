@@ -40,3 +40,13 @@ Three related evidence-integrity defects survived P32.2:
 ## Revisit trigger
 
 Revisit when a new organisation role or provenance genre is needed (extend `ROLE_OF_PREDICATE` + `artifact_genres` together — the taxonomy is the single mapping), when scoped-name candidates accumulate enough that a disposition workflow (bulk review of `partner-name-audit` output) should be built, when a count scope needs structured geometry (promote `jurisdiction` to an evidenced geofence rather than a token), or when a derived sum must cover overlapping sub-populations (requires explicit double-count evidence, not a relaxed guard).
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): LIKELY FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger likely fired:** the count-scope jurisdiction is an unscoped token, not structured
+geometry (F3 §5.1). **Answer:** row P35.17 (jurisdiction registry, boundary pack, `lookup@1`) writes ADR-160
+and appends its own `Revisited by ADR-160` line here (plan §7, S6R-24). The decision above stays in force
+until that answer lands; this ADR's body is unchanged (SIG-ENG-003).

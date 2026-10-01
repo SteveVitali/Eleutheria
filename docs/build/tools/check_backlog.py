@@ -16,8 +16,23 @@ from anywhere:
 
     python docs/build/tools/check_backlog.py
 
-Exits 0 and prints the five count lines when the backlog is consistent; exits 1
+Exits 0 and prints the count lines when the backlog is consistent; exits 1
 with the first failing invariant otherwise.
+
+Round 11 (SEED-15, Stage B T4; SEED-14b's checker list; B4 G8-3/G9; ADR-150 D3):
+
+* **landings** accept letter-suffixed chain tickets and multi-digit row numbers
+  (``P34.48``, ``P37.16a``, ``closed-by:P31.16``);
+* **open-home rule** — an owed (OPEN/PARTIAL) DEFERRALS row cites at least one
+  *open* BACKLOG row (a ``(cites BL-nnn)`` re-homing annotation appended to the
+  row counts); an ADR revisit trigger homes on an open row, or on an
+  ``accepted`` monitor row (BL-002, U-0260) unless the trigger is
+  ``fired-unanswered``, or on a closed row only while it is ``quiet`` or
+  ``superseded`` — the state read from ``ADR_TRIGGERS.csv``, whose ``home``
+  must equal the BACKLOG row that owns the ADR;
+* **RISK ids are unique** across the register's tables, except an id whose
+  second definition a dated rename record (``Renamed RISK-…a by this record``)
+  resolves; correction tables restating an id are not definitions.
 """
 
 from __future__ import annotations
@@ -66,9 +81,19 @@ VALID_STATUS = {"open", "closed", "accepted"}
 # per the phase plan; the ticket's "P21.1…P21.8" shorthand is inclusive of the
 # ninth P21 ticket. Generalised by P24.5 so future tickets land rows without
 # editing this enum.)
+# Round 11 (SEED-15): the row part takes any number of digits and an optional letter suffix
+# (P34.48, P37.16a); before, `P\d{2}\.\d` matched only the first digit of a ticket id.
 LANDING_RE = re.compile(
-    r"^(closed-by:P\d{2}\.\d|P\d{2}\.\d|P\d{2}\+|accepted|human-gate:HG-\d{2})$"
+    r"^(closed-by:P\d{2}\.\d+[a-z]?|P\d{2}\.\d+[a-z]?|P\d{2}\+|accepted|human-gate:HG-\d{2})$"
 )
+# The revisit-trigger register (B4 G8-3; SEED-15) — trigger states for the open-home rule.
+ADR_TRIGGERS = ROOT / "docs/build/reports/adr_triggers/ADR_TRIGGERS.csv"
+# open-home rule: an owed deferral homes on an open row; an ADR trigger may also home on an
+# accepted monitor row (BL-002) unless it fired unanswered, and on a closed row only while
+# quiet or superseded (B4 G8-3; SEED-14b's list).
+OPEN_HOME = frozenset({"open"})
+MONITOR_HOME = frozenset({"accepted"})
+CLOSED_HOME_STATES = frozenset({"quiet", "superseded"})
 
 
 def _fail(msg: str) -> None:
@@ -116,7 +141,8 @@ def adr_revisit_ids() -> list[str]:
     return ids
 
 
-# DEFERRALS statuses that still owe work (mirror of check-build-memory.sh's set).
+# DEFERRALS statuses that still owe work — the same owed set as audit_current_state.OWED_STATUSES
+# and the vendored check-build-memory.sh rule-5 scan (OPEN, PARTIAL).
 DEFERRAL_OWED_STATUSES = frozenset({"OPEN", "PARTIAL"})
 _DEFERRAL_ROW = re.compile(r"^\|\s*(D-[A-Z0-9][A-Za-z0-9._-]*)\s*\|")
 _BL_HOME = re.compile(r"BL-\d{3}")
@@ -127,8 +153,13 @@ def deferral_homes(path: pathlib.Path) -> tuple[list[str], list[str]]:
     least one ``BL-nnn`` backlog home, and those that name none.
 
     DONE / WONTFIX / ACCEPTED-SKELETON rows are owed nothing and skipped. The
-    status is the first word of the row's last cell (the same convention
-    ``scripts/docs/check-build-memory.sh`` uses to parse DEFERRALS statuses).
+    status is the first word of the row's last cell — the row's leading status
+    token, the convention ``audit_current_state.py`` and ``obligation_events.py``
+    use (ADR-126: never "last token wins"). The vendored
+    ``scripts/docs/check-build-memory.sh`` (build-memory 0.5.0, since SEED-02c)
+    no longer parses it this way: it takes the first of OPEN, PARTIAL, DONE,
+    WONTFIX, ACCEPTED-SKELETON (in that priority order) that appears as a word
+    anywhere in the last cell, and uses it only to reject an orphan status.
     """
     citing: list[str] = []
     missing: list[str] = []
@@ -145,6 +176,116 @@ def deferral_homes(path: pathlib.Path) -> tuple[list[str], list[str]]:
             continue
         (citing if _BL_HOME.search(line) else missing).append(m.group(1))
     return citing, missing
+
+
+def deferral_open_homes(
+    path: pathlib.Path, bl_status: dict[str, str]
+) -> tuple[list[str], list[str]]:
+    """Return ``(homed, unhomed)`` — OPEN/PARTIAL DEFERRALS rows that cite at least one *open*
+    BACKLOG row, and those whose cited rows are all closed, accepted or unknown (open-home rule).
+
+    The cites are every ``BL-nnn`` in the row, so an appended ``(cites BL-nnn)`` re-homing annotation
+    homes a row whose original cite has since closed (rows are append-only)."""
+    homed: list[str] = []
+    unhomed: list[str] = []
+    if not path.is_file():
+        return homed, unhomed
+    for line in path.read_text().splitlines():
+        m = _DEFERRAL_ROW.match(line)
+        if not m:
+            continue
+        cells = [c.strip() for c in line.split("|")]
+        words = cells[-2].split() if len(cells) >= 2 else []
+        if not words or words[0].upper() not in DEFERRAL_OWED_STATUSES:
+            continue
+        cites = _BL_HOME.findall(line)
+        if any(bl_status.get(bl) in OPEN_HOME for bl in cites):
+            homed.append(m.group(1))
+        else:
+            unhomed.append(m.group(1))
+    return homed, unhomed
+
+
+def trigger_register(path: pathlib.Path) -> list[dict[str, str]]:
+    """Rows of ``ADR_TRIGGERS.csv`` (empty when the register is absent)."""
+    if not path.is_file():
+        return []
+    with path.open(newline="") as fh:
+        return list(csv.DictReader(fh))
+
+
+def state_word(state: str) -> str:
+    """``fired-answered(P35.1a)`` → ``fired-answered``."""
+    return state.split("(", 1)[0].strip()
+
+
+def adr_home_problems(
+    adr_ids: list[str],
+    owner: dict[str, str],
+    bl_status: dict[str, str],
+    register: list[dict[str, str]],
+) -> list[str]:
+    """Open-home rule for ADR revisit triggers, plus register ``home`` == BACKLOG owner."""
+    problems: list[str] = []
+    states = {
+        r.get("adr", ""): state_word(r.get("state", ""))
+        for r in register
+        if r.get("adr", "").startswith("ADR-")
+    }
+    homes = {
+        r.get("adr", ""): r.get("home", "") for r in register if r.get("adr", "").startswith("ADR-")
+    }
+    for adr in adr_ids:
+        bl = owner.get(adr)
+        if bl is None:
+            continue  # reported as unmapped
+        status = bl_status.get(bl, "")
+        state = states.get(adr)
+        if state is None:
+            problems.append(f"{adr}: no ADR_TRIGGERS.csv row")
+            continue
+        if homes.get(adr) != bl:
+            problems.append(
+                f"{adr}: ADR_TRIGGERS.csv home {homes.get(adr)!r} != BACKLOG owner {bl}"
+            )
+        if status in OPEN_HOME:
+            continue
+        if status in MONITOR_HOME and state != "fired-unanswered":
+            continue
+        if status == "closed" and state in CLOSED_HOME_STATES:
+            continue
+        problems.append(f"{adr}: home {bl} is {status!r} while the trigger is {state!r}")
+    return problems
+
+
+_RISK_DEF_RE = re.compile(r"^\|\s*(RISK-[A-Za-z0-9]+(?:-[A-Za-z0-9]+)+)\b")
+_RENAME_RE = re.compile(r"Renamed (RISK-[A-Za-z0-9]+(?:-[A-Za-z0-9]+)+) by this record")
+
+
+def risk_id_duplicates(path: pathlib.Path) -> list[str]:
+    """RISK ids that head more than one definition row and are not resolved by rename records.
+
+    A definition row is a table row whose first cell starts with the id, outside a section headed
+    "Corrections" (correction tables restate ids on purpose). A rename record ``Renamed RISK-X-NNa
+    by this record`` resolves one extra definition of ``RISK-X-NN`` (B4 G9; F3 §7.1)."""
+    defs: dict[str, int] = {}
+    renames: dict[str, int] = {}
+    in_corrections = False
+    if not path.is_file():
+        return []
+    for line in path.read_text().splitlines():
+        if line.startswith("#"):
+            in_corrections = "orrection" in line
+            continue
+        rm = _RENAME_RE.search(line)
+        if rm:
+            base = re.sub(r"[a-z]$", "", rm.group(1))
+            renames[base] = renames.get(base, 0) + 1
+            continue
+        m = _RISK_DEF_RE.match(line)
+        if m and not in_corrections:
+            defs[m.group(1)] = defs.get(m.group(1), 0) + 1
+    return sorted(rid for rid, n in defs.items() if n - renames.get(rid, 0) > 1)
 
 
 def load_rows() -> list[dict[str, str]]:
@@ -247,10 +388,20 @@ def main() -> int:
                         theme_owner[bl] = cur
 
     citing, missing_homes = deferral_homes(DEFERRALS)
+    bl_status = {r["bl_id"]: r["status"] for r in rows}
+    homed, unhomed = deferral_open_homes(DEFERRALS, bl_status)
+    register = trigger_register(ADR_TRIGGERS)
+    trigger_problems = adr_home_problems(adr, owner, bl_status, register)
+    risk_dupes = risk_id_duplicates(RISK)
     print(f"risk deferred rows: {risk_mapped}/{len(risk_ids)}")
     print(f"ADR revisit triggers: {adr_mapped}/{len(adr)}")
     print(f"LD rows: {ld_mapped}/{len(ld)}")
     print(f"deferral homes: {len(citing)}/{len(citing) + len(missing_homes)}")
+    print(f"deferral open homes: {len(homed)}/{len(homed) + len(unhomed)}")
+    print(
+        f"ADR trigger homes (open-home rule, {len(register)} register rows): {len(adr) - len(trigger_problems)}/{len(adr)}"
+    )
+    print(f"duplicate RISK ids (after rename records): {len(risk_dupes)}")
     print(f"duplicate sources: {len(dupes)}")
 
     ok = True
@@ -285,6 +436,25 @@ def main() -> int:
     if missing_homes:
         print(
             f"  OPEN/PARTIAL DEFERRALS rows with no BL home: {' '.join(missing_homes)}",
+            file=sys.stderr,
+        )
+        ok = False
+    if unhomed:
+        print(
+            "  OPEN/PARTIAL DEFERRALS rows citing no open BL row (append a `(cites BL-nnn)` "
+            f"re-homing annotation): {' '.join(unhomed)}",
+            file=sys.stderr,
+        )
+        ok = False
+    if not register:
+        print(f"  ADR trigger register missing or empty: {ADR_TRIGGERS}", file=sys.stderr)
+        ok = False
+    if trigger_problems:
+        print(f"  ADR trigger homes: {'; '.join(trigger_problems)}", file=sys.stderr)
+        ok = False
+    if risk_dupes:
+        print(
+            f"  RISK ids defined twice with no rename record: {' '.join(risk_dupes)}",
             file=sys.stderr,
         )
         ok = False

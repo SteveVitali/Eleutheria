@@ -58,3 +58,10 @@ durable before any capstone work (decisions T3 / T4 / §4.1 / §4.2 / §4.7).
 Revisit if raw run ledgers or PR bodies are ever wanted **in git** (this ADR deliberately keeps them
 gitignored under `.agents/scratch/`, committing only the promoted build-memory artifacts under
 `docs/build/`), or if the committed `docs/tickets/` record needs a different home or format.
+
+## Status updates
+
+- **Status:** Superseded by ADR-073 (2026-10-01) — §3 only
+- **Status note (2026-10-01, Round-11 T1, unit SEED-11d):** ADR-073's Supersedes field names ADR-058 §3 (the
+  gitignored `.agents/scratch/` home for the machine ledger); ADR-058's other decisions stand. Recorded at
+  Round-11 T1 from F3 §5.2 and F-249 (NEW-4). The body above is unchanged (SIG-ENG-003).

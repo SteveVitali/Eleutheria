@@ -63,7 +63,7 @@ def _git(root: pathlib.Path, *args: str) -> str:
 def _lstate(next_ticket: str, last_completed: str) -> str:
     return (
         "# ledger\n\n## CURRENT STATE\n\n```\n"
-        "projectStatus: IN-PROGRESS\n"
+        "projectStatus: IN_PROGRESS\n"
         f"nextTicket: {next_ticket}\n"
         f"lastCompleted: {last_completed}\n"
         "blockedOn: —\npauseRequested: false\nreturnPass: none\n"
@@ -73,6 +73,28 @@ def _lstate(next_ticket: str, last_completed: str) -> str:
         "buildWorktree: .\nbuildBranchBase: devin/base\npinnedBaseSha: deadbeef\n"
         "chainTip: devin/base\nbenchmarkSet: N/A\nautonomy: checkpoint\n"
         "mergePolicy: NONE\nround: 10\nupdatedAt: 2026-10-15\n```\n"
+    )
+
+
+def _lstate_r11(next_ticket: str, last_completed: str) -> str:
+    """The Round-11 seed shape (B3 §3.4; layout BM-LEDGER-02/-08): values only,
+    `harness` in its slot between `round` and `updatedAt`, an archive pointer
+    comment inside the section, a PHASE LOG region per round."""
+    return (
+        "# ledger\n\n## CURRENT STATE\n\n```\n"
+        "projectStatus: IN_PROGRESS\n"
+        f"nextTicket: {next_ticket}\n"
+        f"lastCompleted: {last_completed}\n"
+        "blockedOn: (nothing)\npauseRequested: false\nreturnPass: (none)\n"
+        "manifest: docs/tickets/00_MANIFEST.md\n"
+        "canonicalSpec: docs/2_canonical_design_spec.md\n"
+        "memoryRoot: docs/build\ndispatchTarget: subagent\n"
+        "buildWorktree: .\nbuildBranchBase: devin/base\npinnedBaseSha: deadbeef\n"
+        "chainTip: devin/base\nbenchmarkSet: N/A\nautonomy: checkpoint\n"
+        "mergePolicy: NONE\nround: 11\nharness: devin-desktop/swe-2-high/subagent\n"
+        "updatedAt: 2026-10-15T00:00:00Z\n```\n"
+        "<!-- Rounds 1-10 head archived; sha256 pointer. -->\n\n"
+        "## PHASE LOG — Round 11\n\n- 2026-10-15 — SEED-10 repair — head archived\n"
     )
 
 
@@ -109,14 +131,14 @@ def _write(root: pathlib.Path, rel: str, text: str) -> None:
     p.write_text(text)
 
 
-def _repo(tmp: pathlib.Path, name: str = "auth") -> pathlib.Path:
+def _repo(tmp: pathlib.Path, name: str = "auth", lstate=_lstate) -> pathlib.Path:
     """A real git repo seeded with a minimal build-memory tree; one initial
     commit where LEDGER says lastCompleted=P9.1 / nextTicket=P9.2."""
     root = tmp / name
     root.mkdir(parents=True)
     for rel, text in BASE_FILES.items():
         _write(root, rel, text)
-    _write(root, "docs/build/LEDGER.md", _lstate("P9.2", "P9.1"))
+    _write(root, "docs/build/LEDGER.md", lstate("P9.2", "P9.1"))
     _git(root, "init", "-q")
     _git(root, "add", "-A")
     _git(root, "commit", "-qm", "seed")
@@ -130,9 +152,9 @@ def _impl_commit(root: pathlib.Path) -> str:
     return _git(root, "rev-parse", "HEAD")
 
 
-def _closeout_commit(root: pathlib.Path, done: str, nxt: str) -> str:
+def _closeout_commit(root: pathlib.Path, done: str, nxt: str, lstate=_lstate) -> str:
     """The memory transaction: LEDGER advance + BUILD_INDEX row + run ledger."""
-    _write(root, "docs/build/LEDGER.md", _lstate(nxt, done))
+    _write(root, "docs/build/LEDGER.md", lstate(nxt, done))
     idx = root / "docs/build/BUILD_INDEX.md"
     idx.write_text(idx.read_text() + f"| 168 | {done} |\n")
     _write(root, f"docs/build/runs/{done}.md", "# run\n")
@@ -165,13 +187,13 @@ def _prepare(root, sd, ticket="P9.2", impl="i" * 40, base="b" * 40, extra=None):
     return _run(root, argv, sd)
 
 
-def _full_closeout(root, sd, ticket="P9.2", impl=None, pr=42, nxt="P9.3") -> str:
+def _full_closeout(root, sd, ticket="P9.2", impl=None, pr=42, nxt="P9.3", lstate=_lstate) -> str:
     """Drive one complete closeout; returns the operation id."""
     impl = impl or _impl_commit(root)
     assert _prepare(root, sd, ticket=ticket, impl=impl) == 0
     op_id = closeout.operation_id(ticket, 1, impl, "b" * 40)
     assert _run(root, ["external-known", "--operation", op_id, "--pr", str(pr)], sd) == 0
-    commit = _closeout_commit(root, ticket, nxt)
+    commit = _closeout_commit(root, ticket, nxt, lstate)
     assert (
         _run(
             root,
@@ -557,6 +579,20 @@ def test_full_closeout_resumes_to_exactly_one(tmp_path: pathlib.Path) -> None:
     for s in ("prepared", "external-known", "memory-committed", "acknowledged"):
         assert states.count(s) == 1, states
     assert len(list((sd / "operations").glob("*.json"))) == 1
+
+
+def test_full_closeout_on_the_round11_values_only_ledger(tmp_path: pathlib.Path) -> None:
+    """The protocol reads the cursor from the Round-11 seed shape (values only,
+    `harness` slot, archive pointer) exactly as from the legacy shape: a full
+    closeout acknowledges once and the authoritative cursor advanced."""
+    root = _repo(tmp_path, lstate=_lstate_r11)
+    sd = tmp_path / "state"
+    op_id = _full_closeout(root, sd, lstate=_lstate_r11)
+    op = _op(sd, op_id)
+    assert op["state"] == "acknowledged"
+    assert [h["state"] for h in op["history"]].count("acknowledged") == 1
+    assert closeout._ledger_lval(root, "lastCompleted") == "P9.2"
+    assert closeout._ledger_lval(root, "nextTicket") == "P9.3"
 
 
 # ── racing stale worktrees: one authoritative chain head ─────────────────────

@@ -1,0 +1,49 @@
+route_id,route_pattern,source_file_chain_tip,in_deployed_build_source,deployed_objects,deployed_raw_bytes,live_probe,page_class,budget_ref,c2_sample,notes
+R01,/,web/src/pages/index.astro,y,1,85844,200@A1-baseline,content-zero-js,lhci-public,all,national landing (SIG-UI-049); A1 recorded 0 <script> and the as-of line
+R02,/contribution-back/,web/src/pages/contribution-back.astro,y,1,6580,200@REPUBLISH-2026-09-27,content-zero-js,lhci-public,all,leverage metric (SIG-CONTRIB-016e); P9
+R03,/corrections/,web/src/pages/corrections.astro,y,1,6805,200@REPUBLISH-2026-09-27,content-zero-js,lhci-public,all,public export web/corrections.json is [] (3 bytes) -> empty-state check (H14)
+R04,/coverage-metrics/,web/src/pages/coverage-metrics.astro,y,1,88519,200@REPUBLISH-2026-09-27,content-zero-js,lhci-public,all,127 metrics in web/coverage.json; C3 number source
+R05,/data-freshness/[...sort]/,web/src/pages/data-freshness/[...sort].astro,y,4,80321-80335,200@REPUBLISH-2026-09-27,content-zero-js,lhci-public,default + /status/,variants: /data-freshness/ /stale/ /status/ /volatility/; 178 sources in web/freshness.json
+R06,/dispute/,web/src/pages/dispute.astro,y,1,7782,200@REPUBLISH-2026-09-27,content-zero-js,lhci-public,all,no <form> on live expected; never submit (P3)
+R07,/dossier/,web/src/pages/dossier/index.astro,y,1,28627,200@2026-09-30T16:43Z,content-zero-js,lhci-public,all,index of 55 dossiers (web/dossier_index.json)
+R08,/dossier/[slug]/,web/src/pages/dossier/[slug].astro,y,55,11146-13699,200@2026-09-30T16:43Z (unresolved),content-zero-js,lhci-public,stratified 8,sample: unresolved fl tx md pt gb-eng au-act ca (PROTOCOL §5.3); no-slash URL 301 -> slash (gb-eng probe)
+R09,/dossier/[slug]/print/,web/src/pages/dossier/[slug]/print.astro,y,55,7921-10498,200@2026-09-30T16:43Z (fl),print,lhci-public,stratified 8,SIG-UI-013 print path; capture print PDF headless
+R10,/dossier/[slug].json,web/src/pages/dossier/[slug].json.ts,y,55,3149-6677,200@2026-09-30T16:43Z (pt),json,n/a,stratified 8,machine-readable dossier (P7)
+R11,/editorial-standards/,web/src/pages/editorial-standards.astro,y,1,9751,200@REPUBLISH-2026-09-27,content-zero-js,lhci-public,all,SIG-UI-042/043
+R12,/evidence/,web/src/pages/evidence/index.astro,y,1,5660,200@2026-09-30T16:43Z,content-zero-js,lhci-public,all,web/evidence.json: 255 artifacts / 0 claim_views
+R13,/evidence/[id]/,web/src/pages/evidence/[id].astro,y,0,-,not-deployed (0 instances),content-zero-js,lhci-public,n/a,generated from claim_views; 0 in release -> no evidence-viewer page exists live (MISMATCH: source route with no deployed instance)
+R14,/map/,web/src/pages/map.astro,y,1,3460837,200@REPUBLISH-2026-09-27,island,island-map,all (JS on+off),document raw bytes vs island documentMaxBytes 153600; MapLibre island + tabular fallback (SIG-UI-050)
+R15,/map/style.json,web/src/pages/map/style.json.ts,y,1,4254,200@REPUBLISH-2026-09-27,json,n/a,all,12 compartment PMTiles sources; check attribution strings
+R16,/methodology/,web/src/pages/methodology.astro,y,1,12288,200@REPUBLISH-2026-09-27,content-zero-js,lhci-public,all,SIG-UI-034; SIG-GOV-019 statement
+R17,/network/,web/src/pages/network.astro,y,1,358510,200@REPUBLISH-2026-09-27,island,island-network,all (JS on+off),document raw bytes vs documentMaxBytes 153600
+R18,/research-queue/,web/src/pages/research-queue.astro,y,1,689410,200@REPUBLISH-2026-09-27,content-zero-js,lhci-public,all,largest zero-JS page by raw bytes; public block total <=153600 applies
+R19,/search/,web/src/pages/search.astro,y,1,152450,not-probed,island,island-search,all (JS on+off),deployed build predates P32.14 release-search form
+R20,/style-guide/,web/src/pages/style-guide.astro,y,1,8915,200@REPUBLISH-2026-09-27,content-zero-js,lhci-public,all,SIG-UI-046
+R21,/task/new/[slug]/,web/src/pages/task/new/[slug].astro,y,78,6092-6408,namespace /task/ 403@2026-09-30T16:43Z,content-zero-js,lhci-public,9 (see notes),slug = base64url JSON array [subject; predicate; kind; label]; strata: 55 jurisdiction NOT_RESEARCHED + 16 jurisdiction UNRESOLVED + 6 agency:okcpd + 1 device:okc-003; sample 1+1 jurisdiction + all 7 agency/device
+R22,/visual-language/,web/src/pages/visual-language.astro,y,1,19584,200@REPUBLISH-2026-09-27,content-zero-js,lhci-public,all,SIG-UI-003..009 reference
+R23,/watch/,web/src/pages/watch.astro,y,1,8631,200@2026-09-30T16:43Z,content-zero-js,lhci-public,all,web/watch.json is [] -> empty-state check; decision_point null
+R24,/watch/[jurisdiction].ics,web/src/pages/watch/[jurisdiction].ics.ts,y,0,-,not-deployed (0 instances),feed,n/a,n/a,0 watch jurisdictions in release (MISMATCH: no iCal feed live; SIG-UI-027)
+R25,/watch/[jurisdiction].xml,web/src/pages/watch/[jurisdiction].xml.ts,y,0,-,not-deployed (0 instances),feed,n/a,n/a,0 watch jurisdictions in release (MISMATCH: no RSS feed live; SIG-UI-027)
+R26,/watch/citations.txt,web/src/pages/watch/citations.txt.ts,y,1,87,not-probed,text,n/a,all,SIG-UI-027c citation list
+R27,/releases/,web/src/pages/releases/index.astro,n,0,-,404@2026-09-30T16:43Z,content-zero-js,lhci-public,C4 only,chain-tip only (P32.13); never deployed (MISMATCH)
+R28,/research-dossier/,web/src/pages/research-dossier/index.astro,n,0,-,404@2026-09-30T16:43Z,content-zero-js,lhci-public,C4 only,chain-tip only (P32.17); never deployed (MISMATCH)
+R29,/research-dossier/[slug]/,web/src/pages/research-dossier/[slug].astro,n,0,-,not-probed,content-zero-js,lhci-public,C4 only,chain-tip only (MISMATCH)
+R30,/research-dossier/[slug].json,web/src/pages/research-dossier/[slug].json.ts,n,0,-,not-probed,json,n/a,C4 only,chain-tip only (MISMATCH)
+R31,/curate/,web/src/pages/curate/index.astro,y,0,-,404@A1-baseline (both origins),not-public (ADR-068 island),lhci-curate,re-confirm 404 only,removed from public bucket by Track 0.2; must stay 404 publicly
+R32,/curate/[id]/,web/src/pages/curate/[id].astro,y,0,-,not-probed,not-public,lhci-curate,none,removed by Track 0.2
+R33,/curate/contradictions/,web/src/pages/curate/contradictions.astro,y,0,-,not-probed,not-public,lhci-curate,none,removed by Track 0.2
+R34,/curate/revert/,web/src/pages/curate/revert.astro,y,0,-,not-probed,not-public,lhci-curate,none,removed by Track 0.2
+R35,/curate/submit/,web/src/pages/curate/submit.astro,y,0,-,not-probed,not-public,lhci-curate,none,removed by Track 0.2
+R36,/curate/tasks/,web/src/pages/curate/tasks.astro,y,0,-,not-probed,not-public,lhci-curate,none,removed by Track 0.2
+X01,/tiles/<compartment>-sites.pmtiles,web/astro.config.mjs (build hook),y,12,18621-27877075,206@REPUBLISH-2026-09-27 (sig_graph range),data,n/a,1 Range request,12 compartments incl. share-alike osm_physical (ODbL-1.0) portal (CC-BY-SA-4.0) dot511_ccbysa2 (CC-BY-SA-2.0); check licence posture + attribution
+X02,/_astro/*,build output,y,11,380-1048764,not-probed,asset,island budgets,via page loads,island JS/CSS bundles (MapIsland.CTk0rhO8.js 1048764 raw; maplibre worker 506723)
+X03,/robots.txt,web/public/robots.txt,y,1,245,200@2026-09-30T16:43Z,text,n/a,all,says terms are served at /terms (the API)
+X04,/sitemap.xml and /sitemap-index.xml,none (no sitemap integration in astro.config.mjs),n,0,-,404@2026-09-30T16:43Z,absent,n/a,H15 check,discoverability
+X05,<unknown route> (404 page),ops/web/nginx.conf error_page 404 /404.html (no 404.html in bucket),n,0,-,404 146-byte body@2026-09-30T16:43Z,error,n/a,H14 check,no src/pages/404.astro
+X06,/task/ (namespace),none,n,0,-,403@2026-09-30T16:43Z,error,n/a,H14 check,directory with no index page
+X07,http://surveillancegraph.org/,LB,n/a,n/a,-,301 -> https://surveillancegraph.org:443/ @2026-09-30T16:43Z,redirect,n/a,H15 check,explicit :443 in Location
+X08,https://storage.googleapis.com/zeta-medley-508121-u7-sig-public/manifest.json,exports (P31.16 publish),n/a,1,132 artifacts,sha256 717aeb44...72d6 via gcloud read 2026-09-30T16:42Z,download,n/a,C2 (linked from site?) + C3,release sig-2026-09-27-ce480ab1
+X09,public export artifacts (bucket sig-public),exports,n/a,132,-,read via gcloud 2026-09-30T16:43Z (8 small JSON),download,n/a,C3 (size-capped),per-compartment sites.{csv|geojson|jsonl|jsonld|parquet|pmtiles|sqlite} + sig_graph/{coverage|freshness|jurisdictions|sharing_edges|sites}.* + web/*.json (research_queue.json is 144 MB: do not download)
+X10,https://sig-api-e5ctyx36jq-uc.a.run.app/{health|terms|openapi.json|v1/*|id/*},api/src/api/app.py + routes.py,n/a,n/a,-,/terms 200; /openapi.json 200 (40263 B); /v1/dossier/fl 200 @2026-09-30T16:43Z,api,n/a,P7 + C3 (<=10 GETs),no custom domain; API serves the live spine not the release (expect drift)
+X11,/intake/new /intake/status /intake/v1/reports /intake/v1/status,api/src/api/intake.py (serve-intake),n,0,-,not deployed,intake,n/a,C4 only,non-operational by gate (503 receiver_not_operating)
+X12,/releases/<pub>/ /r/<pub>/c/<comp>/... /entity/... /v1/releases/<pub>/compartments/<comp>/search,exports.release + api release_search,n,0,-,not deployed,release-archive,lhci-public (static),C4 only,staging_registry (0 records) + P32.24 corpus_registry (75 synthetic records)

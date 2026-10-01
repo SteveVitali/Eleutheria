@@ -66,6 +66,14 @@ including data-quality checks; new requirements have automated tests (SIG-ENG-00
 written for every deviation; the traceability matrix is updated; and the phase's own risk-register
 entries are updated.
 
+**Round-11 amendment (DRAFT-ENG-5, B4 §5; recorded 2026-10-01).** Additions, nothing removed: "CI is
+green" means the pull request's required, head-bound GitHub checks are green at its current head per
+SIG-MEM-007, data-quality checks included; the traceability matrix is the coverage matrix, updated
+through coverage-assessment events under the verdict grammar of SIG-ENG-041; and at each round close
+the risk register gains a dated round-review section and the ADR revisit-trigger register is
+re-evaluated (SIG-ENG-043). The phase's own risk-register entries are still updated at each phase
+gate.
+
 ---
 
 ## 52. Phase specifications

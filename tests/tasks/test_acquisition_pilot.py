@@ -506,6 +506,73 @@ def test_check_pilot_verifies_the_open_rows_in_the_register(readout, entries, tm
     assert any("D-P32.21-1" in v and "OPEN" in v for v in violations)
 
 
+_REGISTER_HEAD = (
+    "| id | kind | item | why | unblocked | verify | proxy | status |\n"
+    "|---|---|---|---|---|---|---|---|\n"
+    "| D-P32.18-1 | P | x | y | z | w | p | OPEN |\n"
+    "| D-P32.19-1 | P | x | y | z | w | p | OPEN |\n"
+    "| D-P32.20-1 | P | x | y | z | w | p | OPEN |\n"
+)
+
+
+def _close_event(evidence: list[str], to_status: str = "DONE") -> str:
+    return json.dumps(
+        {
+            "schema": "obligation-event/1",
+            "event_id": "D-P32.21-1:e1",
+            "kind": "transition",
+            "obligation_id": "D-P32.21-1",
+            "seq": 1,
+            "expected_previous_event": "D-P32.21-1:e0",
+            "from_status": "OPEN",
+            "to_status": to_status,
+            "evidence_refs": evidence,
+        }
+    )
+
+
+def test_check_pilot_accepts_a_closure_only_with_recorded_evidence(readout, entries, tmp_path):
+    """The live return pass closing its row is the intended outcome, not a
+    violation (F5 NEW-2): a closed row passes only with an obligation-event
+    transition to that status citing evidence outside the register."""
+    (tmp_path / "docs/tickets").mkdir(parents=True)
+    register = tmp_path / "docs/tickets/DEFERRALS.md"
+    events = tmp_path / "docs/build/reports/obligations/events.jsonl"
+    events.parent.mkdir(parents=True)
+    run = tmp_path / "docs/build/runs/P34.9.md"
+    run.parent.mkdir(parents=True)
+    run.write_text("# run\n")
+    closed = (
+        "| D-P32.21-1 | P | x | y | z | w | p | DONE 2026-10-10 (runs/P34.9.md) — was: OPEN |\n"
+    )
+
+    # OPEN and PARTIAL rows are owed homes.
+    register.write_text(_REGISTER_HEAD + "| D-P32.21-1 | P | x | y | z | w | p | PARTIAL |\n")
+    assert check_pilot(readout, entries, root=tmp_path) == []
+
+    # A closure typed into the cell with no recorded transition is refused —
+    # even when the old wording ("was: OPEN") still contains the word OPEN.
+    register.write_text(_REGISTER_HEAD + closed)
+    violations = check_pilot(readout, entries, root=tmp_path)
+    assert any("D-P32.21-1" in v and "evidence-backed" in v for v in violations)
+
+    # A transition citing only the register is the claim, not proof.
+    events.write_text(_close_event(["docs/tickets/DEFERRALS.md"]) + "\n")
+    assert any("D-P32.21-1" in v for v in check_pilot(readout, entries, root=tmp_path))
+
+    # Evidence that does not exist is no evidence.
+    events.write_text(_close_event(["docs/build/runs/P99.9.md"]) + "\n")
+    assert any("D-P32.21-1" in v for v in check_pilot(readout, entries, root=tmp_path))
+
+    # A transition to a different status does not back this closure.
+    events.write_text(_close_event(["docs/build/runs/P34.9.md"], to_status="WONTFIX") + "\n")
+    assert any("D-P32.21-1" in v for v in check_pilot(readout, entries, root=tmp_path))
+
+    # A recorded, evidence-backed transition to the row's status is accepted.
+    events.write_text(_close_event(["docs/build/runs/P34.9.md"]) + "\n")
+    assert check_pilot(readout, entries, root=tmp_path) == []
+
+
 def test_render_readout_markdown(readout):
     md = render_readout(readout)
     assert "descriptive only" in md

@@ -1,0 +1,3 @@
+> **OPERATING MODE — Round 11: placeholder.** SEED-17 (Stage B, T5) writes the binding Round-11 OPERATING MODE here once the Round-11 manifest rows exist. It supersedes the Round-1 OPERATING MODE (recorded 2026-09-08; first committed by 4d5a5d27 on 2026-09-09) and the Round-10 import amendment (written by d6c562e5, 2026-09-27T02:40:53Z), both archived verbatim (pointer above): their ledger path, commit-policy note, ticket count and resume condition no longer bind.
+>
+> **Not a resume point.** The Round-11 seed is in progress: projectStatus stays PAUSED and pauseRequested true until GATE-B is recorded in GATE DECISIONS. No session dispatches a ticket from this ledger before then.

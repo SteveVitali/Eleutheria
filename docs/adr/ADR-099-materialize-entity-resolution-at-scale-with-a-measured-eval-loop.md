@@ -113,3 +113,10 @@ surveillance-infrastructure claim that is wrong is a trust-destroying error, so 
   reconsider the objective (part of `D-R6.1-EVAL`).
 - **The connector-registered `camera_*` predicates gain ontology registration** — the §29 resolver can
   then decide them directly; reconsider the shaping-vs-materialize boundary.
+
+## Status updates
+
+- **Status:** Amended by ADR-153 (2026-10-01) — §3
+- **Status note (2026-10-01, Round-11 T1, unit SEED-11d):** Per plan §7 row 153, ADR-153 amends §3 (lean-auto
+  against a measured floor): ruleset v3 auto-collapses only C0–C2 census-verified copies, and inferential
+  matches are published as possible duplicates with intervals. The body above is unchanged (SIG-ENG-003).

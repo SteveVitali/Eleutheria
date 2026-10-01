@@ -131,3 +131,27 @@ gains a physically separate ODbL asset table per §42.3 (superseding the
 connector-layer compartment realisation); or OSM introduces a surveillance
 tagging scheme change large enough that the vocabulary needs a structural
 migration rather than an additive one.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** the live HTTP transport and the OCFL capture store landed (ADR-065) (F3
+§5.1); whether the connector-local 429/504 helpers were retired was not re-verified here. **Answer:** F3
+classified this trigger as needing only a recorded evaluation. The second clause will not fire: T1 amends
+§42.3 from a physical ODbL table to export-boundary compartments (plan §6.3; SEED-12). Wave C makes OSM the
+origin of the national ALPR layer (rows P37.1–P37.2) through this connector's vocabulary and ODbL landing;
+nothing in Round 11 changes this decision. The decision above stays in force until that answer lands; this
+ADR's body is unchanged (SIG-ENG-003).
+
+### Trigger evaluation — correction (Round 11 T1, unit SEED-12c, 2026-10-01T13:57:06Z)
+
+Correction to the evaluation above, appended; that text is not edited. It says "T1 amends §42.3 from a physical
+ODbL table to export-boundary compartments (plan §6.3; SEED-12)". **That amendment was not made in T1.** SEED-12b's
+MUST-weakening test (plan §6.5; ADR-150) found that dropping SIG-LIC-006's "physically separate table" clause would
+weaken a MUST that no operator decision covers, so the draft was withheld (spec Appendix G.7.5); the ratification
+log's round-27 entry (agent interpretation, labelled there) keeps the MUST and the work owed. SIG-LIC-006 stands
+unchanged: separation holds at the export boundary today, and the stored-table split stays owed (RISK-P4-07 →
+BL-046). This trigger's second clause ("the DB gains a physically separate ODbL asset table per §42.3") can therefore
+still fire, when that owed split lands. The rest of the evaluation stands; this ADR's body is unchanged (SIG-ENG-003).

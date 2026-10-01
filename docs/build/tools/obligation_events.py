@@ -79,8 +79,25 @@ diag = audit_current_state.diag
 EVENT_KINDS = {"migration", "transition"}
 DOMAINS = ("fixture", "implementation", "composed-db", "hosted", "public")
 DOMAIN_RANK = {d: i for i, d in enumerate(DOMAINS)}
-VERDICTS = {"MET", "MET-DIFFERENTLY", "PARTIAL", "MISSING", "NA", "N/A"}
+# The verdict grammar is check_coverage_matrix.py's (ADR-150 D1; SIG-ENG-041; SEED-15): MET ·
+# MET-DIFFERENTLY(ADR-nnn|RISK-id;…) · MET-ENGINEERED(D-id;…) · PARTIAL · MISSING · AT-RISK-INTEGRATION ·
+# WAIVED(ADR-nnn) · N/A-RATIONALE, with its parameters; "NA" / "N/A" are the legacy P32.7 spellings.
+_ccm = audit_current_state.check_coverage_matrix
+LEGACY_VERDICTS = {"NA", "N/A"}
+VERDICTS = (
+    set(_ccm.BASE_VERDICTS) | LEGACY_VERDICTS
+)  # base words; parameters parsed per verdict_word()
 MET_VERDICTS = {"MET", "MET-DIFFERENTLY"}
+
+
+def verdict_word(verdict: object) -> str | None:
+    """The base word of a well-formed verdict (``WAIVED(ADR-153)`` → ``WAIVED``); ``None`` if off-grammar."""
+    if not isinstance(verdict, str):
+        return None
+    if verdict in LEGACY_VERDICTS:
+        return verdict
+    return _ccm.verdict_word(verdict)
+
 
 # Refs that are registers/plans rather than evidence of an executed action. A
 # *transition* event (status actually changed after the anchor) needs at least one
@@ -945,7 +962,8 @@ def _spec_ids(root: pathlib.Path) -> set[str]:
     spec = root / SPEC_PATH
     if not spec.is_file():
         return set()
-    return set(re.findall(r"\bSIG-[A-Z][A-Z0-9]*-\d{3}\b", spec.read_text()))
+    # letter-suffixed ids (SIG-INGEST-046b, SIG-PUB-014b) are requirement ids too (SEED-15)
+    return set(re.findall(r"\bSIG-[A-Z][A-Z0-9]*-\d{3}[a-z]?\b", spec.read_text()))
 
 
 def check_assessments(root: pathlib.Path, assessments: list[dict]) -> list[dict]:
@@ -967,8 +985,11 @@ def check_assessments(root: pathlib.Path, assessments: list[dict]) -> list[dict]
         if not errs:
             if a["domain"] not in DOMAINS:
                 errs.append(f"domain {a['domain']!r} not in {DOMAINS}")
-            if a["verdict"] not in VERDICTS:
-                errs.append(f"verdict {a['verdict']!r} not in {sorted(VERDICTS)}")
+            if verdict_word(a["verdict"]) is None:
+                errs.append(
+                    f"verdict {a['verdict']!r} is off the ADR-150 grammar ({' · '.join(sorted(VERDICTS))}, "
+                    "with each word's parameters)"
+                )
             if spec_ids and a["requirement_id"] not in spec_ids:
                 errs.append(
                     f"requirement {a['requirement_id']!r} is not a spec id — coverage "
@@ -980,7 +1001,7 @@ def check_assessments(root: pathlib.Path, assessments: list[dict]) -> list[dict]
                 for r in a["evidence_refs"]:
                     if not isinstance(r, str) or not _ref_exists(root, r):
                         errs.append(f"evidence ref does not exist: {r!r}")
-                if a["verdict"] in MET_VERDICTS and all(
+                if verdict_word(a["verdict"]) in MET_VERDICTS and all(
                     r.split("#", 1)[0].startswith(PLANNING_PREFIXES) for r in a["evidence_refs"]
                 ):
                     errs.append(
@@ -1066,14 +1087,14 @@ def check_assessments(root: pathlib.Path, assessments: list[dict]) -> list[dict]
     # domain-override: a MET head in domain D while a higher domain carries a
     # non-MET current verdict — fixture pass must never paper over a hosted failure.
     for (req, dom), a in heads.items():
-        if a["verdict"] not in MET_VERDICTS:
+        if verdict_word(a["verdict"]) not in MET_VERDICTS:
             continue
         for (req2, dom2), b in heads.items():
             if req2 != req:
                 continue
             if (
                 DOMAIN_RANK.get(dom2, -1) > DOMAIN_RANK.get(dom, -1)
-                and b["verdict"] not in MET_VERDICTS
+                and verdict_word(b["verdict"]) not in MET_VERDICTS
             ):
                 diags.append(
                     diag(

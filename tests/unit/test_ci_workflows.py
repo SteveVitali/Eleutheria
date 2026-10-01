@@ -174,3 +174,70 @@ def test_workflow_files_have_no_credential_literals() -> None:
         text=True,
     )
     assert proc.returncode == 0, proc.stderr
+
+
+# --- Round 11 seed (SEED-02b): runner pin, history guards, trailer check -----
+
+WORKFLOWS = sorted((REPO_ROOT / ".github" / "workflows").glob("*.yml"))
+MAKEFILE = REPO_ROOT / "Makefile"
+
+
+def test_every_job_of_every_workflow_pins_ubuntu_24_04() -> None:
+    """S6R-27 / FEA-16: `ubuntu-latest` moves to Ubuntu 26 from 2026-10-19, so the
+    runner never floats — the pin does not hinge on P34.1's date."""
+    jobs = [(p.name, n, j) for p in WORKFLOWS for n, j in _doc(p)["jobs"].items()]
+    assert len(jobs) >= 9
+    floating = [(wf, n, j.get("runs-on")) for wf, n, j in jobs]
+    assert [f for f in floating if f[2] != "ubuntu-24.04"] == []
+
+
+def _docs_step(needle: str) -> dict:
+    steps = [s for s in _doc(CI_YML)["jobs"]["docs"]["steps"] if needle in (s.get("run") or "")]
+    assert len(steps) == 1, f"the docs job must run `{needle}` in exactly one step"
+    return steps[0]
+
+
+def test_ci_docs_job_runs_the_history_guard_over_the_pr_range() -> None:
+    """BM-HIST-01: the validator's history mode (→ memory_guard.py) judges base...head of
+    the PR, with full history; its non-zero exits are never masked."""
+    job = _doc(CI_YML)["jobs"]["docs"]
+    assert job["steps"][0]["with"]["fetch-depth"] == 0
+    step = _docs_step("check-build-memory.sh . --range")
+    assert '"$BASE_SHA...$HEAD_SHA"' in step["run"]
+    assert step["env"] == {
+        "BASE_SHA": "${{ github.event.pull_request.base.sha }}",
+        "HEAD_SHA": "${{ github.event.pull_request.head.sha }}",
+    }
+    assert all("|| true" not in (s.get("run") or "") for s in job["steps"])
+    assert all(not s.get("continue-on-error") for s in job["steps"])
+    # reported even when an earlier docs step is red; the job still fails on any red step
+    assert step["if"] == "${{ !cancelled() }}"
+
+
+def test_ci_docs_job_runs_the_om01_trailer_check_over_the_pr_range() -> None:
+    step = _docs_step("check_trailers.py")
+    assert '--range "$BASE_SHA...$HEAD_SHA"' in step["run"]
+    assert step["env"]["BASE_SHA"] == "${{ github.event.pull_request.base.sha }}"
+    assert step["env"]["HEAD_SHA"] == "${{ github.event.pull_request.head.sha }}"
+    assert step["if"] == "${{ !cancelled() }}" and not step.get("continue-on-error")
+    assert (REPO_ROOT / "docs/build/tools/check_trailers.py").is_file()
+
+
+def test_make_docs_check_runs_the_round11_checkers() -> None:
+    """B4 G7 item 1: the memory guard, spec-source and coverage-matrix checkers are part of
+    `make docs-check` (which the docs job runs)."""
+    text = MAKEFILE.read_text()
+    line = next(ln for ln in text.splitlines() if ln.startswith("docs-check:"))
+    for target in ("docs-check-memory", "docs-check-spec", "docs-check-matrix"):
+        assert target in line.split(":", 1)[1].split(), target
+        assert f"\n{target}:" in text, target
+    assert "memory_guard.py all --worktree" in text
+    assert "check_spec_src.py" in text and "check_coverage_matrix.py" in text
+
+
+def test_pytest_collects_the_build_memory_tool_suites() -> None:
+    import tomllib
+
+    cfg = tomllib.loads((REPO_ROOT / "pyproject.toml").read_text())["tool"]["pytest"]["ini_options"]
+    assert "docs/build/tools" in cfg["testpaths"]
+    assert (REPO_ROOT / "docs/build/tools/test_memory_guard.py").is_file()

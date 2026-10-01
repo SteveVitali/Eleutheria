@@ -69,3 +69,13 @@ the in-memory `CuratedSourceIndex` value object), promote `connectors.curated_in
 stored surface at that point. Also revisit if a second connector needs the general form
 with a different row shape than the `accountability` Abuse Library path, or if
 `ConfigurationState` population (upstream) changes the shape the §29.6 reconciler consumes.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** the read and export surfaces over `Policy` / `LegalInstrument` landed (F3
+§5.1). **Answer:** F3 classified this trigger as needing only a recorded evaluation. No Round-11 row needs a
+persisted curated source index, so the in-memory `CuratedSourceIndex` stands; promote it when a row does. The
+decision above stays in force until that answer lands; this ADR's body is unchanged (SIG-ENG-003).

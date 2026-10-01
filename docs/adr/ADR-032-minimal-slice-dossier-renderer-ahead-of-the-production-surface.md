@@ -60,3 +60,10 @@ renderer belongs in a package).
 P15.2 lands the production dossier surface with the full epistemic visual
 language and a server-side PDF path; at that point `exports/dossier.py` is
 superseded and this ADR is closed out by the P15.2 ADRs.
+
+## Status updates
+
+- **Status:** Superseded by ADR-050 (2026-10-01)
+- **Status note (2026-10-01, Round-11 T1, unit SEED-11d):** Recorded at Round-11 T1 from F-249: ADR-050
+  (P15.2) declares "Closes out: ADR-032" and supersedes the slice renderer, as this ADR's own revisit trigger
+  foresaw. The body above is unchanged (SIG-ENG-003).

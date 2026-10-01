@@ -192,3 +192,10 @@ full pagination or a richer evidence payload — bump the additive field
 into its own document; or (d) an island legitimately needs >2× the
 measured budget — raise the ceilings only with a fresh measured report and
 a named reason, never silently.
+
+## Status updates
+
+- **Status:** Extended by ADR-155 (2026-10-01)
+- **Status note (2026-10-01, Round-11 T1, unit SEED-11d):** Per plan §7 row 155, ADR-155 (HTML-first page
+  types, A-12) extends this ADR's per-island budgets into a T0–T3 page-type registry with CI budgets (K0 §6).
+  The body above is unchanged (SIG-ENG-003).

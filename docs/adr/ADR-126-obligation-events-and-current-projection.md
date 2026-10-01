@@ -133,3 +133,21 @@ single-writer protocol and entry-point cutover.
 - **A new conflict class:** if a reconciliation ever needs a verdict other than the
   recorded set (`DONE`/`PARTIAL`/`ambiguous-open`), extend `RECONCILIATIONS` semantics in a
   new ADR rather than stretching this one.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): LIKELY FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger likely fired:** status is still hand-edited in DEFERRALS — 97 anchors and 0
+transitions (F-26), anchored at 10-21 (B1 NEW-7; F3 §5.1). **Answer:** row P34.8 (M3 obligation_events repair
++ correction/transition data) and ADR-148 (build memory v2.1), which supersedes this ADR's cutover statements
+(status update below). The decision above stays in force until that answer lands; this ADR's body is unchanged
+(SIG-ENG-003).
+
+## Status updates
+
+- **Status:** Superseded by ADR-148 (2026-10-01) — the D-R10-MEMORY-1 cutover statements only
+- **Status note (2026-10-01, Round-11 T1, unit SEED-11d):** Per plan §7 row 148, ADR-148 (build memory v2.1)
+  splits D-R10-MEMORY-1 (B3 option C) and supersedes this ADR's statements about the P32.8 cutover; the
+  obligation-event and projection design stands. The body above is unchanged (SIG-ENG-003).

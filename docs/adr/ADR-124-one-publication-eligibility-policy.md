@@ -151,3 +151,11 @@ those allows is an operator action (the `sig_materialize` role), not a code chan
 - If `effective_disposition` ever gains belief-time semantics for public reads (rather than
   review-only), that change is a new ADR — the current-access-overrides-history rule is the
   load-bearing property.
+
+## Status updates
+
+- **Status:** Extended by ADR-159 (2026-10-01)
+- **Status note (2026-10-01, Round-11 T1, unit SEED-11d):** Per plan §7 row 159, ADR-159 (organisation
+  publication) adds registry auto-allow — Census of Governments, SAM UEI or Wikidata QID, the person-name screen
+  always running — and a typed "not yet reviewed" state, with no operator review queue (A-10 "Auto-allow +
+  absence only", 2026-10-01T04:07:45Z). The body above is unchanged (SIG-ENG-003).

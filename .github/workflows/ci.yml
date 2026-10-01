@@ -5,6 +5,9 @@
 # CI (SIG-ENG-015/016 wiring): lint, type-check, test, and the
 # "generated artifacts match a fresh generation" gate — run green on the empty
 # skeleton. Install is strictly from the committed lockfile (uv --frozen).
+# Runner: every job pins `ubuntu-24.04` (S6R-27, FEA-16 — the `ubuntu-latest`
+# label moves to Ubuntu 26 from 2026-10-19); P34.1 (TC-PIN) keeps the rest of the
+# toolchain pin.
 
 name: CI
 
@@ -24,13 +27,25 @@ jobs:
   # (broken references, coverage gaps) is caught at change time, not by a periodic
   # sweep. Pure bash + git; no uv/toolchain needed. Kept out of `make check`
   # because the two detectors together take ~30s (>10s), so they run here.
+  #
+  # Round 11 (SEED-02b; B4 G3/G7, plan App. A T2): `make docs-check` also runs the
+  # build-memory history guard on the working tree, the spec-source checker and the
+  # coverage-matrix checker, and the last two steps judge this PR's own commits —
+  # the history guard over base...head (BM-HIST-01) and the OM-01 trailer check.
+  # All stdlib python3: the runner's system Python (3.12 on ubuntu-24.04); no uv.
+  #
+  # TODO(P34.1, CF-01): P34.1 (TC-PIN) owns this job's `push` trigger. When it adds
+  # it, it also adds the push-side history step
+  #   bash scripts/docs/check-build-memory.sh . --first-parent ${{ github.sha }}
+  # and rewrites test_ci_docs_job_runs_only_on_pull_requests with its ADR. Not added
+  # by the seed (plan App. A T2: "The `push` trigger is P34.1's, CF-01").
   docs:
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # the detectors classify missing refs via git history
+          fetch-depth: 0 # the detectors classify missing refs via git history; the history guards need it
 
       - name: Documentation freshness (both detectors)
         run: make docs-check
@@ -41,8 +56,34 @@ jobs:
       - name: Build-memory layout gate (check-build-memory.sh)
         run: bash scripts/docs/check-build-memory.sh .
 
+      # BM-HIST-01 (SEED-02): the lines this PR adds or removes in build-memory
+      # records — record dates, append-only regions, record shape, gate records,
+      # readouts. check-history.sh hands off to docs/build/tools/memory_guard.py.
+      # Exit 1 (violation), 3 (vacuous) and 5 (unknown: shallow clone, bad range)
+      # are all red — never `|| true`. `!cancelled()`: this verdict and the trailer
+      # check's are reported even when an earlier docs step is red (the job still fails).
+      - name: Build-memory history guard (memory_guard.py over the PR range)
+        if: ${{ !cancelled() }}
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          python3 --version
+          bash scripts/docs/check-build-memory.sh . --range "$BASE_SHA...$HEAD_SHA" --json docs/build/logs/build-memory-history.json
+
+      # OM-01 (plan §3.3; A-21 — commits keep the operator's name as author): every
+      # commit of the PR carries a recognised harness trailer, or is an operator
+      # commit (`Harness: operator`, a valid OP-25 signature, a GitHub merge). Exit 1
+      # (an untrailered agent commit), 3 (vacuous) and 5 (unknown) are red.
+      - name: Commit trailer check (OM-01)
+        if: ${{ !cancelled() }}
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: python3 docs/build/tools/check_trailers.py --range "$BASE_SHA...$HEAD_SHA" --json docs/build/logs/trailer-check.json
+
   python:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -69,7 +110,7 @@ jobs:
 
       # The claim-spine DB tests (P02.1) stand up PostgreSQL 18 + PostGIS in a
       # throwaway container and apply the sqitch plan against it (SIG-STORE-024).
-      # ubuntu-latest ships a running Docker daemon; SIG_REQUIRE_DB_TESTS turns a
+      # ubuntu-24.04 ships a running Docker daemon; SIG_REQUIRE_DB_TESTS turns a
       # missing daemon into a failure so the RLS/append-only suite can never
       # silently skip. Ryuk is disabled — the fixtures clean up explicitly.
       - name: Test
@@ -82,7 +123,7 @@ jobs:
         run: make verify-gen
 
   # The composed-stack e2e run FOR REAL (CI.1 / GL-CI-01 — closes the P20.4 /
-  # CI-RED-01 gap honestly): ubuntu-latest ships a running Docker daemon and this
+  # CI-RED-01 gap honestly): ubuntu-24.04 ships a running Docker daemon and this
   # job installs Node + web/node_modules, so the whole tests/e2e suite — seams
   # S1..S8 including the web build (LD-V08, crossed by P21.4) — actually runs
   # instead of skipping. The `python` job above also runs tests/e2e (Docker is
@@ -91,7 +132,7 @@ jobs:
   # SIG_REQUIRE_DB_TESTS=1 turns a missing daemon into a hard failure: the
   # composed gate can never silently no-op.
   composed:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -129,7 +170,7 @@ jobs:
   # time; the dependency *vulnerability* audit (pip-audit → OSV) needs network
   # and advisories drift without a commit, so it rides nightly.yml instead.
   security:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -166,7 +207,7 @@ jobs:
   # OSI-only dependency licence check, and the performance budgets — "checked in CI,
   # not by memory" (SIG-UI-039) and "the build fails on regression" (SIG-UI-041).
   web:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: web

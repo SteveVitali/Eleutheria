@@ -1,0 +1,2 @@
+# Archived LEDGER head line replaced at 2026-10-01T18:11:04Z (GATE-B GB-Q4: P34.40's /v1/* step pre-authorised). Byte-for-byte:
+> - **Pre-authorisation (OM-20).** Only live GATE DECISIONS `pre-authorization` rows: the 13 11A rows (expires: GATE-G4; P34.40 = nginx roll only, its `/v1/*` step needs its own go; P34.6 = drill clone only) and the B-9 Class R standing go (renewed only at a sub-round GATE, never by `continue`). OM-20's class list is never pre-authorised.

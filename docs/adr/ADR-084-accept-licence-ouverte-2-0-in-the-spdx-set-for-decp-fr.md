@@ -44,3 +44,16 @@ Revisit if: counsel (HG-02) confirms Licence Ouverte 2.0 is CC-BY-4.0-compatible
 then widen `relicensable_to`; **or** Etalab's published compatibility position
 changes; **or** a data.gouv.fr source appears under a *different* LO version
 (`fr-lo` v1 vs `lov2`) whose terms differ.
+
+## Status updates
+
+- **Status:** Qualified by ADR-182 (2026-10-01)
+- **Status note (2026-10-01T13:59:14Z, Round-11 T1, unit SEED-12c):** ADR-182 (WV-07; the operator's adopted sentence,
+  agent-drafted and adopted at 2026-10-01T04:28:49Z, sha256 `c5a71e9d7fd9…`: *"I waive the counsel-review clauses of
+  SIG-LIC-009 and SIG-INGEST-037; rights decisions rest on my recorded determinations, labelled as such."*) leaves
+  this ADR's counsel-conditioned revisit clause unable to fire as written — SIG has no counsel (U-013; F3 §5.4,
+  NEW-8). The clause: "counsel (HG-02) confirms Licence Ouverte 2.0 is CC-BY-4.0-compatible". Restated (agent reading,
+  labelled): it fires when the operator records a determination that Licence Ouverte 2.0 is CC-BY-4.0-compatible,
+  labelled "the operator's own determination (no counsel)" (ADR-167); or when counsel is obtained (LATER-05) or a
+  first legal demand arrives (ADR-182's and ADR-166's triggers). The decision and the body above are unchanged
+  (SIG-ENG-003).

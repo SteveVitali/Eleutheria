@@ -142,3 +142,14 @@ Note: no `contributor`/`submission` table exists in `db/deploy/` (confirmed by
 value-object ↔ table pair for `tests/db/test_annotation_alignment.py` to align yet.
 When a contributor persistence path is added, that pair joins the alignment guard
 and this trigger re-arms.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** an intake submission store exists — P32.16 added the isolated `intake` schema
+and receiver (ADR-135; F3 §5.1). **Answer:** the receiver stays non-operational and intake is e-mail-only for
+Round 11 (B-8; ADR-180, ADR-186); row P37.59 lands dark. The contributor models are not thinned; the decision
+stands until a contributor persistence path is used live. The decision above stays in force until that answer
+lands; this ADR's body is unchanged (SIG-ENG-003).

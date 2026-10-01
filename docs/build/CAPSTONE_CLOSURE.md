@@ -454,3 +454,15 @@ verification/1`, `journey-portfolio/1`) plus the signed GATE-G3 readout.
 and the OPEN register **as presented** — it does not declare any deferred,
 human, or live-stage row done. Rows the operator declines return to their
 owners; nothing here silently becomes a gap.
+
+## Addendum — DATE CORRECTION and later records (SEED-08, appended 2026-10-01T08:21:03Z; ADR-146; append-only)
+
+- *Agent record (labelled): written by Claude Code, harness `claude-code/claude-opus-5-5/subagent`, Round-11 Stage-B unit SEED-08.* The lines above are not edited. Each row maps a date this record carries that was not taken from a clock to the true time from git (committer time) or GitHub (PR `createdAt`), per the register `docs/build/reports/memory-repair/date_corrections.csv` (`rec` = data-record number). Exact times from B7's session-store reads (S3 deferral 2026-09-28T01:15:49Z, GATE-G3 approval 03:49:14Z) were confirmed by the operator at GATE-P (B-4 → Q-B1-2; C-1).
+
+| corr | line | recorded → true (UTC) | evidence | register rec |
+|---|---|---|---|---|
+| DC-CAP-01 | L284 | S3 deferral: recorded 2026-10-19 → true 2026-09-28T01:15:49Z (B7; before `a33cd6ec` 01:27:21Z) | S3DEFER: commit a33cd6ec "operator defers S3 human-eval spine" (local 2026-09-27 21:27 -04:00) | 119 |
+| DC-CAP-02 | L326 | GATE-G3 approval: recorded 2026-10-19 → true 2026-09-28T03:49:14Z (B7; before `95c8a73f` 03:49:46Z) | G3SIGN: commit 95c8a73f "GATE-G3 signed" (local 2026-09-27 23:49 -04:00) | 120 |
+| DC-CAP-03 | L340 | S3 deferral: recorded 2026-10-19 → true 2026-09-28T01:15:49Z (B7; before `a33cd6ec` 01:27:21Z) | S3DEFER: commit a33cd6ec "operator defers S3 human-eval spine" (local 2026-09-27 21:27 -04:00) | 121 |
+
+- **Later records that bear on §(f) (pointers; nothing above is re-decided).** GATE-ACCEPT accepted §(f) "as presented" (`docs/build/readouts/ACCEPT-R10.md`; the operator's approval reached the Devin CLI session at 2026-09-28T18:46:46Z per B7, confirmed at GATE-P, C-1). At GATE-P the operator answered C-13 *"Superseded (Recommended)"* (log rounds 22–23, 2026-10-01T05:03:05Z): that acceptance, including its "34 MET", stands as history, superseded by the Round-11 re-verdicts under ADR-150 (B-5). The GATE-G3 signature and candidate `p-17b713…` that §(f) cites are superseded (B-4, GATE-P log round 10, 2026-10-01T04:32:16Z; record: `docs/build/reports/p32.23a-release-candidate/CORRECTION.md`).

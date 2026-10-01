@@ -45,6 +45,14 @@ the set of ADR files and the set of Appendix F rows are equal. Appendix F number
 repository ADR numbering — earlier "logical" numbering in ledgers is a documented equivalence,
 not a second scheme (ADR-062, LD-X04/LD-D03).
 
+**Round-11 amendment (DRAFT-ENG-4, B4 §5; F-32; plan §7; recorded 2026-10-01).** Additions, nothing
+removed: the index MUST show, for every ADR, its number, title, owning ticket or phase, and status,
+derived by the index generator from the ADR header forms in use; a landed ADR that a later ADR
+supersedes MUST carry an appended `Superseded by` status line (one it amends, qualifies or extends,
+an appended `Amended by`, `Qualified by` or `Extended by` line), never an edit of its body;
+`check_spec_src.py` and its tests MUST run in `make docs-check` and in CI (SIG-ENG-042); new ADRs
+MUST use the template header fields.
+
 ---
 
 ## 48. Testing

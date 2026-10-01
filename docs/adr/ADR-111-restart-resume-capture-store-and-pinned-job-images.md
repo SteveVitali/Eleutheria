@@ -155,3 +155,15 @@
 - (c) The restricted bucket's capture prefix grows past 5 GB, or gcsfuse write latency dominates a run. Then
   consider the JSON-API `BlobStore` or a dedicated evidence bucket (with Object Lock, ADR-015).
 - (d) A job's configured image is ever found not to be a digest (a regression of Decision 6).
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** (clause d) three Cloud Run jobs run the tag-only image
+`curlimages/curl:8.10.1`, and the `sig-alerts` service runs on `:latest` (G1-11; F3 §5.1). **Answer:** rows
+P35.1a/P35.1b (fleet hygiene: one digest per roll, the egress probes deleted, Artifact Registry cleanup) and
+the draft SIG-SEC-008 (every service and job by digest; SEED-12's SEC family). This ADR's rule covers jobs;
+extending it to services is SIG-SEC-008's. The decision above stays in force until that answer lands; this
+ADR's body is unchanged (SIG-ENG-003).

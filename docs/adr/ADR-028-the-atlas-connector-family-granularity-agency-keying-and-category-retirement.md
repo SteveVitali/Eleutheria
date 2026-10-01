@@ -128,3 +128,15 @@ only with full provenance"; or the EFF Atlas changes its taxonomy again (a new
 retirement or a category split) such that the versioned category map needs a
 structural rather than additive migration; or the connector layer gains a real
 `deployment_exists` DB write path superseding the compartment-stamp realisation.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** the live HTTP transport and the OCFL capture store landed (ADR-065), letting
+`atlas` fetch and archive real bulk exports (F3 §5.1). **Answer:** F3 classified this trigger as needing only
+a recorded evaluation. No Round-11 row changes this connector's granularity, agency keying or
+category-retirement decisions; Atlas vendor data reaching place and entity pages is a Round-11 acceptance item
+(plan §5.5, COV-05), not a change here. The decision above stays in force until that answer lands; this ADR's
+body is unchanged (SIG-ENG-003).

@@ -8,15 +8,41 @@ provisional release is staging-only, intake non-operational, evaluation deferred
 so a future edit cannot silently reintroduce the pre-launch "nothing is deployed /
 no live fetch" framing — or, conversely, overstate the staged candidate as served.
 The refresh report itself is asserted to exist.
+
+"Must not contain a known-stale claim" guards are kept as written. "Must state the
+current posture" checks are derived from the records the wording describes (the
+DEFERRALS row, the committed intake gate, the governance directory), never pinned
+to today's values, so a legitimate activation or a new policy document does not
+turn them red (BM-TEST-01; SEED-03 / PKG-02 ED-11).
 """
 
 import pathlib
+import re
+import tomllib
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[2]
+
+_NUMBER_WORDS = {
+    word: n
+    for n, word in enumerate(
+        "zero one two three four five six seven eight nine ten eleven twelve thirteen "
+        "fourteen fifteen sixteen seventeen eighteen nineteen twenty".split()
+    )
+}
 
 
 def _read(rel: str) -> str:
     return (REPO_ROOT / rel).read_text(encoding="utf-8")
+
+
+def _deferral_lead(oid: str) -> str:
+    """The leading status token of one DEFERRALS row (the register's own word)."""
+    for line in _read("docs/tickets/DEFERRALS.md").splitlines():
+        if line.startswith(f"| {oid} |"):
+            cell = line.rstrip().rstrip("|").rsplit("|", 1)[-1]
+            words = cell.replace("*", " ").split()
+            return words[0].upper() if words else ""
+    raise AssertionError(f"DEFERRALS.md has no {oid} row")
 
 
 def test_refresh_report_exists() -> None:
@@ -26,7 +52,6 @@ def test_refresh_report_exists() -> None:
 def test_readme_states_deployed_public_surface() -> None:
     readme = _read("README.md")
     assert "surveillancegraph.org" in readme
-    assert "staging" in readme.lower()
     for stale in (
         "not a running service",
         "nothing is deployed",
@@ -37,10 +62,21 @@ def test_readme_states_deployed_public_surface() -> None:
 
 
 def test_readme_round10_honest_bounds() -> None:
+    """The README's bounds follow the records they describe: while production
+    exposure is still owed (D-R10-PUBLISH-1 OPEN/PARTIAL) the README names that
+    obligation and the staged-only posture; while the committed intake gate is
+    off it says the receiver is not operating — and once the gate is on, it may
+    no longer claim `operational=false`."""
     readme = _read("README.md")
-    # The staged-only posture and the non-operational intake must stay stated.
-    assert "D-R10-PUBLISH-1" in readme
-    assert "operational=false" in readme or "receiver_not_operating" in readme
+    if _deferral_lead("D-R10-PUBLISH-1") in {"OPEN", "PARTIAL"}:
+        assert "D-R10-PUBLISH-1" in readme
+        assert "staging" in readme.lower()
+    operational = tomllib.loads(_read("ops/config.toml"))["intake"]["operational"]
+    assert isinstance(operational, bool)
+    if operational:
+        assert "operational=false" not in readme
+    else:
+        assert "operational=false" in readme or "receiver_not_operating" in readme
 
 
 def test_changelog_current_limitations_are_honest() -> None:
@@ -67,10 +103,20 @@ def test_web_readme_names_the_opt_in_islands() -> None:
 
 
 def test_governance_readme_counts_all_documents() -> None:
+    """The index's spelled-out count equals the governance documents actually
+    present, and every one of them is linked from the index."""
     gov = _read("docs/governance/README.md")
-    assert "Ten documents" in gov
-    assert "intake-receiver-operating-packet.md" in gov
-    assert "publication-opinion-drafts.md" in gov
+    docs = sorted(
+        p.name for p in (REPO_ROOT / "docs/governance").glob("*.md") if p.name != "README.md"
+    )
+    assert docs, "docs/governance/ holds no policy documents"
+    counts = re.findall(r"\b([A-Z][a-z]+) documents\.", gov)
+    assert counts, "docs/governance/README.md no longer states its document count"
+    assert [_NUMBER_WORDS.get(c.lower()) for c in counts] == [len(docs)], (
+        f"README states {counts} documents; docs/governance/ holds {len(docs)}"
+    )
+    unlinked = [name for name in docs if f"]({name})" not in gov]
+    assert not unlinked, f"governance documents missing from the index: {unlinked}"
 
 
 def test_docs_index_lists_evaluation_packet() -> None:

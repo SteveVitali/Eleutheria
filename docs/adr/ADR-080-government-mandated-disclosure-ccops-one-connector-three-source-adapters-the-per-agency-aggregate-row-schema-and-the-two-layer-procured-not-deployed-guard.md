@@ -164,3 +164,13 @@ per-incident rows (the aggregate gate's vocabulary may need to grow), or
 (d) the `reports_actual_use` override proves too permissive in live review —
 the honest fallback is to admit use claims only from `deployment_report`-genre
 documents and record the inventory's use assertions as `disclosure` facts.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** (clause b) P31.13 added three CCOPS jurisdictions (`26d5ceee`), and
+`docs/build/runs/P31.13.md` records no evaluation (F3 §5.1). **Answer:** row P36.10 (CCOPS reports, police
+policies, district self-disclosures — 17 sources) decides whether the extractor class generalises or splits.
+The decision above stays in force until that answer lands; this ADR's body is unchanged (SIG-ENG-003).

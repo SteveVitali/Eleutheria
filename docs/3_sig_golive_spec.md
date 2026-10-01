@@ -2,6 +2,7 @@
 
 **Document:** `docs/3_sig_golive_spec.md` · **Version:** 0.2.0 · **Status:** Ratified 2026-09-09 (operator delegated the Appendix-B open questions to Devin's best judgement — see §0.1; workers may implement).
 **Date:** 2026-09-09 · **Author:** Devin (for Steve Vitali)
+**Amended:** 2026-10-01T14:04:39Z — v0.3.0, the Round-11 reconciliation (§0.2; the goal 5 note in §1; §2.1), recorded by Claude Code (Opus 5.5), Stage-B sub-agent SEED-12c, under the operator's B-4 answer (plan E2-18 / Q-E2-19). The ratified text is kept.
 **Repo / worktree:** `~/Eleutheria` (SIG — Surveillance Infrastructure Graph)
 **Derived from:** the `sig-postbuild` build (PRs #47–#68, `projectStatus: DONE`); the build ledger's `RETURN PASS`, `GATE DECISIONS`, and `OPEN FINDINGS`; `docs/build/OPERATIONAL_READINESS.md`; `docs/build/INTEGRATION_PLAN.md`; `docs/build/BACKLOG.csv`; `docs/2_canonical_design_spec.md` §§ cited per ticket.
 **Requirement IDs:** `GL-<AREA>-<nn>`, append-only. Areas: `GATE`, `REL`, `GOV`, `LEGAL`, `ACCT`, `RIGHTS`, `LIVE`, `INFRA`, `CONTRIB`, `SOURCES`, `DEPLOY`, `SCHED`, `OBS`, `CI`, `META`, `JURIS`, `CCOPS`.
@@ -48,7 +49,115 @@ The operator delegated the Appendix-B gates to Devin's judgement ("publish every
 - **GL-GATE-04 (HG-12 host) — the operator's GCP project, `$SIG_GCP_PROJECT` (name `eleutheria`; the id itself is env-resolved, never committed — D3).** Zero/low-cost design (SIG-STORE-003): static site + `sig-exports` output + deposits on **GCS**; API on **Cloud Run** (scales to zero); Postgres+PostGIS on the smallest **Cloud SQL** tier *or* a single `e2-micro` GCE running the compose stack (DEPLOY.1 picks one in its ADR, keeps the other documented). Infra-as-code (gcloud + a Terraform/`ops/gcp/` module) is **written and validated** by DEPLOY.1; the actual `apply` is **gated on operator `gcloud` auth** (Application Default Credentials in the run shell) and never executed by an isolated subagent.
 - **GL-GATE-05 (Go-public) — stays a deliberate human action.** The chain drives to "OKC ingested + published to a GCP **staging/private** target"; the DNS/public cutover (and the `v0.2.0` "first public jurisdiction" tag) is the operator's explicit final step.
 
+> **Amended (Round 11, appended 2026-10-01T14:04:39Z).** GL-GATE-01, -02 and -05 above were overtaken by the 2026-09-15/16 records and are reconciled in §0.2. GL-GATE-06…08 (2026-09-16/18), recorded until now only in the LEDGER, are added there, with GL-GATE-07 and GL-GATE-08 recorded as re-confirmed at GATE-P in the operator's adopted words.
+
 **Credentialed live actions** (real fetches HG-09, GCP `apply`, Zenodo HG-07, MapRoulette HG-08, usability study HG-10) are executed by whatever run shell holds the credentials. In an unattended subagent chain they run in **prepare + gate-pending** mode (code + config landed, RETURN PASS row written) — they are the short list of operator re-runs, not blocks.
+
+## §0.2 Round-11 reconciliation (appended 2026-10-01T14:04:39Z) — goal 5, GL-GATE-01/02/05 and GL-GATE-06…08
+
+**Authority.** The operator's B-4 answer "As stated (Recommended)" (2026-10-01T04:32:16Z), which carries Q-E2-19:
+amend this spec to record the 2026-09-16 go-public and its waivers (plan E2-18; ADR-147 item 16). The operator's words
+below are quoted verbatim from `docs/build/planning/2026-09-30-next-phase/feedback/RATIFICATION_LOG.md` with their round
+times. Where the operator adopted an agent-drafted sentence or option by selecting it, it carries the label
+"agent-drafted, adopted by the operator at <time>" and its sha256 (`printf '%s' "<text>" | shasum -a 256`, prefix shown;
+full values in the cited ADRs).
+
+**Pattern (ADR-145).** This section changes no decision and removes no text. §0.1, Part I and Appendix B stay as
+ratified on 2026-09-09. This section records what was done after they were written, names the Round-11 ADRs that now
+govern, and adds GL-GATE-06…08, which until now existed only in the LEDGER. The GATE DECISIONS rows cited as R32–R53
+are the 53 rows restored on 2026-10-01 with dated annotations (`docs/build/LEDGER.md`, SEED-06).
+
+**What happened.** The legal home was named on 2026-09-15 as the operator, an individual maintainer (R42). The public
+cut-over (Go-public, GL-GATE-05) was executed on 2026-09-16 with HG-11 skipped by the operator and the HG-02 remainder
+deferred (R51). The same day, the operator filled both reviewer roles personally — SIG-PUB-008's independence "waived,
+not satisfied" — and resolved the HG-02 remainder by operator-adopted drafted analyses that are explicitly not legal
+advice (R52). The §0.1 preconditions — a real legal home, and the two-reviewer and counsel gates before the public
+cut-over — were therefore not met when the site went public.
+
+### GL-GATE-01 (HG-01 legal home) — as reconciled
+
+- **Record.** The interim posture above was resolved on 2026-09-15 by naming an individual legal home (R42; annotation
+  R32: "superseded in substance by R42"). It was never a formal legal entity.
+- **Round 11.** SIG-GOV-012/013 are waived for now (WV-01, A-23, round 9). The sentence was agent-drafted, adopted by
+  the operator at 2026-10-01T04:28:49Z, sha256 `b9dc5a9128ac…`: *"I waive SIG-GOV-012/013 for now: SIG's legal home is
+  me as an individual, disclosed on the site, revisited at announcement, a first legal demand, funding, or a second
+  maintainer."* → ADR-165.
+- **Status of the §0.1 text.** "A real legal home remains a human action before the actual public cut-over" is past and
+  recorded as not met. A formal legal home stays a revisit: at the announcement, a first legal demand, funding or a
+  second maintainer.
+
+### GL-GATE-02 (HG-02 counsel) — as reconciled
+
+- **Record.** No counsel was ever engaged. The rows that say "APPROVED by counsel (operator-reported)" (R49, R50) record
+  the operator's own determinations. The label §0.1 required ("operator/engineering disposition pending counsel; counsel
+  review recommended before real public exposure") never shipped (annotation R33; E1 NEW-3), and its "before real public
+  exposure" clause is past.
+- **Round 11.** C-3, round 19 — agent-drafted, adopted by the operator at 2026-10-01T04:54:19Z, sha256 `1461ae213fac…`:
+  *"The 'counsel' determinations of 2026-09-16 and 09-24 were my own; there was no counsel. My 09-28 message 'let's defer
+  all the human review steps and proceed' was my decision to defer the human review legs."* Past "counsel" entries are
+  re-recorded as **the operator's own determination (no counsel)** (ADR-167). The counsel-review clauses of SIG-LIC-009
+  and SIG-INGEST-037 are waived — WV-07, A-23, round 9, agent-drafted, adopted by the operator at 2026-10-01T04:28:49Z,
+  sha256 `c5a71e9d7fd9…`: *"I waive the counsel-review clauses of SIG-LIC-009 and SIG-INGEST-037; rights decisions rest
+  on my recorded determinations, labelled as such."* → ADR-182. SIG-LIC-009's risk-register clause stands.
+- **The label.** The §0.1 label is replaced by ADR-167's publication-basis label on every public artifact. Its text is
+  E2's agent draft, sha256 `f62f9e984c0d…`, and it is **not yet confirmed by the operator**; it ships only after
+  verbatim confirmation in a copy batch (B-2).
+
+### GL-GATE-05 (Go-public) — as reconciled
+
+- **Record.** Executed on 2026-09-16 as a deliberate operator action (R51; annotation R36), without the two
+  preconditions §0.1 and the gate register name: a real legal home (HG-01) and an independent second reviewer (HG-11).
+- **Round 11.** The HG-11 second-reviewer role is waived for Round-11 releases (WV-03, A-23, round 9). The sentence was
+  agent-drafted, adopted by the operator at 2026-10-01T04:28:49Z, sha256 `44644f6bd6ff…`: *"I waive the second-reviewer
+  role (SIG-PUB-008 / HG-11) for Round-11 releases; each readout states 'single maintainer, no second reviewer'."*
+  → ADR-163. SIG-PUB-008 itself stands, and nobody is named.
+- **Next public step.** The site is live. The next public milestone is the announcement, which waits for GATE-ANNOUNCE
+  (plan §13.5; ADR-172). That gate includes a keep/lift answer in the operator's words for WV-01, WV-03, WV-04, WV-05
+  and WV-08.
+
+### GL-GATE-06 (HG-03 blanket disposition, 2026-09-16) — added
+
+- **Record (R53, annotated "blanket").** Sources whose rights block resolves to a clear public licence (CC0, CC-BY,
+  CC-BY-SA, ODbL, MIT, public-records or open-API terms) are flipped to `ingestion_permitted=true` with reviewer
+  "maintainer (delegated)". Sources with unresolved or undetermined terms, share-alike ambiguity beyond the named set, or
+  a `not_contacted` compact posture stay `false`.
+- **Status.** Stands as history. The wider GL-GATE-07 followed on 2026-09-18 (annotation R53). In Round 11, flips run
+  under GL-GATE-07 as re-confirmed below.
+
+### GL-GATE-07 (rights rule, 2026-09-18) — added, and re-confirmed at GATE-P
+
+- **Record (LEDGER GATE DECISIONS, 2026-09-18, the operator's words as recorded):** *"We should ungate the
+  D-SOURCES.12-1 257 gated datasets and for all the 'rights review' cases we should err on the side of approving
+  them"*. It was executed as a blanket approval that included non-US rows, with the sui generis database-right risk
+  accepted. US rows → `LicenseRef-PublicRecord-FactualCompilation`; non-US rows → `LicenseRef-OperatorAccepted-DBRight`;
+  reviewer "maintainer (delegated)".
+- **Re-confirmed at GATE-P (A-7, round 3, 2026-10-01T04:03:25Z).** The operator selected "Re-confirm GL-GATE-07"
+  (sha256 `dacea8206687…`) over the recommendation. The adopted option text, agent-drafted and adopted by the operator at
+  2026-10-01T04:03:25Z, sha256 `1bfedde5feac…`: *"US public records and open-licence sources flip batch-wide under
+  precedent, erring on the side of approving."*
+- **Guardrails (ADR-169).** Tier-1 batches flip batch-wide, and Part VIII screen lines still apply. New non-commercial
+  sources contribute facts and pointers only (A-9). The ≈8,088 express-terms rows stay public under the operator's
+  accepted risk (A-8; ADR-183). Non-US database-right flips N1–N21 follow (B-34).
+- **Who flips.** The operator executes each wave's flip list (OP-26), each flip in an operator-signed commit or a GATE
+  DECISIONS row (OP-25). HG-03 stays an operator action; rights decisions rest on the operator's recorded
+  determinations, labelled as such (WV-07).
+
+### GL-GATE-08 (robots, 2026-09-18) — added, and re-confirmed at GATE-P on every host
+
+- **Record (LEDGER GATE DECISIONS, 2026-09-18, the operator's words as recorded):** *"I also wonder if we should
+  disregard robots.txt-gated sources and crawl them anyway"*. The recorder read it as a decision to "disregard robots
+  entirely": verdicts are probed and recorded, and never gate a fetch (ADR-088). The words themselves are a question
+  (E2-X1).
+- **Re-confirmed at GATE-P (A-5, round 3, 2026-10-01T04:03:25Z).** The operator selected "Re-confirm GL-GATE-08 as is"
+  (sha256 `a18c15758247…`) over the recommendation. The adopted option text, agent-drafted and adopted by the operator
+  at 2026-10-01T04:03:25Z, sha256 `9a8a3109c95f…`: *"Keep disregarding on all 122 hosts incl. PrimeGov; conflicts with
+  SIG-INGEST-046c for reservations. Not recommended."*
+- **Scope (S6R-08, round 26, 2026-10-01T06:51:11Z).** The operator chose "All hosts, as ADR-088 (Recommended)" (sha256
+  `038d8bb1c184…`; agent-drafted option, adopted by the operator at 2026-10-01T06:51:11Z). GL-GATE-08 applies on every
+  host per ADR-088, new hosts included → ADR-168, which extends ADR-088. Disallows are recorded as `robots_disregarded`
+  and disclosed as host + count.
+- **Still binding (not waived).** SIG-INGEST-046c rights reservations are refused; rule-7 opt-outs are honoured at
+  once; rule 4 (no circumvention) and SIG-INGEST-013 (no challenge defeat) apply on every host.
 
 ## Reconciling the P23.x migration tail (decompose-spec instruction)
 
@@ -79,6 +188,8 @@ Each Lane B/C session is a single `implement-spec` run on the manual floor (or `
 4. Prove the federation design with a second jurisdiction, and close the one genuinely-missing connector class (CCOPS).
 5. Zero fabricated readiness: fixture-backed stays fixture-backed until a gate opens; secrets never enter a file; nothing publishes without the two-reviewer + counsel gates.
 
+> **Goal 5 — as reconciled (Round 11, appended 2026-10-01T14:04:39Z; §0.2).** Publication went ahead on 2026-09-16 without the two-reviewer and counsel gates this goal names (§0.2, "What happened"). Round 11 keeps the goal's first two clauses and reads the third as follows: nothing publishes without a recorded go in the operator's words — a candidate-specific Class S readout, or the Class R standing go while it is current (B-9; plan §5.8) — and every artifact states the posture truthfully: a single maintainer with no second reviewer (WV-03, ADR-163), and the operator's own determinations with no counsel (WV-07; ADR-167, ADR-182). No artifact claims a review, a reviewer or a counsel opinion that did not happen (ADR-147, ADR-152). *This is the agent's reconciliation of goal 5 to the operator's recorded answers (labelled), not a new decision.*
+
 **Non-goals.** No change to the built pipeline's contracts (append-only, wire names, schema). No new reconciliation/inference logic. No automated OSM edits (human-mediated only). No merging/tagging by any worker (operator, per `INTEGRATION_PLAN.md`). No third jurisdiction here (JURIS.3+ is a later round).
 
 ## 2. Gate register (Lane A)
@@ -99,6 +210,24 @@ Each row becomes a `HUMAN-H<k>` or `GATE-G<k>` marker; the operator signs it; it
 | HG-10 | Usability participants | ≥5 naïve participants scheduled (roles only) | operator | CONTRIB.1 study |
 | HG-12 | Hosting/budget | a real (zero/low-cost) host + object store + PG target beyond local | operator | INFRA.1, DEPLOY.1 |
 | Go-public | DNS/host cutover | operator decision after HG-01/HG-11 | operator | LIVE.2 → `v0.2.0` |
+
+### 2.1 Gate register — Round-11 status (appended 2026-10-01T14:04:39Z; §0.2)
+
+The register above is kept as ratified. This table records, for each gate whose state changed, what the 2026-09 record
+says and its Round-11 status. Row ids R32–R53 are the restored GATE DECISIONS rows in `docs/build/LEDGER.md`.
+
+| Gate | 2026-09 record | Round-11 status | ADR / plan |
+|---|---|---|---|
+| HG-01 | named on 2026-09-15: the operator, as an individual (R42) | SIG-GOV-012/013 waived for now (WV-01); the legal home is disclosed; revisited at the announcement, a first legal demand, funding or a second maintainer | ADR-165 |
+| HG-11 | skipped at go-public, 2026-09-16 (R51); both roles then filled by the operator, independence "waived, not satisfied" (R52) | the second-reviewer role waived for Round-11 releases (WV-03); SIG-PUB-008 stands, nobody is named, the naming gate denies by default; each readout states "single maintainer, no second reviewer" | ADR-163 |
+| HG-02 | deferred, then "resolved" by operator-adopted drafted analyses that are not legal advice (R51, R52); the "counsel" rows R49 and R50 | no counsel; past "counsel" determinations re-recorded as the operator's own (C-3); counsel-review clauses waived (WV-07); the publication-basis label replaces the GL-GATE-02 label once confirmed verbatim | ADR-167, ADR-182 |
+| HG-03 | flips under GL-GATE-03, -06 and -07, reviewer "maintainer (delegated)" | flips under GL-GATE-07 as re-confirmed at GATE-P (A-7) with ADR-169's guardrails; the operator executes each wave's flip list (OP-26), each flip in an operator-signed commit or GATE DECISIONS row (OP-25); the express-terms rows accepted (A-8) | ADR-169, ADR-183 |
+| HG-04 | outreach skipped by the operator, 2026-09-16 (R52) | owed later-phase with the trigger "the operator authorises outside contact"; the outreach MUSTs are not waived, and are unmet and owed wherever a connector precedes outreach | ADR-171 |
+| HG-10 | usability study skipped by the operator, 2026-09-16 (R52) | owed, not waived (SIG-UI-001; LATER-02) | plan §6.5 |
+| Go-public | executed 2026-09-16 (R51) without a real legal home or an independent second reviewer | the site is live; the announcement waits for GATE-ANNOUNCE | ADR-172; plan §13.5 |
+
+HG-05, HG-07, HG-08, HG-09 and HG-12 are not changed by this reconciliation; their state is in `docs/build/LEDGER.md` and
+`docs/tickets/DEFERRALS.md`.
 
 ## 3. Decisions (first principles)
 

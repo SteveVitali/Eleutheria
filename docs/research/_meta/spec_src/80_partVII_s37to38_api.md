@@ -89,6 +89,14 @@ computed from raw claims at export build (compute-on-read, ADR-092) with claim-i
 per-row rights provenance carried through — never hand-edited into `value_geom` or the modeling
 tables, and never written back to the spine.
 
+**Round-11 amendment (F-34; ADR-099, ADR-101; recorded 2026-10-01).** The parenthetical
+"compute-on-read, ADR-092" above is superseded for the resolved layer: since ADR-099 and ADR-101 the
+export reads the resolved layer from the spine's materialized resolution decision records
+(themselves insert-only spine records, SIG-STORE-014), and compute-on-read remains only as ADR-101's
+explicit fallback for predicates and surfaces without materialized rows. Every protection in this
+requirement stands: read from the claim spine, shaped at build time, claim-id lineage and per-row
+rights provenance carried through, never hand-edited, never written back by the export.
+
 **SIG-EXPORT-013 (MUST).** The public export MUST be the **national, whole-graph** bundle read
 from the entire publishable claim spine — not a hand-picked jurisdiction slice: a per-jurisdiction
 dossier index over **every** publishable jurisdiction, plus the map, network, data-freshness,

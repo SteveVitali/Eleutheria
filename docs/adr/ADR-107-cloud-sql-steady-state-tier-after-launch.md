@@ -117,3 +117,14 @@ Revisit if any of these happens:
   record it, and scale back.
 - D-P30.1-1 / D-P30.1-2 land. A batched sink may then allow `db-g1-small`; measure it before
   deciding.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): PROSPECTIVELY FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger prospectively fired:** Round 11 plans large new-source lands and republishes, and the
+2026-10-10 replay is pending (F3 §5.1). **Answer:** the operator's capacity answer B-11 ("As stated
+(Recommended)", 2026-10-01T04:35:53Z: cap 40 GB, pre-grow to 25 GB, a temporary tier bump for the OSM run),
+recorded by ADR-173 and executed in Wave C (row P37.2); row P34.39a reads back the 10-10 replay. The decision
+above stays in force until that answer lands; this ADR's body is unchanged (SIG-ENG-003).

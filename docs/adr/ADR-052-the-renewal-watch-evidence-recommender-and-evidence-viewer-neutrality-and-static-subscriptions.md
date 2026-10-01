@@ -102,3 +102,13 @@ must be re-checked against the SIG-UI-027b neutrality bar before it is added, an
 denylist extended if a new forbidden signal is identified. Finally, revisit the
 static-feed decision if an interactive/dynamic subscription surface is ever desired;
 it would attach to the same tested serializers behind an explicit, greppable directive.
+
+### Trigger evaluation — SEED-11 (Round 11 T1, 2026-10-01): FIRED
+
+Evaluated at Round-11 Stage B, T1 (unit SEED-11d, 2026-10-01T07:49:22Z) from F3 §5.1
+(`docs/build/planning/2026-09-30-next-phase/research/F3-backlog.md`) and the Round-11 plan
+(`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`); an agent evaluation, not an operator
+decision. **The trigger fired:** the DB-wired API exists, but live pages still show fixture or empty content —
+the `/evidence/` claim views are empty (J1 NEW-4; F3 §5.1). **Answer:** row P34.20 (watch and evidence
+empty-state truth + an interim artifact list); the run-record artifacts are shown with honest labels (D-K8-4,
+B-44). The decision above stays in force until that answer lands; this ADR's body is unchanged (SIG-ENG-003).
