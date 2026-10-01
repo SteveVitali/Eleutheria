@@ -328,3 +328,38 @@ main checkout.
 `drive-build.sh --agent-cmd`: `/Applications/Devin.app/Contents/Resources/app/extensions/windsurf/devin/bin/devin -p --model swe-2-high --permission-mode dangerous --respect-workspace-trust false --` (only `dangerous` lets a non-interactive run use shell tools). OP-07's
 `SIG_GCP_PROJECT` variable is set (the S-5 billing/usage alert is still the operator's). OP-25: walkthrough when P34.28
 nears. OP-08: the operator merges later on their own.
+
+## Startup prompt — final (2026-10-01T19:17:39Z; supersedes §2 as the prompt to paste)
+
+§2's long prompt restates rules the 0.5.x `orchestrate-build` skill and the LEDGER head's OPERATING MODE already carry,
+and §1 of the older Round-6 style prompt ("read LEDGER, MANIFEST, DEFERRALS, BUILD_INDEX") would load ≈1.6 MB (≈400–550k
+tokens) into a 256k window. The prompt below invokes the skill with parameters, points at the governing files, and keeps
+only the round-specific expectations and the hard nevers. §2 stays as a reference of what those files contain.
+
+```text
+Run ~/.claude/skills/orchestrate-build/SKILL.md with
+    ledger=docs/build/LEDGER.md
+    dispatch=subagent
+    autonomy=checkpoint
+    build_worktree=/Users/stevenvitali/Eleutheria
+
+Resume the in-progress SIG (Surveillance Infrastructure Graph) build at Round 11. Do NOT re-run SETUP.
+You are the orchestrator only (harness devin-desktop/swe-2-high/subagent): every ticket runs in a fresh
+sub-agent through implement-spec; never implement a ticket in this session. Every date you write comes
+from Thu Oct  1 19:17:39 UTC 2026 at that moment.
+
+Orient exactly as the skill's §0 (BM-ORIENT-01, ≤ 48 KiB) and the LEDGER head say: the head, RETURN PASS —
+current, docs/build/reports/current/CURRENT.md, the last PHASE LOG lines, and the next ticket's manifest
+line and contract header. Never read LEDGER, DEFERRALS, BUILD_INDEX or the manifest whole (≈1.6 MB; your
+window is 256k). The head's OPERATING MODE and docs/build/reports/OPERATING_MODE_R11.md govern this round:
+CI boundary reads, ticket sizing, the isolation check, pauses, digests and pre-authorisations.
+
+Expect nextTicket=P34.1 (row 201), projectStatus=IN_PROGRESS, chainTip=r11/seed and a clean tree on
+r11/seed; if anything differs, stop and ask. P34.1 carries the dispatch isolation check — run it exactly as
+OPERATING_MODE_R11 §1 says. Drive the chain from P34.1 until the first pause the OPERATING MODE requires
+(a gate, red CI, a usage limit, or a production change not on a live pre-authorisation row), then write
+the digest and report.
+
+Never merge, tag, rebase, force-push or push main, delete branches, flip ingestion_permitted, or contact
+anyone outside the project — the operator integrates.
+```
