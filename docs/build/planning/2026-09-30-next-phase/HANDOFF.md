@@ -15,7 +15,7 @@
 | 1 | Commit SEED-18b (this file, `stageB/GATEB_PACKET.md`, `stageB/PREPUSH_SCAN.md`, `baseline/DELTA_T6.md`, `docs/build/runs/SEED-18b.md`, the regenerated `docs/build/reports/current/`) | planning orchestrator | pending |
 | 2 | Decide the pre-push scan items (`stageB/PREPUSH_SCAN.md` § Verdict: the Part VIII layer pointers and the handle occurrences) | orchestrator + operator (packet Q-1, Q-2) | open |
 | 3 | **OP-05** — GitHub stack ruleset (H2 S-2: `refs/heads/r11/**`, `non_fast_forward` + `deletion`, no bypass) and merge settings (S-3: squash and rebase merges off) | operator | **not applied** (read 2026-10-01T17:28Z: no "stack" ruleset; squash/rebase still allowed — `baseline/DELTA_T6.md` § D6) |
-| 4 | **OP-23** — refresh the private git bundle after the last seed commit, store it off-disk: `git -C /Users/stevenvitali/Eleutheria-next-phase bundle create ~/SIG-planning-backup-<date -u +%Y%m%dT%H%MZ>.bundle r11/seed claude/next-phase-planning && git bundle verify <that file>` | orchestrator makes it; operator stores it | the 05:03Z bundle exists; refresh owed |
+| 4 | **OP-23** — refresh the private git bundle after the last seed commit, store it off-disk: `git -C /Users/stevenvitali/Eleutheria bundle create ~/SIG-planning-backup-<date -u +%Y%m%dT%H%MZ>.bundle r11/seed claude/next-phase-planning && git bundle verify <that file>` | orchestrator makes it; operator stores it | the 05:03Z bundle exists; refresh owed |
 | 5 | Push `r11/seed`; open the **seed PR** (base `devin/p33-8-agent-docs-refresh`, #190's head `b051732c`); **5/5 green on its head** (`python`, `docs`, `composed`, `security`, `web`) | orchestrator (push uses the operator's account) | pending |
 | 6 | **Operator-run checks** in Devin Desktop, incl. the throwaway isolation probe (§4–§5) | operator | pending |
 | 7 | **GATE-B** answered (`stageB/GATEB_PACKET.md`) | operator | pending |
@@ -25,7 +25,7 @@
 
 ## 1. Where the chain resumes
 
-- **Worktree:** `/Users/stevenvitali/Eleutheria-next-phase` — the LEDGER's `buildWorktree` (its comment "T6 confirms"):
+- **Worktree:** `/Users/stevenvitali/Eleutheria` — the LEDGER's `buildWorktree` (its comment "T6 confirms"):
   confirmed at T6 — the directory exists, is a worktree of the SIG repository, has `r11/seed` checked out and was clean at
   `03effc4d` before this unit wrote its files. The main checkout `/Users/stevenvitali/Eleutheria` stays on
   `devin/p33-8-agent-docs-refresh` and is not the build worktree.
@@ -50,7 +50,7 @@ implement a ticket in your own context. Harness string: devin-desktop/swe-2-high
 
 0. Start. Run `date -u +%FT%TZ`; every date you write comes from `date -u` at that moment (OM-04). If your model is not
    swe-2-high, or you cannot start sub-agents, write nothing, say which, and stop (OM-01).
-   cd /Users/stevenvitali/Eleutheria-next-phase ; git status ; git rev-parse --abbrev-ref HEAD   (expect the branch the
+   cd /Users/stevenvitali/Eleutheria ; git status ; git rev-parse --abbrev-ref HEAD   (expect the branch the
    last ticket left checked out — r11/seed before row 201; a dirty tree is a finding: stop and ask).
    `gh auth status` must pass.
 1. Orient (BM-ORIENT-01; ≤ 48 KiB in all; never read LEDGER, DEFERRALS or BUILD_INDEX whole):
@@ -119,7 +119,7 @@ OPERATING_MODE_R11.md §1–§5 or plan §8.5/§12, so the OPERATING MODE govern
   block`) and asks; the operator takes B if verified, else C. The tier taken is recorded in a PHASE LOG entry with the
   failed check's record; a harness change goes through the same entry (OM-01; SB-3 is the authority). *(Agent design:)*
   going back to A needs a passing probe and the operator's words — never automatic.
-- **Preconditions for B and C:** `gh auth status` passes; `cd /Users/stevenvitali/Eleutheria-next-phase` with the
+- **Preconditions for B and C:** `gh auth status` passes; `cd /Users/stevenvitali/Eleutheria` with the
   branch the previous ticket left checked out (plan §12); `projectStatus: IN_PROGRESS` and `pauseRequested: false`
   (otherwise `drive-build.sh` exits 0 as "paused" and prints nothing to dispatch); its CI gate green (it runs
   `ci-boundary.sh` itself and exits 2 on red/pending/unknown). It takes the single-driver lock
@@ -148,7 +148,7 @@ pauses before row 201 and the operator chooses B (if f passed) or C.
 | c | **Sub-agent primitive** (`dispatchTarget: subagent`) exists | the session can start a sub-agent with its own fresh context and receive its final report | mode A is impossible → B or C |
 | — | **Throwaway isolation probe** (§5) | pass as defined there | B or C |
 | d | **A sub-agent cannot compact** (plan §8.5 inference) | Devin Desktop's documentation or the probe sub-agent's own report says whether a sub-agent context compacts or summarises; record the answer | if it *can* compact, record it — the ≤ ~150k loaded rule still binds |
-| e | **Co-author trailer** Devin Desktop writes | in a throwaway clone (`git clone --shared /Users/stevenvitali/Eleutheria-next-phase /tmp/sig-trailer-probe`, never pushed) one commit made by the session passes `python3 docs/build/tools/check_trailers.py --range HEAD~1..HEAD` run in that clone (a Devin co-author line without a model passes with a warning — SEED-02b) | P34.1's contract records the trailer the executor must add by hand (OM-01 grammar) |
+| e | **Co-author trailer** Devin Desktop writes | in a throwaway clone (`git clone --shared /Users/stevenvitali/Eleutheria /tmp/sig-trailer-probe`, never pushed) one commit made by the session passes `python3 docs/build/tools/check_trailers.py --range HEAD~1..HEAD` run in that clone (a Devin co-author line without a model passes with a warning — SEED-02b) | P34.1's contract records the trailer the executor must add by hand (OM-01 grammar) |
 | f | **Headless command** for mode B | a command that runs one prompt non-interactively with `swe-2-high`, takes the prompt as a trailing argument and exits; record it verbatim | mode B unavailable; fallback = C |
 | g | **Scheduled sessions** for OP-24 | Devin Desktop can schedule a session (every 6 h + one-offs) | OP-24 runs in Devin CLI headless with the same model (`LEG_RUNNER_PROMPT.md`) |
 | h | **`gh auth status`** | logged in, scopes include `repo`, `workflow` | fix before any mode |
@@ -159,7 +159,7 @@ Dry-run prompt (paste into a new Devin Desktop session; it changes nothing):
 ```text
 Read-only dry run for the SIG Round-11 hand-off. Do not edit, commit, push, or dispatch any chain ticket.
 Run `date -u +%FT%TZ` first and report it. Report your model and context window.
-cd /Users/stevenvitali/Eleutheria-next-phase ; git status ; git rev-parse --abbrev-ref HEAD ; gh auth status
+cd /Users/stevenvitali/Eleutheria ; git status ; git rev-parse --abbrev-ref HEAD ; gh auth status
 Orient: sed -n '1,/^## OPEN FINDINGS/p' docs/build/LEDGER.md ; tail -n 3 docs/build/LEDGER.md ;
 python3 docs/build/tools/current_projection.py verify ; grep -F "_P34.1__" docs/tickets/00_MANIFEST.md
 Report: nextTicket, projectStatus, harness, and the manifest line for row 201.
@@ -310,5 +310,14 @@ Merging #180 now conflicts once in `docs/build/BUILD_INDEX.md` (row 183: `b01ef2
   logged in, so mode B is unverified (manual tier is the fallback until `devin auth login` + verification).
 - OP-24 deferred to GATE-G4. CURRENT STATE: `projectStatus: IN_PROGRESS`, `pauseRequested: false`, `nextTicket: P34.1`,
   `harness: devin-desktop/swe-2-high/subagent`. The PHASE LOG ends with the GATE-B gate entry and the C10 harness-switch.
-- **To start Round 11:** open one new Devin Desktop session (model `swe-2-high`) in `/Users/stevenvitali/Eleutheria-next-phase`
+- **To start Round 11:** open one new Devin Desktop session (model `swe-2-high`) in `/Users/stevenvitali/Eleutheria`
   on branch `r11/seed` and paste §2's resume prompt verbatim.
+
+## Build checkout moved to the main repo (2026-10-01T18:56:52Z)
+
+At the operator's request the build now runs from **`/Users/stevenvitali/Eleutheria`** checked out on **`r11/seed`** (the
+LEDGER's `buildWorktree`). The Stage-B worktree `/Users/stevenvitali/Eleutheria-next-phase` is detached at `ef7772fe` and kept
+only as the planning archive (it holds ≈2.2 GB of gitignored planning logs; the one log a contract needs —
+`docs/build/logs/next-phase/C3/personal_like_ids.txt`, read by P34.18 — was copied into the main checkout, still gitignored).
+It can be removed (`git worktree remove`) once the operator no longer wants those logs. Every path above now names the
+main checkout.

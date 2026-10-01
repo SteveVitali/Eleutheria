@@ -38,7 +38,7 @@ manifest:        docs/tickets/00_MANIFEST.md
 canonicalSpec:   docs/2_canonical_design_spec.md
 memoryRoot:      docs/build
 dispatchTarget:  subagent                           # one orchestrator session, a fresh sub-agent per ticket (round 25)
-buildWorktree:   /Users/stevenvitali/Eleutheria-next-phase # plan §12 names no path; the Stage-B worktree (T6 confirms)
+buildWorktree:   /Users/stevenvitali/Eleutheria # the operator's main checkout on r11/seed (moved from the Stage-B worktree at C10+)
 buildBranchBase: devin/p33-8-agent-docs-refresh     # Round 11 stacks on #190 (plan §12)
 pinnedBaseSha:   b051732c
 chainTip:        r11/seed                           # the Stage-B seed branch; seed PR base = buildBranchBase
@@ -47,7 +47,7 @@ autonomy:        checkpoint                         # Q-15 = a: pause at gates, 
 mergePolicy:     OPERATOR                           # agents never merge; the operator integrates (plan §12)
 round:           11
 harness:         devin-desktop/swe-2-high/subagent  # resumes at row 201 (A-15); C10 records the switch
-updatedAt:       2026-10-01T18:45:15Z               # SEED-17 (T5)
+updatedAt:       2026-10-01T18:56:52Z               # SEED-17 (T5)
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
@@ -317,6 +317,7 @@ Rows appended at the end, newest last, in the 7-column form (build-memory layout
 | 2026-10-01T18:45:15Z | Stage B (T6) | GATE-B packet / GB-Q8 (Devin Desktop checks) | the operator-run dry-run and isolation probe (HANDOFF §4–§5) | operator pasted the Devin Desktop report ("All probe criteria hold…"; session start 2026-10-01T18:37:39Z) | a, b, c, h and the isolation probe PASS (nonce hash verified by the orchestrator); d undetermined; e not run (first chain PR's trailer check covers it); f headless binary found but not logged in → mode B unverified (fallback = manual tier until `devin auth login` + a live `--agent-cmd` verification); g no scheduled sessions; i model confirmed, window not measured; record `docs/build/reports/isolation/probe-T6.md` | decision |
 | 2026-10-01T18:45:15Z | Stage B (T6) | GATE-B packet / OP-24 (leg-runner backstop) | how the leg-runner backstop runs given Devin has no scheduled sessions | "Decide by GATE-G4" (AskUserQuestion in the Claude Code planning session) | no backstop until GATE-G4; the orchestrator runs due legs itself (OM-19 queue); the GATE-G4 packet asks again before the first window (≥ 2026-10-13) | decision |
 | 2026-10-01T18:45:15Z | GATE-B | GATE-B (Stage B → Round 11) / GB-Q12 | start Round 11 at row 201 (P34.1) in Devin Desktop, `swe-2-high`, mode A (orchestrator + fresh sub-agents); seed PR #192 5/5 green at `d8ea72ef` (one B-15 flake re-run of `web`); the 11A OM-20 list as approved (P34.40 in full, P34.6 drill clone only) | "Go (Recommended)" (AskUserQuestion in the Claude Code planning session) | Round 11 may start: C10 sets `projectStatus: IN_PROGRESS`, records the harness switch; the operator pastes HANDOFF §2's resume prompt into one new Devin Desktop session | decision |
+| 2026-10-01T18:56:52Z | Round 11 (before row 201) | build worktree | run the Round-11 build from the operator's main checkout instead of the Stage-B worktree | "Could you rejigger things so that I can do the build resume from ~/Eleutheria checked out to the proper start branch rather than a worktree?" (operator, Claude Code planning session chat) | `r11/seed` freed from `/Users/stevenvitali/Eleutheria-next-phase` (now detached at `ef7772fe`, kept as the planning archive with its gitignored logs) and checked out in `/Users/stevenvitali/Eleutheria`; `buildWorktree` updated; HANDOFF paths and P34.18's handle-list path updated; the gitignored handle list copied to `docs/build/logs/next-phase/C3/`; a stale empty `.git/index.lock` (2026-10-01T17:47Z, no git process running) removed first | decision |
 
 ## CROSS-CUTTING INVARIANTS (every ticket re-checks; from `docs/tickets/_TEMPLATE.md`)
 - Defining standard (§3.1): no unexplained dots/edges; no silent overwrites; no synthetic certainty; every node has identity; every state has time; every claim has evidence; every inference is labelled; every contradiction stays visible.

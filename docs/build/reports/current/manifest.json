@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "d8ea72ef9637579f7c755b3b43fd5dc3cda18910",
+  "input_commit": "ef7772fe7c02628f8dad9dc4d0fc0cc13809ea70",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -746,7 +746,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "4242793e9baaaec120a06c785192a13a1cbe883b1173276c6c831f640b76b71d"
+      "sha256": "edcc4d479756a4fc8afc6052b342f605211d65c0e778065a36f3e2f2f2ac2dad"
     },
     {
       "path": "docs/build/readouts/ACCEPT-R10.md",
@@ -1898,7 +1898,7 @@
     },
     {
       "path": "docs/tickets/221_P34.18__personal-handle-source-id-rename.md",
-      "sha256": "f994c024c49b74acc387157abe5aa9dfc91781a6af6159db11a1334cecdf329f"
+      "sha256": "c852af0ad2826a3c35774cfdf40092001bd9cbfc4284449fb8710085c5c19067"
     },
     {
       "path": "docs/tickets/222_P34.20__watch-and-evidence-empty-state-truth.md",

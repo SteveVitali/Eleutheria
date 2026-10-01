@@ -4,12 +4,12 @@
 > compatibility cells remain the control authority. This view is derived from
 > the hashed `input-manifest/1` (`manifest.json`); it never writes control
 > state. Shadow mode — the single-writer protocol is `D-R10-MEMORY-1` → P32.8.
-> input_commit: `d8ea72ef9637579f7c755b3b43fd5dc3cda18910` · inputs hashed: 917 · wall-clock receipt: `receipt.json`
+> input_commit: `ef7772fe7c02628f8dad9dc4d0fc0cc13809ea70` · inputs hashed: 917 · wall-clock receipt: `receipt.json`
 
 ## Control (advisory read of LEDGER.md)
 
 - projectStatus `IN_PROGRESS` · round `11` · nextTicket `P34.1` · lastCompleted `P33.8`
-- chainTip `r11/seed` · returnPass `P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25` · updatedAt `2026-10-01T18:45:15Z`
+- chainTip `r11/seed` · returnPass `P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25` · updatedAt `2026-10-01T18:56:52Z`
 
 ## Obligations
 
