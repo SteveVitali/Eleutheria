@@ -148,6 +148,16 @@ jobs:
       - name: Secret scan over every tracked file
         run: make scan-secrets
 
+      # Armed leak check (ADR-119 / D-P30.4-4, operator Q7 = (a)): the scoped
+      # test greps code + config for a literal GCP project id. The id is a repo
+      # VARIABLE, not a credential — it is already recorded publicly in the
+      # append-only build memory, which the check deliberately exempts. When
+      # `vars.SIG_GCP_PROJECT` is unset the check skips (never a false red).
+      - name: GCP project-id leak check (code + config scope)
+        run: uv run pytest tests/connectors/test_secrets.py::test_gcp_project_id_is_env_resolved_not_committed
+        env:
+          SIG_GCP_PROJECT: ${{ vars.SIG_GCP_PROJECT }}
+
       - name: Dependency licence scan (mirrors the web job's OSI/excluded-category gate)
         run: make scan-licenses
 
