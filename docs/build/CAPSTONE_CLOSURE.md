@@ -250,3 +250,207 @@ presented §(b) to the operator; the decision is recorded in the build ledger `G
 
 - [x] Operator has reviewed §(b) and accepts the listed deviations (recorded in the build ledger
   `GATE DECISIONS`, HG-14). — **SIGNED (HG-14), 2026-09-08; transcribed by P20.1**
+
+## (f) Round-10 capstone closure — P33.3 (2026-09-28, append-only)
+
+The Round-10 counterpart of §(a)–(e): the bounded closure step for the six-stream
+round (ADR-120, canonical spec §55, `docs/build/planning/2026-09-25-six-streams/`).
+**This section is the acceptance packet GATE-ACCEPT (manifest row 195, HG-14 /
+round acceptance) reviews.** It presents; it does not sign. The gate readout
+`docs/build/readouts/ACCEPT-R10.md` stays `PENDING` — an operator or authorized
+human record supplies the decision; silence is not approval. Nothing below marks
+operator, reviewer, calendar, or live-stage work done, and no requirement id is
+stamped here: P33.3 owns no requirement ids (its contract footer) and double-owns
+none.
+
+Inputs, consumed as evidence not as verdicts: the independent gap analysis
+(`CAPSTONE_GAP_ANALYSIS.md` §(k), P33.1 — code/tests/artifacts inspected before
+run-ledger claims) and the composed-verification proof (`COMPOSED_E2E_REPORT.md`
+Round-10 addendum + `docs/build/reports/p33.2-composed-verification/`, P33.2),
+re-checked on this branch (`d76c22eb` + this ticket's edits) against the live
+obligation projection (`docs/build/reports/current/`, `current-projection/1` —
+539 hashed inputs, `verify` fresh at run time).
+
+### (f1) Round requirement coverage — the 38 §55 ids
+
+Verdicts re-confirmed, not re-asserted — the P33.1 independent table
+(`CAPSTONE_GAP_ANALYSIS.md` §(k)) stands; the machine record is
+`COVERAGE_MATRIX.csv` (715 rows, `check_coverage_matrix.py` exit 0).
+
+| verdict | count | ids | honest note |
+|---|---|---|---|
+| MET | 34 | `SIG-MEM-001` `SIG-MEM-002` `SIG-MEM-003` · `SIG-TRUST-001` `SIG-TRUST-002` `SIG-TRUST-003` `SIG-TRUST-004` `SIG-TRUST-005` `SIG-TRUST-006` `SIG-TRUST-007` `SIG-TRUST-008` `SIG-TRUST-009` `SIG-TRUST-010` · `SIG-EVAL-003` `SIG-EVAL-004` · `SIG-ACQ-001` `SIG-ACQ-002` `SIG-ACQ-003` `SIG-ACQ-004` · `SIG-FIND-001` `SIG-FIND-002` `SIG-FIND-003` `SIG-FIND-004` `SIG-FIND-005` `SIG-FIND-006` `SIG-FIND-007` `SIG-FIND-008` · `SIG-DOS-001` `SIG-DOS-002` `SIG-DOS-003` `SIG-DOS-004` `SIG-DOS-005` | each cites landed code/tests/artifacts (§(k) evidence column) |
+| PARTIAL | 2 | `SIG-EVAL-001` `SIG-EVAL-002` | campaign machinery landed (digested preregistration, leakage-safe partitions, sealed samples, append-only blinded label store, RLS); **zero human labels exist** — status `awaiting_humans` under `D-R10-HUMAN-1` |
+| MISSING | 4 | `SIG-EVAL-005` `SIG-EVAL-006` `SIG-EVAL-007` `SIG-MEM-004` | recorded, never unrecorded: the three EVAL ids' owners deferred wholesale with the S3 spine (`D-R10-HUMAN-1`, operator decision 2026-10-19); `SIG-MEM-004`'s owner is **P33.8 (row 200)** — scheduled chain work, not deferred |
+
+### (f2) Cross-stream seams (6, `CAPSTONE_GAP_ANALYSIS.md` §(k))
+
+| seam | verdict | state |
+|---|---|---|
+| P32.16 intake → P32.16a apply | MET | `intake.application` → `intake.event` bridge landed; role NOLOGIN — honest isolation |
+| P32.22 recovery → P32.23a candidate | MET | candidate manifest pins frozen snapshot `sha256:138714a6…`; identity `sha256:bc20d4bf…` re-derived |
+| P32.23a candidate → P32.25 publish | MET | `PUBLISH_PROOF.json` pins publication `p-17b713…` + GATE-G3 signed scope (provisional, review-only, `applied=[]`, `decision=null`) |
+| dossier packets → P32.24 corpus | MET | 176 corpus artifacts rehashed clean; 75/75 records; completeness `complete` |
+| eval machinery → human evaluation | PARTIAL (honest deferral) | `eval_confidence.toml mode=shadow`, `awaiting_humans`; owner chain deferred wholesale — recorded, not a gap |
+| intake receiver → production | MISSING-by-design | `ops/config.toml [intake] operational=false`, `503 receiver_not_operating`; OPEN under `D-P32.16-1` |
+
+### (f3) Verification evidence matrix — dated, this run
+
+Revision: branch `devin/p33-3-capstone-closure` on `d76c22eb` (P33.2 tip, PR #184
+OPEN/stacked) + this ticket's edits. `live_verification=false` — committed
+offline evidence only; **no hosted probe, no production publication, no gate
+signature, no human label, no outreach ran**. A skip is never a pass.
+
+| gate | command | result | domain |
+|---|---|---|---|
+| local gate | `make check` | **5,506 passed / 3 skipped / 1 warning** (skips env-gated: live API URL, GCP project, credential env vars — recorded, never passes) | deterministic (Docker suites in-suite) |
+| full pytest | `uv run pytest -q` | **5,514 passed / 3 skipped / 1 warning** — re-run caught a missing SPDX header on the new test file (in-flight defect found + fixed; final run clean) | deterministic |
+| spec source | `python3 docs/build/tools/check_spec_src.py` | OK — byte-identical spec (710,858 bytes), 143 ADRs = file set, 715 ids, reference closure | deterministic |
+| spec-source tests | `python3 docs/build/tools/test_check_spec_src.py` | 8 passed | deterministic |
+| coverage | `python3 docs/build/tools/check_coverage_matrix.py docs/build/COVERAGE_MATRIX.csv` | 715 rows OK | deterministic |
+| backlog | `python3 docs/build/tools/check_backlog.py` + `build_backlog_md.py --check` | 102/102 risk deferred, 143/143 ADR triggers, 90/90 LD rows, 36/36 deferral homes, 0 dup sources; BACKLOG.md == BACKLOG.csv | deterministic |
+| planning | `check_plan.py` / `render_plan.py --check` / `test_planning_tools.py` / `test_integration_preflight.py` | 40 ordered rows, 38 singly-owned requirements, Round-9 tail, six streams / verified / 7 tests / 6 tests | deterministic |
+| memory audit | `python3 docs/build/tools/audit_current_state.py` | 0 errors / 9 recorded baseline conflicts (manifest Lane-B pointer rows, P31.19 dependency references, D-P21.5-1 status-conflict) | deterministic |
+| obligation events | `python3 docs/build/tools/obligation_events.py check` | green — 97 events, 4 coverage assessments, chains/cells consistent | deterministic |
+| current projection | `python3 docs/build/tools/current_projection.py verify` | fresh — 539 input digests match at closeout | deterministic |
+| docs freshness | `make docs-check` | 430 repo docs / 8 agent docs, 0 issues (1 stale suspect = standing warning) | deterministic |
+| build memory | `bash scripts/docs/check-build-memory.sh .` | 0 violations, 0 warnings | deterministic |
+| acceptance-register guard | `uv run pytest tests/unit/test_capstone_closure_round10.py` | 7 passed (new this ticket — fails if the packet drops an owed row or overclaims) | deterministic |
+| **not run (recorded)** | `make test-db`, `tests/e2e`, `npm --prefix web run check`, live stage | no DB/web change in this ticket; live stage disabled — P33.2's `tests/db` 482 / `tests/e2e` 16 / web-check evidence stands as the most recent run (`COMPOSED_E2E_REPORT.md` Round-10 addendum) | recorded, not skipped silently |
+
+Prior-round composed evidence the packet leans on (each dated + digested):
+`sig.composed-verification/1` **verdict=pass 20/20** (P33.2, 2026-09-28, commit
+`ad0bd84`, publication `p-8414a416…`) · `sig.release-publish-verification/1`
+**verdict=pass 25/25** (P32.25) · `sig.journey-portfolio/1` **verdict=pass,
+38 checks** (P32.24) · `sig.candidate-identity/1` `p-17b713…` over frozen
+snapshot `sha256:138714a6…` (P32.23a) · GATE-G3 signed readout 2026-10-19
+(reduced scope, provisional basis).
+
+### (f4) Decisions and deviations — the ADR register
+
+Round-10 decisions are **ADR-120 … ADR-144** (`docs/adr/`, all carrying
+`## Revisit trigger`; `check_backlog.py` 143/143 triggers green). No landed body
+was rewritten; every behavioural surprise was either a new ADR or a recorded
+in-ticket repair:
+
+| kind | items |
+|---|---|
+| planning allocation | ADR-120 — the six-stream round itself |
+| build decisions | ADR-121 (typed assertions + actual-capture bindings) · ADR-122 (role semantics, conservative org identity) · ADR-123 (shared bitemporal occurrence selection) · ADR-124 (one publication-eligibility policy) · ADR-125 (legacy-evidence audit + recovery plan) · ADR-126 (obligation events + current projection) · ADR-127 (single-writer closeout protocol, SHADOW mode) · ADR-128 (preregistered blinded campaigns) · ADR-129 (design-aware evaluator + shadow gates) · ADR-130 (reviewed acquisition queue) · ADR-131 (dossier-documents adapter) · ADR-132 (immutable release namespaces) · ADR-133 (per-compartment FTS5 indexes) · ADR-134 (workspace state) · ADR-135 (isolated intake) · ADR-136 (research-dossier schema) · ADR-137/138/139 (three dossier packets) · ADR-140 (acquisition pilot) · ADR-141 (bounded recovery apply) · ADR-142 (candidate under deferred evaluation) · ADR-143 (journey acceptance portfolio) · ADR-144 (bounded publication + rollback rehearsal) |
+| recorded deviations | **inserted row P32.10a** (manifest row 170.5 — server-side `decided_at` authority defect fix, no ADR: no semantics change, disclosed in row + run ledger) · **S3 spine wholesale deferral** (operator decision 2026-10-19; rows 184–187 recorded OPEN, manifest amendment) · **GATE-G3 reduced-scope signature** (dossiers publish `mechanical_complete`/`review.status=not_run`/`pilot_complete=False`) · **P32.25 hardlink write-through defect** (ADR-144-disclosed; repaired + regression-pinned) · **P33.1's three in-ticket repairs** (coverage-matrix re-verdicts, DEFERRALS dated-terminal regex blind spot + 8 reconciliations, committed-projection regeneration — all disclosed in §(k)) |
+| this ticket | **no new ADR** — P33.3 decides nothing the spec didn't already delegate; its only behavioural surface is the register guard test |
+
+### (f5) OPEN-obligation register — owner · landing · closure condition · compensating control
+
+Every owed row in `DEFERRALS.md` / the live projection (36 rows = 32 OPEN +
+4 PARTIAL) is listed exactly once. **Round-10-scoped** rows first; every row
+below stays `OPEN`/`PARTIAL` — this ticket closes none and invents no progress.
+Verification column cites the row's own `how to verify` field.
+
+**Round-10-scoped obligations (15):**
+
+| obligation | owes | owner | landing / return pass | compensating control now |
+|---|---|---|---|---|
+| `D-R10-HUMAN-1` | human development/calibration labels + dossier semantic review + confirmatory labels + measured decision | operator + independent reviewers | HUMAN-H4 → P32.22a → HUMAN-H5 → P32.23 (manifest rows 184–187, re-enter in order) | machinery shadow-only (`mode=shadow`, `applied=[]`); deferred evaluation disclosed on every published surface; `awaiting_humans` honest |
+| `D-R6.1-EVAL` | human-grounded evaluation + threshold re-derivation | maintainer + reviewers | Round-10 human campaign → P31.18 re-derivation | `provisional-ruleset/1` labelled PROVISIONAL; shadow evaluator reports `historical_point_gate`, never eligibility evidence |
+| `D-P30.2b-1` | human edge adjudication into clustering | engineering + reviewers | Round-10 human campaign → P31.18 | engineering half landed; no auto-write edge claimed; conservative split/merge posture |
+| `D-P30.2b-2` | rules-v3 soft-conflict + re-measure on new holdout | engineering | Round-10 P31.18 evaluation refresh | current ruleset unchanged; tier-3g precision not re-claimed |
+| `D-R10-SOURCES-1` | per-target rights review + bounded live acquisition | reviewer/operator (HG-03 family) | P32.18–P32.21 return passes | review-first acquisition queue + caps landed; nothing fetched unreviewed; no invented rights |
+| `D-R10-LIVE-1` | production hosted recovery + final post-evaluation candidate | operator + engineering | P32.22/P32.23a live stage (`live_verification=true` re-run) | tooling fixture-proven; `prepared_not_executed` packets committed; no production claim anywhere |
+| `D-R10-PUBLISH-1` | production public exposure | operator | GATE-G3 signed scope → P32.25 production half | release half signed at GATE-G3; bounded staging verified 25/25; `latest` pointer byte-pinned; production serve still owed |
+| `D-R10-MEMORY-1` | closeout/writer protocol cutover decision | operator | P32.8 entry-point boundary | protocol landed + tested in SHADOW; `activation-check` honestly reports BLOCKED/READY; legacy path undisguised |
+| `D-R10-USERS-1` | independent usability sessions (uncertainty/comprehension/accessibility) | operator recruiting | P32.24 (`UX.independent_sessions`) | `USABILITY_TASK_PROTOCOL.md` landed; no usability/comprehension/satisfaction claim anywhere |
+| `D-P32.3-1` | legacy `sig.org.name` dispositions (split/merge/keep records) | reviewer session | BL-058 | `partner_org_scoped_identity_key` minting landed; ambiguous pairs stay distinct by default |
+| `D-P32.10a-1` | whole-plan `sqitch verify` repair shape (`=27` vs 28 facets, `verify/shared_temporal_contract.sql:30`) | **maintainer decision** (count-derived/`>=`/stop pinning counts) | BL-058 | per-change verify green on real PG18; defect invisible to `make check`/`make test-db`; isolated to the whole-plan verify script; confirmed still present 2026-09-28 |
+| `D-P32.16-1` | intake receiver operating prerequisites (owner, staffed rotation, retention, secrets, role grants, log exclusions) | operator | GATE-G3 scope + `docs/governance/intake-receiver-operating-packet.md` | receiver honestly `503 receiver_not_operating`; `operational=false` + env gates; never advertised; no synthetic submission |
+| `D-P32.16a-1` | whole-plan `sqitch revert` repair shape (PostGIS dependents refuse `DROP EXTENSION postgis`, `revert/extensions.sql:7`) | **maintainer decision** (CASCADE vs ordered drops vs new teardown change) | BL-058 | per-change reverts green; deploy-only gate path unaffected; confirmed still present 2026-09-28 |
+| `D-P32.18-1` `D-P32.19-1` `D-P32.20-1` `D-P32.21-1` | per-dossier + acquisition-pilot live return passes (4 rows) | operator-gated live stage | BL-058 return passes (`live_verification=true` re-runs) | dossier packets + funnel artifacts committed with fact-to-capture ledgers; all packets `prepared_not_executed` on disk; no pilot-completion claim |
+| `D-P32.23a-1` | production release-candidate build over the hosted snapshot | operator-gated live stage | `LIVE_RETURN_PASS.json` command sequence over hosted DSN | candidate machinery staging-verified; manifest pins +0 rematerialization; pointer immutability proven |
+
+**Carried-forward pre-Round-10 obligations (18):** owed by earlier rounds, still
+owned, unchanged by this ticket — listed in `DEFERRALS.md` and the live
+projection's obligations table (`reports/current/CURRENT.md`):
+
+| obligation | status | owner | landing |
+|---|---|---|---|
+| `D-P21.3-2` | OPEN | operator | export `SIG_*` tokens (HG-09) in a networked shell; live-fetch re-run |
+| `D-P21.5-1` | PARTIAL | operator | Zenodo/object-store credentials (HG-07); SWH save-now declined-by-operator recorded |
+| `D-P21.7-1` | OPEN | operator | MapRoulette account + OSM OE page + `SIG_MAPROULETTE_API_KEY` (HG-08) |
+| `D-JURIS.2-1` | PARTIAL | operator | jurisdiction-source rights decisions |
+| `D-SOURCES.2-2` | OPEN | operator | per-source rights/access dispositions (decline is a valid close) |
+| `D-SOURCES.7-1` | OPEN | reviewer | `dot_511_*` rights decisions |
+| `D-SOURCES.7-2` | OPEN | operator | keyed live run for `dot_511_*` targets |
+| `D-SOURCES.8-1` | PARTIAL | reviewer | remaining `camreg_*` rights decisions (10/14 done under GL-GATE-07) |
+| `D-SOURCES.8-2` | OPEN | operator | keyed live run for `camreg_*` targets |
+| `D-SOURCES.9-1` `D-SOURCES.9-2` `D-SOURCES.9-3` `D-SOURCES.9-4` | OPEN (4 rows) | reviewer / reviewer+external / external / reviewer | per-portal rights decisions + keyed live runs |
+| `D-SOURCES.12-1` | PARTIAL | engineering | `camreg_stalbert_ab` rights + gated-row enumeration |
+| `D-FEDERAL.1-1` | OPEN | scheduled | `sig-sched-sam-gov` cron + +0 re-run check |
+| `D-R7.1-AUTH` | OPEN | operator | external-IdP OAuth decision (new ADR + ticket when unblocked) |
+| `D-R7.2-SEND` | OPEN | operator | consenting-filer records-request send (never automatic) |
+| `D-P31.4-1` | OPEN | scheduled (cron) | date-bound check of the 2026-10-10 batch-05 OSM replay per the row's exact command |
+
+`SIG-MEM-004` is **not** a DEFERRALS row: it is scheduled chain work owned by
+P33.8 (manifest row 200) — pending, not deferred, and listed here so no
+requirement lacks a named owner.
+
+### (f6) Honest scope state — exactly what exists today
+
+- **Provisional policy published to staging.** `provisional-ruleset/1` is the
+  active production-policy basis; the P32.23a candidate `p-17b713…` (identity
+  `sha256:bc20d4bf…` over frozen snapshot `sha256:138714a6…`) carries
+  `evaluation.status=deferred` + `decision=null` + `applied=[]`. GATE-G3 signed
+  a **reduced scope**: dossiers publish `mechanical_complete` with
+  `review.status=not_run`, `pilot_complete=False`; no completed-pilot or
+  certified-count assertion exists anywhere. P32.25 verified the bounded staging
+  publication (25/25) — that is staging evidence, not production exposure.
+- **Evaluation deferred.** The S3 spine (HUMAN-H4 → P32.22a → HUMAN-H5 → P32.23)
+  is deferred wholesale by recorded operator decision; the evaluator runs
+  `mode=shadow` and never promotes; `awaiting_humans` is the honest state.
+- **Intake non-operational.** `[intake].operational=false`; `/intake/new` +
+  POST `/intake/v1/reports` → `503 receiver_not_operating`; no advertised
+  submission surface; no synthetic submission fabricated.
+- **Production exposure OPEN.** `D-R10-PUBLISH-1` (production serve half),
+  `D-P32.23a-1` (production candidate), `D-R10-LIVE-1` (hosted recovery/final
+  candidate) all remain owed — fixture and staging success is not a live pass.
+- **Two whole-plan sqitch hygiene defects** (`D-P32.10a-1` verify count,
+  `D-P32.16a-1` revert dependents) confirmed present and intentionally left for
+  a maintainer decision on repair shape — in-place edits of landed
+  deploy/revert/verify scripts are discouraged by the append-only sqitch
+  convention (`db/AGENTS.md`), so the repair shape is a decision, not a
+  mechanical fix.
+
+### (f7) The acceptance list — what GATE-ACCEPT is asked to accept
+
+Distinguished by kind, per the contract ("intentional design, unresolved
+engineering, human/external obligations, dated verification"):
+
+**Intentional design (no action needed; recorded posture):**
+shadow-mode evaluator that never promotes · `document_only` evidence bindings
+recorded distinctly from typed locators · honest `unavailable`/`awaiting_humans`
+eval states · below-threshold dossiers publishing as `mechanical_complete` ·
+`prepared_not_executed` return-pass packets · the zero-JS static public surface
+(ADR-051 lineage) · intake `operational=false` fail-closed posture · staged
+rollback rehearsal shape (`R.prior_release`/`R.no_prior_pointer`/`R.refused_deploy`).
+
+**Unresolved engineering (owned, bounded, recorded):**
+`D-P32.10a-1` + `D-P32.16a-1` (maintainer decision on sqitch repair shapes) ·
+`D-P32.3-1` (legacy `sig.org.name` dispositions — reviewer session) ·
+`SIG-MEM-004` (scheduled to P33.8, row 200) · the engineering halves of
+`D-P30.2b-1/2` (landed; activation follows the human campaign).
+
+**Human/external obligations:**
+`D-R10-HUMAN-1` + `D-R6.1-EVAL` (independent labels/review) · `D-R10-USERS-1`
+(usability sessions) · `D-R10-SOURCES-1` + `D-P32.18/19/20/21-1` (rights review
++ bounded live acquisition) · `D-R10-LIVE-1` + `D-P32.23a-1` +
+`D-R10-PUBLISH-1` (production live stage) · `D-P32.16-1` (intake operating
+prerequisites) · `D-R10-MEMORY-1` (protocol cutover decision) · the
+carried-forward operator/reviewer/scheduled rows in (f5).
+
+**Dated verification:** (f3) — every gate with its command, result and domain;
+the three verdict-bearing proofs (`composed-verification/1`, `release-publish-
+verification/1`, `journey-portfolio/1`) plus the signed GATE-G3 readout.
+
+**What the signature would mean:** the operator accepts the recorded deviations
+and the OPEN register **as presented** — it does not declare any deferred,
+human, or live-stage row done. Rows the operator declines return to their
+owners; nothing here silently becomes a gap.
