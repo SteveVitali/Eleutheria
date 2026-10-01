@@ -116,7 +116,8 @@ def adr_revisit_ids() -> list[str]:
     return ids
 
 
-# DEFERRALS statuses that still owe work (mirror of check-build-memory.sh's set).
+# DEFERRALS statuses that still owe work — the same owed set as audit_current_state.OWED_STATUSES
+# and the vendored check-build-memory.sh rule-5 scan (OPEN, PARTIAL).
 DEFERRAL_OWED_STATUSES = frozenset({"OPEN", "PARTIAL"})
 _DEFERRAL_ROW = re.compile(r"^\|\s*(D-[A-Z0-9][A-Za-z0-9._-]*)\s*\|")
 _BL_HOME = re.compile(r"BL-\d{3}")
@@ -127,8 +128,13 @@ def deferral_homes(path: pathlib.Path) -> tuple[list[str], list[str]]:
     least one ``BL-nnn`` backlog home, and those that name none.
 
     DONE / WONTFIX / ACCEPTED-SKELETON rows are owed nothing and skipped. The
-    status is the first word of the row's last cell (the same convention
-    ``scripts/docs/check-build-memory.sh`` uses to parse DEFERRALS statuses).
+    status is the first word of the row's last cell — the row's leading status
+    token, the convention ``audit_current_state.py`` and ``obligation_events.py``
+    use (ADR-126: never "last token wins"). The vendored
+    ``scripts/docs/check-build-memory.sh`` (build-memory 0.5.0, since SEED-02c)
+    no longer parses it this way: it takes the first of OPEN, PARTIAL, DONE,
+    WONTFIX, ACCEPTED-SKELETON (in that priority order) that appears as a word
+    anywhere in the last cell, and uses it only to reject an orphan status.
     """
     citing: list[str] = []
     missing: list[str] = []

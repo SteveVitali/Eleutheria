@@ -99,6 +99,8 @@ module = ["h3", "h3.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+# docs/build/tools/test_*.py: the build-memory tools' own suites (memory_guard, ci_boundary,
+# check_trailers, check_spec_src) — collected by `make test` since Round 11 SEED-02b (B4 G7 item 1).
+testpaths = ["tests", "docs/build/tools"]
 pythonpath = ["tests"]
 addopts = "-ra"

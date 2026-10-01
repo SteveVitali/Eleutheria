@@ -1327,6 +1327,173 @@ def test_build_index_corrections_table_may_repeat_a_seq(repo: Path) -> None:
     assert rc == 1 and got == [("record-shape", "columns", "docs/build/BUILD_INDEX.md")], got
 
 
+def test_build_index_marker_rows_under_a_compact_header_are_counted_and_judged(repo: Path) -> None:
+    """SEED-09's shape: late marker rows appended under a new subsection whose header has no spaces
+    (`|Seq|Ticket|…|`). record-shape must count them as candidates and evaluate them (it reported 0
+    before SEED-02b, so a malformed marker row could not be told from no row at all)."""
+    append(
+        repo,
+        "docs/build/BUILD_INDEX.md",
+        "\n### Index repairs (late marker rows)\n\n"
+        "|Seq|Ticket|Kind|Branch|PR|Base|Landed|ADRs|Deferrals|Live|Evidence|\n"
+        "|---|---|---|---|---|---|---|---|---|---|---|\n"
+        "| 02 | GATE-G1 | gate (marker) | — | — (no PR; marker) | demo/t1 | 2026-09-28 | — | — | n-a | "
+        "`readouts/GATE-G1.md` |\n"
+        "| 03 | GATE-G2 | gate (marker) | — | — (no PR; marker) | demo/t1 | 2026-09-28 | — | — | n-a | "
+        "`readouts/GATE-G2.md` |\n",
+    )
+    commit(repo)
+    rc, doc, _ = judge(repo)
+    assert rc == 0, rules(doc)
+    assert counts(doc)["record-shape"] == (2, 2)
+    append(
+        repo,
+        "docs/build/BUILD_INDEX.md",
+        "| 04 | GATE-G3 | gate (marker) | — | — | demo/t1 | 2026-09-28 |\n",
+    )
+    commit(repo)
+    rc2, doc2, _ = judge(repo)
+    assert rc2 == 1 and counts(doc2)["record-shape"] == (3, 3)
+    assert ("record-shape", "columns", "docs/build/BUILD_INDEX.md") in rules(doc2)
+
+
+def test_build_index_seq_is_unique_across_index_tables(repo: Path) -> None:
+    """Every index table (one with a PR or landed column) shares one seq space: a marker row or a
+    Round-11 row appended under a new header may not reuse a seq of the main index (SEED-02b; before,
+    the seen-set was reset at every header, so a reused seq in a later table went unnoticed)."""
+    append(
+        repo,
+        "docs/build/BUILD_INDEX.md",
+        "\n## Round 11\n\n"
+        "| seq | ticket | kind | branch | PR | base | landed | adr | deferrals | live | evidence |\n"
+        "|---|---|---|---|---|---|---|---|---|---|---|\n"
+        "| 01 | T9 | ticket | demo/t9 | #9 | main | 2026-09-27 | — | — | n-a | runs/T9.md |\n",
+    )
+    commit(repo)
+    rc, doc, _ = judge(repo)
+    got = rules(doc)
+    assert rc == 1 and got == [("record-shape", "seq", "docs/build/BUILD_INDEX.md")], got
+    assert "reuses seq 01 (first at line 5)" in json.dumps(doc)
+
+
+def test_build_index_row_under_no_header_is_vacuous(repo: Path) -> None:
+    """A row added above every header cannot be judged for shape: a candidate never evaluated is
+    not green (G11, exit 3)."""
+    replace(
+        repo, "docs/build/BUILD_INDEX.md", "# Build index\n", "# Build index\n| 00 | T0 | stray |\n"
+    )
+    commit(repo)
+    rc, doc, _ = judge(repo)
+    assert rc == 3 and counts(doc)["record-shape"] == (1, 0)
+
+
+def test_record_shape_counts_manifest_and_deferrals_rows(repo: Path) -> None:
+    replace(
+        repo,
+        "docs/tickets/00_MANIFEST.md",
+        "## Plan extensions",
+        "### Round 2\n| # | file |\n|---|---|\n| 02 | `02_T2__next.md` |\n\n## Plan extensions",
+    )
+    append(
+        repo,
+        "docs/tickets/DEFERRALS.md",
+        "| D-T1-2 | V | another live check | budget gated | GATE-G1 | fixture | OPEN |\n",
+    )
+    commit(repo)
+    rc, doc, _ = judge(repo)
+    assert rc == 0, rules(doc)
+    assert counts(doc)["record-shape"] == (2, 2)
+
+
+ADR4 = "# ADR-004: Seed ADR\n\n- **Date:** 2026-09-28\n\n## Decision\nFirst draft.\n\n## Revisit trigger\n\nWhen Z.\n"
+
+
+def _seed_branch(repo: Path, pinned: bool = True) -> str:
+    """A branch commit on top of the fixture's base that adds a seed ADR and readout; the LEDGER pins
+    the base (`pinnedBaseSha`). Returns the base sha."""
+    b0 = base_of(repo)
+    if pinned:
+        replace(
+            repo,
+            "docs/build/LEDGER.md",
+            "nextTicket:      T2\n",
+            f"nextTicket:      T2\npinnedBaseSha:   {b0[:8]}\n",
+        )
+    write(repo, "docs/adr/ADR-004-seed.md", ADR4)
+    write(repo, "docs/build/readouts/GATE-G4.md", READOUT.replace("GATE-G2", "GATE-G4"))
+    commit(repo, "2026-09-28T04:00:00Z", "seed: ADR-004 + GATE-G4 readout")
+    return b0
+
+
+def test_staged_edit_of_a_record_added_on_this_branch_is_allowed(repo: Path) -> None:
+    """Orchestrator note (SEED-12c): in --staged/--worktree mode a record is landed only if it exists
+    at the merge-base of HEAD with the LEDGER's pinnedBaseSha — a seed ADR may be edited until merged."""
+    _seed_branch(repo)
+    replace(
+        repo, "docs/adr/ADR-004-seed.md", "First draft.", "Final wording, final requirement ids."
+    )
+    git(repo, "add", "-A")
+    rc, doc, _ = run_guard(repo, "all", "--staged", now="2026-09-28T05:00:00Z")
+    assert rc == 0, rules(doc)
+    assert doc["input"]["landed_base"] == base_of(repo)
+    assert doc["input"]["landed_from"].startswith("merge-base of HEAD and pinnedBaseSha")
+    assert counts(doc)["append-only"][0] > 0  # the change was judged, not skipped
+    rc_w, doc_w, _ = run_guard(repo, "all", "--worktree", now="2026-09-28T05:00:00Z")
+    assert rc_w == 0, rules(doc_w)
+
+
+def test_staged_edit_of_an_adr_present_at_the_pinned_base_stays_forbidden(repo: Path) -> None:
+    _seed_branch(repo)
+    replace(repo, "docs/adr/ADR-001-demo.md", "Some context.", "Rewritten context.")
+    git(repo, "add", "-A")
+    rc, doc, _ = run_guard(repo, "all", "--staged", now="2026-09-28T05:00:00Z")
+    assert rc == 1 and ("append-only", "frozen", "docs/adr/ADR-001-demo.md") in rules(doc)
+
+
+def test_staged_seed_record_may_be_removed_but_a_landed_one_may_not(repo: Path) -> None:
+    _seed_branch(repo)
+    (repo / "docs/build/readouts/GATE-G4.md").unlink()
+    git(repo, "add", "-A")
+    rc, doc, _ = run_guard(repo, "all", "--staged", now="2026-09-28T05:00:00Z")
+    assert rc == 0, rules(doc)
+    (repo / "docs/build/readouts/GATE-G2.md").unlink()
+    git(repo, "add", "-A")
+    rc2, doc2, _ = run_guard(repo, "all", "--staged", now="2026-09-28T05:00:00Z")
+    assert rc2 == 1 and ("append-only", "deleted", "docs/build/readouts/GATE-G2.md") in rules(doc2)
+
+
+def test_staged_without_a_pinned_base_falls_back_to_head(repo: Path) -> None:
+    _seed_branch(repo, pinned=False)
+    replace(repo, "docs/adr/ADR-004-seed.md", "First draft.", "Rewritten.")
+    git(repo, "add", "-A")
+    rc, doc, _ = run_guard(repo, "all", "--staged", now="2026-09-28T05:00:00Z")
+    assert rc == 1 and ("append-only", "frozen", "docs/adr/ADR-004-seed.md") in rules(doc)
+    assert doc["input"]["landed_from"].startswith("HEAD")
+
+
+def test_range_judges_landedness_at_its_own_base(repo: Path) -> None:
+    b0 = _seed_branch(repo)
+    c1 = git(repo, "rev-parse", "HEAD").strip()
+    replace(repo, "docs/adr/ADR-004-seed.md", "First draft.", "Rewritten.")
+    commit(repo, "2026-09-28T05:00:00Z", "edit the seed ADR")
+    rc, doc, _ = run_guard(repo, "all", "--range", f"{b0}..HEAD", now="2026-09-28T06:00:00Z")
+    assert rc == 0, rules(doc)  # new within the range
+    rc2, doc2, _ = run_guard(repo, "all", "--range", f"{c1}..HEAD", now="2026-09-28T06:00:00Z")
+    assert rc2 == 1 and ("append-only", "frozen", "docs/adr/ADR-004-seed.md") in rules(doc2)
+
+
+def test_oracle_412cb337_index_repair_rows_are_counted(tmp_path: Path) -> None:
+    """SEED-09's index repairs: 2 marker rows + 9 correction rows, all judged and well formed."""
+    if not _have("412cb337"):
+        pytest.skip("412cb337 not in this clone (shallow or rewritten history)")
+    # its own clock: the commit (2026-10-01T13:46:19Z) is later than replay()'s fixed now
+    rc, doc, _ = run_guard(
+        ROOT, "all", "--first-parent", "412cb337", now="2026-10-01T14:00:00Z", tmp=tmp_path
+    )
+    cand, ev = counts(doc)["record-shape"]
+    assert rc == 0 and cand == ev >= 11, (rc, cand, ev)
+
+
 def test_manifest_new_chain_row_needs_a_round_banner_and_a_stable_id(repo: Path) -> None:
     replace(
         repo,

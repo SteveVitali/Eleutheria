@@ -24,7 +24,6 @@ import pathlib
 import re
 import shutil
 
-import pytest
 from support import REPO_ROOT
 
 TOOLS = REPO_ROOT / "docs" / "build" / "tools"
@@ -296,23 +295,14 @@ def test_round11_cursor_naming_no_chain_row_is_error(tmp_path: pathlib.Path) -> 
     assert [d["obligation"] for d in _by_check(diags, "ledger/next-ticket")] == ["P99.9"]
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "audit_current_state.EXPECTED_KEYS has no slot for the optional `harness` key "
-        "(layout BM-LEDGER-02, build-memory skill 0.5.0) — the Round-11 seed LEDGER "
-        "would raise ledger/key-order; fixing the tool turns this XPASS: drop the marker "
-        "with that fix (SEED-03 report)"
-    ),
-)
 def test_round11_harness_slot_passes_key_order(tmp_path: pathlib.Path) -> None:
     diags, _ = audit_current_state.audit(_r11_tree(tmp_path))
     assert "ledger/key-order" not in _checks(diags)
 
 
 def test_round11_harness_out_of_its_slot_is_a_key_order_error(tmp_path: pathlib.Path) -> None:
-    """`harness` is optional but only in its slot — after `updatedAt` it is an
-    error today and must stay one once the slot is accepted."""
+    """`harness` is optional but only in its slot — after `updatedAt` it stays an
+    error now that the slot is accepted (SEED-02b)."""
     moved = LEDGER_R11.replace("harness: devin-desktop/swe-2-high/subagent\n", "").replace(
         "updatedAt: 2026-01-03T00:00:00Z", "updatedAt: 2026-01-03T00:00:00Z\nharness: x/y/z"
     )

@@ -53,3 +53,9 @@ Items surfaced by seed units that a later unit (or the operator) must resolve. E
 - β · DEFERRALS annotations for D-R10-PUBLISH-1 / D-P32.23a-1 (GATE-G3 "satisfied by this signature" no longer holds) and the C-3 bearing on D-LEGAL.1-1 / D-P30.3-COUNSEL · SEED-14
 - β · P34.22a parametrises the `p-17b713` pin in `release_publish_verify.py`; T5 writes the GATE-P rows for C-2/C-3/C-13; PHASE LOG drafts for SEED-08/09 in `runs/SEED-08-09.md` · SEED-13 / SEED-17
 - SEED-02a · conventions for later records (RESTORED caption, `| R<n> |` annotations, DATE CORRECTION wording, gate-marker decision rows need a PHASE LOG pause entry) · SEED-17 OPERATING MODE; guard's 0 `record-shape` candidates for BUILD_INDEX marker rows → check · SEED-02b
+- SEED-02b · seed PR docs job red until T4 lands (`check_coverage_matrix.py` 777 vs pinned 715; 62 ids missing) · SEED-14b + SEED-15
+- SEED-02b · P34.1 owns the docs-job push trigger + `--first-parent` step (TODO in ci.yml); P34.28/OP-25 commits `docs/build/tools/record_policy/allowed_signers` (default path) · SEED-13b contracts / HANDOFF
+- SEED-02b · T6 confirms the trailer Devin Desktop writes (a Devin co-author line without model passes with a warning) · T6
+- SEED-02b · `--first-parent` replay of single seed commits flags 125 seed-ADR edits (expected); the seed is judged as one range (passes) — note in HANDOFF/PR body · T6
+- SEED-02b · upstream agent-skills: `ci-boundary.sh` doesn't forward `--no-wait/--max-wait/--ledger` to the hook · orchestrator (agent-skills follow-up)
+- SEED-02b · regenerate `docs/build/reports/current/` at the end · T6

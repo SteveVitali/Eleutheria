@@ -215,6 +215,24 @@ byte-identical** (LOCAL PATCH banner in-file). The delta, reviewable upstream:
    DEFERRALS ids, ADR index↔files, LEDGER keys, secret/size scans, exit
    severities) is unchanged — the patch touches output/reporting only.
 
+> **Note appended 2026-10-01T14:34:10Z (SEED-02b, Round-11 Stage B; `date -u`).** The text above
+> describes the P32.8 fork as landed and is kept as written. Since SEED-02c
+> (2026-10-01) `scripts/docs/check-build-memory.sh` is no longer that fork: it is
+> the upstream build-memory **0.5.0** validator (skill commit `8aeb6dc`) behind a
+> provenance banner, and upstream now carries items 1–3 of this patch (the
+> `build-memory-check/2` report at `--json PATH` or a unique `mktemp` file named on
+> the last stdout line, the `{repo, commit, dirty, input_digest}` identity, the
+> uniform diagnostic records and `summary.exit`). Item 4 no longer holds: the
+> detection logic is 0.5.0's (duplicate ticket ids keyed on the id, tolerant
+> DEFERRALS status parsing, region-aware PHASE LOG parsing, the guards marker,
+> ledger budgets and the `harness` slot, history mode handed to
+> `scripts/docs/check-history.sh` → `docs/build/tools/memory_guard.py`). Three
+> SIG-local hunks remain, tagged `SIG-LOCAL` in the file: L1 `dirty` also covers
+> the canonical spec, L2 an unwritable report exits 2, L3 diagnostic fields are
+> split on `\037`. The banner at the top of the script and
+> `docs/build/runs/SEED-02c.md` are the current description; this contract's
+> reporting guarantees (items 1–3) still hold.
+
 ## Prior art the protocol consumes (never forks)
 
 - `audit_current_state.py` (P32.1): input digests, expected-revision

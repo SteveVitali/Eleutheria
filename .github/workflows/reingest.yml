@@ -41,7 +41,7 @@ permissions:
 
 jobs:
   reingest-due-sources:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # pinned (S6R-27: ubuntu-latest moves to Ubuntu 26 on 2026-10-19)
     env:
       # Env-only source credentials (HG-09); absent by default → live runs refuse.
       SIG_MUCKROCK_TOKEN: ${{ secrets.SIG_MUCKROCK_TOKEN }}

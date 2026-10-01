@@ -15,7 +15,6 @@ import importlib.util
 import json
 import pathlib
 
-import pytest
 from support import REPO_ROOT
 
 TOOLS = REPO_ROOT / "docs" / "build" / "tools"
@@ -423,7 +422,7 @@ def test_round11_values_only_control_state_projects(tmp_path: pathlib.Path) -> N
     """The projection reads the seed's values-only CURRENT STATE — including the
     new `harness` key — without leaking the archive pointer into a value."""
     root = _r11_tree(tmp_path)
-    current_projection.generate(root, _out(root))  # exit code: see the xfail below
+    current_projection.generate(root, _out(root))  # exit code: asserted by the next test
     control = json.loads((_out(root) / "current.json").read_text())["control"]
     assert control["projectStatus"] == "PAUSED"
     assert control["round"] == "11"
@@ -433,15 +432,6 @@ def test_round11_values_only_control_state_projects(tmp_path: pathlib.Path) -> N
     assert "projectStatus `PAUSED` · round `11`" in md
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "the projection embeds audit_current_state, whose EXPECTED_KEYS has no slot "
-        "for the optional `harness` key (layout BM-LEDGER-02, skill 0.5.0): the seed "
-        "LEDGER is reported INCOMPLETE (ledger/key-order) — drop this marker with the "
-        "audit fix (SEED-03 report)"
-    ),
-)
 def test_round11_values_only_ledger_generates_and_verifies_clean(tmp_path: pathlib.Path) -> None:
     root = _r11_tree(tmp_path)
     assert current_projection.generate(root, _out(root)) == 0

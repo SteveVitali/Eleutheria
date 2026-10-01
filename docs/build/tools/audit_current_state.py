@@ -50,6 +50,9 @@ EXPECTED_KEYS = (
     "manifest canonicalSpec memoryRoot dispatchTarget buildWorktree buildBranchBase "
     "pinnedBaseSha chainTip benchmarkSet autonomy mergePolicy round updatedAt"
 ).split()
+# The optional `harness` key (layout BM-LEDGER-02 / BM-HARNESS-01, build-memory 0.5.0) is accepted
+# only in its slot, between `round` and `updatedAt` (Round-11 seed; SEED-02b).
+EXPECTED_KEYS_WITH_HARNESS = [*EXPECTED_KEYS[:-1], "harness", EXPECTED_KEYS[-1]]
 
 MARKER = "<!-- build-memory: v2 -->"
 OWED_STATUSES = frozenset({"OPEN", "PARTIAL"})
@@ -475,7 +478,7 @@ def parse_ledger(root: pathlib.Path, manifest: dict, diags: list[dict]) -> dict:
         for ln in body.splitlines()
         if re.match(r"^\s*[A-Za-z][A-Za-z0-9]*:(\s|$)", ln)
     ]
-    if got != EXPECTED_KEYS:
+    if got not in (EXPECTED_KEYS, EXPECTED_KEYS_WITH_HARNESS):
         diags.append(
             diag(
                 "ledger/key-order",

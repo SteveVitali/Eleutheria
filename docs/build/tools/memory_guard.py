@@ -64,13 +64,20 @@ Usage::
 included, with commit time = now; `replay` judges every first-parent commit of FROM..TO on its own
 (read-only backtest). Python 3.11+, stdlib and `git` only.
 
+**Landed records (SEED-02b).** A protected record is *landed* — its frozen/append-only rules apply —
+only if it exists at the landed base: the range's base (`A`, or the merge-base for `A...B`), the parent
+for `--first-parent`, and for `--staged`/`--worktree` the merge-base of HEAD with the LEDGER's
+`pinnedBaseSha` (else `buildBranchBase`; else HEAD). A record the branch added after that base (a seed
+ADR) may still be edited or removed until it is merged; its edits are judged as a new file's. The four
+control files (LEDGER, DEFERRALS, BUILD_INDEX, manifest) keep their region rules.
+
 Policy: `docs/build/tools/record_policy/history.policy` (also read by the skill's `check-history.sh`):
 `append-only <glob>`, `date <glob> <ERE>`, `allow <glob> <expires ISO> <fixed text>`,
 `exempt <path> <heading text>`, `archive <dir>`, and (this tool only) `act-when <glob> <ERE>`.
 `record_policy/ci_required.txt` (the G3a required check names) is read with `read_ci_required()`.
 
 Report: `memory-guard/1` JSON at `--json PATH`:
-`{schema, tool, input:{repo, mode, base, head, ci_now, policy_sha256, guards}, summary:{violations,
+`{schema, tool, input:{repo, mode, base, head, landed_base, landed_from, ci_now, policy_sha256, guards}, summary:{violations,
 warnings, exit}, checks:[{check, candidates, evaluated, violations:[…], warnings:[…]}], restored:[…],
 exit}`; each finding is `{check, rule, path, line, commit, message}`.
 
@@ -564,6 +571,16 @@ class Change:
             self.head = ":index" if mode == "staged" else ":worktree"
         else:
             raise UsageError(f"unknown mode {mode}")
+        # The landed base: a protected record is *landed* (frozen/append-only rules apply) only if it
+        # exists there; one added after it is new and may be edited until merged. A range or a
+        # first-parent commit judges against its own base. The index and the working tree judge against
+        # HEAD, but HEAD holds the branch's own unmerged records, so their landed base is the merge-base
+        # of HEAD with the LEDGER's `pinnedBaseSha` (else `buildBranchBase`), falling back to HEAD.
+        self.landed_base: str | None = self.base
+        self.landed_from = "base"
+        if mode in ("staged", "worktree") and self.base:
+            self.landed_base, self.landed_from = self._branch_base(git, self.base)
+        self._landed_cache: dict[str, bool] = {}
         self._head_cache: dict[str, str | None] = {}
         self._base_cache: dict[str, str | None] = {}
         self.added_by: dict[tuple[str, str], CommitInfo] = {}
@@ -579,6 +596,39 @@ class Change:
     @property
     def committed(self) -> bool:
         return self.mode in ("range", "first-parent")
+
+    @staticmethod
+    def _branch_base(git: Git, head: str) -> tuple[str, str]:
+        raw = git.show(head, LEDGER_REL)
+        text = raw.decode("utf-8", "replace") if raw is not None else ""
+        for key in ("pinnedBaseSha", "buildBranchBase"):
+            m = re.search(rf"(?m)^\s*{key}:[ \t]*(\S+)", text)
+            if not m or m.group(1).startswith(("(", "#")):
+                continue
+            for cand in (m.group(1), f"origin/{m.group(1)}"):
+                rev = git.resolve(cand)
+                if not rev:
+                    continue
+                mb = subprocess.run(
+                    ["git", "-C", str(git.root), "merge-base", head, rev],
+                    capture_output=True,
+                    text=True,
+                )
+                if mb.returncode == 0 and mb.stdout.strip():
+                    return mb.stdout.strip(), f"merge-base of HEAD and {key} {m.group(1)}"
+        return head, "HEAD (no resolvable pinnedBaseSha/buildBranchBase)"
+
+    def landed(self, path: str) -> bool:
+        """The record exists at the landed base (it is merged history, not this branch's own work)."""
+        if path not in self._landed_cache:
+            if self.landed_base == self.base:
+                self._landed_cache[path] = self.base_bytes(path) is not None
+            else:
+                self._landed_cache[path] = (
+                    self.landed_base is not None
+                    and self.git.show(self.landed_base, path) is not None
+                )
+        return self._landed_cache[path]
 
     # content
     def at_base(self, path: str) -> str | None:
@@ -915,6 +965,14 @@ class Judge:
             cls = "policy-ao"
         if cls == "contract" and not self.executed(path):
             cls = ""
+        # A record added after the landed base (e.g. a seed ADR in the index/worktree modes) is not
+        # landed: it may be edited or removed until merged. Its edits are judged as a new file's ("N");
+        # the control files (LEDGER, DEFERRALS, BUILD_INDEX, manifest) keep their region rules.
+        fresh = status != "A" and bool(cls) and not self.c.landed(path)
+        if fresh and status == "D":
+            return
+        if fresh and cls not in ("ledger", "deferrals", "index", "manifest"):
+            status = "N"
         if status == "D":
             base = self.c.at_base(path) or ""
             closed_run = cls == "runpr" and "/runs/" in path and run_ledger_closed(base)
@@ -1439,6 +1497,8 @@ class Judge:
                 continue
             for d in status_dates(line):
                 self.add_date(path, i, "act", d, line)
+            if kc:
+                self.r.count("record-shape", 1, 1)
             if kc and len(cells) >= kc and re.sub(r"[\s*`_]", "", cells[kc - 1]) == "P":
                 last = next((c for c in reversed(cells) if c.strip()), "")
                 if re.search(r"OPEN|PARTIAL", last.upper()):
@@ -1460,7 +1520,7 @@ class Judge:
         self.r.count("readouts", 1, 1)
         has_guard_head = guard_sentence_in(head_text)
         commit = self.c.commit_of_added(path, recs.added[0][2]).short if recs.added else ""
-        if status == "A" or not base_text:
+        if status in ("A", "N") or not base_text:
             if not has_guard_head:
                 self.r.v(
                     "readouts",
@@ -1700,6 +1760,7 @@ class Judge:
         hn = sc = pc = dc = 0
         have = False
         seen: dict[str, int] = {}
+        cand = ev = 0  # record-shape (G11): added rows offered / judged against a header
         for i, line in enumerate(head, 1):
             if not line.startswith("|") or is_separator(line):
                 continue
@@ -1713,9 +1774,12 @@ class Judge:
                 # table may name one seq once per corrected field.
                 if not (pc or dc):
                     sc = 0
-                have, seen = True, {}
+                # Every index table shares one seq space (the main index, SEED-09's late marker rows,
+                # the `## Round 11` table): `seen` is not reset per table (SEED-02b).
+                have = True
                 continue
             if not have:
+                cand += i in added  # an added row under no header cannot be judged (G11)
                 continue
             cells = table_cells(line)
             seq = strip_markup(cells[sc - 1]).strip() if sc and len(cells) >= sc else ""
@@ -1723,6 +1787,8 @@ class Judge:
                 if seq:
                     seen[seq] = i
                 continue
+            cand += 1
+            ev += 1
             commit = self.c.commit_of_added(path, line).short
             if len(cells) != hn:
                 self.r.v(
@@ -1765,6 +1831,7 @@ class Judge:
                     self.add_date(path, i, "act", m[0], line)
                 else:
                     self.undated(path, i, "BUILD_INDEX `landed` cell")
+        self.r.count("record-shape", cand, ev)
 
     # -- manifest
     def judge_manifest(self, status: str, path: str, recs: DiffRecs) -> None:
@@ -1824,6 +1891,7 @@ class Judge:
         for i, f, banner in chain(head):
             if i not in added or f in base_files:
                 continue
+            self.r.count("record-shape", 1, 1)
             tid, slug = idof(f)
             if tid in slug_of and slug_of[tid] != slug:
                 self.r.v(
@@ -1858,7 +1926,7 @@ class Judge:
 
     # -- frozen files
     def judge_contract(self, status: str, path: str, recs: DiffRecs) -> None:
-        if status == "A":
+        if status in ("A", "N"):
             return
         self.frozen_common(
             path,
@@ -1907,7 +1975,7 @@ class Judge:
                 )
 
     def judge_policy_ao(self, status: str, path: str, recs: DiffRecs) -> None:
-        if status == "A":
+        if status in ("A", "N"):
             return
         self.frozen_common(
             path,
@@ -1922,11 +1990,16 @@ class Judge:
         (or a bare status line, the skill's form) and (b) as `### Trigger evaluation …` subsections at the
         end of `## Revisit trigger` (or at EOF when that section is last)."""
         head = (self.c.at_head(path) or "").split("\n")
-        if status == "A" or self.c.at_base(path) is None:
+        if status in ("A", "N") or self.c.at_base(path) is None:
+            # "N": an ADR added after the landed base and edited again — still new, not frozen; its
+            # `Date:` header is judged only when this change writes it.
+            added = {hl for hl, _, _ in recs.added}
             for i, line in enumerate(head, 1):
                 if re.match(r"^##\s", line):
                     break
                 if re.match(r"^\s*(-\s*)?(\*\*)?Date:", line):
+                    if status == "N" and i not in added:
+                        break
                     m = DATE_RE.search(line)
                     if m:
                         self.add_date(path, i, "act", m[0], line)
@@ -2033,7 +2106,7 @@ class Judge:
     def judge_jsonl(self, status: str, path: str, recs: DiffRecs) -> None:
         base = self.c.base_bytes(path) or b""
         head = self.c.head_bytes(path) or b""
-        if base and not head.startswith(base):
+        if status != "N" and base and not head.startswith(base):
             self.r.v(
                 "append-only",
                 "prefix",
@@ -2054,9 +2127,10 @@ class Judge:
                     self.add_date(path, hl, cls, m[1], text)
 
     def judge_digest(self, status: str, path: str, recs: DiffRecs) -> None:
-        self.no_removals(
-            path, recs, "append-only", "append-only", "a digest is append-only (BM-DIGEST-01)"
-        )
+        if status != "N":
+            self.no_removals(
+                path, recs, "append-only", "append-only", "a digest is append-only (BM-DIGEST-01)"
+            )
         for hl, _, text in recs.added:
             if re.match(r"^##\s+\d", text):
                 m = DATE_RE.search(text)
@@ -2064,7 +2138,7 @@ class Judge:
                     self.add_date(path, hl, "act", m[0], text)
 
     def judge_runpr(self, status: str, path: str, recs: DiffRecs) -> None:
-        if "/runs/" in path and run_ledger_closed(self.c.at_base(path) or ""):
+        if status != "N" and "/runs/" in path and run_ledger_closed(self.c.at_base(path) or ""):
             self.no_removals(
                 path,
                 recs,
@@ -2660,6 +2734,8 @@ def cmd_change(args: argparse.Namespace) -> int:
         "mode": mode,
         "base": change.base or "(empty tree)",
         "head": change.head,
+        "landed_base": change.landed_base or "(empty tree)",
+        "landed_from": change.landed_from,
         "ci_now": utc_iso(now),
         "policy_sha256": policy.sha256 or None,
         "guards": guards,
