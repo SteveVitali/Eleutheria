@@ -1,0 +1,60 @@
+# docs/build/tools/record_policy/history.policy — the repo policy of the build-memory history guard
+# (docs/build/tools/memory_guard.py; the skill's check-history.sh reads the same file when run without
+# the repo hook). Written by SEED-02a (Round-11 Stage B, T2) at 2026-10-01T08:04:03Z (date -u).
+#
+# One rule per line; "#" starts a comment at the start of a line or after whitespace. Directives:
+#   append-only <path-glob>                       the whole file only appends at EOF (no line removed or changed)
+#   date <path-glob> <ERE>                        an added line matching ERE carries a record date (its first ISO
+#                                                 date/time), judged by G1 (R1 not after its commit; R2 for acts)
+#   act-when <path-glob> <ERE>                    (memory_guard.py only) dates found by "date" rules on this path are
+#                                                 acts (R2 applies) only when the same change adds or removes a line
+#                                                 matching ERE in the same TOML record; otherwise events (R1 only)
+#   allow <path-glob> <expires ISO> <fixed text>  a future record date on a line containing the text is allowed
+#                                                 until "expires" — and, in memory_guard.py, only for dates up to
+#                                                 "expires"; an expired entry no longer exempts (R5)
+#   exempt <path> <heading text>                  a generated ##/### region (heading contains the text) is not judged
+#   archive <dir>                                 an extra living-archived destination for the LEDGER head
+# An allow entry names its reason and the record that authorises it. Changing this file is reviewed like code.
+
+# ── Archive (B3 §3.5; SEED-10) ────────────────────────────────────────────────────────────────────────────
+# The Rounds 1–10 LEDGER head is archived byte-for-byte under memory-repair/ with a sha256 pointer.
+archive docs/build/reports/memory-repair
+
+# ── Generated region (B3 §3.13; SEED-16, later P34.29's generator) ────────────────────────────────────────
+# The heading is "### RETURN PASS — current"; it is written here without the leading "###" because
+# check-history.sh strips " #…" as a comment, which would drop the heading text.
+exempt docs/build/LEDGER.md RETURN PASS — current
+
+# ── db/sqitch.plan (B1 NEW-6; B4 G2 amendment 3; ADR-146; C-10) ──────────────────────────────────────────
+# The plan only appends at EOF: a planned_at is part of a sqitch change id, so a line is never edited or
+# re-stamped. A new line's planned_at is a record date (G1 R1: not later than its commit).
+append-only db/sqitch.plan
+date db/sqitch.plan [0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}
+# C-10 (the operator, GATE-P round 21, 2026-10-01T04:59:05Z; inspection 04:59:41Z): plan lines L44–52 keep
+# their recorded, future-dated planned_at values — a local database holds them as stamped, so they are NEVER
+# re-stamped; their true dates are corrected by appended record only (ADR-146, the correction ADR). They are
+# allow-listed by change (name, dependencies and planned_at — the inputs of the change id) until the latest of
+# them, 2026-10-19T21:00:00Z, after which every one of them is in the past.
+allow db/sqitch.plan 2026-10-19T21:00:00Z claim_assertion_bindings [camera_site_human_decisions claim_evidence ingest_run_capture access_control] 2026-10-03T12:00:00Z
+allow db/sqitch.plan 2026-10-19T21:00:00Z partner_org_scoped_identity_key [claim_assertion_bindings entity_identity_key] 2026-10-10T12:00:00Z
+allow db/sqitch.plan 2026-10-19T21:00:00Z shared_temporal_contract [partner_org_scoped_identity_key camera_site_resolution claim_assertion_bindings] 2026-10-11T00:00:00Z
+allow db/sqitch.plan 2026-10-19T21:00:00Z publication_dispositions [shared_temporal_contract domain_entities] 2026-10-12T00:00:00Z
+allow db/sqitch.plan 2026-10-19T21:00:00Z human_eval_campaign [publication_dispositions materialize_role review_campaign access_control] 2026-10-16T00:00:00Z
+allow db/sqitch.plan 2026-10-19T21:00:00Z disposition_decided_at_authority [publication_dispositions] 2026-09-27T14:00:00Z
+allow db/sqitch.plan 2026-10-19T21:00:00Z intake_storage [disposition_decided_at_authority access_control] 2026-10-18T00:00:00Z
+allow db/sqitch.plan 2026-10-19T21:00:00Z intake_application_bridge [intake_storage publication_dispositions entity_identity_key claim_evidence claim_assertion_bindings] 2026-10-19T00:00:00Z
+allow db/sqitch.plan 2026-10-19T21:00:00Z recovery_apply [intake_application_bridge] 2026-10-19T21:00:00Z
+
+# ── connectors/src/connectors/data/sources.toml rights dates (B1 NEW-5; B4 G1 positions) ─────────────────
+# rights_reviewed_on / last_verified / retrieval_date are record dates (R1: never later than the commit).
+# They are acts — R2: not back-dated more than 48 h without "retro:" / "as-of" — when the same change adds
+# the source or flips its ingestion_permitted (the e1cedcad shape: 2026-09-10 written on 2026-09-13).
+date connectors/src/connectors/data/sources.toml ^[[:space:]]*(rights_reviewed_on|last_verified|retrieval_date)[[:space:]]*=
+act-when connectors/src/connectors/data/sources.toml ^[[:space:]]*ingestion_permitted[[:space:]]*=
+
+# ── Scheduled future dates (R5; B1 NEW-4; B4 G1 R5) ──────────────────────────────────────────────────────
+# D-P31.4-1: the sig-sched-camreg-batch-05 OSM replay is scheduled by cron for 2026-10-10T03:35Z. A record
+# line about it may carry that scheduled date until the fire time + 1 h; after that the record is written
+# from the scheduler's lastAttemptTime and the clock, never from this entry.
+allow docs/tickets/DEFERRALS.md 2026-10-10T04:35:00Z sig-sched-camreg-batch-05
+allow docs/build/LEDGER.md 2026-10-10T04:35:00Z sig-sched-camreg-batch-05
