@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "f333b03e73cbb8db8d935d2a2f9ca5bbaf89b5b3",
+  "input_commit": "3374008b3106aa9fbeaa902770cc9099bbb86bc2",
   "manifest_inputs": 917,
   "control": {
     "projectStatus": "PAUSED",
@@ -13411,7 +13411,7 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "032fc01bdfa8b919c209898508a43abb46a35d284b81f8a3ae112166e5c1c8c2",
+  "manifest_sha256": "2c3fbb966fe6c89a38bd9c2be3b2338b0aaa9a1e3b4bfb8555353e03ab7f9a70",
   "current_md": {
     "lines": 74,
     "bytes": 12672,
