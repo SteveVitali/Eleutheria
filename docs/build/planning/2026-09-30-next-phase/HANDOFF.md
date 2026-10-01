@@ -321,3 +321,10 @@ only as the planning archive (it holds ≈2.2 GB of gitignored planning logs; th
 `docs/build/logs/next-phase/C3/personal_like_ids.txt`, read by P34.18 — was copied into the main checkout, still gitignored).
 It can be removed (`git worktree remove`) once the operator no longer wants those logs. Every path above now names the
 main checkout.
+
+## Fallback mode B verified (2026-10-01T19:13:33Z)
+
+`devin auth login` done by the operator; a read-only headless run verified by the orchestrator. Mode B command for
+`drive-build.sh --agent-cmd`: `/Applications/Devin.app/Contents/Resources/app/extensions/windsurf/devin/bin/devin -p --model swe-2-high --permission-mode dangerous --respect-workspace-trust false --` (only `dangerous` lets a non-interactive run use shell tools). OP-07's
+`SIG_GCP_PROJECT` variable is set (the S-5 billing/usage alert is still the operator's). OP-25: walkthrough when P34.28
+nears. OP-08: the operator merges later on their own.

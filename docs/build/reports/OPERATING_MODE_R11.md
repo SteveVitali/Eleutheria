@@ -342,3 +342,11 @@ template content, and the GATE-B packet says so.
 - **Co-author trailer not yet observed** for Devin Desktop: the first chain PR's CI trailer check (`check_trailers.py`)
   verifies it; a missing trailer is a red check (stop and ask).
 - Skills load from `~/.claude/skills` (verified, `8aeb6dc`), so no B6 §5.3 overrides are needed.
+
+## Amendment — 2026-10-01T19:13:33Z (fallback mode B verified)
+
+- Supersedes the first bullet of the 2026-10-01 GATE-B amendment above: the operator logged the headless Devin CLI in, and the
+  orchestrator verified it read-only (model "SWE-2 High"; repo untouched). **Fallback order on a failed isolation check:
+  (1) mode B** — `drive-build.sh --agent-cmd "/Applications/Devin.app/Contents/Resources/app/extensions/windsurf/devin/bin/devin -p --model swe-2-high --permission-mode dangerous --respect-workspace-trust false --"` (non-interactive runs need `--permission-mode dangerous` to use shell
+  tools; `auto`/`smart` reject them, so every tool is auto-approved — the contracts, the OM never-list, CI and the guards
+  are the controls); **(2) the manual tier** (`drive-build.sh --print-prompt`).
