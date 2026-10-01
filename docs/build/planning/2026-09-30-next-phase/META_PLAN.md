@@ -1659,6 +1659,23 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   F-386/D-J3-4), 1 already-done (F-366), 8 L1/L2 correctness findings fixed in L3 waves 2–3 with named wave-1 interim mitigations
   (S2 to decide pulling earlier). 41 items await 24 decision ids. 61 unsampled MET-DIFFERENTLY rows → SEED-14 re-check. 25 orphan
   catalog units, each justified by its design row. A1 delta re-run: 0 changed keys. **S2 dispatched.**
+- 2026-10-01T01:06:40Z — **S2 done** (`design/S2-round-structure.md`, `data/round11_plan.csv`): all 317 catalog units placed once, no row before a
+  dependency, every S0/S1 fix + prerequisites (76 units / 78 runs) in 11A/11B. **One round, four gated sub-rounds + tail = 262 rows
+  (201–462), ≈238.5 runs:** P34/11A rows 201–248 (44.0 runs; all 9 S0 closed live, safety, memory guards, CI, Round-10 schema →
+  GATE-G4) · P35/11B 249–313 (62.5; data correctness incl. the 8 pulled-forward L1/L2 fixes, transparency exports, release
+  pipeline, Wave A, first model release → GATE-G5) · P36/11C 314–387 (65.0; Wave B, design system, a working page for every
+  U-003 ask → GATE-G6) · P37/11D 388–455 (62.0; Wave C (+D conditional), graphs + explorer, `/quality/`, final release, journeys)
+  · P38 tail 456–462 (5.0; CAP-lite → GATE-ACCEPT-R11 → one reconcile → one docs → announce review → GATE-ANNOUNCE, never auto).
+  `nextTicket` = row 201 P34.1 (toolchain pin, deadline 10-19). Rows 184–187 → superseded markers (T-EVAL-IND); no HUMAN rows.
+  Conflicts resolved (guard core in seed; landed ADRs never edited — corrections via the correction ADR/register; US-first →
+  ACQ-23a/b later; first model release runs the full verification suite). Gates: 5 markers + 11 in-ticket pauses; two new
+  operating rules (dated queue for window-bound live steps; bounded pre-authorisation of routine production changes at each
+  check-in; publication never pre-authorised). Calendar critical path: schema ≥10-14 → Wave A 10-19→23 → first model release →
+  Wave B 10-26→11-05 → no cut 11-06→13 → Wave C 11-16→20 → final release outside 12-06→13 → tail ≈12-05→10. Budget ≈$95–105 →
+  $96–106 → $111–121 → $123–133/mo (≈$127–174 without the DNS move); agent spend reported per check-in. Risks: **B-24 default
+  (boundary-data rights) stalls the critical path → move to Part A**; nine other defaults quietly descope operator asks (search v2,
+  citable snapshots, Wave C, organizations) → flag in the packet; live steps queued but never run; approval fatigue; hosted-DB
+  writes; download egress before the 11B kill switch. **S3 dispatched.**
 
 ---
 
