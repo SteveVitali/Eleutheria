@@ -4,6 +4,16 @@ Row **S1c** of `META_PLAN.md` (Stage P, synthesis). Written 2026-09-30T23:49:00Z
 in the planning worktree `/Users/stevenvitali/Eleutheria-next-phase`, branch `claude/next-phase-planning`, HEAD
 `f55d64c3`. Read-only. This row writes only this file and `data/decision_catalog.csv` (one row per decision, 323 rows).
 
+> **Revised at S4c (2026-10-01T02:38:06Z, `date -u`) to close the S4 reviews** (`reviews/REVIEW_CLOSURE.md`). What changed:
+> the fast path no longer answers anything that needs your own words or touches publication, rights, Part VIII, your
+> identity, money or production authority (TS-01); every default for those lines is the conservative non-action — "not
+> done; stays owed; the chain continues around it" — never acting on silence (TS-02); Part B is no longer called "safe"
+> and every default that would descope one of your asks is marked ⚠ (COV-01); new lines **A-0** (removal-only, now),
+> **A-19…A-23**, **B-44**, **C-12**, **C-13** and **S5-1…S5-4**; answers are collected one line at a time in Claude, as you
+> asked on 2026-09-30T16:27Z, in two sittings (COV-17, FEA-09). The CSV now has 346 ids and four new columns
+> (`packet_line`, `answer_class`, `acts_on_silence`, `default_effect`). Where this file and `NEXT_PHASE_PLAN.md` differ,
+> the plan wins.
+
 > **Not legal advice (P4).** Where an option carries legal or safety exposure, this packet describes it in plain words.
 > It does not say what the law requires. **Recommendations are the agent's. Every decision is the operator's.** Wording
 > marked *agent-drafted* ships only after the operator confirms it verbatim (META_PLAN §2). Nothing here pre-answers a
@@ -21,26 +31,41 @@ in the planning worktree `/Users/stevenvitali/Eleutheria-next-phase`, branch `cl
 
 ## 0. How to use this packet
 
-**Time budget: about 45 minutes in one sitting.**
+**How it is collected (your instruction of 2026-09-30T16:27Z: "interactively collect and log my answers … one by
+one").** The agent asks one line at a time in Claude and logs each answer verbatim with its `date -u` stamp. **Two
+sittings** (FEA-09): sitting 1 = Part A + S5-1…S5-4 (≈ 1.5–2.5 h; several lines need your own words); sitting 2 = Parts
+B, C and D2 (≈ 1.5–2.5 h). GATE-P is recorded after sitting 2. Time figures are estimates.
 
 | part | what it is | lines | time |
 |---|---|---:|---:|
-| **A** | Decide before the Round-11 seed. Few lines, high impact, one of them time-critical (A-1). | 17 | ~22 min |
-| **B** | Batch approvals, each with a default. Most lines are "as recommended". The fast path is one sentence. | 43 | ~10 min |
-| **C** | Informational confirmations: facts the agent found, and texts only you can confirm. | 11 | ~5 min |
-| **D2** | One reaction to the 16 most consequential findings: agree/disagree and priority. | 16 | ~6 min |
+| **A** | Decide before the Round-11 seed. High impact; A-0 and A-1 are time-critical. | 24 | ~75–120 min |
+| **S5** | The plan's operating rules (OM-19/OM-20), the check-in packet, the 11A pre-authorisation list, US-first. | 4 | ~15 min |
+| **B** | Batch lines, each with a default. **Not all safe:** ⚠ marks a default that descopes one of your asks. | 42 | ~45–90 min |
+| **C** | Confirmations of facts the agent found, and texts only you can write. | 13 | ~20–40 min |
+| **D2** | One reaction to the 16 most consequential findings: agree/disagree and priority. | 16 | ~10 min |
 
-**How to answer.** One line each: `A-1: a` · `A-4: a except Q-E2-08` · `B: all as recommended except B-13: b` ·
-`C-4: confirm` · `D2-05: agree P1`. Where a line bundles several decision ids, "as recommended" answers every member.
-The CSV has the member-level options for anyone who wants to answer one id differently.
+**Three answer classes** (column `answer_class` in the CSV; marked on every line below):
 
-**Fast path** (agent-drafted; say it, edit it, or answer line by line): *"Part A as recommended. Part B as recommended.
-Part C confirmed. D2: agree with all, priorities as proposed."*
+| class | marker | how it is answered | if you say nothing |
+|---|---|---|---|
+| **own-words** | **OW** | You type the text, or you reproduce or edit an agent draft. Stored with the sha256 of the exact text you were shown and labelled *"agent-drafted, adopted by the operator at `<date -u>`"* when it started as a draft. Never presented as your composition when it was not | the conservative non-action: not done, not waived, stays owed |
+| **explicit** | **EX** | One answer per line, typed by you (`B-19: yes`). Covers publication, rights, Part VIII, your identity, money, production authority, records | the conservative non-action shown on the line |
+| **batch** | **BT** | "as recommended" may answer many BT lines at once | the recommendation (design/process only: nothing public ships without a Class S readout) |
 
-**Defaults.** Every line has a *default if unanswered*. It is the conservative option, so the build never stalls on
-silence and never acts without an answer. Where the default is "wait for a go" (ING-GO, Class S readouts, HG-11), the
+**The fast path is limited to BT lines** (agent-drafted; say it, edit it, or answer line by line): *"BT lines as
+recommended."* It never answers an OW or EX line, and neither does a check-in `continue` (S5-2). A line that bundles
+several decision ids is answered member by member when any member is OW or EX; the CSV lists the members.
+
+**Defaults never act on silence.** Every OW/EX default is "not done; stays owed; the chain continues around it", a
+status quo that is disclosed, or a conservative removal (CSV `acts_on_silence = no`, checked mechanically). Silence is
+never recorded as you accepting a risk. Where the default is "wait for a go" (ING-GO, Class S readouts, HG-11), the
 waiting is itself the gate. An unanswered rights line never flips a source: code tickets land those rows with
-`ingestion_permitted=false`, and activation skips them (I8 §8).
+`ingestion_permitted=false`, and activation skips them (I8 §8). ⚠ marks every default that would descope something you
+asked for; `NEXT_PHASE_PLAN.md` §4.4 lists each one beside the criterion it disables.
+
+**GATE-P recording rule.** GATE-P records your exact words, the sha256 of the plan revision and packet revision you
+were shown, and the list of lines each answer covers. If you approve on a summary, the record says "approved on a
+summary of `<sha>`".
 
 **Constraints you already fixed, which this packet does not re-ask** (§1):
 - ≤ $300/mo without your go;
@@ -52,9 +77,11 @@ waiting is itself the gate. An unanswered rights line never flips a source: code
 Options that would break one of these are marked **unavailable**. E2 and F4 were written before D1, so several of their
 recommendations changed after U-008, U-011 and U-013. Each changed line says so.
 
-**Counts.**
-- Open decision ids: **323**, de-duplicated. A 68 · B 228 · C 11 · D2 16.
-- They fold into **87 packet lines**: A 17 · B 43 · C 11 · D2 16.
+**Counts (after S4c).**
+- Open decision ids: **346**, de-duplicated. A 84 · B 229 · C 13 · D2 16 · S5 4. Classes: OW 42 · EX 223 · BT 81.
+- They fold into **99 packet lines**: A 24 · B 42 · C 13 · D2 16 · S5 4. (S3 had 87 + 4: B-24 → A-18, B-25 → A-22; new
+  A-0, A-19…A-23, B-44, C-12, C-13.)
+- *Original S1c counts:* 323 ids (A 68 · B 228 · C 11 · D2 16) in 87 lines (A 17 · B 43 · C 11 · D2 16).
 - Rights lines: E4 22, I7 78 (incl. RG1–5, P1–P4, and C10, which Q-30 already answers).
 - K-row design decisions: 84 open across K0–K14 (D-K1-1 is answered).
 - A further **23 rows (≈37 ids) are already answered** and are cited, not re-asked (§1).
@@ -93,28 +120,35 @@ recommendations changed after U-008, U-011 and U-013. Each changed line says so.
 
 ## 2. Part A — decide before the Round-11 seed
 
-Answer each line with a letter or "yes/no". Details for each line follow the table. "$/mo" = the monthly cost
-difference versus doing nothing (inference unless marked).
+Answer each line with a letter or "yes/no" (EX) or in your own words (OW). Details follow the table. "$/mo" = the
+monthly cost difference versus doing nothing (inference unless marked). **No Part A default acts on silence.**
 
 | # | decision | rec. | if unanswered | $/mo · exposure | answer |
 |---|---|---|---|---|---|
-| **A-1** | **Time-critical.** Track-0 exception now for QA-3 (alert channel), QA-4 (uptime/TLS checks) and QA-9 (PITR restore drill), before the 10-01…10-21 first-fire wave and the 10-10T03:35Z OSM replay | **a**: QA-3/4/9 only | no production change; risk recorded as accepted | ≈$0/mo + ≈$0.15–0.40 one-off; additive only | |
-| **A-2** | What the $300/mo ceiling covers. Will you create the QA-10 budget alert and billing export now? | **a**: infra only; agent spend reported at every checkpoint · **yes**, now | infra-only ceiling; budget alert as a Wave-0 step | $0 | |
-| **A-3** | Q-31: move DNS to Cloudflare for a $0-egress R2 origin (basemap, tiles, downloads, snapshots); egress ceiling $50/mo with kill switch; `contact@` alias via email routing | **a**: yes, all three | no DNS change; GCS basemap; downloads stay unlinked; no alias | R2 ≈$2–13 vs GCS ≈$6–43 + download egress; one-time registrar work | |
-| **A-4** | Governance stance (Q-7): adopt the disclosed **single-maintainer, no-counsel** posture package by ADR (PUB-008 stands and no one is named; interim editorial authority + public decision log; interim individual legal home; publication on your recorded risk acceptance, labelled; SEC-003 posture + counts; DB-right basis with guardrails; ODbL map basis recorded as operator-reported) | **a**: adopt all | spec unchanged; false claims still removed; members stay owed | $0; exposure recorded, not removed | |
-| **A-5** | Robots (GL-GATE-08): 125 disregarded fetches on 122 hosts (102 PrimeGov municipal hosts, oscn.net, 5 gouv.fr hosts). Re-confirm, narrow or re-gate. Build the opt-out register and reservation refusal either way | **b**: narrow (honour explicit disallows and TDM reservations on non-US hosts; keep the disregard for US public bodies) | GL-GATE-08 stands as recorded; no new robots-disallowed hosts; controls still built | $0; coverage vs blocking/complaint risk | |
-| **A-6** | Evaluation (Q-L3-1/2): supersede rows 184–187 with no Round-11 human rows; auto-collapse only mechanically proven copies (C0–C2); **SIG-EVAL-004 WAIVED(ADR-L3-B) for C0–C2, in your own words**; the other EVAL MUSTs stay owed | **a**: yes | no automatic collapse at all; "possible duplicate" ranged counts; EVAL-004 AT-RISK | $0 (no evaluation DB) | |
-| **A-7** | Rights stance (Q-19) + **Tier-1 batches**: RB-01…RB-07 and RB-09 (with RG1–5), E4 B1/B5/B6 (Round-10 dossier targets), X3 (46 widening configs) | **a** on all | nothing flips; rows land `ingestion_permitted=false` | +$4–6/mo acquisition (I8); GL-GATE-07-class exposure | |
-| **A-8** | Withdraw the "NEW-1" rows (5,267 public rows whose own terms forbid redistribution, are NC/ND, or say "demo"), and restrict the live `camreg_txdot_rep_tx` (TxDOT's origin terms forbid third-party distribution) | **yes**; I7-C1 **b** | withdraw + restrict (the conservative action) | $0; removes the clearest live rights exposure | |
-| **A-9** | One statement: are SIG's use and exports **non-commercial**? (Governs Bellevue, Honolulu PD, OPC/Canada.ca, CNIL images, and the live Keizer / TRPA / Cal OES NC rows) | **b**: "is or may be commercial" → NC sources are facts-only pointers | b | $0; avoids an argument SIG cannot settle without counsel | |
-| **A-10** | D-K2-1: how the 969 review-flagged organisations become publishable (today every organisation label and all 42,488 organisation edges would be withheld) | **a+b+c**: you review the top 50 by degree (unlocks 96.5 % of edges; ~1–2 h, estimate) + an ADR auto-allowing registry-matched organisations + the rest withheld with typed absence | all withheld; the Organizations section is hidden | $0; your time | |
-| **A-11** | D-K13-1: the "global graph" you asked for (U-003.2) is delivered as **aggregated overview graphs** (types, supply, access, funding, operators, governance, adoption; ≤ 3,000 nodes each) + entity ego graphs + `/explore/`, with descriptive views only (no rankings) until evaluation exists | **a**: yes | a (spec-conforming) | ≈$0–5 | |
-| **A-12** | D-K0-1: replace the zero-JS-on-content-pages rule with **HTML-first page types**. Records/print 0 JS; content ≤ 20 KiB enhancement; map ≤ 360 KiB; explorer ≤ 120 KiB; search ≤ 60 KiB; every URL shows the same facts without JS | **a**: adopt (new ADR superseding ADR-068/091/097/134) | current rule stands: three islands only | +$5–40 (overlaps K1/K3) | |
-| **A-13** | Seed contents (Q-14, Q-B4-1, Q-17): B3 C0–C10 with the deleted GATE DECISIONS rows **restored first**, the date-correction ADR, the ~700-line guard core and F5 PKG-02, so the seed is green; D-R10-MEMORY-1 **split** (B3 option C); Round 11 = P34+/rows 201+ | **a**: yes to all | records-only seed; D-R10-MEMORY-1 stays OPEN in shadow | $0 | |
-| **A-14** | Q-13: apply the B6 skill changes (out-of-repo, user-global skills). Tier A before Stage B; Tier B-must before the first dispatch | **a**: yes | no skill edits; OPERATING MODE overrides instead (B6 §5.3) | $0 cash; agent time | |
-| **A-15** | Execution model (Q-16, Q-15): Claude Code for the whole round, harness recorded, switches only at boundaries. Agents pause only at HG/Class-S gates, ING-GO per wave, spend over the ceiling, red CI, or unnamed production mutations. One digest + spend line per wave | **a**: yes | same as rec. | agent spend on your plan (unmeasured) | |
-| **A-16** | Gate authenticity (Q-B4-2 + forward rule): an operator-only signing key for gate signatures, verified in CI; tentative words are never recorded as decisions; agent text confirmed verbatim | **yes** / **yes** | status quo (verbatim quotes + clock stamps) | $0 (optional hardware key ≈$25–55 one-off) | |
-| **A-17** | Ratify D3: order safety/honesty → correctness → exploration, with Streams I and L in parallel; US-nationwide first. Co-primary journeys gate the capstone equally, the advocate winning conflicts. Flock/Axon facts **never fetched from vendor hosts**. D3 §5 is the announce gate (no early preview). CHART-025 amended to multi-vendor breadth with quality labels | **a**: ratify | a | $0 | |
+| **A-0** · EX (4 members, one go each) | **Time-critical, removal-only, now (Track-0 style; S4 TS-04/TS-12).** Personal ArcGIS handles and 41 e-mail-shaped owner strings are public in the repo tip, in the listable `sig-public` 09-27 release tree, in source/target/subject ids and one live `camera_operator` value; `/visual-language/` asserts fixture facts about real agencies. **A-0.1** PR (you merge to `main`) removing the strings from the registry's non-id text; **A-0.2** remove anonymous read of the 09-27 tree (except prefixes the live site fetches, listed read-only first) with a tombstone note; **A-0.3** remove `/visual-language/` and handle-bearing pages (404 until the re-key republish); **A-0.4** git history: accept retention + disclose, or reserve a later operator-run rewrite (agents never rewrite history; deposits wait for this answer) | **a** on A-0.1–A-0.3; A-0.4 **a** | **not done**; owed by P34.17/P34.18/P34.21 (≥ 10-13); risk recorded as **unresolved**, never as accepted; SWH/Zenodo deposits of history wait | $0; removal only; reversible except A-0.1's merge (revertible) | |
+| **A-1** · EX | **Time-critical.** Track-0 exception now for QA-9 (restore drill) and QA-4's TLS alert; Track 0.5 already did most of QA-3/QA-4 | **a**: QA-9 + TLS alert | no production change; risk recorded as **unresolved** (not accepted) | ≈$0/mo + ≈$0.15–0.40 one-off; additive only | |
+| **A-2** · EX | What the $300/mo ceiling covers; budget alert + billing export now; **agent-spend envelope** (OD-26: the round needs ≈ 380–450 agent contexts ≈ 95–270 M tokens; a usage limit was already hit on 09-30) | **a**: infra only, agent spend reported every check-in · **yes**, now · state an envelope | infra-only (your U-008 words); alert in P34.5; no envelope: the orchestrator pauses at the first usage-limit event | $0 | |
+| **A-3** · EX | Q-31: move DNS to Cloudflare for a $0-egress R2 origin; $50/mo egress ceiling + kill switch; `contact@` alias. P34.50 writes the cut-over runbook first (LB hostnames DNS-only so the Google-managed cert, expiring 12-22, keeps renewing) | **a**: yes, all three | no DNS change; GCS basemap; downloads stay unlinked; no alias ⚠ | R2 ≈$2–13 vs GCS ≈$6–43 + download egress | |
+| **A-4** · EX (+ OW via A-23) | Governance stance (Q-7): adopt the **disclosed** single-maintainer, no-counsel posture (PUB-008 stands, no one named; interim editorial authority + public decision log; interim individual legal home; SEC-003 posture + counts; DB-right basis with guardrails; ODbL map basis as your own determination). **Any spec change that weakens a MUST is a waiver decided at A-23** | **a**: adopt the disclosed posture | spec unchanged; false claims still removed; members stay owed ⚠ | $0; exposure recorded, not removed | |
+| **A-5** · OW | Robots (GL-GATE-08): 125 disregarded fetches on 122 hosts (102 PrimeGov hosts on one vendor platform, oscn.net, 5 gouv.fr). GL-GATE-08 rests on tentative words; re-decide **in your own words** | **b** at minimum: honour explicit disallows on vendor platforms (PrimeGov) and every rights reservation everywhere (SIG-INGEST-046c); any continued disregard for US public bodies only in your words | **GL-GATE-08 not re-confirmed: every explicit disallow and every reservation is honoured everywhere; the 103 disallowing hosts are paused at their next run (P35.1b)** ⚠ | $0; ≥ 103 hosts of agenda/CCOPS/procurement evidence paused | |
+| **A-6** · OW (waiver sentence) | Evaluation (Q-L3-1/2): supersede rows 184–187 with no Round-11 human rows; auto-collapse only C0–C2; **SIG-EVAL-004 WAIVED for C0–C2 in your own words**; the other EVAL MUSTs stay owed | **a**: yes | no automatic collapse; ranged "possible duplicate" counts; EVAL-004 not waived ⚠ | $0 | |
+| **A-7** · OW (GL-GATE-07 re-asked) + EX per batch | Rights stance (Q-19) + **Tier-1 batches** RB-01…07, RB-09 (RG1–5), E4 B1/B5/B6, X3. GL-GATE-07 rests on "err on the side of approving" recorded in the commit that deleted 53 rows; re-decide it in your own words | per-batch lines; **flip only members whose terms are captured verbatim and permit it**; "none captured" members stay gated until captured (I7 option b); E4-B1 **b** | nothing flips; rows land `ingestion_permitted=false`; X3 widening lands disabled ⚠ | +$4–6/mo acquisition (I8) | |
+| **A-8** · EX | Withdraw the 5,267 NEW-1 rows and restrict `camreg_txdot_rep_tx` (≈ 2,821 more): **≈ 8,088 public rows** in all (TS-23) | **yes**; I7-C1 **b** | withdraw + restrict (conservative removal) | $0; removes the clearest live rights exposure | |
+| **A-9** · EX | Are SIG's use and exports **non-commercial**? | **b**: "is or may be commercial" → NC sources facts-only | b (the conservative reading) | $0 | |
+| **A-10** · EX | D-K2-1: how the 969 review-flagged organisations become publishable | **a+b+c** (your top-50 review ≈ 1–2 h + registry auto-allow ADR + typed absence) | all withheld; Organizations hidden ⚠ | $0; your time | |
+| **A-11** · EX | D-K13-1: the "global graph" as aggregated overview graphs (≤ 3,000 nodes) + entity egos + `/explore/`, descriptive only | **a** | a (a design default; nothing ships without a Class S readout) | ≈$0–5 | |
+| **A-12** · EX | D-K0-1: HTML-first page types replace the zero-JS rule (budgets as K0) | **a** | three islands only ⚠ | +$5–40 | |
+| **A-13** · EX | Seed contents: restore-first, correction ADR, guard core, PKG-02; D-R10-MEMORY-1 split; P34+/rows 201+ | **a** | records-only seed (risk: seed PR red) | $0 | |
+| **A-14** · EX | Q-13: apply the B6 skill changes | **a** | no skill edits; OPERATING MODE overrides | $0 | |
+| **A-15** · EX | Execution model: Claude Code for the round; pause rules. **OM-20 pre-authorisation is NOT part of this line** (S5-1/S5-3) | **a** | Claude Code; **pause at every named production mutation** unless an OM-20 list you approved verbatim covers it | agent spend (see A-2) | |
+| **A-16** · EX | Gate authenticity: operator-only signing key for gate commits, verified in CI; forward rule (tentative words never decisions) | **yes / yes** | status quo, recorded as a **disclosed risk** (agents commit with your identity, so no in-repo approval proves origin) | $0 (optional key ≈$25–55) | |
+| **A-17** · EX | Ratify D3 (order, US-first, co-primary journeys, vendor hosts never fetched, D3 §5 as announce gate, CHART-025 amended) | **a** | **D3's order for sequencing only; no spec amendment; no announce rule adopted on silence** | $0 | |
+| **A-18** · EX (= old B-24) | HG-03 for boundary sources `census_gazetteer_tiger` + `natural_earth_10m` (public domain) after terms capture | **yes** | **no** — critical-path **stall**: P35.17 → P35.19, P35.45 and P35.63 wait ⚠ | $0 | |
+| **A-19** · EX | Calendar slip trade-off (FEA-12): if first dispatch is later than ≈ 10-07, (a) let waves slip to their next windows (cliff table, plan §8.8), (b) protect the final-release date by dropping Wave D then Wave C, (c) pause and re-plan | **a** | a — nothing dropped; dates slip per the cliff table | $0 | |
+| **A-20** · EX | Live-API visibility (FEA-07): may structural spine writes (ER re-run, 5,278-subject re-key, backfills, rematerialisations) change live-spine API answers before a Class S readout? | **b**: no — P35.57 (release-pinned API reads) runs first in 11B on its own go, collected at G4; structural writes wait for it | **b** | $0 | |
+| **A-21** · EX | Agent commit authorship (TS-11): 478 of 480 past commits and this planning branch carry your name and address as author whatever wrote them. Use a distinct agent author identity? | **a**: distinct agent author (non-personal no-reply address you pick); pushes stay on your account | b: status quo, recorded as a **disclosed risk**; harness/model trailers enforced in CI either way (OM-01) | $0 | |
+| **A-22** · EX (D-K2-4 moved here from B-25) | Eyes on Flock mirror (TS-06): a MIRROR of vendor portals whose terms forbid bulk extraction, flipped 2026-09-16 under the GL-GATE-06 blanket rule by a **delegated** review, supplying 474,184 sharing edges. (a) keep live on its CC-BY-SA-4.0 basis, delegated review disclosed, no extension · (b) also use the share lists (D-K2-4) after a Part VIII screen · (c) suspend pending your own review (you flip it) | **a** | status unchanged, **no extension** (D-K2-4 no), the delegated review disclosed ⚠ | $0 | |
+| **A-23** · OW, one answer per member | **Waiver candidates (TS-05):** spec MUSTs the round does not meet. WV-01 GOV-012/013 legal home + defence before launch · WV-02 GOV-015 editorial board · WV-03 PUB-008/HG-11 second reviewer · WV-04 UI-042 release blocked until findings dispositioned · WV-05 GOV-001/002 one-click, unidentified intake · WV-06 GOV-008 two-person deletion · WV-07 LIC-009/INGEST-037 counsel clauses. (EVAL-004 is A-6.) Waive each by ADR in your own words, or keep it owed | your words, per member | **none waived**: each stays owed and appears on GATE-ANNOUNCE's "spec MUSTs unmet at launch" list | $0; exposure disclosed | |
 
 ### A-line details
 
@@ -308,58 +342,113 @@ U-008, U-011 and U-013 remove all four. The package takes the honest remainder:
 - **What D3-Q5 means.** The announcement waits for D3 §5's checklist, starting with your own test: "I would send this
   to a journalist today" (the inverse of U-005).
 
+### A-line details added or changed at S4c
+
+**A-0 — Removal-only, now (OD-17…OD-20; TS-04, TS-12, RI-05).**
+- **Why now.** Your "planned … not done now" decision (received before 17:10:49Z, git `e5725b7b`) predates the handle
+  findings (17:01:57Z code, 17:46:42Z live), so you were never asked about removing them now. SIG-PUB-002 excludes
+  personal identifiers unrelated to institutional conduct from every tier.
+- **Scope, plainly.** A-0.1 touches only non-id text in `camera_registry_targets.toml` (the ids need P34.18's alias
+  map). A-0.2 is an IAM change on the release tree, preceded by a read-only listing so nothing the live site fetches is
+  cut. A-0.3 is the `/curate/` pattern (Track 0.2). A-0.4 asks about history: the strings stay in public git history and
+  on ~96 remote branches; history rewriting is outside what agents do; no Software Heritage or Zenodo deposit of the
+  history happens until you answer.
+- **Each member needs its own go**; the agent records pre-state, restore point and probe result (Track-0 rules).
+- **If you say nothing:** nothing is removed now; the owed fix is P34.17/P34.18/P34.21 (≥ 10-13); the plan records the
+  exposure as unresolved, not as accepted.
+
+**A-5 — Robots (changed).** SIG-INGEST-046c says an affirmative reservation "MUST be honoured as a refusal", with no
+jurisdiction limit, and PrimeGov is a vendor platform. The recommendation is therefore at minimum: honour every
+reservation everywhere and every explicit disallow on vendor platforms; keep any disregard for US public bodies only if
+you say so in your own words. The default no longer continues the disregard on silence.
+
+**A-6 — Your words.** The waiver sentence must be yours. You may adopt the agent's example (*"I accept derivation, not
+identity, and waive SIG-EVAL-004's lower-bound clause for C0–C2 as ADR-L3-B describes."*); it is then stored as
+"agent-drafted, adopted by the operator at `<date -u>`" with its sha256.
+
+**A-7 — Rights (changed).** GL-GATE-07 was recorded as *"We should ungate the … 257 … err on the side of approving"* in
+the same commit that deleted 53 GATE DECISIONS rows. Per B5 lesson 2, a later gate must look at the new set rather than
+answer "under GL-GATE-07". So each Tier-1 batch flips only members whose terms are captured verbatim and permit it;
+"none captured" members stay gated until their terms are captured.
+
+**A-15 — Changed.** The line no longer carries production pre-authorisation. Under its default the agents pause at every
+named production mutation unless an OM-20 list you approved verbatim covers it (S5-1/S5-3).
+
+**A-19 — Calendar cliffs (FEA-12).** Monthly freeze windows (days 6–13) and "one manual job at a time" turn a slip of a few
+days into a slip of weeks. The latest first-dispatch date that keeps each wave in its window is about 10-07 for Wave A,
+10-12 for Wave B and 10-20 for Wave C (plan §8.8, inference).
+
+**A-20 — Live API (FEA-07).** The site is built from release bytes; the API is live. Routine nightly ingestion has always
+reached the live-spine routes. The question is about structural rewrites. Under **b** they wait for P35.57, which serves
+release-backed routes from release files and labels every response with its basis.
+
+**A-21 — Authorship (TS-11).** Git authorship cannot attribute agent work today (B5, F-37), and your address is in the
+author metadata of public commits. A distinct agent author identity makes the record honest; pushes still go through
+your account.
+
+**A-22 — Flock mirror (TS-06).** The plan's rule becomes "no Flock/Axon fact whose only provenance is a vendor host **or a
+mirror of one**". Flock and Axon depth then comes from agency pages, procurement records and statutory reports; the plan
+states that ceiling (§5.5).
+
+**A-23 — Waivers (TS-05).** A spec amendment that removes or weakens a MUST is a waiver. Each needs your words, the
+compensating controls and a revisit trigger. Anything not waived stays owed and is listed on GATE-ANNOUNCE.
+
 ---
 
-## 3. Part B — batch approvals with defaults
+## 3. Part B — batch lines, each with a default (not all of them safe)
 
 "Rec." is the recommended answer for every member id listed. The appendix lists the member-level rights and K lines.
-The fast path "B: all as recommended" answers every line.
+**The fast path answers only the BT lines** (B-5, B-15, B-17, B-22, B-23, B-26). Every EX line needs its own typed
+answer; B-9's standing-go text is OW. **⚠ = the default descopes something you asked for** (B-11, B-18, B-19, B-27,
+B-28, B-30, B-31, B-44's D-K8-4) or adds load (B-9); each is listed in the plan's §4.4. No EX/OW default acts on
+silence.
 
 | # | decision | members (CSV ids) | rec. | if unanswered | answer |
 |---|---|---|---|---|---|
-| **B-1** | Wave-0 honesty fixes: E2 H-1…H-9, K13 UXW0-1…6, C6 QW-1…15, and the fixture/status-word publish guard. Also the two S0s outside §7.1's list: `/visual-language/` test facts about OKC PD/Flock, and personal ArcGIS handles in source ids | E2-HFIX, G2-S0X | approve all | removals of false claims ship (§7.1); new wording waits for B-2 | |
-| **B-2** | Copy approvals: agent-drafted texts in batches of ~25, confirmed verbatim per republish, "pending review" until then. **Agents may ship removal-only corrections and "not yet performed / not operating" notices without per-text confirmation** | OD-07, D-J3-12, D-K10-1, D-K10-4, D-K9-4, D-K5-2, D-K4-8 | a | b (no allowance) | |
-| **B-3** | Re-key public source ids that embed personal handles. Old URLs get a neutral "identifier changed" page. The old→new map stays restricted (a public redirect would republish the handles) | DR-C6-01 | a | a | |
-| **B-4** | Record integrity: supersede the fixture candidate `p-17b713` (no re-sign); GATE-G3 superseded; **ACCEPT-R10/R8 annotated "approved on an agent summary; full text composed after"** rather than re-confirmed; go-live spec amended and supersessions appended; date corrections by appended amendment; B7's true times | Q-12, Q-E2-18, Q-E2-19, Q-E2-20, Q-B1-2 | as stated | same (corrections are append-only) | |
-| **B-5** | Verdict vocabulary (MET · MET-DIFFERENTLY(ADR) · MET-ENGINEERED · PARTIAL · MISSING · AT-RISK-INTEGRATION · WAIVED(ADR) · N/A-RATIONALE), the +4 matrix columns, and re-verdicts of scoped and boilerplate rows | Q-E2-17 | a | a | |
-| **B-6** | Residual E2 lines: `/editorial-standards/` shows "not yet performed" and UI-042 stays owed; crawler text follows A-5; register `sig-project.org` (≈$10–20/yr) and move the UA to surveillancegraph.org; attribution handled as a defect with a publish gate; Stage-0 outreach becomes later-phase (U-011); the usability study becomes later-phase; SWH deposit after a history scan (repo is public) | E2-RESID, Q-E2-01/02/03/04/12/16/23 | as stated | no purchase; no deposit; otherwise the same | |
-| **B-7** | Round-10 surfaces at G2 step 7: archive + pinned citations + release search first; research dossiers only after live captures; intake only if B-8 opens it. **No API hotfix** for C3 NEW-1 unless step 1 slips past ~10-21 (disclosed meanwhile) | Q-9, G2-HOTFIX | a / a | a / a | |
-| **B-8** | Intake stays **email-only** (your address) until after the announcement; `/intake/` shows "not operating". Published response times (agent-drafted): **Part VIII/safety takedowns within 72 h; other corrections acknowledged within 7 days, answered within 30**. Task pages name the same address | Q-27, OD-08, D-K11-4 | a | email-only; task pages say "reporting opens with the intake form" | |
-| **B-9** | G3 release model: identity v2 + label `sig-YYYY-MM-DD.N`; **Class R/S rule** with the standing-go text for Class R (confirm the §7.3 text verbatim); monthly on the 15th at 14:00Z, early at ≥ 10 % net and ≥ 14 days, 35-day alert; auto-rollback; 15-min withdrawal SLA; private staging services | D-G3-1/2/3/4/8/9/10 | yes | every release Class S | |
-| **B-10** | Releases from unmerged stack commits (as today); you tag `v0.1.0` after the #190 sitting; legacy buckets retired per G3 | D-G3-5/6/7 | yes | no tags; buckets unchanged | |
-| **B-11** | Cloud SQL autoresize **cap 40 GB** (unlimited today), pre-grow to 25 GB before Wave C, temporary tier bump for the OSM run; OSM monthly; **one ING-GO per acquisition wave (4 lines)**; targets under already-flipped sources treated as configuration; scope = core + droppable Wave D | Q-23, I8-Q2/Q3/Q4/Q5 | as stated | 25 GB cap and Wave C waits; core only | |
-| **B-12** | Paid data sources: $0 | Q-21 | $0 | $0 | |
-| **B-13** | Cost trims: consolidate 79 scheduler triggers into one dispatcher (−$7/mo). Keep the LB (G3 path routing needs it) and min-instances 1. Revisit a Cloud SQL CUD after 3 measured bills | G1-TRIM | a | no trims | |
-| **B-14** | Evidence retention: 365 days minimum, **unlocked** (takedowns stay possible) | G1-RET | a | status quo | |
-| **B-15** | GitHub settings (**you** do them): S-1 `main` ruleset after the merge sitting; S-2 `r11/**` no-force-push before the seed push; S-3 merge commits only, no branch deletion on merge; S-4 `SIG_GCP_PROJECT` variable; S-5 billing check + Actions alert; S-7 optional. Pre-#190 reds don't block Round 11; branch prefix `r11/`; one allow-listed flake re-run per head | H2-SET, Q-B4-3, Q-H2-1/3/4 | as stated | nothing changed; flakes → `blockedOn` | |
-| **B-16** | Keep `claude/next-phase-planning` **local** until T6. The repo is public, so the first push publishes the planning notes, including your address and redacted Part VIII findings. Scan for secrets, personal identifiers and Part VIII content before pushing. A private off-disk backup is optional | Q-H2-6 | a | a | |
-| **B-17** | `nextTicket` = the first Round-11 row (N1). HG-05 gets an operator-owned integration disposition, not a new D-row | B3-NEXT, B3-HG05 | a / a | a / a | |
-| **B-18** | Owed operator actions: register the free **US 511 API keys** (~30 min; yes); QLD/NSW keys (no: non-US not expanded); D-P30.2b-1 curation → merged into the L3 maintainer check (saves 2–8 h); D-P32.3-1 legacy org keys → folded into A-10 + CONF-13 (saves up to ~40 h) | D-SOURCES.7-2, D-SOURCES.8-2, D-P30.2b-1, D-P32.3-1 | as stated | stay OPEN | |
-| **B-19** | Transparency (Q-22): raw bytes for **raw-ok sources only**, after the Part VIII byte screen; J4's derived-only default; scrubbed run logs disclosing robots as host + count; commit hashes shown (repo is public); `/s/<pub>/` snapshots; JSON-LD as linked files; prior releases as manifests + disclosure, not bytes; status lane every 6 h, refused sources as counts; review packets linked after a per-packet check | D-J3-1/2/3/6/7/10/11/13, Q-J4-7 | yes | nothing new published | |
-| **B-20** | Signing: a **pipeline key** in Secret Manager signs release manifests (disclosed as the pipeline's signature); your key (A-16) signs gate records. J3's "operator-held key on every manifest" would put you in every Class-R release | D-J3-8 | a | sha256 only | |
-| **B-21** | Zenodo DOIs (irreversible): openly licensed compartments only, after the attribution fix, run by you | D-J3-9 | yes | none | |
-| **B-22** | Accept the remaining **58 K-row design recommendations** as written (appendix) | K-BATCH | a | as recommended | |
-| **B-23** | Non-US place names: Natural Earth (public domain) now for map and search; GeoNames only if too thin. This resolves the K1/K3 disagreement K13 left open | OD-09 (D-K1-5, D-K3-3) | a | a | |
-| **B-24** | HG-03 for boundaries: `census_gazetteer_tiger` (public domain) + `natural_earth_10m`, after the terms capture. This is the foundation for placing 166k "unresolved" records | D-K4-1 | yes | JUR-01 blocked | |
-| **B-25** | Flock share lists (474,184 edges already held via the Eyes on Flock mirror) become organisation-level access claims after a Part VIII screen | D-K2-4 | yes | no | |
-| **B-26** | Publishing the dedup is an **announce criterion**; until then the site says "records" | D-K13-4 | yes | yes | |
-| **B-27** | A neutral "Other public resources" block on dossiers (Atlas, Eyes on Flock, DeFlock, ACLU, alpr.watch), with no avoidance routing or plate lookup; links to official agenda portals | D3-Q4, D-K7-3 | yes | no peer links | |
-| **B-28** | You write the ≥ 40-query held-out search relevance set (~30 min) | D-K3-7 | a | a separate agent writes it, labelled | |
-| **B-29** | "Beautiful" gallery sign-off by you before the announcement (~30–60 min); the spec published as a page per release | D-K14-9, D-K14-8 | yes | yes / no | |
-| **B-30** | `sig-api` 512 MiB → 1 GiB for release search (**+$3/mo**); search rate limit 30/min | D-K3-5, D-K3-6 | yes | old search stays | |
-| **B-31** | Maintainer checks per Class-S release (~20–40 min each); **no** second model family (avoids new spend and a new provider); failing quality checks shown publicly on `/quality/`; C2 collapse enabled | Q-L3-3/4/5/6 | as stated | no checks; no; passing checks only; C0/C1 only | |
-| **B-32** | I7 Part VIII screens S1–S9: ingest only the screened lane. S5 is ingested with names suppressed (PUB-008); **S8 tribal stays metadata-only** | I7-S1…S9 | a (S8: b) | metadata-only | |
-| **B-33** | RB-06b share-alike (a, share-alike compartment); RB-08 US territories (b, capture terms first) | I7-RB-06b, RB-08 | a / b | not flipped | |
-| **B-34** | **N1–N21 non-US database-right lines: not flipped this round** (b: capture terms if Wave D international runs). This departs from GL-GATE-07 precedent because D3 does not expand non-US coverage and no counsel reviews the database right | I7-N1…N21 | b | not flipped | |
-| **B-35** | Restricted terms IT1–IT7: facts-only pointers (IT4 GETS declined; IT7 Axon never fetched) | I7-IT1…7 | b (IT4: c) | not flipped | |
-| **B-36** | Terms not captured IU1–IU5: capture in Round 11, then a line | I7-IU1…5 | a | facts + citation only | |
-| **B-37** | Tribal TR1–TR2: defer until a tribal-data-governance rule exists (asking the Nation is outside contact) | I7-TR1/2 | a | a | |
-| **B-38** | SEC EDGAR P1–P4: facts-only basis; ingestion later-phase; the first request only after the `contact@` alias exists | I7-P1…4 | a | defer | |
-| **B-39** | Conflicts: DocumentCloud/MuckRock link-only; Sourcewell/OMNIA pointers only; vendor platforms never fetched; revocation clauses accepted for Chicago/ABQ but OpenFEMA API declined; SDPC facts from district pages; **CourtListener bulk stays deferred**; statute seed refreshed from origins; Edmonton decided on OGL-Edmonton | I7-C2/3/4/5/7/8/9/11 (C10 answered by Q-30) | as stated | pointer-only / deferred | |
-| **B-40** | Confirmations: X1 prohibited Tier-3 stays declined; X2 Part VIII blocks stay metadata-only; X4 label corrections M1–M7 in ACQ-02 | I7-X1/X2/X4 | confirm | confirm | |
-| **B-41** | E4 rights rows: R1 close (eID leg WONTFIX); R2a/R2b decline; **R3 decline** (TxDOT); R4a–c flip (closing an owed row); **R4d decline** (follows A-9); R5 flip; R6a capture terms first; R6b superseded | E4-R1…R6b | as stated | not flipped | |
-| **B-42** | E4 Round-10 dossier lines: B2 Part VIII screen + your "clear" per family; B3 SRC-027 metadata-only for good; B4 one bounded retry + byte-bound exception | E4-B2/B3/B4 | a | not assessed | |
-| **B-43** | Status corrections: E4 S1 (D-SOURCES.12-1 → DONE), S2 bonfire WONTFIX, S3 later-phase, S4 → PARTIAL, S5 moot; F1 D-P21.3-2 → DONE | E4-S1…S5, F1-P21.3-2 | as stated | unchanged | |
+| **B-1** · EX | Wave-0 honesty fixes: E2 H-1…H-9, K13 UXW0-1…6, C6 QW-1…15, and the fixture/status-word publish guard. Also the two S0s outside §7.1's list: `/visual-language/` test facts about OKC PD/Flock, and personal ArcGIS handles in source ids | E2-HFIX, G2-S0X | approve all | removals of false claims ship (§7.1); new wording waits for B-2 | |
+| **B-2** · EX | Copy approvals: agent-drafted texts in batches of ~25, confirmed verbatim per republish, "pending review" until then. **Only the notice strings N-1…N-7 ratified here by sha256 (plan §5.1) ship without per-text confirmation; the allowance expires at GATE-G4** (TS-18) | OD-07, D-J3-12, D-K10-1, D-K10-4, D-K9-4, D-K5-2, D-K4-8 | a | b (no allowance) | |
+| **B-3** · EX | Re-key public source ids that embed personal handles. Old URLs get a neutral "identifier changed" page. The old→new map stays restricted (a public redirect would republish the handles) | DR-C6-01 | a | a | |
+| **B-4** · EX | Record integrity: supersede the fixture candidate `p-17b713` (no re-sign); GATE-G3 superseded; **ACCEPT-R8, ACCEPT-R10 and GATE-G3 all annotated with B7's facts; no operator addendum about a past state of mind; the forward question is C-13** (TS-08); go-live spec amended and supersessions appended; date corrections by appended amendment; B7's true times | Q-12, Q-E2-18, Q-E2-19, Q-E2-20, Q-B1-2 | as stated | same (corrections are append-only) | |
+| **B-5** · BT | Verdict vocabulary (MET · MET-DIFFERENTLY(ADR) · MET-ENGINEERED · PARTIAL · MISSING · AT-RISK-INTEGRATION · WAIVED(ADR) · N/A-RATIONALE), the +4 matrix columns, and re-verdicts of scoped and boilerplate rows | Q-E2-17 | a | a | |
+| **B-6** · EX | Residual E2 lines: `/editorial-standards/` shows "not yet performed" and UI-042 stays owed; crawler text follows A-5; register `sig-project.org` (≈$10–20/yr) and move the UA to surveillancegraph.org; attribution handled as a defect with a publish gate; Stage-0 outreach becomes later-phase (U-011); the usability study becomes later-phase; SWH deposit after a history scan (repo is public) | E2-RESID, Q-E2-01/02/03/04/12/16/23 | as stated | no purchase; no deposit; otherwise the same | |
+| **B-7** · EX | Round-10 surfaces at G2 step 7: archive + pinned citations + release search first; research dossiers only after live captures; intake only if B-8 opens it. **No API hotfix** for C3 NEW-1 unless step 1 slips past ~10-21 (disclosed meanwhile) | Q-9, G2-HOTFIX | a / a | a / a | |
+| **B-8** · EX | Intake stays **email-only** (your address) until after the announcement; `/intake/` shows "not operating". Published response times (agent-drafted): **Part VIII/safety takedowns within 72 h; other corrections acknowledged within 7 days, answered within 30**. Task pages name the same address | Q-27, OD-08, D-K11-4 | a | email-only; **no response-time commitment published until you confirm its exact text**; task pages say "reporting opens with the intake form" | |
+| **B-9** · OW+EX ⚠ | G3 release model: identity v2 + label `sig-YYYY-MM-DD.N`; **Class R/S rule** with the standing-go text for Class R (**OW**: your words; it expires at the next sub-round GATE or 30 days, whichever is first, and is void on a ratchet regression, a Part VIII screen change or a new source — TS-13); monthly on the 15th at 14:00Z, early at ≥ 10 % net and ≥ 14 days, 35-day alert; auto-rollback; 15-min withdrawal SLA; private staging services | D-G3-1/2/3/4/8/9/10 | yes | every release Class S | |
+| **B-10** · EX | Releases from unmerged stack commits (as today); you tag `v0.1.0` after the #190 sitting; legacy buckets retired per G3 | D-G3-5/6/7 | yes | no tags; buckets unchanged | |
+| **B-11** · EX ⚠ | Cloud SQL autoresize **cap 40 GB** (unlimited today), pre-grow to 25 GB before Wave C, temporary tier bump for the OSM run; OSM monthly; **one ING-GO per acquisition wave (4 lines)**; targets under already-flipped sources treated as configuration; scope = core + droppable Wave D | Q-23, I8-Q2/Q3/Q4/Q5 | as stated | 25 GB cap and Wave C waits; core only (Wave D dropped); **I8-Q4: new targets under flipped sources wait for a line** | |
+| **B-12** · EX | Paid data sources: $0 | Q-21 | $0 | $0 | |
+| **B-13** · EX | Cost trims: consolidate 79 scheduler triggers into one dispatcher (−$7/mo). Keep the LB (G3 path routing needs it) and min-instances 1. Revisit a Cloud SQL CUD after 3 measured bills | G1-TRIM | a | no trims | |
+| **B-14** · EX | Evidence retention: 365 days minimum, **unlocked** (takedowns stay possible) | G1-RET | a | status quo | |
+| **B-15** · BT | GitHub settings (**you** do them): S-1 `main` ruleset after the merge sitting; S-2 `r11/**` no-force-push before the seed push; S-3 merge commits only, no branch deletion on merge; S-4 `SIG_GCP_PROJECT` variable; S-5 billing check + Actions alert; S-7 optional. Pre-#190 reds don't block Round 11; branch prefix `r11/`; one allow-listed flake re-run per head | H2-SET, Q-B4-3, Q-H2-1/3/4 | as stated | nothing changed; flakes → `blockedOn` | |
+| **B-16** · EX | Keep `claude/next-phase-planning` **local** until T6. The repo is public, so the first push publishes the planning notes, including your address and redacted Part VIII findings. Scan for secrets, personal identifiers and Part VIII content before pushing. A private off-disk backup is optional | Q-H2-6, OD-27 | a; OD-27 your choice (your address is already public as the Q-29 contact and in public commits' author metadata) | stays local; **the T6 push waits for OD-27** (a GATE-B stall) | |
+| **B-17** · BT | `nextTicket` = the first Round-11 row (N1). HG-05 gets an operator-owned integration disposition, not a new D-row | B3-NEXT, B3-HG05 | a / a | a / a | |
+| **B-18** · EX ⚠ | Owed operator actions: register the free **US 511 API keys** (~30 min; yes); QLD/NSW keys (no: non-US not expanded); D-P30.2b-1 curation → merged into the L3 maintainer check (saves 2–8 h); D-P32.3-1 legacy org keys → folded into A-10 + CONF-13 (saves up to ~40 h) | D-SOURCES.7-2, D-SOURCES.8-2, D-P30.2b-1, D-P32.3-1 | as stated | stay OPEN | |
+| **B-19** · EX ⚠ | Transparency (Q-22): raw bytes for **raw-ok sources only**, after the Part VIII byte screen; J4's derived-only default; scrubbed run logs disclosing robots as host + count; commit hashes shown (repo is public); `/s/<pub>/` snapshots; JSON-LD as linked files; prior releases as manifests + disclosure, not bytes; status lane every 6 h, refused sources as counts; review packets linked after a per-packet check | D-J3-1/2/3/6/7/10/11/13, Q-J4-7 | yes | nothing new published | |
+| **B-20** · EX | Signing: a **pipeline key** in Secret Manager signs release manifests (disclosed as the pipeline's signature); your key (A-16) signs gate records. J3's "operator-held key on every manifest" would put you in every Class-R release | D-J3-8 | a | sha256 only | |
+| **B-21** · EX | Zenodo DOIs (irreversible): openly licensed compartments only, after the attribution fix, run by you | D-J3-9 | yes | none | |
+| **B-22** · BT | Accept the remaining **52 K-row design recommendations** as written (appendix); six Part VIII/publication rows moved to B-44 | K-BATCH | a | as recommended (design only; nothing ships without a Class S readout) | |
+| **B-23** · BT | Non-US place names: Natural Earth (public domain) now for map and search; GeoNames only if too thin. This resolves the K1/K3 disagreement K13 left open | OD-09 (D-K1-5, D-K3-3) | a | a | |
+| **B-24** | *moved to Part A as A-18 (S2).* | | | | |
+| **B-25** | *moved to Part A as A-22 (decided with the Eyes on Flock mirror line; TS-06).* | | | | |
+| **B-26** · BT | Publishing the dedup is an **announce criterion**; until then the site says "records" | D-K13-4 | yes | yes | |
+| **B-27** · EX ⚠ | A neutral "Other public resources" block on dossiers (Atlas, Eyes on Flock, DeFlock, ACLU, alpr.watch), with no avoidance routing or plate lookup; links to official agenda portals | D3-Q4, D-K7-3 | yes | no peer links | |
+| **B-28** · EX ⚠ | You write the ≥ 40-query held-out search relevance set (~30 min) | D-K3-7 | a | a separate agent writes it, labelled **"agent-authored held-out set; not independent"** | |
+| **B-29** · EX | "Beautiful" gallery sign-off by you before the announcement (~30–60 min); the spec published as a page per release | D-K14-9, D-K14-8 | yes | yes / no | |
+| **B-30** · EX ⚠ | `sig-api` 512 MiB → 1 GiB for release search (**+$3/mo**); search rate limit 30/min | D-K3-5, D-K3-6 | yes | old search stays | |
+| **B-31** · EX ⚠ | Maintainer checks per Class-S release (~20–40 min each); **no** second model family (avoids new spend and a new provider); failing quality checks shown publicly on `/quality/`; C2 collapse enabled | Q-L3-3/4/5/6 | as stated | no checks; no; **`/quality/` built but not published** (never passing-only); C0/C1 only | |
+| **B-32** · EX | I7 Part VIII screens S1–S9: ingest only the screened lane. S5 is ingested with names suppressed (PUB-008); **S8 tribal stays metadata-only** | I7-S1…S9 | a (S8: b) | metadata-only | |
+| **B-33** · EX | RB-06b share-alike (a, share-alike compartment); RB-08 US territories (b, capture terms first) | I7-RB-06b, RB-08 | a / b | not flipped | |
+| **B-34** · EX | **N1–N21 non-US database-right lines: not flipped this round** (b: capture terms if Wave D international runs). This departs from GL-GATE-07 precedent because D3 does not expand non-US coverage and no counsel reviews the database right | I7-N1…N21 | b | not flipped | |
+| **B-35** · EX | Restricted terms IT1–IT7: facts-only pointers (IT4 GETS declined; IT7 Axon never fetched) | I7-IT1…7 | b (IT4: c) | not flipped | |
+| **B-36** · EX | Terms not captured IU1–IU5: capture in Round 11, then a line | I7-IU1…5 | a | facts + citation only | |
+| **B-37** · EX | Tribal TR1–TR2: defer until a tribal-data-governance rule exists (asking the Nation is outside contact) | I7-TR1/2 | a | a | |
+| **B-38** · EX | SEC EDGAR P1–P4: facts-only basis; ingestion later-phase; the first request only after the `contact@` alias exists | I7-P1…4 | a | defer | |
+| **B-39** · EX | Conflicts: DocumentCloud/MuckRock link-only; Sourcewell/OMNIA pointers only; vendor platforms never fetched; revocation clauses accepted for Chicago/ABQ but OpenFEMA API declined; SDPC facts from district pages; **CourtListener bulk stays deferred**; statute seed refreshed from origins; Edmonton decided on OGL-Edmonton | I7-C2/3/4/5/7/8/9/11 (C10 answered by Q-30) | as stated | pointer-only / deferred | |
+| **B-40** · EX | Confirmations: X1 prohibited Tier-3 stays declined; X2 Part VIII blocks stay metadata-only; X4 label corrections M1–M7 in ACQ-02 | I7-X1/X2/X4 | confirm | confirm | |
+| **B-41** · EX | E4 rights rows: R1 close (eID leg WONTFIX); R2a/R2b decline; **R3 decline** (TxDOT); **R4a–c capture terms, not flipped** (consistent with B-34 and US-first; COV-07); **R4d decline** (follows A-9); R5 flip; R6a capture terms first; R6b superseded | E4-R1…R6b | as stated | not flipped | |
+| **B-42** · EX | E4 Round-10 dossier lines: B2 Part VIII screen + your "clear" per family; B3 SRC-027 metadata-only for good; B4 one bounded retry + byte-bound exception | E4-B2/B3/B4 | a | not assessed | |
+| **B-43** · EX | Status corrections: E4 S1 (D-SOURCES.12-1 → DONE), S2 bonfire WONTFIX, S3 later-phase, S4 → PARTIAL, S5 moot; F1 D-P21.3-2 → DONE | E4-S1…S5, F1-P21.3-2 | as stated | unchanged | |
+| **B-44** · EX ⚠ (D-K8-4) | **Part VIII / publication K rows split out of B-22 (TS-02):** D-K1-7 "My location" button (needs a written SIG-GOV-017 analysis first); D-K7-6 agenda titles that may name people; D-K8-1 excerpt quotation; D-K8-4 showing the 255 synthetic run-record artifacts; D-K1-6 single-source sites shown by default; D-K4-3 2,482 county + 2,817 place pages | D-K1-7, D-K7-6, D-K8-1, D-K8-4, D-K1-6, D-K4-3 | per member (appendix) | no My-location button; matter number + matched term only; locator only, no excerpts; honest empty `/evidence/` until real captures bind; single-source sites stay as today (hollow symbol); country/state pages only | |
 
 ---
 
@@ -367,17 +456,19 @@ The fast path "B: all as recommended" answers every line.
 
 | # | what the agent found or drafted | ids | rec. | if unanswered | answer |
 |---|---|---|---|---|---|
-| **C-1** | **Readout provenance.** You approved GATE-G3 (2026-09-28T03:49:14Z) and ACCEPT-R10 (18:46:46Z) on agent summaries shown 40 min and 11.5 h earlier. The signed texts were composed 32 s and 51 s *after* the approvals. None was given on 2026-10-19. The correction ADR records this as fact | OD-10 | confirm | recorded as B7 found | |
-| **C-2** | **Harness attribution.** Round 1→P27.3 Devin CLI; P27.4→P31.5 Claude Code; P31.6→P33.8 (140 commits) one Devin session, `swe-2-high` only; Round-10 import Codex. Was "Pause after P31.5" a planned hand-over? (It coincided to the minute) | OD-11 | confirm; say yes/no on intent | intent "unknown" | |
-| **C-3** | **Your own words** for: (1) the 2026-09-16/24 "counsel" determinations were yours (U-013); (2) "let's defer all the human review steps and proceed" (09-28T01:15:49Z) was your deferral of the human legs; (3) robots, as A-5 | OD-12 | confirm | U-013 wording used | |
-| **C-4** | **Positioning** (agent-drafted, K14 §2.1 + D3 §1). Tagline *"The evidence behind public surveillance, place by place."* The 45-word sentence, the About paragraph, "why it exists", and the four "what SIG is not" lines. Alternates: *"Public surveillance, traced to the documents."* / *"Who watches, who shares, who decides — sourced."* | D-K14-1 | confirm or edit verbatim | current copy minus false claims | |
-| **C-5** | **About page: who runs SIG.** Your name, or "a single independent maintainer". The public repo and the Q-29 address already name you. You write this text; agents only draft | D-K14-7 | your choice | "a single independent maintainer" placeholder | |
-| **C-6** | **The repository is PUBLIC** (live read). J3, J4 and K14 assumed it was private. Confirm it stays public: this simplifies B-19/B-29, re-opens SWH (B-6) and makes B-16 matter | OD-13 | stays public | no change | |
-| **C-7** | **Cost truth.** What did the last GCP invoice show? G1's ≈$90–100/mo is a list-price inference | OD-14 | state the number | estimate kept, labelled inference | |
-| **C-8** | Under U-014, connectors that need a contact string (EDGAR User-Agent, API sign-ups) would send your name + address. Confirm "alias first" (A-3/OD-04) | OD-15 | alias first | U-014 as recorded | |
-| **C-9** | The `SIG_INTAKE_*_SECRET` lines in two planning notes were a generator command, not a value, and were reworded. Confirm no such value was used in any deployed or staging config | Q-H2-2 | confirm | treated as resolved | |
-| **C-10** | Does any persistent local DB (`sig-ops up` volume, `.codex/worktrees`) hold Round-10 sqitch changes L44–52? | Q-B1-4 | answer if known | "unknown"; never re-stamp | |
-| **C-11** | Confirm the labelled agent interpretations under U-002…U-015. These are: the journalist exploration journey as primary; Stream L; K14; the $300/$1,000 rule; no outreach, recruiting, records-request sending or contribution-back; the alias; B7 | OD-16 | confirm | cited as interpretations | |
+| **C-1** · OW | **Readout provenance.** You approved GATE-G3 (2026-09-28T03:49:14Z) and ACCEPT-R10 (18:46:46Z) on agent summaries shown 40 min and 11.5 h earlier. The signed texts were composed 32 s and 51 s *after* the approvals. None was given on 2026-10-19. The correction ADR records this as fact | OD-10 | confirm | B7's evidence recorded as an agent finding; your confirmation recorded as **absent** | |
+| **C-2** · EX | **Harness attribution.** Round 1→P27.3 Devin CLI; P27.4→P31.5 Claude Code; P31.6→P33.8 (140 commits) one Devin session, `swe-2-high` only; Round-10 import Codex. Was "Pause after P31.5" a planned hand-over? (It coincided to the minute) | OD-11 | confirm; say yes/no on intent | intent "unknown" | |
+| **C-3** · OW | **Your own words** for: (1) the 2026-09-16/24 "counsel" determinations were yours (U-013); (2) "let's defer all the human review steps and proceed" (09-28T01:15:49Z) was your deferral of the human legs; (3) robots, as A-5 | OD-12 | confirm, each item in your own words, recorded with today's `date -u` (never as a 09-28 decision; TS-19) | **not recorded**: the record says you have not given own words for (1)–(3); U-013 is quoted only where it speaks (counsel) | |
+| **C-4** · OW | **Positioning** (agent-drafted, K14 §2.1 + D3 §1). Tagline *"The evidence behind public surveillance, place by place."* The 45-word sentence, the About paragraph, "why it exists", and the four "what SIG is not" lines. Alternates: *"Public surveillance, traced to the documents."* / *"Who watches, who shares, who decides — sourced."* | D-K14-1 | confirm or edit verbatim; each landing clause ships only when a measured check (GQ id, probe ≤ 24 h) makes it true, else in its conditional form (TS-10) | current copy minus false claims | |
+| **C-5** · OW | **About page: who runs SIG.** Your name, or "a single independent maintainer". The public repo and the Q-29 address already name you. You write this text; agents only draft | D-K14-7 | your choice | **the "who runs SIG" section is omitted** until you write it (no placeholder about you ships) | |
+| **C-6** · EX | **The repository is PUBLIC** (live read). J3, J4 and K14 assumed it was private. Confirm it stays public: this simplifies B-19/B-29, re-opens SWH (B-6) and makes B-16 matter | OD-13 | stays public | no change | |
+| **C-7** · EX | **Cost truth.** What did the last GCP invoice show? G1's ≈$90–100/mo is a list-price inference | OD-14 | state the number | estimate kept, labelled inference | |
+| **C-8** · EX | Under U-014, connectors that need a contact string (EDGAR User-Agent, API sign-ups) would send your name + address. Confirm "alias first" (A-3/OD-04) | OD-15 | alias first | **alias first**: no request needing a contact string is sent until the alias exists or you answer (P16 "stop and record") | |
+| **C-9** · EX | The `SIG_INTAKE_*_SECRET` lines in two planning notes were a generator command, not a value, and were reworded. Confirm no such value was used in any deployed or staging config | Q-H2-2 | confirm | treated as resolved | |
+| **C-10** · EX | Does any persistent local DB (`sig-ops up` volume, `.codex/worktrees`) hold Round-10 sqitch changes L44–52? | Q-B1-4 | answer if known | "unknown"; never re-stamp | |
+| **C-11** · EX | Confirm the labelled agent interpretations under U-002…U-015. These are: the journalist exploration journey as primary; Stream L; K14; the $300/$1,000 rule; no outreach, recruiting, records-request sending or contribution-back; the alias; B7 | OD-16 | confirm | cited as interpretations | |
+| **C-12** · OW | **Withdraw-instead-of-fix (COV-04).** U-003 asks that what is advertised actually work. Withdrawn or labelled this round rather than made to work: one-click dispute (honest notice + e-mail), `/intake/` (dark), `/contribution-back/` (LATER-03), `/curate/` (removed), `/task/new/` demo pages (stripped), research-queue "send" (drafts only). Accept the list in your own words? | OD-28 | accept (or name what to make work) | **not accepted**: each item is reported "withdrawn, not accepted (default C-12)" at GATE-ACCEPT-R11 | |
+| **C-13** · OW | **Dated question (TS-08):** does ACCEPT-R10's "34 MET" acceptance still stand — yes / no / superseded? Recorded with today's `date -u`, never as a 09-27/28 statement | OD-29 | your answer | **not answered**: ACCEPT-R10 annotated with B7's facts only; no re-confirmation recorded | |
 
 ---
 
@@ -425,7 +516,7 @@ TH-01…TH-16, plus Stream L and B.
 | B-13 scheduler consolidation | a | − $7 | − $18 (LB), − $7–10 (min-instances) at a functional cost |
 | A-16 hardware key (optional) | — | ≈ $25–55 one-off | passphrase SSH key $0 |
 | **Projected infra total** | | **≈ $100–160/mo**, under $300 | — |
-| Agent/model spend | A-2 a | **not measured**; reported per wave | — |
+| Agent/model spend | A-2 a + OD-26 | **≈ 380–450 fresh contexts ≈ 95–270 M tokens over ≈ 10–11 weeks** (inference: Stage P's observed ≈ 250k–600k tokens per heavy row × the plan's context count); reported every check-in; no dollar figure invented (it depends on your plan) | pause at the first usage-limit event |
 
 Nothing recommended here needs an over-$300 approval. The only paths that approach it are: download egress without
 R2 (A-3 "no" plus public downloads), search abuse without rate limits (≈$140/mo worst case, B-30), and a permanent DB
@@ -434,6 +525,9 @@ scale-up.
 ---
 
 ## 7. Operator work outside the sitting (only if you answer as recommended)
+
+*Superseded at S4c by `NEXT_PHASE_PLAN.md` §11.2 (≈ 25–40 h over ≈ 22–26 touchpoints, by date; FEA-09). The table below is
+S1c's original, kept for the record.*
 
 | when | what | time |
 |---|---|---|
@@ -467,11 +561,22 @@ scale-up.
   islands.
 - **A-13 + A-14 + A-16 → T2/T5/T6.** Stage B cannot write the seed until these are answered or defaulted.
 - **A-1** is independent and time-bound. Answer it even if nothing else is answered today.
+- **A-0** is independent and time-bound too; each member is its own go.
+- **A-20 → S5-3, G4.** Under A-20 = b, P35.57's API roll is a separate go in the G4 sitting and P34.45's ER re-run is not on
+  the 11A OM-20 list.
+- **A-22 → A-11, A-10.** The Flock access overview needs D-K2-4; under A-22's default it is not built.
+- **A-23 → A-4, GATE-ANNOUNCE.** A-4 adopts a disclosed posture; only A-23 can waive a MUST. Unwaived MUSTs are listed at
+  GATE-ANNOUNCE.
+- **A-21, B-16/OD-27 → T5/T6.** The author identity is set in the seed; the push waits for OD-27.
 
 ---
 
 ## 9. Coverage, method and limits
 
+- **S4c additions (23 ids):** OD-17…OD-20 (A-0), OD-21 (A-19), OD-22 (A-20), OD-23 (A-21), OD-24 (A-22), WV-01…WV-07
+  (A-23), OD-26 (A-2), OD-27 (B-16), OD-28 (C-12), OD-29 (C-13), S5-1…S5-4. Sources: `reviews/S4-truth-safety.md`,
+  `reviews/S4-feasibility.md`, `reviews/S4-coverage.md`. The `acts_on_silence` column is checked mechanically
+  (`docs/build/logs/next-phase/S4c/check_silence.py`, gitignored; T4 folds the rule into the S1b checker).
 - **Sources of the 323 ids.**
   - Q-7…Q-31 still open: Q-7, 9, 12, 13, 14, 15, 16, 17, 19, 21, 23 (disk cap), 24, 25, 27, 31.
   - E2 Q-E2-01…23.
@@ -515,7 +620,8 @@ scale-up.
 
 ## Appendix — member-level lines (generated from `data/decision_catalog.csv`)
 
-Answer by exception. Every line not named takes its packet line's answer.
+Answer by exception **for BT lines only**. Every line not named takes its packet line's answer; members of EX/OW lines
+are answered by you (S4c).
 
 #### B-41…B-43 — E4 lines (existing gated rows, status corrections) (19 lines)
 
@@ -525,9 +631,9 @@ Answer by exception. Every line not named takes its packet line's answer.
 | E4-R2a | HG-03 D-SOURCES.2-2 — documentcloud: which option? (GL-GATE-07: NOT COVERED (P26.16: "GL-GATE-07's camera-registry basis does not reach it")) | a decline → WONTFIX · b flip despite the ToS anti-extraction clause · c seek an affirmative DocumentCloud API grant or review named documents one by one | **a** — ToS forbids extraction; decline recorded 2026-09-17; option c's named-document review stays possible later. | |
 | E4-R2b | HG-03 D-SOURCES.2-2 — courtlistener_recap: which option? (GL-GATE-07: NOT COVERED (deferred by name in GL-GATE-07)) | a decline → WONTFIX · b approach FLP's partnership/commercial tier (agreement + token, HG-09) · c accept the membership terms and hold a token (packet: SIG looks ineligible as written) | **a** — Options b/c need an FLP agreement or membership SIG looks ineligible for; b is outside contact (U-011). | |
 | E4-R3 | HG-03 D-SOURCES.7-1 — dot_511_tx (the sole remainder, see S4): which option? (GL-GATE-07: PRECEDENT (camreg_txdot_rep_tx: a personal-account ArcGIS item with licence "none", flipped and live)) | a flip under GL-GATE-07 (US) · b decline as redundant with camreg_txdot_rep_tx · c find a TxDOT-owned layer first | **b** — A second personal-account republish of TxDOT data; with I7-C1 restricting the first, flipping this one would repeat the express-terms conflict. | |
-| E4-R4a | HG-03 D-SOURCES.8-1 — camreg_edmonton_ab (CA): which option? (GL-GATE-07: PRECEDENT (Calgary/York: Canadian, no grant → DBRight)) | a flip, non-US basis · b capture the City of Edmonton ToU first · c decline | **a** — Closes an existing owed row (D-SOURCES.8-1); decide on the OGL-Edmonton basis once the terms body is captured (I7-C11). | |
-| E4-R4b | HG-03 D-SOURCES.8-1 — camreg_hk_hk (HK): which option? (GL-GATE-07: PRECEDENT (camreg_polyu_hk: HK, licence "none" → DBRight, live)) | a flip, non-US basis · b capture the data.gov.hk T&C first · c decline | **a** — Precedent (camreg_polyu_hk); closes the owed row. | |
-| E4-R4c | HG-03 D-SOURCES.8-1 — camreg_qldc_au (AU): which option? (GL-GATE-07: PRECEDENT (Donegal/NZTA: non-grant wording → DBRight)) | a flip, non-US basis · b use the QLDTraffic API (CC-BY per CKAN; key = HG-09) instead · c decline | **a** — Precedent (Donegal/NZTA); closes the owed row. | |
+| E4-R4a | HG-03 D-SOURCES.8-1 — camreg_edmonton_ab (CA): which option? (GL-GATE-07: PRECEDENT (Calgary/York: Canadian, no grant → DBRight)) | a flip, non-US basis · b capture the City of Edmonton ToU first · c decline | **b** (S4c) — capture the terms; not flipped this round (B-34, US-first; COV-07). | |
+| E4-R4b | HG-03 D-SOURCES.8-1 — camreg_hk_hk (HK): which option? (GL-GATE-07: PRECEDENT (camreg_polyu_hk: HK, licence "none" → DBRight, live)) | a flip, non-US basis · b capture the data.gov.hk T&C first · c decline | **b** (S4c) — capture the terms; not flipped this round (B-34, US-first; COV-07). | |
+| E4-R4c | HG-03 D-SOURCES.8-1 — camreg_qldc_au (AU): which option? (GL-GATE-07: PRECEDENT (Donegal/NZTA: non-grant wording → DBRight)) | a flip, non-US basis · b use the QLDTraffic API (CC-BY per CKAN; key = HG-09) instead · c decline | **b** (S4c) — capture the terms; not flipped this round (B-34, US-first; COV-07). | |
 | E4-R4d | HG-03 D-SOURCES.8-1 — camreg_bellevue_wa (US): which option? (GL-GATE-07: ARGUABLE (express non-commercial clause; closest precedent: Lexington's indemnify-and-defend clause was flipped)) | a flip under GL-GATE-07 (US) · b ask the City of Bellevue for written authorization · c decline | **c** — Follows A-9 (I7-C6): if SIG's use may be commercial, the express NC clause means decline/facts-only; option b needs outside contact. | |
 | E4-R5 | HG-03 D-SOURCES.9-1 — procportal_chicago_il: which option? (GL-GATE-07: PRECEDENT (camreg_chicago_il: same data.cityofchicago.org portal, terms uncaptured, flipped)) | a flip under GL-GATE-07 (US) · b capture the Chicago ToU first · c decline | **a** — Same portal as the flipped camreg_chicago_il. | |
 | E4-R6a | HG-03 D-SOURCES.9-4 — bidnet_direct: which option? (GL-GATE-07: ARGUABLE (no vendor-platform procurement portal has ever been flipped)) | a capture bidnetdirect.com terms, then decide · b flip under GL-GATE-07 now · c decline | **a** — Capture bidnetdirect.com terms in Round 11, then decide (never flipped a vendor platform blind). | |
@@ -543,9 +649,12 @@ Answer by exception. Every line not named takes its packet line's answer.
 
 #### A-7 members — Tier-1 batch lines and confirmations (answered by A-7) (17 lines)
 
+S4c: every RB line flips only members whose terms are captured verbatim and permit it; "none captured" members take
+option b (capture first). Each line is EX: answer it yourself.
+
 | line | decision | options | rec. — why | answer |
 |---|---|---|---|---|
-| E4-B1 | HG-03 D-R10-SOURCES-1 — rights basis for the 23 new targets in §4 (3 dossier families + 2 pilot families; 3 lanes each): which option? (GL-GATE-07: PRECEDENT (P29.3 applied it to municipal CCOPS reports; Q-19 proposes it as the default)) | a apply GL-GATE-07 (US) to all three lanes, batch-wide · b decide per target after terms are captured · c defer the live stage | **a** — In A-7: GL-GATE-07 US basis for the 23 dossier/pilot targets, after the URL reconciliation ticket. | |
+| E4-B1 | HG-03 D-R10-SOURCES-1 — rights basis for the 23 new targets in §4 (3 dossier families + 2 pilot families; 3 lanes each): which option? (GL-GATE-07: PRECEDENT (P29.3 applied it to municipal CCOPS reports; Q-19 proposes it as the default)) | a apply GL-GATE-07 (US) to all three lanes, batch-wide · b decide per target after terms are captured · c defer the live stage | **b** (S4c) — decide per target after terms are captured; no batch-wide GL-GATE-07 application (TS-06). | |
 | E4-B5 | HG-03 D-R10-SOURCES-1 — 4 targets already on green sources (OSCN §7-606.1 ×2, ops manual §5-118, purchasing index): which option? (GL-GATE-07: EXECUTED (GL-GATE-03, 2026-09-10)) | a confirm that no re-approval is needed (the row says so itself) · b re-review anyway | **a** — Already executed under GL-GATE-03. | |
 | E4-B6 | HG-03 D-P32.21-1 — registry rows for SRC-006/007/011 (registered_source: null): which option? (GL-GATE-07: follows B1) | a Round 11 adds 3 rows (OMES, DAC, CA State Auditor) on the B1 basis · b add the rows gated only · c drop the incremental families (dossier families only) | **a** — In A-7: follows B1. | |
 | I7-RB-01 | HG-03 batch RB-01: US agency GIS/open-data layers (Flock/LPR/CCTV/ATE/PCAM aggregates on ArcGIS, Socrata, CKAN) (n=38 (32/6)) | a flip all under GL-GATE-07 US · b per target after an org-level terms capture · c defer | **a** — Precedent-consistent per I7 (PRECEDENT: P26.16 camreg_* flips, incl. items with licence "none" (camreg_txdot_rep_tx) and portal terms uncaptured (camreg_chicago_il)); Part-VIII-flagged members still need their S-line. | |
@@ -561,7 +670,7 @@ Answer by exception. Every line not named takes its packet line's answer.
 | I7-RG3 | Rights line RG3: Part 107 Waivers Issued (GL-GATE-07: PRECEDENT (federal §105 → CC0-1.0: usaspending, gao_surveillance_repor…) | a flip the existing row (flip recipe, E4 §2) · b keep gated | **a** — Federal work precedent; member of RB-09. | |
 | I7-RG4 | Rights line RG4: Stingray Tracking Devices: Who's Got Them? (ACLU m… (GL-GATE-07: PRECEDENT (facts + citations only → LicenseRef-DerivedFacts-Citations:…) | a flip the existing row (flip recipe, E4 §2) · b keep gated | **a** — Facts + citations precedent; member of RB-09. | |
 | I7-RG5 | Rights line RG5: Berkeley surveillance annual reports policies MOUs (GL-GATE-07: PRECEDENT (GL-GATE-07 US → LicenseRef-PublicRecord-FactualCompilation:…) | a flip the existing row (flip recipe, E4 §2) · b keep gated | **a** — CCOPS precedent; member of RB-09. | |
-| I7-X3 | Confirmation X3: the 46 widening configurations need no new HG-03 line (run under already-flipped or rights-resolved sources). | confirm / change | **confirm** — Default recorded by I7; answer only to change it. | |
+| I7-X3 | Confirmation X3: the 46 widening configurations need no new HG-03 line (run under already-flipped or rights-resolved sources). | confirm / change | **confirm**; S4c default: **not confirmed** — widening configs land disabled until you answer. | |
 
 #### B-33 — I7 remaining batch lines (2 lines)
 
@@ -660,7 +769,7 @@ Answer by exception. Every line not named takes its packet line's answer.
 | I7-X2 | Confirmation X2: the 26 Part VIII blocks are existence/metadata only, never ingested. | confirm / change | **confirm** — Default recorded by I7; answer only to change it. | |
 | I7-X4 | Confirmation X4: registry and tenant label corrections M1–M7 go into a Round-11 correction ticket (ACQ-02). | confirm / change | **approve** — Default recorded by I7; answer only to change it. | |
 
-#### B-22 — K-row design recommendations accepted by K-BATCH (58 lines)
+#### B-22 — K-row design recommendations accepted by K-BATCH (52 lines)
 
 | line | decision | options | rec. — why | answer |
 |---|---|---|---|---|
@@ -669,8 +778,6 @@ Answer by exception. Every line not named takes its packet line's answer.
 | D-K0-5 | Treat application/ld+json blocks as data (allowed on T1), leaving the "whether" to J3 D-J3-7 | as recommended / other | **Yes** | |
 | D-K1-3 | Basemap extent and refresh: planet z0–15 (R2) or z0–14 (GCS); twice-yearly manual refresh | as recommended / other | **as stated** | |
 | D-K1-4 | Coverage semantics: (a) counts in single-source cells are shown with a "1 source" label, not suppressed; (b) crowdsourced global sources do not count as "SIG has looked" | as recommended / other | **Yes to both** | |
-| D-K1-6 | Symbol semantics: filled = corroborated, hollow = single source, double ring = contested; single-source sites shown by default | as recommended / other | **Yes** | |
-| D-K1-7 | "My location" button (browser-only geolocation after a click; never sent to SIG) | as recommended / other | **Yes** | |
 | D-K1-8 | Ship an early "honest map now" slice (MAP-01a + basemap in today's island) before the full app rewrite | as recommended / other | **Yes if the rewrite is more than ~2 weeks away** | |
 | D-K2-3 | Degree-only sharing data | as recommended / other | **node attribute sentences only (SIG-INGEST-043c); confirm** | |
 | D-K2-5 | Supply relevance | as recommended / other | **exclude unclassified procurement from O1; show it on buyer pages as "not classified"** | |
@@ -680,7 +787,6 @@ Answer by exception. Every line not named takes its packet line's answer.
 | D-K3-2 | Alias governance: aliases are reviewed data rows with a cited expansion; expansion only, never a characterization or relationship | as recommended / other | **Yes** | |
 | D-K3-4 | Query logging | as recommended / other | **None; aggregate counters only** | |
 | D-K4-2 | Disputed-territory point of view (TW, PS, HK, XK, EH, Crimea) | as recommended / other | **ISO 3166-1 as published; XK labelled user-assigned; neutral names; one standing note** | |
-| D-K4-3 | Which sub-state dossiers get pages | as recommended / other | **all counties with ≥1 record (2,482); places with ≥10 records (2,817) + any place with non-site evidence; non-US admin-1 with ≥10 (218)** | |
 | D-K4-4 | US territories: under the United States or as countries | as recommended / other | **under US (Census state-equivalents), with ISO 3166-1 aliases** | |
 | D-K4-5 | Placement precedence placement@1 (located wins; R3 repair heuristics fall back to declared) | as recommended / other | **adopt; revisit when first-class Jurisdiction entities land** | |
 | D-K4-6 | URL scheme (alpha-3 country segment; name-GEOID slugs) | as recommended / other | **adopt; keep /dossier/ as the index root** | |
@@ -699,11 +805,8 @@ Answer by exception. Every line not named takes its packet line's answer.
 | D-K7-2 | Daily watch lane between releases (G3 publish-class status extended to watch/), or watch-only-at-release? | as recommended / other | **the lane; release-only cannot serve agenda alerts** | |
 | D-K7-4 | Lead-time windows (§5.2) | as recommended / other | **as proposed; revisit after 2 months of data** | |
 | D-K7-5 | Generate feeds for every place (valid but empty) or only for places with items? | as recommended / other | **every place, so subscribers can come early** | |
-| D-K7-6 | Title policy for agenda items that may name people | as recommended / other | **verbatim title only when the person-name screen passes; otherwise matter number + matched term** | |
-| D-K8-1 | May claim views quote an excerpt from derived-only sources, and how long? | as recommended / other | **a locator always; an excerpt of ≤300 characters only where the source's recorded terms permit quotation (J4 per-source evidence); otherwise none. Needs E/J4 input; not legal advice** | |
 | D-K8-2 | Claim-view scope and cap | as recommended / other | **document genres with actual_capture; cap 20k per release; overflow count disclosed** | |
 | D-K8-3 | Are /evidence/artifact/<handle>/ pages latest-view aliases of the release anchors, or separate pages? | as recommended / other | **aliases (one template, one data path); citations always go to /r/<pub>/…** | |
-| D-K8-4 | Show the 255 synthetic "run record" artifacts before activation, or hide /evidence/ until real captures are bound? | as recommended / other | **show them with honest labels. They are what every claim points to today, and hiding them repeats the blank page** | |
 | D-K9-1 | Between releases, offer per-source "interim" extracts of newly ingested data (would need the publication, attribution and scrub gates in the status lane)? | as recommended / other | **No. "Latest" = latest release; use G3's early-cut trigger instead** | |
 | D-K9-2 | Per-source history before Round 11: (a) manifest-only entries (D-J3-10); (b) re-derive per-source slices from the 3 restricted snapshots with corrected attribution, labelled "re-derived"; (c) omit | as recommended / other | **(a) — the snapshots carry NEW-1 rows and wrong attribution** | |
 | D-K9-3 | Rename: nav label "Sources", canonical /sources/, /data-freshness/ 301s | as recommended / other | **Yes** | |
@@ -722,6 +825,17 @@ Answer by exception. Every line not named takes its packet line's answer.
 | D-K14-4 | Dark mode follows the OS setting only (no toggle, no stored preference) in Round 11 | as recommended / other | **yes** | |
 | D-K14-5 | Palette change: support moves to a slate ramp; contested and unresolved share raspberry (no red); amber means provisional; blue means links and data; categorical data uses one hue plus shapes. Approve the lexicon labels (§3.4, including "Stated absent") | as recommended / other | **yes** | |
 | D-K14-6 | Amend SIG-UI-044 to "full on record pages, a one-line summary one action away elsewhere"; the compact cite and dispute forms (SIG-UI-033/035 substance unchanged); the golden place(s) for onboarding (with C5 Q-C5-2 / D3 §4) | as recommended / other | **yes; golden place per D3** | |
+
+#### B-44 — Part VIII / publication K rows split out of B-22 (6 lines; EX, answer each)
+
+| line | decision | options | rec. — why | answer |
+|---|---|---|---|---|
+| D-K1-6 | Symbol semantics: filled = corroborated, hollow = single source, double ring = contested; single-source sites shown by default | as recommended / other | **Yes** · **default: no change from today (single-source sites shown with the hollow symbol)** | |
+| D-K1-7 | "My location" button (browser-only geolocation after a click; never sent to SIG) | as recommended / other | **Yes** · S4c rec: **no** until a written SIG-GOV-017 analysis exists; default: no button | |
+| D-K4-3 | Which sub-state dossiers get pages | as recommended / other | **all counties with ≥1 record (2,482); places with ≥10 records (2,817) + any place with non-site evidence; non-US admin-1 with ≥10 (218)** · **default: country and state/admin-1 pages only** | |
+| D-K7-6 | Title policy for agenda items that may name people | as recommended / other | **verbatim title only when the person-name screen passes; otherwise matter number + matched term** · **default: matter number + matched term only** | |
+| D-K8-1 | May claim views quote an excerpt from derived-only sources, and how long? | as recommended / other | **a locator always; an excerpt of ≤300 characters only where the source's recorded terms permit quotation (J4 per-source evidence); otherwise none. Needs E/J4 input; not legal advice** · **default: locator only, no excerpts** | |
+| D-K8-4 | Show the 255 synthetic "run record" artifacts before activation, or hide /evidence/ until real captures are bound? | as recommended / other | **show them with honest labels. They are what every claim points to today, and hiding them repeats the blank page** · **default: honest empty state until real captures are bound** | |
 
 #### Routed K-row items (answered by the packet line named) (11 lines)
 

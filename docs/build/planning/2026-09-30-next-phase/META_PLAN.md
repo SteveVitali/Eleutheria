@@ -1718,6 +1718,20 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   Stage-B owner records the 24 deferred + 153 later-phase items into the registers.
 - 2026-10-01T01:44:22Z — **S4 summary: 9 BLOCKER, 27 MAJOR, 23 MINOR across three reviews; all three "ratifiable with fixes".** S4c closure dispatched
   (single writer for plan/CSV/decision-catalog edits).
+- 2026-10-01T02:55:45Z — **S4c closure done** (`reviews/REVIEW_CLOSURE.md`; resumed once after a login expiry — no partial edits had been applied): all 59
+  findings dispositioned — **9/9 BLOCKER and 27/27 MAJOR closed; 22/23 MINOR closed, COV-13 partly deferred to T4** (catalog
+  registration of the S2/S4c-added rows, since T4 switches the checker to the plan CSV). Structural changes: silence never acts —
+  lines needing the operator's own words or touching publication/rights/Part VIII/identity/money/production are answered one by
+  one with "not done; stays owed" defaults; fast path limited to 81 batch ids; Part B relabelled; 31 descoping/load/stall defaults
+  listed; 49 production cells no longer pre-authorised by A-15's default; **A-0 removal-only-now line** (repo-tip PR, 09-27 bucket
+  tree, `/visual-language/`) + a git-history/archive-deposit line; republish #1 limited to text true of the 09-27 data; new lines
+  A-19…A-23 (calendar slip trade-off, live API, agent commit authorship, Eyes on Flock, seven requirement waivers), B-44, C-12,
+  C-13, S5-1…4 defaults; Stage B writes only 11A contracts + three chain rows PLAN-11B/C/D author later contracts; Wave B code →
+  11B, Wave C → 11C; P34.39 split a/b; every oversized row split; live-leg branch rule + scheduled backstop; P34.46 go/no-go
+  limits; DNS runbook + probe. **Totals: 299 chain rows (201–499), 275.5 runs incl. 20.0 contract-authoring + 26.5 live-leg runs;
+  seed 23.25 runs; infra ≈$123–133/mo; operator ≈25–40 h over ≈24 touchpoints; agent spend ≈380–450 contexts ≈95–270M tokens
+  (no dollar figure).** Packet: 346 decision ids in 99 lines (A 24, B 42, C 13, D2 16, S5 4). Checks: `check_dispositions.py`
+  OK (36 tests), ordering/DAG 0 errors, silence-default check OK.
 
 ---
 
