@@ -219,3 +219,81 @@ operator", and the ADRs must keep that label. Whether selection satisfies the ru
    `docs/build/logs/next-phase/` (gitignored) — S6 was told not to write outside the planning directory.
 4. Whether REVIEW-R11 should also gate GATE-ANNOUNCE (S6 made it advisory: cited if finished; the operator may wait).
 5. S6r: one fresh-context consistency review of the plan against the log, per META_PLAN §6.
+
+## S6b addendum — rounds 24–25 applied
+
+- **Row:** S6b (orchestrator follow-up to S6). **Written:** 2026-10-01T06:21:40Z (`date -u`, the same shell command that applied the
+  edits and ran the checks) by Claude Code (Opus 5.5) in `~/Eleutheria-next-phase`, branch
+  `claude/next-phase-planning`, HEAD `2f05e203`. Nothing committed (the orchestrator commits); nothing outside this planning
+  directory touched; no external request; no production command.
+- **Inputs:** `feedback/RATIFICATION_LOG.md` round 24 (06:05:22Z: S6-F1, S6-F2, S6-F3, the WV-08/WV-09 sentences and the
+  labelled interpretation), round 25 (06:14:06Z: A-15 dispatch mode, added by the orchestrator mid-row) and the Closing
+  section; §6 flags 1–2 and §7 item 4 of this note; `NEXT_PHASE_PLAN.md`; the three CSVs; spec SIG-INGEST-036 rules 1–8
+  and SIG-GOV-001…004 (read-only grep); `~/.claude/skills/orchestrate-build/SKILL.md` (dispatch tiers and
+  `dispatchTarget`, read-only).
+- **Outputs (only these):** `NEXT_PHASE_PLAN.md`, `data/round11_plan.csv`, `data/ticket_catalog.csv`,
+  `data/decision_catalog.csv`, this addendum. The transforms ran as two assert-guarded scripts from the session
+  scratchpad (exact-string replacements in the plan; csv round-trips that are byte-identical on untouched rows); the
+  diffs are the record.
+
+### What changed
+
+| answer (log) | ADRs / ids | plan | CSVs |
+|---|---|---|---|
+| **S6-F1 → WV-08** (round 24): GOV-003's SLA-time clause WAIVED, priority clause MET-DIFFERENTLY; the corrections/intake page publishes the handling order (privacy-harm and safety first, then factual corrections, then other) with no time commitment | **ADR-186** (new, SEED-11); ADR-180's line notes it | header; §0 (governance, open items); §3.4; §4.2 A-23, §4.4 B-8, §4.6, **new §4.8**; §5.1 R1.2 + requirements + acceptance; §5.10; §6.3 GOV-003 row; §6.5 (heading, intro, **new WV-08 row**, "not waived" bullet); §6.6; §7; §11.2 copy batch #1; §11.3; §13.2 item 5; §13.5 (MUSTs-unmet list no longer names GOV-003; dispute page publishes the priority); §14 **R-31 resolved, kept for history** (moved after R-30), R-22; App A T1/T4; App B row 29 | `round11_plan.csv`: **P34.17** gate (WV-08 text; copy batch #1) + notes, P37.59 (opening intake = WV-08's revisit trigger), P38.2, GATE-ANNOUNCE notes; `ticket_catalog.csv`: R11-ACT-06 (scope, gate, acceptance), R11-K13-CAP-02; `decision_catalog.csv`: **WV-08** |
+| **S6-F2 → WV-09** (round 24): SIG-INGEST-036 rule 6 WAIVED for DocumentCloud/MuckRock only; rules 3, 4 and 7 still bind | **ADR-187** (new, SEED-11); ADR-184's line notes it | §0; §4.4 B-39; §4.6; §4.8; §5.5 (design + requirements); §5.10; §6.3 INGEST-036 row; §6.5 (**new WV-09 row**; rule 6 binds every other source); §6.6; §7; §11.3; §13.2; §14 **R-18 narrowed** (rule-6 part resolved; the anti-automation-terms risk stays accepted; trigger now an opt-out); App A T1/T4 | **P36.77** gate (the S6 rule-6 question replaced by WV-09; activation after its HG-03 flip alone) + notes, P37.54 notes; R11-ACQ-32; **WV-09** |
+| **S6-F3** (round 24): REVIEW-R11 runs after the final release and P38.4, **before GATE-ANNOUNCE**; GATE-ANNOUNCE needs every S0/S1 finding fixed or dispositioned by the operator; S2/S3 feed the next round | ADR-149 and ADR-172 one-line decisions amended (both still SEED-11) | header; §0 (opening, table, calendar, operator time, open items); §3.4; §4.2 A-15; §4.8; §8 heading, §8.1, §8.2, **§8.3** (GATE-ANNOUNCE depends on REVIEW-R11), §8.7, **§8.8** (critical path …P38.5 → REVIEW-R11 → S0/S1 → GATE-ANNOUNCE; timeline; cliff note); §10.4; **§11.2** (GATE-ACCEPT-R11 and GATE-ANNOUNCE now separate rows; new S0/S1 disposition touchpoint; "after the round" row removed); **§13.4** (REVIEW-R11 row before GATE-ANNOUNCE), **§13.5** checklist; §14 R-4, R-24; §15 LATER-22; App A T3 | **GATE-ANNOUNCE** `depends_on` P38.5 → `P38.5;REVIEW-R11`, gate + notes; **REVIEW-R11** `sub_round`/`phase` post-round → "closing review (after P38.4; before GATE-ANNOUNCE)" / "closing review", window, gate, notes; P38.5; LATER-22; R11-REVIEW-01 (scope, `where_it_must_land`, gate, acceptance), R11-K13-CAP-02, LATER-22; **S6-F3** |
+| **A-15 dispatch** (round 25, 06:14:06Z, "Orchestrator + sub-agents") — added to this row by the orchestrator | ADR-149 | header; §0 (opening, executor bullet, first dispatch); §3.3 OM-01; §3.4; §4.2 A-15; §4.8; §5.2 (CURRENT STATE `dispatchTarget: subagent`); **§5.3** P34.1 design + **acceptance (fresh-context isolation check; fallback manual tier)**; §8.2; **§8.5** (`dispatchTarget: subagent`; dispatch bullet with the isolation check and fallback); §11.2 note; §14 R-24, R-30; App A **T5** (`dispatchTarget: subagent`, dispatch rule in OPERATING MODE, GATE DECISIONS rows) and **T6** (sub-agent primitive confirmed in the dry-run; HANDOFF documents both modes); App B row 30 | **P34.1** (row 201, the first Round-11 chain row) notes: isolation check — a nonce planted only in the orchestrator's context is invisible to the sub-agent and the sub-agent's run ledger records its own start; on failure pause → manual tier (`drive-build.sh --print-prompt`, one new session per ticket); R11-CI-01 acceptance; **A15-DISPATCH** |
+
+**Totals.** Waivers 7 → **9** (WV-01…WV-09). ADRs 40 → **42**: SEED-11 30 → **32** (146–150, 152–155, 158, 159,
+162–173, **179–187**) + 10 ticket ADRs; SEED-11 stays 4.0 runs (4 contexts of ≈ 8 ADRs); seed 24.25 runs. Chain
+unchanged: 309 rows, 285.5 runs, 28.5 leg runs, 5 gate markers (`round11_plan.csv` still 385 rows; 11 rows edited).
+`ticket_catalog.csv`: 7 units edited, none added. `decision_catalog.csv`: 346 → **350** ids (WV-08, WV-09, S6-F3 under
+`part = S6`, packet lines S6-F1/F2/F3; A15-DISPATCH under packet line A-15); no existing field changed. Operator time
+≈ 23–40 h / ≈ 21 touchpoints → **≈ 23.5–41 h / ≈ 22** (S0/S1 dispositions +0.5–1 h; inference). Calendar: GATE-ANNOUNCE
+≈ 12-05→12-16 at the earliest (was inside the tail's ≈ 12-03→12-12), later if an S0/S1 finding needs a fix row
+(inference). Money unchanged.
+
+**Adopted-sentence sha256** (§5's method): WV-08 `806faae385d94eb358900333b197ac6c04726a4cff879c4a9b9fd7a6e6a943fb`;
+WV-09 `94f061234c413bd4ec841b94255889a1944dc5edae1a1037deeab130d2621fb0`. The method reproduces §5's WV-05 value
+(`bf1f65d5…6142`).
+
+### Checks re-run at S6b (same shell command as the edits)
+
+| check | result |
+|---|---|
+| `python3 PD/tools/s4c/check_order.py` | **0 errors** (exit 0); `TOTAL \| 309 \| eng runs 285.5 (plan 20.0; conditional 1.0) \| leg runs 28.5 \| prod/publish 101 \| OM-20 rows 57 \| pauses 33`; gate rows [('GATE-G4', '259'), ('GATE-G5', '342'), ('GATE-G6', '419'), ('GATE-ACCEPT-R11', '503'), ('GATE-ANNOUNCE', '509')]; GATE-ANNOUNCE's new edge to REVIEW-R11 resolves, is acyclic and is not a chain-order edge (REVIEW-R11 is non-chain) |
+| `python3 PD/tools/s4c/check_silence.py` | answer classes: {'explicit': 225, 'own-words': 44, 'batch': 81}; packet lines: 102 {'A': 24, 'B': 42, 'C': 13, 'D2': 16, 'S5': 4, 'S6': 3}; check_silence: OK (0 errors) (exit 0) |
+| `python3 PD/tools/s4c/check_trace.py` | cited ids checked; missing: [] (exit 0) |
+| `python3 PD/tools/check_dispositions.py` | check_dispositions: OK (0 errors) (exit 0) |
+| `.venv/bin/python -m pytest PD/tools -q` | 52 passed in 0.90s (exit 0) |
+
+### Not reconciled, or left for the orchestrator
+
+1. **GOV-003 has a clause-level split** (priority clause MET-DIFFERENTLY, SLA-time clause WAIVED). B-5's grammar gives one
+   verdict per id; the plan asks T4 to record both clauses in `accepted_scope` (§6.6). If `check_coverage_matrix.py`
+   cannot express that, T4 should give the row WAIVED(ADR-186) (the conservative verdict) and record the priority
+   clause in `accepted_scope`.
+2. **Where REVIEW-R11 fix rows go.** GATE-ANNOUNCE is row 509, the last chain row, and `check_order.py` rejects a chain
+   row that precedes its dependency, so a fix row appended as 510+ cannot simply become a GATE-ANNOUNCE dependency. The
+   plan says a fix is "a plan-extension row under the chain's rules" landing before the operator answers GATE-ANNOUNCE;
+   whether the extension moves the gate marker to the end is left to `decompose-spec mode=extend` at that time.
+3. **"After the tail's final release"** (the brief) was read as after the final release (P37.65b) and the tail's DOC row
+   P38.4, the dependency S6 had already given REVIEW-R11. REVIEW-R11 is not ordered against P38.5; if P38.5 lands first,
+   the GATE-ANNOUNCE packet gains REVIEW-R11's S0/S1 register when the review finishes (P38.5 notes).
+4. **Existing decision-catalog fields kept** (S6's rule): Q-16's `operator_answer` still says the review "closes the
+   round" and Q-L3-4's says it is "outside the round"; the new S6-F3 row supersedes the ordering. The `tools/s6/` scripts
+   keep their S6 text as history.
+5. **`META_PLAN.md`** (its S6 summary, ≈ lines 1752–1775) still says "a post-round Claude Code deep review" and "WV-01…07
+   waived"; it is the orchestrator's file and outside this row's outputs.
+6. **`dispatchTarget`.** S6's §8.5 and T5 used the key for the token target; in `orchestrate-build` it names the dispatch
+   tier the tickets were sized for. Round 25's `dispatchTarget: subagent` is applied and the ≤ ~150k-loaded target
+   restated as that tier's hard one-window ceiling (a sub-agent cannot compact; plan App B row 30). No new key was
+   invented for the token target.
+7. **Labelled inference added:** §8.5 notes that the orchestrator session can be restarted from the LEDGER at a boundary
+   when its own context fills; this is not part of the operator's answer, and the context totals (§10.4) are unchanged
+   because it sits in the existing "orchestrator boundary work" allowance. The operator-time total excludes the
+   manual-tier fallback, which would add substantial time if the isolation check fails (§11.2 says so).
+8. **The isolation check's mechanics** (how the nonce is planted and probed in Devin Desktop) follow only the log's
+   example; T3 writes them into P34.1's contract. If T6 finds Devin Desktop has no sub-agent primitive, the orchestrator
+   pauses before row 201 and the operator chooses the manual tier (App A T6).

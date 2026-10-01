@@ -3,7 +3,10 @@
 > **CANONICAL for Round 11 — GATE-P passed 2026-10-01T05:03:05Z.** The operator answered all 99 packet lines in 23
 > interactive rounds (2026-10-01T03:41:19Z → 05:03:05Z); the verbatim answers and the labelled agent interpretations are in
 > `feedback/RATIFICATION_LOG.md`, committed as `de0b3591`. S6 folded every answer into this plan and its data
-> (2026-10-01T05:55:53Z, `date -u`); `design/S6-ratification-applied.md` lists each change. Where this plan and the log disagree,
+> (2026-10-01T05:55:53Z, `date -u`); `design/S6-ratification-applied.md` lists each change. **S6b** (2026-10-01T06:21:40Z) applied the
+> four lines answered after S6 (log rounds 24–25, 06:05:22Z and 06:14:06Z): **WV-08** (SIG-GOV-003's response-time SLAs),
+> **WV-09** (SIG-INGEST-036 rule 6 for DocumentCloud/MuckRock), **REVIEW-R11 gates GATE-ANNOUNCE on its S0/S1 findings**,
+> and **Devin Desktop dispatches each ticket to a fresh sub-agent** (§4.8). Where this plan and the log disagree,
 > the log wins and S6r records the fix. Recommendations were the agent's; every decision below is the operator's, and
 > 27 lines differ from the recommendation (§4.6). Text marked *agent-drafted* ships only after the operator confirms it
 > word for word (B-2). This is not legal advice (P4).
@@ -13,16 +16,17 @@
   (Opus 5.5) in the planning worktree `~/Eleutheria-next-phase`, branch `claude/next-phase-planning`, from HEAD `9262a959`;
   the orchestrator committed it as `c3e37654`. **Revised (S4c):** 2026-10-01T02:38:06Z → 02:55:12Z from HEAD `3208c8e0`
   (`reviews/REVIEW_CLOSURE.md`); committed as `e5936f96`, unchanged through GATE-P (`de0b3591`; sha256 of the plan shown at
-  S5: `3e7e8970…cfeb8`). **Applied (S6):** 2026-10-01T05:55:53Z from HEAD `43f82494`. Chain tip: `b051732c`
+  S5: `3e7e8970…cfeb8`). **Applied (S6):** 2026-10-01T05:55:53Z from HEAD `43f82494`. **Rounds 24–25 applied (S6b):**
+  2026-10-01T06:21:40Z from HEAD `2f05e203`. Chain tip: `b051732c`
   (`devin/p33-8-agent-docs-refresh`, PR #190).
 - **Read-only (P3, P10).** S6 wrote only this file, `data/round11_plan.csv`, `data/ticket_catalog.csv`,
   `data/decision_catalog.csv` (new columns `operator_answer`, `answered_at`) and `design/S6-ratification-applied.md`. No
   control file, spec, ADR, manifest, LEDGER, register or production system was touched; nothing was committed; no external
   request was made (P16). No secret appears here (P14); the operator's e-mail address is written only as "the operator's
-  address".
+  address". S6b likewise wrote only this file, the same three CSVs and an addendum to `design/S6-ratification-applied.md`.
 - **Evidence class.** `inference` from the cited planning artifacts and the ratification log, except counts, which are the
   mechanical outputs of checkers re-run at S6: the S4c ordering check (`docs/build/logs/next-phase/S4c/check_order.py`,
-  gitignored), `check_silence.py` and `check_trace.py`, and S1b's `tools/check_dispositions.py` (structural validity, not
+  gitignored; copied to `tools/s4c/` at S6, where S6b re-ran it), `check_silence.py` and `check_trace.py`, and S1b's `tools/check_dispositions.py` (structural validity, not
   truth — F-27). Paths are relative to `PD = docs/build/planning/2026-09-30-next-phase/` unless they start with `docs/`, a
   package name or `~`.
 - **Synthesis inputs (P1):** as listed for S3 and S4c (`META_PLAN.md` §1–§5, §7, §7.1, §8–§11; `feedback/OPERATOR_FEEDBACK.md`;
@@ -43,19 +47,21 @@
 **Round 11 makes SIG show, correct and open up the evidence it already holds, while growing US-wide vendor coverage
 from high-quality origins** (D3 §0, ratified at A-17 with one edit: vendor-hosted public pages are fetched). It runs as
 **one round, one manifest, one LEDGER and one `orchestrate-build` loop**, cut into four gated sub-rounds and a short tail
-(S2 §0, §3.3; U-012), executed by **Devin Desktop (`swe-2-high`, 256k context)** and closed by a **post-round deep
-review by Claude Code (Opus 5.5, xhigh)** (A-15).
+(S2 §0, §3.3; U-012), executed by **Devin Desktop (`swe-2-high`, 256k context) — one orchestrator session dispatching
+each ticket to a fresh sub-agent** (A-15; round 25) and closed by a **deep review by Claude Code (Opus 5.5, xhigh),
+REVIEW-R11, after the final release and before GATE-ANNOUNCE: the announcement waits until each of its S0/S1 findings is
+fixed or dispositioned by the operator** (A-15; S6-F3).
 
 | unit | phase | chain rows | eng. runs (of which PLAN) | leg runs* | purpose | ends with |
 |---|---|---|---:|---:|---|---|
-| Stage-B seed | — | 20 units (not chain rows; ≈ 30 contexts) | 24.25 | — | truthful memory, guard core, 30 operator-decision ADRs, spec families, manifest + **11A** contracts, registers | **GATE-B** |
+| Stage-B seed | — | 20 units (not chain rows; ≈ 30 contexts) | 24.25 | — | truthful memory, guard core, 32 operator-decision ADRs, spec families, manifest + **11A** contracts, registers | **GATE-B** |
 | **11A** Safe, honest, truthful | P34 | 59 (201–259) | 56.0 (7.0) | 8.5 | the deferred Track-0 items first (handles, bucket tree, `/visual-language/`, drill, TLS alert, budget alert); S0 removals and fixes live; CI pinned and read; memory guards; Round-10 schema live; quality baseline; honest-posture ER re-run; **PLAN-11B** | P34.47 + **GATE-G4** |
 | **11B** Correct and traceable | P35 | 83 (260–342) | 81.0 (7.0) | 11.0 | Wave A; **Wave B code (incl. the direct Flock transparency-portal connector) + activation queued**; identity/time/geography fixes; transparency exports; release pipeline; **first model release** | P35.63 (HG-11) + P35.64 + **GATE-G5** |
 | **11C** Explorable core | P36 | 77 (343–419) | 72.5 (6.0) | 4.0 | **Wave C queued (US-first, non-US kept)**; Flock share-list claims; Axon Connect, DocumentCloud and Sourcewell/OMNIA connectors; design system; first working page per U-003 ask; core-surfaces release carrying Wave B's data | P36.72b (HG-11) + P36.73 + **GATE-G6** |
 | **11D** Explored and proven | P37 | 80 (420–499) | 69.0 | 5.0 | graphs and explorer; `/quality/`; **Wave D (in scope) incl. international portals and AU keyed APIs**; single-operator deletion path; "My location"; final release; 13 journeys | P37.65b (HG-11) + P37.68a–d CAP-01 |
-| **Tail** | P38 | 10 (500–509) | 7.0 | — | CAP-lite → **GATE-ACCEPT-R11** → REC → DOC → announce review → **GATE-ANNOUNCE** | — |
+| **Tail** | P38 | 10 (500–509) | 7.0 | — | CAP-lite → **GATE-ACCEPT-R11** → REC → DOC → announce review → (REVIEW-R11's S0/S1 fixed or dispositioned) → **GATE-ANNOUNCE** | — |
 | **total** | P34–P38 | **309** (ticket 286 · plan 3 · capstone 11 · gate 5 · reconcile 3 · docs 1) | **285.5** (PLAN 20.0; 1.0 conditional) | **28.5** | | 5 gate markers; 19 never-pre-authorised in-ticket pauses (+2 conditional) |
-| Post-round | — | 1 unit, not a chain row | ≈ 8 (8–12 Claude Code contexts) | — | deep review of the whole round, read-only | findings register + next-round planning input |
+| Closing review (REVIEW-R11) | after P38.4 | 1 unit, not a chain row | ≈ 8 (8–12 Claude Code contexts) | — | deep review of the whole round, read-only | findings register; **S0/S1 fixed or dispositioned by the operator before GATE-ANNOUNCE** (S6-F3); S2/S3 → next-round planning input |
 
 \* Separately dispatched live-leg re-runs (OM-19; `leg_runs` in the CSV). OM-20 is ratified and the 11A list approved
 (S5-3), so the 13 listed 11A rows need no per-row go.
@@ -63,42 +69,53 @@ review by Claude Code (Opus 5.5, xhigh)** (A-15).
 - **Executor and sizing (A-15).** Devin Desktop runs every Round-11 ticket; it pauses only at HG gates (HG-03 lines,
   HG-11/Class S readouts), one ING-GO per acquisition wave, spend above the ceiling, red CI (`blockedOn`) and production
   mutations not on an approved OM-20 list; one digest per wave with a spend line. There is no in-round second harness: the
-  mechanical guards (B4 guard core, B6 controls, CI) are the in-round independent check. Every ticket's Load list +
+  mechanical guards (B4 guard core, B6 controls, CI) are the in-round independent check. **Dispatch (round 25,
+  "Orchestrator + sub-agents"):** one Devin Desktop orchestrator session (`swe-2-high`) runs `orchestrate-build` and
+  dispatches each ticket to a fresh sub-agent (`dispatchTarget: subagent`); CI is read at every boundary (SK-01) and
+  harness + model are recorded per ticket (SK-04/SK-10). The first ticket proves the sub-agent's context is fresh; if it
+  is not, the orchestrator pauses and the operator falls back to the manual tier (`drive-build.sh --print-prompt`, one
+  new session per ticket). A sub-agent cannot compact, so its window is a hard ceiling. Every ticket's Load list +
   working set must fit the 256k window with headroom (**target ≤ ~150k tokens loaded**); ten rows look oversized and are
   split at T3 or at their PLAN row's sizing review (§8.5). Harness and model are recorded per ticket in CURRENT STATE and
   in commit trailers, enforced in CI because commits keep the operator's name as author (OM-01, A-21).
 - **First dispatch:** row 201 = **P34.1 TC-PIN** (must land before **2026-10-19**, the GitHub `ubuntu-latest` → Ubuntu
-  26 runner change; `design/H2-branch-ci.md:113`). Fallback: the seed PR pins `runs-on: ubuntu-24.04` (FEA-16).
+  26 runner change; `design/H2-branch-ci.md:113`). Fallback: the seed PR pins `runs-on: ubuntu-24.04` (FEA-16). As the
+  first sub-agent dispatch it also carries the **fresh-context isolation check** (round 25; §8.5).
 - **No Track-0 production change now** (A-0.1–A-0.3, A-1, A-2a). The personal handles at the repo tip, the listable
   `sig-public` 09-27 tree, `/visual-language/` and the undrilled restore stay **unresolved, operator-deferred exposures**
   (not accepted risks) until their early-11A owners land: P34.18, P34.21b (first leg), P34.17, P34.6, P34.4, P34.5.
 - **S0/S1 (113 findings):** each has exactly one disposition. 109 land on seed/11A/11B units; the 3 that rested on S5
-  decisions are now decided (F-31 → A-4 + the seven A-23 waivers; F-191 → C-3 recorded; F-386 → A-3 yes); 1 was already
+  decisions are now decided (F-31 → A-4 + the seven A-23 waivers, plus WV-08/WV-09 in round 24; F-191 → C-3 recorded;
+  F-386 → A-3 yes); 1 was already
   done (F-366). §9.4 lists the interim and partial fixes.
 - **Rights and collection posture (the operator's choices).** GL-GATE-07 and GL-GATE-08 are re-confirmed; the ≈8,088
   express-terms rows stay public under a recorded acceptance; vendor-hosted public pages (Flock portals, Axon Fusus
   Connect pages), DocumentCloud/MuckRock and Sourcewell/OMNIA are fetched despite their terms inside one envelope (public,
   unauthenticated pages only; no logins, keys or circumvention; rate-limited; terms captured verbatim; exposure disclosed;
   Part VIII screen on every byte); non-US acquisition is kept (N1–N21 flip). §14 records the risks these choices accept.
-- **Governance.** Disclosed single maintainer, no counsel (A-4); all seven waiver candidates WV-01…WV-07 waived in the
-  operator's adopted words, each an ADR with compensating controls and a revisit trigger (§6.5); no human check this
-  round — readouts and `/quality/` say "no human check performed" (B-31).
+- **Governance.** Disclosed single maintainer, no counsel (A-4); all seven waiver candidates WV-01…WV-07 waived at A-23,
+  and two more adopted in round 24 to settle the MUST conflicts S6 found — **WV-08** (SIG-GOV-003's response-time SLAs;
+  the handling priority is published instead) and **WV-09** (SIG-INGEST-036 rule 6, for DocumentCloud/MuckRock only):
+  **nine waivers**, each in the operator's adopted words, each an ADR with compensating controls and a revisit trigger
+  (§6.5); no human check this round — readouts and `/quality/` say "no human check performed" (B-31).
 - **Money:** infrastructure ≈ $95–105/mo after 11A, ≈ $90–100 after 11B (scheduler consolidation −$7), ≈ $102–112 after
   11C and ≈ $112–122 after 11D (inference; §10.4), against the **$300/mo** ceiling, which covers infrastructure only
   (A-2). **Agent usage** is reported per wave, with a pause at any usage-limit event and no fixed cap: ≈ 400–480 Devin
-  Desktop contexts (≈ 100–290 M tokens; inference) plus ≈ 8–12 Claude Code contexts for the post-round review.
-- **Operator time:** ≈ **23–40 h over ≈ 21 touchpoints (plus the wave digests) in ≈ 10–11 weeks** after GATE-P (S5 itself took ≈ 1.5 h); eight
+  Desktop contexts (≈ 100–290 M tokens; inference) plus ≈ 8–12 Claude Code contexts for the closing review (REVIEW-R11).
+- **Operator time:** ≈ **23.5–41 h over ≈ 22 touchpoints (plus the wave digests) in ≈ 10–11 weeks** after GATE-P (S5 itself took ≈ 1.5 h); eight
   synchronous slots; by date in §11.2. Removed by the operator's answers: OPCHECKs, the top-50 organisation review, the
   query set, the dossier "clears", any response-time duty. Added: HG-03 flip lists per wave, the gate-signing key,
-  standing-go renewals.
+  standing-go renewals, and dispositioning REVIEW-R11's S0/S1 findings before GATE-ANNOUNCE (S6-F3).
 - **Calendar (inference; windows make slips cliff-shaped — §8.8):** S5 done 10-01; seed → GATE-B ≈ 10-03→10-07 (R0);
-  11A ends ≈ 10-15→10-17; 11B ≈ 10-27→11-02; GATE-G6 ≈ 11-13→11-18; final release ≈ 11-27→12-05; tail ≈ 12-03→12-12;
-  then the post-round review. A-19 = a: if R0 slips past ≈ 10-07, waves slip to their next windows.
+  11A ends ≈ 10-15→10-17; 11B ≈ 10-27→11-02; GATE-G6 ≈ 11-13→11-18; final release ≈ 11-27→12-05; tail rows through
+  P38.5 ≈ 12-03→12-12; REVIEW-R11 runs after P38.4 (≈ 2–4 days) and GATE-ANNOUNCE follows once its S0/S1 findings are
+  fixed or dispositioned (≈ 12-05→12-16 at the earliest; S6-F3). A-19 = a: if R0 slips past ≈ 10-07, waves slip to
+  their next windows.
 - **What remains for the operator to decide in the round** is only what the rows raise themselves: ING-GOs, each wave's
-  HG-03 flip list, the 11B–11D OM-20 lists, Class R standing-go renewals, HG-11 readouts, in-ticket gos, copy batches and
-  the two closing gates — plus the two unwaived MUSTs S6 found in conflict with answers (SIG-GOV-003's published SLAs vs
-  B-8; SIG-INGEST-036 rule 6 vs fetching DocumentCloud/MuckRock; §14 R-31, R-18). Every other open line was answered at
-  GATE-P (§4).
+  HG-03 flip list, the 11B–11D OM-20 lists, Class R standing-go renewals, HG-11 readouts, in-ticket gos, copy batches,
+  the two closing gates and, before GATE-ANNOUNCE, a disposition for each REVIEW-R11 S0/S1 finding that is not fixed
+  (S6-F3). The two unwaived MUSTs S6 found in conflict with answers were settled in round 24 (WV-08, WV-09) and the
+  dispatch mode in round 25 (§4.8). Every other open line was answered at GATE-P (§4).
 
 ---
 
@@ -137,20 +154,24 @@ confirmed verbatim in copy batch #1 (B-2).
 
 `META_PLAN.md` (GATE-M signed 2026-09-30T16:16Z) → Stage-P rows (A–L, all done) → S1a/S1b/S1c/S2 → S3 draft → S4 (three
 fresh-context adversarial reviews: coverage, feasibility, truth and safety; closed in `reviews/REVIEW_CLOSURE.md`) →
-**S5 / GATE-P, passed 2026-10-01T05:03:05Z** (`feedback/RATIFICATION_LOG.md`, commit `de0b3591`) → **S6** (this
-revision; canonical) → **S6r** (one fresh-context consistency review of this plan against the log; findings closed before
+**S5 / GATE-P, passed 2026-10-01T05:03:05Z** (`feedback/RATIFICATION_LOG.md`, commit `de0b3591`) → **S6** (canonical)
+→ rounds 24–25, four lines answered after S6 (2026-10-01T06:05:22Z, 06:14:06Z), applied by **S6b** (this revision) →
+**S6r** (one fresh-context consistency review of this plan against the log; findings closed before
 Stage B) → Stage B rows T0–T6 (Appendix A) → **GATE-B** (validators + 5/5 CI on the seed PR, orient dry-run in Devin
 Desktop resolves row 201, operator approval) → the Devin Desktop `orchestrate-build` session resumes.
 
 **How GATE-P was recorded (TS-01).** The operator asked (2026-10-01T03:34:09Z) to be asked interactively, with the issue,
 the recommendation and the other options for each decision. The answers came in 23 rounds; each round's answers are
 logged verbatim with the round's `date -u`, and every agent interpretation is labelled as such. Own-words lines (A-5's
-option text, A-6's waiver sentence, A-7's GL-GATE-07 text, the seven A-23 waivers, B-9's standing go, C-3, C-12) were
-answered by selecting an agent-drafted text; the log labels each one *"agent-drafted, adopted by the operator"* with its
+option text, A-6's waiver sentence, A-7's GL-GATE-07 text, the seven A-23 waivers, B-9's standing go, C-3, C-12, and
+round 24's WV-08/WV-09) were answered by selecting an agent-drafted text; the log labels each one *"agent-drafted, adopted by the operator"* with its
 time, and never as the operator's own composition. Two parts of the S4c recording rule were not met during the sitting
 and are closed by S6 from the record: (2) the sha256 of the plan and packet revisions shown — both were unchanged from
 `e5936f96` to `de0b3591` (plan `3e7e8970…cfeb8`, packet `ebeaca7c…69f1`, computed from git at S6); and the sha256 of each
-adopted sentence, computed at S6 from the log's text (`design/S6-ratification-applied.md` §5). The operator's standing
+adopted sentence, computed at S6 from the log's text (`design/S6-ratification-applied.md` §5). Round 24 records how
+selection counts: the operator set the format at S5 (*"I will select for each my choice or write in a custom response"*),
+so a selected drafted sentence is the operator's adopted wording, labelled as such (S6 flag 7); S6b computed the
+WV-08/WV-09 sha256 the same way (§4.8). The operator's standing
 instruction of 2026-09-30 (*"Then after that you can synthesize and proceed as you see fit"*) is recorded as the GATE-P
 go: the agent synthesizes and proceeds to Stage B without a further plan sign-off; Stage B's own human items (HG lines,
 operator-only actions, GATE-B) still pause.
@@ -267,7 +288,7 @@ written from B5 §6.1 (OM-01…OM-18) and S2 §3.5 (OM-19, OM-20):
 
 ### 3.3 The operating clauses (summaries; full paste block B5 §6.1 and S2 §3.5)
 
-OM-01 one harness + model per round — **Devin Desktop, `swe-2-high`** (A-15) — recorded in a `harness:` key, CURRENT STATE and every run ledger; switches only at a boundary; **every agent commit carries a trailer naming the harness and model, and a G-check fails a Round-11 PR with an untrailered agent commit** (B5 OM-01 verbatim; TS-11; required because commits keep the operator's name as author, A-21) ·
+OM-01 one harness + model per round — **Devin Desktop, `swe-2-high`** (A-15) — recorded in a `harness:` key, CURRENT STATE and every run ledger; switches only at a boundary; **dispatch = one orchestrator session handing each ticket to a fresh sub-agent** (`dispatchTarget: subagent`; round 25), its isolation proven on row 201, with the manual tier (`drive-build.sh --print-prompt`, one new session per ticket) as the fallback; **every agent commit carries a trailer naming the harness and model, and a G-check fails a Round-11 PR with an untrailered agent commit** (B5 OM-01 verbatim; TS-11; required because commits keep the operator's name as author, A-21) ·
 OM-02 the worker closes its own ticket in one commit after the PR exists; two orchestrator repairs in a round → `blockedOn` ·
 OM-03 rows enter only from a reviewed plan (`decompose-spec mode=extend`) · OM-04 every date from `date -u` or git/GitHub
 time; never a "chain date" · OM-05 read the PR's head-bound checks after push; red/missing → `blockedOn` · OM-06 every
@@ -319,9 +340,10 @@ project: no outreach, recruiting, records-request sending or contribution-back p
 counsel; no text may imply counsel exists (U-013; the counsel clauses are waived, WV-07) · agents never merge,
 retarget, tag or push `main` (§7.1) · alerts route to the operator's address · the public dispute and intake contact
 is the operator's address until the `contact@` alias exists (Q-29, WV-05; revisited at GATE-ANNOUNCE, TS-21) · no
-response time is promised (B-8) · publication is never pre-authorised; a live-API answer may change before HG-11 only
-with its basis label and the `/status/` notice (A-20) · Devin Desktop executes the round; Claude Code reviews it
-afterwards (A-15).
+response time is promised (B-8); the handling priority is published instead (WV-08) · publication is never pre-authorised; a live-API answer may change before HG-11 only
+with its basis label and the `/status/` notice (A-20) · Devin Desktop executes the round, one fresh sub-agent per ticket
+(round 25); Claude Code reviews it after the final release, and GATE-ANNOUNCE waits for its S0/S1 findings to be fixed
+or dispositioned (A-15; S6-F3).
 
 ---
 
@@ -330,7 +352,8 @@ afterwards (A-15).
 Every line below was answered by the operator on 2026-10-01 (times are the log's round stamps, `date -u`). "Answer"
 quotes the selected option or summarises a custom answer; the full text, the options offered and the labelled
 interpretations are in `feedback/RATIFICATION_LOG.md`, and each of the 346 member decisions now carries its
-`operator_answer` and `answered_at` in `data/decision_catalog.csv`. **Bold** answers differ from the recommendation.
+`operator_answer` and `answered_at` in `data/decision_catalog.csv` (350 rows since S6b added the four lines answered
+in rounds 24–25, §4.8). **Bold** answers differ from the recommendation.
 
 ### 4.1 Ratified before S5 (recorded verbatim in META_PLAN §7.1; unchanged)
 
@@ -374,7 +397,7 @@ The labelled agent interpretations under U-002…U-015 were confirmed at GATE-P 
 | A-12 | "HTML-first page types" | ADR-155 (supersedes the named-island rule of ADR-091/097, extends ADR-134; ADR-068's `/curate/` unchanged — K0 §6) |
 | A-13 | "Full seed" | the seed as planned; no P34.0a fallback |
 | A-14 | "All, staged" (04:16:29Z) | Tier A (SK-13/14/17/18/19/20/22) at T0, Tier B-must (SK-01/02/03/06/09/10) before the first dispatch, the rest early in the round |
-| A-15 | **custom: Devin Desktop, `swe-2-high` (256k), "Devin for everything"; Claude Code deep review "after the entire thing"**; pauses "Gate pauses + wave digest" (04:16:29Z, 04:21:56Z) | §0 executor bullet; §8.5 sizing (≤ ~150k tokens loaded); OM-01 trailers; REVIEW-R11 closing unit; no in-round second harness |
+| A-15 | **custom: Devin Desktop, `swe-2-high` (256k), "Devin for everything"; Claude Code deep review "after the entire thing"**; pauses "Gate pauses + wave digest" (04:16:29Z, 04:21:56Z) | §0 executor bullet; §8.5 sizing (≤ ~150k tokens loaded); OM-01 trailers; REVIEW-R11 closing unit; no in-round second harness; dispatch = orchestrator + a fresh sub-agent per ticket (round 25, §4.8); REVIEW-R11 gates GATE-ANNOUNCE on S0/S1 (S6-F3) |
 | A-16 | "Key + forward rule" | OP-25 operator-only key; P34.28 verifies gate signatures in CI; LATER-15 closes |
 | A-17 | **"Ratify; fetch vendor pages"** (D3-Q3 b; D3-Q1 yes, D3-Q5 a, Q-E2-22 a) | ADR-172 + ADR-184 envelope; P36.74 Flock portals; P36.76 Axon Connect (with B-35); CHART-025 amended |
 | A-18 | "Yes, flip both" (04:21:56Z) | P35.17 captures the terms; the operator flips `census_gazetteer_tiger` + `natural_earth_10m` (OP-26); P35.17 stays on the critical path |
@@ -382,7 +405,7 @@ The labelled agent interpretations under U-002…U-015 were confirmed at GATE-P 
 | A-20 | **"Yes, with labels"** | structural spine writes may change live-API answers before HG-11, disclosed by a basis label on every response (P34.25) and a `/status/` notice; P34.45 returns to 11A; P35.57 is an improvement, not a gate |
 | A-21 | **"Keep my name"** | the operator stays the commit author; harness/model trailers are enforced in CI (OM-01) |
 | A-22 | "Keep + use share lists" (recommendation updated mid-session) | P36.75 turns the 474,184 share-list edges into organisation-level claims after the Part VIII screen |
-| A-23 | WV-01, WV-02, WV-03, WV-04, WV-05 and **WV-06** all waived (04:28:49Z) | seven waiver ADRs (§6.5, §7); GATE-ANNOUNCE's "unmet at launch" list shrinks; WV-06 → P37.71 deletion path |
+| A-23 | WV-01, WV-02, WV-03, WV-04, WV-05 and **WV-06** all waived (04:28:49Z) | seven waiver ADRs (§6.5, §7); GATE-ANNOUNCE's "unmet at launch" list shrinks; WV-06 → P37.71 deletion path; two more waivers followed in round 24 (WV-08, WV-09; §4.8) |
 
 ### 4.3 S5 lines (S5-1…S5-4)
 
@@ -404,7 +427,7 @@ The labelled agent interpretations under U-002…U-015 were confirmed at GATE-P 
 | B-5, B-17, B-22, B-23, B-26 | "Accept all five" (04:33:54Z) | verdict vocabulary; `nextTicket` = N1, HG-05 operator-owned; the 52 K-row recommendations; Natural Earth names; dedup is an announce criterion ("records" until then) |
 | B-6 | **"Move UA, don't buy domain"** | UA/contact → surveillancegraph.org (P35.38); `sig-project.org` not bought — every remaining reference removed, residual squatting risk recorded (R-29); SWH deposit after the history scan; outreach owed later |
 | B-7 | "As stated" | archive + pinned citations + release search first; no API hotfix unless step 1 slips past ~10-21 |
-| B-8 | **"Email, no time promises"** (04:35:53Z) | e-mail-only intake until after the announcement; `/intake/` "not operating"; **no response time is published**; task pages name the same address |
+| B-8 | **"Email, no time promises"** (04:35:53Z) | e-mail-only intake until after the announcement; `/intake/` "not operating"; **no response time is published**; task pages name the same address; round 24 (S6-F1): the corrections page publishes the handling priority without times (WV-08, P34.17) |
 | B-9 | "Adopt + standing go" (standing-go text adopted by selection) | G3 model; Class R standing go, renewed at each sub-round GATE (never by `continue`) |
 | B-10 | "Yes" | releases from unmerged stack commits; the operator tags v0.1.0 after the #190 sitting; legacy buckets retired per G3 |
 | B-11 | "As stated" | 40 GB cap, pre-grow 25 GB, temporary tier bump; OSM monthly; one ING-GO per wave; targets under flipped sources = configuration; **Wave D in scope** |
@@ -426,7 +449,7 @@ The labelled agent interpretations under U-002…U-015 were confirmed at GATE-P 
 | B-35 | **"IT7 full fetch"** | IT1 b, IT2/3/5/6 b, IT4 c; **IT7: Axon Fusus Connect pages fetched in full, every byte screened, private registrants never stored or published** (P36.76) |
 | B-36 + B-37 | "Capture IU; TR facts+cite" (rec. updated after B-32) | IU1–IU5 terms captured (P36.2), then a line; TR1–TR2 facts + citations under the S8 screen |
 | B-38 | "As stated" (04:49:27Z) | EDGAR facts-only basis; ingestion later (LATER-09); first request only after the alias |
-| B-39 | **"Also fetch DocCloud/Sourcewell"** | DocumentCloud/MuckRock (P36.77) and Sourcewell/OMNIA (P36.78) fetched under ADR-184's envelope; C4 per A-17; C5 b; C7 a; C8 b (CourtListener bulk deferred); C9 a; C11 a |
+| B-39 | **"Also fetch DocCloud/Sourcewell"** | DocumentCloud/MuckRock (P36.77) and Sourcewell/OMNIA (P36.78) fetched under ADR-184's envelope; C4 per A-17; C5 b; C7 a; C8 b (CourtListener bulk deferred); C9 a; C11 a; round 24 (S6-F2): SIG-INGEST-036 rule 6 waived for DocumentCloud/MuckRock only (WV-09) |
 | B-40 + B-43 | "Confirm all" | X1, X2 confirmed, X4 approved; E4 S1–S5 and F1 D-P21.3-2 status corrections (SEED-14) |
 | B-41 | **"As listed, R3 flip"**; R2a re-asked → **"Fetch, screened"** (04:51:39Z) | R1 close; **R2a flip `documentcloud`**; R2b decline; **R3 flip `dot_511_tx`**; R4a OGL-Edmonton after capture; R4b flip; R4c QLDTraffic API (P37.70); R4d decline; R5 flip; R6a capture terms; R6b close (P36.2) |
 | B-42 | **"Agent clears, disclosed"** (04:51:39Z) | the agent clears each Round-10 dossier family after the Part VIII screen; readouts say "cleared by agent screen, no human review"; SRC-027 metadata-only; one bounded retry |
@@ -463,14 +486,16 @@ follows. None of S4c's 31 "defaults" applies any more: every line was answered, 
   SIG" text until the operator writes it (C-5); the six C-12 withdrawals.
 - **Added load (agent work):** the vendor and terms-conflicted connectors P36.74, P36.76, P36.77, P36.78, the share-list
   claims P36.75, non-US acquisition P37.69a/b and P37.70, the deletion path P37.71, "My location" P37.72, the agent-written
-  held-out set P36.79, the G4c CI verification in P34.28, and the post-round review — **+10.5 chain runs (net +10.0
+  held-out set P36.79, the G4c CI verification in P34.28, and the closing review (REVIEW-R11) — **+10.5 chain runs (net +10.0
   after P35.49 is dropped) + ≈ 8 review contexts**.
 - **Added load (operator):** HG-03 flip lists per wave (OP-26), the gate-signing key (OP-25), AU key registrations (OP-13),
   Class R standing-go renewals at each sub-round GATE.
 - **Risks accepted by these choices** — express terms kept, vendor and platform terms fetched against, robots disregarded,
-  the EU/UK database right on N1–N21, a single maintainer with all seven waivers, no human checks, the executor B7 tied to
+  the EU/UK database right on N1–N21, a single maintainer with all nine waivers, no human checks, the executor B7 tied to
   Round-10's record failures, live API answers changing before readouts, "My location" against GOV-017, tribal data
-  without a governance rule, the unbought domain, the deferred Track-0 exposures, and two unwaived MUSTs that collide with answers (SIG-GOV-003 with B-8; SIG-INGEST-036 rule 6 with B-39) — are R-18…R-31 in §14, each with mitigation and trigger.
+  without a governance rule, the unbought domain, the deferred Track-0 exposures, and the two MUST conflicts S6 found
+  (SIG-GOV-003 with B-8; SIG-INGEST-036 rule 6 with B-39), settled in round 24 by WV-08 and WV-09 — are R-18…R-31 in §14,
+  each with mitigation and trigger (R-31 is kept as resolved; R-18 keeps only the terms risk).
 - **Recording gaps found at S6** (§1.3): the GATE-P record lacked the plan/packet sha256 and the sha256 of the adopted
   sentences; S6 computed both from the record and labels them as computed afterwards.
 
@@ -481,6 +506,25 @@ The operator asked (2026-09-30T16:27Z) for answers to be collected interactively
 (03:41:19Z → 05:03:05Z), plus the operator-approved local C-10 inspection (04:59:41Z). Five recommendations were updated
 mid-session after earlier answers changed their premise (B-18, B-33, B-34, B-36/37, A-22) and the operator accepted the
 updated ones; one conflict (B-41's R2a vs B-39) was re-asked and resolved in round 18.
+
+### 4.8 Rounds 24–25 — answered after S6 (applied at S6b)
+
+S6 found two answers in conflict with spec MUSTs that no waiver covered and one open gating question (round 24,
+2026-10-01T06:05:22Z); the dispatch mode followed in round 25 (06:14:06Z). The operator chose the recommended option on
+all four lines, so §4.6 still counts 27 deviations. The log's labelled interpretations are applied as written.
+
+| line | operator's answer (verbatim) | consequence |
+|---|---|---|
+| S6-F1 | "Priority order, no times (Recommended)" — WV-08 adopted: *"I waive GOV-003's response-time SLAs; SIG publishes its handling priority without time commitments."* | SIG-GOV-003's SLA-time clause WAIVED(ADR-186); its priority clause MET-DIFFERENTLY: the corrections/intake page (P34.17, copy batch #1) publishes the handling order — privacy-harm and safety reports first, then factual corrections, then everything else — with no time commitment; GOV-003 leaves the GATE-ANNOUNCE "unmet" list; §14 R-31 resolved |
+| S6-F2 | "Waive rule 6 for these (Recommended)" — WV-09 adopted: *"I waive crawler rule 6 (ask first) for DocumentCloud/MuckRock; SIG fetches public pages only, gently, and honours any opt-out immediately."* | SIG-INGEST-036 rule 6 WAIVED(ADR-187) for DocumentCloud/MuckRock only; rules 3 (conservative rate limit), 4 (no circumvention) and 7 (honour opt-out at once) still bind, and rule 6 binds every other source; P36.77 may activate after its HG-03 flip (ING-GO-D, OP-26); §14 R-18 keeps only the anti-automation-terms risk |
+| S6-F3 | "S0/S1 must be dispositioned (Recommended)" | REVIEW-R11 runs after the final release and P38.4 and **before GATE-ANNOUNCE**; GATE-ANNOUNCE is not answered until each REVIEW-R11 S0/S1 finding is fixed (a plan-extension row under the chain's rules) or dispositioned by the operator; S2/S3 findings feed the next round's planning; REVIEW-R11 stays a non-chain unit and GATE-ANNOUNCE carries a `depends_on` edge to it (§8.3, §13.4–§13.5) |
+| A-15 (dispatch) | "Orchestrator + sub-agents (Recommended)" | `dispatchTarget: subagent`: one Devin Desktop orchestrator session (`swe-2-high`) runs `orchestrate-build` and dispatches each ticket to a fresh sub-agent; CI read at every boundary (SK-01); harness + model recorded per ticket (SK-04/SK-10); the first Round-11 ticket (row 201, P34.1) carries a fresh-context isolation check; on failure the orchestrator pauses and the operator falls back to the manual tier (`drive-build.sh --print-prompt`, one new session per ticket); `PD/HANDOFF.md` documents both (§8.5, Appendix A T5–T6) |
+
+Adopted-sentence sha256 (computed at S6b by S6's method — the text between the log's italic quote marks, UTF-8,
+SHA-256): WV-08 `806faae385d94eb358900333b197ac6c04726a4cff879c4a9b9fd7a6e6a943fb`;
+WV-09 `94f061234c413bd4ec841b94255889a1944dc5edae1a1037deeab130d2621fb0`. Both carry the label "agent-drafted, adopted by the
+operator at 2026-10-01T06:05:22Z". `data/decision_catalog.csv` records the four lines as `WV-08`, `WV-09`, `S6-F3` and
+`A15-DISPATCH`.
 
 ---
 
@@ -527,7 +571,7 @@ pre-split figures, kept for traceability (§5.5 and §5.10 give S6's); the CSV i
   | # | removal or change | finding(s) | new text (all confirmed verbatim or from N-1…N-7) |
   |---|---|---|---|
   | R1.1 | fixture two-reviewer "Releasable" review on `/editorial-standards/` removed | F-183 (S0), F-107, F-198, F-201 | N-1 |
-  | R1.2 | every "one-click dispute" / "anonymous" promise removed; dispute page names the operator's address, promises no response time (B-8) and says senders disclose their address (WV-05) | F-03 (S0), F-098 | operator-confirmed dispute notice (copy batch #1) |
+  | R1.2 | every "one-click dispute" / "anonymous" promise removed; dispute page names the operator's address, promises no response time (B-8), says senders disclose their address (WV-05) and publishes the handling order — privacy-harm and safety reports first, then factual corrections, then everything else — with no time commitment (WV-08) | F-03 (S0), F-098 | operator-confirmed dispute notice (copy batch #1) |
   | R1.3 | `/visual-language/` fixture facts removed (A-0.3 = wait for this republish) | F-096 (S0) | none |
   | R1.4 | "human-verified" holdout claims and P/R/F1 1.000 removed | F-06, F-108, F-133, F-192 | the past-tense text below; **no `/quality/` link** (it exists only at P37.45) |
   | R1.5 | "editorial board" and "counsel" wording on site pages removed | F-185, F-189 (site part) | N-1 where a process is described |
@@ -563,10 +607,11 @@ pre-split figures, kept for traceability (§5.5 and §5.10 give S6's); the CSV i
   | unpinned permalinks (F-07/F-099/F-390/F-399) | real pinning P36.66b (11C), under D-J3-6 | wording fixed in republish #1 (R1.6) |
 - **Requirements.** SIG-OPS-001…004 (restore drill, survivability, route allow-list, single publish path), SIG-OPS-006
   (alert delivery), SIG-OPS-009 (cost truth), DRAFT-OPS-2 (fixture sentinels), the G2 §6 claim rules; SIG-PUB-002/004/005/013
-  (at-rest audit, residential demotion); SIG-PUB-008's second-reviewer role and SIG-UI-042's release block are WAIVED by ADR (WV-03, WV-04).
+  (at-rest audit, residential demotion); SIG-PUB-008's second-reviewer role and SIG-UI-042's release block are WAIVED by ADR (WV-03, WV-04);
+  SIG-GOV-003's SLA-time clause is WAIVED (WV-08) and its priority clause met differently by the published handling order (P34.17).
   See §6.
 - **Acceptance (11A exit, live layer, P34.47).** Every S0 has a live removal or fix: restore drilled with timing and
-  deletion protection on; publish path refuses `/curate/` and an absence probe confirms; honest dispute notice; fixture
+  deletion protection on; publish path refuses `/curate/` and an absence probe confirms; honest dispute notice with the published handling order (WV-08); fixture
   pages removed; API honest (P34.46); attribution correct in downloads, API and map behind a publish-time gate. **RI-01
   closes only when** a crawl of the site, the API, the tiles, the `sig-public` listing and the repo tip finds 0 entries
   of the handle list (kept gitignored at `docs/build/logs/next-phase/C3/personal_like_ids.txt`) in source ids, target
@@ -596,7 +641,7 @@ pre-split figures, kept for traceability (§5.5 and §5.10 give S6's); the CSV i
     operator addendum describing a past state of mind**; the forward question "does ACCEPT-R10's acceptance stand?" is C-13,
     recorded with its own `date -u` — TS-08); BUILD_INDEX index repairs (SEED-09); archive the LEDGER head
     byte-for-byte and write a slim head ≤ 12 KiB (SEED-10); RETURN PASS superseding note (SEED-16); Round-11 CURRENT STATE
-    with a `harness:` key and the OPERATING MODE (SEED-17).
+    with a `harness:` key, `dispatchTarget: subagent` (round 25) and the OPERATING MODE (SEED-17).
   - *11A memory rows:* M1 full append-only modes + replay oracle (P34.7) → M3 obligation-event repair, which applies the
     seed's queued `pending_transitions` (P34.8; CF-03) → M2 ledger-contract validator + no-vacuous-pass (P34.9); date truth
     in code and fixtures (P34.22); remaining B2 restorations under M1 (P34.27); readout authorship rules (P34.28); RETURN
@@ -620,13 +665,17 @@ pre-split figures, kept for traceability (§5.5 and §5.10 give S6's); the CSV i
   NEW-1…NEW-12 (unbound `gh pr checks`; 40 CI starts lost 09-17→22 unrecorded; Lighthouse flake).
 - **Design (H2).** **P34.1 TC-PIN** (row 201): Node 24 LTS (`.nvmrc`, `engines`, `packageManager`, `engine-strict`) with one
   recorded lockfile regeneration; uv `required-version`; `runs-on: ubuntu-24.04`; `pipefail`; the `docs` job on push;
-  `cancel-in-progress` for PRs only; `make ci-local`. **P34.2 TC-TRUTH:** the recorded-CI verifier, external-state delta,
+  `cancel-in-progress` for PRs only; `make ci-local`; as the first sub-agent dispatch it also runs the round-25
+  fresh-context isolation check (acceptance below). **P34.2 TC-TRUTH:** the recorded-CI verifier, external-state delta,
   committed `ci_flakes.toml` (one re-run per head for allow-listed flakes only), advisory gate. Boundary gate G3a reads
   **head-bound** check-runs (`commits/<sha>/check-runs`), polls 60 s, 5-min grace, 45-min deadline; any failure, cancel,
   skip, missing or unknown → `blockedOn`. "CI unavailable" is never green: it needs a verbatim, time-boxed operator waiver
   and a later `ci-owed` sweep. Workers never close on red.
 - **Requirements.** DRAFT-MEM-3 (CI truth at every boundary); DRAFT-ENG-3 (validator gates).
-- **Acceptance.** P34.1 landed before 2026-10-19T00:00Z; every boundary in the round read head-bound CI and no row
+- **Acceptance.** P34.1 landed before 2026-10-19T00:00Z **and passed the fresh-context isolation check** (round 25: a
+  nonce planted only in the orchestrator's context is invisible to the sub-agent, and the sub-agent's run ledger records
+  its own start; on failure the orchestrator pauses and the operator falls back to the manual tier,
+  `drive-build.sh --print-prompt`, one new session per ticket); every boundary in the round read head-bound CI and no row
   advanced on red (P38.1 audits this). The 16 pre-#190 reds are merge-readiness items for the operator, not Round-11
   blocks (Q-H2-1 reading of OM-05; B-15).
 
@@ -704,7 +753,8 @@ pre-split figures, kept for traceability (§5.5 and §5.10 give S6's); the CSV i
     contract pages (P36.78), all inside **ADR-184's envelope** — public, unauthenticated pages only; no logins, API keys or
     access-control circumvention; rate-limited; robots per GL-GATE-08; terms text captured verbatim and the exposure
     disclosed; the Part VIII screen on every byte; SIG-PUB-002 material (private-person names, home addresses) redacted
-    before anything is persisted. **Express terms:** the ≈8,088 live rows stay (A-8, ADR-183); new non-commercial sources
+    before anything is persisted. For DocumentCloud/MuckRock, SIG-INGEST-036 rule 6 ("ask first") is waived by **WV-09**
+    (round 24, ADR-187); rules 3, 4 and 7 still bind, so P36.77 activates after its HG-03 flip. **Express terms:** the ≈8,088 live rows stay (A-8, ADR-183); new non-commercial sources
     are facts + pointers only (A-9); IT1–IT6 are facts-only pointers or declined; IU1–IU5 terms are captured in P36.2, then
     a line (B-36); EDGAR gets a facts-only basis but ingestion stays later, first request only after the alias (B-38).
   - **Flock and Axon depth (replaces S4c's "ceiling the terms impose", TS-06).** With D3-Q3 = b, Flock and Axon coverage
@@ -747,7 +797,8 @@ pre-split figures, kept for traceability (§5.5 and §5.10 give S6's); the CSV i
     vendor-page connectors add an estimated ≈ 0.5–0.6 M claims (≈ 1.3–1.5 GB; inference — the share lists hold 474,184
     edges, portal facts are small) → **≈ 12–19 GB, inside B-11's 40 GB cap and the 25 GB pre-grow**. No permanent scale-up
     is planned (LATER-08 trigger unchanged).
-- **Requirements.** SIG-INGEST-036 rule 7 opt-out register + SIG-INGEST-046c reservation refusal (P36.1); the
+- **Requirements.** SIG-INGEST-036 rule 7 opt-out register + SIG-INGEST-046c reservation refusal (P36.1); SIG-INGEST-036
+  rule 6 waived for DocumentCloud/MuckRock only (WV-09, ADR-187); the
   SIG-INGEST-037 counsel clause waived (WV-07) and the terms-conflicted fetching recorded by ADR (ADR-184); SIG-CONF-D09
   upstream reconciliation; **SIG-CHART-025 amended** to US-nationwide multi-vendor breadth with per-class and
   per-geography quality labels (A-17, Q-E2-22 a); SIG-PUB-017 jurisdiction-conditional publication for non-US rows.
@@ -921,7 +972,8 @@ release). The Class R standing go expires (§3.3). **Ops (G1):** P34.39a 10-10 r
 - **Evidence.** F-31, F-185, F-189, F-190, F-191, F-195, F-199, F-471; E1 (contradictions), E2 (22 memos + A-1), E3
   (human-work options), E4 (22 rights decisions); U-011, U-013; B5 §4.
 - **Design (as ratified).** The A-4 posture package (disclosed single maintainer, no counsel) by ADRs 163–167 and 170
-  (§7); **all seven waiver candidates waived in the operator's adopted words** (A-23), each an ADR with compensating
+  (§7); **all seven waiver candidates waived in the operator's adopted words** (A-23), **plus WV-08 and WV-09 in round
+  24**, each an ADR with compensating
   controls and a revisit trigger (§6.5); repo honesty corrections (governance doc, `sources.toml` "counsel" reviewer values
   → "the operator's own determination (no counsel)") (P34.16) — **P34.16 has no live stage, so public `main` keeps the
   false governance text until the operator merges; the OP-08 merge sitting is a safety item (TS-09)**; ADR-086 and ADR-106
@@ -940,7 +992,8 @@ release). The Class R standing go expires (§3.3). **Ops (G1):** P34.39a 10-10 r
 - **Requirements.** SIG-PUB-008 stands (nobody named; default-deny); **WAIVED (ADR) at A-23:** SIG-GOV-012/013 (WV-01),
   SIG-GOV-015 (WV-02), the HG-11/PUB-008 second-reviewer role (WV-03), SIG-UI-042's release block (WV-04),
   SIG-GOV-001/002 (WV-05), SIG-GOV-008's two-person authorisation (WV-06; its tombstone clause stands), the counsel
-  clauses of SIG-LIC-009/SIG-INGEST-037 (WV-07); non-weakening amendments: SIG-SEC-003, SIG-LIC-004 + HG-03 text, §26 rule 7
+  clauses of SIG-LIC-009/SIG-INGEST-037 (WV-07); **WAIVED (ADR) in round 24:** SIG-GOV-003's SLA-time clause (WV-08; its
+  priority clause MET-DIFFERENTLY) and SIG-INGEST-036 rule 6 for DocumentCloud/MuckRock only (WV-09); non-weakening amendments: SIG-SEC-003, SIG-LIC-004 + HG-03 text, §26 rule 7
   opt-out register, SIG-CONTRIB-012/013/030a (timing → later-phase), SIG-CHART-025 (A-17).
 - **Acceptance.** 0 counsel/board/independent-review claims without basis (11A live probe and P38.1); every governance ADR
   carries the operator's adopted words where the decision is theirs, labelled "agent-drafted, adopted by the operator";
@@ -1011,11 +1064,11 @@ performed"; Round 11 performs none (B-31), and SIG-CONF-D02 segregates the agent
 | SIG-PUB-008 | stands; nobody is named; web gate default-deny; **the HG-11 second-reviewer role is WAIVED for Round-11 releases** (WV-03 → ADR-163) | A-4; A-23 |
 | SIG-GOV-012/013/015 | **WAIVED (ADR):** interim individual legal home (WV-01 → ADR-165); interim single-maintainer editorial authority + public decision log (WV-02 → ADR-164) | A-23 |
 | SIG-GOV-001/002 | **WAIVED for Round 11 (ADR-180):** e-mail-only intake; the site says senders disclose their address; no response time promised (B-8) | A-23 WV-05 |
-| SIG-GOV-003 | **not waived, and in conflict with B-8** ("Email, no time promises"): the MUST requires published SLAs by category with privacy-harm and safety claims first. Flagged at S6, not resolved: it stays owed and is listed at GATE-ANNOUNCE until the operator waives it for Round 11 or approves SLA text (§14 R-31) | B-8; S6 flag |
+| SIG-GOV-003 | **SLA-time clause WAIVED (WV-08 → ADR-186); priority clause MET-DIFFERENTLY:** no response time is published (B-8); the corrections/intake page publishes the handling order — privacy-harm and safety reports first, then factual corrections, then everything else (P34.17; copy batch #1). S6 flagged the conflict; round 24 settled it (§14 R-31, resolved) | B-8; S6-F1 |
 | SIG-GOV-008 | **two-person authorisation WAIVED (ADR-181):** the operator alone authorises a true deletion, publicly logged with its reason; the tombstone clause stands; mechanism P37.71 | A-23 WV-06 |
 | SIG-SEC-003 | demand-response posture + published counts; canary declined | A-4 |
 | SIG-LIC-004/009 + HG-03 text | the rights basis the operator states (GL-GATE-07 re-confirmed; express-terms rows accepted; new NC sources facts-only; non-US DB-right flips); **LIC-009's counsel-referral clause WAIVED (WV-07 → ADR-182)**; its risk-register clause stands (R-19, R-20) | A-4; A-7…A-9; B-34; A-23 |
-| SIG-INGEST-036 (§26), SIG-INGEST-037, SIG-INGEST-046c | robots per GL-GATE-08 as re-confirmed (A-5; rule 2 already records `robots_disregarded`); rule 7 opt-out register; 046c reservation refusal built; **INGEST-037's counsel clause WAIVED (WV-07)** and the terms-conflicted fetching recorded by ADR-184; **rule 6 ("ask first" for small civil-society projects) is not waived and conflicts with fetching DocumentCloud/MuckRock without contact under U-011 — flagged, not resolved (§14 R-18; S6 note §6)** | A-5; A-17; B-39; A-23 |
+| SIG-INGEST-036 (§26), SIG-INGEST-037, SIG-INGEST-046c | robots per GL-GATE-08 as re-confirmed (A-5; rule 2 already records `robots_disregarded`); rule 7 opt-out register; 046c reservation refusal built; **INGEST-037's counsel clause WAIVED (WV-07)** and the terms-conflicted fetching recorded by ADR-184; **rule 6 ("ask first" for small civil-society projects) WAIVED for DocumentCloud/MuckRock only (WV-09 → ADR-187)**; rules 3, 4 and 7 still bind, and rule 6 binds every other source | A-5; A-17; B-39; A-23; S6-F2 |
 | SIG-CONTRIB-012/012a/013/030a, SIG-GOV-024, SIG-CHART-033 | outreach timing: owed later-phase obligation, trigger "operator authorises outside contact" | Q-E2-12 a; U-011 |
 | SIG-CHART-025 | **amended:** US-nationwide multi-vendor/multi-technology breadth with per-class and per-geography quality labels | A-17 (Q-E2-22 a) |
 | SIG-UI-042 | **release block WAIVED (WV-04 → ADR-179):** releases ship with the hostile-reader review recorded "not yet performed" and findings listed as known issues | A-23 |
@@ -1038,11 +1091,11 @@ change is written as a `coverage-assessment/1` event. Acceptance packets report 
 layer (MEM-10's contract), never "N MET" alone. ACCEPT-R10's "34 MET" stands as history, superseded by these
 re-verdicts (C-13).
 
-### 6.5 Waivers adopted at GATE-P — and what is deliberately *not* waived
+### 6.5 Waivers adopted at GATE-P and in round 24 — and what is deliberately *not* waived
 
 A spec amendment that removes or weakens a MUST **is a waiver** (T4 adds this rule to the S1b checker). Every waiver
 below was adopted by the operator selecting the agent-drafted sentence shown (labelled "agent-drafted, adopted by the
-operator", 2026-10-01T04:03:25Z for A-6 and 04:28:49Z for A-23), and becomes `WAIVED(ADR-nnn)` with compensating controls
+operator", 2026-10-01T04:03:25Z for A-6, 04:28:49Z for A-23 and 06:05:22Z for the round-24 waivers WV-08/WV-09), and becomes `WAIVED(ADR-nnn)` with compensating controls
 and a revisit trigger. GATE-ANNOUNCE's "spec MUSTs unmet at launch" list now holds only items owed for other reasons.
 
 | waived | adopted sentence (abridged; full text in the log) | ADR | compensating controls | revisit trigger |
@@ -1055,22 +1108,26 @@ and a revisit trigger. GATE-ANNOUNCE's "spec MUSTs unmet at launch" list now hol
 | SIG-GOV-001/002 one-click, unidentified intake (WV-05) | "… corrections come by e-mail, and the site says plainly that senders disclose their address." | 180 | the notice text; no response time promised (B-8); Part VIII takedowns honoured by the operator | announcement; a privacy-harm report |
 | SIG-GOV-008 two-person deletion (WV-06; operator chose it over "keep owed") | "I alone may authorise a deletion, publicly logged with its reason." | 181 | P37.71: in-ticket go only, never OM-20, never agent-initiated; public log + tombstone; audit record kept | a second maintainer; any contested deletion |
 | counsel clauses of SIG-LIC-009 and SIG-INGEST-037 (WV-07) | "… rights decisions rest on my recorded determinations, labelled as such." | 182 | E2's label text on every artifact; LIC-009 risk-register clause kept | counsel obtained (LATER-05); a first legal demand |
+| SIG-GOV-003 response-time SLAs (WV-08; S6-F1, round 24) | "I waive GOV-003's response-time SLAs; SIG publishes its handling priority without time commitments." | 186 | the corrections/intake page (P34.17, copy batch #1) publishes the handling order — privacy-harm and safety reports first, then factual corrections, then everything else — with no time commitment, so GOV-003's priority clause is MET-DIFFERENTLY; WV-05's notice (e-mail; senders disclose their address); Part VIII and safety takedowns honoured by the operator through the withdrawal barrier (P34.41; 15-min technical withdrawal, D-G3-9) | the first public intake form (P37.59's live leg or any successor), the announcement (GATE-ANNOUNCE), or a second maintainer |
+| SIG-INGEST-036 rule 6 "ask first", **DocumentCloud/MuckRock only** (WV-09; S6-F2, round 24) | "I waive crawler rule 6 (ask first) for DocumentCloud/MuckRock; SIG fetches public pages only, gently, and honours any opt-out immediately." | 187 | scoped to the `documentcloud` source (P36.77); rules 3 (conservative rate limit, backoff), 4 (no circumvention) and 7 (opt-out honoured at once and recorded; rule-7 register, P36.1a) still bind; ADR-184's envelope (public, unauthenticated pages only; terms captured verbatim; exposure disclosed; Part VIII screen); every claim links the uploader's page; activation only after the operator's HG-03 flip (ING-GO-D, OP-26) | an opt-out, block or objection from DocumentCloud/MuckRock or an uploader; a terms change; the operator authorising outside contact (U-011 revisited, LATER-04) |
 
 - **One risk row closes by ADR:** RISK-P0-06 via the collection-conduct ADR (ADR-168) restating SIG-INGEST-037's legal
   posture in the operator's A-5 words.
 - **Not waived; stay owed with a trigger:** SIG-EVAL-001/002/005/007 and SIG-IDENT-027/028's independent legs, SIG-DOS-002's
   independent checks (T-EVAL-IND); SIG-UI-001 usability (LATER-02); SIG-CONTRIB-012/012a/013, SIG-GOV-024, SIG-CHART-033
   (LATER-04); D-R10-HUMAN-1 and D-P30.2b-1 (T-EVAL-IND). **Not waived and binding on the operator's new choices:**
-  SIG-GOV-017 ("My location", P37.72), SIG-PUB-002/003/003a (Axon Connect and Flock portals), SIG-INGEST-036 rule 6
-  (DocumentCloud/MuckRock — the open contradiction in §14 R-18), SIG-GOV-003's published SLAs (the open
-  contradiction with B-8, §14 R-31) and SIG-INGEST-046c (reservations refused; whether any express-terms row's captured
+  SIG-GOV-017 ("My location", P37.72), SIG-PUB-002/003/003a (Axon Connect and Flock portals), SIG-INGEST-036 rules 3,
+  4 and 7 (every source, incl. DocumentCloud/MuckRock) and rule 6 (every source except DocumentCloud/MuckRock, WV-09),
+  SIG-GOV-003's priority clause (met differently by the published handling order, WV-08) and SIG-INGEST-046c (reservations refused; whether any express-terms row's captured
   licence metadata is itself a machine-readable reservation is open — §14 R-19).
 
 ### 6.6 Coverage re-verdicts T4 applies (summary)
 
 - **F2b (55 gated/reduced-scope ids):** 12 MET → MET-ENGINEERED (TRUST-004/007/008/009/010, FIND-006/007, DOS-002…005,
   ACQ-004); EVAL-003/004 and PUB-008 → AT-RISK-INTEGRATION (then superseded by L3: EVAL-003 → MET, EVAL-004 → WAIVED
-  scoped); GOV-022, EVID-019 → MET-ENGINEERED; GOV-013/015 → WAIVED(ADR-165/164) (WV-01/02); the outreach five → owed later-phase (not WAIVED).
+  scoped); GOV-022, EVID-019 → MET-ENGINEERED; GOV-013/015 → WAIVED(ADR-165/164) (WV-01/02); **S6b:** GOV-003 → MET-DIFFERENTLY(ADR-186) for its
+  priority clause and WAIVED(ADR-186) for its SLA-time clause (WV-08; T4 records both clauses in the row's
+  `accepted_scope`), INGEST-036 rule 6 → WAIVED(ADR-187) for DocumentCloud/MuckRock only (WV-09); the outreach five → owed later-phase (not WAIVED).
   The 14 MET-ENGINEERED verdicts need their D-rows opened first.
 - **F2a (49 engineering/"claimed" ids):** UI-010, EPIS-018, INGEST-046b, ONTO-054, INGEST-007, STORE-013, ENG-034 → MET;
   UI-040 → MET-DIFFERENTLY(ADR-108; ADR-133); GEO-007, ENG-004 → N/A-RATIONALE; 30+ PARTIAL with a concrete test/build home.
@@ -1096,7 +1153,7 @@ words stores the text as logged with its sha256 and the label *"agent-drafted, a
 | 146 | SEED-11 | Correcting recorded dates that were not taken from a clock | truth source = `date -u`; corrections append-only via one register and this ADR (no footers on landed ADRs); sqitch lines L44–52 never edited — a local DB holds them as stamped (C-10); candidate `p-17b713` superseded; restored rows annotated (SEED-06); a CI guard rejects new future-dated records | A-13, B-4, C-10 | B1 §8 (amended by CF-02) |
 | 147 | SEED-11 | Gate-record integrity and readout authorship | verbatim operator words; adopted agent drafts labelled and sha256-recorded; no proxy signatures; hedged words are not decisions (forward rule); the GATE-P record and its two gaps closed from git (§1.3); ACCEPT-R8/R10 and GATE-G3 annotated with B7's facts; C-1 confirmed; C-13 superseded | A-16, B-4, C-1, C-3, C-13 | E2-17/18/X1; B2; B5 OM-07…09 |
 | 148 | SEED-11 | Build memory v2.1: ledger contract and enforced append-only | ≤ 12 KiB head, value-only CURRENT STATE with `harness:`; guard core in CI; D-R10-MEMORY-1 split (option C) superseding ADR-126/127's cutover statements; closeout journal stays shadow | A-13 | B3, B4 |
-| 149 | SEED-11 | Round-11 operating model | **Devin Desktop, `swe-2-high` (256k), for every row; no in-round second harness; post-round Claude Code (Opus 5.5, xhigh) deep review**; pauses = HG gates, one ING-GO per wave, spend above the ceiling, red CI, mutations off an approved OM-20 list; one digest per wave with a spend line; agent usage reported, pause at any usage-limit event (A-2); OM-19 + OM-20 with the 11A list (S5-3); **live API answers may change before HG-11, labelled (A-20)**; the operator's name stays commit author, trailers CI-enforced (A-21) | A-2, A-15, A-20, A-21, S5-1/2/3 | B5 §6; S2 §3 |
+| 149 | SEED-11 | Round-11 operating model | **Devin Desktop, `swe-2-high` (256k), for every row — one orchestrator session dispatching each ticket to a fresh sub-agent (`dispatchTarget: subagent`, round 25), isolation proven on row 201, manual-tier fallback; no in-round second harness; a Claude Code (Opus 5.5, xhigh) deep review (REVIEW-R11) after the final release whose S0/S1 findings gate GATE-ANNOUNCE (S6-F3)**; pauses = HG gates, one ING-GO per wave, spend above the ceiling, red CI, mutations off an approved OM-20 list; one digest per wave with a spend line; agent usage reported, pause at any usage-limit event (A-2); OM-19 + OM-20 with the 11A list (S5-3); **live API answers may change before HG-11, labelled (A-20)**; the operator's name stays commit author, trailers CI-enforced (A-21) | A-2, A-15 (+ round 25), A-20, A-21, S5-1/2/3, S6-F3 | B5 §6; S2 §3 |
 | 150 | SEED-11 | Coverage verdict vocabulary | MET-ENGINEERED and WAIVED(ADR), four columns, checker cross-checks; "an amendment that weakens a MUST is a waiver"; ACCEPT-R10 superseded by the re-verdicts | B-5, C-13 | F2b §2 |
 | 151 | **P34.1** | Toolchain pin and CI truth | Node 24 LTS, uv pin, `ubuntu-24.04`; head-bound check-runs; flake allow-list (one re-run); CI-unavailable needs a verbatim waiver; tests assert invariants | B-15 | H2; CF-01 |
 | 152 | SEED-11 | Confidence without independent review | confidence by construction + mechanical suite; agent evidence never gates; **no human check this round — every Class S readout and `/quality/` say "no human check performed"**; independent evaluation owed under T-EVAL-IND (D-R10-HUMAN-1, D-P30.2b-1); rows 184–187 superseded | A-6, B-31 | ADR-L3-A |
@@ -1119,7 +1176,7 @@ words stores the text as logged with its sha256 and the label *"agent-drafted, a
 | 169 | SEED-11 | Rights basis with guardrails | **GL-GATE-07 re-confirmed in the operator's adopted words** (Tier-1 batch-wide flips); new NC sources facts-only (A-9); non-US DB-right flips N1–N21 (B-34); RB-06b share-alike, RB-08 territories = US (B-33); IU terms captured then decided; E4 R-lines as answered; flips executed by the operator per wave | A-4, A-7…A-9, B-33…B-41 | E2-11; I7 |
 | 170 | SEED-11 | ODbL map basis | ADR-106's basis recorded as **the operator's own determination (no counsel, no document)**; per-compartment map kept | A-4 | E2-13 |
 | 171 | SEED-11 | Outreach timing | outreach, records-request sending, recruiting, contribution-back → owed later-phase, trigger "operator authorises outside contact" | B-6 | E2-09; U-011 |
-| 172 | SEED-11 | Product direction and scope | D3 ratified with **D3-Q3 = b (vendor-hosted public pages fetched)**; CHART-025 amended; co-primary journeys; D3 §5 announce gate; tagline *"Public surveillance, traced to the documents."* | A-17, C-4 | D3; E2-20 |
+| 172 | SEED-11 | Product direction and scope | D3 ratified with **D3-Q3 = b (vendor-hosted public pages fetched)**; CHART-025 amended; co-primary journeys; D3 §5 announce gate, after REVIEW-R11's S0/S1 findings are fixed or dispositioned (S6-F3); tagline *"Public surveillance, traced to the documents."* | A-17, C-4, S6-F3 | D3; E2-20 |
 | 173 | SEED-11 | Acquisition waves and capacity | one ING-GO per wave + the operator's flip list; **US-first ordering with non-US kept**; cap 40 GB, pre-grow, temporary tier bumps; Wave D in scope; US + AU keys after the alias | B-11, B-18, S5-4 | I8 §7 |
 | 174 | **P35.1a** | Scheduler of record | Cloud Scheduler + daily live-diff + cron lint; scheduler consolidation (B-13, in P35.1b); GitHub `reingest` retired; supersedes ADR-016's scheduler clause and ADR-076's scheduling path | B-13 | G1-09; OPS-03 |
 | 175 | **P34.6** | Production data protection and restore drills | deletion protection, retain-on-delete, quarterly drill at scale, monthly logical export; qualifies ADR-081 | A-1 | G1-03/04 |
@@ -1127,12 +1184,14 @@ words stores the text as logged with its sha256 and the label *"agent-drafted, a
 | 177 | **P37.3** | Evidence retention | 365-day unlocked retention (takedowns and WV-06 deletions stay possible); writers cannot delete | B-14 | G1-RET; COV-14 |
 | 178 | **P34.18** | Public identifier re-key | personal-handle ids renamed with a restricted old→new map and append-only aliases; "identifier changed" pages; the correction note discloses the retained git history | B-3, A-0 | DR-C6-01; COV-14 |
 | 179 | SEED-11 | **WV-04 — SIG-UI-042 release block waived** | releases ship with the hostile-reader review recorded "not yet performed" and findings as known issues | A-23 | S1c WV-04 |
-| 180 | SEED-11 | **WV-05 — e-mail-only intake** | GOV-001/002 waived for Round 11; the site says senders disclose their address; no response time promised | A-23, B-8 | S1c WV-05 |
+| 180 | SEED-11 | **WV-05 — e-mail-only intake** | GOV-001/002 waived for Round 11; the site says senders disclose their address; no response time promised (the handling priority is published, ADR-186) | A-23, B-8 | S1c WV-05 |
 | 181 | SEED-11 | **WV-06 — single-operator true deletion** | the operator alone authorises, publicly logged with its reason; tombstone (category + date); never OM-20; never agent-initiated; mechanism P37.71 keeps the audit record | A-23 | S1c WV-06; SIG-GOV-008 |
 | 182 | SEED-11 | **WV-07 — counsel-review clauses waived** | LIC-009/INGEST-037 counsel clauses waived; rights decisions rest on the operator's recorded determinations, labelled; LIC-009's risk-register clause kept | A-23 | S1c WV-07; E2-05 |
 | 183 | SEED-11 | **Express-terms acceptance** | the operator's adopted sentence (A-8); ≈8,088 rows stay public; captured terms + basis disclosed on pages and in files; withdrawal on a rights-holder objection | A-8, A-9 | J4 NEW-1; I7-C1 |
-| 184 | SEED-11 | **Terms-conflicted public pages: fetch envelope** | Flock portals, Axon Connect, DocumentCloud/MuckRock, Sourcewell/OMNIA fetched despite anti-automation terms inside the envelope (public pages only; no logins, keys or circumvention; rate-limited; terms captured; exposure disclosed; Part VIII screen); records the INGEST-037 deviation (counsel clause waived) and the open INGEST-036 rule-6 conflict | A-17, B-35, B-39, B-41 | D3; I7-C2/C3/C4 |
+| 184 | SEED-11 | **Terms-conflicted public pages: fetch envelope** | Flock portals, Axon Connect, DocumentCloud/MuckRock, Sourcewell/OMNIA fetched despite anti-automation terms inside the envelope (public pages only; no logins, keys or circumvention; rate-limited; terms captured; exposure disclosed; Part VIII screen); records the INGEST-037 deviation (counsel clause waived); INGEST-036 rule 6 is waived for DocumentCloud/MuckRock by ADR-187 | A-17, B-35, B-39, B-41 | D3; I7-C2/C3/C4 |
 | 185 | SEED-11 | **Part VIII screened lanes without a human clear** | S1–S9 screened lanes incl. S8 tribal; the agent clears dossier families (disclosed); B-44's Part VIII rows; SIG-PUB-002 applied before persistence | B-32, B-35, B-42, B-44 | I7 S-lines; E4-B2 |
+| 186 | SEED-11 | **WV-08 — GOV-003 response-time SLAs waived; handling priority published** | the operator's adopted sentence; the corrections/intake page publishes the handling order (privacy-harm and safety reports first, then factual corrections, then everything else) with no time commitment; GOV-003's priority clause MET-DIFFERENTLY, its SLA-time clause WAIVED; revisit at the first public intake form, the announcement or a second maintainer | S6-F1 (round 24), B-8 | S6 flag 1; SIG-GOV-003 |
+| 187 | SEED-11 | **WV-09 — crawler rule 6 waived for DocumentCloud/MuckRock** | the operator's adopted sentence; scoped to DocumentCloud/MuckRock only; rules 3, 4 and 7 still bind; ADR-184's envelope; P36.77 activates only after its HG-03 flip; revisit on an opt-out, block, objection or terms change | S6-F2 (round 24), B-39, B-41 | S6 flag 2; SIG-INGEST-036 |
 
 **Also at T1 (records, not new decisions):** appended status lines on ADR-015, ADR-016 (scheduler clause, by ADR-174),
 ADR-058 §3, ADR-075, ADR-092, ADR-096 §1, ADR-086/106 (`Qualified by ADR-167`), ADR-081 (`Qualified by ADR-175`),
@@ -1140,19 +1199,20 @@ ADR-088 (`Extended by ADR-168`), ADR-099 §3 (`Amended by ADR-153`), ADR-124 (`E
 ADR-161`), ADR-134 (`Extended by ADR-155`), ADR-091 §3–4 and ADR-097 §2–3/§6 (`Superseded by ADR-155`), ADR-079/122
 (`Revisited by ADR-160`), and every ADR superseded above; recorded evaluations of the fired revisit triggers (F3 §5.1);
 `ADR_TRIGGERS.csv` (SEED-15) with one row per revisit trigger, **including Q-29's operator-accepted-risk revisit and the
-seven waiver triggers** (COV-14). Ticket-authored ADRs append their own status lines in the same PR. **SEED-11 writes 30
-ADRs (146–150, 152–155, 158, 159, 162–173, 179–185); ten move to their owning tickets** (FEA-01, FEA-06).
+nine waiver triggers** (COV-14). Ticket-authored ADRs append their own status lines in the same PR. **SEED-11 writes 32
+ADRs (146–150, 152–155, 158, 159, 162–173, 179–187); ten move to their owning tickets** (FEA-01, FEA-06) — 42 in all.
 
 ---
 
-## 8. Ticket plan (`data/round11_plan.csv` is authoritative; 385 rows: 309 chain rows, 4 markers, 20 seed, 19 operator, 20 later, 1 post-round review, 12 dropped/moved/done)
+## 8. Ticket plan (`data/round11_plan.csv` is authoritative; 385 rows: 309 chain rows, 4 markers, 20 seed, 19 operator, 20 later, 1 closing review, 12 dropped/moved/done)
 
 The CSV is post-split and carries `uses`, `leg_runs` and `live_legs` (COV-13, FEA-04/05). S6 kept every id (rows only
 renumbered): new rows got new ids in the scheme (P36.74–P36.79, P37.69a/b–P37.72, OP-25, OP-26, REVIEW-R11), each with a
 `notes` entry "S6: …"; dropped, moved and done units stay as rows with `kind` = `dropped` / `moved` / `done` so every
 reference still resolves (no chain row depends on one). Every `operator_gate` cell now states the GATE-P answer instead
 of a default. Final ids are assigned by T3 (11A) and the PLAN rows (11B–11D). Every number below is regenerated from the
-CSV by the S4c ordering check, re-run at S6 (`docs/build/logs/next-phase/S4c/check_order.py`: 0 errors).
+CSV by the S4c ordering check, re-run at S6 (`docs/build/logs/next-phase/S4c/check_order.py`: 0 errors) and at S6b
+(`tools/s4c/check_order.py`: 0 errors).
 
 ### 8.1 Shape and counts
 
@@ -1164,7 +1224,7 @@ CSV by the S4c ordering check, re-run at S6 (`docs/build/logs/next-phase/S4c/che
 | 11D P37 | 420–499 (80) | 76 tickets incl. 1 conditional (P37.59, dark; 1.0 run), CAP-01 P37.68a–d | 69.0 | 5.0 | 33 | 15 | P37.16a, P37.16b, P37.20, P37.36, P37.42, P37.55, P37.65b · P37.72 only if its GOV-017 analysis fails |
 | tail P38 | 500–509 (10) | CAP.1 a/b, CAP.3, GATE-ACCEPT-R11, REC a/b/c, DOC, CAP-02, GATE-ANNOUNCE | 7.0 | — | — | — | the two gates |
 | **total** | **309** | ticket 286 · plan 3 · capstone 11 · gate 5 · reconcile 3 · docs 1 · **HUMAN 0** | **285.5 (20.0)** | **28.5** | **101** | **57** | **19** (+2 conditional) + 5 gate markers |
-| post-round | — | REVIEW-R11 (Claude Code; not a chain row) | ≈ 8 | — | — | — | — |
+| closing review | — (after P38.4) | REVIEW-R11 (Claude Code; not a chain row; GATE-ANNOUNCE waits for its S0/S1 dispositions, S6-F3) | ≈ 8 | — | — | — | — |
 
 \* in-ticket only if ING-GO-A / ING-GO-B are not given in the G4 sitting. With OM-19, a pause queues a leg; the chain
 continues unless a later row needs the leg's live result (`live:`). The 11B–11D OM-20 rows are pre-authorised only if the
@@ -1178,7 +1238,7 @@ fires and 11B splits at the Wave-B activation boundary with an extra **GATE-G4b*
 
 ### 8.2 Contents in order (rows; details in §5)
 
-- **11A:** CI first (P34.1–2) → production safety: data protection, alerts incl. the TLS-expiry alert, budget alert +
+- **11A:** CI first (P34.1–2; P34.1 also proves sub-agent isolation, round 25) → production safety: data protection, alerts incl. the TLS-expiry alert, budget alert +
   billing export, restore drill (P34.3–6; the deferred A-1/A-2a items) → DNS runbook (P34.50) → memory guards M1/M3/M2
   (P34.7–9) → publish path (P34.10) → W0 copy (P34.11–15) → repo honesty (P34.16) → express-terms disclosure (P34.19) →
   **republish #1** (P34.17: `/visual-language/` and handle-bearing pages removed) → re-key incl. the repo-tip strings,
@@ -1219,16 +1279,18 @@ fires and 11B splits at the Wave-B activation boundary with an extra **GATE-G4b*
   dark/conditional (P37.59) → visual regression, T1 enhancements, contribution path (P37.60–62) → map and explore
   acceptance (P37.63–64) → **final release TX-16** (P37.65a/b) → coverage closeout, Stream-L re-measure (P37.66–67) →
   **CAP-01 journeys** (P37.68a–d).
-- **Tail:** §13. **Post-round:** REVIEW-R11 (§13.4).
+- **Tail:** §13; REVIEW-R11 runs after P38.4 and before GATE-ANNOUNCE, which waits for its S0/S1 dispositions (§13.4).
 
 ### 8.3 Gates, pauses and operator touchpoints
 
 - **Five gate markers:** GATE-G4 (row 259), GATE-G5 (342), GATE-G6 (419), GATE-ACCEPT-R11 (503), GATE-ANNOUNCE (509).
-  HUMAN-H6…H8 stay reserved for the T-EVAL-IND segment. Each check-in GATE follows its acceptance row; the packet is
+  **GATE-ANNOUNCE also depends on REVIEW-R11** (a `depends_on` edge to a non-chain unit, as chain rows already have to
+  seed and operator units) and is answered only when each REVIEW-R11 S0/S1 finding is fixed or dispositioned by the
+  operator (S6-F3). HUMAN-H6…H8 stay reserved for the T-EVAL-IND segment. Each check-in GATE follows its acceptance row; the packet is
   S5-2's (`continue` answers only batch lines). After GATE-P a packet carries only what the rows raise: ING-GOs, the
   wave's HG-03 flip list (OP-26), the next sub-round's OM-20 list, the Class R standing-go renewal (B-9), the spend report.
 - **Nineteen never-pre-authorised in-ticket pauses** (§8.1) plus two conditional ones and the three 11A in-ticket gos
-  for mutations not on the S5-3 list. The operator's touchpoints are listed by date in §11.2 (≈ 21 plus the wave digests, eight synchronous).
+  for mutations not on the S5-3 list. The operator's touchpoints are listed by date in §11.2 (≈ 22 plus the wave digests, eight synchronous).
 - **HG-03 / ING-GO lines:** ING-GO-A **and ING-GO-B** with the Wave A/B flip lists at GATE-G4 (FEA-02); ING-GO-C with the
   Wave-C list at GATE-G5; ING-GO-D with the Wave-D list (N1–N21, ACQ-23a/b, DocumentCloud, Sourcewell/OMNIA, Axon Connect,
   RB-06b, RB-08) at GATE-G6; the A-18 boundary flip inside P35.17. A row whose flip has not been executed lands with
@@ -1263,10 +1325,20 @@ backstop when the chain is not moving (FEA-05).
 
 - **The context ceiling (A-15).** Every row runs in Devin Desktop with `swe-2-high` and a **256k-token window**. A
   ticket's Load list plus its expected working set (code read, test output, CI logs) must fit with headroom: **target ≤
-  ~150k tokens loaded**. `dispatchTarget` in CURRENT STATE (T5) records this; S = 0.5, M = 1.0 run; no chain row exceeds
+  ~150k tokens loaded**. `dispatchTarget: subagent` in CURRENT STATE (T5; round 25) records what the tickets are sized
+  for — a sub-agent cannot compact, so the window is a hard ceiling; S = 0.5, M = 1.0 run; no chain row exceeds
   1.0 run except the explicit fan-outs (PLAN-11B 7.0, PLAN-11C 7.0, PLAN-11D 6.0, P34.48 1.5), each executed as ≤ 1-run
   contexts with named seams. Nothing here is measured yet: T3 measures each 11A contract's Load list with a token count,
   and each PLAN row's Phase-4 review does so for its sub-round.
+- **Dispatch (round 25, "Orchestrator + sub-agents").** One Devin Desktop orchestrator session (`swe-2-high`) runs
+  `orchestrate-build` and dispatches each ticket to a fresh sub-agent; it reads head-bound CI at every boundary (SK-01,
+  OM-05) and records harness + model per ticket (SK-04/SK-10, OM-01). **Isolation check on row 201 (P34.1):** a nonce
+  planted only in the orchestrator's context must be invisible to the sub-agent, and the sub-agent's run ledger must
+  record its own start (B7 could not verify Round 10's per-ticket isolation). If the check fails, the orchestrator pauses
+  and the operator uses the manual tier (`drive-build.sh --print-prompt`, one new session per ticket); `PD/HANDOFF.md`
+  documents both. *(Agent note, inference:)* the orchestrator holds no state the LEDGER does not, so its own session can
+  be restarted from the LEDGER at any boundary when its context fills; that work sits in §10.4's "orchestrator boundary
+  work" allowance.
 - **Rows that look oversized — split at T3 (11A) or at the PLAN row's sizing review:** P34.46 (sqitch L44–52 + allows +
   API roll + go/no-go protocol), P35.61 (hosted audit + bounded apply + freeze), P35.63 (first model release; 21
   prerequisites), P36.12 (Wave B activation, ten family legs), P36.72a (crawl, parity and number truth over 13
@@ -1305,7 +1377,7 @@ backstop when the chain is not moving (FEA-05).
 ### 8.7 Non-chain units
 
 - **Seed (20 units, 24.25 runs, ≈ 30 contexts of ≤ 1 run):** SEED-00…19 (Appendix A maps them to T0–T6). SEED-11 now
-  writes 30 ADRs in 4 contexts (+1.0 run at S6); SEED-12 writes MEM/ENG/OPS/SEC/REL/CONF; SEED-13 writes the manifest + 11A
+  writes 32 ADRs in 4 contexts (+1.0 run at S6; ADR-186/187 added at S6b within the same 4.0 runs); SEED-12 writes MEM/ENG/OPS/SEC/REL/CONF; SEED-13 writes the manifest + 11A
   contracts + skeletons; SEED-14 writes the register entries incl. the S6 changes.
 - **Operator actions (19 active):** OP-01…OP-10, OP-12, OP-13 (US + AU keys), OP-19, OP-20, OP-22, OP-23, OP-24, **OP-25**
   (gate-signing key) and **OP-26** (HG-03 flips per wave); §11. Dropped at S6: OP-11 (no domain purchase), OP-14 (no top-50
@@ -1313,14 +1385,16 @@ backstop when the chain is not moving (FEA-05).
   (agent-written query set); OP-18 done at GATE-P (C-13).
 - **Later (20 units, 23.5 runs):** LATER-01…09, 11…14, 16…22, each with a trigger (§15). Moved into the round at S6:
   LATER-10 → P37.70, LATER-15 → P34.28 + OP-25, R11-ACQ-23a/b → P37.69a/b.
-- **Post-round (1 unit):** REVIEW-R11, the Claude Code deep review (§13.4).
+- **Closing review (1 unit):** REVIEW-R11, the Claude Code deep review, after P38.4 and before GATE-ANNOUNCE; its
+  S0/S1 findings gate the announcement and its S2/S3 findings feed the next round (S6-F3; §13.4).
 
 ### 8.8 Critical paths and calendar cliffs
 
 - **Calendar (binding):** GATE-P (done) → seed → GATE-B → P34.1 (≤ 10-19) → P34.39a (after 10-10) → **P34.46 (≥ 10-14)** →
   GATE-G4 → Wave A legs (10-19→23) → Wave B code incl. P36.74 → **Wave B legs (10-26→11-05)** → 11B chains → **P35.63** →
   GATE-G5 → P37.1–2 → **Wave C legs (11-16→20)** → **P36.72b (≥ 11-13)** → GATE-G6 → Wave D (11-23→12-04) → **P37.65b
-  (outside 12-06→13)** → P37.68a–d → P38 → GATE-ANNOUNCE → REVIEW-R11.
+  (outside 12-06→13)** → P37.68a–d → P38.1a…P38.5 → **REVIEW-R11** (after P38.4) → its S0/S1 findings fixed or
+  dispositioned → **GATE-ANNOUNCE** (S6-F3).
 - **Runs:** inside 11B three chains converge on P35.63 (JUR-01→02a→02b→DSRC-01→JUR-03; CONF-03a→03b→04→07a→07b;
   REL-01→…→REL-06); the Wave B block (≈ 16.5 runs incl. P36.74) precedes them (inference: P35.63 ≈ 2–3 days later than
   with no Wave B block). P35.57 no longer heads the structural chain (A-20 = a).
@@ -1328,10 +1402,12 @@ backstop when the chain is not moving (FEA-05).
   path; OD-27 = a, so the T6 push needs only the scans.
 - **DAG check (S6 re-run):** 309 chain rows, contiguous 201–509; every `depends_on` token resolves; 0 rows before a
   dependency (hard, `(S2)`, `live:`, sequence and soft edges all counted); acyclic; no 11A/11B row depends on a later
-  sub-round; no active row depends on a dropped, moved or done unit.
+  sub-round; no active row depends on a dropped, moved or done unit. S6b re-ran it with GATE-ANNOUNCE's new edge to
+  REVIEW-R11: 0 errors.
 - **Expected timeline (inference; 6–10 runs a day incl. CI waits; operator answers within a day):** seed → GATE-B (R0)
   ≈ 10-03→10-07; GATE-G4 ≈ 10-15→10-17; Wave B code done ≈ 10-19→10-22; GATE-G5 ≈ 10-27→11-02; GATE-G6 ≈ 11-13→11-18;
-  P37.65b ≈ 11-27→12-05; tail ≈ 12-03→12-12; then REVIEW-R11. About 10–11 weeks from R0 — the +10.0 runs S6 added are ≈ 1–2
+  P37.65b ≈ 11-27→12-05; tail rows through P38.5 ≈ 12-03→12-12; REVIEW-R11 ≈ 2–4 days after P38.4; GATE-ANNOUNCE
+  ≈ 12-05→12-16 at the earliest, later if an S0/S1 finding needs a fix row (S6-F3). About 10–11 weeks from R0 — the +10.0 runs S6 added are ≈ 1–2
   days at that rate.
 - **Cliffs, not one-for-one slips (FEA-12).** Monthly freezes (days 6–13) and "one manual job at a time" quantise slips:
 
@@ -1345,10 +1421,11 @@ backstop when the chain is not moving (FEA-05).
   **Latest R0 that keeps each wave in its window:** Wave A ≈ 10-07, Wave B ≈ 10-12, Wave C ≈ 10-20 (inference at the slow
   end of 6–10 runs a day). **A-19 = a:** waves slip to their next windows; nothing is dropped. At GATE-G4 the orchestrator
   re-projects calendar and agent usage from 11A's measured runs a day and pauses rather than silently stretching (FEA-10).
+  The table's tail column ends at P38.5; GATE-ANNOUNCE follows REVIEW-R11 by ≈ 2–4 days plus any S0/S1 fix rows (S6-F3).
 
 ---
 
-## 9. Obligation mapping (S1b: `universe/UNIVERSE_DISPOSED.csv`; `tools/check_dispositions.py` → structurally valid, 0 errors after S4c and again after S6 — it checks shape, not truth, F-27)
+## 9. Obligation mapping (S1b: `universe/UNIVERSE_DISPOSED.csv`; `tools/check_dispositions.py` → structurally valid, 0 errors after S4c, S6 and S6b — it checks shape, not truth, F-27)
 
 ### 9.1 Totals
 
@@ -1423,7 +1500,7 @@ owner is an interim mitigation, depends on a GATE-P answer, or whose final fix l
 | F-522 (0 of 2.78 M bindings reach bytes) | S1 | P35.61 (live-return-pass) | partial: only sources re-run in P35.61 | P35.61 | the ≈ 2.78 M legacy links stay zero-byte (insert-only spine), labelled "capture not bound" |
 | F-27 (validators check structure) | S1 | **SEED-02** (+ P34.9 no-vacuous-pass) | fixed by construction (rehomed from SEED-18) | P34.9 | — |
 | F-184 (hijackable contact domain) | S1 | **P35.38** (rehomed from OP-11) | fixed without a purchase | P35.38 | B-6: no purchase; OP-11 dropped |
-| F-31 (spec contradicts decisions) | S1 | decision Q-7 (A-4) | answered a + seven waivers | SEED-11/12 | A-4 + A-23: closed by the waiver ADRs; S6's flagged contradictions (R-18, R-27) carried |
+| F-31 (spec contradicts decisions) | S1 | decision Q-7 (A-4) | answered a + seven waivers (+ WV-08/WV-09, round 24) | SEED-11/12 | A-4 + A-23 + round 24: closed by the waiver ADRs; of S6's flagged contradictions, R-31 and R-18's rule-6 part were settled by WV-08/WV-09; R-19 and R-27 carried |
 | F-191 (backward confirmations) | S1 | decision OD-12 (C-3) | answered (sentence adopted) | SEED-08 | C-3 recorded with its 2026-10-01 time |
 | F-506, F-507, F-511, F-518…F-521 (L1/L2 correctness) | S1 | P35.24–27, P35.46–47 | pulled forward into 11B; interim P34.44b ratchet | 11B rows | A-6 = a: C0–C2 collapse (C2 enabled, B-31) |
 | F-512 (inferential tiers auto-written) | S1 | P34.45 (back in 11A; ER re-run on the S5-3 list) | fixed in 11A; publication with P35.63 | P35.63 | A-20 = a: lands in 11A, its live-API effect labelled |
@@ -1572,7 +1649,7 @@ S4c's per-sub-round lines with the GATE-P answers applied (all inference on G1's
   | splits for the 256k window | ≈ +10–20 | the rows in §8.5 and any T3/PLAN review finds |
   | re-runs after red CI, late splits, orchestrator boundary work | ≈ +5–10 % | Round 10 executed no live legs, so it is not a base rate (B5 §3.2) |
   | **Devin Desktop total** | **≈ 400–480 fresh contexts** | |
-  | post-round review (Claude Code, Opus 5.5, xhigh) | ≈ 8–12 | REVIEW-R11; modelled on Stage P's review rows |
+  | closing review (Claude Code, Opus 5.5, xhigh) | ≈ 8–12 | REVIEW-R11, before GATE-ANNOUNCE (S6-F3); modelled on Stage P's review rows |
 
   **Calibration:** this planning session's heavy rows measured ≈ 250k–600k tokens each (orchestrator observation; a
   usage limit was hit at ≈ 19:10Z on 09-30). Applied to every Devin context that gives **≈ 100 M (400 × 250k) to ≈ 290 M
@@ -1581,7 +1658,7 @@ S4c's per-sub-round lines with the GATE-P answers applied (all inference on G1's
   usage figure the harness exposes ("not measured" is a valid line; no figure is invented). **Per-wave digest (OM-17 and
   the GATE packet's budget part):** runs and leg runs dispatched; usage per run (median, maximum); cumulative usage; the
   projection to round end at the measured rate; usage-limit events; harness and model. No new paid model service or
-  second model family in the round (B-31; LATER-18); the post-round review runs on the operator's existing Claude Code
+  second model family in the round (B-31; LATER-18); the closing review runs on the operator's existing Claude Code
   access.
 
 ### 10.5 Risks carried by ops (operator-accepted or operator-deferred)
@@ -1614,7 +1691,7 @@ chain row a ticket silently waits on.
 | 2026-10-01 (done) | **S5 / GATE-P**: 99 lines in 23 rounds, 03:41:19Z → 05:03:05Z, + the C-10 local inspection | yes (chat) | ≈ 1.5 h (spent) |
 | T0 → Stage B (≈ 10-01 → 10-07) | OP-01 Tier A skills (applied at T0) · OP-05 GitHub stack ruleset + merge settings · OP-07 project variable, billing check, usage alert · OP-23 store the git bundle privately · OP-24 leg-runner schedule · **OP-25 gate-signing key + allowed_signers** · **GATE-B** | — | 2–3 h |
 | before row 201 | OP-02 skills Tier B-must (OP-03/04 early in the round) | — | 0.5 h |
-| ≈ 10-08 → 10-10 | republish #1 go + **copy batch #1** (tagline + K14 copy, express-terms disclosure, WV-05 intake text, A-20 basis label / status notice; N-strings already ratified) | — | 1–1.5 h |
+| ≈ 10-08 → 10-10 | republish #1 go + **copy batch #1** (tagline + K14 copy, express-terms disclosure, WV-05 intake text + the WV-08 handling-priority text, A-20 basis label / status notice; N-strings already ratified) | — | 1–1.5 h |
 | early 11A | OP-12 billing admin (P34.5) · in-ticket gos for P34.18, P34.24a, P34.44a · P34.21b's bucket-access go | — | 0.5–0.75 h |
 | by GATE-G4 | **OP-09 switch nameservers** from the P34.50 runbook · OP-10 `contact@` alias right after | yes (registrar) | 0.75–1.25 h |
 | ≥ 10-13 | republish #2 go | — | 0.25–0.5 h |
@@ -1630,16 +1707,20 @@ chain row a ticket silently waits on.
 | ≈ 11-20 → 12-02 | P37.16a/b capture-run gos (no Part VIII "clear": the agent clears, B-42) · P37.20/P37.42/P37.36 gos · P37.55 deposit go · P37.72's GOV-017 question only if the analysis fails | — | 1–1.5 h |
 | ≈ 11-27 → 12-05 | **P37.65b final HG-11 readout** (no OPCHECK); OP-19 Zenodo DOI deposits | **yes** | 1.5–2.5 h |
 | ≈ 12-01 → 12-08 | OP-22: operator walkthroughs of the 13 journeys (maintainer, not independent), "beautiful" gallery sign-off; the "who runs SIG" text only if the operator chooses to write it (C-5) | — | 3–5 h |
-| ≈ 12-03 → 12-12 | **GATE-ACCEPT-R11** (sign the accepted-deviations list verbatim) · **GATE-ANNOUNCE** (MUSTs-unmet list, Q-29 revisit, announcement copy) | yes | 1.5–2.5 h |
+| ≈ 12-03 → 12-12 | **GATE-ACCEPT-R11** (sign the accepted-deviations list verbatim, incl. the nine waivers) | yes | 0.75–1.25 h |
+| after REVIEW-R11 (≈ 12-05 → 12-16) | read REVIEW-R11's findings register; **disposition each S0/S1 finding not fixed** (fix row, accept with reason, or defer with trigger; S6-F3) | — | 1–2 h |
+| after the S0/S1 dispositions | **GATE-ANNOUNCE** (MUSTs-unmet list, Q-29 revisit, REVIEW-R11's S0/S1 record, announcement copy) | yes | 0.75–1.25 h |
 | any time | OP-08 bottom-up merge sitting #141–#190 + the v0.1.0 tag — **a safety item** (public `main` keeps false governance text and the repo-tip handle strings until merged, TS-09); optional per-sub-round merges after each GATE (FEA-17) → then OP-06 | — | 1–2 h + optional |
 | every wave | read the digest (spend and agent-usage lines) | — | 0.25 h × ≈ 8–10 |
-| after the round | read REVIEW-R11's findings register | — | 0.5–1 h |
 | only if needed | a WV-06 deletion go (P37.71's mechanism); a usage-limit pause decision | — | as needed |
 
-**Total ≈ 23–40 h over ≈ 21 touchpoints (plus ≈ 8–10 wave digests) in ≈ 10–11 weeks after GATE-P**, eight synchronous slots in bold. Removed at S6:
+**Total ≈ 23.5–41 h over ≈ 22 touchpoints (plus ≈ 8–10 wave digests) in ≈ 10–11 weeks after GATE-P**, eight synchronous slots in bold. Removed at S6:
 three OPCHECKs (≈ 1–2 h), the top-50 organisation review (1–2 h), the query set (0.5 h), the four dossier-family Part VIII
 "clears", any response-time duty, the domain purchase. Added: OP-25, OP-26 (≈ 0.25 h per wave), AU key registrations, the
-standing-go renewals inside each GATE sitting, reading the post-round review.
+standing-go renewals inside each GATE sitting, reading the closing review. **Added at S6b:** dispositioning
+REVIEW-R11's S0/S1 findings before GATE-ANNOUNCE (+0.5–1 h, S6-F3); the WV-08 text rides copy batch #1. If round 25's
+isolation check fails, the manual-tier fallback (one new session per ticket, started by the operator) would add
+substantial operator time that this total does not include.
 
 ### 11.3 What is waived, deferred or owed — and the trigger that reopens it
 
@@ -1649,7 +1730,7 @@ standing-go renewals inside each GATE sitting, reading the post-round review.
 | SIG-EVAL-004 lower bound | **WAIVED for C0–C2 only** (A-6, ADR-153) | T-EVAL-IND; a proposal to auto-write an inferential tier; GQ-23 failing twice in a quarter |
 | hostile-reader review (SIG-UI-042) | **release block WAIVED** (WV-04, ADR-179); `/editorial-standards/` says "not yet performed"; findings listed as known issues | a hostile reader becomes available; GATE-ANNOUNCE |
 | dossier independent check (SIG-DOS-002) | owed | T-EVAL-IND |
-| second reviewer, editorial board, legal home, one-click intake, two-person deletion, counsel clauses | **WAIVED** (WV-01/02/03/05/06/07; §6.5) | each waiver's trigger (§6.5) |
+| second reviewer, editorial board, legal home, one-click intake, two-person deletion, counsel clauses, published response times (GOV-003's SLA-time clause; the handling priority is published), crawler rule 6 for DocumentCloud/MuckRock | **WAIVED** (WV-01/02/03/05/06/07/08/09; §6.5) | each waiver's trigger (§6.5) |
 | usability study on the live site (D-R10-USERS-1, SIG-UI-001) | owed | LATER-02: participants available and contact authorised |
 | outreach, records-request sending, recruiting (D-R7.2-SEND, CONTRIB-012/012a/013, GOV-024, CHART-033) | owed later-phase by ADR | LATER-04: the operator revisits U-011 |
 | contribution-back to OSM/MapRoulette (D-P21.7-1) | owed later-phase | LATER-03 |
@@ -1749,8 +1830,9 @@ chose a descope, the criterion is stated as chosen.
    second reviewer" and "no human check performed"; **every landing-copy clause is bound to a measured check (GQ id) with
    a probe-run record ≤ 24 h old at the publish that ships it, or ships in its conditional form** (TS-10).
 5. **The spec tells the truth (META_PLAN §1 outcome 4; COV-16):** 0 spec MUSTs contradicted by a recorded operator decision
-   without an ADR, an adopted waiver (A-6, A-23) or an owed row; F-31 closed by the waiver ADRs; the open contradictions
-   S6 flagged (§14 R-18 rule 6, R-19 046c, R-27 GOV-017, R-31 GOV-003) each resolved or carried with a trigger.
+   without an ADR, an adopted waiver (A-6, A-23, round 24) or an owed row; F-31 closed by the waiver ADRs; of the
+   contradictions S6 flagged, R-31 (GOV-003) and R-18's rule-6 part were settled by WV-08/WV-09 in round 24, and R-19
+   (046c) and R-27 (GOV-017) are each resolved or carried with a trigger.
 6. **Build truth:** every boundary read head-bound CI; 0 G1 and 0 G2 violations; every due live leg executed in its window
    or re-scheduled with a date; every production statement cites a probe ≤ 24 h old; no proxy signature; every agent commit
    trailered with harness and model (Devin Desktop / `swe-2-high`); ≤ 1 orchestrator close-repair.
@@ -1772,21 +1854,21 @@ A journey passes within its budget with no wrong-conclusion risk and every fact 
 release id. The agent walkthrough is recorded `agent-verified`, never "user-tested"; the operator walks each too
 (OP-22), recorded "operator walkthrough (maintainer, not independent)" (TS-22).
 
-### 13.4 The tail (P38, rows 500–509, 7.0 runs) and the post-round review
+### 13.4 The tail (P38, rows 500–509, 7.0 runs) and the closing review (REVIEW-R11)
 
 | row | what | size |
 |---|---|---|
 | P38.1a/b | **CAP.1 (CAP-lite)**: independent gap analysis of landed rows against the Round-11 requirements — a: 11A + 11B, b: 11C + 11D + composed live verification with CI for every open PR, probe-run records ≤ 24 h old, two-sum headline per status layer (both flagged for a 256k split, §8.5) | M + M |
-| P38.2 | **CAP.3**: close small in-scope gaps; everything else becomes a DEFERRALS row with a trigger; the **accepted-deviations list** — the descopes and accepted risks the operator chose at GATE-P (§4.6), the C-12 withdrawals and the seven waivers | S |
+| P38.2 | **CAP.3**: close small in-scope gaps; everything else becomes a DEFERRALS row with a trigger; the **accepted-deviations list** — the descopes and accepted risks the operator chose at GATE-P (§4.6), the C-12 withdrawals and the nine waivers (WV-01…WV-09) | S |
 | GATE-ACCEPT-R11 | the operator signs the accepted-deviations list verbatim (HG-14 domain) | — |
 | P38.3a/b/c | **REC**: `reconcile-build` a: backlog + readiness, b: spec reconciliation, c: integration plan for ≈ 340 stacked PRs (operator merge legs sized here) | M + M + M |
 | P38.4 | **DOC**: `refresh-repo-docs` then `agent-docs`; every production statement cites a probe-run record | M |
 | P38.5 | **CAP-02**: announce-readiness review against D3 §5 | S |
-| GATE-ANNOUNCE | the operator's decision; never automatic; agents contact no one; the announcement itself is LATER-22 | — |
-| **REVIEW-R11** (post-round, not a chain row) | **deep review by Claude Code (Opus 5.5, xhigh effort)**, modelled on this Stage-P review: read-only over code, build memory, CI and live state after the final release and P38.4; output = a findings register (S0–S3 with evidence classes) and a next-round planning input; ≈ 8–12 contexts sized by its own meta-plan (A-15) | ≈ 8 |
+| **REVIEW-R11** (closing review, not a chain row) | **deep review by Claude Code (Opus 5.5, xhigh effort)**, modelled on this Stage-P review: read-only over code, build memory, CI and live state after the final release and P38.4, **before GATE-ANNOUNCE**; output = a findings register (S0–S3 with evidence classes) and a next-round planning input; **each S0/S1 finding is fixed — by a plan-extension row (`decompose-spec mode=extend`) run under the chain's rules — or dispositioned by the operator before GATE-ANNOUNCE; S2/S3 findings feed the next round** (A-15; S6-F3); ≈ 8–12 contexts sized by its own meta-plan | ≈ 8 |
+| GATE-ANNOUNCE | the operator's decision; never automatic; **waits for REVIEW-R11 and for every one of its S0/S1 findings to be fixed or dispositioned** (S6-F3); agents contact no one; the announcement itself is LATER-22 | — |
 
 Compared with Round 10's nine-row tail that read nothing live: 10 rows, 7.0 runs, live reads by construction, and a
-second harness only after the round (no in-round second harness, A-15). Stream acceptances (TX-16, ACQ-28, CONF-14,
+second harness only at the round's close, before the announcement (no in-round second harness, A-15; S6-F3). Stream acceptances (TX-16, ACQ-28, CONF-14,
 CAP-01) are ordinary 11D rows that measure.
 
 ### 13.5 Ready to announce (GATE-ANNOUNCE checklist; D3 §5, S2 §8.3)
@@ -1794,17 +1876,18 @@ CAP-01) are ordinary 11D rows that measure.
 The operator's own test, *"I would send this to a journalist today"* · every S0 closed live and status words bound to
 recorded state · all 13 journeys pass the agent walkthrough and the operator walkthrough (maintainer, not independent) ·
 D3 §3(b) holds live · **every landing-copy clause bound to a measured check ≤ 24 h old or in its conditional form**
-(TS-10) · **the "spec MUSTs unmet at launch" list signed verbatim** — after the seven A-23 waivers it holds only items owed
-for other reasons (SIG-EVAL-001/002/005/007, SIG-DOS-002, SIG-UI-001, the outreach MUSTs, SIG-GOV-003's published SLAs
-unless waived) and any open contradiction S6 flagged (§14 R-18, R-19, R-27, R-31) · **Q-29 revisited: keep the personal address as the public contact, or require the `contact@`
+(TS-10) · **the "spec MUSTs unmet at launch" list signed verbatim** — after the nine waivers (WV-01…WV-07 at A-23;
+WV-08/WV-09 in round 24) it holds only items owed for other reasons (SIG-EVAL-001/002/005/007, SIG-DOS-002, SIG-UI-001,
+the outreach MUSTs) and any contradiction S6 flagged that is still open (§14 R-19, R-27) · **Q-29 revisited: keep the personal address as the public contact, or require the `contact@`
 alias (OP-10) before announcing** (privacy-harm reports, SIG-GOV-003; TS-21) · attribution gate and Part VIII screens
 green; the express-terms rows disclosed with their captured terms and the operator-accepted basis (A-8) · pinned citation
 and release id on every page · zero-egress serving with the kill switch and budget alert tested · cost at 100× traffic
 ≤ $300 or approved · backups, a drilled restore and alerts · the dispute and intake page states that senders disclose their
-address and that **no response time is promised** (B-8, WV-05) · §1 text, a known-issues page and PROVISIONAL disclosures
+address, that **no response time is promised** (B-8, WV-05) and **the handling priority** — privacy-harm and safety
+first, then factual corrections, then everything else (WV-08) · §1 text, a known-issues page and PROVISIONAL disclosures
 live · **the dedup is published** (B-26) · the gallery signed (B-29) · the "who runs SIG" section either written by the
-operator or omitted (C-5) · REVIEW-R11's findings read if it has finished (the operator may wait for it) · the operator
-confirms the announcement copy. If GATE-ANNOUNCE is unanswered, SIG is not announced.
+operator or omitted (C-5) · **REVIEW-R11 finished, and each of its S0/S1 findings fixed or dispositioned by the
+operator** (S6-F3; S2/S3 findings go to the next round's planning) · the operator confirms the announcement copy. If GATE-ANNOUNCE is unanswered, SIG is not announced.
 
 ---
 
@@ -1815,7 +1898,7 @@ confirms the announcement copy. If GATE-ANNOUNCE is unanswered, SIG is not annou
 | R-1 | **Live legs never run** (Round 10's "prepared, not executed", queued) | OM-19 runs due legs at every boundary, on their own `r11/<id>-live-<n>` branches; no GATE while a leg is *due*; the OP-24 leg-runner backstop runs held-go legs while the chain is paused and alerts on a due leg it cannot run; "engineered" never reported as "live" | a due leg unrun at a boundary |
 | R-2 | **Answered lines drift back into defaults** (the S4c defaults no longer apply) | every `operator_gate` cell and the decision catalog carry the GATE-P answer (S6); `continue` answers batch lines only; P38.2 lists operator-chosen descopes as decided, never as "not attempted" | S6r finds a stale default |
 | R-3 | **Scale** (309 chain rows; CAP-01 fans in ≈ 117 rows) | four gated sub-rounds; every row ≤ 1 run; contracts per sub-round by PLAN rows with a Phase-4 sizing review; re-split rule (11B at its edge; GATE-G4b named in advance) | a sub-round over 85 rows / 75 runs |
-| R-4 | **Operator load and approval fatigue** (≈ 23–40 h over ≈ 21 touchpoints) | the human checks the operator removed; OM-20 lists; the N-1…N-7 allowance; readouts from P35.60's generator; flip lists batched per wave; weekday 14:00–20:00Z slots | a GATE sitting runs over 3 h |
+| R-4 | **Operator load and approval fatigue** (≈ 23.5–41 h over ≈ 22 touchpoints) | the human checks the operator removed; OM-20 lists; the N-1…N-7 allowance; readouts from P35.60's generator; flip lists batched per wave; weekday 14:00–20:00Z slots | a GATE sitting runs over 3 h |
 | R-5 | **Hosted-write accidents** (L44 rewrites `claim_evidence` under an exclusive lock; re-keying; Wave C ≈ 1.1 M claims on 1 vCPU; share-list claims) | AR-2 restore points; P34.6 drill first; P34.24b rehearses the exact deploy set; P34.46's numeric go/no-go; class-based never-list; AR-3; temporary tier bump; one manual job at a time | a failed restore point or an over-threshold rehearsal |
 | R-6 | **Denial of wallet** before P34.21b's first leg and P35.5 (the bucket tree stays listable; no budget alert until P34.5) | P34.3 makes `sig-web` non-public; P34.21b removes anonymous access early in 11A; P34.5 alert; P35.5 early in 11B; usage in every digest | egress above the watch line |
 | R-7 | **UX outruns the data** (K13 R-1) | all Stream-L S1 fixes in 11B before new surfaces; capability binding; "records" wording until the dedup; CAP-01 checks wrong-conclusion risk | a CAP-01 wrong-conclusion finding |
@@ -1824,25 +1907,25 @@ confirms the announcement copy. If GATE-ANNOUNCE is unanswered, SIG is not annou
 | R-10 | **Rights or legal exposure without counsel** (vendor terms, mirrors, database right, Part VIII) — now chosen, see R-18…R-21 | per-wave HG-03 lists executed by the operator; Part VIII at-rest audit (P34.49), residential demotion (P35.66), officer-naming gate (P35.28), redaction (P36.15) before new hosts; withdrawal barrier + dispute channel as remedies | any legal demand (SEC-003 posture, ADR-166) |
 | R-11 | **The public repo** publishes planning notes, the operator's address and redacted Part VIII findings on first push | B-16: local until T6; SEED-00 + pre-push scans; OD-27 = a publishes as recorded; the private git bundle (OP-23) | a scan hit |
 | R-12 | **Usage limits mid-round** (≈ 100–290 M tokens estimated; a limit was already hit on 09-30) | A-2: usage in every digest; the orchestrator pauses and asks at any usage-limit event (no fixed cap); G4 re-projection | a usage-limit event |
-| R-13 | **Stage B under-sized** (30 ADRs, six families, 59 contracts + 309 manifest rows) | SEED-11 now 4 contexts; 11B–11D contracts and the TRANSP/K13 families move to PLAN rows; each seed unit split to ≤ ~150k tokens loaded | a seed context over the target |
+| R-13 | **Stage B under-sized** (32 ADRs, six families, 59 contracts + 309 manifest rows) | SEED-11 now 4 contexts; 11B–11D contracts and the TRANSP/K13 families move to PLAN rows; each seed unit split to ≤ ~150k tokens loaded | a seed context over the target |
 | R-14 | **Cost baseline is unverified** (G1 list-price ≈ $90–100 vs README "≈ $0/$9"; C-7: invoice unknown) | P34.5 billing export early in 11A; GATE-G4 re-projects if the measured baseline differs materially | the first measured bill |
 | R-15 | **Baseline drift during Stage B** (operator merges, first fires, the 10-10 replay) | the A1 delta re-runs before T6 (SEED-01); P34.39a reads the replay back; dates from the clock (AR-4) | an unexplained delta |
 | R-16 | **DNS move breaks TLS or routes** (Google-managed cert expires 2026-12-22) | P34.50 runbook (DNS-only LB records, TTL step-down, DNSSEC handling, rollback); P35.67 probes after the move and ≈ 11-22; TLS-expiry alert at 21 days (P34.4) | a failed post-move probe |
 | R-17 | **Personal data stays public while the round runs** (handles at the repo tip, the listable bucket, ids; history) | early-11A owners (P34.17, P34.18, P34.21b); RI-01 acceptance covers repo + bucket + all id kinds + values; history disclosed (A-0.4) | P34.47's crawl finds a handle |
-| **R-18** | **Fetching vendor- and platform-hosted pages against their anti-automation terms** (Flock, Axon Fusus Connect, DocumentCloud/MuckRock, Sourcewell/OMNIA; A-17, B-35, B-39, E4-R2a) — breach-of-terms or access claims; an IP block; and **SIG-INGEST-036 rule 6 ("ask first" for small civil-society projects) is not waived while U-011 forbids contact, so fetching DocumentCloud/MuckRock without asking conflicts with a MUST** (flagged, not resolved) | ADR-184 envelope (public, unauthenticated pages only; no logins, keys or circumvention; rate limits; terms captured verbatim; exposure disclosed; Part VIII screen); immediate stop and record on any block or demand; withdrawal-by-new-claim; the rule-6 conflict goes to the operator before P36.77 activates (waive rule 6 for it, authorise contact, or keep it dark) | a cease-and-desist, an access block, a ToS change, or the operator's rule-6 answer |
+| **R-18** | **Fetching vendor- and platform-hosted pages against their anti-automation terms** (Flock, Axon Fusus Connect, DocumentCloud/MuckRock, Sourcewell/OMNIA; A-17, B-35, B-39, E4-R2a) — breach-of-terms or access claims; an IP block. *Narrowed at S6b:* the SIG-INGEST-036 rule-6 conflict S6 flagged for DocumentCloud/MuckRock ("ask first" while U-011 forbids contact) was resolved in round 24 by WV-09 (ADR-187); the anti-automation-terms exposure remains the operator's accepted risk | ADR-184 envelope (public, unauthenticated pages only; no logins, keys or circumvention; rate limits; terms captured verbatim; exposure disclosed; Part VIII screen); immediate stop and record on any block or demand; withdrawal-by-new-claim; for DocumentCloud/MuckRock, WV-09's controls — rules 3, 4 and 7 bind, any opt-out honoured at once (rule-7 register, P36.1a), activation only after the operator's HG-03 flip | a cease-and-desist, an access block, a ToS change, or an opt-out (WV-09's trigger) |
 | **R-19** | **Express-terms rows kept public** (≈8,088 rows incl. TxDOT and 3 NC rows; A-8) — and, open: if any row's captured licence metadata is an affirmative machine-readable reservation, SIG-INGEST-046c (not waived) requires refusal | ADR-183 with the operator's sentence; captured terms + basis disclosed on pages and in files; withdrawal on objection (P34.41 barrier, ≤ 15 min); P36.1a classifies the captured metadata and returns any 046c case to the operator | a rights-holder objection or takedown |
 | **R-20** | **EU/UK database right on N1–N21** (B-34; SIG-LIC-009's counsel clause waived, WV-07) | precedent basis recorded per row; express prohibitions excluded; SIG-PUB-017 jurisdiction-conditional publication; LIC-009 risk-register entry kept | an objection from a non-US publisher; counsel obtained |
 | **R-21** | **Robots disallows disregarded** (122 hosts incl. 102 PrimeGov, plus new hosts; A-5) | disclosed as host + count in run logs (B-19); 046c reservations refused; rule-7 opt-out honoured at once; conservative rate limits | an opt-out, a reservation or a block |
-| **R-22** | **Single maintainer with all seven waivers** (no legal home, board, second reviewer, hostile reader, anonymous intake, two-person deletion or counsel) | each waiver's compensating controls (§6.5); public decision log; every readout says "single maintainer, no second reviewer" | each waiver's trigger; announcement |
+| **R-22** | **Single maintainer with all nine waivers** (no legal home, board, second reviewer, hostile reader, anonymous intake, two-person deletion, counsel, published response times, or rule-6 contact with DocumentCloud/MuckRock) | each waiver's compensating controls (§6.5); public decision log; every readout says "single maintainer, no second reviewer" | each waiver's trigger; announcement |
 | **R-23** | **No human checks** (no OPCHECK, agent-cleared Part VIII families, agent-written query set; B-31, B-42, B-28) | mechanical census and ratchets gate; agent lanes labelled and never gating; every surface says "no human check performed" / "cleared by agent screen" / "agent-authored"; T-EVAL-IND owed | a reader-reported error the checks missed; T-EVAL-IND |
-| **R-24** | **The executor is the model B7 associates with Round-10's record failures** (`swe-2-high`; A-15), with the operator's name as author (A-21) | mechanical guards bind any harness (B4 guard core, G1–G4 checks, head-bound CI, OM-01 trailers CI-enforced, OM-02 close discipline); one digest per wave; the post-round Claude Code deep review; no in-round second harness to catch what CI cannot | a G1/G2 violation, an untrailered commit or a close-repair |
+| **R-24** | **The executor is the model B7 associates with Round-10's record failures** (`swe-2-high`; A-15), with the operator's name as author (A-21) | mechanical guards bind any harness (B4 guard core, G1–G4 checks, head-bound CI, OM-01 trailers CI-enforced, OM-02 close discipline); one digest per wave; the closing Claude Code deep review (REVIEW-R11), whose S0/S1 findings gate the announcement (S6-F3); per-ticket sub-agent isolation proven on row 201 (round 25); no in-round second harness to catch what CI cannot | a G1/G2 violation, an untrailered commit or a close-repair |
 | **R-25** | **Live API answers change before Class S readouts** (A-20; P34.45's ER re-run, 11B structural writes) | basis label on every response (P34.25) + `/status/` notice; P35.57 still lands; OM-20 lists name each write | a reader cites a changed answer |
 | **R-26** | **Tribal data ingested without a tribal-data-governance rule** (two S8 members; B-32; TR1–TR2 facts + citations) | Part VIII screen; facts + citations only; no outside contact; withdrawal on objection | a Nation's objection; a governance rule adopted |
 | **R-27** | **"My location" vs SIG-GOV-017** (MUST NOT build an "is a camera watching me right now" surface; not waived) | P37.72 writes the GOV-017 analysis first; map-pan only; no location leaves the browser; no proximity output; a failing analysis pauses and returns the question | the analysis result |
 | **R-28** | **Deferred Track-0 exposures** (handles, bucket tree, `/visual-language/`, no drill or TLS alert before 10-10, no budget alert) — unresolved, operator-deferred | early-11A owners (P34.4–P34.6, P34.17, P34.18, P34.21b); RI-01 crawl at P34.47 | a first-fire failure or an exposure report before the owners land |
 | **R-29** | **`sig-project.org` not bought** (residual squatting of a domain old UA strings and docs named; B-6) | P35.38 removes every reference; the UA names surveillancegraph.org | the domain is registered by a third party |
-| **R-31** | **SIG-GOV-003 (published SLAs by category, privacy-harm and safety first) vs B-8 "no time promises"** — an unwaived MUST in conflict with an answer (S6 flag) | the dispute notice states the address and that senders disclose it (WV-05); the conflict is put to the operator (waive GOV-003 for Round 11, or approve SLA text in a copy batch); until then GOV-003 is listed unmet at GATE-ANNOUNCE | the operator's answer; announcement |
-| **R-30** | **Devin Desktop tooling unverified** (whether it loads `~/.claude/skills`; scheduled sessions for the leg-runner; the 256k window under real Load lists) | T6 dry-run in Devin Desktop; §8.5 sizing; OP-24 falls back to Devin CLI headless with the same model, recorded (OM-01) | the T6 dry-run result |
+| **R-30** | **Devin Desktop tooling unverified** (whether it loads `~/.claude/skills`; scheduled sessions for the leg-runner; the 256k window under real Load lists; **whether its sub-agents start from a fresh context** — round 25) | T6 dry-run in Devin Desktop; §8.5 sizing; OP-24 falls back to Devin CLI headless with the same model, recorded (OM-01); P34.1's isolation check (nonce invisible to the sub-agent; the sub-agent's run ledger records its own start), and on failure a pause and the manual tier (`drive-build.sh --print-prompt`, one new session per ticket — more operator time) | the T6 dry-run result; P34.1's isolation check |
+| **R-31** | **Resolved by WV-08 (round 24, 2026-10-01T06:05:22Z; ADR-186) — row kept for history.** S6 flag: SIG-GOV-003 (published SLAs by category, privacy-harm and safety first) vs B-8 "no time promises", an unwaived MUST in conflict with an answer | S6 put the conflict to the operator. Now: GOV-003's SLA-time clause is waived and its priority clause met differently — the corrections/intake page publishes the handling order (privacy-harm and safety reports first, then factual corrections, then everything else) with no time commitment (P34.17), beside WV-05's notice; GOV-003 leaves the GATE-ANNOUNCE "unmet" list | WV-08's revisit trigger: the first public intake form (P37.59's live leg or a successor), the announcement, or a second maintainer |
 
 ---
 
@@ -1869,7 +1952,7 @@ confirms the announcement copy. If GATE-ANNOUNCE is unanswered, SIG is not annou
 | LATER-19 | Cloud SQL CUD (the scheduler consolidation moved into P35.1b) | 3 measured bills (G1-TRIM d) | 1 · −12 |
 | LATER-20 | legacy bucket retirement | 90 days after P35.59 (dark cutover); `sig-public` root frozen until downloads move | 0.5 |
 | LATER-21 | CI runners to Ubuntu 26 | after TC-PIN, before 24.04 end of support | 0.5 |
-| LATER-22 | Round-11 announcement and public launch | CAP-02 passes and the operator says go | 0 |
+| LATER-22 | Round-11 announcement and public launch | CAP-02 passes, REVIEW-R11's S0/S1 findings are fixed or dispositioned (S6-F3) and the operator says go | 0 |
 
 **Moved into Round 11 at S6:** LATER-10 (non-US keyed APIs → P37.70; B-18, S5-4), LATER-15 (operator-only gate-signing
 key → P34.28 + OP-25; A-16), R11-ACQ-23a/b (international portals and OGC WFS → P37.69a/b; S5-4). The tribal and
@@ -1893,7 +1976,7 @@ Also deferred, outside the catalog: the 45 quiet ADR revisit triggers (watched t
 GATE-P was recorded (§1.3), so Stage B starts after S6r. Every artifact is append-only where it touches a protected
 record (OM-13), dated from `date -u`, and committed on `r11/seed`. Catalog units in brackets (S1a); est. runs from
 `data/round11_plan.csv` (seed total 24.25 runs in ≈ 30 contexts, each ≤ ~150k tokens loaded so it also fits Devin
-Desktop's window; each unit's `notes` name its seams). Stage B writes the seed, the 30 operator-decision ADRs, six
+Desktop's window; each unit's `notes` name its seams). Stage B writes the seed, the 32 operator-decision ADRs, six
 requirement families, the manifest for every row and **full contracts only for 11A and PLAN-11B**; 11B–11D contracts are
 written by the PLAN rows.
 
@@ -1913,16 +1996,17 @@ written by the PLAN rows.
       extension with the **MEM, ENG, OPS, SEC, REL and CONF** families under final ids (TRANSP → PLAN-11B, K13 → PLAN-11C);
       T1 records the draft-id → final-id map and de-duplicates draft ids listed under two families.
 - [ ] Amendments of §6.3 in their owning `spec_src` section files — **incl. the waiver notes for SIG-EVAL-004 (C0–C2),
-      SIG-GOV-001/002/008/012/013/015, SIG-PUB-008's second-reviewer role, SIG-UI-042, and the counsel clauses of
-      SIG-LIC-009/SIG-INGEST-037, and the CHART-025 and UI-036/050 amendments**; one new **Appendix G.7** row set
+      SIG-GOV-001/002/008/012/013/015, SIG-PUB-008's second-reviewer role, SIG-UI-042, the counsel clauses of
+      SIG-LIC-009/SIG-INGEST-037, SIG-GOV-003's SLA-time clause (WV-08) and SIG-INGEST-036 rule 6 for DocumentCloud/MuckRock
+      (WV-09), and the CHART-025 and UI-036/050 amendments**; one new **Appendix G.7** row set
       (`99c_appG_corrections.md`) incl. the §55 true dates; **Appendix F** rows for every new ADR (`99a_appF_adr.md`);
       family table updated for newly opened prefixes.
 - [ ] `BUILD.sh` regenerates `docs/2_canonical_design_spec.md`; `check_spec_src.py` green; new ids append-only; R10-A6
       untouched.
 - [ ] `docs/3_sig_golive_spec.md`: goal 5, GL-GATE-01/02/05, gate register, GL-GATE-06…08 (E2-18; ADR-145 pattern), with
       **GL-GATE-07 and GL-GATE-08 recorded as re-confirmed at GATE-P in the operator's adopted words** (A-5, A-7).
-- [ ] `docs/adr/ADR-146…` — **the 30 ADRs whose §7 author is SEED-11**, template header, the operator's adopted words where
-      the decision is theirs (EVAL-004 waiver, the seven A-23 waivers, GL-GATE-07/08 texts, express-terms acceptance, the
+- [ ] `docs/adr/ADR-146…` — **the 32 ADRs whose §7 author is SEED-11**, template header, the operator's adopted words where
+      the decision is theirs (EVAL-004 waiver, the seven A-23 waivers and round 24's WV-08/WV-09, GL-GATE-07/08 texts, express-terms acceptance, the
       Class R standing go, C-3), each stored with its sha256 and the label "agent-drafted, adopted by the operator at
       <time>"; `## Revisit trigger` in each. The ten engineering ADRs are written by their owning tickets.
 - [ ] Appended `Superseded by ADR-nnn (<date -u>)` status lines on every superseded landed ADR (incl. ADR-015, 058 §3,
@@ -1964,7 +2048,8 @@ written by the PLAN rows.
       `data/round11_plan.csv` as they stand**; gate rows without `.n`; one appended `## Plan extensions` line naming
       PLAN-11B/11C/11D as the later contract authors; a `## Human prerequisites` section listing OP-01…OP-10, OP-12, OP-13,
       OP-19, OP-20, OP-22…OP-26 with due points; the L3 §6.3 dispatch amendment and the 184–187 gate-cell tokens; HG-05 as
-      an operator-owned integration disposition; REVIEW-R11 named as the post-round closing unit (not a manifest row).
+      an operator-owned integration disposition; REVIEW-R11 named as the closing review unit (not a manifest row) that
+      GATE-ANNOUNCE waits for (S0/S1 dispositions; S6-F3).
 - [ ] **Full contracts only for the 59 11A rows and PLAN-11B** from `_TEMPLATE.md` (+ `harness: Devin Desktop /
       swe-2-high` header + B5 §6.2 block): `Run:` line, `live_verification`, `Live window:` and the live-leg re-run prompt
       where windowed, OM-14 mutation list, `live:` edges, requirement ids, acceptance stated at its layer, the OM-20 status
@@ -1978,15 +2063,16 @@ written by the PLAN rows.
 - [ ] `docs/tickets/DEFERRALS.md`: appended annotations for all 36 owed rows per §9.2 (as answered: D-SOURCES.7-2 and
       8-2 → tickets P37.12/P37.70; D-SOURCES.8-1 → P36.2; D-SOURCES.2-2 → P36.77; D-P30.2b-1 → LATER-01 / T-EVAL-IND;
       D-P32.3-1 → ADR-159 + P37.46); new OPEN rows (SEC-003 owner, the ADR-124 allow row, the D-rows MET-ENGINEERED verdicts
-      need, the open S6 contradictions R-18 rule 6 and R-27 GOV-017); **every LATER unit and every later-phase universe item
+      need, the open S6 contradiction R-27 GOV-017 — R-18's rule-6 part and R-31 were settled by WV-09/WV-08); **every LATER unit and every later-phase universe item
       recorded with its trigger and date by a committed generator script (COV-10)**; token transitions only queued (CF-03).
 - [ ] `docs/build/BACKLOG.csv/.md`: closures with evidence, splits, new rows from BL-059 (incl. the EVAL-004 waiver
-      revisit row and one revisit row per A-23 waiver), RISK duplicate-id renames, RISK-P21-03 route; risk rows R-18…R-30.
+      revisit row and one revisit row per waiver WV-01…WV-09), RISK duplicate-id renames, RISK-P21-03 route; risk rows
+      R-18…R-31 (R-31 recorded as resolved by WV-08).
 - [ ] `docs/build/COVERAGE_MATRIX.csv`: verdict vocabulary + `required_domain`/`achieved_domain`/`owed_legs`/
-      `accepted_scope`; F2a/F2b/L3 deltas (§6.6) with Appendix B's corrections; **WAIVED(ADR) for every MUST waived at GATE-P (A-6 and the seven A-23 waivers)**;
+      `accepted_scope`; F2a/F2b/L3 deltas (§6.6) with Appendix B's corrections; **WAIVED(ADR) for every MUST waived at GATE-P (A-6 and the seven A-23 waivers) and in round 24 (WV-08's SLA-time clause, with GOV-003's priority clause MET-DIFFERENTLY; WV-09's rule 6, scoped to DocumentCloud/MuckRock)**;
       each change a `coverage-assessment/1` event. (The 61-row re-verdict is P34.48.)
 - [ ] `check_coverage_matrix.py` grammar + cross-checks + spec-derived counts (incl. "an amendment that weakens a MUST is
-      a waiver"); `check_backlog.py` open-home rule; new `ADR_TRIGGERS.csv` (incl. Q-29's revisit and the seven waiver
+      a waiver"); `check_backlog.py` open-home rule; new `ADR_TRIGGERS.csv` (incl. Q-29's revisit and the nine waiver
       triggers); validator V2 skips superseded manifest rows (COV-14); `tools/check_dispositions.py`: rules (a) and (c) read
       `data/round11_plan.csv` (`sub_round ∈ {11A, 11B}`; the S2/S4c/S6 units become visible, COV-13), rule (d) extended to
       W2-1…6, PF-1…3 and GM-1 (added to the universe; COV-03), the S4c `acts_on_silence` rule folded in from the scratch
@@ -1995,19 +2081,21 @@ written by the PLAN rows.
 
 **T5 — LEDGER seed and resume prompt [SEED-17 1.0]**
 - [ ] CURRENT STATE (values only, ≤ 3 KiB): `round: 11`, `nextTicket: 201` (P34.1), `chainTip` / base per §12,
-      `dispatchTarget` (≤ ~150k tokens loaded in a 256k window), **`harness: Devin Desktop`**, **`model: swe-2-high`** (CF-04,
-      A-15), `blockedOn`, `returnPass`, `updatedAt` from `date -u`; status PAUSED until C10.
+      **`dispatchTarget: subagent`** (round 25; tickets sized for a sub-agent's hard ceiling: ≤ ~150k tokens loaded in a
+      256k window), **`harness: Devin Desktop`**, **`model: swe-2-high`** (CF-04, A-15), `blockedOn`, `returnPass`, `updatedAt` from `date -u`; status PAUSED until C10.
 - [ ] OPERATING MODE — Round 11: OM-01…OM-20 (§3.3, S4c wording incl. OM-01's trailer rule and the class-based never-list),
       the **11A OM-20 list approved at GATE-P (S5-3) with its expiry at GATE-G4**, the A-15 pause rules and the per-wave
       digest with a spend and agent-usage line (A-2), A-20's live-API disclosure rule, H2 §7 paste blocks (G3a gate, flake
       rule), G2 §2 activation rules, P16 "alias first" (C-8), the D-P31.4-1 clock guard, the `git merge-base --is-ancestor
       origin/main <chainTip>` boundary record (COV-14), commit authorship = the operator's name with CI-enforced trailers
-      (A-21), the Class R standing-go text and its renewal rule (B-9), B6 §5.3 overrides only if the T6 check finds Devin
-      Desktop does not load the skills.
+      (A-21), the Class R standing-go text and its renewal rule (B-9), **the round-25 dispatch rule** (one orchestrator
+      session; a fresh sub-agent per ticket; head-bound CI read at every boundary; harness + model per ticket; P34.1's
+      isolation check; on failure pause → manual tier), B6 §5.3 overrides only if the T6 check finds Devin Desktop does not
+      load the skills.
 - [ ] The leg-runner backstop prompt (OM-19; scheduled by the operator as OP-24, in Devin Desktop or Devin CLI headless with
       the same model — recorded).
 - [ ] GATE DECISIONS rows for GATE-M and GATE-P, verbatim with their times, citing `feedback/RATIFICATION_LOG.md` and
-      `de0b3591`.
+      `de0b3591`, plus the rounds 24–25 lines (2026-10-01T06:05:22Z, 06:14:06Z) from the same log.
 - [ ] Stale-token scan of the head = 0; every path named in the head exists.
 
 **T6 — Validation, dry-run and handoff [SEED-18 0.5, SEED-19 0.5]**
@@ -2017,9 +2105,12 @@ written by the PLAN rows.
       cannot land before 2026-10-19, the seed PR pins `runs-on: ubuntu-24.04` (FEA-16).
 - [ ] **Read-only `orchestrate-build` orient dry-run in Devin Desktop** resolves **row 201 = P34.1 TC-PIN**, and records
       **whether Devin Desktop loads the skills from `~/.claude/skills`** (Devin CLI does; Desktop unverified) and whether
-      it can run scheduled sessions for OP-24.
+      it can run scheduled sessions for OP-24, and that it exposes the sub-agent primitive round 25 relies on (`dispatch:
+      subagent`); if it does not, the orchestrator pauses before row 201 and the operator chooses the manual tier.
 - [ ] `PD/HANDOFF.md` with the exact resume prompt (harness Devin Desktop, model `swe-2-high`, worktree, branch, first
-      row, OPERATING MODE pointer, the 256k sizing rule).
+      row, OPERATING MODE pointer, the 256k sizing rule) **and both dispatch modes** (round 25): the orchestrator session
+      dispatching fresh sub-agents, and the manual-tier fallback (`drive-build.sh --print-prompt`, one new session per
+      ticket) with when to switch (a failed isolation check on P34.1).
 - [ ] **GATE-B** recorded verbatim, with the 11A OM-20 list as approved at GATE-P (S5-3); C10 flips the LEDGER to
       IN_PROGRESS.
 
@@ -2057,6 +2148,8 @@ written by the PLAN rows.
 | 26 | (S6) B-18 folded D-P30.2b-1 into the maintainer check, which B-31 then removed; Q-25's seat likewise | D-P30.2b-1 stays OPEN, non-blocking (T-EVAL-IND, LATER-01); the operator holds no evaluation seat |
 | 27 | (S6) the log's A-12 shorthand "superseding ADR-068/091/097/134" vs K0 §6 (supersedes ADR-091 §3–4 and ADR-097 §2–3/§6, extends ADR-134, leaves ADR-068 unchanged) | K0 §6's precise clauses kept (the decision is D-K0-1 a, "supersede the three-island rule"); flagged for S6r |
 | 28 | (S6) the interpretation of IT7 says private registrants are "never stored in public output"; SIG-PUB-002 forbids storing home addresses and incidental private names in **any** tier | PUB-002 applied: P36.76 redacts before anything is persisted (flagged in `design/S6-ratification-applied.md`) |
+| 29 | (S6b) S6 flags 1 and 2 (SIG-GOV-003 vs B-8; SIG-INGEST-036 rule 6 vs B-39/E4-R2a) and S6 §7 item 4 (does REVIEW-R11 gate the announcement?) | answered in round 24 (06:05:22Z): WV-08 (ADR-186), WV-09 (ADR-187), REVIEW-R11 gates GATE-ANNOUNCE on S0/S1 (§4.8) |
+| 30 | (S6b) §8.5 / T5 used `dispatchTarget` for the token target; in `orchestrate-build` it names the dispatch tier the tickets were sized for | round 25: `dispatchTarget: subagent`; the ≤ ~150k-loaded target is that tier's hard one-window ceiling (a sub-agent cannot compact) |
 
 ---
 
@@ -2069,7 +2162,7 @@ cite them (S1a, S1b, S1c, S2, K13, L3, I8), not re-read whole for this row.
 |---|---|
 | §0, §8 | `design/S2-round-structure.md`; `data/round11_plan.csv` |
 | §1, §4.1 | `META_PLAN.md` §7.1; `feedback/OPERATOR_FEEDBACK.md` |
-| §4.2–§4.7 (and every "= answer" in §5–§15) | `feedback/RATIFICATION_LOG.md` (GATE-P; commit `de0b3591`); `data/decision_catalog.csv` (`operator_answer`, `answered_at`); `design/S6-ratification-applied.md` |
+| §4.2–§4.8 (and every "= answer" in §5–§15) | `feedback/RATIFICATION_LOG.md` (GATE-P; commit `de0b3591`); `data/decision_catalog.csv` (`operator_answer`, `answered_at`); `design/S6-ratification-applied.md` |
 | §2 | `baseline/BASELINE.md`, `baseline/TRACK0_RECORD.md`; `findings/REGISTER.md`; `review/REVIEW_SYNTHESIS.md`; L2 |
 | §3 | `META_PLAN.md` §3; `research/B5-orchestration-retro.md` §6; S2 §3.5 |
 | §4 (the questions as asked) | `design/S1c-decision-catalog.md` §2–§9 and appendix; `data/decision_catalog.csv`; S2 §7.3, §11 |
@@ -2094,7 +2187,8 @@ cite them (S1a, S1b, S1c, S2, K13, L3, I8), not re-read whole for this row.
 | S4c revision | 2026-10-01T02:38:06Z → 02:55:12Z | closed the three S4 reviews (`reviews/REVIEW_CLOSURE.md`; committed `e5936f96`) |
 | GATE-P | 2026-10-01T03:41:19Z → 05:03:05Z | 99 lines answered in 23 rounds (`feedback/RATIFICATION_LOG.md`; committed `de0b3591`) |
 | **S6 revision** | 2026-10-01T05:55:53Z | status → CANONICAL; §4 rewritten as the ratified decisions (Parts A, S5, B, C, D2) with the 27 deviations and the recording gaps; §0, §1.3, §3, §5.1/5.2/5.4/5.5/5.6/5.7/5.9/5.10, §6.3–§6.5, §7 (30 SEED-11 ADRs: +179–185), §8 (309 rows, 285.5 runs, 256k sizing, oversized rows), §9, §10 (money, ops), §11 (operator load), §12, §13 (criteria no longer conditional; post-round review; GATE-ANNOUNCE), §14 (R-18…R-31), §15 and Appendix A updated; Appendix B rows 24–28; CSVs: 11 chain rows + OP-25, OP-26 and REVIEW-R11 added, 1 chain row dropped (P35.49), 6 operator rows dropped, OP-18 done, 4 later rows moved in, P34.45 moved to 11A, every operator_gate default replaced by its answer; `decision_catalog.csv` gains `operator_answer` + `answered_at` for all 346 ids. Details: `design/S6-ratification-applied.md` |
+| **S6b — round 24 applied** (+ round 25) | 2026-10-01T06:21:40Z | the operator's four answers given after S6 (log rounds 24–25, 06:05:22Z and 06:14:06Z), all as recommended: **WV-08** (SIG-GOV-003's SLA-time clause waived, priority clause MET-DIFFERENTLY; ADR-186; R-31 resolved, kept for history; P34.17 carries the handling-priority text) · **WV-09** (SIG-INGEST-036 rule 6 waived for DocumentCloud/MuckRock only, rules 3/4/7 still bind; ADR-187; R-18 narrowed; P36.77 activates after its HG-03 flip) · **S6-F3** (REVIEW-R11 runs before GATE-ANNOUNCE, which waits for every S0/S1 finding to be fixed or dispositioned; S2/S3 → next round; GATE-ANNOUNCE gains a `depends_on` edge to REVIEW-R11) · **round 25** (`dispatchTarget: subagent`, one Devin Desktop orchestrator session, fresh sub-agent per ticket; P34.1 carries the fresh-context isolation check; manual-tier fallback). Nine waivers; 32 SEED-11 ADRs (42 in all); operator time ≈ 23.5–41 h. Header, §0, §1.3, §3.3–§3.4, §4 (new §4.8), §5.1–§5.3, §5.5, §5.10, §6.3, §6.5, §6.6, §7, §8, §9, §10.4, §11.2–§11.3, §13, §14, §15, Appendices A–C updated; CSVs: 11 plan rows, 7 catalog units, 4 new decision rows. Details: `design/S6-ratification-applied.md` § S6b addendum |
 
 *Canonical for Round 11. S3 written 2026-10-01T01:13:07Z → 01:26:35Z; revised at S4c 2026-10-01T02:38:06Z → 02:55:12Z;
-ratified at GATE-P 2026-10-01T05:03:05Z; applied at S6 2026-10-01T05:55:53Z (`date -u`). Next: S6r (one fresh-context consistency
-review), then Stage B (T0–T6).*
+ratified at GATE-P 2026-10-01T05:03:05Z; applied at S6 2026-10-01T05:55:53Z; rounds 24–25 applied at S6b 2026-10-01T06:21:40Z (`date -u`).
+Next: S6r (one fresh-context consistency review), then Stage B (T0–T6).*
