@@ -31,3 +31,8 @@ Items surfaced by seed units that a later unit (or the operator) must resolve. E
 - SEED-11d · ADR-032 → ADR-050 supersession line added beyond Appendix A (F-249; ADR-050 "Closes out: ADR-032") — orchestrator keeps it
 - orchestrator · ADR-002 `Qualified by ADR-189` status line appended (WV-11 makes the one exception to it)
 - SEED-11d · **operator question (GATE-B packet):** ADR-183's acceptance covers "all ≈8,088 currently public rows" — do rows re-ingested after 2026-10-01 from the same express-terms sources (e.g. the TxDOT republish refreshing) also fall under it? Recommended reading to offer: yes for the same sources as of 2026-10-01 (they keep refreshing), new sources follow A-9 · GATE-B packet
+- T2-α · history mode must exempt the 53 restored GATE DECISIONS rows from R2 (>48 h back-dated) and check them in restored-dates-vs-`git blame` mode · SEED-02a (+ policy entry)
+- T2-α · SEED-05: append `## PHASE LOG — Round 11` after the new LEDGER date-correction section (PHASE LOG must be the last region); PHASE LOG entry drafts are in `docs/build/runs/SEED-01-04-06-07.md` · SEED-05
+- T2-α · SEED-08 owns date corrections for runs/pr/readouts/DEFERRALS/manifest; SEED-09 appends index repairs below the DC-BI table under a new header; SEED-10 cites DC-L-01…03 and appends to the memory-repair README · SEED-08/09/10
+- T2-α · CF-03 queue path = `docs/build/reports/memory-repair/pending_transitions.csv` (columns are SEED-04's design, labelled) · SEED-13/14
+- T2-α · full A1 delta incl. GCP + CI keys still owed before T6 · orchestrator (T6)
