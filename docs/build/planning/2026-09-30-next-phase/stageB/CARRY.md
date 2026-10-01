@@ -85,3 +85,8 @@ Items surfaced by seed units that a later unit (or the operator) must resolve. E
 - SEED-14b · `obligation_events.py`: add new verdict words + letter-suffixed id parsing; append the 26 anchors for SEED-14a's new rows (append events, never `migrate`) — **in the seed** so T6 is green (P34.8 contract notes it) · SEED-15
 - SEED-14b · SIG-LIC-006 stored-table split (BL-092) has no Round-11 owner → DEFERRALS row owner PLAN-11B (place in 11B) or LATER with trigger; MUST stays owed · SEED-15
 - SEED-14b · EVAL-001 stays PARTIAL until `/methodology/` stops claiming a human-verified holdout (Wave-0 honesty row owns it); EVAL-003/006 → P37.44 · noted
+- SEED-13e · `req_index.py write` reads the coverage matrix at HEAD — re-run it after SEED-15 commits (and before T6) · orchestrator/T6
+- SEED-13e · every dispatch-time token count must add the skill-text share (implement-spec + self-review ≈ 17.5k tokens) · SEED-17 OPERATING MODE
+- SEED-13e · **orchestrator decision:** P34.7 stays one row, dispatched as two sequential contexts (part a: deliverables 1,2,6,7; part b: 3,4,5 + PR) — appended to its contract · done
+- SEED-13e · decompose-spec's ≈128k whole-working-set heuristic vs the plan's ≤ ~150k loaded rule — tradeoff recorded in the manifest's Decomposition decisions · HANDOFF note
+- SEED-13e · GATE-B: raise P34.40's `/v1/*` step needing its own go · GATE-B packet
