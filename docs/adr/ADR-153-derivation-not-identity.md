@@ -16,11 +16,12 @@
     **"No maintainer check"**. The selected option kept C2 (the alternative "C0/C1 only" was not chosen); the log's labelled
     interpretation records Q-L3-6 = a, "C2 enabled".
 - **Requirement ids:** SIG-EVAL-004 — **WAIVED(ADR-153) for C0–C2 only** (waiver note at T1, plan §6.3); SIG-IDENT-028 —
-  amended: auto-demotion for copy tiers is census-driven (plan §6.3); draft SIG-CONF-D04 (derivation, not identity), D05
-  (identity inference never auto-written without independent evaluation), D14 (declared lineage, SHOULD) → SIG-CONF-0nn with the same numbers (SIG-CONF-D01 → SIG-CONF-001 …) in SEED-12's id map `PD/stageB/T1_id_map.csv`, read at writing (SEED-12 owns the final ids). Related, unchanged: SIG-IDENT-020 (tiers 0–3 may
+  amended: auto-demotion for copy tiers is census-driven (plan §6.3); SIG-CONF-004 (derivation, not identity), SIG-CONF-005
+  (identity inference never auto-written without independent evaluation), SIG-CONF-014 (declared lineage, SHOULD) —
+  §56.7; drafted in L3 §7; final ids per `PD/stageB/T1_id_map.csv`. Related, unchanged: SIG-IDENT-020 (tiers 0–3 may
   auto-write), SIG-EPIS-009, SIG-EPIS-029, SIG-RECON-018.
-- **Spec:** §55.4 (SIG-EVAL-004 waiver note, C0–C2), §14.7 (SIG-IDENT-028 amendment); proposed Part XII §56 for the
-  SIG-CONF drafts (SEED-12).
+- **Spec:** §55.4 (SIG-EVAL-004 waiver note, C0–C2), §14.7 (SIG-IDENT-028 amendment); Part XII §56.7 for
+  SIG-CONF-004, SIG-CONF-005 and SIG-CONF-014.
 - **Supersedes:** **ADR-105 §5** (the measured auto-write gate on the agent- and maintainer-verified holdout, for camera
   sites) (plan §7 row 153; L3 ADR-L3-B).
 - **Amends / qualifies / extends:** **amends ADR-099 §3** (the 0.98 floor applies only to independently evaluated tiers;
@@ -112,7 +113,7 @@ L3 §8's draft, which this ADR records.
   cameras from 227,335 records on the 2026-09-27 release — an inference that depends on the lineage declarations).
 - The dedup that reaches the public becomes real (site ids and copies), and every copy carries a checkable basis.
 - A new mirror family must declare its lineage (and, for C1, its id namespace) before it can collapse; an undeclared
-  > 50 % overlap is held from publication (GQ-11, draft SIG-CONF-D14).
+  > 50 % overlap is held from publication (GQ-11, SIG-CONF-014).
 - Real duplicates between independent sources stay double-listed as possible duplicates — the conservative direction —
   until an independent evaluation exists.
 - SIG-EVAL-004's verdict becomes WAIVED(ADR-153) with `accepted_scope` C0–C2 and no open leg; the coverage checker's
@@ -136,3 +137,24 @@ L3 §8's draft, which this ADR records.
   internal revisit threshold, never published as a certification figure).
 - A new source family whose copies carry no id namespace.
 - The operator withdraws the waiver.
+
+## Clarification (2026-10-01T13:56:51Z)
+
+Appended by Claude Code (Opus 5.5), Stage-B sub-agent SEED-12c; the record above is not rewritten. It corrects how
+Decision 4 and the `Requirement ids` header read against the specification as amended at T1.
+
+- **What the record says:** Decision 4 says census-driven demotion "replaces holdout-driven demotion for copy tiers"
+  (SIG-IDENT-028 amended), and the header says SIG-IDENT-028 is "amended: auto-demotion for copy tiers is
+  census-driven".
+- **What holds:** census-driven demotion **adds to** SIG-IDENT-028; it does not replace it. SIG-IDENT-028's clause
+  "Auto-write tiers MUST be automatically demoted to review if holdout precision falls below the published threshold"
+  **stands** for every auto-write tier, C0–C2 included. It is not replaced, not waived, and no waiver ADR covers it.
+  A-6's adopted sentence waives SIG-EVAL-004's lower-bound clause for C0–C2 and nothing else. Replacing the holdout
+  clause would weaken a MUST without the operator's words (plan §6.5; ADR-150).
+- **Where it is recorded:** SEED-12b's spec note on SIG-IDENT-028 (§14.7, source
+  `docs/research/_meta/spec_src/26_partII_s14_identity.md`) and Appendix G.7 row R11-A9 ("census-driven demotion added
+  for copy tiers C0–C2 … the holdout-demotion clause is not waived"). The per-run holdout report continues, labelled as
+  measured on agent-labelled development data (ADR-152).
+- **Effect on the rest of this ADR:** none beyond Decision 4's wording. GQ-23 still re-verifies every C1/C2 collapse
+  after each ER run and demotes on failure, M-1b still samples quarterly, and SIG-EVAL-004 stays `WAIVED(ADR-153)` for
+  C0–C2 only.

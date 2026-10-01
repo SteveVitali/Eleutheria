@@ -13,12 +13,12 @@
     boilerplate rows"* (`PD/feedback/RATIFICATION_ANSWERS.md`); member Q-E2-17 = a ("adopt the vocabulary + re-verdict").
   - **C-13**, rounds 22–23 (2026-10-01T05:03:05Z): **"Superseded (Recommended)"** — OD-29: ACCEPT-R10's "34 MET" stands as
     history, superseded by the Round-11 re-verdicts; recorded with its own time, never as a 2026-09-27/28 statement.
-- **Requirement ids:** DRAFT-ENG-2 "verdict integrity" → **SIG-ENG-041** and DRAFT-ENG-3 "validator gates" →
-  **SIG-ENG-042** (B4 §5; ids as in SEED-12's id map `PD/stageB/T1_id_map.csv`, read at writing; SEED-12 owns them); DRAFT-ENG-5's amendment of SIG-ENG-031 (the coverage matrix is the traceability matrix, reflected through
+- **Requirement ids:** **SIG-ENG-041** "verdict integrity" and
+  **SIG-ENG-042** "validator gates" (§56.3; drafted in B4 §5; final ids per `PD/stageB/T1_id_map.csv`); the Round-11 amendment of SIG-ENG-031 (Appendix G.7 R11-A16) (the coverage matrix is the traceability matrix, reflected through
   assessment events); SIG-MEM-002 (requirement assessments derived from evidence-backed transitions); SIG-ENG-005 (the
   risk-register route for requirements that cannot be verified automatically).
-- **Spec:** §0.6 (SIG-ENG-005), §51.3 (SIG-ENG-031, amended per DRAFT-ENG-5), §55.7 (SIG-MEM-002); proposed Part XII
-  §56 for DRAFT-ENG-2/3 (SEED-12); `docs/build/COVERAGE_MATRIX.csv` (vocabulary and columns, SEED-14/15).
+- **Spec:** §0.6 (SIG-ENG-005), §51.3 (SIG-ENG-031, amended per Appendix G.7 R11-A16), §55.7 (SIG-MEM-002); Part XII
+  §56.3 (SIG-ENG-041, SIG-ENG-042); `docs/build/COVERAGE_MATRIX.csv` (vocabulary and columns, SEED-14/15).
 - **Supersedes:** none — no landed ADR (plan §7, row 150). It supersedes a record, not a decision: ACCEPT-R10's
   "34 MET" headline (C-13).
 - **Amends / qualifies / extends:** extends the `coverage-assessment/1` use of ADR-126 — every verdict change becomes an

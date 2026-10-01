@@ -141,6 +141,24 @@ is never a national node-link hairball. Both requirements stand unchanged, inclu
 default ego view: letting an overview replace the ego network as the explorer's default would weaken
 SIG-UI-022 and is not adopted (Appendix G.7.5).
 
+**Round-11 waiver — WV-12, the default view (ADR-190; recorded 2026-10-01).** The operator waived
+SIG-UI-022's default-view clause in their adopted sentence recorded in ADR-190 (SB-1, GATE-P log
+round 27; agent-drafted, adopted by the operator at 2026-10-01T13:46:58Z; sha256 `1ce44d4df7f6…`).
+**Waived:** "Default view is an ego network with expansion" — the network explorer may open on an
+aggregated overview graph instead of an ego network. **Stands:** "not a global graph" — no national
+node-link graph and no hairball (SIG-UI-021, unchanged); the overview the explorer opens on meets
+the note above (at most 3,000 nodes, aggregated by construction, descriptive only, carrying the
+ER-quality disclosure); the ego network with expansion stays the view every overview node opens.
+For the explorer's default view only, this waiver supersedes the note's last sentence and the
+SIG-UI-022 row of Appendix G.7.5 (both kept; Appendix G.7 R11-W13). **Scope:** the explorer's
+initial view while ADR-190 stands. **Compensating controls:** every overview node drills to its ego
+view in one action, with or without JavaScript; no-JS parity — the overview the explorer opens on
+has a static page and table equivalent and a server-rendered first view (SIG-UI-037), and every
+ego view has its entity page. **Revisit (ADR-190):** an overview over the cap, or a node without
+an ego drill-down; the default read as a complete national graph or as a ranking; a no-JS parity
+or budget failure on a real release; the identity gates passing; the operator asking for the ego
+default back.
+
 **SIG-UI-023 (MUST).** Every centrality or hub statistic MUST carry an **ER-quality disclosure**
 inline (P6, SIG-IDENT-030). If entity resolution is imperfect, so is every network statistic, and
 the UI must say so where the statistic appears, not in a footnote.

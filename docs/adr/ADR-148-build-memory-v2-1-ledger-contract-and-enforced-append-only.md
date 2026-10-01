@@ -17,11 +17,11 @@
     changes that put the `harness` key and the gate-record rules into the build-memory layout contract (T0–T0c).
 - **Requirement ids:** SIG-MEM-002 (evidence-backed obligation transitions that retain history); SIG-MEM-003
   (single-writer closeout; shadow until a verified operator-approved cutover) — verdict MET-ENGINEERED for Round 11
-  (B3 §4); DRAFT-MEM-2 "append-only, proven per change" → **SIG-MEM-006**, DRAFT-MEM-6 "ledger contract" →
-  **SIG-MEM-010**, DRAFT-ENG-1 "tests assert invariants" (the seed's six pin conversions) → **SIG-ENG-040**, and
-  SIG-ENG-044 "guards precede the records they protect" (the seed guard core) — ids as in SEED-12's id map
-  `PD/stageB/T1_id_map.csv`, read at writing; SEED-12 owns them; SIG-ENG-003.
-- **Spec:** §55.7 (SIG-MEM-002, SIG-MEM-003); proposed Part XII §56 for DRAFT-MEM-2/6 and DRAFT-ENG-1 (SEED-12).
+  (B3 §4); **SIG-MEM-006** "append-only, proven per change", **SIG-MEM-010** "ledger contract",
+  **SIG-ENG-040** "tests assert invariants" (the seed's six pin conversions), and **SIG-ENG-044** "guards precede the
+  records they protect" (the seed guard core) — §56.2/§56.3; drafted in B4 §5; final ids per
+  `PD/stageB/T1_id_map.csv`; SIG-ENG-003.
+- **Spec:** §55.7 (SIG-MEM-002, SIG-MEM-003); Part XII §56.2 (SIG-MEM-006, SIG-MEM-010) and §56.3 (SIG-ENG-040, SIG-ENG-044).
 - **Supersedes:** ADR-126 and ADR-127 — **their cutover statements only** (plan §7, row 148): ADR-126 "Shadow
   boundary" ("P32.8 owns the enforced single-writer protocol and entry-point cutover") and its first revisit trigger
   ("P32.8 cutover … this ADR's shadow-mode statements get superseded by the cutover ADR"); ADR-127's "all shadow-mode

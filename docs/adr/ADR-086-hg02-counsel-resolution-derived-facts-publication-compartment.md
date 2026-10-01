@@ -83,3 +83,12 @@ rather than SIG-authored claims.
   2026-09-16 and 09-24 were my own; there was no counsel. My 09-28 message 'let's defer all the human review
   steps and proceed' was my decision to defer the human review legs."* The body above is unchanged
   (SIG-ENG-003).
+- **Status:** Qualified by ADR-182 (2026-10-01)
+- **Status note (2026-10-01T13:59:14Z, Round-11 T1, unit SEED-12c):** ADR-182 (WV-07; the operator's adopted sentence,
+  agent-drafted and adopted at 2026-10-01T04:28:49Z, sha256 `c5a71e9d7fd9…`: *"I waive the counsel-review clauses of
+  SIG-LIC-009 and SIG-INGEST-037; rights decisions rest on my recorded determinations, labelled as such."*) leaves
+  this ADR's counsel-conditioned revisit clause unable to fire as written — SIG has no counsel (U-013; F3 §5.4,
+  NEW-8). The clause: "counsel refines the publication terms for derived-facts sources". Restated (agent reading,
+  labelled): it fires when the operator records refined publication terms for derived-facts sources, labelled "the
+  operator's own determination (no counsel)" (ADR-167); or when counsel is obtained (LATER-05) or a first legal demand
+  arrives (ADR-182's and ADR-166's triggers). The decision and the body above are unchanged (SIG-ENG-003).

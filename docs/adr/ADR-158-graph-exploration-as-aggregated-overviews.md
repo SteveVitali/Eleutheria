@@ -211,3 +211,12 @@ D-K2-3 (degree-only facts as node attributes only) and D-K2-5/6/7 were accepted 
   for two consecutive releases (K0 trigger 1). This is re-decided under ADR-155.
 - **A withheld organisation leaks.** One is found exposed through an overview's labels or topology (SIG-TRUST-006). Stop
   publishing the affected overview and record the fix by a new ADR.
+
+## Status updates
+
+- **Status:** Extended by ADR-190 (2026-10-01)
+- **Status note (2026-10-01T14:09:00Z, Round-11 T1, unit SEED-12c):** ADR-190 (WV-12; the operator's answer "Overview as default
+  (Recommended)" to SB-1, round 27, adopting the agent-drafted sentence at 2026-10-01T13:46:58Z) settles the question this
+  ADR left to the spec unit: SIG-UI-022's default-view clause is waived, so the explorer may open on an aggregated
+  overview, with every overview node drilling to its ego view and no-JS parity. This ADR's statement that SIG-UI-022's
+  ego default is kept now holds for the drill-down only; everything else above is unchanged.

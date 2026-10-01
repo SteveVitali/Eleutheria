@@ -143,3 +143,12 @@ recorded per-target** for the audit trail, but **never blocks** a fetch.
   per this ADR (round 26: "All hosts, as ADR-088 (Recommended)", 2026-10-01T06:51:11Z), and adds the rule-7
   opt-out register, the SIG-INGEST-046c reservation refusal and a user agent naming an owned
   surveillancegraph.org page. The body above is unchanged (SIG-ENG-003).
+- **Status:** Qualified by ADR-182 (2026-10-01)
+- **Status note (2026-10-01T13:59:14Z, Round-11 T1, unit SEED-12c):** ADR-182 (WV-07; the operator's adopted sentence,
+  agent-drafted and adopted at 2026-10-01T04:28:49Z, sha256 `c5a71e9d7fd9…`: *"I waive the counsel-review clauses of
+  SIG-LIC-009 and SIG-INGEST-037; rights decisions rest on my recorded determinations, labelled as such."*) leaves
+  this ADR's counsel-conditioned revisit clause unable to fire as written — SIG has no counsel (U-013; F3 §5.4,
+  NEW-8). The clause: "**Counsel objects** to disregarding robots verdicts". Restated (agent reading, labelled): the
+  disposition stays the operator's to revoke, as that clause says; it fires when the operator revokes or narrows
+  GL-GATE-08 by a new gate decision and ADR, or when counsel is obtained (LATER-05) or a first legal demand arrives
+  (ADR-182's and ADR-166's triggers). The decision and the body above are unchanged (SIG-ENG-003).

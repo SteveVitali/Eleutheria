@@ -15,10 +15,10 @@
   - **C-3**, round 19 (2026-10-01T04:54:19Z): **"Adopt both sentences (Recommended)"** — OD-12 (the backward
     confirmations of E2-X1 items 1–2; item 3 is A-5).
   - **C-13**, rounds 22–23 (2026-10-01T05:03:05Z): **"Superseded (Recommended)"** — OD-29 (ACCEPT-R10's "34 MET").
-- **Requirement ids:** DRAFT-MEM-4 "gate records" → **SIG-MEM-008** and DRAFT-MEM-5 "readout authorship" →
-  **SIG-MEM-009** (B4 §5; ids as in SEED-12's id map `PD/stageB/T1_id_map.csv`, read at writing; SEED-12 owns them); SIG-TRUST-009 (agent judgement cannot sign a release
+- **Requirement ids:** **SIG-MEM-008** "gate records" and
+  **SIG-MEM-009** "readout authorship" (§56.2; drafted in B4 §5; final ids per `PD/stageB/T1_id_map.csv`); SIG-TRUST-009 (agent judgement cannot sign a release
   acceptance); SIG-ENG-003 (append, never edit).
-- **Spec:** §55.8 (SIG-TRUST-009); proposed Part XII §56 for DRAFT-MEM-4/5 (SEED-12); the go-live spec
+- **Spec:** §55.8 (SIG-TRUST-009); Part XII §56.2 (SIG-MEM-008, SIG-MEM-009); the go-live spec
   `docs/3_sig_golive_spec.md` (GL-GATE-06…08 and the 2026-09-16 go-public, E2-18; SEED-12).
 - **Supersedes:** none — no landed ADR (plan §7, row 147). It supersedes records, not ADR decisions: the GATE-G3
   signature (with candidate `p-17b713`, ADR-146) and ACCEPT-R10's "34 MET" acceptance, which stands as history (C-13);
@@ -27,7 +27,7 @@
 - **Sources:** plan §1.3, §3.2–§3.3 (OM-07/08/09), §4.2 (A-16), §4.4 (B-4), §4.5 (C-1, C-2, C-3, C-13), §5.2, §5.10, §7
   (row 147), Appendix A (T2 SEED-06/08; T5); `PD/design/E2-governance-options.md` E2-17, E2-18, E2-X1;
   `PD/research/B2-append-only.md` §1, §4, §4.1, §5.4; `PD/research/B5-orchestration-retro.md` §4 and §6.1 (OM-07…OM-09);
-  `PD/design/B4-verification.md` G4 and §5 (DRAFT-MEM-4/5); `PD/research/B7-harness-attribution.md` §0 items 2–5;
+  `PD/design/B4-verification.md` G4 and §5 (the drafts of SIG-MEM-008/009); `PD/research/B7-harness-attribution.md` §0 items 2–5;
   `PD/design/S6-ratification-applied.md` §5; `PD/data/decision_catalog.csv` (Q-B4-2, Q-E2-18/19/21, Q-12, Q-B1-2, OD-10,
   OD-11, OD-12, OD-29); `docs/build/LEDGER.md` lines 115, 116, 134 (the operator's recorded words).
 - **Recorded:** 2026-10-01T07:42:36Z by Claude Code (Opus 5.5), harness `claude-code/claude-opus-5-5/subagent` — an
@@ -92,7 +92,7 @@ GATE-P itself was collected under a rule set by the operator (2026-10-01T03:34:0
 5. **The readout guard sentence is permanent.** Every readout created or modified from now on contains exactly *"An
    operator or authorized human record supplies the decision; an agent must not sign or assume silence is approval."*
    Signing changes only the `Status:` line and appends a signature block; it never deletes pending text or guard lines
-   and never ticks boxes (DRAFT-MEM-5; G4b-1/2).
+   and never ticks boxes (SIG-MEM-009; G4b-1/2).
 6. **Operator-only gate-signing key (G4c; A-16, Q-B4-2 a).** HG gate signatures and Class-S gos are committed with an
    operator-only key — passphrase- or hardware-backed, never loaded into an ssh-agent that a Devin or Claude session can
    reach — and verified in CI against a committed `allowed_signers` (OP-25; P34.28, which also closes LATER-15).

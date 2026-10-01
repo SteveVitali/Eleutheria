@@ -14,12 +14,13 @@
   - Related, not this ADR's decision line: **B-31** (log round 15, 2026-10-01T04:43:37Z, **"No maintainer check"**) answered
     Q-L3-5 = yes — `/quality/` public, including failing and ratchet checks — which governs how this suite's results are
     shown (ADR-152).
-- **Requirement ids:** draft SIG-CONF-D06 (graph-quality suite: a versioned check registry and a release-bound
-  `quality.json`), D07 (ratchet discipline), D08 (real-data regression corpus), D09 (upstream reconciliation), D13
-  (least-privilege audit path) → SIG-CONF-0nn with the same numbers (SIG-CONF-D01 → SIG-CONF-001 …) in SEED-12's id map `PD/stageB/T1_id_map.csv`, read at writing (SEED-12 owns the final ids); feeds SIG-EVAL-003 and
+- **Requirement ids:** SIG-CONF-006 (graph-quality suite: a versioned check registry and a release-bound
+  `quality.json`), SIG-CONF-007 (ratchet discipline), SIG-CONF-008 (real-data regression corpus), SIG-CONF-009
+  (upstream reconciliation), SIG-CONF-013 (least-privilege audit path) — §56.7; drafted in L3 §7; final ids per
+  `PD/stageB/T1_id_map.csv`; feeds SIG-EVAL-003 and
   SIG-EVAL-006 → MET once CONF-09/CONF-12 land (plan §6.6), SIG-EPIS-029 and SIG-RECON-018 → MET when GQ-11/GQ-12 pass live;
   the release-gate placement lives in the SIG-REL family (G3 V-suite; plan §5.8).
-- **Spec:** proposed Part XII §56 for the SIG-CONF drafts and the SIG-REL release-gate family (SEED-12).
+- **Spec:** Part XII §56.7 (SIG-CONF-006…009, SIG-CONF-013) and §56.6 for the SIG-REL release-gate family (V15: SIG-REL-007).
 - **Supersedes:** none — no landed ADR (plan §7 lists none for this ADR).
 - **Amends / qualifies / extends:** none. Any appended status line on a landed ADR is written by SEED-11d, not here.
 - **Sources:** plan §5.4 (design and acceptance, FEA-11), §5.8 (acceptance), §6.2 (SIG-CONF row), §6.6, §7 row 154;
@@ -53,7 +54,7 @@ round makes, and L3's rule is that only mechanical checks gate.
    (used where the evidence is agent or maintainer judgment, e.g. GQ-22 relevance, or where no target is settled). **Only
    mechanical checks gate**; a check that needs judgment can neither block nor unblock a release.
 3. **Ratchet discipline.** A baseline may move only toward its threshold. **Loosening a baseline or a threshold needs a new
-   ADR** (SIG-ENG-003; draft SIG-CONF-D07) — the same rule as never loosening an xfail's assertion.
+   ADR** (SIG-ENG-003; SIG-CONF-007) — the same rule as never loosening an xfail's assertion.
 4. **Release gate V15 "graph quality".** V15 runs the R-placed checks over the candidate files in G3's verify stage and
    writes `quality.json` into the release; it **consumes** V6 (GQ-16), V8 (GQ-17), V9 (GQ-08), V13 (GQ-27) and V14 (GQ-20),
    which keep their owners, rather than re-implementing them. The descriptor gains a `quality` block (suite digest, report
@@ -65,7 +66,7 @@ round makes, and L3's rule is that only mechanical checks gate.
      (an operator-signed readout listing the deltas); Class R requires 0 enforce failures and 0 ratchet regressions, and the
      Class R standing go is void on any ratchet regression (B-9; ADR-161).
 5. **Lanes.** Ingest/sink checks fail only the target's run; a nightly spine probe runs read-only through the `sig_audit`
-   login with a statement timeout and writes a `probe-run/1` record per run (B4 G10; draft SIG-CONF-D13); PR tests run over
+   login with a statement timeout and writes a `probe-run/1` record per run (B4 G10; SIG-CONF-013); PR tests run over
    the **real-data regression corpus** (P35.23), whose oracles are computed from the captured source bytes by code
    independent of the pipeline, with snapshot changes approved by an explicit commit and non-redistributable (e.g. ODbL)
    slices kept in the restricted bucket with only digests committed; upstream count reconciliation per target per run

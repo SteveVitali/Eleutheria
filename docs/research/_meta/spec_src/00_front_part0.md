@@ -2,7 +2,8 @@
 ## Canonical Design and Implementation Specification
 
 **Document:** `docs/2_canonical_design_spec.md`
-**Version:** 1.1.0 (additive §55 extension; 2026-09-25)
+**Version:** 1.2.0 (additive §56 extension, plus the Round-11 amendments and waivers of Appendix G.7; 2026-10-01T14:01:34Z) —
+previously 1.1.0 (additive §55 extension; 2026-09-25)
 **Status:** Canonical. This document is the authoritative contract for implementation.
 **Supersedes as an implementation authority:** `docs/1_deep_research_overview.md` (which remains
 the authoritative statement of *intent* and against which this document is proven a strict superset).

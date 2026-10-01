@@ -15,13 +15,14 @@
     **"No maintainer check"** (chosen over the recommendation). Members answered: Q-L3-3 (c: no operator maintainer check;
     every Class-S readout and `/quality/` say "no human check performed"), Q-L3-4 (no in-round second model family),
     Q-L3-5 (yes: `/quality/` public, including failing and ratchet checks), Q-L3-6 (a: C2 enabled; recorded in ADR-153).
-- **Requirement ids:** draft SIG-CONF-D01 (basis classes), D02 (agent labels segregated), D03 (only mechanical checks
-  gate), D10 (maintainer checks disclosed, blind-first, verbatim — written "when performed"; Round 11 performs none),
-  D11 (public quality page), D12 (mechanical estimands labelled) → SIG-CONF-0nn with the same numbers (SIG-CONF-D01 → SIG-CONF-001 …) in SEED-12's id map `PD/stageB/T1_id_map.csv`, read at writing (SEED-12 owns the final ids); the §55.9 "Round-11 disposition" paragraph and the owner re-home notes on SIG-EVAL-005/006/007 (plan §6.3);
+- **Requirement ids:** SIG-CONF-001 (basis classes), SIG-CONF-002 (agent labels segregated), SIG-CONF-003 (only mechanical
+  checks gate), SIG-CONF-010 (maintainer checks disclosed, blind-first, verbatim — written "when performed"; Round 11
+  performs none), SIG-CONF-011 (public quality page), SIG-CONF-012 (mechanical estimands labelled) — §56.7; drafted in
+  L3 §7; final ids per `PD/stageB/T1_id_map.csv`; the §55.9 "Round-11 disposition" paragraph and the owner re-home notes on SIG-EVAL-005/006/007 (plan §6.3);
   SIG-EVAL-001/002/005/007, SIG-IDENT-027/028's independent legs, SIG-DOS-002's and SIG-UI-042's independent checks stay
   owed (not waived; plan §6.5).
-- **Spec:** §55.4 (SIG-EVAL-001…007 owner re-home notes) and §55.9 (Round-11 disposition paragraph); proposed Part XII
-  §56 for the SIG-CONF drafts (SEED-12).
+- **Spec:** §55.4 (SIG-EVAL-001…007 owner re-home notes) and §55.9 (Round-11 disposition paragraph); Part XII
+  §56.7 (SIG-CONF-001…003, SIG-CONF-010…012).
 - **Supersedes:** none — no landed ADR (plan §7 lists none for this ADR). It supersedes the Round-10 manifest rows
   184–187 (`HUMAN-H4`, `P32.22a`, `HUMAN-H5`, `P32.23`) as records — superseded, not executed.
 - **Amends / qualifies / extends:** none. ADR-099 §4 (`D-R6.1-EVAL`), ADR-128 and ADR-129 stand unchanged; their
@@ -68,7 +69,7 @@ Class-S release); the operator declined it at B-31.
    as accuracy. No second model family is used in-round (Q-L3-4).
 3. **No human check this round (B-31).** There is no operator maintainer check (OPCHECK is not adopted; row P35.49 and
    OP-16/OP-17 are dropped) and the operator holds no evaluation seat (Q-25 vacated). **Every Class-S readout and the
-   `/quality/` page say "no human check performed".** Draft SIG-CONF-D10 is written "disclosed when performed"; Round 11
+   `/quality/` page say "no human check performed".** SIG-CONF-010 is written "disclosed when performed"; Round 11
    performs none.
 4. **Independent evaluation is owed, not waived.** D-R10-HUMAN-1 stays OPEN, never waived and never WONTFIX, and is
    non-blocking: no Round-11 gate or row waits on a human marker. D-P30.2b-1 (curation decisions), which B-18 had folded
@@ -134,7 +135,7 @@ shasum -a 256`; equal to S6 §5's value).
 - **T-EVAL-IND fires** (the operator records at least two available independent labellers and authorises that contact,
   with the frame-affecting prerequisites landed): seed the successor segment and write a new ADR for the evaluation.
 - The operator changes U-008 (no humans besides the operator) or U-011 (no outside contact).
-- The operator chooses to perform maintainer checks after all: a new ADR adopts a protocol under draft SIG-CONF-D10
+- The operator chooses to perform maintainer checks after all: a new ADR adopts a protocol under SIG-CONF-010
   (disclosed, blind-first, verbatim, never gating), and the "no human check performed" sentence changes only for the
   releases it covers.
 - Any proposal to publish a precision figure for identity inference, or to let B3/B4 evidence gate anything.

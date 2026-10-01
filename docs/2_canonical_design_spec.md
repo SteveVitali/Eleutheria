@@ -2,7 +2,8 @@
 ## Canonical Design and Implementation Specification
 
 **Document:** `docs/2_canonical_design_spec.md`
-**Version:** 1.1.0 (additive §55 extension; 2026-09-25)
+**Version:** 1.2.0 (additive §56 extension, plus the Round-11 amendments and waivers of Appendix G.7; 2026-10-01T14:01:34Z) —
+previously 1.1.0 (additive §55 extension; 2026-09-25)
 **Status:** Canonical. This document is the authoritative contract for implementation.
 **Supersedes as an implementation authority:** `docs/1_deep_research_overview.md` (which remains
 the authoritative statement of *intent* and against which this document is proven a strict superset).
@@ -114,13 +115,15 @@ every `SIG-*` id referenced anywhere in this document is either defined or liste
 | `SEC` | Security and threat model |
 | `GOV` | Governance, takedown, continuity |
 | `ENG` | Engineering practice, repo, testing, CI |
-| `OPS` | Deployment, observability, cost (currently carried under `SIG-ENG-*` in Part IX; `SIG-OPS-*` is reserved for future use) |
+| `OPS` | Deployment, observability, cost (carried under `SIG-ENG-*` in Part IX through Round 10; `SIG-OPS-*`, reserved for future use until then, is opened by §56 for Round-11 operations) |
 | `TRUST` | End-to-end evidence integrity and release activation (§55) |
 | `DOS` | Evidence-complete dossier portfolio (§55) |
 | `EVAL` | Independent evaluation and measured eligibility (§55) |
 | `FIND` | Released discovery, citations and correction journeys (§55) |
 | `ACQ` | Gap-driven source acquisition (§55) |
-| `MEM` | Current build memory and reliable closeout (§55) |
+| `MEM` | Current build memory and reliable closeout (§55; extended by §56) |
+| `REL` | Release identity, promotion, rollback, withdrawal and versioning (§56) |
+| `CONF` | Confidence basis, graph-quality checks and their public disclosure (§56) |
 
 ## 0.4 The execution model
 
@@ -582,6 +585,18 @@ infrastructure and organizational behavior, not ordinary people's movements (OL-
 infrastructure, modeled completely enough that the ontology naturally generalizes to broader
 surveillance technology** (OL-16-01, OL-24-13).
 
+**Round-11 amendment (A-17, Q-E2-22 = a; ADR-172; recorded 2026-10-01).** The operator ratified the
+product direction with Q-E2-22 = a (A-17 "Ratify; fetch vendor pages", GATE-P log round 6,
+2026-10-01T04:16:29Z; the recorded answer: "a — SIG-CHART-025 amended to US-nationwide
+multi-vendor/multi-technology breadth with per-class and per-geography quality labels"). From Round
+11 this requirement reads: SIG's releases MUST cover U.S.-nationwide surveillance infrastructure
+across vendors and technology classes — coverage priority US-nationwide Flock, Axon and other
+vendors — and MUST label coverage quality per technology class and per geography on the public
+surface, so that breadth is never read as depth. Unchanged: the ontology MUST generalise beyond ALPR
+(SIG-CHART-027, SIG-CHART-028). The "first release" framing above is historical (the live release is
+national and international and covers every camera type, E2-20); non-US data stays, labelled, with
+US-first priority (ADR-173). Plan §5.10 classes this amendment as non-weakening.
+
 The wedge is chosen because twelve conditions hold simultaneously (OL-16-02): rich OSM device
 data; a DeFlock contributor ecosystem; Flock portal data; Eyes on Flock; HIBF; ALPR Watch;
 historical Vigilant/EFF data; an active public-records movement; current procurement activity;
@@ -686,6 +701,9 @@ governing dispositions:
 outreach (§Phase 0, §35.1) MUST have been attempted and its outcome recorded in the compact —
 including the outcome "no response", which is itself a recorded state that determines the
 permitted ingestion posture.
+
+**Round-11 status (B-6, Q-E2-12 = a; ADR-171; recorded 2026-10-01).** Not amended and not waived;
+owed as a later-phase obligation — see the outreach-timing note in §35.1.
 
 ---
 
@@ -2512,6 +2530,16 @@ versioned data with per-label provenance.
 boundary and B-cubed cluster precision/recall on the holdout. **Auto-write tiers MUST be
 automatically demoted to review if holdout precision falls below the published threshold.**
 
+**Round-11 amendment (A-6; ADR-153; recorded 2026-10-01).** For the derivation-collapse tiers C0–C2
+(SIG-CONF-004), automatic demotion is also census-driven: after every ER run the census re-verifies
+every collapse, and any failure demotes that lineage's collapse tier on the next run and alerts; a
+quarterly id-resolution sample per declared namespace is reported as a measured property of the copy
+link, never as a certification figure. The per-run holdout report continues, labelled as measured on
+agent-labelled development data, never as human ground truth (ADR-152); this requirement's
+holdout-precision demotion clause is not waived. Inferential tiers are review-only and never
+auto-write (SIG-CONF-005). The independently adjudicated holdout stays owed under T-EVAL-IND (§55.9,
+Round-11 disposition).
+
 **SIG-IDENT-029 (MUST).** Cluster-shape alerts MUST fire for implausible clusters — a municipal PD
 or sheriff cluster above a size threshold, or a cluster joined by a single bridge into components
 that are each substantial. These are the signatures of a bad merge.
@@ -2855,6 +2883,27 @@ CREATE TRIGGER claim_append_only_trg
 use an explicit column list generated from the schema so that adding a column cannot silently
 widen what is mutable. A CI test MUST assert the generated list matches the live schema.)*
 
+**Round-11 waiver — WV-11, one operator-only purge function (ADR-189; recorded 2026-10-01).** The
+operator approved, in their adopted sentence recorded in ADR-189 (S6R-03, GATE-P log round 26;
+agent-drafted, adopted by the operator at 2026-10-01T06:51:11Z; sha256 `04e7b77f8db7…`), one
+operator-only purge function as the sole exception to SIG-STORE-011, limited to material SIG must
+not hold (SIG-GOV-008) and leaving a tombstone and a public log entry. **Waived:** append-only, for
+exactly that one database function and for no other role, path or mechanism. **Stands:** the claim
+table stays append-only, enforced in the database, for every other role and path — the trigger above
+still raises for them, and a test proves it; corrections stay new claims (SIG-GOV-005); suppression
+(SIG-GOV-007) stays the primitive for everything outside SIG-GOV-008's scope; SIG-STORE-012 is not
+waived (no application role gains `DELETE`). **Mechanism and controls:** a single DB-enforced
+function executable only by an operator-held role, added by a new sqitch change with deploy, revert
+and verify scripts (no landed change is edited); scope limited to SIG-GOV-008 material; each use
+leaves a tombstone recording that a deletion occurred, its category and its date — never its content
+— and a public decision-log entry with its reason; it is never on a pre-authorisation list, each use
+needs the operator's in-ticket go naming the material, and its hosted deploy is itself a go that is
+never pre-authorised; the agent guidance names it as the sole exception to the insert-only rule.
+Until that change lands, no update or delete path to the claim table exists. **Revisit (ADR-189):**
+any use; a request to widen its scope or add a second purge path; a second maintainer; a contested
+deletion. Coverage: `WAIVED(ADR-189)`, `accepted_scope` naming the function; every other path keeps
+its verdict.
+
 **SIG-STORE-012 (MUST).** Application roles MUST NOT hold `DELETE` on `claim`, `extraction`,
 `evidence_artifact`, or `evidence_capture`. The trigger is defence in depth, not the only line.
 
@@ -3122,6 +3171,10 @@ evidentiary presentation, as separate captures of the same artifact.
 | `public` | Freely redistributable, no sensitivity concern | Public URL | Public | Public |
 | `restricted` | Lawfully held, redistribution limited by licence or sensitivity | Access-controlled | Public | Redacted |
 | `sealed` | Contains material SIG must not expose (unredacted PII, sealed records, material under a takedown hold) | Access-controlled, audited | **Metadata-only public representation** | None |
+
+**Round-11 amendment (J3 NEW-2; ADR-162; recorded 2026-10-01).** A capture's `storage_tier` MUST be
+derived from its source's redistribution lane and Part VIII class, never defaulted, and the
+derivation MUST precede any public surface that advertises capture bytes.
 
 **SIG-EVID-010 (MUST).** A `sealed` capture MUST still have a **public metadata representation**:
 its existence, source, date, digest, and the claims it supports are public even when its bytes
@@ -3721,6 +3774,9 @@ is not permitted (SIG-CHART-032). This is a runtime gate with a test, not a poli
 have been attempted and its outcome recorded **before** a connector is written for it
 (SIG-CHART-033).
 
+**Round-11 status (B-6, Q-E2-12 = a; ADR-171; recorded 2026-10-01).** Not amended and not waived;
+owed as a later-phase obligation — see the outreach-timing note in §35.1.
+
 ### 22.5 The Eyes on Flock dependency
 
 **SIG-INGEST-030 (MUST). — RESOLVED 2026-08-20.** Eyes on Flock exposes a **public,
@@ -3742,6 +3798,9 @@ already accessible — for three reasons that do not depend on access: ShareAlik
 agreed and correctly rendered; SIG MUST NOT poll faster than the upstream's own refresh
 (SIG-INGEST-030c); and the archival-succession offer (SIG-CONTRIB-013) matters *more* now, not less,
 because this API is a single point of failure for the only lawful route to the portal layer.
+
+**Round-11 status (B-6, Q-E2-12 = a; ADR-171; recorded 2026-10-01).** Not amended and not waived;
+owed as a later-phase obligation — see the outreach-timing note in §35.1.
 
 **SIG-INGEST-030b (MUST).** Historical back-fill MUST use the Internet Archive's captures of the API
 endpoint itself rather than re-deriving history. Because the vendor's own domains are excluded from
@@ -4201,6 +4260,24 @@ public CC BY-SA 4.0 API** (§22.5, SC-18), and MUST NOT attempt direct capture f
 every path returns a bot challenge (F2.1). Output MUST land in the **CC BY-SA 4.0 compartment**
 (SIG-LIC-004a), never merged into the CC-BY graph.
 
+**Round-11 waiver — WV-10, Flock transparency portals, probe-only (ADR-188; recorded 2026-10-01).**
+The operator waived this requirement's no-direct-capture clause in their adopted sentence recorded
+in ADR-188 (S6R-01, GATE-P log round 26; agent-drafted, adopted by the operator at
+2026-10-01T06:51:11Z; sha256 `82487f7b3f0d…`; chosen over the recommendation to keep Flock via the
+aggregator). **Waived:** "MUST NOT attempt direct capture from the vendor", for Flock transparency
+portals only and only in a probe-only form — one gentle, rate-limited probe per known portal under
+the project's user agent; further page requests only while the portal keeps serving without a
+challenge; any bot challenge, 403 or interstitial ends that portal's attempt and is recorded as a
+refusal with its kind. **Stand unchanged:** the aggregator-source clause (the Eyes on Flock
+aggregator remains the source of the portal layer) and the compartment clause (any direct output
+lands in the CC BY-SA 4.0 compartment, never merged into the CC-BY graph); SIG-INGEST-013, §26 rule
+4 and SIG-INGEST-037's anti-circumvention posture are untouched — no challenge-solving, header
+spoofing, proxy rotation or browser automation. A page served without a challenge is Part
+VIII-screened before persistence (ADR-185), its terms are captured verbatim, and opt-outs are
+honoured at once (§26 rule 7). Expected yield today is about zero (F2.1). **Revisit (ADR-188):** the
+first portal served without a challenge (review the parse and the exposure before publishing); a
+cease-and-desist, block, terms or access change; an opt-out; the aggregator ceasing publication.
+
 **The discovery problem, stated because it sizes the fallback.** The vendor publishes **no directory
 of portals**. Portal discovery has historically been performed by **brute-force enumeration over
 candidate locality/agency URL slugs** — which is why Eyes on Flock's discovery work is
@@ -4288,6 +4365,14 @@ as a refusal and recorded on the rights record. One ecosystem project combines
 — a formal opt-out with legal effect in the EU. `UNDETERMINED` and *"affirmatively refused"* are
 different states and MUST be stored differently: the first invites a Stage-0 conversation, the
 second closes it.
+
+**Round-11 note (A-5, S6R-08; ADR-168; recorded 2026-10-01).** Not waived and not amended. With
+GL-GATE-08 applied on every host, a disregarded robots disallow is still not a reservation: an
+affirmative machine-readable reservation (a Content-Signal header, a TDM reservation, an EU DSM
+Article 4 reservation) is honoured as a refusal on every host and recorded on the rights record, by
+the reservation refusal built ahead of every Round-11 acquisition activation (P36.1a). Whether any
+express-terms row's captured licence metadata is itself such a reservation is open; any that is goes
+back to the operator (plan §14 R-19).
 
 **SIG-INGEST-046 (MUST).** The upstream specialist's six documented capabilities (OL-2C-HIBF-08) are
 dispositioned as follows, explicitly, so that none is silently dropped:
@@ -4491,10 +4576,52 @@ connector. Its operative rules:
 7. **Honor opt-out** immediately and record it in the compact.
 8. **Cache aggressively; refetch rarely.** Conditional requests, content-hash short-circuits.
 
+**Round-11 amendment and waiver (A-5, S6R-08, B-6, B-39, WV-09; ADR-168, ADR-184, ADR-187; recorded
+2026-10-01).**
+- **Rule 2.** The operator re-confirmed GL-GATE-08 as is at GATE-P (A-5, "Re-confirm GL-GATE-08 as
+  is", 2026-10-01T04:03:25Z, chosen over the recommendation) and applied it to every host per
+  ADR-088 (S6R-08, "All hosts, as ADR-088 (Recommended)", 2026-10-01T06:51:11Z): `disallowed` and
+  `unretrievable` verdicts are recorded as `robots_disregarded` on every host SIG fetches, vendor
+  and platform hosts included, and each disregard is disclosed publicly as host + count with a
+  GL-GATE-08 reference (ADR-168). A disregarded disallow is never a rights reservation, a licence or
+  an ingestion clearance (SIG-INGEST-046c; HG-03).
+- **Rule 1.** The user agent names an owned explanation page on SIG's own domain, never the
+  operator's personal identifiers; it is in place before any Round-11 acquisition fetch (P35.38a).
+- **Rule 7.** A host-level opt-out register is checked before every fetch, honoured at once and
+  recorded in the compact (P36.1a).
+- **Rule 6 — WAIVED for DocumentCloud/MuckRock only (WV-09).** In the operator's adopted sentence
+  recorded in ADR-187 (S6-F2, GATE-P log round 24; agent-drafted, adopted by the operator at
+  2026-10-01T06:05:22Z; sha256 `94f061234c41…`). Scope: the `documentcloud` connector (public
+  DocumentCloud documents hosted by MuckRock). Compensating controls: ADR-184's envelope (public,
+  unauthenticated pages only; no logins, keys or circumvention; rate-limited; terms captured
+  verbatim; the exposure disclosed; the Part VIII screen before persistence); every claim links the
+  uploader's page; opt-outs honoured at once and recorded; activation only after the operator's
+  HG-03 flip. Revisit (ADR-187): an opt-out, block or objection from DocumentCloud/MuckRock or an
+  uploader; a terms change; the operator authorising outside contact. Rule 6 binds every other
+  source; another small civil-society source whose compact is unresolved waits rather than being
+  asked (ADR-171).
+- **Rules 3, 4, 5 and 8** and SIG-INGEST-013 bind every source unchanged, including the
+  terms-conflicted public pages fetched under ADR-184 and the Flock portal probe (the SIG-INGEST-035
+  note).
+
 **SIG-INGEST-037 (MUST).** Rule 4 is not merely ethical. Circumvention techniques have been held
 to support anti-circumvention claims independent of any computer-fraud theory, and vendor API terms
 in this sector expressly prohibit bulk extraction (R8). The policy is also a **legal posture**, and
 deviating from it is an ADR-level decision requiring counsel, not an engineering judgment.
+
+**Round-11 waiver — WV-07, the counsel clause (ADR-182; recorded 2026-10-01).** The operator waived
+"requiring counsel" in their adopted sentence recorded in ADR-182 (A-23 part 1, GATE-P log round 9;
+agent-drafted, adopted by the operator at 2026-10-01T04:28:49Z; sha256 `c5a71e9d7fd9…`): rights and
+crawler-policy decisions rest on the operator's recorded determinations, labelled as such (no
+counsel; ADR-167). **Stands:** rule 4 and its legal posture, and "deviating from it is an ADR-level
+decision … not an engineering judgment" — every Round-11 deviation from the policy is an ADR resting
+on the operator's recorded words: GL-GATE-08 on every host (ADR-168, which restates this
+requirement's legal posture in the operator's A-5 words and by which RISK-P0-06 closes), the
+terms-conflicted public-page fetch envelope (ADR-184), rule 6 for DocumentCloud/MuckRock (ADR-187)
+and the Flock portal probe (ADR-188). **Compensating controls:** the determination label on every
+rights artifact; no claim of counsel review anywhere; the open legal questions kept in the risk
+register. **Revisit (ADR-182):** counsel obtained; a first legal demand; a rights holder objecting
+to a recorded determination.
 
 ---
 
@@ -4905,6 +5032,14 @@ observation-level count is never presented as a deduplicated device census; cros
 are labelled as shared observation groups, never silently merged. *(Fold-back of ADR-092's launch
 resolution posture — compute-on-read plus honest observation-level framing.)*
 
+**Round-11 amendment (F-34; ADR-099, ADR-101, ADR-153; recorded 2026-10-01).** The disclosure duty
+above stands for both kinds of count. The fold-back's compute-on-read posture is superseded for the
+resolved layer by ADR-099 and ADR-101: a resolution-backed count reads materialized resolution
+decision records (SIG-STORE-014), and the observation-level framing remains the honest fallback
+where no materialized decision exists. Under Round 11's derivation-not-identity policy only
+mechanically verified copies collapse (SIG-CONF-004); inferential matches are published as possible
+duplicates and the affected counts as intervals (SIG-CONF-005), never as a deduplicated census.
+
 ---
 
 ## 30. The inference layer
@@ -5070,6 +5205,12 @@ absolute days. A two-year-old contract date is fresh; a two-year-old active coun
 **SIG-METRIC-007 (MUST).** A public data-freshness page MUST show, per source: last successful
 run, last content change, current status, and the count of entities whose evidence is stale for
 their predicate class. A freshness dashboard is itself a trust affordance.
+
+**Round-11 amendment (J3 draft D07; ADR-162; recorded 2026-10-01).** The page MUST also distinguish
+cadence (declared, next scheduled day, observed), freshness state (computed by the same function
+that drives alerting) and predicate volatility (with not-evaluable counts), and "last content
+change" MUST mean a change of the upstream content digest — a run whose digest is unchanged never
+moves it.
 
 ### 32.5 Completeness estimation — and why capture–recapture is prohibited
 
@@ -5388,6 +5529,22 @@ single-maintainer efforts, and the relevant vendor domains are excluded from the
 archive (§22.2) — so if these projects vanish, the record vanishes with them. This is one of the
 most valuable things SIG can offer, and it costs SIG almost nothing.
 
+**Round-11 status — outreach timing (B-6, Q-E2-12 = a; ADR-171; recorded 2026-10-01).**
+SIG-CONTRIB-012, SIG-CONTRIB-012a, SIG-CONTRIB-013, SIG-CHART-033, SIG-INGEST-029, SIG-INGEST-030a
+and SIG-GOV-024 are **not amended and not waived**. Round 11 makes no contact outside the project
+(the operator's standing instruction U-011; B-6 "Move UA, don't buy domain", GATE-P log round 11,
+2026-10-01T04:33:54Z, answering Q-E2-12 = a), so Stage-0 outreach, the archival-succession offer and
+every other outward contact — sending records requests, recruiting, contribution-back posting,
+asking a source's owner — are owed as a later-phase obligation whose trigger is the operator
+authorising outside contact (LATER-04). No agent contacts anyone. Where a connector is written or
+extended for a project in the §6 table before outreach has been attempted, the "before a connector
+is written" precondition is recorded as unmet and owed — listed among the spec MUSTs unmet at launch
+that the operator signs at GATE-ANNOUNCE — never as met, re-timed or waived. Meanwhile: honest
+compact postures (for example `public_terms_only`) are published with the registry export;
+structural attribution is fixed and gated at publish; licence compartments are kept; any upstream
+opt-out is honoured at once (§26 rule 7); the outreach letter's text is corrected before any future
+send; and SIG publishes no claim that it contacted, consulted or partnered with any project.
+
 ### 35.2 To OpenStreetMap (Q33)
 
 **SIG-CONTRIB-014 (MUST NOT).** SIG MUST NOT perform direct automated writes to OSM
@@ -5646,6 +5803,14 @@ computed from raw claims at export build (compute-on-read, ADR-092) with claim-i
 per-row rights provenance carried through — never hand-edited into `value_geom` or the modeling
 tables, and never written back to the spine.
 
+**Round-11 amendment (F-34; ADR-099, ADR-101; recorded 2026-10-01).** The parenthetical
+"compute-on-read, ADR-092" above is superseded for the resolved layer: since ADR-099 and ADR-101 the
+export reads the resolved layer from the spine's materialized resolution decision records
+(themselves insert-only spine records, SIG-STORE-014), and compute-on-read remains only as ADR-101's
+explicit fallback for predicates and surfaces without materialized rows. Every protection in this
+requirement stands: read from the claim spine, shaped at build time, claim-id lineage and per-row
+rights provenance carried through, never hand-edited, never written back by the export.
+
 **SIG-EXPORT-013 (MUST).** The public export MUST be the **national, whole-graph** bundle read
 from the entire publishable claim spine — not a hand-picked jurisdiction slice: a per-jurisdiction
 dossier index over **every** publishable jurisdiction, plus the map, network, data-freshness,
@@ -5839,6 +6004,36 @@ ego-network from a selected entity, with matrix and arc views as alternatives.
 
 **SIG-UI-022 (MUST).** Default view is an **ego network with expansion**, not a global graph.
 
+**Round-11 note on SIG-UI-021 and SIG-UI-022 (A-11, D-K0-6; ADR-158; recorded 2026-10-01).** The
+operator decided that the "global graph" is a set of aggregated overview graphs, not a raw national
+node-link graph (D-K0-6 "yes", riding A-11 "Overviews + egos (Recommended)", GATE-P log round 5,
+2026-10-01T04:09:43Z). Read with these two requirements: any national or otherwise global graph view
+MUST be an aggregated overview — at most 3,000 nodes, aggregated by construction (nationwide access
+sharing as a state × state matrix, the matrix view SIG-UI-021 names), descriptive only (no
+centrality, ranking or labelled communities), carrying the ER-quality disclosure (SIG-UI-023) and
+drilling down to entity ego networks — offered as one of the alternative views SIG-UI-021 allows; it
+is never a national node-link hairball. Both requirements stand unchanged, including SIG-UI-022's
+default ego view: letting an overview replace the ego network as the explorer's default would weaken
+SIG-UI-022 and is not adopted (Appendix G.7.5).
+
+**Round-11 waiver — WV-12, the default view (ADR-190; recorded 2026-10-01).** The operator waived
+SIG-UI-022's default-view clause in their adopted sentence recorded in ADR-190 (SB-1, GATE-P log
+round 27; agent-drafted, adopted by the operator at 2026-10-01T13:46:58Z; sha256 `1ce44d4df7f6…`).
+**Waived:** "Default view is an ego network with expansion" — the network explorer may open on an
+aggregated overview graph instead of an ego network. **Stands:** "not a global graph" — no national
+node-link graph and no hairball (SIG-UI-021, unchanged); the overview the explorer opens on meets
+the note above (at most 3,000 nodes, aggregated by construction, descriptive only, carrying the
+ER-quality disclosure); the ego network with expansion stays the view every overview node opens.
+For the explorer's default view only, this waiver supersedes the note's last sentence and the
+SIG-UI-022 row of Appendix G.7.5 (both kept; Appendix G.7 R11-W13). **Scope:** the explorer's
+initial view while ADR-190 stands. **Compensating controls:** every overview node drills to its ego
+view in one action, with or without JavaScript; no-JS parity — the overview the explorer opens on
+has a static page and table equivalent and a server-rendered first view (SIG-UI-037), and every
+ego view has its entity page. **Revisit (ADR-190):** an overview over the cap, or a node without
+an ego drill-down; the default read as a complete national graph or as a ranking; a no-JS parity
+or budget failure on a real release; the identity gates passing; the operator asking for the ego
+default back.
+
 **SIG-UI-023 (MUST).** Every centrality or hub statistic MUST carry an **ER-quality disclosure**
 inline (P6, SIG-IDENT-030). If entity resolution is imperfect, so is every network statistic, and
 the UI must say so where the statistic appears, not in a footnote.
@@ -5923,6 +6118,11 @@ page MUST be public and linked from every dossier.
 affordance including the as-of pair and the ruleset version. A citation of SIG made today MUST
 remain reproducible after SIG corrects itself (SIG-TIME-008).
 
+**Round-11 amendment (J3 draft D23; ADR-162; recorded 2026-10-01).** The permalink MUST be an
+immutable, release-bound URL carrying the release id — a site-snapshot `/s/<pub>/…` or record
+`/r/<pub>/…` path — and a legacy as-of selector (`?as_of_world=&as_of_belief=&ruleset=`) MUST
+resolve at the edge to a real release or answer 400, 404 or 409, never current content.
+
 **SIG-UI-049 (MUST).** The public surface MUST present a coherent national **information
 architecture**: a **grouped, uncluttered, keyboard-accessible** navigation (not a flat undifferentiated
 link bar); a real **national landing page** that summarises the dataset with **named denominators and
@@ -5942,6 +6142,13 @@ opt-in interactive islands**. Rationale: SIG pages will be archived, cited in fi
 from web archives years later. A framework whose *default* is no client JavaScript makes
 archivability structural — breaking it requires an explicit, greppable directive — rather than a
 discipline that erodes.
+
+**Round-11 amendment (A-12; ADR-155; recorded 2026-10-01).** The rationale above stands. "Opt-in
+interactive islands" now reads "opt-in enhancement governed by the page-type registry and per-type
+budgets of SIG-UI-050; record and print pages ship no client JavaScript". The operator chose
+HTML-first page types at A-12 ("HTML-first page types (Recommended)" over "Keep three islands",
+GATE-P log round 5, 2026-10-01T04:09:43Z). The default stays static and script-free; every script is
+an explicit, budgeted, greppable opt-in.
 
 **SIG-UI-037 (MUST).** Core content MUST be usable **without JavaScript**. Every map MUST have a
 tabular equivalent; every graph MUST have a list equivalent. This is simultaneously an
@@ -5980,6 +6187,25 @@ still ship zero client JavaScript** (SIG-UI-036). Adding a fourth public island,
 island's no-JS fallback, changes this named set only by a new ADR (SIG-ENG-003), never a silent
 edit.
 
+**Round-11 amendment (A-12; ADR-155; recorded 2026-10-01).** This requirement's named-island rule is
+changed by the new ADR it names as its change path — ADR-155, which supersedes the named-island rule
+of ADR-091 §3–4 and ADR-097 §2–3 and §6 and leaves ADR-068 unchanged — decided by the operator at
+A-12 ("HTML-first page types (Recommended)" over "Keep three islands", GATE-P log round 5,
+2026-10-01T04:09:43Z). From Round 11 the requirement reads: every public route MUST be classified in
+one page-type registry as T0 record and print, T1 content, T2 explore or T3 tool, and a built route
+that matches no type MUST fail the build. T0 pages MUST contain no script element. T1 pages MUST
+render every fact without JavaScript (the JavaScript-off text equals the JavaScript-on text) and MAY
+load approved, framework-free enhancement elements within the T1 budget, never render-blocking. T2
+surfaces — exactly three: the map, the graph explorer and search — MUST encode citable state in the
+URL (`sig.workspace-state/2`), paint a server-rendered first view in a reserved box, and link a
+complete no-JavaScript equivalent (tables, lists, GET forms, static SVG); progressive enhancement,
+never replacement, as above. T3 is `/curate/**` (ADR-068), never published. Budgets are declared per
+page type and measured in CI (SIG-UI-041). Adding a T2 surface or a browser runtime dependency, or
+raising a budget, is a new ADR, never ad hoc. The sentence "every other public page MUST still ship
+zero client JavaScript" now holds for T0 pages; on T1 pages it is replaced by the no-JS parity rule
+and the T1 budget — a relaxation the operator chose at A-12 through the change path this requirement
+names (Appendix G.7 R11-A3).
+
 **SIG-UI-039 (MUST).** Every dependency MUST be OSI-licensed. Non-commercial (CC-BY-NC),
 source-available, and dual BUSL licences MUST be excluded — this rules out several popular graph
 and search components, and the exclusion MUST be checked in CI, not by memory.
@@ -6000,6 +6226,24 @@ stance of the documented organization's counsel, log every sentence they would c
 off. The review, its findings, and their disposition MUST be committed alongside the template
 version. Release is blocked until every finding is dispositioned.
 
+**Round-11 waiver — WV-04, the release block (ADR-179; recorded 2026-10-01).** The operator waived
+this requirement's release block in their adopted sentence recorded in ADR-179 (A-23 part 2, GATE-P
+log round 9; agent-drafted, adopted by the operator at 2026-10-01T04:28:49Z; sha256
+`2a0339a96d57…`). **Waived:** "before release" and "Release is blocked until every finding is
+dispositioned" — a dossier template version may be released while its hostile-reader review is
+recorded truthfully as not yet performed. **Stands and stays owed:** the review itself as defined —
+two independent readers in the documented organization's counsel stance, every challenged sentence
+logged, sign-off, and the review, findings and dispositions committed with the template version;
+nothing may present a review that did not happen. **Scope:** every release while ADR-179 stands.
+**Compensating controls:** `/editorial-standards/` states that the review has not yet been performed
+and shows no reviewer names, date or "releasable" verdict; a truthful zero-reviewer record no longer
+fails the web build and the fixture review is removed; any finding raised against a dossier is
+listed as a known issue until dispositioned; no claim of adversarial or independent review anywhere;
+every Class S readout states "single maintainer, no second reviewer" (the SIG-PUB-008 note) and "no
+human check performed" (ADR-152). **Revisit (ADR-179):** a hostile reader becomes available;
+GATE-ANNOUNCE (a keep/lift answer in the operator's words); a documented organization or its counsel
+disputing a dossier sentence.
+
 *Rationale (not itself testable).* The standard being approximated is that a police chief or vendor
 counsel reading their own dossier should find it accurate, neutral, and hard to attack. That is not
 politeness — it is the property that makes the work usable as evidence. The recorded review above is
@@ -6017,6 +6261,14 @@ the testable proxy.
 
 **SIG-UI-044 (MUST).** Every page MUST carry a "How we know this" module: artifact counts, tier
 distribution, source-independence count, date range, rules applied, and human-review status.
+
+**Round-11 amendment (D-K14-6, accepted with the B-22 batch "Accept all five (Recommended)", GATE-P
+log round 11, 2026-10-01T04:33:54Z; recorded 2026-10-01).** The module is shown in full on record
+pages. On every other page it MAY be collapsed to a one-line summary visible by default, with the
+full, page-specific module — all six fields — on the same page one action away and usable without
+JavaScript (a disclosure element). Every page still carries the module; a link to another page does
+not satisfy this requirement. *(Agent reading, labelled: "one action away" is read as on the same
+page, matching the K14 test design — collapsed by default, fields checked on expand.)*
 
 **SIG-UI-045 (MUST).** Example conformant copy for the three hardest cases:
 
@@ -6071,6 +6323,22 @@ inferring in either direction is an error with legal consequences (SC-09).
 the export gate closed**. The connector may still run for internal research; the data may not be
 published. *(Discharges OL-14.2-02 — "do not discover after launch that a key dataset cannot
 legally be redistributed.")*
+
+**Round-11 amendment (A-4, A-7, A-8, A-9, B-33, B-34; ADR-167, ADR-169, ADR-183; recorded
+2026-10-01).** A source's rights are resolved for this requirement only by a recorded rights
+decision. In Round 11 that decision is the operator's own determination, recorded and labelled as
+such — no counsel was consulted and none is claimed (ADR-167; the counsel clauses are waived, see
+the SIG-LIC-009 note) — under the rights basis the operator stated at GATE-P: GL-GATE-07
+re-confirmed in their adopted words, "US public records and open-licence sources flip batch-wide
+under precedent, erring on the side of approving." (A-7, GATE-P log round 3, 2026-10-01T04:03:25Z;
+chosen over the recommendation); the ≈8,088 express-terms rows already public kept under the
+operator's acceptance (A-8; ADR-183), each with its captured terms and basis disclosed; new
+non-commercial sources published as facts and pointers only (A-9); non-US database-right rows
+flipped on the operator-accepted precedent and published under SIG-PUB-017 (B-34); share-alike
+sources in share-alike compartments (B-33; the §42.3 note). **Guardrails:** a rights decision never
+clears a Part VIII flag; a rights-holder objection triggers withdrawal by new claim; flips are
+executed by the operator per wave. **Unchanged:** a source with no recorded rights decision is
+`UNDETERMINED` and fails the export gate closed.
 
 ### 42.2 SIG's own licences
 
@@ -6152,6 +6420,15 @@ SIG-original evidence graph under CC-BY-4.0.
 layer requires SIG to give its operator attributions back in a form OSM contributors can use —
 which is what P5 and OL-22.6-01 want anyway. The licence enforces the federation compact.
 
+**Round-11 amendment (B-33; ADR-169; recorded 2026-10-01).** The operator answered B-33 "SA
+compartment; territories=US (Recommended)" (GATE-P log round 16, 2026-10-01T04:46:04Z): the RB-06b
+sources — share-alike licensed (CC-BY-SA, ODbL) and all Part VIII-flagged — are published in the
+share-alike compartment matching their licence under SIG-LIC-004a's N-compartment model
+(incompatible regimes never share a compartment and none is merged into the CC-BY graph), each only
+after its Part VIII screen line. SIG-LIC-006 is otherwise unchanged: its "physically separate table"
+clause is not amended (Appendix G.7.5) — separation holds at the export boundary today (compartment
+stamping and the export licence gate), and the stored-table split stays owed.
+
 ### 42.3a The contribution licence conflict, and its resolution
 
 **SIG-LIC-007a (MUST).** The subset of SIG-authored data that is offered upstream to OSM MUST be
@@ -6198,6 +6475,18 @@ the risk register: whether API responses returning device-linked claims constitu
 a Derivative Database under **ODbL clause 4.4(b)**; whether jurisdiction geometry sourced from OSM boundary
 relations contaminates the operator property under the Collective Database fourth bullet; the
 correct regional-cut unit; and the EU sui generis database right for the international phase.
+
+**Round-11 waiver — WV-07, the counsel-referral clause (ADR-182; recorded 2026-10-01).** The
+operator waived "MUST be referred to counsel before launch" in their adopted sentence recorded in
+ADR-182 (A-23 part 1, GATE-P log round 9; agent-drafted, adopted by the operator at
+2026-10-01T04:28:49Z; sha256 `c5a71e9d7fd9…`); where Round 11 needs a decision on these questions it
+rests on the operator's recorded determination, labelled as such (ADR-167; the ODbL map basis,
+ADR-170). **Stands:** "MUST appear in the risk register" — the four questions stay open
+risk-register rows, and the live exposures are carried as plan §14 R-19 (express-terms rows) and
+R-20 (database right on non-US rows). **Compensating controls:** the label on every rights artifact
+that no lawyer's written opinion has been obtained; no counsel claim anywhere. **Revisit
+(ADR-182):** counsel obtained; a first legal demand; a rights holder objecting to a recorded
+determination.
 
 ### 42.4 Export-time computation
 
@@ -6324,6 +6613,19 @@ adds discipline for the unusual ones.
 **SIG-PUB-008 (MUST).** **Two independent reviewers MUST concur in writing.** Disagreement defaults
 to **no-publish**. The decision, its reasoning, and its reviewers MUST be recorded.
 
+**Round-11 waiver — WV-03, the HG-11 second-reviewer role (ADR-163; recorded 2026-10-01).** This
+requirement stands unamended for naming an individual: nobody is named, a naming decision still
+needs two independent reviewers concurring in writing, and the web naming gate denies by default.
+What the operator waived — in their adopted sentence recorded in ADR-163 (A-23 part 1, GATE-P log
+round 9; agent-drafted, adopted by the operator at 2026-10-01T04:28:49Z; sha256 `44644f6bd6ff…`) —
+is the second-reviewer role at the human publication gate HG-11, for Round-11 releases only: the
+operator alone signs HG-11 and each Class S readout, and every readout states "single maintainer, no
+second reviewer" (and, under ADR-152, "no human check performed"). The earlier recorded
+sole-maintainer disposition (`D-P21.4-2`, Appendix G.6.2) is corrected by appended record, never
+edited. **Revisit (ADR-163):** a second independent reviewer becomes available; GATE-ANNOUNCE; the
+end of Round 11; a naming decision is wanted or a published text is found to name an individual; a
+second maintainer.
+
 **SIG-PUB-009 (MUST).** Home addresses are outside the test entirely — never, under any prong
 (SIG-PUB-003).
 
@@ -6437,6 +6739,17 @@ a privacy nicety.
 complied with, and refused, and SHOULD maintain a warrant canary. The response posture for demands
 directed at SIG MUST be documented **before** the first demand arrives.
 
+**Round-11 amendment (A-4, Q-E2-09 = c; ADR-166; recorded 2026-10-01).** SIG meets this requirement
+with a written demand-response posture published on the site — what SIG holds and how it minimises
+what it holds, who receives legal process (the operator, as the interim legal home; the
+SIG-GOV-012/013 note), how preservation requests are handled, the user-notice policy and the
+publication of counts — stated as not legal advice and not reviewed by counsel, and with published
+counts of legal demands received, complied with and refused (counts only; no requester identity or
+case detail). The warrant canary, a SHOULD, is declined: one maintainer cannot guarantee scheduled
+re-publication, a lapsed canary is itself a false signal, and SIG has no counsel to answer the legal
+questions a canary raises. The "before the first demand" clause stays owed until the posture is
+published (P37.8).
+
 ### 44.4 Access control
 
 **SIG-SEC-004 (MUST).** Sensitivity tiers enforced by restrictive RLS; public API role without
@@ -6466,10 +6779,39 @@ copyright claim.
 **SIG-GOV-002 (MUST).** Intake MUST NOT require identifying the submitter, except where a legal
 demand requires standing.
 
+**Round-11 waiver — WV-05, e-mail-only intake (ADR-180; recorded 2026-10-01).** For Round 11 the
+operator waived one-click, unidentified intake in their adopted sentence recorded in ADR-180 (A-23
+part 2, GATE-P log round 9; agent-drafted, adopted by the operator at 2026-10-01T04:28:49Z; sha256
+`bf1f65d5aaa1…`), with B-8 "Email, no time promises" (GATE-P log round 12, 2026-10-01T04:35:53Z).
+**Waived:** SIG-GOV-001's "reachable in one click from any claim" clause, and SIG-GOV-002 in full
+(an e-mail discloses the sender's address). **Stands:** SIG-GOV-001's public intake channel — the
+e-mail address the dispute page names — accepting all five categories. **Scope:** Round 11.
+**Compensating controls:** the dispute and corrections pages name the intake address, say plainly
+that senders disclose their address, promise no response time and publish the handling priority (the
+SIG-GOV-003 note); every "one-click" and "anonymous" promise is removed and `/intake/` is labelled
+not operating; the intake receiver stays non-operational (`503 receiver_not_operating`); Part VIII
+and safety takedowns are honoured by the operator through the withdrawal barrier. **Revisit
+(ADR-180):** the announcement (a keep/lift answer at GATE-ANNOUNCE); a privacy-harm report, or a
+sender harmed by having had to disclose an address; a public intake form opening; the end of Round
+11; a second maintainer.
+
 ### 45.2 Handling
 
 **SIG-GOV-003 (MUST).** Published SLAs by category, with **privacy-harm and safety claims
 prioritized above all others**, including above factual corrections.
+
+**Round-11 waiver — WV-08, the SLA-time clause (ADR-186; recorded 2026-10-01).** The operator waived
+this requirement's response-time SLAs in their adopted sentence recorded in ADR-186 (S6-F1, GATE-P
+log round 24; agent-drafted, adopted by the operator at 2026-10-01T06:05:22Z; sha256
+`806faae385d9…`). **Waived:** "Published SLAs by category" in so far as an SLA is a response-time
+commitment — no response time is published or promised. **Met differently:** the priority clause —
+the corrections and intake page publishes the handling order: privacy-harm and safety reports first,
+then factual corrections, then everything else, with no time commitment
+(`MET-DIFFERENTLY(ADR-186)`). **Scope:** every intake channel while ADR-186 stands (in Round 11,
+e-mail only — the SIG-GOV-001/002 note). **Compensating controls:** the published order; the e-mail
+notice of WV-05; Part VIII and safety takedowns honoured by the operator through the withdrawal
+barrier (a 15-minute technical withdrawal). **Revisit (ADR-186):** the first public intake form; the
+announcement; a second maintainer.
 
 **SIG-GOV-004 (MUST).** Permitted outcomes: correct; annotate; **suppress from public view while
 retaining internally**; delete entirely; or **refuse with published reasoning**. Refusal MUST be a
@@ -6497,6 +6839,21 @@ internally under `sealed` tier, with the decision, its author, and its rationale
 **SIG-GOV-008 (MUST).** True deletion MUST be reserved for material SIG must not hold at all, MUST
 require two-person authorization, and MUST leave a tombstone recording that a deletion occurred,
 its category, and its date — never its content.
+
+**Round-11 waiver — WV-06, the two-person clause only (ADR-181; recorded 2026-10-01).** The operator
+waived two-person authorisation for true deletion in their adopted sentence recorded in ADR-181
+(A-23 part 2, GATE-P log round 9; agent-drafted, adopted by the operator at 2026-10-01T04:28:49Z;
+sha256 `dbf7a851e9d5…`; chosen over the recommendation to keep it owed). **Waived:** "MUST require
+two-person authorization" — the operator alone may authorise a true deletion. **The scope clause and
+the tombstone clause stand unchanged:** true deletion is reserved for material SIG must not hold at
+all, and every deletion leaves a tombstone recording that a deletion occurred, its category and its
+date — never its content; everything outside that scope is suppressed (SIG-GOV-007), not deleted.
+**Compensating controls:** each deletion needs the operator's in-ticket go naming the material, is
+never pre-authorised and never initiated or run by an agent without that go; it is logged publicly
+with its reason in the editorial decision log; the mechanism keeps an internal audit record of the
+authorisation and the act; a claim row can be removed only through the one operator-only purge
+function (the SIG-STORE-011 note; WV-11, ADR-189). **Revisit (ADR-181):** a second maintainer; a
+contested deletion; a deletion requested for material outside this requirement's scope.
 
 **SIG-GOV-009 (MUST).** This is why evidence-store Object Lock is **governance mode, not compliance
 mode** (SIG-EVID-006): compliance mode would make SIG's archive unimpeachable *and* make legitimate
@@ -6528,6 +6885,18 @@ contributors personally.
 **SIG-GOV-013 (MUST).** SIG MUST identify legal-defence resources appropriate to public-interest
 research and journalism **before** they are needed.
 
+**Round-11 waiver — WV-01, SIG-GOV-012 and SIG-GOV-013 (ADR-165; recorded 2026-10-01).** The
+operator waived both requirements "for now" in their adopted sentence recorded in ADR-165 (A-23 part
+1, GATE-P log round 9; agent-drafted, adopted by the operator at 2026-10-01T04:28:49Z; sha256
+`b9dc5a9128ac…`). **Waived:** establishing a fiscal sponsor or nonprofit before launch (SIG-GOV-012)
+and identifying retained legal-defence resources before they are needed (SIG-GOV-013). SIG's legal
+home is the operator as an individual, disclosed on the site; there is no fiscal sponsor, nonprofit
+or incorporated entity. **Compensating controls:** the disclosure on the site, in wording the
+operator confirms verbatim, which describes the operator no further than the adopted sentence does
+until the operator writes that text themselves; public legal-defence referral routes listed (listing
+contacts no one), none retained. **Revisit (ADR-165):** the announcement; a first legal demand;
+funding; a second maintainer.
+
 ### 46.2 Decision-making
 
 **SIG-GOV-014 (MUST).** A published governance document MUST define: who decides schema, ruleset,
@@ -6537,6 +6906,18 @@ and dispute resolution.
 **SIG-GOV-015 (MUST).** An **editorial board** MUST exist for contested claims, officer-naming
 decisions (§43.4), and sensitivity classifications, distinct from the technical maintainers. These
 are editorial judgments and should not be made by whoever happens to hold commit access.
+
+**Round-11 waiver — WV-02, the editorial board (ADR-164; recorded 2026-10-01).** The operator waived
+this requirement in their adopted sentence recorded in ADR-164 (A-23 part 1, GATE-P log round 9;
+agent-drafted, adopted by the operator at 2026-10-01T04:28:49Z; sha256 `bee2cd2b1501…`): the
+operator holds interim single-maintainer editorial authority over contested claims and sensitivity
+classifications, disclosed and never presented as a board. **Compensating controls:** a public,
+append-only editorial decision log recording every naming, sensitivity and contested-claim decision
+(and every true deletion or purge, as a tombstone entry); officer and person naming stays off and
+the web naming gate denies by default (SIG-PUB-008 stands); the Part VIII invariants in code; the
+disclosure that no board exists. SIG-GOV-014 is not waived. **Revisit (ADR-164):** a second
+maintainer; a naming or sensitivity decision contested publicly; naming of an individual wanted; a
+legal-home entity or fiscal sponsor; the operator authorising outside contact.
 
 **SIG-GOV-016 (MUST).** SIG MUST document how it resists capture by any single funder, ideology, or
 vendor interest, including a policy on funding sources it will not accept.
@@ -6603,6 +6984,9 @@ disappearance is a recorded event rather than a retryable error (SIG-INGEST-009)
 offer is made *before* it is needed, because after is too late. **The projects SIG depends on are
 more fragile than the vendors SIG documents.**
 
+**Round-11 status (B-6, Q-E2-12 = a; ADR-171; recorded 2026-10-01).** Not amended and not waived;
+owed as a later-phase obligation — see the outreach-timing note in §35.1.
+
 ---
 
 # Part IX — Engineering practice
@@ -6651,6 +7035,14 @@ the **same** PR; a CI/consistency check (`docs/build/tools/check_spec_src.py`) M
 the set of ADR files and the set of Appendix F rows are equal. Appendix F numbering is the
 repository ADR numbering — earlier "logical" numbering in ledgers is a documented equivalence,
 not a second scheme (ADR-062, LD-X04/LD-D03).
+
+**Round-11 amendment (DRAFT-ENG-4, B4 §5; F-32; plan §7; recorded 2026-10-01).** Additions, nothing
+removed: the index MUST show, for every ADR, its number, title, owning ticket or phase, and status,
+derived by the index generator from the ADR header forms in use; a landed ADR that a later ADR
+supersedes MUST carry an appended `Superseded by` status line (one it amends, qualifies or extends,
+an appended `Amended by`, `Qualified by` or `Extended by` line), never an edit of its body;
+`check_spec_src.py` and its tests MUST run in `make docs-check` and in CI (SIG-ENG-042); new ADRs
+MUST use the template header fields.
 
 ---
 
@@ -6803,6 +7195,14 @@ Five further principles:
 including data-quality checks; new requirements have automated tests (SIG-ENG-004); ADRs are
 written for every deviation; the traceability matrix is updated; and the phase's own risk-register
 entries are updated.
+
+**Round-11 amendment (DRAFT-ENG-5, B4 §5; recorded 2026-10-01).** Additions, nothing removed: "CI is
+green" means the pull request's required, head-bound GitHub checks are green at its current head per
+SIG-MEM-007, data-quality checks included; the traceability matrix is the coverage matrix, updated
+through coverage-assessment events under the verdict grammar of SIG-ENG-041; and at each round close
+the risk register gains a dated round-review section and the ADR revisit-trigger register is
+re-evaluated (SIG-ENG-043). The phase's own risk-register entries are still updated at each phase
+gate.
 
 ---
 
@@ -7282,9 +7682,11 @@ The design rationale and typed shared interfaces are `docs/build/planning/2026-0
 
 Execution sequence: reconcile landed P31 → integrity/tooling and independent engineering → freeze repaired snapshot → human development labels and dossier semantic review → freeze candidate then draw its confirmatory sample → independent blinded final campaign → one evaluation without holdout leakage → rematerialize every final artifact → verify one candidate → human publication gate → publish → full independent capstone/reconciliation/documentation tail. The evaluator and memory events remain shadow-only until their recorded activation/cutover decisions. No planning operation advances another active ledger.
 
-The paragraph above is the *design* order. The landed Round-10 build deviated from it at exactly one point, by recorded operator decision: the human-evaluation spine (HUMAN-H4 → P32.22a → HUMAN-H5 → P32.23) was deferred wholesale on 2026-10-19 and the chain resumed at P32.23a under amended scope — the release candidate was materialized on the **active provisional** policy basis with the deferral disclosed in every artifact (ADR-142). §55.9 records the dated landed state; the deferred rows remain OPEN obligations, not completed work (P33.5 reconciliation, ADR-145).
+The paragraph above is the *design* order. The landed Round-10 build deviated from it at exactly one point, by recorded operator decision: the human-evaluation spine (HUMAN-H4 → P32.22a → HUMAN-H5 → P32.23) was deferred wholesale on ~~2026-10-19~~ 2026-09-28T01:15:49Z (date corrected — ADR-146; Appendix G.7 R11-C1) and the chain resumed at P32.23a under amended scope — the release candidate was materialized on the **active provisional** policy basis with the deferral disclosed in every artifact (ADR-142). §55.9 records the dated landed state; the deferred rows remain OPEN obligations, not completed work (P33.5 reconciliation, ADR-145).
 
 Architecture decision: retain Astro plus the three named map/search/network React islands. Add release-specific read-only SQLite FTS5 search through the existing API package with no-JS HTML and complete static browse/records; use separate, gated anonymous intake storage and a restricted correction application bridge. No general SPA, new basemap, account system or search cluster is selected. Bounded cost/latency/storage benchmarks precede deployment; failure requires a measured alternative ADR, not silently reduced corpus coverage.
+
+**Round-11 amendment (A-12; ADR-155; recorded 2026-10-01).** The island clause of the architecture decision above ("retain Astro plus the three named map/search/network React islands") is superseded by HTML-first page types (§40, the SIG-UI-036 and SIG-UI-050 notes), which the operator chose at A-12 ("HTML-first page types (Recommended)", GATE-P log round 5, 2026-10-01T04:09:43Z): every public route has a declared page type, the public interactive surfaces are the three T2 explore surfaces (map, graph explorer, search) built with Preact rather than React, and T1 content pages may load budgeted, framework-free enhancements while showing every fact without JavaScript. The other clauses of that paragraph change only where a later Round-11 ADR says so.
 
 ### 55.2 Evidence, semantics and temporal integrity
 
@@ -7324,11 +7726,15 @@ Architecture decision: retain Astro plus the three named map/search/network Reac
 
 **SIG-EVAL-004 (MUST).** Auto-write eligibility must use a preregistered lower confidence bound of at least 0.98 on strict precision for each authorized tier, with simultaneous-error control across tested tiers and a fixed sampling/stopping rule. Insufficient evidence demotes or retains provisional/review-only status. The interval method must match the sampling design; point estimates, favorable resampling and optional stopping cannot establish eligibility. LLM agreement is supplementary, never a substitute for human ground truth. Owner: P32.10.
 
+**Round-11 waiver — SIG-EVAL-004's lower-bound clause, derivation tiers C0–C2 only (A-6; ADR-153; recorded 2026-10-01).** The operator waived this requirement's lower-bound clause ("a preregistered lower confidence bound of at least 0.98 on strict precision for each authorized tier …") for the derivation-collapse tiers C0–C2 of ruleset v3 only, in their adopted sentence recorded in ADR-153 and quoted in SIG-CONF-004 (line A-6, GATE-P log round 3; agent-drafted, adopted by the operator at 2026-10-01T04:03:25Z; sha256 `03c0a79ef3b8…`). **Scope:** automatic collapse of mechanically verified copies of one upstream record — C0 the same layer ingested twice under one source, C1 the same value in a declared id namespace of a declared lineage, C2 a one-to-one exact-position match within a documented lineage — never identity inference. For every inferential tier this requirement stands in full and is met fail-safe: such pairs are not auto-written, stay review-only and are published as possible duplicates with their distance and reason (SIG-CONF-005). **Compensating controls:** census re-verification of every collapse on every run, with automatic demotion of a failing lineage (SIG-CONF-004; the SIG-IDENT-028 note); a quarterly id-resolution sample per declared namespace, reported as a measured property of the copy link and never as a certification figure; origin distinctness (a collapse never yields fewer records than the origin publisher lists as distinct); a per-record basis block; append-only, reversible runs; no certification, "human-verified" or camera-match-precision claim anywhere (SIG-CONF-012). **Revisit (ADR-153):** T-EVAL-IND fires; any proposal to auto-write an inferential tier; the census failing for any lineage twice in a quarter; an id-resolution sample's lower bound below 0.98 (an internal threshold, never published as certification); a new source family whose copies carry no id namespace; or the operator withdrawing the waiver. Coverage: `WAIVED(ADR-153)`, scope in `accepted_scope` (SIG-ENG-041).
+
 **SIG-EVAL-005 (MUST).** A rule/threshold candidate must be derived only from development/calibration data and frozen before its confirmatory sampling frame is drawn. After the independent final campaign, evaluate that fixed candidate once, with a new ADR recording losses, coverage, uncertainty, failures and rollback. Further candidate changes after unsealing require a new independent frame/sample/campaign. Human decisions must be verified through the P31 review-to-clustering seam; failed/inconclusive assessments retain provisional disclosures and owed deferrals. Owner: P32.23.
 
 **SIG-EVAL-006 (MUST).** Published evaluation claims must identify exactly the tiers, populations, geography/source mix, model/ruleset and time window supported by the assessment. Drift in input mix, extraction semantics or matching rules triggers reassessment; successful evaluation of selected camera-site tiers cannot certify organization identities, all graph edges or overall surveillance coverage. Owner: P32.23.
 
 **SIG-EVAL-007 (MUST).** Select and freeze the candidate matcher using development/calibration evidence before defining and drawing its confirmatory auto-positive sampling frame. Pin ruleset, eligible edge/tier populations, inclusion probabilities, grouping, sample sizes, seed and hypothesis family before final human labeling. A candidate change that introduces different positives invalidates the old frame; freeze and redraw a new independent assessment rather than carry unsupported inclusion probabilities. Development and final human work have separate markers/readouts. Owner: P32.22a.
+
+**Round-11 owner re-homing (ADR-152; recorded 2026-10-01).** Rows P32.22a and P32.23 (manifest rows 185 and 187) are superseded, not executed (the §55.9 Round-11 disposition below), so the owners named above change; no requirement text in §55.4 changes and nothing here is waived. SIG-EVAL-005 and SIG-EVAL-007 stay owed under `D-R10-HUMAN-1`, owned by the segment the trigger T-EVAL-IND seeds (plan row LATER-01); no Round-11 row owns them. SIG-EVAL-006 is owned by P37.44 (the mechanical evaluation report), also P37.45 (the public quality page): every published quality or evaluation figure names its tiers, population, source mix, ruleset and time window and is never generalised beyond them (SIG-CONF-001, SIG-CONF-012). The independent legs of SIG-EVAL-001 and SIG-EVAL-002 stay owed under the same trigger; SIG-EVAL-004 carries the scoped waiver above.
 
 ### 55.5 Released discovery, citations and correction
 
@@ -7374,7 +7780,7 @@ Architecture decision: retain Astro plus the three named map/search/network Reac
 
 **SIG-TRUST-009 (MUST).** A new public release requires a complete release candidate, change/withholding summary, verified source and publication authority, evaluation disclosure, tested intake operating ownership, and the existing human publication gate. Publication must be atomic, followed by unauthenticated verification against expected digests and a tested prior-release rollback. A planning artifact, successful build or agent judgment cannot sign this gate. Owner: P32.25.
 
-The landed GATE-G3 signature (2026-10-19) was an **explicitly recorded reduced-scope acceptance** for the bounded staging publication (ADR-144): the deferred evaluation spine (`evaluation.status=deferred`, `eval-confidence/1` `mode=shadow`, `applied=[]`), dossiers published `mechanical_complete`/`pilot_complete=False`, and the non-operational intake receiver were each *scoped and disclosed*, not satisfied. The release half of `D-R10-PUBLISH-1` was discharged by that signature; production exposure, the production candidate (`D-P32.23a-1`) and intake operating prerequisites (`D-P32.16-1`) remain OPEN. Nothing in a scoped signature waives this requirement's full criterion set for production exposure — the scope is recorded, never silently dropped.
+The landed GATE-G3 signature (~~2026-10-19~~ approved 2026-09-28T03:49:14Z — date corrected, ADR-146; Appendix G.7 R11-C1) was an **explicitly recorded reduced-scope acceptance** for the bounded staging publication (ADR-144): the deferred evaluation spine (`evaluation.status=deferred`, `eval-confidence/1` `mode=shadow`, `applied=[]`), dossiers published `mechanical_complete`/`pilot_complete=False`, and the non-operational intake receiver were each *scoped and disclosed*, not satisfied. The release half of `D-R10-PUBLISH-1` was discharged by that signature; production exposure, the production candidate (`D-P32.23a-1`) and intake operating prerequisites (`D-P32.16-1`) remain OPEN. Nothing in a scoped signature waives this requirement's full criterion set for production exposure — the scope is recorded, never silently dropped.
 
 **SIG-TRUST-010 (MUST).** After the final evaluation decision, materialize the selected or safely demoted rules against the frozen approved inputs and regenerate all affected graph, dossier, record, index, tile and analytics artifacts into one new release candidate. Every artifact must pin the same evaluation result, ruleset and snapshot. Pre-evaluation previews cannot satisfy release acceptance; any changed evaluation-relevant inputs require an explicit reassessment decision. Owner: P32.23a.
 
@@ -7386,7 +7792,180 @@ New requirement rows enter COVERAGE_MATRIX as MISSING with ticket routing; plann
 
 HUMAN-H4 records human development/calibration labels and separate documentary semantic review; P32.22a freezes the candidate and its sampling frame; HUMAN-H5 records final blinded confirmatory adjudication. GATE-G3 exercises HG-11 for the concrete release and receiver operating packet. GATE-ACCEPT records Round-10 capstone acceptance. Source rights, resource changes, workflow-writer cutover and independent usability work remain separately scoped decisions/return paths. Neither an agent-generated label nor an incomplete dossier may satisfy the human/pilot gate by relabeling it complete.
 
-**Landed state as of the P33.5 reconciliation (2026-09-28, ADR-145).** The recorded obligations above are obligations, not completions: the S3 spine rows (HUMAN-H4, P32.22a, HUMAN-H5, P32.23) are OPEN under `D-R10-HUMAN-1`/`D-R6.1-EVAL` per the operator's 2026-10-19 wholesale-deferral dispatch amendment; the evaluation machinery is landed but runs `mode=shadow` (`eval-confidence/1`, `applied=[]`, `awaiting_humans`) and never promotes without the recorded activation decision; no human label exists and none may be fabricated. The release candidate `p-17b713…` (identity `sha256:bc20d4bf…` over frozen snapshot `sha256:138714a6…`) carries `evaluation.status=deferred` on the provisional basis and was published only inside the bounded staging registry — no production exposure exists. GATE-G3 exercised HG-11 under the explicitly reduced scope recorded above (signed 2026-10-19); the bounded staging publication was verified and rollback-rehearsed (`sig.release-publish-verification/1` pass 25/25, ADR-144). The intake receiver is built and deliberately non-operational — `[intake].operational=false`; `/intake/new` and `POST /intake/v1/reports` return `503 receiver_not_operating` (`D-P32.16-1`). GATE-ACCEPT's signature exists (`ACCEPT-R10`, signed 2026-09-28) — it accepts the capstone register *as presented* and closes no deferred row. Production publication (`D-R10-PUBLISH-1`), the hosted recovery/production candidate (`D-R10-LIVE-1`, `D-P32.23a-1`), source rights (`D-R10-SOURCES-1`), human labels and review, and `SIG-MEM-004` (scheduled to P33.8) all remain owed.
+**Landed state as of the P33.5 reconciliation (2026-09-28, ADR-145).** The recorded obligations above are obligations, not completions: the S3 spine rows (HUMAN-H4, P32.22a, HUMAN-H5, P32.23) are OPEN under `D-R10-HUMAN-1`/`D-R6.1-EVAL` per the operator's ~~2026-10-19~~ 2026-09-28T01:15:49Z (date corrected, ADR-146) wholesale-deferral dispatch amendment; the evaluation machinery is landed but runs `mode=shadow` (`eval-confidence/1`, `applied=[]`, `awaiting_humans`) and never promotes without the recorded activation decision; no human label exists and none may be fabricated. The release candidate `p-17b713…` (identity `sha256:bc20d4bf…` over frozen snapshot `sha256:138714a6…`) carries `evaluation.status=deferred` on the provisional basis and was published only inside the bounded staging registry — no production exposure exists. GATE-G3 exercised HG-11 under the explicitly reduced scope recorded above (signed ~~2026-10-19~~ 2026-09-28T03:49:14Z; date corrected, ADR-146); the bounded staging publication was verified and rollback-rehearsed (`sig.release-publish-verification/1` pass 25/25, ADR-144). The intake receiver is built and deliberately non-operational — `[intake].operational=false`; `/intake/new` and `POST /intake/v1/reports` return `503 receiver_not_operating` (`D-P32.16-1`). GATE-ACCEPT's signature exists (`ACCEPT-R10`, signed 2026-09-28) — it accepts the capstone register *as presented* and closes no deferred row. Production publication (`D-R10-PUBLISH-1`), the hosted recovery/production candidate (`D-R10-LIVE-1`, `D-P32.23a-1`), source rights (`D-R10-SOURCES-1`), human labels and review, and `SIG-MEM-004` (scheduled to P33.8) all remain owed.
+
+**Round-11 disposition (2026-10-01; ADR-152, ADR-153).** For Round 11 the explicit HUMAN-H4 → P32.22a → HUMAN-H5 → P32.23 path named above is replaced by the trigger T-EVAL-IND. Rows 184–187 are superseded, not executed: no human label, adjudication or signature exists for them, and none is planned in Round 11, because the project has no independent reviewers and makes no contact outside the project (the operator's constraints U-008 and U-011). Their obligations stay OPEN and are never closed, waived or relabelled: `D-R10-HUMAN-1`; `D-R6.1-EVAL`, whose remaining legs are SIG-EVAL-001/002/005/007 and SIG-IDENT-027/028 (SIG-EVAL-004 leaves its legs under the scoped waiver of §55.4); and the human portions of `D-P30.2b-1/-2`. T-EVAL-IND fires only when GATE DECISIONS records the operator stating, in their own words, that at least two people independent of the project are available to label and authorising that contact; every frame-affecting prerequisite having landed; and the certification aim. On firing it seeds the reviewer surface, a pilot, a frozen candidate, a confirmatory campaign and its decision (plan row LATER-01). The non-human parts pass to Round-11 rows P34.45 (inferential tiers review-only, human estimands `unavailable`) and P37.44 (the mechanical evaluation report), with the confidence disclosure of SIG-CONF-001…012. No Round-11 gate waits on a human marker, and no surface may claim a human check (ADR-152). The dates above marked "date corrected" follow ADR-146 (Appendix G.7 R11-C1).
+
+# Part XII — Round-11 build truth, operations, releases and confidence
+
+## 56. Round-11 contract extension (2026-10-01)
+
+### 56.1 Scope, precedence and execution authority
+
+This additive extension records the new requirement families of the Round-11 plan, `docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md` (canonical; §6, with the themes of §5.2–§5.4, §5.8 and §5.11), which the operator ratified at GATE-P through the answers logged verbatim in `docs/build/planning/2026-09-30-next-phase/feedback/RATIFICATION_LOG.md` (rounds 1–26, 2026-10-01T03:41:19Z–06:51:11Z). It defines future implementation obligations; it is not evidence that any of them is implemented, that any human check exists, or that any gate is signed. Part VIII protections, the frozen §47 layout, the insert-only claim spine (SIG-STORE-011 binds every path except the one operator-only purge function of ADR-189) and every earlier part remain binding. Nothing in this part weakens a MUST elsewhere.
+
+Round 11 runs without independent humans and without contact outside the project (the operator's constraints U-008 and U-011; plan §3.4). A requirement that needs an independent person stays owed under its own trigger (T-EVAL-IND); agent or maintainer work is never relabelled to satisfy it. The waivers the operator adopted (ADR-153, ADR-163…165, ADR-179…182, ADR-186…189) are recorded as amendments in the sections that own the waived requirements and in Appendix G.7, not here: this part only adds requirements.
+
+The draft ids of the planning notes (B4 §5 DRAFT-MEM/ENG/OPS; G1 §4; G3 §10 SIG-REL-D01…D14; L3 §7 SIG-CONF-D01…D14) map to the final ids below in `docs/build/planning/2026-09-30-next-phase/stageB/T1_id_map.csv`. A draft listed under two families is written once. A surviving draft keeps its ordinal (G3's SIG-REL-D04 is SIG-REL-004; G1's provisional SIG-OPS-004 stays SIG-OPS-004). **Id note:** the requirement ids SIG-OPS-nnn, SIG-REL-nnn and SIG-CONF-nnn are not the planning ticket keys OPS-01…08, REL-01…11 and CONF-01…14 (catalog ids `R11-OPS-*`, `R11-REL-*`, `R11-CONF-*`); a ticket key never names a requirement.
+
+Each requirement names one implementing owner: a Round-11 chain row by its `data/round11_plan.csv` id, or a Stage-B seed unit (SEED-nn). Where the manifest (rows 201+) renames a row, the manifest is authoritative. "Also" names rows that extend the owner's work without owning the requirement. Operator decisions are quoted with the round time from the log; a text the operator adopted by selecting an agent-drafted option carries the label `agent-drafted, adopted by the operator at <time>` and the sha256 prefix computed in `design/S6-ratification-applied.md` §5.
+
+### 56.2 Build-memory truth (extends §55.7)
+
+In Round 10 the committed build memory (ADR-073) carried future-dated records, lost append-only history and readouts composed after one-line approvals, and every validator passed because each checked structure, not truth (plan §5.2; B1–B5). These requirements make the memory's truth mechanically checked (ADR-146, ADR-147, ADR-148).
+
+**SIG-MEM-005 (MUST).** *Clock-true records.* Every date or time recorded as an event — in build memory, ADR headers, spec landed-status text, obligation events, `db/sqitch.plan`, release identities and product constants — MUST come from the system clock at the moment of recording (`date -u`), or from the git or GitHub time of the event with its source named; never from a "chain date" or an estimate. It MUST NOT be later than the commit that records it. A future date is allowed only for a scheduled, real-world, synthetic or illustrative value that carries an explicit future-ok class and reason, or an allow-list entry that expires; forecast text in the planning documents under `docs/build/planning/` is a plan, not a record. A recorded date found to be wrong is corrected only by an appended, dated correction that names what it corrects (ADR-146), never by rewriting the record or by a footer on a landed ADR; deployed migration-plan lines keep their stamped dates (SIG-ENG-045). CI MUST fail a change that adds a violating record. Owner: SEED-02 (guard core). Also: P34.8 (obligation-event clock defaults), P34.22a/b (code literals and fixtures).
+
+**SIG-MEM-006 (MUST).** *Append-only, proven per change.* Protected build-memory regions, declared in a committed policy, MUST change only by appending at the region's end, by filling a declared placeholder, by an annotation that preserves the prior text, or — for a declared living region (the ledger head, OPERATING MODE, CURRENT STATE) — by replacement whose removed bytes are archived verbatim and hash-linked in the same commit. CI MUST check every pull request against its base and every push to `main` against its first parent. Lost append-only history is restored verbatim from git first and annotated afterwards by appended rows. Owner: P34.7. Also: SEED-02 (core modes), P34.27 (remaining restorations).
+
+**SIG-MEM-007 (MUST).** *CI truth at every boundary.* Before closing a ticket and before dispatching the next, the orchestrator MUST read the head-bound GitHub check runs of the ticket's pull request at its current head and of every unmerged ancestor in the stack. A failing, cancelled, skipped, missing or unknown required check MUST set `blockedOn` and stop the chain until it is fixed or waived verbatim by the operator. "CI unavailable" is never green: it needs a verbatim, time-boxed operator waiver and a later sweep of the owed runs. Only an allow-listed flake gets one re-run per head. The recorded result (check names, conclusions, run ids, head sha) MUST be verifiable by CI against GitHub; a local-only result is recorded as `locally-green`. Each boundary MUST also record `main`'s head, whether the chain descends from it, and the merges since the previous boundary, read from GitHub. In Round 11 the check covers the `r11/` pull requests and their `r11/` ancestors; the reds of the earlier stack are merge-readiness items for the operator, not Round-11 blocks (B-15, "As stated (Recommended)", 2026-10-01T04:33:54Z). Owner: P34.2. Also: SEED-02 (the boundary reader).
+
+**SIG-MEM-008 (MUST).** *Gate records.* Each gate decision MUST be recorded as a table row giving the `date -u` of receipt, the gate, the item, the operator's words verbatim (or `provided: yes/no` where the words would carry a secret), the consequence and its kind (decision, pre-authorization, confirmation, waiver or date-correction). A decision MUST be dated at or after its gate's pause, unless it is a pre-authorization that lists explicit item ids and an expiry. Nothing is pre-authorized on silence, and silence is never consent. Words that are interrogative, conditional, hedged or instructional MUST be followed by a recorded plain yes/no before any consequence is acted on — the forward rule the operator adopted with A-16 ("Key + forward rule (Recommended)", 2026-10-01T04:16:29Z). No record may delegate a signature or attestation to an agent. Owner: P34.28. Also: SEED-02 (table form and dates).
+
+**SIG-MEM-009 (MUST).** *Readout authorship.* Every gate or human readout MUST contain, from creation and permanently, the sentence "An operator or authorized human record supplies the decision; an agent must not sign or assume silence is approval." A signed readout's decision MUST be the operator's verbatim words, identical to its gate record. Agent-written text MUST sit in labelled agent-drafted blocks whose sha256 the operator confirmed in words recorded verbatim; a text the operator adopts by selecting an agent-drafted option is recorded with its sha256 and the label `agent-drafted, adopted by the operator at <time>`. Signing MUST only change the status line and append a signature block. A past determination is recorded as what it was: a "counsel" determination for which no counsel existed is recorded as the operator's own determination (ADR-167). Owner: P34.28. Also: SEED-02 (the sentence in new readouts).
+
+**SIG-MEM-010 (MUST).** *Ledger contract.* The control ledger's orient region MUST stay within a declared byte budget (12 KiB in Round 11). CURRENT STATE MUST hold single values from declared vocabularies, including the harness of the current segment. Every path named in the orient region MUST exist, and no deny-listed stale token may appear in it. PHASE LOG entries MUST be appended only at the end of the current round's section, in the fixed shape and size. BUILD_INDEX rows MUST be well formed and uniquely sequenced, with no placeholders after close. RETURN PASS MUST equal its generated form. Run ledgers MUST name the harness and model. A CI probe MUST show that the documented orient recipe resolves the next unit within its budget. Planning ledgers MUST keep CURRENT STATE consistent with their change logs. Owner: P34.9. Also: SEED-10 (the slim head), P34.29 (the RETURN PASS generator).
+
+**SIG-MEM-011 (MUST).** *Status layers and live claims.* A statement of progress MUST name its layer — engineered, fixture-verified, staging-verified, live-executed, public or human-completed — and never report a lower layer as a higher one. A build-memory, readiness or README statement that asserts production state MUST cite a probe-run record (id, time, result, output digest) no older than 24 hours at its commit. The citation is what is checked; the truth rests on the probe (SIG-OPS-011). Owner: P35.3.
+
+**SIG-MEM-012 (MUST).** *Harness attribution.* Round-11 commits keep the operator's name as author (A-21: the operator chose "Keep my name", 2026-10-01T04:25:48Z). Every agent commit MUST therefore carry a trailer naming its harness and model — a recognised harness co-author trailer, or `Harness: <harness>/<model-id>/<tier>` — and CI MUST fail a Round-11 pull request that contains an untrailered agent commit. An operator commit is identified by a valid operator signature (SIG-SEC-010) or `Harness: operator` and needs no harness trailer. One harness and model run each segment; a switch happens only at a boundary and is recorded in the PHASE LOG, and CURRENT STATE, run ledgers and contract headers name the segment's harness. Trailers are self-reported: they prove consistency, not origin. Owner: SEED-02 (trailer grammar). Also: P34.9 (ledger fields).
+
+### 56.3 Engineering verification
+
+**SIG-ENG-040 (MUST).** *Tests and validators assert invariants.* A test MUST NOT assert the current value of a living record: the next unit, the project status, a named obligation's, requirement's or readout's status, or the counts, row ranges or dates of living registers. Tests read living control records only through the validators or against an explicit snapshot commit, and assert only properties that hold at every commit (vocabulary membership, uniqueness, generated equals source, reference resolution, append-only properties) or facts about frozen artifacts. A validator MUST NOT pin a living count either: an expected count is derived from its source, such as the spec's requirement definitions. A failing pin is converted or deleted, never relaxed in place. A lint in `make check` MUST enforce this. Owner: P34.31. Also: SEED-03 (the seed's conversions).
+
+**SIG-ENG-041 (MUST).** *Verdict integrity.* The coverage-matrix checker MUST enforce the verdict grammar — MET, MET-DIFFERENTLY(ADR|RISK), MET-ENGINEERED(D-id…), PARTIAL, MISSING, AT-RISK-INTEGRATION, WAIVED(ADR) and N/A-RATIONALE — with its parameters and the columns `required_domain`, `achieved_domain`, `owed_legs` and `accepted_scope`. It MUST cross-check each verdict against the obligation register and `accepted_scope`: no MET with an owed leg; MET-ENGINEERED only with open owed legs; WAIVED only with an accepted ADR that contains the id and a revisit trigger, and no open leg; a scoped acceptance never raises a verdict. The routing of an open verdict MUST name a ticket that has not landed, cited evidence MUST exist, expected counts MUST be derived from the spec rather than pinned, and every verdict change is written as a `coverage-assessment/1` event. A spec amendment that removes or weakens a MUST is a waiver, recorded as WAIVED(ADR) with the operator's words, compensating controls and a revisit trigger (ADR-150). An acceptance packet MUST report both sums — engineering closed (MET + MET-DIFFERENTLY + MET-ENGINEERED) and requirement satisfied (MET + MET-DIFFERENTLY) — and never "N MET" alone. Owner: SEED-15. Also: P34.33 (the capstone two-sum check).
+
+**SIG-ENG-042 (MUST).** *Validator gates; no vacuous pass.* Every build-memory and spec validator MUST run in `make docs-check` and in the CI documentation job on every pull request and every push to `main`. Each validator and scheduled check MUST report how many items its input offers and how many it evaluated, and MUST fail when it evaluated none of a non-empty candidate set or when its parse rate falls below a declared floor. A scheduled job that measured nothing MUST NOT report success. Owner: P34.9. Also: SEED-02 (CI wiring).
+
+**SIG-ENG-043 (MUST).** *Revisit triggers are monitored.* Every ADR revisit trigger MUST have exactly one register row with the hash of its trigger text, a state (quiet, fired-unanswered, fired-answered, superseded or dormant), evidence, an open home and a last-evaluated date. A fired trigger MUST have a recorded answer — a new ADR, a ticket or a waiver — before the round closes, and at the round tail every row is evaluated within the round. Owner: P34.32. Also: SEED-15 (the register file).
+
+**SIG-ENG-044 (MUST).** *Guards precede the records they protect.* A round's seed MUST carry, before its first record commit, the guard core for the record classes it writes: record dates (SIG-MEM-005), append-only regions (SIG-MEM-006), the CI-boundary reader (SIG-MEM-007), the gate-table form (SIG-MEM-008), the readout sentence for new readouts (SIG-MEM-009), the trailer grammar (SIG-MEM-012) and the validator wiring (SIG-ENG-042), with the living-record test pins converted (SIG-ENG-040). The seed pull request MUST be green under them before the round's first gate (GATE-B in Round 11). The full readout rules (SIG-MEM-009) MUST land before the round's first readout is signed. A guard that cannot land first is replaced by an equivalent planning-side check until it lands, and the gap is recorded. The operator chose the full seed (A-13, "Full seed (Recommended)", and Q-B4-1, both 2026-10-01T04:09:43Z). Owner: SEED-02. Also: SEED-03 (pin conversions).
+
+**SIG-ENG-045 (MUST).** *Migration lifecycle.* The whole sqitch plan MUST deploy, verify, revert and redeploy cleanly in CI on every pull request, into a fresh database created from `template0` (SIG-STORE-041). A plan line, once deployed to any database, MUST NOT be edited or re-stamped, because its planned time is part of its change id. A wrong date in the plan is corrected by an appended amendment (ADR-146), and a defective verify script by `sqitch tag` and `rework`, never by editing a deployed script. In particular, `db/sqitch.plan` lines 44–52 keep their stamped dates: a local database holds them as stamped (C-10; operator-approved local inspection, 2026-10-01T04:59:41Z). Owner: P34.24a.
+
+**SIG-ENG-046 (MUST).** *Pinned toolchain.* The Node, npm and uv versions and the CI runner image MUST be pinned in the repository and identical in local and CI runs, checked by a CI assertion, and CI MUST fail when a dependency install would rewrite a lockfile; a lockfile regeneration is its own recorded change. Superseded pull-request runs MAY be cancelled; runs on pushes to `main` MUST NOT be. Owner: P34.1.
+
+### 56.4 Operations (opens the `OPS` family)
+
+The hosted deployment (ADR-081) had no restore drill at scale, no deletion protection, no alert path that reached a person, no scheduler of record and no least privilege (plan §5.8; G1). Operations requirements were carried under SIG-ENG-* in Part IX; §0.3 now opens `SIG-OPS-*` for them. The release model — identity, promotion, Class R and Class S, rollback and cadence — is the `REL` family (§56.6), not OPS. Production mutations follow the Round-11 operating clauses OM-14 and OM-20: named in a contract, scripted, with a restore point, and run only under the operator's go or an operator-approved pre-authorization list.
+
+**SIG-OPS-001 (MUST).** *Restore drill and logical export.* The production claim spine MUST be restored from its managed backups (point-in-time and a full backup) into a new, isolated instance at least quarterly and after every schema-changing deploy. The drill MUST verify append-only row-count parity at the restore point for every spine table, MUST record the measured RTO and RPO, and MUST delete the drill instance afterwards by a name-checked command that cannot touch production. A drill against a seed or fixture database does not satisfy this requirement. A logical export of the production database MUST be stored outside the instance's lifecycle at least monthly. Owner: P34.6.
+
+**SIG-OPS-002 (MUST).** *Instance survivability.* The production database instance MUST have deletion protection enabled, MUST retain its backups on instance deletion, MUST have a maintenance window outside the scheduled batch windows, and MUST have a storage autoresize cap at the value the operator set (B-11, "As stated (Recommended)", 2026-10-01T04:35:53Z). Owner: P34.3.
+
+**SIG-OPS-003 (MUST).** *Public route allow-list.* The public web origin MUST serve only routes on a committed allow-list. The publish tooling MUST refuse to publish a build that contains an unlisted top-level route or a page built from internal or demo layouts. Each denied route MUST return 404 on every public origin, verified after every publish and every probe sweep. A surface the operator accepted as withdrawn rather than made to work stays off the list until it works (C-12, "Accept the list (Recommended)", 2026-10-01T05:03:05Z). Owner: P34.10.
+
+**SIG-OPS-004 (MUST).** *Single publish path and release record.* The public site and the public compartments MUST be published only by the repository-owned publish command — the release tool of SIG-REL-004 once it exists. Hand-typed syncs to public buckets are prohibited, and no publish deletes a release tree. Every publish MUST write a release record (release id, git commit, image digests, digest of the published tree). The release id on every page is SIG-REL-009. Owner: P34.10.
+
+**SIG-OPS-005 (MUST).** *Live-configuration reconciliation.* A read-only reconciler MUST compare the live scheduler, jobs, services, identities and bucket policies with their repository declarations (the cadence file, a manual-job allow-list and the declared posture) at least daily, and alert on drift. One scheduler of record runs every scheduled job. A cron schedule that restricts both day-of-month and day-of-week MUST be rejected unless explicitly annotated. Configuration MUST NOT require an image roll to take effect. Owner: P35.1a.
+
+**SIG-OPS-006 (MUST).** *Alert delivery.* Every critical alert MUST reach a human channel — at minimum e-mail to the operator's address — within 1 hour. A condition red for more than 24 hours MUST re-notify daily. The operator MUST be notified of any failed scheduled execution. Probes MUST cover the canonical public origin through the load balancer, including TLS certificate expiry (alerted at least 21 days ahead), and not only platform URLs. A scheduled check that measured nothing fails (SIG-ENG-042). Owner: P35.2. Also: P34.4 (the first channel, uptime checks and the TLS-expiry alert).
+
+**SIG-OPS-007 (SHOULD).** *Availability objectives.* The public site root and the API health endpoint SHOULD meet 99.5 % monthly availability, measured by external checks at intervals of 5 minutes or less, with a monthly error-budget readout. Owner: P35.2.
+
+**SIG-OPS-008 (MUST).** *Read-model freshness.* While scheduled ingestion runs, materialized read models MUST be refreshed at least weekly, so that the live API lags the claim spine by at most seven days. The site's republish cadence and its triggers are SIG-REL-011; the site's as-of and its notice that the API may be newer are SIG-REL-009. Owner: P36.44.
+
+**SIG-OPS-009 (MUST).** *Cost truth.* Measured monthly cost MUST be available (a billing export or equivalent) and compared against the operator-set ceiling with a budget alert. The ceiling covers infrastructure only; costs billed outside the cloud account (object hosting and CDN, registrar, domains) are read into the same monthly spend ledger. Agent usage is reported, not capped, and a usage-limit event pauses the round for the operator (A-2a, "Infra only; alert later", and A-2b, "Report + pause on limit (Recommended)", 2026-10-01T03:53:59Z). Documented cost claims MUST be measured, not projected; an estimate is labelled as one. Owner: P34.5.
+
+**SIG-OPS-010 (SHOULD).** *Runbooks.* Hosted operations SHOULD have maintained runbooks, with commands verified against the tree, for alert response, restore, republish, scheduled-window watch, job failure, secret rotation, roll, cost review and decommissioning, plus the rollback and withdrawal procedures of SIG-REL-013. Owner: P35.4.
+
+**SIG-OPS-011 (MUST).** *Probe placement and evidence.* Each production-truth probe — route allow-list and absence (SIG-OPS-003), release record and page stamp (SIG-OPS-004, SIG-REL-009), live-configuration drift (SIG-OPS-005), monitoring liveness (SIG-OPS-006), and the attribution, jurisdiction–coordinate, API-parity and number-truth probes — MUST declare its trigger points (pull request, release candidate, publish, schedule, round tail) and write a `probe-run/1` record (id, time, result, output digest). The round tail MUST include a full probe sweep. Owner: P35.3.
+
+**SIG-OPS-012 (MUST).** *Fixture sentinels.* Release candidates, the public web build and sampled live API responses MUST be scanned for fixture and placeholder sentinels: test domains, placeholder IRIs, fixture and demo markers, loopback URLs, undisclosed stand-in captures and unregistered contact domains. A hit outside a declared fixture compartment fails the gate. Owner: P35.3.
+
+**SIG-STORE-048 (MUST).** *Evidence immutability in hosting.* The hosted OCFL capture store and the ops run and probe records MUST be protected against overwrite and deletion by a bucket retention policy, or by object versioning with noncurrent retention of at least 90 days. The capture store's retention is 365 days and stays unlocked, so that lawful takedowns and the operator-only deletion path (ADR-181, ADR-189) remain possible (B-14, "Accept all three (Recommended)", 2026-10-01T04:39:45Z). Runtime identities that write captures MUST NOT hold object-delete. No document may call a store WORM unless such a control is in force. Owner: P37.3. Also: P34.3 (versioning and noncurrent lifecycle).
+
+### 56.5 Security posture
+
+SIG-SEC-001…006 (§44) stand. SIG-SEC-003's Round-11 amendment (a written demand-response posture, published legal-demand counts, the warrant canary declined; ADR-166) is recorded in §44 and Appendix G.7, not here.
+
+**SIG-SEC-007 (MUST).** *Least-privilege runtime identities.* No service or job may run as a principal holding a basic project role (Owner, Editor or Viewer). Each workload class MUST have a dedicated service account with only the roles it needs, and each secret is readable only by its consumers. Public-facing workloads MUST NOT hold delete permissions on the spine or evidence stores. Owner: P34.42a/b.
+
+**SIG-SEC-008 (MUST).** *Digest pinning everywhere.* Every service and job MUST reference its image by digest (extending ADR-111 from jobs to services), and deployed code MUST be reproducible from the repository. Owner: P35.1a/b.
+
+**SIG-SEC-009 (SHOULD).** *Secret lifecycle.* Each secret SHOULD have a recorded owner, consumer and last-rotation date. A secret known to be exposed MUST be rotated before its first production use. Secret values live only in the secret manager, never in files (SIG-SEC-006). Owner: P35.4.
+
+**SIG-SEC-010 (MUST).** *Operator-only gate signatures.* Gate signatures — HG gate decisions, Class S release gos, and every source flip from `ingestion_permitted = false` to `true` — MUST be made in commits or records signed with an operator-only key that is passphrase- or hardware-backed and never loaded where an agent session can reach it (no agent-reachable ssh-agent or credential store). CI MUST verify those signatures against a committed `allowed_signers` file, and MUST fail a gate signature, a Class S go or an `ingestion_permitted` false-to-true transition that no operator-signed commit or GATE DECISIONS record covers. The key proves origin; it never signs release manifests (SIG-REL-015). The operator adopted this control with A-16 ("Key + forward rule (Recommended)", 2026-10-01T04:16:29Z). Owner: P34.28 (the operator creates the key, OP-25).
+
+**SIG-SEC-011 (MUST).** *Public read role by explicit grant.* The public API's database role MUST read only the published read surface (§37), through explicit column lists or views granted by a sqitch change. It MUST NOT hold a blanket SELECT that reaches internal tables such as the evidence access log, review decisions, run environments or unscreened evidence excerpts. A database test MUST allow-list exactly what the role can read. Owner: P34.25.
+
+### 56.6 Releases (opens the `REL` family)
+
+The live release id was neither content-addressed nor belief-pinned, versions read `0.0.0`, a web redeploy could erase release trees, and live serving could not honour withdrawals (plan §5.8; G3). The operator adopted G3's release model with its Class R standing go (B-9, "Adopt + standing go (Recommended)") and its versioning and legacy-bucket answers (B-10, "Yes (Recommended)"), both 2026-10-01T04:35:53Z, and the manifest-signing split (B-20, "Pipeline key + your gate key (Recommended)", 2026-10-01T04:41:11Z). The model's engineering ADR is written by its owning row.
+
+**SIG-REL-001 (MUST).** *Release identity.* Every production release MUST have a content-addressed publication id (`p-` followed by the sha256 of its canonical descriptor) and an immutable human label `sig-YYYY-MM-DD.N`: the UTC date of the data as-of plus an ordinal per date, allocated under a lock and never reused. A label that was never promoted is shown as such. Owner: P35.12.
+
+**SIG-REL-002 (MUST).** *Descriptor binding.* The release descriptor MUST bind the spine snapshot (world and belief instants, watermark, environment); the clean, pushed code commit; the ruleset, resolver, policy, projection and ontology versions from one version source; the publication-gate digests; the evaluation status; the disclosure digests; the graph-quality report digest (SIG-CONF-006); and the build instant. Only a descriptor of this version is promotable: promotion MUST refuse a dirty tree, an unpushed commit, a `0.0.0` version, a non-sha revision or an older descriptor. A production release MAY be built from a pushed, CI-green, unmerged stack commit. Owner: P35.12.
+
+**SIG-REL-003 (MUST).** *Clock-true release dates.* Every date in a release MUST come from the clock at the moment it describes, and none may be later than the build instant. A replay MUST be labelled as one and is always Class S. The label date is derived, never typed. Owner: P35.12.
+
+**SIG-REL-004 (MUST).** *One writer of public bytes.* Public release bytes MUST change only through the release tool (promote, rollback, withdraw) or the status publisher (status files only). Release storage MUST NOT be publicly readable except through the serving layer. This refines SIG-OPS-004 once the release tool exists. Owner: P35.53.
+
+**SIG-REL-005 (MUST).** *Immutable after staging.* After staging, a release's bytes MUST NOT change except by a tombstone or removal under a recorded disposition; no tool deletes a staged release. Owner: P35.53.
+
+**SIG-REL-006 (MUST).** *Metadata-only promotion.* Promotion MUST switch the latest view, `/releases/latest.json` and the API's current release together, by metadata only — a new configuration generation, with services rolled by digest — and MUST copy no release bytes. A candidate MUST NOT be publicly reachable before promotion. Owner: P35.54.
+
+**SIG-REL-007 (MUST).** *Verification and automatic rollback.* A candidate MUST pass the verification suite on a private staging origin — integrity; identity and clock; route allow-list and absence; stamp and manifest; link crawl and containment; number truth; API parity; attribution; jurisdiction–coordinate sanity; withdrawal barrier; budgets and accessibility; scrub; disclosures; diff sanity (V1–V14); and the graph-quality gate (V15, SIG-CONF-007) — and the public-origin subset after promotion. Any failure or skip blocks promotion. A post-promotion failure MUST roll back automatically and alert the operator; that rollback is pre-authorised (D-G3-8, adopted with B-9). Owner: P35.58. Also: P35.56 (suite A).
+
+**SIG-REL-008 (MUST).** *Snapshot containment.* A release's page snapshot MUST contain no same-origin link outside its own `/s/<pub>/` prefix, except to `/r/<pub>/`, `/releases/` and declared latest-version links. The transparency family's snapshot requirements (appended by PLAN-11B, §56.8) complement this one. Owner: P36.66b. Also: P35.65 (the CI containment check).
+
+**SIG-REL-009 (MUST).** *Release stamp.* Every HTML page MUST show the release label, the data as-of, the code commit (linked) and the build time; MUST say that the public API may serve newer, unreleased records; and MUST link the release's `release.json`. Every response MUST carry `X-SIG-Release`. Owner: P35.13.
+
+**SIG-REL-010 (MUST).** *API release parity.* Every API route whose answer the site shows MUST serve the current promoted release's files and name that release. Every other route MUST label itself live-spine, with its watermark and the current release id. A live-spine answer may change before a release gate only with that label and a `/status/` notice (A-20, "Yes, with labels", 2026-10-01T04:25:48Z). Owner: P35.57. Also: P34.25 (the basis label).
+
+**SIG-REL-011 (MUST).** *Cadence.* A release MUST be cut at least monthly outside the batch window, and early when net-new publishable claims reach 10 % and 14 days have passed since the last promotion. The scheduled cut is suppressed when a Class S promotion landed within the previous 14 days. Release age MUST be alerted at 35 days. This absorbs the republish triggers of G1's freshness draft (SIG-OPS-008). Owner: P36.44.
+
+**SIG-REL-012 (MUST).** *Release classes and the standing go.* Promotion MUST be Class S — a candidate-specific readout signed by the operator (HG-11) — unless the classifier proves every Class R condition; the classifier MUST fail closed. Class R requires a recorded, revocable standing operator go. Agents may run a Class R promotion under it, but MUST NOT promote Class S, sign, or treat silence as approval. Round 11's standing go is the operator's adopted text (B-9; agent-drafted, adopted by the operator at 2026-10-01T04:35:53Z; sha256 `e4e24975b854…`): "Agents may promote a Class R release built from the same signed code whose diff stays within bounds (records −2%…+15%, no compartment <−5% or >+50%, no source loses >20%), with all checks green and no waivers; this go expires at the next sub-round gate or after 30 days, and is void on any ratchet regression, Part VIII screen change or new source." It is renewed at each sub-round gate and never by a bare "continue". A ratchet regression always yields Class S (SIG-CONF-007). Every Class S readout states "single maintainer, no second reviewer" (ADR-163) and "no human check performed" (SIG-CONF-010). Owner: P35.60.
+
+**SIG-REL-013 (MUST).** *Rollback and withdrawal.* Rollback MUST re-apply the current withdrawal set and MUST NOT revert serving configuration. A withdrawal MUST be live on every alias of every release, snapshot, latest view, download and mirror within 15 minutes, served as 410 with a dated tombstone (D-G3-9, adopted with B-9). A reinstatement is a new disposition and a new release, never an edit. Owner: P35.55.
+
+**SIG-REL-014 (MUST).** *Code versions.* Code versions MUST come from one source, and no package may report `0.0.0`. Semver tags MUST be placed on `main` by the operator after merge sittings; agents never tag or push `main`. Public-behaviour changes MUST carry a CHANGELOG entry, and release notes MUST link commits or tags to release labels. Owner: P34.23.
+
+**SIG-REL-015 (MUST).** *Manifest signatures.* Every release manifest and checksum list MUST be signed with the release pipeline's key, held in the secret manager and disclosed as signed by SIG's release pipeline; that signature proves integrity, not approval. Approval of a Class S release is the operator's gate signature (SIG-SEC-010), and the pipeline key never signs gate records. Owner: P36.50 (the operator creates the key, OP-20).
+
+### 56.7 Confidence without independent review (opens the `CONF` family)
+
+No independent human evaluation exists or is planned in Round 11 (ADR-152). Confidence is built by construction and held by mechanical checks; agent and maintainer judgements are disclosed and never gate. The operator adopted "derivation, not identity" (A-6, 2026-10-01T04:03:25Z; ADR-153) and chose no maintainer check (B-31: "No maintainer check", 2026-10-01T04:43:37Z); per the log's labelled interpretation of B-31, the line's other parts — a public quality page that shows failing and ratchet checks, and derivation tier C2 enabled — stand as stated. SIG-EVAL-001…007 remain in force; the waiver of SIG-EVAL-004's lower-bound clause for C0–C2 only is recorded at §55.4 and in ADR-153.
+
+**SIG-CONF-001 (MUST).** *Basis classes.* Every published quality, evaluation or confidence statement MUST carry exactly one basis class — by construction (B0), mechanical census (B1), mechanical sample (B2), agent review (B3), maintainer check (B4) or independent human (B5) — and its n, population, source-mix digest, ruleset and time window. "Human-verified", "independently reviewed", "verified" or "certified" MUST appear only with an independent-human completion marker. Owner: P34.45. Also: P37.45 (basis on public surfaces).
+
+**SIG-CONF-002 (MUST).** *Agent labels are segregated.* Labels produced by AI agents or models MUST be stored with labeller kind, model id, prompt digest and context id. They MUST NOT be stored in or read from human-evaluation tables, MUST NOT be read by any auto-write gate, evaluation-status promotion or release gate, and MUST NOT be applied to partitions reserved for an independent campaign. Owner: P35.48.
+
+**SIG-CONF-003 (MUST).** *Only mechanical checks gate.* A release, materialization or auto-write gate MUST depend only on by-construction, mechanical-census or mechanical-sample evidence (or on independent-human evidence under SIG-EVAL-004). Agent-review and maintainer-check results MAY trigger work and MUST be published with their class. Owner: P34.44a.
+
+**SIG-CONF-004 (MUST).** *Derivation, not identity.* Automatic collapse of records MUST be limited to copies of one upstream record: C0, the same layer ingested twice under one source; C1, the same value in a declared id namespace of a declared lineage, unique in both captures; C2, a one-to-one exact-position match within a lineage declared with documentary evidence whose measured overlap meets the declared floor (at least 0.9), within the copy tolerance and with no attribute conflict. A collapse is recorded as a derivation link and a shared site id, never as an entity merge. Every collapse MUST be re-verified by census on every run, and a failing lineage's tier MUST demote automatically. A collapse MUST NOT produce fewer records than the origin publisher lists as distinct. Organisations auto-link only on an exact shared authoritative identifier or an established registry crosswalk; a name-based match is published as "possibly the same". This is the policy under which SIG-EVAL-004's lower-bound clause is waived for C0–C2 only, in the operator's adopted sentence: "I accept derivation, not identity, and waive SIG-EVAL-004's lower-bound clause for C0–C2 as ADR-L3-B describes." (A-6; agent-drafted, adopted by the operator at 2026-10-01T04:03:25Z; sha256 `03c0a79ef3b8…`; ADR-L3-B is ADR-153.) Owner: P35.46. Also: P37.46a/b (organisations).
+
+**SIG-CONF-005 (MUST).** *Identity inference is never auto-written without independent evaluation.* Candidate pairs that are not derivation collapses MUST NOT be auto-written while no independent-human evaluation certifies their tier. They MUST be published as possible duplicates with basis and distance, and every affected count MUST be published as a range beside its record count: copies collapsed for the upper bound, and every possible duplicate within the declared distance merged for the lower bound. Owner: P35.47. Also: P34.45 (inferential tiers review-only).
+
+**SIG-CONF-006 (MUST).** *Graph-quality suite.* A versioned check registry MUST declare, for each check, its id, statement, population, placement (sink, spine probe, release gate, pull request, scheduled), mode (enforce, ratchet with baseline, report), threshold, basis class and fixing ticket. The release gate MUST write a `quality.json` report bound into the release descriptor (SIG-REL-002). Owner: P34.44a.
+
+**SIG-CONF-007 (MUST).** *Ratchet discipline.* A ratchet check MUST fail on any regression beyond its baseline. Its baseline MAY only move toward its threshold, and it MUST flip to enforce in the ticket that removes its cause. Loosening a baseline or threshold MUST be recorded by a new ADR. The release gate passes on zero ratchet regressions and zero failures of enforced checks; any other miss is a known-issue line in the readout, not a block. A ratchet regression MUST classify the candidate as Class S (SIG-REL-012). Owner: P34.44a.
+
+**SIG-CONF-008 (MUST).** *Real-data regression corpus.* A pinned corpus of captured upstream slices, one per recorded failure archetype, MUST run with oracles computed from the source bytes by code independent of the pipeline. Committed slices MUST respect their licences; restricted slices run in a scheduled job with their digests committed. Snapshot changes MUST be approved by an explicit commit. Owner: P35.23.
+
+**SIG-CONF-009 (MUST).** *Upstream reconciliation.* Each target run MUST record the upstream's own count at fetch and compare it with the subjects held after the run. An unexplained difference above 1 % MUST fail the target run once the check is enforced; an explained difference carries a recorded reason (a filter, withheld rows, a pagination cap). Owner: P35.34. Also: P34.44a/b (the check).
+
+**SIG-CONF-010 (MUST).** *Maintainer checks, when performed.* Checks by the project's maintainer, when performed, MUST be recorded with the maintainer's answers verbatim, the time, the packet digest, the seed and the strata. The maintainer MUST answer before seeing the system's or an agent's answer. The checks MUST be published as not independent and MUST NOT count as independent labels. Round 11 performs none, because the operator chose "No maintainer check" (B-31, 2026-10-01T04:43:37Z); every Class S readout and the quality page therefore state "no human check performed". Owner: P35.60. Also: P37.45.
+
+**SIG-CONF-011 (MUST).** *Public quality page.* A release-bound quality page (`/quality/`) MUST render every registered check, including failing and ratchet checks, from the release's `quality.json`; a "who checked what" table by basis class, whose independent-review row reads "none" while none has been performed; and a "what we cannot tell you" section. It is a content page without client script. A per-record basis block MUST show the copy, possible-duplicate, corroboration, location-check, technology and evidence states. Owner: P37.45. Also: P37.39 (per-record rendering).
+
+**SIG-CONF-012 (MUST).** *Mechanical estimands are labelled.* Perturbation, hard-negative, census and fidelity results MUST state their estimand in the report header and MUST NOT be presented as real-world identity precision or recall. No public text may claim human verification, independent review or certification; a cross-source camera-match precision figure or a 0.98 certification; completeness ("complete", "every"); model agreement as accuracy; organisation identity or agency counts beyond what the crosswalk proves; candidate recall; that a camera exists or operates (SIG records claims about cameras); capture–recapture totals; maintainer independence; or centrality, rankings or "most connected". Owner: P37.44. Also: P34.47 and P38.1a/b (claim probes).
+
+**SIG-CONF-013 (MUST).** *Least-privilege audit path.* Continuous checks over the production database MUST use a login that can only read, with a statement timeout, and MUST write a probe-run record per run. Owner: P34.43.
+
+**SIG-CONF-014 (SHOULD).** *Declared lineage.* Every source registry row SHOULD declare its lineage (origin, mirror-of, derived-from) with documentary evidence, and each key field its id namespace. An undeclared layer pair with measured overlap above 50 % MUST be held from publication until it is declared (SIG-EPIS-029). Owner: P35.25.
+
+### 56.8 Families appended by later rows, and de-duplication
+
+- **Transparency (`SIG-TRANSP-*`; J3 §11 D01–D25 and K9/K10 D26–D43)** is appended by PLAN-11B, whose 11B transparency rows cite it. SIG-TRANSP-D26…D43 also appear in the K13 UX set; they are written once, by PLAN-11B.
+- **The K13 UX set** (UXR-01…38, UXR-A01…A13 and the K0–K14 design ids they adopt) is appended by PLAN-11C, which decides whether it opens new prefixes or folds into `SIG-UI-*`. UXR-A13 adopts SIG-CONF-D01, D05 and D11; these are written once, here, as SIG-CONF-001, SIG-CONF-005 and SIG-CONF-011, and PLAN-11C cites those ids.
+- Each later family is an append-only `spec_src` change from the ratified plan, rebuilt by `BUILD.sh`, and registers its prefix in §0.3.
+- **De-duplications made here.** G1's provisional SIG-OPS-004: its page release-id clause is SIG-REL-009 and its single-path clause is refined by SIG-REL-004. G1's provisional SIG-OPS-008: its republish triggers are SIG-REL-011 and its as-of disclosure SIG-REL-009; SIG-OPS-008 keeps read-model freshness. The monthly logical export moves from G1's SIG-OPS-002 to SIG-OPS-001. The vacuous-success sentence of G1's SIG-OPS-006 is SIG-ENG-042. DRAFT-ENG-4 and DRAFT-ENG-5 are amendments of SIG-ENG-039 and SIG-ENG-031, not new ids; their "CI green" means SIG-MEM-007.
+
+### 56.9 Traceability
+
+New requirement rows enter the coverage matrix as MISSING with their owner's routing; planning does not turn them MET, and their verdicts follow SIG-ENG-041. The draft-id → final-id map is `docs/build/planning/2026-09-30-next-phase/stageB/T1_id_map.csv`. Landed-status text for this part is appended, dated from the clock, as its rows land; at the time of writing nothing in this part has landed.
 
 # Appendix A — Requirement traceability matrix
 
@@ -9171,6 +9750,41 @@ repository number, title, and owning phase. Its single source of truth is `docs/
 | ADR-143 | The investigation-journey acceptance portfolio: declared corpus, staged scratch release, evidence classes, and honest gaps (P32.24 / Round 10 S4 — SIG-FIND-007): `ops.journey_verify` runs the public-investigation acceptance portfolio over two strictly separated subjects — the committed P32.23a candidate packet verified READ-ONLY (manifest artifact digests, identity digest, release validation, deferral dispositions, zero-JS footprint, and the honest not_applicable record surface: 16 exported claims → 0 materialized published records) and a declared `sig.journey-corpus/1` acceptance export (75 records, `sig_graph` CC-BY-4.0 + `osm_physical` ODbL-1.0, declared cases in `corpus.json`: page-≥2 tail record, 5 no-public-point + 5 unreported-jurisdiction + 3 unresolved-point deployments, ghost claim → `unlocated` anchor, an evidence leg with no published legs, 3 typed edges across all access kinds, a withheld entity + withheld claim) built by the SAME `build_release` path and staged into a scratch registry under the report dir — never the published registry; every check row carries `evidence_kind` (`automated_conformance`/`agent_walkthrough`/`independent_human`), a status (`pass`/`fail`/`deferred`/`not_applicable`/`verified_by_test`), an evidence-grounded `expected_answer` for the interpretive legs, and owner+landing — a `fail`/`deferred`/`not_applicable` row constructed without both raises `PortfolioError`, so no material failure can land unowned and no false portfolio PASS is possible; journey C consumes `sig.journey-intake-proof/1` — a real-PG18 run of submit → fresh-connection survival → restricted queue → propose/approve → exactly-once §16.6 `correct` apply → publish linkage → resolved state → live `sig_intake_receiver` refusal — folded in as executed pass (verified_by_test when absent); the withdrawal legs record real `denied`/`withhold` dispositions on the scratch registry and verify tombstone/`route_deny` answers plus unaffected-route permissibility; no-JS/print/citation walkthroughs are byte-verified, keyboard/back-forward/receipt legs honestly `verified_by_test` where the interactive proof lives in the web/db suites, and `UX.independent_sessions` stays `independent_human`+`deferred` under OPEN `D-R10-USERS-1` with `USABILITY_TASK_PROTOCOL.md` as the landed compensating control — no human claim is fabricated anywhere; additive verbs `sig-ops journey-verify|journey-intake`; committed artifacts under `docs/build/reports/p32.24-investigation-journey-verification/`. BL-058 | P32.24 |
 | ADR-144 | Bounded release publication, unauthenticated verification, and rollback rehearsal (P32.25 / Round 10 S1 — SIG-TRUST-009): under GATE-G3's signed reduced-scope acceptance (reduced dossiers `review.status=not_run`/`pilot_complete=False`, intake non-operational, evaluation deferred), `ops.release_publish_verify` emits `sig.release-publish-verification/1` — `PUBLISH_PROOF.json` + `PUBLIC_VERIFICATION.md` with journey-discipline evidence classes (owner+landing enforced on any non-pass, verdict fail-closed) — over four layers: **PF.\*** preflight pins before any pointer moves — the signed GATE-G3 readout must exist and name the exact publication `p-17b713cee4f4f605f73d72c6b13c824499d0d35005e4295f86c989e52dc98587`, identity `sha256:bc20d4bf…` and frozen snapshot `sha256:138714a6…`; `CANDIDATE_MANIFEST` must equal the accepted pins (descriptor sha, release/export manifest shas, `provisional-ruleset/1`, evaluation `deferred`/`shadow`/`applied=[]`/`decision=null`, `published=false`, validation `complete`); all 18 manifest artifacts re-hash byte-for-byte; `DISCLOSURE` must carry the deferred posture (`resolved_sites=null`, `prior_preview_counts_reused=false`, 3 recorded dispositions); **P.\*** publish runs `activate()` on a **fresh** bounded registry only (non-empty refused so the transition is observable) — validate-first, `latest.json` last, `null → p-17b713…` recorded, catalog pinned, whole-tree post-publish re-validation, activation receipt; **V.\*** verifies unauthenticated public reads — every manifest artifact re-hashes over the served tree *and* over real HTTP GETs from a throwaway static server (no credentials exist — "unauthenticated" is the honest shape), citations + selector states (cite-this-URL marking, compat-index redirect, bare-selector answer, honest `unavailable` pre-release selector), honest 0-record absences (search 404 `unknown_compartment`/`unknown_publication`, no tiles), the zero-disposition withdrawal barrier, loudly-recorded suppressed slices, the provisional basis on the published surface with no artifact asserting a completed pilot/final evaluation/certified resolved-sites count, intake honestly unavailable (config flag + both env gates + 503 `receiver_not_operating` + no live submission link + no synthetic submission), zero-JS; **R.\*** rehearses rollback in labelled scratch registries — `R.prior_release` (stand-in prior → candidate → `rollback(prior)`: pointer restored atomically, candidate bytes keep serving identically at immutable routes — old citations preserved — inter-activation withdrawals keep denying), `R.no_prior_pointer` (the candidate's real rollback shape via additive `exports.release.clear_latest_pointer`: refuses when the pointer is already absent, re-applies withdrawals, removes `latest.json`, re-emits the overlay, receipts — catalog/compat/immutable history untouched), `R.refused_deploy` (a tampered bundle fails `validate_release` before staging — pointer/catalog/served bytes byte-identical); `apply_withdrawals` now breaks hardlinks (`st_nlink > 1` → unlink) before tombstone writes so a staged tree can never write through into an immutable release input — the P32.24 `corpus_release/` write-through corruption this surfaced is repaired by deterministic `build_release` rebuild + disclosed; the `R.prior_release` stand-in is the regenerated P32.24 corpus (rebuilt `publication_id` asserted `p-81f1986a…`), labelled, never a fabricated production predecessor; `sig.release-publish-return-pass/1` (`prepared_not_executed`) pins the production deploy/probe/rollback sequence — the production half of `D-R10-PUBLISH-1`, `D-P32.23a-1`, `D-R10-LIVE-1`, `D-P32.16-1` all stay OPEN; additive verb `sig-ops release-publish`; committed artifacts under `docs/build/reports/p32.25-accepted-release-verification/`. BL-058 | P32.25 |
 | ADR-145 | Round-10 spec reconciliation to the landed design (P33.5 / Round 10 X3, row 197 — the P20.2/ADR-062 pattern applied to the landed Round-10 state): changes **no behaviour** — it amends normative spec text to match decisions already landed and ADR'd, and records the honest activation posture. Six amendments: **(1)** the robots posture — SIG-INGEST-012, SIG-INGEST-036 rule 2 and SIG-INGEST-046b still read "refuse on `disallowed`/`unavailable`"; under the operator's GL-GATE-08 disposition (ADR-088) verdicts are probed + recorded per RFC 9309 §2.3.1.4 (ADR-087 kept) but never gate — a non-grant fetch is stamped `robots_disregarded` as first-class provenance; the ADR-083 documented-API allow-list mode is written into §26 for the first time; challenges/circumvention stay prohibited (SIG-INGEST-013/037) and the binding gate stays `ingestion_permitted` (HG-03). **(2)** SIG-GEO-012 — PMTiles archives are per-compartment (never merged) and generated by the pinned tippecanoe build **or** the deterministic pure-Python v3 fallback (ADR-067/ADR-118). **(3)** SIG-API-005 — release-namespaced reads bind the as-of pair structurally via the immutable `r/<publication>` namespace, and legacy `as_of_*` selectors resolve through `sig.compat-index/1` to a real release or an honest invalid/unavailable/ambiguous (ADR-132/133/144). **(4)** §55.1/§55.9 gain the dated landed-status record — the S3 spine (HUMAN-H4 → P32.22a → HUMAN-H5 → P32.23) deferred wholesale by the operator's 2026-10-19 dispatch amendment; the candidate on `provisional-ruleset/1` with `evaluation.status=deferred`/`decision=null`/`applied=[]`/`mode=shadow`; evaluator shadow-only; intake `operational=false`/`503 receiver_not_operating`; GATE-G3's signed reduced scope; ACCEPT-R10 signed 2026-09-28 accepting the register as presented — every deferred/gated row stays OPEN. **(5)** SIG-TRUST-009 gains the reduced-scope-acceptance clause (GATE-G3's signature is disclosed scope, not waived criteria; the full set remains the production bar). **(6)** SIG-TRUST-010 gains the deferred-evaluation (inconclusive-case) clause — provisional-basis candidate, unpublished by construction, refusing on activated shadow gate. **Checked + unchanged:** SIG-PUB-008 (obligation stands; sole-maintainer waiver is a recorded operator disposition, not spec text), SIG-INGEST-011/013/037, SIG-GEO-013/SIG-UI-038 (conditional, no-basemap already recorded), the remaining 38 §55 ids (capstone-verdicted; PARTIAL/MISSING are obligations, not drift), the deferred live halves. No new requirement id minted — count stays **715**; no ADR body rewritten; Appendix G.6 carries the dated disposition table. BL-058 | P33.5 |
+| ADR-146 | Correcting recorded dates that were not taken from a clock (Round 11 Stage B, T1): the truth source for every recorded date is `date -u`; wrong dates are corrected by appended entries through one register and this ADR, never by footers on landed ADRs; `db/sqitch.plan` lines 44–52 keep their stamped values (C-10); candidate `p-17b713` superseded; the true §55 dates recorded by Appendix G.7 R11-C1 (SIG-MEM-005, SIG-ENG-045) | SEED-11 |
+| ADR-147 | Gate-record integrity and readout authorship (Round 11 Stage B, T1): operator decisions recorded in verbatim words; adopted agent drafts labelled "agent-drafted, adopted by the operator at <time>" with their sha256; no proxy signatures; hedged words are not decisions; ACCEPT-R8, ACCEPT-R10 and GATE-G3 annotated with B7's facts; ACCEPT-R10's "34 MET" acceptance superseded (C-13) and kept as history (SIG-MEM-008, SIG-MEM-009) | SEED-11 |
+| ADR-148 | Build memory v2.1 (Round 11 Stage B, T1): a ledger head of at most 12 KiB with a value-only CURRENT STATE carrying `harness:`; the guard core in CI; the D-R10-MEMORY-1 split (option C) supersedes the cutover statements of ADR-126 and ADR-127; the closeout journal stays shadow (SIG-MEM-006, SIG-MEM-010, SIG-ENG-040, SIG-ENG-044) | SEED-11 |
+| ADR-149 | Round-11 operating model (Round 11 Stage B, T1): Devin Desktop (`swe-2-high`) for every chain row, one orchestrator dispatching each ticket to a fresh sub-agent with isolation proven on row 201 and a fallback; the post-round Claude Code review REVIEW-R11 gates GATE-ANNOUNCE on S0/S1; pauses, digests, OM-19/OM-20; Stage B recorded as its own harness segment (SIG-MEM-007, SIG-MEM-010, SIG-MEM-012, SIG-OPS-009) | SEED-11 |
+| ADR-150 | Coverage verdict vocabulary (Round 11 Stage B, T1): MET-ENGINEERED and `WAIVED(ADR)` verdicts, four matrix columns and checker cross-checks; an amendment that weakens a MUST is a waiver; ACCEPT-R10's acceptance superseded by the Round-11 re-verdicts (SIG-ENG-041, SIG-ENG-042) | SEED-11 |
+| ADR-152 | Confidence without independent review (Round 11 Stage B, T1): confidence by construction plus a mechanical suite; agent evidence never gates; no human check this round, and every Class S readout and `/quality/` say "no human check performed"; independent evaluation owed under T-EVAL-IND; rows 184–187 superseded (SIG-CONF-001…003, SIG-CONF-010…012) | SEED-11 |
+| ADR-153 | Derivation, not identity (Round 11 Stage B, T1): ruleset v3 auto-collapses only C0–C2 copies (C2 enabled), census-verified; inferential matches published as possible duplicates with intervals; SIG-EVAL-004's lower-bound clause WAIVED for C0–C2 in the operator's adopted sentence (A-6); supersedes ADR-105 §5, amends ADR-099 §3; census demotion added to SIG-IDENT-028, whose holdout clause stands (dated clarification) (SIG-CONF-004, SIG-CONF-005, SIG-CONF-014) | SEED-11 |
+| ADR-154 | Graph-quality suite as a ratcheted release gate (Round 11 Stage B, T1): 27 checks in enforce, ratchet and report lanes; release gate V15 = 0 ratchet regressions and 0 enforce failures; loosening a baseline needs a new ADR (SIG-CONF-006…009, SIG-CONF-013, SIG-REL-007) | SEED-11 |
+| ADR-155 | HTML-first page types (Round 11 Stage B, T1; A-12): a T0/T1/T2/T3 page-type registry with CI budgets and no-JS parity replaces the named-island rule of ADR-091 §3–4 and ADR-097 §2–3/§6; extends ADR-134; ADR-068 (`/curate/**`) unchanged; SIG-UI-036/050 amended (Appendix G.7 R11-A3) | SEED-11 |
+| ADR-158 | Graph exploration as aggregated overviews (Round 11 Stage B, T1; A-11, A-22): overview graphs of at most 3,000 nodes, entity egos and `/explore/`, descriptive only (no centrality, rankings or labelled communities); the state × state Flock-sharing overview from screened share-list claims in the CC BY-SA compartment | SEED-11 |
+| ADR-159 | Organisation publication (Round 11 Stage B, T1; A-10): registry auto-allow (Census of Governments, SAM UEI, Wikidata QID; the person-name screen always runs; basis shown) and a typed "not yet reviewed" state for every other organisation; no operator review queue; extends ADR-124 | SEED-11 |
+| ADR-162 | Transparency and distribution (Round 11 Stage B, T1): export-time static artifacts, source-keyed rights lanes, a fail-closed scrub, a status lane, a zero-egress host with a spend ceiling and kill switch, raw bytes only for raw-ok sources, and immutable `/s/<pub>/` snapshots (SIG-REL-008, SIG-REL-009) | SEED-11 |
+| ADR-163 | Single-maintainer publication posture (Round 11 Stage B, T1): SIG-PUB-008 stands, nobody is named, the naming gate denies by default; the HG-11 second-reviewer role WAIVED for Round-11 releases (WV-03) | SEED-11 |
+| ADR-164 | Interim editorial authority and a public decision log (Round 11 Stage B, T1): one maintainer, disclosed; the SIG-GOV-015 editorial board WAIVED (WV-02); the log also records every WV-06 deletion | SEED-11 |
+| ADR-165 | Interim legal home (Round 11 Stage B, T1): an individual, disclosed; SIG-GOV-012/013 WAIVED (WV-01); revisited at the announcement, a first legal demand, funding or a second maintainer | SEED-11 |
+| ADR-166 | Legal-demand posture (Round 11 Stage B, T1): a written posture before the first demand and published legal-demand counts; the warrant canary declined (SIG-SEC-003) | SEED-11 |
+| ADR-167 | Counsel basis (Round 11 Stage B, T1; A-4, C-3): past "counsel" determinations re-recorded as the operator's own determinations (no counsel), with the C-3 sentence; E2's label text on every artifact once confirmed verbatim; qualifies ADR-086 and ADR-106 | SEED-11 |
+| ADR-168 | Collection conduct (Round 11 Stage B, T1; A-5): GL-GATE-08 re-confirmed in the operator's adopted option text, on every host per ADR-088 (round 26) — robots disallows disregarded and disclosed as host + count; the rule-7 opt-out register and the SIG-INGEST-046c reservation refusal built; the user agent names an owned explanation URL; extends ADR-088 | SEED-11 |
+| ADR-169 | Rights basis with guardrails (Round 11 Stage B, T1; A-7): GL-GATE-07 re-confirmed in the operator's adopted words (Tier-1 batch-wide flips); new non-commercial sources facts-only (A-9); non-US database-right flips N1–N21; RB-06b share-alike; flips executed by the operator per wave | SEED-11 |
+| ADR-170 | ODbL map basis (Round 11 Stage B, T1): ADR-106's basis recorded as the operator's own determination (no counsel, no document); the per-compartment map kept | SEED-11 |
+| ADR-171 | Outreach timing (Round 11 Stage B, T1; B-6): outreach, records-request sending, recruiting and contribution-back owed later-phase, with the trigger "the operator authorises outside contact"; the outreach MUSTs not waived | SEED-11 |
+| ADR-172 | Product direction and scope (Round 11 Stage B, T1): D3 ratified with vendor-hosted public pages fetched (D3-Q3 = b); SIG-CHART-025 amended; co-primary journeys; the announce gate after REVIEW-R11's S0/S1 findings are fixed or dispositioned | SEED-11 |
+| ADR-173 | Acquisition waves and capacity (Round 11 Stage B, T1): one ING-GO per wave with the operator's flip list; US-first ordering with non-US kept; a 40 GB cap with pre-grow and temporary tier bumps; Wave D in scope | SEED-11 |
+| ADR-179 | WV-04 (Round 11 Stage B, T1): SIG-UI-042's release block WAIVED in the operator's adopted sentence — releases ship with the hostile-reader review recorded "not yet performed" and findings listed as known issues; the review itself stays owed | SEED-11 |
+| ADR-180 | WV-05 (Round 11 Stage B, T1): e-mail-only intake for Round 11 — SIG-GOV-001's one-click clause and SIG-GOV-002 WAIVED; the site says senders disclose their address; no response time promised | SEED-11 |
+| ADR-181 | WV-06 (Round 11 Stage B, T1): single-operator true deletion — SIG-GOV-008's two-person clause WAIVED, its scope and tombstone clauses stand; publicly logged with its reason; never pre-authorised or agent-initiated; a claim row only through ADR-189's purge function | SEED-11 |
+| ADR-182 | WV-07 (Round 11 Stage B, T1): the counsel-review clauses of SIG-LIC-009 and SIG-INGEST-037 WAIVED; rights decisions rest on the operator's recorded determinations, labelled as such; SIG-LIC-009's risk-register clause kept; qualifies the counsel-conditioned revisit clauses of thirteen landed ADRs | SEED-11 |
+| ADR-183 | Express-terms acceptance (Round 11 Stage B, T1; A-8, A-9): the ≈8,088 rows public on 2026-10-01 stay public, disclosed with their captured terms and the operator-accepted basis, withdrawn on a rights-holder objection; new non-commercial sources facts and pointers only; a dated clarification records SB-2 — scheduled refreshes of the same sources are covered | SEED-11 |
+| ADR-184 | Terms-conflicted public pages (Round 11 Stage B, T1; A-17, B-39): the vendor and platform fetch envelope — public pages only, no logins, keys or circumvention, rate-limited, the project user agent, terms captured, exposure disclosed, Part VIII screen; records the SIG-INGEST-037 deviation | SEED-11 |
+| ADR-185 | Part VIII screened lanes without a human clear (Round 11 Stage B, T1): S1–S9 screened lanes including S8 tribal; dossier families cleared by the agent, disclosed; SIG-PUB-002 applied before persistence by one rule for the terms-conflicted connectors | SEED-11 |
+| ADR-186 | WV-08 (Round 11 Stage B, T1; S6-F1): SIG-GOV-003's response-time SLAs WAIVED; the handling priority (privacy-harm and safety first, then factual corrections, then everything else) published without time commitments | SEED-11 |
+| ADR-187 | WV-09 (Round 11 Stage B, T1; S6-F2): crawler rule 6 ("ask first") WAIVED for DocumentCloud/MuckRock only; rules 3, 4 and 7 still bind; ADR-184's envelope applies | SEED-11 |
+| ADR-188 | WV-10 (Round 11 Stage B, T1; S6R-01): Flock transparency portals probe-only — SIG-INGEST-035's no-direct-capture clause WAIVED; a portal page is fetched only when served without a challenge, and any challenge stops the attempt; the aggregator stays the portal source | SEED-11 |
+| ADR-189 | WV-11 (Round 11 Stage B, T1; S6R-03): one DB-enforced, operator-only purge function as the sole exception to SIG-STORE-011, limited to material SIG must not hold (SIG-GOV-008 scope), leaving a tombstone and a public log entry; qualifies ADR-002 | SEED-11 |
+| ADR-190 | WV-12 (Round 11 Stage B, T1; SB-1, round 27): SIG-UI-022's ego-network default WAIVED in the operator's adopted sentence — the explorer may open on an aggregated overview (ADR-158), every overview node drilling to its ego view, with no-JS parity; "not a global graph" stands (Appendix G.7 R11-W13) | SEED-12 |
 
 # Appendix G — Corrections and material extensions to the source outline
 
@@ -9374,4 +9988,86 @@ deviation is an operated-state disposition recorded elsewhere:
 
 No new requirement id was minted (no new requirement ownership — the count stays **715**);
 requirement verdicts and their dated historical assessments are untouched.
+
+## G.7 Round-11 corrections and extensions (Stage B, 2026-10-01; plan §6)
+
+Round 11's ratified plan (`docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md`, canonical; the operator's
+answers are logged verbatim with their round times in `docs/build/planning/2026-09-30-next-phase/feedback/RATIFICATION_LOG.md`)
+extends and amends this specification. **Unlike G.5 and G.6, this section records waivers.** Where the operator waived
+a MUST clause in their adopted words, the waived requirement's text is kept and a dated waiver note is added in its
+owning section, citing the ADR that records the operator's sentence (with its sha256), the scope, the compensating
+controls and the revisit trigger; the coverage verdict becomes `WAIVED(ADR)` with the scope in `accepted_scope`
+(SIG-ENG-041). An amendment that would remove or weaken a MUST without such words is **not applied** (plan §6.5: an
+amendment that weakens a MUST is a waiver; ADR-150) — those drafts are listed in G.7.5 with the requirement standing.
+Every other item adds a dated note or a superseding sentence and removes no obligation. The G.5 and G.6 history,
+R10-A6 and every landed ADR body above are unchanged.
+
+### G.7.1 Part XII added
+
+| # | Section | Change | Authority |
+|---|---|---|---|
+| R11-X1 | Part XII, §56 (new); §0.3 | Round-11 contract extension: SIG-MEM-005…012, SIG-ENG-040…046, SIG-OPS-001…012, SIG-STORE-048, SIG-SEC-007…011, SIG-REL-001…015 and SIG-CONF-001…014 — 62 new ids, append-only, draft → final map in `docs/build/planning/2026-09-30-next-phase/stageB/T1_id_map.csv`; `SIG-OPS-*` opened and the `REL` and `CONF` families registered in §0.3. The transparency and UX families are appended later by their planning rows (§56.8) | plan §6.1–§6.2 (ratified at GATE-P); ADR-146…150, ADR-152…154 |
+
+### G.7.2 Waivers adopted by the operator
+
+Each sentence was agent-drafted and adopted by the operator by selection, recorded verbatim in the cited ADR; the
+sha256 is `printf '%s' "<sentence>" | shasum -a 256` over the logged text (prefix shown).
+
+| # | Section (id) | Clause waived · scope | Operator's words (line, log round time, sha256) | ADR |
+|---|---|---|---|---|
+| R11-W1 | §55.4 (SIG-EVAL-004) | the preregistered 0.98 lower-bound clause, for the derivation-collapse tiers C0–C2 only; inferential tiers stay review-only (met fail-safe) | A-6, 2026-10-01T04:03:25Z, `03c0a79ef3b8…` | ADR-153 |
+| R11-W2 | §45.1 (SIG-GOV-001, SIG-GOV-002) | SIG-GOV-001's one-click clause and all of SIG-GOV-002, for Round 11 (e-mail intake; senders disclose their address) | WV-05 (A-23), 2026-10-01T04:28:49Z, `bf1f65d5aaa1…` | ADR-180 |
+| R11-W3 | §45.2 (SIG-GOV-003) | the response-time (SLA) clause; the priority clause is met differently by the published handling order | WV-08 (S6-F1), 2026-10-01T06:05:22Z, `806faae385d9…` | ADR-186 |
+| R11-W4 | §45.4 (SIG-GOV-008) | the two-person clause; the scope and tombstone clauses stand | WV-06 (A-23), 2026-10-01T04:28:49Z, `dbf7a851e9d5…` | ADR-181 |
+| R11-W5 | §46.1 (SIG-GOV-012, SIG-GOV-013) | a legal home before launch and retained legal-defence resources, "for now" (an individual legal home, disclosed) | WV-01 (A-23), 2026-10-01T04:28:49Z, `b9dc5a9128ac…` | ADR-165 |
+| R11-W6 | §46.2 (SIG-GOV-015) | the editorial board (interim single-maintainer authority + public decision log) | WV-02 (A-23), 2026-10-01T04:28:49Z, `bee2cd2b1501…` | ADR-164 |
+| R11-W7 | §43.4 (SIG-PUB-008) and HG-11 | the HG-11 second-reviewer role, for Round-11 releases; SIG-PUB-008's naming concurrence stands (nobody is named) | WV-03 (A-23), 2026-10-01T04:28:49Z, `44644f6bd6ff…` | ADR-163 |
+| R11-W8 | §41 (SIG-UI-042) | the release block; the hostile-reader review stays owed and is recorded "not yet performed" | WV-04 (A-23), 2026-10-01T04:28:49Z, `2a0339a96d57…` | ADR-179 |
+| R11-W9 | §42.3a (SIG-LIC-009), §26 (SIG-INGEST-037) | the counsel-referral and counsel-requiring clauses; SIG-LIC-009's risk-register clause and SIG-INGEST-037's ADR-level-decision clause stand | WV-07 (A-23), 2026-10-01T04:28:49Z, `c5a71e9d7fd9…` | ADR-182 |
+| R11-W10 | §26 rule 6 (SIG-INGEST-036) | "ask first", for DocumentCloud/MuckRock only; rules 1–5, 7 and 8 bind every source | WV-09 (S6-F2), 2026-10-01T06:05:22Z, `94f061234c41…` | ADR-187 |
+| R11-W11 | §23.4 (SIG-INGEST-035) | the no-direct-capture clause, for Flock transparency portals, probe-only; the aggregator-source and compartment clauses stand | WV-10 (S6R-01), 2026-10-01T06:51:11Z, `82487f7b3f0d…` | ADR-188 |
+| R11-W12 | §16.3 (SIG-STORE-011) | append-only, for one operator-only purge function only; every other role and path stays append-only | WV-11 (S6R-03), 2026-10-01T06:51:11Z, `04e7b77f8db7…` | ADR-189 |
+| R11-W13 | §39.4 (SIG-UI-022) | the default-view clause ("Default view is an ego network with expansion"): the explorer may open on an aggregated overview meeting R11-A2's rules, every overview node drilling to its ego view, with no-JS parity; "not a global graph" (no national node-link graph) stands. Supersedes G.7.5's SIG-UI-022 row (kept) | WV-12 (SB-1), 2026-10-01T13:46:58Z, `1ce44d4df7f6…` | ADR-190 |
+
+### G.7.3 Amendments applied to `spec_src` (none weakens a MUST)
+
+| # | Section (id) | Change | Authority |
+|---|---|---|---|
+| R11-A1 | §5.1 (SIG-CHART-025) | US-nationwide multi-vendor and multi-technology breadth with per-class and per-geography quality labels, so breadth is never read as depth; the generalisation duty unchanged; classed non-weakening by plan §5.10 | A-17 (Q-E2-22 = a); ADR-172 |
+| R11-A2 | §39.3–§39.4 (SIG-UI-021, SIG-UI-022) | the "global graph" is a set of aggregated overviews (≤ 3,000 nodes, descriptive, ER-disclosed, drilling to egos), offered as alternative views; both requirements unchanged, including the ego default (the default-view clause later waived: R11-W13, 2026-10-01T13:56:14Z) | A-11, D-K0-6; ADR-158 |
+| R11-A3 | §40 (SIG-UI-036, SIG-UI-050); §55.1 | HTML-first page types (T0–T3 registry, per-type budgets, no-JS parity) replace the named-island rule; zero client JavaScript still holds for T0 pages and T1 pages gain budgeted enhancements — a relaxation the operator chose at A-12 through the new-ADR change path SIG-UI-050 itself names | A-12 (B-22 for Preact); ADR-155 |
+| R11-A4 | §39.9 (SIG-UI-035) | immutable, release-bound permalinks (`/s/<pub>/`, `/r/<pub>/`); legacy as-of selectors resolve at the edge or fail | J3 draft D23 (B-19); ADR-162 |
+| R11-A5 | §41 (SIG-UI-044) | full module on record pages; elsewhere a one-line summary with the full module on the same page one action away | D-K14-6 (B-22) |
+| R11-A6 | §32.4 (SIG-METRIC-007) | cadence / freshness-state / volatility distinctions; digest-based "last content change" | J3 draft D07 (B-19); ADR-162 |
+| R11-A7 | §17.5 (SIG-EVID-009) | the storage tier is derived from the redistribution lane and Part VIII class, never defaulted | J3 NEW-2 (B-19); ADR-162 |
+| R11-A8 | §38.1 (SIG-EXPORT-012), §29.8 (SIG-RECON-058) | the ADR-092 compute-on-read citation is superseded for the resolved layer by the materialized resolution records of ADR-099/ADR-101; every protection stands | F-34; ADR-099, ADR-101 |
+| R11-A9 | §14.7 (SIG-IDENT-028) | census-driven demotion added for copy tiers C0–C2; the holdout report is labelled agent-labelled development data; the holdout-demotion clause is not waived | A-6; ADR-153 |
+| R11-A10 | §55.4 (SIG-EVAL-005/006/007), §55.9 | owner re-homing; the Round-11 disposition: rows 184–187 superseded, not executed; T-EVAL-IND replaces the HUMAN-H4/P32.22a/HUMAN-H5/P32.23 path; every obligation stays OPEN | ADR-152, ADR-153 |
+| R11-A11 | §44.3 (SIG-SEC-003) | a written demand-response posture and published legal-demand counts; the warrant canary (a SHOULD) declined with its rationale | A-4 (Q-E2-09 = c); ADR-166 |
+| R11-A12 | §42.1 (SIG-LIC-004) | rights resolve only by a recorded decision — in Round 11 the operator's own determination, labelled (GL-GATE-07 re-confirmed; express-terms rows kept; new non-commercial sources facts-only; non-US database-right flips); `UNDETERMINED` still fails closed | A-4, A-7, A-8, A-9, B-34; ADR-167, ADR-169, ADR-183 |
+| R11-A13 | §42.3 | share-alike compartments for the RB-06b sources under SIG-LIC-004a | B-33; ADR-169 |
+| R11-A14 | §26 (SIG-INGEST-036 rules 1, 2, 7; SIG-INGEST-037), §23.7 (SIG-INGEST-046c) | GL-GATE-08 re-confirmed and applied on every host, disregards disclosed as host + count; rule 1 met by an owned explanation URL; the rule-7 opt-out register and the reservation refusal built; the terms-conflicted fetch envelope; SIG-INGEST-037's legal posture restated (RISK-P0-06 closes by ADR-168) | A-5, S6R-08, B-6, B-39; ADR-168, ADR-184 |
+| R11-A15 | §6 (SIG-CHART-033), §22.4 (SIG-INGEST-029), §22.5 (SIG-INGEST-030a), §35.1 (SIG-CONTRIB-012/012a/013), §46.5 (SIG-GOV-024) | outreach timing: not amended in substance and not waived — owed as a later-phase obligation with the trigger "the operator authorises outside contact"; unmet and owed wherever a connector precedes outreach. (The plan's "CONTRIB-030a" is SIG-INGEST-030a.) | B-6 (Q-E2-12 = a); ADR-171 |
+| R11-A16 | §51.3 (SIG-ENG-031) | additions: green head-bound checks per SIG-MEM-007; the coverage matrix as the traceability matrix; a per-round risk review and revisit-trigger re-evaluation | DRAFT-ENG-5 (B4 §5) |
+| R11-A17 | §47 (SIG-ENG-039) | additions: index fields and status, appended status lines on superseded or amended ADRs, `check_spec_src.py` and its tests in `make docs-check` and CI, template headers | DRAFT-ENG-4 (B4 §5); F-32 |
+
+### G.7.4 Date corrections
+
+| # | Section | Correction | Authority |
+|---|---|---|---|
+| R11-C1 | §55.1, §55.8 (the SIG-TRUST-009 paragraph), §55.9 | The landed-status text recorded "2026-10-19" for two Round-10 events that happened on 2026-09-28. The operator's deferral of the S3 human-evaluation spine: **2026-09-28T01:15:49Z** (operator-confirmed, C-1/Q-B1-2; recorded in commit `a33cd6ec` at 01:27:21Z). The GATE-G3 approval: **2026-09-28T03:49:14Z** (operator-confirmed; signed text committed in `95c8a73f` at 03:49:46Z). Corrected in place with the recorded value struck through, never erased. The same recorded date in R10-A6 above, in Appendix F's ADR-145 row and in the bodies of landed ADR-142…145 is corrected by this row and ADR-146 only — none of them is edited; the "2026-10-01" replay date in Appendix F's ADR-138 row names no event (stand-in captures authored 2026-09-27T12:06Z). No gate approval or decision was given on 2026-10-19. `db/sqitch.plan` lines 44–52 keep their stamped `planned_at` values and are never re-stamped (SIG-ENG-045; C-10) | ADR-146 |
+
+### G.7.5 Checked and deliberately not amended
+
+| Item | Why no spec change |
+|---|---|
+| SIG-GOV-017 | Not amended, not waived (B-44): the approved "My location" control is built only as a map-pan control after a written SIG-GOV-017 analysis; a failing analysis returns the question to the operator |
+| SIG-PUB-002, SIG-PUB-003, SIG-PUB-003a | Not amended: applied before persistence by one rule for every terms-conflicted connector — a redacted rendition plus the upstream URL and the sha256 of the original, or only the pointer and the screened facts (ADR-185) |
+| SIG-EVAL-001/002/005/007, SIG-IDENT-027/028's independent legs, SIG-DOS-002's independent checks, SIG-UI-001 usability | Owed, not waived: T-EVAL-IND, or the usability trigger (LATER-02) |
+| SIG-EXPORT-002, RO-Crate clause | Left for a decision by the transparency design (J3 §11); no operator decision on it is recorded, so the clause stands as written |
+| SIG-LIC-006, "physically separate table" (§42.3) | Plan §6.3 drafts "physical ODbL table → export-boundary compartments" (RISK-P4-07). Removing the stored-table clause would weaken this MUST and no operator decision covers it, so it is not applied: separation holds at the export boundary today and the stored-table split stays owed (RISK-P4-07 → BL-046) |
+| SIG-INGEST-004 | The drafted binding-level versioning (ADR-121; the F2a re-audit's NEW-7) would drop "the claim's logical identity MUST include `extractor_version` and `normalizer_version`"; not applied without operator words. The requirement stands; the divergence is owed (the alternative is to add the versions to the identity) |
+| SIG-ENG-004 | The drafted alignment ("MET = criteria 1+2; criteria 3–5 recorded per row") would weaken the all-five Definition of Done; not applied. Its verdict (N/A-RATIONALE, as the meta-rule the verdict process applies) needs no text change |
+| SIG-ONTO-060 | The scope list conflicts with §11.6's own examples (for example `federal`, `private_camera`, `to_partner`, `required`), and 15 of the 45 realised slugs use scopes outside it. Widening a closed list relaxes it and needs the realised enum read from the ontology; recorded here, not changed |
+| SIG-UI-022, default view | The drafted wording "aggregated overview graphs … MAY serve as the global entry point" would let an overview replace the ego-network default; not applied (R11-A2 records the non-weakening reading). An overview as the explorer's default needs the operator's words — applied as R11-W13 at 2026-10-01T13:56:14Z (WV-12, ADR-190) |
 

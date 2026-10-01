@@ -6,8 +6,8 @@
 - **Decided:** at GATE-P. A-10 (2026-10-01T04:07:45Z, round 4) chose the rule; B-18 (2026-10-01T04:39:45Z, round 13)
   folded in the legacy organisation keys (D-P32.3-1). The operator's words are recorded verbatim below.
 - **Requirement ids:** SIG-TRUST-006, SIG-ONTO-013, SIG-PUB-002, SIG-PUB-008 (persons are never auto-allowed); drafts
-  SIG-UI-D21, SIG-UI-D22 and SIG-UI-D24 (K2 §8; adopted by K13 as UXR-A03, numbered by PLAN-11C); SIG-CONF-D13 (L3 CONF-13;
-  numbered by SEED-12)
+  SIG-UI-D21, SIG-UI-D22 and SIG-UI-D24 (K2 §8; adopted by K13 as UXR-A03, numbered by PLAN-11C); SIG-CONF-013 (L3 CONF-13;
+  §56.7)
 - **Spec:** `docs/2_canonical_design_spec.md` §11.2, §43, §55.2
 - **Implemented by:** P34.26 (the ADR-124 allow-disposition row, the `sig-ops` disposition verb, the flagged-organisation
   census), P34.46 (allows applied with the Round-10 schema), P35.29, P35.30, P36.41, P37.22–P37.27 (labels, entity

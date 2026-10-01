@@ -144,3 +144,14 @@ classified this trigger as needing only a recorded evaluation. The second clause
 origin of the national ALPR layer (rows P37.1–P37.2) through this connector's vocabulary and ODbL landing;
 nothing in Round 11 changes this decision. The decision above stays in force until that answer lands; this
 ADR's body is unchanged (SIG-ENG-003).
+
+### Trigger evaluation — correction (Round 11 T1, unit SEED-12c, 2026-10-01T13:57:06Z)
+
+Correction to the evaluation above, appended; that text is not edited. It says "T1 amends §42.3 from a physical
+ODbL table to export-boundary compartments (plan §6.3; SEED-12)". **That amendment was not made in T1.** SEED-12b's
+MUST-weakening test (plan §6.5; ADR-150) found that dropping SIG-LIC-006's "physically separate table" clause would
+weaken a MUST that no operator decision covers, so the draft was withheld (spec Appendix G.7.5); the ratification
+log's round-27 entry (agent interpretation, labelled there) keeps the MUST and the work owed. SIG-LIC-006 stands
+unchanged: separation holds at the export boundary today, and the stored-table split stays owed (RISK-P4-07 →
+BL-046). This trigger's second clause ("the DB gains a physically separate ODbL asset table per §42.3") can therefore
+still fire, when that owed split lands. The rest of the evaluation stands; this ADR's body is unchanged (SIG-ENG-003).

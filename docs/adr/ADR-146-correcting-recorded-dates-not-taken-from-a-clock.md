@@ -14,13 +14,13 @@
   - **C-10**, round 21 (2026-10-01T04:59:05Z): **"Let me inspect it (Recommended)"** — Q-B1-4; the operator-approved,
     local, read-only inspection reported its result at 2026-10-01T04:59:41Z.
 - **Requirement ids:** SIG-ENG-003 (a change is appended, never an edit); SIG-TRUST-008 (calendar-dependent checks are not
-  marked complete before they run); DRAFT-MEM-1 "recorded dates come from the clock and are never later than their
-  commit" (B4 §5) → **SIG-MEM-005** in SEED-12's id map (`PD/stageB/T1_id_map.csv`, read at writing; SEED-12 owns the final
-  ids), and SIG-ENG-045 there (deployed sqitch lines never re-stamped; L44–52 keep their stamped dates, C-10); the
+  marked complete before they run); **SIG-MEM-005** "recorded dates come from the clock and are never later than their
+  commit" (§56.2; drafted in B4 §5; final id per `PD/stageB/T1_id_map.csv`), and **SIG-ENG-045** (§56.3; deployed sqitch lines never
+  re-stamped; L44–52 keep their stamped dates, C-10); the
   plan §6.3 row "§55 landed-status text; Appendix G" (true Round-10 dates through one new Appendix G.7 row; sqitch
   L44–52 never re-stamped).
 - **Spec:** §55 (`96b_partXI_s55_six_streams.md` landed-status text, corrected to true dates); Appendix G (one new G.7
-  row; R10-A6 untouched); proposed Part XII §56 for DRAFT-MEM-1 (SEED-12).
+  row; R10-A6 untouched); Part XII §56.2 (SIG-MEM-005) and §56.3 (SIG-ENG-045).
 - **Supersedes:** none — no landed ADR decision (plan §7, row 146). It replaces clause 2 of B1 §8's planning draft
   ("ADRs get an appended correction footer"; plan Appendix B row 1), which was never an ADR.
 - **Amends / qualifies / extends:** none. It is the single correction record for the dates in 26 landed ADRs (table

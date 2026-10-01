@@ -7,8 +7,8 @@
   (round 13). The operator's words are recorded verbatim below.
 - **Requirement ids:** SIG-EXPORT-002, SIG-EXPORT-008, SIG-EXPORT-009, SIG-METRIC-007, SIG-EVID-009, SIG-UI-035,
   SIG-PUB-015, SIG-TRUST-006, SIG-LIC-004a, SIG-LIC-010. The draft family SIG-TRANSP-D01…D25 (J3 §11) and D26…D43
-  (K9/K10, via UXR-A10) is appended as SIG-TRANSP-001…043 by PLAN-11B (PLAN §6.2). SIG-REL-D08 and SIG-REL-D09 come
-  from G3; SEED-12 numbers them.
+  (K9/K10, via UXR-A10) is appended as SIG-TRANSP-001…043 by PLAN-11B (PLAN §6.2). SIG-REL-008 and SIG-REL-009 come
+  from G3 (drafts D08/D09; §56.6; final ids per `PD/stageB/T1_id_map.csv`).
 - **Spec:** `docs/2_canonical_design_spec.md` §17.5, §32.4, §38.1, §38.5, §39.9, §42, §43, §55.2
 - **Implemented by:** P35.5 (zero-egress host, ceilings, kill switch); P35.31 (scrub, publish secret gate, capture-tier
   derivation); P35.32 (`ingest_run_report`); P35.33, P35.35, P35.36, P35.37, P35.39–P35.42; P36.43 (status lane);

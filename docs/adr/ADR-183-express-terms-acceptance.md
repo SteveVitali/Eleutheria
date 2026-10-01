@@ -88,3 +88,26 @@ Revisit — by a new ADR — when any of these happens:
 - a source's captured terms change, or P36.1a classifies a row's metadata as an affirmative reservation (SIG-INGEST-046c);
 - a refresh would publish rows from these sources that were not public on 2026-10-01;
 - a first legal demand arrives, or the operator obtains counsel (LATER-05).
+
+## Clarification (2026-10-01T13:56:51Z)
+
+Appended by Claude Code (Opus 5.5), Stage-B sub-agent SEED-12c; the record above is not rewritten. It answers open
+question (b) under Consequences in the operator's words and says how the third revisit trigger now reads.
+
+- **The question (SB-2, round 27, summary as logged):** "does the express-terms acceptance cover scheduled refreshes of
+  the same sources?" — options offered: "Yes, same sources (Recommended)" · "Freeze at today's rows".
+- **The operator's answer, verbatim:** "Yes, same sources (Recommended)" — 2026-10-01T13:46:58Z
+  (`docs/build/planning/2026-09-30-next-phase/feedback/RATIFICATION_LOG.md`, round 27). The option was agent-drafted
+  and adopted by the operator at 2026-10-01T13:46:58Z; sha256 of the label
+  `8b87c2e67d01ebbe0477950701f5be1917c256ae3ec9c0be6094b8ed107c3130` (`printf '%s' "<label>" | shasum -a 256`,
+  computed at writing).
+- **What it covers (the log's labelled agent interpretation, recorded here):** the acceptance covers the express-terms
+  sources public as of 2026-10-01 — the sources of J4 NEW-1's 5,267 rows and `camreg_txdot_rep_tx` — **including their
+  scheduled refreshes**. Rows that a scheduled refresh of one of those sources publishes after 2026-10-01 fall under the
+  same acceptance and carry the same disclosure and remedies (items 1–5 above). **Any new source follows A-9**: if its
+  terms carry a non-commercial clause it contributes facts and pointers only.
+- **How the record now reads (agent reading, labelled):** Consequences (b) is answered — refreshed rows from these
+  sources are covered. The third revisit trigger ("a refresh would publish rows from these sources that were not public
+  on 2026-10-01") no longer fires for a scheduled refresh of these sources. A refresh that captures changed terms still
+  fires the second trigger. The SIG-INGEST-046c question (Consequences (a); P36.1a), withdrawal on objection, and the
+  rows outside the acceptance (the 9 leak-derived Atlas FR rows, the `demo_*` task pages) are unchanged.

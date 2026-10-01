@@ -150,3 +150,16 @@ authorises outside contact" (ADR-171; LATER-04; D-R7.2-SEND stays OPEN); row P37
 The counsel review of the operational fields (RISK-P10-16) cannot happen without counsel (F3 §5.4; WV-07,
 ADR-182). The decision stands. The decision above stays in force until that answer lands; this ADR's body is
 unchanged (SIG-ENG-003).
+
+## Status updates
+
+- **Status:** Qualified by ADR-182 (2026-10-01)
+- **Status note (2026-10-01T13:59:14Z, Round-11 T1, unit SEED-12c):** ADR-182 (WV-07; the operator's adopted sentence,
+  agent-drafted and adopted at 2026-10-01T04:28:49Z, sha256 `c5a71e9d7fd9…`: *"I waive the counsel-review clauses of
+  SIG-LIC-009 and SIG-INGEST-037; rights decisions rest on my recorded determinations, labelled as such."*) leaves
+  this ADR's counsel-conditioned revisit clause unable to fire as written — SIG has no counsel (U-013; F3 §5.4,
+  NEW-8). The clause: "the per-jurisdiction operational fields (deadline/fee/appeal) complete their counsel review
+  (RISK-P10-16)". Restated (agent reading, labelled): it fires when the operator records a reviewed determination of
+  those fields that replaces the seed values, labelled "the operator's own determination (no counsel)" (ADR-167); or
+  when counsel is obtained (LATER-05) or a first legal demand arrives (ADR-182's and ADR-166's triggers). The decision
+  and the body above are unchanged (SIG-ENG-003).
