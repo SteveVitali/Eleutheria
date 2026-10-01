@@ -1676,6 +1676,13 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   (boundary-data rights) stalls the critical path → move to Part A**; nine other defaults quietly descope operator asks (search v2,
   citable snapshots, Wave C, organizations) → flag in the packet; live steps queued but never run; approval fatigue; hosted-DB
   writes; download egress before the 11B kill switch. **S3 dispatched.**
+- 2026-10-01T01:27:12Z — **S3 done** (`NEXT_PHASE_PLAN.md`, ≈1,440 lines, DRAFT pending S4/S5): §0 one-page summary; §1–§15 per the S3 spec; Appendix A
+  Stage-B T0–T6 checklist; Appendix B 20 resolved input inconsistencies (e.g., CF-02 forbids ADR date footers vs B1/SEED-08 → CF-02
+  wins; outreach ids kept owed not WAIVED; L3 EVAL verdicts over F2b; A-16 signing key has no R11 row; SEED-11 sized for ~20 ADRs vs
+  ~31 listed; operator address in 3 planning files → redaction choice before any public push); Appendix C evidence index. Key numbers:
+  262 rows (≈277 after splits), ≈238.5 runs + seed 20 units/23.2 runs; 5 gates, 11 pauses, 0 HUMAN rows; 1,159 dispositioned items;
+  18 Part-A lines (B-24 promoted), 9 descoping defaults flagged; infra ≈$95–133/mo; ≈31 provisional ADRs from ADR-146; one
+  requirement waiver (EVAL-004 copy tiers). **S4 dispatched (3 fresh-context adversarial reviews).**
 
 ---
 
