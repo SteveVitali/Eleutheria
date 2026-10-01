@@ -742,6 +742,133 @@ def build_parser() -> argparse.ArgumentParser:
         required=True,
         help="output directory for recovery_plan.json + the live return-pass packet",
     )
+
+    rapply = sub.add_parser(
+        "recovery-apply",
+        help="P32.22 (SIG-TRUST-008, ADR-141): the bounded recovery apply — "
+        "reconciles the dry-run plan against the audit it was built over, "
+        "executes ONLY the selected proposed actions under the sig_recovery "
+        "role (per-action atomic receipt = exactly-once across restart), "
+        "re-verifies bind bytes at the pinned occurrence (never fetches), "
+        "records before/after inventories + resource use + a +0 rerun, and "
+        "optionally rematerializes in dependency order. --apply is required "
+        "to write; without it the command reconciles and reports only",
+    )
+    rapply.add_argument(
+        "--dsn", default=None, help="writable PostgreSQL DSN (else SIG_STAGING_DSN/local)"
+    )
+    rapply.add_argument("--plan", required=True, help="the recovery_plan.json to apply")
+    rapply.add_argument(
+        "--audit", required=True, help="the audit_report.json the plan was built over"
+    )
+    rapply.add_argument(
+        "--apply",
+        action="store_true",
+        help="execute the selected scope (without it the command reconciles and "
+        "reports the scope only — zero writes)",
+    )
+    rapply.add_argument(
+        "--execution-id", default=None, help="recorded execution id (required with --apply)"
+    )
+    rapply.add_argument(
+        "--authority",
+        default=None,
+        help="the operator authorization stamped on receipts + dispositions "
+        "(required with --apply — the plan's placeholder never lands)",
+    )
+    rapply.add_argument(
+        "--decided-by", default=None, help="the deciding operator handle (dispositions)"
+    )
+    rapply.add_argument(
+        "--adjudicator", default=None, help="the adjudicator handle (repair asserted_by)"
+    )
+    rapply.add_argument(
+        "--capture-dir",
+        default=None,
+        help="the OCFL capture root bind actions re-verify against (required "
+        "when the selection contains bind_verified_capture actions)",
+    )
+    rapply.add_argument(
+        "--batches", default=None, help="comma list of batch ids selecting the scope"
+    )
+    rapply.add_argument(
+        "--kinds", default=None, help="comma list of action kinds selecting the scope"
+    )
+    rapply.add_argument("--claims", default=None, help="file of claim ids selecting the scope")
+    rapply.add_argument(
+        "--max-actions", type=int, default=None, help="abort threshold on selected actions"
+    )
+    rapply.add_argument(
+        "--role",
+        default="sig_recovery",
+        help="the least-privilege applier role (default sig_recovery; empty to "
+        "run under the session login — tests only)",
+    )
+    rapply.add_argument(
+        "--verify-rerun", action="store_true", help="verify a +0 rerun over the receipts"
+    )
+    rapply.add_argument(
+        "--rematerialize",
+        action="store_true",
+        help="rematerialize the read surface in dependency order after the apply",
+    )
+    rapply.add_argument(
+        "--out", default=None, help="output directory for APPLY_REPORT.json/.md + the live packet"
+    )
+
+    rfreeze = sub.add_parser(
+        "recovery-freeze",
+        help="P32.22 (SIG-TRUST-008, ADR-141): freeze the unpublished "
+        "repaired-input snapshot + audit preview — the HUMAN-H4 frame. Re-runs "
+        "the audit over the SAME population on the repaired spine and freezes "
+        "the result as sig.repaired-snapshot/1 (explicitly provisional; NOT a "
+        "release candidate — P32.23a owns that). Never a public pointer",
+    )
+    rfreeze.add_argument("--dsn", default=None, help="PostgreSQL DSN (read-only session)")
+    rfreeze.add_argument(
+        "--apply-report", required=True, help="the APPLY_REPORT.json from recovery-apply"
+    )
+    rfreeze.add_argument("--plan", required=True, help="the recovery_plan.json the apply executed")
+    rfreeze.add_argument(
+        "--audit", required=True, help="the audit_report.json the plan was built over"
+    )
+    rfreeze.add_argument(
+        "--capture-dir", default=None, help="the OCFL capture root for the post-apply audit"
+    )
+    rfreeze.add_argument(
+        "--seed", default=None, help="the recorded sampling seed (default: the audit's)"
+    )
+    rfreeze.add_argument(
+        "--sample", type=int, default=None, help="sample size (default: the audit's)"
+    )
+    rfreeze.add_argument("--targeted", default=None, help="file of claim ids (targeted set)")
+    rfreeze.add_argument("--adjudications", default=None, help="adjudicator verdicts JSON")
+    rfreeze.add_argument("--sqitch-head", default=None, help="recorded schema identity")
+    rfreeze.add_argument(
+        "--out",
+        required=True,
+        help="output directory for REPAIRED_SNAPSHOT.json + AUDIT_PREVIEW.md",
+    )
+
+    rseed = sub.add_parser(
+        "recovery-fixture-seed",
+        help="P32.22 (SIG-TRUST-008): seed a REAL deployed spine from the P32.6 "
+        "audit fixture (fixture_spine.json + capture_root) with deterministic "
+        "uuid5 id mapping — the test/fixture stage for the bounded apply. "
+        "Append-only ON CONFLICT DO NOTHING; writes the id map + remapped "
+        "targeted/adjudications files",
+    )
+    rseed.add_argument(
+        "--dsn", default=None, help="writable PostgreSQL DSN (a deployed TEST spine)"
+    )
+    rseed.add_argument(
+        "--fixture",
+        default="docs/build/reports/p32.6-legacy-evidence",
+        help="the fixture packet directory (fixture_spine.json + capture_root)",
+    )
+    rseed.add_argument(
+        "--out", default=None, help="write id_map.json + remapped targeted/adjudications here"
+    )
     return parser
 
 
@@ -2013,6 +2140,217 @@ def _cmd_recovery_plan(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_recovery_apply(args: argparse.Namespace) -> int:
+    """``sig-ops recovery-apply`` — the bounded apply (P32.22)."""
+    from . import recovery_apply as ra
+
+    plan = json.loads(Path(args.plan).read_text(encoding="utf-8"))
+    audit = json.loads(Path(args.audit).read_text(encoding="utf-8"))
+
+    # --- reconcile + report the scope WITHOUT writing (the default) ---------
+    selection = ra.select_actions(
+        plan,
+        batches=[b.strip() for b in (args.batches or "").split(",") if b.strip()] or None,
+        kinds=[k.strip() for k in (args.kinds or "").split(",") if k.strip()] or None,
+        claim_ids=sorted(_read_id_file(args.claims)) or None,
+        max_actions=args.max_actions,
+    )
+    problems = ra.reconcile_apply(plan, audit, selection)
+    if problems:
+        for p in problems:
+            print(f"recovery-apply: REFUSED — {p}", file=sys.stderr)
+        return 3
+    if not args.apply:
+        print(
+            "recovery-apply (dry reconcile): "
+            f"{len(selection.actions)} proposed actions selected "
+            f"({len(selection.excluded)} excluded by scope/status), "
+            f"batches {list(selection.batches)} — re-run with --apply to execute"
+        )
+        return 0
+    if not args.execution_id or not args.authority:
+        print(
+            "recovery-apply: --apply requires --execution-id and --authority "
+            "(the operator authorization the receipts + dispositions record)",
+            file=sys.stderr,
+        )
+        return 2
+
+    dsn = args.dsn or os.environ.get("SIG_STAGING_DSN") or _cloudsql_dsn_from_parts()
+    if not dsn:
+        print("recovery-apply: needs --dsn / SIG_STAGING_DSN / SIG_PG_* parts", file=sys.stderr)
+        return 2
+    try:
+        import psycopg
+    except ImportError:
+        print("recovery-apply: psycopg unavailable", file=sys.stderr)
+        return 2
+
+    probe = None
+    if args.capture_dir:
+        from evidence.ocfl import OcflStore
+        from evidence.storage import LocalFileStore
+
+        from . import evidence_audit as ea
+
+        probe = ea.OcflCaptureProbe(
+            OcflStore(LocalFileStore(str(args.capture_dir))),
+            root_desc=str(args.capture_dir),
+        )
+
+    conn = psycopg.connect(dsn, autocommit=True)
+    try:
+        report = ra.execute_bounded_apply(
+            conn,
+            plan,
+            audit,
+            execution_id=str(args.execution_id),
+            authority=str(args.authority),
+            decided_by=args.decided_by,
+            adjudicator=args.adjudicator,
+            probe=probe,
+            batches=[b.strip() for b in (args.batches or "").split(",") if b.strip()] or None,
+            kinds=[k.strip() for k in (args.kinds or "").split(",") if k.strip()] or None,
+            claim_ids=sorted(_read_id_file(args.claims)) or None,
+            max_actions=args.max_actions,
+            code_commit=_git_head(),
+            role=args.role or None,
+            verify_rerun=bool(args.verify_rerun),
+            rematerialize=bool(args.rematerialize),
+            generated_at=None,
+        )
+    except ra.ApplyScopeError as exc:
+        print(f"recovery-apply: REFUSED — {exc}", file=sys.stderr)
+        conn.rollback()
+        conn.close()
+        return 3
+    if args.out:
+        out = Path(args.out)
+        paths = ra.write_report(report, out)
+        shadow = ra.build_provisional_vs_shadow(code_commit=_git_head())
+        (out / "PROVISIONAL_VS_SHADOW.json").write_text(
+            json.dumps(shadow, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        (out / "PROVISIONAL_VS_SHADOW.md").write_text(
+            ra.render_shadow_markdown(shadow), encoding="utf-8"
+        )
+        ra.write_apply_return_pass(out, apply_report=report, snapshot=None)
+        print(f"recovery-apply: report + packet written under {paths['report'].parent}")
+    conn.commit()
+    conn.close()
+    counts = report["counts"]
+    print(
+        f"recovery-apply: {report['status']} — {counts.get('applied', 0)} applied, "
+        f"{counts.get('conflict_existing', 0)} already-bound, "
+        f"{counts.get('skipped', 0)} skipped, {len(report['failures'])} failed "
+        f"(+0 rerun verified: {report.get('rerun', {}).get('plus_zero')})"
+    )
+    return 0 if report["status"] == "complete" else 3
+
+
+def _cmd_recovery_freeze(args: argparse.Namespace) -> int:
+    """``sig-ops recovery-freeze`` — the unpublished HUMAN-H4 snapshot frame."""
+    from . import recovery_apply as ra
+
+    apply_report = json.loads(Path(args.apply_report).read_text(encoding="utf-8"))
+    plan = json.loads(Path(args.plan).read_text(encoding="utf-8"))
+    audit = json.loads(Path(args.audit).read_text(encoding="utf-8"))
+
+    dsn = args.dsn or os.environ.get("SIG_STAGING_DSN") or _cloudsql_dsn_from_parts()
+    if not dsn:
+        print("recovery-freeze: needs --dsn / SIG_STAGING_DSN / SIG_PG_* parts", file=sys.stderr)
+        return 2
+    try:
+        import psycopg
+    except ImportError:
+        print("recovery-freeze: psycopg unavailable", file=sys.stderr)
+        return 2
+
+    probe = None
+    if args.capture_dir:
+        from evidence.ocfl import OcflStore
+        from evidence.storage import LocalFileStore
+
+        from . import evidence_audit as ea
+
+        probe = ea.OcflCaptureProbe(
+            OcflStore(LocalFileStore(str(args.capture_dir))),
+            root_desc=str(args.capture_dir),
+        )
+
+    adjudications = None
+    if args.adjudications:
+        adjudications = {
+            str(k): str(v)
+            for k, v in json.loads(Path(args.adjudications).read_text(encoding="utf-8")).items()
+        }
+    # The snapshot re-loads the audited population READ-ONLY.
+    conn = psycopg.connect(dsn, options="-c default_transaction_read_only=on")
+    snapshot = ra.freeze_snapshot(
+        conn,
+        apply_report=apply_report,
+        plan=plan,
+        audit=audit,
+        probe=probe,
+        seed=args.seed,
+        sample_size=int(args.sample or 0),
+        targeted_ids=_read_id_file(args.targeted),
+        adjudications=adjudications,
+        code_commit=_git_head(),
+        sqitch_head=args.sqitch_head,
+        out_dir=args.out,
+    )
+    conn.close()
+    print(
+        f"recovery-freeze: snapshot {snapshot['snapshot_digest'][:20]}… — "
+        "frozen_unpublished, provisional preview (the HUMAN-H4 frame; "
+        "P32.23a owns the release candidate)"
+    )
+    return 0
+
+
+def _cmd_recovery_fixture_seed(args: argparse.Namespace) -> int:
+    """``sig-ops recovery-fixture-seed`` — seed a deployed TEST spine from the
+    committed P32.6 fixture packet (deterministic uuid5 mapping; idempotent)."""
+    from . import recovery_fixture as rf
+
+    dsn = args.dsn or os.environ.get("SIG_STAGING_DSN") or _cloudsql_dsn_from_parts()
+    if not dsn:
+        print(
+            "recovery-fixture-seed: needs --dsn / SIG_STAGING_DSN / SIG_PG_* parts",
+            file=sys.stderr,
+        )
+        return 2
+    try:
+        import psycopg
+    except ImportError:
+        print("recovery-fixture-seed: psycopg unavailable", file=sys.stderr)
+        return 2
+    conn = psycopg.connect(dsn)
+    try:
+        id_map = rf.seed_fixture_spine(conn, args.fixture)
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+    if args.out:
+        out = Path(args.out)
+        out.mkdir(parents=True, exist_ok=True)
+        (out / "id_map.json").write_text(
+            json.dumps(id_map, indent=2, sort_keys=True, default=str) + "\n",
+            encoding="utf-8",
+        )
+        rf.write_remapped_fixtures(id_map, out)
+    print(
+        f"recovery-fixture-seed: {len(id_map['claims'])} claims, "
+        f"{len(id_map['captures'])} captures, {len(id_map['runs'])} runs seeded "
+        f"from {args.fixture}"
+    )
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run the `ops` CLI. Returns a process exit code."""
     parser = build_parser()
@@ -2073,6 +2411,12 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_evidence_audit(args)
     if args.command == "recovery-plan":
         return _cmd_recovery_plan(args)
+    if args.command == "recovery-apply":
+        return _cmd_recovery_apply(args)
+    if args.command == "recovery-freeze":
+        return _cmd_recovery_freeze(args)
+    if args.command == "recovery-fixture-seed":
+        return _cmd_recovery_fixture_seed(args)
     if args.command == "release-serve":
         return _cmd_release_serve(args)
     parser.print_help()

@@ -145,6 +145,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-138](ADR-138-tulsa-dossier-packet-template-executed-and-honest-unknowns.md) | — | — | — |
 | [ADR-139](ADR-139-san-diego-dossier-packet-subscription-hardware-prime-component-and-proposed-recommendation.md) | — | — | — |
 | [ADR-140](ADR-140-acquisition-pilot-batch-selection-funnel-measurement-and-gate-packets.md) | — | — | — |
+| [ADR-141](ADR-141-bounded-recovery-apply-exactly-once-receipts-and-rematerialization.md) | — | — | — |
 
 ## Notes
 

@@ -1,0 +1,14 @@
+{
+  "2007d8e5-4241-59e3-af19-0b4c263c9f55": {
+    "revised_fields": {
+      "value_text": "adjudicated-operator",
+      "raw_value": "adjudicated-raw"
+    },
+    "basis": "fixture adjudicator: unsupported operator-role claim repaired (P32.22 fixture adjudication record)",
+    "locator": {
+      "kind": "byte_range",
+      "start": 0,
+      "end": 4
+    }
+  }
+}

@@ -1,0 +1,474 @@
+{
+  "after": {
+    "claim_evidence": 3,
+    "claims": 3,
+    "ingest_run": 3,
+    "publication_disposition": 3,
+    "recovery_application": 4
+  },
+  "apply_version": "recovery-apply-report/1",
+  "authority": "op:p32-22-fixture-authority (engineering stage, live_verification=false)",
+  "before": {
+    "claim_evidence": 3,
+    "claims": 3,
+    "ingest_run": 2,
+    "publication_disposition": 0,
+    "recovery_application": 0
+  },
+  "counts": {
+    "already_applied": 0,
+    "applied": 4,
+    "conflict_existing": 0,
+    "skipped": 0
+  },
+  "decided_by": "operator:p32-22-fixture",
+  "execution_id": "exec-p32-22-fixture-v1",
+  "failures": [],
+  "generated_at": null,
+  "inventory_delta": {
+    "claim_evidence": 0,
+    "claims": 0,
+    "ingest_run": 1,
+    "publication_disposition": 3,
+    "recovery_application": 4
+  },
+  "no_refetch": "no code path in the applier fetches; the probe only re-reads recorded pinned bytes for digest verification",
+  "notes": [
+    "fixture/test-PG engineering stage — the production execution is a separate operator-gated live pass (D-R10-LIVE-1 stays OPEN)",
+    "every 'skipped'/'conflict_existing' result is honest: nothing invented, nothing forced past the append-only surface"
+  ],
+  "pins": {
+    "audit_input_digest": "sha256:d9edce6e37e87141cc92d13bf6f35fa70d1ead72b242ba376ae7c10b9a5931d6",
+    "audit_version": "evidence-audit/1",
+    "code_commit": "10547fff2072e1a9f9481dc8d7adf2a972031091",
+    "plan_digest": "sha256:73a3f75e037222900617c59d0408b15257f931cc4594784819e828c53f6ae17f",
+    "plan_version": "recovery-plan/1",
+    "role": "sig_recovery"
+  },
+  "provisional": true,
+  "rematerialization": [
+    {
+      "after": 0,
+      "before": 0,
+      "inserted": 0,
+      "order": 1,
+      "seconds": 0.051,
+      "step": "resolution",
+      "summary": {
+        "considered_pairs": 2,
+        "inserted": 0,
+        "resolved": 0,
+        "skipped_existing": 0,
+        "skipped_pinned": 0,
+        "skipped_unresolvable": 2,
+        "superseded": 0,
+        "unresolved": 0
+      },
+      "table": "resolution"
+    },
+    {
+      "after": 0,
+      "before": 0,
+      "inserted": 0,
+      "order": 2,
+      "seconds": 0.083,
+      "step": "camera-sites",
+      "summary": {
+        "active_learning_enqueued": 0,
+        "auto_write_decisions": 0,
+        "auto_write_tiers": [],
+        "blocking_candidate_pairs": 0,
+        "by_tier": {},
+        "cluster_alerts": [],
+        "cluster_size_histogram": {},
+        "decisions": 0,
+        "dedup_ratio": 0.0,
+        "demotions": [
+          {
+            "demoted": true,
+            "precision": 0.0,
+            "threshold": 0.98,
+            "tier": 1
+          },
+          {
+            "demoted": true,
+            "precision": 0.0,
+            "threshold": 0.98,
+            "tier": 3
+          }
+        ],
+        "disputed_pairs": 77,
+        "duplicate_target_groups": 0,
+        "duplicate_target_records": 0,
+        "execution_appended": true,
+        "execution_id": "4c6b5af7-3071-4b42-97af-0a36df495bb2",
+        "gold_pairs": 540,
+        "gold_set_version": "camera-2",
+        "holdout_pairs": 180,
+        "human_review": {
+          "accept_edges_applied": 0,
+          "accept_edges_refused": 0,
+          "accepts": 0,
+          "cannot_link_edges": 0,
+          "clusters_with_human_accepts": 0,
+          "conflicts": 0,
+          "proposed_awaiting_review": 0,
+          "rejects": 0,
+          "unmatched_pairs": 0,
+          "verdict_pairs": 0
+        },
+        "incompatible_class_pairs_blocked": 0,
+        "inserted": 0,
+        "kappa": 0.6689490445859873,
+        "mirror_lineages": {},
+        "multi_record_sites_independently_corroborated": 0,
+        "multi_record_sites_one_lineage_only": 0,
+        "observation_count_M": 0,
+        "proposed_decisions": 0,
+        "proposed_reasons": {},
+        "resolved_site_count_N": 0,
+        "resolver_version": "camera-sites/1.1.0",
+        "review_items_enqueued": 0,
+        "rules_version": "2",
+        "run_key": "camsite:dd6fef83150e036561b0c0e64b8bbcdbadbc70ee",
+        "run_record_inserted": true,
+        "skipped_existing": 0,
+        "tier6_discarded": 0,
+        "tier_measurements": {},
+        "tier_measurements_llm_labels": {},
+        "unblockable_records": 0
+      },
+      "table": "camera_site_match"
+    },
+    {
+      "after": 0,
+      "before": 0,
+      "inserted": 0,
+      "order": 3,
+      "seconds": 0.007,
+      "step": "edges",
+      "summary": {
+        "asymmetry_tasks": 0,
+        "by_access_kind": {},
+        "considered_claims": 5,
+        "contradictions": 0,
+        "edges_reconciled": 0,
+        "inserted": 0,
+        "observations": 0,
+        "skipped_existing": 0,
+        "skipped_unmapped": 0
+      },
+      "table": "relationship"
+    },
+    {
+      "after": 0,
+      "before": 0,
+      "inserted": 0,
+      "order": 4,
+      "seconds": 0.018,
+      "step": "contradictions",
+      "summary": {
+        "by_type": {},
+        "considered_pairs": 2,
+        "detected": 0,
+        "inserted": 0,
+        "skipped_existing": 0,
+        "skipped_unevidenced": 0,
+        "superseded": 0
+      },
+      "table": "contradiction"
+    },
+    {
+      "after": 3,
+      "before": 0,
+      "inserted": 3,
+      "order": 5,
+      "seconds": 0.057,
+      "step": "coverage",
+      "summary": {
+        "absences_considered": 0,
+        "absences_inserted": 0,
+        "by_method": {
+          "counted_with_denominator": 1,
+          "reconciliation_ratio": 2
+        },
+        "inserted": 3,
+        "metrics_considered": 3,
+        "skipped_existing": 0
+      },
+      "table": "coverage_record"
+    },
+    {
+      "after": 0,
+      "before": 0,
+      "inserted": 0,
+      "order": 6,
+      "seconds": 0.006,
+      "step": "accountability",
+      "summary": {
+        "by_link_type": {},
+        "claims_considered": 5,
+        "deployments_considered": 1,
+        "inserted": 0,
+        "links_derived": 0,
+        "skipped_existing": 0
+      },
+      "table": "inference.derived_fact"
+    }
+  ],
+  "rerun": {
+    "all_already_applied": true,
+    "all_reconciled": true,
+    "executed": true,
+    "inventory_delta_zero": true,
+    "plus_zero": true,
+    "results": [
+      {
+        "action_digest": "17061f1acaa5c4e4b894b7931435a8d9283f1f726f0320aa8f84aee8714b8ee3",
+        "outcome": "already_applied"
+      },
+      {
+        "action_digest": "4123531823d809bddc224e022d8c82545eeedceac1949e1635db1e69a34d9547",
+        "outcome": "already_applied"
+      },
+      {
+        "action_digest": "423b83b60bdbc0948fd6940abd1a8d3de671c5ac4e0dfd15714e7943895fab7c",
+        "outcome": "already_applied"
+      },
+      {
+        "action_digest": "a8e56f9e35addd7616ecba0e290f0f9f61245ab8dc9da09d778081d2b89d702b",
+        "outcome": "already_applied"
+      }
+    ]
+  },
+  "resource_use": {
+    "batch_bounds_respected": true,
+    "ceilings": {
+      "exceeds_ceiling": false,
+      "pilot": {
+        "byte_budget": 2147483648,
+        "max_claims": 40,
+        "source": "S1-evidence-integrity research §6",
+        "wall_clock_minutes": 30,
+        "workers": 1
+      },
+      "recovery_batch": {
+        "max_assertions": 10000,
+        "max_distinct_bytes": 262144000,
+        "source": "S1-evidence-integrity research §6",
+        "workers": 1
+      },
+      "storage_headroom": {
+        "min_batch_free_headroom": 0.2,
+        "require_disposition_at_fraction": 0.85,
+        "warn_at_fraction": 0.7
+      }
+    },
+    "dispositions_inserted": 3,
+    "distinct_capture_bytes_reverified": [],
+    "receipts_recorded": 4,
+    "result_writes": {
+      "claim_evidence": 1,
+      "claims": 1,
+      "publication_disposition": 3
+    },
+    "scoped_bindings_inserted": 0,
+    "scoped_rows_inserted": 0,
+    "wall_clock_seconds": 0.243,
+    "workers": 1
+  },
+  "results": [
+    {
+      "action_digest": "17061f1acaa5c4e4b894b7931435a8d9283f1f726f0320aa8f84aee8714b8ee3",
+      "binding_key": null,
+      "claim_id": "c101e8bc-4999-5309-aed4-fd9626822263",
+      "detail": {
+        "disposition": "withhold",
+        "policy_version": "publication-eligibility/1",
+        "proposed_authority_replaced": "recovery-plan/1 proposal — requires P32.22 operator authorization",
+        "reason_category": "pending_publication_review",
+        "target_kind": "claim"
+      },
+      "disposition_id": "4512f706-dd71-4495-9756-82d34a6b86bd",
+      "kind": "record_disposition",
+      "outcome": "applied",
+      "result_claim_id": null,
+      "run_id": "01a0e454-a4fb-7968-bc59-1937a667f5a2"
+    },
+    {
+      "action_digest": "4123531823d809bddc224e022d8c82545eeedceac1949e1635db1e69a34d9547",
+      "binding_key": null,
+      "claim_id": "2007d8e5-4241-59e3-af19-0b4c263c9f55",
+      "detail": {
+        "adjudicator": "fixture-adjudicator",
+        "adjudicator_basis": "fixture adjudicator: unsupported operator-role claim repaired (P32.22 fixture adjudication record)",
+        "evidence_rebound": 1,
+        "predicate_id": "camera_operator",
+        "revised_fields": [
+          "raw_value",
+          "value_text"
+        ]
+      },
+      "disposition_id": null,
+      "kind": "repair_claim",
+      "outcome": "applied",
+      "result_claim_id": "01a0e454-a576-754d-a760-e664a8b0a583",
+      "run_id": "01a0e454-a4fb-7968-bc59-1937a667f5a2"
+    },
+    {
+      "action_digest": "423b83b60bdbc0948fd6940abd1a8d3de671c5ac4e0dfd15714e7943895fab7c",
+      "binding_key": null,
+      "claim_id": "dae8cca4-dc93-5a3f-98fa-41c4c2495eca",
+      "detail": {
+        "disposition": "withhold",
+        "policy_version": "publication-eligibility/1",
+        "proposed_authority_replaced": "recovery-plan/1 proposal — requires P32.22 operator authorization",
+        "reason_category": "pending_publication_review",
+        "target_kind": "claim"
+      },
+      "disposition_id": "fa45ce23-1f7c-4fe3-a74d-82443cf191b8",
+      "kind": "record_disposition",
+      "outcome": "applied",
+      "result_claim_id": null,
+      "run_id": "01a0e454-a4fb-7968-bc59-1937a667f5a2"
+    },
+    {
+      "action_digest": "a8e56f9e35addd7616ecba0e290f0f9f61245ab8dc9da09d778081d2b89d702b",
+      "binding_key": null,
+      "claim_id": "2007d8e5-4241-59e3-af19-0b4c263c9f55",
+      "detail": {
+        "disposition": "withhold",
+        "policy_version": "publication-eligibility/1",
+        "proposed_authority_replaced": "recovery-plan/1 proposal — requires P32.22 operator authorization",
+        "reason_category": "pending_publication_review",
+        "target_kind": "claim"
+      },
+      "disposition_id": "82451bcf-3cc3-4f56-90b0-a521f4d08218",
+      "kind": "record_disposition",
+      "outcome": "applied",
+      "result_claim_id": null,
+      "run_id": "01a0e454-a4fb-7968-bc59-1937a667f5a2"
+    }
+  ],
+  "scope": {
+    "batches": [
+      "batch-1"
+    ],
+    "claim_ids": [
+      "2007d8e5-4241-59e3-af19-0b4c263c9f55",
+      "c101e8bc-4999-5309-aed4-fd9626822263",
+      "dae8cca4-dc93-5a3f-98fa-41c4c2495eca"
+    ],
+    "dry_run_matches_applied": true,
+    "excluded": [
+      {
+        "action_digest": "d46bcd762bfac58df7d5e130196106756aa11cd884f5022535e52f90ee13a5c7",
+        "claim_id": "2755a122-5aa5-588f-81df-4fcbfaed3e23",
+        "kind": "no_write",
+        "reason": "no_write"
+      },
+      {
+        "action_digest": "18d2fd0e0eb45f2cf2a236b848b9708dcba569cdf358ac1643c572ee3033671e",
+        "claim_id": "2a94edd7-1d7c-57dc-a8b2-671be576800e",
+        "kind": "no_write",
+        "reason": "no_write"
+      },
+      {
+        "action_digest": "5650a90706f0f32769015cf8eefd538d7ca99faa2cfa1ecd041f932502e943be",
+        "claim_id": "3731c26c-521f-5798-88ed-ce4048cc756a",
+        "kind": "no_write",
+        "reason": "no_write"
+      },
+      {
+        "action_digest": "1f485389bc22435af89fdab3a532f6955005c3fc909c0cdc3722adef1fca5188",
+        "claim_id": "4b6fffcd-e71d-5a11-98f3-dfd63b6920bc",
+        "kind": "no_write",
+        "reason": "no_write"
+      },
+      {
+        "action_digest": "93d12d647c912603466dc6bc5c44e1ae23b440948cab47388a26c7fc7572d7b5",
+        "claim_id": "57a11d94-470e-5477-ae16-cfd7e6d8ad1b",
+        "kind": "no_write",
+        "reason": "no_write"
+      },
+      {
+        "action_digest": "5f1568bc4e7f47dced579ebbdebff0e4197d0903c4c67fc7a4c0b56f755c9f62",
+        "claim_id": "5cd19634-5702-532e-b515-fc681e923475",
+        "kind": "no_write",
+        "reason": "no_write"
+      },
+      {
+        "action_digest": "a121f1809597556bc85cdcbd0d931dc9e8a260131b25b682a113113bccf53a0c",
+        "claim_id": "5ec1be73-8271-5f92-8d55-8428c70a24b8",
+        "kind": "no_write",
+        "reason": "no_write"
+      },
+      {
+        "action_digest": "cdd0825e70dfc6d115f96da72695d3d329b1e1b337a687fa5c4a7e56d1f2a291",
+        "claim_id": "811b7a8c-e8e0-5ef9-9eaa-c4c80e4b3d86",
+        "kind": "no_write",
+        "reason": "no_write"
+      },
+      {
+        "action_digest": "a7847ae673b0596ef36fa026ea16ac8af4b210e6585e23772948548c3701ad65",
+        "claim_id": "83f41edf-a6ca-5548-94a1-42a5c91444f7",
+        "kind": "no_write",
+        "reason": "no_write"
+      },
+      {
+        "action_digest": "c99f39fa0c80d5552cae8391b4338e2365d5a802ada39b8f776312b54a572521",
+        "claim_id": "8daffc4c-219b-5490-bd03-62a661db27f8",
+        "kind": "no_write",
+        "reason": "no_write"
+      },
+      {
+        "action_digest": "f74ff9da936c3c69e97b90af83751ae1050811ef0de446fd7c2b603de6a2245b",
+        "claim_id": "95ed13f3-e64b-579f-b03c-e0b3cd8edeec",
+        "kind": "no_write",
+        "reason": "no_write"
+      },
+      {
+        "action_digest": "4c62e64bb63ccb3d1f79e4a3b351856a2fa0c4b90183d9472fe91cf22f2845d7",
+        "claim_id": "a3052025-30b8-5376-b694-e4f2a2953bfb",
+        "kind": "no_write",
+        "reason": "no_write"
+      },
+      {
+        "action_digest": "6b78cc9719391054398b2f1eaa09c774f573214041d16722ee4a256fe961d764",
+        "claim_id": "c101e8bc-4999-5309-aed4-fd9626822263",
+        "kind": "no_write",
+        "reason": "no_write"
+      },
+      {
+        "action_digest": "00066aa538418e85c8a8725cee8754df22909813473ddee635dd85ce9d033201",
+        "claim_id": "dae8cca4-dc93-5a3f-98fa-41c4c2495eca",
+        "kind": "no_write",
+        "reason": "no_write"
+      },
+      {
+        "action_digest": "90f08326a712b4d51cbe2b21a4b1c642486e14b18720e6fd90251becd613dabe",
+        "claim_id": "f2c724e0-c239-52d4-931d-3b6ab41d4ab7",
+        "kind": "no_write",
+        "reason": "no_write"
+      }
+    ],
+    "filters": {
+      "batches": null,
+      "claim_ids": null,
+      "kinds": null,
+      "max_actions": null,
+      "truncated": 0
+    },
+    "selected_action_digests": [
+      "17061f1acaa5c4e4b894b7931435a8d9283f1f726f0320aa8f84aee8714b8ee3",
+      "4123531823d809bddc224e022d8c82545eeedceac1949e1635db1e69a34d9547",
+      "423b83b60bdbc0948fd6940abd1a8d3de671c5ac4e0dfd15714e7943895fab7c",
+      "a8e56f9e35addd7616ecba0e290f0f9f61245ab8dc9da09d778081d2b89d702b"
+    ],
+    "selected_kinds": [
+      "record_disposition",
+      "repair_claim"
+    ]
+  },
+  "status": "complete"
+}
