@@ -2,12 +2,13 @@
 <!-- Archived head: LEDGER.md lines 1–54 at f66b2450 (the Rounds 1–10 title, provenance, OPERATING MODE, Round-10 import amendment and CURRENT STATE with its history chains; 126,875 B), byte-for-byte → docs/build/reports/memory-repair/LEDGER_head_R01-R10.txt, sha256 0d9437ceaf6081e0c44fc4751de80a3a34c68a130fb30ff3b005d319dc1021b8 (SEED-10, 2026-10-01T08:14:19Z). Its dates are as recorded, not corrected: see DC-L-01…03 under "DATE CORRECTIONS — LEDGER, Rounds 1–10" and docs/build/reports/memory-repair/date_corrections.csv. -->
 <!-- Archived placeholder: LEDGER.md lines 6–8 at 7bd2028c (SEED-10's placeholder; 689 B), byte-for-byte → docs/build/reports/memory-repair/LEDGER_head_placeholder_SEED-10.txt, sha256 c3324b73a0ce70f55d396fffbe043ca4219a9d28be11bc880e5f11773f2ffe32 (SEED-17, 2026-10-01T16:53:34Z). -->
 <!-- Archived line: the OM-20 pre-authorisation head line before GATE-B GB-Q4, byte-for-byte → docs/build/reports/memory-repair/LEDGER_head_line_pre-GB-Q4.txt, sha256 dcc1d4c1e9ceb289bab73a69669c41bfc70c2e606ee244d08225316c4032c38a -->
+<!-- Archived line: the head State line before C10, byte-for-byte → docs/build/reports/memory-repair/LEDGER_head_state_pre-C10.txt, sha256 89de0e9fb2fb496bfcc693d543eccbc9009af17a3d5d4a1815b13ad1ae431740 -->
 
 Seeded by the planning session (decompose-spec; recorded as 2026-09-08, before the ledger was committed); committed as build memory v2 by P22.3 (ADR-073); head replaced for Round 11 by SEED-10 on branch `r11/seed` at 2026-10-01T08:14:19Z (B3 §3.2). The manifest is the plan; this file holds state and the append-only records.
 
 > **OPERATING MODE — Round 11** (SEED-17, 2026-10-01T16:53:34Z; binds rows 201–510 from GATE-B). Full text, sources, operator's words: `docs/build/reports/OPERATING_MODE_R11.md`; per-ticket subset: the manifest's `## Operating rules`. Supersedes the Round-1 OPERATING MODE, the Round-10 import amendment and SEED-10's placeholder (archived above).
 >
-> - **State.** Paused for GATE-B: no dispatch before its GATE DECISIONS row; C10 then sets `projectStatus: IN_PROGRESS`, `pauseRequested: false` and appends the `harness-switch` entry (claude-code → devin-desktop; A-15, round 25).
+> - **State.** Round 11 in progress since GATE-B (C10, 2026-10-01; GATE DECISIONS `### Round 11`): the PHASE LOG ends with the GATE-B gate entry and the `harness-switch` (claude-code → devin-desktop; A-15, round 25); next is P34.1 (row 201).
 > - **Dispatch (round 25).** One Devin Desktop `swe-2-high` orchestrator session (`orchestrate-build`), a fresh sub-agent per ticket. A `returnPass` key is a landed ticket, never re-dispatched as a ticket: its leg runs as its re-run line says. Isolation check (plan §8.5) at the T6 probe, P34.1, each sub-round GATE and every orchestrator restart; on failure: pause, then a T6-verified `drive-build.sh --agent-cmd` command (round 27), else the manual tier (`drive-build.sh --print-prompt`, a new session per ticket).
 > - **Orient (≤ 48 KiB).** O1 this head · O3 `### RETURN PASS — current` · O4 `current_projection.py verify` + `docs/build/reports/current/CURRENT.md` · O5 the last 3 lines · O6 the next row's manifest line + contract header. Never LEDGER, DEFERRALS or BUILD_INDEX whole. Re-measure each Load at dispatch (bytes ÷ 3 and ÷ 4) **plus the skill-text share (≈ 17.5k tokens)**: ≤ ~150k loaded, else split.
 > - **Clock (OM-04).** Every date from `date -u` at writing, or a named git/GitHub time. A read-back of a scheduled event (D-P31.4-1, the batch-05 OSM replay) waits for `date -u` ≥ its fire time and the scheduler's `lastAttemptTime`.
@@ -28,11 +29,11 @@ Seeded by the planning session (decompose-spec; recorded as 2026-09-08, before t
 
 <!-- Values only (BM-LEDGER-02/08): one line per key, at most 256 B, no history; the PHASE LOG and git carry the history of values. -->
 ```
-projectStatus:   IN_PROGRESS                             # Round-11 seed in progress; C10 sets IN_PROGRESS after GATE-B
+projectStatus:   IN_PROGRESS                             # Round 11 running since GATE-B (C10)
 nextTicket:      P34.1                              # row 201, the first Round-11 row
 lastCompleted:   P33.8                              # row 200, the last Round-10 row (PR #190)
 blockedOn:       (nothing)                          # real blocks only; a pending gate is a RETURN PASS row
-pauseRequested:  false                               # false with the GATE-B entry (C10)
+pauseRequested:  false                               # set at C10 (GATE-B go)
 returnPass:      P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25 # landed R10 tickets; legs: RETURN PASS — current
 manifest:        docs/tickets/00_MANIFEST.md
 canonicalSpec:   docs/2_canonical_design_spec.md
@@ -46,8 +47,8 @@ benchmarkSet:    N/A
 autonomy:        checkpoint                         # Q-15 = a: pause at gates, ING-GO, spend, red CI, unlisted OM-20 mutations
 mergePolicy:     OPERATOR                           # agents never merge; the operator integrates (plan §12)
 round:           11
-harness:         devin-desktop/swe-2-high/subagent  # resumes at row 201 (A-15); C10 records the switch
-updatedAt:       2026-10-01T18:56:52Z               # SEED-17 (T5)
+harness:         devin-desktop/swe-2-high/subagent  # since C10 (A-15, round 25)
+updatedAt:       2026-10-01T19:15:50Z
 ```
 
 ## OPEN FINDINGS (carry to CAPSTONE; not per-ticket blocks)
