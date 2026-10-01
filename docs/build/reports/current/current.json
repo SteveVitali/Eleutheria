@@ -1,14 +1,14 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "3374008b3106aa9fbeaa902770cc9099bbb86bc2",
+  "input_commit": "d8ea72ef9637579f7c755b3b43fd5dc3cda18910",
   "manifest_inputs": 917,
   "control": {
-    "projectStatus": "PAUSED",
+    "projectStatus": "IN_PROGRESS",
     "nextTicket": "P34.1",
     "lastCompleted": "P33.8",
     "blockedOn": "(nothing)",
-    "pauseRequested": "true",
+    "pauseRequested": "false",
     "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
@@ -23,7 +23,7 @@
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-01T17:11:50Z"
+    "updatedAt": "2026-10-01T18:45:15Z"
   },
   "counts": {
     "obligations": 124,
@@ -13411,10 +13411,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "2c3fbb966fe6c89a38bd9c2be3b2338b0aaa9a1e3b4bfb8555353e03ab7f9a70",
+  "manifest_sha256": "55305f979e00c20a7d14337fe0900c93171bb7c784da4ff60bfa335d0f198bab",
   "current_md": {
     "lines": 74,
-    "bytes": 12672,
+    "bytes": 12677,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

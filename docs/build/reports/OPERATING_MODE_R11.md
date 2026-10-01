@@ -326,3 +326,19 @@ The skills (`implement-spec`, `orchestrate-build`, `build-memory`, `self-review`
 Devin Desktop does is checked by T6's orient dry-run. **No B6 §5.3 override is in force.** If T6 finds that Devin Desktop
 does not load the skills, T6 appends an amendment here carrying the B6 §5.3 overrides and the hand-applied Tier A/B-must
 template content, and the GATE-B packet says so.
+
+## Amendment — 2026-10-01T18:45:15Z (GATE-B results)
+
+- **Fallback B (headless) is not yet available.** The Devin CLI binary exists at
+  `/Applications/Devin.app/Contents/Resources/app/extensions/windsurf/devin/bin/devin` (not on PATH; v3000.10.48); its
+  non-interactive form is `… -p --model swe-2-high --permission-mode <mode> -- "<prompt>"`. `devin auth status` reported
+  "Not logged in" at the dry run, so mode B is **unverified**: after a failed isolation check the fallback is the manual tier
+  (`drive-build.sh --print-prompt`) until the operator runs `devin auth login` and a live `--agent-cmd` verification passes
+  (record it as a GATE DECISIONS row).
+- **OP-24 (leg-runner backstop) is deferred to GATE-G4** (operator: "Decide by GATE-G4"). Until then there is no backstop:
+  the orchestrator runs due legs from the OM-19 queue itself; the GATE-G4 packet (row 260) asks again before the first
+  window (≥ 2026-10-13).
+- **Sub-agent compaction is undetermined** (not documented); the ≤ ~150k-loaded rule binds regardless.
+- **Co-author trailer not yet observed** for Devin Desktop: the first chain PR's CI trailer check (`check_trailers.py`)
+  verifies it; a missing trailer is a red check (stop and ask).
+- Skills load from `~/.claude/skills` (verified, `8aeb6dc`), so no B6 §5.3 overrides are needed.

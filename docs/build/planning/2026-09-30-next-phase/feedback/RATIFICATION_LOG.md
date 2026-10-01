@@ -565,3 +565,15 @@ recorded as made at the operator's direction (tool unrecorded); at the seed PR's
 chain's text, and P34.27 appends a dated annotation naming `4a2ce75d` and why it is superseded. GB-Q11 → C10 appends the
 draft verbatim.
 
+
+## Round 29 — GATE-B (answered 2026-10-01T18:45:30Z)
+
+| line | question (summary) | options offered | operator answer (verbatim) |
+|---|---|---|---|
+| GB-Q8 | Devin Desktop dry-run + isolation probe (HANDOFF §4–§5) | operator-run; report pasted back | report pasted ("All probe criteria hold…"; full record in `docs/build/reports/isolation/probe-T6.md`) |
+| GB-Q12 | GATE-B: start Round 11 at row 201 in Devin Desktop, swe-2-high, mode A | Go (Recommended) · Go, manual tier · Hold | **Go (Recommended)** |
+| OP-24 | leg-runner backstop given no scheduled sessions in Devin | launchd + headless Devin (Recommended) · I'll run it by hand · Decide by GATE-G4 | **Decide by GATE-G4** |
+
+The operator's instruction with the pasted report: *"Proceed as you see fit"*. *Agent interpretation (labelled):* C10 recorded
+(GATE-B gate entry + harness switch in the PHASE LOG; `projectStatus: IN_PROGRESS`); mode B stays unverified until `devin
+auth login`; OP-24 is asked again in the GATE-G4 packet.

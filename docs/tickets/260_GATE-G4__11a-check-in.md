@@ -91,3 +91,10 @@ OM-07/08/09 (verbatim words, no proxy signature, hedged words get a yes/no quest
 
 - Plan row notes (S4c, S6): G4 collects ING-GO-A, ING-GO-B (Wave B legs 10-26 → 11-05), the P35.57 API-roll go, A-7/B-32 lines due in 11B, the Wave A/B HG-03 flip lists (OP-26), the 11B OM-20 list and the Class R standing-go renewal (B-9); every other S5 line was answered at GATE-P.
 - The isolation probe repeats at each sub-round GATE and after any orchestrator restart (plan §8.5) — the orchestrator's work, reported in the packet's status part.
+
+## Added at GATE-B (2026-10-01T18:45:15Z)
+
+- [ ] Ask the operator to decide **OP-24** (the leg-runner backstop): GATE-B recorded "Decide by GATE-G4"; Devin Desktop has
+  no scheduled sessions; options include a macOS launchd job driving the headless Devin CLI (needs `devin auth login`), the
+  operator running it by hand at window opens, or no backstop. The first windows open ≥ 2026-10-13.
+- [ ] Report whether fallback mode B (headless Devin) has been verified (`devin auth login` + a live `--agent-cmd` run).

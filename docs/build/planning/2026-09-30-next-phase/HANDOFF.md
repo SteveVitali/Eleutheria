@@ -300,3 +300,15 @@ manifest row and not operator work; ≈ 8–12 contexts sized by its own meta-pl
 ## Merge-sitting guidance (GATE-B packet Q-10; recorded 2026-10-01T18:11:04Z)
 
 Merging #180 now conflicts once in `docs/build/BUILD_INDEX.md` (row 183: `b01ef231` on #179 vs the stack's later text): take the **stack's side** at #180; the simulation then runs clean to #190 and differs from #190 only in `docs/build/readouts/ACCEPT-R10.md`. At the seed PR's merge, resolve `ACCEPT-R10.md` to the **seed's text** (GB-Q9 (ii) *"Keep the chain's record (Recommended)"*). Agents never merge.
+
+## GATE-B record (C10, 2026-10-01T18:45:15Z)
+
+- **GATE-B: "Go (Recommended)"** — recorded in GATE DECISIONS `### Round 11` and RATIFICATION_LOG. Seed PR #192 5/5 green
+  at `d8ea72ef` before C10 (one B-15 flake re-run of `web`).
+- Devin Desktop dry-run + isolation probe: **PASS** (`docs/build/reports/isolation/probe-T6.md`). Correction to §3/§4: a
+  `devin` binary exists at `/Applications/Devin.app/Contents/Resources/app/extensions/windsurf/devin/bin/devin` but is not
+  logged in, so mode B is unverified (manual tier is the fallback until `devin auth login` + verification).
+- OP-24 deferred to GATE-G4. CURRENT STATE: `projectStatus: IN_PROGRESS`, `pauseRequested: false`, `nextTicket: P34.1`,
+  `harness: devin-desktop/swe-2-high/subagent`. The PHASE LOG ends with the GATE-B gate entry and the C10 harness-switch.
+- **To start Round 11:** open one new Devin Desktop session (model `swe-2-high`) in `/Users/stevenvitali/Eleutheria-next-phase`
+  on branch `r11/seed` and paste §2's resume prompt verbatim.

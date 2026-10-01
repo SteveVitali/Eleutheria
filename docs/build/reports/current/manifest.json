@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "3374008b3106aa9fbeaa902770cc9099bbb86bc2",
+  "input_commit": "d8ea72ef9637579f7c755b3b43fd5dc3cda18910",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -746,7 +746,7 @@
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "80424f4131209fca0abf0bb9e781622c38c83f4e936898b60a1d171a146ce4cc"
+      "sha256": "4242793e9baaaec120a06c785192a13a1cbe883b1173276c6c831f640b76b71d"
     },
     {
       "path": "docs/build/readouts/ACCEPT-R10.md",
@@ -2054,7 +2054,7 @@
     },
     {
       "path": "docs/tickets/260_GATE-G4__11a-check-in.md",
-      "sha256": "7b7101e8746319bbd64115435bdf0f46ebcd1bb3c8b4ed9528e13f82cf46b4f5"
+      "sha256": "d6c9b96af1adb10296c084db2acf0178763452d70d19cb730b9008862719b7f6"
     },
     {
       "path": "docs/tickets/261_P35.57__api-release-parity.md",

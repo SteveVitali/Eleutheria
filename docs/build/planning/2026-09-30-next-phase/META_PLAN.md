@@ -13,17 +13,17 @@
 ## CURRENT STATE
 
 ```
-projectStatus:   IN_PROGRESS        # NOT_STARTED | IN_PROGRESS | BLOCKED | PAUSED | DONE
-stage:           B                  # M (meta-plan) → P (plan) → B (build artifacts) → HANDOFF
-nextUnit:        resume Stage B  # SEED-02b (finish from wip/seed-02b) ∥ SEED-13b/c/d (11A full contracts) ∥ SEED-14a/b → SEED-13e, SEED-15 → T5 (SEED-17) → T6 → GATE-B
-lastCompleted:   S6c + T0           # plan CANONICAL (S6/S6b/S6c), S6r closed; T0/T0b skills applied; T0c running
+projectStatus:   DONE               # NOT_STARTED | IN_PROGRESS | BLOCKED | PAUSED | DONE
+stage:           HANDOFF                # M (meta-plan) → P (plan) → B (build artifacts) → HANDOFF
+nextUnit:        (none) — Round 11 runs from docs/build/LEDGER.md (Devin Desktop, row 201 = P34.1); planning closed
+lastCompleted:   GATE-B + C10   # seed PR #192; Round 11 handed to Devin Desktop
 blockedOn:       (nothing)
 pauseRequested:  false
 baseline:        baseline/baseline.json @ 2026-09-30T16:31:55Z   # delta procedure in BASELINE.md
 planOut:         docs/build/planning/2026-09-30-next-phase/NEXT_PHASE_PLAN.md
 memoryRoot:      docs/build
 round:           11                 # provisional; manifest phases continue at P34, rows at 201
-updatedAt:       2026-10-01T15:08:54Z   # written by `date -u` (§9 clock rule)
+updatedAt:       2026-10-01T18:45:30Z   # written by `date -u` (§9 clock rule)
 ```
 
 **Vocabularies.** Row status: `open → in-progress → done | blocked-on-operator | dropped(reason)`;
@@ -1854,6 +1854,14 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   checks; SEED-13c had written nothing. Both resumed from their saved transcripts (SendMessage) rather than re-dispatched:
   13b to re-verify its files, run checks and write its ledger; 13c to write rows 221–240 matching 13b's shape. Queue after
   them: SEED-13d → SEED-14a ∥ SEED-14b → SEED-13e ∥ SEED-15 → T5 → T6 (≤ 2 concurrent).
+- 2026-10-01T18:45:30Z — **Stage B done; GATE-B passed; planning closed.** After SEED-17/18a/18b: GATE-B packet rounds 28–29 (publish as
+  recorded; P34.40 fully pre-authorised; P34.6 drill clone only; OP-05 applied via `gh` on the operator's instruction;
+  bundle stored in iCloud Drive `SIG-backups/`); `r11/seed` pushed and seed PR **#192** opened against
+  `devin/p33-8-agent-docs-refresh`; CI 5/5 green at `d8ea72ef` (one B-15 flake re-run of `web`); the operator's Devin
+  Desktop dry-run + isolation probe PASS (`docs/build/reports/isolation/probe-T6.md`); **GATE-B "Go (Recommended)"**;
+  OP-24 deferred to GATE-G4. C10: LEDGER `projectStatus: IN_PROGRESS`, GATE-B gate entry + harness switch appended. Round 11
+  now runs from `docs/build/LEDGER.md` in Devin Desktop (HANDOFF §2 resume prompt). Post-round: REVIEW-R11 (Claude Code)
+  gates GATE-ANNOUNCE on S0/S1.
 
 ---
 
