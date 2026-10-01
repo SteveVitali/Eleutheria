@@ -114,13 +114,15 @@ every `SIG-*` id referenced anywhere in this document is either defined or liste
 | `SEC` | Security and threat model |
 | `GOV` | Governance, takedown, continuity |
 | `ENG` | Engineering practice, repo, testing, CI |
-| `OPS` | Deployment, observability, cost (currently carried under `SIG-ENG-*` in Part IX; `SIG-OPS-*` is reserved for future use) |
+| `OPS` | Deployment, observability, cost (carried under `SIG-ENG-*` in Part IX through Round 10; `SIG-OPS-*`, reserved for future use until then, is opened by §56 for Round-11 operations) |
 | `TRUST` | End-to-end evidence integrity and release activation (§55) |
 | `DOS` | Evidence-complete dossier portfolio (§55) |
 | `EVAL` | Independent evaluation and measured eligibility (§55) |
 | `FIND` | Released discovery, citations and correction journeys (§55) |
 | `ACQ` | Gap-driven source acquisition (§55) |
-| `MEM` | Current build memory and reliable closeout (§55) |
+| `MEM` | Current build memory and reliable closeout (§55; extended by §56) |
+| `REL` | Release identity, promotion, rollback, withdrawal and versioning (§56) |
+| `CONF` | Confidence basis, graph-quality checks and their public disclosure (§56) |
 
 ## 0.4 The execution model
 

@@ -16,3 +16,11 @@ Items surfaced by seed units that a later unit (or the operator) must resolve. E
 - SEED-11b · WV-01 "disclosed on the site" vs C-5 "Omit until I write it": the legal-home disclosure must not name the operator or describe them beyond the adopted WV-01 sentence until they write the About text · T3 (copy-batch contract) + HANDOFF note
 - SEED-11b · ticket_catalog R11-GOV-01 says counsel values become "operator-reported"; P34.16's contract must say "the operator's own determination (no counsel)" (TS-09) · SEED-13 (T3)
 - SEED-11b · ADR-159 / ADR-166 cite T4's new OPEN rows ("the ADR-124 allow row", "SEC-003 owner") — create them · SEED-14 (T4); ADR-124's third revisit trigger evaluated · SEED-11d
+- SEED-12a · `check_spec_src.py` id count will fail after BUILD.sh (777 vs 715) unless the 62 new §56 ids are appended to its `FOLD_BACK_IDS` (list in `docs/build/runs/SEED-12a.md`) · SEED-12c
+- SEED-12a · spec version line (`00_front_part0.md:5`, 1.1.0) not bumped · SEED-12c
+- SEED-12a · owners to confirm: SIG-OPS-007→P35.2, SIG-SEC-008→P35.1a/b, SIG-SEC-009→P35.4, SIG-CONF-010→P35.60 (P35.49 dropped) · SEED-13 (T3)
+- SEED-12a · SIG-ENG-031 amendment should cite SIG-MEM-007 ("CI green"); Appendix G.7 needs a row for Part XII · SEED-12b/12c
+- SEED-12a · seven ids beyond plan §6.2 (SIG-MEM-012, ENG-044/045/046, SEC-010/011, REL-015) — each traced to a ratified answer or cited note; keep (orchestrator review: all trace to A-21, A-13, C-10/F5, F5/H2, A-16, J1 NEW-9, B-20) · keep
+- SEED-12a · ADRs citing "final id assigned by SEED-12" → update to final ids from `stageB/T1_id_map.csv` · SEED-12c
+- SEED-12a · PLAN-11B / PLAN-11C must register SIG-TRANSP / K13 prefixes in §0.3 · SEED-13 contracts for PLAN-11B/11C
+- SEED-12a · 62 new coverage-matrix rows as MISSING routed to owners · SEED-14 (T4)
