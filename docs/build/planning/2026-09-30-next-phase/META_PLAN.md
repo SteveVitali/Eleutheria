@@ -1695,6 +1695,17 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   Part VIII ordering/redaction, inconsistent record corrections incl. ACCEPT-R8, surviving "counsel" wording, landing overclaims,
   agent commits authored under the operator's name, S1 false claims live through 11A, pre-authorisation scope + no Class R expiry,
   §0 count overstatements).
+- 2026-10-01T01:43:39Z — **S4 feasibility review done** (`reviews/S4-feasibility.md`): **not ratifiable as drafted; ratifiable with fixes — 3 BLOCKER, 9
+  MAJOR, 7 MINOR.** Blockers: FEA-01 Stage B can't produce ~277 contracts (~2 MB) in 4 runs + T1/T4 over-scoped → seed writes only
+  11A contracts, 11B–11D contracts written at each sub-round boundary from PLAN rows, engineering ADRs move into their tickets;
+  FEA-02 Wave B cannot fit 10-26→11-05 (its code rows + go sit after GATE-G5) and the slip cascades into Wave C; FEA-03 OM-19 + the
+  P34.39 read-back window would block GATE-G4 until ≈10-21 and lose Wave A. Majors: undeclared context ceiling + more oversized
+  rows; live-leg re-runs undercounted (≈40–70) with no branch/PR policy or runner while the chain is stopped; five ADRs double-owned;
+  missing `withBase()` helper; P34.46 lacks go/no-go limits; clone rehearsal ≠ deploy; 11B spine writes go public via the live API
+  before HG-11; DNS move lacks a runbook + TLS renewal risk (cert expires 12-22) + Cloudflare costs outside the GCP budget alert;
+  operator load ≈22–32 h over 18–20 touchpoints; no agent-spend estimate despite a usage limit already hit; P35.63 blocked by
+  absolute quality targets; non-linear slip cliffs. Must split before T3: P34.44, P36.9, P36.42, P36.66, P36.72, P37.65, P37.68,
+  P38.1, P38.3; multi-leg by wall clock: P34.39, P35.11, P35.61, P35.63, P36.12, P37.2, P37.54.
 
 ---
 
