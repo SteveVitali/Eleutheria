@@ -297,3 +297,77 @@ WV-09 `94f061234c413bd4ec841b94255889a1944dc5edae1a1037deeab130d2621fb0`. The me
 8. **The isolation check's mechanics** (how the nonce is planted and probed in Devin Desktop) follow only the log's
    example; T3 writes them into P34.1's contract. If T6 finds Devin Desktop has no sub-agent primitive, the orchestrator
    pauses before row 201 and the operator chooses the manual tier (App A T6).
+
+## S6c addendum — S6r closed, round 26 applied
+
+- **Row:** S6c (orchestrator follow-up to S6r). **Written:** 2026-10-01T07:24:09Z (`date -u`, the same shell command that applied the
+  edits, ran the checks and wrote this addendum) by Claude Code (Opus 5.5) in a fresh context in `~/Eleutheria-next-phase`,
+  branch `claude/next-phase-planning`, HEAD `787160ee`. Nothing committed (the orchestrator commits); nothing outside this
+  planning directory touched; no external request; no production command.
+- **Inputs:** `reviews/S6r-consistency.md` (30 findings); `feedback/RATIFICATION_LOG.md` round 26 (06:51:11Z: S6R-01 →
+  WV-10, S6R-03 → WV-11, S6R-08 → GL-GATE-08 on every host) and its "Record clarification (S6R-02)"; `META_PLAN.md` §11
+  (T0/T0b Stage-B obligations; T0c in progress in another session, ≈ release 0.5.0); the plan and the three CSVs; spec
+  SIG-INGEST-035/036/037, SIG-INGEST-013, SIG-STORE-011, SIG-GOV-007/008 (grep); ADR-088, ADR-118, LEDGER GL-GATE-08,
+  `~/agent-skills/skills/build-memory/layout.md` (read-only).
+- **Outputs (only these):** `NEXT_PHASE_PLAN.md`, `data/round11_plan.csv`, `data/ticket_catalog.csv`,
+  `data/decision_catalog.csv`, this addendum and `reviews/S6r-closure.md` (one row per S6R id). Assert-guarded scripts
+  from the session scratchpad (exact-string replacements in the plan; csv round-trips byte-identical on untouched rows).
+
+### What changed
+
+| item | ADRs / ids | plan | CSVs |
+|---|---|---|---|
+| **S6R-01 → WV-10** (round 26; against the recommendation): SIG-INGEST-035's no-direct-capture clause waived for Flock portals; P36.74 probe-only — stops on any challenge/403/interstitial; no challenge-solving, spoofing, proxy rotation or browser automation; expected yield ≈ 0; aggregator stays the source; CC BY-SA compartment | **ADR-188** (new, SEED-11); ADR-184 restated | header, §0, §1.3, §4.2 A-17, §4.6, **new §4.9**, §5.5, §6.3 (new INGEST-035 row), §6.5 (new row; not-waived list), §6.6, §7, §8.1–§8.4, §10.4, §11.3, §13.2, §14 R-18, R-22, App A T1/T4, App B row 31 | **P36.74** (title, gate, 1.0 → 0.5 run, notes), P36.12 leg; R11-ACQ-29 (S, 0.5, $0, acceptance); **`WV-10`**; D3-Q3 note |
+| **S6R-03 → WV-11** (round 26): one DB-enforced operator-only purge function, the sole SIG-STORE-011 exception, by a new sqitch change; GOV-008 scope; tombstone + public log; never OM-20; in-ticket go per use | **ADR-189** (new, SEED-11); ADR-181 cites it | §0, §3.3 never-list, §3.4, §4.9, §5.10, §6.3 (GOV-008 scope clause; new STORE-011 row), §6.5 (WV-06 row; new WV-11 row), §6.6, §7, §10.2, §11.2–§11.3, §14 R-22 + **new R-32**, App A T1/T4 | **P37.71** (title, gate, live stage, notes incl. AGENTS.md's sole-exception text); R11-GOV-06 (scope, gate, acceptance); **`WV-11`**; WV-06 source note |
+| **S6R-08** (round 26): GL-GATE-08 on every host per ADR-088 | ADR-168 restated | §0, §4.2 A-5, §4.9, §5.5, §6.3, §7, §10.2, §14 R-21 | P36.1a/P36.1b gates; R11-GOV-04; **`GL-GATE-08-SCOPE`**; Q-E2-11 source note |
+| **S6R-02**: record clarification — not drift | ADR-169 restated | §4.4 B-41, §4.9, §9.2, §7, App A T5 | E4-R4a/E4-R4b `source_refs`; P36.2 notes |
+| **S1 closures S6R-04/05/06** | — | P35.38a at the head of 11A (row 203) with hard edges; P36.1a ahead of Wave A; the A-17 envelope's P16 contact rule; App A T2/T5/T6 obligations (validator three-way sync to the final skill contract per T0c, `kind`/pre-authorization port, Round-11-scoped `ci_boundary.py`, `ci_required.txt`, `projectStatus`, HANDOFF preconditions); CURRENT STATE keys per BM-LEDGER-02 (`harness: devin-desktop/swe-2-high/subagent`, no `model:`) | P35.38 → **P35.38a** (new row, 11A) + **P35.38b**; P36.1a moved; edges on P34.17, P35.11, P36.12, P36.74, P36.76–78, P37.2, P37.54; P35.39 → P35.38b; SEED-02 2.0 → 3.0; SEED-04/13/17/18/19 notes; R11-SAFE-06, SEED-02/17/19 catalog |
+| **S2/S3 closures** | ADR-149, 169, 184, 185 one-liners | Stage B = Claude Code (contexts split, trailer grammar, G1 scope); isolation protocol; watch list; GATE-G4b likely; copy batches and fallback priced; OP-26 mechanics; waiver keep/lift at GATE-ANNOUNCE; re-anchoring by supersession; labels; §7 "Also at T1"; counts; baseline delta; counter; runner pin; in-round rights lines; P34.49 protective | P34.45 `live_legs`; C-10 on P34.22a/b, P34.24a/b, P34.46; P34.1, P34.10, P34.17, P34.18, P34.28, P34.49, P36.2, P36.64, P36.75–78, P37.25, P37.66, P38.2, P38.3a/c, P38.4, PLAN-11B/11C, GATE-ANNOUNCE, REVIEW-R11, SEED-00/14, OP-01…04, OP-08, OP-22, OP-26; catalog R11-CI-01, R11-REVIEW-01, SEED-00/11, OP-03/04/08/26; dec D-K0-1, Q-16, Q-L3-4, WV-07 `unblocks`, D3-Q3/I7-C2/I7-C3 envelope |
+
+**Totals.** Chain 309 → **310 rows (201–510)**, 285.5 runs (P35.38a +0.5, P36.74 −0.5), 28.5 leg runs, 101
+prod./publish rows, 57 OM-20 rows, 5 gate markers (rows 260/343/420/504/510); 11A 59 → **60 rows / 56.5 runs**, 11B 83
+rows / 81.0 → **80.5 runs** (re-split view 82 / 73.5; GATE-G4b budgeted as likely). `round11_plan.csv` 385 → **386
+rows**. Seed 24.25 → **25.25 runs, ≈ 31 Claude Code contexts**. Waivers 9 → **11**; ADRs 42 → **44** (SEED-11 32 → 34:
+146–150, 152–155, 158, 159, 162–173, 179–189). `decision_catalog.csv` 350 → **353** ids (part `S6r`, packet lines
+S6R-01/03/08). Deviations: 27 closing-table rows (≈ 29 lines) + 1 (S6R-01). Agent contexts: **≈ 370–460 Devin Desktop
+(rows 201–510) + ≈ 40–43 Claude Code** (Stage B ≈ 31, REVIEW-R11 8–12). Operator time ≈ 23.5–41 h / ≈ 22 touchpoints →
+**≈ 27–49 h / ≈ 27–29** (+ ≈ 15–25 h only if the manual tier is needed). Money unchanged within its ranges (the Flock
+connector ≈ $0). Risks R-18…R-31 → **R-18…R-32**.
+
+**Adopted-sentence sha256** (§5's method): WV-10 `82487f7b3f0d7aa6e0312f1c41649f2e19bdb654c462e31d19dab40482918fcf`;
+WV-11 `04e7b77f8db7b2396dcca7241cf3597fe1a04e2f10ced3493c3b6d1accbe19b1` (the method reproduces WV-08 `806faae3…43fb` and
+WV-09 `94f06123…21fb0`).
+
+### Checks re-run at S6c (same shell command as the edits)
+
+| check | result |
+|---|---|
+| `python3 PD/tools/s4c/check_order.py` | **0 errors** (exit 0); `TOTAL \| 310 \| eng runs 285.5 (plan 20.0; conditional 1.0) \| leg runs 28.5 \| prod/publish 101 \| OM-20 rows 57 \| pauses 33`; `11A \| 60 \| {'ticket': 57, 'plan': 1, 'capstone': 1, 'gate': 1} \| 56.5 (7.0) \| 8.5 \| 23 \| 13 \| 6`; `11B \| 83 \| {'ticket': 80, 'plan': 1, 'capstone': 1, 'gate': 1} \| 80.5 (7.0) \| 11.0 \| 26 \| 19 \| 8`; `11C \| 77 \| {'ticket': 74, 'plan': 1, 'capstone': 1, 'gate': 1} \| 72.5 (6.0) \| 4.0 \| 19 \| 10 \| 9`; `11D \| 80 \| {'ticket': 76, 'capstone': 4} \| 69.0 (0.0) \| 5.0 \| 33 \| 15 \| 10`; `11D-tail \| 10 \| {'capstone': 4, 'gate': 2, 'reconcile': 3, 'docs': 1} \| 7.0 (0.0) \| 0.0 \| 0 \| 0 \| 0`; gates: [('GATE-G4', '260'), ('GATE-G5', '343'), ('GATE-G6', '420'), ('GATE-ACCEPT-R11', '504'), ('GATE-ANNOUNCE', '510')] |
+| `python3 PD/tools/s4c/check_silence.py` | answer classes: {'explicit': 226, 'own-words': 46, 'batch': 81}; packet lines: 105 {'A': 24, 'B': 42, 'C': 13, 'D2': 16, 'S5': 4, 'S6': 3, 'S6R': 3}; acts_on_silence: {'no': 288, 'yes': 65}; check_silence: OK (0 errors) (exit 0) |
+| `python3 PD/tools/s4c/check_trace.py` | cited ids checked; missing: [] (exit 0) |
+| `python3 PD/tools/check_dispositions.py` | check_dispositions: OK (0 errors) (exit 0) |
+| `.venv/bin/python -m pytest PD/tools -q` | 52 passed in 0.72s (exit 0) |
+
+### Not reconciled, or left for the orchestrator
+
+1. **One operator question (S6R-16),** asked in the GATE-B packet, not before: is "Headless Devin command" approved as a
+   second dispatch fallback? The plan assumes no answer.
+2. **T0c.** The skill contract is still moving (T0c, ≈ 0.5.0). The plan writes CURRENT STATE, the validator sync and the
+   GATE DECISIONS `kind` check against "the final skill contract per T0c" and lists today's BM-LEDGER-02 key order as the
+   current form; if T0c changes the key set or the harness grammar, T5/SEED-02 follow T0c, not this plan's wording.
+3. **The log (S6R-22).** The round-24 paragraph "On own words by selection" is agent reasoning without a label in the log;
+   the plan now labels it, the log is not edited here (append-only; the orchestrator may append a label line).
+4. **`META_PLAN.md`** (orchestrator's file): its §11 needs the S6r / round 26 / S6c entries and its S6 summary still says
+   "WV-01…07 waived"; not edited here.
+5. **P35.38a's reach.** It fixes the UA before any Round-11 acquisition fetch; the existing first-fire crons keep the old
+   `sig-project.org` UA until the next connector-image roll (P35.11's L1 roll at the latest) — the exposure window B-6's
+   answer accepted (Q-E2-03 b). If the operator wants it shorter, an earlier image roll is an OM-20 line for GATE-G4 or an
+   in-ticket go; the plan does not add one.
+6. **P37.71's hosted deploy.** The purge function's sqitch change alters the claim table's append-only enforcement, so
+   its hosted deploy is treated as a never-pre-authorised in-ticket go (it may wait for the first use); P37.71's
+   `live_stage` stays "none (…)" so the prod/publish and pause counts are unchanged.
+7. **ADR-184's compartments (S6R-12).** The Flock portal output and the share-list claims are fixed to the CC BY-SA
+   compartment by SIG-INGEST-035's clause; the compartment of each other terms-conflicted source (Axon Connect,
+   DocumentCloud, Sourcewell/OMNIA) is T1's to record, and a source that fits no compartment under SIG-LIC-010 returns to
+   the operator as an HG-03 line.
+8. **The `tools/s6/` scripts** keep their S6 text as history; they were not re-run.
