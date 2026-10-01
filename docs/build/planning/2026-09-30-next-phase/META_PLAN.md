@@ -1783,6 +1783,19 @@ connector_reuse, retrieved_at (date -u), found_by_query_id, evidence_class, note
   `docs/build/tools/record_policy/ci_required.txt`; HANDOFF must describe the **Devin Desktop manual tier** (`drive-build.sh
   --print-prompt` → paste into one new `swe-2-high` session per ticket; `gh` logged in). **T0c** (the remaining 12 proposals,
   incl. SK-04 harness key and SK-08 operator digest) dispatched now so Stage B runs on the final skill version.
+- 2026-10-01T07:24:56Z — **Rounds 25–26 + S6b/S6r/S6c.** Round 25 (`2f05e203`): Devin Desktop dispatch = one orchestrator session + fresh
+  sub-agent per ticket; P34.1 carries a fresh-context isolation check with manual-tier fallback. S6b (`35a4dc16`) applied
+  rounds 24–25 (ADR-186 WV-08, ADR-187 WV-09; REVIEW-R11 gates GATE-ANNOUNCE on S0/S1). **S6r** fresh-context review
+  (`reviews/S6r-consistency.md`): 0 S0 · 6 S1 · 14 S2 · 10 S3; three items went to the operator as round 26 (`787160ee`):
+  WV-10 (INGEST-035 waived → P36.74 probe-only, stops on any challenge), WV-11 (one operator-only purge function = sole
+  SIG-STORE-011 exception, GOV-008 scope), GL-GATE-08 covers all hosts (ADR-088); S6R-02 closed as not drift (B-41 as
+  presented listed "R4b Hong Kong flip"). **S6c** closed all 30 (`reviews/S6r-closure.md`): ADR-188/189; P35.38a (UA contact
+  URL → surveillancegraph.org) moved to row 203 ahead of every Round-11 fetch; Appendix A carries the T0/T0b obligations;
+  LEDGER keys per the layout contract; C-10 rule in P34.22a/b, P34.24a/b, P34.46; Stage B = Claude Code. Totals now:
+  **310 chain rows (201–510), 285.5 eng runs, seed 25.25 runs (~31 Claude Code contexts), 11 waivers (WV-01…WV-11),
+  44 ADRs (ADR-146…189), 353 decision ids, operator ≈27–49 h over ≈27–29 touchpoints.** Waiver count in earlier entries of this
+  log (seven, nine) is superseded by this entry. One question carried to GATE-B: approve "headless Devin command" as a second
+  fallback (S6R-16). Next: wait for T0c, then Stage B (T1…T6).
 
 ---
 
