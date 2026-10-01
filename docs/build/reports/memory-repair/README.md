@@ -173,3 +173,70 @@ n=$(grep -n -F "$(git show c2055d96^:docs/build/LEDGER.md | sed -n '114p')" docs
 sed -n "${n},$((n+52))p" docs/build/LEDGER.md | shasum -a 256                    # = baec891d…82bd8
 git diff f66b2450 -- docs/build/LEDGER.md docs/build/BUILD_INDEX.md | grep -c '^-[^-]'   # = 0 (append-only)
 ```
+
+## SEED-05, SEED-10, SEED-16 — LEDGER restructure (T2, part γ; appended 2026-10-01T08:14:19Z)
+
+Written by the Stage-B units SEED-05, SEED-10 and SEED-16 at 2026-10-01T08:14:19Z (`date -u`), harness
+`claude-code/claude-opus-5-5/subagent`; run ledger `docs/build/runs/SEED-05-10-16.md`. This section is appended; nothing
+above it changed.
+
+| file | bytes | sha256 | data rows | written by |
+|---|---:|---|---:|---|
+| `LEDGER_head_R01-R10.txt` | 126,875 | `0d9437ceaf6081e0c44fc4751de80a3a34c68a130fb30ff3b005d319dc1021b8` | 54 lines | SEED-10 (C6) |
+| `phase_log_index_r01-r10.csv` | 28,262 | `6644905eb8489387492f7b7816ef67a5489d7d16a91c2eb40182903e4a6d4d0d` | 186 | SEED-05 (C2) |
+
+### `LEDGER_head_R01-R10.txt` (SEED-10; B3 §3.5)
+
+- **What it is:** `docs/build/LEDGER.md` lines 1–54 at `<PRE>` = `f66b2450` (= the chain tip `b051732c`; that range is
+  unchanged by SEED-06/07, which appended below it), byte-for-byte: the Rounds 1–10 title and provenance, the Round-1
+  OPERATING MODE (recorded 2026-09-08; first committed by `4d5a5d27`, 2026-09-09T21:39:53Z), the Round-10 import
+  amendment (written by `d6c562e5`, 2026-09-27T02:40:53Z) and CURRENT STATE with its history chains
+  (122,978 B). A raw `.txt`, so the slice (which contains fences) hashes identically to its source (B3 §3.2).
+- **Pointer:** the HTML comment on line 2 of the new LEDGER names this file and its sha256 (living-archived head,
+  BM-LEDGER-08; `docs/build/tools/record_policy/history.policy` lists this directory as an `archive` destination).
+- **Dates inside are as recorded, not corrected** (B1 §5.1): the CURRENT STATE history chains (L34, L35, L52 @PRE) are
+  corrected by `DC-L-01`…`DC-L-03` in the LEDGER's `## DATE CORRECTIONS — LEDGER, Rounds 1–10`, and every token by the
+  `date_corrections.csv` rows those entries cite.
+- **Superseded text** (named, not quoted — BM-ORIENT-01): the archived head names a retired ledger path, says the file
+  is not committed, counts the Round-1 tickets, and makes the Round-10 resume wait on a handoff report; the Round-10
+  resume of 2026-09-27 (PR #155) met that condition in practice (B3 §2.3). The new head's OPERATING MODE placeholder
+  supersedes them; SEED-17 (T5) writes the binding Round-11 OPERATING MODE.
+
+### `phase_log_index_r01-r10.csv` (SEED-05; B3 §3.10)
+
+- **Rows:** 170 entry rows (every dated `- YYYY-MM-DD —` line of the five PHASE LOG regions at `<PRE>`) + 16 index-only
+  rows (B3 §2.6: 13 `missing-entry`, 3 `no-done-entry`).
+- **Columns:** `idx` (file order at `<PRE>`; 171–186 index-only) · `order_key` (`<introducing commit time UTC>#<line
+  @PRE>`, the true order) · `recorded_date` (the lead date as written) · `introduced_by` (the first commit whose LEDGER
+  holds a line starting with the entry's first 72 characters; `4d5a5d27`, the first committed LEDGER, for entries
+  written before the ledger was committed) · `last_written_by` (`git blame` at `<PRE>`) · `line_at_pre` · `section` (the
+  `## ` heading above the entry) · `lead_id` (the first token after the dash, markup removed, when it is a ticket id or
+  `SETUP` / `CAPSTONE` / `ROUND<n>`) · `kind` (done · partial · inserted · pause · resume · round · gate · other ·
+  missing-entry · no-done-entry; a heuristic over the entry's bold head — agent classification, labelled) ·
+  `entry_sha256_12` (sha256 of the entry line without its newline, first 12 hex) · `build_index_seq` (the BUILD_INDEX
+  row at `<PRE>`; a Round-3 re-run cites its own row, e.g. P21.1 → 55 for Round 1, 71 for Round 3) · `date_status` (ok ·
+  future · past · pre-git; future = lead date later than the introducing commit's UTC date, past = more than 1 day
+  earlier) · `correction_ref` (`DC-L-nn` rows of the LEDGER's DATE CORRECTIONS section whose `line @PRE` is the entry) ·
+  `era` (an added column, labelled: the round grouping of the LEDGER's index table).
+- **Cross-checks at write time:** 25 future + 15 past entries (= B3 §2.4), each with exactly one `DC-L` ref; 12
+  inversions in file order (= B3); era counts = B3 §3.10 (R1–R2 21, R3 12, R3–R4 11, P25–P26 16, R5 10, R6 6, R7 3,
+  R8 6, R9 18, R10 35, events 32); each `entry_sha256_12` equals the sha256 of its line at `<PRE>`, and that line occurs
+  exactly once in the live LEDGER.
+- **Generator:** a planning-side script run once from scratch (not committed; the method is the column list above).
+
+### Verify
+
+```sh
+D=docs/build/reports/memory-repair
+git show f66b2450:docs/build/LEDGER.md | sed -n '1,54p' | shasum -a 256   # = 0d9437ce…
+shasum -a 256 $D/LEDGER_head_R01-R10.txt                                                # equal
+grep -c -F 'LEDGER_head_R01-R10.txt' docs/build/LEDGER.md                               # ≥ 1 (the pointer)
+shasum -a 256 $D/phase_log_index_r01-r10.csv                                                 # = 6644905e…
+python3 - <<'PY'   # every anchor matches its line @PRE
+import csv, hashlib, subprocess
+pre = subprocess.run(["git", "show", "f66b2450:docs/build/LEDGER.md"], capture_output=True).stdout.split(b"\n")
+rows = [r for r in csv.DictReader(open("docs/build/reports/memory-repair/phase_log_index_r01-r10.csv")) if r["line_at_pre"]]
+assert all(hashlib.sha256(pre[int(r["line_at_pre"]) - 1]).hexdigest()[:12] == r["entry_sha256_12"] for r in rows)
+print(len(rows), "anchors ok")
+PY
+```
