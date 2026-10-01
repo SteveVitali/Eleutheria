@@ -18,7 +18,9 @@ invariant §32 demands:
 * **Absence is a visible gap, not a guess (§32.1, SIG-METRIC-002).** Where a class of
   subjects is known but a peer-tracked predicate has never been researched for one of them,
   a ``not_researched`` :class:`~inference.coverage.CoverageRecord` is written — the honest
-  negative space, distinguished from ``searched_not_found``.
+  negative space, distinguished from ``searched_not_found``. The peer classes and their
+  tracked predicates are **declared** (``data/peer_classes.toml``, ADR-115), never
+  inferred from the whole spine.
 * **Append-only (ADR-005).** This path only ``INSERT``s — there is no ``UPDATE``/``DELETE``.
   A changed measurement yields a new :func:`coverage_input_digest` and a *superseding* row;
   a re-run over an unchanged spine is a no-op (+0).
@@ -51,6 +53,7 @@ from .completeness import (
 )
 from .coverage import CoverageRecord
 from .denominators import ProvenanceCompleteness, PublishedAggregate, provenance_completeness
+from .peer_classes import PeerClass, load_peer_classes
 
 __all__ = [
     "CoverageMaterializeSummary",
@@ -324,53 +327,80 @@ def read_predicate_reconciliation(
     return out
 
 
-def read_negative_space(conn: Any, *, jurisdiction: str | None = None) -> list[CoverageRecord]:
+def read_negative_space(
+    conn: Any,
+    *,
+    jurisdiction: str | None = None,
+    peer_classes: Iterable[PeerClass] | None = None,
+) -> list[CoverageRecord]:
     """Retain the honest §32.1 negative space over the spine (SIG-METRIC-002).
 
-    The peer-class rule: for each entity class (``entity_type``), the tracked predicates are
-    those that appear on *some* peer of that class. A known subject (one that carries ≥1
-    tier-0 claim) that has NO claim for a peer-tracked predicate is a ``not_researched``
-    coverage record — "SIG has not looked here", distinguished from ``searched_not_found``
-    (which would need named sources). This converts a silent gap into a queryable one.
+    The peer-class rule (P31.9 / ADR-115, replacing the P28.4
+    entity-type-as-class rule — the hosted spine is all ``deployment`` and the
+    old rule would emit ~26.7M rows of meaningless absences): a peer class is
+    ``(entity_type, connector)``, declared in
+    :mod:`inference.peer_classes` (``data/peer_classes.toml``). A claim subject
+    belongs to a class when at least one of its tier-0, currently-valid claims
+    was written by an ``ingest_run`` whose ``connector_name`` the class
+    declares; its tracked set is the UNION of the tracked predicates of every
+    class it belongs to. A member with NO claim for a tracked predicate is a
+    ``not_researched`` coverage record — "SIG has not looked here",
+    distinguished from ``searched_not_found`` (which would need named sources).
+
+    A predicate absent from the declaration is never negative space, and a
+    subject whose claims come only from connectors no class declares produces
+    no rows — an undeclared coverage surface, never a guess. ``peer_classes``
+    is injectable for tests; ``None`` loads the shipped declaration.
     """
+    classes = tuple(peer_classes) if peer_classes is not None else load_peer_classes()
+    if not classes:
+        return []
+
     params: list[Any] = []
     juris = _jurisdiction_filter(jurisdiction, params)
     rows = conn.execute(
-        "SELECT c.subject_id::text, e.entity_type, c.predicate_id "
+        "SELECT c.subject_id::text, e.entity_type, ir.connector_name, c.predicate_id "
         "  FROM claim c JOIN entity e ON e.entity_id = c.subject_id "
+        "  JOIN ingest_run ir ON ir.run_id = c.ingest_run_id "
         " WHERE c.sensitivity_tier = 0 AND upper_inf(c.sys_period)"
         + juris
-        + " GROUP BY c.subject_id, e.entity_type, c.predicate_id "
-        " ORDER BY e.entity_type, c.subject_id, c.predicate_id",
+        + " GROUP BY c.subject_id, e.entity_type, ir.connector_name, c.predicate_id "
+        " ORDER BY e.entity_type, c.subject_id",
         tuple(params),
     ).fetchall()
 
-    subjects_by_class: dict[str, set[str]] = {}
-    predicates_by_class: dict[str, set[str]] = {}
+    subject_type: dict[str, str] = {}
+    subject_connectors: dict[str, set[str]] = {}
     claimed_pairs: set[tuple[str, str]] = set()
-    for subject_id, entity_type, predicate_id in rows:
-        s, t, p = str(subject_id), str(entity_type), str(predicate_id)
-        subjects_by_class.setdefault(t, set()).add(s)
-        predicates_by_class.setdefault(t, set()).add(p)
-        claimed_pairs.add((s, p))
+    for subject_id, entity_type, connector_name, predicate_id in rows:
+        s = str(subject_id)
+        subject_type[s] = str(entity_type)
+        subject_connectors.setdefault(s, set()).add(str(connector_name))
+        claimed_pairs.add((s, str(predicate_id)))
+
+    classes_by_type: dict[str, list[PeerClass]] = {}
+    for pc in classes:
+        classes_by_type.setdefault(pc.entity_type, []).append(pc)
 
     out: list[CoverageRecord] = []
-    for entity_type, subjects in sorted(subjects_by_class.items()):
-        tracked = sorted(predicates_by_class.get(entity_type, set()))
-        for subject_id in sorted(subjects):
-            for predicate_id in tracked:
-                if (subject_id, predicate_id) in claimed_pairs:
-                    continue
-                out.append(
-                    CoverageRecord(
-                        predicate_id=predicate_id,
-                        absence_kind=_NOT_RESEARCHED,
-                        subject_id=subject_id,
-                        subject_class=entity_type,
-                        searched_by="auto",
-                        search_method="inference.materialize (peer-class negative space)",
-                    )
+    for subject_id in sorted(subject_type):
+        tracked: set[str] = set()
+        for pc in classes_by_type.get(subject_type[subject_id], ()):
+            if subject_connectors[subject_id] & set(pc.connectors):
+                tracked.update(pc.tracked)
+        for predicate_id in sorted(tracked):
+            if (subject_id, predicate_id) in claimed_pairs:
+                continue
+            out.append(
+                CoverageRecord(
+                    predicate_id=predicate_id,
+                    absence_kind=_NOT_RESEARCHED,
+                    subject_id=subject_id,
+                    subject_class=subject_type[subject_id],
+                    searched_by="auto",
+                    search_method="inference.materialize (peer-class negative space)",
                 )
+            )
     return out
 
 
@@ -467,6 +497,7 @@ def materialize_coverage(
     jurisdiction: str | None = None,
     role: str | None = None,
     negative_space: bool = True,
+    peer_classes: Iterable[PeerClass] | None = None,
 ) -> CoverageMaterializeSummary:
     """Materialize honest §32 coverage over the resolved spine (P28.4).
 
@@ -474,7 +505,9 @@ def materialize_coverage(
     reconciliation ratios (§32.5), and the honest negative space (§32.1) as append-only,
     idempotent ``coverage_record`` rows — and NEVER a total or a population estimate
     (SIG-METRIC-008/009/010, enforced by :func:`assert_coverage_row_has_named_denominator`
-    and the DB CHECK). A second call over an unchanged spine inserts +0.
+    and the DB CHECK). The negative space is scoped by the declared peer classes
+    (P31.9 / ADR-115; ``peer_classes`` overrides the shipped declaration, tests only).
+    A second call over an unchanged spine inserts +0.
     """
     if role:
         conn.execute(f"SET ROLE {role}")
@@ -493,7 +526,9 @@ def materialize_coverage(
             skipped_existing += 1
 
     if negative_space:
-        for record in read_negative_space(conn, jurisdiction=jurisdiction):
+        for record in read_negative_space(
+            conn, jurisdiction=jurisdiction, peer_classes=peer_classes
+        ):
             absences_considered += 1
             row = absence_row(record)
             if _insert_coverage(conn, row):
