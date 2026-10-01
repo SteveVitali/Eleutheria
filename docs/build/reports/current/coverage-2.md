@@ -1,0 +1,72 @@
+# link-out: coverage (page 2/2)
+
+| requirement | domain | verdict | assessed_at | supersedes |
+|---|---|---|---|---|
+| SIG-OPS-003 | hosted | MISSING | 2026-10-01 | — |
+| SIG-OPS-004 | hosted | MISSING | 2026-10-01 | — |
+| SIG-OPS-005 | hosted | MISSING | 2026-10-01 | — |
+| SIG-OPS-006 | hosted | MISSING | 2026-10-01 | — |
+| SIG-OPS-007 | hosted | MISSING | 2026-10-01 | — |
+| SIG-OPS-008 | hosted | MISSING | 2026-10-01 | — |
+| SIG-OPS-009 | hosted | MISSING | 2026-10-01 | — |
+| SIG-OPS-010 | hosted | MISSING | 2026-10-01 | — |
+| SIG-OPS-011 | hosted | MISSING | 2026-10-01 | — |
+| SIG-OPS-012 | hosted | MISSING | 2026-10-01 | — |
+| SIG-PUB-007 | public | AT-RISK-INTEGRATION | 2026-10-01 | — |
+| SIG-PUB-008 | public | WAIVED(ADR-163) | 2026-10-01 | — |
+| SIG-PUB-012 | composed-db | PARTIAL | 2026-10-01 | — |
+| SIG-PUB-014 | implementation | MET | 2026-10-01 | — |
+| SIG-PUB-014b | implementation | MET | 2026-10-01 | — |
+| SIG-PUB-015 | public | PARTIAL | 2026-10-01 | — |
+| SIG-PUB-016 | public | MISSING | 2026-10-01 | — |
+| SIG-RECON-018 | hosted | AT-RISK-INTEGRATION | 2026-10-01 | — |
+| SIG-RECON-039 | public | PARTIAL | 2026-10-01 | — |
+| SIG-RECON-040 | public | AT-RISK-INTEGRATION | 2026-10-01 | — |
+| SIG-RECON-052 | implementation | PARTIAL | 2026-10-01 | — |
+| SIG-REL-001 | public | MISSING | 2026-10-01 | — |
+| SIG-REL-002 | public | MISSING | 2026-10-01 | — |
+| SIG-REL-003 | public | MISSING | 2026-10-01 | — |
+| SIG-REL-004 | public | MISSING | 2026-10-01 | — |
+| SIG-REL-005 | public | MISSING | 2026-10-01 | — |
+| SIG-REL-006 | public | MISSING | 2026-10-01 | — |
+| SIG-REL-007 | public | MISSING | 2026-10-01 | — |
+| SIG-REL-008 | public | MISSING | 2026-10-01 | — |
+| SIG-REL-009 | public | MISSING | 2026-10-01 | — |
+| SIG-REL-010 | public | MISSING | 2026-10-01 | — |
+| SIG-REL-011 | public | MISSING | 2026-10-01 | — |
+| SIG-REL-012 | public | MISSING | 2026-10-01 | — |
+| SIG-REL-013 | public | MISSING | 2026-10-01 | — |
+| SIG-REL-014 | implementation | MISSING | 2026-10-01 | — |
+| SIG-REL-015 | public | MISSING | 2026-10-01 | — |
+| SIG-SEC-003 | public | MISSING | 2026-10-01 | — |
+| SIG-SEC-005 | hosted | PARTIAL | 2026-10-01 | — |
+| SIG-SEC-006 | hosted | PARTIAL | 2026-10-01 | — |
+| SIG-SEC-007 | hosted | MISSING | 2026-10-01 | — |
+| SIG-SEC-008 | hosted | MISSING | 2026-10-01 | — |
+| SIG-SEC-009 | hosted | MISSING | 2026-10-01 | — |
+| SIG-SEC-010 | hosted | MISSING | 2026-10-01 | — |
+| SIG-SEC-011 | hosted | MISSING | 2026-10-01 | — |
+| SIG-STORE-004 | implementation | PARTIAL | 2026-10-01 | — |
+| SIG-STORE-005 | implementation | PARTIAL | 2026-10-01 | — |
+| SIG-STORE-011 | composed-db | WAIVED(ADR-189) | 2026-10-01 | — |
+| SIG-STORE-013 | composed-db | MET | 2026-10-01 | — |
+| SIG-STORE-037 | implementation | PARTIAL | 2026-10-01 | — |
+| SIG-STORE-044 | implementation | PARTIAL | 2026-10-01 | — |
+| SIG-STORE-045 | implementation | PARTIAL | 2026-10-01 | — |
+| SIG-STORE-048 | hosted | MISSING | 2026-10-01 | — |
+| SIG-TRUST-004 | hosted | MET-ENGINEERED(D-P32.3-1) | 2026-10-01 | — |
+| SIG-TRUST-007 | hosted | MET-ENGINEERED(D-R10-LIVE-1) | 2026-10-01 | — |
+| SIG-TRUST-008 | hosted | MET-ENGINEERED(D-R10-LIVE-1) | 2026-10-01 | — |
+| SIG-TRUST-009 | public | MET-ENGINEERED(D-R10-PUBLISH-1;D-P32.23a-1;D-R10-LIVE-1;D-P32.16-1) | 2026-10-01 | — |
+| SIG-TRUST-010 | public | MET-ENGINEERED(D-R10-HUMAN-1;D-P32.23a-1) | 2026-10-01 | — |
+| SIG-UI-001 | public | PARTIAL | 2026-10-01 | — |
+| SIG-UI-010 | implementation | MET | 2026-10-01 | — |
+| SIG-UI-022 | public | WAIVED(ADR-190) | 2026-10-01 | — |
+| SIG-UI-038 | implementation | MET | 2026-10-01 | — |
+| SIG-UI-040 | implementation | MET-DIFFERENTLY(ADR-108;ADR-133) | 2026-10-01 | — |
+| SIG-UI-040 | implementation | MET-DIFFERENTLY | 2026-10-01 | SIG-UI-040:r11-1 |
+| SIG-UI-042 | public | WAIVED(ADR-179) | 2026-10-01 | — |
+| SIG-UI-047 | implementation | MET | 2026-10-01 | — |
+- historical CSV: 777 dated rows in `docs/build/COVERAGE_MATRIX.csv` (labelled `historical/csv`, preserved verbatim)
+
+← back: CURRENT.md
