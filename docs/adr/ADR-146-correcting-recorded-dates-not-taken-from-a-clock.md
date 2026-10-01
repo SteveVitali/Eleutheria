@@ -274,3 +274,23 @@ undeployed on hosted per the run ledgers (`live_verification=false`; F-14) and d
 - A tooling change reintroduces a manual date input without G1, or G1 is weakened, disabled or allow-listed beyond an
   expiring entry.
 - The expiring L44–52 allow-list entry reaches 2026-10-19T21:00Z.
+
+## Clarification (2026-10-01T16:54:25Z)
+
+Appended by Claude Code (Opus 5.5), Stage-B sub-agent SEED-15 (Round 11, T4); the record above is not rewritten. It
+resolves a conflict between Decision 5 and the record policy for `db/sqitch.plan` (CARRY: SEED-13c).
+
+- **What the record says:** Decision 5's third bullet permits "a pointer comment above a line" (a standalone `#` line
+  changes no change id; B1 §5.7) and places these "sqitch comment corrections" with the B1 code ticket (P34.22a/b).
+- **What holds:** `docs/build/tools/record_policy/history.policy` declares `append-only db/sqitch.plan` — the plan only
+  gains lines at its end — and the history guard (`docs/build/tools/memory_guard.py`, `judge_policy_ao`; the skill's
+  `check-history.sh`) reports any line inserted before the end of that file as a violation. **No comment, pointer or
+  other line is inserted above any `db/sqitch.plan` line**, by P34.22a/b or any other row. A correction to a sqitch
+  line's recorded date is made only by appended record: this ADR's table "`db/sqitch.plan` (18 lines; none is edited)",
+  the date-correction register (`docs/build/reports/memory-repair/date_corrections.csv`), and, where a ticket needs to
+  say more, an appended amendment in its own ADR text — consistent with `history.policy`'s C-10 note ("their true dates
+  are corrected by appended record only").
+- **Effect on the rest of this ADR:** none beyond that bullet. L41–52 are never edited or re-stamped; new plan lines
+  still append at the end of the file with `planned_at` not later than their commit (from `sqitch add` or `date -u`);
+  the expiring L44–52 allow-list entry (until 2026-10-19T21:00Z) is unchanged. A ticket contract that still names the
+  comment form (P34.22a/b) reads through this clarification.

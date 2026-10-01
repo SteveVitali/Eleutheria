@@ -516,3 +516,70 @@ def test_assessment_supersedes_other_scope_fails(tmp_path: pathlib.Path) -> None
     diags = obligation_events.check_assessments(root, assessments)
     hits = [d for d in diags if "same requirement+domain scope" in d["message"]]
     assert hits
+
+
+# ── the ADR-150 verdict grammar and letter-suffixed ids (SEED-15) ─────────────
+
+
+def test_adr150_verdict_forms_are_accepted(tmp_path: pathlib.Path) -> None:
+    """Every ADR-150 verdict word, with its parameters, is a valid assessment verdict."""
+    root = _tree(tmp_path)
+    ref = ["docs/build/runs/P9.1.md"]
+    verdicts = [
+        ("WAIVED(ADR-153)", "fixture"),
+        ("MET-ENGINEERED(D-T9.1-1;D-T9.1-3)", "implementation"),
+        ("AT-RISK-INTEGRATION", "composed-db"),
+        ("MET-DIFFERENTLY(ADR-108;ADR-133)", "hosted"),
+        ("N/A-RATIONALE", "public"),
+    ]
+    assessments = [
+        _assessment(f"a{i}", "SIG-TST-002", v, dom, ref) for i, (v, dom) in enumerate(verdicts)
+    ]
+    diags = obligation_events.check_assessments(root, assessments)
+    assert not [d for d in diags if d["check"] == "coverage/malformed"], diags
+
+
+def test_off_grammar_verdict_fails(tmp_path: pathlib.Path) -> None:
+    root = _tree(tmp_path)
+    ref = ["docs/build/runs/P9.1.md"]
+    assessments = [
+        _assessment("a1", "SIG-TST-001", "WAIVED", "implementation", ref),
+        _assessment("a2", "SIG-TST-002", "MET-PENDING", "implementation", ref),
+        _assessment("a3", "SIG-MEM-002", "MET-ENGINEERED(ADR-150)", "implementation", ref),
+    ]
+    diags = obligation_events.check_assessments(root, assessments)
+    hits = [d for d in diags if "off the ADR-150 grammar" in d["message"]]
+    assert sorted(d["evidence"] for d in hits) == ["a1", "a2", "a3"]
+
+
+def test_letter_suffixed_requirement_ids_are_spec_ids(tmp_path: pathlib.Path) -> None:
+    """SIG-INGEST-046b-style ids are requirement ids (the spec parser used to drop the suffix)."""
+    root = _tree(
+        tmp_path, {"docs/2_canonical_design_spec.md": SPEC + "**SIG-TST-046b (MUST).** Suffixed.\n"}
+    )
+    ok = [_assessment("a1", "SIG-TST-046b", "MISSING", "hosted", ["docs/build/runs/P9.1.md"])]
+    assert not obligation_events.check_assessments(root, ok)
+    unknown = [_assessment("a1", "SIG-TST-046c", "MISSING", "hosted", ["docs/build/runs/P9.1.md"])]
+    hits = [
+        d
+        for d in obligation_events.check_assessments(root, unknown)
+        if "not a spec id" in d["message"]
+    ]
+    assert hits
+
+
+def test_parameterised_met_differently_is_still_held_to_the_planning_rule(
+    tmp_path: pathlib.Path,
+) -> None:
+    root = _tree(tmp_path)
+    assessments = [
+        _assessment(
+            "a1",
+            "SIG-TST-001",
+            "MET-DIFFERENTLY(ADR-108)",
+            "implementation",
+            ["docs/build/planning/plan.md"],
+        )
+    ]
+    diags = obligation_events.check_assessments(root, assessments)
+    assert [d for d in diags if "planning" in d["message"].lower()]

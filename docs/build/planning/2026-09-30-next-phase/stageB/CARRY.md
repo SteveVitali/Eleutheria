@@ -90,3 +90,9 @@ Items surfaced by seed units that a later unit (or the operator) must resolve. E
 - SEED-13e · **orchestrator decision:** P34.7 stays one row, dispatched as two sequential contexts (part a: deliverables 1,2,6,7; part b: 3,4,5 + PR) — appended to its contract · done
 - SEED-13e · decompose-spec's ≈128k whole-working-set heuristic vs the plan's ≤ ~150k loaded rule — tradeoff recorded in the manifest's Decomposition decisions · HANDOFF note
 - SEED-13e · GATE-B: raise P34.40's `/v1/*` step needing its own go · GATE-B packet
+- SEED-15 · `test_extract_universe.py` (3 tests) compares the extractor against the live DEFERRALS (123 rows vs S1b's frozen 97) — pin it to the S1b snapshot commit (b051732c) instead of the living file · SEED-18 (T6 prep)
+- SEED-15 · `test_real_tree_zero_errors`: 20 errors = seed ADRs citing ticket-authored ADR numbers not yet written (151/156/157/160/161/174–178) → audit must accept numbers recorded as reserved in `docs/adr/README.md` Notes; 6 errors = `203_P35.38a` contract lists dependencies on later rows → fix the contract (later fetching rows depend on 203, not the reverse) · SEED-18
+- SEED-15 · P34.22a/b contracts still describe an in-file sqitch comment that ADR-146's clarification forbids → patch · SEED-18
+- SEED-15 · P34.48's contract should name SIG-UI-040 (re-verdict routed there) · SEED-18
+- SEED-15 · re-run `req_index.py write` after this commit · SEED-18
+- SEED-15 · vendored `check-build-memory.sh` V2 skip matches skip words anywhere in a row (too broad) → upstream note · orchestrator (agent-skills follow-up)

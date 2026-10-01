@@ -18,9 +18,23 @@ Rules (each failure is printed and the exit code is 1):
       merged-into, to a unit in the stage-B seed or the first Round-11 waves (`first_waves`),
       to an operator decision, to already-done evidence, or to a later-wave fix that names a
       first-wave `interim:` mitigation; later-phase only with an explicit trigger; never wontfix;
-  (d) every operator ask U-003.1 ... U-003.11 resolves to at least one seed/R11 ticket;
+  (d) every operator ask U-003.1 ... U-003.11 — and, since T4 (COV-03), the asks recorded only in
+      META_PLAN §7.1 (W2-1 ... W2-6, PF-1 ... PF-3, GM-1; each bound to its verbatim quote) —
+      resolves to at least one seed/R11 ticket;
   (e) every owed deferral (UNIVERSE effective_status OPEN or PARTIAL) has a valid disposition,
-      and a later-phase one names an explicit trigger.
+      and a later-phase one names an explicit trigger;
+  (f) acts on silence (TS-01/TS-02; folded in from the S4c scratch `s4c/check_silence.py`): every
+      decision whose answer_class is own-words or explicit has acts_on_silence = no; a batch line
+      adopts its recommendation on silence only with the design-only declaration; no acting
+      default text remains; no Part A/C/S5 line is batch;
+  (g) no item keeps a `decision(<dec_id>)` disposition once that decision has an operator answer
+      (`operator_answer` + `answered_at`): T4 re-dispositions each to its final kind (plan §9.6).
+
+Round-11 T4 switch (SEED-15; plan §9.1, S2 §2.2, COV-13): rule (c)'s first waves are the units of
+`data/round11_plan.csv` rows with `sub_round` in {11A, 11B} plus the stage-B seed units (their
+`cat_ids` and row ids), and rule (a)'s catalog view adds the plan's own units — a row with no
+catalog entry ("NEW (S2)", "NEW (S4c)") is visible under its row id, and every catalog id an
+11A/11B row names must exist.
 
 Run:  python3 docs/build/planning/2026-09-30-next-phase/tools/check_dispositions.py \
           [--pd DIR] [--csv FILE]
@@ -64,11 +78,86 @@ ENUM = (
     "merged-into",
     "decision",
 )
-CAT_PAT = re.compile(r"^(SEED-\d{2}|R11-[A-Z0-9]+(?:-[A-Za-z0-9.]+)+|OP-\d{2}|LATER-\d{2})$")
+CAT_PAT = re.compile(
+    r"^(SEED-\d{2}|R11-[A-Z0-9]+(?:-[A-Za-z0-9.]+)+|OP-\d{2}|LATER-\d{2}"
+    # Round-11 plan row ids (COV-13: the S2/S4c/S6 units with no catalog entry are visible by row id)
+    r"|P3[4-8]\.\d+[a-z]?|GATE-[A-Z][A-Za-z0-9-]*|PLAN-11[A-D]|REVIEW-R11)$"
+)
+FIRST_WAVE_SUB_ROUNDS = ("11A", "11B")
+# round11_plan.csv kind -> the catalog class a plan-only unit takes in rule (a)'s catalog view
+PLAN_KIND_CLASS = {
+    "ticket": "r11",
+    "gate": "r11",
+    "marker": "r11",
+    "capstone": "r11",
+    "plan": "r11",
+    "reconcile": "r11",
+    "docs": "r11",
+    "review": "r11",
+    "seed": "seed",
+    "operator": "operator",
+    "later": "later",
+}
 DISP_PAT = re.compile(r"^([a-z-]+)\((.+)\)$", re.S)
 OWED = ("OPEN", "PARTIAL")
 SEVERE = ("S0", "S1")
 U003_ASKS = [f"U-003.{i}" for i in range(1, 12)]
+# Asks recorded only in META_PLAN §7.1 (COV-03; plan §9.5), quoted verbatim from it, with the item
+# each one names. T4 adds them to the universe (source_kind feedback) and to rule (d).
+META_ASKS: dict[str, tuple[str, str]] = {
+    "W2-1": (
+        "configure them for ingestion and ingest them into prod",
+        "Scope addition, operator verbatim (2026-09-30, during Wave 2)",
+    ),
+    "W2-2": (
+        "making the data itself easily exportable",
+        "Scope addition, operator verbatim (2026-09-30, during Wave 2)",
+    ),
+    "W2-3": (
+        "explore each third party source",
+        "Scope addition, operator verbatim (2026-09-30, during Wave 2)",
+    ),
+    "W2-4": (
+        "link to the ground truth",
+        "Scope addition, operator verbatim (2026-09-30, during Wave 2)",
+    ),
+    "W2-5": (
+        "download the raw data",
+        "Scope addition, operator verbatim (2026-09-30, during Wave 2)",
+    ),
+    "W2-6": (
+        "see ingestion logs/metrics/timestamps",
+        "Scope addition, operator verbatim (2026-09-30, during Wave 2)",
+    ),
+    "PF-1": (
+        "I want to do all of what you are suggesting, but this work should be planned/specified in "
+        "the next round of tickets, not done now.",
+        "S0 hotfixes (attribution takedown, `/editorial-standards/` fixture review, `/dispute/` notice)",
+    ),
+    "PF-2": (
+        "I want to do all of what you are suggesting, but this work should be planned/specified in "
+        "the next round of tickets, not done now.",
+        "G1 quick actions QA-1…QA-10",
+    ),
+    "PF-3": (
+        "I want to do all of what you are suggesting, but this work should be planned/specified in "
+        "the next round of tickets, not done now.",
+        "`/task/new/` demo pages",
+    ),
+    "GM-1": ("keep me in the loop", "GATE-M"),
+}
+META_ASK_IDS = list(META_ASKS)
+# (f) acts on silence — the S4c scratch rule (TS-01, TS-02), folded in at T4
+SILENCE_CLASSES = ("own-words", "explicit", "batch")
+SILENCE_ACTING = (
+    r"recorded as operator-accepted",
+    r"^U-014 as recorded$",
+    r"^record U-013 wording",
+    r"passing checks only shown",
+    r"placeholder 'a single independent maintainer'",
+    r"GL-GATE-08 stands as recorded",
+)
+ANSWERED_AT = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
 
 # Units that a design row itself places in its first two waves (wave 0/1), before S2 merges the
 # waves. Each block cites the design that says so; first_waves() adds S1a's own landing column,
@@ -145,6 +234,71 @@ def load_decisions(pd: pathlib.Path) -> set[str]:
     return {r["dec_id"] for r in read_csv(pd / "data" / "decision_catalog.csv")}
 
 
+def load_decision_rows(pd: pathlib.Path) -> list[dict]:
+    return read_csv(pd / "data" / "decision_catalog.csv")
+
+
+def load_plan(pd: pathlib.Path) -> list[dict]:
+    """`data/round11_plan.csv` rows (the authoritative Round-11 rows); empty when absent."""
+    path = pd / "data" / "round11_plan.csv"
+    return read_csv(path) if path.exists() else []
+
+
+def plan_cat_ids(row: dict) -> list[str]:
+    return [
+        t.strip() for t in re.split(r"[;,]", row.get("cat_ids", "")) if CAT_PAT.match(t.strip())
+    ]
+
+
+def load_units(pd: pathlib.Path, catalog: dict[str, dict], plan: list[dict]) -> dict[str, dict]:
+    """Rule (a)'s catalog view (COV-13): the ticket catalog plus every plan row under its row id, with
+    the class its `kind` implies — so a row with no catalog entry ("NEW (S2)", "NEW (S4c)") is visible,
+    and a link may name a row (P34.17) as well as its catalog unit (R11-ACT-06)."""
+    units = dict(catalog)
+    for r in plan:
+        rid = r.get("id", "")
+        if rid in units or not CAT_PAT.match(rid):
+            continue
+        cls = PLAN_KIND_CLASS.get(r.get("kind", ""), r.get("kind", ""))
+        units[rid] = {
+            "cat_id": rid,
+            "class": cls,
+            "where_it_must_land": r.get("sub_round", ""),
+            "depends_on": "",
+        }
+    return units
+
+
+def check_silence(decisions: list[dict]) -> list[str]:
+    """(f) acts on silence (TS-01, TS-02): the S4c scratch check, folded in."""
+    err: list[str] = []
+    if decisions and "answer_class" not in decisions[0]:
+        return [
+            "(f) data/decision_catalog.csv has no answer_class column — acts-on-silence not checkable"
+        ]
+    for r in decisions:
+        cls = r.get("answer_class", "")
+        aos = r.get("acts_on_silence", "")
+        if cls not in SILENCE_CLASSES:
+            err.append(f"(f) {r['dec_id']}: answer_class {cls!r}")
+        if cls in ("own-words", "explicit") and aos != "no":
+            err.append(f"(f) {r['dec_id']}: {cls} line acts on silence")
+        if cls == "batch" and aos.startswith("yes") and "no publication" not in aos:
+            err.append(
+                f"(f) {r['dec_id']}: batch line acts on silence without the design-only declaration"
+            )
+        for pat in SILENCE_ACTING:
+            if re.search(pat, r.get("default_if_unanswered", "")):
+                err.append(f"(f) {r['dec_id']}: acting default text remains ({pat})")
+        if r.get("packet_line", "").startswith(("A-", "C-", "S5-")) and cls == "batch":
+            err.append(f"(f) {r['dec_id']}: Part A/C/S5 line marked batch")
+    return err
+
+
+def _norm_ws(text: str) -> str:
+    return re.sub(r"\s+", " ", text)
+
+
 def load_feedback_ids(pd: pathlib.Path) -> list[str]:
     """U-0nn headings plus U-0nn / U-003.n table rows in OPERATOR_FEEDBACK.md, in order, unique."""
     txt = (pd / "feedback" / "OPERATOR_FEEDBACK.md").read_text()
@@ -212,9 +366,26 @@ def load_candidate_groups(pd: pathlib.Path, errors: list[str]) -> dict[str, int]
 
 
 def first_waves(catalog: dict[str, dict], pd: pathlib.Path) -> set[str]:
-    """Seed rows, S1a 'early R11' rows, K13 W0/W1 and the design-designated wave 0/1 units.
+    """Rule (c)'s first waves (T4 switch, plan §9.1 / S2 §2.2): the stage-B seed units and every
+    `data/round11_plan.csv` row with `sub_round` in {11A, 11B} — each row's catalog ids and its row
+    id. Before T4 (no plan file) the S1b provisional view applies (`first_waves_s1b`)."""
+    plan = load_plan(pd)
+    if not plan:
+        return first_waves_s1b(catalog, pd)
+    out: set[str] = set()
+    for r in plan:
+        sub = r.get("sub_round", "")
+        if sub in FIRST_WAVE_SUB_ROUNDS or r.get("kind") == "seed" or sub == "stage-B seed":
+            out.update(plan_cat_ids(r))
+            if CAT_PAT.match(r.get("id", "")):
+                out.add(r["id"])
+    return out
 
-    Their transitive hard prerequisites (`depends_on`) are added too.
+
+def first_waves_s1b(catalog: dict[str, dict], pd: pathlib.Path) -> set[str]:
+    """S1b's provisional first waves (kept for the record; superseded by the T4 switch): seed rows,
+    S1a 'early R11' rows, K13 W0/W1 and the design-designated wave 0/1 units, plus their transitive
+    hard prerequisites (`depends_on`).
     """
     k13_path = pd / "data" / "k13_tickets.csv"
     k13_wave = {r["ticket_id"]: r["wave"] for r in read_csv(k13_path)} if k13_path.exists() else {}
@@ -259,13 +430,29 @@ class Result:
 def check(rows: list[dict], pd: pathlib.Path) -> Result:
     res = Result()
     err = res.errors
-    catalog = load_catalog(pd)
-    decisions = load_decisions(pd)
+    plan = load_plan(pd)
+    if not plan:
+        err.append("(a) data/round11_plan.csv is missing or empty — rules (a) and (c) read it (T4)")
+    catalog = load_units(pd, load_catalog(pd), plan)
+    decision_rows = load_decision_rows(pd)
+    decisions = {r["dec_id"] for r in decision_rows}
     universe = read_csv(pd / "universe" / "UNIVERSE.csv")
     findings = read_csv(pd / "findings" / "FINDINGS.csv")
     feedback = load_feedback_ids(pd)
     groups = load_candidate_groups(pd, err)
     fw = first_waves(catalog, pd)
+    # (a) the plan's catalog view: every catalog id an 11A/11B row names exists (COV-13)
+    plan_visible = 0
+    for r in plan:
+        if r.get("sub_round") not in FIRST_WAVE_SUB_ROUNDS:
+            continue
+        plan_visible += 1
+        for c in plan_cat_ids(r):
+            if c not in catalog:
+                err.append(
+                    f"(a) plan row {r.get('id')} names catalog id {c}, which is not a catalog unit"
+                )
+    res.stats["plan_units_11ab"] = plan_visible
 
     if rows and list(rows[0].keys()) != COLS:
         err.append(f"(a) columns {list(rows[0].keys())} != {COLS}")
@@ -283,6 +470,14 @@ def check(rows: list[dict], pd: pathlib.Path) -> Result:
         expected[f["f_id"]] = ("finding", f["origin_ref"])
     for i in feedback:
         expected[i] = ("feedback", f"feedback/OPERATOR_FEEDBACK.md {i}")
+    meta_path = pd / "META_PLAN.md"
+    meta_text = _norm_ws(meta_path.read_text()) if meta_path.exists() else ""
+    for i, (quote, label) in META_ASKS.items():
+        expected[i] = ("feedback", f"META_PLAN.md §7.1 {i}")
+        if _norm_ws(quote) not in meta_text or _norm_ws(label) not in meta_text:
+            err.append(
+                f"(a) META_PLAN ask {i}: its verbatim quote or item is not in META_PLAN.md §7.1"
+            )
     for g in groups:
         expected[g] = ("candidate_group", "")
     for i, (kind, ref) in expected.items():
@@ -420,8 +615,8 @@ def check(rows: list[dict], pd: pathlib.Path) -> Result:
             )
     res.stats["severe"] = dict(severe_ok)
 
-    # ---- (d) operator asks U-003.1..11
-    for a in U003_ASKS:
+    # ---- (d) operator asks U-003.1..11 + the META_PLAN §7.1 asks (COV-03)
+    for a in U003_ASKS + META_ASK_IDS:
         if a not in parsed:
             err.append(f"(d) operator ask {a} has no disposition")
             continue
@@ -447,6 +642,24 @@ def check(rows: list[dict], pd: pathlib.Path) -> Result:
             )
     res.stats["owed"] = dict(owed_kinds)
     res.stats["owed_n"] = len(owed)
+
+    # ---- (f) acts on silence (S4c, folded in)
+    err.extend(check_silence(decision_rows))
+    res.stats["silence_n"] = len(decision_rows)
+
+    # ---- (g) answered decisions leave no item at decision(...) (plan §9.6)
+    answered = {
+        r["dec_id"]: r
+        for r in decision_rows
+        if r.get("operator_answer", "").strip() and ANSWERED_AT.match(r.get("answered_at", ""))
+    }
+    stale = [i for i, (kind, arg, _r) in parsed.items() if kind == "decision" and arg in answered]
+    for i in stale:
+        err.append(
+            f"(g) {i} still reads decision({parsed[i][1]}) although the operator answered it at "
+            f"{answered[parsed[i][1]]['answered_at']} — re-disposition it to its final kind (T4, plan §9.6)"
+        )
+    res.stats["decision_items"] = sum(1 for k, _a, _r in parsed.values() if k == "decision")
     res.stats["rows"] = len(rows)
     res.stats["by_kind"] = dict(Counter(r["source_kind"] for r in rows))
     res.stats["first_waves"] = len(fw)
@@ -468,7 +681,14 @@ def main(argv: list[str] | None = None) -> int:
     for e in res.errors:
         print("ERROR", e)
     s = res.stats
-    print(f"rows {s.get('rows')} {s.get('by_kind')}; first-wave units {s.get('first_waves')}")
+    print(
+        f"rows {s.get('rows')} {s.get('by_kind')}; first-wave units {s.get('first_waves')} "
+        f"(11A/11B plan rows {s.get('plan_units_11ab')})"
+    )
+    print(
+        f"decisions checked for acts-on-silence {s.get('silence_n')}; items still at decision(...) "
+        f"{s.get('decision_items')}"
+    )
     print(
         f"S0/S1 resolution {s.get('severe')}; owed deferrals {s.get('owed_n')} -> {s.get('owed')}"
     )

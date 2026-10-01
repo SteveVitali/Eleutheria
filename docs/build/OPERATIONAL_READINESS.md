@@ -361,3 +361,14 @@ the trigger.
 
 **Scheduled (not a deferral):** `SIG-MEM-004` — owner **P33.8** (manifest row
 200): `implement-spec spec=docs/tickets/200_P33.8__round10-agent-docs-refresh.md live_verification=false` when the chain reaches it — docs refresh after P33.5–P33.7 land.
+
+## Addendum — DATE CORRECTION (SEED-15, appended 2026-10-01T16:55:17Z; ADR-146; append-only)
+
+- *Agent record (labelled): written by Claude Code, harness `claude-code/claude-opus-5-5/subagent`, Round-11 Stage-B
+  unit SEED-15.* The lines above are not edited. The row maps a date this record carries that was not taken from a clock
+  to the true time (git committer time of the signing commit; the operator confirmed the date at GATE-P, C-1 / Q-B1-2),
+  per the date-correction register `docs/build/reports/memory-repair/date_corrections.csv` (carry item β/14a).
+
+| corr | line | recorded → true (UTC) | evidence | register rec |
+|---|---|---|---|---|
+| DC-OR-01 | L266 | GATE-G3 signature: recorded 2026-10-19 → true 2026-09-28T03:49:14Z (spec Appendix G.7.4 R11-C1; ADR-146 event row 33) | G3SIGN: commit `95c8a73f` "docs(build): GATE-G3 signed …" (committer 2026-09-27T23:49:46-04:00 = 2026-09-28T03:49:46Z) | 210 |

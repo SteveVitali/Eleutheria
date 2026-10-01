@@ -73,12 +73,24 @@ companions: _TEMPLATE.md
 | 3 | `161_P9.1__c.md` | 9 | c |
 | 4 | `P00.9__later.md` | 0 | a legacy-named ticket inserted late |
 """
-MANIFEST_R11 = MANIFEST + "\n### Round 11 — wave 1\n\n| 5 | `201_P10.1__d.md` | 10 | d |\n"
+ROUND11_ROWS = "\n### Round 11 — wave 1\n\n| 5 | `201_P10.1__d.md` | 10 | d |\n"
+# The seed's manifest: the unlanded rows below the first Round-11 row carry an appended gate-cell
+# `superseded-by(…)` token (plan §8.6; rows 184–187 in the real manifest), so V2 skips them.
+MANIFEST_R11 = (
+    MANIFEST.replace("| 9 | c |", "| 9 | c · **superseded-by(P10.1)** |").replace(
+        "| 0 | a legacy-named ticket inserted late |",
+        "| 0 | a legacy-named ticket inserted late · deferred(D-P9.1-1) |",
+    )
+    + ROUND11_ROWS
+)
 
 SPEC = "**SIG-TST-001 (MUST).** One requirement. See ADR-001.\n"
+# The Round-11 matrix header: the twelve P19.2 columns + the four build-memory 0.5.0 columns
+# (ADR-150 D2; check_coverage_matrix.HEADER, SEED-15).
 COVERAGE = (
-    "id,level,spec_section,class,verdict,evidence,owning_tickets,tests,adrs,risk_rows,routing,note\n"
-    "SIG-TST-001,MUST,§1,covered+tested,MET,t,P00.1,t,ADR-001,—,—,n\n"
+    "id,level,spec_section,class,verdict,evidence,owning_tickets,tests,adrs,risk_rows,routing,note,"
+    "required_domain,achieved_domain,owed_legs,accepted_scope\n"
+    "SIG-TST-001,MUST,§1,covered+tested,MET,t,P00.1,t,ADR-001,—,—,n,,,,\n"
 )
 
 # The Round-11 seed shape of CURRENT STATE (B3 §3.4; skill 0.5.0 layout
@@ -235,7 +247,7 @@ def test_owed_row_without_backlog_home_is_error(tmp_path: pathlib.Path) -> None:
 
 
 def test_coverage_nonmet_without_routing_is_error(tmp_path: pathlib.Path) -> None:
-    bad_cov = COVERAGE + "SIG-TST-002,MUST,§1,unreferenced,PARTIAL,,P9.1,,,—,—,n\n"
+    bad_cov = COVERAGE + "SIG-TST-002,MUST,§1,unreferenced,PARTIAL,,P9.1,,,—,—,n,,,,\n"
     spec = SPEC + "**SIG-TST-002 (MUST).** Second.\n"
     diags, _ = audit_current_state.audit(
         _tree(
@@ -285,8 +297,92 @@ def test_round11_values_only_cursor_resolves(tmp_path: pathlib.Path) -> None:
         "ledger/next-landed",
         "ledger/index-ahead",
         "ledger/done-uncovered",
+        "ledger/next-not-lowest",
     ):
         assert check not in checks, [d for d in diags if d["check"] == check]
+
+
+def test_v2_next_ticket_must_be_the_lowest_open_row(tmp_path: pathlib.Path) -> None:
+    """V2 (B3 §6; COV-14): with rows 3 and 4 neither landed nor superseded, a cursor that jumps
+    to the Round-11 row is an error naming the row the build actually owes next."""
+    root = _tree(
+        tmp_path,
+        {
+            "docs/build/LEDGER.md": LEDGER_R11,
+            "docs/tickets/00_MANIFEST.md": MANIFEST + ROUND11_ROWS,
+            "docs/tickets/201_P10.1__d.md": "- **Depends on:** P00.2\n",
+        },
+    )
+    diags, _ = audit_current_state.audit(root)
+    hits = _by_check(diags, "ledger/next-not-lowest")
+    assert [d["obligation"] for d in hits] == ["P10.1"]
+    assert "lowest open row: P9.1" in hits[0]["evidence"]
+
+
+def test_v2_skips_superseded_deferred_unused_and_human_rows(tmp_path: pathlib.Path) -> None:
+    """Each skip form on its own takes a row out of the order: a superseded-by(…) or deferred(…)
+    gate token, an `unused` row, and a HUMAN marker row."""
+    manifest = (
+        MANIFEST.replace("| 9 | c |", "| 9 | c · unused |").replace(
+            "| 4 | `P00.9__later.md` | 0 | a legacy-named ticket inserted late |",
+            "| 4 | `HUMAN-H9__review.md` | 0 | human review |",
+        )
+        + ROUND11_ROWS
+    )
+    root = _tree(
+        tmp_path,
+        {
+            "docs/build/LEDGER.md": LEDGER_R11,
+            "docs/tickets/00_MANIFEST.md": manifest,
+            "docs/tickets/201_P10.1__d.md": "- **Depends on:** P00.2\n",
+            "docs/tickets/HUMAN-H9__review.md": "# human\n",
+        },
+    )
+    diags, _ = audit_current_state.audit(root)
+    assert not _by_check(diags, "ledger/next-not-lowest")
+
+
+def test_v2_superseded_token_only_counts_in_the_gate_cell(tmp_path: pathlib.Path) -> None:
+    """A description that merely mentions supersession does not skip the row."""
+    manifest = (
+        MANIFEST.replace("| 9 | c |", "| 9 | superseded-by(x) mentioned | c |").replace(
+            "| 0 | a legacy-named ticket inserted late |", "| 0 | x | deferred(D-P9.1-1) |"
+        )
+        + ROUND11_ROWS
+    )
+    root = _tree(
+        tmp_path,
+        {
+            "docs/build/LEDGER.md": LEDGER_R11,
+            "docs/tickets/00_MANIFEST.md": manifest,
+            "docs/tickets/201_P10.1__d.md": "- **Depends on:** P00.2\n",
+        },
+    )
+    diags, _ = audit_current_state.audit(root)
+    assert [d["evidence"] for d in _by_check(diags, "ledger/next-not-lowest")] == [
+        "nextTicket: P10.1; lowest open row: P9.1"
+    ]
+
+
+def test_v2_done_when_every_row_landed_or_skipped(tmp_path: pathlib.Path) -> None:
+    ledger = LEDGER_R11.replace("nextTicket: P10.1", "nextTicket: DONE")
+    index = (
+        "| # | ticket | x | evidence |\n|---|---|---|---|\n"
+        "| 1 | P00.1 | t | `runs/P00.1.md` |\n"
+        "| 2 | P00.2 | t | `runs/P00.1.md` |\n"
+        "| 5 | P10.1 d-ticket | t | `runs/P00.1.md` |\n"
+    )
+    root = _tree(
+        tmp_path,
+        {
+            "docs/build/LEDGER.md": ledger,
+            "docs/build/BUILD_INDEX.md": index,
+            "docs/tickets/00_MANIFEST.md": MANIFEST_R11,
+            "docs/tickets/201_P10.1__d.md": "- **Depends on:** P00.2\n",
+        },
+    )
+    diags, _ = audit_current_state.audit(root)
+    assert not _by_check(diags, "ledger/next-not-lowest")
 
 
 def test_round11_cursor_naming_no_chain_row_is_error(tmp_path: pathlib.Path) -> None:

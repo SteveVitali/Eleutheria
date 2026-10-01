@@ -176,6 +176,10 @@ UNIT_META: dict[str, tuple[str, str, str, str]] = {
 #  * into the later phase: U-0039 D-P30.2b-1 (plan §9.2: "D-P30.2b-1 → … stays OPEN, non-blocking,
 #    T-EVAL-IND (LATER-01)"; §15 LATER-01 "also closes D-P30.2b-1");
 INTO_LATER: dict[str, tuple[str, str]] = {"D-P30.2b-1": ("LATER-01", "D-P30.2b-1")}
+#  * the same re-disposition once T4 (SEED-15, plan §9.6) has written it into UNIVERSE_DISPOSED.csv: the row
+#    reads `later-phase(…)` and its rationale records "T4 re-disposition … was decision(<dec_id>)". It is
+#    still reported as re-dispositioned from that decision, and not counted as later-phase at S1b.
+_T4_REDISPOSED_RE = re.compile(r"T4 re-disposition \(SEED-15[^)]*\): was decision\(([^()]+)\)")
 #  * into Round 11 by a note in round11_plan.csv (LATER-09: "S6: tribal (B-32 S8) … channels … moved into
 #    Round 11"): the tribal candidate group, whose later-phase trigger (a tribal-data-governance rule) B-32 /
 #    I7-S8 = a removed. round11_plan.csv names no landing row for it.
@@ -323,6 +327,11 @@ def build(data: dict) -> dict:
                 status = "moved into Round 11"
                 landing = _moved_landing(moved[unit]["sub_round"])
                 basis = f"{unit}: round11_plan.csv sub_round '{moved[unit]['sub_round']}'"
+            elif _T4_REDISPOSED_RE.search(r.get("rationale", "")):
+                dec_id = _T4_REDISPOSED_RE.search(r["rationale"]).group(1)
+                ans, _ = _answer(data, dec_id)
+                status, basis = "later (re-dispositioned from decision)", f"{dec_id} = {ans}"
+                dec = [dec_id] + [d for d in dec if d != dec_id]
             elif r["item_id"] in INTO_ROUND_BY_NOTE:
                 dec_id, note_unit, needle, where = INTO_ROUND_BY_NOTE[r["item_id"]]
                 note = data["plan"].get(note_unit, {}).get("notes", "")
@@ -533,7 +542,12 @@ def render_csv(data: dict, model: dict) -> str:
 
 def counts(data: dict, model: dict) -> dict[str, int]:
     items = model["items"]
-    s1b_later = sum(1 for r in data["universe"] if r["disposition"].startswith("later-phase"))
+    s1b_later = sum(
+        1
+        for r in data["universe"]
+        if r["disposition"].startswith("later-phase")
+        and not _T4_REDISPOSED_RE.search(r.get("rationale", ""))
+    )
     moved_in = sum(1 for it in items if it["status"] == "moved into Round 11")
     into_later = sum(1 for it in items if it["status"].startswith("later (re-dispositioned"))
     recorded = sum(1 for it in items if it["status"].startswith("later"))

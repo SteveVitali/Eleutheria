@@ -90,9 +90,25 @@ def test_landing_enum_accepts_real_landings() -> None:
         "P25+",
         "accepted",
         "human-gate:HG-09",
+        # Round 11 (SEED-15): multi-digit rows and letter-suffixed tickets
+        "closed-by:P31.16",
+        "P34.48",
+        "P37.16a",
+        "closed-by:P32.23a",
+        "P39+",
     ):
         assert check_backlog.LANDING_RE.match(good), good
-    for bad in ("later", "TBD", "closed-by:X", "P1.2", "human-gate:HG-9", "", "P24"):
+    for bad in (
+        "later",
+        "TBD",
+        "closed-by:X",
+        "P1.2",
+        "human-gate:HG-9",
+        "",
+        "P24",
+        "P34.4AB",
+        "P34.",
+    ):
         assert not check_backlog.LANDING_RE.match(bad), bad
 
 
@@ -205,3 +221,82 @@ def test_every_owed_deferral_cites_a_bl_home() -> None:
             continue
         cited = set(re.findall(r"BL-\d{3}", ln))
         assert cited <= rows, f"{ln[:60]}… cites non-existent BL rows: {cited - rows}"
+
+
+# --- Round 11 (SEED-15): the open-home rule and RISK-id uniqueness --------------
+
+
+def test_open_home_rule_needs_an_open_bl_row(tmp_path) -> None:
+    """An owed row homes only on an open BACKLOG row; an appended `(cites BL-nnn)` re-homing
+    annotation homes a row whose original cite closed (rows are append-only)."""
+    fake = tmp_path / "DEFERRALS.md"
+    fake.write_text(
+        "| id | obligation | status |\n|---|---|---|\n"
+        "| D-X-1 | owed | OPEN (cites BL-001) |\n"
+        "| D-X-2 | owed | OPEN (cites BL-002) · re-homed 2026-10-01: (cites BL-001) |\n"
+        "| D-X-3 | owed | PARTIAL (cites BL-002) |\n"
+        "| D-X-4 | owed | OPEN (cites BL-003) |\n"
+        "| D-X-5 | done | DONE (cites BL-002) |\n"
+    )
+    status = {"BL-001": "open", "BL-002": "closed", "BL-003": "accepted"}
+    homed, unhomed = check_backlog.deferral_open_homes(fake, status)
+    assert homed == ["D-X-1", "D-X-2"]
+    assert unhomed == ["D-X-3", "D-X-4"]
+
+
+def test_adr_trigger_homes_follow_the_trigger_state() -> None:
+    owner = {
+        "ADR-001": "BL-001",
+        "ADR-002": "BL-002",
+        "ADR-003": "BL-003",
+        "ADR-004": "BL-002",
+        "ADR-005": "BL-003",
+    }
+    status = {"BL-001": "open", "BL-002": "accepted", "BL-003": "closed"}
+    register = [
+        {"adr": "ADR-001", "state": "fired-unanswered", "home": "BL-001"},  # open home: any state
+        {
+            "adr": "ADR-002",
+            "state": "fired-answered(P34.1)",
+            "home": "BL-002",
+        },  # monitor home: answered ok
+        {"adr": "ADR-003", "state": "quiet", "home": "BL-003"},  # closed home: quiet ok
+        {
+            "adr": "ADR-004",
+            "state": "fired-unanswered",
+            "home": "BL-002",
+        },  # monitor home: unanswered no
+        {
+            "adr": "ADR-005",
+            "state": "fired-answered(P34.1)",
+            "home": "BL-001",
+        },  # closed home + home mismatch
+    ]
+    problems = check_backlog.adr_home_problems(
+        ["ADR-001", "ADR-002", "ADR-003", "ADR-004", "ADR-005", "ADR-006"], owner, status, register
+    )
+    joined = "; ".join(problems)
+    assert "ADR-004: home BL-002 is 'accepted' while the trigger is 'fired-unanswered'" in joined
+    assert "ADR-005: ADR_TRIGGERS.csv home 'BL-001' != BACKLOG owner BL-003" in joined
+    assert "ADR-005: home BL-003 is 'closed' while the trigger is 'fired-answered'" in joined
+    assert not any(p.startswith(("ADR-001", "ADR-002", "ADR-003")) for p in problems)
+    assert len(problems) == 3  # ADR-006 has no BACKLOG owner: reported as unmapped elsewhere
+
+
+def test_risk_ids_unique_unless_a_rename_record_resolves_them(tmp_path) -> None:
+    reg = tmp_path / "risk_register.md"
+    reg.write_text(
+        "## Phase 5\n\n### Scaffolded\n\n| RISK-P5-04 → BL-017 | a |\n| RISK-P5-09 | b |\n\n"
+        "### Partly retired\n\n| RISK-P5-04 | c |\n| RISK-P5-09 | d |\n\n"
+        "## Round 11 review\n\n### Corrections, closures and re-routes\n\n"
+        "| RISK-P5-04 (second occurrence) | **Renamed RISK-P5-04a by this record.** |\n"
+        "| RISK-P5-09 | restated in a corrections table, not a definition |\n"
+    )
+    assert check_backlog.risk_id_duplicates(reg) == ["RISK-P5-09"]
+
+
+def test_real_register_has_unique_risk_ids_and_open_deferral_homes() -> None:
+    assert check_backlog.risk_id_duplicates(check_backlog.RISK) == []
+    status = {r["bl_id"]: r["status"] for r in _rows()}
+    homed, unhomed = check_backlog.deferral_open_homes(DEFERRALS, status)
+    assert homed and not unhomed, unhomed

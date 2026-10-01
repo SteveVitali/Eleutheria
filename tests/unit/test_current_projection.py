@@ -85,9 +85,12 @@ DEFERRALS = (
 )
 
 SPEC = "**SIG-TST-001 (MUST).** One requirement. See ADR-001.\n"
+# The Round-11 matrix header: twelve P19.2 columns + the four build-memory 0.5.0 columns
+# (ADR-150 D2; check_coverage_matrix.HEADER, SEED-15).
 COVERAGE = (
-    "id,level,spec_section,class,verdict,evidence,owning_tickets,tests,adrs,risk_rows,routing,note\n"
-    "SIG-TST-001,MUST,§1,covered+tested,MET,e,P00.1,t,ADR-001,—,—,n\n"
+    "id,level,spec_section,class,verdict,evidence,owning_tickets,tests,adrs,risk_rows,routing,note,"
+    "required_domain,achieved_domain,owed_legs,accepted_scope\n"
+    "SIG-TST-001,MUST,§1,covered+tested,MET,e,P00.1,t,ADR-001,—,—,n,,,,\n"
 )
 
 FUNNEL = """# evidence domains + funnel

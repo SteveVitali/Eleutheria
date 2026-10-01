@@ -240,3 +240,14 @@ assert all(hashlib.sha256(pre[int(r["line_at_pre"]) - 1]).hexdigest()[:12] == r[
 print(len(rows), "anchors ok")
 PY
 ```
+
+## Note — `pending_transitions.csv` grew after the seed write (SEED-15, appended 2026-10-01T16:55:41Z; append-only)
+
+The **Files** table above records the header-only seed write of `pending_transitions.csv` (154 B, sha256
+`084eab61…7ebde7`, 0 data rows) and is not edited. SEED-14a then appended five `queue` rows, `PT-001`…`PT-005`
+(commit `cac65a17`, committer time 2026-10-01T16:10:52Z), as this README's own "SEED-14 appends" note foresaw; the
+file at this note is 2674 B with 5 data rows, sha256 `3d94b3a7fa89e1d801f227237803573cab02547e76502de135192690d773b404`. The recorded digest therefore no longer matches by
+design: the queue only grows (P34.8 appends `applied` / `withdrawn` rows), so the current digest is read from the file,
+not from this README.
+
+    shasum -a 256 docs/build/reports/memory-repair/pending_transitions.csv

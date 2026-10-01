@@ -312,6 +312,34 @@ def test_redispositions_follow_the_operator_answers(tmp_path: Path) -> None:
     assert "1 candidate groups (5 candidates)" in row_line(deferrals(root), "D-R11-LATER-09")
 
 
+def test_a_t4_redisposition_reads_the_same_as_the_pre_t4_decision(tmp_path: Path) -> None:
+    """Once T4 (SEED-15, plan §9.6) writes D-P30.2b-1's re-disposition into the universe — the row reads
+    later-phase(…) and its rationale records "was decision(D-P30.2b-1)" — the register is byte-identical
+    to the one generated from the pre-T4 decision(…) row: same status, basis, date and S1b count."""
+    before = make_tree(tmp_path / "before")
+    write(before)
+    after = make_tree(tmp_path / "after")
+    rows = universe_rows()
+    for r in rows:
+        if r["item_id"] == "U-0039":
+            r["disposition"] = "later-phase(T-EVAL-IND (§11.3))"
+            r["disposition_ref"] = "LATER-01"
+            r["rationale"] = (
+                "x · T4 re-disposition (SEED-15, 2026-10-01T16:00:00Z; plan §9.6): was decision(D-P30.2b-1); "
+                "operator answer …"
+            )
+    (after / f"{PD}/universe/UNIVERSE_DISPOSED.csv").write_text(
+        _csv(UNI_COLS, rows), encoding="utf-8"
+    )
+    write(after)
+    rel = "docs/build/reports/later-register"
+    for name in ("LATER_REGISTER.md", "later_register.csv"):
+        assert (after / rel / name).read_text(encoding="utf-8") == (before / rel / name).read_text(
+            encoding="utf-8"
+        ), name
+    assert deferrals(after) == deferrals(before)
+
+
 def test_cells_never_carry_a_pipe(tmp_path: Path) -> None:
     root = make_tree(tmp_path)
     write(root)

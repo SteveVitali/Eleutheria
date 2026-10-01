@@ -17,6 +17,23 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import check_dispositions as cd  # noqa: E402
 
 ASKS = [f"U-003.{i}" for i in range(1, 12)]
+DEC_COLS = [
+    "dec_id",
+    "answer_class",
+    "acts_on_silence",
+    "default_if_unanswered",
+    "packet_line",
+    "operator_answer",
+    "answered_at",
+]
+DEC_BASE = {
+    "answer_class": "explicit",
+    "acts_on_silence": "no",
+    "default_if_unanswered": "non-action / status quo",
+    "packet_line": "A-1",
+    "operator_answer": "",
+    "answered_at": "",
+}
 
 
 def _write(path: pathlib.Path, cols: list[str], rows: list[dict]) -> None:
@@ -78,7 +95,95 @@ def make_pd(tmp: pathlib.Path) -> pathlib.Path:
         ["ticket_id", "wave"],
         [{"ticket_id": "W1-1", "wave": "W1"}],
     )
-    _write(pd / "data" / "decision_catalog.csv", ["dec_id"], [{"dec_id": "Q-1"}])
+    _write(
+        pd / "data" / "decision_catalog.csv",
+        DEC_COLS,
+        [
+            # Q-1 is unanswered, so an item may still wait on it; Q-2 is answered (rule (g))
+            dict(DEC_BASE, dec_id="Q-1"),
+            dict(
+                DEC_BASE,
+                dec_id="Q-2",
+                operator_answer="a — yes",
+                answered_at="2026-10-01T04:00:00Z",
+            ),
+        ],
+    )
+    # round11_plan.csv (T4 switch): 11A/11B rows and the seed are the first waves; P34.47 is a
+    # "NEW (S2)" row with no catalog entry, visible under its row id (COV-13)
+    _write(
+        pd / "data" / "round11_plan.csv",
+        ["row", "id", "cat_ids", "sub_round", "kind"],
+        [
+            {
+                "row": "1",
+                "id": "SEED-11",
+                "cat_ids": "SEED-11",
+                "sub_round": "stage-B seed",
+                "kind": "seed",
+            },
+            {
+                "row": "2",
+                "id": "SEED-12",
+                "cat_ids": "SEED-12",
+                "sub_round": "stage-B seed",
+                "kind": "seed",
+            },
+            {
+                "row": "201",
+                "id": "P34.1",
+                "cat_ids": "R11-ACT-06",
+                "sub_round": "11A",
+                "kind": "ticket",
+            },
+            {
+                "row": "202",
+                "id": "P34.2",
+                "cat_ids": "R11-K13-W1-1",
+                "sub_round": "11A",
+                "kind": "ticket",
+            },
+            {
+                "row": "203",
+                "id": "P34.47",
+                "cat_ids": "NEW (S2)",
+                "sub_round": "11A",
+                "kind": "capstone",
+            },
+            {
+                "row": "261",
+                "id": "P35.1",
+                "cat_ids": "R11-PRE-01",
+                "sub_round": "11B",
+                "kind": "ticket",
+            },
+            {
+                "row": "341",
+                "id": "P36.1",
+                "cat_ids": "R11-LATE-01",
+                "sub_round": "11C",
+                "kind": "ticket",
+            },
+            {
+                "row": "601",
+                "id": "LATER-01",
+                "cat_ids": "LATER-01",
+                "sub_round": "later",
+                "kind": "later",
+            },
+        ],
+    )
+    (pd / "META_PLAN.md").write_text(
+        "# meta\n\n### 7.1 Decisions recorded at GATE-M\n\n"
+        + 'Scope addition, operator verbatim (2026-09-30, during Wave 2): *"'
+        + " ".join(cd.META_ASKS[a][0] for a in cd.META_ASK_IDS if a.startswith("W2-"))
+        + '"*\n\n'
+        + 'Production-fix decision: *"'
+        + cd.META_ASKS["PF-1"][0]
+        + '"*\n\n'
+        + "".join(f"| {cd.META_ASKS[a][1]} | approved |\n" for a in ("PF-1", "PF-2", "PF-3"))
+        + '\nGATE-M: *"keep me in the\nloop"*\n'
+    )
     _write(
         pd / "universe" / "UNIVERSE.csv",
         ["u_id", "source_kind", "source_ref", "effective_status"],
@@ -182,6 +287,17 @@ def baseline() -> list[dict]:
                 f"feedback/OPERATOR_FEEDBACK.md {a}",
                 "ticket(R11-K13-W1-1)",
                 "R11-K13-W1-1;R11-LATE-01",
+            )
+        )
+    for a in cd.META_ASK_IDS:
+        rows.append(
+            row(
+                a,
+                "feedback",
+                f"META_PLAN.md §7.1 {a}",
+                "ticket(R11-ACT-06)",
+                "R11-ACT-06",
+                links="P34.1",
             )
         )
     return rows
@@ -336,10 +452,28 @@ def test_b_link_tokens_resolve(pd):
 
 
 # ---- (c) S0/S1 placement
-def test_c_first_wave_closure(pd):
+def test_c_first_waves_read_the_plan(pd):
+    """T4 switch: the first waves are the seed and the 11A/11B rows of round11_plan.csv (cat ids and
+    row ids), not the catalog's provisional landing column."""
     fw = cd.first_waves(cd.load_catalog(pd), pd)
+    assert {"SEED-11", "R11-ACT-06", "R11-PRE-01", "R11-K13-W1-1", "P34.1", "P34.47"} <= fw
+    assert "R11-LATE-01" not in fw and "LATER-01" not in fw and "P36.1" not in fw
+
+
+def test_c_s1b_provisional_view_kept_for_the_record(pd):
+    fw = cd.first_waves_s1b(cd.load_catalog(pd), pd)
     assert {"SEED-11", "R11-ACT-06", "R11-PRE-01", "R11-K13-W1-1"} <= fw
     assert "R11-LATE-01" not in fw and "LATER-01" not in fw
+
+
+def test_c_a_unit_the_plan_puts_in_11c_is_not_first_wave(pd):
+    """R11-PRE-01 is a catalog prerequisite of a wave-0 unit (first wave under S1b's closure); the plan
+    puts it in 11B, so it stays first-wave — move it to 11C and an S1 finding landing there fails."""
+    plan = pd / "data" / "round11_plan.csv"
+    plan.write_text(plan.read_text().replace("P35.1,R11-PRE-01,11B", "P35.1,R11-PRE-01,11C"))
+    rows = baseline()
+    rows[2] = dict(rows[2], disposition="ticket(R11-PRE-01)", disposition_ref="R11-PRE-01")
+    assert any(e.startswith("(c) F-01") for e in errs(rows, pd))
 
 
 def test_c_severe_outside_first_waves_fails(pd):
@@ -451,3 +585,87 @@ def test_parse_disposition():
 def test_feedback_ids(pd):
     ids = cd.load_feedback_ids(pd)
     assert ids[0] == "U-001" and ids[1:] == ASKS
+
+
+# ---- T4 (SEED-15): rule (a)'s plan view, the META_PLAN asks, acts-on-silence, answered decisions
+def test_a_plan_rows_are_visible_units(pd):
+    """A "NEW (S2)" plan row with no catalog entry can be named by its row id (COV-13)."""
+    rows = baseline()
+    rows[0] = dict(rows[0], disposition="ticket(P34.47)", disposition_ref="P34.47")
+    assert errs(rows, pd) == []
+
+
+def test_a_plan_row_naming_an_unknown_catalog_id_fails(pd):
+    plan = pd / "data" / "round11_plan.csv"
+    plan.write_text(plan.read_text().replace("P34.2,R11-K13-W1-1", "P34.2,R11-K13-W9-9"))
+    assert any("plan row P34.2 names catalog id R11-K13-W9-9" in e for e in errs(baseline(), pd))
+
+
+def test_a_missing_plan_file_fails(pd):
+    (pd / "data" / "round11_plan.csv").unlink()
+    assert any("round11_plan.csv is missing" in e for e in errs(baseline(), pd))
+
+
+def test_a_meta_asks_are_source_items_bound_to_their_quotes(pd):
+    rows = [r for r in baseline() if r["item_id"] != "W2-5"]
+    assert any(e.startswith("(a) source item W2-5 (feedback)") for e in errs(rows, pd))
+    meta = pd / "META_PLAN.md"
+    meta.write_text(meta.read_text().replace("download the raw data", "download data"))
+    assert any("META_PLAN ask W2-5" in e for e in errs(baseline(), pd))
+
+
+def test_d_meta_asks_need_a_ticket(pd):
+    rows = baseline()
+    i = next(n for n, r in enumerate(rows) if r["item_id"] == "GM-1")
+    rows[i] = dict(
+        rows[i], disposition="already-done(digests sent)", disposition_ref="note.md", links=""
+    )
+    assert any("(d) operator ask GM-1" in e for e in errs(rows, pd))
+
+
+@pytest.mark.parametrize(
+    "change, needle",
+    [
+        ({"answer_class": "explicit", "acts_on_silence": "yes"}, "explicit line acts on silence"),
+        (
+            {"answer_class": "own-words", "acts_on_silence": "maybe"},
+            "own-words line acts on silence",
+        ),
+        (
+            {"answer_class": "batch", "acts_on_silence": "yes — adopts", "packet_line": "B-1"},
+            "without the design-only declaration",
+        ),
+        (
+            {"answer_class": "batch", "acts_on_silence": "no", "packet_line": "A-3"},
+            "Part A/C/S5 line marked batch",
+        ),
+        (
+            {"default_if_unanswered": "recorded as operator-accepted risk"},
+            "acting default text remains",
+        ),
+        ({"answer_class": "guess"}, "answer_class 'guess'"),
+    ],
+)
+def test_f_acts_on_silence(pd, change, needle):
+    _write(pd / "data" / "decision_catalog.csv", DEC_COLS, [dict(DEC_BASE, dec_id="Q-1", **change)])
+    assert any(e.startswith("(f)") and needle in e for e in errs(baseline(), pd))
+
+
+def test_f_batch_design_only_line_may_act_on_silence(pd):
+    ok = dict(
+        DEC_BASE,
+        dec_id="Q-1",
+        answer_class="batch",
+        packet_line="B-1",
+        acts_on_silence="yes — design/process only; no publication, rights or money effect",
+    )
+    _write(pd / "data" / "decision_catalog.csv", DEC_COLS, [ok])
+    assert errs(baseline(), pd) == []
+
+
+def test_g_answered_decision_must_be_redispositioned(pd):
+    rows = baseline()
+    rows[0] = dict(rows[0], disposition="decision(Q-2)", disposition_ref="Q-2")
+    assert any(e.startswith("(g) U-0001 still reads decision(Q-2)") for e in errs(rows, pd))
+    rows[0] = dict(rows[0], disposition="decision(Q-1)", disposition_ref="Q-1")
+    assert not any(e.startswith("(g)") for e in errs(rows, pd))
