@@ -64,3 +64,9 @@ Items surfaced by seed units that a later unit (or the operator) must resolve. E
 - SEED-13b · Load counts include a 16 KiB DEFERRALS allowance; re-measure at dispatch (OM rule) · SEED-17 OPERATING MODE
 - SEED-13b · requirement→ticket index across all 60 11A rows + fresh-context Phase-4 sizing review · SEED-13e
 - SEED-13b · stricter windows chosen where row text and plan §8.4/§10.2 disagree (P34.3, P34.4, P34.6); P34.13 `/terms` redirect ships only with notice N-7; P34.4 `gh workflow disable reingest.yml` is a named mutation · note in HANDOFF
+- SEED-13c · ADR-146 Decision 5 allows a comment above a sqitch plan line, but `history.policy` only allows end-of-file additions → append a clarification to ADR-146 (corrections to sqitch lines are appended amendments / ADR text only; no in-file comment) · SEED-15
+- SEED-13c · P34.18's hosted rename can't use a new sqitch change before P34.46 deploys L44–52 → existing tables or wait (ADR-178 decides in-ticket) · noted in contract
+- SEED-13c · ticket-authored engineering ADRs take the next free number at dispatch (≥ ADR-191; e.g. P34.21a qualifying ADR-095, P34.24a) — OPERATING MODE rule · SEED-17
+- SEED-13c · P34.21b leg-level deps on P34.18 + P34.21a recorded in its contract; add a Plan-extensions note if row-level ordering is needed (row 221 P34.18 precedes P34.21b anyway) · SEED-13e verify order
+- SEED-13c · PLAN-11B ≈104k loaded + ≈56k written per 12-row batch → batches of 8–10 · PLAN-11B contract already notes; SEED-13e sizing review confirms
+- SEED-13c · P34.26 expects the ADR-124 allow DEFERRALS row from SEED-14 · SEED-14a
