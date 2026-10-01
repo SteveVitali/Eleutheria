@@ -30,6 +30,22 @@ the export gate closed**. The connector may still run for internal research; the
 published. *(Discharges OL-14.2-02 — "do not discover after launch that a key dataset cannot
 legally be redistributed.")*
 
+**Round-11 amendment (A-4, A-7, A-8, A-9, B-33, B-34; ADR-167, ADR-169, ADR-183; recorded
+2026-10-01).** A source's rights are resolved for this requirement only by a recorded rights
+decision. In Round 11 that decision is the operator's own determination, recorded and labelled as
+such — no counsel was consulted and none is claimed (ADR-167; the counsel clauses are waived, see
+the SIG-LIC-009 note) — under the rights basis the operator stated at GATE-P: GL-GATE-07
+re-confirmed in their adopted words, "US public records and open-licence sources flip batch-wide
+under precedent, erring on the side of approving." (A-7, GATE-P log round 3, 2026-10-01T04:03:25Z;
+chosen over the recommendation); the ≈8,088 express-terms rows already public kept under the
+operator's acceptance (A-8; ADR-183), each with its captured terms and basis disclosed; new
+non-commercial sources published as facts and pointers only (A-9); non-US database-right rows
+flipped on the operator-accepted precedent and published under SIG-PUB-017 (B-34); share-alike
+sources in share-alike compartments (B-33; the §42.3 note). **Guardrails:** a rights decision never
+clears a Part VIII flag; a rights-holder objection triggers withdrawal by new claim; flips are
+executed by the operator per wave. **Unchanged:** a source with no recorded rights decision is
+`UNDETERMINED` and fails the export gate closed.
+
 ### 42.2 SIG's own licences
 
 **SIG-LIC-004a (MUST).** The export architecture MUST be an **N-compartment model keyed on the
@@ -110,6 +126,15 @@ SIG-original evidence graph under CC-BY-4.0.
 layer requires SIG to give its operator attributions back in a form OSM contributors can use —
 which is what P5 and OL-22.6-01 want anyway. The licence enforces the federation compact.
 
+**Round-11 amendment (B-33; ADR-169; recorded 2026-10-01).** The operator answered B-33 "SA
+compartment; territories=US (Recommended)" (GATE-P log round 16, 2026-10-01T04:46:04Z): the RB-06b
+sources — share-alike licensed (CC-BY-SA, ODbL) and all Part VIII-flagged — are published in the
+share-alike compartment matching their licence under SIG-LIC-004a's N-compartment model
+(incompatible regimes never share a compartment and none is merged into the CC-BY graph), each only
+after its Part VIII screen line. SIG-LIC-006 is otherwise unchanged: its "physically separate table"
+clause is not amended (Appendix G.7.5) — separation holds at the export boundary today (compartment
+stamping and the export licence gate), and the stored-table split stays owed.
+
 ### 42.3a The contribution licence conflict, and its resolution
 
 **SIG-LIC-007a (MUST).** The subset of SIG-authored data that is offered upstream to OSM MUST be
@@ -156,6 +181,18 @@ the risk register: whether API responses returning device-linked claims constitu
 a Derivative Database under **ODbL clause 4.4(b)**; whether jurisdiction geometry sourced from OSM boundary
 relations contaminates the operator property under the Collective Database fourth bullet; the
 correct regional-cut unit; and the EU sui generis database right for the international phase.
+
+**Round-11 waiver — WV-07, the counsel-referral clause (ADR-182; recorded 2026-10-01).** The
+operator waived "MUST be referred to counsel before launch" in their adopted sentence recorded in
+ADR-182 (A-23 part 1, GATE-P log round 9; agent-drafted, adopted by the operator at
+2026-10-01T04:28:49Z; sha256 `c5a71e9d7fd9…`); where Round 11 needs a decision on these questions it
+rests on the operator's recorded determination, labelled as such (ADR-167; the ODbL map basis,
+ADR-170). **Stands:** "MUST appear in the risk register" — the four questions stay open
+risk-register rows, and the live exposures are carried as plan §14 R-19 (express-terms rows) and
+R-20 (database right on non-US rows). **Compensating controls:** the label on every rights artifact
+that no lawyer's written opinion has been obtained; no counsel claim anywhere. **Revisit
+(ADR-182):** counsel obtained; a first legal demand; a rights holder objecting to a recorded
+determination.
 
 ### 42.4 Export-time computation
 
@@ -281,6 +318,19 @@ adds discipline for the unusual ones.
 
 **SIG-PUB-008 (MUST).** **Two independent reviewers MUST concur in writing.** Disagreement defaults
 to **no-publish**. The decision, its reasoning, and its reviewers MUST be recorded.
+
+**Round-11 waiver — WV-03, the HG-11 second-reviewer role (ADR-163; recorded 2026-10-01).** This
+requirement stands unamended for naming an individual: nobody is named, a naming decision still
+needs two independent reviewers concurring in writing, and the web naming gate denies by default.
+What the operator waived — in their adopted sentence recorded in ADR-163 (A-23 part 1, GATE-P log
+round 9; agent-drafted, adopted by the operator at 2026-10-01T04:28:49Z; sha256 `44644f6bd6ff…`) —
+is the second-reviewer role at the human publication gate HG-11, for Round-11 releases only: the
+operator alone signs HG-11 and each Class S readout, and every readout states "single maintainer, no
+second reviewer" (and, under ADR-152, "no human check performed"). The earlier recorded
+sole-maintainer disposition (`D-P21.4-2`, Appendix G.6.2) is corrected by appended record, never
+edited. **Revisit (ADR-163):** a second independent reviewer becomes available; GATE-ANNOUNCE; the
+end of Round 11; a naming decision is wanted or a published text is found to name an individual; a
+second maintainer.
 
 **SIG-PUB-009 (MUST).** Home addresses are outside the test entirely — never, under any prong
 (SIG-PUB-003).

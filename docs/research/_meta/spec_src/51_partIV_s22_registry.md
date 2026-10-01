@@ -157,6 +157,9 @@ is not permitted (SIG-CHART-032). This is a runtime gate with a test, not a poli
 have been attempted and its outcome recorded **before** a connector is written for it
 (SIG-CHART-033).
 
+**Round-11 status (B-6, Q-E2-12 = a; ADR-171; recorded 2026-10-01).** Not amended and not waived;
+owed as a later-phase obligation — see the outreach-timing note in §35.1.
+
 ### 22.5 The Eyes on Flock dependency
 
 **SIG-INGEST-030 (MUST). — RESOLVED 2026-08-20.** Eyes on Flock exposes a **public,
@@ -178,6 +181,9 @@ already accessible — for three reasons that do not depend on access: ShareAlik
 agreed and correctly rendered; SIG MUST NOT poll faster than the upstream's own refresh
 (SIG-INGEST-030c); and the archival-succession offer (SIG-CONTRIB-013) matters *more* now, not less,
 because this API is a single point of failure for the only lawful route to the portal layer.
+
+**Round-11 status (B-6, Q-E2-12 = a; ADR-171; recorded 2026-10-01).** Not amended and not waived;
+owed as a later-phase obligation — see the outreach-timing note in §35.1.
 
 **SIG-INGEST-030b (MUST).** Historical back-fill MUST use the Internet Archive's captures of the API
 endpoint itself rather than re-deriving history. Because the vendor's own domains are excluded from

@@ -35,6 +35,17 @@ a privacy nicety.
 complied with, and refused, and SHOULD maintain a warrant canary. The response posture for demands
 directed at SIG MUST be documented **before** the first demand arrives.
 
+**Round-11 amendment (A-4, Q-E2-09 = c; ADR-166; recorded 2026-10-01).** SIG meets this requirement
+with a written demand-response posture published on the site — what SIG holds and how it minimises
+what it holds, who receives legal process (the operator, as the interim legal home; the
+SIG-GOV-012/013 note), how preservation requests are handled, the user-notice policy and the
+publication of counts — stated as not legal advice and not reviewed by counsel, and with published
+counts of legal demands received, complied with and refused (counts only; no requester identity or
+case detail). The warrant canary, a SHOULD, is declined: one maintainer cannot guarantee scheduled
+re-publication, a lapsed canary is itself a false signal, and SIG has no counsel to answer the legal
+questions a canary raises. The "before the first demand" clause stays owed until the posture is
+published (P37.8).
+
 ### 44.4 Access control
 
 **SIG-SEC-004 (MUST).** Sensitivity tiers enforced by restrictive RLS; public API role without
@@ -64,10 +75,39 @@ copyright claim.
 **SIG-GOV-002 (MUST).** Intake MUST NOT require identifying the submitter, except where a legal
 demand requires standing.
 
+**Round-11 waiver — WV-05, e-mail-only intake (ADR-180; recorded 2026-10-01).** For Round 11 the
+operator waived one-click, unidentified intake in their adopted sentence recorded in ADR-180 (A-23
+part 2, GATE-P log round 9; agent-drafted, adopted by the operator at 2026-10-01T04:28:49Z; sha256
+`bf1f65d5aaa1…`), with B-8 "Email, no time promises" (GATE-P log round 12, 2026-10-01T04:35:53Z).
+**Waived:** SIG-GOV-001's "reachable in one click from any claim" clause, and SIG-GOV-002 in full
+(an e-mail discloses the sender's address). **Stands:** SIG-GOV-001's public intake channel — the
+e-mail address the dispute page names — accepting all five categories. **Scope:** Round 11.
+**Compensating controls:** the dispute and corrections pages name the intake address, say plainly
+that senders disclose their address, promise no response time and publish the handling priority (the
+SIG-GOV-003 note); every "one-click" and "anonymous" promise is removed and `/intake/` is labelled
+not operating; the intake receiver stays non-operational (`503 receiver_not_operating`); Part VIII
+and safety takedowns are honoured by the operator through the withdrawal barrier. **Revisit
+(ADR-180):** the announcement (a keep/lift answer at GATE-ANNOUNCE); a privacy-harm report, or a
+sender harmed by having had to disclose an address; a public intake form opening; the end of Round
+11; a second maintainer.
+
 ### 45.2 Handling
 
 **SIG-GOV-003 (MUST).** Published SLAs by category, with **privacy-harm and safety claims
 prioritized above all others**, including above factual corrections.
+
+**Round-11 waiver — WV-08, the SLA-time clause (ADR-186; recorded 2026-10-01).** The operator waived
+this requirement's response-time SLAs in their adopted sentence recorded in ADR-186 (S6-F1, GATE-P
+log round 24; agent-drafted, adopted by the operator at 2026-10-01T06:05:22Z; sha256
+`806faae385d9…`). **Waived:** "Published SLAs by category" in so far as an SLA is a response-time
+commitment — no response time is published or promised. **Met differently:** the priority clause —
+the corrections and intake page publishes the handling order: privacy-harm and safety reports first,
+then factual corrections, then everything else, with no time commitment
+(`MET-DIFFERENTLY(ADR-186)`). **Scope:** every intake channel while ADR-186 stands (in Round 11,
+e-mail only — the SIG-GOV-001/002 note). **Compensating controls:** the published order; the e-mail
+notice of WV-05; Part VIII and safety takedowns honoured by the operator through the withdrawal
+barrier (a 15-minute technical withdrawal). **Revisit (ADR-186):** the first public intake form; the
+announcement; a second maintainer.
 
 **SIG-GOV-004 (MUST).** Permitted outcomes: correct; annotate; **suppress from public view while
 retaining internally**; delete entirely; or **refuse with published reasoning**. Refusal MUST be a
@@ -95,6 +135,21 @@ internally under `sealed` tier, with the decision, its author, and its rationale
 **SIG-GOV-008 (MUST).** True deletion MUST be reserved for material SIG must not hold at all, MUST
 require two-person authorization, and MUST leave a tombstone recording that a deletion occurred,
 its category, and its date — never its content.
+
+**Round-11 waiver — WV-06, the two-person clause only (ADR-181; recorded 2026-10-01).** The operator
+waived two-person authorisation for true deletion in their adopted sentence recorded in ADR-181
+(A-23 part 2, GATE-P log round 9; agent-drafted, adopted by the operator at 2026-10-01T04:28:49Z;
+sha256 `dbf7a851e9d5…`; chosen over the recommendation to keep it owed). **Waived:** "MUST require
+two-person authorization" — the operator alone may authorise a true deletion. **The scope clause and
+the tombstone clause stand unchanged:** true deletion is reserved for material SIG must not hold at
+all, and every deletion leaves a tombstone recording that a deletion occurred, its category and its
+date — never its content; everything outside that scope is suppressed (SIG-GOV-007), not deleted.
+**Compensating controls:** each deletion needs the operator's in-ticket go naming the material, is
+never pre-authorised and never initiated or run by an agent without that go; it is logged publicly
+with its reason in the editorial decision log; the mechanism keeps an internal audit record of the
+authorisation and the act; a claim row can be removed only through the one operator-only purge
+function (the SIG-STORE-011 note; WV-11, ADR-189). **Revisit (ADR-181):** a second maintainer; a
+contested deletion; a deletion requested for material outside this requirement's scope.
 
 **SIG-GOV-009 (MUST).** This is why evidence-store Object Lock is **governance mode, not compliance
 mode** (SIG-EVID-006): compliance mode would make SIG's archive unimpeachable *and* make legitimate
@@ -126,6 +181,18 @@ contributors personally.
 **SIG-GOV-013 (MUST).** SIG MUST identify legal-defence resources appropriate to public-interest
 research and journalism **before** they are needed.
 
+**Round-11 waiver — WV-01, SIG-GOV-012 and SIG-GOV-013 (ADR-165; recorded 2026-10-01).** The
+operator waived both requirements "for now" in their adopted sentence recorded in ADR-165 (A-23 part
+1, GATE-P log round 9; agent-drafted, adopted by the operator at 2026-10-01T04:28:49Z; sha256
+`b9dc5a9128ac…`). **Waived:** establishing a fiscal sponsor or nonprofit before launch (SIG-GOV-012)
+and identifying retained legal-defence resources before they are needed (SIG-GOV-013). SIG's legal
+home is the operator as an individual, disclosed on the site; there is no fiscal sponsor, nonprofit
+or incorporated entity. **Compensating controls:** the disclosure on the site, in wording the
+operator confirms verbatim, which describes the operator no further than the adopted sentence does
+until the operator writes that text themselves; public legal-defence referral routes listed (listing
+contacts no one), none retained. **Revisit (ADR-165):** the announcement; a first legal demand;
+funding; a second maintainer.
+
 ### 46.2 Decision-making
 
 **SIG-GOV-014 (MUST).** A published governance document MUST define: who decides schema, ruleset,
@@ -135,6 +202,18 @@ and dispute resolution.
 **SIG-GOV-015 (MUST).** An **editorial board** MUST exist for contested claims, officer-naming
 decisions (§43.4), and sensitivity classifications, distinct from the technical maintainers. These
 are editorial judgments and should not be made by whoever happens to hold commit access.
+
+**Round-11 waiver — WV-02, the editorial board (ADR-164; recorded 2026-10-01).** The operator waived
+this requirement in their adopted sentence recorded in ADR-164 (A-23 part 1, GATE-P log round 9;
+agent-drafted, adopted by the operator at 2026-10-01T04:28:49Z; sha256 `bee2cd2b1501…`): the
+operator holds interim single-maintainer editorial authority over contested claims and sensitivity
+classifications, disclosed and never presented as a board. **Compensating controls:** a public,
+append-only editorial decision log recording every naming, sensitivity and contested-claim decision
+(and every true deletion or purge, as a tombstone entry); officer and person naming stays off and
+the web naming gate denies by default (SIG-PUB-008 stands); the Part VIII invariants in code; the
+disclosure that no board exists. SIG-GOV-014 is not waived. **Revisit (ADR-164):** a second
+maintainer; a naming or sensitivity decision contested publicly; naming of an individual wanted; a
+legal-home entity or fiscal sponsor; the operator authorising outside contact.
 
 **SIG-GOV-016 (MUST).** SIG MUST document how it resists capture by any single funder, ideology, or
 vendor interest, including a policy on funding sources it will not accept.
@@ -200,5 +279,8 @@ seeded from recovered, individually re-verified URLs rather than from names (SIG
 disappearance is a recorded event rather than a retryable error (SIG-INGEST-009); and the archival
 offer is made *before* it is needed, because after is too late. **The projects SIG depends on are
 more fragile than the vendors SIG documents.**
+
+**Round-11 status (B-6, Q-E2-12 = a; ADR-171; recorded 2026-10-01).** Not amended and not waived;
+owed as a later-phase obligation — see the outreach-timing note in §35.1.
 
 ---

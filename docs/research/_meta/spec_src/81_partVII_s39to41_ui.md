@@ -129,6 +129,18 @@ ego-network from a selected entity, with matrix and arc views as alternatives.
 
 **SIG-UI-022 (MUST).** Default view is an **ego network with expansion**, not a global graph.
 
+**Round-11 note on SIG-UI-021 and SIG-UI-022 (A-11, D-K0-6; ADR-158; recorded 2026-10-01).** The
+operator decided that the "global graph" is a set of aggregated overview graphs, not a raw national
+node-link graph (D-K0-6 "yes", riding A-11 "Overviews + egos (Recommended)", GATE-P log round 5,
+2026-10-01T04:09:43Z). Read with these two requirements: any national or otherwise global graph view
+MUST be an aggregated overview — at most 3,000 nodes, aggregated by construction (nationwide access
+sharing as a state × state matrix, the matrix view SIG-UI-021 names), descriptive only (no
+centrality, ranking or labelled communities), carrying the ER-quality disclosure (SIG-UI-023) and
+drilling down to entity ego networks — offered as one of the alternative views SIG-UI-021 allows; it
+is never a national node-link hairball. Both requirements stand unchanged, including SIG-UI-022's
+default ego view: letting an overview replace the ego network as the explorer's default would weaken
+SIG-UI-022 and is not adopted (Appendix G.7.5).
+
 **SIG-UI-023 (MUST).** Every centrality or hub statistic MUST carry an **ER-quality disclosure**
 inline (P6, SIG-IDENT-030). If entity resolution is imperfect, so is every network statistic, and
 the UI must say so where the statistic appears, not in a footnote.
@@ -213,6 +225,11 @@ page MUST be public and linked from every dossier.
 affordance including the as-of pair and the ruleset version. A citation of SIG made today MUST
 remain reproducible after SIG corrects itself (SIG-TIME-008).
 
+**Round-11 amendment (J3 draft D23; ADR-162; recorded 2026-10-01).** The permalink MUST be an
+immutable, release-bound URL carrying the release id — a site-snapshot `/s/<pub>/…` or record
+`/r/<pub>/…` path — and a legacy as-of selector (`?as_of_world=&as_of_belief=&ruleset=`) MUST
+resolve at the edge to a real release or answer 400, 404 or 409, never current content.
+
 **SIG-UI-049 (MUST).** The public surface MUST present a coherent national **information
 architecture**: a **grouped, uncluttered, keyboard-accessible** navigation (not a flat undifferentiated
 link bar); a real **national landing page** that summarises the dataset with **named denominators and
@@ -232,6 +249,13 @@ opt-in interactive islands**. Rationale: SIG pages will be archived, cited in fi
 from web archives years later. A framework whose *default* is no client JavaScript makes
 archivability structural — breaking it requires an explicit, greppable directive — rather than a
 discipline that erodes.
+
+**Round-11 amendment (A-12; ADR-155; recorded 2026-10-01).** The rationale above stands. "Opt-in
+interactive islands" now reads "opt-in enhancement governed by the page-type registry and per-type
+budgets of SIG-UI-050; record and print pages ship no client JavaScript". The operator chose
+HTML-first page types at A-12 ("HTML-first page types (Recommended)" over "Keep three islands",
+GATE-P log round 5, 2026-10-01T04:09:43Z). The default stays static and script-free; every script is
+an explicit, budgeted, greppable opt-in.
 
 **SIG-UI-037 (MUST).** Core content MUST be usable **without JavaScript**. Every map MUST have a
 tabular equivalent; every graph MUST have a list equivalent. This is simultaneously an
@@ -270,6 +294,25 @@ still ship zero client JavaScript** (SIG-UI-036). Adding a fourth public island,
 island's no-JS fallback, changes this named set only by a new ADR (SIG-ENG-003), never a silent
 edit.
 
+**Round-11 amendment (A-12; ADR-155; recorded 2026-10-01).** This requirement's named-island rule is
+changed by the new ADR it names as its change path — ADR-155, which supersedes the named-island rule
+of ADR-091 §3–4 and ADR-097 §2–3 and §6 and leaves ADR-068 unchanged — decided by the operator at
+A-12 ("HTML-first page types (Recommended)" over "Keep three islands", GATE-P log round 5,
+2026-10-01T04:09:43Z). From Round 11 the requirement reads: every public route MUST be classified in
+one page-type registry as T0 record and print, T1 content, T2 explore or T3 tool, and a built route
+that matches no type MUST fail the build. T0 pages MUST contain no script element. T1 pages MUST
+render every fact without JavaScript (the JavaScript-off text equals the JavaScript-on text) and MAY
+load approved, framework-free enhancement elements within the T1 budget, never render-blocking. T2
+surfaces — exactly three: the map, the graph explorer and search — MUST encode citable state in the
+URL (`sig.workspace-state/2`), paint a server-rendered first view in a reserved box, and link a
+complete no-JavaScript equivalent (tables, lists, GET forms, static SVG); progressive enhancement,
+never replacement, as above. T3 is `/curate/**` (ADR-068), never published. Budgets are declared per
+page type and measured in CI (SIG-UI-041). Adding a T2 surface or a browser runtime dependency, or
+raising a budget, is a new ADR, never ad hoc. The sentence "every other public page MUST still ship
+zero client JavaScript" now holds for T0 pages; on T1 pages it is replaced by the no-JS parity rule
+and the T1 budget — a relaxation the operator chose at A-12 through the change path this requirement
+names (Appendix G.7 R11-A3).
+
 **SIG-UI-039 (MUST).** Every dependency MUST be OSI-licensed. Non-commercial (CC-BY-NC),
 source-available, and dual BUSL licences MUST be excluded — this rules out several popular graph
 and search components, and the exclusion MUST be checked in CI, not by memory.
@@ -290,6 +333,24 @@ stance of the documented organization's counsel, log every sentence they would c
 off. The review, its findings, and their disposition MUST be committed alongside the template
 version. Release is blocked until every finding is dispositioned.
 
+**Round-11 waiver — WV-04, the release block (ADR-179; recorded 2026-10-01).** The operator waived
+this requirement's release block in their adopted sentence recorded in ADR-179 (A-23 part 2, GATE-P
+log round 9; agent-drafted, adopted by the operator at 2026-10-01T04:28:49Z; sha256
+`2a0339a96d57…`). **Waived:** "before release" and "Release is blocked until every finding is
+dispositioned" — a dossier template version may be released while its hostile-reader review is
+recorded truthfully as not yet performed. **Stands and stays owed:** the review itself as defined —
+two independent readers in the documented organization's counsel stance, every challenged sentence
+logged, sign-off, and the review, findings and dispositions committed with the template version;
+nothing may present a review that did not happen. **Scope:** every release while ADR-179 stands.
+**Compensating controls:** `/editorial-standards/` states that the review has not yet been performed
+and shows no reviewer names, date or "releasable" verdict; a truthful zero-reviewer record no longer
+fails the web build and the fixture review is removed; any finding raised against a dossier is
+listed as a known issue until dispositioned; no claim of adversarial or independent review anywhere;
+every Class S readout states "single maintainer, no second reviewer" (the SIG-PUB-008 note) and "no
+human check performed" (ADR-152). **Revisit (ADR-179):** a hostile reader becomes available;
+GATE-ANNOUNCE (a keep/lift answer in the operator's words); a documented organization or its counsel
+disputing a dossier sentence.
+
 *Rationale (not itself testable).* The standard being approximated is that a police chief or vendor
 counsel reading their own dossier should find it accurate, neutral, and hard to attack. That is not
 politeness — it is the property that makes the work usable as evidence. The recorded review above is
@@ -307,6 +368,14 @@ the testable proxy.
 
 **SIG-UI-044 (MUST).** Every page MUST carry a "How we know this" module: artifact counts, tier
 distribution, source-independence count, date range, rules applied, and human-review status.
+
+**Round-11 amendment (D-K14-6, accepted with the B-22 batch "Accept all five (Recommended)", GATE-P
+log round 11, 2026-10-01T04:33:54Z; recorded 2026-10-01).** The module is shown in full on record
+pages. On every other page it MAY be collapsed to a one-line summary visible by default, with the
+full, page-specific module — all six fields — on the same page one action away and usable without
+JavaScript (a disclosure element). Every page still carries the module; a link to another page does
+not satisfy this requirement. *(Agent reading, labelled: "one action away" is read as on the same
+page, matching the K14 test design — collapsed by default, fields checked on expand.)*
 
 **SIG-UI-045 (MUST).** Example conformant copy for the three hardest cases:
 

@@ -372,6 +372,18 @@ infrastructure and organizational behavior, not ordinary people's movements (OL-
 infrastructure, modeled completely enough that the ontology naturally generalizes to broader
 surveillance technology** (OL-16-01, OL-24-13).
 
+**Round-11 amendment (A-17, Q-E2-22 = a; ADR-172; recorded 2026-10-01).** The operator ratified the
+product direction with Q-E2-22 = a (A-17 "Ratify; fetch vendor pages", GATE-P log round 6,
+2026-10-01T04:16:29Z; the recorded answer: "a — SIG-CHART-025 amended to US-nationwide
+multi-vendor/multi-technology breadth with per-class and per-geography quality labels"). From Round
+11 this requirement reads: SIG's releases MUST cover U.S.-nationwide surveillance infrastructure
+across vendors and technology classes — coverage priority US-nationwide Flock, Axon and other
+vendors — and MUST label coverage quality per technology class and per geography on the public
+surface, so that breadth is never read as depth. Unchanged: the ontology MUST generalise beyond ALPR
+(SIG-CHART-027, SIG-CHART-028). The "first release" framing above is historical (the live release is
+national and international and covers every camera type, E2-20); non-US data stays, labelled, with
+US-first priority (ADR-173). Plan §5.10 classes this amendment as non-weakening.
+
 The wedge is chosen because twelve conditions hold simultaneously (OL-16-02): rich OSM device
 data; a DeFlock contributor ecosystem; Flock portal data; Eyes on Flock; HIBF; ALPR Watch;
 historical Vigilant/EFF data; an active public-records movement; current procurement activity;
@@ -476,6 +488,9 @@ governing dispositions:
 outreach (§Phase 0, §35.1) MUST have been attempted and its outcome recorded in the compact —
 including the outcome "no response", which is itself a recorded state that determines the
 permitted ingestion posture.
+
+**Round-11 status (B-6, Q-E2-12 = a; ADR-171; recorded 2026-10-01).** Not amended and not waived;
+owed as a later-phase obligation — see the outreach-timing note in §35.1.
 
 ---
 

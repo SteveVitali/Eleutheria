@@ -149,6 +149,14 @@ observation-level count is never presented as a deduplicated device census; cros
 are labelled as shared observation groups, never silently merged. *(Fold-back of ADR-092's launch
 resolution posture — compute-on-read plus honest observation-level framing.)*
 
+**Round-11 amendment (F-34; ADR-099, ADR-101, ADR-153; recorded 2026-10-01).** The disclosure duty
+above stands for both kinds of count. The fold-back's compute-on-read posture is superseded for the
+resolved layer by ADR-099 and ADR-101: a resolution-backed count reads materialized resolution
+decision records (SIG-STORE-014), and the observation-level framing remains the honest fallback
+where no materialized decision exists. Under Round 11's derivation-not-identity policy only
+mechanically verified copies collapse (SIG-CONF-004); inferential matches are published as possible
+duplicates and the affected counts as intervals (SIG-CONF-005), never as a deduplicated census.
+
 ---
 
 ## 30. The inference layer
@@ -314,6 +322,12 @@ absolute days. A two-year-old contract date is fresh; a two-year-old active coun
 **SIG-METRIC-007 (MUST).** A public data-freshness page MUST show, per source: last successful
 run, last content change, current status, and the count of entities whose evidence is stale for
 their predicate class. A freshness dashboard is itself a trust affordance.
+
+**Round-11 amendment (J3 draft D07; ADR-162; recorded 2026-10-01).** The page MUST also distinguish
+cadence (declared, next scheduled day, observed), freshness state (computed by the same function
+that drives alerting) and predicate volatility (with not-evaluable counts), and "last content
+change" MUST mean a change of the upstream content digest — a run whose digest is unchanged never
+moves it.
 
 ### 32.5 Completeness estimation — and why capture–recapture is prohibited
 

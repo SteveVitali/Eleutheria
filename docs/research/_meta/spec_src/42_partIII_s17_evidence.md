@@ -97,6 +97,10 @@ evidentiary presentation, as separate captures of the same artifact.
 | `restricted` | Lawfully held, redistribution limited by licence or sensitivity | Access-controlled | Public | Redacted |
 | `sealed` | Contains material SIG must not expose (unredacted PII, sealed records, material under a takedown hold) | Access-controlled, audited | **Metadata-only public representation** | None |
 
+**Round-11 amendment (J3 NEW-2; ADR-162; recorded 2026-10-01).** A capture's `storage_tier` MUST be
+derived from its source's redistribution lane and Part VIII class, never defaulted, and the
+derivation MUST precede any public surface that advertises capture bytes.
+
 **SIG-EVID-010 (MUST).** A `sealed` capture MUST still have a **public metadata representation**:
 its existence, source, date, digest, and the claims it supports are public even when its bytes
 are not. *(Discharges OL-13.4-01 and OL-Q31.)* This is what allows SIG to say "we hold the
