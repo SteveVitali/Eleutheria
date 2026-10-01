@@ -59,6 +59,7 @@ from uuid import uuid4
 
 from parsing.locator import Locator
 from policy.sensitivity import SensitivityClass, apply_tier, geo_tier_for
+from resolution.partner_identity import partner_ref_rows
 
 from ._data import load_table
 from .stages import (
@@ -652,6 +653,10 @@ class CameraRegistryEntry:
 # --- the connector ------------------------------------------------------------
 
 
+#: The operator predicate whose text claims gain an entity-ref claim (P31.5).
+_PARTNER_PREDICATES = frozenset({"camera_operator"})
+
+
 @register
 class Dot511Connector(Connector):
     """The `dot_511` connector: state DOT/511 traffic-camera location registries.
@@ -898,7 +903,18 @@ class Dot511Connector(Connector):
         return out
 
     # -- link + load --
-    # link() is inherited (identity): SIG-INGEST-034 — candidate identifiers only.
+    # SIG-INGEST-034: candidate identifiers only; the identity layer decides whether
+    # the registry's operator stands as an organisation (P31.5 / ADR-112).
+
+    def link(self, ctx: RunContext, normalized: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """Append the ``camera_operator`` entity-ref claims (P31.5 / ADR-112).
+
+        The operator is the reviewed publisher name of the registry target, the
+        deployment → organisation edge the P28.6 accountability chain joins on.
+        A composite operator ("King County / WSDOT") names two parties and stays
+        text only.
+        """
+        return partner_ref_rows(normalized, predicates=_PARTNER_PREDICATES)
 
     def load(self, ctx: RunContext, linked: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Produce the L1 rows; the driver asserts them (live only, SIG-INGEST-003)."""

@@ -421,3 +421,73 @@ optimize the repeat-sighting storage since overall data size is small and won't 
   the Round-10 human campaign), P31.19 (`projectStatus` evaluation must treat the moved P31.18 + human campaign as
   Round-10 rows, not Round-9 gate-pending ones), and the §2/§3 dependency sketch (`P31.10 ─► P31.11 ─► P31.17 (human) ─►
   P31.18`).
+
+## 11. Wave B seed 2026-09-25
+
+*(Appended at the Wave-B seed; §0–§10 are kept as written. Where they disagree with this section, this section and the
+seeded contracts in `docs/tickets/` win.)*
+
+**Operator answers (LEDGER § GATE DECISIONS 2026-09-25, "Round 9 Wave B ratification + ops decisions"):** (1) **"Seed Wave
+B, run it"** — rows 146–157 seeded and driven; P31.16 still pauses for HG-11. (2) **"Drop P31.17"** — an Opus-5.5 first
+pass would mostly measure self-consistency (the existing gold labels are Opus-made); the eval stays PROVISIONAL and
+D-R6.1-EVAL stays OPEN until a real human review in Round 10. (3) Second reconnect drill run → **D-P30.4-1 DONE**. (4)
+`sig-api` min-instances=1 (same digest `sha256:21bb9526…`).
+
+**What was seeded** (branch `devin/round9-waveb-seed`, off the P31.4 tip `9152118`):
+
+| row | ticket | base branch | gate |
+|---|---|---|---|
+| 146 | P31.5 `entity-ref-claims-procurement` | `devin/round9-waveb-seed` | — |
+| 147 | P31.6 `access-edges-and-hosted-link-materialization` | `devin/p31-5-entity-ref-claims-procurement` | — |
+| 148 | P31.7 `claim-re-sightings` | `devin/p31-6-access-edges-and-hosted-link-materialization` | — (Q5 answered) |
+| 149 | P31.8 `predicate-registry-legislation-portal` | `devin/p31-7-claim-re-sightings` | — |
+| 150 | P31.9 `negative-space-peer-classes` | `devin/p31-8-predicate-registry-legislation-portal` | — |
+| 151 | P31.10 `camera-site-review-surface` | `devin/p31-9-negative-space-peer-classes` | — (re-scoped) |
+| 152 | P31.11 `review-decisions-into-clustering` | `devin/p31-10-camera-site-review-surface` | — (re-scoped) |
+| 153 | P31.12 `accountability-breadth-federal-uk` | `devin/p31-11-review-decisions-into-clustering` | — |
+| 154 | P31.13 `accountability-breadth-ccops-fema` | `devin/p31-12-accountability-breadth-federal-uk` | — |
+| 155 | P31.14 `presentation-analytics-from-export` | `devin/p31-13-accountability-breadth-ccops-fema` | — |
+| 156 | P31.15 `vector-tiles-and-compression` | `devin/p31-14-presentation-analytics-from-export` | Q8/Q9 answered (no pause) |
+| 157 | P31.16 `rematerialize-reexport-republish` | `devin/p31-15-vector-tiles-and-compression` | **HG-11** (pause) |
+| ~~158~~ | ~~P31.17 `llm-annotation-first-pass`~~ | — | **DROPPED** (operator 2026-09-25) |
+| ~~159~~ | ~~P31.18 `resolution-eval-from-first-principles`~~ | — | **Round 10** |
+| 160 | P31.19 `round9-closeout` | `devin/p31-16-rematerialize-reexport-republish` | — (Q7 = (a)) |
+
+**Re-scopes (nothing in Round 9 depends on a review campaign).**
+
+- **P31.10** is standalone **tooling** for the Round-10 human review: a PG-backed loopback review surface + a seeded
+  stratified sampler (the ~400-pair Q11 design is its default for Round 10). It runs no campaign, needs no decisions,
+  and claims no eval closure; D-R6.1-EVAL and D-P30.2b-1 stay OPEN.
+- **P31.11** consumes whatever `review_decision` rows exist — on hosted, expected **zero** camera-site decisions — and
+  must be correct (and tested) with zero; it lands the within-source duplicate-layer fix (D-P30.2b-3) in full. The
+  "re-run after P31.17 decisions" RETURN PASS is gone; D-P30.2b-1's closure is a Round-10 item.
+- **P31.19** implements Q7 = (a) only, and carries D-R6.1-EVAL (+ the human halves of D-P30.2b-1/-2) as **owned Round-10
+  items** with owner + landing in its sweep — never as a blocker it pretends to close. P31.17 counts as consciously
+  skipped; P31.18 as moved.
+- The §3 dependency line `P31.10 ─► P31.11 ─► P31.17 (human) ─► P31.18` becomes `P31.10 ─► P31.11` in Round 9, with
+  `human review campaign ─► P31.18` in Round 10.
+
+**Wave-A reality folded into the contracts** (re-checked against the landed code at `9152118`):
+
+- **Sink (ADR-110).** The object seam exists (`object_resolver` → `EntityRef`, written as `object_type='entity_ref'`, not
+  `'entity'`); `_DEFAULT_ENTITY_TYPE` is subject-only; partner schemes must join `GUARDED_SCHEMES` with their backfill.
+  `content_digest` does not cover the resolver output, so P31.5 emits a distinct record per entity-ref claim. The
+  duplicate hook exists (`on_duplicates` / `DuplicateBatch`) but no production caller wires it. Its `capture_by_digest`
+  holds the sink's **synthetic per-(source, genre, run)** `evidence_capture` row, so P31.7's uncapped re-sightings are
+  one link per claim per execution, unless its ADR uses `ingest_run_capture` digests.
+- **Streaming + resume + captures (ADR-111).** Per-capture flush; `ingest_run_capture` marks; a resumed execution skips
+  flushed targets. Hosted captures persist to the restricted GCS bucket only **since the 2026-09-25 job roll**, so
+  P31.6's replay-from-evidence covers only sources that have run since then.
+- **Jobs (ADR-111 D6).** Every job is digest-pinned (`sig-ops roll-jobs`, `pin_image_digest`). All 76 `sig-api` jobs,
+  including `sig-sched-camreg-batch-05`, run `sha256:feff986c…`. P31.7 rolls with `--exclude` for batch-05 until the
+  2026-10-10 outcome is recorded (D-P31.4-1). New-source jobs (P31.12/13) are `sig-ops scheduled-ingest` jobs with the
+  capture store, created without re-applying `scheduled-ops.sh` over the existing jobs.
+- **Runs (ADR-109).** Per-execution `ingest_run` + append-only `ingest_run_completion`. P31.16 also runs the
+  `run-completions` step, because the freshness page is its public half (P31.2 did not republish, Q3).
+- **API.** `sig-api` is pooled on `sha256:21bb9526…` with min-instances=1, and D-P30.4-1 is DONE. P31.16's
+  instance-restart observation is therefore a regression check, not a first proof. Neither drill restarted the Cloud SQL
+  instance.
+- **`sig-web`** has no repo-owned deploy path (it was hand-made in P30.3). P31.15 adds one; P31.16 rolls it and retires
+  `/map/points.json`, which closes R8-1.
+- **Disk.** P31.7 and P31.9 read the provisioned disk live (15 GB per ADR-107) instead of assuming it.
+- `ops/Dockerfile` installs against `uv.lock` (P31.2). The next free ADR is **ADR-112**.

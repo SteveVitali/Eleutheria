@@ -136,12 +136,68 @@ def test_strategy_choices_per_predicate_class() -> None:
     assert rs.volatility_class("camera_status") == "FAST"
 
 
+#: The procurement + accountability rows P31.5 registered with an assessed `connector_run`
+#: directness (ADR-112 §6). Explicit, so a later row is not exempted by accident.
+P31_5_ASSESSED = frozenset(
+    {
+        "buyer",
+        "seller",
+        "funder",
+        "recipient",
+        "amount",
+        "currency",
+        "signed_date",
+        "start_date",
+        "end_date",
+        "renewal_options",
+        "products",
+        "quantities",
+        "document",
+        "acquisition_channel",
+        "parent_cooperative_contract",
+        "amends_contract",
+        "lifecycle_transition",
+        "instrument_type",
+        "program_name",
+        "award_date",
+        "period",
+        "conditions",
+        "notice_type",
+        "posted_date",
+        "response_deadline",
+        "title",
+        "description",
+        "place_of_performance",
+        "country",
+        "matched_keyword",
+        "content_term",
+        "event_type",
+        "event_date",
+        "event_organizations",
+        "event_deployments",
+        "event_technologies",
+        "affected_party_class",
+        "proceeding_court",
+        "proceeding_docket_number",
+        "proceeding_case_name",
+        "proceeding_parties",
+        "proceeding_party_role",
+        "proceeding_filed_date",
+        "proceeding_disposition_date",
+        "proceeding_courtlistener_id",
+        "proceeding_recap_id",
+    }
+)
+
+
 def test_pre_existing_predicates_read_d6_for_the_new_genres() -> None:
     # Behaviour-preserving: before P30.2a a claim in these genres was dropped (no
     # directness row); now it is dropped as D6. The assessment is owed (D-P30.2a-1).
+    # P31.5 / ADR-112 assessed the procurement + accountability family it registered;
+    # every other pre-existing row is still D6.
     camera = set(_measured_camera_predicates())
     for pid, row in predicate_registry().items():
-        if pid in camera:
+        if pid in camera or pid in P31_5_ASSESSED:
             continue
         assert row["directness"]["camera_registry"] == "D6", pid
         assert row["directness"]["connector_run"] == "D6", pid

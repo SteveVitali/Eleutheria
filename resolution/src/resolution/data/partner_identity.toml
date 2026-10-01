@@ -1,0 +1,196 @@
+# SPDX-License-Identifier: Apache-2.0
+# The partner-organisation identity rules (P31.5 / ADR-112) — DATA, not code, read by
+# resolution.partner_identity. Bump `version` whenever a rule changes: the version is
+# carried on every entity-ref claim record (`object_ref.rules`), so a rule change is a
+# new claim, never a silent re-identification. Every list is matched against the
+# TOKENS of normalize_org_name(name) (folded, lowercased, punctuation split), and a
+# multi-word entry matches as a contiguous token run.
+#
+# The decision order (resolution.partner_identity.partner_identity):
+#   1. no alphabetic word            -> text only ("not_a_name": an id of unknown scheme)
+#   2. several parties in one string -> text only ("multiple_parties")
+#   3. an individual/sole-trader phrase -> text only ("sole_proprietor", Part VIII)
+#   4. an honorific, a personal suffix or a common given name -> text only
+#                                       ("person_shaped", Part VIII)
+#   5. a role or title word with no institutional head noun ("Sheriff Smith",
+#      "Police Chief Doe") -> text only ("person_shaped"; the officer-naming gate)
+#   6. no distinguishing word (every word generic or an organisation marker:
+#      "Police Department", "Fire Department", "Department of Justice") -> text only
+#      ("generic_name": the same words name a body in every jurisdiction)
+#   7. an organisation marker        -> an organisation
+#   8. one word                      -> text only ("single_word": a bare surname or
+#                                       brand cannot be told apart)
+#   9. anything else                 -> text only ("person_shaped": two or more words
+#                                       with no organisation marker read as a name)
+# Only step 7 mints an organisation. When in doubt the partner stays a text claim: that
+# is the conservative direction for Part VIII. The given-name list leaves out names that
+# are also common place names (Austin, Madison, Charlotte, Jackson, Victoria, ...), so a
+# city or county named that way is not refused by it.
+
+version = "1"
+
+# Raw-string separators that mean the value names more than one party
+# ("King County / WSDOT", "A; B"). Checked on the raw text, before normalization.
+multi_party_separators = ["/", ";", "|", " + "]
+
+# A natural person trading under a name, or a record that says it is an individual.
+individual_phrases = [
+  "dba",
+  "d b a",
+  "doing business as",
+  "trading as",
+  "t a",
+  "sole proprietor",
+  "sole proprietorship",
+  "sole trader",
+  "self employed",
+  "an individual",
+  "private individual",
+  "entrepreneur individuel",
+  "auto entrepreneur",
+  "micro entrepreneur",
+  "family trust",
+  "living trust",
+  "revocable trust",
+  "estate of",
+]
+
+# Honorifics and personal name suffixes (a person, never a body).
+person_tokens = [
+  "mr", "mrs", "ms", "miss", "mx", "dr", "prof", "sir", "dame", "esq",
+  "jr", "sr", "ii", "iii", "iv",
+  "mme", "mlle", "herr", "frau", "sra", "srta",
+]
+
+# Words that never distinguish one organisation from another. A name made only of
+# these ("Police Department", "City", "Unknown", "Various vendors") is too generic
+# to be an identity: it would merge unrelated bodies.
+generic_tokens = [
+  "the", "of", "and", "de", "du", "des", "la", "le", "les", "der", "die", "das",
+  "city", "county", "state", "town", "township", "village", "borough", "parish",
+  "municipality", "municipal", "district", "region", "province", "federal", "national",
+  "government", "public", "department", "office", "agency", "authority", "bureau",
+  "police", "sheriff", "safety", "security", "transportation", "transport",
+  # a bare "Department of <sector>" is every jurisdiction's department: its identity is
+  # the agency-code crosswalk, never the name
+  "justice", "defense", "defence", "homeland", "treasury", "commerce", "interior",
+  "health", "human", "services", "education", "energy", "labor", "labour",
+  "agriculture", "veterans", "affairs", "finance", "revenue", "corrections",
+  "environment", "environmental", "protection", "natural", "resources", "emergency",
+  "management", "information", "technology", "communications", "works", "general",
+  "administration", "ministry", "ministere", "ministerio", "ministerium",
+  "commune", "ville", "mairie", "departement", "gemeinde", "stadt",
+  "vendor", "vendors", "supplier", "suppliers", "contractor", "contractors",
+  "buyer", "purchaser", "company", "inc", "llc", "ltd", "corp", "corporation",
+  "unknown", "various", "multiple", "other", "others", "misc", "miscellaneous",
+  "none", "na", "n", "a", "tbd", "redacted", "confidential", "withheld",
+  # service nouns every jurisdiction's body carries ("Fire Department", "Highway Patrol",
+  # "School District", "Board of Education", "Department of Motor Vehicles")
+  "fire", "rescue", "ems", "highway", "highways", "patrol", "school", "schools",
+  "board", "council", "commission", "housing", "port", "transit", "parks",
+  "recreation", "water", "sewer", "sanitation", "planning", "zoning", "motor",
+  "vehicles", "library", "court", "courts", "jail", "detention", "probation",
+  "parole", "corrections", "traffic", "roads", "streets", "airport", "attorney",
+  "prosecutor", "clerk", "treasurer", "assessor", "coroner", "examiner", "medical",
+  "office", "division", "unit", "section", "branch", "services", "service",
+  "for", "on", "in", "at", "to", "by", "et", "y", "e", "und", "van", "von", "del",
+]
+
+# Organisation markers: legal-form suffixes, public-body words and sector words that
+# a personal name does not carry. One of these (with a distinguishing word, step 5)
+# makes the value an organisation.
+org_tokens = [
+  # legal forms
+  # (two-letter forms that are also name syllables — SA, SE, AG, AS, AB, CO, SL, CV,
+  # LP — are left out: "Kim Se-hoon", "Jose Sa" must never read as companies)
+  "inc", "incorporated", "llc", "llp", "pllc", "ltd", "limited", "plc", "corp",
+  "corporation", "company", "companies", "gmbh", "sas", "sarl", "srl", "oyj", "asa",
+  "aps", "kft", "zrt", "sro", "ooo", "pty", "pte", "bhd", "ltda", "slu",
+  # public bodies
+  "agency", "authority", "board", "bureau", "commission", "council", "county", "city",
+  "town", "township", "village", "borough", "parish", "municipality", "municipal",
+  "district", "department", "ministry", "office", "government", "state", "federal",
+  "national", "public", "police", "sheriff", "constabulary", "patrol", "marshal",
+  "court", "prosecutor", "university", "college", "school", "schools", "academy",
+  "institute", "hospital", "clinic", "library", "port", "airport", "transit",
+  "transportation", "transport", "highway", "highways", "railway", "utility",
+  "utilities", "housing", "administration", "service", "services", "force", "guard",
+  "army", "navy", "commonwealth", "republic", "kingdom", "tribe", "tribal", "nation",
+  # associations and firms
+  "association", "foundation", "trust", "society", "union", "federation",
+  "cooperative", "coop", "consortium", "alliance", "partnership", "partners", "group",
+  "holdings", "enterprise", "enterprises", "industries", "international", "global",
+  "solutions", "systems", "technologies", "technology", "tech", "security", "safety",
+  "surveillance", "communications", "networks", "network", "software", "labs",
+  "laboratories", "analytics", "data", "digital", "electronics", "electric",
+  "engineering", "consulting", "consultants", "contractors", "construction", "supply",
+  "supplies", "products", "manufacturing", "integrators", "integration", "video",
+  "media", "center", "centre",
+  # non-US public bodies (TED / DECP / national registries)
+  "commune", "ville", "mairie", "departement", "prefecture", "ministere", "syndicat",
+  "communaute", "agglomeration", "metropole", "etablissement", "hospitalier",
+  "conseil", "gendarmerie", "stadt", "gemeinde", "landkreis", "kreis", "bezirk",
+  "polizei", "ministerium", "gemeente", "politie", "provincie", "comune", "provincia",
+  "regione", "ayuntamiento", "municipio", "ajuntament", "diputacion", "policia",
+  "ministerio", "concello", "kommune", "kommun", "gmina", "miasto", "powiat", "urzad",
+  "obec", "mesto", "spolka", "agencja", "oddzial", "komenda", "policja", "wojewodztwo",
+  "zarzad", "instytut", "uniwersytet", "szpital", "agence", "agencia", "agenzia",
+  "agentur", "amt", "behorde", "landesamt", "bundesamt", "bundespolizei", "verband",
+  "zweckverband", "direction", "direccion", "direzione", "servicio", "servizio",
+  "consejo", "consiglio", "universidad", "universite", "universita", "hopital",
+  "ospedale", "krankenhaus",
+]
+
+# Role and title words: next to a name they describe a person ("Sheriff John Smith",
+# "Detective Doe"). One refuses unless the name also carries an institutional head noun
+# ("Office of the County Attorney", "Sheriff's Office").
+role_tokens = [
+  "officer", "detective", "det", "sergeant", "sgt", "lieutenant", "lt", "captain",
+  "capt", "cpt", "corporal", "cpl", "trooper", "deputy", "chief", "commissioner",
+  "director", "agent", "inspector", "investigator", "constable", "sheriff", "marshal",
+  "attorney", "prosecutor", "judge", "justice", "mayor", "councilmember", "councilman",
+  "councilwoman", "alderman", "alderwoman", "senator", "representative", "rep",
+  "governor", "manager", "supervisor", "clerk", "secretary", "president", "ceo",
+  "founder", "owner", "principal", "superintendent", "patrolman", "patrolwoman",
+  "chair", "chairman", "chairwoman", "treasurer", "coroner", "examiner",
+]
+
+# Institutional head nouns: with one of these a role word names a body, not a person.
+head_nouns = [
+  "office", "department", "agency", "bureau", "division", "unit", "board",
+  "commission", "council", "court", "courts", "service", "services", "authority",
+  "administration", "ministry", "institute", "association", "corporation", "company",
+  "inc", "llc", "ltd", "government", "district",
+]
+
+# Common given names (US/EU/Latin American/romanized East Asian). A given name in the
+# value reads as a natural person (Part VIII) — "John Smith Consulting", "Law Office of
+# Jane Doe" — and refuses. Names that are also common place names are omitted on purpose.
+given_names = [
+  "aaron", "abigail", "adam", "adrian", "ahmed", "aisha", "alan", "alejandro", "alex",
+  "alexander", "alexandra", "alice", "alicia", "alison", "amanda", "amber", "amy",
+  "andrea", "andrew", "angela", "anita", "ann", "anna", "anthony", "ashley", "benjamin",
+  "betty", "beverly", "bob", "bobby", "bradley", "brandon", "brenda", "brian", "bruce",
+  "bryan", "carl", "carmen", "carol", "caroline", "catherine", "cheryl", "chris",
+  "christian", "christina", "christine", "christopher", "cindy", "claire", "craig",
+  "cynthia", "daniel", "david", "debbie", "deborah", "debra", "denise", "dennis",
+  "diana", "diane", "donald", "donna", "dorothy", "edward", "eleanor", "elena", "emily",
+  "emma", "eric", "ethan", "evelyn", "fatima", "fran", "gary", "gerald", "gloria",
+  "gregory", "hannah", "harold", "heather", "helen", "hiroshi", "isabel", "jack",
+  "jacob", "jamie", "jane", "janet", "janice", "jason", "javier", "jean", "jeffrey",
+  "jennifer", "jeremy", "jessica", "jill", "joan", "joe", "john", "johnny", "jonathan",
+  "jorge", "joshua", "joyce", "judith", "judy", "julia", "julie", "justin", "karen",
+  "katherine", "kathleen", "kathryn", "kathy", "keith", "kelly", "kenneth", "kevin",
+  "kimberly", "kyle", "larry", "laura", "lauren", "linda", "lisa", "margaret", "marie",
+  "marilyn", "martha", "matthew", "megan", "melissa", "michael", "michelle", "mohammed",
+  "muhammad", "nancy", "natalie", "nathan", "nicholas", "nicole", "noah", "olivia",
+  "oscar", "pamela", "patricia", "patrick", "peter", "philip", "rachel", "ralph",
+  "rebecca", "richard", "robert", "roberto", "roger", "ronald", "ruth", "ryan", "samuel",
+  "sandra", "sara", "sarah", "scott", "sean", "sharon", "shirley", "sophia", "stephanie",
+  "stephen", "steven", "susan", "teresa", "terry", "timothy", "tom", "tony", "valerie",
+  "walter", "wei", "yuki", "zachary", "jean-pierre", "pierre", "jacques", "francois",
+  "michel", "philippe", "nicolas", "sophie", "isabelle", "nathalie", "hans", "jurgen",
+  "klaus", "wolfgang", "stefan", "andreas", "katarzyna", "piotr", "krzysztof", "tomasz",
+  "marek", "giuseppe", "giovanni", "marco", "luca", "francesca", "min", "jun", "hyun",
+  "sung", "seo", "ji",
+]

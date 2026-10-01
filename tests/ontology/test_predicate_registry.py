@@ -66,3 +66,20 @@ def test_contested_facts_are_never_resolved(registry: dict) -> None:
 def test_registry_matches_source(registry: dict) -> None:
     src = load_vocab("predicates")
     assert len(registry["predicates"]) == len(src["predicates"])
+
+
+def test_p31_5_object_kind_and_maps_to_are_well_formed(registry: dict) -> None:
+    # P31.5 / ADR-112: `object_kind` is entity_ref | literal, every `maps_to` names a real
+    # row, and the entity_ref rows are exactly the partner predicates the connectors emit.
+    from resolution.partner_identity import PARTNER_PREDICATES
+
+    by_id = {p["predicate_id"]: p for p in registry["predicates"]}
+    kinds = {pid: p["object_kind"] for pid, p in by_id.items() if "object_kind" in p}
+    assert set(kinds.values()) <= {"entity_ref", "literal"}
+    assert {pid for pid, kind in kinds.items() if kind == "entity_ref"} == set(PARTNER_PREDICATES)
+    for pid, p in by_id.items():
+        if "maps_to" in p:
+            target = by_id[p["maps_to"]]
+            assert p["maps_to"] != pid
+            assert p["volatility_class"] == target["volatility_class"], pid
+            assert p["resolution_strategy"] == target["resolution_strategy"], pid
