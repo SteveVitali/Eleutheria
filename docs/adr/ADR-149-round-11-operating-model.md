@@ -215,3 +215,11 @@ never proxy-signed (OM-07/08).
   harness — a new ADR.
 - The round closes (GATE-ACCEPT-R11 / GATE-ANNOUNCE) — the next round's planning re-decides the executor, dispatch tier,
   pause rules and OM-20 lists; this ADR does not carry over by default.
+
+## Clarification (2026-10-01T17:13:24Z)
+
+The B-9 Class R standing go (the operator's adopted sentence, S6 sha256 `e4e24975…`) is recorded in `docs/build/LEDGER.md`
+GATE DECISIONS (`### Round 11`) as a `kind: pre-authorization` row. It expires at GATE-G4 or 2026-10-31 (30 days from
+adoption), whichever is first, and is void on a ratchet regression, a Part VIII screen change or a new source. It is renewed
+only by the operator's own line at a sub-round gate, never by `continue` (S5-2). The release model itself is ADR-161,
+written by P35.12.
