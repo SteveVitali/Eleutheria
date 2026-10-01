@@ -72,7 +72,8 @@ Every Python package is `<pkg>/src/<pkg>/…` and exposes a CLI: `uv run python 
 
 | command | what it runs |
 |---|---|
-| `make check` | `lint` → `format-check` → `typecheck` → `test` (pytest) → `verify-gen` — the full local gate, mirror of CI |
+| `make check` | `lint` → `format-check` → `typecheck` → `test` (pytest) → `verify-gen` — the fast local gate; the `python` CI job's commands |
+| `make ci-local` | all five CI jobs locally: the `SIG_REQUIRE_DB_TESTS=1` suite, `docs-check` + history/trailer range checks, the scans, composed `tests/e2e` with web deps, and the web check + perf (P34.1, SIG-ENG-046) |
 | `make test-db` | `SIG_REQUIRE_DB_TESTS=1 uv run pytest tests/db` — the claim-spine DB suite (**needs Docker**) |
 | `SIG_REQUIRE_DB_TESTS=1 uv run pytest tests/e2e` | the composed-stack e2e (**needs Docker**) |
 | `npm --prefix web run check` | the web gate: `typecheck` → `test:unit` → `build` → `check:licenses` → `test:e2e` |

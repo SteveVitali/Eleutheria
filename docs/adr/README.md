@@ -155,6 +155,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-148](ADR-148-build-memory-v2-1-ledger-contract-and-enforced-append-only.md) | Build memory v2.1: ledger contract and enforced append-only | SEED-11 (unit SEED-11a) | Accepted |
 | [ADR-149](ADR-149-round-11-operating-model.md) | Round-11 operating model | SEED-11 (unit SEED-11a) | Accepted |
 | [ADR-150](ADR-150-coverage-verdict-vocabulary.md) | Coverage verdict vocabulary | SEED-11 (unit SEED-11a) | Accepted |
+| [ADR-151](ADR-151-toolchain-pin-and-ci-truth.md) | Toolchain pin and CI truth (P34.1) | P34.1 (Round 11 / P34, row 201; requirement SIG-ENG-046; plan §7 | accepted (engineering; `live_verification=false` — CI policy, verified |
 | [ADR-152](ADR-152-confidence-without-independent-review.md) | Confidence without independent review | SEED-11 (unit SEED-11a) | Accepted |
 | [ADR-153](ADR-153-derivation-not-identity.md) | Derivation, not identity | SEED-11 (unit SEED-11a) | Accepted |
 | [ADR-154](ADR-154-graph-quality-suite-as-a-ratcheted-release-gate.md) | Graph-quality suite as a ratcheted release gate | SEED-11 (unit SEED-11a) | Accepted |

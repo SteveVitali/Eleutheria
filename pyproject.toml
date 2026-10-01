@@ -7,6 +7,12 @@
 # lint/type-check/test configuration. It is intentionally NOT a distributable
 # package: SIG ships as the per-area member packages under each §47 directory.
 
+# The pinned uv toolchain (SIG-ENG-046, P34.1, ADR-151): local and CI runs use
+# the same uv — `setup-uv` in the workflows installs exactly this version, and a
+# mismatched local uv refuses rather than drifting.
+[tool.uv]
+required-version = "==0.12.6"
+
 [tool.uv.workspace]
 members = [
     "ontology",
