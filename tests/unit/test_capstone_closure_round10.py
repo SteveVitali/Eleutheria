@@ -157,17 +157,39 @@ def test_p33_3_annotations_preserve_open_status() -> None:
         )
 
 
-def test_gate_accept_readout_stays_pending_and_section_is_honest() -> None:
+def test_gate_accept_readout_state_matches_the_recorded_decision() -> None:
+    """The readout must declare a real recorded state — never an asserted one.
+
+    P33.3 landed this guard while GATE-ACCEPT was still PENDING; the operator
+    signed ``ACCEPT-R10.md`` on 2026-09-28 (LEDGER § GATE DECISIONS). The
+    invariant is not "PENDING forever" — it is that the committed readout's
+    declared state is genuine: a PENDING readout must carry no decision
+    vocabulary, and a SIGNED readout must carry the recorded authority, date
+    and decision domain with a matching LEDGER gate-decision entry. Either
+    way, §(f) keeps its honest wording: the packet is presented, it does not
+    sign itself, and it closes none of the owed register.
+    """
     readout = READOUT_ACCEPT.read_text(encoding="utf-8")
-    assert "PENDING" in readout, "GATE-ACCEPT readout lost its PENDING marker"
-    assert "APPROVED" not in readout and "SIGN" not in re.sub(r"SIGN[A-Z]*ATURE", "", readout), (
-        "GATE-ACCEPT readout asserts a decision that has not happened"
-    )
+    if "PENDING" in readout:
+        assert "APPROVED" not in readout and "SIGN" not in re.sub(
+            r"SIGN[A-Z]*ATURE", "", readout
+        ), "GATE-ACCEPT readout asserts a decision that has not happened"
+    else:
+        # post-signature state — provenance is mandatory, never an agent claim
+        assert "SIGNED" in readout, "readout is neither PENDING nor SIGNED"
+        for marker in ("Authority:", "Date:", "Decision domain:"):
+            assert marker in readout, (
+                f"signed GATE-ACCEPT readout lacks provenance marker {marker!r}"
+            )
+        ledger = (REPO_ROOT / "docs/build/LEDGER.md").read_text(encoding="utf-8")
+        decisions = ledger.split("## GATE DECISIONS", 1)[-1]
+        assert "ACCEPT-R10" in decisions, (
+            "readout is signed but no GATE DECISIONS entry records ACCEPT-R10"
+        )
 
     section = _closure_section_f()
     for marker in (
-        "PENDING",  # the section itself points at the pending readout
-        "does not sign",
+        "does not sign",  # the packet prepares; an operator records the verdict
         "closes none",
     ):
         assert marker in section, f"§(f) lost honest-gate wording: {marker!r} missing"
