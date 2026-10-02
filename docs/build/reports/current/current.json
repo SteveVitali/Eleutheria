@@ -1,15 +1,15 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "0f2a2a0bc5d369ab44fe6249fcbae49db82f454d",
-  "manifest_inputs": 927,
+  "input_commit": "257428a05a4c2fddaef3924a670eab806581b301",
+  "manifest_inputs": 929,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.6",
-    "lastCompleted": "P34.5",
+    "nextTicket": "P34.50",
+    "lastCompleted": "P34.6",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
-    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5",
+    "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6",
     "manifest": "docs/tickets/00_MANIFEST.md",
     "canonicalSpec": "docs/2_canonical_design_spec.md",
     "memoryRoot": "docs/build",
@@ -17,22 +17,22 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.5-cost-guard-budget-alert-billing-export",
+    "chainTip": "r11/P34.6-restore-drill-and-logical-export",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-02T08:50:04Z"
+    "updatedAt": "2026-10-02T11:16:00Z"
   },
   "counts": {
-    "obligations": 135,
-    "owed": 74,
-    "open": 70,
+    "obligations": 141,
+    "owed": 79,
+    "open": 75,
     "partial": 4,
-    "terminal": 61,
-    "events": 135,
-    "transitions": 0,
+    "terminal": 62,
+    "events": 142,
+    "transitions": 1,
     "coverage_assessments": 187,
     "coverage_historical_rows": 777,
     "reconciled_by_event": 15,
@@ -6015,6 +6015,293 @@
           }
         }
       ]
+    },
+    {
+      "id": "D-P34.6-1",
+      "status": "DONE",
+      "status_source": "event-head D-P34.6-1:e1",
+      "kind": "V",
+      "owner": "engineering",
+      "landing": "P34.6",
+      "backlog_home": "BL-084",
+      "item": "The P34.6 live drill leg — run `ops/gcp/restore-drill.sh --apply all` (prestate → PITR clone `sig-pg-drill-<STAMP>` at T → parity counts at T over the Cloud SQL Auth Proxy → `/health` + `/v1/coverage` smoke → name-checked delete → post-state `--verify`) so the drill record lands live",
+      "unblocked_by": "owner: the OM-19 leg-runner — the orchestrator's `r11/P34.6-live-<n>` dispatch or the operator; trigger: a `date -u` outside 03:00–10:00Z with no `sig-materialize` execution running, the newest `sig-pg` backup `SUCCESSFUL`, and the latest `sig-probe` sweep green — or its red confirmed as the recorded stale-targets class via `--probe-note`",
+      "verify": "re-run `implement-spec spec=docs/tickets/207_P34.6__restore-drill-and-logical-export.md live_verification=true` (the contract's re-run line), equivalently `ops/gcp/restore-drill.sh --apply all` then `--verify` printing `0 DRIFT`; `record.json` (`sig.restore-drill/1`) names T, RTO, RPO and equal per-table counts",
+      "proxy": "the script enforces the same window guard itself (exit 42 inside a closed window — it cannot be accidentally forced), the delete is name-checked (`assert_drill_name` refuses `sig-pg` outright — `tests/ops/test_cloudsql_drill.py` + `test_restore_drill_iac.py` pin it), and `--verify --from-state` is offline-proven both directions",
+      "line": 1025,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.6-1:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.6-1",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "DONE",
+          "to_status": "DONE",
+          "ticket_id": "P32.7",
+          "owner": "—",
+          "landing": "—",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-02",
+          "recorded_at": "2026-10-02",
+          "source_commit": "1056c60c",
+          "reason": "migration anchor: raw cell status preserved verbatim",
+          "anchor": {
+            "row_line": 1025,
+            "row_sha256": "769b47c0b5c1b6f65f813661f1737088da5211583eec7c353d91220ae6402fe3",
+            "parser_status": "DONE",
+            "prose_terminal": "DONE 2026-",
+            "interpretation": "preserved"
+          }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.6-1:e1",
+          "kind": "transition",
+          "obligation_id": "D-P34.6-1",
+          "seq": 1,
+          "expected_previous_event": "D-P34.6-1:e0",
+          "from_status": "OPEN",
+          "to_status": "DONE",
+          "ticket_id": "P34.6",
+          "owner": "engineering",
+          "landing": "P34.6",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/build/runs/P34.6.md",
+            "docs/build/logs/restore-drill/drill-20261002T102313Z/record.json",
+            "docs/build/logs/restore-drill/verify-20261002T104437Z"
+          ],
+          "observed_at": "2026-10-02",
+          "recorded_at": "2026-10-02",
+          "source_commit": "1056c60c",
+          "reason": "first live at-scale drill executed: PITR clone sig-pg-drill-20261002t1023z at T=2026-10-02T10:13:13Z; 10/10 per-table parity at T over the Cloud SQL Auth Proxy (schema-aware: prod is pre-P32.4 so claim_evidence counted unbounded and spine_watermark absent on both ends, recorded honestly), sqitch tip equal (39 changes -> camera_site_human_decisions), PostGIS 3.6.0, API smoke 200/200, RTO 1069.1684 s / RPO 16681.036829 s, name-checked delete left sig-pg only; --verify 11 OK / 0 DRIFT; record sha256 6a9fe046ff21dbc5715a2fb61982dbe842b5e92884927140843f5b0360551257c"
+        }
+      ]
+    },
+    {
+      "id": "D-P34.6-2",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.6-2:e0",
+      "kind": "V",
+      "owner": "engineering",
+      "landing": "BL-084",
+      "backlog_home": "BL-084",
+      "item": "The first monthly logical export — `ops/gcp/logical-export.sh --apply export --go \"<verbatim go>\"` writes `pg/monthly/<YYYY-MM>/sig-<STAMP>.sql` in `sig-backups`",
+      "unblocked_by": "owner: the operator (the verbatim in-ticket go) or the OM-19 leg-runner once a go lands; trigger: the recorded go + a `date -u` outside 03:00–10:00Z AND outside AR-3 (the export loads `sig-pg`'s single vCPU)",
+      "verify": "`ops/gcp/logical-export.sh --verify` prints `export:monthly-export-object` OK; the object exists at `gs://<project>-sig-backups/pg/monthly/<YYYY-MM>/` and survives `sig-pg` lifecycle events (the contract's \"outside the instance's lifecycle\" point)",
+      "proxy": "the script refuses without `--go` (exit 42, tested); the cadence row is inert to `scheduled-ops.sh` so nothing silently schedules; the monthly debt cannot lapse invisibly — DEFERRALS + the cadence.toml row both name it",
+      "line": 1026,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.6-2:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.6-2",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P32.7",
+          "owner": "engineering",
+          "landing": "BL-084",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-02",
+          "recorded_at": "2026-10-02",
+          "source_commit": "1056c60c",
+          "reason": "migration anchor: raw cell status preserved verbatim",
+          "anchor": {
+            "row_line": 1026,
+            "row_sha256": "bf7e62b11c7516a56f11549616b9485b852841e02365340503517a47201a6919",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P34.6-3",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.6-3:e0",
+      "kind": "V",
+      "owner": "engineering",
+      "landing": "BL-084",
+      "backlog_home": "BL-084",
+      "item": "The `sig-backups` lifecycle rules — `ops/gcp/logical-export.sh --apply lifecycle --go \"<verbatim go>\"` applies Delete `pg/monthly/*` at 100 d (three newest monthly exports kept) + Delete `pg/adhoc/*` at 30 d",
+      "unblocked_by": "owner: the operator (the verbatim in-ticket go) or the OM-19 leg-runner once a go lands; trigger: the recorded go (no extra window beyond the apply-side guards)",
+      "verify": "`ops/gcp/logical-export.sh --verify` prints `export:lifecycle-monthly-100d` + `export:lifecycle-adhoc-30d` OK",
+      "proxy": "`pg/seed-*/` is never matched by either rule (the relabel prefix is deliberate), and read-then-compare refusal means a foreign rule can't be silently overwritten",
+      "line": 1027,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.6-3:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.6-3",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P32.7",
+          "owner": "engineering",
+          "landing": "BL-084",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-02",
+          "recorded_at": "2026-10-02",
+          "source_commit": "1056c60c",
+          "reason": "migration anchor: raw cell status preserved verbatim",
+          "anchor": {
+            "row_line": 1027,
+            "row_sha256": "41e837eb8cbfee129d2005d630b125373619c3295fb449ddbe46c0950d175c47",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P34.6-4",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.6-4:e0",
+      "kind": "V",
+      "owner": "engineering",
+      "landing": "BL-084",
+      "backlog_home": "BL-084",
+      "item": "The seed-dump relabel BY COPY — `ops/gcp/logical-export.sh --apply relabel --go \"<verbatim go>\"` copies the two `pg/sig-20260915*.sql` dumps to `pg/seed-2026-09-15/` and writes the README object; the originals under `pg/` are never deleted",
+      "unblocked_by": "owner: the operator (the verbatim in-ticket go) or the OM-19 leg-runner once a go lands; trigger: the recorded go",
+      "verify": "`ops/gcp/logical-export.sh --verify` prints `export:seed-prefix` OK; `gcloud storage ls gs://<project>-sig-backups/pg/` still lists both originals",
+      "proxy": "the leg can only copy — the `_read` verb allowlist and the absence of any `rm`/`mv`/`delete` call are pinned by `test_relabel_copies_seeds_and_never_deletes`; GCP_DEPLOYMENT.md's appended note already names the two objects seed dumps",
+      "line": 1028,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.6-4:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.6-4",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P32.7",
+          "owner": "engineering",
+          "landing": "BL-084",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-02",
+          "recorded_at": "2026-10-02",
+          "source_commit": "1056c60c",
+          "reason": "migration anchor: raw cell status preserved verbatim",
+          "anchor": {
+            "row_line": 1028,
+            "row_sha256": "cf3f972667baa8ab38776dad296e9529f754afb31dd054f9f2f20329e68dd329",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P34.6-5",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.6-5:e0",
+      "kind": "V",
+      "owner": "engineering",
+      "landing": "GATE-G4",
+      "backlog_home": "BL-084",
+      "item": "Leg 3 — the full-backup variant drill: `ops/gcp/restore-drill.sh --apply fullrestore --go \"<verbatim go>\"` (empty `sig-pg-drill-b-<STAMP>` + `sql backups restore` of the newest AUTOMATED backup, then the same counts/smoke/delete legs); SIG-OPS-001 names point-in-time AND a full backup — this is also the quarterly drill",
+      "unblocked_by": "owner: the operator (the verbatim go / the quarterly cadence packet) or the OM-19 leg-runner; trigger: the recorded go or the GATE-G4 listing — then the same window rules as leg 1",
+      "verify": "the same `sig.restore-drill/1` record with `sig-pg-drill-b-<stamp>` as `clone_instance`; `--verify` `0 DRIFT`",
+      "proxy": "`fullrestore` refuses without `--go` (exit 42, tested) and the name-checked delete covers the `-b-` shape too (`assert_drill_name` accepts it — the variant is never outside the safe-name rule)",
+      "line": 1029,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.6-5:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.6-5",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P32.7",
+          "owner": "engineering",
+          "landing": "GATE-G4",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-02",
+          "recorded_at": "2026-10-02",
+          "source_commit": "1056c60c",
+          "reason": "migration anchor: raw cell status preserved verbatim",
+          "anchor": {
+            "row_line": 1029,
+            "row_sha256": "aa1a74b27fa424ff65ebc841a63a688b66a4b1f28f6d1d9ddeab7164690aa9e5",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
+    },
+    {
+      "id": "D-P34.6-6",
+      "status": "OPEN",
+      "status_source": "event-head D-P34.6-6:e0",
+      "kind": "V",
+      "owner": "engineering",
+      "landing": "P34.46",
+      "backlog_home": "BL-084",
+      "item": "The after-schema-deploy drill — SIG-OPS-001 requires the restore drill \"after every schema-changing deploy\"; the next one is due after P34.46's schema deploy lands",
+      "unblocked_by": "owner: the P34.46 run (or the OM-19 leg-runner after it); trigger: P34.46's schema-changing deploy landing",
+      "verify": "`ops/gcp/restore-drill.sh --apply clone/counts/…` re-run post-deploy; the record's `sqitch_equal` must stay true (the clone carries the new tip)",
+      "proxy": "the drill record compares `sqitch.changes` tips on both sides — a schema-drifted clone would fail the check loudly, so a stale drill can't read as green",
+      "line": 1030,
+      "events": [
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.6-6:e0",
+          "kind": "migration",
+          "obligation_id": "D-P34.6-6",
+          "seq": 0,
+          "expected_previous_event": null,
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P32.7",
+          "owner": "engineering",
+          "landing": "P34.46",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/tickets/DEFERRALS.md"
+          ],
+          "observed_at": "2026-10-02",
+          "recorded_at": "2026-10-02",
+          "source_commit": "1056c60c",
+          "reason": "migration anchor: raw cell status preserved verbatim",
+          "anchor": {
+            "row_line": 1030,
+            "row_sha256": "e21c32b71daafbdcf8df94d40a65bc6a596462f318a4bd6f1cabab092ee90496",
+            "parser_status": "OPEN",
+            "prose_terminal": null,
+            "interpretation": "preserved"
+          }
+        }
+      ]
     }
   ],
   "coverage": {
@@ -10403,8 +10690,8 @@
           "label": "historical/csv"
         },
         "SIG-OPS-001": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET-ENGINEERED(D-P34.6-2;D-P34.6-3;D-P34.6-4;D-P34.6-5;D-P34.6-6)",
+          "evidence": "ops/gcp/restore-drill.sh;ops/gcp/restore-point.sh;ops/gcp/logical-export.sh;ops/src/ops/cloudsql_drill.py;docs/build/runs/P34.6.md;tests/ops/test_cloudsql_drill.py;tests/ops/test_restore_drill_iac.py",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -13925,10 +14212,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "d52ba5f975968a0405cf9c01a21b682081401ef9313870eb14fe39f458f71458",
+  "manifest_sha256": "6c26ecacb922b913c4ffed48a978c428375b79df1cd01bf090628435a344fd22",
   "current_md": {
     "lines": 74,
-    "bytes": 12842,
+    "bytes": 12844,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
