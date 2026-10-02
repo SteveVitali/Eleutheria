@@ -5,6 +5,10 @@
 
 from __future__ import annotations
 
+import re
+import subprocess
+from pathlib import Path
+
 import pytest
 from connectors.net import (
     DEFAULT_CONTACT_URL,
@@ -15,12 +19,54 @@ from connectors.net import (
 )
 from policy.crawler import CircumventionError
 
+REPO_ROOT = Path(__file__).resolve().parents[2]
+
+# The owned explanation page every crawler contact URL must name (P35.38a;
+# ADR-168 Decision 6-7, Q-E2-03/B-6 "Move UA, don't buy domain").
+OWNED_CONTACT_URL = "https://surveillancegraph.org/data-collection/"
+
 
 def test_user_agent_carries_a_contact_url() -> None:
     # SIG-INGEST-011 / Rule 1: a documented UA carrying a contact URL.
     ua = user_agent("toy", "1")
     assert ua.startswith("toy/1")
     assert DEFAULT_CONTACT_URL in ua
+
+
+def test_default_contact_url_is_the_owned_explanation_page() -> None:
+    # P35.38a / ADR-168 Decision 6: the contact URL is on the domain SIG owns,
+    # trailing slash included — the literal the whole tree shares.
+    assert DEFAULT_CONTACT_URL == OWNED_CONTACT_URL
+    assert "sig-project.org" not in DEFAULT_CONTACT_URL
+
+
+def test_user_agent_carries_no_personal_identifier_or_email() -> None:
+    # A-17 / C-8: the UA is a product token plus the owned explanation URL —
+    # no name, handle or e-mail of the operator ever rides in it.
+    ua = user_agent("toy", "1")
+    assert ua == f"toy/1 (+{OWNED_CONTACT_URL})"
+    assert re.fullmatch(r"toy/1 \(\+https://\S+\)", ua)
+    assert "@" not in ua
+    assert "sig-project.org" not in ua
+
+
+def test_no_unowned_contact_domain_literal_in_shipped_code() -> None:
+    # P35.38a deliverable 3 (B-6): no `sig-project.org` literal may survive in
+    # shipped code or config. The contract's scope is exactly these trees;
+    # historical records (db/sqitch.plan author lines, landed ADRs, run
+    # ledgers, captured evidence fixtures) are excluded by scoping, never
+    # edited.
+    scope = ["connectors", "tasks", "policy", "ops", "web/src"]
+    out = subprocess.run(
+        ["git", "-C", str(REPO_ROOT), "grep", "-n", "-e", "sig-project.org", "--", *scope],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert out.returncode in (0, 1), out.stderr
+    assert not out.stdout.strip(), (
+        "unowned sig-project.org literal(s) in shipped code/config:\n" + out.stdout
+    )
 
 
 def test_unretrievable_robots_is_recorded_and_fetched(transport_factory, json_response) -> None:  # type: ignore[no-untyped-def]
