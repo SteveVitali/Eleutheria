@@ -3,7 +3,8 @@
   "ci": {
     "collect": {
       "staticDistDir": "./dist",
-      "numberOfRuns": 1,
+      "numberOfRuns": 3,
+      "//runs": "P34.2 / ADR-191: three sampled runs per URL, asserted on the median — the single-run sampling flake (LH-PERF-1, evidence runs 35051006427/35263896936/35889213151/36065771273/36338778274) red-marked green work five times. Budgets and thresholds unchanged; only the sampling noise floor moves.",
       "//url": "A representative page per budget block (lhci autodiscovery otherwise caps at 5 arbitrary pages and never reaches the islands): public zero-JS content pages, a /curate/** island-allowance page (ADR-068), and the three public interactive islands /map//network//search/ (ADR-097), so every block below is actually exercised.",
       "url": [
         "/index.html",

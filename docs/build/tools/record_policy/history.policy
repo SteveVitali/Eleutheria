@@ -58,3 +58,10 @@ act-when connectors/src/connectors/data/sources.toml ^[[:space:]]*ingestion_perm
 # from the scheduler's lastAttemptTime and the clock, never from this entry.
 allow docs/tickets/DEFERRALS.md 2026-10-10T04:35:00Z sig-sched-camreg-batch-05
 allow docs/build/LEDGER.md 2026-10-10T04:35:00Z sig-sched-camreg-batch-05
+
+# ── flake_log.csv (P34.2; H2 §4.4; B-15) ──────────────────────────────────────────────────────────────────
+# The flake re-run log is a living append-only record: ci_boundary.py appends one row per attempt
+# (the first failure's `failure` row and, when allowed, the `rerun-requested` row — at most one per
+# head). A row's first ISO timestamp is its record date (R1: not later than the commit that lands it).
+append-only docs/build/reports/ci/flake_log.csv
+date docs/build/reports/ci/flake_log.csv [0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}

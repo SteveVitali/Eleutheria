@@ -186,6 +186,7 @@ One row per ADR, numeric order. Regenerate with `build-memory adr-index`
 | [ADR-188](ADR-188-wv-10-flock-portals-probe-only.md) | WV-10 — Flock transparency portals probe-only (SIG-INGEST-035's no-direct-capture clause waived) | SEED-11 (Round-11 Stage B, T1 — unit SEED-11d) | Accepted |
 | [ADR-189](ADR-189-wv-11-one-operator-only-purge-function.md) | WV-11 — one operator-only purge function, the sole exception to SIG-STORE-011 | SEED-11 (Round-11 Stage B, T1 — unit SEED-11d) | Accepted |
 | [ADR-190](ADR-190-wv-12-sig-ui-022-ego-network-default-waived-overview-default.md) | WV-12 — SIG-UI-022's ego-network default waived; the explorer may open on an aggregated overview | SEED-12 (Round-11 Stage B, T1 — unit SEED-12c) | Accepted |
+| [ADR-191](ADR-191-lighthouse-three-run-median.md) | Lighthouse performance gate samples three runs, asserts the median (P34.2) | P34.2 (Round 11 / P34, row 202; requirement SIG-MEM-007; cited: | accepted (engineering; `live_verification=false` — CI policy, verified |
 
 ## Notes
 

@@ -68,7 +68,10 @@ ci-local: sync
 	fi; \
 	echo "ci-local: build-memory history + trailer range $$range"; \
 	bash scripts/docs/check-build-memory.sh . --range "$$range" --json docs/build/logs/build-memory-history.json && \
-	python3 docs/build/tools/check_trailers.py --range "$$range" --json docs/build/logs/trailer-check.json
+	python3 docs/build/tools/check_trailers.py --range "$$range" --json docs/build/logs/trailer-check.json && \
+	{ base="$${range%%...*}"; \
+	  echo "ci-local: recorded-CI verifier over $$base"; \
+	  python3 docs/build/tools/verify_recorded_ci.py --diff-base "$$base" --json docs/build/logs/recorded-ci-verify.json; }
 	@# The CI jobs' drift gate is `git diff --exit-code` (the checkout is clean, so
 	@# worktree==index). Locally the tree is dirty by construction — the same
 	@# predicate is "does the pinned npm rewrite the file": hash-stability across
@@ -83,6 +86,9 @@ ci-local: sync
 	$(MAKE) scan-secrets
 	uv run pytest tests/connectors/test_secrets.py::test_gcp_project_id_is_env_resolved_not_committed
 	$(MAKE) scan-licenses
+	@# P34.2: the per-PR npm advisory gate — production deps, high+; the same
+	@# driver the `security` job runs, reports into docs/build/logs (gitignored).
+	bash scripts/ci/npm_audit_gate.sh --out docs/build/logs
 	npm --prefix web run typecheck
 	npm --prefix web run test:unit
 	npm --prefix web run build
