@@ -48,6 +48,7 @@ from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
 
+from db.occurrences import BELIEF_NOW, BELIEF_PARAM, claim_source_cte
 from inference.accountability import read_materialized_accountability_links
 from inference.materialize import read_materialized_coverage
 from policy.licensing import (
@@ -64,7 +65,7 @@ from resolution.camera_sites_pg import read_resolved_site_runs
 
 from . import analytics, provo
 from . import compartments as C
-from .audit import _EFFECTIVE_CTE
+from .audit import _LATEST_DECISION_CTE
 from .bundle import Bundle, build_bundle
 from .manifest import Artifact, BuildSpec, Manifest, canonical_json, sha256_hex
 from .shaping import (
@@ -169,7 +170,7 @@ EXPORT_QUERIES: dict[str, tuple[str, str]] = {
     # refused claim never pads the "How we know this" distribution.
     "claim_weights": (
         "claim",
-        _EFFECTIVE_CTE
+        "{EFFECTIVE}"
         + "SELECT c.claim_id::text, cs.source_id, c.predicate_id, c.source_reliability,"
         "       c.claim_directness, c.artifact_integrity, c.observed_at, rr.spdx_expression"
         "  FROM claim c"
@@ -193,11 +194,18 @@ def fetch_export_raw(cur: Any, *, belief: datetime | None = None) -> dict[str, A
     describes one spine state. Each query is guarded by ``to_regclass`` — a spine
     missing a table yields an empty result (honest absence), never an error.
 
-    ``belief`` is accepted for symmetry with shaping; the supplementary tables the
-    launch surfaces read are not belief-partitioned today, so it is currently
-    unused here (the shaping half already pins the belief instant).
+    ``belief`` pins the belief-partitioned reads (P32.4 / ADR-123): ``claim``
+    rows are filtered by ``sys_period @> belief`` *and* the shared
+    ``claim_source`` CTE's evidence bindings by ``bound_at <= belief`` — the
+    same frozen view every other consumer sees; non-partitioned reference
+    tables are unchanged. The belief expressions are module constants, never
+    caller SQL.
     """
-    del belief  # symmetry with shaping.fetch_shaping_raw; unused for these reads
+    belief_filter = (
+        "upper_inf(c.sys_period)" if belief is None else "c.sys_period @> %s::timestamptz"
+    )
+    occ_bound = BELIEF_PARAM if belief is not None else BELIEF_NOW
+    effective = _LATEST_DECISION_CTE + claim_source_cte(occ_bound)
     raw: dict[str, Any] = {}
     for key, (guard, sql) in EXPORT_QUERIES.items():
         cur.execute("SELECT to_regclass(%s) IS NOT NULL", (guard,))
@@ -206,7 +214,10 @@ def fetch_export_raw(cur: Any, *, belief: datetime | None = None) -> dict[str, A
             raw[key] = []
             continue
         try:
-            cur.execute(sql)
+            final = sql.replace("{EFFECTIVE}", effective).replace(
+                "upper_inf(c.sys_period)", belief_filter
+            )
+            cur.execute(final, tuple([belief] * final.count("%s")) or None)
             raw[key] = cur.fetchall()
         except Exception:  # noqa: BLE001 - a schema-shape mismatch is honest absence
             raw[key] = []

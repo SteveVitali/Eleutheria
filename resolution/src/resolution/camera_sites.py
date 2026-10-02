@@ -78,7 +78,7 @@ from collections import defaultdict
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import asdict, dataclass, field, is_dataclass
 from dataclasses import fields as dc_fields
-from datetime import date
+from datetime import date, datetime
 from functools import cache
 from importlib.resources import files
 from pathlib import Path
@@ -176,6 +176,13 @@ class CameraRecord:
     #: one source republished the same row.
     target_id: str | None = None
     capture_digests: tuple[str, ...] = ()
+    #: P32.4 (ADR-123): the *atomic* coordinate pair's own occurrence — the
+    #: latest capture that established BOTH selected coordinate claims (the
+    #: pair is one source-record occurrence, never lat from capture X and lon
+    #: from capture Y). ``None`` when the axes were never asserted together —
+    #: such a record keeps no point.
+    coordinate_capture_id: str | None = None
+    coordinate_retrieved_at: datetime | None = None
 
     def block_record(self) -> dict[str, Any]:
         return {"latitude": self.latitude, "longitude": self.longitude, "source_id": self.source_id}

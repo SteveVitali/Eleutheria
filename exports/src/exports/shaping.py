@@ -67,6 +67,15 @@ from datetime import UTC, date, datetime
 from decimal import Decimal, InvalidOperation
 from typing import Any, Literal, Protocol
 
+from db.occurrences import (
+    BELIEF_NOW,
+    BELIEF_PARAM,
+    claim_source_cte,
+    lineage_candidates,
+)
+from db.occurrences import (
+    spine_watermark as _spine_watermark_read,
+)
 from inference.denominators import PublishedAggregate, provenance_completeness
 from inference.freshness import SourceFreshness, source_freshness
 from parsing.claim import ParsedValue
@@ -80,7 +89,7 @@ from policy.sensitivity import apply_tier
 from reconcile.weight import predicate_meta
 from resolution.partner_identity import PARTNER_PREDICATES
 
-from .audit import _EFFECTIVE_CTE, GEO_PREDICATES, JURISDICTION_PREDICATE
+from .audit import _LATEST_DECISION_CTE, GEO_PREDICATES, JURISDICTION_PREDICATE
 
 #: The shaped-dataset output schema version — bumped when the emitted shape changes.
 SHAPING_SCHEMA_VERSION = "p27.3/1.0.0"
@@ -170,6 +179,19 @@ class ShapingClaim:
     effective_derivative_permitted: str
     effective_attribution: str
     effective_terms_url: str
+    #: P32.4 (ADR-123): the claim's selected latest *eligible* establishing
+    #: occurrence — the sighting the shared contract picked (refs preserved).
+    occurrence_capture_id: str | None = None
+    occurrence_retrieved_at: datetime | None = None
+    occurrence_bound_at: datetime | None = None
+    #: The exact ordering instant under the shared contract: the claim's own
+    #: ``observed_at`` when dated, else the occurrence's ``retrieved_at`` — what
+    #: per-lineage candidate selection orders by (a claim id is never a clock).
+    observed_instant: datetime | None = None
+    #: The contract's dating basis: ``"claim"`` (self-dated),
+    #: ``"capture_retrieved_at_latest"`` (capture-dated fallback — labelled, an
+    #: inference not an asserted date) or ``"undated"``.
+    observed_basis: str = "undated"
 
     @property
     def publishable(self) -> bool:
@@ -198,6 +220,13 @@ class ValueObservation:
     raw_value: str
     display_value: str  # the normalized, comparable form
     observed_at: str | None
+    #: P32.4 (ADR-123): how this observation was dated under the shared contract
+    #: — ``"claim"`` (its own observed_at), ``"capture_retrieved_at_latest"``
+    #: (the undated fallback basis, labelled) or ``"undated"``.
+    observed_basis: str = "claim"
+    #: The occurrence reference of the claim's latest eligible establishing
+    #: capture (evidence ref preserved in output), when one exists.
+    capture_id: str | None = None
 
 
 @dataclass(frozen=True)
@@ -241,6 +270,8 @@ class ObservationEnvelope:
                     "raw_value": o.raw_value,
                     "display_value": o.display_value,
                     "observed_at": o.observed_at,
+                    "observed_basis": o.observed_basis,
+                    "capture_id": o.capture_id,
                 }
                 for o in self.observations
             ],
@@ -564,12 +595,15 @@ class ShapedDataset:
 
 QUERIES: dict[str, str] = {
     # Every current claim over the shaping predicate set, with its source and its
-    # EFFECTIVE rights (latest rights_decision over the recorded rights_id).
+    # EFFECTIVE rights (latest rights_decision over the recorded rights_id) and
+    # its latest *eligible* establishing occurrence refs (P32.4/ADR-123) — the
+    # {EFFECTIVE} marker is replaced at fetch time with the decision CTE +
+    # claim_source_cte bound at the request's belief instant.
     "shaping_claims": (
-        _EFFECTIVE_CTE
-        + "SELECT c.claim_id::text, c.subject_id::text, c.predicate_id, c.value_kind,"
+        "{EFFECTIVE}" + "SELECT c.claim_id::text, c.subject_id::text, c.predicate_id, c.value_kind,"
         "       c.value_text, c.value_num, c.raw_value, c.observed_at,"
         "       c.sensitivity_tier, cs.source_id, ir.connector_name,"
+        "       cs.capture_id::text, cs.retrieved_at, cs.bound_at,"
         "       COALESCE(ld.rights_id, c.rights_id)::text AS effective_rights_id,"
         "       rr.spdx_expression, rr.redistributable, rr.derivative_permitted,"
         "       rr.attribution_text, rr.terms_url"
@@ -592,7 +626,7 @@ QUERIES: dict[str, str] = {
     ),
     # Sources present on the shaped claims, with run + observation stats.
     "source_stats": (
-        _EFFECTIVE_CTE + "SELECT cs.source_id, count(*) AS claims,"
+        "{EFFECTIVE}" + "SELECT cs.source_id, count(*) AS claims,"
         "       max(c.observed_at) AS last_content_change,"
         "       count(*) FILTER (WHERE c.observed_at IS NOT NULL) AS observed_claims"
         "  FROM claim c"
@@ -603,7 +637,7 @@ QUERIES: dict[str, str] = {
     # Per-source run freshness inputs: the last SUCCESSFUL run's finish, plus the
     # latest run's status verbatim (a still-running land reads 'degraded').
     "source_runs": (
-        _EFFECTIVE_CTE + "SELECT cs.source_id,"
+        "{EFFECTIVE}" + "SELECT cs.source_id,"
         "       max(ir.finished_at) FILTER ("
         "           WHERE ir.status IN ('succeeded','completed','success','ok')"
         "       ) AS last_successful_run,"
@@ -621,7 +655,7 @@ QUERIES: dict[str, str] = {
     # (a buyer, a seller, a camera's operator — ADR-112) are not sharing edges and
     # are left out, so they never surface as "unclassified" access edges.
     "sharing_edges": (
-        _EFFECTIVE_CTE + "SELECT c.claim_id::text, c.subject_id::text, c.predicate_id,"
+        "{EFFECTIVE}" + "SELECT c.claim_id::text, c.subject_id::text, c.predicate_id,"
         "       COALESCE(c.object_entity::text, c.value_text) AS partner_ref,"
         "       cs.source_id, c.observed_at"
         "  FROM claim c"
@@ -637,28 +671,38 @@ QUERIES: dict[str, str] = {
         "   AND upper_inf(c.sys_period) AND c.sensitivity_tier = 0"
         " ORDER BY c.subject_id, c.predicate_id, c.claim_id"
     ),
-    # The append-only spine watermark (P25.10) — disclosed on every output.
-    "spine_watermark": (
-        "SELECT (SELECT count(*) FROM claim),"
-        "       (SELECT count(*) FROM claim WHERE upper(sys_period) IS NOT NULL),"
-        "       (SELECT max(lower(sys_period)) FROM claim),"
-        "       (SELECT count(*) FROM claim_evidence),"
-        "       (SELECT count(*) FROM evidence_capture),"
-        "       (SELECT count(*) FROM evidence_artifact)"
-    ),
+    # The append-only spine watermark (P25.10; the bounded trigger-maintained
+    # table since P32.4 / D-P31.1-1) — read via db.occurrences.spine_watermark,
+    # which also covers a pre-change spine with the legacy count fallback.
+    "spine_watermark": "__WATERMARK__",
 }
 
-#: The same queries minus the rights_decision CTE, for a pre-P27.2 spine.
+#: The same queries minus the rights_decision CTE, for a pre-P27.2 spine. The
+#: occurrence ordering matches the shared contract (latest establishing
+#: occurrence); ``bound_at`` is not referenced so the query still runs on a
+#: pre-P32.2 schema — a spine that old has no bound_at column.
 _FALLBACK_CLAIM_SOURCE_CTE = (
     "WITH claim_source AS ("
-    "  SELECT DISTINCT ON (ce.claim_id) ce.claim_id, ea.source_id"
+    "  SELECT DISTINCT ON (ce.claim_id) ce.claim_id, ea.source_id,"
+    "         ce.capture_id, ec.retrieved_at, NULL::timestamptz AS bound_at"
     "    FROM claim_evidence ce"
     "    JOIN evidence_capture ec ON ce.capture_id = ec.capture_id"
     "    JOIN evidence_artifact ea ON ec.artifact_id = ea.artifact_id"
     "   WHERE ce.role = 'establishes'"
-    "   ORDER BY ce.claim_id, ea.source_id ASC"
+    "   ORDER BY ce.claim_id, ec.retrieved_at DESC NULLS LAST, ce.capture_id ASC"
     ") "
 )
+
+
+def expand_query(sql: str, *, bound: str = BELIEF_NOW) -> str:
+    """Expand the ``{EFFECTIVE}`` marker into the effective-rights + shared
+    ``claim_source`` CTEs (a raw query string is not executable until expanded).
+
+    ``bound`` is the occurrence bound expression — ``BELIEF_NOW`` for a
+    current-knowledge read, ``BELIEF_PARAM`` for a ``%s`` belief placeholder
+    (one leading parameter is then required).
+    """
+    return sql.replace("{EFFECTIVE}", _LATEST_DECISION_CTE + claim_source_cte(bound))
 
 
 def _queries_for(has_decisions: bool) -> dict[str, str]:
@@ -670,7 +714,7 @@ def _queries_for(has_decisions: bool) -> dict[str, str]:
         # A pre-P27.2 spine has no rights_decision; the recorded rights_id IS the
         # effective one (fail-closed), so the ld join collapses to NULL.
         out[key] = (
-            sql.replace(_EFFECTIVE_CTE, _FALLBACK_CLAIM_SOURCE_CTE)
+            sql.replace("{EFFECTIVE}", _FALLBACK_CLAIM_SOURCE_CTE)
             .replace("COALESCE(ld.rights_id, c.rights_id)", "c.rights_id")
             .replace(
                 "  LEFT JOIN latest_decision ld"
@@ -740,6 +784,12 @@ def observation_envelope(predicate_id: str, claims: Sequence[ShapingClaim]) -> O
     Deterministic: claims are sorted by ``(claim_id)``; the modal value is the
     lexicographically-smallest among the most-supported distinct values (a pure
     function of the claim set). A conflict keeps every candidate visible.
+
+    P32.4 / ADR-123: ``status``/``distinct_values``/``supporting``/``dissenting``
+    are computed over the *candidates* — the latest eligible claim per source
+    lineage — so a superseded same-source assertion stays visible in
+    ``observations`` (labelled history) without posing as a current candidate,
+    while genuinely independent sources remain concurrent candidates.
     """
     if not claims:
         return ObservationEnvelope(
@@ -756,15 +806,18 @@ def observation_envelope(predicate_id: str, claims: Sequence[ShapingClaim]) -> O
             observations=(),
         )
     observations: list[ValueObservation] = []
-    by_value: dict[str, list[str]] = {}
     parseable_values: set[str] = set()
+    # P32.4 / ADR-123: the envelope's CANDIDATES are the latest eligible claim
+    # per source lineage (concurrent independent candidates stay concurrent — a
+    # superseded same-source claim is history, not a current candidate, while
+    # two sources disagreeing still conflict). ``observations``/``considered``
+    # keep every claim as labelled history.
+    candidates = lineage_candidates(list(claims))
+    by_value: dict[str, list[str]] = {}
     for claim in sorted(claims, key=lambda c: c.claim_id):
         parsed = _display_value(claim)
         display = parsed.parsed if parsed.parse_ok else f"(unparseable: {parsed.raw_value})"
         display_str = str(display)
-        if parsed.parse_ok:
-            parseable_values.add(display_str)
-        by_value.setdefault(display_str, []).append(claim.claim_id)
         observations.append(
             ValueObservation(
                 claim_id=claim.claim_id,
@@ -772,11 +825,20 @@ def observation_envelope(predicate_id: str, claims: Sequence[ShapingClaim]) -> O
                 raw_value=claim.raw_value,
                 display_value=display_str,
                 observed_at=claim.observed_at.isoformat() if claim.observed_at else None,
+                observed_basis=claim.observed_basis,
+                capture_id=claim.occurrence_capture_id,
             )
         )
+    for claim in sorted(candidates, key=lambda c: c.claim_id):
+        parsed = _display_value(claim)
+        display = parsed.parsed if parsed.parse_ok else f"(unparseable: {parsed.raw_value})"
+        display_str = str(display)
+        if parsed.parse_ok:
+            parseable_values.add(display_str)
+        by_value.setdefault(display_str, []).append(claim.claim_id)
     distinct = sorted(by_value)
     considered = tuple(c.claim_id for c in sorted(claims, key=lambda c: c.claim_id))
-    n_sources = len({o.source_id for o in observations})
+    n_sources = len({c.source_id or "(unattributed)" for c in candidates})
     if len(distinct) == 1:
         return ObservationEnvelope(
             predicate_id=predicate_id,
@@ -786,7 +848,7 @@ def observation_envelope(predicate_id: str, claims: Sequence[ShapingClaim]) -> O
             n_observations=len(observations),
             n_sources=n_sources,
             considered_claim_ids=considered,
-            supporting_claim_ids=considered,
+            supporting_claim_ids=tuple(sorted(by_value[distinct[0]])),
             dissenting_claim_ids=(),
             distinct_values=tuple(distinct),
             observations=tuple(observations),
@@ -1270,6 +1332,9 @@ def parse_shaping_claims(rows: Sequence[Sequence[Any]]) -> list[ShapingClaim]:
             sensitivity_tier,
             source_id,
             connector_name,
+            occurrence_capture_id,
+            occurrence_retrieved_at,
+            occurrence_bound_at,
             effective_rights_id,
             spdx,
             redistributable,
@@ -1282,6 +1347,18 @@ def parse_shaping_claims(rows: Sequence[Sequence[Any]]) -> list[ShapingClaim]:
             if isinstance(observed_at, datetime)
             else (observed_at if isinstance(observed_at, date) else None)
         )
+        # The shared contract's dating (ADR-123): the claim's own observed_at
+        # instant when dated, else the latest eligible occurrence's retrieved_at
+        # (the labelled undated fallback), else undated.
+        if observed_at is not None:
+            observed_instant = observed_at if isinstance(observed_at, datetime) else None
+            observed_basis = "claim"
+        elif occurrence_retrieved_at is not None:
+            observed_instant = occurrence_retrieved_at
+            observed_basis = "capture_retrieved_at_latest"
+        else:
+            observed_instant = None
+            observed_basis = "undated"
         claims.append(
             ShapingClaim(
                 claim_id=str(claim_id),
@@ -1301,6 +1378,13 @@ def parse_shaping_claims(rows: Sequence[Sequence[Any]]) -> list[ShapingClaim]:
                 effective_derivative_permitted=str(derivative_permitted),
                 effective_attribution="" if attribution is None else str(attribution),
                 effective_terms_url="" if terms_url is None else str(terms_url),
+                occurrence_capture_id=None
+                if occurrence_capture_id is None
+                else str(occurrence_capture_id),
+                occurrence_retrieved_at=occurrence_retrieved_at,
+                occurrence_bound_at=occurrence_bound_at,
+                observed_instant=observed_instant,
+                observed_basis=observed_basis,
             )
         )
     return claims
@@ -1486,39 +1570,32 @@ def fetch_shaping_raw(
     the *same* spine state — it must not open a second snapshot.
 
     The belief predicate is injected into the fixed query text — a constant of
-    this module, never caller SQL.
+    this module, never caller SQL. P32.4 / ADR-123: the same belief instant
+    bounds the ``claim_source`` CTE's ``bound_at`` (evidence-knowledge time)
+    inside ``{EFFECTIVE}``, so a belief-pinned fetch sees exactly the claims and
+    the evidence bindings known at that instant — nothing later leaks backward.
     """
     belief_filter = (
         "upper_inf(c.sys_period)" if belief is None else "c.sys_period @> %s::timestamptz"
     )
+    occ_bound = BELIEF_PARAM if belief is not None else BELIEF_NOW
     raw: dict[str, Any] = {}
     predicates = list(SHAPING_PREDICATES)
     for key, query in queries.items():
-        sql = query.replace("upper_inf(c.sys_period)", belief_filter)
+        sql = expand_query(query, bound=occ_bound).replace("upper_inf(c.sys_period)", belief_filter)
         if key == "spine_watermark":
-            cur.execute(sql)
-            row = cur.fetchone()
-            raw[key] = (
-                "none"
-                if row is None
-                else (
-                    f"claims={row[0]} closed={row[1]} "
-                    f"latest_assertion={row[2].isoformat() if row[2] else 'none'} "
-                    f"evidence={row[3]}/{row[4]}/{row[5]}"
-                )
-            )
-        elif key == "sharing_edges":
-            if belief is not None:
-                cur.execute(sql, (belief,))
-            else:
-                cur.execute(sql)
-            raw[key] = cur.fetchall()
-        else:
-            if belief is not None:
-                cur.execute(sql, (predicates, belief))
-            else:
-                cur.execute(sql, (predicates,))
-            raw[key] = cur.fetchall()
+            raw[key] = _spine_watermark_read(cur)
+            continue
+        params: list[Any] = []
+        if "{EFFECTIVE}" in query and belief is not None:
+            params.append(belief)  # the CTE's bound_at — the first %s in the SQL
+        if "%s" in sql:
+            if "ANY(%s)" in sql:
+                params.append(predicates)
+            if "@> %s" in sql:
+                params.append(belief)
+        cur.execute(sql, tuple(params) if params else None)
+        raw[key] = cur.fetchall()
     raw["source_completions"] = fetch_source_completions(cur, belief=belief)
     return raw
 

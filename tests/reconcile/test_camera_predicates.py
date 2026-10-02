@@ -363,11 +363,13 @@ def _row(
     evidence_origin: str | None = None,
 ) -> tuple[Any, ...]:
     # SELECT column order of reconcile.materialize.read_claim_groups —
-    # the four trailing columns are the P32.3 qualifier read-through
-    # (count_scope / count_scope_detail / scope jurisdiction / evidence_origin).
+    # the two columns after retrieved_at are the P32.4 occurrence refs
+    # (capture_id / bound_at); the four trailing columns are the P32.3
+    # qualifier read-through (count_scope / detail / jurisdiction / origin).
     return (
         subject, pred, cid, "value", text, num, None, text, None,  # observed_at NULL
         "R3", "I1", "active", "dot_511_ok", "camera_registry", datetime(2026, 9, 18, 3),
+        f"cap-{cid}", datetime(2026, 9, 18, 3),
         count_scope, count_scope_detail, count_scope_jurisdiction, evidence_origin,
     )  # fmt: skip
 
