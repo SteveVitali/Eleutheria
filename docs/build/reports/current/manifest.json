@@ -6,7 +6,7 @@
     "docs/build/reports/current/",
     "docs/build/logs/"
   ],
-  "input_commit": "d1f1df2db5ec568e01ef4324307bd22ad56f83a6",
+  "input_commit": "8a87d03c83d719f4cc3b4111af3b69e1a9b56984",
   "inputs": [
     {
       "path": "docs/2_canonical_design_spec.md",
@@ -758,15 +758,15 @@
     },
     {
       "path": "docs/build/BUILD_INDEX.md",
-      "sha256": "d2501d949d0b65f2c66a1cc4ea4cea31c6e868e781a303663faa6b8a4ba67ea2"
+      "sha256": "4d6efb6e2f13de727b6a02128c3ae317789c50bff7635a380cd069e33e8321ef"
     },
     {
       "path": "docs/build/COVERAGE_MATRIX.csv",
-      "sha256": "fd0e62ab1871168eb30df2aea9697f2693e028ecaea8fc708fb951448726e2d7"
+      "sha256": "b4681d0cb5b96f252f437a1acf57837d16341ac1da31d649b2e25153551d526b"
     },
     {
       "path": "docs/build/LEDGER.md",
-      "sha256": "bd4d6d8adfe3d95e3bbdf24e32e5bc94e2fd9bfc15baba442a765ae45b53a96a"
+      "sha256": "3bcd0d1a0110e48479257ded224eb6d4de80a0cf2e439bbf62e5b1d2d6e77389"
     },
     {
       "path": "docs/build/readouts/ACCEPT-R10.md",
@@ -818,11 +818,11 @@
     },
     {
       "path": "docs/build/reports/obligations/coverage_assessments.jsonl",
-      "sha256": "8549409caa97224210b467eb95f839d454aaf917489d4056e66ce5eba127db51"
+      "sha256": "d3614e5b0d88c9a53d7b33b1d8e4ce49ae341879ea914e7885ea3c3b5f28ffeb"
     },
     {
       "path": "docs/build/reports/obligations/events.jsonl",
-      "sha256": "95ef30e4673106b28f2aaf2b6e7566604925b2c449a36f3ba8b594d4b029eb95"
+      "sha256": "3f16730afd9ceeb70be328095f07c7738dea0a3789fc0cc9e93b7bcfd60f6637"
     },
     {
       "path": "docs/build/reports/obligations/governing_adrs.json",
@@ -1602,7 +1602,11 @@
     },
     {
       "path": "docs/build/runs/P34.8.md",
-      "sha256": "609e2199a023045f86c5ac1ecf62e114fa3bc8fb2b27feb75f036f4195e3b9d1"
+      "sha256": "d706f3345cc5c2104e4c713495148916962991ad1d2418b45ea43e8c20077305"
+    },
+    {
+      "path": "docs/build/runs/P34.9.md",
+      "sha256": "3147a6d3c1b92b12a5fa096e60659f27e95f71ff0358715ad5eab0e6e3068211"
     },
     {
       "path": "docs/build/runs/P35.38a.md",

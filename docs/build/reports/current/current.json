@@ -1,12 +1,12 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "d1f1df2db5ec568e01ef4324307bd22ad56f83a6",
-  "manifest_inputs": 932,
+  "input_commit": "8a87d03c83d719f4cc3b4111af3b69e1a9b56984",
+  "manifest_inputs": 933,
   "control": {
     "projectStatus": "IN_PROGRESS",
-    "nextTicket": "P34.9",
-    "lastCompleted": "P34.8",
+    "nextTicket": "P34.10",
+    "lastCompleted": "P34.9",
     "blockedOn": "(nothing)",
     "pauseRequested": "false",
     "returnPass": "P21.5, P31.4, P32.18, P32.19, P32.20, P32.21, P32.22, P32.23a, P32.25, P34.3, P34.4, P34.5, P34.6, P34.50",
@@ -17,13 +17,13 @@
     "buildWorktree": "/Users/stevenvitali/Eleutheria",
     "buildBranchBase": "devin/p33-8-agent-docs-refresh",
     "pinnedBaseSha": "b051732c",
-    "chainTip": "r11/P34.8-obligation-events-repair",
+    "chainTip": "r11/P34.9-ledger-contract-validator-no-vacuous-pass",
     "benchmarkSet": "N/A",
     "autonomy": "checkpoint",
     "mergePolicy": "OPERATOR",
     "round": "11",
     "harness": "devin-desktop/swe-2-high/subagent",
-    "updatedAt": "2026-10-02T18:00:02Z"
+    "updatedAt": "2026-10-02T20:46:44Z"
   },
   "counts": {
     "obligations": 143,
@@ -31,9 +31,9 @@
     "open": 74,
     "partial": 3,
     "terminal": 66,
-    "events": 611,
-    "transitions": 14,
-    "coverage_assessments": 187,
+    "events": 615,
+    "transitions": 18,
+    "coverage_assessments": 189,
     "coverage_historical_rows": 777,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
@@ -2236,11 +2236,11 @@
     {
       "id": "D-R6.1-EVAL",
       "status": "OPEN",
-      "status_source": "event-head D-R6.1-EVAL:e0",
+      "status_source": "event-head D-R6.1-EVAL:e1",
       "kind": "F",
       "owner": "maintainer + reviewers",
-      "landing": "**Round 10**: the human review campaign → P31.18 re-derivation",
-      "backlog_home": "BL-057",
+      "landing": "stays OPEN under trigger T-EVAL-IND (the deferred human evaluation campaign); the non-human parts pass to CONF-02 = P34.45 and CONF-09 = P37.44 (SEED-13a disposition, ADR-152)",
+      "backlog_home": "BL-088",
       "item": "Re-derive the auto-vs-human resolution balance from FIRST PRINCIPLES once real ground truth exists (§2.6): re-estimate P/R/R on a *human* holdout and re-tune `auto_write_precision_threshold` + the tier cutoffs against it; re-assess whether the LLM adjudicator stays trustworthy (κ) as models drift; formalize the active-learning loop + the cost/benefit of human review vs marginal precision; consider a decision-theoretic loss (a false merge in a surveillance-accountability record is asymmetrically worse than a false split) rather than pairwise precision. The first-pass thresholds (κ ≥ 0.7, precision ≥ 0.98) are explicitly PROVISIONAL and must not ossify.",
       "unblocked_by": "real human ground truth accumulates — field verification, contributor `/dispute` + review-queue decisions periodically re-`build_gold_set` + re-freeze a new holdout version (old holdout stays immutable), and/or a dedicated human-adjudication pass",
       "verify": "after P28.1 lands: re-`build_gold_set` from the live loop's human decisions → re-freeze a versioned holdout → re-measure P/R/F1 + B-cubed + LLM-vs-human κ on the *human* holdout → re-tune the floor + tier cutoffs against it and record the new values in a NEW ADR (SIG-ENG-003), never a silent threshold edit; the \"resolved\" surfaces drop the provisional-eval disclosure only then",
@@ -2274,6 +2274,28 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-R6.1-EVAL:e1",
+          "kind": "transition",
+          "obligation_id": "D-R6.1-EVAL",
+          "seq": 1,
+          "expected_previous_event": "D-R6.1-EVAL:e0",
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.9",
+          "owner": "maintainer + reviewers",
+          "landing": "stays OPEN under trigger T-EVAL-IND (the deferred human evaluation campaign); the non-human parts pass to CONF-02 = P34.45 and CONF-09 = P37.44 (SEED-13a disposition, ADR-152)",
+          "backlog_home": "BL-088",
+          "evidence_refs": [
+            "docs/build/runs/P34.9.md",
+            "docs/tickets/00_MANIFEST.md"
+          ],
+          "observed_at": "2026-10-02",
+          "recorded_at": "2026-10-02",
+          "source_commit": "7feae0fd",
+          "reason": "landing correction: the migration anchor named P31.18 — dropped/moved at the Round-10 import, then the whole human-review spine was superseded at the R11 seed (ADR-152; rows 184-187 superseded-by T-EVAL-IND + CONF-02/CONF-09). The SEED-13a disposition names this obligation verbatim as OPEN under T-EVAL-IND. Appended transition re-lands it; the anchor line is preserved verbatim (append-only, ADR-146). Found by P34.9's projection landing check (B4 V9)."
         }
       ]
     },
@@ -3069,11 +3091,11 @@
     {
       "id": "D-P30.2b-1",
       "status": "OPEN",
-      "status_source": "event-head D-P30.2b-1:e0",
+      "status_source": "event-head D-P30.2b-1:e1",
       "kind": "F",
       "owner": "engineering + reviewers",
-      "landing": "**Round 10** (human review campaign → P31.18); engineering half landed",
-      "backlog_home": "BL-057",
+      "landing": "the T-EVAL-IND human-evaluation segment — real human review decisions clustering on hosted + gold-set growth (the deferred campaign; ADR-152); the engineering halves already landed (P31.10 surface, P31.11 wiring)",
+      "backlog_home": "BL-088",
       "item": "close the review loop for camera-site proposals: an `accept` on an `er_match:camera_site:*` review item becomes an append-only human same_as decision (`decided_by` = reviewer) that the next camera-site run clusters, and the accepted/rejected pairs grow the gold set (new holdout version; old holdout immutable)",
       "unblocked_by": "a curation ticket (BL-057) + real human review decisions",
       "verify": "an accepted proposal appears as an `auto_write`-equivalent human edge in the next run's clusters (N drops by one), a rejected one never clusters; `camera_site_run.summary` records the human-decision counts; re-run +0",
@@ -3107,17 +3129,39 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P30.2b-1:e1",
+          "kind": "transition",
+          "obligation_id": "D-P30.2b-1",
+          "seq": 1,
+          "expected_previous_event": "D-P30.2b-1:e0",
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.9",
+          "owner": "engineering + reviewers",
+          "landing": "the T-EVAL-IND human-evaluation segment — real human review decisions clustering on hosted + gold-set growth (the deferred campaign; ADR-152); the engineering halves already landed (P31.10 surface, P31.11 wiring)",
+          "backlog_home": "BL-088",
+          "evidence_refs": [
+            "docs/build/runs/P34.9.md",
+            "docs/tickets/00_MANIFEST.md"
+          ],
+          "observed_at": "2026-10-02",
+          "recorded_at": "2026-10-02",
+          "source_commit": "7feae0fd",
+          "reason": "landing correction: the migration anchor named P31.18 — dropped at the Round-10 import and the human-review spine superseded at the R11 seed (ADR-152). Closure needs the deferred human campaign, which fires only on trigger T-EVAL-IND. Appended transition re-lands it; the anchor line is preserved verbatim (append-only, ADR-146). Found by P34.9's projection landing check (B4 V9)."
         }
       ]
     },
     {
       "id": "D-P30.2b-2",
       "status": "OPEN",
-      "status_source": "event-head D-P30.2b-2:e0",
+      "status_source": "event-head D-P30.2b-2:e1",
       "kind": "F",
       "owner": "engineering",
-      "landing": "**Round 10** (with the P31.18 evaluation refresh)",
-      "backlog_home": "BL-057",
+      "landing": "the next camera-site rules version measured on a fresh frozen holdout — the holdout is the T-EVAL-IND human-evaluation segment; the rules re-derivation rides P32.23's superseded scope = CONF-02 (P34.45) / CONF-09 (P37.44) and decision leg T-EVAL-IND EV-D, EV-R (ADR-152)",
+      "backlog_home": "BL-088",
       "item": "encode the device-kind and place conflicts that are visible only in a site description — e.g. a police neighbourhood CCTV row vs a DOT traffic camera at the same point, or two coincident rows whose descriptions name different freeways/cross-streets — as recorded soft conflicts (never auto-write)",
       "unblocked_by": "the next camera-site rules version + a fresh holdout (BL-057)",
       "verify": "a rules-v3 soft conflict for name-level device-kind/place disagreement; measured on a new frozen holdout; tier 3g precision re-measured ≥ 0.98",
@@ -3151,6 +3195,28 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P30.2b-2:e1",
+          "kind": "transition",
+          "obligation_id": "D-P30.2b-2",
+          "seq": 1,
+          "expected_previous_event": "D-P30.2b-2:e0",
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.9",
+          "owner": "engineering",
+          "landing": "the next camera-site rules version measured on a fresh frozen holdout — the holdout is the T-EVAL-IND human-evaluation segment; the rules re-derivation rides P32.23's superseded scope = CONF-02 (P34.45) / CONF-09 (P37.44) and decision leg T-EVAL-IND EV-D, EV-R (ADR-152)",
+          "backlog_home": "BL-088",
+          "evidence_refs": [
+            "docs/build/runs/P34.9.md",
+            "docs/tickets/00_MANIFEST.md"
+          ],
+          "observed_at": "2026-10-02",
+          "recorded_at": "2026-10-02",
+          "source_commit": "7feae0fd",
+          "reason": "landing correction: the migration anchor named P31.18 — dropped at the Round-10 import; the human-holdout work moved with the superseded S3 spine (ADR-152). Appended transition re-lands it; the anchor line is preserved verbatim (append-only, ADR-146). Found by P34.9's projection landing check (B4 V9)."
         }
       ]
     },
@@ -5846,10 +5912,10 @@
     {
       "id": "D-P34.1-1",
       "status": "OPEN",
-      "status_source": "event-head D-P34.1-1:e0",
+      "status_source": "event-head D-P34.1-1:e1",
       "kind": "V",
       "owner": "operator merge",
-      "landing": "the first merge sitting after this PR reaches main; P38.1 audits it",
+      "landing": "the first merge sitting after this PR reaches main; P38.1a audits it",
       "backlog_home": "BL-084",
       "item": "\"0 cancelled push runs on `main` after merges\" — the SIG-ENG-046 rule that a push run to `main` is never cancelled, observed for real",
       "unblocked_by": "owner: operator merge; trigger: the first merge sitting after this PR reaches `main`; P38.1 audits it",
@@ -5884,6 +5950,28 @@
             "prose_terminal": null,
             "interpretation": "preserved"
           }
+        },
+        {
+          "schema": "obligation-event/1",
+          "event_id": "D-P34.1-1:e1",
+          "kind": "transition",
+          "obligation_id": "D-P34.1-1",
+          "seq": 1,
+          "expected_previous_event": "D-P34.1-1:e0",
+          "from_status": "OPEN",
+          "to_status": "OPEN",
+          "ticket_id": "P34.9",
+          "owner": "operator merge",
+          "landing": "the first merge sitting after this PR reaches main; P38.1a audits it",
+          "backlog_home": "BL-084",
+          "evidence_refs": [
+            "docs/build/runs/P34.9.md",
+            "docs/tickets/00_MANIFEST.md"
+          ],
+          "observed_at": "2026-10-02",
+          "recorded_at": "2026-10-02",
+          "source_commit": "7feae0fd",
+          "reason": "landing correction: the migration anchor named P38.1, renumbered at the S6 plan split — manifest row 501 is P38.1a (independent gap analysis: 11A + 11B), the audit leg the anchor meant. Appended transition re-lands the obligation; the anchor line is preserved verbatim (append-only, ADR-146). Found by P34.9's projection landing check (B4 V9: a landing must name a manifest chain row)."
         }
       ]
     },
@@ -11029,8 +11117,8 @@
           "label": "historical/csv"
         },
         "SIG-MEM-010": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "PARTIAL",
+          "evidence": "docs/build/tools/ledger_contract.py;docs/build/tools/record_policy/phase_log_kinds.txt;docs/build/tools/record_policy/stale_tokens.txt;docs/build/tools/test_ledger_contract.py;docs/build/runs/P34.9.md;Makefile;scripts/docs/check-build-memory.sh;docs/build/tools/memory_guard.py;docs/build/tools/check_backlog.py;docs/build/tools/audit_current_state.py",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -11059,8 +11147,8 @@
           "label": "historical/csv"
         },
         "SIG-ENG-042": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "Makefile;.github/workflows/ci.yml;scripts/docs/check-build-memory.sh;docs/build/tools/ledger_contract.py;docs/build/tools/check_spec_src.py;docs/build/tools/check_coverage_matrix.py;docs/build/tools/check_backlog.py;docs/build/tools/audit_current_state.py;docs/build/tools/current_projection.py;docs/build/tools/obligation_events.py;docs/build/tools/memory_guard.py;docs/build/tools/test_ledger_contract.py;tests/unit/test_ci_workflows.py;docs/build/runs/P34.9.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -11722,6 +11810,16 @@
         "limitations": "new Round-11 requirement entering the matrix as MISSING with its owner's routing (P34.9); planning never marks it MET (spec §56.9)",
         "supersedes": null,
         "assessment_id": "SIG-ENG-042:r11-1"
+      },
+      {
+        "requirement_id": "SIG-ENG-042",
+        "domain": "implementation",
+        "verdict": "MET",
+        "assessed_at": "2026-10-02",
+        "code_revision": "r11/P34.9-ledger-contract-validator-no-vacuous-pass @ f9236a4f9f48eca6958bd01ca4a9f543f5d7ff6d",
+        "limitations": "every named validator reports candidates/evaluated with declared floors and exits 3 on a vacuous set; all run under make docs-check and the CI docs job on PRs and pushes to main — observed live on this PR's own run; the nightly replay's vacuous exit landed in P34.7; no residual leg owed",
+        "supersedes": "SIG-ENG-042:r11-1",
+        "assessment_id": "SIG-ENG-042:r11-2"
       },
       {
         "requirement_id": "SIG-ENG-043",
@@ -12432,6 +12530,16 @@
         "limitations": "new Round-11 requirement entering the matrix as MISSING with its owner's routing (P34.9); planning never marks it MET (spec §56.9)",
         "supersedes": null,
         "assessment_id": "SIG-MEM-010:r11-1"
+      },
+      {
+        "requirement_id": "SIG-MEM-010",
+        "domain": "implementation",
+        "verdict": "PARTIAL",
+        "assessed_at": "2026-10-02",
+        "code_revision": "r11/P34.9-ledger-contract-validator-no-vacuous-pass @ f9236a4f9f48eca6958bd01ca4a9f543f5d7ff6d",
+        "limitations": "every clause except 'RETURN PASS MUST equal its generated form' is implemented and verified (ledger-contract/1: V1-V6/V8/V11-V13, check/--at/replay, counts+floors, exits 0/1/2/3/5, wired into docs-check and the CI docs job); the generator equality leg is P34.29's deliverable — routed there in the matrix (PARTIAL, not MET-ENGINEERED: the residual is a manifest row, not a deferral)",
+        "supersedes": "SIG-MEM-010:r11-1",
+        "assessment_id": "SIG-MEM-010:r11-2"
       },
       {
         "requirement_id": "SIG-MEM-011",
@@ -13372,6 +13480,11 @@
           "assessed_at": "2026-10-01"
         },
         {
+          "requirement": "SIG-ENG-042",
+          "verdict": "MET",
+          "assessed_at": "2026-10-02"
+        },
+        {
           "requirement": "SIG-ENG-043",
           "verdict": "MISSING",
           "assessed_at": "2026-10-01"
@@ -13575,6 +13688,11 @@
           "requirement": "SIG-MEM-010",
           "verdict": "MISSING",
           "assessed_at": "2026-10-01"
+        },
+        {
+          "requirement": "SIG-MEM-010",
+          "verdict": "PARTIAL",
+          "assessed_at": "2026-10-02"
         },
         {
           "requirement": "SIG-MEM-011",
@@ -14611,10 +14729,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "f8b65e96e768e6c2051a55aea3f67ea999f6c17ba4cbfd5b1cb4a7bafce7ee13",
+  "manifest_sha256": "7b817ae7fa4066c200436a00917cc236cae92e87988a38107e6c103af4ce242f",
   "current_md": {
     "lines": 74,
-    "bytes": 12844,
+    "bytes": 12926,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",

@@ -19,7 +19,7 @@
 #   file named on the last stdout line, the input identity {repo, commit, dirty, input_digest}, uniform
 #   {check, severity, file, obligation, evidence, message} records and summary.exit.
 #
-# LOCAL PATCH — the body below the closing banner line is the upstream file byte-for-byte except three
+# LOCAL PATCH — the body below the closing banner line is the upstream file byte-for-byte except six
 # hunks, each tagged `SIG-LOCAL` in place (all upstream candidates):
 #   L1  write_report: `dirty` also covers the canonical spec when it lies inside the repo (the input
 #       digest reads the spec, so an uncommitted spec edit marks the report dirty). From the P32.8 fork.
@@ -28,6 +28,14 @@
 #   L3  emit_diags: records are split on \037, not <tab> — bash merges adjacent tab separators, so a
 #       diagnostic with an empty file/obligation/evidence field put its message under the wrong JSON
 #       key (latent in the P32.8 fork and in upstream 0.5.0; found by SEED-02c).
+#   L4  count(): any counted check with candidates > 0 and evaluated == 0 sets VACUOUS and reports a
+#       `vacuous` violation (exit 3) — upstream only did this inside the phase-log-done block; the
+#       P34.9 G11 rule applies it to every counted check, and the phase-log-done block keeps its
+#       declared 0.5 parse floor for the evaluated > 0 case (B3 §6 / B4 G11).
+#   L5  the > 48 KiB orient probe is `guarded` (fails under the guards marker), not warn-only —
+#       V11's budget is a contract bound (B4 G5 / BM-ORIENT-01).
+#   L6  `OPERATOR` joins the done-entry pseudo-id allow-list — B3's allow-list is
+#       SETUP | OPERATOR | ROUND* (CAPSTONE/DONE stay from the upstream list).
 # Behaviours SIG takes from upstream 0.5.0 as they are: duplicate ticket ids keyed on the id (not the
 # NN prefix); tolerant DEFERRALS status parsing (first canonical token of the last cell); human output
 # `- check: message`; the contract/patch/3 report shape (now also `guards`, `counts`, `input.now`).
@@ -37,7 +45,7 @@
 # `repo` key (upstream writes the full report, `input.repo`).
 # Verify the vendored body against the skill:
 #   diff <(sed '2,/^# ---- end of SIG vendoring banner ----/d' scripts/docs/check-build-memory.sh) \
-#        ~/.claude/skills/build-memory/scripts/check-build-memory.sh      # → only the three SIG-LOCAL hunks
+#        ~/.claude/skills/build-memory/scripts/check-build-memory.sh      # → only the six SIG-LOCAL hunks
 # ---- end of SIG vendoring banner ----
 # check-build-memory.sh — validate a repo's build-memory layout. (BM-VALID-01.)
 #
@@ -228,7 +236,16 @@ newtmp() { local t; t="$(mktemp)"; TMPS="$TMPS $t"; printf '%s' "$t"; }
 viol() { printf '%s\t%s\t%s\t%s\t%s\n' "$1" "${3:-}" "${4:-}" "${5:-}" "$2" >> "$VIOL"; }
 warn() { printf '%s\t%s\t%s\t%s\t%s\n' "$1" "${3:-}" "${4:-}" "${5:-}" "$2" >> "$WARN"; }
 COUNTS=""   # ,"<check>":{"candidates":n,"evaluated":m}
-count() { COUNTS="$COUNTS,\"$1\":{\"candidates\":$2,\"evaluated\":$3}"; }
+# SIG-LOCAL L4 (P34.9, G11): a counted check that evaluated none of a non-empty
+# candidate set is vacuous — flagged here once, exit 3 at the end, so no check
+# can pass without having judged anything.
+count() {
+  COUNTS="$COUNTS,\"$1\":{\"candidates\":$2,\"evaluated\":$3}"
+  if [ "$2" -gt 0 ] && [ "$3" -eq 0 ]; then
+    VACUOUS=1
+    viol vacuous "check '$1': $2 candidate(s) but 0 evaluated — the check would pass vacuously (G11)" ""
+  fi
+}
 VACUOUS=0
 
 write_report() {   # write_report <exit> <buildMemory true|false> [guards]
@@ -782,12 +799,17 @@ if [ -f "$LEDGER" ]; then
   cand="$(awk -F'\t' '$6 == 1' "$PL" | wc -l | tr -d ' ')"
   eval_n="$(awk -F'\t' '$6 == 1 && $5 != ""' "$PL" | wc -l | tr -d ' ')"
   count phase-log-done "$cand" "$eval_n"
-  if [ "$cand" -gt 0 ] && { [ "$eval_n" -eq 0 ] || [ $((eval_n * 2)) -lt "$cand" ]; }; then
+  # SIG-LOCAL L4 (P34.9): the ==0 case is reported by count() above for every
+  # counted check; this block keeps the declared parse floor (fewer than half
+  # parsing is vacuous even when it parsed something).
+  if [ "$cand" -gt 0 ] && [ "$eval_n" -gt 0 ] && [ $((eval_n * 2)) -lt "$cand" ]; then
     VACUOUS=1
-    viol vacuous "LEDGER.md: $cand PHASE LOG 'done' entr(y/ies) but only $eval_n parse to a ticket id — the done ↔ BUILD_INDEX check would pass vacuously; write entries as '- <date -u +%F> — <ID> done — …' (BM-LEDGER-06)" "docs/build/LEDGER.md"
+    viol vacuous "LEDGER.md: $cand PHASE LOG 'done' entr(y/ies) but only $eval_n parse to a ticket id — below the declared 0.5 parse floor; the done ↔ BUILD_INDEX check would pass vacuously; write entries as '- <date -u +%F> — <ID> done — …' (BM-LEDGER-06)" "docs/build/LEDGER.md"
   fi
   awk -F'\t' '$6 == 1 && $5 != "" {print $1 "\t" $3 "\t" $4 "\t" $5}' "$PL" | while IFS="$(printf '\t')" read -r ln islast mk tid; do
-    case "$tid" in SETUP|CAPSTONE|DONE|ROUND|ROUND[0-9]*) continue ;; esac
+    # SIG-LOCAL L6 (P34.9): OPERATOR joins the pseudo-id allow-list (B3's set:
+    # SETUP | OPERATOR | ROUND*; CAPSTONE/DONE kept from the upstream list).
+    case "$tid" in SETUP|CAPSTONE|DONE|OPERATOR|ROUND|ROUND[0-9]*) continue ;; esac
     report=viol
     if [ "$mk" = "1" ]; then if [ "$islast" = "1" ]; then report=guarded; else report=warn; fi; fi
     if [ -f "$BI" ] && ! in_index "$tid"; then
@@ -944,7 +966,9 @@ if [ -f "$LEDGER" ]; then
   fi
   orient_b=$((head_b + ${rp_b:-0} + ${last3_b:-0} + nt_b))
   count orient-bytes "$orient_b" "$orient_b"
-  [ "$orient_b" -gt 49152 ] && warn ledger-budget "orient recipe reads $orient_b B (> 48 KiB: head $head_b · RETURN PASS ${rp_b:-0} · last 3 entries ${last3_b:-0} · next row $nt_b) (BM-ORIENT-01, V11)" "docs/build/LEDGER.md"
+  # SIG-LOCAL L5 (P34.9): the 48 KiB orient-probe budget is a contract bound,
+  # not advice — fail under the guards marker, warn without it.
+  [ "$orient_b" -gt 49152 ] && guarded ledger-budget "orient recipe reads $orient_b B (> 48 KiB: head $head_b · RETURN PASS ${rp_b:-0} · last 3 entries ${last3_b:-0} · next row $nt_b) (BM-ORIENT-01, V11)" "docs/build/LEDGER.md"
 
   # GATE DECISIONS rows in the 7-column form (BM-GATE-05, -09; guarded). Header-aware: a table row
   # with a `consequence` cell is a header; the table is 7-column iff that header also has `kind`.

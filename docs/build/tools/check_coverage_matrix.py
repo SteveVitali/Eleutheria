@@ -609,6 +609,15 @@ def main(argv: list[str] | None = None) -> int:
             f"{stats.get('waiver_records', 0)} spec waiver records · evaluated: {stats['evaluated']} rows, "
             f"{stats['evidence_refs']} evidence refs"
         )
+    # G11 (P34.9): the matrix offered rows and none were evaluated — the check
+    # ran on nothing; exit 3, never a silent pass.
+    if stats and stats["rows"] > 0 and stats["evaluated"] == 0:
+        print(
+            f"VACUOUS: {stats['rows']} matrix rows offered, 0 evaluated "
+            "(G11, exit 3)",
+            file=sys.stderr,
+        )
+        return 3
     if errors:
         print(f"FAIL: {len(errors)} problem(s):")
         for e in errors:

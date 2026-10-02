@@ -1,0 +1,7 @@
+# V3 stale-token policy (B3 §6; P34.9): tokens that must not appear in the
+# LEDGER orient region (the head of the file, down to `## OPEN FINDINGS`).
+# One token per line; a leading `!` retires a default. Defaults are
+# `.agents/scratch`, `gitignored` and `Do not resume until`
+# (check-build-memory.sh); the two below complete B3's deny list.
+never commit
+PHASE PLAN
