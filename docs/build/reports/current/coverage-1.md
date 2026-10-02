@@ -37,6 +37,7 @@
 | SIG-ENG-040 | implementation | MISSING | 2026-10-01 | — |
 | SIG-ENG-041 | implementation | MISSING | 2026-10-01 | — |
 | SIG-ENG-042 | implementation | MISSING | 2026-10-01 | — |
+| SIG-ENG-042 | implementation | MET | 2026-10-02 | SIG-ENG-042:r11-1 |
 | SIG-ENG-043 | implementation | MISSING | 2026-10-01 | — |
 | SIG-ENG-044 | implementation | MISSING | 2026-10-01 | — |
 | SIG-ENG-045 | composed-db | MISSING | 2026-10-01 | — |
@@ -108,6 +109,7 @@
 | SIG-MEM-008 | implementation | MISSING | 2026-10-01 | — |
 | SIG-MEM-009 | implementation | MISSING | 2026-10-01 | — |
 | SIG-MEM-010 | implementation | MISSING | 2026-10-01 | — |
+| SIG-MEM-010 | implementation | PARTIAL | 2026-10-02 | SIG-MEM-010:r11-1 |
 | SIG-MEM-011 | implementation | MISSING | 2026-10-01 | — |
 | SIG-MEM-012 | implementation | MISSING | 2026-10-01 | — |
 | SIG-ONTO-001 | implementation | PARTIAL | 2026-10-01 | — |
@@ -120,7 +122,5 @@
 | SIG-ONTO-057 | implementation | PARTIAL | 2026-10-01 | — |
 | SIG-ONTO-057a | implementation | PARTIAL | 2026-10-01 | — |
 | SIG-ONTO-060 | implementation | PARTIAL | 2026-10-01 | — |
-| SIG-ONTO-064 | public | PARTIAL | 2026-10-01 | — |
-| SIG-ONTO-065 | public | PARTIAL | 2026-10-01 | — |
 
 ← back: CURRENT.md · next page: coverage-2.md

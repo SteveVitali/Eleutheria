@@ -2,6 +2,8 @@
 
 | requirement | domain | verdict | assessed_at | supersedes |
 |---|---|---|---|---|
+| SIG-ONTO-064 | public | PARTIAL | 2026-10-01 | — |
+| SIG-ONTO-065 | public | PARTIAL | 2026-10-01 | — |
 | SIG-OPS-001 | hosted | MISSING | 2026-10-01 | — |
 | SIG-OPS-002 | hosted | MISSING | 2026-10-01 | — |
 | SIG-OPS-003 | hosted | MISSING | 2026-10-01 | — |

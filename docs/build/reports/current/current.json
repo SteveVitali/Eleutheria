@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "f9236a4f9f48eca6958bd01ca4a9f543f5d7ff6d",
+  "input_commit": "1168e6eb0a949862b5340b26098b279bd7ef34b7",
   "manifest_inputs": 933,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -33,7 +33,7 @@
     "terminal": 66,
     "events": 615,
     "transitions": 18,
-    "coverage_assessments": 187,
+    "coverage_assessments": 189,
     "coverage_historical_rows": 777,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
@@ -11117,8 +11117,8 @@
           "label": "historical/csv"
         },
         "SIG-MEM-010": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "PARTIAL",
+          "evidence": "docs/build/tools/ledger_contract.py;docs/build/tools/record_policy/phase_log_kinds.txt;docs/build/tools/record_policy/stale_tokens.txt;docs/build/tools/test_ledger_contract.py;docs/build/runs/P34.9.md;Makefile;scripts/docs/check-build-memory.sh;docs/build/tools/memory_guard.py;docs/build/tools/check_backlog.py;docs/build/tools/audit_current_state.py",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -11147,8 +11147,8 @@
           "label": "historical/csv"
         },
         "SIG-ENG-042": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "MET",
+          "evidence": "Makefile;.github/workflows/ci.yml;scripts/docs/check-build-memory.sh;docs/build/tools/ledger_contract.py;docs/build/tools/check_spec_src.py;docs/build/tools/check_coverage_matrix.py;docs/build/tools/check_backlog.py;docs/build/tools/audit_current_state.py;docs/build/tools/current_projection.py;docs/build/tools/obligation_events.py;docs/build/tools/memory_guard.py;docs/build/tools/test_ledger_contract.py;tests/unit/test_ci_workflows.py;docs/build/runs/P34.9.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -11810,6 +11810,16 @@
         "limitations": "new Round-11 requirement entering the matrix as MISSING with its owner's routing (P34.9); planning never marks it MET (spec §56.9)",
         "supersedes": null,
         "assessment_id": "SIG-ENG-042:r11-1"
+      },
+      {
+        "requirement_id": "SIG-ENG-042",
+        "domain": "implementation",
+        "verdict": "MET",
+        "assessed_at": "2026-10-02",
+        "code_revision": "r11/P34.9-ledger-contract-validator-no-vacuous-pass @ f9236a4f9f48eca6958bd01ca4a9f543f5d7ff6d",
+        "limitations": "every named validator reports candidates/evaluated with declared floors and exits 3 on a vacuous set; all run under make docs-check and the CI docs job on PRs and pushes to main — observed live on this PR's own run; the nightly replay's vacuous exit landed in P34.7; no residual leg owed",
+        "supersedes": "SIG-ENG-042:r11-1",
+        "assessment_id": "SIG-ENG-042:r11-2"
       },
       {
         "requirement_id": "SIG-ENG-043",
@@ -12520,6 +12530,16 @@
         "limitations": "new Round-11 requirement entering the matrix as MISSING with its owner's routing (P34.9); planning never marks it MET (spec §56.9)",
         "supersedes": null,
         "assessment_id": "SIG-MEM-010:r11-1"
+      },
+      {
+        "requirement_id": "SIG-MEM-010",
+        "domain": "implementation",
+        "verdict": "PARTIAL",
+        "assessed_at": "2026-10-02",
+        "code_revision": "r11/P34.9-ledger-contract-validator-no-vacuous-pass @ f9236a4f9f48eca6958bd01ca4a9f543f5d7ff6d",
+        "limitations": "every clause except 'RETURN PASS MUST equal its generated form' is implemented and verified (ledger-contract/1: V1-V6/V8/V11-V13, check/--at/replay, counts+floors, exits 0/1/2/3/5, wired into docs-check and the CI docs job); the generator equality leg is P34.29's deliverable — routed there in the matrix (PARTIAL, not MET-ENGINEERED: the residual is a manifest row, not a deferral)",
+        "supersedes": "SIG-MEM-010:r11-1",
+        "assessment_id": "SIG-MEM-010:r11-2"
       },
       {
         "requirement_id": "SIG-MEM-011",
@@ -13460,6 +13480,11 @@
           "assessed_at": "2026-10-01"
         },
         {
+          "requirement": "SIG-ENG-042",
+          "verdict": "MET",
+          "assessed_at": "2026-10-02"
+        },
+        {
           "requirement": "SIG-ENG-043",
           "verdict": "MISSING",
           "assessed_at": "2026-10-01"
@@ -13663,6 +13688,11 @@
           "requirement": "SIG-MEM-010",
           "verdict": "MISSING",
           "assessed_at": "2026-10-01"
+        },
+        {
+          "requirement": "SIG-MEM-010",
+          "verdict": "PARTIAL",
+          "assessed_at": "2026-10-02"
         },
         {
           "requirement": "SIG-MEM-011",
@@ -14699,10 +14729,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "1e3c7269f6a773c97f64bb426a4841a70733c4b1709ae0186f9b679bf9e7aecb",
+  "manifest_sha256": "3273768310a84dc9de3b96a4e5484eeeac54e922b946f63b70219e6a13cb3dfa",
   "current_md": {
     "lines": 74,
-    "bytes": 12862,
+    "bytes": 12926,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
