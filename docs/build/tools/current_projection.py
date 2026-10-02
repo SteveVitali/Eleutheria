@@ -291,6 +291,8 @@ def classify_conflicts(
     by_doc: list[dict] = []
     inconsistencies: list[dict] = []
     for d in diags:
+        if d["severity"] == "warning":
+            continue  # advisory (e.g. volatile gitignored-log refs), never an inconsistency
         if d["severity"] == "conflict" and (
             d["check"] == "deferrals/status-conflict"
             and d["obligation"] in covered_conflict_obligations
