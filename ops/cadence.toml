@@ -70,6 +70,128 @@ name = "sig-pg-cloudsql"
 kind = "cloudsql"                # reachability only — SELECT 1 through the job's
                                  # mounted /cloudsql socket; DSN from env parts
 
+# --- P34.10 (SIG-OPS-003): denied-route absence probes -------------------------
+# `kind = "http-absent"` inverts the health assertion: the target is GREEN only
+# when the route answers HTTP 404 — anything served (200/3xx/403) means a
+# denied route is PRESENT on that origin, and an unreachable origin is a
+# failure too (absence cannot be proven against a dead origin). This is the
+# tripwire the hand rsync was missing (S0 F-02): a denied route appearing on a
+# public origin is recorded and, under --alert, fires a recorded critical.
+# Each denied route (ops/public_routes.toml [[denied]]) is probed on EVERY
+# public origin — the apex domain (the recorded canonical origin, ADR-093),
+# the deployed web service ($SIG_PROBE_WEB_URL — the *.run.app URL today, the
+# apex fronted by the LB post-cutover), and the sig-web bucket's direct
+# storage.googleapis.com name. `sig-ops publish-web --apply` runs exactly these
+# targets as its post-sync verify.
+
+[[probes.targets]]
+name = "absent-apex-curate"
+kind = "http-absent"
+url = "https://surveillancegraph.org"          # canonical public origin (ADR-093)
+path = "/curate/"
+
+[[probes.targets]]
+name = "absent-apex-curate-submit"
+kind = "http-absent"
+url = "https://surveillancegraph.org"
+path = "/curate/submit/"
+
+[[probes.targets]]
+name = "absent-apex-demo-task"
+kind = "http-absent"
+url = "https://surveillancegraph.org"
+path = "/task/new/demo_roundtrip/"
+
+[[probes.targets]]
+name = "absent-apex-releases"
+kind = "http-absent"
+url = "https://surveillancegraph.org"
+path = "/releases/"
+
+[[probes.targets]]
+name = "absent-apex-research-dossier"
+kind = "http-absent"
+url = "https://surveillancegraph.org"
+path = "/research-dossier/"
+
+[[probes.targets]]
+name = "absent-apex-intake"
+kind = "http-absent"
+url = "https://surveillancegraph.org"
+path = "/intake/"
+
+[[probes.targets]]
+name = "absent-web-curate"
+kind = "http-absent"
+url_env = "SIG_PROBE_WEB_URL"                  # the deployed web service (run.app)
+path = "/curate/"
+
+[[probes.targets]]
+name = "absent-web-curate-submit"
+kind = "http-absent"
+url_env = "SIG_PROBE_WEB_URL"
+path = "/curate/submit/"
+
+[[probes.targets]]
+name = "absent-web-demo-task"
+kind = "http-absent"
+url_env = "SIG_PROBE_WEB_URL"
+path = "/task/new/demo_roundtrip/"
+
+[[probes.targets]]
+name = "absent-web-releases"
+kind = "http-absent"
+url_env = "SIG_PROBE_WEB_URL"
+path = "/releases/"
+
+[[probes.targets]]
+name = "absent-web-research-dossier"
+kind = "http-absent"
+url_env = "SIG_PROBE_WEB_URL"
+path = "/research-dossier/"
+
+[[probes.targets]]
+name = "absent-web-intake"
+kind = "http-absent"
+url_env = "SIG_PROBE_WEB_URL"
+path = "/intake/"
+
+[[probes.targets]]
+name = "absent-bucket-curate"
+kind = "http-absent"
+url = "https://storage.googleapis.com/{project}-sig-web"   # direct bucket origin
+path = "/curate/"
+
+[[probes.targets]]
+name = "absent-bucket-curate-submit"
+kind = "http-absent"
+url = "https://storage.googleapis.com/{project}-sig-web"
+path = "/curate/submit/"
+
+[[probes.targets]]
+name = "absent-bucket-demo-task"
+kind = "http-absent"
+url = "https://storage.googleapis.com/{project}-sig-web"
+path = "/task/new/demo_roundtrip/"
+
+[[probes.targets]]
+name = "absent-bucket-releases"
+kind = "http-absent"
+url = "https://storage.googleapis.com/{project}-sig-web"
+path = "/releases/"
+
+[[probes.targets]]
+name = "absent-bucket-research-dossier"
+kind = "http-absent"
+url = "https://storage.googleapis.com/{project}-sig-web"
+path = "/research-dossier/"
+
+[[probes.targets]]
+name = "absent-bucket-intake"
+kind = "http-absent"
+url = "https://storage.googleapis.com/{project}-sig-web"
+path = "/intake/"
+
 [runs]
 # Every scheduled ingest execution appends one run row here:
 #   gs://…-sig-restricted/ops/runs/<source>/<date>/<ts>.json

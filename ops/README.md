@@ -104,6 +104,17 @@ verification surface (`uv run sig-ops --help` for the exact flags):
 | `dossier-packet`, `dossier-packet-tulsa`, `dossier-packet-san-diego`, `seed-correct` | the reviewed three-dossier evidence sets + the authored OKC seed-correction packet (ADR-137/138/139) | offline fixture replay; `review.status=not_run` |
 | `swh-save`, `egress-report`, `degraded`, `keepalive-check`, `probe`, `alerts`/`alert`, `dashboard` | Software Heritage save request, egress budget, degraded static posture, observability | mixed — see each verb's help |
 
+**The public surface publishes ONE way (P34.10, SIG-OPS-003/004).** Public bytes
+reach a public bucket only through `sig-ops publish-web` (dry-run by default;
+`--apply` syncs): it refuses a built tree holding any top-level entry off
+`ops/public_routes.toml` or any internal/demo marker, writes
+`dist/.sig-release.json`, syncs without ever deleting the `r/`, `releases/`,
+`entity/`, `conf/` release namespaces, and probes every `[[denied]]` route
+absent on every public origin afterwards. Hand-typed `gcloud storage rsync`
+(or any other direct write) to `*-sig-web` or `*-sig-public` is forbidden —
+that bypass is what re-published `/curate/**` once (S0 F-02, G1 §3.2).
+Restricted-compartment writes (`*-sig-restricted`) stay operator-executed.
+
 ## Go-public cut-over — executed (2026-09-16/24/27)
 
 Recorded, not deferred: the GCP deploy ran under operator ADC (`GCP_DEPLOYMENT.md`,

@@ -39,14 +39,24 @@ labels each public compartment with its SPDX licence + attribution.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
+import re
 import shutil
+import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
+from .alerts import utcnow
 from .degraded import DegradedBuildError, Runner, build_static_site
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Iterable, Sequence
+
+    from .gcs import GcsBucket
+    from .observe import ProbeResult
 
 #: The default national export the public build reads (the P27.4 `--from-spine` bundle).
 #: `SIG_EXPORT_DIR` overrides; there is deliberately NO fixtures default for the public
@@ -171,13 +181,15 @@ def build_public_web(
 
 #: Build routes that are NOT public surfaces: the authenticated curation app's static shell
 #: (``/curate/**`` — "Authenticated curation surface — not public", ADR-068; served only by
-#: the loopback curation app). The static build emits them (the web test suite exercises
-#: them), but the PUBLIC origin never carries them (P30.3).
+#: the loopback curation app). Since P34.10 the default build never emits them at all
+#: (``web/src/internal/`` injects only under ``SIG_BUILD_INTERNAL=1``) — this strip stays
+#: as belt-and-suspenders over a build that was run with the internal flag set; the
+#: allow-list assertion in :func:`assert_allowlisted_tree` is the primary gate.
 NON_PUBLIC_WEB_PATHS: tuple[str, ...] = ("curate",)
 
 
 def strip_non_public_web(dist: Path) -> list[str]:
-    """Remove the non-public routes from a built ``web/dist`` before the public sync."""
+    """Remove any non-public routes from a built ``web/dist`` before the public sync."""
     removed: list[str] = []
     for rel in NON_PUBLIC_WEB_PATHS:
         target = dist / rel
@@ -561,9 +573,615 @@ def assert_site_matches_partition(dist: Path, public_root: Path) -> None:
         )
 
 
+# --- 3. the one allow-listed publish path (P34.10, SIG-OPS-003/004) -----------
+#
+# `sig-ops publish-web` is the ONLY way public bytes reach a public bucket — the
+# durable fix for the hand-typed `gcloud storage rsync --delete-unmatched` that
+# bypassed the build and re-published /curate/** (S0 F-02, G1 §3.2). The command
+# composes: prepare (export build + compartment partition) → allow-list and
+# content assertions → release record → ONE sync → post-sync absence probes.
+# The sync never deletes the release trees (`r/`, `releases/`, `entity/`,
+# `conf/` plus the release-pipeline root objects) — a web redeploy can retire a
+# stale site page but can never touch an immutable release namespace.
+
+#: The committed allow-list (data, not code). ``--allowlist`` /
+#: ``SIG_PUBLIC_ROUTES`` override it; neither is ever auto-created.
+DEFAULT_ALLOWLIST_PATH = Path("ops") / "public_routes.toml"
+
+#: The release record the publish writes into the synced tree (SIG-OPS-004).
+RELEASE_RECORD = ".sig-release.json"
+RELEASE_RECORD_SCHEMA = "sig/web-release-record/1.0.0"
+
+#: Namespaces the site sync NEVER deletes — the immutable release trees owned by
+#: the release pipeline (G2 0b: ``r/``, ``releases/<pub>/``, ``entity/``,
+#: ``conf/``). ``releases/`` is protected wholesale (superset of
+#: ``releases/<pub>/``) so the sync can never remove ``releases/index.html``,
+#: which exactly one generator owns (the release tool, P35.53).
+PROTECTED_PREFIXES: tuple[str, ...] = ("r/", "releases/", "entity/", "conf/")
+
+#: Release-pipeline root objects that are not under a protected prefix but are
+#: never web-build output: the compat index and the per-release ``release.json``
+#: that SIG-REL-009 links every page to. Protected by name, like the prefixes.
+PROTECTED_NAMES: frozenset[str] = frozenset({"compat_index.json", "release.json"})
+
+#: The top-level entries a staged RELEASE tree (--release-tree) may carry — the
+#: namespaces the release pipeline owns. Anything else (e.g. a staged
+#: ``index.html`` that would clobber the site root) refuses the publish.
+RELEASE_TREE_TOP_LEVEL: frozenset[str] = frozenset(
+    {"r", "releases", "entity", "conf", "compat_index.json", "release.json"}
+)
+
+
+def is_protected_object(name: str) -> bool:
+    """True iff the bucket object ``name`` is a release-tree byte the site sync
+    must never delete or overwrite (the immutable namespaces + the release
+    pipeline's root objects)."""
+    return name in PROTECTED_NAMES or any(name.startswith(p) for p in PROTECTED_PREFIXES)
+
+
+@dataclass(frozen=True)
+class PublicAllowlist:
+    """The parsed ``ops/public_routes.toml``.
+
+    ``top_level`` is the set of top-level entries a built tree may carry;
+    ``required`` is the subset every public build MUST emit (conditional
+    entries — the reserved 404 page, the publish's own release record,
+    export-mode-only ``tiles/`` — are listable but not required);
+    ``denied_routes`` are the never-public routes probed absent post-publish.
+    """
+
+    top_level: frozenset[str]
+    denied_routes: tuple[str, ...]
+    required: frozenset[str] = frozenset()
+
+    def as_json(self) -> dict[str, Any]:
+        return {
+            "top_level": sorted(self.top_level),
+            "required": sorted(self.required),
+            "denied_routes": list(self.denied_routes),
+        }
+
+
+def load_allowlist(path: str | Path | None = None) -> PublicAllowlist:
+    """Parse the committed allow-list (``ops/public_routes.toml``).
+
+    Resolution order: explicit ``path`` → ``$SIG_PUBLIC_ROUTES`` →
+    ``ops/public_routes.toml`` relative to the repo root. An explicitly
+    chosen path (argument or env) that does not exist fails LOUD — a mistyped
+    path must never silently substitute the default. Fails loud on a missing
+    file or a malformed/empty ``top_level`` set — an absent allow-list must
+    never read as "everything is allowed".
+    """
+    candidates: list[Path] = []
+    if path:
+        candidates.append(Path(path))
+    env_path = os.environ.get("SIG_PUBLIC_ROUTES", "").strip()
+    if env_path:
+        candidates.append(Path(env_path))
+    candidates.append(Path(__file__).resolve().parents[3] / DEFAULT_ALLOWLIST_PATH)
+    if len(candidates) > 1 and not candidates[0].is_file():
+        raise PublishError(
+            f"the allow-list {candidates[0]} does not exist — refusing to "
+            "silently publish against a substitute (SIG-OPS-003)."
+        )
+    resolved = next((c for c in candidates if c.is_file()), candidates[-1])
+    if not resolved.is_file():
+        raise PublishError(
+            f"the committed allow-list is absent: {resolved}. Nothing may be "
+            "published without it (SIG-OPS-003)."
+        )
+    with resolved.open("rb") as fh:
+        doc = tomllib.load(fh)
+    top = doc.get("allowlist", {}).get("top_level", [])
+    if not top:
+        raise PublishError(f"{resolved} carries an empty [allowlist].top_level — refusing.")
+    denied = tuple(str(d.get("path", "")) for d in doc.get("denied", []))
+    if any(not d.startswith("/") or not d.endswith("/") for d in denied):
+        raise PublishError(
+            f"{resolved}: every [[denied]] path must be a route — leading and "
+            f"trailing '/' required (got {denied!r})."
+        )
+    required = frozenset(str(e) for e in doc.get("allowlist", {}).get("required", []))
+    if required - frozenset(str(e) for e in top):
+        raise PublishError(
+            f"{resolved}: [allowlist].required names entries absent from "
+            f"top_level: {sorted(required - frozenset(str(e) for e in top))}"
+        )
+    return PublicAllowlist(
+        top_level=frozenset(str(e) for e in top),
+        denied_routes=denied,
+        required=required,
+    )
+
+
+def _top_level_entries(dist: Path) -> set[str]:
+    return {p.name for p in dist.iterdir()}
+
+
+def _iter_files(root: Path) -> list[Path]:
+    return sorted(p for p in root.rglob("*") if p.is_file())
+
+
+def assert_allowlisted_tree(dist: Path, allowlist: PublicAllowlist) -> None:
+    """Refuse a built tree holding any top-level entry off the allow-list.
+
+    This is the check the hand rsync bypassed: ``publish-web`` exits non-zero
+    when ``dist`` contains a directory or file not committed to
+    ``ops/public_routes.toml`` — a planted ``curate/``, an unlisted namespace,
+    or any new route nobody approved for the public surface.
+    """
+    violations: list[str] = []
+    present = _top_level_entries(dist)
+    for entry in sorted(present):
+        if entry not in allowlist.top_level:
+            violations.append(f"{entry}/  (not on the committed allow-list)")
+    # …and the other direction: a route the allow-list REQUIRES that the build
+    # did not emit means a silently broken build — refuse it the same way.
+    for entry in sorted(allowlist.required - present):
+        violations.append(f"{entry}/  (required by the allow-list but not built)")
+    if violations:
+        raise PublishError(
+            "publish refused — the built tree holds top-level entries that are "
+            "not on the committed allow-list (ops/public_routes.toml, "
+            "SIG-OPS-003):\n  " + "\n  ".join(violations)
+        )
+
+
+#: The curation shell's internal-layout marker (``CurateLayout`` renders it on
+#: every /curate/** page): a built public page carrying it was produced from an
+#: internal layout — refused regardless of which route it sits on.
+_CURATE_BANNER = 'data-testid="curate-auth-banner"'
+
+#: A form action pointed at a loopback host: the curation app's write endpoint
+#: is ``http://127.0.0.1:8001`` (loopback-only by design, ADR-068) — such an
+#: action on a public page means internal form markup leaked into the tree.
+_LOOPBACK_ACTION = re.compile(
+    r"""(?:action|formaction)\s*=\s*["']https?://(?:localhost|127\.0\.0\.1|0\.0\.0\.0|\[?::1\]?)[:"'/]""",
+    re.IGNORECASE,
+)
+
+#: A demo-fixture marker: a URL (href/src/action) whose path contains a
+#: ``demo_`` segment, or a rendered generated-task descriptor whose fields carry
+#: a ``demo_`` id (the fixtures' demonstrator absences are ``demo_*``).
+_DEMO_HREF = re.compile(r"""(?:href|src|action)\s*=\s*["'][^"']*/demo_[^"']*["']""", re.IGNORECASE)
+_DEMO_TASK_FIELD = re.compile(r'data-testid="task-field-[^"]+"[^>]*>\s*demo_', re.IGNORECASE)
+
+
+def assert_public_tree_content(dist: Path) -> None:
+    """Refuse a tree carrying internal/demo markers (G1 §3.2 item 3).
+
+    Scans every ``.html`` in the tree for the curation-shell banner
+    (``data-testid="curate-auth-banner"`` — any internal-layout page, wherever
+    it sits), a form action bound to a loopback host (the curation app's write
+    endpoint), and ``demo_`` task markers — in page markup AND in path segments
+    (a ``task/new/demo_*/index.html`` route is refused by name).
+    """
+    violations: list[str] = []
+    for path in _iter_files(dist):
+        rel = path.relative_to(dist).as_posix()
+        if any(part.startswith("demo_") for part in path.relative_to(dist).parts):
+            violations.append(f"{rel}: path carries a demo_ segment (demo fixture content)")
+            continue
+        if path.suffix != ".html":
+            continue
+        text = path.read_text(encoding="utf-8", errors="replace")
+        if _CURATE_BANNER in text:
+            violations.append(
+                f'{rel}: carries data-testid="curate-auth-banner" — a page built '
+                "from an internal curation layout can never ship public"
+            )
+        for m in _LOOPBACK_ACTION.finditer(text):
+            violations.append(
+                f"{rel}: form action on a loopback host ({m.group(0)[:60]}…) — the "
+                "loopback-only curation write path must never ship public"
+            )
+        for m in _DEMO_TASK_FIELD.finditer(text):
+            violations.append(
+                f"{rel}: a generated-task descriptor carries a demo_ id "
+                f"({m.group(0)[:80]}…) — demo fixture content is never publishable"
+            )
+        for m in _DEMO_HREF.finditer(text):
+            violations.append(f"{rel}: links a demo_ route ({m.group(0)[:60]}…)")
+    if violations:
+        raise PublishError(
+            "publish refused — the built tree carries internal/demo markers "
+            "(SIG-OPS-003):\n  " + "\n  ".join(violations)
+        )
+
+
+def tree_manifest(root: Path, *, exclude: frozenset[str] = frozenset()) -> list[tuple[str, str]]:
+    """``(relpath, sha256)`` for every file under ``root`` except ``exclude``."""
+    rows: list[tuple[str, str]] = []
+    for path in _iter_files(root):
+        rel = path.relative_to(root).as_posix()
+        if rel in exclude:
+            continue
+        rows.append((rel, hashlib.sha256(path.read_bytes()).hexdigest()))
+    return rows
+
+
+def tree_digest(root: Path, *, exclude: frozenset[str] = frozenset()) -> str:
+    """The published-tree digest: sha256 over the sorted ``rel<TAB>sha256``
+    manifest — the tamper-evident fingerprint a release record pins."""
+    h = hashlib.sha256()
+    for rel, digest in tree_manifest(root, exclude=exclude):
+        h.update(rel.encode("utf-8"))
+        h.update(b"\t")
+        h.update(digest.encode("ascii"))
+        h.update(b"\n")
+    return f"sha256:{h.hexdigest()}"
+
+
+def write_release_record(
+    dist: Path,
+    *,
+    release_id: str,
+    git_commit: str,
+    built_at: str,
+    data_release: str | None = None,
+    image_digests: Sequence[str] = (),
+    bucket: str | None = None,
+    allowlist_path: str = str(DEFAULT_ALLOWLIST_PATH),
+) -> Path:
+    """Write ``dist/.sig-release.json`` — the release record every publish leaves
+    (SIG-OPS-004): release id, git commit, build time, image digests (none for a
+    static site — the field is recorded empty so the shape never varies), and
+    the published-tree digest over every synced byte except the record itself.
+    """
+    digest = tree_digest(dist, exclude=frozenset({RELEASE_RECORD}))
+    doc = {
+        "schema": RELEASE_RECORD_SCHEMA,
+        "release_id": release_id,
+        "git_commit": git_commit,
+        "built_at": built_at,
+        "tree_digest": digest,
+        "tree_digest_scope": (
+            "sha256 over the sorted (relpath, sha256) manifest of every file "
+            f"under the published tree except {RELEASE_RECORD} itself"
+        ),
+        "image_digests": sorted(image_digests),
+        "data_release": data_release,
+        "bucket": bucket,
+        "allowlist": allowlist_path,
+        "publisher": "sig-ops publish-web",
+    }
+    out = dist / RELEASE_RECORD
+    out.write_text(json.dumps(doc, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return out
+
+
+def assert_release_tree(tree: Path) -> None:
+    """A staged release tree may carry ONLY the release namespaces (``r/``,
+    ``releases/``, ``entity/``, ``conf/``, ``compat_index.json``,
+    ``release.json``) — a staged ``index.html`` would clobber the site root."""
+    if not tree.is_dir():
+        raise PublishError(f"--release-tree {tree} is not a directory")
+    bad = sorted(e.name for e in tree.iterdir() if e.name not in RELEASE_TREE_TOP_LEVEL)
+    if bad:
+        raise PublishError(
+            "publish refused — the staged release tree carries entries outside "
+            f"the release namespaces ({', '.join(sorted(RELEASE_TREE_TOP_LEVEL))}):\n  "
+            + "\n  ".join(bad)
+        )
+
+
+_CONTENT_TYPES: dict[str, str] = {
+    ".html": "text/html; charset=utf-8",
+    ".css": "text/css; charset=utf-8",
+    ".js": "application/javascript; charset=utf-8",
+    ".mjs": "application/javascript; charset=utf-8",
+    ".json": "application/json",
+    ".jsonl": "application/jsonl",
+    ".txt": "text/plain; charset=utf-8",
+    ".xml": "application/xml",
+    ".ics": "text/calendar; charset=utf-8",
+    ".svg": "image/svg+xml",
+    ".png": "image/png",
+    ".webp": "image/webp",
+    ".ico": "image/x-icon",
+    ".woff": "font/woff",
+    ".woff2": "font/woff2",
+    ".pmtiles": "application/octet-stream",
+    ".webmanifest": "application/manifest+json",
+}
+
+
+def _content_type(path: Path) -> str:
+    return _CONTENT_TYPES.get(path.suffix.lower(), "application/octet-stream")
+
+
+@dataclass(frozen=True)
+class SyncPlan:
+    """The dry-run/apply contract for one tree sync (SIG-OPS-004).
+
+    ``uploads`` is every local object the sync writes; ``deletes`` is every
+    remote object the sync removes — computed with the protected release
+    namespaces already excluded, so ``deletes`` can NEVER name a byte under
+    ``r/``, ``releases/``, ``entity/``, ``conf/`` or the release-pipeline root
+    objects (``protected_kept`` records exactly those skips for the audit
+    trail). ``remote`` is None when the destination listing was not read (a
+    dry-run without a bucket handle cannot compute deletions — reported, never
+    assumed empty).
+    """
+
+    uploads: tuple[str, ...]
+    deletes: tuple[str, ...]
+    protected_kept: tuple[str, ...]
+    remote_known: bool
+
+
+def plan_site_sync(local_names: Iterable[str], remote_names: Iterable[str] | None) -> SyncPlan:
+    """Compute the site sync: upload every local object; delete remote objects
+    the local tree no longer carries — EXCEPT the protected release namespaces,
+    which the site sync may never touch (the report records them as
+    ``protected_kept`` so the skip is audited, not silent)."""
+    local = sorted(set(local_names))
+    deletes: tuple[str, ...] = ()
+    kept: tuple[str, ...] = ()
+    if remote_names is not None:
+        remote = set(remote_names)
+        extras = remote - set(local)
+        deletes = tuple(sorted(n for n in extras if not is_protected_object(n)))
+        kept = tuple(sorted(n for n in remote if is_protected_object(n)))
+    return SyncPlan(
+        uploads=tuple(local),
+        deletes=deletes,
+        protected_kept=kept,
+        remote_known=remote_names is not None,
+    )
+
+
+def sync_tree(
+    bucket: GcsBucket,
+    src: Path,
+    *,
+    delete_extras: bool,
+    plan: SyncPlan | None = None,
+) -> SyncPlan:
+    """The ONE repository-owned sync primitive (SIG-OPS-004 — replaces every
+    hand-typed ``gcloud storage rsync``).
+
+    Uploads every file under ``src`` (content-typed by suffix). Deletion happens
+    ONLY when ``delete_extras`` — the site tree — and only the remote extras the
+    plan computed; the release-tree and public-export legs call this with
+    ``delete_extras=False`` (append-only — a publish never deletes a release or
+    compartment byte). Deletion is double-guarded: the plan never lists a
+    protected name, and :func:`is_protected_object` re-checks every delete at
+    the write so a plan bug cannot delete a release tree either.
+    """
+    local_names = [p.relative_to(src).as_posix() for p in _iter_files(src)]
+    if plan is None:
+        if delete_extras:
+            plan = plan_site_sync(local_names, bucket.list_objects(""))
+        else:
+            plan = SyncPlan(
+                uploads=tuple(sorted(local_names)),
+                deletes=(),
+                protected_kept=(),
+                remote_known=False,
+            )
+    for path in _iter_files(src):
+        rel = path.relative_to(src).as_posix()
+        bucket.put_object(rel, path.read_bytes(), content_type=_content_type(path))
+    if delete_extras:
+        for name in plan.deletes:
+            if is_protected_object(name):  # belt-and-suspenders on the plan
+                raise PublishError(
+                    f"sync plan would delete protected object {name!r} — refusing "
+                    "(the site sync can never touch the release namespaces)"
+                )
+            bucket.delete_object(name)
+    return plan
+
+
+@dataclass(frozen=True)
+class PublishWebResult:
+    """The outcome record of one ``publish-web`` run (dry-run or applied)."""
+
+    applied: bool
+    dist: Path
+    record: dict[str, Any]
+    site_plan: SyncPlan
+    release_tree: Path | None = None
+    release_plan: SyncPlan | None = None
+    export_tree: Path | None = None
+    export_plan: SyncPlan | None = None
+    absent_probes: tuple[ProbeResult, ...] = ()
+
+    def as_lines(self) -> list[str]:
+        mode = "APPLIED" if self.applied else "DRY-RUN (nothing synced)"
+        lines = [
+            f"publish-web {mode}: {self.dist}",
+            f"  release record: {self.dist / RELEASE_RECORD} "
+            f"(release_id={self.record['release_id']}, "
+            f"commit={self.record['git_commit']}, digest={self.record['tree_digest']})",
+            f"  site sync: {len(self.site_plan.uploads)} uploads, "
+            f"{len(self.site_plan.deletes)} deletes"
+            + ("" if self.site_plan.remote_known else " (remote unlisted — deletes uncomputed)"),
+            f"  protected remote objects kept: {len(self.site_plan.protected_kept)}",
+        ]
+        if self.release_plan is not None:
+            lines.append(
+                f"  release-tree sync ({self.release_tree}): "
+                f"{len(self.release_plan.uploads)} uploads, deletes disabled "
+                "(release namespaces are append-only)"
+            )
+        if self.export_plan is not None:
+            lines.append(
+                f"  public-export sync ({self.export_tree}): "
+                f"{len(self.export_plan.uploads)} uploads, deletes disabled"
+            )
+        if self.absent_probes:
+            ok = sum(1 for p in self.absent_probes if p.ok)
+            lines.append(
+                f"  absence probes: {ok}/{len(self.absent_probes)} denied routes "
+                "confirmed absent (HTTP 404) on the public origins"
+            )
+        return lines
+
+
+def run_publish_web(
+    *,
+    dist: Path,
+    apply: bool,
+    bucket: GcsBucket | None = None,
+    allowlist_path: str | Path | None = None,
+    release_tree: Path | None = None,
+    export_tree: Path | None = None,
+    export_bucket: GcsBucket | None = None,
+    release_id: str | None = None,
+    git_commit: str | None = None,
+    now: str | None = None,
+    data_release: str | None = None,
+    image_digests: Sequence[str] = (),
+    absent_verify: Callable[[], Sequence[ProbeResult]] | None = None,
+) -> PublishWebResult:
+    """The one publish path (SIG-OPS-003/004): assert → record → sync → verify.
+
+    Order and refusal discipline: the allow-list + content assertions run
+    BEFORE anything is written or synced; the release record is written into
+    the tree that is synced; the site sync deletes only remote extras OUTSIDE
+    the protected release namespaces; the staged release tree and the public
+    export tree sync append-only (a publish never deletes a release tree or a
+    compartment byte); and an applied run must prove every denied route absent
+    on every resolvable public origin via ``absent_verify`` (injected by the
+    CLI from ``ops/cadence.toml`` — the same probe rows the 6-hourly sweep
+    carries).
+
+    ``apply=False`` computes and prints the same plan against a remote LISTING
+    (read-only) and performs no write. Without a bucket handle the plan is
+    local-only (deletes reported as uncomputed).
+    """
+    if not dist.is_dir() or not any(dist.iterdir()):
+        raise PublishError(f"publish refused — {dist} is absent or empty; build first")
+    allowlist = load_allowlist(allowlist_path)
+    assert_allowlisted_tree(dist, allowlist)
+    assert_public_tree_content(dist)
+    if release_tree is not None:
+        assert_release_tree(release_tree)
+    if export_tree is not None and not export_tree.is_dir():
+        raise PublishError(f"--export-tree {export_tree} is not a directory")
+
+    commit = git_commit or _git_head()
+    built_at = now or utcnow()
+    rid = release_id or f"web-{built_at.replace('-', '').replace(':', '')[:15]}Z-{commit[:8]}"
+    write_release_record(
+        dist,
+        release_id=rid,
+        git_commit=commit,
+        built_at=built_at,
+        data_release=data_release,
+        image_digests=image_digests,
+        bucket=bucket.bucket if bucket else None,
+    )
+    record = json.loads((dist / RELEASE_RECORD).read_text(encoding="utf-8"))
+
+    local_names = [p.relative_to(dist).as_posix() for p in _iter_files(dist)]
+    remote_names: list[str] | None = None
+    if bucket is not None:
+        remote_names = bucket.list_objects("")
+    site_plan = plan_site_sync(local_names, remote_names)
+    release_plan: SyncPlan | None = None
+    export_plan: SyncPlan | None = None
+
+    probes: tuple[ProbeResult, ...] = ()
+    if apply:
+        if bucket is None:
+            raise PublishError(
+                "publish-web --apply needs a destination bucket (--bucket, "
+                "SIG_WEB_BUCKET or SIG_GCP_PROJECT) — nothing was synced"
+            )
+        if export_tree is not None and export_bucket is None:
+            raise PublishError(
+                "--export-tree needs --export-bucket (the public compartment "
+                "bucket) — refusing to run a partial publish; nothing was synced"
+            )
+        if absent_verify is None:
+            raise PublishError(
+                "post-sync verification is mandatory: no absence-probe callable "
+                "was provided (the CLI wires it from ops/cadence.toml)"
+            )
+        site_plan = sync_tree(bucket, dist, delete_extras=True, plan=site_plan)
+        if release_tree is not None:
+            release_plan = sync_tree(bucket, release_tree, delete_extras=False)
+        if export_tree is not None:
+            assert export_bucket is not None  # refused above — never partial
+            export_plan = sync_tree(export_bucket, export_tree, delete_extras=False)
+        probes = tuple(absent_verify())
+        present = [p for p in probes if not p.ok]
+        if not probes:
+            raise PublishError(
+                "post-sync verify ran ZERO absence probes — no public origin "
+                "resolved from ops/cadence.toml; the publish cannot prove the "
+                "denied routes are absent (SIG-OPS-003)"
+            )
+        if present:
+            raise PublishError(
+                "post-sync verify FAILED — denied routes are reachable on a "
+                "public origin after the sync (SIG-OPS-003):\n  "
+                + "\n  ".join(f"{p.service}: {p.detail}" for p in present)
+            )
+    else:
+        if release_tree is not None:
+            release_plan = plan_site_sync(
+                (p.relative_to(release_tree).as_posix() for p in _iter_files(release_tree)),
+                None,
+            )
+        if export_tree is not None:
+            export_plan = plan_site_sync(
+                (p.relative_to(export_tree).as_posix() for p in _iter_files(export_tree)),
+                None,
+            )
+
+    return PublishWebResult(
+        applied=apply,
+        dist=dist,
+        record=record,
+        site_plan=site_plan,
+        release_tree=release_tree,
+        release_plan=release_plan,
+        export_tree=export_tree,
+        export_plan=export_plan,
+        absent_probes=probes,
+    )
+
+
+def _git_head(repo_root: Path | None = None) -> str:
+    """The checked-out commit the publish records (git, not a hand value)."""
+    import subprocess
+
+    root = repo_root or Path(__file__).resolve().parents[3]
+    proc = subprocess.run(
+        ["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=root, check=False
+    )
+    if proc.returncode != 0:
+        raise PublishError(f"cannot resolve the git commit for the release record: {proc.stderr}")
+    return proc.stdout.strip()
+
+
 __all__ = [
     "DEFAULT_NATIONAL_EXPORT",
+    "DEFAULT_ALLOWLIST_PATH",
     "PrepareResult",
+    "PublishWebResult",
+    "PublicAllowlist",
+    "PROTECTED_NAMES",
+    "PROTECTED_PREFIXES",
+    "RELEASE_RECORD",
+    "RELEASE_RECORD_SCHEMA",
+    "RELEASE_TREE_TOP_LEVEL",
+    "SyncPlan",
+    "assert_allowlisted_tree",
+    "assert_public_tree_content",
+    "assert_release_tree",
+    "is_protected_object",
+    "load_allowlist",
+    "plan_site_sync",
+    "run_publish_web",
+    "sync_tree",
+    "tree_digest",
+    "tree_manifest",
+    "write_release_record",
     "run_public_prepare",
     "PublishError",
     "CompartmentLeak",

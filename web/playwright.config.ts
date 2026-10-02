@@ -36,7 +36,12 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `npm run build && npm run preview -- --port ${PORT}`,
+    // P34.10: the e2e suite exercises the FULL surface — the allow-listed public
+    // routes plus the internal/withdrawn ones (`/curate/**`, `/releases/`,
+    // `/research-dossier/`, `/visual-language/`, `/contribution-back/`) that the
+    // default build never emits (SIG-OPS-003). `SIG_BUILD_INTERNAL=1` injects them
+    // (astro.config.mjs `sigInternalRoutes`); publishable builds never set it.
+    command: `SIG_BUILD_INTERNAL=1 npm run build && npm run preview -- --port ${PORT}`,
     port: PORT,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

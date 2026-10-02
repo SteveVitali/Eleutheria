@@ -25,7 +25,7 @@ import urllib.request
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Sequence
@@ -42,6 +42,29 @@ def http_ok(url: str, *, timeout: float = 3.0) -> bool:
             return 200 <= resp.status < 500
     except (urllib.error.URLError, ConnectionError, OSError, ValueError):
         return False
+
+
+def http_absent(url: str, *, timeout: float = 15.0) -> tuple[bool, str]:
+    """True iff ``url`` answers exactly HTTP 404 — the denied-route check
+    (P34.10 / SIG-OPS-003).
+
+    Returns ``(ok, detail)``: ``ok`` requires an answered 404 (urllib reports it
+    as an :class:`~urllib.error.HTTPError`, and a redirect that lands on a 404
+    still counts). Any other status — 200 content, a 403 "exists but denied",
+    or a redirect to live content — means the route is PRESENT and ``ok`` is
+    False with the observed status in ``detail``. An unreachable origin is also
+    ``ok=False``: absence cannot be proven against an origin that did not
+    answer, and the probe must not silently green a dead origin (§3.1).
+    """
+    try:
+        with urllib.request.urlopen(url, timeout=timeout) as resp:  # noqa: S310 - fixed hosts
+            return False, f"present (HTTP {resp.status})"
+    except urllib.error.HTTPError as exc:
+        if exc.code == 404:
+            return True, "absent (HTTP 404)"
+        return False, f"present (HTTP {exc.code})"
+    except (urllib.error.URLError, ConnectionError, OSError, ValueError) as exc:
+        return False, f"unreachable ({exc})"
 
 
 def pg_ready(dsn: str) -> bool:
@@ -80,7 +103,15 @@ class ProbeResult:
         }
 
 
-def _timed(check: Callable[[], bool]) -> tuple[bool, float]:
+_T = TypeVar("_T")
+
+
+def _timed(check: Callable[[], _T]) -> tuple[_T, float]:
+    """Run ``check``, returning its result plus wall-clock latency in ms.
+
+    Generic over the result type (P34.10: the absent-route check returns
+    ``(ok, detail)`` where the health checks return a plain ``bool``).
+    """
     start = time.monotonic()
     ok = check()
     return ok, (time.monotonic() - start) * 1000.0
@@ -446,6 +477,7 @@ __all__ = [
     "RetentionPolicy",
     "ServiceBudget",
     "compute_uptime",
+    "http_absent",
     "http_ok",
     "pg_ready",
     "probe_stack",
