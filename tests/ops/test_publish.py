@@ -1052,7 +1052,23 @@ def test_internal_routes_in_astro_config_are_off_the_allowlist() -> None:
         # check above proves.
 
 
-@pytest.mark.skipif(shutil.which("npm") is None, reason="npm toolchain absent")
+#: The web-build environment gate, mirroring `_require_web_env` in
+#: tests/e2e/test_composed_stack.py: the CI `python` job runs this suite but
+#: installs no Node / `web/node_modules` — only the CI `web` job does, so a
+#: real `npm run build` there cannot run (rc 127 "astro: not found"). Skip
+#: cleanly instead of failing; the same builds are exercised by the web job's
+#: own `npm run build` / e2e / `check:perf` runs.
+_WEB_BUILD_UNAVAILABLE = (
+    shutil.which("npm") is None or not (_REPO_ROOT / "web" / "node_modules").exists()
+)
+_WEB_BUILD_SKIP = pytest.mark.skipif(
+    _WEB_BUILD_UNAVAILABLE,
+    reason="web build environment unavailable (no npm / web/node_modules); "
+    "the web build is covered by the CI `web` job",
+)
+
+
+@_WEB_BUILD_SKIP
 def test_default_web_build_emits_no_internal_routes(tmp_path: Path) -> None:
     """AC: a build without SIG_BUILD_INTERNAL emits no curate/ (or any other
     non-public route). The route gate lives in astro.config.mjs, orthogonal to
@@ -1085,7 +1101,7 @@ def test_default_web_build_emits_no_internal_routes(tmp_path: Path) -> None:
     P.assert_allowlisted_tree(dist, P.load_allowlist(_ALLOWLIST_PATH))
 
 
-@pytest.mark.skipif(shutil.which("npm") is None, reason="npm toolchain absent")
+@_WEB_BUILD_SKIP
 def test_internal_build_flag_restores_the_full_surface(tmp_path: Path) -> None:
     """SIG_BUILD_INTERNAL=1 (the web e2e suite's flag) emits the internal routes."""
     import os as _os
