@@ -1,7 +1,7 @@
 {
   "schema": "current-projection/1",
   "authority": "advisory — docs/build/LEDGER.md CURRENT STATE and the DEFERRALS.md compatibility cells remain the control authority; this projection is derived from hashed inputs and never writes them (shadow mode; the single-writer protocol is D-R10-MEMORY-1 → P32.8)",
-  "input_commit": "14a2c845752bee83f9b90081069a146dd87642a3",
+  "input_commit": "df694498ae4cb140e8441d613127d24e9101b4e5",
   "manifest_inputs": 934,
   "control": {
     "projectStatus": "IN_PROGRESS",
@@ -33,7 +33,7 @@
     "terminal": 66,
     "events": 615,
     "transitions": 18,
-    "coverage_assessments": 189,
+    "coverage_assessments": 191,
     "coverage_historical_rows": 777,
     "reconciled_by_event": 15,
     "reconciled_by_documentation": 8,
@@ -11189,14 +11189,14 @@
           "label": "historical/csv"
         },
         "SIG-OPS-003": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "PARTIAL",
+          "evidence": "ops/public_routes.toml;ops/src/ops/publish.py;ops/src/ops/cli.py;ops/src/ops/observe.py;ops/src/ops/scheduled.py;ops/cadence.toml;web/astro.config.mjs;docs/build/runs/P34.10.md",
           "assessed": "",
           "label": "historical/csv"
         },
         "SIG-OPS-004": {
-          "verdict": "MISSING",
-          "evidence": "",
+          "verdict": "PARTIAL",
+          "evidence": "ops/public_routes.toml;ops/src/ops/publish.py;ops/src/ops/cli.py;ops/src/ops/observe.py;ops/src/ops/scheduled.py;ops/cadence.toml;web/astro.config.mjs;docs/build/runs/P34.10.md",
           "assessed": "",
           "label": "historical/csv"
         },
@@ -12712,6 +12712,16 @@
         "assessment_id": "SIG-OPS-003:r11-1"
       },
       {
+        "requirement_id": "SIG-OPS-003",
+        "domain": "hosted",
+        "verdict": "PARTIAL",
+        "assessed_at": "2026-10-02",
+        "code_revision": "r11/P34.10-one-allow-listed-publish-path @ 14a2c845752bee83f9b90081069a146dd87642a3",
+        "limitations": "allow-list + internal/demo refusal machinery, the 404-only http-absent probes on all three public origins, and the public-only default build are landed and verified at implementation/fixture (669 ops tests; real astro builds with and without SIG_BUILD_INTERNAL); the live legs — an applied publish and the post-sync/sweep proof that each denied route answers 404 on every real origin (the /curate/** leak from the 2026-09-27 hand rsync is still live) — are owed to P34.17, routed there in the matrix (PARTIAL, not MET-ENGINEERED: the residual is a manifest row, not a deferral)",
+        "supersedes": "SIG-OPS-003:r11-1",
+        "assessment_id": "SIG-OPS-003:r11-2"
+      },
+      {
         "requirement_id": "SIG-OPS-004",
         "domain": "hosted",
         "verdict": "MISSING",
@@ -12720,6 +12730,16 @@
         "limitations": "new Round-11 requirement entering the matrix as MISSING with its owner's routing (P34.10); planning never marks it MET (spec §56.9)",
         "supersedes": null,
         "assessment_id": "SIG-OPS-004:r11-1"
+      },
+      {
+        "requirement_id": "SIG-OPS-004",
+        "domain": "hosted",
+        "verdict": "PARTIAL",
+        "assessed_at": "2026-10-02",
+        "code_revision": "r11/P34.10-one-allow-listed-publish-path @ 14a2c845752bee83f9b90081069a146dd87642a3",
+        "limitations": "the single repository-owned publish path is landed (sig-ops publish-web; hand-typed syncs forbidden in deploy.py + ops/README); sync_tree never deletes the release namespaces and syncs release/public-compartment trees append-only; .sig-release.json records release id/commit/build time/image digests/tree digest — verified at implementation/fixture; the first applied publish with a real release record on the real bucket is owed to P34.17, routed there in the matrix (PARTIAL: the residual is a manifest row, not a deferral); the SIG-REL-004 release-tool refinement stays P35.53's row",
+        "supersedes": "SIG-OPS-004:r11-1",
+        "assessment_id": "SIG-OPS-004:r11-2"
       },
       {
         "requirement_id": "SIG-OPS-005",
@@ -13977,9 +13997,19 @@
           "assessed_at": "2026-10-01"
         },
         {
+          "requirement": "SIG-OPS-003",
+          "verdict": "PARTIAL",
+          "assessed_at": "2026-10-02"
+        },
+        {
           "requirement": "SIG-OPS-004",
           "verdict": "MISSING",
           "assessed_at": "2026-10-01"
+        },
+        {
+          "requirement": "SIG-OPS-004",
+          "verdict": "PARTIAL",
+          "assessed_at": "2026-10-02"
         },
         {
           "requirement": "SIG-OPS-005",
@@ -14729,10 +14759,10 @@
   "known_inconsistencies": [],
   "incomplete": false,
   "stale_sources": [],
-  "manifest_sha256": "8de34e1f620c4ac05366b5d1b2f9a878b24515111d42002bd4c012260b1be620",
+  "manifest_sha256": "0a4129dc677e1ff97dca37be6a84369cfd333bc1341e7086bc618dc1b3b5824f",
   "current_md": {
     "lines": 74,
-    "bytes": 12916,
+    "bytes": 12984,
     "budget": "250 lines / 20480 bytes",
     "spill_pages": [
       "coverage-1.md",
